@@ -12,7 +12,7 @@ import {
   getPlacementQuickFormat,
 } from "../../../learner/placement/placement-quick-format";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
-import { fitsExamOptions, getExamChoiceFormat } from "../../../library/exams/exam-choice-format";
+import { fitsExamOptions, getExamChoiceFormats } from "../../../library/exams/exam-choice-format";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../../../library/exams/true-false-labels";
 import { getItemAudienceFilter } from "../../../library/items/item-field";
 import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
@@ -93,7 +93,7 @@ async function loadCandidates({
   skillIds: readonly string[];
   userId: string;
 }): Promise<ChoiceItem[]> {
-  const choice = getExamChoiceFormat(shape.structure);
+  const choices = getExamChoiceFormats(shape.structure);
 
   const items = await prisma.item.findMany({
     include: ITEM_IMAGE_INCLUDE,
@@ -107,7 +107,7 @@ async function loadCandidates({
   });
 
   return items
-    .filter((item) => fitsExamOptions({ choice, item }))
+    .filter((item) => fitsExamOptions({ choices, item }))
     .map((item) => parseChoiceItem(item))
     .filter((item) => item !== null);
 }

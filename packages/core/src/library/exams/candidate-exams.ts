@@ -1,7 +1,7 @@
 import "server-only";
 import { type LessonSpecParams } from "@zoonk/ai/tasks/lesson-spec";
 import { type ExamBlueprint, type GoalKind } from "@zoonk/db";
-import { toItemExam } from "../../lookahead/placement-item-skills";
+import { toItemExam } from "../../lookahead/item-exam";
 
 export type CandidateExam = NonNullable<LessonSpecParams["exams"]>[number];
 

@@ -10,7 +10,7 @@ import {
 import { GRADABLE_ITEM_FORMATS } from "../../../learner/_utils/choice-items";
 import { getLessonSkillRows, toIdKey } from "../../../library/_utils/shared-rows";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
-import { fitsExamChoice, getExamChoiceFormat } from "../../../library/exams/exam-choice-format";
+import { fitsExamChoice, getExamChoiceFormats } from "../../../library/exams/exam-choice-format";
 import { getItemAudienceFilter } from "../../../library/items/item-field";
 import { type ItemSetPick, listItemSetsForSkills } from "../../../library/items/item-sets";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
@@ -280,11 +280,11 @@ export async function loadMockCandidates({
     goal.id ? loadSkillAreas(goal.id, plan) : new Map<string, string>(),
   ]);
 
-  const choice = getExamChoiceFormat(structure);
+  const choices = getExamChoiceFormats(structure);
 
   const items = itemIds
     ? loaded
-    : loaded.filter((item) => typed.includes(item.format) || fitsExamChoice({ choice, item }));
+    : loaded.filter((item) => typed.includes(item.format) || fitsExamChoice({ choices, item }));
 
   const [answers, sets] = await Promise.all([
     loadLastAnswers({ itemIds: items.map((item) => item.id), userId }),
@@ -292,7 +292,7 @@ export async function loadMockCandidates({
       ? []
       : loadSetUnits({
           areas,
-          fits: (item) => typed.includes(item.format) || fitsExamChoice({ choice, item }),
+          fits: (item) => typed.includes(item.format) || fitsExamChoice({ choices, item }),
           goal,
           mix,
           skillIds,

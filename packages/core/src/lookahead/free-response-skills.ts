@@ -6,7 +6,8 @@ import { getExamScale } from "../exams/scoring/exam-scales";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { getSkillArea } from "../plans/planner/graph-areas";
 import { parsePlanGraph } from "../plans/planner/plan-state";
-import { type PlacementItemSkill, toItemExam } from "./placement-item-skills";
+import { toItemExam } from "./item-exam";
+import { type PlacementItemSkill } from "./placement-item-skills";
 
 const FREE_RESPONSE_SKILLS = 3;
 

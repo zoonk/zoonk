@@ -5,7 +5,8 @@ import {
   getPlacementQuickFormat,
 } from "../../learner/placement/placement-quick-format";
 import { listPastQuestionExamples } from "../../library/items/past-question-examples";
-import { type PlacementItemSkill, toItemExam } from "../../lookahead/placement-item-skills";
+import { toItemExam } from "../../lookahead/item-exam";
+import { type PlacementItemSkill } from "../../lookahead/placement-item-skills";
 import { loadAnytimeMockSetup } from "./_utils/anytime-mock-setup";
 import { planMockWrites } from "./_utils/mock-writes";
 import { type MockFormatShortfall } from "./mock-shortfall";

@@ -4,21 +4,21 @@ import { readDatabaseFacts } from "../../../_utils/read-database-facts";
 import {
   type ExamChoiceFormat,
   fitsExamChoice,
-  getExamChoiceFormat,
+  getExamChoiceFormats,
 } from "../../../library/exams/exam-choice-format";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { getItemAudienceFilter } from "../../../library/items/item-field";
 import { PLACEMENT_ITEM_FORMATS, preferExamItems } from "./placement-items";
 
-async function loadExamChoice(
+async function loadChoiceFormats(
   examBlueprintId: string | null,
   tx: TransactionClient = prisma,
-): Promise<ExamChoiceFormat | null> {
+): Promise<ExamChoiceFormat[]> {
   const blueprint = examBlueprintId
     ? await tx.examBlueprint.findUnique({ where: { id: examBlueprintId } })
     : null;
 
-  return blueprint ? getExamChoiceFormat(readBlueprintContent(blueprint).structure) : null;
+  return blueprint ? getExamChoiceFormats(readBlueprintContent(blueprint).structure) : [];
 }
 
 /** Never uses another exam's questions; general questions fill gaps only when no matching exam questions are being written. */
@@ -37,7 +37,7 @@ export async function loadPlacementItems({
   writingSkillIds?: ReadonlySet<string>;
   tx?: TransactionClient;
 }) {
-  const [items, choice] = await readDatabaseFacts(
+  const [items, choices] = await readDatabaseFacts(
     tx,
     () =>
       tx.item.findMany({
@@ -56,11 +56,11 @@ export async function loadPlacementItems({
           ...getItemAudienceFilter({ examBlueprintId }),
         },
       }),
-    () => loadExamChoice(examBlueprintId, tx),
+    () => loadChoiceFormats(examBlueprintId, tx),
   );
 
   const fitting = items
-    .filter((item) => fitsExamChoice({ choice, item }))
+    .filter((item) => fitsExamChoice({ choices, item }))
     .map(({ content: _content, ...item }) => item);
 
   return preferExamItems({ examBlueprintId, items: fitting, writingSkillIds });

@@ -398,6 +398,7 @@
     "./lookahead/exam-format-skills": "./src/lookahead/exam-format-skills.ts",
     "./lookahead/free-response-skills": "./src/lookahead/free-response-skills.ts",
     "./lookahead/goal-generation-access": "./src/lookahead/goal-generation-access.ts",
+    "./lookahead/item-exam": "./src/lookahead/item-exam.ts",
     "./lookahead/item-set-targets": "./src/lookahead/item-set-targets.ts",
     "./lookahead/learner-lookahead": "./src/lookahead/learner-lookahead.ts",
     "./lookahead/lessons-ask": "./src/lookahead/lessons-ask.ts",

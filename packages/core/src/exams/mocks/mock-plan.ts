@@ -8,11 +8,11 @@ import {
   sectionMinutes,
   toSectionRules,
 } from "./mock-day-sections";
-import { getFormatQuotas, getMockFormatMix } from "./mock-format-mix";
+import { getFormatQuotas, getMockFormatMix, listUnaskedKeys } from "./mock-format-mix";
 import { planListeningSection, planSpeakingSection } from "./mock-oral-sections";
 import { countReused } from "./mock-reuse";
 import { type MockRouting, isNextModule, toRouting } from "./mock-routing";
-import { mapAreasToSections } from "./mock-section-areas";
+import { listSectionNames, mapAreasToSections } from "./mock-section-areas";
 import { getSectionName, orderBySubjectShares, sectionPool } from "./mock-section-pool";
 import { takeQuestions } from "./mock-sets";
 import { type SubjectShare, getPartOfAreas, splitPartShares } from "./mock-subject-shares";
@@ -153,10 +153,12 @@ export function planMock({
 
       const previous = sections[index - 1]?.name ?? null;
       const routed = adaptive && isNextModule({ current: section.name, previous });
+      const sectionMix = getMockFormatMix(structure, listSectionNames({ areaSections, section }));
+      const unasked = listUnaskedKeys({ mix, sectionMix });
 
       const pool = orderBySubjectShares({
         pool: sectionPool({ areaSections, candidates, section }).filter(
-          (candidate) => !state.used.has(candidate.itemId),
+          (candidate) => !state.used.has(candidate.itemId) && !unasked.has(candidate.format ?? ""),
         ),
         portion: routed ? share * 2 : share,
         subjectShares: shares,
@@ -164,7 +166,7 @@ export function planMock({
       });
 
       const routing = routed ? toRouting({ pool, wanted }) : null;
-      const quotas = getFormatQuotas({ mix, wanted: routed ? wanted * 2 : wanted });
+      const quotas = getFormatQuotas({ mix: sectionMix, wanted: routed ? wanted * 2 : wanted });
       const picked = routing ? [] : takeQuestions({ pool, quotas, wanted });
       const reserved = routing ? [...routing.easier, ...routing.harder] : picked;
 
@@ -186,9 +188,12 @@ export function planMock({
         routing,
       };
 
-      const formatsWanted = Object.fromEntries(
-        [...quotas].map(([key, count]) => [key, (state.formatsWanted[key] ?? 0) + count]),
-      );
+      const formatsWanted = {
+        ...state.formatsWanted,
+        ...Object.fromEntries(
+          [...quotas].map(([key, count]) => [key, (state.formatsWanted[key] ?? 0) + count]),
+        ),
+      };
 
       return {
         formatsWanted,

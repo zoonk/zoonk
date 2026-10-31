@@ -40,11 +40,21 @@ async function loadOptionSkills({
   const asksAll = !option.area && option.areas.length === 0;
   const listening = getListeningSkillIds({ exam, graph });
 
-  return graph.skills.flatMap((skill) => {
+  const asked = graph.skills.flatMap((skill) => {
     const area = getSkillArea({ graph, skill });
-    const asked = asksAll || isOptionArea({ area, option, structure });
-    return asked && !listening.has(skill.skillId) ? [{ area, id: skill.skillId }] : [];
+    const inOption = asksAll || isOptionArea({ area, option, structure });
+    return inOption && !listening.has(skill.skillId) ? [{ area, id: skill.skillId }] : [];
   });
+
+  const rows = await prisma.skill.findMany({
+    select: { id: true, isQuantitative: true },
+    where: { id: { in: asked.map((skill) => skill.id) } },
+  });
+
+  return asked.map((skill) => ({
+    ...skill,
+    isQuantitative: rows.find((row) => row.id === skill.id)?.isQuantitative ?? null,
+  }));
 }
 
 function listWrites({

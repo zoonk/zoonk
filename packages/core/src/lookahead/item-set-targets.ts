@@ -11,7 +11,8 @@ import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { listPastQuestionExamples } from "../library/items/past-question-examples";
 import { getSkillArea } from "../plans/planner/graph-areas";
 import { parsePlanGraph } from "../plans/planner/plan-state";
-import { type PlacementItemSkill, toItemExam } from "./placement-item-skills";
+import { toItemExam } from "./item-exam";
+import { type PlacementItemSkill } from "./placement-item-skills";
 
 const SET_AREAS = 2;
 

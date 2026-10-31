@@ -22,29 +22,11 @@ import {
   getConfirmingCount,
   getPlacementQuickFormat,
 } from "../learner/placement/placement-quick-format";
-import {
-  fitsExamChoice,
-  fitsExamOptions,
-  getExamChoiceFormat,
-  getExamFormats,
-} from "../library/exams/exam-choice-format";
-import { type NoticeFormats } from "../library/exams/notice-formats";
-import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
-import { readGoalExamFormats } from "../library/exams/short-answers";
+import { fitsExamChoice, fitsExamOptions } from "../library/exams/exam-choice-format";
 import { getItemAudienceFilter } from "../library/items/item-field";
 import { loadSkillPrerequisites } from "../library/skills/skill-prerequisites";
 import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
-
-type PlacementItemExam = {
-  /** Null until the exam blueprint is linked. */
-  blueprintId: string | null;
-  name: string;
-  /** Null when the notice does not specify an option count. */
-  optionCount: number | null;
-  /** Quoted past-paper examples; omitted when the picker does not load them. */
-  pastQuestions?: string[];
-  style: string;
-};
+import { type PlacementChoice, type PlacementItemExam, getPickingExam } from "./item-exam";
 
 export type PlacementItemSkill = {
   description: string;
@@ -83,66 +65,6 @@ function getUsedSituations(items: readonly SkillItem[]): string[] {
 
   const situations = ordered.flatMap((item) => getItemSituation(item.content) ?? []);
   return [...new Set(situations)].slice(0, MAX_USED_SITUATIONS);
-}
-
-function toExamStyle({
-  formats,
-  scoring,
-}: {
-  formats: NoticeFormats["formats"];
-  scoring: string | undefined;
-}): string {
-  return [
-    ...formats.map((format) =>
-      format.options
-        ? `${format.kind} (${format.options} options): ${format.description}`
-        : `${format.kind}: ${format.description}`,
-    ),
-    scoring,
-  ]
-    .filter(Boolean)
-    .join(" ");
-}
-
-function toOptionCount(formats: NoticeFormats["formats"]): number | null {
-  return formats.find((format) => format.kind === "multipleChoice")?.options ?? null;
-}
-
-export function toItemExam(blueprint: ExamBlueprint): PlacementItemExam {
-  const { structure } = readBlueprintContent(blueprint);
-  const formats = getExamFormats(structure);
-
-  return {
-    blueprintId: blueprint.id,
-    name: blueprint.role ? `${blueprint.name}, ${blueprint.role}` : blueprint.name,
-    optionCount: toOptionCount(formats),
-    style: toExamStyle({ formats, scoring: structure.mock?.scoring.description }),
-  };
-}
-
-function toNoticeItemExam({ formats, name }: { formats: NoticeFormats; name: string }) {
-  const examFormats = getExamFormats(formats);
-
-  return {
-    blueprintId: null,
-    name,
-    optionCount: toOptionCount(examFormats),
-    style: toExamStyle({ formats: examFormats, scoring: undefined }),
-  };
-}
-
-function getGoalItemExam(
-  goal: Pick<Goal, "details" | "kind" | "title"> & { examBlueprint: ExamBlueprint | null },
-): { exam: PlacementItemExam | null; formats: NoticeFormats | null } {
-  const blueprint = goal.examBlueprint;
-  const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
-  const formats = readGoalExamFormats({ goal, structure });
-
-  if (blueprint) {
-    return { exam: goal.kind === "exam" ? toItemExam(blueprint) : null, formats };
-  }
-
-  return { exam: formats ? toNoticeItemExam({ formats, name: goal.title }) : null, formats };
 }
 
 type PickingGoal = Pick<Goal, "details"> & {
@@ -264,6 +186,7 @@ function getCoveringItemFilter({
 
 /** Workflow bridge: goalId must come from the authenticated boundary. formats narrows generation; exceptAnswered excludes seen questions from coverage. */
 export async function pickPlacementItemSkills({
+  choice,
   exceptAnswered = false,
   forPlacement = false,
   formats,
@@ -271,6 +194,7 @@ export async function pickPlacementItemSkills({
   quickNeeded = 1,
   skillIds,
 }: {
+  choice?: PlacementChoice;
   /** Questions the goal's learner already answered don't count: they won't be asked again. */
   exceptAnswered?: boolean;
   /** Only placement respects an explicit placement skip; tests and practice may still request questions. */
@@ -301,11 +225,10 @@ export async function pickPlacementItemSkills({
   const picked = await readPickedSkillIds({ forPlacement, goal, listeningSkillIds, skillIds });
 
   const blueprint = goal?.examBlueprint ?? null;
-  const { exam, formats: structure } = goal ? getGoalItemExam(goal) : { exam: null, formats: null };
-  const choice = exam ? getExamChoiceFormat(structure) : null;
+  const { choices, exam, formats: structure } = getPickingExam({ choice, goal });
 
   const fits = (item: SkillItem) =>
-    formats ? fitsExamOptions({ choice, item }) : fitsExamChoice({ choice, item });
+    formats ? fitsExamOptions({ choices, item }) : fitsExamChoice({ choices, item });
 
   const quickFormat =
     formats?.find((format) => isQuickFormat(format)) ?? getPlacementQuickFormat(structure);

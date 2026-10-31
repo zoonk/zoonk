@@ -34,14 +34,20 @@ export async function prepareExamFormatItemsStep({
 }): Promise<number> {
   "use step";
 
-  const { answerFormat, skill } = pick;
-  const { entry, format, select } = answerFormat;
+  const { answerFormat, skill, style } = pick;
+  const { entry, format, options, select } = answerFormat;
   const context = toContentAnalytics({ analytics, scope: skill, workflowRunId });
+
+  const exam = skill.exam && {
+    ...skill.exam,
+    optionCount: options ?? skill.exam.optionCount,
+    style: style ?? skill.exam.style,
+  };
 
   const { data, provenance } = await generateItems({
     analytics: context,
     count,
-    examFormat: skill.exam ? { ...skill.exam, entry, select } : null,
+    examFormat: exam ? { ...exam, entry, select } : null,
     format,
     language: skill.language,
     level: skill.level ?? "intermediate",
@@ -59,11 +65,11 @@ export async function prepareExamFormatItemsStep({
   const { created, unchecked } = await createItems({
     analytics: context,
     entry: entry ?? undefined,
-    examBlueprintId: skill.exam?.blueprintId ?? null,
+    examBlueprintId: exam?.blueprintId ?? null,
     format,
     items: data.items,
     language: skill.language,
-    optionCount: format === "multipleChoice" ? (skill.exam?.optionCount ?? null) : null,
+    optionCount: format === "multipleChoice" ? (exam?.optionCount ?? null) : null,
     provenance,
     select: select ?? undefined,
     skillId: skill.id,

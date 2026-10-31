@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import {
+  ONE_PICK_MIX,
   getFormatMixSource,
   getFormatQuotas,
   getItemFormatKey,
@@ -30,21 +31,48 @@ const JEE_ADVANCED = structureOf([
   { entry: { kind: "integer", places: null }, kind: "numeric", options: null },
 ]);
 
+const GRE_LIKE = structureOf([
+  { description: "Compare two quantities", sections: ["Quantitative Reasoning"] },
+  { description: "One answer", options: 5, sections: ["Verbal Reasoning", "Quantitative"] },
+  { description: "Fill each blank from its column", options: 5, sections: ["Verbal"] },
+  { description: "Two equivalent answers", options: 6, sections: ["Verbal"], select: 2 },
+  {
+    description: "Type a number",
+    entry: { kind: "fraction", places: null },
+    kind: "numeric",
+    options: null,
+    sections: ["Quantitative Reasoning"],
+  },
+  { description: "Essay", kind: "essay", options: null },
+]);
+
+function keysOf(mix: { key: string; share: number }[]) {
+  return mix.map(({ key, share }) => ({ key, share }));
+}
+
 describe(getMockFormatMix, () => {
   it("asks each format the notice lists in equal parts when it gives no counts", () => {
     const mix = getMockFormatMix(JEE_ADVANCED);
 
-    expect(mix.map(({ key, share }) => ({ key, share }))).toStrictEqual([
-      { key: "choice", share: 1 / 3 },
+    expect(keysOf(mix)).toStrictEqual([
+      { key: "choice:4", share: 1 / 3 },
       { key: "picks:all", share: 1 / 3 },
       { key: "numeric:integer:", share: 1 / 3 },
     ]);
 
     expect(mix.map((format) => format.writer)).toStrictEqual([
-      { kind: "quick" },
-      { answerFormat: { entry: null, format: "multipleChoice", select: "all" }, kind: "item" },
+      { choice: { kind: "multipleChoice", options: 4 }, kind: "quick" },
       {
-        answerFormat: { entry: { kind: "integer", places: null }, format: "numeric", select: null },
+        answerFormat: { entry: null, format: "multipleChoice", options: 4, select: "all" },
+        kind: "item",
+      },
+      {
+        answerFormat: {
+          entry: { kind: "integer", places: null },
+          format: "numeric",
+          options: null,
+          select: null,
+        },
         kind: "item",
       },
     ]);
@@ -59,8 +87,8 @@ describe(getMockFormatMix, () => {
       { kind: "essay", options: null },
     ]);
 
-    expect(getMockFormatMix(jeeMain).map(({ key, share }) => ({ key, share }))).toStrictEqual([
-      { key: "choice", share: 0.8 },
+    expect(keysOf(getMockFormatMix(jeeMain))).toStrictEqual([
+      { key: "choice:4", share: 0.8 },
       { key: "numeric:number:", share: 0.2 },
     ]);
 
@@ -68,38 +96,94 @@ describe(getMockFormatMix, () => {
 
     const sat = structureOf([{ share: 0.75 }, { kind: "shortAnswer", options: null }]);
 
-    expect(getMockFormatMix(sat).map(({ key, share }) => ({ key, share }))).toStrictEqual([
-      { key: "choice", share: 0.75 },
+    expect(keysOf(getMockFormatMix(sat))).toStrictEqual([
+      { key: "choice:4", share: 0.75 },
       { key: "typed", share: 0.25 },
     ]);
   });
 
   it("asks one pick only for an exam that lists only one, and without a blueprint", () => {
-    const enem = structureOf([{ options: 5 }, { kind: "essay", options: null }]);
+    const enem = structureOf([{ description: "Five options", options: 5 }]);
 
     expect(getMockFormatMix(enem)).toStrictEqual([
-      { key: "choice", share: 1, writer: { kind: "quick" } },
+      {
+        key: "choice:5",
+        sections: [],
+        share: 1,
+        style: "multipleChoice (5 options): Five options",
+        writer: { choice: { kind: "multipleChoice", options: 5 }, kind: "quick" },
+      },
     ]);
 
-    expect(getMockFormatMix(null)).toStrictEqual([
-      { key: "choice", share: 1, writer: { kind: "quick" } },
+    expect(getMockFormatMix(null)).toStrictEqual(ONE_PICK_MIX);
+  });
+
+  it("keeps one-pick formats with their own options apart, each asked only where the notice asks it", () => {
+    expect(keysOf(getMockFormatMix(GRE_LIKE, ["Verbal Reasoning (Section 1)"]))).toStrictEqual([
+      { key: "choice:5", share: 2 / 3 },
+      { key: "picks:2", share: 1 / 3 },
     ]);
+
+    const quantitative = getMockFormatMix(GRE_LIKE, ["Quantitative Reasoning (Section 2)"]);
+
+    expect(keysOf(quantitative)).toStrictEqual([
+      { key: "choice:4", share: 1 / 3 },
+      { key: "choice:5", share: 1 / 3 },
+      { key: "numeric:fraction:", share: 1 / 3 },
+    ]);
+
+    expect(quantitative.map(({ sections, style }) => ({ sections, style }))).toStrictEqual([
+      {
+        sections: ["Quantitative Reasoning"],
+        style: "multipleChoice (4 options): Compare two quantities",
+      },
+      {
+        sections: ["Verbal Reasoning", "Quantitative"],
+        style: "multipleChoice (5 options): One answer",
+      },
+      { sections: ["Quantitative Reasoning"], style: "numeric: Type a number" },
+    ]);
+  });
+
+  it("asks every format in a part no format names, and in the whole exam", () => {
+    expect(getMockFormatMix(GRE_LIKE, ["Analytical Writing"])).toHaveLength(4);
+    expect(getMockFormatMix(GRE_LIKE, [])).toHaveLength(4);
+
+    expect(getMockFormatMix(GRE_LIKE).find((format) => format.key === "choice:5")).toMatchObject({
+      sections: ["Verbal Reasoning", "Quantitative", "Verbal"],
+      style:
+        "multipleChoice (5 options): One answer multipleChoice (5 options): Fill each blank from its column",
+    });
   });
 });
 
-function keyOf(format: string, content: object) {
-  return getItemFormatKey({ item: { content, format }, mix: getMockFormatMix(JEE_ADVANCED) });
+function keyOf(format: string, content: object, structure = JEE_ADVANCED) {
+  return getItemFormatKey({ item: { content, format }, mix: getMockFormatMix(structure) });
+}
+
+function options(count: number) {
+  return Array.from({ length: count }, (_, index) => ({ isCorrect: index === 0, text: "" }));
 }
 
 describe(getItemFormatKey, () => {
   it("puts a bank question in the format it's answered in", () => {
-    expect(keyOf("multipleChoice", { select: 1 })).toBe("choice");
-    expect(keyOf("multipleChoice", {})).toBe("choice");
+    expect(keyOf("multipleChoice", { options: options(4), select: 1 })).toBe("choice:4");
+    expect(keyOf("multipleChoice", { options: options(4) })).toBe("choice:4");
     expect(keyOf("multipleChoice", { select: "all" })).toBe("picks:all");
     expect(keyOf("multipleChoice", { select: 2 })).toBe("picks:all");
     expect(keyOf("numeric", { entry: { kind: "integer", places: null } })).toBe("numeric:integer:");
     expect(keyOf("numeric", {})).toBe("numeric:integer:");
     expect(keyOf("typed", {})).toBeNull();
+  });
+
+  it("tells one-pick formats apart by their options", () => {
+    expect(keyOf("multipleChoice", { options: options(4) }, GRE_LIKE)).toBe("choice:4");
+    expect(keyOf("multipleChoice", { options: options(5) }, GRE_LIKE)).toBe("choice:5");
+    expect(keyOf("multipleChoice", { options: options(3) }, GRE_LIKE)).toBeNull();
+
+    expect(keyOf("trueFalse", {}, structureOf([{ kind: "trueFalse", options: null }]))).toBe(
+      "choice:tf",
+    );
   });
 });
 
@@ -107,7 +191,7 @@ describe(getFormatQuotas, () => {
   it("shares a section's questions among the formats, all of them asked", () => {
     expect(getFormatQuotas({ mix: getMockFormatMix(JEE_ADVANCED), wanted: 17 })).toStrictEqual(
       new Map([
-        ["choice", 6],
+        ["choice:4", 6],
         ["picks:all", 6],
         ["numeric:integer:", 5],
       ]),

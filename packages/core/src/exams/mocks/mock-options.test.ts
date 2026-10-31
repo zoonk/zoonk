@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { getMockFormatMix } from "./mock-format-mix";
+import { ONE_PICK_MIX, getMockFormatMix } from "./mock-format-mix";
 import { planOptionMock } from "./mock-option-plan";
 import { listMockOptions } from "./mock-options";
 import { type MockCandidate, countPlannedQuestions } from "./mock-plan";
@@ -682,12 +682,7 @@ describe(getMockQuestionsShortfall, () => {
 
   it("asks for each skill's share when the bank is short of the mock's questions", () => {
     expect(shortfall(candidates("Matemática", 9))).toStrictEqual([
-      {
-        format: { key: "choice", share: 1, writer: { kind: "quick" } },
-        questionsPerSkill: 12,
-        skillIds,
-        target: 15,
-      },
+      { format: ONE_PICK_MIX[0], questionsPerSkill: 12, skillIds, target: 15 },
     ]);
   });
 

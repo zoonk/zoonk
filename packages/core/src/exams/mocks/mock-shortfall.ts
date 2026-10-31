@@ -1,5 +1,6 @@
 import { apportion } from "@zoonk/utils/apportion";
 import { interleave } from "@zoonk/utils/interleave";
+import { listAskedSkills } from "../../library/exams/format-sections";
 import { type MockFormat } from "./mock-format-mix";
 import {
   type MockCandidate,
@@ -25,7 +26,8 @@ export function isMockShort({
   return planned < Math.ceil(option.questions * NEAR_FULL_SHARE);
 }
 
-export type MockWritingSkill = { area: string | null; id: string };
+/** `isQuantitative` is false for a skill whose numeric questions came back empty. */
+export type MockWritingSkill = { area: string | null; id: string; isQuantitative?: boolean | null };
 
 export type MockFormatShortfall = {
   format: MockFormat;
@@ -34,14 +36,18 @@ export type MockFormatShortfall = {
   target: number;
 };
 
+/**
+ * Numbers go to a skill already answered in numbers, or, when the documents ask them in some parts
+ * only, to the skills of those parts.
+ */
 function canWrite({
   candidates,
   format,
-  skillId,
+  skill,
 }: {
   candidates: readonly MockCandidate[];
   format: MockFormat;
-  skillId?: string;
+  skill?: MockWritingSkill;
 }): boolean {
   const { writer } = format;
 
@@ -49,14 +55,24 @@ function canWrite({
     return writer.kind !== "bankOnly";
   }
 
+  if (format.sections.length > 0) {
+    return skill?.isQuantitative !== false;
+  }
+
   return candidates.some(
     (candidate) =>
-      (skillId === undefined || candidate.skillId === skillId) &&
+      (skill === undefined || candidate.skillId === skill.id) &&
       candidate.format?.startsWith("numeric:"),
   );
 }
 
 type FormatCount = { format: MockFormat; needed: number; planned: number; wanted: number };
+
+/** A format no section of this mock asks (the notice asks it on another day) needs no questions. */
+function listAskedFormats({ mix, plan }: { mix: readonly MockFormat[]; plan: MockPlan }) {
+  const wanted = plan.formatsWanted;
+  return wanted ? mix.filter((format) => format.key in wanted) : [...mix];
+}
 
 function countFormats({
   candidates,
@@ -69,17 +85,19 @@ function countFormats({
   option: { questions: number };
   plan: MockPlan;
 }): FormatCount[] {
-  const needed = apportion({ total: option.questions, weights: mix.map((format) => format.share) });
+  const asked = listAskedFormats({ mix, plan });
+  const weights = asked.map((format) => format.share);
+  const needed = apportion({ total: option.questions, weights });
   const planned = new Set(getPlannedItemIds(plan));
 
   const fresh = candidates.filter(
     (candidate) => !candidate.answered && planned.has(candidate.itemId),
   );
 
-  return mix.map((format, index) => ({
+  return asked.map((format, index) => ({
     format,
     needed: needed[index] ?? 0,
-    planned: fresh.filter((candidate) => mix.length === 1 || candidate.format === format.key)
+    planned: fresh.filter((candidate) => asked.length === 1 || candidate.format === format.key)
       .length,
     wanted: plan.formatsWanted?.[format.key] ?? 0,
   }));
@@ -93,7 +111,8 @@ export function listShortFormats(input: {
 }): MockFormat[] {
   const { candidates, mix, option, plan } = input;
   const newQuestions = countPlannedQuestions(plan) - plan.reused;
-  const writable = mix.filter((format) => canWrite({ candidates, format }));
+  const asked = listAskedFormats({ mix, plan });
+  const writable = asked.filter((format) => canWrite({ candidates, format }));
   const fallback = isMockShort({ option, planned: newQuestions }) ? writable[0] : undefined;
 
   return countFormats(input)
@@ -123,7 +142,10 @@ export function getMockQuestionsShortfall({
   const fresh = candidates.filter((candidate) => !candidate.answered);
 
   return countFormats({ candidates, mix, option, plan }).flatMap(({ format, needed, wanted }) => {
-    const eligible = skills.filter((skill) => canWrite({ candidates, format, skillId: skill.id }));
+    const eligible = listAskedSkills({ format, skills }).filter((skill) =>
+      canWrite({ candidates, format, skill }),
+    );
+
     const size = Math.max(needed, wanted);
 
     if (!shortFormats.has(format) || eligible.length === 0 || size === 0) {

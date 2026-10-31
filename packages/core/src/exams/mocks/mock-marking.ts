@@ -9,7 +9,7 @@ import {
 } from "../../library/exams/part-points";
 import { listCountedSubjects } from "../choices/exam-choices";
 import { getWrongPenalty } from "../scoring/mock-scoring";
-import { getChoiceFormatKey } from "./mock-format-mix";
+import { getChoiceFormatKey, getFormatSelection } from "./mock-format-mix";
 import { findAreaSubject } from "./mock-options";
 import { type MockCandidate, type MockPlan, getPlannedItemIds } from "./mock-plan";
 import { type ItemMarking, type MockMarking } from "./mock-points-contract";
@@ -146,7 +146,7 @@ function markItems({
     const found = findRows({
       format: ROW_FORMATS[item.itemFormat] ?? null,
       rows,
-      selection: item.format ?? getChoiceFormatKey(null),
+      selection: getFormatSelection(item.format ?? null),
       subject,
     });
 

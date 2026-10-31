@@ -1,7 +1,25 @@
 import { describe, expect, it } from "vitest";
-import { ONE_PICK_MIX } from "./mock-format-mix";
+import { type MockFormat, ONE_PICK_MIX } from "./mock-format-mix";
 import { type MockCandidate, type MockPlan } from "./mock-plan";
 import { getMockQuestionsShortfall } from "./mock-shortfall";
+
+function numbers(sections: string[]): MockFormat {
+  return {
+    key: "numeric:fraction:",
+    sections,
+    share: 1,
+    style: "numeric: Type a number",
+    writer: {
+      answerFormat: {
+        entry: { kind: "fraction", places: null },
+        format: "numeric",
+        options: null,
+        select: null,
+      },
+      kind: "item",
+    },
+  };
+}
 
 describe(getMockQuestionsShortfall, () => {
   it("requests enough fresh items for both routes", () => {
@@ -44,5 +62,35 @@ describe(getMockQuestionsShortfall, () => {
     ).toStrictEqual([
       { format: ONE_PICK_MIX[0], questionsPerSkill: 4, skillIds: ["skill"], target: 8 },
     ]);
+  });
+
+  it("writes numbers for the skills of the parts that ask them, and untied numbers only where some exist", () => {
+    const plan: MockPlan = {
+      day: null,
+      formatsWanted: { "numeric:fraction:": 4 },
+      fullLength: true,
+      minutes: 10,
+      reused: 0,
+      sections: [],
+      written: [],
+    };
+
+    const skills = [
+      { area: "Verbal Reasoning", id: "words" },
+      { area: "Quantitative Reasoning", id: "ratios" },
+      { area: "Quantitative Reasoning", id: "charts", isQuantitative: false },
+    ];
+
+    const shortfall = (format: MockFormat) =>
+      getMockQuestionsShortfall({
+        candidates: [],
+        mix: [format],
+        option: { questions: 4 },
+        plan,
+        skills,
+      }).flatMap((write) => write.skillIds);
+
+    expect(shortfall(numbers(["Quantitative Reasoning"]))).toStrictEqual(["ratios"]);
+    expect(shortfall(numbers([]))).toStrictEqual([]);
   });
 });

@@ -3,13 +3,16 @@ import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { toListeningExam } from "../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../exams/listening/listening-skills";
+import { type ExamAnswerFormat, getMockFormatMix } from "../exams/mocks/mock-format-mix";
+import { listAskedSkills } from "../library/exams/format-sections";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { ANY_NUMBER } from "../library/items/_utils/numeric-entry";
 import { takesNumericAnswers } from "../library/items/numeric-skills";
 import { listPastQuestionExamples } from "../library/items/past-question-examples";
+import { getSkillArea } from "../plans/planner/graph-areas";
 import { parsePlanGraph } from "../plans/planner/plan-state";
-import { type ExamAnswerFormat, listExamAnswerFormats } from "./exam-answer-formats";
-import { type PlacementItemSkill, toItemExam } from "./placement-item-skills";
+import { toItemExam } from "./item-exam";
+import { type PlacementItemSkill } from "./placement-item-skills";
 
 const EXAM_FORMAT_SKILLS = 3;
 
@@ -27,9 +30,14 @@ function isInAnswerFormat({
     : fields.select === answerFormat.select;
 }
 
-export type ExamFormatPick = { answerFormat: ExamAnswerFormat; skill: PlacementItemSkill };
+export type ExamFormatPick = {
+  answerFormat: ExamAnswerFormat;
+  skill: PlacementItemSkill;
+  style: string | null;
+};
 
 type SkillRow = {
+  area: string | null;
   description: string;
   id: string;
   isQuantitative: boolean | null;
@@ -93,11 +101,15 @@ export async function pickExamFormatSkills({
 
   const blueprint = goal?.kind === "exam" ? goal.examBlueprint : null;
 
-  const answerFormats = blueprint
-    ? listExamAnswerFormats(readBlueprintContent(blueprint).structure)
+  const formats = blueprint
+    ? getMockFormatMix(readBlueprintContent(blueprint).structure).flatMap((format) =>
+        format.writer.kind === "item"
+          ? [{ ...format, answerFormat: format.writer.answerFormat }]
+          : [],
+      )
     : [];
 
-  if (!blueprint || answerFormats.length === 0) {
+  if (!blueprint || formats.length === 0) {
     return [];
   }
 
@@ -105,10 +117,15 @@ export async function pickExamFormatSkills({
   const firstPhase = Math.min(...graph.skills.map((skill) => skill.phase));
   const listening = goal ? getListeningSkillIds({ exam: toListeningExam(goal), graph }) : new Set();
 
-  const ranked = graph.skills
+  const rankedSkills = graph.skills
     .filter((skill) => skill.phase === firstPhase && !listening.has(skill.skillId))
-    .toSorted((a, b) => (b.weight ?? 0) - (a.weight ?? 0))
-    .map((skill) => skill.skillId);
+    .toSorted((a, b) => (b.weight ?? 0) - (a.weight ?? 0));
+
+  const ranked = rankedSkills.map((skill) => skill.skillId);
+
+  const areas = new Map(
+    rankedSkills.map((skill) => [skill.skillId, getSkillArea({ graph, skill })]),
+  );
 
   const rows = await prisma.skill.findMany({
     select: {
@@ -128,11 +145,15 @@ export async function pickExamFormatSkills({
     where: { id: { in: ranked } },
   });
 
-  const skills = ranked.flatMap((id) => rows.find((row) => row.id === id) ?? []);
+  const skills = ranked.flatMap((id) => {
+    const row = rows.find((candidate) => candidate.id === id);
+    return row ? [{ ...row, area: areas.get(id) ?? null }] : [];
+  });
+
   const exam = toItemExam(blueprint);
 
-  const picks = answerFormats.flatMap((answerFormat) =>
-    skills
+  const picks = formats.flatMap(({ answerFormat, sections, style }) =>
+    listAskedSkills({ format: { sections }, skills })
       .filter((skill) => needsAnswerFormat({ answerFormat, blueprintId: blueprint.id, skill }))
       .toSorted(
         (a, b) =>
@@ -140,11 +161,11 @@ export async function pickExamFormatSkills({
           Number(isKnownInFormat({ answerFormat, skill: a })),
       )
       .slice(0, EXAM_FORMAT_SKILLS)
-      .map(({ items: _items, ...skill }) => ({ answerFormat, skill })),
+      .map(({ area: _area, items: _items, ...skill }) => ({ answerFormat, skill, style })),
   );
 
   return Promise.all(
-    picks.map(async ({ answerFormat, skill }) => {
+    picks.map(async ({ answerFormat, skill, style }) => {
       const pastQuestions = await listPastQuestionExamples({
         examBlueprintId: blueprint.id,
         skillIds: [skill.id],
@@ -153,6 +174,7 @@ export async function pickExamFormatSkills({
       return {
         answerFormat,
         skill: { ...skill, exam: { ...exam, pastQuestions }, usedSituations: [] },
+        style,
       };
     }),
   );

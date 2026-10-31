@@ -40,3 +40,24 @@ export function isSectionArea({
   const named = candidate.area ? areaSections.get(candidate.area) : undefined;
   return Boolean(section.name && named?.includes(section.name));
 }
+
+/** The section's name and its subjects', which the documents may name its formats by. */
+export function listSectionNames({
+  areaSections,
+  section,
+}: {
+  areaSections: AreaSections | null;
+  section: NamedSection;
+}): string[] {
+  const { name } = section;
+
+  if (!name) {
+    return [];
+  }
+
+  const areas = [...(areaSections ?? [])].flatMap(([area, named]) =>
+    named.includes(name) ? [area] : [],
+  );
+
+  return [name, ...areas];
+}

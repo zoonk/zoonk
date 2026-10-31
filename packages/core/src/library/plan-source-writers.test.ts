@@ -539,6 +539,7 @@ describe("plan source writer coverage", () => {
       "pastOptions",
       "getExamFormats",
       "getExamChoiceFormat",
+      "getExamChoiceFormats",
       "getMockFormatMix",
       "getFormatMixSource",
       "fitsExamOptions",

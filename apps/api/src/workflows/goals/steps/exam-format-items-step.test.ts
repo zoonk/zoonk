@@ -22,6 +22,7 @@ async function pickFor(answerFormat: ExamFormatPick["answerFormat"]): Promise<Ex
       targetLanguage: null,
       usedSituations: [],
     },
+    style: null,
   };
 }
 
@@ -30,8 +31,13 @@ describe(prepareExamFormatItemsStep, () => {
     vi.mocked(generateItems).mockResolvedValue(taskResult({ items: [] }));
 
     const [numeric, severalPicks] = await Promise.all([
-      pickFor({ entry: { kind: "integer", places: null }, format: "numeric", select: null }),
-      pickFor({ entry: null, format: "multipleChoice", select: "all" }),
+      pickFor({
+        entry: { kind: "integer", places: null },
+        format: "numeric",
+        options: null,
+        select: null,
+      }),
+      pickFor({ entry: null, format: "multipleChoice", options: null, select: "all" }),
     ]);
 
     await Promise.all(

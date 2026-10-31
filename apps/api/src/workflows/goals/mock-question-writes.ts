@@ -39,7 +39,9 @@ export async function writeMockQuestions({
   later: boolean;
   workflowRunId: string;
 }): Promise<PlacementItemsWritten> {
-  const quick = writes.filter((write) => write.format.writer.kind === "quick");
+  const quick = writes.flatMap((write) =>
+    write.format.writer.kind === "quick" ? [{ choice: write.format.writer.choice, write }] : [],
+  );
 
   const items = writes.flatMap((write) =>
     write.format.writer.kind === "item"
@@ -52,11 +54,12 @@ export async function writeMockQuestions({
 
   const [quickWritten, itemResults] = await Promise.all([
     Promise.all(
-      quick.map((write) =>
+      quick.map(({ choice, write }) =>
         preparePlacementItems({
           analytics,
+          choice: choice ? { ...choice, style: write.format.style } : undefined,
           exceptAnswered: true,
-          formats: [quickFormat],
+          formats: [choice?.kind ?? quickFormat],
           goalId,
           later,
           quickCount: write.questionsPerSkill,
@@ -74,7 +77,7 @@ export async function writeMockQuestions({
             prepareExamFormatItemsStep({
               analytics,
               count: write.questionsPerSkill,
-              pick: { answerFormat, skill },
+              pick: { answerFormat, skill, style: write.format.style },
               wait: later ? "later" : "learner",
               workflowRunId,
             }),

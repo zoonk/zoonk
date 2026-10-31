@@ -61,6 +61,22 @@ const BANK = [
   ...candidates("Languages", 40),
 ];
 
+function sectioned(name: string, questions: number) {
+  return { day: null, kind: "objective" as const, minutes: questions, name, questions };
+}
+
+function format(described: Partial<ExamStructure["formats"][number]>) {
+  return { citation, description: "", kind: "multipleChoice" as const, options: 5, ...described };
+}
+
+function formatted(area: string, key: string): MockCandidate[] {
+  return candidates(area, 6).map((candidate) => ({
+    ...candidate,
+    format: key,
+    itemId: `${area}-${key}-${candidate.itemId}`,
+  }));
+}
+
 describe(planMock, () => {
   it("sits half of one exam day at the real pace, with only that day's areas", () => {
     const plan = planMock({
@@ -82,6 +98,66 @@ describe(planMock, () => {
     );
 
     expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it("asks each section only the formats the notice asks there, in their shares", () => {
+    const exam = {
+      ...structure({
+        sections: [
+          sectioned("Verbal Reasoning (Section 1)", 6),
+          sectioned("Quantitative Reasoning (Section 1)", 6),
+        ],
+      }),
+      formats: [
+        format({ options: 4, sections: ["Quantitative Reasoning"] }),
+        format({ sections: ["Verbal Reasoning"] }),
+        format({ options: 6, sections: ["Verbal Reasoning"], select: 2 }),
+        format({ kind: "numeric", options: null, sections: ["Quantitative Reasoning"] }),
+      ],
+    };
+
+    const plan = planMock({
+      adaptive: false,
+      candidates: [
+        ...formatted("Verbal Reasoning", "choice:4"),
+        ...formatted("Verbal Reasoning", "choice:5"),
+        ...formatted("Verbal Reasoning", "picks:2"),
+        ...formatted("Quantitative Reasoning", "choice:4"),
+        ...formatted("Quantitative Reasoning", "numeric:number:"),
+      ],
+      fullLength: true,
+      mockNumber: 0,
+      structure: exam,
+    });
+
+    const [verbal, quantitative] = plan.sections.map((section) =>
+      section.itemIds.map((id) => id.split("-")[1]),
+    );
+
+    expect(verbal?.toSorted()).toStrictEqual([
+      "choice:5",
+      "choice:5",
+      "choice:5",
+      "picks:2",
+      "picks:2",
+      "picks:2",
+    ]);
+
+    expect(quantitative?.toSorted()).toStrictEqual([
+      "choice:4",
+      "choice:4",
+      "choice:4",
+      "numeric:number:",
+      "numeric:number:",
+      "numeric:number:",
+    ]);
+
+    expect(plan.formatsWanted).toStrictEqual({
+      "choice:4": 3,
+      "choice:5": 3,
+      "numeric:number:": 3,
+      "picks:2": 3,
+    });
   });
 
   it("never fills a section with another area's questions, or with questions of no known area", () => {

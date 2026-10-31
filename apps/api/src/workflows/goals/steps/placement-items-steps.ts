@@ -5,6 +5,7 @@ import {
 } from "@zoonk/ai/tasks/items/placement-items";
 import { getContentReuse } from "@zoonk/core/library/curriculum/scope";
 import { createItems } from "@zoonk/core/library/items/create";
+import { type PlacementChoice } from "@zoonk/core/lookahead/item-exam";
 import {
   type PlacementItemFormat,
   type PlacementItemPick,
@@ -83,6 +84,7 @@ async function storePlacementItems({
 }
 
 export type PlacementItemsRequest = WriteContext & {
+  choice?: PlacementChoice;
   exceptAnswered?: boolean;
   forPlacement?: boolean;
   formats?: readonly PlacementItemFormat[];
@@ -94,6 +96,7 @@ export type PlacementItemsRequest = WriteContext & {
 };
 
 export async function pickPlacementBatchesStep({
+  choice,
   exceptAnswered,
   forPlacement,
   formats,
@@ -109,6 +112,7 @@ export async function pickPlacementBatchesStep({
   "use step";
 
   const { confirmingCount, quickFormat, skills } = await pickPlacementItemSkills({
+    choice,
     exceptAnswered,
     forPlacement,
     formats,

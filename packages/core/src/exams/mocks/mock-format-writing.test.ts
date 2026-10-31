@@ -123,6 +123,10 @@ async function formatsSetup(bank: Bank) {
   return { goal, skills };
 }
 
+function statedFormat(described: object) {
+  return { citation: CITATION, description: "", kind: "multipleChoice", options: 5, ...described };
+}
+
 describe("a mock in the exam's own mix of formats", () => {
   it("asks each format its share of the paper, format by format", async () => {
     const { goal } = await formatsSetup({ numbers: 3, onePicks: 3, severalPicks: 3 });
@@ -232,5 +236,111 @@ describe("a mock in the exam's own mix of formats", () => {
       quickFormat: "multipleChoice",
       writes: [],
     });
+  });
+
+  it("writes each section's formats for the skills of that section only", async () => {
+    const sections = ["Verbal Reasoning", "Quantitative Reasoning"];
+
+    const [user, blueprint, words, ratios] = await Promise.all([
+      userFixture(),
+      examBlueprintFixture({
+        structure: {
+          formats: [
+            statedFormat({
+              description: "Compare two quantities",
+              options: 4,
+              sections: [sections[1]],
+            }),
+            statedFormat({ description: "One answer", sections }),
+            statedFormat({
+              description: "Two alike",
+              options: 6,
+              sections: [sections[0]],
+              select: 2,
+            }),
+            statedFormat({
+              description: "Type a number",
+              entry: { kind: "fraction", places: null },
+              kind: "numeric",
+              options: null,
+              sections: [sections[1]],
+            }),
+          ],
+          mock: {
+            ...STRUCTURE.mock,
+            sections: sections.map((name) => ({
+              day: null,
+              kind: "objective",
+              minutes: 8,
+              name: `${name} (Section 1)`,
+              questions: 4,
+            })),
+            timeLimitMinutes: 16,
+            totalQuestions: 8,
+          },
+          rules: [],
+          subjects: sections.map((name) => ({
+            citation: CITATION,
+            name,
+            questions: 4,
+            topics: [],
+            weight: null,
+          })),
+        },
+      }),
+      skillFixture({ name: `Words ${crypto.randomUUID()}` }),
+      skillFixture({ name: `Ratios ${crypto.randomUUID()}` }),
+    ]);
+
+    const goal = await goalFixture({
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    const plan = await planFixture({
+      goalId: goal.id,
+      graph: {
+        phases: [{ milestone: null, name: "Basics" }],
+        skills: [words, ratios].map((skill, index) => ({
+          area: sections[index] ?? null,
+          lessons: 1,
+          name: skill.name,
+          phase: 0,
+          skillId: skill.id,
+          weight: null,
+        })),
+      },
+    });
+
+    await Promise.all(
+      [words, ratios].map((skill, position) =>
+        planItemFixture({ kind: "lesson", planId: plan.id, position, skillId: skill.id }),
+      ),
+    );
+
+    const { writes } = await listMockPrepWrites({ goalId: goal.id });
+
+    expect(
+      writes.map(({ format: written, skillIds }) => ({
+        key: written.key,
+        skillIds,
+        style: written.style,
+      })),
+    ).toStrictEqual([
+      {
+        key: "choice:4",
+        skillIds: [ratios.id],
+        style: "multipleChoice (4 options): Compare two quantities",
+      },
+      {
+        key: "choice:5",
+        skillIds: [words.id, ratios.id],
+        style: "multipleChoice (5 options): One answer",
+      },
+      { key: "picks:2", skillIds: [words.id], style: "multipleChoice (6 options): Two alike" },
+      { key: "numeric:fraction:", skillIds: [ratios.id], style: "numeric: Type a number" },
+    ]);
   });
 });
