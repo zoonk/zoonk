@@ -23,6 +23,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.pressKey
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -220,6 +221,17 @@ class LanguageStepsFlowTest {
         play(listOf(translation("pick"), summaryStep("end")), learner = "es-MX")
 
         rule.onNodeWithText("Which one means this?").assertIsDisplayed()
+    }
+
+    @Test
+    fun aTranslationsWordHintsShowInItsFeedback() {
+        play(listOf(translation("pick", hints = """{"note":"You say it to a cat.","pronunciationTip":null}"""), summaryStep("end")))
+
+        rule.onNodeWithText("You say it to a cat.").assertDoesNotExist()
+        tap("gato")
+        tap("Check")
+
+        rule.onNodeWithText("You say it to a cat.").performScrollTo().assertIsDisplayed()
     }
 
     @Test

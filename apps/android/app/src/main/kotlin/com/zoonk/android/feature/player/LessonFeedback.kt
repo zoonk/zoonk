@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.player.engine.isLanguageStep
+import com.zoonk.android.feature.player.language.WordHintsView
 import com.zoonk.android.feature.player.model.AnswerCorrection
 import com.zoonk.android.feature.player.model.AnswerKeyPoint
 import com.zoonk.android.feature.player.model.LessonStep
@@ -138,6 +139,7 @@ fun LessonStepResultView(
         } else {
             result.feedback?.let { RichText(text = it, style = MaterialTheme.typography.bodyMedium) }
         }
+        (step.content as? StepContent.Language)?.wordHints?.let { WordHintsView(it) }
 
         if (canExplain(step, result)) explainAnswer()
 

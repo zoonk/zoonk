@@ -98,15 +98,18 @@ internal fun matchColumns(id: String) =
 internal fun vocabulary(id: String) =
     step(id, StepKind.Vocabulary, "vocabulary", word = WORD, hints = """{"note":"You say it to a cat.","pronunciationTip":null}""")
 
-internal fun translation(id: String) =
-    step(
-        id,
-        StepKind.Translation,
-        "translation",
-        word = WORD,
-        translations = """[{"audioUrl":null,"id":"w-2","romanization":null,"word":"perro"},{"audioUrl":null,"id":"w-1",
-            "romanization":"ga-to","word":"gato"}]""",
-    )
+internal fun translation(
+    id: String,
+    hints: String? = null,
+) = step(
+    id,
+    StepKind.Translation,
+    "translation",
+    word = WORD,
+    translations = """[{"audioUrl":null,"id":"w-2","romanization":null,"word":"perro"},{"audioUrl":null,"id":"w-1",
+        "romanization":"ga-to","word":"gato"}]""",
+    hints = hints,
+)
 
 internal fun multipleChoice(id: String) =
     step(
