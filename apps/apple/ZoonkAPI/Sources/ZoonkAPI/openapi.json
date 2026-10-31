@@ -13051,7 +13051,7 @@
     },
     "/goals/{goalId}/area-practice": {
       "post": {
-        "description": "\"Practice now\" on a chapter (or another area of the goal's preparation): a bonus block of practice on that area's studied skills, added to today's session. It can start before the day's session is done, but counts as extra time: at most two bonus practice blocks a day, never past the daily time limit, with capped Brain Power. Tapping again returns the unfinished block.",
+        "description": "\"Practice now\" on a chapter (or another area of the goal's preparation): a bonus block of practice on that area's studied skills, added to today's session. It can start before the day's session is done, but counts as extra time: about ten minutes, as many a day as the learner asks for, never past the daily time limit, with capped Brain Power. Tapping again returns the unfinished block.",
         "operationId": "createAreaPractice",
         "security": [
           {
@@ -14838,7 +14838,7 @@
     },
     "/goals/{goalId}/refresh-practice": {
       "post": {
-        "description": "\"Review\" on Content: the block of today's session that reviews the goal's skills that are fading or due today when one is still to do; otherwise a bonus block of practice on them, weakest first, added to today's session. A bonus block counts as extra time: at most two bonus practice blocks a day, never past the daily time limit, with capped Brain Power. Tapping again returns the same unfinished block.",
+        "description": "\"Review\" on Content: the block of today's session that reviews the goal's skills that are fading or due today when one is still to do; otherwise a bonus block of practice on them, weakest first, added to today's session. A bonus block counts as extra time: about ten minutes, as many a day as the learner asks for, never past the daily time limit, with capped Brain Power. Tapping again returns the same unfinished block.",
         "operationId": "createRefreshPractice",
         "security": [
           {
@@ -23365,7 +23365,7 @@
     },
     "/study-sessions/{sessionId}/extra-blocks": {
       "post": {
-        "description": "\"Keep learning\" after the day's session, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them before the tap), studied a day early. With every lesson done, one bonus block of mixed practice instead, at most twice a day, with capped Brain Power. Never past the daily time limit. A free exam plan past its first week has none (`plusRequired`): its practice and new lessons come with Plus.",
+        "description": "\"Keep learning\" after the day's session, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them before the tap), studied a day early. With every lesson done, a bonus block of mixed practice instead, again with each tap, with capped Brain Power. Never past the daily time limit. A free exam plan past its first week has none (`plusRequired`): its practice and new lessons come with Plus.",
         "operationId": "createStudyExtraBlock",
         "security": [
           {
@@ -88158,10 +88158,9 @@
           },
           "reason": {
             "nullable": true,
-            "description": "Why it isn't offered: the day's two bonus practice blocks are used with no lesson of the plan left to add, the daily time limit leaves too little, nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
+            "description": "Why it isn't offered: the daily time limit leaves too little, nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
             "type": "string",
             "enum": [
-              "dailyCap",
               "dailyLimit",
               "nothingToStudy",
               "plusRequired",

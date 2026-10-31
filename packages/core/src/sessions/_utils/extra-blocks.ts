@@ -11,7 +11,7 @@ import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { PRACTICE_MINUTES_PER_QUESTION, toMinutes } from "../block-minutes";
 import { getBlockItemIds, readBlockPayload, toBlockPayload } from "../block-payload";
-import { type ExtraTime, hasExtraPracticeLeft } from "../extra-time";
+import { type ExtraTime } from "../extra-time";
 import { type PlannedBlock } from "../session-builder";
 import { type DayBlockInput } from "./day-block-view";
 import { loadExamStructure } from "./exam-structure";
@@ -183,7 +183,6 @@ export async function buildExtraLessons({
   }));
 }
 
-/** Returns a reason when the daily bonus cap or available material prevents adding work. */
 export async function planExtraBlocks({
   minutes,
   session,
@@ -194,25 +193,15 @@ export async function planExtraBlocks({
   session: ExtraDay;
   skillIds: string[];
   userId: string;
-}): Promise<{ blocks: ExtraBlocks } | { reason: "dailyCap" | "nothingToStudy" }> {
+}): Promise<ExtraBlocks | null> {
   const [lesson, ...lessons] = await buildExtraLessons({ minutes, session });
 
   if (lesson) {
-    return { blocks: [lesson, ...lessons] };
-  }
-
-  const blocks = session.blocks.map((block) => ({
-    extra: readBlockPayload(block).extra,
-    kind: block.kind,
-    status: block.status,
-  }));
-
-  if (!hasExtraPracticeLeft(blocks)) {
-    return { reason: "dailyCap" };
+    return [lesson, ...lessons];
   }
 
   const practice = await buildExtraPractice({ minutes, session, skillIds, userId });
-  return practice ? { blocks: [practice] } : { reason: "nothingToStudy" };
+  return practice ? [practice] : null;
 }
 
 /** Offer more time only after checking it has actual work to add; expose those lessons before the tap. */
@@ -237,11 +226,11 @@ export async function withExtraStudyCheck({
 
   const planned = await planExtraBlocks({ minutes: extraTime.minutes, session, skillIds, userId });
 
-  if ("reason" in planned) {
-    return { available: false, lessons: [], minutes: 0, reason: planned.reason };
+  if (!planned) {
+    return { available: false, lessons: [], minutes: 0, reason: "nothingToStudy" };
   }
 
-  const lessons = planned.blocks.flatMap((block) =>
+  const lessons = planned.flatMap((block) =>
     block.kind === "learn"
       ? [{ minutes: block.estimatedMinutes, title: block.payload.title ?? "" }]
       : [],

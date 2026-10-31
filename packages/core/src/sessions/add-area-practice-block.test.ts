@@ -16,9 +16,9 @@ import {
 import { addAreaPracticeBlock } from "./add-area-practice-block";
 import { readBlockPayload } from "./block-payload";
 
-async function setup() {
+async function setup({ itemsPerSkill = 2 }: { itemsPerSkill?: number } = {}) {
   const user = await userFixture();
-  const fixture = await learnerGoalFixture({ itemsPerSkill: 2, phases: [2, 2], userId: user.id });
+  const fixture = await learnerGoalFixture({ itemsPerSkill, phases: [2, 2], userId: user.id });
 
   await Promise.all(
     fixture.skills.map((skill) =>
@@ -133,28 +133,34 @@ describe(addAreaPracticeBlock, () => {
     expect(firstItems.every((item) => firstSkills.has(item.skillId))).toBe(true);
   });
 
-  it("counts toward the day's two bonus blocks", async () => {
-    const { chapters, goal } = await setup();
-
+  it("keeps adding bonus practice past two blocks a day", async () => {
+    const { chapters, goal } = await setup({ itemsPerSkill: 10 });
     const [firstArea = "", secondArea = ""] = chapters.map((chapter) => chapter.id);
 
-    await addAreaPracticeBlock({ goalId: goal.id, input: { areaId: firstArea, timeZone: "UTC" } });
-    await addAreaPracticeBlock({ goalId: goal.id, input: { areaId: secondArea, timeZone: "UTC" } });
+    const add = (areaId: string) =>
+      addAreaPracticeBlock({ goalId: goal.id, input: { areaId, timeZone: "UTC" } });
+
+    const finishAll = () =>
+      prisma.studySessionBlock.updateMany({
+        data: { status: "completed" },
+        where: { session: { goalId: goal.id } },
+      });
+
+    await add(firstArea);
+    await finishAll();
+    await add(secondArea);
+    await finishAll();
+
+    await expect(add(firstArea)).resolves.toMatchObject({
+      block: { extra: true, kind: "practice", status: "pending" },
+      status: "ready",
+    });
 
     const blocks = await prisma.studySessionBlock.findMany({
       where: { session: { goalId: goal.id } },
     });
 
-    expect(blocks.filter((block) => readBlockPayload(block).extra)).toHaveLength(2);
-
-    await prisma.studySessionBlock.updateMany({
-      data: { status: "completed" },
-      where: { session: { goalId: goal.id } },
-    });
-
-    await expect(
-      addAreaPracticeBlock({ goalId: goal.id, input: { areaId: firstArea, timeZone: "UTC" } }),
-    ).resolves.toStrictEqual({ reason: "dailyCap", status: "unavailable" });
+    expect(blocks.filter((block) => readBlockPayload(block).extra)).toHaveLength(3);
   });
 
   it("opens the area's next lesson when nothing there is studied yet", async () => {

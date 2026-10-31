@@ -9,7 +9,6 @@ import {
 import { readBlockLessonStates } from "./_utils/lesson-screens";
 import { type StudyBlockView } from "./_utils/session-view";
 import { findOwnedStudySession } from "./_utils/study-session-access";
-import { readBlockPayload } from "./block-payload";
 import { getBlockScreen } from "./day-block";
 import { type ExtraTimeReason, getExtraTime } from "./extra-time";
 import { getDailyTimeLimitStatus } from "./get-daily-time-limit";
@@ -44,16 +43,12 @@ export async function addExtraStudyBlock({
   const added = await withSessionAppendLock<ExtraStudyBlockResult>({
     run: async ({ session, transaction }) => {
       const extraTime = getExtraTime({
-        blocks: session.blocks.map((block) => ({
-          extra: readBlockPayload(block).extra,
-          kind: block.kind,
-          status: block.status,
-        })),
+        blocks: session.blocks,
         remainingLimitMinutes: limit?.remainingMinutes ?? null,
       });
 
-      if (!extraTime.available || extraTime.reason) {
-        return { reason: extraTime.reason ?? "dailyCap", status: "unavailable" };
+      if (!extraTime.available) {
+        return { reason: extraTime.reason, status: "unavailable" };
       }
 
       const planned = await planExtraBlocks({
@@ -63,16 +58,11 @@ export async function addExtraStudyBlock({
         userId,
       });
 
-      if ("reason" in planned) {
-        return planned.reason === "dailyCap"
-          ? { reason: planned.reason, status: "unavailable" }
-          : { status: "nothingToPractice" };
+      if (!planned) {
+        return { status: "nothingToPractice" };
       }
 
-      return {
-        block: await appendExtraBlocks({ planned: planned.blocks, session, transaction }),
-        status: "ready",
-      };
+      return { block: await appendExtraBlocks({ planned, session, transaction }), status: "ready" };
     },
     session: owned.session,
   });

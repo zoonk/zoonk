@@ -23,7 +23,7 @@ const SUMMARY: StudySessionSummary = {
   comesBack: [],
   correct: 0,
   energy: null,
-  extraTime: { available: false, lessons: [], minutes: 0, reason: null },
+  extraTime: { available: false, lessons: [], minutes: 0, reason: "nothingToStudy" },
   finished: true,
   fullMeal: false,
   minutes: 0,

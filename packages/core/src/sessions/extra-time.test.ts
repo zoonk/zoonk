@@ -1,9 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { getExtraTime, hasExtraPracticeLeft } from "./extra-time";
+import { getExtraTime } from "./extra-time";
 
-const done = { extra: false, kind: "learn" as const, status: "completed" as const };
-const extraLesson = { extra: true, kind: "learn" as const, status: "completed" as const };
-const extraPractice = { extra: true, kind: "practice" as const, status: "completed" as const };
+const done = { status: "completed" as const };
 
 describe(getExtraTime, () => {
   it("offers more time once the day's blocks are done or stopped", () => {
@@ -28,12 +26,9 @@ describe(getExtraTime, () => {
     ).toStrictEqual({ available: true, lessons: [], minutes: 10, reason: null });
   });
 
-  it("keeps going with the plan's lessons however many were added already", () => {
+  it("keeps going however many blocks were added already", () => {
     expect(
-      getExtraTime({
-        blocks: [done, extraLesson, extraLesson, extraLesson],
-        remainingLimitMinutes: null,
-      }),
+      getExtraTime({ blocks: [done, done, done, done, done], remainingLimitMinutes: null }),
     ).toStrictEqual({ available: true, lessons: [], minutes: 10, reason: null });
   });
 
@@ -51,16 +46,5 @@ describe(getExtraTime, () => {
       minutes: 0,
       reason: "dailyLimit",
     });
-  });
-});
-
-describe(hasExtraPracticeLeft, () => {
-  it("never becomes an endless feed of bonus practice", () => {
-    expect(hasExtraPracticeLeft([done, extraPractice])).toBe(true);
-    expect(hasExtraPracticeLeft([done, extraPractice, extraPractice])).toBe(false);
-  });
-
-  it("doesn't count the plan's lessons studied a day early as bonus practice", () => {
-    expect(hasExtraPracticeLeft([done, extraLesson, extraLesson, extraPractice])).toBe(true);
   });
 });

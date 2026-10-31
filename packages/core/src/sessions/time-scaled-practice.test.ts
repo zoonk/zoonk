@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { DAY_MS, SESSION_NOW, daysAgo, sessionGoalFixture } from "./_test-utils/session-goal";
+import { addExtraStudyBlock } from "./add-extra-study-block";
 
 async function lessonsDoneLearner(
   dailyMinutes: number,
@@ -59,6 +60,7 @@ async function openPractice(...input: Parameters<typeof lessonsDoneLearner>) {
     blocks: practice,
     minutes: practice.reduce((sum, block) => sum + block.estimatedMinutes, 0),
     plannedMinutes: today.session.minutes.planned,
+    sessionId: today.session.id,
   };
 }
 
@@ -94,5 +96,23 @@ describe("practice once the plan's lessons are done", () => {
 
     expect(minutes).toBeGreaterThan(20);
     expect(plannedMinutes).toBeLessThanOrEqual(40);
+  });
+
+  it("keeps adding bonus practice past two blocks once the day is done", async () => {
+    const { sessionId } = await openPractice(20);
+
+    const finishAll = () =>
+      prisma.studySessionBlock.updateMany({ data: { status: "completed" }, where: { sessionId } });
+
+    await finishAll();
+    await addExtraStudyBlock({ sessionId });
+    await finishAll();
+    await addExtraStudyBlock({ sessionId });
+    await finishAll();
+
+    await expect(addExtraStudyBlock({ sessionId })).resolves.toMatchObject({
+      block: { estimatedMinutes: 9, extra: true, kind: "practice", questions: 6 },
+      status: "ready",
+    });
   });
 });

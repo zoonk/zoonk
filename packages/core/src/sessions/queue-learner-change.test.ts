@@ -1,10 +1,12 @@
 import { prisma } from "@zoonk/db";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
-import { SESSION_NOW, daysAgo } from "./_test-utils/session-goal";
+import { SESSION_NOW, SESSION_TODAY, daysAgo } from "./_test-utils/session-goal";
 import { addAreaPracticeBlock } from "./add-area-practice-block";
 import { openStudyDay } from "./open-study-day";
 
@@ -68,48 +70,32 @@ describe("queue attempts mark freshness while preserving the queue", () => {
     });
   });
 
-  it("a refused third bonus marks freshness and leaves the queue unchanged", async () => {
+  it("a bonus refused at the daily limit leaves the queue unchanged", async () => {
     const day = await setup();
-
-    await Promise.all(
-      day.chapters.map((chapter) =>
-        expect(
-          addAreaPracticeBlock({
-            goalId: day.goal.id,
-            input: { areaId: chapter.id, timeZone: "UTC" },
-          }),
-        ).resolves.toMatchObject({ status: "ready" }),
-      ),
-    );
-
-    const queues = await prisma.studySession.findMany({
-      include: { blocks: { orderBy: { position: "asc" } } },
-      where: { goalId: day.goal.id },
-    });
-
-    const [first] = queues;
-
-    if (!first) {
-      throw new Error("Expected the actual opened day");
-    }
-
-    await prisma.studySessionBlock.updateMany({
-      data: { status: "completed" },
-      where: { sessionId: first.id },
-    });
-
     const [chapter] = day.chapters;
 
     if (!chapter) {
       throw new Error("Expected an owned chapter");
     }
 
+    const session = await prisma.studySession.findFirstOrThrow({
+      include: { blocks: true },
+      where: { goalId: day.goal.id },
+    });
+
+    await Promise.all([
+      learningProfileFixture({ dailyLimitMinutes: 10, userId: day.user.id }),
+      dailyProgressFixtureMany([
+        { date: SESSION_TODAY, timeSpentSeconds: 10 * 60, userId: day.user.id },
+      ]),
+    ]);
+
     await expect(
       addAreaPracticeBlock({ goalId: day.goal.id, input: { areaId: chapter.id, timeZone: "UTC" } }),
-    ).resolves.toMatchObject({ status: "unavailable" });
+    ).resolves.toStrictEqual({ reason: "dailyLimit", status: "unavailable" });
 
-    await expect(prisma.studySessionBlock.count({ where: { sessionId: first.id } })).resolves.toBe(
-      first.blocks.length,
-    );
+    await expect(
+      prisma.studySessionBlock.count({ where: { sessionId: session.id } }),
+    ).resolves.toBe(session.blocks.length);
   });
 });

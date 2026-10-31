@@ -4,7 +4,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readBlockPayload } from "../block-payload";
 import { ensureStudySession } from "../ensure-study-session";
-import { type ExtraTimeReason, getExtraTime, hasExtraPracticeLeft } from "../extra-time";
+import { type ExtraTimeReason, getExtraTime } from "../extra-time";
 import { getDailyTimeLimitStatus } from "../get-daily-time-limit";
 import {
   appendExtraBlocks,
@@ -92,20 +92,10 @@ async function addToLockedSession({
     };
   }
 
-  const blocks = session.blocks.map((block) => ({
-    extra: readBlockPayload(block).extra,
-    kind: block.kind,
-    status: block.status,
-  }));
-
-  const extraTime = getExtraTime({ anytime: true, blocks, remainingLimitMinutes });
+  const extraTime = getExtraTime({ anytime: true, blocks: session.blocks, remainingLimitMinutes });
 
   if (!extraTime.available) {
-    return { reason: extraTime.reason ?? "dailyCap", status: "unavailable" };
-  }
-
-  if (!hasExtraPracticeLeft(blocks)) {
-    return { reason: "dailyCap", status: "unavailable" };
+    return { reason: extraTime.reason, status: "unavailable" };
   }
 
   const { areaId, planItemIds, refresh, skillIds, title } = target;
@@ -136,7 +126,7 @@ async function addToLockedSession({
   };
 }
 
-/** May precede session completion but obeys extra-time and reward caps; concurrent taps reuse the same target block. */
+/** May precede session completion but obeys the daily limit and reward caps; concurrent taps reuse the same target block. */
 export async function addTargetedPracticeBlock({
   goal,
   target,

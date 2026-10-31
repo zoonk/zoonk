@@ -2,7 +2,6 @@ import { type Goal, type StudyFreshStart } from "@zoonk/db";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { addDays } from "../../plans/planner/plan-calendar";
 import { type StudyWeek } from "../../progress/_utils/load-study-week";
-import { readBlockPayload } from "../block-payload";
 import { BRAIN_POWER_BONUS, getHyperdriveLevel, scoreAnswers } from "../brain-power";
 import { getSessionMinutesDone } from "../daily-goal";
 import { getExtraTime } from "../extra-time";
@@ -101,11 +100,7 @@ export function toDayViewFields({
     examAccess,
     examTomorrow: isExamTomorrow({ day: session.localDate, goal: session.goal }),
     extraTime: getExtraTime({
-      blocks: session.blocks.map((block) => ({
-        extra: readBlockPayload(block).extra,
-        kind: block.kind,
-        status: block.status,
-      })),
+      blocks: session.blocks,
       remainingLimitMinutes: dailyLimit?.remainingMinutes ?? null,
     }),
     freshStart: session.freshStart,

@@ -95,11 +95,7 @@ export async function readSavedDayView({
       : null,
     emptyDay: null,
     extraTime: getExtraTime({
-      blocks: refill.blocks.map((block) => ({
-        extra: readBlockPayload(block).extra,
-        kind: block.kind,
-        status: block.status,
-      })),
+      blocks: refill.blocks,
       remainingLimitMinutes: view.dailyLimit?.remainingMinutes ?? null,
     }),
     minutes: {
