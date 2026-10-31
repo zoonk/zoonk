@@ -9,7 +9,6 @@ import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content
 type CourseDetailsContext = {
   analytics?: ContentAnalytics;
   courseId: string;
-  copyOnly?: boolean;
   workflowRunId: string;
 };
 
@@ -23,11 +22,7 @@ export async function writeCourseDetailsStep(
   "use step";
 
   return collectCourseContentTags(() =>
-    writeCourseDetails({
-      analytics: toSharedAnalytics(context),
-      copyOnly: context.copyOnly,
-      courseId: context.courseId,
-    }),
+    writeCourseDetails({ analytics: toSharedAnalytics(context), courseId: context.courseId }),
   );
 }
 

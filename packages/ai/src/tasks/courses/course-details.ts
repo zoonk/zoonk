@@ -1,6 +1,5 @@
 import "server-only";
 import { COURSE_CATEGORIES, type CourseCategory } from "@zoonk/utils/categories";
-import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { normalizeString } from "@zoonk/utils/string";
 import { Output, generateText } from "ai";
 import { z } from "zod";
@@ -27,11 +26,6 @@ export const SUBJECT_CATEGORIES = COURSE_CATEGORIES.filter(
 );
 
 const systemPrompt = promptTemplate.replace("{{CATEGORIES}}", () => SUBJECT_CATEGORIES.join(", "));
-
-/** The hash the details writer records, without generating anything. */
-export function getCourseDetailsPromptVersion(): string {
-  return getPromptVersion({ systemPrompt });
-}
 
 export const PAGE_LISTS = {
   audience: { items: 3, words: 6 },

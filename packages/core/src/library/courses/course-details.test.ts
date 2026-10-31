@@ -28,22 +28,6 @@ describe(writeCourseDetails, () => {
     );
   });
 
-  it("rewrites copy only while keeping an empty description and category set", async () => {
-    const course = await outlinedCourse();
-
-    await expect(writeCourseDetails({ copyOnly: true, courseId: course.id })).resolves.toBe(
-      "written",
-    );
-
-    const stored = await readCourse(course.id);
-
-    expect(stored).toMatchObject({
-      categories: [],
-      description: null,
-      landingPage: details.landingPage,
-    });
-  });
-
   it.each(["older-landing-copy", null])(
     "keeps %s landing-copy provenance when filling only metadata",
     async (promptVersion) => {

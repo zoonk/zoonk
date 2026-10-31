@@ -8,11 +8,7 @@ import {
   writeCourseDetailsStep,
 } from "./steps/course-details-steps";
 
-export type CourseDetailsInput = {
-  analytics?: ContentAnalytics;
-  courseId: string;
-  copyOnly?: boolean;
-};
+export type CourseDetailsInput = { analytics?: ContentAnalytics; courseId: string };
 
 export type CourseDetailsResult = {
   details: "failed" | "skipped" | "written";
@@ -36,20 +32,13 @@ export async function courseDetailsWorkflow(
     await joinRun(conflict);
   }
 
-  const context = {
-    analytics: input.analytics,
-    copyOnly: input.copyOnly,
-    courseId: input.courseId,
-    workflowRunId,
-  };
+  const context = { analytics: input.analytics, courseId: input.courseId, workflowRunId };
 
   const [details] = await Promise.allSettled([
     deliverCourseContent(writeCourseDetailsStep(context)),
   ]);
 
-  const [icon] = await Promise.allSettled([
-    input.copyOnly ? Promise.resolve(null) : createIcon(context),
-  ]);
+  const [icon] = await Promise.allSettled([createIcon(context)]);
 
   return {
     details: details.status === "fulfilled" ? details.value : "failed",

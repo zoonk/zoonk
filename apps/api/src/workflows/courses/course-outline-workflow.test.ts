@@ -1129,11 +1129,7 @@ describe(courseOutlineWorkflow, () => {
 
       expect(vi.mocked(start).mock.calls).toStrictEqual([
         [courseIconWorkflow, [{ analytics: undefined, courseId: course.id }]],
-        [
-          courseDetailsWorkflow,
-          [{ analytics: undefined, courseId: course.id }],
-          { attributes: { courseId: course.id } },
-        ],
+        [courseDetailsWorkflow, [{ analytics: undefined, courseId: course.id }]],
       ]);
     },
   );
@@ -1830,11 +1826,7 @@ describe(courseOutlineWorkflow, () => {
       ).resolves.toMatchObject({ description: null, imageUrl: null, outlineStatus: "completed" });
 
       expect(vi.mocked(start).mock.calls).toStrictEqual([
-        [
-          courseDetailsWorkflow,
-          [{ analytics: undefined, courseId: course.id }],
-          { attributes: { courseId: course.id } },
-        ],
+        [courseDetailsWorkflow, [{ analytics: undefined, courseId: course.id }]],
       ]);
     },
   );
@@ -1871,11 +1863,7 @@ describe(courseOutlineWorkflow, () => {
     ).resolves.toStrictEqual({ bandsWritten: 0, chapterIds: [], status: "written" });
 
     expect(vi.mocked(start).mock.calls).toStrictEqual([
-      [
-        courseDetailsWorkflow,
-        [{ analytics: undefined, courseId: course.id }],
-        { attributes: { courseId: course.id } },
-      ],
+      [courseDetailsWorkflow, [{ analytics: undefined, courseId: course.id }]],
     ]);
   });
 
@@ -2000,11 +1988,9 @@ describe(courseOutlineWorkflow, () => {
 
     expect(generateCourseOutline).not.toHaveBeenCalled();
 
-    expect(start).toHaveBeenCalledWith(
-      courseDetailsWorkflow,
-      [{ analytics: undefined, courseId: course.id }],
-      { attributes: { courseId: course.id } },
-    );
+    expect(start).toHaveBeenCalledWith(courseDetailsWorkflow, [
+      { analytics: undefined, courseId: course.id },
+    ]);
   });
 
   it(

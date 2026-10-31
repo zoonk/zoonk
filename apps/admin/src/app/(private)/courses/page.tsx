@@ -10,10 +10,6 @@ import {
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { CourseList, CourseListSkeleton } from "./course-list";
-import {
-  RegenerateCourseDetails,
-  RegenerateCourseDetailsSkeleton,
-} from "./regenerate-course-details";
 
 export const metadata: Metadata = { title: "Courses" };
 
@@ -28,10 +24,6 @@ export default function CoursesPage({ searchParams }: PageProps<"/courses">) {
       </ContainerHeader>
 
       <ContainerBody>
-        <Suspense fallback={<RegenerateCourseDetailsSkeleton />}>
-          <RegenerateCourseDetails />
-        </Suspense>
-
         <Suspense fallback={<AdminSearchSkeleton />}>
           <AdminSearch placeholder="Search by title…" />
         </Suspense>

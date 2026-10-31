@@ -1,4 +1,3 @@
-import { getCourseDetailsPromptVersion } from "@zoonk/ai/tasks/courses/details";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
@@ -19,7 +18,7 @@ export const details = {
 export const provenance = {
   generatedAt: "2026-09-27T12:00:00.000Z",
   model: "openai/gpt-6-luna",
-  promptVersion: getCourseDetailsPromptVersion(),
+  promptVersion: "details-test",
   runId: "details-run-1",
 };
 

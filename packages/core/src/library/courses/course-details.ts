@@ -30,10 +30,10 @@ function findCourse(courseId: string) {
 
 type DetailsCourse = NonNullable<Awaited<ReturnType<typeof findCourse>>>;
 
-function findMissingDetails({ course, copyOnly }: { course: DetailsCourse; copyOnly: boolean }) {
+function findMissingDetails(course: DetailsCourse) {
   return {
-    categories: !copyOnly && course.categories.length === 0,
-    description: !copyOnly && !course.description,
+    categories: course.categories.length === 0,
+    description: !course.description,
     landingPage: course.landingPage === null,
   };
 }
@@ -111,9 +111,7 @@ async function saveMissingDetails({
 export async function writeCourseDetails({
   analytics,
   courseId,
-  copyOnly = false,
 }: {
-  copyOnly?: boolean;
   analytics?: DetailsAnalytics;
   courseId: string;
 }): Promise<"skipped" | "written"> {
@@ -123,7 +121,7 @@ export async function writeCourseDetails({
     return "skipped";
   }
 
-  const missing = findMissingDetails({ copyOnly, course });
+  const missing = findMissingDetails(course);
 
   if (!missing.categories && !missing.description && !missing.landingPage) {
     return "skipped";

@@ -12,7 +12,6 @@ import com.zoonk.api.apis.HealthApi
 import com.zoonk.api.apis.LanguageApi
 import com.zoonk.api.apis.LearnerApi
 import com.zoonk.api.apis.LessonsApi
-import com.zoonk.api.apis.LibraryCoursesApi
 import com.zoonk.api.apis.LibraryLessonsApi
 import com.zoonk.api.apis.MemoryApi
 import com.zoonk.api.apis.MilestonesApi
@@ -71,7 +70,6 @@ class ApiServices(
     val language: LanguageApi by lazy { retrofit.create() }
     val learner: LearnerApi by lazy { retrofit.create() }
     val lessons: LessonsApi by lazy { retrofit.create() }
-    val libraryCourses: LibraryCoursesApi by lazy { retrofit.create() }
     val libraryLessons: LibraryLessonsApi by lazy { retrofit.create() }
     val memory: MemoryApi by lazy { retrofit.create() }
     val milestones: MilestonesApi by lazy { retrofit.create() }

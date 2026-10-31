@@ -1,7 +1,7 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
-import { generateCourseDetails, getCourseDetailsPromptVersion } from "./course-details";
+import { generateCourseDetails } from "./course-details";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
@@ -101,10 +101,7 @@ describe(generateCourseDetails, () => {
       ),
     );
 
-    expect(results.map((result) => result.provenance.promptVersion)).toStrictEqual(
-      Array.from({ length: 4 }, () => getCourseDetailsPromptVersion()),
-    );
-
+    expect(new Set(results.map((result) => result.provenance.promptVersion)).size).toBe(1);
     expect(new Set(results.map((result) => result.systemPrompt)).size).toBe(1);
     expect(new Set(results.map((result) => result.userPrompt)).size).toBe(4);
   });

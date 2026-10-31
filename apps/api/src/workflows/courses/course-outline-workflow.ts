@@ -12,9 +12,8 @@ import { deliverCourseContent } from "../_shared/course-content-notification";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { claimRunToken, joinRun } from "../_shared/run-token";
 import { claimCourseWhenFree } from "./claim-course-when-free";
-import { courseIconWorkflow } from "./course-details-workflow";
+import { courseDetailsWorkflow, courseIconWorkflow } from "./course-details-workflow";
 import { replanWaitingGoals } from "./replan-waiting-goals";
-import { startCourseDetailsRun } from "./start-course-details-run";
 import { type BandPlan, toChapterMoves } from "./steps/band-outline";
 import {
   type CourseOutlineStreamStep,
@@ -181,7 +180,7 @@ async function startSharedCourseWork(input: CourseOutlineInput): Promise<void> {
     return;
   }
 
-  await startCourseDetailsRun({ analytics: input.analytics, courseId: input.courseId });
+  await start(courseDetailsWorkflow, [{ analytics: input.analytics, courseId: input.courseId }]);
 }
 
 async function takeNextTurn({

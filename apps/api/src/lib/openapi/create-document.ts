@@ -12,7 +12,6 @@ import { catalogPaths } from "./paths/catalog";
 import { catalogResourcePaths } from "./paths/catalog-resources";
 import { checkpointPaths } from "./paths/checkpoints";
 import { contentGenerationPaths } from "./paths/content-generation";
-import { courseDetailsRegenerationPaths } from "./paths/course-details-regenerations";
 import { courseEstimatePaths } from "./paths/course-estimates";
 import { courseGoalPaths } from "./paths/course-goals";
 import { currentLearningPaths } from "./paths/current-learning";
@@ -102,7 +101,6 @@ const paths = withInternalErrorResponses({
   ...checkpointPaths,
   ...contentGenerationPaths,
   ...courseGoalPaths,
-  ...courseDetailsRegenerationPaths,
   ...courseEstimatePaths,
   ...currentLearningPaths,
   ...examPaths,
