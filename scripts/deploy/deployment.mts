@@ -112,6 +112,17 @@ async function getPreviewCacheAccess(): Promise<CourseCacheAccess> {
   return { bypass: bypass?.[0] ?? null, secret };
 }
 
+/**
+ * Neon's URLs say `sslmode=require`, which pg 8 already treats as `verify-full` but warns about on
+ * every boot, since pg 9 will stop verifying the certificate. Only the URL pg reads changes: Prisma's
+ * CLI reads the unpooled one and would treat `verify-full` as `prefer`, falling back to plain TCP.
+ */
+function withVerifiedCertificate(databaseUrl: string): string {
+  const url = new URL(databaseUrl);
+  url.searchParams.set("sslmode", "verify-full");
+  return url.toString();
+}
+
 const deploymentSchema = z.object({
   aliasAssigned: z.boolean().optional(),
   aliasError: z.unknown().optional(),
@@ -207,7 +218,7 @@ async function deployApp({
   const domain = target === "production" ? project.productionDomain : project.stagingDomain;
 
   const env = {
-    DATABASE_URL: requiredEnv("DATABASE_URL"),
+    DATABASE_URL: withVerifiedCertificate(requiredEnv("DATABASE_URL")),
     DATABASE_URL_UNPOOLED: requiredEnv("DATABASE_URL_UNPOOLED"),
     NEXT_PUBLIC_API_URL: target === "preview" && project.app === "api" ? "" : apiUrl,
     NEXT_PUBLIC_APP_DOMAIN: target === "preview" ? "" : domain,

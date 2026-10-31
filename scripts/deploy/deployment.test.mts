@@ -19,8 +19,8 @@ beforeEach(() => {
   vi.stubEnv("DEPLOY_SHA", "tested-sha");
   vi.stubEnv("DEPLOY_REF", "main");
   vi.stubEnv("PR_NUMBER", "42");
-  vi.stubEnv("DATABASE_URL", "postgresql://pr-database");
-  vi.stubEnv("DATABASE_URL_UNPOOLED", "postgresql://pr-database-direct");
+  vi.stubEnv("DATABASE_URL", "postgresql://pr-database?sslmode=require&channel_binding=require");
+  vi.stubEnv("DATABASE_URL_UNPOOLED", "postgresql://pr-database-direct?sslmode=require");
   vi.stubEnv("GITHUB_STEP_SUMMARY", "");
 });
 
@@ -115,8 +115,8 @@ describe(deploy, () => {
 
     for (const call of submissions) {
       expect(call.body.env).toMatchObject({
-        DATABASE_URL: "postgresql://pr-database",
-        DATABASE_URL_UNPOOLED: "postgresql://pr-database-direct",
+        DATABASE_URL: "postgresql://pr-database?sslmode=verify-full&channel_binding=require",
+        DATABASE_URL_UNPOOLED: "postgresql://pr-database-direct?sslmode=require",
         NEXT_PUBLIC_APP_DOMAIN: "",
       });
 
