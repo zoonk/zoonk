@@ -10,7 +10,12 @@ const TODAY_TABS = {
   en: '"Today"',
   es: '"Hoy"',
   fr: '"Aujourd’hui"',
+  it: '"Oggi"',
+  ja: '"今日"',
+  ko: '"오늘"',
+  pl: '"Dziś"',
   pt: '"Hoje"',
+  tr: '"Bugün"',
 } as const;
 
 const LANGUAGES = Object.keys(TODAY_TABS) as (keyof typeof TODAY_TABS)[];
@@ -29,7 +34,7 @@ describe(selectAppLanguageNames, () => {
   });
 
   it("names nothing in a language the app doesn't show", () => {
-    const prompt = selectAppLanguageNames({ language: "it", template });
+    const prompt = selectAppLanguageNames({ language: "ar", template });
 
     expect(LANGUAGES.filter((language) => prompt.includes(TODAY_TABS[language]))).toStrictEqual([]);
   });
