@@ -45,6 +45,7 @@ export type FindExamDateParams = FindExamDateInput & {
   model?: string;
   reasoning?: Reasoning;
   searchTool?: ResearchSearchTool;
+  useFallback?: boolean;
 };
 
 function buildUserPrompt(input: FindExamDateInput): string {
@@ -62,12 +63,12 @@ ${formatUntrustedInput({
   `;
 }
 
-/** No fallback models: the search tool is tied to the model it's measured with. */
 export async function findExamDate({
   analytics,
   model = defaultModel,
   reasoning = defaultReasoning,
   searchTool = defaultSearchTool,
+  useFallback,
   ...input
 }: FindExamDateParams) {
   const userPrompt = buildUserPrompt(input);
@@ -81,6 +82,7 @@ export async function findExamDate({
     searchTool,
     systemPrompt,
     task: "find-exam-date",
+    useFallback,
     userPrompt,
   });
 

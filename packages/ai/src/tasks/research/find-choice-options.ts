@@ -33,6 +33,7 @@ export type FindChoiceOptionsParams = FindChoiceOptionsInput & {
   model?: string;
   reasoning?: Reasoning;
   searchTool?: ResearchSearchTool;
+  useFallback?: boolean;
 };
 
 function buildUserPrompt(input: FindChoiceOptionsInput): string {
@@ -43,12 +44,12 @@ ${formatUntrustedInput({ BOARD: input.board ?? "", EXAM: input.exam })}
   `;
 }
 
-/** No fallback models: the search tool is tied to the model it's measured with. */
 export async function findChoiceOptions({
   analytics,
   model = defaultModel,
   reasoning = defaultReasoning,
   searchTool = defaultSearchTool,
+  useFallback,
   ...input
 }: FindChoiceOptionsParams) {
   const userPrompt = buildUserPrompt(input);
@@ -63,6 +64,7 @@ export async function findChoiceOptions({
     searchTool,
     systemPrompt,
     task: "find-choice-options",
+    useFallback,
     userPrompt,
   });
 

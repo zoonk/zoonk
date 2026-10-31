@@ -12,8 +12,13 @@ import {
 } from "./research-search-tools";
 
 /**
+ * With Parallel, Terra scored as high as Flash on six of the seven search evals; on
+ * find-target-cutoff it, Sol and Sonnet each left one more cut-off unknown, 9.0 to 9.33 (31 Oct 2026).
+ */
+const fallbackModels = ["openai/gpt-6.1-terra"] as const;
+
+/**
  * A page on a site no search returned was invented, so a task keeps only what `isSearched` passes.
- * No fallback models: each search tool is tied to the model it's measured with.
  */
 export async function runSearchTask<T>({
   analytics,
@@ -25,6 +30,7 @@ export async function runSearchTask<T>({
   searchTool,
   systemPrompt,
   task,
+  useFallback = true,
   userPrompt,
 }: {
   analytics?: AiGenerationContext;
@@ -37,6 +43,7 @@ export async function runSearchTask<T>({
   searchTool: ResearchSearchTool;
   systemPrompt: string;
   task: string;
+  useFallback?: boolean;
   userPrompt: string;
 }) {
   const { provenance, result } = await runTaskGeneration({
@@ -47,7 +54,12 @@ export async function runSearchTask<T>({
         model,
         output: Output.object({ schema }),
         prompt: userPrompt,
-        providerOptions: buildProviderOptions({ fallbackModels: [], model, useFallback: false }),
+        providerOptions: buildProviderOptions({
+          fallbackModels,
+          model,
+          // A `native` search tool belongs to the requested model's provider alone.
+          useFallback: useFallback && searchTool !== "native",
+        }),
         reasoning,
         stopWhen: isStepCount(maxSteps),
         tools: buildResearchSearchTools({ model, searchTool }),

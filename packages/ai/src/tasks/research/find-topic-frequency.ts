@@ -53,6 +53,7 @@ export type FindTopicFrequencyParams = FindTopicFrequencyInput & {
   model?: string;
   reasoning?: Reasoning;
   searchTool?: ResearchSearchTool;
+  useFallback?: boolean;
 };
 
 function formatSubjects(subjects: readonly TopicFrequencySubject[]): string {
@@ -78,15 +79,13 @@ ${formatUntrustedInput({
   `;
 }
 
-/**
- * A plan short on time leaves out the topics asked least first. No fallback models: the search tool
- * is tied to the model it's measured with.
- */
+/** A plan short on time leaves out the topics asked least first. */
 export async function findTopicFrequency({
   analytics,
   model = defaultModel,
   reasoning = defaultReasoning,
   searchTool = defaultSearchTool,
+  useFallback,
   ...input
 }: FindTopicFrequencyParams) {
   const userPrompt = buildUserPrompt(input);
@@ -101,6 +100,7 @@ export async function findTopicFrequency({
     searchTool,
     systemPrompt,
     task: "find-topic-frequency",
+    useFallback,
     userPrompt,
   });
 

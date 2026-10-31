@@ -38,6 +38,7 @@ export type FindCourseWeightsParams = FindCourseWeightsInput & {
   model?: string;
   reasoning?: Reasoning;
   searchTool?: ResearchSearchTool;
+  useFallback?: boolean;
 };
 
 function buildUserPrompt(input: FindCourseWeightsInput): string {
@@ -53,12 +54,12 @@ ${formatUntrustedInput({
   `;
 }
 
-/** No fallback models: the search tool is tied to the model it's measured with. */
 export async function findCourseWeights({
   analytics,
   model = defaultModel,
   reasoning = defaultReasoning,
   searchTool = defaultSearchTool,
+  useFallback,
   ...input
 }: FindCourseWeightsParams) {
   const userPrompt = buildUserPrompt(input);
@@ -72,6 +73,7 @@ export async function findCourseWeights({
     searchTool,
     systemPrompt,
     task: "find-course-weights",
+    useFallback,
     userPrompt,
   });
 

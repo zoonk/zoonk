@@ -21,9 +21,13 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        { "conclusion": "Missed the published cut-off", "kind": "majorErrors", "score": 8 },
+        { "conclusion": "Missed the published cut-off", "kind": "minorErrors", "score": 8 },
+        {
+          "conclusion": "Missed the published cut-off",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
       ],
       "testCase": {
         "expected": { "range": { "max": 900, "min": 550 } },
@@ -75,6 +79,28 @@
     },
     {
       "steps": [
+        { "conclusion": "Missed the published cut-off", "kind": "majorErrors", "score": 8 },
+        { "conclusion": "Missed the published cut-off", "kind": "minorErrors", "score": 8 },
+        {
+          "conclusion": "Missed the published cut-off",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": { "maxScore": 10, "range": { "max": 10, "min": 5 } },
+        "id": "pt-concurso-tjsp-escrevente-1",
+        "userInput": {
+          "course": null,
+          "exam": "Concurso TJ-SP, Escrevente Técnico Judiciário",
+          "institution": null,
+          "position": "Escrevente Técnico Judiciário",
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
@@ -87,24 +113,6 @@
           "exam": "Northern Plains Civil Service Exam, Junior Records Officer",
           "institution": null,
           "position": "Junior Records Officer",
-          "today": "2026-10-07"
-        }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "maxScore": 10, "range": { "max": 10, "min": 5 } },
-        "id": "pt-concurso-tjsp-escrevente-1",
-        "userInput": {
-          "course": null,
-          "exam": "Concurso TJ-SP, Escrevente Técnico Judiciário",
-          "institution": null,
-          "position": "Escrevente Técnico Judiciário",
           "today": "2026-10-07"
         }
       }

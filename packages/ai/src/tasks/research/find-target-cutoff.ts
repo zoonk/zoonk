@@ -46,6 +46,7 @@ export type FindTargetCutoffParams = FindTargetCutoffInput & {
   model?: string;
   reasoning?: Reasoning;
   searchTool?: ResearchSearchTool;
+  useFallback?: boolean;
 };
 
 function formatTarget(input: FindTargetCutoffInput): Record<string, string> {
@@ -74,12 +75,12 @@ ${formatUntrustedInput(formatTarget(input))}
   `;
 }
 
-/** No fallback models: the search tool is tied to the model it's measured with. */
 export async function findTargetCutoff({
   analytics,
   model = defaultModel,
   reasoning = defaultReasoning,
   searchTool = defaultSearchTool,
+  useFallback,
   ...input
 }: FindTargetCutoffParams) {
   const userPrompt = buildUserPrompt(input);
@@ -95,6 +96,7 @@ export async function findTargetCutoff({
     searchTool,
     systemPrompt,
     task: "find-target-cutoff",
+    useFallback,
     userPrompt,
   });
 

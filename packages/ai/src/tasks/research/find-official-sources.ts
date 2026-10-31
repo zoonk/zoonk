@@ -79,6 +79,7 @@ export type FindOfficialSourcesParams = {
   /** Documents that couldn't be downloaded, which the search looks for on other sites. */
   unreadable?: readonly string[];
   searchTool?: ResearchSearchTool;
+  useFallback?: boolean;
   model?: string;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
@@ -112,10 +113,7 @@ function toPlanPrompt({
     .join("\n");
 }
 
-/**
- * Addresses on sites no search returned are dropped, since the model invented them. No fallback
- * models: each search tool is tied to the model it's measured with.
- */
+/** Addresses on sites no search returned are dropped, since the model invented them. */
 export async function findOfficialSources({
   analytics,
   model = defaultModel,
@@ -124,6 +122,7 @@ export async function findOfficialSources({
   searchTool = defaultSearchTool,
   topic,
   unreadable = [],
+  useFallback,
 }: FindOfficialSourcesParams) {
   const userPrompt = toPlanPrompt({ plan, topic, unreadable });
 
@@ -142,6 +141,7 @@ export async function findOfficialSources({
     searchTool,
     systemPrompt,
     task: "find-official-sources",
+    useFallback,
     userPrompt,
   });
 
