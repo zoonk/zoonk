@@ -55,6 +55,50 @@ function getPracticePartSize(questions: number): number {
   return 2 * Math.ceil(questions / (2 * parts));
 }
 
+function getPartMinutes({
+  drillItems,
+  index,
+  part,
+}: {
+  drillItems: number;
+  index: number;
+  part: readonly PracticeItem[];
+}): number {
+  return toMinutes((part.length + (index === 0 ? drillItems : 0)) * PRACTICE_MINUTES_PER_QUESTION);
+}
+
+/** Each block's minutes round up on their own, so the parts give back whole questions or sets until their total fits. */
+function splitWithinMinutes({
+  drillItems,
+  items,
+  minutes,
+}: {
+  drillItems: number;
+  items: readonly PracticeItem[];
+  minutes: number;
+}): PracticeItem[][] {
+  const parts = splitPracticeQuestions({
+    first: drillItems,
+    practice: items,
+    size: getPracticePartSize(drillItems + items.length),
+  });
+
+  const planned = parts.reduce(
+    (sum, part, index) => sum + getPartMinutes({ drillItems, index, part }),
+    0,
+  );
+
+  if (planned <= minutes || items.length === 0) {
+    return parts;
+  }
+
+  return splitWithinMinutes({
+    drillItems,
+    items: takePracticeQuestions({ practice: items, room: items.length - 1 }),
+    minutes,
+  });
+}
+
 /** A full review stays one block, so it reaches every topic in one sitting like the mock it stands for. */
 export function buildPracticeBlocks({
   drills,
@@ -95,22 +139,14 @@ export function buildPracticeBlocks({
     skillIds: [...items.map((item) => item.skillId), ...reviewedSkillIds],
   });
 
-  const parts = fullReview
-    ? [items]
-    : splitPracticeQuestions({
-        first: drillItems,
-        practice: items,
-        size: getPracticePartSize(questions),
-      });
+  const parts = fullReview ? [items] : splitWithinMinutes({ drillItems, items, minutes });
 
   return parts.map((part, index) => {
     const partDrills = index === 0 ? drills : [];
 
     return {
       canDo: null,
-      estimatedMinutes: toMinutes(
-        (countDrilled(partDrills) + part.length) * PRACTICE_MINUTES_PER_QUESTION,
-      ),
+      estimatedMinutes: getPartMinutes({ drillItems, index, part }),
       kind: "practice",
       lessonId: null,
       payload: toBlockPayload({

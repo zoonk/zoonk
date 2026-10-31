@@ -550,6 +550,52 @@ describe(buildSessionBlocks, () => {
   });
 });
 
+describe("a long day's practice in three-question sets", () => {
+  const sets = Array.from({ length: 40 }, (_set, set) =>
+    [0, 1, 2].map((index) => ({
+      itemId: `set${set}-q${index}`,
+      setId: `set${set}`,
+      skillId: `s${set % 3}`,
+    })),
+  ).flat();
+
+  it.each([
+    { dailyMinutes: 60, most: 60, remainingLimitMinutes: null },
+    { dailyMinutes: 120, most: 120, remainingLimitMinutes: null },
+    { dailyMinutes: 120, most: 60, remainingLimitMinutes: 60 },
+  ])(
+    "plans no more than $most minutes for a $dailyMinutes-minute day, keeping each set whole",
+    ({ dailyMinutes, most, remainingLimitMinutes }) => {
+      const { blocks, plannedMinutes } = buildSessionBlocks({
+        ...baseInput,
+        capsules: [],
+        dailyMinutes,
+        drills: [],
+        lessons: [],
+        practice: sets,
+        practiceShare: 0.6,
+        remainingLimitMinutes,
+      });
+
+      const setsByBlock = blocks.map(
+        (block) => new Set(block.payload.itemIds.map((itemId) => itemId.split("-")[0])),
+      );
+
+      expect(plannedMinutes).toBeLessThanOrEqual(most);
+      expect(plannedMinutes).toBeGreaterThan(most - 5);
+
+      expect(
+        blocks.every((block) => block.payload.itemIds.length % 3 === 0) &&
+          setsByBlock.every((ids, index) =>
+            setsByBlock.every(
+              (other, at) => at === index || [...ids].every((id) => !other.has(id)),
+            ),
+          ),
+      ).toBe(true);
+    },
+  );
+});
+
 describe(getPracticeShare, () => {
   it("keeps practice small during the basics and grows it with the plan", () => {
     expect(getPracticeShare({ daysToExam: null, planProgress: 0.05 })).toBe(0.1);
