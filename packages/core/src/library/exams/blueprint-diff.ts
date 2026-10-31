@@ -1,6 +1,8 @@
+import { normalizeString } from "@zoonk/utils/string";
 import { type BlueprintContent, type ExamEdition, type ExamStructure } from "./blueprint-contract";
 import { keepKnownSubjectFacts } from "./blueprint-subject-merge";
 import { countsEverySubject } from "./subject-questions";
+import { toTopicKey } from "./topic-key";
 
 export type BlueprintChange = { after: unknown; before: unknown; field: string };
 
@@ -167,18 +169,62 @@ function keepPastQuestions({
     : past;
 }
 
+type Subject = ExamStructure["subjects"][number];
+
+function toSyllabusKey(subject: Subject): string {
+  return subject.topics.map((topic) => toTopicKey(topic)).join("\n");
+}
+
+/** Past papers ranked and counted a subject's topics as they stood, so new topics need them again. */
+function listChangedSyllabi({
+  current,
+  merged,
+}: {
+  current: readonly Subject[];
+  merged: readonly Subject[];
+}): Set<string> {
+  const after = new Map(
+    merged.map((subject) => [normalizeString(subject.name), toSyllabusKey(subject)]),
+  );
+
+  return new Set(
+    current
+      .filter((subject) => after.get(normalizeString(subject.name)) !== toSyllabusKey(subject))
+      .map((subject) => normalizeString(subject.name)),
+  );
+}
+
 function withLookups({
   current,
+  merged,
   next,
   subjectsChanged,
 }: {
   current: ExamStructure;
+  merged: readonly Subject[];
   next: ExamStructure;
   subjectsChanged: boolean;
 }) {
+  const changed = listChangedSyllabi({ current: current.subjects, merged });
+  const hasNewSyllabus = (name: string) => changed.has(normalizeString(name));
+
+  const stored = keepPastQuestions({ current, next, subjectsChanged });
+
+  const counted = stored?.subjects.some((subject) => hasNewSyllabus(subject.name))
+    ? undefined
+    : stored;
+
+  const frequency = current.pastTopicFrequency;
+  const ranked = frequency?.subjects.filter((subject) => !hasNewSyllabus(subject.name)) ?? [];
+
+  const kept =
+    frequency && ranked.length < frequency.subjects.length
+      ? { checkedAt: null, subjects: ranked }
+      : frequency;
+
   const pastOptions = current.pastOptions ?? next.pastOptions;
-  const pastQuestions = keepPastQuestions({ current, next, subjectsChanged }) ?? next.pastQuestions;
-  const pastTopicFrequency = current.pastTopicFrequency ?? next.pastTopicFrequency;
+  const pastQuestions = counted ?? next.pastQuestions;
+  const pastTopicFrequency = kept ?? next.pastTopicFrequency;
 
   return {
     ...(pastOptions ? { pastOptions } : {}),
@@ -245,6 +291,12 @@ export function mergeBlueprintContent({
   const changedFields = new Set(changes.map((change) => change.field));
   const has = (field: string) => changedFields.has(field);
 
+  const subjects = pick({
+    changed: has("subjects"),
+    current: current.structure.subjects,
+    next: next.structure.subjects,
+  });
+
   return {
     changes,
     content: {
@@ -262,6 +314,7 @@ export function mergeBlueprintContent({
         }),
         ...withLookups({
           current: current.structure,
+          merged: subjects,
           next: next.structure,
           subjectsChanged: has("subjects"),
         }),
@@ -271,11 +324,7 @@ export function mergeBlueprintContent({
               current: current.structure.rules,
               next: next.structure.rules,
             }),
-        subjects: pick({
-          changed: has("subjects"),
-          current: current.structure.subjects,
-          next: next.structure.subjects,
-        }),
+        subjects,
         testedLanguage: next.structure.testedLanguage ?? current.structure.testedLanguage ?? null,
       },
       topicFrequency: pick({

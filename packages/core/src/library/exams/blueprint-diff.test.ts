@@ -45,6 +45,20 @@ function content(overrides: Partial<BlueprintContent> = {}): BlueprintContent {
   };
 }
 
+function withTopics(name: string, topics: string[]) {
+  return { citation: OLD_CITATION, name, questions: null, topics, weight: null };
+}
+
+function ranked(name: string, topic: string) {
+  return {
+    basis: "questões de 2020 a 2025",
+    board: "Cebraspe",
+    name,
+    source: { title: null, url: "https://example.com/assuntos" },
+    topics: [{ appearances: 9, level: "high" as const, topic }],
+  };
+}
+
 describe(mergeBlueprintContent, () => {
   it("reports nothing when only the passages differ", () => {
     const current = content();
@@ -205,6 +219,45 @@ describe(mergeBlueprintContent, () => {
       mergeBlueprintContent({ current: withLookup(notFound), next: content() }).content.structure
         .pastQuestions,
     ).toStrictEqual(notFound);
+  });
+
+  it("forgets the past-paper research of a subject whose topics changed, keeping the others'", () => {
+    const current = content({
+      structure: {
+        ...content().structure,
+        pastQuestions: {
+          board: "Cebraspe",
+          checkedAt: "2026-10-01T00:00:00.000Z",
+          edition: "2024",
+          source: { title: null, url: "https://example.com/distribuicao" },
+          subjects: [
+            { name: "Direito", questions: 30 },
+            { name: "Ética", questions: 20 },
+          ],
+        },
+        pastTopicFrequency: {
+          checkedAt: "2026-10-01T00:00:00.000Z",
+          subjects: [ranked("Direito", "Leis"), ranked("Ética", "Deveres")],
+        },
+        subjects: [withTopics("Direito", ["Leis"]), withTopics("Ética", ["Deveres"])],
+      },
+    });
+
+    const next = content({
+      structure: {
+        ...content().structure,
+        subjects: [withTopics("Direito", ["Leis", "Controle"]), withTopics("Ética", ["Deveres"])],
+      },
+    });
+
+    const merged = mergeBlueprintContent({ current, next, nextEdition: true }).content.structure;
+
+    expect(merged.pastQuestions).toBeUndefined();
+
+    expect(merged.pastTopicFrequency).toStrictEqual({
+      checkedAt: null,
+      subjects: [ranked("Ética", "Deveres")],
+    });
   });
 
   it("keeps a subject's stated counts, group and name when a new reading of it leaves them out", () => {
