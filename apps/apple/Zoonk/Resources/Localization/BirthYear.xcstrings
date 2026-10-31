@@ -42,7 +42,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprueba el año y vuelve a intentarlo."
+            "value" : "Revisa el año e inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -158,7 +158,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha guardado. Vuelve a intentarlo."
+            "value" : "No se guardó. Inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -187,7 +187,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se lo preguntamos a todo el mundo una sola vez."
+            "value" : "Se lo preguntamos a cada persona una sola vez."
           }
         },
         "fr" : {
@@ -245,7 +245,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tienes que tener al menos %lld años para usar Zoonk, así que cerraremos tu sesión. Aquí estaremos cuando los cumplas."
+            "value" : "Para usar Zoonk necesitas tener al menos %lld años, así que cerraremos tu sesión. Aquí estaremos cuando los cumplas."
           }
         },
         "fr" : {
@@ -274,7 +274,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Necesitas tener al menos %lld años para usar Zoonk. Aquí estaremos cuando los cumplas."
+            "value" : "Para usar Zoonk necesitas tener al menos %lld años. Aquí estaremos cuando los cumplas."
           }
         },
         "fr" : {
