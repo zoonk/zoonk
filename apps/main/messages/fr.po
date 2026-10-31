@@ -1151,9 +1151,9 @@ msgid "Delete your account?"
 msgstr "Supprimer ton compte ?"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "hL_UdI"
-msgid "Your goals, plans, progress, memory, feedback and uploads are deleted for good. This can't be undone."
-msgstr "Tes objectifs, plans, progrès, informations mémorisées, avis et fichiers importés sont définitivement supprimés. Cette action est irréversible."
+msgctxt "yF2UF2"
+msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
+msgstr "Tes objectifs, tes plans, ta progression, ta mémoire et tes fichiers importés seront définitivement supprimés. Cette action est irréversible."
 
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -3900,9 +3900,15 @@ msgid "Can I get a refund?"
 msgstr "Puis-je obtenir un remboursement ?"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "LHV1sa"
-msgid "Just <link>contact us</link> and tell us what happened. We'll do our best to get you a refund."
-msgstr "Il te suffit de <link>nous contacter</link> et de nous dire ce qui s’est passé. Nous ferons de notre mieux pour te rembourser."
+msgctxt "qwugiM"
+msgid "If you subscribed on our website, you can cancel within 14 days for a full refund. Just <link>contact us</link>. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
+msgstr "Si tu as souscrit un abonnement sur notre site, tu peux l’annuler dans les 14 jours pour obtenir un remboursement intégral. Il te suffit de <link>nous contacter</link>. Les achats sur l’App Store ou Google Play sont soumis aux règles de remboursement d’Apple ou de Google."
+
+#: src/components/pricing/plus-questions.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "xkr-zo"
+msgid "Terms"
+msgstr "Conditions d’utilisation"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "4YTeTA"
@@ -4053,11 +4059,6 @@ msgstr "Pied de page"
 msgctxt "cXBJ7U"
 msgid "Privacy"
 msgstr "Confidentialité"
-
-#: src/components/public/public-footer.tsx
-msgctxt "xkr-zo"
-msgid "Terms"
-msgstr "Conditions d’utilisation"
 
 #: src/components/public/public-footer.tsx
 msgctxt "k7JNE3"

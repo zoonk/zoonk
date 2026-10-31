@@ -111,7 +111,7 @@ export function DeleteAccountSection({ userId }: { userId: string }) {
             <AlertDialogTitle>{t("Delete your account?")}</AlertDialogTitle>
             <AlertDialogDescription>
               {t(
-                "Your goals, plans, progress, memory, feedback and uploads are deleted for good. This can't be undone.",
+                "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone.",
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>

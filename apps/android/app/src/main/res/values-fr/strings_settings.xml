@@ -10,7 +10,7 @@
   "settings_delete_account_description": "8debe1408e249ccd90e48421f399a0fa8fa9d42c6496819604c84265e9fcb906",
   "settings_delete_code_description": "60fbc150bb0cb57797e65c8b81b0f7b84a4df8b395c37a4ac458ee08c1ef11d3",
   "settings_delete_code_title": "0782ab3ff90c01dceb3bc495a23f8980490eb264c147d81d309b111414910af5",
-  "settings_delete_confirm_description": "705d0eb2990c38d0cea5a09abb212d44cab78377b201128bfa67a4ec41e02b08",
+  "settings_delete_confirm_description": "6259f3105ba70dc1c246912c2a0c821744355f6d3f6ad58d8c505ba77773cabc",
   "settings_delete_confirm_title": "459a750bfd8fa6ae9cb71bdf93339ca2ea3e7b6bfe9a623e69dff23af7e170b1",
   "settings_delete_ellipsis": "72c9b3b78592cd1cd1e91163ca4f0cf2cd4f0defad9395418c6d819e8a453904",
   "settings_delete_failed": "af5fb59c7cb572a424640dd4188315e0bfd27506bbba00f12fe8873300391ef3",
@@ -74,7 +74,7 @@
     <string name="settings_delete_account_description">Supprime définitivement ton compte et tout son contenu. L’abonnement Plus acheté sur le web est résilié ; les achats Google Play et App Store se gèrent là où tu les as effectués.</string>
     <string name="settings_delete_ellipsis">Supprimer…</string>
     <string name="settings_delete_confirm_title">Supprimer ton compte ?</string>
-    <string name="settings_delete_confirm_description">Tes objectifs, plans, ta progression, ta mémoire, tes retours et tes fichiers importés seront définitivement supprimés. Cette action est irréversible.</string>
+    <string name="settings_delete_confirm_description">Tes objectifs, tes plans, ta progression, ta mémoire et tes fichiers importés seront définitivement supprimés. Cette action est irréversible.</string>
     <string name="settings_cancel">Annuler</string>
     <string name="settings_delete_code_title">Confirme ton identité</string>
     <!-- %1$s is the account's email address. -->

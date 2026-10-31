@@ -1151,9 +1151,9 @@ msgid "Delete your account?"
 msgstr "Delete your account?"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "hL_UdI"
-msgid "Your goals, plans, progress, memory, feedback and uploads are deleted for good. This can't be undone."
-msgstr "Your goals, plans, progress, memory, feedback and uploads are deleted for good. This can't be undone."
+msgctxt "yF2UF2"
+msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
+msgstr "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
 
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -3900,9 +3900,15 @@ msgid "Can I get a refund?"
 msgstr "Can I get a refund?"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "LHV1sa"
-msgid "Just <link>contact us</link> and tell us what happened. We'll do our best to get you a refund."
-msgstr "Just <link>contact us</link> and tell us what happened. We'll do our best to get you a refund."
+msgctxt "qwugiM"
+msgid "If you subscribed on our website, you can cancel within 14 days for a full refund. Just <link>contact us</link>. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
+msgstr "If you subscribed on our website, you can cancel within 14 days for a full refund. Just <link>contact us</link>. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
+
+#: src/components/pricing/plus-questions.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "xkr-zo"
+msgid "Terms"
+msgstr "Terms"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "4YTeTA"
@@ -4053,11 +4059,6 @@ msgstr "Footer"
 msgctxt "cXBJ7U"
 msgid "Privacy"
 msgstr "Privacy"
-
-#: src/components/public/public-footer.tsx
-msgctxt "xkr-zo"
-msgid "Terms"
-msgstr "Terms"
 
 #: src/components/public/public-footer.tsx
 msgctxt "k7JNE3"

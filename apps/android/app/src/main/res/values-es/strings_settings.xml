@@ -10,7 +10,7 @@
   "settings_delete_account_description": "89b1f5793d726e15cf6cc548d4b01fb7b4371994164e8ccded4d34b800d08319",
   "settings_delete_code_description": "abb59d64259354692e9f613e32133f109349ec3679a273b53213dd7a8e0066fc",
   "settings_delete_code_title": "4228c6081cd6d637b1e3487dc0350b4c636a08bd54623553a437d981ccdc2b4b",
-  "settings_delete_confirm_description": "1452e4dfba82026be236e9e257652e60b1efc13e40d8d9aab21f70be23e52e21",
+  "settings_delete_confirm_description": "c369366cb18313f152c63faea2d8d82ebe8b7500892a5cc085184ffd721eaaa8",
   "settings_delete_confirm_title": "577d1c5ec795996e1e33114de872177c235d9631101c8668742fcd56accbd642",
   "settings_delete_ellipsis": "e90a21ff60c887c1482ecaef0e15b6700a7e04538d11b5de9a91888d7aefcbd1",
   "settings_delete_failed": "96dd08b9ddbf90faa0fd7f252f772fc7b85902d26fa7e062c0e24287e3251c85",
@@ -74,7 +74,7 @@
     <string name="settings_delete_account_description">Elimina tu cuenta y todo su contenido para siempre. Plus comprado en la web se cancela; las compras en Google Play y App Store se gestionan donde las hiciste.</string>
     <string name="settings_delete_ellipsis">Eliminar…</string>
     <string name="settings_delete_confirm_title">¿Eliminar tu cuenta?</string>
-    <string name="settings_delete_confirm_description">Tus objetivos, planes, progreso, memoria, comentarios y archivos subidos se eliminarán para siempre. Esta acción no se puede deshacer.</string>
+    <string name="settings_delete_confirm_description">Tus objetivos, planes, progreso, memoria y archivos subidos se eliminarán definitivamente. Esta acción no se puede deshacer.</string>
     <string name="settings_cancel">Cancelar</string>
     <string name="settings_delete_code_title">Confirma que eres tú</string>
     <!-- %1$s is the account's email address. -->

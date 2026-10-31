@@ -10,7 +10,7 @@
   "settings_delete_account_description": "267dc81e7d516cd653dbd4501333b39c2e5f2b19796da25f05968267bb9488e9",
   "settings_delete_code_description": "178188d63881cf713042ad9e3a326ec400cf527dd7038082851215afd4361d9a",
   "settings_delete_code_title": "30b7f21a5b181db0efc194f9ee3a6ed7d2fb075851277bdff15ed65103f40c95",
-  "settings_delete_confirm_description": "1bfc3b14582c5313c2e7a0b4edb41dcf9e8e4e0ab278e3108e95f9ff4ba90681",
+  "settings_delete_confirm_description": "dffbb0b7eaaaecb67d536b7bce7176f29415858e7e72cfbd3a4b35ead01f7e1a",
   "settings_delete_confirm_title": "c6c5d778946bbdc8864d984e8c08585a16e6d094ba13084c450f8a91e421ce6c",
   "settings_delete_ellipsis": "4709a4680b8b9fb3cc92e76f63a3e6185db677822766e6cc9cbe4e36cfcb1bbc",
   "settings_delete_failed": "54bcf385490a31b8932440153e9b245c93bcf68dd50b6cbfa2533ed75957b319",
@@ -74,7 +74,7 @@
     <string name="settings_delete_account_description">Löscht dein Konto und alle darin enthaltenen Daten endgültig. Im Web gekauftes Plus wird gekündigt. Käufe über Google Play und den App Store verwaltest du dort, wo du sie gekauft hast.</string>
     <string name="settings_delete_ellipsis">Löschen…</string>
     <string name="settings_delete_confirm_title">Dein Konto löschen?</string>
-    <string name="settings_delete_confirm_description">Deine Ziele, Pläne, Fortschritte, dein Gedächtnis, Feedback und deine hochgeladenen Dateien werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.</string>
+    <string name="settings_delete_confirm_description">Deine Ziele, Pläne, dein Fortschritt, deine Erinnerungen und Uploads werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.</string>
     <string name="settings_cancel">Abbrechen</string>
     <string name="settings_delete_code_title">Bestätige deine Identität</string>
     <!-- %1$s is the account's email address. -->

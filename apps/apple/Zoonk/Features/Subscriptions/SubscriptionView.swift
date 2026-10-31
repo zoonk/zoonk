@@ -679,7 +679,7 @@ private struct PlusQuestions: View {
       DisclosureGroup {
         answer(
           Text(
-            "Just contact us and tell us what happened. We'll do our best to get you a refund.",
+            "Apple handles refunds for Plus bought in the App Store: ask for one in your Apple account. If you subscribed on our website, you can cancel within 14 days for a full refund. Just contact us.",
             tableName: "Account", comment: "Answers whether Plus can be refunded"))
 
         Link(destination: AccountLinks.support) {

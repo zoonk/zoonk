@@ -129,5 +129,5 @@
     <string name="subscription_question_cancel">What happens if I cancel?</string>
     <string name="subscription_answer_cancel">You keep Plus until the end of the period you already paid for. Then you\'re back on the free plan, and your goals and progress stay with you.</string>
     <string name="subscription_question_refund">Can I get a refund?</string>
-    <string name="subscription_answer_refund">Just contact us and tell us what happened. We\'ll do our best to get you a refund.</string>
+    <string name="subscription_answer_refund">Google Play handles refunds for Plus bought there: ask for one in Google Play. If you subscribed on our website, you can cancel within 14 days for a full refund. Just contact us.</string>
 </resources>

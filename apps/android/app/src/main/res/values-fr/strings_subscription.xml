@@ -15,7 +15,7 @@
   "subscription_answer_free_lead": "6d24da9fe3189a69b14935526f572a8bf42040e81eb7ce7477567ea0d7a41454",
   "subscription_answer_free_lessons": "1acb9eecff8a89bd88b17e74909dc49f1a13da36eda463e7431c2cffa1e9e27a",
   "subscription_answer_free_uploads": "cdca4c8d6b2358c6df87cc960ee248cbedca341d70eb51b7060855e6fc491116",
-  "subscription_answer_refund": "796100a7df45ec1552bb12bb3e7c1fc32f2b78cb82e6d072586d1bdb6d9c0dc1",
+  "subscription_answer_refund": "e56e2681423e11bce7efa3bfb15393c04052df26b9877c1d0fe342d8bb77e002",
   "subscription_answer_unlimited": "ddaa7ade6d12c40364ee1a549f78d688292b5faaac8e128dd38403eb999db2a3",
   "subscription_available_with_plus": "7cd7b0aaee2632e2489afa3f3f925647a7c42923529005cf98f9bd78c9820013",
   "subscription_benefit_buddy": "e3d3d539c397a67a6435cf8f5930eb73dc6c6b049178a63cc1c67c601f671e6a",
@@ -222,5 +222,5 @@
     <string name="subscription_question_cancel">Que se passe-t-il si je résilie ?</string>
     <string name="subscription_answer_cancel">Tu gardes Plus jusqu’à la fin de la période déjà payée. Tu repasses ensuite à la formule gratuite et tu conserves tes objectifs et ta progression.</string>
     <string name="subscription_question_refund">Puis-je obtenir un remboursement ?</string>
-    <string name="subscription_answer_refund">Contacte-nous et raconte-nous ce qui s’est passé. Nous ferons de notre mieux pour te rembourser.</string>
+    <string name="subscription_answer_refund">Google Play gère les remboursements des abonnements Plus souscrits sur sa plateforme : fais ta demande dans Google Play. Si tu as souscrit ton abonnement sur notre site, tu peux l’annuler dans les 14 jours pour obtenir un remboursement intégral. Il te suffit de nous contacter.</string>
 </resources>

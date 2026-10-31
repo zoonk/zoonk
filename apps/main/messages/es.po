@@ -1151,9 +1151,9 @@ msgid "Delete your account?"
 msgstr "¿Eliminar tu cuenta?"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "hL_UdI"
-msgid "Your goals, plans, progress, memory, feedback and uploads are deleted for good. This can't be undone."
-msgstr "Tus objetivos, planes, progreso, memoria, comentarios y archivos subidos se eliminarán para siempre. Esta acción no se puede deshacer."
+msgctxt "yF2UF2"
+msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
+msgstr "Tus objetivos, planes, progreso, memoria y archivos subidos se eliminarán definitivamente. Esta acción no se puede deshacer."
 
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -3900,9 +3900,15 @@ msgid "Can I get a refund?"
 msgstr "¿Puedo pedir un reembolso?"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "LHV1sa"
-msgid "Just <link>contact us</link> and tell us what happened. We'll do our best to get you a refund."
-msgstr "Solo tienes que <link>contactar con nosotros</link> y contarnos qué ha pasado. Haremos todo lo posible para devolverte el dinero."
+msgctxt "qwugiM"
+msgid "If you subscribed on our website, you can cancel within 14 days for a full refund. Just <link>contact us</link>. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
+msgstr "Si te has suscrito en nuestra web, puedes cancelar la suscripción en un plazo de 14 días y recibir un reembolso completo. Solo tienes que <link>contactar con nosotros</link>. Las compras en el App Store o en Google Play se rigen por las normas de reembolso de Apple o de Google."
+
+#: src/components/pricing/plus-questions.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "xkr-zo"
+msgid "Terms"
+msgstr "Condiciones"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "4YTeTA"
@@ -4053,11 +4059,6 @@ msgstr "Pie de página"
 msgctxt "cXBJ7U"
 msgid "Privacy"
 msgstr "Privacidad"
-
-#: src/components/public/public-footer.tsx
-msgctxt "xkr-zo"
-msgid "Terms"
-msgstr "Condiciones"
 
 #: src/components/public/public-footer.tsx
 msgctxt "k7JNE3"

@@ -64,7 +64,7 @@ struct AccountDeletionView: View {
         }
       } message: {
         Text(
-          "This permanently deletes your profile, goals, plans, progress, memory, feedback and uploads. This can't be undone.",
+          "This permanently deletes your profile, goals, plans, progress, memory and uploads. This can't be undone.",
           tableName: "Account",
           comment: "Explains the consequences of confirming permanent account deletion")
       }
@@ -112,10 +112,10 @@ struct AccountDeletionView: View {
 
         Label {
           Text(
-            "Memory, feedback and uploads",
+            "Memory and uploads",
             tableName: "Account",
             comment:
-              "What the app remembers about the learner, their feedback and their uploaded files, removed during account deletion"
+              "What the app remembers about the learner and their uploaded files, removed during account deletion"
           )
         } icon: {
           Image(systemName: "tray.full")

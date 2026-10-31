@@ -1047,6 +1047,35 @@
         }
       }
     },
+    "Apple handles refunds for Plus bought in the App Store: ask for one in your Apple account. If you subscribed on our website, you can cancel within 14 days for a full refund. Just contact us." : {
+      "comment" : "Answers whether Plus can be refunded",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du Plus im App Store gekauft hast, ist Apple für die Rückerstattung zuständig: Beantrag sie in deinem Apple-Account. Wenn du dein Abo auf unserer Website abgeschlossen hast, kannst du es innerhalb von 14 Tagen kündigen und bekommst den vollen Betrag zurück. Meld dich einfach bei uns."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple gestiona los reembolsos de Plus si lo has comprado en el App Store: solicita el tuyo desde tu cuenta de Apple. Si te has suscrito en nuestra web, puedes cancelar en un plazo de 14 días y recibir un reembolso completo. Solo tienes que contactar con nosotros."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple gère le remboursement de Plus si tu l’as acheté dans l’App Store : fais ta demande depuis ton compte Apple. Si tu as souscrit ton abonnement sur notre site, tu peux l’annuler sous 14 jours pour obtenir un remboursement intégral. Il suffit de nous contacter."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple cuida dos reembolsos de assinaturas do Plus feitas na App Store: peça o seu na sua conta Apple. Se você assinou pelo nosso site, pode cancelar em até 14 dias para receber o valor total de volta. É só falar com a gente."
+          }
+        }
+      }
+    },
     "By continuing, you agree to the Zoonk %@ and %@." : {
       "comment" : "Legal agreement below the sign-in methods; the arguments are the links to the terms of service and the privacy policy",
       "localizations" : {
@@ -2431,35 +2460,6 @@
         }
       }
     },
-    "Just contact us and tell us what happened. We'll do our best to get you a refund." : {
-      "comment" : "Answers whether Plus can be refunded",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meld dich einfach bei uns und erzähl uns, was passiert ist. Wir tun unser Bestes, damit du dein Geld zurückbekommst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Solo tienes que contactar con nosotros y contarnos qué ha pasado. Haremos todo lo posible para que recibas un reembolso."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il te suffit de nous contacter et de nous expliquer ce qui s’est passé. Nous ferons de notre mieux pour te rembourser."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "É só entrar em contato e contar o que aconteceu. A gente vai fazer o possível para você receber um reembolso."
-          }
-        }
-      }
-    },
     "Keep your plan and progress on all your devices." : {
       "comment" : "Explains the benefit of signing in",
       "localizations" : {
@@ -2692,31 +2692,31 @@
         }
       }
     },
-    "Memory, feedback and uploads" : {
-      "comment" : "What the app remembers about the learner, their feedback and their uploaded files, removed during account deletion",
+    "Memory and uploads" : {
+      "comment" : "What the app remembers about the learner and their uploaded files, removed during account deletion",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erinnerungen, Feedback und hochgeladene Dateien"
+            "value" : "Gespeicherte Informationen und Uploads"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Memoria, comentarios y archivos subidos"
+            "value" : "Memoria y archivos subidos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mémoire, commentaires et fichiers importés"
+            "value" : "Mémoire et fichiers importés"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Memória, feedback e arquivos enviados"
+            "value" : "Memória e arquivos enviados"
           }
         }
       }
@@ -4153,31 +4153,31 @@
         }
       }
     },
-    "This permanently deletes your profile, goals, plans, progress, memory, feedback and uploads. This can't be undone." : {
+    "This permanently deletes your profile, goals, plans, progress, memory and uploads. This can't be undone." : {
       "comment" : "Explains the consequences of confirming permanent account deletion",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Profil, deine Ziele, Pläne, Fortschritte, Erinnerungen, dein Feedback und deine hochgeladenen Dateien werden dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden."
+            "value" : "Dabei werden dein Profil, deine Ziele und Pläne, dein Fortschritt sowie gespeicherte Informationen über dich und deine Uploads dauerhaft gelöscht. Das lässt sich nicht rückgängig machen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esto elimina permanentemente tu perfil, objetivos, planes, progreso, memoria, comentarios y archivos subidos. Esta acción no se puede deshacer."
+            "value" : "Esto elimina de forma permanente tu perfil, objetivos, planes, progreso, memoria y archivos subidos. No se puede deshacer."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cela supprimera définitivement ton profil, tes objectifs, tes plans, ta progression, ta mémoire, tes commentaires et tes fichiers importés. Cette action est irréversible."
+            "value" : "Cette action supprime définitivement ton profil, tes objectifs, tes plans, ta progression, les informations mémorisées à ton sujet et tes fichiers importés. Elle est irréversible."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso exclui permanentemente seu perfil, metas, planos, progresso, memória, feedback e arquivos enviados. Essa ação não pode ser desfeita."
+            "value" : "Isso exclui permanentemente seu perfil, metas, planos, progresso, memória e arquivos enviados. Não dá para desfazer."
           }
         }
       }

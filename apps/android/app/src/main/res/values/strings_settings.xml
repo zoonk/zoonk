@@ -20,7 +20,7 @@
     <string name="settings_delete_account_description">Deletes your account and everything in it for good. Plus bought on the web is canceled; Google Play and App Store purchases are managed where you bought them.</string>
     <string name="settings_delete_ellipsis">Delete…</string>
     <string name="settings_delete_confirm_title">Delete your account?</string>
-    <string name="settings_delete_confirm_description">Your goals, plans, progress, memory, feedback and uploads are deleted for good. This can\'t be undone.</string>
+    <string name="settings_delete_confirm_description">Your goals, plans, progress, memory and uploads are deleted for good. This can\'t be undone.</string>
     <string name="settings_cancel">Cancel</string>
     <string name="settings_delete_code_title">Confirm it\'s you</string>
     <!-- %1$s is the account's email address. -->

@@ -1,3 +1,4 @@
+import { CommercialDisclosureLink } from "@/components/public/commercial-disclosure-link";
 import { PublicDisclosure } from "@/components/public/public-disclosure";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
@@ -11,6 +12,9 @@ import { type PlusViewerState } from "./plus-plan";
 const PLUS_QUESTIONS_ID = "plus-questions";
 const ANSWER_CLASS = "text-muted-foreground text-[15px] leading-relaxed text-pretty sm:text-base";
 const ANSWER_LINK_CLASS = "text-foreground font-medium underline underline-offset-4";
+
+const LEGAL_LINK_CLASS =
+  "hover:text-foreground hit-area relative underline-offset-4 hover:underline";
 
 function keepNumbersWithWords(text: string) {
   return text.replaceAll(/(?<=\d) /gu, "\u00A0");
@@ -145,11 +149,18 @@ export async function PlusQuestions({
         <PublicDisclosure summary={t("Can I get a refund?")}>
           <p className={ANSWER_CLASS}>
             {t.rich(
-              "Just <link>contact us</link> and tell us what happened. We'll do our best to get you a refund.",
+              "If you subscribed on our website, you can cancel within 14 days for a full refund. Just <link>contact us</link>. Purchases in the App Store or Google Play follow Apple's or Google's refund rules.",
               { link: renderSupportLink },
             )}
           </p>
         </PublicDisclosure>
+
+        <p className="text-muted-foreground mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+          <Link className={LEGAL_LINK_CLASS} href="/terms">
+            {t("Terms")}
+          </Link>
+          <CommercialDisclosureLink className={LEGAL_LINK_CLASS} />
+        </p>
       </div>
     </section>
   );

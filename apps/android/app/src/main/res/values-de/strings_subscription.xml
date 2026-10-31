@@ -15,7 +15,7 @@
   "subscription_answer_free_lead": "ff38aca4ca15c0361fb7c27a5034dbc87ee219f1e8d5f0fd3135fb15dfec1261",
   "subscription_answer_free_lessons": "f62b7fbdd5de66b97e524cb5e77521332f876e47c5ba2117708a9b588b31a2e1",
   "subscription_answer_free_uploads": "fbe084ffd70a5c0440f221b0a5a4fd071d627fefb15f779e37d7c7d2cddb613b",
-  "subscription_answer_refund": "0aaf7a8bf5fedd162871c5819b55ae081c10ccc85ba6e4e881a9c6d9a65ebbae",
+  "subscription_answer_refund": "01832a1dbc93a53750ebf787fa09767893c897ba0b36c03bcb7aaa2fbb6de1ad",
   "subscription_answer_unlimited": "a24269e215326d523dce6d8ce8aa434e107441d69b216507f64dba00992027aa",
   "subscription_available_with_plus": "c1f0a8dbf6c53c615c5e8b607884619c669c4cbe61ffffe3a944d354cfbb225d",
   "subscription_benefit_buddy": "1e1cbf7a03898933b894e35118c1f7fe98a7778d99c496bb1b62c7b56f1f05cd",
@@ -211,5 +211,5 @@
     <string name="subscription_question_cancel">Was passiert, wenn ich kündige?</string>
     <string name="subscription_answer_cancel">Du behältst Plus bis zum Ende des Zeitraums, für den du bereits bezahlt hast. Danach wechselst du zurück zum Free-Tarif und behältst deine Ziele und deinen Fortschritt.</string>
     <string name="subscription_question_refund">Kann ich eine Rückerstattung bekommen?</string>
-    <string name="subscription_answer_refund">Kontaktiere uns einfach und erzähl uns, was passiert ist. Wir tun unser Bestes, um dir dein Geld zurückzuerstatten.</string>
+    <string name="subscription_answer_refund">Wenn du Plus über Google Play gekauft hast, kümmert sich Google Play um die Rückerstattung: Beantrag sie dort. Wenn du das Abo auf unserer Website abgeschlossen hast, kannst du es innerhalb von 14 Tagen kündigen und bekommst den vollen Betrag zurück. Meld dich einfach bei uns.</string>
 </resources>

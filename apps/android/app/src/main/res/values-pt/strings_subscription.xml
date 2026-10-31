@@ -15,7 +15,7 @@
   "subscription_answer_free_lead": "baca0583eb01fc616bee85d707427b005324f5f12f8163fa20d8590deb5c6930",
   "subscription_answer_free_lessons": "1449a02fc5935d4dd1c89c7408ce384a52394ba270b3e9fee8b8288fddf3d04a",
   "subscription_answer_free_uploads": "e79297f76b5c8708d34fdb0f9a2915724333a8afb87c98ad17495ad2a300f413",
-  "subscription_answer_refund": "856f273eeb12ea8056091a1c69b9452ef5d6d53da4826df4744c8a42d00a4e8b",
+  "subscription_answer_refund": "c6bf066a7e8043f5132ff70ce0724ae42c5e212af8d4e433ecb5a52c78c07982",
   "subscription_answer_unlimited": "92b426f7ccd837dcdc6284164557f10ca8938b6e27883ce8bfcfb68c9083d77e",
   "subscription_available_with_plus": "57dc0e240c048ca8c5a1f0772e69782ac072a0be960092ff9430a6e86857bb1c",
   "subscription_benefit_buddy": "6fc097e2b5a3817f345c84df99faf9d135903b61e3cf298100bcece5a1db2e8c",
@@ -222,5 +222,5 @@
     <string name="subscription_question_cancel">O que acontece se eu cancelar?</string>
     <string name="subscription_answer_cancel">Você mantém o Plus até o fim do período que já pagou. Depois, volta para o plano Grátis e mantém suas metas e seu progresso.</string>
     <string name="subscription_question_refund">Posso receber um reembolso?</string>
-    <string name="subscription_answer_refund">É só entrar em contato e contar o que aconteceu. Vamos fazer o possível para conseguir seu reembolso.</string>
+    <string name="subscription_answer_refund">Google Play cuida dos reembolsos do Plus comprado por lá: peça um reembolso via Google Play. Se você assinou pelo nosso site, pode cancelar em até 14 dias e receber o valor total de volta. É só falar com a gente.</string>
 </resources>

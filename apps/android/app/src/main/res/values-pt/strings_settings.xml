@@ -10,7 +10,7 @@
   "settings_delete_account_description": "6d7781d1cbbcfa675cbdb9ae25cfc49f3d08e419af590586c7838b17ab1bbe93",
   "settings_delete_code_description": "b719b25ad23b9f311703cbdec02fcd6d7d5e2900780a8f54b5c6fa85a97b27c6",
   "settings_delete_code_title": "c19459d668a5da55082341f9b6be6e2837553320b733a1bb89b2956654f3c406",
-  "settings_delete_confirm_description": "2ffce7f3768626779477ee17e62bbfce5be95ca1e722c54ed8010382684251b5",
+  "settings_delete_confirm_description": "dab5b4341023db4dd9fd788defbb3c40d592d46790312727784da118116d8f0a",
   "settings_delete_confirm_title": "9c88ebaafb73f470625147866ebaf0586a637fa75a725119597ae3ec4a2f746e",
   "settings_delete_ellipsis": "72b13a62eb947838c7a6ebf9209883fa9361131070f839d478220b76f17f8c74",
   "settings_delete_failed": "7aa1d9d6a86e1c28eaff9fab3dea0be3710414dc95eb7f4bfab47b2ebe5b1b1e",
@@ -74,7 +74,7 @@
     <string name="settings_delete_account_description">Exclui sua conta e tudo que está nela de forma permanente. O Plus comprado no site é cancelado; compras no Google Play e na App Store são gerenciadas onde foram feitas.</string>
     <string name="settings_delete_ellipsis">Excluir…</string>
     <string name="settings_delete_confirm_title">Excluir sua conta?</string>
-    <string name="settings_delete_confirm_description">Suas metas, planos, progresso, memória, feedback e arquivos enviados serão excluídos permanentemente. Não é possível desfazer essa ação.</string>
+    <string name="settings_delete_confirm_description">Suas metas, planos, progresso, memória e arquivos enviados serão apagados para sempre. Não dá para desfazer isso.</string>
     <string name="settings_cancel">Cancelar</string>
     <string name="settings_delete_code_title">Confirme que é você</string>
     <!-- %1$s is the account's email address. -->
