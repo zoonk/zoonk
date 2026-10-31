@@ -4,7 +4,7 @@ import {
   isCountedByNotice,
 } from "../../library/exams/subject-questions";
 import { withClassTestMock } from "./class-test-mock";
-import { isQuestionSubject } from "./written-subject";
+import { isObjectiveSection, isQuestionSubject } from "./written-subject";
 
 function getStatedQuestions(structure: ExamStructure): number | null {
   const sections = (structure.mock?.sections ?? []).reduce(
@@ -73,6 +73,10 @@ export function toMockStructure({
     return structure;
   }
 
+  const sections = structure.mock?.sections ?? [];
+  const objective = sections.filter((section) => isObjectiveSection(section));
+  const [only] = objective.length === 1 ? objective : [];
+
   return {
     ...structure,
     mock: {
@@ -80,9 +84,11 @@ export function toMockStructure({
       citations: [],
       order: null,
       scoring: { description: "", method: "raw" },
-      sections: [],
       timeLimitMinutes: null,
       ...structure.mock,
+      sections: sections.map((section) =>
+        section === only ? { ...section, questions: found.questions } : section,
+      ),
       totalQuestions: found.questions,
     },
   };
