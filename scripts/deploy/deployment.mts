@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { createHmac } from "node:crypto";
 import { appendFile } from "node:fs/promises";
 import { z } from "zod";
 import { github, vercel, waitFor } from "./api.mts";
@@ -9,7 +9,6 @@ type Project = (typeof PROJECTS)[number];
 
 /** RFC 1035: Vercel shortens a longer generated label in a way its docs don't spell out. */
 const MAX_DNS_LABEL = 63;
-const CACHE_SECRET_BYTES = 32;
 
 type AppUrls = { api: string | null; main: string | null };
 type CourseCacheAccess = { bypass: string | null; secret: string };
@@ -94,9 +93,10 @@ const protectionBypassSchema = z.object({
 });
 
 /**
- * A preview of any branch gets its own secret for the API's course-page refreshes and Main's
- * automation bypass to get them past its Deployment Protection. Production and staging keep the
- * projects' own values, which outlast an app redeployed or rolled back alone.
+ * A preview of any branch gets a secret for the API's course-page refreshes and Main's automation
+ * bypass to get them past its Deployment Protection. The secret comes from the PR database's
+ * address, so a run still working on a superseded API deployment reaches the newer main app.
+ * Production and staging keep the projects' own values, which outlast an app redeployed alone.
  */
 async function getPreviewCacheAccess(): Promise<CourseCacheAccess> {
   const { protectionBypass = {} } = protectionBypassSchema.parse(
@@ -107,7 +107,11 @@ async function getPreviewCacheAccess(): Promise<CourseCacheAccess> {
     ([, value]) => value.scope === "automation-bypass",
   );
 
-  return { bypass: bypass?.[0] ?? null, secret: randomBytes(CACHE_SECRET_BYTES).toString("hex") };
+  const secret = createHmac("sha256", requiredEnv("DATABASE_URL"))
+    .update("app-cache-secret")
+    .digest("hex");
+
+  return { bypass: bypass?.[0] ?? null, secret };
 }
 
 const deploymentSchema = z.object({

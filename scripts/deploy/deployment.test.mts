@@ -236,7 +236,7 @@ describe(deploy, () => {
 });
 
 describe("preview course cache access", () => {
-  it("gives a preview's API and main app one cache secret and the API main's bypass", async () => {
+  it("gives a preview's apps one cache secret for every redeploy, and its API main's bypass", async () => {
     const submissions = new Map<string, Call>();
 
     intercept((call) => {
@@ -272,8 +272,10 @@ describe("preview course cache access", () => {
 
     expect(api).toHaveProperty("MAIN_CACHE_BYPASS_SECRET", "main-automation-bypass");
     expect(main).toHaveProperty("APP_CACHE_SECRET", secret.APP_CACHE_SECRET);
-    expect(main).not.toHaveProperty("MAIN_CACHE_BYPASS_SECRET");
     expect(admin).not.toHaveProperty("APP_CACHE_SECRET");
+
+    await deploy("preview");
+    expect(submissions.get(PROJECTS[0].id)?.body.env).toStrictEqual(api);
   });
 
   it.each(["production", "staging"] as const)(
@@ -295,7 +297,6 @@ describe("preview course cache access", () => {
 
       for (const call of submissions) {
         expect(call.body.env).not.toHaveProperty("APP_CACHE_SECRET");
-        expect(call.body.env).not.toHaveProperty("MAIN_CACHE_BYPASS_SECRET");
       }
     },
   );
