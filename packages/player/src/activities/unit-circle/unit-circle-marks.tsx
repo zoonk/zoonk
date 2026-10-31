@@ -229,14 +229,26 @@ export function TrigLegsAndAngle({
   const [drawn, setDrawn] = useState({ labels: "", sizes: NOTHING_DRAWN });
 
   useLayoutEffect(() => {
-    setDrawn({
-      labels,
-      sizes: {
-        angle: sizeOf(angleRef.current),
-        cos: sizeOf(cosRef.current),
-        sin: sizeOf(sinRef.current),
-      },
-    });
+    const [angleNode, cosNode, sinNode] = [angleRef.current, cosRef.current, sinRef.current];
+
+    const measure = () => {
+      setDrawn({
+        labels,
+        sizes: { angle: sizeOf(angleNode), cos: sizeOf(cosNode), sin: sizeOf(sinNode) },
+      });
+    };
+
+    measure();
+
+    const resizes = new ResizeObserver(measure);
+
+    for (const node of [angleNode, cosNode, sinNode]) {
+      if (node) {
+        resizes.observe(node);
+      }
+    }
+
+    return () => resizes.disconnect();
   }, [labels]);
 
   const sizes = drawn.labels === labels ? drawn.sizes : NOTHING_DRAWN;

@@ -209,6 +209,37 @@ describe("geometry and data activities", () => {
     });
   });
 
+  it("unit circle: raising the text size later keeps the cos value and the angle apart", async () => {
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport({ height: 812, width: 375 }, async () => {
+      openActivity({ template: "unitCircle" });
+      await pressOnSlider("Point on the circle", "End", 1);
+      await press("ArrowLeft", 3);
+      await expect.poll(() => dialText((text) => text === "345°")).toBeDefined();
+
+      document.documentElement.style.fontSize = "200%";
+
+      await expect
+        .poll(() => {
+          const angle = dialText((text) => text === "345°");
+          const cos = dialText((text) => text.startsWith("cos = "));
+
+          return angle && cos
+            ? Math.max(
+                cos.left - angle.right,
+                angle.left - cos.right,
+                cos.top - angle.bottom,
+                angle.top - cos.bottom,
+              )
+            : Number.NEGATIVE_INFINITY;
+        })
+        .toBeGreaterThan(0);
+    });
+  });
+
   it("unit circle: reading the wrong angle is wrong", async () => {
     openActivity({ template: "unitCircle" });
     await pressOnSlider("Point on the circle", "ArrowRight", 3);
