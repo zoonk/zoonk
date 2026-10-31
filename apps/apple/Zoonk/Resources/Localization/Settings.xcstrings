@@ -390,6 +390,35 @@
         }
       }
     },
+    "Change limit" : {
+      "comment" : "Opens the daily time limit setting",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeitlimit ändern"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiar el límite"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier la limite"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mudar limite"
+          }
+        }
+      }
+    },
     "Change undone" : {
       "comment" : "Says a deleted fact came back",
       "localizations" : {

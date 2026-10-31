@@ -46,6 +46,7 @@ enum MockPlanOfferOutcome: Equatable, Sendable {
 enum EssaySubmission: Equatable, Sendable {
   case graded(EssayGrade)
   case limitReached
+  case dailyLimitReached
 }
 
 struct ExamResultInput: Encodable, Equatable, Sendable {
@@ -359,6 +360,7 @@ struct ExamAPI {
       switch try await client.submitEssay(path: .init(blockId: blockId), body: .json(body)) {
       case .ok(let response): return .graded(try PracticeJSON.recode(try response.body.json))
       case .tooManyRequests: return .limitReached
+      case .forbidden: return .dailyLimitReached
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable

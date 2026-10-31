@@ -1320,6 +1320,35 @@
         }
       }
     },
+    "You've reached your daily time limit. Your text stays here." : {
+      "comment" : "The daily time limit is a setting that stops study for the day",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast dein tägliches Zeitlimit erreicht. Dein Text bleibt hier."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has alcanzado tu límite de tiempo diario. Tu texto seguirá aquí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as atteint ta limite de temps quotidienne. Ton texte reste ici."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você atingiu seu limite diário de tempo. Seu texto continua aqui."
+          }
+        }
+      }
+    },
     "You've used today's essay grades. Your text stays here; send it tomorrow." : {
       "comment" : "No essay grades left today",
       "localizations" : {

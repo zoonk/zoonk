@@ -175,6 +175,20 @@ struct PreferencesSheet: View {
   }
 }
 
+struct ChangeLimitButton: View {
+  @Environment(AppRouter.self) private var router
+
+  var body: some View {
+    Button {
+      router.present(.preferences)
+    } label: {
+      Text("Change limit", tableName: "Settings", comment: "Opens the daily time limit setting")
+        .fontWeight(.semibold)
+    }
+    .buttonStyle(.borderless)
+  }
+}
+
 struct SettingsSaveError: View {
   var body: some View {
     Section {

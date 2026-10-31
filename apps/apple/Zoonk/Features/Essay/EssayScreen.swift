@@ -38,7 +38,7 @@ struct EssayScreen: View {
             .buttonStyle(.bordered)
           }
         case .loaded(let view):
-          EssayContent(resource: essay, essay: view)
+          EssayContent(store: store, essay: view)
         }
       }
       .navigationTitle(
@@ -58,60 +58,31 @@ struct EssayScreen: View {
   }
 }
 
-private enum EssaySendStatus: Equatable {
-  case idle
-  case grading
-  case failed
-  case limitReached
-}
-
 private struct EssayContent: View {
   @Environment(ExamStore.self) private var store
   @Environment(PracticeStore.self) private var practice
   @Environment(\.dismiss) private var dismiss
-  @State private var writing: Bool?
-  @State private var typed: String?
-  @State private var status = EssaySendStatus.idle
-  @State private var slow = false
-  @State private var startedAt: Date?
-  @State private var editedSinceSentAt: Date?
-  @State private var ungraded: (attemptId: String, text: String)?
+  @State private var writer: EssayWriter
   @State private var finishing = false
   @State private var finishFailed = false
   @State private var confirmsLeave = false
   @State private var openCriteria: Set<String> = []
 
-  let resource: Resource<EssayView>
   let essay: EssayView
 
-  private static let slowAfter = Duration.seconds(20)
-  private static let timeout = Duration.seconds(90)
-
-  private var isWriting: Bool { writing ?? essay.drafts.isEmpty }
-  private var graded: String { essay.drafts.first?.text ?? "" }
-
-  private var text: String {
-    if let typed { return typed }
-    if let kept = UnsentEssay.read(essay.blockId),
-      !kept.trimmingCharacters(in: .whitespaces).isEmpty,
-      kept != graded
-    {
-      return kept
-    }
-    return graded
-  }
-
-  private var unsent: Bool {
-    !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && text != graded
+  init(store: ExamStore, essay: EssayView) {
+    _writer = State(initialValue: EssayWriter(store: store, blockId: essay.blockId))
+    self.essay = essay
   }
 
   private var canSend: Bool {
-    EssayWords.count(text) > 0 && status != .grading && essay.gradesLeft > 0 && !finishing
+    EssayWords.count(writer.text) > 0 && writer.status != .grading && essay.gradesLeft > 0
+      && !finishing
   }
 
   var body: some View {
     Group {
-      if isWriting {
+      if writer.isWriting {
         PaneSplit {
           Form {
             promptSections
@@ -154,7 +125,7 @@ private struct EssayContent: View {
     .toolbar {
       ToolbarItem(placement: .cancellationAction) {
         Button(role: .close) {
-          if isWriting, unsent {
+          if writer.isWriting, writer.unsent {
             confirmsLeave = true
           } else {
             dismiss()
@@ -162,7 +133,7 @@ private struct EssayContent: View {
         }
       }
     }
-    .interactiveDismissDisabled(isWriting && unsent)
+    .interactiveDismissDisabled(writer.isWriting && writer.unsent)
     .confirmationDialog(
       Text("Leave for now?", tableName: "Essay", comment: "Leaving with unsent text"),
       isPresented: $confirmsLeave, titleVisibility: .visible
@@ -195,14 +166,14 @@ private struct EssayContent: View {
           }
           .buttonStyle(.bordered)
           .controlSize(.large)
-          .disabled(finishing || status == .grading)
+          .disabled(finishing || writer.status == .grading)
         }
 
-        if isWriting {
+        if writer.isWriting {
           Button {
-            Task { await send() }
+            Task { await writer.send() }
           } label: {
-            if status == .grading {
+            if writer.status == .grading {
               Text("Grading…", tableName: "Essay", comment: "A draft is being graded")
             } else if essay.drafts.isEmpty {
               Text("Send for grading", tableName: "Essay", comment: "Sends a draft")
@@ -215,7 +186,7 @@ private struct EssayContent: View {
           .disabled(!canSend)
         } else {
           Button {
-            writing = true
+            writer.writing = true
           } label: {
             Text("Rewrite", tableName: "Essay", comment: "Rewrites the essay")
           }
@@ -265,7 +236,7 @@ private struct EssayContent: View {
             comment: "Full marks")
         }
         Button {
-          writing = false
+          writer.writing = false
         } label: {
           Text("See the grade", tableName: "Essay", comment: "Back to the last grade")
         }
@@ -274,10 +245,10 @@ private struct EssayContent: View {
       }
     }
 
-    let words = EssayWords.count(text)
+    let words = EssayWords.count(writer.text)
 
     Section {
-      TextEditor(text: textBinding)
+      TextEditor(text: $writer.text)
         .frame(minHeight: 280)
         .accessibilityLabel(Text(boxLabel))
         .accessibilityHint(EssayWords.hint(words))
@@ -297,17 +268,6 @@ private struct EssayContent: View {
       : String(localized: "Rewrite what needs work", table: "Essay", comment: "The rewrite box")
   }
 
-  private var textBinding: Binding<String> {
-    Binding(
-      get: { text },
-      set: { next in
-        startedAt = startedAt ?? .now
-        editedSinceSentAt = editedSinceSentAt ?? .now
-        typed = next
-        UnsentEssay.keep(next, blockId: essay.blockId)
-      })
-  }
-
   @ViewBuilder
   private var statusLine: some View {
     Group {
@@ -317,21 +277,30 @@ private struct EssayContent: View {
           comment: "Finishing the block failed"
         )
         .foregroundStyle(.destructive)
-      } else if status == .failed {
+      } else if writer.status == .failed {
         Text(
           "That didn't go through. Your text is still here. Try again in a moment.",
           tableName: "Essay", comment: "Grading failed"
         )
         .foregroundStyle(.destructive)
-      } else if isWriting, status == .limitReached || essay.gradesLeft == 0 {
+      } else if writer.isWriting, writer.status == .dailyLimitReached {
+        VStack(alignment: .leading, spacing: 2) {
+          Text(
+            "You've reached your daily time limit. Your text stays here.", tableName: "Essay",
+            comment: "The daily time limit is a setting that stops study for the day"
+          )
+          .foregroundStyle(.secondary)
+          ChangeLimitButton()
+        }
+      } else if writer.isWriting, writer.status == .limitReached || essay.gradesLeft == 0 {
         Text(
           "You've used today's essay grades. Your text stays here; send it tomorrow.",
           tableName: "Essay", comment: "No essay grades left today"
         )
         .foregroundStyle(.secondary)
-      } else if status == .grading {
+      } else if writer.status == .grading {
         Group {
-          if slow {
+          if writer.slow {
             Text(
               "Still grading. This is taking longer than usual.", tableName: "Essay",
               comment: "Grading is slow")
@@ -346,60 +315,6 @@ private struct EssayContent: View {
     }
     .font(.subheadline)
     .frame(maxWidth: .infinity, alignment: .leading)
-  }
-
-  /// Reuses the id when the text didn't change since a send that failed, so the server grades it
-  /// once. Text changed while it was graded stays open as the rewrite.
-  private func send() async {
-    let text = text
-    let attemptId = ungraded?.text == text ? ungraded!.attemptId : UUID().uuidString.lowercased()
-    let durationMs = startedAt.map { Int(Date.now.timeIntervalSince($0) * 1000) } ?? 0
-    let blockId = essay.blockId
-    ungraded = (attemptId, text)
-    editedSinceSentAt = nil
-    status = .grading
-    slow = false
-
-    let slowTask = Task {
-      try? await Task.sleep(for: Self.slowAfter)
-      if !Task.isCancelled { slow = true }
-    }
-
-    let result: MutationResult<EssaySubmission>? = await within(Self.timeout) { [store] in
-      await store.write(invalidating: [.learnerModel, .userProgress]) { api, token in
-        try await api.submitEssay(
-          token: token, blockId: blockId, attemptId: attemptId, text: text, durationMs: durationMs)
-      }
-    }
-
-    slowTask.cancel()
-
-    switch result {
-    case .done(.graded(let grade)):
-      let isChangedSince = self.text != text
-      status = .idle
-      ungraded = nil
-      writing = isChangedSince
-      startedAt = isChangedSince ? editedSinceSentAt : nil
-
-      if !isChangedSince {
-        typed = nil
-        UnsentEssay.clear(blockId)
-      }
-
-      resource.update { essay in
-        var essay = essay
-        essay.drafts.insert(.init(grade: grade, submittedAt: .now, text: text), at: 0)
-        essay.gradesLeft = max(0, essay.gradesLeft - 1)
-        return essay
-      }
-    case .done(.limitReached):
-      status = .limitReached
-    case .obsolete:
-      status = .idle
-    case .failed, nil:
-      status = .failed
-    }
   }
 
   private func finish() async {
@@ -422,21 +337,5 @@ private struct EssayContent: View {
     case .obsolete:
       break
     }
-  }
-}
-
-private enum UnsentEssay {
-  private static func key(_ blockId: String) -> String { "essay.unsent.\(blockId)" }
-
-  static func read(_ blockId: String) -> String? {
-    UserDefaults.standard.string(forKey: key(blockId))
-  }
-
-  static func keep(_ text: String, blockId: String) {
-    UserDefaults.standard.set(text, forKey: key(blockId))
-  }
-
-  static func clear(_ blockId: String) {
-    UserDefaults.standard.removeObject(forKey: key(blockId))
   }
 }

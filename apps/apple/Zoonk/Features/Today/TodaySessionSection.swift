@@ -627,8 +627,6 @@ private struct FoldRow: View {
 }
 
 private struct TodayDayStatus: View {
-  @Environment(AppRouter.self) private var router
-
   let view: TodayView
   private let sentence: String
   private let clause: String?
@@ -761,13 +759,7 @@ private struct TodayDayStatus: View {
         }
 
         if changesLimit {
-          Button {
-            router.present(.preferences)
-          } label: {
-            Text("Change limit", tableName: "Today", comment: "Opens the daily time limit setting")
-              .fontWeight(.semibold)
-          }
-          .buttonStyle(.borderless)
+          ChangeLimitButton()
         }
       }
     } icon: {
