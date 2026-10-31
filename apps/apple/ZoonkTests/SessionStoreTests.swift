@@ -512,6 +512,30 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testAGuestThatFinishesAfterASignInKeepsTheSignIn() async {
+    let account = makeAccount()
+    let api = SessionStoreAPIStub(emailSignInResult: .success("account-session"))
+    api.guestSignInResult = .success("guest-session")
+    let credentialStore = SessionCredentialStoreSpy()
+    let session = makeSession(api: api, credentialStore: credentialStore)
+    let guest = makeAccount(userID: "guest")
+    api.currentAccountHandler = { token in
+      guard token == "guest-session" else {
+        return account
+      }
+
+      await session.signInWithEmailCode(email: "learner@zoonk.test", code: "123456")
+      return guest
+    }
+
+    let started = await session.continueAsGuest()
+
+    XCTAssertTrue(started)
+    XCTAssertEqual(session.state, .signedIn(account))
+    XCTAssertEqual(credentialStore.savedTokens, ["account-session"])
+  }
+
+  @MainActor
   func testSigningInFromAGuestSessionSendsItSoTheGuestsPlanMovesToTheAccount() async {
     let account = makeAccount()
     let api = SessionStoreAPIStub(
@@ -1391,6 +1415,7 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
   var currentAccountError: Error?
   var currentAccountHandler: (@MainActor (String) async throws -> CurrentAccount)?
   var emailSignInResult: Result<String, AccountAPIError> = .failure(.invalidResponse)
+  var guestSignInResult: Result<String, AccountAPIError> = .failure(.invalidResponse)
   var emailCodeRequests = [(email: String, token: String?)]()
   var emailSignInGuestTokens = [String?]()
   var emailCodeHandler: (@MainActor (String, String?) async throws -> Void)?
@@ -1482,6 +1507,10 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
   {
     emailSignInGuestTokens.append(guestToken)
     return try emailSignInResult.get()
+  }
+
+  func signInAsGuest() async throws -> String {
+    try guestSignInResult.get()
   }
 
   func sendEmailCode(email: String, token: String?) async throws {

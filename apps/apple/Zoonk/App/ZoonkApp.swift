@@ -2,7 +2,6 @@ import SwiftUI
 
 @main
 struct ZoonkApp: App {
-  @State private var birthYear: BirthYearGate
   @State private var buddy: BuddyStore
   @State private var courseCatalog: CourseCatalogStore
   @State private var exam: ExamStore
@@ -40,7 +39,6 @@ struct ZoonkApp: App {
       let initiallyPresentsAccount = false
     #endif
 
-    _birthYear = State(initialValue: dependencies.birthYearGate)
     _buddy = State(initialValue: dependencies.buddyStore)
     cache = dependencies.cache
     _courseCatalog = State(initialValue: dependencies.courseCatalogStore)
@@ -77,9 +75,7 @@ struct ZoonkApp: App {
         }
         .onChange(of: session.authenticatedSession) {
           cache.followSession()
-          birthYear.followSession()
         }
-        .environment(birthYear)
         .environment(buddy)
         .environment(courseCatalog)
         .environment(exam)
@@ -101,7 +97,7 @@ struct ZoonkApp: App {
         .environment(\.imageLoader, images)
         .environment(\.lessonTutor, .buddy)
         .environment(
-          \.lessonGuestStart, LessonGuestStart { [birthYear] in await birthYear.startGuest() }
+          \.lessonGuestStart, LessonGuestStart { [session] in await session.continueAsGuest() }
         )
         .environment(\.lessonPlayer, lessonPlayer)
         .environment(\.lessonAudio, .voice(voice))

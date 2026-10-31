@@ -203,6 +203,5 @@ struct PresentedTask: View {
       .sheet(item: router.sheet(presentedBy: depth + 1)) { sheet in
         AppSheetView(sheet: sheet)
       }
-      .asksBirthYear(here: router.tasks.count == depth + 1 && router.sheet == nil)
   }
 }

@@ -1376,35 +1376,6 @@
         }
       }
     },
-    "Off for learners under 18 in your country" : {
-      "comment" : "Why the usage data switch is off and can't be turned on: the law doesn't let minors agree to it",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Für Lernende unter 18 Jahren in deinem Land deaktiviert"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Desactivado para menores de 18 años en tu país"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Désactivé pour les moins de 18 ans dans ton pays"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Desativado para menores de 18 anos no seu país"
-          }
-        }
-      }
-    },
     "Options for “%@”" : {
       "comment" : "Names the menu that edits or deletes a remembered fact",
       "localizations" : {

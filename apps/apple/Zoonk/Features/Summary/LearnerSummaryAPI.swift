@@ -7,7 +7,6 @@ struct LearnerSummary: Equatable, Sendable {
   let goals: [LearnerGoal]
   let identity: LearnerIdentity
   let level: LearnerLevel?
-  var needsBirthYear = false
   /// When the summary changes without a write: the next midnight, the subscription's next change or
   /// the session's end.
   let nextChangeAt: Date
@@ -145,7 +144,6 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
       LearnerLevel(
         belt: ProgressBelt(rawValue: level.color.rawValue) ?? .white, level: level.level)
     },
-    needsBirthYear: summary.needsBirthYear,
     nextChangeAt: dateFromEpochMilliseconds(summary.nextChangeAt),
     places: LearnerPlaces(
       exam: summary.places.exam,

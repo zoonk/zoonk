@@ -582,6 +582,7 @@ struct LessonGuestGateView: View {
   @Environment(\.lessonGuestStart) private var guestStart
   @Environment(\.lessonPlayerRoutes) private var routes
   @State private var isStarting = false
+  @State private var startFailed = false
   @State private var starting: Task<Void, Never>?
 
   let outline: LessonOutline
@@ -601,9 +602,12 @@ struct LessonGuestGateView: View {
       if let start = guestStart.start {
         Button {
           isStarting = true
+          startFailed = false
           starting = Task {
             if await start() {
               reload()
+            } else {
+              startFailed = true
             }
             isStarting = false
           }
@@ -614,6 +618,14 @@ struct LessonGuestGateView: View {
         }
         .buttonStyle(.mainAction)
         .disabled(isStarting)
+
+        if startFailed {
+          Text(
+            "We couldn't open this lesson", tableName: "Player", comment: "A lesson failed to open"
+          )
+          .font(.footnote)
+          .foregroundStyle(.destructive)
+        }
       } else {
         Button {
           routes.signIn()

@@ -450,10 +450,8 @@ private struct MockSpeakingView: View {
       ConversationScreen(conversationId: task.conversationId) {
         openTask = nil
       }
-      .asksBirthYear(here: true)
       .onDisappear { Task { await run.reload() } }
     }
-    .coversBirthYearLayer(openTask != nil)
     .safeAreaBar(edge: .bottom) {
       MockActionBar(run: run) {
         if view.speaking == nil {

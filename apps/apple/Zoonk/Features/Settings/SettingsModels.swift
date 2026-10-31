@@ -9,7 +9,6 @@ struct LearningPreferences: Equatable, Sendable {
   let dailyTimes: [Int]
   var shareUsageData: Bool
   var soundsEnabled: Bool
-  let usageDataLockedOff: Bool
 
   /// A saved limit the list lacks, such as one set on the web, shows as itself.
   var dailyLimitChoices: [Int] {
@@ -151,10 +150,9 @@ extension LearningPreferences {
       availableGlasses: profile.availableGlasses.compactMap { BuddyGlasses(rawValue: $0.rawValue) },
       dailyLimitMinutes: profile.dailyLimitMinutes,
       dailyTimes: profile.dailyTimes,
-      // Usage is recorded until the learner turns it off, unless it's locked off for a minor.
-      shareUsageData: !profile.usageDataLockedOff && profile.shareUsageData != false,
-      soundsEnabled: profile.soundsEnabled,
-      usageDataLockedOff: profile.usageDataLockedOff)
+      // Usage is recorded until the learner turns it off.
+      shareUsageData: profile.shareUsageData ?? true,
+      soundsEnabled: profile.soundsEnabled)
   }
 }
 
