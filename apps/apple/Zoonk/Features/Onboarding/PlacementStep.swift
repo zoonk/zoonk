@@ -95,7 +95,7 @@ struct PlacementStep: View {
   private var steps: some View {
     switch phase {
     case .loading:
-      ProgressView()
+      StepLoading()
     case .intro:
       intro
     case .waiting(let failure):

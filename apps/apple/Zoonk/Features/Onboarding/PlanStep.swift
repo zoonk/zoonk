@@ -42,7 +42,7 @@ struct PlanWait<Content: View>: View {
       default:
         switch (plan.state, isWaiting) {
         case (.idle, false), (.loading, false):
-          ProgressView()
+          StepLoading()
         default:
           building(plan)
             .onboardingColumn()

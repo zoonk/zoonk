@@ -45,7 +45,7 @@ struct GoalSetupContent: View {
         }
         .closesTask()
       case .idle, .loading, .empty:
-        ProgressView()
+        StepLoading()
           .closesTask()
           .toolbar(removing: .title)
       }
@@ -60,6 +60,15 @@ extension View {
   /// Main's onboarding column, 40rem.
   func onboardingColumn() -> some View {
     readableColumn(640)
+  }
+}
+
+/// On the background the steps' forms have, so going from one step to the next doesn't flash white.
+struct StepLoading: View {
+  var body: some View {
+    ProgressView()
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .background(Color(.systemGroupedBackground))
   }
 }
 

@@ -33,7 +33,7 @@ struct LevelTestStep: View {
     Group {
       switch phase {
       case .loading:
-        ProgressView()
+        StepLoading()
       case .intro(let showAlphabetNote):
         LevelTestIntro(
           language: language, targetLanguage: targetLanguage, minutes: testMinutes,
