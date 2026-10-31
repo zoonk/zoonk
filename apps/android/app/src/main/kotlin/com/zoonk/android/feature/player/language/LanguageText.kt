@@ -70,8 +70,86 @@ private fun String.isWordLike() = any(Char::isLetterOrDigit)
 
 private fun Char.isConnector() = this in "-'’‐‑‒–"
 
-/** The words a reading or listening answer must be built from; blank text has none. */
-fun acceptedWords(text: String): List<String> = segmentWords(text)
+// JavaScript's `\s` also takes the ideographic space Japanese writes between words.
+private val ANY_SPACES = Regex("""[\s\p{Z}]+""")
+
+private val JAPANESE_SCRIPTS =
+    setOf(Character.UnicodeScript.HAN, Character.UnicodeScript.HIRAGANA, Character.UnicodeScript.KATAKANA)
+
+private enum class PhraseScript { Hiragana, Katakana, Other }
+
+private fun Int.isLetterOrNumber() =
+    Character.isLetter(this) ||
+        Character.getType(this).toByte() in
+        setOf(Character.DECIMAL_DIGIT_NUMBER, Character.LETTER_NUMBER, Character.OTHER_NUMBER)
+
+private fun Int.isOpeningPunctuation() =
+    Character.getType(this).toByte() in setOf(Character.START_PUNCTUATION, Character.INITIAL_QUOTE_PUNCTUATION)
+
+private fun phraseScript(codePoint: Int): PhraseScript? =
+    when {
+        Character.getType(codePoint).toByte() == Character.MODIFIER_LETTER || !codePoint.isLetterOrNumber() -> null
+        Character.UnicodeScript.of(codePoint) == Character.UnicodeScript.HIRAGANA -> PhraseScript.Hiragana
+        Character.UnicodeScript.of(codePoint) == Character.UnicodeScript.KATAKANA -> PhraseScript.Katakana
+        else -> PhraseScript.Other
+    }
+
+/** Core's `splitJapanesePhrases`: a kanji, katakana or Latin word with the kana after it ("駅まで"). */
+private fun splitJapanesePhrases(text: String): List<String> {
+    val phrases = mutableListOf<String>()
+    var previous: PhraseScript? = null
+    text.codePoints().forEach { codePoint ->
+        val char = String(Character.toChars(codePoint))
+        val script = phraseScript(codePoint)
+        val opens = codePoint.isOpeningPunctuation()
+        val startsWord = script != null && script != PhraseScript.Hiragana && previous != script
+        if (phrases.isEmpty() || opens || (startsWord && previous != null)) {
+            phrases += char
+        } else {
+            phrases[phrases.lastIndex] += char
+        }
+        previous = if (opens) null else script ?: previous
+    }
+    return phrases
+}
+
+/** Core's `segmentLearnerWords`: Japanese, the one app language without spaces, splits into phrases. */
+fun segmentLearnerWords(text: String): List<String> {
+    val normalized = normalizePunctuation(text)
+    val isJapanese = normalized.codePoints().anyMatch { Character.UnicodeScript.of(it) in JAPANESE_SCRIPTS }
+    if (!isJapanese) return segmentWords(normalized)
+    return normalized.split(ANY_SPACES).filter(String::isNotEmpty).flatMap(::splitJapanesePhrases)
+}
+
+private val UNSPACED_SCRIPTS =
+    JAPANESE_SCRIPTS +
+        setOf(
+            Character.UnicodeScript.THAI,
+            Character.UnicodeScript.LAO,
+            Character.UnicodeScript.KHMER,
+            Character.UnicodeScript.MYANMAR,
+        )
+
+/** Core's `countWords`: text without spaces (Japanese, Chinese, Thai) counts the words a dictionary finds. */
+fun countWords(text: String): Int =
+    text.split(ANY_SPACES).sumOf { piece ->
+        val unspaced = piece.codePoints().anyMatch { Character.UnicodeScript.of(it) in UNSPACED_SCRIPTS }
+        val words = if (unspaced) segmentNonSpaceText(piece) else listOf(piece)
+        words.count { word -> word.codePoints().anyMatch { it.isLetterOrNumber() } }
+    }
+
+/**
+ * The words a reading or listening answer must be built from; blank text has none. A listening
+ * builds the translation, in the learner's own language.
+ */
+internal fun acceptedWords(
+    text: String,
+    kind: ArrangeKind,
+): List<String> =
+    when (kind) {
+        ArrangeKind.Reading -> segmentWords(text)
+        ArrangeKind.Listening -> segmentLearnerWords(text)
+    }
 
 private val REGEX_SPECIAL = Regex("""[.*+?^${'$'}{}()|\[\]\\]""")
 

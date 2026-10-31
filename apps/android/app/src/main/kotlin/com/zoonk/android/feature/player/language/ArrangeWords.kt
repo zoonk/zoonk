@@ -87,7 +87,7 @@ internal fun ArrangeWordsView(
     onAnswer: (LessonAnswer?) -> Unit,
     prompt: @Composable () -> Unit,
 ) {
-    val correctWords = remember(answerText) { acceptedWords(answerText) }
+    val correctWords = remember(answerText, kind) { acceptedWords(answerText, kind) }
     var placed by rememberSaveable(stateSaver = PlacedWordsSaver) { mutableStateOf(initialPlacement(answer)) }
     val sounds = speech?.let { rememberSpokenAudio(it, language) }
     val checked = result != null

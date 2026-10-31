@@ -78,6 +78,7 @@ function translationOption(
 
 function serialize({ steps, ...resources }: Partial<Resources> & { steps: StepInput[] }) {
   return serializeExerciseSteps({
+    languages: { language: "pt", targetLanguage: "en" },
     resources: {
       distractorWords: [],
       lessonSentences: [],

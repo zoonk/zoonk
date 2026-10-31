@@ -101,6 +101,21 @@ describe(matchTypedAnswer, () => {
     expect(matchTypedAnswer({ acceptedAnswers: ["automobile"], answer: "car" }).kind).toBe("none");
   });
 
+  it.each([
+    ["ışık", "Işık"],
+    ["izmir", "İzmir"],
+    ["IŞIK", "ışık"],
+  ])("matches Turkish %j to %j in Turkish casing", (answer, accepted) => {
+    expect(matchTypedAnswer({ acceptedAnswers: [accepted], answer })).toStrictEqual({
+      acceptedAnswer: accepted,
+      kind: "exact",
+    });
+  });
+
+  it("keeps the Turkish dotless and dotted i apart", () => {
+    expect(matchTypedAnswer({ acceptedAnswers: ["kır"], answer: "kir" }).kind).toBe("none");
+  });
+
   it("prefers an exact match over a typo match", () => {
     expect(
       matchTypedAnswer({ acceptedAnswers: ["colour", "color"], answer: "color" }),

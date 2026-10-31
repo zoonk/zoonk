@@ -44,19 +44,25 @@ function toTranslationOption(word: TranslationSourceWord | DistractorWord): Tran
   };
 }
 
-function isCasedLetter(letter: string): boolean {
-  return letter.toLocaleLowerCase() !== letter.toLocaleUpperCase();
+function isCasedLetter({ language, letter }: { language: string; letter: string }): boolean {
+  return letter.toLocaleLowerCase(language) !== letter.toLocaleUpperCase(language);
 }
 
 /** Normalize visible option casing so formatting cannot identify the correct answer. */
-function capitalizeFirstCasedLetter(text: string): string {
+function capitalizeFirstCasedLetter({
+  language,
+  text,
+}: {
+  language: string;
+  text: string;
+}): string {
   const firstLetter = FIRST_LETTER_PATTERN.exec(text)?.[0];
 
-  if (!firstLetter || !isCasedLetter(firstLetter)) {
+  if (!firstLetter || !isCasedLetter({ language, letter: firstLetter })) {
     return text;
   }
 
-  return text.replace(FIRST_LETTER_PATTERN, (letter) => letter.toLocaleUpperCase());
+  return text.replace(FIRST_LETTER_PATTERN, (letter) => letter.toLocaleUpperCase(language));
 }
 
 function getTerminalPunctuation(text: string): string {
@@ -70,23 +76,26 @@ function stripTerminalPunctuation(text: string): string {
 }
 
 function normalizeTranslationOptionWord(params: {
+  language: string;
   optionWord: string;
   terminalPunctuation: string;
 }): string {
   const textWithoutPunctuation = stripTerminalPunctuation(params.optionWord);
   const textWithPunctuation = `${textWithoutPunctuation}${params.terminalPunctuation}`;
 
-  return capitalizeFirstCasedLetter(textWithPunctuation);
+  return capitalizeFirstCasedLetter({ language: params.language, text: textWithPunctuation });
 }
 
 /** Keep original metadata/ids while normalizing labels so formatting cannot reveal the correct answer. */
 function normalizeTranslationOption(params: {
+  language: string;
   option: TranslationOption;
   terminalPunctuation: string;
 }): TranslationOption {
   return {
     ...params.option,
     word: normalizeTranslationOptionWord({
+      language: params.language,
       optionWord: params.option.word,
       terminalPunctuation: params.terminalPunctuation,
     }),
@@ -122,6 +131,8 @@ export function buildDistractorWordLookup(
 export function buildTranslationOptions(params: {
   distractorLookup: Map<string, DistractorWord>;
   kind: string;
+  /** The options' language: the one the lesson teaches. */
+  language: string;
   word: TranslationSourceWord | null;
 }): TranslationOption[] {
   if (params.kind !== "translation" || !params.word) {
@@ -139,7 +150,7 @@ export function buildTranslationOptions(params: {
   const terminalPunctuation = getTerminalPunctuation(params.word.translation);
 
   const options = [toTranslationOption(params.word), ...directDistractors].map((option) =>
-    normalizeTranslationOption({ option, terminalPunctuation }),
+    normalizeTranslationOption({ language: params.language, option, terminalPunctuation }),
   );
 
   return shuffle(options);

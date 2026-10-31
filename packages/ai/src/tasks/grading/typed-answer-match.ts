@@ -21,12 +21,12 @@ export type TypedAnswerMatch =
 
 /**
  * Accents stay because they change words in several languages ("e" and "é" in Portuguese), and a
- * decimal comma becomes a point so "1,5" and "1.5" match.
+ * decimal comma becomes a point so "1,5" and "1.5" match. `locale` sets the casing rules.
  */
-export function normalizeTypedAnswer(text: string): string {
+export function normalizeTypedAnswer(text: string, locale = "und"): string {
   return text
     .normalize("NFC")
-    .toLowerCase()
+    .toLocaleLowerCase(locale)
     .replaceAll(APOSTROPHES, "'")
     .replaceAll(DECIMAL_SEPARATOR, ".")
     .replaceAll(SYMBOLS, " ")
@@ -131,6 +131,16 @@ function isExact(answer: string, accepted: string): boolean {
 }
 
 /**
+ * Turkish lowercases "I" to "ı" and "İ" to "i", so an answer also matches in Turkish casing:
+ * "ışık" for "Işık", "izmir" for "İzmir". Written in lowercase, "ı" and "i" stay different letters.
+ */
+const CASE_LOCALES = ["und", "tr"] as const;
+
+function toCaseKeys(text: string): string[] {
+  return CASE_LOCALES.map((locale) => normalizeTypedAnswer(text, locale));
+}
+
+/**
  * "typo" is a slip the caller may accept with a note; "rounded" a number rounded to the places
  * typed, which the caller may accept outside language practice.
  */
@@ -141,29 +151,34 @@ export function matchTypedAnswer({
   acceptedAnswers: readonly string[];
   answer: string;
 }): TypedAnswerMatch {
-  const normalizedAnswer = normalizeTypedAnswer(answer);
+  const answerKeys = toCaseKeys(answer);
 
-  if (!normalizedAnswer) {
+  if (!answerKeys[0]) {
     return { acceptedAnswer: null, kind: "none" };
   }
 
   const candidates = acceptedAnswers
-    .map((accepted) => ({ accepted, normalized: normalizeTypedAnswer(accepted) }))
-    .filter((candidate) => candidate.normalized.length > 0);
+    .map((accepted) => ({ accepted, keys: toCaseKeys(accepted) }))
+    .filter((candidate) => Boolean(candidate.keys[0]));
 
-  const exact = candidates.find((candidate) => isExact(normalizedAnswer, candidate.normalized));
+  const findCandidate = (matches: (answer: string, accepted: string) => boolean) =>
+    candidates.find((candidate) =>
+      answerKeys.some((key, index) => matches(key, candidate.keys[index] ?? "")),
+    );
+
+  const exact = findCandidate(isExact);
 
   if (exact) {
     return { acceptedAnswer: exact.accepted, kind: "exact" };
   }
 
-  const typo = candidates.find((candidate) => isTypo(normalizedAnswer, candidate.normalized));
+  const typo = findCandidate(isTypo);
 
   if (typo) {
     return { acceptedAnswer: typo.accepted, kind: "typo" };
   }
 
-  const rounded = candidates.find((candidate) => isRounded(normalizedAnswer, candidate.normalized));
+  const rounded = findCandidate(isRounded);
 
   return rounded
     ? { acceptedAnswer: rounded.accepted, kind: "rounded" }

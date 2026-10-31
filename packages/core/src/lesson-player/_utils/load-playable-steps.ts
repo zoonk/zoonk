@@ -131,5 +131,10 @@ export async function loadPlayableSteps({
     ? isSameLanguage({ learnerLanguage: lesson.language, targetLanguage: lesson.targetLanguage })
     : false;
 
-  return toPlayableSteps({ resources, rows, sameLanguage });
+  const languages = {
+    language: lesson.language,
+    targetLanguage: lesson.targetLanguage ?? lesson.language,
+  };
+
+  return toPlayableSteps({ languages, resources, rows, sameLanguage });
 }

@@ -116,7 +116,12 @@ export function ArrangeWordsInteraction({
   wordBankOptions: WordBankOption[];
 }) {
   const { trigger } = useWebHaptics();
-  const acceptedWordSequences = buildAcceptedArrangeWordSequences(answer);
+
+  const acceptedWordSequences = buildAcceptedArrangeWordSequences({
+    kind: answerKind,
+    text: answer,
+  });
+
   const correctWords = acceptedWordSequences[0] ?? [];
   const acceptedWordLengths = getAcceptedArrangeWordLengths(acceptedWordSequences);
 

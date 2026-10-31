@@ -11,6 +11,7 @@ import { logError } from "@zoonk/utils/logger";
 import { getExploreExpected } from "../../library/activities/activity-expected";
 import { getActivityTemplate } from "../../library/activities/activity-templates";
 import { safeParseStepContent } from "../../library/steps/contract/step-contract";
+import { type LessonLanguages } from "../../player/contracts/build-word-bank-options";
 import { type ExerciseKind, isExerciseKind } from "../../player/contracts/exercise-content";
 import {
   type ExerciseResources,
@@ -237,17 +238,19 @@ function toExerciseInput({
 }
 
 function toExerciseSteps({
+  languages,
   resources,
   rows,
   sameLanguage,
 }: {
+  languages: LessonLanguages;
   resources: LessonPairResources;
   rows: PlayableStepRow[];
   sameLanguage: boolean;
 }): Map<string, PlayableLanguageStep> {
   const exerciseRows = rows.filter((row): row is ExerciseRow => isExerciseKind(row.kind));
   const inputs = exerciseRows.flatMap((row) => toExerciseInput({ resources, row, sameLanguage }));
-  const serialized = serializeExerciseSteps({ resources, steps: inputs });
+  const serialized = serializeExerciseSteps({ languages, resources, steps: inputs });
   const rowsById = new Map(exerciseRows.map((row) => [row.id, row]));
 
   return new Map(
@@ -278,10 +281,12 @@ function toExerciseSteps({
 }
 
 function toListeningFallbacks({
+  languages,
   resources,
   rows,
   sameLanguage,
 }: {
+  languages: LessonLanguages;
   resources: LessonPairResources;
   rows: PlayableStepRow[];
   sameLanguage: boolean;
@@ -305,23 +310,25 @@ function toListeningFallbacks({
       : [];
   });
 
-  const serialized = serializeExerciseSteps({ resources, steps: inputs });
+  const serialized = serializeExerciseSteps({ languages, resources, steps: inputs });
   return new Map(serialized.map((exercise) => [exercise.id, exercise]));
 }
 
 /** Omits unservable screens; reads, checks, and completion must share this selection. */
 export function toPlayableSteps({
+  languages,
   resources,
   rows,
   sameLanguage,
 }: {
+  languages: LessonLanguages;
   resources: LessonPairResources;
   rows: PlayableStepRow[];
   /** The lesson is in the learner's own language, such as English for English readers. */
   sameLanguage: boolean;
 }): PlayableLibraryStep[] {
-  const exercises = toExerciseSteps({ resources, rows, sameLanguage });
-  const listening = toListeningFallbacks({ resources, rows, sameLanguage });
+  const exercises = toExerciseSteps({ languages, resources, rows, sameLanguage });
+  const listening = toListeningFallbacks({ languages, resources, rows, sameLanguage });
 
   const steps = rows.flatMap((row) => {
     const step = isTeachingKind(row.kind)

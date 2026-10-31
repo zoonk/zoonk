@@ -281,11 +281,59 @@ enum LessonGrading {
     }
   }
 
-  /// A sentence in the learner's language split into words as core splits it: at spaces, with
-  /// punctuation kept on its word. Without a space it's one word, as core keeps "Mexa-se!" whole.
+  /// A sentence in the learner's language split into words as core's `segmentLearnerWords` splits
+  /// it: at spaces, with punctuation kept on its word, and without a space it's one word, as core
+  /// keeps "Mexa-se!" whole. Japanese, the one app language without spaces, splits into phrases.
   static func segmentWords(_ text: String) -> [String] {
     // Spaces before punctuation go, so "Oui !" is one word.
     let normalized = text.replacing(/(\S)\s+([!?.,;:。、！？؟])/) { "\($0.output.1)\($0.output.2)" }
-    return normalized.split(separator: " ").map(String.init)
+
+    guard normalized.contains(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/) else {
+      return normalized.split(separator: " ").map(String.init)
+    }
+
+    return normalized.split(whereSeparator: \.isWhitespace).flatMap { japanesePhrases(String($0)) }
+  }
+
+  private enum PhraseScript {
+    case hiragana, katakana, other
+  }
+
+  /// By the character's first scalar, as core reads each code point: "ﾊﾞ" is one character here.
+  private static func phraseScript(_ character: Character) -> PhraseScript? {
+    let text = character.unicodeScalars.first.map { String($0) } ?? ""
+
+    guard text.wholeMatch(of: /\p{Lm}/) == nil, text.wholeMatch(of: /[\p{L}\p{N}]/) != nil else {
+      return nil
+    }
+
+    if text.wholeMatch(of: /\p{Script=Hiragana}/) != nil {
+      return .hiragana
+    }
+
+    return text.wholeMatch(of: /\p{Script=Katakana}/) != nil ? .katakana : .other
+  }
+
+  /// Core's `splitJapanesePhrases`: a kanji, katakana or Latin word with the kana after it ("駅まで").
+  private static func japanesePhrases(_ text: String) -> [String] {
+    var phrases: [String] = []
+    var previous: PhraseScript?
+
+    for character in text {
+      let script = phraseScript(character)
+      let opens =
+        character.unicodeScalars.first.map { String($0) }?.wholeMatch(of: /[\p{Ps}\p{Pi}]/) != nil
+      let startsWord = script != nil && script != .hiragana && previous != script
+
+      if phrases.isEmpty || opens || (startsWord && previous != nil) {
+        phrases.append(String(character))
+      } else {
+        phrases[phrases.count - 1].append(character)
+      }
+
+      previous = opens ? nil : (script ?? previous)
+    }
+
+    return phrases
   }
 }

@@ -59,7 +59,7 @@ function toComparableScript({ language, text }: { language: string; text: string
 function toTokens({ language, text }: { language: string; text: string }): string[] {
   const normalized = expandContractions({
     language,
-    text: normalizeTypedAnswer(toComparableScript({ language, text })),
+    text: normalizeTypedAnswer(toComparableScript({ language, text }), getBaseLanguage(language)),
   });
 
   const segmenter = getUnspacedSegmenter(language);

@@ -23,6 +23,7 @@ describe(buildTranslationOptions, () => {
     const options = buildTranslationOptions({
       distractorLookup,
       kind: "translation",
+      language: "en",
       word: {
         audioUrl: "/audio/tea.mp3",
         distractors: ["cafe!"],
@@ -37,5 +38,23 @@ describe(buildTranslationOptions, () => {
       { audioUrl: "/audio/tea.mp3", id: "word-1", romanization: null, word: "Tea" },
       { audioUrl: "/audio/cafe.mp3", id: "distractor-1", romanization: null, word: "Café" },
     ]);
+  });
+
+  it("capitalizes options with the rules of their language", () => {
+    const options = buildTranslationOptions({
+      distractorLookup: new Map(),
+      kind: "translation",
+      language: "tr",
+      word: {
+        audioUrl: null,
+        distractors: ["inek"],
+        id: "word-1",
+        romanization: null,
+        translation: "island",
+        word: "ada",
+      },
+    });
+
+    expect(options.map((option) => option.word)).toStrictEqual(["Ada", "İnek"]);
   });
 });

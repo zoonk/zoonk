@@ -5,7 +5,11 @@ import {
   parseStepContent,
 } from "../../library/steps/contract/step-contract";
 import { getTileRomanization } from "./_utils/tile-romanization";
-import { buildSentenceWordOptions, buildWordBankOptions } from "./build-word-bank-options";
+import {
+  type LessonLanguages,
+  buildSentenceWordOptions,
+  buildWordBankOptions,
+} from "./build-word-bank-options";
 import { type ExerciseKind, isExerciseKind } from "./exercise-content";
 import {
   type TranslationOption,
@@ -205,9 +209,11 @@ export type ExerciseResources = {
 
 /** Serializes only supported exercises; malformed content is omitted rather than failing the lesson. */
 export function serializeExerciseSteps({
+  languages,
   resources,
   steps,
 }: {
+  languages: LessonLanguages;
   resources: ExerciseResources;
   steps: StepDataInput[];
 }): SerializedStep[] {
@@ -246,6 +252,7 @@ export function serializeExerciseSteps({
         translationOptions: buildTranslationOptions({
           distractorLookup,
           kind: step.kind,
+          language: languages.targetLanguage,
           word: step.word,
         }),
         vocabularyOptions: serializedLessonWords,
@@ -254,6 +261,7 @@ export function serializeExerciseSteps({
           serializedLessonWords,
           serializedDistractorWords,
           sentenceWordMap,
+          languages,
         ),
       },
     ];

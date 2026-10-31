@@ -6,6 +6,8 @@ import { type DistractorWord } from "./translation-options";
 
 type SerializedSentence = NonNullable<SerializedStep["sentence"]>;
 
+const LANGUAGES = { language: "pt", targetLanguage: "de" };
+
 function keepOrder() {
   vi.mocked(shuffle).mockImplementation((items) => [...items]);
 }
@@ -76,6 +78,7 @@ describe(buildWordBankOptions, () => {
       [],
       [],
       new Map(),
+      LANGUAGES,
     );
 
     expect(options.map((option) => option.word)).toStrictEqual([
@@ -100,6 +103,7 @@ describe(buildWordBankOptions, () => {
         }),
       ],
       new Map(),
+      LANGUAGES,
     );
 
     expect(options.find((option) => option.word === "犬")).toStrictEqual({
@@ -130,6 +134,7 @@ describe(buildWordBankOptions, () => {
       ],
       [makeDistractorWord({ audioUrl: "/audio/noite.mp3", romanization: "noite", word: "noite" })],
       new Map(),
+      LANGUAGES,
     );
 
     expect(options.map((option) => option.word)).toStrictEqual([
@@ -160,6 +165,7 @@ describe(buildWordBankOptions, () => {
       [],
       [],
       new Map(),
+      LANGUAGES,
     );
 
     expect(options.map((option) => option.word)).toStrictEqual([
@@ -188,6 +194,7 @@ describe(buildWordBankOptions, () => {
       [],
       [],
       new Map(),
+      LANGUAGES,
     );
 
     expect(options.map((option) => option.word)).toStrictEqual([
@@ -213,6 +220,7 @@ describe(buildWordBankOptions, () => {
       [],
       [],
       new Map(),
+      LANGUAGES,
     );
 
     expect(options.map((option) => option.word)).toStrictEqual([
@@ -227,12 +235,76 @@ describe(buildWordBankOptions, () => {
     ]);
   });
 
+  it("splits a Japanese translation into phrases a learner can arrange", () => {
+    const options = buildWordBankOptions(
+      makeStep(
+        "listening",
+        makeSentence({
+          sentence: "I drink coffee every morning.",
+          translation: "毎朝コーヒーを飲みます。",
+          translationDistractors: ["紅茶を", "飲みました"],
+        }),
+      ),
+      [],
+      [],
+      new Map(),
+      { language: "ja", targetLanguage: "en" },
+    );
+
+    expect(options.map((option) => option.word)).toStrictEqual([
+      "毎朝",
+      "コーヒーを",
+      "飲みます。",
+      "紅茶を",
+      "飲みました",
+    ]);
+  });
+
+  it("lowercases distractors with the rules of their language", () => {
+    const options = buildWordBankOptions(
+      makeStep(
+        "listening",
+        makeSentence({
+          sentence: "Good morning.",
+          translation: "Günaydın.",
+          translationDistractors: ["Işık", "İyi"],
+        }),
+      ),
+      [],
+      [],
+      new Map(),
+      { language: "tr", targetLanguage: "en" },
+    );
+
+    expect(options.map((option) => option.word)).toStrictEqual(["Günaydın.", "ışık", "iyi"]);
+  });
+
+  it("drops a distractor that is a sentence word in its language's casing", () => {
+    const options = buildWordBankOptions(
+      makeStep(
+        "listening",
+        makeSentence({
+          sentence: "The light is here.",
+          translation: "Işık burada.",
+          translationDistractors: ["ışık", "orada"],
+        }),
+      ),
+      [],
+      [],
+      new Map(),
+      { language: "tr", targetLanguage: "en" },
+    );
+
+    expect(options.map((option) => option.word)).toStrictEqual(["Işık", "burada.", "orada"]);
+  });
+
   it("shows fewer distractors when sanitation removes entries", () => {
     const options = buildWordBankOptions(
       makeStep("reading", makeSentence({ distractors: ["Hola", "Salut"], sentence: "Hola mundo" })),
       [],
       [],
       new Map(),
+      LANGUAGES,
     );
 
     expect(options.map((option) => option.word)).toStrictEqual(["Hola", "mundo", "salut"]);

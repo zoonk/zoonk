@@ -1,4 +1,3 @@
-import { segmentWords } from "@zoonk/utils/string";
 import { parseStepContent } from "../../library/steps/contract/step-contract";
 import { type SelectedAnswer } from "./_utils/selected-answer-schema";
 import { buildAcceptedArrangeWordSequences } from "./arrange-words-answers";
@@ -63,12 +62,16 @@ function checkReadingStep(step: CheckableStep, answer: SelectedAnswer): AnswerRe
     return null;
   }
 
-  const acceptedWords = buildAcceptedArrangeWordSequences(step.sentence.sentence);
+  const acceptedWords = buildAcceptedArrangeWordSequences({
+    kind: "reading",
+    text: step.sentence.sentence,
+  });
+
   const result = checkArrangeWordsAnswer(acceptedWords, answer.arrangedWords);
 
   return {
     ...result,
-    correctAnswer: segmentWords(step.sentence.sentence).join(" "),
+    correctAnswer: step.sentence.sentence,
     feedback: step.sentence.explanation ?? null,
   };
 }
@@ -78,12 +81,16 @@ function checkListeningStep(step: CheckableStep, answer: SelectedAnswer): Answer
     return null;
   }
 
-  const acceptedWords = buildAcceptedArrangeWordSequences(step.sentence.translation);
+  const acceptedWords = buildAcceptedArrangeWordSequences({
+    kind: "listening",
+    text: step.sentence.translation,
+  });
+
   const result = checkArrangeWordsAnswer(acceptedWords, answer.arrangedWords);
 
   return {
     ...result,
-    correctAnswer: segmentWords(step.sentence.translation).join(" "),
+    correctAnswer: step.sentence.translation,
     feedback: step.sentence.explanation ?? null,
   };
 }

@@ -206,6 +206,7 @@ export function languageStep(
   const word = taught ? { ...RENT, id: crypto.randomUUID(), ...taught } : RENT;
 
   const [exercise] = serializeExerciseSteps({
+    languages: { language: "pt", targetLanguage: "en" },
     resources: pairWith(word),
     steps: [
       {

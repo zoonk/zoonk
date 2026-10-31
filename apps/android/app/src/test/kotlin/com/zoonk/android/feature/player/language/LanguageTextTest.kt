@@ -41,6 +41,26 @@ class LanguageTextTest {
     }
 
     @Test
+    fun japaneseInTheLearnersLanguageSplitsIntoPhrases() {
+        assertEquals(listOf("私は", "学生です。"), segmentLearnerWords("私は学生です。"))
+        assertEquals(listOf("毎朝", "コーヒーを", "飲みます。"), segmentLearnerWords("毎朝コーヒーを飲みます。"))
+        assertEquals(listOf("この", "本はとても", "面白かったです。"), segmentLearnerWords("この本はとても面白かったです。"))
+        assertEquals(listOf("彼は", "「はい」と", "言った。"), segmentLearnerWords("彼は「はい」と言った。"))
+        assertEquals(listOf("私は", "iPhone", "15を", "使います"), segmentLearnerWords("私はiPhone 15を使います"))
+        assertEquals(listOf("コーヒー・ケーキ", "3個"), segmentLearnerWords("コーヒー・ケーキ3個"))
+        assertEquals(listOf("東京", "ﾊﾞｽに", "乗る"), segmentLearnerWords("東京ﾊﾞｽに乗る"))
+        assertEquals(listOf("東京大学"), segmentLearnerWords("東京大学"))
+        assertEquals(listOf("Oui,", "je", "suis", "là!"), segmentLearnerWords("Oui , je suis là !"))
+        assertEquals(listOf("저는", "학생이에요."), segmentLearnerWords("저는 학생이에요."))
+    }
+
+    @Test
+    fun wordsAreCountedInTextWithAndWithoutSpaces() {
+        assertEquals(6, countWords("Yo veo un gato - ¿y tú?"))
+        assertTrue(countWords("私は学生です。毎朝コーヒーを飲みます。") >= 8)
+    }
+
+    @Test
     fun theRomanizationHidesOnlyTheAnswersWholeWord() {
         assertNull(templateRomanization("o", null))
         assertEquals("okane o onegai shimasu.", templateRomanization(null, "okane o onegai shimasu."))

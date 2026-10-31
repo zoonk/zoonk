@@ -33,6 +33,7 @@ function activityStep(content: unknown): PlayableActivityStep {
 
 function exerciseStep(kind: PlayableLanguageStep["kind"], content: object): PlayableLanguageStep {
   const [exercise] = serializeExerciseSteps({
+    languages: { language: "en", targetLanguage: "es" },
     resources: { distractorWords: [], lessonSentences: [], lessonWords: [], sentenceWords: [] },
     steps: [{ content, id: `${kind}-step`, kind, position: 0, sentence: null, word: null }],
   });

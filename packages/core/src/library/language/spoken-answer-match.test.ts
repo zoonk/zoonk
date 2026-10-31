@@ -135,6 +135,16 @@ describe(matchSpokenAnswer, () => {
 
     expect(match.isCorrect).toBe(true);
   });
+
+  it("compares Turkish in Turkish casing", () => {
+    const match = matchSpokenAnswer({
+      expected: "Işıklar İzmir'de yanıyor.",
+      heard: "ışıklar izmir'de yanıyor",
+      language: "tr",
+    });
+
+    expect(match.isCorrect).toBe(true);
+  });
 });
 
 describe(pickWordsToExplain, () => {

@@ -1,6 +1,6 @@
 import { sanitizeDistractors } from "@zoonk/utils/distractors";
 import { shuffle } from "@zoonk/utils/shuffle";
-import { segmentWords, stripPunctuation } from "@zoonk/utils/string";
+import { segmentLearnerWords, segmentWords, stripPunctuation } from "@zoonk/utils/string";
 import { getTileRomanization } from "./_utils/tile-romanization";
 import {
   type SerializedStep,
@@ -159,9 +159,19 @@ export function buildSentenceWordOptions(
   return segmentWords(sentence).map((word) => buildOption(word));
 }
 
+export type LessonLanguages = { language: string; targetLanguage: string };
+
+type WordBankConfig = {
+  correctWords: string[];
+  distractors: string[];
+  language: string;
+  usesTargetLanguageMetadata: boolean;
+};
+
 function getWordBankConfig(
   step: SerializedStep,
-): { correctWords: string[]; distractors: string[]; usesTargetLanguageMetadata: boolean } | null {
+  languages: LessonLanguages,
+): WordBankConfig | null {
   if (step.kind === "reading" && step.sentence) {
     return {
       correctWords: segmentWords(step.sentence.sentence),
@@ -170,18 +180,20 @@ function getWordBankConfig(
         input: step.sentence.sentence,
         shape: "single-word",
       }),
+      language: languages.targetLanguage,
       usesTargetLanguageMetadata: true,
     };
   }
 
   if (step.kind === "listening" && step.sentence) {
     return {
-      correctWords: segmentWords(step.sentence.translation),
+      correctWords: segmentLearnerWords(step.sentence.translation),
       distractors: sanitizeDistractors({
         distractors: step.sentence.translationDistractors,
         input: step.sentence.translation,
-        shape: "single-word",
+        shape: "single-learner-word",
       }),
+      language: languages.language,
       usesTargetLanguageMetadata: false,
     };
   }
@@ -189,21 +201,32 @@ function getWordBankConfig(
   return null;
 }
 
-function removeCanonicalWordCollisions(distractors: string[], correctWords: string[]): string[] {
-  const canonicalWordKeys = new Set(correctWords.map((word) => normalizeWordKey(word)));
+function removeCanonicalWordCollisions({
+  correctWords,
+  distractors,
+  language,
+}: {
+  correctWords: string[];
+  distractors: string[];
+  language: string;
+}): string[] {
+  const toKey = (word: string) => stripPunctuation(word).toLocaleLowerCase(language).trim();
+  const canonicalWordKeys = new Set(correctWords.map((word) => toKey(word)));
 
-  return distractors.filter((word) => !canonicalWordKeys.has(normalizeWordKey(word)));
+  return distractors.filter((word) => !canonicalWordKeys.has(toKey(word)));
 }
 
 /** Normalize distractor casing so capitalization cannot reveal extra tiles. */
-function normalizeDistractorCasing(distractor: string): string {
-  return distractor.toLocaleLowerCase();
-}
-
-function getVisibleDistractors(distractors: string[]): string[] {
+function getVisibleDistractors({
+  distractors,
+  language,
+}: {
+  distractors: string[];
+  language: string;
+}): string[] {
   return shuffle(distractors)
     .slice(0, WORD_BANK_DISTRACTOR_LIMIT)
-    .map((distractor) => normalizeDistractorCasing(distractor));
+    .map((distractor) => distractor.toLocaleLowerCase(language));
 }
 
 export function buildWordBankOptions(
@@ -211,16 +234,18 @@ export function buildWordBankOptions(
   lessonWords: SerializedWord[],
   distractorWords: DistractorWord[],
   sentenceWordMap: Map<string, WordDataInput>,
+  languages: LessonLanguages,
 ): WordBankOption[] {
-  const config = getWordBankConfig(step);
+  const config = getWordBankConfig(step, languages);
 
   if (!config) {
     return [];
   }
 
-  const distractors = getVisibleDistractors(
-    removeCanonicalWordCollisions(config.distractors, config.correctWords),
-  );
+  const distractors = getVisibleDistractors({
+    distractors: removeCanonicalWordCollisions(config),
+    language: config.language,
+  });
 
   const words = shuffle([...config.correctWords, ...distractors]);
 

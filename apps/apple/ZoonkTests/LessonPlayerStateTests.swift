@@ -1089,6 +1089,23 @@ final class LessonPlayerSavingTests: XCTestCase {
     XCTAssertEqual(LessonGrading.segmentWords("Je suis là !"), ["Je", "suis", "là!"])
   }
 
+  func testAJapaneseListeningTranslationSplitsIntoPhrasesAsInCore() {
+    let cases: [(String, [String])] = [
+      ("私は学生です。", ["私は", "学生です。"]),
+      ("毎朝コーヒーを飲みます。", ["毎朝", "コーヒーを", "飲みます。"]),
+      ("この本はとても面白かったです。", ["この", "本はとても", "面白かったです。"]),
+      ("彼は「はい」と言った。", ["彼は", "「はい」と", "言った。"]),
+      ("私はiPhone 15を使います", ["私は", "iPhone", "15を", "使います"]),
+      ("コーヒー・ケーキ3個", ["コーヒー・ケーキ", "3個"]),
+      ("東京ﾊﾞｽに乗る", ["東京", "ﾊﾞｽに", "乗る"]),
+      ("東京大学", ["東京大学"]),
+    ]
+
+    for (text, phrases) in cases {
+      XCTAssertEqual(LessonGrading.segmentWords(text), phrases, text)
+    }
+  }
+
   func testANumberedPictureThatNeverCameLeavesItsQuestionOut() throws {
     let numbered = check(id: "numbered")
       .replacingOccurrences(
