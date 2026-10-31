@@ -152,12 +152,14 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
     }
   }
 
-  /// Does nothing when no value is shown.
+  /// Does nothing when no value is shown. A read already on its way predates the change, so it's
+  /// discarded.
   func update(_ transform: (Value) -> Value) {
     guard case .loaded(let value) = state else {
       return
     }
 
+    cancelRequest()
     let updated = transform(value)
     storedState = isEmpty(updated) ? .empty : .loaded(updated)
     revision += 1

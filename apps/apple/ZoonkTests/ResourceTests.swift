@@ -351,6 +351,21 @@ final class ResourceTests: XCTestCase {
     XCTAssertNotEqual(resource.revision, revision)
   }
 
+  func testAReadAlreadyOnItsWayDoesntUndoAnUpdate() async {
+    let requests = Requests(results: [.success(1)])
+    let resource = makeResource(requests: requests)
+    await resource.load()
+
+    requests.suspends = true
+    let refresh = Task { await resource.refresh() }
+    await requests.waitForCount(2)
+    resource.update { _ in 5 }
+    requests.resolve(1, with: .success(1))
+    await refresh.value
+
+    XCTAssertEqual(resource.state, .loaded(5))
+  }
+
   private func makeResource(
     requests: Requests,
     session: SessionStore = .preview(account: .resourceTestAccount),
