@@ -52,7 +52,7 @@ test.describe("Journey", () => {
       await expect(
         editor
           .getByRole("status")
-          .filter({ hasText: `Daily time becomes ${minutesLabel(otherTime)}.` }),
+          .filter({ hasText: `Daily time changed to ${minutesLabel(otherTime)}.` }),
       ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
       await expect.poll(loadPlanItems).not.toStrictEqual(before);
