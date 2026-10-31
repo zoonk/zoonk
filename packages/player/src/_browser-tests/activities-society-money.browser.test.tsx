@@ -60,6 +60,33 @@ async function leaveAndComeBack() {
   await page.getByRole("button", { name: "Previous screen" }).click();
 }
 
+function chartLabels() {
+  return [...document.querySelectorAll("figure svg text")].map((text) => ({
+    box: text.getBoundingClientRect(),
+    text: text.textContent ?? "",
+  }));
+}
+
+function labelsOver(text: string): string[] {
+  const labels = chartLabels();
+  const target = labels.find((label) => label.text === text)?.box;
+
+  if (!target) {
+    throw new Error(`No chart label ${text}`);
+  }
+
+  return labels
+    .filter(
+      ({ box, text: other }) =>
+        other !== text &&
+        target.left < box.right &&
+        box.left < target.right &&
+        target.top < box.bottom &&
+        box.top < target.bottom,
+    )
+    .map((label) => label.text);
+}
+
 function timelineMarks(result: "check" | "x") {
   return document.querySelectorAll(`[data-slot="timeline-event"] .lucide-${result}`);
 }
@@ -120,6 +147,17 @@ describe("money and society activities", () => {
     await expect.element(valueInput()).toHaveValue("1000");
     await checkActivity();
     await expectVerdict("Correct!");
+  });
+
+  it("formula model what-ifs: the right answer's label stays clear of the other chart labels", async () => {
+    openActivity({ content: scenario, template: "formulaModel" });
+    await page.getByRole("button", { name: "Rent goes up $500" }).click();
+    await pressOnSlider("Price per cup", "ArrowRight", 2);
+    await checkActivity();
+    await expectVerdict("Correct!");
+
+    await expect.poll(() => chartLabels().map((label) => label.text)).toContain("1,000");
+    expect(labelsOver("1,000")).toStrictEqual([]);
   });
 
   it("formula model what-ifs: leaving the event off gives the wrong profit", async () => {

@@ -23,7 +23,17 @@ const MIN_DELTA_PIXELS = 12;
 
 type Curve = { points: readonly PlotPoint[]; y: number | null };
 
-function DeltaMark({ from, label, to, x }: { from: number; label: string; to: number; x: number }) {
+function DeltaMark({
+  from,
+  label,
+  to,
+  x,
+}: {
+  from: number;
+  label: string | null;
+  to: number;
+  x: number;
+}) {
   const scales = usePlotScales();
   const [px, top, bottom] = [scales.x.toPixel(x), scales.y.toPixel(from), scales.y.toPixel(to)];
 
@@ -41,15 +51,17 @@ function DeltaMark({ from, label, to, x }: { from: number; label: string; to: nu
         strokeDasharray="3 3"
         strokeWidth={1.5}
       />
-      <text
-        className="fill-current text-xs font-semibold tabular-nums"
-        dominantBaseline="middle"
-        textAnchor={nearRight ? "end" : "start"}
-        x={nearRight ? px - DELTA_LABEL_GAP : px + DELTA_LABEL_GAP}
-        y={(top + bottom) / 2}
-      >
-        {label}
-      </text>
+      {label && (
+        <text
+          className="fill-current text-xs font-semibold tabular-nums"
+          dominantBaseline="middle"
+          textAnchor={nearRight ? "end" : "start"}
+          x={nearRight ? px - DELTA_LABEL_GAP : px + DELTA_LABEL_GAP}
+          y={(top + bottom) / 2}
+        >
+          {label}
+        </text>
+      )}
     </g>
   );
 }
@@ -113,7 +125,8 @@ export function ActivityFormulaChart({
       <ActivityPlotLine points={current.points} />
 
       {baseline?.y !== null && baseline?.y !== undefined && current.y !== null && deltaLabel && (
-        <DeltaMark from={baseline.y} label={deltaLabel} to={current.y} x={x} />
+        // Once checked, the right answer's label takes the change label's place; the readouts still say it.
+        <DeltaMark from={baseline.y} label={expected ? null : deltaLabel} to={current.y} x={x} />
       )}
 
       {baseline?.y !== null && baseline?.y !== undefined && (
