@@ -36,7 +36,7 @@ describe(transcribeSpeech, () => {
     vi.mocked(transcribe).mockReset();
   });
 
-  it("asks gpt-transcribe, then MAI-Transcribe 2, for verbatim words in the learner's language, away from providers that train on them", async () => {
+  it("asks gpt-transcribe for verbatim words in the learner's language, away from providers that train on them", async () => {
     vi.mocked(transcribe).mockResolvedValueOnce(heard(" Eu quero mas café. "));
 
     const result = await transcribeSpeech({ audio: AUDIO, language: "pt-BR" });
@@ -45,8 +45,7 @@ describe(transcribeSpeech, () => {
     expect(triedModels()).toStrictEqual(["gateway:openai/gpt-transcribe"]);
 
     expect(vi.mocked(transcribe).mock.calls[0]?.[0].providerOptions).toStrictEqual({
-      azure: { locales: ["pt"] },
-      gateway: { disallowPromptTraining: true, models: ["microsoft/mai-transcribe-2"] },
+      gateway: { disallowPromptTraining: true },
       openai: { language: "pt", prompt: expect.stringContaining("Never correct them") },
     });
 
@@ -57,19 +56,18 @@ describe(transcribeSpeech, () => {
     });
   });
 
-  it("records and prices the fallback that heard the audio", async () => {
+  it("prices the audio by length and records the credential the gateway used", async () => {
     vi.mocked(transcribe).mockResolvedValueOnce(
       heard("How much is the hint?", {
         durationInSeconds: 60,
         providerMetadata: {
           gateway: {
             routing: {
-              finalProvider: "azure",
+              finalProvider: "openai",
               modelAttempts: [
-                { canonicalSlug: "openai/gpt-transcribe", success: false },
                 {
-                  canonicalSlug: "microsoft/mai-transcribe-2",
-                  providerAttempts: [{ credentialType: "system", success: true }],
+                  canonicalSlug: "openai/gpt-transcribe",
+                  providerAttempts: [{ credentialType: "byok", success: true }],
                   success: true,
                 },
               ],
@@ -82,34 +80,24 @@ describe(transcribeSpeech, () => {
     const { provenance } = await transcribeSpeech({ audio: AUDIO, language: "en" });
 
     expect(provenance).toMatchObject({
-      costUsd: computeCallCostUsd({
-        model: "microsoft/mai-transcribe-2",
-        usage: { audioSeconds: 60 },
-      }),
-      credential: "system",
-      model: "microsoft/mai-transcribe-2",
-      provider: "azure",
-      requestedModel: "openai/gpt-transcribe",
+      costUsd: computeCallCostUsd({ model: "openai/gpt-transcribe", usage: { audioSeconds: 60 } }),
+      credential: "byok",
+      model: "openai/gpt-transcribe",
+      provider: "openai",
       usage: { audioSeconds: 60 },
     });
   });
 
-  it("tries only the requested model when fallbacks are off", async () => {
+  it("transcribes with the requested model", async () => {
     vi.mocked(transcribe).mockResolvedValueOnce(heard("Tengo un pero"));
 
     const result = await transcribeSpeech({
       audio: AUDIO,
       language: "es",
       model: "google/gemini-3.5-transcribe",
-      useFallback: false,
     });
 
     expect(triedModels()).toStrictEqual(["gateway:google/gemini-3.5-transcribe"]);
-
-    expect(vi.mocked(transcribe).mock.calls[0]?.[0].providerOptions).toMatchObject({
-      gateway: { disallowPromptTraining: true, models: [] },
-    });
-
     expect(result.provenance).toMatchObject({ model: "google/gemini-3.5-transcribe" });
   });
 

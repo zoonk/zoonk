@@ -26,8 +26,6 @@ export type TranscriptionModelId = (typeof TRANSCRIPTION_MODELS)[number];
  */
 const defaultModel: TranscriptionModelId = "openai/gpt-transcribe";
 
-const FALLBACK_MODELS: readonly TranscriptionModelId[] = ["microsoft/mai-transcribe-2"];
-
 /** Never includes the expected answer, which would bias the model toward "hearing" it. */
 const TRANSCRIPTION_PROMPT =
   "A language learner is practicing. Write exactly the words you hear, including mispronounced words, wrong grammar and wrong words. Never correct them.";
@@ -39,24 +37,16 @@ export type TranscribeSpeechParams = {
   audio: Uint8Array;
   language: string;
   model?: TranscriptionModelId;
-  useFallback?: boolean;
   analytics?: AiGenerationContext;
 };
 
 export type SpeechTranscript = { text: string };
 
-/**
- * Each provider reads only its own options. Given the locale, MAI-Transcribe rejects a language it
- * can't hear, such as Irish, instead of writing it as another language's words.
- */
-function getProviderOptions({ language, useFallback }: { language: string; useFallback: boolean }) {
-  const code = getBaseLanguage(language);
-
+function getProviderOptions(language: string) {
   return {
-    azure: { locales: [code] },
-    gateway: { ...NO_PROMPT_TRAINING, models: useFallback ? [...FALLBACK_MODELS] : [] },
+    gateway: NO_PROMPT_TRAINING,
     openai: {
-      language: code,
+      language: getBaseLanguage(language),
       prompt: TRANSCRIPTION_PROMPT,
     } satisfies OpenAITranscriptionModelOptions,
   };
@@ -89,16 +79,16 @@ function buildTranscriptionProvenance({
 }
 
 /**
- * The audio is only sent to the model; nothing here stores it. gpt-transcribe and its fallback
- * reject a language they don't support, such as Irish or Malagasy; other models may return wrong
- * text instead.
+ * The audio is only sent to the model; nothing here stores it. The default model, gpt-transcribe,
+ * rejects a language it doesn't support, such as Irish or Malagasy; other models may return wrong
+ * text instead. It has no fallback: no other gateway model reads the WebM and MP4 learners record
+ * and also refuses a language it can't hear.
  */
 export async function transcribeSpeech({
   analytics,
   audio,
   language,
   model = defaultModel,
-  useFallback = true,
 }: TranscribeSpeechParams) {
   const run = startTaskRun({
     analytics,
@@ -110,7 +100,7 @@ export async function transcribeSpeech({
   const result = await transcribe({
     audio,
     model: zoonkGateway.transcriptionModel(model),
-    providerOptions: getProviderOptions({ language, useFallback }),
+    providerOptions: getProviderOptions(language),
   });
 
   const provenance = await run.finish((details) =>
