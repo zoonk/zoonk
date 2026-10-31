@@ -7,8 +7,11 @@ import com.zoonk.api.models.ItemSetListening
 import com.zoonk.api.models.LanguageConversationStartInputOneOf
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf12
 import com.zoonk.api.models.MockShape
+import com.zoonk.api.models.PlayableLibraryStepAnyOf5Content
 import com.zoonk.api.models.PlayableLibraryStepAnyOf9Exercise
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf18Fields
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf21Fields
+import com.zoonk.api.models.SpeechClipRequest
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -51,6 +54,29 @@ class ApiJsonTest {
 
         val decoded = ApiJson.decodeFromString<PlayableLibraryStepAnyOf9Exercise>(exercise)
         assertTrue(decoded is PlayableLibraryStepAnyOf9Exercise.PlayableLibraryStepAnyOf5ListeningOneOf2Value)
+    }
+
+    @Test
+    fun languageFieldsTakeAnyTagAGoalCanName() {
+        val spokenAnswer =
+            ApiJson.decodeFromString<PlayableLibraryStepAnyOf5Content>(
+                """{"language":"sr-Latn","prompt":"Say hello","targetText":"Zdravo"}""",
+            )
+        val dialogue =
+            ApiJson.decodeFromString<PlayableLibraryStepAnyOfContentOneOf21Fields>(
+                """
+                {"language":"es-419","lines":[{"speaker":"them","text":"Hola","translation":"Hi"}],
+                 "replies":[{"id":"a","isBest":true,"text":"Hola","translation":"Hi","why":"A greeting"}],"scene":"A café"}
+                """.trimIndent(),
+            )
+        val clip =
+            ApiJson.decodeFromString<SpeechClipRequest>(
+                ApiJson.encodeToString(SpeechClipRequest.serializer(), SpeechClipRequest("zh-TW", "你好")),
+            )
+
+        assertEquals("sr-Latn", spokenAnswer.language)
+        assertEquals("es-419", dialogue.language)
+        assertEquals("zh-TW", clip.language)
     }
 
     @Test
