@@ -233,15 +233,21 @@ internal fun levelTestOf(
     answered: Int = 0,
     total: Int = 12,
     levels: List<String> = emptyList(),
+    showAlphabetNote: Boolean = false,
 ): LanguageLevelTest =
     ApiJson.decodeFromString(
         """
         {"answered":$answered,"lastCorrect":null,"levels":[${levels.joinToString(",")}],"next":$next,"status":"ready",
-         "showAlphabetNote":false,"targetLanguage":"it","total":$total}
+         "showAlphabetNote":$showAlphabetNote,"targetLanguage":"it","total":$total}
         """.trimIndent(),
     )
 
-internal fun preparingTestOf(startedAt: String? = null): LanguageLevelTest =
+internal fun preparingTestOf(
+    startedAt: String? = null,
+    showAlphabetNote: Boolean = false,
+): LanguageLevelTest =
     ApiJson.decodeFromString(
-        """{"expectedSeconds":120,"showAlphabetNote":false,"startedAt":${startedAt?.let { "\"$it\"" } ?: "null"},"status":"preparing"}""",
+        """{"expectedSeconds":120,"showAlphabetNote":$showAlphabetNote,"startedAt":${startedAt?.let {
+            "\"$it\""
+        } ?: "null"},"status":"preparing"}""",
     )

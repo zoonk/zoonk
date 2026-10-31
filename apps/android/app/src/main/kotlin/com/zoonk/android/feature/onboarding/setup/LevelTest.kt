@@ -66,6 +66,13 @@ internal fun levelTestPhase(
     }
 }
 
+internal val LanguageLevelTest.showAlphabetNote: Boolean
+    get() =
+        when (this) {
+            is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.showAlphabetNote
+            is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.showAlphabetNote
+        }
+
 private fun LanguageLevelTestOneOf1.phase(): LevelTestPhase {
     val progress = answered.toFloat() / total.coerceAtLeast(1)
     return when (val next = next) {

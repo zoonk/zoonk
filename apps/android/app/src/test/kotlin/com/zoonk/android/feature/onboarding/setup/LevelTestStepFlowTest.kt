@@ -121,14 +121,28 @@ class LevelTestStepFlowTest {
     }
 
     @Test
-    fun aLanguageInAnotherAlphabetSuggestsSkippingIt() {
+    fun aTestReadyForItsQuestionsSuggestsSkippingWhenCoreSaysItsAlphabetIsNew() {
+        api.levelTest = levelTestOf(showAlphabetNote = true)
+        show()
+
+        rule.onNodeWithText(ALPHABET_NOTE).assertIsDisplayed()
+    }
+
+    @Test
+    fun aTestStillBeingPreparedSuggestsSkippingWhenCoreSaysItsAlphabetIsNew() {
+        api.levelTest = preparingTestOf(showAlphabetNote = true)
+        show()
+
+        rule.onNodeWithText(ALPHABET_NOTE).assertIsDisplayed()
+    }
+
+    @Test
+    fun theAlphabetNoteStaysOutWhenCoreSaysNot() {
+        api.levelTest = levelTestOf(showAlphabetNote = false)
         show(targetLanguage = "ja")
 
         rule.onNodeWithText("Let's see your level in Japanese").assertIsDisplayed()
-        rule
-            .onNodeWithText(
-                "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it.",
-            ).assertIsDisplayed()
+        rule.onNodeWithText(ALPHABET_NOTE).assertDoesNotExist()
     }
 
     @Test
@@ -418,5 +432,6 @@ class LevelTestStepFlowTest {
         const val POLL_MS = 3_500L
         const val MESSAGE = "Ci vediamo alla stazione alle otto."
         const val CLIP_URL = "https://clips.test/level-test/stazione.mp3"
+        const val ALPHABET_NOTE = "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it."
     }
 }

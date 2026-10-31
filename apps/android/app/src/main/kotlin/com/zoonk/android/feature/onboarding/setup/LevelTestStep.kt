@@ -2,7 +2,6 @@ package com.zoonk.android.feature.onboarding.setup
 
 import android.app.LocaleConfig
 import android.app.LocaleManager
-import android.icu.util.ULocale
 import android.os.Build
 import android.os.LocaleList
 import androidx.compose.foundation.layout.Arrangement
@@ -52,6 +51,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.audio.SpeechFailedNote
 import com.zoonk.android.feature.audio.SpeechPlayer
@@ -125,6 +125,7 @@ internal fun ColumnScope.LanguageLevelTestStep(
                 language,
                 targetLanguage,
                 testMinutes,
+                showAlphabetNote = (test as? LoadState.Loaded)?.value?.showAlphabetNote == true,
                 pending = vm.isSaving,
                 failed = vm.finishFailed,
                 onStart = vm::begin,
@@ -171,6 +172,7 @@ private fun ColumnScope.LevelTestIntro(
     language: String,
     targetLanguage: String,
     testMinutes: Int,
+    showAlphabetNote: Boolean,
     pending: Boolean,
     failed: Boolean,
     onStart: () -> Unit,
@@ -180,7 +182,7 @@ private fun ColumnScope.LevelTestIntro(
         stringResource(R.string.onboarding_language_test_title, languageName(targetLanguage, currentLocale())),
         stringResource(R.string.onboarding_language_test_description, formatMinutes(testMinutes, currentLocale())),
     )
-    if (usesNonLatinScript(targetLanguage)) {
+    if (showAlphabetNote) {
         Text(
             stringResource(R.string.onboarding_language_test_new_alphabet),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -494,12 +496,6 @@ private fun skillName(skill: LanguageLevelTestOneOf1LevelsInner.Skill): String =
             LanguageLevelTestOneOf1LevelsInner.Skill.WRITING -> R.string.onboarding_language_test_writing
         },
     )
-
-internal fun usesNonLatinScript(tag: String): Boolean =
-    ULocale.addLikelySubtags(ULocale.forLanguageTag(tag)).script.let {
-        it.isNotEmpty() &&
-            it != "Latn"
-    }
 
 private const val LISTENING_RATE = 0.9f
 
