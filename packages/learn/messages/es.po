@@ -4301,13 +4301,13 @@ msgstr "hasta aproximadamente el {date}"
 #: src/journey/path-phase-row.tsx
 msgctxt "M6MlNv"
 msgid "Continues today"
-msgstr "Se retoma hoy"
+msgstr "Continúa hoy"
 
 #. When this phase continues. {date} is a day, like "May 5".
 #: src/journey/path-phase-row.tsx
 msgctxt "-DKe0Q"
 msgid "Continues {date}"
-msgstr "Se retoma el {date}"
+msgstr "Continúa el {date}"
 
 #. On a phase of the learner's plan: the plan has no room for its challenge before their goal's date.
 #: src/journey/path-phase-row.tsx
@@ -7305,7 +7305,7 @@ msgstr "Cuando quieras: un día completo de examen o medio día"
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
 msgid "Continue your mock exam"
-msgstr "Retomar tu simulacro"
+msgstr "Continuar tu simulacro"
 
 #: src/mock/mock-entry.tsx
 msgctxt "QJQ0Nr"
@@ -9341,7 +9341,7 @@ msgstr "Ayuda a que tu plan se enfoque en lo más importante."
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "m-5-7M"
 msgid "Your target"
-msgstr "Tu objetivo"
+msgstr "Tu meta"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "baXBse"
@@ -12715,7 +12715,7 @@ msgstr "{lessons, plural, one {Mañana empezarás con # lección más para poner
 #: src/today/today-catch-up.tsx
 msgctxt "HK8HHp"
 msgid "Catch up today · +{time}"
-msgstr "Ponerse al día hoy · +{time}"
+msgstr "Ponerte al día hoy · +{time}"
 
 #: src/today/today-change-notice.tsx
 msgctxt "ZoDO4s"
