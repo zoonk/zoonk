@@ -84802,6 +84802,12 @@
             "nullable": true,
             "type": "string"
           },
+          "sourceIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "timeZone": {
             "nullable": true,
             "type": "string"
@@ -85225,6 +85231,10 @@
             "nullable": true,
             "type": "object",
             "properties": {
+              "board": {
+                "nullable": true,
+                "type": "string"
+              },
               "checkedAt": {
                 "type": "string",
                 "format": "date-time",
@@ -85271,6 +85281,10 @@
             "nullable": true,
             "type": "object",
             "properties": {
+              "board": {
+                "nullable": true,
+                "type": "string"
+              },
               "checkedAt": {
                 "type": "string",
                 "format": "date-time",
@@ -85344,6 +85358,10 @@
                   "type": "object",
                   "properties": {
                     "basis": {
+                      "type": "string"
+                    },
+                    "board": {
+                      "nullable": true,
                       "type": "string"
                     },
                     "name": {
