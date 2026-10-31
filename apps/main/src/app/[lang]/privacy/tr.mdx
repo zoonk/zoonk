@@ -26,7 +26,7 @@ Bu verileri elektronik ortamda, girdiğin bilgilerden ve Zoonk'u web'de ve uygul
 ## 2. Verileri neden kullanıyoruz
 
 - **Zoonk'u senin için çalıştırmak:** hesabın, hedeflerin, planların, derslerin, ilerlemen, ders arkadaşın, belleğin, sesli özellikler ve hesap e-postaları. Bunlar, kaydolduğun hizmeti sunabilmemiz için gereklidir (seninle yaptığımız sözleşme).
-- **Yaşını kontrol etmek:** doğum yılını asgari yaşı uygulamak ve reşit olmayanların verilerini korumak için kullanırız (bölüm 14). Bu, bazı ülkelerde kanunen zorunludur (hukuki yükümlülük) ve genç öğrencileri koruma konusundaki meşru menfaatimizdir.
+- **Yaşını kontrol etmek:** doğum yılını asgari yaşı uygulamak ve reşit olmayanların verilerini korumak için kullanırız (bölüm 14). Bazı ülkelerde bu kanunen zorunludur (hukuki yükümlülük); diğer yerlerde ise genç öğrencileri koruma konusundaki meşru menfaatimizdir.
 - **Ödemeleri almak ve kayıt tutmak:** Plus'ı sunmak, iptalleri işleme almak ve iadeleri göndermek (seninle yaptığımız sözleşme) ve kanunun gerektirdiği vergi ve muhasebe kayıtlarını tutmak (hukuki yükümlülük).
 - **Zoonk'u güvende tutmak:** dolandırıcılığı, botları ve kötüye kullanımı önlemek ve adil kullanım sınırlarını uygulamak. Bu, Zoonk'u ve onu kullanan kişileri koruma konusundaki meşru menfaatimizdir. Brezilya kanunu gerektirdiği için her girişin kaydını tutarız (hukuki yükümlülük, bölüm 10).
 - **Zoonk'u düzeltmek ve geliştirmek:** kullanım analizi, oturum kayıtları, hata raporları ve yapay zekâ içeriğinin kalite kontrolleri. Bu, hataları bulma ve Zoonk'u iyileştirme konusundaki meşru menfaatimizdir. AB, AEA, Birleşik Krallık, İsviçre ve Türkiye'de tarayıcındaki kullanım analizi yalnızca kabul edersen başlar (rızan). Kullanım analizini istediğin zaman kapatabilir (bölüm 7) ve geri kalanına itiraz edebilirsin (bölüm 12).
@@ -79,7 +79,7 @@ Reklam göstermeyiz; verilerini asla satmayız ve reklam amacıyla paylaşmayız
 
 - Zoonk'un nasıl kullanıldığını anlamak, sorunları gidermek ve Zoonk'u geliştirmek için PostHog (kullanım analizi ve oturum kayıtları) ve Vercel Web Analytics kullanırız. Oturum kaydı, ekranların nasıl görüntülendiğini ve kullanıldığını gösterir. Yazdıkların veya yüklediklerin ekrandaysa bir kayıtta görünebilir. Analiz verilerini yalnızca Zoonk'u işletmek için bunlara ihtiyacı olan kişiler görebilir.
 - **Ne zaman başlar:** AB, AEA, Birleşik Krallık, İsviçre ve Türkiye'de, kullanım verileriyle ilgili bildirimimizde “Kabul et” seçeneğini seçene kadar başlamazlar. Diğer yerlerde sen kapatmadıkça açıktırlar. Giriş sayfalarımız bunları yüklemez.
-- **Kapatma:** Web'de veya uygulamalarımızda Ayarlar › Tercihler bölümündeki “Kullanım verilerini paylaş” seçeneğini kullan. Kapatmak, tarayıcındaki kullanım analizini ve sunucularımızın hesabınla ilgili kaydettiği olayları durdurur. Cihazlarından herhangi birinde kapatırsan, hesabın için her yerde kapanır.
+- **Kapatma:** Web'de veya uygulamalarımızda Ayarlar › Tercihler bölümündeki “Kullanım verilerini paylaş” seçeneğini kullan. Kapatmak, tarayıcındaki kullanım analizini ve sunucularımızın hesabınla ilgili kaydettiği olayları durdurur. Cihazlarından herhangi birinde oradan kapatırsan, hesabın için her yerde kapanır.
 - **Reşit olmayanlar:** Oturum kaydını ve PostHog profilini yalnızca 18 yaş ve üzerinde, Kore'de 19 yaş ve üzerinde olduğunu bildiğimiz öğrenciler için tutarız. Daha küçük olanlar veya yaşını bilmediğimiz kişiler için oturum kaydı da profil de olmaz.
 - **Sunucularımızdan gelen olaylar:** Sunucularımız da Zoonk'un nasıl kullanıldığını anlamak için bir dersi bitirmen veya nasıl giriş yaptığın gibi bazı olayları kaydeder. Bunlar çerez kullanmaz ve meşru menfaatimize dayanır. “Kullanım verilerini paylaş” seçeneğini kapatmak bunları da durdurur. Uygulamalarımızda analiz araçları yoktur; bu nedenle orada yalnızca bu olaylar geçerlidir.
 - **Ülken:** Her ziyarette fiyatları göstermek ve ülkenin kurallarını uygulamak için ülkeni IP adresinden, bu mümkün olmadığında tarayıcının dilinden belirleriz. Bunu hesabına kaydetmeyiz.
@@ -100,6 +100,8 @@ Tarayıcın veya uygulaman şu hizmetlere doğrudan bilgi gönderir:
 - **PostHog:** kullanım verileri açıkken gördüğün ekranlar, tıklamalar ve dokunmalar, bir ziyaretçi kimliği, cihaz, tarayıcı, IP adresi ve oturum kayıtları; kullanımı anlamak ve sorunları gidermek için.
 - **Vercel Web Analytics:** kullanım verileri açıkken sayfanın adresi, geldiğin sayfa, cihaz ve tarayıcı; ziyaretleri saymak için.
 - **Vercel BotID:** giriş yaptığında, misafir olarak başladığında veya bir aboneliği iptal ettiğinde güvenlik kontrolleri; botları engellemek için.
+- **Vercel Blob:** dosya yüklediğinde yüklediğin dosyalar ve IP adresin; bunları saklamak için (bölüm 6).
+- **OpenAI:** canlı sesli sohbetlerde sesin, IP adresin ve tarayıcın veya cihazın; sohbeti yürütmek için (bölüm 5).
 - **Sentry:** hata ayrıntıları, cihaz ve tarayıcı; hataları düzeltmek için.
 - **jsDelivr:** programlama etkinliklerinde IP adresin ve tarayıcın; programlama araçlarını yüklemek için.
 - **GitHub Pages:** müzik etkinliklerinde IP adresin ve tarayıcın; enstrüman seslerini yüklemek için.
@@ -171,9 +173,9 @@ Zoonk'u hesap oluşturmadan deneyebilirsin. Bir çerez, misafir oturumunu cihaz�
 ## 13. Hesabını silme
 
 - Profil sayfandaki “Hesabı sil” seçeneğiyle hesabını istediğin zaman silebilirsin.
-- Bunun ardından hesabını, öğrenme verilerini, belleğini, yüklediğin dosyaları ve özel dosyalarından oluşturulan her şeyi sileriz ve web sitemizdeki aboneliğini iade yapmadan hemen sona erdiririz. 14 gün içinde iade gibi hak ettiğin bir iadeyi almak için hesabını silmeden önce iptal et (bkz. [Koşullar](/terms)). App Store veya Google Play'den yapılan bir abonelik Apple'da veya Google'da kalır: onu oradaki hesabından iptal et.
+- Bunun ardından hesabını, öğrenme verilerini, belleğini, yüklediğin dosyaları ve özel dosyalarından oluşturulan her şeyi sileriz ve web sitemizdeki aboneliğini iade yapmadan hemen sona erdiririz. 14 gün içinde iade gibi hak ettiğin bir iadeyi almak için hesabını silmeden önce iptal et veya sonrasında aynı e-posta adresinden bize yaz (bkz. [Koşullar](/terms)). App Store veya Google Play'den yapılan bir abonelik Apple'da veya Google'da kalır: onu oradaki hesabından iptal et.
 - Bir sorunun ilk denemede doğru cevaplanıp cevaplanmadığı ve bir dersin ne kadar sürdüğü gibi bazı çalışma istatistikleri, herkes için dersleri iyileştirmek amacıyla, seninle bağlantı kuracak hiçbir şey olmadan saklanır.
-- 30 gün içinde PostHog profilini de olay kayıtları ve oturum kayıtlarıyla birlikte sileriz. 18 yaşından küçük öğrencilerinkiler gibi profili olmayan olay kayıtları ad veya e-posta içermez ve PostHog'un saklama süresi dolduğunda silinir.
+- 30 gün içinde PostHog profilini de olay kayıtları ve oturum kayıtlarıyla birlikte sileriz. 18 yaşından küçük öğrencilerinkiler gibi profili olmayan olay kayıtları hesap kimliğini korur ancak ad veya e-posta içermez ve PostHog'un saklama süresi dolduğunda silinir.
 - Giriş kayıtları 6 ay boyunca kalır (bölüm 10).
 - Yüklediğin ve ortak kaynak hâline gelen kamuya açık belgeler, artık seninle bağlantılı olmadıkları için kalır.
 - Ödeme kayıtları, ödeme ve vergi mevzuatının gerektirdiği şekilde Stripe, Apple veya Google'da kalır.
