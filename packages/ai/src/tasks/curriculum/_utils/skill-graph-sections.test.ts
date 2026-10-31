@@ -117,7 +117,7 @@ describe(joinSections, () => {
     ]);
   });
 
-  it("turns a topic another call's subject teaches into the first skill that teaches it", () => {
+  it("turns a topic another call's subject teaches into every skill that teaches it", () => {
     const joined = joinSections([
       [
         rawSkill({ key: "constitution-basics", topics: ["S2.1"] }),
@@ -125,7 +125,11 @@ describe(joinSections, () => {
         rawSkill({ key: "amendments", topics: ["S2.4"] }),
       ],
       [
-        rawSkill({ key: "bill-procedure", prerequisites: ["S2.4", "S9.9"], topics: ["S5.1"] }),
+        rawSkill({
+          key: "bill-procedure",
+          prerequisites: ["S2.4", "S2.5", "S9.9"],
+          topics: ["S5.1"],
+        }),
         rawSkill({ key: "own-topic", prerequisites: ["S5.1"], topics: ["S5.2"] }),
       ],
     ]);
@@ -135,7 +139,7 @@ describe(joinSections, () => {
       ["s1-constitution-basics", []],
       ["s1-legislative-process-rules", []],
       ["s1-amendments", []],
-      ["s2-bill-procedure", ["s1-legislative-process-rules"]],
+      ["s2-bill-procedure", ["s1-legislative-process-rules", "s1-amendments"]],
       ["s2-own-topic", ["s2-bill-procedure"]],
     ]);
   });

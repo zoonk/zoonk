@@ -68,11 +68,16 @@ export function toSectionCalls(sections: readonly GraphFrameSection[]): GraphFra
 
 type RawSkill = RawSkillGraph["skills"][number];
 
-function findTopicTeachers(skills: readonly RawSkill[]): Map<string, string> {
+function findTopicTeachers(skills: readonly RawSkill[]): Map<string, string[]> {
+  const taught = skills.flatMap((skill) =>
+    skill.topics.map((topic) => ({ key: skill.key, topic: topic.trim() })),
+  );
+
   return new Map(
-    skills
-      .toReversed()
-      .flatMap((skill) => skill.topics.map((topic): [string, string] => [topic.trim(), skill.key])),
+    [...Map.groupBy(taught, (entry) => entry.topic)].map(([topic, entries]) => [
+      topic,
+      entries.map((entry) => entry.key),
+    ]),
   );
 }
 
@@ -83,7 +88,8 @@ export function getSectionCall(key: string): number | null {
 
 /**
  * Calls write at once and may name the same key, so keys are made unique. A prerequisite naming
- * another call's topic id (`S2.4`) becomes the first skill that teaches that topic.
+ * another call's topic id (`S2.4`) becomes every skill that teaches that topic, since the skill
+ * applies what the whole topic teaches.
  */
 export function joinSections(calls: readonly (readonly RawSkill[])[]): RawSkill[] {
   const keyed = calls.flatMap((skills, index) =>
@@ -100,9 +106,14 @@ export function joinSections(calls: readonly (readonly RawSkill[])[]): RawSkill[
 
   return keyed.map((skill) => ({
     ...skill,
-    prerequisites: skill.prerequisites.flatMap((key) => {
-      const resolved = isTopicId(key) ? teachers.get(key) : key;
-      return resolved && resolved !== skill.key ? [resolved] : [];
-    }),
+    prerequisites: [
+      ...new Set(
+        skill.prerequisites.flatMap((key) =>
+          (isTopicId(key) ? (teachers.get(key) ?? []) : [key]).filter(
+            (resolved) => resolved !== skill.key,
+          ),
+        ),
+      ),
+    ],
   }));
 }
