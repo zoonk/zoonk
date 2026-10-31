@@ -194,7 +194,7 @@ const lesson = {
 const CALL_STEPS = { callReady: "done", joinRunningCall: "join", writeCall: "write" } as const;
 
 const conversationCall = {
-  phases: [{ id: "write", seconds: 20 }],
+  phases: [{ id: "write", seconds: 40 }],
   steps: CALL_STEPS,
 } as const satisfies GenerationKindDefinition<CallWritingStepName, "write">;
 
