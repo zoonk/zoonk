@@ -94,6 +94,7 @@ function ScheduleTime({ exam, schedule }: { exam: boolean; schedule: Schedule })
         full={found.found && getFullMinutes(readTimeToCover(found.found))}
         label={t("Time a day")}
         minutes={minutes}
+        titled
         onChange={(next) =>
           setPicked(
             toPickedMinutes({
@@ -235,9 +236,10 @@ export function ScheduleStep({
       title={t("How much time can you study each day?")}
     >
       <PlanReceiptChips className="min-[72rem]:hidden" goal={goal} />
+      {/* The days decide the time, and what the time covers arrives last, so nothing above it moves. */}
+      <ScheduleWeek recommendedMinutes={recommendedMinutes} schedule={schedule} />
       <ScheduleTime exam={exam} schedule={schedule} />
       {exam && <ExamFullCourse schedule={schedule} />}
-      <ScheduleWeek recommendedMinutes={recommendedMinutes} schedule={schedule} />
     </StepForm>
   );
 }

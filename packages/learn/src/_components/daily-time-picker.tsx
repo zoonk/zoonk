@@ -179,13 +179,30 @@ function DailyTimeReadout({
 
 export function DailyTimePicker({
   minutes,
+  titled = false,
   ...props
-}: DailyTimeProps & { minutes: number | null }) {
-  if (minutes === null) {
-    return <Skeleton className="h-12 w-40" />;
+}: DailyTimeProps & { minutes: number | null; titled?: boolean }) {
+  const picker =
+    minutes === null ? (
+      <Skeleton className="h-12 w-40" />
+    ) : (
+      <DailyTimeReadout minutes={minutes} {...props} />
+    );
+
+  if (!titled) {
+    return picker;
   }
 
-  return <DailyTimeReadout minutes={minutes} {...props} />;
+  return (
+    <div className="flex flex-col gap-3">
+      {/* The picker carries the name for screen readers (`label`); this is its visible title. */}
+      <span aria-hidden="true" className="text-sm font-medium">
+        {props.label}
+      </span>
+
+      {picker}
+    </div>
+  );
 }
 
 export function DailyTimeField({ defaultMinutes, name }: { defaultMinutes: number; name: string }) {

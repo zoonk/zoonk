@@ -161,11 +161,6 @@ function DailyMinutes({
 
   return (
     <div className="flex flex-col gap-3" id={getEditorSectionId("time")}>
-      {/* The picker carries the name for screen readers (`label`); this is its visible title. */}
-      <span aria-hidden="true" className="text-sm font-medium">
-        {t("Time a day")}
-      </span>
-
       <DailyTimePicker
         disabled={isPending}
         full={getFullMinutes(answer)}
@@ -174,6 +169,7 @@ function DailyMinutes({
         onChange={setMinutes}
         saves
         suggested={getOfferedMinutes(answer)}
+        titled
       />
 
       <DailyCoverage
