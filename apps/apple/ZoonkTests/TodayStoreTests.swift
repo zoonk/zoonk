@@ -63,7 +63,8 @@ final class TodayStoreTests: XCTestCase {
       session: day(blocks: [block(position: 0, kind: "review")], nextPosition: 0))
     let api = StudyAPIStub(
       opened: OpenedStudyDay(
-        opening: try opening(#"{"blockId":"b1","kind":"session"}"#), sessionId: "s1"),
+        opening: try opening(#"{"blockId":"b1","kind":"session","sessionId":"s1"}"#),
+        sessionId: "s1"),
       today: .day(view))
     let store = TodayStore(api: api, cache: signedInCache())
     await store.today.load()
@@ -126,7 +127,8 @@ final class TodayStoreTests: XCTestCase {
     let view = try today(session: day(blocks: [review], nextPosition: 0, id: "s1"))
     let api = StudyAPIStub(
       openings: [
-        try opening(#"{"blockId":"b1","kind":"session"}"#), try opening(#"{"kind":"changed"}"#),
+        try opening(#"{"blockId":"b1","kind":"session","sessionId":"s1"}"#),
+        try opening(#"{"kind":"changed"}"#),
       ],
       today: .day(view))
     let store = TodayStore(api: api, cache: signedInCache())
@@ -141,19 +143,46 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(openings, ["mission:b1", "mission:b1"])
   }
 
-  func testAMissionLinkToABlockTodayDoesntListOpensNothing() async throws {
-    let view = try today(
-      session: day(
-        blocks: [block(position: 0, kind: "review", id: "b1")], nextPosition: 0, id: "s1"))
-    let api = StudyAPIStub(today: .day(view))
+  func testAMissionLinkOpensItsSessionWhileTodayIsntRead() async throws {
+    let api = StudyAPIStub(
+      openings: [try opening(#"{"blockId":"b1","kind":"session","sessionId":"s9"}"#)])
+    let store = TodayStore(api: api, cache: signedInCache())
+
+    let destination = await store.open(blockID: "b1").destination
+
+    XCTAssertEqual(destination, .questionBlock(blockID: "b1"))
+    XCTAssertEqual(store.sessionID, "s9", "the session screen shows the session it opened in")
+  }
+
+  func testAMissionLinksSessionWinsOverAnEarlierDayTodayStillShows() async throws {
+    let yesterday = try today(
+      session: day(blocks: [], nextPosition: nil, id: "s1", localDate: "2026-10-27"))
+    let api = StudyAPIStub(
+      openings: [try opening(#"{"blockId":"b1","kind":"session","sessionId":"s9"}"#)],
+      today: .day(yesterday))
     let store = TodayStore(api: api, cache: signedInCache())
     await store.today.load()
 
-    let elsewhere = await store.open(blockID: "b2").destination
+    _ = await store.open(blockID: "b1")
 
-    XCTAssertEqual(elsewhere, .changed, "the session screen shows only Today's day")
-    let openings = await api.openedBlocks
-    XCTAssertEqual(openings, [])
+    XCTAssertEqual(store.sessionID, "s9", "not the session Today read yesterday")
+  }
+
+  func testAMissionLinksSessionDoesNotOutliveTheDayTodayShowed() async throws {
+    let api = StudyAPIStub(
+      openings: [try opening(#"{"blockId":"b1","kind":"session","sessionId":"s9"}"#)],
+      today: .day(try today(session: day(blocks: [], nextPosition: nil))))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    _ = await store.open(blockID: "b1")
+    XCTAssertEqual(store.sessionID, "s9")
+
+    await api.serve(
+      .day(try today(session: day(blocks: [], nextPosition: nil, localDate: "2026-10-29"))))
+    await store.today.refresh()
+
+    XCTAssertNil(store.sessionID, "tomorrow isn't opened yet")
   }
 
   func testTheSessionsContinueNamesItsNextStepAndWhileYouWaitTheBlock() async throws {
@@ -162,7 +191,7 @@ final class TodayStoreTests: XCTestCase {
     let api = StudyAPIStub(
       openings: [
         try opening(#"{"kind":"lesson","lessonId":"l1","sessionId":"s1"}"#),
-        try opening(#"{"blockId":"b2","kind":"session"}"#),
+        try opening(#"{"blockId":"b2","kind":"session","sessionId":"s1"}"#),
       ])
     let store = TodayStore(api: api, cache: signedInCache())
 
@@ -202,7 +231,8 @@ final class TodayStoreTests: XCTestCase {
       session: day(blocks: [block(position: 0), block(position: 1)], nextPosition: 0))
     let api = StudyAPIStub(
       opened: OpenedStudyDay(
-        opening: try opening(#"{"blockId":"b2","kind":"session"}"#), sessionId: "s1"))
+        opening: try opening(#"{"blockId":"b2","kind":"session","sessionId":"s1"}"#),
+        sessionId: "s1"))
     let store = TodayStore(api: api, cache: signedInCache())
 
     let destination = await store.open(view.session.blocks[1], as: .mission, in: view).destination
@@ -215,7 +245,7 @@ final class TodayStoreTests: XCTestCase {
   func testExtraTimeAddsABlockAndOpensIt() async throws {
     let view = try today(session: day(blocks: [], nextPosition: nil, id: "s1", state: "done"))
     let api = StudyAPIStub(
-      openings: [try opening(#"{"blockId":"extra","kind":"session"}"#)],
+      openings: [try opening(#"{"blockId":"extra","kind":"session","sessionId":"s1"}"#)],
       extraBlock: try block(position: 3, id: "extra"))
     let store = TodayStore(api: api, cache: signedInCache())
 
@@ -388,7 +418,9 @@ final class TodayStoreTests: XCTestCase {
   func testAStepWhoseLessonIsntPickedYetWaitsWhileTheServerPreparesIt() async throws {
     let placeholder = try block(position: 0, kind: "learn", id: "b1")
     let view = try today(session: day(blocks: [placeholder], nextPosition: 0, id: "s1"))
-    let api = StudyAPIStub(openings: [try opening(#"{"blockId":"b1","kind":"preparingLesson"}"#)])
+    let api = StudyAPIStub(openings: [
+      try opening(#"{"blockId":"b1","kind":"preparingLesson","sessionId":"s1"}"#)
+    ])
     let store = TodayStore(api: api, cache: signedInCache())
 
     let destination = await store.open(placeholder, as: .block, in: view).destination
@@ -420,7 +452,7 @@ final class TodayStoreTests: XCTestCase {
 
   func testEachOpeningShowsItsScreen() throws {
     let screens: [(String, StudyDestination)] = [
-      (#"{"blockId":"b1","kind":"essay"}"#, .essay(blockID: "b1")),
+      (#"{"blockId":"b1","kind":"essay","sessionId":"s1"}"#, .essay(blockID: "b1")),
       (
         #"{"blockId":"b1","kind":"checkpoint","sessionId":"s1"}"#,
         .checkpoint(blockID: "b1", sessionID: "s1")
@@ -429,7 +461,7 @@ final class TodayStoreTests: XCTestCase {
         #"{"kind":"challenge","planItemId":"p1","sessionId":"s1"}"#,
         .challenge(planItemID: "p1", sessionID: "s1")
       ),
-      (#"{"blockId":null,"kind":"session"}"#, .session),
+      (#"{"blockId":null,"kind":"session","sessionId":"s1"}"#, .session),
       (#"{"kind":"today"}"#, .today),
     ]
 
@@ -841,7 +873,8 @@ private func unwrittenLesson(block: String, lesson: String) throws -> StudyBlock
 }
 
 private func openedReview() throws -> OpenedStudyDay {
-  OpenedStudyDay(opening: try opening(#"{"blockId":"b1","kind":"session"}"#), sessionId: "s1")
+  OpenedStudyDay(
+    opening: try opening(#"{"blockId":"b1","kind":"session","sessionId":"s1"}"#), sessionId: "s1")
 }
 
 private actor StudyAPIStub: StudyAPIClient {

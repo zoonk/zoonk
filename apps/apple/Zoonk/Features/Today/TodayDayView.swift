@@ -341,8 +341,8 @@ struct TodayDayView: View {
 }
 
 extension AppRouter {
-  /// A mission's block Today doesn't list, or one no longer free to start, shows Today as it stands.
-  /// Nothing opens when it couldn't, or once the learner moved on.
+  /// A mission's block no longer free to start shows Today as it stands. Nothing opens when it
+  /// couldn't, or once the learner moved on.
   static func openingTodayBlocks(today: TodayStore) -> BlockOpener {
     { blockID, router in
       let tab = router.selectedTab

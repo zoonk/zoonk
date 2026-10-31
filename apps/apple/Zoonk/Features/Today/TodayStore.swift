@@ -179,19 +179,13 @@ final class TodayStore {
     return view
   }
 
+  /// The session the learner's last opening named, while Today still shows the day it showed then
+  /// (or still isn't read, as for a mission opened from Buddy); otherwise Today's saved one.
   var sessionID: String? {
-    guard let day else {
-      return nil
-    }
-
-    if let saved = day.session.id {
-      return saved
-    }
-
     guard let opened, opened.owner == cache.session.authenticatedSession,
-      opened.day == OpenedSession.Day(day)
+      opened.day == day.map(OpenedSession.Day.init)
     else {
-      return nil
+      return day?.session.id
     }
 
     return opened.sessionID
@@ -228,24 +222,18 @@ final class TodayStore {
         let ref = DayBlockRef(block)
         let opened = try await self.openDay(
           view, target: tap == .next ? .next(ref) : .ref(ref), token: token)
-        return (opened.sessionId, opened.opening ?? .changed(.init(kind: .changed)))
+        return opened.opening ?? .changed(.init(kind: .changed))
       }
 
-      return (
-        sessionID,
-        try await self.openBlock(tap, blockID: blockID, sessionID: sessionID, token: token)
-      )
+      return try await self.openBlock(tap, blockID: blockID, sessionID: sessionID, token: token)
     }
   }
 
-  /// A mission link from outside Today. The session screen shows the block within Today's day, so a
-  /// block Today doesn't list opens nothing.
+  /// A mission link from outside Today.
   func open(blockID: String) async -> MutationResult<StudyDestination> {
-    guard let view = day, let block = view.session.blocks.first(where: { $0.id == blockID }) else {
-      return .done(.changed)
+    await openStep(for: day.map(OpenedSession.Day.init)) { token in
+      try await self.openBlock(.mission(.init(blockId: blockID, kind: .mission)), token: token)
     }
-
-    return await open(block, as: .mission, in: view)
   }
 
   func open(_ block: StudyBlock, as tap: StudyTap, sessionID: String) async -> MutationResult<
@@ -256,23 +244,20 @@ final class TodayStore {
         throw DayChanged()
       }
 
-      return (
-        sessionID,
-        try await self.openBlock(tap, blockID: blockID, sessionID: sessionID, token: token)
-      )
+      return try await self.openBlock(tap, blockID: blockID, sessionID: sessionID, token: token)
     }
   }
 
   func addExtraTime(in view: TodayView) async -> MutationResult<StudyDestination> {
     await openStep(for: OpenedSession.Day(view)) { token in
-      let sessionID = try await self.keptSessionID(in: view, token: token)
-      return (sessionID, try await self.openExtraBlock(sessionID: sessionID, token: token))
+      try await self.openExtraBlock(
+        sessionID: try await self.keptSessionID(in: view, token: token), token: token)
     }
   }
 
   func addExtraTime(sessionID: String) async -> MutationResult<StudyDestination> {
     await openStep(for: day.map(OpenedSession.Day.init)) { token in
-      (sessionID, try await self.openExtraBlock(sessionID: sessionID, token: token))
+      try await self.openExtraBlock(sessionID: sessionID, token: token)
     }
   }
 
@@ -373,19 +358,19 @@ final class TodayStore {
 
   private func openStep(
     for day: OpenedSession.Day?,
-    _ open: (_ token: String) async throws -> (sessionID: String, opening: StudyBlockOpening)
+    _ open: (_ token: String) async throws -> StudyBlockOpening
   ) async -> MutationResult<StudyDestination> {
     switch await cache.mutate(
       invalidating: [.userProgress, .userSession],
       { identity in
-        let (sessionID, opening) = try await open(identity.bearerToken)
-        return (sessionID, try await self.destination(of: opening, for: identity))
+        let opening = try await open(identity.bearerToken)
+        return (opening.sessionID, try await self.destination(of: opening, for: identity))
       })
     {
     case .done(let (sessionID, destination)):
       // `mutate` returns `done` only while the learner who tapped is still the one signed in.
       if let owner = cache.session.authenticatedSession {
-        if let day {
+        if let sessionID {
           opened = OpenedSession(owner: owner, day: day, sessionID: sessionID)
         }
 
@@ -484,6 +469,23 @@ final class TodayStore {
   }
 }
 
+extension StudyBlockOpening {
+  /// Nil for Today or a change.
+  var sessionID: String? {
+    switch self {
+    case .lesson(let lesson): lesson.sessionId
+    case .unwrittenLesson(let lesson): lesson.sessionId
+    case .preparingLesson(let step): step.sessionId
+    case .essay(let essay): essay.sessionId
+    case .checkpoint(let checkpoint): checkpoint.sessionId
+    case .mock(let mock): mock.sessionId
+    case .challenge(let challenge): challenge.sessionId
+    case .session(let session): session.sessionId
+    case .today, .changed: nil
+    }
+  }
+}
+
 extension StudyDestination {
   /// A lesson still unwritten after its writing ended opens on the session, whose Continue asks for
   /// it again.
@@ -527,7 +529,8 @@ private struct OpenedSession {
   }
 
   let owner: AuthenticatedSession
-  let day: Day
+  /// What Today showed when it opened; nil while Today isn't read.
+  let day: Day?
   let sessionID: String
 }
 
