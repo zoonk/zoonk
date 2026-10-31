@@ -44,19 +44,6 @@ describe("finding waterfalls", () => {
     assert.deepEqual(waterfallLines(source), []);
   });
 
-  it("leaves next-intl's functions, which stay sequential", () => {
-    const source = [
-      "export async function Page() {",
-      "  const t = await getExtracted();",
-      "  const locale = await getLocale();",
-      "  const goals = await listGoals();",
-      "  return { goals, locale, t };",
-      "}",
-    ].join("\n");
-
-    assert.deepEqual(waterfallLines(source), []);
-  });
-
   it("leaves bare awaits, whose order is usually the point", () => {
     const source = [
       "export async function Seed() {",

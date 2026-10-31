@@ -2,17 +2,6 @@ import { parseSync } from "oxc-parser";
 import { type ChangedFile, type Flag } from "./diff-audit.mts";
 import { type Rule, SOURCE } from "./rules/shared.mts";
 
-/** next-intl's functions stay sequential, never inside `Promise.all` (root `AGENTS.md`). */
-const SEQUENTIAL_CALLS = new Set([
-  "getExtracted",
-  "getFormatter",
-  "getLocale",
-  "getMessages",
-  "getNow",
-  "getTimeZone",
-  "getTranslations",
-]);
-
 /** A transaction runs its statements one at a time on one connection, in the order they're written. */
 const TRANSACTION_CLIENTS = new Set(["transaction", "tx"]);
 
@@ -95,13 +84,6 @@ function names(node: Node | null): Set<string> {
   return found;
 }
 
-function calleeName(awaited: Node): string | null {
-  const callee =
-    awaited.type === "CallExpression" && isNode(awaited.callee) ? awaited.callee : null;
-
-  return callee?.type === "Identifier" && typeof callee.name === "string" ? callee.name : null;
-}
-
 function statementLists(root: unknown): Node[][] {
   const lists: Node[][] = [];
 
@@ -149,15 +131,13 @@ export function findWaterfalls(path: string, source: string): { offset: number; 
 
       const uses = names(current.awaited);
 
-      const sequential = [previous.awaited, current.awaited].some(
-        (awaited) =>
-          SEQUENTIAL_CALLS.has(calleeName(awaited) ?? "") ||
-          [...names(awaited)].some((name) => TRANSACTION_CLIENTS.has(name)),
+      const inTransaction = [previous.awaited, current.awaited].some((awaited) =>
+        [...names(awaited)].some((name) => TRANSACTION_CLIENTS.has(name)),
       );
 
       const dependent = [...previous.bound].some((name) => uses.has(name));
 
-      return sequential || dependent
+      return inTransaction || dependent
         ? []
         : [{ offset: statement.start, text: source.slice(statement.start, statement.end) }];
     }),
