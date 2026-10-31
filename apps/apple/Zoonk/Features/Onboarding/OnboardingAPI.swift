@@ -188,22 +188,33 @@ struct TimeAdvice: PlanAnswer, Decodable {
   let ready: Bool
 }
 
+/// When part of the goal never fits, whatever the time: the fewest minutes that cover as much as any
+/// time does, and that share.
+struct MostCoverage: Decodable, Equatable, Sendable {
+  let coveredShare: Double
+  let minutes: Int
+}
+
 struct TimeToCover: PlanAnswer, Decodable {
   struct Suggested: Equatable, Sendable, Decodable {
+    /// `focus` is what's worth most first, never to be said to cover everything.
     enum Kind: String, Sendable, Decodable {
       case everything
-      case everyTopic
+      case focus
     }
 
+    let coveredShare: Double
+    let everyTopic: Bool
     let kind: Kind
     let minutes: Int
     let split: DaySplit?
   }
 
+  let most: MostCoverage?
   let pastDate: Bool
   let ready: Bool
   let recommendedMinutes: Int?
-  /// The time the question starts on: what covers everything, else what reaches every topic.
+  /// The time the question starts on: what covers everything, else what's worth most first.
   let suggested: Suggested?
   let targetDate: String?
   let targetDateNamedMonth: Bool

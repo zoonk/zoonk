@@ -122,9 +122,10 @@ enum ScheduleTime {
     picked == nil && found == nil && !failed && suggestedMinutes(first) != nil
   }
 
-  /// Only while the time shown falls short of everything.
+  /// Only while the time shown falls short of everything, and only a suggestion its label is true of.
   static func offer(found: TimeToCover?, line: Line, minutes: Int?) -> TimeToCover.Suggested? {
-    guard let suggested = found?.suggested, suggested.minutes != minutes, !line.coversEverything
+    guard let suggested = found?.suggested, suggested.minutes != minutes, !line.coversEverything,
+      suggested.kind == .everything || suggested.everyTopic
     else {
       return nil
     }
@@ -166,7 +167,11 @@ enum ScheduleTime {
     }
 
     if let suggested = found.suggested, suggested.minutes == minutes {
-      return suggested.kind == .everything ? .everything(suggested: true) : .everyTopic
+      if suggested.kind == .everything {
+        return .everything(suggested: true)
+      }
+
+      return suggested.everyTopic ? .everyTopic : .share(suggested.coveredShare)
     }
 
     guard let advice else {

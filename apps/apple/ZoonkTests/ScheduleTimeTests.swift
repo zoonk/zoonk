@@ -5,25 +5,31 @@ import XCTest
 final class ScheduleTimeTests: XCTestCase {
   private typealias Line = ScheduleTime.Line
 
+  private func everything(_ minutes: Int, split: DaySplit? = nil) -> TimeToCover.Suggested {
+    .init(coveredShare: 1, everyTopic: true, kind: .everything, minutes: minutes, split: split)
+  }
+
+  private func focus(_ minutes: Int, everyTopic: Bool) -> TimeToCover.Suggested {
+    .init(coveredShare: 0.32, everyTopic: everyTopic, kind: .focus, minutes: minutes, split: nil)
+  }
+
   private func found(
-    suggested: TimeToCover.Suggested? = .init(kind: .everything, minutes: 35, split: nil),
+    suggested: TimeToCover.Suggested? = .init(
+      coveredShare: 1, everyTopic: true, kind: .everything, minutes: 35, split: nil),
     recommendedMinutes: Int? = 35,
     pastDate: Bool = false
   ) -> TimeToCover {
     TimeToCover(
-      pastDate: pastDate, ready: true, recommendedMinutes: recommendedMinutes,
+      most: nil, pastDate: pastDate, ready: true, recommendedMinutes: recommendedMinutes,
       suggested: suggested, targetDate: "2028-10-29", targetDateNamedMonth: false)
   }
 
   private func everythingAt(_ minutes: Int) -> TimeToCover {
-    found(
-      suggested: .init(kind: .everything, minutes: minutes, split: nil),
-      recommendedMinutes: minutes)
+    found(suggested: everything(minutes), recommendedMinutes: minutes)
   }
 
   private func everyTopicAt(_ minutes: Int) -> TimeToCover {
-    found(
-      suggested: .init(kind: .everyTopic, minutes: minutes, split: nil), recommendedMinutes: nil)
+    found(suggested: focus(minutes, everyTopic: true), recommendedMinutes: nil)
   }
 
   private var tooClose: TimeToCover { found(suggested: nil, recommendedMinutes: nil) }
@@ -102,6 +108,13 @@ final class ScheduleTimeTests: XCTestCase {
   func testSaysWhyTheSuggestedTimeWithoutAskingThePlanAgain() {
     XCTAssertEqual(line(found: found()), .everything(suggested: true))
     XCTAssertEqual(line(found: everyTopicAt(45), minutes: 45), .everyTopic)
+  }
+
+  func testSaysOnlyWhatAFocusThatLeavesTopicsOutCoversAndOffersItNoLabel() {
+    let leavesTopicsOut = found(suggested: focus(240, everyTopic: false), recommendedMinutes: 805)
+
+    XCTAssertEqual(line(found: leavesTopicsOut, minutes: 240), .share(0.32))
+    XCTAssertNil(ScheduleTime.offer(found: leavesTopicsOut, line: .share(0.1), minutes: 30))
   }
 
   func testSaysWhatAnotherTimeCoversOnceThePlanAnswersForIt() {
@@ -200,8 +213,8 @@ final class ScheduleTimeTests: XCTestCase {
       TimeChoice(minutes: 45, split: DaySplit(mine: 30, others: 1, rest: 15)),
     ]
     let split = DaySplit(mine: 25, others: 1, rest: 10)
-    let suggested = found(suggested: .init(kind: .everything, minutes: 35, split: split))
-    let later = found(suggested: .init(kind: .everything, minutes: 60, split: nil))
+    let suggested = found(suggested: everything(35, split: split))
+    let later = found(suggested: everything(60))
 
     XCTAssertEqual(ScheduleTime.split(minutes: 45, choices: choices, answers: []), choices[1].split)
     XCTAssertEqual(
@@ -216,7 +229,7 @@ final class ScheduleTimeTests: XCTestCase {
     XCTAssertNil(ScheduleTime.offer(found: found(), line: short, minutes: 35))
     XCTAssertEqual(
       ScheduleTime.offer(found: found(), line: short, minutes: 15),
-      .init(kind: .everything, minutes: 35, split: nil))
+      everything(35))
     XCTAssertNil(
       ScheduleTime.offer(
         found: everyTopicAt(240), line: .everything(suggested: false), minutes: 900)

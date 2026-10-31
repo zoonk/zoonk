@@ -283,7 +283,7 @@ struct ScheduleQuestion: View {
       Text(
         "Cover everything with \(duration(offer.minutes)) a day", tableName: "Onboarding",
         comment: "Picks the time a day that covers the whole goal by its date")
-    case .everyTopic:
+    case .focus:
       Text(
         "Reach every topic with \(duration(offer.minutes)) a day", tableName: "Onboarding",
         comment: "Picks the time a day that brings every topic in by the goal's date")

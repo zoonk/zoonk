@@ -191,8 +191,8 @@ enum PlanChangeOutcome: Equatable, Sendable {
 }
 
 struct PlanTimeToCover: Decodable, Equatable, Sendable {
-  let coreMinutes: Int?
   let fittingDate: String?
+  let most: MostCoverage?
   let ready: Bool
   let recommendedMinutes: Int?
   let targetDate: String?
