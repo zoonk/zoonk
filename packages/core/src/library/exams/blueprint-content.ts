@@ -11,7 +11,12 @@ import { toMock } from "./blueprint-mock-content";
 import { type ExtractionDocument } from "./blueprint-passages";
 import { toSubjectTopics } from "./blueprint-subject-topics";
 import { keepExamParts } from "./format-sections";
-import { getFormatShares, isFormatShare, isObjectiveFormat, toFormatDetails } from "./format-shares";
+import {
+  getFormatShares,
+  isFormatShare,
+  isObjectiveFormat,
+  toFormatDetails,
+} from "./format-shares";
 import { isObjectiveTestUnread } from "./objective-test";
 
 type Extraction = BlueprintExtraction;
