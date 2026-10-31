@@ -1,6 +1,7 @@
 import "server-only";
 import { type Course, prisma } from "@zoonk/db";
 import { cache } from "react";
+import { NO_EXAM_PICKS } from "../../exams/choices/exam-choices";
 import { toListeningExam } from "../../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../../exams/listening/listening-skills";
 import { loadCourseExam } from "../../goals/_utils/course-exam";
@@ -110,7 +111,7 @@ export const loadCourseEstimateData = cache(async (courseId: string, today: stri
   } as const;
 
   const graph = await resolveMergedSkills(
-    await chooseExamOptionSkills({ choices: [], goal, graph: sourceGraph }),
+    await chooseExamOptionSkills({ goal, graph: sourceGraph, picks: NO_EXAM_PICKS }),
   );
 
   const skillIds = graph.skills.map((skill) => skill.skillId);

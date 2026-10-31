@@ -109,6 +109,7 @@ const planSettingsSchema = z.object({
     .default([]),
   difficultyBias: z.enum(DIFFICULTY_BIASES).default("standard"),
   examChoices: z.array(examChoicePickSchema).default([]),
+  examSubjects: z.array(z.string()).default([]),
   focusAreas: z.array(z.string()).default([]),
   focusParts: z.array(focusPartSchema).default([]),
   fullCourse: z.boolean().default(false),

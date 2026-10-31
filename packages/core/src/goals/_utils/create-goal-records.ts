@@ -26,6 +26,12 @@ function getWeekdayMinutes({
   );
 }
 
+/** The plan holds the exam subjects a goal is for, where every read of the exam's subjects finds them. */
+function toScopeSettings(value: unknown): { examSubjects?: string[] } {
+  const subjects = Array.isArray(value) ? value.filter((item) => typeof item === "string") : [];
+  return subjects.length > 0 ? { examSubjects: subjects } : {};
+}
+
 type GoalRecord = {
   dailyMinutes: number;
   draft: GoalDraft;
@@ -41,11 +47,12 @@ export async function insertGoalWithPlan(
   { dailyMinutes, draft, id, input, testedLanguage, userId }: GoalRecord,
 ): Promise<void> {
   const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
+  const { examSubjects, ...details } = draft.details ?? {};
 
   await tx.goal.create({
     data: {
       dailyMinutes,
-      details: draft.details ?? {},
+      details,
       examBlueprintId: draft.examBlueprintId ?? null,
       id,
       kind: draft.kind,
@@ -65,6 +72,7 @@ export async function insertGoalWithPlan(
     data: {
       goalId: id,
       settings: {
+        ...toScopeSettings(examSubjects),
         startDate: toIsoDate(getDateInTimeZone({ date: new Date(), timeZone })),
         weekdayMinutes: getWeekdayMinutes({ dailyMinutes, studyDays: input.studyDays }),
       },

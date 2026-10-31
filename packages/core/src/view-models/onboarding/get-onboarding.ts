@@ -7,7 +7,7 @@ import { getNoSitting } from "../../exams/_utils/notice-day";
 import { getExamCalendarDay, getPlanExamDays } from "../../exams/_utils/plan-exam-days";
 import { listExamChoiceViews } from "../../exams/choices/exam-choice-views";
 import { toChosenStructure } from "../../exams/choices/exam-choices";
-import { loadExamChoices } from "../../exams/choices/load-exam-choices";
+import { loadExamPicks } from "../../exams/choices/load-exam-choices";
 import { findNamedChoices } from "../../exams/choices/named-exam-choices";
 import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { loadCourseExam } from "../../goals/_utils/course-exam";
@@ -79,23 +79,29 @@ async function findExamNotice({
       select: { edition: true, examDate: true, ownerId: true, structure: true },
       where: { id: goal.examBlueprintId },
     }),
-    loadExamChoices(goal.id),
+    loadExamPicks(goal.id),
   ]);
 
   const stored = examStructureSchema.safeParse(blueprint?.structure).data;
 
-  const choices = stored
-    ? [...saved, ...findNamedChoices({ choices: saved, goal, structure: stored })]
+  const picks = stored
+    ? {
+        ...saved,
+        examChoices: [
+          ...saved.examChoices,
+          ...findNamedChoices({ goal, picks: saved, structure: stored }),
+        ],
+      }
     : saved;
 
-  const structure = stored && toChosenStructure({ choices, structure: stored });
+  const structure = stored && toChosenStructure({ picks, structure: stored });
 
   // Written papers are not subjects the learner can declare already known.
   const subjects = structure
     ? structure.subjects.filter((subject) => !isWrittenSubject({ structure, subject }))
     : [];
 
-  const views = stored ? listExamChoiceViews({ choices, structure: stored }) : [];
+  const views = stored ? listExamChoiceViews({ picks, structure: stored }) : [];
 
   return {
     choices: views,

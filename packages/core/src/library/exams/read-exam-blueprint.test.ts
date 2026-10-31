@@ -4,6 +4,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { NO_EXAM_PICKS } from "../../exams/choices/exam-choices";
 import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
 import { loadTargetCutoff } from "../../exams/cutoffs/load-target-cutoff";
 import { loadExamStructure } from "../../sessions/_utils/exam-structure";
@@ -42,8 +43,8 @@ describe("shared blueprint reads", () => {
 
     const counts = await countDatabaseStatements(async () =>
       Promise.all([
-        loadExamStructure(goal, { blueprint, choices: [] }),
-        loadExamChoiceViews({ blueprint, choices: [], examBlueprintId: blueprint.id }),
+        loadExamStructure(goal, { blueprint, picks: NO_EXAM_PICKS }),
+        loadExamChoiceViews({ blueprint, examBlueprintId: blueprint.id, picks: NO_EXAM_PICKS }),
         loadTargetCutoff({ blueprint, details: {}, examBlueprintId: blueprint.id }),
       ]),
     );

@@ -272,7 +272,7 @@ export async function loadPreparationInputs({
   userId: string;
 }) {
   const [
-    { choices, fullCourse, graph, plan, skills: measured, survivorOf },
+    { fullCourse, graph, picks, plan, skills: measured, survivorOf },
     { goal: measuredGoal, test },
   ] = await Promise.all([
     loadMeasuredSkills({ goalId, readPlan, savedPlan }),
@@ -292,9 +292,9 @@ export async function loadPreparationInputs({
     loadTests({ goalId, test, userId }),
     loadSkillImportance({
       blueprint,
-      choices,
       goal: measuredGoal,
       graph,
+      picks,
       skills: measured,
       survivorOf,
     }),
@@ -320,6 +320,7 @@ export async function loadPreparationInputs({
   return {
     answers,
     areas,
+    examPart: picks.examSubjects.length > 0,
     mockResults: tests.mocks,
     mocks: tests.tests,
     sectionWeights: weights.sectionWeights,

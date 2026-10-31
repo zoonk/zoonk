@@ -167,11 +167,7 @@ export async function computePlan({
   } = request;
 
   const resolved = await resolveMergedSkills(
-    await chooseExamOptionSkills({
-      choices: state.settings.examChoices,
-      goal: context.goal,
-      graph: state.graph,
-    }),
+    await chooseExamOptionSkills({ goal: context.goal, graph: state.graph, picks: state.settings }),
   );
 
   const targetDate = getStateTargetDate(state);
@@ -180,7 +176,7 @@ export async function computePlan({
     await Promise.all([
       loadPlannerInputs({
         difficultyBias: state.settings.difficultyBias,
-        examChoices: state.settings.examChoices,
+        examPicks: state.settings,
         focus: state.settings,
         goal: context.goal,
         graph: resolved,

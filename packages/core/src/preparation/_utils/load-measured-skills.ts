@@ -44,7 +44,7 @@ export async function loadMeasuredSkills({
   ]);
 
   const graph = parsePlanGraph(row?.graph);
-  const { examChoices: choices, fullCourse, skippedAreas } = parsePlanSettings(row?.settings);
+  const { examChoices, examSubjects, fullCourse, skippedAreas } = parsePlanSettings(row?.settings);
   const skipped = new Set(skippedAreas);
   const graphSkills = graph.skills.filter((skill) => !skipped.has(getSkillArea({ graph, skill })));
 
@@ -97,5 +97,5 @@ export async function loadMeasuredSkills({
     })),
   ];
 
-  return { choices, fullCourse, graph, plan, skills, survivorOf };
+  return { fullCourse, graph, picks: { examChoices, examSubjects }, plan, skills, survivorOf };
 }

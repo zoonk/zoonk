@@ -1,6 +1,6 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
-import { readExamChoices } from "../../../exams/choices/exam-choices";
+import { readExamPicks } from "../../../exams/choices/exam-choices";
 import { loadClaimEvents } from "../../../learner/_utils/load-skill-claims";
 import {
   type LibrarySource,
@@ -118,7 +118,7 @@ export async function loadSyllabusInput(
 ): Promise<SyllabusInput | null> {
   const [plan, notice] = await Promise.all([
     readSyllabusPlan(goal, { savedPlan, selectedPlan }),
-    loadNotice(goal, blueprint, savedPlan ? readExamChoices(savedPlan.settings) : undefined),
+    loadNotice(goal, blueprint, savedPlan ? readExamPicks(savedPlan.settings) : undefined),
   ]);
 
   if (!plan) {
@@ -205,7 +205,7 @@ export async function loadSkillSubjects(
     savedPlan === undefined
       ? prisma.plan.findUnique({ select: { graph: true }, where: { goalId: goal.id } })
       : savedPlan,
-    loadNotice(goal, blueprint, savedPlan ? readExamChoices(savedPlan.settings) : undefined),
+    loadNotice(goal, blueprint, savedPlan ? readExamPicks(savedPlan.settings) : undefined),
   ]);
 
   const graph = parsePlanGraph(plan?.graph);

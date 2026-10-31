@@ -18,7 +18,7 @@ import {
   toBlockPayload,
 } from "../../../sessions/block-payload";
 import { getSession } from "../../../users/get-session";
-import { readExamChoices } from "../../choices/exam-choices";
+import { readExamPicks } from "../../choices/exam-choices";
 import { isMockAnswerPresent } from "../mock-answer-presence";
 import {
   MOCK_ABANDONMENT_DELAY_MS,
@@ -103,7 +103,7 @@ async function findScheduledMock({
 
   const { mockExam, session: studySession, ...row } = block;
   const blueprint = studySession.goal?.examBlueprint ?? null;
-  const choices = readExamChoices(studySession.goal?.plan?.settings);
+  const picks = readExamPicks(studySession.goal?.plan?.settings);
 
   return {
     block: row,
@@ -112,8 +112,8 @@ async function findScheduledMock({
     mock: toSitting(mockExam),
     payload,
     sessionDate: studySession.localDate,
-    structure: blueprint ? readMockStructure({ blueprint, choices }) : null,
-    unpicked: readUnpickedChoices({ blueprint, choices }),
+    structure: blueprint ? readMockStructure({ blueprint, picks }) : null,
+    unpicked: readUnpickedChoices({ blueprint, picks }),
     userId,
   };
 }
@@ -147,7 +147,7 @@ async function findAnytimeMock({
 
   const itemIds = getAskedItemIds(mock.conditions).map((entry) => entry.itemId);
   const timeZone = getAnswerTimeZone({ goal });
-  const choices = readExamChoices(goal?.plan?.settings);
+  const picks = readExamPicks(goal?.plan?.settings);
 
   return {
     block: null,
@@ -156,8 +156,8 @@ async function findAnytimeMock({
     mock,
     payload: toBlockPayload({ itemIds }),
     sessionDate: getDateInTimeZone({ date: mock.startedAt, timeZone }),
-    structure: examBlueprint ? readMockStructure({ blueprint: examBlueprint, choices }) : null,
-    unpicked: readUnpickedChoices({ blueprint: examBlueprint, choices }),
+    structure: examBlueprint ? readMockStructure({ blueprint: examBlueprint, picks }) : null,
+    unpicked: readUnpickedChoices({ blueprint: examBlueprint, picks }),
     userId,
   };
 }

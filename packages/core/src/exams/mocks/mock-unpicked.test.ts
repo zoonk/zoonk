@@ -42,14 +42,17 @@ const ENEM: ExamStructure = {
 
 describe(listUnpickedChoices, () => {
   it("places a choice on the day its options' subject is asked", () => {
-    expect(listUnpickedChoices({ choices: [], structure: ENEM })).toStrictEqual([
-      { days: [1], name: FOREIGN },
-    ]);
+    expect(
+      listUnpickedChoices({ picks: { examChoices: [], examSubjects: [] }, structure: ENEM }),
+    ).toStrictEqual([{ days: [1], name: FOREIGN }]);
   });
 
   it("lists nothing once the learner picks", () => {
     const choices = [{ group: FOREIGN, subject: "Língua Inglesa" }];
-    expect(listUnpickedChoices({ choices, structure: ENEM })).toStrictEqual([]);
+
+    expect(
+      listUnpickedChoices({ picks: { examChoices: choices, examSubjects: [] }, structure: ENEM }),
+    ).toStrictEqual([]);
   });
 });
 
@@ -81,7 +84,10 @@ describe("day mocks of an exam with an unpicked choice", () => {
       dayInTurn: 1,
       goalAreas: [LANGUAGES, "Matemática e suas Tecnologias"],
       structure: ENEM,
-      unpicked: listUnpickedChoices({ choices: [], structure: ENEM }),
+      unpicked: listUnpickedChoices({
+        picks: { examChoices: [], examSubjects: [] },
+        structure: ENEM,
+      }),
     });
 
     const fullDays = options.flatMap((option) =>

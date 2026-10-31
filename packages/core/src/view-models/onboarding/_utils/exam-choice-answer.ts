@@ -27,7 +27,7 @@ async function findNamedChoiceOperations({
   const structure = examStructureSchema.safeParse(blueprint?.structure).data;
 
   return structure
-    ? findNamedChoices({ choices: state.settings.examChoices, goal, structure }).map((choice) => ({
+    ? findNamedChoices({ goal, picks: state.settings, structure }).map((choice) => ({
         kind: "setExamChoice" as const,
         ...choice,
       }))

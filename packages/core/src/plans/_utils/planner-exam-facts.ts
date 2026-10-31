@@ -1,6 +1,6 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
-import { type ExamChoice, toChosenStructure } from "../../exams/choices/exam-choices";
+import { type ExamPicks, NO_EXAM_PICKS, toChosenStructure } from "../../exams/choices/exam-choices";
 import { getWeeklyMockMinutes, listMockClocks } from "../../exams/mocks/mock-plan";
 import { toMockStructure } from "../../exams/mocks/mock-structure";
 import {
@@ -39,20 +39,20 @@ function readNoticeBlueprint(goal: Pick<Goal, "examBlueprintId">) {
 
 async function loadNoticeFacts({
   blueprint: known,
-  choices,
   goal,
   graph,
+  picks,
 }: {
   blueprint?: NoticeBlueprint | null;
-  choices: readonly ExamChoice[];
   goal: Pick<Goal, "examBlueprintId">;
   graph: PlanGraph;
+  picks: ExamPicks;
 }): Promise<ExamFacts> {
   const blueprint = known === undefined ? await readNoticeBlueprint(goal) : known;
 
   const stored = examStructureSchema.safeParse(blueprint?.structure).data;
 
-  const parsed = stored ? toChosenStructure({ choices, structure: stored }) : null;
+  const parsed = stored ? toChosenStructure({ picks, structure: stored }) : null;
   const ownerId = blueprint?.ownerId ?? null;
   const noticeQuestions = examEditionSchema.safeParse(blueprint?.edition).data?.questionCount;
 
@@ -76,17 +76,17 @@ async function loadNoticeFacts({
 
 export function loadExamFacts({
   blueprint,
-  choices = [],
   goal,
   graph,
+  picks = NO_EXAM_PICKS,
 }: {
   blueprint?: NoticeBlueprint | null;
-  choices?: readonly ExamChoice[];
   goal: Pick<Goal, "examBlueprintId" | "kind">;
   graph: PlanGraph;
+  picks?: ExamPicks;
 }): Promise<ExamFacts> | ExamFacts {
   if (goal.kind === "exam") {
-    return loadNoticeFacts({ blueprint, choices, goal, graph });
+    return loadNoticeFacts({ blueprint, goal, graph, picks });
   }
 
   return {

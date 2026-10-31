@@ -3,7 +3,13 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { toNameWords } from "@zoonk/utils/name-words";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getAnsweredQuestions } from "../../view-models/onboarding/onboarding-steps";
-import { type ExamChoice, findChoiceOption, listChoiceGroups } from "./exam-choices";
+import {
+  type ExamChoice,
+  type ExamPicks,
+  findChoiceOption,
+  listChoiceGroups,
+} from "./exam-choices";
+import { scopeExamStructure } from "./exam-scope";
 
 type Option = Pick<ExamStructure["subjects"][number], "name" | "shortName">;
 
@@ -78,12 +84,12 @@ function readStatedTexts(details: Record<string, unknown>): { read: string[]; ty
  * choice's question, even with "Decide later", nothing is picked for them.
  */
 export function findNamedChoices({
-  choices,
   goal,
-  structure,
+  picks,
+  structure: whole,
 }: {
-  choices: readonly ExamChoice[];
   goal: Pick<Goal, "details">;
+  picks: ExamPicks;
   structure: ExamStructure;
 }): ExamChoice[] {
   const details = isJsonObject(goal.details) ? goal.details : {};
@@ -93,9 +99,10 @@ export function findNamedChoices({
   }
 
   const { read, typed } = readStatedTexts(details);
+  const structure = scopeExamStructure({ examSubjects: picks.examSubjects, structure: whole });
 
   return listChoiceGroups(structure.subjects).flatMap((group) => {
-    const isPicked = choices.some(
+    const isPicked = picks.examChoices.some(
       (choice) => choice.group === group.name && findChoiceOption({ choice, structure }),
     );
 

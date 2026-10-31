@@ -1,6 +1,6 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
-import { type ExamChoice } from "../../exams/choices/exam-choices";
+import { type ExamPicks } from "../../exams/choices/exam-choices";
 import { getItemAudienceFilter } from "../../library/items/item-field";
 import { loadExamFacts } from "../../plans/_utils/planner-exam-facts";
 import { readCourseWeights } from "../../plans/planner/course-weights";
@@ -43,14 +43,14 @@ function getGraphDifficulty({ graph, phase }: { graph: PlanGraph; phase: number 
 
 export async function loadSkillImportance({
   blueprint,
-  choices,
   goal,
   graph,
+  picks,
   skills,
   survivorOf,
 }: {
   blueprint?: ExamBlueprint | null;
-  choices: readonly ExamChoice[];
+  picks: ExamPicks;
   goal: Pick<Goal, "details" | "examBlueprintId" | "kind"> | null;
   graph: PlanGraph;
   skills: readonly ImportanceSkill[];
@@ -59,7 +59,7 @@ export async function loadSkillImportance({
   const members = [...new Set(skills.flatMap((skill) => skill.memberSkillIds))];
 
   const [facts, bank] = await Promise.all([
-    goal ? loadExamFacts({ blueprint, choices, goal, graph }) : null,
+    goal ? loadExamFacts({ blueprint, goal, graph, picks }) : null,
     loadBankDifficulty({ examBlueprintId: goal?.examBlueprintId ?? null, skillIds: members }),
   ]);
 

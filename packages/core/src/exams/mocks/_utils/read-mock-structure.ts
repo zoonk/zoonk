@@ -2,7 +2,7 @@ import "server-only";
 import { type ExamBlueprint } from "@zoonk/db";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
-import { type ExamChoice, toChosenStructure } from "../../choices/exam-choices";
+import { type ExamPicks, toChosenStructure } from "../../choices/exam-choices";
 import { getMockSizeSource } from "../mock-size-source";
 import { toMockStructure } from "../mock-structure";
 import { type UnpickedChoice, listUnpickedChoices } from "../mock-unpicked";
@@ -19,12 +19,12 @@ const UNSTATED_SIZE: MockSizeSource = {
 
 export function readMockStructure({
   blueprint,
-  choices,
   dayMinutes,
+  picks,
 }: {
   blueprint: ExamBlueprint;
-  choices: readonly ExamChoice[];
   dayMinutes?: number | null;
+  picks: ExamPicks;
 }): ExamStructure {
   const { edition, structure } = readBlueprintContent(blueprint);
 
@@ -32,19 +32,19 @@ export function readMockStructure({
     dayMinutes,
     noticeQuestions: edition.questionCount,
     ownerId: blueprint.ownerId,
-    structure: toChosenStructure({ choices, structure }),
+    structure: toChosenStructure({ picks, structure }),
   });
 }
 
 export function readUnpickedChoices({
   blueprint,
-  choices,
+  picks,
 }: {
   blueprint: ExamBlueprint | null;
-  choices: readonly ExamChoice[];
+  picks: ExamPicks;
 }): UnpickedChoice[] {
   return blueprint
-    ? listUnpickedChoices({ choices, structure: readBlueprintContent(blueprint).structure })
+    ? listUnpickedChoices({ picks, structure: readBlueprintContent(blueprint).structure })
     : [];
 }
 

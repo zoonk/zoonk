@@ -40,7 +40,7 @@ function countFullMockByTest({
   const chosen = toMockStructure({
     noticeQuestions: null,
     ownerId: null,
-    structure: toChosenStructure({ choices, structure }),
+    structure: toChosenStructure({ picks: { examChoices: choices, examSubjects: [] }, structure }),
   });
 
   const areas = chosen.subjects.map((subject) => subject.name);
@@ -99,7 +99,11 @@ describe("a CGU 2026 specialty, as its notice was read", () => {
   });
 
   it("weighs the picked specialty by the final score's formula: half for the 260 objective points, 180 of them P3's", () => {
-    const chosen = toChosenStructure({ choices: PICKED, structure: CGU });
+    const chosen = toChosenStructure({
+      picks: { examChoices: PICKED, examSubjects: [] },
+      structure: CGU,
+    });
+
     const shares = listSubjectShares(chosen);
 
     const shareOf = (name?: string) =>
@@ -113,7 +117,12 @@ describe("a CGU 2026 specialty, as its notice was read", () => {
   it("weighs the picked specialty by P3's 180 of the exam's 360 points without a formula", () => {
     const scoring = CGU.mock && { ...CGU.mock.scoring, finalShares: undefined };
     const structure = { ...CGU, mock: CGU.mock && scoring && { ...CGU.mock, scoring } };
-    const chosen = toChosenStructure({ choices: PICKED, structure });
+
+    const chosen = toChosenStructure({
+      picks: { examChoices: PICKED, examSubjects: [] },
+      structure,
+    });
+
     const index = chosen.subjects.findIndex((subject) => subject.name === SOFTWARE?.name);
 
     expect(listSubjectShares(chosen)[index]).toBe(0.5);

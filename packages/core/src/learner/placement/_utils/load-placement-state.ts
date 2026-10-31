@@ -79,10 +79,7 @@ function getChosenAreaShares({
   structure: ExamStructure | null;
 }): Map<string, number> | null {
   return structure
-    ? getAreaShares({
-        graph,
-        structure: toChosenStructure({ choices: settings.examChoices, structure }),
-      })
+    ? getAreaShares({ graph, structure: toChosenStructure({ picks: settings, structure }) })
     : null;
 }
 

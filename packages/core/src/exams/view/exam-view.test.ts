@@ -17,6 +17,10 @@ import { getExamView } from "./get-exam-view";
 
 const citation = { passage: "", sourceId: "notice" };
 
+function paper(day: number) {
+  return { day, kind: "objective" as const, minutes: 300, name: `Day ${day}`, questions: 45 };
+}
+
 function frequency(topic: string, level: "high" | "medium") {
   return { appearances: null, basis: "Past papers", citation, level, subject: "Math", topic };
 }
@@ -166,6 +170,35 @@ describe("exam screen", () => {
       },
       status: "ready",
     });
+  });
+
+  it("shows only the papers and subjects of the part of the exam the learner prepares", async () => {
+    const { goal, plan } = await examSetup({
+      examDay: "2026-11-08",
+      mock: {
+        adaptive: false,
+        citations: [],
+        order: null,
+        scoring: { description: "", method: "raw" },
+        sections: [paper(1), paper(2)],
+        timeLimitMinutes: 600,
+        totalQuestions: 90,
+      },
+    });
+
+    await prisma.plan.update({
+      data: { settings: { examSubjects: ["Mathematics"] } },
+      where: { id: plan.id },
+    });
+
+    const result = await getExamView({ goalId: goal.id });
+    const exam = result.status === "ready" ? result.exam : null;
+
+    expect(exam?.format).toMatchObject([{ day: 1, minutes: 300, parts: [{ name: "Day 1" }] }]);
+
+    expect(exam?.map?.subjects.map((subject) => subject.name)).toStrictEqual([
+      "Mathematics and its Technologies",
+    ]);
   });
 
   it("tags Today's stops on topics the board asks a lot", async () => {

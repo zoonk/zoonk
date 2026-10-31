@@ -27,7 +27,11 @@ const ENEM: ExamStructure = {
 };
 
 function named(details: object, structure: ExamStructure = CGU) {
-  return findNamedChoices({ choices: [], goal: { details }, structure });
+  return findNamedChoices({
+    goal: { details },
+    picks: { examChoices: [], examSubjects: [] },
+    structure,
+  });
 }
 
 function read(position: string) {
@@ -91,8 +95,8 @@ describe(findNamedChoices, () => {
 
     expect(
       findNamedChoices({
-        choices: [{ group: SPECIALTY, subject: AUDIT }],
         goal: { details },
+        picks: { examChoices: [{ group: SPECIALTY, subject: AUDIT }], examSubjects: [] },
         structure: CGU,
       }),
     ).toStrictEqual([]);
@@ -103,8 +107,11 @@ describe(findNamedChoices, () => {
   it("picks again when the saved option is no longer one the notice offers", () => {
     expect(
       findNamedChoices({
-        choices: [{ group: SPECIALTY, subject: "Controle Interno" }],
         goal: { details: { targetPosition: "Desenvolvimento de Sistemas" } },
+        picks: {
+          examChoices: [{ group: SPECIALTY, subject: "Controle Interno" }],
+          examSubjects: [],
+        },
         structure: CGU,
       }),
     ).toStrictEqual([{ group: SPECIALTY, subject: SOFTWARE }]);

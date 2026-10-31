@@ -1,9 +1,9 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import {
-  type ExamChoice,
-  findChoiceOption,
-  findOptionAreas,
+  type ExamPicks,
+  findSubjectAreas,
+  listChoiceGroups,
   listUnchosenSubjects,
 } from "../../exams/choices/exam-choices";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
@@ -19,29 +19,36 @@ function listAreas(graph: PlanGraph): string[] {
   return [...new Set(graph.skills.map((skill) => getSkillArea({ graph, skill })))];
 }
 
-function listPickedOptions({
-  choices,
+function listTakenOptions({
   structure,
+  untaken,
 }: {
-  choices: readonly ExamChoice[];
   structure: ExamStructure;
-}): string[] {
-  return choices.flatMap((choice) => findChoiceOption({ choice, structure })?.name ?? []);
+  untaken: ReadonlySet<string>;
+}): Set<string> {
+  return new Set(
+    listChoiceGroups(structure.subjects).flatMap((group) =>
+      group.options.flatMap((option) => (untaken.has(option.name) ? [] : [option.name])),
+    ),
+  );
 }
 
-async function addPickedFromSharedGraph({
-  choices,
+async function addTakenFromSharedGraph({
   examBlueprintId,
   graph,
   structure,
+  taken,
 }: {
-  choices: readonly ExamChoice[];
   examBlueprintId: string;
   graph: PlanGraph;
   structure: ExamStructure;
+  taken: ReadonlySet<string>;
 }): Promise<PlanGraph> {
-  const taught = new Set(findOptionAreas({ areas: listAreas(graph), structure }).values());
-  const missing = listPickedOptions({ choices, structure }).filter((name) => !taught.has(name));
+  const taught = new Set(
+    findSubjectAreas({ areas: listAreas(graph), names: taken, structure }).values(),
+  );
+
+  const missing = [...taken].filter((name) => !taught.has(name));
 
   if (missing.length === 0) {
     return graph;
@@ -53,7 +60,7 @@ async function addPickedFromSharedGraph({
   });
 
   const shared = joinOptionSkills(parsePlanGraph(stored?.graph));
-  const sharedAreas = findOptionAreas({ areas: listAreas(shared), structure });
+  const sharedAreas = findSubjectAreas({ areas: listAreas(shared), names: taken, structure });
 
   const areas = new Set(
     [...sharedAreas].flatMap(([area, option]) => (missing.includes(option) ? [area] : [])),
@@ -62,14 +69,15 @@ async function addPickedFromSharedGraph({
   return addSharedOptionSkills({ areas, graph, shared });
 }
 
+/** Sets aside the skills of the subjects the learner doesn't take, and brings in the options they do. */
 export async function chooseExamOptionSkills({
-  choices,
   goal,
   graph,
+  picks,
 }: {
-  choices: readonly ExamChoice[];
   goal: Pick<Goal, "examBlueprintId" | "kind">;
   graph: PlanGraph;
+  picks: ExamPicks;
 }): Promise<PlanGraph> {
   const blueprint =
     goal.kind === "exam" && goal.examBlueprintId
@@ -85,18 +93,17 @@ export async function chooseExamOptionSkills({
     return joinOptionSkills(graph);
   }
 
-  const joined = await addPickedFromSharedGraph({
-    choices,
+  const untaken = listUnchosenSubjects({ picks, structure });
+
+  const joined = await addTakenFromSharedGraph({
     examBlueprintId: blueprint.id,
     graph: joinOptionSkills(graph),
     structure,
+    taken: listTakenOptions({ structure, untaken }),
   });
 
-  const unchosen = listUnchosenSubjects({ choices, structure });
-  const optionAreas = findOptionAreas({ areas: listAreas(joined), structure });
-
   const areas = new Set(
-    [...optionAreas].flatMap(([area, option]) => (unchosen.has(option) ? [area] : [])),
+    findSubjectAreas({ areas: listAreas(joined), names: untaken, structure }).keys(),
   );
 
   return setAsideOptionSkills({ areas, graph: joined });

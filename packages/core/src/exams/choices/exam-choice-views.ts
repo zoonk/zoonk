@@ -5,10 +5,11 @@ import { findExamQuestions } from "../mocks/mock-structure";
 import { type ExamChoiceView } from "./exam-choice-contract";
 import {
   type ChoiceGroup,
-  type ExamChoice,
+  type ExamPicks,
   listChoiceGroups,
   toChosenStructure,
 } from "./exam-choices";
+import { scopeExamStructure } from "./exam-scope";
 
 type Subject = ExamStructure["subjects"][number];
 
@@ -60,7 +61,10 @@ function describeLeftOut({
   const counts = group.options.map((option) => getSubjectQuestions({ structure, subject: option }));
 
   const taken = first
-    ? toChosenStructure({ choices: [{ group: group.name, subject: first.name }], structure })
+    ? toChosenStructure({
+        picks: { examChoices: [{ group: group.name, subject: first.name }], examSubjects: [] },
+        structure,
+      })
     : structure;
 
   const option = taken.subjects.find((subject) => subject.name === first?.name);
@@ -79,14 +83,16 @@ function describeLeftOut({
 }
 
 export function listExamChoiceViews({
-  choices,
-  structure,
+  picks,
+  structure: whole,
 }: {
-  choices: readonly ExamChoice[];
+  picks: ExamPicks;
   structure: ExamStructure;
 }): ExamChoiceView[] {
+  const structure = scopeExamStructure({ examSubjects: picks.examSubjects, structure: whole });
+
   return listChoiceGroups(structure.subjects).map((group) => {
-    const choice = choices.find((item) => item.group === group.name);
+    const choice = picks.examChoices.find((item) => item.group === group.name);
 
     return {
       group: group.name,

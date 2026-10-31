@@ -6,7 +6,7 @@ import {
   listChoiceGroups,
   listCountedSubjects,
   listUnchosenSubjects,
-  readExamChoices,
+  readExamPicks,
   toChosenStructure,
 } from "./exam-choices";
 
@@ -55,28 +55,37 @@ describe(listChoiceGroups, () => {
 
 describe(listUnchosenSubjects, () => {
   it("leaves every option out until the learner picks one", () => {
-    expect([...listUnchosenSubjects({ choices: [], structure: enem })]).toStrictEqual([
-      "Língua Inglesa",
-      "Língua Espanhola",
-    ]);
+    expect([
+      ...listUnchosenSubjects({ picks: { examChoices: [], examSubjects: [] }, structure: enem }),
+    ]).toStrictEqual(["Língua Inglesa", "Língua Espanhola"]);
   });
 
   it("keeps only the picked option", () => {
-    expect([...listUnchosenSubjects({ choices: spanish, structure: enem })]).toStrictEqual([
-      "Língua Inglesa",
-    ]);
+    expect([
+      ...listUnchosenSubjects({
+        picks: { examChoices: spanish, examSubjects: [] },
+        structure: enem,
+      }),
+    ]).toStrictEqual(["Língua Inglesa"]);
   });
 
   it("reads a pick the notice no longer lists as no pick", () => {
     const stale = [{ group: FOREIGN, subject: "Língua Francesa" }];
 
-    expect(listUnchosenSubjects({ choices: stale, structure: enem }).size).toBe(2);
+    expect(
+      listUnchosenSubjects({ picks: { examChoices: stale, examSubjects: [] }, structure: enem })
+        .size,
+    ).toBe(2);
   });
 });
 
 describe(toChosenStructure, () => {
   it("is the exam as the learner takes it: the picked option, counted inside its subject once", () => {
-    expect(names(toChosenStructure({ choices: spanish, structure: enem }))).toStrictEqual([
+    expect(
+      names(
+        toChosenStructure({ picks: { examChoices: spanish, examSubjects: [] }, structure: enem }),
+      ),
+    ).toStrictEqual([
       [LANGUAGES, 40],
       ["Língua Espanhola", 5],
       ["Matemática e suas Tecnologias", 45],
@@ -84,7 +93,9 @@ describe(toChosenStructure, () => {
   });
 
   it("keeps the subject an option is part of whole while nothing is picked", () => {
-    expect(names(toChosenStructure({ choices: [], structure: enem }))).toStrictEqual([
+    expect(
+      names(toChosenStructure({ picks: { examChoices: [], examSubjects: [] }, structure: enem })),
+    ).toStrictEqual([
       [LANGUAGES, 45],
       ["Matemática e suas Tecnologias", 45],
     ]);
@@ -92,7 +103,10 @@ describe(toChosenStructure, () => {
 
   it("leaves an exam without choices as it is", () => {
     const plain = { ...enem, subjects: [subject("Matemática", 45)] };
-    expect(toChosenStructure({ choices: spanish, structure: plain })).toStrictEqual(plain);
+
+    expect(
+      toChosenStructure({ picks: { examChoices: spanish, examSubjects: [] }, structure: plain }),
+    ).toStrictEqual(plain);
   });
 
   it("takes an option's count from the latest edition when the notice gives none", () => {
@@ -109,7 +123,11 @@ describe(toChosenStructure, () => {
       ),
     };
 
-    expect(names(toChosenStructure({ choices: spanish, structure: past }))).toStrictEqual([
+    expect(
+      names(
+        toChosenStructure({ picks: { examChoices: spanish, examSubjects: [] }, structure: past }),
+      ),
+    ).toStrictEqual([
       [LANGUAGES, 40],
       ["Língua Espanhola", null],
       ["Matemática e suas Tecnologias", 45],
@@ -149,12 +167,21 @@ describe(findChoiceOption, () => {
   });
 });
 
-describe(readExamChoices, () => {
+describe(readExamPicks, () => {
   it("reads the plan's stored picks, and none from settings without them", () => {
-    expect(readExamChoices({ examChoices: spanish, focusAreas: [] })).toStrictEqual(spanish);
-    expect(readExamChoices({ focusAreas: [] })).toStrictEqual([]);
-    expect(readExamChoices({ examChoices: "broken" })).toStrictEqual([]);
-    expect(readExamChoices(null)).toStrictEqual([]);
+    expect(readExamPicks({ examChoices: spanish, examSubjects: ["Matemática"] })).toStrictEqual({
+      examChoices: spanish,
+      examSubjects: ["Matemática"],
+    });
+
+    expect(readExamPicks({ focusAreas: [] })).toStrictEqual({ examChoices: [], examSubjects: [] });
+
+    expect(readExamPicks({ examChoices: "broken" })).toStrictEqual({
+      examChoices: [],
+      examSubjects: [],
+    });
+
+    expect(readExamPicks(null)).toStrictEqual({ examChoices: [], examSubjects: [] });
   });
 });
 

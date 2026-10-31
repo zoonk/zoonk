@@ -4,7 +4,7 @@ import { type PastCheckpoint, type SeededPast } from "@zoonk/db/seed";
 import { getDateInTimeZone, getHourInTimeZone } from "@zoonk/utils/time-zone";
 import { loadCheckpointCandidates } from "../checkpoints/_utils/checkpoint-candidates";
 import { getPassMark, selectCheckpointItems } from "../checkpoints/checkpoint-rules";
-import { readExamChoices } from "../exams/choices/exam-choices";
+import { readExamPicks } from "../exams/choices/exam-choices";
 import { loadSkillAreas } from "../exams/mocks/_utils/mock-candidates";
 import { buildMockConditions } from "../exams/mocks/_utils/mock-conditions";
 import { gradeMockItem } from "../exams/mocks/_utils/mock-item-grading";
@@ -269,8 +269,8 @@ async function fillMock({
     return;
   }
 
-  const choices = readExamChoices(settings?.settings);
-  const structure = readMockStructure({ blueprint, choices });
+  const picks = readExamPicks(settings?.settings);
+  const structure = readMockStructure({ blueprint, picks });
   const skillIds = plan.skills.map((skill) => skill.id);
 
   const planned = await planWeeklyMock({
@@ -300,7 +300,7 @@ async function fillMock({
     payload,
     sessionDate: checkpoint.localDate,
     structure,
-    unpicked: readUnpickedChoices({ blueprint, choices }),
+    unpicked: readUnpickedChoices({ blueprint, picks }),
     userId: goal.userId,
   });
 

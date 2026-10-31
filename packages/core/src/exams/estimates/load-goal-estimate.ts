@@ -148,9 +148,11 @@ function readMockShape(conditions: unknown) {
 }
 
 function getRecentMockEvidence({
+  examPart,
   ledgerMocks,
   mocks,
 }: {
+  examPart: boolean;
   ledgerMocks: readonly LedgerMock[];
   mocks: readonly RecentMock[];
 }): RecentMockEvidence {
@@ -159,22 +161,26 @@ function getRecentMockEvidence({
   return {
     questions: Math.max(sitting, countRecentQuestions(ledgerMocks)),
     subjectOnly:
-      mocks.length > 0 && mocks.every((mock) => readMockShape(mock.conditions)?.kind === "area"),
+      examPart ||
+      (mocks.length > 0 && mocks.every((mock) => readMockShape(mock.conditions)?.kind === "area")),
   };
 }
 
+/** `examPart`: the goal prepares only some of the exam's subjects, so no mock speaks for the whole exam's score. */
 export async function loadGoalScoreEstimate({
   blueprint,
+  examPart,
   goal,
   ledgerMocks,
 }: {
   blueprint?: Pick<ExamBlueprint, "identityKey" | "name"> | null;
+  examPart: boolean;
   goal: Pick<Goal, "examBlueprintId" | "id" | "title">;
   ledgerMocks: readonly LedgerMock[];
 }): Promise<EstimatedScore | null> {
   const mocks = await loadRecentMocks(goal.id);
 
-  if (!canEstimateScore(getRecentMockEvidence({ ledgerMocks, mocks }))) {
+  if (!canEstimateScore(getRecentMockEvidence({ examPart, ledgerMocks, mocks }))) {
     return null;
   }
 

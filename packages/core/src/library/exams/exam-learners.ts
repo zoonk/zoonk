@@ -46,7 +46,7 @@ async function saveNamedChoices(
   }
 
   const state = getPlanState({ goal, plan });
-  const named = findNamedChoices({ choices: state.settings.examChoices, goal, structure });
+  const named = findNamedChoices({ goal, picks: state.settings, structure });
 
   if (named.length === 0) {
     return false;

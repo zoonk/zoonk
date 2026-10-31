@@ -1,6 +1,6 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { listExamChoiceViews } from "../choices/exam-choice-views";
-import { type ExamChoice, listChoiceGroups } from "../choices/exam-choices";
+import { type ExamPicks, listChoiceGroups } from "../choices/exam-choices";
 import { findSubjectSections, getObjectiveSectionNames } from "./exam-parts";
 
 type Subject = ExamStructure["subjects"][number];
@@ -31,15 +31,15 @@ function findAskedDays({
 }
 
 export function listUnpickedChoices({
-  choices,
+  picks,
   structure,
 }: {
-  choices: readonly ExamChoice[];
+  picks: ExamPicks;
   structure: ExamStructure;
 }): UnpickedChoice[] {
   const groups = listChoiceGroups(structure.subjects);
 
-  return listExamChoiceViews({ choices, structure }).flatMap((view) => {
+  return listExamChoiceViews({ picks, structure }).flatMap((view) => {
     if (view.subject) {
       return [];
     }

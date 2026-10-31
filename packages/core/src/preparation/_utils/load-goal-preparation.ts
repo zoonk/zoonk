@@ -126,7 +126,12 @@ export async function loadOwnedGoalPreparation({
   const estimatedScore =
     inputs.testKind === "weeklyChallenges"
       ? null
-      : await loadGoalScoreEstimate({ blueprint, goal, ledgerMocks: inputs.mockResults });
+      : await loadGoalScoreEstimate({
+          blueprint,
+          examPart: inputs.examPart,
+          goal,
+          ledgerMocks: inputs.mockResults,
+        });
 
   return {
     preparation: {

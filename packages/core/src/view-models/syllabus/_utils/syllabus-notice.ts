@@ -1,8 +1,8 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { namesMatch } from "../../../exams/_utils/name-match";
-import { type ExamChoice, toChosenStructure } from "../../../exams/choices/exam-choices";
-import { loadExamChoices } from "../../../exams/choices/load-exam-choices";
+import { type ExamPicks, toChosenStructure } from "../../../exams/choices/exam-choices";
+import { loadExamPicks } from "../../../exams/choices/load-exam-choices";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { getPassMarks } from "../../../library/exams/pass-marks";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
@@ -48,21 +48,21 @@ function getWrittenTasks({
     .flatMap((section) => (section.tasks ?? []).map((task) => task.description));
 }
 
-/** Restricts notice choices to learner picks; GET callers should share the already-read blueprint and choices. */
+/** Restricts the notice to the learner's picks; GET callers should share the already-read blueprint and picks. */
 export async function loadNotice(
   goal: Pick<Goal, "examBlueprintId" | "id" | "kind"> & Partial<Pick<Goal, "details" | "language">>,
   knownBlueprint?: ExamBlueprint | null | Promise<ExamBlueprint | null>,
-  knownChoices?: readonly ExamChoice[],
+  knownPicks?: ExamPicks,
 ): Promise<SyllabusInput["notice"]> {
   if (goal.kind !== "exam" || !goal.examBlueprintId) {
     return null;
   }
 
-  const [blueprint, choices] = await Promise.all([
+  const [blueprint, picks] = await Promise.all([
     knownBlueprint === undefined
       ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
       : knownBlueprint,
-    knownChoices ?? loadExamChoices(goal.id),
+    knownPicks ?? loadExamPicks(goal.id),
   ]);
 
   if (!blueprint) {
@@ -70,7 +70,7 @@ export async function loadNotice(
   }
 
   const { edition, structure: read, topicFrequency } = readBlueprintContent(blueprint);
-  const structure = toChosenStructure({ choices, structure: read });
+  const structure = toChosenStructure({ picks, structure: read });
   const levels = listTopicLevels({ structure, topicFrequency });
   const shares = listPlanShares(structure);
 

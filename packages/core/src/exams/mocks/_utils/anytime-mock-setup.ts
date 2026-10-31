@@ -9,8 +9,8 @@ import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { getItemAudienceFilter } from "../../../library/items/item-field";
 import { getSkillArea } from "../../../plans/planner/graph-areas";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
-import { readExamChoices } from "../../choices/exam-choices";
-import { loadExamChoices } from "../../choices/load-exam-choices";
+import { readExamPicks } from "../../choices/exam-choices";
+import { loadExamPicks } from "../../choices/load-exam-choices";
 import { type AnytimeMockChoice } from "../mock-contract";
 import { getDaySections } from "../mock-day-sections";
 import { getMockFormatMix } from "../mock-format-mix";
@@ -83,7 +83,7 @@ export async function loadAnytimeMockSetup(
 ): Promise<AnytimeMockSetup> {
   const plan = page ? await page.plan : undefined;
 
-  const [blueprint, areas, finished, pace, essays, choices, typed, speaking] = await Promise.all([
+  const [blueprint, areas, finished, pace, essays, picks, typed, speaking] = await Promise.all([
     knownBlueprint === undefined && goal.examBlueprintId
       ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
       : (knownBlueprint ?? null),
@@ -91,14 +91,14 @@ export async function loadAnytimeMockSetup(
     countFinishedMocksBefore({ goalId: goal.id }),
     loadMockPace(goal.examBlueprintId),
     page?.essays ?? loadMockEssays({ goal, userId: goal.userId }),
-    plan === undefined ? loadExamChoices(goal.id) : readExamChoices(plan?.settings),
+    plan === undefined ? loadExamPicks(goal.id) : readExamPicks(plan?.settings),
     page?.typed ?? loadBankTypedParts(goal.examBlueprintId),
     findExamSpeakingSetup({ goalId: goal.id, userId: goal.userId }),
   ]);
 
   const buildable = await canBuildMock({ blueprint, skillIds: [...areas.keys()] });
 
-  const structure = blueprint ? readMockStructure({ blueprint, choices }) : null;
+  const structure = blueprint ? readMockStructure({ blueprint, picks }) : null;
 
   const { recordings, unvoiced } = await loadListeningCandidates({
     goalId: goal.id,
@@ -125,7 +125,7 @@ export async function loadAnytimeMockSetup(
           speaking: speaking !== null,
           structure,
           typed,
-          unpicked: readUnpickedChoices({ blueprint, choices }),
+          unpicked: readUnpickedChoices({ blueprint, picks }),
         })
       : [],
     placement: buildable ? listPlacementMockOptions({ goalAreas, pace, structure }) : [],

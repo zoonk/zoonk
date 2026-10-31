@@ -1,7 +1,7 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
-import { type ExamChoice } from "../../exams/choices/exam-choices";
-import { loadExamChoices } from "../../exams/choices/load-exam-choices";
+import { type ExamPicks } from "../../exams/choices/exam-choices";
+import { loadExamPicks } from "../../exams/choices/load-exam-choices";
 import { readMockStructure } from "../../exams/mocks/_utils/read-mock-structure";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 
@@ -10,24 +10,20 @@ export async function loadExamStructure(
   goal: Pick<Goal, "examBlueprintId" | "id">,
   {
     blueprint: knownBlueprint,
-    choices: knownChoices,
     dayMinutes,
-  }: {
-    blueprint?: ExamBlueprint | null;
-    choices?: readonly ExamChoice[];
-    dayMinutes?: number | null;
-  } = {},
+    picks: knownPicks,
+  }: { blueprint?: ExamBlueprint | null; dayMinutes?: number | null; picks?: ExamPicks } = {},
 ): Promise<ExamStructure | null> {
   if (!goal.examBlueprintId) {
     return null;
   }
 
-  const [blueprint, choices] = await Promise.all([
+  const [blueprint, picks] = await Promise.all([
     knownBlueprint === undefined
       ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
       : knownBlueprint,
-    knownChoices ?? loadExamChoices(goal.id),
+    knownPicks ?? loadExamPicks(goal.id),
   ]);
 
-  return blueprint ? readMockStructure({ blueprint, choices, dayMinutes }) : null;
+  return blueprint ? readMockStructure({ blueprint, dayMinutes, picks }) : null;
 }

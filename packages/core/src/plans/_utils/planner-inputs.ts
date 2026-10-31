@@ -1,6 +1,6 @@
 import "server-only";
 import { type CourseLevel, type Goal, prisma } from "@zoonk/db";
-import { type ExamChoice } from "../../exams/choices/exam-choices";
+import { type ExamPicks } from "../../exams/choices/exam-choices";
 import { loadSkillEvidence } from "../../learner/_utils/load-skill-claims";
 import { listClaimed } from "../../learner/_utils/skill-claims";
 import { toSkillStatus } from "../../learner/_utils/skill-status";
@@ -85,7 +85,7 @@ async function loadReadiness({
 
 export async function loadPlannerInputs({
   difficultyBias,
-  examChoices = [],
+  examPicks,
   focus = { focusAreas: [], focusParts: [] },
   goal,
   graph,
@@ -93,7 +93,7 @@ export async function loadPlannerInputs({
   userId,
 }: {
   difficultyBias: DifficultyBias;
-  examChoices?: readonly ExamChoice[];
+  examPicks?: ExamPicks;
   focus?: Pick<PlanSettings, "focusAreas" | "focusParts">;
   goal: Pick<Goal, "details" | "examBlueprintId" | "id" | "kind" | "primaryCourseId">;
   graph: PlanGraph;
@@ -109,7 +109,7 @@ export async function loadPlannerInputs({
     loadGoalPlannerLessons({ goal, graph, userId }),
     loadSkillPrerequisites(skillIds),
     loadReadiness({ skillIds, targetDate: isExam ? targetDate : null, userId }),
-    loadExamFacts({ choices: examChoices, goal, graph }),
+    loadExamFacts({ goal, graph, picks: examPicks }),
     loadSkillEvidence({
       focused: (skillId) => focused.has(skillId),
       goalId: goal.id,

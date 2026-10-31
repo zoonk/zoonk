@@ -23,7 +23,7 @@ import { getExamPrepAccess } from "../../sessions/_utils/exam-access";
 import { resolveViewGoal } from "../../view-models/_utils/resolve-view-goal";
 import { getExamCalendar, toExamDates } from "../_utils/exam-calendar";
 import { type NoticeDates, loadNoticeDates } from "../_utils/notice-day";
-import { readExamChoices, toChosenStructure } from "../choices/exam-choices";
+import { readExamPicks, toChosenStructure } from "../choices/exam-choices";
 import { loadTargetCutoff } from "../cutoffs/load-target-cutoff";
 import { loadGoalScoreEstimate } from "../estimates/load-goal-estimate";
 import { getExamDocument } from "../exam-document";
@@ -54,20 +54,21 @@ async function loadMap({
   blueprint,
   goalId,
   plan,
+  structure,
   userId,
 }: {
   blueprint: ExamBlueprint | null;
   goalId: string;
   plan: SavedPlan | null;
+  structure: ExamStructure | null;
   userId: string;
 }): Promise<ExamMap | null> {
-  if (!blueprint) {
+  if (!blueprint || !structure) {
     return null;
   }
 
   const content = readBlueprintContent(blueprint);
   const areas = await loadSkillAreas(goalId, plan ?? undefined);
-  const choices = readExamChoices(plan?.settings);
 
   const learnerSkills = await prisma.learnerSkill.findMany({
     select: { skillId: true, state: true },
@@ -79,8 +80,23 @@ async function loadMap({
   return buildExamMap({
     frequency: content.topicFrequency,
     skills: [...areas].map(([skillId, area]) => ({ area, state: states.get(skillId) ?? "new" })),
-    structure: toChosenStructure({ choices, structure: content.structure }),
+    structure,
   });
+}
+
+function readLearnerStructure({
+  blueprint,
+  plan,
+}: {
+  blueprint: ExamBlueprint | null;
+  plan: SavedPlan | null;
+}): ExamStructure | null {
+  return blueprint
+    ? toChosenStructure({
+        picks: readExamPicks(plan?.settings),
+        structure: readBlueprintContent(blueprint).structure,
+      })
+    : null;
 }
 
 function loadExamNoticeDates({
@@ -199,7 +215,9 @@ export async function getExamView({
   const calendar = getExamCalendar({ blueprint, goal });
   const timeZone = getAnswerTimeZone({ goal, timeZone: requestTimeZone });
   const today = getDateInTimeZone({ date: now, timeZone });
-  const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
+
+  const structure = readLearnerStructure({ blueprint, plan });
+
   const scale = getExamScale({ blueprint, goal });
 
   const [inputs, allowance] = await Promise.all([
@@ -235,9 +253,14 @@ export async function getExamView({
     speaking,
     admission,
   ] = await Promise.all([
-    loadMap({ blueprint, goalId, plan, userId }),
+    loadMap({ blueprint, goalId, plan, structure, userId }),
     loadExamHistory({ goalId, today }),
-    loadGoalScoreEstimate({ blueprint, goal, ledgerMocks: inputs.mockResults }),
+    loadGoalScoreEstimate({
+      blueprint,
+      examPart: inputs.examPart,
+      goal,
+      ledgerMocks: inputs.mockResults,
+    }),
     prisma.examResult.findUnique({ where: { goalId } }),
     plan ? loadShortPlanDay({ goal, source: plan, today }) : null,
     loadNextMock({ blueprint, goal, today }),

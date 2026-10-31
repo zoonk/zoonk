@@ -3,15 +3,24 @@ import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getSubjectQuestions } from "../../library/exams/subject-questions";
 import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import { examChoicePickSchema } from "./exam-choice-contract";
+import { scopeExamStructure } from "./exam-scope";
 
 type Subject = ExamStructure["subjects"][number];
 
 export type ExamChoice = z.infer<typeof examChoicePickSchema>;
 
-const storedChoicesSchema = z.object({ examChoices: z.array(examChoicePickSchema).default([]) });
+/** Which of an exam's subjects the learner takes: the options they picked, within the subjects they prepare. */
+export type ExamPicks = { examChoices: readonly ExamChoice[]; examSubjects: readonly string[] };
 
-export function readExamChoices(settings: unknown): ExamChoice[] {
-  return storedChoicesSchema.safeParse(settings).data?.examChoices ?? [];
+const storedPicksSchema = z.object({
+  examChoices: z.array(examChoicePickSchema).default([]),
+  examSubjects: z.array(z.string()).default([]),
+});
+
+export const NO_EXAM_PICKS: ExamPicks = { examChoices: [], examSubjects: [] };
+
+export function readExamPicks(settings: unknown): ExamPicks {
+  return storedPicksSchema.safeParse(settings).data ?? NO_EXAM_PICKS;
 }
 
 export type ChoiceGroup<T extends Pick<Subject, "choiceGroup" | "name">> = {
@@ -42,7 +51,7 @@ export function findChoiceOption({
   return group?.options.find((option) => option.name === choice.subject) ?? null;
 }
 
-export function listUnchosenSubjects({
+function listUnchosenOptions({
   choices,
   structure,
 }: {
@@ -63,18 +72,35 @@ export function listUnchosenSubjects({
   );
 }
 
-export function findOptionAreas({
+/** The subjects the learner doesn't take: outside what they prepare, or options they didn't pick. */
+export function listUnchosenSubjects({
+  picks,
+  structure,
+}: {
+  picks: ExamPicks;
+  structure: ExamStructure;
+}): Set<string> {
+  const scoped = scopeExamStructure({ examSubjects: picks.examSubjects, structure });
+  const kept = new Set(scoped.subjects.map((subject) => subject.name));
+  const unchosen = listUnchosenOptions({ choices: picks.examChoices, structure: scoped });
+
+  return new Set(
+    structure.subjects.flatMap((subject) =>
+      kept.has(subject.name) && !unchosen.has(subject.name) ? [] : [subject.name],
+    ),
+  );
+}
+
+export function findSubjectAreas({
   areas,
+  names,
   structure,
 }: {
   areas: readonly string[];
+  names: ReadonlySet<string>;
   structure: ExamStructure;
 }): Map<string, string> {
-  const options = new Set(
-    listChoiceGroups(structure.subjects).flatMap((group) => group.options.map((item) => item.name)),
-  );
-
-  if (options.size === 0) {
+  if (names.size === 0) {
     return new Map();
   }
 
@@ -83,7 +109,7 @@ export function findOptionAreas({
   return new Map(
     [...matches].flatMap(([area, index]) => {
       const name = structure.subjects[index]?.name;
-      return name && options.has(name) ? [[area, name] as const] : [];
+      return name && names.has(name) ? [[area, name] as const] : [];
     }),
   );
 }
@@ -125,17 +151,19 @@ function countChosenParts({
 }
 
 export function toChosenStructure({
-  choices,
-  structure,
+  picks,
+  structure: whole,
 }: {
-  choices: readonly ExamChoice[];
+  picks: ExamPicks;
   structure: ExamStructure;
 }): ExamStructure {
+  const structure = scopeExamStructure({ examSubjects: picks.examSubjects, structure: whole });
+
   if (listChoiceGroups(structure.subjects).length === 0) {
     return structure;
   }
 
-  const unchosen = listUnchosenSubjects({ choices, structure });
+  const unchosen = listUnchosenOptions({ choices: picks.examChoices, structure });
   const kept = structure.subjects.filter((subject) => !unchosen.has(subject.name));
   const chosen = kept.filter((subject) => subject.choiceGroup && subject.partOf);
 

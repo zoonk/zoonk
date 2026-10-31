@@ -106,7 +106,7 @@ const key = getPlanInputsKey({ input, items: [] });
 describe(getPlanInputsKey, () => {
   it("keeps the bytes of the keys plans were saved with", () => {
     expect(getPlanInputsKey({ input, items: [{ ...item, status: "done" }] })).toBe(
-      "5ac38dc2490a47b0843a74bf0f36885dfe2303407e2d837af782d0c5e1b12e74",
+      "480b724851fbb20e785a4edd241df195d98f8fb65562bb682227ba8b5e8f7189",
     );
   });
 

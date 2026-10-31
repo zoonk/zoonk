@@ -196,10 +196,7 @@ export async function buildPlanView({
       today: toIsoDate(context.today),
     }),
     Promise.resolve(selectedCatchUp),
-    loadExamChoiceViews({
-      choices: state.settings.examChoices,
-      examBlueprintId: goal.examBlueprintId,
-    }),
+    loadExamChoiceViews({ examBlueprintId: goal.examBlueprintId, picks: state.settings }),
     loadTodayLearnBlocks(goal),
     loadGraphPartAreas({ examBlueprintId: goal.examBlueprintId, graph: state.graph }),
     listTaughtStandInSkills({ goal, graph: state.graph, items }),

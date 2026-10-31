@@ -827,7 +827,7 @@ describe(getGoalPreparation, () => {
     });
   });
 
-  it("estimates a score only once the recent mocks hold enough of the exam", async () => {
+  it("estimates a score only once the recent mocks hold enough of the exam, and never for part of it", async () => {
     const { goal, user } = await setup();
 
     await Promise.all([
@@ -896,6 +896,13 @@ describe(getGoalPreparation, () => {
 
     expect(range).toMatchObject({ mocks: 3, scale: "percent" });
     expect(range?.high).toBeLessThan(100);
+
+    await prisma.plan.update({
+      data: { settings: { examSubjects: ["Ética"] } },
+      where: { goalId: goal.id },
+    });
+
+    await expect(estimate()).resolves.toBeNull();
   });
 
   it("has no preparation for a quick explanation", async () => {

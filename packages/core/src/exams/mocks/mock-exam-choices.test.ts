@@ -69,7 +69,10 @@ function askedByArea({
   choices: readonly ExamChoice[];
   structure: ExamStructure;
 }) {
-  const chosen = toChosenStructure({ choices, structure });
+  const chosen = toChosenStructure({
+    picks: { examChoices: choices, examSubjects: [] },
+    structure,
+  });
 
   const [full] = listMockOptions({
     dayInTurn: 1,
@@ -121,7 +124,10 @@ describe("a mock of an exam with a choice of subject", () => {
   });
 
   it("offers the option the learner picked inside its subject, never as a subject of its own", () => {
-    const chosen = toChosenStructure({ choices: [SPANISH], structure: enemDay(1) });
+    const chosen = toChosenStructure({
+      picks: { examChoices: [SPANISH], examSubjects: [] },
+      structure: enemDay(1),
+    });
 
     const options = listMockOptions({
       dayInTurn: 1,

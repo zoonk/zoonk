@@ -1,6 +1,6 @@
 import "server-only";
 import { type ExamBlueprint, type Goal } from "@zoonk/db";
-import { readExamChoices } from "../../exams/choices/exam-choices";
+import { readExamPicks } from "../../exams/choices/exam-choices";
 import { getExamStartTime } from "../../exams/mocks/_utils/mock-conditions";
 import { getBankTypedParts } from "../../exams/mocks/_utils/mock-typed-parts";
 import { planWeeklyMock } from "../../exams/mocks/_utils/plan-weekly-mock";
@@ -49,7 +49,7 @@ export async function loadMockCard({
   const dayMinutes = getGoalDayMinutes({ date, goal, planSettings: goalPlan?.settings });
 
   const structure = blueprint
-    ? readMockStructure({ blueprint, choices: readExamChoices(goalPlan?.settings), dayMinutes })
+    ? readMockStructure({ blueprint, dayMinutes, picks: readExamPicks(goalPlan?.settings) })
     : null;
 
   const identity = findScheduledMock({

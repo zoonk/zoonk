@@ -7,8 +7,8 @@ import { type BlueprintContent } from "../../library/exams/blueprint-contract";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { getPastQuestionsSource, getSubjectQuestions } from "../../library/exams/subject-questions";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
-import { type ExamChoice, toChosenStructure } from "../choices/exam-choices";
-import { loadExamChoices } from "../choices/load-exam-choices";
+import { type ExamPicks, toChosenStructure } from "../choices/exam-choices";
+import { loadExamPicks } from "../choices/load-exam-choices";
 import { getExamEditionDays, readExamMonth, readExamYear } from "./exam-edition-days";
 import { findLearnerSitting } from "./exam-sittings";
 
@@ -59,16 +59,16 @@ function toQuestionsSource(structure: Structure): Pick<ExamFactsContext, "questi
 
 function toFacts({
   blueprint,
-  choices,
   goal,
+  picks,
 }: {
   blueprint: ExamBlueprint;
-  choices: readonly ExamChoice[];
   goal: FactsGoal;
+  picks: ExamPicks;
 }): ExamFactsContext {
   const content = readBlueprintContent(blueprint);
   const { edition } = content;
-  const structure = toChosenStructure({ choices, structure: content.structure });
+  const structure = toChosenStructure({ picks, structure: content.structure });
 
   const today = toIsoDate(
     getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
@@ -104,12 +104,12 @@ export async function loadExamNoticeFacts(goal: FactsGoal): Promise<ExamFactsCon
     return null;
   }
 
-  const [blueprint, choices] = await Promise.all([
+  const [blueprint, picks] = await Promise.all([
     prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } }),
-    loadExamChoices(goal.id),
+    loadExamPicks(goal.id),
   ]);
 
-  return blueprint ? toFacts({ blueprint, choices, goal }) : null;
+  return blueprint ? toFacts({ blueprint, goal, picks }) : null;
 }
 
 export type OfficialExamDate = { date: string; source: string | null };

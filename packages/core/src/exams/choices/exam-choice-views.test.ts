@@ -26,7 +26,7 @@ const enem: ExamStructure = {
 describe(listExamChoiceViews, () => {
   it("shows each choice's options and the learner's pick, none while unpicked", () => {
     const [view] = listExamChoiceViews({
-      choices: [{ group: FOREIGN, subject: "Língua Espanhola" }],
+      picks: { examChoices: [{ group: FOREIGN, subject: "Língua Espanhola" }], examSubjects: [] },
       structure: enem,
     });
 
@@ -40,13 +40,19 @@ describe(listExamChoiceViews, () => {
       subject: "Língua Espanhola",
     });
 
-    expect(listExamChoiceViews({ choices: [], structure: enem })[0]?.subject).toBeNull();
+    expect(
+      listExamChoiceViews({ picks: { examChoices: [], examSubjects: [] }, structure: enem })[0]
+        ?.subject,
+    ).toBeNull();
   });
 
   it("says an unpicked specialty leaves out its whole test, by the notice's counts and points", () => {
     const cgu = examStructureSchema.parse(reading);
 
-    expect(listExamChoiceViews({ choices: [], structure: cgu })[0]?.leftOut).toStrictEqual({
+    expect(
+      listExamChoiceViews({ picks: { examChoices: [], examSubjects: [] }, structure: cgu })[0]
+        ?.leftOut,
+    ).toStrictEqual({
       examPoints: 360,
       examQuestions: 170,
       name: "Conhecimentos específicos (P3)",

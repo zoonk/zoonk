@@ -2,7 +2,7 @@ import "server-only";
 import { type Goal, type GoalKind } from "@zoonk/db";
 import { loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
 import { type ExamChoiceView } from "../../exams/choices/exam-choice-contract";
-import { readExamChoices } from "../../exams/choices/exam-choices";
+import { readExamPicks } from "../../exams/choices/exam-choices";
 import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
 import { type ExamMomentView } from "../../exams/view/exam-view-contract";
 import { loadExamMoment } from "../../exams/view/load-exam-moment";
@@ -204,8 +204,8 @@ async function loadOpenExamChoice(goal: Goal): Promise<ExamChoiceView | null> {
   const saved = await readSavedPlan(goal.userId, goal.id);
 
   const choices = await loadExamChoiceViews({
-    choices: readExamChoices(saved?.settings),
     examBlueprintId: goal.examBlueprintId,
+    picks: readExamPicks(saved?.settings),
   });
 
   return choices.find((choice) => !choice.subject) ?? null;
