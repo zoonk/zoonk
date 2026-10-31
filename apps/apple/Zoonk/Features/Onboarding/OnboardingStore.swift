@@ -113,6 +113,12 @@ final class OnboardingStore {
         timeZone: TimeZone.current.identifier))
   }
 
+  func startWaitingGoal(_ goal: LearnerWaitingGoal) async throws -> String {
+    var input: Components.Schemas.GoalCreateInput = try PracticeJSON.recode(goal.input)
+    input.timeZone = TimeZone.current.identifier
+    return try await create(input)
+  }
+
   func createExplanation(draft: OnboardingDraft, question: String) async throws -> String {
     try await create(
       .init(

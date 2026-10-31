@@ -16,6 +16,7 @@ struct LearnerSummary: Equatable, Sendable {
   let timeZone: String?
   /// Activities left in today's session, nil before the day is saved.
   let todayBlocksLeft: Int?
+  var waitingGoals: [LearnerWaitingGoal] = []
 }
 
 struct LearnerGoal: Equatable, Identifiable, Sendable {
@@ -49,6 +50,17 @@ struct LearnerGoal: Equatable, Identifiable, Sendable {
     case completed
     case paused
   }
+}
+
+/// A goal typed with the learner's goals that their plan didn't start, kept so it starts without
+/// typing it again.
+struct LearnerWaitingGoal: Equatable, Identifiable, Sendable {
+  let id: String
+  /// POST /goals as it is, with the learner's time zone, starts it.
+  let input: Components.Schemas.GoalCreateInputOutput
+  let locked: Bool
+
+  var title: String { input.goals.first?.title ?? "" }
 }
 
 struct LearnerLevel: Equatable, Sendable {
@@ -153,7 +165,10 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
     readAt: dateFromEpochMilliseconds(summary.readAt),
     tier: LearnerTier(rawValue: summary.tier.rawValue) ?? .free,
     timeZone: summary.timeZone,
-    todayBlocksLeft: summary.today?.blocksLeft)
+    todayBlocksLeft: summary.today?.blocksLeft,
+    waitingGoals: summary.waitingGoals.map { goal in
+      LearnerWaitingGoal(id: goal.id, input: goal.input.value1, locked: goal.locked)
+    })
 }
 
 extension LearnerSummary {

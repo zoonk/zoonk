@@ -24,8 +24,8 @@ struct ReadDraftView: View {
       ) {
         create {
           try await onboarding.createGoals(
-            understood.goals.map(\.draft.value1), schedule: understood.schedule,
-            sourceIDs: sourceIDs)
+            understood.startableGoals(limit: draft.activeGoalLimit).map(\.draft.value1),
+            schedule: understood.schedule, sourceIDs: sourceIDs)
         } then: {
           onCreated($0)
         }
@@ -119,7 +119,7 @@ private struct UnderstoodCard: View {
         title: Text(
           "Here's what I understood", tableName: "Onboarding",
           comment: "Title of the card that confirms what was read from the learner's words"),
-        description: understood.goals.count > 1
+        description: startable.count > 1
           ? Text(
             "These goals share your daily time. You can change all of this later.",
             tableName: "Onboarding", comment: "Under several understood goals")
@@ -130,7 +130,7 @@ private struct UnderstoodCard: View {
       RewritableWords(
         words: draft.prompt, rewriting: $rewriting, isDisabled: isCreating, onRewrite: onRewrite)
 
-      ForEach(understood.goals.indices, id: \.self) { index in
+      ForEach(startable, id: \.self) { index in
         Section {
           ForEach(rows(goal: index)) { row in
             UnderstoodRowView(
@@ -141,6 +141,34 @@ private struct UnderstoodCard: View {
               },
               onSave: { value in await save(row: row, goal: index, value: value) })
           }
+        }
+      }
+
+      ForEach(locked, id: \.self) { index in
+        Section {
+          ForEach(rows(goal: index).map(\.readOnly)) { row in
+            UnderstoodRowView(row: row, isEditing: false, onEdit: { _ in }, onSave: { _ in false })
+          }
+        }
+      }
+
+      if !locked.isEmpty {
+        Section {
+          PlusNotice(
+            description: locked.count == 1
+              ? Text(
+                "Following more than one goal at a time comes with Plus. Until then, this goal waits in your goals.",
+                tableName: "Onboarding",
+                comment:
+                  "Under the one goal the free plan can't follow yet, which waits in the learner's goal list; Plus is the subscription's name, not \"more\""
+              )
+              : Text(
+                "Following more than one goal at a time comes with Plus. Until then, these goals wait in your goals.",
+                tableName: "Onboarding",
+                comment:
+                  "Under the goals the free plan can't follow yet, which wait in the learner's goal list; Plus is the subscription's name, not \"more\""
+              ),
+            showsSeePlus: error?.limit?.isPlusLimit != true, isInset: true)
         }
       }
 
@@ -174,6 +202,14 @@ private struct UnderstoodCard: View {
     }
   }
 
+  private var startable: Range<Int> {
+    understood.startableGoals(limit: draft.activeGoalLimit).indices
+  }
+
+  private var locked: Range<Int> {
+    startable.upperBound..<understood.goals.endIndex
+  }
+
   private func rows(goal index: Int) -> [UnderstoodRow] {
     let rows = UnderstoodRows.rows(for: understood.goals[index])
 
@@ -203,6 +239,22 @@ private struct UnderstoodCard: View {
     } catch {
       return false
     }
+  }
+}
+
+extension Components.Schemas.GoalUnderstanding.Case1Payload {
+  fileprivate func startableGoals(limit: Int?) -> ArraySlice<Components.Schemas.UnderstoodGoal> {
+    goals.prefix(limit ?? goals.count)
+  }
+}
+
+extension UnderstoodRow {
+  fileprivate var readOnly: UnderstoodRow {
+    var row = self
+    row.field = nil
+    row.suggestedDate = nil
+    row.choiceDates = []
+    return row
   }
 }
 

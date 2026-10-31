@@ -177,7 +177,9 @@ extension View {
 private struct GoalSwitcher: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(OnboardingStore.self) private var onboarding
   @State private var pendingGoalId: String?
+  @State private var isStartingWaitingGoal = false
   /// Caps a long goal title so it truncates in the bar instead of moving to its overflow menu.
   @ScaledMetric(relativeTo: .body) private var maxTitleWidth: CGFloat = 140
 
@@ -213,6 +215,28 @@ private struct GoalSwitcher: View {
                 Text(goal.title)
                 Text(goalLine(goal))
               }
+            }
+
+            ForEach(summary.waitingGoals) { goal in
+              Button {
+                start(goal)
+              } label: {
+                Text(goal.title)
+
+                if goal.locked {
+                  Text(
+                    "Starts with Plus", tableName: "Navigation",
+                    comment:
+                      "Under a goal in the goal switcher that the free plan can't follow yet; Plus is the subscription's name, not \"more\""
+                  )
+                } else {
+                  Text(
+                    "Ready to start", tableName: "Navigation",
+                    comment:
+                      "Under a goal in the goal switcher that the learner typed and can start now")
+                }
+              }
+              .disabled(isStartingWaitingGoal)
             }
           } header: {
             Text(
@@ -288,6 +312,23 @@ private struct GoalSwitcher: View {
         Text(
           "Current goal. Switch goal", tableName: "Navigation",
           comment: "Spoken hint of the goal switcher, after the current goal's title"))
+    }
+  }
+
+  private func start(_ goal: LearnerWaitingGoal) {
+    guard !goal.locked else {
+      router.present(.subscription)
+      return
+    }
+
+    isStartingWaitingGoal = true
+
+    Task {
+      defer { isStartingWaitingGoal = false }
+
+      if let goalID = try? await onboarding.startWaitingGoal(goal) {
+        router.open(.goalSetup(goalId: goalID))
+      }
     }
   }
 

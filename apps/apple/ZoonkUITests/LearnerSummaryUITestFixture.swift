@@ -39,6 +39,7 @@ let learnerSummaryUITestJSON = """
     "readAt": 1767225600000,
     "tier": "free",
     "timeZone": "America/New_York",
-    "today": { "blocksLeft": 3, "next": null }
+    "today": { "blocksLeft": 3, "next": null },
+    "waitingGoals": []
   }
   """

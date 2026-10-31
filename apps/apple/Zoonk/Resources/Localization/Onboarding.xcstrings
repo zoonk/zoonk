@@ -9225,6 +9225,124 @@
         }
       }
     },
+    "Following more than one goal at a time comes with Plus. Until then, these goals wait in your goals." : {
+      "comment" : "Under the goals the free plan can't follow yet, which wait in the learner's goal list; Plus is the subscription's name, not \"more\"",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Plus kannst du mehrere Ziele gleichzeitig verfolgen. Bis dahin warten diese Ziele in deiner Zielliste."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con Plus puedes seguir más de un objetivo a la vez. Mientras tanto, estos objetivos se quedan en tu lista de objetivos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec Plus, tu peux suivre plusieurs objectifs à la fois. En attendant, ces objectifs t’attendent dans ta liste d’objectifs."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con Plus puoi seguire più obiettivi alla volta. Nel frattempo, questi obiettivi ti aspettano tra i tuoi obiettivi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plusに登録すると、複数の目標を同時に進められます。それまでは、これらの目標は目標一覧に残ります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus를 구독하면 여러 목표를 동시에 진행할 수 있어요. 그전까지는 내 목표 목록에 남아 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W pakiecie Plus możesz realizować więcej niż jeden cel naraz. Na razie te cele czekają na twojej liście celów."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com o Plus, você pode seguir mais de uma meta por vez. Até lá, essas metas ficam na sua lista de metas."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aynı anda birden fazla hedef üzerinde çalışmak Plus’a özel. O zamana kadar bu hedefler hedef listende bekler."
+          }
+        }
+      }
+    },
+    "Following more than one goal at a time comes with Plus. Until then, this goal waits in your goals." : {
+      "comment" : "Under the one goal the free plan can't follow yet, which waits in the learner's goal list; Plus is the subscription's name, not \"more\"",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Plus kannst du mehrere Ziele gleichzeitig verfolgen. Bis dahin wartet dieses Ziel in deiner Zielliste."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con Plus puedes seguir más de un objetivo a la vez. Mientras tanto, este objetivo se queda en tu lista de objetivos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec Plus, tu peux suivre plusieurs objectifs à la fois. En attendant, cet objectif t’attend dans ta liste d’objectifs."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con Plus puoi seguire più obiettivi alla volta. Nel frattempo, questo obiettivo ti aspetta tra i tuoi obiettivi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plusに登録すると、複数の目標を同時に進められます。それまでは、この目標は目標一覧に残ります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus를 구독하면 여러 목표를 동시에 진행할 수 있어요. 그전까지 이 목표는 내 목표 목록에서 기다려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W pakiecie Plus możesz realizować więcej niż jeden cel naraz. Na razie ten cel czeka na twojej liście celów."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com o Plus, você pode seguir mais de uma meta por vez. Até lá, essa meta fica na sua lista de metas."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aynı anda birden fazla hedef üzerinde çalışmak Plus’a özel. O zamana kadar bu hedef hedef listende bekler."
+          }
+        }
+      }
+    },
     "Following the %@ syllabus" : {
       "comment" : "The options of an exam's choice the learner's plan studies, listed, such as a specialty (Desenvolvimento de Sistemas), a foreign language or two modules, named as the exam's notice names them",
       "localizations" : {
