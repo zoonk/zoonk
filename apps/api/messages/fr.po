@@ -232,6 +232,7 @@ msgctxt "-e4BVR"
 msgid "Continue to Zoonk"
 msgstr "Continuer vers Zoonk"
 
+#. The link shows only the word "Zoonk", so keep "Zoonk" as a separate word, with no ending or particle attached.
 #: src/components/auth-frame.tsx
 msgctxt "m-X1D0"
 msgid "Back to Zoonk"

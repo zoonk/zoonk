@@ -232,10 +232,11 @@ msgctxt "-e4BVR"
 msgid "Continue to Zoonk"
 msgstr "Zoonk로 이동하기"
 
+#. The link shows only the word "Zoonk", so keep "Zoonk" as a separate word, with no ending or particle attached.
 #: src/components/auth-frame.tsx
 msgctxt "m-X1D0"
 msgid "Back to Zoonk"
-msgstr "Zoonk로 돌아가기"
+msgstr "Zoonk 페이지로 돌아가기"
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "Sd1Qq1"
