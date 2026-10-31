@@ -44,6 +44,7 @@ describe(toTopicFrequencyFinding, () => {
       subjects: [
         {
           basis: "questões de 2009 a 2024",
+          board: "INEP",
           name: "Ciências da Natureza e suas Tecnologias",
           source: { title: "Os assuntos que mais caem no Enem", url: PAGE },
           topics: [
@@ -79,6 +80,7 @@ describe(toTopicFrequencyFinding, () => {
       subjects: [
         {
           basis: "questões de 2009 a 2024",
+          board: "INEP",
           name: "Ciências Humanas e suas Tecnologias",
           source: { title: "Os assuntos que mais caem no Enem", url: PAGE },
           topics: [{ appearances: null, level: "medium", topic: "Representação espacial" }],
@@ -97,14 +99,17 @@ describe(toTopicFrequencyFinding, () => {
 
     const raw = { subjects: [natureza, humanas] };
 
-    expect(
-      toTopicFrequencyFinding({ board: "Cebraspe", isSearched: searched, raw, subjects }),
-    ).toStrictEqual({ subjects: [] });
+    const rated = (board: string | null) =>
+      toTopicFrequencyFinding({ board, isSearched: searched, raw, subjects }).subjects.map(
+        (subject) => [subject.name, subject.board],
+      );
 
-    expect(
-      toTopicFrequencyFinding({ board: "Inep", isSearched: searched, raw, subjects }).subjects.map(
-        (subject) => subject.name,
-      ),
-    ).toStrictEqual(["Ciências da Natureza e suas Tecnologias"]);
+    expect(rated("Cebraspe")).toStrictEqual([]);
+    expect(rated("Inep")).toStrictEqual([["Ciências da Natureza e suas Tecnologias", "INEP"]]);
+
+    expect(rated(null)).toStrictEqual([
+      ["Ciências da Natureza e suas Tecnologias", "INEP"],
+      ["Ciências Humanas e suas Tecnologias", null],
+    ]);
   });
 });

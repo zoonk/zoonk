@@ -53,6 +53,7 @@ describe(recordSubjectQuestions, () => {
     });
 
     await recordSubjectQuestions({
+      board: "FGV",
       edition: "45º Exame",
       examBlueprintId: blueprint.id,
       questions: [7, 6, 8],
@@ -78,6 +79,7 @@ describe(recordSubjectQuestions, () => {
     const blueprint = await examBlueprintFixture({ board: "FGV", structure });
 
     await recordSubjectQuestions({
+      board: "FGV",
       edition: null,
       examBlueprintId: blueprint.id,
       questions: [7, null, 8],
@@ -111,9 +113,14 @@ describe(recordSubjectQuestions, () => {
     await expect(findSubjectQuestionsLookup({ examBlueprintId: blueprint.id })).resolves.toBeNull();
   });
 
-  it("looks up nothing while the exam's board is unknown, since another board's papers don't count", async () => {
+  it("looks up an exam whose board is unknown too, without a board to keep to", async () => {
     const blueprint = await examBlueprintFixture({ board: null, structure });
 
-    await expect(findSubjectQuestionsLookup({ examBlueprintId: blueprint.id })).resolves.toBeNull();
+    await expect(
+      findSubjectQuestionsLookup({ examBlueprintId: blueprint.id }),
+    ).resolves.toMatchObject({
+      board: null,
+      subjects: ["Direito Civil", "Direito Penal", "Ética Profissional"],
+    });
   });
 });

@@ -27,6 +27,7 @@ export async function lookUpSubjectQuestionsStep({
   });
 
   await recordSubjectQuestions({
+    board: data.board,
     edition: data.edition,
     examBlueprintId,
     questions: data.questions,

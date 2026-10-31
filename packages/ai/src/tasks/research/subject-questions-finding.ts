@@ -1,4 +1,4 @@
-import { compareBoards } from "@zoonk/utils/exam-boards";
+import { isFromCurrentBoard } from "@zoonk/utils/exam-boards";
 
 const MAX_TITLE_LENGTH = 200;
 const MAX_EDITION_LENGTH = 80;
@@ -17,14 +17,17 @@ export type RawSubjectQuestionsFinding = {
 /** Null for a subject the source gives no single count for. */
 export type SubjectQuestionsFinding =
   | {
+      /** Who ran the edition the counts are from. */
+      board: string | null;
       edition: string | null;
       questions: (number | null)[];
       source: { title: string | null; url: string };
       status: "found";
     }
-  | { edition: null; questions: []; source: null; status: "unknown" };
+  | { board: null; edition: null; questions: []; source: null; status: "unknown" };
 
 const UNKNOWN: SubjectQuestionsFinding = {
+  board: null,
   edition: null,
   questions: [],
   source: null,
@@ -72,14 +75,16 @@ export function toSubjectQuestionsFinding({
   subjectCount,
   total,
 }: {
-  board: string;
+  board: string | null;
   /** An address on a site the search didn't return was invented. */
   isSearched: (url: string) => boolean;
   raw: RawSubjectQuestionsFinding;
   subjectCount: number;
   total: number | null;
 }): SubjectQuestionsFinding {
-  if (raw.status !== "found" || !raw.board || compareBoards(raw.board, board) !== "same") {
+  const countedBoard = raw.board?.trim() || null;
+
+  if (raw.status !== "found" || !isFromCurrentBoard({ board: countedBoard, current: board })) {
     return UNKNOWN;
   }
 
@@ -96,6 +101,7 @@ export function toSubjectQuestionsFinding({
   }
 
   return {
+    board: countedBoard,
     edition: raw.edition?.trim().slice(0, MAX_EDITION_LENGTH) || null,
     questions,
     source: { title: raw.sourceTitle?.trim().slice(0, MAX_TITLE_LENGTH) || null, url },

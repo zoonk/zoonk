@@ -216,7 +216,7 @@ describe(researchWorkflow, () => {
 
     vi.mocked(findSubjectQuestions).mockResolvedValue({
       ...TASK_RESULT,
-      data: { edition: null, questions: [], source: null, status: "unknown" },
+      data: { board: null, edition: null, questions: [], source: null, status: "unknown" },
     });
 
     vi.mocked(findChoiceOptions).mockResolvedValue({
@@ -389,6 +389,7 @@ describe(researchWorkflow, () => {
     vi.mocked(findSubjectQuestions).mockResolvedValue({
       ...TASK_RESULT,
       data: {
+        board: "Cebraspe",
         edition: "TCDF 2023",
         questions: counts,
         source: { title: "Distribuição de itens", url: "https://example.com/tcdf" },
@@ -428,6 +429,7 @@ describe(researchWorkflow, () => {
           .filter((subject) => subject.name === portuguese?.name)
           .map((subject) => ({
             basis: "questões de 2019 a 2025",
+            board: "Cebraspe",
             name: subject.name,
             source: { title: "Assuntos que mais caem", url: "https://example.com/cebraspe" },
             topics: [{ appearances: 12, level: "high" as const, topic: subject.topics[0] ?? "" }],
@@ -494,6 +496,7 @@ describe(researchWorkflow, () => {
         data: {
           subjects: subjects.map((subject) => ({
             basis: "questões de 2019 a 2025",
+            board: "Cebraspe",
             name: subject.name,
             source: { title: "Assuntos que mais caem", url: "https://example.com/cebraspe" },
             topics: subject.topics.map((topic) => ({

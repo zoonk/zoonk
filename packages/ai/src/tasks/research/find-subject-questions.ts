@@ -29,7 +29,7 @@ const schema = z.object({
 });
 
 type FindSubjectQuestionsInput = {
-  board: string;
+  board: string | null;
   exam: string;
   subjects: string[];
   today: string;
@@ -49,7 +49,7 @@ function buildUserPrompt(input: FindSubjectQuestionsInput): string {
     TODAY: ${input.today}
 
 ${formatUntrustedInput({
-  BOARD: input.board,
+  BOARD: input.board ?? "",
   EXAM: input.exam,
   SUBJECTS: input.subjects.map((subject, index) => `${index + 1}. ${subject}`).join("\n"),
   TOTAL: input.total === null ? "" : String(input.total),

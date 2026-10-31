@@ -62,3 +62,14 @@ export function compareBoards(first: string, second: string): "different" | "sam
 
   return firstBoard || secondBoard ? "different" : "unknown";
 }
+
+/** Past papers count only from the current board's editions, or any edition's while it's unknown. */
+export function isFromCurrentBoard({
+  board,
+  current,
+}: {
+  board: string | null;
+  current: string | null;
+}): boolean {
+  return !current || (board !== null && compareBoards(board, current) === "same");
+}

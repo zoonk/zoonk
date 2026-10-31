@@ -122,7 +122,9 @@ const mockConditionsSchema = z.object({
   totalQuestions: z.number().int().nullable(),
 });
 
+/** `board` is who ran the editions a past-paper lookup counted, when it said. */
 const pastQuestionsSchema = z.object({
+  board: z.string().nullable().optional(),
   checkedAt: z.iso.datetime(),
   edition: z.string().nullable(),
   source: z.object({ title: z.string().nullable(), url: z.string() }).nullable(),
@@ -130,6 +132,7 @@ const pastQuestionsSchema = z.object({
 });
 
 const pastOptionsSchema = z.object({
+  board: z.string().nullable().optional(),
   checkedAt: z.iso.datetime(),
   edition: z.string().nullable(),
   options: z.number().int().min(2).nullable(),
@@ -147,6 +150,7 @@ const pastTopicFrequencySchema = z.object({
   subjects: z.array(
     z.object({
       basis: z.string(),
+      board: z.string().nullable().optional(),
       name: z.string(),
       source: z.object({ title: z.string().nullable(), url: z.string() }),
       topics: z.array(pastTopicSchema),

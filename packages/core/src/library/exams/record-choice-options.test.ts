@@ -111,6 +111,7 @@ describe(recordChoiceOptions, () => {
         source: { title: null, url: "https://www.gov.br/inep/provas" },
       }),
       recordSubjectQuestions({
+        board: "Inep",
         edition: "Enem 2025",
         examBlueprintId: blueprint.id,
         questions: [45, 45, 45],

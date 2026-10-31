@@ -1,4 +1,4 @@
-import { compareBoards } from "@zoonk/utils/exam-boards";
+import { isFromCurrentBoard } from "@zoonk/utils/exam-boards";
 
 const MAX_TITLE_LENGTH = 200;
 const MAX_BASIS_LENGTH = 120;
@@ -25,6 +25,8 @@ export type RawTopicFrequencyFinding = {
 export type TopicFrequencyFinding = {
   subjects: {
     basis: string;
+    /** Who ran the editions the source counted. */
+    board: string | null;
     name: string;
     source: { title: string | null; url: string };
     topics: { appearances: number | null; level: Level; topic: string }[];
@@ -81,8 +83,8 @@ function toTopics({
 }
 
 /**
- * Only one source's rating of a subject's own topics, counted from editions `board` ran, from a
- * page a search returned; never guessed.
+ * Only one source's rating of a subject's own topics, from editions the current board ran when
+ * it's known, from a page a search returned; never guessed.
  */
 export function toTopicFrequencyFinding({
   board,
@@ -90,7 +92,7 @@ export function toTopicFrequencyFinding({
   raw,
   subjects,
 }: {
-  board: string;
+  board: string | null;
   /** An address on a site the search didn't return was invented. */
   isSearched: (url: string) => boolean;
   raw: RawTopicFrequencyFinding;
@@ -99,14 +101,14 @@ export function toTopicFrequencyFinding({
   const found = raw.subjects.flatMap((entry) => {
     const subject = subjects[entry.subject - 1];
     const url = entry.sourceUrl?.trim();
+    const countedBoard = entry.board?.trim() || null;
 
     if (
       !subject ||
       !url ||
       !URL.canParse(url) ||
       !isSearched(url) ||
-      !entry.board ||
-      compareBoards(entry.board, board) !== "same"
+      !isFromCurrentBoard({ board: countedBoard, current: board })
     ) {
       return [];
     }
@@ -117,6 +119,7 @@ export function toTopicFrequencyFinding({
       ? [
           {
             basis: entry.basis.trim().slice(0, MAX_BASIS_LENGTH),
+            board: countedBoard,
             name: subject.name,
             source: { title: entry.sourceTitle?.trim().slice(0, MAX_TITLE_LENGTH) || null, url },
             topics,

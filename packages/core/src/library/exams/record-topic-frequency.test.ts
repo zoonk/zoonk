@@ -139,9 +139,11 @@ describe(recordTopicFrequency, () => {
     await expect(findTopicFrequencyLookup({ examBlueprintId: blueprint.id })).resolves.toBeNull();
   });
 
-  it("looks up nothing while the exam's board is unknown, since another board's papers don't count", async () => {
+  it("looks up an exam whose board is unknown too, without a board to keep to", async () => {
     const blueprint = await examBlueprintFixture({ board: null, name: "ENEM", structure });
 
-    await expect(findTopicFrequencyLookup({ examBlueprintId: blueprint.id })).resolves.toBeNull();
+    await expect(
+      findTopicFrequencyLookup({ examBlueprintId: blueprint.id }),
+    ).resolves.toMatchObject({ board: null, exam: "ENEM" });
   });
 });

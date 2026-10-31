@@ -7,7 +7,7 @@ import { type ExamStructure, examEditionSchema, examStructureSchema } from "./bl
 import { needsPastQuestions } from "./subject-questions";
 
 export type SubjectQuestionsLookup = {
-  board: string;
+  board: string | null;
   exam: string;
   subjects: string[];
   total: number | null;
@@ -17,10 +17,7 @@ function describeExam(blueprint: Pick<ExamBlueprint, "name" | "role">): string {
   return blueprint.role ? `${blueprint.name}, ${blueprint.role}` : blueprint.name;
 }
 
-/**
- * Internal workflow bridge: the blueprint must come from the research run that linked it. Null
- * while the exam's board is unknown, since only past papers its current board wrote count.
- */
+/** Internal workflow bridge: the blueprint must come from the research run that linked it. */
 export async function findSubjectQuestionsLookup({
   examBlueprintId,
 }: {
@@ -30,7 +27,7 @@ export async function findSubjectQuestionsLookup({
   const structure = examStructureSchema.safeParse(blueprint?.structure).data;
 
   if (
-    !blueprint?.board ||
+    !blueprint ||
     blueprint.ownerId ||
     !structure ||
     !needsPastQuestions({ now: new Date(), structure })
@@ -51,12 +48,14 @@ export async function findSubjectQuestionsLookup({
 
 /** Internal workflow bridge: the blueprint must come from the research run that requested the lookup. */
 export async function recordSubjectQuestions({
+  board,
   edition,
   examBlueprintId,
   questions,
   source,
   subjects,
 }: {
+  board: string | null;
   edition: string | null;
   examBlueprintId: string;
   questions: readonly (number | null)[];
@@ -78,6 +77,7 @@ export async function recordSubjectQuestions({
   const now = new Date();
 
   const pastQuestions: NonNullable<ExamStructure["pastQuestions"]> = {
+    board: counted.length > 0 ? board : null,
     checkedAt: now.toISOString(),
     edition: counted.length > 0 ? edition : null,
     source: counted.length > 0 ? source : null,

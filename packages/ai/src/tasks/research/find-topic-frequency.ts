@@ -41,7 +41,7 @@ const schema = z.object({
 });
 
 type FindTopicFrequencyInput = {
-  board: string;
+  board: string | null;
   exam: string;
   /** Topics in the notice's words. */
   subjects: TopicFrequencySubject[];
@@ -71,7 +71,7 @@ function buildUserPrompt(input: FindTopicFrequencyInput): string {
     TODAY: ${input.today}
 
 ${formatUntrustedInput({
-  BOARD: input.board,
+  BOARD: input.board ?? "",
   EXAM: input.exam,
   SUBJECTS: formatSubjects(input.subjects),
 })}

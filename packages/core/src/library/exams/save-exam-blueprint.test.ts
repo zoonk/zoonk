@@ -314,72 +314,83 @@ describe(saveExamBlueprint, () => {
     ).resolves.toBe(0);
   });
 
-  it("forgets what past papers showed when the exam changes boards, and keeps it under the same board", async () => {
+  it("forgets past papers a clearly other board wrote, and keeps those that may be the exam's own", async () => {
     const source = await sourceFixture({ language: "pt" });
-    const examIdentity = identity();
     const first = content({ questions: 80, sourceHash: source.contentHash, sourceId: source.id });
     const pastSource = { title: "Distribuição", url: "https://example.com/fgv" };
+    const checkedAt = "2026-01-10T00:00:00.000Z";
 
-    const past = {
-      pastOptions: {
-        checkedAt: "2026-01-10T00:00:00.000Z",
-        edition: "2022",
-        options: 5,
-        source: pastSource,
-      },
+    const pastOf = (board: string) => ({
+      pastOptions: { board, checkedAt, edition: "2022", options: 5, source: pastSource },
       pastQuestions: {
-        checkedAt: "2026-01-10T00:00:00.000Z",
+        board,
+        checkedAt,
         edition: "2022",
         source: pastSource,
         subjects: [{ name: "Direito Constitucional", questions: 20 }],
       },
       pastTopicFrequency: {
-        checkedAt: "2026-01-10T00:00:00.000Z",
+        checkedAt,
         subjects: [
           {
-            basis: "questões da FGV",
+            basis: `questões da ${board}`,
+            board,
             name: "Direito Constitucional",
             source: pastSource,
             topics: [{ appearances: 12, level: "high" as const, topic: "Direitos fundamentais" }],
           },
         ],
       },
+    });
+
+    const nameBoardAfterLookups = async ({
+      board,
+      counted,
+    }: {
+      board: string;
+      counted: string;
+    }) => {
+      const examIdentity = identity();
+      const past = pastOf(counted);
+
+      await saveExamBlueprint({
+        content: { ...first, structure: { ...first.structure, ...past } },
+        identity: examIdentity,
+        provenance: PROVENANCE,
+        sourceId: source.id,
+      });
+
+      const saved = await saveExamBlueprint({
+        board,
+        content: first,
+        identity: examIdentity,
+        provenance: PROVENANCE,
+        sourceId: source.id,
+      });
+
+      return { past, structure: saved.blueprint.structure };
     };
 
-    await saveExamBlueprint({
-      board: "FGV",
-      content: { ...first, structure: { ...first.structure, ...past } },
-      identity: examIdentity,
-      provenance: PROVENANCE,
-      sourceId: source.id,
+    const other = await nameBoardAfterLookups({ board: "Cebraspe", counted: "FGV" });
+
+    expect(other.structure).not.toHaveProperty("pastOptions");
+    expect(other.structure).not.toHaveProperty("pastQuestions");
+
+    expect(examStructureSchema.parse(other.structure).pastTopicFrequency).toStrictEqual({
+      checkedAt: null,
+      subjects: [],
     });
 
-    const sameBoard = await saveExamBlueprint({
-      board: "Fundação Getúlio Vargas",
-      content: first,
-      identity: examIdentity,
-      provenance: PROVENANCE,
-      sourceId: source.id,
+    const alias = await nameBoardAfterLookups({ board: "Fundação Getúlio Vargas", counted: "FGV" });
+
+    expect(alias.structure).toMatchObject(alias.past);
+
+    const acronym = await nameBoardAfterLookups({
+      board: "IDEPI",
+      counted: "Instituto para o Desenvolvimento do Ensino, Pesquisa e Inovação",
     });
 
-    expect(sameBoard.blueprint).toMatchObject({
-      board: "Fundação Getúlio Vargas",
-      structure: past,
-    });
-
-    const newBoard = await saveExamBlueprint({
-      board: "Cebraspe",
-      content: first,
-      identity: examIdentity,
-      provenance: PROVENANCE,
-      sourceId: source.id,
-    });
-
-    expect(newBoard.blueprint.board).toBe("Cebraspe");
-
-    expect(newBoard.blueprint.structure).not.toHaveProperty("pastOptions");
-    expect(newBoard.blueprint.structure).not.toHaveProperty("pastQuestions");
-    expect(newBoard.blueprint.structure).not.toHaveProperty("pastTopicFrequency");
+    expect(acronym.structure).toMatchObject(acronym.past);
   });
 
   it("lets a later edition's notice replace the last one's subjects and board, and keeps what a re-read missed", async () => {

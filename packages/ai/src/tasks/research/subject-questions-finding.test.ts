@@ -17,6 +17,16 @@ const raw = {
   status: "found" as const,
 };
 
+function findStatus({ board, counted }: { board: string | null; counted: string | null }) {
+  return toSubjectQuestionsFinding({
+    board,
+    isSearched: searched,
+    raw: { ...raw, board: counted },
+    subjectCount: 3,
+    total: 20,
+  }).status;
+}
+
 describe(toSubjectQuestionsFinding, () => {
   it("keeps one count per subject, in the subjects' order, with its source", () => {
     expect(
@@ -28,6 +38,7 @@ describe(toSubjectQuestionsFinding, () => {
         total: 20,
       }),
     ).toStrictEqual({
+      board: "FGV Conhecimento",
       edition: "45º Exame",
       questions: [8, 6, 6],
       source: { title: "Quantas questões cai de cada matéria", url: PAGE },
@@ -69,7 +80,7 @@ describe(toSubjectQuestionsFinding, () => {
   });
 
   it("drops counts for every subject that don't add up to the exam's total, or that come from nowhere", () => {
-    const unknown = { edition: null, questions: [], source: null, status: "unknown" };
+    const unknown = { board: null, edition: null, questions: [], source: null, status: "unknown" };
 
     expect(
       toSubjectQuestionsFinding({
@@ -102,25 +113,10 @@ describe(toSubjectQuestionsFinding, () => {
     ).toStrictEqual(unknown);
   });
 
-  it("counts nothing from an edition another board ran, or one whose board it doesn't say", () => {
-    expect(
-      toSubjectQuestionsFinding({
-        board: "Cebraspe",
-        isSearched: searched,
-        raw,
-        subjectCount: 3,
-        total: 20,
-      }),
-    ).toMatchObject({ status: "unknown" });
-
-    expect(
-      toSubjectQuestionsFinding({
-        board: "FGV",
-        isSearched: searched,
-        raw: { ...raw, board: null },
-        subjectCount: 3,
-        total: 20,
-      }),
-    ).toMatchObject({ status: "unknown" });
+  it("counts nothing from another board's edition, or one whose board it doesn't say, unless the board is unknown", () => {
+    expect(findStatus({ board: "Cebraspe", counted: "FGV" })).toBe("unknown");
+    expect(findStatus({ board: "FGV", counted: null })).toBe("unknown");
+    expect(findStatus({ board: "Fundação Getúlio Vargas", counted: "FGV" })).toBe("found");
+    expect(findStatus({ board: null, counted: "FGV" })).toBe("found");
   });
 });

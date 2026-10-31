@@ -1472,6 +1472,7 @@ async function subjectQuestionsCase(): Promise<WriterCase> {
     root: blueprintRoot(blueprint.id),
     write: () =>
       recordSubjectQuestions({
+        board: "Inep",
         edition: "2025",
         examBlueprintId: blueprint.id,
         questions: [45],

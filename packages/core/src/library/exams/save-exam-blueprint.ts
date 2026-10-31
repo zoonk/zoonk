@@ -145,27 +145,35 @@ export async function previewExamBlueprintChanges({
   }).changes;
 }
 
-/** What past papers showed (counts, topics, options) belongs to the board that wrote them. */
+/**
+ * What past papers showed (counts, topics, options) belongs to the board that wrote them, so it's
+ * forgotten once the exam's board is clearly another; a lookup that may be the same board stays.
+ */
 function forgetOtherBoardsPapers({
   board,
-  current,
   stored,
 }: {
   board: string | null;
-  current: ExamBlueprint;
   stored: BlueprintContent;
 }): BlueprintContent {
-  if (!board || !current.board || compareBoards(current.board, board) !== "different") {
+  if (!board) {
     return stored;
   }
+
+  const isOther = (counted?: string | null) =>
+    counted ? compareBoards(counted, board) === "different" : false;
+
+  const { pastOptions, pastQuestions, pastTopicFrequency } = stored.structure;
+  const subjects = pastTopicFrequency?.subjects.filter((subject) => !isOther(subject.board)) ?? [];
+  const lostSubjects = subjects.length < (pastTopicFrequency?.subjects.length ?? 0);
 
   return {
     ...stored,
     structure: {
       ...stored.structure,
-      pastOptions: null,
-      pastQuestions: null,
-      pastTopicFrequency: null,
+      pastOptions: isOther(pastOptions?.board) ? null : pastOptions,
+      pastQuestions: isOther(pastQuestions?.board) ? null : pastQuestions,
+      pastTopicFrequency: lostSubjects ? { checkedAt: null, subjects } : pastTopicFrequency,
     },
   };
 }
@@ -181,7 +189,7 @@ async function updateBlueprint({
   const nextEdition = isNextEdition({ current: read, next: input.content });
   // An edition nobody named a board for keeps "unknown", never the last edition's board.
   const board = input.board ?? (nextEdition ? null : current.board);
-  const stored = forgetOtherBoardsPapers({ board, current, stored: read });
+  const stored = forgetOtherBoardsPapers({ board, stored: read });
 
   const { changes, content } = mergeBlueprintContent({
     current: stored,
