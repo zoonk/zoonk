@@ -39,7 +39,7 @@ struct PatternTesterCanvas: View {
 
   var body: some View {
     ChartsCanvas {
-      LessonRichText(fields.task)
+      LessonRichText(fields.task, literalNumbers: isRegex)
         .font(.subheadline)
 
       field
@@ -406,8 +406,9 @@ struct PatternTesterCanvas: View {
       VStack(alignment: .leading, spacing: 8) {
         ForEach(visible, id: \.self) { hint in
           VStack(alignment: .leading, spacing: 2) {
-            LessonRichText(hint.mistake).font(.footnote.weight(.semibold))
-            LessonRichText(hint.hint).font(.footnote)
+            LessonRichText(hint.mistake, literalNumbers: isRegex)
+              .font(.footnote.weight(.semibold))
+            LessonRichText(hint.hint, literalNumbers: isRegex).font(.footnote)
           }
           .frame(maxWidth: .infinity, alignment: .leading)
           .padding(12)

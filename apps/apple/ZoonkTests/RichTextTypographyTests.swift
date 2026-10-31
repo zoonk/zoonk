@@ -83,4 +83,14 @@ final class RichTextTypographyTests: XCTestCase {
     XCTAssertEqual(ItemTextBlock.plain("About 350000 people"), "About \(grouped) people")
     XCTAssertEqual(ItemTextBlock.asWritten("**About** 350000 people"), "About 350000 people")
   }
+
+  @MainActor
+  func testARegexTaskKeepsItsNumbersAsWritten() {
+    let task = "Match **codes** like 350000 or 94103-1234."
+
+    XCTAssertEqual(
+      String(LessonRichText.attributed(task, literalNumbers: true).characters),
+      "Match codes like 350000 or 94103-1234.")
+    XCTAssertNotEqual(LessonRichText.plain(task), "Match codes like 350000 or 94103-1234.")
+  }
 }

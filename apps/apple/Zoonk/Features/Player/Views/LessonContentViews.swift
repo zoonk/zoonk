@@ -3,43 +3,45 @@ import SwiftUI
 
 struct LessonRichText: View {
   let text: String
+  let literalNumbers: Bool
 
-  init(_ text: String) {
+  init(_ text: String, literalNumbers: Bool = false) {
     self.text = text
+    self.literalNumbers = literalNumbers
   }
 
   var body: some View {
-    Text(Self.attributed(text))
+    Text(Self.attributed(text, literalNumbers: literalNumbers))
   }
 
-  static func attributed(_ text: String) -> AttributedString {
+  static func attributed(_ text: String, literalNumbers: Bool = false) -> AttributedString {
     // An escaped dollar is a price, never the edge of a formula.
     let escaped = text.replacingOccurrences(of: "\\$", with: dollarPlaceholder)
     var result = AttributedString()
     var rest = Substring(escaped)
 
     while let match = rest.firstMatch(of: /\$\$(.+?)\$\$|\$([^$\s][^$]*?[^$\s]|[^$\s])\$(?!\d)/) {
-      result += markdown(rest[..<match.range.lowerBound])
+      result += markdown(rest[..<match.range.lowerBound], literalNumbers: literalNumbers)
       let formula = String(match.output.1 ?? match.output.2 ?? "")
       result +=
         isFormula(formula)
         ? LessonMath.attributed(formula.replacingOccurrences(of: dollarPlaceholder, with: "\\$"))
-        : markdown(match.output.0)
+        : markdown(match.output.0, literalNumbers: literalNumbers)
       rest = rest[match.range.upperBound...]
     }
 
-    return result + markdown(rest)
+    return result + markdown(rest, literalNumbers: literalNumbers)
   }
 
   private static let dollarPlaceholder = "\u{FFFC}"
 
-  private static func markdown(_ text: Substring) -> AttributedString {
+  private static func markdown(_ text: Substring, literalNumbers: Bool) -> AttributedString {
     let options = AttributedString.MarkdownParsingOptions(
       interpretedSyntax: .inlineOnlyPreservingWhitespace)
     let restored = text.replacingOccurrences(of: dollarPlaceholder, with: "$")
-    return RichTextTypography.typesetNumbers(
-      in: (try? AttributedString(markdown: restored, options: options))
-        ?? AttributedString(restored))
+    let parsed =
+      (try? AttributedString(markdown: restored, options: options)) ?? AttributedString(restored)
+    return literalNumbers ? parsed : RichTextTypography.typesetNumbers(in: parsed)
   }
 
   /// Prices ("$5 and $10") stay text: a formula has math in it.
