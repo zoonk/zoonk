@@ -4,6 +4,7 @@ import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { expect, test } from "./fixtures";
+import { expectHydrated } from "./hydration";
 import { openAs } from "./study-day";
 
 async function createTwoGoalLearner() {
@@ -35,7 +36,9 @@ test.describe("Learning tabs frame", () => {
 
     await page.goto("/today");
 
-    await page.getByRole("button", { name: /^Bake sourdough bread.*Switch goal$/u }).click();
+    const switchGoal = page.getByRole("button", { name: /^Bake sourdough bread.*Switch goal$/u });
+    await expectHydrated(switchGoal);
+    await switchGoal.click();
     await page.getByRole("menuitemradio", { name: "Learn to cook" }).click();
 
     await expect(page.getByRole("button", { name: /^Learn to cook.*Switch goal$/u })).toBeVisible();

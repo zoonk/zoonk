@@ -16,6 +16,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
+import { expectHydrated } from "./hydration";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 
 const citation = { passage: "", sourceId: "notice" };
@@ -141,10 +142,12 @@ test.describe("Exam date", () => {
     try {
       await page.goto("/plan");
 
-      await page
+      const editDate = page
         .getByRole("region", { exact: true, name: "Your plan" })
-        .getByRole("button", { name: /^Exam date/u })
-        .click();
+        .getByRole("button", { name: /^Exam date/u });
+
+      await expectHydrated(editDate);
+      await editDate.click();
 
       const editor = page.getByRole("dialog", { name: "Adjust your plan" });
       const date = editor.getByLabel("Exam date");

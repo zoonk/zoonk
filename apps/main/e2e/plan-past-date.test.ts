@@ -2,6 +2,7 @@ import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
+import { expectHydrated } from "./hydration";
 import { asPersona } from "./learn-personas";
 import { routeTimeToCover } from "./time-to-cover-routes";
 
@@ -77,7 +78,9 @@ test.describe("A plan whose date came with lessons left", () => {
       await page.goto("/plan");
 
       const slot = suggestionSlot(page);
-      await slot.getByRole("button", { exact: true, name: "Preview" }).click();
+      const preview = slot.getByRole("button", { exact: true, name: "Preview" });
+      await expectHydrated(preview);
+      await preview.click();
       await expect(slot.locator('[data-slot="diff-lines"]')).toBeVisible();
       await slot.getByRole("button", { exact: true, name: "Apply" }).click();
 
