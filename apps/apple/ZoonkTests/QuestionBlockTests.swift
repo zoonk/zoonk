@@ -240,7 +240,7 @@ final class PracticeModelTests: XCTestCase {
   }
 
   func testNumericEntryReadsNumbersLikeALessonsAnswerField() {
-    let lessons = Locale(identifier: currentCourseCatalogLanguage())
+    let lessons = formattingLocale(currentCourseCatalogLanguage())
 
     for text in ["12,000", "1,234,567", "12.000", "0,125", "1.234,5"] {
       XCTAssertEqual(

@@ -43,7 +43,7 @@ final class ActivityRenderersTests: XCTestCase {
   }
 
   func testReadoutsWriteNumbersInTheLessonsLanguageNotTheDevicesRegion() {
-    let lessons = Locale(identifier: currentCourseCatalogLanguage())
+    let lessons = formattingLocale(currentCourseCatalogLanguage())
 
     XCTAssertEqual(ActivityNumberFormat.format(12_000), 12_000.formatted(.number.locale(lessons)))
     XCTAssertEqual(ActivityNumberFormat.format(2.5), 2.5.formatted(.number.locale(lessons)))

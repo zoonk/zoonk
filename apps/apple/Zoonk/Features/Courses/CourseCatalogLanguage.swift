@@ -9,7 +9,12 @@ func currentCourseCatalogLanguage() -> String {
 extension Locale {
   /// Lessons write and read numbers the course language's way, as main does, so a readout never
   /// says "12.000" beside lesson text saying "12,000". The app's own screens keep the device region.
-  static let courseLanguage = Locale(identifier: currentCourseCatalogLanguage())
+  static let courseLanguage = formattingLocale(currentCourseCatalogLanguage())
+}
+
+/// Zoonk writes Spanish the Mexican way (1,234.56), as main does.
+func formattingLocale(_ language: String) -> Locale {
+  Locale(identifier: language == "es" ? "es_MX" : language)
 }
 
 func courseCatalogLanguage(preferredLocalizations: [String]) -> String {

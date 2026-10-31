@@ -77,7 +77,7 @@ final class RichTextTypographyTests: XCTestCase {
   @MainActor
   func testLessonAndItemTextTypesetTheirNumbers() {
     let grouped = 350_000.formatted(
-      .number.locale(Locale(identifier: currentCourseCatalogLanguage())))
+      .number.locale(formattingLocale(currentCourseCatalogLanguage())))
 
     XCTAssertEqual(LessonRichText.plain("About 350000 people"), "About \(grouped) people")
     XCTAssertEqual(ItemTextBlock.plain("About 350000 people"), "About \(grouped) people")

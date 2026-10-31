@@ -837,7 +837,7 @@ final class LocalizedNumberTests: XCTestCase {
     ]
 
     for (device, text, number) in typed {
-      let lessons = Locale(identifier: courseCatalogLanguage(preferredLocalizations: [device]))
+      let lessons = formattingLocale(courseCatalogLanguage(preferredLocalizations: [device]))
       XCTAssertEqual(parseLocalizedNumber(text, locale: lessons), number, "\(device): \(text)")
     }
   }

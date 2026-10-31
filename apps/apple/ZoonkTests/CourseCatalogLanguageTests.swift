@@ -19,4 +19,10 @@ final class CourseCatalogLanguageTests: XCTestCase {
     XCTAssertEqual(courseCatalogLanguage(preferredLocalizations: ["ja-JP"]), "en")
     XCTAssertEqual(courseCatalogLanguage(preferredLocalizations: []), "en")
   }
+
+  func testSpanishWritesNumbersTheMexicanWay() {
+    XCTAssertEqual(
+      ActivityNumberFormat.format(1234.5, digits: 1, locale: formattingLocale("es")), "1,234.5")
+    XCTAssertEqual(formattingLocale("pt"), Locale(identifier: "pt"))
+  }
 }
