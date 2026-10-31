@@ -166,7 +166,7 @@ private struct FeedbackForm: View {
         MultilineTextField(
           text: $store.message,
           prompt: Text(
-            "How can we help?",
+            "How can we help you?",
             tableName: "Feedback",
             comment: "Placeholder in the feedback message field."),
           label: Text(

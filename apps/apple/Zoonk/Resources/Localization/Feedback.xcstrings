@@ -175,13 +175,13 @@
         }
       }
     },
-    "How can we help?" : {
+    "How can we help you?" : {
       "comment" : "Placeholder in the feedback message field.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wie können wir helfen?"
+            "value" : "Wie können wir dir helfen?"
           }
         },
         "es" : {
@@ -193,13 +193,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comment pouvons-nous t’aider ?"
+            "value" : "Comment peut-on t’aider ?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Como a gente pode ajudar?"
+            "value" : "Como a gente pode te ajudar?"
           }
         }
       }
