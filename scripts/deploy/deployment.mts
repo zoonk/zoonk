@@ -93,10 +93,8 @@ const protectionBypassSchema = z.object({
 });
 
 /**
- * A preview of any branch gets a secret for the API's course-page refreshes and Main's automation
- * bypass to get them past its Deployment Protection. The secret comes from the PR database's
- * address, so a run still working on a superseded API deployment reaches the newer main app.
- * Production and staging keep the projects' own values, which outlast an app redeployed alone.
+ * The secret comes from the PR database's address, so a run still working on a superseded API
+ * deployment reaches the newer main app. Production and staging keep the projects' own values.
  */
 async function getPreviewCacheAccess(): Promise<CourseCacheAccess> {
   const { protectionBypass = {} } = protectionBypassSchema.parse(
