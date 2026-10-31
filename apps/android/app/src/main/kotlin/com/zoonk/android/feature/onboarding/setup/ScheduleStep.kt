@@ -85,6 +85,8 @@ internal fun ColumnScope.ScheduleStep(
     val weekend = weekendPicked.takeIf { weekendOn && days.any(::isWeekend) }
     val hasDays = days.isNotEmpty()
     val paused = run.isStopped
+    // Read once as the step opens, so steps the run reports later never switch the screen.
+    val openedBuilding = rememberSaveable { run.isPlanBuilding }
 
     val covering =
         rememberPlanAnswer(
@@ -131,15 +133,13 @@ internal fun ColumnScope.ScheduleStep(
             now = TimeAnswerState(found, line),
         )
 
-    val gate =
-        if (dated) {
-            covering.last?.let { PlanGate(it.ready, it.readingNotice) }
-        } else {
-            timeAdvice.last?.let { PlanGate(it.ready, it.readingNotice) }
-        }
+    val coverGate = covering.last?.let { PlanGate(it.ready, it.readingNotice) }
+    // When the plan's answer says the goal has no date, the advice asks next: that answer said the plan is ready.
+    val gate = if (dated) coverGate else timeAdvice.last?.let { PlanGate(it.ready, it.readingNotice) } ?: coverGate
     val gatePoll = if (dated) covering.poll else timeAdvice.poll
-    if (gate?.waits(run) == true) {
-        if (gate.readingNotice && !gatePoll.stopped && !run.isStopped) {
+    val gateStatus = if (dated) covering.status else timeAdvice.status
+    if (waitsForPlan(gate, gateStatus, openedBuilding, run)) {
+        if (gate?.readingNotice == true && !gatePoll.stopped && !run.isStopped) {
             val document = if (exam && goal.targetLanguage != null) ExamDocument.GUIDE else ExamDocument.NOTICE
             NoticeReading(document, lastEdition = false)
         } else {
@@ -242,14 +242,6 @@ internal fun ColumnScope.ScheduleStep(
             FullCourseToggle(fullCourse, end, onCheckedChange = { fullCourse = it })
         }
     }
-}
-
-private data class PlanGate(
-    val ready: Boolean,
-    val readingNotice: Boolean,
-) {
-    /** A run that's done leaves the time question to say the plan is still working the time out. */
-    fun waits(run: GenerationRun) = !ready && (readingNotice || run.status != GenerationRun.Status.Ready)
 }
 
 private data class ExamFinish(

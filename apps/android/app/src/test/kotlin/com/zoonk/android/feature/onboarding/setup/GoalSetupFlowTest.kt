@@ -759,6 +759,36 @@ class GoalSetupFlowTest {
         rule.onNodeWithContentDescription("Time a day, 45\u00A0min").assertIsDisplayed()
     }
 
+    /** The buddy's answer opens the time question while the plan's run is still building it. */
+    private fun answerBuddyWhileThePlanIsBuilt() {
+        api.setup = { setupView(listOf("buddy", "schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.reply = { _, _ -> setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.generationId = { "run-1" }
+        api.events =
+            MutableSharedFlow<GenerationEvent>(replay = 1).apply { tryEmit(GenerationEvent(status = "started", step = "buildSkillGraph")) }
+        show()
+        rule.onNodeWithText("Continue").performScrollTo().performClick()
+    }
+
+    @Test
+    fun theTimeQuestionOpensOnThePlansWaitWhileThePlanIsBuilt() {
+        api.coverGateAfter = 0
+        api.coverGate = CompletableDeferred()
+        answerBuddyWhileThePlanIsBuilt()
+
+        rule.onNodeWithText("Building your plan").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("How much time can you study each day?").assertDoesNotExist()
+    }
+
+    @Test
+    fun aReadyPlanThatFindsNoDateKeepsTheQuestionWhileItsTimeAdviceIsAsked() {
+        api.cover = { coverOf(recommended = 45).copy(targetDate = null) }
+        answerBuddyWhileThePlanIsBuilt()
+
+        rule.onNodeWithText("How much time can you study each day?").assertIsDisplayed()
+        rule.onNodeWithText("Building your plan").assertDoesNotExist()
+    }
+
     @Test
     fun aDatedGoalWaitsForItsPlanBeforeAskingTheTime() {
         api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }

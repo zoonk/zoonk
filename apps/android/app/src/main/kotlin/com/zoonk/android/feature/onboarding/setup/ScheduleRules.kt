@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.onboarding.setup
 
 import androidx.compose.runtime.saveable.Saver
+import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.plan.DaySplit
 import com.zoonk.android.feature.plan.TimeLine
 import com.zoonk.android.feature.plan.isBusy
@@ -114,6 +115,28 @@ internal fun waitsToSave(
     line: TimeLine,
     picked: Int?,
 ): Boolean = picked == null && line.isBusy
+
+internal data class PlanGate(
+    val ready: Boolean,
+    val readingNotice: Boolean,
+)
+
+/**
+ * Until the plan's first answer, the run as the step opened ([openedBuilding]) decides, so steps
+ * the run reports later never switch the screen. A run that's done leaves the time question to say
+ * the plan is still working the time out.
+ */
+internal fun waitsForPlan(
+    gate: PlanGate?,
+    status: PollStatus,
+    openedBuilding: Boolean,
+    run: GenerationRun,
+): Boolean =
+    if (gate == null) {
+        status == PollStatus.Polling && openedBuilding
+    } else {
+        !gate.ready && (gate.readingNotice || run.status != GenerationRun.Status.Ready)
+    }
 
 /** The plan's answer for the days shown and what it says about the time shown. */
 internal data class TimeAnswerState(
