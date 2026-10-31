@@ -17,7 +17,7 @@ import kotlinx.serialization.json.jsonPrimitive
  * A sandbox whose page loads at once and answers like main's: every runtime warms up, and each
  * program, query or regex gets what [answer] returns. Hold a reply back with [gate].
  */
-internal class ScriptedSandbox(
+class ScriptedSandbox(
     private val scope: CoroutineScope,
     var answer: (JsonObject) -> JsonElement = { request -> if (request.type == "testRegex") regexTested(request) else JsonPrimitive(true) },
 ) {
@@ -83,6 +83,6 @@ internal class ScriptedSandbox(
     }
 }
 
-internal val JsonObject.code: String get() = getValue("code").jsonPrimitive.content
+val JsonObject.code: String get() = getValue("code").jsonPrimitive.content
 
 private val JsonObject.type get() = getValue("type").jsonPrimitive.content

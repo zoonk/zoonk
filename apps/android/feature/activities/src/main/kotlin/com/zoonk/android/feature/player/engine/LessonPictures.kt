@@ -26,7 +26,7 @@ fun LessonStep.isWaitingForPicture(
  * Pictures drawn since the lesson opened; then, with their wait over, screens stop waiting and a
  * numbered picture's question that never got it is left out (main's `getLostNumberedScreens`).
  */
-internal fun LessonPlayerState.withPictures(
+fun LessonPlayerState.withPictures(
     fresh: List<LessonStep>,
     openedAt: Long,
     now: Long,

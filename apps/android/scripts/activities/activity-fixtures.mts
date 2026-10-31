@@ -13,7 +13,7 @@ import {
 } from "@zoonk/testing/fixtures/activity-contents";
 
 export const ACTIVITY_FIXTURES_FILE = new URL(
-  "../../app/src/test/resources/activity-fixtures.json",
+  "../../feature/activities/src/testFixtures/resources/activity-fixtures.json",
   import.meta.url,
 );
 

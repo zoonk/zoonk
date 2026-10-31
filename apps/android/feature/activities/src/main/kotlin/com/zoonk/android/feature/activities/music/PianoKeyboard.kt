@@ -69,7 +69,7 @@ private fun layoutKeys(
  * that [label] describes.
  */
 @Composable
-internal fun PianoKeyboard(
+fun PianoKeyboard(
     label: String,
     marks: Map<Int, NoteMarkKind>,
     nameOf: (Int) -> String,

@@ -5,7 +5,7 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 
-internal fun LessonPlayerState.enterPosition(
+fun LessonPlayerState.enterPosition(
     position: Int,
     now: Long,
 ): LessonPlayerState {
@@ -39,7 +39,7 @@ private fun LessonPlayerState.leaveQuickCheck(now: Long): LessonPlayerState {
         .enterPosition(quick.returnPosition, now)
 }
 
-internal fun LessonPlayerState.advance(now: Long): LessonPlayerState {
+fun LessonPlayerState.advance(now: Long): LessonPlayerState {
     if (quickCheck?.missed == true) return leaveQuickCheck(now)
 
     val available = queue.filterIndexed { index, id -> index <= position || id !in unavailableStepIds }
@@ -51,7 +51,7 @@ internal fun LessonPlayerState.advance(now: Long): LessonPlayerState {
     return state.copy(notice = null).enterPosition(next, now)
 }
 
-internal fun LessonPlayerState.leaveOutAhead(
+fun LessonPlayerState.leaveOutAhead(
     isLeftOut: (String) -> Boolean,
     completionStatus: CompletionStatus,
     now: Long,
@@ -75,7 +75,7 @@ internal fun LessonPlayerState.leaveOutAhead(
 }
 
 /** Leaves out screens that can't be played (a numbered picture that never came), the one in view too. */
-internal fun LessonPlayerState.skipSteps(
+fun LessonPlayerState.skipSteps(
     stepIds: Collection<String>,
     now: Long,
 ): LessonPlayerState {
@@ -96,7 +96,7 @@ internal fun LessonPlayerState.skipSteps(
     return copy(quickCheck = quick, unavailableStepIds = unavailable).leaveOutAhead(isLeftOut, CompletionStatus.Ready, now)
 }
 
-internal fun LessonPlayerState.continueReading(now: Long): LessonPlayerState {
+fun LessonPlayerState.continueReading(now: Long): LessonPlayerState {
     val step = currentStep
     val workedExample = step?.content as? StepContent.WorkedExample ?: return advance(now)
     val shown = revealed[step.id] ?: 1
@@ -106,7 +106,7 @@ internal fun LessonPlayerState.continueReading(now: Long): LessonPlayerState {
     return copy(revealed = revealed + (step.id to shown + 1))
 }
 
-internal fun LessonPlayerState.continueChallenge(): LessonPlayerState {
+fun LessonPlayerState.continueChallenge(): LessonPlayerState {
     val step = currentStep ?: return this
     val challenge = step.content as? StepContent.Challenge ?: return this
     val shown = revealed[step.id] ?: 0
@@ -119,7 +119,7 @@ internal fun LessonPlayerState.continueChallenge(): LessonPlayerState {
 val LessonPlayerState.canGoBack: Boolean
     get() = phase == LessonPhase.Playing && position > 0 && quickCheck == null && run !is LessonRun.Refused
 
-internal fun LessonPlayerState.goBack(now: Long): LessonPlayerState {
+fun LessonPlayerState.goBack(now: Long): LessonPlayerState {
     val previousId = queue.getOrNull(position - 1)
 
     if (!canGoBack || previousId == null) return this
@@ -159,7 +159,7 @@ private fun LessonPlayerState.missesAfter(
     return if (isCorrect) emptyList() else misses + Miss(step.id, step.skillId)
 }
 
-internal fun LessonPlayerState.resolveCheck(
+fun LessonPlayerState.resolveCheck(
     stepId: String,
     result: StepResult,
     counts: Boolean,
@@ -192,7 +192,7 @@ internal fun LessonPlayerState.resolveCheck(
     return if (step?.kind == StepKind.MatchColumns) resolved.advance(now) else resolved
 }
 
-internal fun LessonPlayerState.explainFirst(now: Long): LessonPlayerState {
+fun LessonPlayerState.explainFirst(now: Long): LessonPlayerState {
     val step = currentStep
 
     if (phase != LessonPhase.Playing || step == null || !step.isQuestionStep) return this
@@ -207,7 +207,7 @@ internal fun LessonPlayerState.explainFirst(now: Long): LessonPlayerState {
     return copy(answers = answers - step.id, helped = helped + step.id, queue = before + ids + rest, stepStartedAt = now)
 }
 
-internal fun LessonPlayerState.startQuickCheck(now: Long): LessonPlayerState {
+fun LessonPlayerState.startQuickCheck(now: Long): LessonPlayerState {
     val checks = quickCheckQueue()
 
     if (phase != LessonPhase.Playing || quickCheck != null || checks.isEmpty()) return this

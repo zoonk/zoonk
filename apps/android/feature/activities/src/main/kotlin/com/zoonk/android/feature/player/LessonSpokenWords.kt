@@ -47,7 +47,7 @@ val LocalLessonSpeech = staticCompositionLocalOf<SpeechPlayer?> { null }
  * themselves when picked, normally then slowly.
  */
 @Composable
-internal fun SpokenWords(
+fun SpokenWords(
     heard: SpokenHeard,
     language: String,
 ) {

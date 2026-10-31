@@ -19,3 +19,4 @@ rootProject.name = "ZoonkAndroid"
 
 include(":app", ":api", ":lint-checks")
 include(":core:data", ":core:designsystem", ":core:navigation", ":core:resources", ":core:ui")
+include(":feature:activities")

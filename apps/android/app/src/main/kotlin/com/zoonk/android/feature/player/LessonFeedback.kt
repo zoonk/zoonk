@@ -132,7 +132,8 @@ fun LessonStepResultView(
         SampleAnswer(result)
 
         val spoken = step.content as? StepContent.SpokenAnswer
-        if (result.heard != null && spoken != null) SpokenWords(result.heard, spoken.content.language)
+        val heard = result.heard
+        if (heard != null && spoken != null) SpokenWords(heard, spoken.content.language)
 
         if (keyPoints != null) {
             KeyPoints(keyPoints)

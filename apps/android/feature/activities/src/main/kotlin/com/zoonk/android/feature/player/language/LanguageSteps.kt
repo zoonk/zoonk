@@ -423,7 +423,7 @@ private fun TranslationView(
 }
 
 @Composable
-internal fun WordHintsView(hints: WordHints) {
+fun WordHintsView(hints: WordHints) {
     val note = hints.note
     val tip = hints.pronunciationTip
     if (note.isNullOrBlank() && tip.isNullOrBlank()) return

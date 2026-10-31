@@ -6,10 +6,10 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import kotlin.math.min
 
-internal enum class RevealPart { Question, Verdict, Feedback, Result }
+enum class RevealPart { Question, Verdict, Feedback, Result }
 
 /** Where a screen's question and a check's feedback sit, so the feedback can come into view without the question leaving it. */
-internal class FeedbackReveal {
+class FeedbackReveal {
     private val parts = mutableMapOf<RevealPart, LayoutCoordinates>()
     var viewport: LayoutCoordinates? = null
 
@@ -48,9 +48,9 @@ internal class FeedbackReveal {
     }
 }
 
-internal val LocalFeedbackReveal = staticCompositionLocalOf<FeedbackReveal?> { null }
+val LocalFeedbackReveal = staticCompositionLocalOf<FeedbackReveal?> { null }
 
-internal fun Modifier.revealPart(
+fun Modifier.revealPart(
     reveal: FeedbackReveal?,
     part: RevealPart,
 ): Modifier = if (reveal == null) this else onGloballyPositioned { reveal.place(part, it) }

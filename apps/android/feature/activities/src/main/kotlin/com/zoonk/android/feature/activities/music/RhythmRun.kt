@@ -308,7 +308,7 @@ class DeviceDelayStore internal constructor(
         }
     }
 
-    internal companion object {
+    companion object {
         const val FILE = "music"
         const val KEY = "rhythm_device_delay"
         private const val SKIPPED = "skipped"
