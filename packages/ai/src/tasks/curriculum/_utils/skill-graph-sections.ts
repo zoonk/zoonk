@@ -86,10 +86,60 @@ export function getSectionCall(key: string): number | null {
   return call ? Number(call) - 1 : null;
 }
 
+type Prerequisites = ReadonlyMap<string, readonly string[]>;
+
+function dependsOn({
+  key,
+  on,
+  prerequisites,
+}: {
+  key: string;
+  on: string;
+  prerequisites: Prerequisites;
+}): boolean {
+  const seen = new Set<string>();
+
+  const visit = (current: string): boolean => {
+    if (current === on) {
+      return true;
+    }
+
+    if (seen.has(current)) {
+      return false;
+    }
+
+    seen.add(current);
+    return (prerequisites.get(current) ?? []).some((next) => visit(next));
+  };
+
+  return visit(key);
+}
+
+function resolvePrerequisites({
+  prerequisites,
+  skill,
+  teachers,
+}: {
+  prerequisites: Prerequisites;
+  skill: RawSkill;
+  teachers: ReadonlyMap<string, readonly string[]>;
+}): string[] {
+  const resolved = skill.prerequisites.flatMap((key) =>
+    isTopicId(key)
+      ? (teachers.get(key) ?? []).filter(
+          (teacher) => !dependsOn({ key: teacher, on: skill.key, prerequisites }),
+        )
+      : [key],
+  );
+
+  return [...new Set(resolved)];
+}
+
 /**
  * Calls write at once and may name the same key, so keys are made unique. A prerequisite naming
  * another call's topic id (`S2.4`) becomes every skill that teaches that topic, since the skill
- * applies what the whole topic teaches.
+ * applies what the whole topic teaches, except a teacher that already depends on the skill, which
+ * would close a cycle.
  */
 export function joinSections(calls: readonly (readonly RawSkill[])[]): RawSkill[] {
   const keyed = calls.flatMap((skills, index) =>
@@ -104,16 +154,18 @@ export function joinSections(calls: readonly (readonly RawSkill[])[]): RawSkill[
 
   const teachers = findTopicTeachers(keyed);
 
+  const explicitPrerequisites = new Map(
+    keyed.map((skill) => [skill.key, skill.prerequisites.filter((key) => !isTopicId(key))]),
+  );
+
+  const prerequisites = keyed.reduce(
+    (resolved, skill) =>
+      resolved.set(skill.key, resolvePrerequisites({ prerequisites: resolved, skill, teachers })),
+    new Map<string, readonly string[]>(explicitPrerequisites),
+  );
+
   return keyed.map((skill) => ({
     ...skill,
-    prerequisites: [
-      ...new Set(
-        skill.prerequisites.flatMap((key) =>
-          (isTopicId(key) ? (teachers.get(key) ?? []) : [key]).filter(
-            (resolved) => resolved !== skill.key,
-          ),
-        ),
-      ),
-    ],
+    prerequisites: [...(prerequisites.get(skill.key) ?? [])],
   }));
 }

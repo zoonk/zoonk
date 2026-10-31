@@ -143,4 +143,38 @@ describe(joinSections, () => {
       ["s2-own-topic", ["s2-bill-procedure"]],
     ]);
   });
+
+  it("leaves out a teacher of the topic that depends on the skill, keeping the others", () => {
+    const joined = joinSections([
+      [
+        rawSkill({ key: "a", topics: ["S1.1"] }),
+        rawSkill({ key: "b", prerequisites: ["c"], topics: ["S1.1"] }),
+        rawSkill({ key: "c", prerequisites: ["S1.1"], topics: ["S1.2"] }),
+      ],
+    ]);
+
+    expect(joined.map((skill) => [skill.key, skill.prerequisites])).toStrictEqual([
+      ["s1-a", []],
+      ["s1-b", ["s1-c"]],
+      ["s1-c", ["s1-a"]],
+    ]);
+  });
+
+  it("leaves out a teacher that depends on the skill through other skills", () => {
+    const joined = joinSections([
+      [
+        rawSkill({ key: "a", topics: ["S1.1"] }),
+        rawSkill({ key: "b", prerequisites: ["d"], topics: ["S1.1"] }),
+        rawSkill({ key: "d", prerequisites: ["S2.1"], topics: ["S1.2"] }),
+      ],
+      [rawSkill({ key: "c", prerequisites: ["S1.1"], topics: ["S2.1"] })],
+    ]);
+
+    expect(joined.map((skill) => [skill.key, skill.prerequisites])).toStrictEqual([
+      ["s1-a", []],
+      ["s1-b", ["s1-d"]],
+      ["s1-d", ["s2-c"]],
+      ["s2-c", ["s1-a"]],
+    ]);
+  });
 });
