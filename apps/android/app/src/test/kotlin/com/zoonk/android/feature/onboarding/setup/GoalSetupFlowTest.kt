@@ -673,6 +673,17 @@ class GoalSetupFlowTest {
     }
 
     @Test
+    fun aGoalThatIsGoneOrNotTheLearnersSaysSoAndLeadsHome() {
+        api.setup = { throw ApiException(ApiError.NotFound) }
+        show()
+
+        rule.onNodeWithText("We couldn't find this page").assertIsDisplayed()
+        rule.onNodeWithText("Try again").assertDoesNotExist()
+        rule.onNodeWithText("Go to the home page").performClick()
+        assertEquals(AppRoute.Today, navigator.currentRoute)
+    }
+
+    @Test
     fun theTimesWorthStopsAskingAfterItsLoadAndThreeFailedPollsAndTryAgainAsksAgain() {
         api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
         api.cover = { coverOf(recommended = 45) }

@@ -45,6 +45,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
@@ -62,6 +63,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -199,7 +201,11 @@ fun GoalSetupScreen(
                 }
 
                 is LoadState.Failed -> {
-                    LoadFailedMessage(onRetry = { vm.reload() })
+                    if (shown.error == ApiError.NotFound) {
+                        NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) })
+                    } else {
+                        LoadFailedMessage(onRetry = { vm.reload() })
+                    }
                 }
 
                 else -> {}
