@@ -3,7 +3,7 @@
 ## Voice and locale
 
 - Use Italian for Italy and informal “tu”.
-- Localize illustrative exam examples for Italy, such as the Maturità, university admission tests and concorsi pubblici.
+- Localize an exam named only as an example, such as a goal suggestion, for Italy: the Maturità, university admission tests and concorsi pubblici. Keep the exam when the screen shows its own scores, sections or questions, such as the SAT example plan.
 - Lines saying what Zoonk is doing while it works speak as “noi” (“Stiamo preparando la pagina 3…”). The buddy speaks as “io”.
 - Buttons, links, menu actions and mission names use the “tu” imperative: “Riprova”, “Inizia un nuovo obiettivo”, “Completa la tua prima lezione”.
 - Avoid adjectives and participles that mark the learner's or the buddy's gender, also in lines they say: “Ti diamo il benvenuto”, not “Benvenuto”. Never use “ə”, “*” or “/a”.

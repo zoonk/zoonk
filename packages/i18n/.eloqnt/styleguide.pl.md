@@ -7,7 +7,7 @@
 - Lines saying what Zoonk is doing while it works speak as “my” (“Przygotowujemy stronę 3…”). The buddy speaks as “ja”.
 - The learner's and the buddy's gender are unknown, and Polish marks them in past-tense verbs of any person and in adjectives about them (“pewny”, “gotowy”). Use the present or future, “udało ci/mi się”, impersonal “-no” forms or a noun phrase: “Lekcja ukończona!”, “Nie wiem”, “Zmiana jest poniżej”, not “Ukończyłeś lekcję!”, “Ukończyłeś(-aś)” or “Nie jestem pewny”.
 - Decline “Zoonk” as a masculine noun: “w Zoonku”, “z Zoonkiem”.
-- Localize illustrative exam examples for Poland, such as the matura and the egzamin ósmoklasisty.
+- Localize an exam named only as an example, such as a goal suggestion, for Poland: the matura and the egzamin ósmoklasisty. Keep the exam when the screen shows its own scores, sections or questions, such as the SAT example plan.
 - Treat “Moc Umysłu” as a product name. Amounts take “pkt”: “+10 pkt Mocy Umysłu”.
 
 ## Placeholders

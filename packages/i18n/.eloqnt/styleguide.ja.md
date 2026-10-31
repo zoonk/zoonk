@@ -9,15 +9,18 @@
 - The buddy speaks in です・ます too and calls itself “わたし”.
 - Buddy names take no honorific. The learner's name and named people in calls and speaking exams take “さん” (“{name}さん”); roles such as “試験官” don't.
 - Keep “Zoonk” and “Plus” in Latin letters.
-- Localize illustrative exam examples for Japan, such as the 大学入学共通テスト, 英検 and 公務員試験.
+- Localize an exam named only as an example, such as a goal suggestion, for Japan: the 大学入学共通テスト, 英検 and 公務員試験. Keep the exam when the screen shows its own scores, sections or questions, such as the SAT example plan.
+- Use full-width “！”, “？”, “（）” and “：”, with no space after “。”. Write numbers with their units: “30秒”, “1日”, “1〜2分”.
+- Write foreign cities and the people in examples in katakana: “ロンドン”, “アナさん”.
+- When an English plural's one form has its own words (“Opens tomorrow”, “all of it”), keep them in an “=1” branch, since Japanese has only “other”.
 
 ## Glossary
 
-- “lesson”: “レッスン”, not “授業”
+- “lesson”: “レッスン”, not “授業”; lessons are counted “#レッスン”, not with “件”, “回” or “つ”
 - “goal” (the learner's goal): “目標”
 - “plan” (study plan): “学習計画”, or “計画” where it's clear; subscription plan: “プラン”
 - “Free” (subscription name): “無料プラン”
-- “Get Plus”: “Plusに登録する”
+- “Get Plus”: “Plusに登録する”; the “Subscribe” button: “登録する”; “subscription”: “サブスクリプション”; to “cancel” it: “解約する”
 - “session” (study): “学習” (“今日の学習”), not “セッション”, which is the sign-in session
 - “subject” (of an exam or a plan): “科目”
 - “topic”: “トピック”
@@ -29,6 +32,10 @@
 - “check” (an answer): “答え合わせ”, not “確認”, which confirms
 - “write” (Zoonk generating content): “作成する”; learner writing: “書く”
 - “essay”: “小論文”, not “エッセイ”
+- “case” (a situation the learner works through): “事例”, not “ケース”
+- “the big day” (the exam or goal date): “本番” for an exam, otherwise “目標の日”, never “大切な日”
+- the “objective” questions of a mock: “選択式の問題”
+- “Got it” (closing a notice): “OK”, not “了解”; “Not quite” (a wrong answer): “少し違います”
 - “guess” (a pick that doesn't count) and the learner's “estimate” before the answer shows: “予想”, never “回答”; an estimated score or band: “推定スコア” / “推定バンドスコア”
 - “say” (aloud, in pronunciation practice): “声に出して言う”
 - “share” (personal facts): “教える”, not “共有する”
@@ -56,7 +63,7 @@
 - Buddy stages “Baby” / “Young” / “Adult”: “赤ちゃん” / “こども” / “おとな”, never “アダルト”
 - “Brain Power”: “脳力” (a play on “能力”), never “能力” or “ブレインパワー”
 - “mission”: “ミッション”
-- “call” (speaking practice): “会話”, not “電話”
+- “call” (speaking practice): “会話”, not “電話”; the verb: “会話練習をする”
 - “Mistakes notebook”: “間違いノート”
 - “Saved to your mistakes”: “間違いノートに保存しました”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “未克服” / “克服済み”
@@ -74,6 +81,7 @@
 - “Beginner” / “Intermediate” / “Advanced” (course levels and plan phases): “初級” / “中級” / “上級”
 - “Quick lesson”: “クイックレッスン”
 - “Focus test”: “重点診断”
+- “Quick explanation”: “クイック解説”
 - “Weekly summary”: “週間まとめ”
 - “Full review”: “総復習”; spaced review: “復習”
 - Belts: “白帯”, “黄帯”, “オレンジ帯”, “緑帯”, “青帯”, “紫帯”, “茶帯”, “赤帯”, “グレー帯”, “黒帯”
