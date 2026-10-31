@@ -26,6 +26,7 @@ import frFlag from "flag-icons/flags/4x3/fr.svg";
 import gbWlsFlag from "flag-icons/flags/4x3/gb-wls.svg";
 import geFlag from "flag-icons/flags/4x3/ge.svg";
 import grFlag from "flag-icons/flags/4x3/gr.svg";
+import hkFlag from "flag-icons/flags/4x3/hk.svg";
 import hrFlag from "flag-icons/flags/4x3/hr.svg";
 import huFlag from "flag-icons/flags/4x3/hu.svg";
 import idFlag from "flag-icons/flags/4x3/id.svg";
@@ -99,6 +100,7 @@ export const FLAG_IMAGES: Record<LanguageFlagCode, FlagImage> = {
   "gb-wls": gbWlsFlag,
   ge: geFlag,
   gr: grFlag,
+  hk: hkFlag,
   hr: hrFlag,
   hu: huFlag,
   id: idFlag,

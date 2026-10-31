@@ -92,6 +92,16 @@ describe(voiceListeningScript, () => {
     ]);
   });
 
+  it("voices a language Flash Lite doesn't speak on Flash alone", async () => {
+    generateSpeechWithProviderMock.mockResolvedValue(speaks(2));
+
+    await voiceListeningScript({ language: "sv", lines: LINES });
+
+    expect(
+      new Set(generateSpeechWithProviderMock.mock.calls.map(([input]) => input.model)),
+    ).toStrictEqual(new Set([FLASH]));
+  });
+
   it("fails the recording when a line fails on every model, instead of leaving a gap", async () => {
     generateSpeechWithProviderMock.mockImplementation(async ({ voice }) => {
       if (voice === "Puck") {

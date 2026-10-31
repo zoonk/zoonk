@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   getLanguageName,
   getMaiVoiceLocale,
+  isFlashLiteTTSLanguage,
   isTTSSupportedLanguage,
   toCanonicalLanguage,
   usesNonLatinScript,
@@ -33,6 +34,18 @@ describe(isTTSSupportedLanguage, () => {
   it("reads the language from a code with a region", () => {
     expect(isTTSSupportedLanguage("zh-TW")).toBe(true);
   });
+
+  it("voices Cantonese apart from Mandarin", () => {
+    expect(isTTSSupportedLanguage("yue")).toBe(true);
+  });
+});
+
+describe(isFlashLiteTTSLanguage, () => {
+  it("leaves out the languages only Gemini Flash speaks", () => {
+    expect(isFlashLiteTTSLanguage("es")).toBe(true);
+    expect(isFlashLiteTTSLanguage("sv")).toBe(false);
+    expect(isFlashLiteTTSLanguage("xx")).toBe(false);
+  });
 });
 
 describe(toCanonicalLanguage, () => {
@@ -62,6 +75,16 @@ describe(usesNonLatinScript, () => {
   it("reads the language from a code with a region", () => {
     expect(usesNonLatinScript("zh-TW")).toBe(true);
     expect(usesNonLatinScript("pt-BR")).toBe(false);
+  });
+
+  it("knows the script of a language without a list", () => {
+    expect(usesNonLatinScript("yue")).toBe(true);
+    expect(usesNonLatinScript("kk")).toBe(true);
+  });
+
+  it("follows a script the tag names", () => {
+    expect(usesNonLatinScript("sr")).toBe(true);
+    expect(usesNonLatinScript("sr-Latn")).toBe(false);
   });
 });
 

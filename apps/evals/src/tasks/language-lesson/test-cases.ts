@@ -181,4 +181,19 @@ export const TEST_CASES: TestCase<unknown, LanguageLessonInput>[] = [
       unitTitle: "Hearing the sounds in words",
     },
   },
+  {
+    expectations: `US English speaker learning Cantonese (not Mandarin), A1, ordering at a Hong Kong cha chaan teng. Every Cantonese word and sentence is spoken Cantonese written in traditional characters, with Cantonese-only words where Cantonese uses them ("唔該", "係", "嘅", "咩", "喺", "幾多錢"), never Mandarin wording ("谢谢", "是", "的", "什么", "在", "多少钱") or simplified characters. Romanization is Jyutping with tone numbers ("m4 goi1"), never pinyin. Tips name Cantonese sounds and tones English speakers get wrong.`,
+    id: "en-yue-a1-ordering",
+    userInput: {
+      knownWords: [],
+      learnerLanguage: "en",
+      lessonCanDo: "Order a drink and a dish and ask how much it costs",
+      lessonDescription: "Order milk tea and a pineapple bun, and ask for the price",
+      lessonTitle: "Ordering at a cha chaan teng",
+      level: "A1",
+      targetLanguage: "yue",
+      unitCanDos: ["Order food and drinks", "Ask how much something costs"],
+      unitTitle: "Eating out in Hong Kong",
+    },
+  },
 ];

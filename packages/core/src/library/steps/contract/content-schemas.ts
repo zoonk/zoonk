@@ -1,3 +1,4 @@
+import { LANGUAGE_CODE_PATTERN } from "@zoonk/utils/languages";
 import { z } from "zod";
 
 const STEP_TEXT_LIMITS = {
@@ -21,7 +22,7 @@ export const partSchema = z.string().min(1).max(STEP_TEXT_LIMITS.part);
 
 export const richTextSchema = z.string().min(1).max(STEP_TEXT_LIMITS.richText);
 
-export const languageCodeSchema = z.string().regex(/^[a-z]{2,3}(?:-[A-Z]{2})?$/u);
+export const languageCodeSchema = z.string().regex(LANGUAGE_CODE_PATTERN);
 
 export const citationSchema = z
   .object({

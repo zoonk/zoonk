@@ -116,6 +116,16 @@ describe(matchSpokenAnswer, () => {
     expect(match.words[0]?.heard).toBe("请问最近的图书馆在哪里");
   });
 
+  it("accepts Cantonese heard in simplified characters for a sentence written in traditional ones", () => {
+    const match = matchSpokenAnswer({
+      expected: "唔該，請問地鐵站喺邊度？",
+      heard: "唔该请问地铁站喺边度",
+      language: "yue",
+    });
+
+    expect(match.isCorrect).toBe(true);
+  });
+
   it("doesn't fail Japanese for a comma the transcript left out", () => {
     const match = matchSpokenAnswer({
       expected: "先週、友達と京都に行きました。",

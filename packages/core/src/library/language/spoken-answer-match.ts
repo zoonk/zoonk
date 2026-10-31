@@ -40,8 +40,11 @@ function expandContractions({ language, text }: { language: string; text: string
 /** Speech recognition may return either Chinese script; compare in simplified characters. */
 const toSimplifiedChinese = createChineseConverter({ from: "t", to: "cn" });
 
+const CHINESE_SCRIPT_LANGUAGES: ReadonlySet<string> = new Set(["yue", "zh"]);
+
 const UNSPACED_LANGUAGE_SEGMENTERS: Readonly<Record<string, Intl.Segmenter>> = {
   ja: new Intl.Segmenter("ja", { granularity: "word" }),
+  yue: new Intl.Segmenter("yue", { granularity: "word" }),
   zh: new Intl.Segmenter("zh", { granularity: "word" }),
 };
 
@@ -50,7 +53,7 @@ function getUnspacedSegmenter(language: string): Intl.Segmenter | undefined {
 }
 
 function toComparableScript({ language, text }: { language: string; text: string }): string {
-  return getBaseLanguage(language) === "zh" ? toSimplifiedChinese(text) : text;
+  return CHINESE_SCRIPT_LANGUAGES.has(getBaseLanguage(language)) ? toSimplifiedChinese(text) : text;
 }
 
 function toTokens({ language, text }: { language: string; text: string }): string[] {

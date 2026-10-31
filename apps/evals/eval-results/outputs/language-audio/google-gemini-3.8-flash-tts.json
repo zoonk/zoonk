@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-11T19:40:01.972Z",
+  "generatedAt": "2026-10-31T00:18:08.209Z",
   "modelId": "google/gemini-3.8-flash-tts",
   "outputs": [
     {
@@ -352,6 +352,69 @@
       "systemPrompt": "",
       "testCaseId": "it-lookalike-pane-1",
       "userPrompt": "pane"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 2037.514375,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/yue-word.mp3\",\n  \"costUsd\": 0.000276,\n  \"durationMs\": 1040\n}",
+      "systemPrompt": "",
+      "testCaseId": "yue-word-1",
+      "userPrompt": "唔該"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 2781.2341669999996,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/yue-sentence.mp3\",\n  \"costUsd\": 0.0006555,\n  \"durationMs\": 2720\n}",
+      "systemPrompt": "",
+      "testCaseId": "yue-sentence-1",
+      "userPrompt": "唔該，請問地鐵站喺邊度？"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 2275.146084,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/he-word.mp3\",\n  \"costUsd\": 0.00035,\n  \"durationMs\": 1360\n}",
+      "systemPrompt": "",
+      "testCaseId": "he-word-1",
+      "userPrompt": "ספרייה"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 2775.2664579999996,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/he-sentence.mp3\",\n  \"costUsd\": 0.000622,\n  \"durationMs\": 2560\n}",
+      "systemPrompt": "",
+      "testCaseId": "he-sentence-1",
+      "userPrompt": "איפה תחנת הרכבת הקרובה?"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 2115.856708,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/uk-word.mp3\",\n  \"costUsd\": 0.000461,\n  \"durationMs\": 1840\n}",
+      "systemPrompt": "",
+      "testCaseId": "uk-word-1",
+      "userPrompt": "бібліотека"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 2693.4845829999995,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/uk-sentence.mp3\",\n  \"costUsd\": 0.000816,\n  \"durationMs\": 3400\n}",
+      "systemPrompt": "",
+      "testCaseId": "uk-sentence-1",
+      "userPrompt": "Скажіть, будь ласка, як дійти до вокзалу?"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 2538.5388749999993,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/ur-sentence.mp3\",\n  \"costUsd\": 0.0007215,\n  \"durationMs\": 3000\n}",
+      "systemPrompt": "",
+      "testCaseId": "ur-sentence-1",
+      "userPrompt": "قریب ترین ریلوے اسٹیشن کہاں ہے؟"
     }
   ],
   "taskId": "language-audio"

@@ -815,6 +815,83 @@
           "unitTitle": "Hearing the sounds in words"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The Cantonese is grammatical, natural, and written in traditional characters. Translations accurately convey the contextual meanings, Jyutping and tone numbers are correct, and the cultural and grammatical explanations are sound. No accuracy cap is triggered.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The lesson specifically addresses English-speaker difficulties: aspirated ts versus English ch, initial ng without an added vowel, syllabic m, and lexical tones rather than stress. It also compares Cantonese classifiers and price-question structure with English. The respellings add no syllables, and Jyutping is consistently provided.",
+          "score": 9,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The vocabulary and short sentences directly support ordering milk tea and a pineapple bun and asking their combined price at a Hong Kong cha chaan teng. The scope is appropriate for A1, without padded vocabulary or repetition of known words.",
+          "score": 10,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The tip, examples, and classifier blank align, and the blank has exactly one correct answer. Writing answers provide several correct formulations, and speaking prompts establish realistic service encounters. However, 本 and 位 are implausible distractors for the price-question sentence, weakening that exercise.",
+          "score": 8,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The English is clear, concise, and natural. Target-language fields contain Cantonese rather than English, sentence tiles omit decorative final punctuation while retaining question marks, and each summary line states one usable capability.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3287,
+          "outputTokens": 1396,
+          "reasoningTokens": 819
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The price-question sentence uses 本 and 位 as distractors even though it contains no classifier slot. These are not plausible alternatives in that sentence and make the exercise easier through irrelevance rather than language knowledge.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a second classifier practice item for 一杯奶茶 to reinforce the drink-versus-bun distinction. A short tone cue for naai5 caa4 would also help English speakers pronounce the central drink order, complementing the existing consonant tips.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Cantonese (not Mandarin), A1, ordering at a Hong Kong cha chaan teng. Every Cantonese word and sentence is spoken Cantonese written in traditional characters, with Cantonese-only words where Cantonese uses them (\"唔該\", \"係\", \"嘅\", \"咩\", \"喺\", \"幾多錢\"), never Mandarin wording (\"谢谢\", \"是\", \"的\", \"什么\", \"在\", \"多少钱\") or simplified characters. Romanization is Jyutping with tone numbers (\"m4 goi1\"), never pinyin. Tips name Cantonese sounds and tones English speakers get wrong.",
+        "id": "en-yue-a1-ordering-1",
+        "userInput": {
+          "knownWords": [],
+          "learnerLanguage": "en",
+          "lessonCanDo": "Order a drink and a dish and ask how much it costs",
+          "lessonDescription": "Order milk tea and a pineapple bun, and ask for the price",
+          "lessonTitle": "Ordering at a cha chaan teng",
+          "level": "A1",
+          "targetLanguage": "yue",
+          "unitCanDos": ["Order food and drinks", "Ask how much something costs"],
+          "unitTitle": "Eating out in Hong Kong"
+        }
+      }
     }
   ],
   "taskId": "language-lesson"

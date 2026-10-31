@@ -272,6 +272,27 @@ describe(generateLanguageAudio, () => {
     expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE]);
   });
 
+  it("skips Flash Lite for a language it doesn't speak", async () => {
+    generateSpeechWithProviderMock
+      .mockRejectedValueOnce(new Error("Flash unavailable"))
+      .mockResolvedValueOnce(voiced());
+
+    await generateLanguageAudio({ language: "sv", text: "Var ligger tågstationen?" });
+
+    expect(requestedModels()).toStrictEqual([FLASH, MAI_VOICE]);
+  });
+
+  it("tries the only model that speaks a language twice", async () => {
+    generateSpeechWithProviderMock
+      .mockRejectedValueOnce(new Error("Flash unavailable"))
+      .mockResolvedValueOnce(voiced());
+
+    const result = await generateLanguageAudio({ language: "ug", text: "ياخشىمۇسىز" });
+
+    expect(result.error).toBeNull();
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH]);
+  });
+
   it("falls back when a model's audio is silent", async () => {
     convertWavToMp3Mock
       .mockRejectedValueOnce(new Error(`${FLASH} returned silent audio`))

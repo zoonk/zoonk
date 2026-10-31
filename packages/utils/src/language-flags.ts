@@ -85,6 +85,7 @@ const LANGUAGE_FLAGS = {
   ur: "pk",
   uz: "uz",
   vi: "vn",
+  yue: "hk",
   zh: "cn",
   "zh-TW": "tw",
   zu: "za",

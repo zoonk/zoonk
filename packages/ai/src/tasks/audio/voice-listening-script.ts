@@ -15,7 +15,7 @@ import {
   getListeningVoicePromptVersion,
 } from "./listening-voice-prompt";
 import { assertExpectedAudioSize, getMaxSeconds } from "./speech-limits";
-import { type SpeechModelName, speechModels } from "./speech-models";
+import { type SpeechModelName, getSpeakingModels, speechModels } from "./speech-models";
 import { buildSpeechProvenance } from "./speech-provenance";
 import { generateSpeechWithProvider } from "./speech-provider";
 
@@ -113,7 +113,10 @@ export async function voiceListeningScript({
   model?: SpeechModelName;
   serviceTier?: ServiceTier;
 }): Promise<SafeReturn<AudioResult>> {
-  const models = model ? [model, model] : LISTENING_SPEECH_MODELS;
+  const models = model
+    ? [model, model]
+    : getSpeakingModels({ candidates: LISTENING_SPEECH_MODELS, language });
+
   const locale = getBaseLanguage(language);
 
   const parts = lines.flatMap((line, turn) =>

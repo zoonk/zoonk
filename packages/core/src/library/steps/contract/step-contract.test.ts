@@ -178,6 +178,17 @@ describe("step contract", () => {
     expect(safeParseStepContent("check", pastTheLast).success).toBe(false);
   });
 
+  it("takes spoken answers in every language a goal can name, scripts and regions too", () => {
+    const languages = ["es", "es-419", "sr-Latn", "yue"];
+
+    expect(
+      languages.filter(
+        (language) =>
+          safeParseStepContent("spokenAnswer", { ...contents.spokenAnswer, language }).success,
+      ),
+    ).toStrictEqual(languages);
+  });
+
   it("rejects content that doesn't match its kind", () => {
     expect(
       safeParseStepContent("check", {

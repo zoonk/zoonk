@@ -1363,6 +1363,253 @@
           "lookAlike": { "english": "peɪn", "native": "ˈpaːne" }
         }
       }
+    },
+    {
+      "classification": { "expected": "read right", "predicted": "read right" },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "cacheReadTokens": 0,
+          "inputTokens": 861,
+          "outputTokens": 124,
+          "reasoningTokens": 100
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read \"唔該\". gpt-transcribe heard \"唔該。\" (misheard []); the pronunciation check heard \"唔該\" (unclear []).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read \"唔該\". gpt-transcribe heard \"唔該。\" (misheard []); the pronunciation check heard \"唔該\" (unclear []).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read \"唔該\". gpt-transcribe heard \"唔該。\" (misheard []); the pronunciation check heard \"唔該\" (unclear []).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "yue-word-1",
+        "userInput": { "caseId": "yue-word", "language": "yue", "text": "唔該" }
+      }
+    },
+    {
+      "classification": { "expected": "read right", "predicted": "read right" },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "cacheReadTokens": 0,
+          "inputTokens": 923,
+          "outputTokens": 195,
+          "reasoningTokens": 164
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read \"唔該，請問地鐵站喺邊度？\". gpt-transcribe heard \"唔該請問地鐵站喺邊度？\" (misheard []); the pronunciation check heard \"唔該請問地鐵站喺邊度\" (unclear []).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read \"唔該，請問地鐵站喺邊度？\". gpt-transcribe heard \"唔該請問地鐵站喺邊度？\" (misheard []); the pronunciation check heard \"唔該請問地鐵站喺邊度\" (unclear []).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read \"唔該，請問地鐵站喺邊度？\". gpt-transcribe heard \"唔該請問地鐵站喺邊度？\" (misheard []); the pronunciation check heard \"唔該請問地鐵站喺邊度\" (unclear []).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "yue-sentence-1",
+        "userInput": {
+          "caseId": "yue-sentence",
+          "language": "yue",
+          "text": "唔該，請問地鐵站喺邊度？"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "read right", "predicted": "read right" },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "cacheReadTokens": 0,
+          "inputTokens": 867,
+          "outputTokens": 118,
+          "reasoningTokens": 93
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read \"ספרייה\". gpt-transcribe heard \"ספרייה.\" (misheard []); the pronunciation check heard \"ספרייה\" (unclear []).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read \"ספרייה\". gpt-transcribe heard \"ספרייה.\" (misheard []); the pronunciation check heard \"ספרייה\" (unclear []).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read \"ספרייה\". gpt-transcribe heard \"ספרייה.\" (misheard []); the pronunciation check heard \"ספרייה\" (unclear []).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "he-word-1",
+        "userInput": { "caseId": "he-word", "language": "he", "text": "ספרייה" }
+      }
+    },
+    {
+      "classification": { "expected": "read right", "predicted": "read right" },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "cacheReadTokens": 0,
+          "inputTokens": 925,
+          "outputTokens": 192,
+          "reasoningTokens": 86
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read \"איפה תחנת הרכבת הקרובה?\". gpt-transcribe heard \"איפה תחנת הרכבת הקרובה?\" (misheard []); the pronunciation check heard \"איפה תחנת הרכבת הקרובה?\" (unclear []).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read \"איפה תחנת הרכבת הקרובה?\". gpt-transcribe heard \"איפה תחנת הרכבת הקרובה?\" (misheard []); the pronunciation check heard \"איפה תחנת הרכבת הקרובה?\" (unclear []).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read \"איפה תחנת הרכבת הקרובה?\". gpt-transcribe heard \"איפה תחנת הרכבת הקרובה?\" (misheard []); the pronunciation check heard \"איפה תחנת הרכבת הקרובה?\" (unclear []).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "he-sentence-1",
+        "userInput": {
+          "caseId": "he-sentence",
+          "language": "he",
+          "text": "איפה תחנת הרכבת הקרובה?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "read right", "predicted": "read right" },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "cacheReadTokens": 0,
+          "inputTokens": 870,
+          "outputTokens": 134,
+          "reasoningTokens": 101
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read \"бібліотека\". gpt-transcribe heard \"Бібліотека.\" (misheard []); the pronunciation check heard \"бібліотека\" (unclear []).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read \"бібліотека\". gpt-transcribe heard \"Бібліотека.\" (misheard []); the pronunciation check heard \"бібліотека\" (unclear []).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read \"бібліотека\". gpt-transcribe heard \"Бібліотека.\" (misheard []); the pronunciation check heard \"бібліотека\" (unclear []).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "uk-word-1",
+        "userInput": { "caseId": "uk-word", "language": "uk", "text": "бібліотека" }
+      }
+    },
+    {
+      "classification": { "expected": "read right", "predicted": "read right" },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "cacheReadTokens": 0,
+          "inputTokens": 971,
+          "outputTokens": 270,
+          "reasoningTokens": 93
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read \"Скажіть, будь ласка, як дійти до вокзалу?\". gpt-transcribe heard \"Скажіть, будь ласка, як дійти до вокзалу?\" (misheard []); the pronunciation check heard \"Скажіть будь ласка, як дійти до вокзалу?\" (unclear []).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read \"Скажіть, будь ласка, як дійти до вокзалу?\". gpt-transcribe heard \"Скажіть, будь ласка, як дійти до вокзалу?\" (misheard []); the pronunciation check heard \"Скажіть будь ласка, як дійти до вокзалу?\" (unclear []).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read \"Скажіть, будь ласка, як дійти до вокзалу?\". gpt-transcribe heard \"Скажіть, будь ласка, як дійти до вокзалу?\" (misheard []); the pronunciation check heard \"Скажіть будь ласка, як дійти до вокзалу?\" (unclear []).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "uk-sentence-1",
+        "userInput": {
+          "caseId": "uk-sentence",
+          "language": "uk",
+          "text": "Скажіть, будь ласка, як дійти до вокзалу?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "read right", "predicted": "misread" },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "cacheReadTokens": 0,
+          "inputTokens": 934,
+          "outputTokens": 474,
+          "reasoningTokens": 234
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read \"قریب ترین ریلوے اسٹیشن کہاں ہے؟\". gpt-transcribe heard \"قریب ترین रेलवे स्टेशन कहाँ है?\" (misheard [\"ریلوے\",\"اسٹیشن\",\"کہاں\",\"ہے؟\"]); the pronunciation check heard \"قریب ترین ریلوے اسٹیشن کہاں ہے؟\" (unclear []).",
+          "kind": "majorErrors",
+          "score": 3.3
+        },
+        {
+          "conclusion": "Read \"قریب ترین ریلوے اسٹیشن کہاں ہے؟\". gpt-transcribe heard \"قریب ترین रेलवे स्टेशन कहाँ है?\" (misheard [\"ریلوے\",\"اسٹیشن\",\"کہاں\",\"ہے؟\"]); the pronunciation check heard \"قریب ترین ریلوے اسٹیشن کہاں ہے؟\" (unclear []).",
+          "kind": "minorErrors",
+          "score": 3.3
+        },
+        {
+          "conclusion": "Read \"قریب ترین ریلوے اسٹیشن کہاں ہے؟\". gpt-transcribe heard \"قریب ترین रेलवे स्टेशन कहाँ है?\" (misheard [\"ریلوے\",\"اسٹیشن\",\"کہاں\",\"ہے؟\"]); the pronunciation check heard \"قریب ترین ریلوے اسٹیشن کہاں ہے؟\" (unclear []).",
+          "kind": "potentialImprovements",
+          "score": 3.3
+        }
+      ],
+      "testCase": {
+        "id": "ur-sentence-1",
+        "userInput": {
+          "caseId": "ur-sentence",
+          "language": "ur",
+          "text": "قریب ترین ریلوے اسٹیشن کہاں ہے؟"
+        }
+      }
     }
   ],
   "taskId": "language-audio"

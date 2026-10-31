@@ -24533,7 +24533,7 @@
         "properties": {
           "language": {
             "type": "string",
-            "pattern": "^[a-z]{2,3}(?:-[A-Z]{2})?$",
+            "pattern": "^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\\d{3}))?$",
             "description": "The language the text is in, such as \"it\", \"es\" or \"pt-BR\""
           },
           "personal": {
@@ -49997,7 +49997,7 @@
                         "properties": {
                           "language": {
                             "type": "string",
-                            "pattern": "^[a-z]{2,3}(?:-[A-Z]{2})?$"
+                            "pattern": "^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\\d{3}))?$"
                           },
                           "lines": {
                             "minItems": 1,
@@ -62545,7 +62545,7 @@
                 "properties": {
                   "language": {
                     "type": "string",
-                    "pattern": "^[a-z]{2,3}(?:-[A-Z]{2})?$"
+                    "pattern": "^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\\d{3}))?$"
                   },
                   "prompt": {
                     "type": "string",

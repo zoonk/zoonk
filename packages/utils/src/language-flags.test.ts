@@ -27,6 +27,10 @@ describe(getLanguageFlagCode, () => {
     );
   });
 
+  it("shows Hong Kong's flag for Cantonese", () => {
+    expect(getLanguageFlagCode("yue")).toBe("hk");
+  });
+
   it("has no flag for a language it doesn't know", () => {
     expect(getLanguageFlagCode("eo")).toBeNull();
     expect(getLanguageFlagCode("")).toBeNull();

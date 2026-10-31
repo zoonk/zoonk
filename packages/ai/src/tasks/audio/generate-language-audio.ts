@@ -2,12 +2,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { isBlockedTestCall } from "@zoonk/utils/blocked-test-call";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import {
-  type TTSVoice,
-  getBaseLanguage,
-  getMaiVoiceLocale,
-  usesNonLatinScript,
-} from "@zoonk/utils/languages";
+import { type TTSVoice, getBaseLanguage, usesNonLatinScript } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
 import { segmentWords } from "@zoonk/utils/string";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
@@ -19,7 +14,7 @@ import { convertWavToMp3 } from "./convert-wav-to-mp3";
 import alphabetSymbolPrompt from "./generate-language-audio-alphabet-symbol.prompt.md";
 import { DEFAULT_LANGUAGE_AUDIO_VOICE, getLanguageAudioPrompt } from "./language-audio-prompt";
 import { assertExpectedAudioSize, getMaxSeconds } from "./speech-limits";
-import { type SpeechModelName, speechModels } from "./speech-models";
+import { type SpeechModelName, getSpeakingModels, speechModels } from "./speech-models";
 import { buildSpeechProvenance } from "./speech-provenance";
 import { generateSpeechWithProvider } from "./speech-provider";
 
@@ -83,14 +78,14 @@ function getSpeechModels({
     return [speechModels.geminiFlash, speechModels.geminiFlash, speechModels.geminiFlash];
   }
 
-  const baseLanguage = getBaseLanguage(language);
-  const speaksMaiVoice = getMaiVoiceLocale(baseLanguage) !== null;
-
-  return [
-    speechModels.geminiFlash,
-    speechModels.geminiFlashLite,
-    ...(speaksMaiVoice ? [speechModels.maiVoiceFlash] : []),
-  ];
+  return getSpeakingModels({
+    candidates: [
+      speechModels.geminiFlash,
+      speechModels.geminiFlashLite,
+      speechModels.maiVoiceFlash,
+    ],
+    language,
+  });
 }
 
 /**

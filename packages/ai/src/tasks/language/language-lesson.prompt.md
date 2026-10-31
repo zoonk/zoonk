@@ -40,7 +40,7 @@ Choose them at `LEVEL`. From B1 up, the learner already says the basics of any s
 - `translation`: a short definition of the word's meaning in this situation, the way a learner's dictionary writes it, in words easier than the word itself ("bat": "a stick used to hit a ball"). It never uses the word or a form of it ("need": "need", or "grow": "to keep growing", fails): the learner reads the definition and picks the word.
 {{/sameLanguage}}
 - `pronunciation`: a respelling that a speaker of `LEARNER_LANGUAGE` can read aloud with no training (see Respelling).
-- `romanization`: when `NEEDS_ROMANIZATION` is `yes`, the standard romanization (Hepburn, pinyin with tone marks, and so on). Otherwise `null`.
+- `romanization`: when `NEEDS_ROMANIZATION` is `yes`, the standard romanization (Hepburn, pinyin with tone marks, Jyutping, and so on). Otherwise `null`.
 {{#bilingual}}
 - `tip`: one sentence in `LEARNER_LANGUAGE` about the sound that speakers of `LEARNER_LANGUAGE` tend to get wrong in this word, and how to fix it with the mouth, stress or rhythm. Base it on how `LEARNER_LANGUAGE` works ("In Portuguese an 'r' at the start of a word sounds like an 'h'; for 'rent', curl the tongue back without touching the roof of your mouth"). Only state what you are sure is true about both languages, including where each word is stressed. `null` when the word has no real trap for these speakers or you aren't sure. Never invent a problem.
 - `note`: one short sentence in `LEARNER_LANGUAGE` for a false friend or a usage trap ("In Portuguese 'renda' means income; 'rent' is 'aluguel'"). `null` when there is none.
