@@ -44,7 +44,7 @@ function toMarking({
         points: row.points,
         questions: questions !== null && questions >= 1 ? questions : null,
         select: row.select,
-        wrongPoints: share === null ? null : share * row.points,
+        wrongPoints: share === null ? null : penalty,
       },
     ];
   });

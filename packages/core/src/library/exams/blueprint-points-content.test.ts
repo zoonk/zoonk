@@ -377,3 +377,14 @@ describe("fractional deductions at the minimum", () => {
     expect(result).toMatchObject({ met: true, short: null });
   });
 });
+
+describe("stated decimal deductions", () => {
+  it.each([
+    { points: 5, wrongPoints: 0.4 },
+    { points: 2.5, wrongPoints: 0.21 },
+    { points: 10, wrongPoints: 2.45 },
+  ])("stores the cited $wrongPoints deduction unchanged for $points point items", (row) => {
+    const scoring = readScoring({ scoring: { marking: [{ ...ROW_P1, ...row }] } });
+    expect(scoring?.marking?.[0]?.wrongPoints).toBe(row.wrongPoints);
+  });
+});

@@ -1,12 +1,19 @@
-const MAX_DENOMINATOR = 12;
-const FRACTION_TOLERANCE = 0.005;
+const REPEATING_DENOMINATORS = { ninths: 9, sixths: 6, thirds: 3, twelfths: 12 };
+const TERMINATING_DENOMINATOR = 4;
+
+const REPEATING_FRACTIONS = Object.values(REPEATING_DENOMINATORS).flatMap((denominator) =>
+  Array.from({ length: denominator - 1 }, (_, index) => (index + 1) / denominator).filter(
+    (fraction) => !Number.isInteger(fraction * TERMINATING_DENOMINATOR),
+  ),
+);
+
+const FRACTION_TOLERANCE = 0.01;
 
 export function normalizePenalty(value: number): number {
   const nearest =
-    Array.from({ length: MAX_DENOMINATOR }, (_, index) => {
-      const denominator = index + 1;
-      return Math.round(value * denominator) / denominator;
-    }).toSorted((first, second) => Math.abs(first - value) - Math.abs(second - value))[0] ?? value;
+    REPEATING_FRACTIONS.toSorted(
+      (first, second) => Math.abs(first - value) - Math.abs(second - value),
+    )[0] ?? value;
 
   return Math.abs(nearest - value) <= FRACTION_TOLERANCE ? nearest : value;
 }
@@ -20,5 +27,5 @@ export function getMarkingPenalty({
 }): number | null {
   return wrongPoints === null || wrongPoints < 0 || wrongPoints > points
     ? null
-    : normalizePenalty(wrongPoints / points);
+    : normalizePenalty(wrongPoints) / points;
 }
