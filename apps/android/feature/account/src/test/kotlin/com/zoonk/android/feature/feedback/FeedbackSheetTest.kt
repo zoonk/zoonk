@@ -30,8 +30,6 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import java.io.IOException
 
-internal const val FEEDBACK_DESCRIPTION = "Found a problem or have an idea? Tell us below or email hello@zoonk.com."
-
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
 class FeedbackSheetTest {

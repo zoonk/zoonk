@@ -74,6 +74,7 @@ androidx-annotation = { module = "androidx.annotation:annotation", version.ref =
 androidx-core = { module = "androidx.core:core", version.ref = "androidxCore" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+androidx-compose-runtime = { module = "androidx.compose.runtime:runtime" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 androidx-compose-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite" }

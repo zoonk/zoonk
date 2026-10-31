@@ -33,6 +33,7 @@ import com.zoonk.android.feature.practice.block.practiceBlockEntries
 import com.zoonk.android.feature.pronunciation.pronunciationEntries
 import com.zoonk.android.feature.recap.recapEntries
 import com.zoonk.android.feature.session.sessionEntries
+import com.zoonk.android.feature.settings.licensesEntries
 import com.zoonk.android.feature.settings.settingsEntries
 import com.zoonk.android.feature.speaking.speakingEntries
 import com.zoonk.android.feature.stats.statsEntries
@@ -52,6 +53,7 @@ fun appEntries(
     entryProvider {
         accountEntries(app, navigator)
         settingsEntries(app, navigator)
+        licensesEntries(navigator)
         memoryEntries(app, navigator)
         feedbackEntries(app, navigator)
         subscriptionEntries(app, navigator)

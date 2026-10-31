@@ -44,7 +44,7 @@ import com.zoonk.android.ui.characters.BuddyPicker
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun BuddyEditor(
+fun BuddyEditor(
     look: BuddyLook,
     name: String,
     isSaving: Boolean,

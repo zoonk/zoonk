@@ -83,6 +83,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:ui"))
+    implementation(project(":feature:account"))
     implementation(project(":feature:activities"))
     implementation(project(":feature:conversation"))
     implementation(libs.androidx.activity.compose)
@@ -148,6 +149,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":core:data")))
     testImplementation(testFixtures(project(":core:navigation")))
+    testImplementation(testFixtures(project(":feature:account")))
     testImplementation(testFixtures(project(":feature:activities")))
     testImplementation(testFixtures(project(":feature:conversation")))
     testImplementation(composeBom)

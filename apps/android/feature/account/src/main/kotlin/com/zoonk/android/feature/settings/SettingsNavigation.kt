@@ -35,5 +35,4 @@ fun EntryProviderScope<NavKey>.settingsEntries(
     ) { SettingsScreen(app, navigator) }
     entry<AppRoute.Preferences>(metadata = ListDetailSceneStrategy.detailPane()) { PreferencesScreen(app, navigator) }
     entry<AppRoute.Profile>(metadata = ListDetailSceneStrategy.detailPane()) { ProfileScreen(app, navigator) }
-    entry<AppRoute.Licenses>(metadata = ListDetailSceneStrategy.detailPane()) { LicensesScreen(navigator) }
 }

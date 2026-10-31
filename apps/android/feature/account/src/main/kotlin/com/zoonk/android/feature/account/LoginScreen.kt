@@ -115,7 +115,7 @@ private fun SignIn(
 }
 
 @Composable
-internal fun Methods(
+fun Methods(
     signIn: SignInViewModel,
     navigator: AppNavigator,
 ) {
@@ -202,7 +202,7 @@ internal fun Methods(
 }
 
 @Composable
-internal fun CodeEntry(
+fun CodeEntry(
     signIn: SignInViewModel,
     email: String,
 ) {
@@ -287,7 +287,7 @@ private fun ProfileSetup(
 }
 
 @Composable
-internal fun ProfileSetupForm(form: ProfileFormViewModel) {
+fun ProfileSetupForm(form: ProfileFormViewModel) {
     Title(stringResource(R.string.account_setup_title))
     Description(stringResource(R.string.account_setup_description))
     ProfileFields(form, isSetup = true)
@@ -296,7 +296,7 @@ internal fun ProfileSetupForm(form: ProfileFormViewModel) {
 }
 
 @Composable
-internal fun AuthColumn(
+fun AuthColumn(
     padding: PaddingValues,
     content: @Composable ColumnScope.() -> Unit,
 ) {
