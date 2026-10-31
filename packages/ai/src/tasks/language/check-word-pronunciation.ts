@@ -9,11 +9,9 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import { isCloserToNative } from "./_utils/ipa-similarity";
 import systemPrompt from "./check-word-pronunciation.prompt.md";
 
-/**
- * Only models that take audio in can listen, and on AI Gateway those are Gemini's. It got all 16
- * clips right on its eval at 2.9s p50 (11 Oct 2026).
- */
+/** MiMo V2.6 Flash costs less but called a native clip English. */
 const defaultModel = "google/gemini-3.8-flash";
+const fallbackModels = ["xiaomi/mimo-v2.6-pro"] as const;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the model writes what it heard before choosing. */
 const schema = z.object({
@@ -37,6 +35,7 @@ export type CheckWordPronunciationParams = {
   analytics?: AiGenerationContext;
   abortSignal?: AbortSignal;
   model?: string;
+  useFallback?: boolean;
 };
 
 function buildUserPrompt({
@@ -65,10 +64,11 @@ export async function checkWordPronunciation({
   language,
   mediaType,
   model = defaultModel,
+  useFallback = true,
   word,
 }: CheckWordPronunciationParams) {
   const userPrompt = buildUserPrompt({ englishIpa, ipa, language, word });
-  const providerOptions = buildProviderOptions({ fallbackModels: [], model, useFallback: false });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,

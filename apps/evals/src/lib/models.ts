@@ -52,6 +52,7 @@ const GENERATION_MODELS: { id: string; name: string }[] = [
   { id: "openai/gpt-5.6-luna", name: "gpt-5.6-luna" },
   { id: "openai/gpt-5.5", name: "gpt-5.5" },
   { id: "openai/gpt-5.4-mini", name: "gpt-5.4-mini" },
+  { id: "xiaomi/mimo-v2.6-pro", name: "mimo-v2.6-pro" },
 ];
 
 const EVALUATION_MODELS: { gatewayModelId: string; name: string }[] = [

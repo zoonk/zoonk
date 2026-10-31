@@ -33,6 +33,7 @@ async function checkClip({
     language,
     mediaType: "audio/mpeg",
     model,
+    useFallback: false,
     word,
   });
 }

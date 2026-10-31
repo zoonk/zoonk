@@ -13,10 +13,8 @@ import {
 import systemPrompt from "./assess-pronunciation.prompt.md";
 
 /**
- * Only models that take audio in can run this, and on AI Gateway those are Gemini's: 3.8 Flash
- * matched 23 of 24 labeled clips with no false flags (28 Sep 2026). No other model backs it up (11
- * Oct 2026): the gateway already tries it on Vertex, and no other Gemini model is both different
- * and lasting.
+ * No fallback: other providers' audio models on AI Gateway take only MP3 or WAV, not the WebM and
+ * MP4 learners record.
  */
 const defaultModel = "google/gemini-3.8-flash";
 
