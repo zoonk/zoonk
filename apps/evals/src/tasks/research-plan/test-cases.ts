@@ -31,6 +31,19 @@ export const TEST_CASES: TestCase<ResearchPlanExpected, ExamResearchPlanParams>[
   {
     expected: {
       country: "BR",
+      domains: ["cebraspe.org.br", "gov.br/cgu"],
+      language: "pt",
+      nameIncludes: ["cgu", "controladoria"],
+      roleExcludes: "tecnologia",
+      roleIncludes: "auditor",
+    },
+    id: "cgu-2026-specialty",
+    language: "pt",
+    userInput: { goal: "passar no concurso da CGU 2026 para auditor de TI, desenvolvimento" },
+  },
+  {
+    expected: {
+      country: "BR",
       domains: ["oab.fgv.br", "fgv.br"],
       language: "pt",
       nameIncludes: ["oab"],

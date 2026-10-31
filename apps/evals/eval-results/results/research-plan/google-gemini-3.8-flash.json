@@ -243,6 +243,28 @@
       "testCase": {
         "expected": {
           "country": "BR",
+          "domains": ["cebraspe.org.br", "gov.br/cgu"],
+          "language": "pt",
+          "nameIncludes": ["cgu", "controladoria"],
+          "roleExcludes": "tecnologia",
+          "roleIncludes": "auditor"
+        },
+        "id": "cgu-2026-specialty-1",
+        "language": "pt",
+        "userInput": {
+          "goal": "passar no concurso da CGU 2026 para auditor de TI, desenvolvimento"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "BR",
           "domains": ["oab.fgv.br", "fgv.br"],
           "language": "pt",
           "nameIncludes": ["oab"],
