@@ -1054,7 +1054,7 @@ msgstr "{number}番のマスには何が入りますか？"
 #: src/activities/decision-tree/decision-tree-activity.tsx
 msgctxt "rUq4jt"
 msgid "The case"
-msgstr "ケース"
+msgstr "事例"
 
 #: src/activities/decision-tree/decision-tree-activity.tsx
 msgctxt "8LkSSl"
@@ -1084,7 +1084,7 @@ msgstr "第{number}問です。残っている候補は{outcomes}です。"
 #: src/activities/decision-tree/decision-tree-review.tsx
 msgctxt "GSaFJS"
 msgid "The walk for this case"
-msgstr "このケースの判定の流れ"
+msgstr "この事例での判断の流れ"
 
 #: src/activities/decision-tree/decision-tree-review.tsx
 msgctxt "mJLCHX"
@@ -2977,7 +2977,7 @@ msgstr "空欄{position}"
 #: src/components/listening-step.tsx
 msgctxt "aAmWaS"
 msgid "What do you hear?"
-msgstr "何と聞こえますか?"
+msgstr "何と聞こえますか？"
 
 #: src/components/listening-step.tsx
 #: src/components/reading-step.tsx
@@ -3024,7 +3024,7 @@ msgstr "答えの選択肢"
 #: src/components/translation-step.tsx
 msgctxt "anLbqe"
 msgid "Which one means this?"
-msgstr "この意味を表すのはどれですか?"
+msgstr "この意味を表すのはどれですか？"
 
 #. Verdict on an answer that is almost right.
 #: src/components/verdict-label.tsx
@@ -3051,7 +3051,7 @@ msgstr "予想が当たりました！"
 #: src/components/verdict-label.tsx
 msgctxt "--l7ni"
 msgid "Not quite"
-msgstr "答えが違うようです"
+msgstr "少し違います"
 
 #: src/components/verdict-label.tsx
 msgctxt "pWC3pf"
@@ -3073,7 +3073,7 @@ msgstr "今回は答え合わせをしていません"
 #: src/components/verdict-label.tsx
 msgctxt "Ilqo6R"
 msgid "Not quite:"
-msgstr "答えが違うようです："
+msgstr "少し違います："
 
 #: src/components/vocabulary-step.tsx
 msgctxt "lqtP-R"
@@ -3273,7 +3273,7 @@ msgstr "レッスンのまとめ"
 #: src/lesson/controls/summary-sheet.tsx
 msgctxt "NYTGIb"
 msgid "Got it"
-msgstr "了解"
+msgstr "OK"
 
 #: src/lesson/feedback/explain-answer.tsx
 msgctxt "OON40X"
@@ -3513,7 +3513,7 @@ msgstr "画面のオプション"
 #: src/lesson/lesson-screen-menu.tsx
 msgctxt "_fpJc0"
 msgid "Made with AI. It may contain mistakes."
-msgstr "AIで作成しています。間違いが含まれることがあります。"
+msgstr "AIで作成しました。間違いが含まれることがあります。"
 
 #: src/lesson/lesson-screen-menu.tsx
 msgctxt "JfMPi0"
@@ -3778,12 +3778,12 @@ msgstr "「<question></question>」について"
 #: src/lesson/tutor/tutor-quote.tsx
 msgctxt "YXoOph"
 msgid "You wrote <strong>{answer}</strong> on “<question></question>”"
-msgstr "<strong>{answer}</strong>と書いた問題は「<question></question>」です"
+msgstr "<strong>{answer}</strong>と書いて「<question></question>」に答えました"
 
 #: src/lesson/tutor/tutor-quote.tsx
 msgctxt "x-V0mZ"
 msgid "You picked <strong>{answer}</strong> on “<question></question>”"
-msgstr "<strong>{answer}</strong>を選んだ問題は「<question></question>」です"
+msgstr "<strong>{answer}</strong>を選んで「<question></question>」に答えました"
 
 #: src/questions/ask-tutor.tsx
 msgctxt "H7C1B-"

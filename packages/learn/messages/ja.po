@@ -87,14 +87,14 @@ msgstr "知っていた"
 #: src/syllabus/subject-aside.tsx
 msgctxt "bW7B87"
 msgid "New"
-msgstr "変更後"
+msgstr "新規"
 
 #: src/_components/coverage-bar.tsx
 #: src/plan/plan-bases-choices.tsx
 #: src/syllabus/subject-aside.tsx
 msgctxt "cMaydB"
 msgid "Studied"
-msgstr "学習した"
+msgstr "学習済み"
 
 #: src/_components/coverage-bar.tsx
 #: src/challenge/challenge-labels.tsx
@@ -1335,7 +1335,7 @@ msgstr "結果を見る"
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "a2N2Lk"
 msgid "{lessons, plural, =0 {New try tomorrow. Nothing is lost.} one {New try tomorrow, after # short lesson. Nothing is lost.} other {New try tomorrow, after # short lessons. Nothing is lost.}}"
-msgstr "{lessons, plural, =0 {明日、もう一度挑戦できます。これまでの成果はそのままです。} other {短いレッスンを#件終えると、明日もう一度挑戦できます。これまでの成果はそのままです。}}"
+msgstr "{lessons, plural, =0 {明日また挑戦できます。これまでの成果はそのままです。} other {明日、短い#レッスンを終えてからまた挑戦できます。これまでの成果はそのままです。}}"
 
 #: src/challenge/challenge-intro-parts.tsx
 #: src/exam/exam-format-section.tsx
@@ -1470,7 +1470,7 @@ msgstr "模試{number}"
 #: src/challenge/challenge-intro.tsx
 msgctxt "8uKw6W"
 msgid "Objective part only"
-msgstr "客観式問題のみ"
+msgstr "選択式の問題のみ"
 
 #: src/challenge/challenge-intro.tsx
 #: src/mock/mock-chooser.tsx
@@ -1710,7 +1710,7 @@ msgstr "正解です！"
 #: src/session/question-block/question-feedback.tsx
 msgctxt "--l7ni"
 msgid "Not quite"
-msgstr "不正解"
+msgstr "少し違います"
 
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "5qf9VW"
@@ -1769,7 +1769,7 @@ msgstr "トリックスターの盾"
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "q3Cq0Z"
 msgid "{count, plural, =0 {# broken} one {# broken} other {# broken}}"
-msgstr "{count, plural, =0 {壊れたのは#枚} other {#枚破壊}}"
+msgstr "{count, plural, =0 {壊れたのは#枚} other {#枚壊れた}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/trickster-shield.tsx
@@ -1939,7 +1939,7 @@ msgstr "再挑戦でクリア"
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "3EE-ok"
 msgid "{lessons, plural, =0 {Nothing is lost.} one {After # short lesson on what tripped you up. Nothing is lost.} other {After # short lessons on what tripped you up. Nothing is lost.}}"
-msgstr "{lessons, plural, =0 {これまでの学習は無駄になりません。} other {つまずいた内容を#回の短いレッスンで復習してから再挑戦できます。これまでの学習は無駄になりません。}}"
+msgstr "{lessons, plural, =0 {これまでの成果はそのままです。} other {つまずいたところを短い#レッスンで復習してからです。これまでの成果はそのままです。}}"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "3tVzDw"
@@ -1970,7 +1970,7 @@ msgstr "今日の学習計画は？"
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "6BPV1l"
 msgid "Explain my last mistake"
-msgstr "直近の間違いを解説する"
+msgstr "直前の間違いを説明してほしい"
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "U1SYIe"
@@ -1980,7 +1980,7 @@ msgstr "まず取り組むことは？"
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "31_FZO"
 msgid "I want to study less this week"
-msgstr "今週の学習量を減らす"
+msgstr "今週は学習量を減らしたい"
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "V2JAKF"
@@ -2187,7 +2187,7 @@ msgstr "選ぶ"
 #: src/conversation/tutor-tool-offer.tsx
 msgctxt "T4Jya7"
 msgid "Calls are paused for everyone right now. Try again later."
-msgstr "現在、会話機能はどなたも利用できません。しばらくしてからもう一度お試しください。"
+msgstr "現在、会話練習はどなたも利用できません。しばらくしてからもう一度お試しください。"
 
 #: src/conversation/tutor-tool-offer.tsx
 msgctxt "N-VHbS"
@@ -2430,7 +2430,7 @@ msgstr "発想のヒントになる文章"
 #: src/essay/essay-prompt.tsx
 msgctxt "rUq4jt"
 msgid "The case"
-msgstr "ケース"
+msgstr "事例"
 
 #. The grade of the learner's last essay draft.
 #: src/essay/essay-rewrite-guide.tsx
@@ -2709,7 +2709,7 @@ msgstr "Plusなら、好きなときに模試を受けられます。学習計�
 #: src/exam/exam-moment-card.tsx
 msgctxt "DBeLXR"
 msgid "Today is your short mock, then a look at what it finds. Then rest. {work}"
-msgstr "今日は短時間の模試を受けて、結果を振り返ります。その後は休みます。 {work}"
+msgstr "今日は短い模試を受けて、結果を振り返ります。そのあとは休みましょう。{work}"
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "kjAsiN"
@@ -2724,12 +2724,12 @@ msgstr "今日はよく出るトピックを学びます。その後は休みま
 #: src/exam/exam-moment-card.tsx
 msgctxt "hKsGQp"
 msgid "Today is a full review of every topic, in your test's format, your weakest first. Then rest. {work}"
-msgstr "今日は試験形式で、苦手なものから順にすべてのトピックを総復習します。その後は休みます。 {work}"
+msgstr "今日は試験と同じ形式で、苦手なものから順にすべてのトピックを総復習します。そのあとは休みましょう。{work}"
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "txVer2"
 msgid "Today is a short, light review. Then rest. {work}"
-msgstr "今日は短時間で軽く復習します。その後は休みます。 {work}"
+msgstr "今日は短時間で軽く復習します。そのあとは休みましょう。{work}"
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "KtlcEL"
@@ -2744,7 +2744,7 @@ msgstr "{sessions, plural, =0 {#回の学習} other {#回の学習}}を終えま
 #: src/exam/exam-moment-card.tsx
 msgctxt "S-SzlM"
 msgid "You've prepared for this."
-msgstr "この試験に向けて準備してきました。"
+msgstr "この日のために準備してきました。"
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "0r924W"
@@ -4159,7 +4159,7 @@ msgstr "終了日"
 #: src/onboarding/start-over-menu.tsx
 msgctxt "I5NMJ8"
 msgid "More"
-msgstr "多い"
+msgstr "その他"
 
 #: src/journey/plan-sections.tsx
 #: src/mind-maps/mind-maps-screen.tsx
@@ -4523,7 +4523,7 @@ msgstr "この会話は終了しました"
 #: src/language/unit/practice-conversation.tsx
 msgctxt "bpY1F_"
 msgid "It's the same for everyone right now. Try again later."
-msgstr "現在はどなたも会話を利用できません。しばらくしてからもう一度お試しください。"
+msgstr "現在、どなたも利用できません。しばらくしてからもう一度お試しください。"
 
 #: src/language/conversation/call-problem.tsx
 #: src/language/exam-speaking/speaking-paper-section.tsx
@@ -4845,12 +4845,12 @@ msgstr "声に出して練習する単語"
 #: src/language/conversation/speaking-mock-result.tsx
 msgctxt "UVsIGR"
 msgid "Estimated band, from 0 to 9"
-msgstr "推定バンドスコア、0から9"
+msgstr "推定バンドスコア（0〜9）"
 
 #: src/language/conversation/speaking-mock-result.tsx
 msgctxt "GSMcfa"
 msgid "Estimated band, from 1 to 6"
-msgstr "推定バンドスコア、1から6"
+msgstr "推定バンドスコア（1〜6）"
 
 #: src/language/conversation/speaking-mock-result.tsx
 msgctxt "GQZyOJ"
@@ -6190,7 +6190,7 @@ msgstr "初めての小論文を書く"
 #: src/missions/first-step-copy.tsx
 msgctxt "missions.ZM1A6e"
 msgid "Have your first call"
-msgstr "初めて会話する"
+msgstr "初めて会話練習をする"
 
 #: src/missions/first-step-copy.tsx
 msgctxt "missions.BUTJD4"
@@ -6337,7 +6337,7 @@ msgstr "発音"
 #: src/missions/mission-copy.tsx
 msgctxt "missions.x_ozmd"
 msgid "Have a call"
-msgstr "会話する"
+msgstr "会話練習をする"
 
 #: src/missions/mission-copy.tsx
 msgctxt "GQWmIw"
@@ -6458,7 +6458,7 @@ msgstr "{count, plural, other {残りの#レッスンは今日の学習計画に
 #: src/missions/mission-copy.tsx
 msgctxt "76vDAi"
 msgid "{title} (+{count, plural, one {# lesson} other {# lessons}})"
-msgstr "{title} (+{count, plural, other {#レッスン}})"
+msgstr "{title}（+{count, plural, other {#レッスン}}）"
 
 #: src/missions/mission-copy.tsx
 msgctxt "tbs1gZ"
@@ -6811,7 +6811,7 @@ msgstr "問題の読み違い"
 #: src/mistakes/use-cause-label.ts
 msgctxt "g0vfFx"
 msgid "Fell for a trap"
-msgstr "ひっかけにかかりました"
+msgstr "ひっかけに引っかかりました"
 
 #: src/mistakes/use-cause-label.ts
 msgctxt "OVroZO"
@@ -6821,7 +6821,7 @@ msgstr "時間が足りませんでした"
 #: src/mistakes/use-cause-label.ts
 msgctxt "Wgnnu5"
 msgid "Guessed"
-msgstr "勘で答えました"
+msgstr "予想で答えました"
 
 #: src/mistakes/use-cause-label.ts
 msgctxt "v5Hndp"
@@ -7294,7 +7294,7 @@ msgstr "この模試では正解数を表示します。"
 #: src/mock/mock-option-labels.ts
 msgctxt "rkZNO0"
 msgid "objective part only"
-msgstr "答えが決まっている問題のみ"
+msgstr "選択式の問題のみ"
 
 #. {count} is a number of questions in a mock exam, and {time} about how long it takes.
 #: src/mock/mock-option-labels.ts
@@ -7386,7 +7386,7 @@ msgstr "今日の学習を続ける"
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
-msgstr "正解数"
+msgstr "正解"
 
 #: src/mock/mock-result-answers.tsx
 msgctxt "y2fpaL"
@@ -7811,7 +7811,7 @@ msgstr "{document, select, notice {要項には試験の問題数が記載され
 #: src/mock/mock-size-note.tsx
 msgctxt "FQgYkK"
 msgid "{document, select, notice {The notice doesn't say how many questions the exam has.} other {The official guide doesn't say how many questions the exam has.}} This mock asks {count, plural, one {# question} other {# questions}}, as a past edition did."
-msgstr "{document, select, notice {要項には試験の問題数が記載されていません。} other {公式ガイドには試験の問題数が記載されていません。}} この模試では、過去の試験に合わせて{count, plural, other {#問}}を出題します。"
+msgstr "{document, select, notice {要項には試験の問題数が書かれていません。} other {公式ガイドには試験の問題数が書かれていません。}}この模試では、過去の試験と同じく{count, plural, other {#問}}出題します。"
 
 #: src/mock/mock-size-note.tsx
 msgctxt "_EsAvv"
@@ -7826,7 +7826,7 @@ msgstr "{document, select, notice {要項には出題形式ごとの問題数が
 #: src/mock/mock-size-note.tsx
 msgctxt "o58c-R"
 msgid "{document, select, notice {The notice doesn't give the exam's time.} other {The official guide doesn't give the exam's time.}} This mock gives {time}."
-msgstr "{document, select, notice {要項には試験時間が記載されていません。} other {公式ガイドには試験時間が記載されていません。}} この模試の制限時間は{time}です。"
+msgstr "{document, select, notice {要項には試験時間が書かれていません。} other {公式ガイドには試験時間が書かれていません。}}この模試の制限時間は{time}です。"
 
 #: src/mock/mock-speaking.tsx
 msgctxt "YaAVNM"
@@ -8133,7 +8133,7 @@ msgstr "お知らせを受け取るには、アカウントを作成してくだ
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "qG3mZH"
 msgid "Lessons for playing {instrument} are coming"
-msgstr "{instrument}のレッスンを準備しています"
+msgstr "{instrument}のレッスンは準備中です"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "xR84Dg"
@@ -9344,7 +9344,7 @@ msgstr "スキップ"
 #: src/plan/plan-schedule.tsx
 msgctxt "RlSFBL"
 msgid "Study days"
-msgstr "学習日数"
+msgstr "学習する曜日"
 
 #: src/onboarding/steps/study-week.tsx
 #: src/plan/plan-schedule.tsx
@@ -9559,7 +9559,7 @@ msgstr "約{lessons, plural, other {#レッスン}}を追加します。"
 #: src/plan/use-effect-counts.ts
 msgctxt "zFFz5n"
 msgid "Adds {lessons, plural, one {# lesson} other {# lessons}}."
-msgstr "{lessons, plural, other {レッスンを#件追加します}}。"
+msgstr "{lessons, plural, other {#レッスン}}増えます。"
 
 #: src/plan-diff/plan-effect-diff.tsx
 #: src/plan/use-effect-counts.ts
@@ -9968,7 +9968,7 @@ msgstr "すべて学べるように期日を変更する"
 #: src/plan/plan-date-text.tsx
 msgctxt "7KwTGn"
 msgid "~{date}"
-msgstr "約{date}"
+msgstr "{date}ごろ"
 
 #: src/plan/plan-date.tsx
 msgctxt "3VeTk-"
@@ -10430,7 +10430,7 @@ msgstr "自分のパソコンで練習する代わりに、レッスンでは例
 #: src/plan/plan-tools.tsx
 msgctxt "xMezs8"
 msgid "No tools? You can do it all with examples."
-msgstr "ツールを使わず、すべて例で学ぶ。"
+msgstr "ツールがなくても、例題だけですべて学ぶ。"
 
 #: src/plan/plan-tools.tsx
 msgctxt "svOBOg"
@@ -10605,7 +10605,7 @@ msgstr "{count, plural, other {#項目の前提知識をそれぞれクイック
 #: src/plan/use-bases-texts.ts
 msgctxt "XpCEl_"
 msgid "{count, plural, one {# prerequisite, skipped.} other {# prerequisites, all skipped.}}"
-msgstr "{count, plural, other {#項目の前提知識をすべてスキップします。}}"
+msgstr "{count, plural, other {前提知識#項目をすべてスキップしました。}}"
 
 #: src/plan/use-bases-texts.ts
 msgctxt "7sIzM8"
@@ -10929,7 +10929,7 @@ msgstr "{dateKind, select, month {終了は{after}ごろです（変更前は{be
 #: src/plan/use-estimate-sentence.ts
 msgctxt "FJ-d5Y"
 msgid "{lessons, plural, one {Your goal takes # fewer lesson.} other {Your goal takes # fewer lessons.}}"
-msgstr "{lessons, plural, other {目標達成に必要なレッスンが#回少なくなります。}}"
+msgstr "{lessons, plural, other {目標達成に必要なレッスンが#レッスン減ります。}}"
 
 #: src/plan/use-estimate-sentence.ts
 msgctxt "f1LZew"
@@ -11497,7 +11497,7 @@ msgstr "今はわからなくても大丈夫です"
 #: src/questions/test-out-run.tsx
 msgctxt "4x1wtn"
 msgid "{passMark, number}% right skips the chapter. No feedback until the end."
-msgstr "{passMark, number}%正解すると、この章をスキップできます。答え合わせは最後に行います。"
+msgstr "正答率が{passMark, number}%以上なら、この章をスキップします。答え合わせは最後に行います。"
 
 #: src/questions/test-out-run.tsx
 msgctxt "LzwC46"
@@ -11956,7 +11956,7 @@ msgstr "今日の学習を喜ぶ{buddy}"
 #: src/session/summary/summary-rewards.tsx
 msgctxt "ajfhRp"
 msgid "{count, plural, one {Done} other {All # done}}"
-msgstr "{count, plural, other {#件すべて完了}}"
+msgstr "{count, plural, other {全#件完了}}"
 
 #: src/session/summary/summary-rewards.tsx
 msgctxt "4VMsuw"
@@ -12116,7 +12116,7 @@ msgstr "目標"
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.eclXxO"
 msgid "Quick explanations"
-msgstr "簡単な解説"
+msgstr "クイック解説"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.QTg-WT"
@@ -12833,7 +12833,7 @@ msgstr "学習する時刻を{time}に変更する"
 #: src/today/today-insight.tsx
 msgctxt "NYTGIb"
 msgid "Got it"
-msgstr "了解"
+msgstr "OK"
 
 #: src/today/today-insight.tsx
 #: src/today/today-plan-change.tsx
@@ -13110,12 +13110,12 @@ msgstr "{count, plural, =0 {#日間学習しました} other {#日間学習し�
 #: src/week/logbook-sections.tsx
 msgctxt "koboTV"
 msgid "{time} more than the week before!"
-msgstr "前の週より{time}多く学習しました!"
+msgstr "前の週より{time}長く学習しました！"
 
 #: src/week/logbook-sections.tsx
 msgctxt "mY3vs_"
 msgid "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}"
-msgstr "{questions, plural, other {前の週より#問多く解きました!}}"
+msgstr "{questions, plural, other {前の週より#問多く解きました！}}"
 
 #: src/week/logbook-sections.tsx
 msgctxt "v3GVFU"
@@ -13130,12 +13130,12 @@ msgstr "週間まとめ · {range}"
 #: src/week/logbook-sections.tsx
 msgctxt "E0UW5r"
 msgid "What a week, {name}!"
-msgstr "{name}さん、充実した1週間でしたね!"
+msgstr "{name}さん、充実した1週間でしたね！"
 
 #: src/week/logbook-sections.tsx
 msgctxt "7-xkic"
 msgid "What a week!"
-msgstr "充実した1週間でしたね!"
+msgstr "充実した1週間でしたね！"
 
 #: src/week/logbook-sections.tsx
 msgctxt "ug01Mk"

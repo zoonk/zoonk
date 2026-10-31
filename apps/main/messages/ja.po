@@ -286,7 +286,7 @@ msgstr "目標"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "eclXxO"
 msgid "Quick explanations"
-msgstr "簡単な解説"
+msgstr "クイック解説"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
@@ -316,7 +316,7 @@ msgstr "メモリ"
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 msgctxt "R_6nsx"
 msgid "Subscription"
-msgstr "利用プラン"
+msgstr "サブスクリプション"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 msgctxt "2GURQY"
@@ -407,7 +407,7 @@ msgstr "第{number}章（全{total}章）"
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
 msgctxt "t_2u2K"
 msgid "{count, plural, one {# short lesson} other {# short lessons}}"
-msgstr "{count, plural, other {#つの短いレッスン}}"
+msgstr "{count, plural, other {短時間で学べる#レッスン}}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/library-lesson-page.tsx
@@ -628,7 +628,7 @@ msgstr "入りきらない"
 #: src/app/[lang]/(home)/_components/goal-measure.tsx
 msgctxt "ArogzQ"
 msgid "{count, plural, =0 {# of {total, number} lessons} one {# of {total, number} lessons} other {# of {total, number} lessons}}"
-msgstr "{count, plural, =0 {#レッスン／全{total, number}レッスン} other {#レッスン（全{total, number}レッスン中）}}"
+msgstr "{count, plural, =0 {#レッスン（全{total, number}レッスン中）} other {#レッスン／全{total, number}レッスン}}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-chapter-row.tsx
 msgctxt "OGR3YM"
@@ -945,12 +945,12 @@ msgstr "おかえりなさい"
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "N2AOpV"
 msgid "Your quick explanation"
-msgstr "かんたん解説"
+msgstr "クイック解説"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "Iqgfb9"
 msgid "Quick explanation"
-msgstr "かんたん解説"
+msgstr "クイック解説"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "kgu6gE"
@@ -1279,12 +1279,12 @@ msgstr "生活に合った例や学習計画を用意するために、Zoonkが�
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "UWVETE"
 msgid "Cancel subscription"
-msgstr "定期購入を解約する"
+msgstr "サブスクリプションを解約する"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "kjXmSN"
 msgid "Unable to manage your subscription. Contact us at hello@zoonk.com"
-msgstr "定期購入を管理できません。hello@zoonk.comまでご連絡ください"
+msgstr "サブスクリプションを管理できません。hello@zoonk.comまでお問い合わせください"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "qO091u"
@@ -1866,7 +1866,7 @@ msgstr "すべて見る"
 #: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "lO7wKc"
 msgid "Not yet"
-msgstr "まだです"
+msgstr "まだありません"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "McGBe4"
@@ -2111,7 +2111,7 @@ msgstr "{month}の大学入学共通テスト"
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "CsR4zq"
 msgid "SAT in {month}"
-msgstr "{month}の大学入学共通テスト"
+msgstr "{month}のSAT"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "7iOCQZ"
@@ -2121,7 +2121,7 @@ msgstr "Madridで使うスペイン語"
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "PnbhyK"
 msgid "English for London"
-msgstr "Londonで使う英語"
+msgstr "ロンドンで使う英語"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "AeiByK"
@@ -2138,7 +2138,7 @@ msgstr "大学入学共通テスト"
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "fFLzL0"
 msgid "SAT"
-msgstr "大学入学共通テスト"
+msgstr "SAT"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "EV-GCl"
@@ -2148,12 +2148,12 @@ msgstr "データアナリスト"
 #: src/app/[lang]/(home)/_components/final-call.tsx
 msgctxt "PYDioW"
 msgid "The big day"
-msgstr "大切な日"
+msgstr "目標の日"
 
 #: src/app/[lang]/(home)/_components/final-call.tsx
 msgctxt "g39LXe"
 msgid "What's your big day?"
-msgstr "大切な日はいつですか？"
+msgstr "目標の日はいつですか？"
 
 #: src/app/[lang]/(home)/_components/goal-measure.tsx
 msgctxt "s4s2qc"
@@ -2352,7 +2352,7 @@ msgstr "{month}のENEMに向けて準備する"
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "voOKaq"
 msgid "get ready for the SAT in {month}"
-msgstr "{month}のSATに向けて準備する"
+msgstr "{month}の大学入学共通テストに備える"
 
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "XmrixE"
@@ -2592,13 +2592,13 @@ msgstr "少し違います。支払額のうち12ドルは月額の基本料金�
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "5vUSgc"
 msgid "SAT style · Math"
-msgstr "共通テスト形式 · 数学"
+msgstr "SAT形式 · 数学"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "fzFJfx"
 msgid "A phone plan costs $12 a month plus $0.05 per text. Ana paid $15.40 in March. How many texts did she send?"
-msgstr "携帯電話の料金は月額12ドルに加え、メッセージ1通につき0.05ドルかかります。Anaさんは3月に15.40ドル支払いました。メッセージを何通送りましたか？"
+msgstr "携帯電話の料金は月額12ドルで、メッセージ1通につき0.05ドルかかります。アナさんは3月に15.40ドル支払いました。メッセージを何通送りましたか？"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "pS0xug"
@@ -2643,7 +2643,7 @@ msgstr "推定スコア · 理科"
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "hdNQ5-"
 msgid "Estimated score · SAT"
-msgstr "推定スコア · 共通テスト"
+msgstr "推定スコア · SAT"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "AIeIsk"
@@ -3159,7 +3159,7 @@ msgstr "試験や海外への引っ越しなど、目標とその予定日をZoo
 #: src/app/[lang]/(home)/page.tsx
 msgctxt "201rSY"
 msgid "Zoonk: A study plan for every day until the big day"
-msgstr "Zoonk：大切な日に向けた毎日の学習計画"
+msgstr "Zoonk：目標の日まで、毎日の学習計画"
 
 #: src/app/[lang]/(home)/page.tsx
 #: src/components/auth-gate.tsx
@@ -3700,7 +3700,7 @@ msgstr "試験対策：診断、学習計画、{days, plural, =7 {最初の週�
 #: src/components/pricing/free-plan.tsx
 msgctxt "5ZDN6U"
 msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
-msgstr "AIが学習の相棒に：1日{count, plural, other {#件のメッセージ}}"
+msgstr "学習の相棒となるAI：{count, plural, other {1日#通のメッセージ}}"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "JfcsFI"
@@ -3816,7 +3816,7 @@ msgstr "まずは無料で始めましょう。<rest>すべて使いたくなっ
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "xrpz7X"
 msgid "Free covers one goal at a time. Plus covers every goal, all the way to the big day."
-msgstr "無料プランでは、一度に1つの目標に取り組めます。Plusなら、すべての目標で大切な日まで学習を続けられます。"
+msgstr "無料プランでは一度に1つの目標に取り組めます。Plusなら、すべての目標を目標の日までサポートします。"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "1vrigA"
@@ -3967,7 +3967,7 @@ msgstr "試験対策では、診断と学習計画、最初の1週間の学習�
 #: src/components/pricing/subscribe-button.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
-msgstr "申し込む"
+msgstr "登録する"
 
 #: src/components/pricing/subscribe-button.tsx
 msgctxt "qQDa8p"
