@@ -250,7 +250,6 @@ async function outlineCourse({
   return outlined.value;
 }
 
-/** A run that hands its bands to the next turn sends its readers on to that run. */
 function getLastEvent(result: CourseOutlineResult): StepStreamMessage<CourseOutlineStreamStep> {
   if ("nextRunId" in result && result.nextRunId) {
     return { entityId: result.nextRunId, status: "started", step: "joinCourseOutline" };
@@ -265,15 +264,16 @@ export async function courseOutlineWorkflow(
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
-  const { conflict } = await claimRunToken(`course-outline:${input.courseId}`);
-
-  await courseOutlineProgressStep(
-    conflict
-      ? { entityId: conflict.runId, status: "started", step: "joinCourseOutline" }
-      : { status: "started", step: "writeCourseOutline" },
-  );
 
   try {
+    const { conflict } = await claimRunToken(`course-outline:${input.courseId}`);
+
+    await courseOutlineProgressStep(
+      conflict
+        ? { entityId: conflict.runId, status: "started", step: "joinCourseOutline" }
+        : { status: "started", step: "writeCourseOutline" },
+    );
+
     const result = await outlineCourse({ conflict, context: { ...input, workflowRunId }, input });
     await courseOutlineProgressStep(getLastEvent(result), { last: true });
     return result;
