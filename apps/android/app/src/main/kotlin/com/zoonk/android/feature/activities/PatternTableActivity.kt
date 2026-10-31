@@ -33,9 +33,14 @@ import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CollectionInfo
+import androidx.compose.ui.semantics.CollectionItemInfo
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.collectionInfo
+import androidx.compose.ui.semantics.collectionItemInfo
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -160,10 +165,22 @@ private fun PatternGrid(rows: List<List<@Composable () -> Unit>>) {
             content = {
                 rows.forEachIndexed { rowIndex, row ->
                     if (rowIndex > 0) Box(Modifier.background(line))
-                    row.forEach { cell -> Column(Modifier.padding(8.dp), verticalArrangement = Arrangement.Center) { cell() } }
+                    row.forEachIndexed { columnIndex, cell ->
+                        Column(
+                            Modifier
+                                .semantics(mergeDescendants = true) {
+                                    collectionItemInfo = CollectionItemInfo(rowIndex, 1, columnIndex, 1)
+                                    if (rowIndex == 0 || columnIndex == 0) heading()
+                                }.padding(8.dp),
+                            verticalArrangement = Arrangement.Center,
+                        ) { cell() }
+                    }
                 }
             },
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            modifier =
+                Modifier
+                    .semantics { collectionInfo = CollectionInfo(rows.size, rows.first().size) }
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
         ) { measurables, _ ->
             val columns = rows.first().size
             val room = available - 16.dp.roundToPx()

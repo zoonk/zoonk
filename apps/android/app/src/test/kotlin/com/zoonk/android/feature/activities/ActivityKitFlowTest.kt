@@ -2,7 +2,11 @@ package com.zoonk.android.feature.activities
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -10,6 +14,7 @@ import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -151,6 +156,21 @@ class ActivityKitFlowTest {
         harness.tap("Check")
 
         rule.onNodeWithText("Which ending does", substring = true).assertDoesNotExist()
+    }
+
+    @Test
+    fun patternTableReadsAsATableARowCellAtATime() {
+        play("patternTable", isCorrect = true)
+
+        rule
+            .onNode(
+                SemanticsMatcher("a table of 7 rows and 3 columns") {
+                    val table = it.config.getOrNull(SemanticsProperties.CollectionInfo)
+                    table?.rowCount == 7 && table.columnCount == 3
+                },
+            ).assertExists()
+        rule.onNode(hasText("yo") and hasText("I")).assert(isHeading())
+        rule.onNode(hasText("hablar") and hasText("to speak")).assert(isHeading())
     }
 
     @Test
