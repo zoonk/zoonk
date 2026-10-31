@@ -4,6 +4,7 @@ import { type ResearchAnalytics } from "./_utils/research-analytics";
 import { extractBlueprintStep } from "./steps/extract-blueprint-step";
 import { findNoticeReadingStep } from "./steps/is-notice-read-step";
 import { saveBlueprintStep } from "./steps/save-blueprint-step";
+import { canReadSourcesStep } from "./steps/store-sources-step";
 
 export type SavedBlueprint = { created: boolean; examBlueprintId: string; movesExamDays: boolean };
 
@@ -65,6 +66,11 @@ export async function readExamBlueprint({
   const stored = isNew ? null : await findNoticeReadingStep({ identity, sourceId: noticeId });
 
   if (stored?.read && !force) {
+    return null;
+  }
+
+  // A stored reading stays until every document it read can be read again.
+  if (!isNew && !(await canReadSourcesStep(sourceIds))) {
     return null;
   }
 

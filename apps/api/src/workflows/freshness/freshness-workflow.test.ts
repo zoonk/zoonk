@@ -71,7 +71,12 @@ const NEXT_NOTICE_PLAN: ExamResearchPlan = {
   searchTerms: ["TCDF"],
 };
 
-const ANNEX_TEXT = "ANEXO II – QUADRO DE PROVAS\nP1 Conhecimentos básicos: 50 itens.";
+const ANNEX_TEXT = [
+  "ANEXO II – QUADRO DE PROVAS",
+  "P1 Conhecimentos básicos: 50 itens, peso 1, duração conjunta de cinco horas.",
+  "P2 Conhecimentos específicos: 70 itens, peso 2, aplicada no mesmo turno.",
+  "P3 Discursiva: uma peça técnica de até 60 linhas, valendo 60 pontos.",
+].join("\n");
 
 async function readFixture(name: string) {
   return readFile(new URL(`../research/_test-fixtures/${name}`, import.meta.url), "utf8");
@@ -564,6 +569,22 @@ describe(freshnessWorkflow, () => {
     await expect(readNoticeAgainWorkflow({ examBlueprintId: randomUUID() })).resolves.toStrictEqual(
       { status: "notFound" },
     );
+  });
+
+  it("reads nothing again while a document the last reading read can't be read", async () => {
+    const { annex, blueprint } = await examWithLearner();
+
+    await prisma.source.update({ data: { extractedText: "" }, where: { id: annex.id } });
+
+    await expect(readNoticeAgainWorkflow({ examBlueprintId: blueprint.id })).resolves.toStrictEqual(
+      { status: "read" },
+    );
+
+    expect(extractExamBlueprint).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } }),
+    ).resolves.toMatchObject({ edition: blueprint.edition, structure: blueprint.structure });
   });
 
   it("stops when nobody studies the exam anymore", async () => {

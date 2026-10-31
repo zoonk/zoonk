@@ -1263,6 +1263,61 @@ describe(researchWorkflow, () => {
     ).resolves.toMatchObject({ board: "Cebraspe" });
   });
 
+  it("keeps the last edition's reading while a required annex of the new notice can't be read or copied", async () => {
+    const { goal } = await examGoal();
+    const { plan } = await replayTcdfResearch();
+    const { data: recorded } = await findOfficialSources({} as never);
+    const [notice] = recorded.documents;
+
+    if (!notice) {
+      throw new Error("The recorded search has the notice first.");
+    }
+
+    const annex = {
+      ...notice,
+      documentType: "annex" as const,
+      title: "Anexo II – Quadro de provas",
+      url: `https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/anexo-ii-${randomUUID()}.pdf`,
+    };
+
+    vi.mocked(findOfficialSources).mockImplementation(async ({ unreadable = [] }) => ({
+      ...TASK_RESULT,
+      data: { ...recorded, documents: unreadable.length > 0 ? [] : [notice, annex] },
+    }));
+
+    const fetchNotice = vi.mocked(fetch).getMockImplementation();
+
+    vi.mocked(fetch).mockImplementation(async (input, init) =>
+      requestedUrl(input).includes("anexo-ii")
+        ? new PageResponse("Access Denied", { status: 403 })
+        : (fetchNotice?.(input, init) ?? new PageResponse("", { status: 404 })),
+    );
+
+    const lastEdition = await examBlueprintFixture({
+      examDate: new Date(Date.now() - 300 * 86_400_000),
+      identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+      language: "pt",
+      name: plan.name,
+      role: plan.role,
+    });
+
+    vi.mocked(generateSourceChangeNotice).mockResolvedValue({
+      ...TASK_RESULT,
+      data: { message: "Saiu o edital de 2026." },
+    });
+
+    await expect(researchWorkflow({ goalId: goal.id })).resolves.toMatchObject({
+      examBlueprintId: lastEdition.id,
+      status: "ready",
+    });
+
+    expect(vi.mocked(findOfficialSources).mock.calls.at(-1)?.[0].unreadable).toStrictEqual([
+      annex.url,
+    ]);
+
+    expect(extractExamBlueprint).not.toHaveBeenCalled();
+  });
+
   it("keeps the exam's subjects and scoring when the check rejects every detail their passages don't state", async () => {
     const { goal } = await examGoal();
     const { extraction, plan } = await replayTcdfResearch();

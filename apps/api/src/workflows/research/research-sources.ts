@@ -53,32 +53,59 @@ async function storeDocuments({
   return { stored, unreadable };
 }
 
-function isNotice(source: Pick<StoredSource, "documentType">): boolean {
+type Typed = Pick<StoredSource, "documentType">;
+
+/** The notice's tables and content list, without which a reading misses counts, weights or topics. */
+const REQUIRED_ANNEXES: ReadonlySet<StoredSource["documentType"]> = new Set(["annex", "syllabus"]);
+
+function isNotice(source: Typed): boolean {
   return source.documentType === "notice";
+}
+
+/** The notice, unless another notice was read, and its required annexes, none of which downloaded. */
+function listLostParts({
+  stored,
+  topic,
+  unreadable,
+}: {
+  stored: StoredSource[];
+  topic: SourceTopic;
+  unreadable: FoundSourceDocument[];
+}): FoundSourceDocument[] {
+  if (topic !== "exam") {
+    return [];
+  }
+
+  const hasNotice = stored.some((source) => isNotice(source));
+
+  return unreadable.filter((document) =>
+    isNotice(document) ? !hasNotice : REQUIRED_ANNEXES.has(document.documentType),
+  );
+}
+
+function countType({ documentType }: Typed, documents: readonly Typed[]): number {
+  return documents.filter((document) => document.documentType === documentType).length;
+}
+
+function isRecovered({ copies, lost }: { copies: Typed[]; lost: Typed[] }): boolean {
+  return lost.every((document) => countType(document, copies) >= countType(document, lost));
 }
 
 /** Some boards' sites refuse every download (Vunesp's answer 403), so copies are read from other sites. */
 async function storeCopies({
   analytics,
+  lost,
   plan,
   searchAnalytics,
-  stored,
   topic,
-  unreadable,
 }: {
   analytics: ResearchAnalytics;
+  lost: FoundSourceDocument[];
   plan: ExamResearchPlan | SourceResearchPlan;
   searchAnalytics: ResearchAnalytics;
-  stored: StoredSource[];
   topic: SourceTopic;
-  unreadable: FoundSourceDocument[];
 }): Promise<StoredSource[]> {
-  const isNoticeUnread =
-    topic === "exam" &&
-    unreadable.some((document) => isNotice(document)) &&
-    !stored.some((source) => isNotice(source));
-
-  if (!isNoticeUnread) {
+  if (lost.length === 0) {
     return [];
   }
 
@@ -87,7 +114,7 @@ async function storeCopies({
       analytics: searchAnalytics,
       plan,
       topic,
-      unreadable: unreadable.map((document) => document.url),
+      unreadable: lost.map((document) => document.url),
     }),
   ]);
 
@@ -105,7 +132,10 @@ async function storeCopies({
   return copies.stored;
 }
 
-/** `board` runs the edition the found documents are for; null outside exams or when they don't say. */
+/**
+ * `board` runs the edition the found documents are for; null outside exams or when they don't say.
+ * `complete` is false when the notice's required annexes couldn't be read or copied.
+ */
 export async function findAndStoreSources({
   analytics,
   personalPlan = false,
@@ -118,7 +148,7 @@ export async function findAndStoreSources({
   plan: ExamResearchPlan | SourceResearchPlan;
   requireOfficial: boolean;
   topic: SourceTopic;
-}): Promise<{ board: string | null; sourceIds: string[] }> {
+}): Promise<{ board: string | null; complete: boolean; sourceIds: string[] }> {
   const searchAnalytics = toPlanAnalytics({ analytics, personal: personalPlan });
   const found = await findSourcesStep({ analytics: searchAnalytics, plan, topic });
 
@@ -132,17 +162,19 @@ export async function findAndStoreSources({
   const hasOfficial = found.documents.some((document) => document.kind === "official");
 
   if (requireOfficial && !hasOfficial) {
-    return { board: null, sourceIds: [] };
+    return { board: null, complete: true, sourceIds: [] };
   }
 
-  const copies = await storeCopies({ analytics, plan, searchAnalytics, stored, topic, unreadable });
+  const lost = listLostParts({ stored, topic, unreadable });
+  const copies = await storeCopies({ analytics, lost, plan, searchAnalytics, topic });
+  const complete = isRecovered({ copies, lost });
 
   // A notice's corrections and annexes read without it would stand in for the whole notice.
   if (
     found.documents.some((document) => isNotice(document)) &&
     ![...stored, ...copies].some((source) => isNotice(source))
   ) {
-    return { board: found.board, sourceIds: [] };
+    return { board: found.board, complete, sourceIds: [] };
   }
 
   const readable =
@@ -155,7 +187,7 @@ export async function findAndStoreSources({
     .toSorted((first, second) => Number(isNotice(second)) - Number(isNotice(first)))
     .map((source) => source.sourceId);
 
-  return { board: found.board, sourceIds: [...new Set(sourceIds)] };
+  return { board: found.board, complete, sourceIds: [...new Set(sourceIds)] };
 }
 
 async function findTopicSources({
