@@ -1,4 +1,5 @@
 import "server-only";
+import { normalizeString } from "@zoonk/utils/string";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
@@ -55,6 +56,8 @@ export const questionFormatSchema = z.object({
   options: z.number().int().nullable(),
   partialCredit: partialCreditSchema.nullable(),
   passage: z.string(),
+  /** Empty when the documents ask it in every part of the exam. */
+  sections: z.array(z.string()),
   /** Null for one pick. */
   select: optionSelectSchema.nullable(),
 });
@@ -74,8 +77,8 @@ export type ExtractQuestionFormatsParams = {
 };
 
 /**
- * The blueprint reading sometimes drops formats a class's notes announce in passing, so this narrow
- * read runs beside it and fills what the reading missed.
+ * Runs beside the blueprint reading and takes the lead on formats: the whole reading drops formats
+ * a class's notes announce in passing and runs a practice paper's formats together.
  */
 export async function extractQuestionFormats({
   analytics,
@@ -117,37 +120,80 @@ export async function extractQuestionFormats({
   };
 }
 
-/**
- * For one the reading called `other`, every format the narrow read names that asks the same thing:
- * a reading may write a table and an essay of one announcement as one `other`.
- */
-function completeFormat({
+function nameKind({
+  format,
+  read,
+}: {
+  format: QuestionFormat;
+  read: readonly QuestionFormat[];
+}): QuestionFormat[] {
+  if (format.kind !== "other") {
+    return [format];
+  }
+
+  const named = read.filter(
+    (candidate) => candidate.kind !== "other" && isSameFormat(candidate, format),
+  );
+
+  return named.length > 0 ? named : [format];
+}
+
+function isSameAnswer(first: QuestionFormat, second: QuestionFormat): boolean {
+  return first.kind === second.kind && first.select === second.select;
+}
+
+/** Only when each read has one format answered this way, so no format takes another's options. */
+function fillFromReading({
   format,
   found,
+  read,
 }: {
   format: QuestionFormat;
   found: readonly QuestionFormat[];
-}): QuestionFormat[] {
-  if (format.kind === "other") {
-    const named = found.filter(
-      (candidate) => candidate.kind !== "other" && isSameFormat(candidate, format),
-    );
+  read: readonly QuestionFormat[];
+}): QuestionFormat {
+  const [reading, ...others] = read.filter((other) => isSameAnswer(other, format));
+  const isOnly = found.filter((other) => isSameAnswer(other, format)).length === 1;
 
-    return named.length > 0 ? named : [format];
-  }
+  return reading && others.length === 0 && isOnly
+    ? {
+        ...format,
+        entry: format.entry ?? reading.entry,
+        options: format.options ?? reading.options,
+      }
+    : format;
+}
 
-  const withOptions =
-    format.options === null
-      ? found.find((candidate) => candidate.kind === format.kind && candidate.options !== null)
-      : undefined;
+function isSamePassage(first: QuestionFormat, second: QuestionFormat): boolean {
+  const [one, two] = [first, second].map((format) => normalizeString(format.passage));
 
-  return [withOptions ?? format];
+  return (
+    first.document === second.document &&
+    Boolean(one && two && (one.includes(two) || two.includes(one)))
+  );
 }
 
 /**
- * A format the reading already has keeps its entry unless the narrow read adds its options or names
- * its kind. Two different tasks of one kind both stay.
+ * One exam's choice formats share words ("choice", "select"), so a reading's format quoting another
+ * passage is the same only when it's answered alike.
  */
+function covers({ format, other }: { format: QuestionFormat; other: QuestionFormat }): boolean {
+  if (isSamePassage(other, format)) {
+    return true;
+  }
+
+  if (!isSameFormat(other, format)) {
+    return false;
+  }
+
+  return (
+    format.kind === "other" ||
+    other.kind === "other" ||
+    (isSameAnswer(other, format) && (format.options === null || other.options === format.options))
+  );
+}
+
+/** The reading adds only the formats it alone names and the options or entry left unstated. */
 export function mergeQuestionFormats({
   found,
   read,
@@ -155,11 +201,13 @@ export function mergeQuestionFormats({
   found: readonly QuestionFormat[];
   read: readonly QuestionFormat[];
 }): QuestionFormat[] {
-  const completed = [...new Set(read.flatMap((format) => completeFormat({ format, found })))];
-
-  const added = found.filter(
-    (format) => !completed.includes(format) && !read.some((other) => isSameFormat(format, other)),
+  const kept = [...new Set(found.flatMap((format) => nameKind({ format, read })))].map((format) =>
+    found.includes(format) ? fillFromReading({ format, found, read }) : format,
   );
 
-  return [...completed, ...added];
+  const added = read.filter(
+    (format) => !kept.includes(format) && !kept.some((other) => covers({ format, other })),
+  );
+
+  return [...kept, ...added];
 }

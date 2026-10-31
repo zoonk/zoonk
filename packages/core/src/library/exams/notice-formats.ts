@@ -5,7 +5,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { type ExamStructure, examStructureSchema } from "./blueprint-contract";
 import { type ExtractionDocument } from "./blueprint-passages";
-import { toAnswerFormat } from "./format-shares";
+import { toFormatDetails } from "./format-shares";
 import { isPassageInDocument } from "./passage-check";
 
 const noticeFormatsSchema = examStructureSchema.shape.formats;
@@ -37,7 +37,7 @@ function toCitedFormat({
         description: format.description,
         kind: format.kind,
         options: format.options,
-        ...toAnswerFormat(format),
+        ...toFormatDetails(format),
       }
     : null;
 }

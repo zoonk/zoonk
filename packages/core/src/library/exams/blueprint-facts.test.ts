@@ -20,6 +20,7 @@ function countedFormat({
     options: null,
     partialCredit: null,
     passage: NOTICE.slice(0, 40),
+    sections: [],
     select: null,
   };
 }
@@ -111,6 +112,7 @@ describe(listBlueprintFacts, () => {
             options: null,
             partialCredit: null,
             passage: discursive,
+            sections: [],
             select: null,
           },
         ],
@@ -293,6 +295,7 @@ describe(listBlueprintFacts, () => {
             options: 4,
             partialCredit: "perOption",
             passage: format,
+            sections: [],
             select: "all",
           },
         ],
@@ -328,6 +331,7 @@ describe(listBlueprintFacts, () => {
             options: null,
             partialCredit: "plusMinus",
             passage: format,
+            sections: [],
             select: "all",
           },
         ],

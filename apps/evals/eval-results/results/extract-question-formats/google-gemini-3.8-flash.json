@@ -1,0 +1,56 @@
+{
+  "modelId": "google/gemini-3.8-flash",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "Facts 8/9. passages found 7/7. missing: {\"kind\":\"multipleChoice\",\"passage\":\"column|blank\",\"section\":\"verbal\",\"select\":null}",
+          "kind": "majorErrors",
+          "score": 9.28888888888889
+        },
+        {
+          "conclusion": "Facts 8/9. passages found 7/7. missing: {\"kind\":\"multipleChoice\",\"passage\":\"column|blank\",\"section\":\"verbal\",\"select\":null}",
+          "kind": "minorErrors",
+          "score": 9.28888888888889
+        },
+        {
+          "conclusion": "Facts 8/9. passages found 7/7. missing: {\"kind\":\"multipleChoice\",\"passage\":\"column|blank\",\"section\":\"verbal\",\"select\":null}",
+          "kind": "potentialImprovements",
+          "score": 9.28888888888889
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "absent": [
+            { "kind": "multipleChoice", "passage": {}, "select": "all" },
+            { "description": {}, "kind": "numeric" }
+          ],
+          "present": [
+            { "kind": "essay" },
+            { "kind": "multipleChoice", "options": 4, "section": "quantitative", "select": null },
+            { "kind": "multipleChoice", "options": 5, "select": null },
+            { "kind": "multipleChoice", "passage": {}, "section": "verbal", "select": null },
+            { "kind": "multipleChoice", "options": 6, "section": "verbal", "select": 2 },
+            { "kind": "multipleChoice", "select": "all" },
+            { "kind": "numeric", "section": "quantitative" }
+          ]
+        },
+        "id": "en-gre-general-test-1",
+        "userInput": {
+          "documents": [
+            {
+              "title": "GRE General Test Structure",
+              "url": "https://www.ets.org/gre/test-takers/general-test/prepare/test-structure.html"
+            },
+            {
+              "title": "Practice Book for the Paper-delivered GRE General Test",
+              "url": "https://www.ets.org/content/dam/ets-india/pdfs/gre/paper-delivered-test-practice-book.pdf"
+            }
+          ],
+          "exam": "GRE General Test"
+        }
+      }
+    }
+  ],
+  "taskId": "extract-question-formats"
+}

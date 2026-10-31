@@ -47,12 +47,14 @@ export function isFormatShare(share: number | null | undefined): share is number
   return typeof share === "number" && share > 0 && share <= 1;
 }
 
-export function toAnswerFormat(format: {
+export function toFormatDetails(format: {
   entry: ExamStructure["formats"][number]["entry"];
+  sections: string[];
   select: ExamStructure["formats"][number]["select"];
 }) {
   return {
     ...(format.entry ? { entry: format.entry } : {}),
+    ...(format.sections.length > 0 ? { sections: format.sections } : {}),
     ...(format.select && format.select !== 1 ? { select: format.select } : {}),
   };
 }

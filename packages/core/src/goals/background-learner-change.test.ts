@@ -159,6 +159,7 @@ describe("background goal plan marks", () => {
           options: 5,
           partialCredit: null,
           passage: "five options per question",
+          sections: [],
           select: null,
         },
       ],

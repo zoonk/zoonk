@@ -85116,6 +85116,12 @@
                     "plusMinus"
                   ]
                 },
+                "sections": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
                 "select": {
                   "nullable": true,
                   "anyOf": [

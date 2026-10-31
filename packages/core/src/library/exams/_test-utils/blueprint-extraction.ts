@@ -53,6 +53,7 @@ export function blueprintExtraction(
         options: null,
         partialCredit: null,
         passage: COUNT_PASSAGE,
+        sections: [],
         select: null,
       },
     ],

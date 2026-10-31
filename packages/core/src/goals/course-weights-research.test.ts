@@ -293,6 +293,7 @@ describe("background plan inputs", () => {
           options: 5,
           partialCredit: null,
           passage: "five options per question",
+          sections: [],
           select: null,
         },
       ],

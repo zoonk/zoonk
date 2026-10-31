@@ -22,6 +22,7 @@ import { exampleLinesTask } from "./example-lines/task";
 import { explainSpokenAnswerTask } from "./explain-spoken-answer/task";
 import { explainWrongAnswerTask } from "./explain-wrong-answer/task";
 import { extractExamBlueprintTask } from "./extract-exam-blueprint/task";
+import { extractQuestionFormatsTask } from "./extract-question-formats/task";
 import { findChoiceOptionsTask } from "./find-choice-options/task";
 import { findCourseWeightsTask } from "./find-course-weights/task";
 import { findExamDateTask } from "./find-exam-date/task";
@@ -97,6 +98,7 @@ export const TASKS: readonly RegisteredTask[] = [
   findTopicFrequencyTask,
   findChoiceOptionsTask,
   extractExamBlueprintTask,
+  extractQuestionFormatsTask,
   checkCitedFactsTask,
   checkExamReadingTask,
   citeMaterialTask,

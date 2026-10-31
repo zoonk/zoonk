@@ -61,14 +61,16 @@
       "passage": "O julgamento de cada item será CERTO ou ERRADO, de acordo com o(s) comando(s) a que se refere o item. Haverá, na folha de respostas, para cada item, dois campos de marcação: o campo designado com o código C, que deverá ser preenchido pelo candidato caso julgue o item CERTO, e o campo designado com o código E",
       "description": "Itens para julgamento em Certo ou Errado com folha de respostas contendo campos C e E.",
       "kind": "trueFalse",
-      "options": null
+      "options": null,
+      "sections": []
     },
     {
       "document": 1,
       "passage": "A prova discursiva (P4) valerá 50,00 pontos e consistirá de: a) uma questão discursiva, a ser respondida em até 20 linhas cada, no valor de 15,00 pontos, a respeito de tema relacionado aos conhecimentos especializados, e b) uma peça de natureza técnica (Informação), de até 50 linhas",
       "description": "Uma questão discursiva de até 20 linhas e uma peça de natureza técnica de até 50 linhas sobre conhecimentos especializados.",
       "kind": "essay",
-      "options": null
+      "options": null,
+      "sections": []
     }
   ],
   "mock": {

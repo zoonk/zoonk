@@ -9,7 +9,7 @@ import { toTestedLanguage } from "./blueprint-language";
 import { toMock } from "./blueprint-mock-content";
 import { type ExtractionDocument } from "./blueprint-passages";
 import { toSubjectTopics } from "./blueprint-subject-topics";
-import { getFormatShares, isFormatShare, isObjectiveFormat, toAnswerFormat } from "./format-shares";
+import { getFormatShares, isFormatShare, isObjectiveFormat, toFormatDetails } from "./format-shares";
 import { isObjectiveTestUnread } from "./objective-test";
 
 type Extraction = BlueprintExtraction;
@@ -161,7 +161,7 @@ function toStructure({
           : keptOr({ gap: "", id: `${id}.description`, kept, value: item.description }),
       kind: item.kind,
       options: item.options,
-      ...toAnswerFormat(item),
+      ...toFormatDetails(item),
       ...(item.partialCredit && kept.has(`${id}.partialCredit`)
         ? { partialCredit: item.partialCredit }
         : {}),

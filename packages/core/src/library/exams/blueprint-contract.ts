@@ -46,6 +46,8 @@ const blueprintFormatSchema = z.object({
   kind: z.enum(EXAM_FORMAT_KINDS),
   options: z.number().int().nullable(),
   partialCredit: partialCreditSchema.optional(),
+  /** The parts of the exam that ask it, by the documents' names; absent when every part does. */
+  sections: z.array(z.string()).optional(),
   select: optionSelectSchema.nullable().optional(),
   share: z.number().min(0).max(1).nullable().optional(),
 });

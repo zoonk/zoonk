@@ -138,6 +138,7 @@ async function replayTcdfResearch() {
         options: 5,
         partialCredit: null,
         passage: "As questões terão cinco alternativas.",
+        sections: [],
         select: null,
       },
     ],
