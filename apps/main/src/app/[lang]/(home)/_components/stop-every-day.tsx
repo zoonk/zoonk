@@ -60,6 +60,7 @@ function withNotes(steps: readonly TomorrowStep[]): DayListStep[] {
 
 async function PlanChanged({ goal }: { goal: ExampleGoal }) {
   const t = await getExtracted();
+  const tDiff = await getExtracted("planDiff");
   const format = await getFormatter();
   const set = await getExampleSet();
   const plans = await getExamplePlans();
@@ -92,7 +93,16 @@ async function PlanChanged({ goal }: { goal: ExampleGoal }) {
       </p>
 
       <DiffLines
-        labels={{ added: t("New"), removed: t("Was") }}
+        labels={{
+          added: tDiff({
+            description: "Marks a plan's value after a change, beside its old one.",
+            message: "New",
+          }),
+          removed: tDiff({
+            description: "Marks a plan's value before a change, beside its new one.",
+            message: "Was",
+          }),
+        }}
         lines={
           change.kind === "moved"
             ? [

@@ -1703,19 +1703,21 @@ msgstr "İstatistiklerin"
 
 #. Legend of a heatmap, from the lightest to the darkest squares.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "Xsvev8"
+msgctxt "activityLegend.Xsvev8"
 msgid "Activity from less to more"
-msgstr "Azdan çoğa etkinlik düzeyi"
+msgstr "Etkinlik düzeyi: azdan çoğa"
 
+#. The light end of a heatmap's legend: less activity.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "mFYgAX"
+msgctxt "activityLegend.mFYgAX"
 msgid "Less"
-msgstr "Az"
+msgstr "Daha az"
 
+#. The dark end of a heatmap's legend: more activity.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "I5NMJ8"
+msgctxt "activityLegend.I5NMJ8"
 msgid "More"
-msgstr "Çok"
+msgstr "Daha fazla"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 msgctxt "-eNLo_"
@@ -1740,9 +1742,9 @@ msgstr "Çalıştığın her gün"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "RlSFBL"
-msgid "Study days"
-msgstr "Çalıştığın günler"
+msgctxt "CjJYVQ"
+msgid "Days studied"
+msgstr "Çalışılan gün sayısı"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
 msgctxt "-ZYXXk"
@@ -3250,13 +3252,15 @@ msgctxt "DQ8KR2"
 msgid "Your plan changed"
 msgstr "Planın değişti"
 
+#. Marks a plan's value after a change, beside its old one.
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "bW7B87"
+msgctxt "planDiff.bW7B87"
 msgid "New"
 msgstr "Yeni"
 
+#. Marks a plan's value before a change, beside its new one.
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "K0Lp_g"
+msgctxt "planDiff.K0Lp_g"
 msgid "Was"
 msgstr "Önceki"
 

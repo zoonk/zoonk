@@ -23,7 +23,7 @@ export async function ActivityTiles({
       <StatTile
         detail={t("Any day you studied")}
         icon={<CalendarCheckIcon />}
-        label={t("Study days")}
+        label={t("Days studied")}
         tone="success"
         value={formatWholeNumber({ format, value: activity.learningDays })}
       />

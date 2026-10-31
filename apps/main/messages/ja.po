@@ -1703,17 +1703,19 @@ msgstr "学習データ"
 
 #. Legend of a heatmap, from the lightest to the darkest squares.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "Xsvev8"
+msgctxt "activityLegend.Xsvev8"
 msgid "Activity from less to more"
-msgstr "学習量が少ない順"
+msgstr "活動量の少ない順"
 
+#. The light end of a heatmap's legend: less activity.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "mFYgAX"
+msgctxt "activityLegend.mFYgAX"
 msgid "Less"
 msgstr "少ない"
 
+#. The dark end of a heatmap's legend: more activity.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "I5NMJ8"
+msgctxt "activityLegend.I5NMJ8"
 msgid "More"
 msgstr "多い"
 
@@ -1740,8 +1742,8 @@ msgstr "学習したすべての日"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "RlSFBL"
-msgid "Study days"
+msgctxt "CjJYVQ"
+msgid "Days studied"
 msgstr "学習日数"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
@@ -3250,13 +3252,15 @@ msgctxt "DQ8KR2"
 msgid "Your plan changed"
 msgstr "学習計画が変わりました"
 
+#. Marks a plan's value after a change, beside its old one.
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "bW7B87"
+msgctxt "planDiff.bW7B87"
 msgid "New"
 msgstr "変更後"
 
+#. Marks a plan's value before a change, beside its new one.
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "K0Lp_g"
+msgctxt "planDiff.K0Lp_g"
 msgid "Was"
 msgstr "変更前"
 

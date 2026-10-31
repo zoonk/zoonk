@@ -110,7 +110,7 @@ function ActivityCalendarWeekColumn({ week }: { week: ActivityCalendarWeek }) {
 }
 
 async function ActivityLegend() {
-  const t = await getExtracted();
+  const t = await getExtracted("activityLegend");
 
   return (
     <ContributionCalendarLegend
@@ -119,11 +119,15 @@ async function ActivityLegend() {
         message: "Activity from less to more",
       })}
     >
-      <ContributionCalendarLegendLabel>{t("Less")}</ContributionCalendarLegendLabel>
+      <ContributionCalendarLegendLabel>
+        {t({ description: "The light end of a heatmap's legend: less activity.", message: "Less" })}
+      </ContributionCalendarLegendLabel>
       {INTENSITY_CLASSES.map((className) => (
         <ContributionCalendarLegendSwatch className={className} key={className} />
       ))}
-      <ContributionCalendarLegendLabel>{t("More")}</ContributionCalendarLegendLabel>
+      <ContributionCalendarLegendLabel>
+        {t({ description: "The dark end of a heatmap's legend: more activity.", message: "More" })}
+      </ContributionCalendarLegendLabel>
     </ContributionCalendarLegend>
   );
 }

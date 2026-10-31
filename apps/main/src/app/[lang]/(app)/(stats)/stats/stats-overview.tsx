@@ -111,7 +111,7 @@ async function StudyDaysTile({
 }) {
   const t = await getExtracted();
   const format = await getFormatter();
-  const label = t("Study days");
+  const label = t("Days studied");
 
   const time = await getProgressLearningTimeLabel({
     totalSeconds: activity?.totalLearningSeconds ?? 0,

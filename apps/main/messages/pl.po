@@ -1703,17 +1703,19 @@ msgstr "Twoje statystyki"
 
 #. Legend of a heatmap, from the lightest to the darkest squares.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "Xsvev8"
+msgctxt "activityLegend.Xsvev8"
 msgid "Activity from less to more"
-msgstr "Aktywność od najmniejszej do największej"
+msgstr "Aktywność od mniejszej do większej"
 
+#. The light end of a heatmap's legend: less activity.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "mFYgAX"
+msgctxt "activityLegend.mFYgAX"
 msgid "Less"
 msgstr "Mniej"
 
+#. The dark end of a heatmap's legend: more activity.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "I5NMJ8"
+msgctxt "activityLegend.I5NMJ8"
 msgid "More"
 msgstr "Więcej"
 
@@ -1740,8 +1742,8 @@ msgstr "Każdy dzień nauki"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "RlSFBL"
-msgid "Study days"
+msgctxt "CjJYVQ"
+msgid "Days studied"
 msgstr "Dni nauki"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
@@ -3250,13 +3252,15 @@ msgctxt "DQ8KR2"
 msgid "Your plan changed"
 msgstr "Twój plan się zmienił"
 
+#. Marks a plan's value after a change, beside its old one.
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "bW7B87"
+msgctxt "planDiff.bW7B87"
 msgid "New"
-msgstr "Nowe"
+msgstr "Teraz"
 
+#. Marks a plan's value before a change, beside its new one.
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "K0Lp_g"
+msgctxt "planDiff.K0Lp_g"
 msgid "Was"
 msgstr "Wcześniej"
 
