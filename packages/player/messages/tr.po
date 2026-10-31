@@ -79,7 +79,7 @@ msgstr "Uygula"
 #: src/activities/_components/activity-badge.tsx
 msgctxt "UJRCcU"
 msgid "Label it"
-msgstr "Adlandır"
+msgstr "Etiketle"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "eGo7pb"
@@ -241,7 +241,7 @@ msgstr "Cevap:"
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
-msgstr "Cevabınla ilgili geri bildirim"
+msgstr "Cevap değerlendirmesi"
 
 #: src/activities/_components/activity-guess-comparison.tsx
 msgctxt "iNWAkL"
@@ -676,7 +676,7 @@ msgstr "{times} kat daha fazla"
 #: src/activities/categorize/categorize-activity.tsx
 msgctxt "VOcx64"
 msgid "{item} is in {group}. {sorted} of {total} sorted."
-msgstr "{item} artık {group} grubunda. {sorted}/{total} öğe gruplandı."
+msgstr "{item}, {group} grubunda. {sorted} / {total} öğe gruplandı."
 
 #: src/activities/categorize/categorize-activity.tsx
 msgctxt "OnWRsG"
@@ -701,12 +701,12 @@ msgstr "Hepsi gruplandı. Hazır olduğunda kontrol et."
 #: src/activities/categorize/categorize-activity.tsx
 msgctxt "6BdpHo"
 msgid "{sorted} of {total} sorted"
-msgstr "{sorted}/{total} öğe gruplandı"
+msgstr "{sorted} / {total} öğe gruplandı"
 
 #: src/activities/categorize/categorize-activity.tsx
 msgctxt "p97Ob6"
 msgid "Sort {total} items into {groups}. Pick an item, then pick its group. {sorted} of {total} sorted."
-msgstr "{total} öğeyi şu gruplara ayır: {groups}. Önce bir öğe, sonra grubunu seç. {sorted}/{total} öğe gruplandı."
+msgstr "{total} öğeyi {groups} gruplarına ayır. Önce bir öğe, sonra grubunu seç. {sorted} / {total} öğe gruplandı."
 
 #: src/activities/categorize/categorize-group.tsx
 msgctxt "gYfi1i"
@@ -726,7 +726,7 @@ msgstr "Burada henüz bir şey yok"
 #: src/activities/categorize/categorize-results.tsx
 msgctxt "Y4KaZD"
 msgid "{right} of {total} in the right group"
-msgstr "{right}/{total} öğe doğru grupta"
+msgstr "{right} / {total} öğe doğru grupta"
 
 #: src/activities/categorize/categorize-results.tsx
 msgctxt "Q5lL_i"
@@ -766,7 +766,7 @@ msgstr "Önce bir neden, sonra yol açtığı sonucu seç."
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "m4T6j3"
 msgid "{count} of {total, plural, one {# link} other {# links}}"
-msgstr "{count}/{total, plural, other {# ilişki}}"
+msgstr "{count} / {total, plural, other {# ilişki}}"
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "qbRyCu"
@@ -838,7 +838,7 @@ msgstr "{span}: {change}."
 #: src/activities/code-runner/code-runner-activity.tsx
 msgctxt "ydcluT"
 msgid "{count, plural, one {Line {lines} is yours} other {Lines {lines} are yours}}"
-msgstr "{count, plural, other {Düzenleyebileceğin # satır var: {lines}}}"
+msgstr "{count, plural, one {Düzenleyeceğin satır: {lines}} other {Düzenleyeceğin satırlar: {lines}}}"
 
 #: src/activities/code-runner/code-runner-activity.tsx
 #: src/activities/code-tracer/tracer-parts.tsx
@@ -884,7 +884,7 @@ msgstr "Çıktıyı görmek için kodu çalıştır"
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "5ZJLyt"
 msgid "Nothing printed"
-msgstr "Çıktı üretilmedi"
+msgstr "Çıktı yok"
 
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "fio5op"
@@ -1069,7 +1069,7 @@ msgstr "Cevapların"
 #: src/activities/decision-tree/decision-tree-activity.tsx
 msgctxt "aI6870"
 msgid "Your answers lead to"
-msgstr "Cevaplarının götürdüğü sonuç"
+msgstr "Cevaplarına göre sonuç"
 
 #: src/activities/decision-tree/decision-tree-activity.tsx
 msgctxt "PTXFe3"
@@ -1189,7 +1189,7 @@ msgstr "Soru"
 #: src/activities/find-error/find-error-activity.tsx
 msgctxt "-gEihu"
 msgid "The AI's answer. One step is wrong: spot the AI's mistake."
-msgstr "Yapay zekânın cevabı. Adımlardan biri yanlış: yapay zekânın hatasını bul."
+msgstr "Yapay zekânın cevabı. Bir adım yanlış: yapay zekânın hatasını bul."
 
 #: src/activities/find-error/find-error-activity.tsx
 msgctxt "x9tWpR"
@@ -1209,12 +1209,12 @@ msgstr "{number}. adım yanlış."
 #: src/activities/find-error/find-error-activity.tsx
 msgctxt "QiUVvv"
 msgid "An AI assistant's answer in {count} steps. One step is wrong; pick it."
-msgstr "Bir yapay zekâ asistanının {count} adımlık cevabı. Adımlardan biri yanlış; onu seç."
+msgstr "Yapay zekâ asistanının {count} adımlık cevabı. Bir adım yanlış; onu seç."
 
 #: src/activities/find-error/find-error-activity.tsx
 msgctxt "Z2DktY"
 msgid "A worked answer in {count} steps. One step is wrong; pick it."
-msgstr "{count} adımlık bir çözüm. Adımlardan biri yanlış; onu seç."
+msgstr "{count} adımlık bir çözüm. Bir adım yanlış; onu seç."
 
 #: src/activities/formula-model/formula-model-activity.tsx
 msgctxt "erkNmC"
@@ -1345,7 +1345,7 @@ msgstr "Kenarlar: {parts}."
 #: src/activities/geometry-board/use-describe-board.ts
 msgctxt "gz7lgF"
 msgid "Sides: {parts}, adding up to a perimeter of {total}."
-msgstr "Kenarlar: {parts}. Çevre: {total}."
+msgstr "Kenarlar: {parts}, toplam çevre uzunluğu {total}."
 
 #: src/activities/geometry-board/use-describe-board.ts
 msgctxt "NiayTH"
@@ -1612,7 +1612,7 @@ msgstr "Orada neler olduğunu görmek için numaralı bir yere dokun."
 #: src/activities/map-explorer/map-explorer-activity.tsx
 msgctxt "PAYKae"
 msgid "{count} of {total} explored"
-msgstr "{count}/{total} yer keşfedildi"
+msgstr "{count} / {total} keşfedildi"
 
 #: src/activities/map-explorer/map-explorer-activity.tsx
 msgctxt "-Jv0vH"
@@ -1813,7 +1813,7 @@ msgstr "John Snow’un 1854 tarihli haritasına dayanan sadeleştirilmiş sokak 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "HfJhT9"
 msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
-msgstr "{left} ile {right} eşleştirildi. {matched, plural, other {# çift eşleştirildi (toplam {total}).}}"
+msgstr "{left} ile {right} eşleştirildi. {matched, plural, other {# / {total} çift eşleştirildi.}}"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "95nYEN"
@@ -1838,7 +1838,7 @@ msgstr "{text}, eşi yok"
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nDkRHw"
 msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, other {# çift eşleştirildi (toplam {total})}}"
+msgstr "{matched, plural, other {# / {total} çift eşleştirildi}}"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "ZdoI92"
@@ -1858,7 +1858,7 @@ msgstr "Bu ikisi eşleşmiyor."
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Dzn88L"
 msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {count, plural, =0 {} one {# card has no match.} other {# cards have no match.}} {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
-msgstr "İki sütun halinde kartlar var. Eşleştirmek için soldan ve sağdan birer kart seç. {count, plural, =0 {} other {# kartın eşi yok.}} {matched, plural, other {# çift eşleştirildi (toplam {total}).}}"
+msgstr "Kartlar iki sütun halinde. Eşleştirmek için soldan ve sağdan birer kart seç. {count, plural, =0 {} other {# kartın eşi yok.}} {matched, plural, other {# / {total} çift eşleştirildi.}}"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "kzygtu"
@@ -1908,7 +1908,7 @@ msgstr "{atom} seçildi."
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "phXGea"
 msgid "Nothing selected."
-msgstr "Hiçbir şey seçili değil."
+msgstr "Seçili öğe yok."
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "DLio1y"
@@ -1923,7 +1923,7 @@ msgstr "Oluşturulan: {formula}"
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "ymqUu2"
 msgid "{atom}: {used} of {valence, plural, =0 {# bonds} one {# bond} other {# bonds}}"
-msgstr "{atom}: {used} bağ kullanıldı; {valence, plural, =0 {# bağ kurulabilir} other {en fazla # bağ kurulabilir}}"
+msgstr "{atom}: {used} / {valence, plural, =0 {# bağ} other {# bağ}}"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "18z35m"
@@ -2255,10 +2255,11 @@ msgctxt "8WlDyp"
 msgid "Repeat a number of times"
 msgstr "Belirli sayıda tekrarla"
 
+#. A noun on a palette of pattern parts: a group of characters.
 #: src/activities/pattern-tester/pattern-tester-activity.tsx
 msgctxt "HpoDwk"
 msgid "Group"
-msgstr "Grupla"
+msgstr "Grup"
 
 #: src/activities/pattern-tester/pattern-tester-activity.tsx
 msgctxt "InWqys"
@@ -2328,7 +2329,7 @@ msgstr "Semboller"
 #: src/activities/pattern-tester/pattern-tester-activity.tsx
 msgctxt "naQh_0"
 msgid "{passing, plural, =0 {# of {total} examples pass.} one {# of {total} examples pass.} other {# of {total} examples pass.}}"
-msgstr "{passing, plural, =0 {# örnek testi geçti (toplam {total}).} other {# örnek testten geçti (toplam {total}).}}"
+msgstr "{passing, plural, =0 {# / {total} örnek testi geçti.} other {# / {total} örnek testi geçti.}}"
 
 #: src/activities/pattern-tester/pattern-tester-activity.tsx
 msgctxt "5XbPTb"
@@ -2378,7 +2379,7 @@ msgstr "eşleşti"
 #: src/activities/pattern-tester/regex-samples.tsx
 msgctxt "w8hCjj"
 msgid "{passing, plural, =0 {# of {total} pass} one {# of {total} pass} other {# of {total} pass}}"
-msgstr "{passing, plural, =0 {# tanesi testi geçti (toplam {total})} other {# tanesi testten geçti (toplam {total})}}"
+msgstr "{passing, plural, =0 {# / {total} başarılı} other {# / {total} başarılı}}"
 
 #: src/activities/process-order/process-order-activity.tsx
 msgctxt "NI6DvQ"
@@ -2534,7 +2535,7 @@ msgstr "Tık seslerini dinle…"
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "uWojAJ"
 msgid "Tap with each click · {click} of {total}"
-msgstr "Her tık sesinde dokun · {click}/{total}"
+msgstr "Her tık sesinde dokun · {click} / {total}"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "U3WmLU"
@@ -2600,7 +2601,7 @@ msgstr "{tap}. vuruş kaçtı."
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "DDydNj"
 msgid "{onTime} of {total, plural, =0 {# taps} one {# tap} other {# taps}} on time."
-msgstr "{onTime} / {total, plural, =0 {# vuruş} other {# vuruş}} zamanında yapıldı."
+msgstr "{onTime} / {total, plural, =0 {# vuruş} other {# vuruş}} zamanında."
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
@@ -2717,7 +2718,7 @@ msgstr "Sorgu çalıştı ancak tablo döndürmedi. Satır almak için SELECT ku
 #: src/activities/sql-playground/sql-result.tsx
 msgctxt "XjrTx5"
 msgid "{count, plural, =0 {Your result has no rows} one {Your result: # row} other {Your result: # rows}}"
-msgstr "{count, plural, =0 {Sonucunda hiç satır yok} other {Sonucunda # satır var}}"
+msgstr "{count, plural, =0 {Sonucunda satır yok} other {Sonucun: # satır}}"
 
 #: src/activities/sql-playground/sql-result.tsx
 msgctxt "BgDPcv"
@@ -2769,7 +2770,7 @@ msgstr "Adımlar"
 #: src/activities/step-solver/step-solver-activity.tsx
 msgctxt "VVjt1M"
 msgid "Step {current} of {total}."
-msgstr "{current}. adım, toplam {total} adım."
+msgstr "Adım: {current} / {total}."
 
 #: src/activities/step-solver/step-solver-step.tsx
 msgctxt "5SURVE"
@@ -3014,7 +3015,7 @@ msgstr "Duraklat"
 #: src/components/play-audio-button.tsx
 msgctxt "J3ca41"
 msgid "Play"
-msgstr "Dinle"
+msgstr "Oynat"
 
 #: src/components/player-choice-scene.tsx
 msgctxt "akd-cv"
@@ -3051,7 +3052,7 @@ msgstr "Güzel tahmin!"
 #: src/components/verdict-label.tsx
 msgctxt "--l7ni"
 msgid "Not quite"
-msgstr "Doğru değil"
+msgstr "Pek öyle değil"
 
 #: src/components/verdict-label.tsx
 msgctxt "pWC3pf"
@@ -3073,7 +3074,7 @@ msgstr "Bu kez kontrol edilmedi"
 #: src/components/verdict-label.tsx
 msgctxt "Ilqo6R"
 msgid "Not quite:"
-msgstr "Doğru değil:"
+msgstr "Pek öyle değil:"
 
 #: src/components/vocabulary-step.tsx
 msgctxt "lqtP-R"
@@ -3208,7 +3209,7 @@ msgstr "Tekrar tarihi: {date}"
 #: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "sgeE0r"
 msgid "Back to unit"
-msgstr "Bölüme dön"
+msgstr "Üniteye dön"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "_N8rYN"
@@ -3278,17 +3279,17 @@ msgstr "Anladım"
 #: src/lesson/feedback/explain-answer.tsx
 msgctxt "OON40X"
 msgid "Why that answer misses"
-msgstr "Bu yanıt neden yanlış"
+msgstr "Bu cevap neden doğru değil"
 
 #: src/lesson/feedback/explain-answer.tsx
 msgctxt "g00v5Z"
 msgid "Explaining your answer"
-msgstr "Yanıtını açıklıyoruz"
+msgstr "Cevabını açıklıyoruz"
 
 #: src/lesson/feedback/explain-answer.tsx
 msgctxt "aIkpfv"
 msgid "Explain my answer"
-msgstr "Yanıtımı açıkla"
+msgstr "Cevabımı açıkla"
 
 #: src/lesson/feedback/explain-answer.tsx
 msgctxt "I_NpAB"
@@ -3439,6 +3440,7 @@ msgctxt "ZpQ6us"
 msgid "Result"
 msgstr "Sonuç"
 
+#. Heading of the panel that recaps the lesson, not a button.
 #: src/lesson/lesson-aside.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "C9sbYe"
@@ -3498,7 +3500,7 @@ msgstr "Dersi kapat"
 #: src/lesson/lesson-player-header.tsx
 msgctxt "dYp90P"
 msgid "Lesson progress"
-msgstr "Dersteki ilerlemen"
+msgstr "Ders ilerlemesi"
 
 #: src/lesson/lesson-player-shell.tsx
 msgctxt "ZHEKO0"
@@ -3523,7 +3525,7 @@ msgstr "Bunu zaten biliyorum"
 #: src/lesson/lesson-stage.tsx
 msgctxt "qzpeai"
 msgid "Write again"
-msgstr "Yeniden hazırla"
+msgstr "Tekrar yaz"
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "LnHBcu"
@@ -3538,12 +3540,12 @@ msgstr "Tam olmadı. Bir daha bakıp kendin düzelt, sonra kontrol et."
 #: src/lesson/lesson-stage.tsx
 msgctxt "KC15MC"
 msgid "Your answer here didn't save. Answer it again to finish the lesson."
-msgstr "Buradaki cevabın kaydedilemedi. Dersi bitirmek için tekrar cevapla."
+msgstr "Bu soruya verdiğin cevap kaydedilmedi. Dersi bitirmek için tekrar cevapla."
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "rKXfRV"
 msgid "This question was waiting for its picture. Answer it to finish the lesson."
-msgstr "Bu soru, görseli hazır olmadığı için bekliyordu. Dersi bitirmek için soruyu cevapla."
+msgstr "Bu soru için görsel bekleniyordu. Dersi bitirmek için soruyu cevapla."
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "I67vt5"
@@ -3568,7 +3570,7 @@ msgstr "İyi yaptıkların"
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "A4Mc64"
 msgid "To improve"
-msgstr "Geliştirebileceklerin"
+msgstr "Geliştirilecekler"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "uaHswU"
@@ -3583,7 +3585,7 @@ msgstr "Meydan okuma tamamlandı"
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "ttLWcq"
 msgid "Skills practiced"
-msgstr "Çalıştığın beceriler"
+msgstr "Çalışılan beceriler"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "gvZdep"
@@ -3727,7 +3729,7 @@ msgstr "Yazmak yerine sesli söyle"
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "QuYUAL"
 msgid "The microphone is blocked. Type your answer instead."
-msgstr "Mikrofon erişimi engellendi. Bunun yerine cevabını yaz."
+msgstr "Mikrofona erişim engellendi. Bunun yerine cevabını yaz."
 
 #: src/lesson/steps/summary-step.tsx
 msgctxt "RrCui3"
@@ -3778,32 +3780,32 @@ msgstr "“<question></question>” hakkında"
 #: src/lesson/tutor/tutor-quote.tsx
 msgctxt "YXoOph"
 msgid "You wrote <strong>{answer}</strong> on “<question></question>”"
-msgstr "<strong>{answer}</strong> cevabını yazdığın soru: “<question></question>”"
+msgstr "<strong>{answer}</strong> cevabını “<question></question>” sorusuna yazdın"
 
 #: src/lesson/tutor/tutor-quote.tsx
 msgctxt "x-V0mZ"
 msgid "You picked <strong>{answer}</strong> on “<question></question>”"
-msgstr "<strong>{answer}</strong> cevabını seçtiğin soru: “<question></question>”"
+msgstr "<strong>{answer}</strong> cevabını “<question></question>” sorusunda seçtin"
 
 #: src/questions/ask-tutor.tsx
 msgctxt "H7C1B-"
 msgid "Ask {name} about this chapter"
-msgstr "Bu ünite hakkında {name} ile konuş"
+msgstr "{name} ile bu ünite hakkında konuş"
 
 #: src/questions/ask-tutor.tsx
 msgctxt "BL_-O3"
 msgid "Ask {name} about this mock exam"
-msgstr "Bu deneme sınavı hakkında {name} ile konuş"
+msgstr "{name} ile bu deneme sınavı hakkında konuş"
 
 #: src/questions/ask-tutor.tsx
 msgctxt "tLlk0f"
 msgid "Ask {name} about your plan"
-msgstr "Planın hakkında {name} ile konuş"
+msgstr "{name} ile planın hakkında konuş"
 
 #: src/questions/ask-tutor.tsx
 msgctxt "dHV3p3"
 msgid "Ask {name} about this subject"
-msgstr "Bu konu hakkında {name} ile konuş"
+msgstr "{name} ile bu konu hakkında konuş"
 
 #: src/questions/item-tutor.tsx
 msgctxt "_DwRra"
@@ -3833,7 +3835,7 @@ msgstr "Planınla ilgili soru sor…"
 #: src/questions/lesson-question-composer.tsx
 msgctxt "uDwgZF"
 msgid "Ask about this subject…"
-msgstr "Bu branşla ilgili soru sor…"
+msgstr "Bu konu hakkında soru sor…"
 
 #: src/questions/lesson-question-composer.tsx
 msgctxt "TCh0B4"
@@ -3843,7 +3845,7 @@ msgstr "Bu soruyla ilgili soru sor…"
 #: src/questions/lesson-question-composer.tsx
 msgctxt "wBr6ON"
 msgid "Ask about your answer…"
-msgstr "Cevabınla ilgili soru sor…"
+msgstr "Cevabın hakkında soru sor…"
 
 #: src/questions/lesson-question-composer.tsx
 msgctxt "6sIYgs"
@@ -3908,7 +3910,7 @@ msgstr "Paketleri incele"
 #: src/questions/lesson-question-panel.tsx
 msgctxt "BIwI4b"
 msgid "Ask about your answer"
-msgstr "Cevabınla ilgili soru sor"
+msgstr "Cevabın hakkında soru sor"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "OcZMlL"
@@ -3938,7 +3940,7 @@ msgstr "Planınla ilgili sorular sor"
 #: src/questions/lesson-question-panel.tsx
 msgctxt "zoFfdl"
 msgid "Ask questions about this subject"
-msgstr "Bu branşla ilgili sorular sor"
+msgstr "Bu konu hakkında soru sor"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "uF5ZgT"
@@ -3978,7 +3980,7 @@ msgstr "Planınla ilgili sorular"
 #: src/questions/lesson-question-thread.tsx
 msgctxt "6QK3he"
 msgid "Questions about this subject"
-msgstr "Bu branşla ilgili sorular"
+msgstr "Bu konuyla ilgili sorular"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "UQ_Pn_"
@@ -4071,10 +4073,11 @@ msgctxt "C1eFF3"
 msgid "No answer available."
 msgstr "Cevap yok."
 
+#. The study buddy is writing its answer; it speaks as "I".
 #: src/questions/lesson-question-turn.tsx
 msgctxt "P1QHV0"
 msgid "Thinking…"
-msgstr "Düşünüyoruz…"
+msgstr "Düşünüyorum…"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "wfxYSP"
@@ -4096,6 +4099,7 @@ msgctxt "nCFX1M"
 msgid "Load earlier questions"
 msgstr "Önceki soruları yükle"
 
+#. Label of the field where the learner types a question.
 #: src/questions/lesson-question-turn.tsx
 msgctxt "LIVM_k"
 msgid "Your question"
@@ -4134,17 +4138,17 @@ msgstr "{name} ile sohbet"
 #: src/questions/tutor-dock.tsx
 msgctxt "nete1_"
 msgid "Ask {name} about your answer"
-msgstr "Cevabınla ilgili sorularını {name} ile paylaş"
+msgstr "{name} ile cevabın hakkında konuş"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "Fp8B9R"
 msgid "Ask {name} about this question"
-msgstr "Bu soruyla ilgili sorularını {name} ile paylaş"
+msgstr "{name} ile bu soru hakkında konuş"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "_Kuebo"
 msgid "Ask {name} about this screen"
-msgstr "Bu ekranla ilgili sorularını {name} ile paylaş"
+msgstr "{name} ile bu ekran hakkında konuş"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "8ToTqX"
