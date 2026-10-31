@@ -9,16 +9,18 @@ plugins {
     alias(libs.plugins.spotless)
 }
 
+// Globs rooted at each module, never `**/`: a `**` glob walks every build folder, and reading one while a
+// compile task writes class files into it fails the check.
+val modules = listOf("app", "api", "lint-checks", "core/*", "feature/*", "build-logic/*")
+
 spotless {
     kotlin {
-        target("**/src/**/*.kt")
-        targetExclude("**/build/**", "**/node_modules/**")
+        target(modules.map { "$it/src/**/*.kt" })
         ktlint()
     }
 
     kotlinGradle {
-        target("**/*.gradle.kts")
-        targetExclude("**/build/**", "**/node_modules/**")
+        target(listOf("*.gradle.kts", "build-logic/*.gradle.kts") + modules.map { "$it/*.gradle.kts" })
         ktlint()
     }
 
