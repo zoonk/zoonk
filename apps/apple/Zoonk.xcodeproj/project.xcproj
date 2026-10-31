@@ -10,7 +10,12 @@
       "de",
       "es",
       "fr",
+      "it",
+      "ja",
+      "ko",
+      "pl",
       "pt",
+      "tr",
     ],
   },
   "packages": [

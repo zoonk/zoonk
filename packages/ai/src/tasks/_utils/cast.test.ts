@@ -28,6 +28,6 @@ describe(formatCast, () => {
   });
 
   it("leaves languages without lists to the writer", () => {
-    expect(formatCast({ language: "ja", seed: "a" })).toBe("CAST: none");
+    expect(formatCast({ language: "ar", seed: "a" })).toBe("CAST: none");
   });
 });

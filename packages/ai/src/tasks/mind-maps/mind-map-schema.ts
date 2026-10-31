@@ -1,3 +1,4 @@
+import { type SupportedLocale, getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { z } from "zod";
 
 /** A map stays readable on one square picture: at most six branches, three points each. */
@@ -30,17 +31,22 @@ export type MindMapStructure = z.infer<typeof mindMapStructureSchema>;
 
 type MindMapHeadings = { centralIdea: string; summary: string };
 
-const HEADINGS: Readonly<Record<string, MindMapHeadings>> = {
+const HEADINGS: Readonly<Record<SupportedLocale, MindMapHeadings>> = {
   de: { centralIdea: "Kernidee", summary: "Zusammenfassung" },
   en: { centralIdea: "Central idea", summary: "Summary" },
   es: { centralIdea: "Idea central", summary: "Resumen" },
   fr: { centralIdea: "Idée centrale", summary: "Résumé" },
+  it: { centralIdea: "Idea centrale", summary: "Riepilogo" },
+  ja: { centralIdea: "中心となる考え", summary: "まとめ" },
+  ko: { centralIdea: "핵심 개념", summary: "요약" },
+  pl: { centralIdea: "Główna myśl", summary: "Podsumowanie" },
   pt: { centralIdea: "Ideia central", summary: "Resumo" },
+  tr: { centralIdea: "Ana fikir", summary: "Özet" },
 };
 
 /** English for a language the app doesn't speak. */
 export function getMindMapHeadings(language: string): MindMapHeadings {
-  return HEADINGS[language] ?? { centralIdea: "Central idea", summary: "Summary" };
+  return HEADINGS[getSupportedLocaleFromLanguage(language)];
 }
 
 /** The map never letters em dashes. */

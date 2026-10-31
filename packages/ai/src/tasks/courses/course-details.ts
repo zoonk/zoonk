@@ -81,16 +81,18 @@ function formatChapters(chapters: readonly DetailsChapter[]): string {
         .join("");
 }
 
-/**
- * An imperative reads as an instruction to the visitor, so Romance languages take the infinitive
- * and German an infinitive phrase with the verb last.
- */
+/** An imperative reads as an instruction to the visitor, so each language takes its learning goals' form. */
 const OUTCOME_VERB_FORMS: Record<SupportedLocale, string> = {
   de: "an infinitive phrase with the verb at the end, as German learning goals are written",
   en: "the verb's base form at the start",
   es: "the infinitive at the start",
   fr: "the infinitive at the start",
+  it: "the infinitive at the start",
+  ja: "a phrase ending in the verb's plain potential form (直せる, 読める, ～できる), as Japanese course pages list what you'll be able to do",
+  ko: "a phrase ending in ~ㄹ 수 있어요 (고칠 수 있어요), as Korean learning apps say what you'll be able to do",
+  pl: 'the infinitive at the start, imperfective for a skill ("rozwiązywać równania") and perfective only for a one-time result ("napisać CV")',
   pt: "the infinitive at the start",
+  tr: 'a verb-final phrase ending in the -mak/-mek infinitive ("grafikleri yorumlamak")',
 };
 
 function buildUserPrompt(params: CourseDetailsParams): string {

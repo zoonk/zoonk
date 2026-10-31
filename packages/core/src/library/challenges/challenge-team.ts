@@ -1,4 +1,4 @@
-import { getBaseLanguage } from "@zoonk/utils/languages";
+import { type SupportedLocale, getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { hashSeed } from "@zoonk/utils/seeded-random";
 import { z } from "zod";
 import { type ChallengeTeamSlot } from "../steps/contract/challenge-content";
@@ -20,7 +20,7 @@ export const challengeTeamSchema = z
 
 export type ChallengeTeam = z.infer<typeof challengeTeamSchema>;
 
-const TEAM_NAMES: Readonly<Record<string, readonly string[]>> = {
+const TEAM_NAMES: Readonly<Record<SupportedLocale, readonly string[]>> = {
   de: [
     "Lena",
     "Deniz",
@@ -77,6 +77,62 @@ const TEAM_NAMES: Readonly<Record<string, readonly string[]>> = {
     "Sarah",
     "Nathan",
   ],
+  it: [
+    "Giulia",
+    "Matteo",
+    "Chiara",
+    "Luca",
+    "Fatima",
+    "Andrea",
+    "Sara",
+    "Ahmed",
+    "Elena",
+    "Marco",
+    "Aurora",
+    "Davide",
+  ],
+  ja: [
+    "美咲",
+    "大輝",
+    "結衣",
+    "拓海",
+    "さくら",
+    "翔太",
+    "マリア",
+    "健太",
+    "美月",
+    "悠斗",
+    "陽菜",
+    "蓮",
+  ],
+  ko: [
+    "서연",
+    "민준",
+    "지은",
+    "현우",
+    "하은",
+    "도윤",
+    "수아",
+    "재민",
+    "예린",
+    "준호",
+    "유나",
+    "성민",
+  ],
+  pl: [
+    "Zuzanna",
+    "Jakub",
+    "Maja",
+    "Kacper",
+    "Oksana",
+    "Mateusz",
+    "Natalia",
+    "Bartek",
+    "Julia",
+    "Dmytro",
+    "Aleksandra",
+    "Piotr",
+  ],
   pt: [
     "Sofia",
     "Rui",
@@ -91,14 +147,21 @@ const TEAM_NAMES: Readonly<Record<string, readonly string[]>> = {
     "Helena",
     "Caio",
   ],
+  tr: [
+    "Elif",
+    "Emre",
+    "Zeynep",
+    "Mert",
+    "Ayşe",
+    "Burak",
+    "Defne",
+    "Can",
+    "Selin",
+    "Kerem",
+    "Rojda",
+    "Baran",
+  ],
 };
-
-const FALLBACK_LANGUAGE = "en";
-
-function getTeamLanguage(language: string): string {
-  const base = getBaseLanguage(language);
-  return base in TEAM_NAMES ? base : FALLBACK_LANGUAGE;
-}
 
 /** Case role descriptions assume alternating genders, starting with a woman, so team names must match. */
 export function buildChallengeTeam({
@@ -108,8 +171,8 @@ export function buildChallengeTeam({
   language: string;
   seed: string;
 }): ChallengeTeam {
-  const base = getTeamLanguage(language);
-  const names = TEAM_NAMES[base] ?? [];
+  const base = getSupportedLocaleFromLanguage(language);
+  const names = TEAM_NAMES[base];
   const pairs = Math.max(1, Math.floor(names.length / 2));
   const start = (hashSeed(seed) % pairs) * 2;
 

@@ -12,7 +12,7 @@ object AppLink {
     private val hosts = setOf("zoonk.com", "www.zoonk.com")
 
     /** Main's `localePrefix: "as-needed"`: English pages have no prefix. */
-    private val localePrefixes = setOf("de", "en", "es", "fr", "pt")
+    private val localePrefixes = setOf("de", "en", "es", "fr", "it", "ja", "ko", "pl", "pt", "tr")
 
     /**
      * The route for one of main's pages: a `zoonk.com` URL or a path on it (`/pt/plan`), or null

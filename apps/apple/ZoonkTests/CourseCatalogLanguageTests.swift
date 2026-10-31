@@ -11,12 +11,12 @@ final class CourseCatalogLanguageTests: XCTestCase {
 
   func testFirstSupportedLocalizationWins() {
     XCTAssertEqual(
-      courseCatalogLanguage(preferredLocalizations: ["ja-JP", "fr-CA", "en-US"]),
+      courseCatalogLanguage(preferredLocalizations: ["ar-EG", "fr-CA", "en-US"]),
       "fr")
   }
 
   func testUnsupportedAndMissingLocalizationsFallBackToEnglish() {
-    XCTAssertEqual(courseCatalogLanguage(preferredLocalizations: ["ja-JP"]), "en")
+    XCTAssertEqual(courseCatalogLanguage(preferredLocalizations: ["ar-EG"]), "en")
     XCTAssertEqual(courseCatalogLanguage(preferredLocalizations: []), "en")
   }
 

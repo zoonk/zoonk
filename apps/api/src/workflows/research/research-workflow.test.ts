@@ -34,6 +34,7 @@ import {
   sourceFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { Response as PageResponse, fetch } from "undici";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
@@ -358,7 +359,7 @@ describe(researchWorkflow, () => {
     await researchWorkflow({ goalId: goal.id });
 
     expect(vi.mocked(translatePassMarks).mock.calls[0]?.[0]).toMatchObject({
-      languages: ["en", "es", "pt", "fr", "de"],
+      languages: SUPPORTED_LOCALES,
       serviceTier: "priority",
       texts: [passMark.text],
     });

@@ -1,6 +1,6 @@
 import Foundation
 
-private let supportedCourseCatalogLanguages = Set(["de", "en", "es", "fr", "pt"])
+private let supportedCourseCatalogLanguages = Set(["de", "en", "es", "fr", "it", "ja", "ko", "pl", "pt", "tr"])
 
 func currentCourseCatalogLanguage() -> String {
   courseCatalogLanguage(preferredLocalizations: Bundle.main.preferredLocalizations)

@@ -5,7 +5,12 @@ const PROMPT_LANGUAGE_NAMES: Record<string, string> = {
   en: "US English",
   es: "Español de México",
   fr: "Français",
+  it: "Italiano",
+  ja: "日本語",
+  ko: "한국어",
+  pl: "Polski",
   pt: "Português Brasileiro",
+  tr: "Türkçe",
 };
 
 export function getPromptLanguageName(params: { language: string; userLanguage?: string }): string {

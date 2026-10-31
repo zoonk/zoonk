@@ -20,7 +20,7 @@ test("translatable resources cannot bypass Eloqnt via another XML file, locale, 
   const untracked = [
     "app/src/main/res/values/feature.xml",
     "app/src/main/res/values-de/strings_removed.xml",
-    "app/src/main/res/values-ja/strings.xml",
+    "app/src/main/res/values-ar/strings.xml",
     "app/src/debug/res/values/strings.xml",
   ];
 

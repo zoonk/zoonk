@@ -52,6 +52,37 @@ describe("what a screen's words point at", () => {
     ).toStrictEqual(["image", "timeline"]);
   });
 
+  it.each([
+    [
+      "it",
+      "Nell'immagine, Giulia è accanto a una bicicletta. Nella tabella ci sono i prezzi.",
+      ["image", "table"],
+    ],
+    [
+      "ja",
+      "下の図を見てください。表には値段が、年表には出来事が並んでいます。",
+      ["image", "timeline"],
+    ],
+    ["ja", "下のグラフでは、この表の数字が増えています。", ["chart", "table"]],
+    ["ko", "아래 그림을 보세요. 표에서 가격을 확인해요.", ["image", "table"]],
+    ["tr", "Aşağıdaki grafik fiyatları, tabloda ise tarihleri görüyorsun.", ["chart", "table"]],
+    ["pl", "Na rysunku widać rower, a na wykresie ceny.", ["chart", "image"]],
+  ])("finds what a %s text points at", (language, text, kinds) => {
+    expect(pointedAt(language, text)).toStrictEqual(kinds);
+  });
+
+  it.each([
+    ["it", "Nel disegno di legge, la figura del sindaco cambia. Le due figure chiave sono qui."],
+    ["ja", "地図記号の意図を発表で説明します。次の表現を使って、2つの図形を比べましょう。"],
+    ["ja", "結衣は地図を見ながら歩き、証明写真1枚を撮りました。毎年表彰があります。"],
+    ["ko", "발표에서 지도자의 의도를 설명해요. 다음 표현을 사용해서 표를 보여 주세요."],
+    ["ko", "민준은 사진을 보며 웃었어요. 프로젝트 타임라인을 정해요."],
+    ["tr", "Bu şekilde düşünürsen sorun kolaylaşır. Aşağıdaki şekilde ilerle."],
+    ["tr", "Projenin zaman çizelgesini hazırla."],
+  ])("ignores %s words that only contain a picture's name", (language, text) => {
+    expect(pointedAt(language, text)).toStrictEqual([]);
+  });
+
   it("reads numbered drawings or charts as panels, which only one picture side by side shows", () => {
     expect(pointedAt("pt", "Observe os dois desenhos. Desenho 1: barras deitadas.")).toStrictEqual([
       "panels",

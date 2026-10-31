@@ -1,5 +1,5 @@
 import { type LessonVisual } from "@zoonk/ai/tasks/visuals/schema";
-import { getBaseLanguage } from "@zoonk/utils/languages";
+import { type SupportedLocale, getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { findMarkdownTables, findRaggedTableRows } from "@zoonk/utils/markdown-table";
 import { normalizeString } from "@zoonk/utils/string";
 
@@ -30,7 +30,7 @@ const EN_PATTERNS: VisualPatterns = {
   timeline: [/ (?:on|in) the timeline /u, / the timeline (?:below|above|shows) /u],
 };
 
-const PATTERNS: Readonly<Record<string, VisualPatterns>> = {
+const PATTERNS: Readonly<Record<SupportedLocale, VisualPatterns>> = {
   de: {
     chart: [/ (?:im|auf dem) (?:diagramm|schaubild) /u, / das diagramm (?:unten|zeigt) /u],
     image: [
@@ -75,6 +75,59 @@ const PATTERNS: Readonly<Record<string, VisualPatterns>> = {
     table: [/ dans le tableau /u, / le tableau (?:ci dessous|suivant|montre) /u],
     timeline: [/ sur la frise /u],
   },
+  it: {
+    chart: [/ (?:nel|sul|dal) grafico /u, / il grafico (?:qui sotto|sotto|seguente|mostra) /u],
+    image: [
+      / (?:nell|nella|sull|sulla|dall|dalla) (?:immagine|immagini|foto|illustrazione|vignetta|infografica|mappa|cartina) /u,
+      / (?:nella|sulla|dalla) figura (?!(?:retorica|retoriche|professionale|chiave|del|della|dello|dei|degli|delle|di) )/u,
+      / (?:nel|sul|dal) (?:disegno|diagramma) (?!di legge )/u,
+      / (?:nello|sullo|dallo) schema /u,
+      / (?:osserva|guarda) (?:l|la|le|il|lo) (?:immagine|immagini|foto|figura|mappa|cartina|diagramma|schema) /u,
+      / (?:l immagine|la figura|la foto|la mappa|lo schema) (?:qui sotto|sotto|seguente|mostra) /u,
+      / (?:immagine|figura|foto) [0-9]+ /u,
+    ],
+    panels: [
+      / disegno [0-9]+ /u,
+      / grafico [2-9] /u,
+      / (?:le|i) (?:due|tre) (?:immagini|disegni) /u,
+    ],
+    table: [/ (?:nella|dalla) tabella /u, / la tabella (?:qui sotto|sotto|seguente|mostra) /u],
+    timeline: [/ (?:sulla|nella) linea del tempo /u],
+  },
+  ja: {
+    chart: [/(?:下|上|次|左|右)の(?:グラフ|図表)/u, /グラフ(?:を見|から|によると|が示)/u],
+    image: [
+      /(?:下|上|次|左|右)の(?:図|絵|写真|イラスト|画像|地図)/u,
+      /(?:図|写真|イラスト)[0-9０-９]+(?![0-9０-９]*[枚点])/u,
+      /(?:絵|写真|イラスト|画像|地図)を見(?:てください|てみましょう|てみて)/u,
+    ],
+    panels: [/(?:2|3|２|３|二|三)つの(?:図(?!形)|絵|写真|イラスト)/u],
+    table: [/(?:下|上|次|左|右)の表(?!\p{Script=Han})/u, /この表(?:を|から|では|に|の)/u],
+    timeline: [/年表(?![彰明示])/u, /(?:下|上|次|左|右)の(?:年表|タイムライン)/u],
+  },
+  ko: {
+    chart: [/ (?:아래|위|다음)의? 그래프/u, / 그래프(?:에서|를 보|가 보여)/u],
+    image: [
+      / (?:아래|위|다음)의? (?:그림|사진|이미지|삽화|지도|도식|인포그래픽)/u,
+      / (?:그림|사진) ?[0-9]+ /u,
+      / (?:그림|사진|지도)(?:을|를) (?:보세요|봐요|봅시다|살펴보세요|살펴봐요)/u,
+    ],
+    panels: [/ (?:두|세) (?:그림|사진|그래프)/u],
+    table: [/ (?:아래|위|다음)의? 표(?: |를|에|의|는|와|로)/u, / 표에서/u, / 표 ?[0-9]+ /u],
+    timeline: [/ 연표/u, / (?:아래|위|다음)의? 타임라인/u],
+  },
+  pl: {
+    chart: [/ na (?:wykresie|diagramie) /u, / wykres (?:ponizej|powyzej|pokazuje) /u],
+    image: [
+      / na (?:rysunku|zdjeciu|ilustracji|obrazku|mapie|schemacie|infografice) /u,
+      / (?:spojrz|popatrz) na (?:rysunek|zdjecie|ilustracje|obrazek|mape|schemat) /u,
+      / (?:rysunek|zdjecie|ilustracja|obrazek|mapa|schemat) (?:ponizej|powyzej|pokazuje) /u,
+      / (?:rysunek|ilustracja|zdjecie) [0-9]+ /u,
+    ],
+    panels: [/ wykres [2-9] /u, / (?:dwa|trzy) (?:rysunki|obrazki|wykresy) /u],
+    table: [/ (?:w|z) tabeli /u, / tabela (?:ponizej|powyzej|pokazuje) /u],
+    timeline: [/ na osi czasu /u],
+  },
   pt: {
     chart: [
       / n[ao]s? graficos? /u,
@@ -103,10 +156,21 @@ const PATTERNS: Readonly<Record<string, VisualPatterns>> = {
     ],
     timeline: [/ na linha do tempo /u, / a linha do tempo (?:abaixo|a seguir|mostra) /u],
   },
+  tr: {
+    chart: [/ grafikte /u, / grafige (?:gore|bak)/u, / (?:asagıdaki|yukarıdaki) grafik/u],
+    image: [
+      / (?:resimde|fotografta|gorselde|cizimde|haritada|semada|infografikte) /u,
+      / (?:asagıdaki|yukarıdaki) (?:resim|fotograf|gorsel|sekil |sekle|cizim|harita|sema)/u,
+      / (?:sekil|resim|gorsel) [0-9]+ /u,
+    ],
+    panels: [/ cizim [0-9]+ /u, / grafik [2-9] /u, / (?:iki|uc) (?:resim|cizim|gorsel)/u],
+    table: [/ tablo(?:da|daki|ya gore) /u, / (?:asagıdaki|yukarıdaki) tablo/u],
+    timeline: [/ (?:asagıdaki|yukarıdaki) zaman (?:cizelgesi|seridi|tuneli)| zaman seridi/u],
+  },
 };
 
 function getPatterns(language: string): VisualPatterns {
-  return PATTERNS[getBaseLanguage(language)] ?? EN_PATTERNS;
+  return PATTERNS[getSupportedLocaleFromLanguage(language)];
 }
 
 function normalizeForPhrases(text: string): string {

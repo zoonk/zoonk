@@ -12,7 +12,7 @@ import { useState } from "react";
 import { PLUS_CTA_CLASS } from "./plus-cta";
 
 type RequestState = "error" | "idle" | "loading";
-type StripeLocaleOverride = "de" | "es-419" | "fr" | "pt-BR";
+type StripeLocaleOverride = "de" | "es-419" | "fr" | "it" | "ja" | "ko" | "pl" | "pt-BR" | "tr";
 
 /**
  * Stripe can infer English and unknown locales from the browser. The supported non-English app
@@ -23,7 +23,12 @@ const STRIPE_LOCALE_OVERRIDES: Readonly<Record<string, StripeLocaleOverride | un
   de: "de",
   es: "es-419",
   fr: "fr",
+  it: "it",
+  ja: "ja",
+  ko: "ko",
+  pl: "pl",
   pt: "pt-BR",
+  tr: "tr",
 };
 
 function readBillingPeriod(billingSwitch: string): "monthly" | "yearly" {

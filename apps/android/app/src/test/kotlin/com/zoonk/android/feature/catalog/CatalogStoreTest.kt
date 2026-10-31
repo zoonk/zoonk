@@ -161,7 +161,8 @@ class CatalogStoreTest {
     fun theCatalogIsInTheAppsLanguageWhenZoonkHasOne() {
         assertEquals("pt", catalogLanguage(Locale.forLanguageTag("pt-BR")))
         assertEquals("de", catalogLanguage(Locale.GERMANY))
-        assertEquals("en", catalogLanguage(Locale.JAPAN))
+        assertEquals("ja", catalogLanguage(Locale.JAPAN))
+        assertEquals("en", catalogLanguage(Locale.forLanguageTag("ar")))
     }
 
     @Test

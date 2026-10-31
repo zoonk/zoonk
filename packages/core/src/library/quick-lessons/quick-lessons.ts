@@ -1,16 +1,22 @@
 import "server-only";
 import { type CourseLevel, type LibraryVisibility, prisma } from "@zoonk/db";
+import { type SupportedLocale, getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { createLibraryLesson } from "../lessons/create-library-lesson";
 import { QUICK_LESSON_MINUTES, getQuickLessonIdentityKey } from "./quick-lesson-identity";
 
 export type QuickLessonRef = { estimatedMinutes: number; lessonId: string; title: string };
 
-const QUICK_LESSON_TITLES: Readonly<Record<string, string>> = {
+const QUICK_LESSON_TITLES: Readonly<Record<SupportedLocale, string>> = {
   de: "Kurzlektion: {skill}",
   en: "Quick lesson: {skill}",
   es: "Clase rápida: {skill}",
   fr: "Leçon rapide : {skill}",
+  it: "Lezione veloce: {skill}",
+  ja: "クイックレッスン：{skill}",
+  ko: "짧은 레슨: {skill}",
+  pl: "Szybka lekcja: {skill}",
   pt: "Aula rápida: {skill}",
+  tr: "Hızlı ders: {skill}",
 };
 
 type HomeCandidate = {
@@ -59,8 +65,7 @@ function pickHomeChapter({
 }
 
 function getQuickLessonTitle({ language, name }: Pick<QuickLessonSkill, "language" | "name">) {
-  const template = QUICK_LESSON_TITLES[language] ?? QUICK_LESSON_TITLES.en ?? "{skill}";
-  return template.replace("{skill}", name);
+  return QUICK_LESSON_TITLES[getSupportedLocaleFromLanguage(language)].replace("{skill}", name);
 }
 
 function getQuickLessonOwner(skill: Pick<QuickLessonSkill, "ownerId" | "visibility">) {

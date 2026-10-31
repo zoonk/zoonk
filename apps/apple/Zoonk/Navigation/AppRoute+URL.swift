@@ -6,7 +6,7 @@ enum AppLink: Equatable {
   case block(blockId: String)
 
   /// Mirrors `SUPPORTED_LOCALES` in `@zoonk/utils/locale`, which main prefixes its paths with.
-  private static let localePrefixes: Set<String> = ["de", "en", "es", "fr", "pt"]
+  private static let localePrefixes: Set<String> = ["de", "en", "es", "fr", "it", "ja", "ko", "pl", "pt", "tr"]
 
   init?(url: URL) {
     guard url.scheme == "https" || url.scheme == "http" else {

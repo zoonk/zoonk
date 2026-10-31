@@ -39,7 +39,7 @@ describe("sitemap content languages", () => {
   it("includes regional teaching languages and excludes unsupported or malformed languages throughout the catalog", async () => {
     const [regional, unsupported, malformed] = await Promise.all([
       createLocalizedCatalog("pt-BR"),
-      createLocalizedCatalog("ja-JP"),
+      createLocalizedCatalog("ar-EG"),
       createLocalizedCatalog("en_US"),
     ]);
 

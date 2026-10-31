@@ -29,6 +29,6 @@ describe(formatLocalContext, () => {
   });
 
   it("has no pack for languages outside the app's languages", () => {
-    expect(formatLocalContext("ja")).toBe("LOCAL_CONTEXT: none");
+    expect(formatLocalContext("ar")).toBe("LOCAL_CONTEXT: none");
   });
 });

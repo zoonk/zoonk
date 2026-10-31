@@ -571,5 +571,5 @@ private fun HowItWorks(hasAccount: Boolean) {
 internal fun appLanguage(): String =
     ConfigurationCompat.getLocales(LocalConfiguration.current).getFirstMatch(APP_LANGUAGES)?.language ?: "en"
 
-private val APP_LANGUAGES = arrayOf("en", "de", "es", "fr", "pt")
+private val APP_LANGUAGES = arrayOf("en", "de", "es", "fr", "it", "ja", "ko", "pl", "pt", "tr")
 private const val MAX_QUESTION_LENGTH = 500

@@ -17,7 +17,7 @@ describe(buildChallengeTeam, () => {
       buildChallengeTeam({ language: "pt", seed: "a" }),
     );
 
-    expect(buildChallengeTeam({ language: "ja", seed: "a" })).toStrictEqual(
+    expect(buildChallengeTeam({ language: "ar", seed: "a" })).toStrictEqual(
       buildChallengeTeam({ language: "en", seed: "a" }),
     );
   });

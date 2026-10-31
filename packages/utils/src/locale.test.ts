@@ -14,11 +14,16 @@ describe(getContentLocale, () => {
     ["PT-pt", "pt"],
     ["fr-Latn-CA", "fr"],
     ["de-DE", "de"],
+    ["it-IT", "it"],
+    ["ja-JP", "ja"],
+    ["ko-KR", "ko"],
+    ["tr-TR", "tr"],
+    ["pl-PL", "pl"],
   ])("matches the supported route locale for %s", (language, locale) => {
     expect(getContentLocale(language)).toBe(locale);
   });
 
-  it.each(["it", "ja-JP", "", "en_US", "pt-invalid_tag", "und", "und-Latn"])(
+  it.each(["ar", "zh-Hans", "", "en_US", "pt-invalid_tag", "und", "und-Latn"])(
     "does not invent an English content locale for %s",
     (language) => {
       expect(getContentLocale(language)).toBeNull();
@@ -28,11 +33,15 @@ describe(getContentLocale, () => {
 
 describe(isValidLocale, () => {
   it("accepts every app locale", () => {
-    expect(["en", "es", "pt", "fr", "de"].every((locale) => isValidLocale(locale))).toBe(true);
+    expect(
+      ["en", "es", "pt", "fr", "de", "it", "ja", "ko", "tr", "pl"].every((locale) =>
+        isValidLocale(locale),
+      ),
+    ).toBe(true);
   });
 
   it("rejects unsupported locale codes", () => {
-    expect(isValidLocale("it")).toBe(false);
+    expect(isValidLocale("ru")).toBe(false);
   });
 });
 
@@ -46,7 +55,7 @@ describe(getSupportedLocaleFromLanguage, () => {
   });
 
   it("falls back to English for unsupported languages", () => {
-    expect(getSupportedLocaleFromLanguage("it")).toBe("en");
+    expect(getSupportedLocaleFromLanguage("ru")).toBe("en");
   });
 });
 

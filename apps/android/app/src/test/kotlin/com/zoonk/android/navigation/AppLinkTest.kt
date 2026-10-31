@@ -113,13 +113,13 @@ class AppLinkTest {
 
     @Test
     fun dropsMainsLanguagePrefix() {
-        listOf("de", "en", "es", "fr", "pt").forEach { language ->
+        listOf("de", "en", "es", "fr", "it", "ja", "ko", "pl", "pt", "tr").forEach { language ->
             assertEquals(AppRoute.PlanLink("plan-1"), AppLink.parse("https://zoonk.com/$language/plan-link/plan-1"))
             assertEquals(AppRoute.Today, AppLink.parse("https://zoonk.com/$language"))
             assertEquals(AppRoute.Subject("history"), AppLink.parse("/$language/plan/history"))
         }
 
-        assertNull(AppLink.parse("/it/plan-link/plan-1"))
+        assertNull(AppLink.parse("/ar/plan-link/plan-1"))
     }
 
     @Test
@@ -173,13 +173,13 @@ class AppLinkTest {
     fun webPagesOpenInTheAppsLanguage() {
         assertEquals("https://www.zoonk.com/privacy", AppLink.webUrl(AppRoute.Privacy, "en"))
         assertEquals("https://www.zoonk.com/pt/terms", AppLink.webUrl(AppRoute.Terms, "pt"))
-        assertEquals("https://www.zoonk.com/blog", AppLink.webUrl(AppRoute.Blog, "it"))
+        assertEquals("https://www.zoonk.com/blog", AppLink.webUrl(AppRoute.Blog, "ar"))
     }
 
     @Test
     fun anyPageOfMainHasItsUrlInTheAppsLanguage() {
         assertEquals("https://www.zoonk.com/plan-link/abc", AppLink.pageUrl("/plan-link/abc", "en"))
         assertEquals("https://www.zoonk.com/pt/plan-link/abc", AppLink.pageUrl("/plan-link/abc", "pt"))
-        assertEquals("https://www.zoonk.com/plan-link/abc", AppLink.pageUrl("/plan-link/abc", "it"))
+        assertEquals("https://www.zoonk.com/plan-link/abc", AppLink.pageUrl("/plan-link/abc", "ar"))
     }
 }

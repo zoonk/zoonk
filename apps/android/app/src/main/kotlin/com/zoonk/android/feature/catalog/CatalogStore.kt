@@ -187,7 +187,7 @@ internal fun String.toUuidOrNull(): UUID? = runCatching { UUID.fromString(this) 
 /** Main's catalog lists courses in the app's language, or English when Zoonk has no catalog in it. */
 fun catalogLanguage(locale: Locale): String = locale.language.takeIf { it in CATALOG_LANGUAGES } ?: "en"
 
-private val CATALOG_LANGUAGES = setOf("de", "en", "es", "fr", "pt")
+private val CATALOG_LANGUAGES = setOf("de", "en", "es", "fr", "it", "ja", "ko", "pl", "pt", "tr")
 
 class LiveCatalogApi(
     private val api: ApiClients,

@@ -33,11 +33,31 @@ const LEVEL_PHASE_NAMES: Readonly<Record<SupportedLocale, Record<CourseLevel, st
     intermediate: "Intermédiaire",
     overview: "Aperçu",
   },
+  it: {
+    advanced: "Avanzato",
+    beginner: "Principiante",
+    intermediate: "Intermedio",
+    overview: "Panoramica",
+  },
+  ja: { advanced: "上級", beginner: "初級", intermediate: "中級", overview: "入門" },
+  ko: { advanced: "고급", beginner: "초급", intermediate: "중급", overview: "입문" },
+  pl: {
+    advanced: "Zaawansowany",
+    beginner: "Początkujący",
+    intermediate: "Średnio zaawansowany",
+    overview: "Przegląd",
+  },
   pt: {
     advanced: "Avançado",
     beginner: "Iniciante",
     intermediate: "Intermediário",
     overview: "Visão geral",
+  },
+  tr: {
+    advanced: "İleri seviye",
+    beginner: "Başlangıç",
+    intermediate: "Orta seviye",
+    overview: "Genel bakış",
   },
 };
 
