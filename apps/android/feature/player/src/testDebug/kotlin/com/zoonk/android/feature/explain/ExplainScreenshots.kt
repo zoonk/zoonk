@@ -84,7 +84,7 @@ private fun explanation(
 
 /**
  * Review screenshots of a quick explanation, written only on demand:
- * `./gradlew :app:testDebugUnitTest --tests '*ExplainScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * `./gradlew :feature:player:testDebugUnitTest --tests '*ExplainScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

@@ -38,7 +38,7 @@ import java.io.File
 
 /**
  * Review screenshots of the music activities' keys, rhythm and notation, written only on demand:
- * `./gradlew :app:testDebugUnitTest --tests '*MusicScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * `./gradlew :feature:player:testDebugUnitTest --tests '*MusicScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

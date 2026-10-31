@@ -44,7 +44,7 @@ import java.util.UUID
 
 /**
  * Review screenshots of the essay, written only on demand:
- * `./gradlew :app:testDebugUnitTest --tests '*EssayScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * `./gradlew :feature:exam:testDebugUnitTest --tests '*EssayScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

@@ -38,7 +38,7 @@ import java.io.File
 
 /**
  * Review screenshots of a pronunciation round, written only on demand:
- * `./gradlew :app:testDebugUnitTest --tests '*PronunciationScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * `./gradlew :feature:player:testDebugUnitTest --tests '*PronunciationScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

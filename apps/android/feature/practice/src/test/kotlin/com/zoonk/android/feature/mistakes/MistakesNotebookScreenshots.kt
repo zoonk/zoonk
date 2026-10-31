@@ -33,7 +33,7 @@ import java.util.UUID
 
 /**
  * Review screenshots of the mistakes notebook, written only on demand:
- * `./gradlew :app:testDebugUnitTest --tests '*MistakesNotebookScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * `./gradlew :feature:practice:testDebugUnitTest --tests '*MistakesNotebookScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

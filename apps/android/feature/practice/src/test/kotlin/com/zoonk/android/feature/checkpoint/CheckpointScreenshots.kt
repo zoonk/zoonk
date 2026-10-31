@@ -42,7 +42,7 @@ import java.util.UUID
 
 /**
  * Review screenshots of the checkpoint duel, written only on demand:
- * `./gradlew :app:testDebugUnitTest --tests '*CheckpointScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * `./gradlew :feature:practice:testDebugUnitTest --tests '*CheckpointScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

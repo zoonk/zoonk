@@ -63,7 +63,7 @@ import java.util.UUID
 
 /**
  * Review screenshots of the subject and chapter pages and the Plan's structure, written only on
- * demand: `./gradlew :app:testDebugUnitTest --tests '*GoalContentScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * demand: `./gradlew :feature:plan:testDebugUnitTest --tests '*GoalContentScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

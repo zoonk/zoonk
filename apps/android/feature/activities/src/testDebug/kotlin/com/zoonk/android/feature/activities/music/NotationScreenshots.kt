@@ -32,7 +32,7 @@ import java.io.File
 
 /**
  * Review screenshots of melodies engraved as main's abcjs draws them (326dp is a phone's staff, 640dp a tablet's), written
- * only on demand: `./gradlew :app:testDebugUnitTest --tests '*NotationScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * only on demand: `./gradlew :feature:activities:testDebugUnitTest --tests '*NotationScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

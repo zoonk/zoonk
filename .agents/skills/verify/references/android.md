@@ -7,8 +7,10 @@ How to look at screens and measure requests, memory, leaks, CPU and jank for the
 Robolectric renders real screens on the JVM in seconds. Use it to check every window size, dark theme, more contrast and large text before opening an emulator. `app/src/testDebug/kotlin/com/zoonk/android/gallery/GalleryScreenshots.kt` is the pattern: `@GraphicsMode(NATIVE)`, Compose UI test v2's `createAndroidComposeRule`, one test per `@Config(qualifiers = "w411dp-h891dp-xxhdpi")` size (`-night` for dark, `RuntimeEnvironment.setFontScale(2f)` for 200%), and `onRoot().captureToImage()` written to a folder only when one is passed:
 
 ```sh
-./gradlew :app:testDebugUnitTest --tests '*Screenshots*' --rerun -Pzoonk.shots=/path/to/folder
+./gradlew :feature:today:testDebugUnitTest --tests '*Screenshots*' --rerun -Pzoonk.shots=/path/to/folder
 ```
+
+Run the test task of the module that owns the screen (`:app` for the gallery and the shell); each module writes its reports under its own `build/`.
 
 Read the PNGs. Images aren't committed and CI doesn't compare pixels. A render shows layout, color and type; it doesn't show system bars, timing or TalkBack, so the emulator check still follows for runtime behavior.
 

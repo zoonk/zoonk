@@ -43,7 +43,7 @@ import java.util.UUID
 
 /**
  * Review screenshots of the mind maps page, a chapter's mind map card and the viewer, written only
- * on demand: `./gradlew :app:testDebugUnitTest --tests '*MindMapScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * on demand: `./gradlew :feature:plan:testDebugUnitTest --tests '*MindMapScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  * Pictures don't load on the JVM, so they show as their muted surface.
  */
 @RunWith(AndroidJUnit4::class)

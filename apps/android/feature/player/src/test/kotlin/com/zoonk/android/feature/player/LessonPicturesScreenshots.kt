@@ -25,7 +25,7 @@ import java.io.File
 
 /**
  * Review screenshots of pictures still being drawn, written only on demand:
- * `./gradlew :app:testDebugUnitTest --tests '*LessonPicturesScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * `./gradlew :feature:player:testDebugUnitTest --tests '*LessonPicturesScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

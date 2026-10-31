@@ -34,7 +34,7 @@ pnpm android:phone -- Medium_Phone
 pnpm android:tablet -- Pixel_Tablet
 ```
 
-Use Android Studio for Compose previews. APKs and test reports are under `app/build/`.
+Use Android Studio for Compose previews. APKs are under `app/build/`, and each module's test reports are under its own `build/`.
 
 The Makefile shortcuts require GNU Make and a POSIX shell. On native Windows, use `.\gradlew.bat` from this directory with the tasks listed in the [Makefile](Makefile), for example `.\gradlew.bat :app:assembleRelease`.
 

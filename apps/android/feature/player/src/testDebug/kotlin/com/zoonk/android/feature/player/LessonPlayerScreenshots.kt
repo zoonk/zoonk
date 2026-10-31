@@ -57,7 +57,7 @@ import kotlin.time.Instant
 
 /**
  * Review screenshots of the lesson player, written only on demand:
- * `./gradlew :app:testDebugUnitTest --tests '*LessonPlayerScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * `./gradlew :feature:player:testDebugUnitTest --tests '*LessonPlayerScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

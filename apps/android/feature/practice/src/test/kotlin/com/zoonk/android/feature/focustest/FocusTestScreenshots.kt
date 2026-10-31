@@ -51,7 +51,7 @@ import java.util.UUID
 
 /**
  * Review screenshots of the focus test, written only on demand:
- * `./gradlew :app:testDebugUnitTest --tests '*FocusTestScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * `./gradlew :feature:practice:testDebugUnitTest --tests '*FocusTestScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

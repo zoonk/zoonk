@@ -48,7 +48,7 @@ import java.util.UUID
 
 /**
  * Review screenshots of the challenge intro, written only on demand:
- * `./gradlew :app:testDebugUnitTest --tests '*ChallengeScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * `./gradlew :feature:practice:testDebugUnitTest --tests '*ChallengeScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

@@ -61,7 +61,7 @@ import kotlin.time.Instant
 
 /**
  * Review screenshots of the language screens, written only on demand:
- * `./gradlew :app:testDebugUnitTest --tests '*LanguageStepsScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * `./gradlew :feature:player:testDebugUnitTest --tests '*LanguageStepsScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

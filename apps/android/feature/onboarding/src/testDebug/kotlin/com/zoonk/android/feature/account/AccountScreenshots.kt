@@ -50,7 +50,7 @@ import java.io.File
 
 /**
  * Review screenshots of the account screens, written only on demand:
- * `./gradlew :app:testDebugUnitTest --tests '*AccountScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * `./gradlew :feature:onboarding:testDebugUnitTest --tests '*AccountScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

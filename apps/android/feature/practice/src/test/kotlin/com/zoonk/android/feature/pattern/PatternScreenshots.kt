@@ -27,7 +27,7 @@ import java.io.File
 
 /**
  * Review screenshots of a mistake pattern, written only on demand:
- * `./gradlew :app:testDebugUnitTest --tests '*PatternScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * `./gradlew :feature:practice:testDebugUnitTest --tests '*PatternScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

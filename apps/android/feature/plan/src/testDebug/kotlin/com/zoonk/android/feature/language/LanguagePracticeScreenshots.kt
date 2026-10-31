@@ -39,7 +39,7 @@ import java.util.UUID
 
 /**
  * Review screenshots of the alphabet row and Today's language notice, written only on demand:
- * `./gradlew :app:testDebugUnitTest --tests '*LanguagePracticeScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * `./gradlew :feature:plan:testDebugUnitTest --tests '*LanguagePracticeScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
