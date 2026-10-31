@@ -1,10 +1,10 @@
-import { type AlphabetLessonContent } from "@zoonk/ai/tasks/language/alphabet-lesson";
+import { type PublishedAlphabetLesson } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { type StepKind } from "@zoonk/db";
 import { safeParseStepContent } from "../../steps/contract/step-contract";
 
 export type AlphabetStepToSave = { content: object; kind: StepKind };
 
-type Letter = AlphabetLessonContent["letters"][number];
+type Letter = PublishedAlphabetLesson["letters"][number];
 
 const MAX_GROUP_SIZE = 5;
 
@@ -60,7 +60,7 @@ export function buildAlphabetLessonSteps({
   content,
 }: {
   audioUrls: ReadonlyMap<string, string>;
-  content: AlphabetLessonContent;
+  content: Pick<PublishedAlphabetLesson, "intro" | "letters" | "summary">;
 }): AlphabetStepToSave[] {
   const letters = content.letters
     .map((letter) => ({

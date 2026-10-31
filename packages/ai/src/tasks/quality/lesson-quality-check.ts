@@ -9,9 +9,10 @@ import {
   type ServiceTier,
   buildProviderOptions,
 } from "../../provider-options";
+import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type LessonWritingContext, formatLessonPlan } from "../lesson-writer/format-lesson-plan";
 import { getLessonCheckModels } from "./lesson-check-models";
-import systemPrompt from "./lesson-quality-check.prompt.md";
+import promptTemplate from "./lesson-quality-check.prompt.md";
 
 const QUALITY_ISSUE_KINDS = [
   "incorrect",
@@ -46,6 +47,8 @@ export type LessonQualityIssue = z.infer<typeof schema>["issues"][number];
 type ReviewedLesson = { screens: { kind: string; content: unknown }[]; summary: string[] };
 
 export type CheckLessonQualityParams = LessonWritingContext & {
+  /** A script's first letters, shown as letter cards instead of planned screens. */
+  alphabet?: boolean;
   lesson: ReviewedLesson;
   reuse: CallReuse;
   writerModel: string;
@@ -84,6 +87,11 @@ export async function checkLessonQuality(params: CheckLessonQualityParams) {
     model,
     serviceTier,
     useFallback,
+  });
+
+  const systemPrompt = selectPromptVariants({
+    template: promptTemplate,
+    variants: { alphabet: Boolean(params.alphabet) },
   });
 
   const userPrompt = `${formatLessonPlan(params)}

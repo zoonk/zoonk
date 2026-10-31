@@ -3,8 +3,10 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { getLanguagePromptContext } from "../_utils/prompt-language";
+import { type LessonProblem, formatLessonProblems } from "../lesson-writer/format-lesson-plan";
+import fixPrompt from "./alphabet-lesson-fix.prompt.md";
 import systemPrompt from "./alphabet-lesson.prompt.md";
 
 /**
@@ -47,35 +49,54 @@ const schema = z.object({
 
 export type AlphabetLessonContent = z.infer<typeof schema>;
 
+type WrittenLetter = AlphabetLessonContent["letters"][number];
+
+/** What learners see: a letter's IPA and the script's name guide the writer and aren't kept. */
+export type PublishedAlphabetLesson = Omit<AlphabetLessonContent, "letters" | "script"> & {
+  letters: Omit<WrittenLetter, "ipa">[];
+};
+
 export type GenerateAlphabetLessonParams = {
   targetLanguage: string;
   learnerLanguage: string;
   model?: string;
+  serviceTier?: ServiceTier;
   useFallback?: boolean;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
 };
 
-export async function generateAlphabetLesson(params: GenerateAlphabetLessonParams) {
-  const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
-
+function formatLanguages(params: { learnerLanguage: string; targetLanguage: string }): string {
   const languages = getLanguagePromptContext({
     targetLanguage: params.targetLanguage,
     userLanguage: params.learnerLanguage,
   });
 
-  const userPrompt = `
+  return `
     TARGET_LANGUAGE: ${languages.targetLanguageName}
     LEARNER_LANGUAGE: ${languages.userLanguageName}
   `;
+}
 
-  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
+async function runAlphabetLessonTask({
+  instructions,
+  params,
+  task,
+  userPrompt,
+}: {
+  instructions: string;
+  params: GenerateAlphabetLessonParams;
+  task: string;
+  userPrompt: string;
+}) {
+  const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
+  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,
     generate: () =>
       generateText({
-        instructions: systemPrompt,
+        instructions,
         model,
         output: Output.object({ schema }),
         prompt: userPrompt,
@@ -83,9 +104,114 @@ export async function generateAlphabetLesson(params: GenerateAlphabetLessonParam
         reasoning,
       }),
     libraryInput: true,
-    systemPrompt,
-    task: "alphabet-lesson",
+    systemPrompt: instructions,
+    task,
   });
 
-  return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
+  return {
+    data: result.output,
+    provenance,
+    systemPrompt: instructions,
+    usage: result.usage,
+    userPrompt,
+  };
+}
+
+export async function generateAlphabetLesson(params: GenerateAlphabetLessonParams) {
+  return runAlphabetLessonTask({
+    instructions: systemPrompt,
+    params,
+    task: "alphabet-lesson",
+    userPrompt: formatLanguages(params),
+  });
+}
+
+/** The intro screens, then one card per letter: the screens a reviewer numbers its problems by. */
+export function listAlphabetScreens(lesson: Pick<PublishedAlphabetLesson, "intro" | "letters">) {
+  return [
+    ...lesson.intro.map((content) => ({ content, kind: "explanation" as const })),
+    ...lesson.letters.map((content) => ({ content, kind: "alphabet" as const })),
+  ];
+}
+
+function formatPublishedLesson(lesson: PublishedAlphabetLesson): string {
+  const screens = listAlphabetScreens(lesson).map((screen, index) => ({
+    screen: index + 1,
+    ...screen,
+  }));
+
+  return JSON.stringify(
+    {
+      canDo: lesson.canDo,
+      description: lesson.description,
+      screens,
+      summary: lesson.summary,
+      title: lesson.title,
+    },
+    null,
+    1,
+  );
+}
+
+function toPublishedLetter({
+  audioText,
+  forms,
+  pronunciation,
+  readingAid,
+  symbol,
+}: WrittenLetter): PublishedAlphabetLesson["letters"][number] {
+  return { audioText, forms, pronunciation, readingAid, symbol };
+}
+
+/** Only the screens a problem names change, so unflagged letters keep their words and audio. */
+function applyAlphabetFixes({
+  fixed,
+  lesson,
+  problems,
+}: {
+  fixed: AlphabetLessonContent;
+  lesson: PublishedAlphabetLesson;
+  problems: readonly LessonProblem[];
+}): PublishedAlphabetLesson {
+  const flagged = new Set(problems.flatMap((problem) => problem.screen ?? []));
+  const introCount = lesson.intro.length;
+
+  return {
+    ...lesson,
+    intro: lesson.intro.map((screen, index) =>
+      flagged.has(index) ? (fixed.intro[index] ?? screen) : screen,
+    ),
+    letters: lesson.letters.map((letter, index) => {
+      const fix = fixed.letters[index];
+      return flagged.has(introCount + index) && fix ? toPublishedLetter(fix) : letter;
+    }),
+    summary: problems.some((problem) => problem.screen === null) ? fixed.summary : lesson.summary,
+  };
+}
+
+export type FixAlphabetLessonParams = GenerateAlphabetLessonParams & {
+  lesson: PublishedAlphabetLesson;
+  /** `screen` indexes `listAlphabetScreens(lesson)`, or is null for the summary. */
+  problems: LessonProblem[];
+};
+
+export async function fixAlphabetLesson(params: FixAlphabetLessonParams) {
+  const { lesson, problems } = params;
+
+  const userPrompt = `${formatLanguages(params)}
+PUBLISHED_LESSON:
+${formatPublishedLesson(lesson)}
+
+PROBLEMS:
+${formatLessonProblems(problems)}
+`;
+
+  const fix = await runAlphabetLessonTask({
+    instructions: `${systemPrompt}\n${fixPrompt}`,
+    params,
+    task: "alphabet-lesson-fix",
+    userPrompt,
+  });
+
+  return { ...fix, data: applyAlphabetFixes({ fixed: fix.data, lesson, problems }) };
 }

@@ -1,4 +1,5 @@
 import { type RegisteredTask } from "@/lib/types";
+import { alphabetLessonFixTask } from "./alphabet-lesson-fix/task";
 import { alphabetLessonTask } from "./alphabet-lesson/task";
 import { answerFromMaterialTask } from "./answer-from-material/task";
 import { assessPronunciationTask } from "./assess-pronunciation/task";
@@ -172,6 +173,7 @@ export const TASKS: readonly RegisteredTask[] = [
   mistakePatternTask,
   levelTestBankTask,
   alphabetLessonTask,
+  alphabetLessonFixTask,
   setupLessonOutlineTask,
 ];
 

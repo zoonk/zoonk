@@ -317,6 +317,15 @@ const REGISTRY: Record<string, Registration[]> = {
       writes: ["lesson.updateMany"],
     },
   ],
+  "library/language/alphabet/review-alphabet-lesson.ts": [
+    {
+      fields: ["summary"],
+      readElsewhere: { "plans/_utils/replan.ts": "a plan's posted summary" },
+      verdict: "excluded",
+      why: "a fixed version keeps the lesson's title and letters",
+      writes: ["lesson.update"],
+    },
+  ],
   "library/language/alphabet/write-alphabet-lesson.ts": [
     { verdict: "marks", why: "publication renames the lesson", writes: ["lesson.updateMany"] },
   ],

@@ -4,7 +4,9 @@ import {
   checkLessonQuality,
 } from "@zoonk/ai/tasks/quality/lesson-check";
 import { describeActivityTemplates } from "@zoonk/core/library/activities/writer-templates";
+import { toAlphabetLessonCheck } from "@zoonk/core/library/language/alphabet-lesson-check";
 import { checkWrittenLesson, toReviewedLesson } from "@zoonk/core/library/quality/code-checks";
+import { type AlphabetCheckInput } from "./alphabet-lessons";
 import { scoreLessonQualityCheck } from "./scorer";
 import {
   type LessonQualityCheckExpected,
@@ -14,16 +16,32 @@ import {
 
 type LessonQualityCheckOutput = Awaited<ReturnType<typeof checkLessonQuality>>["data"];
 
-const WRITER_MODEL = "openai/gpt-6-sol";
+type ModelOptions = Pick<CheckLessonQualityParams, "model" | "reasoning" | "useFallback">;
 
-function reviewLesson({
+const WRITER_MODEL = "openai/gpt-6-sol";
+const ALPHABET_WRITER_MODEL = "openai/gpt-6-luna";
+
+function reviewAlphabetLesson({
+  alphabet,
+  learnerLanguage,
+  targetLanguage,
+  ...options
+}: AlphabetCheckInput & ModelOptions) {
+  return checkLessonQuality({
+    ...toAlphabetLessonCheck({ learnerLanguage, lesson: alphabet, targetLanguage }),
+    ...options,
+    reuse: "bounded",
+    writerModel: ALPHABET_WRITER_MODEL,
+  });
+}
+
+function reviewWrittenLesson({
   lesson,
   model,
   reasoning,
   useFallback,
   ...context
-}: LessonQualityCheckInput &
-  Pick<CheckLessonQualityParams, "model" | "reasoning" | "useFallback">) {
+}: LessonQualityCheckInput & ModelOptions) {
   const { screens } = checkWrittenLesson({
     language: context.language,
     lesson,
@@ -46,13 +64,17 @@ function reviewLesson({
   });
 }
 
+function reviewLesson(input: (AlphabetCheckInput | LessonQualityCheckInput) & ModelOptions) {
+  return "alphabet" in input ? reviewAlphabetLesson(input) : reviewWrittenLesson(input);
+}
+
 export const lessonQualityCheckTask: Task<
-  LessonQualityCheckInput,
+  AlphabetCheckInput | LessonQualityCheckInput,
   LessonQualityCheckOutput,
   LessonQualityCheckExpected
 > = {
   description:
-    "Review a written lesson as an expert from another model family: block wrong facts, wrong answer keys, jargon before it's explained, filler, level misfits and decorative activities, and pass clean lessons",
+    "Review a written or alphabet lesson as an expert from another model family: block wrong facts and sound cues, wrong answer keys, jargon before it's explained, filler, level misfits and decorative activities, and pass clean lessons",
   generate: reviewLesson,
   id: "lesson-quality-check",
   name: "Lesson Quality Check",

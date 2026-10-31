@@ -1,4 +1,5 @@
 import { setTimeout } from "node:timers/promises";
+import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import {
   generateCourseOutline,
   streamCourseOutline,
@@ -17,7 +18,9 @@ import {
 import { type GeneratedItem, type ItemFormat } from "@zoonk/ai/tasks/items/schemas";
 import { classifyWorkField } from "@zoonk/ai/tasks/items/work-field";
 import { writeItemSet } from "@zoonk/ai/tasks/items/write-set";
+import { generateAlphabetLesson } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/plans/routine-fit";
+import { checkLessonQuality } from "@zoonk/ai/tasks/quality/lesson-check";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
 import { loadPlanLessons } from "@zoonk/core/lookahead/speculative-lessons";
 import { isPlanConflictError } from "@zoonk/core/plans/conflict";
@@ -56,6 +59,7 @@ import { courseDetailsWorkflow } from "../courses/course-details-workflow";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { levelTestBankWorkflow } from "../language/level-test-bank-workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
+import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
 import { goalContentWorkflow } from "./goal-content-workflow";
 import * as goalPlacement from "./goal-placement-items";
 import { placementItemsWorkflow } from "./placement-items-workflow";
@@ -1429,6 +1433,66 @@ describe(goalContentWorkflow, () => {
         {
           analytics: { distinctId: user.id, goalId: goal.id, platform: undefined },
           pair: { language: "pt", targetLanguage: "ja" },
+        },
+      ]);
+    },
+  );
+
+  it(
+    "publishes a language's alphabet lesson without waiting for its review, then starts the review",
+    { timeout: TIMEOUT },
+    async () => {
+      const { goal, user } = await newGoal({
+        kind: "language",
+        language: "pt",
+        targetLanguage: "ru",
+      });
+
+      vi.mocked(generateLanguageAudio).mockResolvedValue({
+        data: null,
+        error: new Error("No voice"),
+      });
+
+      vi.mocked(generateAlphabetLesson).mockResolvedValue(
+        taskResult(
+          {
+            canDo: "Leia e pronuncie в e х.",
+            description: "Suas primeiras letras russas.",
+            intro: [{ text: "Leia da esquerda para a direita.", title: "Direção" }],
+            letters: [
+              ["в", "v", "ва"],
+              ["х", "kh", "ха"],
+            ].map(([symbol = "", readingAid = "", audioText = ""]) => ({
+              audioText,
+              forms: [],
+              ipa: `/${readingAid}/`,
+              pronunciation: `Como ${readingAid}.`,
+              readingAid,
+              symbol,
+            })),
+            script: "Cirílico",
+            summary: ["Leia uma letra por vez."],
+            title: "Primeiras letras russas",
+          },
+          "openai/gpt-6-luna",
+        ),
+      );
+
+      await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
+        status: "built",
+      });
+
+      const lesson = await prisma.lesson.findUniqueOrThrow({
+        where: { languageIdentity: { identityKey: "alphabet:ru-Cyrl", language: "pt" } },
+      });
+
+      expect(lesson.contentStatus).toBe("completed");
+      expect(checkLessonQuality).not.toHaveBeenCalled();
+
+      expect(start).toHaveBeenCalledWith(alphabetReviewWorkflow, [
+        {
+          analytics: { distinctId: user.id, goalId: goal.id, platform: undefined },
+          lessonId: lesson.id,
         },
       ]);
     },

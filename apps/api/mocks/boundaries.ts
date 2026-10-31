@@ -35,6 +35,10 @@ export const boundaries = {
   "@zoonk/ai/tasks/items/statute-drills": { generateStatuteDrills: vi.fn() },
   "@zoonk/ai/tasks/items/work-field": { classifyWorkField: vi.fn() },
   "@zoonk/ai/tasks/items/write-set": { writeItemSet: vi.fn() },
+  "@zoonk/ai/tasks/language/alphabet-lesson": {
+    fixAlphabetLesson: vi.fn(),
+    generateAlphabetLesson: vi.fn(),
+  },
   "@zoonk/ai/tasks/language/conversation-scenario": { generateConversationScenario: vi.fn() },
   "@zoonk/ai/tasks/language/level-test-bank": { generateLevelTestBank: vi.fn() },
   "@zoonk/ai/tasks/lesson-spec": { generateLessonSpec: vi.fn() },

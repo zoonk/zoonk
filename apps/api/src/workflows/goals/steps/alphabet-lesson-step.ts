@@ -1,5 +1,8 @@
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
-import { writeAlphabetLesson } from "@zoonk/core/library/language/write-alphabet-lesson";
+import {
+  type WriteAlphabetLessonResult,
+  writeAlphabetLesson,
+} from "@zoonk/core/library/language/write-alphabet-lesson";
 import { type ContentAnalytics } from "../../_shared/content-analytics";
 
 export async function prepareAlphabetLessonStep({
@@ -10,16 +13,16 @@ export async function prepareAlphabetLessonStep({
   analytics: ContentAnalytics;
   goal: GoalCurriculumInputs["goal"];
   workflowRunId: string;
-}): Promise<void> {
+}): Promise<WriteAlphabetLessonResult | null> {
   "use step";
 
   if (goal.kind !== "language" || !goal.targetLanguage) {
-    return;
+    return null;
   }
 
   const targetLanguage = goal.targetLanguage;
 
-  await writeAlphabetLesson({
+  return writeAlphabetLesson({
     analytics,
     learnerLanguage: goal.language,
     targetLanguage,

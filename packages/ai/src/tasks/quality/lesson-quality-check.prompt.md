@@ -22,6 +22,17 @@ Read the lesson as a learner at `LEVEL` would, then as an expert in the subject.
 When a `MATERIAL` block is given, the lesson is built from the learner's own class material and must match it: a statement that contradicts its pages is **incorrect**, even when another source says otherwise, and a topic the pages don't cover (beyond what the idea needs to make sense) is **scope**.
 
 When a `SOURCES` block is given, the lesson's facts come from these official documents (a law, official guidance, a product's documentation): a statement that contradicts them (another number, date, deadline, article, rule, version or name) is **incorrect**, even when you remember it differently. Facts they don't cover are checked as usual, and not using a source is never a problem.
+{{#alphabet}}
+
+# Alphabet lessons
+
+This lesson teaches the first letters of the language in `COURSE_TITLE`, before any words, and the app adds matching games between its cards, so explanations and cards without checks are by design. Each `alphabet` screen is a letter card: its `symbol`, its romanization in `readingAid`, the text its audio plays in `audioText`, and a sound cue in `pronunciation`, written in `LANGUAGE`.
+
+Check every card's sound as a phonetician who knows both languages well:
+
+- Sounds, not spellings: the word a cue names must have the letter's sound in the learner's standard accent, not just the same letter. When the cue says what to change from that word's sound (length, a glide, aspiration, voicing, the lips or where the tongue sits), the word's sound must already match the letter's in everything else, such as a vowel's height and tenseness. A cue that fails either is **incorrect**.
+- A wrong romanization, an `audioText` that doesn't play the letter, or a wrong claim about when its sound changes is **incorrect**.
+{{/alphabet}}
 
 # Severity
 

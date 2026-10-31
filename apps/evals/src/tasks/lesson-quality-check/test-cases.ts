@@ -4,6 +4,7 @@ import {
   type CheckLessonQualityParams,
   type LessonQualityIssueKind,
 } from "@zoonk/ai/tasks/quality/lesson-check";
+import { ALPHABET_LESSONS, ALPHABET_SLIPS, type AlphabetCheckInput } from "./alphabet-lessons";
 import { BASE_LESSONS } from "./base-lessons";
 import { EXAM_PREP_BASE_LESSON } from "./exam-prep-lessons";
 import { SOURCED_BASE_LESSONS } from "./sourced-lessons";
@@ -58,7 +59,25 @@ function screenOf(base: BaseLesson, screen: number): WrittenScreen {
 const { doorways, eletron, regra, temperature } = BASE_LESSONS;
 const { estabilidade, taxDeadlines } = SOURCED_BASE_LESSONS;
 
-export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheckInput>[] = [
+export const TEST_CASES: TestCase<
+  LessonQualityCheckExpected,
+  AlphabetCheckInput | LessonQualityCheckInput
+>[] = [
+  {
+    expected: { verdict: "pass" },
+    id: "pt-ru-alphabet-clean",
+    userInput: ALPHABET_LESSONS.cyrillic,
+  },
+  {
+    expected: { kinds: ["incorrect"], screen: 8, verdict: "fail" },
+    id: "pt-ru-alphabet-silent-h",
+    userInput: ALPHABET_SLIPS.silentH,
+  },
+  {
+    expected: { kinds: ["incorrect"], screen: 7, verdict: "fail" },
+    id: "en-ko-alphabet-book-vowel",
+    userInput: ALPHABET_SLIPS.bookVowel,
+  },
   { expected: { verdict: "pass" }, id: "en-tax-deadlines-sourced-clean", userInput: taxDeadlines },
   {
     expected: { verdict: "pass" },

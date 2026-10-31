@@ -63,7 +63,14 @@ export const scoreLessonQualityCheck: TaskScorer<LessonQualityCheckExpected> = (
   }
 
   const issues = parseIssues(output);
-  const blocking = (issues ?? []).filter((issue) => issue.severity === "blocking");
+  // An alphabet lesson is already published, so its review acts only on what's incorrect.
+  const actsOnlyOnIncorrect = "alphabet" in testCase.userInput;
+
+  const blocking = (issues ?? []).filter(
+    (issue) =>
+      issue.severity === "blocking" && (!actsOnlyOnIncorrect || issue.kind === "incorrect"),
+  );
+
   const verdict = blocking.length > 0 ? "fail" : "pass";
   const predicted = issues === null ? null : verdict;
   const classification = { expected: expected.verdict, predicted };

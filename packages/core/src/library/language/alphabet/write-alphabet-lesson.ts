@@ -1,5 +1,6 @@
 import "server-only";
 import { generateAlphabetLesson } from "@zoonk/ai/tasks/language/alphabet-lesson";
+import { type TransactionClient } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { usesNonLatinScript } from "@zoonk/utils/languages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
@@ -14,11 +15,10 @@ import { createLibraryLesson } from "../../lessons/create-library-lesson";
 import { startLessonVersion } from "../../lessons/lesson-versions";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
 import { getAlphabetIdentityKey } from "./alphabet-identity";
+import { ALPHABET_LESSON_MINUTES } from "./alphabet-lesson-check";
 import { type AlphabetStepToSave, buildAlphabetLessonSteps } from "./alphabet-lesson-steps";
 
 type Analytics = Parameters<typeof generateAlphabetLesson>[0]["analytics"];
-
-const ALPHABET_LESSON_MINUTES = 5;
 
 export type WriteAlphabetLessonResult =
   | { status: "notNeeded" }
@@ -26,16 +26,14 @@ export type WriteAlphabetLessonResult =
 
 type LessonUpdate = Awaited<ReturnType<typeof generateAlphabetLesson>>["data"];
 
-async function voiceLetters({
-  content,
+export async function voiceLetters({
+  letters,
   targetLanguage,
 }: {
-  content: LessonUpdate;
+  letters: readonly { audioText: string }[];
   targetLanguage: string;
 }): Promise<Map<string, string>> {
-  const texts = [...new Set(content.letters.map((letter) => letter.audioText.trim()))].filter(
-    Boolean,
-  );
+  const texts = [...new Set(letters.map((letter) => letter.audioText.trim()))].filter(Boolean);
 
   const clips = await Promise.all(
     texts.map(async (text) => {
@@ -51,6 +49,36 @@ async function voiceLetters({
   );
 
   return new Map(clips.filter((clip) => clip !== null));
+}
+
+export async function insertAlphabetVersion(
+  tx: TransactionClient,
+  {
+    lessonId,
+    steps,
+  }: {
+    lessonId: string;
+    steps: readonly (AlphabetStepToSave & { provenance: LibraryProvenance })[];
+  },
+): Promise<number> {
+  const version = await startLessonVersion(tx, lessonId);
+
+  await tx.step.createMany({
+    data: steps.map((step, position) => ({
+      ...toStepData({
+        content: step.content,
+        contractVersion: STEP_CONTRACT_VERSION,
+        kind: step.kind,
+        position,
+        provenance: step.provenance,
+      }),
+      lessonId,
+      position,
+      version,
+    })),
+  });
+
+  return version;
 }
 
 class AlphabetClaimLostError extends Error {
@@ -85,6 +113,7 @@ async function saveAlphabetLesson({
           canDo: content.canDo,
           contentStatus: "completed",
           description: content.description,
+          setAsideAt: null,
           summary: { ideas: content.summary.map((text) => ({ text })) },
           title: content.title,
           ...toProvenanceData(provenance),
@@ -96,21 +125,9 @@ async function saveAlphabetLesson({
         throw new AlphabetClaimLostError();
       }
 
-      const version = await startLessonVersion(tx, lessonId);
-
-      await tx.step.createMany({
-        data: steps.map((step, position) => ({
-          ...toStepData({
-            content: step.content,
-            contractVersion: STEP_CONTRACT_VERSION,
-            kind: step.kind,
-            position,
-            provenance,
-          }),
-          lessonId,
-          position,
-          version,
-        })),
+      await insertAlphabetVersion(tx, {
+        lessonId,
+        steps: steps.map((step) => ({ ...step, provenance })),
       });
 
       return true;
@@ -179,7 +196,7 @@ async function writeClaimedLesson({
     targetLanguage,
   });
 
-  const audioUrls = await voiceLetters({ content: data, targetLanguage });
+  const audioUrls = await voiceLetters({ letters: data.letters, targetLanguage });
   const steps = buildAlphabetLessonSteps({ audioUrls, content: data });
 
   if (!steps.some((step) => step.kind === "alphabet")) {
