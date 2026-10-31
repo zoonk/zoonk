@@ -2,15 +2,15 @@
 
 First, discover providers, current models, supported effort settings, and remaining quotas/reset times where exposed. When delegating multiple sub-agents, split them into multiple providers (if available) based on remaining quota.
 
-Resolve the latest Claude Opus and GPT Sol from the live catalog (currently Opus 5.5 and GPT-6.1-Sol); map effort names to supported equivalents. Existing approval and verification rules still apply.
+Resolve the latest Claude Opus and GPT Sol from the live catalog (currently Opus 5.5, GPT-6.1-Sol, GPT-6.1-Terra); map effort names to supported equivalents. Existing approval and verification rules still apply.
 
 - **Design:** UI and UX work, including UI elements, layouts, and interactions, is design work. Use Opus with xhigh reasoning unless asked otherwise.
 - **Copywriting:** Prefer Opus with xhigh reasoning.
 - **Marketing:** Prefer Opus with xhigh reasoning for marketing, landing pages, motion videos, and animation.
-- **Computer use:** Prefer GPT Sol through Codex with medium reasoning.
+- **Computer use:** Prefer GPT Terra through Codex with medium reasoning.
 - **Code review:** Use the model family that didn't write the change, at xhigh reasoning ([cross-model review](../../AGENTS.md#cross-model-review)).
-- **Small code changes:** Use GPT Sol with medium reasoning.
-- **Architecture:** Have GPT Sol and Opus, both at xhigh reasoning, exchange proposals, objections, and revisions until they agree on the best approach. Relay their responses if direct communication is unavailable. Opus may then implement at medium effort.
+- **Small code changes:** Use GPT Sol with xhigh reasoning.
+- **Architecture:** Have GPT Sol and Opus, both at xhigh reasoning, exchange proposals, objections, and revisions until they agree on the best approach. Relay their responses if direct communication is unavailable. Opus may then implement at high effort.
 - **Large tasks:** Split independent work across subagents and providers to avoid exhausting one provider. Among providers meeting the task's model requirements, prefer those with the most remaining capacity and assign non-overlapping edits.
 - **Spread the load:** Give each new subagent, review or helper to the eligible provider with the most remaining capacity at that moment, so usage grows a little on every provider instead of draining one or two. A provider past about 70% of its window takes no new work while another eligible one has room.
 - **Nested delegation:** These rules apply at every level. A subagent that splits work delegates to the providers with the most remaining capacity instead of fanning out on its own provider.
