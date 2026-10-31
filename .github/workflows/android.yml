@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths: [apps/android/**, .github/workflows/android.yml, .github/workflows/native-changes.yml]
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -23,13 +24,14 @@ jobs:
 
   compile-release:
     name: compile (release)
-    needs: changes
-    if: needs.changes.outputs.changed == 'true'
+    # Release lint and the R8 build take over 5 minutes each here, so they run only when started by
+    # hand; agents run them locally instead.
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
       COMPILE_VARIANT: release
-      COMPILE_TASKS: :app:compileReleaseKotlin
+      COMPILE_TASKS: compileReleaseKotlin
     concurrency:
       group: ${{ github.workflow }}-compile-release-${{ github.event.pull_request.number || github.ref }}
       cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
@@ -88,7 +90,7 @@ jobs:
     timeout-minutes: 10
     env:
       COMPILE_VARIANT: tests
-      COMPILE_TASKS: :app:compileDebugUnitTestKotlin :api:compileTestKotlin
+      COMPILE_TASKS: compileDebugUnitTestKotlin :api:compileTestKotlin
     concurrency:
       group: ${{ github.workflow }}-compile-tests-${{ github.event.pull_request.number || github.ref }}
       cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
@@ -138,10 +140,10 @@ jobs:
         include:
           - job: checks
             target: lint
-            tasks: :app:lintRelease
+            tasks: lintRelease
           - job: release
             target: build
-            arguments: -x :app:lintVitalRelease
+            arguments: -x lintVitalRelease
     steps:
       - *checkout
       - *java

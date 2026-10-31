@@ -15,16 +15,16 @@ The launcher detects the standard SDK location; set `ANDROID_HOME` for a custom 
 
 Run from the repository root:
 
-| Command                        | Purpose                                                                            |
-| ------------------------------ | ---------------------------------------------------------------------------------- |
-| `pnpm android:phone`           | Build, install, and launch on a phone emulator.                                    |
-| `pnpm android:tablet`          | Build, install, and launch on a tablet emulator.                                   |
-| `pnpm android:build`           | Build the Release APK.                                                             |
-| `pnpm android:check`           | Run translation checks, tests, and formatting; CI runs lint and the Release build. |
-| `make -C apps/android lint`    | Check formatting, Android Lint, and the custom lint rules' tests.                  |
-| `make -C apps/android test`    | Run JVM unit tests.                                                                |
-| `make -C apps/android format`  | Format Kotlin and Gradle files.                                                    |
-| `make -C apps/android ui-test` | Run instrumented tests on connected devices.                                       |
+| Command                        | Purpose                                                           |
+| ------------------------------ | ----------------------------------------------------------------- |
+| `pnpm android:phone`           | Build, install, and launch on a phone emulator.                   |
+| `pnpm android:tablet`          | Build, install, and launch on a tablet emulator.                  |
+| `pnpm android:build`           | Build the Release APK.                                            |
+| `pnpm android:check`           | Run translation checks, tests, and formatting.                    |
+| `make -C apps/android lint`    | Check formatting, Android Lint, and the custom lint rules' tests. |
+| `make -C apps/android test`    | Run JVM unit tests.                                               |
+| `make -C apps/android format`  | Format Kotlin and Gradle files.                                   |
+| `make -C apps/android ui-test` | Run instrumented tests on connected devices.                      |
 
 The launcher prefers a running compatible emulator. Pass an exact Device Manager name to select another AVD:
 
@@ -35,7 +35,7 @@ pnpm android:tablet -- Pixel_Tablet
 
 Use Android Studio for Compose previews. APKs and test reports are under `app/build/`.
 
-The Makefile shortcuts require GNU Make and a POSIX shell. On native Windows, use `.\gradlew.bat` from this directory with the tasks listed in the [Makefile](Makefile), for example `.\gradlew.bat :app:assembleRelease`.
+The Makefile shortcuts require GNU Make and a POSIX shell. On native Windows, use `.\gradlew.bat` from this directory with the tasks listed in the [Makefile](Makefile), for example `.\gradlew.bat assembleRelease`.
 
 ## Local API
 
@@ -76,7 +76,7 @@ Root `pnpm i18n` includes Android. For targeted retranslation, add `--id navigat
 
 ## Verification
 
-The [Android workflow](../../.github/workflows/android.yml) checks native code and builds; [shared code quality](../../.github/workflows/code-quality.yml) checks translations and TypeScript tooling.
+The [Android workflow](../../.github/workflows/android.yml) checks formatting and runs the tests, and runs Android Lint and the Release build when started by hand; [shared code quality](../../.github/workflows/code-quality.yml) checks translations and TypeScript tooling.
 
 For UI changes, inspect phone and tablet layouts, resizing, large text, and TalkBack. Instrumented tests don't replace manual accessibility testing; relaunch the app afterward if instrumentation removed the Debug APK.
 

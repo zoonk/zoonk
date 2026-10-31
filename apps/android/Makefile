@@ -4,9 +4,9 @@ DEFAULT_ANDROID_SDK := $(firstword $(wildcard $(HOME)/Library/Android/sdk $(HOME
 ANDROID_HOME ?= $(DEFAULT_ANDROID_SDK)
 export ANDROID_HOME
 
-LINT_TASKS := spotlessCheck :app:lintRelease :lint-checks:test
-TEST_TASKS := :app:testDebugUnitTest :api:test
-BUILD_TASKS := :app:assembleRelease
+LINT_TASKS := spotlessCheck lintRelease :lint-checks:test
+TEST_TASKS := testDebugUnitTest :api:test
+BUILD_TASKS := assembleRelease
 
 .PHONY: build test ui-test lint format check
 
@@ -17,7 +17,7 @@ test:
 	$(GRADLEW) $(GRADLE_ARGUMENTS) $(TEST_TASKS)
 
 ui-test:
-	$(GRADLEW) $(GRADLE_ARGUMENTS) :app:connectedDebugAndroidTest
+	$(GRADLEW) $(GRADLE_ARGUMENTS) connectedDebugAndroidTest
 
 lint:
 	$(GRADLEW) $(GRADLE_ARGUMENTS) $(LINT_TASKS)
