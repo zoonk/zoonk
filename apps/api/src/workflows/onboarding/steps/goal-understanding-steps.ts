@@ -1,19 +1,29 @@
 import { createStepStream, progressStep } from "@/workflows/_shared/stream-status";
+import { type GoalUnderstanding } from "@zoonk/ai/tasks/goals/understand-goal";
 import { type GoalUnderstandingStepName } from "@zoonk/core/library/generation/steps";
+import { type OnboardingExamDate } from "@zoonk/core/view-models/onboarding/contract";
 import {
+  type ExamLookup,
+  type FoundExam,
+  type GoalReading,
+  type StoredExam,
   type UnderstandingRunDraft,
+  type UnderstoodLanguagePair,
+  type UnderstoodWords,
   completeUnderstandingDraft,
   failUnderstandingDraft,
+  findKeptReading,
+  findStoredExam,
+  isUnsafeGoal,
   loadUnderstandingDraft,
-  readGoalWords,
-  readsExamDates,
   recordUnderstandingRun,
+  saveGoalReading,
+  searchExamDates,
+  understandGoalWords,
 } from "@zoonk/core/view-models/onboarding/understanding-run";
 import { type WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 
 type UnderstandingStreamStep = GoalUnderstandingStepName | typeof WORKFLOW_ERROR_STEP;
-
-type ReadWords = Awaited<ReturnType<typeof readGoalWords>>;
 
 export const understandingProgressStep = progressStep<UnderstandingStreamStep>;
 
@@ -27,28 +37,66 @@ export async function recordUnderstandingRunStep(input: {
   return loadUnderstandingDraft(input.draftId);
 }
 
-export async function readGoalStep(draft: UnderstandingRunDraft): Promise<ReadWords> {
+export async function findKeptReadingStep(
+  draft: UnderstandingRunDraft,
+): Promise<GoalReading | null> {
   "use step";
 
   await using stream = createStepStream<UnderstandingStreamStep>();
   await stream.status({ entityId: draft.id, status: "started", step: "readGoal" });
 
-  return await readGoalWords(draft);
+  return await findKeptReading(draft);
+}
+
+export async function understandGoalStep(draft: UnderstandingRunDraft): Promise<UnderstoodWords> {
+  "use step";
+
+  return understandGoalWords(draft);
+}
+
+export async function classifyGoalIntentStep(draft: UnderstandingRunDraft): Promise<boolean> {
+  "use step";
+
+  return isUnsafeGoal(draft);
+}
+
+export async function saveGoalReadingStep(input: {
+  draft: UnderstandingRunDraft;
+  unsafe: boolean;
+  words: UnderstoodWords;
+}): Promise<GoalReading> {
+  "use step";
+
+  return saveGoalReading(input);
+}
+
+export async function findStoredExamStep(input: {
+  language: string;
+  lookup: ExamLookup;
+}): Promise<StoredExam | null> {
+  "use step";
+
+  return findStoredExam(input);
+}
+
+export async function searchExamDatesStep(input: {
+  lookup: ExamLookup;
+  stored: StoredExam | null;
+  userId: string;
+}): Promise<OnboardingExamDate[]> {
+  "use step";
+
+  return searchExamDates(input);
 }
 
 export async function completeUnderstandingStep(input: {
   draft: UnderstandingRunDraft;
-  read: ReadWords;
-}) {
+  exams: (FoundExam | null)[];
+  understanding: GoalUnderstanding;
+}): Promise<UnderstoodLanguagePair[]> {
   "use step";
 
-  await using stream = createStepStream<UnderstandingStreamStep>();
-
-  if (readsExamDates(input.read.result)) {
-    await stream.status({ entityId: input.draft.id, status: "started", step: "findExamDates" });
-  }
-
-  return await completeUnderstandingDraft({ draft: input.draft, ...input.read });
+  return completeUnderstandingDraft(input);
 }
 
 export async function failUnderstandingStep(draftId: string): Promise<void> {

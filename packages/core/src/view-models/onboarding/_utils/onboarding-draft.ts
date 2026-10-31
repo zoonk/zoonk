@@ -5,6 +5,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { type GoalUnderstandingView, type OnboardingDraftView } from "../onboarding-contract";
 import { goalUnderstandingViewSchema } from "../onboarding-view-schemas";
+import { type FoundExam } from "./exam-facts";
 import { getLearnerToday, toUnderstandingView } from "./understanding-view";
 
 /** The learner's own draft; another learner's reads as missing. */
@@ -72,24 +73,22 @@ export async function loadDraftView(draft: OnboardingDraft): Promise<OnboardingD
 
 /** Persists the card using the draft's learner-local today and carries its identity into each goal. */
 export async function completeDraft({
-  allowDateSearch,
   draft,
+  exams,
   understanding,
 }: {
-  /** A reused understanding's exam day is searched for only as small AI help (`allowDateSearch`). */
-  allowDateSearch?: () => Promise<boolean>;
   draft: Pick<OnboardingDraft, "id" | "language" | "prompt" | "timeZone" | "userId">;
+  exams: readonly (FoundExam | null)[];
   understanding: GoalUnderstanding;
 }): Promise<OnboardingDraft> {
   const view = await toUnderstandingView({
     context: {
-      allowDateSearch,
       goal: draft.prompt,
       language: draft.language,
       onboardingId: draft.id,
       today: getLearnerToday(draft.timeZone),
-      userId: draft.userId,
     },
+    exams,
     understanding,
   });
 

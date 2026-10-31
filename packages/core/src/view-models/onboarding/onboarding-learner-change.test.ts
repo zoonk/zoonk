@@ -20,8 +20,6 @@ import { prepareGoalUnderstandingRun } from "./prepare-goal-understanding-run";
 import { reviseOnboardingDraft } from "./revise-onboarding-draft";
 import { startGoalUnderstanding } from "./start-goal-understanding";
 
-const PROVENANCE = { model: "test", promptVersion: "test", runId: "test-run" };
-
 async function setup() {
   const user = await userFixture();
   const goal = await goalFixture({ userId: user.id });
@@ -140,8 +138,8 @@ describe("onboarding writes", () => {
           case "complete":
             return completeUnderstandingDraft({
               draft,
-              provenance: PROVENANCE,
-              result: { route: "unsafe" },
+              exams: [],
+              understanding: { route: "unsafe" },
             });
           case "revise":
             return reviseOnboardingDraft({

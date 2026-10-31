@@ -5,6 +5,7 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { z } from "zod";
 import { ownLevelSchema } from "../../../learner/placement/placement-contract";
 import { ONBOARDING_PURPOSES } from "../onboarding-contract";
+import { isNamedExam } from "./exam-facts";
 
 const understoodGoalSchema = z.object({
   examDay: z.enum(["booked", "official"]).optional(),
@@ -64,6 +65,19 @@ export async function findCachedUnderstanding({
 
   const parsed = storedUnderstandingSchema.safeParse(row.result);
   return parsed.success ? parsed.data : null;
+}
+
+/** Only a reading that names no exam completes without a model call; one that does waits for its run's exam lookup. */
+export async function findCompletableUnderstanding(
+  key: CacheKey & { now: Date },
+): Promise<GoalUnderstanding | null> {
+  const cached = await findCachedUnderstanding(key);
+
+  if (cached?.route === "goals" && cached.goals.some(isNamedExam)) {
+    return null;
+  }
+
+  return cached;
 }
 
 export async function saveUnderstanding({

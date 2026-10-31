@@ -5,9 +5,8 @@ import { type RefusedUsage } from "../../entitlements/contract";
 import { findGuestGoalLimit } from "../../entitlements/find-guest-goal-limit";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
-import { allowDateSearch } from "./_utils/date-search";
 import { completeDraft, findOwnedDraft, loadDraftView } from "./_utils/onboarding-draft";
-import { findCachedUnderstanding } from "./_utils/understanding-cache";
+import { findCompletableUnderstanding } from "./_utils/understanding-cache";
 import { type OnboardingDraftView } from "./onboarding-contract";
 
 export type GoalUnderstandingRunResult =
@@ -37,7 +36,7 @@ export async function prepareGoalUnderstandingRun({
     return { draft: await loadDraftView(draft), status: "understood" };
   }
 
-  const cached = await findCachedUnderstanding({
+  const cached = await findCompletableUnderstanding({
     language: draft.language,
     normalizedPrompt: normalizeString(draft.prompt),
     now: new Date(),
@@ -45,7 +44,7 @@ export async function prepareGoalUnderstandingRun({
   });
 
   if (cached) {
-    const understood = await completeDraft({ allowDateSearch, draft, understanding: cached });
+    const understood = await completeDraft({ draft, exams: [], understanding: cached });
 
     return { draft: await loadDraftView(understood), status: "understood" };
   }

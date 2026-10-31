@@ -5,9 +5,8 @@ import { type RefusedUsage } from "../../entitlements/contract";
 import { findGuestGoalLimit } from "../../entitlements/find-guest-goal-limit";
 import { writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
-import { allowDateSearch } from "./_utils/date-search";
 import { completeDraft, toDraftView } from "./_utils/onboarding-draft";
-import { findCachedUnderstanding } from "./_utils/understanding-cache";
+import { findCompletableUnderstanding } from "./_utils/understanding-cache";
 import { type GoalUnderstandingInput, type OnboardingDraftView } from "./onboarding-contract";
 
 export type StartGoalUnderstandingResult =
@@ -15,7 +14,7 @@ export type StartGoalUnderstandingResult =
   | { status: "unauthorized" }
   | { draft: OnboardingDraftView; status: "understanding" | "understood" };
 
-/** Requires a session, including guests; reuses only this learner's recent words, otherwise claims AI allowance and returns a draft to start. */
+/** Requires a session, including guests; understands this learner's recent words at once unless they name an exam, otherwise claims AI allowance and returns a draft to start. */
 export async function startGoalUnderstanding(
   input: GoalUnderstandingInput,
 ): Promise<StartGoalUnderstandingResult> {
@@ -31,7 +30,7 @@ export async function startGoalUnderstanding(
     return { limit: guestLimit, status: "limitReached" };
   }
 
-  const cached = await findCachedUnderstanding({
+  const cached = await findCompletableUnderstanding({
     language: input.language,
     normalizedPrompt: normalizeString(input.goal),
     now: new Date(),
@@ -59,7 +58,7 @@ export async function startGoalUnderstanding(
     return { draft: toDraftView({ draft, goalId: null }), status: "understanding" };
   }
 
-  const understood = await completeDraft({ allowDateSearch, draft, understanding: cached });
+  const understood = await completeDraft({ draft, exams: [], understanding: cached });
 
   return { draft: toDraftView({ draft: understood, goalId: null }), status: "understood" };
 }

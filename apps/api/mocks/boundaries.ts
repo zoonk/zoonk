@@ -21,6 +21,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/curriculum/teaching-chapters": { findTeachingChapters: vi.fn() },
   "@zoonk/ai/tasks/explain/question-generality": { classifyQuestionGenerality: vi.fn() },
   "@zoonk/ai/tasks/explain/quick-explanation": { generateQuickExplanation: vi.fn() },
+  "@zoonk/ai/tasks/goals/find-exam-date": { findExamDate: vi.fn() },
   "@zoonk/ai/tasks/goals/understand-goal": { understandGoal: vi.fn() },
   "@zoonk/ai/tasks/identity/decision": { decideLibraryIdentity: vi.fn() },
   "@zoonk/ai/tasks/identity/goal-specificity": { classifyGoalSpecificity: vi.fn() },

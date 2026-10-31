@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { findExamDate } from "@zoonk/ai/tasks/goals/find-exam-date";
 import { prisma } from "@zoonk/db";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
@@ -115,6 +116,46 @@ describe(prepareGoalUnderstandingRun, () => {
 
     expect(alreadyUnderstood.status).toBe("understood");
     await expect(countAssists(user.id)).resolves.toBe(0);
+  });
+
+  it("leaves words read today that name an exam to a run, counting only a retry", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const prompt = `pass the TOEFL ${randomUUID()}`;
+
+    await goalUnderstandingFixture({
+      goal: prompt,
+      result: {
+        followUps: [],
+        goals: [{ examName: "TOEFL", kind: "exam", subject: "English", title: "Pass the TOEFL" }],
+        route: "goals",
+      },
+      userId: user.id,
+    });
+
+    const first = await onboardingDraftFixture({
+      prompt,
+      status: "understanding",
+      userId: user.id,
+    });
+
+    const firstRun = await prepareGoalUnderstandingRun({ draftId: first.id });
+
+    expect(firstRun.status === "start" && firstRun.draft.status).toBe("understanding");
+    await expect(countAssists(user.id)).resolves.toBe(0);
+
+    const failed = await onboardingDraftFixture({
+      prompt,
+      runId: "failed-run",
+      status: "failed",
+      userId: user.id,
+    });
+
+    const retry = await prepareGoalUnderstandingRun({ draftId: failed.id });
+
+    expect(retry.status === "start" && retry.draft.status).toBe("understanding");
+    await expect(countAssists(user.id)).resolves.toBe(1);
+    expect(findExamDate).not.toHaveBeenCalled();
   });
 
   it("only starts the learner's own drafts", async () => {

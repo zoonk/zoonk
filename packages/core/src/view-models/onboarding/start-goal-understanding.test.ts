@@ -1,15 +1,14 @@
 import { randomUUID } from "node:crypto";
 import { classifyCourseIntent } from "@zoonk/ai/tasks/courses/intent";
+import { findExamDate } from "@zoonk/ai/tasks/goals/find-exam-date";
 import { understandGoal as runUnderstandGoal } from "@zoonk/ai/tasks/goals/understand-goal";
 import { prisma } from "@zoonk/db";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
-import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
-import { buildExamIdentityKey } from "../../library/exams/exam-identity";
 import { startGoalUnderstanding } from "./start-goal-understanding";
 
 function uniqueGoal(text: string) {
@@ -152,38 +151,10 @@ describe(startGoalUnderstanding, () => {
     expect(cards.map((draft) => draft?.targetDate)).toStrictEqual([dates[0], undefined]);
   });
 
-  it("gives an exam the dates of the year named, with the notice they came from", async () => {
+  it("leaves words read today that name an exam to a run, counted like new words, without a model call here", async () => {
     const user = await userFixture();
     mockSession(user.id);
     const examName = `Test Exam ${randomUUID()}`;
-    const source = await sourceFixture({ title: "Official notice" });
-    const citation = { passage: "The exam takes place on", sourceId: source.id };
-
-    const blueprint = await examBlueprintFixture({
-      edition: {
-        check: null,
-        citations: [],
-        dates: [
-          { citation, date: "2099-11-15", kind: "exam", label: "Day 2", startTime: null },
-          { citation, date: "2099-11-08", kind: "exam", label: "Day 1", startTime: null },
-          {
-            citation,
-            date: "2099-06-01",
-            kind: "registrationEnd",
-            label: "Registration ends",
-            startTime: null,
-          },
-        ],
-        noticeUrl: null,
-        questionCount: null,
-        sourceHash: null,
-        timeZone: null,
-        year: 2099,
-      },
-      identityKey: buildExamIdentityKey({ name: examName, ownerId: null, role: null }),
-      name: examName,
-    });
-
     const goal = uniqueGoal("pass the exam in 2099");
 
     await goalUnderstandingFixture({
@@ -197,76 +168,15 @@ describe(startGoalUnderstanding, () => {
     });
 
     const result = await startGoalUnderstanding({ goal, language: "en" });
-    const understanding = result.status === "understood" ? result.draft.understanding : null;
-    const [understood] = understanding?.status === "goals" ? understanding.goals : [];
-    const official = { title: "Official notice", url: source.url };
 
-    expect(understood?.draft.examBlueprintId).toBe(blueprint.id);
-
-    expect(understood?.examDates).toStrictEqual([
-      {
-        date: "2099-11-08",
-        estimated: false,
-        label: "Day 1",
-        registrationClosed: false,
-        source: official,
-      },
-      {
-        date: "2099-11-15",
-        estimated: false,
-        label: "Day 2",
-        registrationClosed: false,
-        source: official,
-      },
-    ]);
-  });
-
-  it("remembers the notice's day the card offers next to a month the learner named", async () => {
-    const user = await userFixture();
-    mockSession(user.id);
-    const examName = `Test Exam ${randomUUID()}`;
-    const source = await sourceFixture({ title: "Official notice" });
-    const citation = { passage: "The exam takes place on", sourceId: source.id };
-
-    await examBlueprintFixture({
-      edition: {
-        check: null,
-        citations: [],
-        dates: [{ citation, date: "2099-11-08", kind: "exam", label: "Exam", startTime: null }],
-        noticeUrl: null,
-        questionCount: null,
-        sourceHash: null,
-        timeZone: null,
-        year: 2099,
-      },
-      identityKey: buildExamIdentityKey({ name: examName, ownerId: null, role: null }),
-      name: examName,
+    expect(result).toMatchObject({
+      draft: { generationId: null, status: "understanding", understanding: null },
+      status: "understanding",
     });
 
-    const understand = async (examMonth: number) => {
-      const goal = uniqueGoal(`pass the exam in month ${examMonth} of 2099`);
-
-      await goalUnderstandingFixture({
-        goal,
-        result: {
-          followUps: [],
-          goals: [
-            { examMonth, examName, examYear: 2099, kind: "exam", subject: examName, title: "Pass" },
-          ],
-          route: "goals",
-        },
-        userId: user.id,
-      });
-
-      const result = await startGoalUnderstanding({ goal, language: "en" });
-      const understanding = result.status === "understood" ? result.draft.understanding : null;
-      const [understood] = understanding?.status === "goals" ? understanding.goals : [];
-
-      return understood?.draft.details?.offeredNoticeDay;
-    };
-
-    await expect(understand(12)).resolves.toBe("2099-11-08");
-    await expect(understand(11)).resolves.toBeUndefined();
+    expect(runUnderstandGoal).not.toHaveBeenCalled();
+    expect(findExamDate).not.toHaveBeenCalled();
+    await expect(countAssists(user.id)).resolves.toBe(1);
   });
 
   it("saves new words as a draft to read in a run, without calling the models here", async () => {

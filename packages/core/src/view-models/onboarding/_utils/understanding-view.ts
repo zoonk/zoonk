@@ -7,7 +7,7 @@ import { type GoalDraft } from "../../../goals/goal-contract";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { getTargetDateBounds } from "../../../plans/target-date-range";
 import { type GoalUnderstandingView, type UnderstoodGoalView } from "../onboarding-contract";
-import { findExamFacts } from "./exam-facts";
+import { type FoundExam, toExamFacts } from "./exam-facts";
 
 /** Start with a sustainable short habit when the learner gave no daily time. */
 const DEFAULT_DAILY_MINUTES = 15;
@@ -17,10 +17,6 @@ export type UnderstandingContext = {
   language: string;
   onboardingId: string;
   today: string;
-  /** The learner the draft is for, so an exam date lookup counts toward their cost. */
-  userId: string;
-  /** Asked before an exam's day is searched for on the web (see `allowDateSearch`). */
-  allowDateSearch?: () => Promise<boolean>;
 };
 
 type DetailValue = NonNullable<GoalDraft["details"]>[string];
@@ -40,10 +36,6 @@ function compactDetails(details: Record<string, DetailValue | undefined>) {
 
 function getAnsweredByWords(understanding: Extract<GoalUnderstanding, { route: "goals" }>) {
   return understanding.dailyMinutes === undefined ? [] : ["schedule"];
-}
-
-export function isNamedExam(goal: UnderstoodGoal): goal is UnderstoodGoal & { examName: string } {
-  return goal.kind === "exam" && Boolean(goal.examName);
 }
 
 /** Offer conflicting official notice dates without replacing the learner's month; never offer estimates. */
@@ -70,35 +62,19 @@ async function toGoalView({
   answered,
   context,
   followUps,
+  found,
   goal,
   studyTimeNote,
 }: {
   answered: string[];
   context: UnderstandingContext;
   followUps: string[];
+  found: FoundExam | null;
   goal: UnderstoodGoal;
   studyTimeNote: string | undefined;
 }): Promise<UnderstoodGoalView> {
   const { language, onboardingId, today } = context;
-
-  const exam = isNamedExam(goal)
-    ? await findExamFacts({
-        allowSearch: context.allowDateSearch,
-        analytics: { contentScope: "personal", distinctId: context.userId },
-        exam: {
-          examMonth: goal.examMonth,
-          examName: goal.examName,
-          examYear: goal.examYear,
-          institution: goal.institution,
-          role: goal.targetPosition,
-          targetLanguage: goal.targetLanguage ?? null,
-          words: context.goal,
-        },
-        language,
-        lookUpDate: !goal.targetDate && goal.examDay !== "booked",
-        today,
-      })
-    : null;
+  const exam = found ? toExamFacts(found) : null;
 
   const details = compactDetails({
     answered,
@@ -151,30 +127,29 @@ async function toGoalView({
 
 async function toGoalsView({
   context,
+  exams,
   understanding,
 }: {
   context: UnderstandingContext;
+  exams: readonly (FoundExam | null)[];
   understanding: Extract<GoalUnderstanding, { route: "goals" }>;
 }): Promise<GoalUnderstandingView> {
   const answered = getAnsweredByWords(understanding);
   const { studyTimeNote } = understanding;
-  const [main, ...others] = understanding.goals;
 
-  // Follow-ups apply only to the main goal that onboarding continues with.
-  const goals = await Promise.all([
-    ...(main
-      ? [
-          toGoalView({
-            answered,
-            context,
-            followUps: understanding.followUps,
-            goal: main,
-            studyTimeNote,
-          }),
-        ]
-      : []),
-    ...others.map((goal) => toGoalView({ answered, context, followUps: [], goal, studyTimeNote })),
-  ]);
+  const goals = await Promise.all(
+    understanding.goals.map((goal, index) =>
+      toGoalView({
+        answered,
+        context,
+        // Follow-ups apply only to the main goal that onboarding continues with.
+        followUps: index === 0 ? understanding.followUps : [],
+        found: exams[index] ?? null,
+        goal,
+        studyTimeNote,
+      }),
+    ),
+  );
 
   return {
     goals,
@@ -188,12 +163,14 @@ async function toGoalsView({
   };
 }
 
-/** May read exam dates for the learner's local today; preserve learner-supplied targets. */
+/** `exams` is by goal: what the run found for that goal's named exam, or null; learner-supplied targets are kept. */
 export async function toUnderstandingView({
   context,
+  exams,
   understanding,
 }: {
   context: UnderstandingContext;
+  exams: readonly (FoundExam | null)[];
   understanding: GoalUnderstanding;
 }): Promise<GoalUnderstandingView> {
   switch (understanding.route) {
@@ -202,7 +179,7 @@ export async function toUnderstandingView({
     case "instrument":
       return { instrument: understanding.instrument, status: "instrument" };
     case "goals":
-      return toGoalsView({ context, understanding });
+      return toGoalsView({ context, exams, understanding });
     case "unclear":
     case "unsafe":
       return { status: understanding.route };

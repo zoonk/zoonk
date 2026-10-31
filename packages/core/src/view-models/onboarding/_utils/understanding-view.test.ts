@@ -1,69 +1,83 @@
 import { randomUUID } from "node:crypto";
-import { findExamDate } from "@zoonk/ai/tasks/goals/find-exam-date";
-import { type UnderstoodGoal } from "@zoonk/ai/tasks/goals/understand-goal";
-import { decideExamIdentity } from "@zoonk/ai/tasks/research/exam-identity-decision";
-import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { type GoalUnderstanding, type UnderstoodGoal } from "@zoonk/ai/tasks/goals/understand-goal";
+import { describe, expect, it } from "vitest";
+import { type FoundExam, listExamLookups } from "./exam-facts";
 import { toUnderstandingView } from "./understanding-view";
 
 const TODAY = "2026-10-30";
 
-async function viewOf(goal: UnderstoodGoal) {
-  const user = await userFixture();
+const NOTICE_DAY = {
+  date: "2099-11-08",
+  estimated: false,
+  label: "Day 1",
+  registrationClosed: false,
+  source: { title: "Official notice", url: "https://example.com/notice.pdf" },
+};
 
-  return toUnderstandingView({
-    context: {
-      goal: "a high score on the test",
-      language: "en",
-      onboardingId: randomUUID(),
-      today: TODAY,
-      userId: user.id,
-    },
-    understanding: { followUps: [], goals: [goal], route: "goals" },
+async function cardOf({
+  found = () => null,
+  goal,
+}: {
+  found?: (lookup: FoundExam["lookup"]) => FoundExam | null;
+  goal: UnderstoodGoal;
+}) {
+  const understanding: GoalUnderstanding = { followUps: [], goals: [goal], route: "goals" };
+  const context = { goal: "a high score on the test", language: "en", onboardingId: randomUUID() };
+
+  const exams = listExamLookups({
+    language: "en",
+    today: TODAY,
+    understanding,
+    words: context.goal,
+  }).map((lookup) => (lookup ? found(lookup) : null));
+
+  const view = await toUnderstandingView({
+    context: { ...context, today: TODAY },
+    exams,
+    understanding,
   });
+
+  return view.status === "goals" ? view.goals[0] : null;
 }
 
 describe(toUnderstandingView, () => {
-  beforeEach(() => {
-    vi.mocked(decideExamIdentity).mockResolvedValue(null);
-
-    vi.mocked(findExamDate).mockResolvedValue({
-      data: { dates: [], source: null, status: "unknown" },
-      provenance: {} as never,
-      systemPrompt: "",
-      usage: {} as never,
-      userPrompt: "",
+  it("says on the draft that each candidate books the test", async () => {
+    const card = await cardOf({
+      goal: {
+        examDay: "booked",
+        examName: `Booked Test ${randomUUID()}`,
+        examTarget: "score",
+        kind: "exam",
+        subject: "the test",
+        title: "Prepare for the test",
+      },
     });
+
+    expect(card?.draft.details).toMatchObject({ examDay: "booked", examTarget: "score" });
   });
 
-  it("never searches for the official day of a test each candidate books, and says so in the draft", async () => {
-    const view = await viewOf({
-      examDay: "booked",
-      examName: `Booked Test ${randomUUID()}`,
-      examTarget: "score",
-      kind: "exam",
-      subject: "the test",
-      title: "Prepare for the test",
-    });
+  it("gives an exam the notice's days with their source, and remembers the day it offers next to a month the learner named", async () => {
+    const blueprintId = randomUUID();
 
-    expect(view.status === "goals" ? view.goals[0]?.draft.details : null).toMatchObject({
-      examDay: "booked",
-      examTarget: "score",
-    });
+    const cardFor = (examMonth: number) =>
+      cardOf({
+        found: (lookup) => ({ lookup, searched: [], stored: { blueprintId, dates: [NOTICE_DAY] } }),
+        goal: {
+          examMonth,
+          examName: "Test Exam",
+          examYear: 2099,
+          kind: "exam",
+          subject: "Test Exam",
+          title: "Pass it",
+        },
+      });
 
-    expect(findExamDate).not.toHaveBeenCalled();
-  });
+    const [december, november] = await Promise.all([cardFor(12), cardFor(11)]);
 
-  it("searches for the official day of an exam its organizer sets", async () => {
-    await viewOf({
-      examDay: "official",
-      examName: `Entrance Exam ${randomUUID()}`,
-      kind: "exam",
-      subject: "the exam",
-      title: "Pass the entrance exam",
-    });
-
-    expect(findExamDate).toHaveBeenCalledOnce();
+    expect(december?.draft.examBlueprintId).toBe(blueprintId);
+    expect(december?.examDates).toStrictEqual([NOTICE_DAY]);
+    expect(december?.draft.details?.offeredNoticeDay).toBe("2099-11-08");
+    expect(november?.draft.details?.offeredNoticeDay).toBeUndefined();
   });
 
   it("keeps the position the reading recorded beside it, so an exam choice can tell it from a typed one", async () => {

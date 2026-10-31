@@ -1,10 +1,18 @@
 import { randomUUID } from "node:crypto";
 import { findExamDate } from "@zoonk/ai/tasks/goals/find-exam-date";
+import { type UnderstoodGoal } from "@zoonk/ai/tasks/goals/understand-goal";
 import { decideExamIdentity } from "@zoonk/ai/tasks/research/exam-identity-decision";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { buildExamIdentityKey } from "../../../library/exams/exam-identity";
-import { findExamFacts } from "./exam-facts";
+import {
+  type ExamLookup,
+  type StoredExam,
+  findStoredExam,
+  listExamLookups,
+  searchExamDates,
+  toExamFacts,
+} from "./exam-facts";
 
 const TODAY = "2026-09-28";
 const NOTICE_URL = "https://cdn.cebraspe.org.br/concursos/camara_25/edital.pdf";
@@ -19,6 +27,32 @@ function lookupAnswers(data: Finding) {
     usage: {} as never,
     userPrompt: "",
   });
+}
+
+function lookupFor(
+  goal: Partial<UnderstoodGoal> & { examName: string },
+  language = "en",
+): ExamLookup {
+  const [lookup] = listExamLookups({
+    language,
+    today: TODAY,
+    understanding: {
+      followUps: [],
+      goals: [{ kind: "exam", subject: goal.examName, title: goal.examName, ...goal }],
+      route: "goals",
+    },
+    words: `pass the ${goal.examName}`,
+  });
+
+  if (!lookup) {
+    throw new Error("Expected an exam lookup");
+  }
+
+  return lookup;
+}
+
+function searchFor(lookup: ExamLookup, stored: StoredExam | null) {
+  return searchExamDates({ lookup, stored, userId: randomUUID() });
 }
 
 async function storedExam({
@@ -72,10 +106,55 @@ async function storedExam({
   return { blueprint, examName: name, source };
 }
 
-describe(findExamFacts, () => {
+describe(listExamLookups, () => {
+  it("looks for a certificate's notice in the learner's language, then in the one it tests", () => {
+    expect(lookupFor({ examName: "DELE B2", targetLanguage: "es" }, "pt")).toMatchObject({
+      language: "pt",
+      noticeLanguages: ["pt", "es"],
+    });
+
+    expect(lookupFor({ examName: "IELTS", targetLanguage: "en" }).noticeLanguages).toStrictEqual([
+      "en",
+    ]);
+  });
+
+  it("only looks up a day the learner didn't give, for an exam its organizer sets", () => {
+    expect(lookupFor({ examDay: "official", examName: "ENEM" }).lookUpDate).toBe(true);
+    expect(lookupFor({ examDay: "booked", examName: "TOEFL" }).lookUpDate).toBe(false);
+    expect(lookupFor({ examName: "ENEM", targetDate: "2027-11-07" }).lookUpDate).toBe(false);
+  });
+
+  it("has nothing to look up for goals that name no exam", () => {
+    expect(
+      listExamLookups({
+        language: "en",
+        today: TODAY,
+        understanding: {
+          followUps: [],
+          goals: [
+            { kind: "learn", subject: "Welding", title: "Weld" },
+            { examName: "IELTS", kind: "exam", subject: "English", title: "Pass the IELTS" },
+          ],
+          route: "goals",
+        },
+        words: "weld and pass the IELTS",
+      }).map((lookup) => lookup?.exam.examName ?? null),
+    ).toStrictEqual([null, "IELTS"]);
+
+    expect(
+      listExamLookups({
+        language: "en",
+        today: TODAY,
+        understanding: { route: "unsafe" },
+        words: "anything",
+      }),
+    ).toStrictEqual([]);
+  });
+});
+
+describe(findStoredExam, () => {
   beforeEach(() => {
     vi.mocked(decideExamIdentity).mockResolvedValue(null);
-    lookupAnswers({ dates: [], source: null, status: "unknown" });
   });
 
   it("gives the notice's days still ahead, with their source, for the year it's for", async () => {
@@ -104,35 +183,33 @@ describe(findExamFacts, () => {
           source: officialSource,
         },
       ],
-      targetDate: null,
     };
 
     const [named, unnamed] = await Promise.all([
-      findExamFacts({ exam: { examName, examYear: 2026 }, language: "en", today: TODAY }),
-      findExamFacts({ exam: { examName }, language: "en", today: TODAY }),
+      findStoredExam({ language: "en", lookup: lookupFor({ examName, examYear: 2026 }) }),
+      findStoredExam({ language: "en", lookup: lookupFor({ examName }) }),
     ]);
 
     expect(named).toStrictEqual(expected);
     expect(unnamed).toStrictEqual(expected);
-    expect(findExamDate).not.toHaveBeenCalled();
   });
 
-  it("finds a language certificate's notice stored in the language it tests", async () => {
+  it("finds a language certificate's notice only in the language it tests", async () => {
     const { blueprint, examName } = await storedExam({
       days: ["2026-11-14", "2027-04-02"],
       language: "es",
       year: 2026,
     });
 
-    const facts = await findExamFacts({
-      exam: { examName, targetLanguage: "es" },
-      language: "pt",
-      today: TODAY,
-    });
+    const lookup = lookupFor({ examName, targetLanguage: "es" }, "pt");
 
-    expect(facts).toMatchObject({ blueprintId: blueprint.id, targetDate: null });
-    expect(facts.dates.map((day) => day.date)).toStrictEqual(["2026-11-14", "2027-04-02"]);
-    expect(findExamDate).not.toHaveBeenCalled();
+    const [inPortuguese, inSpanish] = await Promise.all(
+      lookup.noticeLanguages.map((language) => findStoredExam({ language, lookup })),
+    );
+
+    expect(inPortuguese).toBeNull();
+    expect(inSpanish?.blueprintId).toBe(blueprint.id);
+    expect(inSpanish?.dates.map((day) => day.date)).toStrictEqual(["2026-11-14", "2027-04-02"]);
   });
 
   it("finds the stored notice when the learner words the exam and its role another way", async () => {
@@ -152,19 +229,21 @@ describe(findExamFacts, () => {
       return match ? { id: match.id, probability: 0.9 } : null;
     });
 
-    const facts = await findExamFacts({
-      exam: {
-        examName: `Concurso da Câmara Municipal ${town}`,
-        examYear: 2027,
-        institution: `Câmara Municipal ${town}`,
-        role: "registro/redação",
-      },
+    const stored = await findStoredExam({
       language: "pt",
-      today: TODAY,
+      lookup: lookupFor(
+        {
+          examName: `Concurso da Câmara Municipal ${town}`,
+          examYear: 2027,
+          institution: `Câmara Municipal ${town}`,
+          targetPosition: "registro/redação",
+        },
+        "pt",
+      ),
     });
 
-    expect(facts).toMatchObject({ blueprintId: blueprint.id, targetDate: null });
-    expect(facts.dates.map((day) => day.date)).toStrictEqual(["2027-01-17"]);
+    expect(stored?.blueprintId).toBe(blueprint.id);
+    expect(stored?.dates.map((day) => day.date)).toStrictEqual(["2027-01-17"]);
 
     expect(decideExamIdentity).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -173,126 +252,34 @@ describe(findExamFacts, () => {
     );
   });
 
-  it("looks up the published day when no notice is stored, and makes it the goal's date", async () => {
-    lookupAnswers({
-      dates: [
-        { date: "2027-01-17", label: "Objective test" },
-        { date: "2027-01-24", label: "Written test" },
-      ],
-      source: { title: "Notice 1", url: NOTICE_URL },
-      status: "official",
+  it("fails when the identity decision fails, so its step can try again", async () => {
+    const town = randomUUID().slice(0, 8);
+
+    await storedExam({
+      days: ["2027-01-17"],
+      language: "pt",
+      name: `Concurso Câmara Municipal ${town}`,
+      year: 2027,
     });
 
-    const source = { title: "Notice 1", url: NOTICE_URL };
+    vi.mocked(decideExamIdentity).mockRejectedValue(new Error("The model is down"));
 
     await expect(
-      findExamFacts({
-        exam: { examName: `Unstored Exam ${randomUUID()}`, examYear: 2027, role: "Analyst" },
-        language: "en",
-        today: TODAY,
+      findStoredExam({
+        language: "pt",
+        lookup: lookupFor({ examName: `Concurso da Câmara Municipal ${town}` }, "pt"),
       }),
-    ).resolves.toStrictEqual({
-      blueprintId: null,
-      dates: [
-        {
-          date: "2027-01-17",
-          estimated: false,
-          label: "Objective test",
-          registrationClosed: false,
-          source,
-        },
-        {
-          date: "2027-01-24",
-          estimated: false,
-          label: "Written test",
-          registrationClosed: false,
-          source,
-        },
-      ],
-      targetDate: "2027-01-17",
-    });
-
-    expect(findExamDate).toHaveBeenCalledWith(
-      expect.objectContaining({ role: "Analyst", today: TODAY, year: 2027 }),
-    );
+    ).rejects.toThrow("The model is down");
   });
 
-  it("only offers a published day in another month than the one the learner named", async () => {
-    const source = { title: "Notice 1", url: NOTICE_URL };
-
-    lookupAnswers({
-      dates: [{ date: "2027-01-10", label: "Objective test" }],
-      source,
-      status: "official",
-    });
-
-    const exam = { examName: `Unstored Exam ${randomUUID()}`, examYear: 2027 };
-
-    const [march, january] = await Promise.all([
-      findExamFacts({ exam: { ...exam, examMonth: 3 }, language: "en", today: TODAY }),
-      findExamFacts({ exam: { ...exam, examMonth: 1 }, language: "en", today: TODAY }),
-    ]);
-
-    expect(march).toStrictEqual({
-      blueprintId: null,
-      dates: [
-        {
-          date: "2027-01-10",
-          estimated: false,
-          label: "Objective test",
-          registrationClosed: false,
-          source,
-        },
-      ],
-      targetDate: null,
-    });
-
-    expect(january.targetDate).toBe("2027-01-10");
-  });
-
-  it("never guesses: a notice that isn't out leaves the date to be confirmed", async () => {
-    lookupAnswers({ dates: [], source: null, status: "notPublished" });
-
-    await expect(
-      findExamFacts({
-        exam: { examName: `Unknown Exam ${randomUUID()}`, examYear: 2028 },
-        language: "en",
-        today: TODAY,
-      }),
-    ).resolves.toStrictEqual({ blueprintId: null, dates: [], targetDate: null });
-  });
-
-  it("leaves the date to be confirmed when the search fails, instead of failing the card", async () => {
-    vi.mocked(findExamDate).mockRejectedValue(new Error("The search is down"));
-
-    await expect(
-      findExamFacts({
-        exam: { examName: `Unreachable Exam ${randomUUID()}` },
-        language: "en",
-        today: TODAY,
-      }),
-    ).resolves.toStrictEqual({ blueprintId: null, dates: [], targetDate: null });
-  });
-
-  it("doesn't look anything up when the learner gave their own day", async () => {
-    await findExamFacts({
-      exam: { examName: `Own Day Exam ${randomUUID()}` },
-      language: "en",
-      lookUpDate: false,
-      today: TODAY,
-    });
-
-    expect(findExamDate).not.toHaveBeenCalled();
-  });
-
-  it("estimates the next edition when every stored day has passed, unless a new notice is out", async () => {
+  it("estimates the next edition when every stored day has passed", async () => {
     const { blueprint, examName } = await storedExam({
       days: ["2025-11-09", "2025-11-16"],
       year: 2025,
     });
 
     await expect(
-      findExamFacts({ exam: { examName }, language: "en", today: TODAY }),
+      findStoredExam({ language: "en", lookup: lookupFor({ examName }) }),
     ).resolves.toStrictEqual({
       blueprintId: blueprint.id,
       dates: [
@@ -311,48 +298,161 @@ describe(findExamFacts, () => {
           source: null,
         },
       ],
-      targetDate: null,
     });
-
-    lookupAnswers({
-      dates: [{ date: "2026-11-22", label: "Day 1" }],
-      source: { title: "New notice", url: NOTICE_URL },
-      status: "official",
-    });
-
-    await expect(
-      findExamFacts({ exam: { examName }, language: "en", today: TODAY }),
-    ).resolves.toMatchObject({ blueprintId: blueprint.id, targetDate: "2026-11-22" });
   });
 
   it("estimates the days in the month the learner named, over the notice's usual month", async () => {
     const { examName } = await storedExam({ days: ["2025-07-27"], year: 2025 });
 
-    await expect(
-      findExamFacts({
-        exam: { examMonth: 3, examName, examYear: 2027 },
-        language: "en",
-        today: TODAY,
-      }),
-    ).resolves.toMatchObject({
-      dates: [
-        {
-          date: "2027-03-28",
-          estimated: true,
-          label: "Day 1",
-          registrationClosed: false,
-          source: null,
-        },
-      ],
-      targetDate: null,
+    const stored = await findStoredExam({
+      language: "en",
+      lookup: lookupFor({ examMonth: 3, examName, examYear: 2027 }),
     });
+
+    expect(stored?.dates).toStrictEqual([
+      {
+        date: "2027-03-28",
+        estimated: true,
+        label: "Day 1",
+        registrationClosed: false,
+        source: null,
+      },
+    ]);
   });
 
   it("has no dates for a year that has passed", async () => {
     const { blueprint, examName } = await storedExam({ days: ["2026-11-08"], year: 2026 });
 
     await expect(
-      findExamFacts({ exam: { examName, examYear: 2025 }, language: "en", today: TODAY }),
-    ).resolves.toStrictEqual({ blueprintId: blueprint.id, dates: [], targetDate: null });
+      findStoredExam({ language: "en", lookup: lookupFor({ examName, examYear: 2025 }) }),
+    ).resolves.toStrictEqual({ blueprintId: blueprint.id, dates: [] });
+  });
+});
+
+describe(searchExamDates, () => {
+  beforeEach(() => {
+    lookupAnswers({ dates: [], source: null, status: "unknown" });
+  });
+
+  it("looks up the published days when no notice is stored", async () => {
+    const source = { title: "Notice 1", url: NOTICE_URL };
+
+    lookupAnswers({
+      dates: [
+        { date: "2027-01-17", label: "Objective test" },
+        { date: "2027-01-24", label: "Written test" },
+      ],
+      source,
+      status: "official",
+    });
+
+    const lookup = lookupFor({
+      examName: `Unstored Exam ${randomUUID()}`,
+      examYear: 2027,
+      targetPosition: "Analyst",
+    });
+
+    await expect(searchFor(lookup, null)).resolves.toStrictEqual([
+      {
+        date: "2027-01-17",
+        estimated: false,
+        label: "Objective test",
+        registrationClosed: false,
+        source,
+      },
+      {
+        date: "2027-01-24",
+        estimated: false,
+        label: "Written test",
+        registrationClosed: false,
+        source,
+      },
+    ]);
+
+    expect(findExamDate).toHaveBeenCalledWith(
+      expect.objectContaining({ role: "Analyst", today: TODAY, year: 2027 }),
+    );
+  });
+
+  it("doesn't search when a stored official day answers it, but does when the stored days are estimates", async () => {
+    const lookup = lookupFor({ examName: `Stored Exam ${randomUUID()}` });
+    const day = { date: "2026-11-08", label: "Day 1", registrationClosed: false, source: null };
+
+    await expect(
+      searchFor(lookup, { blueprintId: randomUUID(), dates: [{ ...day, estimated: false }] }),
+    ).resolves.toStrictEqual([]);
+
+    expect(findExamDate).not.toHaveBeenCalled();
+
+    await searchFor(lookup, { blueprintId: randomUUID(), dates: [{ ...day, estimated: true }] });
+    expect(findExamDate).toHaveBeenCalledOnce();
+  });
+
+  it("doesn't look anything up when the learner gave their own day or books the test", async () => {
+    await Promise.all([
+      searchFor(
+        lookupFor({ examName: `Own Day Exam ${randomUUID()}`, targetDate: "2027-03-01" }),
+        null,
+      ),
+      searchFor(lookupFor({ examDay: "booked", examName: `Booked Test ${randomUUID()}` }), null),
+    ]);
+
+    expect(findExamDate).not.toHaveBeenCalled();
+  });
+
+  it("never guesses: a notice that isn't out leaves the date to be confirmed", async () => {
+    lookupAnswers({ dates: [], source: null, status: "notPublished" });
+
+    await expect(
+      searchFor(lookupFor({ examName: `Unknown Exam ${randomUUID()}`, examYear: 2028 }), null),
+    ).resolves.toStrictEqual([]);
+  });
+
+  it("fails when the search fails, so its step can try again", async () => {
+    vi.mocked(findExamDate).mockRejectedValue(new Error("The search is down"));
+
+    await expect(
+      searchFor(lookupFor({ examName: `Unreachable Exam ${randomUUID()}` }), null),
+    ).rejects.toThrow("The search is down");
+  });
+});
+
+describe(toExamFacts, () => {
+  const source = { title: "Notice 1", url: NOTICE_URL };
+
+  const found = {
+    date: "2027-01-10",
+    estimated: false,
+    label: "Objective test",
+    registrationClosed: false,
+    source,
+  };
+
+  it("makes a searched day the goal's date, except in another month than the one the learner named", () => {
+    const exam = { examName: `Unstored Exam ${randomUUID()}`, examYear: 2027 };
+
+    expect(
+      toExamFacts({
+        lookup: lookupFor({ ...exam, examMonth: 1 }),
+        searched: [found],
+        stored: null,
+      }),
+    ).toStrictEqual({ blueprintId: null, dates: [found], targetDate: "2027-01-10" });
+
+    expect(
+      toExamFacts({
+        lookup: lookupFor({ ...exam, examMonth: 3 }),
+        searched: [found],
+        stored: null,
+      }),
+    ).toStrictEqual({ blueprintId: null, dates: [found], targetDate: null });
+  });
+
+  it("keeps a stored notice's days when the search found none", () => {
+    const stored = { blueprintId: randomUUID(), dates: [{ ...found, estimated: true }] };
+
+    expect(
+      toExamFacts({ lookup: lookupFor({ examName: "ENEM" }), searched: [], stored }),
+    ).toStrictEqual({ blueprintId: stored.blueprintId, dates: stored.dates, targetDate: null });
   });
 });
