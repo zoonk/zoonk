@@ -2180,139 +2180,10 @@ msgid "Right answers in the last 90 days"
 msgstr "Bonnes réponses sur les 90 derniers jours"
 
 #: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "VoGk4M"
-msgid "Human Sciences"
-msgstr "Sciences humaines"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "hi9HZU"
-msgid "The 1922 Republican Reaction"
-msgstr "La Réaction républicaine de 1922"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
 #: src/app/[lang]/(home)/_components/hero-days.ts
 msgctxt "fqtVVy"
 msgid "Quick review"
 msgstr "Révision rapide"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "6uQ0Uq"
-msgid "Mathematics"
-msgstr "Mathématiques"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "UVKvZc"
-msgid "Coupons and discounts together"
-msgstr "Cumuler bons de réduction et remises"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "uwjllL"
-msgid "Essay"
-msgstr "Rédaction"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "GgvwAY"
-msgid "Agent and action"
-msgstr "Acteur et action"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-msgctxt "80dW6X"
-msgid "Natural Sciences"
-msgstr "Sciences naturelles"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "zCVSrQ"
-msgid "Breathing and heat loss"
-msgstr "Respiration et perte de chaleur"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "CqUpPo"
-msgid "Review: the Republican Reaction"
-msgstr "Révision : la Réaction républicaine"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-msgctxt "xnFXXr"
-msgid "Languages and Codes"
-msgstr "Langages et codes"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "ZBVLAA"
-msgid "Verbal text and images"
-msgstr "Textes et images"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "pjCKVa"
-msgid "Means of carrying it out"
-msgstr "Moyens de mise en œuvre"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "PknAdD"
-msgid "Reading and Writing"
-msgstr "Lecture et écriture"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "VApQpI"
-msgid "Words in context"
-msgstr "Les mots en contexte"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-#: src/lib/categories/category.ts
-msgctxt "dPgwrL"
-msgid "Math"
-msgstr "Maths"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "fnAN1H"
-msgid "Linear equations in context"
-msgstr "Équations du premier degré en contexte"
-
-#. A writing lesson on linking words, such as “however” and “therefore”.
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "Oczvha"
-msgid "Transitions"
-msgstr "Mots de liaison"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "evMyyy"
-msgid "Rhetorical synthesis"
-msgstr "Synthèse rhétorique"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "xVyNnw"
-msgid "Review: words in context"
-msgstr "Révision : les mots en contexte"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "1ecowp"
-msgid "Slope and intercept"
-msgstr "Coefficient directeur et ordonnée à l’origine"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "planPhases.QyaAtA"
-msgid "Final stretch"
-msgstr "Dernière ligne droite"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "planPhases.6RRX7X"
@@ -2328,6 +2199,11 @@ msgstr "Combler les lacunes"
 msgctxt "planPhases.KV-O0y"
 msgid "Practice"
 msgstr "Entraînement"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "planPhases.QyaAtA"
+msgid "Final stretch"
+msgstr "Dernière ligne droite"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "examplePhases.urVD1a"
@@ -2384,16 +2260,6 @@ msgctxt "examplePhases.uNOJ2Q"
 msgid "Portfolio"
 msgstr "Portfolio"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "C-6pYD"
-msgid "ENEM in {month}"
-msgstr "ENEM en {month}"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "CsR4zq"
-msgid "SAT in {month}"
-msgstr "SAT en {month}"
-
 #. An example goal's name. Use your language's name for Mexico City.
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "3parBE"
@@ -2410,18 +2276,6 @@ msgstr "L’anglais pour Londres"
 msgctxt "AeiByK"
 msgid "Data analyst by {month}"
 msgstr "Analyste de données d’ici {month}"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "PqLPMH"
-msgid "ENEM"
-msgstr "ENEM"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "fFLzL0"
-msgid "SAT"
-msgstr "SAT"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "EV-GCl"
@@ -2628,17 +2482,6 @@ msgid "Tell Zoonk your goal and date. Your plan fits your schedule and adjusts i
 msgstr "Indique à Zoonk ton objectif et sa date. Ton plan s’adapte à ton emploi du temps et s’ajuste si tu manques un jour."
 
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "UDq71K"
-msgid "get ready for the ENEM in {month}"
-msgstr "me préparer à l’ENEM en {month}"
-
-#. The page below shows a plan for the SAT, so keep the SAT.
-#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "voOKaq"
-msgid "get ready for the SAT in {month}"
-msgstr "me préparer au SAT en {month}"
-
-#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "XmrixE"
 msgid "get promoted to data analyst by {month}"
 msgstr "obtenir une promotion au poste d’analyste de données d’ici {month}"
@@ -2654,58 +2497,6 @@ msgstr "parler espagnol pour m’installer à Mexico en {month}"
 msgctxt "FWZush"
 msgid "speak English for my move to London in {month}"
 msgstr "parler anglais pour mon déménagement à Londres en {month}"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "HyMpO2"
-msgid "Percentage"
-msgstr "Pourcentage"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "9tawku"
-msgid "Chains of percentage changes"
-msgstr "Évolutions successives en pourcentage"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "RBEn94"
-msgid "Final price in offers with conditions"
-msgstr "Prix final des offres sous conditions"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "70A04J"
-msgid "Real discount on bulk purchases"
-msgstr "Réduction réelle sur les achats en gros"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "mqt6F2"
-msgid "Functions"
-msgstr "Fonctions"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "uWZ77n"
-msgid "Percentages"
-msgstr "Pourcentages"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "x5e8F-"
-msgid "Ratios and rates"
-msgstr "Rapports et taux"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "SQoF9G"
-msgid "Linear equations"
-msgstr "Équations du premier degré"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "54haEF"
-msgid "Systems of equations"
-msgstr "Systèmes d’équations"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "FwdaMw"
-msgid "Quadratics"
-msgstr "Le second degré"
 
 #: src/app/[lang]/(home)/_components/placed-plans.tsx
 msgctxt "Q2mxTI"
@@ -2809,24 +2600,9 @@ msgid "Which sentence asks for a coffee politely?"
 msgstr "Quelle phrase permet de demander un café poliment ?"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "ccKtO0"
-msgid "It goes to your Mistakes notebook, and your plan brings it back."
-msgstr "Cette erreur rejoint ton Carnet d’erreurs et ton plan te la propose à nouveau."
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "XdCc60"
-msgid "In a pasture, grass is eaten by grasshoppers, grasshoppers by frogs, and frogs by snakes."
-msgstr "Dans un pré, les criquets mangent l’herbe, les grenouilles mangent les criquets et les serpents mangent les grenouilles."
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "eNAKwz"
-msgid "How much they eat isn't it: any animal turns only a small part of its food into body."
-msgstr "Ce n’est pas une question de quantité mangée : chaque animal ne transforme qu’une petite partie de sa nourriture en matière corporelle."
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "devjxy"
-msgid "ENEM style · Natural Sciences"
-msgstr "Type ENEM · Sciences de la nature"
+msgctxt "6NoIUl"
+msgid "Correct"
+msgstr "Correct"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "1nJY2_"
@@ -2834,81 +2610,21 @@ msgid "Your answer"
 msgstr "Ta réponse"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "XSkW9E"
-msgid "Predators eat less than their prey"
-msgstr "Les prédateurs mangent moins que leurs proies"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "6NoIUl"
-msgid "Correct"
-msgstr "Correct"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "BxleoZ"
-msgid "Part of the energy is lost as heat in each organism's respiration"
-msgstr "Une partie de l’énergie est dissipée sous forme de chaleur lors de la respiration de chaque organisme"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "bJBtpz"
-msgid "Plants photosynthesize less at night"
-msgstr "Les plantes font moins de photosynthèse la nuit"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "-G1BGM"
-msgid "Decomposers use up the energy first"
-msgstr "Les décomposeurs utilisent l’énergie en premier"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "Ia64KY"
-msgid "Energy turns into matter"
-msgstr "L’énergie se transforme en matière"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "KklV3w"
-msgid "In a food chain, the available energy decreases at each trophic level. What is the main reason?"
-msgstr "Dans une chaîne alimentaire, l’énergie disponible diminue à chaque niveau trophique. Quelle en est la raison principale ?"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "7HOB5M"
-msgid "Not quite. $12 of it is the monthly fee: only $3.40 pays for texts, and $3.40 ÷ $0.05 = 68."
-msgstr "Pas tout à fait. Sur cette somme, 12 $ correspondent à l’abonnement mensuel : seuls 3,40 $ servent à payer les SMS, et 3,40 $ ÷ 0,05 $ = 68."
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "5vUSgc"
-msgid "SAT style · Math"
-msgstr "Type SAT · Maths"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "fzFJfx"
-msgid "A phone plan costs $12 a month plus $0.05 per text. Ana paid $15.40 in March. How many texts did she send?"
-msgstr "Un forfait téléphonique coûte 12 $ par mois, plus 0,05 $ par SMS. Ana a payé 15,40 $ en mars. Combien de SMS a-t-elle envoyés ?"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "pS0xug"
-msgid "Ecology"
-msgstr "Écologie"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "bTLlEc"
-msgid "Electricity"
-msgstr "Électricité"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "s4wHw2"
-msgid "Waves"
-msgstr "Ondes"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "5HTCGf"
-msgid "Chemical bonds"
-msgstr "Liaisons chimiques"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "YicAn8"
 msgid "A question and a mock exam"
 msgstr "Une question et un examen blanc"
+
+#. {explanation} says why the learner's answer was wrong. Follow it the way your language joins two sentences.
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "43HclA"
+msgid "{explanation} It goes to your Mistakes notebook, and your plan brings it back."
+msgstr "{explanation} Cette erreur est ajoutée à ton Carnet d’erreurs, et ton plan te la fait réviser."
+
+#. {exam} is a national exam's short name (SAT, bac, 수능); {subject} is a subject.
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "idUS16"
+msgid "{exam} style · {subject}"
+msgstr "Type {exam} · {subject}"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "TxWEcZ"
@@ -2920,15 +2636,11 @@ msgctxt "fi0FtL"
 msgid "Available with Plus"
 msgstr "Disponible avec Plus"
 
+#. {part} is the exam (SAT) or the part of it (Mathematics) the result is for. Exams report a score, a grade or a band (13–15/20, 2–3등급): use a word that fits each.
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "8oF1Dm"
-msgid "Estimated score · Natural Sciences"
-msgstr "Score estimé · Sciences de la nature"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "hdNQ5-"
-msgid "Estimated score · SAT"
-msgstr "Score estimé · SAT"
+msgctxt "XgYQIA"
+msgid "Estimated score · {part}"
+msgstr "Score estimé · {part}"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "AIeIsk"
@@ -2951,31 +2663,6 @@ msgid "{count, plural, one {# mistake to review} other {# mistakes to review}}"
 msgstr "{count, plural, one {# erreur à revoir} other {# erreurs à revoir}}"
 
 #: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "LF4Rmd"
-msgid "Southeast"
-msgstr "Sud-Est"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "p5M06X"
-msgid "Northeast"
-msgstr "Nord-Est"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "GQoFr3"
-msgid "South"
-msgstr "Sud"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "gX3gLf"
-msgid "North"
-msgstr "Nord"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "IcTDzP"
-msgid "West"
-msgstr "Ouest"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
 msgctxt "X8SGOJ"
 msgid "A real problem and the Mistakes notebook"
 msgstr "Un problème concret et le Carnet d’erreurs"
@@ -2989,16 +2676,6 @@ msgstr "Problème concret · SQL"
 msgctxt "xY0kqD"
 msgid "Which region sold the most?"
 msgstr "Quelle région a le plus vendu ?"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "QU8p-1"
-msgid "It works. The Southeast sold the most."
-msgstr "Ça marche. Le Sud-Est a le plus vendu."
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "XyPY2_"
-msgid "It works. North sold the most."
-msgstr "Ça marche. Le Nord a le plus vendu."
 
 #: src/app/[lang]/(home)/_components/practice-job.tsx
 msgctxt "yod7QT"
@@ -3083,34 +2760,9 @@ msgid "Next time:"
 msgstr "La prochaine fois :"
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "wMCUxI"
-msgid "Because it's not about how much they eat. Every animal spends most of the energy in its food on staying alive, and respiration releases that energy as heat. That's why only about 10% moves up to the next level."
-msgstr "Parce que ce n’est pas une question de quantité de nourriture. Chaque animal utilise la majeure partie de l’énergie de sa nourriture pour rester en vie, et la respiration libère cette énergie sous forme de chaleur. C’est pourquoi seulement 10 % environ passent au niveau suivant."
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "hng4OP"
-msgid "Why not A?"
-msgstr "Pourquoi pas A ?"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "4CBljU"
-msgid "Mock exam 2 · Question 4 · Natural Sciences"
-msgstr "Examen blanc 2 · Question 4 · Sciences naturelles"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "80lZTQ"
-msgid "308 is what you get if you divide all of the $15.40 by 5 cents. But $12 of it is the monthly fee. Only the $3.40 left pays for texts, and $3.40 ÷ $0.05 = 68."
-msgstr "On obtient 308 en divisant la totalité des 15,40 $ par 5 centimes. Mais 12 $ correspondent au prix mensuel du forfait. Seuls les 3,40 $ restants servent à payer les SMS, et 3,40 $ ÷ 0,05 $ = 68."
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "HKbV8Z"
-msgid "Why isn't it 308?"
-msgstr "Pourquoi ce n’est pas 308 ?"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "3Eue1R"
-msgid "Mock exam 2 · Question 4 · Math"
-msgstr "Examen blanc 2 · Question 4 · Mathématiques"
+msgctxt "iX1JrZ"
+msgid "Mock exam {mock, number} · Question {question, number} · {subject}"
+msgstr "Examen blanc {mock, number} · Question {question, number} · {subject}"
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "0M1dOe"
@@ -3303,6 +2955,7 @@ msgctxt "planDiff.K0Lp_g"
 msgid "Was"
 msgstr "Avant"
 
+#. {phase} is a plan phase's name, such as “Fill the gaps”.
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "3WnP-W"
 msgid "{phase} until {date}"
@@ -4447,6 +4100,11 @@ msgstr "Langues"
 msgctxt "u3ovjm"
 msgid "Law"
 msgstr "Droit"
+
+#: src/lib/categories/category.ts
+msgctxt "dPgwrL"
+msgid "Math"
+msgstr "Maths"
 
 #: src/lib/categories/category.ts
 msgctxt "qydxOd"

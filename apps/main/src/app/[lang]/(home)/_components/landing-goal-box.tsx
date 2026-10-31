@@ -14,14 +14,7 @@ async function getGoalExamples(): Promise<Record<ExampleGoal, string>> {
     format.dateTime(plans[goal].date, { month: "long", timeZone: "UTC" });
 
   return {
-    exam:
-      set.exam === "enem"
-        ? t("get ready for the ENEM in {month}", { month: month("exam") })
-        : t({
-            description: "The page below shows a plan for the SAT, so keep the SAT.",
-            message: "get ready for the SAT in {month}",
-            values: { month: month("exam") },
-          }),
+    exam: set.exam.goal(month("exam")),
     job: t("get promoted to data analyst by {month}", { month: month("job") }),
     move:
       set.move === "mexico-city"

@@ -11,7 +11,7 @@
 - Lines saying what Zoonk is doing while it works use “-고 있어요” without a subject: “3페이지를 만들고 있어요…”.
 - The buddy speaks in 해요체 too and calls itself “저”.
 - Keep “Zoonk” and “Plus” in Latin letters. They take the particles of a vowel ending, as read “준크” and “플러스”: “Zoonk가”, “Plus를”.
-- Localize an exam named only as an example, such as a goal suggestion, for South Korea: 수능, 공무원 시험 and 토익. Keep the exam when the screen shows its own scores, sections or questions, such as the SAT example plan.
+- Localize an exam named only as an example, such as a goal suggestion, for South Korea: 수능, 공무원 시험 and 토익. Keep the exam when the screen shows its own scores, sections or questions, such as an SAT course.
 - When an English plural's one form has its own words (“Opens tomorrow”, “all of it”), keep them in an “=1” branch, since Korean has only “other”.
 
 ## Placeholders

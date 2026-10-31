@@ -77,10 +77,7 @@ async function PlanChanged({ goal }: { goal: ExampleGoal }) {
   const phaseName = current?.name ?? "";
 
   const goalDate = {
-    exam: t("{exam} on {date}", {
-      date: formatDay(plan.date),
-      exam: set.exam === "enem" ? t("ENEM") : t("SAT"),
-    }),
+    exam: t("{exam} on {date}", { date: formatDay(plan.date), exam: set.exam.name }),
     job: t("Goal date {date}", { date: formatDay(plan.date) }),
     move: t("Moving day {date}", { date: formatDay(plan.date) }),
   }[goal];
@@ -109,14 +106,19 @@ async function PlanChanged({ goal }: { goal: ExampleGoal }) {
                 // Only the lesson a missed day takes out is bad news, so it alone is red.
                 {
                   kind: "removed",
-                  text: t("{phase} until {date}", { date: formatDay(end), phase: phaseName }),
+                  text: t({
+                    description: "{phase} is a plan phase's name, such as “Fill the gaps”.",
+                    message: "{phase} until {date}",
+                    values: { date: formatDay(end), phase: phaseName },
+                  }),
                   tone: "neutral",
                 },
                 {
                   kind: "added",
-                  text: t("{phase} until {date}", {
-                    date: formatDay(change.movedEnd),
-                    phase: phaseName,
+                  text: t({
+                    description: "{phase} is a plan phase's name, such as “Fill the gaps”.",
+                    message: "{phase} until {date}",
+                    values: { date: formatDay(change.movedEnd), phase: phaseName },
                   }),
                   tone: "neutral",
                 },

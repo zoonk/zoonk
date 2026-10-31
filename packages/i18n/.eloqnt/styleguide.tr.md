@@ -5,7 +5,7 @@
 - Use Turkish for Turkey and informal “sen”.
 - Buttons, links, menu actions and mission names use the “sen” imperative: “Tekrar dene”, “Yeni bir hedefe başla”, “İlk dersini bitir”.
 - Lines saying what Zoonk is doing while it works speak as “biz” (“3. sayfayı hazırlıyoruz…”). The buddy speaks as “ben”.
-- Localize an exam named only as an example, such as a goal suggestion, for Turkey: YKS, LGS and KPSS. Keep the exam when the screen shows its own scores, sections or questions, such as the SAT example plan.
+- Localize an exam named only as an example, such as a goal suggestion, for Turkey: YKS, LGS and KPSS. Keep the exam when the screen shows its own scores, sections or questions, such as an SAT course.
 
 ## Placeholders
 

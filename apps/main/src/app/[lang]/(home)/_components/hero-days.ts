@@ -1,5 +1,6 @@
 import { type DayListStep } from "@/components/public/day-list";
 import { getExtracted } from "next-intl/server";
+import { examStep } from "./exam-tomorrow";
 import { type ExampleGoal, getExampleSet } from "./landing-examples";
 
 export async function getHeroDays(): Promise<Record<ExampleGoal, DayListStep[]>> {
@@ -9,81 +10,22 @@ export async function getHeroDays(): Promise<Record<ExampleGoal, DayListStep[]>>
   const mistakes = (count: number) =>
     t("{count, plural, one {# mistake} other {# mistakes}}", { count });
 
-  const exam: DayListStep[] =
-    set.exam === "enem"
-      ? [
-          { id: "review", kind: "review", minutes: 2, state: "done", title: t("Quick review") },
-          {
-            detail: t("Human Sciences"),
-            id: "republic",
-            kind: "lesson",
-            minutes: 3,
-            state: "current",
-            title: t("The 1922 Republican Reaction"),
-          },
-          {
-            detail: t("Mathematics"),
-            id: "discounts",
-            kind: "lesson",
-            minutes: 5,
-            state: "ahead",
-            title: t("Coupons and discounts together"),
-          },
-          {
-            detail: mistakes(3),
-            id: "mistakes",
-            kind: "mistakes",
-            minutes: 5,
-            state: "ahead",
-            title: t("Practice your mistakes"),
-          },
-          {
-            detail: t("Essay"),
-            id: "essay",
-            kind: "essay",
-            minutes: 10,
-            state: "ahead",
-            title: t("Agent and action"),
-          },
-        ]
-      : [
-          { id: "review", kind: "review", minutes: 2, state: "done", title: t("Quick review") },
-          {
-            detail: t("Reading and Writing"),
-            id: "words",
-            kind: "lesson",
-            minutes: 5,
-            state: "current",
-            title: t("Words in context"),
-          },
-          {
-            detail: t("Math"),
-            id: "equations",
-            kind: "lesson",
-            minutes: 6,
-            state: "ahead",
-            title: t("Linear equations in context"),
-          },
-          {
-            detail: mistakes(3),
-            id: "mistakes",
-            kind: "mistakes",
-            minutes: 5,
-            state: "ahead",
-            title: t("Practice your mistakes"),
-          },
-          {
-            detail: t("Reading and Writing"),
-            id: "transitions",
-            kind: "lesson",
-            minutes: 7,
-            state: "ahead",
-            title: t({
-              description: "A writing lesson on linking words, such as “however” and “therefore”.",
-              message: "Transitions",
-            }),
-          },
-        ];
+  const [first, second, last] = set.exam.today;
+
+  const exam: DayListStep[] = [
+    { id: "review", kind: "review", minutes: 2, state: "done", title: t("Quick review") },
+    { ...examStep(first), state: "current" },
+    { ...examStep(second), state: "ahead" },
+    {
+      detail: mistakes(3),
+      id: "mistakes",
+      kind: "mistakes",
+      minutes: 5,
+      state: "ahead",
+      title: t("Practice your mistakes"),
+    },
+    { ...examStep(last), state: "ahead" },
+  ];
 
   return {
     exam,

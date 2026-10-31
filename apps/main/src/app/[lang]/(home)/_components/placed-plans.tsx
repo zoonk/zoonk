@@ -10,40 +10,17 @@ import {
 import { StatusMark } from "@zoonk/learn/status-mark";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
+import { type PlacedRow } from "./example-set";
 import { EXAMPLE_GOALS, type ExampleGoal, GOAL_SWITCH, getExampleSet } from "./landing-examples";
 
-type PlanRow = { id: string; lessons?: number; state: "next" | "skipped" | "todo"; title: string };
-
 async function getPlacedPlans(): Promise<
-  Record<ExampleGoal, { rows: PlanRow[]; skipped: number }>
+  Record<ExampleGoal, { rows: readonly PlacedRow[]; skipped: number }>
 > {
   const t = await getExtracted();
   const set = await getExampleSet();
 
-  const exam: PlanRow[] =
-    set.exam === "enem"
-      ? [
-          { id: "percentage", state: "skipped", title: t("Percentage") },
-          { id: "chains", state: "skipped", title: t("Chains of percentage changes") },
-          {
-            id: "offers",
-            lessons: 7,
-            state: "next",
-            title: t("Final price in offers with conditions"),
-          },
-          { id: "bulk", lessons: 8, state: "todo", title: t("Real discount on bulk purchases") },
-          { id: "functions", lessons: 2, state: "todo", title: t("Functions") },
-        ]
-      : [
-          { id: "percentages", state: "skipped", title: t("Percentages") },
-          { id: "ratios", state: "skipped", title: t("Ratios and rates") },
-          { id: "linear", lessons: 6, state: "next", title: t("Linear equations") },
-          { id: "systems", lessons: 8, state: "todo", title: t("Systems of equations") },
-          { id: "quadratics", lessons: 7, state: "todo", title: t("Quadratics") },
-        ];
-
   return {
-    exam: { rows: exam, skipped: 12 },
+    exam: { rows: set.exam.placed.rows, skipped: 12 },
     job: {
       rows: [
         { id: "basics", state: "skipped", title: t("Spreadsheet basics") },
@@ -67,7 +44,11 @@ async function getPlacedPlans(): Promise<
   };
 }
 
-async function PlacedPlanPicture({ plan }: { plan: { rows: PlanRow[]; skipped: number } }) {
+async function PlacedPlanPicture({
+  plan,
+}: {
+  plan: { rows: readonly PlacedRow[]; skipped: number };
+}) {
   const t = await getExtracted();
   // Its own namespace: a placed topic's "Skipped" agrees with topics of any gender and number,
   // unlike the app's status word for one chapter.

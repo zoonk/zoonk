@@ -2180,139 +2180,10 @@ msgid "Right answers in the last 90 days"
 msgstr "최근 90일간의 정답"
 
 #: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "VoGk4M"
-msgid "Human Sciences"
-msgstr "인문·사회과학"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "hi9HZU"
-msgid "The 1922 Republican Reaction"
-msgstr "1922년 Republican Reaction"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
 #: src/app/[lang]/(home)/_components/hero-days.ts
 msgctxt "fqtVVy"
 msgid "Quick review"
 msgstr "간단 복습"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "6uQ0Uq"
-msgid "Mathematics"
-msgstr "수학"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "UVKvZc"
-msgid "Coupons and discounts together"
-msgstr "쿠폰과 할인 함께 적용하기"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "uwjllL"
-msgid "Essay"
-msgstr "서술형"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "GgvwAY"
-msgid "Agent and action"
-msgstr "실행 주체와 행동"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-msgctxt "80dW6X"
-msgid "Natural Sciences"
-msgstr "자연과학"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "zCVSrQ"
-msgid "Breathing and heat loss"
-msgstr "호흡과 열 방출"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "CqUpPo"
-msgid "Review: the Republican Reaction"
-msgstr "복습: Republican Reaction"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-msgctxt "xnFXXr"
-msgid "Languages and Codes"
-msgstr "언어와 기호"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "ZBVLAA"
-msgid "Verbal text and images"
-msgstr "글과 이미지"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "pjCKVa"
-msgid "Means of carrying it out"
-msgstr "실행 방법"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "PknAdD"
-msgid "Reading and Writing"
-msgstr "읽기와 쓰기"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "VApQpI"
-msgid "Words in context"
-msgstr "문맥 속 어휘"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-#: src/lib/categories/category.ts
-msgctxt "dPgwrL"
-msgid "Math"
-msgstr "수학"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "fnAN1H"
-msgid "Linear equations in context"
-msgstr "일차방정식 활용"
-
-#. A writing lesson on linking words, such as “however” and “therefore”.
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "Oczvha"
-msgid "Transitions"
-msgstr "연결어"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "evMyyy"
-msgid "Rhetorical synthesis"
-msgstr "목적에 맞게 정보 종합하기"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "xVyNnw"
-msgid "Review: words in context"
-msgstr "복습: 문맥 속 어휘"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "1ecowp"
-msgid "Slope and intercept"
-msgstr "기울기와 절편"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "planPhases.QyaAtA"
-msgid "Final stretch"
-msgstr "마무리"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "planPhases.6RRX7X"
@@ -2328,6 +2199,11 @@ msgstr "부족한 부분 채우기"
 msgctxt "planPhases.KV-O0y"
 msgid "Practice"
 msgstr "연습"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "planPhases.QyaAtA"
+msgid "Final stretch"
+msgstr "마무리"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "examplePhases.urVD1a"
@@ -2384,16 +2260,6 @@ msgctxt "examplePhases.uNOJ2Q"
 msgid "Portfolio"
 msgstr "포트폴리오"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "C-6pYD"
-msgid "ENEM in {month}"
-msgstr "{month} 수능"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "CsR4zq"
-msgid "SAT in {month}"
-msgstr "{month} 수능"
-
 #. An example goal's name. Use your language's name for Mexico City.
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "3parBE"
@@ -2410,18 +2276,6 @@ msgstr "런던 생활 영어"
 msgctxt "AeiByK"
 msgid "Data analyst by {month}"
 msgstr "{month}까지 데이터 분석가 되기"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "PqLPMH"
-msgid "ENEM"
-msgstr "수능"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "fFLzL0"
-msgid "SAT"
-msgstr "수능"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "EV-GCl"
@@ -2628,17 +2482,6 @@ msgid "Tell Zoonk your goal and date. Your plan fits your schedule and adjusts i
 msgstr "Zoonk에 목표와 날짜를 알려 주세요. 일정에 맞춰 계획을 세우고, 하루 공부를 못 하면 조정해 줘요."
 
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "UDq71K"
-msgid "get ready for the ENEM in {month}"
-msgstr "{month} 수능을 준비하고 싶어요"
-
-#. The page below shows a plan for the SAT, so keep the SAT.
-#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "voOKaq"
-msgid "get ready for the SAT in {month}"
-msgstr "{month} 수능을 준비하고 싶어요"
-
-#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "XmrixE"
 msgid "get promoted to data analyst by {month}"
 msgstr "{month}까지 데이터 분석가로 승진하기"
@@ -2654,58 +2497,6 @@ msgstr "{month}에 멕시코시티로 이사 갈 때 스페인어로 말하고 �
 msgctxt "FWZush"
 msgid "speak English for my move to London in {month}"
 msgstr "{month} 런던 이사에 대비해 영어로 대화하기"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "HyMpO2"
-msgid "Percentage"
-msgstr "백분율"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "9tawku"
-msgid "Chains of percentage changes"
-msgstr "연속적인 백분율 변화"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "RBEn94"
-msgid "Final price in offers with conditions"
-msgstr "조건부 할인 적용 후 최종 가격"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "70A04J"
-msgid "Real discount on bulk purchases"
-msgstr "대량 구매 시 실제 할인율"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "mqt6F2"
-msgid "Functions"
-msgstr "함수"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "uWZ77n"
-msgid "Percentages"
-msgstr "백분율"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "x5e8F-"
-msgid "Ratios and rates"
-msgstr "비와 비율"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "SQoF9G"
-msgid "Linear equations"
-msgstr "일차방정식"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "54haEF"
-msgid "Systems of equations"
-msgstr "연립방정식"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "FwdaMw"
-msgid "Quadratics"
-msgstr "이차방정식"
 
 #: src/app/[lang]/(home)/_components/placed-plans.tsx
 msgctxt "Q2mxTI"
@@ -2809,24 +2600,9 @@ msgid "Which sentence asks for a coffee politely?"
 msgstr "커피를 정중하게 주문하는 문장은 무엇인가요?"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "ccKtO0"
-msgid "It goes to your Mistakes notebook, and your plan brings it back."
-msgstr "오답 노트에 저장되고, 계획에 따라 다시 풀게 돼요."
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "XdCc60"
-msgid "In a pasture, grass is eaten by grasshoppers, grasshoppers by frogs, and frogs by snakes."
-msgstr "풀밭에서는 메뚜기가 풀을 먹고, 개구리는 메뚜기를, 뱀은 개구리를 먹어요."
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "eNAKwz"
-msgid "How much they eat isn't it: any animal turns only a small part of its food into body."
-msgstr "먹는 양 때문은 아니에요. 어떤 동물이든 먹이의 아주 적은 부분만 몸을 만드는 데 써요."
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "devjxy"
-msgid "ENEM style · Natural Sciences"
-msgstr "수능 유형 · 과학탐구"
+msgctxt "6NoIUl"
+msgid "Correct"
+msgstr "정답"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "1nJY2_"
@@ -2834,81 +2610,21 @@ msgid "Your answer"
 msgstr "내 답"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "XSkW9E"
-msgid "Predators eat less than their prey"
-msgstr "포식자는 먹잇감보다 적게 먹어요"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "6NoIUl"
-msgid "Correct"
-msgstr "정답"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "BxleoZ"
-msgid "Part of the energy is lost as heat in each organism's respiration"
-msgstr "각 생물이 호흡할 때 에너지의 일부가 열로 빠져나가요"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "bJBtpz"
-msgid "Plants photosynthesize less at night"
-msgstr "식물은 밤에 광합성을 덜 해요"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "-G1BGM"
-msgid "Decomposers use up the energy first"
-msgstr "분해자가 에너지를 먼저 소모해요"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "Ia64KY"
-msgid "Energy turns into matter"
-msgstr "에너지가 물질로 바뀌어요"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "KklV3w"
-msgid "In a food chain, the available energy decreases at each trophic level. What is the main reason?"
-msgstr "먹이 사슬에서는 영양 단계가 높아질수록 이용할 수 있는 에너지가 줄어들어요. 가장 큰 이유는 무엇일까요?"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "7HOB5M"
-msgid "Not quite. $12 of it is the monthly fee: only $3.40 pays for texts, and $3.40 ÷ $0.05 = 68."
-msgstr "조금 달라요. 이 중 12달러는 월 기본요금이에요. 문자 요금은 3.40달러뿐이고, 3.40달러 ÷ 0.05달러 = 68이에요."
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "5vUSgc"
-msgid "SAT style · Math"
-msgstr "수능 유형 · 수학"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "fzFJfx"
-msgid "A phone plan costs $12 a month plus $0.05 per text. Ana paid $15.40 in March. How many texts did she send?"
-msgstr "휴대폰 요금제의 월 기본요금은 12달러이고, 문자 한 통당 0.05달러가 추가돼요. Ana는 3월에 15.40달러를 냈어요. 문자를 몇 통 보냈을까요?"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "pS0xug"
-msgid "Ecology"
-msgstr "생태학"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "bTLlEc"
-msgid "Electricity"
-msgstr "전기"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "s4wHw2"
-msgid "Waves"
-msgstr "파동"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "5HTCGf"
-msgid "Chemical bonds"
-msgstr "화학 결합"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "YicAn8"
 msgid "A question and a mock exam"
 msgstr "문제와 모의고사"
+
+#. {explanation} says why the learner's answer was wrong. Follow it the way your language joins two sentences.
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "43HclA"
+msgid "{explanation} It goes to your Mistakes notebook, and your plan brings it back."
+msgstr "{explanation} 이 문제는 오답 노트에 저장되고, 계획에 따라 다시 나와요."
+
+#. {exam} is a national exam's short name (SAT, bac, 수능); {subject} is a subject.
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "idUS16"
+msgid "{exam} style · {subject}"
+msgstr "{exam} 유형 · {subject}"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "TxWEcZ"
@@ -2920,15 +2636,11 @@ msgctxt "fi0FtL"
 msgid "Available with Plus"
 msgstr "Plus에서 이용 가능"
 
+#. {part} is the exam (SAT) or the part of it (Mathematics) the result is for. Exams report a score, a grade or a band (13–15/20, 2–3등급): use a word that fits each.
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "8oF1Dm"
-msgid "Estimated score · Natural Sciences"
-msgstr "예상 점수 · 과학탐구"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "hdNQ5-"
-msgid "Estimated score · SAT"
-msgstr "예상 점수 · 수능"
+msgctxt "XgYQIA"
+msgid "Estimated score · {part}"
+msgstr "예상 성적 · {part}"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "AIeIsk"
@@ -2951,31 +2663,6 @@ msgid "{count, plural, one {# mistake to review} other {# mistakes to review}}"
 msgstr "{count, plural, other {복습할 오답 #개}}"
 
 #: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "LF4Rmd"
-msgid "Southeast"
-msgstr "남동부"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "p5M06X"
-msgid "Northeast"
-msgstr "북동부"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "GQoFr3"
-msgid "South"
-msgstr "남부"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "gX3gLf"
-msgid "North"
-msgstr "북부"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "IcTDzP"
-msgid "West"
-msgstr "서부"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
 msgctxt "X8SGOJ"
 msgid "A real problem and the Mistakes notebook"
 msgstr "실무 문제와 오답 노트"
@@ -2989,16 +2676,6 @@ msgstr "실무 문제 · SQL"
 msgctxt "xY0kqD"
 msgid "Which region sold the most?"
 msgstr "어느 지역의 매출이 가장 높았나요?"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "QU8p-1"
-msgid "It works. The Southeast sold the most."
-msgstr "잘 실행됐어요. 남동부 매출이 가장 높았어요."
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "XyPY2_"
-msgid "It works. North sold the most."
-msgstr "잘 실행됐어요. 북부 매출이 가장 높았어요."
 
 #: src/app/[lang]/(home)/_components/practice-job.tsx
 msgctxt "yod7QT"
@@ -3083,34 +2760,9 @@ msgid "Next time:"
 msgstr "다음에는:"
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "wMCUxI"
-msgid "Because it's not about how much they eat. Every animal spends most of the energy in its food on staying alive, and respiration releases that energy as heat. That's why only about 10% moves up to the next level."
-msgstr "먹는 양이 중요한 게 아니기 때문이에요. 모든 동물은 먹이에서 얻는 에너지 대부분을 생명을 유지하는 데 쓰고, 호흡 과정에서 그 에너지가 열로 빠져나가요. 그래서 다음 영양 단계로 전달되는 에너지는 약 10%뿐이에요."
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "hng4OP"
-msgid "Why not A?"
-msgstr "왜 A가 정답이 아니에요?"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "4CBljU"
-msgid "Mock exam 2 · Question 4 · Natural Sciences"
-msgstr "2회 모의고사 · 4번 문제 · 자연과학"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "80lZTQ"
-msgid "308 is what you get if you divide all of the $15.40 by 5 cents. But $12 of it is the monthly fee. Only the $3.40 left pays for texts, and $3.40 ÷ $0.05 = 68."
-msgstr "308은 15.40달러 전부를 5센트로 나누면 나오는 값이에요. 그런데 그중 12달러는 월 기본요금이에요. 문자 요금은 남은 3.40달러니까 3.40달러 ÷ 0.05달러 = 68이에요."
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "HKbV8Z"
-msgid "Why isn't it 308?"
-msgstr "왜 308이 아니에요?"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "3Eue1R"
-msgid "Mock exam 2 · Question 4 · Math"
-msgstr "2회 모의고사 · 4번 문제 · 수학"
+msgctxt "iX1JrZ"
+msgid "Mock exam {mock, number} · Question {question, number} · {subject}"
+msgstr "{mock, number}회 모의고사 · {question, number}번 문제 · {subject}"
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "0M1dOe"
@@ -3303,10 +2955,11 @@ msgctxt "planDiff.K0Lp_g"
 msgid "Was"
 msgstr "변경 전"
 
+#. {phase} is a plan phase's name, such as “Fill the gaps”.
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "3WnP-W"
 msgid "{phase} until {date}"
-msgstr "{phase} {date}까지"
+msgstr "{phase} · {date}까지"
 
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "Rec1Kn"
@@ -4447,6 +4100,11 @@ msgstr "언어"
 msgctxt "u3ovjm"
 msgid "Law"
 msgstr "법률"
+
+#: src/lib/categories/category.ts
+msgctxt "dPgwrL"
+msgid "Math"
+msgstr "수학"
 
 #: src/lib/categories/category.ts
 msgctxt "qydxOd"

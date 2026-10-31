@@ -9,7 +9,7 @@
 - The buddy speaks in です・ます too and calls itself “わたし”.
 - Buddy names take no honorific. The learner's name and named people in calls and speaking exams take “さん” (“{name}さん”); roles such as “試験官” don't.
 - Keep “Zoonk” and “Plus” in Latin letters.
-- Localize an exam named only as an example, such as a goal suggestion, for Japan: the 大学入学共通テスト, 英検 and 公務員試験. Keep the exam when the screen shows its own scores, sections or questions, such as the SAT example plan.
+- Localize an exam named only as an example, such as a goal suggestion, for Japan: the 大学入学共通テスト, 英検 and 公務員試験. Keep the exam when the screen shows its own scores, sections or questions, such as an SAT course.
 - Use full-width “！”, “？”, “（）” and “：”, with no space after “。”. Write numbers with their units: “30秒”, “1日”, “1〜2分”.
 - Write foreign cities and the people in examples in katakana: “ロンドン”, “アナさん”.
 - When an English plural's one form has its own words (“Opens tomorrow”, “all of it”), keep them in an “=1” branch, since Japanese has only “other”.

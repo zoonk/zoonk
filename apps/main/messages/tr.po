@@ -2180,139 +2180,10 @@ msgid "Right answers in the last 90 days"
 msgstr "Son 90 gündeki doğru cevaplar"
 
 #: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "VoGk4M"
-msgid "Human Sciences"
-msgstr "Sosyal bilimler"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "hi9HZU"
-msgid "The 1922 Republican Reaction"
-msgstr "1922 Cumhuriyetçi Tepki Hareketi"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
 #: src/app/[lang]/(home)/_components/hero-days.ts
 msgctxt "fqtVVy"
 msgid "Quick review"
 msgstr "Hızlı tekrar"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "6uQ0Uq"
-msgid "Mathematics"
-msgstr "Matematik"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "UVKvZc"
-msgid "Coupons and discounts together"
-msgstr "Kupon ve indirimleri birlikte kullanma"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "uwjllL"
-msgid "Essay"
-msgstr "Kompozisyon"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "GgvwAY"
-msgid "Agent and action"
-msgstr "Eylem ve sorumlusu"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-msgctxt "80dW6X"
-msgid "Natural Sciences"
-msgstr "Fen bilimleri"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "zCVSrQ"
-msgid "Breathing and heat loss"
-msgstr "Solunum ve ısı kaybı"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "CqUpPo"
-msgid "Review: the Republican Reaction"
-msgstr "Tekrar: Cumhuriyetçi Tepki Hareketi"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-msgctxt "xnFXXr"
-msgid "Languages and Codes"
-msgstr "Dil ve iletişim"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "ZBVLAA"
-msgid "Verbal text and images"
-msgstr "Metin ve görseller"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "pjCKVa"
-msgid "Means of carrying it out"
-msgstr "Uygulama yolları"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "PknAdD"
-msgid "Reading and Writing"
-msgstr "Okuma ve yazma"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "VApQpI"
-msgid "Words in context"
-msgstr "Kelimelerin bağlamdaki anlamı"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-#: src/lib/categories/category.ts
-msgctxt "dPgwrL"
-msgid "Math"
-msgstr "Matematik"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "fnAN1H"
-msgid "Linear equations in context"
-msgstr "Doğrusal denklem problemleri"
-
-#. A writing lesson on linking words, such as “however” and “therefore”.
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "Oczvha"
-msgid "Transitions"
-msgstr "Geçiş ifadeleri"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "evMyyy"
-msgid "Rhetorical synthesis"
-msgstr "Bilgileri amaca uygun birleştirme"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "xVyNnw"
-msgid "Review: words in context"
-msgstr "Tekrar: kelimelerin bağlamdaki anlamı"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "1ecowp"
-msgid "Slope and intercept"
-msgstr "Eğim ve eksenleri kesme noktaları"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "planPhases.QyaAtA"
-msgid "Final stretch"
-msgstr "Son düzlük"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "planPhases.6RRX7X"
@@ -2328,6 +2199,11 @@ msgstr "Eksikleri tamamlama"
 msgctxt "planPhases.KV-O0y"
 msgid "Practice"
 msgstr "Alıştırma"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "planPhases.QyaAtA"
+msgid "Final stretch"
+msgstr "Son düzlük"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "examplePhases.urVD1a"
@@ -2384,16 +2260,6 @@ msgctxt "examplePhases.uNOJ2Q"
 msgid "Portfolio"
 msgstr "Portföy"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "C-6pYD"
-msgid "ENEM in {month}"
-msgstr "{month} ayında YKS"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "CsR4zq"
-msgid "SAT in {month}"
-msgstr "{month} ayında YKS"
-
 #. An example goal's name. Use your language's name for Mexico City.
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "3parBE"
@@ -2410,18 +2276,6 @@ msgstr "London için İngilizce"
 msgctxt "AeiByK"
 msgid "Data analyst by {month}"
 msgstr "{month} ayına kadar veri analisti"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "PqLPMH"
-msgid "ENEM"
-msgstr "YKS"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "fFLzL0"
-msgid "SAT"
-msgstr "YKS"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "EV-GCl"
@@ -2628,17 +2482,6 @@ msgid "Tell Zoonk your goal and date. Your plan fits your schedule and adjusts i
 msgstr "Zoonk’a hedefini ve tarihini söyle. Planın programına uyar ve bir gün çalışamazsan yeniden düzenlenir."
 
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "UDq71K"
-msgid "get ready for the ENEM in {month}"
-msgstr "{month} ayındaki YKS’ye hazırlanmak"
-
-#. The page below shows a plan for the SAT, so keep the SAT.
-#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "voOKaq"
-msgid "get ready for the SAT in {month}"
-msgstr "{month} ayındaki YKS’ye hazırlanmak"
-
-#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "XmrixE"
 msgid "get promoted to data analyst by {month}"
 msgstr "{month} ayına kadar veri analistliğine yükselmek"
@@ -2654,58 +2497,6 @@ msgstr "{month} ayında Meksiko’ya taşındığımda İspanyolca konuşmak"
 msgctxt "FWZush"
 msgid "speak English for my move to London in {month}"
 msgstr "{month} ayında Londra’ya taşındığımda İngilizce konuşabilmek"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "HyMpO2"
-msgid "Percentage"
-msgstr "Yüzde"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "9tawku"
-msgid "Chains of percentage changes"
-msgstr "Ardışık yüzde değişimleri"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "RBEn94"
-msgid "Final price in offers with conditions"
-msgstr "Koşullu kampanyalarda son fiyat"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "70A04J"
-msgid "Real discount on bulk purchases"
-msgstr "Toplu alımlarda gerçek indirim"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "mqt6F2"
-msgid "Functions"
-msgstr "Fonksiyonlar"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "uWZ77n"
-msgid "Percentages"
-msgstr "Yüzdeler"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "x5e8F-"
-msgid "Ratios and rates"
-msgstr "Oranlar ve birim oranlar"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "SQoF9G"
-msgid "Linear equations"
-msgstr "Doğrusal denklemler"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "54haEF"
-msgid "Systems of equations"
-msgstr "Denklem sistemleri"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "FwdaMw"
-msgid "Quadratics"
-msgstr "İkinci dereceden denklemler"
 
 #: src/app/[lang]/(home)/_components/placed-plans.tsx
 msgctxt "Q2mxTI"
@@ -2809,24 +2600,9 @@ msgid "Which sentence asks for a coffee politely?"
 msgstr "Hangi cümleyle kibarca kahve istenir?"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "ccKtO0"
-msgid "It goes to your Mistakes notebook, and your plan brings it back."
-msgstr "Yanlış defterine kaydedilir, planın da tekrar karşına çıkarır."
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "XdCc60"
-msgid "In a pasture, grass is eaten by grasshoppers, grasshoppers by frogs, and frogs by snakes."
-msgstr "Bir çayırda çekirgeler otları, kurbağalar çekirgeleri, yılanlar da kurbağaları yer."
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "eNAKwz"
-msgid "How much they eat isn't it: any animal turns only a small part of its food into body."
-msgstr "Mesele ne kadar yedikleri değil: her hayvan, yediğinin yalnızca küçük bir kısmını vücut kütlesine dönüştürür."
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "devjxy"
-msgid "ENEM style · Natural Sciences"
-msgstr "YKS tarzı · Fen bilimleri"
+msgctxt "6NoIUl"
+msgid "Correct"
+msgstr "Doğru"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "1nJY2_"
@@ -2834,81 +2610,21 @@ msgid "Your answer"
 msgstr "Cevabın"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "XSkW9E"
-msgid "Predators eat less than their prey"
-msgstr "Avcı hayvanlar avlarından daha az besin tüketir"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "6NoIUl"
-msgid "Correct"
-msgstr "Doğru"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "BxleoZ"
-msgid "Part of the energy is lost as heat in each organism's respiration"
-msgstr "Her canlının solunumu sırasında enerjinin bir kısmı ısı olarak kaybolur"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "bJBtpz"
-msgid "Plants photosynthesize less at night"
-msgstr "Bitkiler geceleri daha az fotosentez yapar"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "-G1BGM"
-msgid "Decomposers use up the energy first"
-msgstr "Enerjiyi önce ayrıştırıcılar tüketir"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "Ia64KY"
-msgid "Energy turns into matter"
-msgstr "Enerji maddeye dönüşür"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "KklV3w"
-msgid "In a food chain, the available energy decreases at each trophic level. What is the main reason?"
-msgstr "Bir besin zincirinde kullanılabilir enerji her beslenme basamağında azalır. Bunun temel nedeni nedir?"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "7HOB5M"
-msgid "Not quite. $12 of it is the monthly fee: only $3.40 pays for texts, and $3.40 ÷ $0.05 = 68."
-msgstr "Tam olarak öyle değil. Bunun 12 doları aylık ücret: mesajlar için yalnızca 3,40 dolar kalıyor ve 3,40 dolar ÷ 0,05 dolar = 68."
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "5vUSgc"
-msgid "SAT style · Math"
-msgstr "YKS tarzı · Matematik"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "fzFJfx"
-msgid "A phone plan costs $12 a month plus $0.05 per text. Ana paid $15.40 in March. How many texts did she send?"
-msgstr "Bir telefon tarifesinin aylık ücreti 12 dolar, mesaj başına ücreti ise 0,05 dolar. Ana mart ayında 15,40 dolar ödedi. Kaç mesaj gönderdi?"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "pS0xug"
-msgid "Ecology"
-msgstr "Ekoloji"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "bTLlEc"
-msgid "Electricity"
-msgstr "Elektrik"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "s4wHw2"
-msgid "Waves"
-msgstr "Dalgalar"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "5HTCGf"
-msgid "Chemical bonds"
-msgstr "Kimyasal bağlar"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "YicAn8"
 msgid "A question and a mock exam"
 msgstr "Bir soru ve bir deneme sınavı"
+
+#. {explanation} says why the learner's answer was wrong. Follow it the way your language joins two sentences.
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "43HclA"
+msgid "{explanation} It goes to your Mistakes notebook, and your plan brings it back."
+msgstr "{explanation} Yanlış defterine kaydedilir ve planında tekrar karşına çıkar."
+
+#. {exam} is a national exam's short name (SAT, bac, 수능); {subject} is a subject.
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "idUS16"
+msgid "{exam} style · {subject}"
+msgstr "{exam} tarzı · {subject}"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "TxWEcZ"
@@ -2920,15 +2636,11 @@ msgctxt "fi0FtL"
 msgid "Available with Plus"
 msgstr "Plus ile kullanılabilir"
 
+#. {part} is the exam (SAT) or the part of it (Mathematics) the result is for. Exams report a score, a grade or a band (13–15/20, 2–3등급): use a word that fits each.
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "8oF1Dm"
-msgid "Estimated score · Natural Sciences"
-msgstr "Tahmini puan · Fen bilimleri"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "hdNQ5-"
-msgid "Estimated score · SAT"
-msgstr "Tahmini puan · YKS"
+msgctxt "XgYQIA"
+msgid "Estimated score · {part}"
+msgstr "Tahmini puan · {part}"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "AIeIsk"
@@ -2951,31 +2663,6 @@ msgid "{count, plural, one {# mistake to review} other {# mistakes to review}}"
 msgstr "{count, plural, other {Gözden geçirilecek # yanlış}}"
 
 #: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "LF4Rmd"
-msgid "Southeast"
-msgstr "Güneydoğu"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "p5M06X"
-msgid "Northeast"
-msgstr "Kuzeydoğu"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "GQoFr3"
-msgid "South"
-msgstr "Güney"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "gX3gLf"
-msgid "North"
-msgstr "Kuzey"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "IcTDzP"
-msgid "West"
-msgstr "Batı"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
 msgctxt "X8SGOJ"
 msgid "A real problem and the Mistakes notebook"
 msgstr "Gerçek hayattan bir problem ve Yanlış defteri"
@@ -2989,16 +2676,6 @@ msgstr "Gerçek hayattan bir problem · SQL"
 msgctxt "xY0kqD"
 msgid "Which region sold the most?"
 msgstr "En çok satışı hangi bölge yaptı?"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "QU8p-1"
-msgid "It works. The Southeast sold the most."
-msgstr "Çalışıyor. En çok satışı Güneydoğu yaptı."
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "XyPY2_"
-msgid "It works. North sold the most."
-msgstr "Çalışıyor. En çok satışı Kuzey yaptı."
 
 #: src/app/[lang]/(home)/_components/practice-job.tsx
 msgctxt "yod7QT"
@@ -3083,34 +2760,9 @@ msgid "Next time:"
 msgstr "Bir dahaki sefere:"
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "wMCUxI"
-msgid "Because it's not about how much they eat. Every animal spends most of the energy in its food on staying alive, and respiration releases that energy as heat. That's why only about 10% moves up to the next level."
-msgstr "Çünkü önemli olan ne kadar yedikleri değil. Her hayvan besinlerden aldığı enerjinin çoğunu hayatta kalmak için kullanır ve solunumla bu enerji ısı olarak açığa çıkar. Bu yüzden bir sonraki basamağa enerjinin yalnızca yaklaşık %10’u aktarılır."
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "hng4OP"
-msgid "Why not A?"
-msgstr "Neden A değil?"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "4CBljU"
-msgid "Mock exam 2 · Question 4 · Natural Sciences"
-msgstr "Deneme sınavı 2 · Soru 4 · Fen Bilimleri"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "80lZTQ"
-msgid "308 is what you get if you divide all of the $15.40 by 5 cents. But $12 of it is the monthly fee. Only the $3.40 left pays for texts, and $3.40 ÷ $0.05 = 68."
-msgstr "15,40 doların tamamını 5 sente bölersen 308 bulursun. Ama bunun 12 doları aylık ücret. Mesajlar için yalnızca kalan 3,40 dolar ödenir ve 3,40 dolar ÷ 0,05 dolar = 68."
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "HKbV8Z"
-msgid "Why isn't it 308?"
-msgstr "Neden 308 değil?"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "3Eue1R"
-msgid "Mock exam 2 · Question 4 · Math"
-msgstr "Deneme sınavı 2 · Soru 4 · Matematik"
+msgctxt "iX1JrZ"
+msgid "Mock exam {mock, number} · Question {question, number} · {subject}"
+msgstr "Deneme sınavı {mock, number} · Soru {question, number} · {subject}"
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "0M1dOe"
@@ -3303,10 +2955,11 @@ msgctxt "planDiff.K0Lp_g"
 msgid "Was"
 msgstr "Önceki"
 
+#. {phase} is a plan phase's name, such as “Fill the gaps”.
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "3WnP-W"
 msgid "{phase} until {date}"
-msgstr "{phase} aşaması {date} tarihine kadar"
+msgstr "{phase} · {date} tarihine kadar"
 
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "Rec1Kn"
@@ -4447,6 +4100,11 @@ msgstr "Diller"
 msgctxt "u3ovjm"
 msgid "Law"
 msgstr "Hukuk"
+
+#: src/lib/categories/category.ts
+msgctxt "dPgwrL"
+msgid "Math"
+msgstr "Matematik"
 
 #: src/lib/categories/category.ts
 msgctxt "qydxOd"

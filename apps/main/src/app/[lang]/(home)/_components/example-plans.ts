@@ -4,7 +4,6 @@ import { type ExamplePhase } from "./example-road";
 import {
   type ExampleCalendar,
   type ExampleGoal,
-  type ExampleSet,
   daysBetween,
   getExampleCalendar,
   getExampleSet,
@@ -30,7 +29,7 @@ function addDays(date: Date, days: number): Date {
   return new Date(date.getTime() + days * MS_PER_DAY);
 }
 
-const ENEM_WRITTEN = {
+const EXAM_WRITTEN = {
   daysLeft: 26,
   foundationsEnd: -4,
   foundationsStart: -15,
@@ -39,75 +38,45 @@ const ENEM_WRITTEN = {
   practiceEnd: 19,
 };
 
-const ENEM_GAPS_END = ENEM_WRITTEN.gapsEnd / ENEM_WRITTEN.daysLeft;
-const ENEM_PRACTICE_END = ENEM_WRITTEN.practiceEnd / ENEM_WRITTEN.daysLeft;
+const EXAM_GAPS_END = EXAM_WRITTEN.gapsEnd / EXAM_WRITTEN.daysLeft;
+const EXAM_PRACTICE_END = EXAM_WRITTEN.practiceEnd / EXAM_WRITTEN.daysLeft;
 
-function fitEnemPhases({
+async function getExamPhases({
   date,
-  names,
   today,
 }: {
   date: Date;
-  names: Record<"finalStretch" | "foundations" | "gaps" | "practice", string>;
   today: Date;
-}): ExamplePhase[] {
+}): Promise<ExamplePhase[]> {
+  const t = await getExtracted("planPhases");
+
   const daysLeft = Math.max(daysBetween({ from: today, to: date }), 1);
-  const gapsEnd = Math.max(Math.round(daysLeft * ENEM_GAPS_END), 1);
-  const practiceEnd = Math.max(Math.round(daysLeft * ENEM_PRACTICE_END), gapsEnd + 1);
+  const gapsEnd = Math.max(Math.round(daysLeft * EXAM_GAPS_END), 1);
+  const practiceEnd = Math.max(Math.round(daysLeft * EXAM_PRACTICE_END), gapsEnd + 1);
 
   const phases = [
     {
-      end: addDays(today, ENEM_WRITTEN.foundationsEnd),
+      end: addDays(today, EXAM_WRITTEN.foundationsEnd),
       id: "foundations",
-      name: names.foundations,
-      start: addDays(today, ENEM_WRITTEN.foundationsStart),
+      name: t("Foundations"),
+      start: addDays(today, EXAM_WRITTEN.foundationsStart),
     },
     {
       end: addDays(today, Math.min(gapsEnd, daysLeft)),
       id: "gaps",
-      name: names.gaps,
-      start: addDays(today, ENEM_WRITTEN.gapsStart),
+      name: t("Fill the gaps"),
+      start: addDays(today, EXAM_WRITTEN.gapsStart),
     },
     {
       end: addDays(today, practiceEnd),
       id: "practice",
-      name: names.practice,
+      name: t("Practice"),
       start: addDays(today, gapsEnd + 1),
     },
-    { end: date, id: "final", name: names.finalStretch, start: addDays(today, practiceEnd + 1) },
+    { end: date, id: "final", name: t("Final stretch"), start: addDays(today, practiceEnd + 1) },
   ];
 
   return phases.filter((phase) => phase.start <= phase.end && phase.start <= date);
-}
-
-async function getExamPhases({
-  calendar,
-  date,
-  exam,
-}: {
-  calendar: ExampleCalendar;
-  date: Date;
-  exam: ExampleSet["exam"];
-}): Promise<ExamplePhase[]> {
-  const t = await getExtracted("planPhases");
-
-  const names = {
-    finalStretch: t("Final stretch"),
-    foundations: t("Foundations"),
-    gaps: t("Fill the gaps"),
-    practice: t("Practice"),
-  };
-
-  if (exam === "enem") {
-    return fitEnemPhases({ date, names, today: calendar.today });
-  }
-
-  return [
-    { end: "2026-10-09", id: "foundations", name: names.foundations, start: "2026-08-31" },
-    { end: "2026-11-05", id: "gaps", name: names.gaps, start: "2026-10-10" },
-    { end: "2027-01-31", id: "practice", name: names.practice, start: "2026-11-06" },
-    { end: "2027-03-13", id: "final", name: names.finalStretch, start: "2027-02-01" },
-  ].map((phase) => shiftPhase(calendar, phase));
 }
 
 async function getMovePhases(calendar: ExampleCalendar): Promise<ExamplePhase[]> {
@@ -143,20 +112,17 @@ export async function getExamplePlans(): Promise<Record<ExampleGoal, ExamplePlan
   const calendar = await getExampleCalendar();
 
   const dates = {
-    exam: getGoalDate({ calendar, goal: "exam", set }),
-    job: getGoalDate({ calendar, goal: "job", set }),
-    move: getGoalDate({ calendar, goal: "move", set }),
+    exam: getGoalDate({ calendar, goal: "exam" }),
+    job: getGoalDate({ calendar, goal: "job" }),
+    move: getGoalDate({ calendar, goal: "move" }),
   };
 
-  const examPhases = await getExamPhases({ calendar, date: dates.exam, exam: set.exam });
+  const examPhases = await getExamPhases({ date: dates.exam, today: calendar.today });
   const movePhases = await getMovePhases(calendar);
   const jobPhases = await getJobPhases(calendar);
   const month = (date: Date) => format.dateTime(date, { month: "long", timeZone: "UTC" });
 
-  const examName =
-    set.exam === "enem"
-      ? t("ENEM in {month}", { month: month(dates.exam) })
-      : t("SAT in {month}", { month: month(dates.exam) });
+  const examName = set.exam.planName(month(dates.exam));
 
   const moveName =
     set.move === "mexico-city"
@@ -175,7 +141,7 @@ export async function getExamplePlans(): Promise<Record<ExampleGoal, ExamplePlan
       mark: { id: "example-exam", kind: "exam", targetLanguage: null, title: examName },
       name: examName,
       phases: examPhases,
-      shortName: set.exam === "enem" ? t("ENEM") : t("SAT"),
+      shortName: set.exam.name,
     },
     job: {
       dailyMinutes: 20,

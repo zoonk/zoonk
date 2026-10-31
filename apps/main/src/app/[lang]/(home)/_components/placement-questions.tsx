@@ -1,17 +1,20 @@
 import { AnswerPicture, AnswerPictures } from "@/components/public/answer-picture";
 import { Variant } from "@/components/public/variant-switch";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, getFormatter } from "next-intl/server";
 import { FRAME_EYEBROW_CLASS } from "./day-one-styles";
 import { EXAMPLE_GOALS, type ExampleGoal, GOAL_SWITCH, getExampleSet } from "./landing-examples";
+
+const PRICE_SHARES = [{ share: 0.96 }, { share: 1 }, { share: 1.04 }, { share: 0.8 }];
 
 type PlacementQuestion = { label: string; lang?: string; options: string[]; question: string };
 
 async function getPlacementQuestions(): Promise<Record<ExampleGoal, PlacementQuestion>> {
   const t = await getExtracted();
+  const format = await getFormatter();
   const set = await getExampleSet();
 
   const percent = {
-    options: ["96%", "100%", "104%", "80%"],
+    options: PRICE_SHARES.map(({ share }) => format.number(share, { style: "percent" })),
     question: t(
       "A price goes up 20%, then down 20%. What percent of the original price is it now?",
     ),
@@ -22,16 +25,12 @@ async function getPlacementQuestions(): Promise<Record<ExampleGoal, PlacementQue
       ...percent,
       label: t("Question {number, number} · {subject}", {
         number: 3,
-        subject: set.exam === "enem" ? t("Mathematics") : t("Math"),
+        subject: set.exam.placed.subject.name,
       }),
     },
     job: {
       label: t("Question {number, number} · {subject}", { number: 3, subject: t("Spreadsheets") }),
-      // A spreadsheet's functions are named in its language: Brazil's say SOMA and split with ";".
-      options:
-        set.market === "brazil"
-          ? ["=SOMA(B2:B9)", "=SOMAR(B2:B9)", "=SOMA(B2;B9)"]
-          : ["=SUM(B2:B9)", "=ADD(B2:B9)", "=SUM(B2,B9)"],
+      options: [...set.job.formulas],
       question: t("Which formula adds up the values in B2 through B9?"),
     },
     move:

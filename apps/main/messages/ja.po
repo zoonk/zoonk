@@ -2180,139 +2180,10 @@ msgid "Right answers in the last 90 days"
 msgstr "過去90日間の正解率"
 
 #: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "VoGk4M"
-msgid "Human Sciences"
-msgstr "人文科学"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "hi9HZU"
-msgid "The 1922 Republican Reaction"
-msgstr "1922年のRepublican Reaction"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
 #: src/app/[lang]/(home)/_components/hero-days.ts
 msgctxt "fqtVVy"
 msgid "Quick review"
 msgstr "さっと復習"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "6uQ0Uq"
-msgid "Mathematics"
-msgstr "数学"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "UVKvZc"
-msgid "Coupons and discounts together"
-msgstr "クーポンと割引の併用"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "uwjllL"
-msgid "Essay"
-msgstr "小論文"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "GgvwAY"
-msgid "Agent and action"
-msgstr "誰が何をするか"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-msgctxt "80dW6X"
-msgid "Natural Sciences"
-msgstr "自然科学"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "zCVSrQ"
-msgid "Breathing and heat loss"
-msgstr "呼吸と放熱"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "CqUpPo"
-msgid "Review: the Republican Reaction"
-msgstr "復習：Republican Reaction"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-msgctxt "xnFXXr"
-msgid "Languages and Codes"
-msgstr "言語と表現"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "ZBVLAA"
-msgid "Verbal text and images"
-msgstr "文章と画像"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "pjCKVa"
-msgid "Means of carrying it out"
-msgstr "実行するための手段"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "PknAdD"
-msgid "Reading and Writing"
-msgstr "リーディングとライティング"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "VApQpI"
-msgid "Words in context"
-msgstr "文脈に応じた言葉の意味"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-#: src/lib/categories/category.ts
-msgctxt "dPgwrL"
-msgid "Math"
-msgstr "数学"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "fnAN1H"
-msgid "Linear equations in context"
-msgstr "一次方程式の文章題"
-
-#. A writing lesson on linking words, such as “however” and “therefore”.
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "Oczvha"
-msgid "Transitions"
-msgstr "つなぎ言葉"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "evMyyy"
-msgid "Rhetorical synthesis"
-msgstr "目的に合わせた情報のまとめ方"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "xVyNnw"
-msgid "Review: words in context"
-msgstr "復習：文脈に応じた言葉の意味"
-
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-msgctxt "1ecowp"
-msgid "Slope and intercept"
-msgstr "傾きと切片"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "planPhases.QyaAtA"
-msgid "Final stretch"
-msgstr "仕上げ"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "planPhases.6RRX7X"
@@ -2328,6 +2199,11 @@ msgstr "知識の穴を埋める"
 msgctxt "planPhases.KV-O0y"
 msgid "Practice"
 msgstr "演習"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "planPhases.QyaAtA"
+msgid "Final stretch"
+msgstr "仕上げ"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "examplePhases.urVD1a"
@@ -2384,16 +2260,6 @@ msgctxt "examplePhases.uNOJ2Q"
 msgid "Portfolio"
 msgstr "ポートフォリオ"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "C-6pYD"
-msgid "ENEM in {month}"
-msgstr "{month}の大学入学共通テスト"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "CsR4zq"
-msgid "SAT in {month}"
-msgstr "{month}のSAT"
-
 #. An example goal's name. Use your language's name for Mexico City.
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "3parBE"
@@ -2410,18 +2276,6 @@ msgstr "ロンドンで使う英語"
 msgctxt "AeiByK"
 msgid "Data analyst by {month}"
 msgstr "{month}までにデータアナリストになる"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "PqLPMH"
-msgid "ENEM"
-msgstr "大学入学共通テスト"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "fFLzL0"
-msgid "SAT"
-msgstr "SAT"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "EV-GCl"
@@ -2628,17 +2482,6 @@ msgid "Tell Zoonk your goal and date. Your plan fits your schedule and adjusts i
 msgstr "Zoonkに目標と日付を教えてください。予定に合わせて学習計画を作り、学習できない日があっても調整します。"
 
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "UDq71K"
-msgid "get ready for the ENEM in {month}"
-msgstr "{month}のENEMに向けて準備する"
-
-#. The page below shows a plan for the SAT, so keep the SAT.
-#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "voOKaq"
-msgid "get ready for the SAT in {month}"
-msgstr "{month}の大学入学共通テストに備える"
-
-#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "XmrixE"
 msgid "get promoted to data analyst by {month}"
 msgstr "{month}までにデータアナリストに昇進する"
@@ -2654,58 +2497,6 @@ msgstr "{month}にメキシコシティへ引っ越すので、スペイン語�
 msgctxt "FWZush"
 msgid "speak English for my move to London in {month}"
 msgstr "{month}にロンドンへ引っ越すので、英語を話せるようになる"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "HyMpO2"
-msgid "Percentage"
-msgstr "百分率"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "9tawku"
-msgid "Chains of percentage changes"
-msgstr "連続する割合の増減"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "RBEn94"
-msgid "Final price in offers with conditions"
-msgstr "条件付きセールの支払額"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "70A04J"
-msgid "Real discount on bulk purchases"
-msgstr "まとめ買いの実質的な割引"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "mqt6F2"
-msgid "Functions"
-msgstr "関数"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "uWZ77n"
-msgid "Percentages"
-msgstr "百分率"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "x5e8F-"
-msgid "Ratios and rates"
-msgstr "比と割合"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "SQoF9G"
-msgid "Linear equations"
-msgstr "一次方程式"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "54haEF"
-msgid "Systems of equations"
-msgstr "連立方程式"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "FwdaMw"
-msgid "Quadratics"
-msgstr "二次方程式"
 
 #: src/app/[lang]/(home)/_components/placed-plans.tsx
 msgctxt "Q2mxTI"
@@ -2809,24 +2600,9 @@ msgid "Which sentence asks for a coffee politely?"
 msgstr "丁寧にコーヒーを注文する文はどれですか？"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "ccKtO0"
-msgid "It goes to your Mistakes notebook, and your plan brings it back."
-msgstr "間違いノートに保存され、学習計画の中でまた出題されます。"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "XdCc60"
-msgid "In a pasture, grass is eaten by grasshoppers, grasshoppers by frogs, and frogs by snakes."
-msgstr "牧草地では、バッタが草を食べ、カエルがバッタを食べ、ヘビがカエルを食べます。"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "eNAKwz"
-msgid "How much they eat isn't it: any animal turns only a small part of its food into body."
-msgstr "食べる量の違いではありません。どの動物も、食べたもののうち体になるのはほんの一部です。"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "devjxy"
-msgid "ENEM style · Natural Sciences"
-msgstr "共通テスト形式 · 理科"
+msgctxt "6NoIUl"
+msgid "Correct"
+msgstr "正解"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "1nJY2_"
@@ -2834,81 +2610,21 @@ msgid "Your answer"
 msgstr "選んだ答え"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "XSkW9E"
-msgid "Predators eat less than their prey"
-msgstr "捕食者は獲物よりも食べる量が少ないため"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "6NoIUl"
-msgid "Correct"
-msgstr "正解"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "BxleoZ"
-msgid "Part of the energy is lost as heat in each organism's respiration"
-msgstr "それぞれの生物の呼吸で、エネルギーの一部が熱として失われるため"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "bJBtpz"
-msgid "Plants photosynthesize less at night"
-msgstr "夜は植物の光合成が少なくなるため"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "-G1BGM"
-msgid "Decomposers use up the energy first"
-msgstr "分解者が先にエネルギーを使い切るため"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "Ia64KY"
-msgid "Energy turns into matter"
-msgstr "エネルギーが物質に変わるため"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "KklV3w"
-msgid "In a food chain, the available energy decreases at each trophic level. What is the main reason?"
-msgstr "食物連鎖では、栄養段階が上がるごとに利用できるエネルギーが減ります。主な理由は何ですか？"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "7HOB5M"
-msgid "Not quite. $12 of it is the monthly fee: only $3.40 pays for texts, and $3.40 ÷ $0.05 = 68."
-msgstr "少し違います。支払額のうち12ドルは月額の基本料金です。メッセージ送信料は3.40ドルだけなので、3.40ドル ÷ 0.05ドル = 68通です。"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "5vUSgc"
-msgid "SAT style · Math"
-msgstr "SAT形式 · 数学"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "fzFJfx"
-msgid "A phone plan costs $12 a month plus $0.05 per text. Ana paid $15.40 in March. How many texts did she send?"
-msgstr "携帯電話の料金は月額12ドルで、メッセージ1通につき0.05ドルかかります。アナさんは3月に15.40ドル支払いました。メッセージを何通送りましたか？"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "pS0xug"
-msgid "Ecology"
-msgstr "生態学"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "bTLlEc"
-msgid "Electricity"
-msgstr "電気"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "s4wHw2"
-msgid "Waves"
-msgstr "波動"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "5HTCGf"
-msgid "Chemical bonds"
-msgstr "化学結合"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "YicAn8"
 msgid "A question and a mock exam"
 msgstr "問題と模試"
+
+#. {explanation} says why the learner's answer was wrong. Follow it the way your language joins two sentences.
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "43HclA"
+msgid "{explanation} It goes to your Mistakes notebook, and your plan brings it back."
+msgstr "{explanation}間違いノートに保存され、学習計画に沿ってまた出題されます。"
+
+#. {exam} is a national exam's short name (SAT, bac, 수능); {subject} is a subject.
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "idUS16"
+msgid "{exam} style · {subject}"
+msgstr "{exam}形式 · {subject}"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "TxWEcZ"
@@ -2920,15 +2636,11 @@ msgctxt "fi0FtL"
 msgid "Available with Plus"
 msgstr "Plusで利用できます"
 
+#. {part} is the exam (SAT) or the part of it (Mathematics) the result is for. Exams report a score, a grade or a band (13–15/20, 2–3등급): use a word that fits each.
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "8oF1Dm"
-msgid "Estimated score · Natural Sciences"
-msgstr "推定スコア · 理科"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "hdNQ5-"
-msgid "Estimated score · SAT"
-msgstr "推定スコア · SAT"
+msgctxt "XgYQIA"
+msgid "Estimated score · {part}"
+msgstr "推定スコア · {part}"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "AIeIsk"
@@ -2951,31 +2663,6 @@ msgid "{count, plural, one {# mistake to review} other {# mistakes to review}}"
 msgstr "{count, plural, other {復習が必要な間違いが#件あります}}"
 
 #: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "LF4Rmd"
-msgid "Southeast"
-msgstr "南東部"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "p5M06X"
-msgid "Northeast"
-msgstr "北東部"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "GQoFr3"
-msgid "South"
-msgstr "南部"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "gX3gLf"
-msgid "North"
-msgstr "北部"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "IcTDzP"
-msgid "West"
-msgstr "西部"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
 msgctxt "X8SGOJ"
 msgid "A real problem and the Mistakes notebook"
 msgstr "実践課題と間違いノート"
@@ -2989,16 +2676,6 @@ msgstr "実践課題 · SQL"
 msgctxt "xY0kqD"
 msgid "Which region sold the most?"
 msgstr "売上が最も高い地域はどこですか？"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "QU8p-1"
-msgid "It works. The Southeast sold the most."
-msgstr "うまくいきました。売上が最も高かったのは南東部です。"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "XyPY2_"
-msgid "It works. North sold the most."
-msgstr "うまくいきました。売上が最も高かったのは北部です。"
 
 #: src/app/[lang]/(home)/_components/practice-job.tsx
 msgctxt "yod7QT"
@@ -3083,34 +2760,9 @@ msgid "Next time:"
 msgstr "次回："
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "wMCUxI"
-msgid "Because it's not about how much they eat. Every animal spends most of the energy in its food on staying alive, and respiration releases that energy as heat. That's why only about 10% moves up to the next level."
-msgstr "食べる量の問題ではないからです。どの動物も、食べ物から得たエネルギーの大半を生きるために使い、呼吸によって熱として放出します。そのため、次の段階に移るエネルギーは約10%だけです。"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "hng4OP"
-msgid "Why not A?"
-msgstr "なぜAではないのですか？"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "4CBljU"
-msgid "Mock exam 2 · Question 4 · Natural Sciences"
-msgstr "模試2 · 第4問 · 理科"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "80lZTQ"
-msgid "308 is what you get if you divide all of the $15.40 by 5 cents. But $12 of it is the monthly fee. Only the $3.40 left pays for texts, and $3.40 ÷ $0.05 = 68."
-msgstr "15.40ドル全額を5セントで割ると、308になります。でも、そのうち12ドルは月額の基本料金です。メッセージの送信料にあたるのは残りの3.40ドルだけなので、3.40ドル ÷ 0.05ドル = 68です。"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "HKbV8Z"
-msgid "Why isn't it 308?"
-msgstr "なぜ308ではないのですか？"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "3Eue1R"
-msgid "Mock exam 2 · Question 4 · Math"
-msgstr "模試2 · 第4問 · 数学"
+msgctxt "iX1JrZ"
+msgid "Mock exam {mock, number} · Question {question, number} · {subject}"
+msgstr "第{mock, number}回模試 · 第{question, number}問 · {subject}"
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "0M1dOe"
@@ -3303,10 +2955,11 @@ msgctxt "planDiff.K0Lp_g"
 msgid "Was"
 msgstr "変更前"
 
+#. {phase} is a plan phase's name, such as “Fill the gaps”.
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "3WnP-W"
 msgid "{phase} until {date}"
-msgstr "{phase}は{date}まで"
+msgstr "{phase}（{date}まで）"
 
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "Rec1Kn"
@@ -4447,6 +4100,11 @@ msgstr "語学"
 msgctxt "u3ovjm"
 msgid "Law"
 msgstr "法律"
+
+#: src/lib/categories/category.ts
+msgctxt "dPgwrL"
+msgid "Math"
+msgstr "数学"
 
 #: src/lib/categories/category.ts
 msgctxt "qydxOd"

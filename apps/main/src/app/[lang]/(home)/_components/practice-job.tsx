@@ -6,7 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheckIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { FRAME_EYEBROW_CLASS } from "./day-one-styles";
-import { SQL_NAMES, getExampleSet } from "./landing-examples";
+import { getExampleSet } from "./landing-examples";
 import { CARD_CLASS } from "./practice-card-styles";
 
 const MISTAKE_SKILL = "GROUP BY";
@@ -15,20 +15,7 @@ export async function JobPractice() {
   const t = await getExtracted();
   const format = await getFormatter();
   const set = await getExampleSet();
-  const names = SQL_NAMES[set.market];
-
-  const rows =
-    set.market === "brazil"
-      ? [
-          { amount: 42_180, id: "southeast", region: t("Southeast") },
-          { amount: 37_920, id: "northeast", region: t("Northeast") },
-          { amount: 29_400, id: "south", region: t("South") },
-        ]
-      : [
-          { amount: 42_180, id: "north", region: t("North") },
-          { amount: 37_920, id: "south", region: t("South") },
-          { amount: 29_400, id: "west", region: t("West") },
-        ];
+  const { regions, result, sql: names } = set.job;
 
   const query = [
     {
@@ -63,13 +50,11 @@ export async function JobPractice() {
 
         <p className="text-success-text flex items-center gap-1.5 text-[0.84375rem] font-medium">
           <CircleCheckIcon aria-hidden="true" className="size-4" />
-          {set.market === "brazil"
-            ? t("It works. The Southeast sold the most.")
-            : t("It works. North sold the most.")}
+          {result}
         </p>
 
         <ul className="divided-rows flex flex-col text-[0.84375rem]">
-          {rows.map((row, index) => (
+          {regions.map((row, index) => (
             <li
               className={cn(
                 "flex justify-between gap-3 py-2",
@@ -77,7 +62,7 @@ export async function JobPractice() {
               )}
               key={row.id}
             >
-              <span className={cn(index === 0 && "font-medium")}>{row.region}</span>
+              <span className={cn(index === 0 && "font-medium")}>{row.name}</span>
               <span className={cn(NUMERIC_CLASS, "text-xs")}>{format.number(row.amount)}</span>
             </li>
           ))}

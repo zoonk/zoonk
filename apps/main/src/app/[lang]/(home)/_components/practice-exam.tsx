@@ -59,84 +59,34 @@ function ExamQuestionCard({
 
 export async function ExamPractice() {
   const t = await getExtracted();
-  const set = await getExampleSet();
-  const isEnem = set.exam === "enem";
+  const { exam } = await getExampleSet();
+  const { mock, practice } = exam;
+  const tags = { right: t("Correct"), wrong: t("Your answer") };
 
-  const notebook = t("It goes to your Mistakes notebook, and your plan brings it back.");
-
-  const card = isEnem ? (
-    <ExamQuestionCard
-      context={t(
-        "In a pasture, grass is eaten by grasshoppers, grasshoppers by frogs, and frogs by snakes.",
-      )}
-      explanation={[
-        t("How much they eat isn't it: any animal turns only a small part of its food into body."),
-        notebook,
-      ].join(" ")}
-      label={t("ENEM style · Natural Sciences")}
-      options={[
-        { result: "wrong", tag: t("Your answer"), text: t("Predators eat less than their prey") },
-        {
-          result: "right",
-          tag: t("Correct"),
-          text: t("Part of the energy is lost as heat in each organism's respiration"),
-        },
-        { text: t("Plants photosynthesize less at night") },
-        { text: t("Decomposers use up the energy first") },
-        { text: t("Energy turns into matter") },
-      ]}
-      question={t(
-        "In a food chain, the available energy decreases at each trophic level. What is the main reason?",
-      )}
-    />
-  ) : (
-    <ExamQuestionCard
-      explanation={[
-        t(
-          "Not quite. $12 of it is the monthly fee: only $3.40 pays for texts, and $3.40 ÷ $0.05 = 68.",
-        ),
-        notebook,
-      ].join(" ")}
-      label={t("SAT style · Math")}
-      options={[
-        { text: "58" },
-        { result: "right", tag: t("Correct"), text: "68" },
-        { text: "72" },
-        { result: "wrong", tag: t("Your answer"), text: "308" },
-      ]}
-      question={t(
-        "A phone plan costs $12 a month plus $0.05 per text. Ana paid $15.40 in March. How many texts did she send?",
-      )}
-    />
-  );
-
-  const topics = isEnem
-    ? [
-        { id: "ecology", name: t("Ecology"), right: 2, total: 4 },
-        { id: "electricity", name: t("Electricity"), right: 3, total: 4 },
-        { id: "waves", name: t("Waves"), right: 3, total: 3 },
-        { id: "bonds", name: t("Chemical bonds"), right: 3, total: 3 },
-      ]
-    : [
-        { id: "linear", name: t("Linear equations"), right: 3, total: 4 },
-        { id: "percentages", name: t("Percentages"), right: 3, total: 4 },
-        { id: "words", name: t("Words in context"), right: 3, total: 4 },
-        {
-          id: "transitions",
-          name: t({
-            description: "A writing lesson on linking words, such as “however” and “therefore”.",
-            message: "Transitions",
-          }),
-          right: 3,
-          total: 3,
-        },
-      ];
-
-  const misses = topics.reduce((sum, topic) => sum + topic.total - topic.right, 0);
+  const misses = mock.topics.reduce((sum, topic) => sum + topic.total - topic.right, 0);
 
   return (
     <Pair aria-label={t("A question and a mock exam")}>
-      {card}
+      <ExamQuestionCard
+        context={practice.context}
+        explanation={t({
+          description:
+            "{explanation} says why the learner's answer was wrong. Follow it the way your language joins two sentences.",
+          message: "{explanation} It goes to your Mistakes notebook, and your plan brings it back.",
+          values: { explanation: practice.explanation },
+        })}
+        label={t({
+          description:
+            "{exam} is a national exam's short name (SAT, bac, 수능); {subject} is a subject.",
+          message: "{exam} style · {subject}",
+          values: { exam: exam.name, subject: practice.subject.name },
+        })}
+        options={practice.options.map((option) => ({
+          ...option,
+          tag: option.result && tags[option.result],
+        }))}
+        question={practice.question}
+      />
 
       <ProductWindow className={cn(CARD_CLASS, "gap-4")}>
         <p className="flex items-center justify-between gap-3">
@@ -150,16 +100,21 @@ export async function ExamPractice() {
         </p>
 
         <div className="flex flex-col gap-2">
-          <p className="text-readout text-[2.75rem]">{isEnem ? "610–690" : "1180–1260"}</p>
+          <p className="text-readout text-[2.75rem]">{mock.score}</p>
           <p className="text-muted-foreground text-[0.8125rem]">
-            {isEnem ? t("Estimated score · Natural Sciences") : t("Estimated score · SAT")}
+            {t({
+              description:
+                "{part} is the exam (SAT) or the part of it (Mathematics) the result is for. Exams report a score, a grade or a band (13–15/20, 2–3등급): use a word that fits each.",
+              message: "Estimated score · {part}",
+              values: { part: mock.scoreOf },
+            })}
           </p>
         </div>
 
         <div className="flex flex-col">
           <p className={cn(PAGE_SECTION_TITLE_CLASS, "pb-1")}>{t("By topic")}</p>
           <ul className="divided-rows flex flex-col">
-            {topics.map((topic) => (
+            {mock.topics.map((topic) => (
               <li
                 className="flex items-center justify-between gap-3 py-2 text-[0.84375rem]"
                 key={topic.id}

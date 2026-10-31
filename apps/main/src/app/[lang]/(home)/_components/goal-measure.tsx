@@ -12,7 +12,6 @@ const JOB_PROGRESS = { known: 10, studied: 33, total: 220 };
 
 const JOB_TODAY: Record<DayState, number> = { missed: 2, studied: 1 };
 
-const STUDIED_YESTERDAY = new Set(["essay", "human", "math", "reading"]);
 const STUDIED_POINT = 0.01;
 
 const MOVE_LEVELS = "A2 → B1";
@@ -64,24 +63,12 @@ export async function GoalMeasure({ day, goal }: { day: DayState; goal: ExampleG
     );
   }
 
-  const examSubjects =
-    set.exam === "enem"
-      ? [
-          { id: "languages", name: t("Languages and Codes"), share: 0.31 },
-          { id: "human", name: t("Human Sciences"), share: 0.38 },
-          { id: "natural", name: t("Natural Sciences"), share: 0.27 },
-          { id: "math", name: t("Mathematics"), share: 0.41 },
-          { id: "essay", name: t("Essay"), share: 0.33 },
-        ]
-      : [
-          { id: "reading", name: t("Reading and Writing"), share: 0.38 },
-          { id: "math", name: t("Math"), share: 0.3 },
-        ];
+  const studiedYesterday = new Set(set.exam.today.map((lesson) => lesson.subject.id));
 
-  const subjects = examSubjects.map((subject) => ({
+  const subjects = set.exam.subjects.map((subject) => ({
     ...subject,
     share:
-      day === "studied" && STUDIED_YESTERDAY.has(subject.id)
+      day === "studied" && studiedYesterday.has(subject.id)
         ? subject.share + STUDIED_POINT
         : subject.share,
   }));
@@ -100,7 +87,7 @@ export async function GoalMeasure({ day, goal }: { day: DayState; goal: ExampleG
             className="grid grid-cols-[minmax(0,1fr)_4.5rem_2.5rem] items-center gap-2.5 text-[0.8125rem]"
             key={subject.id}
           >
-            <span className="min-w-0 truncate">{subject.name}</span>
+            <span className="min-w-0 text-pretty">{subject.name}</span>
             <Meter className="h-1">
               <MeterFill className="bg-success" share={subject.share} />
             </Meter>

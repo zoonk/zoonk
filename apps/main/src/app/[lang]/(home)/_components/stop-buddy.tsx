@@ -12,13 +12,7 @@ import { Variant } from "@/components/public/variant-switch";
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { CornerDownRightIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
-import {
-  EXAMPLE_GOALS,
-  type ExampleGoal,
-  GOAL_SWITCH,
-  SQL_NAMES,
-  getExampleSet,
-} from "./landing-examples";
+import { EXAMPLE_GOALS, type ExampleGoal, GOAL_SWITCH, getExampleSet } from "./landing-examples";
 
 const STOP_TITLE_ID = "stop-buddy";
 
@@ -40,30 +34,19 @@ type Exchange = { answer: string; ask: string; context: string; lang?: string; q
 async function getExchanges(): Promise<Record<ExampleGoal, Exchange>> {
   const t = await getExtracted();
   const set = await getExampleSet();
-  const sql = SQL_NAMES[set.market];
+  const { sql } = set.job;
+  const { practice } = set.exam;
 
-  const exam: Exchange =
-    set.exam === "enem"
-      ? {
-          answer: t(
-            "Because it's not about how much they eat. Every animal spends most of the energy in its food on staying alive, and respiration releases that energy as heat. That's why only about 10% moves up to the next level.",
-          ),
-          ask: t("Why not A?"),
-          context: t("Mock exam 2 · Question 4 · Natural Sciences"),
-          quote: t(
-            "In a food chain, the available energy decreases at each trophic level. What is the main reason?",
-          ),
-        }
-      : {
-          answer: t(
-            "308 is what you get if you divide all of the $15.40 by 5 cents. But $12 of it is the monthly fee. Only the $3.40 left pays for texts, and $3.40 ÷ $0.05 = 68.",
-          ),
-          ask: t("Why isn't it 308?"),
-          context: t("Mock exam 2 · Question 4 · Math"),
-          quote: t(
-            "A phone plan costs $12 a month plus $0.05 per text. Ana paid $15.40 in March. How many texts did she send?",
-          ),
-        };
+  const exam: Exchange = {
+    answer: practice.answer,
+    ask: practice.ask,
+    context: t("Mock exam {mock, number} · Question {question, number} · {subject}", {
+      mock: 2,
+      question: 4,
+      subject: practice.subject.name,
+    }),
+    quote: practice.question,
+  };
 
   return {
     exam,

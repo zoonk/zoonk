@@ -1,11 +1,23 @@
 import { getCourseExamDaysByRoute } from "@zoonk/core/catalog/course-exam-days-by-route";
 import { addIsoDays, daysBetweenIsoDays, getIsoDay } from "@zoonk/utils/calendar-day";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { type SupportedLocale, getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { logError } from "@zoonk/utils/logger";
-import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { unstable_rethrow } from "next/navigation";
 import { lang } from "next/root-params";
 import { cache } from "react";
+import { type ExamExample, type ExampleSet } from "./example-set";
+import { de } from "./example-sets/de";
+import { en } from "./example-sets/en";
+import { es } from "./example-sets/es";
+import { fr } from "./example-sets/fr";
+import { it } from "./example-sets/it";
+import { ja } from "./example-sets/ja";
+import { ko } from "./example-sets/ko";
+import { pl } from "./example-sets/pl";
+import { pt } from "./example-sets/pt";
+import { tr } from "./example-sets/tr";
+import { getNextSitting } from "./next-sitting";
 
 export const EXAMPLE_GOALS = ["exam", "move", "job"] as const;
 
@@ -15,21 +27,21 @@ export const DEFAULT_EXAMPLE_GOAL: ExampleGoal = "exam";
 
 export const GOAL_SWITCH = "landing-goal";
 
-/** A page never suggests learning the language it's written in, so English pages move to Mexico City to speak Spanish. */
-export type ExampleSet = {
-  exam: "enem" | "sat";
-  market: "brazil" | "global";
-  move: "london" | "mexico-city";
+const EXAMPLE_SETS: Record<SupportedLocale, ExampleSet> = {
+  de,
+  en,
+  es,
+  fr,
+  it,
+  ja,
+  ko,
+  pl,
+  pt,
+  tr,
 };
 
 export async function getExampleSet(): Promise<ExampleSet> {
-  const language = await lang();
-
-  return {
-    exam: language === "pt" ? "enem" : "sat",
-    market: language === "pt" ? "brazil" : "global",
-    move: language === "en" ? "mexico-city" : "london",
-  };
+  return EXAMPLE_SETS[getSupportedLocaleFromLanguage(await lang())];
 }
 
 /** Noon UTC is the same day in every time zone. */
@@ -40,59 +52,54 @@ function exampleDay(isoDate: string): Date {
 /** Example dates are written as if this were today and move with the real calendar, so no day shown is already gone. */
 const AUTHORED_TODAY = "2026-10-13";
 
-const ENEM_ROUTE = { brandSlug: AI_ORG_SLUG, courseSlug: "enem-pt" };
+type ExamCourse = NonNullable<ExamExample["course"]>;
 
-type ExampleDays = { enemDay: string | null; today: string };
+type ExampleDays = { examDay: string | null; today: string };
 
 /** Cached so the page stays prerendered; the default cache lifetime works it out again soon after the day changes. */
-async function getCachedExampleDays(exam: ExampleSet["exam"]): Promise<ExampleDays> {
+async function getCachedExampleDays(course: ExamCourse | null): Promise<ExampleDays> {
   "use cache";
 
-  const found = exam === "enem" ? await getCourseExamDaysByRoute(ENEM_ROUTE) : null;
+  const found = course ? await getCourseExamDaysByRoute(course) : null;
   const timeZone = found?.timeZone ?? "UTC";
 
   const today = getIsoDay({ now: new Date(), timeZone });
-  return { enemDay: found?.days.find((day) => day > today) ?? null, today };
+  return { examDay: found?.days.find((day) => day > today) ?? null, today };
 }
 
-async function getExampleDays(exam: ExampleSet["exam"]): Promise<ExampleDays> {
+async function getExampleDays(course: ExamCourse | null): Promise<ExampleDays> {
   try {
-    return await getCachedExampleDays(exam);
+    return await getCachedExampleDays(course);
   } catch (error) {
     // Next's own signals (a prerender's interrupted request) must keep propagating.
     unstable_rethrow(error);
     logError("Landing example days failed", { error });
 
-    return getCachedExampleDays("sat");
+    return getCachedExampleDays(null);
   }
 }
 
 export type ExampleCalendar = {
-  enemDay: Date | null;
+  examDay: Date;
   shift: (isoDate: string) => Date;
   today: Date;
   tomorrow: Date;
 };
 
 export const getExampleCalendar = cache(async (): Promise<ExampleCalendar> => {
-  const set = await getExampleSet();
-  const { enemDay, today } = await getExampleDays(set.exam);
+  const { exam } = await getExampleSet();
+  const { examDay, today } = await getExampleDays(exam.course ?? null);
   const offset = daysBetweenIsoDays({ from: AUTHORED_TODAY, to: today });
 
   return {
-    enemDay: enemDay ? exampleDay(enemDay) : null,
+    examDay: exampleDay(examDay ?? getNextSitting({ day: exam.date, today })),
     shift: (isoDate) => exampleDay(addIsoDays({ day: isoDate, days: offset })),
     today: exampleDay(today),
     tomorrow: exampleDay(addIsoDays({ day: today, days: 1 })),
   };
 });
 
-const EXAMPLE_GOAL_DATES = {
-  enem: "2026-11-08",
-  job: "2027-06-10",
-  move: "2027-03-01",
-  sat: "2027-03-13",
-} as const;
+const EXAMPLE_GOAL_DATES = { job: "2027-06-10", move: "2027-03-01" } as const;
 
 export function daysBetween({ from, to }: { from: Date; to: Date }): number {
   return Math.round((to.getTime() - from.getTime()) / MS_PER_DAY);
@@ -101,21 +108,9 @@ export function daysBetween({ from, to }: { from: Date; to: Date }): number {
 export function getGoalDate({
   calendar,
   goal,
-  set,
 }: {
   calendar: ExampleCalendar;
   goal: ExampleGoal;
-  set: ExampleSet;
 }): Date {
-  if (goal === "exam" && set.exam === "enem" && calendar.enemDay) {
-    return calendar.enemDay;
-  }
-
-  return calendar.shift(EXAMPLE_GOAL_DATES[goal === "exam" ? set.exam : goal]);
+  return goal === "exam" ? calendar.examDay : calendar.shift(EXAMPLE_GOAL_DATES[goal]);
 }
-
-/** A Brazilian database names its columns in Portuguese. */
-export const SQL_NAMES = {
-  brazil: { orders: "pedidos", region: "regiao", sales: "vendas" },
-  global: { orders: "orders", region: "region", sales: "sales" },
-} as const;

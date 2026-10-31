@@ -3,7 +3,7 @@
 ## Voice and locale
 
 - Use Italian for Italy and informal “tu”.
-- Localize an exam named only as an example, such as a goal suggestion, for Italy: the Maturità, university admission tests and concorsi pubblici. Keep the exam when the screen shows its own scores, sections or questions, such as the SAT example plan.
+- Localize an exam named only as an example, such as a goal suggestion, for Italy: the Maturità, university admission tests and concorsi pubblici. Keep the exam when the screen shows its own scores, sections or questions, such as an SAT course.
 - Lines saying what Zoonk is doing while it works speak as “noi” (“Stiamo preparando la pagina 3…”). The buddy speaks as “io”.
 - Buttons, links, menu actions and mission names use the “tu” imperative: “Riprova”, “Inizia un nuovo obiettivo”, “Completa la tua prima lezione”.
 - Options the learner picks to answer a question or name a goal speak as the learner, in the infinitive or the first person: “Cambiare carriera”, “Parto da zero”, “Superare la Maturità”. Plan phases and feature titles are nouns: “Recupero delle lacune”, “Esercizi sugli errori”.
