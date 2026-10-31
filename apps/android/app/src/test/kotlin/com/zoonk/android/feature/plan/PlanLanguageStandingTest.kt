@@ -80,7 +80,7 @@ class PlanLanguageStandingTest {
         show()
 
         compose.onNode(hasClickAction() and hasText("Level")).assertIsDisplayed()
-        compose.onNodeWithText("A2+, goal B2").assertIsDisplayed()
+        compose.onNodeWithText("B1, goal B2").assertIsDisplayed()
         compose.onNodeWithText("Reading leads").assertIsDisplayed()
     }
 

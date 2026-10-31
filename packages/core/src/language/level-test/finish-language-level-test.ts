@@ -1,7 +1,6 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { type LanguageSkill, type LanguageSkillLevel, type TransactionClient } from "@zoonk/db";
-import { formatCefrScore } from "@zoonk/utils/cefr";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getUserProgressCacheTag } from "../../cache/tags";
@@ -11,13 +10,13 @@ import { type ProgressLock } from "../../sessions/_utils/session-progress";
 import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { readGoalDetails } from "../_utils/language-goal";
+import { getOverallLevel } from "../levels/skill-level-rules";
 import { announceLevelTestPlacement, placeLevelTestResult } from "./_utils/level-test-placement";
 import { loadLevelTestContext, readLevelTestProgress } from "./_utils/level-test-state";
 import { type LevelTestBank, type LevelTestProgress } from "./level-test-contract";
 import {
   type LevelTestScores,
   getLevelTestScores,
-  getOverallScore,
   listLevelTestLevels,
   toLevelLabels,
 } from "./level-test-rules";
@@ -144,7 +143,7 @@ export async function finishLanguageLevelTest(
 
       const details = {
         ...readGoalDetails(current),
-        level: formatCefrScore(getOverallScore(currentScores)),
+        level: getOverallLevel(listLevelTestLevels(currentScores).map(({ score }) => score)),
         levelTest: { ...currentProgress, counted: currentProgress.answers.length },
         skillLevels: toLevelLabels(currentScores),
       };

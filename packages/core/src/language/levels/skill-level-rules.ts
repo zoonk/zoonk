@@ -130,11 +130,11 @@ export function getLevelTrend({
   return score < startScore ? "down" : "same";
 }
 
+/** The level test stores this as the level the plan starts from, so what a learner is shown is where they are placed. */
 export function getOverallLevel(scores: readonly number[]): string | null {
   if (scores.length === 0) {
     return null;
   }
 
-  const average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
-  return formatCefrScore(Math.floor(average / HALF_STEP) * HALF_STEP);
+  return formatCefrScore(scores.reduce((sum, score) => sum + score, 0) / scores.length);
 }

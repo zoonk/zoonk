@@ -120,9 +120,10 @@ describe(getLevelTrend, () => {
 });
 
 describe(getOverallLevel, () => {
-  it("rounds the skills' average down to a half step", () => {
-    expect(getOverallLevel([2, 2, 1.5, 1.5])).toBe("A2+");
-    expect(getOverallLevel([2, 2, 2, 1.5])).toBe("A2+");
+  it("rounds the skills' average to the nearest half step", () => {
+    expect(getOverallLevel([2, 2, 2, 1.5])).toBe("B1");
+    expect(getOverallLevel([2, 2, 1.5, 1.5])).toBe("B1");
+    expect(getOverallLevel([2, 1.5, 1.5])).toBe("A2+");
     expect(getOverallLevel([2, 2])).toBe("B1");
   });
 

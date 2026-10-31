@@ -7,7 +7,7 @@ internal const val LANGUAGE_GOAL = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a01"
 
 /** Reading and listening rose a level since the level test; two units done, two ahead. */
 internal fun languageProgress(
-    level: String? = "A2+",
+    level: String? = "B1",
     target: String? = """{"label":"B2","score":3}""",
     targetDate: String? = "2027-06-30",
     speakingMock: String? = null,

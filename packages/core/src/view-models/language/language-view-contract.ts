@@ -41,7 +41,7 @@ export const languageProgressViewSchema = z
       .nullable()
       .meta({
         description:
-          'The level across skills ("A2+"): their average, rounded down to a half step; null before any',
+          'The level across skills ("A2+"): their average, rounded to the nearest half step, as the level test places the plan; null before any',
       }),
     levels: z.array(languageSkillLevelSchema),
     speaking: speakingPaperViewSchema
@@ -196,7 +196,7 @@ export const languageTodayViewSchema = z
       .nullable()
       .meta({
         description:
-          "The level across skills (their average, rounded down to a half step), shown instead of preparation",
+          "The level across skills (their average, rounded to the nearest half step), shown instead of preparation",
       }),
     pronunciation: duePronunciationSchema
       .nullable()

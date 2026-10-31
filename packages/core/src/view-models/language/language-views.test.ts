@@ -61,7 +61,7 @@ describe("language view models", () => {
     });
 
     expect(progress.target).toStrictEqual({ label: "B1+", score: 2.5 });
-    expect(progress.level).toBe("A2");
+    expect(progress.level).toBe("A2+");
 
     expect(progress.canDo).toStrictEqual([
       { done: true, text: "Consigo fazer a parte 1", unitTitle: "Chegando" },
@@ -398,7 +398,7 @@ describe("language view models", () => {
     expect(result).toStrictEqual({
       status: "ready",
       today: {
-        level: { label: "A2", target: "B1+" },
+        level: { label: "A2+", target: "B1+" },
         pronunciation: null,
         speaking: { access: "plusRequired", title: "B1 Preliminary" },
       },

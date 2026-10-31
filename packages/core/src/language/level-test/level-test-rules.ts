@@ -276,8 +276,3 @@ export function listLevelTestLevels(
 export function toLevelLabels(scores: LevelTestScores): Partial<Record<LanguageSkill, string>> {
   return Object.fromEntries(listLevelTestLevels(scores).map((level) => [level.skill, level.label]));
 }
-
-export function getOverallScore(scores: LevelTestScores): number {
-  const values = listLevelTestLevels(scores).map((level) => level.score);
-  return clampCefrScore(values.reduce((sum, value) => sum + value, 0) / values.length);
-}

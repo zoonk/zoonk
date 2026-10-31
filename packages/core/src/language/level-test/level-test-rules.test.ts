@@ -1,11 +1,10 @@
-import { CEFR_LEVELS, clampCefrScore } from "@zoonk/utils/cefr";
+import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { describe, expect, it } from "vitest";
 import { type LevelTestBank, type LevelTestProgress } from "./level-test-contract";
 import {
   LEVEL_TEST_TOTAL,
   getLevelTestScores,
   getNextLevelTestStep,
-  getOverallScore,
   toLevelLabels,
 } from "./level-test-rules";
 
@@ -55,7 +54,6 @@ describe("level estimates", () => {
 
     expect(scores.speaking).toBeUndefined();
     expect(toLevelLabels(scores)).not.toHaveProperty("speaking");
-    expect(getOverallScore(scores)).toBe(clampCefrScore((scores.reading + scores.listening) / 2));
   });
 
   it("rises with right answers and falls with wrong ones", () => {
@@ -163,6 +161,5 @@ describe(getLevelTestScores, () => {
     expect(scores.speaking).toBe(0.5);
     expect(toLevelLabels(scores).speaking).toBe("A1+");
     expect(toLevelLabels(scores)).not.toHaveProperty("writing");
-    expect(getOverallScore(scores)).toBeGreaterThanOrEqual(0.5);
   });
 });

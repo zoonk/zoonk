@@ -28,6 +28,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-util
 import * as announcement from "../../plans/announce-tested-out-items";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
+import { getLanguageTodayView } from "../../view-models/language/get-language-today-view";
 import { readGoalDetails } from "../_utils/language-goal";
 import { skipAlphabetIntro } from "../alphabet/skip-alphabet-intro";
 import { placeLevelTestResult } from "./_utils/level-test-placement";
@@ -717,6 +718,41 @@ describe("language level test", () => {
         : null;
 
     expect(level?.score).toBeGreaterThan(1);
+  });
+
+  it("shows on Today the level the plan was placed at", async () => {
+    await saveBank();
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    const answers = ["reading", "listening"].flatMap((skill) =>
+      ["A2", "B1"].map((level) => ({ answerIndex: 1, id: `${skill}-${level}-0` })),
+    );
+
+    await prisma.goal.update({
+      data: {
+        details: {
+          ...readGoalDetails(goal),
+          levelTest: { answers, speaking: { level: "A2", score: 0.95 } },
+        },
+      },
+      where: { id: goal.id },
+    });
+
+    await expect(finishLanguageLevelTest(goal.id)).resolves.toMatchObject({
+      levels: [
+        { label: "B1", skill: "reading" },
+        { label: "B1", skill: "listening" },
+        { label: "A2+", skill: "speaking" },
+      ],
+    });
+
+    const placed = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    expect(readGoalDetails(placed).level).toBe("B1");
+
+    await expect(getLanguageTodayView({ goalId: goal.id })).resolves.toMatchObject({
+      today: { level: { label: "B1" } },
+    });
   });
 
   it("asks a guest who used today's help to sign up before checking the sentence", async () => {
