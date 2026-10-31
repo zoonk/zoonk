@@ -84,6 +84,21 @@ class KeyboardFretboardTest {
     }
 
     @Test
+    fun anExplanationStartsOnTheSolvedEndEvenWhenTheQuestionHasAStart() {
+        assertEquals(
+            listOf(0, 3, 7),
+            KeyboardFretboard.initialPitches(
+                null,
+                isInteraction = true,
+                byEar = false,
+                start = cMajor,
+                target = cMinor,
+                isExploring = true,
+            ),
+        )
+    }
+
+    @Test
     fun aChordSoundsTogetherAndNotesOneAfterTheOtherEachAboveTheLast() {
         assertEquals(
             listOf(MusicSound(0.0, 69), MusicSound(0.03, 72), MusicSound(0.06, 76)),
