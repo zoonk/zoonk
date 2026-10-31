@@ -2,6 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { betterAuth } from "better-auth/minimal";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { type AuthEvent, registerAuthEventSink } from "./auth-events";
 import { guestAuth } from "./guests/_test-utils/guest-auth";
 import { createGoal } from "./guests/_test-utils/learner-data";
 import { signInWithNativeApple } from "./native-apple";
@@ -121,6 +122,16 @@ function createRequestIP() {
   return `12.${Number.parseInt(bytes.slice(0, 2), 16)}.${Number.parseInt(bytes.slice(2, 4), 16)}.${Number.parseInt(bytes.slice(4, 6), 16)}`;
 }
 
+function recordAuthEvents() {
+  const sink = vi.fn((_event: AuthEvent) => Promise.resolve());
+  registerAuthEventSink(sink);
+  return sink;
+}
+
+function signIns(sink: ReturnType<typeof recordAuthEvents>) {
+  return sink.mock.calls.map(([event]) => event).filter((event) => event.name === "sign-in");
+}
+
 describe("native Apple sign-in through Apple's endpoints", () => {
   const requestIPs = new Set<string>();
 
@@ -147,6 +158,7 @@ describe("native Apple sign-in through Apple's endpoints", () => {
       const credentials = await authorizeWithApple({ audience: clientIdentifier });
       const ip = createRequestIP();
       requestIPs.add(ip);
+      const authEvents = recordAuthEvents();
 
       const session = await signInWithNativeApple({
         credentials: { ...credentials, client },
@@ -171,6 +183,10 @@ describe("native Apple sign-in through Apple's endpoints", () => {
 
       expect(exchange?.get("client_id")).toBe(clientIdentifier);
       expect(exchange?.get("redirect_uri") ?? null).toBe(redirectURI);
+
+      expect(signIns(authEvents)).toStrictEqual([
+        { method: "apple", name: "sign-in", userId: session.user.id },
+      ]);
     },
   );
 });
@@ -180,6 +196,7 @@ describe("a guest's Apple sign-in that fails after Apple's grant", () => {
     const guest = await guestAuth.api.signInAnonymous();
     const goal = await createGoal(guest.user.id);
     const ip = createRequestIP();
+    const authEvents = recordAuthEvents();
 
     const credentials = await authorizeWithApple({
       audience: SERVICES_ID,
@@ -203,6 +220,7 @@ describe("a guest's Apple sign-in that fails after Apple's grant", () => {
 
     expect(keptGoal?.userId).toBe(guest.user.id);
     expect(guestSession?.userId).toBe(guest.user.id);
+    expect(signIns(authEvents)).toStrictEqual([]);
   });
 });
 

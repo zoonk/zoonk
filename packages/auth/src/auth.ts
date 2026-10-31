@@ -1,10 +1,17 @@
 import { betterAuth } from "better-auth/minimal";
 import { GUEST_SIGN_IN_RATE_LIMIT } from "./config";
 import { createEmailDeletionReauthentication } from "./email-deletion-reauthentication";
-import { baseAuthConfig, baseAuthPlugins, fullPlugins, socialProviders } from "./server";
+import {
+  baseAuthConfig,
+  baseAuthPlugins,
+  fullPlugins,
+  signInDatabaseHooks,
+  socialProviders,
+} from "./server";
 
 export const auth = betterAuth({
   ...baseAuthConfig,
+  databaseHooks: signInDatabaseHooks,
   plugins: [...baseAuthPlugins, ...fullPlugins],
   rateLimit: {
     customRules: { "/sign-in/anonymous": GUEST_SIGN_IN_RATE_LIMIT },

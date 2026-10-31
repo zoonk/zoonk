@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { reportAuthEvent } from "./auth-events";
 import { getAppleClient } from "./native-apple-client";
 import { type NativeAppleCredentials } from "./native-apple-contract";
 import { type NativeAppleSession, isNativeAppleSession } from "./native-apple-response";
@@ -298,6 +299,8 @@ export async function signInWithNativeApple(request: NativeAppleSessionRequest) 
     await deleteAttemptSessions({ changes, responseSessionToken: session.token });
     throw error;
   });
+
+  await reportAuthEvent({ method: "apple", name: "sign-in", userId: session.user.id });
 
   return session;
 }

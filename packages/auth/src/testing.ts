@@ -1,9 +1,10 @@
 import { betterAuth } from "better-auth/minimal";
 import { createEmailDeletionReauthentication } from "./email-deletion-reauthentication";
-import { baseAuthConfig, baseAuthPlugins } from "./server";
+import { baseAuthConfig, baseAuthPlugins, signInDatabaseHooks } from "./server";
 
 export const auth = betterAuth({
   ...baseAuthConfig,
+  databaseHooks: signInDatabaseHooks,
   emailAndPassword: {
     enabled: true,
     password: {

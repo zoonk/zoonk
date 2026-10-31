@@ -21,7 +21,11 @@ import {
   IS_COOKIE_CACHE_ENABLED,
   SESSION_EXPIRES_IN_DAYS,
 } from "./config";
-import { ensureUserProgressAfterAuthCreate, reportSignUpAfterAuthCreate } from "./db-hooks";
+import {
+  ensureUserProgressAfterAuthCreate,
+  reportSignInAfterSessionCreate,
+  reportSignUpAfterAuthCreate,
+} from "./db-hooks";
 import { createEmailOTPPlugin } from "./email-otp-plugin";
 import { validateEmailBeforeOTP } from "./email-signup-policy";
 import { guardUserCreation } from "./guests/account-creation-guard";
@@ -97,6 +101,22 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
   // code would hear it's wrong instead of expired. Expired codes stay until the daily sweep.
   verification: { disableCleanup: true },
 };
+
+/**
+ * For the instances learners sign in with. Account deletion's reauthorization signs in only to
+ * prove who's deleting, and native Apple reports once its whole sign-in has succeeded.
+ */
+export const signInDatabaseHooks = {
+  ...baseAuthConfig.databaseHooks,
+  session: {
+    create: {
+      after: async (session, context) => {
+        await baseAuthConfig.databaseHooks?.session?.create?.after?.(session, context);
+        await reportSignInAfterSessionCreate(session, context);
+      },
+    },
+  },
+} satisfies BetterAuthOptions["databaseHooks"];
 
 export const baseAuthPlugins = [
   adminPlugin(),

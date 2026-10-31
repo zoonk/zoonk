@@ -5,7 +5,13 @@ import { GUEST_SIGN_IN_RATE_LIMIT } from "./config";
 import { createEmailDeletionReauthentication } from "./email-deletion-reauthentication";
 import { createEmailOTPPlugin } from "./email-otp-plugin";
 import { sessionHintPlugin } from "./plugins/session-hint";
-import { baseAuthConfig, baseAuthPlugins, fullPlugins, socialProviders } from "./server";
+import {
+  baseAuthConfig,
+  baseAuthPlugins,
+  fullPlugins,
+  signInDatabaseHooks,
+  socialProviders,
+} from "./server";
 
 /** BotID (the `captcha` plugin) only answers on Vercel, so the E2E build, which runs outside it, leaves it out. */
 const e2ePluginOverrideIds = new Set([
@@ -18,6 +24,7 @@ const e2ePluginOverrideIds = new Set([
 
 export const auth = betterAuth({
   ...baseAuthConfig,
+  databaseHooks: signInDatabaseHooks,
   emailAndPassword: {
     enabled: true,
     password: {

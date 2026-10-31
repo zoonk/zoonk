@@ -10,21 +10,21 @@ export async function register() {
     const [
       { registerAiGenerationAnalytics },
       { registerAiCallLog },
-      { registerSignUpAnalytics },
+      { registerAuthAnalytics },
       { registerSubscriptionAnalytics },
       { registerEvaluationRunLog },
     ] = await Promise.all([
       import("@zoonk/core/analytics/ai-generations"),
       import("@zoonk/core/ai-calls/log"),
-      import("@zoonk/core/analytics/sign-up-events"),
+      import("@zoonk/core/analytics/auth-events"),
       import("@zoonk/core/analytics/subscription-events"),
       import("@zoonk/core/evaluation-runs/log"),
     ]);
 
     registerAiGenerationAnalytics();
     registerAiCallLog();
-    // Better Auth serves sign-ups and Stripe's webhooks here as well as in the API.
-    registerSignUpAnalytics();
+    // Better Auth serves sign-ins, sign-ups and Stripe's webhooks here as well as in the API.
+    registerAuthAnalytics();
     registerSubscriptionAnalytics();
     registerEvaluationRunLog();
   }
