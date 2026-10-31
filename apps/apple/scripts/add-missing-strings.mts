@@ -1,119 +1,81 @@
-import { globSync, readFileSync, statSync, writeFileSync } from "node:fs";
-import path from "node:path";
+import { readFileSync, writeFileSync } from "node:fs";
 import {
-  PLACEHOLDER,
-  type SourceString,
-  appleDirectory,
+  type CompiledString,
+  FORMAT_SPECIFIER,
   catalogFiles,
   findMissingStrings,
   listStrings,
-  normalizeKey,
   readCatalog,
 } from "./check-strings.mts";
 
-type BuiltString = SourceString & { comment?: string };
-
-type StringsData = {
-  builtAt: number;
-  source: string;
-  tables: Record<string, { comment?: string; key: string }[]>;
-};
-
-// `make` and `pnpm iphone` build here; the Xcode app adds new strings to the catalogs itself.
-const STRINGSDATA =
-  "DerivedData/*/Build/Intermediates.noindex/*.build/*/*.build/Objects-normal/*/*.stringsdata";
-
 const XCODE_KEY_ORDER = new Intl.Collator("en", { caseFirst: "upper" });
 
-function readStringsData(file: string): StringsData {
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The Swift compiler writes this file.
-  const data = JSON.parse(readFileSync(file, "utf8")) as Omit<StringsData, "builtAt">;
-  return { ...data, builtAt: statSync(file).mtimeMs };
-}
+/** Xcode numbers the arguments of a string that has several, so a translation can reorder them. */
+function numberArguments(text: string): string {
+  const specifiers = (text.match(FORMAT_SPECIFIER) ?? []).filter((specifier) => specifier !== "%%");
 
-/** The strings in each source file's newest build, with the compiler's format specifiers. */
-function builtStrings(): BuiltString[] {
-  const builds = globSync(STRINGSDATA, { cwd: appleDirectory })
-    .map((file) => readStringsData(path.join(appleDirectory, file)))
-    .filter((data) => data.source.startsWith(`${appleDirectory}/`));
+  if (specifiers.length < 2 || specifiers.some((specifier) => specifier.includes("$"))) {
+    return text;
+  }
 
-  const newest = Map.groupBy(builds, (data) => data.source)
-    .values()
-    .map((versions) =>
-      versions.reduce((last, data) => (data.builtAt > last.builtAt ? data : last)),
-    );
+  let position = 0;
 
-  return [...newest].flatMap((data) =>
-    Object.entries(data.tables).flatMap(([table, strings]) =>
-      strings.map((string) => ({ ...string, table })),
-    ),
+  return text.replaceAll(FORMAT_SPECIFIER, (specifier) =>
+    specifier === "%%" ? specifier : `%${(position += 1)}$${specifier.slice(1)}`,
   );
 }
 
-function stringId({ key, table }: SourceString): string {
-  return `${table}\n${normalizeKey(key)}`;
-}
-
-/** Xcode gives a string with several arguments an English value with numbered ones. */
-function englishValue(key: string) {
-  const specifiers = key.match(PLACEHOLDER) ?? [];
-
-  if (specifiers.length < 2) {
-    return {};
-  }
-
-  const value = key
-    .split(PLACEHOLDER)
-    .map((text, index) => {
-      const specifier = specifiers[index];
-      return specifier ? `${text}%${index + 1}$${specifier.slice(1)}` : text;
-    })
-    .join("");
-
-  return { localizations: { en: { stringUnit: { state: "new", value } } } };
-}
-
-function catalogEntry({ key, uses }: { key: string; uses: BuiltString[] }) {
+function catalogEntry(key: string, uses: CompiledString[]) {
   const comments = [...new Set(uses.flatMap((use) => use.comment ?? []))].toSorted();
-  const comment = comments.length > 0 ? { comment: comments.join("\n") } : {};
+  const value = uses.find((use) => use.value !== undefined)?.value;
+  const english = numberArguments(value ?? key);
 
-  return [key, { ...comment, ...englishValue(key) }] as const;
+  return [
+    key,
+    {
+      ...(comments.length > 0 && { comment: comments.join("\n") }),
+      ...(value !== undefined && { extractionState: "extracted_with_value" }),
+      ...(english !== key && {
+        localizations: { en: { stringUnit: { state: "new", value: english } } },
+      }),
+    },
+  ] as const;
 }
 
 /** Writes the catalog the way Xcode does, so only the new strings show in its diff. */
-function addToCatalog({ file, strings }: { file: string; strings: BuiltString[] }) {
+function addToCatalog(file: string, strings: CompiledString[]) {
   const catalog = readCatalog(file);
 
   const added = Map.groupBy(strings, (string) => string.key)
     .entries()
-    .map(([key, uses]) => catalogEntry({ key, uses }));
+    .map(([key, uses]) => catalogEntry(key, uses));
 
   const entries = [...Object.entries(catalog.strings), ...added].toSorted(([first], [second]) =>
     XCODE_KEY_ORDER.compare(first, second),
   );
 
   const json = JSON.stringify({ ...catalog, strings: Object.fromEntries(entries) }, null, 2);
-  writeFileSync(file, json.replaceAll(/^(?<key>\s*"(?:[^"\\]|\\.)*"): /gmu, "$<key> : "));
+  const ending = readFileSync(file, "utf8").endsWith("\n") ? "\n" : "";
+
+  writeFileSync(
+    file,
+    `${json.replaceAll(/^(?<key>\s*"(?:[^"\\]|\\.)*"): /gmu, "$<key> : ")}${ending}`,
+  );
 }
 
 const { missing } = findMissingStrings();
 const catalogs = catalogFiles();
-const built = Map.groupBy(builtStrings(), (string) => stringId(string));
-
-const addable = missing.filter(
-  (string) => catalogs.has(string.table) && built.has(stringId(string)),
-);
-
-const unresolved = missing.filter((string) => !addable.includes(string));
-const added = addable.flatMap((string) => built.get(stringId(string)) ?? []);
+const unresolved = missing.filter((string) => !catalogs.has(string.table));
 
 for (const [table, file] of catalogs) {
-  const strings = added.filter((string) => string.table === table);
+  const strings = missing.filter((string) => string.table === table);
 
   if (strings.length > 0) {
-    addToCatalog({ file, strings });
+    addToCatalog(file, strings);
   }
 }
+
+const added = missing.filter((string) => catalogs.has(string.table));
 
 if (added.length > 0) {
   process.stdout.write(`Added to their String Catalogs:\n${listStrings(added)}`);
@@ -121,8 +83,8 @@ if (added.length > 0) {
 
 if (unresolved.length > 0) {
   process.stderr.write(
-    `Not added, because no build has them yet or their table has no String Catalog:\n${listStrings(unresolved)}` +
-      "Build the app (`make -C apps/apple build`) or fix the string's table, then run this again.\n",
+    `Not added, because their table has no String Catalog:\n${listStrings(unresolved)}` +
+      "Write each one with the `table:` of its feature's catalog.\n",
   );
 
   process.exitCode = 1;

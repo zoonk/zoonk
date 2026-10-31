@@ -29,7 +29,7 @@ Run commands from this directory:
 | `make ui-test`       | Run the UI tests on the default iPhone simulator.     |
 | `make format`        | Format Swift source files in place.                   |
 | `make format-check`  | Check Swift formatting without changing files.        |
-| `make strings-check` | Check that source strings are in their catalogs.      |
+| `make strings-check` | Check that built strings are in their catalogs.       |
 | `make check`         | Check formatting and strings, and run the unit tests. |
 
 From the repository root, add `-C apps/apple`, for example `make -C apps/apple check`. Before committing, run `pnpm apple:check` from the repository root: it also validates the translations.
@@ -101,4 +101,4 @@ Archiving uploads the app's debug symbols, so crash reports show our code instea
 
 ## Continuous Integration
 
-GitHub Actions checks Swift formatting and String Catalogs and builds the iPhone and iPad app. UI tests remain local because clean hosted macOS runners currently spend several minutes preparing the simulator before executing the tests.
+GitHub Actions checks Swift formatting, builds the iPhone and iPad app and checks that every string it compiled is in its String Catalog. UI tests remain local because clean hosted macOS runners currently spend several minutes preparing the simulator before executing the tests.

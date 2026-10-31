@@ -31,4 +31,4 @@ format-check:
 strings-check:
 	node scripts/check-strings.mts
 
-check: format-check strings-check test
+check: format-check test strings-check
