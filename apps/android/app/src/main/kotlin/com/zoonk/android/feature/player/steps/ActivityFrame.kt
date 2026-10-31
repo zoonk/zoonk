@@ -70,6 +70,8 @@ import com.zoonk.android.feature.activities.sorting.matchPairsRenderer
 import com.zoonk.android.feature.activities.sorting.processOrderRenderer
 import com.zoonk.android.feature.activities.sorting.timelineRenderer
 import com.zoonk.android.feature.activities.stepSolverRenderer
+import com.zoonk.android.feature.player.LocalFeedbackReveal
+import com.zoonk.android.feature.player.RevealPart
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.isRequiredPictureDrawing
@@ -83,6 +85,7 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.NumericCheck
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepResult
+import com.zoonk.android.feature.player.revealPart
 import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
@@ -373,10 +376,13 @@ private fun ActivityFeedback(
     answer: ActivityAnswer?,
     isCorrect: Boolean,
 ) {
-    FeedbackPanel(label = stringResource(R.string.player_answer_feedback)) {
+    val reveal = LocalFeedbackReveal.current
+
+    FeedbackPanel(label = stringResource(R.string.player_answer_feedback), modifier = Modifier.revealPart(reveal, RevealPart.Feedback)) {
         FeedbackVerdict(
             text = stringResource(if (isCorrect) R.string.player_verdict_correct else R.string.player_verdict_incorrect),
             tone = if (isCorrect) FeedbackTone.Right else FeedbackTone.Wrong,
+            modifier = Modifier.revealPart(reveal, RevealPart.Verdict),
         )
 
         when (check) {

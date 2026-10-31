@@ -100,6 +100,7 @@ fun LessonStepResultView(
         FeedbackVerdict(
             text = stringResource(verdict.label),
             tone = verdict.tone,
+            modifier = Modifier.revealPart(LocalFeedbackReveal.current, RevealPart.Verdict),
             icon = if (verdict == Verdict.Guess) R.drawable.ic_auto_awesome else null,
             end = hyperdriveStreak?.let { stringResource(R.string.player_hyperdrive_streak, count(it)) },
         )

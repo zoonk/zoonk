@@ -1,7 +1,9 @@
 package com.zoonk.android.feature.player
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,8 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -31,6 +31,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -38,6 +39,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -48,7 +50,9 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -364,6 +368,7 @@ internal fun segmentParts(segments: List<Segment>): List<MeterPart> =
 private const val READ_ALPHA = 0.25f
 
 private const val SWIPE_DISTANCE = 96f
+private val REVEAL_MARGIN = 16.dp
 
 @Composable
 private fun Content(
@@ -399,6 +404,7 @@ private fun Content(
         else -> {
             val step = screen.step ?: return
             val scroll = rememberScrollState()
+            val reveal = remember(step.id, state.position) { FeedbackReveal() }
 
             LaunchedEffect(step.id, state.position) { scroll.scrollTo(0) }
             PrefetchPictures(state)
@@ -408,6 +414,7 @@ private fun Content(
             Column(
                 Modifier
                     .fillMaxSize()
+                    .onGloballyPositioned { reveal.viewport = it }
                     .verticalScroll(scroll)
                     .pointerInput(screen.canGoBack, screen.canGoForward) {
                         var travelled = 0f
@@ -424,11 +431,13 @@ private fun Content(
                         )
                     }.padding(vertical = 16.dp),
             ) {
-                LessonColumn {
-                    Notice(state, screen, viewModel)
-                    // A screen's own picks (placed words, filled blanks) start over on the next screen and on a retry.
-                    key(step.id, state.position) { StepView(step, state, screen, actions, navigator, language) }
-                    Result(state, screen)
+                CompositionLocalProvider(LocalFeedbackReveal provides reveal) {
+                    LessonColumn {
+                        Notice(state, screen, viewModel)
+                        // A screen's own picks (placed words, filled blanks) start over on the next screen and on a retry.
+                        key(step.id, state.position) { StepView(step, state, screen, actions, navigator, language) }
+                        Result(state, screen, scroll, reveal)
+                    }
                 }
             }
         }
@@ -500,6 +509,8 @@ private fun Notice(
 private fun Result(
     state: LessonPlayerState,
     screen: LessonScreen,
+    scroll: ScrollState,
+    reveal: FeedbackReveal,
 ) {
     val step = screen.step ?: return
     val result = state.results[step.id] ?: return
@@ -513,12 +524,17 @@ private fun Result(
             willReturn = !result.isCorrect && state.queue.drop(state.position + 1).contains(step.id),
         )
 
-    val requester = remember { BringIntoViewRequester() }
+    val margin = with(LocalDensity.current) { REVEAL_MARGIN.toPx() }
 
     // The verdict scrolls into view after a check, not when the learner goes back to review it.
-    LaunchedEffect(step.id, state.position) { if (!state.reviewing) requester.bringIntoView() }
+    LaunchedEffect(step.id, state.position) {
+        if (!state.reviewing) {
+            withFrameNanos {}
+            scroll.animateScrollBy(reveal.scrollBy(margin))
+        }
+    }
 
-    Column(Modifier.bringIntoViewRequester(requester), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(Modifier.revealPart(reveal, RevealPart.Result), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (showsOwnResult(step)) {
             LessonResultNotes(next, screen.hyperdriveStreak)
         } else {

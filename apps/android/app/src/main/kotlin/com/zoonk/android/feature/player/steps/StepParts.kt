@@ -22,9 +22,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.recode
+import com.zoonk.android.feature.player.LocalFeedbackReveal
+import com.zoonk.android.feature.player.RevealPart
 import com.zoonk.android.feature.player.engine.isOwnPictureDrawing
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepVisual
+import com.zoonk.android.feature.player.revealPart
 import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
@@ -121,7 +124,7 @@ fun QuestionText(
     if (question.isNotBlank()) {
         RichText(
             text = question,
-            modifier = Modifier.semantics { heading() },
+            modifier = Modifier.semantics { heading() }.revealPart(LocalFeedbackReveal.current, RevealPart.Question),
             style =
                 MaterialTheme.typography.titleLarge.copy(
                     color = if (answered) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
