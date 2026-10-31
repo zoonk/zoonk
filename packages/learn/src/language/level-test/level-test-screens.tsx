@@ -4,7 +4,6 @@ import {
   LEVEL_TEST_MINUTES,
   type LanguageLevelTestView,
 } from "@zoonk/core/language/level-test/contract";
-import { usesNonLatinScript } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
 import { CircleCheckIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
@@ -51,12 +50,14 @@ export function TestIntro({
   onStart,
   onSwitch,
   pending,
+  showAlphabetNote,
 }: {
   goal: { language: string; targetLanguage: string };
   onScratch: () => void;
   onStart: () => void;
   onSwitch: (language: string) => void;
   pending: boolean;
+  showAlphabetNote: boolean;
 }) {
   const t = useExtracted();
   const locale = useLocale();
@@ -77,7 +78,7 @@ export function TestIntro({
         </OnboardingDescription>
       </OnboardingHeading>
 
-      {usesNonLatinScript(goal.targetLanguage) && (
+      {showAlphabetNote && (
         <p className="text-muted-foreground text-sm text-pretty">
           {t(
             "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it.",

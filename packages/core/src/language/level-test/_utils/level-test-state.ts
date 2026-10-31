@@ -2,7 +2,7 @@ import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { type Goal } from "@zoonk/db";
 import { parseCefrScore } from "@zoonk/utils/cefr";
-import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
+import { isTTSSupportedLanguage, usesNonLatinScript } from "@zoonk/utils/languages";
 import { findSpeechClip, toSpeechClip } from "../../../audio/_utils/speech-clips";
 import { type SpeechClip } from "../../../audio/speech-clip-contract";
 import { getSpeechClipKey } from "../../../audio/speech-clip-key";
@@ -148,6 +148,7 @@ export async function toLevelTestView({
   if (!bank) {
     return {
       expectedSeconds: LEVEL_TEST_PREPARING_SECONDS,
+      showAlphabetNote: usesNonLatinScript(goal.targetLanguage),
       startedAt: bankStartedAt?.toISOString() ?? null,
       status: "preparing",
     };
@@ -182,6 +183,7 @@ export async function toLevelTestView({
     lastCorrect,
     levels: listLevelTestLevels(scores),
     next,
+    showAlphabetNote: usesNonLatinScript(goal.targetLanguage),
     status: "ready",
     targetLanguage: goal.targetLanguage,
     total: LEVEL_TEST_TOTAL,

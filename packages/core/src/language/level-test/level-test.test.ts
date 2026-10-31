@@ -29,6 +29,7 @@ import * as announcement from "../../plans/announce-tested-out-items";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { readGoalDetails } from "../_utils/language-goal";
+import { skipAlphabetIntro } from "../alphabet/skip-alphabet-intro";
 import { placeLevelTestResult } from "./_utils/level-test-placement";
 import { answerLanguageLevelTest } from "./answer-language-level-test";
 import { finishLanguageLevelTest } from "./finish-language-level-test";
@@ -158,6 +159,37 @@ async function readItemStatuses(itemIds: string[]) {
 }
 
 describe("language level test", () => {
+  it.each([
+    { showAlphabetNote: false, targetLanguage: "hmn" },
+    { showAlphabetNote: false, targetLanguage: "ber" },
+    { showAlphabetNote: true, targetLanguage: "ja" },
+    { showAlphabetNote: false, targetLanguage: "sr-Latn" },
+  ])(
+    "uses the alphabet intro decision for $targetLanguage",
+    async ({ showAlphabetNote, targetLanguage }) => {
+      const { goal, user } = await languageGoalFixture();
+      await prisma.goal.update({ data: { targetLanguage }, where: { id: goal.id } });
+      await prisma.languageLevelTest.deleteMany({ where: { language: "pt", targetLanguage } });
+      mockSession(user.id);
+
+      await expect(getLanguageLevelTest(goal.id)).resolves.toMatchObject({
+        status: "ready",
+        test: { showAlphabetNote, status: "preparing" },
+      });
+
+      await saveBank(targetLanguage);
+
+      await expect(getLanguageLevelTest(goal.id)).resolves.toMatchObject({
+        status: "ready",
+        test: { showAlphabetNote, status: "ready" },
+      });
+
+      await expect(skipAlphabetIntro(goal.id)).resolves.toStrictEqual({
+        status: showAlphabetNote ? "skipped" : "notLanguage",
+      });
+    },
+  );
+
   it("finishes a language test without overlapping queries on its transaction connection", async () => {
     const { goal, user } = await placedLearnerFixture();
 

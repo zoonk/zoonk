@@ -36850,6 +36850,9 @@
                 "maximum": 9007199254740991,
                 "description": "How long writing a pair's questions usually takes"
               },
+              "showAlphabetNote": {
+                "type": "boolean"
+              },
               "startedAt": {
                 "nullable": true,
                 "description": "When the run writing the pair's questions started; null when nothing is writing them (none started, or it failed): start it with POST /goals/{goalId}/language-level-test/generations. Only the first learner of a language pair waits",
@@ -36866,6 +36869,7 @@
             },
             "required": [
               "expectedSeconds",
+              "showAlphabetNote",
               "startedAt",
               "status"
             ],
@@ -37083,6 +37087,9 @@
                 ],
                 "type": "object"
               },
+              "showAlphabetNote": {
+                "type": "boolean"
+              },
               "status": {
                 "type": "string",
                 "enum": [
@@ -37104,6 +37111,7 @@
               "lastCorrect",
               "levels",
               "next",
+              "showAlphabetNote",
               "status",
               "targetLanguage",
               "total"

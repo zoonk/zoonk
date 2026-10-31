@@ -11,7 +11,13 @@ const ASKED_AT = Date.parse("2026-09-28T10:00:00Z");
 
 const BANK_START_MS = 45_000;
 
-const idle = { expectedSeconds: 120, startedAt: null, status: "preparing" as const };
+const idle = {
+  expectedSeconds: 120,
+  showAlphabetNote: false,
+  startedAt: null,
+  status: "preparing" as const,
+};
+
 const writing = { ...idle, startedAt: "2026-09-28T10:00:03Z" };
 
 function run(

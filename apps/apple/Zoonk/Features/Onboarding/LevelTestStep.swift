@@ -21,7 +21,7 @@ struct LevelTestStep: View {
 
   private enum Phase {
     case loading
-    case intro
+    case intro(showAlphabetNote: Bool)
     case preparing(generationID: String)
     case question(LevelTest.Question, number: Int, progress: Double)
     case speaking(LevelTest.Sentence, progress: Double)
@@ -33,9 +33,10 @@ struct LevelTestStep: View {
       switch phase {
       case .loading:
         ProgressView()
-      case .intro:
+      case .intro(let showAlphabetNote):
         LevelTestIntro(
           language: language, targetLanguage: targetLanguage, minutes: testMinutes,
+          showAlphabetNote: showAlphabetNote,
           isSaving: isSaving, failed: failed,
           onStart: { Task { await begin() } }, onSkip: finish)
       case .preparing(let generationID):
@@ -159,10 +160,12 @@ struct LevelTestStep: View {
       return
     }
 
-    guard let test = try? await onboarding.levelTest(goalID: goalID), test.status == .ready,
+    let test = try? await onboarding.levelTest(goalID: goalID)
+
+    guard let test, test.status == .ready,
       (test.answered ?? 0) > 0
     else {
-      phase = .intro
+      phase = .intro(showAlphabetNote: test?.showAlphabetNote ?? false)
       return
     }
 
@@ -308,18 +311,11 @@ private func baseLanguage(_ code: String) -> String {
   String(code.lowercased().prefix { $0 != "-" && $0 != "_" })
 }
 
-extension Locale.Language {
-  /// Core's `usesNonLatinScript`: the script the tag names, else the one the language is usually
-  /// written in; an unknown language counts as Latin.
-  var usesNonLatinScript: Bool {
-    script.map { $0 != .latin } ?? false
-  }
-}
-
 private struct LevelTestIntro: View {
   let language: String
   let targetLanguage: String
   let minutes: Int
+  let showAlphabetNote: Bool
   let isSaving: Bool
   let failed: Bool
   let onStart: () -> Void
@@ -339,7 +335,7 @@ private struct LevelTestIntro: View {
           tableName: "Onboarding",
           comment: "What the level test is; %@ is about how long it takes, such as \"3 minutes\""))
 
-      if Locale.Language(identifier: targetLanguage).usesNonLatinScript {
+      if showAlphabetNote {
         Section {
           Text(
             "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it.",

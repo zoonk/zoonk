@@ -126,7 +126,7 @@ describe("the level test's question bank", () => {
 
     await expect(getLanguageLevelTest(goalId)).resolves.toStrictEqual({
       status: "ready",
-      test: { expectedSeconds: 120, startedAt: null, status: "preparing" },
+      test: { expectedSeconds: 120, showAlphabetNote: true, startedAt: null, status: "preparing" },
     });
 
     await expect(prisma.languageLevelTest.count({ where: pair })).resolves.toBe(0);

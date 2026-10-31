@@ -37,7 +37,10 @@ export type LanguageLevelTestActions = {
   switchLanguage: (language: string) => void;
 };
 
-type Phase = { kind: "done" | "intro" | "loading" | "waiting" } | { kind: "test"; test: ReadyTest };
+type Phase =
+  | { kind: "done" | "loading" | "waiting" }
+  | { kind: "intro"; showAlphabetNote: boolean }
+  | { kind: "test"; test: ReadyTest };
 
 function toReadyPhase(view: ReadyTest): Phase {
   return view.next.kind === "done" ? { kind: "done" } : { kind: "test", test: view };
@@ -56,7 +59,7 @@ function toResumedPhase({
 
   return view?.status === "preparing" && view.startedAt && started
     ? { kind: "waiting" }
-    : { kind: "intro" };
+    : { kind: "intro", showAlphabetNote: view?.showAlphabetNote ?? false };
 }
 
 function getPendingAudioQuestion(phase: Phase): string | null {
@@ -199,6 +202,7 @@ export function LanguageLevelTestStep({
           onStart={() => void begin()}
           onSwitch={actions.switchLanguage}
           pending={isPending}
+          showAlphabetNote={phase.showAlphabetNote}
         />
       );
     case "waiting":

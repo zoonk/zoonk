@@ -144,6 +144,7 @@ export const languageLevelTestViewSchema = z
         .int()
         .min(1)
         .meta({ description: "How long writing a pair's questions usually takes" }),
+      showAlphabetNote: z.boolean(),
       startedAt: z.iso
         .datetime()
         .nullable()
@@ -167,6 +168,7 @@ export const languageLevelTestViewSchema = z
         z.object({ kind: z.literal("speaking"), speaking: speakingViewSchema }),
         z.object({ kind: z.literal("done") }),
       ]),
+      showAlphabetNote: z.boolean(),
       status: z.literal("ready"),
       targetLanguage: z.string(),
       total: z.int().min(1).meta({ description: "Questions and sentences the test asks at most" }),

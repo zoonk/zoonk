@@ -260,6 +260,7 @@ struct LevelTest: Decodable, Equatable, Sendable {
   }
 
   let status: Status
+  let showAlphabetNote: Bool
   /// Set while a run writes the pair's questions.
   let startedAt: String?
   let answered: Int?

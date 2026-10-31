@@ -468,6 +468,7 @@ test.describe("Language goal API", () => {
 
     expect(await shown.json()).toStrictEqual({
       expectedSeconds: 120,
+      showAlphabetNote: false,
       startedAt: null,
       status: "preparing",
     });
