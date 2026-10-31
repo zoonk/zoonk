@@ -2,7 +2,7 @@ import { GoalKind } from "@zoonk/db";
 import { z } from "zod";
 import { displayWeightSchema } from "../../exams/display-weight-contract";
 import { examDocumentSchema } from "../../exams/exam-document";
-import { TOPIC_FREQUENCY_LEVELS } from "../../library/exams/blueprint-contract";
+import { TOPIC_FREQUENCY_LEVELS } from "../../library/exams/blueprint-past-contract";
 import { passMarksSchema } from "../../library/exams/pass-marks";
 import { writtenPracticeSchema } from "../../plans/written-practice-contract";
 

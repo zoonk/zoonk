@@ -3,11 +3,8 @@ import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getExamBlueprintCacheTag } from "../../cache/tags";
 import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
-import {
-  type PastTopicFrequency,
-  examStructureSchema,
-  topicFrequencySchema,
-} from "./blueprint-contract";
+import { examStructureSchema, topicFrequencySchema } from "./blueprint-contract";
+import { type PastTopicFrequency } from "./blueprint-past-contract";
 import { listUnratedSubjects, needsTopicFrequency } from "./topic-frequency";
 
 export type TopicFrequencyLookup = {

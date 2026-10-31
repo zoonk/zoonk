@@ -1,4 +1,4 @@
-import { type TopicFrequencyLevel } from "../../../library/exams/blueprint-contract";
+import { type TopicFrequencyLevel } from "../../../library/exams/blueprint-past-contract";
 import { type PassMarks } from "../../../library/exams/pass-marks";
 import { type TopicFrequencySource } from "../../../library/exams/topic-frequency";
 import { type TodayLearnBlock } from "../../../plans/_utils/up-next-item";

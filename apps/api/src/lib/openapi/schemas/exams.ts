@@ -14,7 +14,7 @@ import {
 } from "@zoonk/core/exams/view/contract";
 import { speakingMockExamSchema } from "@zoonk/core/language/conversations/contract";
 import { speakingPaperViewSchema } from "@zoonk/core/language/exam-speaking/contract";
-import { TOPIC_FREQUENCY_LEVELS } from "@zoonk/core/library/exams/blueprint-contract";
+import { TOPIC_FREQUENCY_LEVELS } from "@zoonk/core/library/exams/blueprint-past-contract";
 import { passMarksSchema } from "@zoonk/core/library/exams/pass-marks";
 import { z } from "zod";
 import { examMockSummarySchema } from "./exam-mock-summary";

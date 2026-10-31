@@ -1,6 +1,12 @@
 import { numericEntrySchema, optionSelectSchema } from "@zoonk/ai/tasks/items/schemas";
 import { partialCreditSchema } from "@zoonk/ai/tasks/research/partial-credit";
 import { z } from "zod";
+import {
+  TOPIC_FREQUENCY_LEVELS,
+  pastOptionsSchema,
+  pastQuestionsSchema,
+  pastTopicFrequencySchema,
+} from "./blueprint-past-contract";
 
 const citationSchema = z.object({ passage: z.string(), sourceId: z.string() });
 
@@ -22,8 +28,6 @@ const EXAM_DATE_KINDS = [
   "results",
   "other",
 ] as const;
-
-export const TOPIC_FREQUENCY_LEVELS = ["high", "medium", "low"] as const;
 
 const blueprintSubjectSchema = z.object({
   choiceGroup: z.string().nullable().optional(),
@@ -209,44 +213,6 @@ const mockConditionsSchema = z.object({
   totalQuestions: z.number().int().nullable(),
 });
 
-/** `board` is who ran the editions a past-paper lookup counted, when it said. */
-const pastQuestionsSchema = z.object({
-  board: z.string().nullable().optional(),
-  checkedAt: z.iso.datetime(),
-  edition: z.string().nullable(),
-  source: z.object({ title: z.string().nullable(), url: z.string() }).nullable(),
-  subjects: z.array(z.object({ name: z.string(), questions: z.number().int().min(0) })),
-});
-
-const pastOptionsSchema = z.object({
-  board: z.string().nullable().optional(),
-  checkedAt: z.iso.datetime(),
-  edition: z.string().nullable(),
-  options: z.number().int().min(2).nullable(),
-  source: z.object({ title: z.string().nullable(), url: z.string() }).nullable(),
-});
-
-const pastTopicSchema = z.object({
-  appearances: z.number().int().min(0).nullable(),
-  level: z.enum(TOPIC_FREQUENCY_LEVELS),
-  topic: z.string(),
-});
-
-const pastTopicFrequencySchema = z.object({
-  checkedAt: z.iso.datetime().nullable(),
-  subjects: z.array(
-    z.object({
-      basis: z.string(),
-      board: z.string().nullable().optional(),
-      name: z.string(),
-      source: z.object({ title: z.string().nullable(), url: z.string() }),
-      topics: z.array(pastTopicSchema),
-    }),
-  ),
-});
-
-export type PastTopicFrequency = z.infer<typeof pastTopicFrequencySchema>;
-
 export const examStructureSchema = z.object({
   formats: z.array(blueprintFormatSchema),
   mock: mockConditionsSchema.nullable(),
@@ -323,7 +289,6 @@ export type Citation = z.infer<typeof citationSchema>;
 export type ExamStructure = z.infer<typeof examStructureSchema>;
 export type ExamEdition = z.infer<typeof examEditionSchema>;
 export type TopicFrequency = z.infer<typeof topicFrequencySchema>;
-export type TopicFrequencyLevel = (typeof TOPIC_FREQUENCY_LEVELS)[number];
 export type ExamDate = z.infer<typeof examDateSchema>;
 
 export type BlueprintContent = {

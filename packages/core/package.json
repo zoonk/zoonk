@@ -295,6 +295,7 @@
     "./library/curriculum/teaching-chapters": "./src/library/curriculum/teaching-chapters.ts",
     "./library/exams/blueprint-content": "./src/library/exams/blueprint-content.ts",
     "./library/exams/blueprint-contract": "./src/library/exams/blueprint-contract.ts",
+    "./library/exams/blueprint-past-contract": "./src/library/exams/blueprint-past-contract.ts",
     "./library/exams/blueprint-facts": "./src/library/exams/blueprint-facts.ts",
     "./library/exams/blueprint-passages": "./src/library/exams/blueprint-passages.ts",
     "./library/exams/blueprint-reading": "./src/library/exams/blueprint-reading.ts",
