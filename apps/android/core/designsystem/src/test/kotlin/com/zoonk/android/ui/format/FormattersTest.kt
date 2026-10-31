@@ -19,6 +19,7 @@ class FormattersTest {
     private val es = Locale.forLanguageTag("es")
     private val fr = Locale.FRENCH
     private val de = Locale.GERMAN
+    private val ja = Locale.JAPANESE
 
     @Test
     fun aLanguageIsNamedWithItsVariety() {
@@ -63,6 +64,8 @@ class FormattersTest {
         assertEquals("45 s", formatDuration(45, fr))
         assertEquals("1 Std. 30 Min.", formatDuration(5_400, de))
         assertEquals("45 Sek.", formatDuration(45, de))
+        assertEquals("1時間30分", formatDuration(5_400, ja))
+        assertEquals("45秒", formatDuration(45, ja))
         assertEquals("45 min", formatMinutes(45, en))
     }
 

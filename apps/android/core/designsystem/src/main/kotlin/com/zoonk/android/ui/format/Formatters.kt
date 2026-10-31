@@ -111,11 +111,14 @@ fun formatDuration(
 ): String {
     val seconds = totalSeconds.coerceAtLeast(0)
     val format = MeasureFormat.getInstance(ULocale.forLocale(locale), MeasureFormat.FormatWidth.SHORT)
+    // CLDR spaces Japanese units ("1 時間 30 分"), but Japanese writes them together ("1時間30分").
+    val unspaced = locale.language == "ja"
+    val unitSpace = if (unspaced) "" else NO_BREAK_SPACE.toString()
 
     fun unit(
         value: Long,
         unit: MeasureUnit,
-    ) = format.format(Measure(value, unit)).replace(' ', NO_BREAK_SPACE)
+    ) = format.format(Measure(value, unit)).replace(" ", unitSpace)
 
     if (seconds == 0L) return unit(0, MeasureUnit.MINUTE)
     if (seconds < SECONDS_PER_MINUTE) return unit(seconds, MeasureUnit.SECOND)
@@ -127,7 +130,9 @@ fun formatDuration(
     val hours = unit(totalMinutes / MINUTES_PER_HOUR, MeasureUnit.HOUR)
     val minutes = totalMinutes % MINUTES_PER_HOUR
 
-    return if (minutes == 0L) hours else "$hours ${unit(minutes, MeasureUnit.MINUTE)}"
+    val separator = if (unspaced) "" else " "
+
+    return if (minutes == 0L) hours else "$hours$separator${unit(minutes, MeasureUnit.MINUTE)}"
 }
 
 fun formatMinutes(
