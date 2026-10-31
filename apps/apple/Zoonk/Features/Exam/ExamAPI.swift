@@ -47,6 +47,7 @@ enum EssaySubmission: Equatable, Sendable {
   case graded(EssayGrade)
   case limitReached
   case dailyLimitReached
+  case blockNotActive
 }
 
 struct ExamResultInput: Encodable, Equatable, Sendable {
@@ -361,6 +362,7 @@ struct ExamAPI {
       case .ok(let response): return .graded(try PracticeJSON.recode(try response.body.json))
       case .tooManyRequests: return .limitReached
       case .forbidden: return .dailyLimitReached
+      case .conflict: return .blockNotActive
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable

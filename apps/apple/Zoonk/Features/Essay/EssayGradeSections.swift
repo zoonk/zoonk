@@ -2,6 +2,7 @@ import SwiftUI
 
 struct EssayGradeSections: View {
   let grade: EssayGrade
+  var isClosed = false
 
   var body: some View {
     if grade.zeroReason == .tooShort {
@@ -9,11 +10,13 @@ struct EssayGradeSections: View {
         VStack(alignment: .leading, spacing: 4) {
           Text("Too short to grade", tableName: "Essay", comment: "An essay too short to grade")
             .font(.headline)
-          Text(
-            "Write the whole essay, then send it again.", tableName: "Essay",
-            comment: "What to do with an essay too short to grade"
-          )
-          .foregroundStyle(.secondary)
+          if !isClosed {
+            Text(
+              "Write the whole essay, then send it again.", tableName: "Essay",
+              comment: "What to do with an essay too short to grade"
+            )
+            .foregroundStyle(.secondary)
+          }
         }
       }
     } else {

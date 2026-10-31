@@ -23,6 +23,7 @@ final class EssayWriter {
   private var startedAt: Date?
   private var editedSinceSentAt: Date?
   private var ungraded: (attemptId: String, text: String)?
+  private var isFinishedThisVisit = false
 
   @ObservationIgnored private let store: ExamStore
   @ObservationIgnored private let blockId: String
@@ -33,7 +34,16 @@ final class EssayWriter {
     essay = store.essay(blockId: blockId)
   }
 
-  var isWriting: Bool { writing ?? (essay.value?.drafts.isEmpty ?? true) }
+  var isClosed: Bool {
+    guard !isFinishedThisVisit else { return false }
+
+    return switch essay.value?.status {
+    case .completed, .skipped: true
+    case .active, .pending, nil: false
+    }
+  }
+
+  var isWriting: Bool { !isClosed && (writing ?? (essay.value?.drafts.isEmpty ?? true)) }
   private var graded: String { essay.value?.drafts.first?.text ?? "" }
 
   var text: String {
@@ -108,10 +118,26 @@ final class EssayWriter {
       status = .limitReached
     case .done(.dailyLimitReached):
       status = .dailyLimitReached
+    case .done(.blockNotActive):
+      status = .failed
+      // The block was finished or skipped elsewhere; a fresh read, not one already on its way,
+      // shows it closed.
+      essay.invalidate()
+      await essay.refresh()
     case .obsolete:
       status = .idle
     case .failed, nil:
       status = .failed
+    }
+  }
+
+  /// The finished block goes on to the session, so only a later visit shows the essay closed.
+  func didFinish() {
+    isFinishedThisVisit = true
+    essay.update { essay in
+      var essay = essay
+      essay.status = .completed
+      return essay
     }
   }
 }

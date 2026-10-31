@@ -160,6 +160,35 @@
         }
       }
     },
+    "Back to Today" : {
+      "comment" : "Leaves a finished essay for Today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zurück zu Heute"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a Hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retour à Aujourd’hui"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voltar para Hoje"
+          }
+        }
+      }
+    },
     "By what means" : {
       "comment" : "ENEM proposal element",
       "localizations" : {
@@ -1316,6 +1345,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prática de escrita"
+          }
+        }
+      }
+    },
+    "You skipped this essay." : {
+      "comment" : "An essay the learner skipped without sending a draft",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast diesen Aufsatz übersprungen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te has saltado esta redacción."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as sauté cette rédaction."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você pulou essa redação."
           }
         }
       }

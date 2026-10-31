@@ -61,6 +61,7 @@ struct EssayScreen: View {
 private struct EssayContent: View {
   @Environment(ExamStore.self) private var store
   @Environment(PracticeStore.self) private var practice
+  @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
   @State private var writer: EssayWriter
   @State private var finishing = false
@@ -102,7 +103,7 @@ private struct EssayContent: View {
       } else if let grade = essay.drafts.first?.grade {
         PaneSplit {
           List {
-            EssayGradeSections(grade: grade)
+            EssayGradeSections(grade: grade, isClosed: writer.isClosed)
           }
         } secondary: {
           List {
@@ -115,11 +116,23 @@ private struct EssayContent: View {
           .safeAreaBar(edge: .bottom) { actionBar }
         } single: {
           List {
-            EssayGradeSections(grade: grade)
+            EssayGradeSections(grade: grade, isClosed: writer.isClosed)
             EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
           }
           .safeAreaBar(edge: .bottom) { actionBar }
         }
+      } else {
+        List {
+          Section {
+            ItemText(essay.question)
+              .font(.headline)
+          } footer: {
+            Text(
+              "You skipped this essay.", tableName: "Essay",
+              comment: "An essay the learner skipped without sending a draft")
+          }
+        }
+        .safeAreaBar(edge: .bottom) { actionBar }
       }
     }
     .toolbar {
@@ -156,49 +169,65 @@ private struct EssayContent: View {
 
   private var actionBar: some View {
     VStack(spacing: 10) {
-      statusLine
-      HStack(spacing: 12) {
-        if !essay.drafts.isEmpty {
-          Button {
-            Task { await finish() }
-          } label: {
-            Text("Skip the rewrite", tableName: "Essay", comment: "Goes on without rewriting")
-          }
-          .buttonStyle(.bordered)
-          .controlSize(.large)
-          .disabled(finishing || writer.status == .grading)
+      if writer.isClosed {
+        Button {
+          router.showRoot(of: .today)
+        } label: {
+          Text("Back to Today", tableName: "Essay", comment: "Leaves a finished essay for Today")
         }
-
-        if writer.isWriting {
-          Button {
-            Task { await writer.send() }
-          } label: {
-            if writer.status == .grading {
-              Text("Grading…", tableName: "Essay", comment: "A draft is being graded")
-            } else if essay.drafts.isEmpty {
-              Text("Send for grading", tableName: "Essay", comment: "Sends a draft")
-            } else {
-              Text("Grade the rewrite", tableName: "Essay", comment: "Sends a rewrite")
-            }
-          }
-          .buttonStyle(.mainAction)
-          .controlSize(.large)
-          .disabled(!canSend)
-        } else {
-          Button {
-            writer.writing = true
-          } label: {
-            Text("Rewrite", tableName: "Essay", comment: "Rewrites the essay")
-          }
-          .buttonStyle(.mainAction)
-          .controlSize(.large)
-          .keyboardShortcut(.defaultAction)
-        }
+        .buttonStyle(.mainAction)
+        .controlSize(.large)
+        .keyboardShortcut(.defaultAction)
+      } else {
+        writeActions
       }
     }
     .scenePadding(.horizontal)
     .padding(.vertical, 10)
     .keepsOffFold()
+  }
+
+  @ViewBuilder
+  private var writeActions: some View {
+    statusLine
+    HStack(spacing: 12) {
+      if !essay.drafts.isEmpty {
+        Button {
+          Task { await finish() }
+        } label: {
+          Text("Skip the rewrite", tableName: "Essay", comment: "Goes on without rewriting")
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+        .disabled(finishing || writer.status == .grading)
+      }
+
+      if writer.isWriting {
+        Button {
+          Task { await writer.send() }
+        } label: {
+          if writer.status == .grading {
+            Text("Grading…", tableName: "Essay", comment: "A draft is being graded")
+          } else if essay.drafts.isEmpty {
+            Text("Send for grading", tableName: "Essay", comment: "Sends a draft")
+          } else {
+            Text("Grade the rewrite", tableName: "Essay", comment: "Sends a rewrite")
+          }
+        }
+        .buttonStyle(.mainAction)
+        .controlSize(.large)
+        .disabled(!canSend)
+      } else {
+        Button {
+          writer.writing = true
+        } label: {
+          Text("Rewrite", tableName: "Essay", comment: "Rewrites the essay")
+        }
+        .buttonStyle(.mainAction)
+        .controlSize(.large)
+        .keyboardShortcut(.defaultAction)
+      }
+    }
   }
 
   @ViewBuilder
@@ -331,6 +360,7 @@ private struct EssayContent: View {
       })
     {
     case .done:
+      writer.didFinish()
       dismiss()
     case .failed:
       finishFailed = true
