@@ -276,7 +276,7 @@ describe(explainQuestionWorkflow, () => {
     ).resolves.toMatchObject({ primaryCourse: { title: courseTitle } });
   });
 
-  it("answers the same question at once for the next learner, with the same way to go further", async () => {
+  it("answers the same question at once for the next learner, with the same way to go further, and sets up both plans", async () => {
     const question = `why does the moon change shape? ${crypto.randomUUID()}`;
     const courseTitle = `The Moon ${crypto.randomUUID().slice(0, 8)}`;
     const [first, second] = await Promise.all([explainGoal(question), explainGoal(question)]);
@@ -315,6 +315,13 @@ describe(explainQuestionWorkflow, () => {
       details: { relatedQuestions: ["What is an index fund?", "Why do stocks fall?"] },
       primaryCourse: { title: courseTitle },
     });
+
+    await expect(
+      prisma.plan.findMany({
+        select: { setupTasks: true },
+        where: { goalId: { in: [first.goal.id, second.goal.id] } },
+      }),
+    ).resolves.toStrictEqual([{ setupTasks: [] }, { setupTasks: [] }]);
   });
 
   it("finds the course to go further a guest's first question never got, for everyone after", async () => {

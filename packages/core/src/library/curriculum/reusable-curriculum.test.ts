@@ -399,11 +399,7 @@ describe("reusing an exam's graph for a learner who started its course", () => {
       throw new Error("The exam's graph wasn't reused.");
     }
 
-    await createGoalPlan({
-      goalId: inputs.goal.id,
-      graph: toGoalPlanGraph(reused),
-      setup: "steps",
-    });
+    await createGoalPlan({ goalId: inputs.goal.id, graph: toGoalPlanGraph(reused) });
 
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: inputs.goal.id } });
 
@@ -487,11 +483,7 @@ describe("reusing an exam's graph for a learner who started its course", () => {
       throw new Error("The exam's graph wasn't reused.");
     }
 
-    await createGoalPlan({
-      goalId: inputs.goal.id,
-      graph: toGoalPlanGraph(reused),
-      setup: "steps",
-    });
+    await createGoalPlan({ goalId: inputs.goal.id, graph: toGoalPlanGraph(reused) });
 
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: inputs.goal.id } });
     const planned = parsePlanGraph(plan.graph);

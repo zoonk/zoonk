@@ -6,10 +6,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
+import { createSetUpGoalPlan } from "../plans/_test-utils/set-up-plan";
 import { parsePlanChangePayload } from "../plans/_utils/plan-change-payload";
 import { loadTodayPlanChange } from "../plans/_utils/today-plan-change";
 import { changeGoalPlan } from "../plans/change-goal-plan";
-import { createGoalPlan } from "../plans/create-goal-plan";
 import { getGoalPlan } from "../plans/get-goal-plan";
 import { findPlanTimeToCover } from "../plans/get-time-advice";
 import { refreshGoalPlan } from "../plans/refresh-goal-plan";
@@ -47,7 +47,7 @@ async function examGoal(userId: string, dailyMinutes = 30) {
     userId,
   });
 
-  await createGoalPlan({ goalId: goal.id, graph: library.graph });
+  await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
   return { goal, plan };
 }
@@ -62,7 +62,7 @@ async function learnGoal(userId: string) {
     userId,
   });
 
-  await createGoalPlan({ goalId: goal.id, graph: library.graph });
+  await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
   return { goal, plan };
 }
@@ -163,7 +163,7 @@ async function datedGoal(userId: string) {
     userId,
   });
 
-  await createGoalPlan({ goalId: goal.id, graph: library.graph });
+  await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
   return { goal, plan };
 }
@@ -381,7 +381,7 @@ describe("falling behind", () => {
       userId: user.id,
     });
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
     await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
 
     setToday("2020-10-07");
@@ -518,7 +518,7 @@ describe("catching up", () => {
       userId: user.id,
     });
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     await openToday(goal.id);
     setToday("2020-09-30");
@@ -602,7 +602,7 @@ describe("coming back", () => {
       userId: user.id,
     });
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     await openToday(goal.id);
     setToday("2020-09-30");

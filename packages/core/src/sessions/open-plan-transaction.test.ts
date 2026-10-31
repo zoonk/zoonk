@@ -71,9 +71,9 @@ async function setup() {
   await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
   mockSession(user.id);
 
-  await expect(
-    createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" }),
-  ).resolves.toMatchObject({ status: "created" });
+  await expect(createGoalPlan({ goalId: goal.id, graph: library.graph })).resolves.toMatchObject({
+    status: "created",
+  });
 
   await expect(prisma.planItem.count({ where: { kind: "lesson", planId: plan.id } })).resolves.toBe(
     LESSON_COUNT,

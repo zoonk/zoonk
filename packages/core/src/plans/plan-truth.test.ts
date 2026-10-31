@@ -14,8 +14,8 @@ import { mockSession } from "../_test-utils/mock-session";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { getSyllabusView } from "../view-models/syllabus/get-syllabus-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { createSetUpGoalPlan } from "./_test-utils/set-up-plan";
 import { changeGoalPlan } from "./change-goal-plan";
-import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 import { findPlanTimeToCover } from "./get-time-advice";
 import { type LearnerPlanOperation } from "./plan-contract";
@@ -74,7 +74,7 @@ async function setup({ dailyMinutes }: { dailyMinutes: number }) {
     userId: user.id,
   });
 
-  await createGoalPlan({ goalId: goal.id, graph });
+  await createSetUpGoalPlan({ goalId: goal.id, graph });
   mockSession(user.id);
 
   return { goal, library, user };

@@ -7,8 +7,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { fitRoutineInSteps, setUpPlanInSteps } from "./_test-utils/set-up-plan";
 import { createGoalPlan } from "./create-goal-plan";
-import { runPlanSetupTask } from "./plan-setup";
 
 /** A Monday in 2020, before other tests' learning events, so pace estimates don't move dates. */
 const NOW = new Date("2020-09-28T12:00:00Z");
@@ -84,6 +84,7 @@ describe("plans read the learner's goals and routine", () => {
     });
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await setUpPlanInSteps(goal.id);
 
     expect(vi.mocked(fitPlanToRoutineFacts)).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -116,13 +117,14 @@ describe("plans read the learner's goals and routine", () => {
     });
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await setUpPlanInSteps(goal.id);
 
     expect(vi.mocked(fitPlanToRoutineFacts)).not.toHaveBeenCalled();
   });
 
   it("keeps an explicit schedule when the routine model finishes afterwards", async () => {
     const { goal, library, plan } = await setup();
-    await createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" });
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const result = mockFit({
       operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [0] }],
@@ -138,7 +140,7 @@ describe("plans read the learner's goals and routine", () => {
       return result;
     });
 
-    const routine = runPlanSetupTask({ goalId: goal.id, task: "routine" });
+    const routine = fitRoutineInSteps(goal.id);
     await started.promise;
 
     try {
@@ -180,6 +182,7 @@ describe("plans read the learner's goals and routine", () => {
     });
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await setUpPlanInSteps(goal.id);
     expect(fitPlanToRoutineFacts).not.toHaveBeenCalled();
   });
 
@@ -205,9 +208,20 @@ describe("plans read the learner's goals and routine", () => {
       }),
     ]);
 
-    await createGoalPlan({ goalId: first.goal.id, graph: library.graph });
-    await createGoalPlan({ goalId: second.goal.id, graph: library.graph });
+    await Promise.all(
+      [first.goal.id, second.goal.id].map(async (goalId) => {
+        await createGoalPlan({ goalId, graph: library.graph });
+        await setUpPlanInSteps(goalId);
+      }),
+    );
 
     expect(vi.mocked(fitPlanToRoutineFacts)).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.plan.findMany({
+        select: { setupTasks: true },
+        where: { goalId: { in: [first.goal.id, second.goal.id] } },
+      }),
+    ).resolves.toStrictEqual([{ setupTasks: [] }, { setupTasks: [] }]);
   });
 });

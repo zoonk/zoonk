@@ -11,12 +11,12 @@ import {
 } from "@zoonk/core/library/curriculum/goal-course-bands";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
-import { type PlanSetupTask } from "@zoonk/core/plans/setup";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { isBuiltBeforeResearch, loadGoalReferences } from "./goal-content-inputs";
 import { startOutlines } from "./goal-outlines";
 import { prepareGraphPlacement } from "./goal-placement-items";
 import { type GoalRunContext, type SavedSlice } from "./goal-run-context";
+import { setUpPlan } from "./plan-setup";
 import {
   buildSkillGraphStep,
   checkGraphCoverageStep,
@@ -30,7 +30,7 @@ import {
   readGoalLookaheadStep,
   readPlanFirstSkillStep,
 } from "./steps/goal-lookahead-steps";
-import { createGoalPlanStep, runPlanSetupTaskStep } from "./steps/goal-plan-steps";
+import { createGoalPlanStep } from "./steps/goal-plan-steps";
 import { goalProgressStep } from "./steps/goal-progress-step";
 import { startNoticeWaitStep } from "./steps/notice-steps";
 import { mergeSkillTwinsStep } from "./steps/skill-twins-step";
@@ -89,21 +89,6 @@ function pinStartedCourse({
   return startedCourse
     ? { ...built, graph: pinGraphToCourse({ course: startedCourse, graph: built.graph }) }
     : built;
-}
-
-/** A task that still fails stays owed for the goal's next run, so this run goes on without it. */
-export function setUpPlan({
-  goalId,
-  tasks,
-}: {
-  goalId: string;
-  tasks: readonly PlanSetupTask[];
-}): Promise<unknown> {
-  return tasks.reduce<Promise<unknown>>(
-    (previous, task) =>
-      previous.then(() => runPlanSetupTaskStep({ goalId, task }).catch(() => null)),
-    Promise.resolve(),
-  );
 }
 
 type SavedCurriculum = Pick<BuiltCurriculum, "courseIdsByKey" | "idsByKey">;

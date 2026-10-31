@@ -30,7 +30,7 @@ async function manifestFixture() {
   const user = await userFixture();
   const fixture = await unplannedCheckpointFixture({ userId: user.id });
   mockSession(user.id);
-  await createGoalPlan({ goalId: fixture.goal.id, graph: fixture.graph, setup: "steps" });
+  await createGoalPlan({ goalId: fixture.goal.id, graph: fixture.graph });
   const lessonIds = fixture.lessons.map((lesson) => lesson.id);
   const manifest = await createPlanGenerationManifest({ goalId: fixture.goal.id, lessonIds });
   expect(manifest).not.toBeNull();

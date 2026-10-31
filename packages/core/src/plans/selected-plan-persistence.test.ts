@@ -51,9 +51,9 @@ async function setup() {
 
   mockSession(user.id);
 
-  await expect(
-    createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" }),
-  ).resolves.toMatchObject({ status: "created" });
+  await expect(createGoalPlan({ goalId: goal.id, graph: library.graph })).resolves.toMatchObject({
+    status: "created",
+  });
 
   const currentGoal = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
   const context = await loadPlanContext({ goal: currentGoal, now: NOW });

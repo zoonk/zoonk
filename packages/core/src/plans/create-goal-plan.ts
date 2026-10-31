@@ -19,7 +19,7 @@ import { type ComputedPlan, computePlan } from "./_utils/replan";
 import { trackPlanCreated } from "./_utils/track-plan-created";
 import { checkNoticeLanding } from "./notice-wait";
 import { withPlanRetry } from "./plan-conflict";
-import { listPlanSetupTasks, setUpPlanNow } from "./plan-setup";
+import { listPlanSetupTasks } from "./plan-setup";
 import { toIsoDate } from "./planner/plan-calendar";
 import { type PlanGraph, parsePlanSettings, planGraphSchema } from "./planner/plan-state";
 import { getTargetDateBounds } from "./target-date-range";
@@ -219,8 +219,8 @@ async function planAgainFromSaved(goalId: string): Promise<ComputedPlan | null> 
 
 /**
  * Throws a plan conflict (`isPlanConflictError`) when other writes keep landing while it plans, for
- * the caller to try again later. Returns the setup tasks still owed, also when the plan was already
- * built.
+ * the caller to try again later. Applies none of a new plan's setup: it returns the tasks still owed,
+ * also when the plan was already built, for the goal's run to apply.
  */
 export async function createGoalPlan({
   followNotice = false,
@@ -229,7 +229,6 @@ export async function createGoalPlan({
   graph,
   platform,
   provenance = null,
-  setup = "now",
 }: {
   /**
    * The notice was read before the learner saw the plan, so a date taken from it follows its new
@@ -241,7 +240,6 @@ export async function createGoalPlan({
   graph: PlanGraph;
   platform?: AnalyticsPlatform | null;
   provenance?: Provenance | null;
-  setup?: "now" | "steps";
 }): Promise<GoalPlanCreation> {
   const goal = await prisma.goal.findUnique({ select: { id: true }, where: { id: goalId } });
 
@@ -274,8 +272,8 @@ export async function createGoalPlan({
     });
   }
 
-  const setupTasks =
-    setup === "now" ? await setUpPlanNow(goalId) : await listPlanSetupTasks(goalId);
-
-  return { setupTasks, status: built.status === "created" || settled ? "created" : "unchanged" };
+  return {
+    setupTasks: await listPlanSetupTasks(goalId),
+    status: built.status === "created" || settled ? "created" : "unchanged",
+  };
 }

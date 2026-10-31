@@ -108,7 +108,7 @@ describe(createGoalPlan, () => {
     const { goal, library, plan } = await setup();
 
     await expect(createGoalPlan({ goalId: goal.id, graph: library.graph })).resolves.toStrictEqual({
-      setupTasks: [],
+      setupTasks: ["placement", "routine"],
       status: "created",
     });
 
@@ -444,7 +444,7 @@ describe(createGoalPlan, () => {
     const items = await prisma.planItem.findMany({ where: { planId: plan.id } });
 
     await expect(createGoalPlan({ goalId: goal.id, graph: library.graph })).resolves.toStrictEqual({
-      setupTasks: [],
+      setupTasks: ["placement", "routine"],
       status: "unchanged",
     });
 
@@ -461,7 +461,7 @@ describe(createGoalPlan, () => {
     const reordered = { ...library.graph, skills: [...rest, ...(first ? [first] : [])] };
 
     await expect(createGoalPlan({ goalId: goal.id, graph: reordered })).resolves.toStrictEqual({
-      setupTasks: [],
+      setupTasks: ["placement", "routine"],
       status: "created",
     });
 

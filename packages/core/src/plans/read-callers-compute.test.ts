@@ -27,7 +27,7 @@ async function savedPlan() {
   const user = await userFixture();
   const fixture = await unplannedCheckpointFixture({ userId: user.id });
   mockSession(user.id);
-  await createGoalPlan({ goalId: fixture.goal.id, graph: fixture.graph, setup: "steps" });
+  await createGoalPlan({ goalId: fixture.goal.id, graph: fixture.graph });
   vi.mocked(buildPlan).mockClear();
   vi.mocked(buildSessionBlocks).mockClear();
   return { ...fixture, user };

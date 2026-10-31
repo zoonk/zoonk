@@ -43,7 +43,7 @@ describe("a new plan's quick lessons, created after it's saved", () => {
 
   it("places the quick lesson when a run that stopped after saving the plan runs again", async () => {
     const { goal, graph, living, plan } = await setup();
-    const input = { goalId: goal.id, graph, setup: "steps" as const };
+    const input = { goalId: goal.id, graph };
 
     vi.spyOn(quickBases, "ensureQuickBaseLessons").mockRejectedValueOnce(
       new Error("The run stopped"),

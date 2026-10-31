@@ -18,7 +18,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useIsolatedBudgetDay } from "../_test-utils/isolated-budget-day";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { loadGoalCurriculumInputs } from "../library/curriculum/goal-curriculum-inputs";
-import { listPlanSetupTasks, setUpPlanNow } from "../plans/plan-setup";
+import { setUpPlanInSteps } from "../plans/_test-utils/set-up-plan";
+import { listPlanSetupTasks } from "../plans/plan-setup";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { getOnboarding } from "../view-models/onboarding/get-onboarding";
 import { startCourseWithPlan } from "./_test-utils/start-course-with-plan";
@@ -220,7 +221,8 @@ describe(startCourseGoal, () => {
     expect(steps).toContain("placement");
 
     await expect(listPlanSetupTasks(goalId)).resolves.toStrictEqual(["placement", "routine"]);
-    await expect(setUpPlanNow(goalId)).resolves.toStrictEqual([]);
+    await setUpPlanInSteps(goalId);
+    await expect(listPlanSetupTasks(goalId)).resolves.toStrictEqual([]);
   });
 
   it("takes a quick test as the level's answer, leaving the level to placement", async () => {

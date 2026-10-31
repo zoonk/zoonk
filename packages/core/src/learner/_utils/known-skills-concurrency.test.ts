@@ -39,7 +39,7 @@ async function placedGoal() {
   await attemptFixture({ isCorrect: true, itemId: item.id, skillId, userId: user.id });
 
   mockSession(user.id);
-  await createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" });
+  await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
   return { goalId: goal.id, planId: plan.id };
 }

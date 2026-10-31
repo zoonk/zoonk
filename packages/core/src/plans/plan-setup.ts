@@ -1,13 +1,13 @@
 import "server-only";
 import { type PlanSetupTask, prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
-import { logError } from "@zoonk/utils/logger";
 import { applyPlacementToNewPlan } from "../learner/placement/_utils/apply-placement";
-import { fitPlanToRoutine } from "./_utils/fit-plan-to-routine";
+import { fitPlanToRoutineMemory } from "./_utils/fit-plan-to-routine";
 import { PlanSetupTaskEndedError, isPlanSetupTaskOwed } from "./_utils/plan-setup-tasks";
 import { askAboutNoticeDay } from "./notice-plan-change";
 
 export { type PlanSetupTask } from "@zoonk/db";
+export { type PlanMemorySearch } from "./_utils/plan-memory";
+export { searchRoutineMemory, selectRoutineMemory } from "./_utils/fit-plan-to-routine";
 
 /**
  * Placement first, since the routine's fit starts from what's left; the notice's day last, so it
@@ -15,53 +15,59 @@ export { type PlanSetupTask } from "@zoonk/db";
  */
 const SETUP_ORDER: readonly PlanSetupTask[] = ["placement", "routine", "notice"];
 
-const SETUP_TASKS: Record<PlanSetupTask, (goalId: string) => Promise<void>> = {
+const SETUP_TASKS: Record<Exclude<PlanSetupTask, "routine">, (goalId: string) => Promise<void>> = {
   notice: askAboutNoticeDay,
   placement: applyPlacementToNewPlan,
-  routine: fitPlanToRoutine,
 };
 
 function toSetupOrder(tasks: readonly PlanSetupTask[]): PlanSetupTask[] {
   return SETUP_ORDER.filter((task) => tasks.includes(task));
 }
 
-/**
- * Each task runs once; a failure throws and leaves it owed. Workflow bridge: the goal comes from
- * the run that built its plan.
- */
-export async function runPlanSetupTask({
+async function runOwedTask({
   goalId,
+  run,
   task,
 }: {
   goalId: string;
+  run: () => Promise<void>;
   task: PlanSetupTask;
 }): Promise<void> {
   if (!(await isPlanSetupTaskOwed({ goalId, task }))) {
     return;
   }
 
-  await SETUP_TASKS[task](goalId).catch((error: unknown) => {
+  await run().catch((error: unknown) => {
     if (!(error instanceof PlanSetupTaskEndedError)) {
       throw error;
     }
   });
 }
 
+/**
+ * Each task runs once; a failure throws and leaves it owed. Workflow bridge: the goal comes from
+ * the run that built its plan. The routine runs in three calls, one model call each:
+ * `searchRoutineMemory`, `selectRoutineMemory` when it returns terms, then `fitPlanToRoutine`.
+ */
+export function runPlanSetupTask({
+  goalId,
+  task,
+}: {
+  goalId: string;
+  task: Exclude<PlanSetupTask, "routine">;
+}): Promise<void> {
+  return runOwedTask({ goalId, run: () => SETUP_TASKS[task](goalId), task });
+}
+
+export function fitPlanToRoutine(input: { goalId: string; memory: string[] }): Promise<void> {
+  return runOwedTask({
+    goalId: input.goalId,
+    run: () => fitPlanToRoutineMemory(input),
+    task: "routine",
+  });
+}
+
 export async function listPlanSetupTasks(goalId: string): Promise<PlanSetupTask[]> {
   const plan = await prisma.plan.findUnique({ select: { setupTasks: true }, where: { goalId } });
   return toSetupOrder(plan?.setupTasks ?? []);
-}
-
-/** A task that fails is logged and stays owed for the goal's next run. */
-export async function setUpPlanNow(goalId: string): Promise<PlanSetupTask[]> {
-  for (const task of await listPlanSetupTasks(goalId)) {
-    // oxlint-disable-next-line no-await-in-loop -- Each task reads the plan the one before left.
-    const { error } = await safeAsync(() => runPlanSetupTask({ goalId, task }));
-
-    if (error) {
-      logError(`[plan setup] The ${task} setup of goal ${goalId}'s plan failed:`, error);
-    }
-  }
-
-  return listPlanSetupTasks(goalId);
 }

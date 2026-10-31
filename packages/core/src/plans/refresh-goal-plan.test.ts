@@ -15,8 +15,8 @@ import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { markPlanItemsTestedOut, markSkillsKnown } from "../learner/_utils/known-skills";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { createSetUpGoalPlan } from "./_test-utils/set-up-plan";
 import { loadPlanChangeView } from "./_utils/owned-plan";
-import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { getGoalPlan } from "./get-goal-plan";
 import { findPlanTimeToCover } from "./get-time-advice";
@@ -38,7 +38,7 @@ async function setup() {
     userId: user.id,
   });
 
-  await createGoalPlan({ goalId: goal.id, graph: library.graph });
+  await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
   mockSession(user.id);
 
   return { goal, library, plan, user };
@@ -212,7 +212,7 @@ describe("a plan's numbers while the Library outlines it", () => {
       userId: user.id,
     });
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
     mockSession(user.id);
 
     const before = await readNumbers(goal.id);
@@ -378,7 +378,7 @@ describe("test-outs on the plan", () => {
       userId: user.id,
     });
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
     mockSession(user.id);
 
     const [assumed, answered] = library.skills;
@@ -440,7 +440,7 @@ describe("the lessons a plan counted for each skill", () => {
       userId: user.id,
     });
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
     mockSession(user.id);
 
     const grown = library.skills[1];

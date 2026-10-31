@@ -7,8 +7,8 @@ import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboa
 import { getOnboarding } from "../view-models/onboarding/get-onboarding";
 import { getPlanTabView } from "../view-models/plan/get-plan-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { createSetUpGoalPlan } from "./_test-utils/set-up-plan";
 import { changeGoalPlan } from "./change-goal-plan";
-import { createGoalPlan } from "./create-goal-plan";
 import { findPlanTimeToCover } from "./get-time-advice";
 import { type PlanChangeInput } from "./plan-contract";
 import { previewPlanChange } from "./preview-plan-change";
@@ -61,7 +61,7 @@ async function pastDateGoal(kind: "exam" | "learn", dailyMinutes = 5) {
     data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
   });
 
-  await createGoalPlan({ goalId: goal.id, graph: library.graph });
+  await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
   const plannedLessons = await prisma.planItem.count({
     where: { kind: "lesson", planId: plan.id, status: "todo" },
@@ -254,7 +254,7 @@ describe("a plan made after its date", () => {
       userId: user.id,
     });
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
     mockSession(user.id);
 
     const view = await readPlan();

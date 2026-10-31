@@ -11,7 +11,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
-import { createGoalPlan } from "../plans/create-goal-plan";
+import { createSetUpGoalPlan } from "../plans/_test-utils/set-up-plan";
 import { findPlanTimeToCover } from "../plans/get-time-advice";
 import { claimLessonQuestionAnswer } from "./answer-lifecycle";
 import { createLessonQuestion } from "./create-lesson-question";
@@ -52,7 +52,7 @@ async function plannedLearner({
     userId: user.id,
   });
 
-  await createGoalPlan({ goalId: goal.id, graph: library.graph });
+  await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
   const plan = await prisma.plan.findUniqueOrThrow({
     include: { items: { orderBy: { position: "asc" } } },
@@ -589,7 +589,7 @@ describe("the plan the buddy looks up", () => {
         userId: user.id,
       });
 
-      await createGoalPlan({ goalId: goal.id, graph: library.graph });
+      await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
       const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
       const [mock] = await Promise.all([

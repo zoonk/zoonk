@@ -31,11 +31,20 @@ type MemoryTaskRequest = {
   analytics?: AiGenerationContext;
 };
 
+type MemorySearch = { facts: MemoryFactForTask[] } | { terms: string[] };
+
 type FactScope = {
   categories: MemoryCategory[];
   includeSensitive: boolean;
   now: Date;
   userId: string;
+};
+
+type FactSearch = {
+  analytics?: AiGenerationContext;
+  language: string;
+  need: string;
+  scope: FactScope;
 };
 
 function scopeWhere({ categories, includeSensitive, now, userId }: FactScope) {
@@ -55,25 +64,50 @@ function findRecentFacts({ limit, scope }: { limit: number; scope: FactScope }) 
   });
 }
 
-async function searchRelevantFacts({
+async function lookUpMemory({
+  analytics,
+  categories,
+  includeSensitive = false,
+  language,
+  need,
+  userId,
+}: MemoryTaskRequest): Promise<{ facts: MemoryFactForTask[] } | { search: FactSearch }> {
+  if (categories.length === 0 || !(await isMemoryEnabled(userId))) {
+    return { facts: [] };
+  }
+
+  const scope = { categories: [...categories], includeSensitive, now: new Date(), userId };
+  const total = await prisma.memoryFact.count({ where: scopeWhere(scope) });
+
+  if (total <= FACT_LIMIT || !need) {
+    return { facts: await findRecentFacts({ limit: FACT_LIMIT, scope }) };
+  }
+
+  return { search: { analytics, language, need, scope } };
+}
+
+async function generateFactSearchTerms({
   analytics,
   language,
   need,
-  scope,
-}: {
-  analytics?: AiGenerationContext;
-  language: string;
-  need: string;
-  scope: FactScope;
-}): Promise<MemoryFactForTask[]> {
-  const candidateLimit = FACT_LIMIT * CANDIDATE_FACTOR;
+}: FactSearch): Promise<string[]> {
   const { data } = await generateMemorySearchTerms({ analytics, language, need });
+  return data.terms;
+}
+
+async function searchRelevantFacts({
+  language,
+  need,
+  scope,
+  terms,
+}: FactSearch & { terms: string[] }): Promise<MemoryFactForTask[]> {
+  const candidateLimit = FACT_LIMIT * CANDIDATE_FACTOR;
 
   const matchedIds = await searchMemoryFactIds({
     ...scope,
     language,
     limit: candidateLimit,
-    terms: data.terms,
+    terms,
   });
 
   const [matched, recent] = await Promise.all([
@@ -91,31 +125,15 @@ async function searchRelevantFacts({
   return selectRelevantMemoryFacts({ facts: candidates, limit: FACT_LIMIT, need });
 }
 
-async function selectFacts({
-  analytics,
-  language,
-  need,
-  scope,
+async function markUsed({
+  facts,
+  userId,
 }: {
-  analytics?: AiGenerationContext;
-  language: string;
-  need?: string;
-  scope: FactScope;
+  facts: MemoryFactForTask[];
+  userId: string;
 }): Promise<MemoryFactForTask[]> {
-  const total = await prisma.memoryFact.count({ where: scopeWhere(scope) });
-
-  if (total <= FACT_LIMIT || !need) {
-    return findRecentFacts({ limit: FACT_LIMIT, scope });
-  }
-
-  const searched = await safeAsync(() => searchRelevantFacts({ analytics, language, need, scope }));
-
-  if (searched.error) {
-    logError("Memory search failed; using the most recent facts instead.", searched.error);
-    return findRecentFacts({ limit: FACT_LIMIT, scope });
-  }
-
-  return searched.data;
+  await markMemoryFactsUsed({ ids: facts.map((fact) => fact.id), now: new Date(), userId });
+  return facts;
 }
 
 /**
@@ -123,31 +141,53 @@ async function selectFacts({
  * started, never from a client.
  */
 export async function getMemoryForTask(request: MemoryTaskRequest): Promise<MemoryFactForTask[]> {
-  const facts = await findMemoryForTask(request);
-
-  await markMemoryFactsUsed({
-    ids: facts.map((fact) => fact.id),
-    now: new Date(),
-    userId: request.userId,
-  });
-
-  return facts;
+  return markUsed({ facts: await findMemoryForTask(request), userId: request.userId });
 }
 
 /** `getMemoryForTask` without marking the facts used, for a task that marks only what it uses. */
-export async function findMemoryForTask({
-  analytics,
-  categories,
-  includeSensitive = false,
-  language,
-  need,
-  userId,
-}: MemoryTaskRequest): Promise<MemoryFactForTask[]> {
-  if (categories.length === 0 || !(await isMemoryEnabled(userId))) {
-    return [];
+export async function findMemoryForTask(request: MemoryTaskRequest): Promise<MemoryFactForTask[]> {
+  const lookup = await lookUpMemory(request);
+
+  if ("facts" in lookup) {
+    return lookup.facts;
   }
 
-  const scope = { categories: [...categories], includeSensitive, now: new Date(), userId };
+  const { search } = lookup;
 
-  return selectFacts({ analytics, language, need, scope });
+  const searched = await safeAsync(async () =>
+    searchRelevantFacts({ ...search, terms: await generateFactSearchTerms(search) }),
+  );
+
+  if (searched.error) {
+    logError("Memory search failed; using the most recent facts instead.", searched.error);
+    return findRecentFacts({ limit: FACT_LIMIT, scope: search.scope });
+  }
+
+  return searched.data;
+}
+
+/**
+ * `getMemoryForTask` in two calls, one model call each, so a workflow retries each alone: a failed
+ * call throws instead of falling back to the most recent facts.
+ */
+export async function startMemorySearch(request: MemoryTaskRequest): Promise<MemorySearch> {
+  const lookup = await lookUpMemory(request);
+
+  if ("facts" in lookup) {
+    return { facts: await markUsed({ facts: lookup.facts, userId: request.userId }) };
+  }
+
+  return { terms: await generateFactSearchTerms(lookup.search) };
+}
+
+export async function selectMemoryFacts({
+  terms,
+  ...request
+}: MemoryTaskRequest & { terms: string[] }): Promise<MemoryFactForTask[]> {
+  const lookup = await lookUpMemory(request);
+
+  const facts =
+    "facts" in lookup ? lookup.facts : await searchRelevantFacts({ ...lookup.search, terms });
+
+  return markUsed({ facts, userId: request.userId });
 }

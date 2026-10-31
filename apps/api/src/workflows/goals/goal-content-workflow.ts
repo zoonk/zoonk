@@ -8,12 +8,13 @@ import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { claimRunToken } from "../_shared/run-token";
 import { prepareAhead, startPairLevelTest } from "./goal-ahead";
 import { isBuiltBeforeResearch, waitForGraphInputs } from "./goal-content-inputs";
-import { type BuiltCurriculum, buildCurriculum, setUpPlan } from "./goal-curriculum";
+import { type BuiltCurriculum, buildCurriculum } from "./goal-curriculum";
 import { followPlanStart } from "./goal-lookahead";
 import { outlinePlanAhead } from "./goal-outlines";
 import { preparePlanPlacement } from "./goal-placement-items";
 import { reconcileResearch, reconcileStoredPlan } from "./goal-research-reconcile";
 import { type GoalRunContext } from "./goal-run-context";
+import { setUpPlan } from "./plan-setup";
 import { isPlanPreparedStep, recordGoalBuildFailureStep } from "./steps/goal-build-outcome-steps";
 import {
   decideGoalScopeStep,

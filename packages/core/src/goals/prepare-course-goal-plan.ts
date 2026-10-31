@@ -60,6 +60,6 @@ export async function prepareCourseGoalPlan({
   });
 
   if (graph.skills.length > 0 || exam) {
-    await createGoalPlan({ goalId, graph, platform, setup: "steps" });
+    await createGoalPlan({ goalId, graph, platform });
   }
 }

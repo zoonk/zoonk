@@ -270,7 +270,7 @@ describe("background plan inputs", () => {
       planFixture({ goalId: goal.id }),
     ]);
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" });
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
     mockSession(goal.userId);
     const lookup = await lookUp(goal.id);
     const held = holdLearnerLock({ userId: goal.userId });

@@ -9,6 +9,7 @@ import { updateGoal } from "../goals/update-goal";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { createSetUpGoalPlan } from "./_test-utils/set-up-plan";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
@@ -134,7 +135,7 @@ describe(getPlanTimeAdvice, () => {
   it("estimates an undated plan for the selected week without saving a deadline or schedule", async () => {
     const { goal, library } = await setup(18, 15);
     await prisma.goal.update({ data: { targetDate: null }, where: { id: goal.id } });
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
     const before = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
     const ask = (input: PlanTimeAdviceInput) => getPlanTimeAdvice({ goalId: goal.id, input });
@@ -188,7 +189,7 @@ describe(getPlanTimeAdvice, () => {
       skills: library.graph.skills.map((skill) => ({ ...skill, lessons: 600 })),
     };
 
-    await createGoalPlan({ goalId: goal.id, graph: large });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: large });
 
     await expect(
       getPlanTimeAdvice({ goalId: goal.id, input: { dailyMinutes: 5, studyDays: [0] } }),
@@ -219,7 +220,7 @@ describe(getPlanTimeAdvice, () => {
       timeZone: "UTC",
     });
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const studyDays = [0];
     const advice = await readAdvice(goal.id, studyDays);
@@ -318,7 +319,7 @@ describe(getPlanTimeAdvice, () => {
 
   it("recommends the time the plan then shows, and that time covers the whole goal", async () => {
     const { goal, library } = await setup();
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const advice = await readAdvice(goal.id, EVERY_DAY);
 
@@ -357,7 +358,7 @@ describe(getPlanTimeAdvice, () => {
         userId: user.id,
       });
 
-      await createGoalPlan({ goalId: goal.id, graph: library.graph });
+      await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
       const ownTime = await readPlanTime(goal.id);
       const own = ownTime.recommendedMinutes ?? 0;
       const asked = await readAdvice(goal.id, EVERY_DAY);
@@ -406,7 +407,7 @@ describe(getPlanTimeAdvice, () => {
 
   it("says what the time the learner looks at covers, without changing the time recommended", async () => {
     const { goal, library } = await setup();
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const advice = await readAdvice(goal.id, EVERY_DAY);
     const recommended = advice.recommendedMinutes ?? 0;
@@ -436,7 +437,7 @@ describe(getPlanTimeAdvice, () => {
 
   it("on fewer study days recommends more a day: the number the plan shows once they're set", async () => {
     const { goal, library } = await setup();
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const [everyDay, weekdays] = await Promise.all([
       readAdvice(goal.id, EVERY_DAY),
@@ -454,7 +455,7 @@ describe(getPlanTimeAdvice, () => {
 
   it("counts the weekend's own time: the number the plan shows once the week is set", async () => {
     const { goal, library } = await setup(18);
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const [everyDay, withWeekend] = await Promise.all([
       readAdvice(goal.id, EVERY_DAY),
@@ -489,7 +490,7 @@ describe(getPlanTimeAdvice, () => {
 
   it("measures a new daily time with the saved weekend time, as applying it does", async () => {
     const { goal, library } = await setup(18);
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     await change(goal.id, [
       { kind: "setDailyMinutes", minutes: 10 },
@@ -514,7 +515,7 @@ describe(getPlanTimeAdvice, () => {
 
   it("keeps lighter weekdays when recommending time with an unchanged weekend override", async () => {
     const { goal, library } = await setup(31, 60);
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     await change(goal.id, [
       { kind: "setWeekdayMinutes", minutes: 30, weekdays: [0, 6] },
@@ -554,7 +555,7 @@ describe(getPlanTimeAdvice, () => {
     "matches updateGoal's saved coverage for $name",
     async ({ dailyMinutes, lighter, studyDays, weekendMinutes }) => {
       const { goal, library } = await setup(12, 60);
-      await createGoalPlan({ goalId: goal.id, graph: library.graph });
+      await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
       if (lighter) {
         await change(goal.id, [
@@ -581,7 +582,7 @@ describe(getPlanTimeAdvice, () => {
     "offers only an achievable recommendation for $name",
     async ({ lighter, studyDays, weekendMinutes }) => {
       const { goal, library } = await setup(12, 60);
-      await createGoalPlan({ goalId: goal.id, graph: library.graph });
+      await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
       if (lighter) {
         await change(goal.id, [
@@ -617,7 +618,7 @@ describe(getPlanTimeAdvice, () => {
 
   it("offers no daily-time increase when weekend-only candidates save the same schedule", async () => {
     const { goal, library } = await setup(16, 60);
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const input = { studyDays: [0, 6], weekendMinutes: 60 };
 
@@ -640,7 +641,7 @@ describe(getPlanTimeAdvice, () => {
 
   it("recommends more than 4 hours on weekdays when the weekend's 4 hours don't cover it", async () => {
     const { goal, library } = await setup(70, 60);
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const input = { dailyMinutes: 5, studyDays: [0, 1, 6], weekendMinutes: 240 };
     const advice = await readAdvice(goal.id, input.studyDays, input);
@@ -657,7 +658,7 @@ describe(getPlanTimeAdvice, () => {
 
   it("can preview and accept replacing all saved study days", async () => {
     const { goal, library } = await setup(12, 60);
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     await updateGoal({
       goalId: goal.id,
@@ -676,7 +677,7 @@ describe(getPlanTimeAdvice, () => {
 
   it("keeps the number however other learners' lessons went since", async () => {
     const { goal, library } = await setup();
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const before = await readAdvice(goal.id, EVERY_DAY);
     const other = await userFixture();
@@ -738,7 +739,7 @@ describe(getPlanTimeAdvice, () => {
       timeZone: "UTC",
     });
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const ask = (input: PlanTimeAdviceInput) => getPlanTimeAdvice({ goalId: goal.id, input });
 
@@ -793,7 +794,7 @@ describe(getPlanTimeAdvice, () => {
       timeZone: "UTC",
     });
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const readEstimate = async () => {
       const result = await getGoalPlan(goal.id);
@@ -855,7 +856,7 @@ describe(getPlanTimeAdvice, () => {
 
   it("waits for the placement the learner ended before the plan existed, then recommends the plan's time", async () => {
     const { goal, library } = await setup();
-    await createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" });
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     await expect(readAdvice(goal.id, EVERY_DAY)).resolves.toMatchObject({
       ready: false,
@@ -875,7 +876,7 @@ describe(getPlanTimeAdvice, () => {
 
   it("waits while the plan waits for its exam's notice reading, then recommends the plan's time", async () => {
     const { goal, library } = await setup();
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
     await startNoticeWait({ goalId: goal.id, now: NOW });
 
     await expect(readAdvice(goal.id, EVERY_DAY)).resolves.toMatchObject({
@@ -897,7 +898,7 @@ describe(getPlanTimeAdvice, () => {
 
   it("recommends the plan's time once its wait for the notice runs out without a reading", async () => {
     const { goal, library } = await setup();
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
     await startNoticeWait({ goalId: goal.id, now: new Date(NOW.getTime() - 7 * 60_000) });
 
     const advice = await readAdvice(goal.id, EVERY_DAY);
@@ -936,7 +937,7 @@ describe(getPlanTimeAdvice, () => {
       timeZone: "UTC",
     });
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     const graph = stored.graph as { skills: { lessons: number }[] };
@@ -957,7 +958,7 @@ describe(getPlanTimeAdvice, () => {
 
   it("reads only the learner's own goal", async () => {
     const { goal, library } = await setup();
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const stranger = await userFixture();
     mockSession(stranger.id);

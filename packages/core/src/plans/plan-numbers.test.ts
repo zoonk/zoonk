@@ -10,9 +10,9 @@ import {
 import { loadCourseEstimateData } from "../catalog/_utils/course-estimate-data";
 import { startCourseWithPlan } from "../goals/_test-utils/start-course-with-plan";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { createSetUpGoalPlan } from "./_test-utils/set-up-plan";
 import { getPlanNumbers } from "./_utils/plan-numbers";
 import { changeGoalPlan } from "./change-goal-plan";
-import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 import { getPlanTimeAdvice } from "./get-time-advice";
 import { endNoticeWait } from "./notice-wait";
@@ -52,7 +52,7 @@ describe("learner plan numbers", () => {
       throw new Error("Expected reused curriculum");
     }
 
-    await createGoalPlan({ goalId: started.goal.id, graph: data.sourceGraph });
+    await createSetUpGoalPlan({ goalId: started.goal.id, graph: data.sourceGraph });
     await endNoticeWait(started.goal.id);
 
     const changed = await changeGoalPlan({
@@ -212,7 +212,7 @@ describe("learner plan numbers", () => {
       });
 
       mockSession(user.id);
-      await createGoalPlan({ goalId: goal.id, graph: library.graph });
+      await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
       const [result, stored] = await Promise.all([
         getGoalPlan(goal.id),

@@ -61,7 +61,6 @@ import * as goalPlacement from "./goal-placement-items";
 import { placementItemsWorkflow } from "./placement-items-workflow";
 import * as lookaheadSteps from "./steps/goal-lookahead-steps";
 import * as planSteps from "./steps/goal-plan-steps";
-import { runPlanSetupTaskStep } from "./steps/goal-plan-steps";
 import * as noticeSteps from "./steps/notice-steps";
 
 type SkillGraph = Awaited<ReturnType<typeof generateSkillGraph>>["data"];
@@ -724,10 +723,6 @@ describe(goalContentWorkflow, () => {
       };
 
       await expect(setupOf()).resolves.toStrictEqual(["routine"]);
-
-      await expect(runPlanSetupTaskStep({ goalId: goal.id, task: "routine" })).rejects.toBe(
-        overloaded,
-      );
 
       vi.mocked(fitPlanToRoutineFacts).mockResolvedValue(
         taskResult({

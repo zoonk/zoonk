@@ -1,4 +1,4 @@
-import { setUpPlanNow } from "../../plans/plan-setup";
+import { setUpPlanInSteps } from "../../plans/_test-utils/set-up-plan";
 import { getGoal } from "../get-goal";
 import { prepareCourseGoalPlan } from "../prepare-course-goal-plan";
 import { startCourseGoal } from "../start-course-goal";
@@ -11,7 +11,7 @@ export async function startCourseWithPlan(input: Parameters<typeof startCourseGo
   }
 
   await prepareCourseGoalPlan({ goalId: result.goal.id });
-  await setUpPlanNow(result.goal.id);
+  await setUpPlanInSteps(result.goal.id);
   const prepared = await getGoal(result.goal.id);
 
   if (prepared.status !== "ready") {

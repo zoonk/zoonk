@@ -8,8 +8,8 @@ import { getExamView } from "../exams/view/get-exam-view";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { getOnboarding } from "../view-models/onboarding/get-onboarding";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { createSetUpGoalPlan } from "./_test-utils/set-up-plan";
 import { changeGoalPlan } from "./change-goal-plan";
-import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { getGoalPlan } from "./get-goal-plan";
 import { getPlanTimeAdvice } from "./get-time-advice";
@@ -96,7 +96,7 @@ async function plannedExam({
   });
 
   mockSession(user.id);
-  await createGoalPlan({ goalId: goal.id, graph: library.graph });
+  await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
   return goal;
 }

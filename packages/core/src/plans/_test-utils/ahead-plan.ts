@@ -4,12 +4,12 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getPlanTabView } from "../../view-models/plan/get-plan-view";
 import { loadPaceSamples } from "../_utils/pace-samples";
-import { createGoalPlan } from "../create-goal-plan";
 import { LEARN_KINDS } from "../planner/plan-item-rules";
 import { choosePace } from "../planner/plan-pace";
 import { parsePlanSettings } from "../planner/plan-state";
 import { refreshGoalPlan } from "../refresh-goal-plan";
 import { planLibraryFixture, unplannedGoalFixture } from "./plan-library";
+import { createSetUpGoalPlan } from "./set-up-plan";
 
 /** A Tuesday in 2020, before the learning events other tests write, which estimates read. */
 export const AHEAD_START = new Date("2020-09-29T12:00:00Z");
@@ -91,7 +91,7 @@ export async function aheadPlanFixture({
     userId: user.id,
   });
 
-  await createGoalPlan({ goalId: goal.id, graph: library.graph });
+  await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
   mockSession(user.id);
 
   if (faster) {

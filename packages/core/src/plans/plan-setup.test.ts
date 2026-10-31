@@ -1,3 +1,5 @@
+import { selectRelevantMemoryFacts } from "@zoonk/ai/tasks/memory/relevance";
+import { generateMemorySearchTerms } from "@zoonk/ai/tasks/memory/search-terms";
 import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/plans/routine-fit";
 import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
@@ -13,7 +15,12 @@ import { getRequestProgressDateContext } from "../progress/get-request-date-cont
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { announceTestedOutItems } from "./announce-tested-out-items";
 import { createGoalPlan } from "./create-goal-plan";
-import { runPlanSetupTask } from "./plan-setup";
+import {
+  fitPlanToRoutine,
+  runPlanSetupTask,
+  searchRoutineMemory,
+  selectRoutineMemory,
+} from "./plan-setup";
 import type * as NoticeDay from "../exams/_utils/notice-day";
 import type * as Announcement from "./announce-tested-out-items";
 
@@ -61,7 +68,7 @@ function mockLightWeek() {
   });
 }
 
-async function routineGoal() {
+async function routineGoal({ notes = 0 }: { notes?: number } = {}) {
   const user = await userFixture();
 
   const [library, unplanned] = await Promise.all([
@@ -73,6 +80,9 @@ async function routineGoal() {
       statement: "Travels the week of October 5",
       userId: user.id,
     }),
+    ...Array.from({ length: notes }, (_, index) =>
+      memoryFactFixture({ category: "goals", statement: `Goal note ${index}`, userId: user.id }),
+    ),
   ]);
 
   mockSession(user.id);
@@ -164,32 +174,39 @@ describe(runPlanSetupTask, () => {
     vi.useRealTimers();
   });
 
-  it("leaves a new plan's setup to the caller's steps, and owes each task until it has run", async () => {
+  it("leaves a new plan's whole setup owed for the goal's run, with no model call", async () => {
     const { goal, library, plan } = await routineGoal();
 
-    await expect(
-      createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" }),
-    ).resolves.toStrictEqual({ setupTasks: ["placement", "routine"], status: "created" });
+    await expect(createGoalPlan({ goalId: goal.id, graph: library.graph })).resolves.toStrictEqual({
+      setupTasks: ["placement", "routine"],
+      status: "created",
+    });
 
     await expect(readSetupTasks(plan.id)).resolves.toStrictEqual(["placement", "routine"]);
+    await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
+    expect(generateMemorySearchTerms).not.toHaveBeenCalled();
     expect(fitPlanToRoutineFacts).not.toHaveBeenCalled();
   });
 
-  it("fits a new plan to the routine once: a failed call is retried, and a retry after the fit changes nothing", async () => {
+  it("fits a new plan to the routine once: a failed fit throws for its retry, and a retry after the fit changes nothing", async () => {
     const { goal, library, plan } = await routineGoal();
-    await createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" });
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    const search = await searchRoutineMemory(goal.id);
+    expect(search).toStrictEqual({ memory: ["Travels the week of October 5"] });
+    const memory = search && "memory" in search ? search.memory : [];
 
     vi.mocked(fitPlanToRoutineFacts).mockRejectedValueOnce(new Error("The provider is overloaded"));
 
-    await expect(runPlanSetupTask({ goalId: goal.id, task: "routine" })).rejects.toThrow(
+    await expect(fitPlanToRoutine({ goalId: goal.id, memory })).rejects.toThrow(
       "The provider is overloaded",
     );
 
     await expect(readSetupTasks(plan.id)).resolves.toContain("routine");
 
     mockLightWeek();
-    await runPlanSetupTask({ goalId: goal.id, task: "routine" });
-    await runPlanSetupTask({ goalId: goal.id, task: "routine" });
+    await fitPlanToRoutine({ goalId: goal.id, memory });
+    await fitPlanToRoutine({ goalId: goal.id, memory });
 
     const changes = await prisma.planChange.findMany({ where: { planId: plan.id } });
 
@@ -199,11 +216,45 @@ describe(runPlanSetupTask, () => {
 
     expect(fitPlanToRoutineFacts).toHaveBeenCalledTimes(2);
     await expect(readSetupTasks(plan.id)).resolves.toStrictEqual(["placement"]);
+    await expect(searchRoutineMemory(goal.id)).resolves.toBeNull();
+  });
+
+  it("searches a large memory in two calls, each throwing for its retry instead of falling back", async () => {
+    const { goal, library, plan } = await routineGoal({ notes: 10 });
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    vi.mocked(generateMemorySearchTerms).mockRejectedValueOnce(new Error("Gateway down"));
+    await expect(searchRoutineMemory(goal.id)).rejects.toThrow("Gateway down");
+
+    vi.mocked(generateMemorySearchTerms).mockResolvedValueOnce({
+      data: { terms: ["travel"] },
+    } as Awaited<ReturnType<typeof generateMemorySearchTerms>>);
+
+    await expect(searchRoutineMemory(goal.id)).resolves.toStrictEqual({ terms: ["travel"] });
+
+    vi.mocked(selectRelevantMemoryFacts).mockRejectedValueOnce(new Error("Gateway down"));
+
+    await expect(selectRoutineMemory({ goalId: goal.id, terms: ["travel"] })).rejects.toThrow(
+      "Gateway down",
+    );
+
+    vi.mocked(selectRelevantMemoryFacts).mockImplementationOnce(async ({ facts }) =>
+      facts.filter((fact) => fact.statement.startsWith("Travels")),
+    );
+
+    const memory = await selectRoutineMemory({ goalId: goal.id, terms: ["travel"] });
+    expect(memory).toStrictEqual(["Travels the week of October 5"]);
+
+    mockLightWeek();
+    await fitPlanToRoutine({ goalId: goal.id, memory });
+
+    expect(fitPlanToRoutineFacts).toHaveBeenCalledWith(expect.objectContaining({ memory }));
+    await expect(readSetupTasks(plan.id)).resolves.toStrictEqual(["placement"]);
   });
 
   it("tests out what placement settled once: a failed announcement is retried with what the failed attempt tested out", async () => {
     const { goal, library, plan } = await placedGoal();
-    await createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" });
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     vi.mocked(announceTestedOutItems).mockRejectedValueOnce(dropped());
 
@@ -236,9 +287,9 @@ describe(runPlanSetupTask, () => {
   it("asks about the notice's day once: a failed ask is retried, and a retry after it asks nothing", async () => {
     const { goal, library, plan } = await examInAnotherMonth();
 
-    await expect(
-      createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" }),
-    ).resolves.toMatchObject({ setupTasks: ["placement", "routine", "notice"] });
+    await expect(createGoalPlan({ goalId: goal.id, graph: library.graph })).resolves.toMatchObject({
+      setupTasks: ["placement", "routine", "notice"],
+    });
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       targetDate: new Date("2020-12-01T00:00:00Z"),
@@ -265,24 +316,5 @@ describe(runPlanSetupTask, () => {
     ]);
 
     await expect(readSetupTasks(plan.id)).resolves.toStrictEqual(["placement", "routine"]);
-  });
-
-  it("sets up a plan a request builds in that request, and leaves a task that failed there to the next run", async () => {
-    const { goal, library, plan } = await routineGoal();
-    vi.mocked(fitPlanToRoutineFacts).mockRejectedValueOnce(new Error("The provider is overloaded"));
-
-    await expect(createGoalPlan({ goalId: goal.id, graph: library.graph })).resolves.toStrictEqual({
-      setupTasks: ["routine"],
-      status: "created",
-    });
-
-    mockLightWeek();
-    await runPlanSetupTask({ goalId: goal.id, task: "routine" });
-
-    await expect(
-      prisma.planChange.count({ where: { planId: plan.id, status: "applied" } }),
-    ).resolves.toBe(1);
-
-    await expect(readSetupTasks(plan.id)).resolves.toStrictEqual([]);
   });
 });

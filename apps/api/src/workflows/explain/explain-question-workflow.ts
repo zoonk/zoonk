@@ -7,6 +7,8 @@ import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken } from "../_shared/run-token";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
+import { setUpPlan } from "../goals/plan-setup";
+import { listPlanSetupTasksStep } from "../goals/steps/goal-plan-steps";
 import { recordGoalRunStep } from "../goals/steps/record-goal-run-step";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { explainProgressStep } from "./steps/explain-progress-step";
@@ -259,6 +261,7 @@ export async function explainQuestionWorkflow({
   );
 
   await finish(result);
+  await setUpPlan({ goalId, tasks: await listPlanSetupTasksStep(goalId) });
   await goFurther?.();
 
   return result;

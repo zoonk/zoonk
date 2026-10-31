@@ -5,7 +5,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { createLessonQuestion } from "../lesson-questions/create-lesson-question";
 import { seedPersonaCopy } from "../seed/seed";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
-import { createGoalPlan } from "./create-goal-plan";
+import { createSetUpGoalPlan } from "./_test-utils/set-up-plan";
 import { getPlanBasesAdvice } from "./get-bases-advice";
 import { getGoalPlan } from "./get-goal-plan";
 import { findPlanTimeToCover, getPlanTimeAdvice } from "./get-time-advice";
@@ -141,7 +141,7 @@ describe("plans laid out per read", () => {
       userId: user.id,
     });
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
     mockSession(user.id);
     vi.setSystemTime(new Date("2020-10-20T12:00:00Z"));
 

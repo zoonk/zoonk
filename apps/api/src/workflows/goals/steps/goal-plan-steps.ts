@@ -5,7 +5,15 @@ import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph"
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
 import { createGoalPlan } from "@zoonk/core/plans/create";
 import { isNoticeLandingExpiredError } from "@zoonk/core/plans/notice-wait";
-import { type PlanSetupTask, listPlanSetupTasks, runPlanSetupTask } from "@zoonk/core/plans/setup";
+import {
+  type PlanMemorySearch,
+  type PlanSetupTask,
+  fitPlanToRoutine,
+  listPlanSetupTasks,
+  runPlanSetupTask,
+  searchRoutineMemory,
+  selectRoutineMemory,
+} from "@zoonk/core/plans/setup";
 import { catchPlanConflict } from "../../_shared/plan-conflict-outcome";
 import { type PlanStepOutcome } from "../../_shared/plan-conflict-retry";
 
@@ -47,7 +55,6 @@ function toGraphPlan({
       promptVersion: provenance.promptVersion,
       runId: provenance.runId,
     },
-    setup: "steps" as const,
   };
 }
 
@@ -84,13 +91,36 @@ export async function followNoticeStep(input: GraphPlanInput): Promise<PlanStepO
   });
 }
 
-export async function runPlanSetupTaskStep(input: {
-  goalId: string;
-  task: PlanSetupTask;
-}): Promise<void> {
+export async function runPlanSetupTaskStep(
+  input: Parameters<typeof runPlanSetupTask>[0],
+): Promise<void> {
   "use step";
 
   await runPlanSetupTask(input);
+}
+
+export async function searchRoutineMemoryStep(goalId: string): Promise<PlanMemorySearch | null> {
+  "use step";
+
+  return searchRoutineMemory(goalId);
+}
+
+export async function selectRoutineMemoryStep(input: {
+  goalId: string;
+  terms: string[];
+}): Promise<string[]> {
+  "use step";
+
+  return selectRoutineMemory(input);
+}
+
+export async function fitPlanToRoutineStep(input: {
+  goalId: string;
+  memory: string[];
+}): Promise<void> {
+  "use step";
+
+  await fitPlanToRoutine(input);
 }
 
 export async function listPlanSetupTasksStep(goalId: string): Promise<PlanSetupTask[]> {

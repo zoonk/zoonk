@@ -461,7 +461,7 @@ describe("checkpoint kind facts share the actual planned and played duration", (
       mockSession(user.id);
 
       await expect(
-        createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" }),
+        createGoalPlan({ goalId: goal.id, graph: library.graph }),
       ).resolves.toMatchObject({ status: "created" });
 
       const initial = await prisma.plan.findUniqueOrThrow({

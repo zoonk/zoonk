@@ -36,9 +36,9 @@ async function setup(startDate = "2026-09-30") {
   await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
   mockSession(user.id);
 
-  await expect(
-    createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" }),
-  ).resolves.toMatchObject({ status: "created" });
+  await expect(createGoalPlan({ goalId: goal.id, graph: library.graph })).resolves.toMatchObject({
+    status: "created",
+  });
 
   return {
     goal,
