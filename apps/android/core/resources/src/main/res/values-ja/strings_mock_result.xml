@@ -36,7 +36,7 @@
   "mock_result_focus_done": "c587ea89e132bdfad719a26817af560d884b504a1bbb54e6ac27aba99e933a94",
   "mock_result_focus_title": "57df87ad6d93518f116c969c21bbc5cd51832f64da01c4b5be32465e1bf61281",
   "mock_result_grade_it": "a8bdb9d9fa4e2ebf305ea37d1073e11274222fe217168cc4e198ccda9b44e7cc",
-  "mock_result_grading": "db2e0602e747e44af81d4224055020a9b1672a89a789917ddef23a1dc38645b2",
+  "mock_result_grading": "2bc929dcb2641c43d0f62e502ccd0708ca39bb91faaf751bf63f1bbeecab1105",
   "mock_result_grading_failed": "c22351fa6e1cb78e99913c83433a2a4a78ad53c9000ba72799df85bc9c17b0a6",
   "mock_result_grading_limit": "801da86712e0d29948cf1f5ce32ffe2ce1f252fa1da943836a3fc8b2caded692",
   "mock_result_grading_slow": "71a35ccaac6c8f4977c34317b58fce65bd097288cc0e24c8931a965600f7cf13",
@@ -287,7 +287,7 @@
     <string name="mock_result_partly_right_note">一部正解で、部分点がつきました。</string>
     <string name="mock_result_written_part">筆記パート · %1$d／%2$d</string>
     <string name="mock_result_too_short">採点するには短すぎます</string>
-    <string name="mock_result_grading">試験の採点基準に沿って採点しています。最大30 秒かかることがあります。</string>
+    <string name="mock_result_grading">試験の評価基準に沿って採点しています。最大30秒かかります。</string>
     <string name="mock_result_grading_slow">引き続き採点しています。いつもより時間がかかっています。</string>
     <string name="mock_result_grading_failed">うまくいきませんでした。少し待ってからもう一度試してください。</string>
     <string name="mock_result_not_graded">まだ採点されていません。</string>

@@ -110,5 +110,5 @@
 
 ## Formatting preferences
 
-- Match the app's compact durations: “2 時間 30 分”, “30 秒”.
+- Match the app's compact durations: “2時間30分”, “30秒”.
 - Quote with 「」, and 『』 inside them.

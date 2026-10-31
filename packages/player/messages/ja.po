@@ -869,7 +869,7 @@ msgstr "{line}行目：{error}"
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "IY8DPN"
 msgid "Stopped after {seconds} seconds. Is there a loop that never ends?"
-msgstr "{seconds} 秒で実行を停止しました。終わらないループはありませんか？"
+msgstr "{seconds}秒で停止しました。終わらないループはありませんか？"
 
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "wzki3Y"
@@ -2550,7 +2550,7 @@ msgstr "この端末では音が遅れずに聞こえます。"
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "hIMvUw"
 msgid "Sound on this device arrives about {ms} ms late. Rhythms here take that out."
-msgstr "この端末では音が約{ms} ミリ秒遅れて聞こえます。リズムの練習では、この遅れを差し引いて判定します。"
+msgstr "この端末では音が約{ms}ミリ秒遅れて聞こえます。リズム練習ではこの遅れを補正します。"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "ukg6sv"
@@ -2583,13 +2583,13 @@ msgstr "今はスキップする"
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "T0p6Z6"
 msgid "Tap {tap} came {ms} ms early."
-msgstr "{tap}回目のタップは{ms} ミリ秒早かったです。"
+msgstr "{tap}拍目のタップは{ms}ミリ秒早かったです。"
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "pGYXzO"
 msgid "Tap {tap} came {ms} ms late."
-msgstr "{tap}回目のタップは{ms} ミリ秒遅かったです。"
+msgstr "{tap}拍目のタップは{ms}ミリ秒遅かったです。"
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
@@ -2688,7 +2688,7 @@ msgstr "クエリの結果の行数が多すぎます。結合条件が抜けて
 #: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "3f2LxP"
 msgid "The query took more than {seconds} seconds and was stopped."
-msgstr "クエリの実行時間が{seconds} 秒を超えたため、停止しました。"
+msgstr "クエリの実行時間が{seconds}秒を超えたため停止しました。"
 
 #: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "ubVY3z"

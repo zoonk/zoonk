@@ -2341,7 +2341,7 @@ msgstr "練習する"
 #: src/conversation/tutor-plan-change.tsx
 msgctxt "LTNKL8"
 msgid "1 week"
-msgstr "1 週間"
+msgstr "1週間"
 
 #: src/conversation/tutor-plan-change.tsx
 msgctxt "j_pdrL"
@@ -2711,7 +2711,7 @@ msgstr "引き続き採点しています。いつもより時間がかかって
 #: src/essay/essay-screen.tsx
 msgctxt "UqDNfF"
 msgid "Reading your essay against each criterion. It can take up to 30 seconds."
-msgstr "各評価基準に沿って小論文を読んでいます。最大で30 秒かかることがあります。"
+msgstr "各評価基準に沿って小論文を読んでいます。最大30秒かかることがあります。"
 
 #: src/essay/essay-screen.tsx
 msgctxt "othn-n"
@@ -3459,7 +3459,7 @@ msgstr "試験官が出す問題を作成しています…"
 #: src/generation/call-generation-copy.ts
 msgctxt "bTJras"
 msgid "Fitting the parts into about five minutes…"
-msgstr "全体が約5 分に収まるように調整しています…"
+msgstr "全体が5分ほどに収まるよう調整しています…"
 
 #: src/generation/call-generation-copy.ts
 msgctxt "bI13IC"
@@ -4207,7 +4207,7 @@ msgstr "{goal} · 学習計画を作成しています"
 #: src/journey/journey-screen.tsx
 msgctxt "vKk5P_"
 msgid "It usually takes a minute or two. Your plan opens here as soon as it's ready."
-msgstr "通常は 1〜2 分ほどかかります。学習計画ができ次第、ここに表示されます。"
+msgstr "通常は1〜2分かかります。学習計画ができ次第、ここに表示されます。"
 
 #: src/journey/journey-screen.tsx
 msgctxt "wRaHK-"
@@ -4881,7 +4881,7 @@ msgstr "引き続きスピーキングを評価しています。通常より時
 #: src/language/conversation/call-problem.tsx
 msgctxt "foEK61"
 msgid "Rating your speaking on the exam's criteria. It usually takes about half a minute."
-msgstr "試験の評価基準に沿ってスピーキングを評価しています。通常は30 秒ほどかかります。"
+msgstr "試験の評価基準に沿ってスピーキングを評価しています。通常は30秒ほどかかります。"
 
 #: src/language/conversation/call-problem.tsx
 msgctxt "pUiJI5"
@@ -4949,7 +4949,7 @@ msgstr "会話を準備する"
 #: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "XIsjEi"
 msgid "This challenge is a short call about the unit. It's written for your speaking level first, which takes up to half a minute."
-msgstr "このチャレンジは、ユニットの内容についての短い会話です。まずスピーキングのレベルに合わせて内容を作成するため、最大30 秒かかります。"
+msgstr "このチャレンジでは、ユニットの内容について短い会話をします。スピーキングのレベルに合わせて内容を作成するため、始まるまでに最大30秒かかります。"
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
 #: src/language/conversation/conversation-intro.tsx
@@ -5501,7 +5501,7 @@ msgstr "タスク"
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "3wsc3Q"
 msgid "{min}–{max} min"
-msgstr "{min}〜{max} 分"
+msgstr "{min}〜{max}分"
 
 #. Time the learner gets to prepare before answering these speaking exam tasks. {tasks} lists task numbers.
 #: src/language/exam-speaking/speaking-task-row.tsx
@@ -5596,7 +5596,7 @@ msgstr "「録音」を押して、声に出して言ってください"
 #: src/language/level-test/level-test-preparing.tsx
 msgctxt "fLPXYn"
 msgid "The {language} test is new in your language, so its questions are being written now. It usually takes a minute or two, and only this once."
-msgstr "ご利用の言語では{language}のテストがまだないため、問題を作成しています。通常1〜2 分ほどかかりますが、この準備は今回だけです。"
+msgstr "お使いの言語での{language}テストはまだないため、今、問題を作成しています。通常は1〜2分かかりますが、この待ち時間は今回だけです。"
 
 #: src/language/level-test/level-test-preparing.tsx
 #: src/language/level-test/level-test-screens.tsx
@@ -6301,7 +6301,7 @@ msgstr "全画面表示"
 #: src/mind-maps/mind-map-card.tsx
 msgctxt "X6Frhz"
 msgid "It takes about half a minute. You can leave this page; it'll be here."
-msgstr "30 秒ほどかかります。このページを離れても、戻ればここで見られます。"
+msgstr "30秒ほどかかります。このページを離れても、戻ってから確認できます。"
 
 #: src/mind-maps/mind-map-card.tsx
 msgctxt "DSQIYK"
@@ -7755,7 +7755,7 @@ msgstr "分野別"
 #: src/mock/mock-result-essays.tsx
 msgctxt "hpzsHc"
 msgid "Grading it with the exam's rubric. It can take up to 30 seconds."
-msgstr "試験の採点基準に沿って採点しています。最大30 秒かかることがあります。"
+msgstr "試験の評価基準に沿って採点しています。最大30秒かかることがあります。"
 
 #: src/mock/mock-result-essays.tsx
 msgctxt "S2mivZ"
@@ -8463,7 +8463,7 @@ msgstr "無料プランでは、一度に取り組める目標は1つです。�
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"
 msgid "A short explanation written for you, about 5 minutes."
-msgstr "学びたいことに合わせた、約5 分で読める短い解説です。"
+msgstr "5分ほどで読める、一人ひとりに合わせた短い解説です。"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "rnVK11"
@@ -9256,7 +9256,7 @@ msgstr "追加した資料をもとに問題を作成しています。資料の
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "1bV_YK"
 msgid "They come from the skills your goal needs. It usually takes a minute or two."
-msgstr "目標の達成に必要なスキルをもとに問題を作成しています。通常1〜2 分ほどかかります。"
+msgstr "目標に必要なスキルをもとに問題を作成しています。通常は1〜2分かかります。"
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "WYzHAI"
@@ -9276,7 +9276,7 @@ msgstr "回答は保存されています。"
 #: src/onboarding/steps/plan-building.tsx
 msgctxt "zCKNAZ"
 msgid "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two."
-msgstr "最初に学ぶ内容を選び、日々の予定に合わせて学習計画を立てています。新しい科目の場合、1〜2 分ほどかかることがあります。"
+msgstr "最初に学ぶ内容を選び、毎日の予定に合わせて調整しています。新しい科目の場合は1〜2分かかることがあります。"
 
 #: src/onboarding/steps/plan-shape.tsx
 #: src/syllabus/subject-aside.tsx
@@ -11804,7 +11804,7 @@ msgstr "読み取りのために送信しています…"
 #: src/today/today-extra-time.tsx
 msgctxt "a8JHBW"
 msgid "Study {minutes} more minutes"
-msgstr "あと {minutes} 分学習する"
+msgstr "あと{minutes}分学習する"
 
 #: src/session/lesson-moment.tsx
 #: src/session/study-moment.tsx
@@ -11829,7 +11829,7 @@ msgstr "学習の進捗を保存しています…"
 #: src/session/next-stop-wait.tsx
 msgctxt "m3SPlD"
 msgid "This lesson is being written for you. It's usually ready in about two minutes."
-msgstr "専用のレッスンを作成しています。通常は 2 分ほどで完成します。"
+msgstr "一人ひとりに合わせてレッスンを作成しています。通常は2分ほどで完成します。"
 
 #: src/session/next-stop-wait.tsx
 msgctxt "J05b6v"
@@ -12074,7 +12074,7 @@ msgstr "{buddy}が輝き始めました。"
 #: src/session/reached-moment.tsx
 msgctxt "T5ld7Y"
 msgid "Right answers raise it. A day away lowers it a little."
-msgstr "正解すると上がります。1 日休むと少し下がります。"
+msgstr "正解すると上がります。1日休むと少し下がります。"
 
 #: src/session/reached-moment.tsx
 msgctxt "NnY-Hf"
@@ -12130,7 +12130,7 @@ msgstr "学習を続ける"
 #: src/session/summary/summary-parts.tsx
 msgctxt "Ug6aid"
 msgid "Done in under a minute"
-msgstr "1 分未満で完了"
+msgstr "1分未満で完了"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "dQnLX6"
@@ -12754,7 +12754,7 @@ msgstr "学習を始める"
 #: src/today/today-action.tsx
 msgctxt "AFqHlU"
 msgid "Practice for {minutes} minutes"
-msgstr "{minutes} 分練習する"
+msgstr "{minutes}分練習する"
 
 #. Button that has Zoonk write today's lessons.
 #: src/today/today-action.tsx
@@ -13091,7 +13091,7 @@ msgstr "最近の回答から"
 #: src/today/today-more.tsx
 msgctxt "4wC4V5"
 msgid "Study for {minutes} minutes"
-msgstr "{minutes} 分学習する"
+msgstr "{minutes}分学習する"
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"
@@ -13136,7 +13136,7 @@ msgstr "{goal}に向けた学習計画を作成しています"
 #: src/today/today-preparing.tsx
 msgctxt "YIDCBU"
 msgid "It usually takes a minute or two. Your first day opens here as soon as it's ready."
-msgstr "通常は1〜2 分ほどかかります。準備ができ次第、初日の学習がここに表示されます。"
+msgstr "通常1〜2分ほどかかります。準備ができ次第、初日の学習がここに表示されます。"
 
 #: src/today/today-screen.tsx
 #: src/today/today-shell.tsx
@@ -13167,7 +13167,7 @@ msgstr "おすすめの目標"
 #: src/today/today-suggested-goal.tsx
 msgctxt "Ie2Ije"
 msgid "Build a plan in 1 minute."
-msgstr "1 分で学習計画を作れます。"
+msgstr "1分で学習計画を作れます。"
 
 #: src/today/today-up-next.tsx
 msgctxt "oAkgEE"
@@ -13284,7 +13284,7 @@ msgstr "新しい週が始まりました。今日は簡単なウォームアッ
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "OA9N1Z"
 msgid "Preparing the lessons… It takes about half a minute."
-msgstr "レッスンを準備しています…30 秒ほどかかります。"
+msgstr "レッスンを準備しています…30秒ほどかかります。"
 
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "VCjBXi"
@@ -13299,7 +13299,7 @@ msgstr "レッスンを見る"
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "oo_iQE"
 msgid "A topic's lessons are planned two weeks before you get to it. You can see this one's now."
-msgstr "レッスンの内容は、そのトピックを学ぶ2 週間前に決まります。このトピックのレッスンは今すぐ見られます。"
+msgstr "各トピックのレッスンは、そのトピックに進む2週間前に計画を立てます。このトピックのレッスンは今すぐ確認できます。"
 
 #. {start} is a day, like "Nov 5", or a month, like "December".
 #: src/topic-outline/use-far-topic-line.ts

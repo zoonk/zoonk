@@ -53,7 +53,7 @@
   "conversation_focus": "43e6d830860427c489944b59888c450723b91623b22829096fb74ca6b2c0325c",
   "conversation_get_across": "8fb90d951419a1ee36605e30a12921ced83db433f3cf66d7229ec1aa4a464a01",
   "conversation_get_ready": "536435e91701710312f94d912fdec02fe77a6c779ba89701ed26009cda7ca1fd",
-  "conversation_get_ready_description": "4732a3a776dc47f7e2bbbf0076e5e357c3be6fd2dd31fd6228f1668a52555885",
+  "conversation_get_ready_description": "b30329b0331e0ad5db038385e48607f33eb76efc1db855fc33af92c0ec484234",
   "conversation_getting_ready": "9f828ff43234b28b695b012435b4379bb454a8700953bcf3fe84e573eb220482",
   "conversation_go_to_task": "4c882a3ed753e64dbd739a7e0432b7e57676fd8cdea89620cd4c412bc0d59782",
   "conversation_goal_done": "49a9b4b965299d4bcde590cbd21c9780709355e40fcb9651b3dd3d89d09f4ef2",
@@ -112,7 +112,7 @@
   "conversation_prep_shared": "4fd3b0a55ed11169b1704cc5209e3f5f3cd6de7573147dea3ea88e3d397724c1",
   "conversation_preparation": "1e4ab38acd78343ba7d9a9fe775d8c7018c623a2c5b6767212fa3001f71f9e0d",
   "conversation_rated_on": "094480d5530d568ac2eb36c5bb406571e7d7e8e8908a8c0020a45abf513ab8b3",
-  "conversation_rating": "dbd903c7b69c7e6abdd315bbd3cbf0037b982a47edb6e68724ab4031a6b94840",
+  "conversation_rating": "4fa460a8c093e0f94741b78e668dc7e6aabb7d4bb105bc5caed3fd136eab9539",
   "conversation_rating_slow": "8b899e3b0edd66ef72d27e208ef5ab035c19fd52267af2e6a37955360f2750f9",
   "conversation_reconnecting": "e68afb07f90e537b691b91ddcbb578a51d5d05a473ea5c55528fe29bb0ebc08a",
   "conversation_role_examiner": "4335ba3e1d61de049a1aa47d91bf5da1dae4bdb8ea7b1dbbcdfb1de485b0c1af",
@@ -240,7 +240,7 @@
     <string name="conversation_try_again">もう一度試す</string>
     <string name="conversation_writing_feedback">フィードバックを作成しています…</string>
     <string name="conversation_writing_feedback_slow">引き続きフィードバックを作成しています。通常より時間がかかっています。</string>
-    <string name="conversation_rating">試験の評価基準に沿ってスピーキングを評価しています。通常は30 秒ほどかかります。</string>
+    <string name="conversation_rating">試験の評価基準に沿ってスピーキングを評価しています。通常30秒ほどかかります。</string>
     <string name="conversation_rating_slow">引き続きスピーキングを評価しています。通常より時間がかかっています。</string>
     <string name="conversation_still_closing">会話の終了処理を進めています。少し待ってからもう一度お試しください。</string>
     <string name="conversation_save_failed">会話を保存できませんでした。</string>
@@ -273,7 +273,7 @@
     <string name="conversation_study_time_used_up">1日の学習時間の上限に達しました。この会話は次回の学習でできます。</string>
     <string name="conversation_back_to_today">「今日」に戻る</string>
     <string name="conversation_get_ready">会話を準備する</string>
-    <string name="conversation_get_ready_description">このチャレンジは、ユニットの内容についての短い会話です。まずスピーキングのレベルに合わせて内容を作成するため、最大30 秒かかります。</string>
+    <string name="conversation_get_ready_description">このチャレンジは、ユニットの内容についての短い会話です。先にスピーキングのレベルに合わせて内容を作成するため、最大30秒かかります。</string>
     <string name="conversation_getting_ready">会話を準備しています</string>
     <string name="conversation_opens_here">準備ができ次第、ここに表示されます。</string>
     <string name="conversation_writing_call">会話を作成しています</string>

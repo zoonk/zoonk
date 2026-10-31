@@ -33,7 +33,7 @@
   "speaking_writing_mock": "c1f4d52736bf52b26ed820fb3bb2f12e0b9ab32b9c0542e1df1bbda691b10b65",
   "speaking_writing_mock_line_1": "7cbfc3d0aef03524391649f8db81e259ca152597a8b2dfb993609c7c3a47e0f1",
   "speaking_writing_mock_line_2": "0f329d98a810bb510fc004555b040cc8f7aa7a66eb20badcfc49718dbe374cf6",
-  "speaking_writing_mock_line_3": "78a62cfc042fa0e57997472cd81e4f6c68ce2d126ce291af1bce6489f2f6f2db",
+  "speaking_writing_mock_line_3": "e3cb54a4cfb473916924a7b7d62f28111146c6d5c34f61d36539f60375c8d0fb",
   "speaking_writing_mock_line_4": "da229c259c119cb2902257de9d812fba3dcec4a25863b0a01a2914bd06d61736",
   "speaking_writing_mock_phase": "c3b8af912f881a2da5ad1544096cb2d12f2660750323ad7853f71f669fb33cce"
 }
@@ -83,6 +83,6 @@
     <string name="speaking_writing_mock_phase">試験官の台本を作成しています</string>
     <string name="speaking_writing_mock_line_1">試験官を選んでいます…</string>
     <string name="speaking_writing_mock_line_2">試験官が出す問題を作成しています…</string>
-    <string name="speaking_writing_mock_line_3">全体が約5 分に収まるように調整しています…</string>
+    <string name="speaking_writing_mock_line_3">全体が5分ほどに収まるように調整しています…</string>
     <string name="speaking_writing_mock_line_4">役立つフレーズを追加しています…</string>
 </resources>

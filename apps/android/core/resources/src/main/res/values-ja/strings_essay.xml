@@ -25,7 +25,7 @@
   "essay_for_example": "9fc4bdd101b4885d7b209e25c0c631d7b6e1ed13decd6f4db634fb7ce9eb24a0",
   "essay_full_marks": "94b8f50e3c6c107fa114629e26440ac92cd52570c6d502a092c669db967b3e21",
   "essay_grade_rewrite": "90d40264912dd5eda0943fe36d9b33fdb4b624e9347a2da282a14229ae474ed5",
-  "essay_grading": "d5966b4285edfab0e5a34cb0b5887d28d7c4bb6e1fcf78f1cd459abf62c376e1",
+  "essay_grading": "7588371af0744e3cc2129b96705362218a878d5c7c4ebf33afbef02765414684",
   "essay_grading_button": "9569c00ade57701394e1ff513267c532b9884169f8e89ca7f7419cfa1e194f8d",
   "essay_grading_slow": "22b1485efcedcfe39e2c4b6d6cb957e236a5e06c9b7dc54749b92622418669d7",
   "essay_keep_writing": "bf22bf27cf32f08ae37cd730d1f6eeae538e1df81815ca856e1650ac794f73b6",
@@ -110,7 +110,7 @@
     <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
     <string name="essay_daily_limit_reached">1日の学習時間の上限に達しました。書いた内容はここに残ります。</string>
     <string name="essay_limit_reached">今日の小論文の採点回数を使い切りました。文章はここに残るので、明日送信してください。</string>
-    <string name="essay_grading">各評価基準に沿って小論文を読んでいます。最大で30 秒かかることがあります。</string>
+    <string name="essay_grading">各評価基準に沿って小論文を評価しています。最大30秒かかります。</string>
     <string name="essay_grading_slow">引き続き採点しています。いつもより時間がかかっています。</string>
     <string name="essay_skip_rewrite">書き直しをスキップする</string>
     <string name="essay_grading_button">採点しています…</string>

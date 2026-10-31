@@ -41,7 +41,7 @@
   "plan_bases_studied_stay": "8cef4e605f14a22a06e7566eca0ec340b78bf88a0d7093071643272f2b4bf31c",
   "plan_bases_topics_come_in": "5a89d60e85bc1526560b9605c5880fe47c9a899e63323df769b977607372fbbd",
   "plan_bases_topics_leave": "75216de56ed3abea10c97e207ea1f9768947533da61ec5f5591dfd07733e4952",
-  "plan_building_description": "600ccbb7993d09bf3c1e5d1063e96df32c4333d52322118a46edb3d51fa252f8",
+  "plan_building_description": "fa2cb3aa80f7d0b2a3380363c046563662e04bfcc6a05aae117351f396d8229d",
   "plan_building_eyebrow": "121c1d31f5263a6b6263bcabbb1a0fc015f018b40945ccde81d3fc074b7fb099",
   "plan_cadence_biweekly": "b4952cadce3c1d15cb1d066dc0406c690506b5dd64629e312b256294c711c263",
   "plan_cadence_biweekly_effect": "3374a0d33e1ed4920cf76fef8aa1c22e9f78ae44b2763a24deef31a4cb2ad2b2",
@@ -621,7 +621,7 @@
     <string name="plan_setup_left_description">質問への回答をもとに、目標達成までの毎日の学習計画を立てます。</string>
     <string name="plan_continue">続ける</string>
     <string name="plan_building_eyebrow">%1$s · 学習計画を作成しています</string>
-    <string name="plan_building_description">通常は 1〜2 分ほどかかります。学習計画ができ次第、ここに表示されます。</string>
+    <string name="plan_building_description">通常1〜2分かかります。準備ができ次第、ここに学習計画が表示されます。</string>
     <string name="plan_options">学習計画のメニュー</string>
     <string name="plan_adjust_plan">学習計画を調整する</string>
     <string name="plan_about_exam">試験について</string>

@@ -3588,7 +3588,7 @@ msgstr "{count, plural, other {#項目を復習する}}"
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "X6rSIT"
 msgid "It usually takes a minute or two. The lesson opens here as soon as it's ready."
-msgstr "通常は1〜2 分ほどかかります。準備ができ次第、ここでレッスンが開きます。"
+msgstr "通常1〜2分ほどかかります。準備ができ次第、ここでレッスンが開きます。"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "Dr8j6a"
@@ -3598,7 +3598,7 @@ msgstr "このレッスンはまだ作成されていません"
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "kCHykv"
 msgid "Zoonk writes it when you start. It takes a minute or two."
-msgstr "開始するとZoonkが作成します。1〜2 分ほどかかります。"
+msgstr "始めると、Zoonkがレッスンを作成します。1〜2分ほどかかります。"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "RFCwI6"
@@ -3923,12 +3923,12 @@ msgstr "まずは1問"
 #: src/components/catalog/first-question.tsx
 msgctxt "Ekbc8q"
 msgid "Your answer starts the {minutes}-minute lesson."
-msgstr "答えると、{minutes} 分のレッスンが始まります。"
+msgstr "答えると、{minutes}分のレッスンが始まります。"
 
 #: src/components/catalog/first-question.tsx
 msgctxt "E07b8i"
 msgid "Your choice opens the {minutes}-minute lesson. Check your answer there."
-msgstr "答えを選ぶと、{minutes} 分のレッスンが開きます。そこで答え合わせができます。"
+msgstr "選ぶと、{minutes}分のレッスンが開きます。そこで答え合わせをしましょう。"
 
 #: src/components/catalog/first-question.tsx
 msgctxt "KUHspv"

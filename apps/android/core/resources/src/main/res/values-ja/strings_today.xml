@@ -7,7 +7,7 @@
   "today_behind_goal": "c9af90b4d9486d85109de98f09bc06aebc0f4c52018adba916b7030191306ab5",
   "today_behind_kept": "5456742f3206a68d5de42548d2655466501588a517f033e7700b9aaa6cbd621f",
   "today_building_plan": "ebae8c5d179224b9370e5bd685c841fad8ac237f48ddf4efc6e1d91d5be50d09",
-  "today_building_plan_detail": "9ada028a25e888853c76d918b5ecdb7729e0cfb5533caa3616bab554a8ee6ae0",
+  "today_building_plan_detail": "49a68768a9476e4d2be56395401e2897499fe607429e7e6f55fb09568de5ad6a",
   "today_building_plan_goal": "8a9d096061c0f1ef9feb5af44e0806e9c3ea54f0ec37859dba58cee53b1cb02e",
   "today_catch_up_before_exam": "adac3a0252a48693dde42f103ea617902bb260736a60e4fb4496a313c55c7b28",
   "today_catch_up_next_days": "ef3b81498839128f4cd0c5df86d2cd5b108f0c613520e64ab5040a7a2cf987b1",
@@ -160,7 +160,7 @@
   "today_study_minutes": "7c65122130185c4b6cb9b1bb9fd0e7e4d6de907d99b90930fbaa73ca88631999",
   "today_study_more_minutes": "26989084ebfc6092b4aa932d2af11dc95783bd6fe31946fab3c005134b20f14b",
   "today_suggested_goal_accept": "f11183eba60b421751daf70381450357156519aef2cdc0aa52e2ea6250064580",
-  "today_suggested_goal_detail": "5fa7977613a2e285678a8d8c741f038bac1e360edd3941e4ec2bf06b9784429e",
+  "today_suggested_goal_detail": "868c9dcff34808bcd8656a0c1c875caf66e9db7ae76fda0060596b82b2b33940",
   "today_suggested_goal_question": "84847b32238e8e673f985fec6edf1a04749de6bfa5ac8c758d060ec3db7a6a1e",
   "today_take_mock": "a26b662500481679378e5d59c8312ac637a20e86e86eb135a88a25b1bae6dbd7",
   "today_take_mock_detail": "eabc44f25f57c7e783621c94f344d8965af6596788e9f64d510c9de61f1aa832",
@@ -309,7 +309,7 @@
     <string name="today_welcome_back">おかえりなさい</string>
     <!-- %1$s is a course's title. -->
     <string name="today_suggested_goal_question">「%1$s」を続けますか？</string>
-    <string name="today_suggested_goal_detail">1 分で学習計画を作れます。</string>
+    <string name="today_suggested_goal_detail">1分で学習計画を作れます。</string>
     <string name="today_suggested_goal_accept">学習計画を作成する</string>
     <string name="today_not_now">今はしない</string>
     <string name="today_save_failed">保存できませんでした。もう一度お試しください。</string>
@@ -333,7 +333,7 @@
     <string name="today_continue_setting_up">設定を続ける</string>
     <string name="today_building_plan">学習計画を作成しています</string>
     <string name="today_building_plan_goal">%1$sに向けた学習計画を作成しています</string>
-    <string name="today_building_plan_detail">通常は1〜2 分ほどかかります。準備ができ次第、初日の学習がここに表示されます。</string>
+    <string name="today_building_plan_detail">通常1〜2分かかります。準備ができ次第、ここに初日の学習が表示されます。</string>
     <string name="today_quick_explanation">クイック解説</string>
     <string name="today_continue_explanation">解説を続ける</string>
     <string name="today_session_ended_description">目標に向けて、毎日レッスンや復習、練習に取り組めます。</string>

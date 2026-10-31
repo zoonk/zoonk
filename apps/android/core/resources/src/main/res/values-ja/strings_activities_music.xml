@@ -58,7 +58,7 @@
   "activities_music_skip_for_now": "424c433e9f9c8f701442efd9a0b8c112821af3cbb0e2e6c1d088e5d900031b62",
   "activities_music_sound_check_failed": "01e2cb0af93b803a01fed314e4af05cbd2d7627df9cf0054eaf7b7803d16b3f1",
   "activities_music_sound_check_intro": "ef55aa19a044a129e4e5047e683005a1578dc4faca13dc8ac3f87b8d3e54e5bc",
-  "activities_music_sound_check_late": "5cae792bf7aeee5a607fc93a92aae7f5d68d7182468140704f9f04bc89d952cb",
+  "activities_music_sound_check_late": "810a4c2bfe6cfe77122cbf533e8ba411eb7d7ca3947f767e8fbd566fc7f21197",
   "activities_music_sound_check_listen": "6ae4f40cb5e68850b2219b09e99e8d9602bef79d979b55a1f0d5cfdf25baa9a0",
   "activities_music_sound_check_on_time": "dc2940c4ca94667b5cc9bda4e63b79ef13281baffc91017cf4aef8211bf42eb4",
   "activities_music_sound_check_start": "dd1b5fc08f3acc94e8669a35a49d5543582d17fcef921f99ee07c8d192b342da",
@@ -74,9 +74,9 @@
   "activities_music_string_low_e": "c2012da7ff2b2f7c818a9b81d69559df577d6edb9ec009bd6f17de570c55673e",
   "activities_music_string_position": "b42c57bcd3b31775e8d04ffb884ffc85e5488cc3e6b617886098858a922367a3",
   "activities_music_tab": "e875fa6acbba2f4ecae96a00754e9766bb34ada584a4b75d6053e4ad2823fb76",
-  "activities_music_tap_early": "b7382d84022bd84f6bcc60cb8e3ff07408a921932216161c2e710d195e9d353f",
+  "activities_music_tap_early": "73642830cecf689ad526341a201b5bf60dfc53a24a2cfd09e4811a4d7f20a97a",
   "activities_music_tap_here": "8eeed8ebe7087bf7f251c2fecbc61a92a17acda9936bd3de0563ca57a94b44bb",
-  "activities_music_tap_late": "6a4aa60f3fbd2223ac116e123a5db66b2a2e6d3c7fefee114b241729c1db695c",
+  "activities_music_tap_late": "4339a1860fd9a8b1503a7b43f7a7117f7ef96a3d87da90fd4bdcf139be2d9208",
   "activities_music_tap_missed": "a9499728d086bb2fad40b74355f54a3b95cbc00fa91b1079430e14ab8837b1c8",
   "activities_music_taps_on_time": "4284d9db6e23145b177ccbbd8b83e89944dcb8ec4f348e79adbfcdf26afcdcf0",
   "activities_music_tempo": "c4e2d22cb1c08a92cf6349c9debacbaf0d116cba07890393c23b09fd9d7d3b31",
@@ -217,9 +217,9 @@
         <item quantity="other">タイミングが合ったタップは%1$d回でした（全%2$d回）。</item>
     </plurals>
     <!-- The tap furthest off, like "Tap 3 came 40 ms early". The first value is which tap, counted from 1. -->
-    <string name="activities_music_tap_early">%1$s回目のタップは%2$d ミリ秒早かったです。</string>
+    <string name="activities_music_tap_early">%1$s回目のタップは%2$dミリ秒早かったです。</string>
     <!-- The tap furthest off, like "Tap 3 came 40 ms late". The first value is which tap, counted from 1. -->
-    <string name="activities_music_tap_late">%1$s回目のタップは%2$d ミリ秒遅れました。</string>
+    <string name="activities_music_tap_late">%1$s回目のタップは%2$dミリ秒遅れました。</string>
     <!-- Which tap was missed, counted from 1, like "Tap 3 was missed." -->
     <string name="activities_music_tap_missed">%1$s回目のタップがありませんでした。</string>
     <!-- Taps that matched none of the rhythm's steps. -->
@@ -237,7 +237,7 @@
     <string name="activities_music_sound_check_failed">クリック音とタップのタイミングを十分に確認できませんでした。もう一度、音が鳴るたびにタップしてみてください。</string>
     <string name="activities_music_sound_check_on_time">この端末では音が遅れずに聞こえます。</string>
     <!-- How late this device plays sound, like "about 120 ms late". -->
-    <string name="activities_music_sound_check_late">この端末では音が約%1$d ミリ秒遅れます。リズムの判定では、その遅れを補正します。</string>
+    <string name="activities_music_sound_check_late">この端末の音には約%1$dミリ秒の遅れがあります。ここでのリズム練習では、この遅れを補正します。</string>
     <string name="activities_music_sound_check_start">音の確認を始める</string>
     <string name="activities_music_skip_for_now">今はスキップする</string>
     <string name="activities_music_continue">続ける</string>

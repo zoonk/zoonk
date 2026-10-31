@@ -9,7 +9,7 @@
   "mindmaps_card_create": "683f1b2954dbf1241290c5bf28262b990811c7a8a380d083d1444f46f235cd4b",
   "mindmaps_card_description": "9a6565ce4f505f7859b155c1e5defe739a301cf582e8c062c7c8bf1260bded5c",
   "mindmaps_card_failed": "299e53d857457bc0257f329e3c84ce244b872631e5198d935c48a83fd3bfb909",
-  "mindmaps_card_generating": "05504deebcb8a5b59813504dee10ec3377e27cc7b6a47f703c05ea4574f5764b",
+  "mindmaps_card_generating": "abf9b75538ff41c49f136fdbeba0a0f99119b8fa6b255df85bc0e7a34d2cc2f8",
   "mindmaps_card_generating_title": "9f5aa6669e985fa4a95a82a51fb1d3da1954578bf4de61303c81f297b647e800",
   "mindmaps_card_title": "1d0ed1c1ebd4d75d316d2e12e108c9f3783d0a7cddbaf1094a8460b850fb4cd4",
   "mindmaps_card_unreachable": "ed331280fc66355f5ccd629b577420d73ec877ce4999a3811979cac357ed248e",
@@ -83,7 +83,7 @@
     <string name="mindmaps_card_description">章の要点を1枚の図にまとめ、ひと目で復習できます。</string>
     <string name="mindmaps_card_create">マインドマップを作成する</string>
     <string name="mindmaps_card_generating_title">マインドマップを作成しています…</string>
-    <string name="mindmaps_card_generating">30 秒ほどかかります。このページを離れても、戻ればここで見られます。</string>
+    <string name="mindmaps_card_generating">30秒ほどかかります。あとでここで確認できるので、このページを離れても大丈夫です。</string>
     <string name="mindmaps_card_failed">今回はマインドマップを作成できませんでした。</string>
     <string name="mindmaps_card_unreachable">サーバーに接続できませんでした。インターネット接続を確認してください。</string>
     <string name="mindmaps_as_text_note">図に間違いがあったため、マインドマップをテキストで表示しています。</string>

@@ -5467,7 +5467,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1日の学習時間を%#@minutes@増やして%#@days@続けると、また順調なペースに戻ります。"
+            "value" : "1日の学習時間を%#@minutes@増やして%#@days@続けると、また順調に進められます。"
           },
           "substitutions" : {
             "days" : {
@@ -5478,7 +5478,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg日"
+                      "value" : "%arg日間"
                     }
                   }
                 }
@@ -5492,7 +5492,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg 分"
+                      "value" : "%arg分"
                     }
                   }
                 }

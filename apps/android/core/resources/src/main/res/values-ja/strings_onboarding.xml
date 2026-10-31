@@ -190,7 +190,7 @@
   "onboarding_placement_unavailable_description": "793b12bd0a743fd88aa9a8345a71a5742329fb3bd24c7a72f2d18c389691195a",
   "onboarding_placement_unavailable_title": "527740a15d443aa212bfdfa62815a561ace78a39532db9b682929fff1459c484",
   "onboarding_placement_waiting_material": "4ebd954d7477dff6d59c6c0ab986d3e9ad96cae84421672c2f195fce38e724c8",
-  "onboarding_placement_waiting_skills": "2ac00cdc1df8dd8d1f6efbfe3af8aaa5c75a6a4e44a38a95069eec84a3ed38ae",
+  "onboarding_placement_waiting_skills": "eea1e18d1aab46bce5dda35c98f087ec6f14bec486e83e3dcb7799ccda901b34",
   "onboarding_placement_waiting_title": "b9d3df6e709b5f4c494bbbed3b215e65ff264fec3456496b291930eb6a7eb88f",
   "onboarding_placement_wrong": "bad919077ee246f3495ea7ea0322d5ef3d1cbd2b976d60491e26887ec383c899",
   "onboarding_placement_your_answer": "c3a4799cff17b93ab5974d186dde00ef9c37196ebc78a4c375ff7d3c8175eef1",
@@ -240,7 +240,7 @@
   "onboarding_remove_material": "e9f51b2ad2f11020596ae2299c587cd2b690c36ab16cb966aace53377879f696",
   "onboarding_reveal_about_days": "56374b0101e753a5403115c1fd79c100d98053b8dd7c0ac854c2ec1531cb1ba1",
   "onboarding_reveal_adjust": "2792f0aec650ed8116e491e29155285a99da56418d256ddb0b00e6a9e5f0f79c",
-  "onboarding_reveal_building_description": "1dae5fa705c2819b079c9e9295f798bea140aafbf527f5d1eaed0bfbd21c3d21",
+  "onboarding_reveal_building_description": "080b1928c36cfd6fc563687bab85592bdd1c47ff789c7169fb88a96e284e37af",
   "onboarding_reveal_building_title": "1ae3d8130e3de1fb9816c0409879ac3060ab37384571aaeab5ddc6077f70c71b",
   "onboarding_reveal_chapters": "ccaa8fca249f5431c775a989aadff0aeaba862e8eb2bcb0175dcc2e869d30ba8",
   "onboarding_reveal_covers_exam_after": "bbe5efefd5fba2a19fc4312c1d2c89d5e693699578a677386ed74dd4321849f5",
@@ -622,7 +622,7 @@
     <string name="onboarding_placement_skip_basics">スキップして基礎から始める</string>
     <string name="onboarding_placement_waiting_title">問題を準備しています</string>
     <string name="onboarding_placement_waiting_material">追加した資料をもとに問題を作成しています。資料の読み取りには数分かかります。</string>
-    <string name="onboarding_placement_waiting_skills">目標の達成に必要なスキルをもとに問題を作成しています。通常1〜2 分ほどかかります。</string>
+    <string name="onboarding_placement_waiting_skills">目標に必要なスキルをもとに作成しています。通常1〜2分かかります。</string>
     <string name="onboarding_placement_skip_for_now">今はスキップする</string>
     <string name="onboarding_placement_skip_note">代わりに、最初の数回の学習でこの中から数問出題します。</string>
     <!-- Beside the subject, above a placement question. %1$d is its number. -->
@@ -698,7 +698,7 @@
     <string name="onboarding_language_test_writing">ライティング</string>
     <!-- Title while Zoonk is still building the learner's plan, before it is ready. -->
     <string name="onboarding_reveal_building_title">学習計画を作成しています</string>
-    <string name="onboarding_reveal_building_description">最初に学ぶ内容を選び、日々の予定に合わせて学習計画を立てています。新しい科目の場合、1〜2 分ほどかかることがあります。</string>
+    <string name="onboarding_reveal_building_description">最初に学ぶ内容を選び、毎日の予定に組み込んでいます。新しい科目の場合は1〜2分かかることがあります。</string>
     <!-- Above a published course's title, offered while the learner's plan is built. -->
     <string name="onboarding_library_course_fits">目標に合うコースがライブラリにあります</string>
     <string name="onboarding_reveal_reading_title">試験の公式資料を読み込んでいます</string>
