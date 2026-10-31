@@ -27,6 +27,37 @@ export function isPlanMade(run: GenerationRun | null): boolean {
   return run?.steps.createPlan === "completed";
 }
 
+export function isPlanBuilding(run: GenerationRun | null): boolean {
+  return (
+    run !== null && run.status !== "ready" && Object.keys(run.steps).length > 0 && !isPlanMade(run)
+  );
+}
+
+type PlanGate = { last: { readingNotice: boolean; ready: boolean } | null; status: PollStatus };
+
+/**
+ * Until the plan's first answer, the run as the step opened decides, so a reload's replayed steps
+ * never switch the screen. A run that's done leaves the time question to say the plan is still
+ * working the time out.
+ */
+export function waitsForPlan({
+  gate,
+  openedBuilding,
+  run,
+}: {
+  gate: PlanGate;
+  openedBuilding: boolean;
+  run: GenerationRun | null;
+}) {
+  const { last } = gate;
+
+  if (last === null) {
+    return gate.status === "polling" && openedBuilding;
+  }
+
+  return !last.ready && (last.readingNotice || run?.status !== "ready");
+}
+
 export function hasWaitFailed({
   poll,
   run,

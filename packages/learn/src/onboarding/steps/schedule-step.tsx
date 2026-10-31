@@ -5,6 +5,7 @@ import { type GoalView } from "@zoonk/core/goals/contract";
 import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/contract";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
+import { useState } from "react";
 import { DailyTimePicker } from "../../_components/daily-time-picker";
 import { type GoalDate, TimeAnswer } from "../../_components/time-answer";
 import { getFullTimeNote, getMarkedTimes, getOffer } from "../../_utils/time-answer";
@@ -17,15 +18,17 @@ import { type GoalsTogether, keepsFullCourse, toPickedMinutes, waitsToSave } fro
 import { StepForm } from "./step-form";
 import { EVERY_DAY, WeekdayToggles, WeekendMinutes } from "./study-week";
 import { type Schedule, type ScheduleActions, useSchedule } from "./use-schedule";
-import { WAITING_RUN, getWaitRun, hasWaitFailed, isPlanMade, isRunStopped } from "./wait-run";
+import {
+  WAITING_RUN,
+  getWaitRun,
+  hasWaitFailed,
+  isPlanBuilding,
+  isPlanMade,
+  isRunStopped,
+  waitsForPlan,
+} from "./wait-run";
 
 const FULL_COURSE_ID = "onboarding-full-course";
-
-/** A run that's done leaves the time question to say the plan is still working the time out. */
-function isWaiting({ gate, run }: { gate: Schedule["gate"]; run: GenerationRun | null }) {
-  const last = gate.last;
-  return last !== null && !last.ready && (last.readingNotice || run?.status !== "ready");
-}
 
 function getGoalDate(schedule: Schedule): GoalDate | null {
   const shown = schedule.found.found ?? schedule.found.last;
@@ -200,6 +203,8 @@ export function ScheduleStep({
   together: GoalsTogether;
 }) {
   const t = useExtracted();
+  // oxlint-disable-next-line react/hook-use-state -- Read once as the step opens, never updated.
+  const [openedBuilding] = useState(() => isPlanBuilding(run));
 
   const schedule = useSchedule({
     actions: { findTimeToCover, getTimeAdvice },
@@ -212,7 +217,7 @@ export function ScheduleStep({
     together,
   });
 
-  if (isWaiting({ gate: schedule.gate, run })) {
+  if (waitsForPlan({ gate: schedule.gate, openedBuilding, run })) {
     return <PlanWait gate={schedule.gate} goal={goal} run={run} />;
   }
 

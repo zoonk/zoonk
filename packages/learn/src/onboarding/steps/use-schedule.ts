@@ -178,7 +178,8 @@ export function useSchedule({
     dated,
     found,
     fullCourse,
-    gate: dated ? found.covering : timeAdvice,
+    // When the plan's answer says the goal has no date, the advice asks next: that answer said the plan is ready.
+    gate: dated ? found.covering : { ...timeAdvice, last: timeAdvice.last ?? found.covering.last },
     line,
     minutes,
     picked,
