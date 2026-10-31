@@ -108,7 +108,7 @@ describe(chooseServiceTier, () => {
 });
 
 describe(buildImageProviderOptions, () => {
-  it("lets shared Library pictures fall back to FLUX and Recraft, after Sunburst", () => {
+  it("lets shared Library pictures fall back to FLUX and Recraft, after Sunburst and MAI-Image", () => {
     expect(
       buildImageProviderOptions({
         promptTraining: true,
@@ -120,6 +120,7 @@ describe(buildImageProviderOptions, () => {
       gateway: {
         models: [
           "openai/gpt-image-2.5-sunburst",
+          "microsoft/mai-image-2.6",
           "bfl/flux-3-image",
           "recraft/recraft-v4.1-utility",
         ],
@@ -136,7 +137,11 @@ describe(buildImageProviderOptions, () => {
         size: "1024x1280",
         useFallback: true,
       }).gateway.models,
-    ).toStrictEqual(["openai/gpt-image-2.5-sunburst", "bfl/flux-3-image"]);
+    ).toStrictEqual([
+      "openai/gpt-image-2.5-sunburst",
+      "microsoft/mai-image-2.6",
+      "bfl/flux-3-image",
+    ]);
   });
 
   it("keeps pictures that can't train with providers that don't train on prompts", () => {
@@ -148,7 +153,7 @@ describe(buildImageProviderOptions, () => {
         useFallback: true,
       }),
     ).toStrictEqual({
-      gateway: { models: ["openai/gpt-image-2.5-sunburst"] },
+      gateway: { models: ["openai/gpt-image-2.5-sunburst", "microsoft/mai-image-2.6"] },
       openai: { output_format: "webp", quality: "medium" },
     });
   });

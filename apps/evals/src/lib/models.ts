@@ -69,6 +69,9 @@ const IMAGE_MODELS: { id: string; name: string }[] = [
   { id: "openai/gpt-image-2.5-flare", name: "gpt-image-2.5-flare" },
   { id: "openai/gpt-image-2.5-sunburst", name: "gpt-image-2.5-sunburst" },
   { id: "openai/gpt-image-2", name: "gpt-image-2" },
+  { id: "microsoft/mai-image-2.6", name: "mai-image-2.6" },
+  { id: "microsoft/mai-image-2.6-flash", name: "mai-image-2.6-flash" },
+  { id: "bytedance/seedream-5.0-pro", name: "seedream-5.0-pro" },
 ];
 
 const SPEECH_MODELS: { id: string; name: string }[] = [

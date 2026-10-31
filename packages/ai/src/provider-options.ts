@@ -50,10 +50,10 @@ function isSupportedModelPrefix(value: string): value is SupportedModelPrefix {
 }
 
 /**
- * Sunburst letters as well as Flare at the same price (mind-map eval, 7 Oct 2026). Seedream refuses
- * images under 3.7 megapixels.
+ * The other no-training models fell short: MAI-Image-2.6-Flash misdraws lesson scenes, Seedream
+ * misspells words, Muse rejects the `quality` option and Grok ignores `size`.
  */
-const IMAGE_FALLBACK_MODELS = ["openai/gpt-image-2.5-sunburst"] as const;
+const IMAGE_FALLBACK_MODELS = ["openai/gpt-image-2.5-sunburst", "microsoft/mai-image-2.6"] as const;
 
 /**
  * These draw subjects OpenAI's models won't, but may train on prompts, so they only draw where
