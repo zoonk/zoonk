@@ -229,7 +229,5 @@ var appLanguageName: String {
 }
 
 func nativeLanguageName(_ identifier: String) -> String {
-  let language = Locale(identifier: identifier)
-  return (language.localizedString(forIdentifier: identifier) ?? identifier)
-    .capitalized(with: language)
+  Locale(identifier: identifier).languageTitle(identifier)
 }

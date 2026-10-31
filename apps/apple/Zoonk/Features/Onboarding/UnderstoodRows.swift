@@ -178,7 +178,7 @@ enum UnderstoodRows {
       return []
     }
 
-    let language = locale.localizedString(forLanguageCode: target) ?? target
+    let language = locale.languageTitle(target)
     let native = text(facts.details?.nativeLanguage) ?? facts.language
     var rows: [UnderstoodRow] = []
 
@@ -196,7 +196,7 @@ enum UnderstoodRows {
         id: "nativeLanguage",
         label: LocalizedStringResource(
           "You speak", table: "Onboarding", comment: "Row with the learner's own language"),
-        value: locale.localizedString(forLanguageCode: native) ?? native))
+        value: locale.languageTitle(native)))
 
     return rows
   }

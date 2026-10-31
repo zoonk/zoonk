@@ -134,6 +134,19 @@ final class UnderstoodRowsTests: XCTestCase {
     XCTAssertTrue(GoalError.starting(OnboardingError.limit(guest)).needsAccount)
   }
 
+  func testALanguageIsNamedWithItsVarietyAsMainListsIt() throws {
+    let goal = try understoodGoal(
+      draft: [
+        "kind": "language", "language": "pt", "prompt": "falar com minha avó em Taipé",
+        "title": "Falar com minha avó", "targetLanguage": "zh-TW",
+      ])
+
+    let rows = UnderstoodRows.rows(for: goal, today: today, locale: Locale(identifier: "pt-BR"))
+
+    XCTAssertEqual(
+      rows.filter { $0.id.hasSuffix("Language") }.map(\.value), ["Chinês (Taiwan)", "Português"])
+  }
+
   private func examDay(_ date: String, closed: Bool = false) -> [String: Any] {
     [
       "date": date, "estimated": false, "label": "", "registrationClosed": closed,

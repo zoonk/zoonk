@@ -62,7 +62,7 @@ struct LevelTestStep: View {
         "Preparing your level test", table: "Onboarding",
         comment: "Title while a language's level test questions are written"),
       description: LocalizedStringResource(
-        "The \(languageName(targetLanguage)) test is new in your language, so its questions are being written now. It usually takes a minute or two, and only this once.",
+        "The \(Locale.current.languageName(targetLanguage)) test is new in your language, so its questions are being written now. It usually takes a minute or two, and only this once.",
         table: "Onboarding", comment: "Why the level test waits: the language's name"),
       generationID: generationID,
       kind: .levelTestBank,
@@ -316,10 +316,6 @@ extension Locale.Language {
   }
 }
 
-private func languageName(_ code: String) -> String {
-  Locale.current.localizedString(forLanguageCode: code) ?? code
-}
-
 private struct LevelTestIntro: View {
   let language: String
   let targetLanguage: String
@@ -335,7 +331,8 @@ private struct LevelTestIntro: View {
     Form {
       StepHeader(
         title: Text(
-          "Let's see your level in \(languageName(targetLanguage))", tableName: "Onboarding",
+          "Let's see your level in \(Locale.current.languageName(targetLanguage))",
+          tableName: "Onboarding",
           comment: "Title of a language goal's level test"),
         description: Text(
           "About \(Duration.seconds(minutes * 60), format: .units(allowed: [.minutes], width: .wide)) of reading, listening and one sentence out loud, so your plan starts at your level.",
