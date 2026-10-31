@@ -5,13 +5,16 @@ import { BaseBuilder, createBaseBuilderConfig } from "@workflow/builders";
 /** Where `@workflow/vitest` looks for the bundle by default. */
 const OUT_DIR = join(import.meta.dirname, ".workflow-vitest");
 
-/** `@zoonk/ai` stays an import instead of being inlined, so a test's `vi.mock` can replace it. */
+/**
+ * `@zoonk/ai` stays an import so a test's `vi.mock` can replace it, and `@zoonk/db` so steps share
+ * the test's Prisma runtime: an inlined copy's `sql` fragments fail that client's `instanceof Sql`.
+ */
 class ApiWorkflowTestBuilder extends BaseBuilder {
   constructor() {
     super({
       ...createBaseBuilderConfig({
         dirs: ["src"],
-        externalPackages: ["@zoonk/ai"],
+        externalPackages: ["@zoonk/ai", "@zoonk/db"],
         workingDir: import.meta.dirname,
       }),
       buildTarget: "next",
