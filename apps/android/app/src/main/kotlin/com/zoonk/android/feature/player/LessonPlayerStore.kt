@@ -6,6 +6,7 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.perform
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.player.engine.LessonRefusal
@@ -81,6 +82,18 @@ interface LessonPlayerApi {
         session: AuthenticatedSession,
         lessonId: String,
     ): LessonFit?
+
+    /** The learner's saved example on an explanation screen; null when none fits. Reading never writes one. */
+    suspend fun exampleLine(
+        session: AuthenticatedSession,
+        stepId: String,
+    ): String?
+
+    /** Writes the lesson's example lines, every screen's in one call: it runs AI, so only from the learner's move. */
+    suspend fun writeExampleLines(
+        session: AuthenticatedSession,
+        stepId: String,
+    )
 }
 
 class LiveLessonPlayerApi(
@@ -164,6 +177,18 @@ class LiveLessonPlayerApi(
         } catch (e: ApiException) {
             if (e.error == ApiError.NotFound) null else throw e
         }
+
+    override suspend fun exampleLine(
+        session: AuthenticatedSession,
+        stepId: String,
+    ) = perform { api.clients(session).lessons.getCurrentUserStepExampleLine(UUID.fromString(stepId)) }.line
+
+    override suspend fun writeExampleLines(
+        session: AuthenticatedSession,
+        stepId: String,
+    ) {
+        perform { api.streamingClients(session).lessons.requestCurrentUserStepExampleLine(UUID.fromString(stepId)) }
+    }
 }
 
 /** Lessons by id, kept across opening and closing the player; each read follows the session. */
@@ -178,7 +203,19 @@ class LessonPlayerStore(
             session?.let { api.challengeTeam(it, id) }
         }
 
+    // A line is built from the facts the learner shared and their goal, so it follows them.
+    private val exampleLines =
+        cache.keyed<String, String>(
+            Audience.SignedIn,
+            setOf(DataDomain.Memory, DataDomain.Goals, DataDomain.LearningProfile),
+        ) { session, stepId ->
+            session?.let { api.exampleLine(it, stepId) }
+        }
+
     fun lesson(id: String) = lessons[id]
+
+    /** The learner's own example on an explanation screen; empty when none fits or none is written yet. */
+    fun exampleLine(stepId: String) = exampleLines[stepId]
 
     /** The colleagues' names a challenge's `{{slot}}`s stand for, in slot order. */
     fun challengeTeam(lessonId: String) = teams[lessonId]

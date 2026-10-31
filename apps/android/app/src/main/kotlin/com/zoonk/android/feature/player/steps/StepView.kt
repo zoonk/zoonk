@@ -2,6 +2,7 @@ package com.zoonk.android.feature.player.steps
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import com.zoonk.android.data.Resource
 import com.zoonk.android.feature.activities.choiceAnswer
 import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceRecording
@@ -49,6 +50,9 @@ interface StepActions {
         stepId: String,
         recording: VoiceRecording,
     ): GradeOutcome<Unit>
+
+    /** The learner's own example on an explanation screen; null while the lesson's examples are being written. */
+    fun exampleLine(stepId: String): Resource<String>?
 }
 
 /**
@@ -72,7 +76,7 @@ fun StepView(
     when (val content = step.content) {
         is StepContent.Guess -> GuessHookView(step, content, answer, result, locked, actions)
         is StepContent.Fact -> FactHookView(step, content)
-        is StepContent.Explanation -> ExplanationView(step, content)
+        is StepContent.Explanation -> ExplanationView(step, content, actions)
         is StepContent.WorkedExample -> WorkedExampleView(step, content, revealed = state.revealed[step.id] ?: 1)
         is StepContent.Check -> CheckView(content, answer, result, locked, screen, actions)
         is StepContent.Summary -> SummaryView(content)
@@ -82,12 +86,12 @@ fun StepView(
         is StepContent.Challenge -> ChallengeView(step, content, answer, result, state, actions)
         is StepContent.Language -> LanguageStepView(content, answer, result, locked, language, actions)
     }
+
+    step.citation?.let { LessonCitation(it) }
 }
 
 fun isPlayable(step: LessonStep): Boolean =
     when (val content = step.content) {
-
-    step.citation?.let { LessonCitation(it) }
         is StepContent.Activity -> content.isPlayable
         else -> true
     }

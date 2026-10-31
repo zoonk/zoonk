@@ -170,6 +170,35 @@ class FakeLessonPlayerApi(
         return writeResponse()
     }
 
+    /**
+     * The example lines the server has saved, by screen; [linesToWrite] are the ones the lesson's
+     * first move saves, its response lost when [linesResponseLost].
+     */
+    var savedLines = mapOf<String, String>()
+    var linesToWrite = mapOf<String, String>()
+    var linesGate: CompletableDeferred<Unit>? = null
+    var linesResponseLost = false
+    val lineReads = mutableListOf<String>()
+    val lineWrites = mutableListOf<String>()
+
+    override suspend fun exampleLine(
+        session: AuthenticatedSession,
+        stepId: String,
+    ): String? {
+        lineReads += stepId
+        return savedLines[stepId]
+    }
+
+    override suspend fun writeExampleLines(
+        session: AuthenticatedSession,
+        stepId: String,
+    ) {
+        lineWrites += stepId
+        linesGate?.await()
+        savedLines = savedLines + linesToWrite
+        if (linesResponseLost) throw ApiException(ApiError.Network)
+    }
+
     var fit: LessonFit? = null
 
     override suspend fun fit(

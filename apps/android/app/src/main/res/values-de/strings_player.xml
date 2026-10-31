@@ -168,7 +168,8 @@
   "player_write_your_answer": "2d952ed6c44667861e45aeb60056721b76dede64560cef11e9b09791c28f4472",
   "player_writing_lesson": "c00adab6aa228221b57a1fc93693b6b81c1c9ac9281d8b3f04cca3e477292a42",
   "player_writing_note": "6a829988e9246e7ded33e55e57f1417385837a183d1d5cbf9483a4aba4c5ad2f",
-  "player_your_answer": "c60ee378d46fbf537214bd96561b006cac63e856e9ab325d960873e70fa0a907"
+  "player_your_answer": "c60ee378d46fbf537214bd96561b006cac63e856e9ab325d960873e70fa0a907",
+  "player_your_example": "aff5f52871894b76fcb79920327a10d5526a842147da500c86f4d9de8a740996"
 }
 -->
 <resources>
@@ -236,6 +237,8 @@
     <string name="player_worked_example">Schritt für Schritt erklärt</string>
     <string name="player_worked_example_steps">Schritte</string>
     <string name="player_worked_example_result">Ergebnis</string>
+    <!-- For TalkBack: names the line under an explanation that ties its idea to the learner\'s own life, written from what they shared. -->
+    <string name="player_your_example">Dein Beispiel</string>
     <string name="player_summary">Zusammenfassung</string>
     <plurals name="player_summary_ideas">
         <item quantity="one">%1$s wichtiger Inhalt aus dieser Lektion</item>
@@ -371,8 +374,8 @@
     <string name="player_nothing_left_title">Keine Fragen mehr offen</string>
     <string name="player_nothing_left_description">Schließe ab, um dein Ergebnis zu sehen.</string>
     <string name="player_finish">Abschließen</string>
-</resources>
     <!-- For TalkBack, under a lesson screen: where it comes from in the learner\'s own material. %1$s is a document\'s title, maybe with its page or slide, like "Biology.pdf, page 12". -->
     <string name="player_citation_from_material">Aus deinem Material: %1$s</string>
     <!-- Under a screen of a lesson built from the learner\'s own material, when no page of that material supports what the screen says. -->
     <string name="player_citation_not_in_material">Nicht in deinem Material</string>
+</resources>

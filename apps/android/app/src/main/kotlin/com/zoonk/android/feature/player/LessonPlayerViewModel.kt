@@ -1,7 +1,9 @@
 package com.zoonk.android.feature.player
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.ApiException
@@ -29,6 +31,7 @@ import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.engine.LessonSupport
 import com.zoonk.android.feature.player.engine.RunAnswer
 import com.zoonk.android.feature.player.engine.gradeOnDevice
+import com.zoonk.android.feature.player.engine.hasExampleLineSlot
 import com.zoonk.android.feature.player.engine.isServerGradedAnswer
 import com.zoonk.android.feature.player.engine.isWaitingForPicture
 import com.zoonk.android.feature.player.engine.reduce
@@ -173,6 +176,8 @@ class LessonPlayerViewModel(
     private var completing: Job? = null
     private val unsaved = mutableMapOf<String, MutableList<PendingCheck>>()
     private val screenLocks = mutableMapOf<String, Mutex>()
+    private var exampleLinesWrite: Job? = null
+    private var writingExampleLines by mutableStateOf(false)
 
     /**
      * Starts the lesson's run when it opens, as main does after its player mounts (never on a
@@ -189,6 +194,8 @@ class LessonPlayerViewModel(
         owner = session
         unsaved.clear()
         screenLocks.clear()
+        exampleLinesWrite = null
+        writingExampleLines = false
         mutableEnding.value = LessonEnding(inSession = studySessionId != null)
         mutableState.value = null
         startRun()
@@ -208,6 +215,7 @@ class LessonPlayerViewModel(
     }
 
     fun dispatch(action: LessonAction) {
+        if (action == LessonAction.Continue || action == LessonAction.GoBack) writeExampleLines()
         val before = mutableState.value?.completion?.status
         mutableState.update { state -> state?.let { reduce(it, action, now()) } }
         if (mutableState.value?.completion?.status == CompletionStatus.Saving && before != CompletionStatus.Saving) saveCompletion()
@@ -307,6 +315,8 @@ class LessonPlayerViewModel(
 
         if (state.phase != LessonPhase.Playing) return
 
+        writeExampleLines()
+
         if (answer is LessonAnswer.Hook) {
             revealGuess(step, answer.optionId)?.let { dispatch(LessonAction.CheckResolved(step.id, it, counts = false)) }
             return
@@ -336,6 +346,36 @@ class LessonPlayerViewModel(
             keepUnsent()
             saveScreen(step.id)
         }
+    }
+
+    /** Null while the lesson's example lines are being written, so a screen reads its line once they're in. */
+    fun exampleLine(stepId: String): Resource<String>? = store.exampleLine(stepId).takeUnless { writingExampleLines }
+
+    /**
+     * Main's: the learner's first move writes the lesson's example lines, never its opening, and a
+     * failed write isn't tried again. Every line is read again once the write settles, since its
+     * response can be lost or built from memory that changed meanwhile.
+     */
+    private fun writeExampleLines() {
+        val slots =
+            lesson
+                ?.steps
+                .orEmpty()
+                .filter { it.hasExampleLineSlot }
+                .map(LessonStep::id)
+        val first = slots.firstOrNull() ?: return
+
+        if (exampleLinesWrite != null) return
+
+        writingExampleLines = true
+        exampleLinesWrite =
+            work.launch {
+                cache.mutate(invalidating = setOf(DataDomain.Allowance)) { session ->
+                    if (session == owner) store.api.writeExampleLines(session, first)
+                }
+                slots.forEach { store.exampleLine(it).invalidate() }
+                writingExampleLines = false
+            }
     }
 
     private fun startRun() {

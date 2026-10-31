@@ -23,13 +23,26 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PlayableLibraryStepAnyOf4ContentOneOf
 import com.zoonk.api.models.PlayableLibraryStepAnyOf6ContentIdeasInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOf8ContentStepsInner
+import com.zoonk.api.models.PlayableLibraryStepAnyOf3ContentExampleLineSlot as ExampleLineSlot
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf11FieldsPicture as OptionPicture
 
 fun explanationStep(
     id: String,
     skillId: String? = null,
     visual: StepVisual? = null,
-) = LessonStep(id, skillId, StepContent.Explanation(ExplanationStepContent(text = "Idea $id", title = "Title $id", visual = visual)))
+    exampleIdea: String? = null,
+) = LessonStep(
+    id,
+    skillId,
+    StepContent.Explanation(
+        ExplanationStepContent(
+            text = "Idea $id",
+            title = "Title $id",
+            visual = visual,
+            exampleLineSlot = exampleIdea?.let(::ExampleLineSlot),
+        ),
+    ),
+)
 
 fun workedExampleStep(id: String) =
     LessonStep(

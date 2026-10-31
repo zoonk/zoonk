@@ -189,6 +189,8 @@ fun LessonPlayer(
                     stepId: String,
                     recording: VoiceRecording,
                 ) = viewModel.gradeSpoken(stepId, recording)
+
+                override fun exampleLine(stepId: String) = viewModel.exampleLine(stepId)
             }
         }
     val focus = remember { FocusRequester() }

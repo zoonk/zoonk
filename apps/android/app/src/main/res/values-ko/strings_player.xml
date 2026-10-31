@@ -168,7 +168,8 @@
   "player_write_your_answer": "92a5bf659c9f703f92af4e773e735b57f3be306937908e6b9cd2e293dc10b88e",
   "player_writing_lesson": "7e265e7c590bcfc2a1970cafa4ef7efdb5d20e507bdbf6fdbeaf225628360f7f",
   "player_writing_note": "1aa3746736db28e752607722fd5f3471099850f6dae495baaeea5eb25352117e",
-  "player_your_answer": "453009f5c086dbe11ade9c97cb00ab21eceb6d7ac4ddc5cbd580ab01f463e082"
+  "player_your_answer": "453009f5c086dbe11ade9c97cb00ab21eceb6d7ac4ddc5cbd580ab01f463e082",
+  "player_your_example": "7ef76eadf639e079ecefddb83a9dec61c2afb5596f8e0dba2e7d106ddb35d1bf"
 }
 -->
 <resources>
@@ -235,6 +236,8 @@
     <string name="player_worked_example">풀이 예시</string>
     <string name="player_worked_example_steps">풀이 과정</string>
     <string name="player_worked_example_result">결과</string>
+    <!-- For TalkBack: names the line under an explanation that ties its idea to the learner\'s own life, written from what they shared. -->
+    <string name="player_your_example">내 생활 속 예시</string>
     <string name="player_summary">요약</string>
     <plurals name="player_summary_ideas">
         <item quantity="other">이 레슨에서 기억할 내용 %1$s개</item>
@@ -365,8 +368,8 @@
     <string name="player_nothing_left_title">더 답할 문제가 없어요</string>
     <string name="player_nothing_left_description">마치고 결과를 확인해 보세요.</string>
     <string name="player_finish">끝내기</string>
-</resources>
     <!-- For TalkBack, under a lesson screen: where it comes from in the learner\'s own material. %1$s is a document\'s title, maybe with its page or slide, like "Biology.pdf, page 12". -->
     <string name="player_citation_from_material">내 자료에서 가져왔어요: %1$s</string>
     <!-- Under a screen of a lesson built from the learner\'s own material, when no page of that material supports what the screen says. -->
     <string name="player_citation_not_in_material">내 자료에 없는 내용</string>
+</resources>

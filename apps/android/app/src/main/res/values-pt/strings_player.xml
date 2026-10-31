@@ -168,7 +168,8 @@
   "player_write_your_answer": "be669593ec8942cbfa4f6f61285b87d51970b29f0f6327e5b88be90175676c6e",
   "player_writing_lesson": "ec94d4661e13c08f7045bc8a9dc8760b2e9834b5c13fbd9bddde0f3ba143606b",
   "player_writing_note": "5cf4126e5193d2df0b3090c9085e291ab132ea4dd9c56339558aa895f1e357ef",
-  "player_your_answer": "86964a578d5f77cefce59ff4ea1a55af42bafb85f8b369d27c168a9926d6072f"
+  "player_your_answer": "86964a578d5f77cefce59ff4ea1a55af42bafb85f8b369d27c168a9926d6072f",
+  "player_your_example": "d8973700565889eb236600c8474400e4922bdd87a1f9d16f6b25fc45e52df114"
 }
 -->
 <resources>
@@ -237,6 +238,8 @@
     <string name="player_worked_example">Exemplo resolvido</string>
     <string name="player_worked_example_steps">Passos</string>
     <string name="player_worked_example_result">Resultado</string>
+    <!-- For TalkBack: names the line under an explanation that ties its idea to the learner\'s own life, written from what they shared. -->
+    <string name="player_your_example">Seu exemplo</string>
     <string name="player_summary">Resumo</string>
     <plurals name="player_summary_ideas">
         <item quantity="one">%1$s ideia para levar desta aula</item>
@@ -377,8 +380,8 @@
     <string name="player_nothing_left_title">Não há mais perguntas para responder</string>
     <string name="player_nothing_left_description">Termine para ver como você foi.</string>
     <string name="player_finish">Terminar</string>
-</resources>
     <!-- For TalkBack, under a lesson screen: where it comes from in the learner\'s own material. %1$s is a document\'s title, maybe with its page or slide, like "Biology.pdf, page 12". -->
     <string name="player_citation_from_material">Do seu material: %1$s</string>
     <!-- Under a screen of a lesson built from the learner\'s own material, when no page of that material supports what the screen says. -->
     <string name="player_citation_not_in_material">Não está no seu material</string>
+</resources>

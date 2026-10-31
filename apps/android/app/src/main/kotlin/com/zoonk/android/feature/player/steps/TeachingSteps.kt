@@ -4,12 +4,16 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
@@ -20,6 +24,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,6 +40,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -49,6 +55,9 @@ import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.data.Resource
+import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
 import com.zoonk.android.feature.audio.VoiceAnswerRecorder
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
@@ -156,6 +165,7 @@ internal fun GuessHookView(
 internal fun ExplanationView(
     step: LessonStep,
     content: StepContent.Explanation,
+    actions: StepActions,
 ) {
     val explanation = content.content
 
@@ -173,6 +183,29 @@ internal fun ExplanationView(
         }
         LessonStepVisual(explanation.visual)
         content.explore?.takeUnless { step.isExploredPictureLost }?.let { ExploredActivityCanvas(it) }
+        if (explanation.exampleLineSlot != null) actions.exampleLine(step.id)?.let { ExampleLine(it) }
+    }
+}
+
+/** Main's `ExampleLine`: the explanation's idea in the learner's own life, once it's written; nothing when none fits. */
+@Composable
+private fun ExampleLine(line: Resource<String>) {
+    val state by line.collectShown()
+    val text = state.value ?: return
+    val style = MaterialTheme.typography.bodyLarge
+
+    Row(
+        Modifier.height(IntrinsicSize.Min).semantics(mergeDescendants = true) {},
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        VerticalDivider(Modifier.fillMaxHeight().padding(end = 4.dp), thickness = 2.dp)
+        Icon(
+            painter = painterResource(R.drawable.ic_person),
+            contentDescription = stringResource(R.string.player_your_example),
+            modifier = Modifier.size(with(LocalDensity.current) { style.lineHeight.toDp() }),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        RichInlineText(text = text, modifier = Modifier.weight(1f), style = style)
     }
 }
 

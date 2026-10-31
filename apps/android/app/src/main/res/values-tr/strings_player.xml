@@ -168,7 +168,8 @@
   "player_write_your_answer": "2bccbed46fb67a1c21ac7f7bec82bf53d3acdfefbc9d8bab6aebe58f0f16c701",
   "player_writing_lesson": "8975f01bba2c0faad3702827b546e4e78f406275856f78ebb131ea4578d4c8a7",
   "player_writing_note": "70cabbaa0433fe75cf17db99689d4c85106e5fe167a87dd0cc52df42dc5dee60",
-  "player_your_answer": "bbe8405a2b2d75235749e343b89c05b81a5186b28caff3190bad9bf9ee3db627"
+  "player_your_answer": "bbe8405a2b2d75235749e343b89c05b81a5186b28caff3190bad9bf9ee3db627",
+  "player_your_example": "44f5c5ed55823b341689f4c53dd8c0356579472b905c2d4994804ccb12318a5c"
 }
 -->
 <resources>
@@ -236,6 +237,8 @@
     <string name="player_worked_example">Çözümlü örnek</string>
     <string name="player_worked_example_steps">Adımlar</string>
     <string name="player_worked_example_result">Sonuç</string>
+    <!-- For TalkBack: names the line under an explanation that ties its idea to the learner\'s own life, written from what they shared. -->
+    <string name="player_your_example">Hayatından bir örnek</string>
     <string name="player_summary">Özet</string>
     <plurals name="player_summary_ideas">
         <item quantity="one">Bu dersten aklında kalacak %1$s bilgi</item>
@@ -371,8 +374,8 @@
     <string name="player_nothing_left_title">Cevaplanacak soru kalmadı</string>
     <string name="player_nothing_left_description">Sonucunu görmek için bitir.</string>
     <string name="player_finish">Bitir</string>
-</resources>
     <!-- For TalkBack, under a lesson screen: where it comes from in the learner\'s own material. %1$s is a document\'s title, maybe with its page or slide, like "Biology.pdf, page 12". -->
     <string name="player_citation_from_material">Materyalinden: %1$s</string>
     <!-- Under a screen of a lesson built from the learner\'s own material, when no page of that material supports what the screen says. -->
     <string name="player_citation_not_in_material">Materyalinde yer almıyor</string>
+</resources>

@@ -308,6 +308,8 @@ class LanguageStepsFlowTest {
                     stepId: String,
                     recording: VoiceRecording,
                 ) = GradeOutcome.Failed
+
+                override fun exampleLine(stepId: String) = null
             }
         val content = reading("read").content as StepContent.Language
         restoration.setContent {

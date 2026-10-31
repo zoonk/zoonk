@@ -168,7 +168,8 @@
   "player_write_your_answer": "f53d264f3d7b71f794b1f327cebb49195974befd19a765f870f0ac742bb07b2e",
   "player_writing_lesson": "c921bb17f2aa38d5ce18f8d4b884b2297a1a0482db305ead7c9290cc8fefea38",
   "player_writing_note": "4c399b93b6cc5e04fcff668139bd09fd1627364b7c541c9fee8c633d9690e578",
-  "player_your_answer": "c5d23a3ad588edce41e71ff88da7da054b05643d6fb838f4e9fdbfa7e7f44f06"
+  "player_your_answer": "c5d23a3ad588edce41e71ff88da7da054b05643d6fb838f4e9fdbfa7e7f44f06",
+  "player_your_example": "d8280581441c526421eea87cbe191d4e569f1474c7e45f4fbd79cf36cea97246"
 }
 -->
 <resources>
@@ -235,6 +236,8 @@
     <string name="player_worked_example">解き方の例</string>
     <string name="player_worked_example_steps">ステップ</string>
     <string name="player_worked_example_result">結果</string>
+    <!-- For TalkBack: names the line under an explanation that ties its idea to the learner\'s own life, written from what they shared. -->
+    <string name="player_your_example">身近な例</string>
     <string name="player_summary">まとめ</string>
     <plurals name="player_summary_ideas">
         <item quantity="other">このレッスンで覚えておきたい%1$s個のポイント</item>
@@ -365,8 +368,8 @@
     <string name="player_nothing_left_title">すべての問題に回答しました</string>
     <string name="player_nothing_left_description">終了すると結果を確認できます。</string>
     <string name="player_finish">終了する</string>
-</resources>
     <!-- For TalkBack, under a lesson screen: where it comes from in the learner\'s own material. %1$s is a document\'s title, maybe with its page or slide, like "Biology.pdf, page 12". -->
     <string name="player_citation_from_material">参照した資料：%1$s</string>
     <!-- Under a screen of a lesson built from the learner\'s own material, when no page of that material supports what the screen says. -->
     <string name="player_citation_not_in_material">資料には載っていません</string>
+</resources>

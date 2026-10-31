@@ -34,6 +34,8 @@ val LessonStep.isExplainingStep: Boolean get() = kind in EXPLAINING_KINDS
 
 val LessonStep.isAnswerable: Boolean get() = kind !in READ_ONLY_KINDS
 
+val LessonStep.hasExampleLineSlot: Boolean get() = (content as? StepContent.Explanation)?.content?.exampleLineSlot != null
+
 /** Typed answers and spoken recordings wait for the server's grade; the rest are graded on the device. */
 fun isServerGradedAnswer(
     answer: LessonAnswer,
