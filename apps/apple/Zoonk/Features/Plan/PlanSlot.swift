@@ -178,27 +178,13 @@ struct PlanSuggestionSection: View {
   }
 
   private func fitTitle(_ offer: GoalPlan.FitOffer) -> Text {
-    let schedule = context.plan.schedule
-
-    guard offer.fits, let targetDate = schedule.targetDate else {
+    guard offer.fits, let covers = planCoversEverythingText(context.plan) else {
       return Text(
         "\(offer.effect.lessonsAdded) more lessons fit in your time", tableName: "Plan",
         comment: "Title of the offer that brings more lessons in")
     }
 
-    let date = PlanDate.text(
-      targetDate, today: context.plan.today, month: schedule.targetDateNamedMonth)
-
-    return schedule.targetDateNamedMonth
-      ? Text(
-        "Your time covers everything by the start of \(date)", tableName: "Plan",
-        comment:
-          "Title of the offer that brings the whole goal in; the argument is the month the learner named, like 'May 2027'"
-      )
-      : Text(
-        "Your time covers everything by \(date)", tableName: "Plan",
-        comment:
-          "Title of the offer that brings the whole goal in; the argument is a date like 'May 5'")
+    return covers
   }
 
   @ViewBuilder

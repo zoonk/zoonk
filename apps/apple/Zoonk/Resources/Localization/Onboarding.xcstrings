@@ -3366,175 +3366,6 @@
         }
       }
     },
-    "Cover everything with %@ a day" : {
-      "comment" : "Picks the time a day that covers the whole goal by its date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alles mit %@ pro Tag abdecken"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cubrir todo con %@ al día"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tout couvrir avec %@ par jour"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estude tudo com %@ por dia"
-          }
-        }
-      }
-    },
-    "Covers about %@ of your exam topics in depth by %@, what comes up most first." : {
-      "comment" : "The share of an exam the time a day covers by its date; the second argument is a date like 'May 5, 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Damit lernst du etwa %1$@ deiner Prüfungsthemen bis zum %2$@ gründlich, die häufigsten zuerst."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Covers about %1$@ of your exam topics in depth by %2$@, what comes up most first."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cubre a fondo aproximadamente el %1$@ de los temas de tu examen para el %2$@, empezando por los más frecuentes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu étudies en profondeur environ %1$@ des sujets de ton examen d’ici le %2$@, en commençant par les plus fréquents."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você estuda a fundo cerca de %1$@ dos tópicos da sua prova até %2$@, começando pelo que mais cai."
-          }
-        }
-      }
-    },
-    "Covers about %@ of your exam topics in depth by the start of %@, what comes up most first." : {
-      "comment" : "The share of an exam the time a day covers by its date; the second argument is the month the learner named, like 'May 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Damit lernst du etwa %1$@ deiner Prüfungsthemen bis Anfang %2$@ gründlich, die häufigsten zuerst."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Covers about %1$@ of your exam topics in depth by the start of %2$@, what comes up most first."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cubre a fondo aproximadamente el %1$@ de los temas de tu examen para el inicio de %2$@, empezando por los más frecuentes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu étudies en profondeur environ %1$@ des sujets de ton examen d’ici début %2$@, en commençant par les plus fréquents."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você estuda a fundo cerca de %1$@ dos tópicos da sua prova até o início de %2$@, começando pelo que mais cai."
-          }
-        }
-      }
-    },
-    "Covers about %@ of your goal in depth by %@, what matters most first." : {
-      "comment" : "The share of a goal the time a day covers by its date; the second argument is a date like 'May 5, 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Damit lernst du etwa %1$@ der Inhalte für dein Ziel bis zum %2$@ gründlich, das Wichtigste zuerst."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Covers about %1$@ of your goal in depth by %2$@, what matters most first."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cubre a fondo aproximadamente el %1$@ de tu objetivo para el %2$@, empezando por lo más importante."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu étudies en profondeur environ %1$@ de ce que tu veux apprendre d’ici le %2$@, en commençant par l’essentiel."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você estuda a fundo cerca de %1$@ do conteúdo da sua meta até %2$@, começando pelo que mais importa."
-          }
-        }
-      }
-    },
-    "Covers about %@ of your goal in depth by the start of %@, what matters most first." : {
-      "comment" : "The share of a goal the time a day covers by its date; the second argument is the month the learner named, like 'May 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Damit lernst du etwa %1$@ der Inhalte für dein Ziel bis Anfang %2$@ gründlich, das Wichtigste zuerst."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Covers about %1$@ of your goal in depth by the start of %2$@, what matters most first."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cubre a fondo aproximadamente el %1$@ de tu objetivo para el inicio de %2$@, empezando por lo más importante."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu étudies en profondeur environ %1$@ de ce que tu veux apprendre d’ici début %2$@, en commençant par l’essentiel."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você estuda a fundo cerca de %1$@ do conteúdo da sua meta até o início de %2$@, começando pelo que mais importa."
-          }
-        }
-      }
-    },
     "Covers all your exam topics by %@." : {
       "comment" : "The time a day picked covers a whole exam; the argument is a date like 'May 5, 2027'",
       "localizations" : {
@@ -6963,151 +6794,6 @@
         }
       }
     },
-    "Reach every topic with %@ a day" : {
-      "comment" : "Picks the time a day that brings every topic in by the goal's date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jedes Thema mit %@ pro Tag erreichen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cubrir todos los temas con %@ al día"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aborder tous les sujets avec %@ par jour"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estude todos os tópicos com %@ por dia"
-          }
-        }
-      }
-    },
-    "Reaches every exam topic by %@, some in less depth." : {
-      "comment" : "The time a day brings every exam topic in; the argument is a date like 'May 5, 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Damit kommen bis zum %@ alle Prüfungsthemen dran, manche weniger ausführlich."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cubre todos los temas del examen para el %@, algunos con menos profundidad."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu abordes tous les sujets de ton examen d’ici le %@, mais certains moins en détail."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você estuda todos os tópicos da sua prova até %@, alguns com menos profundidade."
-          }
-        }
-      }
-    },
-    "Reaches every exam topic by the start of %@, some in less depth." : {
-      "comment" : "The time a day brings every exam topic in; the argument is the month the learner named, like 'May 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Damit kommen bis Anfang %@ alle Prüfungsthemen dran, manche weniger ausführlich."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cubre todos los temas del examen para principios de %@, algunos con menos profundidad."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu abordes tous les sujets de ton examen d’ici début %@, mais certains moins en détail."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você estuda todos os tópicos da sua prova até o início de %@, alguns com menos profundidade."
-          }
-        }
-      }
-    },
-    "Reaches every part of your goal by %@, some in less depth." : {
-      "comment" : "The time a day brings every part of a goal in; the argument is a date like 'May 5, 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Damit kommen bis zum %@ alle Inhalte für dein Ziel dran, manche weniger ausführlich."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cubre todas las partes de tu objetivo para el %@, algunas con menos profundidad."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu abordes tout ce que tu veux apprendre d’ici le %@, mais certains points moins en détail."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você estuda todo o conteúdo da sua meta até %@, algumas partes com menos profundidade."
-          }
-        }
-      }
-    },
-    "Reaches every part of your goal by the start of %@, some in less depth." : {
-      "comment" : "The time a day brings every part of a goal in; the argument is the month the learner named, like 'May 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Damit kommen bis Anfang %@ alle Inhalte für dein Ziel dran, manche weniger ausführlich."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cubre todas las partes de tu objetivo para principios de %@, algunas con menos profundidad."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu abordes tout ce que tu veux apprendre d’ici début %@, mais certains points moins en détail."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você estuda todo o conteúdo da sua meta até o início de %@, algumas partes com menos profundidade."
-          }
-        }
-      }
-    },
     "Read it again" : {
       "comment" : "Reads the changed words again",
       "localizations" : {
@@ -8874,35 +8560,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "As ideias principais, sem fórmulas"
-          }
-        }
-      }
-    },
-    "The days you picked can't cover everything in depth by your date. More study days would help." : {
-      "comment" : "No time a day covers the whole goal on the days picked",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die gewählten Lerntage reichen nicht aus, um bis zu deinem Zieldatum alles gründlich zu lernen. Mehr Lerntage würden helfen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con los días que elegiste no alcanza para estudiar todo a fondo antes de la fecha que fijaste. Estudiar más días ayudaría."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les jours que tu as choisis ne suffisent pas pour tout étudier en profondeur d’ici la date prévue. Ajouter des jours d’étude serait utile."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com os dias que você escolheu, não dá para estudar tudo a fundo até a data definida. Mais dias de estudo ajudariam."
           }
         }
       }
@@ -12550,35 +12207,6 @@
         }
       }
     },
-    "Your date is too close to cover everything in depth." : {
-      "comment" : "No time a day covers the whole goal by its date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Zieldatum ist zu nah, um alles gründlich abzudecken."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La fecha de tu objetivo está demasiado cerca para estudiar todo a fondo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta date est trop proche pour tout couvrir en profondeur."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua data está próxima demais para estudar tudo a fundo."
-          }
-        }
-      }
-    },
     "Your date, %@, has passed." : {
       "comment" : "Above the date question when the goal's date has passed",
       "localizations" : {
@@ -13422,6 +13050,663 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O Zoonk não ensina nada que possa fazer mal a você ou a outras pessoas, nem jogos de azar ou formas de trapacear. Tem outra coisa que você gostaria de aprender?"
+          }
+        }
+      }
+    },
+    "%@ (covers everything)" : {
+      "comment" : "The time a day that covers the whole goal by its date, among the times to pick. Say \"cover everything\", not \"study everything\": the \"Study everything, even after the exam\" switch beside it does something else.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (deckt alles ab)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (para cubrir todo)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (pour tout couvrir)"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (cobre tudo)"
+          }
+        }
+      }
+    },
+    "Covering as much as any daily time can by %@, about %@ in depth, takes about %@ a day, more than most people can keep up." : {
+      "comment" : "Part of the goal never fits whatever the time, so this is the most any time a day covers; the arguments are a date like 'May 5, 2027', a percentage like '99%' and a time like '8 h'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bis zum %1$@ kannst du höchstens etwa %2$@ der Inhalte gründlich lernen. Dafür brauchst du etwa %3$@ am Tag. Das ist mehr, als die meisten auf Dauer schaffen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covering as much as any daily time can by %1$@, about %2$@ in depth, takes about %3$@ a day, more than most people can keep up."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cubrir lo máximo posible para el %1$@, aproximadamente el %2$@ en profundidad, requiere aproximadamente %3$@ al día, un ritmo que la mayoría no puede mantener."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Étudier le maximum possible d’ici le %1$@, soit environ %2$@ en profondeur, demande environ %3$@ par jour, un rythme que la plupart des gens ne peuvent pas tenir."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudar o máximo possível até %1$@, com cerca de %2$@ do conteúdo estudado a fundo, exige cerca de %3$@ por dia, um ritmo que a maioria das pessoas não consegue manter."
+          }
+        }
+      }
+    },
+    "Covering as much as any daily time can by the start of %@, about %@ in depth, takes about %@ a day, more than most people can keep up." : {
+      "comment" : "Part of the goal never fits whatever the time, so this is the most any time a day covers; the arguments are a month like 'May 2027', a percentage like '99%' and a time like '8 h'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bis Anfang %1$@ kannst du höchstens etwa %2$@ der Inhalte gründlich lernen. Dafür brauchst du etwa %3$@ am Tag. Das ist mehr, als die meisten auf Dauer schaffen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covering as much as any daily time can by the start of %1$@, about %2$@ in depth, takes about %3$@ a day, more than most people can keep up."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cubrir lo máximo posible antes de que empiece %1$@, aproximadamente el %2$@ en profundidad, requiere aproximadamente %3$@ al día, un ritmo que la mayoría no puede mantener."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Étudier le maximum possible d’ici début %1$@, soit environ %2$@ en profondeur, demande environ %3$@ par jour, un rythme que la plupart des gens ne peuvent pas tenir."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudar o máximo possível até o início de %1$@, com cerca de %2$@ do conteúdo estudado a fundo, exige cerca de %3$@ por dia, um ritmo que a maioria das pessoas não consegue manter."
+          }
+        }
+      }
+    },
+    "Covering everything in depth by %@ takes about %@ a day, more than most people can keep up." : {
+      "comment" : "What covering the whole goal takes; the first argument is a date like 'May 5, 2027', the second a time like '13 h 30 min'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um bis zum %1$@ alles gründlich zu lernen, brauchst du etwa %2$@ am Tag. Das ist mehr, als die meisten auf Dauer schaffen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covering everything in depth by %1$@ takes about %2$@ a day, more than most people can keep up."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cubrir todo en profundidad para el %1$@ requiere aproximadamente %2$@ al día, un ritmo que la mayoría no puede mantener."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout étudier en profondeur d’ici le %1$@ demande environ %2$@ par jour, un rythme que la plupart des gens ne peuvent pas tenir."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudar tudo a fundo até %1$@ exige cerca de %2$@ por dia, um ritmo que a maioria das pessoas não consegue manter."
+          }
+        }
+      }
+    },
+    "Covering everything in depth by the start of %@ takes about %@ a day, more than most people can keep up." : {
+      "comment" : "What covering the whole goal takes; the first argument is a month like 'May 2027', the second a time like '13 h 30 min'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um bis Anfang %1$@ alles gründlich zu lernen, brauchst du etwa %2$@ am Tag. Das ist mehr, als die meisten auf Dauer schaffen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covering everything in depth by the start of %1$@ takes about %2$@ a day, more than most people can keep up."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cubrir todo en profundidad antes de que empiece %1$@ requiere aproximadamente %2$@ al día, un ritmo que la mayoría no puede mantener."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout étudier en profondeur d’ici début %1$@ demande environ %2$@ par jour, un rythme que la plupart des gens ne peuvent pas tenir."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudar tudo a fundo até o início de %1$@ exige cerca de %2$@ por dia, um ritmo que a maioria das pessoas não consegue manter."
+          }
+        }
+      }
+    },
+    "Covers about %@ of your exam topics in depth by %@, starting with what comes up most." : {
+      "comment" : "The share of an exam a time a day covers by its date; the second argument is a date like 'May 5, 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damit lernst du etwa %1$@ deiner Prüfungsthemen bis zum %2$@ gründlich. Die häufigsten Prüfungsthemen kommen zuerst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covers about %1$@ of your exam topics in depth by %2$@, starting with what comes up most."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cubre en profundidad aproximadamente el %1$@ del temario de tu examen para el %2$@, empezando por lo que más se pregunta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permet d’étudier en profondeur environ %1$@ des sujets de ton examen d’ici le %2$@, en commençant par ceux qui reviennent le plus souvent."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dá para estudar a fundo cerca de %1$@ dos tópicos da sua prova até %2$@, começando pelo que mais cai."
+          }
+        }
+      }
+    },
+    "Covers about %@ of your exam topics in depth by the start of %@, starting with what comes up most." : {
+      "comment" : "The share of an exam a time a day covers by its date; the second argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damit lernst du etwa %1$@ deiner Prüfungsthemen bis Anfang %2$@ gründlich. Die häufigsten Prüfungsthemen kommen zuerst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covers about %1$@ of your exam topics in depth by the start of %2$@, starting with what comes up most."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cubre en profundidad aproximadamente el %1$@ del temario de tu examen antes de que empiece %2$@, empezando por lo que más se pregunta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permet d’étudier en profondeur environ %1$@ des sujets de ton examen d’ici début %2$@, en commençant par ceux qui reviennent le plus souvent."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dá para estudar a fundo cerca de %1$@ dos tópicos da sua prova até o início de %2$@, começando pelo que mais cai."
+          }
+        }
+      }
+    },
+    "Covers about %@ of your goal in depth by %@, starting with what matters most." : {
+      "comment" : "The share of a goal a time a day covers by its date; the second argument is a date like 'May 5, 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damit lernst du etwa %1$@ der Inhalte für dein Ziel bis zum %2$@ gründlich. Das Wichtigste kommt zuerst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covers about %1$@ of your goal in depth by %2$@, starting with what matters most."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cubre en profundidad aproximadamente el %1$@ de tu objetivo para el %2$@, empezando por lo más importante."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permet de travailler en profondeur environ %1$@ de ton objectif d’ici le %2$@, en commençant par l’essentiel."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dá para estudar a fundo cerca de %1$@ do conteúdo da sua meta até %2$@, começando pelo que mais importa."
+          }
+        }
+      }
+    },
+    "Covers about %@ of your goal in depth by the start of %@, starting with what matters most." : {
+      "comment" : "The share of a goal a time a day covers by its date; the second argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damit lernst du etwa %1$@ der Inhalte für dein Ziel bis Anfang %2$@ gründlich. Das Wichtigste kommt zuerst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covers about %1$@ of your goal in depth by the start of %2$@, starting with what matters most."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cubre en profundidad aproximadamente el %1$@ de tu objetivo antes de que empiece %2$@, empezando por lo más importante."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permet de travailler en profondeur environ %1$@ de ton objectif d’ici début %2$@, en commençant par l’essentiel."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dá para estudar a fundo cerca de %1$@ do conteúdo da sua meta até o início de %2$@, começando pelo que mais importa."
+          }
+        }
+      }
+    },
+    "More study days would help." : {
+      "comment" : "After what covering a goal takes, while the learner doesn't study every day",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mehr Lerntage würden helfen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudiar más días ayudaría."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Étudier plus de jours par semaine aiderait."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudar em mais dias ajudaria."
+          }
+        }
+      }
+    },
+    "Not even a whole day covers everything in depth by %@." : {
+      "comment" : "No time a day covers the whole goal; the argument is a date like 'May 5, 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selbst wenn du täglich den ganzen Tag lernst, kannst du bis zum %@ nicht alles gründlich lernen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ni siquiera estudiando todo el día se puede cubrir todo en profundidad para el %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Même en étudiant toute la journée, tu ne peux pas tout étudier en profondeur d’ici le %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nem estudando o dia inteiro dá para cobrir tudo a fundo até %@."
+          }
+        }
+      }
+    },
+    "Not even a whole day covers everything in depth by the start of %@." : {
+      "comment" : "No time a day covers the whole goal; the argument is a month like 'May 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selbst wenn du täglich den ganzen Tag lernst, kannst du bis Anfang %@ nicht alles gründlich lernen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ni siquiera estudiando todo el día se puede cubrir todo en profundidad antes de que empiece %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Même en étudiant toute la journée, tu ne peux pas tout étudier en profondeur d’ici début %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nem estudando o dia inteiro dá para cobrir tudo a fundo até o início de %@."
+          }
+        }
+      }
+    },
+    "That's more than most people can keep up." : {
+      "comment" : "After a time a day that covers everything but is longer than people keep up",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das ist mehr, als die meisten auf Dauer schaffen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es un ritmo que la mayoría no puede mantener."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est un rythme que la plupart des gens ne peuvent pas tenir."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "É um ritmo que a maioria das pessoas não consegue manter."
+          }
+        }
+      }
+    },
+    "Use %@ a day" : {
+      "comment" : "Picks the longer time a day just described, which covers everything or as much as any time can",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Täglich %@ einplanen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dedicar %@ al día"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisir %@ par jour"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar %@ por dia"
+          }
+        }
+      }
+    },
+    "Use %@ a day to cover everything" : {
+      "comment" : "Picks the time a day that covers the whole goal by its date. Say \"cover everything\", not \"study everything\": the \"Study everything, even after the exam\" switch beside it does something else.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Täglich %@ einplanen, um alles abzudecken"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dedicar %@ al día para cubrir todo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consacrer %@ par jour pour tout couvrir"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar %@ por dia para cobrir tudo"
+          }
+        }
+      }
+    },
+    "Use the suggested %@ a day" : {
+      "comment" : "Picks the time a day the plan suggests, at most 4 hours, which covers what's worth most first",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorschlag übernehmen: %@ am Tag"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguir la sugerencia de %@ al día"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisir la durée conseillée de %@ par jour"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar o tempo sugerido de %@ por dia"
+          }
+        }
+      }
+    },
+    "We suggest %@ a day." : {
+      "comment" : "Before what the suggested time a day covers; the argument is a time like '4 h'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir schlagen %@ am Tag vor."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te sugerimos %@ al día."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous te conseillons %@ par jour."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente sugere %@ por dia."
+          }
+        }
+      }
+    },
+    "Your plan then covers every exam topic, the ones asked most in more depth. That's about %@ of the exam studied in depth." : {
+      "comment" : "What the suggested time a day studies of an exam; the argument is a percentage like '32%' of everything studied in depth, not of the topics reached",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan deckt dann alle Prüfungsthemen ab. Die häufigsten behandelt er gründlicher. So lernst du etwa %@ der Prüfungsinhalte gründlich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Así, tu plan cubre todos los temas del examen y profundiza más en los que más se preguntan. Eso supone estudiar en profundidad aproximadamente el %@ del temario."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan aborde alors tous les sujets de l’examen et approfondit davantage ceux qui reviennent le plus souvent. Cela représente environ %@ de l’examen étudié en profondeur."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assim, seu plano cobre todos os tópicos da prova e aprofunda os que mais caem. Isso dá cerca de %@ do conteúdo da prova estudado a fundo."
+          }
+        }
+      }
+    },
+    "Your plan then covers every part of your goal, what matters most in more depth. That's about %@ of it studied in depth." : {
+      "comment" : "What the suggested time a day studies of a goal; the argument is a percentage like '32%' of everything studied in depth, not of the parts reached",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan deckt dann alle Inhalte für dein Ziel ab. Die wichtigsten behandelt er gründlicher. So lernst du etwa %@ davon gründlich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Así, tu plan abarca todas las partes de tu objetivo y profundiza más en lo más importante. Eso supone estudiar en profundidad aproximadamente el %@ del total."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan aborde alors tout le contenu de ton objectif et approfondit davantage ce qui compte le plus. Cela représente environ %@ du contenu étudié en profondeur."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assim, seu plano cobre todo o conteúdo da sua meta e aprofunda o que mais importa. Isso dá cerca de %@ do conteúdo estudado a fundo."
+          }
+        }
+      }
+    },
+    "Your plan then starts with what matters most, about %@ of your goal studied in depth. The rest may not fit." : {
+      "comment" : "What the suggested time a day studies of a goal; the argument is a percentage like '32%' of everything studied in depth, not of the parts reached",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan beginnt dann mit dem Wichtigsten. So lernst du etwa %@ der Inhalte für dein Ziel gründlich. Für den Rest reicht die Zeit vielleicht nicht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Así, tu plan empieza por lo más importante y cubre en profundidad aproximadamente el %@ de tu objetivo. Puede que no dé tiempo a estudiar el resto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan commence alors par l’essentiel, avec environ %@ de ton objectif travaillé en profondeur. Il n’y a peut-être pas assez de temps pour le reste."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assim, seu plano começa pelo que mais importa, com cerca de %@ do conteúdo da sua meta estudado a fundo. O resto pode ficar de fora."
+          }
+        }
+      }
+    },
+    "Your plan then starts with what the exam asks most, about %@ of it studied in depth. Topics it asks least may not fit." : {
+      "comment" : "What the suggested time a day studies of an exam; the argument is a percentage like '32%' of everything studied in depth, not of the topics reached",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan beginnt dann mit den häufigsten Prüfungsthemen. So lernst du etwa %@ der Prüfungsinhalte gründlich. Für die Themen, die am seltensten drankommen, reicht die Zeit vielleicht nicht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Así, tu plan empieza por lo que más se pregunta en el examen y cubre en profundidad aproximadamente el %@ del temario. Puede que no dé tiempo a estudiar los temas menos frecuentes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan commence alors par les sujets qui reviennent le plus souvent à l’examen, avec environ %@ de l’examen étudié en profondeur. Il n’y a peut-être pas assez de temps pour les sujets les moins fréquents."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assim, seu plano começa pelo que mais cai na prova, com cerca de %@ do conteúdo estudado a fundo. Os tópicos que menos caem podem ficar de fora."
           }
         }
       }

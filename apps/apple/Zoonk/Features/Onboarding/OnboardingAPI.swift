@@ -210,6 +210,8 @@ struct TimeToCover: PlanAnswer, Decodable {
     let split: DaySplit?
   }
 
+  /// For a goal that isn't an exam: the date its saved time covers everything by.
+  let fittingDate: String?
   let most: MostCoverage?
   let pastDate: Bool
   let ready: Bool

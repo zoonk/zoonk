@@ -38,7 +38,7 @@ protocol PlanAPIClient: Sendable {
   func chooseTools(
     token: String, goalId: String, tools: [String], choice: ToolChoice, system: String?
   ) async throws -> PlanChangeOutcome
-  func timeToCover(token: String, goalId: String) async throws -> PlanTimeToCover
+  func timeToCover(token: String, goalId: String) async throws -> TimeToCover
   func basesAdvice(token: String, goalId: String) async throws -> PlanBasesAdvice
   func continueAtNextLevel(token: String, goalId: String) async throws -> Bool
   func skipAlphabet(token: String, goalId: String) async throws -> Bool
@@ -290,7 +290,7 @@ struct PlanAPI: PlanAPIClient {
   }
 
   /// Only when the learner asks: it plans the goal at each daily time.
-  func timeToCover(token: String, goalId: String) async throws -> PlanTimeToCover {
+  func timeToCover(token: String, goalId: String) async throws -> TimeToCover {
     try await clients.perform(token: token) { client in
       switch try await client.findPlanTimeToCover(path: .init(goalId: goalId), body: .json(.init()))
       {

@@ -190,15 +190,6 @@ enum PlanChangeOutcome: Equatable, Sendable {
   case undone
 }
 
-struct PlanTimeToCover: Decodable, Equatable, Sendable {
-  let fittingDate: String?
-  let most: MostCoverage?
-  let ready: Bool
-  let recommendedMinutes: Int?
-  let targetDate: String?
-  let targetDateNamedMonth: Bool
-}
-
 struct PlanBasesAdvice: Decodable, Equatable, Sendable {
   let ready: Bool
   let recommended: BaseChoice?

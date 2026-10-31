@@ -307,7 +307,7 @@ private actor PlanAPIStub: PlanAPIClient {
   func chooseTools(
     token: String, goalId: String, tools: [String], choice: ToolChoice, system: String?
   ) async throws -> PlanChangeOutcome { .unchanged }
-  func timeToCover(token: String, goalId: String) async throws -> PlanTimeToCover {
+  func timeToCover(token: String, goalId: String) async throws -> TimeToCover {
     throw APIError.unavailable
   }
   func basesAdvice(token: String, goalId: String) async throws -> PlanBasesAdvice {

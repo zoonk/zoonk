@@ -6282,76 +6282,6 @@
         }
       }
     },
-    "At %@ a day, your plan covers everything by %@." : {
-      "comment" : "The time a day Find found, which a tap applies; the second argument is a date like 'May 5'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit %1$@ pro Tag würde dein Plan bis zum %2$@ alles abdecken."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "At %1$@ a day, your plan covers everything by %2$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %1$@ al día, tu plan cubre todo para el %2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec %1$@ par jour, ton plan couvre tout d’ici le %2$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com %1$@ por dia, seu plano cobre tudo até %2$@."
-          }
-        }
-      }
-    },
-    "At %@ a day, your plan covers everything by the start of %@." : {
-      "comment" : "The time a day Find found, which a tap applies; the second argument is the month the learner named, like 'May 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit %1$@ pro Tag würde dein Plan bis Anfang %2$@ alles abdecken."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "At %1$@ a day, your plan covers everything by the start of %2$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %1$@ al día, tu plan cubre todo para el inicio de %2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec %1$@ par jour, ton plan couvre tout d’ici début %2$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com %1$@ por dia, seu plano cobre tudo até o início de %2$@."
-          }
-        }
-      }
-    },
     "Beginner" : {
       "comment" : "A course level",
       "localizations" : {
@@ -7501,35 +7431,6 @@
         }
       }
     },
-    "Covers your whole goal." : {
-      "comment" : "The time a day covers everything",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deckt dein gesamtes Ziel ab."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cubre todo tu objetivo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couvre tout ton objectif."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cobre toda a sua meta."
-          }
-        }
-      }
-    },
     "Daily time changed to %@." : {
       "comment" : "Says the plan's time a day changed",
       "localizations" : {
@@ -8292,64 +8193,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reta final"
-          }
-        }
-      }
-    },
-    "Find the time that covers everything" : {
-      "comment" : "Plans the goal at each time a day to find one that covers it",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lernzeit finden, die für alles reicht"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Encontrar el tiempo para cubrir todo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trouver la durée qui permet de tout couvrir"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Encontrar o tempo para cobrir tudo"
-          }
-        }
-      }
-    },
-    "Finding the time…" : {
-      "comment" : "Find is planning each time a day",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir suchen die passende Lernzeit…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscando el tiempo…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recherche de la durée…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Encontrando o tempo…"
           }
         }
       }
@@ -11098,64 +10941,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Próximos passos na sua trilha"
-          }
-        }
-      }
-    },
-    "No amount of time a day covers everything in depth by %@." : {
-      "comment" : "Find found no time a day that covers everything; the argument is a date like 'May 5'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bis zum %@ lässt sich nicht alles gründlich lernen, egal wie viel Zeit du täglich einplanst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Por más tiempo que dediques al día, no es posible estudiar todo a fondo para el %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu ne peux pas tout approfondir d’ici le %@, quel que soit le temps consacré chaque jour."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mesmo aumentando o tempo diário, não dá para estudar tudo a fundo até %@."
-          }
-        }
-      }
-    },
-    "No amount of time a day covers everything in depth by the start of %@." : {
-      "comment" : "Find found no time a day that covers everything; the argument is the month the learner named, like 'May 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bis Anfang %@ lässt sich nicht alles gründlich lernen, egal wie viel Zeit du täglich einplanst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Por más tiempo que dediques al día, no es posible estudiar todo a fondo antes de que empiece %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu ne peux pas tout approfondir d’ici début %@, quel que soit le temps consacré chaque jour."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mesmo aumentando o tempo diário, não dá para estudar tudo a fundo até o início de %@."
           }
         }
       }
@@ -15098,35 +14883,6 @@
         }
       }
     },
-    "We couldn't work out the time needed." : {
-      "comment" : "Find failed",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir konnten die benötigte Zeit nicht ermitteln."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No pudimos calcular el tiempo necesario."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Impossible de calculer le temps nécessaire."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não conseguimos calcular o tempo necessário."
-          }
-        }
-      }
-    },
     "We noticed a pattern" : {
       "comment" : "A rule the learner keeps getting wrong, noticed in the unit's mistakes",
       "localizations" : {
@@ -16418,7 +16174,7 @@
       }
     },
     "Your plan is still being built. Try again in a moment." : {
-      "comment" : "Advice asked while the plan was being built\nFind asked while the plan was being built",
+      "comment" : "Advice asked while the plan was being built",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -16801,7 +16557,7 @@
       }
     },
     "Your time covers everything by %@" : {
-      "comment" : "Title of the offer that brings the whole goal in; the argument is a date like 'May 5'",
+      "comment" : "The learner's own time a day covers the whole goal; the argument is a date like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -16830,7 +16586,7 @@
       }
     },
     "Your time covers everything by the start of %@" : {
-      "comment" : "Title of the offer that brings the whole goal in; the argument is the month the learner named, like 'May 2027'",
+      "comment" : "The learner's own time a day covers the whole goal; the argument is the month the learner named, like 'May 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -16883,6 +16639,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seu tempo é suficiente para estudar tudo, então recomendamos estudar cada base a fundo."
+          }
+        }
+      }
+    },
+    "Working out what your time covers…" : {
+      "comment" : "While a change to the plan saves, in place of what the time a day covers",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir berechnen, wofür deine Lernzeit reicht…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calculando cuánto puedes estudiar en ese tiempo…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calcul de ce que ton temps d’étude permet de couvrir…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calculando o que dá tempo de estudar…"
           }
         }
       }
