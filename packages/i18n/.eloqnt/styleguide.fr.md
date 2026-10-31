@@ -11,12 +11,10 @@
 - “daily time limit” (the learner's setting): “limite de temps quotidienne”
 - “plan” (study plan): “plan”, not “programme” or “parcours”; subscription plan: “formule”
 - “Free” (subscription): “gratuite”
-- “Guardian”: “Parent ou tuteur”
 - “session” (study): “séance”; sign-in session: “session”
 - “write” (Zoonk generating content): “préparer”; learner writing: “écrire”
 - “share” (personal facts): “dire”
 - “Brain Power”: “Puissance Mentale”
-- “BP”: “PM”
 - “score”, including an exam's “band”: “Score”, not “note” or “bande”
 - Language skills “Listening” / “Speaking” / “Reading” / “Words”: “Écoute” / “Expression orale” / “Lecture” / “Vocabulaire”
 - Speaking criteria “Fluency” / “Accuracy” / “Range of language”: “Aisance” / “Précision” / “Richesse de la langue”
@@ -42,10 +40,8 @@
 
 - “Buddy”: “Compagnon”
 - “study buddy”: “compagnon d’étude”
-- “Time capsules”: “Capsules temporelles”
 - Mission names (missions list, first steps): infinitive: “Terminer ta première leçon”; “Practice” / “Review”: “S’entraîner” / “Réviser”
 - “essay”: “rédaction”, not “dissertation”
-- “Hyperdrive”: “Hyperpropulsion”
 - “Mistakes notebook”: “Carnet d’erreurs”
 - “Saved to your mistakes”: “Ajouté à ton carnet d’erreurs”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “À corriger” / “Corrigées”
@@ -53,14 +49,11 @@
 - “New” / “Learning” / “Solid” / “Mastered” (mastery): “Nouveau” / “En cours” / “Solide” / “Maîtrisé”
 - “Known before”: “Déjà connus”; “Known” (progress legend): “Déjà acquis”
 - “Preparation”: “Préparation”
-- “Boss”: “Boss”
 - “the Trickster”: “le Farceur”
 - “Broken” / “Held” (shield): “Brisé” / “A tenu”
-- “Big Challenge”: “Grand Défi”
 - “Phase challenge”: “Défi de la phase”, not “contrôle”, “bilan”, or “étape”
 - “Weekly challenge”: “Défi hebdomadaire”
 - “Mock exam”, including speaking mocks: “Examen blanc”, not “simulation”
-- “Full meal”: “Repas complet”
 - “Logbook”: “Journal de bord”
 - “Fading” (needs review): “À revoir”
 - “Overview” (course level): “Vue d’ensemble”

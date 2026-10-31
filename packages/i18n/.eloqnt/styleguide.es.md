@@ -18,7 +18,6 @@
 - “write” (Zoonk generating content): “preparar”; learner writing: “escribir”
 - “learning” (study days): “estudio”
 - “Brain Power”: “Poder Mental”
-- “BP”: “PM”
 - “score”, including an exam's: “puntaje”, not “puntuación” or “nota”; the admission cut-off: “puntaje mínimo”
 - “grade” (an essay): “calificar”, and the result “calificación”, not “corregir” or “nota”; “fix” (a mistake): “corregir”
 - “band” (an exam's score band): “banda”
@@ -40,10 +39,8 @@
 ## Feature names and states
 
 - “Buddy”: “Compañero”
-- “Time capsules”: “Cápsulas del tiempo”
 - Mission names (missions list, first steps): “tú” imperative: “Completa tu primera lección”
 - “essay”: “redacción”, not “ensayo”
-- “Hyperdrive”: “Hiperimpulso”
 - “Mistakes notebook”: “Cuaderno de errores”
 - “Saved to your mistakes”: “Guardado en tu cuaderno de errores”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “Por corregir” / “Corregidos”
@@ -51,14 +48,11 @@
 - “New” / “Learning” / “Solid” / “Mastered” (mastery): “Nuevo” / “Aprendiendo” / “Firme” / “Dominado”
 - “Known before”: “Ya conocidos”; “Known” (progress legend): “Ya lo sabías”
 - “Preparation”: “Preparación”
-- “Boss”: “Jefe final”
 - “the Trickster”: “el Tramposo”
 - “Broken” / “Held” (shield): “Roto” / “Resistió”
-- “Big Challenge”: “Gran Desafío”
 - “Phase challenge”: “Desafío de la fase”, not “reto”, “control”, or “examen”
 - “Weekly challenge”: “Desafío semanal”
 - “Mock exam”, including speaking mocks: “Simulacro”; standalone title: “Simulacro de examen”
-- “Full meal”: “Comida completa”
 - “Logbook”: “Bitácora”
 - “Fading” (needs review): “Por repasar”
 - “Overview” (course level): “Panorama general”

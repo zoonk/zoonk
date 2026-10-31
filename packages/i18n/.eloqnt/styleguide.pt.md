@@ -33,7 +33,6 @@
 - “learning path”: “trilha”
 - “prerequisite”: “base”, not “pré-requisito”
 - “Brain Power”: “Poder Mental”
-- “BP”: “PM”
 - “score”, including an exam's “band”: “pontuação”, not “nota” or “faixa”; the admission cut-off stays “nota de corte”
 - “again”, including “Retry”: “de novo”, not “novamente”
 - “listening”: “escuta”
@@ -52,10 +51,8 @@
 ## Feature names and states
 
 - “Buddy”: “Parceiro”
-- “Time capsules”: “Cápsulas do tempo”
 - Mission names (missions list, first steps): infinitive: “Concluir sua primeira aula”
 - “call” (speaking practice): “conversa”, not “chamada” or “ligação”
-- “Hyperdrive”: “Hiperpropulsão”
 - “Mistakes notebook”: “Caderno de erros”
 - “Saved to your mistakes”: “Salvo no seu caderno de erros”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “Para corrigir” / “Corrigidos”
@@ -63,15 +60,12 @@
 - “New” / “Learning” / “Solid” / “Mastered” (mastery): “Novo” / “Aprendendo” / “Firme” / “Dominado”
 - “Known before”: “Você já sabia”; “Known” (progress legend): “Já sabia”
 - “Preparation”: “Preparo”
-- “Boss”: “Chefão”
 - “the Trickster”: “o Pegadinha”
 - “Broken” / “Held” (shield): “Quebrado” / “Resistiu”
-- “Big Challenge”: “Grande Desafio”
 - “Phase challenge”: “Desafio da fase”, not “avaliação”, “ponto de controle”, or “etapa”
 - “Step” the learner takes or follows (the next step, a solution’s or worked example’s steps, a run’s steps): “passo” (“Próximo passo”, “Passo 2”); “etapa” only for a stage of a process or a flow (“as etapas da fotossíntese”, “nas próximas etapas”)
 - “Weekly challenge”: “Desafio semanal”
 - “Mock exam”, including speaking mocks: “Simulado”, not “prova simulada” or “simulação”
-- “Full meal”: “Refeição completa”
 - “Logbook”: “Diário de bordo”
 - “Fading” (needs review): “Para revisar”
 - “Focus test”: “Teste de foco”
