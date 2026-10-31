@@ -51,7 +51,7 @@ function getAnalyticsViewer({ learner, locale }: { learner: LearnerSummaryState;
     plan: analytics.plan,
     properties: buildSharedEventProperties({
       goal: analytics.goal,
-      isGuest: false,
+      isGuest: identity.isAnonymous,
       locale,
       platform: "web",
     }),
