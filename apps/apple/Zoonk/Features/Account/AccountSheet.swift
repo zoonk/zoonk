@@ -295,7 +295,6 @@ private struct SettingsHubView: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
   @Environment(SettingsStore.self) private var settings
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @ScaledMetric(relativeTo: .body) private var avatarSize = 40.0
 
   let account: CurrentAccount
@@ -309,12 +308,7 @@ private struct SettingsHubView: View {
       if !isGuest {
         Section {
           AccountSectionLink(destination: .profile, sectionOpen: sectionOpen) {
-            let layout =
-              dynamicTypeSize.isAccessibilitySize
-              ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
-              : AnyLayout(HStackLayout(spacing: 12))
-
-            layout {
+            AccessibilityStack(spacing: 12, stackedSpacing: 8) {
               AccountAvatar(user: account.user, size: avatarSize)
                 .accessibilityHidden(true)
 

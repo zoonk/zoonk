@@ -197,7 +197,6 @@ extension StudyMission {
 
 struct MissionRow: View {
   @Environment(LearnerSummaryStore.self) private var learner
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
   let mission: StudyMission
   let buddyName: String
@@ -213,28 +212,13 @@ struct MissionRow: View {
   }
 
   var body: some View {
-    let row = Group {
-      if dynamicTypeSize.isAccessibilitySize {
-        VStack(alignment: .leading, spacing: 4) {
-          HStack(spacing: 12) {
-            mark
-            Spacer(minLength: 8)
-            trailing
-          }
-
-          text
-        }
-      } else {
-        HStack(alignment: .firstTextBaseline, spacing: 12) {
-          mark
-            .frame(minWidth: 20)
-
-          text
-
-          Spacer(minLength: 8)
-          trailing
-        }
-      }
+    let row = MarkedRow(stackedSpacing: 4) {
+      mark
+        .frame(minWidth: 20)
+    } content: {
+      text
+    } end: {
+      trailing
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(

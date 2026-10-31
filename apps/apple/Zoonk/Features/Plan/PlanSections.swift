@@ -202,7 +202,6 @@ private struct RoadmapCompact: View {
 }
 
 struct PlanNumbersSection: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(PlanStore.self) private var store
 
   let context: PlanContext
@@ -212,12 +211,7 @@ struct PlanNumbersSection: View {
     let standing = standingNumber
 
     Section {
-      let layout =
-        dynamicTypeSize.isAccessibilitySize
-        ? AnyLayout(VStackLayout(alignment: .leading, spacing: 16))
-        : AnyLayout(HStackLayout(alignment: .top, spacing: 16))
-
-      layout {
+      AccessibilityStack(alignment: .top, spacing: 16) {
         if let standing {
           tile(standing) { context.show(.standing) }
         }

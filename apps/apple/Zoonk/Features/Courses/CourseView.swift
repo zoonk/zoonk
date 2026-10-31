@@ -136,7 +136,6 @@ private struct EditionNotice: View {
 }
 
 private struct CourseHeroSection: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
   let detail: CourseDetail
   let exam: CoursePlanExample.Exam?
@@ -148,12 +147,7 @@ private struct CourseHeroSection: View {
         CourseMark(detail.course)
 
         if detail.course.subject != nil || exam != nil {
-          let layout =
-            dynamicTypeSize.isAccessibilitySize
-            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 6))
-            : AnyLayout(HStackLayout(spacing: 8))
-
-          layout {
+          AccessibilityStack(spacing: 8, stackedSpacing: 6) {
             if let subject = detail.course.subject {
               CourseSubjectLabel(subject: subject)
             }

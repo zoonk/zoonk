@@ -2,7 +2,7 @@ import SwiftUI
 
 struct CourseCatalogGrid: View {
   @Environment(AppRouter.self) private var router
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.stacksContent) private var isStacked
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(CourseCatalogStore.self) private var catalog
   @State private var space = PaneSpace(width: 0)
@@ -45,7 +45,7 @@ struct CourseCatalogGrid: View {
   }
 
   private var usesColumns: Bool {
-    horizontalSizeClass == .regular && !dynamicTypeSize.isAccessibilitySize
+    horizontalSizeClass == .regular && !isStacked
   }
 
   private var columns: [GridItem] {
@@ -130,13 +130,11 @@ private struct CourseCell: View {
       VStack(alignment: .leading, spacing: 4) {
         if isColumn {
           title
-        } else if dynamicTypeSize.isAccessibilitySize {
-          title
-          subjectLabel
         } else {
-          HStack(alignment: .firstTextBaseline, spacing: 8) {
+          AccessibilityStack(alignment: .firstTextBaseline, spacing: 8, stackedSpacing: 4) {
             title
-            Spacer(minLength: 0)
+              .frame(maxWidth: .infinity, alignment: .leading)
+
             subjectLabel
           }
         }

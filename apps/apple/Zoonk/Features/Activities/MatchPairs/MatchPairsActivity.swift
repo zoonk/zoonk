@@ -24,7 +24,6 @@ private struct MatchPairsCanvas: View {
   @State private var progress: MatchPairs.Progress
   @State private var selection: [MatchPairs.Side: String] = [:]
   @State private var miss: Miss?
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
   init(fields: MatchPairsFields, context: ActivityCanvasContext) {
     self.fields = fields
@@ -41,15 +40,10 @@ private struct MatchPairsCanvas: View {
 
   var body: some View {
     let columns = MatchPairs.columns(fields)
-    let layout =
-      dynamicTypeSize.isAccessibilitySize
-      ? AnyLayout(VStackLayout(alignment: .leading, spacing: 16))
-      : AnyLayout(HStackLayout(alignment: .top, spacing: 10))
-
     VStack(alignment: .leading, spacing: 16) {
       ActivityCaption(caption)
 
-      layout {
+      AccessibilityStack(alignment: .top, spacing: 10, stackedSpacing: 16) {
         column(.left, columns.left, others: columns.right)
         column(.right, columns.right, others: columns.left)
       }

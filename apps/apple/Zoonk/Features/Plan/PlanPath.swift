@@ -98,7 +98,7 @@ extension PlanPhase {
 
 private struct PlanPhaseRow: View {
   @Environment(PlanStore.self) private var store
-  @Environment(\.dynamicTypeSize) private var typeSize
+  @Environment(\.stacksContent) private var isStacked
 
   let context: PlanContext
   let phase: PlanPhase
@@ -246,7 +246,7 @@ private struct PlanPhaseRow: View {
         StatusMark(status: next ? .next : phase.mark)
       }
     } value: {
-      VStack(alignment: typeSize.isAccessibilitySize ? .leading : .trailing, spacing: 2) {
+      VStack(alignment: isStacked ? .leading : .trailing, spacing: 2) {
         if phase.lessonsTotal > 0 {
           Text(
             "\(phase.lessonsDone) / \(phase.lessonsTotal)", tableName: "Plan",
@@ -568,21 +568,13 @@ struct SyllabusSubjectRow: View {
   }
 }
 
-/// The counts stay at the trailing edge beside a long name, which wraps; accessibility text sizes
-/// stack them under it.
+/// The counts stay at the trailing edge beside a long name, which wraps; stacked, they go under it.
 struct PlanPathRow<Title: View, Value: View>: View {
-  @Environment(\.dynamicTypeSize) private var typeSize
-
   @ViewBuilder let title: Title
   @ViewBuilder let value: Value
 
   var body: some View {
-    let layout =
-      typeSize.isAccessibilitySize
-      ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
-      : AnyLayout(HStackLayout(alignment: .firstTextBaseline, spacing: 12))
-
-    layout {
+    AccessibilityStack(alignment: .firstTextBaseline, spacing: 12, stackedSpacing: 4) {
       title
         .frame(maxWidth: .infinity, alignment: .leading)
 

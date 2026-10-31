@@ -7,7 +7,7 @@ struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
   let secondary: Secondary
   let single: Single
 
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.stacksContent) private var isStacked
 
   init(
     primaryShare: CGFloat = 0.5,
@@ -25,7 +25,7 @@ struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
     // A reader, so the panes are chosen in the same layout pass: a wide screen never shows the
     // one-column version first.
     GeometryReader { proxy in
-      let panes = PaneSpace(proxy).panes(primaryShare: primaryShare, at: dynamicTypeSize)
+      let panes = PaneSpace(proxy).panes(primaryShare: primaryShare, stacked: isStacked)
 
       Group {
         if let panes {
@@ -62,11 +62,11 @@ struct PaneBeside<Pane: View, Content: View>: View {
   @ViewBuilder let pane: () -> Pane
   @ViewBuilder let content: (_ isBeside: Bool) -> Content
 
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.stacksContent) private var isStacked
 
   var body: some View {
     GeometryReader { proxy in
-      let panes = isAvailable ? PaneSpace(proxy).panes(primaryShare: 0.5, at: dynamicTypeSize) : nil
+      let panes = isAvailable ? PaneSpace(proxy).panes(primaryShare: 0.5, stacked: isStacked) : nil
 
       HStack(spacing: 0) {
         if let panes {
@@ -127,9 +127,10 @@ struct PaneSpace: Equatable {
     }
   }
 
-  /// One column at accessibility text sizes, which the panes' phone layouts can't fit two of.
-  func panes(primaryShare: CGFloat, at dynamicTypeSize: DynamicTypeSize) -> Panes? {
-    dynamicTypeSize.isAccessibilitySize ? nil : panes(primaryShare: primaryShare)
+  /// One column where content stacks (`stacksContent`): the panes' phone layouts can't fit two of
+  /// them at those text sizes.
+  func panes(primaryShare: CGFloat, stacked: Bool) -> Panes? {
+    stacked ? nil : panes(primaryShare: primaryShare)
   }
 
   /// Decided on the shares, so the hinge never collapses the panes; where there's a hinge, they meet

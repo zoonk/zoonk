@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct MindMapsScreen: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.stacksContent) private var isStacked
   @Environment(LearnerSummaryStore.self) private var learner
   @ScaledMetric(relativeTo: .body) private var tileWidth = 160.0
   @Environment(MindMapsStore.self) private var store
@@ -20,7 +20,7 @@ struct MindMapsScreen: View {
   }
 
   private var columns: [GridItem] {
-    if dynamicTypeSize.isAccessibilitySize {
+    if isStacked {
       return [GridItem(.flexible())]
     }
 
@@ -37,26 +37,21 @@ struct MindMapsScreen: View {
     case .loaded(let maps):
       ScrollView {
         VStack(alignment: .leading, spacing: 12) {
-          (dynamicTypeSize.isAccessibilitySize
-            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
-            : AnyLayout(HStackLayout(alignment: .firstTextBaseline))) {
-              Text(
-                "Chapters you finished", tableName: "MindMaps",
-                comment: "Heading of the chapters with mind maps"
-              )
-              .font(.headline)
+          AccessibilityStack(alignment: .firstTextBaseline, stackedSpacing: 4) {
+            Text(
+              "Chapters you finished", tableName: "MindMaps",
+              comment: "Heading of the chapters with mind maps"
+            )
+            .font(.headline)
+            .frame(maxWidth: .infinity, alignment: .leading)
 
-              if !dynamicTypeSize.isAccessibilitySize {
-                Spacer()
-              }
-
-              Text(
-                "\(maps.chapters.count) chapters", tableName: "MindMaps",
-                comment: "How many chapters have mind maps"
-              )
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
-            }
+            Text(
+              "\(maps.chapters.count) chapters", tableName: "MindMaps",
+              comment: "How many chapters have mind maps"
+            )
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+          }
 
           LazyVGrid(columns: columns, spacing: 16) {
             ForEach(maps.chapters) { map in

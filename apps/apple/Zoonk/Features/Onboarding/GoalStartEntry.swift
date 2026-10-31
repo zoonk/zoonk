@@ -78,7 +78,6 @@ struct GoalEntrySections<Attachment: View>: View {
   let onSubmit: (String) -> Void
   @ViewBuilder var attachment: () -> Attachment
 
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @FocusState private var isFocused: Bool
 
   /// The same limit core applies to a typed goal.
@@ -90,12 +89,7 @@ struct GoalEntrySections<Attachment: View>: View {
     }
 
     Section {
-      let layout =
-        dynamicTypeSize.isAccessibilitySize
-        ? AnyLayout(VStackLayout(alignment: .leading))
-        : AnyLayout(HStackLayout(alignment: .top))
-
-      layout {
+      AccessibilityStack(alignment: .top) {
         Text(
           "I want to", tableName: "Onboarding",
           comment: "The goal box's label, before the learner's words"

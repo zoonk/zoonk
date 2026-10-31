@@ -373,7 +373,6 @@ private struct DayProgressRow: View {
 }
 
 struct BlockRow: View {
-  @Environment(\.dynamicTypeSize) private var typeSize
   @Environment(TodayStore.self) private var today
 
   let block: StudyBlock
@@ -387,27 +386,22 @@ struct BlockRow: View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       mark
 
-      VStack(alignment: .leading, spacing: 2) {
-        Text(block.displayTitle)
-          .font(isNext ? .body.weight(.semibold) : .body)
-          .foregroundStyle(block.isFinished ? .secondary : .primary)
+      AccessibilityStack(alignment: .firstTextBaseline, spacing: 12, stackedSpacing: 2) {
+        VStack(alignment: .leading, spacing: 2) {
+          Text(block.displayTitle)
+            .font(isNext ? .body.weight(.semibold) : .body)
+            .foregroundStyle(block.isFinished ? .secondary : .primary)
 
-        if !block.isFinished {
-          ForEach(lines, id: \.self) { line in
-            Text(line)
-              .font(.footnote)
-              .foregroundStyle(.secondary)
+          if !block.isFinished {
+            ForEach(lines, id: \.self) { line in
+              Text(line)
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+            }
           }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
 
-        // Accessibility sizes give the title the row's width: the minutes go under it.
-        if typeSize.isAccessibilitySize {
-          trailing
-        }
-      }
-
-      if !typeSize.isAccessibilitySize {
-        Spacer(minLength: 8)
         trailing
       }
     }

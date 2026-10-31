@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Like the exam room: one question at a time with no feedback.
 struct MockRunnerView: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.stacksContent) private var isStacked
   /// Kept through folding and unfolding iPhone Duo, and never turned into a sheet over the question
   /// when the screen narrows.
   @State private var showsAnswerSheet = false
@@ -25,8 +25,8 @@ struct MockRunnerView: View {
       }
     }
     .onGeometryChange(for: Bool.self) {
-      [isAccessibilitySize = dynamicTypeSize.isAccessibilitySize] proxy in
-      !isAccessibilitySize && PaneSpace(proxy).panes(primaryShare: 0.5) != nil
+      [isStacked] proxy in
+      PaneSpace(proxy).panes(primaryShare: 0.5, stacked: isStacked) != nil
     } action: {
       fitsTwoPages = $0
     }
@@ -187,19 +187,15 @@ struct MockRunnerView: View {
 }
 
 private struct MockQuestionMeta: View {
-  @Environment(\.dynamicTypeSize) private var typeSize
+  @Environment(\.stacksContent) private var isStacked
   let run: MockRun
   let view: MockView
   let question: MockQuestion
 
   var body: some View {
-    let layout =
-      typeSize.isAccessibilitySize
-      ? AnyLayout(VStackLayout(alignment: .leading)) : AnyLayout(HStackLayout())
-
-    layout {
+    AccessibilityStack {
       Text(question.area ?? "")
-        .lineLimit(typeSize.isAccessibilitySize ? nil : 1)
+        .lineLimit(isStacked ? nil : 1)
       Spacer(minLength: 0)
       if question.format == .essay {
         Text("Written part", tableName: "Mock", comment: "A full mock's essay part")

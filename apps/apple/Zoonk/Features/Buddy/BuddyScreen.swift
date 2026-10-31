@@ -73,7 +73,6 @@ struct BuddyScreen: View {
 private struct BuddyContent: View {
   @Environment(BuddyStore.self) private var store
   @Environment(TutorStore.self) private var tutor
-  @Environment(\.dynamicTypeSize) private var typeSize
   @Environment(\.tutorPlaces) private var places
 
   let status: BuddyStatus
@@ -343,12 +342,7 @@ private struct BuddyContent: View {
     HStack(spacing: 16) {
       face
 
-      let values =
-        typeSize.isAccessibilitySize
-        ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
-        : AnyLayout(HStackLayout(spacing: 16))
-
-      values {
+      AccessibilityStack(spacing: 16, stackedSpacing: 4) {
         Label {
           Text(
             status.energy.current.map {

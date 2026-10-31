@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LessonStageView: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.stacksContent) private var isStacked
 
   let store: LessonPlayerStore
   let state: LessonPlayerState
@@ -30,10 +30,9 @@ struct LessonStageView: View {
     AccessibilityNotification.Announcement(announcement).post()
   }
 
-  /// The two pages where the stage splits, or nil for one column, which accessibility text sizes
-  /// always get.
+  /// The two pages where the stage splits, or nil for one column.
   private func pages(_ proxy: GeometryProxy) -> PaneSpace.Panes? {
-    dynamicTypeSize.isAccessibilitySize ? nil : PaneSpace(proxy).panes(primaryShare: 0.5)
+    PaneSpace(proxy).panes(primaryShare: 0.5, stacked: isStacked)
   }
 
   var body: some View {

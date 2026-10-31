@@ -129,7 +129,7 @@ private struct PatternRow: View {
   let isBest: Bool
   let minimumAnswers: Int
 
-  @Environment(\.dynamicTypeSize) private var typeSize
+  @Environment(\.stacksContent) private var isStacked
   @ScaledMetric(relativeTo: .subheadline) private var nameWidth = 130.0
   @ScaledMetric(relativeTo: .subheadline) private var shareWidth = 44.0
 
@@ -138,23 +138,15 @@ private struct PatternRow: View {
   }
 
   var body: some View {
-    Group {
-      if typeSize.isAccessibilitySize {
-        VStack(alignment: .leading, spacing: 6) {
-          label
-          HStack(spacing: 12) {
-            bar
-            share
-          }
-        }
-      } else {
-        HStack(spacing: 16) {
-          label
-            .frame(width: nameWidth, alignment: .leading)
-          bar
-          share
-            .frame(width: shareWidth, alignment: .trailing)
-        }
+    AccessibilityStack(spacing: 16, stackedSpacing: 6) {
+      label
+        .frame(width: isStacked ? nil : nameWidth, alignment: .leading)
+
+      HStack(spacing: isStacked ? 12 : 16) {
+        bar
+
+        share
+          .frame(width: isStacked ? nil : shareWidth, alignment: .trailing)
       }
     }
     .padding(.vertical, 10)
@@ -166,7 +158,7 @@ private struct PatternRow: View {
       HStack(alignment: .firstTextBaseline, spacing: 6) {
         Text(name)
           .font(.subheadline.weight(isBest ? .semibold : .regular))
-          .lineLimit(typeSize.isAccessibilitySize ? nil : 1)
+          .lineLimit(isStacked ? nil : 1)
 
         if let hours {
           Text(hours)

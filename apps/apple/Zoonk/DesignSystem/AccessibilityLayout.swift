@@ -1,36 +1,75 @@
 import SwiftUI
 
-/// Side by side, then stacked from the first accessibility size, where side by side each part
-/// wraps a syllable a line. The HIG's stacked layout: text above what sat beside it.
+extension EnvironmentValues {
+  /// Side-by-side content stacks from the first accessibility size, where side by side each part
+  /// wraps a syllable a line. Every layout that changes when its content stacks reads this.
+  var stacksContent: Bool { dynamicTypeSize.isAccessibilitySize }
+}
+
+/// Side by side, then stacked where `stacksContent` says. The HIG's stacked layout: text above what
+/// sat beside it.
 struct AccessibilityStack<Content: View>: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.stacksContent) private var isStacked
 
   var alignment: VerticalAlignment = .center
   var spacing: CGFloat?
+  var stackedSpacing: CGFloat?
   @ViewBuilder let content: Content
 
   var body: some View {
     let layout =
-      dynamicTypeSize.isAccessibilitySize
-      ? AnyLayout(VStackLayout(alignment: .leading, spacing: spacing))
+      isStacked
+      ? AnyLayout(VStackLayout(alignment: .leading, spacing: stackedSpacing ?? spacing))
       : AnyLayout(HStackLayout(alignment: alignment, spacing: spacing))
 
     layout { content }
   }
 }
 
+/// A mark, its text and what sits at the row's end. Stacked, the mark and the end share the first
+/// line and the text takes the row's width under them.
+struct MarkedRow<Mark: View, Content: View, End: View>: View {
+  @Environment(\.stacksContent) private var isStacked
+
+  var stackedSpacing: CGFloat?
+  @ViewBuilder let mark: Mark
+  @ViewBuilder let content: Content
+  @ViewBuilder let end: End
+
+  var body: some View {
+    if isStacked {
+      VStack(alignment: .leading, spacing: stackedSpacing) {
+        HStack(spacing: 12) {
+          mark
+          Spacer(minLength: 8)
+          end
+        }
+
+        content
+      }
+    } else {
+      HStack(alignment: .firstTextBaseline, spacing: 12) {
+        mark
+
+        content
+          .frame(maxWidth: .infinity, alignment: .leading)
+
+        end
+      }
+    }
+  }
+}
+
 /// Buttons side by side. Stacked, each is a regular-size rounded rectangle as wide as the row, like
 /// an alert's.
 struct ButtonRow<Content: View>: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.stacksContent) private var isStacked
   @Environment(\.controlSize) private var controlSize
 
   var spacing: CGFloat?
   @ViewBuilder let content: Content
 
   var body: some View {
-    let isStacked = dynamicTypeSize.isAccessibilitySize
-
     AccessibilityStack(spacing: spacing) { content }
       .buttonSizing(isStacked ? .flexible : .automatic)
       .buttonBorderShape(isStacked ? .roundedRectangle : .automatic)

@@ -84,9 +84,11 @@ The only tokens are where main's structure needs something the system lacks:
 
 ## Accessibility text sizes
 
-From the first accessibility size (`dynamicTypeSize.isAccessibilitySize`) text grows past what a row can hold side by side, so layouts change there, as Apple's apps do. `DesignSystem/AccessibilityLayout.swift` holds the shared rules:
+From the first accessibility size text grows past what a row can hold side by side, so layouts change there, as Apple's apps do. One rule decides it, `@Environment(\.stacksContent)`, and `DesignSystem/AccessibilityLayout.swift` holds the shared pieces that follow it. Never switch a layout on `isAccessibilitySize` yourself:
 
-- Things side by side stack, text above what sat beside it: `AccessibilityStack`. A section header with a value at its end is `SectionHeaderRow`.
+- Things side by side stack, text above what sat beside it: `AccessibilityStack` (`stackedSpacing` when the stacked gap differs). A title with a value at its end puts `.frame(maxWidth: .infinity, alignment: .leading)` on the title; a section header like that is `SectionHeaderRow`.
+- A mark, its text and something at the row's end (a chevron, a drag handle, a badge) are a `MarkedRow`: stacked, the mark and the end share the first line and the text takes the width under them.
+- Where content changes beyond the stack itself (a value's own alignment, a fixed width side by side), read `stacksContent`. Two panes or grid columns become one column on it too (`PaneSpace.panes(primaryShare:stacked:)`).
 - Text buttons side by side go in a `ButtonRow`: stacked, each is a regular-size rounded rectangle as wide as the row, like an alert's buttons.
 - Buttons are rounded rectangles, not capsules: a wrapped capsule's round ends take the width its words need. A button's shape doesn't reach into a presentation, so the app's root, the router's presented screens and any other presented screen with text buttons each set it (`roundedButtonsAtAccessibilitySizes()`), and bordered, main-action and glass buttons follow it. A bordered button in a toolbar keeps `.buttonBorderShape(.automatic)` (`TutorAskToolbarItem`): toolbars keep their own text size, so it never wraps.
 - A bar over the content is a `screenBar(edge:)` (`DesignSystem/ScreenBar.swift`), never a bare `safeAreaBar`: like the system's bars, its controls' text stops growing at the second accessibility size, so the content keeps the screen. A field in the bar takes `.keepsFullTextSize()`: learners read what they type. Controls that can't show their titles there show them in the Large Content Viewer (`accessibilityShowsLargeContentViewer()`), as a tab bar does.

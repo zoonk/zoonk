@@ -204,8 +204,6 @@ private struct ProcessOrderCanvas: View {
 }
 
 private struct ProcessStepRow<Content: View>: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
   let position: Int
   let icon: String?
   let mark: ActivityTileMark
@@ -213,37 +211,16 @@ private struct ProcessStepRow<Content: View>: View {
   @ViewBuilder let content: Content
 
   var body: some View {
-    if dynamicTypeSize.isAccessibilitySize {
-      VStack(alignment: .leading, spacing: 8) {
-        HStack(spacing: 12) {
-          marks
-          Spacer(minLength: 0)
-          handle
-        }
-        text
+    MarkedRow(stackedSpacing: 8) {
+      ProcessStepMarks(position: position, icon: icon, mark: mark)
+    } content: {
+      content
+    } end: {
+      if isDraggable {
+        Image(systemName: "line.3.horizontal")
+          .foregroundStyle(.secondary)
+          .accessibilityHidden(true)
       }
-    } else {
-      HStack(alignment: .firstTextBaseline, spacing: 12) {
-        marks
-        text
-        handle
-      }
-    }
-  }
-
-  private var marks: some View {
-    ProcessStepMarks(position: position, icon: icon, mark: mark)
-  }
-
-  private var text: some View {
-    content.frame(maxWidth: .infinity, alignment: .leading)
-  }
-
-  @ViewBuilder private var handle: some View {
-    if isDraggable {
-      Image(systemName: "line.3.horizontal")
-        .foregroundStyle(.secondary)
-        .accessibilityHidden(true)
     }
   }
 }

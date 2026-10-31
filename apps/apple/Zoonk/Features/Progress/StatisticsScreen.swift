@@ -350,7 +350,7 @@ private struct PatternsOverview: View {
 }
 
 private struct PatternsLinkRow: View {
-  @Environment(\.dynamicTypeSize) private var typeSize
+  @Environment(\.stacksContent) private var isStacked
 
   let patterns: ScorePatterns?
 
@@ -364,22 +364,14 @@ private struct PatternsLinkRow: View {
   var body: some View {
     StatsSectionLink(section: .patterns) {
       HStack(spacing: 12) {
-        let layout =
-          typeSize.isAccessibilitySize
-          ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
-          : AnyLayout(HStackLayout(spacing: 12))
-
-        layout {
+        AccessibilityStack(spacing: 12, stackedSpacing: 4) {
           Text(StatsSection.patterns.title)
             .foregroundStyle(.primary)
-
-          if !typeSize.isAccessibilitySize {
-            Spacer(minLength: 12)
-          }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
           Text(value)
             .foregroundStyle(.secondary)
-            .multilineTextAlignment(typeSize.isAccessibilitySize ? .leading : .trailing)
+            .multilineTextAlignment(isStacked ? .leading : .trailing)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
 
