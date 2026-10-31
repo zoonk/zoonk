@@ -250,7 +250,7 @@ describe(mergeBlueprintContent, () => {
       },
     });
 
-    const merged = mergeBlueprintContent({ current, next, nextEdition: true }).content.structure;
+    const merged = mergeBlueprintContent({ current, next }).content.structure;
 
     expect(merged.pastQuestions).toBeUndefined();
 
@@ -284,102 +284,56 @@ describe(mergeBlueprintContent, () => {
     ).toStrictEqual(current.structure.pastTopicFrequency);
   });
 
-  it("keeps a subject's stated counts, group and name when a new reading of it leaves them out", () => {
-    const essay = {
-      citation: OLD_CITATION,
-      name: "Redação",
-      questions: null,
-      topics: [],
-      weight: null,
-    };
-
+  it("takes a new reading's subjects and formats as it states them, what it leaves out included", () => {
     const current = content({
       structure: {
         ...content().structure,
+        formats: [
+          { citation: OLD_CITATION, description: "Cinco", kind: "multipleChoice", options: 5 },
+        ],
         subjects: [
           {
             citation: OLD_CITATION,
             group: "Conhecimentos básicos (P1)",
             name: "Linguagens",
             questions: 45,
-            shortName: "Linguagens",
-            topicGroups: [{ name: "Leitura", topics: ["Leis"] }],
             topics: ["Leis"],
             weight: 0.25,
           },
-          essay,
+          { citation: OLD_CITATION, name: "Redação", questions: null, topics: [], weight: null },
         ],
       },
     });
 
-    const next = content({
-      structure: {
-        ...content().structure,
-        subjects: [
-          {
-            citation: NEW_CITATION,
-            group: null,
-            name: "Linguagens, Códigos e suas Tecnologias",
-            questions: null,
-            topics: ["Leis"],
-            weight: null,
-          },
-          { ...essay, citation: NEW_CITATION, name: "Prova de Redação" },
-          { citation: NEW_CITATION, name: "Ética", questions: null, topics: [], weight: null },
-        ],
-      },
-    });
-
-    const merged = mergeBlueprintContent({ current, next });
-
-    expect(merged.content.structure.subjects).toStrictEqual([
-      { ...current.structure.subjects[0], citation: NEW_CITATION },
-      { ...essay, citation: NEW_CITATION },
-      { citation: NEW_CITATION, name: "Ética", questions: null, topics: [], weight: null },
-    ]);
-
-    expect(merged.changes.map((change) => change.field)).toStrictEqual(["subjects"]);
-
-    const skipping = content({
-      structure: { ...next.structure, subjects: [next.structure.subjects[2]!] },
-    });
-
-    expect(
-      mergeBlueprintContent({ current: merged.content, next: skipping }).content.structure.subjects,
-    ).toStrictEqual(merged.content.structure.subjects);
-  });
-
-  it("keeps the choice a subject is an option of when a new reading of it leaves it out", () => {
-    const option = {
-      choiceGroup: "Língua Estrangeira",
-      citation: OLD_CITATION,
-      name: "Língua Espanhola",
-      partOf: "Linguagens",
-      questions: 5,
-      topics: [],
-      weight: null,
+    const reading = {
+      formats: [
+        {
+          citation: NEW_CITATION,
+          description: "Objetivas",
+          kind: "multipleChoice" as const,
+          options: null,
+        },
+      ],
+      subjects: [
+        {
+          citation: NEW_CITATION,
+          group: null,
+          name: "Linguagens, Códigos e suas Tecnologias",
+          questions: null,
+          topics: ["Leis"],
+          weight: null,
+        },
+        { citation: NEW_CITATION, name: "Ética", questions: null, topics: [], weight: null },
+      ],
     };
 
-    const current = content({ structure: { ...content().structure, subjects: [option] } });
-
-    const next = content({
-      structure: {
-        ...content().structure,
-        subjects: [
-          {
-            citation: NEW_CITATION,
-            name: "Língua Espanhola",
-            questions: 6,
-            topics: [],
-            weight: null,
-          },
-        ],
-      },
+    const merged = mergeBlueprintContent({
+      current,
+      next: content({ structure: { ...content().structure, ...reading } }),
     });
 
-    expect(mergeBlueprintContent({ current, next }).content.structure.subjects).toStrictEqual([
-      { ...option, citation: NEW_CITATION, questions: 6 },
-    ]);
+    expect(merged.content.structure).toMatchObject(reading);
+    expect(merged.changes.map((change) => change.field)).toStrictEqual(["subjects", "formats"]);
   });
 
   it("compares stored JSON regardless of key order", () => {
@@ -395,46 +349,6 @@ describe(mergeBlueprintContent, () => {
     });
 
     expect(merged.changes).toStrictEqual([]);
-  });
-
-  it("keeps a known number of options when a new reading doesn't state it", () => {
-    const fiveOptions = {
-      citation: OLD_CITATION,
-      description: "Múltipla escolha com cinco alternativas, de A a E",
-      kind: "multipleChoice" as const,
-      options: 5,
-    };
-
-    const essay = {
-      citation: OLD_CITATION,
-      description: "Redação",
-      kind: "essay" as const,
-      options: null,
-    };
-
-    const current = content({
-      structure: { ...content().structure, formats: [fiveOptions, essay] },
-    });
-
-    const next = content({
-      structure: {
-        ...current.structure,
-        formats: [
-          {
-            citation: NEW_CITATION,
-            description: "Questões objetivas",
-            kind: "multipleChoice",
-            options: null,
-          },
-          { ...essay, citation: NEW_CITATION },
-        ],
-      },
-    });
-
-    const merged = mergeBlueprintContent({ current, next });
-
-    expect(merged.changes).toStrictEqual([]);
-    expect(merged.content.structure.formats).toStrictEqual([fiveOptions, essay]);
   });
 
   it("takes a new number of options, and the new reading's other formats", () => {

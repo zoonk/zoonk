@@ -1,6 +1,5 @@
 import { normalizeString } from "@zoonk/utils/string";
 import { type BlueprintContent, type ExamEdition, type ExamStructure } from "./blueprint-contract";
-import { keepKnownSubjectFacts } from "./blueprint-subject-merge";
 import { countsEverySubject } from "./subject-questions";
 import { toTopicKey } from "./topic-key";
 
@@ -58,21 +57,6 @@ function keepRulesWithTranslations({
 
 function isEmptyValue(value: unknown): boolean {
   return value === null || (Array.isArray(value) && value.length === 0);
-}
-
-type ExamFormat = ExamStructure["formats"][number];
-
-function keepKnownOptions({
-  current,
-  next,
-}: {
-  current: readonly ExamFormat[];
-  next: readonly ExamFormat[];
-}): ExamFormat[] {
-  return next.map((format) => {
-    const known = current.find((stored) => stored.kind === format.kind && stored.options !== null);
-    return format.options === null && known ? known : format;
-  });
 }
 
 function getSections({
@@ -251,35 +235,16 @@ export function movesExamDays({
 }
 
 /**
- * A re-read of the same edition only fills in what it missed; a later edition's notice replaces the
- * last one's subjects and formats (`nextEdition`).
+ * The latest reading of the notice decides its subjects and formats; a section it leaves empty keeps
+ * the stored one, and the lookups beside it stay only for what it didn't change.
  */
 export function mergeBlueprintContent({
   current,
-  next: reading,
-  nextEdition = false,
+  next,
 }: {
   current: BlueprintContent;
   next: BlueprintContent;
-  nextEdition?: boolean;
 }): BlueprintMerge {
-  const next: BlueprintContent = nextEdition
-    ? reading
-    : {
-        ...reading,
-        structure: {
-          ...reading.structure,
-          formats: keepKnownOptions({
-            current: current.structure.formats,
-            next: reading.structure.formats,
-          }),
-          subjects: keepKnownSubjectFacts({
-            current: current.structure.subjects,
-            next: reading.structure.subjects,
-          }),
-        },
-      };
-
   const changes = getSections({ current, next })
     .filter((section) => isChanged(section))
     .map(({ after, before, field }) => ({

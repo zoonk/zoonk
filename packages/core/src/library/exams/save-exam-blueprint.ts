@@ -102,40 +102,12 @@ export function isPastEdition({ content }: { content: BlueprintContent }): boole
   return examDate !== null && examDate.getTime() + MS_PER_DAY <= Date.now();
 }
 
-/**
- * An edition is its opening notice: reading it again, with its corrections, stays in that edition
- * whatever day it now gives the exam. Another notice opens a new edition, unless both date the exam
- * and the new day isn't later, as a copy of the same notice found elsewhere.
- */
-function isNextEdition({
-  next,
-  sourceId,
-  stored,
-  storedSourceId,
-}: {
-  next: BlueprintContent;
-  sourceId: string;
-  stored: BlueprintContent;
-  storedSourceId: string | null;
-}): boolean {
-  if (sourceId === storedSourceId) {
-    return false;
-  }
-
-  const before = findLastDate(stored.edition.dates, "exam");
-  const after = findLastDate(next.edition.dates, "exam");
-
-  return !before || !after || after.getTime() > before.getTime();
-}
-
 export async function previewExamBlueprintChanges({
   content,
   identity,
-  sourceId,
 }: {
   content: BlueprintContent;
   identity: ExamIdentity;
-  sourceId: string;
 }): Promise<BlueprintChange[] | null> {
   const current = await findExamBlueprintByKey({
     identityKey: buildExamIdentityKey(identity),
@@ -153,16 +125,7 @@ export async function previewExamBlueprintChanges({
     return null;
   }
 
-  return mergeBlueprintContent({
-    current: stored,
-    next: content,
-    nextEdition: isNextEdition({
-      next: content,
-      sourceId,
-      stored,
-      storedSourceId: current.sourceId,
-    }),
-  }).changes;
+  return mergeBlueprintContent({ current: stored, next: content }).changes;
 }
 
 /**
@@ -205,24 +168,9 @@ async function updateBlueprint({
   current: ExamBlueprint;
   input: SaveExamBlueprintInput;
 }): Promise<SavedExamBlueprint> {
-  const read = readBlueprintContent(current);
-
-  const nextEdition = isNextEdition({
-    next: input.content,
-    sourceId: input.sourceId,
-    stored: read,
-    storedSourceId: current.sourceId,
-  });
-
-  // An edition nobody named a board for keeps "unknown", never the last edition's board.
-  const board = input.board ?? (nextEdition ? null : current.board);
-  const stored = forgetOtherBoardsPapers({ board, stored: read });
-
-  const { changes, content } = mergeBlueprintContent({
-    current: stored,
-    next: input.content,
-    nextEdition,
-  });
+  const board = input.board ?? current.board;
+  const stored = forgetOtherBoardsPapers({ board, stored: readBlueprintContent(current) });
+  const { changes, content } = mergeBlueprintContent({ current: stored, next: input.content });
 
   const notice = changes.length > 0 ? input.notice : null;
 
