@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import {
   findChoiceOption,
-  findNamedOption,
   findPartAreas,
   listChoiceGroups,
   listCountedSubjects,
@@ -147,37 +146,6 @@ describe(findChoiceOption, () => {
     expect(
       findChoiceOption({ choice: { group: FOREIGN, subject: LANGUAGES }, structure: enem }),
     ).toBeNull();
-  });
-});
-
-describe(findNamedOption, () => {
-  const specialties = [
-    { name: "Auditoria", shortName: "Auditoria" },
-    { name: "Tecnologia da Informação – Ciência de Dados", shortName: "Ciência de Dados" },
-    { name: "Tecnologia da Informação – Infraestrutura de TI", shortName: "Infraestrutura de TI" },
-    { name: "Tecnologia da Informação – Desenvolvimento de Sistemas", shortName: null },
-  ];
-
-  const named = (...words: string[]) => findNamedOption({ options: specialties, words });
-
-  it("names the option a word of the learner's is only in", () => {
-    expect(named("concurso da CGU para TI, desenvolvimento")).toBe(
-      "Tecnologia da Informação – Desenvolvimento de Sistemas",
-    );
-
-    expect(named("passar na CGU", "Auditor de ciência de dados")).toBe(
-      "Tecnologia da Informação – Ciência de Dados",
-    );
-  });
-
-  it("names none from words the options share, an acronym, or a word one only starts with", () => {
-    expect(named("CGU, tecnologia da informação")).toBeNull();
-    expect(named("CGU, auditor de TI")).toBeNull();
-    expect(named("passar no concurso da CGU 2026 para auditor")).toBeNull();
-  });
-
-  it("names none when the words name two options", () => {
-    expect(named("CGU auditoria ou desenvolvimento")).toBeNull();
   });
 });
 

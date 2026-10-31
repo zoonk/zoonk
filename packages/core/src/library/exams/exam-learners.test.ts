@@ -1,8 +1,14 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import {
+  SOFTWARE,
+  SPECIALTY,
+  specialtyBlueprintFixture,
+} from "../../exams/choices/_test-utils/choice-blueprint";
+import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { linkGoalToExamBlueprint, toResearchPlanInput } from "./exam-learners";
 
 const DETAILS = {
@@ -119,5 +125,70 @@ describe(linkGoalToExamBlueprint, () => {
         goals.map((row) => [row.title, [row.examBlueprintId, row.targetLanguage]]),
       ),
     ).toStrictEqual({ "DELE B2": [other.id, "es"], "PTE Academic 65": [pte.id, "en"] });
+  });
+
+  it("takes the specialty the learner's own words name, and leaves the choice when they refuse one", async () => {
+    const user = await userFixture();
+
+    const [blueprint, named, refused] = await Promise.all([
+      specialtyBlueprintFixture(),
+      goalFixture({
+        kind: "exam",
+        language: "pt",
+        prompt: "Passar na CGU, desenvolvimento de sistemas",
+        userId: user.id,
+      }),
+      goalFixture({
+        kind: "exam",
+        language: "pt",
+        prompt: "Passar na CGU, mas não quero Desenvolvimento de Sistemas",
+        userId: user.id,
+      }),
+    ]);
+
+    await Promise.all([
+      planFixture({ goalId: named.id, phases: [] }),
+      planFixture({ goalId: refused.id, phases: [] }),
+    ]);
+
+    await Promise.all([
+      linkGoalToExamBlueprint({ examBlueprintId: blueprint.id, goalId: named.id }),
+      linkGoalToExamBlueprint({ examBlueprintId: blueprint.id, goalId: refused.id }),
+    ]);
+
+    const plans = await prisma.plan.findMany({ where: { goalId: { in: [named.id, refused.id] } } });
+
+    const picks = (goalId: string) =>
+      parsePlanSettings(plans.find((plan) => plan.goalId === goalId)?.settings).examChoices;
+
+    expect(picks(named.id)).toStrictEqual([{ group: SPECIALTY, subject: SOFTWARE }]);
+    expect(picks(refused.id)).toStrictEqual([]);
+  });
+
+  it("never changes a pick the learner already made when research links the notice again", async () => {
+    const user = await userFixture();
+    const blueprint = await specialtyBlueprintFixture();
+    const auditing = [{ group: SPECIALTY, subject: "Auditoria" }];
+
+    const goal = await goalFixture({
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      language: "pt",
+      prompt: "Passar na CGU, desenvolvimento de sistemas",
+      userId: user.id,
+    });
+
+    const plan = await planFixture({
+      goalId: goal.id,
+      phases: [],
+      settings: { examChoices: auditing },
+    });
+
+    await linkGoalToExamBlueprint({ examBlueprintId: blueprint.id, goalId: goal.id });
+
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    expect(parsePlanSettings(saved.settings).examChoices).toStrictEqual(auditing);
+    expect(saved.inputVersion).toBe(plan.inputVersion);
   });
 });

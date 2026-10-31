@@ -1,13 +1,14 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { searchCourses } from "../../courses/search-courses";
 import { getNoSitting } from "../../exams/_utils/notice-day";
 import { getExamCalendarDay, getPlanExamDays } from "../../exams/_utils/plan-exam-days";
 import { listExamChoiceViews } from "../../exams/choices/exam-choice-views";
-import { findNamedOption, toChosenStructure } from "../../exams/choices/exam-choices";
+import { toChosenStructure } from "../../exams/choices/exam-choices";
 import { loadExamChoices } from "../../exams/choices/load-exam-choices";
+import { findNamedChoices } from "../../exams/choices/named-exam-choices";
 import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { loadCourseExam } from "../../goals/_utils/course-exam";
 import { findActiveGoalId, loadGoalViews } from "../../goals/_utils/goal-view";
@@ -41,34 +42,16 @@ export type OnboardingResult =
   | { onboarding: OnboardingView; status: "ready" }
   | { status: "notFound" | "unauthorized" };
 
-/** The question is still asked: an option the learner's goal names only starts picked. */
-function preselectNamedOptions({
-  choices,
-  words,
-}: {
-  choices: OnboardingView["examChoices"];
-  words: string[];
-}): OnboardingView["examChoices"] {
-  return choices.map((choice) =>
-    choice.subject
-      ? choice
-      : { ...choice, subject: findNamedOption({ options: choice.options, words }) },
-  );
-}
-
+/** Before a POST saves it, an option the learner's own words name already counts as picked, so only a choice nothing names is asked. */
 async function findExamNotice({
   details,
-  examBlueprintId,
+  goal,
   goalDate,
-  goalId,
-  prompt,
   today,
 }: {
   details: Record<string, unknown>;
-  examBlueprintId: string | null;
+  goal: Pick<Goal, "details" | "examBlueprintId" | "id" | "language" | "prompt" | "title">;
   goalDate: string | null;
-  goalId: string;
-  prompt: string;
   today: string;
 }): Promise<{
   choices: OnboardingView["examChoices"];
@@ -79,7 +62,7 @@ async function findExamNotice({
   noSitting: NoSitting | null;
   subjects: OnboardingView["examSubjects"];
 }> {
-  if (!examBlueprintId) {
+  if (!goal.examBlueprintId) {
     return {
       choices: [],
       examDate: null,
@@ -91,15 +74,20 @@ async function findExamNotice({
     };
   }
 
-  const [blueprint, choices] = await Promise.all([
+  const [blueprint, saved] = await Promise.all([
     prisma.examBlueprint.findUnique({
       select: { edition: true, examDate: true, ownerId: true, structure: true },
-      where: { id: examBlueprintId },
+      where: { id: goal.examBlueprintId },
     }),
-    loadExamChoices(goalId),
+    loadExamChoices(goal.id),
   ]);
 
   const stored = examStructureSchema.safeParse(blueprint?.structure).data;
+
+  const choices = stored
+    ? [...saved, ...findNamedChoices({ choices: saved, goal, structure: stored })]
+    : saved;
+
   const structure = stored && toChosenStructure({ choices, structure: stored });
 
   // Written papers are not subjects the learner can declare already known.
@@ -108,10 +96,9 @@ async function findExamNotice({
     : [];
 
   const views = stored ? listExamChoiceViews({ choices, structure: stored }) : [];
-  const position = typeof details.targetPosition === "string" ? details.targetPosition : "";
 
   return {
-    choices: preselectNamedOptions({ choices: views, words: [prompt, position] }),
+    choices: views,
     examDate: blueprint?.examDate ? toIsoDate(blueprint.examDate) : null,
     examDays:
       blueprint && !blueprint.ownerId
@@ -240,14 +227,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       findLearningProfileView(userId),
       findActiveGoalId(userId),
       findOnboardingGoalIds(goal),
-      findExamNotice({
-        details,
-        examBlueprintId: goal.examBlueprintId,
-        goalDate,
-        goalId,
-        prompt: goal.prompt,
-        today,
-      }),
+      findExamNotice({ details, goal, goalDate, today }),
       findCourseExamDays({ goal, today }),
       readPlanReadiness(goal.id),
     ],

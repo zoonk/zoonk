@@ -3,7 +3,6 @@ import { isDeepStrictEqual } from "node:util";
 import { type Goal, type Plan, type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { findOfferedChoices } from "../../../exams/choices/choose-exam-option";
 import { getLeastDailyBudget, splitDailyBudget } from "../../../goals/daily-budget";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
@@ -16,6 +15,7 @@ import { getScheduleOperations } from "../../../plans/planner/schedule-operation
 import { assertTargetDates } from "../../../plans/target-date-range";
 import { type OnboardingAnswerInput } from "../onboarding-contract";
 import { getAnsweredQuestions, getFollowUpQuestions, readExamTarget } from "../onboarding-steps";
+import { getExamChoiceOperations } from "./exam-choice-answer";
 import { findOnboardingGoalIds } from "./onboarding-goals";
 
 type Details = Record<string, unknown>;
@@ -164,6 +164,7 @@ async function saveAnswerSettings(
   return true;
 }
 
+/** `current` carries the details with this answer, so the words it adds can name an exam's option. */
 async function getAnswerOperations({
   current,
   goalId,
@@ -189,17 +190,8 @@ async function getAnswerOperations({
     operations.push({ fullCourse: input.fullCourse, kind: "setFullCourse" });
   }
 
-  if (input.question === "examChoice" && input.choices) {
-    const offered = await findOfferedChoices({ choices: input.choices, db: tx, goal: current });
-
-    if (!offered) {
-      return null;
-    }
-
-    operations.push(...offered.map((choice) => ({ kind: "setExamChoice" as const, ...choice })));
-  }
-
-  return operations;
+  const choices = await getExamChoiceOperations({ goal: current, input, state, tx });
+  return choices && [...operations, ...choices];
 }
 
 export async function saveAnswerInputs({
@@ -285,9 +277,15 @@ export async function saveAnswerInputs({
           today: toIsoDate(today),
         });
 
+        const answeredDetails = {
+          ...withoutReplacedAnswer({ details, input }),
+          ...getDetailChanges({ details, input }),
+          answered: [...new Set([...getAnsweredQuestions(details), input.question])],
+        };
+
         // oxlint-disable-next-line no-await-in-loop -- Choices are validated on the answer's transaction client.
         const operations = await getAnswerOperations({
-          current,
+          current: { ...current, details: answeredDetails },
           goalId: goal.id,
           input,
           schedule,
@@ -307,13 +305,7 @@ export async function saveAnswerInputs({
 
         const data = {
           dailyMinutes: applied.state.goal.dailyMinutes,
-          ...(own && {
-            details: {
-              ...withoutReplacedAnswer({ details, input }),
-              ...getDetailChanges({ details, input }),
-              answered: [...new Set([...getAnsweredQuestions(details), input.question])],
-            },
-          }),
+          ...(own && { details: answeredDetails }),
           targetDate: applied.state.goal.targetDate
             ? fromIsoDate(applied.state.goal.targetDate)
             : null,

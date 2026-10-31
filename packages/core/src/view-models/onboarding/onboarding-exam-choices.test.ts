@@ -37,6 +37,23 @@ async function setup() {
   return { goal, plan };
 }
 
+async function specialtyGoal(prompt: string, details: object = {}) {
+  const user = await userFixture();
+  const blueprint = await specialtyBlueprintFixture();
+
+  const { goal, plan } = await unplannedGoalFixture({
+    details,
+    examBlueprintId: blueprint.id,
+    kind: "exam",
+    language: "pt",
+    prompt,
+    userId: user.id,
+  });
+
+  mockSession(user.id);
+  return { goal, plan };
+}
+
 async function loadOnboarding(goalId: string) {
   const result = await getOnboarding({ goalId });
 
@@ -139,24 +156,73 @@ describe("onboarding an exam with a choice", () => {
     });
   });
 
-  it("starts at the specialty the learner's goal names, and still asks", async () => {
-    const user = await userFixture();
-    const blueprint = await specialtyBlueprintFixture();
-
-    const { goal, plan } = await unplannedGoalFixture({
-      examBlueprintId: blueprint.id,
-      kind: "exam",
-      language: "pt",
-      prompt: "passar no concurso da CGU para auditor de TI, desenvolvimento",
-      userId: user.id,
-    });
-
-    mockSession(user.id);
+  it("takes the specialty the learner's goal names without asking, and saves it with their next answer", async () => {
+    const { goal, plan } = await specialtyGoal(
+      "passar no concurso da CGU para auditor de TI, desenvolvimento",
+    );
 
     const onboarding = await loadOnboarding(goal.id);
 
-    expect(onboarding.steps).toContain("examChoice");
+    expect(onboarding.steps).not.toContain("examChoice");
     expect(onboarding.examChoices).toMatchObject([{ group: SPECIALTY, subject: SOFTWARE }]);
+    expect(onboarding.examSubjects.map((subject) => subject.name)).toContain(SOFTWARE);
+    await expect(loadChoices(plan.id)).resolves.toStrictEqual([]);
+
+    await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { level: "basic", question: "level" },
+    });
+
+    await expect(loadChoices(plan.id)).resolves.toStrictEqual([
+      { group: SPECIALTY, subject: SOFTWARE },
+    ]);
+  });
+
+  it.each([
+    ["names none", "passar no concurso da CGU para auditor"],
+    ["refuses one", "passar no concurso da CGU, não quero Auditoria"],
+  ])("asks which specialty when the goal %s", async (_, prompt) => {
+    const { goal } = await specialtyGoal(prompt);
+    const onboarding = await loadOnboarding(goal.id);
+
+    expect(onboarding.steps).toContain("examChoice");
+    expect(onboarding.examChoices).toMatchObject([{ group: SPECIALTY, subject: null }]);
+  });
+
+  it("takes the specialty from the position the learner types in onboarding", async () => {
+    const { goal, plan } = await specialtyGoal("passar no concurso da CGU", {
+      examTarget: "position",
+    });
+
+    await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { question: "target", target: "Auditor Federal – Desenvolvimento de Sistemas" },
+    });
+
+    await expect(loadChoices(plan.id)).resolves.toStrictEqual([
+      { group: SPECIALTY, subject: SOFTWARE },
+    ]);
+
+    await expect(loadOnboarding(goal.id)).resolves.not.toMatchObject({
+      steps: expect.arrayContaining(["examChoice"]),
+    });
+  });
+
+  it("never picks for a learner who chose to decide later", async () => {
+    const { goal, plan } = await specialtyGoal("passar no concurso da CGU", {
+      followUps: [{ question: "Qual área?" }],
+    });
+
+    await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { choices: null, question: "examChoice" },
+    });
+
+    await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { answers: ["Desenvolvimento de Sistemas"], question: "followUps" },
+    });
+
     await expect(loadChoices(plan.id)).resolves.toStrictEqual([]);
   });
 

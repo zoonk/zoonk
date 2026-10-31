@@ -1,9 +1,10 @@
 import "server-only";
-import { type ExamBlueprint, prisma } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
 import { type ExamChoiceView } from "./exam-choice-contract";
 import { listExamChoiceViews } from "./exam-choice-views";
 import { type ExamChoice, findPartAreas, readExamChoices } from "./exam-choices";
+import { findNamedChoices } from "./named-exam-choices";
 
 export async function loadExamChoices(goalId: string): Promise<ExamChoice[]> {
   const plan = await prisma.plan.findUnique({ select: { settings: true }, where: { goalId } });
@@ -40,6 +41,23 @@ export async function loadExamChoiceViews({
 }): Promise<ExamChoiceView[]> {
   const structure = await loadStructure(examBlueprintId, blueprint);
   return structure ? listExamChoiceViews({ choices, structure }) : [];
+}
+
+/** Onboarding asks a choice only when the learner's own words name none of its options. */
+export async function hasUnpickedChoice(
+  goal: Pick<Goal, "details" | "examBlueprintId" | "id" | "language" | "prompt" | "title">,
+): Promise<boolean> {
+  const [structure, saved] = await Promise.all([
+    loadStructure(goal.examBlueprintId),
+    loadExamChoices(goal.id),
+  ]);
+
+  if (!structure) {
+    return false;
+  }
+
+  const choices = [...saved, ...findNamedChoices({ choices: saved, goal, structure })];
+  return listExamChoiceViews({ choices, structure }).some((choice) => choice.subject === null);
 }
 
 export async function loadPartAreas({

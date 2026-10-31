@@ -2,7 +2,7 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { io } from "next/cache";
-import { loadExamChoiceViews, loadExamChoices } from "../../exams/choices/load-exam-choices";
+import { hasUnpickedChoice } from "../../exams/choices/load-exam-choices";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { findLearningProfileView } from "../../profile/_utils/learning-profile-view";
 import { type LearningProfileView } from "../../profile/learning-profile-contract";
@@ -20,7 +20,16 @@ const RECENT_DRAFTS = 5;
 
 type ResumeGoal = Pick<
   Goal,
-  "createdAt" | "details" | "examBlueprintId" | "id" | "kind" | "status" | "targetDate" | "title"
+  | "createdAt"
+  | "details"
+  | "examBlueprintId"
+  | "id"
+  | "kind"
+  | "language"
+  | "prompt"
+  | "status"
+  | "targetDate"
+  | "title"
 >;
 
 type ResumeDraft = {
@@ -66,15 +75,10 @@ async function isInOnboarding({
 }): Promise<boolean> {
   const onboardingId = readOnboardingId(goal);
 
-  const choices = await loadExamChoiceViews({
-    choices: await loadExamChoices(goal.id),
-    examBlueprintId: goal.examBlueprintId,
-  });
-
   const steps = getOnboardingSteps({
     goal: {
       details: readDetails(goal),
-      hasUnpickedChoice: choices.some((choice) => choice.subject === null),
+      hasUnpickedChoice: await hasUnpickedChoice(goal),
       kind: goal.kind,
       targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
     },
@@ -143,6 +147,8 @@ export async function getOnboardingResume(): Promise<OnboardingResumeResult> {
         examBlueprintId: true,
         id: true,
         kind: true,
+        language: true,
+        prompt: true,
         status: true,
         targetDate: true,
         title: true,

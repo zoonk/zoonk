@@ -1,9 +1,13 @@
 import "server-only";
-import { type GoalKind, prisma } from "@zoonk/db";
+import { type Goal, type GoalKind, type Plan, type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { findNamedChoices } from "../../exams/choices/named-exam-choices";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { getPlanState } from "../../plans/_utils/plan-context";
+import { applyPlanOperations } from "../../plans/planner/plan-operations";
 import { getReferenceSyllabusNeed } from "../curriculum/goal-curriculum-inputs";
 import { toExamIdentity, toSharedContext } from "../curriculum/shared-graph-prompt";
+import { type ExamStructure, examStructureSchema } from "./blueprint-contract";
 import { readTestedLanguage } from "./blueprint-language";
 
 export function countActiveExamGoals(examBlueprintId: string): Promise<number> {
@@ -31,6 +35,39 @@ export function countActiveSourceGoals(sourceId: string): Promise<number> {
   });
 }
 
+async function saveNamedChoices(
+  tx: TransactionClient,
+  { goal, structure }: { goal: Goal & { plan: Plan | null }; structure: ExamStructure | undefined },
+): Promise<boolean> {
+  const { plan } = goal;
+
+  if (!plan || !structure || goal.kind !== "exam") {
+    return false;
+  }
+
+  const state = getPlanState({ goal, plan });
+  const named = findNamedChoices({ choices: state.settings.examChoices, goal, structure });
+
+  if (named.length === 0) {
+    return false;
+  }
+
+  const applied = applyPlanOperations({
+    goalKind: goal.kind,
+    operations: named.map((choice) => ({ kind: "setExamChoice" as const, ...choice })),
+    state,
+    today: new Date(),
+  });
+
+  if ("error" in applied) {
+    return false;
+  }
+
+  await tx.plan.update({ data: { settings: applied.state.settings }, where: { id: plan.id } });
+  return true;
+}
+
+/** Also takes the options of the notice's choices that the learner's own words name. */
 export async function linkGoalToExamBlueprint({
   examBlueprintId,
   goalId,
@@ -44,6 +81,7 @@ export async function linkGoalToExamBlueprint({
   });
 
   const targetLanguage = blueprint ? readTestedLanguage(blueprint.structure) : null;
+  const structure = examStructureSchema.safeParse(blueprint?.structure).data;
 
   const goal = await prisma.goal.findUnique({ where: { id: goalId } });
 
@@ -54,7 +92,7 @@ export async function linkGoalToExamBlueprint({
   return writeLearnerChange(
     { goalIds: [goalId], planInputs: true, userId: goal.userId },
     async (tx) => {
-      const current = await tx.goal.findUnique({ where: { id: goalId } });
+      const current = await tx.goal.findUnique({ include: { plan: true }, where: { id: goalId } });
 
       if (!current) {
         return unchanged(false);
@@ -63,16 +101,18 @@ export async function linkGoalToExamBlueprint({
       const language =
         current.kind === "exam" && targetLanguage ? targetLanguage : current.targetLanguage;
 
-      if (current.examBlueprintId === examBlueprintId && current.targetLanguage === language) {
-        return unchanged(true);
+      const linked =
+        current.examBlueprintId !== examBlueprintId || current.targetLanguage !== language;
+
+      if (linked) {
+        await tx.goal.update({
+          data: { examBlueprintId, targetLanguage: language },
+          where: { id: goalId },
+        });
       }
 
-      await tx.goal.update({
-        data: { examBlueprintId, targetLanguage: language },
-        where: { id: goalId },
-      });
-
-      return true;
+      const picked = await saveNamedChoices(tx, { goal: current, structure });
+      return linked || picked ? true : unchanged(true);
     },
   );
 }

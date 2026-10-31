@@ -214,7 +214,7 @@ type OnboardingTimeChoice = { minutes: number; split: DaySplit | null };
 export type OnboardingView = {
   /** "passed" and "today" bring the `targetDate` screen back even when answered; "noSitting" until the learner answers it. */
   dateProblem: OnboardingDateProblem | null;
-  /** Studies only selected options; empty when the exam offers no choices. Unpicked, `subject` is the option the goal names, preselected. */
+  /** Studies only selected options; empty when the exam offers no choices. `subject` is the saved pick or the option the learner's own words name, which is taken without asking. */
   examChoices: ExamChoiceView[];
   /** The next sitting's days, the first the plan's default date; null unless the exam has a public calendar. */
   examDays: { days: string[]; estimated: boolean } | null;
