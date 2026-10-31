@@ -2237,12 +2237,14 @@ msgid "{score} of {max}"
 msgstr "{score} de {max}"
 
 #: src/essay/essay-feedback.tsx
+#: src/essay/essay-rewrite-guide.tsx
 #: src/mock/mock-result-essays.tsx
 msgctxt "fGmDCR"
 msgid "Too short to grade"
 msgstr "Demasiado corta para evaluarla"
 
 #: src/essay/essay-feedback.tsx
+#: src/essay/essay-rewrite-guide.tsx
 msgctxt "j5eiKQ"
 msgid "Write the whole essay, then send it again."
 msgstr "Escribe la redacción completa y vuelve a enviarla."
