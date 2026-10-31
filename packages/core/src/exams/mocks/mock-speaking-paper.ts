@@ -6,6 +6,7 @@ import {
   type WrittenExamCard,
   toExamTaskConversation,
 } from "../../language/exam-speaking/_utils/write-exam-task";
+import { type SpeakingFormat } from "../../language/exam-speaking/speaking-format";
 import { getSpeakingTask } from "../../language/exam-speaking/speaking-formats";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { mockConditionsSchema } from "./mock-contract";
@@ -13,6 +14,34 @@ import { mockConditionsSchema } from "./mock-contract";
 type SittingPaper = { mockId: string; userId: string };
 
 export type SpeakingPaperTask = { continues: string | null; key: string };
+
+/** The paper the cards were written for: its exam, level and every task. */
+export type SpeakingPaperPlan = {
+  exam: SpeakingFormat["exam"];
+  goalId: string;
+  level: SpeakingFormat["level"];
+  tasks: SpeakingPaperTask[];
+};
+
+function toTaskKeys(keys: readonly string[]): string {
+  return keys.toSorted().join(",");
+}
+
+function isWholePaper({
+  cards,
+  format,
+  plan,
+}: {
+  cards: readonly { task: string }[];
+  format: SpeakingFormat;
+  plan: SpeakingPaperPlan;
+}): boolean {
+  return (
+    format.exam === plan.exam &&
+    format.level === plan.level &&
+    toTaskKeys(format.tasks.map((task) => task.key)) === toTaskKeys(cards.map((card) => card.task))
+  );
+}
 
 async function findUnwrittenPaper({ mockId, userId }: SittingPaper) {
   const mock = await prisma.mockExam.findFirst({
@@ -38,32 +67,35 @@ async function findUnwrittenPaper({ mockId, userId }: SittingPaper) {
  */
 export async function listSpeakingPaperTasks(
   sitting: SittingPaper,
-): Promise<{ goalId: string; tasks: SpeakingPaperTask[] } | null> {
+): Promise<SpeakingPaperPlan | null> {
   const paper = await findUnwrittenPaper(sitting);
 
   if (!paper) {
     return null;
   }
 
-  const tasks = paper.format.tasks.map((task) => ({
-    continues: task.continues ?? null,
-    key: task.key,
-  }));
+  const { exam, level, tasks } = paper.format;
+  const keys = tasks.map((task) => ({ continues: task.continues ?? null, key: task.key }));
 
-  return { goalId: paper.goal.id, tasks };
+  return { exam, goalId: paper.goal.id, level, tasks: keys };
 }
 
 /**
  * Binds the whole paper to the sitting's speaking part in the transaction that saves its calls, so
- * a sitting never shows half a paper and a second writer binds nothing.
+ * a sitting never shows half a paper and a second writer binds nothing. Cards written for a paper
+ * the goal no longer has bind nothing either; the next start writes the current one.
  */
 export async function saveSpeakingPaper({
   cards,
+  plan,
   ...sitting
-}: SittingPaper & { cards: (WrittenExamCard & { task: string })[] }): Promise<void> {
+}: SittingPaper & {
+  cards: (WrittenExamCard & { task: string })[];
+  plan: SpeakingPaperPlan;
+}): Promise<void> {
   const paper = await findUnwrittenPaper(sitting);
 
-  if (!paper) {
+  if (!paper || !isWholePaper({ cards, format: paper.format, plan })) {
     return;
   }
 

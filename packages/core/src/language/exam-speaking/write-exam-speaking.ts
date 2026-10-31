@@ -78,18 +78,25 @@ export async function needsExamTaskCard(input: LearnerGoal & { task: string }): 
   return setup !== null && (await findWaitingExamTask(setup)) === null;
 }
 
-/** Saved only when no card for the task is waiting, so a retried save adds none. */
+/** Saved under the id its run chose, so a save that runs again adds no second copy. */
 export async function saveExamTask({
+  conversationId,
   written,
   ...input
-}: LearnerGoal & { task: string; written: WrittenExamCard }): Promise<void> {
+}: LearnerGoal & {
+  conversationId: string;
+  task: string;
+  written: WrittenExamCard;
+}): Promise<void> {
   const setup = await findTaskSetup(input);
 
-  if (!setup || (await findWaitingExamTask(setup))) {
+  if (!setup) {
     return;
   }
 
+  const card = { ...toExamTaskConversation({ ...setup, written }), id: conversationId };
+
   await writeLearnerChange({ userId: input.userId }, (tx) =>
-    tx.languageConversation.create({ data: toExamTaskConversation({ ...setup, written }) }),
+    tx.languageConversation.createMany({ data: [card], skipDuplicates: true }),
   );
 }

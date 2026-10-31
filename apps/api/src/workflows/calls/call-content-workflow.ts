@@ -50,8 +50,9 @@ async function writeExamTask(input: LearnerGoal & { task: string }): Promise<voi
 
   const written = await writeTaskCard({ ...input, previous: null });
 
+  // A workflow's randomUUID is the same on replay, so a save that runs again finds its own card.
   if (written) {
-    await saveExamTaskStep({ ...input, written });
+    await saveExamTaskStep({ ...input, conversationId: crypto.randomUUID(), written });
   }
 }
 
@@ -83,12 +84,12 @@ async function writeSpeakingPaper(sitting: { mockId: string; userId: string }): 
   };
 
   const cards = await Promise.all(paper.tasks.map((task) => write(task.key)));
-  const whole = cards.filter((card) => card !== null);
 
-  // A goal whose paper changed meanwhile binds nothing; the next start writes its current one.
-  if (whole.length === cards.length) {
-    await saveSpeakingPaperStep({ ...sitting, cards: whole });
-  }
+  await saveSpeakingPaperStep({
+    ...sitting,
+    cards: cards.filter((card) => card !== null),
+    plan: paper,
+  });
 }
 
 async function writeCall(writing: CallWriting): Promise<"written"> {

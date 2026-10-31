@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import {
   listSpeakingPaperTasks,
   saveSpeakingPaper,
@@ -56,7 +57,7 @@ async function writePaper(sitting: { mockId: string; userId: string }): Promise<
     }
   }
 
-  await saveSpeakingPaper({ ...sitting, cards });
+  await saveSpeakingPaper({ ...sitting, cards, plan: paper });
 }
 
 /** What the API's call writing workflow runs, as steps one after another. */
@@ -70,7 +71,7 @@ export async function writeTestCall(writing: CallWriting): Promise<void> {
       const written = await writeTaskCard({ ...writing, previous: null });
 
       if (written) {
-        await saveExamTask({ ...writing, written });
+        await saveExamTask({ ...writing, conversationId: randomUUID(), written });
       }
 
       return;

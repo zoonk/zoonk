@@ -1,5 +1,5 @@
 import {
-  type SpeakingPaperTask,
+  type SpeakingPaperPlan,
   listSpeakingPaperTasks,
   saveSpeakingPaper,
 } from "@zoonk/core/exams/mocks/speaking-paper";
@@ -57,7 +57,7 @@ export async function drawExamPhotoStep(
 }
 
 export async function saveExamTaskStep(
-  input: LearnerGoal & { task: string; written: WrittenExamCard },
+  input: LearnerGoal & { conversationId: string; task: string; written: WrittenExamCard },
 ): Promise<void> {
   "use step";
 
@@ -67,7 +67,7 @@ export async function saveExamTaskStep(
 export async function listSpeakingPaperTasksStep(input: {
   mockId: string;
   userId: string;
-}): Promise<{ goalId: string; tasks: SpeakingPaperTask[] } | null> {
+}): Promise<SpeakingPaperPlan | null> {
   "use step";
 
   return listSpeakingPaperTasks(input);
@@ -76,6 +76,7 @@ export async function listSpeakingPaperTasksStep(input: {
 export async function saveSpeakingPaperStep(input: {
   cards: WrittenTaskCard[];
   mockId: string;
+  plan: SpeakingPaperPlan;
   userId: string;
 }): Promise<void> {
   "use step";

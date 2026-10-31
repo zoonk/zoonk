@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { checkConversationObjectives } from "@zoonk/ai/tasks/language/conversation-objectives";
 import { generateExamSpeakingCard } from "@zoonk/ai/tasks/language/exam-speaking-card";
 import { drawExamSpeakingPhoto } from "@zoonk/ai/tasks/language/exam-speaking-photo";
@@ -20,6 +21,7 @@ import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { reviewRunsInline } from "../../_test-utils/review-runs";
 import { mockConditionsSchema } from "../../exams/mocks/mock-contract";
+import { listSpeakingPaperTasks, saveSpeakingPaper } from "../../exams/mocks/mock-speaking-paper";
 import { startWrittenCall, writeTestCall } from "../conversations/_test-utils/write-test-call";
 import { completeLanguageConversation } from "../conversations/complete-language-conversation";
 import { getLanguageConversation } from "../conversations/get-language-conversation";
@@ -27,6 +29,7 @@ import { findNextCallWriting } from "../conversations/prepare-language-calls";
 import { startLanguageConversation } from "../conversations/start-language-conversation";
 import { loadSpeakingPaper } from "./_utils/exam-speaking-setup";
 import { getSpeakingSection } from "./get-speaking-section";
+import { saveExamTask, writeExamTaskCard } from "./write-exam-speaking";
 
 const PROVENANCE = {
   generatedAt: new Date().toISOString(),
@@ -128,8 +131,8 @@ async function startTask({ goalId, task }: { goalId: string; task: string }) {
   return started.conversationId;
 }
 
-async function sitSpeakingPaper(goal: { id: string; userId: string }) {
-  const mock = await prisma.mockExam.create({
+function createSpeakingSitting(goal: { id: string; userId: string }) {
+  return prisma.mockExam.create({
     data: {
       conditions: {
         day: null,
@@ -162,7 +165,10 @@ async function sitSpeakingPaper(goal: { id: string; userId: string }) {
       userId: goal.userId,
     },
   });
+}
 
+async function sitSpeakingPaper(goal: { id: string; userId: string }) {
+  const mock = await createSpeakingSitting(goal);
   const writing = { kind: "speakingPaper", mockId: mock.id, userId: goal.userId } as const;
   await writeTestCall(writing);
 
@@ -725,6 +731,64 @@ describe("exam speaking tasks", () => {
     mockSession(other.id);
 
     await expect(getSpeakingSection(section.id)).resolves.toStrictEqual({ status: "notFound" });
+  });
+
+  it("saves a task's card once, even when its save runs again after the learner opened it", async () => {
+    const { goal, user } = await deleLearner();
+    const learner = { goalId: goal.id, task: "t1", userId: user.id };
+    const draft = await writeExamTaskCard({ ...learner, previous: null });
+    const written = { draft: draft ?? writtenCard(), photos: [] };
+    const save = { ...learner, conversationId: randomUUID(), written };
+
+    await saveExamTask(save);
+
+    await prisma.languageConversation.update({
+      data: { startedAt: new Date() },
+      where: { id: save.conversationId },
+    });
+
+    await saveExamTask(save);
+
+    await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(
+      1,
+    );
+  });
+
+  it("binds nothing when the goal's paper changed while its cards were written", async () => {
+    const { goal, user } = await deleLearner();
+    const mock = await createSpeakingSitting(goal);
+    const sitting = { mockId: mock.id, userId: user.id };
+    const plan = await listSpeakingPaperTasks(sitting);
+
+    if (!plan) {
+      throw new Error("Expected a paper to write");
+    }
+
+    const cards = await Promise.all(
+      plan.tasks.map(async ({ key }) => {
+        const draft = await writeExamTaskCard({
+          ...sitting,
+          goalId: goal.id,
+          previous: null,
+          task: key,
+        });
+
+        return { draft: draft ?? writtenCard(), photos: [], task: key };
+      }),
+    );
+
+    await prisma.goal.update({ data: { title: "DELE B1" }, where: { id: goal.id } });
+    await saveSpeakingPaper({ ...sitting, cards, plan });
+
+    const kept = await prisma.mockExam.findUniqueOrThrow({ where: { id: mock.id } });
+
+    expect(
+      mockConditionsSchema.parse(kept.conditions).sections[0]?.speakingSectionId,
+    ).toBeUndefined();
+
+    await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(
+      0,
+    );
   });
 
   it("binds a whole paper to its sitting once: writing it again adds nothing", async () => {
