@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
@@ -59,7 +60,6 @@ import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf2
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf15Fields
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf15FieldsLinesInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf15FieldsShift.Direction
-import kotlin.math.abs
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf2Value as CurveShiftAnswerValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf15Value as LineCrossingContent
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf1Value as InteractionCheckValue
@@ -255,34 +255,7 @@ private fun LineCrossingChart(
         val x = LinearScale(0.0..domain.x, left to right)
         val y = LinearScale(0.0..domain.y, bottom to top)
         val pixel = { point: Vec -> Offset(x.toPixel(point.x), y.toPixel(point.y)) }
-        val segment = { line: Line -> LineCrossingModel.segment(line, domain).let { (from, to) -> pixel(from) to pixel(to) } }
-
-        Canvas(Modifier.matchParentSize().clearAndSetSemantics {}) {
-            val label = { text: String, color: Color, ends: Pair<Offset, Offset>, upper: Boolean ->
-                lineLabel(measurer.measure(text, lineStyle), color, colors.halo, ends, upper, top)
-            }
-            drawAxes(left, right, top, bottom, colors.ink)
-            drawText(measurer.measure(fields.yLabel, axisStyle.copy(color = colors.muted)), topLeft = Offset(left, 0f))
-            measurer.measure(fields.xLabel, axisStyle.copy(color = colors.muted)).let {
-                drawText(it, topLeft = Offset(right - it.size.width, bottom + AXIS_LABEL_GAP.toPx()))
-            }
-
-            clipRect(left, top, right, bottom) {
-                movedLines.forEach { drawSegment(segment(it), colors.muted, dashed = true) }
-                answerLine?.let { drawSegment(segment(it), colors.right, dashed = true) }
-                shown.forEachIndexed { index, line -> drawSegment(segment(line), colors.tones[index], dashed = false) }
-            }
-            if (movedLines.isNotEmpty()) {
-                crossingMark(pixel(before), left, bottom, isBefore = true, colors)
-                changeArrows(pixel(before), pixel(after), left, bottom, colors.ink)
-            }
-            crossingMark(pixel(after), left, bottom, isBefore = false, colors)
-
-            movedLines.forEach { label(beforeLabel, colors.muted, segment(it), false) }
-            answerLine?.let { label(whatHappened, colors.rightText, segment(it), false) }
-            shown.forEachIndexed { index, line -> label(fields.lines[index].label, colors.tones[index], segment(line), true) }
-        }
-
+        val segment = { line: Line -> LineCrossingModel.segment(line, domain).let { (from, to) -> LabelSegment(pixel(from), pixel(to)) } }
         val handles =
             fields.lines.map { line ->
                 val home = LineCrossingModel.along(line.line(), domain, HANDLE_SHARE)
@@ -296,6 +269,58 @@ private fun LineCrossingChart(
                     }
                 Triple(line, scale, center)
             }
+        val names =
+            fields.lines.mapIndexed { index, line -> LineName(line.label, colors.tones[index], shown[index], isUpper = true) } +
+                listOfNotNull(answerLine?.let { LineName(whatHappened, colors.rightText, it, isUpper = false) }) +
+                movedLines.map { LineName(beforeLabel, colors.muted, it, isUpper = false) }
+        val texts = names.map { measurer.measure(it.text, lineStyle) }
+        val unit = density.density
+        val arrows = if (movedLines.isEmpty()) emptyList() else changeArrowSegments(pixel(before), pixel(after), left, bottom, unit)
+        val dots = listOfNotNull(pixel(after), pixel(before).takeIf { movedLines.isNotEmpty() })
+        val boxes =
+            placeLineLabels(
+                area = Rect(left, top, constraints.maxWidth.toFloat(), bottom),
+                labels =
+                    names.mapIndexed { index, name ->
+                        LineLabel(
+                            name.isUpper,
+                            segment(name.line),
+                            Size(texts[index].size.width.toFloat(), with(density) { lineStyle.fontSize.toPx() }),
+                        )
+                    },
+                marks =
+                    LabelMarks(
+                        circles =
+                            handles.map { (_, _, center) -> LabelCircle(center, (KNOB_RADIUS + KNOB_STROKE / 2).value * unit) } +
+                                dots.map { LabelCircle(it, (DOT_RADIUS + DOT_STROKE / 2).value * unit) },
+                        lines = names.map { segment(it.line) },
+                        segments = arrows,
+                    ),
+                unit = unit,
+            )
+
+        Canvas(Modifier.matchParentSize().clearAndSetSemantics {}) {
+            drawAxes(left, right, top, bottom, colors.ink)
+            drawText(measurer.measure(fields.yLabel, axisStyle.copy(color = colors.muted)), topLeft = Offset(left, 0f))
+            measurer.measure(fields.xLabel, axisStyle.copy(color = colors.muted)).let {
+                drawText(it, topLeft = Offset(right - it.size.width, bottom + AXIS_LABEL_GAP.toPx()))
+            }
+
+            clipRect(left, top, right, bottom) {
+                movedLines.forEach { drawSegment(segment(it), colors.muted, dashed = true) }
+                answerLine?.let { drawSegment(segment(it), colors.right, dashed = true) }
+                shown.forEachIndexed { index, line -> drawSegment(segment(line), colors.tones[index], dashed = false) }
+            }
+            names.forEachIndexed { index, name ->
+                drawLabel(texts[index], Offset(boxes[index].left, boxes[index].center.y), name.color, colors.halo, LabelAnchor.Start)
+            }
+            if (movedLines.isNotEmpty()) {
+                crossingMark(pixel(before), left, bottom, isBefore = true, colors)
+                arrows.forEach { arrow(it.from, it.to, colors.ink) }
+            }
+            crossingMark(pixel(after), left, bottom, isBefore = false, colors)
+        }
+
         val reach = with(density) { TRACK_WIDTH.toPx() / 2 }
         handles.forEach { (line, scale, center) ->
             val ends = listOf(scale.toPixel(range.min), scale.toPixel(range.max))
@@ -427,37 +452,19 @@ private fun DrawScope.drawAxes(
 }
 
 private fun DrawScope.drawSegment(
-    ends: Pair<Offset, Offset>,
+    ends: LabelSegment,
     color: Color,
     dashed: Boolean,
 ) {
     val dash = LINE_DASH.toPx()
     drawLine(
         color,
-        ends.first,
-        ends.second,
+        ends.from,
+        ends.to,
         (if (dashed) 2.dp else 3.dp).toPx(),
         StrokeCap.Round,
         pathEffect = if (dashed) PathEffect.dashPathEffect(floatArrayOf(dash, dash)) else null,
     )
-}
-
-private fun DrawScope.lineLabel(
-    text: TextLayoutResult,
-    color: Color,
-    halo: Color,
-    ends: Pair<Offset, Offset>,
-    upper: Boolean,
-    top: Float,
-) {
-    val (lower, higher) = if (ends.first.y > ends.second.y) ends else ends.second to ends.first
-    val end = if (upper) higher else lower
-    val gap = LABEL_GAP.toPx()
-    val baseline = maxOf(end.y - gap, top + gap)
-    val middle = baseline - text.firstBaseline + text.size.height / 2f
-    val inLeftHalf = end.x < size.width / 2
-    val at = Offset(if (inLeftHalf) end.x + gap else end.x - gap, middle)
-    drawLabel(text, at, color, halo, if (inLeftHalf) LabelAnchor.Start else LabelAnchor.End)
 }
 
 private fun DrawScope.crossingMark(
@@ -486,17 +493,19 @@ private fun DrawScope.crossingMark(
     }
 }
 
-private fun DrawScope.changeArrows(
+private fun changeArrowSegments(
     before: Offset,
     after: Offset,
     left: Float,
     bottom: Float,
-    ink: Color,
-) {
-    val inset = ARROW_OFFSET.toPx()
-    val dot = DOT_RADIUS.toPx()
-    if (abs(after.y - before.y) > dot) arrow(Offset(left + inset, before.y), Offset(left + inset, after.y), ink)
-    if (abs(after.x - before.x) > dot) arrow(Offset(before.x, bottom - inset), Offset(after.x, bottom - inset), ink)
+    unit: Float,
+): List<LabelSegment> {
+    val inset = ARROW_OFFSET.value * unit
+    val dot = DOT_RADIUS.value * unit
+    return listOf(
+        LabelSegment(Offset(left + inset, before.y), Offset(left + inset, after.y)),
+        LabelSegment(Offset(before.x, bottom - inset), Offset(after.x, bottom - inset)),
+    ).filter { (it.to - it.from).getDistance() > dot }
 }
 
 private fun DrawScope.arrow(
@@ -518,6 +527,13 @@ private fun DrawScope.arrow(
         }
     drawPath(head, ink, style = Stroke(width, cap = StrokeCap.Round, join = StrokeJoin.Round))
 }
+
+private class LineName(
+    val text: String,
+    val color: Color,
+    val line: Line,
+    val isUpper: Boolean,
+)
 
 private val PLOT_AREA = 192.dp
 private val AXIS_LABEL_GAP = 8.dp
