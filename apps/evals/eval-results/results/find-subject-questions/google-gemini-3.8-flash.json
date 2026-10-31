@@ -3,27 +3,12 @@
   "results": [
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "counts": {},
-          "status": "any"
-        },
+        "expected": { "counts": {}, "status": "any" },
         "id": "pt-camara-registro-redacao-1",
         "userInput": {
           "board": "Cebraspe",
@@ -46,29 +31,12 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "counts": {
-            "20": 8
-          },
-          "status": "found"
-        },
+        "expected": { "counts": { "20": 8 }, "status": "found" },
         "id": "pt-oab-1a-fase-1",
         "userInput": {
           "board": "FGV",
@@ -102,16 +70,8 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "Missed the published distribution",
-          "kind": "majorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Missed the published distribution",
-          "kind": "minorErrors",
-          "score": 8
-        },
+        { "conclusion": "Missed the published distribution", "kind": "majorErrors", "score": 8 },
+        { "conclusion": "Missed the published distribution", "kind": "minorErrors", "score": 8 },
         {
           "conclusion": "Missed the published distribution",
           "kind": "potentialImprovements",
@@ -119,10 +79,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "counts": {},
-          "status": "found"
-        },
+        "expected": { "counts": {}, "status": "found" },
         "id": "pt-oab-1a-fase-without-ethics-1",
         "userInput": {
           "board": "FGV",
@@ -155,27 +112,12 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "counts": {},
-          "status": "unknown"
-        },
+        "expected": { "counts": {}, "status": "unknown" },
         "id": "pt-cgu-2026-new-board-and-syllabus-1",
         "userInput": {
           "board": "Cebraspe",

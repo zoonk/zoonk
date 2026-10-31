@@ -954,6 +954,483 @@
           "language": "pt"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All 14 blueprint subjects appear as areas with their exact names, and all supplied topic IDs are assigned to relevant skills. Discursive coverage includes content, formal written Portuguese, the 30-line question, the 60-line situation-problem, and the shared time limit. Exam strategy is included. Weights are valid and generally prioritize P3 over P1/P2; no topic-frequency data supports a more specific weighting requirement. No coverage cap is triggered.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The phases progress sensibly, have distinct stage-oriented titles, and use capability-based milestones. Courses are recognizable subjects. However, several direct prerequisite edges are missing: applied audit evaluation lacks the audit-evidence foundation, evaluation of public and private integrity programs lacks the public-integrity foundation, and risk-selected sampling analysis lacks sampling or inference prerequisites. These multiple dependency errors trigger the cap of 7, even though the displayed sequence often places the relevant foundations earlier.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 428.5-hour total is plausible for a broad competitive examination, and most skills are chapter-sized rather than whole-course bundles. However, nearly uniform lesson counts conceal substantial scope differences. For example, a single distinction between auditing and human-subject research receives 34 lessons, while three substantial political-science pillars receive 32 together. Some names also combine separate actions. The allocation needs rebalancing but remains usable for planning.",
+          "score": 8,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills stay within the supplied subjects, discursive writing, and permitted exam strategy. There are no standalone prerequisite areas, motivational phases, general study-advice skills, or excluded subjects from earlier examinations. Foundational and applied treatments generally correspond to the blueprint's own distinctions rather than unrelated additions. No filler cap is triggered.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The map fits this CGU examination, uses Brazilian Portuguese, preserves the exact subject-area names, and avoids prohibited extra subjects. Writing skills are correctly marked as outcomes. One clear naming mismatch remains: 'Aplicar deveres éticos da CGU' is institution-specific rather than generically reusable as required; the CGU-specific scope belongs in its description. This warrants the single-mismatch cap of 8.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The graph emphasizes judgment, evidence quality, causal inference, proportionality, uncertainty, and checking conclusions rather than rote memorization. It explicitly includes responsible AI use, source verification, bias, human supervision, independent validation, and limits on AI-generated evidence. Manual writing and examination decisions are appropriate scored abilities, not obsolete-work filler.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 39213,
+          "outputTokens": 1492,
+          "reasoningTokens": 506
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several necessary prerequisite edges are missing. For example, 'Analisar avaliações de auditoria governamental' does not require the existing skill on judging audit evidence and conclusions; 'Avaliar programas de integridade' requires private-integrity foundations but not public-integrity foundations despite covering both; and 'Avaliar cruzamentos e amostras por risco' does not require the existing sampling or inference skills. The displayed sequence often puts foundations earlier, but the prerequisite graph does not reliably enforce them.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Lesson allocations are uneven relative to scope: distinguishing auditing from human-subject research receives 34 lessons, while corruption, capture mechanisms, consequences, and institutional responses collectively receive 32. A few names also miss the reusable, single-action requirement: 'Aplicar deveres éticos da CGU' is institution-specific, and 'Decidir marcações e administrar tempo na prova' combines two actions.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the exam-strategy description explicitly state the cancellation rule and the different P1/P2 versus P3 point values. Clarify how the estimated hours divide between short lessons, practice, and reviews, especially in the final phase, where 102 three-minute lessons consume half of the 10.2 hours available for timed written practice and exam strategy.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Every one of the notice's 14 subjects is an area, named exactly as the notice names it, and every topic id is taught by some skill\n      - No area for a subject this notice doesn't list, even one earlier CGU editions tested (Língua Portuguesa, Língua Inglesa, Tecnologia da Informação, Direito Administrativo): those lessons take the learner's time from what this exam asks\n      - Beyond the subjects, only what this exam scores: the discursive test (two questions, graded on content and on written Portuguese), whose skills practice that writing and are its outcome skills, and exam strategy for certo/errado items where a wrong item cancels a right one\n      - A base a topic needs goes in the subject that needs it, never in an area of its own\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-cgu-2026-notice-subjects-only-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "CGU, Auditor Federal de Finanças e Controle - Auditoria (Cebraspe)",
+            "notes": [
+              "Format: itens de certo ou errado; P1 (conhecimentos básicos) com 40 itens, P2 (conhecimentos complementares) com 40 itens e P3 (conhecimentos específicos) com 90 itens, em 5 horas; prova discursiva de 3h30 com duas questões, uma de até 30 linhas (30 pontos) e uma situação-problema de até 60 linhas (70 pontos).",
+              "Scoring: na P1 e na P2, cada item certo vale 1,00 ponto e cada item errado desconta 1,00 ponto; na P3, cada item certo vale 2,00 pontos e cada item errado desconta 2,00 pontos; itens sem marcação valem 0,00.",
+              "Rule: a prova discursiva avalia o conteúdo, a capacidade de expressão na modalidade escrita e o uso das normas do registro formal culto da Língua Portuguesa."
+            ],
+            "subjects": [
+              {
+                "group": "Conhecimentos básicos (P1)",
+                "name": "Estado, Democracia, Direitos e Ciência Política",
+                "questions": null,
+                "topics": [
+                  "1 Estado e legitimidade",
+                  "1.1 Estado, governo e administração; autoridade, legitimidade e poder; interesse público, pluralismo e conflitos distributivos",
+                  "2 Democracia e representação",
+                  "2.1 Representação e participação; responsabilização democrática; relações entre Executivo, Legislativo e Judiciário; governabilidade e controles recíprocos",
+                  "3 Federalismo e capacidades estatais",
+                  "3.1 Autonomia, coordenação e cooperação federativa; capacidades administrativas e políticas; burocracia, discricionariedade e implementação de direitos",
+                  "4 Ordem constitucional e direitos",
+                  "4.1 Fundamentos e objetivos da República; direitos fundamentais, sociais e políticos; igualdade, devido processo e limites ao exercício do poder; princípios da administração pública",
+                  "5 Valor público e controle",
+                  "5.1 Resultados socialmente relevantes; legitimidade, confiança e direitos; controle interno, externo e social em perspectiva institucional; tensões entre eficiência, equidade e garantias",
+                  "6 Corrupção como fenômeno político e social",
+                  "6.1 Abuso do poder confiado e apropriação de decisões públicas em benefício particular; dimensões política, administrativa e público-privada",
+                  "6.2 Distinções entre corrupção, falha de gestão, conflito de interesses e ilícitos específicos; relações e diferenças entre clientelismo, patronagem, nepotismo e captura",
+                  "7 Mecanismos de reprodução e captura",
+                  "7.1 Assimetrias de poder e informação, incentivos e oportunidades; relações principal-agente e problemas de ação coletiva; normas sociais, tolerância organizacional e redes de favorecimento",
+                  "7.2 Captura de políticas e influência indevida; distinção entre representação legítima de interesses e favorecimento",
+                  "8 Consequências e respostas à corrupção",
+                  "8.1 Efeitos sobre direitos, desigualdades, competição, alocação de recursos, qualidade dos serviços e confiança institucional",
+                  "8.2 Relações entre prevenção, detecção, responsabilização e reparação; controles democráticos, participação e capacidades estatais",
+                  "8.3 Avaliação crítica das respostas e de seus efeitos não pretendidos, preservados o devido processo e a continuidade de serviços essenciais",
+                  "9 Estado e modelos de desenvolvimento econômico",
+                  "9.1 Arranjos de desenvolvimento com diferentes combinações de mercado, planejamento, regulação, provisão pública e atuação empresarial do Estado; industrialização, inovação e transformação produtiva",
+                  "9.2 Papel das empresas estatais no investimento de longo prazo, na infraestrutura, no financiamento e na prestação de serviços públicos",
+                  "9.3 Relações entre finalidade pública, concorrência, universalização, sustentabilidade fiscal e socioambiental; capacidades estatais, riscos de captura e efeitos distributivos",
+                  "9.4 Fundamentos constitucionais da atuação econômica do Estado e comparação de alternativas institucionais à luz de objetivos, evidências e resultados"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos básicos (P1)",
+                "name": "Sociedade Brasileira, Desigualdades, Diversidade e Desenvolvimento",
+                "questions": null,
+                "topics": [
+                  "1 Fundamentos sociológicos",
+                  "1.1 Instituições, socialização e ação coletiva; estratificação e mobilidade social; redes, poder, discriminação e reprodução das desigualdades",
+                  "2 Formação social e cidadania no Brasil",
+                  "2.1 Heranças da escravidão, hierarquias sociais e construção da cidadania; transformações nas relações entre Estado e sociedade; mecanismos de inclusão e exclusão institucional",
+                  "3 População, território e trabalho",
+                  "3.1 Transição demográfica, envelhecimento e cuidado; desigualdades regionais, urbanas e rurais; estrutura produtiva, informalidade e mudanças tecnológicas no trabalho",
+                  "4 Diversidade e acesso a direitos",
+                  "4.1 Relações étnico-raciais, gênero e sexualidade; pessoas com deficiência; idade; povos indígenas e comunidades tradicionais",
+                  "5 Desenvolvimento e realidade brasileira",
+                  "5.1 Pobreza, renda e proteção social; educação, saúde, saneamento e habitação como problemas públicos; sustentabilidade e vulnerabilidade climática; leitura contextual de indicadores e desigualdades"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos básicos (P1)",
+                "name": "Ética Pública e Responsabilidade Profissional",
+                "questions": null,
+                "topics": [
+                  "1 Fundamentos da ética pública",
+                  "1.1 Interesse público, dignidade, justiça e responsabilidade; relações entre deveres, consequências e virtudes profissionais; conflitos entre valores em decisões públicas",
+                  "2 Deveres profissionais",
+                  "2.2 Aplicação dos valores e deveres de conduta ética da CGU a situações de trabalho",
+                  "3 Conflitos de interesses e imparcialidade",
+                  "3.1 Identificação de interesses privados em conflito com a função pública e medidas de prevenção, consulta e encaminhamento, nos termos dos arts. 3º a 5º, 8º e 10 da Lei nº 12.813/2013",
+                  "3.2 Impedimento e suspeição no processo administrativo federal, nos termos dos arts. 18 a 21 da Lei nº 9.784/1999; comunicação e abstenção quando exigidas",
+                  "4 Relações de trabalho e atendimento",
+                  "4.1 Dignidade, diversidade e relações de poder; reconhecimento e prevenção de assédio e discriminação; respeito, escuta e não retaliação",
+                  "4.2 Distinção entre acolher uma pessoa, verificar fatos e atribuir responsabilidade",
+                  "5 Integridade como responsabilidade institucional",
+                  "5.1 Coerência entre regras e práticas; ambiente organizacional e incentivos; canais de orientação e relato; papel do exemplo, da confiança e da prestação de contas"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos básicos (P1)",
+                "name": "Administração Pública e Fundamentos de Políticas Públicas",
+                "questions": null,
+                "topics": [
+                  "1 Organização administrativa",
+                  "1.1 Administração direta e indireta; descentralização e desconcentração; agentes públicos; funções da administração pública: formulação, execução, regulação e controle de políticas e ações públicas; arranjos de cooperação com entes federativos e entidades não estatais",
+                  "2 Modelos de administração",
+                  "2.1 Burocracia e profissionalização; gestão orientada a resultados; participação e governança; limites e contribuições de diferentes modelos na realidade brasileira",
+                  "3 Políticas públicas",
+                  "3.1 Problema público, agenda e formulação; instrumentos de ação estatal; implementação, monitoramento e avaliação; intersetorialidade e atores governamentais e sociais",
+                  "4 Planejamento e recursos",
+                  "4.1 Funções do planejamento e do orçamento; relação entre PPA, LDO e LOA; receita e despesa em nível conceitual; restrições fiscais, escolhas alocativas e sustentabilidade das ações",
+                  "5 Serviços e transformação digital",
+                  "5.1 Orientação ao usuário; simplificação e acessibilidade; coordenação de serviços; oportunidades e riscos da automação e da inteligência artificial na administração"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos complementares (P2)",
+                "name": "Fundamentos de Governança, Riscos e Integridade Pública e Privada",
+                "questions": null,
+                "topics": [
+                  "1 Governança e responsabilidades",
+                  "1.1 Distinção entre direção, gestão, controle e prestação de contas; papéis, supervisão, transparência e responsabilização",
+                  "2 Riscos e controles essenciais",
+                  "2.1 Risco, causa, consequência e controle; prevenção e detecção; proporcionalidade dos controles, segregação de funções e risco residual",
+                  "2.2 Identificação de vulnerabilidades e de controles compatíveis com situações usuais, a partir dos dados fornecidos",
+                  "3 Integridade pública",
+                  "3.1 Finalidades dos programas e medidas de integridade; compromisso da liderança, orientação ética, identificação de riscos, canais de relato e acompanhamento de ações",
+                  "3.2 Prevenção de favorecimento, assédio e discriminação; ambiente seguro e não retaliação",
+                  "4 Integridade privada",
+                  "4.1 Finalidades dos programas de integridade e sua relação com o poder público; compromisso da direção, registros confiáveis, controles, diligência proporcional sobre terceiros, canais de relato e remediação",
+                  "4.2 Diferença entre existência documental, implementação e efetividade dos mecanismos",
+                  "5 Prevenção e melhoria institucional",
+                  "5.1 Cultura, incentivos e confiança; diferenças de capacidade entre organizações; orientação e medidas proporcionais",
+                  "5.2 Denúncias e resultados de controle como insumos de melhoria",
+                  "5.3 Distinção entre baixa ocorrência e baixa detecção de problemas; leitura de evidências simples sobre funcionamento e resultados das medidas"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos complementares (P2)",
+                "name": "Fundamentos de Transparência, Ouvidoria e Participação Social",
+                "questions": null,
+                "topics": [
+                  "1 Acesso à informação",
+                  "1.1 Transparência ativa e passiva; finalidade de pedidos e recursos; publicidade como regra e motivação das restrições",
+                  "1.2 Distinção conceitual entre informação classificada, sigilos previstos em lei, informação pessoal e documento preparatório; acesso parcial e comunicação clara da decisão",
+                  "2 Transparência e proteção de dados",
+                  "2.1 Compatibilização entre acesso à informação e proteção de dados pessoais; finalidade, necessidade e salvaguardas",
+                  "2.2 Diferença entre dados pessoais e dados pessoais sensíveis; noções de tarjamento, anonimização e risco de reidentificação",
+                  "3 Ouvidoria e proteção das pessoas",
+                  "3.1 Finalidades das manifestações; acolhimento, encaminhamento e resposta ao usuário; acessibilidade e linguagem cidadã",
+                  "3.2 Proteção da identidade e prevenção de retaliação",
+                  "3.3 Distinção entre receber um relato, apurar fatos e decidir sobre responsabilidade",
+                  "4 Participação e melhoria de serviços",
+                  "4.1 Participação e controle social; conselhos, consultas e escuta de usuários; representatividade e barreiras à participação",
+                  "4.2 Recorrências em manifestações como sinais de problemas",
+                  "4.2.1 Subnotificação",
+                  "4.3 Transparência ativa, dados abertos e Portal da Transparência como meios de acesso e controle; qualidade, atualização, cobertura e limites da informação",
+                  "4.4 Papel da CGU na orientação e no monitoramento da transparência e do acesso à informação, em nível de finalidade institucional",
+                  "5 Integridade da informação e comunicação",
+                  "5.1 Confiabilidade e contexto das fontes; distinção entre fato, alegação e interpretação",
+                  "5.2 Desinformação e efeitos sobre políticas públicas; comunicação de incertezas e correção de erros",
+                  "5.3 Liberdade de expressão e pluralismo",
+                  "5.3.1 Distinção entre crítica legítima e desinformação"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos complementares (P2)",
+                "name": "Fundamentos de Direito Público Aplicado, Controle e Responsabilização",
+                "questions": null,
+                "topics": [
+                  "1 Decisão administrativa",
+                  "1.1 Competência, finalidade, motivação, proporcionalidade e segurança jurídica; consideração das consequências e das condições de atuação",
+                  "1.2 Dever de fundamentação e limites ao exercício do poder e à revisão de decisões",
+                  "2 Processo e garantias",
+                  "2.1 Devido processo, contraditório, defesa e imparcialidade; finalidade da instrução e da prova",
+                  "2.2 Distinção entre procedimento investigativo e processo sancionador; proteção de direitos e necessidade de fundamentar conclusões",
+                  "3 Funções de controle e melhoria da gestão",
+                  "3.1 Finalidades do controle interno, externo e social; inserção institucional da CGU no Poder Executivo federal",
+                  "3.2 Avaliação da ação governamental e apoio ao aprimoramento da gestão, da governança, dos controles e dos resultados das políticas públicas; prevenção, detecção e correção de irregularidades",
+                  "3.3 Autonomia técnica e responsabilidades dos gestores; diferenças de competências e complementaridade com o controle externo exercido pelo Congresso Nacional com o auxílio do TCU",
+                  "3.4 Distinção entre avaliar a gestão, apurar fatos e aplicar sanções; cooperação e compartilhamento lícito de informações",
+                  "4 Responsabilização em nível introdutório",
+                  "4.1 Distinção entre indício, falha de gestão, irregularidade e responsabilidade",
+                  "4.2 Finalidades e diferenças entre responsabilização de agentes públicos e de pessoas jurídicas; noções de admissibilidade, processo disciplinar, processo administrativo de responsabilização e acordo de leniência",
+                  "5 Proteção e encaminhamento",
+                  "5.1 Distinção entre acolhimento, medidas de proteção, apuração de fatos e conclusão sancionadora, especialmente diante de assédio e discriminação; finalidades e garantias de cada atuação"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos complementares (P2)",
+                "name": "Fundamentos de Evidências, Dados e Inteligência Artificial",
+                "questions": null,
+                "topics": [
+                  "1 Perguntas e fontes",
+                  "1.1 Relação entre problema, pergunta e informação necessária; fontes documentais, administrativas, estatísticas e de participação social",
+                  "1.2 Distinção entre dado, evidência, interpretação e juízo de valor; verificação de origem e confronto de fontes",
+                  "2 Leitura de dados e indicadores",
+                  "2.1 Interpretação de tabelas, gráficos, proporções, taxas e medidas descritivas; denominadores, qualidade e comparabilidade",
+                  "2.2 Distinção entre indicadores de percepção, experiência, denúncias, detecção e sanções na análise da corrupção; subnotificação e limites de inferência sobre sua ocorrência",
+                  "3 Inferências e erros de raciocínio",
+                  "3.1 Associação e causalidade; seleção e representatividade; explicações alternativas e incerteza",
+                  "3.2 Generalizações indevidas, falácia ecológica e viés de confirmação; falsos positivos e falsos negativos",
+                  "4 Integridade da evidência e proteção",
+                  "4.1 Rastreabilidade e verificação de informações; comunicação proporcional dos resultados e limites",
+                  "4.2 Escuta sem indução, confidencialidade e risco de identificação indireta",
+                  "4.3 Distinção entre as condições e os regimes de proteção de entrevistados em auditoria, participantes de pesquisa e denunciantes",
+                  "5 Uso responsável de inteligência artificial",
+                  "5.1 Possibilidades de classificação, busca, síntese e apoio à análise; escolha entre IA, solução simples e revisão humana",
+                  "5.2 Erros, conteúdo não sustentado, vieses e efeitos sobre grupos; proteção de informações, supervisão, rastreabilidade e contestação",
+                  "5.3 Verificação de fontes e limites da automação de decisões que afetam direitos"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos complementares (P2)",
+                "name": "Fundamentos de Auditoria Governamental e Atuação Integrada da CGU",
+                "questions": null,
+                "topics": [
+                  "1 Propósito, serviços e papéis",
+                  "1.1 Contribuição da auditoria para a governança, os riscos, os controles e os resultados",
+                  "1.2 Avaliação e consultoria como serviços de auditoria interna governamental; apuração de atos e fatos com indícios de ilegalidade ou irregularidade na utilização de recursos públicos federais como competência do sistema de controle interno",
+                  "1.3 Finalidades e diferenças entre as três formas de atuação da SFC; relação com a gestão, correição e avaliação de políticas",
+                  "1.4 Independência, objetividade, diligência e ceticismo; papéis de gestão, supervisão e auditoria no modelo das três linhas",
+                  "2 Ciclo do trabalho",
+                  "2.1 Planejamento, execução, comunicação e monitoramento; finalidade de objetivos, escopo, critérios e perguntas",
+                  "2.2 Priorização por risco, materialidade e relevância social em nível conceitual; adequação do trabalho às finalidades de avaliação, consultoria ou apuração",
+                  "2.3 Apoio à melhoria da gestão com preservação da autonomia técnica e das responsabilidades de decisão e execução dos gestores",
+                  "3 Evidência e conclusão",
+                  "3.1 Suficiência, adequação e confiabilidade; noção de achado e de limitações",
+                  "3.2 Distinção entre sinal de risco, evidência e conclusão; necessidade de aprofundamento e proporcionalidade da afirmação",
+                  "4 Comunicação e acompanhamento",
+                  "4.1 Clareza, contexto e utilidade dos resultados; publicidade e proteção de pessoas e informações",
+                  "4.2 Recomendações relacionadas a causas e riscos; distinção entre plano de ação, implementação, resultado e benefício",
+                  "5 Integração entre funções da CGU",
+                  "5.1 Denúncias e informações de ouvidoria e transparência como insumos de risco; achados como subsídios para admissibilidade correcional e responsabilização de entes privados",
+                  "5.2 Resultados do controle como insumos de integridade e melhoria de serviços; compartilhamento lícito, devolutivas e proteção"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos específicos (P3)",
+                "name": "Auditoria Governamental: Avaliação, Consultoria e Apuração",
+                "questions": null,
+                "topics": [
+                  "1 Avaliação, consultoria e apuração",
+                  "1.1 Seleção da forma de atuação conforme o problema, objetivos e riscos",
+                  "1.2 Avaliação: critérios de desempenho e conformidade, exame de evidências e conclusões independentes sobre governança, controles e resultados",
+                  "1.3 Consultoria: análise da demanda, pactuação de objetivos, escopo e produtos; assessoramento, aconselhamento e facilitação; salvaguardas de objetividade e limites à assunção de responsabilidades gerenciais",
+                  "1.4 Apuração: delimitação dos fatos e hipóteses, planejamento de diligências, reunião e preservação de elementos probatórios, análise de possíveis prejuízos e comunicação às instâncias competentes",
+                  "1.5 Distinção entre apuração no controle interno, investigação correcional e processo sancionador; acompanhamento de providências e aprendizado institucional",
+                  "2 Planejamento técnico do trabalho",
+                  "2.1 Universo, seleção e priorização; risco de auditoria; objetivos, escopo, critérios e questões; matriz de planejamento, programa de trabalho e desenho de evidências",
+                  "2.2 Relação entre perguntas de auditoria e de avaliação de políticas, respeitadas suas finalidades e seus desenhos",
+                  "2.3 Coordenação de equipes e mudanças de escopo sem comprometer a inferência conjunta; seleção aleatória e por risco e seus propósitos",
+                  "3 Testes e amostragem",
+                  "3.1 Testes de controles e substantivos; inspeção, confirmação, observação, procedimentos analíticos e recálculo; amostragem estatística e por julgamento; tamanho, seleção, limitações e desenho de procedimentos para riscos identificados",
+                  "4 Achados documentação e revisão",
+                  "4.1 Critério, condição, causas e efeitos; suficiência e adequação da evidência; papéis de trabalho, trilha de revisão e supervisão; contradita técnica e exame de evidências divergentes; indícios de fraude e aprofundamento compatível com o mandato",
+                  "5 Auditoria de dados e IA",
+                  "5.1 Testes sobre qualidade de dados, controles e rastreabilidade; desenho de validações independentes; riscos de viés, erro e mudança de desempenho; supervisão e governança de sistemas automatizados; limites do uso de IA como evidência",
+                  "6 Comunicação monitoramento e qualidade",
+                  "6.1 Construção de relatórios e recomendações sustentados por evidências; avaliação de soluções alternativas; testes de implementação e resultado; benefícios e monitoramento",
+                  "6.2 Asseguração e melhoria da qualidade dos trabalhos; avaliação de capacidade da atividade de auditoria a partir de evidências e planos de melhoria"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos específicos (P3)",
+                "name": "Finanças Públicas, Orçamento e Contabilidade Pública",
+                "questions": null,
+                "topics": [
+                  "1 Economia e finanças do setor público",
+                  "1.1 Funções alocativa, distributiva e estabilizadora; bens públicos, externalidades e monopólios naturais; financiamento de políticas e federalismo fiscal",
+                  "1.2 Progressividade, regressividade e neutralidade da tributação; resultados primário e nominal, déficit e necessidades de financiamento; restrições, riscos e sustentabilidade fiscal em análise aplicada",
+                  "2 Orçamento e planejamento",
+                  "2.1 PPA, LDO e LOA em aplicação; elaboração, emendas, discussão e aprovação do orçamento; classificações relevantes, créditos e alterações, vinculações e metas",
+                  "2.2 Programação orçamentária e financeira; limites de empenho e pagamento, contingenciamento e bloqueio no escopo do programa",
+                  "3 Execução e responsabilidade fiscal",
+                  "3.1 Etapas da receita e da despesa; empenho, liquidação e pagamento; restos a pagar; Conta Única do Tesouro Nacional e gestão de disponibilidades",
+                  "3.2 Limites, metas e transparência fiscal; dívida e riscos fiscais no escopo do programa",
+                  "4 Informação contábil aplicada ao controle",
+                  "4.1 Relações entre execução orçamentária, financeira e patrimônio; reconhecimento e mensuração de operações usuais com receitas, despesas, ativos e passivos",
+                  "4.2 Leitura dos balanços orçamentário, financeiro e patrimonial e da demonstração das variações patrimoniais, com notas explicativas pertinentes; conciliação e identificação de inconsistências relevantes para o controle",
+                  "5 Custos e análise da execução",
+                  "5.1 Comprovação da despesa e conexão físico-financeira; comparação entre recursos, custos e entregas",
+                  "5.2 Interpretação de informações de custos e de indicadores de execução e eficiência, observadas comparabilidade, bases de cálculo e limitações",
+                  "5.3 MCASP 11ª edição e Manual de Informações do Sistema de Custos (MIC)",
+                  "6 Informação societária de empresas estatais",
+                  "6.1 Distinção entre informação societária e contabilidade aplicada ao setor público",
+                  "6.2 Leitura de balanço patrimonial, demonstração do resultado e notas explicativas; relações entre posição patrimonial, desempenho e caixa",
+                  "6.3 Reconhecimento de efeitos e incertezas de depreciação, redução ao valor recuperável, provisões, contingências e transações com partes relacionadas",
+                  "7 Governança e finalidade pública de empresas estatais",
+                  "7.1 Papéis e responsabilidades do Estado como proprietário das empresas estatais e gestor de seus administradores, dos conselhos de administração e fiscal e das instâncias de auditoria e fiscalização",
+                  "7.2 Finalidade pública, sustentabilidade econômico-financeira e prestação de contas; conflitos de interesses e controles",
+                  "7.3 Relação entre mandatos de política pública, estratégias empresariais, recursos empregados e resultados sociais e econômicos; custos, riscos e transparência dos compromissos assumidos",
+                  "7.4 Coerência entre objetivos, recursos e resultados divulgados; compromissos de políticas públicas e informações da carta anual"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos específicos (P3)",
+                "name": "Políticas Públicas e Métodos de Investigação e Avaliação",
+                "questions": null,
+                "topics": [
+                  "1 Problema, desenho e avaliabilidade",
+                  "1.1 Causas e manifestações do problema público; população elegível e público atendido; instrumentos, incentivos, teoria da mudança e modelo lógico",
+                  "1.2 Relação entre problema, pressupostos, hipóteses e evidências; explicações alternativas e efeitos não pretendidos",
+                  "1.3 Avaliabilidade e compatibilidade entre pergunta e informação disponível",
+                  "2 Implementação gestão e coordenação",
+                  "2.1 Arranjos federativos e interorganizacionais; parcerias; capacidades, recursos e diferenças territoriais; discricionariedade na linha de frente e barreiras administrativas",
+                  "2.2 Processos e projetos como instrumentos de entrega; responsabilidades, riscos e marcos de execução",
+                  "2.3 Assessoramento, cooperação e adaptação de soluções com preservação de direitos e controles",
+                  "3 Monitoramento e desenhos de avaliação",
+                  "3.1 Insumos, atividades, produtos, resultados e impactos; eficiência, eficácia, efetividade e equidade",
+                  "3.2 Indicadores, fontes e periodicidade",
+                  "3.3 Avaliações ex ante e ex post, de desenho, implementação, resultados, impacto e eficiência",
+                  "3.4 Pré-teste e estudo-piloto; critérios de julgamento e seleção do desenho adequado à pergunta",
+                  "4 Estratégias qualitativas e mistas",
+                  "4.1 Estudos de caso, entrevistas, grupos focais e observação; seleção de casos e participantes, perguntas e controle de indução",
+                  "4.2 Análise de processos e hipóteses de mecanismo; triangulação e integração de evidências quantitativas e qualitativas; limites de generalização",
+                  "5 Identificação causal e análise econômica",
+                  "5.1 Contrafactual, seleção e confundimento; experimentos e quase experimentos; grupos de comparação e medidas anteriores à intervenção",
+                  "5.2 Diferenças em diferenças, regressão descontínua e pareamento em interpretação aplicada, com hipóteses e ameaças à validade",
+                  "5.3 Custo-efetividade e custo-benefício, custo de oportunidade e sensibilidade; heterogeneidade de efeitos, equidade e impactos territoriais",
+                  "6 Conclusões, recomendações e uso dos resultados",
+                  "6.1 Validade interna e externa, incerteza e resultados nulos; comparação de alternativas e recomendações proporcionais e exequíveis",
+                  "6.2 Priorização, escuta, adaptação e condições de implementação; acompanhamento de benefícios e efeitos distributivos",
+                  "6.3 Distinção entre plano, implementação e resultados, com evidências adequadas a cada etapa",
+                  "7 Ética da investigação",
+                  "7.1 Dignidade, privacidade e segurança das pessoas; riscos de coerção, exposição e reidentificação; informação e consentimento quando cabível",
+                  "7.2 Integridade dos registros, autoria e prevenção de plágio, fabricação ou seleção indevida de evidências",
+                  "7.3 Distinção entre auditoria e pesquisa científica envolvendo seres humanos; finalidades, proteção dos participantes e requisitos de apreciação ética"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos específicos (P3)",
+                "name": "Auditoria de Contratações, Transferências e Execução de Recursos",
+                "questions": null,
+                "topics": [
+                  "1 Planejamento e seleção",
+                  "1.1 Necessidade da contratação, estudos e especificação; pesquisa de preços; competição e critérios de seleção; riscos de direcionamento e de restrição indevida",
+                  "2 Execução contratual",
+                  "2.1 Medição, entrega e aceitação; fiscalização, pagamento, alterações e reequilíbrio; evidências sobre quantidade, qualidade e preço; continuidade de serviços e resposta a falhas",
+                  "3 Transferências e parcerias",
+                  "3.1 Objetivos, instrumentos, planos de trabalho e obrigações; seleção e execução; acompanhamento e prestação de contas; capacidades locais e responsabilidades dos participantes",
+                  "4 Testes e sinais de irregularidade",
+                  "4.1 Concentração e vínculos entre fornecedores; fracionamento e padrões atípicos; comprovação física e documental; cruzamentos de dados; limites de amostras dirigidas por risco",
+                  "5 Encaminhamentos e resultados",
+                  "5.1 Dano e critérios para sua demonstração; correção de processos, proteção de usuários e recuperação de recursos; interfaces com responsabilização e integridade; recomendações proporcionais"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos específicos (P3)",
+                "name": "Integridade, Transparência e Responsabilização Aplicadas ao Controle Público",
+                "questions": null,
+                "topics": [
+                  "1 Direito público aplicado às respostas de controle",
+                  "1.1 Análise de vulnerabilidades, incentivos, conflitos e capacidades institucionais; articulação entre governança, riscos e controles",
+                  "1.2 Integração de manifestações de ouvidoria, dados de transparência, achados de auditoria e informações correcionais",
+                  "1.3 Definição de prioridades e combinação de respostas preventivas, corretivas e de responsabilização; competências, motivação, proporcionalidade, consequências práticas e condições de atuação",
+                  "2 Informação, participação e qualidade dos serviços",
+                  "2.1 Análise de pedidos e recursos de acesso à informação; aplicação articulada da LAI e da LGPD",
+                  "2.2 Informação classificada, sigilos legais, informação pessoal e documentos preparatórios; acesso parcial, motivação e revisão de restrições",
+                  "2.3 Transparência ativa e dados abertos; qualidade, cobertura, atualização e risco de reidentificação",
+                  "2.4 Análise de reclamações, solicitações, sugestões e outras manifestações; escuta de usuários e não usuários, participação, representatividade, barreiras de acesso e subnotificação",
+                  "2.5 Utilização dos resultados para aperfeiçoar serviços e orientar o controle",
+                  "3 Proteção do denunciante e tratamento seguro dos relatos",
+                  "3.1 Salvaguardas da identidade do denunciante desde o recebimento do relato; pseudonimização, acesso por necessidade de conhecer, rastreabilidade e condições legais de compartilhamento ou revelação",
+                  "3.2 Identificação de riscos e práticas de retaliação; medidas preventivas, protetivas e reparadoras e competências para sua adoção",
+                  "3.3 Acolhimento e prevenção de revitimização em situações de assédio e discriminação",
+                  "3.4 Articulação entre proteção, preservação de evidências, apuração e direitos de defesa",
+                  "4 Avaliação e aperfeiçoamento da integridade pública e privada",
+                  "4.1 Diagnóstico de riscos e avaliação da existência, implementação e efetividade de programas de integridade",
+                  "4.2 Compromisso da liderança, cultura, incentivos, registros, controles, diligência sobre terceiros, canais de relato e remediação",
+                  "4.3 Avaliação de maturidade e planos de melhoria proporcionais ao contexto e à capacidade institucional",
+                  "4.4 Análise de conflitos de interesses, impedimentos, favorecimento e exercício de atividade privada; medidas de prevenção, orientação e tratamento",
+                  "4.5 Prevenção de assédio e discriminação como dimensão da integridade organizacional",
+                  "5 Admissibilidade, prova e requisitos da responsabilização",
+                  "5.1 Qualificação de notícias de irregularidade e juízo de admissibilidade; arquivamento fundamentado, investigação e instauração de processo",
+                  "5.2 Regimes de agentes públicos e de pessoas jurídicas; materialidade, autoria quando exigível, nexo, enquadramento e elemento subjetivo conforme o regime aplicável",
+                  "5.3 Responsabilidade objetiva da pessoa jurídica e requisitos de ato lesivo e interesse ou benefício",
+                  "5.4 Licitude, suficiência e valoração da prova; compartilhamento entre instâncias, contraditório, defesa e motivação",
+                  "5.5 Distinção entre achado de controle e imputação de responsabilidade",
+                  "6 Instrumentos de responsabilização e soluções consensuais",
+                  "6.1 Processo administrativo disciplinar e processo administrativo de responsabilização de pessoas jurídicas: cabimento, instrução, garantias e decisão",
+                  "6.2 Aplicação dos marcos prescricionais e dos critérios de dosimetria; fundamentação da sanção e da reparação do dano em casos concretos",
+                  "6.3 Acordo de leniência: requisitos, colaboração, efeitos, obrigações de integridade e limites",
+                  "6.4 Termo de ajustamento de conduta: requisitos, proporcionalidade e acompanhamento",
+                  "6.5 Coordenação entre instâncias, distinção entre sanção e reparação e consideração das sanções relativas ao mesmo fato nos termos legais",
+                  "7 Resultados, comunicação e aprendizagem institucional",
+                  "7.1 Conversão de manifestações, avaliações e apurações em medidas de melhoria da gestão, da integridade e dos serviços",
+                  "7.2 Planos de ação, responsabilidades, indicadores e acompanhamento de compromissos",
+                  "7.3 Avaliação da implementação e dos efeitos das medidas sobre recorrência, acesso a direitos e confiança",
+                  "7.4 Distinção entre redução de ocorrências e redução da detecção",
+                  "7.5 Comunicação pública de resultados, contextualização de informações, proteção de pessoas e prestação de contas"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Passar no concurso da CGU",
+          "goalKind": "exam",
+          "language": "pt"
+        }
+      }
     }
   ],
   "taskId": "skill-graph"
