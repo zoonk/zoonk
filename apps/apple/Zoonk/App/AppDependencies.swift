@@ -1,5 +1,6 @@
 @MainActor
 struct AppDependencies {
+  let birthYearGate: BirthYearGate
   let buddyStore: BuddyStore
   let cache: AppCache
   let courseCatalogStore: CourseCatalogStore
@@ -62,9 +63,13 @@ struct AppDependencies {
       cache: cache)
     examStore = ExamStore(api: ExamAPI(clients: clients), cache: cache)
     explainStore = ExplainStore(clients: clients, cache: cache)
-    learnerSummaryStore = LearnerSummaryStore(
+    let learnerSummaryStore = LearnerSummaryStore(
       api: learnerSummaryAPI ?? LearnerSummaryAPI(clients: clients),
       cache: cache)
+    self.learnerSummaryStore = learnerSummaryStore
+    let birthYearGate = BirthYearGate(
+      api: BirthYearAPI(clients: clients), cache: cache, summary: learnerSummaryStore.summary)
+    self.birthYearGate = birthYearGate
     let settingsStore = SettingsStore(
       api: settingsAPI ?? SettingsAPI(clients: clients), cache: cache)
     self.settingsStore = settingsStore
@@ -81,7 +86,8 @@ struct AppDependencies {
     self.imageLoader = imageLoader
     mindMapsStore = MindMapsStore(
       api: mindMapsAPI ?? MindMapsAPI(clients: clients), cache: cache)
-    onboardingStore = OnboardingStore(clients: clients, cache: cache, session: session)
+    onboardingStore = OnboardingStore(
+      clients: clients, cache: cache, session: session, birthYear: birthYearGate)
     planStore = PlanStore(api: PlanAPI(clients: clients), cache: cache)
     practiceStore = PracticeStore(api: PracticeAPI(clients: clients), cache: cache)
     progressStore = ProgressStore(

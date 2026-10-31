@@ -238,15 +238,37 @@ final class SessionStore {
     }
   }
 
-  func continueAsGuest() async -> Bool {
+  /// Not signed in here: nothing uses the guest until `adoptGuest(_:)`.
+  func createGuest() async -> AuthenticatedSession? {
+    do {
+      return AuthenticatedSession(bearerToken: try await api.signInAsGuest())
+    } catch {
+      failure = getFailure(error)
+      return nil
+    }
+  }
+
+  /// False, keeping the session as it is, when another one started meanwhile.
+  func adoptGuest(_ guest: AuthenticatedSession) async -> Bool {
+    guard authenticatedSession == nil else {
+      return false
+    }
+
     markInteractiveOperationStarted()
     let workingRevision = startWorkingOperation()
     failure = nil
     defer { finishWorkingOperation(workingRevision) }
 
     do {
-      let token = try await api.signInAsGuest()
-      try await completeSignIn(token: token)
+      let account = try await api.getCurrentAccount(token: guest.bearerToken)
+
+      guard authenticatedSession == nil else {
+        return false
+      }
+
+      try credentialStore.save(guest.bearerToken)
+      token = guest.bearerToken
+      state = .signedIn(account)
       return true
     } catch {
       failure = getFailure(error)

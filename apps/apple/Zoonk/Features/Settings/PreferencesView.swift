@@ -73,6 +73,18 @@ struct PreferencesView: View {
             "Stop for the day after this much study.", tableName: "Settings",
             comment: "Explains the daily time limit")
         }
+
+        Section {
+          Toggle(isOn: usageDataBinding(preferences)) {
+            Text(
+              "Share usage data", tableName: "Settings",
+              comment: "Switch that lets Zoonk record how the learner uses it, for analytics")
+            Text(
+              "Shows us how you use Zoonk, so we can improve it", tableName: "Settings",
+              comment: "What sharing usage data does")
+          }
+          .tint(.success)
+        }
       }
 
       Section {
@@ -130,6 +142,16 @@ struct PreferencesView: View {
       set: { enabled in
         Task {
           await settings.updatePreferences(.soundsEnabled(enabled))
+        }
+      })
+  }
+
+  private func usageDataBinding(_ preferences: LearningPreferences) -> Binding<Bool> {
+    Binding(
+      get: { preferences.shareUsageData },
+      set: { shares in
+        Task {
+          await settings.updatePreferences(.shareUsageData(shares))
         }
       })
   }

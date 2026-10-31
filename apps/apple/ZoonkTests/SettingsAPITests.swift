@@ -25,9 +25,21 @@ final class SettingsAPITests: XCTestCase {
 
     _ = try await api.updatePreferences(token: "token", .dailyLimitMinutes(30))
     _ = try await api.updatePreferences(token: "token", .soundsEnabled(false))
+    _ = try await api.updatePreferences(token: "token", .shareUsageData(false))
 
     XCTAssertEqual(
-      transport.sentBodies.value, [["dailyLimitMinutes": 30], ["soundsEnabled": false]])
+      transport.sentBodies.value,
+      [["dailyLimitMinutes": 30], ["soundsEnabled": false], ["shareUsageData": false]])
+  }
+
+  func testUsageDataIsSharedUntilTheLearnerChooses() async throws {
+    let api = SettingsAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!, transport: ProfileUpdateTransport()))
+
+    let preferences = try await api.updatePreferences(token: "token", .soundsEnabled(true))
+
+    XCTAssertTrue(preferences.shareUsageData)
   }
 
   func testTheLimitOffersCoresTimesWithASavedOneTheyLack() async throws {
@@ -69,9 +81,11 @@ private struct ProfileUpdateTransport: ClientTransport {
           "profile": {
             "activeGoalId": null,
             "availableGlasses": ["round"],
+            "birthYear": 1990,
             "buddy": { "glasses": "round", "kind": "zu", "name": null, "picked": false },
             "dailyLimitMinutes": \(limit.map(String.init) ?? "null"),
             "dailyTimes": [5, 360, 390],
+            "shareUsageData": null,
             "soundsEnabled": true
           }
         }

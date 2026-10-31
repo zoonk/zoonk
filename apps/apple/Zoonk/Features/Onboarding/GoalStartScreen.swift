@@ -187,6 +187,9 @@ private struct GoalStartFlow: View {
           draft = nil
         }
       }
+      .onDisappear {
+        sending?.cancel()
+      }
     }
   }
 
@@ -272,6 +275,10 @@ private struct GoalStartFlow: View {
 
         draft = .draft(value, sentHere: true)
       } catch is CancellationError {
+        // The visitor backed out of the birth year question, or the session changed meanwhile.
+        if !Task.isCancelled {
+          path = []
+        }
       } catch {
         guard !Task.isCancelled else {
           return

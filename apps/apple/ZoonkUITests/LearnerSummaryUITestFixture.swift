@@ -4,7 +4,10 @@ let learnerSummaryUITestJSON = """
   {
     "account": { "email": "ui-test@zoonk.test", "image": null, "name": "UI Test User" },
     "activeGoalId": "0b6c4c1e-7a39-4c6e-9f43-2f8f1f0c5a11",
-    "analytics": { "disabled": true, "goal": null, "plan": "free", "username": "ui_test_user" },
+    "analytics": {
+      "adult": true, "disabled": true, "goal": null, "plan": "free", "shareUsageData": null,
+      "username": "ui_test_user"
+    },
     "buddy": {
       "beltColor": "yellow", "energy": 64, "glasses": "round", "kind": "zu", "name": "Zu",
       "studiedToday": false
@@ -31,6 +34,7 @@ let learnerSummaryUITestJSON = """
     },
     "level": { "color": "yellow", "level": 12 },
     "missions": null,
+    "needsBirthYear": false,
     "nextChangeAt": 4102444800000,
     "places": { "exam": true, "mindMaps": true, "readyMistakes": 2, "speaking": true },
     "readAt": 1767225600000,

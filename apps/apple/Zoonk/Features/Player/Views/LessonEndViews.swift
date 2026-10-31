@@ -582,6 +582,7 @@ struct LessonGuestGateView: View {
   @Environment(\.lessonGuestStart) private var guestStart
   @Environment(\.lessonPlayerRoutes) private var routes
   @State private var isStarting = false
+  @State private var starting: Task<Void, Never>?
 
   let outline: LessonOutline
   let reload: () -> Void
@@ -600,7 +601,7 @@ struct LessonGuestGateView: View {
       if let start = guestStart.start {
         Button {
           isStarting = true
-          Task {
+          starting = Task {
             if await start() {
               reload()
             }
@@ -621,6 +622,9 @@ struct LessonGuestGateView: View {
         }
         .buttonStyle(.mainAction)
       }
+    }
+    .onDisappear {
+      starting?.cancel()
     }
   }
 }

@@ -10,6 +10,7 @@ struct CourseStartScreen: View {
   @Environment(SessionStore.self) private var session
   @State private var level: String?
   @State private var isStarting = false
+  @State private var startTask: Task<Void, Never>?
   @State private var error: GoalError?
   @State private var goalID: String?
 
@@ -88,6 +89,9 @@ struct CourseStartScreen: View {
       }
     }
     .loads(course, refreshable: false)
+    .onDisappear {
+      startTask?.cancel()
+    }
   }
 
   private func start() {
@@ -98,7 +102,7 @@ struct CourseStartScreen: View {
     isStarting = true
     error = nil
 
-    Task {
+    startTask = Task {
       defer { isStarting = false }
 
       do {

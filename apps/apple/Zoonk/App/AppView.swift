@@ -64,6 +64,7 @@ struct AppView: View {
     subscriptionStore: .live())
 
   AppView()
+    .environment(dependencies.birthYearGate)
     .environment(dependencies.courseCatalogStore)
     .environment(dependencies.learnerSummaryStore)
     .environment(dependencies.progressStore)

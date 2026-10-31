@@ -9,15 +9,19 @@ final class OnboardingStore {
   let resume: Resource<OnboardingResume>
 
   @ObservationIgnored private let api: OnboardingAPI
+  @ObservationIgnored private let birthYear: BirthYearGate
   @ObservationIgnored private let cache: AppCache
   @ObservationIgnored private let clients: APIClientFactory
   @ObservationIgnored private let session: SessionStore
   @ObservationIgnored private var onboardings: [String: Resource<GoalOnboarding>] = [:]
   @ObservationIgnored private var planLinks: [String: Resource<Components.Schemas.PlanLink>] = [:]
 
-  init(clients: APIClientFactory, cache: AppCache, session: SessionStore) {
+  init(
+    clients: APIClientFactory, cache: AppCache, session: SessionStore, birthYear: BirthYearGate
+  ) {
     let api = OnboardingAPI(clients: clients)
     self.api = api
+    self.birthYear = birthYear
     self.cache = cache
     self.clients = clients
     self.session = session
@@ -43,12 +47,8 @@ final class OnboardingStore {
 
   /// So the write that follows has a session to belong to.
   private func ensureSession() async throws {
-    if session.authenticatedSession != nil {
-      return
-    }
-
-    guard await session.continueAsGuest() else {
-      throw OnboardingError.failed(.unauthorized)
+    guard await birthYear.startGuest() else {
+      throw CancellationError()
     }
   }
 

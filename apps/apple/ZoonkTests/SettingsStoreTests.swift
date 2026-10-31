@@ -447,6 +447,7 @@ extension LearningPreferences {
     availableGlasses: [.round],
     dailyLimitMinutes: nil,
     dailyTimes: [15, 30, 45],
+    shareUsageData: true,
     soundsEnabled: true)
 }
 

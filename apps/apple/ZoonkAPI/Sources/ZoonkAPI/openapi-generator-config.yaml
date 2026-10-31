@@ -21,6 +21,7 @@ filter:
     - answerSuggestedGoal
     - askMaterialQuestion
     - cancelStripeSubscription
+    - checkBirthYear
     - checkLanguageConversationObjectives
     - completeGoalPlacement
     - completeLanguageConversation
@@ -202,6 +203,7 @@ filter:
     - requestCurrentUserStepExampleLine
     - requestSpeechClip
     - reviseGoalUnderstanding
+    - saveCurrentUserBirthYear
     - saveMockAnswer
     - searchCatalog
     - skipAlphabetIntro

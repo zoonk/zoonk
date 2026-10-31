@@ -17,6 +17,7 @@ struct AppTabView: View {
       .sheet(item: router.sheet(presentedBy: 0)) { sheet in
         AppSheetView(sheet: sheet)
       }
+      .asksBirthYear(here: router.tasks.isEmpty && router.sheet == nil)
       .onChange(of: session.account?.user.id) { previous, current in
         // Signing in keeps a visitor's place, and a guest's: their plan and progress move to the
         // account.
@@ -162,17 +163,20 @@ struct AppSheetView: View {
   let sheet: AppSheet
 
   var body: some View {
-    switch sheet {
-    case .account:
-      AccountSheet()
-    case .feedback(let screen):
-      FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: screen))
-    case .preferences:
-      PreferencesSheet()
-    case .signIn:
-      AccountSheet(signsIn: true)
-    case .subscription:
-      SubscriptionScreen()
+    Group {
+      switch sheet {
+      case .account:
+        AccountSheet()
+      case .feedback(let screen):
+        FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: screen))
+      case .preferences:
+        PreferencesSheet()
+      case .signIn:
+        AccountSheet(signsIn: true)
+      case .subscription:
+        SubscriptionScreen()
+      }
     }
+    .asksBirthYear(here: true)
   }
 }
