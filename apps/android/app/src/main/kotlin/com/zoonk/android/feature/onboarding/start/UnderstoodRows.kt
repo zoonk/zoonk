@@ -9,6 +9,7 @@ import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatTimeOfDay
+import com.zoonk.android.ui.format.languageName
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalDraftOutput
 import com.zoonk.api.models.GoalUnderstandingOneOfSchedule
@@ -420,10 +421,7 @@ class UnderstoodRows(
         )
     }
 
-    private fun languageName(tag: String): String =
-        Locale.forLanguageTag(tag).getDisplayLanguage(locale).replaceFirstChar {
-            it.titlecase(locale)
-        }
+    private fun languageName(tag: String): String = languageName(tag, locale).replaceFirstChar { it.titlecase(locale) }
 
     private companion object {
         const val SITTING_CHOICES = 3

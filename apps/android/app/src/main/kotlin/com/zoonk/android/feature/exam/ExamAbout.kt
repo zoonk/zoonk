@@ -40,6 +40,7 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
+import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamFormatDay
 import com.zoonk.api.models.ExamView
@@ -49,7 +50,6 @@ import com.zoonk.api.models.TargetCutoff
 import kotlinx.datetime.toJavaLocalDate
 import java.net.URI
 import java.time.LocalDate
-import java.util.Locale
 
 /** What main's aside says about the exam, beside the page or after it. */
 internal enum class AboutSection { Format, Scoring, DateNote }
@@ -202,7 +202,7 @@ private fun ExamScoringSection(exam: ExamView) {
                     ScoringRow(R.drawable.ic_flag, stringResource(R.string.exam_to_pass)) {
                         it.texts.forEach { text -> Line(AnnotatedString(text, SpanStyle(localeList = LocaleList(it.language)))) }
                         if (it.language != locale.language) {
-                            val language = Locale.forLanguageTag(it.language).getDisplayLanguage(locale).ifEmpty { it.language }
+                            val language = languageName(it.language, locale)
                             Line(stringResource(R.string.exam_pass_marks_language, language))
                         }
                     }

@@ -74,6 +74,7 @@ import com.zoonk.android.ui.components.LevelBar
 import com.zoonk.android.ui.components.MediaPending
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ChoiceAnswer
 import com.zoonk.api.models.LanguageLevelTestOneOf1LevelsInner
@@ -493,12 +494,6 @@ private fun skillName(skill: LanguageLevelTestOneOf1LevelsInner.Skill): String =
             LanguageLevelTestOneOf1LevelsInner.Skill.WRITING -> R.string.onboarding_language_test_writing
         },
     )
-
-/** As it reads mid-sentence in [locale], such as "italiano" in Portuguese. */
-private fun languageName(
-    tag: String,
-    locale: Locale,
-): String = Locale.forLanguageTag(tag).getDisplayLanguage(locale).ifEmpty { tag }
 
 internal fun usesNonLatinScript(tag: String): Boolean =
     ULocale.addLikelySubtags(ULocale.forLanguageTag(tag)).script.let {

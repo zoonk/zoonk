@@ -5,6 +5,7 @@ import android.icu.text.DateFormat
 import android.icu.text.DateIntervalFormat
 import android.icu.text.DecimalFormatSymbols
 import android.icu.text.ListFormatter
+import android.icu.text.LocaleDisplayNames
 import android.icu.text.MeasureFormat
 import android.icu.text.NumberFormat
 import android.icu.util.DateInterval
@@ -30,6 +31,15 @@ import kotlin.math.roundToLong
 @Composable
 @ReadOnlyComposable
 fun currentLocale(): Locale = LocalConfiguration.current.locales[0]
+
+/** A language as main's `Intl.DisplayNames` names it, variety included: "Chinese (Taiwan)", "Latin American Spanish". */
+fun languageName(
+    tag: String,
+    locale: Locale,
+): String =
+    LocaleDisplayNames
+        .getInstance(ULocale.forLocale(locale), LocaleDisplayNames.DialectHandling.DIALECT_NAMES)
+        .localeDisplayName(ULocale.forLanguageTag(tag))
 
 /** "a, b and c", as main's `format.list` writes a conjunction. */
 fun formatList(

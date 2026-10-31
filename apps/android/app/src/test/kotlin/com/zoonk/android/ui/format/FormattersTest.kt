@@ -21,6 +21,22 @@ class FormattersTest {
     private val de = Locale.GERMAN
 
     @Test
+    fun aLanguageIsNamedWithItsVariety() {
+        val cases =
+            mapOf(
+                "zh" to "Chinese",
+                "zh-TW" to "Chinese (Taiwan)",
+                "yue" to "Cantonese",
+                "es-419" to "Latin American Spanish",
+                "sr-Latn" to "Serbian (Latin)",
+                "zzz" to "zzz",
+            )
+
+        cases.forEach { (tag, expected) -> assertEquals(expected, languageName(tag, en)) }
+        assertEquals("chinês (Taiwan)", languageName("zh-TW", pt))
+    }
+
+    @Test
     fun durationRoundsToSecondsMinutesThenHoursAndMinutes() {
         val cases =
             mapOf(

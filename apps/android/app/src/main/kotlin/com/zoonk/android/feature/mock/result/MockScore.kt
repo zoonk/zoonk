@@ -37,12 +37,12 @@ import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockResult
 import com.zoonk.api.models.MockScoreNotes
-import java.util.Locale
 import kotlin.math.roundToInt
 
 @Composable
@@ -345,7 +345,7 @@ private fun PassMarks(view: MockExam) {
             )
         }
         if (marks.language != locale.language) {
-            val language = Locale.forLanguageTag(marks.language).getDisplayLanguage(locale).ifEmpty { marks.language }
+            val language = languageName(marks.language, locale)
             Text(
                 stringResource(R.string.mock_result_pass_marks_language, language),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

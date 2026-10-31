@@ -173,6 +173,8 @@ class CatalogStoreTest {
     @Test
     fun onlyCountriesHaveFlagEmoji() {
         assertEquals("🇧🇷", flagEmoji("br"))
+        assertEquals("🇹🇼", flagEmoji("tw"))
+        assertEquals("🇭🇰", flagEmoji("hk"))
         assertNull(flagEmoji("es-ct"))
         assertNull(flagEmoji("arab"))
     }
