@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  countWords,
   createEmDashReplacer,
   deduplicateNormalizedTexts,
   ensureLocaleSuffix,
@@ -8,6 +9,7 @@ import {
   normalizeString,
   removeAccents,
   replaceEmDashes,
+  segmentLearnerWords,
   segmentWords,
   stripPunctuation,
   toSlug,
@@ -30,6 +32,11 @@ describe(removeAccents, () => {
 
   it("handles empty string", () => {
     expect(removeAccents("")).toBe("");
+  });
+
+  it("keeps Japanese voiced kana and Korean syllables whole", () => {
+    expect(removeAccents("グラフ")).toBe("グラフ");
+    expect(removeAccents("그래프")).toBe("그래프");
   });
 
   it("handles mixed characters", () => {
@@ -298,6 +305,37 @@ describe(segmentWords, () => {
 
   it("keeps surrounding punctuation on non-space tokens", () => {
     expect(segmentWords("¿Hola?")).toStrictEqual(["¿Hola?"]);
+  });
+});
+
+describe(segmentLearnerWords, () => {
+  it.each([
+    ["私は学生です。", ["私は", "学生です。"]],
+    ["毎朝コーヒーを飲みます。", ["毎朝", "コーヒーを", "飲みます。"]],
+    ["この本はとても面白かったです。", ["この", "本はとても", "面白かったです。"]],
+    ["彼は「はい」と言った。", ["彼は", "「はい」と", "言った。"]],
+    ["私はiPhone 15を使います", ["私は", "iPhone", "15を", "使います"]],
+    ["コーヒー・ケーキ3個", ["コーヒー・ケーキ", "3個"]],
+    ["東京ﾊﾞｽに乗る", ["東京", "ﾊﾞｽに", "乗る"]],
+    ["東京大学", ["東京大学"]],
+  ])("splits Japanese %j into phrases", (text, phrases) => {
+    expect(segmentLearnerWords(text)).toStrictEqual(phrases);
+  });
+
+  it("splits other languages as segmentWords does", () => {
+    expect(segmentLearnerWords("Oui , je suis là !")).toStrictEqual(["Oui,", "je", "suis", "là!"]);
+    expect(segmentLearnerWords("저는 학생이에요.")).toStrictEqual(["저는", "학생이에요."]);
+  });
+});
+
+describe(countWords, () => {
+  it("counts words between spaces", () => {
+    expect(countWords("Yo veo un gato - ¿y tú?")).toBe(6);
+  });
+
+  it("counts the words of text written without spaces", () => {
+    expect(countWords("私は学生です。毎朝コーヒーを飲みます。")).toBeGreaterThanOrEqual(8);
+    expect(countWords("私はiPhone 15を使います")).toBeGreaterThanOrEqual(5);
   });
 });
 

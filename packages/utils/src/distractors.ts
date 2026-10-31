@@ -1,6 +1,12 @@
-import { normalizePunctuation, normalizeString, segmentWords, stripPunctuation } from "./string";
+import {
+  normalizePunctuation,
+  normalizeString,
+  segmentLearnerWords,
+  segmentWords,
+  stripPunctuation,
+} from "./string";
 
-export type DistractorShape = "any" | "single-word";
+export type DistractorShape = "any" | "single-learner-word" | "single-word";
 
 function getNormalizedText(text: string): string | null {
   const normalizedText = normalizePunctuation(text).trim();
@@ -17,7 +23,12 @@ function hasSupportedShape(params: { distractor: string; shape: DistractorShape 
     return true;
   }
 
-  return segmentWords(params.distractor).length === 1;
+  const words =
+    params.shape === "single-learner-word"
+      ? segmentLearnerWords(params.distractor)
+      : segmentWords(params.distractor);
+
+  return words.length === 1;
 }
 
 export function sanitizeDistractors(params: {

@@ -2,8 +2,12 @@ const SLUG_MAX_LENGTH = 50;
 const WORD_CONNECTOR_PATTERN = /^[-'’‐‑‒–]$/u;
 const wordSegmenter = new Intl.Segmenter(undefined, { granularity: "word" });
 
+/** Recomposed after, so Japanese voiced kana ("が") and Korean syllables ("한") stay whole. */
 export function removeAccents(str: string): string {
-  return str.normalize("NFD").replaceAll(/[\u0300-\u036F]/gu, "");
+  return str
+    .normalize("NFD")
+    .replaceAll(/[\u0300-\u036F]/gu, "")
+    .normalize("NFC");
 }
 
 export function normalizeString(str: string): string {
@@ -142,6 +146,82 @@ export function segmentWords(text: string): string[] {
   }
 
   return segmentNonSpaceText(normalizedText);
+}
+
+const JAPANESE_SCRIPT = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
+const HIRAGANA = /\p{Script=Hiragana}/u;
+const KATAKANA = /\p{Script=Katakana}/u;
+const LETTER_OR_NUMBER = /[\p{L}\p{N}]/u;
+const OPENING_PUNCTUATION = /[\p{Ps}\p{Pi}]/u;
+const MODIFIER_LETTER = /\p{Lm}/u;
+
+type PhraseScript = "hiragana" | "katakana" | "other";
+
+/** Marks that lengthen, voice or repeat a sound ("ー", "ﾞ", "々") continue the word they follow. */
+function getPhraseScript(char: string): PhraseScript | null {
+  if (MODIFIER_LETTER.test(char) || !LETTER_OR_NUMBER.test(char)) {
+    return null;
+  }
+
+  if (HIRAGANA.test(char)) {
+    return "hiragana";
+  }
+
+  return KATAKANA.test(char) ? "katakana" : "other";
+}
+
+/**
+ * A phrase starts at a kanji, katakana or Latin word and takes the kana after it, so particles and
+ * endings stay on their word ("駅まで", "飲みます"); an opening bracket starts one too.
+ */
+function splitJapanesePhrases(text: string): string[] {
+  const phrases: string[] = [];
+  let previous: PhraseScript | null = null;
+
+  for (const char of text) {
+    const script = getPhraseScript(char);
+    const opens = OPENING_PUNCTUATION.test(char);
+    const startsWord = script !== null && script !== "hiragana" && previous !== script;
+
+    if (phrases.length === 0 || opens || (startsWord && previous !== null)) {
+      phrases.push(char);
+    } else {
+      phrases[phrases.length - 1] += char;
+    }
+
+    previous = opens ? null : (script ?? previous);
+  }
+
+  return phrases;
+}
+
+/**
+ * The words a learner arranges in their own language, one of the app's languages. Japanese, the
+ * only one without spaces, splits into phrases the same way on every platform, since a dictionary
+ * split cuts its words apart ("飲|み|ます"); the others split as `segmentWords` does.
+ */
+export function segmentLearnerWords(text: string): string[] {
+  const normalizedText = normalizePunctuation(text);
+
+  if (!JAPANESE_SCRIPT.test(normalizedText)) {
+    return segmentWords(normalizedText);
+  }
+
+  return normalizedText
+    .split(/\s+/u)
+    .filter(Boolean)
+    .flatMap((piece) => splitJapanesePhrases(piece));
+}
+
+const NO_SPACE_SCRIPT =
+  /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Thai}\p{Script=Lao}\p{Script=Khmer}\p{Script=Myanmar}]/u;
+
+/** Text in a script without spaces (Japanese, Chinese, Thai) counts the words a dictionary finds. */
+export function countWords(text: string): number {
+  return text
+    .split(/\s+/u)
+    .flatMap((piece) => (NO_SPACE_SCRIPT.test(piece) ? segmentNonSpaceText(piece) : [piece]))
+    .filter((word) => LETTER_OR_NUMBER.test(word)).length;
 }
 
 export function getFirstSentence(text: string, locale: string): string {
