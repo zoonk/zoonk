@@ -1431,61 +1431,263 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Rhythmus mit %1$lld Schritten und einem Schlag alle %2$lld Schritte. Tippe bei den Schritten %3$@. Zu jedem Schlag hörst du ein Klicken."
+            "value" : "Ein Rhythmus mit %#@steps@ und einem Schlag alle %2$lld Schritte. Tippe bei den Schritten %3$@ mit, während bei jedem Schlag ein Klick ertönt."
+          },
+          "substitutions" : {
+            "steps" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Schritt"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Schritten"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "A rhythm of %1$lld steps with a beat every %2$lld. Tap on steps %3$@, over a click on every beat."
+            "value" : "A rhythm of %#@steps@ with a beat every %2$lld. Tap on steps %3$@, over a click on every beat."
+          },
+          "substitutions" : {
+            "steps" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg step"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg steps"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un ritmo de %1$lld pasos con un pulso cada %2$lld. Toca en los pasos %3$@ mientras suena un clic en cada pulso."
+            "value" : "Un ritmo de %#@steps@ con un pulso cada %2$lld. Toca en los pasos %3$@ mientras suena un clic en cada pulso."
+          },
+          "substitutions" : {
+            "steps" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg paso"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg pasos"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un rythme de %1$lld cases, avec un temps toutes les %2$lld cases. Appuie sur les cases %3$@, avec un clic à chaque temps."
+            "value" : "Un rythme de %#@steps@ avec une pulsation tous les %2$lld pas. Appuie sur les pas %3$@, avec un clic à chaque pulsation."
+          },
+          "substitutions" : {
+            "steps" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg pas"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un ritmo di %1$lld posizioni con un battito ogni %2$lld. Tocca nelle posizioni %3$@, con un clic a ogni battito."
+            "value" : "Un ritmo di %#@steps@ con un battito ogni %2$lld. Tocca i passi %3$@, mentre un clic scandisce ogni battito."
+          },
+          "substitutions" : {
+            "steps" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg passo"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg passi"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "全%1$lldステップで、%2$lldステップごとに拍があるリズムです。拍ごとに鳴るクリック音を聴きながら、ステップ%3$@でタップしてください。"
+            "value" : "全%#@steps@で、%2$lldステップごとに拍があるリズムです。拍ごとに鳴るクリック音を聞きながら、ステップ%3$@をタップします。"
+          },
+          "substitutions" : {
+            "steps" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%argステップ"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "총 %1$lld칸이고 %2$lld칸마다 한 박자인 리듬이에요. 매 박자에 나는 클릭 소리를 들으며 %3$@번 칸에서 누르세요."
+            "value" : "%#@steps@으로 된 리듬이며 %2$lld칸마다 박자가 있어요. 박자마다 들리는 클릭 소리에 맞춰 %3$@번 칸을 누르세요."
+          },
+          "substitutions" : {
+            "steps" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg칸"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Liczba kroków w rytmie: %1$lld, miara co %2$lld. Stukaj na krokach %3$@; każdą miarę wyznacza kliknięcie."
+            "value" : "Rytm ma %#@steps@, a miara wypada co %2$lld. Stukaj, gdy wypadają kroki %3$@. Na każdą miarę słychać kliknięcie."
+          },
+          "substitutions" : {
+            "steps" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "few" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg kroki"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg krok"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg kroków"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um ritmo de %1$lld passos, com uma batida a cada %2$lld. Toque nos passos %3$@, acompanhando um clique a cada batida."
+            "value" : "Um ritmo de %#@steps@ com uma batida a cada %2$lld. Toque nos passos %3$@, com um clique a cada batida."
+          },
+          "substitutions" : {
+            "steps" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg passo"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg passos"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld adımlık ritimde her %2$lld adımda bir vuruş var. Her vuruşta duyduğun tık sesi eşliğinde şu adımlarda dokun: %3$@."
+            "value" : "%#@steps@ bir ritim; her %2$lld adımda bir vuruş var. %3$@ numaralı adımlarda dokun; her vuruşta bir tık sesi duyacaksın."
+          },
+          "substitutions" : {
+            "steps" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg adımlık"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -2108,57 +2310,159 @@
       "comment" : "Why the sound check runs, before it starts",
       "localizations" : {
         "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kopfhörer können den Ton etwas verzögert wiedergeben. Tippe einmal zu %lld Klicks mit, damit dein Timing auf diesem Gerät fair bewertet wird."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Bei Kopfhörern kann der Ton etwas verzögert ankommen. Tippe einmal zu %lld Klick mit, damit deine Schläge bei Rhythmusaufgaben auf diesem Gerät fair bewertet werden."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Bei Kopfhörern kann der Ton etwas verzögert ankommen. Tippe einmal zu %lld Klicks mit, damit deine Schläge bei Rhythmusaufgaben auf diesem Gerät fair bewertet werden."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Headphones can play sound a little late. Tap along with %lld click once, and rhythms on this device are timed fairly."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Headphones can play sound a little late. Tap along with %lld clicks once, and rhythms on this device are timed fairly."
+                }
+              }
+            }
           }
         },
         "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El sonido de los audífonos puede tener un pequeño retraso. Haz esta prueba una vez tocando al ritmo de %lld clics para que ese retraso no afecte tus resultados en este dispositivo."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Los audífonos pueden reproducir el sonido con un poco de retraso. Toca al ritmo de %lld clic en una sola prueba para que este dispositivo evalúe los ritmos con precisión."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Los audífonos pueden reproducir el sonido con un poco de retraso. Toca al ritmo de %lld clics en una sola prueba para que este dispositivo evalúe los ritmos con precisión."
+                }
+              }
+            }
           }
         },
         "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le son peut arriver avec un léger retard dans le casque. Appuie une fois au rythme de %lld clics pour que tes rythmes soient évalués équitablement sur cet appareil."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Les écouteurs peuvent diffuser le son avec un léger retard. Un seul test suffit : appuie au rythme de %lld clic pour que les rythmes soient bien synchronisés sur cet appareil."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Les écouteurs peuvent diffuser le son avec un léger retard. Un seul test suffit : appuie au rythme de %lld clics pour que les rythmes soient bien synchronisés sur cet appareil."
+                }
+              }
+            }
           }
         },
         "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le cuffie possono riprodurre il suono con un po’ di ritardo. Segui %lld clic toccando a tempo: basta farlo una volta per valutare correttamente il ritmo su questo dispositivo."
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Le cuffie possono riprodurre i suoni con un leggero ritardo. Fai una sola prova toccando a tempo con %lld clic, così i ritmi su questo dispositivo saranno valutati correttamente."
+                }
+              }
+            }
           }
         },
         "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ヘッドホンでは音が少し遅れて聞こえることがあります。一度、%lld回のクリック音に合わせてタップすると、このデバイスでリズムのタイミングを正しく判定できるようになります。"
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "ヘッドホンでは音が少し遅れて聞こえることがあります。一度、%lld回のクリック音に合わせてタップすると、この端末でリズムのタイミングを正しく判定できます。"
+                }
+              }
+            }
           }
         },
         "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "헤드폰에서는 소리가 조금 늦게 들릴 수 있어요. 클릭 소리 %lld번에 맞춰 누르는 과정을 한 번만 거치면, 이 기기의 소리 지연을 반영해 리듬을 정확하게 채점해요."
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "헤드폰에서는 소리가 조금 늦게 들릴 수 있어요. 클릭 소리에 맞춰 %lld번 눌러 두면 이후에는 이 기기에서 리듬 타이밍을 정확하게 판정할 수 있어요."
+                }
+              }
+            }
           }
         },
         "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Słuchawki mogą odtwarzać dźwięk z lekkim opóźnieniem. Wystarczy jedna próba stukania w rytm %lld kliknięć, byśmy uwzględniali to opóźnienie przy ocenie rytmów na tym urządzeniu."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Słuchawki mogą odtwarzać dźwięk z lekkim opóźnieniem. Wystukaj raz rytm %lld kliknięcia, aby rytmy na tym urządzeniu były oceniane sprawiedliwie."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Słuchawki mogą odtwarzać dźwięk z lekkim opóźnieniem. Wystukaj raz rytm %lld kliknięć, aby rytmy na tym urządzeniu były oceniane sprawiedliwie."
+                }
+              }
+            }
           }
         },
         "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O som pode chegar com um pequeno atraso nos fones. Acompanhe %lld cliques com toques uma vez para ajustar o tempo dos ritmos neste dispositivo."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Fones de ouvido podem atrasar um pouco o som. Toque acompanhando %lld clique para ajustar o tempo dos ritmos neste aparelho. Você só precisa fazer isso uma vez."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Fones de ouvido podem atrasar um pouco o som. Toque acompanhando %lld cliques para ajustar o tempo dos ritmos neste aparelho. Você só precisa fazer isso uma vez."
+                }
+              }
+            }
           }
         },
         "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kulaklıklar sesi biraz gecikmeli verebilir. Bir kez %lld tık sesine dokunarak eşlik et; böylece bu cihazdaki ritimlerde zamanlamanı doğru değerlendirebiliriz."
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Kulaklıklar sesi biraz gecikmeli verebilir. Bir kez %lld tık sesine eşlik ederek dokun; böylece bu cihazda ritim tutuşunu doğru değerlendirebiliriz."
+                }
+              }
+            }
           }
         }
       }
