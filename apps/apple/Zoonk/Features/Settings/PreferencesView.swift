@@ -145,9 +145,11 @@ struct PreferencesView: View {
   }
 }
 
-/// Preferences on their own, for a link from elsewhere such as Today's "Change limit".
+/// Preferences on their own, for a link from elsewhere such as Today's "Change limit". They're the
+/// learner's own, so the sheet closes once that session ends, as the account sheet leaves them.
 struct PreferencesSheet: View {
   @Environment(\.dismiss) private var dismiss
+  @Environment(SessionStore.self) private var session
 
   var body: some View {
     NavigationStack {
@@ -157,6 +159,18 @@ struct PreferencesSheet: View {
             Button(role: .close, action: dismiss.callAsFunction)
           }
         }
+    }
+    .onChange(of: session.state) { previous, state in
+      switch state {
+      case .signedOut, .unavailable:
+        dismiss()
+      case .signedIn(let account):
+        if let shown = previous.account, shown.user.id != account.user.id {
+          dismiss()
+        }
+      case .restoring:
+        break
+      }
     }
   }
 }
