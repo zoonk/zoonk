@@ -47,10 +47,10 @@ export async function PublicFooter({ pathname }: { pathname?: string }) {
                 message: "Cancel your subscription here",
               })}
             </Link>
-            <Link className={FOOTER_LINK_CLASS} href="/subscription/cancel">
+            <Link className={FOOTER_LINK_CLASS} href="/subscription/cancel?choice=withdrawal">
               {t({
                 description:
-                  "Footer link to withdraw within 14 days, which EU law requires (Consumer Rights Directive art. 11a): use the directive's official wording in this language. In German it must read exactly “Vertrag widerrufen” (BGB § 356a).",
+                  "Footer link to withdraw within 14 days, which EU law requires. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Vertrag widerrufen”, in French “Renoncer au contrat ici”, in Spanish “Desistir del contrato aquí”, in Portuguese “Retrate-se do contrato aqui”, in Italian “Recedere dal contratto qui”, in Polish “Odstąp od umowy tutaj”.",
                 message: "Withdraw from contract here",
               })}
             </Link>

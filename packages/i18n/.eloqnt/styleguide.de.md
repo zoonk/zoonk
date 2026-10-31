@@ -42,6 +42,7 @@
 - Speaking criteria “Fluency” / “Accuracy” / “Interaction”: “Redefluss” / “Korrektheit” / “Interaktion”
 - “musicianship”: “musikalische Grundlagen”
 - “You've reached today's study time”: “Deine Lernzeit für heute ist aufgebraucht”, in every line that starts with it
+- Ending a subscription “for an important reason” (BGB § 314): “aus wichtigem Grund”; that cancellation is an “außerordentliche Kündigung”
 
 ## Feature names and states
 

@@ -1,34 +1,32 @@
 import { getFormatter } from "@/i18n/formatter";
-import { getPathname } from "@/i18n/navigation";
-import { getWebPlusCancellation } from "@zoonk/core/subscriptions/web-plus-cancellation";
-import { ListGroup } from "@zoonk/learn/list";
+import {
+  type WebPlusCancellation,
+  getWebPlusCancellation,
+} from "@zoonk/core/subscriptions/web-plus-cancellation";
 import {
   Page,
   PageHeader,
   PageHeaderContent,
   PageSection,
-  PageSectionFooter,
   PageSubtitle,
   PageTitle,
 } from "@zoonk/learn/page";
-import { SettingRow } from "@zoonk/learn/setting-rows";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { formatPrice } from "@zoonk/utils/currency";
 import { type Metadata } from "next";
 import { getExtracted, getLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { ManagedSubscription } from "../managed-subscription";
-import { CancelPlusButton, CancelPlusForm } from "./cancel-plus-form";
+import { type CancelChoice } from "./cancel-choices";
+import { CancelPlusForm } from "./cancel-plus-form";
+import { CancelWithoutLoginForm } from "./cancel-without-login-form";
+
+type ReadyCancellation = Extract<WebPlusCancellation, { status: "ready" }>;
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
   return { robots: { follow: false, index: false }, title: t("Cancel Plus") };
-}
-
-function renderDate(chunks: React.ReactNode) {
-  return <span className="tabular-nums">{chunks}</span>;
 }
 
 function CancelPlusHeader({ children }: { children?: React.ReactNode }) {
@@ -44,94 +42,117 @@ async function CancelPlusTitle() {
   return <PageTitle className="md:text-xl md:leading-tight">{t("Cancel Plus")}</PageTitle>;
 }
 
-async function LogInToCancel() {
+/**
+ * No login needed (BGB § 312k; EU Consumer Rights Directive art. 11a), and nothing else on the page
+ * but the cancellation (BGH I ZR 200/25).
+ */
+async function CancelWithoutLogin() {
   const t = await getExtracted();
-  const locale = await getLocale();
-  const next = getPathname({ href: "/subscription/cancel", locale });
-  const loginHref = `${getPathname({ href: "/login", locale })}?next=${encodeURIComponent(next)}`;
 
   return (
     <>
       <CancelPlusHeader>
         <CancelPlusTitle />
         <PageSubtitle>
-          <span>{t("Log in with the account you subscribed with to cancel or get a refund.")}</span>
+          <span>{t("For Plus bought on our website. No login needed.")}</span>
         </PageSubtitle>
       </CancelPlusHeader>
 
-      <a className={buttonVariants({ className: "w-max", size: "sm" })} href={loginHref}>
-        {t("Log in")}
-      </a>
+      <PageSection aria-label={t("Cancel Plus")}>
+        <CancelWithoutLoginForm />
+      </PageSection>
     </>
   );
 }
 
-async function RenewalChoice({
-  currency,
-  endsAt,
-  refundAmount,
-  unpaid,
-  unstartedMonths,
-}: {
-  currency: string;
-  endsAt: Date;
-  refundAmount: number;
-  unpaid: boolean;
-  unstartedMonths: number;
-}) {
+async function getOrdinaryChoice(cancellation: ReadyCancellation): Promise<CancelChoice | null> {
   const t = await getExtracted();
   const format = await getFormatter();
   const locale = await getLocale();
-  const date = format.dateTime(endsAt, { dateStyle: "long" });
+  const ordinary = cancellation.cancellation;
 
-  const button = (
-    <CancelPlusButton withdraw={false}>
-      {t({
-        description:
-          "Confirms canceling the subscription; Plus stays until the date beside it. In German it must read exactly “Jetzt kündigen” (BGB § 312k).",
-        message: "Cancel now",
-      })}
-    </CancelPlusButton>
-  );
-
-  if (unpaid) {
-    return (
-      <SettingRow
-        description={t(
-          "Your last payment didn't go through. Canceling stops us from trying again.",
-        )}
-        label={t("Unpaid renewal")}
-      >
-        {button}
-      </SettingRow>
-    );
+  if (!ordinary) {
+    return null;
   }
 
-  return (
-    <SettingRow
-      description={
-        unstartedMonths > 0
-          ? t(
-              "For the {count, plural, one {# month} other {# months}} that haven't started, we refund {amount}.",
-              { amount: formatPrice(refundAmount, currency, locale), count: unstartedMonths },
-            )
-          : t("You won't be charged again.")
-      }
-      label={t("Keep Plus until {date}", { date })}
-    >
-      {button}
-    </SettingRow>
-  );
+  if (cancellation.unpaid) {
+    return {
+      description: t("Your last payment didn't go through. Canceling stops us from trying again."),
+      label: t("Stop the unpaid renewal"),
+      value: "ordinary",
+    };
+  }
+
+  return {
+    description:
+      ordinary.unstartedMonths > 0
+        ? t(
+            "For the {count, plural, one {# month} other {# months}} that haven't started, we refund {amount}.",
+            {
+              amount: formatPrice(ordinary.refundAmount, cancellation.currency, locale),
+              count: ordinary.unstartedMonths,
+            },
+          )
+        : t("You won't be charged again."),
+    label: t("Keep Plus until {date}", {
+      date: format.dateTime(ordinary.endsAt, { dateStyle: "long" }),
+    }),
+    value: "ordinary",
+  };
+}
+
+async function getChoices(cancellation: ReadyCancellation): Promise<CancelChoice[]> {
+  const t = await getExtracted();
+  const format = await getFormatter();
+  const locale = await getLocale();
+  const { currency, extraordinary, withdrawal } = cancellation;
+  const money = (amount: number) => formatPrice(amount, currency, locale);
+  const ordinary = await getOrdinaryChoice(cancellation);
+
+  return [
+    ...(ordinary ? [ordinary] : []),
+    ...(withdrawal
+      ? [
+          {
+            description: t(
+              "Plus ends right away, and we refund {amount}. You can do this until {date}.",
+              {
+                amount: money(withdrawal.refundAmount),
+                date: format.dateTime(withdrawal.until, { dateStyle: "long" }),
+              },
+            ),
+            label: t({
+              description:
+                "The 14-day withdrawal from the contract with its full refund. In brackets, the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.",
+              message: "Full refund (withdrawal)",
+            }),
+            value: "withdrawal" as const,
+          },
+        ]
+      : []),
+    ...(extraordinary
+      ? [
+          {
+            description:
+              extraordinary.refundAmount > 0
+                ? t("Plus ends right away, and we refund {amount} for the days left.", {
+                    amount: money(extraordinary.refundAmount),
+                  })
+                : t("Plus ends right away."),
+            label: t("End now for an important reason"),
+            value: "extraordinary" as const,
+          },
+        ]
+      : []),
+  ];
 }
 
 async function CancelPlusContent() {
   const t = await getExtracted();
-  const format = await getFormatter();
-  const locale = await getLocale();
   const cancellation = await getWebPlusCancellation();
 
   if (!cancellation) {
-    return <LogInToCancel />;
+    return <CancelWithoutLogin />;
   }
 
   if (cancellation.status === "none") {
@@ -158,28 +179,9 @@ async function CancelPlusContent() {
     );
   }
 
-  const toDate = (date: Date) => format.dateTime(date, { dateStyle: "long" });
-
-  if (cancellation.status === "ending") {
-    return (
-      <CancelPlusHeader>
-        <CancelPlusTitle />
-        <PageSubtitle>
-          <span>
-            {t.rich("Your subscription will end on <mono>{date}</mono>.", {
-              date: toDate(cancellation.endsAt),
-              mono: renderDate,
-            })}
-          </span>
-        </PageSubtitle>
-      </CancelPlusHeader>
-    );
-  }
-
-  const { currency, email, endingAt, name, withdrawal } = cancellation;
-  const money = (amount: number) => formatPrice(amount, currency, locale);
+  const { email, endingAt, name } = cancellation;
   const plan = cancellation.interval === "year" ? t("Plus, yearly") : t("Plus, monthly");
-  const periodEnd = cancellation.cancellation;
+  const choices = await getChoices(cancellation);
 
   return (
     <>
@@ -193,48 +195,12 @@ async function CancelPlusContent() {
       </CancelPlusHeader>
 
       <PageSection aria-label={t("Cancel Plus")}>
-        <CancelPlusForm email={email}>
-          {endingAt && (
-            <p className="text-sm">
-              {t.rich("Your subscription will end on <mono>{date}</mono>.", {
-                date: toDate(endingAt),
-                mono: renderDate,
-              })}
-            </p>
-          )}
-
-          <ListGroup>
-            {withdrawal && (
-              <SettingRow
-                description={t(
-                  "Plus ends right away, and we refund {amount}. You can do this until {date}.",
-                  { amount: money(withdrawal.refundAmount), date: toDate(withdrawal.until) },
-                )}
-                label={t("Full refund")}
-              >
-                <CancelPlusButton withdraw>
-                  {t({
-                    description:
-                      "Confirms withdrawing from the contract with a full refund (EU Consumer Rights Directive art. 11a). In German it must read exactly “Widerruf bestätigen” (BGB § 356a).",
-                    message: "Cancel and get a refund",
-                  })}
-                </CancelPlusButton>
-              </SettingRow>
-            )}
-
-            {periodEnd && (
-              <RenewalChoice
-                currency={currency}
-                endsAt={periodEnd.endsAt}
-                refundAmount={periodEnd.refundAmount}
-                unpaid={cancellation.unpaid}
-                unstartedMonths={periodEnd.unstartedMonths}
-              />
-            )}
-          </ListGroup>
-
-          <PageSectionFooter>{t("We'll email you the confirmation.")}</PageSectionFooter>
-        </CancelPlusForm>
+        <CancelPlusForm
+          choices={choices}
+          email={email}
+          endingAt={endingAt}
+          key={choices.map(({ value }) => value).join(" ")}
+        />
       </PageSection>
     </>
   );

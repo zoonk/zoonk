@@ -47,6 +47,7 @@
 - “hello@zoonk.com”: “contato@zoonk.com”
 - “Send feedback” (to Zoonk): “Enviar feedback”, not “Enviar comentários”
 - “You've reached today's study time”: “Você usou todo o seu tempo de estudo de hoje”, in every line that starts with it
+- Ending a subscription “for an important reason”: “por motivo justificado”
 
 ## Feature names and states
 

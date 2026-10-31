@@ -6,6 +6,7 @@ import {
   googlePlayNotificationSchema,
   googlePlaySubscriptionRequestSchema,
 } from "@zoonk/core/subscriptions/google-play-contract";
+import { webPlusCancellationRequestSchema } from "@zoonk/core/subscriptions/web-plus-cancellation-contract";
 import {
   badRequestResponse,
   conflictResponse,
@@ -17,7 +18,6 @@ import {
   freePlanResponseSchema,
   storeSubscriptionResponseSchema,
   stripeSubscriptionCancellationReceiptSchema,
-  stripeSubscriptionCancellationRequestSchema,
   stripeSubscriptionCancellationSchema,
 } from "../schemas/subscriptions";
 import { AUTHENTICATED_SECURITY, PUBLIC_SECURITY } from "../security";
@@ -105,7 +105,7 @@ export const subscriptionPaths = {
         "Refunds through Stripe right away, and emails the receipt in the request's language.",
       operationId: "cancelStripeSubscription",
       requestBody: {
-        content: { "application/json": { schema: stripeSubscriptionCancellationRequestSchema } },
+        content: { "application/json": { schema: webPlusCancellationRequestSchema } },
         required: true,
       },
       responses: {

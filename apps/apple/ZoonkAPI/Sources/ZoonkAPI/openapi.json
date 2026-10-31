@@ -25972,14 +25972,26 @@
       "StripeSubscriptionCancellationRequest": {
         "type": "object",
         "properties": {
-          "withdraw": {
-            "type": "boolean",
-            "description": "True ends Plus now with the 14-day refund; false stops the renewal"
+          "choice": {
+            "type": "string",
+            "enum": [
+              "ordinary",
+              "withdrawal",
+              "extraordinary"
+            ],
+            "description": "ordinary stops the renewal; withdrawal ends Plus now with the 14-day full refund; extraordinary ends Plus now for an important reason and refunds the full days left"
+          },
+          "reason": {
+            "description": "Why, for an extraordinary cancellation, which needs one",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
           }
         },
         "required": [
-          "withdraw"
-        ]
+          "choice"
+        ],
+        "additionalProperties": false
       },
       "AppleSubscriptionNotification": {
         "type": "object",
@@ -73395,6 +73407,26 @@
             ],
             "additionalProperties": false
           },
+          "extraordinary": {
+            "nullable": true,
+            "description": "Ending Plus now for an important reason, which the request names. Null for an unpaid renewal, whose cancellation already ends it now",
+            "type": "object",
+            "properties": {
+              "refund": {
+                "nullable": true,
+                "description": "The full days left until Plus would end",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Money"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "refund"
+            ],
+            "additionalProperties": false
+          },
           "withdrawal": {
             "nullable": true,
             "description": "Within 14 days of subscribing: Plus ends now and the whole payment is refunded",
@@ -73419,6 +73451,7 @@
         },
         "required": [
           "cancellation",
+          "extraordinary",
           "withdrawal"
         ],
         "additionalProperties": false

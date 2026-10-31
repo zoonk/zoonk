@@ -51,6 +51,7 @@
 - “musicianship”: “음악 기초”
 - “study time”, the daily amount: “학습 시간”; the time of day the learner studies: “학습 시간대”
 - “You've reached today's study time”: “오늘 학습 시간을 다 채웠어요”, in every line that starts with it
+- Ending a subscription “for an important reason”: “부득이한 사유로”
 
 ## Feature names and states
 

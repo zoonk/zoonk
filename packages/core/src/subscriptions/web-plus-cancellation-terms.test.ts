@@ -6,6 +6,7 @@ const subscribedAt = new Date("2025-01-31T10:00:00Z");
 function monthly(now: string) {
   return getWebPlusCancellationTerms({
     amountPaid: 2990,
+    endingAt: null,
     interval: "month",
     now: new Date(now),
     periodEnd: new Date("2025-02-28T10:00:00Z"),
@@ -17,6 +18,7 @@ function monthly(now: string) {
 function renewedYearly(now: string) {
   return getWebPlusCancellationTerms({
     amountPaid: 12_000,
+    endingAt: null,
     interval: "year",
     now: new Date(now),
     periodEnd: new Date("2027-01-31T10:00:00Z"),
@@ -27,7 +29,7 @@ function renewedYearly(now: string) {
 
 describe(getWebPlusCancellationTerms, () => {
   it("offers the whole payment back within 14 days, or keeping Plus until the period ends", () => {
-    expect(monthly("2025-02-05T09:00:00Z")).toStrictEqual({
+    expect(monthly("2025-02-05T09:00:00Z")).toMatchObject({
       cancellation: {
         endsAt: new Date("2025-02-28T10:00:00Z"),
         refundAmount: 0,
@@ -43,7 +45,7 @@ describe(getWebPlusCancellationTerms, () => {
   });
 
   it("only stops the renewal after 14 days", () => {
-    expect(monthly("2025-02-20T09:00:00Z")).toStrictEqual({
+    expect(monthly("2025-02-20T09:00:00Z")).toMatchObject({
       cancellation: {
         endsAt: new Date("2025-02-28T10:00:00Z"),
         refundAmount: 0,
@@ -56,6 +58,7 @@ describe(getWebPlusCancellationTerms, () => {
   it("keeps Plus until the period ends in a first year, without a refund", () => {
     const terms = getWebPlusCancellationTerms({
       amountPaid: 12_000,
+      endingAt: null,
       interval: "year",
       now: new Date("2025-06-01T00:00:00Z"),
       periodEnd: new Date("2026-01-31T10:00:00Z"),
@@ -99,6 +102,7 @@ describe(getWebPlusCancellationTerms, () => {
   it("rounds a twelfth to the nearest cent", () => {
     const terms = getWebPlusCancellationTerms({
       amountPaid: 9990,
+      endingAt: null,
       interval: "year",
       now: new Date("2026-02-01T00:00:00Z"),
       periodEnd: new Date("2027-01-31T10:00:00Z"),
@@ -107,5 +111,30 @@ describe(getWebPlusCancellationTerms, () => {
     });
 
     expect(terms.cancellation.refundAmount).toBe(9158);
+  });
+
+  it("refunds the full days left of the period when Plus ends now for an important reason", () => {
+    // 28 days paid, 8 full days left on Feb 20 at 09:00: the day it ends counts as used.
+    expect(monthly("2025-02-20T09:00:00Z").extraordinary).toStrictEqual({
+      owed: 854,
+      refundAmount: 854,
+    });
+
+    expect(monthly("2025-02-28T09:00:00Z").extraordinary.refundAmount).toBe(0);
+  });
+
+  it("counts an early end's days only once its unstarted months were refunded", () => {
+    const terms = getWebPlusCancellationTerms({
+      amountPaid: 12_000,
+      endingAt: new Date("2026-03-31T10:00:00Z"),
+      interval: "year",
+      now: new Date("2026-03-15T00:00:00Z"),
+      periodEnd: new Date("2027-01-31T10:00:00Z"),
+      periodStart: new Date("2026-01-31T10:00:00Z"),
+      subscribedAt,
+    });
+
+    // 16 full days of 365 come back now; the 10 unstarted months' 10,000 were refunded before.
+    expect(terms.extraordinary).toStrictEqual({ owed: 10_526, refundAmount: 526 });
   });
 });

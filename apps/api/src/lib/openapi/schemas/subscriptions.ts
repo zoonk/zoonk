@@ -62,6 +62,17 @@ export const stripeSubscriptionCancellationSchema = z
         description:
           "Stopping the renewal, so Plus ends at endsAt. Null when the renewal is already stopped",
       }),
+    extraordinary: z
+      .object({
+        refund: moneySchema
+          .nullable()
+          .meta({ description: "The full days left until Plus would end" }),
+      })
+      .nullable()
+      .meta({
+        description:
+          "Ending Plus now for an important reason, which the request names. Null for an unpaid renewal, whose cancellation already ends it now",
+      }),
     withdrawal: z
       .object({
         refund: moneySchema,
@@ -74,14 +85,6 @@ export const stripeSubscriptionCancellationSchema = z
       }),
   })
   .meta({ id: "StripeSubscriptionCancellation" });
-
-export const stripeSubscriptionCancellationRequestSchema = z
-  .object({
-    withdraw: z
-      .boolean()
-      .meta({ description: "True ends Plus now with the 14-day refund; false stops the renewal" }),
-  })
-  .meta({ id: "StripeSubscriptionCancellationRequest" });
 
 export const stripeSubscriptionCancellationReceiptSchema = z
   .object({

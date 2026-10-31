@@ -10,7 +10,6 @@ msgstr ""
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/auth-gate.tsx
 #: src/components/login-bar-link.tsx
@@ -1212,6 +1211,8 @@ msgstr "So nennen dich Zoonk und dein Kumpel"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Name"
@@ -1284,6 +1285,70 @@ msgctxt "KTQxC5"
 msgid "What Zoonk remembers to give you examples and plans that fit your life."
 msgstr "Was Zoonk sich merkt, um dir Beispiele und Pläne zu geben, die zu deinem Leben passen."
 
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "Jgc-3V"
+msgid "Choose how to cancel"
+msgstr "Art der Kündigung wählen"
+
+#. Label for why the subscription ends now, in a legal cancellation form
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "AkCxS_"
+msgid "Reason"
+msgstr "Grund"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "C_0PBN"
+msgid "Briefly, why you can't keep Plus until the end of the period."
+msgstr "Beschreib kurz, warum du Plus nicht bis zum Ende des Zeitraums behalten kannst."
+
+#. Confirms withdrawing from the contract with a full refund. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Widerruf bestätigen”, in French “Confirmer la rétractation”, in Spanish “Confirmar desistimiento”, in Portuguese “Confirmar retratação”, in Italian “Conferma recesso”, in Polish “Potwierdź odstąpienie od umowy”.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "JdkOCO"
+msgid "Confirm withdrawal"
+msgstr "Widerruf bestätigen"
+
+#. Confirms canceling the subscription, at the end of the period or now for an important reason. In German it must read exactly “Jetzt kündigen” (BGB § 312k).
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "AmzBg2"
+msgid "Cancel now"
+msgstr "Jetzt kündigen"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "KEqLnF"
+msgid "We'll email you the confirmation."
+msgstr "Wir schicken dir die Bestätigung per E-Mail."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "sy-pv5"
+msgid "Email"
+msgstr "E-Mail"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "p1P-hQ"
+msgid "Request"
+msgstr "Anliegen"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "z_wUXE"
+msgid "Received"
+msgstr "Eingegangen"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "L3xzht"
+msgid "We've refunded the full {amount} to the payment method you used. Your bank usually shows it within 5 to 10 business days."
+msgstr "Wir haben dir den vollen Betrag von {amount} auf das von dir verwendete Zahlungsmittel erstattet. Deine Bank zeigt die Erstattung in der Regel innerhalb von 5 bis 10 Werktagen an."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "4sPQbT"
+msgid "We've refunded {amount} for the days left to the payment method you used. Your bank usually shows it within 5 to 10 business days."
+msgstr "Wir haben dir {amount} für die verbleibenden Tage über deine ursprüngliche Zahlungsmethode erstattet. Bei deiner Bank ist die Erstattung in der Regel innerhalb von 5 bis 10 Bankarbeitstagen zu sehen."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "RBJRQ0"
+msgid "We've refunded {amount} for the months that haven't started to the payment method you used. Your bank usually shows it within 5 to 10 business days."
+msgstr "Wir haben dir {amount} für die noch nicht begonnenen Monate auf das von dir verwendete Zahlungsmittel erstattet. Deine Bank zeigt die Erstattung in der Regel innerhalb von 5 bis 10 Werktagen an."
+
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
 msgctxt "zG9LME"
 msgid "Plus has ended."
@@ -1295,30 +1360,15 @@ msgid "You keep Plus until {date}, then it ends."
 msgstr "Du behältst Plus bis {date}, danach endet es."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-msgctxt "L3xzht"
-msgid "We've refunded the full {amount} to the payment method you used. Your bank usually shows it within 5 to 10 business days."
-msgstr "Wir haben dir den vollen Betrag von {amount} auf das von dir verwendete Zahlungsmittel erstattet. Deine Bank zeigt die Erstattung in der Regel innerhalb von 5 bis 10 Werktagen an."
+msgctxt "a6637b"
+msgid "We've emailed the confirmation to {email}."
+msgstr "Wir haben die Bestätigung an {email} gesendet."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-msgctxt "RBJRQ0"
-msgid "We've refunded {amount} for the months that haven't started to the payment method you used. Your bank usually shows it within 5 to 10 business days."
-msgstr "Wir haben dir {amount} für die noch nicht begonnenen Monate auf das von dir verwendete Zahlungsmittel erstattet. Deine Bank zeigt die Erstattung in der Regel innerhalb von 5 bis 10 Werktagen an."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-msgctxt "j6FKgP"
-msgid "Changed your mind? Until {date}, you can still get a full refund."
-msgstr "Anders überlegt? Bis zum {date} kannst du dir noch den vollen Betrag erstatten lassen."
-
-#. The 14-day withdrawal from the contract (EU right of withdrawal), with its full refund.
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-msgctxt "mSN7ug"
-msgid "We received your withdrawal on {dateTime} and emailed the confirmation to {email}."
-msgstr "Wir haben deinen Widerruf am {dateTime} erhalten und die Bestätigung per E-Mail an {email} geschickt."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-msgctxt "Ckm8Lq"
-msgid "We received your cancellation on {dateTime} and emailed the confirmation to {email}."
-msgstr "Wir haben deine Kündigung am {dateTime} erhalten und die Bestätigung per E-Mail an {email} geschickt."
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "qO091u"
+msgid "Your subscription will end on <mono>{date}</mono>."
+msgstr "Dein Abo endet am <mono>{date}</mono>."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
 msgctxt "SBWnEw"
@@ -1326,9 +1376,78 @@ msgid "We couldn't cancel your subscription. Try again or email hello@zoonk.com.
 msgstr "Wir konnten dein Abo nicht kündigen. Versuch es noch einmal oder schreib eine E-Mail an hello@zoonk.com."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-msgctxt "GUQ7xu"
-msgid "That option isn't available anymore."
-msgstr "Diese Option ist nicht mehr verfügbar."
+msgctxt "0sJrli"
+msgid "That option isn't available anymore. Check your choice above and try again."
+msgstr "Diese Option ist nicht mehr verfügbar. Prüf oben deine Auswahl und versuch es noch einmal."
+
+#. The 14-day withdrawal from the contract with its full refund. Use the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "dTs6Jp"
+msgid "We received your withdrawal."
+msgstr "Wir haben deinen Widerruf erhalten."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "aeHrbi"
+msgid "We received your cancellation."
+msgstr "Wir haben deine Kündigung erhalten."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "S8L_pb"
+msgid "If {email} has Plus from our website, the confirmation will arrive there within a few minutes. No email? Check it's the address you subscribed with, or write to hello@zoonk.com."
+msgstr "Wenn du Plus mit {email} über unsere Website abonniert hast, kommt die Bestätigung innerhalb weniger Minuten dort an. Keine E-Mail? Prüf, ob du diese Adresse für dein Abo verwendet hast, oder schreib an hello@zoonk.com."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "RKaCAK"
+msgid "Subscribed in the App Store or Google Play? This doesn't cancel it. Cancel it there."
+msgstr "Im App Store oder bei Google Play abonniert? Das Abo wird hier nicht gekündigt. Kündig es dort."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "_kuMS2"
+msgid "You keep Plus until the period you paid for ends. After a yearly renewal, it ends with the current month, and we refund the rest."
+msgstr "Du behältst Plus bis zum Ende des bezahlten Zeitraums. Nach einer jährlichen Verlängerung endet Plus zum Monatsende, und wir erstatten den Rest."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "aMFeUo"
+msgid "Cancel at the end of the period"
+msgstr "Zum Ende des Zeitraums kündigen"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "eCYQKH"
+msgid "Within 14 days of subscribing. Plus ends right away, and we refund everything."
+msgstr "Innerhalb von 14 Tagen nach Abschluss des Abos. Plus endet sofort und wir erstatten dir den gesamten Betrag."
+
+#. The 14-day withdrawal from the contract with its full refund. In brackets, the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "67jMfM"
+msgid "Full refund (withdrawal)"
+msgstr "Vollständige Erstattung (Widerruf)"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "M1J5Bi"
+msgid "Plus ends right away, and we refund the days left."
+msgstr "Plus endet sofort und wir erstatten dir den Betrag für die verbleibenden Tage."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "5Avfh5"
+msgid "End now for an important reason"
+msgstr "Jetzt aus wichtigem Grund kündigen"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "D8gqFG"
+msgid "The one you use for Zoonk"
+msgstr "Die E-Mail-Adresse, die du für Zoonk nutzt"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "c2I4F9"
+msgid "We couldn't send your request. Try again or email hello@zoonk.com."
+msgstr "Wir konnten deine Anfrage nicht senden. Versuch es noch einmal oder schreib an hello@zoonk.com."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "JmEP0L"
+msgid "Check your name and email, then try again."
+msgstr "Prüf deinen Namen und deine E-Mail-Adresse und versuch es dann noch einmal."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "cEOHN2"
@@ -1336,15 +1455,9 @@ msgid "Cancel Plus"
 msgstr "Plus kündigen"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "Z2Gl7R"
-msgid "Log in with the account you subscribed with to cancel or get a refund."
-msgstr "Meld dich mit dem Konto an, mit dem du das Abo abgeschlossen hast, um zu kündigen oder eine Erstattung zu erhalten."
-
-#. Confirms canceling the subscription; Plus stays until the date beside it. In German it must read exactly “Jetzt kündigen” (BGB § 312k).
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "AmzBg2"
-msgid "Cancel now"
-msgstr "Jetzt kündigen"
+msgctxt "qsB1Um"
+msgid "For Plus bought on our website. No login needed."
+msgstr "Für Plus-Abos von unserer Website. Keine Anmeldung nötig."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "ObvuQ4"
@@ -1352,9 +1465,9 @@ msgid "Your last payment didn't go through. Canceling stops us from trying again
 msgstr "Deine letzte Zahlung hat nicht geklappt. Nach der Kündigung versuchen wir nicht mehr, den Betrag abzubuchen."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "a5g7yu"
-msgid "Unpaid renewal"
-msgstr "Unbezahlte Verlängerung"
+msgctxt "tXpyKb"
+msgid "Stop the unpaid renewal"
+msgstr "Unbezahlte Verlängerung stoppen"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "FLm13g"
@@ -1372,15 +1485,24 @@ msgid "Keep Plus until {date}"
 msgstr "Plus bis {date} behalten"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "rM1iWC"
+msgid "Plus ends right away, and we refund {amount}. You can do this until {date}."
+msgstr "Plus endet sofort, und wir erstatten dir {amount}. Das ist bis {date} möglich."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "Je1aal"
+msgid "Plus ends right away, and we refund {amount} for the days left."
+msgstr "Plus endet sofort und wir erstatten dir {amount} für die verbleibenden Tage."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "8PqZ9h"
+msgid "Plus ends right away."
+msgstr "Plus endet sofort."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "t5tErU"
 msgid "There's no subscription to cancel on {email}."
 msgstr "Für {email} gibt es kein Abo, das du kündigen kannst."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "qO091u"
-msgid "Your subscription will end on <mono>{date}</mono>."
-msgstr "Dein Abo endet am <mono>{date}</mono>."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "ta4t1h"
@@ -1392,27 +1514,6 @@ msgctxt "7VS06t"
 msgid "Plus, monthly"
 msgstr "Plus, monatlich"
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "rM1iWC"
-msgid "Plus ends right away, and we refund {amount}. You can do this until {date}."
-msgstr "Plus endet sofort, und wir erstatten dir {amount}. Das ist bis {date} möglich."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "88OqBo"
-msgid "Full refund"
-msgstr "Vollständige Erstattung"
-
-#. Confirms withdrawing from the contract with a full refund (EU Consumer Rights Directive art. 11a). In German it must read exactly “Widerruf bestätigen” (BGB § 356a).
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "x4y7DX"
-msgid "Cancel and get a refund"
-msgstr "Widerruf bestätigen"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "KEqLnF"
-msgid "We'll email you the confirmation."
-msgstr "Wir schicken dir die Bestätigung per E-Mail."
-
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "AucmVG"
 msgid "Renews on <mono>{date}</mono>."
@@ -1422,6 +1523,11 @@ msgstr "Verlängert sich am <mono>{date}</mono>."
 msgctxt "xWINkR"
 msgid "Current billing period ends on <mono>{date}</mono>."
 msgstr "Der aktuelle Abrechnungszeitraum endet am <mono>{date}</mono>."
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "UWVETE"
+msgid "Cancel subscription"
+msgstr "Abo kündigen"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "CrGYez"
@@ -1437,11 +1543,6 @@ msgstr "Aktiv"
 msgctxt "oESc06"
 msgid "What's included"
 msgstr "Das ist enthalten"
-
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "UWVETE"
-msgid "Cancel subscription"
-msgstr "Abo kündigen"
 
 #: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
 #: src/components/pricing/free-plan.tsx
@@ -1484,6 +1585,16 @@ msgstr "Dieses Abo wird von Zoonk verwaltet. Kontaktiere den Support, wenn du Hi
 msgctxt "5CI3KH"
 msgid "Contact support"
 msgstr "Support kontaktieren"
+
+#: src/app/[lang]/(app)/(settings)/subscription/refund-offer.tsx
+msgctxt "6vciLq"
+msgid "Until {date}, you can still end Plus now and get a full refund."
+msgstr "Noch bis zum {date} kannst du Plus sofort beenden und bekommst den vollen Betrag zurück."
+
+#: src/app/[lang]/(app)/(settings)/subscription/refund-offer.tsx
+msgctxt "nXq8w6"
+msgid "Get a full refund"
+msgstr "Vollständige Erstattung erhalten"
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 msgctxt "bF03Os"
@@ -4266,7 +4377,7 @@ msgctxt "gdJ1Ic"
 msgid "Cancel your subscription here"
 msgstr "Verträge hier kündigen"
 
-#. Footer link to withdraw within 14 days, which EU law requires (Consumer Rights Directive art. 11a): use the directive's official wording in this language. In German it must read exactly “Vertrag widerrufen” (BGB § 356a).
+#. Footer link to withdraw within 14 days, which EU law requires. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Vertrag widerrufen”, in French “Renoncer au contrat ici”, in Spanish “Desistir del contrato aquí”, in Portuguese “Retrate-se do contrato aqui”, in Italian “Recedere dal contratto qui”, in Polish “Odstąp od umowy tutaj”.
 #: src/components/public/public-footer.tsx
 msgctxt "OxFgc6"
 msgid "Withdraw from contract here"

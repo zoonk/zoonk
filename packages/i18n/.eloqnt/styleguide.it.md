@@ -38,6 +38,7 @@
 - “musicianship”: “formazione musicale”
 - “study time”, the daily amount: “tempo di studio”; the time of day the learner studies: “orario di studio”
 - “You've reached today's study time”: “Hai esaurito il tempo di studio di oggi”, in every line that starts with it
+- Ending a subscription “for an important reason”: “per giusta causa”
 
 ## Feature names and states
 

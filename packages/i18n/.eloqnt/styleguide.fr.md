@@ -35,6 +35,7 @@
 - “Send feedback” (to Zoonk): “Donner ton avis”, not “Envoyer un retour” or “Envoyer un avis”
 - “You've reached today's study time”: “Tu as utilisé tout ton temps d’étude pour aujourd’hui”, in every line that starts with it
 - “match” (pairs, in Match pairs): “associer”, not “trouver”
+- Ending a subscription “for an important reason”: “pour motif légitime”
 
 ## Feature names and states
 

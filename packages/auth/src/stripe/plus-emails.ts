@@ -9,6 +9,7 @@ import { getTranslation } from "../translations/get-translations";
 type Money = { amount: number; currency: string };
 type Translation = Awaited<ReturnType<typeof getTranslation>>;
 type BillingInterval = "month" | "year";
+type CancellationChoice = "extraordinary" | "ordinary" | "withdrawal";
 
 const SELLER =
   "Zoonk Tecnologia e Educação Ltda · CNPJ 42.262.784/0001-76 · Setor SGAN 601, Módulo H, Sala 55, SS1, Parte 14, Edif Ion, Asa Norte, Brasília (DF), 70830-018, Brazil · hello@zoonk.com";
@@ -151,48 +152,74 @@ export async function sendPlusPurchaseEmail({
   await send({ body, subject: t.plusPurchaseSubject, to: email });
 }
 
+function refundTemplate({
+  choice,
+  t,
+  withdrawn,
+}: {
+  choice: CancellationChoice;
+  t: Translation;
+  withdrawn: boolean;
+}): string {
+  if (withdrawn) {
+    return t.plusRefundFull;
+  }
+
+  return choice === "extraordinary" ? t.plusRefundDaysLeft : t.plusRefundUnstarted;
+}
+
 /** The receipt of a cancellation or withdrawal, with its date and time (BGB §§ 312k and 356a). */
 export async function sendPlusCancellationEmail({
+  choice,
   email,
   endsAt,
   interval,
+  lateWithdrawal,
   locale,
   name,
+  reason,
   receivedAt,
   refund,
   refundableUntil,
-  withdrawn,
 }: {
+  choice: CancellationChoice;
   email: string;
   endsAt: Date;
   interval: BillingInterval;
+  /** A withdrawal sent after its 14 days, carried out as an ordinary cancellation instead. */
+  lateWithdrawal: boolean;
   locale: string;
   name: string;
+  reason: string | null;
   receivedAt: Date;
   refund: Money | null;
   refundableUntil: Date | null;
-  withdrawn: boolean;
 }): Promise<void> {
   const t = await getTranslation(locale);
   const format = formatters(locale);
   const endsNow = endsAt <= receivedAt;
+  const withdrawn = choice === "withdrawal" && !lateWithdrawal;
+
+  const received = {
+    extraordinary: t.plusExtraordinaryReceived,
+    ordinary: t.plusCancellationReceived,
+    withdrawal: t.plusWithdrawalReceived,
+  }[choice];
 
   const refundSentence = refund
-    ? `${html(withdrawn ? t.plusRefundFull : t.plusRefundUnstarted, { amount: format.money(refund) })} ${html(t.plusRefundTiming)}`
+    ? `${html(refundTemplate({ choice, t, withdrawn }), { amount: format.money(refund) })} ${html(t.plusRefundTiming)}`
     : html(t.plusNoMoreCharges);
 
   const ending = endsNow ? html(t.plusEndedNow) : html(t.plusEndsOn, { date: format.date(endsAt) });
+  const lateNote = lateWithdrawal ? ` ${html(t.plusWithdrawalTooLate)}` : "";
 
   const body = renderEmail([
-    paragraph(
-      html(withdrawn ? t.plusWithdrawalReceived : t.plusCancellationReceived, {
-        dateTime: format.dateTime(receivedAt),
-      }),
-    ),
+    paragraph(`${html(received, { dateTime: format.dateTime(receivedAt) })}${lateNote}`),
     details([
       ...(name ? [[t.plusNameLabel, name] as [string, string]] : []),
       [t.plusAccountLabel, email],
       [t.plusPlanLabel, planName(t, interval)],
+      ...(reason ? [[t.plusReasonLabel, reason] as [string, string]] : []),
       [t.plusEndsLabel, format.date(endsAt)],
       ...(refund ? [[t.plusRefundLabel, format.money(refund)] as [string, string]] : []),
     ]),

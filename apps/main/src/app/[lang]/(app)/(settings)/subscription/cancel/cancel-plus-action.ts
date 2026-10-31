@@ -4,6 +4,7 @@ import {
   type WebPlusCancellationOutcome,
   cancelWebPlus,
 } from "@zoonk/core/subscriptions/web-plus-cancellation";
+import { webPlusCancellationRequestSchema } from "@zoonk/core/subscriptions/web-plus-cancellation-contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { logError } from "@zoonk/utils/logger";
@@ -18,15 +19,21 @@ export type CancelPlusResult =
 /** Server Actions can't read the page's `[lang]`, so the page sends it for the receipt's language. */
 export async function cancelPlusAction({
   locale,
-  withdraw,
+  request,
 }: {
   locale: unknown;
-  withdraw: unknown;
+  request: unknown;
 }): Promise<CancelPlusResult> {
+  const parsed = webPlusCancellationRequestSchema.safeParse(request);
+
+  if (!parsed.success) {
+    return { status: "failed" };
+  }
+
   const { data, error } = await safeAsync(() =>
     cancelWebPlus({
       locale: localeSchema.safeParse(locale).data ?? DEFAULT_LOCALE,
-      withdraw: withdraw === true,
+      request: parsed.data,
     }),
   );
 

@@ -47,6 +47,7 @@
 - “musicianship”: “podstawy muzyki”
 - “study time”, the daily amount: “czas nauki”; the time of day the learner studies: “godzina nauki”
 - “You've reached today's study time”: “Twój czas nauki na dziś się skończył”, in every line that starts with it
+- Ending a subscription “for an important reason”: “z ważnego powodu”
 
 ## Feature names and states
 

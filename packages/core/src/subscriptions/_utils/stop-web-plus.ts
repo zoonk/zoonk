@@ -83,23 +83,31 @@ async function voidOpenInvoice(subscription: Stripe.Subscription): Promise<void>
   }
 }
 
+/** An extraordinary cancellation's reason goes to Stripe, where support sees it beside the subscription. */
 export async function stopSubscription({
   endsAt,
+  endsNow,
+  reason,
   subscription,
-  withdraw,
 }: {
   endsAt: Date;
+  endsNow: boolean;
+  reason: string | null;
   subscription: Stripe.Subscription;
-  withdraw: boolean;
 }): Promise<Stripe.Subscription> {
+  const cancelNow = {
+    ...(reason && { cancellation_details: { comment: reason } }),
+    prorate: false,
+  };
+
   if (isUnpaid(subscription)) {
-    const canceled = await stripeClient.subscriptions.cancel(subscription.id, { prorate: false });
+    const canceled = await stripeClient.subscriptions.cancel(subscription.id, cancelNow);
     await voidOpenInvoice(subscription);
     return canceled;
   }
 
-  if (withdraw) {
-    return stripeClient.subscriptions.cancel(subscription.id, { prorate: false });
+  if (endsNow) {
+    return stripeClient.subscriptions.cancel(subscription.id, cancelNow);
   }
 
   const item = subscription.items.data[0];

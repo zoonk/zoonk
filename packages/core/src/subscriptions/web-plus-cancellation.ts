@@ -1,175 +1,43 @@
 import "server-only";
+import { isHumanRequest } from "@zoonk/auth/human-check";
 import { sendPlusCancellationEmail } from "@zoonk/auth/plus-emails";
-import { stripeClient } from "@zoonk/auth/stripe-client";
 import { prisma } from "@zoonk/db";
 import { type PriceInfo } from "@zoonk/utils/currency";
+import { safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { io } from "next/cache";
-import { findActiveSubscriptionForUser } from "../auth/subscription";
 import { getSession } from "../users/get-session";
 import {
-  UNPAID_STATUSES,
-  getLatestInvoice,
-  isUnpaid,
+  type Learner,
+  type WebPlusCancellation,
+  loadCancellation,
+} from "./_utils/load-web-plus-cancellation";
+import {
   refundLatestPayment,
   saveStoppedSubscription,
   stopSubscription,
-  toDate,
 } from "./_utils/stop-web-plus";
-import { getWebPlusCancellationTerms } from "./web-plus-cancellation-terms";
+import {
+  type WebPlusCancellationChoice,
+  type WebPlusCancellationRequest,
+} from "./web-plus-cancellation-contract";
 import type Stripe from "stripe";
 
-type BillingInterval = "month" | "year";
-type Terms = ReturnType<typeof getWebPlusCancellationTerms>;
-type Learner = { email: string; id: string; name: string };
+export type { WebPlusCancellation } from "./_utils/load-web-plus-cancellation";
 
-export type WebPlusCancellation =
-  | { status: "none"; email: string }
-  | { status: "store"; provider: "apple" | "google" | "zoonk" }
-  | { status: "ending"; endsAt: Date }
-  | {
-      status: "ready";
-      /** Null once the renewal is already stopped, while the 14-day refund is still open. */
-      cancellation: Terms["cancellation"] | null;
-      currency: string;
-      email: string;
-      /** When Plus ends, if the renewal is already stopped. */
-      endingAt: Date | null;
-      interval: BillingInterval;
-      name: string;
-      /** The last renewal wasn't paid: canceling ends it now and stops the charge attempts. */
-      unpaid: boolean;
-      withdrawal: Terms["withdrawal"];
-    };
-
-export type WebPlusCancellationOutcome =
-  | {
-      status: "canceled";
-      endsAt: Date;
-      receivedAt: Date;
-      refund: PriceInfo | null;
-      /** Stopping the renewal leaves the 14-day refund open until this day. */
-      refundableUntil: Date | null;
-    }
-  | { status: "unavailable" };
-
-type ReadyCancellation = Extract<WebPlusCancellation, { status: "ready" }>;
-
-type LoadedCancellation = {
-  cancellation: WebPlusCancellation;
-  stripeSubscription: Stripe.Subscription | null;
+type CanceledOutcome = {
+  status: "canceled";
+  endsAt: Date;
+  receivedAt: Date;
+  refund: PriceInfo | null;
+  /** Stopping the renewal leaves the 14-day refund open until this day. */
+  refundableUntil: Date | null;
 };
 
-function isPendingCancel(subscription: Stripe.Subscription): boolean {
-  return subscription.cancel_at_period_end || subscription.cancel_at !== null;
-}
+export type WebPlusCancellationOutcome = CanceledOutcome | { status: "unavailable" };
 
-async function readLiveStripeSubscription(id: string): Promise<Stripe.Subscription | null> {
-  const subscription = await stripeClient.subscriptions.retrieve(id, {
-    expand: ["latest_invoice.payments"],
-  });
-
-  return subscription.status === "active" || isUnpaid(subscription) ? subscription : null;
-}
-
-function describeCancellation({
-  learner,
-  now,
-  subscription,
-}: {
-  learner: Learner;
-  now: Date;
-  subscription: Stripe.Subscription;
-}): WebPlusCancellation {
-  const item = subscription.items.data[0];
-  const invoice = getLatestInvoice(subscription);
-
-  if (!item || !invoice) {
-    return { email: learner.email, status: "none" };
-  }
-
-  const interval: BillingInterval = item.price.recurring?.interval === "year" ? "year" : "month";
-  const ready = { currency: invoice.currency, email: learner.email, interval, name: learner.name };
-
-  if (isUnpaid(subscription)) {
-    return {
-      ...ready,
-      cancellation: { endsAt: now, refundAmount: 0, unstartedMonths: 0 },
-      endingAt: null,
-      status: "ready",
-      unpaid: true,
-      withdrawal: null,
-    };
-  }
-
-  const { cancellation, withdrawal } = getWebPlusCancellationTerms({
-    amountPaid: invoice.amount_paid,
-    interval,
-    now,
-    periodEnd: toDate(item.current_period_end),
-    periodStart: toDate(item.current_period_start),
-    subscribedAt: toDate(subscription.start_date),
-  });
-
-  const endingAt = isPendingCancel(subscription)
-    ? toDate(subscription.cancel_at ?? item.current_period_end)
-    : null;
-
-  if (endingAt && !withdrawal) {
-    return { endsAt: endingAt, status: "ending" };
-  }
-
-  return {
-    ...ready,
-    cancellation: endingAt ? null : cancellation,
-    endingAt,
-    status: "ready",
-    unpaid: false,
-    withdrawal,
-  };
-}
-
-function findUnpaidWebSubscription(userId: string) {
-  return prisma.subscription.findFirst({
-    orderBy: { id: "desc" },
-    where: { provider: "stripe", referenceId: userId, status: { in: UNPAID_STATUSES } },
-  });
-}
-
-async function loadCancellation({
-  learner,
-  now,
-}: {
-  learner: Learner;
-  now: Date;
-}): Promise<LoadedCancellation> {
-  const subscription =
-    (await findActiveSubscriptionForUser({ now, userId: learner.id })) ??
-    (await findUnpaidWebSubscription(learner.id));
-
-  if (!subscription) {
-    return { cancellation: { email: learner.email, status: "none" }, stripeSubscription: null };
-  }
-
-  if (subscription.provider !== "stripe") {
-    return {
-      cancellation: { provider: subscription.provider, status: "store" },
-      stripeSubscription: null,
-    };
-  }
-
-  const stripeSubscription = subscription.stripeSubscriptionId
-    ? await readLiveStripeSubscription(subscription.stripeSubscriptionId)
-    : null;
-
-  if (!stripeSubscription) {
-    return { cancellation: { email: learner.email, status: "none" }, stripeSubscription: null };
-  }
-
-  return {
-    cancellation: describeCancellation({ learner, now, subscription: stripeSubscription }),
-    stripeSubscription,
-  };
-}
+type ReadyCancellation = Extract<WebPlusCancellation, { status: "ready" }>;
+type ChosenOption = { endsAt: Date; owed: number; refundAmount: number };
 
 async function getLearner(): Promise<Learner | null> {
   const session = await getSession();
@@ -191,38 +59,112 @@ export async function getWebPlusCancellation(): Promise<WebPlusCancellation | nu
   return cancellation;
 }
 
-function chooseOption({
-  cancellation,
-  receivedAt,
-  withdraw,
-}: {
-  cancellation: ReadyCancellation;
-  receivedAt: Date;
-  withdraw: boolean;
-}): { endsAt: Date; refundAmount: number } | null {
-  if (!withdraw) {
-    return cancellation.cancellation;
-  }
+function getOptions(
+  cancellation: ReadyCancellation,
+  receivedAt: Date,
+): Record<WebPlusCancellationChoice, ChosenOption | null> {
+  const { extraordinary, withdrawal } = cancellation;
+  const ordinary = cancellation.cancellation;
 
-  return (
-    cancellation.withdrawal && {
+  return {
+    extraordinary: extraordinary && {
       endsAt: receivedAt,
-      refundAmount: cancellation.withdrawal.refundAmount,
-    }
-  );
+      owed: extraordinary.owed,
+      refundAmount: extraordinary.refundAmount,
+    },
+    ordinary: ordinary && {
+      endsAt: ordinary.endsAt,
+      owed: ordinary.refundAmount,
+      refundAmount: ordinary.refundAmount,
+    },
+    withdrawal: withdrawal && {
+      endsAt: receivedAt,
+      owed: withdrawal.refundAmount,
+      refundAmount: withdrawal.refundAmount,
+    },
+  };
 }
 
 /**
  * The refund goes first, so a failure never leaves Plus ended without it, and a retry finishes what
- * a failed request started. The receipt is emailed in `locale`. Caches aren't expired: main keeps
- * the receipt on screen and reads its pages again when the learner leaves. Null without an account.
+ * a failed request started. Once Stripe stops Plus, the receipt goes out before our copy of the
+ * subscription is saved, which Stripe's webhook writes too. Without an option, Plus is already
+ * ending as asked and only the receipt goes out.
+ */
+async function applyCancellation({
+  cancellation,
+  lateWithdrawal,
+  learner,
+  locale,
+  option,
+  receivedAt,
+  request,
+  stripeSubscription,
+}: {
+  cancellation: ReadyCancellation;
+  lateWithdrawal: boolean;
+  learner: Learner;
+  locale: string;
+  option: ChosenOption | null;
+  receivedAt: Date;
+  request: WebPlusCancellationRequest;
+  stripeSubscription: Stripe.Subscription;
+}): Promise<CanceledOutcome> {
+  const endsAt = option?.endsAt ?? cancellation.endingAt ?? receivedAt;
+  const endsNow = endsAt <= receivedAt;
+  const refundableUntil = endsNow ? null : (cancellation.withdrawal?.until ?? null);
+  const reason = request.choice === "extraordinary" ? (request.reason ?? null) : null;
+
+  const refund =
+    option && option.refundAmount > 0
+      ? { amount: option.refundAmount, currency: cancellation.currency }
+      : null;
+
+  if (option && refund) {
+    await refundLatestPayment({ owed: option.owed, subscription: stripeSubscription });
+  }
+
+  const stopped =
+    option &&
+    (await stopSubscription({ endsAt, endsNow, reason, subscription: stripeSubscription }));
+
+  await sendPlusCancellationEmail({
+    choice: request.choice,
+    email: learner.email,
+    endsAt,
+    interval: cancellation.interval,
+    lateWithdrawal,
+    locale,
+    name: learner.name,
+    reason,
+    receivedAt,
+    refund,
+    refundableUntil,
+  });
+
+  if (stopped) {
+    const { error } = await safeAsync(() =>
+      saveStoppedSubscription({ stopped, userId: learner.id }),
+    );
+
+    if (error) {
+      logError("[applyCancellation] Saving the stopped subscription failed:", error);
+    }
+  }
+
+  return { endsAt, receivedAt, refund, refundableUntil, status: "canceled" };
+}
+
+/**
+ * Caches aren't expired: main keeps the receipt on screen and reads its pages again when the learner
+ * leaves. The receipt is emailed in `locale`. Null without an account.
  */
 export async function cancelWebPlus({
   locale,
-  withdraw,
+  request,
 }: {
   locale: string;
-  withdraw: boolean;
+  request: WebPlusCancellationRequest;
 }): Promise<WebPlusCancellationOutcome | null> {
   const learner = await getLearner();
 
@@ -234,36 +176,87 @@ export async function cancelWebPlus({
   const { cancellation, stripeSubscription } = await loadCancellation({ learner, now: receivedAt });
 
   const option =
-    cancellation.status === "ready" ? chooseOption({ cancellation, receivedAt, withdraw }) : null;
+    cancellation.status === "ready" ? getOptions(cancellation, receivedAt)[request.choice] : null;
 
   if (cancellation.status !== "ready" || !option || !stripeSubscription) {
     return { status: "unavailable" };
   }
 
-  const { endsAt, refundAmount } = option;
-  const refundableUntil = withdraw ? null : (cancellation.withdrawal?.until ?? null);
-
-  const refund =
-    refundAmount > 0 ? { amount: refundAmount, currency: cancellation.currency } : null;
-
-  if (refund) {
-    await refundLatestPayment({ owed: refund.amount, subscription: stripeSubscription });
-  }
-
-  const stopped = await stopSubscription({ endsAt, subscription: stripeSubscription, withdraw });
-  await saveStoppedSubscription({ stopped, userId: learner.id });
-
-  await sendPlusCancellationEmail({
-    email: learner.email,
-    endsAt,
-    interval: cancellation.interval,
+  return applyCancellation({
+    cancellation,
+    lateWithdrawal: false,
+    learner,
     locale,
-    name: learner.name,
+    option,
     receivedAt,
-    refund,
-    refundableUntil,
-    withdrawn: withdraw,
+    request,
+    stripeSubscription,
+  });
+}
+
+async function cancelForDeclaration({
+  email,
+  locale,
+  name,
+  receivedAt,
+  request,
+}: {
+  email: string;
+  locale: string;
+  name: string;
+  receivedAt: Date;
+  request: WebPlusCancellationRequest;
+}): Promise<void> {
+  const user = await prisma.user.findUnique({
+    select: { email: true, id: true },
+    where: { email: email.trim().toLowerCase() },
   });
 
-  return { endsAt, receivedAt, refund, refundableUntil, status: "canceled" };
+  if (!user) {
+    return;
+  }
+
+  const learner = { email: user.email, id: user.id, name };
+  const { cancellation, stripeSubscription } = await loadCancellation({ learner, now: receivedAt });
+
+  if (cancellation.status !== "ready" || !stripeSubscription) {
+    return;
+  }
+
+  const options = getOptions(cancellation, receivedAt);
+
+  // A visitor can't see which choices are open, so a withdrawal after its 14 days, or any choice
+  // on an unpaid renewal, becomes the ordinary cancellation it can still be (BGB § 140).
+  await applyCancellation({
+    cancellation,
+    lateWithdrawal: request.choice === "withdrawal" && !options.withdrawal,
+    learner,
+    locale,
+    option: options[request.choice] ?? options.ordinary,
+    receivedAt,
+    request,
+    stripeSubscription,
+  });
+}
+
+/**
+ * The cancel page's form for visitors who aren't logged in (BGB § 312k; EU Consumer Rights
+ * Directive art. 11a). Whoever knows an account's email can cancel its website Plus, as the law
+ * asks, so the answer is the same whether or not the email matched, and the confirmation goes only
+ * to the account's own address. A failure throws so the visitor can send it again, and the retry
+ * finishes what the failed one started. Null when the request fails the human check.
+ */
+export async function requestWebPlusCancellation(declaration: {
+  email: string;
+  locale: string;
+  name: string;
+  request: WebPlusCancellationRequest;
+}): Promise<{ receivedAt: Date } | null> {
+  if (!(await isHumanRequest())) {
+    return null;
+  }
+
+  const receivedAt = new Date();
+  await cancelForDeclaration({ ...declaration, receivedAt });
+  return { receivedAt };
 }

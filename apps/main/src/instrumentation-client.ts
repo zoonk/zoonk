@@ -14,7 +14,14 @@ if (process.env.NODE_ENV === "production") {
   });
 
   // Guests, sign-in codes and social sign-in: `botCheckPlugin` checks the same requests on the server.
-  initBotId({ protect: [{ method: "POST", path: "/api/auth/*" }] });
+  // The cancel page's form posts its Server Action to the page, with or without a locale prefix.
+  initBotId({
+    protect: [
+      { method: "POST", path: "/api/auth/*" },
+      { method: "POST", path: "/subscription/cancel" },
+      { method: "POST", path: "/*/subscription/cancel" },
+    ],
+  });
 }
 
 /**

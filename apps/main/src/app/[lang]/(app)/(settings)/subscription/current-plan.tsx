@@ -1,6 +1,7 @@
 import { PlusBenefits } from "@/components/pricing/plus-benefits";
 import { getFormatter } from "@/i18n/formatter";
 import { Link } from "@/i18n/navigation";
+import { getWebPlusCancellation } from "@zoonk/core/subscriptions/web-plus-cancellation";
 import { type Subscription } from "@zoonk/db";
 import { CHIP_CLASS } from "@zoonk/learn/chip";
 import {
@@ -13,9 +14,12 @@ import {
 } from "@zoonk/learn/page";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { safeAsync } from "@zoonk/utils/error";
 import { isWebManagedSubscriptionProvider } from "@zoonk/utils/subscription";
 import { getExtracted } from "next-intl/server";
+import { Suspense } from "react";
 import { ManagedSubscription } from "./managed-subscription";
+import { RefundOffer } from "./refund-offer";
 
 function renderDate(chunks: React.ReactNode) {
   return <span className="tabular-nums">{chunks}</span>;
@@ -51,6 +55,33 @@ async function getDateLine(subscription: Subscription): Promise<React.ReactNode>
       });
 }
 
+async function RefundStillOpen() {
+  const { data: cancellation } = await safeAsync(() => getWebPlusCancellation());
+  const withdrawal = cancellation?.status === "ready" ? cancellation.withdrawal : null;
+  return withdrawal && <RefundOffer until={withdrawal.until} />;
+}
+
+async function WebPlanAction({ isEnding }: { isEnding: boolean }) {
+  const t = await getExtracted();
+
+  if (isEnding) {
+    return (
+      <Suspense>
+        <RefundStillOpen />
+      </Suspense>
+    );
+  }
+
+  return (
+    <Link
+      className={cn(buttonVariants({ size: "sm", variant: "outline" }), "w-max")}
+      href="/subscription/cancel"
+    >
+      {t("Cancel subscription")}
+    </Link>
+  );
+}
+
 export async function CurrentPlan({ subscription }: { subscription: Subscription }) {
   const t = await getExtracted();
   const dateLine = await getDateLine(subscription);
@@ -81,14 +112,7 @@ export async function CurrentPlan({ subscription }: { subscription: Subscription
 
       <div className="empty:hidden">
         {isWebManagedSubscriptionProvider(subscription.provider) ? (
-          !isEnding && (
-            <Link
-              className={cn(buttonVariants({ size: "sm", variant: "outline" }), "w-max")}
-              href="/subscription/cancel"
-            >
-              {t("Cancel subscription")}
-            </Link>
-          )
+          <WebPlanAction isEnding={isEnding} />
         ) : (
           <ManagedSubscription provider={subscription.provider} />
         )}
