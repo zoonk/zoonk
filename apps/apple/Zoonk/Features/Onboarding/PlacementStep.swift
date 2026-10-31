@@ -231,7 +231,7 @@ struct PlacementStep: View {
           comment: "Why placement questions take a moment"))
 
       if let failure {
-        GenerationFailureSection(failure: failure, isActing: isStarting) {
+        GenerationFailureSection(failure: failure) {
           retry(failure)
         }
       } else {
@@ -262,7 +262,7 @@ struct PlacementStep: View {
       }
     }
     .onboardingColumn()
-    .disabled(isSaving)
+    .disabled(isSaving || isStarting)
     .task(id: waitRound) { await waitForQuestions() }
   }
 
@@ -303,6 +303,10 @@ struct PlacementStep: View {
 
   /// Start reads first, so questions that already exist never flash the wait.
   private func start() async {
+    guard !isSaving, !isStarting else {
+      return
+    }
+
     isStarting = true
     defer { isStarting = false }
 
