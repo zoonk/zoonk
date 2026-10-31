@@ -8,12 +8,12 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
-internal const val Q1 = "3b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
-internal const val Q2 = "4b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
-internal const val Q3 = "5b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
-internal const val REMOVED = "6b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
+const val Q1 = "3b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
+const val Q2 = "4b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
+const val Q3 = "5b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
+const val REMOVED = "6b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
 
-internal fun duelQuestion(
+fun duelQuestion(
     itemId: String,
     answered: Boolean? = null,
 ) = fixture(
@@ -23,7 +23,7 @@ internal fun duelQuestion(
 )
 
 /** A won boss's end: 50 Brain Power, 20 of them the day's bonus it paid. */
-internal fun wonCompletion(): StudyBlockCompletion =
+fun wonCompletion(): StudyBlockCompletion =
     decodeFixture(
         "study-block-completion",
         "checkpoint" to
@@ -39,7 +39,7 @@ internal fun wonCompletion(): StudyBlockCompletion =
             ),
     )
 
-internal fun checkpoint(
+fun checkpoint(
     vararg questions: JsonObject = arrayOf(duelQuestion(Q1), duelQuestion(Q2), duelQuestion(Q3)),
     kind: String = "boss",
     passMark: Int = 2,

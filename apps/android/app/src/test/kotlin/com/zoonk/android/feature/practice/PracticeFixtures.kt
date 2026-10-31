@@ -91,12 +91,6 @@ internal fun studyFeedback(
         """.trimMargin(),
     )
 
-internal object UnusedSessionSteps : SessionSteps {
-    override suspend fun continueSession(sessionId: UUID): MutationResult<AppRoute> = error("Not used")
-
-    override suspend fun stop(sessionId: UUID): MutationResult<AppRoute> = error("Not used")
-}
-
 /** A runner over [detail] whose answers get [feedback] and whose finish gets [completion]; without one, finishing fails. */
 internal fun practiceViewModel(
     cache: AppCache,

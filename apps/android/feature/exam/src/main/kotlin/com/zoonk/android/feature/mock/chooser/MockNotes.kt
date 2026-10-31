@@ -55,7 +55,7 @@ internal fun MockNotes(
 
 /** Main's `MockLeftOutNote` on its own, for a mock's intro. */
 @Composable
-internal fun MockLeftOutNote(
+fun MockLeftOutNote(
     leftOut: List<MockLeftOut>,
     modifier: Modifier = Modifier,
 ) {

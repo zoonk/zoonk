@@ -57,7 +57,7 @@ import com.zoonk.android.feature.questions.TimeMachine as TimeMachineFacts
 
 /** Where a wrong answer cancels a right one: this visit's count and what leaving blank is for. */
 @Composable
-internal fun SwipeScore(tally: NetTally) {
+fun SwipeScore(tally: NetTally) {
     val right = pluralStringResource(R.plurals.practice_net_right, tally.right, tally.right)
     val wrong = pluralStringResource(R.plurals.practice_net_wrong, tally.wrong, tally.wrong)
     val net = stringResource(R.string.practice_net, tally.right - tally.wrong)
@@ -84,7 +84,7 @@ internal fun SwipeScore(tally: NetTally) {
 
 /** Before the answer, only that the learner saw it: an earlier answer could give today's away. */
 @Composable
-internal fun TimeMachine(
+fun TimeMachine(
     machine: TimeMachineFacts,
     format: QuestionFormat,
     words: TrueFalseWords,
@@ -93,7 +93,7 @@ internal fun TimeMachine(
 }
 
 @Composable
-internal fun TimeMachineNote(
+fun TimeMachineNote(
     machine: TimeMachineFacts,
     format: QuestionFormat,
     words: TrueFalseWords,
@@ -168,7 +168,7 @@ internal fun RunDone(
 }
 
 @Composable
-internal fun RunPage(
+fun RunPage(
     modifier: Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -184,7 +184,7 @@ internal fun RunPage(
 }
 
 @Composable
-internal fun RunIntro(
+fun RunIntro(
     title: String,
     detail: String,
     facts: List<String> = emptyList(),
@@ -199,12 +199,12 @@ internal fun RunIntro(
 }
 
 /** A run's reading column, centered on wide windows, with every screen of the run on the same edges. */
-internal fun Modifier.runColumn(): Modifier = widthIn(max = RUN_WIDTH).fillMaxWidth().padding(horizontal = 16.dp)
+fun Modifier.runColumn(): Modifier = widthIn(max = RUN_WIDTH).fillMaxWidth().padding(horizontal = 16.dp)
 
 private val RUN_WIDTH = 640.dp
 
 @Composable
-internal fun RunFinished(
+fun RunFinished(
     title: String,
     action: String,
     saving: Boolean,
@@ -230,14 +230,14 @@ internal fun RunFinished(
 }
 
 @Composable
-internal fun RunLoading(onClose: () -> Unit) {
+fun RunLoading(onClose: () -> Unit) {
     TaskScaffold(onClose = onClose) { padding ->
         Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
     }
 }
 
 @Composable
-internal fun RunLoadFailed(
+fun RunLoadFailed(
     onClose: () -> Unit,
     onRetry: () -> Unit,
 ) {
@@ -245,7 +245,7 @@ internal fun RunLoadFailed(
 }
 
 @Composable
-internal fun RunNotFound(
+fun RunNotFound(
     onClose: () -> Unit,
     description: String = stringResource(R.string.practice_not_found_description),
 ) {
@@ -261,7 +261,7 @@ internal fun RunNotFound(
 
 /** A recording set's place and task; its player comes with the listening milestone. */
 @Composable
-internal fun ListeningSet(set: ItemSet) {
+fun ListeningSet(set: ItemSet) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SetPlace(set)
         set.listening?.title?.let { Text(it, style = MaterialTheme.typography.titleMedium) }
@@ -277,7 +277,7 @@ internal fun ListeningSet(set: ItemSet) {
 
 /** A main action that shows it's working while its write is on its way; it keeps its colors then, as main's, so it doesn't read as unavailable. */
 @Composable
-internal fun BusyButton(
+fun BusyButton(
     label: String,
     busy: Boolean,
     enabled: Boolean,
@@ -298,7 +298,7 @@ internal fun BusyButton(
 
 /** [onRetry] sends the same answer again: the only way to resend an "I don't know" or a time-up answer. */
 @Composable
-internal fun SaveErrorText(onRetry: (() -> Unit)? = null) {
+fun SaveErrorText(onRetry: (() -> Unit)? = null) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
             text = stringResource(R.string.practice_save_error),
@@ -311,6 +311,6 @@ internal fun SaveErrorText(onRetry: (() -> Unit)? = null) {
 }
 
 @Composable
-internal fun NoteText(text: String) {
+fun NoteText(text: String) {
     Text(text = text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
 }

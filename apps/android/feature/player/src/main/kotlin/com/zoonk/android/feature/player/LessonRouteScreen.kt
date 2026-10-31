@@ -218,12 +218,6 @@ internal fun PlayingLesson(
     }
 }
 
-/** Main's task frame keeps the lesson's name small, so the screen below leads. */
-@Composable
-fun LessonTitle(title: String) {
-    Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.titleSmall)
-}
-
 /** A task's frame for what shows before the lesson's screens: its title, and leaving. */
 @Composable
 internal fun LessonFrame(
