@@ -46,6 +46,9 @@
     <string name="player_explain_answer_title">Why that answer misses</string>
     <!-- Heading of the panel that recaps the lesson, not a button. -->
     <string name="player_from_the_lesson">From the lesson</string>
+    <string name="player_offer_tricky">This one is tricky. %1$s can explain it another way.</string>
+    <string name="player_offer_taking_time">Taking your time? %1$s can explain it another way.</string>
+    <string name="player_offer_no_thanks">No thanks</string>
     <string name="player_unchecked_compare">Each question is checked a few times a day. Compare your answer with this one:</string>
     <plurals name="player_key_points">
         <item quantity="one">%1$s of %2$s key point</item>

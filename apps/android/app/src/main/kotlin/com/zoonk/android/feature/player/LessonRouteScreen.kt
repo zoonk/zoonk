@@ -56,6 +56,7 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.steps.LocalChallengeTeam
 import com.zoonk.android.feature.tutor.TutorAskButton
 import com.zoonk.android.feature.tutor.TutorSuggestion
+import com.zoonk.android.feature.tutor.tutorIdentity
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -175,6 +176,13 @@ internal fun PlayingLesson(
     val summary by app.learnerSummary.summary.collectShown()
 
     val suggestions = remember(load.lesson) { load.lesson.tutorSuggestions.map { TutorSuggestion(it.label, it.id.value) } }
+    val identity = tutorIdentity(summary.value)
+    val tutor =
+        remember(identity, suggestions) {
+            LessonTutor(identity) { scope, worded, open, onOpenChange ->
+                TutorAskButton(scope, app, navigator, worded, open, onOpenChange, suggestions)
+            }
+        }
 
     LaunchedEffect(load.lesson.id, signedIn) { viewModel.open(load.lesson) }
 
@@ -204,9 +212,8 @@ internal fun PlayingLesson(
             endSlot,
             buddy = summary.value?.buddy,
             ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
-        ) { scope, worded ->
-            TutorAskButton(scope, app, navigator, worded, suggestions)
-        }
+            tutor = tutor,
+        )
         LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
     }
 }

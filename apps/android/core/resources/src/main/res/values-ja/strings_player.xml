@@ -108,6 +108,9 @@
   "player_notice_picture_ready": "376e19d769b6a20991b0705e38e12108c7a2684956989f240de13827bd4bde31",
   "player_notice_self_correct": "f2dd7fd9e38d9a4d5d3a879c1526907ca47e445b4841004909c4f2a8b8324553",
   "player_notice_writing_skipped": "226af9861099fc76e15d02397c95d5a774ae5820e0d70c90b9e6ccda32e9bd96",
+  "player_offer_no_thanks": "6746925ee9a0d649b62060162bcbff0b96a0f408f78af5cf33a8732992d9eec0",
+  "player_offer_taking_time": "07a7964ad76bc6785c1b40101010a1207321f1ef158c395b4afbab1203e6ffee",
+  "player_offer_tricky": "a11fc80a555409235e6d43b60cb117f4fa77f79d25f8e28bf86262380ed29b5c",
   "player_open_failed": "1e5b88b39dcf0baaf3a9c086b52b33fe848624e2d3baf8f9b7a64a6ab7d7ba6d",
   "player_opening_lesson": "93a1a95fac960dea805841cba36cb2798df9781534e7671fe01312cfc0be691a",
   "player_part_of": "401ba3aa3f710678f9cb3b3b8022424ea40f51340f0413596cea7e7ed5e6bbf3",
@@ -221,6 +224,9 @@
     <string name="player_explain_answer_title">この答えが正解ではない理由</string>
     <!-- Heading of the panel that recaps the lesson, not a button. -->
     <string name="player_from_the_lesson">レッスンの内容</string>
+    <string name="player_offer_tricky">この問題は少し難しいですね。%1$sが別の言い方で説明してくれます。</string>
+    <string name="player_offer_taking_time">じっくり考えていますか？%1$sが別の言い方で説明してくれます。</string>
+    <string name="player_offer_no_thanks">いいえ</string>
     <string name="player_unchecked_compare">各問題で答え合わせができるのは1日に数回です。次の解答例と自分の答えを比べてみてください：</string>
     <plurals name="player_key_points">
         <item quantity="other">要点%1$s個 / 全%2$s個</item>

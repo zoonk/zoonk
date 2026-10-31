@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.player
 
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -27,6 +29,7 @@ import com.zoonk.android.feature.goalcontent.GoalContentStore
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -48,6 +51,7 @@ internal class LessonPlayerHarness(
     val opened = mutableListOf<AppRoute>()
     val replaced = mutableListOf<AppRoute>()
     var closed = 0
+    var tutorAsked = false
     lateinit var api: FakeLessonPlayerApi
     val catalogApi = FakeCatalogApi()
     lateinit var catalog: CatalogStore
@@ -85,6 +89,7 @@ internal class LessonPlayerHarness(
         sessionId: String? = null,
         sessionSteps: SessionSteps? = null,
         restoration: StateRestorationTester? = null,
+        withTutor: Boolean = false,
         configure: FakeLessonPlayerApi.() -> Unit = {},
     ) {
         val lesson = playable(steps)
@@ -122,7 +127,24 @@ internal class LessonPlayerHarness(
                     val state by viewModel.state.collectAsState()
                     val ending by viewModel.ending.collectAsState()
                     LaunchedEffect(Unit) { viewModel.open(lesson) }
-                    LessonPlayer(lesson, state, ending, viewModel, exits, rememberAppNavigator(), ceremony = ceremony)
+                    LessonPlayer(
+                        lesson,
+                        state,
+                        ending,
+                        viewModel,
+                        exits,
+                        rememberAppNavigator(),
+                        ceremony = ceremony,
+                        tutor =
+                            if (withTutor) {
+                                LessonTutor(TutorIdentity("Sam", look = null)) { _, _, open, onOpenChange ->
+                                    TextButton(onClick = { onOpenChange(true) }) { Text("Ask buddy") }
+                                    LaunchedEffect(open) { if (open) tutorAsked = true }
+                                }
+                            } else {
+                                null
+                            },
+                    )
                 }
             }
         }

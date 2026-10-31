@@ -108,6 +108,9 @@
   "player_notice_picture_ready": "e2744f86b16f67cdda997321755b3f1a6293ba025bce9780c28cc1667a490a9c",
   "player_notice_self_correct": "d08469d66c3b513c6fe960c753432dfbf754ead98de2f49403a0f36e11181ba3",
   "player_notice_writing_skipped": "6f7ec4192f18a01eadc480ae8fd5555a7a4f603e34c2d13911207932d5b47b1e",
+  "player_offer_no_thanks": "d50e32202f9f5fdf68061c891218e537ac4a79178cf934c9b2d617a089751a85",
+  "player_offer_taking_time": "4a6de29f676afed36c365f1636f0d1bf4797a7f62c0d4a57ea401fbca06941f0",
+  "player_offer_tricky": "18011757acce053c6d478c95a2ae70ed192e1f1c95f1b67fe2508d8c4be285ff",
   "player_open_failed": "67b8e1a6af4847e3c5cbcd7340b22f59e869ef969953f6a40aee80603bea93aa",
   "player_opening_lesson": "04ddffca306d4c6571540ace77d879be63759dd8c85179534b86b96662ab557f",
   "player_part_of": "c9d745c1a3c7affefaecc365a89d28eacab7de5bfbd34e4709b693536252a865",
@@ -221,6 +224,9 @@
     <string name="player_explain_answer_title">Bu cevap neden doğru değil</string>
     <!-- Heading of the panel that recaps the lesson, not a button. -->
     <string name="player_from_the_lesson">Dersten</string>
+    <string name="player_offer_tricky">Bu soru biraz zor. %1$s farklı bir şekilde anlatabilir.</string>
+    <string name="player_offer_taking_time">Biraz daha zamana mı ihtiyacın var? %1$s farklı bir şekilde anlatabilir.</string>
+    <string name="player_offer_no_thanks">Hayır, teşekkürler</string>
     <string name="player_unchecked_compare">Her soruyu günde birkaç kez kontrol ediyoruz. Cevabını bununla karşılaştır:</string>
     <plurals name="player_key_points">
         <item quantity="one">%1$s / %2$s temel nokta</item>

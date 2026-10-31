@@ -108,6 +108,9 @@
   "player_notice_picture_ready": "dc438a40dac0f3d4ab94dad36bd3beefe9632a7167116152665edc46b7a40a6c",
   "player_notice_self_correct": "d984649639fa70ee8e5602fc980419775975f4f130bc600ddcf7de4442cb23a7",
   "player_notice_writing_skipped": "38d1dde65d180cfd97c32751ca9a135724678bcf57121d018132cb998e8b8db7",
+  "player_offer_no_thanks": "1ed1b1f66e58da51a94ac0d4b52b20fe92072d554b059ffae9ffca51872fef52",
+  "player_offer_taking_time": "cd288dfa3aaf597fba43ae6f9c84b54f575ff0537ff678212284a5e660d1e422",
+  "player_offer_tricky": "4969f2941607cfa6eef98d9ef0dcd36ff5bb288773e178b87aa683c6a49f1bd5",
   "player_open_failed": "e8610177db5bf9f53da2121140733dc789f92fe14676c8523932f9c8bda6ad62",
   "player_opening_lesson": "618017a49e2989cd25325d46e02b675a2825b32184dac3a73c4ce2f50f1b40b9",
   "player_part_of": "da683991d2b6a583fbffd98ab2d3a1201ed78462ebff6eb9b132c8cf6cc83e5f",
@@ -221,6 +224,9 @@
     <string name="player_explain_answer_title">이 답이 맞지 않는 이유</string>
     <!-- Heading of the panel that recaps the lesson, not a button. -->
     <string name="player_from_the_lesson">레슨 내용</string>
+    <string name="player_offer_tricky">이 문제는 좀 까다로워요. %1$s(이)가 다른 방식으로 설명해 줄 수 있어요.</string>
+    <string name="player_offer_taking_time">생각할 시간이 더 필요한가요? %1$s(이)가 다른 방식으로 설명해 줄 수 있어요.</string>
+    <string name="player_offer_no_thanks">아니요, 괜찮아요</string>
     <string name="player_unchecked_compare">문제마다 하루에 몇 번씩 답을 확인해요. 아래 답과 작성한 답을 비교해 보세요:</string>
     <plurals name="player_key_points">
         <item quantity="other">핵심 내용 %1$s/%2$s개</item>

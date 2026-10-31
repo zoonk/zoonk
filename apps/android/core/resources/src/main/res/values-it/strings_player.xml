@@ -108,6 +108,9 @@
   "player_notice_picture_ready": "cf2b2b3a088caaf44848119d7c6fb6d9a6a39c6083613d0bba30146a830369d7",
   "player_notice_self_correct": "a9207bac48c263b0e2ef306dd1b96cb680e0c16f724b3ca346b0b7695d05ab6f",
   "player_notice_writing_skipped": "7f7a8551bee765151c5f98e4a05f204cb922114c41989bb8bc5c6db672443147",
+  "player_offer_no_thanks": "d437e64d7e279c64bcff5b652b419ca6c28bc8a0b9e26bf54e6408fd3566f85f",
+  "player_offer_taking_time": "f9738ac6d6fd729c87bf5f18cd33d3fe13c593cc972a8d64fdac61330eb4bf99",
+  "player_offer_tricky": "02b926f34504bf2c9264d4ea8d6d2d8f3c25b00424531cc643c9366227dc2f36",
   "player_open_failed": "7eddaac226b8897341c94aec7a9ce84740c0229f1fc9e541192e0c900584553a",
   "player_opening_lesson": "f2ae56b1774fd32e593fb31a95c16b9bebcb9e778ad21248f235857fd4115dfe",
   "player_part_of": "4eda0724244cd2fd23edc92f0a9bcc87a7390ccf9be9d253bd8e0af327de89bc",
@@ -221,6 +224,9 @@
     <string name="player_explain_answer_title">Perché questa risposta non è corretta</string>
     <!-- Heading of the panel that recaps the lesson, not a button. -->
     <string name="player_from_the_lesson">Dalla lezione</string>
+    <string name="player_offer_tricky">Questa domanda è difficile. %1$s può spiegartela in un altro modo.</string>
+    <string name="player_offer_taking_time">Ti serve più tempo? %1$s può spiegartela in un altro modo.</string>
+    <string name="player_offer_no_thanks">No grazie</string>
     <string name="player_unchecked_compare">Controlliamo ogni domanda più volte al giorno. Confronta la tua risposta con questa:</string>
     <plurals name="player_key_points">
         <item quantity="one">%1$s di %2$s punto chiave</item>

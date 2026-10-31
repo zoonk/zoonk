@@ -108,6 +108,9 @@
   "player_notice_picture_ready": "1548da42120fba36ffcb895688ebb3eb7f8155fdf86382c6a71e3f706257c8fb",
   "player_notice_self_correct": "62aad019a74a3fcc36f27201ed49626ae0f0294cc26a004a285a7a822a246e2a",
   "player_notice_writing_skipped": "f6d4c0006cfd3d3d8df1b39877dafcf3b7b1f8cd533dff8e806fea1d5ba576ed",
+  "player_offer_no_thanks": "0454c96572ae6ecd36cab68e356395957f8b95efa76c5cbef0960074ff45121a",
+  "player_offer_taking_time": "82266d6402b2e15a7429d6e237a04f3e522237314ec2e5496f08e3ca028d2b69",
+  "player_offer_tricky": "f5f6d26d4ec994123b3169990eff1530c74dc643806beb0d6ac0c7a3ee232081",
   "player_open_failed": "78694bfa4aee6d92baa4dc8a1227c89e93ac4f58a973aab19be868242795338f",
   "player_opening_lesson": "6cc7a732955d694aa8e46962fda968d50ab48a1a2825fa010fd7d9d307661967",
   "player_part_of": "24de6e07e310cdc20f6cffd792ec0d9d0c4a9480b7d7831ab678fe726b799fb1",
@@ -221,6 +224,9 @@
     <string name="player_explain_answer_title">Warum diese Antwort nicht zutrifft</string>
     <!-- Heading of the panel that recaps the lesson, not a button. -->
     <string name="player_from_the_lesson">Aus der Lektion</string>
+    <string name="player_offer_tricky">Das ist knifflig. %1$s kann es dir anders erklären.</string>
+    <string name="player_offer_taking_time">Brauchst du etwas mehr Zeit? %1$s kann es dir anders erklären.</string>
+    <string name="player_offer_no_thanks">Nein danke</string>
     <string name="player_unchecked_compare">Jede Frage wird ein paar Mal am Tag geprüft. Vergleiche deine Antwort mit dieser:</string>
     <plurals name="player_key_points">
         <item quantity="one">%1$s von %2$s Kernpunkt</item>

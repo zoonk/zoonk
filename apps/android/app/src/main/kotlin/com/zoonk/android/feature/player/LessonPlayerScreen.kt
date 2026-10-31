@@ -32,9 +32,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.IntState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -48,7 +51,11 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -95,7 +102,6 @@ import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.SummaryIdeas
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.player.steps.keyPick
-import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LabelChip
@@ -149,7 +155,7 @@ fun LessonPlayer(
     endSlot: LessonEndSlot? = null,
     buddy: LearnerSummaryBuddy? = null,
     ceremony: MomentCeremony? = null,
-    ask: (@Composable (TutorScope, worded: Boolean) -> Unit)? = null,
+    tutor: LessonTutor? = null,
 ) {
     val screen = remember(state) { state?.screen() }
     val ownEnd =
@@ -195,6 +201,28 @@ fun LessonPlayer(
             }
         }
     val focus = remember { FocusRequester() }
+    var asking by rememberSaveable { mutableStateOf(false) }
+    // Main's offer to ask the buddy stops for a question once it's turned down or the buddy is asked about it.
+    var closedOffers by rememberSaveable { mutableStateOf(emptyList<String>()) }
+    val stepId = screen?.step?.id
+    val closeOffer = { if (stepId != null) closedOffers = closedOffers + stepId }
+    val touches = remember { mutableIntStateOf(0) }
+    val offer: (@Composable (BuddyOfferReason) -> Unit)? =
+        if (tutor == null || stepId in closedOffers) {
+            null
+        } else {
+            { reason ->
+                AskBuddyOffer(
+                    reason,
+                    tutor.identity,
+                    onAsk = {
+                        asking = true
+                        closeOffer()
+                    },
+                    onDismiss = closeOffer,
+                )
+            }
+        }
     val unsent = screen?.unsentAnswer == true
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
     // Escape leaves as back does, so leaving with an unsent answer asks first.
@@ -206,7 +234,11 @@ fun LessonPlayer(
             Modifier
                 .focusRequester(focus)
                 .focusable()
-                .onKeyEvent { event ->
+                .pointerInput(Unit) { countTouches(touches) }
+                .onPreviewKeyEvent { event ->
+                    if (event.type == KeyEventType.KeyDown) touches.intValue++
+                    false
+                }.onKeyEvent { event ->
                     event.type == KeyEventType.KeyDown && state != null && screen != null &&
                         handleKey(event.key, state, screen, viewModel, actions, leave) {
                             if (ownEnd == null) {
@@ -248,7 +280,14 @@ fun LessonPlayer(
                         TaskActionBar {
                             ActionBar(screen, actions, language.prompt, onBack = { viewModel.dispatch(LessonAction.GoBack) }) {
                                 // A screen that already offers help keeps the ask quiet.
-                                ask?.invoke(state.tutorScope(screen), state.showsMiss(screen) && screen.struggleOffer == null)
+                                tutor?.askButton?.invoke(
+                                    state.tutorScope(screen),
+                                    state.showsMiss(screen) && screen.struggleOffer == null,
+                                    asking,
+                                ) { open ->
+                                    asking = open
+                                    if (open) closeOffer()
+                                }
                             }
                         }
                     }
@@ -264,7 +303,7 @@ fun LessonPlayer(
                 Starting()
             } else {
                 Segments(screen.segments, state)
-                Content(state, screen, ending, viewModel, actions, exits, navigator, ownEnd, language, buddy, ceremony)
+                Content(state, screen, ending, viewModel, actions, exits, navigator, ownEnd, language, buddy, ceremony, offer, touches)
             }
         }
     }
@@ -386,6 +425,8 @@ private fun Content(
     language: LessonLanguage,
     buddy: LearnerSummaryBuddy?,
     ceremony: MomentCeremony?,
+    offer: (@Composable (BuddyOfferReason) -> Unit)?,
+    touches: IntState,
 ) {
     val run = state.run
 
@@ -439,7 +480,10 @@ private fun Content(
                         Notice(state, screen, viewModel)
                         // A screen's own picks (placed words, filled blanks) start over on the next screen and on a retry.
                         key(step.id, state.position) { StepView(step, state, screen, actions, navigator, language) }
-                        Result(state, screen, scroll, reveal, viewModel, exits)
+                        if (offer != null && screen.quickCheck == null) {
+                            StrugglePause(step, state.position, touches) { offer(BuddyOfferReason.Pause) }
+                        }
+                        Result(state, screen, scroll, reveal, viewModel, exits, offer)
                         LessonRecap(state, screen)
                     }
                 }
@@ -517,6 +561,7 @@ private fun Result(
     reveal: FeedbackReveal,
     viewModel: LessonPlayerViewModel,
     exits: LessonPlayerExits,
+    offer: (@Composable (BuddyOfferReason) -> Unit)?,
 ) {
     val step = screen.step ?: return
     val result = state.results[step.id] ?: return
@@ -553,6 +598,18 @@ private fun Result(
                     onSeePlus = { exits.open(AppRoute.Subscription) },
                 )
             }
+        }
+
+        if (screen.struggleOffer != null) offer?.invoke(BuddyOfferReason.Misses)
+    }
+}
+
+/** A press, a scroll or a key is the learner still there, as main's struggle pause counts them. */
+private suspend fun PointerInputScope.countTouches(touches: MutableIntState) {
+    awaitPointerEventScope {
+        while (true) {
+            val type = awaitPointerEvent(PointerEventPass.Initial).type
+            if (type == PointerEventType.Press || type == PointerEventType.Scroll) touches.intValue++
         }
     }
 }
