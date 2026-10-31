@@ -15,14 +15,6 @@ const EXAM_FORMAT_KINDS = [
   "other",
 ] as const;
 
-const EXAM_SCORING_METHODS = [
-  "raw",
-  "wrongCancelsRight",
-  "itemResponseTheory",
-  "scaled",
-  "other",
-] as const;
-
 const EXAM_DATE_KINDS = [
   "registrationStart",
   "registrationEnd",
@@ -181,7 +173,7 @@ const mockConditionsSchema = z.object({
         description:
           "How a right and a wrong answer score where it differs by test or format, in the notice's order; a question no row covers earns 1 point",
       }),
-    method: z.enum(EXAM_SCORING_METHODS),
+    method: z.enum(["raw", "wrongCancelsRight", "itemResponseTheory", "scaled", "other"]),
     parts: z
       .array(scoredPartSchema)
       .optional()

@@ -179,6 +179,7 @@ describe("mixed paper map shares", () => {
   it("counts a choice and its nested options once when assuming an essay share", () => {
     const structure = { ...enem, subjects: [...enem.subjects, ...grouped("Written", ["Essay"])] };
     const map = buildExamMap({ frequency: [], skills: [], structure });
+
     expect(map.subjects.map((item) => item.share)).toStrictEqual([
       1 / 3,
       5 / 90 / 1.5,
