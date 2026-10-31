@@ -1134,7 +1134,7 @@ msgstr "Eliminar cuenta"
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 msgctxt "PswkCL"
 msgid "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store."
-msgstr "Elimina tu cuenta y todo su contenido para siempre. Plus se cancela si lo compraste en la web; las compras en App Store se administran en App Store."
+msgstr "Elimina tu cuenta y todo su contenido para siempre. Se cancela la suscripción a Plus contratada en la web; las compras del App Store se administran en el App Store."
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -1458,7 +1458,7 @@ msgstr "<mono>{used, number}/{limit, number}</mono> mensajes enviados hoy a tu c
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "3iCRcP"
 msgid "Manage in App Store"
-msgstr "Administrar en App Store"
+msgstr "Administrar en el App Store"
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "tiFovn"
