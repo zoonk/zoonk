@@ -12,14 +12,15 @@ const ASK_TIMEOUT_MS = 45_000;
 
 export type TimeToCoverAnswer =
   | { kind: "covers"; minutes: number }
-  | { coreMinutes: number | null; kind: "none" };
+  | { everyTopicMinutes: number | null; kind: "none" };
 
-export function readTimeToCover(
-  time: Pick<PlanTimeToCover, "coreMinutes" | "recommendedMinutes">,
-): TimeToCoverAnswer {
-  return time.recommendedMinutes === null
-    ? { coreMinutes: time.coreMinutes, kind: "none" }
-    : { kind: "covers", minutes: time.recommendedMinutes };
+/** Offers only core's suggestion: a day longer than anyone keeps up isn't offered, even when it covers everything. */
+export function readTimeToCover({
+  suggested,
+}: Pick<PlanTimeToCover, "suggested">): TimeToCoverAnswer {
+  return suggested?.kind === "everything"
+    ? { kind: "covers", minutes: suggested.minutes }
+    : { everyTopicMinutes: suggested?.minutes ?? null, kind: "none" };
 }
 
 export function getOfferedMinutes(answer: TimeToCoverAnswer | null): number | null {
@@ -27,7 +28,7 @@ export function getOfferedMinutes(answer: TimeToCoverAnswer | null): number | nu
     return null;
   }
 
-  return answer.kind === "covers" ? answer.minutes : answer.coreMinutes;
+  return answer.kind === "covers" ? answer.minutes : answer.everyTopicMinutes;
 }
 
 export async function requestWithin<Answer>(
@@ -85,17 +86,7 @@ export function useTimeToCoverTexts() {
         values: { date: formatDate(fittingDate, "long"), time: formatDuration(dailyMinutes) },
       }),
     noDate: t("We couldn't find a date that covers everything."),
-    none: ({
-      targetDate,
-      targetDateNamedMonth,
-    }: Pick<PlanTimeToCover, "targetDateNamedMonth"> & { targetDate: string }) =>
-      t({
-        description:
-          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-        message:
-          "{dateKind, select, month {No amount of time a day covers everything in depth by {date}.} other {No amount of time a day covers everything in depth by {date}.}}",
-        values: goalDate({ isoDate: targetDate, namedMonth: targetDateNamedMonth, style: "long" }),
-      }),
+    none: t("Your date is too close to cover everything in depth."),
     tryAgain: t("Try again"),
     use: (minutes: number) =>
       t({

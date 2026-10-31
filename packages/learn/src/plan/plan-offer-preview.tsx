@@ -204,12 +204,8 @@ export function useAnswerOffer() {
     time: PlanTimeToCover;
   }): CoverageOffer | null {
     const answer = readTimeToCover(time);
-    const { fittingDate, targetDate, targetDateNamedMonth } = time;
-
-    const none =
-      answer.kind === "none" && targetDate
-        ? texts.none({ targetDate, targetDateNamedMonth })
-        : null;
+    const { fittingDate, targetDate } = time;
+    const none = answer.kind === "none" && targetDate ? texts.none : null;
 
     if (goal.kind !== "exam" && fittingDate && (intent === "date" || answer.kind !== "covers")) {
       return {

@@ -9345,6 +9345,7 @@ msgid "The days you picked can't cover everything in depth by your date. More st
 msgstr "Com os dias que você escolheu, não dá para estudar tudo a fundo até a data definida. Mais dias de estudo ajudariam."
 
 #: src/onboarding/steps/schedule-line.tsx
+#: src/plan/use-time-to-cover.ts
 msgctxt "YNFEUo"
 msgid "Your date is too close to cover everything in depth."
 msgstr "A data está muito próxima para estudar tudo a fundo."
@@ -11389,12 +11390,6 @@ msgstr "Com {time} por dia, seu plano cobre tudo até {date}."
 msgctxt "wo_0PK"
 msgid "We couldn't find a date that covers everything."
 msgstr "A gente não conseguiu encontrar uma data para estudar tudo."
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/plan/use-time-to-cover.ts
-msgctxt "YV4Gvt"
-msgid "{dateKind, select, month {No amount of time a day covers everything in depth by {date}.} other {No amount of time a day covers everything in depth by {date}.}}"
-msgstr "{dateKind, select, month {Não dá para estudar tudo a fundo até {date}, seja qual for o tempo diário.} other {Não dá para estudar tudo a fundo até {date}, seja qual for o tempo diário.}}"
 
 #. A button that changes the plan's daily time to the one just found.
 #: src/plan/use-time-to-cover.ts

@@ -133,17 +133,10 @@ export function FindLine({
             </p>
           )}
 
-          {answer?.kind === "none" && answered?.targetDate && (
-            <p>
-              {texts.none({
-                targetDate: answered.targetDate,
-                targetDateNamedMonth: answered.targetDateNamedMonth,
-              })}
-            </p>
-          )}
+          {answer?.kind === "none" && answered?.targetDate && <p>{texts.none}</p>}
 
-          {answer?.kind === "none" && answer.coreMinutes !== null && (
-            <p>{texts.everyTopic(answer.coreMinutes)}</p>
+          {answer?.kind === "none" && answer.everyTopicMinutes !== null && (
+            <p>{texts.everyTopic(answer.everyTopicMinutes)}</p>
           )}
 
           {dateFound && (
