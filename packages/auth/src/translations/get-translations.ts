@@ -25,13 +25,15 @@ export function getTranslation(locale: string) {
   return translations[isTranslatedLocale(locale) ? locale : "en"]();
 }
 
-export async function getRequestTranslation() {
+export async function getRequestLocale(): Promise<string> {
   const [cookieStore, headerStore] = await Promise.all([cookies(), headers()]);
 
-  const locale = getLocaleFromRequest({
+  return getLocaleFromRequest({
     acceptLanguage: headerStore.get("accept-language"),
     cookieLocale: cookieStore.get(LOCALE_COOKIE)?.value,
   });
+}
 
-  return getTranslation(locale);
+export async function getRequestTranslation() {
+  return getTranslation(await getRequestLocale());
 }

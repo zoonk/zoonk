@@ -27,7 +27,9 @@
     "./username-rules": "./src/username-rules.ts",
     "./user-blobs": "./src/user-blobs.ts",
     "./stripe-prices": "./src/stripe/prices.ts",
-    "./subscription-events": "./src/stripe/subscription-events.ts"
+    "./subscription-events": "./src/stripe/subscription-events.ts",
+    "./plus-emails": "./src/stripe/plus-emails.ts",
+    "./stripe-client": "./src/stripe/client.ts"
   },
   "scripts": {
     "test": "vitest run",

@@ -40,3 +40,5 @@ export const MAIN_URL = getDefaultMainUrl();
 export const TERMS_URL = new URL("/terms", MAIN_URL).toString();
 
 export const PRIVACY_URL = new URL("/privacy", MAIN_URL).toString();
+
+export const CANCEL_SUBSCRIPTION_URL = new URL("/subscription/cancel", MAIN_URL).toString();

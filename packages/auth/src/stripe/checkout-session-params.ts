@@ -1,18 +1,19 @@
 import { TERMS_URL } from "@zoonk/utils/url";
 import {
-  getRequestTranslation,
+  getRequestLocale,
   getTranslation,
   isTranslatedLocale,
 } from "../translations/get-translations";
 import type Stripe from "stripe";
 
+/** The language of the emails about this subscription, which Stripe's webhooks can't tell. */
+export const SUBSCRIPTION_LOCALE_KEY = "locale";
+
 /** Stripe's `auto` and any language we don't translate fall back to the request's language. */
-function getCheckoutTranslation(stripeLocale?: string) {
+async function getCheckoutLocale(stripeLocale?: string): Promise<string> {
   const language = stripeLocale?.split("-")[0];
 
-  return language && isTranslatedLocale(language)
-    ? getTranslation(language)
-    : getRequestTranslation();
+  return language && isTranslatedLocale(language) ? language : getRequestLocale();
 }
 
 /**
@@ -27,7 +28,8 @@ export async function getCheckoutSessionParams({
   annual: boolean;
   locale?: string;
 }): Promise<Stripe.Checkout.SessionCreateParams> {
-  const t = await getCheckoutTranslation(locale);
+  const language = await getCheckoutLocale(locale);
+  const t = await getTranslation(language);
 
   return {
     allow_promotion_codes: true,
@@ -38,5 +40,6 @@ export async function getCheckoutSessionParams({
         message: t.checkoutTermsConsent.replace("{termsUrl}", TERMS_URL),
       },
     },
+    subscription_data: { metadata: { [SUBSCRIPTION_LOCALE_KEY]: language } },
   };
 }

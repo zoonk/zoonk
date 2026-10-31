@@ -3,6 +3,7 @@ import { PAID_PLANS } from "@zoonk/utils/subscription";
 import { z } from "zod";
 import { getCheckoutSessionParams } from "./checkout-session-params";
 import { stripeClient } from "./client";
+import { sendPlusPurchaseConfirmation } from "./purchase-confirmation";
 import { reportSubscriptionChange } from "./subscription-events";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? "";
@@ -38,7 +39,16 @@ export function stripePlugin() {
       // pending; a subscription ended right away (or by failed payments) was never pending.
       onSubscriptionCancel: ({ subscription }) => reportChange("canceled", subscription),
       // Stripe confirmed a checkout; the learner may never come back to the page it returns to.
-      onSubscriptionComplete: ({ subscription }) => reportChange("started", subscription),
+      // Better Auth logs a failure here, and Stripe isn't asked to retry the webhook.
+      onSubscriptionComplete: async ({ stripeSubscription, subscription }) => {
+        await Promise.all([
+          reportChange("started", subscription),
+          sendPlusPurchaseConfirmation({
+            referenceId: subscription.referenceId,
+            stripeSubscription,
+          }),
+        ]);
+      },
       onSubscriptionDeleted: async ({ subscription }) => {
         if (!subscription.cancelAtPeriodEnd && !subscription.cancelAt) {
           await reportChange("canceled", subscription);

@@ -13,6 +13,12 @@ describe(getCheckoutSessionParams, () => {
     });
   });
 
+  it("keeps the language on the subscription for its emails", async () => {
+    const params = await getCheckoutSessionParams({ annual: false, locale: "pt-BR" });
+
+    expect(params.subscription_data).toStrictEqual({ metadata: { locale: "pt" } });
+  });
+
   it("writes it in a translated language the site doesn't offer yet", async () => {
     const params = await getCheckoutSessionParams({ annual: false, locale: "ja" });
 
