@@ -9,11 +9,7 @@ type Subject = ExamStructure["subjects"][number];
 
 const PERCENT = 100;
 
-type ShareGroup = { parts: readonly string[]; share: number };
-
-function isInGroup({ group, subject }: { group: ShareGroup; subject: Subject }): boolean {
-  return coversSubject({ parts: group.parts, subject });
-}
+type ShareGroup = { parts: readonly string[]; share: number; term: boolean };
 
 function findQualifyingPart({
   structure,
@@ -51,43 +47,77 @@ function getPassShare({ part, structure }: { part: ScoredPart; structure: ExamSt
   return max ? Math.min(1, minimum.value / max) : 1;
 }
 
-/** A subject's own stated weight counts only where no term of the final score covers it. */
+/**
+ * A subject's own stated weight is a share of its own where no term of the final score covers it;
+ * inside a term it counts when it fits the term's share (`splitTerm`).
+ */
 function listShareGroups(structure: ExamStructure): ShareGroup[] {
   const terms = structure.mock?.scoring.finalShares ?? [];
 
   const own = structure.subjects.flatMap((subject) =>
-    subject.weight !== null && !terms.some((group) => isInGroup({ group, subject }))
-      ? [{ parts: [subject.name], share: subject.weight }]
+    subject.weight !== null && !terms.some((term) => coversSubject({ parts: term.parts, subject }))
+      ? [{ parts: [subject.name], share: subject.weight, term: false }]
       : [],
   );
 
-  return [...terms, ...own];
+  return [...terms.map((term) => ({ parts: term.parts, share: term.share, term: true })), ...own];
+}
+
+/** Rounded weights, such as 0.33 and 0.17 of a 0.5 term, can miss its share by a little. */
+const SHARE_TOLERANCE = 0.01;
+
+/**
+ * The weights a term's subjects state count when they fit its share, and the rest of the share goes
+ * to its other subjects by points. Weights past the share, or leaving part of it to no subject,
+ * contradict the term, so it splits by points.
+ */
+function splitTerm({ members, share }: { members: readonly Subject[]; share: number }) {
+  const weighed = members.filter((member) => member.weight !== null);
+  const others = members.filter((member) => member.weight === null);
+  const remainder = share - weighed.reduce((sum, member) => sum + (member.weight ?? 0), 0);
+
+  const fits =
+    weighed.length > 0 &&
+    remainder >= -SHARE_TOLERANCE &&
+    (others.length > 0 || remainder <= SHARE_TOLERANCE);
+
+  return fits
+    ? { byPoints: others, pool: Math.max(0, remainder), weighed: true }
+    : { byPoints: members, pool: share, weighed: false };
 }
 
 function getShareInGroup({
+  group,
   members,
   points,
-  share,
-  stated,
+  rest,
   subject,
 }: {
+  group: ShareGroup | null;
   members: readonly Subject[];
   points: ReadonlyMap<Subject, number | null>;
-  share: number;
-  stated: boolean;
+  rest: number;
   subject: Subject;
 }): number | null {
   const own = points.get(subject) ?? null;
-  const memberPoints = members.map((member) => points.get(member) ?? null);
 
-  if (!stated) {
-    const total = memberPoints.reduce<number>((sum, value) => sum + (value ?? 0), 0);
-    return own !== null && total > 0 ? (share * own) / total : null;
+  if (!group) {
+    const total = members.reduce((sum, member) => sum + (points.get(member) ?? 0), 0);
+    return own !== null && total > 0 ? (rest * own) / total : null;
   }
 
-  const fallback = getSubjectShareFallback(memberPoints);
-  const total = memberPoints.reduce<number>((sum, value) => sum + (value ?? fallback), 0);
-  return total > 0 ? (share * (own ?? fallback)) / total : null;
+  const split = group.term
+    ? splitTerm({ members, share: group.share })
+    : { byPoints: members, pool: group.share, weighed: false };
+
+  if (split.weighed && subject.weight !== null) {
+    return subject.weight;
+  }
+
+  const shared = split.byPoints.map((member) => points.get(member) ?? null);
+  const fallback = getSubjectShareFallback(shared);
+  const total = shared.reduce<number>((sum, value) => sum + (value ?? fallback), 0);
+  return total > 0 ? (split.pool * (own ?? fallback)) / total : null;
 }
 
 /**
@@ -100,7 +130,7 @@ export function listSubjectShares(structure: ExamStructure): (number | null)[] {
   const rest = Math.max(0, 1 - groups.reduce((sum, group) => sum + group.share, 0));
 
   const groupOf = (subject: Subject) =>
-    groups.find((group) => isInGroup({ group, subject })) ?? null;
+    groups.find((group) => coversSubject({ parts: group.parts, subject })) ?? null;
 
   const counted = listCountedSubjects(structure.subjects).filter(
     (subject) => !isQualifying({ structure, subject }),
@@ -118,10 +148,10 @@ export function listSubjectShares(structure: ExamStructure): (number | null)[] {
     const group = groupOf(subject);
 
     return getShareInGroup({
+      group,
       members: counted.filter((member) => groupOf(member) === group),
       points,
-      share: group?.share ?? rest,
-      stated: group !== null,
+      rest,
       subject,
     });
   });

@@ -181,7 +181,28 @@ describe("the final score's formula", () => {
     ]);
   });
 
-  it("lets a term of the final score decide over a subject's own weight", () => {
+  it.each([
+    { name: "every subject's", shares: [0.4, 0.1], weights: { Português: 0.4, Ética: 0.1 } },
+    { name: "one subject's", shares: [0.4, 0.1], weights: { Português: 0.4 } },
+    { name: "past the term's", shares: [0.25, 0.25], weights: { Português: 0.6 } },
+  ])(
+    "keeps a term's subjects at their stated weights when they fit it: $name weight",
+    ({ shares, weights }) => {
+      const structure = withFormula([term(["P1"], 0.5), term(["P2", "P3", "P4"], 0.5)]);
+
+      const subjects = structure.subjects.map((item) => ({
+        ...item,
+        weight: weights[item.name as keyof typeof weights] ?? null,
+      }));
+
+      const [portuguese, ethics] = listSubjectShares({ ...structure, subjects });
+
+      expect(portuguese).toBeCloseTo(shares[0] ?? 0);
+      expect(ethics).toBeCloseTo(shares[1] ?? 0);
+    },
+  );
+
+  it("lets a term of the final score decide over a subject's own weight that contradicts it", () => {
     const structure = withFormula([term(["P1", "P2", "P3"], 0.5), term(["P4"], 0.5)]);
 
     const subjects = structure.subjects.map((item) =>
