@@ -33,13 +33,15 @@ export const examChoiceViewSchema = z
     group: z.string(),
     leftOut: z
       .object({
+        examPoints: z.number().int().nullable(),
         examQuestions: z.number().int().nullable(),
         name: z.string(),
+        points: z.number().int().nullable(),
         questions: z.number().int().nullable(),
       })
       .meta({
         description:
-          "What the plan and mocks leave out while nothing is picked: `name` is the test the options make up (a specialty's own test), or the choice itself; `questions` is how many questions an option has and `examQuestions` the exam's, each null when the notice doesn't say",
+          "What the plan and mocks leave out while nothing is picked: `name` is the test the options make up (a specialty's own test), or the choice itself. `points` and `questions` are what an option is worth and how many questions it has; `examPoints` and `examQuestions` the whole exam's with one option. Each is null when the notice doesn't say",
       }),
     options: z.array(z.object({ name: z.string(), shortName: z.string().nullable() })),
     subject: z.string().nullable(),

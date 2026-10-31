@@ -5,11 +5,8 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { searchCourses } from "../../courses/search-courses";
 import { getNoSitting } from "../../exams/_utils/notice-day";
 import { getExamCalendarDay, getPlanExamDays } from "../../exams/_utils/plan-exam-days";
-import {
-  findNamedOption,
-  listExamChoiceViews,
-  toChosenStructure,
-} from "../../exams/choices/exam-choices";
+import { listExamChoiceViews } from "../../exams/choices/exam-choice-views";
+import { findNamedOption, toChosenStructure } from "../../exams/choices/exam-choices";
 import { loadExamChoices } from "../../exams/choices/load-exam-choices";
 import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { loadCourseExam } from "../../goals/_utils/course-exam";

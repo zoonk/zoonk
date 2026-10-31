@@ -2,12 +2,8 @@ import "server-only";
 import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
 import { type ExamChoiceView } from "./exam-choice-contract";
-import {
-  type ExamChoice,
-  findPartAreas,
-  listExamChoiceViews,
-  readExamChoices,
-} from "./exam-choices";
+import { listExamChoiceViews } from "./exam-choice-views";
+import { type ExamChoice, findPartAreas, readExamChoices } from "./exam-choices";
 
 export async function loadExamChoices(goalId: string): Promise<ExamChoice[]> {
   const plan = await prisma.plan.findUnique({ select: { settings: true }, where: { goalId } });

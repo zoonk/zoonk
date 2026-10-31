@@ -77790,6 +77790,12 @@
           "leftOut": {
             "type": "object",
             "properties": {
+              "examPoints": {
+                "nullable": true,
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
               "examQuestions": {
                 "nullable": true,
                 "type": "integer",
@@ -77799,6 +77805,12 @@
               "name": {
                 "type": "string"
               },
+              "points": {
+                "nullable": true,
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
               "questions": {
                 "nullable": true,
                 "type": "integer",
@@ -77807,12 +77819,14 @@
               }
             },
             "required": [
+              "examPoints",
               "examQuestions",
               "name",
+              "points",
               "questions"
             ],
             "additionalProperties": false,
-            "description": "What the plan and mocks leave out while nothing is picked: `name` is the test the options make up (a specialty's own test), or the choice itself; `questions` is how many questions an option has and `examQuestions` the exam's, each null when the notice doesn't say"
+            "description": "What the plan and mocks leave out while nothing is picked: `name` is the test the options make up (a specialty's own test), or the choice itself. `points` and `questions` are what an option is worth and how many questions it has; `examPoints` and `examQuestions` the whole exam's with one option. Each is null when the notice doesn't say"
           },
           "options": {
             "type": "array",

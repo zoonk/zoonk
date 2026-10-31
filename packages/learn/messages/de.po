@@ -603,6 +603,12 @@ msgctxt "belts.E1okmE"
 msgid "White belt"
 msgstr "Weißer Gürtel"
 
+#. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. {count} and {total} are points of the exam's score.
+#: src/_utils/use-choice-left-out.ts
+msgctxt "8GYum4"
+msgid "Until you pick, your plan and mocks leave out {name}: {count, number} of the exam's {total, number} points."
+msgstr "Bis du eine Option auswählst, lassen dein Plan und deine Probeprüfungen {name} aus: {count, number} von {total, number} Prüfungspunkten."
+
 #. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
 #: src/_utils/use-choice-left-out.ts
 msgctxt "Rpl5Yb"

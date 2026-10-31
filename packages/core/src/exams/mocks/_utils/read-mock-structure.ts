@@ -2,11 +2,8 @@ import "server-only";
 import { type ExamBlueprint } from "@zoonk/db";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
-import {
-  type ExamChoice,
-  listUnpickedLeftOut,
-  toChosenStructure,
-} from "../../choices/exam-choices";
+import { listUnpickedLeftOut } from "../../choices/exam-choice-views";
+import { type ExamChoice, toChosenStructure } from "../../choices/exam-choices";
 import { getMockSizeSource } from "../mock-size-source";
 import { toMockStructure } from "../mock-structure";
 import { type MockSizeSource } from "../mock-view-contract";

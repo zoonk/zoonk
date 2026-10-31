@@ -3,7 +3,7 @@ import { z } from "zod";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getSubjectQuestions } from "../../library/exams/subject-questions";
 import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
-import { type ExamChoiceView, examChoicePickSchema } from "./exam-choice-contract";
+import { examChoicePickSchema } from "./exam-choice-contract";
 
 type Subject = ExamStructure["subjects"][number];
 
@@ -41,75 +41,6 @@ export function findChoiceOption({
 }): Subject | null {
   const group = listChoiceGroups(structure.subjects).find((item) => item.name === choice.group);
   return group?.options.find((option) => option.name === choice.subject) ?? null;
-}
-
-function findOptionsTest({
-  group,
-  structure,
-}: {
-  group: ChoiceGroup<Subject>;
-  structure: ExamStructure;
-}): string | null {
-  const [test, ...others] = new Set(group.options.map((option) => option.group ?? null));
-
-  const isWhole =
-    test &&
-    others.length === 0 &&
-    structure.subjects.every(
-      (subject) => subject.group !== test || subject.choiceGroup === group.name,
-    );
-
-  return isWhole ? test : null;
-}
-
-function describeLeftOut({
-  group,
-  structure,
-}: {
-  group: ChoiceGroup<Subject>;
-  structure: ExamStructure;
-}): ExamChoiceView["leftOut"] {
-  const counts = group.options.map((option) => getSubjectQuestions({ structure, subject: option }));
-
-  return {
-    examQuestions: structure.mock?.totalQuestions ?? null,
-    name: findOptionsTest({ group, structure }) ?? group.name,
-    questions: counts.find((count) => count !== null) ?? null,
-  };
-}
-
-export function listExamChoiceViews({
-  choices,
-  structure,
-}: {
-  choices: readonly ExamChoice[];
-  structure: ExamStructure;
-}): ExamChoiceView[] {
-  return listChoiceGroups(structure.subjects).map((group) => {
-    const choice = choices.find((item) => item.group === group.name);
-
-    return {
-      group: group.name,
-      leftOut: describeLeftOut({ group, structure }),
-      options: group.options.map((option) => ({
-        name: option.name,
-        shortName: option.shortName ?? null,
-      })),
-      subject: group.options.find((option) => option.name === choice?.subject)?.name ?? null,
-    };
-  });
-}
-
-export function listUnpickedLeftOut({
-  choices,
-  structure,
-}: {
-  choices: readonly ExamChoice[];
-  structure: ExamStructure;
-}): string[] {
-  return listExamChoiceViews({ choices, structure }).flatMap((view) =>
-    view.subject ? [] : [view.leftOut.name],
-  );
 }
 
 /** Shorter words are acronyms like "TI", which a notice can spell out in its other options' names. */
