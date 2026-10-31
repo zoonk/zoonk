@@ -34,12 +34,15 @@ export function listAskedIn<Format extends SectionedFormat>({
   }
 
   const asked = formats.filter((format) => isAskedIn({ format, names }));
-  const unknown = new Set(findUnknownScopeFormats(asked.length > 0 ? formats : []));
+  const unscoped = formats.filter((format) => !format.sections?.length);
 
-  return formats.filter(
-    (format) => isAskedIn({ format, names }) || (!format.sections?.length && !unknown.has(format)),
-  );
+  if (asked.length > 0) {
+    return asked;
+  }
+
+  return unscoped.length > 0 ? unscoped : [...formats];
 }
+
 
 export function listAskedSkills<Skill extends { area: string | null }>({
   format,

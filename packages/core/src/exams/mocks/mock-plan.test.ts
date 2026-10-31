@@ -78,6 +78,33 @@ function formatted(area: string, key: string): MockCandidate[] {
 }
 
 describe(planMock, () => {
+  it("keeps a complete mock when format scopes and section names use different labels", () => {
+    const exam = {
+      ...structure({ sections: [sectioned("Physics", 10), sectioned("Chemistry", 10)] }),
+      formats: [
+        format({ sections: ["Section 1"] }),
+        format({ kind: "numeric", options: null, sections: ["Section 2"] }),
+      ],
+      subjects: [],
+    };
+
+    const bank = ["Physics", "Chemistry"].flatMap((area) => [
+      ...formatted(area, "choice:5"),
+      ...formatted(area, "numeric:number:"),
+    ]);
+
+    const plan = planMock({
+      adaptive: false,
+      candidates: bank,
+      fullLength: true,
+      mockNumber: 0,
+      structure: exam,
+    });
+
+    expect(plan.sections.map((section) => section.itemIds.length)).toStrictEqual([10, 10]);
+    expect(plan.formatsWanted).toStrictEqual({ "choice:5": 10, "numeric:number:": 10 });
+  });
+
   it("keeps choice everywhere alongside numeric questions in Section B", () => {
     const exam = {
       ...structure({ sections: [sectioned("Section A", 6), sectioned("Section B", 6)] }),
