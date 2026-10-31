@@ -1,9 +1,9 @@
 import { getPathname } from "@/i18n/navigation";
 import { SIGNED_IN_COOKIE } from "@/lib/auth/auth-change";
-import { escapeHtml } from "@/lib/http/escape-html";
 import { SESSION_HINT, SESSION_HINT_COOKIE } from "@zoonk/auth/session-hint";
 import { verifyOneTimeTokenCallback } from "@zoonk/core/auth/ott/callback";
 import { getSafeAppRelativePath } from "@zoonk/core/auth/ott/redirect";
+import { escapeHtml } from "@zoonk/utils/escape-html";
 import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import { getLocaleFromRequest } from "@zoonk/utils/locale-request";
 import { getExtracted } from "next-intl/server";

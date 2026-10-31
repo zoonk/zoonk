@@ -22,6 +22,7 @@
     "./download": "./src/download.ts",
     "./duration": "./src/duration.ts",
     "./environment": "./src/environment.ts",
+    "./escape-html": "./src/escape-html.ts",
     "./error": "./src/error.ts",
     "./exam-boards": "./src/exam-boards.ts",
     "./form": "./src/form.ts",

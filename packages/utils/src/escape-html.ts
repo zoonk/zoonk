@@ -1,4 +1,4 @@
-/** Escapes text and attribute values for the few HTML documents a route writes by hand. */
+/** Escapes text and attribute values in HTML written by hand: a route's documents and our emails. */
 export function escapeHtml(value: string): string {
   return value
     .replaceAll("&", "&amp;")

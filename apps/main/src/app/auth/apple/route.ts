@@ -1,4 +1,4 @@
-import { escapeHtml } from "@/lib/http/escape-html";
+import { escapeHtml } from "@zoonk/utils/escape-html";
 import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import { getLocaleFromRequest } from "@zoonk/utils/locale-request";
 import { getExtracted } from "next-intl/server";
