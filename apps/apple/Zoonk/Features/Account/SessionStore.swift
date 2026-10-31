@@ -382,6 +382,33 @@ final class SessionStore {
     return result
   }
 
+  /// False when it failed. Plus renewing again, or a renewal that can't be turned back on anymore,
+  /// refreshes the account and what's left to cancel. A session that ended meanwhile fails; an
+  /// unauthorized answer signs that session out.
+  func keepWebPlus() async -> Bool {
+    guard let authenticatedSession else {
+      return false
+    }
+
+    do {
+      try await api.keepWebPlus(token: authenticatedSession.bearerToken)
+    } catch AccountAPIError.cancellationChoiceClosed {
+    } catch AccountAPIError.unauthorized {
+      await expire(authenticatedSession)
+      return false
+    } catch {
+      return false
+    }
+
+    guard self.authenticatedSession == authenticatedSession else {
+      return false
+    }
+
+    subscriptionChanged?()
+    await reloadAccount(for: authenticatedSession)
+    return true
+  }
+
   /// A refresh that started before the change must not bring back the account it replaced.
   private func reloadAccount(for session: AuthenticatedSession) async {
     accountRefreshRevision = UUID()

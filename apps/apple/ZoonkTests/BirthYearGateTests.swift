@@ -303,6 +303,45 @@ final class BirthYearGateTests: XCTestCase {
     XCTAssertEqual(visitor.gate.prompt, .belowMinimumAge(13, logsOut: false))
   }
 
+  func testAClosedAccountIsForgottenOnOKWithoutLoggingOutAndIsRemembered() async {
+    let device = makeDefaultsSuite()
+    let app = makeApp(saves: [.accountClosed(13)], device: device)
+    await app.signIn()
+
+    await app.gate.submit(2020)
+
+    XCTAssertEqual(app.gate.prompt, .accountClosed(13))
+    XCTAssertNotNil(app.session.account, "Nothing changes until OK")
+
+    await app.gate.forgetClosedAccount()
+
+    XCTAssertNil(app.session.account)
+    XCTAssertTrue(app.accounts.signOuts.isEmpty, "Its server session is gone already")
+    XCTAssertNil(app.gate.prompt)
+
+    let visitor = makeApp(device: device)
+    let retried = await visitor.gate.startGuest()
+
+    XCTAssertFalse(retried)
+    XCTAssertEqual(visitor.gate.prompt, .belowMinimumAge(13, logsOut: false))
+  }
+
+  func testAClosedAccountsMessageStaysWhenARequestFindsItsSessionGone() async throws {
+    let app = makeApp(saves: [.accountClosed(13)])
+    await app.signIn()
+    await app.gate.submit(2020)
+
+    await app.session.expire(try XCTUnwrap(app.session.authenticatedSession))
+    app.gate.followSession()
+
+    XCTAssertNil(app.session.account)
+    XCTAssertEqual(app.gate.prompt, .accountClosed(13))
+
+    await app.gate.forgetClosedAccount()
+
+    XCTAssertNil(app.gate.prompt)
+  }
+
   func testAnAccountOnADeviceThatRefusedWithinTheDayGetsTheMessageAndLogsOut() async {
     let device = makeDefaultsSuite()
     await refuseAVisitor(on: device, clock: TestClock())
@@ -400,6 +439,7 @@ private final class TestClock {
 private actor BirthYearAPIStub: BirthYearAPIClient {
   enum Answer {
     case accepted
+    case accountClosed(Int)
     case belowMinimumAge(Int)
     case failure(APIError)
     case invalidYear
@@ -465,6 +505,8 @@ private actor BirthYearAPIStub: BirthYearAPIClient {
     switch answer {
     case .accepted:
       .accepted
+    case .accountClosed(let minimumAge):
+      .accountClosed(minimumAge: minimumAge)
     case .belowMinimumAge(let minimumAge):
       .belowMinimumAge(minimumAge)
     case .failure(let error):

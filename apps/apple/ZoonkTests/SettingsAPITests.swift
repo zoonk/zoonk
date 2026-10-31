@@ -74,6 +74,8 @@ final class SettingsAPITests: XCTestCase {
           status: .ok,
           json: """
             {
+              "accountDeletion": { "refund": { "amount": 29.9, "currency": "BRL" } },
+              "canResumeRenewal": true,
               "cancellation": null,
               "extraordinary": { "refund": { "amount": 19.5, "currency": "BRL" } },
               "withdrawal": {
@@ -91,7 +93,9 @@ final class SettingsAPITests: XCTestCase {
         withdrawal: .init(
           refund: Money(amount: 29.9, currency: "BRL"),
           until: try Date("2026-11-14T12:00:00Z", strategy: .iso8601)),
-        periodEnd: nil))
+        periodEnd: nil,
+        canResumeRenewal: true,
+        accountDeletionRefund: Money(amount: 29.9, currency: "BRL")))
   }
 
   func testNothingLeftToCancelIsNotFound() async {

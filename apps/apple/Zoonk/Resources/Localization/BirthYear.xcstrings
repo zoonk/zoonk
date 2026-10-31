@@ -262,6 +262,35 @@
         }
       }
     },
+    "You need to be %lld or older to use Zoonk, so we've closed your account and deleted its data. We'll be here when you are." : {
+      "comment" : "Tells a signed-in learner whose birth year is certainly below the minimum age that their account is already deleted; the number is that age",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du musst mindestens %lld Jahre alt sein, um Zoonk zu nutzen. Deshalb haben wir dein Konto geschlossen und die zugehörigen Daten gelöscht. Wir sind für dich da, sobald du alt genug bist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Debes tener al menos %lld años para usar Zoonk, así que cerramos tu cuenta y eliminamos sus datos. Aquí estaremos cuando tengas la edad necesaria."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu dois avoir au moins %lld ans pour utiliser Zoonk. Nous avons donc fermé ton compte et supprimé ses données. Nous serons là quand tu auras l’âge requis."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você precisa ter pelo menos %lld anos para usar o Zoonk, então encerramos sua conta e excluímos os dados dela. A gente vai estar aqui quando você tiver a idade necessária."
+          }
+        }
+      }
+    },
     "You need to be %lld or older to use Zoonk. We'll be here when you are." : {
       "comment" : "Tells a learner below the minimum age kindly; the number is that age",
       "localizations" : {

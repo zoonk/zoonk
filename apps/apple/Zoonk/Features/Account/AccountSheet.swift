@@ -14,7 +14,7 @@ private enum AccountDestination: Hashable {
 private struct AccountDeletionDestination: Hashable {
   let email: String
   let hasAppleAccount: Bool
-  let storeSubscriptionProvider: StoreSubscriptionProvider?
+  let subscription: AccountSubscription?
 }
 
 struct AccountSheet: View {
@@ -158,7 +158,7 @@ struct AccountSheet: View {
       AccountDeletionView(
         email: deletion.email,
         hasAppleAccount: deletion.hasAppleAccount,
-        storeSubscriptionProvider: deletion.storeSubscriptionProvider)
+        subscription: deletion.subscription)
     case .memory:
       MemoryView()
     case .preferences:
@@ -449,9 +449,7 @@ private func makeDeletionDestination(_ account: CurrentAccount) -> AccountDeleti
   AccountDeletionDestination(
     email: account.user.email,
     hasAppleAccount: account.account.deletion.hasAppleAccount,
-    storeSubscriptionProvider: account.account.subscription.flatMap {
-      StoreSubscriptionProvider(rawValue: $0.provider)
-    })
+    subscription: account.account.subscription)
 }
 
 private struct AccountSubscriptionRow: View {

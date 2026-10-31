@@ -52,9 +52,12 @@ struct Money: Equatable {
   /// In the currency's major unit: 29.9 is R$ 29,90.
   let amount: Double
   let currency: String
+
+  var formatted: String {
+    amount.formatted(.currency(code: currency))
+  }
 }
 
-/// At least one choice is set.
 struct WebPlusCancellation: Equatable {
   struct Withdrawal: Equatable {
     let refund: Money
@@ -70,6 +73,10 @@ struct WebPlusCancellation: Equatable {
   let withdrawal: Withdrawal?
   /// Stopping the renewal; after a yearly renewal it refunds the months that haven't started.
   let periodEnd: PeriodEnd?
+  /// Only the renewal is stopped, so Plus can be kept and renew as before.
+  var canResumeRenewal = false
+  /// Deleting the account ends Plus right away and refunds this.
+  var accountDeletionRefund: Money? = nil
 }
 
 enum WebPlusCancellationPreview: Equatable {

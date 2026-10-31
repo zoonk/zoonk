@@ -1093,6 +1093,80 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testKeepingPlusTurnsTheRenewalBackOnAndReadsThePlanAgain() async {
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(
+        makeAccount(subscription: makeWebSubscription(cancelAt: Date(timeIntervalSince1970: 0)))))
+    api.keepWebPlusHandler = { _ in }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    let cache = AppCache(session: session)
+    var canResumeRenewal = true
+    let choices: Resource<WebPlusCancellation> = cache.resource(
+      audience: .signedIn, domains: [.userSubscription]
+    ) { _ in
+      WebPlusCancellation(withdrawal: nil, periodEnd: nil, canResumeRenewal: canResumeRenewal)
+    }
+    await choices.load()
+
+    canResumeRenewal = false
+    api.currentAccountResult = .success(makeAccount(subscription: makeWebSubscription()))
+    let kept = await session.keepWebPlus()
+    await choices.load()
+
+    XCTAssertTrue(kept)
+    XCTAssertEqual(api.keepWebPlusTokens, ["stored-session"])
+    XCTAssertNil(session.account?.account.subscription?.cancelAt)
+    XCTAssertEqual(choices.value?.canResumeRenewal, false)
+  }
+
+  @MainActor
+  func testKeepingPlusThatCantBeKeptAnymoreReadsThePlanAgain() async {
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(
+        makeAccount(subscription: makeWebSubscription(cancelAt: Date(timeIntervalSince1970: 0)))))
+    api.keepWebPlusHandler = { _ in throw AccountAPIError.cancellationChoiceClosed }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    let cache = AppCache(session: session)
+    var canResumeRenewal = true
+    let choices: Resource<WebPlusCancellation> = cache.resource(
+      audience: .signedIn, domains: [.userSubscription]
+    ) { _ in
+      WebPlusCancellation(withdrawal: nil, periodEnd: nil, canResumeRenewal: canResumeRenewal)
+    }
+    await choices.load()
+
+    canResumeRenewal = false
+    let keptElsewhere = makeAccount(subscription: makeWebSubscription())
+    api.currentAccountResult = .success(keptElsewhere)
+    let kept = await session.keepWebPlus()
+    await choices.load()
+
+    XCTAssertTrue(kept, "Nothing failed: the plan and preview say what's true now")
+    XCTAssertEqual(session.account, keptElsewhere)
+    XCTAssertEqual(choices.value?.canResumeRenewal, false)
+  }
+
+  @MainActor
+  func testKeepingPlusThatFailsKeepsTheAccount() async {
+    let ending = makeAccount(
+      subscription: makeWebSubscription(cancelAt: Date(timeIntervalSince1970: 0)))
+    let api = SessionStoreAPIStub(currentAccountResult: .success(ending))
+    api.keepWebPlusHandler = { _ in throw AccountAPIError.network }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let kept = await session.keepWebPlus()
+
+    XCTAssertFalse(kept)
+    XCTAssertEqual(session.account, ending)
+  }
+
+  @MainActor
   func testAFailedWebPlusCancellationKeepsTheAccount() async {
     let account = makeAccount(subscription: makeWebSubscription())
     let api = SessionStoreAPIStub(currentAccountResult: .success(account))
@@ -1290,6 +1364,8 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
   var webPlusCancellationHandler: (@MainActor (String) async throws -> WebPlusCancellation)?
   var cancelWebPlusHandler: (@MainActor (String, Bool) async throws -> Money?)?
   private(set) var cancelWebPlusRequests = [(token: String, withdraw: Bool)]()
+  var keepWebPlusHandler: (@MainActor (String) async throws -> Void)?
+  private(set) var keepWebPlusTokens = [String]()
 
   init(
     appleSubscriptionResult: Result<AppleSubscriptionSynchronization, AccountAPIError> = .failure(
@@ -1322,6 +1398,16 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
     }
 
     return try await cancelWebPlusHandler(token, withdraw)
+  }
+
+  func keepWebPlus(token: String) async throws {
+    keepWebPlusTokens.append(token)
+
+    guard let keepWebPlusHandler else {
+      throw AccountAPIError.invalidResponse
+    }
+
+    try await keepWebPlusHandler(token)
   }
 
   func synchronizeAppleSubscription(
@@ -1488,6 +1574,10 @@ extension AccountAPIClient {
   }
 
   func cancelWebPlus(token: String, withdraw: Bool) async throws -> Money? {
+    throw AccountAPIError.invalidResponse
+  }
+
+  func keepWebPlus(token: String) async throws {
     throw AccountAPIError.invalidResponse
   }
 }

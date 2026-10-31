@@ -12,6 +12,8 @@ final class BirthYearGate {
     case question(canCancel: Bool)
     /// An account can't go on, so closing it logs out; a visitor just closes it.
     case belowMinimumAge(Int, logsOut: Bool)
+    /// The server deleted the account, so closing it forgets its session here.
+    case accountClosed(Int)
   }
 
   enum Failure: Equatable {
@@ -24,6 +26,8 @@ final class BirthYearGate {
   private var notice: (owner: AuthenticatedSession?, failure: Failure)?
   /// Shown only to the session it was made in, and cleared when the session changes.
   private var refusal: (owner: AuthenticatedSession?, minimumAge: Int)?
+  /// Kept until OK, even once a request finds its session gone.
+  private var closedAccount: (identity: AuthenticatedSession, minimumAge: Int)?
   /// The visitors' writes waiting for a guest, each resumed once.
   private var waitingWrites: [UUID: CheckedContinuation<Bool, Never>] = [:]
   /// The visitor's guest until its year is saved; only then is it signed in, so nothing learns
@@ -55,6 +59,10 @@ final class BirthYearGate {
   }
 
   var prompt: Prompt? {
+    if let closedAccount {
+      return .accountClosed(closedAccount.minimumAge)
+    }
+
     if let refusal, refusal.owner == session.authenticatedSession {
       return .belowMinimumAge(refusal.minimumAge, logsOut: refusal.owner != nil)
     }
@@ -156,6 +164,19 @@ final class BirthYearGate {
     await session.expire(identity)
   }
 
+  /// Its server session no longer exists, so it's only forgotten on this device.
+  func forgetClosedAccount() async {
+    guard let identity = closedAccount?.identity, !isSaving else {
+      return
+    }
+
+    isSaving = true
+    defer { isSaving = false }
+
+    await session.expire(identity)
+    closedAccount = nil
+  }
+
   private var session: SessionStore {
     cache.session
   }
@@ -220,7 +241,7 @@ final class BirthYearGate {
       finish(startingWrites: true)
     case .invalidYear:
       fail(.invalidYear)
-    case .belowMinimumAge(let minimumAge):
+    case .belowMinimumAge(let minimumAge), .accountClosed(let minimumAge):
       refuse(minimumAge)
     }
   }
@@ -258,7 +279,7 @@ final class BirthYearGate {
     case .invalidYear:
       fail(.invalidYear)
       return nil
-    case .belowMinimumAge(let minimumAge):
+    case .belowMinimumAge(let minimumAge), .accountClosed(let minimumAge):
       refuse(minimumAge)
       return nil
     }
@@ -280,6 +301,9 @@ final class BirthYearGate {
       fail(.invalidYear)
     case .done(.belowMinimumAge(let minimumAge)):
       refuse(minimumAge)
+    case .done(.accountClosed(let minimumAge)):
+      rememberRefusal(minimumAge)
+      closedAccount = session.authenticatedSession.map { ($0, minimumAge) }
     case .failed:
       fail(.unsaved)
     case .obsolete:
@@ -288,9 +312,13 @@ final class BirthYearGate {
   }
 
   private func refuse(_ minimumAge: Int) {
-    defaults.set([Self.minimumAgeKey: minimumAge, Self.dateKey: now()], forKey: Self.refusalKey)
+    rememberRefusal(minimumAge)
     refusal = (session.authenticatedSession, minimumAge)
     finish(startingWrites: false)
+  }
+
+  private func rememberRefusal(_ minimumAge: Int) {
+    defaults.set([Self.minimumAgeKey: minimumAge, Self.dateKey: now()], forKey: Self.refusalKey)
   }
 
   private func fail(_ failure: Failure) {

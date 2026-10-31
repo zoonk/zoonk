@@ -51,6 +51,9 @@ protocol AccountAPIClient {
   /// Ends Plus now with the 14-day refund, or stops the renewal, and returns what it refunded.
   /// Throws `cancellationChoiceClosed` when that choice isn't open anymore.
   func cancelWebPlus(token: String, withdraw: Bool) async throws -> Money?
+  /// Turns a stopped renewal back on. Throws `cancellationChoiceClosed` when Plus isn't set to end
+  /// with its paid period anymore.
+  func keepWebPlus(token: String) async throws
 }
 
 extension AccountAPIClient {
@@ -317,6 +320,23 @@ struct AccountAPI {
     }
   }
 
+  func keepWebPlus(token: String) async throws {
+    let output = try await perform(token: token) { client in
+      try await client.resumeStripeSubscription()
+    }
+
+    switch output {
+    case .noContent:
+      return
+    case .unauthorized:
+      throw AccountAPIError.unauthorized
+    case .conflict:
+      throw AccountAPIError.cancellationChoiceClosed
+    case .internalServerError, .undocumented:
+      throw AccountAPIError.invalidResponse
+    }
+  }
+
   func synchronizeAppleSubscription(
     token: String,
     signedTransaction: String
@@ -579,6 +599,8 @@ extension WebPlusCancellation {
       },
       periodEnd: cancellation.cancellation.map {
         .init(endsAt: $0.endsAt, refund: $0.refund.map { Money($0.value1) })
-      })
+      },
+      canResumeRenewal: cancellation.canResumeRenewal,
+      accountDeletionRefund: cancellation.accountDeletion.refund.map { Money($0.value1) })
   }
 }

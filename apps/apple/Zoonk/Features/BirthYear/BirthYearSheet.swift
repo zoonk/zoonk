@@ -64,6 +64,8 @@ private struct BirthYearSheet: View {
         question(canCancel: canCancel)
       case .belowMinimumAge(let minimumAge, let logsOut):
         belowMinimumAge(minimumAge, logsOut: logsOut)
+      case .accountClosed(let minimumAge):
+        accountClosed(minimumAge)
       }
     }
     .interactiveDismissDisabled(!canClose || gate.isSaving)
@@ -79,6 +81,7 @@ private struct BirthYearSheet: View {
     switch prompt {
     case .question(let canCancel): canCancel
     case .belowMinimumAge(_, let logsOut): !logsOut
+    case .accountClosed: false
     }
   }
 
@@ -163,6 +166,49 @@ private struct BirthYearSheet: View {
   }
 
   private func belowMinimumAge(_ minimumAge: Int, logsOut: Bool) -> some View {
+    ageStop {
+      if logsOut {
+        Text(
+          "You need to be \(minimumAge) or older to use Zoonk, so we'll log you out. We'll be here when you are.",
+          tableName: "BirthYear",
+          comment:
+            "Tells a signed-in learner below the minimum age kindly that OK logs them out; the number is that age"
+        )
+      } else {
+        Text(
+          "You need to be \(minimumAge) or older to use Zoonk. We'll be here when you are.",
+          tableName: "BirthYear",
+          comment: "Tells a learner below the minimum age kindly; the number is that age")
+      }
+    } onOK: {
+      if logsOut {
+        Task {
+          await gate.logOut()
+        }
+      } else {
+        gate.close()
+      }
+    }
+  }
+
+  private func accountClosed(_ minimumAge: Int) -> some View {
+    ageStop {
+      Text(
+        "You need to be \(minimumAge) or older to use Zoonk, so we've closed your account and deleted its data. We'll be here when you are.",
+        tableName: "BirthYear",
+        comment:
+          "Tells a signed-in learner whose birth year is certainly below the minimum age that their account is already deleted; the number is that age"
+      )
+    } onOK: {
+      Task {
+        await gate.forgetClosedAccount()
+      }
+    }
+  }
+
+  private func ageStop<Description: View>(
+    @ViewBuilder description: () -> Description, onOK: @escaping () -> Void
+  ) -> some View {
     ContentUnavailableView {
       Label {
         Text(
@@ -172,32 +218,10 @@ private struct BirthYearSheet: View {
         Image(systemName: "hourglass")
       }
     } description: {
-      Group {
-        if logsOut {
-          Text(
-            "You need to be \(minimumAge) or older to use Zoonk, so we'll log you out. We'll be here when you are.",
-            tableName: "BirthYear",
-            comment:
-              "Tells a signed-in learner below the minimum age kindly that OK logs them out; the number is that age"
-          )
-        } else {
-          Text(
-            "You need to be \(minimumAge) or older to use Zoonk. We'll be here when you are.",
-            tableName: "BirthYear",
-            comment: "Tells a learner below the minimum age kindly; the number is that age")
-        }
-      }
-      .accessibilityFocused($isMessageFocused)
+      description()
+        .accessibilityFocused($isMessageFocused)
     } actions: {
-      Button {
-        if logsOut {
-          Task {
-            await gate.logOut()
-          }
-        } else {
-          gate.close()
-        }
-      } label: {
+      Button(action: onOK) {
         Text("OK", tableName: "BirthYear", comment: "Closes the message for a learner too young")
       }
       .buttonStyle(.mainAction)

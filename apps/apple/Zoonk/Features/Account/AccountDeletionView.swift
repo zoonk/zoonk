@@ -17,6 +17,7 @@ private enum PendingAccountDeletion {
 struct AccountDeletionView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(SessionStore.self) private var session
+  @Environment(SettingsStore.self) private var settings
   @State private var code = ""
   @State private var hasSentCode = false
   @State private var isAppStoreSubscriptionManagementPresented = false
@@ -27,7 +28,7 @@ struct AccountDeletionView: View {
 
   let email: String
   let hasAppleAccount: Bool
-  let storeSubscriptionProvider: StoreSubscriptionProvider?
+  let subscription: AccountSubscription?
 
   var body: some View {
     content
@@ -64,10 +65,18 @@ struct AccountDeletionView: View {
         }
       } message: {
         Text(
-          "This permanently deletes your profile, goals, plans, progress, memory and uploads. This can't be undone.",
-          tableName: "Account",
-          comment: "Explains the consequences of confirming permanent account deletion")
+          verbatim: [
+            String(
+              localized:
+                "This permanently deletes your profile, goals, plans, progress, memory and uploads. This can't be undone.",
+              table: "Account",
+              comment: "Explains the consequences of confirming permanent account deletion"),
+            webPlusNotice,
+          ]
+          .compactMap(\.self)
+          .joined(separator: "\n\n"))
       }
+      .modifier(WebPlusLoading(choices: webPlus))
       .onAppear {
         session.clearFailure()
       }
@@ -347,6 +356,38 @@ struct AccountDeletionView: View {
         }
       }
     }
+  }
+
+  private var storeSubscriptionProvider: StoreSubscriptionProvider? {
+    subscription.flatMap { StoreSubscriptionProvider(rawValue: $0.provider) }
+  }
+
+  private var webPlus: Resource<WebPlusCancellation>? {
+    settings.webPlus(for: subscription)
+  }
+
+  /// Main's `DeletionPlusNotice`. A read that failed says nothing and never stops the deletion.
+  private var webPlusNotice: String? {
+    guard let choices = webPlus?.value else {
+      return nil
+    }
+
+    guard let refund = choices.accountDeletionRefund else {
+      return String(
+        localized: "Your Plus ends right away, without a refund. You won't be charged again.",
+        table: "Account",
+        comment:
+          "Before deleting the account, what happens to Plus bought on the web when nothing is refunded"
+      )
+    }
+
+    return String(
+      localized:
+        "Your Plus ends right away, and we refund \(refund.formatted) to the payment method you used.",
+      table: "Account",
+      comment:
+        "Before deleting the account, what happens to Plus bought on the web; the argument is the refunded amount"
+    )
   }
 
   private var normalizedCode: String {

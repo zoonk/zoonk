@@ -276,6 +276,21 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertEqual(tokens, ["preview-session"])
   }
 
+  func testDeletingTheAccountAsksStripeOnlyAboutAWebPlus() async {
+    let api = SettingsAPIStub()
+    let store = makeStore(api: api)
+
+    XCTAssertNil(store.webPlus(for: nil))
+    XCTAssertNil(
+      store.webPlus(for: AccountSubscription(plan: "plus", provider: "apple", status: "active")))
+
+    let choices = store.webPlus(
+      for: AccountSubscription(plan: "plus", provider: "stripe", status: "active"))
+    await choices?.load()
+
+    XCTAssertEqual(choices?.value?.accountDeletionRefund, Money(amount: 29.9, currency: "BRL"))
+  }
+
   func testAWebPlusRefundThatDidntLoadFailsUntilTriedAgain() async {
     let api = SettingsAPIStub()
     await api.failWebPlusCancellation(with: APIError.unavailable)
@@ -512,7 +527,9 @@ extension WebPlusCancellation {
   fileprivate static let refundStillOpen = WebPlusCancellation(
     withdrawal: .init(
       refund: Money(amount: 29.9, currency: "BRL"), until: Date(timeIntervalSince1970: 1_000)),
-    periodEnd: nil)
+    periodEnd: nil,
+    canResumeRenewal: true,
+    accountDeletionRefund: Money(amount: 29.9, currency: "BRL"))
 }
 
 extension MemoryFact {

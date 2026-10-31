@@ -1326,6 +1326,35 @@
         }
       }
     },
+    "Changed your mind? Keep Plus, and it renews as before." : {
+      "comment" : "Under the button that turns the stopped renewal of Plus bought on the web back on",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anders überlegt? Wenn du Plus behältst, verlängert sich dein Abo wie bisher."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Cambiaste de opinión? Conserva Plus y se renovará como antes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as changé d’avis ? Choisis « Garder Plus » pour que ta formule se renouvelle comme avant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mudou de ideia? Mantenha o Plus e ele volta a ser renovado como antes."
+          }
+        }
+      }
+    },
     "Check the information and try again." : {
       "comment" : "Error shown when profile information is invalid",
       "localizations" : {
@@ -2588,7 +2617,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantener Plus"
+            "value" : "Conservar Plus"
           }
         },
         "fr" : {
@@ -4869,6 +4898,35 @@
         }
       }
     },
+    "We couldn't keep Plus. Try again or email hello@zoonk.com." : {
+      "comment" : "Turning the stopped renewal of Plus bought on the web back on failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten die Verlängerung von Plus nicht wieder aktivieren. Versuch es noch einmal oder schreib an hello@zoonk.com."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos conservar Plus. Inténtalo de nuevo o escribe a contacto@zoonk.com."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu réactiver le renouvellement de Plus. Réessaie ou écris à hello@zoonk.com."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente não conseguiu manter o Plus. Tente de novo ou envie um e-mail para contato@zoonk.com."
+          }
+        }
+      }
+    },
     "We couldn't load what the free plan includes." : {
       "comment" : "The free plan's limits failed to load on the Plus screen",
       "localizations" : {
@@ -5405,6 +5463,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seu plano"
+          }
+        }
+      }
+    },
+    "Your Plus ends right away, and we refund %@ to the payment method you used." : {
+      "comment" : "Before deleting the account, what happens to Plus bought on the web; the argument is the refunded amount",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plus endet sofort, und wir erstatten dir %@ auf das verwendete Zahlungsmittel."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu suscripción a Plus termina de inmediato y te reembolsamos %@ al método de pago que usaste."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta formule Plus prend fin immédiatement et nous te remboursons %@ sur le moyen de paiement utilisé."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O seu Plus acaba na hora, e a gente reembolsa %@ no mesmo meio de pagamento que você usou."
+          }
+        }
+      }
+    },
+    "Your Plus ends right away, without a refund. You won't be charged again." : {
+      "comment" : "Before deleting the account, what happens to Plus bought on the web when nothing is refunded",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plus endet sofort, ohne Rückerstattung. Dir wird nichts mehr berechnet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu suscripción a Plus termina de inmediato, sin reembolso. No se te volverá a cobrar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta formule Plus prend fin immédiatement, sans remboursement. Nous ne te facturerons plus rien."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O seu Plus acaba na hora, sem reembolso. Não haverá novas cobranças."
           }
         }
       }

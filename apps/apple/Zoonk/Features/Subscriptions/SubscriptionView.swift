@@ -412,6 +412,7 @@ struct PlusStatusView: View {
   @State private var choices: WebPlusCancellation?
   @State private var outcome: CancellationOutcome?
   @State private var cancellationFailed = false
+  @State private var keepFailed = false
   @State private var working: Task<Void, Never>?
 
   /// As it was when the screen opened, until the account says otherwise.
@@ -475,6 +476,40 @@ struct PlusStatusView: View {
         } else if let endingChoices {
           switch endingChoices.state {
           case .loaded(let choices):
+            if choices.canResumeRenewal {
+              Section {
+                Button {
+                  run(keepPlus)
+                } label: {
+                  workingLabel(
+                    Text(
+                      "Keep Plus", tableName: "Account",
+                      comment:
+                        "Turns the stopped renewal of Plus bought on the web back on, so it renews as before"
+                    ))
+                }
+                .disabled(working != nil)
+              } footer: {
+                VStack(alignment: .leading, spacing: 8) {
+                  Text(
+                    "Changed your mind? Keep Plus, and it renews as before.", tableName: "Account",
+                    comment:
+                      "Under the button that turns the stopped renewal of Plus bought on the web back on"
+                  )
+
+                  if keepFailed {
+                    Text(
+                      "We couldn't keep Plus. Try again or email hello@zoonk.com.",
+                      tableName: "Account",
+                      comment:
+                        "Turning the stopped renewal of Plus bought on the web back on failed"
+                    )
+                    .foregroundStyle(.destructive)
+                  }
+                }
+              }
+            }
+
             if let withdrawal = choices.withdrawal {
               Section {
                 choicesButton(
@@ -528,7 +563,7 @@ struct PlusStatusView: View {
         }
       }
     }
-    .modifier(EndingWebPlusLoading(choices: endingChoices))
+    .modifier(WebPlusLoading(choices: endingChoices))
     .onDisappear {
       working?.cancel()
       working = nil
@@ -549,7 +584,7 @@ struct PlusStatusView: View {
       if case .canceled(let refund, _) = outcome {
         if let refund {
           Text(
-            "We've refunded \(amount(refund)) to the payment method you used. We emailed you the confirmation.",
+            "We've refunded \(refund.formatted) to the payment method you used. We emailed you the confirmation.",
             tableName: "Account",
             comment: "After canceling Plus bought on the web; the argument is the refunded amount")
         } else {
@@ -584,17 +619,21 @@ struct PlusStatusView: View {
     .foregroundStyle(.destructive)
   }
 
+  private func workingLabel(_ title: Text) -> some View {
+    HStack {
+      title
+
+      Spacer()
+
+      if working != nil {
+        ProgressView()
+      }
+    }
+  }
+
   private func choicesButton(_ title: Text, action: @escaping () -> Void) -> some View {
     Button(action: action) {
-      HStack {
-        title
-
-        Spacer()
-
-        if working != nil {
-          ProgressView()
-        }
-      }
+      workingLabel(title)
     }
     .disabled(working != nil)
     .confirmationDialog(
@@ -656,7 +695,7 @@ struct PlusStatusView: View {
       lines.append(
         String(
           localized:
-            "Until \(day(withdrawal.until)), you can get a full refund of \(amount(withdrawal.refund)). Plus ends right away.",
+            "Until \(day(withdrawal.until)), you can get a full refund of \(withdrawal.refund.formatted). Plus ends right away.",
           table: "Account",
           comment:
             "In the dialog that cancels Plus: the 14-day full refund; the arguments are its last day and the amount"
@@ -668,7 +707,7 @@ struct PlusStatusView: View {
         lines.append(
           String(
             localized:
-              "You keep Plus until \(day(periodEnd.endsAt)). We refund \(amount(refund)) for the months that haven't started.",
+              "You keep Plus until \(day(periodEnd.endsAt)). We refund \(refund.formatted) for the months that haven't started.",
             table: "Account",
             comment:
               "In the dialog that cancels Plus after a yearly renewal; the arguments are Plus's last day and the refunded amount"
@@ -693,6 +732,7 @@ struct PlusStatusView: View {
 
   private func run(_ work: @escaping () async -> Void) {
     cancellationFailed = false
+    keepFailed = false
     working = Task {
       await work()
       working = nil
@@ -733,12 +773,18 @@ struct PlusStatusView: View {
     }
   }
 
-  private func day(_ date: Date) -> String {
-    date.formatted(date: .abbreviated, time: .omitted)
+  private func keepPlus() async {
+    let kept = await session.keepWebPlus()
+
+    guard !Task.isCancelled else {
+      return
+    }
+
+    keepFailed = !kept
   }
 
-  private func amount(_ money: Money) -> String {
-    money.amount.formatted(.currency(code: money.currency))
+  private func day(_ date: Date) -> String {
+    date.formatted(date: .abbreviated, time: .omitted)
   }
 
   private var dateLine: Text? {
@@ -767,7 +813,8 @@ private enum CancellationOutcome {
   case choiceClosed
 }
 
-private struct EndingWebPlusLoading: ViewModifier {
+/// Only a Plus bought on the web reads its choices, since they come from Stripe.
+struct WebPlusLoading: ViewModifier {
   let choices: Resource<WebPlusCancellation>?
 
   func body(content: Content) -> some View {

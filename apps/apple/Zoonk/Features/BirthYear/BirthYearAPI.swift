@@ -6,6 +6,9 @@ enum BirthYearAnswer: Equatable, Sendable {
   case invalidYear
   /// Below the minimum age where the learner is: nothing was saved.
   case belowMinimumAge(Int)
+  /// Certainly below it: the server deleted the account, its sessions included, and refunded its
+  /// website Plus in full.
+  case accountClosed(minimumAge: Int)
 }
 
 protocol BirthYearAPIClient: Sendable {
@@ -59,7 +62,8 @@ private func birthYearAnswer(refusedWith error: Components.Schemas._Error._Error
       throw APIError.unavailable
     }
 
-    return .belowMinimumAge(minimumAge)
+    return (details?["accountClosed"] ?? nil) as? Bool == true
+      ? .accountClosed(minimumAge: minimumAge) : .belowMinimumAge(minimumAge)
   default:
     throw APIError.unavailable
   }
