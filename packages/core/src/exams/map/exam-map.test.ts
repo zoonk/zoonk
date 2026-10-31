@@ -131,4 +131,13 @@ describe("written test weights", () => {
 
     expect(shareOf(structure)).toStrictEqual([0.5, 0.5]);
   });
+
+  it("shares a written paper's maximum among its written subjects", () => {
+    const structure = scored({
+      scoring: { parts: [{ ...part("P4", 1), maxPoints: 100, questions: null }] },
+      subjects: [subject("Objective", 100), ...grouped("P4", ["Essay", "Redação"])],
+    });
+
+    expect(shareOf(structure)).toStrictEqual([0.5, 0.25, 0.25]);
+  });
 });
