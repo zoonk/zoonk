@@ -76,6 +76,7 @@ import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.color
+import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -868,19 +869,6 @@ private fun LimitStatus(
         link = statusLink(stringResource(R.string.today_change_limit)) { actions.navigate(AppRoute.Preferences) },
     )
 }
-
-private fun statusLink(
-    label: String,
-    onClick: () -> Unit,
-): AnnotatedString =
-    buildAnnotatedString {
-        withLink(
-            LinkAnnotation.Clickable(
-                tag = label,
-                styles = TextLinkStyles(SpanStyle(fontWeight = FontWeight.Medium, textDecoration = TextDecoration.Underline)),
-            ) { onClick() },
-        ) { append(label) }
-    }
 
 /** "See you tomorrow!" only when tomorrow is a study day; else the plan's next day by name, or the next session. */
 @Composable

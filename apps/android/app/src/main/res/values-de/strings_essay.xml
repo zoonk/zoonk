@@ -12,6 +12,7 @@
   "essay_criterion_legal_basis": "d7144cb5c5e1af8a61b7630deee25d979f90e6c59b18533eefeea7ebcef02adb",
   "essay_criterion_requests": "2f2d091e188c4fbce8e93ec0d1fe004ad6e56cd4116537231c4a15687204a8e9",
   "essay_criterion_topic": "6177c30f277716f23c86127542033dcd8f0038e120762e49e66a8ebf7c437df1",
+  "essay_daily_limit_reached": "f019de4fc9140497ec1270ef5bca182850332c6a9dad0e48ed1ae5aae37ed651",
   "essay_element_action": "64c1c907e7fec708f5ce215199f21c454b489d80dd1c48455cd18c1956ea4f7d",
   "essay_element_agent": "a70649f0f295c13dd138342d84a10746f5d063db517b3424d014512b091d6d97",
   "essay_element_detail": "73c731f24e1dadabaca4466cfaadd56d10c12bf8899160af9b10a6e4d943d558",
@@ -102,6 +103,8 @@
         <item quantity="other">%d Wörter</item>
     </plurals>
     <string name="essay_send_failed">Das hat nicht geklappt. Dein Text ist noch da. Versuch es gleich noch einmal.</string>
+    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
+    <string name="essay_daily_limit_reached">Du hast dein tägliches Zeitlimit erreicht. Dein Text bleibt hier.</string>
     <string name="essay_limit_reached">Du hast deine Bewertungen für heute aufgebraucht. Dein Text bleibt hier; schick ihn morgen ab.</string>
     <string name="essay_grading">Wir prüfen deinen Text anhand jedes Kriteriums. Das kann bis zu 30 Sekunden dauern.</string>
     <string name="essay_grading_slow">Wir bewerten noch. Das dauert länger als sonst.</string>

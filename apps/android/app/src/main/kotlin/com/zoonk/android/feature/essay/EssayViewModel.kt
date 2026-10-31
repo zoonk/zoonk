@@ -36,7 +36,7 @@ data class UnsentEssay(
 
 enum class EssayMode { Grade, Write }
 
-enum class EssaySend { Idle, Pending, Failed, LimitReached }
+enum class EssaySend { Idle, Pending, Failed, LimitReached, DailyLimitReached }
 
 @Immutable
 data class EssayUi(
@@ -139,8 +139,13 @@ class EssayViewModel(
                 }
 
                 is MutationResult.Failed -> {
-                    val limit = result.code == ESSAY_LIMIT_REACHED
-                    mutableUi.update { it.copy(send = if (limit) EssaySend.LimitReached else EssaySend.Failed) }
+                    val send =
+                        when (result.code) {
+                            ESSAY_LIMIT_REACHED -> EssaySend.LimitReached
+                            DAILY_LIMIT_REACHED -> EssaySend.DailyLimitReached
+                            else -> EssaySend.Failed
+                        }
+                    mutableUi.update { it.copy(send = send) }
                 }
 
                 MutationResult.Obsolete -> {
@@ -231,6 +236,7 @@ class EssayViewModel(
 
     private companion object {
         const val ESSAY_LIMIT_REACHED = "ESSAY_LIMIT_REACHED"
+        const val DAILY_LIMIT_REACHED = "DAILY_LIMIT_REACHED"
 
         /** The API's longest essay duration. */
         const val MAX_DURATION_MS = 5_400_000L

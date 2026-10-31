@@ -50,6 +50,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
@@ -94,6 +95,7 @@ import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.rememberMoveFocus
+import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
@@ -219,7 +221,7 @@ internal fun EssayWrite(
             },
         bottomBar = {
             TaskActionBar {
-                StatusLine(ui.send, ui.gradesLeft)
+                StatusLine(ui.send, ui.gradesLeft) { navigator.open(AppRoute.Preferences) }
                 if (finishFailed && !finishing) SaveErrorText(viewModel::finish)
                 TaskActions { width ->
                     if (rewriting) {
@@ -390,6 +392,7 @@ private fun EssayBox(
 private fun StatusLine(
     send: EssaySend,
     gradesLeft: Int,
+    onChangeLimit: () -> Unit,
 ) {
     var slow by remember(send) { mutableStateOf(false) }
     LaunchedEffect(send) {
@@ -401,13 +404,29 @@ private fun StatusLine(
     val failed = send == EssaySend.Failed
     val line =
         when {
-            failed -> R.string.essay_send_failed
-            send == EssaySend.LimitReached || gradesLeft == 0 -> R.string.essay_limit_reached
-            send == EssaySend.Pending -> if (slow) R.string.essay_grading_slow else R.string.essay_grading
-            else -> return
+            failed -> {
+                AnnotatedString(stringResource(R.string.essay_send_failed))
+            }
+
+            send == EssaySend.DailyLimitReached -> {
+                AnnotatedString(stringResource(R.string.essay_daily_limit_reached) + " ") +
+                    statusLink(stringResource(R.string.today_change_limit), onChangeLimit)
+            }
+
+            send == EssaySend.LimitReached || gradesLeft == 0 -> {
+                AnnotatedString(stringResource(R.string.essay_limit_reached))
+            }
+
+            send == EssaySend.Pending -> {
+                AnnotatedString(stringResource(if (slow) R.string.essay_grading_slow else R.string.essay_grading))
+            }
+
+            else -> {
+                return
+            }
         }
     Text(
-        stringResource(line),
+        line,
         Modifier.semantics { liveRegion = if (failed) LiveRegionMode.Assertive else LiveRegionMode.Polite },
         color = if (failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodyMedium,

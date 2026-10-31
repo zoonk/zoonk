@@ -310,6 +310,20 @@ class EssayViewModelTest {
         }
 
     @Test
+    fun theDailyTimeLimitSaysSoAndKeepsTheText() =
+        runTest(dispatcher) {
+            submit = { throw ApiException(ApiError.Unavailable, "DAILY_LIMIT_REACHED", status = 403) }
+            val viewModel = viewModel()
+            viewModel.write("Cities grow.")
+
+            viewModel.send()
+            advanceUntilIdle()
+
+            assertEquals(EssaySend.DailyLimitReached, viewModel.ui.value.send)
+            assertEquals("Cities grow.", viewModel.ui.value.text)
+        }
+
+    @Test
     fun noGradesLeftTodayKeepsTheDraftFromBeingSent() =
         runTest(dispatcher) {
             gradesLeft = 0

@@ -12,6 +12,7 @@
   "essay_criterion_legal_basis": "724491923e9c12e9d958ead5eb4c84f2199974446ddbc09e13d290b23861d653",
   "essay_criterion_requests": "4a6217830957dda7ffc2e6e459bf9c9fb881a9504cfa46b2ceb8e217b2f7e799",
   "essay_criterion_topic": "8de4a92658057b054844d684acf5ce10bfedc10c2e1cfb3bbea801cba3f23a68",
+  "essay_daily_limit_reached": "3fac63b7704255361504b7a205e67c0758a1abd515482e84e68a073ffa3ff209",
   "essay_element_action": "2212066319dfdfac4d733b3aeee46d1c0c602ec2f00f98ce56d03f8fd2495a1d",
   "essay_element_agent": "5c9963aa294553e1ae5b008462593b2ab7f48807ac058959f8d473947c1c167b",
   "essay_element_detail": "822df53f33c41a7041f472bd534c54db214a076b7f8a24ee86e477b1ea2ba657",
@@ -103,6 +104,8 @@
         <item quantity="other">%d palabras</item>
     </plurals>
     <string name="essay_send_failed">No se ha podido completar. Tu texto sigue aquí. Vuelve a intentarlo dentro de un momento.</string>
+    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
+    <string name="essay_daily_limit_reached">Has alcanzado tu límite de tiempo diario. Tu texto se queda aquí.</string>
     <string name="essay_limit_reached">Has agotado las correcciones de redacciones de hoy. Tu texto seguirá aquí; envíalo mañana.</string>
     <string name="essay_grading">Estamos revisando tu redacción según cada criterio. Puede tardar hasta 30 segundos.</string>
     <string name="essay_grading_slow">Sigue en corrección. Está tardando más de lo habitual.</string>
