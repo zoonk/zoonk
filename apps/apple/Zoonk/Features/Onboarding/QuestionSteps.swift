@@ -639,11 +639,11 @@ private struct DateQuestion: View {
       second == nil
       ? String(
         localized: LocalizedStringResource(
-          "Your plan gets you ready by then.", table: "Onboarding", comment: "Under the exam's date"
+          "Your plan paces your lessons to end by then.", table: "Onboarding", comment: "Under the exam's date"
         ))
       : String(
         localized: LocalizedStringResource(
-          "Your plan gets you ready by the first day.", table: "Onboarding",
+          "Your plan paces your lessons to end by the first day.", table: "Onboarding",
           comment: "Under an exam's dates over several days"))
     let estimated =
       examDays.estimated

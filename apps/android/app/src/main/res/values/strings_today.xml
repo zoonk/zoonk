@@ -162,11 +162,11 @@
     </plurals>
     <!-- Read by TalkBack; both are durations, such as "1 hr 20 min of 3 hr 45 min". -->
     <string name="today_week_time">%1$s of %2$s studied this week</string>
-    <!-- Read by TalkBack for each day of the week: "Monday: goal reached". -->
+    <!-- Read by TalkBack for each day of the week: "Monday: daily time met". -->
     <string name="today_week_day">%1$s: %2$s</string>
     <!-- "Saturday: weekly challenge, not studied". -->
     <string name="today_week_challenge_day">%1$s: %2$s, %3$s</string>
-    <string name="today_week_goal_reached">goal reached</string>
+    <string name="today_week_goal_reached">daily time met</string>
     <string name="today_week_studied">studied</string>
     <string name="today_week_exam_day">exam day</string>
     <string name="today_week_deadline">your goal\'s date</string>

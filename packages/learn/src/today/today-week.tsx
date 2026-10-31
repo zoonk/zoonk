@@ -127,7 +127,7 @@ function useDayStatus() {
 
   return (day: WeekDay): string => {
     if (day.hitGoal) {
-      return t("goal reached");
+      return t("daily time met");
     }
 
     if (day.studied) {

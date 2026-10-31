@@ -40,8 +40,8 @@ function ExamDateStep({
 
   const ready =
     second === undefined
-      ? t("Your plan gets you ready by then.")
-      : t("Your plan gets you ready by the first day.");
+      ? t("Your plan paces your lessons to end by then.")
+      : t("Your plan paces your lessons to end by the first day.");
 
   return (
     <StepForm

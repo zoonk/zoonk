@@ -529,8 +529,8 @@
     <string name="onboarding_exam_on">Your exam is on %1$s</string>
     <!-- %1$s is an exam's first day, %2$s its second. -->
     <string name="onboarding_exam_on_two">Your exam is on %1$s (and %2$s)</string>
-    <string name="onboarding_exam_ready">Your plan gets you ready by then.</string>
-    <string name="onboarding_exam_ready_first_day">Your plan gets you ready by the first day.</string>
+    <string name="onboarding_exam_ready">Your plan paces your lessons to end by then.</string>
+    <string name="onboarding_exam_ready_first_day">Your plan paces your lessons to end by the first day.</string>
     <string name="onboarding_exam_expected">This is the expected date until the notice confirms it.</string>
     <string name="onboarding_another_date">Another date</string>
     <string name="onboarding_date_title">Is there a date you\'re aiming for?</string>
