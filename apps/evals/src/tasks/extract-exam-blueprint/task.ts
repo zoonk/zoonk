@@ -161,9 +161,14 @@ function getQuestionTotals(reading: Reading): number[] {
 }
 
 function findSubject({ name, reading }: { name: string; reading: Reading }) {
-  return reading.subjects.find(
-    (subject) => normalizeString(subject.name) === normalizeString(name),
+  const wanted = normalizeString(name);
+  const exact = reading.subjects.find((subject) => normalizeString(subject.name) === wanted);
+
+  const named = reading.subjects.filter((subject) =>
+    normalizeString(subject.name).includes(wanted),
   );
+
+  return exact ?? (named.length === 1 ? named[0] : undefined);
 }
 
 function hasGroupedSubjects({
@@ -189,8 +194,9 @@ function hasChoice({
   reading: Reading;
 }): boolean {
   const options = fact.options.map((option) =>
-    reading.subjects.find((subject) =>
-      normalizeString(subject.name).includes(normalizeString(option)),
+    reading.subjects.find(
+      (subject) =>
+        subject.choiceGroup && normalizeString(subject.name).includes(normalizeString(option)),
     ),
   );
 

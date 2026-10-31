@@ -161,6 +161,47 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
   {
     expected: {
       facts: [
+        {
+          kind: "choice",
+          options: [
+            "Auditoria",
+            "Ciência de Dados",
+            "Infraestrutura",
+            "Desenvolvimento de Sistemas",
+          ],
+        },
+        { kind: "subject", name: "Desenvolvimento de Sistemas", questions: 90 },
+        { group: "P3", kind: "group", subject: "Desenvolvimento de Sistemas" },
+        {
+          kind: "topic",
+          subject: "Desenvolvimento de Sistemas",
+          topic: "1.2 Requisitos funcionais e não funcionais",
+        },
+        {
+          kind: "topic",
+          subject: "Infraestrutura",
+          topic:
+            "1.1 Modelos TCP/IP e OSI; IPv4 e IPv6, DNS, DHCP, roteamento, segmentação, balanceamento e qualidade de serviço",
+        },
+        { group: "P1", kind: "group", subject: "Estado, Democracia, Direitos e Ciência Política" },
+        { group: "P2", kind: "group", subject: "Fundamentos de Auditoria Governamental" },
+      ],
+    },
+    id: "cgu-2026-auditor-specialties",
+    language: "pt",
+    userInput: {
+      documents: [
+        {
+          title: "Edital nº 1 – CGU – AFFC, de 8 de outubro de 2026 (versão atualizada)",
+          url: "https://cdn.cebraspe.org.br/concursos/cgu_26_affc/arquivos/FDEEFB41D8ACD48AB369A9915EA1A48C67389EC91427E98F6F264E19B1F63FB9.pdf",
+        },
+      ],
+      exam: "Concurso CGU 2026, Auditor Federal de Finanças e Controle",
+    },
+  },
+  {
+    expected: {
+      facts: [
         { date: "2027-01-17", dateKind: "exam", kind: "date" },
         { format: "trueFalse", kind: "format" },
         { kind: "scoring", method: "wrongCancelsRight" },
