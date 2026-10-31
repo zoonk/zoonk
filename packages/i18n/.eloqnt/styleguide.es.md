@@ -34,6 +34,7 @@
 - “Free” (subscription name): “Gratis”
 - “Get Plus”: “obtener Plus”, not “pasarse a Plus” or “hacerse Plus”
 - “hello@zoonk.com”: “contacto@zoonk.com”
+- “the App Store”: “el App Store”, as Apple writes it in Latin America
 - “You've reached today's study time”: “Completaste tu tiempo de estudio de hoy”, in every line that starts with it
 
 ## Feature names and states
