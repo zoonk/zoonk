@@ -15,12 +15,13 @@
 ## Glossary
 
 - “lesson”: “ders”
+- “chapter”: “ünite”, not “bölüm” (a speaking task)
 - “goal” (the learner's goal): “hedef”
 - “plan” (study plan): “plan”; subscription plan: “paket”
 - “Free” (subscription name): “Ücretsiz”
 - “Get Plus”: “Plus’a geç”
 - “session” (study): “çalışma” (“bugünkü çalışma”), not “oturum”, which is the sign-in session or a mock's section
-- “subject” (of an exam or a plan): “branş”, not “ders” (a lesson)
+- “subject” of an exam: “branş”, not “ders” (a lesson); a subject the learner studies as a goal, rather than an exam or a language: “konu”
 - “topic”: “konu”
 - “area” (a weighted part of an exam or a goal): “alan”
 - “section” (a part of a mock exam): “oturum”
@@ -33,7 +34,7 @@
 - “guess” (a pick that doesn't count) and the learner's “estimate” before the answer shows: “tahmin”, never “cevap”
 - “say” (aloud, in pronunciation practice): “söylemek”, as in “Sesli söyle”
 - “share” (personal facts): “anlatmak”
-- “task” (a speaking exam's task): “bölüm”, not “görev” (a mission)
+- “task” (a speaking exam's task): “bölüm”, not “görev” (a mission); its task card: “kart”
 - “hand in” (a mock or one of its parts): “teslim etmek”
 - “flag” (a mock question to come back to): “işaretlemek”
 - “pattern” (a mistake that recurs): “tekrarlayan hata”
@@ -59,7 +60,7 @@
 - “Mistakes notebook”: “Yanlış defteri”
 - “Saved to your mistakes”: “Yanlış defterine kaydedildi”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “Düzeltilecekler” / “Düzeltilenler”
-- “New” / “Learning” / “Solid” / “Mastered” (mastery): “Yeni” / “Öğreniliyor” / “Sağlam” / “Ustalaşıldı”
+- “New” / “Learning” / “Solid” / “Mastered” (mastery): “Yeni” / “Öğreniliyor” / “Sağlam” / “Tam öğrenildi”
 - “Known before”: “Zaten biliyordun”; “Known” (progress legend): “Biliniyor”
 - “Preparation”: “Hazırlık”
 - “the Trickster”: “Hilebaz”

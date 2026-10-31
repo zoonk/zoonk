@@ -26,7 +26,7 @@
 - “subject” (of an exam or a plan): “과목”
 - “topic”: “주제”
 - “area” (a weighted part of an exam or a goal): “영역”
-- “phase” (a part of the plan): “단계”; a “step” (in a solution, a process or a flow): “스텝”, or “풀이 과정” for a solution's steps
+- “phase” (a part of the plan) and a “step” in a process or a flow: “단계”, not “스텝”; a solution's steps: “풀이 과정”
 - “section” (a part of a mock exam): “파트”, not “영역”
 - “material” (the learner's own files and notes): “자료”
 - “notice” (an exam's official notice): “공고”
@@ -34,7 +34,7 @@
 - “check” (an answer): “확인”, as on the button; “정답 확인” where “확인” alone could read as OK
 - “question”: one the learner asks: “질문”; one the learner answers, in a lesson, practice or exam: “문제”
 - “write” (Zoonk generating content): “만들다”; learner writing: “쓰다”
-- “guess” (a pick that doesn't count): “추측”, never “답”
+- “guess” (a pick that doesn't count): “예상”, never “답”
 - “say” (aloud, in pronunciation practice): “소리 내어 말하다”
 - “share” (personal facts): “알려 주다”, not “공유하다”
 - “task” (a speaking exam's task): “과제”
@@ -94,7 +94,7 @@
 ## Buddy names
 
 - “Zu”: “Zu”
-- “Noodle”: “똑똑이”
+- “Noodle”: “골똘이”
 - “Beep”: “삐삐”
 - “Otto”: “옥토”
 

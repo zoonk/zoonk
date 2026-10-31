@@ -30,7 +30,7 @@
 - “check” (an answer): “sprawdzić”, as in the “Sprawdź” button
 - “write” (Zoonk generating content): “przygotowywać”; learner writing: “pisać”
 - “essay”: “wypracowanie”, not “esej”
-- “guess” (a pick that doesn't count): “przypuszczenie”, never “odpowiedź”; the verb: “zgadywać”
+- “guess” (a pick that doesn't count): “strzał” (“Dobry strzał!”, “Twój strzał: {guess}”), never “odpowiedź” or “przypuszczenie”; the verb: “zgadywać”
 - “say” (aloud, in pronunciation practice): “powiedzieć”, as in “Powiedz to na głos”
 - “share” (personal facts): “opowiedzieć”, not “udostępnić”
 - “task” (a speaking exam's task): “zadanie”

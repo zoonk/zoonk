@@ -34,6 +34,7 @@
 - “share” (personal facts): “教える”, not “共有する”
 - “task” (a speaking exam's task): “タスク”
 - “hand in” (a mock or one of its parts): “提出する”
+- “trap” (in a Trickster question): “ひっかけ”, as in “ひっかけ問題”, not “罠”
 - “flag” (a mock question to come back to): “見直し”, never “マーク”, which means filling in the answer sheet
 - “pattern” (a mistake that recurs): “ミスの傾向”
 - “link” (between a cause and its effect): “つながり”, not “リンク”
@@ -51,7 +52,7 @@
 
 - “Buddy”: “相棒”; “study buddy”: “学習の相棒”
 - Buddy stages “Baby” / “Young” / “Adult”: “赤ちゃん” / “こども” / “おとな”, never “アダルト”
-- “Brain Power”: “ブレインパワー”
+- “Brain Power”: “脳力” (a play on “能力”), never “能力” or “ブレインパワー”
 - “mission”: “ミッション”
 - “call” (speaking practice): “会話”, not “電話”
 - “Mistakes notebook”: “間違いノート”

@@ -23,7 +23,7 @@
 - “check” (an answer): “controllare”, as in the “Controlla” button
 - “write” (Zoonk generating content): “preparare”; learner writing: “scrivere”
 - “essay”: “tema”, not “saggio”
-- “guess” (a pick that doesn't count): “ipotesi”, never “risposta”; the verb: “indovinare”
+- “guess” (a pick that doesn't count): “ipotesi”, or “stima” for a number the learner guesses (“La tua stima: {guess}”), never “risposta”; the verb: “indovinare”
 - “say” (aloud, in pronunciation practice): “dire”, as in “Dillo ad alta voce”
 - “share” (personal facts): “raccontare”
 - “task” (a speaking exam's task): “compito”
@@ -51,7 +51,7 @@
 - “New” / “Learning” / “Solid” / “Mastered” (mastery): “Nuovo” / “In corso” / “Solido” / “Padroneggiato”
 - “Known before”: “Lo sapevi già”; “Known” (progress legend): “Già noto”
 - “Preparation”: “Preparazione”
-- “the Trickster”: “l’Ingannatore”
+- “the Trickster”: “il Briccone”
 - “Broken” / “Held” (shield): “Rotto” / “Ha retto”
 - “Phase challenge”: “Sfida della fase”
 - “Weekly challenge”: “Sfida settimanale”
