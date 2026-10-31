@@ -1,6 +1,7 @@
 import { getSubjectShareFallback } from "../../exams/_utils/subject-share-fallback";
 import { listCountedSubjects } from "../../exams/choices/exam-choices";
 import { type ExamStructure, type ScoredPart } from "./blueprint-contract";
+import { coversSubject } from "./final-share-cover";
 import { getPartMaxPoints } from "./part-points";
 import { getSubjectPoints } from "./subject-points";
 
@@ -11,9 +12,7 @@ const PERCENT = 100;
 type ShareGroup = { parts: readonly string[]; share: number };
 
 function isInGroup({ group, subject }: { group: ShareGroup; subject: Subject }): boolean {
-  return [subject.name, subject.group, subject.partOf].some(
-    (name) => typeof name === "string" && group.parts.includes(name),
-  );
+  return coversSubject({ parts: group.parts, subject });
 }
 
 function findQualifyingPart({

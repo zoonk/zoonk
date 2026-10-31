@@ -119,10 +119,12 @@ function toScoring({
   kept,
   mock,
   partNames,
+  subjects,
 }: {
   kept: KeptFacts;
   mock: NonNullable<Extraction["mock"]>;
   partNames: readonly string[];
+  subjects: ExamStructure["subjects"];
 }) {
   const { description, method, relative, scale, wrongPenalty } = mock.scoring;
 
@@ -144,7 +146,7 @@ function toScoring({
     ...(relative && kept.has("mock.scoring.relative") ? { relative: true } : {}),
     ...(penalty === null ? {} : { wrongPenalty: normalizePenalty(penalty) }),
     ...toScale({ kept, scale }),
-    ...toPointsScoring({ kept, partNames, scoring: mock.scoring }),
+    ...toPointsScoring({ kept, partNames, scoring: mock.scoring, subjects }),
   };
 }
 
@@ -187,10 +189,12 @@ export function toMock({
   extraction,
   kept,
   partNames,
+  subjects,
 }: {
   extraction: Extraction;
   kept: KeptFacts;
   partNames: readonly string[];
+  subjects: ExamStructure["subjects"];
 }) {
   const { mock } = extraction;
   const citations = [...kept.entries()].find(([id]) => id.startsWith("mock."))?.[1];
@@ -203,7 +207,7 @@ export function toMock({
     adaptive: mock.adaptive && kept.has("mock.adaptive"),
     citations,
     order: keptOr({ gap: null, id: "mock.order", kept, value: mock.order }),
-    scoring: toScoring({ kept, mock, partNames }),
+    scoring: toScoring({ kept, mock, partNames, subjects }),
     sections: toSections({ kept, mock }),
     timeLimitMinutes: keptOr({
       gap: null,

@@ -159,6 +159,7 @@ function toStructure({
     extraction,
     kept,
     partNames: [...groups, ...subjects.map((subject) => subject.name)],
+    subjects,
   });
 
   const parts = listExamParts({ mock, subjects });

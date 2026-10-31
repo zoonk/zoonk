@@ -361,6 +361,10 @@ describe("the final score's formula", () => {
   it.each([
     { name: "add up past the whole", shares: [SHARE_OBJECTIVE, { ...SHARE_WRITTEN, share: 0.6 }] },
     { name: "name a test twice", shares: [SHARE_OBJECTIVE, { ...SHARE_WRITTEN, parts: [P1] }] },
+    {
+      name: "cover a subject twice, by its group and by its name",
+      shares: [SHARE_WRITTEN, { ...SHARE_WRITTEN, parts: ["Prova discursiva"] }],
+    },
   ])("keeps no term when they $name", ({ shares }) => {
     expect(readScoring({ scoring: { finalShares: shares } })?.finalShares).toBeUndefined();
   });

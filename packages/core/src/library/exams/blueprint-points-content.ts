@@ -7,6 +7,7 @@ import {
   type ScoredPart,
 } from "./blueprint-contract";
 import { type KeptFacts, keptOr } from "./blueprint-kept";
+import { coversSubject } from "./final-share-cover";
 import { getMarkingPenalty } from "./marking-penalty";
 import { getPartMaxPoints } from "./part-points";
 
@@ -157,14 +158,18 @@ function toTotalMinimum({ kept, scoring }: { kept: KeptFacts; scoring: Scoring }
   return { citation, unit: totalMinimum.unit, value: totalMinimum.value };
 }
 
+type PartSubject = Parameters<typeof coversSubject>[0]["subject"];
+
 function toFinalShares({
   kept,
   partNames,
   scoring,
+  subjects,
 }: {
   kept: KeptFacts;
   partNames: readonly string[];
   scoring: Scoring;
+  subjects: readonly PartSubject[];
 }): FinalShare[] {
   const shares = scoring.finalShares.flatMap((share, index) => {
     const citation = kept.get(`mock.scoring.finalShares.${index}`)?.[0];
@@ -177,10 +182,13 @@ function toFinalShares({
       : [];
   });
 
-  const parts = shares.flatMap((share) => share.parts);
+  const covered = subjects.map(
+    (subject) => shares.filter((share) => coversSubject({ parts: share.parts, subject })).length,
+  );
+
   const total = shares.reduce((sum, share) => sum + share.share, 0);
 
-  return new Set(parts).size === parts.length && total <= MAX_SHARES_TOTAL ? shares : [];
+  return covered.every((count) => count <= 1) && total <= MAX_SHARES_TOTAL ? shares : [];
 }
 
 /** A part is a test or block as a kept subject's `group` or `name` writes it. */
@@ -188,15 +196,17 @@ export function toPointsScoring({
   kept,
   partNames,
   scoring,
+  subjects,
 }: {
   kept: KeptFacts;
   partNames: readonly string[];
   scoring: Scoring;
+  subjects: readonly PartSubject[];
 }) {
   const marking = toMarking({ kept, partNames, scoring });
   const parts = toParts({ kept, marking, partNames, scoring });
   const totalMinimum = toTotalMinimum({ kept, scoring });
-  const finalShares = toFinalShares({ kept, partNames, scoring });
+  const finalShares = toFinalShares({ kept, partNames, scoring, subjects });
 
   return {
     ...(finalShares.length > 0 ? { finalShares } : {}),
