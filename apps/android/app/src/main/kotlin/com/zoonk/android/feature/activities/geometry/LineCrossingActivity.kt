@@ -232,7 +232,7 @@ private fun LineCrossingChart(
     val whatHappened = stringResource(R.string.activities_geometry_line_what_happened)
     val amount = fields.shift.amount
     val lines = fields.lines.map { it.line() }
-    val domain = LineCrossingModel.domain(amount, axis, lines[0], lines[1])
+    val (domain, homes) = LineCrossingModel.layout(amount, axis, lines[0], lines[1])
     val range = LineCrossingModel.range(amount)
     val shown = fields.lines.map { LineCrossingModel.moved(it.line(), offsetOf(it), axis) }
     val movedLines = fields.lines.filter { offsetOf(it) != 0.0 }.map { it.line() }
@@ -256,8 +256,8 @@ private fun LineCrossingChart(
         val pixel = { point: Vec -> Offset(x.toPixel(point.x), y.toPixel(point.y)) }
         val segment = { line: Line -> LineCrossingModel.segment(line, domain).let { (from, to) -> LabelSegment(pixel(from), pixel(to)) } }
         val handles =
-            fields.lines.map { line ->
-                val home = LineCrossingModel.along(line.line(), domain, HANDLE_SHARE)
+            fields.lines.mapIndexed { index, line ->
+                val home = homes[index]
                 val (along, start) = if (axis == PlaceOrientation.Horizontal) x to home.x else y to home.y
                 val scale = LinearScale(range.min..range.max, along.toPixel(start + range.min) to along.toPixel(start + range.max))
                 val center =
@@ -551,7 +551,6 @@ private val ARROW_OFFSET = 10.dp
 private val ARROW_HEAD = 6.dp
 private const val ARROW_SPREAD = 0.6f
 private const val MAX_PLOT_GROWTH = 1.5f
-private const val HANDLE_SHARE = 0.82
 private const val AXIS_ALPHA = 0.4f
 private const val BEFORE_GUIDE_ALPHA = 0.5f
 private const val AFTER_GUIDE_ALPHA = 0.6f

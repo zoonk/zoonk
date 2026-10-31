@@ -4,6 +4,7 @@ import com.zoonk.android.feature.activities.PlaceOrientation
 import com.zoonk.android.feature.activities.SnapRange
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf15FieldsShift.Direction
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** Expected values are what main's `line-crossing-model.ts` and core's `shiftLine` and `crossing` return for the same input. */
@@ -91,5 +92,21 @@ class LineCrossingModelTest {
                 LineCrossingModel.direction(offset, axis)
             },
         )
+    }
+
+    @Test
+    fun leavesRoomOnTheChartForEachHandlesWholeSlide() {
+        val (domain, homes) = LineCrossingModel.layout(2.0, sideways, supply, demand)
+        val range = LineCrossingModel.range(2.0)
+
+        assertTrue("homes $homes", homes.minOf { it.x + range.min } >= 0.0)
+        assertTrue("homes $homes, domain $domain", homes.maxOf { it.x + range.max } <= domain.x)
+    }
+
+    @Test
+    fun keepsAFallingLinesHandleAboveZeroWhenItSlidesDown() {
+        val (_, homes) = LineCrossingModel.layout(2.0, upright, supply, demand)
+
+        assertTrue("home ${homes[1]}", homes[1].y + LineCrossingModel.range(2.0).min >= 0.0)
     }
 }

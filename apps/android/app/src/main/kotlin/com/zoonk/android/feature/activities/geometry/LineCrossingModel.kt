@@ -98,6 +98,36 @@ internal object LineCrossingModel {
         return Vec(x, line.yAt(x))
     }
 
+    /**
+     * Main's `chartLayout`: the chart's span and where each line's drag handle rests, 82% along the
+     * line, past the crossings, or the nearest point to that whose slide stays above zero. The span
+     * grows so each handle's whole slide stays on the chart.
+     */
+    fun layout(
+        amount: Double,
+        axis: PlaceOrientation,
+        first: Line,
+        second: Line,
+    ): Pair<Vec, List<Vec>> {
+        val fitted = domain(amount, axis, first, second)
+        val range = range(amount)
+        val alongAxis = { point: Vec -> if (axis == PlaceOrientation.Horizontal) point.x else point.y }
+        val homes =
+            listOf(first, second).map { line ->
+                along(line, fitted, HANDLE_SHARES.firstOrNull { alongAxis(along(line, fitted, it)) + range.min >= 0 } ?: HANDLE_SHARE)
+            }
+        val reach = homes.maxOf { alongAxis(it) + range.max }
+        val grown =
+            if (axis ==
+                PlaceOrientation.Horizontal
+            ) {
+                fitted.copy(x = max(fitted.x, reach))
+            } else {
+                fitted.copy(y = max(fitted.y, reach))
+            }
+        return grown to homes
+    }
+
     fun change(
         before: Double,
         after: Double,
@@ -111,6 +141,10 @@ internal object LineCrossingModel {
     }
 
     private const val HEADROOM = 1.25
+    private const val HANDLE_SHARE = 0.82
+    private const val HANDLE_SHARE_STEPS = 100
+    private val HANDLE_SHARES =
+        (0..HANDLE_SHARE_STEPS).map { it.toDouble() / HANDLE_SHARE_STEPS }.sortedBy { abs(it - HANDLE_SHARE) }
     private const val MIN_SPAN = 1.0
     private const val STEPS_PER_SHIFT = 4
     private const val RELATIVE_SLACK = 1e-9
