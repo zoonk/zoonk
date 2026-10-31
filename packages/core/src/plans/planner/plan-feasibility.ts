@@ -79,11 +79,14 @@ export function getPlanFeasibility({
   examSubjects = null,
   input,
   planned = buildPlan(input),
+  plannedInput,
   studyScheduleAt,
 }: {
   examSubjects?: readonly ExamSubjectShare[] | null;
   input: BuildPlanInput;
   planned?: BuiltPlan;
+  /** What `planned` was built from: a time tried with that same input reuses it. */
+  plannedInput?: BuildPlanInput;
   studyScheduleAt?: StudyScheduleAt;
 }): PlanFeasibility {
   const known = input.knownSkillIds ?? new Set<string>();
@@ -98,7 +101,9 @@ export function getPlanFeasibility({
   const skillFits = toSkillFits(coverage);
   const fullCourseEndDate = once(() => (deadline && !fits ? getFullCourseEnd(input) : null));
 
-  const plannedAt = once(() => planAtMinutes(input, studyScheduleAt));
+  const plannedAt = once(() =>
+    planAtMinutes(input, studyScheduleAt, plannedInput && { built: planned, input: plannedInput }),
+  );
 
   const coverageAt = (dailyMinutes: number) =>
     getSelectedCoverage({ built: plannedAt()(dailyMinutes), examSubjects, input });

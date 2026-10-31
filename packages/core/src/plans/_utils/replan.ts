@@ -281,6 +281,7 @@ export async function computePlan({
       examSubjects,
       input,
       planned: built,
+      plannedInput: builtInput,
       studyScheduleAt: options.studyScheduleAt,
     }),
   );

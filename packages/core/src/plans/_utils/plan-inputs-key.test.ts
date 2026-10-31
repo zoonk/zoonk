@@ -249,14 +249,10 @@ describe(readLanding, () => {
       items: [standIn, { ...standIn, id: "done", status: "done" as const }],
     };
 
-    expect(readLanding({ input: longer, savedKey })).toStrictEqual({ landedOnly: false });
-    expect(readLanding({ input: studied, savedKey })).toStrictEqual({ landedOnly: false });
-
-    expect(readLanding({ input: { ...landed, mode: "forced" }, savedKey })).toStrictEqual({
-      landedOnly: false,
-    });
-
-    expect(readLanding({ input: landed, savedKey: null })).toStrictEqual({ landedOnly: false });
+    expect(readLanding({ input: longer, savedKey })).toStrictEqual({});
+    expect(readLanding({ input: studied, savedKey })).toStrictEqual({});
+    expect(readLanding({ input: { ...landed, mode: "forced" }, savedKey })).toStrictEqual({});
+    expect(readLanding({ input: landed, savedKey: null })).toStrictEqual({});
   });
 
   it("lands a skill's next chapter, written since, though the plan holds lessons of it", () => {
@@ -271,8 +267,6 @@ describe(readLanding, () => {
   it("never reads a lesson the plan was saved without, but knew, as written since", () => {
     const heldKey = getPlanInputsKey({ input: { ...held, lessons }, items: [] });
 
-    expect(readLanding({ input: { ...held, lessons }, savedKey: heldKey })).toStrictEqual({
-      landedOnly: false,
-    });
+    expect(readLanding({ input: { ...held, lessons }, savedKey: heldKey })).toStrictEqual({});
   });
 });

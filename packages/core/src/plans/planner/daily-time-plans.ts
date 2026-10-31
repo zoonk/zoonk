@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from "node:util";
 import { MAX_DAILY_MINUTES } from "../daily-minutes";
 import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
 import { scaleWeekdayMinutes } from "./plan-calendar";
@@ -41,6 +42,7 @@ export function withDailyMinutes(
 export function planAtMinutes(
   input: BuildPlanInput,
   studyScheduleAt?: StudyScheduleAt,
+  planned?: { built: BuiltPlan; input: BuildPlanInput },
 ): (dailyMinutes: number) => BuiltPlan {
   const plans = new Map<string, BuiltPlan>();
 
@@ -51,7 +53,11 @@ export function planAtMinutes(
       ? `${candidate.goal.dailyMinutes}:${candidate.settings.weekdayMinutes?.join(",") ?? "daily"}`
       : String(dailyMinutes);
 
-    const plan = plans.get(key) ?? buildPlan(candidate);
+    const plan =
+      plans.get(key) ??
+      (planned && isDeepStrictEqual(candidate, planned.input)
+        ? planned.built
+        : buildPlan(candidate));
 
     plans.set(key, plan);
     return plan;

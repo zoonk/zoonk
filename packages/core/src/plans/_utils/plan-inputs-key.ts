@@ -194,5 +194,5 @@ export function readLanding({
     return { heldSkillsLand: true, landedOnly: true };
   }
 
-  return { landedOnly: isOnly(input) };
+  return isOnly(input) ? { landedOnly: true } : {};
 }
