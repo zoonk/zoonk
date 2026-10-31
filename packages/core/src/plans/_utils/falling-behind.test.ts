@@ -39,13 +39,14 @@ describe(getFallingBehind, () => {
     const searches = (
       [
         "alternative",
-        "coreMinutes",
         "fittingDate",
         "fullCourseEndDate",
         "recommendedMinutes",
         "timeCovers",
       ] as const
     ).map((field) => vi.spyOn(feasibility, field, "get"));
+
+    const coverageAt = vi.spyOn(feasibility, "coverageAt");
 
     const behind = getFallingBehind({
       computed: {
@@ -72,5 +73,7 @@ describe(getFallingBehind, () => {
     for (const getter of searches) {
       expect(getter).not.toHaveBeenCalled();
     }
+
+    expect(coverageAt).not.toHaveBeenCalled();
   });
 });

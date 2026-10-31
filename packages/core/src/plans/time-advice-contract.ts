@@ -40,11 +40,25 @@ export const daySplitSchema = z
 
 const suggestedTimeSchema = z
   .object({
-    kind: z
-      .enum(["everything", "everyTopic"])
+    coveredShare: z
+      .number()
+      .min(0)
+      .max(1)
       .meta({
         description:
-          "everything: the time covers the whole goal in depth by its date (recommendedMinutes); everyTopic: it brings every topic in, some in less depth (coreMinutes)",
+          "What these minutes cover in depth by the date, measured as coveredShare is (see measure): 1 for everything",
+      }),
+    everyTopic: z
+      .boolean()
+      .meta({
+        description:
+          "These minutes bring every topic in, the ones asked most in more depth: false when the topics asked least wait. True for everything",
+      }),
+    kind: z
+      .enum(["everything", "focus"])
+      .meta({
+        description:
+          "everything: the minutes cover the whole goal in depth by its date (recommendedMinutes); focus: covering everything takes more than most people keep up, so they're 4 hours a day, what's worth most first, and never to be described as covering everything",
       }),
     minutes: z.int(),
     split: daySplitSchema.meta({
@@ -56,7 +70,7 @@ const suggestedTimeSchema = z
   .default(null)
   .meta({
     description:
-      "The daily time to start the learner on, never more than 4 hours a day: recommendedMinutes when it's at most that, else coreMinutes when that is. Null when neither is, without a date, while not ready, and when the date has passed. With studyDays, like them, the day the goals typed together share",
+      "The daily time to recommend and start the learner on, never more than 4 hours a day: recommendedMinutes when it's at most that, else 4 hours. Show recommendedMinutes beside a focus time, so the learner sees what everything takes and can pick it. Null without a date, while not ready, and when the date has passed. With studyDays, like them, the day the goals typed together share",
   });
 
 const targetDateNamedMonthSchema = z
@@ -107,13 +121,6 @@ export type PlanTimeAdvice = z.infer<typeof planTimeAdviceSchema>;
 
 export const planTimeToCoverSchema = z
   .object({
-    coreMinutes: z
-      .int()
-      .nullable()
-      .meta({
-        description:
-          "When even every topic's core lessons don't fit by the date: the fewest daily minutes that bring every topic in. Null when they all fit. With studyDays, the least day the goals typed together share that gives this goal those minutes, at least 5 minutes for each goal. Never offer it as a time to study: offer suggested",
-      }),
     fittingDate: isoDateSchema
       .nullable()
       .meta({
@@ -125,7 +132,7 @@ export const planTimeToCoverSchema = z
       .default(false)
       .meta({
         description:
-          "The goal's date has passed in the learner's time zone: no daily time covers it, so recommendedMinutes, coreMinutes and suggested are null",
+          "The goal's date has passed in the learner's time zone: no daily time covers it, so recommendedMinutes and suggested are null",
       }),
     readingNotice: readingNoticeSchema,
     ready: readySchema,
@@ -134,12 +141,12 @@ export const planTimeToCoverSchema = z
       .nullable()
       .meta({
         description:
-          "Daily minutes that study the whole goal in depth by its date: the fewest up to 4 hours a day; above that, a time that does, which a weekly mock can make a little more than the fewest. Null without a date, while the plan is being built, or when not even a whole day does. With studyDays, the least day the goals typed together share that gives this goal those minutes, at least 5 minutes for each goal. Never offer it as a time to study: offer suggested",
+          "Daily minutes that study the whole goal in depth by its date: the fewest up to 4 hours a day; above that, a time that does, which a weekly mock can make a little more than the fewest. Null without a date, while the plan is being built, or when not even a whole day does. With studyDays, the least day the goals typed together share that gives this goal those minutes, at least 5 minutes for each goal. More than 4 hours a day is more than most people keep up: suggested is then the recommendation",
       }),
     suggested: suggestedTimeSchema,
     targetDate: isoDateSchema
       .nullable()
-      .meta({ description: "The goal's date, which the recommended time covers everything by" }),
+      .meta({ description: "The goal's date, which recommendedMinutes covers everything by" }),
     targetDateNamedMonth: targetDateNamedMonthSchema,
   })
   .meta({ id: "PlanTimeToCover" });

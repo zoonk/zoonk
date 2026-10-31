@@ -354,10 +354,10 @@ const INTERVIEW_PLAN = {
 
 const ENEM_TIME_TO_COVER: GoalTutorLookUpStandIn = {
   timeToCover: {
-    coreMinutes: null,
     fittingDate: null,
     recommendedMinutes: 95,
     status: "found",
+    suggested: { coveredShare: 1, everyTopic: true, kind: "everything", minutes: 95 },
     targetDate: "2026-11-08",
     what: "timeToCover",
   },

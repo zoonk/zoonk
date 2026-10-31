@@ -77,16 +77,18 @@ export type PlanLookUpFound =
     }
   | {
       /**
-       * When even the cores don't fit by the date: the fewest minutes a day that bring every topic
-       * in.
-       */
-      coreMinutes: number | null;
-      /**
        * For a non-exam goal whose time falls short: the earliest date that time covers it all by.
        */
       fittingDate: string | null;
       /** The fewest minutes a day that study the whole goal in depth by its date; null when no daily time does. */
       recommendedMinutes: number | null;
+      /** The time a day to recommend; `focus` when everything takes more than most people keep up. */
+      suggested: {
+        coveredShare: number;
+        everyTopic: boolean;
+        kind: "everything" | "focus";
+        minutes: number;
+      } | null;
       targetDate: string | null;
       what: "timeToCover";
     };
@@ -99,5 +101,5 @@ export const PLAN_LOOKUP_USES: Record<PlanLookUp, string> = {
   schedule:
     "the plan's study days ahead, up to 14 days from the day in `query` (YYYY-MM-DD; null for the day after the context's `today`, which the context already has): each day's lessons, reviews, challenges and mocks with their status, minutes for this week's days, and the challenges' and mocks' links. Ask again from the day after `to` for later days. For what comes on a day or in the next weeks.",
   timeToCover:
-    "the daily time that studies their whole goal in depth by its date (`recommendedMinutes`), found by planning the goal at each daily time: exact, so it takes a moment; null when not even a whole day does. For a goal that isn't an exam whose own time falls short, the earliest date that time covers everything by (`fittingDate`); when even the topics' cores don't fit, the time that brings every topic in (`coreMinutes`). Takes no `area` or `query`. Only when they ask about their daily time, what more time would cover or when they'd finish everything: never for anything else.",
+    "the daily time that studies their whole goal in depth by its date (`recommendedMinutes`), found by planning the goal at each daily time: exact, so it takes a moment; null when not even a whole day does. The time to recommend (`suggested`): that same time when it's 4 hours a day or less (`kind` `everything`); otherwise 4 hours (`focus`), since more is more than most people keep up, with the share of everything it covers in depth by the date (`coveredShare`) and whether it still brings every topic in (`everyTopic`). For a goal that isn't an exam whose own time falls short, the earliest date that time covers everything by (`fittingDate`). Takes no `area` or `query`. Only when they ask about their daily time, what more time would cover or when they'd finish everything: never for anything else.",
 };

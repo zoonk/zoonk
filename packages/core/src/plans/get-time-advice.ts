@@ -272,7 +272,6 @@ export async function findPlanTimeToCover({
     return {
       status: "ready",
       time: {
-        coreMinutes: null,
         fittingDate: null,
         pastDate: false,
         readingNotice: asked.readingNotice,
@@ -319,23 +318,26 @@ export async function findPlanTimeToCover({
   const movesDate = ownWeek && context.goal.kind !== "exam" && (pastDate || !feasibility.fits);
 
   // Nothing covers a date that has passed, so no time is searched for.
-  const minutes = {
-    coreMinutes: pastDate ? null : toDayMinutes({ day, minutes: feasibility.coreMinutes }),
-    recommendedMinutes: pastDate
-      ? null
-      : toDayMinutes({ day, minutes: feasibility.recommendedMinutes }),
-  };
+  const recommendedMinutes = pastDate
+    ? null
+    : toDayMinutes({ day, minutes: feasibility.recommendedMinutes });
 
-  const suggested = getSuggestedTime(minutes);
+  const suggested =
+    pastDate || !context.goal.targetDate
+      ? null
+      : getSuggestedTime({
+          coverageAt: (budget) => feasibility.coverageAt(getGoalShare({ ...day, budget })),
+          everything: recommendedMinutes,
+        });
 
   return {
     status: "ready",
     time: {
-      ...minutes,
       fittingDate: movesDate && context.goal.targetDate ? await findCoveringDate(context) : null,
       pastDate,
       readingNotice: false,
       ready: true,
+      recommendedMinutes,
       suggested: suggested && {
         ...suggested,
         split: getDaySplit({ ...day, budget: suggested.minutes }),

@@ -192,7 +192,7 @@ export function useAnswerOffer() {
   const formatDuration = useFormatDuration();
   const formatDate = useFormatIsoDate();
   const texts = useTimeToCoverTexts();
-  const { goal } = usePlanScreen();
+  const { goal, plan } = usePlanScreen();
 
   return function answerOffer({
     covered,
@@ -204,12 +204,16 @@ export function useAnswerOffer() {
     time: PlanTimeToCover;
   }): CoverageOffer | null {
     const answer = readTimeToCover(time);
-    const { fittingDate, targetDate } = time;
-    const none = answer.kind === "none" && targetDate ? texts.none : null;
+    const { fittingDate, targetDate, targetDateNamedMonth } = time;
+
+    const takes =
+      answer.kind === "focus" && targetDate
+        ? texts.everythingTakes({ minutes: answer.full, targetDate, targetDateNamedMonth })
+        : null;
 
     if (goal.kind !== "exam" && fittingDate && (intent === "date" || answer.kind !== "covers")) {
       return {
-        description: intent === "date" || !none ? [covered] : [covered, none],
+        description: intent === "date" || !takes ? [covered] : [covered, takes],
         operations: [{ kind: "setTargetDate", targetDate: fittingDate }],
         title: t({
           description:
@@ -223,6 +227,24 @@ export function useAnswerOffer() {
 
     if (intent === "date" || answer.kind === "none") {
       return null;
+    }
+
+    if (answer.kind === "focus") {
+      // A learner who already studies longer is never asked to cut down: what everything takes is said instead.
+      return answer.minutes > plan.schedule.dailyMinutes
+        ? {
+            description: [
+              ...(takes ? [takes] : []),
+              texts.focus({
+                coveredShare: answer.coveredShare,
+                everyTopic: answer.everyTopic,
+                exam: goal.kind === "exam",
+              }),
+            ],
+            operations: [{ kind: "setDailyMinutes", minutes: answer.minutes }],
+            title: texts.suggestTitle(answer.minutes),
+          }
+        : null;
     }
 
     return {

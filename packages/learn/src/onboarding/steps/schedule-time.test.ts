@@ -2,11 +2,11 @@ import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/tim
 import { describe, expect, it } from "vitest";
 import {
   asksAboutTime,
+  getFullTimeNote,
   getOffer,
   getShownMinutes,
   getSuggestedMinutes,
   getTimeLine,
-  getTooClose,
   keepsFullCourse,
   toFindWeek,
   toPickedMinutes,
@@ -17,17 +17,16 @@ import {
 
 const PAST_DATE = { pastDate: true, recommendedMinutes: null, suggested: null };
 
-const TOO_CLOSE = { coreMinutes: null, recommendedMinutes: null, suggested: null };
+const TOO_CLOSE = { recommendedMinutes: null, suggested: null };
 
 function foundTime(time: Partial<PlanTimeToCover> = {}): PlanTimeToCover {
   return {
-    coreMinutes: null,
     fittingDate: null,
     pastDate: false,
     readingNotice: false,
     ready: true,
     recommendedMinutes: 35,
-    suggested: { kind: "everything", minutes: 35, split: null },
+    suggested: { coveredShare: 1, everyTopic: true, kind: "everything", minutes: 35, split: null },
     targetDate: "2028-10-29",
     targetDateNamedMonth: false,
     ...time,
@@ -35,14 +34,16 @@ function foundTime(time: Partial<PlanTimeToCover> = {}): PlanTimeToCover {
 }
 
 function everythingAt(minutes: number): Partial<PlanTimeToCover> {
-  return { recommendedMinutes: minutes, suggested: { kind: "everything", minutes, split: null } };
+  return {
+    recommendedMinutes: minutes,
+    suggested: { coveredShare: 1, everyTopic: true, kind: "everything", minutes, split: null },
+  };
 }
 
-function everyTopicAt(minutes: number): Partial<PlanTimeToCover> {
+function focusAt(recommendedMinutes: number | null): Partial<PlanTimeToCover> {
   return {
-    coreMinutes: minutes,
-    recommendedMinutes: null,
-    suggested: { kind: "everyTopic", minutes, split: null },
+    recommendedMinutes,
+    suggested: { coveredShare: 0.32, everyTopic: false, kind: "focus", minutes: 240, split: null },
   };
 }
 
@@ -73,7 +74,7 @@ const LINE = {
 
 describe(getSuggestedMinutes, () => {
   it("takes the plan's suggestion, or none while the plan hasn't answered", () => {
-    expect(getSuggestedMinutes(foundTime(everyTopicAt(45)))).toBe(45);
+    expect(getSuggestedMinutes(foundTime(focusAt(805)))).toBe(240);
     expect(getSuggestedMinutes(foundTime(TOO_CLOSE))).toBeNull();
     expect(getSuggestedMinutes(null)).toBeNull();
   });
@@ -166,9 +167,11 @@ describe(getTimeLine, () => {
   it("says why the suggested time without asking the plan again", () => {
     expect(getTimeLine(LINE)).toStrictEqual({ kind: "everything", suggested: true });
 
-    expect(getTimeLine({ ...LINE, found: foundTime(everyTopicAt(45)), minutes: 45 })).toStrictEqual(
-      { kind: "everyTopic" },
-    );
+    expect(getTimeLine({ ...LINE, found: foundTime(focusAt(805)), minutes: 240 })).toStrictEqual({
+      coveredShare: 0.32,
+      everyTopic: false,
+      kind: "focus",
+    });
   });
 
   it("says what another time covers once the plan answers for it", () => {
@@ -240,43 +243,36 @@ describe(asksAboutTime, () => {
   });
 });
 
-describe(getTooClose, () => {
+describe(getFullTimeNote, () => {
   const SHORT = { kind: "share", share: 0.15 } as const;
+  const FOCUS = foundTime(focusAt(805));
 
-  it("says why only when no suggestion covers everything", () => {
-    const longerThanSuggested = { coreMinutes: 255, recommendedMinutes: 805, suggested: null };
-
-    expect(getTooClose({ found: foundTime(), line: SHORT, studiesEveryDay: true })).toBeNull();
-
-    expect(
-      getTooClose({ found: foundTime(longerThanSuggested), line: SHORT, studiesEveryDay: true }),
-    ).toBe("date");
+  it("says what everything takes only beside a focus suggestion", () => {
+    expect(getFullTimeNote({ found: foundTime(), line: SHORT, studiesEveryDay: true })).toBeNull();
 
     expect(
-      getTooClose({ found: foundTime(PAST_DATE), line: SHORT, studiesEveryDay: true }),
+      getFullTimeNote({ found: foundTime(PAST_DATE), line: SHORT, studiesEveryDay: true }),
     ).toBeNull();
 
-    expect(getTooClose({ found: foundTime(TOO_CLOSE), line: SHORT, studiesEveryDay: true })).toBe(
-      "date",
-    );
+    expect(getFullTimeNote({ found: FOCUS, line: SHORT, studiesEveryDay: true })).toStrictEqual({
+      kind: "takes",
+      minutes: 805,
+      moreDays: false,
+    });
+  });
 
+  it("says more study days help while some days are left, even when no day covers it all", () => {
     expect(
-      getTooClose({ found: foundTime(everyTopicAt(45)), line: SHORT, studiesEveryDay: true }),
-    ).toBe("date");
+      getFullTimeNote({ found: foundTime(focusAt(null)), line: SHORT, studiesEveryDay: false }),
+    ).toStrictEqual({ kind: "takes", minutes: null, moreDays: true });
   });
 
-  it("blames the study days, not the date, while there are days left to add", () => {
-    expect(getTooClose({ found: foundTime(TOO_CLOSE), line: SHORT, studiesEveryDay: false })).toBe(
-      "days",
-    );
-  });
-
-  it("says nothing once the time picked covers everything anyway", () => {
+  it("says the time shown is more than most people keep up once it covers everything", () => {
     const covers = { kind: "everything", suggested: false } as const;
 
-    expect(
-      getTooClose({ found: foundTime(TOO_CLOSE), line: covers, studiesEveryDay: false }),
-    ).toBeNull();
+    expect(getFullTimeNote({ found: FOCUS, line: covers, studiesEveryDay: true })).toStrictEqual({
+      kind: "tooLong",
+    });
   });
 });
 
@@ -289,15 +285,37 @@ describe(getOffer, () => {
     expect(getOffer({ found: foundTime(), line: SHORT, minutes: 15 })).toStrictEqual({
       kind: "everything",
       minutes: 35,
-      split: null,
     });
   });
 
   it("offers nothing to a time that already covers everything", () => {
     const covers = { kind: "everything", suggested: false } as const;
-    const found = foundTime(everyTopicAt(240));
+    const found = foundTime(everythingAt(240));
 
     expect(getOffer({ found, line: covers, minutes: 900 })).toBeNull();
+  });
+
+  it("offers the time that covers everything beside a focus, and the focus beside any other", () => {
+    const found = foundTime(focusAt(805));
+    const covers = { kind: "everything", suggested: false } as const;
+    const focus = getTimeLine({ ...LINE, found, minutes: 240 });
+
+    expect(getOffer({ found, line: focus, minutes: 240 })).toStrictEqual({
+      kind: "full",
+      minutes: 805,
+    });
+
+    expect(getOffer({ found, line: covers, minutes: 805 })).toStrictEqual({
+      kind: "focus",
+      minutes: 240,
+    });
+
+    expect(getOffer({ found, line: SHORT, minutes: 120 })).toStrictEqual({
+      kind: "focus",
+      minutes: 240,
+    });
+
+    expect(getOffer({ found: foundTime(focusAt(null)), line: focus, minutes: 240 })).toBeNull();
   });
 });
 

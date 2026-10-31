@@ -665,16 +665,23 @@ describe("the plan the buddy looks up", () => {
         throw new Error(`Expected the time that covers everything, got ${time.status}`);
       }
 
-      const { coreMinutes, fittingDate, recommendedMinutes } = time.time;
+      const { fittingDate, recommendedMinutes, suggested } = time.time;
 
       expect(found).toStrictEqual({
-        coreMinutes,
         fittingDate,
         recommendedMinutes,
         status: "found",
+        suggested: suggested && {
+          coveredShare: suggested.coveredShare,
+          everyTopic: suggested.everyTopic,
+          kind: suggested.kind,
+          minutes: suggested.minutes,
+        },
         targetDate: "2020-10-02",
         what: "timeToCover",
       });
+
+      expect(suggested).not.toBeNull();
 
       expect(recommendedMinutes).toBeGreaterThan(0);
     });

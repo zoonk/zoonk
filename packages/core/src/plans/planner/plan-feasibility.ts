@@ -15,10 +15,12 @@ import { fromIsoDate } from "./plan-calendar";
 import { type ExamSubjectShare, getSkillValue } from "./selected-coverage";
 import { getSelectedCoverage } from "./selected-plan-summary";
 
+export type TimeCoverage = { coreFits: boolean; coveredShare: number };
+
 export type PlanFeasibility = {
   alternative: { dailyMinutes: number; endDate: Date | null } | null;
   coreFits: boolean;
-  coreMinutes: number | null;
+  coverageAt: (dailyMinutes: number) => TimeCoverage;
   coveredShare: number;
   deepensMostAsked: boolean;
   deadline: Date | null;
@@ -105,11 +107,22 @@ export function getPlanFeasibility({
     planAtMinutes(input, studyScheduleAt, plannedInput && { built: planned, input: plannedInput }),
   );
 
-  const coverageAt = (dailyMinutes: number) =>
+  const selectedAt = (dailyMinutes: number) =>
     getSelectedCoverage({ built: plannedAt()(dailyMinutes), examSubjects, input });
 
+  const coverageAt = (dailyMinutes: number): TimeCoverage => {
+    const selected = selectedAt(dailyMinutes);
+
+    return {
+      coreFits:
+        selected?.coreFits ??
+        hasEveryTopic({ built: plannedAt()(dailyMinutes), known, skills: input.graph.skills }),
+      coveredShare: selected?.coveredShare ?? 1,
+    };
+  };
+
   const timeCovers = once(
-    () => deadline !== null && (fits || (coverageAt(input.goal.dailyMinutes)?.fits ?? false)),
+    () => deadline !== null && (fits || (selectedAt(input.goal.dailyMinutes)?.fits ?? false)),
   );
 
   const fittingFloor = once(() =>
@@ -123,7 +136,7 @@ export function getPlanFeasibility({
 
   const recommendedMinutes = once(() =>
     deadline
-      ? findFittingMinutes((minutes) => coverageAt(minutes)?.fits ?? false, fittingFloor())
+      ? findFittingMinutes((minutes) => selectedAt(minutes)?.fits ?? false, fittingFloor())
       : null,
   );
 
@@ -138,25 +151,13 @@ export function getPlanFeasibility({
       : null,
   );
 
-  const coreMinutes = once(() =>
-    coreFits
-      ? null
-      : findFittingMinutes(
-          (minutes) =>
-            coverageAt(minutes)?.coreFits ??
-            hasEveryTopic({ built: plannedAt()(minutes), known, skills: input.graph.skills }),
-        ),
-  );
-
   // Lazy: each builds a plan per time it tries, and most readers never ask.
   return {
     get alternative() {
       return alternative();
     },
     coreFits,
-    get coreMinutes() {
-      return coreMinutes();
-    },
+    coverageAt,
     coveredShare,
     deadline,
     deepensMostAsked: deepensMostAsked({ input, known, skillFits }),

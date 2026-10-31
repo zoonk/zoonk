@@ -103,6 +103,7 @@ export function TimeSelect({
 
 type DailyTimeProps = {
   disabled?: boolean;
+  full?: number | null;
   label: string;
   onChange: (minutes: number) => void;
   saves?: boolean;
@@ -110,8 +111,29 @@ type DailyTimeProps = {
   suggested?: number | null;
 };
 
+function TimeOptionLabel({
+  full,
+  minutes,
+  suggested,
+}: {
+  full: number | null;
+  minutes: number;
+  suggested: number | null;
+}) {
+  const t = useExtracted();
+  const formatDuration = useFormatDuration();
+  const time = formatDuration(minutes);
+
+  if (minutes === suggested) {
+    return t("{time} (suggested)", { time });
+  }
+
+  return minutes === full ? t("{time} (covers everything)", { time }) : time;
+}
+
 function DailyTimeReadout({
   disabled = false,
+  full = null,
   label,
   minutes,
   onChange,
@@ -119,9 +141,8 @@ function DailyTimeReadout({
   stale = false,
   suggested = null,
 }: DailyTimeProps & { minutes: number }) {
-  const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const times = getDailyTimes(minutes, suggested);
+  const times = getDailyTimes(minutes, suggested, full);
   const { waiting, ...choice } = useTimeChoice({ disabled, minutes, onChange, saves });
 
   return (
@@ -148,9 +169,7 @@ function DailyTimeReadout({
       >
         {times.map((time) => (
           <option key={time} value={time}>
-            {time === suggested
-              ? t("{time} (suggested)", { time: formatDuration(time) })
-              : formatDuration(time)}
+            <TimeOptionLabel full={full} minutes={time} suggested={suggested} />
           </option>
         ))}
       </select>

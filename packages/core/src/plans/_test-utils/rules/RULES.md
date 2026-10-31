@@ -258,10 +258,10 @@ For a dated exam, turning `fullCourse` on keeps the schedule on or before the ex
 - **Check:** a syllabus topic shown as to study (or in progress) has a lesson still to do on a skill that teaches it; one in progress whose rest is out for time (its lessons set aside after missed days, `notPlannedReason` `time`) has none still to do; one shown out of the plan has none still to do or done; `feasibility.coreFits` never stands next to topics out for time; `fits` implies `coreFits`.
 - **Reads:** `syllabus`, `view.feasibility`, `after`.
 
-### R26. The recommended time covers the goal
+### R26. What everything takes is said, and the suggestion is one people keep up
 
-- **Owner's words:** "by default recommend the daily minutes that cover 100% of the goal by its date" (7 Oct).
-- **Check:** with the daily time at or above the `recommendedMinutes` Find answered (`findPlanTimeToCover`, only when the learner asks), the plan fits. Any time a day up to a whole day can be recommended ("if a user wants to study 15 hours a day, that's their choice", 24 Oct); above 4 hours it may be a little more than the fewest that fits (see `findFittingMinutes`).
+- **Owner's words:** "by default recommend the daily minutes that cover 100% of the goal by its date" (7 Oct); "if a user wants to study 15 hours a day, that's their choice" (24 Oct); "we need to be honest… to cover all of this within the deadline, you would need around 13 hours a day. That can be unrealistic, so we suggest maybe a four-hour plan instead… we shouldn't drop quality for people who actually want to spend more time" (30 Oct).
+- **Check:** with the daily time at or above the `recommendedMinutes` Find answered (`findPlanTimeToCover`, only when the learner asks), the plan fits; above 4 hours it may be a little more than the fewest that fits (see `findFittingMinutes`). The `suggested` time is `recommendedMinutes` when that's at most 4 hours a day, else 4 hours (`focus`), whose `coveredShare` and `everyTopic` are what the plan at that time covers; the learner sees both times and can pick either, or any other.
 - **Reads:** `timeToCover`, `view.feasibility`, `view.schedule.dailyMinutes`.
 
 ### R27. No em dashes

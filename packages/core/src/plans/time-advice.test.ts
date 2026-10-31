@@ -367,7 +367,14 @@ describe(getPlanTimeAdvice, () => {
       const split = { mine: own, others: 1, rest: day - own };
 
       expect(day).toBe(getBudgetForGoal({ count: 2, minutes: own, place }));
-      expect(asked.suggested).toStrictEqual({ kind: "everything", minutes: day, split });
+
+      expect(asked.suggested).toStrictEqual({
+        coveredShare: 1,
+        everyTopic: true,
+        kind: "everything",
+        minutes: day,
+        split,
+      });
 
       const [ownAsDay, wholeDay] = await Promise.all([
         readAdvice(goal.id, EVERY_DAY, { dailyMinutes: own }),

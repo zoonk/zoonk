@@ -59,7 +59,7 @@ describe("the plan read", () => {
 
     expect(full.plan.feasibility.coreFits).toBe(false);
 
-    for (const field of ["coreMinutes", "recommendedMinutes", "fittingDate"]) {
+    for (const field of ["recommendedMinutes", "fittingDate"]) {
       expect(full.plan.feasibility).not.toHaveProperty(field);
     }
 

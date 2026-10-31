@@ -129,13 +129,12 @@ test("waits for the time new study days need before saving the suggestion", asyn
     const minutes = fewerDays ? 45 : 30;
 
     const json: PlanTimeToCover = {
-      coreMinutes: null,
       fittingDate: null,
       pastDate: false,
       readingNotice: false,
       ready: true,
       recommendedMinutes: minutes,
-      suggested: { kind: "everything", minutes, split: null },
+      suggested: { coveredShare: 1, everyTopic: true, kind: "everything", minutes, split: null },
       targetDate: targetDate.toISOString().slice(0, 10),
       targetDateNamedMonth: false,
     };

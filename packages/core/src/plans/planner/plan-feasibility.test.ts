@@ -309,12 +309,12 @@ describe(getPlanFeasibility, () => {
 
     const feasibility = getPlanFeasibility({ input });
 
-    expect(feasibility).toMatchObject({ coreFits: true, coreMinutes: null, fits: false });
+    expect(feasibility).toMatchObject({ coreFits: true, fits: false });
     expect(feasibility.recommendedMinutes).toBeGreaterThan(30);
     expect(feasibility.skillFits.get("s2")).toBeGreaterThan(0);
   });
 
-  it("says the time that brings every skill in when even the cores don't fit", () => {
+  it("says what another daily time covers, as a plan at that time measures it", () => {
     const skills = Array.from({ length: 8 }, (_, index) =>
       skill(`s${index}`, { lessons: 60, weight: 8 - index }),
     );
@@ -325,15 +325,18 @@ describe(getPlanFeasibility, () => {
     });
 
     const feasibility = getPlanFeasibility({ input });
+    const times = [10, 60, 240];
 
-    expect(feasibility.coreFits).toBe(false);
-    expect(feasibility.coreMinutes).toBeGreaterThan(10);
-    expect(feasibility.coreMinutes).toBeLessThan(feasibility.recommendedMinutes ?? 241);
+    const planned = times.map((minutes) => {
+      const { coreFits, coveredShare } = getPlanFeasibility({
+        input: withDailyMinutes(input, minutes),
+      });
 
-    const atCoreMinutes = getPlanFeasibility({
-      input: { ...input, goal: { ...input.goal, dailyMinutes: feasibility.coreMinutes ?? 0 } },
+      return { coreFits, coveredShare };
     });
 
-    expect(atCoreMinutes.coreFits).toBe(true);
+    expect(times.map((minutes) => feasibility.coverageAt(minutes))).toStrictEqual(planned);
+    expect(planned.map((at) => at.coreFits)).toStrictEqual([false, false, true]);
+    expect(planned[1]?.coveredShare).toBeLessThan(planned[2]?.coveredShare ?? 0);
   });
 });

@@ -7,6 +7,7 @@ import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { DailyTimePicker } from "../../_components/daily-time-picker";
 import { type GenerationRun } from "../../generation/generation-run";
+import { getFullMinutes, readTimeToCover } from "../../plan/use-time-to-cover";
 import { PlanReceipt, PlanReceiptChips } from "../plan-receipt";
 import { FullCourseToggle } from "./full-course-toggle";
 import { NoticeReading } from "./notice-reading";
@@ -14,9 +15,9 @@ import { PlanBuilding } from "./plan-building";
 import { type GoalDate, ScheduleLine } from "./schedule-line";
 import {
   type GoalsTogether,
+  getFullTimeNote,
   getOffer,
   getSuggestedMinutes,
-  getTooClose,
   keepsFullCourse,
   toPickedMinutes,
   waitsToSave,
@@ -90,6 +91,7 @@ function ScheduleTime({ exam, schedule }: { exam: boolean; schedule: Schedule })
   return (
     <div className="flex flex-col gap-2">
       <DailyTimePicker
+        full={found.found && getFullMinutes(readTimeToCover(found.found))}
         label={t("Time a day")}
         minutes={minutes}
         onChange={(next) =>
@@ -110,17 +112,17 @@ function ScheduleTime({ exam, schedule }: { exam: boolean; schedule: Schedule })
         exam={exam}
         line={line}
         minutes={minutes}
+        note={getFullTimeNote({
+          found: found.found,
+          line,
+          studiesEveryDay: schedule.week.days.length === EVERY_DAY.length,
+        })}
         offer={getOffer({ found: found.found, line, minutes })}
         onRetry={found.failed ? found.covering.restart : schedule.timeAdvice.restart}
         onUseOffer={(offer) =>
           setPicked(toPickedMinutes({ first: found.first, found: found.found, minutes: offer }))
         }
         split={schedule.split}
-        tooClose={getTooClose({
-          found: found.found,
-          line,
-          studiesEveryDay: schedule.week.days.length === EVERY_DAY.length,
-        })}
       />
     </div>
   );
@@ -129,7 +131,7 @@ function ScheduleTime({ exam, schedule }: { exam: boolean; schedule: Schedule })
 function ExamFullCourse({ schedule }: { schedule: Schedule }) {
   const { advice, fullCourse, line, minutes } = schedule;
   const date = getGoalDate(schedule);
-  const short = line.kind === "share" || line.kind === "everyTopic";
+  const short = line.kind === "share" || line.kind === "focus";
 
   if (!date || !(short || keepsFullCourse({ checked: fullCourse, line }))) {
     return null;

@@ -135,18 +135,18 @@ describe("a plan's headline and its topics tell one truth", () => {
     await expect(readTruth(goal.id)).resolves.toMatchObject({ coreFits: true, outForTime: [] });
   });
 
-  it("says topics don't fit exactly when subject pages leave some out, and the time that brings them in", async () => {
+  it("says topics don't fit exactly when subject pages leave some out, and the suggested time brings them in", async () => {
     const { goal } = await setup({ dailyMinutes: 7 });
 
     const short = await readTruth(goal.id);
     const found = await findPlanTimeToCover({ goalId: goal.id, input: {} });
-    const coreMinutes = found.status === "ready" ? found.time.coreMinutes : null;
+    const suggested = found.status === "ready" ? found.time.suggested : null;
 
     expect(short.outForTime.length).toBeGreaterThan(0);
     expect(short.coreFits).toBe(false);
-    expect(coreMinutes).not.toBeNull();
+    expect(suggested).toMatchObject({ everyTopic: true });
 
-    await change(goal.id, [{ kind: "setDailyMinutes", minutes: coreMinutes ?? 0 }]);
+    await change(goal.id, [{ kind: "setDailyMinutes", minutes: suggested?.minutes ?? 0 }]);
 
     await expect(readTruth(goal.id)).resolves.toMatchObject({ coreFits: true, outForTime: [] });
   });

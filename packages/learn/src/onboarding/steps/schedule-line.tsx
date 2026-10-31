@@ -1,21 +1,21 @@
 "use client";
 
 import { type DaySplit } from "@zoonk/core/goals/daily-budget";
-import { type PlanSuggestedTime } from "@zoonk/core/plans/time-advice-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate, useGoalDateValues } from "../../_utils/iso-date";
 import { useFormatShare } from "../../_utils/percent";
 import { useFormatDuration } from "../../_utils/time-format";
-import { type TimeLine, type TooClose, isBusyLine } from "./schedule-time";
+import { useTimeToCoverTexts } from "../../plan/use-time-to-cover";
+import { type FullTimeNote, type TimeLine, type TimeOffer, isBusyLine } from "./schedule-time";
 
 export type GoalDate = { isoDate: string; namedMonth: boolean };
 
-type DatedLine = Extract<TimeLine, { kind: "everyTopic" | "everything" | "pastDate" | "share" }>;
+type DatedLine = Extract<TimeLine, { kind: "everything" | "focus" | "pastDate" | "share" }>;
 
 type FinishLine = Extract<TimeLine, { kind: "finish" | "noFinish" }>;
 
-const DATED_KINDS = new Set<TimeLine["kind"]>(["everyTopic", "everything", "pastDate", "share"]);
+const DATED_KINDS = new Set<TimeLine["kind"]>(["everything", "focus", "pastDate", "share"]);
 const FINISH_KINDS = new Set<TimeLine["kind"]>(["finish", "noFinish"]);
 const FAILED_KINDS = new Set<TimeLine["kind"]>(["askFailed", "findFailed"]);
 
@@ -31,18 +31,40 @@ function FinishMonth(chunks: React.ReactNode) {
   return <span className="text-foreground font-medium">{chunks}</span>;
 }
 
-function TooCloseWords({ tooClose }: { tooClose: TooClose }) {
-  const t = useExtracted();
+function EverythingTakesWords({
+  date,
+  note,
+}: {
+  date: GoalDate;
+  note: Extract<FullTimeNote, { kind: "takes" }>;
+}) {
+  const texts = useTimeToCoverTexts();
 
-  return tooClose === "days"
-    ? t(
-        "The days you picked can't cover everything in depth by your date. More study days would help.",
-      )
-    : t("Your date is too close to cover everything in depth.");
+  return (
+    <p>
+      {texts.everythingTakes({
+        minutes: note.minutes,
+        targetDate: date.isoDate,
+        targetDateNamedMonth: date.namedMonth,
+      })}
+      {note.moreDays && <> {texts.moreDays}</>}
+    </p>
+  );
 }
 
-function DatedWords({ date, exam, line }: { date: GoalDate; exam: boolean; line: DatedLine }) {
+function DatedWords({
+  date,
+  exam,
+  line,
+  minutes,
+}: {
+  date: GoalDate;
+  exam: boolean;
+  line: DatedLine;
+  minutes: number;
+}) {
   const t = useExtracted();
+  const texts = useTimeToCoverTexts();
   const goalDate = useGoalDateValues();
   const formatShare = useFormatShare();
   const shown = goalDate({ ...date, style: "long" });
@@ -82,22 +104,13 @@ function DatedWords({ date, exam, line }: { date: GoalDate; exam: boolean; line:
               "{dateKind, select, month {Covers your whole goal by {date}.} other {Covers your whole goal by {date}.}}",
             values: shown,
           });
-    case "everyTopic":
-      return exam
-        ? t({
-            description:
-              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-            message:
-              "{dateKind, select, month {Reaches every exam topic by {date}, some in less depth.} other {Reaches every exam topic by {date}, some in less depth.}}",
-            values: shown,
-          })
-        : t({
-            description:
-              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-            message:
-              "{dateKind, select, month {Reaches every part of your goal by {date}, some in less depth.} other {Reaches every part of your goal by {date}, some in less depth.}}",
-            values: shown,
-          });
+    case "focus":
+      return (
+        <>
+          {texts.suggest(minutes)}{" "}
+          {texts.focus({ coveredShare: line.coveredShare, everyTopic: line.everyTopic, exam })}
+        </>
+      );
     case "share":
       return exam
         ? t({
@@ -191,7 +204,10 @@ function LineWords({
   minutes: number | null;
 }) {
   if (isDatedLine(line)) {
-    return date && <DatedWords date={date} exam={exam} line={line} />;
+    return (
+      date &&
+      minutes !== null && <DatedWords date={date} exam={exam} line={line} minutes={minutes} />
+    );
   }
 
   if (isFinishLine(line)) {
@@ -212,79 +228,80 @@ function DaySplitWords({ split }: { split: DaySplit }) {
     : t("This goal gets {main} a day and your other goals {other} together.", { main, other });
 }
 
-function OfferLabel({ offer }: { offer: PlanSuggestedTime }) {
+function OfferLabel({ offer }: { offer: TimeOffer }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const time = formatDuration(offer.minutes);
 
-  return offer.kind === "everything"
-    ? t("Cover everything with {time} a day", { time })
-    : t("Reach every topic with {time} a day", { time });
+  return offer.kind === "focus"
+    ? t("Use the suggested {time} a day", { time })
+    : t("Cover everything with {time} a day", { time });
 }
 
-/** One polite live region for the time shown: what it means, why, and the way back to the suggestion. */
+/** One polite live region for the time shown: what everything takes, what this time covers, and the other time to pick. */
 export function ScheduleLine({
   date,
   exam,
   line,
   minutes,
+  note,
   offer,
   onRetry,
   onUseOffer,
   split,
-  tooClose,
 }: {
   date: GoalDate | null;
   exam: boolean;
   line: TimeLine;
   minutes: number | null;
-  offer: PlanSuggestedTime | null;
+  note: FullTimeNote | null;
+  offer: TimeOffer | null;
   onRetry: () => void;
   onUseOffer: (minutes: number) => void;
   split: DaySplit | null;
-  tooClose: TooClose | null;
 }) {
   const t = useExtracted();
+  const texts = useTimeToCoverTexts();
   const failed = FAILED_KINDS.has(line.kind);
 
   return (
-    <p
+    <div
       aria-busy={isBusyLine(line)}
       aria-live="polite"
-      className="text-muted-foreground min-h-12 text-sm leading-6 text-pretty sm:min-h-0"
+      className="text-muted-foreground flex min-h-12 flex-col gap-2 text-sm leading-6 text-pretty sm:min-h-0"
     >
-      {tooClose && (
-        <>
-          <TooCloseWords tooClose={tooClose} />{" "}
-        </>
-      )}
+      {date && note?.kind === "takes" && <EverythingTakesWords date={date} note={note} />}
 
-      <LineWords date={date} exam={exam} line={line} minutes={minutes} />
+      <p>
+        <LineWords date={date} exam={exam} line={line} minutes={minutes} />
 
-      {split && (
-        <>
-          {" "}
-          <DaySplitWords split={split} />
-        </>
-      )}
+        {note?.kind === "tooLong" && <> {texts.tooLong}</>}
 
-      {failed && (
-        <>
-          {" "}
-          <Button onClick={onRetry} variant="link">
-            {t("Try again")}
-          </Button>
-        </>
-      )}
+        {split && (
+          <>
+            {" "}
+            <DaySplitWords split={split} />
+          </>
+        )}
 
-      {offer && !failed && (
-        <>
-          {" "}
-          <Button onClick={() => onUseOffer(offer.minutes)} variant="link">
-            <OfferLabel offer={offer} />
-          </Button>
-        </>
-      )}
-    </p>
+        {failed && (
+          <>
+            {" "}
+            <Button onClick={onRetry} variant="link">
+              {t("Try again")}
+            </Button>
+          </>
+        )}
+
+        {offer && !failed && (
+          <>
+            {" "}
+            <Button onClick={() => onUseOffer(offer.minutes)} variant="link">
+              <OfferLabel offer={offer} />
+            </Button>
+          </>
+        )}
+      </p>
+    </div>
   );
 }

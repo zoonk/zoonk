@@ -30,7 +30,7 @@ import { ChooseFocus, useCanChooseFocus } from "./plan-focus";
 import { FullCourseSwitch } from "./plan-full-course";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
-import { getOfferedMinutes } from "./use-time-to-cover";
+import { getFullMinutes, getOfferedMinutes } from "./use-time-to-cover";
 
 const DAYS_PER_WEEK = 7;
 
@@ -168,6 +168,7 @@ function DailyMinutes({
 
       <DailyTimePicker
         disabled={isPending}
+        full={getFullMinutes(answer)}
         label={t("Time a day")}
         minutes={time.shown}
         onChange={setMinutes}

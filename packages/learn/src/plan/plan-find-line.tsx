@@ -9,6 +9,7 @@ import { findSectionControl } from "./plan-editor-sections";
 import { FULL_COURSE_SWITCH_ID } from "./plan-full-course";
 import {
   type TimeToCoverAnswer,
+  getFullMinutes,
   getOfferedMinutes,
   readTimeToCover,
   useTimeToCover,
@@ -105,6 +106,8 @@ export function FindLine({
   const { answered, find, state } = useTimeToCover();
   const answer = answered && readTimeToCover(answered);
   const offered = getOfferedMinutes(answer);
+  const full = getFullMinutes(answer);
+  const current = plan.schedule.shape.weekdays;
   const showsDate = goal.kind !== "exam" && answer?.kind !== "covers";
   const dateFound = showsDate ? answered?.fittingDate : null;
 
@@ -133,10 +136,25 @@ export function FindLine({
             </p>
           )}
 
-          {answer?.kind === "none" && answered?.targetDate && <p>{texts.none}</p>}
+          {answer?.kind === "focus" && answered?.targetDate && (
+            <>
+              <p>
+                {texts.everythingTakes({
+                  minutes: answer.full,
+                  targetDate: answered.targetDate,
+                  targetDateNamedMonth: answered.targetDateNamedMonth,
+                })}
+              </p>
 
-          {answer?.kind === "none" && answer.everyTopicMinutes !== null && (
-            <p>{texts.everyTopic(answer.everyTopicMinutes)}</p>
+              <p>
+                {texts.suggest(answer.minutes)}{" "}
+                {texts.focus({
+                  coveredShare: answer.coveredShare,
+                  everyTopic: answer.everyTopic,
+                  exam: goal.kind === "exam",
+                })}
+              </p>
+            </>
           )}
 
           {dateFound && (
@@ -148,19 +166,32 @@ export function FindLine({
             </p>
           )}
 
-          {offered !== null && offered !== plan.schedule.shape.weekdays && (
-            <Button
-              className="self-start"
-              disabled={pending}
-              focusableWhenDisabled
-              id={USE_TIME_ID}
-              onClick={() => applyTime(offered)}
-              size="sm"
-              variant="outline"
-            >
-              {texts.use(offered)}
-            </Button>
-          )}
+          <div className="flex flex-wrap gap-2 empty:hidden">
+            {offered !== null && offered !== current && (
+              <Button
+                disabled={pending}
+                focusableWhenDisabled
+                id={USE_TIME_ID}
+                onClick={() => applyTime(offered)}
+                size="sm"
+                variant="outline"
+              >
+                {texts.use(offered)}
+              </Button>
+            )}
+
+            {full !== null && full !== current && (
+              <Button
+                disabled={pending}
+                focusableWhenDisabled
+                onClick={() => applyTime(full)}
+                size="sm"
+                variant="ghost"
+              >
+                {texts.use(full)}
+              </Button>
+            )}
+          </div>
         </>
       }
       canFind={canFind}

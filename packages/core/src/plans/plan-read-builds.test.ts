@@ -153,7 +153,7 @@ describe("plans laid out per read", () => {
 
     expect(found.result).toMatchObject({
       status: "ready",
-      time: { coreMinutes: null, recommendedMinutes: null, targetDate: "2020-10-19" },
+      time: { recommendedMinutes: null, suggested: null, targetDate: "2020-10-19" },
     });
 
     expect(found.builds).toBeLessThanOrEqual(2);

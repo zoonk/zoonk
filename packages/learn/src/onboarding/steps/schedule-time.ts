@@ -1,5 +1,4 @@
 import {
-  type PlanSuggestedTime,
   type PlanTimeAdvice,
   type PlanTimeAdviceInput,
   type PlanTimeToCover,
@@ -10,10 +9,10 @@ export type StudyWeek = Omit<PlanTimeAdviceInput, "dailyMinutes"> & { studyDays:
 export type TimeLine =
   | { kind: "asking" }
   | { kind: "askFailed" }
-  | { kind: "everyTopic" }
   | { kind: "everything"; suggested: boolean }
   | { kind: "findFailed" }
   | { kind: "finish"; endDate: string }
+  | { coveredShare: number; everyTopic: boolean; kind: "focus" }
   | { kind: "noDays" }
   | { kind: "noFinish" }
   | { kind: "pastDate" }
@@ -132,14 +131,16 @@ export function toPickedMinutes({
   return follows && getSuggestedMinutes(found) === minutes ? null : minutes;
 }
 
-export type TooClose = "date" | "days";
+export type FullTimeNote =
+  | { kind: "takes"; minutes: number | null; moreDays: boolean }
+  | { kind: "tooLong" };
 
 /**
- * Why no suggestion covers everything, which happens when it would take longer than core ever
- * suggests; null when one does, the time shown does, or the date passed. The date is to blame only
- * once every day is a study day: until then, more days bring the time down.
+ * When the suggestion is a focus: what covering everything takes while the time shown falls short
+ * of it, or that the time shown, which covers it all, is more than most people keep up. More days
+ * bring the time down until every day is a study day.
  */
-export function getTooClose({
+export function getFullTimeNote({
   found,
   line,
   studiesEveryDay,
@@ -147,20 +148,22 @@ export function getTooClose({
   found: PlanTimeToCover | null;
   line: TimeLine;
   studiesEveryDay: boolean;
-}): TooClose | null {
-  if (
-    !found ||
-    found.pastDate ||
-    line.kind === "everything" ||
-    found.suggested?.kind === "everything"
-  ) {
+}): FullTimeNote | null {
+  if (!found || found.suggested?.kind !== "focus") {
     return null;
   }
 
-  return studiesEveryDay ? "date" : "days";
+  return line.kind === "everything"
+    ? { kind: "tooLong" }
+    : { kind: "takes", minutes: found.recommendedMinutes, moreDays: !studiesEveryDay };
 }
 
-/** Only while the time shown falls short of everything. */
+export type TimeOffer = { kind: "everything" | "focus" | "full"; minutes: number };
+
+/**
+ * The suggestion while another time is shown, unless that time covers everything anyway; on a
+ * focus suggestion, the time that covers everything.
+ */
 export function getOffer({
   found,
   line,
@@ -169,12 +172,20 @@ export function getOffer({
   found: PlanTimeToCover | null;
   line: TimeLine;
   minutes: number | null;
-}): PlanSuggestedTime | null {
+}): TimeOffer | null {
   const suggested = found?.suggested ?? null;
 
-  return suggested && suggested.minutes !== minutes && line.kind !== "everything"
-    ? suggested
-    : null;
+  if (!suggested) {
+    return null;
+  }
+
+  if (suggested.minutes !== minutes) {
+    const covered = suggested.kind === "everything" && line.kind === "everything";
+    return covered ? null : { kind: suggested.kind, minutes: suggested.minutes };
+  }
+
+  const full = found?.recommendedMinutes ?? null;
+  return suggested.kind === "focus" && full !== null ? { kind: "full", minutes: full } : null;
 }
 
 function getDatedLine({
@@ -203,7 +214,7 @@ function getDatedLine({
   if (suggested?.minutes === minutes) {
     return suggested.kind === "everything"
       ? { kind: "everything", suggested: true }
-      : { kind: "everyTopic" };
+      : { coveredShare: suggested.coveredShare, everyTopic: suggested.everyTopic, kind: "focus" };
   }
 
   if (!advice) {

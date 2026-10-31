@@ -62,7 +62,7 @@ function getCardFlags({
   const dateless = isGoal && found !== null && found.fittingDate === null;
   const offersDate = offer?.operations[0]?.kind === "setTargetDate";
   const asked = offer !== null || found !== null;
-  const noTime = found !== null && readTimeToCover(found).kind === "none";
+  const noTime = found !== null && readTimeToCover(found).kind !== "covers";
 
   return {
     findsTime: !asked,
@@ -93,7 +93,16 @@ function useCardLines({
   const failed = intent === "date" ? t("We couldn't check what changes.") : texts.failed;
   const retryText = state.status === "building" ? texts.building : failed;
 
-  const none = found?.targetDate && !offer && !flags.noDate ? texts.none : null;
+  const answer = found && readTimeToCover(found);
+
+  const none =
+    found?.targetDate && answer?.kind === "focus" && !offer && !flags.noDate
+      ? texts.everythingTakes({
+          minutes: answer.full,
+          targetDate: found.targetDate,
+          targetDateNamedMonth: found.targetDateNamedMonth,
+        })
+      : null;
 
   const noDate = flags.noDate ? texts.noDate : null;
   const retry = flags.retry ? retryText : null;
