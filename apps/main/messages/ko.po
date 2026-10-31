@@ -1,0 +1,4176 @@
+msgid ""
+msgstr ""
+"Language: ko\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @eloqnt/format-po\n"
+"X-Message-Key: msgctxt\n"
+
+#: src/app/[lang]/(app)/(catalog)/_components/account-dropdown-item.tsx
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+#: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/components/auth-gate.tsx
+#: src/components/login-bar-link.tsx
+#: src/components/public/start-lesson-button.tsx
+msgctxt "odXlk8"
+msgid "Log in"
+msgstr "로그인"
+
+#: src/app/[lang]/(app)/(catalog)/_components/account-dropdown-item.tsx
+#: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
+#: src/components/auth-gate.tsx
+msgctxt "0vL5u1"
+msgid "Create an account"
+msgstr "계정 만들기"
+
+#: src/app/[lang]/(app)/(catalog)/_components/account-dropdown-item.tsx
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+msgctxt "PlBReU"
+msgid "Log out"
+msgstr "로그아웃"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "C81_uG"
+msgid "Logout"
+msgstr "로그아웃"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "U3l-Q9"
+msgid "Home page"
+msgstr "홈"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+#: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
+#: src/app/[lang]/(app)/(catalog)/courses/page.tsx
+#: src/components/catalog/catalog-not-found.tsx
+msgctxt "s-Ncqj"
+msgid "Explore courses"
+msgstr "코스 둘러보기"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
+msgctxt "ng8fsM"
+msgid "Start a goal"
+msgstr "목표 시작하기"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+#: src/components/pricing/plus-pricing.tsx
+#: src/components/public/public-footer.tsx
+#: src/components/public/public-nav-links.tsx
+msgctxt "5Wwopw"
+msgid "Pricing"
+msgstr "요금제"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "xIoGG9"
+msgid "Go to"
+msgstr "바로 가기"
+
+#. Words people type to find Send feedback in the search, never shown. Keep “bug” and add the words people use in this language.
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "CbsWrd"
+msgid "bug, problem, report, idea, suggestion, feature request, contact"
+msgstr "bug, 버그, 오류, 문제, 신고, 제보, 아이디어, 제안, 기능 요청, 문의"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-links.tsx
+msgctxt "G5YSJR"
+msgid "Send feedback"
+msgstr "의견 보내기"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "tv5FG3"
+msgid "Blog"
+msgstr "블로그"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/support/page.tsx
+#: src/app/[lang]/(app)/(settings)/support/support-content.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "SENRqu"
+msgid "Help"
+msgstr "도움말"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
+#: src/app/[lang]/(app)/(onboarding)/start/[goalId]/page.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "ChuNUI"
+msgid "Your plan"
+msgstr "내 계획"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "dXSivY"
+msgid "My account"
+msgstr "내 계정"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "y7pLO8"
+msgid "Mock exam {number}"
+msgstr "모의고사 {number}"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "zP4GPk"
+msgid "Mock exams"
+msgstr "모의고사"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "42u92h"
+msgid "In the catalog"
+msgstr "카탈로그에서"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "zMX-mq"
+msgid "Ask {buddy}: “{question}”"
+msgstr "{buddy}에게 물어보기: “{question}”"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "t-HGE_"
+msgid "opens the chat"
+msgstr "채팅이 열려요"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "Q7LVft"
+msgid "Start a new goal: “{goal}”"
+msgstr "새 목표 시작하기: “{goal}”"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "MA35Hh"
+msgid "Start a goal: “{goal}”"
+msgstr "목표 시작하기: “{goal}”"
+
+#. Heading over the option to ask the buddy the typed question.
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "ZT0z9z"
+msgid "Ask"
+msgstr "물어보기"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "Q25Oon"
+msgid "New goal"
+msgstr "새 목표"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "u82Vi2"
+msgid "Continue today's session"
+msgstr "오늘의 학습 이어가기"
+
+#. The sizes of mock exam the learner can take: the full exam, half of it, or one subject.
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "Zu-MTq"
+msgid "full, half or one subject"
+msgstr "전체, 절반 또는 한 과목"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/mock/new/page.tsx
+msgctxt "g5EneG"
+msgid "Take a mock exam"
+msgstr "모의고사 보기"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "AFQMLq"
+msgid "Practice your mistakes"
+msgstr "틀린 문제 다시 풀기"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "z6HKe1"
+msgid "Ask {buddy}…"
+msgstr "{buddy}에게 물어보기…"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "QTg-WT"
+msgid "Start a new goal"
+msgstr "새 목표 시작하기"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+#: src/app/[lang]/(home)/_components/hero-window.tsx
+#: src/components/catalog/course-plan-window.tsx
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "zWgbGg"
+msgid "Today"
+msgstr "오늘"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/plan/[subject]/page.tsx
+#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
+#: src/app/[lang]/(app)/(learn)/plan/page.tsx
+#: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
+#: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
+#: src/components/learn/journey-page-bar.tsx
+msgctxt "fz0z4c"
+msgid "Plan"
+msgstr "계획"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "1L2nnA"
+msgid "Buddy"
+msgstr "짝꿍"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/mistakes/page.tsx
+#: src/app/[lang]/(home)/_components/practice-job.tsx
+msgctxt "g3GlDw"
+msgid "Mistakes notebook"
+msgstr "오답 노트"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "Xy7a7A"
+msgid "Exam"
+msgstr "시험"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "ONqlu6"
+msgid "Speaking"
+msgstr "말하기"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/mind-maps/page.tsx
+msgctxt "Z9Sg5E"
+msgid "Mind maps"
+msgstr "마인드맵"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/logbook/page.tsx
+msgctxt "_qTRbZ"
+msgid "Logbook"
+msgstr "학습 일지"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(stats)/layout.tsx
+#: src/app/[lang]/(app)/(stats)/stats/page.tsx
+msgctxt "H3eDAS"
+msgid "Statistics"
+msgstr "통계"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "Ie60UL"
+msgid "Switch to {goal}"
+msgstr "{goal}(으)로 전환하기"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "wL7VAE"
+msgid "Actions"
+msgstr "작업"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "OXDyuT"
+msgid "Your goals"
+msgstr "내 목표"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "eclXxO"
+msgid "Quick explanations"
+msgstr "간단한 설명"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/layout.tsx
+#: src/app/[lang]/(app)/(settings)/settings/page.tsx
+msgctxt "D3idYv"
+msgid "Settings"
+msgstr "설정"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "itPgxd"
+msgid "Profile"
+msgstr "프로필"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
+msgctxt "dVx3yz"
+msgid "Memory"
+msgstr "메모리"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+msgctxt "R_6nsx"
+msgid "Subscription"
+msgstr "구독"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+msgctxt "2GURQY"
+msgid "Appearance"
+msgstr "화면 모양"
+
+#. A page inside Settings for the buddy, sounds, daily time limit and app language: use a word other than “Settings”.
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+msgctxt "PCSt5T"
+msgid "Preferences"
+msgstr "사용 환경"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+#: src/components/public/footer-languages.tsx
+msgctxt "y1Z3or"
+msgid "Language"
+msgstr "언어"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "4tfrGE"
+msgid "Couldn't open your next step. Try again."
+msgstr "다음 단계로 이동하지 못했어요. 다시 시도해 보세요."
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "60v8Pt"
+msgid "Search or ask"
+msgstr "검색 또는 질문"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "z5av6z"
+msgid "Go to a page, run an action or ask a question."
+msgstr "페이지로 이동하거나 기능을 실행하거나 질문해 보세요."
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "취소"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(app)/(catalog)/_components/search-dropdown-item.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-links.tsx
+msgctxt "qpMObd"
+msgid "Search or ask…"
+msgstr "검색 또는 질문…"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "3ATcmQ"
+msgid "move"
+msgstr "이동"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "-9qP4Y"
+msgid "open"
+msgstr "열기"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "BSij1a"
+msgid "close"
+msgstr "닫기"
+
+#: src/app/[lang]/(app)/(catalog)/_components/user-avatar-menu.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "6b2CRH"
+msgid "User menu"
+msgstr "사용자 메뉴"
+
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+#: src/components/pricing/plus-plan.tsx
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "lOdoIb"
+msgid "Plus"
+msgstr "Plus"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-chapter-aside.tsx
+#: src/components/catalog/chapter-strip.tsx
+msgctxt "BGwIJy"
+msgid "Chapter {number} of {total}"
+msgstr "{number}장 / 전체 {total}장"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
+msgctxt "t_2u2K"
+msgid "{count, plural, one {# short lesson} other {# short lessons}}"
+msgstr "{count, plural, other {짧은 레슨 #개}}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/library-lesson-page.tsx
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
+#: src/components/catalog/plan-workload.tsx
+msgctxt "iqLF8D"
+msgid "Lessons"
+msgstr "레슨"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-chapter-aside.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "n7xPkB"
+msgid "{count, plural, one {# lesson} other {# lessons}}"
+msgstr "{count, plural, other {레슨 #개}}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
+msgctxt "QNnsRX"
+msgid "{minutes, plural, one {# minute} other {# minutes}}."
+msgstr "{minutes, plural, other {#분}}."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
+#: src/components/catalog/first-question.tsx
+msgctxt "xIVf67"
+msgid "No sign-up needed."
+msgstr "회원 가입이 필요 없어요."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
+msgctxt "4NMpnC"
+msgid "Start the lesson"
+msgstr "레슨 시작하기"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "x5DbVQ"
+msgid "Start this lesson"
+msgstr "이 레슨 시작하기"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
+msgctxt "h4RNnR"
+msgid "{count, plural, one {# idea} other {# ideas}}"
+msgstr "{count, plural, other {개념 #개}}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+msgctxt "kvjzxh"
+msgid "What you'll learn"
+msgstr "배울 내용"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+msgctxt "nxKjXi"
+msgid "{count, plural, one {# lesson} other {# lessons}} · {duration}"
+msgstr "{count, plural, other {레슨 #개}} · {duration}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
+msgctxt "qCHG2P"
+msgid "Chapter {number}: {chapter}"
+msgstr "챕터 {number}: {chapter}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
+msgctxt "AvS60l"
+msgid "Go to the chapter"
+msgstr "챕터로 이동하기"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
+msgctxt "f-_t_p"
+msgid "This lesson is part of the {course} course."
+msgstr "이 레슨은 {course} 코스에 포함돼 있어요."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "TEMmOs"
+msgid "Example plan"
+msgstr "계획 예시"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "JZFs07"
+msgid "An example. Your plan follows your answers, so it can start later and end sooner."
+msgstr "예시예요. 실제 계획은 답변에 따라 달라져서 뒷부분부터 시작해 더 빨리 끝날 수 있어요."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-start.tsx
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/page.tsx
+#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
+#: src/components/pricing/plus-pricing.tsx
+msgctxt "npIkqE"
+msgid "Start free, no account needed."
+msgstr "계정 없이 무료로 시작할 수 있어요."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+msgctxt "XUON71"
+msgid "Start here and Zoonk writes its lessons for your level."
+msgstr "여기서 시작하면 Zoonk가 수준에 맞춰 이 챕터의 레슨을 만들어 줘요."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+msgctxt "LxAk-r"
+msgid "Your plan from this chapter"
+msgstr "이 챕터부터 시작하는 내 계획"
+
+#. Heading over the ways to start a plan. “your level” is what the learner already knows.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+msgctxt "NCLSU6"
+msgid "Start today, at your level"
+msgstr "오늘, 내 수준에 맞춰 시작해요"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+msgctxt "H_k_3P"
+msgid "It follows the course from here, at your pace, with reviews before you forget."
+msgstr "여기서부터 내 페이스에 맞춰 코스를 따라 배우고, 잊기 전에 복습해요."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+msgctxt "6i_Ywx"
+msgid "A few quick questions, then your plan and your first lesson."
+msgstr "간단한 질문 몇 개에 답하면 계획과 첫 레슨이 준비돼요."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+msgctxt "uPK7mm"
+msgid "Chapter options"
+msgstr "챕터 옵션"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "DcXGUl"
+msgid "{chapter}: {course} course"
+msgstr "{chapter}: {course} 코스"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-fit.tsx
+msgctxt "kRwSyb"
+msgid "What you'll be able to do"
+msgstr "배우고 나면 할 수 있는 것"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-fit.tsx
+msgctxt "fIvfRs"
+msgid "Who it's for"
+msgstr "이런 분께 추천해요"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-start.tsx
+msgctxt "SFqn9B"
+msgid "Try a lesson"
+msgstr "레슨 체험하기"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+msgctxt "VO_HQW"
+msgid "Your plan until {date}, at {time} a day"
+msgstr "{date}까지, 하루 {time}씩 공부하는 내 계획"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+msgctxt "ZSMfHW"
+msgid "Your plan at {minutes, plural, one {# minute} other {# minutes}} a day, from scratch"
+msgstr "{minutes, plural, other {하루 #분씩}} 기초부터 배우는 내 계획"
+
+#. Heading over the list of the course's chapters and lessons. Not the learner's study plan, so use a different word than “plan”.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+msgctxt "rEPdIs"
+msgid "Course outline"
+msgstr "코스 목차"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
+msgctxt "GG6-cA"
+msgid "{count, plural, one {# chapter} other {# chapters}}"
+msgstr "{count, plural, other {챕터 #개}}"
+
+#. After the course's chapter count. Zoonk writes more lessons as learners reach them, so this counts only those written until now.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+msgctxt "5RluHj"
+msgid "{count, plural, one {# lesson written so far} other {# lessons written so far}}"
+msgstr "{count, plural, other {지금까지 만든 레슨 #개}}"
+
+#. Describes what happens once the learner builds a plan; not a command. The learner builds and Zoonk writes, so use a different verb for each.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+msgctxt "bdvt9X"
+msgid "Build your plan and Zoonk writes this course's chapters and lessons for you, starting at your level."
+msgstr "계획을 세우면 Zoonk가 수준에 맞는 내용부터 이 코스의 챕터와 레슨을 만들어 줘요."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+msgctxt "FwtWUq"
+msgid "This course is also available in your language."
+msgstr "이 코스는 사용 중인 언어로도 배울 수 있어요."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+msgctxt "vZu-i7"
+msgid "Your plan follows this course"
+msgstr "이 코스를 따라가는 내 계획"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+msgctxt "Sm_2tk"
+msgid "Course options"
+msgstr "코스 옵션"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+#: src/components/public/public-footer.tsx
+#: src/components/public/public-nav-links.tsx
+msgctxt "R85gsW"
+msgid "Courses"
+msgstr "코스"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
+msgctxt "xbvV6c"
+msgid "{count, plural, one {# chapter left out} other {# chapters left out}}"
+msgstr "{count, plural, other {챕터 #개 제외}}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
+#: src/components/catalog/area-study.ts
+msgctxt "IldniG"
+msgid "Left out"
+msgstr "제외"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
+#: src/app/[lang]/(home)/_components/goal-measure.tsx
+msgctxt "ArogzQ"
+msgid "{count, plural, =0 {# of {total, number} lessons} one {# of {total, number} lessons} other {# of {total, number} lessons}}"
+msgstr "{count, plural, =0 {레슨 #개(전체 {total, number}개 중)} other {레슨 #개 / 전체 {total, number}개}}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-chapter-row.tsx
+msgctxt "OGR3YM"
+msgid "Show fewer chapters"
+msgstr "챕터 접기"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-chapter-row.tsx
+msgctxt "IiIBmN"
+msgid "{count, plural, one {Show # more chapter} other {Show # more chapters}}"
+msgstr "{count, plural, other {챕터 #개 더 보기}}"
+
+#. Under the name of a course's level, such as Intermediate, that has no chapters yet. “it” is that level.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
+msgctxt "H7iemn"
+msgid "Not written yet. Zoonk writes its chapters as learners reach it."
+msgstr "아직 만들지 않았어요. 이 단계에 도달하면 Zoonk가 챕터를 만들어요."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
+msgctxt "wieA_m"
+msgid "week {week, number}"
+msgstr "{week, number}주차"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
+msgctxt "rci8_D"
+msgid "weeks {first, number}–{last, number}"
+msgstr "{first, number}–{last, number}주차"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-weeks.ts
+msgctxt "434gtt"
+msgid "Week {week, number}"
+msgstr "{week, number}주차"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-weeks.ts
+#: src/components/catalog/area-study.ts
+msgctxt "v1x8m2"
+msgid "quick lessons and lessons written as you reach them"
+msgstr "짧은 레슨과 진도에 맞춰 만들어지는 레슨"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-weeks.ts
+msgctxt "YFq7jF"
+msgid "quick lessons"
+msgstr "짧은 레슨"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-weeks.ts
+#: src/components/catalog/area-study.ts
+msgctxt "Xa1Q8P"
+msgid "lessons written as you reach them"
+msgstr "진도에 맞춰 만들어지는 레슨"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "6CUqWy"
+msgid "Learn {course} in short lessons, with a plan that starts at your level and fits your schedule. Start free. {description}"
+msgstr "짧은 레슨으로 {course} 학습을 시작해 보세요. 수준과 일정에 맞게 계획을 세워 드려요. 무료로 시작하세요. {description}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "gyGolN"
+msgid "Learn {course}"
+msgstr "{course} 배우기"
+
+#: src/app/[lang]/(app)/(catalog)/courses/category-nav.tsx
+msgctxt "zQvVDJ"
+msgid "All"
+msgstr "전체"
+
+#: src/app/[lang]/(app)/(catalog)/courses/category-nav.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "왼쪽으로 스크롤하기"
+
+#: src/app/[lang]/(app)/(catalog)/courses/category-nav.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "오른쪽으로 스크롤하기"
+
+#: src/app/[lang]/(app)/(catalog)/courses/category-nav.tsx
+msgctxt "tuZsq-"
+msgid "Course categories"
+msgstr "코스 카테고리"
+
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+msgctxt "zJxO2f"
+msgid "No courses"
+msgstr "코스 없음"
+
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+msgctxt "Wc7aau"
+msgid "No courses available yet."
+msgstr "아직 이용할 수 있는 코스가 없어요."
+
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+msgctxt "T0mfNV"
+msgid "Loading more courses…"
+msgstr "코스를 더 불러오고 있어요…"
+
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+msgctxt "W_5hwr"
+msgid "Something went wrong. Please try again."
+msgstr "문제가 생겼어요. 다시 시도해 보세요."
+
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/app/auth/callback/route.ts
+#: src/components/errors/page-error-message.tsx
+#: src/components/public/course-start-failure.tsx
+msgctxt "FazwRl"
+msgid "Try again"
+msgstr "다시 시도"
+
+#: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
+msgctxt "ONxggU"
+msgid "Start from a course, or tell Zoonk what you're getting ready for."
+msgstr "코스를 골라 시작하거나, 무엇을 준비하고 있는지 Zoonk에게 알려 주세요."
+
+#: src/app/[lang]/(app)/(catalog)/courses/page.tsx
+msgctxt "WgPMAP"
+msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons to learn subjects like science, math, technology, and more."
+msgstr "Zoonk의 모든 코스를 둘러보고 AI와 함께 무엇이든 배워 보세요. 과학, 수학, 기술 등 다양한 과목을 다루는 참여형 레슨을 찾아보세요."
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
+msgctxt "yAw6p8"
+msgid "{belt}, level {level}. Statistics"
+msgstr "{belt}, 레벨 {level}. 통계"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-frame.tsx
+msgctxt "ZKtRoA"
+msgid "Skip to content"
+msgstr "본문으로 바로 가기"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
+msgctxt "l5SUmq"
+msgid "Start with a goal"
+msgstr "목표부터 시작하기"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
+#: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
+msgctxt "FqgLH3"
+msgid "Tell us what you want to learn, and we'll plan every day until you get there."
+msgstr "배우고 싶은 것을 알려 주세요. 목표에 도달할 때까지 매일 무엇을 공부할지 계획해 드려요."
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "vj_mVz"
+msgid "{belt}, level {level}"
+msgstr "{belt}, 레벨 {level}"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "zF7Cth"
+msgid "Guest"
+msgstr "게스트"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+msgctxt "UTFsoN"
+msgid "Study"
+msgstr "학습"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+msgctxt "JZy6jo"
+msgid "Sidebar"
+msgstr "사이드바"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+msgctxt "eOJ4QU"
+msgid "Collapse sidebar"
+msgstr "사이드바 접기"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+msgctxt "1JgBls"
+msgid "Expand sidebar"
+msgstr "사이드바 펼치기"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-tab-navigation.tsx
+msgctxt "CPAYvm"
+msgid "{count, plural, one {# activity left} other {# activities left}}"
+msgstr "{count, plural, other {활동이 #개 남았어요}}"
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "ijwVvk"
+msgid "Earlier questions"
+msgstr "이전 질문"
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "6hIrBQ"
+msgid "From an earlier version of {course}"
+msgstr "{course}의 이전 버전에서 한 질문"
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "TnUbiV"
+msgid "From an earlier version of this course"
+msgstr "이 코스의 이전 버전에서 한 질문"
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "vgDvJf"
+msgid "No answer was saved."
+msgstr "저장된 답변이 없어요."
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "zqnAPr"
+msgid "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread."
+msgstr "코스를 새로 만들기 전에 했던 질문이에요. 레슨 내용이 바뀌어서 다시 읽을 수 있도록 여기에 남겨 뒀어요."
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "YPd0dY"
+msgid "You have no earlier questions."
+msgstr "이전 질문이 없어요."
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "O3OEwU"
+msgid "Older questions"
+msgstr "더 오래된 질문"
+
+#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+msgctxt "FRwDt3"
+msgid "Your buddy"
+msgstr "내 짝꿍"
+
+#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
+msgctxt "6YPtag"
+msgid "Your buddy answers your questions and adjusts your plan."
+msgstr "짝꿍이 질문에 답하고 계획을 조정해 줘요."
+
+#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
+msgctxt "BV0cQk"
+msgid "Your day"
+msgstr "내 하루"
+
+#: src/app/[lang]/(app)/(learn)/content/chapters/[chapterId]/page.tsx
+msgctxt "dOgCSN"
+msgid "Chapter"
+msgstr "챕터"
+
+#: src/app/[lang]/(app)/(learn)/content/chapters/[chapterId]/page.tsx
+msgctxt "LzFnTo"
+msgid "A chapter of your plan, with its lessons and how far you are."
+msgstr "계획에 포함된 챕터의 레슨과 학습 진도를 볼 수 있어요."
+
+#: src/app/[lang]/(app)/(learn)/content/units/[chapterId]/page.tsx
+msgctxt "xkB-8Z"
+msgid "Unit"
+msgstr "단원"
+
+#: src/app/[lang]/(app)/(learn)/content/units/[chapterId]/page.tsx
+msgctxt "9dC4eV"
+msgid "A unit of your language plan, with its lessons and how far you are."
+msgstr "언어 학습 계획에 포함된 단원의 레슨과 학습 진도를 볼 수 있어요."
+
+#: src/app/[lang]/(app)/(learn)/exam/page.tsx
+msgctxt "9HjIgh"
+msgid "Your exam"
+msgstr "내 시험"
+
+#: src/app/[lang]/(app)/(learn)/exam/page.tsx
+msgctxt "KixPd0"
+msgid "Your exam's areas, how ready you are for each, and its mock exams."
+msgstr "시험 영역과 영역별 준비도, 모의고사를 볼 수 있어요."
+
+#: src/app/[lang]/(app)/(learn)/mind-maps/page.tsx
+msgctxt "JKdNG-"
+msgid "Each chapter's ideas on one map, to review how they connect."
+msgstr "챕터별 마인드맵으로 개념들이 어떻게 연결되는지 복습해요."
+
+#: src/app/[lang]/(app)/(learn)/mistakes/page.tsx
+msgctxt "iY3_pj"
+msgid "The questions you got wrong, why, and practice until you get them right."
+msgstr "어떤 문제를 왜 틀렸는지 살펴보고, 맞힐 때까지 연습해요."
+
+#: src/app/[lang]/(app)/(learn)/mock/new/page.tsx
+#: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
+msgctxt "OsH_hN"
+msgid "Mock exam, timed like the real one"
+msgstr "실제 시험과 같은 제한 시간으로 보는 모의고사"
+
+#: src/app/[lang]/(app)/(learn)/plan/[subject]/page.tsx
+#: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
+#: src/app/[lang]/(app)/(onboarding)/start/[goalId]/page.tsx
+msgctxt "R6T7P_"
+msgid "What you'll study each day until your goal, and what it covers."
+msgstr "목표를 이룰 때까지 매일 무엇을 공부할지, 어떤 내용을 다룰지 확인해요."
+
+#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
+msgctxt "NIpBgv"
+msgid "Your plan comes after a few questions"
+msgstr "몇 가지 질문에 답하면 계획이 준비돼요"
+
+#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
+msgctxt "mMlLhC"
+msgid "Answer them and we'll plan every day until you reach your goal."
+msgstr "답해 주시면 목표를 이룰 때까지 매일의 학습 계획을 세워 드려요."
+
+#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "계속하기"
+
+#: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
+msgctxt "wRaHK-"
+msgid "Your plan at a glance"
+msgstr "내 계획 한눈에 보기"
+
+#: src/app/[lang]/(app)/(learn)/speaking/page.tsx
+msgctxt "LdUCtG"
+msgid "Speaking practice"
+msgstr "말하기 연습"
+
+#: src/app/[lang]/(app)/(learn)/speaking/page.tsx
+msgctxt "wxCaBV"
+msgid "Calls in the language you're learning, at your level."
+msgstr "배우는 언어로 수준에 맞게 대화해요."
+
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+msgctxt "UKxoV8"
+msgid "Welcome back"
+msgstr "다시 만나서 반가워요"
+
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+msgctxt "N2AOpV"
+msgid "Your quick explanation"
+msgstr "나를 위한 간단한 설명"
+
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+msgctxt "Iqgfb9"
+msgid "Quick explanation"
+msgstr "간단한 설명"
+
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+msgctxt "kgu6gE"
+msgid "Continue explanation"
+msgstr "설명 이어서 보기"
+
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+msgctxt "B1ehqx"
+msgid "Each day's lessons, reviews and practice for your goal."
+msgstr "목표에 맞춘 매일의 레슨과 복습, 연습을 확인해요."
+
+#: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
+msgctxt "vr-vFm"
+msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
+msgstr "무료 요금제에서는 한 번에 목표 하나만 진행할 수 있어요. 다른 목표를 잠시 멈추고 이 목표를 이어서 진행하거나, Plus를 구독해 여러 목표를 함께 진행하세요."
+
+#: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
+msgctxt "4CJCep"
+msgid "Resume {goal}"
+msgstr "{goal} 이어서 하기"
+
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "kL0PL2"
+msgid "Start a new goal, or pick another one above."
+msgstr "새 목표를 시작하거나 위에서 다른 목표를 선택하세요."
+
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "WDKpPN"
+msgid "You finished {goal}."
+msgstr "{goal}을(를) 완료했어요."
+
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "EQpfkS"
+msgid "Finished"
+msgstr "완료"
+
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "MsEnHi"
+msgid "Nothing is planned until you resume it."
+msgstr "다시 시작할 때까지는 학습 일정이 잡히지 않아요."
+
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "CSgdxh"
+msgid "{goal} is paused."
+msgstr "{goal} 진행을 잠시 멈췄어요."
+
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "ND345k"
+msgid "This goal is paused."
+msgstr "이 목표는 잠시 멈춘 상태예요."
+
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "C2iTEH"
+msgid "Paused"
+msgstr "잠시 멈춤"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "nggkj2"
+msgid "Continue setting up"
+msgstr "설정 이어서 하기"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "DchlAP"
+msgid "It's built from what you tell us."
+msgstr "알려 주신 내용을 바탕으로 계획을 만들어요."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "zvtDTr"
+msgid "Your plan for {goal} needs a few more answers."
+msgstr "{goal} 계획을 만들려면 답변이 조금 더 필요해요."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "dMgVfu"
+msgid "Setting up"
+msgstr "설정 중"
+
+#: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
+msgctxt "irPOsS"
+msgid "A mock exam to find your level"
+msgstr "실력 진단 모의고사"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "8Dn3GJ"
+msgid "{chapters, plural, one {# chapter} other {# chapters}} · {lessons, plural, one {# lesson} other {# lessons}}"
+msgstr "{chapters, plural, other {챕터 #개}} · {lessons, plural, other {레슨 #개}}"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "Cr5XrH"
+msgid "{count, plural, one {and # more chapter} other {and # more chapters}}"
+msgstr "{count, plural, other {그 외 챕터 #개}}"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "IyoCIG"
+msgid "Your plan starts at this chapter and follows the course from there, in the time you have each day."
+msgstr "하루에 공부할 수 있는 시간에 맞춰 이 챕터부터 코스 순서대로 계획을 세워요."
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "8s-b4U"
+msgid "How much do you already know?"
+msgstr "이미 어느 정도 알고 있나요?"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "eePhP0"
+msgid "It only changes where your plan starts."
+msgstr "계획의 시작 지점만 달라져요."
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "C1D9a4"
+msgid "Your plan follows this course, in the time you have each day."
+msgstr "하루에 공부할 수 있는 시간에 맞춰 이 코스 순서대로 계획을 세워요."
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "6CVLNb"
+msgid "{minutes, plural, one {# minute} other {# minutes}} a day for now. You can change it in the next steps."
+msgstr "우선 하루 {minutes, plural, other {#분}}으로 시작해요. 다음 단계에서 바꿀 수 있어요."
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+#: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
+#: src/components/public/goal-form.tsx
+#: src/components/public/start-plan-link.tsx
+msgctxt "UTU-oM"
+msgid "Build my plan"
+msgstr "내 계획 만들기"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+#: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
+msgctxt "1bImNc"
+msgid "Starting your plan…"
+msgstr "계획을 준비하고 있어요…"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/page.tsx
+msgctxt "6e3fLf"
+msgid "Start {course}"
+msgstr "{course} 시작하기"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/page.tsx
+msgctxt "9m9h0p"
+msgid "Start a course"
+msgstr "코스 시작하기"
+
+#: src/app/[lang]/(app)/(onboarding)/start/page.tsx
+msgctxt "j8Jfmw"
+msgid "Write what you want to achieve in your own words. Zoonk asks only what's missing and builds a plan for your time. Start free, no account needed."
+msgstr "이루고 싶은 목표를 자유롭게 적어 보세요. Zoonk가 필요한 내용만 더 물어보고, 공부할 수 있는 시간에 맞춰 계획을 만들어요. 계정 없이 무료로 시작하세요."
+
+#: src/app/[lang]/(app)/(onboarding)/start/page.tsx
+msgctxt "G4ZsrK"
+msgid "Start with your goal"
+msgstr "목표부터 시작하기"
+
+#: src/app/[lang]/(app)/(settings)/_components/settings-eyebrow.tsx
+msgctxt "DId5yN"
+msgid "{email} · Plus"
+msgstr "{email} · Plus"
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+msgctxt "Bq4K5C"
+msgid "For your safety, sign in again, then delete your account."
+msgstr "보안을 위해 다시 로그인한 뒤 계정을 삭제하세요."
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+msgctxt "scfgdM"
+msgid "Sign in again"
+msgstr "다시 로그인"
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+msgctxt "OR6zpA"
+msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
+msgstr "계정을 삭제하지 못했어요. 다시 시도하거나 hello@zoonk.com으로 이메일을 보내세요."
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "wyxJrL"
+msgid "Delete account"
+msgstr "계정 삭제"
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "PswkCL"
+msgid "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store."
+msgstr "계정과 계정에 저장된 모든 데이터가 영구적으로 삭제돼요. 웹에서 구매한 Plus는 해지되고, App Store에서 구매한 구독은 App Store에서 관리해요."
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "Sk9SL5"
+msgid "Delete my account"
+msgstr "내 계정 삭제"
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+msgctxt "lNbJX1"
+msgid "Delete…"
+msgstr "삭제…"
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+msgctxt "TcCxtt"
+msgid "Delete your account?"
+msgstr "계정을 삭제할까요?"
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+msgctxt "hL_UdI"
+msgid "Your goals, plans, progress, memory, feedback and uploads are deleted for good. This can't be undone."
+msgstr "목표, 계획, 진행 상황, 메모리, 피드백, 업로드한 파일이 영구적으로 삭제돼요. 되돌릴 수 없어요."
+
+#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "_nHp1D"
+msgid "Everything Zoonk keeps about you, as one file"
+msgstr "Zoonk가 보관하는 내 모든 정보를 하나의 파일로"
+
+#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "RcXC-q"
+msgid "Download my data"
+msgstr "내 데이터 다운로드"
+
+#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
+msgctxt "cQNx6-"
+msgid "Preparing your data…"
+msgstr "데이터를 준비하고 있어요…"
+
+#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
+msgctxt "Ob8gKI"
+msgid "Preparing…"
+msgstr "준비하고 있어요…"
+
+#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
+msgctxt "5q3qC0"
+msgid "Download"
+msgstr "다운로드"
+
+#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
+msgctxt "owirfw"
+msgid "We couldn't prepare the download. Try again."
+msgstr "다운로드할 파일을 준비하지 못했어요. 다시 시도해 보세요."
+
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "I4oZQq"
+msgid "Your name, username and account on Zoonk."
+msgstr "Zoonk에서 사용하는 이름, 사용자 이름, 계정 정보예요."
+
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "TwyMau"
+msgid "Account"
+msgstr "계정"
+
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "ZTyMjO"
+msgid "Your data"
+msgstr "내 데이터"
+
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "O7G-L3"
+msgid "How Zoonk and your buddy call you"
+msgstr "Zoonk와 짝꿍이 부를 이름"
+
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "HAlOn1"
+msgid "Name"
+msgstr "이름"
+
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "vLl7z0"
+msgid "3-30 characters. Letters, numbers, and underscores only."
+msgstr "3~30자. 글자, 숫자, 밑줄만 사용할 수 있어요."
+
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "JCIgkj"
+msgid "Username"
+msgstr "사용자 이름"
+
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "1VpnDN"
+msgid "Your name, username and account."
+msgstr "이름, 사용자 이름, 계정 정보예요."
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "1SvspN"
+msgid "Checking..."
+msgstr "확인하고 있어요…"
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "9N4_rz"
+msgid "{username} is available"
+msgstr "{username}은(는) 사용할 수 있어요"
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "R76cpj"
+msgid "{username} is already taken"
+msgstr "{username}은(는) 이미 사용 중이에요"
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "저장"
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "GrnZDN"
+msgid "Saved."
+msgstr "저장했어요."
+
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+msgctxt "VnpW_P"
+msgid "Choose your buddy, sounds, a daily time limit and the app's language."
+msgstr "짝꿍, 소리, 하루 학습 시간 제한, 앱 언어를 선택하세요."
+
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+msgctxt "BbrYZc"
+msgid "Your buddy, lessons and language, the way you like them."
+msgstr "짝꿍, 레슨, 언어를 원하는 대로 설정하세요."
+
+#: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
+msgctxt "LCU3Qs"
+msgid "See, correct or delete what Zoonk remembers about you."
+msgstr "Zoonk가 기억하는 내 정보를 확인하고 수정하거나 삭제하세요."
+
+#: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
+msgctxt "KTQxC5"
+msgid "What Zoonk remembers to give you examples and plans that fit your life."
+msgstr "내 생활에 맞는 예시와 계획을 제공하기 위해 Zoonk가 기억하는 내용이에요."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "UWVETE"
+msgid "Cancel subscription"
+msgstr "구독 해지"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "kjXmSN"
+msgid "Unable to manage your subscription. Contact us at hello@zoonk.com"
+msgstr "구독을 관리할 수 없어요. hello@zoonk.com으로 문의해 주세요"
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "qO091u"
+msgid "Your subscription will end on <mono>{date}</mono>."
+msgstr "<mono>{date}</mono>에 구독이 종료돼요."
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "AucmVG"
+msgid "Renews on <mono>{date}</mono>."
+msgstr "<mono>{date}</mono>에 갱신돼요."
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "xWINkR"
+msgid "Current billing period ends on <mono>{date}</mono>."
+msgstr "현재 결제 기간은 <mono>{date}</mono>에 끝나요."
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "CrGYez"
+msgid "Subscription ending"
+msgstr "구독 종료 예정"
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "3a5wL8"
+msgid "Active"
+msgstr "구독 중"
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "oESc06"
+msgid "What's included"
+msgstr "포함된 혜택"
+
+#: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
+#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "tf1lIh"
+msgid "Free"
+msgstr "무료"
+
+#: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
+msgctxt "kkHvAa"
+msgid "<mono>{used, number}/{limit, number}</mono> buddy messages used today"
+msgstr "오늘 짝꿍 메시지 <mono>{used, number}/{limit, number}</mono>개 사용"
+
+#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
+msgctxt "3iCRcP"
+msgid "Manage in App Store"
+msgstr "App Store에서 관리하기"
+
+#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
+msgctxt "tiFovn"
+msgid "Manage in Google Play"
+msgstr "Google Play에서 관리하기"
+
+#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
+msgctxt "Tp4wJB"
+msgid "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings."
+msgstr "App Store에서 관리하는 구독이에요. 변경하거나 취소하려면 Apple의 구독 설정을 이용하세요."
+
+#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
+msgctxt "unNUPf"
+msgid "This subscription is managed through Google Play. To change or cancel it, use Google Play."
+msgstr "Google Play에서 관리하는 구독이에요. 변경하거나 취소하려면 Google Play를 이용하세요."
+
+#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
+msgctxt "P0ZHma"
+msgid "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it."
+msgstr "Zoonk가 관리하는 구독이에요. 변경이나 취소에 도움이 필요하면 고객 지원팀에 문의하세요."
+
+#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
+msgctxt "5CI3KH"
+msgid "Contact support"
+msgstr "고객 지원팀에 문의하기"
+
+#: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "bF03Os"
+msgid "Confirming your subscription"
+msgstr "구독을 확인하고 있어요"
+
+#: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "weaUjp"
+msgid "Still confirming your subscription"
+msgstr "아직 구독을 확인하고 있어요"
+
+#: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "7lERBM"
+msgid "Stripe is confirming your payment. It usually takes a few seconds."
+msgstr "Stripe에서 결제를 확인하고 있어요. 보통 몇 초 정도 걸려요."
+
+#: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "gDgnVG"
+msgid "This is taking longer than usual. If your payment went through, Plus shows up here as soon as Stripe confirms it."
+msgstr "평소보다 시간이 오래 걸리고 있어요. 결제가 완료됐다면 Stripe에서 확인하는 대로 여기에 Plus가 표시돼요."
+
+#: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "QI17io"
+msgid "Checking with Stripe…"
+msgstr "Stripe에 확인하고 있어요…"
+
+#: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "1A8Z_l"
+msgid "Check again"
+msgstr "다시 확인하기"
+
+#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
+msgctxt "uPJSSB"
+msgid "Subscribe to Zoonk Plus"
+msgstr "Zoonk Plus 구독하기"
+
+#: src/app/[lang]/(app)/(settings)/support/page.tsx
+#: src/app/[lang]/(app)/(settings)/support/support-content.tsx
+msgctxt "e60J1V"
+msgid "Ask a question, report a problem or share an idea. We answer by email."
+msgstr "궁금한 점이나 문제, 아이디어를 알려 주세요. 이메일로 답변해 드려요."
+
+#: src/app/[lang]/(app)/(settings)/support/support-content.tsx
+msgctxt "l1XTI5"
+msgid "Follow us"
+msgstr "팔로우하기"
+
+#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
+msgctxt "FVh2Tr"
+msgid "Start learning to track your progress"
+msgstr "학습을 시작하고 진행 상황을 확인해 보세요"
+
+#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
+msgctxt "4IVFWL"
+msgid "Go to Today"
+msgstr "오늘의 학습으로 이동하기"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/lib/public/public-labels.ts
+msgctxt "9uOFF3"
+msgid "Overview"
+msgstr "개요"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+#: src/app/[lang]/(home)/_components/goal-measure.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "레벨"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+#: src/app/[lang]/(app)/(stats)/energy/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "cVpmV7"
+msgid "Energy"
+msgstr "에너지"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(app)/(stats)/activity/page.tsx
+msgctxt "ZmlNQ3"
+msgid "Activity"
+msgstr "활동"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(app)/(stats)/score/page.tsx
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "oLkLww"
+msgid "Score"
+msgstr "점수"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "BCauSf"
+msgid "Patterns"
+msgstr "학습 패턴"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+msgctxt "QbGIBZ"
+msgid "Your stats"
+msgstr "내 통계"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "Xsvev8"
+msgid "Activity from less to more"
+msgstr "활동량이 적은 쪽부터 많은 쪽까지"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "mFYgAX"
+msgid "Less"
+msgstr "적음"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "I5NMJ8"
+msgid "More"
+msgstr "많음"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "-eNLo_"
+msgid "{date} · {count, plural, =0 {No study} one {# activity} other {# activities}}"
+msgstr "{date} · {count, plural, =0 {학습 활동 #개} other {활동 #개}}"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "o0vS8L"
+msgid "Past 12 months"
+msgstr "지난 12개월"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "MnYAxL"
+msgid "Activity by day"
+msgstr "일별 활동"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
+msgctxt "RZVnqi"
+msgid "Any day you studied"
+msgstr "조금이라도 공부한 날"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "RlSFBL"
+msgid "Study days"
+msgstr "학습 일수"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
+msgctxt "-ZYXXk"
+msgid "{count, plural, =0 {Finished} one {Finished} other {Finished}}"
+msgstr "{count, plural, =0 {완료한 레슨은 #개예요} other {완료한 레슨이 #개예요}}"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
+msgctxt "jfPES_"
+msgid "Studying in total"
+msgstr "총 학습 시간"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
+msgctxt "ug01Mk"
+msgid "Time"
+msgstr "시간"
+
+#: src/app/[lang]/(app)/(stats)/activity/page.tsx
+msgctxt "LYW_o7"
+msgid "Your study days, lessons finished and time spent learning."
+msgstr "학습 일수와 완료한 레슨 수, 총 학습 시간이에요."
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "jPmToJ"
+msgid "Energy intensity from low to high"
+msgstr "낮은 에너지부터 높은 에너지까지"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "477I0g"
+msgid "Low"
+msgstr "낮음"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "AxMhQr"
+msgid "High"
+msgstr "높음"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "5ZmEgv"
+msgid "{date} · No Energy recorded"
+msgstr "{date} · 에너지 기록 없음"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "beOKv0"
+msgid "{date} · {percentage} Energy"
+msgstr "{date} · 에너지 {percentage}"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "0i1UHO"
+msgid "Energy by day"
+msgstr "일별 에너지"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+msgctxt "OiTvvB"
+msgid "Since you started"
+msgstr "시작한 날부터"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+msgctxt "FnRTEV"
+msgid "Average"
+msgstr "평균"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+msgctxt "WUD69_"
+msgid "Days with full Energy"
+msgstr "에너지가 가득 찬 날"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+msgctxt "1bzMX0"
+msgid "At 100%"
+msgstr "100% 달성"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+msgctxt "y6wXa9"
+msgid "Every lesson you finish raises your Energy. On days off it drops a little, and your belt and progress stay."
+msgstr "레슨을 마칠 때마다 에너지가 올라요. 쉬는 날에는 조금 내려가고, 띠와 학습 진도는 그대로 유지돼요."
+
+#: src/app/[lang]/(app)/(stats)/energy/page.tsx
+msgctxt "wSjCCg"
+msgid "Your Energy now and over the past 12 months."
+msgstr "지금의 에너지와 지난 12개월간의 에너지 기록이에요."
+
+#: src/app/[lang]/(app)/(stats)/layout.tsx
+#: src/app/[lang]/(app)/(stats)/stats/page.tsx
+msgctxt "5CNApj"
+msgid "All goals"
+msgstr "모든 목표"
+
+#: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
+msgctxt "CIQa5T"
+msgid "{color, select, white {White} yellow {Yellow} orange {Orange} green {Green} blue {Blue} purple {Purple} brown {Brown} red {Red} gray {Gray} black {Black} other {Belt}}"
+msgstr "{color, select, white {흰띠} yellow {노란띠} orange {주황띠} green {초록띠} blue {파란띠} purple {보라띠} brown {갈색띠} red {빨간띠} gray {회색띠} black {검은띠} other {띠}}"
+
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "SeonFl"
+msgid "Every belt earned"
+msgstr "모든 띠를 획득했어요"
+
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "e6TtsL"
+msgid "Next belt"
+msgstr "다음 띠"
+
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "0ZGPb-"
+msgid "{belt} at <mono>{points}</mono> Brain Power"
+msgstr "{belt} · 두뇌력 <mono>{points}</mono> 달성 시"
+
+#. The Brain Power the learner still needs to earn the next belt.
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "dzpvr6"
+msgid "{points, plural, one {<mono>#</mono> to go} other {<mono>#</mono> to go}}"
+msgstr "{points, plural, other {두뇌력 <mono>#</mono> 더 필요해요}}"
+
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "3DtX17"
+msgid "Belt progression"
+msgstr "띠 승급 단계"
+
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "EX6xiz"
+msgid "Level <mono>{level}</mono> of {count}"
+msgstr "레벨 <mono>{level}</mono> / {count}"
+
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+msgctxt "pgt3eW"
+msgid "Max level reached"
+msgstr "최고 레벨 달성"
+
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+msgctxt "Cm04Yp"
+msgid "Next level"
+msgstr "다음 레벨"
+
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+msgctxt "cmc2-s"
+msgid "{color, select, yellow {To Yellow belt} orange {To Orange belt} green {To Green belt} blue {To Blue belt} purple {To Purple belt} brown {To Brown belt} red {To Red belt} gray {To Gray belt} black {To Black belt} other {To the next belt}}"
+msgstr "{color, select, yellow {노란띠까지} orange {주황띠까지} green {초록띠까지} blue {파란띠까지} purple {보라띠까지} brown {갈색띠까지} red {빨간띠까지} gray {회색띠까지} black {검은띠까지} other {다음 띠까지}}"
+
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+msgctxt "57EFxN"
+msgid "To level {level}"
+msgstr "레벨 {level}까지"
+
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+msgctxt "LEuDU7"
+msgid "Brain Power"
+msgstr "두뇌력"
+
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+msgctxt "pDD9dm"
+msgid "Never goes down"
+msgstr "줄어들지 않아요"
+
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+msgctxt "wbDtI_"
+msgid "Every lesson adds {points} Brain Power, and it never goes down."
+msgstr "레슨마다 두뇌력이 {points}씩 쌓이고 절대 줄어들지 않아요."
+
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+msgctxt "Wzw2i9"
+msgid "Your belt, level and Brain Power."
+msgstr "띠와 레벨, 두뇌력을 확인해 보세요."
+
+#: src/app/[lang]/(app)/(stats)/patterns/page.tsx
+msgctxt "eBJm5e"
+msgid "See when you perform best over the past 90 days."
+msgstr "최근 90일 동안 정답률이 가장 높았던 때를 확인해 보세요."
+
+#: src/app/[lang]/(app)/(stats)/patterns/page.tsx
+msgctxt "SXjWkq"
+msgid "When you answer best, over the last 90 days."
+msgstr "최근 90일 동안 정답률이 가장 높았던 때예요."
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-names.ts
+msgctxt "00_IyC"
+msgid "Night"
+msgstr "밤"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-names.ts
+msgctxt "_kzk_m"
+msgid "Morning"
+msgstr "아침"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-names.ts
+msgctxt "mF-J9o"
+msgid "Afternoon"
+msgstr "오후"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-names.ts
+msgctxt "mPEpnN"
+msgid "Evening"
+msgstr "저녁"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
+msgctxt "VcCKQU"
+msgid "{count, plural, =0 {No answers} one {# answer} other {# answers}}"
+msgstr "{count, plural, =0 {답변 없음(#개)} other {답변 #개}}"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
+msgctxt "2oIGIh"
+msgid "Throughout the week"
+msgstr "요일별"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
+msgctxt "g0f6D5"
+msgid "Throughout the day"
+msgstr "시간대별"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
+msgctxt "cwmQSC"
+msgid "Any day"
+msgstr "어느 요일이든"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
+msgctxt "wmdZZD"
+msgid "Any time"
+msgstr "어느 시간대든"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
+msgctxt "QF6BDw"
+msgid "Your days are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any day works."
+msgstr "요일별 점수 차이가 {points, plural, =0 {#점이라} other {#점 이내라}} 어느 요일이든 괜찮아요."
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
+msgctxt "S1QB1r"
+msgid "Your times of day are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any time works."
+msgstr "시간대별 점수 차이가 {points, plural, =0 {#점이라} other {#점 이내라}} 어느 시간대든 괜찮아요."
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
+msgctxt "1M3zAD"
+msgid "A day or a time of day needs {count, plural, one {# answer} other {# answers}} to count, so one lucky answer never makes a pattern."
+msgstr "요일이나 시간대별로 {count, plural, other {#번 이상 답해야}} 분석에 반영하니, 우연히 한 번 맞힌 답으로 경향이 정해지지는 않아요."
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "0Fab5z"
+msgid "Within {points, plural, =0 {# points} one {# point} other {# points}}"
+msgstr "{points, plural, =0 {#점 차이} other {#점 이내}}"
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "yJxUpG"
+msgid "Not enough answers yet"
+msgstr "아직 답변이 부족해요"
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "9DVTlI"
+msgid "{score} · {count, plural, one {# answer} other {# answers}}"
+msgstr "{score} · {count, plural, other {답변 #개}}"
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "HHFpcy"
+msgid "Best day"
+msgstr "정답률이 가장 높은 요일"
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "dFW9lU"
+msgid "Best time"
+msgstr "정답률이 가장 높은 시간대"
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "WDXXIC"
+msgid "In the last 90 days"
+msgstr "최근 90일간"
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "2mUitd"
+msgid "Answers"
+msgstr "답변 수"
+
+#: src/app/[lang]/(app)/(stats)/score/page.tsx
+msgctxt "-JqpHp"
+msgid "See your answer accuracy and weekly trend over the past 90 days."
+msgstr "최근 90일간의 정답률과 주별 변화를 확인해 보세요."
+
+#: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
+msgctxt "33eat_"
+msgid "Weekly score trend"
+msgstr "주간 점수 추이"
+
+#: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
+msgctxt "i2_Jga"
+msgid "{score} across {count, plural, one {# answer} other {# answers}}"
+msgstr "{score} ({count, plural, other {응답 #개 기준}})"
+
+#: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
+msgctxt "l-oCrn"
+msgid "{label}: {score} across {count, plural, one {# answer} other {# answers}}"
+msgstr "{label}: {score} ({count, plural, other {응답 #개 기준}})"
+
+#: src/app/[lang]/(app)/(stats)/score/score-chart-plot.tsx
+msgctxt "q9WSEF"
+msgid "{count, plural, one {# answer} other {# answers}}"
+msgstr "{count, plural, other {응답 #개}}"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "yQlMuI"
+msgid "Right answers"
+msgstr "정답"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "OLmtAV"
+msgid "Of all your answers"
+msgstr "전체 응답 중"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "gAnLDP"
+msgid "Right"
+msgstr "정답"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "3YnSzO"
+msgid "{correct} of {total}"
+msgstr "{correct} / {total}"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "60UdOE"
+msgid "Back from today"
+msgstr "오늘 기준"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "jCNpEL"
+msgid "Period"
+msgstr "기간"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "Ip-YhF"
+msgid "Every answer counts the same, so harder lessons can lower your score for a while."
+msgstr "모든 답을 똑같이 반영해서 어려운 레슨을 풀면 점수가 잠시 낮아질 수 있어요."
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "emqpoS"
+msgid "Score · 90 days"
+msgstr "점수 · 90일"
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "eIGEJG"
+msgid "Your score shows after your first answers."
+msgstr "첫 문제에 답하면 점수가 표시돼요."
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "kV-RMr"
+msgid "{low}–{high}"
+msgstr "{low}–{high}"
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "hofSlo"
+msgid "Patterns · 90 days"
+msgstr "패턴 · 90일"
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "078WAr"
+msgid "See all"
+msgstr "전체 보기"
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+#: src/app/[lang]/(home)/_components/practice-move.tsx
+msgctxt "lO7wKc"
+msgid "Not yet"
+msgstr "아직 없어요"
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "McGBe4"
+msgid "Spread across the week"
+msgstr "요일별 점수 범위"
+
+#: src/app/[lang]/(app)/(stats)/stats/page.tsx
+msgctxt "Q0jtuV"
+msgid "Your belt, Energy, study days, right answers and when you do best."
+msgstr "내 띠, 에너지, 학습 일수, 정답 수와 점수가 가장 높은 때를 확인해 보세요."
+
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "AezvZG"
+msgid "Average {value}"
+msgstr "평균 {value}"
+
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "I5Pid5"
+msgid "{lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} · {time}"
+msgstr "{lessons, plural, =0 {레슨 #개} other {레슨 #개}} · {time}"
+
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "_qHKLY"
+msgid "{correct, plural, =0 {<mono>#/{total}</mono> right} one {<mono>#/{total}</mono> right} other {<mono>#/{total}</mono> right}}"
+msgstr "{correct, plural, =0 {<mono>#/{total}</mono> 정답} other {<mono>#/{total}</mono> 정답}}"
+
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "Y_aK5B"
+msgid "Right answers in the last 90 days"
+msgstr "최근 90일간의 정답"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+#: src/app/[lang]/(home)/_components/goal-measure.tsx
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "VoGk4M"
+msgid "Human Sciences"
+msgstr "인문·사회과학"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "hi9HZU"
+msgid "The 1922 Republican Reaction"
+msgstr "1922년 Republican Reaction"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "fqtVVy"
+msgid "Quick review"
+msgstr "간단 복습"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+#: src/app/[lang]/(home)/_components/goal-measure.tsx
+#: src/app/[lang]/(home)/_components/hero-days.ts
+#: src/app/[lang]/(home)/_components/placement-questions.tsx
+msgctxt "6uQ0Uq"
+msgid "Mathematics"
+msgstr "수학"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "UVKvZc"
+msgid "Coupons and discounts together"
+msgstr "쿠폰과 할인 함께 적용하기"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+#: src/app/[lang]/(home)/_components/goal-measure.tsx
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "uwjllL"
+msgid "Essay"
+msgstr "논술"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "GgvwAY"
+msgid "Agent and action"
+msgstr "실행 주체와 행동"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+#: src/app/[lang]/(home)/_components/goal-measure.tsx
+msgctxt "80dW6X"
+msgid "Natural Sciences"
+msgstr "자연과학"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+msgctxt "zCVSrQ"
+msgid "Breathing and heat loss"
+msgstr "호흡과 열 방출"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+msgctxt "CqUpPo"
+msgid "Review: the Republican Reaction"
+msgstr "복습: Republican Reaction"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+#: src/app/[lang]/(home)/_components/goal-measure.tsx
+msgctxt "xnFXXr"
+msgid "Languages and Codes"
+msgstr "언어와 기호"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+msgctxt "ZBVLAA"
+msgid "Verbal text and images"
+msgstr "글과 이미지"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+msgctxt "pjCKVa"
+msgid "Means of carrying it out"
+msgstr "실행 방법"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+#: src/app/[lang]/(home)/_components/goal-measure.tsx
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "PknAdD"
+msgid "Reading and Writing"
+msgstr "읽기와 쓰기"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "VApQpI"
+msgid "Words in context"
+msgstr "문맥 속 어휘"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+#: src/app/[lang]/(home)/_components/goal-measure.tsx
+#: src/app/[lang]/(home)/_components/hero-days.ts
+#: src/app/[lang]/(home)/_components/placement-questions.tsx
+#: src/lib/categories/category.ts
+msgctxt "dPgwrL"
+msgid "Math"
+msgstr "수학"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "fnAN1H"
+msgid "Linear equations in context"
+msgstr "일차방정식 활용"
+
+#. A writing lesson on linking words, such as “however” and “therefore”.
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "Oczvha"
+msgid "Transitions"
+msgstr "연결어"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+msgctxt "evMyyy"
+msgid "Rhetorical synthesis"
+msgstr "목적에 맞게 정보 종합하기"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+msgctxt "xVyNnw"
+msgid "Review: words in context"
+msgstr "복습: 문맥 속 어휘"
+
+#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
+msgctxt "1ecowp"
+msgid "Slope and intercept"
+msgstr "기울기와 절편"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "planPhases.QyaAtA"
+msgid "Final stretch"
+msgstr "마무리"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "planPhases.6RRX7X"
+msgid "Foundations"
+msgstr "기초 다지기"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "planPhases.PFt14a"
+msgid "Fill the gaps"
+msgstr "부족한 부분 채우기"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "planPhases.KV-O0y"
+msgid "Practice"
+msgstr "연습"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "examplePhases.urVD1a"
+msgid "Arriving"
+msgstr "도착"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "examplePhases.NMkS59"
+msgid "Renting a flat"
+msgstr "집 구하기"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "examplePhases.JrZJR9"
+msgid "Bank and phone"
+msgstr "은행과 휴대폰"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "examplePhases.c2wcVC"
+msgid "First week at work"
+msgstr "직장 생활 첫 주"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "examplePhases.kvlt4O"
+msgid "Doctor"
+msgstr "병원 가기"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "examplePhases.O8qego"
+msgid "Social life"
+msgstr "사람들과 어울리기"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "examplePhases.fd_DO3"
+msgid "Spreadsheets"
+msgstr "스프레드시트"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "examplePhases.c0Ycwn"
+msgid "SQL"
+msgstr "SQL"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "examplePhases.H3eDAS"
+msgid "Statistics"
+msgstr "통계"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "examplePhases.nwqt7T"
+msgid "Dashboards"
+msgstr "대시보드"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "examplePhases.uNOJ2Q"
+msgid "Portfolio"
+msgstr "포트폴리오"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "C-6pYD"
+msgid "ENEM in {month}"
+msgstr "{month} 수능"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "CsR4zq"
+msgid "SAT in {month}"
+msgstr "{month} 수능"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "7iOCQZ"
+msgid "Spanish for Madrid"
+msgstr "Madrid 생활을 위한 스페인어"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "PnbhyK"
+msgid "English for London"
+msgstr "London 생활을 위한 영어"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "AeiByK"
+msgid "Data analyst by {month}"
+msgstr "{month}까지 데이터 분석가 되기"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "PqLPMH"
+msgid "ENEM"
+msgstr "수능"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "fFLzL0"
+msgid "SAT"
+msgstr "수능"
+
+#: src/app/[lang]/(home)/_components/example-plans.ts
+msgctxt "EV-GCl"
+msgid "Data analyst"
+msgstr "데이터 분석가"
+
+#: src/app/[lang]/(home)/_components/final-call.tsx
+msgctxt "PYDioW"
+msgid "The big day"
+msgstr "중요한 날"
+
+#: src/app/[lang]/(home)/_components/final-call.tsx
+msgctxt "g39LXe"
+msgid "What's your big day?"
+msgstr "어떤 날을 준비하고 있나요?"
+
+#: src/app/[lang]/(home)/_components/goal-measure.tsx
+msgctxt "s4s2qc"
+msgid "Next: renting, banking, the first week at work"
+msgstr "다음: 집 구하기, 은행 이용하기, 직장 생활 첫 주"
+
+#: src/app/[lang]/(home)/_components/goal-measure.tsx
+msgctxt "sIMS7i"
+msgid "Progress"
+msgstr "진행 상황"
+
+#: src/app/[lang]/(home)/_components/goal-measure.tsx
+msgctxt "Kus9gk"
+msgid "Preparation"
+msgstr "준비도"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "c0Ycwn"
+msgid "SQL"
+msgstr "SQL"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "Hph5oB"
+msgid "GROUP BY with two columns"
+msgstr "열 두 개로 GROUP BY 사용하기"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "-rCMUK"
+msgid "Review: joins"
+msgstr "복습: 조인"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+msgctxt "ERPrTb"
+msgid "HAVING: filtering groups"
+msgstr "HAVING: 그룹 걸러내기"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+msgctxt "pCbjPa"
+msgid "Review: GROUP BY"
+msgstr "복습: GROUP BY"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "LLHRRm"
+msgid "SQL · from real work"
+msgstr "SQL · 실무 사례"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+msgctxt "saf8j1"
+msgid "Real problem: top customers"
+msgstr "실무 문제: 우수 고객"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "XfDXBj"
+msgid "Lesson + 6 questions"
+msgstr "레슨 + 문제 6개"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "PrA5f8"
+msgid "Calling about an apartment"
+msgstr "전화로 아파트 문의하기"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "xjeKSS"
+msgid "Review: airport and metro"
+msgstr "복습: 공항과 지하철"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+msgctxt "bRvUh5"
+msgid "Lesson + 5 questions"
+msgstr "레슨 + 문제 5개"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+msgctxt "_tlTcq"
+msgid "Visiting a flat"
+msgstr "아파트 보러 가기"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "l2uAYh"
+msgid "3 to practice"
+msgstr "연습할 문제 3개"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "qUe0cG"
+msgid "Mistakes: getting around the city"
+msgstr "오답: 시내에서 이동하기"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+msgctxt "SyGbgm"
+msgid "Review: calling about an apartment"
+msgstr "복습: 전화로 아파트 문의하기"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "JNotbo"
+msgid "Pronunciation tips"
+msgstr "발음 팁"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+msgctxt "Eio4j-"
+msgid "Speaking: booking a visit"
+msgstr "말하기: 방문 예약하기"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+msgctxt "taVtve"
+msgid "2 to practice"
+msgstr "연습할 문제 2개"
+
+#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
+msgctxt "E6a1TF"
+msgid "Mistakes: calling about an apartment"
+msgstr "오답: 전화로 아파트 문의하기"
+
+#: src/app/[lang]/(home)/_components/hero-days.ts
+#: src/app/[lang]/(home)/_components/tomorrow-steps.ts
+msgctxt "QEqlcn"
+msgid "{count, plural, one {# mistake} other {# mistakes}}"
+msgstr "{count, plural, other {오답 #개}}"
+
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "D6C3cx"
+msgid "Real problem: sales by region"
+msgstr "실무 문제: 지역별 매출"
+
+#: src/app/[lang]/(home)/_components/hero-days.ts
+msgctxt "wCgkXs"
+msgid "Speaking: asking about the rent"
+msgstr "말하기: 월세 문의하기"
+
+#: src/app/[lang]/(home)/_components/hero-window.tsx
+msgctxt "-suPrU"
+msgid "Example goals"
+msgstr "목표 예시"
+
+#: src/app/[lang]/(home)/_components/hero-window.tsx
+msgctxt "goalSwitcher.aefUZL"
+msgid "{time} a day"
+msgstr "하루 {time}"
+
+#: src/app/[lang]/(home)/_components/hero-window.tsx
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "goalSwitcher.8PP61v"
+msgid "{days, plural, =0 {The day is here} one {# day left} other {# days left}}"
+msgstr "{days, plural, =0 {바로 오늘} other {#일 남음}}"
+
+#: src/app/[lang]/(home)/_components/hero-window.tsx
+msgctxt "Ecf4N6"
+msgid "Level {level} → {target}"
+msgstr "레벨 {level} → {target}"
+
+#: src/app/[lang]/(home)/_components/hero-window.tsx
+msgctxt "dPX7wH"
+msgid "On pace"
+msgstr "계획대로"
+
+#: src/app/[lang]/(home)/_components/hero-window.tsx
+msgctxt "I_pvBN"
+msgid "Phase {number, number} of {total, number} · {name}"
+msgstr "{number, number}단계(총 {total, number}단계) · {name}"
+
+#: src/app/[lang]/(home)/_components/hero-window.tsx
+msgctxt "dVwB3J"
+msgid "{done, number} of {total, number}"
+msgstr "{done, number}/{total, number}"
+
+#: src/app/[lang]/(home)/_components/hero-window.tsx
+msgctxt "jpMuGb"
+msgid "Example plans. Yours follows your goal, your time and what you already know. Pick one: the rest of the page follows it."
+msgstr "계획 예시예요. 실제 계획은 목표와 학습 시간, 이미 아는 내용에 맞춰져요. 하나를 골라 보세요. 페이지의 나머지 내용도 그 예시에 맞춰 바뀌어요."
+
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+#: src/app/[lang]/opengraph-image.tsx
+msgctxt "hV7Lpg"
+msgid "Know what to study every day until the big day."
+msgstr "목표한 날까지 매일 무엇을 공부할지 알려 드려요."
+
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+#: src/app/[lang]/opengraph-image.tsx
+msgctxt "6kw-3N"
+msgid "Tell Zoonk your goal and date. Your plan fits your schedule and adjusts if you miss a day."
+msgstr "Zoonk에 목표와 날짜를 알려 주세요. 일정에 맞춰 계획을 세우고, 하루 공부를 못 하면 조정해 줘요."
+
+#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
+msgctxt "UDq71K"
+msgid "get ready for the ENEM in {month}"
+msgstr "{month} 수능을 준비하고 싶어요"
+
+#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
+msgctxt "voOKaq"
+msgid "get ready for the SAT in {month}"
+msgstr "{month} 수능을 준비하고 싶어요"
+
+#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
+msgctxt "XmrixE"
+msgid "get promoted to data analyst by {month}"
+msgstr "{month}까지 데이터 분석가로 승진하고 싶어요"
+
+#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
+msgctxt "Kiy_DO"
+msgid "speak Spanish for my move to Madrid in {month}"
+msgstr "{month}에 마드리드로 이사 가서 스페인어로 대화하고 싶어요"
+
+#. An example goal a learner might type; {month} is a month name. Use your language's name for London.
+#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
+msgctxt "FWZush"
+msgid "speak English for my move to London in {month}"
+msgstr "{month}에 런던으로 이사 가서 영어로 대화하고 싶어요"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "HyMpO2"
+msgid "Percentage"
+msgstr "백분율"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "9tawku"
+msgid "Chains of percentage changes"
+msgstr "연속적인 백분율 변화"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "RBEn94"
+msgid "Final price in offers with conditions"
+msgstr "조건부 할인 적용 후 최종 가격"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "70A04J"
+msgid "Real discount on bulk purchases"
+msgstr "대량 구매 시 실제 할인율"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "mqt6F2"
+msgid "Functions"
+msgstr "함수"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "uWZ77n"
+msgid "Percentages"
+msgstr "백분율"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "x5e8F-"
+msgid "Ratios and rates"
+msgstr "비와 비율"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "SQoF9G"
+msgid "Linear equations"
+msgstr "일차방정식"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "54haEF"
+msgid "Systems of equations"
+msgstr "연립방정식"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "FwdaMw"
+msgid "Quadratics"
+msgstr "이차방정식"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "Q2mxTI"
+msgid "Spreadsheet basics"
+msgstr "스프레드시트 기초"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "higY8h"
+msgid "Formulas"
+msgstr "수식"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "1b-_GC"
+msgid "SQL: SELECT and WHERE"
+msgstr "SQL: SELECT와 WHERE"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "y5g1z8"
+msgid "Joins"
+msgstr "조인"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "u5IbOk"
+msgid "GROUP BY"
+msgstr "GROUP BY"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "_FeNoU"
+msgid "Greetings and introductions"
+msgstr "인사와 자기소개"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "0YG5_J"
+msgid "Numbers and prices"
+msgstr "숫자와 가격"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "ApbYuU"
+msgid "Ordering at a café"
+msgstr "카페에서 주문하기"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+#: src/app/[lang]/(home)/_components/practice-move.tsx
+msgctxt "NMkS59"
+msgid "Renting a flat"
+msgstr "집 빌리기"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "JrZJR9"
+msgid "Bank and phone"
+msgstr "은행과 휴대폰"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "Wfs1md"
+msgid "{count, plural, one {# lesson skipped} other {# lessons skipped}}"
+msgstr "{count, plural, other {레슨 #개 건너뜀}}"
+
+#: src/app/[lang]/(home)/_components/placed-plans.tsx
+msgctxt "placedPlan.djZCU5"
+msgid "Skipped"
+msgstr "건너뜀"
+
+#: src/app/[lang]/(home)/_components/placement-questions.tsx
+msgctxt "2F9-v0"
+msgid "A price goes up 20%, then down 20%. What percent of the original price is it now?"
+msgstr "가격이 20% 오른 뒤 20% 내렸어요. 지금 가격은 원래 가격의 몇 퍼센트인가요?"
+
+#: src/app/[lang]/(home)/_components/placement-questions.tsx
+msgctxt "LkDjkt"
+msgid "Question {number, number} · {subject}"
+msgstr "문제 {number, number} · {subject}"
+
+#: src/app/[lang]/(home)/_components/placement-questions.tsx
+msgctxt "fd_DO3"
+msgid "Spreadsheets"
+msgstr "스프레드시트"
+
+#: src/app/[lang]/(home)/_components/placement-questions.tsx
+msgctxt "Vz-obi"
+msgid "Which formula adds up the values in B2 through B9?"
+msgstr "B2부터 B9까지의 값을 더하는 수식은 무엇인가요?"
+
+#: src/app/[lang]/(home)/_components/placement-questions.tsx
+msgctxt "8WtyrD"
+msgid "Spanish"
+msgstr "스페인어"
+
+#: src/app/[lang]/(home)/_components/placement-questions.tsx
+msgctxt "nuIDZ0"
+msgid "Which one means “I'd like a coffee, please”?"
+msgstr "“커피 한 잔 주세요”라는 뜻의 표현은 무엇인가요?"
+
+#: src/app/[lang]/(home)/_components/placement-questions.tsx
+msgctxt "WkrNSk"
+msgid "English"
+msgstr "영어"
+
+#: src/app/[lang]/(home)/_components/placement-questions.tsx
+msgctxt "STdub8"
+msgid "Which sentence asks for a coffee politely?"
+msgstr "커피를 정중하게 주문하는 문장은 무엇인가요?"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "ccKtO0"
+msgid "It goes to your Mistakes notebook, and your plan brings it back."
+msgstr "오답 노트에 저장되고, 계획에 따라 다시 풀게 돼요."
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "XdCc60"
+msgid "In a pasture, grass is eaten by grasshoppers, grasshoppers by frogs, and frogs by snakes."
+msgstr "풀밭에서는 메뚜기가 풀을 먹고, 개구리는 메뚜기를, 뱀은 개구리를 먹어요."
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "eNAKwz"
+msgid "How much they eat isn't it: any animal turns only a small part of its food into body."
+msgstr "먹는 양 때문은 아니에요. 어떤 동물이든 먹이의 아주 적은 부분만 몸을 만드는 데 써요."
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "devjxy"
+msgid "ENEM style · Natural Sciences"
+msgstr "수능 유형 · 과학탐구"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "1nJY2_"
+msgid "Your answer"
+msgstr "내 답"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "XSkW9E"
+msgid "Predators eat less than their prey"
+msgstr "포식자는 먹잇감보다 적게 먹어요"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "6NoIUl"
+msgid "Correct"
+msgstr "정답"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "BxleoZ"
+msgid "Part of the energy is lost as heat in each organism's respiration"
+msgstr "각 생물이 호흡할 때 에너지의 일부가 열로 빠져나가요"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "bJBtpz"
+msgid "Plants photosynthesize less at night"
+msgstr "식물은 밤에 광합성을 덜 해요"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "-G1BGM"
+msgid "Decomposers use up the energy first"
+msgstr "분해자가 에너지를 먼저 소모해요"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "Ia64KY"
+msgid "Energy turns into matter"
+msgstr "에너지가 물질로 바뀌어요"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "KklV3w"
+msgid "In a food chain, the available energy decreases at each trophic level. What is the main reason?"
+msgstr "먹이 사슬에서는 영양 단계가 높아질수록 이용할 수 있는 에너지가 줄어들어요. 가장 큰 이유는 무엇일까요?"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "7HOB5M"
+msgid "Not quite. $12 of it is the monthly fee: only $3.40 pays for texts, and $3.40 ÷ $0.05 = 68."
+msgstr "조금 달라요. 이 중 12달러는 월 기본요금이에요. 문자 요금은 3.40달러뿐이고, 3.40달러 ÷ 0.05달러 = 68이에요."
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "5vUSgc"
+msgid "SAT style · Math"
+msgstr "수능 유형 · 수학"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "fzFJfx"
+msgid "A phone plan costs $12 a month plus $0.05 per text. Ana paid $15.40 in March. How many texts did she send?"
+msgstr "휴대폰 요금제의 월 기본요금은 12달러이고, 문자 한 통당 0.05달러가 추가돼요. Ana는 3월에 15.40달러를 냈어요. 문자를 몇 통 보냈을까요?"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "pS0xug"
+msgid "Ecology"
+msgstr "생태학"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "bTLlEc"
+msgid "Electricity"
+msgstr "전기"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "s4wHw2"
+msgid "Waves"
+msgstr "파동"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "5HTCGf"
+msgid "Chemical bonds"
+msgstr "화학 결합"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "YicAn8"
+msgid "A question and a mock exam"
+msgstr "문제와 모의고사"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "TxWEcZ"
+msgid "Mock exam {number, number} finished"
+msgstr "{number, number}회 모의고사 완료"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "fi0FtL"
+msgid "Available with Plus"
+msgstr "Plus에서 이용 가능"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "8oF1Dm"
+msgid "Estimated score · Natural Sciences"
+msgstr "예상 점수 · 과학탐구"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "hdNQ5-"
+msgid "Estimated score · SAT"
+msgstr "예상 점수 · 수능"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "AIeIsk"
+msgid "By topic"
+msgstr "주제별"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "K1BpxO"
+msgid "{right, number} of {total, number}"
+msgstr "{right, number} / {total, number}"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "tgvES0"
+msgid "Now"
+msgstr "지금"
+
+#: src/app/[lang]/(home)/_components/practice-exam.tsx
+msgctxt "3TEtUT"
+msgid "{count, plural, one {# mistake to review} other {# mistakes to review}}"
+msgstr "{count, plural, other {복습할 오답 #개}}"
+
+#: src/app/[lang]/(home)/_components/practice-job.tsx
+msgctxt "LF4Rmd"
+msgid "Southeast"
+msgstr "남동부"
+
+#: src/app/[lang]/(home)/_components/practice-job.tsx
+msgctxt "p5M06X"
+msgid "Northeast"
+msgstr "북동부"
+
+#: src/app/[lang]/(home)/_components/practice-job.tsx
+msgctxt "GQoFr3"
+msgid "South"
+msgstr "남부"
+
+#: src/app/[lang]/(home)/_components/practice-job.tsx
+msgctxt "gX3gLf"
+msgid "North"
+msgstr "북부"
+
+#: src/app/[lang]/(home)/_components/practice-job.tsx
+msgctxt "IcTDzP"
+msgid "West"
+msgstr "서부"
+
+#: src/app/[lang]/(home)/_components/practice-job.tsx
+msgctxt "X8SGOJ"
+msgid "A real problem and the Mistakes notebook"
+msgstr "실전 문제와 오답 노트"
+
+#: src/app/[lang]/(home)/_components/practice-job.tsx
+msgctxt "8rf-6Z"
+msgid "Real problem · SQL"
+msgstr "실전 문제 · SQL"
+
+#: src/app/[lang]/(home)/_components/practice-job.tsx
+msgctxt "xY0kqD"
+msgid "Which region sold the most?"
+msgstr "어느 지역의 매출이 가장 높았나요?"
+
+#: src/app/[lang]/(home)/_components/practice-job.tsx
+msgctxt "QU8p-1"
+msgid "It works. The Southeast sold the most."
+msgstr "잘 실행됐어요. 남동부 매출이 가장 높았어요."
+
+#: src/app/[lang]/(home)/_components/practice-job.tsx
+msgctxt "XyPY2_"
+msgid "It works. North sold the most."
+msgstr "잘 실행됐어요. 북부 매출이 가장 높았어요."
+
+#: src/app/[lang]/(home)/_components/practice-job.tsx
+msgctxt "yod7QT"
+msgid "{count, number} to fix"
+msgstr "고칠 문제 {count, number}개"
+
+#: src/app/[lang]/(home)/_components/practice-job.tsx
+msgctxt "x95Is1"
+msgid "Grouped by customer, not region"
+msgstr "지역 대신 고객별로 묶음"
+
+#: src/app/[lang]/(home)/_components/practice-job.tsx
+msgctxt "jvmShc"
+msgid "SUM added each customer's sales, so the regions never showed."
+msgstr "SUM이 고객별 매출을 더해서 지역별 결과는 나오지 않았어요."
+
+#: src/app/[lang]/(home)/_components/practice-job.tsx
+msgctxt "8Gu0rE"
+msgid "Practice this skill"
+msgstr "이 스킬 연습하기"
+
+#: src/app/[lang]/(home)/_components/practice-move.tsx
+msgctxt "jX9yWL"
+msgid "Ask about the rent"
+msgstr "월세 물어보기"
+
+#: src/app/[lang]/(home)/_components/practice-move.tsx
+msgctxt "XWcqJ_"
+msgid "Book a visit"
+msgstr "방문 예약하기"
+
+#: src/app/[lang]/(home)/_components/practice-move.tsx
+msgctxt "Eerjf7"
+msgid "Ask what the bills include"
+msgstr "공과금에 포함되는 항목 물어보기"
+
+#: src/app/[lang]/(home)/_components/practice-move.tsx
+msgctxt "QBCsqh"
+msgid "Speaking practice and a practice call"
+msgstr "말하기 연습과 대화 연습"
+
+#: src/app/[lang]/(home)/_components/practice-move.tsx
+msgctxt "9Da2rt"
+msgid "Say it out loud"
+msgstr "소리 내어 말해 보세요"
+
+#: src/app/[lang]/(home)/_components/practice-move.tsx
+msgctxt "-ImamJ"
+msgid "Can I see the apartment on Saturday?"
+msgstr "토요일에 집을 보러 가도 될까요?"
+
+#. Pronunciation tips: “SAT-ur-day” is the English word “Saturday” and “SÁ-ba-do” the Spanish word “sábado”. Keep each word as written.
+#: src/app/[lang]/(home)/_components/practice-move.tsx
+msgctxt "wXawda"
+msgid "{move, select, london {Stress the first part: <b>SAT</b>-ur-day.} other {Stress the accent: <b>SÁ</b>-ba-do.}}"
+msgstr "{move, select, london {첫 음절에 강세를 두세요: <b>SAT</b>-ur-day.} other {악센트 표시가 있는 음절에 강세를 두세요: <b>SÁ</b>-ba-do.}}"
+
+#: src/app/[lang]/(home)/_components/practice-move.tsx
+msgctxt "waQKY7"
+msgid "Practice call"
+msgstr "대화 연습"
+
+#: src/app/[lang]/(home)/_components/practice-move.tsx
+msgctxt "53_ATX"
+msgid "Goals of the call"
+msgstr "대화 목표"
+
+#. Read by screen readers: the learner reached this goal of the call.
+#: src/app/[lang]/(home)/_components/practice-move.tsx
+msgctxt "JXdbo8"
+msgid "Done"
+msgstr "달성"
+
+#: src/app/[lang]/(home)/_components/practice-move.tsx
+msgctxt "D5YAeG"
+msgid "{done, number} of {total, number} goals"
+msgstr "목표 {done, number}개 달성 / 총 {total, number}개"
+
+#: src/app/[lang]/(home)/_components/practice-move.tsx
+msgctxt "CEUYFA"
+msgid "Next time:"
+msgstr "다음에는:"
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "wMCUxI"
+msgid "Because it's not about how much they eat. Every animal spends most of the energy in its food on staying alive, and respiration releases that energy as heat. That's why only about 10% moves up to the next level."
+msgstr "먹는 양이 중요한 게 아니기 때문이에요. 모든 동물은 먹이에서 얻는 에너지 대부분을 생명을 유지하는 데 쓰고, 호흡 과정에서 그 에너지가 열로 빠져나가요. 그래서 다음 영양 단계로 전달되는 에너지는 약 10%뿐이에요."
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "hng4OP"
+msgid "Why not A?"
+msgstr "왜 A가 정답이 아니에요?"
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "4CBljU"
+msgid "Mock exam 2 · Question 4 · Natural Sciences"
+msgstr "2회 모의고사 · 4번 문제 · 자연과학"
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "80lZTQ"
+msgid "308 is what you get if you divide all of the $15.40 by 5 cents. But $12 of it is the monthly fee. Only the $3.40 left pays for texts, and $3.40 ÷ $0.05 = 68."
+msgstr "308은 15.40달러 전부를 5센트로 나누면 나오는 값이에요. 그런데 그중 12달러는 월 기본요금이에요. 문자 요금은 남은 3.40달러니까 3.40달러 ÷ 0.05달러 = 68이에요."
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "HKbV8Z"
+msgid "Why isn't it 308?"
+msgstr "왜 308이 아니에요?"
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "3Eue1R"
+msgid "Mock exam 2 · Question 4 · Math"
+msgstr "2회 모의고사 · 4번 문제 · 수학"
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "0M1dOe"
+msgid "Without it, SUM adds every row into one total. GROUP BY {column} makes one total per region, so you can compare them, and ORDER BY puts the biggest first."
+msgstr "없으면 SUM이 모든 행의 값을 하나로 합산해요. GROUP BY {column} 구문은 지역별 합계를 내서 서로 비교할 수 있게 해 주고, ORDER BY는 가장 큰 값부터 정렬해요."
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "7KLvWs"
+msgid "Why do I need GROUP BY here?"
+msgstr "여기서는 왜 GROUP BY가 필요해요?"
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "TCZIsQ"
+msgid "Real problem · Sales by region"
+msgstr "실전 문제 · 지역별 매출"
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "3Yv6Eb"
+msgid "Both work. In Spain people usually say “piso” for a flat in a building. “Apartamento” often means a small one, like a holiday rental, so “piso” sounds more natural when you're renting in Madrid."
+msgstr "둘 다 쓸 수 있어요. 스페인에서는 아파트를 보통 “piso”라고 해요. “apartamento”는 휴가 때 빌리는 숙소처럼 작은 집을 뜻할 때가 많아서, 마드리드에서 집을 빌릴 때는 “piso”가 더 자연스러워요."
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "iyPucV"
+msgid "Why “piso” and not “apartamento”?"
+msgstr "왜 “apartamento”가 아니라 “piso”라고 해요?"
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "00sc5X"
+msgid "Lesson · Calling about an apartment"
+msgstr "레슨 · 아파트 문의 대화"
+
+#. The buddy answers a learner of English. Keep only “flat” and “apartment” in English, the words being taught; translate the rest, London and the US included.
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "4teyr4"
+msgid "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there."
+msgstr "둘 다 쓸 수 있지만 런던에서는 보통 “flat”이라고 해요. 미국에서는 “apartment”를 더 많이 쓰기 때문에 런던에서 집을 빌릴 때는 “flat”이 더 자연스러워요."
+
+#. A learner of English asks about the English words “flat” and “apartment”.
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "O0g0Ss"
+msgid "Why “flat” and not “apartment”?"
+msgstr "왜 “apartment”가 아니라 “flat”이라고 해요?"
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "buddyNames.vPjK_E"
+msgid "Zu"
+msgstr "Zu"
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "AcKlQI"
+msgid "Explain it more simply"
+msgstr "더 쉽게 설명해 주세요"
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "s6QqT3"
+msgid "I want to go deeper"
+msgstr "더 깊이 알고 싶어요"
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "AmRISg"
+msgid "11 pm · one question"
+msgstr "밤 11시 · 질문 하나"
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "eOHX5x"
+msgid "Stuck? Ask Zu."
+msgstr "막혔나요? Zu에게 물어보세요."
+
+#: src/app/[lang]/(home)/_components/stop-buddy.tsx
+msgctxt "HRHTTM"
+msgid "Your AI study buddy explains any question as simply as you need, right where you got stuck."
+msgstr "막히면 그 자리에서 AI 공부 짝꿍이 어떤 문제든 이해할 수 있게 쉽게 설명해 줘요."
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "HGiiLi"
+msgid "From scratch, with everyday examples"
+msgstr "일상 속 예시로 기초부터"
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "pIPmbB"
+msgid "Nothing, I'm just starting"
+msgstr "이제 막 시작해서 아는 게 없어요"
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "uzFoxW"
+msgid "I know a few things"
+msgstr "조금은 알아요"
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "wouTdw"
+msgid "The basics"
+msgstr "기초는 알아요"
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "h9kQ0S"
+msgid "We'll skip what you already know"
+msgstr "이미 아는 내용은 건너뛰어요"
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "koLFLL"
+msgid "I studied it before"
+msgstr "전에 공부한 적 있어요"
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "47D0tB"
+msgid "Only what's new or hard"
+msgstr "새롭거나 어려운 내용만"
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "BY-vT3"
+msgid "I know it well"
+msgstr "잘 알아요"
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "MLAAq8"
+msgid "Adapts to your answers, about {time}"
+msgstr "답변에 맞춰 진행하고 약 {time} 걸려요"
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "PAwSdR"
+msgid "Not sure, give me a quick test"
+msgstr "잘 모르겠어요, 짧은 테스트를 볼래요"
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "ZATSm-"
+msgid "Day 1 · 2 minutes"
+msgstr "1일 차 · 2분"
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "CMlDLt"
+msgid "Your plan starts where you are."
+msgstr "지금 실력에 맞는 계획으로 시작해요."
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "-3GuWe"
+msgid "A few quick questions find what you already know, and your plan skips it."
+msgstr "간단한 문제 몇 개로 이미 아는 내용을 확인해 계획에서 건너뛰어요."
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "j9qNv7"
+msgid "Day 1, in three steps"
+msgstr "세 단계로 보는 1일 차"
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "FI0QGz"
+msgid "Say how much you know"
+msgstr "얼마나 아는지 알려 주기"
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "ctiEvk"
+msgid "Answer a few questions"
+msgstr "문제 몇 개 풀기"
+
+#: src/app/[lang]/(home)/_components/stop-day-one.tsx
+msgctxt "v-y-wJ"
+msgid "Your plan skips what you know"
+msgstr "이미 아는 내용은 계획에서 건너뛰어요"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "udtNZk"
+msgid "{exam} on {date}"
+msgstr "{exam} 시험일 {date}"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "-FjPjU"
+msgid "Goal date {date}"
+msgstr "목표일 {date}"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "a5fAnr"
+msgid "Moving day {date}"
+msgstr "이사 날짜 {date}"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "DQ8KR2"
+msgid "Your plan changed"
+msgstr "계획이 바뀌었어요"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "bW7B87"
+msgid "New"
+msgstr "변경 후"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "K0Lp_g"
+msgid "Was"
+msgstr "변경 전"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "3WnP-W"
+msgid "{phase} until {date}"
+msgstr "{phase} {date}까지"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "Rec1Kn"
+msgid "One lesson of {phase}"
+msgstr "{phase} 레슨 1개"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "MtrTNy"
+msgid "Tomorrow"
+msgstr "내일"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "AleVJo"
+msgid "On pace. Nothing moves."
+msgstr "계획대로 진행 중이에요. 일정은 그대로예요."
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "ACteAu"
+msgid "Short lessons Zoonk writes for your goal."
+msgstr "Zoonk가 목표에 맞춰 만드는 짧은 레슨이에요."
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "eXs5Be"
+msgid "Written for your goal"
+msgstr "목표에 맞춰 만든 레슨"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+#: src/components/catalog/plan-workload.tsx
+msgctxt "RYqUsZ"
+msgid "What you studied comes back right before you'd forget it."
+msgstr "배운 내용은 잊기 직전에 다시 나와요."
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "OKDhTn"
+msgid "Back before you forget"
+msgstr "잊기 전 복습"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "bjikyk"
+msgid "Every mistake comes back until you get it right."
+msgstr "틀린 문제는 맞힐 때까지 다시 나와요."
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "4DoPlf"
+msgid "Mistakes, practiced"
+msgstr "틀린 문제 연습"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "TcjVgp"
+msgid "What you missed comes first, and the rest of your plan moves to fit."
+msgstr "못 한 학습을 먼저 하고, 나머지 계획은 그에 맞춰 조정돼요."
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+#: src/app/[lang]/(home)/_components/tomorrow-steps.ts
+msgctxt "i4CkTc"
+msgid "From yesterday"
+msgstr "어제 남은 학습"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "1ooK0d"
+msgid "Every day"
+msgstr "매일"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "ZuAnCp"
+msgid "Your day is ready when you open Zoonk."
+msgstr "Zoonk를 열면 오늘의 학습이 준비돼 있어요."
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "QkIlUm"
+msgid "Short lessons written for your goal, reviews right before you'd forget, and your mistakes to practice. Missed yesterday? It comes first."
+msgstr "목표에 맞춘 짧은 레슨, 잊기 직전 복습, 틀린 문제 연습까지 준비돼 있어요. 어제 못 한 학습이 있나요? 그것부터 시작해요."
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "6dIxDP"
+msgid "Yesterday"
+msgstr "어제"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "yesterdaySwitch.cMaydB"
+msgid "Studied"
+msgstr "공부했어요"
+
+#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+msgctxt "yesterdaySwitch.1Gku3Z"
+msgid "No time"
+msgstr "시간이 없었어요"
+
+#: src/app/[lang]/(home)/_components/stop-practice.tsx
+msgctxt "6_YTk8"
+msgid "Week {week, number} · mock exam"
+msgstr "{week, number}주 차 · 모의고사"
+
+#: src/app/[lang]/(home)/_components/stop-practice.tsx
+msgctxt "D32g2O"
+msgid "Questions in your exam's format, and mock exams timed like the real one, with an estimated score."
+msgstr "실제 시험과 같은 형식의 문제를 풀고, 같은 제한 시간으로 모의고사를 보며 예상 점수도 확인해요."
+
+#: src/app/[lang]/(home)/_components/stop-practice.tsx
+msgctxt "_xKXo7"
+msgid "Practice like the real exam."
+msgstr "실제 시험처럼 연습하세요."
+
+#: src/app/[lang]/(home)/_components/stop-practice.tsx
+msgctxt "mB5Vfh"
+msgid "Week {week, number} · real work"
+msgstr "{week, number}주 차 · 실무"
+
+#: src/app/[lang]/(home)/_components/stop-practice.tsx
+msgctxt "9zZGUO"
+msgid "Problems from the job you want, checked as you go, and every mistake kept for later."
+msgstr "원하는 직업의 실무 문제를 풀며 바로 결과를 확인해요. 틀린 부분은 모두 저장돼 나중에 다시 볼 수 있어요."
+
+#: src/app/[lang]/(home)/_components/stop-practice.tsx
+msgctxt "XFjhzO"
+msgid "Practice on real work."
+msgstr "실무 문제로 연습하세요."
+
+#: src/app/[lang]/(home)/_components/stop-practice.tsx
+msgctxt "ebyq2G"
+msgid "Week {week, number} · speaking"
+msgstr "{week, number}주 차 · 말하기"
+
+#: src/app/[lang]/(home)/_components/stop-practice.tsx
+msgctxt "PzTp8t"
+msgid "Say real sentences out loud, get tips on how you sound, and practice calls for the moments that matter."
+msgstr "실생활에서 쓰는 문장을 소리 내어 말하고, 발음에 대한 조언을 받으며 중요한 순간에 필요한 대화를 연습하세요."
+
+#: src/app/[lang]/(home)/_components/stop-practice.tsx
+msgctxt "hyh1lt"
+msgid "Practice the conversations you'll have."
+msgstr "앞으로 나눌 대화를 연습하세요."
+
+#: src/app/[lang]/(home)/page.tsx
+msgctxt "M3puYF"
+msgid "Tell Zoonk your goal and date, like an exam or a move abroad. Get a study plan for every day that fits your schedule. Start free, no account needed."
+msgstr "시험이나 해외 이주 같은 목표와 날짜를 Zoonk에 알려 주세요. 일정에 맞는 매일의 학습 계획을 받아 보세요. 계정 없이 무료로 시작하세요."
+
+#: src/app/[lang]/(home)/page.tsx
+msgctxt "201rSY"
+msgid "Zoonk: A study plan for every day until the big day"
+msgstr "Zoonk: 중요한 날까지, 하루하루의 학습 계획"
+
+#: src/app/[lang]/(home)/page.tsx
+#: src/components/auth-gate.tsx
+#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/plus-pricing.tsx
+#: src/components/public/public-visitor-actions.tsx
+msgctxt "i7IHHZ"
+msgid "Start free"
+msgstr "무료로 시작하기"
+
+#: src/app/[lang]/account-deleted-toast.tsx
+msgctxt "H30ctc"
+msgid "Your account was deleted."
+msgstr "계정이 삭제됐어요."
+
+#: src/app/[lang]/challenge/[planItemId]/page.tsx
+#: src/app/[lang]/checkpoint/[blockId]/page.tsx
+msgctxt "9MidH4"
+msgid "Challenge"
+msgstr "챌린지"
+
+#: src/app/[lang]/conversation/[conversationId]/page.tsx
+msgctxt "gegfoA"
+msgid "Conversation"
+msgstr "대화"
+
+#: src/app/[lang]/error.tsx
+#: src/components/errors/global-error-content.tsx
+#: src/components/public/not-found-message.tsx
+msgctxt "mShMz9"
+msgid "Go to the home page"
+msgstr "홈으로 가기"
+
+#: src/app/[lang]/essay/[blockId]/page.tsx
+msgctxt "Jo0iJd"
+msgid "Writing practice"
+msgstr "쓰기 연습"
+
+#: src/app/[lang]/explain/[goalId]/explain-client.tsx
+msgctxt "UOYMne"
+msgid "Build a plan for {course}"
+msgstr "{course} 학습 계획 세우기"
+
+#: src/app/[lang]/explain/[goalId]/explain-client.tsx
+msgctxt "CJ4yhP"
+msgid "Build a plan for the whole subject"
+msgstr "과목 전체 학습 계획 세우기"
+
+#: src/app/[lang]/explain/[goalId]/explain-client.tsx
+msgctxt "xuyfqZ"
+msgid "I want to understand {topic} in depth"
+msgstr "{topic}에 대해 깊이 알고 싶어요"
+
+#: src/app/[lang]/focus-test/page.tsx
+msgctxt "-3M8u-"
+msgid "Focus test"
+msgstr "집중 진단"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/components/public/start-lesson-button.tsx
+msgctxt "K6x1SC"
+msgid "We couldn't open the lesson. Try again, or log in to keep going."
+msgstr "레슨을 열지 못했어요. 다시 시도하거나 로그인해서 학습을 이어 가세요."
+
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/components/public/start-lesson-button.tsx
+msgctxt "ZGpU-B"
+msgid "Opening your lesson"
+msgstr "레슨을 열고 있어요"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
+msgctxt "cyR7Kh"
+msgid "Back"
+msgstr "뒤로"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
+msgctxt "A6lEGi"
+msgid "About this lesson"
+msgstr "레슨 소개"
+
+#. Heading over a lesson or review the learner can start now, because this lesson couldn't be written.
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "27L4n6"
+msgid "Ready to do instead"
+msgstr "대신 바로 할 수 있는 학습"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "aa5y6W"
+msgid "Ready while you wait"
+msgstr "기다리는 동안 할 수 있는 학습"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "P0sSfc"
+msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
+msgstr "{count, plural, other {개념 #개 복습하기}}"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "X6rSIT"
+msgid "It usually takes a minute or two. The lesson opens here as soon as it's ready."
+msgstr "보통 1~2분 정도 걸려요. 준비되면 여기서 바로 레슨이 열려요."
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "Dr8j6a"
+msgid "This lesson isn't written yet"
+msgstr "아직 만들지 않은 레슨이에요"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "kCHykv"
+msgid "Zoonk writes it when you start. It takes a minute or two."
+msgstr "시작하면 Zoonk가 레슨을 만들어요. 1~2분 정도 걸려요."
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "RFCwI6"
+msgid "Starting…"
+msgstr "시작 중…"
+
+#: src/app/[lang]/mistakes/practice/page.tsx
+msgctxt "HGnX5e"
+msgid "Practice mistakes"
+msgstr "틀린 문제 연습"
+
+#: src/app/[lang]/mock/[blockId]/page.tsx
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "6ppMud"
+msgid "Mock exam"
+msgstr "모의고사"
+
+#: src/app/[lang]/pattern/[patternId]/page.tsx
+msgctxt "KS_o38"
+msgid "Mistake pattern"
+msgstr "실수 패턴"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "A-ZnsR"
+msgid "A plan for {subject}"
+msgstr "{subject} 학습 계획"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "ILuHAq"
+msgid "A study plan"
+msgstr "학습 계획"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "TTuJ75"
+msgid "~{time}"
+msgstr "약 {time}"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "4zm4MM"
+msgid "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know."
+msgstr "같은 과목을 나만의 페이스로 공부할 수 있도록 계획을 만들어요. 몇 문제를 풀면 이미 아는 내용은 건너뛰어요."
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "ql_IXy"
+msgid "A study plan someone shared with you"
+msgstr "누군가 공유해 준 학습 계획"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "8jQqTq"
+msgid "Start from this plan"
+msgstr "이 계획으로 시작하기"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "7ip5wV"
+msgid "~{time} of study · {phases, plural, one {# phase} other {# phases}} · {skills, plural, one {# skill} other {# skills}}"
+msgstr "약 {time} 학습 · {phases, plural, other {단계 #개}} · {skills, plural, other {스킬 #개}}"
+
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "3aNmDX"
+msgid "How much time a day?"
+msgstr "하루에 얼마나 공부할까요?"
+
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "W97xmd"
+msgid "You can't start another goal right now. Finish or pause one first."
+msgstr "지금은 새 목표를 시작할 수 없어요. 먼저 목표 하나를 끝내거나 잠시 멈춰 주세요."
+
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "kaDIbJ"
+msgid "That didn't work. Try again in a moment."
+msgstr "문제가 생겼어요. 잠시 후 다시 시도해 보세요."
+
+#: src/app/[lang]/privacy/page.tsx
+msgctxt "afKQHy"
+msgid "Read Zoonk's privacy policy to understand how we use and protect your personal information."
+msgstr "Zoonk가 개인정보를 어떻게 사용하고 보호하는지 개인정보 처리방침에서 확인해 보세요."
+
+#: src/app/[lang]/privacy/page.tsx
+msgctxt "vx0nkZ"
+msgid "Privacy Policy"
+msgstr "개인정보 처리방침"
+
+#: src/app/[lang]/pronunciation/page.tsx
+msgctxt "mSmk6Q"
+msgid "Say it again"
+msgstr "다시 소리 내어 말하기"
+
+#: src/app/[lang]/session/page.tsx
+msgctxt "hnntJl"
+msgid "Today's session"
+msgstr "오늘의 학습"
+
+#: src/app/[lang]/terms/page.tsx
+msgctxt "DaGtoz"
+msgid "Read Zoonk's terms of use to understand the rules and conditions for using our platform and services"
+msgstr "Zoonk 이용약관에서 플랫폼과 서비스 이용에 관한 규칙과 조건을 확인해 보세요"
+
+#: src/app/[lang]/terms/page.tsx
+msgctxt "UhkSyx"
+msgid "Terms of Use"
+msgstr "이용약관"
+
+#: src/app/[lang]/test-out/[chapterId]/page.tsx
+msgctxt "5-s6we"
+msgid "Test out of a chapter"
+msgstr "테스트로 챕터 건너뛰기"
+
+#: src/app/[lang]/test-out/[chapterId]/page.tsx
+#: src/components/catalog/chapter-strip.tsx
+msgctxt "KGN7UU"
+msgid "This chapter"
+msgstr "이 챕터"
+
+#: src/app/auth/apple/route.ts
+msgctxt "5JUHBB"
+msgid "Go back to Zoonk"
+msgstr "Zoonk로 돌아가기"
+
+#: src/app/auth/apple/route.ts
+msgctxt "99__Yc"
+msgid "Your browser didn't open the Zoonk app. Close this page and sign in with Apple again in the app."
+msgstr "브라우저에서 Zoonk 앱을 열지 못했어요. 이 페이지를 닫고 앱에서 Apple로 다시 로그인하세요."
+
+#. Signing the learner in failed.
+#: src/app/auth/callback/route.ts
+msgctxt "1KzRxp"
+msgid "We couldn't sign you in."
+msgstr "로그인하지 못했어요."
+
+#: src/app/global-not-found.tsx
+#: src/components/catalog/catalog-not-found.tsx
+msgctxt "QRccCM"
+msgid "Page not found"
+msgstr "페이지를 찾을 수 없어요"
+
+#: src/components/auth-gate.tsx
+msgctxt "xhBZ5m"
+msgid "Create an account to use this page"
+msgstr "이 페이지를 이용하려면 계정을 만드세요"
+
+#: src/components/auth-gate.tsx
+msgctxt "DrBO6u"
+msgid "Your plan and progress move to your account, safe on any device."
+msgstr "계획과 진도가 계정으로 옮겨져 어느 기기에서든 안전하게 학습을 이어갈 수 있어요."
+
+#: src/components/auth-gate.tsx
+msgctxt "HVR09O"
+msgid "Your session ended"
+msgstr "로그인 세션이 끝났어요"
+
+#: src/components/auth-gate.tsx
+msgctxt "acWSVG"
+msgid "Log in to continue"
+msgstr "계속하려면 로그인하세요"
+
+#: src/components/auth-gate.tsx
+msgctxt "pb0Q20"
+msgid "Log in to pick up your plan."
+msgstr "로그인해 계획을 이어가세요."
+
+#: src/components/auth-gate.tsx
+msgctxt "eSXQ3z"
+msgid "Log in to pick up where you left off, or start free."
+msgstr "로그인해 이어서 학습하거나 무료로 시작하세요."
+
+#: src/components/auth-gate.tsx
+msgctxt "77LoTm"
+msgid "Start something new"
+msgstr "새로 시작하기"
+
+#: src/components/catalog/area-study.ts
+msgctxt "ug2Ory"
+msgid "{count, plural, one {# quick lesson} other {# quick lessons}}"
+msgstr "{count, plural, other {짧은 레슨 #개}}"
+
+#: src/components/catalog/area-study.ts
+msgctxt "T9NkkS"
+msgid "{fitting, plural, =0 {# of {total, number} lessons fit} one {# of {total, number} lessons fit} other {# of {total, number} lessons fit}}"
+msgstr "{fitting, plural, =0 {계획에 들어가는 레슨은 #개예요(전체 {total, number}개)} other {레슨 #개가 계획에 들어가요(전체 {total, number}개)}}"
+
+#: src/components/catalog/area-study.ts
+msgctxt "XP3dEr"
+msgid "{count, plural, one {+ # quick lesson} other {+ # quick lessons}}"
+msgstr "{count, plural, other {+ 짧은 레슨 #개}}"
+
+#: src/components/catalog/area-study.ts
+msgctxt "pJM3om"
+msgid "{time} of study"
+msgstr "학습 {time}"
+
+#: src/components/catalog/catalog-back-to-top.tsx
+msgctxt "Gs9Kfp"
+msgid "Back to top"
+msgstr "맨 위로 가기"
+
+#: src/components/catalog/catalog-hero.tsx
+msgctxt "Q4d9LI"
+msgid "With Zoonk, your plan starts at this chapter and fits your schedule."
+msgstr "Zoonk에서는 이 챕터부터 시작해 일정에 맞춰 배울 수 있도록 계획을 세워요."
+
+#: src/components/catalog/catalog-hero.tsx
+msgctxt "Deu0Hn"
+msgid "With Zoonk, your plan starts at your level and fits your schedule."
+msgstr "Zoonk에서는 현재 수준에서 시작해 일정에 맞춰 배울 수 있도록 계획을 세워요."
+
+#: src/components/catalog/chapter-strip.tsx
+msgctxt "ZmNtfT"
+msgid "Where this chapter sits in the course"
+msgstr "코스에서 이 챕터의 위치"
+
+#: src/components/catalog/chapter-strip.tsx
+msgctxt "7-fN2b"
+msgid "After this chapter"
+msgstr "이 챕터 다음"
+
+#: src/components/catalog/course-exam-eyebrow.tsx
+msgctxt "U-M99k"
+msgid "Exam around {dates} · {days, plural, =0 {today} one {about # day left} other {about # days left}}"
+msgstr "{dates}쯤 시험 · {days, plural, =0 {오늘} other {약 #일 남음}}"
+
+#: src/components/catalog/course-exam-eyebrow.tsx
+msgctxt "_of7g2"
+msgid "Exam on {dates} · {days, plural, =0 {today} one {# day left} other {# days left}}"
+msgstr "{dates} 시험 · {days, plural, =0 {오늘} other {#일 남음}}"
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "aaZjUM"
+msgid "{weeks, plural, one {<big>~#</big> week} other {<big>~#</big> weeks}}"
+msgstr "{weeks, plural, other {<big>약 #</big>주}}"
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "BzWLOy"
+msgid "to finish the whole course at {minutes, plural, one {# minute} other {# minutes}} a day, Monday to Friday, from scratch."
+msgstr "월요일부터 금요일까지 {minutes, plural, other {하루 #분씩}} 공부해 코스를 처음부터 끝까지 마치는 데 걸려요."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "JR79VT"
+msgid "Starting today, you'd finish around <strong>{month}</strong>."
+msgstr "오늘 시작하면 <strong>{month}</strong>쯤 마칠 수 있어요."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "lM5n28"
+msgid "+ {count, plural, one {# more lesson} other {# more lessons}}"
+msgstr "+ {count, plural, other {레슨 #개 더}}"
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "vEgeBR"
+msgid "by {date}, at {time} a day, Monday to Friday, what comes up most first: {count, plural, =0 {lessons} one {# lesson} other {# lessons}} already in the course, and more written as you reach them."
+msgstr "{date}까지 월요일부터 금요일까지 하루 {time}씩, 자주 나오는 내용부터 배워요. 코스에 이미 있는 {count, plural, =0 {레슨} other {레슨 #개}}부터 시작하고, 진도에 맞춰 새 레슨이 만들어져요."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "lhlS-t"
+msgid "by {date}, at {time} a day, Monday to Friday, in quick lessons on what comes up most. The full lessons come once there's more time."
+msgstr "{date}까지 월요일부터 금요일까지 하루 {time}씩, 자주 나오는 내용을 짧은 레슨으로 배워요. 시간 여유가 생기면 더 자세한 레슨으로 배워요."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "ngWcm1"
+msgid "by {date}, at {time} a day, Monday to Friday, what comes up most first: {count, number} of the course's {total, plural, one {# lesson} other {# lessons}}."
+msgstr "{date}까지 월요일부터 금요일까지 하루 {time}씩, 자주 나오는 내용부터 레슨 {count, number}개를 배워요. 코스 전체는 {total, plural, other {레슨 #개}}예요."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "zC104g"
+msgid "Not all of it fits by then. Before you start, you see how much fits at your level and your time."
+msgstr "그날까지 전부 배우기는 어려워요. 시작하기 전에 내 수준과 학습 시간에 맞춰 얼마나 배울 수 있는지 확인할 수 있어요."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "Pq4Zco"
+msgid "That's every topic in the course, in depth."
+msgstr "코스의 모든 주제를 깊이 있게 배워요."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "e1oyF_"
+msgid "That's every exam topic in the course, in depth."
+msgstr "코스에 있는 모든 시험 주제를 깊이 있게 배워요."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "YTiAat"
+msgid "<big>{time}</big> of study"
+msgstr "<big>{time}</big> 학습"
+
+#: src/components/catalog/course-progress.tsx
+msgctxt "YdCF9O"
+msgid "Continue your plan"
+msgstr "계획 이어가기"
+
+#: src/components/catalog/course-progress.tsx
+msgctxt "mElWfu"
+msgid "You are here"
+msgstr "현재 위치"
+
+#: src/components/catalog/first-question.tsx
+msgctxt "xpsuUj"
+msgid "Guess first. It doesn't count."
+msgstr "먼저 예상해 보세요. 점수에 반영되지 않아요."
+
+#: src/components/catalog/first-question.tsx
+msgctxt "ShLQAa"
+msgid "Quick question"
+msgstr "간단한 문제"
+
+#: src/components/catalog/first-question.tsx
+msgctxt "Ekbc8q"
+msgid "Your answer starts the {minutes}-minute lesson."
+msgstr "답을 고르면 {minutes}분 레슨이 시작돼요."
+
+#: src/components/catalog/first-question.tsx
+msgctxt "E07b8i"
+msgid "Your choice opens the {minutes}-minute lesson. Check your answer there."
+msgstr "선택하면 {minutes}분 레슨이 열려요. 레슨에서 정답을 확인해 보세요."
+
+#: src/components/catalog/first-question.tsx
+msgctxt "KUHspv"
+msgid "Continue the lesson"
+msgstr "레슨 이어가기"
+
+#: src/components/catalog/first-question.tsx
+msgctxt "7U_QZr"
+msgid "You've started this lesson. It picks up where you left off."
+msgstr "이미 시작한 레슨이에요. 마지막으로 학습한 곳부터 이어져요."
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "tc8knM"
+msgid "Lessons not written yet"
+msgstr "아직 만들지 않은 레슨"
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "7o2WBm"
+msgid "Reviews and practice"
+msgstr "복습과 연습"
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "lH5xFH"
+msgid "Challenges and mock exams"
+msgstr "챌린지와 모의고사"
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "___zLu"
+msgid "Challenges"
+msgstr "챌린지"
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "5nUlrS"
+msgid "What fills the time"
+msgstr "학습 시간 구성"
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "wk-8Dt"
+msgid "{time} in all"
+msgstr "총 {time}"
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "GDUlmD"
+msgid "Of this, {time} comes after the exam."
+msgstr "이 중 {time} 분량은 시험 이후에 진행돼요."
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "3MtrI6"
+msgid "Lessons not written yet are written as you reach them."
+msgstr "아직 만들지 않은 레슨은 학습할 차례가 되면 만들어요."
+
+#: src/components/catalog/try-lesson.tsx
+msgctxt "iHnKCj"
+msgid "Try a lesson · free · {time}"
+msgstr "레슨 체험하기 · 무료 · {time}"
+
+#: src/components/catalog/try-lesson.tsx
+msgctxt "tTC5l3"
+msgid "{chapter} · lesson {number, number}"
+msgstr "{chapter} · 레슨 {number, number}"
+
+#: src/components/errors/page-error-message.tsx
+msgctxt "R6Dkep"
+msgid "It might be your connection or a problem on our side. Trying again usually fixes it."
+msgstr "인터넷 연결이나 서비스에 문제가 있을 수 있어요. 다시 시도하면 대부분 해결돼요."
+
+#: src/components/errors/page-error-message.tsx
+msgctxt "9nolIL"
+msgid "This page didn't load"
+msgstr "페이지를 불러오지 못했어요"
+
+#: src/components/learn/detail-skeleton.tsx
+msgctxt "iFsDVR"
+msgid "Loading"
+msgstr "불러오는 중"
+
+#: src/components/learn/upload-request-client.tsx
+msgctxt "Hv1OVQ"
+msgid "Your plan needs a document"
+msgstr "계획에 문서가 필요해요"
+
+#: src/components/learn/upload-request-client.tsx
+msgctxt "osDDWB"
+msgid "Thanks. We're reading it now, and your plan will update in a few minutes."
+msgstr "고마워요. 지금 문서를 읽고 있어요. 몇 분 안에 계획이 업데이트돼요."
+
+#: src/components/learn/upload-request-client.tsx
+msgctxt "p4N05H"
+msgid "Upload"
+msgstr "업로드"
+
+#: src/components/pricing/free-plan.tsx
+#: src/components/public/course-start-failure.tsx
+msgctxt "d82w2J"
+msgid "Create a free account"
+msgstr "무료 계정 만들기"
+
+#: src/components/pricing/free-plan.tsx
+msgctxt "m5_Dxl"
+msgid "Your current plan"
+msgstr "현재 이용 중인 요금제"
+
+#: src/components/pricing/free-plan.tsx
+msgctxt "NynllM"
+msgid "No card needed."
+msgstr "카드 등록이 필요 없어요."
+
+#: src/components/pricing/free-plan.tsx
+msgctxt "SJVGSo"
+msgid "A plan for your goal and your date"
+msgstr "목표와 목표일에 맞춘 계획"
+
+#: src/components/pricing/free-plan.tsx
+msgctxt "Bj_ci-"
+msgid "For an exam: the diagnostic, your plan and {days, plural, =7 {its first week} one {its first day} other {its first # days}}"
+msgstr "시험 준비: 진단, 계획, {days, plural, =7 {첫 주(#일)의 학습} other {처음 #일간의 학습}}"
+
+#: src/components/pricing/free-plan.tsx
+msgctxt "5ZDN6U"
+msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
+msgstr "AI 공부 짝꿍: 하루 {count, plural, other {메시지 #개}}"
+
+#: src/components/pricing/free-plan.tsx
+msgctxt "JfcsFI"
+msgid "Speaking practice calls, with lower limits than Plus"
+msgstr "말하기 연습 대화(Plus보다 낮은 이용 한도)"
+
+#: src/components/pricing/free-plan.tsx
+msgctxt "kTr3m7"
+msgid "{goals, plural, one {# goal} other {# goals}} · {lessons, plural, one {# lesson} other {# lessons}} a month"
+msgstr "{goals, plural, other {목표 #개}} · 월 {lessons, plural, other {레슨 #개}}"
+
+#: src/components/pricing/plus-benefits.tsx
+msgctxt "ktRBJl"
+msgid "Your whole exam plan, every day to the exam"
+msgstr "시험일까지 매일 이어지는 전체 시험 준비 계획"
+
+#: src/components/pricing/plus-benefits.tsx
+msgctxt "CRK05Z"
+msgid "Mock exams, timed like the real one"
+msgstr "실제 시험과 시간 제한이 같은 모의고사"
+
+#: src/components/pricing/plus-benefits.tsx
+msgctxt "qYv-RO"
+msgid "An AI study buddy whenever you're stuck"
+msgstr "막힐 때마다 도와주는 AI 공부 짝꿍"
+
+#: src/components/pricing/plus-benefits.tsx
+msgctxt "GEER8U"
+msgid "Higher limits for speaking calls"
+msgstr "더 넉넉한 말하기 연습 대화 이용 한도"
+
+#: src/components/pricing/plus-benefits.tsx
+msgctxt "joZG7W"
+msgid "Every goal · every lesson"
+msgstr "모든 목표 · 모든 레슨"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "0I_Rwu"
+msgid "Get Plus"
+msgstr "Plus 구독하기"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "PFGLfW"
+msgid "Manage your plan"
+msgstr "요금제 관리"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "Lxn0Fm"
+msgid "Price shown at checkout"
+msgstr "가격은 결제 단계에서 확인할 수 있어요"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "Rw82_V"
+msgid "per month"
+msgstr "월"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "PMrrSl"
+msgid "Billed every month."
+msgstr "매월 결제돼요."
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "qxHg3H"
+msgid "per year"
+msgstr "연"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "8fp1TZ"
+msgid "That's <mono>{amount}</mono> a month."
+msgstr "월 <mono>{amount}</mono>인 셈이에요."
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "u2XWYU"
+msgid "Billing period"
+msgstr "결제 주기"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "wYsv4Z"
+msgid "Monthly"
+msgstr "월간"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "dqD39h"
+msgid "Yearly"
+msgstr "연간"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "EMZyX7"
+msgid "save {amount}"
+msgstr "{amount} 절약"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "dyhF_4"
+msgid "Cancel anytime."
+msgstr "언제든 해지할 수 있어요."
+
+#: src/components/pricing/plus-pricing.tsx
+msgctxt "jPlE1k"
+msgid "Get ready for your exam, new job or move with Zoonk Plus: unlimited lessons and goals, full exam prep with mock exams and your AI study buddy. Start free."
+msgstr "시험이나 새 직장, 이사를 앞두고 있다면 Zoonk Plus로 준비하세요. 무제한 레슨과 목표, 모의고사를 포함한 시험 준비 전 과정, AI 공부 짝꿍을 이용할 수 있어요. 무료로 시작하세요."
+
+#: src/components/pricing/plus-pricing.tsx
+msgctxt "DfjjXa"
+msgid "Zoonk Plus: plans and pricing"
+msgstr "Zoonk Plus: 요금제와 가격"
+
+#: src/components/pricing/plus-pricing.tsx
+msgctxt "rmN6Kk"
+msgid "Start free. <rest>Plus when you want everything.</rest>"
+msgstr "무료로 시작하세요. <rest>모든 기능이 필요할 땐 Plus를 선택하세요.</rest>"
+
+#. “Free” and “Plus” are the names of the two subscription tiers.
+#: src/components/pricing/plus-pricing.tsx
+msgctxt "xrpz7X"
+msgid "Free covers one goal at a time. Plus covers every goal, all the way to the big day."
+msgstr "무료 요금제는 한 번에 목표 하나를 지원해요. Plus는 모든 목표를 중요한 날까지 쭉 지원해요."
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "1vrigA"
+msgid "Start free with {count, plural, one {# lesson} other {# lessons}}, no account needed. With a free account, you get:"
+msgstr "계정 없이도 {count, plural, other {레슨 #개}}를 무료로 이용해 보세요. 무료 계정을 만들면 다음을 이용할 수 있어요:"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "PKf2T8"
+msgid "With the free plan, you get:"
+msgstr "무료 요금제로 다음을 이용할 수 있어요:"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "Uoc-Co"
+msgid "{count, plural, one {# goal} other {# goals}} at a time"
+msgstr "{count, plural, other {한 번에 목표 #개}}"
+
+#: src/components/pricing/plus-questions.tsx
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "dkfN6h"
+msgid "{month, plural, one {# lesson} other {# lessons}} a month, up to {day, number} a day"
+msgstr "한 달에 {month, plural, other {레슨 #개}}, 하루 최대 {day, number}개"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "PVvHeY"
+msgid "{days, plural, =7 {The first week} one {The first day} other {The first # days}} of exam prep"
+msgstr "{days, plural, =7 {시험 준비 첫 주} other {시험 준비 첫 #일}}"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "FZOFIX"
+msgid "{tutor, plural, one {# message to your buddy} other {# messages to your buddy}} and {uploads, plural, one {# upload} other {# uploads}} a day"
+msgstr "하루 {tutor, plural, other {짝꿍에게 보내는 메시지 #개}}와 {uploads, plural, other {업로드 #회}}"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "QKrdr3"
+msgid "Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)"
+msgstr "Plus보다 이용 한도가 낮은 대화 연습(시험 말하기 과제는 Plus에 포함)"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "ieflON"
+msgid "hello@zoonk.com"
+msgstr "hello@zoonk.com"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "uUjwhB"
+msgid "Common questions"
+msgstr "자주 묻는 질문"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "XPjDwN"
+msgid "Still unsure?"
+msgstr "아직 궁금한 점이 있나요?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "jVRlNg"
+msgid "What's in the free plan?"
+msgstr "무료 요금제에는 무엇이 포함되나요?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "zAc0Zf"
+msgid "Is Plus really unlimited?"
+msgstr "Plus는 정말 무제한인가요?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "flRDel"
+msgid "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>."
+msgstr "거의 무제한이에요. 레슨, 목표, 짝꿍에는 봇과 자동화 도구를 막기 위한 한도만 있어요. 직접 공부하는 분들을 제한하려는 게 아니에요. 말하기 대화에는 일일·월간 이용 한도가 있지만, 무료 요금제보다 넉넉해요. <link>공정 이용 정책</link>을 확인해 보세요."
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "jNjtlE"
+msgid "What happens if I cancel?"
+msgstr "구독을 해지하면 어떻게 되나요?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "z1FMPn"
+msgid "You keep Plus until the end of the period you already paid for. Then you're back on the free plan, and your goals and progress stay with you."
+msgstr "이미 결제한 기간이 끝날 때까지 Plus를 이용할 수 있어요. 그 뒤에는 무료 요금제로 돌아가고, 목표와 학습 진도는 그대로 유지돼요."
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "94whIk"
+msgid "Can I get a refund?"
+msgstr "환불받을 수 있나요?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "LHV1sa"
+msgid "Just <link>contact us</link> and tell us what happened. We'll do our best to get you a refund."
+msgstr "<link>문의하기</link>를 통해 어떤 일이 있었는지 알려 주세요. 환불받을 수 있도록 최선을 다할게요."
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "4YTeTA"
+msgid "{days, plural, =7 {Diagnostic and week 1} one {Diagnostic and day 1} other {Diagnostic and the first # days}}"
+msgstr "{days, plural, =7 {진단과 첫 주} other {진단과 첫 #일}}"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "NsXWWN"
+msgid "Closing gaps"
+msgstr "부족한 부분 채우기"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "KV-O0y"
+msgid "Practice"
+msgstr "연습"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "Csk9Zg"
+msgid "Final review"
+msgstr "마무리 복습"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "avI1bO"
+msgid "An exam plan"
+msgstr "시험 준비 계획"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "2ZZIpk"
+msgid "{days, plural, =7 {Free: the diagnostic and week 1 · Plus: every week after it to exam day, with mock exams} one {Free: the diagnostic and day 1 · Plus: every day after it to exam day, with mock exams} other {Free: the diagnostic and the first # days · Plus: every day after them to exam day, with mock exams}}"
+msgstr "{days, plural, =7 {무료: 진단과 첫 주 · Plus: 그다음 주부터 시험 당일까지, 모의고사 포함} other {무료: 진단과 첫 #일 · Plus: 그다음 날부터 시험 당일까지, 모의고사 포함}}"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "Q-aTo1"
+msgid "Exam day"
+msgstr "시험 당일"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "x-wBHO"
+msgid "Any other goal"
+msgstr "그 밖의 목표"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "KshPEJ"
+msgid "{count, plural, one {About one short lesson each weekday.} other {About # short lessons each weekday.}}"
+msgstr "{count, plural, other {평일마다 짧은 레슨을 약 #개씩 할 수 있어요.}}"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "en1DQp"
+msgid "What free covers"
+msgstr "무료로 이용할 수 있는 것"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "XnAqzA"
+msgid "See your whole plan before you pay."
+msgstr "결제 전에 전체 계획을 확인하세요."
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "PH2HUb"
+msgid "For an exam, the diagnostic, your plan and its first week are free. Plus keeps you going to exam day, with mock exams along the way."
+msgstr "시험 준비를 위한 진단과 계획, 첫 주 학습은 무료예요. Plus로는 모의고사도 풀면서 시험 당일까지 계속 준비할 수 있어요."
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr "구독하기"
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "qQDa8p"
+msgid "Unable to start checkout. Contact us at hello@zoonk.com"
+msgstr "결제를 시작할 수 없어요. hello@zoonk.com으로 문의해 주세요"
+
+#: src/components/progress/progress-day-count-label.ts
+msgctxt "r9koty"
+msgid "{count, plural, =0 {# days} one {# day} other {# days}}"
+msgstr "{count, plural, =0 {#일} other {#일}}"
+
+#: src/components/public/course-start-failure.tsx
+msgctxt "xANHtD"
+msgid "See Plus"
+msgstr "Plus 알아보기"
+
+#: src/components/public/course-start-failure.tsx
+msgctxt "MO6156"
+msgid "Go to your Plan"
+msgstr "내 계획으로 이동"
+
+#: src/components/public/course-start-failure.tsx
+msgctxt "6qTSET"
+msgid "We couldn't start this course."
+msgstr "이 코스를 시작하지 못했어요."
+
+#: src/components/public/day-list.tsx
+msgctxt "m9CrfE"
+msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
+msgstr "{done, plural, =0 {#개 완료, 전체 {total, number}개가 남았어요} other {#개 완료, 전체 {total, number}개}}"
+
+#: src/components/public/footer-explore-links.tsx
+msgctxt "3snD6d"
+msgid "Popular courses"
+msgstr "인기 코스"
+
+#: src/components/public/footer-explore-links.tsx
+msgctxt "VKb1MS"
+msgid "Categories"
+msgstr "분야"
+
+#: src/components/public/goal-example.ts
+msgctxt "IWESF6"
+msgid "get ready for the ENEM in November"
+msgstr "11월 수능 준비하기"
+
+#: src/components/public/goal-example.ts
+msgctxt "lXNtAo"
+msgid "get promoted to data analyst by June"
+msgstr "6월까지 데이터 분석가로 승진하기"
+
+#: src/components/public/goal-form.tsx
+msgctxt "47CC_y"
+msgid "Write your goal in the box first, in your own words."
+msgstr "먼저 입력란에 목표를 자유롭게 써 보세요."
+
+#: src/components/public/goal-form.tsx
+msgctxt "lnZvgd"
+msgid "I want to"
+msgstr "이루고 싶은 목표"
+
+#: src/components/public/goal-form.tsx
+msgctxt "0u-6yz"
+msgid "For example: <example></example>"
+msgstr "예: <example></example>"
+
+#: src/components/public/not-found-message.tsx
+msgctxt "EdX_cR"
+msgid "The link may be old or mistyped."
+msgstr "오래된 링크이거나 주소가 잘못 입력되었을 수 있어요."
+
+#: src/components/public/not-found-message.tsx
+msgctxt "Rx6qZ-"
+msgid "We couldn't find this page"
+msgstr "페이지를 찾을 수 없어요"
+
+#: src/components/public/public-footer.tsx
+msgctxt "Vge-RX"
+msgid "Footer"
+msgstr "하단 메뉴"
+
+#: src/components/public/public-footer.tsx
+msgctxt "cXBJ7U"
+msgid "Privacy"
+msgstr "개인정보 처리방침"
+
+#: src/components/public/public-footer.tsx
+msgctxt "xkr-zo"
+msgid "Terms"
+msgstr "이용약관"
+
+#: src/components/public/public-footer.tsx
+msgctxt "k7JNE3"
+msgid "© {year} Zoonk"
+msgstr "© {year} Zoonk"
+
+#: src/lib/belt-colors.ts
+#: src/lib/belt-label.ts
+msgctxt "_6Vlf7"
+msgid "{color, select, white {White belt} yellow {Yellow belt} orange {Orange belt} green {Green belt} blue {Blue belt} purple {Purple belt} brown {Brown belt} red {Red belt} gray {Gray belt} black {Black belt} other {Belt}}"
+msgstr "{color, select, white {흰띠} yellow {노란띠} orange {주황띠} green {초록띠} blue {파란띠} purple {보라띠} brown {갈색띠} red {빨간띠} gray {회색띠} black {검은띠} other {띠}}"
+
+#: src/lib/categories/category.ts
+msgctxt "fFt3il"
+msgid "Arts"
+msgstr "예술"
+
+#: src/lib/categories/category.ts
+msgctxt "w1Fanr"
+msgid "Business"
+msgstr "비즈니스"
+
+#: src/lib/categories/category.ts
+msgctxt "n5D_Ku"
+msgid "Communication"
+msgstr "의사소통"
+
+#: src/lib/categories/category.ts
+msgctxt "mn6pIm"
+msgid "Culture"
+msgstr "문화"
+
+#: src/lib/categories/category.ts
+msgctxt "KOuDOE"
+msgid "Economics"
+msgstr "경제학"
+
+#: src/lib/categories/category.ts
+msgctxt "hwL7a0"
+msgid "Engineering"
+msgstr "공학"
+
+#: src/lib/categories/category.ts
+msgctxt "aTYLZQ"
+msgid "Exams"
+msgstr "시험"
+
+#: src/lib/categories/category.ts
+msgctxt "YMDBNH"
+msgid "Geography"
+msgstr "지리"
+
+#: src/lib/categories/category.ts
+msgctxt "hlmkcL"
+msgid "Health"
+msgstr "건강"
+
+#: src/lib/categories/category.ts
+msgctxt "djJp6c"
+msgid "History"
+msgstr "역사"
+
+#: src/lib/categories/category.ts
+msgctxt "GsBRWL"
+msgid "Languages"
+msgstr "언어"
+
+#: src/lib/categories/category.ts
+msgctxt "u3ovjm"
+msgid "Law"
+msgstr "법률"
+
+#: src/lib/categories/category.ts
+msgctxt "qydxOd"
+msgid "Science"
+msgstr "과학"
+
+#: src/lib/categories/category.ts
+msgctxt "OV_2-4"
+msgid "Society"
+msgstr "사회"
+
+#: src/lib/categories/category.ts
+msgctxt "I1ZCPK"
+msgid "Technology"
+msgstr "기술"
+
+#: src/lib/categories/category.ts
+msgctxt "XL8IWT"
+msgid "{category} courses. The best {category} online courses, interactive lessons to learn."
+msgstr "{category} 코스. 최고의 {category} 온라인 코스와 직접 참여하며 배우는 레슨을 만나 보세요."
+
+#: src/lib/categories/category.ts
+msgctxt "4HKnmB"
+msgid "{category} Courses"
+msgstr "{category} 코스"
+
+#: src/lib/categories/category.ts
+msgctxt "BBu_dn"
+msgid "Courses in {category}"
+msgstr "{category} 분야 코스"
+
+#: src/lib/public/public-labels.ts
+msgctxt "3Rx6Qo"
+msgid "Advanced"
+msgstr "고급"
+
+#: src/lib/public/public-labels.ts
+msgctxt "0H9Fkb"
+msgid "Beginner"
+msgstr "초급"
+
+#: src/lib/public/public-labels.ts
+msgctxt "o5_DJA"
+msgid "Intermediate"
+msgstr "중급"
