@@ -78,6 +78,83 @@ function formatted(area: string, key: string): MockCandidate[] {
 }
 
 describe(planMock, () => {
+  it("keeps numeric questions whose label names no exam part alongside subject-scoped choices", () => {
+    const subjects = ["Physics", "Chemistry", "Mathematics"];
+
+    const exam = {
+      ...structure({ sections: subjects.map((name) => sectioned(name, 6)) }),
+      formats: [
+        format({ options: 4, sections: subjects }),
+        format({ kind: "numeric", options: null, sections: ["Section B"] }),
+      ],
+      subjects: subjects.map((name) => ({
+        citation,
+        name,
+        questions: 6,
+        topics: [],
+        weight: null,
+      })),
+    };
+
+    const bank = subjects.flatMap((area) => [
+      ...formatted(area, "choice:4"),
+      ...formatted(area, "numeric:number:"),
+    ]);
+
+    const plan = planMock({
+      adaptive: false,
+      candidates: bank,
+      fullLength: true,
+      mockNumber: 0,
+      structure: exam,
+    });
+
+    expect(plan.formatsWanted).toStrictEqual({ "choice:4": 9, "numeric:number:": 9 });
+
+    expect(
+      plan.sections.map(
+        (section) => section.itemIds.filter((id) => id.includes("numeric:number:")).length,
+      ),
+    ).toStrictEqual([3, 3, 3]);
+  });
+
+  it("never plans objective questions in a written section", () => {
+    const exam = {
+      ...structure({
+        sections: [
+          sectioned("Verbal", 6),
+          { ...sectioned("Analytical Writing", 0), kind: "written" as const },
+        ],
+      }),
+      formats: [
+        format({ sections: ["Verbal"] }),
+        format({ kind: "numeric", options: null, sections: ["Quantitative"] }),
+        format({ kind: "essay", options: null, sections: ["Analytical Writing"] }),
+      ],
+      subjects: ["Verbal", "Quantitative"].map((name) => ({
+        citation,
+        name,
+        questions: 6,
+        topics: [],
+        weight: null,
+      })),
+    };
+
+    const plan = planMock({
+      adaptive: false,
+      candidates: [
+        ...formatted("Verbal", "choice:5"),
+        ...formatted("Analytical Writing", "numeric:number:"),
+      ],
+      fullLength: true,
+      mockNumber: 0,
+      structure: exam,
+    });
+
+    expect(plan.sections.map((section) => section.name)).toStrictEqual(["Verbal"]);
+    expect(plan.formatsWanted).toStrictEqual({ "choice:5": 6 });
+  });
+
   it("keeps a complete mock when format scopes and section names use different labels", () => {
     const exam = {
       ...structure({ sections: [sectioned("Physics", 10), sectioned("Chemistry", 10)] }),

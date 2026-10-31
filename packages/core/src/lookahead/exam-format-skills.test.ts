@@ -67,6 +67,51 @@ async function jeeGoal() {
 }
 
 describe(pickExamFormatSkills, () => {
+  it("does not write a later-phase subject's format using first-phase skills", async () => {
+    const { blueprint, goal, skills } = await jeeGoal();
+
+    await Promise.all([
+      prisma.examBlueprint.update({
+        data: {
+          structure: {
+            formats: [{ ...JEE_FORMATS[2], sections: ["Physics"] }],
+            mock: null,
+            rules: [],
+            subjects: ["Chemistry", "Physics"].map((name) => ({
+              citation,
+              name,
+              questions: 6,
+              topics: [],
+              weight: null,
+            })),
+          },
+        },
+        where: { id: blueprint.id },
+      }),
+      prisma.plan.update({
+        data: {
+          graph: {
+            phases: [
+              { milestone: null, name: "Chemistry" },
+              { milestone: null, name: "Physics" },
+            ],
+            skills: skills.map((skill, index) => ({
+              area: index < 4 ? "Chemistry" : "Physics",
+              lessons: 1,
+              name: skill.name,
+              phase: index < 4 ? 0 : 1,
+              skillId: skill.id,
+              weight: 1,
+            })),
+          },
+        },
+        where: { goalId: goal.id },
+      }),
+    ]);
+
+    await expect(pickExamFormatSkills({ goalId: goal.id })).resolves.toStrictEqual([]);
+  });
+
   it("filters formats before taking the highest-weight skills", async () => {
     const { blueprint, goal, skills } = await jeeGoal();
 
@@ -81,7 +126,13 @@ describe(pickExamFormatSkills, () => {
             ],
             mock: null,
             rules: [],
-            subjects: [],
+            subjects: ["Verbal", "Quantitative"].map((name) => ({
+              citation,
+              name,
+              questions: 6,
+              topics: [],
+              weight: null,
+            })),
           },
         },
         where: { id: blueprint.id },

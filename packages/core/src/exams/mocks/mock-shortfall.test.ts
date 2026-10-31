@@ -23,6 +23,55 @@ function numbers(sections: string[]): MockFormat {
 }
 
 describe(getMockQuestionsShortfall, () => {
+  it("writes numeric questions when only their internal section label is unmatched", () => {
+    const structure = {
+      formats: [
+        {
+          citation: { passage: "", sourceId: "notice" },
+          description: "Choice",
+          kind: "multipleChoice",
+          options: 4,
+          sections: ["Physics", "Chemistry", "Mathematics"],
+        },
+        {
+          citation: { passage: "", sourceId: "notice" },
+          description: "Number",
+          kind: "numeric",
+          options: null,
+          sections: ["Section B"],
+        },
+      ],
+      mock: null,
+      rules: [],
+      subjects: ["Physics", "Chemistry", "Mathematics"].map((name) => ({
+        citation: { passage: "", sourceId: "notice" },
+        name,
+        questions: 6,
+        topics: [],
+        weight: null,
+      })),
+    } as ExamStructure;
+
+    const writes = getMockQuestionsShortfall({
+      candidates: [],
+      mix: getMockFormatMix(structure),
+      option: { questions: 6 },
+      plan: {
+        day: null,
+        formatsWanted: { "choice:4": 3, "numeric:number:": 3 },
+        fullLength: true,
+        minutes: 6,
+        reused: 0,
+        sections: [],
+        written: [],
+      },
+      skills: [{ area: "Physics", id: "physics" }],
+      structure,
+    });
+
+    expect(writes.map((write) => write.format.key)).toStrictEqual(["choice:4", "numeric:number:"]);
+  });
+
   it("falls back to all skills only when none resolve for that format", () => {
     const structure = {
       formats: [
@@ -43,7 +92,13 @@ describe(getMockQuestionsShortfall, () => {
       ],
       mock: null,
       rules: [],
-      subjects: [],
+      subjects: ["Verbal", "Quantitative"].map((name) => ({
+        citation: { passage: "", sourceId: "notice" },
+        name,
+        questions: 6,
+        topics: [],
+        weight: null,
+      })),
     } as ExamStructure;
 
     const writes = getMockQuestionsShortfall({
@@ -213,7 +268,13 @@ describe(getMockQuestionsShortfall, () => {
           ],
           mock: null,
           rules: [],
-          subjects: [],
+          subjects: ["Verbal Reasoning", "Quantitative Reasoning"].map((name) => ({
+            citation: { passage: "", sourceId: "notice" },
+            name,
+            questions: 6,
+            topics: [],
+            weight: null,
+          })),
         },
       }).flatMap((write) => write.skillIds);
 

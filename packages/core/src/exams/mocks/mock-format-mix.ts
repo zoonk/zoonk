@@ -9,9 +9,10 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { sumOf } from "@zoonk/utils/number";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { countOptions, getExamFormats } from "../../library/exams/exam-choice-format";
-import { isAskedIn, listAskedIn } from "../../library/exams/format-sections";
+import { listAskedIn, listExamPartNames } from "../../library/exams/format-sections";
 import { isFormatShare } from "../../library/exams/format-shares";
 import { describeFormat } from "../../library/exams/format-style";
+import { listSubjectNames } from "../../library/exams/subject-names";
 import { ANY_NUMBER } from "../../library/items/_utils/numeric-entry";
 
 export type ExamAnswerFormat =
@@ -141,17 +142,23 @@ function toMockFormat({
  * the documents ask in that part of the exam (its section's name and its subjects').
  */
 export function getMockFormatMix(
-  structure: Pick<ExamStructure, "formats" | "pastOptions"> | null,
+  structure: ExamStructure | null,
   names?: readonly string[],
 ): MockFormat[] {
   const stated = (structure ? getExamFormats(structure) : []).flatMap(
     (format) => toStatedFormat(format) ?? [],
   );
 
-  const asked = names ? listAskedIn({ formats: stated, names }) : stated;
+  const asked = names
+    ? listAskedIn({
+        allNames: listExamPartNames(structure),
+        formats: stated,
+        names: names.flatMap((area) => listSubjectNames({ area, structure })),
+      })
+    : stated;
 
   if (asked.length === 0) {
-    return [...ONE_PICK_MIX];
+    return stated.length === 0 ? [...ONE_PICK_MIX] : [];
   }
 
   const weights = toWeights(asked);
@@ -177,9 +184,7 @@ export function listUnaskedKeys({
   return new Set(mix.map((format) => format.key).filter((key) => !asked.has(key)));
 }
 
-export function getFormatMixSource(
-  structure: Pick<ExamStructure, "formats" | "pastOptions"> | null,
-): "even" | "notice" | null {
+export function getFormatMixSource(structure: ExamStructure | null): "even" | "notice" | null {
   if (getMockFormatMix(structure).length <= 1) {
     return null;
   }
@@ -238,26 +243,13 @@ export function getFormatQuotas({
 }
 
 export function getMockWritingFormat({
-  allNames,
   format,
   names,
   structure,
 }: {
-  allNames: readonly string[];
   format: MockFormat;
   names: readonly string[];
-  structure: Pick<ExamStructure, "formats" | "pastOptions"> | null;
+  structure: ExamStructure | null;
 }): MockFormat | null {
-  const members = structure
-    ? getExamFormats(structure).filter((member) => toWriter(member)?.key === format.key)
-    : [];
-
-  const resolved = members.some((member) => isAskedIn({ format: member, names: allNames }));
-  const asked = members.some((member) => isAskedIn({ format: member, names }));
-
-  if (resolved && !asked) {
-    return null;
-  }
-
   return getMockFormatMix(structure, names).find((scoped) => scoped.key === format.key) ?? null;
 }
