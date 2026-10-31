@@ -182,14 +182,25 @@ struct FormulaModelView {
     return now - before
   }
 
-  /// Once checked, the right answer's label takes the change label's place; the readouts still say
-  /// it.
-  func changeLabel(showsAnswer: Bool) -> String? {
-    guard !showsAnswer, delta != 0 else {
+  struct Change {
+    let before: Double
+    let now: Double
+    let label: String?
+  }
+
+  /// Left out under 1/11 of the chart's height, as on the web, where the dots would cover it. Once
+  /// checked, the right answer's label takes the change label's place; the readouts still say it.
+  func change(in domain: ClosedRange<Double>, showsAnswer: Bool) -> Change? {
+    guard abs(delta) >= (domain.upperBound - domain.lowerBound) / 11, let before = chartedBefore,
+      let now = chartedNow
+    else {
       return nil
     }
 
-    return ActivityNumberFormat.format(delta, unit: charted.unit, signed: true)
+    return Change(
+      before: before, now: now,
+      label: showsAnswer
+        ? nil : ActivityNumberFormat.format(delta, unit: charted.unit, signed: true))
   }
 
   var compared: (x: Double, y: Double)? {

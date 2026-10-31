@@ -206,7 +206,7 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertEqual(view.baseline?.kind, .whatIf)
   }
 
-  func testFormulaModelDropsTheChangeLabelForTheAnswersOnceChecked() throws {
+  func testFormulaModelDrawsAVisibleChangeAndDropsItsLabelOnceChecked() throws {
     let fields: FormulaModelFields = try decode(
       """
       {"events":[{"label":"Rent goes up $500","name":"rentUp"}],
@@ -217,10 +217,19 @@ final class ChartsActivitiesTests: XCTestCase {
       fields: fields, axis: fields.variables[0], charted: fields.outputs[0],
       sliders: ["price": 4], events: ["rentUp": 1])
 
-    XCTAssertEqual(
-      view.changeLabel(showsAnswer: false),
-      ActivityNumberFormat.format(-500, unit: "$", signed: true))
-    XCTAssertNil(view.changeLabel(showsAnswer: true))
+    let change = try XCTUnwrap(view.change(in: 0...5000, showsAnswer: false))
+    XCTAssertEqual(change.before, 2000)
+    XCTAssertEqual(change.now, 1500)
+    XCTAssertEqual(change.label, ActivityNumberFormat.format(-500, unit: "$", signed: true))
+
+    let checked = try XCTUnwrap(view.change(in: 0...5000, showsAnswer: true))
+    XCTAssertNil(checked.label)
+    XCTAssertNil(view.change(in: 0...6000, showsAnswer: false), "The dots would cover it")
+
+    let started = FormulaModelView(
+      fields: fields, axis: fields.variables[0], charted: fields.outputs[0],
+      sliders: ["price": 4], events: ["rentUp": 0])
+    XCTAssertNil(started.change(in: 0...5000, showsAnswer: false))
   }
 
   func testFormulaModelStartsAtTheCheckInputsTheLastOfANameWinning() throws {

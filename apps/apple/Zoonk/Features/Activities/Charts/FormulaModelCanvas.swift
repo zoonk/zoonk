@@ -127,43 +127,76 @@ struct FormulaModelCanvas: View {
   private func chart(_ view: FormulaModelView) -> some View {
     let current = view.curve(view.now)
     let expected = expectedPoint(view)
+    let domain = view.yDomain
+    let change = view.change(in: domain, showsAnswer: expected != nil)
+    let now = view.chartedNow
 
     return Chart {
-      if let baseline = view.baseline {
-        ForEach(view.curve(baseline.values), id: \.x) { point in
-          LineMark(
-            x: .value("x", point.x), y: .value("y", point.y), series: .value("curve", "before")
-          )
-          .foregroundStyle(.secondary)
-          .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
+      ChartsHiddenMarks {
+        if let baseline = view.baseline {
+          ForEach(view.curve(baseline.values), id: \.x) { point in
+            LineMark(
+              x: .value("x", point.x), y: .value("y", point.y), series: .value("curve", "before")
+            )
+            .foregroundStyle(.secondary)
+            .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
+          }
+        }
+
+        ForEach(current, id: \.x) { point in
+          LineMark(x: .value("x", point.x), y: .value("y", point.y), series: .value("curve", "now"))
+            .foregroundStyle(.mint)
+            .lineStyle(StrokeStyle(lineWidth: 2.5))
+        }
+
+        if let compared = view.compared {
+          PointMark(x: .value("x", compared.x), y: .value("y", compared.y))
+            .foregroundStyle(.orange)
+            .symbolSize(60)
+        }
+
+        if now != nil {
+          RuleMark(x: .value("x", view.x))
+            .foregroundStyle(.secondary.opacity(0.5))
         }
       }
 
-      ForEach(current, id: \.x) { point in
-        LineMark(x: .value("x", point.x), y: .value("y", point.y), series: .value("curve", "now"))
-          .foregroundStyle(.mint)
-          .lineStyle(StrokeStyle(lineWidth: 2.5))
-      }
-
-      if let compared = view.compared {
-        PointMark(x: .value("x", compared.x), y: .value("y", compared.y))
-          .foregroundStyle(.orange)
-          .symbolSize(60)
-      }
-
-      if let now = view.chartedNow {
-        RuleMark(x: .value("x", view.x))
-          .foregroundStyle(.secondary.opacity(0.5))
-        PointMark(x: .value("x", view.x), y: .value("y", now))
-          .foregroundStyle(.mint)
-          .symbolSize(90)
-          .annotation(position: .top, spacing: 4) {
-            if let label = view.changeLabel(showsAnswer: expected != nil) {
-              Text(verbatim: label)
-                .font(.caption.weight(.semibold).monospacedDigit())
-                .foregroundStyle(.mint)
-            }
+      if let change {
+        RuleMark(
+          x: .value("x", view.x), yStart: .value("y", change.before), yEnd: .value("y", change.now)
+        )
+        .foregroundStyle(.orange)
+        .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [3, 3]))
+        // Hidden before the annotation: hiding a mark after it hides the label from sight too.
+        .accessibilityHidden(true)
+        .annotation(
+          position: view.x >= (view.axis.min + view.axis.max) / 2 ? .leading : .trailing,
+          spacing: 8
+        ) {
+          if let label = change.label {
+            Text(verbatim: label)
+              .font(.caption.weight(.semibold).monospacedDigit())
+              .foregroundStyle(.orange)
           }
+        }
+      }
+
+      ChartsHiddenMarks {
+        if let before = view.chartedBefore {
+          PointMark(x: .value("x", view.x), y: .value("y", before))
+            .symbol {
+              Circle()
+                .strokeBorder(.secondary, lineWidth: 2)
+                .background(.background, in: .circle)
+                .frame(width: 9, height: 9)
+            }
+        }
+
+        if let now {
+          PointMark(x: .value("x", view.x), y: .value("y", now))
+            .foregroundStyle(.mint)
+            .symbolSize(90)
+        }
       }
 
       if let expected {
@@ -171,6 +204,7 @@ struct FormulaModelCanvas: View {
           .symbol(Circle().strokeBorder(lineWidth: 2.5))
           .symbolSize(260)
           .foregroundStyle(.success)
+          .accessibilityHidden(true)
           .annotation(position: .top, spacing: 4) {
             Text(verbatim: expected.label)
               .font(.caption.weight(.semibold).monospacedDigit())
@@ -179,7 +213,7 @@ struct FormulaModelCanvas: View {
       }
     }
     .chartXScale(domain: view.axis.min...view.axis.max)
-    .chartYScale(domain: view.yDomain)
+    .chartYScale(domain: domain)
     .chartXAxis {
       AxisMarks(values: .automatic(desiredCount: 4)) { value in
         AxisGridLine()
@@ -229,7 +263,9 @@ struct FormulaModelCanvas: View {
           : Text("Now", tableName: "ActivitiesCharts", comment: "Legend of the solid curve")
       }
       HStack(spacing: 6) {
-        Capsule().fill(.secondary).frame(width: 16, height: 2)
+        Path { $0.addLines([CGPoint(x: 0, y: 1), CGPoint(x: 16, y: 1)]) }
+          .stroke(.secondary, style: StrokeStyle(lineWidth: 2, dash: [4, 2]))
+          .frame(width: 16, height: 2)
         kind == .whatIf
           ? Text(
             "Before", tableName: "ActivitiesCharts",
