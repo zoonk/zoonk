@@ -235,6 +235,72 @@ describe(deploy, () => {
   );
 });
 
+describe("preview course cache access", () => {
+  it("gives a preview's API and main app one cache secret and the API main's bypass", async () => {
+    const submissions = new Map<string, Call>();
+
+    intercept((call) => {
+      if (call.url.hostname === "api.github.com") {
+        return { head: { sha: "tested-sha" }, state: "open" };
+      }
+
+      if (call.url.pathname === "/v2/teams/test-team") {
+        return { slug: "zoonk" };
+      }
+
+      if (call.url.pathname === "/v9/projects/main-project") {
+        return {
+          protectionBypass: {
+            "main-automation-bypass": { scope: "automation-bypass" },
+            "main-share-link": { scope: "shareable-link" },
+          },
+        };
+      }
+
+      if (call.method === "POST") {
+        submissions.set(String(call.body.project), call);
+        return { id: String(call.body.project) };
+      }
+
+      return { readyState: "READY", url: "preview.vercel.app" };
+    });
+
+    await deploy("preview");
+
+    const [api, main, admin] = PROJECTS.map((project) => submissions.get(project.id)?.body.env);
+    const secret = z.object({ APP_CACHE_SECRET: z.string().regex(/^[a-f0-9]{64}$/u) }).parse(api);
+
+    expect(api).toHaveProperty("MAIN_CACHE_BYPASS_SECRET", "main-automation-bypass");
+    expect(main).toHaveProperty("APP_CACHE_SECRET", secret.APP_CACHE_SECRET);
+    expect(main).not.toHaveProperty("MAIN_CACHE_BYPASS_SECRET");
+    expect(admin).not.toHaveProperty("APP_CACHE_SECRET");
+  });
+
+  it.each(["production", "staging"] as const)(
+    "keeps the %s projects' own cache secrets, which outlast one app's redeploy",
+    async (target) => {
+      const submissions: Call[] = [];
+
+      intercept((call) => {
+        if (call.method === "POST") {
+          submissions.push(call);
+          return { id: String(call.body.project) };
+        }
+
+        return { aliasAssigned: true, readyState: "READY", url: `${target}.vercel.app` };
+      });
+
+      await deploy(target);
+      expect(submissions).toHaveLength(PROJECTS.length);
+
+      for (const call of submissions) {
+        expect(call.body.env).not.toHaveProperty("APP_CACHE_SECRET");
+        expect(call.body.env).not.toHaveProperty("MAIN_CACHE_BYPASS_SECRET");
+      }
+    },
+  );
+});
+
 describe(cancelPreviews, () => {
   it("cancels only this run's PR builds, including later result pages", async () => {
     const canceled: string[] = [];
