@@ -10,15 +10,16 @@ import { useState } from "react";
 import { PLUS_CTA_CLASS } from "./plus-cta";
 
 type RequestState = "error" | "idle" | "loading";
-type StripeLocaleOverride = "de" | "es" | "fr" | "pt-BR";
+type StripeLocaleOverride = "de" | "es-419" | "fr" | "pt-BR";
 
 /**
  * Stripe can infer English and unknown locales from the browser. The supported non-English app
- * locales need an explicit mapping, including Stripe's distinct Brazilian Portuguese code.
+ * locales need an explicit mapping, including Stripe's distinct Brazilian Portuguese and Latin
+ * American Spanish codes.
  */
 const STRIPE_LOCALE_OVERRIDES: Readonly<Record<string, StripeLocaleOverride | undefined>> = {
   de: "de",
-  es: "es",
+  es: "es-419",
   fr: "fr",
   pt: "pt-BR",
 };
