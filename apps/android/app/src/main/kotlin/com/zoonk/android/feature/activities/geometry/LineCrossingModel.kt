@@ -4,6 +4,7 @@ import com.zoonk.android.feature.activities.PlaceOrientation
 import com.zoonk.android.feature.activities.SnapRange
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf15FieldsShift.Direction
 import kotlin.math.abs
+import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
@@ -99,34 +100,31 @@ internal object LineCrossingModel {
     }
 
     /**
-     * Main's `chartLayout`: the chart's span and where each line's drag handle rests, 82% along the
-     * line, past the crossings, or the nearest point to that whose slide stays above zero. The span
-     * grows so each handle's whole slide stays on the chart.
+     * Main's `slideRange`: how far a line's handle slides from rest, twice the real shift each way, cut
+     * where the handle would pass [lowest] or [highest], but never short of this line's [real] move.
      */
-    fun layout(
+    fun slideRange(
         amount: Double,
-        axis: PlaceOrientation,
-        first: Line,
-        second: Line,
-    ): Pair<Vec, List<Vec>> {
-        val fitted = domain(amount, axis, first, second)
-        val range = range(amount)
-        val alongAxis = { point: Vec -> if (axis == PlaceOrientation.Horizontal) point.x else point.y }
-        val homes =
-            listOf(first, second).map { line ->
-                along(line, fitted, HANDLE_SHARES.firstOrNull { alongAxis(along(line, fitted, it)) + range.min >= 0 } ?: HANDLE_SHARE)
-            }
-        val reach = homes.maxOf { alongAxis(it) + range.max }
-        val grown =
-            if (axis ==
-                PlaceOrientation.Horizontal
-            ) {
-                fitted.copy(x = max(fitted.x, reach))
-            } else {
-                fitted.copy(y = max(fitted.y, reach))
-            }
-        return grown to homes
+        home: Double,
+        lowest: Double,
+        highest: Double,
+        real: Double,
+    ): SnapRange {
+        val full = range(amount)
+        val steps = { room: Double -> floor(max(room, 0.0) / full.step + SNAP_SLACK) * full.step }
+        return SnapRange(
+            min = min(max(full.min, -steps(home - lowest)), real),
+            max = max(min(full.max, steps(highest - home)), real),
+            step = full.step,
+        )
     }
+
+    /** Main's resting spot: 82% along the line, past the crossings, or the nearest point to that [isClear] of the crossing. */
+    fun restingSpot(
+        line: Line,
+        domain: Vec,
+        isClear: (Vec) -> Boolean,
+    ): Vec = along(line, domain, HANDLE_SHARES.firstOrNull { isClear(along(line, domain, it)) } ?: HANDLE_SHARE)
 
     fun change(
         before: Double,
@@ -143,6 +141,7 @@ internal object LineCrossingModel {
     private const val HEADROOM = 1.25
     private const val HANDLE_SHARE = 0.82
     private const val HANDLE_SHARE_STEPS = 100
+    private const val SNAP_SLACK = 1e-9
     private val HANDLE_SHARES =
         (0..HANDLE_SHARE_STEPS).map { it.toDouble() / HANDLE_SHARE_STEPS }.sortedBy { abs(it - HANDLE_SHARE) }
     private const val MIN_SPAN = 1.0

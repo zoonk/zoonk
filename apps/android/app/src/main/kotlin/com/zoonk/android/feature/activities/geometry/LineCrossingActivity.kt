@@ -47,6 +47,7 @@ import com.zoonk.android.feature.activities.ActivityPlaceTrack
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.PlaceOrientation
+import com.zoonk.android.feature.activities.SnapRange
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.player.model.ActivityAnswer
@@ -59,6 +60,7 @@ import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf2
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf15Fields
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf15FieldsLinesInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf15FieldsShift.Direction
+import kotlin.math.sign
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf2Value as CurveShiftAnswerValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf15Value as LineCrossingContent
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf1Value as InteractionCheckValue
@@ -161,6 +163,7 @@ private fun LineCrossingActivity(props: ActivityProps) {
             fields = fields,
             axis = axis,
             offsetOf = offsetOf,
+            realOffsetOf = realOffsetOf,
             answerLine = shifted?.takeIf { showsAnswer }?.let { LineCrossingModel.moved(it.line(), realOffset, axis) },
             enabled = !props.isLocked,
             valueText = { line -> "${movedText(line, offsetOf(line), axis)}. $changes" },
@@ -210,6 +213,7 @@ private fun LineCrossingChart(
     fields: LineCrossingFields,
     axis: PlaceOrientation,
     offsetOf: (FieldLine) -> Double,
+    realOffsetOf: (FieldLine) -> Double,
     answerLine: Line?,
     enabled: Boolean,
     valueText: @Composable (FieldLine) -> String,
@@ -232,8 +236,7 @@ private fun LineCrossingChart(
     val whatHappened = stringResource(R.string.activities_geometry_line_what_happened)
     val amount = fields.shift.amount
     val lines = fields.lines.map { it.line() }
-    val (domain, homes) = LineCrossingModel.layout(amount, axis, lines[0], lines[1])
-    val range = LineCrossingModel.range(amount)
+    val domain = LineCrossingModel.domain(amount, axis, lines[0], lines[1])
     val shown = fields.lines.map { LineCrossingModel.moved(it.line(), offsetOf(it), axis) }
     val movedLines = fields.lines.filter { offsetOf(it) != 0.0 }.map { it.line() }
     val before = LineCrossingModel.crossing(lines[0], lines[1])
@@ -255,10 +258,16 @@ private fun LineCrossingChart(
         val y = LinearScale(0.0..domain.y, bottom to top)
         val pixel = { point: Vec -> Offset(x.toPixel(point.x), y.toPixel(point.y)) }
         val segment = { line: Line -> LineCrossingModel.segment(line, domain).let { (from, to) -> LabelSegment(pixel(from), pixel(to)) } }
+        val knob = with(density) { (KNOB_RADIUS + KNOB_STROKE / 2).toPx() }
+        val clearance = knob + with(density) { (DOT_RADIUS + DOT_STROKE / 2 + CROSSING_CLEARANCE).toPx() }
         val handles =
-            fields.lines.mapIndexed { index, line ->
-                val home = homes[index]
+            fields.lines.map { line ->
+                val home = LineCrossingModel.restingSpot(line.line(), domain) { (pixel(it) - pixel(before)).getDistance() >= clearance }
                 val (along, start) = if (axis == PlaceOrientation.Horizontal) x to home.x else y to home.y
+                val (first, last) = along.range
+                val inset = sign(last - first) * knob
+                val ends = listOf(along.toValue(first + inset), along.toValue(last - inset))
+                val range = LineCrossingModel.slideRange(amount, start, ends.min(), ends.max(), realOffsetOf(line))
                 val scale = LinearScale(range.min..range.max, along.toPixel(start + range.min) to along.toPixel(start + range.max))
                 val center =
                     if (axis == PlaceOrientation.Horizontal) {
@@ -266,7 +275,7 @@ private fun LineCrossingChart(
                     } else {
                         Offset(x.toPixel(home.x), scale.toPixel(offsetOf(line)))
                     }
-                Triple(line, scale, center)
+                PlacedHandle(line, scale, range, center)
             }
         val names =
             fields.lines.mapIndexed { index, line -> LineName(line.label, colors.tones[index], shown[index], isUpper = true) } +
@@ -290,7 +299,7 @@ private fun LineCrossingChart(
                 marks =
                     LabelMarks(
                         circles =
-                            handles.map { (_, _, center) -> LabelCircle(center, (KNOB_RADIUS + KNOB_STROKE / 2).value * unit) } +
+                            handles.map { LabelCircle(it.center, knob) } +
                                 dots.map { LabelCircle(it, (DOT_RADIUS + DOT_STROKE / 2).value * unit) },
                         lines = names.map { segment(it.line) },
                         segments = arrows,
@@ -321,7 +330,7 @@ private fun LineCrossingChart(
         }
 
         val reach = with(density) { TRACK_WIDTH.toPx() / 2 }
-        handles.forEach { (line, scale, center) ->
+        handles.forEach { (line, scale, range, center) ->
             val ends = listOf(scale.toPixel(range.min), scale.toPixel(range.max))
             val track =
                 if (axis == PlaceOrientation.Horizontal) {
@@ -331,7 +340,7 @@ private fun LineCrossingChart(
                 }
             ActivityPlaceTrack(track, scale, range, onChange = { onMove(line, it) }, orientation = axis, disabled = !enabled)
         }
-        handles.forEachIndexed { index, (line, scale, center) ->
+        handles.forEachIndexed { index, (line, scale, range, center) ->
             ActivityPlaceHandle(
                 center = center,
                 scale = scale,
@@ -527,6 +536,13 @@ private fun DrawScope.arrow(
     drawPath(head, ink, style = Stroke(width, cap = StrokeCap.Round, join = StrokeJoin.Round))
 }
 
+private data class PlacedHandle(
+    val line: FieldLine,
+    val scale: LinearScale,
+    val range: SnapRange,
+    val center: Offset,
+)
+
 private class LineName(
     val text: String,
     val color: Color,
@@ -547,6 +563,7 @@ private val LINE_DASH = 5.dp
 private val GUIDE_DASH = 3.dp
 private val DOT_RADIUS = 6.dp
 private val DOT_STROKE = 2.dp
+private val CROSSING_CLEARANCE = 3.dp
 private val ARROW_OFFSET = 10.dp
 private val ARROW_HEAD = 6.dp
 private const val ARROW_SPREAD = 0.6f

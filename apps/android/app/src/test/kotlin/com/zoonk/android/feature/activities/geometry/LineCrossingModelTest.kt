@@ -6,6 +6,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf15FieldsShift.Di
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.math.hypot
 
 /** Expected values are what main's `line-crossing-model.ts` and core's `shiftLine` and `crossing` return for the same input. */
 class LineCrossingModelTest {
@@ -95,18 +96,32 @@ class LineCrossingModelTest {
     }
 
     @Test
-    fun leavesRoomOnTheChartForEachHandlesWholeSlide() {
-        val (domain, homes) = LineCrossingModel.layout(2.0, sideways, supply, demand)
-        val range = LineCrossingModel.range(2.0)
-
-        assertTrue("homes $homes", homes.minOf { it.x + range.min } >= 0.0)
-        assertTrue("homes $homes, domain $domain", homes.maxOf { it.x + range.max } <= domain.x)
+    fun slidesTwiceTheShiftEachWayWhenTheChartHasRoom() {
+        assertEquals(SnapRange(-4.0, 4.0, 0.5), LineCrossingModel.slideRange(2.0, 5.0, 0.0, 10.83, 0.0))
     }
 
     @Test
-    fun keepsAFallingLinesHandleAboveZeroWhenItSlidesDown() {
-        val (_, homes) = LineCrossingModel.layout(2.0, upright, supply, demand)
+    fun stopsWhereTheHandleWouldLeaveTheChart() {
+        val flatCost = Line(intercept = 500.0, slope = 0.0)
+        val extent = LineCrossingModel.domain(500.0, upright, flatCost, revenue).y
+        val range = LineCrossingModel.slideRange(500.0, 500.0, 0.0, extent, 500.0)
 
-        assertTrue("home ${homes[1]}", homes[1].y + LineCrossingModel.range(2.0).min >= 0.0)
+        assertEquals(-500.0, range.min, 1e-9)
+        assertTrue("range $range, extent $extent", 500.0 + range.max <= extent)
+    }
+
+    @Test
+    fun neverStopsShortOfTheLinesRealMove() {
+        assertEquals(500.0, LineCrossingModel.slideRange(500.0, 900.0, 0.0, 1000.0, 500.0).max, 1e-9)
+    }
+
+    @Test
+    fun restsAHandleClearOfTheCrossing() {
+        val domain = LineCrossingModel.domain(2.0, upright, supply, demand)
+        val crossing = LineCrossingModel.crossing(supply, demand)
+        val gap = { point: Vec -> hypot(point.x - crossing.x, point.y - crossing.y) }
+        val home = LineCrossingModel.restingSpot(demand, domain) { gap(it) >= 1.0 }
+
+        assertTrue("home $home, crossing $crossing", gap(home) >= 1.0)
     }
 }
