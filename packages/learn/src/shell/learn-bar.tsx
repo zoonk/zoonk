@@ -125,23 +125,33 @@ export function LearnBackLink({
   );
 }
 
+function useCameFromApp(): boolean {
+  // Read after hydration: the server has no history, and its render goes to the hub.
+  return useSyncExternalStore(subscribeToHistory, cameFromApp, () => false);
+}
+
 function PageBarStart({
   back,
   root = false,
+  section = false,
   title,
   titleAway,
 }: {
   back: { href: string; label?: string };
   root?: boolean;
+  section?: boolean;
   title?: string;
   titleAway: boolean;
 }) {
+  const fromApp = useCameFromApp() && section;
+  const label = fromApp ? undefined : back.label;
+
   return (
     <div className="col-start-1 row-start-1 flex min-w-0 items-center gap-3 lg:gap-1.5">
       {root ? (
         <LearnBackLink className="lg:hidden" href={back.href} toApp />
       ) : (
-        <LearnBackLink crumb href={back.href} label={back.label} />
+        <LearnBackLink crumb href={back.href} label={label} toApp={fromApp} />
       )}
 
       {title && !root && (
@@ -149,7 +159,7 @@ function PageBarStart({
           aria-hidden="true"
           className="hidden min-w-0 items-center gap-1.5 text-[0.8125rem] lg:flex"
         >
-          {back.label && <span className="text-faint before:content-['/']" />}
+          {label && <span className="text-faint before:content-['/']" />}
           <span className="truncate font-medium">{title}</span>
         </span>
       )}
@@ -166,15 +176,18 @@ function PageBarStart({
   );
 }
 
+/** In a `section`, back returns to the page the learner came from outside it, as in `LearnSectionBar`. */
 export function LearnPageBar({
   back,
   children,
   root = false,
+  section = false,
   title,
 }: {
   back: { href: string; label?: string };
   children?: React.ReactNode;
   root?: boolean;
+  section?: boolean;
   title?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -193,7 +206,13 @@ export function LearnPageBar({
         )}
         data-title-away={(title && titleAway) || undefined}
       >
-        <PageBarStart back={back} root={root} title={title} titleAway={titleAway} />
+        <PageBarStart
+          back={back}
+          root={root}
+          section={section}
+          title={title}
+          titleAway={titleAway}
+        />
 
         <div className="col-start-2 row-start-1 flex items-center justify-end gap-1">
           {children}
@@ -248,8 +267,7 @@ function SectionBarStart({
   parent?: { href: string; label: string };
   title?: string;
 }) {
-  // Read after hydration: the server has no history, and its render goes to the hub.
-  const fromApp = useSyncExternalStore(subscribeToHistory, cameFromApp, () => false);
+  const fromApp = useCameFromApp();
 
   if (!parent || fromApp) {
     return (

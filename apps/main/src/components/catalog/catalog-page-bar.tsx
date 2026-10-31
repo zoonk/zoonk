@@ -12,7 +12,7 @@ export function CatalogPageBar({
   title?: string;
 }) {
   return (
-    <LearnPageBar back={back} title={title}>
+    <LearnPageBar back={back} section title={title}>
       {options}
 
       <NoAccountNote>
