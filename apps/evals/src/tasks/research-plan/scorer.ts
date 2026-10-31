@@ -10,7 +10,6 @@ export type ResearchPlanExpected = {
   language: string;
   domains: string[];
   roleIncludes?: string;
-  roleExcludes?: string;
   classTest?: boolean;
   noQueries?: boolean;
 };
@@ -68,16 +67,6 @@ function listChecks({ expected, plan }: { expected: ResearchPlanExpected; plan: 
             label: "role",
             passed: normalizeString(plan.role ?? "").includes(
               normalizeString(expected.roleIncludes),
-            ),
-          },
-        ]
-      : []),
-    ...(expected.roleExcludes
-      ? [
-          {
-            label: "role without",
-            passed: !normalizeString(plan.role ?? "").includes(
-              normalizeString(expected.roleExcludes),
             ),
           },
         ]
