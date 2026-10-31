@@ -109,7 +109,6 @@ private fun PlanMenu(
     val context = LocalContext.current
     val shareTitle = stringResource(R.string.plan_share)
     val shareUrl = sharePlanUrl(page, currentLocale().language)
-    val partialCourse = page.plan.course?.takeIf { it.planChapterCount in 1 until it.chapterCount && it.brandSlug != null }
     val buddy = page.summary.buddy
 
     Box {
@@ -147,7 +146,7 @@ private fun MenuItems(
     val context = LocalContext.current
     val shareTitle = stringResource(R.string.plan_share)
     val shareUrl = sharePlanUrl(page, currentLocale().language)
-    val partialCourse = page.plan.course?.takeIf { it.planChapterCount in 1 until it.chapterCount && it.brandSlug != null }
+    val libraryCourse = page.libraryCourse
     val buddy = page.summary.buddy
 
     DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
@@ -158,14 +157,14 @@ private fun MenuItems(
             }
 
         if (links.hasExam) MenuItem(R.drawable.ic_school, stringResource(R.string.plan_about_exam), close(links::exam))
-        partialCourse?.let { course ->
+        libraryCourse?.let { course ->
             MenuItem(
                 R.drawable.ic_local_library,
                 stringResource(R.string.plan_full_course),
                 close { links.course(course.courseId.toString()) },
             )
         }
-        if (links.hasExam || partialCourse != null) HorizontalDivider()
+        if (links.hasExam || libraryCourse != null) HorizontalDivider()
 
         MenuItem(
             R.drawable.ic_share,

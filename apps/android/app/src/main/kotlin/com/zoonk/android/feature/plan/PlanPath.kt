@@ -51,6 +51,7 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LearnerSummaryGoal
+import com.zoonk.api.models.PlanCourse
 import com.zoonk.api.models.PlanPhase
 import com.zoonk.api.models.PlanPhaseChaptersInner
 import com.zoonk.api.models.PlanPhaseCheckpoint
@@ -65,6 +66,7 @@ internal fun PathSection(
     modifier: Modifier = Modifier,
     alphabet: (@Composable () -> Unit)? = null,
     brief: Boolean = false,
+    course: PlanCourse? = null,
 ) {
     val phases = page.plan.phases
     val roadmap = page.plan.roadmapPhases
@@ -98,6 +100,14 @@ internal fun PathSection(
             afterExam.forEach { phase ->
                 HorizontalDivider()
                 PhaseItem(page, phase, isLast = false, open = phase.index == openIndex, links = links, brief = brief)
+            }
+            course?.let {
+                HorizontalDivider()
+                ListRow(
+                    headline = { Text(stringResource(R.string.plan_full_course)) },
+                    onClick = { links.course(it.courseId.toString()) },
+                    leading = { Icon(painterResource(R.drawable.ic_local_library), contentDescription = null) },
+                )
             }
         }
     }
