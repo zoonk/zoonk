@@ -59,6 +59,7 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf7Fields.AngleUnit
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -226,7 +227,8 @@ private fun UnitCircleDial(
                 }
                 drawLine(colors.ink, center, point, 2.dp.toPx())
 
-                trigLegs(center, point, show, values, names, formatTrig, tones, colors.halo) { label(it, valueStyle) }
+                val target = mark?.let { onCircle(center, radius, it.degrees) }
+                trigLegs(center, point, target, show, values, names, formatTrig, tones, colors.halo) { label(it, valueStyle) }
                 if (Trig.TAN in show) {
                     tangent(
                         center,
@@ -307,6 +309,7 @@ private fun trigTones() =
 private fun DrawScope.trigLegs(
     center: Offset,
     point: Offset,
+    target: Offset?,
     show: List<Trig>,
     values: Map<Trig, Double?>,
     names: Map<Trig, String>,
@@ -316,7 +319,6 @@ private fun DrawScope.trigLegs(
     measure: (String) -> TextLayoutResult,
 ) {
     val foot = Offset(point.x, center.y)
-    val isLeft = point.x < center.x
     val isAbove = point.y <= center.y
     val segment = SEGMENT_WIDTH.toPx()
 
@@ -334,14 +336,8 @@ private fun DrawScope.trigLegs(
     if (Trig.SIN in show) {
         drawLine(tones.sin, foot, point, segment, StrokeCap.Round)
         val text = measure("${names.getValue(Trig.SIN)} = ${formatTrig(values[Trig.SIN])}")
-        val beside = foot.x + (if (isLeft) -1 else 1) * SIN_LABEL_GAP.toPx()
-        val fits = if (isLeft) beside - text.size.width >= 0 else beside + text.size.width <= size.width
-        if (fits) {
-            drawLabel(text, Offset(beside, (foot.y + point.y) / 2), tones.sin, halo, if (isLeft) LabelAnchor.End else LabelAnchor.Start)
-        } else {
-            val corner = Offset(if (isLeft) 0f else size.width, if (isAbove) size.height - CORNER_INSET.toPx() else CORNER_INSET.toPx())
-            drawLabel(text, corner, tones.sin, halo, if (isLeft) LabelAnchor.Start else LabelAnchor.End)
-        }
+        val (at, anchor) = sinLabelPlacement(point, center, target, text.size.width.toFloat(), size.width, density)
+        drawLabel(text, at, tones.sin, halo, anchor)
     }
 }
 
@@ -476,6 +472,34 @@ private fun sideAnchor(degrees: Double): LabelAnchor {
 
 private fun angleLabelDirection(degrees: Double): Double = (degrees / 2).coerceIn(AXIS_CLEARANCE, FULL_TURN - AXIS_CLEARANCE)
 
+/**
+ * Main's `sinLabelPlacement`: beside the sine's leg when it fits, else just past the point at the leg's
+ * end, or past [target]'s ring when that ring sits right beyond the point. [unit] is pixels per dp.
+ */
+internal fun sinLabelPlacement(
+    point: Offset,
+    center: Offset,
+    target: Offset?,
+    labelWidth: Float,
+    canvasWidth: Float,
+    unit: Float,
+): Pair<Offset, LabelAnchor> {
+    val foot = Offset(point.x, center.y)
+    val isLeft = point.x < center.x
+    val isAbove = point.y <= center.y
+    val beside = foot.x + (if (isLeft) -1 else 1) * SIN_LABEL_GAP.value * unit
+    val fits = if (isLeft) beside - labelWidth >= 0 else beside + labelWidth <= canvasWidth
+
+    if (fits) return Offset(beside, (foot.y + point.y) / 2) to if (isLeft) LabelAnchor.End else LabelAnchor.Start
+
+    val outermost =
+        target
+            ?.takeIf { abs(it.x - point.x) < labelWidth && (if (isAbove) it.y < point.y else it.y > point.y) }
+            ?.y ?: point.y
+    val x = foot.x.coerceIn(labelWidth / 2, (canvasWidth - labelWidth / 2).coerceAtLeast(labelWidth / 2))
+    return Offset(x, outermost + (if (isAbove) -1 else 1) * SIN_LABEL_PAST_POINT.value * unit) to LabelAnchor.Middle
+}
+
 private val MAX_SIZE = 300.dp
 private val HIT_REACH = 22.dp
 private val TARGET_RADIUS = 7.dp
@@ -484,7 +508,7 @@ private val ARC_RADIUS = 22.dp
 private val ANGLE_LABEL_GAP = 16.dp
 private val LABEL_GAP = 8.dp
 private val SIN_LABEL_GAP = 26.dp
-private val CORNER_INSET = 10.dp
+private val SIN_LABEL_PAST_POINT = 28.dp
 private val SEGMENT_WIDTH = 4.dp
 private val SWATCH_WIDTH = 12.dp
 private val SWATCH_HEIGHT = 4.dp
