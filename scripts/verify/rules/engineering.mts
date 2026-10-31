@@ -1,5 +1,8 @@
 import { CODE, type Rule, SERVER_SOURCE, SOURCE, TESTS, UI } from "./shared.mts";
 
+const TYPE_SCHEMA_OR_CONSTANT = String.raw`(?:type\s+\w+|\w+Schema|[A-Z][A-Z\d_]*)\b(?:\s+as\s+\w+)?`;
+const IMPORT_WITHOUT_MODEL_CALLS = String.raw`(?:import|export)\s+(?:type\b|\{\s*${TYPE_SCHEMA_OR_CONSTANT}(?:\s*,\s*${TYPE_SCHEMA_OR_CONSTANT})*\s*,?\s*\})`;
+
 export const ENGINEERING_RULES: Rule[] = [
   {
     files: SOURCE,
@@ -113,6 +116,30 @@ export const ENGINEERING_RULES: Rule[] = [
       "A Workflow step already retries a thrown error 3 times, and an AI call gets the AI SDK's retries and the Gateway's fallback models. What concrete failure do those defaults miss? If none, let the step throw (root `AGENTS.md`); if one, say it beside the code.",
     role: "engineering",
     side: "server",
+  },
+  {
+    files: SERVER_SOURCE,
+    line: /(?<![.\w])after\((?!(?:async\s*)?\(\)\s*=>\s*track[A-Z]\w*\()/u,
+    name: "Work after the response",
+    question:
+      "Work in `after()` isn't retried and is lost when it fails. Does it reach a model or start work a write owes? That's a follow-up (`oweFollowUps`) an API workflow runs; only analytics, refreshes without AI and an interactive stream's save stay here (root `AGENTS.md`).",
+    role: "engineering",
+  },
+  {
+    files: /^(?:packages\/core\/src|apps\/api\/src\/(?:app|lib))\/(?!.*\.test\.)(?!.*_test-utils)/u,
+    line: new RegExp(String.raw`^(?!\s*${IMPORT_WITHOUT_MODEL_CALLS}).*["']@zoonk/ai/tasks/`, "u"),
+    name: "Model task in reach of a request",
+    question:
+      "Which request reaches this model call? Only an API workflow step or an interactive call may (root `AGENTS.md`); otherwise the request answers with a run to wait on, or the write owes a follow-up.",
+    role: "engineering",
+  },
+  {
+    files: /^apps\/main\/src\/(?!.*\.test\.)(?!.*_test-utils)/u,
+    line: /(?<!function\s)\bpostAsLearner\(/u,
+    name: "API work started by Main",
+    question:
+      "Is this the whole operation forwarded to its API endpoint? Main never starts API work after its own core call; work a write owes is a core follow-up.",
+    role: "engineering",
   },
   {
     files: SOURCE,

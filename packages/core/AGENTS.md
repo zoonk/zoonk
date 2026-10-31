@@ -22,6 +22,11 @@
 - Normalize route values and other semantically equivalent inputs before calling a regular `"use cache"` leaf so encoded and decoded values share one canonical cache key.
 - Core mutations own cache-tag invalidation and return only their domain resource or outcome. Use `revalidateCacheTags(tags)` from `src/cache/revalidate-cache-tags.ts`, never `revalidateTag` directly: it expires the tags with `{ expire: 0 }` from both Server Actions and Route Handlers. Each Next.js app has its own cache. API course-content write steps collect the tags from `revalidateCourseContent(tags)` and return them with their result; the caller awaits an independent notification workflow’s start so delivery retries expire Main’s copies without repeating persistence or AI work or failing saved content. Direct writes await delivery after committing. Other cross-app shared reads must use a cheap fresh version key (as `getPlayableLibraryLesson` does), or the default revalidation where a short delay is harmless. Apps retain only route-specific `revalidatePath()` calls.
 
+## Follow-ups and generation
+
+- Core can't start workflows, so a write records the work it owes with `oweFollowUps` in the branch that actually changes the row (the first time a session ends, not a repeat call that finds it ended), never as a "start this next" result for apps. A workflow that makes the write starts its next run itself, from the step's result.
+- A capability that needs content nobody has written returns what to write and its key instead of writing it, before it starts, charges or reserves anything, since the client sends the same request again once that content is written. The API turns that into a run.
+
 ## Learner data
 
 - Progress and stats reads never join content tables. They read learner-owned rows, such as daily totals and activity records, so every number survives content being deleted, merged, or regenerated.
