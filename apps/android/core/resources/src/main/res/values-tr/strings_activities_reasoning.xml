@@ -72,6 +72,7 @@
   "activities_reasoning_source_missed": "cac100b8cfa71949db575584ba151bb7446f1457c754ddb43fb1d7a6c902c9c6",
   "activities_reasoning_source_missed_passages": "59b77c324e0a13acbff6d6b55e29260c578ba2c62fdd230c5bb377cee3c45073",
   "activities_reasoning_source_nothing_marked": "f2a0596513e8f0c1baacf4ad7b308c851ad33c35c43a36d890ee5c331793e602",
+  "activities_reasoning_source_to_mark": "3b86162d7599551aec0fc86f48e2efc1e9df3a505cefa88e927d6f0a549fa691",
   "activities_reasoning_source_unmark": "1a20b9f8b46a7eedfb9636ce49c26f36e08cab3c7b84110065f3857966dbdccd",
   "activities_reasoning_source_what_to_mark": "2979ff2d8b37d88611da47970827d4119ac9efd137e23702af1604537eb6f9de",
   "activities_reasoning_source_wrong_mark": "29794ac033b4ee9d4d3f3fc496230fab8aab70ac79bb8ea5a70666e26c49de88",
@@ -140,6 +141,8 @@
     <string name="activities_reasoning_source_missed_passages">Gözden kaçanlar: %1$s.</string>
     <!-- For TalkBack once checked, after a source's text: the passages the learner marked by mistake, separated by semicolons. -->
     <string name="activities_reasoning_source_wrong_passages">Yanlışlıkla işaretlediklerin: %1$s.</string>
+    <!-- For TalkBack once checked, after a source's text when the learner's own marks weren't kept: the passages the question was about, separated by semicolons. -->
+    <string name="activities_reasoning_source_to_mark">İşaretlenmesi gereken yerler: %1$s.</string>
     <!-- Legend once checked: the tint of the passages the question was about. -->
     <string name="activities_reasoning_source_what_to_mark">İşaretlenecek yerler</string>
     <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->

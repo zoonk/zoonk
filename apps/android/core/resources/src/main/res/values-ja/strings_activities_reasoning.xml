@@ -72,6 +72,7 @@
   "activities_reasoning_source_missed": "40e5fa0de80f31e2731b6a0b637e2bfe7c5dab8b5a6a0bcbc06e92f4a531ba3d",
   "activities_reasoning_source_missed_passages": "bf0c8df50a5ef769858cf0eae685e5e611ab7a550521cb4fbafaca89b6d1b99c",
   "activities_reasoning_source_nothing_marked": "d56ae19190d8383c06a76c7e4d021a9d553762ca136a4bbc39e79a26efa04e53",
+  "activities_reasoning_source_to_mark": "0cfdc4d95970c474e4403a926d645b5ed87193338725d3a21fb61ef563f793fe",
   "activities_reasoning_source_unmark": "d7c67a31157754afed482bdf9514ce27a6b42fd0fd061178f3db8a572e0ff7e1",
   "activities_reasoning_source_what_to_mark": "9989cf1f936c43a4f4ee3bef4910f077ef4d03bfc724924435158a4ea1e320c5",
   "activities_reasoning_source_wrong_mark": "7643b5e18dcd1995712c518c9e78f1ff520d2cfa56b5656004a979669068fd12",
@@ -137,6 +138,8 @@
     <string name="activities_reasoning_source_missed_passages">見落とした箇所は%1$sです。</string>
     <!-- For TalkBack once checked, after a source's text: the passages the learner marked by mistake, separated by semicolons. -->
     <string name="activities_reasoning_source_wrong_passages">誤って印を付けた箇所は%1$sです。</string>
+    <!-- For TalkBack once checked, after a source's text when the learner's own marks weren't kept: the passages the question was about, separated by semicolons. -->
+    <string name="activities_reasoning_source_to_mark">印を付ける箇所：%1$s。</string>
     <!-- Legend once checked: the tint of the passages the question was about. -->
     <string name="activities_reasoning_source_what_to_mark">印を付ける箇所</string>
     <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->

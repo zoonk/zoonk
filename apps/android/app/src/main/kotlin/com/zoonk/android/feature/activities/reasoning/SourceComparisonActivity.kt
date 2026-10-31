@@ -79,12 +79,20 @@ private enum class PassageState { Unmarked, Marked, Correct, Incorrect, Missed }
 private fun SourceComparisonActivity(props: ActivityProps) {
     val content = (props.content as SourceComparisonContent).value
     val fields = content.fields
-    var marked by rememberSaveable { mutableStateOf(props.answer.selectionIds.orEmpty()) }
+    // Null when a checked screen's answer doesn't hold the learner's marks (a choice check): it shows what to mark (main's `startingMarks`).
+    var learnerMarks by rememberSaveable { mutableStateOf(props.answer.selectionIds ?: if (props.isChecked) null else emptyList()) }
+    val isKey = learnerMarks == null
+    val marked =
+        learnerMarks ?: fields.sources
+            .flatMap { it.passages }
+            .filter { it.isTarget }
+            .map { it.id }
 
     fun toggle(id: String) {
         if (props.isLocked) return
-        marked = if (id in marked) marked - id else marked + id
-        if (content.check is InteractionCheckValue) props.onAnswerChange(marked.takeIf { it.isNotEmpty() }?.let(::selectionAnswer))
+        val next = if (id in marked) marked - id else marked + id
+        learnerMarks = next
+        if (content.check is InteractionCheckValue) props.onAnswerChange(next.takeIf { it.isNotEmpty() }?.let(::selectionAnswer))
     }
 
     ActivityCanvas {
@@ -96,6 +104,7 @@ private fun SourceComparisonActivity(props: ActivityProps) {
                     icon = if (index % 2 == 0) R.drawable.ic_history_edu else R.drawable.ic_menu_book,
                     marked = marked,
                     isChecked = props.isChecked,
+                    isKey = isKey,
                     onToggle = ::toggle,
                 )
             }
@@ -117,6 +126,7 @@ private fun SourceCard(
     @DrawableRes icon: Int,
     marked: List<String>,
     isChecked: Boolean,
+    isKey: Boolean,
     onToggle: (String) -> Unit,
 ) {
     val accent = MaterialTheme.zoonk.vizAccent
@@ -139,7 +149,7 @@ private fun SourceCard(
                     Text(source.date, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
                 }
             }
-            Excerpt(source, marked, isChecked, onToggle)
+            Excerpt(source, marked, isChecked, isKey, onToggle)
             val url = citation.url
             Text(
                 if (url == null) {
@@ -168,6 +178,7 @@ private fun Excerpt(
     source: Source,
     marked: List<String>,
     isChecked: Boolean,
+    isKey: Boolean,
     onToggle: (String) -> Unit,
 ) {
     val segments = remember(source) { splitExcerpt(source.excerpt, source.passages.map { ExcerptPassage(it.id, it.text) }) }
@@ -200,10 +211,23 @@ private fun Excerpt(
     val missedTexts = source.passages.filter { isChecked && it.isTarget && it.id !in marked }.map { it.text }
     val summary =
         listOfNotNull(
-            if (markedTexts.isEmpty()) {
-                stringResource(R.string.activities_reasoning_source_nothing_marked)
-            } else {
-                stringResource(R.string.activities_reasoning_source_you_marked, markedTexts.joinToString("; "))
+            when {
+                isKey -> {
+                    markedTexts.takeIf { it.isNotEmpty() }?.let {
+                        stringResource(
+                            R.string.activities_reasoning_source_to_mark,
+                            it.joinToString("; "),
+                        )
+                    }
+                }
+
+                markedTexts.isEmpty() -> {
+                    stringResource(R.string.activities_reasoning_source_nothing_marked)
+                }
+
+                else -> {
+                    stringResource(R.string.activities_reasoning_source_you_marked, markedTexts.joinToString("; "))
+                }
             },
             wrongTexts.takeIf { it.isNotEmpty() }?.let {
                 stringResource(R.string.activities_reasoning_source_wrong_passages, it.joinToString("; "))

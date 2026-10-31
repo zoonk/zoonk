@@ -72,6 +72,7 @@
   "activities_reasoning_source_missed": "5fcff3313326622247fd84573cc75b658f5e95064104d67423272eef7c4fb033",
   "activities_reasoning_source_missed_passages": "933f9ed8281c7600e3e8954525a51f3e28709b11f32267ac180d976b7eb54ef5",
   "activities_reasoning_source_nothing_marked": "19a55849c6702c5f946c2fd5e02065dfec569620d188fb8f8cc079903ef41007",
+  "activities_reasoning_source_to_mark": "762cdf404359b0107b282b811e4159248ced9814d0c3febd0b7d922482e490b6",
   "activities_reasoning_source_unmark": "8a68508f04c37fcda114ab93424d88c32b0a78b3e5c7df976aa53e7eb26c8f6d",
   "activities_reasoning_source_what_to_mark": "3ad7c0c54e1d23a34e499a0a42cd1c4555e0e5453c8f5a2e817f9ab91d9acfd4",
   "activities_reasoning_source_wrong_mark": "8df2b2884d002101f421b5e42f1a8c350d13bad73e75db4da5ec7ef00340973a",
@@ -140,6 +141,8 @@
     <string name="activities_reasoning_source_missed_passages">Nicht markiert: %1$s.</string>
     <!-- For TalkBack once checked, after a source's text: the passages the learner marked by mistake, separated by semicolons. -->
     <string name="activities_reasoning_source_wrong_passages">Fälschlich markiert: %1$s.</string>
+    <!-- For TalkBack once checked, after a source's text when the learner's own marks weren't kept: the passages the question was about, separated by semicolons. -->
+    <string name="activities_reasoning_source_to_mark">Was du markieren sollst: %1$s.</string>
     <!-- Legend once checked: the tint of the passages the question was about. -->
     <string name="activities_reasoning_source_what_to_mark">Was markiert werden soll</string>
     <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->

@@ -72,6 +72,7 @@
   "activities_reasoning_source_missed": "c8a966a74663d390c1bcdd778b1cc0e3358dcdba24158f710f17e71977df2b32",
   "activities_reasoning_source_missed_passages": "ab1e047315f8929533e6f55bc0b9659ee43c91d5c1f30d23d37e55d9a1041cc2",
   "activities_reasoning_source_nothing_marked": "bd269937553591849d1bd3df0b2324835aa3dd3d9e2bc82fe513b21a6044b823",
+  "activities_reasoning_source_to_mark": "f1869a379163685b1e37e5970da3b4ef6e4b222b26c474354153b8e7c420e5dd",
   "activities_reasoning_source_unmark": "8b081636318bd960b0685b588fda42b7528e2fcc13985d2e587abc2f544a8563",
   "activities_reasoning_source_what_to_mark": "c07fc80e6a5468ad7214d186dcf53456d6829d75d8414109661f97c07793eaac",
   "activities_reasoning_source_wrong_mark": "395ac6ceeff238c620755634d24ef35c21aebd75a7b8e7580ab87f4d2943f67d",
@@ -137,6 +138,8 @@
     <string name="activities_reasoning_source_missed_passages">놓친 구절: %1$s.</string>
     <!-- For TalkBack once checked, after a source's text: the passages the learner marked by mistake, separated by semicolons. -->
     <string name="activities_reasoning_source_wrong_passages">잘못 표시한 구절: %1$s.</string>
+    <!-- For TalkBack once checked, after a source's text when the learner's own marks weren't kept: the passages the question was about, separated by semicolons. -->
+    <string name="activities_reasoning_source_to_mark">표시할 부분: %1$s.</string>
     <!-- Legend once checked: the tint of the passages the question was about. -->
     <string name="activities_reasoning_source_what_to_mark">표시할 구절</string>
     <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->

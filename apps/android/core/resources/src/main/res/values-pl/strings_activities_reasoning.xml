@@ -72,6 +72,7 @@
   "activities_reasoning_source_missed": "a46716692d7921f352e6d6e63ce4700a9b6ed57740c2d09f5dc995ca2e72a1fa",
   "activities_reasoning_source_missed_passages": "86444240306cedc3b751068a9bf1adbb3cac95cabc42af41a0352ca6fb64022c",
   "activities_reasoning_source_nothing_marked": "335847c42188049d71d0550b47b3df5593ae70e2ab249fe05ba5d50af70e9635",
+  "activities_reasoning_source_to_mark": "0b4344a7bdfff6454e2fa1fe88528869af19e4e31867bdd6f286a3afaca79e36",
   "activities_reasoning_source_unmark": "625153763b5db3781b371982f9bce5bd9ad1c196be339bda826328d5145df3a3",
   "activities_reasoning_source_what_to_mark": "827e5a3a14d54bc0d7e6d765d15abbb86ab1c04bc9e17a4045a63ab9051ebc4f",
   "activities_reasoning_source_wrong_mark": "77f7f2ed9a9d32fa867d0204fd41917e1be6e191c9d1f2301969562ee8256f47",
@@ -146,6 +147,8 @@
     <string name="activities_reasoning_source_missed_passages">Nie zaznaczono: %1$s.</string>
     <!-- For TalkBack once checked, after a source's text: the passages the learner marked by mistake, separated by semicolons. -->
     <string name="activities_reasoning_source_wrong_passages">Błędnie zaznaczono: %1$s.</string>
+    <!-- For TalkBack once checked, after a source's text when the learner's own marks weren't kept: the passages the question was about, separated by semicolons. -->
+    <string name="activities_reasoning_source_to_mark">Co zaznaczyć: %1$s.</string>
     <!-- Legend once checked: the tint of the passages the question was about. -->
     <string name="activities_reasoning_source_what_to_mark">Co zaznaczyć</string>
     <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->

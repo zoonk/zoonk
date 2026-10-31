@@ -72,6 +72,7 @@
   "activities_reasoning_source_missed": "c629e7020ba6f7fd3ea0e7d0a78d833646629533669528caf7ca6f06ed4cc180",
   "activities_reasoning_source_missed_passages": "fcc75bf3e72654114c9f1368bf197616950b783599f8243fda6e0b699aba3e04",
   "activities_reasoning_source_nothing_marked": "3fd4e267dd4a7eeea09db41e25c65f162025d4029c0ab98d4bf66b5339ee6649",
+  "activities_reasoning_source_to_mark": "0405a9fc44d42e46941a454ecc2e9718d30a2d25236e9680cd902d37591586ef",
   "activities_reasoning_source_unmark": "32618839f82728de996748fa07f72dfc27958c9bac1081df8159114b02f2c2ec",
   "activities_reasoning_source_what_to_mark": "3a8bcfbfc0c9f82bd9fcfb4e7d9976b28b2dcbcb6a4c80f20813f0f4904f8cf9",
   "activities_reasoning_source_wrong_mark": "21d8ccdd588190c82c3171876a9ceeffeab5565bd4e74a0c2a40aa667ebe0c7d",
@@ -143,6 +144,8 @@
     <string name="activities_reasoning_source_missed_passages">Você deixou passar: %1$s.</string>
     <!-- For TalkBack once checked, after a source's text: the passages the learner marked by mistake, separated by semicolons. -->
     <string name="activities_reasoning_source_wrong_passages">Marcados por engano: %1$s.</string>
+    <!-- For TalkBack once checked, after a source's text when the learner's own marks weren't kept: the passages the question was about, separated by semicolons. -->
+    <string name="activities_reasoning_source_to_mark">O que marcar: %1$s.</string>
     <!-- Legend once checked: the tint of the passages the question was about. -->
     <string name="activities_reasoning_source_what_to_mark">O que marcar</string>
     <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->

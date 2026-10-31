@@ -72,6 +72,7 @@
   "activities_reasoning_source_missed": "85657da9bd85106379f363f255e70370a898badb2f45e5904bba20c872126a7d",
   "activities_reasoning_source_missed_passages": "56ae374cc661aca2fcacfbf44ef2351f4df6b5da0504552e1952be8570d00dd6",
   "activities_reasoning_source_nothing_marked": "fe127f86a65d1c06327d1fa8247ba9a46b57bf72de13f0dbe1bc97f0a3d52406",
+  "activities_reasoning_source_to_mark": "fa0839f6d783fe8eac12ff498adad300411c0ab909c8c475e400bdb6b018daf2",
   "activities_reasoning_source_unmark": "32a31e6b9167f2c665bc529dfe914af3a809d9c3677806b341ba63181c103e58",
   "activities_reasoning_source_what_to_mark": "2d02d43b6808c13a152c4391a618ad83ec54b8ddd366c58ee9c62f0dbefa4219",
   "activities_reasoning_source_wrong_mark": "453cbdbf509ce5ac1ea23392773f8d98b0adc903f55a762ce08378bb5653134c",
@@ -143,6 +144,8 @@
     <string name="activities_reasoning_source_missed_passages">Oubliés : %1$s.</string>
     <!-- For TalkBack once checked, after a source's text: the passages the learner marked by mistake, separated by semicolons. -->
     <string name="activities_reasoning_source_wrong_passages">Passages marqués par erreur : %1$s.</string>
+    <!-- For TalkBack once checked, after a source's text when the learner's own marks weren't kept: the passages the question was about, separated by semicolons. -->
+    <string name="activities_reasoning_source_to_mark">Passages à marquer : %1$s.</string>
     <!-- Legend once checked: the tint of the passages the question was about. -->
     <string name="activities_reasoning_source_what_to_mark">À marquer</string>
     <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->

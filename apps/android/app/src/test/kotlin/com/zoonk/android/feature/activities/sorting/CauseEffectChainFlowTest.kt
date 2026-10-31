@@ -11,6 +11,9 @@ import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.pressKey
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.feature.activities.ActivityFixtures
+import com.zoonk.android.feature.player.checkResult
+import com.zoonk.android.feature.player.summaryStep
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -71,6 +74,25 @@ class CauseEffectChainFlowTest : SortingFlow() {
     }
 
     @Test
+    fun causeEffectWithAQuestionComesBackAsTheWholeChain() {
+        val check = choiceCheck("Why did the storms get so bad?", "Plowing and drought together", "Only the drought")
+        harness.play(listOf(ActivityFixtures.step("causeEffectChain", check = check), summaryStep("end"))) {
+            grade = { _, _ -> checkResult(true, expected = ActivityFixtures.expected("causeEffectChain")) }
+        }
+
+        link("Prairie plowed for wheat")
+        link("Dust storms")
+        tap("Plowing and drought together")
+        harness.tap("Check")
+        harness.tap("Continue")
+        rule.onNodeWithContentDescription("Previous screen").performClick()
+
+        rule.onNodeWithContentDescription("How they connect").assertExists()
+        shows("Dry soil lifted.")
+        rule.onNodeWithText("Missed link").assertDoesNotExist()
+    }
+
+    @Test
     fun causeEffectWithOnlyAKeyboard() {
         play("causeEffectChain", isCorrect = true)
         val plow = rule.onNodeWithText("Prairie plowed for wheat")
@@ -111,5 +133,6 @@ class CauseEffectChainFlowTest : SortingFlow() {
         rule.onNodeWithText("Prairie plowed for wheat").assertIsNotEnabled()
         rule.onNodeWithText("Pick a cause, then pick what it led to.").assertDoesNotExist()
         rule.onNodeWithContentDescription("Remove the link from Years of drought to Dust storms").assertDoesNotExist()
+        rule.onNodeWithContentDescription("How they connect").assertExists()
     }
 }

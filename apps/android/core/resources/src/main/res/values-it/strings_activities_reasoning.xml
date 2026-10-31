@@ -72,6 +72,7 @@
   "activities_reasoning_source_missed": "1956681971404c11f85a4ea078235f84ee5d35b8cd05d9dc1287337d65b11f15",
   "activities_reasoning_source_missed_passages": "824283094d2ad616d6d5da79b821f81c8ddde09102d07ad14f96ffda00da1565",
   "activities_reasoning_source_nothing_marked": "4513efae0aadb2fa3304aa575e4ce5c9f30113adaf233d2a0f1b0e27d20d65ad",
+  "activities_reasoning_source_to_mark": "f7fad0b1e16c1814c0e968a833ecdd1e6ad936b7e34bee64e86f9ef3abb8b017",
   "activities_reasoning_source_unmark": "414bf183c223aa59b78d16e4f638e0586c66457feb632aa85206118d7def04af",
   "activities_reasoning_source_what_to_mark": "673c551fc7e428f449d0cdd4816926dba6757da532399ff491a29f1ad311fb64",
   "activities_reasoning_source_wrong_mark": "78799db2499de1c2ee9fcf67e01ba605ce4cb54c1e7d998c970346555820ee6b",
@@ -143,6 +144,8 @@
     <string name="activities_reasoning_source_missed_passages">Non hai evidenziato: %1$s.</string>
     <!-- For TalkBack once checked, after a source's text: the passages the learner marked by mistake, separated by semicolons. -->
     <string name="activities_reasoning_source_wrong_passages">Evidenziati per errore: %1$s.</string>
+    <!-- For TalkBack once checked, after a source's text when the learner's own marks weren't kept: the passages the question was about, separated by semicolons. -->
+    <string name="activities_reasoning_source_to_mark">Cosa evidenziare: %1$s.</string>
     <!-- Legend once checked: the tint of the passages the question was about. -->
     <string name="activities_reasoning_source_what_to_mark">Cosa evidenziare</string>
     <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->

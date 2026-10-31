@@ -18,6 +18,7 @@ import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isFocused
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.percentOffset
@@ -33,6 +34,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.activities.gridCells
 import com.zoonk.android.feature.activities.selectionIds
+import com.zoonk.android.feature.activities.sorting.choiceCheck
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
 import com.zoonk.android.feature.player.model.LessonStep
@@ -211,6 +213,24 @@ class ReasoningFlowTest {
         harness.tap("Check")
 
         rule.onNode(rebels).performScrollTo().assert(states("Nothing marked yet. Missed: the rebels fired first."))
+    }
+
+    @Test
+    fun sourceComparisonWithAQuestionComesBackShowingWhatToMark() {
+        val check = choiceCheck("Why do they disagree?", "Each writer blames the other side", "One of them wasn't there")
+        harness.play(listOf(ActivityFixtures.step("sourceComparison", check = check), summaryStep("end"))) {
+            grade = { _, _ -> checkResult(true, expected = null) }
+        }
+
+        rule.onNode(regulars).performScrollTo().performCustomAccessibilityActionWithLabel("Mark: The regulars fired on us")
+        tap("Each writer blames the other side")
+        harness.tap("Check")
+        harness.tap("Continue")
+        rule.onNodeWithContentDescription("Previous screen").performClick()
+
+        rule.onNode(regulars).performScrollTo().assert(states("What to mark: The regulars fired on us."))
+        rule.onNode(rebels).performScrollTo().assert(states("What to mark: the rebels fired first."))
+        rule.onNodeWithText("Missed").assertDoesNotExist()
     }
 
     @Test

@@ -91,9 +91,11 @@ private fun CauseEffectChainActivity(props: ActivityProps) {
     val order = nodes.map { it.id }
     val truth = fields.links.map { CauseLink(it.from, it.to) }
     val isGuided = content.check is ChoiceCheck && !props.isExploring
+    // The lesson's chain: when exploring, or when a checked screen's answer doesn't hold the learner's links (a choice check), as main's `startingLinks`.
+    val isLessonChain = rememberSaveable { props.isExploring || (props.isChecked && props.answer.links == null) }
     var links by rememberSaveable(stateSaver = LinksSaver) {
         mutableStateOf(
-            if (props.isExploring) {
+            if (isLessonChain) {
                 truth
             } else {
                 props.answer.links
@@ -145,15 +147,15 @@ private fun CauseEffectChainActivity(props: ActivityProps) {
     }
 
     val results =
-        if (props.isChecked && !isGuided) {
+        if (props.isChecked && !isGuided && !isLessonChain) {
             compareLinks(links, truth)
         } else {
-            links.map { LinkResult(it, if (isGuided) LinkState.Correct else LinkState.Made) }
+            links.map { LinkResult(it, if (isGuided && !isLessonChain) LinkState.Correct else LinkState.Made) }
         }
 
     Box {
         ActivityCanvas {
-            if (!props.isExploring) {
+            if (!isLessonChain) {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
                         causeId?.let { stringResource(R.string.activities_sorting_now_pick, labelOf(it)) }
@@ -212,12 +214,12 @@ private fun CauseEffectChainActivity(props: ActivityProps) {
 
             LinkList(
                 results = results,
+                isLessonChain = isLessonChain,
                 labelOf = labelOf,
                 why = { link -> fields.links.firstOrNull { it.from == link.from && it.to == link.to }?.why },
                 showWhy = isGuided || locked,
                 canRemove = !locked && !isGuided,
                 onRemove = { update(links.toggle(it)) },
-                isExploring = props.isExploring,
             )
         }
         ActivityAnnouncement(if (locked) "" else announcement)
@@ -282,16 +284,16 @@ private fun NodeCard(
 @Composable
 private fun LinkList(
     results: List<LinkResult>,
+    isLessonChain: Boolean,
     labelOf: (String) -> String,
     why: (CauseLink) -> String?,
     showWhy: Boolean,
     canRemove: Boolean,
     onRemove: (CauseLink) -> Unit,
-    isExploring: Boolean,
 ) {
     if (results.isEmpty()) return
     val colors = MaterialTheme.colorScheme
-    val label = stringResource(if (isExploring) R.string.activities_sorting_how_they_connect else R.string.activities_sorting_your_links)
+    val label = stringResource(if (isLessonChain) R.string.activities_sorting_how_they_connect else R.string.activities_sorting_your_links)
     val ledTo = stringResource(R.string.activities_sorting_led_to)
 
     Column(Modifier.semantics { contentDescription = label }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
