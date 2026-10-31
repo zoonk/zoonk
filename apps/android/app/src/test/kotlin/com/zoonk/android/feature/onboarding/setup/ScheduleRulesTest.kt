@@ -6,6 +6,7 @@ import com.zoonk.api.models.OnboardingTimeChoicesInner
 import com.zoonk.api.models.OnboardingTimeChoicesInnerSplit
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeToCover
+import com.zoonk.api.models.PlanTimeToCoverMost
 import com.zoonk.api.models.PlanTimeToCoverSuggested
 import com.zoonk.api.models.PlanTimeToCoverSuggestedSplit
 import kotlinx.datetime.LocalDate
@@ -46,7 +47,7 @@ class ScheduleRulesTest {
         targetDateNamedMonth = false,
     )
 
-    private val tooClose = found(recommended = 2_000, focus = 300)
+    private val tooClose = found(recommended = null, focus = 300)
 
     private val noSuggestion = found(recommended = 2_000, focus = 2_000)
 
@@ -161,6 +162,16 @@ class ScheduleRulesTest {
         assertEquals(TooClose.Date, tooClose(tooClose, short, studiesEveryDay = true))
         assertEquals(TooClose.Days, tooClose(tooClose, short, studiesEveryDay = false))
         assertNull(tooClose(tooClose, TimeLine.Everything(suggested = false), studiesEveryDay = true))
+    }
+
+    @Test
+    fun noDateOrDaysAreBlamedWhileATimeCoversEverythingOrPartNeverFitsWhateverTheTime() {
+        val short = TimeLine.Share(0.3)
+        val coveredAt300 = found(recommended = 300).copy(suggested = suggestion(PlanTimeToCoverSuggested.Kind.FOCUS, 240))
+        val partNeverFits = tooClose.copy(most = PlanTimeToCoverMost(coveredShare = 0.99, minutes = 280))
+
+        assertNull(tooClose(coveredAt300, short, studiesEveryDay = false))
+        assertNull(tooClose(partNeverFits, short, studiesEveryDay = false))
     }
 
     @Test

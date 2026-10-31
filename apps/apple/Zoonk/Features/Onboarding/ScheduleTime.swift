@@ -101,12 +101,13 @@ enum ScheduleTime {
     return answers.compactMap(\.suggested).first { $0.minutes == minutes }?.split
   }
 
-  /// Why no suggestion covers everything, which happens only when not even a whole day does; nil when
-  /// one does, the time shown does, or the date passed. The date is to blame only once every day is a
-  /// study day: until then, more days bring the time down.
+  /// Why no time covers everything: only when not even a whole day does while more time would still
+  /// cover more, as main says it. Nil when a time covers everything, even past the suggestion, when
+  /// part never fits whatever the time, when the time shown covers it, or when the date passed. The
+  /// date is to blame only once every day is a study day: until then, more days bring the time down.
   static func tooClose(found: TimeToCover?, line: Line, studiesEveryDay: Bool) -> TooClose? {
-    guard let found, !found.pastDate, !line.coversEverything,
-      found.suggested?.kind != .everything
+    guard let found, !found.pastDate, !line.coversEverything, found.recommendedMinutes == nil,
+      found.most == nil
     else {
       return nil
     }

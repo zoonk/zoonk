@@ -336,7 +336,7 @@ class GoalSetupFlowTest {
     @Test
     fun aDayThatCantHoldEverythingOpensOnTheTimeThatReachesEveryTopicAndSaysWhy() {
         api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
-        api.cover = { coverOf(recommended = 2_000, focus = 300) }
+        api.cover = { coverOf(recommended = null, focus = 300) }
         show()
 
         rule.onNodeWithContentDescription("Time a day, 5\u00A0hr").assertIsDisplayed()

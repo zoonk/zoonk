@@ -150,9 +150,10 @@ internal fun pickedMinutes(
 internal enum class TooClose { Date, Days }
 
 /**
- * Why no suggestion covers everything, which happens only when not even a whole day does; null when
- * one does, the time shown does, or the date passed. The date is to blame only once every day is a
- * study day: until then, more days bring the time down.
+ * Why no time covers everything: only when not even a whole day does while more time would still
+ * cover more, as main says it. Null when a time covers everything, even past the suggestion, when
+ * part never fits whatever the time, when the time shown covers it, or when the date passed. The
+ * date is to blame only once every day is a study day: until then, more days bring the time down.
  */
 internal fun tooClose(
     found: PlanTimeToCover?,
@@ -161,7 +162,7 @@ internal fun tooClose(
 ): TooClose? =
     when {
         found == null || found.pastDate || line is TimeLine.Everything -> null
-        found.suggested?.kind == PlanTimeToCoverSuggested.Kind.EVERYTHING -> null
+        found.recommendedMinutes != null || found.most != null -> null
         studiesEveryDay -> TooClose.Date
         else -> TooClose.Days
     }

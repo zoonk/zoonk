@@ -184,6 +184,19 @@ final class ScheduleTimeTests: XCTestCase {
       ScheduleTime.tooClose(found: longest, line: .everyTopic, studiesEveryDay: false), .days)
   }
 
+  func testBlamesNoDateOrDaysWhileATimeCoversEverythingOrPartNeverFitsWhateverTheTime() {
+    let coveredAt300 = found(suggested: focus(240, everyTopic: true), recommendedMinutes: 300)
+    let partNeverFits = TimeToCover(
+      most: MostCoverage(coveredShare: 0.99, minutes: 280), pastDate: false, ready: true,
+      recommendedMinutes: nil, suggested: focus(240, everyTopic: true), targetDate: "2028-10-29",
+      targetDateNamedMonth: false)
+
+    XCTAssertNil(
+      ScheduleTime.tooClose(found: coveredAt300, line: .share(0.3), studiesEveryDay: false))
+    XCTAssertNil(
+      ScheduleTime.tooClose(found: partNeverFits, line: .share(0.3), studiesEveryDay: false))
+  }
+
   func testBlamesTheDaysUntilEveryDayIsAStudyDay() {
     let fewerDays = ScheduleTime.tooClose(
       found: tooClose, line: .share(0.15), studiesEveryDay: false)
