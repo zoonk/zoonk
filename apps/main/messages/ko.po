@@ -920,7 +920,6 @@ msgstr "답해 주시면 목표를 이룰 때까지 매일의 학습 계획을 �
 
 #: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
-#: src/app/[lang]/birth-year-gate.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "계속하기"
@@ -3465,61 +3464,6 @@ msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "계정이 삭제됐어요."
 
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "VqYaaL"
-msgid "Check the year and try again."
-msgstr "출생 연도를 확인하고 다시 시도해 보세요."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "TCf3Ld"
-msgid "We couldn't save it. Check your connection and try again."
-msgstr "저장하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 보세요."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "wqPXuM"
-msgid "What year were you born?"
-msgstr "몇 년에 태어났나요?"
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "u7SgKI"
-msgid "We ask everyone once."
-msgstr "모든 분께 한 번만 여쭤봐요."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "Wr357G"
-msgid "Birth year"
-msgstr "출생 연도"
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "dUCA4K"
-msgid "Not now"
-msgstr "나중에"
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "H6bpYq"
-msgid "You need to be {minimumAge, number} or older to use Zoonk, so we've closed your account and deleted its data. We'll be here when you are."
-msgstr "{minimumAge, number}세 이상이어야 Zoonk를 이용할 수 있어서 계정을 폐쇄하고 데이터를 삭제했어요. 이용할 수 있는 나이가 되면 다시 만나요."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "7dMiHf"
-msgid "You need to be {minimumAge, number} or older to use Zoonk, so we'll log you out. We'll be here when you are."
-msgstr "Zoonk는 {minimumAge, number}세 이상부터 이용할 수 있어서 로그아웃할게요. 그때까지 여기서 기다릴게요."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "GuXkQM"
-msgid "You need to be {minimumAge, number} or older to use Zoonk. We'll be here when you are."
-msgstr "Zoonk는 {minimumAge, number}세 이상부터 이용할 수 있어요. 그때까지 여기서 기다릴게요."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "WCgBMi"
-msgid "Not just yet"
-msgstr "아직은 이용할 수 없어요"
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "kAEQyV"
-msgid "OK"
-msgstr "확인"
-
 #: src/app/[lang]/challenge/[planItemId]/page.tsx
 #: src/app/[lang]/checkpoint/[blockId]/page.tsx
 msgctxt "9MidH4"
@@ -3562,11 +3506,6 @@ msgstr "{topic}에 대해 깊이 알고 싶어요"
 msgctxt "-3M8u-"
 msgid "Focus test"
 msgstr "집중 진단"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
-msgctxt "eBoUdl"
-msgid "Start lesson"
-msgstr "레슨 시작하기"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx

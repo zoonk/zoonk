@@ -920,7 +920,6 @@ msgstr "Odpowiedz na nie, a zaplanujemy naukę na każdy dzień, aż osiągniesz
 
 #: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
-#: src/app/[lang]/birth-year-gate.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Kontynuuj"
@@ -3465,61 +3464,6 @@ msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "Usunięto twoje konto."
 
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "VqYaaL"
-msgid "Check the year and try again."
-msgstr "Sprawdź rok i spróbuj ponownie."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "TCf3Ld"
-msgid "We couldn't save it. Check your connection and try again."
-msgstr "Nie udało się zapisać roku. Sprawdź połączenie z internetem i spróbuj ponownie."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "wqPXuM"
-msgid "What year were you born?"
-msgstr "Jaki jest twój rok urodzenia?"
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "u7SgKI"
-msgid "We ask everyone once."
-msgstr "Każdego pytamy tylko raz."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "Wr357G"
-msgid "Birth year"
-msgstr "Rok urodzenia"
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "dUCA4K"
-msgid "Not now"
-msgstr "Nie teraz"
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "H6bpYq"
-msgid "You need to be {minimumAge, number} or older to use Zoonk, so we've closed your account and deleted its data. We'll be here when you are."
-msgstr "Musisz mieć co najmniej {minimumAge, number} lat, by korzystać z Zoonka, dlatego zamknęliśmy twoje konto i usunęliśmy jego dane. Gdy osiągniesz ten wiek, będziemy tu na ciebie czekać."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "7dMiHf"
-msgid "You need to be {minimumAge, number} or older to use Zoonk, so we'll log you out. We'll be here when you are."
-msgstr "Żeby korzystać z Zoonka, musisz mieć co najmniej {minimumAge, number} lat, więc cię wylogujemy. Będziemy tu na ciebie czekać."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "GuXkQM"
-msgid "You need to be {minimumAge, number} or older to use Zoonk. We'll be here when you are."
-msgstr "Żeby korzystać z Zoonka, musisz mieć co najmniej {minimumAge, number} lat. Będziemy tu na ciebie czekać."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "WCgBMi"
-msgid "Not just yet"
-msgstr "Jeszcze nie"
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "kAEQyV"
-msgid "OK"
-msgstr "OK"
-
 #: src/app/[lang]/challenge/[planItemId]/page.tsx
 #: src/app/[lang]/checkpoint/[blockId]/page.tsx
 msgctxt "9MidH4"
@@ -3562,11 +3506,6 @@ msgstr "Chcę dogłębnie zrozumieć temat: {topic}"
 msgctxt "-3M8u-"
 msgid "Focus test"
 msgstr "Test priorytetów"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
-msgctxt "eBoUdl"
-msgid "Start lesson"
-msgstr "Rozpocznij lekcję"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx

@@ -912,11 +912,6 @@ msgid "Privacy"
 msgstr "Gizlilik"
 
 #: src/appearance/appearance-screen.tsx
-msgctxt "72SFRq"
-msgid "Off for learners under 18 in your country"
-msgstr "Ülkende 18 yaşından küçükler için kapalı"
-
-#: src/appearance/appearance-screen.tsx
 msgctxt "8uEFmZ"
 msgid "Shows us how you use Zoonk, so we can improve it"
 msgstr "Zoonk’u nasıl kullandığını gösterir, böylece onu geliştirebiliriz"

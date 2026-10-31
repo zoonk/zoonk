@@ -44,7 +44,6 @@
   "settings_preferences_save_failed": "ccd1308e7ba482b252d245b98f159063851645f50643921432e9c9884aafb90c",
   "settings_preferences_share_usage_data": "17e99e362edaadae762d517b6c2e46f8eca99ced22c312ac50756fe08819a4f7",
   "settings_preferences_share_usage_data_description": "f72f54da4d515ca69c81c523a3ff2acd9ac262f36465c1bdeef0bb197114854e",
-  "settings_preferences_share_usage_data_locked": "abeba7f6adda862d52b627a5ae45231c0257448ffe931ed46c36be975a9d6b5c",
   "settings_preferences_sounds": "692afa6fa1188e5418851868b0afc8f545493d0f3754d5fbae92cb958b2f031b",
   "settings_preferences_sounds_description": "4d521392c771733e62dccdd4970acd85523f3ead84f84d559d02b09a1eedbe7d",
   "settings_preferences_summary": "45820d8a8eea034f640b53a64914a6f2038566ea7b6ca9bd4ff24c038e5db199",
@@ -114,6 +113,4 @@
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
     <string name="settings_preferences_share_usage_data">利用状況データを送信する</string>
     <string name="settings_preferences_share_usage_data_description">Zoonkの利用状況を把握し、改善に役立てます</string>
-    <!-- Why the usage data switch is off and can't be turned on: the law doesn't let minors agree to it. -->
-    <string name="settings_preferences_share_usage_data_locked">お住まいの国では18歳未満の方はオンにできません</string>
 </resources>

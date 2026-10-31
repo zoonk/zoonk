@@ -912,11 +912,6 @@ msgid "Privacy"
 msgstr "개인정보 처리방침"
 
 #: src/appearance/appearance-screen.tsx
-msgctxt "72SFRq"
-msgid "Off for learners under 18 in your country"
-msgstr "거주 국가에서는 만 18세 미만 학습자가 이 설정을 켤 수 없어요"
-
-#: src/appearance/appearance-screen.tsx
 msgctxt "8uEFmZ"
 msgid "Shows us how you use Zoonk, so we can improve it"
 msgstr "Zoonk를 어떻게 사용하는지 알려 주고 서비스 개선에 도움이 돼요"

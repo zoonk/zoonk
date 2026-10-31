@@ -44,7 +44,6 @@
   "settings_preferences_save_failed": "ba7636ee4896cc2dc3de2f91456d72d2a2dac9aff05bade72ebe17f18b82fc77",
   "settings_preferences_share_usage_data": "2cb412d570fea104a4adc657a5961046daf9ed79601e251373422214e651980c",
   "settings_preferences_share_usage_data_description": "a2d8395dc1ccf944c3d48974e0d01fcfe209e87a73a24f025942167c369a825c",
-  "settings_preferences_share_usage_data_locked": "7915020e2171913a73ce0eb82983921135246943b3d9827da98bab50e88fda73",
   "settings_preferences_sounds": "44fbc42b458b7b831e0375356efbda421231a2068aeaba0ca6692316d583439d",
   "settings_preferences_sounds_description": "fd0698c088fe01f8bb6bbc2fec4d0e0c63525712955ccc1437b6916344e85473",
   "settings_preferences_summary": "5d6e68552124d521d787a6182bdb87e80ee767757cf12626256bde5fe7fd986e",
@@ -114,6 +113,4 @@
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
     <string name="settings_preferences_share_usage_data">앱 사용 데이터 제공</string>
     <string name="settings_preferences_share_usage_data_description">Zoonk를 어떻게 사용하는지 알려 주고 서비스 개선에 도움이 돼요</string>
-    <!-- Why the usage data switch is off and can't be turned on: the law doesn't let minors agree to it. -->
-    <string name="settings_preferences_share_usage_data_locked">거주 국가에서는 만 18세 미만 학습자가 켤 수 없어요</string>
 </resources>

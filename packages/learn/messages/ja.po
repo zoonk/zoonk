@@ -912,11 +912,6 @@ msgid "Privacy"
 msgstr "プライバシーポリシー"
 
 #: src/appearance/appearance-screen.tsx
-msgctxt "72SFRq"
-msgid "Off for learners under 18 in your country"
-msgstr "お住まいの国では、18歳未満の方はオフです"
-
-#: src/appearance/appearance-screen.tsx
 msgctxt "8uEFmZ"
 msgid "Shows us how you use Zoonk, so we can improve it"
 msgstr "Zoonkの利用状況を把握し、改善に役立てます"

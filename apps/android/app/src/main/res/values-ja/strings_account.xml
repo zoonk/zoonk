@@ -2,22 +2,11 @@
 <!-- eloqnt-fingerprints-v1
 {
   "account_agreement": "fc35f4f8530cc85cb53022c93063b58c71a56ca36396ea233aece1768b40b4a7",
-  "account_below_minimum_age_description": "8e088652b434c51b033ba730f7c2ba7f4de9e53e4951276ad4293e0b7c11a6b7",
-  "account_below_minimum_age_log_out_description": "fc12b921a8e1a45ce3e47916a430ec108cf363d757aa00eaefa547cd69cc8c20",
-  "account_below_minimum_age_ok": "eacea627a1c6f81694188e67f10756870261235f8034ebffb163ef5bcd8e5fb9",
-  "account_below_minimum_age_title": "b76a7bc81bc8a8d6ddd187492fb6e5b5a3cc083d7fc4d84744c3ae890613d886",
-  "account_birth_year_description": "4c3769b3993dc137bdf7a4fb1fa4853914e2406a7101a8329d5f6dc9d8f051be",
-  "account_birth_year_invalid": "839bddc397179b3a496e5f32e99bc4fe6032fb124e91bfbf1919085f74a6b7d2",
-  "account_birth_year_label": "ab9f9d59a873c8f4e1ee755d26a0691c6e4b07eef066c1ec0007b189d551cf5f",
-  "account_birth_year_not_now": "ecbde8e003786ae15a4c2efd546682aba7d8c23f350866c75a53e4a2c222dc6d",
-  "account_birth_year_save_failed": "0bede935a7aedffc9a7cfd695225b8ced1db37e8f5f69c5a721e3c1298a9043e",
-  "account_birth_year_title": "b4bf75fb76615f7d2a3ed660944f6175b461fa7ab2653c63f2cd7896b4d7cdbe",
   "account_change": "95121564d3132b6fdf11b921b6dab79093cda038a098023fc3f24f29918d42cb",
   "account_change_email": "44034a0fa187165c47e184b9bb7a61f00bc3d4b6c5a5df0d2735839f2037764b",
   "account_change_username": "61a210346bcb9883d36b03daed603fe5a4505ad1e34f77337f8a7bdff9613070",
   "account_check_email_description": "51df482fa061ab79bfed460d8fb8da5b971f37cafde94311361db6b5e94e6441",
   "account_check_email_title": "98c9803fd6684941c0aca04292c542b59e25b5d110cf29116634c302d7b9da1a",
-  "account_closed_below_minimum_age_description": "8af0eb365071001809da51a9b8fd0475367cc5051382ce1dbbfd7330c7a9ba4e",
   "account_code_label": "2c558bfc9dad8d2b09323cf3e7ab885c6033b3860daeb251a3b4b9e82a9b0fc6",
   "account_continue": "05583d22d2ded5596a4f3b8e6e3dad24c4e83f7b45bebccab38b7d28d8dc3f8a",
   "account_continue_with_apple": "8fd2e778e55b3fb129c287f1c90d104af07cab98fda70ea8a868f3b49f26dde0",
@@ -131,22 +120,4 @@
     <string name="account_sign_out_failed">Zoonkからログアウトできませんでした。通信状況を確認して、もう一度お試しください。</string>
     <string name="account_unavailable_title">アカウントを確認できませんでした</string>
     <string name="account_unavailable_description">ログイン状態は保たれています。通信状況が原因かもしれないので、少し待ってからもう一度お試しください。</string>
-    <!-- Asked once, before a new or existing account goes on learning. -->
-    <string name="account_birth_year_title">何年生まれですか？</string>
-    <string name="account_birth_year_description">皆さんに一度だけお聞きしています。</string>
-    <!-- Closes the birth year question without answering; nothing starts. -->
-    <string name="account_birth_year_not_now">今は答えない</string>
-    <!-- The label of the field where the learner types the four-digit year they were born, like 1998. -->
-    <string name="account_birth_year_label">生まれた年</string>
-    <string name="account_birth_year_invalid">生まれた年を確認して、もう一度お試しください。</string>
-    <string name="account_birth_year_save_failed">保存できませんでした。もう一度お試しください。</string>
-    <!-- Title of a kind message to someone too young to use Zoonk where they live. -->
-    <string name="account_below_minimum_age_title">利用できるのはもう少し先です</string>
-    <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Kind and encouraging, never scolding. -->
-    <string name="account_below_minimum_age_description">Zoonkは%1$d歳から利用できます。その年齢になったら、いつでも戻ってきてください。</string>
-    <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Shown to someone signed in: "log you out" means Zoonk ends their session in the app when they tap OK, the same action as the menu's "Log out". Kind and encouraging, never scolding. -->
-    <string name="account_below_minimum_age_log_out_description">Zoonkは%1$d歳から利用できるため、ログアウトします。その年齢になったら、いつでも戻ってきてください。</string>
-    <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Shown to someone signed in whose birth year is certainly below it: Zoonk has already deleted the account. Kind and encouraging, never scolding. -->
-    <string name="account_closed_below_minimum_age_description">Zoonkを利用するには%1$d歳以上である必要があるため、アカウントを閉鎖し、データを削除しました。利用できる年齢になったら、またお会いできるのを楽しみにしています。</string>
-    <string name="account_below_minimum_age_ok">OK</string>
 </resources>

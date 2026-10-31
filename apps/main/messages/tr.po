@@ -920,7 +920,6 @@ msgstr "Soruları cevapla, hedefine ulaşana kadar günlük planını hazırlaya
 
 #: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
-#: src/app/[lang]/birth-year-gate.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Devam et"
@@ -3465,61 +3464,6 @@ msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "Hesabın silindi."
 
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "VqYaaL"
-msgid "Check the year and try again."
-msgstr "Yılı kontrol edip tekrar dene."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "TCf3Ld"
-msgid "We couldn't save it. Check your connection and try again."
-msgstr "Kaydedemedik. Bağlantını kontrol edip tekrar dene."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "wqPXuM"
-msgid "What year were you born?"
-msgstr "Hangi yıl doğdun?"
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "u7SgKI"
-msgid "We ask everyone once."
-msgstr "Bunu herkese bir kez soruyoruz."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "Wr357G"
-msgid "Birth year"
-msgstr "Doğum yılı"
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "dUCA4K"
-msgid "Not now"
-msgstr "Sonraya bırak"
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "H6bpYq"
-msgid "You need to be {minimumAge, number} or older to use Zoonk, so we've closed your account and deleted its data. We'll be here when you are."
-msgstr "Zoonk’u kullanmak için en az {minimumAge, number} yaşında olman gerekiyor. Bu yüzden hesabını kapattık ve verilerini sildik. O yaşa geldiğinde burada olacağız."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "7dMiHf"
-msgid "You need to be {minimumAge, number} or older to use Zoonk, so we'll log you out. We'll be here when you are."
-msgstr "Zoonk’u kullanmak için en az {minimumAge, number} yaşında olman gerekiyor, bu yüzden oturumunu kapatacağız. O yaşa geldiğinde burada olacağız."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "GuXkQM"
-msgid "You need to be {minimumAge, number} or older to use Zoonk. We'll be here when you are."
-msgstr "Zoonk’u kullanmak için en az {minimumAge, number} yaşında olman gerekiyor. O yaşa geldiğinde burada olacağız."
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "WCgBMi"
-msgid "Not just yet"
-msgstr "Henüz değil"
-
-#: src/app/[lang]/birth-year-gate.tsx
-msgctxt "kAEQyV"
-msgid "OK"
-msgstr "Tamam"
-
 #: src/app/[lang]/challenge/[planItemId]/page.tsx
 #: src/app/[lang]/checkpoint/[blockId]/page.tsx
 msgctxt "9MidH4"
@@ -3562,11 +3506,6 @@ msgstr "{topic} konusunu derinlemesine anlamak istiyorum"
 msgctxt "-3M8u-"
 msgid "Focus test"
 msgstr "Odak testi"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
-msgctxt "eBoUdl"
-msgid "Start lesson"
-msgstr "Derse başla"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx
