@@ -1155,7 +1155,7 @@ msgstr "¿Eliminar tu cuenta?"
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "yF2UF2"
 msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
-msgstr "Tus objetivos, planes, progreso, memoria y archivos subidos se eliminarán definitivamente. Esta acción no se puede deshacer."
+msgstr "Tus objetivos, planes, progreso, memoria y archivos subidos se eliminan para siempre. Esto no se puede deshacer."
 
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
