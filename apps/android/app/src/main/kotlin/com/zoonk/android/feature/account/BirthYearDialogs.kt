@@ -41,6 +41,14 @@ fun BirthYearDialogs(gate: BirthYearGate) {
             BelowMinimumAgeMessage(shown, onClose = gate::closeBelowMinimumAge)
         }
 
+        is BirthYearPrompt.AccountClosed -> {
+            AgeStopMessage(
+                stringResource(R.string.account_closed_below_minimum_age_description, shown.minimumAge),
+                canClose = false,
+                onClose = gate::forgetClosedAccount,
+            )
+        }
+
         null -> {}
     }
 }
@@ -103,15 +111,25 @@ internal fun BelowMinimumAgeMessage(
     stop: BirthYearPrompt.BelowMinimumAge,
     onClose: () -> Unit,
 ) {
-    val ok = remember { FocusRequester() }
     val description =
         if (stop.logsOut) R.string.account_below_minimum_age_log_out_description else R.string.account_below_minimum_age_description
 
+    AgeStopMessage(stringResource(description, stop.minimumAge), canClose = !stop.logsOut, onClose = onClose)
+}
+
+@Composable
+private fun AgeStopMessage(
+    description: String,
+    canClose: Boolean,
+    onClose: () -> Unit,
+) {
+    val ok = remember { FocusRequester() }
+
     AlertDialog(
         onDismissRequest = onClose,
-        properties = DialogProperties(dismissOnBackPress = !stop.logsOut, dismissOnClickOutside = !stop.logsOut),
+        properties = DialogProperties(dismissOnBackPress = canClose, dismissOnClickOutside = canClose),
         title = { Text(stringResource(R.string.account_below_minimum_age_title)) },
-        text = { Text(stringResource(description, stop.minimumAge)) },
+        text = { Text(description) },
         confirmButton = {
             TextButton(onClick = onClose, modifier = Modifier.focusRequester(ok)) {
                 Text(stringResource(R.string.account_below_minimum_age_ok))

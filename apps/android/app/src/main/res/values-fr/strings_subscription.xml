@@ -39,6 +39,8 @@
   "subscription_canceled": "d8b81d6e24ac796cb73668d80f5ab53471fa502616018314c8138f1b5cfebf8b",
   "subscription_canceled_refund": "12e9d79a93ea7da77b925041a2f971790ab975c8133025075d5db7d761be3fd9",
   "subscription_contact_support": "1a8c3b492a0574a1627aef472fb5790c20be64a81121ec6b1dfd62a6464160ad",
+  "subscription_deletion_no_refund": "71439cfd9e8db3ae57a51b5f9727da2f905d56c1779456b652bf47e29c1099d2",
+  "subscription_deletion_refund": "71600f039619b63f12e3863eaf855f1d5e1e329ba3d11f574d32df61e516ec72",
   "subscription_ending": "15fb2387151e922c521d96f22f8c555b3a3eb5d7c8c3b2b42dc267c4bf15d28d",
   "subscription_ends_on": "c1976f512b793fa39f1e912853ca3e4f31f04fb1647faa9be7ead93ec37e45f5",
   "subscription_free": "f2e5f3c52c974703ca35778dedfad4bd1f1598f485fb50b2fc812214d3de77a2",
@@ -56,7 +58,9 @@
   "subscription_get_plus": "11bbacf52d235c2a60c19a3b99012716c402f1164a4a7462b332fd3228f50b64",
   "subscription_get_refund": "6a9ed5b8d0f20807e231a95a1994dd34840ab69a29583961bc9c3bfab6e51f29",
   "subscription_hide_answer": "f78641011a7f2c94f3df56fc306f3175c04c1b15d52a932ba75dbaa1290189e5",
+  "subscription_keep_failed": "a8e9295e28b57d2afb24cd2f58b868caf4612cf47b7f7cf8353a45b6c2a15bcc",
   "subscription_keep_plus": "134656c65b1feea9a9b3c4bb44f79337549350aa5ad3431afb069e8913a72d32",
+  "subscription_keep_plus_description": "0bb2b437441518deec25c68baf1e31af13ae7f40405e442caf889662bfcea4e2",
   "subscription_manage_google": "dd534b011c2d612956bd9acb735d1df4b0acdbd0a4afc98cb7e9004938396782",
   "subscription_managed_apple": "37cb74852b77b6d0b970e8266c55190aee70f4739f65b9907d336600dc9702db",
   "subscription_managed_google": "468762302db1685c90fd98df2df77649d344cd858020e39435ab135bcb1b9e25",
@@ -130,7 +134,7 @@
     <string name="subscription_cancel_at_period_end_refund">Tu gardes Plus jusqu’au %1$s. Nous te remboursons %2$s pour les mois qui n’ont pas encore commencé.</string>
     <!-- Stops the renewal, so Plus ends at the end of what's paid. German law (BGB § 312k) requires this button to read exactly "Jetzt kündigen" in German. -->
     <string name="subscription_cancel_confirm">Résilier maintenant</string>
-    <!-- Closes the cancel dialog without canceling. -->
+    <!-- Closes the cancel dialog without canceling, and turns a stopped renewal back on so Plus renews as before. -->
     <string name="subscription_keep_plus">Garder Plus</string>
     <!-- The last line of the cancel dialog. -->
     <string name="subscription_cancel_email">Nous t’enverrons la confirmation par e-mail.</string>
@@ -139,6 +143,13 @@
     <string name="subscription_canceled_refund">Nous avons remboursé %1$s sur le moyen de paiement utilisé. Plus est résilié. Nous t’avons envoyé la confirmation par e-mail.</string>
     <string name="subscription_refund_still_open">Jusqu’au %1$s, tu peux encore résilier Plus dès maintenant et obtenir un remboursement intégral.</string>
     <string name="subscription_get_refund">Obtenir un remboursement intégral</string>
+    <!-- Above the Keep Plus button, once the renewal of Plus bought on the web is stopped. -->
+    <string name="subscription_keep_plus_description">Tu as changé d’avis ? Garde Plus et ton abonnement se renouvellera comme avant.</string>
+    <string name="subscription_keep_failed">Impossible de réactiver le renouvellement de Plus. Réessaie ou écris à hello@zoonk.com.</string>
+    <!-- Before deleting the account, what happens to Plus bought on the web. %1$s is the amount refunded, like "R$ 29,90". -->
+    <string name="subscription_deletion_refund">Ton abonnement Plus prend fin immédiatement et nous te remboursons %1$s sur le moyen de paiement utilisé.</string>
+    <!-- Before deleting the account, what happens to Plus bought on the web when nothing is refunded. -->
+    <string name="subscription_deletion_no_refund">Ton abonnement Plus prend fin immédiatement, sans remboursement. Tu ne paieras plus rien.</string>
     <!-- The cancel option the learner chose closed meanwhile, such as the 14-day refund. -->
     <string name="subscription_cancel_unavailable">Cette option n’est plus disponible.</string>
     <!-- Closes a message after canceling. -->

@@ -3,6 +3,7 @@ package com.zoonk.android.feature.subscription
 import android.content.res.Configuration
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -30,6 +31,7 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.Money
 import com.zoonk.api.models.StripeSubscriptionCancellation
+import com.zoonk.api.models.StripeSubscriptionCancellationAccountDeletion
 import com.zoonk.api.models.StripeSubscriptionCancellationCancellation
 import com.zoonk.api.models.StripeSubscriptionCancellationExtraordinary
 import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
@@ -59,6 +61,8 @@ class WebPlusCancellationTest {
     private var answer: MutationResult<StripeSubscriptionCancellationReceipt> = MutationResult.Done(receipt(REFUND))
     private var optionsArrive: CompletableDeferred<Unit>? = null
     private val sent = mutableListOf<Choice>()
+    private var keepAnswer: MutationResult<Unit> = MutationResult.Done(Unit)
+    private var keeps = 0
     private var subscription by mutableStateOf<MeSubscription?>(null)
     private var endingChoices: () -> StripeSubscriptionCancellation = { choices(cancellation = null, withdrawal = WITHDRAWAL) }
     private var endingReads = 0
@@ -96,6 +100,10 @@ class WebPlusCancellationTest {
                             send = {
                                 sent += it
                                 answer
+                            },
+                            keepPlus = {
+                                keeps++
+                                keepAnswer
                             },
                         )
                     }
@@ -299,6 +307,95 @@ class WebPlusCancellationTest {
     }
 
     @Test
+    fun aStoppedRenewalCanBeKeptBesideTheRefund() {
+        endingChoices = { choices(cancellation = null, withdrawal = WITHDRAWAL, canResumeRenewal = true) }
+        show(cancelAt = ENDS)
+
+        rule.onNodeWithText("Changed your mind? Keep Plus, and it renews as before.").assertExists()
+        rule.onNodeWithText("Get a full refund").assertExists()
+        rule.onNodeWithText("Keep Plus").performClick()
+
+        assertEquals(1, keeps)
+        rule.onNodeWithText(KEEP_FAILED).assertDoesNotExist()
+    }
+
+    @Test
+    fun keepingPlusThatFailsSaysWhomToContact() {
+        keepAnswer = MutationResult.Failed(ApiError.Unavailable, status = 500)
+        endingChoices = { choices(cancellation = null, withdrawal = null, canResumeRenewal = true) }
+        show(cancelAt = ENDS)
+
+        rule.onNodeWithText("Keep Plus").performClick()
+
+        rule.onNodeWithText(KEEP_FAILED).assertExists()
+        rule.onNodeWithText("Keep Plus").assertIsEnabled()
+    }
+
+    @Test
+    fun keepingPlusThatCantBeKeptAnymoreShowsNoError() {
+        keepAnswer = MutationResult.Failed(ApiError.Unavailable, "CONFLICT", 409)
+        endingChoices = { choices(cancellation = null, withdrawal = null, canResumeRenewal = true) }
+        show(cancelAt = ENDS)
+
+        rule.onNodeWithText("Keep Plus").performClick()
+
+        assertEquals(1, keeps)
+        rule.onNodeWithText(KEEP_FAILED).assertDoesNotExist()
+    }
+
+    @Test
+    fun deletingTheAccountSaysWhatItRefunds() {
+        showDeletionNotice()
+
+        rule.onNodeWithText("Your Plus ends right away, and we refund R$29.90 to the payment method you used.").assertExists()
+    }
+
+    @Test
+    fun deletingTheAccountWithoutARefundSaysNothingMoreIsCharged() {
+        endingChoices = { choices(cancellation = AT_PERIOD_END, withdrawal = null) }
+        showDeletionNotice()
+
+        rule.onNodeWithText("Your Plus ends right away, without a refund. You won't be charged again.").assertExists()
+    }
+
+    @Test
+    fun aDeletionNoticeThatWontLoadSaysNothing() {
+        endingChoices = { throw ApiException(ApiError.Unavailable, status = 500) }
+        showDeletionNotice()
+
+        rule.waitForIdle()
+        assertEquals(1, endingReads)
+        rule.onNodeWithText("Your Plus ends right away", substring = true).assertDoesNotExist()
+        rule.onNodeWithText("This page didn't load").assertDoesNotExist()
+    }
+
+    @Test
+    fun deletingAPlayAccountDoesntAskStripe() {
+        showDeletionNotice(provider = "google")
+
+        rule.waitForIdle()
+        assertEquals(0, endingReads)
+        rule.onNodeWithText("Your Plus ends right away", substring = true).assertDoesNotExist()
+    }
+
+    private fun showDeletionNotice(provider: String = "stripe") {
+        val subscription =
+            MeSubscription(
+                cancelAt = null,
+                cancelAtPeriodEnd = false,
+                id = UUID.fromString("0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0d4"),
+                periodEnd = null,
+                periodStart = null,
+                plan = "plus",
+                provider = provider,
+                status = "active",
+            )
+        rule.setContent {
+            ZoonkTheme { webPlusDeletionNotice(subscription, endingWebPlusChoices)?.let { Text(it) } }
+        }
+    }
+
+    @Test
     fun aPlayPlusIsManagedInPlayWithoutAskingStripe() {
         show("google", cancelAt = ENDS)
 
@@ -309,6 +406,7 @@ class WebPlusCancellationTest {
 
     private companion object {
         const val FAILED = "Unable to manage your subscription. Contact us at hello@zoonk.com"
+        const val KEEP_FAILED = "We couldn't keep Plus. Try again or email hello@zoonk.com."
         val REFUND = Money(29.9, "BRL")
         val ENDS: Instant = Instant.parse("2026-12-01T00:00:00Z")
         val WITHDRAWAL = StripeSubscriptionCancellationWithdrawal(refund = REFUND, until = Instant.parse("2026-11-14T12:00:00Z"))
@@ -317,7 +415,10 @@ class WebPlusCancellationTest {
         fun choices(
             cancellation: StripeSubscriptionCancellationCancellation?,
             withdrawal: StripeSubscriptionCancellationWithdrawal?,
+            canResumeRenewal: Boolean = false,
         ) = StripeSubscriptionCancellation(
+            accountDeletion = StripeSubscriptionCancellationAccountDeletion(refund = withdrawal?.refund ?: cancellation?.refund),
+            canResumeRenewal = canResumeRenewal,
             cancellation = cancellation,
             extraordinary = StripeSubscriptionCancellationExtraordinary(refund = REFUND),
             withdrawal = withdrawal,

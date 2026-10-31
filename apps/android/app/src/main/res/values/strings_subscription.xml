@@ -34,7 +34,7 @@
     <string name="subscription_cancel_at_period_end_refund">You keep Plus until %1$s. We refund %2$s for the months that haven\'t started.</string>
     <!-- Stops the renewal, so Plus ends at the end of what's paid. German law (BGB § 312k) requires this button to read exactly "Jetzt kündigen" in German. -->
     <string name="subscription_cancel_confirm">Cancel now</string>
-    <!-- Closes the cancel dialog without canceling. -->
+    <!-- Closes the cancel dialog without canceling, and turns a stopped renewal back on so Plus renews as before. -->
     <string name="subscription_keep_plus">Keep Plus</string>
     <!-- The last line of the cancel dialog. -->
     <string name="subscription_cancel_email">We\'ll email you the confirmation.</string>
@@ -43,6 +43,13 @@
     <string name="subscription_canceled_refund">We\'ve refunded %1$s to the payment method you used. Plus is canceled. We emailed you the confirmation.</string>
     <string name="subscription_refund_still_open">Until %1$s, you can still end Plus now and get a full refund.</string>
     <string name="subscription_get_refund">Get a full refund</string>
+    <!-- Above the Keep Plus button, once the renewal of Plus bought on the web is stopped. -->
+    <string name="subscription_keep_plus_description">Changed your mind? Keep Plus, and it renews as before.</string>
+    <string name="subscription_keep_failed">We couldn\'t keep Plus. Try again or email hello@zoonk.com.</string>
+    <!-- Before deleting the account, what happens to Plus bought on the web. %1$s is the amount refunded, like "R$ 29,90". -->
+    <string name="subscription_deletion_refund">Your Plus ends right away, and we refund %1$s to the payment method you used.</string>
+    <!-- Before deleting the account, what happens to Plus bought on the web when nothing is refunded. -->
+    <string name="subscription_deletion_no_refund">Your Plus ends right away, without a refund. You won\'t be charged again.</string>
     <!-- The cancel option the learner chose closed meanwhile, such as the 14-day refund. -->
     <string name="subscription_cancel_unavailable">That option isn\'t available anymore.</string>
     <!-- Closes a message after canceling. -->

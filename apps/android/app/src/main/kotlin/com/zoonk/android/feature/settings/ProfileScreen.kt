@@ -52,6 +52,7 @@ import com.zoonk.android.feature.account.AccountFailure
 import com.zoonk.android.feature.account.ProfileFields
 import com.zoonk.android.feature.account.ProfileFormViewModel
 import com.zoonk.android.feature.account.ProfileSaveFailure
+import com.zoonk.android.feature.subscription.webPlusDeletionNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -125,6 +126,7 @@ private fun Profile(
     val user = signedIn.account.user
     val form = viewModel(key = "profile-form:$key") { ProfileFormViewModel(app.account, user, createSavedStateHandle()) }
     val profile = viewModel(key = "profile:$key") { ProfileViewModel(app.account, signedIn.session, user.email) }
+    val webPlusNotice = webPlusDeletionNotice(signedIn.account.account.subscription, app.subscriptions.webPlusChoices)
     val context = LocalContext.current
     val export =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
@@ -190,7 +192,7 @@ private fun Profile(
         }
     }
 
-    DeletionDialogs(app, navigator, profile, signedIn)
+    DeletionDialogs(app, navigator, profile, signedIn, webPlusNotice)
 }
 
 @Composable
@@ -199,6 +201,7 @@ private fun DeletionDialogs(
     navigator: AppNavigator,
     profile: ProfileViewModel,
     signedIn: SessionState.SignedIn,
+    webPlusNotice: String?,
 ) {
     val email = signedIn.account.user.email
     val context = LocalContext.current
@@ -214,6 +217,7 @@ private fun DeletionDialogs(
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Text(stringResource(R.string.settings_delete_confirm_description))
+                        webPlusNotice?.let { Text(it) }
                         failure?.let { Failure(it) }
                     }
                 },

@@ -6,6 +6,7 @@ import com.zoonk.android.data.apiHttpClient
 import com.zoonk.android.data.startOnLoopback
 import com.zoonk.api.models.Money
 import com.zoonk.api.models.StripeSubscriptionCancellation
+import com.zoonk.api.models.StripeSubscriptionCancellationAccountDeletion
 import com.zoonk.api.models.StripeSubscriptionCancellationExtraordinary
 import com.zoonk.api.models.StripeSubscriptionCancellationRequest.Choice
 import com.zoonk.api.models.StripeSubscriptionCancellationWithdrawal
@@ -53,7 +54,9 @@ class LiveSubscriptionApiTest {
             server.enqueue(
                 json(
                     """
-                    {"cancellation":null,
+                    {"accountDeletion":{"refund":{"amount":29.9,"currency":"BRL"}},
+                     "canResumeRenewal":true,
+                     "cancellation":null,
                      "extraordinary":{"refund":{"amount":19.5,"currency":"BRL"}},
                      "withdrawal":{"refund":{"amount":29.9,"currency":"BRL"},"until":"2026-11-14T12:00:00.000Z"}}
                     """.trimIndent(),
@@ -62,12 +65,27 @@ class LiveSubscriptionApiTest {
 
             assertEquals(
                 StripeSubscriptionCancellation(
+                    accountDeletion = StripeSubscriptionCancellationAccountDeletion(Money(29.9, "BRL")),
+                    canResumeRenewal = true,
                     cancellation = null,
                     extraordinary = StripeSubscriptionCancellationExtraordinary(Money(19.5, "BRL")),
                     withdrawal = StripeSubscriptionCancellationWithdrawal(Money(29.9, "BRL"), Instant.parse("2026-11-14T12:00:00Z")),
                 ),
                 api.webPlusCancellation(ana),
             )
+        }
+
+    @Test
+    fun keepingPlusDeletesTheCancellation() =
+        runTest {
+            server.enqueue(MockResponse.Builder().code(204).build())
+
+            api.keepWebPlus(ana)
+
+            val request = server.takeRequest(5, TimeUnit.SECONDS)!!
+            assertEquals("DELETE", request.method)
+            assertEquals("/v1/me/subscriptions/stripe/cancellation", request.url.encodedPath)
+            assertEquals("Bearer token-a", request.headers["Authorization"])
         }
 
     private fun json(body: String) =

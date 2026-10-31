@@ -50,6 +50,8 @@ interface SubscriptionApi {
         session: AuthenticatedSession,
         choice: Choice,
     ): StripeSubscriptionCancellationReceipt
+
+    suspend fun keepWebPlus(session: AuthenticatedSession)
 }
 
 class LiveSubscriptionApi(
@@ -78,6 +80,9 @@ class LiveSubscriptionApi(
         choice: Choice,
     ): StripeSubscriptionCancellationReceipt =
         perform { api.clients(session).subscriptions.cancelStripeSubscription(StripeSubscriptionCancellationRequest(choice)) }
+
+    override suspend fun keepWebPlus(session: AuthenticatedSession) =
+        perform { api.clients(session).subscriptions.resumeStripeSubscription() }
 }
 
 sealed interface PurchaseState {
@@ -128,10 +133,10 @@ class SubscriptionStore(
     val freePlan: Resource<FreePlan> = cache.resource(Audience.Everyone) { api.freePlan() }
 
     /**
-     * What a Plus bought on the web whose renewal is stopped can still do, such as the 14-day refund.
-     * It asks Stripe, so only a plan screen showing such a Plus collects it.
+     * What canceling, keeping Plus or deleting the account does to a Plus bought on the web. It asks
+     * Stripe, so only a screen showing such a Plus collects it.
      */
-    val endingWebPlusChoices: Resource<StripeSubscriptionCancellation> =
+    val webPlusChoices: Resource<StripeSubscriptionCancellation> =
         cache.resource(Audience.SignedIn, setOf(DataDomain.UserSubscription)) { session ->
             session?.let { api.webPlusCancellation(it) }
         }
@@ -185,6 +190,12 @@ class SubscriptionStore(
     suspend fun cancelWebPlus(choice: Choice): MutationResult<StripeSubscriptionCancellationReceipt> =
         cache
             .mutate(invalidating = SUBSCRIPTION_DOMAINS) { api.cancelWebPlus(it, choice) }
+            .also { if (it is MutationResult.Failed && it.status == HTTP_CONFLICT) readPlanAgain() }
+
+    /** Turns a stopped renewal back on. A 409 means only the renewal isn't stopped anymore, so the plan is read again. */
+    suspend fun keepWebPlus(): MutationResult<Unit> =
+        cache
+            .mutate(invalidating = SUBSCRIPTION_DOMAINS) { api.keepWebPlus(it) }
             .also { if (it is MutationResult.Failed && it.status == HTTP_CONFLICT) readPlanAgain() }
 
     private fun readPlanAgain() = cache.invalidate(SUBSCRIPTION_DOMAINS)
@@ -259,5 +270,5 @@ class SubscriptionStore(
 
 fun PlusOffers.offerFor(period: BillingPeriod): PlusOffer? = if (period == BillingPeriod.Yearly) yearly else monthly
 
-/** The web cancellation's answer when the chosen option closed meanwhile. */
+/** The web Plus answer when the chosen option, or keeping Plus, closed meanwhile. */
 internal const val HTTP_CONFLICT = 409

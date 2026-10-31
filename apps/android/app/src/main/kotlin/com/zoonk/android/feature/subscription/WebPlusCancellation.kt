@@ -33,6 +33,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.StripeSubscriptionCancellation
 import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
 import com.zoonk.api.models.StripeSubscriptionCancellationRequest.Choice
@@ -53,10 +54,11 @@ sealed interface WebPlusCancellationStep {
     data object Unavailable : WebPlusCancellationStep
 }
 
-/** Canceling a Plus bought on the web, kept across recreation so a refund's receipt isn't lost. */
+/** Canceling a Plus bought on the web, or keeping it, kept across recreation so a refund's receipt isn't lost. */
 class WebPlusCancellationViewModel(
     private val readOptions: suspend () -> MutationResult<StripeSubscriptionCancellation>,
     private val send: suspend (Choice) -> MutationResult<StripeSubscriptionCancellationReceipt>,
+    private val keepPlus: suspend () -> MutationResult<Unit>,
 ) : ViewModel() {
     var step by mutableStateOf<WebPlusCancellationStep>(WebPlusCancellationStep.Closed)
         private set
@@ -66,6 +68,11 @@ class WebPlusCancellationViewModel(
     var sending by mutableStateOf<Choice?>(null)
         private set
     var failed by mutableStateOf(false)
+        private set
+
+    var isKeeping by mutableStateOf(false)
+        private set
+    var keepFailed by mutableStateOf(false)
         private set
 
     fun open() {
@@ -124,6 +131,18 @@ class WebPlusCancellationViewModel(
     fun close() {
         if (sending == null) step = WebPlusCancellationStep.Closed
     }
+
+    /** The plan read again shows Plus renewing, or, after a 409, what's true now. */
+    fun keep() {
+        if (isKeeping) return
+        isKeeping = true
+        keepFailed = false
+        viewModelScope.launch {
+            val result = keepPlus()
+            keepFailed = result is MutationResult.Failed && result.status != HTTP_CONFLICT
+            isKeeping = false
+        }
+    }
 }
 
 /** Main's `CancelPlusButton`. */
@@ -134,13 +153,14 @@ internal fun WebPlusCancelButton(cancellation: WebPlusCancellationViewModel) {
             onClick = cancellation::open,
             enabled = !cancellation.isOpening,
         ) { PendingLabel(cancellation.isOpening, stringResource(R.string.subscription_cancel)) }
-        if (cancellation.failed && cancellation.step == WebPlusCancellationStep.Closed) CancelFailed()
+        val failed = cancellation.failed && cancellation.step == WebPlusCancellationStep.Closed
+        if (failed) Failure(stringResource(R.string.subscription_cancel_failed))
     }
 }
 
-/** Main's `RefundStillOpen`: stopping the renewal keeps the 14-day refund open. */
+/** Main's `EndingPlanActions`: an ending Plus can be kept while only its renewal stopped, and refunded while the 14 days last. */
 @Composable
-internal fun WebPlusRefund(
+internal fun EndingWebPlus(
     choices: Resource<StripeSubscriptionCancellation>,
     cancellation: WebPlusCancellationViewModel,
 ) {
@@ -152,15 +172,49 @@ internal fun WebPlusRefund(
         return
     }
     val options = state.value ?: return
-    val withdrawal = options.withdrawal ?: return
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(
-            stringResource(R.string.subscription_refund_still_open, planDate(withdrawal.until, currentLocale())),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        OutlinedButton(onClick = { cancellation.open(options) }) { Text(stringResource(R.string.subscription_get_refund)) }
+    val withdrawal = options.withdrawal
+    if (!options.canResumeRenewal && withdrawal == null) return
+    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        if (options.canResumeRenewal) KeepPlus(cancellation)
+        if (withdrawal != null) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Explanation(stringResource(R.string.subscription_refund_still_open, planDate(withdrawal.until, currentLocale())))
+                OutlinedButton(onClick = { cancellation.open(options) }) { Text(stringResource(R.string.subscription_get_refund)) }
+            }
+        }
     }
+}
+
+@Composable
+private fun Explanation(text: String) {
+    Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+}
+
+@Composable
+private fun KeepPlus(cancellation: WebPlusCancellationViewModel) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Explanation(stringResource(R.string.subscription_keep_plus_description))
+        OutlinedButton(onClick = cancellation::keep, enabled = !cancellation.isKeeping) {
+            PendingLabel(cancellation.isKeeping, stringResource(R.string.subscription_keep_plus))
+        }
+        if (cancellation.keepFailed) Failure(stringResource(R.string.subscription_keep_failed))
+    }
+}
+
+/**
+ * Main's `DeletionPlusNotice`: what deleting the account does to [subscription] when it's Plus bought
+ * on the web. Null for any other plan, or when the read failed, which never stops the deletion.
+ */
+@Composable
+internal fun webPlusDeletionNotice(
+    subscription: MeSubscription?,
+    choices: Resource<StripeSubscriptionCancellation>,
+): String? {
+    if (subscription?.provider != STRIPE) return null
+    val state by choices.collectShown()
+    val deletion = state.value?.accountDeletion ?: return null
+    val refund = deletion.refund ?: return stringResource(R.string.subscription_deletion_no_refund)
+    return stringResource(R.string.subscription_deletion_refund, money(refund, currentLocale()))
 }
 
 /** Shown above whatever the plan becomes, so the receipt stays after Plus ends. */
@@ -211,7 +265,7 @@ private fun CancelChoices(
                     )
                 }
                 Text(stringResource(R.string.subscription_cancel_email))
-                if (cancellation.failed) CancelFailed()
+                if (cancellation.failed) Failure(stringResource(R.string.subscription_cancel_failed))
             }
         },
         // Up to three long labels don't fit side by side, so the actions stack with the confirming ones on top.
@@ -254,9 +308,9 @@ private fun Notice(
 }
 
 @Composable
-private fun CancelFailed() {
+private fun Failure(text: String) {
     Text(
-        stringResource(R.string.subscription_cancel_failed),
+        text,
         Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,

@@ -17,6 +17,7 @@
   "account_change_username": "940cc2e430a8c3ef4d048f11dde77f85c75c4ae3ac11fd8aea45ae81233bec16",
   "account_check_email_description": "404dcb3f16694ace8074dbd6941c8e1aeafa839744b0e9f7522d9cef6f208af6",
   "account_check_email_title": "6ab144d6b4bd8c18c5f11792304fa6818ac3fe6f09865f9f6ed20647c5abe01e",
+  "account_closed_below_minimum_age_description": "ec02411c499b298e6573c1e93aa16b23b838f54388d455d6e6113cad7c622377",
   "account_code_label": "aa2f573a68a9e5103ee35100c4890a5ea75f93fd2772e1695c384991853e1f64",
   "account_continue": "1bc4c028b56d8b5ca14e0c501d09ce51d3d76877e24fdcf2eabd2c14bec6077a",
   "account_continue_with_apple": "cdfdbf2681a1732d656770bbc553a23d637fb566fce4a65d7695bb43ee2104c0",
@@ -145,5 +146,7 @@
     <string name="account_below_minimum_age_description">Du kannst Zoonk ab %1$d Jahren nutzen. Wir sind für dich da, wenn es so weit ist.</string>
     <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Shown to someone signed in: "log you out" means Zoonk ends their session in the app when they tap OK, the same action as the menu's "Log out". Kind and encouraging, never scolding. -->
     <string name="account_below_minimum_age_log_out_description">Du musst mindestens %1$d Jahre alt sein, um Zoonk zu nutzen. Deshalb melden wir dich ab. Wir sind für dich da, wenn du so weit bist.</string>
+    <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Shown to someone signed in whose birth year is certainly below it: Zoonk has already deleted the account. Kind and encouraging, never scolding. -->
+    <string name="account_closed_below_minimum_age_description">Du musst mindestens %1$d Jahre alt sein, um Zoonk zu nutzen. Deshalb haben wir dein Konto geschlossen und die zugehörigen Daten gelöscht. Wenn du alt genug bist, sind wir für dich da.</string>
     <string name="account_below_minimum_age_ok">OK</string>
 </resources>

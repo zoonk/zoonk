@@ -3,6 +3,7 @@ package com.zoonk.android.feature.account
 import android.content.Context
 import androidx.core.content.edit
 import com.zoonk.android.data.ApiException
+import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionState
@@ -24,6 +25,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.intOrNull
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.hours
@@ -40,6 +42,11 @@ sealed interface BirthYearPrompt {
     data class BelowMinimumAge(
         val minimumAge: Int,
         val logsOut: Boolean,
+    ) : BirthYearPrompt
+
+    /** The server deleted the account, so its OK forgets the session on this device. */
+    data class AccountClosed(
+        val minimumAge: Int,
     ) : BirthYearPrompt
 }
 
@@ -110,9 +117,17 @@ class BirthYearGate(
         ) : Visitor
     }
 
+    private data class ClosedAccount(
+        val session: AuthenticatedSession,
+        val minimumAge: Int,
+    )
+
     private val form = MutableStateFlow(Form())
     private val visitor = MutableStateFlow<Visitor?>(null)
     private val lastStop = MutableStateFlow(stops.last())
+
+    /** Kept until OK, even once a request finds its session gone. */
+    private val closedAccount = MutableStateFlow<ClosedAccount?>(null)
 
     val prompt: StateFlow<BirthYearPrompt?> =
         combine(sessions.state, summary.state, visitor, form, lastStop) { session, summary, visitor, form, lastStop ->
@@ -134,7 +149,8 @@ class BirthYearGate(
                     null
                 }
             }
-        }.stateIn(scope, SharingStarted.Eagerly, null)
+        }.combine(closedAccount) { prompt, closed -> closed?.let { BirthYearPrompt.AccountClosed(it.minimumAge) } ?: prompt }
+            .stateIn(scope, SharingStarted.Eagerly, null)
 
     /**
      * For a visitor's first write: asks the year and checks it, then starts the guest and saves the
@@ -188,6 +204,15 @@ class BirthYearGate(
         scope.launch { if (sessions.signOut() is SignOutResult.Failed) onSignOutFailed() }
     }
 
+    /** Its server session no longer exists, so it's only forgotten on this device. */
+    fun forgetClosedAccount() {
+        val closed = closedAccount.value ?: return
+        scope.launch {
+            sessions.forgetDeletedAccount(closed.session)
+            closedAccount.value = null
+        }
+    }
+
     /** Null asks again. */
     private suspend fun startWith(birthYear: Long): SignInResult? {
         if (sessions.current == null) {
@@ -223,7 +248,12 @@ class BirthYearGate(
             }
 
             is MutationResult.Failed -> {
-                if (refuse(result.code, result.details) != null) Saved.Stopped else Saved.Retry
+                val minimumAge = refuse(result.code, result.details)
+                val session = sessions.current
+                if (minimumAge != null && session != null && result.details.accountClosed()) {
+                    closedAccount.value = ClosedAccount(session, minimumAge)
+                }
+                if (minimumAge != null) Saved.Stopped else Saved.Retry
             }
 
             MutationResult.Obsolete -> {
@@ -257,6 +287,9 @@ class BirthYearGate(
     private fun Form.question(canClose: Boolean) = BirthYearPrompt.Question(canClose, saving, error)
 
     private fun JsonElement?.minimumAge(): Int = (((this as? JsonObject)?.get("minimumAge")) as? JsonPrimitive)?.intOrNull ?: MINIMUM_AGE
+
+    private fun JsonElement?.accountClosed(): Boolean =
+        (((this as? JsonObject)?.get("accountClosed")) as? JsonPrimitive)?.booleanOrNull == true
 
     private companion object {
         val STOP_KEPT = 24.hours

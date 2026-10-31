@@ -24,6 +24,7 @@ import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.Money
 import com.zoonk.api.models.StoreSubscriptionResponse
 import com.zoonk.api.models.StripeSubscriptionCancellation
+import com.zoonk.api.models.StripeSubscriptionCancellationAccountDeletion
 import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
 import com.zoonk.api.models.StripeSubscriptionCancellationRequest.Choice
 import com.zoonk.api.models.StripeSubscriptionCancellationWithdrawal
@@ -132,7 +133,26 @@ private class FakeSubscriptionApi : SubscriptionApi {
         canceled += session.bearerToken to choice
         return RECEIPT
     }
+
+    val kept = mutableListOf<String>()
+    var keepFailure: ApiException? = null
+
+    override suspend fun keepWebPlus(session: AuthenticatedSession) {
+        keepFailure?.let { throw it }
+        kept += session.bearerToken
+    }
 }
+
+private fun choices(
+    withdrawal: StripeSubscriptionCancellationWithdrawal? = null,
+    canResumeRenewal: Boolean = false,
+) = StripeSubscriptionCancellation(
+    accountDeletion = StripeSubscriptionCancellationAccountDeletion(refund = withdrawal?.refund),
+    canResumeRenewal = canResumeRenewal,
+    cancellation = null,
+    extraordinary = null,
+    withdrawal = withdrawal,
+)
 
 private val RECEIPT =
     StripeSubscriptionCancellationReceipt(
@@ -358,22 +378,91 @@ class SubscriptionStoreTest {
         runTest {
             val (_, store) = store(ana)
             api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
-            api.cancellationRead = { StripeSubscriptionCancellation(cancellation = null, extraordinary = null, withdrawal = WITHDRAWAL) }
-            val shown = launch { store.endingWebPlusChoices.shown.collect {} }
+            api.cancellationRead = { choices(withdrawal = WITHDRAWAL) }
+            val shown = launch { store.webPlusChoices.shown.collect {} }
             advanceUntilIdle()
             assertNotNull(
-                store.endingWebPlusChoices.state.value.value
+                store.webPlusChoices.state.value.value
                     ?.withdrawal,
             )
 
             api.cancelFailure = ApiException(ApiError.Unavailable, "CONFLICT", 409)
-            api.cancellationRead = { StripeSubscriptionCancellation(cancellation = null, extraordinary = null, withdrawal = null) }
+            api.cancellationRead = { choices() }
             store.cancelWebPlus(Choice.WITHDRAWAL)
             advanceUntilIdle()
 
             assertNull(
-                store.endingWebPlusChoices.state.value.value
+                store.webPlusChoices.state.value.value
                     ?.withdrawal,
+            )
+            shown.cancel()
+        }
+
+    @Test
+    fun keepingPlusIsSentWithTheSessionsTokenAndShowsThePlanRenewing() =
+        runTest {
+            val (_, store) = store(ana)
+            api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
+            api.cancellationRead = { choices(canResumeRenewal = true) }
+            val shown =
+                launch {
+                    launch { store.account.shown.collect {} }
+                    store.webPlusChoices.shown.collect {}
+                }
+            advanceUntilIdle()
+
+            api.accountRead = { subscribed(it.accountId, provider = "stripe") }
+            api.cancellationRead = { choices() }
+            val result = store.keepWebPlus()
+            advanceUntilIdle()
+
+            assertEquals(MutationResult.Done(Unit), result)
+            assertEquals(listOf("token-a"), api.kept)
+            assertNull(
+                store.account.state.value.value
+                    ?.account
+                    ?.subscription
+                    ?.cancelAt,
+            )
+            assertEquals(
+                false,
+                store.webPlusChoices.state.value.value
+                    ?.canResumeRenewal,
+            )
+            shown.cancel()
+        }
+
+    @Test
+    fun keepingPlusThatCantBeKeptAnymoreReadsThePlanAgain() =
+        runTest {
+            val (_, store) = store(ana)
+            api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
+            api.cancellationRead = { choices(canResumeRenewal = true) }
+            val shown =
+                launch {
+                    launch { store.account.shown.collect {} }
+                    store.webPlusChoices.shown.collect {}
+                }
+            advanceUntilIdle()
+
+            api.keepFailure = ApiException(ApiError.Unavailable, "CONFLICT", 409)
+            api.accountRead = { subscribed(it.accountId, provider = "stripe") }
+            api.cancellationRead = { choices() }
+            val result = store.keepWebPlus()
+            advanceUntilIdle()
+
+            assertEquals(409, (result as MutationResult.Failed).status)
+            assertTrue(api.kept.isEmpty())
+            assertNull(
+                store.account.state.value.value
+                    ?.account
+                    ?.subscription
+                    ?.cancelAt,
+            )
+            assertEquals(
+                false,
+                store.webPlusChoices.state.value.value
+                    ?.canResumeRenewal,
             )
             shown.cancel()
         }

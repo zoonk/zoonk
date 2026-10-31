@@ -39,6 +39,8 @@
   "subscription_canceled": "2c313ca7c9226365c042670ee9d69f37dbd27d79b0cfc0b698476c142d26ac86",
   "subscription_canceled_refund": "947ad9fd54b9835399d51b1eee4952db6fb6be4198293ed63f754052abe3e26d",
   "subscription_contact_support": "f935912efca2f6aafe4c74cf38881613f3a3416fde5ff5d9512224b5542f7e1a",
+  "subscription_deletion_no_refund": "ba9c3a82658332778ce45de506f72a872942f909c20919af4cf10469a096a583",
+  "subscription_deletion_refund": "5f663b94e5423d99302965b0aff2ea1de169054dc808e911482e500f657c3daf",
   "subscription_ending": "4d233eb21106acf3c5531fcbae2b468fd9b00578e6ce3e02c7912d2241a0457d",
   "subscription_ends_on": "98991f89f34d2368eee60736a58aae31a8d3679d98ffd1b91dcdfecb608fb443",
   "subscription_free": "82fd254ce7cc6c4d3e2e646705ff8728157c6c92c8ac3312be2bfe7e569dbdb3",
@@ -56,7 +58,9 @@
   "subscription_get_plus": "42bdb6871c324989090e2b058699d5c5e412d7928527087964f540b609d9086a",
   "subscription_get_refund": "bf9535a69a240fed5947f92349516d7c1bfd9513c752d141c26b57bbd7251c55",
   "subscription_hide_answer": "84ec3ea3757fe72b884def7b29bb462737e37d896da0b2cfa3c9e7a58322288a",
+  "subscription_keep_failed": "b18b86156727bd901031aa1b21f17ba28895ec13bbcddf5ea62d59d3f8dcc536",
   "subscription_keep_plus": "9b3c556e320390ae108b0abef0cd0028fc2282cc3088d7d662483ff0046064f6",
+  "subscription_keep_plus_description": "efea7de7aceb5a20e2a9fce754406c5b1281ebc2d96d82f53962499cf716b4db",
   "subscription_manage_google": "43873817c0e9c5b2ae86619ffadd00c2e94390bac3a7959546d23c1c78b1a510",
   "subscription_managed_apple": "7d4c8ad09615b02e1218915dfa8bcf62876cefb3fad526fb8210d2e15cb98263",
   "subscription_managed_google": "622ae547cfa37dd5f5356785784435b104ce330e866562f68c0a2bdfa5398131",
@@ -130,7 +134,7 @@
     <string name="subscription_cancel_at_period_end_refund">Conservas Plus hasta el %1$s. Te reembolsamos %2$s por los meses que aún no han empezado.</string>
     <!-- Stops the renewal, so Plus ends at the end of what's paid. German law (BGB § 312k) requires this button to read exactly "Jetzt kündigen" in German. -->
     <string name="subscription_cancel_confirm">Cancelar ahora</string>
-    <!-- Closes the cancel dialog without canceling. -->
+    <!-- Closes the cancel dialog without canceling, and turns a stopped renewal back on so Plus renews as before. -->
     <string name="subscription_keep_plus">Conservar Plus</string>
     <!-- The last line of the cancel dialog. -->
     <string name="subscription_cancel_email">Te enviaremos la confirmación por correo electrónico.</string>
@@ -139,6 +143,13 @@
     <string name="subscription_canceled_refund">Te reembolsamos %1$s al método de pago que usaste. Plus está cancelado. Te enviamos la confirmación por correo electrónico.</string>
     <string name="subscription_refund_still_open">Hasta el %1$s, aún puedes cancelar Plus de inmediato y recibir un reembolso completo.</string>
     <string name="subscription_get_refund">Obtener un reembolso completo</string>
+    <!-- Above the Keep Plus button, once the renewal of Plus bought on the web is stopped. -->
+    <string name="subscription_keep_plus_description">¿Cambiaste de opinión? Conserva Plus y se renovará como antes.</string>
+    <string name="subscription_keep_failed">No pudimos conservar tu suscripción a Plus. Inténtalo de nuevo o escribe a contacto@zoonk.com.</string>
+    <!-- Before deleting the account, what happens to Plus bought on the web. %1$s is the amount refunded, like "R$ 29,90". -->
+    <string name="subscription_deletion_refund">Tu suscripción a Plus termina de inmediato y te reembolsamos %1$s al método de pago que usaste.</string>
+    <!-- Before deleting the account, what happens to Plus bought on the web when nothing is refunded. -->
+    <string name="subscription_deletion_no_refund">Tu suscripción a Plus termina de inmediato, sin reembolso. No volveremos a cobrarte.</string>
     <!-- The cancel option the learner chose closed meanwhile, such as the 14-day refund. -->
     <string name="subscription_cancel_unavailable">Esa opción ya no está disponible.</string>
     <!-- Closes a message after canceling. -->

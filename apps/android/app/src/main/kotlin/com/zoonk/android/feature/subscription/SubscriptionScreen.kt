@@ -131,7 +131,11 @@ private fun Account(
     val scope = rememberCoroutineScope()
     val cancellation =
         viewModel(key = "web-plus-cancellation:$sessionKey") {
-            WebPlusCancellationViewModel(app.subscriptions::webPlusCancellation, app.subscriptions::cancelWebPlus)
+            WebPlusCancellationViewModel(
+                app.subscriptions::webPlusCancellation,
+                app.subscriptions::cancelWebPlus,
+                app.subscriptions::keepWebPlus,
+            )
         }
 
     WebPlusCancellationDialog(cancellation)
@@ -140,7 +144,7 @@ private fun Account(
         is LoadState.Loaded -> {
             val subscription = state.value.account.subscription
             if (subscription != null) {
-                CurrentPlan(subscription, navigator, cancellation, app.subscriptions.endingWebPlusChoices)
+                CurrentPlan(subscription, navigator, cancellation, app.subscriptions.webPlusChoices)
             } else {
                 Offer(app, navigator, hasAccount = true, isVisitor = false)
             }
@@ -184,7 +188,7 @@ internal fun CurrentPlan(
     PlusBenefits()
 
     if (provider == STRIPE) {
-        if (isEnding) WebPlusRefund(endingChoices, cancellation) else WebPlusCancelButton(cancellation)
+        if (isEnding) EndingWebPlus(endingChoices, cancellation) else WebPlusCancelButton(cancellation)
         return
     }
 
@@ -532,4 +536,4 @@ internal fun money(
 
 private const val GOOGLE = "google"
 private const val APPLE = "apple"
-private const val STRIPE = "stripe"
+internal const val STRIPE = "stripe"

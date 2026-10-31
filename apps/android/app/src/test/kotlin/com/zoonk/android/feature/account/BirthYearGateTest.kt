@@ -111,6 +111,17 @@ class BirthYearGateTest {
     private fun belowMinimumAge(minimumAge: Int) =
         ApiException(ApiError.Unavailable, "BELOW_MINIMUM_AGE", 422, buildJsonObject { put("minimumAge", minimumAge) })
 
+    private fun accountClosed(minimumAge: Int) =
+        ApiException(
+            ApiError.Unavailable,
+            "BELOW_MINIMUM_AGE",
+            422,
+            buildJsonObject {
+                put("minimumAge", minimumAge)
+                put("accountClosed", true)
+            },
+        )
+
     private suspend fun TestScope.gate(): BirthYearGate {
         val main = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
         lateinit var cache: AppCache
@@ -328,6 +339,50 @@ class BirthYearGateTest {
 
             assertTrue(sessions.state.value is SessionState.SignedOut)
             assertEquals(listOf("token-a"), sessionApi.revoked)
+            assertNull(gate.prompt.value)
+        }
+
+    @Test
+    fun aClosedAccountIsForgottenOnOkWithoutLoggingOutAndIsRemembered() =
+        runTest {
+            credentials.stored = StoredSession(AuthenticatedSession(ANA, "token-a", "local-a"))
+            val gate = gate()
+            api.refusals += accountClosed(13)
+
+            gate.answer(2020)
+            advanceUntilIdle()
+
+            assertEquals(AgeStop(13, now), stops.stop)
+            assertEquals(BirthYearPrompt.AccountClosed(13), gate.prompt.value)
+            assertTrue(sessions.state.value is SessionState.SignedIn)
+
+            gate.forgetClosedAccount()
+            advanceUntilIdle()
+
+            assertTrue(sessions.state.value is SessionState.SignedOut)
+            assertTrue(sessionApi.revoked.isEmpty())
+            assertNull(gate.prompt.value)
+        }
+
+    @Test
+    fun aClosedAccountsMessageStaysWhenARequestFindsItsSessionGone() =
+        runTest {
+            val ana = AuthenticatedSession(ANA, "token-a", "local-a")
+            credentials.stored = StoredSession(ana)
+            val gate = gate()
+            api.refusals += accountClosed(13)
+            gate.answer(2020)
+            advanceUntilIdle()
+
+            sessions.expire(ana)
+            advanceUntilIdle()
+
+            assertTrue(sessions.state.value is SessionState.SignedOut)
+            assertEquals(BirthYearPrompt.AccountClosed(13), gate.prompt.value)
+
+            gate.forgetClosedAccount()
+            advanceUntilIdle()
+
             assertNull(gate.prompt.value)
         }
 
