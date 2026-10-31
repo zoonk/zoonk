@@ -1,3 +1,5 @@
+import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { listSubjectNames } from "../../library/exams/subject-names";
 import { findNamingSections } from "../_utils/name-match";
 import { type MockCandidate } from "./mock-plan";
 
@@ -9,16 +11,25 @@ export function mapAreasToSections({
   allSections,
   candidates,
   partOf = new Map(),
+  structure = null,
 }: {
   allSections: readonly NamedSection[];
   candidates: readonly MockCandidate[];
   partOf?: ReadonlyMap<string, string>;
+  structure?: ExamStructure | null;
 }): AreaSections | null {
   const sections = allSections.flatMap((section) => (section.name ? [section.name] : []));
   const areas = new Set(candidates.flatMap((candidate) => candidate.area ?? []));
 
   const sectionsOf = (area: string) => {
-    const named = findNamingSections({ name: area, sections });
+    const named = [
+      ...new Set(
+        listSubjectNames({ area, structure }).flatMap((name) =>
+          findNamingSections({ name, sections }),
+        ),
+      ),
+    ];
+
     const whole = partOf.get(area);
     return named.length === 0 && whole ? findNamingSections({ name: whole, sections }) : named;
   };

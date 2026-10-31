@@ -10,6 +10,7 @@ import {
 } from "../exams/mocks/mock-format-mix";
 import { listAskedSkills } from "../library/exams/format-sections";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
+import { listSubjectNames } from "../library/exams/subject-names";
 import { ANY_NUMBER } from "../library/items/_utils/numeric-entry";
 import { takesNumericAnswers } from "../library/items/numeric-skills";
 import { listPastQuestionExamples } from "../library/items/past-question-examples";
@@ -156,9 +157,10 @@ export async function pickExamFormatSkills({
 
   const exam = toItemExam(blueprint);
 
+  const structure = readBlueprintContent(blueprint).structure;
 
   const picks = formats.flatMap((format) =>
-    listAskedSkills({ format, skills })
+    listAskedSkills({ format, skills, structure })
       .filter((skill) =>
         needsAnswerFormat({ answerFormat: format.answerFormat, blueprintId: blueprint.id, skill }),
       )
@@ -171,7 +173,7 @@ export async function pickExamFormatSkills({
       .flatMap(({ area, items: _items, ...skill }) => {
         const own = getMockWritingFormat({
           format,
-          names: area ? [area] : [],
+          names: area ? listSubjectNames({ area, structure }) : [],
         });
 
         return own ? [{ answerFormat: format.answerFormat, skill, style: own.style }] : [];

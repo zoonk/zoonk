@@ -1,6 +1,8 @@
 import { apportion } from "@zoonk/utils/apportion";
 import { interleave } from "@zoonk/utils/interleave";
+import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { listAskedSkills } from "../../library/exams/format-sections";
+import { listSubjectNames } from "../../library/exams/subject-names";
 import { type MockFormat, getMockWritingFormat } from "./mock-format-mix";
 import {
   type MockCandidate,
@@ -131,18 +133,20 @@ export function getMockQuestionsShortfall({
   option,
   plan,
   skills,
+  structure = null,
 }: {
   candidates: readonly MockCandidate[];
   mix: readonly MockFormat[];
   option: { questions: number };
   plan: MockPlan;
   skills: readonly MockWritingSkill[];
+  structure?: ExamStructure | null;
 }): MockFormatShortfall[] {
   const shortFormats = new Set(listShortFormats({ candidates, mix, option, plan }));
   const fresh = candidates.filter((candidate) => !candidate.answered);
 
   return countFormats({ candidates, mix, option, plan }).flatMap(({ format, needed, wanted }) => {
-    const eligible = listAskedSkills({ format, skills }).filter((skill) =>
+    const eligible = listAskedSkills({ format, skills, structure }).filter((skill) =>
       canWrite({ candidates, format, skill }),
     );
 
@@ -176,7 +180,7 @@ export function getMockQuestionsShortfall({
     const scoped = written.flatMap((skill) => {
       const own = getMockWritingFormat({
         format,
-        names: skill.area ? [skill.area] : [],
+        names: skill.area ? listSubjectNames({ area: skill.area, structure }) : [],
       });
 
       return own ? [{ format: own, questionsPerSkill: target - holds(skill), skill }] : [];

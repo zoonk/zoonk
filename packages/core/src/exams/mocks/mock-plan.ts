@@ -123,6 +123,7 @@ export function planMock({
     allSections,
     candidates,
     partOf: getPartOfAreas(subjectShares),
+    structure,
   });
 
   const byArea = areaSections !== null;

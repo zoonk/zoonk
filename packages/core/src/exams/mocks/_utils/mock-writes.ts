@@ -62,8 +62,10 @@ function listWrites({
   optionSkills,
   pick,
   planned,
+  structure,
 }: {
   mix: ReturnType<typeof getMockFormatMix>;
+  structure: ExamStructure | null;
   optionSkills: readonly MockWritingSkill[];
   pick: AnytimeMockPick;
   planned: Awaited<ReturnType<typeof planFromBank>>;
@@ -75,6 +77,7 @@ function listWrites({
       option: pick.option,
       plan: planned.plan,
       skills: optionSkills,
+      structure,
     });
   }
 
@@ -109,5 +112,11 @@ export async function planMockWrites({
     return null;
   }
 
-  return listWrites({ mix: getMockFormatMix(setup.structure), optionSkills, pick, planned });
+  return listWrites({
+    mix: getMockFormatMix(setup.structure),
+    optionSkills,
+    pick,
+    planned,
+    structure: setup.structure,
+  });
 }
