@@ -108,6 +108,7 @@ describe("line crossing chart", () => {
 
   it("keeps the handles off the line names at the top of the range, in large text", async () => {
     document.documentElement.style.fontSize = "200%";
+
     onTestFinished(() => {
       document.documentElement.style.removeProperty("font-size");
     });
