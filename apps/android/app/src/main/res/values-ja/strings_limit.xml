@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "limit_calls_free_day": "f9341d853b585d0a506777782e156b77902e8db2a25b49ccb5d2dc858b18e255",
+  "limit_calls_free_month": "ab13310608ab2f96cedf91c1260d69654b091db76e3af20ddb1caa618c24ad6c",
+  "limit_calls_guest": "27966f7073270fdd61caa970e2f788bbe5038aec7f46364190604f6ef4792a5d",
+  "limit_calls_plus_day": "28200e7d3fabdc75853bb31b9ab73aa7a7547a010408e481f5247212387fdc81",
+  "limit_calls_plus_month": "81d4394d1e76e2a16e93b6ba2de1535cb0023a51344639216803510ebc67d8d2",
+  "limit_create_account": "1665e96a9f21bccdf2417a64da61dfd3abf6c5345c3c198038196246e7811ba0",
+  "limit_help_free_day": "bec7ba3976382356373d2bcc57acd860bac1d060c4e80a2be2120566d61d1042",
+  "limit_help_free_month": "2f97fb6e7dbc021cd78feee0c0addb55e83dd6359c425b5040a4587b5f52b9a6",
+  "limit_help_guest_day": "0f8e3dd56b5ef7058c5659556674ed858a67ba278f7348018c25e79b7b78c0a8",
+  "limit_help_guest_total": "1fbf32dedc73ef15582d4f31539d529959660e3a288253d831d51db22e05d1eb",
+  "limit_help_plus": "6929986bb4b70aa01fae93eda0c19b0aaa09539c3a74528b1bff80a5c736c481",
+  "limit_lessons_free_day": "c84e477cce1043c9d0ad22f481a5dad9d3d45b26bc244123553343295ed8c1ae",
+  "limit_lessons_free_month": "88c4b52cc4edb63829dbbfb500f2e07752d0974ec3cf441d1777ec814cad8f95",
+  "limit_lessons_guest": "9a3413e3cb09d890c9dcff637f8abe899c2078bbf131b3a3ac9e4221b5bdc4e2",
+  "limit_lessons_plus": "65997e4f40ac2b42e8f104dd23a7b17e588b6e62453939349a6074ae9047b5fe",
+  "limit_mind_maps_free_day": "b360621b0d1010b4e6cc50405c54301772d8a3873552f81f76c701de44c28e5c",
+  "limit_mind_maps_free_month": "be08d83a38702e38c9b5614b06844b8a3258c20304311e3a905fd158a8b37a60",
+  "limit_mind_maps_guest": "30a0d924aac2056f65cc802228769023e668e22bee4690eeaf87c38b83f7d40f",
+  "limit_mind_maps_plus": "ea5647892a39dbe76dbdd4e620acdcd50e177bf26cac48b2fb4bc82baa9bedef",
+  "limit_outlines_free_day": "15787c6f8b3500979e7fe422cee1d47b85e202a14c191d2f72db8c1e8da22726",
+  "limit_outlines_free_month": "259aecd2e43113b8dc3decfdc2ecf9170a1596754d5a9a3f6fabe0bf6853549c",
+  "limit_outlines_guest": "246af2b330af523ae9418e3c18871bc45a48ea72122472de0aa4bc4f52358ca6",
+  "limit_outlines_plus": "d7211d973356a75659a630dfe210efa61eeab7e158ffac6954df2fb5fc7c7c93",
+  "limit_see_plus": "2d04e739c2e4e2604efaae990a2672a893e71415191f12382975a7db109c3f68",
+  "limit_sign_up_required": "8c3e829090bc97ac7f4c549ef17fa58af03420c0bbfe4ec0367d85a05c992340",
+  "limit_slow_down": "0b916baa542b56e4c7f48b082275700757352993aa19155fa8a6975226bca236"
+}
+-->
+<resources>
+    <string name="limit_create_account">無料アカウントを作成する</string>
+    <string name="limit_see_plus">Plusの詳細を見る</string>
+    <string name="limit_slow_down">少し休んでから、もう一度お試しください。</string>
+    <string name="limit_sign_up_required">続けるには、無料アカウントを作成してください。</string>
+    <string name="limit_help_guest_total">アカウントなしで利用できる無料のヘルプを使い切りました。無料アカウントを作成すると、引き続き利用できます。</string>
+    <string name="limit_help_guest_day">今日の無料のヘルプを使い切りました。無料アカウントを作成すると、引き続き利用できます。</string>
+    <string name="limit_help_plus">今日のヘルプを使い切りました。明日また利用できます。</string>
+    <string name="limit_help_free_month">今月のヘルプを使い切りました。来月また利用できます。Plusに登録すると、今すぐ続けられます。</string>
+    <string name="limit_help_free_day">今日のヘルプを使い切りました。明日また利用できます。Plusに登録すると、今すぐ続けられます。</string>
+    <string name="limit_lessons_guest">アカウントなしで試せるレッスンはここまでです。無料アカウントを作成すると、学習を続けられます。</string>
+    <string name="limit_lessons_plus">今日の新しいレッスンはここまでです。明日また受けられます。</string>
+    <string name="limit_lessons_free_month">今月の新しいレッスンはここまでです。来月また受けられます。Plusに登録すると、今すぐ続けられます。</string>
+    <string name="limit_lessons_free_day">今日の新しいレッスンはここまでです。明日また受けられます。Plusに登録すると、今すぐ続けられます。</string>
+    <string name="limit_mind_maps_guest">アカウントなしで作れるマインドマップはここまでです。無料アカウントを作成すると、もっと作れます。</string>
+    <string name="limit_mind_maps_plus">今日作れるマインドマップはここまでです。明日また作れます。</string>
+    <string name="limit_mind_maps_free_month">今月作れるマインドマップはここまでです。来月また作れます。Plusに登録すると、今すぐ続けられます。</string>
+    <string name="limit_mind_maps_free_day">今日作れるマインドマップはここまでです。明日また作れます。Plusに登録すると、今すぐ続けられます。</string>
+    <string name="limit_outlines_guest">アカウントなしで事前に見られるトピックはここまでです。無料アカウントを作成すると、もっと見られます。</string>
+    <string name="limit_outlines_plus">トピックを事前に見られるのは、今日はここまでです。明日また見られます。</string>
+    <string name="limit_outlines_free_month">トピックを事前に見られるのは、今月はここまでです。来月また見られます。Plusに登録すると、今すぐ続きを見られます。</string>
+    <string name="limit_outlines_free_day">トピックを事前に見られるのは、今日はここまでです。明日また見られます。Plusに登録すると、今すぐ続きを見られます。</string>
+    <string name="limit_calls_guest">無料アカウントで会話の練習ができます。アカウントを作成して、声に出して練習しましょう。</string>
+    <string name="limit_calls_plus_month">来月また会話の練習ができます。</string>
+    <string name="limit_calls_plus_day">明日また会話の練習ができます。</string>
+    <string name="limit_calls_free_month">来月また会話の練習ができます。Plusに登録すると、もっと練習できます。</string>
+    <string name="limit_calls_free_day">明日また会話の練習ができます。Plusに登録すると、もっと練習できます。</string>
+</resources>

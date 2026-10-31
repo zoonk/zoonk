@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "missions_after_challenge": "2f1d1dd90db8b536fa317564b03355749e93fda8ea1394d3de8274b49c748216",
+  "missions_after_lessons": "07c1d3152fddfb741fddd5bd51e0df1f03e9a6582d537faccae172dec9821f21",
+  "missions_already_earned": "31dab12857109886e158dbaf87d6ba6dc67d014c5c809779fb8f0e010c0e0fb1",
+  "missions_ask_anything": "1328d084c3678faf267bb87981007aab406974cbf4a0358a98fe7ce904af9c30",
+  "missions_ask_buddy": "b54129eb42dbf7e755f6d38189046ef71ef0357ef77707643a404924421b7044",
+  "missions_brain_power": "593ef6bdccfb1af5d62dff51c7f18b8dea97c64c02b1828250829f8264a6061d",
+  "missions_brain_power_about": "b564a338c80b926da08a413e03852ec69dbce2041a9610b8d8115ef7d5b32d5c",
+  "missions_brain_power_total": "5c91f0c46ddca162377f6774096288ac4bd473b33a40a289d3aa89f64fce0a33",
+  "missions_call": "57d262ed3dada31bf0b2e1ff5e11da916c05a0f43577207ae9bd987e4177b94d",
+  "missions_challenge": "fd2d76fa5c652bb91b2be5c11c1c4249fa1136920d8a37da0eb2c39bb214f749",
+  "missions_count": "a9ac67c08b3ec802d6d6e6775565059f355759e0f46e4fa4118718fcd87bb9bb",
+  "missions_done": "f71125cf59d4a696d2b3ac4c200c16cd6bd53449d22345bb33aa410d61457aa9",
+  "missions_due_today": "4e18fdfcda94d0cbd073e628cdcdcbbc523fbe18db97553b3a1c29d75e9b0cfe",
+  "missions_earned": "b8bd11f10b75010eb9581995455429503f2d4112439308e19d3fe234c40100c7",
+  "missions_essay": "48d329f7a63fc979fdd92985b18a448a944def054b0ebe18f625429537343758",
+  "missions_estimate": "812983392065bcf1fc8d07d6c74cde93527b9230831a05bb7a9234a88b728e1a",
+  "missions_finish_chapter": "9d9dcfc9a39679f9e2af4bccad47629fdf19d791eae5544a99750c037c8f9eb2",
+  "missions_finish_chapter_named": "9e0b35334ff030799059a5a9784bc17a26187532e50ffdd7e5c2a7a3f7f14b7d",
+  "missions_finish_new_lesson": "58a2d450a4e461df96fcdb4b6b75179cdd33426711df47ce9a380ec4a641c3ee",
+  "missions_fix_a_mistake": "3137dd90538062771274467514d446390c7734e5058dc6998c6e76c304290dc7",
+  "missions_fix_mistakes": "74e14256cf4e8eebd1adf3212eabf0996df4274641ac46c786778b9f22918c21",
+  "missions_from_notebook": "dca3d38199a89e50a1c8c3e4d2a5fb6a6436f36a5ddc091f6073b0a0c78bbf6f",
+  "missions_just_done": "6513d9d2c1f68c59c091643556fefd34131d029dbf26d2dc833362864e2dcfdf",
+  "missions_last_lesson": "0628bfb66928f45c0728ad87679c62f14c205819b04a5db9d81edc532e927da8",
+  "missions_last_lessons": "003107ee10bcf347c35d257696b4716f3e5fb5f8f10001a3d8166791cf33b714",
+  "missions_left": "8a9ed625c1adc3a71bd9ff03633a41ac740cfe56230c4f7446439800f0f83ed3",
+  "missions_lesson_and_more": "e16b376a79b420662ee2d9be4b2c8b456a661c6fc9d33860fe4cce06763b8378",
+  "missions_mock": "b7b7e1859d65eb3c00554232c62d90edd8af795289965766a4557bd7cce17f54",
+  "missions_moment_all_done": "dbd505f319c1e3b982a3c26ec27c06e34d3e8eddc51a42d066ab3b51693f6072",
+  "missions_moment_done": "a7e37da84d316f4f07df4449bee3a2752c04fdfd227a93c0c324c689a8ac9a8c",
+  "missions_moment_more": "56f47399383bc974539fb6a90984ea732d6e9bcc1dce10c7d5469d87b4e26ca1",
+  "missions_moment_one_done": "ce7ef18cf995e85d5b62593c278810e8e227e627ae1264b40ef6d67d2b0a8568",
+  "missions_most_room": "477936add9dc0bb035d561e18d91c4416df355ecc75eb730f7d15b6ac7a78658",
+  "missions_open_buddy": "1c6a361b17ca7d4a1762148d6802e6fe1eda80bcde7c4f4ca7994fb22ecd3851",
+  "missions_open_call": "044e0275aaf2d17e4601436e6dbd3c36cbf8e286d724a0c5d54b3596f86464d5",
+  "missions_open_challenge": "3693b3a1db68bb6cdf53cd2e2e3723da1b3fd2dcb1977dbd8a36b6f365b25239",
+  "missions_open_chapter": "ec142e4547a0ef1406a7d5ac766756cfcb1c60b8af28f32d9f42c607652ab4f1",
+  "missions_open_essay": "14dc40d4d4c5b61828986211f75af5b4655e96445931314080e7550686fc2012",
+  "missions_open_mistakes": "b335cedf3c49c80c2b1178b9b66f3462fd8b161d2c91b0e6a55c02a440e899fa",
+  "missions_open_mock": "f233f7c5e71b2b639352811d73b0fd76cc5e88de7a14f964a2ae51b56067878c",
+  "missions_open_mock_chooser": "dba0b7123e3c113349743c12bd3bf50a7bc5e360ffb2244fde011e9a079c4241",
+  "missions_open_new_lesson": "e109617f816afbe3bcc5c8016104b6e72b617e49fb38cdb07f1fa8ef86365338",
+  "missions_open_pattern": "42f71baa9ca25becc156bd70486753c28985044d98cb1971ac4e2a136058452d",
+  "missions_open_practice": "8e1807e0f8e10dd11adaaa12c91a483220d0e9ad8c1623ec06ca08c933f8345e",
+  "missions_open_pronunciation": "1393b41f4ba2c63eb630fc9a879448043cc6e462f3669840de46cff7e9b644e9",
+  "missions_open_review": "974660eb0d9dcf8fec6b8d80b789aca20774835d7c0f7e6365521ae43d705c3e",
+  "missions_pattern": "9a98541f74e175d2f0e8e85363a723b5a64cff510cf7859c72e74a2c5c6a0f2e",
+  "missions_points": "f918a0510982795cac966fcc68c9eaa122fe05e07c589f1dd24010b0e8741fe9",
+  "missions_practice": "06c902decc555480c6764192e349219e7e4c97c01aeb499cda5157d034e85368",
+  "missions_practice_area": "abc283186e5d1bac93b5950bbceefede30d7ca1d067ff2bf495e8a89e29bfbbf",
+  "missions_progress": "95b1abeac5c8ca9dd43e18f1ad5b823ee7561716c607824277f86c8495435d7f",
+  "missions_pronunciation": "91a90b288e648cb1f24e1ca936f637681747d94a2d44302b8176007714bc1701",
+  "missions_quick_call": "4924ae6c276f073b1e32364ee8bc5edb886df2a064b38df7a6f4f9e8d27a738e",
+  "missions_quick_call_unit": "dfd42020c8d63691eb193d8cb612eb9136e0caa3021464683090a0946b28491b",
+  "missions_rematch": "81deba1de3e3e4a5580ee8d926f4c21b51761a5a70720fb21ed4adfa4adc5f83",
+  "missions_review": "ee2626e6975f5cce59efe4912d33d10068fabce9fe0e17225e11f6140943280b",
+  "missions_something_new": "4154f7870d66674cb4e5bd21d4bd5ba7275ac4b6a2e8142e9c4e9a5846fefc68",
+  "missions_title": "ceef5c7a94a48820a2d61c0eb77e180f07e574114fa164d74e3ea06fd42c133d",
+  "missions_weekly_challenge": "651f58528afa0e195a4a0c5b9ec5d5c1680bd502e4027483a1877441e54da68c"
+}
+-->
+<resources>
+    <string name="missions_title">今日のミッション</string>
+    <string name="missions_done">ミッション達成</string>
+    <!-- %1$s is a formatted number of points. -->
+    <string name="missions_earned">脳力を+%1$s獲得しました。</string>
+    <string name="missions_already_earned">今日の脳力+%1$sは獲得済みです。</string>
+    <plurals name="missions_count">
+        <item quantity="other">%d個のミッション</item>
+    </plurals>
+    <plurals name="missions_left">
+        <item quantity="other">残り%d個</item>
+    </plurals>
+    <string name="missions_moment_all_done">今日のミッションをすべて達成しました！</string>
+    <string name="missions_moment_one_done">ミッションを達成しました！</string>
+    <plurals name="missions_moment_done">
+        <item quantity="other">%d個のミッションを達成しました！</item>
+    </plurals>
+    <!-- %1$d is how many missions are left, %2$s the day's bonus, such as 50. -->
+    <plurals name="missions_moment_more">
+        <item quantity="other">あと%1$d個で脳力+%2$s</item>
+    </plurals>
+    <string name="missions_just_done">たった今達成</string>
+    <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->
+    <string name="missions_progress">%1$s個達成、全部で%2$s個</string>
+    <string name="missions_brain_power">脳力</string>
+    <!-- %1$s is a formatted number of Brain Power points: "+50". -->
+    <string name="missions_points">+%1$s</string>
+    <string name="missions_brain_power_about">学んだことを表すポイントです。増えると帯のランクが上がり、相棒も育ちます。問題への回答やレッスン、チャレンジで増え、今日のミッションをすべて終えるとさらに+%1$sを獲得できます。</string>
+    <string name="missions_brain_power_total">現在の脳力：%1$s</string>
+    <string name="missions_review">復習</string>
+    <string name="missions_something_new">新しいレッスンを受ける</string>
+    <!-- %1$s is a chapter's title. -->
+    <string name="missions_finish_chapter_named">「%1$s」を終える</string>
+    <string name="missions_finish_chapter">章を終える</string>
+    <string name="missions_rematch">トリックスターに再挑戦する</string>
+    <string name="missions_challenge">トリックスターに挑む</string>
+    <string name="missions_weekly_challenge">週間チャレンジ</string>
+    <string name="missions_mock">模試を受ける</string>
+    <string name="missions_essay">書く練習をする</string>
+    <!-- A verb: a mission to practice. -->
+    <string name="missions_practice">練習する</string>
+    <string name="missions_fix_a_mistake">間違いを1つ直す</string>
+    <plurals name="missions_fix_mistakes">
+        <item quantity="other">間違いを%d件直す</item>
+    </plurals>
+    <!-- A mission: practice a kind of mistake the learner keeps making. -->
+    <string name="missions_pattern">ミスの傾向に合わせて練習する</string>
+    <string name="missions_pronunciation">発音</string>
+    <string name="missions_call">会話する</string>
+    <!-- %1$s is the learner's buddy's name. -->
+    <string name="missions_ask_buddy">%1$sに質問する</string>
+    <!-- %1$s is a skill area's title. -->
+    <string name="missions_practice_area">%1$sを練習する</string>
+    <string name="missions_after_lessons">今日のレッスンを終えたら</string>
+    <string name="missions_after_challenge">前のチャレンジが終わった後</string>
+    <string name="missions_from_notebook">間違いノートから</string>
+    <string name="missions_due_today">今日が復習日</string>
+    <!-- %1$s is a language unit's title. -->
+    <string name="missions_quick_call_unit">短い会話 · %1$s</string>
+    <string name="missions_quick_call">短い会話</string>
+    <string name="missions_ask_anything">今日のレッスンのことなら何でも</string>
+    <string name="missions_last_lesson">最後のレッスンは今日の学習計画に入っています</string>
+    <plurals name="missions_last_lessons">
+        <item quantity="other">最後の%dレッスンは今日の学習計画に入っています</item>
+    </plurals>
+    <!-- %1$s is a lesson's title; %2$d counts the chapter's other lessons left. -->
+    <plurals name="missions_lesson_and_more">
+        <item quantity="other">%1$s（ほか%2$dレッスン）</item>
+    </plurals>
+    <string name="missions_finish_new_lesson">今日の新しいレッスンを終える</string>
+    <string name="missions_most_room">いちばん伸びしろのある分野</string>
+    <!-- %1$s is a duration, such as "10 min"; the tilde marks an estimate. -->
+    <string name="missions_estimate">約%1$s</string>
+    <!-- What TalkBack says a tap on a mission does: "Double tap to go to today's review". -->
+    <string name="missions_open_review">今日の復習に進む</string>
+    <string name="missions_open_new_lesson">今日の新しいレッスンに進む</string>
+    <string name="missions_open_chapter">この章の次のレッスンに進む</string>
+    <string name="missions_open_challenge">チャレンジに進む</string>
+    <string name="missions_open_mock_chooser">模試を選ぶ</string>
+    <string name="missions_open_mock">今日の模試に進む</string>
+    <string name="missions_open_essay">今日の小論文に進む</string>
+    <string name="missions_open_practice">今日の練習に進む</string>
+    <string name="missions_open_mistakes">間違えた問題を練習する</string>
+    <string name="missions_open_pattern">ミスの傾向を見る</string>
+    <string name="missions_open_pronunciation">発音練習に進む</string>
+    <string name="missions_open_call">会話を選ぶ</string>
+    <!-- %1$s is the learner's buddy's name. -->
+    <string name="missions_open_buddy">%1$sに会いに行く</string>
+</resources>

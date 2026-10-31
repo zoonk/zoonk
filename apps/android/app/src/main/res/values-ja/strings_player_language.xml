@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "player_language_all_matched": "979c6a3657ba408df82cbaee3139920534f3551862c3da6358aac4e1fc0b2654",
+  "player_language_alphabet": "ed332a1d746d3187e62b573b90670d5af66cad5769c65140c555a99a782a4254",
+  "player_language_blank": "4ca529f649657d9a7264b8f016c773cfea16b502b866b18c4614d80043c3bb09",
+  "player_language_blank_checked": "0650f887c8d207896f306f79b39edb891bd5a89789e891ba2942e212a614f13b",
+  "player_language_blank_filled": "83e915343b068bd76afc3848434f567232c05bbd5cbfe37a5cae13ced6e9dd80",
+  "player_language_checked_word": "d7daad9e0c09a5a5c3a6d2fd533de512ebac55552e8d998de42d4e7508e0bc46",
+  "player_language_correct": "b1266e98b694d95ebb3d03232cb70e078ea89b4a9f0f8c1e29ca6f68827f5317",
+  "player_language_incorrect": "f5957f32578b3b2eff195d24575f9aa594f3f146cbd07d0ddd2856ebc23c6a50",
+  "player_language_match_the_pairs": "e06b5cb09b4ed42251b6b01c52f2460fe4479384afc7fd3ec7660fce1d8d1258",
+  "player_language_matched": "68703df290d8f71780f196e374ad9786a4aa49338d80e096088f50cb9b7228e0",
+  "player_language_move_earlier": "519e95c7694aa18e366e0a63ba2e2e2a73b55149dee4787163800ebd921e008a",
+  "player_language_move_later": "478939e9424653fa135ecf7f0fdf43e360a3edafaa1295144f1d460e0e6eed82",
+  "player_language_not_a_pair": "277ccfef30dd77de0836255c3d91aefa01eadeb76bc2fa15516f1c7c49d6d697",
+  "player_language_pick_words": "e3f016c63f67dd907141e09e0b5b4f5fc9f081f58d1b5cf5c52d6a4883ae958d",
+  "player_language_play": "5cbeafaf588c0ddbd3f50a0c1223d4ffd0b90ce7872a522e0fd621ffa7a1e418",
+  "player_language_play_pronunciation": "abff9aaea7929f84830216c4265bb3a498a30b1a3e3b885103da4c472331fa00",
+  "player_language_position": "1bd6f54ab6d0cdc1a75df3f0af59babc955cf6be8eb323bf25c38688c132b4d2",
+  "player_language_pronunciation_tip": "c984919ac2648e7ae4ff16c0baf210285fa6e0db6f6e97798e5641073ad2028d",
+  "player_language_remove": "e8acaa5d0b8cf3247ba6d9008fa65e0968867ff83d29bda46fc47b550b8a32b7",
+  "player_language_selected": "364d89f15b8c6cfab07122a891b65e3b5b12f84b42511fa180336e7c2a5d9c86",
+  "player_language_show_translation": "7a8235298a2724ab73132769d092e4fb65e0d77c03ffec9462b4d9e511cb884f",
+  "player_language_stop": "6652de62dcd7d813962f1be22b81d9d3a29013aace3d2a05e074a17527d4c731",
+  "player_language_translate": "45f858723b695f4bb25b862bd35e723fd2ae511231355594367f650a07cef812",
+  "player_language_usage": "bedaddf0b6561946b11938cc7ae4367bbe03835bca1251628accb0196a0fc2ab",
+  "player_language_vocabulary": "8f07ac1c4ead35a8b88c3f03a9976fcb1d87c5b02e099d7343d31413d55009fd",
+  "player_language_what_do_you_hear": "b9c5ee95c551988f327ce366c2c9fd61748d9b1fdb7ea5a7edd7ed5225011024",
+  "player_language_which_means_this": "edc273518aff589ae07eb807fd5259b8b435e6bd3954b864a564aef458f044b8",
+  "player_language_word_bank": "82cf95fc053d5f1aa17616d03179080834ff6905783ddd66ab8fbdd86de1c37f",
+  "player_language_your_answer": "913d14ae2051aaf0529606c6e79a985166ee26f086135130a388d29cc6e4bff2"
+}
+-->
+<resources>
+    <string name="player_language_translate">訳してください</string>
+    <!-- Shown over a word to pick its match when the lesson is in the learner's own language. -->
+    <string name="player_language_which_means_this">同じ意味のものはどれですか？</string>
+    <string name="player_language_what_do_you_hear">何と聞こえますか?</string>
+    <string name="player_language_play">再生</string>
+    <!-- Button that stops the sentence playing, a short label like a media player's Stop. -->
+    <string name="player_language_stop">停止</string>
+    <string name="player_language_play_pronunciation">発音を再生する</string>
+    <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->
+    <string name="player_language_vocabulary">語彙：%1$s</string>
+    <!-- Screen reader name of an alphabet screen; %1$s is the letter. -->
+    <string name="player_language_alphabet">文字：%1$s</string>
+    <!-- Read before a note on how a word is used. -->
+    <string name="player_language_usage">使い方：</string>
+    <!-- Read before a tip on how to say a word. -->
+    <string name="player_language_pronunciation_tip">発音のコツ：</string>
+    <string name="player_language_word_bank">単語の選択肢</string>
+    <string name="player_language_your_answer">選んだ答え</string>
+    <string name="player_language_pick_words">単語を選んで答えを作ってください</string>
+    <!-- Screen reader name of a placed word; %1$d is its place in the answer, %2$s the word. -->
+    <string name="player_language_position">%1$d番目：%2$s</string>
+    <!-- Screen reader name of a checked word; %1$s is the word, %2$s says whether it's correct. -->
+    <string name="player_language_checked_word">%1$s。%2$s。</string>
+    <string name="player_language_correct">正解</string>
+    <string name="player_language_incorrect">不正解</string>
+    <!-- Screen reader action that moves a placed word one place earlier in the answer. -->
+    <string name="player_language_move_earlier">1つ前に移動する</string>
+    <!-- Screen reader action that moves a placed word one place later in the answer. -->
+    <string name="player_language_move_later">1つ後ろに移動する</string>
+    <!-- Screen reader action that shows a word's translation. -->
+    <string name="player_language_show_translation">訳を表示する</string>
+    <!-- Screen reader name of an empty blank; %1$d is its place in the sentence. -->
+    <string name="player_language_blank">空欄%1$d</string>
+    <string name="player_language_blank_filled">空欄%1$d：%2$s</string>
+    <!-- Screen reader action that takes a placed word back to the word bank. -->
+    <string name="player_language_remove">外す</string>
+    <!-- %1$d is the blank's place, %2$s the word, %3$s says whether it's correct. -->
+    <string name="player_language_blank_checked">空欄%1$d：%2$s。%3$s。</string>
+    <string name="player_language_match_the_pairs">ペアを作ってください。</string>
+    <string name="player_language_all_matched">すべてのペアができました。続けるには「答え合わせ」を押してください。</string>
+    <!-- Screen reader state of a word already paired with its match. -->
+    <string name="player_language_matched">ペアになっています</string>
+    <!-- Screen reader state of the word picked to pair next. -->
+    <string name="player_language_selected">選択中</string>
+    <!-- Said by the screen reader when two picked words don't go together. -->
+    <string name="player_language_not_a_pair">正しい組み合わせではありません</string>
+</resources>

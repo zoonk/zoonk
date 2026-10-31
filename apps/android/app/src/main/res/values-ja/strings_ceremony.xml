@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "ceremony_belt": "7bbf33c7b70f5aae3e836a57bc8e92e0da4dd52a124a0d6485bdf54a633f4338",
+  "ceremony_belt_detail": "d991c97086aeaa6bd1878667293f311cd8f0f51b26afd2df3299c34f5661d703",
+  "ceremony_belt_reached": "eeaaa4b42ef1444085a7aa8c3ed942174bbe72f938b64ad8a49d700ad011c27c",
+  "ceremony_continue": "f8965171cabf635fe92b8b6dff50486117b4327253c6648809e96b7c153b3afd",
+  "ceremony_glasses_aviator": "d013355ac62ec8522018fac238267eabc7dfe6460f285947d6ddb8383804d9d7",
+  "ceremony_glasses_aviator_detail": "0088798612df4ae76a9b206f5a7d2a0ecf72aaf7297da394001f5340c69644af",
+  "ceremony_glasses_cat_eye": "b2b37b24fc12639c848c0b18139de5050d59c86c17d38224e335006392cbe4d5",
+  "ceremony_glasses_cat_eye_detail": "dadf02fbbed03a4e60c0957757ada7ec26338065b40ea645bc440400c5d9bf7f",
+  "ceremony_glasses_monocle": "c13ce5d8e38b3616840f00f86b7f2d961360a3f5f30ba6f66ca11b026536616e",
+  "ceremony_glasses_monocle_detail": "0e2188094f9bff9e6a09543ec955d9b4f455420cc0cf9db350ccb68c826c7a80",
+  "ceremony_glasses_new": "011f65bf62195276b2186e6b281b6d2dbe4e4e307d2705b3a9d6cab45332d569",
+  "ceremony_glasses_new_detail": "bd1d063da7cfa1bb0fd2c02c0c6490a936018e293b4778a2579868092849e861",
+  "ceremony_glasses_retro": "ebe600c7203d57f2719d930627cfe415ecfb5de752985ae919b063a9d47240bb",
+  "ceremony_glasses_retro_detail": "cbbcdfeddb5a3545484973f5673428a3de13c230b0210f60620f4aa636efb47e",
+  "ceremony_glasses_star": "72d57a2594bc4c8640d1c22fdf4fd67b030a7044a1001ce91646d7c97b84ecb1",
+  "ceremony_glasses_star_detail": "992d672298888bc80e8b65dff5cad18e806227c3880e5316b2a0e4172ccc631d",
+  "ceremony_grew_up": "7fc6ff0c0f030d8c0240ba8e104fe8e765b7f908646bb65cfa372dd624f82978",
+  "ceremony_new_belt": "c9b0fd038254298e62b9434cc214237e8021cac939ba9dac59c0f74b6579c4d9",
+  "ceremony_not_now": "16bd8b943e751ae0aa78a75fd05387a4e2cfb5bc841b438f87e654a3fdc66d52",
+  "ceremony_stage_adult": "3d1a0e0dcf2877b84491cd9e235250fb4390c44f33539b168efe22d794134610",
+  "ceremony_stage_young": "ac16fb90cb98e881488aab6d8e84d40e41d297f32283d2f08a55ac47476eba5f",
+  "ceremony_wear": "0362999d84f4ea6312443f9709287f646dc7ecbc1d13af2f7f06a90a57d89e4e"
+}
+-->
+<resources>
+    <!-- %1$s is the belt's name, such as Yellow belt. -->
+    <string name="ceremony_belt">%1$s！</string>
+    <string name="ceremony_new_belt">新しい帯！</string>
+    <!-- %1$s is a formatted amount of Brain Power, such as 1,000. -->
+    <string name="ceremony_belt_reached">学習で脳力が%1$sに達しました。</string>
+    <string name="ceremony_belt_detail">脳力を伸ばしたごほうびです。</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="ceremony_grew_up">%1$sが成長しました！</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="ceremony_stage_young">%1$sはこどもになりました。脳力とともに、これからも成長していきます。</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="ceremony_stage_adult">%1$sは脳力ですっかり成長し、おとなになりました。</string>
+    <string name="ceremony_glasses_star">星形メガネ！</string>
+    <string name="ceremony_glasses_star_detail">初めてフェーズチャレンジに勝ったごほうびです。</string>
+    <string name="ceremony_glasses_aviator">アビエーターメガネ！</string>
+    <string name="ceremony_glasses_aviator_detail">初めて週間チャレンジを終えたごほうびです。</string>
+    <string name="ceremony_glasses_cat_eye">キャットアイメガネ！</string>
+    <string name="ceremony_glasses_cat_eye_detail">すべてのミッションを達成した日が合計7日になったごほうびです。</string>
+    <string name="ceremony_glasses_retro">レトロメガネ！</string>
+    <string name="ceremony_glasses_retro_detail">復習を50回終えたごほうびです。</string>
+    <string name="ceremony_glasses_monocle">片眼鏡！</string>
+    <string name="ceremony_glasses_monocle_detail">最後のチャレンジに勝ったごほうびです。</string>
+    <string name="ceremony_glasses_new">新しいメガネ！</string>
+    <string name="ceremony_glasses_new_detail">相棒とセットのメガネです。</string>
+    <string name="ceremony_continue">続ける</string>
+    <!-- Button after earning glasses: puts them on the learner's buddy. -->
+    <string name="ceremony_wear">メガネをかける</string>
+    <string name="ceremony_not_now">今はしない</string>
+</resources>

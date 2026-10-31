@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "steps_continue": "b93c9fb5196f0646710fee211628a8e179267b7ab46b9db31cc3b541e1f7b4f8",
+  "steps_progress": "d696ce7d554ea1b955fc7953122a699526b2b872d61906f2b57f8223ac3c6f5e"
+}
+-->
+<resources>
+    <string name="steps_continue">続ける</string>
+    <!-- Read by TalkBack for the step dots: "Step 2 of 4". -->
+    <string name="steps_progress">ステップ%1$d（全%2$dステップ）</string>
+</resources>

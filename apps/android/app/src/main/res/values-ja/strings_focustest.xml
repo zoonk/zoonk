@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "focustest_about": "1d88ba7344186f52159278656ab961658cde6ec2f9f4e9adbc4adcb1a131d0da",
+  "focustest_area_right": "e2107417d57aa6a9c2205c4d4c5c6f9c98844291ec39397a16ee8a809da43e12",
+  "focustest_ended_detail": "bcf44827edc6fcbaeeea50135a09c72c8925ad1e66339bc4cec747b9be16bdd6",
+  "focustest_ended_title": "8ff34756d5fad931bea903189b073e9d48d171432f107687ddefd90c45d31f6d",
+  "focustest_focus_detail_one": "bcd5b1563e1746a975d8633793d9474f95069ea8fcd1007e8a2741f44ef3e1e4",
+  "focustest_focus_detail_several": "a377545c6dbee6aa2eae325334bb725c8844c34de964ef05acada3ab607b198b",
+  "focustest_how_you_did": "d4c98294c36200279a16212c27e1b4a24fc740803ef5c1b1abf5141da11ed177",
+  "focustest_intro_detail": "29c58e4fe45971a27fc5d4c2b0618465b695222375280823a23820f4226a9c4a",
+  "focustest_intro_title": "3159638283f990da871486e8f873c2d5a11686577cf1983121bb1469c67148f7",
+  "focustest_new_focus": "8b304ed0ff2e3cee7ffb1e3721dad5cb4ae0d47926cf5634ef829aef98f12b89",
+  "focustest_questions": "c550db987f3db0991254714d23a63f70910ae5ab0c1c1a51ce66285226035c69",
+  "focustest_see_plan": "93c916930f923dd037c885dc0c47149e28b49ae130bff7e2c6907bea66028bd3",
+  "focustest_start": "981a3c1cfb728429a2883cf8ea0ae8cbc0b194368ed546ebb1eb7368c863039d",
+  "focustest_starting": "ded53717bb9064a7a8373b9fcadee91378c3ed3c8d87cecb0b5d20c0ae598bda",
+  "focustest_subjects": "fac5f14a4459c6a4ded086e182dffbccef456ff03cc3fcf2164c835d88b983a7",
+  "focustest_title": "1b4fd48f572eddb9253b2d0d3cd76728287d14f0c970493538b4ddb5bf72c29a",
+  "focustest_undone": "3b712acae98a46f2c27aa4d3f9b69594d68c0048a4f7eeb3140157bc2059c770",
+  "focustest_waiting_detail": "cc3aaf888d926f7e7d638ef4b4d3206f76b6de7ac63bd40b9d36dead1e3993c2",
+  "focustest_waiting_title": "c6eae46edff3337fd2b1528c47870ce2a39340354540e237691bca8d3ee894c5",
+  "focustest_writing": "ec99226dfacf71de324f641ef2a75042268e50af0860c98dd2b42b3a15a96a4c",
+  "focustest_writing_detail": "28ab903b6f4bc41f3c17a01f749d5b41910ddf5ba21a718f7a9198a53d71efe5",
+  "focustest_writing_line": "d0cc84e34567e7b7f3883e45d311459b11c022a560be4407c66874b4c6febc3c",
+  "focustest_writing_questions": "f590e07ee4dae0f6c04e34295a053d1cb0df0691e0be62f05f7524e497a4bb78",
+  "focustest_writing_title": "1c872abab0f4d133fa05e8901ea6f0067db39fee7e4b6792729c807771c6b85d"
+}
+-->
+<resources>
+    <!-- A test that sets which subjects of an exam the plan studies in more depth. -->
+    <string name="focustest_title">重点診断</string>
+    <string name="focustest_intro_title">どこを重点的に学べばよいですか？</string>
+    <string name="focustest_intro_detail">各科目から数問ずつ出題します。特に学習が必要な科目を優先し、より深く学べるようにします。</string>
+    <plurals name="focustest_subjects">
+        <item quantity="other">%d科目</item>
+    </plurals>
+    <plurals name="focustest_questions">
+        <item quantity="other">%d問</item>
+    </plurals>
+    <!-- How long the test takes. %1$s is a duration, such as "5 min". -->
+    <string name="focustest_about">約%1$s</string>
+    <string name="focustest_start">テストを始める</string>
+    <string name="focustest_starting">開始しています…</string>
+    <string name="focustest_writing">問題を作成しています</string>
+    <string name="focustest_writing_questions">各科目の問題を作成しています</string>
+    <string name="focustest_writing_line">各科目で何を出題するか選んでいます…</string>
+    <string name="focustest_writing_title">テストを準備しています</string>
+    <string name="focustest_writing_detail">各科目の問題を数問ずつ作成しています。準備ができると、ここにテストが表示されます。</string>
+    <string name="focustest_waiting_title">次の問題を作成しています</string>
+    <string name="focustest_waiting_detail">残りの問題を作成しています。準備ができ次第、ここでテストを再開します。</string>
+    <string name="focustest_ended_title">一部の問題を作成できませんでした</string>
+    <string name="focustest_ended_detail">ここまでの回答でテストを終えましょう。学習計画でより深く学ぶ内容は、この回答をもとに決まります。</string>
+    <string name="focustest_how_you_did">診断結果</string>
+    <!-- A subject's score, such as "2 of 3 right". %1$d is how many were right, %2$d how many were asked. -->
+    <plurals name="focustest_area_right">
+        <item quantity="other">%1$d問正解（全%2$d問）</item>
+    </plurals>
+    <!-- Over the subjects the test chose to study in more depth. -->
+    <string name="focustest_new_focus">新しい重点科目</string>
+    <!-- Under the subjects the test chose. -->
+    <string name="focustest_focus_detail_one">配点が大きく、間違いが最も多かった科目です。学習計画ではこの科目をより深く学びます。ほかのトピックもすべて計画に含まれています。</string>
+    <string name="focustest_focus_detail_several">どれも配点が大きく、間違いが特に多かった科目です。学習計画ではこれらの科目をより深く学びます。ほかのトピックもすべて計画に含まれています。</string>
+    <string name="focustest_undone">学習計画を元に戻しました</string>
+    <string name="focustest_see_plan">学習計画を見る</string>
+</resources>

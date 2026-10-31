@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_code_badge_query_data": "5c35b8a456a850537f69e4b01a474b12bdecb784b88650738c4b4a396444f0c8",
+  "activities_code_badge_run": "f328741319afca9aaf14c7f3e1f2839efea27ad3282f49d3ca6eacd144b200b3",
+  "activities_code_badge_step_through": "267f6d82ca78dfef2bbf536729d1d988e3df170a409fabadfc52abf627922f20",
+  "activities_code_badge_test_pattern": "10a124b61bcbce3886a7b982de45bb61f622b200e16fdfa5b742ba1e5225d651",
+  "activities_code_before_first_line": "7063e1f2a1555035676bb4e66700f292305515f665b69eaab72691d94d8327ec",
+  "activities_code_changed_code": "800fc093ef511284112a3987edf51c162d12d0284aa68c88475fb138a460e8d0",
+  "activities_code_changed_query": "58efa27daf4648e82d199b3ee0e3fdf8b6562fe8fb5682090c2c5665a260d925",
+  "activities_code_code": "3fa86e1cd2704bb573b490b4235fe5c8bc00f06b52bafb9e5fa399c1404e5f20",
+  "activities_code_current_line": "2cf075c044ede81489889a9e19ba1a2c1732af52013933cac5d9693afb3e35f3",
+  "activities_code_error_line": "f5afc3dda428bf54a3ee8e9206a1d4af925805bbb566a3ab4eb7121bfc7fbab8",
+  "activities_code_examples_pass": "8f460fafeb357edf1225cc6a32f9ab6c45e382a60afb491fa16584e22667b65d",
+  "activities_code_expected": "ac13ac2005f7198674b2d0eedf28183b48776dd736c0d030f58cc4cc2da2a758",
+  "activities_code_expected_result": "a45094f0d7db4980ba5790d5c4633b5891233760f563966b1b437d7907893d02",
+  "activities_code_expected_result_in_order": "76dc77e2b729b4437ef47a7e38ecd7a3378fc6f094016d3889a968ec64577913",
+  "activities_code_formula_that_works": "44a6f501b10dedd2821b4415cddebfd788580d125f8e5e42c935b8ac0181f3f8",
+  "activities_code_hint_mistake": "56c2648d13cc9126f0ebc17c314790a375abd609a00e0ec7ae5ad01d5ca97fa5",
+  "activities_code_line_yours": "6c47fb4a933231b574012bc64e69c2cc8abccfa32efb594b39db366c863531e9",
+  "activities_code_lines_yours": "bb5e7e8b10e044f7803b749766b60bf417f0d5c017791d938c66221e3f57737b",
+  "activities_code_no_table": "140bce3e23985f582b952b0b2cc4eca9e1cff3853d239b739b43449f76c4046b",
+  "activities_code_not_quite": "736491b531dbf8107d3db1291bc08baf6c86b5acd2cc0396e1a00761801ba3f2",
+  "activities_code_not_set": "fcdf49c43b63e1f42578ad3fabb715b5f761e48e652c74cae983a5d9efee721c",
+  "activities_code_nothing_printed": "af5f3678cdb56921467f9819e81d3c1b7b72e3e1f0cc743f01db02c1add5d33c",
+  "activities_code_output": "514324af83c80938c6dda62a20b684bdfea8438bab6eeab12dd8daa5aaef7a7b",
+  "activities_code_pass_count": "2dc8ad703e83fb3a6d2e62d2786abee42441a876d6a6e6354f440c7584e9c3de",
+  "activities_code_pattern_cant_run": "5954c263cecfa73d2d61c08780050843475a634cb2bbefdc3c5a62a1e41fb515",
+  "activities_code_pattern_that_works": "81e8a44d9a1cadb5e36ef1a6aa54677f2588f6d6d165400b6a993fdf1443f6a4",
+  "activities_code_predict_first": "91a25293e3e755340e1e6eb5cb39fdf912eb9c03a39561d55affefe71b19f7a9",
+  "activities_code_query": "b434b306f327b85418a0e0ea5c0a6d7ebaccba1118e51691b973ab6b32f2256a",
+  "activities_code_query_that_works": "cb03179f54c8ef1d3b4dd56b2ae8951be7aa4aa6f73b2ff1a37327d079d987fc",
+  "activities_code_query_timeout": "284788546395cca43ea4dd1ba46d63057d2efac3c1d9a440da9d132ac6617e2c",
+  "activities_code_query_too_many_rows": "7f99af91099c0b5a9f4bddf5e3730296c0b038783d9e794791915fff80ebd69b",
+  "activities_code_result_no_rows": "195786a284beb5148ba3eacdf3650d938503cbf3b131eda4f2ad1918d7d983ad",
+  "activities_code_row_extra": "e492b7c3bdb7bb7d94877b5736efe5e6ecd5216c58fb7421e73f6d89e63d2f5d",
+  "activities_code_row_missing": "5783437c28fd2c9b5798b4111136fdfdde10324d673fef931dca0f1528858b0d",
+  "activities_code_run": "d1bb5bdfab924332ba88a701522639f300a1c1fd6cf8118dd00ce88b98c23aee",
+  "activities_code_run_again": "c46b173a3d7ef981aaaa6b1ca8cf9144eeeced75e4ae4ac54a08165f54c3c7f5",
+  "activities_code_run_to_see": "f7e73f80c094d7f4fafcbab8829f56b6cc115c73beba0dd7204335429e23d06a",
+  "activities_code_running": "83b4dea2795d27a8bf2d8343ef5143a9a16f21a6d852ef9ab8f6e91c032ea839",
+  "activities_code_runtime_failed": "9840681ca11f8adf7279051bb8a8ef29c3ff9393e0829b96a9032035f51515a8",
+  "activities_code_runtime_loading": "9c36f5fb24f5ba8b0d87c339af44c3885396c82a94ed77d7ba57c0316706e11d",
+  "activities_code_sample_doesnt_match": "96d4520275861adbc5143849e406d533774f13b44a42c6dad7721173dde808c7",
+  "activities_code_sample_matched": "0b959f76443ab0f428bb1a74ebdc64fb34171e5b014a6922578b0c6706bf9ebe",
+  "activities_code_sample_matches": "339e10cbca3a32d52c18c80d7efa4cda349d768cd010b9d19328ec041efeeede",
+  "activities_code_sample_no_match": "8648f88bb7bb3a458a7966ccd72d9e721c9b0284f0b0e16d916522ca275af4c3",
+  "activities_code_should_give": "f9a509c98b6c98a2482f465882d6e7b39a41c395432d8936f383a321aaa737df",
+  "activities_code_should_match": "f064e5a5280cc7bed802a6ff371acb951d8cdbce92d918a41c9fd7f08c092fa9",
+  "activities_code_should_not_match": "eb3415c121ea4e67c2b2165090964cfce8249aade8bc4a2431cf9c04e3952be0",
+  "activities_code_show_another_hint": "5292536e15d720ae4c0791684b3eac4ec4ac3eda5a4db91740ca509897b39f88",
+  "activities_code_show_hint": "22eeb13aa210965465a015204b7558a38d387eeee451a5dcd1f6fbf874672426",
+  "activities_code_snippet_any": "59bd267758de431450cc694951bf4d770602f5c2801cb92ccdf36873e9c721d5",
+  "activities_code_snippet_digit": "df571bedc0febd729d42ec0d78897e5955ef418b5ba9eaf64e42f35dfc1fabb0",
+  "activities_code_snippet_divided_by": "85acc974e66b078dec438b4b0c5cd3915bf7f4629535abfdcbec02e187d2d52f",
+  "activities_code_snippet_end": "c886fb92ded6a06580ae30827a3a051e6e0be30a086e8992c843b3563c8b03b3",
+  "activities_code_snippet_group": "0d57047c17c7bd0f18a432de799bd0ee1590876dbe3f487f21c3210217d2aa5a",
+  "activities_code_snippet_minus": "57188b038a2005d9de52edc0ed9c6bd73e49cc649be36fb2c34738320d90ec24",
+  "activities_code_snippet_one_of": "fd9b031c9423eaf3f51a5fe69cfa37b42b253a9b2a6389891ebc14da511a77ca",
+  "activities_code_snippet_one_or_more": "1599f7d38a86fff32604cf5402c356c0191aad2fc592722032990c1ea22307cf",
+  "activities_code_snippet_optional": "f2a3219aee874382ee09583c428fbeadacb920b12ed4b8ec4592e821bf3e3de4",
+  "activities_code_snippet_or": "63193c7e3a8d0a3949b9e042dc1f5dc99d296088237e9a2103c9dc2302100d0f",
+  "activities_code_snippet_parentheses": "b2aff54c42c365d2980cf8763979cded488bc7555da0b18be49196f45b1b3135",
+  "activities_code_snippet_plus": "c65dc9a9203791982fdc78ec45a1eeed7aa16a7d2b6fc74eaecde6a9fba6903f",
+  "activities_code_snippet_power": "ec70520e88d4316427b4d876635a3c66c73c865f940d8378607db24aa4227cbf",
+  "activities_code_snippet_repeat": "b27ac681d7761d82f16b2e2c81c6aa0bde5dd5ba4504ad915c7e7870e4601bd0",
+  "activities_code_snippet_space": "58603da6a209c7503a52de210dc83ccaadb689e39500f20d627bbc627beb75a2",
+  "activities_code_snippet_start": "b4361acd209c19725ebe3639708db668d4a9d56bd6787a741e44d93bbb5cd6db",
+  "activities_code_snippet_times": "00e4abb1626ff9b190c5015452d69f7e293988f6aa7a350dc7386f1ee02b91e4",
+  "activities_code_snippet_word": "fdcac2871753eb78b22a8169d736a80f979cabe9f922ef50234f0578a30197d6",
+  "activities_code_snippet_zero_or_more": "2bc794ab864a45e18fd36c2492e12c8790fa53de4a1ffff7678f93ff29cd5bc4",
+  "activities_code_sql_words": "8f5ac831b4b25f0b011978a0448610e2ffbc52386f7b8932bd7b332b25536a10",
+  "activities_code_start_over": "99e8005b716f5e5abdb9b07f550beac1cb38b16b46bbf5e9c0c2855b1882eefa",
+  "activities_code_step_back": "f4f6a4597a4e0ba8b9a2fc318cd8066ad24349a92e1c98baa47c3e8dff04c222",
+  "activities_code_step_forward": "be35a7de1cccb6ac494ea94afc108b5c5658f33d70dbb00a9fb3fe8835cf8442",
+  "activities_code_step_next_line": "92322a0abbff40c2f290f0a305cc4328801a81454a097658ef685eaf54ecc021",
+  "activities_code_step_of": "634a39f1f1b047896f6046670a86036e0dae3711598ec850c9eac51d655989c1",
+  "activities_code_step_to_see": "262deb79f1431b47ab6607135aff9ad77151888f9c96702cb808d9162e0b9026",
+  "activities_code_stopped_after": "d0078a068172ab60fc4f580764b35c0c9119475fe0193090f1e4d7c582fe9e7f",
+  "activities_code_symbols": "08c29c7f67ec6cb3890878e6679377b8c0ef24ebd388ee0a294a0315eede1218",
+  "activities_code_table_named": "3b61ed04c5777f413ce4f82cb89df8869452fea0405dbd1e31ea229241e52db7",
+  "activities_code_table_rows": "e340277c5dd7bc6ea0815ec3bdd35b42438f99fe1d5f298be914295d44510f57",
+  "activities_code_too_much_output": "2cd511b347d5e18f845a6ec566a50456546ba4b14e76dbcd4998bae276d84655",
+  "activities_code_value_was": "49229a1222a3416833d6b02707255597beda89ae991579a84ef542e5fbfac9e8",
+  "activities_code_variables": "f7bbac5a1d0e9c4326bcc9ebc78e1683730afb6ac407584d61f93f69760224ac",
+  "activities_code_whole_run": "2b581225b893391e7c7ee1bf97171e298c0fc23e5b6d63b9b4f7bccdfb0fbcf6",
+  "activities_code_whole_run_explored": "b0a499d75f61d01e07bb9e01064512a54dba21517b8ab745d93a93d4d3363152",
+  "activities_code_you_said_right": "49387ab89943f75cffcfd1a868f0b1bffd6de03d55b63a6983037ac9bee1c8bf",
+  "activities_code_you_said_wrong": "e7e5418b55b24c24b2832f9a2a04e74bd7ef1d35d3baf3b36b9663d08e5a6717",
+  "activities_code_your_formula": "daa552fae32846212349306b2fc3e30b9e2043cfc2e54658387af0300cab09d2",
+  "activities_code_your_output": "9bea71d34ba6cc85fa29fb0de119e92d632256642a52a3ae91c5ae04f8cc7a71",
+  "activities_code_your_pattern": "a84917dadfc25898eb1524bbba8e268dc3fc18a8acc4ec1816ad3c042b08eedd",
+  "activities_code_your_predictions": "68134c7d536affb407cbcd972e4e8f404bc2fbf5b77efe2f7fae869559276f5e",
+  "activities_code_your_query": "77d25685c6490eb13aef114b1b991b2f3472d9eb22e3ae0da04b715220a0d4cb",
+  "activities_code_your_result": "a09cbfc8e46db82fb1ff754b90194e649e1bd315b1717a408dbf8e9ef9a1c01a",
+  "activities_code_your_result_rows": "e5c0543d85d689e8984d899d1cc32479bbb4986d882f2fd8b72e87151d0ef2e0"
+}
+-->
+<resources>
+    <string name="activities_code_badge_run">コードを実行する</string>
+    <!-- %1$s is a runtime's name, like Python, JavaScript or SQLite. -->
+    <string name="activities_code_runtime_loading">%1$sを準備しています。初回は数秒かかります。</string>
+    <!-- %1$s is a runtime's name, like Python, JavaScript or SQLite. -->
+    <string name="activities_code_runtime_failed">%1$sを読み込めませんでした。通信状況を確認して、もう一度お試しください。</string>
+    <string name="activities_code_run">実行する</string>
+    <string name="activities_code_run_again">もう一度実行する</string>
+    <string name="activities_code_running">実行中</string>
+    <string name="activities_code_start_over">元のコードからやり直す</string>
+    <!-- The name of a block of program code, for TalkBack. -->
+    <string name="activities_code_code">コード</string>
+    <!-- The lines of a program the learner may edit; %1$s lists their numbers, like "2 and 3". -->
+    <plurals name="activities_code_lines_yours">
+        <item quantity="other">%1$s行目は編集できます</item>
+    </plurals>
+    <!-- A line of code the learner may edit, for TalkBack. -->
+    <string name="activities_code_line_yours">%1$d行目は編集できます</string>
+    <string name="activities_code_your_output">実際の出力</string>
+    <!-- What a program shown to explore printed, with no expected output beside it. -->
+    <string name="activities_code_output">出力</string>
+    <!-- The output the program should print. -->
+    <string name="activities_code_expected">期待される出力</string>
+    <string name="activities_code_run_to_see">コードを実行すると、出力が表示されます</string>
+    <string name="activities_code_nothing_printed">何も出力されませんでした</string>
+    <string name="activities_code_changed_code">コードを変更しました。もう一度実行して、新しい出力を確認してください。</string>
+    <!-- A program's error and the line it happened on, like "Line 2: NameError: name 'x' is not defined". -->
+    <string name="activities_code_error_line">%1$d行目：%2$s</string>
+    <plurals name="activities_code_stopped_after">
+        <item quantity="other">%d 秒で停止しました。終わらないループになっていませんか？</item>
+    </plurals>
+    <string name="activities_code_too_much_output">出力が多すぎたため、実行を停止しました。終わらないループはありませんか？</string>
+    <!-- Before the feedback for a likely mistake the program's output shows. -->
+    <string name="activities_code_not_quite">惜しい：</string>
+    <string name="activities_code_badge_test_pattern">規則性を確かめる</string>
+    <!-- The field for a regular expression, for TalkBack. -->
+    <string name="activities_code_your_pattern">パターン</string>
+    <!-- The field for a spreadsheet formula, for TalkBack. -->
+    <string name="activities_code_your_formula">数式</string>
+    <!-- The row of buttons that type regular expression or formula symbols, for TalkBack. -->
+    <string name="activities_code_symbols">記号</string>
+    <!-- What the regular expression symbol ^ means, for TalkBack. -->
+    <string name="activities_code_snippet_start">テキストの先頭</string>
+    <!-- What the regular expression symbol $ means, for TalkBack. -->
+    <string name="activities_code_snippet_end">テキストの末尾</string>
+    <!-- What the regular expression symbol \d means, for TalkBack. -->
+    <string name="activities_code_snippet_digit">任意の数字</string>
+    <!-- What the regular expression symbol \w means, for TalkBack. -->
+    <string name="activities_code_snippet_word">英字、数字、アンダースコアのいずれか</string>
+    <!-- What the regular expression symbol \s means, for TalkBack. -->
+    <string name="activities_code_snippet_space">任意の空白文字</string>
+    <!-- What the regular expression symbol . means, for TalkBack. -->
+    <string name="activities_code_snippet_any">任意の1文字</string>
+    <!-- What the regular expression brackets [ ] mean, for TalkBack. -->
+    <string name="activities_code_snippet_one_of">これらの文字のいずれか</string>
+    <!-- What the regular expression braces { } mean, for TalkBack. -->
+    <string name="activities_code_snippet_repeat">指定した回数の繰り返し</string>
+    <!-- What the regular expression parentheses ( ) mean, for TalkBack. -->
+    <string name="activities_code_snippet_group">グループ化</string>
+    <!-- What the regular expression symbol ? means, for TalkBack. -->
+    <string name="activities_code_snippet_optional">省略可能</string>
+    <!-- What the regular expression symbol + means, for TalkBack. -->
+    <string name="activities_code_snippet_one_or_more">1回以上の繰り返し</string>
+    <!-- What the regular expression symbol * means, for TalkBack. -->
+    <string name="activities_code_snippet_zero_or_more">0回以上の繰り返し</string>
+    <!-- What the regular expression symbol | means, for TalkBack. -->
+    <string name="activities_code_snippet_or">または</string>
+    <!-- The + sign in a formula, for TalkBack. Not "Plus", the subscription's name. -->
+    <string name="activities_code_snippet_plus">プラス記号</string>
+    <!-- The − sign in a formula, for TalkBack. -->
+    <string name="activities_code_snippet_minus">マイナス</string>
+    <!-- The × sign in a formula, for TalkBack. -->
+    <string name="activities_code_snippet_times">かける</string>
+    <!-- The ÷ sign in a formula, for TalkBack. -->
+    <string name="activities_code_snippet_divided_by">わる</string>
+    <!-- The ^ sign in a formula, for TalkBack. -->
+    <string name="activities_code_snippet_power">累乗</string>
+    <!-- Parentheses in a formula, for TalkBack. -->
+    <string name="activities_code_snippet_parentheses">丸かっこ</string>
+    <string name="activities_code_pattern_cant_run">このパターンは実行できません。かっこが閉じているか確認し、内部に繰り返しがあるグループ全体を繰り返さないようにしてください。</string>
+    <!-- Example texts the regular expression should match. -->
+    <string name="activities_code_should_match">一致させるテキスト</string>
+    <!-- Example texts the regular expression should not match. -->
+    <string name="activities_code_should_not_match">一致させないテキスト</string>
+    <!-- An example text the pattern matches, as it should. -->
+    <string name="activities_code_sample_matches">一致</string>
+    <!-- An example text the pattern doesn't match, as it should. -->
+    <string name="activities_code_sample_doesnt_match">一致しない</string>
+    <!-- An example text the pattern should match but doesn't. -->
+    <string name="activities_code_sample_no_match">一致なし</string>
+    <!-- An example text the pattern shouldn't match but does. -->
+    <string name="activities_code_sample_matched">一致した</string>
+    <!-- How many examples of a list pass, like "1 of 3 pass". -->
+    <plurals name="activities_code_pass_count">
+        <item quantity="other">%1$d件が正解（全%2$d件）</item>
+    </plurals>
+    <!-- How many examples pass in all, for TalkBack, like "2 of 5 examples pass." -->
+    <plurals name="activities_code_examples_pass">
+        <item quantity="other">正しい結果になった例は%1$d件、全部で%2$d件です。</item>
+    </plurals>
+    <!-- The output a spreadsheet formula should give for an example's cells. -->
+    <string name="activities_code_should_give">正しい結果</string>
+    <!-- What the learner's formula gives for an example's cells. -->
+    <string name="activities_code_your_result">計算結果</string>
+    <string name="activities_code_show_hint">ヒントを表示する</string>
+    <string name="activities_code_show_another_hint">次のヒントを表示する</string>
+    <!-- A likely mistake, before the hint for it, like "Matches extra digits:". -->
+    <string name="activities_code_hint_mistake">%1$s：</string>
+    <string name="activities_code_pattern_that_works">条件を満たすパターン</string>
+    <string name="activities_code_formula_that_works">条件を満たす数式</string>
+    <string name="activities_code_badge_query_data">データを検索する</string>
+    <!-- The field for a SQL query, and its label. -->
+    <string name="activities_code_your_query">クエリ</string>
+    <!-- Above the SQL query shown to explore, already written and ready to run. -->
+    <string name="activities_code_query">クエリ</string>
+    <!-- The row of buttons that type SQL words and the tables' names, for TalkBack. -->
+    <string name="activities_code_sql_words">SQLのキーワード、テーブル名、列名</string>
+    <plurals name="activities_code_query_timeout">
+        <item quantity="other">クエリの実行が%d 秒を超えたため、停止しました。</item>
+    </plurals>
+    <!-- A query that returned more rows than a lesson's small tables could need, most often by joining tables without saying how they match. -->
+    <string name="activities_code_query_too_many_rows">クエリの結果の行数が多すぎます。結合条件が抜けていませんか？</string>
+    <plurals name="activities_code_table_rows">
+        <item quantity="other">%d行</item>
+    </plurals>
+    <!-- A database table's name, for TalkBack, like "Table countries". -->
+    <string name="activities_code_table_named">テーブル %1$s</string>
+    <!-- A row of the learner's result that the expected result doesn't have, for TalkBack. -->
+    <string name="activities_code_row_extra">正しい結果にはない行</string>
+    <!-- A row of the expected result that the learner's result doesn't have, for TalkBack. -->
+    <string name="activities_code_row_missing">実行結果にない行</string>
+    <string name="activities_code_no_table">クエリは実行されましたが、表は返されませんでした。SELECTで行を取得してください。</string>
+    <string name="activities_code_result_no_rows">実行結果に行がありません</string>
+    <plurals name="activities_code_your_result_rows">
+        <item quantity="other">実行結果：%d行</item>
+    </plurals>
+    <string name="activities_code_changed_query">クエリを変更しました。新しい結果を見るには、もう一度実行してください。</string>
+    <string name="activities_code_expected_result">期待される結果</string>
+    <string name="activities_code_expected_result_in_order">期待される結果（この順序で）</string>
+    <string name="activities_code_query_that_works">正しい結果が得られるクエリ</string>
+    <string name="activities_code_badge_step_through">一段階ずつ進める</string>
+    <string name="activities_code_step_back">前のステップに戻る</string>
+    <string name="activities_code_step_forward">次のステップに進む</string>
+    <!-- Where a code trace stands before any line ran. -->
+    <string name="activities_code_before_first_line">最初の行の実行前</string>
+    <!-- Where a code trace stands, like "Step 2 of 4". -->
+    <string name="activities_code_step_of">ステップ%1$d（全%2$dステップ）</string>
+    <!-- The line of code that just ran, for TalkBack. -->
+    <string name="activities_code_current_line">実行した行</string>
+    <!-- The variables a code trace watches, for TalkBack. -->
+    <string name="activities_code_variables">変数</string>
+    <!-- A variable's value before the step that changed it, shown before its new value, like "3 →". -->
+    <string name="activities_code_value_was">%1$s →</string>
+    <!-- A variable with no value yet. -->
+    <string name="activities_code_not_set">未設定</string>
+    <string name="activities_code_predict_first">まず予想してみましょう。次のステップに進むと、結果がわかります。</string>
+    <string name="activities_code_step_to_see">次のステップに進んで、予想が合っているか確かめましょう。</string>
+    <string name="activities_code_step_next_line">次のステップに進むと、次の行が実行されます。</string>
+    <string name="activities_code_whole_run">実行はこれで終わりです。準備ができたら、予想の答え合わせをしましょう。</string>
+    <!-- At the last step of a code trace shown to explore, with nothing to predict. -->
+    <string name="activities_code_whole_run_explored">実行の流れはここまでです。</string>
+    <!-- The learner's predictions of a code trace's values, for TalkBack. -->
+    <string name="activities_code_your_predictions">予想</string>
+    <!-- A right prediction, like "You said 6, and it was." -->
+    <string name="activities_code_you_said_right">予想した%1$sで合っていました。</string>
+    <!-- A wrong prediction and the real value, like "You said 5; it was 6." -->
+    <string name="activities_code_you_said_wrong">%1$sと予想しましたが、実際は%2$sでした。</string>
+</resources>

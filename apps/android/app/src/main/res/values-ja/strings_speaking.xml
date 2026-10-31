@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "speaking_eyebrow": "5e52c71f212d8ef33f1fccc068fb926338e845b5a5a9c1ef20878eea0d65ae14",
+  "speaking_facts": "d69fa7a857312fa3ea4c4425148bf3f9fad50bb47a8c0415e0ef9964ca4c799b",
+  "speaking_footer": "e734c99878500dcbb71d310975bf5c39f975d923ce2dfd28a9025f749abb277d",
+  "speaking_footer_partner": "c2913bfa14c5b969021d4b26e60926867877522b7d9c055b70529bee0d502fb1",
+  "speaking_last_at": "2cf353a32d212456f1d1b4adf77b55c8867e8211a39a331454c4c90bab92637d",
+  "speaking_last_below": "943589897ddc2d5ad815592c57e4d082b24e648ac35f6d4b3494ae5bc533425c",
+  "speaking_last_near": "5f9246fd115d2a7a7a169645f5033944b4b1ba189fbd4be90a8546814ce0994f",
+  "speaking_last_none": "9e9e59fd63d5849ae23be42002fbb744d81f70d81038ddcfb6ec1516fb12cc83",
+  "speaking_last_result": "1e390e67e3fdaeffd209c1d6eca348c9d80056ce856138381ade95f241354429",
+  "speaking_mock_failed": "f1d6f6417e9beffddd41ee121f8cfe6850941e736e1e6b8444e8ee8fcdfa5279",
+  "speaking_mock_ielts": "4f1ae4f27dde44d4afd38d168ba4e38064fd2e042db24f7c8f713ee4ba041278",
+  "speaking_mock_opens": "b85b2fe2ebac928cf3e6dabda9aa1e90ba81bba8cc87725ea804271667386a8b",
+  "speaking_mock_start": "934d1ac48ec1f95abb99ff5b183740cf72f04f797916af80ab8ae4af1a25c4a8",
+  "speaking_mock_toefl": "b1fb548943ac10fbcffc0cd9b2d70c2900f2e423a2bdc238fe00b505bbae0ddf",
+  "speaking_no_time_day": "5f8e86649def1815f2b51e4a5f1b3de7ab5040b6ec2bdbfee4c47818cdff9403",
+  "speaking_no_time_month": "9eb8095b2ac876dafe7ae62a5d1aea855030ec8354e43378b699892a44b62930",
+  "speaking_official": "c09ffd5207c7d7ca5dc3411b30870560fe03bf91ded4c7591f78d164c126e415",
+  "speaking_official_format": "06452421850abec84cae151fd41eb12281f535024e84a9a9781c0a5245c42f0c",
+  "speaking_opens_when_ready": "84e87ece43cf7dc37ca3344e90ad9cac918b5a12560a928e0c08da118745a763",
+  "speaking_plus": "68954239809680c676e061cc058d29c1980a21d29b8e9ac6c0fd6c7d6ee6417e",
+  "speaking_prep": "a589c6dca9bbe5bd6f7f4015676dbd3303f4aac58f7c9fdff5cf450d707dbdbd",
+  "speaking_prep_shared": "d5f2cc825e13723e590057e6b21f716e1bc184572407156a31ba46289fefc407",
+  "speaking_rated_on": "e5990405e863bdbd6ea8c8add0095e652b9400d19affb9f21b22fb85987ae805",
+  "speaking_row": "29b2da758f3082c94821f3ed2628b1e5cba9c606adace2e1648b50f94fd24328",
+  "speaking_section": "eb12986ccd65cb44246a273955648772826a0ac3aa81d30e20f5457bd8a0c8de",
+  "speaking_start_failed": "5eef369349f2387edfdf01b24fe9a649418c206ed49646dd5485269ca26b0f7b",
+  "speaking_start_task": "05054a968ce2980108f272beb1bdad1bc732f6e9f93e4f6e0dd92c976005cd33",
+  "speaking_tasks": "7c543b9cb245b62182cdb1fa88a20a4e2ce875c29bfbb26266c1241f953135d9",
+  "speaking_title": "ad1762fa79a1f6c192d6c013be36ef71aa54e329f6132f5f1c9e0fd7a36e9dcb",
+  "speaking_writing_mock": "c1f4d52736bf52b26ed820fb3bb2f12e0b9ab32b9c0542e1df1bbda691b10b65",
+  "speaking_writing_mock_line_1": "7cbfc3d0aef03524391649f8db81e259ca152597a8b2dfb993609c7c3a47e0f1",
+  "speaking_writing_mock_line_2": "0f329d98a810bb510fc004555b040cc8f7aa7a66eb20badcfc49718dbe374cf6",
+  "speaking_writing_mock_line_3": "78a62cfc042fa0e57997472cd81e4f6c68ce2d126ce291af1bce6489f2f6f2db",
+  "speaking_writing_mock_line_4": "da229c259c119cb2902257de9d812fba3dcec4a25863b0a01a2914bd06d61736",
+  "speaking_writing_mock_phase": "c3b8af912f881a2da5ad1544096cb2d12f2660750323ad7853f71f669fb33cce"
+}
+-->
+<resources>
+    <!-- Practicing an official language exam's speaking paper (DELE, DELF, Goethe, Cambridge) on calls with an AI in the examiner's place. -->
+    <string name="speaking_title">スピーキング練習</string>
+    <string name="speaking_eyebrow">試験形式のスピーキング</string>
+    <!-- The paper's task count and how long its speaking part lasts in the exam, such as "4 tasks · 15 min in the exam". -->
+    <plurals name="speaking_facts">
+        <item quantity="other">%1$dタスク · 本番では%2$s</item>
+    </plurals>
+    <string name="speaking_official">%1$sは公式の試験です。受験の予定がなくても、スピーキングのタスクを練習できます。</string>
+    <string name="speaking_tasks">タスク</string>
+    <!-- The exam page's speaking section, with the paper's title beside it. -->
+    <string name="speaking_section">スピーキング</string>
+    <string name="speaking_plus">Plusでは、試験のすべてのタスクを会話で練習できます。各タスクの終了後に、公式の評価基準に基づく推定スコアが表示されます。</string>
+    <string name="speaking_opens_when_ready">カードの準備ができ次第、タスクが開きます。</string>
+    <string name="speaking_no_time_month">このタスクを行うには、今月の残りの会話時間が足りません</string>
+    <string name="speaking_no_time_day">このタスクを行うには、今日の残りの会話時間が足りません</string>
+    <string name="speaking_start_failed">タスクを開始できませんでした。少し待ってからもう一度試してください。</string>
+    <string name="speaking_footer_partner">AIが人間の試験官やほかの受験者の代わりを務めます。練習のたびに新しいカードを使い、終了後には試験の公式評価基準に基づく推定スコアが表示されます。公式のスコアではありません。</string>
+    <string name="speaking_footer">AIが人間の試験官の代わりを務めます。練習のたびに新しいカードを使い、終了後には試験の公式評価基準に基づく推定スコアが表示されます。公式のスコアではありません。</string>
+    <string name="speaking_official_format">公式の試験形式</string>
+    <string name="speaking_start_task">このタスクを始める</string>
+    <string name="speaking_last_result">前回の結果を見る</string>
+    <string name="speaking_last_none">前回：推定スコアなし</string>
+    <!-- How many criteria were at the exam's level on the last try, such as "Last try: 3 of 4 at B2". -->
+    <string name="speaking_last_at">前回：%1$s/%2$s項目が%3$sレベル</string>
+    <string name="speaking_last_near">前回：%1$s／%2$s項目で%3$sに近い評価</string>
+    <string name="speaking_last_below">前回：%1$s未満</string>
+    <!-- Preparation time shared by several tasks, such as "20 min to prepare tasks 1 and 2". -->
+    <string name="speaking_prep_shared">準備時間：%1$s（タスク%2$s共通）</string>
+    <string name="speaking_prep">準備時間：%1$s</string>
+    <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
+    <string name="speaking_rated_on">%1$sを評価します。</string>
+    <!-- A row into the speaking paper's practice: the exam and level, such as "DELE B2 tasks on a call". -->
+    <string name="speaking_row">会話で%1$sのタスクを練習</string>
+    <!-- A band is the exam's score for each criterion. -->
+    <string name="speaking_mock_ielts">試験官と短いスピーキングテストを行います。終了後、各評価項目の推定バンドスコアがわかります。</string>
+    <!-- A band is the exam's score for each criterion. -->
+    <string name="speaking_mock_toefl">文を復唱してから、試験官と短い面接を行います。終了後、各評価項目の推定バンドスコア（1〜6）がわかります。</string>
+    <string name="speaking_mock_start">模試を始める</string>
+    <string name="speaking_mock_opens">準備ができ次第、模試の画面が開きます。</string>
+    <string name="speaking_mock_failed">模試を始められませんでした。少し待ってから、もう一度試してください。</string>
+    <string name="speaking_writing_mock">模試を作成しています</string>
+    <string name="speaking_writing_mock_phase">試験官の台本を作成しています</string>
+    <string name="speaking_writing_mock_line_1">試験官を選んでいます…</string>
+    <string name="speaking_writing_mock_line_2">試験官が出す問題を作成しています…</string>
+    <string name="speaking_writing_mock_line_3">全体が約5 分に収まるように調整しています…</string>
+    <string name="speaking_writing_mock_line_4">役立つフレーズを追加しています…</string>
+</resources>
