@@ -51,6 +51,17 @@ function keysOf(mix: { key: string; share: number }[]) {
 }
 
 describe(getMockFormatMix, () => {
+  it("excludes unknown-scope Text Completion when Quant formats are known", () => {
+    const structure = structureOf([
+      { description: "Text Completion", options: 3, sections: [] },
+      { description: "Compare quantities", sections: ["Quantitative"] },
+    ]);
+
+    expect(getMockFormatMix(structure, ["Quantitative"]).map(({ key }) => key)).toStrictEqual([
+      "choice:4",
+    ]);
+  });
+
   it("asks each format the notice lists in equal parts when it gives no counts", () => {
     const mix = getMockFormatMix(JEE_ADVANCED);
 
@@ -145,8 +156,8 @@ describe(getMockFormatMix, () => {
     ]);
   });
 
-  it("asks every format in a part no format names, and in the whole exam", () => {
-    expect(getMockFormatMix(GRE_LIKE, ["Analytical Writing"])).toHaveLength(4);
+  it("uses unknown scope only in parts without known formats", () => {
+    expect(getMockFormatMix(GRE_LIKE, ["Analytical Writing"])).toStrictEqual(ONE_PICK_MIX);
     expect(getMockFormatMix(GRE_LIKE, [])).toHaveLength(4);
 
     expect(getMockFormatMix(GRE_LIKE).find((format) => format.key === "choice:5")).toMatchObject({

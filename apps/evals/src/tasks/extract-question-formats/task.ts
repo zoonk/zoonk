@@ -2,6 +2,7 @@ import { createFixedScore } from "@/lib/score";
 import { type Task, type TaskScorer } from "@/lib/types";
 import { type OptionSelect } from "@zoonk/ai/tasks/items/schemas";
 import { type QuestionFormat } from "@zoonk/ai/tasks/research/extract-question-formats";
+import { findUnknownScopeFormats } from "@zoonk/core/library/exams/format-sections";
 import { normalizeString } from "@zoonk/utils/string";
 import { type FormatsEvalInput, type FormatsEvalOutput, generateQuestionFormats } from "./generate";
 import { TEST_CASES } from "./test-cases";
@@ -60,6 +61,7 @@ const scoreFormats: TaskScorer<FormatsExpected> = ({ output, testCase }) => {
     return createFixedScore({ conclusion: "Invalid output", score: MIN_SCORE });
   }
 
+  const unknown = findUnknownScopeFormats(parsed.formats);
   const has = (fact: FormatFact) => parsed.formats.some((format) => matches({ fact, format }));
   const missing = expected.present.filter((fact) => !has(fact));
   const wrong = expected.absent.filter((fact) => has(fact));
@@ -69,6 +71,9 @@ const scoreFormats: TaskScorer<FormatsExpected> = ({ output, testCase }) => {
   const passageShare = total === 0 ? 0 : found / total;
 
   const conclusion = [
+    unknown.length > 0
+      ? `Unknown scope: ${unknown.map((format) => format.description).join("; ")}`
+      : "",
     `Facts ${facts - missing.length - wrong.length}/${facts}`,
     `passages found ${found}/${total}`,
     missing.length > 0 ? `missing: ${missing.map((fact) => describeFact(fact)).join("; ")}` : "",
@@ -79,7 +84,10 @@ const scoreFormats: TaskScorer<FormatsExpected> = ({ output, testCase }) => {
 
   return createFixedScore({
     conclusion,
-    score: MIN_SCORE + SCORE_RANGE * (FACT_WEIGHT * factShare + PASSAGE_WEIGHT * passageShare),
+    score:
+      unknown.length > 0
+        ? MIN_SCORE
+        : MIN_SCORE + SCORE_RANGE * (FACT_WEIGHT * factShare + PASSAGE_WEIGHT * passageShare),
   });
 };
 

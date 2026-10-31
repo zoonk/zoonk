@@ -56,7 +56,6 @@ export const questionFormatSchema = z.object({
   options: z.number().int().nullable(),
   partialCredit: partialCreditSchema.nullable(),
   passage: z.string(),
-  /** Empty when the documents ask it in every part of the exam. */
   sections: z.array(z.string()),
   /** Null for one pick. */
   select: optionSelectSchema.nullable(),
@@ -155,13 +154,19 @@ function fillFromReading({
   const [reading, ...others] = read.filter((other) => isSameAnswer(other, format));
   const isOnly = found.filter((other) => isSameAnswer(other, format)).length === 1;
 
+  const scoped = read.filter((other) => other.sections.length > 0 && covers({ format, other }));
+
+  const recovered = scoped.length === 1 ? (scoped[0]?.sections ?? []) : [];
+  const sections = format.sections.length > 0 ? format.sections : recovered;
+
   return reading && others.length === 0 && isOnly
     ? {
         ...format,
         entry: format.entry ?? reading.entry,
         options: format.options ?? reading.options,
+        sections,
       }
-    : format;
+    : { ...format, sections };
 }
 
 function isSamePassage(first: QuestionFormat, second: QuestionFormat): boolean {
