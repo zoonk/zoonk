@@ -1,8 +1,6 @@
 package com.zoonk.android.feature.onboarding.setup
 
-import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationRun
-import com.zoonk.android.data.StepState
 import com.zoonk.android.feature.onboarding.suggestion
 import com.zoonk.android.feature.onboarding.suggestionFor
 import com.zoonk.android.feature.plan.DaySplit
@@ -157,45 +155,21 @@ class ScheduleRulesTest {
         assertFalse(keepsFullCourse(false, TimeLine.Share(0.4)))
     }
 
-    private val building =
-        GenerationRun(
-            GenerationRun.Status.Following,
-            steps = mapOf("understandGoal" to StepState.Completed, "buildSkillGraph" to StepState.Started),
-        )
-
-    private val made =
-        GenerationRun(
-            GenerationRun.Status.Following,
-            steps = mapOf("createPlan" to StepState.Completed, "outlineCourses" to StepState.Started),
-        )
+    private val building = GenerationRun(GenerationRun.Status.Following)
+    private val done = GenerationRun(GenerationRun.Status.Ready)
 
     @Test
-    fun aPlanIsBuildingWhileItsRunReportsStepsWithoutHavingMadeIt() {
-        assertTrue(building.isPlanBuilding)
-        assertTrue(building.copy(status = GenerationRun.Status.Failed, failure = GenerationFailure.Generation).isPlanBuilding)
-        assertFalse(made.isPlanBuilding)
-        assertFalse(building.copy(status = GenerationRun.Status.Ready).isPlanBuilding)
-        assertFalse(GenerationRun().isPlanBuilding)
-        assertFalse(GenerationRun(GenerationRun.Status.Following).isPlanBuilding)
+    fun beforeThePlansFirstAnswerTheViewDecidesEvenOnceTheRunIsDone() {
+        assertTrue(waitsForPlan(PlanGate(ready = false, readingNotice = false), answered = false, run = done))
+        assertFalse(waitsForPlan(PlanGate(ready = true, readingNotice = false), answered = false, run = building))
     }
 
     @Test
-    fun beforeThePlansFirstAnswerTheRunAsTheStepOpenedDecides() {
-        assertTrue(waitsForPlan(null, PollStatus.Polling, openedBuilding = true, run = building))
-        assertFalse(waitsForPlan(null, PollStatus.Polling, openedBuilding = false, run = building))
-        assertFalse(waitsForPlan(null, PollStatus.Polling, openedBuilding = false, run = made))
-        assertFalse(waitsForPlan(null, PollStatus.Idle, openedBuilding = true, run = building))
-        assertFalse(waitsForPlan(null, PollStatus.Failed, openedBuilding = true, run = building))
-    }
-
-    @Test
-    fun afterItThePlansAnswerDecides() {
+    fun afterItARunThatsDoneLeavesTheQuestionToSayThePlanIsStillWorkingTheTimeOut() {
         val notReady = PlanGate(ready = false, readingNotice = false)
-        val done = made.copy(status = GenerationRun.Status.Ready)
 
-        assertTrue(waitsForPlan(notReady, PollStatus.Polling, openedBuilding = false, run = made))
-        assertFalse(waitsForPlan(PlanGate(ready = true, readingNotice = false), PollStatus.Idle, openedBuilding = true, run = building))
-        assertFalse(waitsForPlan(notReady, PollStatus.Polling, openedBuilding = true, run = done))
-        assertTrue(waitsForPlan(PlanGate(ready = false, readingNotice = true), PollStatus.Polling, openedBuilding = false, run = done))
+        assertTrue(waitsForPlan(notReady, answered = true, run = building))
+        assertFalse(waitsForPlan(notReady, answered = true, run = done))
+        assertTrue(waitsForPlan(PlanGate(ready = false, readingNotice = true), answered = true, run = done))
     }
 }

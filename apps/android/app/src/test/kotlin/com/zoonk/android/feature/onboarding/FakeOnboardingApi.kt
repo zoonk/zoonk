@@ -124,6 +124,7 @@ internal fun setupView(
     dateProblem: String? = null,
     examDays: String? = null,
     examChoices: String = "[]",
+    planReady: Boolean = true,
 ): Onboarding =
     ApiJson.decodeFromString(
         """
@@ -132,7 +133,7 @@ internal fun setupView(
             "[",
             "]",
         ) { "\"$it\"" }},
-         "libraryCourse":null,"planReadiness":{"readingNotice":false,"ready":true},"quickTestMinutes":$quickTestMinutes,"recommendedMinutes":30,"steps":[${steps.joinToString(
+         "libraryCourse":null,"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":$quickTestMinutes,"recommendedMinutes":30,"steps":[${steps.joinToString(
             ",",
         ) { "\"$it\"" }}],
          "timeChoices":[${timeChoices.joinToString(",") { "{\"minutes\":$it,\"split\":${split(it) ?: "null"}}" }}],

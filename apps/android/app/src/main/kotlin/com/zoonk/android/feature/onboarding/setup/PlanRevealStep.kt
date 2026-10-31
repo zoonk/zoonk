@@ -138,7 +138,7 @@ internal fun ColumnScope.PlanRevealStep(
         }
 
         plan?.ready != true -> {
-            PlanBuilding(run.withPoll(poll), onRetry = if (poll.stopped) poll::restart else onRetryRun) {
+            PlanBuilding(run.withPoll(poll.stopped), onRetry = if (poll.stopped) poll::restart else onRetryRun) {
                 libraryCourse?.let { course ->
                     LibraryCourseOffer(course) { navigator.open(AppRoute.CatalogCourse(course.courseId.toString())) }
                 }
@@ -146,7 +146,7 @@ internal fun ColumnScope.PlanRevealStep(
         }
 
         readingNotice && (poll.stopped || run.isStopped) -> {
-            PlanBuilding(run.withPoll(poll), onRetry = if (poll.stopped) poll::restart else onRetryRun)
+            PlanBuilding(run.withPoll(poll.stopped), onRetry = if (poll.stopped) poll::restart else onRetryRun)
         }
 
         readingNotice -> {

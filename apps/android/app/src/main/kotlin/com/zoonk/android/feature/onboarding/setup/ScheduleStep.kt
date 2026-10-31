@@ -55,6 +55,7 @@ import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingAnswerInputOneOf8
+import com.zoonk.api.models.OnboardingPlanReadiness
 import com.zoonk.api.models.OnboardingTimeChoicesInner
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeToCover
@@ -69,6 +70,7 @@ internal fun ColumnScope.ScheduleStep(
     goal: Goal,
     recommendedMinutes: Int,
     timeChoices: List<OnboardingTimeChoicesInner>,
+    planReadiness: OnboardingPlanReadiness,
     run: GenerationRun,
     store: OnboardingStore,
     vm: GoalSetupViewModel,
@@ -85,8 +87,6 @@ internal fun ColumnScope.ScheduleStep(
     val weekend = weekendPicked.takeIf { weekendOn && days.any(::isWeekend) }
     val hasDays = days.isNotEmpty()
     val paused = run.isStopped
-    // Read once as the step opens, so steps the run reports later never switch the screen.
-    val openedBuilding = rememberSaveable { run.isPlanBuilding }
 
     val covering =
         rememberPlanAnswer(
@@ -135,16 +135,17 @@ internal fun ColumnScope.ScheduleStep(
 
     val coverGate = covering.last?.let { PlanGate(it.ready, it.readingNotice) }
     // When the plan's answer says the goal has no date, the advice asks next: that answer said the plan is ready.
-    val gate = if (dated) coverGate else timeAdvice.last?.let { PlanGate(it.ready, it.readingNotice) } ?: coverGate
-    val gatePoll = if (dated) covering.poll else timeAdvice.poll
-    val gateStatus = if (dated) covering.status else timeAdvice.status
-    if (waitsForPlan(gate, gateStatus, openedBuilding, run)) {
-        if (gate?.readingNotice == true && !gatePoll.stopped && !run.isStopped) {
+    val answered = if (dated) coverGate else timeAdvice.last?.let { PlanGate(it.ready, it.readingNotice) } ?: coverGate
+    val gate = answered ?: PlanGate(planReadiness.ready, planReadiness.readingNotice)
+    val gateAnswer = if (dated) covering else timeAdvice
+    if (waitsForPlan(gate, answered != null, run)) {
+        val gateFailed = gateAnswer.status == PollStatus.Failed
+        if (gate.readingNotice && !gateFailed && !run.isStopped) {
             val document = if (exam && goal.targetLanguage != null) ExamDocument.GUIDE else ExamDocument.NOTICE
             NoticeReading(document, lastEdition = false)
         } else {
-            val retry = if (gatePoll.stopped) gatePoll::restart else LocalPlanStart.current?.onRetry
-            PlanBuilding(run.withPoll(gatePoll), retry)
+            val retry = if (gateFailed) gateAnswer.restart else LocalPlanStart.current?.onRetry
+            PlanBuilding(run.withPoll(gateFailed), retry)
         }
         return
     }

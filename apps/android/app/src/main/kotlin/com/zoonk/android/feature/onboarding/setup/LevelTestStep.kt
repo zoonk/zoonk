@@ -137,7 +137,7 @@ internal fun ColumnScope.LanguageLevelTestStep(
         }
 
         LevelTestPhase.Waiting -> {
-            val run = vm.bank.run().withPoll(poll)
+            val run = vm.bank.run().withPoll(poll.stopped)
             LevelTestWaiting(
                 targetLanguage = targetLanguage,
                 run = run,

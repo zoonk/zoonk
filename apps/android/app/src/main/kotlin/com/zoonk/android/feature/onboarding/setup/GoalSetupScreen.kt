@@ -339,6 +339,7 @@ private fun ColumnScope.QuestionStep(
                 view.goal,
                 view.recommendedMinutes.toInt(),
                 view.timeChoices,
+                view.planReadiness,
                 run,
                 store,
                 vm,

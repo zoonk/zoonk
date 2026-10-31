@@ -60,11 +60,9 @@ class LevelTestTest {
     @Test
     fun offersToCheckAgainOnceCheckingKeepsFailingWhileWritingMayGoOn() {
         val followed = BankWait().seen(writing, ASKED_AT)
-        val poll = Poll().apply { stopped = true }
-
         assertEquals(
             followingWriter.copy(status = GenerationRun.Status.Failed, failure = GenerationFailure.Connection),
-            followed.run().withPoll(poll),
+            followed.run().withPoll(failed = true),
         )
         assertFalse(followed.isStopped)
     }

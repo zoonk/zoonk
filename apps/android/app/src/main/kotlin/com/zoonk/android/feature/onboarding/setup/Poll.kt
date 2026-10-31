@@ -99,7 +99,6 @@ internal class PlanAnswer<T>(
     val answer: T?,
     val first: T?,
     val last: T?,
-    val poll: Poll,
     val status: PollStatus,
     val restart: () -> Unit,
 )
@@ -159,7 +158,7 @@ internal fun <Q : Any, T : Any> rememberPlanAnswer(
         missed = false
         poll.restart()
     }
-    return PlanAnswer(answer, first, answer ?: last, poll, status, restart)
+    return PlanAnswer(answer, first, answer ?: last, status, restart)
 }
 
 private fun <T> jsonSaver(serializer: KSerializer<T>) =
@@ -181,11 +180,9 @@ internal val GenerationRun.isStopped get() = status == GenerationRun.Status.Fail
 /** The run's plan exists, so what waits on it asks now instead of at its next check. */
 internal val GenerationRun.planMade get() = steps["createPlan"] == StepState.Completed
 
-internal val GenerationRun.isPlanBuilding get() = status != GenerationRun.Status.Ready && steps.isNotEmpty() && !planMade
-
-/** Polling that stopped reads as a lost connection, whose Try again polls again. */
-internal fun GenerationRun.withPoll(poll: Poll): GenerationRun =
-    if (poll.stopped) copy(status = GenerationRun.Status.Failed, failure = GenerationFailure.Connection) else this
+/** Polling that failed reads as a lost connection, whose Try again polls again. */
+internal fun GenerationRun.withPoll(failed: Boolean): GenerationRun =
+    if (failed) copy(status = GenerationRun.Status.Failed, failure = GenerationFailure.Connection) else this
 
 private val POLL_INTERVAL = 3.seconds
 private val SETTLE = 300.milliseconds

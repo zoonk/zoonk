@@ -122,21 +122,14 @@ internal data class PlanGate(
 )
 
 /**
- * Until the plan's first answer, the run as the step opened ([openedBuilding]) decides, so steps
- * the run reports later never switch the screen. A run that's done leaves the time question to say
- * the plan is still working the time out.
+ * Until the plan's first answer, the onboarding view's [gate] decides. Once the plan has [answered],
+ * a run that's done leaves the time question to say the plan is still working the time out.
  */
 internal fun waitsForPlan(
-    gate: PlanGate?,
-    status: PollStatus,
-    openedBuilding: Boolean,
+    gate: PlanGate,
+    answered: Boolean,
     run: GenerationRun,
-): Boolean =
-    if (gate == null) {
-        status == PollStatus.Polling && openedBuilding
-    } else {
-        !gate.ready && (gate.readingNotice || run.status != GenerationRun.Status.Ready)
-    }
+): Boolean = !gate.ready && (gate.readingNotice || !answered || run.status != GenerationRun.Status.Ready)
 
 /** The plan's answer for the days shown and what it says about the time shown. */
 internal data class TimeAnswerState(

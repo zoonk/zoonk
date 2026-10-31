@@ -149,7 +149,7 @@ internal fun ColumnScope.PlacementStep(
 
         PlacementPhase.Waiting -> {
             PlacementWaiting(
-                run = run.withPoll(poll),
+                run = run.withPoll(poll.stopped),
                 onRetry = if (poll.stopped) poll::restart else onRetryRun,
                 pending = vm.isSaving,
                 failed = vm.finishFailed,

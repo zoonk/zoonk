@@ -759,13 +759,10 @@ class GoalSetupFlowTest {
         rule.onNodeWithContentDescription("Time a day, 45\u00A0min").assertIsDisplayed()
     }
 
-    /** The buddy's answer opens the time question while the plan's run is still building it. */
+    /** The buddy's answer opens the time question while the plan is still being built. */
     private fun answerBuddyWhileThePlanIsBuilt() {
         api.setup = { setupView(listOf("buddy", "schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
-        api.reply = { _, _ -> setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
-        api.generationId = { "run-1" }
-        api.events =
-            MutableSharedFlow<GenerationEvent>(replay = 1).apply { tryEmit(GenerationEvent(status = "started", step = "buildSkillGraph")) }
+        api.reply = { _, _ -> setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08", planReady = false) }
         show()
         rule.onNodeWithText("Continue").performScrollTo().performClick()
     }
@@ -778,6 +775,36 @@ class GoalSetupFlowTest {
 
         rule.onNodeWithText("Building your plan").performScrollTo().assertIsDisplayed()
         rule.onNodeWithText("How much time can you study each day?").assertDoesNotExist()
+    }
+
+    @Test
+    fun aReloadOntoTheTimeQuestionWhileThePlanIsBuiltOpensOnItsWait() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08", planReady = false) }
+        api.generationId = { "run-1" }
+        api.coverGateAfter = 0
+        api.coverGate = CompletableDeferred()
+        show()
+
+        rule.onNodeWithText("Building your plan").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("How much time can you study each day?").assertDoesNotExist()
+    }
+
+    @Test
+    fun aFirstTimeAskThatHangsOnThePlansWaitOffersToReconnect() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08", planReady = false) }
+        api.generationId = { "run-1" }
+        api.cover = { coverOf(recommended = 45) }
+        api.coverGateAfter = 0
+        api.coverGate = CompletableDeferred()
+        show()
+
+        rule.mainClock.advanceTimeBy(46_000)
+        rule.onNodeWithText("Reconnect").performScrollTo().performClick()
+        rule.onNodeWithText("Connection lost").assertDoesNotExist()
+
+        api.coverGate?.complete(Unit)
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.onNodeWithText("How much time can you study each day?").assertIsDisplayed()
     }
 
     @Test
