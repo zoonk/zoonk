@@ -290,6 +290,23 @@ final class ScheduleTimeTests: XCTestCase {
     XCTAssertFalse(ScheduleTime.waitsToSave(line: .findFailed, picked: nil))
   }
 
+  func testContinueWaitsWhileNewDaysSuggestionIsWorkedOutUnlessTheLearnerPickedATime() {
+    let first = everythingAt(35)
+    let minutes = shown(first: first, found: first)
+    let pending = line(found: nil, minutes: minutes)
+
+    XCTAssertEqual(minutes, 35, "the old suggestion stays on screen")
+    XCTAssertFalse(
+      ScheduleTime.canContinue(hasDays: true, minutes: minutes, line: pending, picked: nil))
+    XCTAssertTrue(
+      ScheduleTime.canContinue(
+        hasDays: true, minutes: 60, line: line(found: nil, minutes: 60), picked: 60))
+    XCTAssertTrue(
+      ScheduleTime.canContinue(hasDays: true, minutes: 35, line: line(found: first), picked: nil))
+    XCTAssertFalse(
+      ScheduleTime.canContinue(hasDays: false, minutes: 35, line: .noDays, picked: 35))
+  }
+
   func testKeepsTheLastAnswerInPlaceWhileNewDaysAreWorkedOut() {
     let settled = ScheduleTime.Answer(found: found(), line: .share(0.4))
     let working = ScheduleTime.Answer(found: nil, line: .working)

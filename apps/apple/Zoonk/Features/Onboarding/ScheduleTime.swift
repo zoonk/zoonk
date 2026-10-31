@@ -150,6 +150,10 @@ enum ScheduleTime {
     picked == nil && line.isBusy
   }
 
+  static func canContinue(hasDays: Bool, minutes: Int?, line: Line, picked: Int?) -> Bool {
+    hasDays && minutes != nil && !waitsToSave(line: line, picked: picked)
+  }
+
   /// While the time shown is worked out again, the last answer stays in place, marked as updating.
   static func shownAnswer(last: Answer, now: Answer) -> (answer: Answer, updating: Bool) {
     let updating = now.line.isBusy && !last.line.isBusy

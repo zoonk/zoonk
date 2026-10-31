@@ -96,7 +96,10 @@ struct ScheduleQuestion: View {
         }
       }
 
-      StepButtons(canContinue: !days.isEmpty && shown.minutes != nil) {
+      StepButtons(
+        canContinue: ScheduleTime.canContinue(
+          hasDays: !days.isEmpty, minutes: shown.minutes, line: shown.line, picked: picked)
+      ) {
         submit(shown)
       }
       .environment(
