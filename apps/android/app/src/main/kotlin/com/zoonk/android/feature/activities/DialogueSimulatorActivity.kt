@@ -139,7 +139,7 @@ private fun ChatLine(
                         buildAnnotatedString {
                             append("$said ")
                             append(spoken(line.text, language))
-                            append(". ${line.translation}")
+                            append(" ${line.translation}")
                         }
                 }.padding(horizontal = 14.dp, vertical = 10.dp),
         ) {

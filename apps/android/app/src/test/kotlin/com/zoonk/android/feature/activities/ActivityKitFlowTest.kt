@@ -211,6 +211,13 @@ class ActivityKitFlowTest {
     }
 
     @Test
+    fun dialogueReadsALineThenItsMeaningWithoutAnAddedStop() {
+        play("dialogueSimulator", isCorrect = false)
+
+        rule.onNode(hasText("They say: Buenos días, dígame. Good morning, how can I help?")).assertExists()
+    }
+
+    @Test
     fun aMissedStepSolverComesBackToSolveAgain() {
         play("stepSolver", isCorrect = false)
 
