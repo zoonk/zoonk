@@ -79,12 +79,12 @@ msgstr "Metti in pratica"
 #: src/activities/_components/activity-badge.tsx
 msgctxt "UJRCcU"
 msgid "Label it"
-msgstr "Assegna i nomi"
+msgstr "Assegna le etichette"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "eGo7pb"
 msgid "Link causes"
-msgstr "Collega le cause"
+msgstr "Collega cause ed effetti"
 
 #: src/activities/_components/activity-badge.tsx
 #: src/lesson/feedback/lesson-spoken-words.tsx
@@ -180,7 +180,7 @@ msgstr "Passo dopo passo"
 #: src/activities/_components/activity-badge.tsx
 msgctxt "S-w423"
 msgid "Step through"
-msgstr "Esegui passo passo"
+msgstr "Procedi passo passo"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "4M_1qG"
@@ -241,7 +241,7 @@ msgstr "Risposta:"
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
-msgstr "Valutazione della risposta"
+msgstr "Commenti sulla risposta"
 
 #: src/activities/_components/activity-guess-comparison.tsx
 msgctxt "iNWAkL"
@@ -838,7 +838,7 @@ msgstr "{span}: {change}."
 #: src/activities/code-runner/code-runner-activity.tsx
 msgctxt "ydcluT"
 msgid "{count, plural, one {Line {lines} is yours} other {Lines {lines} are yours}}"
-msgstr "{count, plural, one {Puoi modificare la riga {lines}} other {Puoi modificare le righe {lines}}}"
+msgstr "{count, plural, one {La riga {lines} è tua} other {Le righe {lines} sono tue}}"
 
 #: src/activities/code-runner/code-runner-activity.tsx
 #: src/activities/code-tracer/tracer-parts.tsx
@@ -969,12 +969,12 @@ msgstr "non assegnato"
 #: src/activities/code-tracer/tracer-parts.tsx
 msgctxt "nKNuOk"
 msgid "Step back"
-msgstr "Vai indietro"
+msgstr "Torna al passaggio precedente"
 
 #: src/activities/code-tracer/tracer-parts.tsx
 msgctxt "VbyaoP"
 msgid "Step forward"
-msgstr "Vai avanti"
+msgstr "Vai al passaggio successivo"
 
 #: src/activities/code-tracer/tracer-parts.tsx
 msgctxt "LQcg2H"
@@ -1858,7 +1858,7 @@ msgstr "Queste due carte non vanno insieme."
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Dzn88L"
 msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {count, plural, =0 {} one {# card has no match.} other {# cards have no match.}} {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
-msgstr "Due colonne di carte. Scegli una carta a sinistra e una a destra per abbinarle. {count, plural, =0 {} one {# carta senza abbinamento.} other {# carte senza abbinamento.}} {matched, plural, one {# coppia abbinata su {total}.} other {# coppie abbinate su {total}.}}"
+msgstr "Due colonne di carte. Scegli una carta a sinistra e una a destra per abbinarle. {count, plural, =0 {} one {# carta non ha un abbinamento.} other {# carte non hanno un abbinamento.}} {matched, plural, one {Hai trovato # coppia su {total}.} other {Hai trovato # coppie su {total}.}}"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "kzygtu"
@@ -1908,7 +1908,7 @@ msgstr "{atom} selezionato."
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "phXGea"
 msgid "Nothing selected."
-msgstr "Nessun atomo selezionato."
+msgstr "Nessuna selezione."
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "DLio1y"
@@ -2079,7 +2079,7 @@ msgstr "Pentagramma"
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "1xqT9N"
 msgid "Tab"
-msgstr "Intavolatura"
+msgstr "Tablatura"
 
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "yYzCD2"
@@ -2255,6 +2255,7 @@ msgctxt "8WlDyp"
 msgid "Repeat a number of times"
 msgstr "Ripeti un certo numero di volte"
 
+#. A noun on a palette of pattern parts: a group of characters.
 #: src/activities/pattern-tester/pattern-tester-activity.tsx
 msgctxt "HpoDwk"
 msgid "Group"
@@ -2328,7 +2329,7 @@ msgstr "Simboli"
 #: src/activities/pattern-tester/pattern-tester-activity.tsx
 msgctxt "naQh_0"
 msgid "{passing, plural, =0 {# of {total} examples pass.} one {# of {total} examples pass.} other {# of {total} examples pass.}}"
-msgstr "{passing, plural, =0 {Superano il test # esempi su {total}.} one {# esempio su {total} supera il test.} other {# esempi su {total} superano il test.}}"
+msgstr "{passing, plural, =0 {# esempi su {total} superano il test.} one {# esempio su {total} supera il test.} other {# esempi su {total} superano il test.}}"
 
 #: src/activities/pattern-tester/pattern-tester-activity.tsx
 msgctxt "5XbPTb"
@@ -2378,7 +2379,7 @@ msgstr "corrispondenza trovata"
 #: src/activities/pattern-tester/regex-samples.tsx
 msgctxt "w8hCjj"
 msgid "{passing, plural, =0 {# of {total} pass} one {# of {total} pass} other {# of {total} pass}}"
-msgstr "{passing, plural, =0 {Superano il test # su {total}} one {# su {total} supera il test} other {# su {total} superano il test}}"
+msgstr "{passing, plural, =0 {# superati su {total}} one {# su {total} superato} other {# su {total} superati}}"
 
 #: src/activities/process-order/process-order-activity.tsx
 msgctxt "NI6DvQ"
@@ -2519,7 +2520,7 @@ msgstr "Prima ascolta"
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "V8V6gJ"
 msgid "Start tapping"
-msgstr "Inizia a toccare"
+msgstr "Inizia a battere il ritmo"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "zuJJlV"
@@ -2717,7 +2718,7 @@ msgstr "La query è stata eseguita ma non ha restituito una tabella. Usa SELECT 
 #: src/activities/sql-playground/sql-result.tsx
 msgctxt "XjrTx5"
 msgid "{count, plural, =0 {Your result has no rows} one {Your result: # row} other {Your result: # rows}}"
-msgstr "{count, plural, =0 {Il tuo risultato è vuoto (# righe)} one {Il tuo risultato contiene # riga} other {Il tuo risultato contiene # righe}}"
+msgstr "{count, plural, =0 {Il tuo risultato non contiene righe} one {Il tuo risultato: # riga} other {Il tuo risultato: # righe}}"
 
 #: src/activities/sql-playground/sql-result.tsx
 msgctxt "BgDPcv"
@@ -2920,7 +2921,7 @@ msgstr "Alfabeto"
 #: src/components/fill-blank-step.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
-msgstr "Corretta"
+msgstr "Corretto"
 
 #: src/components/arrange-words-answer-area.tsx
 #: src/components/fill-blank-step.tsx
@@ -3035,7 +3036,7 @@ msgstr "Ci sei quasi"
 #: src/components/verdict-label.tsx
 msgctxt "xmF49T"
 msgid "Correct!"
-msgstr "Giusto!"
+msgstr "Esatto!"
 
 #: src/components/verdict-label.tsx
 msgctxt "yuSMTV"
@@ -3051,7 +3052,7 @@ msgstr "Hai indovinato!"
 #: src/components/verdict-label.tsx
 msgctxt "--l7ni"
 msgid "Not quite"
-msgstr "Non proprio"
+msgstr "Non è la risposta giusta"
 
 #: src/components/verdict-label.tsx
 msgctxt "pWC3pf"
@@ -3233,7 +3234,7 @@ msgstr "Lezione completata"
 #: src/lesson/completion/lesson-completion-ready.tsx
 msgctxt "2O2sfp"
 msgid "Finish"
-msgstr "Termina"
+msgstr "Concludi"
 
 #: src/lesson/controls/ask-buddy-offer.tsx
 msgctxt "j5DG16"
@@ -3406,7 +3407,7 @@ msgstr "Conferma"
 #: src/lesson/lesson-action-bar.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
-msgstr "Continua"
+msgstr "Avanti"
 
 #: src/lesson/lesson-action-bar.tsx
 msgctxt "BkQAJw"
@@ -3439,6 +3440,7 @@ msgctxt "ZpQ6us"
 msgid "Result"
 msgstr "Risultato"
 
+#. Heading of the panel that recaps the lesson, not a button.
 #: src/lesson/lesson-aside.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "C9sbYe"
@@ -3523,7 +3525,7 @@ msgstr "Lo so già"
 #: src/lesson/lesson-stage.tsx
 msgctxt "qzpeai"
 msgid "Write again"
-msgstr "Scrivi di nuovo"
+msgstr "Prepara di nuovo"
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "LnHBcu"
@@ -3563,7 +3565,7 @@ msgstr "Conversazione"
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "l_-Tz5"
 msgid "Nicely done"
-msgstr "Ottimo lavoro"
+msgstr "Ben fatto"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "A4Mc64"
@@ -4054,7 +4056,7 @@ msgstr "Non abbiamo potuto completare questa risposta."
 #: src/questions/lesson-question-turn.tsx
 msgctxt "plrEVt"
 msgid "Get answer"
-msgstr "Ottieni una risposta"
+msgstr "Ottieni la risposta"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "TtobyB"
@@ -4071,6 +4073,7 @@ msgctxt "C1eFF3"
 msgid "No answer available."
 msgstr "Nessuna risposta disponibile."
 
+#. The study buddy is writing its answer; it speaks as "I".
 #: src/questions/lesson-question-turn.tsx
 msgctxt "P1QHV0"
 msgid "Thinking…"
@@ -4096,6 +4099,7 @@ msgctxt "nCFX1M"
 msgid "Load earlier questions"
 msgstr "Carica le domande precedenti"
 
+#. Label of the field where the learner types a question.
 #: src/questions/lesson-question-turn.tsx
 msgctxt "LIVM_k"
 msgid "Your question"
@@ -4139,7 +4143,7 @@ msgstr "Fai una domanda a {name} sulla tua risposta"
 #: src/questions/tutor-dock.tsx
 msgctxt "Fp8B9R"
 msgid "Ask {name} about this question"
-msgstr "Fai una domanda a {name} su questa domanda"
+msgstr "Chiedi a {name} aiuto su questa domanda"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "_Kuebo"
