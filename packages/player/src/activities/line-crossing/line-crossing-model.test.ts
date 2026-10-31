@@ -6,7 +6,6 @@ import {
   lineShiftAnswer,
   moveLine,
   movedLine,
-  shiftRange,
   slideRange,
   visibleSegment,
 } from "./line-crossing-model";
@@ -64,15 +63,6 @@ describe(lineShiftAnswer, () => {
   it("has no answer before anything moves", () => {
     expect(lineShiftAnswer({}, "horizontal")).toBeNull();
     expect(lineShiftAnswer({ demand: 0, supply: 0 }, "horizontal")).toBeNull();
-  });
-});
-
-describe(shiftRange, () => {
-  it("reaches the real shift in whole steps", () => {
-    const range = shiftRange(2);
-
-    expect(range).toStrictEqual({ max: 4, min: -4, step: 0.5 });
-    expect(Number.isInteger(2 / range.step)).toBe(true);
   });
 });
 

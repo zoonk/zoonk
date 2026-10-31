@@ -55,7 +55,7 @@ export function lineShiftAnswer(offsets: LineOffsets, axis: ShiftAxis) {
   return { curve, direction: directionOf(offset, axis), kind: "curveShift" } as const;
 }
 
-export function shiftRange(amount: number) {
+function shiftRange(amount: number) {
   return { max: amount * 2, min: -amount * 2, step: amount / STEPS_PER_SHIFT };
 }
 
