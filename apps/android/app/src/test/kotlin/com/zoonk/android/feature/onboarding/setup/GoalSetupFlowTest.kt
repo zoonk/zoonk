@@ -971,7 +971,7 @@ class GoalSetupFlowTest {
         rule.onNodeWithText("Build my plan").performScrollTo().performClick()
         rule.waitForIdle()
 
-        assertEquals(1, api.finishedLevelTests)
+        assertEquals(2, api.finishedLevelTests)
         val answer = api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf9Value
         assertEquals(OnboardingAnswerInputOneOf9.Question.PLACEMENT, answer.value.question)
     }

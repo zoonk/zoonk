@@ -50,7 +50,7 @@ struct LevelTestStep: View {
       case .speaking(let sentence, let progress):
         LevelTestSpeaking(
           goalID: goalID, sentence: sentence, progress: progress, onTest: show,
-          onSkip: { phase = .done })
+          onSkip: stop)
       case .done:
         LevelTestDone(levels: levels, isSaving: isSaving, failed: failed, onContinue: finish)
       }
@@ -144,7 +144,7 @@ struct LevelTestStep: View {
             comment: "Answers a placement question without guessing"),
       isSaving: isSaving, failed: failed,
       onAnswer: { answer(question, with: $0, skips: skips) },
-      onStop: { phase = .done },
+      onStop: stop,
       media: {
         if isListening {
           ListeningMessage(question: question, language: targetLanguage, owner: owner)
@@ -165,7 +165,8 @@ struct LevelTestStep: View {
     phase = .question(shown, number: number, progress: progress)
   }
 
-  /// Without answers it starts from its intro, and only the learner's Start asks for questions.
+  /// Without answers it starts from its intro, unless it was ended, and only the learner's Start
+  /// asks for questions.
   private func resume() async {
     guard case .loading = phase else {
       return
@@ -174,7 +175,7 @@ struct LevelTestStep: View {
     let test = try? await onboarding.levelTest(goalID: goalID)
 
     guard let test, test.status == .ready,
-      (test.answered ?? 0) > 0
+      (test.answered ?? 0) > 0 || test.next?.kind == "done"
     else {
       phase = .intro(showAlphabetNote: test?.showAlphabetNote ?? false)
       return
@@ -260,6 +261,20 @@ struct LevelTestStep: View {
   }
 
   private func finish() {
+    saveFinish(then: onDone)
+  }
+
+  /// Saving the finish ends the test, so a relaunch or another device shows this result too.
+  private func stop() {
+    guard !isSaving else {
+      return
+    }
+
+    phase = .done
+    saveFinish {}
+  }
+
+  private func saveFinish(then next: @escaping () async throws -> Void) {
     guard !isSaving else {
       return
     }
@@ -272,7 +287,7 @@ struct LevelTestStep: View {
 
       do {
         try await onboarding.finishLevelTest(goalID: goalID)
-        try await onDone()
+        try await next()
       } catch is CancellationError {
       } catch {
         failed = true

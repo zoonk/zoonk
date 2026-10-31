@@ -134,9 +134,11 @@ internal class LevelTestViewModel(
         }
     }
 
-    /** The learner leaves the questions for the levels they have so far. */
+    /** The learner leaves the questions for the levels they have so far, saved so reopening the test shows them too. */
     fun stop() {
+        if (isSaving) return
         stopped = true
+        finish {}
     }
 
     fun finish(onDone: () -> Unit) {

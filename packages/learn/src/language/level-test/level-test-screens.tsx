@@ -7,6 +7,7 @@ import {
 import { isValidLocale } from "@zoonk/utils/locale";
 import { CircleCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ChangeSaveError } from "../../_components/save-error";
 import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration } from "../../_utils/time-format";
 import {
@@ -112,10 +113,12 @@ export function TestIntro({
 }
 
 export function TestDone({
+  failed,
   levels,
   onContinue,
   pending,
 }: {
+  failed: boolean;
   levels: ReadyTest["levels"];
   onContinue: () => void;
   pending: boolean;
@@ -135,6 +138,7 @@ export function TestDone({
       </OnboardingHeading>
       <LevelBars levels={levels} />
       <OnboardingFooter>
+        {failed && <ChangeSaveError />}
         <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
           {t("Build my plan")}
         </OnboardingPrimaryButton>

@@ -482,40 +482,6 @@ describe("language level test", () => {
     ).resolves.toBe(1);
   });
 
-  it("never puts back the levels of a result a later finish replaced", async () => {
-    const { goalId, userId } = await plannedLearnerFixture();
-
-    const placing = vi
-      .spyOn(placement, "loadPlacement")
-      .mockRejectedValueOnce(new Error("Plan busy"))
-      .mockRejectedValueOnce(new Error("Plan busy"));
-
-    await expect(finishLanguageLevelTest(goalId)).rejects.toThrow("Plan busy");
-    const pause = pauseNextFinishAfterSettling();
-
-    try {
-      const retry = finishLanguageLevelTest(goalId);
-      await pause.settled;
-      await answerNextQuestion(goalId);
-      await expect(finishLanguageLevelTest(goalId)).rejects.toThrow("Plan busy");
-      const [latestGoal, latestSkills] = await readFinishState({ goalId, userId });
-      pause.resume();
-      await retry;
-      const [goalAfter, skillsAfter] = await readFinishState({ goalId, userId });
-      const { level, skillLevels } = readGoalDetails(latestGoal);
-      expect(skillsAfter).toStrictEqual(latestSkills);
-
-      expect(goalAfter.details).toMatchObject({
-        level,
-        levelTest: { placement: { placed: true } },
-        skillLevels,
-      });
-    } finally {
-      pause.resume();
-      placing.mockRestore();
-    }
-  });
-
   it("places the current goal after a concurrent change without reading placement twice", async () => {
     const { goalId, readPlacement, userId } = await plannedLearnerFixture();
 
@@ -598,31 +564,33 @@ describe("language level test", () => {
     }
   });
 
-  it("goes on with a test finished early from the level the learner gave", async () => {
+  it("ends a test finished early, so reading it again shows its result instead of a question", async () => {
     await saveBank();
-    const [early, once] = await Promise.all([languageGoalFixture(), languageGoalFixture()]);
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
 
-    mockSession(once.user.id);
-    const firstOnce = await answerNextQuestion(once.goal.id);
-    const secondOnce = await answerNextQuestion(once.goal.id);
-    const finishedOnce = await finishLanguageLevelTest(once.goal.id);
+    await answerNextQuestion(goal.id);
+    const unanswered = await getLanguageLevelTest(goal.id);
 
-    mockSession(early.user.id);
-    const firstAsked = await answerNextQuestion(early.goal.id);
-    await finishLanguageLevelTest(early.goal.id);
-    const askedAfterFinish = await answerNextQuestion(early.goal.id);
-    const finishedAgain = await finishLanguageLevelTest(early.goal.id);
+    const questionId =
+      unanswered.status === "ready" &&
+      unanswered.test.status === "ready" &&
+      unanswered.test.next.kind === "question"
+        ? unanswered.test.next.question.id
+        : "";
 
-    expect([firstAsked, askedAfterFinish]).toStrictEqual([firstOnce, secondOnce]);
-    expect(finishedAgain).toStrictEqual(finishedOnce);
+    const finished = await finishLanguageLevelTest(goal.id);
 
-    const [earlyGoal, onceGoal] = await Promise.all([
-      prisma.goal.findUniqueOrThrow({ where: { id: early.goal.id } }),
-      prisma.goal.findUniqueOrThrow({ where: { id: once.goal.id } }),
-    ]);
+    await expect(getLanguageLevelTest(goal.id)).resolves.toMatchObject({
+      status: "ready",
+      test: { answered: 1, next: { kind: "done" }, status: "ready" },
+    });
 
-    const { level, skillLevels } = readGoalDetails(onceGoal);
-    expect(earlyGoal.details).toMatchObject({ level, skillLevels });
+    await expect(
+      answerLanguageLevelTest({ goalId: goal.id, input: { answerIndex: 1, questionId } }),
+    ).resolves.toStrictEqual({ status: "invalid" });
+
+    await expect(finishLanguageLevelTest(goal.id)).resolves.toStrictEqual(finished);
   });
 
   it("takes the finish marker before progress and serializes identical finish requests", async () => {
@@ -915,7 +883,7 @@ describe("language level test", () => {
 });
 
 describe("level test on a non-Latin script", () => {
-  it("saves the reading level with the result, which a repeat keeps and a new result starts over", async () => {
+  it("saves the reading level with the result, which a repeat keeps", async () => {
     await saveBank("ja");
     const { goal, user, plan } = await languageGoalFixture();
     await prisma.goal.update({ data: { targetLanguage: "ja" }, where: { id: goal.id } });
@@ -940,20 +908,6 @@ describe("level test on a non-Latin script", () => {
 
     await finishLanguageLevelTest(goal.id);
     await expect(readReading()).resolves.toStrictEqual(lessons);
-
-    await answerNextQuestion(goal.id);
-    await finishLanguageLevelTest(goal.id);
-
-    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
-      inputVersion: plan.inputVersion + 2,
-    });
-
-    await expect(readReading()).resolves.toMatchObject({
-      score: lessons.score,
-      windowCeiling: null,
-      windowCorrect: 0,
-      windowTotal: 0,
-    });
   });
 });
 

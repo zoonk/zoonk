@@ -466,10 +466,10 @@ class LevelTestStepFlowTest {
 
         rule.onNodeWithText("Your level today").assertIsDisplayed()
         rule.onNodeWithText("Reading").assertIsDisplayed()
-        assertEquals(0, api.finishedLevelTests)
+        assertEquals(1, api.finishedLevelTests)
         tap("Build my plan")
 
-        assertEquals(1, api.finishedLevelTests)
+        assertEquals(2, api.finishedLevelTests)
         assertEquals(1, done)
     }
 

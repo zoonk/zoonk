@@ -53,7 +53,7 @@ function toResumedPhase({
   started: boolean;
   view: LanguageLevelTestView | null;
 }): Phase {
-  if (view?.status === "ready" && (started || view.answered > 0)) {
+  if (view?.status === "ready" && (started || view.answered > 0 || view.next.kind === "done")) {
     return toReadyPhase(view);
   }
 
@@ -106,6 +106,7 @@ export function LanguageLevelTestStep({
   const [phase, setPhase] = useState<Phase>({ kind: "loading" });
   const [levels, setLevels] = useState<ReadyTest["levels"]>([]);
   const [bank, setBank] = useState<BankWait>(INITIAL_BANK_WAIT);
+  const [stopFailed, setStopFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [isStarting, startStarting] = useTransition();
 
@@ -192,9 +193,20 @@ export function LanguageLevelTestStep({
 
   const finish = () =>
     startTransition(async () => {
+      setStopFailed(false);
       await actions.finish();
       onDone();
     });
+
+  // Saving the finish ends the test, so a reload or another device shows this result too.
+  const stop = () => {
+    setPhase({ kind: "done" });
+
+    startTransition(async () => {
+      const { data: saved } = await safeAsync(actions.finish);
+      setStopFailed(!saved);
+    });
+  };
 
   switch (phase.kind) {
     case "loading":
@@ -221,14 +233,16 @@ export function LanguageLevelTestStep({
         />
       );
     case "done":
-      return <TestDone levels={levels} onContinue={finish} pending={isPending} />;
+      return (
+        <TestDone failed={stopFailed} levels={levels} onContinue={finish} pending={isPending} />
+      );
     case "test":
       return (
         <TestStep
           actions={actions}
           audioPending={audioPoll.status === "polling"}
           next={phase.test.next}
-          onStop={() => setPhase({ kind: "done" })}
+          onStop={stop}
           onView={show}
           progress={phase.test.answered / phase.test.total}
           targetLanguage={goal.targetLanguage}

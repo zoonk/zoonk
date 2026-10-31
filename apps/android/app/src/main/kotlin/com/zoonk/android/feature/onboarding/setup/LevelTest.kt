@@ -40,7 +40,7 @@ internal sealed interface LevelTestPhase {
 }
 
 /**
- * The test resumes once the learner tapped Start ([started]) or answered, and waits for its
+ * The test resumes once the learner tapped Start ([started]), answered or ended it, and waits for its
  * questions after this screen's Start ([begun]) or while a run it started writes them. [stopped] is
  * the learner leaving the questions for their levels.
  */
@@ -56,10 +56,11 @@ internal fun levelTestPhase(
     val value = (test as? LoadState.Loaded)?.value
     val ready = (value as? LanguageLevelTest.LanguageLevelTestOneOf1Value)?.value
     val preparing = (value as? LanguageLevelTest.LanguageLevelTestOneOfValue)?.value
+    val ended = ready?.next is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf2Value
 
     return when {
         stopped -> LevelTestPhase.Done(ready?.levels.orEmpty())
-        ready != null && (started || ready.answered > 0) -> ready.phase()
+        ready != null && (started || ready.answered > 0 || ended) -> ready.phase()
         begun -> LevelTestPhase.Waiting
         preparing != null && started && (preparing.startedAt != null || bank.sawWriter) -> LevelTestPhase.Waiting
         else -> LevelTestPhase.Intro

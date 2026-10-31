@@ -96,6 +96,11 @@ class LevelTestTest {
     }
 
     @Test
+    fun aTestEndedBeforeAnyAnswerReopensOnItsResult() {
+        assertTrue(phase(LoadState.Loaded(levelTestOf(next = DONE_NEXT))) is LevelTestPhase.Done)
+    }
+
+    @Test
     fun aStartedTestWaitsOnlyWhileARunWritesItsQuestions() {
         assertEquals(LevelTestPhase.Waiting, phase(LoadState.Loaded(preparingTestOf("2026-09-28T10:00:03Z")), started = true))
         assertEquals(LevelTestPhase.Intro, phase(LoadState.Loaded(preparingTestOf()), started = true))

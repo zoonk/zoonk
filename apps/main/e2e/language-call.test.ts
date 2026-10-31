@@ -248,7 +248,11 @@ test.describe("Language practice in the plan", () => {
     await page.getByRole("button", { name: "Stop here and see my plan" }).click();
 
     await expect(page.getByRole("heading", { name: "Your level today" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Build my plan" })).toBeEnabled();
 
+    await page.reload();
+
+    await expect(page.getByRole("heading", { name: "Your level today" })).toBeVisible();
     await expect(page.getByRole("listitem").filter({ hasText: "Reading" })).toBeVisible();
     await expect(page.getByRole("listitem").filter({ hasText: "Speaking" })).toHaveCount(0);
 

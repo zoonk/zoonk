@@ -9,6 +9,7 @@ import {
 
 type TestAnswers = {
   answers: readonly Pick<LevelTestProgress["answers"][number], "answerIndex" | "id" | "skipped">[];
+  placement?: LevelTestProgress["placement"];
   speaking: LevelTestProgress["speaking"];
 };
 
@@ -195,6 +196,11 @@ export function getNextLevelTestStep({
   progress: TestAnswers;
   start: number;
 }): LevelTestStep {
+  // A finish records its placement on the test: the learner ended it there.
+  if (progress.placement) {
+    return { kind: "done" };
+  }
+
   const targets = {
     listening: getTargetBand({
       answers: scoreAnswers({ bank, progress, skill: "listening" }),
