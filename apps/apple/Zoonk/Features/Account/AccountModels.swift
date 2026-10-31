@@ -1,7 +1,7 @@
 import Foundation
 
 struct CurrentAccount: Decodable, Equatable {
-  let account: AccountAccess
+  var account: AccountAccess
   let user: AccountUser
 
   var needsProfileSetup: Bool {
@@ -11,7 +11,7 @@ struct CurrentAccount: Decodable, Equatable {
 
 struct AccountAccess: Decodable, Equatable {
   let deletion: AccountDeletionRequirements
-  let subscription: AccountSubscription?
+  var subscription: AccountSubscription?
 
   var subscriptionAction: AccountSubscriptionAction {
     guard let subscription else {

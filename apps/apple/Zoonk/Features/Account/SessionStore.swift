@@ -383,16 +383,21 @@ final class SessionStore {
   }
 
   /// False when it failed. Plus renewing again, or a renewal that can't be turned back on anymore,
-  /// refreshes the account and what's left to cancel. A session that ended meanwhile fails; an
+  /// refreshes the account and what's left to cancel; Plus renewing again shows even when that read
+  /// fails, unless the account changed meanwhile. A session that ended meanwhile fails; an
   /// unauthorized answer signs that session out.
   func keepWebPlus() async -> Bool {
     guard let authenticatedSession else {
       return false
     }
 
+    let keepRevision = accountRefreshRevision
+    let renews: Bool
     do {
       try await api.keepWebPlus(token: authenticatedSession.bearerToken)
+      renews = true
     } catch AccountAPIError.cancellationChoiceClosed {
+      renews = false
     } catch AccountAPIError.unauthorized {
       await expire(authenticatedSession)
       return false
@@ -402,6 +407,11 @@ final class SessionStore {
 
     guard self.authenticatedSession == authenticatedSession else {
       return false
+    }
+
+    if renews, accountRefreshRevision == keepRevision, var account {
+      account.account.subscription?.cancelAt = nil
+      state = .signedIn(account)
     }
 
     subscriptionChanged?()
