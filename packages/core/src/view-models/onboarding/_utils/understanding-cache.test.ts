@@ -32,6 +32,24 @@ describe(findCachedUnderstanding, () => {
     });
   });
 
+  it("keeps what an exam's learner aims for", async () => {
+    const user = await userFixture();
+    const goal = `a high score on the gmat ${randomUUID()}`;
+
+    const exam = {
+      examTarget: "score",
+      kind: "exam",
+      subject: "GMAT",
+      title: "Prepare for the GMAT",
+    } as const;
+
+    await goalUnderstandingFixture({ goal, result: { ...RESULT, goals: [exam] }, userId: user.id });
+
+    await expect(readCached({ goal, userId: user.id })).resolves.toMatchObject({
+      goals: [{ examTarget: "score" }],
+    });
+  });
+
   it("never gives another learner a reading of the same words, and goes away with its learner", async () => {
     const [user, other] = await Promise.all([userFixture(), userFixture()]);
     const goal = `pass the enem for medicine at ufmg ${randomUUID()}`;

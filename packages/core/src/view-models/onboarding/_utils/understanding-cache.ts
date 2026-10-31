@@ -9,6 +9,7 @@ import { ONBOARDING_PURPOSES } from "../onboarding-contract";
 const understoodGoalSchema = z.object({
   examMonth: z.number().optional(),
   examName: z.string().optional(),
+  examTarget: z.enum(["admission", "position", "score"]).optional(),
   examYear: z.number().optional(),
   institution: z.string().optional(),
   kind: z.enum(["learn", "exam", "language"]),
