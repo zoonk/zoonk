@@ -67,6 +67,9 @@ android {
 
     androidResources {
         generateLocaleConfig = true
+        // Keeps libraries' translations to the app's languages, so our strings that replace theirs (close_sheet)
+        // aren't outranked by a library's regional copy, such as Compose's pt-rBR "Fechar planilha".
+        localeFilters += listOf("en", "de", "es", "fr", "pt")
     }
 
     compileOptions {

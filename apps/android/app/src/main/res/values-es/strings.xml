@@ -15,6 +15,7 @@
   "belt_red": "fe93443f09d2cc8a014820bf1db79fa2e108e040049e1cc29b6e934dd6d4a7fe",
   "belt_white": "fd145aa314fa6543afb18c900913ee4b68364d0777fc81cd1fc85d0f600efe85",
   "belt_yellow": "cad650ac9deaec8a4d6c37ed40821e69b39cb1811790e0468314fe4534bd3c4c",
+  "close_sheet": "464acccebb7cee39bf4ef3dc02111c058a607e9f9260abd16b605207f2df5d35",
   "diff_line_spoken": "579a15cfdda7ec86ca37638e30e84df1b3f8f926c3bdcf934c099d1c486d6d25",
   "disclosure_collapsed": "6f9dca9787c560ef2907407e1cd5a0b0a9e3c21ad7925d5ff08322f0ceed91f3",
   "disclosure_expanded": "64f71b708f9418463055126f7acda187b619635e3ee7b19c49bad0430679a196",
@@ -62,7 +63,7 @@
   "web_page_unavailable": "bc5aec9f00829f3232d9ced3e688494e832c12f45ede614008713b3d2d87f264"
 }
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="navigation_today">Hoy</string>
     <string name="navigation_plan">Plan</string>
     <string name="navigation_buddy">Compañero</string>
@@ -129,4 +130,6 @@
     <string name="list_row_states">%1$s, %2$s</string>
     <!-- A toast, at most two short lines: a link did nothing because no app on the phone can open web pages. Same meaning as Android's own "No app can perform this action". -->
     <string name="web_page_unavailable">Ninguna aplicación puede abrir esta página.</string>
+    <!-- Replaces Compose's own string of this name, whose Portuguese and German read as closing a spreadsheet. TalkBack's label for the dimmed area behind a bottom sheet, which closes the sheet. "Sheet" means a panel that slides up from the bottom of the screen, not a spreadsheet or a sheet of paper. -->
+    <string name="close_sheet" tools:override="true" tools:ignore="UnusedResources">Cerrar panel</string>
 </resources>
