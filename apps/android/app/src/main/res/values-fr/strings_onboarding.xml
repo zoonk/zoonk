@@ -335,6 +335,7 @@
   "onboarding_role_work_title": "b5c27507f1c7345a05b87c1cf5119777c73b734094536c510ee8ae9d27276dc2",
   "onboarding_row_course": "c7703b38c94f63e14fb56d614645b610dea8690930539ca5ac39f56c22411089",
   "onboarding_row_cutoff_score": "e47a865a745e49b787c982d77b3e03de889cc2aaacdca0327a4fc80d33211bdc",
+  "onboarding_row_date_booked": "bbd57e08473b976519c5f8dc6133a1285e2cce4d02beea9da0e455a6eb794cbe",
   "onboarding_row_date_not_out_guide": "3852de525832516dfc7224bb1f35830e8bc7b538b69b43511aa38fe461d77600",
   "onboarding_row_date_not_out_notice": "5b5d0456e95adc1017e7d5d87dacb863b7e9d5e25479180a6c6650fad1e1eecf",
   "onboarding_row_date_to_be_confirmed": "3e3f16d6db2703aa51bfff275ec109f72f09777aae352188cbadfc1165c784ba",
@@ -571,6 +572,7 @@
     <string name="onboarding_row_date_to_be_confirmed">%1$s, à confirmer</string>
     <string name="onboarding_row_date_not_out_notice">La date officielle sera publiée dans l’avis d’examen. Tu la connais déjà ? Indique-la ici.</string>
     <string name="onboarding_row_date_not_out_guide">La date officielle sera publiée dans le calendrier officiel de l’examen. Tu la connais déjà ? Indique-la ici.</string>
+    <string name="onboarding_row_date_booked">Tu choisis la date de ce test au moment de la réservation. Tu as déjà réservé ? Indique la date ici.</string>
     <string name="onboarding_row_dates_estimated">D’après les dates habituelles. On te préviendra quand les dates officielles seront publiées.</string>
     <string name="onboarding_row_pick_date">Choisis ta date</string>
     <string name="onboarding_row_several_sittings">Cet examen a lieu plusieurs fois par an. En attendant que tu choisisses une date, ton plan utilise la première.</string>

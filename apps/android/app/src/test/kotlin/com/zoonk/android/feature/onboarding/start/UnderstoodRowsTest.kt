@@ -56,6 +56,14 @@ class UnderstoodRowsTest {
     }
 
     @Test
+    fun aBookedTestSaysTheLearnerPicksItsDay() {
+        val row = dateRow(understanding(goalsUnderstanding(details = """{"examDay":"booked"}""")))
+
+        assertEquals("To be confirmed", row.value)
+        assertEquals("You pick this test's day when you book it. Booked already? Set it here.", row.note)
+    }
+
+    @Test
     fun anExamHeldSeveralTimesAYearAsksWhichSitting() {
         val dates = listOf("2026-12-05", "2027-03-06", "2027-06-05", "2027-09-04").joinToString(",") { day(it) }
         val row = dateRow(understanding(goalsUnderstanding(examDates = "[$dates]")))

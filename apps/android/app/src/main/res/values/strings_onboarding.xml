@@ -122,6 +122,7 @@
     <string name="onboarding_row_date_to_be_confirmed">%1$s, to be confirmed</string>
     <string name="onboarding_row_date_not_out_notice">The official date comes out in the exam\'s notice. Know it already? Set it here.</string>
     <string name="onboarding_row_date_not_out_guide">The official date comes out on the exam\'s official calendar. Know it already? Set it here.</string>
+    <string name="onboarding_row_date_booked">You pick this test\'s day when you book it. Booked already? Set it here.</string>
     <string name="onboarding_row_dates_estimated">From its usual dates. We\'ll tell you when the official ones are out.</string>
     <string name="onboarding_row_pick_date">Pick your date</string>
     <string name="onboarding_row_several_sittings">This exam is held several times a year. Until you pick one, your plan uses the first.</string>

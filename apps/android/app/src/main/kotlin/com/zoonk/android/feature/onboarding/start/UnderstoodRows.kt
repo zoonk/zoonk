@@ -259,7 +259,11 @@ class UnderstoodRows(
                     value = toBeConfirmed(ExamSittings.examMonth(draft.details), examYear(draft, examDates)),
                     note =
                         text(
-                            if (isGuide(draft)) R.string.onboarding_row_date_not_out_guide else R.string.onboarding_row_date_not_out_notice,
+                            when {
+                                draft.details.text("examDay") == "booked" -> R.string.onboarding_row_date_booked
+                                isGuide(draft) -> R.string.onboarding_row_date_not_out_guide
+                                else -> R.string.onboarding_row_date_not_out_notice
+                            },
                         ),
                     editable = EditableField.TargetDate,
                 )

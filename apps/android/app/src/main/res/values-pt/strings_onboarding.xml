@@ -335,6 +335,7 @@
   "onboarding_role_work_title": "b7b50f8e915a9893f7eeaec5c84ecc24d958a7ac4ebcb753acdaf632c28a50d4",
   "onboarding_row_course": "8c5bba924835ec5575b5a810233db74578bfeadd2153d9d2d3a1dfadb8ce2f73",
   "onboarding_row_cutoff_score": "e466c71621973468333d24343ff871622822f655c55ec895253a27fc60805152",
+  "onboarding_row_date_booked": "7d4d58522467152c88c2dc8ab5c073474cc60ec54faf189e8df6b3967c80c7fa",
   "onboarding_row_date_not_out_guide": "0379a02f5823bcc4b91cd79e0f50440b6aeeb19cab98959160e0a6ffde28647a",
   "onboarding_row_date_not_out_notice": "d9616c81d8a9d208135731acd452cc8edbddab8dfeea93c1306eabd1e45f3d5d",
   "onboarding_row_date_to_be_confirmed": "9cdd233988c418d827dc00905277b738e52c67bf90ecf5973fd0890541571650",
@@ -571,6 +572,7 @@
     <string name="onboarding_row_date_to_be_confirmed">%1$s, a confirmar</string>
     <string name="onboarding_row_date_not_out_notice">A data oficial sai no edital da prova. Já sabe qual é? Informe aqui.</string>
     <string name="onboarding_row_date_not_out_guide">A data oficial sai no calendário oficial da prova. Já sabe qual é? Informe aqui.</string>
+    <string name="onboarding_row_date_booked">Você escolhe a data dessa prova na hora de agendar. Já agendou? Informe a data aqui.</string>
     <string name="onboarding_row_dates_estimated">Com base nas datas habituais da prova. A gente avisa quando as datas oficiais saírem.</string>
     <string name="onboarding_row_pick_date">Escolha sua data</string>
     <string name="onboarding_row_several_sittings">Esta prova acontece várias vezes por ano. Até você escolher uma data, seu plano usa a primeira.</string>

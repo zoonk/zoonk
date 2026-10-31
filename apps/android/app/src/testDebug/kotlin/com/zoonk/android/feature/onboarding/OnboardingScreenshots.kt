@@ -283,6 +283,21 @@ class OnboardingScreenshots {
                         AppRoute.StartGoal(draftId = DRAFT_ID),
                     )
                 },
+                "understood-booked" to {
+                    Start(
+                        FakeOnboardingApi().apply {
+                            draft =
+                                understoodDraft(
+                                    understanding =
+                                        goalsUnderstanding(
+                                            title = "Prepare for the GRE",
+                                            details = """{"examDay":"booked","onboardingId":"$DRAFT_ID"}""",
+                                        ),
+                                )
+                        },
+                        AppRoute.StartGoal(draftId = DRAFT_ID),
+                    )
+                },
                 "explain" to {
                     Start(
                         FakeOnboardingApi().apply { draft = understoodDraft(prompt = "how does inflation work", understanding = EXPLAIN) },

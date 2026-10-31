@@ -335,6 +335,7 @@
   "onboarding_role_work_title": "8c7436855b0f3e69d0eba55bc576bc6f67fe5096156c568e2a2ebc0a42a58555",
   "onboarding_row_course": "6fe16e362ce4fdd0dc9cc15abd0fe85f47aabc80cb6ffdf28641863c2d7f5a15",
   "onboarding_row_cutoff_score": "82e5aa43743e63b754d7c7799d185de76939894ba6d81bcf6b1295efd67ea22e",
+  "onboarding_row_date_booked": "244b0347520659bcc895484e717b640f4bd495dd2f0b7a685c49ef135ed60235",
   "onboarding_row_date_not_out_guide": "fecccc118a0c84513e4a4011bf82ea543a6c2c40e2315d2dc2cdb6a42b025177",
   "onboarding_row_date_not_out_notice": "5cb0a57c7cabb87e6822cd74030ccbbab9284ec031b3863e98658116bcf35fea",
   "onboarding_row_date_to_be_confirmed": "a2a4cbc2e6ff0ea3622623e1b8d4240a2e03c79830fc27b0d16cb36150ba36e3",
@@ -569,6 +570,7 @@
     <string name="onboarding_row_date_to_be_confirmed">%1$s, noch zu bestätigen</string>
     <string name="onboarding_row_date_not_out_notice">Der offizielle Termin wird in der Prüfungsausschreibung veröffentlicht. Kennst du ihn schon? Trag ihn hier ein.</string>
     <string name="onboarding_row_date_not_out_guide">Der offizielle Termin wird im Prüfungskalender veröffentlicht. Kennst du ihn schon? Trag ihn hier ein.</string>
+    <string name="onboarding_row_date_booked">Den Termin für diesen Test legst du bei der Buchung fest. Schon gebucht? Trag ihn hier ein.</string>
     <string name="onboarding_row_dates_estimated">Anhand der üblichen Termine geschätzt. Wir sagen dir Bescheid, sobald die offiziellen Termine feststehen.</string>
     <string name="onboarding_row_pick_date">Wähle deinen Termin</string>
     <string name="onboarding_row_several_sittings">Diese Prüfung findet mehrmals im Jahr statt. Bis du einen Termin auswählst, verwendet dein Plan den ersten.</string>
