@@ -365,28 +365,37 @@ struct WorkedStepsView: View {
   }
 }
 
+/// Main's `ItemCitationNote`: where an answer comes from, with the Sources chip once it was checked.
 struct CitationNote: View {
   let citation: PracticeCitation
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 2) {
-      if let url = citation.url.flatMap(URL.init(string:)) {
-        Link(destination: url) {
-          Text(citation.title ?? citation.text)
-        }
-      } else {
-        Text(citation.title ?? citation.text)
+    ViewThatFits(in: .horizontal) {
+      HStack(spacing: 12) {
+        source
+        Spacer(minLength: 0)
+        chip
       }
 
-      if let checkedAt = citation.checkedAt {
-        Text(
-          "Checked \(checkedAt.formatted(.dateTime.month(.abbreviated).year()))",
-          tableName: "Practice",
-          comment: "When a quoted source was last found current.")
+      VStack(alignment: .leading, spacing: 8) {
+        source
+        chip
       }
     }
-    .font(.caption)
-    .foregroundStyle(.secondary)
+  }
+
+  private var source: some View {
+    Text(citation.text)
+      .font(.caption.weight(.medium))
+      .foregroundStyle(.secondary)
+  }
+
+  @ViewBuilder private var chip: some View {
+    if let checkedAt = citation.checkedAt {
+      SourcesChip(
+        title: citation.title ?? citation.text, publisher: citation.publisher, url: citation.url,
+        checkedAt: checkedAt)
+    }
   }
 }
 
