@@ -116,33 +116,6 @@ describe(courseDetailsWorkflow, () => {
     });
   });
 
-  it("replaces a course kept from before learning v2 whole, drawing its icon from the new description", async () => {
-    const { course } = await outlinedCourse({
-      description: "The old description",
-      imageUrl: "https://blob.test/old.webp",
-      landingPage: { valueProposition: "The old promise" },
-      legacyDetails: true,
-    });
-
-    await expect(courseDetailsWorkflow({ courseId: course.id })).resolves.toStrictEqual({
-      details: "written",
-      iconUrl: ICON_URL,
-    });
-
-    await expect(
-      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
-    ).resolves.toMatchObject({
-      description: details.description,
-      imageUrl: ICON_URL,
-      landingPage: details.landingPage,
-      legacyDetails: false,
-    });
-
-    expect(vi.mocked(generateCourseIcon).mock.calls[0]?.[0]).toMatchObject({
-      description: details.description,
-    });
-  });
-
   it("still draws the icon when the details fail", async () => {
     const { course } = await outlinedCourse();
     vi.mocked(generateCourseDetails).mockRejectedValue(new Error("The model is down"));

@@ -11,6 +11,7 @@ import {
   finishCourseOutline,
   getCourseBandContext,
   getCourseOutlineOwner,
+  needsLegacyCourseDetails,
   releaseStaleCourseOutline,
 } from "@zoonk/core/library/curriculum/course-outline-state";
 import { placeChaptersAfter } from "@zoonk/core/library/curriculum/place-chapters-after";
@@ -125,6 +126,12 @@ async function claimCourseOutlineWhenFree(input: { courseId: string; workflowRun
   await releaseStaleCourseOutline({ courseId: input.courseId, staleRunId: ownerId });
 
   return claimCourseOutline(input);
+}
+
+export async function needsLegacyCourseDetailsStep(courseId: string): Promise<boolean> {
+  "use step";
+
+  return needsLegacyCourseDetails(courseId);
 }
 
 export async function finishCourseOutlineStep(input: {

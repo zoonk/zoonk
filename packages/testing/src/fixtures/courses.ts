@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Course, type CourseCategory, prisma } from "@zoonk/db";
-import { type FixtureAttrs } from "./_utils/fixture-attrs";
+import { type FixtureAttrs, fixtureProvenance } from "./_utils/fixture-attrs";
 
 export async function courseFixture(attrs?: FixtureAttrs<Course, "landingPage">) {
   return prisma.course.create({
@@ -9,6 +9,7 @@ export async function courseFixture(attrs?: FixtureAttrs<Course, "landingPage">)
       /** Authored fixtures must not become sweep candidates when another suite uses an old clock. */
       detailsModel: "zoonk/hand-written",
       language: "en",
+      ...fixtureProvenance(),
       normalizedTitle: "test course",
       slug: `test-course-${randomUUID()}`,
       title: "Test Course",

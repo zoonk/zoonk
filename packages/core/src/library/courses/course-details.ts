@@ -31,13 +31,10 @@ function findCourse(courseId: string) {
 type DetailsCourse = NonNullable<Awaited<ReturnType<typeof findCourse>>>;
 
 function findMissingDetails({ course, copyOnly }: { course: DetailsCourse; copyOnly: boolean }) {
-  const legacy = !copyOnly && course.legacyDetails;
-
   return {
-    categories: legacy || (!copyOnly && course.categories.length === 0),
-    description: legacy || (!copyOnly && !course.description),
-    landingPage: legacy || course.landingPage === null,
-    legacy,
+    categories: !copyOnly && course.categories.length === 0,
+    description: !copyOnly && !course.description,
+    landingPage: course.landingPage === null,
   };
 }
 
@@ -93,15 +90,11 @@ async function saveMissingDetails({
   const categories = missing.categories ? getCategories({ course, details }) : [];
 
   await prisma.$transaction([
-    ...(missing.legacy
-      ? [prisma.courseCategory.deleteMany({ where: { courseId: course.id } })]
-      : []),
     prisma.course.update({
       data: {
         ...(missing.description && details && { description: details.description }),
         ...(missing.landingPage && details && { landingPage: details.landingPage }),
         ...(missing.landingPage && generated && toDetailsProvenanceData(generated.provenance)),
-        ...(missing.legacy && { imageUrl: null, legacyDetails: false }),
       },
       where: { id: course.id },
     }),

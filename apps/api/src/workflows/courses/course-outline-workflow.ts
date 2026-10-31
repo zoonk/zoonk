@@ -20,6 +20,7 @@ import {
   finishCourseOutlineStep,
   listWaitingGoalsStep,
   logReplanFailureStep,
+  needsLegacyCourseDetailsStep,
   placeChaptersAfterStep,
   planOutlineBandStep,
   replanWaitingGoalStep,
@@ -233,8 +234,13 @@ async function writeClaimedBands({
   }
 }
 
+/** A guest's run also writes the new details of a course from before learning v2. */
 async function startSharedCourseWork(input: CourseOutlineInput): Promise<void> {
-  if (input.scope.ownerId || input.forGuest) {
+  if (input.scope.ownerId) {
+    return;
+  }
+
+  if (input.forGuest && !(await needsLegacyCourseDetailsStep(input.courseId))) {
     return;
   }
 

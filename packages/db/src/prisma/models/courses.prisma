@@ -36,9 +36,6 @@ model Course {
   iconPromptVersion    String?              @map("icon_prompt_version")
   iconRunId            String?              @map("icon_run_id")
   iconGeneratedAt      DateTime?            @map("icon_generated_at")
-  /// Its description, landing page, categories and picture are from before learning v2. The course's
-  /// pages keep them until its next details run replaces them all.
-  legacyDetails        Boolean              @default(false) @map("legacy_details")
   createdAt            DateTime             @default(now()) @map("created_at")
   updatedAt            DateTime             @default(now()) @updatedAt @map("updated_at")
   categories           CourseCategory[]

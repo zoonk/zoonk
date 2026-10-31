@@ -1797,6 +1797,84 @@ describe(courseOutlineWorkflow, () => {
     },
   );
 
+  it(
+    "starts a course from before learning v2 over for a guest, and that run writes the course's details again",
+    { timeout: TIMEOUT },
+    async () => {
+      const [{ bandSkills }, course] = await Promise.all([
+        waitingGoal({ setupComplete: false }),
+        courseFixture({
+          imageUrl: "https://example.com/old-icon.webp",
+          isPublished: true,
+          outlineStatus: null,
+          runId: null,
+          title: "Immunology",
+        }),
+      ]);
+
+      await expect(
+        courseOutlineWorkflow({
+          bands: [{ level: "overview", skills: bandSkills }],
+          courseId: course.id,
+          forGuest: true,
+          scope,
+        }),
+      ).resolves.toMatchObject({ bandsWritten: 1, status: "written" });
+
+      await expect(
+        prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+      ).resolves.toMatchObject({ description: null, imageUrl: null, outlineStatus: "completed" });
+
+      expect(vi.mocked(start).mock.calls).toStrictEqual([
+        [
+          courseDetailsWorkflow,
+          [{ analytics: undefined, courseId: course.id }],
+          { attributes: { courseId: course.id } },
+        ],
+      ]);
+    },
+  );
+
+  it("writes the details a course from before learning v2 still lacks for a guest whose band needs nothing", async () => {
+    const [skill, course, lesson] = await Promise.all([
+      skillFixture(),
+      courseFixture({ description: null, outlineStatus: "failed", runId: null }),
+      libraryLessonFixture(),
+    ]);
+
+    const chapter = await libraryChapterFixture();
+
+    await Promise.all([
+      prisma.chapterSkill.create({ data: { chapterId: chapter.id, skillId: skill.id } }),
+      courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
+      prisma.chapterLesson.create({
+        data: { chapterId: chapter.id, lessonId: lesson.id, position: 0 },
+      }),
+    ]);
+
+    await expect(
+      courseOutlineWorkflow({
+        bands: [
+          {
+            level: "overview",
+            skills: [{ description: skill.description, id: skill.id, key: "k", name: skill.name }],
+          },
+        ],
+        courseId: course.id,
+        forGuest: true,
+        scope,
+      }),
+    ).resolves.toStrictEqual({ bandsWritten: 0, chapterIds: [], status: "written" });
+
+    expect(vi.mocked(start).mock.calls).toStrictEqual([
+      [
+        courseDetailsWorkflow,
+        [{ analytics: undefined, courseId: course.id }],
+        { attributes: { courseId: course.id } },
+      ],
+    ]);
+  });
+
   it("leaves a shared course's background work to a learner with an account, even when a guest's band needs nothing", async () => {
     const [skill, course, lesson] = await Promise.all([
       skillFixture(),

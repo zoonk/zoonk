@@ -2,9 +2,12 @@ import { randomUUID } from "node:crypto";
 import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
 import { generateSearchTerms } from "@zoonk/ai/tasks/identity/search-terms";
 import { prisma } from "@zoonk/db";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
-import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import {
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
   lessonSkillFixture,
@@ -783,6 +786,93 @@ describe("course outline state", () => {
         getCourseRouteCacheTag({ brandSlug: organization.slug, courseSlug: course.slug }),
       ]),
     );
+  });
+
+  it("starts a course from before learning v2 over on its first outline, keeping its address", async () => {
+    const organization = await aiOrganizationFixture();
+
+    const course = await courseFixture({
+      imageUrl: "https://example.com/old-icon.webp",
+      isPublished: true,
+      landingPage: { valueProposition: "The old promise" },
+      organizationId: organization.id,
+      outlineStatus: null,
+      runId: null,
+      visibility: "public",
+    });
+
+    await courseCategoryFixture({ category: "science", courseId: course.id });
+
+    const results = await Promise.all([
+      claimCourseOutline({ courseId: course.id, workflowRunId: randomUUID() }),
+      claimCourseOutline({ courseId: course.id, workflowRunId: randomUUID() }),
+    ]);
+
+    expect(results.toSorted()).toStrictEqual(["claimed", "running"]);
+
+    const [stored, categories] = await Promise.all([
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+      prisma.courseCategory.findMany({ where: { courseId: course.id } }),
+    ]);
+
+    expect(stored).toMatchObject({
+      description: null,
+      imageUrl: null,
+      isPublished: true,
+      landingPage: null,
+      slug: course.slug,
+      title: course.title,
+    });
+
+    expect(categories).toStrictEqual([]);
+
+    expect(vi.mocked(revalidateTag).mock.calls.map(([tag]) => tag)).toStrictEqual(
+      expect.arrayContaining([
+        COURSE_LIST_CACHE_TAG,
+        getCourseRouteCacheTag({ brandSlug: organization.slug, courseSlug: course.slug }),
+      ]),
+    );
+  });
+
+  it.each([
+    { label: "a learning v2 course whose outline failed", runId: randomUUID(), withChapter: false },
+    {
+      label: "a course from before learning v2 with its new chapters",
+      runId: null,
+      withChapter: true,
+    },
+  ])("keeps the details of $label when its outline opens again", async ({ runId, withChapter }) => {
+    const course = await courseFixture({
+      imageUrl: "https://example.com/icon.webp",
+      landingPage: { valueProposition: "The promise" },
+      outlineStatus: "failed",
+      runId,
+      visibility: "public",
+    });
+
+    const chapter = withChapter ? await libraryChapterFixture() : null;
+
+    await Promise.all([
+      courseCategoryFixture({ category: "science", courseId: course.id }),
+      chapter && courseChapterFixture({ chapterId: chapter.id, courseId: course.id }),
+    ]);
+
+    await expect(
+      claimCourseOutline({ courseId: course.id, workflowRunId: randomUUID() }),
+    ).resolves.toBe("claimed");
+
+    const [stored, categories] = await Promise.all([
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+      prisma.courseCategory.findMany({ where: { courseId: course.id } }),
+    ]);
+
+    expect(stored).toMatchObject({
+      description: course.description,
+      imageUrl: course.imageUrl,
+      landingPage: { valueProposition: "The promise" },
+    });
+
+    expect(categories).toHaveLength(1);
   });
 
   it("gives the next free position in a band and every chapter title of the course", async () => {

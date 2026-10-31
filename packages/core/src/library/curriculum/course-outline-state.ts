@@ -1,5 +1,5 @@
 import "server-only";
-import { type CourseLevel, prisma } from "@zoonk/db";
+import { type CourseLevel, DbNull, prisma } from "@zoonk/db";
 import { revalidateCourseContent } from "../../cache/revalidate-course-content";
 import {
   COURSE_LIST_CACHE_TAG,
@@ -102,6 +102,40 @@ export async function getCourseBandContext({
   };
 }
 
+/** The courses kept from before learning v2 are the only ones no run made. */
+const LEGACY_COURSE = { runId: null };
+
+/**
+ * A course from before learning v2 lost its chapters in the cutover and keeps its old details on
+ * its pages until its first outline clears them.
+ */
+async function startLegacyCourseOver(courseId: string): Promise<void> {
+  const cleared = await prisma.$transaction(async (tx) => {
+    const { count } = await tx.course.updateMany({
+      data: { description: null, imageUrl: null, landingPage: DbNull },
+      where: { ...LEGACY_COURSE, courseChapters: { none: {} }, id: courseId },
+    });
+
+    if (count > 0) {
+      await tx.courseCategory.deleteMany({ where: { courseId } });
+    }
+
+    return count > 0;
+  });
+
+  if (cleared) {
+    await revalidateCourseContent(await getListedCourseTags(courseId));
+  }
+}
+
+export async function needsLegacyCourseDetails(courseId: string): Promise<boolean> {
+  const count = await prisma.course.count({
+    where: { ...LEGACY_COURSE, description: null, id: courseId },
+  });
+
+  return count > 0;
+}
+
 export async function claimCourseOutline({
   courseId,
   workflowRunId,
@@ -109,6 +143,8 @@ export async function claimCourseOutline({
   courseId: string;
   workflowRunId: string;
 }): Promise<Exclude<LibraryClaimResult, "completed">> {
+  await startLegacyCourseOver(courseId);
+
   const claim = await claimLibraryGeneration({
     id: courseId,
     target: "courseOutline",
