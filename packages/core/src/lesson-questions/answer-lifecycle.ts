@@ -9,10 +9,7 @@ import { type UsageDecision } from "../entitlements/contract";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { type MemoryChange } from "../memory/memory-contract";
 import { getSession } from "../users/get-session";
-import {
-  type ClaimLessonQuestionAnswerInput,
-  claimAnswerInTransaction,
-} from "./_utils/answer-claim";
+import { claimAnswerInTransaction } from "./_utils/answer-claim";
 import { loadLearnerNames } from "./_utils/learner-names";
 import { lessonQuestionResourceOmit } from "./_utils/question-resource";
 import { getSharedAnswerKey, saveSharedAnswer } from "./_utils/shared-answers";
@@ -140,7 +137,7 @@ function getAnswerAnalytics({
 }
 
 /** Requires the owner session; an existing shared answer completes immediately without allowance or memory reads. */
-export async function claimLessonQuestionAnswer(input: ClaimLessonQuestionAnswerInput) {
+export async function claimLessonQuestionAnswer(input: { questionId: string }) {
   const session = await getSession();
 
   if (!session) {

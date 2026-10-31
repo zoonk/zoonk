@@ -3,40 +3,32 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { lessonQuestionPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
+import { toClientChunks } from "@/lib/tutor-client-chunks";
 import {
-  type AnswerGeneration,
-  type AnswerRun,
-  getAnswerLanguage,
-  getTutorModel,
-  startTutorAnswer,
-  toClientChunks,
-} from "@/lib/tutor-answers";
-import { confirmToolsOnly, loadConfirmationWords } from "@/lib/tutor-confirmation";
-import { type LessonQuestionAnswerCompletion } from "@zoonk/ai/tasks/lessons/question";
-import { joinStepTexts } from "@zoonk/ai/tasks/tutor/goal-tutor";
-import {
-  claimLessonQuestionAnswer,
-  completeLessonQuestionAnswer,
-  failLessonQuestionAnswer,
-  rememberLessonQuestionAnswer,
-} from "@zoonk/core/lesson-questions/answer-lifecycle";
+  type ConfirmationWords,
+  confirmToolsOnly,
+  loadConfirmationWords,
+} from "@/lib/tutor-confirmation";
+import { claimLessonQuestionAnswer } from "@zoonk/core/lesson-questions/answer-lifecycle";
 import {
   LESSON_QUESTION_MEMORY_PART,
   LESSON_QUESTION_SAVED_ANSWER_PART,
 } from "@zoonk/core/lesson-questions/contract";
-import { type MemoryChange } from "@zoonk/core/memory/contract";
-import { safeAsync } from "@zoonk/utils/error";
-import { logError } from "@zoonk/utils/logger";
-import { replaceEmDashes } from "@zoonk/utils/string";
+import {
+  type TutorAnswerRun,
+  finishTutorAnswer,
+  rememberTutorAnswer,
+  startTutorAnswer,
+} from "@zoonk/core/lesson-questions/tutor-answer";
 import {
   type UIMessageChunk,
   consumeStream,
   createUIMessageStream,
   createUIMessageStreamResponse,
+  toUIMessageStream,
 } from "ai";
 import { after } from "next/server";
 
-const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty lesson question answer";
 const SHARED_ANSWER_ID = "answer";
 const CONFIRMATION_ID = "confirmation";
 
@@ -44,92 +36,6 @@ const RESPONSE_HEADERS = {
   "Cache-Control": "no-store, no-transform",
   "X-Content-Type-Options": "nosniff",
 };
-
-type AnswerTarget = { questionId: string; revision: number; shareAnswer: boolean };
-
-async function persistLessonQuestionAnswer({
-  completion,
-  target,
-}: {
-  completion: LessonQuestionAnswerCompletion;
-  target: AnswerTarget;
-}): Promise<void> {
-  const result = await completeLessonQuestionAnswer({ ...completion, ...target });
-
-  if (result.status !== "updated") {
-    throw new Error(`Lesson question answer was not persisted: ${result.status}`);
-  }
-}
-
-type Confirm = () => string | null;
-
-async function getLessonQuestionAnswerCompletion({
-  answer,
-  confirm,
-  keepLinks,
-}: {
-  answer: AnswerGeneration;
-  confirm: Confirm;
-  keepLinks: AnswerRun["keepLinks"];
-}): Promise<{ completion: LessonQuestionAnswerCompletion; confirmation: string | null }> {
-  const [finalStep, steps] = await Promise.all([
-    answer.generation.finalStep,
-    answer.generation.steps,
-  ]);
-
-  const failed = finalStep.finishReason === "error";
-  const words = joinStepTexts(steps);
-  const confirmation = failed || words ? null : confirm();
-  const text = words || confirmation;
-
-  if (failed || !text) {
-    throw new Error(EMPTY_ANSWER_MESSAGE);
-  }
-
-  const provenance = await answer.provenance;
-
-  return {
-    completion: {
-      answer: keepLinks(text),
-      finishReason: finalStep.finishReason,
-      generatedAt: provenance.generatedAt,
-      model: provenance.model,
-      promptVersion: provenance.promptVersion,
-      provider: provenance.provider,
-      runId: provenance.runId,
-    },
-    confirmation,
-  };
-}
-
-async function finishLessonQuestionAnswer({
-  confirm,
-  run,
-  target,
-}: {
-  confirm: Confirm;
-  run: AnswerRun;
-  target: AnswerTarget;
-}): Promise<{ confirmation: string | null; saved: string }> {
-  try {
-    const { completion, confirmation } = await getLessonQuestionAnswerCompletion({
-      answer: run.answer,
-      confirm,
-      keepLinks: run.keepLinks,
-    });
-
-    await persistLessonQuestionAnswer({ completion, target });
-    return { confirmation, saved: replaceEmDashes(completion.answer) };
-  } catch (error) {
-    logError("[Lesson Question Answer Error]", {
-      questionId: target.questionId,
-      revision: target.revision,
-    });
-
-    await failLessonQuestionAnswer({ questionId: target.questionId, revision: target.revision });
-    throw error;
-  }
-}
 
 function streamSharedAnswer(answer: string) {
   return createUIMessageStream({
@@ -139,24 +45,6 @@ function streamSharedAnswer(answer: string) {
       writer.write({ id: SHARED_ANSWER_ID, type: "text-end" });
     },
   });
-}
-
-/** The answer is already saved by then, so a failure here is logged and changes nothing. */
-async function learnFromAnswer(target: AnswerTarget): Promise<MemoryChange[]> {
-  if (target.shareAnswer) {
-    return [];
-  }
-
-  const { data, error } = await safeAsync(() =>
-    rememberLessonQuestionAnswer({ questionId: target.questionId }),
-  );
-
-  if (error) {
-    logError("[Lesson Question Memory Error]", { questionId: target.questionId });
-    return [];
-  }
-
-  return data;
 }
 
 function enqueueConfirmation({
@@ -177,20 +65,22 @@ function enqueueConfirmation({
  * checked links link the app.
  */
 function streamGeneratedAnswer({
-  confirm,
   run,
-  target,
+  words,
 }: {
-  confirm: Confirm;
-  run: AnswerRun;
-  target: AnswerTarget;
+  run: TutorAnswerRun;
+  words: ConfirmationWords | null;
 }) {
   const heldBack: UIMessageChunk[] = [];
+  const chunks = toUIMessageStream({ sendReasoning: false, stream: run.answer.generation.stream });
 
-  return run.chunks.pipeThrough(toClientChunks(run)).pipeThrough(
+  return chunks.pipeThrough(toClientChunks(run)).pipeThrough(
     new TransformStream<UIMessageChunk, UIMessageChunk>({
       async flush(controller) {
-        const { confirmation, saved } = await finishLessonQuestionAnswer({ confirm, run, target });
+        const { confirmation, saved } = await finishTutorAnswer({
+          confirmation: words && confirmToolsOnly({ run, words }),
+          run,
+        });
 
         if (confirmation) {
           enqueueConfirmation({ confirmation, controller });
@@ -200,7 +90,7 @@ function streamGeneratedAnswer({
 
         heldBack.forEach((chunk) => controller.enqueue(chunk));
 
-        const memoryChanges = await learnFromAnswer(target);
+        const memoryChanges = await rememberTutorAnswer(run.target);
 
         if (memoryChanges.length > 0) {
           controller.enqueue({ data: memoryChanges, type: LESSON_QUESTION_MEMORY_PART });
@@ -225,10 +115,7 @@ async function createLessonQuestionAnswer(
 ) {
   const path = await readPathParams(context, lessonQuestionPathParamsSchema);
 
-  const result = await claimLessonQuestionAnswer({
-    questionId: path.questionId,
-    requestedModel: getTutorModel,
-  });
+  const result = await claimLessonQuestionAnswer({ questionId: path.questionId });
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();
@@ -253,23 +140,16 @@ async function createLessonQuestionAnswer(
     });
   }
 
-  const { claim } = result;
+  const run = startTutorAnswer(result.claim);
 
-  const target = {
-    questionId: claim.questionId,
-    revision: claim.revision,
-    shareAnswer: claim.shareAnswer,
-  };
-
-  const run = startTutorAnswer(claim);
-  const language = getAnswerLanguage(claim.contextSnapshot);
-  const words = language ? await loadConfirmationWords(language) : null;
-  const confirm = () => (words ? confirmToolsOnly({ run, words }) : null);
+  const words = run.confirmationLanguage
+    ? await loadConfirmationWords(run.confirmationLanguage)
+    : null;
 
   return createUIMessageStreamResponse({
     consumeSseStream: ({ stream }) => after(consumeStream({ stream })),
     headers: RESPONSE_HEADERS,
-    stream: streamGeneratedAnswer({ confirm, run, target }),
+    stream: streamGeneratedAnswer({ run, words }),
   });
 }
 

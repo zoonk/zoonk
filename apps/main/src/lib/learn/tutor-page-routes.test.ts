@@ -1,6 +1,6 @@
 import { readdirSync } from "node:fs";
 import path from "node:path";
-import { createAnswerLinks } from "@zoonk/player/tutor/app-links";
+import { createAnswerLinks } from "@zoonk/core/lesson-questions/app-links";
 import { describe, expect, it } from "vitest";
 
 const APP_DIR = path.join(import.meta.dirname, "../../app/[lang]");

@@ -1,7 +1,7 @@
 import { type GoalTutorAppToolResult } from "@zoonk/ai/tasks/tutor/goal-tutor-cards";
 import { type GoalTutorAppTool } from "@zoonk/ai/tasks/tutor/goal-tutor-tools";
-import { type TutorToolOffer } from "@zoonk/core/lesson-questions/contract";
-import { type offerTutorTool } from "@zoonk/core/lesson-questions/offer-tool";
+import { type TutorToolOffer } from "../contract";
+import { type offerTutorTool } from "../offer-tutor-tool";
 
 type OfferedDetails = Extract<GoalTutorAppToolResult, { status: "offered" }>["offered"];
 

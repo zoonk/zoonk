@@ -1,34 +1,15 @@
 import "server-only";
 import { type LessonQuestionPriorTurn } from "@zoonk/ai/tasks/lessons/question";
-import {
-  type LessonQuestionContextKind,
-  type TransactionClient,
-  type TutorSharedAnswer,
-} from "@zoonk/db";
+import { type TransactionClient, type TutorSharedAnswer } from "@zoonk/db";
 import { aboutCheckedAnswerWhere, findAboutCheckedAnswer } from "./about-checked-answer";
 import { parseLessonQuestionContextSnapshot } from "./context-snapshot-schema";
 import { lessonQuestionResourceOmit } from "./question-resource";
 import { getSharedAnswerKey } from "./shared-answers";
 import { lockLessonQuestionThread } from "./thread-lock";
+import { getTutorModel } from "./tutor-model";
 
 const MAX_PRIOR_TURNS = 12;
 const STALE_GENERATION_MILLISECONDS = 2 * 60 * 1000;
-
-/** requestedModel may depend on contextKind; record the model requested while generation is pending. */
-export type ClaimLessonQuestionAnswerInput = {
-  questionId: string;
-  requestedModel: string | ((contextKind: LessonQuestionContextKind) => string);
-};
-
-function resolveRequestedModel({
-  contextKind,
-  requestedModel,
-}: {
-  contextKind: LessonQuestionContextKind;
-  requestedModel: ClaimLessonQuestionAnswerInput["requestedModel"];
-}): string {
-  return typeof requestedModel === "function" ? requestedModel(contextKind) : requestedModel;
-}
 
 function getStaleGenerationBoundary(now: Date): Date {
   return new Date(now.getTime() - STALE_GENERATION_MILLISECONDS);
@@ -189,7 +170,7 @@ export async function claimAnswerInTransaction({
   transaction,
   userId,
 }: {
-  input: ClaimLessonQuestionAnswerInput;
+  input: { questionId: string };
   now: Date;
   transaction: TransactionClient;
   userId: string;
@@ -230,6 +211,9 @@ export async function claimAnswerInTransaction({
     return completeWithSharedAnswer({ question, shared, transaction, where: claimWhere });
   }
 
+  const contextSnapshot = parseLessonQuestionContextSnapshot(question.contextSnapshot);
+  const shareAnswer = sharedKey !== null;
+
   const claimed = await transaction.lessonQuestion.updateMany({
     data: {
       answer: null,
@@ -239,10 +223,7 @@ export async function claimAnswerInTransaction({
       model: null,
       promptVersion: null,
       provider: null,
-      requestedModel: resolveRequestedModel({
-        contextKind: question.contextKind,
-        requestedModel: input.requestedModel,
-      }),
+      requestedModel: getTutorModel({ contextSnapshot, shareAnswer }),
       runId: null,
       status: "running",
     },
@@ -255,13 +236,13 @@ export async function claimAnswerInTransaction({
 
   return {
     claim: {
-      contextSnapshot: parseLessonQuestionContextSnapshot(question.contextSnapshot),
+      contextSnapshot,
       goalId: question.goalId,
       priorTurns,
       question: question.question,
       questionId: question.id,
       revision: question.generationRevision + 1,
-      shareAnswer: sharedKey !== null,
+      shareAnswer,
     },
     status: "ready" as const,
   };

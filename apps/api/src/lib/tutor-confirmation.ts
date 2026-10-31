@@ -1,6 +1,6 @@
 import { type TutorToolOffer } from "@zoonk/core/lesson-questions/contract";
+import { type TutorAnswerRun } from "@zoonk/core/lesson-questions/tutor-answer";
 import { getExtracted } from "next-intl/server";
-import { type AnswerRun } from "./tutor-answers";
 
 const LINE_BREAK = "\n\n";
 
@@ -30,7 +30,7 @@ export async function loadConfirmationWords(language: string) {
   };
 }
 
-type ConfirmationWords = Awaited<ReturnType<typeof loadConfirmationWords>>;
+export type ConfirmationWords = Awaited<ReturnType<typeof loadConfirmationWords>>;
 
 function describeOffer({ offer, words }: { offer: TutorToolOffer; words: ConfirmationWords }) {
   switch (offer.kind) {
@@ -59,7 +59,7 @@ export function confirmToolsOnly({
   run,
   words,
 }: {
-  run: AnswerRun;
+  run: TutorAnswerRun;
   words: ConfirmationWords;
 }): string | null {
   const lines = [

@@ -1,5 +1,5 @@
 import { streamLessonQuestionAnswer } from "@zoonk/ai/tasks/lessons/question";
-import { GOAL_TUTOR_MODEL, streamGoalTutorAnswer } from "@zoonk/ai/tasks/tutor/goal-tutor";
+import { streamGoalTutorAnswer } from "@zoonk/ai/tasks/tutor/goal-tutor";
 import { createCardTools } from "@zoonk/ai/tasks/tutor/goal-tutor-cards";
 import { createLookUpTool } from "@zoonk/ai/tasks/tutor/goal-tutor-lookup";
 import {
@@ -624,9 +624,6 @@ describe("lesson question answer route", () => {
     await Promise.all(afterTasks);
 
     expect(streamLessonQuestionAnswer).not.toHaveBeenCalled();
-    const [claim] = vi.mocked(claimLessonQuestionAnswer).mock.calls[0] ?? [];
-    const requested = claim?.requestedModel;
-    expect(typeof requested === "function" ? requested("plan") : requested).toBe(GOAL_TUTOR_MODEL);
 
     expect(streamGoalTutorAnswer).toHaveBeenCalledWith(
       expect.objectContaining({

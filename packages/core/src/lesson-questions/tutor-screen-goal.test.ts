@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { interpretPlanEdit } from "@zoonk/ai/tasks/plans/edit-intent";
+import { GOAL_TUTOR_MODEL } from "@zoonk/ai/tasks/tutor/goal-tutor";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
@@ -111,10 +112,7 @@ async function askAndClaim({
     throw new Error(`Expected a created question, received ${created.status}`);
   }
 
-  const claimed = await claimLessonQuestionAnswer({
-    questionId: created.question.id,
-    requestedModel: MODEL,
-  });
+  const claimed = await claimLessonQuestionAnswer({ questionId: created.question.id });
 
   if (claimed.status !== "ready") {
     throw new Error(`Expected a claimed answer, received ${claimed.status}`);
@@ -162,12 +160,16 @@ describe("the buddy on a screen inside a goal", () => {
     const { chapter, goal } = await plannedGoal(user.id);
     mockSession(user.id);
 
-    const { claim } = await askAndClaim({
+    const { claim, questionId } = await askAndClaim({
       context: { kind: "chapter" },
       target: { chapterId: chapter.id, kind: "chapter" },
     });
 
     expect(claim.analytics).toStrictEqual({ distinctId: user.id, goalId: goal.id });
+
+    await expect(
+      prisma.lessonQuestion.findUniqueOrThrow({ where: { id: questionId } }),
+    ).resolves.toMatchObject({ requestedModel: GOAL_TUTOR_MODEL, status: "running" });
 
     expect(claim.contextSnapshot).toMatchObject({
       goal: { title: "Get a UX job" },
@@ -363,7 +365,7 @@ describe("the buddy on a screen inside a goal", () => {
       UPDATE lesson_questions SET context_snapshot = context_snapshot - 'privateContent'
       WHERE id = ${questionId}::uuid`;
 
-    const claimed = await claimLessonQuestionAnswer({ questionId, requestedModel: MODEL });
+    const claimed = await claimLessonQuestionAnswer({ questionId });
 
     expect(claimed).toMatchObject({ claim: { contextSnapshot: { privateContent: true } } });
   });
@@ -455,10 +457,7 @@ describe("the buddy on a screen inside a goal", () => {
       where: { id: created.question.id },
     });
 
-    const claimed = await claimLessonQuestionAnswer({
-      questionId: created.question.id,
-      requestedModel: MODEL,
-    });
+    const claimed = await claimLessonQuestionAnswer({ questionId: created.question.id });
 
     expect(claimed).toMatchObject({
       claim: { contextSnapshot: { goal: { cutoff }, setup: { writtenCadence: "biweekly" } } },

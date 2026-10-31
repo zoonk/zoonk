@@ -340,10 +340,7 @@ describe("the tutor beyond lessons", () => {
       target: { chapterId, kind: "chapter" },
     });
 
-    const claimed = await claimLessonQuestionAnswer({
-      questionId: question.id,
-      requestedModel: ANSWER_RUN.model,
-    });
+    const claimed = await claimLessonQuestionAnswer({ questionId: question.id });
 
     expect(claimed).toMatchObject({
       claim: { learnerMemory: [], priorTurns: [], shareAnswer: false },

@@ -28,8 +28,6 @@ import { claimLessonQuestionAnswer } from "./answer-lifecycle";
 import { createLessonQuestion } from "./create-lesson-question";
 import { lookUpTutorData } from "./look-up-tutor-data";
 
-const MODEL = "openai/gpt-6-luna";
-
 async function learnerWithGoal({ open = true }: { open?: boolean } = {}) {
   const user = await userFixture();
 
@@ -83,10 +81,7 @@ async function answering(goalId: string) {
     throw new Error(`Expected a created question, received ${created.status}`);
   }
 
-  const claimed = await claimLessonQuestionAnswer({
-    questionId: created.question.id,
-    requestedModel: MODEL,
-  });
+  const claimed = await claimLessonQuestionAnswer({ questionId: created.question.id });
 
   if (claimed.status !== "ready") {
     throw new Error(`Expected a claimed answer, received ${claimed.status}`);

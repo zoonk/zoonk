@@ -193,10 +193,7 @@ describe("item tutor access", () => {
     });
 
     await expect(
-      claimLessonQuestionAnswer({
-        questionId: created.question.id,
-        requestedModel: "openai/gpt-6-luna",
-      }),
+      claimLessonQuestionAnswer({ questionId: created.question.id }),
     ).resolves.toStrictEqual({ status: "notFound" });
   });
 });

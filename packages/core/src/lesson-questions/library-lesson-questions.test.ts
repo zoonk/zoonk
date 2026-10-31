@@ -76,7 +76,7 @@ async function askAnswered({ answer, ...asked }: Parameters<typeof ask>[0] & { a
 }
 
 async function claimedHistory(questionId: string) {
-  const claimed = await claimLessonQuestionAnswer({ questionId, requestedModel: MODEL });
+  const claimed = await claimLessonQuestionAnswer({ questionId });
 
   if (claimed.status !== "ready") {
     throw new Error(`Expected a claimed answer, received ${claimed.status}`);
@@ -269,10 +269,7 @@ describe("questions about a Library lesson", () => {
 
     const question = await ask({ context: { kind: "lesson" }, lessonId: lesson.id });
 
-    const claimed = await claimLessonQuestionAnswer({
-      questionId: question.id,
-      requestedModel: MODEL,
-    });
+    const claimed = await claimLessonQuestionAnswer({ questionId: question.id });
 
     expect(claimed).toMatchObject({
       claim: {
@@ -297,7 +294,7 @@ describe("questions about a Library lesson", () => {
     const guestQuestion = await ask({ context: { kind: "lesson" }, lessonId: guest.lesson.id });
 
     await expect(
-      claimLessonQuestionAnswer({ questionId: guestQuestion.id, requestedModel: MODEL }),
+      claimLessonQuestionAnswer({ questionId: guestQuestion.id }),
     ).resolves.toMatchObject({
       decision: { limit: { resource: "tutorMessage", tier: "guest" }, status: "limitReached" },
       status: "usageRefused",
@@ -307,9 +304,7 @@ describe("questions about a Library lesson", () => {
     await usageRecordsFixture({ count: 10, kind: "tutorMessage", userId: learner.user.id });
     const question = await ask({ context: { kind: "lesson" }, lessonId: learner.lesson.id });
 
-    await expect(
-      claimLessonQuestionAnswer({ questionId: question.id, requestedModel: MODEL }),
-    ).resolves.toMatchObject({
+    await expect(claimLessonQuestionAnswer({ questionId: question.id })).resolves.toMatchObject({
       decision: { limit: { period: "day", resource: "tutorMessage" }, status: "limitReached" },
       status: "usageRefused",
     });
@@ -325,17 +320,16 @@ describe("questions about a Library lesson", () => {
     const outage = new Error("Database unavailable");
     vi.mocked(claimUsage).mockRejectedValueOnce(outage);
 
-    await expect(
-      claimLessonQuestionAnswer({ questionId: question.id, requestedModel: MODEL }),
-    ).rejects.toBe(outage);
+    await expect(claimLessonQuestionAnswer({ questionId: question.id })).rejects.toBe(outage);
 
     await expect(
       prisma.lessonQuestion.findUniqueOrThrow({ where: { id: question.id } }),
     ).resolves.toMatchObject({ generationRevision: 1, status: "failed" });
 
-    await expect(
-      claimLessonQuestionAnswer({ questionId: question.id, requestedModel: MODEL }),
-    ).resolves.toMatchObject({ claim: { revision: 2 }, status: "ready" });
+    await expect(claimLessonQuestionAnswer({ questionId: question.id })).resolves.toMatchObject({
+      claim: { revision: 2 },
+      status: "ready",
+    });
   });
 
   it("saves the answer first, then updates memory from the exchange for the notice", async () => {
@@ -347,10 +341,7 @@ describe("questions about a Library lesson", () => {
       question: "I need this for my nursing exam, where does it show up?",
     });
 
-    const claimed = await claimLessonQuestionAnswer({
-      questionId: question.id,
-      requestedModel: MODEL,
-    });
+    const claimed = await claimLessonQuestionAnswer({ questionId: question.id });
 
     const revision = claimed.status === "ready" ? claimed.claim.revision : 0;
 

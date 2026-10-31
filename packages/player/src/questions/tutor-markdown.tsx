@@ -1,5 +1,6 @@
 "use client";
 
+import { isTutorAppPath, readTutorBlockLink } from "@zoonk/core/lesson-questions/app-links";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -23,7 +24,6 @@ import {
 } from "streamdown";
 import { type PlayerLinkComponent } from "../player-context";
 import { getSafeLessonQuestionUrl } from "./lesson-question-url";
-import { isTutorAppPath, readTutorBlockLink } from "./tutor-app-links";
 import { useMarkdownPlugins } from "./tutor-markdown-plugins";
 
 const DISALLOWED_ANSWER_ELEMENTS = ["img"] as const;

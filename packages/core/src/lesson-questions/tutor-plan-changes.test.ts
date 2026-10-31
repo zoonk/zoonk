@@ -115,10 +115,7 @@ async function askBuddy({ goalId, question }: { goalId: string; question: string
     throw new Error(`Expected a created question, received ${created.status}`);
   }
 
-  const claimed = await claimLessonQuestionAnswer({
-    questionId: created.question.id,
-    requestedModel: () => ANSWER_RUN.model,
-  });
+  const claimed = await claimLessonQuestionAnswer({ questionId: created.question.id });
 
   if (claimed.status !== "ready") {
     throw new Error(`Expected a claimed answer, received ${claimed.status}`);

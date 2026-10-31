@@ -14,7 +14,6 @@
     "./preview/catalog": "./src/preview/preview-catalog.ts",
     "./questions/styles.css": "./src/questions/styles.css",
     "./tutor": "./src/questions/ask-tutor.tsx",
-    "./tutor/app-links": "./src/questions/tutor-app-links.ts",
     "./tutor/conversation": "./src/questions/tutor-conversation.tsx",
     "./tutor/dock": "./src/questions/tutor-dock.tsx",
     "./tutor/item": "./src/questions/item-tutor.tsx",

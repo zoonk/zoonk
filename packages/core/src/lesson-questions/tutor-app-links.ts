@@ -1,9 +1,5 @@
-import {
-  type GoalTutorLinks,
-  type GoalTutorPage,
-  type TutorLink,
-} from "@zoonk/core/lesson-questions/contract";
 import { keepAllowedMarkdownLinks } from "@zoonk/utils/markdown-links";
+import { type GoalTutorLinks, type GoalTutorPage, type TutorLink } from "./contract";
 
 const TUTOR_PAGE_PATHS = {
   activity: "/activity",

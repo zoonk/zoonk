@@ -13,7 +13,7 @@ import {
 } from "@zoonk/ai/tasks/tutor/goal-tutor-lookup";
 import { listGoalTutorPages } from "@zoonk/ai/tasks/tutor/goal-tutor-pages";
 import { type GoalTutorAppTool } from "@zoonk/ai/tasks/tutor/goal-tutor-tools";
-import { createAnswerLinks } from "@zoonk/player/tutor/app-links";
+import { createAnswerLinks } from "@zoonk/core/lesson-questions/app-links";
 import { TEST_CASES } from "./test-cases";
 
 type GoalTutorOutput = {

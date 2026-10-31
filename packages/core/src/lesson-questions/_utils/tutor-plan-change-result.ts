@@ -2,9 +2,9 @@ import {
   type GoalTutorPlanChangeEffect,
   type GoalTutorPlanChangeResult,
 } from "@zoonk/ai/tasks/tutor/goal-tutor-cards";
-import { type proposeTutorPlanChange } from "@zoonk/core/lesson-questions/propose-plan-change";
-import { type PlanOperation } from "@zoonk/core/plans/contract";
-import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
+import { type PlanOperation } from "../../plans/plan-contract";
+import { type PlanChangeView } from "../../plans/plan-view-contract";
+import { type proposeTutorPlanChange } from "../propose-tutor-plan-change";
 
 const WEEKDAYS = [
   "Sunday",

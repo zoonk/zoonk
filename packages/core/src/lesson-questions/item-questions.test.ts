@@ -64,10 +64,7 @@ async function askAnswered({ answer, ...asked }: Parameters<typeof ask>[0] & { a
 }
 
 async function claimedHistory(questionId: string) {
-  const claimed = await claimLessonQuestionAnswer({
-    questionId,
-    requestedModel: "openai/gpt-6-luna",
-  });
+  const claimed = await claimLessonQuestionAnswer({ questionId });
 
   if (claimed.status !== "ready") {
     throw new Error(`Expected a claimed answer, received ${claimed.status}`);

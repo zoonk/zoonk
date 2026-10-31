@@ -55,10 +55,7 @@ async function answering(goalId: string) {
     throw new Error(`Expected a created question, received ${created.status}`);
   }
 
-  const claimed = await claimLessonQuestionAnswer({
-    questionId: created.question.id,
-    requestedModel: MODEL,
-  });
+  const claimed = await claimLessonQuestionAnswer({ questionId: created.question.id });
 
   if (claimed.status !== "ready") {
     throw new Error(`Expected a claimed answer, received ${claimed.status}`);
@@ -477,7 +474,7 @@ describe("the exam's question counts the buddy reads", () => {
     }
 
     const [claimed, syllabus] = await Promise.all([
-      claimLessonQuestionAnswer({ questionId: created.question.id, requestedModel: MODEL }),
+      claimLessonQuestionAnswer({ questionId: created.question.id }),
       getSyllabusView({ goalId: goal.id }),
     ]);
 

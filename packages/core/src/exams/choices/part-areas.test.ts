@@ -87,10 +87,7 @@ async function proposeFocusInAnswer({ areas, goalId }: { areas: string[]; goalId
 
   const questionId = created.status === "created" ? created.question.id : "";
 
-  const claimed = await claimLessonQuestionAnswer({
-    questionId,
-    requestedModel: () => "google/gemini-3.8-flash",
-  });
+  const claimed = await claimLessonQuestionAnswer({ questionId });
 
   const revision = claimed.status === "ready" ? claimed.claim.revision : 0;
   const result = await proposeTutorPlanChange({ questionId, request: question, revision });

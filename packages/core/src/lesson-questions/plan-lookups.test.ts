@@ -17,8 +17,6 @@ import { claimLessonQuestionAnswer } from "./answer-lifecycle";
 import { createLessonQuestion } from "./create-lesson-question";
 import { lookUpTutorData } from "./look-up-tutor-data";
 
-const MODEL = "openai/gpt-6-luna";
-
 const NOW = new Date("2020-09-28T12:00:00Z");
 
 const TODAY_LINK = { kind: "page", page: "today" };
@@ -92,10 +90,7 @@ async function answering({ goalId, userId }: { goalId: string; userId: string })
     throw new Error(`Expected a created question, received ${created.status}`);
   }
 
-  const claimed = await claimLessonQuestionAnswer({
-    questionId: created.question.id,
-    requestedModel: MODEL,
-  });
+  const claimed = await claimLessonQuestionAnswer({ questionId: created.question.id });
 
   if (claimed.status !== "ready") {
     throw new Error(`Expected a claimed answer, received ${claimed.status}`);

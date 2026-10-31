@@ -88,7 +88,7 @@ async function askOnScreen({
 }
 
 async function claimReady(questionId: string) {
-  const claimed = await claimLessonQuestionAnswer({ questionId, requestedModel: MODEL });
+  const claimed = await claimLessonQuestionAnswer({ questionId });
 
   if (claimed.status !== "ready") {
     throw new Error(`Expected a ready claim, received ${claimed.status}`);
@@ -165,9 +165,11 @@ describe("shared answers to the tutor's suggestions on a screen", () => {
       userId: second.id,
     });
 
-    await expect(
-      claimLessonQuestionAnswer({ questionId: again.id, requestedModel: MODEL }),
-    ).resolves.toStrictEqual({ answer: "A simpler take.", questionId: again.id, status: "shared" });
+    await expect(claimLessonQuestionAnswer({ questionId: again.id })).resolves.toStrictEqual({
+      answer: "A simpler take.",
+      questionId: again.id,
+      status: "shared",
+    });
 
     await expect(
       prisma.lessonQuestion.findUniqueOrThrow({ where: { id: again.id } }),
@@ -224,9 +226,10 @@ describe("shared answers to the tutor's suggestions on a screen", () => {
 
     const sameWords = await askOnScreen({ question: WORDS.simpler, shared, userId: other.id });
 
-    await expect(
-      claimLessonQuestionAnswer({ questionId: sameWords.id, requestedModel: MODEL }),
-    ).resolves.toMatchObject({ claim: { shareAnswer: false }, status: "ready" });
+    await expect(claimLessonQuestionAnswer({ questionId: sameWords.id })).resolves.toMatchObject({
+      claim: { shareAnswer: false },
+      status: "ready",
+    });
 
     await expect(
       prisma.tutorSharedAnswer.findMany({ where: { stepId: shared.step.id } }),

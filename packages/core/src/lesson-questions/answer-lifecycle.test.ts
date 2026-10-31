@@ -77,10 +77,7 @@ describe("lesson question answer lifecycle", () => {
 
     const claims = await Promise.all(
       [first, second].map((result) =>
-        claimLessonQuestionAnswer({
-          questionId: result.question.id,
-          requestedModel: "openai/gpt-6-luna",
-        }),
+        claimLessonQuestionAnswer({ questionId: result.question.id }),
       ),
     );
 
@@ -114,10 +111,7 @@ describe("lesson question answer lifecycle", () => {
     }
 
     await expect(
-      claimLessonQuestionAnswer({
-        questionId: followUp.question.id,
-        requestedModel: "openai/gpt-6-luna",
-      }),
+      claimLessonQuestionAnswer({ questionId: followUp.question.id }),
     ).resolves.toMatchObject({
       claim: {
         priorTurns: [{ answer: "First step explanation", question: first.question.question }],
@@ -130,8 +124,8 @@ describe("lesson question answer lifecycle", () => {
     const { question } = await createLessonQuestionFixture();
 
     const [first, duplicate] = await Promise.all([
-      claimLessonQuestionAnswer({ questionId: question.id, requestedModel: "openai/gpt-6-luna" }),
-      claimLessonQuestionAnswer({ questionId: question.id, requestedModel: "openai/gpt-6-luna" }),
+      claimLessonQuestionAnswer({ questionId: question.id }),
+      claimLessonQuestionAnswer({ questionId: question.id }),
     ]);
 
     expect([first.status, duplicate.status].toSorted()).toStrictEqual(["conflict", "ready"]);
@@ -177,8 +171,8 @@ describe("lesson question answer lifecycle", () => {
     });
 
     const [first, second] = await Promise.all([
-      claimLessonQuestionAnswer({ questionId: question.id, requestedModel: "openai/gpt-6-luna" }),
-      claimLessonQuestionAnswer({ questionId: followUp.id, requestedModel: "openai/gpt-6-luna" }),
+      claimLessonQuestionAnswer({ questionId: question.id }),
+      claimLessonQuestionAnswer({ questionId: followUp.id }),
     ]);
 
     expect(first.status).toBe("ready");
@@ -197,9 +191,9 @@ describe("lesson question answer lifecycle", () => {
 
     await prisma.lesson.delete({ where: { id: lesson.id } });
 
-    await expect(
-      claimLessonQuestionAnswer({ questionId: question.id, requestedModel: "openai/gpt-6-luna" }),
-    ).resolves.toStrictEqual({ status: "notFound" });
+    await expect(claimLessonQuestionAnswer({ questionId: question.id })).resolves.toStrictEqual({
+      status: "notFound",
+    });
 
     await expect(
       prisma.lessonQuestion.findUniqueOrThrow({ where: { id: question.id } }),
@@ -209,10 +203,7 @@ describe("lesson question answer lifecycle", () => {
   it.each(["failed", "abandoned"])("safely retries a %s answer", async (cause) => {
     const { lesson, question, user } = await createLessonQuestionFixture();
 
-    const firstClaim = await claimLessonQuestionAnswer({
-      questionId: question.id,
-      requestedModel: "openai/gpt-6-luna",
-    });
+    const firstClaim = await claimLessonQuestionAnswer({ questionId: question.id });
 
     if (firstClaim.status !== "ready") {
       throw new Error(`Expected a ready claim, received ${firstClaim.status}`);
@@ -230,10 +221,7 @@ describe("lesson question answer lifecycle", () => {
       });
     }
 
-    const retry = await claimLessonQuestionAnswer({
-      questionId: question.id,
-      requestedModel: "openai/gpt-6-luna",
-    });
+    const retry = await claimLessonQuestionAnswer({ questionId: question.id });
 
     if (retry.status !== "ready") {
       throw new Error(`Expected a ready retry, received ${retry.status}`);
@@ -343,10 +331,7 @@ describe("lesson question answer lifecycle", () => {
 
     const followUp = await createFollowUpQuestion({ lessonId: lesson.id, question: "Question 16" });
 
-    const claim = await claimLessonQuestionAnswer({
-      questionId: followUp.id,
-      requestedModel: "openai/gpt-6-luna",
-    });
+    const claim = await claimLessonQuestionAnswer({ questionId: followUp.id });
 
     if (claim.status !== "ready") {
       throw new Error(`Expected a ready claim, received ${claim.status}`);
@@ -365,9 +350,9 @@ describe("lesson question answer lifecycle", () => {
     const otherUser = await userFixture();
     mockSession(otherUser.id);
 
-    await expect(
-      claimLessonQuestionAnswer({ questionId: question.id, requestedModel: "openai/gpt-6-luna" }),
-    ).resolves.toStrictEqual({ status: "notFound" });
+    await expect(claimLessonQuestionAnswer({ questionId: question.id })).resolves.toStrictEqual({
+      status: "notFound",
+    });
 
     await expect(
       completeLessonQuestionAnswer({

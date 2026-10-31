@@ -1,5 +1,5 @@
-import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { describe, expect, it } from "vitest";
+import { type PlanChangeView } from "../../plans/plan-view-contract";
 import { toPlanChangeModelResult } from "./tutor-plan-change-result";
 
 const CHANGE: PlanChangeView = {
