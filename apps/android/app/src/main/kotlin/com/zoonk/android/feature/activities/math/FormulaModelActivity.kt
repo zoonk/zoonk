@@ -148,7 +148,7 @@ private fun FormulaModelBoard(
                     props.expected.numericValue?.takeIf { props.isChecked }?.let { y ->
                         val digits = exactFractionDigitsFor(check.answer, check.allowed, props.answer.numericValue ?: check.answer)
                         AnswerPoint(
-                            x = check.inputs?.find { it.name == axis.name }?.`value` ?: axis.initial,
+                            x = answerX(check.inputs, axis),
                             y = y,
                             label = formatAmount(y, locale, check.unit, maximumFractionDigits = digits),
                         )

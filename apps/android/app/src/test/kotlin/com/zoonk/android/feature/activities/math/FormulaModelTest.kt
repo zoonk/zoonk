@@ -5,6 +5,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOfValue as FormulaModelContent
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheckOneOfInputsInner as CheckInput
 
 /** Expected values are what main's `formula-model-view.ts` and core's `computeValue` return for main's fixtures. */
 class FormulaModelTest {
@@ -17,6 +18,14 @@ class FormulaModelTest {
     ): ModelView {
         val fields = fields(fixture)
         return modelView(fields, checkNotNull(chartAxis(fields)), checkNotNull(chartedOutput(fields, null)), sliders, events)
+    }
+
+    @Test
+    fun aRepeatedCheckInputPlacesTheAnswerAtItsLastValueAsCoreReadsIt() {
+        val axis = checkNotNull(chartAxis(fields("formulaModel.scenario")))
+        val inputs = listOf(CheckInput("price", 3.0), CheckInput("rentUp", 1.0), CheckInput("price", 4.0))
+
+        assertEquals(4.0, answerX(inputs, axis), 0.0)
     }
 
     @Test

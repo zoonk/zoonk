@@ -2,6 +2,7 @@ package com.zoonk.android.feature.activities.math
 
 import com.zoonk.android.feature.activities.ActivityExpression
 import com.zoonk.android.ui.components.niceDomain
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheckOneOfInputsInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfFields
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfFieldsOutputsInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfFieldsVariablesInner
@@ -35,6 +36,12 @@ internal data class ModelView(
     val x: Double,
     val yDomain: ClosedFloatingPointRange<Double>,
 )
+
+/** Where a numeric check's answer sits on the chart's x axis: a repeated input takes its last value, as core reads it. */
+internal fun answerX(
+    inputs: List<PlayableLibraryStepAnyOfContentOneOfCheckOneOfInputsInner>?,
+    axis: ModelVariable,
+): Double = inputs?.lastOrNull { it.name == axis.name }?.`value` ?: axis.initial
 
 internal fun startingValues(variables: List<ModelVariable>): ModelValues = variables.associate { it.name to it.initial }
 
