@@ -47,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.heading
@@ -338,7 +339,7 @@ internal fun ReadingPrompt(
             hints.forEach { hint ->
                 val translation = hint.translation
                 if (translation == null) {
-                    Text(hint.word, style = style)
+                    Text(hint.word, style = style, modifier = Modifier.clearAndSetSemantics {})
                 } else {
                     HintedWord(hint.word, translation, style)
                 }

@@ -9,10 +9,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.longClick
@@ -52,6 +55,7 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.playable
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.summaryStep
@@ -226,6 +230,15 @@ class LanguageStepsFlowTest {
         play(listOf(translation("pick"), summaryStep("end")), learner = "es-MX")
 
         rule.onNodeWithText("Which one means this?").assertIsDisplayed()
+    }
+
+    @Test
+    fun aReadingsSentenceIsReadOnceAsItsHeading() {
+        val catOnly = """[{"audioUrl":null,"romanization":null,"translation":"cat","word":"gato."}]"""
+        play(listOf(step("read", StepKind.Reading, "reading", sentence = sentence(null), sentenceWords = catOnly), summaryStep("end")))
+
+        val prompt = rule.onNode(isHeading() and hasContentDescription("I see a cat.")).fetchSemanticsNode()
+        assertEquals(null, prompt.config.getOrNull(SemanticsProperties.Text))
     }
 
     @Test
