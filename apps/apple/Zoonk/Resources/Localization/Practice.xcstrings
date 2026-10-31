@@ -8536,147 +8536,147 @@
         }
       }
     },
-    "You've reached today's study time." : {
-      "comment" : "A challenge can't start today: the daily limit is reached.",
+    "You've reached your daily time limit. Move the challenge to Monday to keep it." : {
+      "comment" : "The daily time limit is a setting that stops study for the day.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast deine heutige Lernzeit erreicht."
+            "value" : "Du hast dein tägliches Zeitlimit erreicht. Verschieb die Herausforderung auf Montag, um sie zu behalten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has alcanzado el tiempo de estudio de hoy."
+            "value" : "Has alcanzado tu límite de tiempo diario. Pasa el desafío al lunes para conservarlo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as atteint ta durée d’étude pour aujourd’hui."
+            "value" : "Tu as atteint ta limite de temps quotidienne. Reporte le défi à lundi pour le conserver."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você atingiu seu tempo de estudo de hoje."
+            "value" : "Você atingiu seu limite diário de tempo. Para manter o desafio, passe ele para segunda-feira."
           }
         }
       }
     },
-    "You've reached today's study time. Move the challenge to Monday to keep it." : {
-      "comment" : "Study time is the learner's daily amount.",
+    "You've reached your daily time limit. The challenge will be here on %@." : {
+      "comment" : "The daily time limit is a setting that stops study for the day. The argument is a weekday, like 'Monday'.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast deine Lernzeit für heute ausgeschöpft. Verschiebe die Herausforderung auf Montag, damit sie erhalten bleibt."
+            "value" : "Du hast dein tägliches Zeitlimit erreicht. Die Herausforderung wartet am %@ hier auf dich."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya has agotado el tiempo de estudio de hoy. Pasa el desafío al lunes para no perderlo."
+            "value" : "Has alcanzado tu límite de tiempo diario. El desafío estará aquí el %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as atteint la durée d’étude prévue pour aujourd’hui. Décale le défi à lundi pour le garder."
+            "value" : "Tu as atteint ta limite de temps quotidienne. Le défi sera disponible %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você já usou todo o seu tempo de estudo de hoje. Remarque o desafio para segunda-feira para mantê-lo."
+            "value" : "Você atingiu seu limite diário de estudo. O desafio estará aqui %@."
           }
         }
       }
     },
-    "You've reached today's study time. The challenge will be here on %@." : {
-      "comment" : "Study time is the learner's daily amount. The argument is a weekday, like 'Monday'.",
+    "You've reached your daily time limit. The challenge will be here tomorrow." : {
+      "comment" : "The daily time limit is a setting that stops study for the day.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast deine Lernzeit für heute ausgeschöpft. Die Herausforderung ist am %@ wieder da."
+            "value" : "Du hast dein tägliches Zeitlimit erreicht. Die Herausforderung wartet morgen hier auf dich."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya has agotado el tiempo de estudio de hoy. El desafío estará aquí el %@."
+            "value" : "Has alcanzado tu límite de tiempo diario. El desafío estará aquí mañana."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as atteint la durée d’étude prévue pour aujourd’hui. Le défi sera disponible le %@."
+            "value" : "Tu as atteint ta limite de temps quotidienne. Le défi sera là demain."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você já usou todo o seu tempo de estudo de hoje. O desafio fica para %@."
+            "value" : "Você atingiu seu limite diário de tempo. O desafio estará aqui amanhã."
           }
         }
       }
     },
-    "You've reached today's study time. The challenge will be here tomorrow." : {
-      "comment" : "Study time is the learner's daily amount.",
+    "You've reached your daily time limit. The challenge will be in your next session." : {
+      "comment" : "The daily time limit is a setting that stops study for the day.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast deine Lernzeit für heute ausgeschöpft. Die Herausforderung ist morgen wieder da."
+            "value" : "Du hast dein tägliches Zeitlimit erreicht. Die Herausforderung wartet in deiner nächsten Lerneinheit auf dich."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya has agotado el tiempo de estudio de hoy. El desafío estará aquí mañana."
+            "value" : "Has alcanzado tu límite de tiempo diario. El desafío estará en tu próxima sesión."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as atteint la durée d’étude prévue pour aujourd’hui. Le défi sera là demain."
+            "value" : "Tu as atteint ta limite de temps quotidienne. Tu retrouveras le défi à ta prochaine séance."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você já usou todo o seu tempo de estudo de hoje. O desafio fica para amanhã."
+            "value" : "Você atingiu seu limite diário de tempo. O desafio ficará para a sua próxima sessão."
           }
         }
       }
     },
-    "You've reached today's study time. The challenge will be in your next session." : {
-      "comment" : "Study time is the learner's daily amount.",
+    "You've reached your daily time limit. You'll miss this week's challenge." : {
+      "comment" : "The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast deine Lernzeit für heute ausgeschöpft. Die Herausforderung kommt in deiner nächsten Lerneinheit."
+            "value" : "Du hast dein tägliches Zeitlimit erreicht. Du verpasst die Herausforderung dieser Woche."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya has agotado el tiempo de estudio de hoy. El desafío estará en tu próxima sesión."
+            "value" : "Has alcanzado tu límite de tiempo diario. Te perderás el desafío de esta semana."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as atteint la durée d’étude prévue pour aujourd’hui. Le défi sera dans ta prochaine séance."
+            "value" : "Tu as atteint ta limite de temps pour aujourd’hui. Tu vas manquer le défi de cette semaine."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você já usou todo o seu tempo de estudo de hoje. O desafio fica para sua próxima sessão."
+            "value" : "Você atingiu seu limite diário de estudo. Você vai perder o desafio desta semana."
           }
         }
       }

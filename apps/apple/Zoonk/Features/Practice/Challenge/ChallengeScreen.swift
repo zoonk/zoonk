@@ -506,25 +506,30 @@ struct ChallengeScreen: View {
       comment: "A mock exam challenge is Plus-only.")
   }
 
-  /// Past today's study time the week's challenge doesn't come back on its own, so it asks to move
+  /// Past the daily time limit the week's challenge doesn't come back on its own, so it asks to move
   /// it; a phase's challenge waits for the next study day.
   private func usedUpLine(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource {
     if challenge.kind == .weekly {
       return challenge.canMove
         ? LocalizedStringResource(
-          "You've reached today's study time. Move the challenge to Monday to keep it.",
-          table: "Practice", comment: "Study time is the learner's daily amount.")
+          "You've reached your daily time limit. Move the challenge to Monday to keep it.",
+          table: "Practice",
+          comment: "The daily time limit is a setting that stops study for the day.")
         : LocalizedStringResource(
-          "You've reached today's study time.", table: "Practice",
-          comment: "A challenge can't start today: the daily limit is reached.")
+          "You've reached your daily time limit. You'll miss this week's challenge.",
+          table: "Practice",
+          comment:
+            "The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week."
+        )
     }
 
     guard let next = challenge.nextStudyDate, let nextDate = Self.parseDay(next),
       let today = Self.parseDay(challenge.today)
     else {
       return LocalizedStringResource(
-        "You've reached today's study time. The challenge will be in your next session.",
-        table: "Practice", comment: "Study time is the learner's daily amount.")
+        "You've reached your daily time limit. The challenge will be in your next session.",
+        table: "Practice",
+        comment: "The daily time limit is a setting that stops study for the day.")
     }
 
     var calendar = Calendar(identifier: .gregorian)
@@ -532,17 +537,19 @@ struct ChallengeScreen: View {
 
     if calendar.dateComponents([.day], from: today, to: nextDate).day == 1 {
       return LocalizedStringResource(
-        "You've reached today's study time. The challenge will be here tomorrow.",
-        table: "Practice", comment: "Study time is the learner's daily amount.")
+        "You've reached your daily time limit. The challenge will be here tomorrow.",
+        table: "Practice",
+        comment: "The daily time limit is a setting that stops study for the day.")
     }
 
     var weekday = Date.FormatStyle.dateTime.weekday(.wide)
     weekday.timeZone = .gmt
 
     return LocalizedStringResource(
-      "You've reached today's study time. The challenge will be here on \(nextDate.formatted(weekday)).",
+      "You've reached your daily time limit. The challenge will be here on \(nextDate.formatted(weekday)).",
       table: "Practice",
-      comment: "Study time is the learner's daily amount. The argument is a weekday, like 'Monday'."
+      comment:
+        "The daily time limit is a setting that stops study for the day. The argument is a weekday, like 'Monday'."
     )
   }
 

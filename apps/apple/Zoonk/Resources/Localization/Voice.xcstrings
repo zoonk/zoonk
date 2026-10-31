@@ -5864,31 +5864,31 @@
         }
       }
     },
-    "You've reached today's study time. You can make this call in your next session." : {
-      "comment" : "Study time is the learner's daily amount.",
+    "You've reached your daily time limit. You can make this call in your next session." : {
+      "comment" : "The daily time limit is a setting that stops study for the day.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast deine Lernzeit für heute ausgeschöpft. Du kannst dieses Gespräch in deiner nächsten Lerneinheit führen."
+            "value" : "Du hast dein tägliches Zeitlimit erreicht. Du kannst dieses Gespräch in deiner nächsten Lerneinheit führen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has completado tu tiempo de estudio de hoy. Puedes hacer esta llamada en tu próxima sesión."
+            "value" : "Has alcanzado tu límite de tiempo diario. Podrás hacer esta llamada en tu próxima sesión."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as utilisé tout ton temps d’étude pour aujourd’hui. Tu pourras passer cet appel lors de ta prochaine séance."
+            "value" : "Tu as atteint ta limite de temps quotidienne. Tu pourras passer cet appel à ta prochaine séance."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você já usou todo o tempo de estudo de hoje. Pode ter essa conversa na próxima sessão."
+            "value" : "Você atingiu seu limite diário de tempo. Você pode ter essa conversa na sua próxima sessão."
           }
         }
       }

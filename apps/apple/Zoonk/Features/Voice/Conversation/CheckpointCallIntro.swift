@@ -106,8 +106,8 @@ struct CheckpointCallIntro: View {
     }
   }
 
-  /// Mirrors main's `startCheckpointCallAction`: what changed since the intro was read (today's
-  /// study time, earlier work, the block finished elsewhere, the block gone) shows as the intro is
+  /// Mirrors main's `startCheckpointCallAction`: what changed since the intro was read (the daily
+  /// time limit, earlier work, the block finished elsewhere, the block gone) shows as the intro is
   /// read again; only a failure is worth another try.
   private func start() async {
     isStarting = true
@@ -141,8 +141,8 @@ private struct StudyTimeUsedUp: View {
 
   var body: some View {
     Text(
-      "You've reached today's study time. You can make this call in your next session.",
-      tableName: "Voice", comment: "Study time is the learner's daily amount."
+      "You've reached your daily time limit. You can make this call in your next session.",
+      tableName: "Voice", comment: "The daily time limit is a setting that stops study for the day."
     )
     .font(.footnote)
     .foregroundStyle(.secondary)
