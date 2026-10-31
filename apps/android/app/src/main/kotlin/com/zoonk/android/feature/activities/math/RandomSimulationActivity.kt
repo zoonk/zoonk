@@ -444,11 +444,11 @@ private fun marginText(
     val locale = currentLocale()
     if (!isShare) return stringResource(R.string.activities_math_sampling_margin, formatAmount(margin, locale, unit))
     val points = (margin * PERCENT * TENTHS).roundToInt() / TENTHS.toDouble()
-    return pluralStringResource(
-        R.plurals.activities_math_sampling_margin_points,
-        pluralQuantity(points, locale),
-        formatAmount(points, locale),
-    )
+    val formatted = formatAmount(points, locale)
+    val quantity =
+        pluralQuantity(points, locale)
+            ?: return stringResource(R.string.activities_math_sampling_margin_points_decimal, formatted)
+    return pluralStringResource(R.plurals.activities_math_sampling_margin_points, quantity, formatted)
 }
 
 @Composable

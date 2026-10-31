@@ -63,7 +63,9 @@ class AmountsTest {
 
     @Test
     fun aDecimalAmountTakesThePluralItsLanguageGivesIt() {
-        val category = { value: Double, locale: Locale -> PluralRules.forLocale(locale).select(pluralQuantity(value, locale).toDouble()) }
+        val category = { value: Double, locale: Locale ->
+            pluralQuantity(value, locale)?.let { PluralRules.forLocale(locale).select(it.toDouble()) }
+        }
 
         assertEquals(
             listOf("other", "one", "other", "one", "other", "one", "one", "other", "other"),
@@ -79,5 +81,12 @@ class AmountsTest {
                 1.5 to Locale.forLanguageTag("es"),
             ).map { (value, locale) -> category(value, locale) },
         )
+    }
+
+    @Test
+    fun aDecimalWithAFormNoWholeNumberTakesHasNoQuantity() {
+        val polish = Locale.forLanguageTag("pl")
+
+        assertEquals(listOf(null, null, 2), listOf(1.5, 2.5, 2.0).map { pluralQuantity(it, polish) })
     }
 }

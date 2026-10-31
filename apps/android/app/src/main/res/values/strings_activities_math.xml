@@ -161,4 +161,6 @@
         <item quantity="one">±%1$s point</item>
         <item quantity="other">±%1$s points</item>
     </plurals>
+    <!-- A margin of error in percentage points with decimals, like "±9.8 points", in the form a language gives decimal numbers (Polish "±9,8 punktu"). -->
+    <string name="activities_math_sampling_margin_points_decimal">±%1$s points</string>
 </resources>

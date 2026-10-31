@@ -176,15 +176,16 @@ private fun isWhole(
 /**
  * Android's plurals take a whole number, so a shown [value] with decimals gives a whole number its
  * language words the same way by ICU's rules, as main's messages do: "1.5 points", "1,5 point".
+ * Null when no whole number takes a decimal's form, as Polish "1,5 punktu".
  */
 fun pluralQuantity(
     value: Double,
     locale: Locale,
-): Int {
+): Int? {
     if (value == floor(value)) return value.toInt()
     val rules = PluralRules.forLocale(locale)
     val category = rules.select(value)
-    return (0..PLURAL_SEARCH).firstOrNull { rules.select(it.toDouble()) == category } ?: value.toInt()
+    return (0..PLURAL_SEARCH).firstOrNull { rules.select(it.toDouble()) == category }
 }
 
 private val CURRENCY_SYMBOLS =
