@@ -1107,6 +1107,9 @@ private struct MockNotesSection: View {
   private var leftOutLines: [String] {
     view.leftOut.map { leftOut in
       switch (leftOut.part, leftOut.name) {
+      case (.choice, let name):
+        String(
+          localized: "\(name ?? "") isn't in mocks yet.", table: "Mock", comment: "A left-out part")
       case (.listening, let name?), (.speaking, let name?):
         String(localized: "\(name) isn't in mocks yet.", table: "Mock", comment: "A left-out part")
       case (.listening, nil):

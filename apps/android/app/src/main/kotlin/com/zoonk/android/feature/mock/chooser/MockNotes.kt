@@ -160,6 +160,10 @@ private fun leftOutLine(
                 ?: stringResource(R.string.mock_chooser_left_out_speaking)
         }
 
+        MockLeftOut.Part.CHOICE -> {
+            name?.let { stringResource(R.string.mock_chooser_left_out_named, it) }
+        }
+
         MockLeftOut.Part.PRACTICAL -> {
             name?.let { stringResource(R.string.mock_chooser_left_out_practical_named, it) }
                 ?: stringResource(R.string.mock_chooser_left_out_practical)

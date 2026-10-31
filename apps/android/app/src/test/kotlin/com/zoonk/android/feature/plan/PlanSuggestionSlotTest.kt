@@ -422,7 +422,9 @@ class PlanSuggestionSlotTest {
     private companion object {
         const val RESULT_WAIT = 20_000L
         const val EXAM_CHOICES =
-            """"examChoices":[{"group":"Foreign language","options":[{"name":"English","shortName":null},""" +
+            """"examChoices":[{"group":"Foreign language",""" +
+                """"leftOut":{"examPoints":null,"examQuestions":null,"name":"Foreign language","points":null,"questions":null},""" +
+                """"options":[{"name":"English","shortName":null},""" +
                 """{"name":"Spanish","shortName":null}],"subject":null}]"""
         const val BEHIND = """"status":{"kind":"behind","days":2,"extraMinutesPerDay":10,"lessons":null}"""
         const val FIT_OFFER =

@@ -386,7 +386,9 @@ class PlanEditorTest {
         val RATIOS = UUID.fromString("6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b02").toString()
 
         const val EXAM_CHOICES =
-            """"examChoices":[{"group":"Foreign language","options":[{"name":"English","shortName":null},""" +
+            """"examChoices":[{"group":"Foreign language",""" +
+                """"leftOut":{"examPoints":null,"examQuestions":null,"name":"Foreign language","points":null,"questions":null},""" +
+                """"options":[{"name":"English","shortName":null},""" +
                 """{"name":"Spanish","shortName":null}],"subject":null}]"""
 
         val BASES =

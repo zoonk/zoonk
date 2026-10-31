@@ -291,6 +291,7 @@ struct MockScoreNotes: Hashable, Decodable, Sendable {
 
 struct MockLeftOut: Hashable, Decodable, Sendable {
   enum Part: String, Decodable, Sendable {
+    case choice
     case listening
     case numeric
     case practical
