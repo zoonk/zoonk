@@ -4056,6 +4056,7 @@ msgid "Plan options"
 msgstr "学習計画のメニュー"
 
 #: src/journey/journey-menu.tsx
+#: src/journey/plan-sections.tsx
 msgctxt "AGWryT"
 msgid "See the full course"
 msgstr "コース全体を見る"
