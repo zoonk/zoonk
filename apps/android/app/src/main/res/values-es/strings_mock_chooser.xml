@@ -74,7 +74,7 @@
   "mock_chooser_written_part": "96e7fe44639cc6e04fedeb31182c54e156694ea40ac4ddaa539c0ef968e57e42"
 }
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="mock_chooser_title">Hacer un simulacro</string>
     <string name="mock_chooser_rule">Solo verás tu resultado al final, como el día del examen.</string>
     <string name="mock_chooser_pick_free">Elige qué parte del examen quieres hacer ahora.</string>
@@ -90,8 +90,9 @@
     <string name="mock_chooser_one_subject">Una materia</string>
     <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$s lists them, such as "Specialty knowledge (P3)". -->
     <string name="mock_chooser_full_day_without">Un día de examen sin %1$s</string>
+    <!-- PluralsCandidate: %1$d names which exam day it is, not a count. -->
     <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$d is the exam day's number; %2$s lists the tests, such as "Foreign language". -->
-    <string name="mock_chooser_full_day_number_without">Día %1$d del examen sin %2$s</string>
+    <string name="mock_chooser_full_day_number_without" tools:ignore="PluralsCandidate">Día %1$d del examen sin %2$s</string>
     <!-- After a mock's parts or subjects: the mock covers only the exam's objective part, questions with set answers, and leaves the exam day's written part out. -->
     <string name="mock_chooser_objective_only">solo la parte objetiva</string>
     <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
