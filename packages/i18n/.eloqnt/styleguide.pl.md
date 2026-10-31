@@ -4,6 +4,9 @@
 
 - Use Polish for Poland and informal “ty”, lowercase mid-sentence: “twój plan”.
 - Buttons, links, menu actions and mission names use the “ty” imperative: “Spróbuj ponownie”, “Ukończ pierwszą lekcję”.
+- Options the learner picks answer the question: the infinitive after “Co chcesz…?” (“Zmienić zawód”), the first person where the English says “I” (“Zaczynam od zera”, “Zdecyduję później”), never the imperative. Toggles, reassurance lines and settings descriptions are statements (“Możesz zrezygnować w dowolnej chwili”); panel titles are nouns (“Z lekcji”).
+- Compact “X of Y” counters read “# z {total}”, with the same words in every plural form.
+- Never turn a plan's coverage or timing into a promise: “plan obejmuje {after} materiału”, not “cel zrealizowany” or “zdążysz się przygotować”.
 - Lines saying what Zoonk is doing while it works speak as “my” (“Przygotowujemy stronę 3…”). The buddy speaks as “ja”.
 - The learner's and the buddy's gender are unknown, and Polish marks them in past-tense verbs of any person and in adjectives about them (“pewny”, “gotowy”). Use the present or future, “udało ci/mi się”, impersonal “-no” forms or a noun phrase: “Lekcja ukończona!”, “Nie wiem”, “Zmiana jest poniżej”, not “Ukończyłeś lekcję!”, “Ukończyłeś(-aś)” or “Nie jestem pewny”.
 - Decline “Zoonk” as a masculine noun: “w Zoonku”, “z Zoonkiem”.
@@ -12,13 +15,19 @@
 
 ## Placeholders
 
-- Name and title placeholders can't decline: keep them in the nominative, as the subject or after a colon: “Napisz do: {name}”.
+- Name and title placeholders can't decline: keep them in the nominative, as the subject or after a colon: “Napisz do: {name}”. To ask the buddy, give it its own clause: “Zapytaj o ten rozdział. Odpowie {buddy}”.
 
 ## Glossary
 
 - “goal” (the learner's goal): “cel”
 - “plan” (study plan): “plan”; subscription plan: “pakiet”
-- “Free” (subscription name): “Free”
+- “Free” (subscription name): “Free”, as in “pakiet Free”; a “free account”: “bezpłatne konto”
+- “Today” (the tab and the page): “Dziś”
+- a language plan's “unit”: “dział”, never “rozdział”, which is a chapter
+- “Quick explanation”: “Szybkie wyjaśnienie”
+- “the big day” (the exam or goal date): “wielki dzień”
+- a counted study “session”: “dzień nauki”
+- pace statuses “Ahead” / “Behind”: “Przed planem” / “Za planem”
 - “Get Plus”: “przejdź na Plus”
 - “session” (study): “nauka” (“dzisiejsza nauka”), not “sesja”, which is the sign-in session or the exam period
 - “subject” (of an exam or a plan): “przedmiot”
@@ -42,7 +51,7 @@
 - Language skills “Listening” / “Speaking” / “Reading” / “Writing” / “Words”: “Słuchanie” / “Mówienie” / “Czytanie” / “Pisanie” / “Słownictwo”
 - Speaking criteria “Fluency” / “Accuracy” / “Interaction” / “Range of language”: “Płynność” / “Poprawność” / “Interakcja” / “Zakres środków językowych”
 - “examiner” / “another candidate” (the AI's roles in a speaking exam): “egzaminator” / “drugi zdający”
-- “tap” (a beat the learner taps in a rhythm activity): “uderzenie”; the verb: “stuknij”
+- “tap” (a beat the learner taps in a rhythm activity): “uderzenie”; the verb: “stuknij”; a “beat” of the bar: “miara”; tempo: “BPM”
 - “prerequisite”: “podstawy”, not “wymagania wstępne”
 - “musicianship”: “podstawy muzyki”
 - “study time”, the daily amount: “czas nauki”; the time of day the learner studies: “godzina nauki”
@@ -52,7 +61,7 @@
 
 ## Feature names and states
 
-- “Buddy”: “Kumpel”; “study buddy”: “kumpel do nauki”
+- “Buddy”: “Kumpel”; “study buddy”: “kumpel do nauki”; “AI study buddy”: “kumpel do nauki z AI”
 - Buddy stages “Baby” / “Young” / “Adult”: “Maluch” / “Nastolatek” / “Dorosły”
 - “mission”: “misja”
 - “call” (speaking practice): “rozmowa”, not “połączenie”
