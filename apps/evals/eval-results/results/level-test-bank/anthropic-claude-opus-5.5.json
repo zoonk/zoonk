@@ -248,6 +248,62 @@
         "id": "pt-en-second-1",
         "userInput": { "learnerLanguage": "pt", "targetLanguage": "en" }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "The bank progresses from single explicit facts at A1 through sequencing and simple descriptions at A2, stated opinions and reasons at B1, inferred attitudes at B2, and irony, qualified judgments, and implications at C1. Speaking sentences increase from seven simple words to 23 words with embedded and concessive clauses. The C1 listening items could sustain their nuanced discourse longer, but no question is clearly at the wrong level and neighboring levels remain distinguishable.",
+          "score": 9,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "All marked indexes identify the clearly supported answer. Distractors draw on competing details, earlier attitudes, or misread implications without creating a second defensible answer to the question asked. For example, bringing a camera remains necessary in the photography notice, but changing rooms is unambiguously its main purpose. Options are reasonably similar in length, and answering requires passage-specific information.",
+          "score": 10,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "Spanish is natural and appropriate for Mexico, including departamento, recámara, camión, celular, chamba, nomás, and ya mero, with no vosotros forms. Written passages resemble notices, correspondence, reviews, and commentary; listening passages use credible announcements and conversational messages. Questions, options, and translations are natural US English. Situations vary substantially, with no brands, identifiable real people, or stereotypes.",
+          "score": 10,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5056,
+          "outputTokens": 980,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "The C1 listening passages could offer more sustained nuance through longer development of contrasting perspectives. They already test implication, but this would make their difficulty more distinctly advanced relative to B2.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of Mexican Spanish passages and sentences (Mexican vocabulary and forms like \"ustedes\", \"departamento\", \"celular\", never \"vosotros\") for US English speakers: questions, options and translations in US English. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "en-es-1",
+        "userInput": { "learnerLanguage": "en", "targetLanguage": "es" }
+      }
     }
   ],
   "taskId": "level-test-bank"

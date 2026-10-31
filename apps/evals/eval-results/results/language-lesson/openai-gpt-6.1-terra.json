@@ -491,168 +491,6 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "The Spanish is grammatical and natural for the situation, and the translations preserve the intended meanings. “Alquiler,” “fianza,” and “gastos” fit Spain Spanish. “Depósito” appears only as a distractor, not as the taught term for the rental deposit. The pronunciation and grammar explanations are accurate; no accuracy cap applies.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 30
-        },
-        {
-          "categoryId": "pairAwareness",
-          "reasoning": "The tapped-r instruction, comparison with English “think,” and is/are comparisons are useful for English speakers. Respellings mark stress and do not add syllables. A reminder against English-style vowel glides would improve the otherwise well-targeted guidance.",
-          "score": 9,
-          "label": "Written for this language pair",
-          "weight": 20
-        },
-        {
-          "categoryId": "situationAndLevel",
-          "reasoning": "The short questions directly support asking about rent, the deposit, and bills at A2. Vocabulary is focused rather than padded, and neither known item is retaught. “Piso” also appears naturally in practice.",
-          "score": 10,
-          "label": "Situation and level",
-          "weight": 20
-        },
-        {
-          "categoryId": "practiceDesign",
-          "reasoning": "The tip, examples, and completion exercises consistently practice singular “es” versus plural “son.” Each exercise has one correct supplied option, and the writing answers cover the two principal formulations. However, speaking prompts lack an explicit real-world setup, and several wrong options are weak distractors rather than likely learner confusions.",
-          "score": 8,
-          "label": "Practice design",
-          "weight": 20
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The English is clear, concise, and natural. Target-language fields remain in Spanish, questions retain their question marks, and there are no decorative sentence-ending periods in tile content. Each summary line identifies one usable question the learner can now ask.",
-          "score": 10,
-          "label": "Language and style",
-          "weight": 10
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3067,
-          "outputTokens": 1059,
-          "reasoningTokens": 470
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The speaking prompts specify what to ask but do not establish a concrete interaction, such as calling a Madrid landlord. Some distractors, especially “somos” and “soy,” are less plausible learner errors than singular/plural alternatives.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Add a brief English-specific reminder to keep Spanish vowels pure, particularly the o represented by “oh” in the respellings. Give speaking prompts a landlord-contact scenario.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "US English speaker learning Spain Spanish, A2, renting a flat in Madrid. Spain vocabulary: \"el piso\", \"el alquiler\", \"la fianza\", \"los gastos\"; \"vosotros\" is fine but a lesson aimed at a landlord would use \"usted\". Latin American forms like \"el departamento\" or \"el depósito\" as the main word are wrong for this variant. Tips should target sounds English speakers get wrong (the tapped \"r\", pure vowels, \"ll\").",
-        "id": "en-es-a2-renting-1",
-        "userInput": {
-          "knownWords": ["la casa", "¿Cuánto cuesta?"],
-          "learnerLanguage": "en",
-          "lessonCanDo": "Ask about the rent, the deposit and the bills for a flat",
-          "lessonDescription": "Ask what the rent is and what the deposit and bills are",
-          "lessonTitle": "Asking about the rent",
-          "level": "A2",
-          "targetLanguage": "es",
-          "unitCanDos": ["Call about a flat", "Ask what's included", "Arrange a viewing"],
-          "unitTitle": "Renting a flat in Madrid"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The English sentences are grammatical and natural in US English, and their Spanish translations are defensible. The notes correctly distinguish work on tasks, workplace location, and from/to time ranges. No clear wrong translation, false rule, or wrong-variant trigger appears.",
-          "score": 9,
-          "label": "Accuracy",
-          "weight": 30
-        },
-        {
-          "categoryId": "pairAwareness",
-          "reasoning": "The subject-omission and question-word-order comparisons are useful for Spanish speakers, as are the r and v articulation tips. However, the requested b/v contrast, sh and initial consonant-cluster support, and false-friend guidance are absent. Some respellings also receive little corrective support, notably “DI” for “the”. No respelling clearly adds a syllable, so the syllable-addition cap does not apply.",
-          "score": 7,
-          "label": "Written for this language pair",
-          "weight": 20
-        },
-        {
-          "categoryId": "situationAndLevel",
-          "reasoning": "The material is short, everyday, and suitable for A2, and it does not reteach the known expressions. Workplace and hours are covered, but the central ability to say what one's occupation is remains untaught. Generic project work is a weaker priority than an occupation expression for this exact lesson.",
-          "score": 6,
-          "label": "Situation and level",
-          "weight": 20
-        },
-        {
-          "categoryId": "practiceDesign",
-          "reasoning": "The from/to tip, examples, and blank practice align, and the blank has one correct answer. However, “hasta” is not clearly wrong as a translation distractor for the schedule sentence. Writing coverage misses a common correct version without “from”, and speaking prompts do not establish the requested real conversational moments.",
-          "score": 7,
-          "label": "Practice design",
-          "weight": 20
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The Spanish is concise, natural, and appropriate for Spain. Target-language fields remain in English, sentence tiles and translations omit decorative final punctuation, and the question retains its question marks. Each summary line identifies one concrete thing the learner can express.",
-          "score": 10,
-          "label": "Language and style",
-          "weight": 10
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2957,
-          "outputTokens": 1218,
-          "reasoningTokens": 474
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The lesson does not teach learners to state their occupation, a central part of the can-do. “I work on projects” describes tasks, not what someone does for a living; an occupation pattern such as “I work as a nurse” is missing. One translation distractor, “hasta”, is also a valid alternative in “Trabajo de nueve hasta cinco”, so it can penalize a correct answer.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Language-pair support is incomplete: there is useful guidance for English r and v, but no explicit b/v contrast, sh guidance, initial s-plus-consonant guidance, or false-friend note. The speaking prompts request sentences rather than establish a workplace interaction. Writing answers omit common alternatives such as “I work nine to five”.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Prioritize an occupation alongside workplace and hours, then add useful schedule vocabulary such as “full-time” or “a shift”. Connect pronunciation and false-friend notes to that vocabulary. Frame speaking practice as answering a new colleague who asks about the learner’s job and schedule.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "Spain Spanish speaker learning US English, A2, talking about their job. Words like \"I work as\", \"a nurse\", \"a shift\", \"full-time\". Tips for Spanish speakers (the English \"v\" and \"b\", the \"sh\" sound, adding \"e\" before \"s\" + consonant as in \"estudent\"), notes for false friends (\"actually\" is not \"actualmente\"). All learner-language text in Spain Spanish.",
-        "id": "es-en-a2-work-1",
-        "userInput": {
-          "knownWords": ["I am", "my name is"],
-          "learnerLanguage": "es",
-          "lessonCanDo": "Decir a qué te dedicas y qué horario tienes",
-          "lessonDescription": "Explica en qué trabajas, dónde y en qué horario",
-          "lessonTitle": "Hablar de tu trabajo",
-          "level": "A2",
-          "targetLanguage": "en",
-          "unitCanDos": [
-            "Presentarte en el trabajo",
-            "Hablar de tu trabajo",
-            "Pedir ayuda a un compañero"
-          ],
-          "unitTitle": "Tu primera semana en el trabajo"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
           "reasoning": "Definitions accurately explain the words without repeating the headword or a form of it. Sentences are grammatical and natural, sentence translations repeat them exactly, and the grammar explanations are accurate in context. No accuracy cap is triggered.",
           "score": 10,
           "label": "Accuracy",
@@ -821,6 +659,168 @@
             "Use endings, clusters and stress to identify spoken words"
           ],
           "unitTitle": "Hearing the sounds in words"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The English words and sentences are grammatical and natural in US English, and their Spanish translations preserve their meanings. The explanations of prepositions, word order, and schedule expressions are accurate. No wrong-translation, ungrammatical-sentence, false-rule, or wrong-variant cap is triggered.",
+          "score": 9,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The lesson explicitly contrasts English prepositions with Spanish and correctly warns against adding an initial e to 'schedule'. However, the requested v/b and sh support is missing, and 'UÉRK' risks teaching a Spanish diphthong. Guidance on the English r would make that respelling more useful. No respelling clearly adds a syllable, so the syllable-addition cap does not apply. Null notes are appropriate for the selected words, although the requested false-friend support is not represented.",
+          "score": 7,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The sentences are short and suitable for A2, cover working location and hours, and do not reteach the known expressions. However, a central part of the can-do—saying what you do for a living—is missing. 'Projects' is less useful here than an occupation and an 'I work as...' frame, and the lesson offers little vocabulary for describing shifts or employment schedules.",
+          "score": 6,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The tip, examples, and two practice blanks consistently teach 'from...to...', and the supplied blank options yield one intended correct answer each. However, the sentence distractor 'until' produces another valid schedule sentence. Writing coverage omits 'I work nine to five', and the speaking prompts are instructions to produce sentences rather than realistic workplace moments.",
+          "score": 7,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "Learner-facing text is concise, natural Spanish suitable for Mexico. Target-language fields remain in English, quoted English in explanations is appropriate, and sentence tiles omit decorative final punctuation while retaining question marks. Each summary line identifies one thing the learner can say.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3007,
+          "outputTokens": 1527,
+          "reasoningTokens": 710
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The lesson does not adequately teach how to say what your job is: it provides no occupation or usable 'I work as a...' construction. Working on projects is not a substitute for identifying your occupation. In addition, 'until' is an invalid distractor for 'I work from nine to five', because 'I work from nine until five' is also correct.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The requested pronunciation support is only partly covered: the initial s-plus-consonant tip is useful, but there is no support for English v versus b or sh. 'UÉRK' can encourage a Spanish ue diphthong rather than the vowel in 'work'. Speaking prompts request sentence production without establishing a realistic workplace interaction, and the writing answers omit the common correct variant 'I work nine to five'.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Prioritize an occupation, 'I work as', and schedule vocabulary such as 'shift' or 'full-time' over 'projects'. These choices would also create opportunities for relevant pronunciation guidance. Add a short coworker-introduction scenario and, where relevant, a contextualized explanation that 'actually' means 'en realidad', not 'actualmente'.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Mexican Spanish speaker learning US English, A2, talking about their job. Words like \"I work as\", \"a nurse\", \"a shift\", \"full-time\". Tips for Spanish speakers (the English \"v\" and \"b\", the \"sh\" sound, adding \"e\" before \"s\" + consonant as in \"estudent\"), notes for false friends (\"actually\" is not \"actualmente\"). All learner-language text in Mexican Spanish.",
+        "id": "es-en-a2-work-1",
+        "userInput": {
+          "knownWords": ["I am", "my name is"],
+          "learnerLanguage": "es",
+          "lessonCanDo": "Decir a qué te dedicas y qué horario tienes",
+          "lessonDescription": "Explica en qué trabajas, dónde y en qué horario",
+          "lessonTitle": "Hablar de tu trabajo",
+          "level": "A2",
+          "targetLanguage": "en",
+          "unitCanDos": [
+            "Presentarte en el trabajo",
+            "Hablar de tu trabajo",
+            "Pedir ayuda a un compañero"
+          ],
+          "unitTitle": "Tu primera semana en el trabajo"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The sentences are grammatical, translations preserve their meanings, and renta, depósito, and servicios fit Mexican Spanish. No inappropriate regional forms or forms of address appear. The separate-vowel pronunciation of incluidos is possible in Spanish, so it does not establish an added-syllable error or false rule.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The steady-vowel tip explicitly addresses English vowel gliding, and sentence explanations use helpful English–Spanish comparisons. However, the respelling of servicios leaves English speakers without guidance against using their English r; a tapped-r explanation would address a relevant pronunciation difficulty.",
+          "score": 8,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The compact vocabulary and short sentences support asking about rent, a deposit, and utilities at A2. Neither known expression is retaught, and the lesson avoids padding with regional synonyms or unnecessarily advanced language.",
+          "score": 10,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The grammar tip, examples, and blank exercise consistently practice cuánto es, with exactly one correct blank answer. Distractors are plausible and absent from their corresponding answers, and the writing answers cover useful alternative constructions. The speaking prompts are weaker: they state what to ask without setting up a concrete landlord interaction.",
+          "score": 8,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The lesson is concise, keeps English out of target-language fields, and handles sentence-ending punctuation correctly. Summary lines identify usable outcomes, but “Ask the rent” is not natural US English and should be rewritten as “Ask how much the rent is.”",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3064,
+          "outputTokens": 1419,
+          "reasoningTokens": 840
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The summary phrase “Ask the rent” is unnatural US English; “Ask how much the rent is” would be clearer. The speaking prompts identify the requested information but do not establish a concrete interaction with a landlord.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a targeted explanation of the tapped r in servicios, contrasting it with the English r and the initial rolled r in renta. Make speaking prompts situational, such as calling a landlord about an advertised apartment.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Mexican Spanish, A2, renting an apartment in Mexico City. Mexican vocabulary: \"el departamento\", \"la renta\", \"el depósito\", \"los servicios\"; \"ustedes\" for a group, never \"vosotros\", and a lesson aimed at a landlord would use \"usted\". Spain forms like \"el piso\", \"el alquiler\", \"la fianza\" or \"los gastos\" as the main word are wrong for this variant. Tips should target sounds English speakers get wrong (the tapped \"r\", pure vowels, \"ll\").",
+        "id": "en-es-a2-renting-1",
+        "userInput": {
+          "knownWords": ["la casa", "¿Cuánto cuesta?"],
+          "learnerLanguage": "en",
+          "lessonCanDo": "Ask about the rent, the deposit and the bills for an apartment",
+          "lessonDescription": "Ask what the rent is and what the deposit and bills are",
+          "lessonTitle": "Asking about the rent",
+          "level": "A2",
+          "targetLanguage": "es",
+          "unitCanDos": ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
+          "unitTitle": "Renting an apartment in Mexico City"
         }
       }
     }
