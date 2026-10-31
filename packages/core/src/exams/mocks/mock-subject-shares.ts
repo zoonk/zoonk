@@ -3,6 +3,7 @@ import { type MockCandidate } from "./mock-plan";
 
 export type SubjectShare = {
   even?: boolean;
+  group?: string | null;
   name: string;
   partOf?: string | null;
   questions: number | null;
@@ -42,7 +43,9 @@ export function splitPartShares({
     const theirs = countSkills({ candidates, name: share.partOf });
     const questions = own + theirs > 0 ? (whole * own) / (own + theirs) : 0;
 
-    return [{ name: share.name, partOf: share.partOf, questions }];
+    return [
+      { ...share, group: shares.find((other) => other.name === share.partOf)?.group, questions },
+    ];
   });
 
   return shares.flatMap((share): CountedShare[] => {

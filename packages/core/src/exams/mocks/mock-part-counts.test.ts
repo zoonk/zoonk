@@ -65,15 +65,25 @@ const BANK: MockCandidate[] = Object.values(TESTS).flatMap((names) =>
   ),
 );
 
-function planFullMock(structure: ExamStructure): string[] {
-  const subjects = Object.values(TESTS).flat();
-  const [full] = listMockOptions({ dayInTurn: null, goalAreas: subjects, structure });
-  const plan = full ? planOptionMock({ candidates: BANK, option: full, structure }) : null;
+function planFullMock(structure: ExamStructure, half = false): string[] {
+  const subjects = structure.subjects.map((item) => item.name);
+  const options = listMockOptions({ dayInTurn: null, goalAreas: subjects, structure });
+
+  const full = options.find((option) => option.kind === (half ? "half" : "full"));
+
+  const plan = full
+    ? planOptionMock({
+        candidates: BANK.filter((item) => subjects.includes(item.area ?? "")),
+        option: full,
+        structure,
+      })
+    : null;
+
   return (plan?.sections ?? []).flatMap((section) => section.itemIds);
 }
 
-function countByTest(structure: ExamStructure) {
-  const asked = planFullMock(structure);
+function countByTest(structure: ExamStructure, half = false) {
+  const asked = planFullMock(structure, half);
 
   return Object.fromEntries(
     Object.entries(TESTS).map(([group, names]) => [
@@ -126,5 +136,27 @@ describe("a notice that counts its tests' questions, not its subjects'", () => {
         structure: structureWith({ scoring: {} }),
       }).subjects,
     ).toBe("even");
+  });
+});
+
+describe("paper counts", () => {
+  it("preserves two equal paper counts when each has three subjects", () => {
+    const structure = structureWith({ scoring: { parts: [part("P1", 40), part("P2", 40)] } });
+
+    structure.subjects = structure.subjects
+      .filter((item) => item.group !== "P3")
+      .filter(
+        (item) =>
+          TESTS.P1.slice(0, 3).some((name) => name === item.name) ||
+          TESTS.P2.slice(0, 3).some((name) => name === item.name),
+      );
+
+    if (structure.mock) {
+      structure.mock.totalQuestions = 80;
+      structure.mock.sections = [];
+    }
+
+    expect(countByTest(structure)).toStrictEqual({ P1: 40, P2: 40, P3: 0 });
+    expect(countByTest(structure, true)).toStrictEqual({ P1: 20, P2: 20, P3: 0 });
   });
 });

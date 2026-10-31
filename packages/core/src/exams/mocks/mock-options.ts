@@ -1,5 +1,8 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { getPlannedSubjectQuestions } from "../../library/exams/subject-questions";
+import {
+  getPartQuestions,
+  getPlannedSubjectQuestions,
+} from "../../library/exams/subject-questions";
 import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import { namesMatch } from "../_utils/name-match";
 import { type MockOptionView, type MockShape } from "./mock-contract";
@@ -71,6 +74,10 @@ export function getSubjectShares(structure: ExamStructure | null): SubjectShare[
     const whole = objective.find((other) => other.name === subject.partOf);
 
     return {
+      group:
+        subject.group && structure && getPartQuestions({ name: subject.group, structure }) !== null
+          ? subject.group
+          : null,
       name: subject.name,
       partOf: whole ? whole.name : null,
       questions: structure ? getPlannedSubjectQuestions({ structure, subject }) || null : null,

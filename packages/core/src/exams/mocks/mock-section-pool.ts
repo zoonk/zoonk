@@ -75,10 +75,26 @@ export function orderBySubjectShares({
   const weights = shares.map((share) => share.questions ?? 0);
   const total = weights.reduce((sum, weight) => sum + weight, 0);
   const size = counted ? Math.min(wanted, Math.round(total * portion)) : wanted;
-  const quotas = apportion({ total: size, weights });
+  const groups = [...Map.groupBy(shares, (share) => share.group ?? share.name).values()];
 
-  const first = shares.flatMap((share, index) =>
-    (bySubject.get(share) ?? []).slice(0, quotas[index] ?? 0),
+  const groupCounts = apportion({
+    total: size,
+    weights: groups.map((group) => group.reduce((sum, share) => sum + (share.questions ?? 0), 0)),
+  });
+
+  const quotas = new Map(
+    groups.flatMap((group, index) => {
+      const counts = apportion({
+        total: groupCounts[index] ?? 0,
+        weights: group.map((share) => share.questions ?? 0),
+      });
+
+      return group.map((share, position) => [share, counts[position] ?? 0] as const);
+    }),
+  );
+
+  const first = shares.flatMap((share) =>
+    (bySubject.get(share) ?? []).slice(0, quotas.get(share) ?? 0),
   );
 
   const picked = new Set(first.map((candidate) => candidate.itemId));
