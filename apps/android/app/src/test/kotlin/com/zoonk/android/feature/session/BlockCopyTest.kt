@@ -42,13 +42,6 @@ class BlockCopyTest {
             topics = listOf("Functions", "Percentages") + (1..8).map { "Topic $it" },
         )
 
-    private fun title(step: DayStep): String {
-        var title = ""
-        compose.setContent { title = blockTitle(step) }
-        compose.waitForIdle()
-        return title
-    }
-
     private fun detail(step: DayStep): String? {
         var detail: String? = null
         compose.setContent { detail = blockDetail(step) }
@@ -68,9 +61,13 @@ class BlockCopyTest {
 
     @Test
     fun aPracticeBlockIsNamedAfterTheAreasMostOfItAsksAbout() {
-        assertEquals("Practice: Math and Languages", title(practice))
-        assertEquals("Bonus practice: Math and Languages", title(practice.copy(extra = true)))
-        assertEquals("Mixed practice", title(practice.copy(areas = emptyList())))
+        var titles = emptyList<String>()
+        val steps = listOf(practice, practice.copy(extra = true), practice.copy(areas = emptyList()))
+
+        compose.setContent { titles = steps.map { blockTitle(it) } }
+        compose.waitForIdle()
+
+        assertEquals(listOf("Practice: Math and Languages", "Bonus practice: Math and Languages", "Mixed practice"), titles)
     }
 
     @Test
