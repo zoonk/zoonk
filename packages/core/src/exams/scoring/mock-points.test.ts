@@ -627,6 +627,36 @@ describe("selection marking", () => {
   });
 });
 
+describe("selection marking of formats keyed by their options", () => {
+  it("marks a one-pick question of a format with its own options by the one-pick row", () => {
+    const structure = examStructure({
+      scoring: {
+        marking: [
+          {
+            ...row(null, 3, { format: "multipleChoice", questions: 1, wrongPoints: 1 }),
+            select: 1,
+          },
+          {
+            ...row(null, 4, { format: "multipleChoice", questions: 1, wrongPoints: 2 }),
+            select: 2,
+          },
+        ],
+      },
+      subjects: [subject("Physics", null, 2)],
+    });
+
+    const items = [
+      { area: "Physics", format: "choice:5", itemFormat: "multipleChoice" as const, itemId: "one" },
+      { area: "Physics", format: "picks:2", itemFormat: "multipleChoice" as const, itemId: "two" },
+    ];
+
+    expect(markItems({ items, structure })?.items).toStrictEqual({
+      one: { part: "Physics", points: 3, wrongPenalty: 1 / 3 },
+      two: { part: "Physics", points: 4, wrongPenalty: 0.5 },
+    });
+  });
+});
+
 describe("conflicting whole-paper evidence", () => {
   it("derives each item's points from a paper maximum and count", () => {
     const structure = examStructure({
