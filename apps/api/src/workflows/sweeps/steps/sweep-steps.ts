@@ -9,10 +9,6 @@ import { deleteRetiredSteps } from "@zoonk/core/library/lessons/versions";
 import { listLessonsForLaterReview } from "@zoonk/core/library/quality/later-reviews";
 import { countOpenReviewFlags } from "@zoonk/core/library/review-flags/flagged";
 import { purgeMemoryFacts } from "@zoonk/core/memory/purge";
-import {
-  listDueRenewalReminders,
-  sendRenewalReminder,
-} from "@zoonk/core/subscriptions/renewal-reminders";
 
 export async function listDueFreshnessTargetsStep(): Promise<FreshnessTarget[]> {
   "use step";
@@ -78,17 +74,4 @@ export async function purgeExpiredAuthRecordsStep() {
   "use step";
 
   return purgeExpiredAuthRecords();
-}
-
-export async function listDueRenewalRemindersStep(): Promise<string[]> {
-  "use step";
-
-  return listDueRenewalReminders();
-}
-
-/** One subscription per step, so a failed email is sent again without repeating the others. */
-export async function sendRenewalReminderStep(subscriptionId: string): Promise<boolean> {
-  "use step";
-
-  return sendRenewalReminder(subscriptionId);
 }

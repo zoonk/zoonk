@@ -554,7 +554,6 @@
     "./subscriptions/google-play-notification": "./src/subscriptions/process-google-play-notification.ts",
     "./subscriptions/google-play-renewal": "./src/subscriptions/check-google-play-renewal.ts",
     "./subscriptions/google-play-sync": "./src/subscriptions/sync-google-play-subscription.ts",
-    "./subscriptions/renewal-reminders": "./src/subscriptions/renewal-reminders.ts",
     "./subscriptions/web-plus-account-deletion": "./src/subscriptions/web-plus-account-deletion.ts",
     "./subscriptions/web-plus-cancellation": "./src/subscriptions/web-plus-cancellation.ts",
     "./subscriptions/web-plus-cancellation-contract": "./src/subscriptions/web-plus-cancellation-contract.ts",

@@ -2,8 +2,8 @@ import { DEFAULT_LOCALE } from "@zoonk/utils/locale";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
 
 /**
- * The language and time zone of the emails about a subscription, which Stripe's webhooks and the
- * daily sweeps can't tell. The zone is null for subscriptions from before it was kept.
+ * Stripe's webhooks don't include the learner's language and time zone for subscription emails.
+ * The zone is null for subscriptions from before it was kept.
  */
 type SubscriptionPreferences = { locale: string; timeZone: string | null };
 

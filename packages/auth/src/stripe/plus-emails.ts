@@ -1,12 +1,10 @@
 import { sendEmail } from "@zoonk/mailer";
 import { formatPrice } from "@zoonk/utils/currency";
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
 import { escapeHtml } from "@zoonk/utils/escape-html";
 import { getFormattingLocale } from "@zoonk/utils/locale";
 import { logError } from "@zoonk/utils/logger";
 import { getRefundLastDay } from "@zoonk/utils/subscription";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { CANCEL_SUBSCRIPTION_URL, PRIVACY_URL, TERMS_URL } from "@zoonk/utils/url";
 import { getTranslation } from "../translations/get-translations";
 
@@ -313,45 +311,4 @@ export async function sendPlusCancellationEmail({
     subject: withdrawn ? t.plusWithdrawalSubject : t.plusCancellationSubject,
     to: email,
   });
-}
-
-function deadlineBox({ label, value }: { label: string; value: string }): string {
-  return `<div style="margin:0 0 16px;padding:12px 16px;border:2px solid #18181b;border-radius:8px"><p style="margin:0;color:#71717a">${escapeHtml(label)}</p><p style="margin:4px 0 0;font-size:17px;font-weight:600">${escapeHtml(value)}</p></div>`;
-}
-
-/**
- * France wants the last day to cancel in a visible box (Code de la consommation L215-1): the day
- * before the renewal's, where the learner is. Throws when the mailer fails, so a retry sends it.
- */
-export async function sendPlusRenewalReminderEmail({
-  email,
-  locale,
-  renewal,
-  timeZone,
-}: {
-  email: string;
-  locale: string;
-  renewal: Money & { date: Date };
-  timeZone: string | null;
-}): Promise<void> {
-  const t = await getTranslation(locale);
-  const format = formatters({ locale, timeZone });
-  const renewalDay = getDateInTimeZone({ date: renewal.date, timeZone: format.zone });
-  const lastDayToCancel = new Date(renewalDay.getTime() - MS_PER_DAY);
-  const values = { amount: format.money(renewal), date: format.date(renewal.date) };
-
-  const body = renderEmail([
-    paragraph(html(t.plusRenewalIntro, values)),
-    deadlineBox({ label: t.plusRenewalDeadlineLabel, value: format.day(lastDayToCancel) }),
-    details([
-      [t.plusAccountLabel, email],
-      [t.plusPlanLabel, planName(t, "year")],
-    ]),
-    paragraph(html(t.plusPurchaseCancel, {}, { cancelLink: link(CANCEL_SUBSCRIPTION_URL) })),
-    paragraph(html(t.plusPurchaseYearlyRefund)),
-    paragraph(html(t.plusEmailQuestions)),
-    legalLinks(t),
-  ]);
-
-  await send({ body, subject: fill(t.plusRenewalSubject, values), to: email });
 }

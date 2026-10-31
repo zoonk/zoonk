@@ -1,10 +1,6 @@
 import { sendEmail } from "@zoonk/mailer";
 import { describe, expect, it, vi } from "vitest";
-import {
-  sendPlusCancellationEmail,
-  sendPlusPurchaseEmail,
-  sendPlusRenewalReminderEmail,
-} from "./plus-emails";
+import { sendPlusCancellationEmail, sendPlusPurchaseEmail } from "./plus-emails";
 
 // Email delivery is external; render the real templates and inspect the payload sent to the mailer.
 vi.mock("@zoonk/mailer", () => ({ sendEmail: vi.fn().mockResolvedValue({}) }));
@@ -126,31 +122,5 @@ describe(sendPlusCancellationEmail, () => {
 
     expect(lastEmail()?.htmlBody).toContain("refunded the full €9.99");
     expect(lastEmail()?.subject).toBe("Your Zoonk Plus subscription is canceled and refunded");
-  });
-});
-
-describe(sendPlusRenewalReminderEmail, () => {
-  const reminder = {
-    email: "yearly@zoonk.test",
-    locale: "fr",
-    renewal: { amount: 5999, currency: "EUR", date: new Date("2026-12-05T01:00:00Z") },
-    timeZone: "Europe/Paris",
-  };
-
-  it("states the renewal, its price and the last day to cancel in a box", async () => {
-    await sendPlusRenewalReminderEmail(reminder);
-
-    expect(lastEmail()?.subject).toBe("Ton Zoonk Plus se renouvelle le 5 décembre 2026");
-    expect(lastEmail()?.htmlBody).toContain("59,99");
-
-    expect(lastEmail()?.htmlBody).toMatch(
-      /Dernier jour pour arrêter le renouvellement<\/p><p[^>]*>4 décembre 2026/u,
-    );
-  });
-
-  it("throws when the mailer fails, so the sweep sends it again", async () => {
-    vi.mocked(sendEmail).mockResolvedValueOnce({ data: null, error: new Error("Mailer down") });
-
-    await expect(sendPlusRenewalReminderEmail(reminder)).rejects.toThrow("Mailer down");
   });
 });
