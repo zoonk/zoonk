@@ -10,6 +10,7 @@ import {
 const MIN_CALIBRATION_REPORTS = 5;
 
 type ScoredMock = {
+  correct: number;
   endedAt: Date;
   points: { asked: number; earned: number } | null;
   total: number;
@@ -17,12 +18,12 @@ type ScoredMock = {
 
 /** Mocks scored in points count by their share of the points, so a test worth double weighs double. */
 export function weighByPoints(mocks: readonly ScoredMock[]): MockResult[] | null {
-  if (mocks.length === 0 || mocks.some((mock) => !mock.points || mock.points.asked <= 0)) {
+  if (mocks.every((mock) => !mock.points || mock.points.asked <= 0)) {
     return null;
   }
 
-  return mocks.map(({ endedAt, points, total }) => {
-    const share = points ? points.earned / points.asked : 0;
+  return mocks.map(({ correct, endedAt, points, total }) => {
+    const share = points && points.asked > 0 ? points.earned / points.asked : correct / total;
     return { correct: Math.min(1, Math.max(0, share)) * total, endedAt, total };
   });
 }

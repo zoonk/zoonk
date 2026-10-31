@@ -127,7 +127,14 @@ function toScoredMocks(mocks: readonly RecentMock[]) {
     const parsed = mockResultSchema.safeParse(result).data;
 
     return finishedAt && parsed
-      ? [{ endedAt: finishedAt, points: parsed.points ?? null, total: parsed.total }]
+      ? [
+          {
+            correct: parsed.correct,
+            endedAt: finishedAt,
+            points: parsed.points ?? null,
+            total: parsed.total,
+          },
+        ]
       : [];
   });
 }

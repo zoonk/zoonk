@@ -66,8 +66,8 @@ describe(weighByPoints, () => {
 
   it("estimates from the share of points, so wrong answers on a test worth double weigh double", () => {
     const weighed = weighByPoints([
-      { endedAt, points: { asked: 260, earned: 182 }, total: 170 },
-      { endedAt, points: { asked: 260, earned: 130 }, total: 170 },
+      { correct: 0, endedAt, points: { asked: 260, earned: 182 }, total: 170 },
+      { correct: 0, endedAt, points: { asked: 260, earned: 130 }, total: 170 },
     ]);
 
     expect(weighed?.map((mock) => mock.correct / mock.total)).toStrictEqual([0.7, 0.5]);
@@ -78,16 +78,19 @@ describe(weighByPoints, () => {
 
   it("keeps a negative net score at nothing rather than below it", () => {
     expect(
-      weighByPoints([{ endedAt, points: { asked: 80, earned: -12 }, total: 80 }]),
+      weighByPoints([{ correct: 0, endedAt, points: { asked: 80, earned: -12 }, total: 80 }]),
     ).toStrictEqual([{ correct: 0, endedAt, total: 80 }]);
   });
 
   it("leaves mocks without points to the right answers", () => {
     expect(
       weighByPoints([
-        { endedAt, points: { asked: 80, earned: 40 }, total: 80 },
-        { endedAt, points: null, total: 80 },
+        { correct: 0, endedAt, points: { asked: 80, earned: 40 }, total: 80 },
+        { correct: 60, endedAt, points: null, total: 80 },
       ]),
-    ).toBeNull();
+    ).toStrictEqual([
+      { correct: 40, endedAt, total: 80 },
+      { correct: 60, endedAt, total: 80 },
+    ]);
   });
 });
