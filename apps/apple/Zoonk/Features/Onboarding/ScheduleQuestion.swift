@@ -10,8 +10,8 @@ struct ScheduleQuestion: View {
   let onAnswer: ([String: Any]) -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
-  @State private var found = PlanAsking<ScheduleWeek, TimeToCover>()
-  @State private var advised = PlanAsking<AdviceKey, TimeAdvice>()
+  @State private var found = PlanAsking<ScheduleWeek, TimeToCover, ContinuousClock>()
+  @State private var advised = PlanAsking<AdviceKey, TimeAdvice, ContinuousClock>()
   @State private var picked: Int?
   @State private var fullCourse = false
   @State private var days: [Int]

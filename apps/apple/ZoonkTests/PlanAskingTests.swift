@@ -1,3 +1,4 @@
+import Synchronization
 import XCTest
 
 @testable import Zoonk
@@ -55,7 +56,42 @@ final class PlanAskingTests: XCTestCase {
     }
   }
 
-  private func makeAsking(timeout: Duration = .seconds(60)) -> PlanAsking<String, Answer> {
+  /// Sleeps of at most `step` pass at once and move its time on; a longer one, a request's timeout,
+  /// waits until it's cancelled.
+  private final class StepClock: Clock {
+    struct Instant: InstantProtocol {
+      let offset: Duration
+
+      func advanced(by duration: Duration) -> Instant { Instant(offset: offset + duration) }
+      func duration(to other: Instant) -> Duration { other.offset - offset }
+      static func < (lhs: Instant, rhs: Instant) -> Bool { lhs.offset < rhs.offset }
+    }
+
+    private let current = Mutex(Instant(offset: .zero))
+    private let step: Duration
+
+    init(step: Duration) {
+      self.step = step
+    }
+
+    var now: Instant { current.withLock { $0 } }
+    var minimumResolution: Duration { .zero }
+
+    func sleep(until deadline: Instant, tolerance: Duration?) async throws {
+      guard now.duration(to: deadline) <= step else {
+        try await Task.sleep(for: .seconds(3600))
+        return
+      }
+
+      current.withLock { $0 = max($0, deadline) }
+      await Task.yield()
+      try Task.checkCancellation()
+    }
+  }
+
+  private func makeAsking(timeout: Duration = .seconds(60))
+    -> PlanAsking<String, Answer, ContinuousClock>
+  {
     PlanAsking(interval: .milliseconds(1), settle: .milliseconds(1), timeout: timeout)
   }
 
@@ -141,16 +177,20 @@ final class PlanAskingTests: XCTestCase {
     XCTAssertEqual(asking.answer(for: "week")?.id, 2)
   }
 
-  func testKeepsAskingWhileThePlanStaysUnreadyForLong() async {
-    let asking = makeAsking()
+  func testKeepsAskingPastTenMinutesWhileThePlanStaysUnready() async {
+    let clock = StepClock(step: .seconds(3))
+    let asking = PlanAsking<String, Answer, StepClock>(
+      clock: clock, interval: .seconds(3), settle: .milliseconds(300), timeout: .seconds(45))
+    let unready = 250
     let replies = Replies(
-      Array(repeating: .success(Answer(id: 1, ready: false)), count: 50) + [
+      Array(repeating: .success(Answer(id: 1, ready: false)), count: unready) + [
         .success(Answer(id: 2, ready: true))
       ])
 
     await asking.ask("week", when: true) { try replies.next() }
 
-    XCTAssertEqual(replies.calls, 51)
+    XCTAssertGreaterThan(clock.now.offset, .seconds(600))
+    XCTAssertEqual(replies.calls, unready + 1)
     XCTAssertEqual(asking.answer(for: "week")?.id, 2)
     XCTAssertEqual(asking.status, .idle)
   }

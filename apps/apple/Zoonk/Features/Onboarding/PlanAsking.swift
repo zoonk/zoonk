@@ -8,7 +8,7 @@ import Observation
 /// latest week.
 @MainActor
 @Observable
-final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer> {
+final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer, C: Clock<Duration>> {
   enum Status: Equatable, Sendable {
     case idle
     case asking
@@ -25,17 +25,15 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer> {
   private var latest: Answer?
 
   @ObservationIgnored private var out: (key: Key, id: UUID, answer: Task<Answer, Error>)?
+  @ObservationIgnored private let clock: C
   @ObservationIgnored private let interval: Duration
   @ObservationIgnored private let settle: Duration
   @ObservationIgnored private let timeout: Duration
 
   /// After the first answer, `settle` lets days tapped in a row or a menu passing times ask once.
   /// `timeout` is main's: an ask unanswered that long fails while its request keeps the lane.
-  init(
-    interval: Duration = .seconds(3),
-    settle: Duration = .milliseconds(300),
-    timeout: Duration = .seconds(45)
-  ) {
+  init(clock: C, interval: Duration, settle: Duration, timeout: Duration) {
+    self.clock = clock
     self.interval = interval
     self.settle = settle
     self.timeout = timeout
@@ -70,7 +68,7 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer> {
 
     if latest != nil {
       do {
-        try await Task.sleep(for: settle)
+        try await clock.sleep(for: settle)
       } catch {
         return
       }
@@ -113,7 +111,7 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer> {
       }
 
       do {
-        try await Task.sleep(for: interval)
+        try await clock.sleep(for: interval)
       } catch {
         return
       }
@@ -125,7 +123,7 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer> {
   private func send(_ key: Key, _ request: @escaping @MainActor () async throws -> Answer)
     async throws -> Answer?
   {
-    let deadline = ContinuousClock.now + timeout
+    let deadline = clock.now.advanced(by: timeout)
 
     while let out, out.key != key {
       guard await settled(out.answer, before: deadline) != nil, !Task.isCancelled else {
@@ -137,7 +135,7 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer> {
   }
 
   /// Stops waiting at `deadline` or on cancellation; `task` itself runs on.
-  private func settled(_ task: Task<Answer, Error>, before deadline: ContinuousClock.Instant)
+  private func settled(_ task: Task<Answer, Error>, before deadline: C.Instant)
     async -> Result<Answer, Error>?
   {
     let gate = Gate<Result<Answer, Error>?>()
@@ -147,8 +145,8 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer> {
         gate.open(continuation)
         gate.watch(Task { gate.resume(await task.result) })
         gate.watch(
-          Task {
-            try? await Task.sleep(until: deadline)
+          Task { [clock] in
+            try? await clock.sleep(until: deadline, tolerance: nil)
             gate.resume(nil)
           })
       }
@@ -174,6 +172,16 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer> {
 
     out = (key, id, sent)
     return sent
+  }
+}
+
+extension PlanAsking where C == ContinuousClock {
+  convenience init(
+    interval: Duration = .seconds(3),
+    settle: Duration = .milliseconds(300),
+    timeout: Duration = .seconds(45)
+  ) {
+    self.init(clock: ContinuousClock(), interval: interval, settle: settle, timeout: timeout)
   }
 }
 
