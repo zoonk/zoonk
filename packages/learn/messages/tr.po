@@ -131,7 +131,7 @@ msgstr "{time} (önerilen)"
 #: src/_components/daily-time-picker.tsx
 msgctxt "GUkMRc"
 msgid "{time} (covers everything)"
-msgstr ""
+msgstr "{time} (tamamını kapsar)"
 
 #: src/_components/daily-time-picker.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -636,77 +636,77 @@ msgstr "Ne zaman bitireceğini hesaplayamadık."
 #: src/_components/time-answer-texts.ts
 msgctxt "zUbsmj"
 msgid "{dateKind, select, month {Not even a whole day covers everything in depth by {date}.} other {Not even a whole day covers everything in depth by {date}.}}"
-msgstr ""
+msgstr "{dateKind, select, month {Günün tamamını ayırmak bile {date} tarihine kadar her şeyi ayrıntılı çalışmaya yetmez.} other {Günün tamamını ayırmak bile {date} tarihine kadar her şeyi ayrıntılı çalışmaya yetmez.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "13 h 30 min".
 #: src/_components/time-answer-texts.ts
 msgctxt "I9fMB3"
 msgid "{dateKind, select, month {Covering everything in depth by {date} takes about {time} a day, more than most people can keep up.} other {Covering everything in depth by {date} takes about {time} a day, more than most people can keep up.}}"
-msgstr ""
+msgstr "{dateKind, select, month {Her şeyi {date} tarihine kadar ayrıntılı çalışmak için günde yaklaşık {time} gerekir; çoğu kişi bu tempoyu sürdüremez.} other {Her şeyi {date} tarihine kadar ayrıntılı çalışmak için günde yaklaşık {time} gerekir; çoğu kişi bu tempoyu sürdüremez.}}"
 
 #. Part of the goal never fits, whatever the time, so this is the most any daily time covers. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "8 h"; {share} a percentage, like "99%".
 #: src/_components/time-answer-texts.ts
 msgctxt "MTkVRt"
 msgid "{dateKind, select, month {Covering as much as any daily time can by {date}, about {share} in depth, takes about {time} a day, more than most people can keep up.} other {Covering as much as any daily time can by {date}, about {share} in depth, takes about {time} a day, more than most people can keep up.}}"
-msgstr ""
+msgstr "{dateKind, select, month {Günde ne kadar çalışırsan çalış, {date} tarihine kadar hedefinin en fazla yaklaşık {share} kadarını ayrıntılı çalışabilirsin. Bunun için günde yaklaşık {time} gerekir; çoğu kişi bu tempoyu sürdüremez.} other {Günde ne kadar çalışırsan çalış, {date} tarihine kadar hedefinin en fazla yaklaşık {share} kadarını ayrıntılı çalışabilirsin. Bunun için günde yaklaşık {time} gerekir; çoğu kişi bu tempoyu sürdüremez.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
 msgctxt "AVgtRb"
 msgid "{dateKind, select, month {Covers about {share} of your exam topics in depth by {date}, starting with what comes up most.} other {Covers about {share} of your exam topics in depth by {date}, starting with what comes up most.}}"
-msgstr ""
+msgstr "{dateKind, select, month {En çok çıkan konulardan başlayarak sınav konularının yaklaşık {share} kadarını {date} tarihine kadar ayrıntılı ele alır.} other {En çok çıkan konulardan başlayarak sınav konularının yaklaşık {share} kadarını {date} tarihine kadar ayrıntılı ele alır.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
 msgctxt "Tampv1"
 msgid "{dateKind, select, month {Covers about {share} of your goal in depth by {date}, starting with what matters most.} other {Covers about {share} of your goal in depth by {date}, starting with what matters most.}}"
-msgstr ""
+msgstr "{dateKind, select, month {En önemli kısımlardan başlayarak hedefinin yaklaşık {share} kadarını {date} tarihine kadar ayrıntılı ele alır.} other {En önemli kısımlardan başlayarak hedefinin yaklaşık {share} kadarını {date} tarihine kadar ayrıntılı ele alır.}}"
 
 #. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
 #: src/_components/time-answer-texts.ts
 msgctxt "llz5RA"
 msgid "Your plan then covers every exam topic, the ones asked most in more depth. That's about {share} of the exam studied in depth."
-msgstr ""
+msgstr "Böylece planın tüm sınav konularını kapsar, en çok çıkanları daha ayrıntılı ele alır. Bu, sınav kapsamının yaklaşık {share} kadarını ayrıntılı çalışman demek."
 
 #. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
 #: src/_components/time-answer-texts.ts
 msgctxt "lKM-91"
 msgid "Your plan then starts with what the exam asks most, about {share} of it studied in depth. Topics it asks least may not fit."
-msgstr ""
+msgstr "Böylece planın sınavda en çok çıkan konularla başlar ve sınav kapsamının yaklaşık {share} kadarını ayrıntılı ele alır. En az çıkan konular sığmayabilir."
 
 #. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
 #: src/_components/time-answer-texts.ts
 msgctxt "xjYmua"
 msgid "Your plan then covers every part of your goal, what matters most in more depth. That's about {share} of it studied in depth."
-msgstr ""
+msgstr "Böylece planın hedefinin her kısmını kapsar, en önemli kısımları daha ayrıntılı ele alır. Bu, hedefinin yaklaşık {share} kadarını ayrıntılı çalışman demek."
 
 #. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
 #: src/_components/time-answer-texts.ts
 msgctxt "NaIXds"
 msgid "Your plan then starts with what matters most, about {share} of your goal studied in depth. The rest may not fit."
-msgstr ""
+msgstr "Böylece planın en önemli kısımlarla başlar ve hedefinin yaklaşık {share} kadarını ayrıntılı ele alır. Geri kalanı sığmayabilir."
 
 #: src/_components/time-answer-texts.ts
 msgctxt "QrYTpK"
 msgid "More study days would help."
-msgstr ""
+msgstr "Çalışmaya daha fazla gün ayırmak yardımcı olur."
 
 #. A sentence before what that time covers. {time} is a daily study time, like "4 h".
 #: src/_components/time-answer-texts.ts
 msgctxt "IaAonA"
 msgid "We suggest {time} a day."
-msgstr ""
+msgstr "Günde {time} çalışmanı öneriyoruz."
 
 #. The title of a suggestion to change the daily study time. {time} is like "4 h".
 #: src/_components/time-answer-texts.ts
 msgctxt "UE-bQq"
 msgid "We suggest {time} a day"
-msgstr ""
+msgstr "Günde {time} çalışmanı öneriyoruz"
 
 #: src/_components/time-answer-texts.ts
 msgctxt "0CZ1fn"
 msgid "That's more than most people can keep up."
-msgstr ""
+msgstr "Çoğu kişi bu tempoyu sürdüremez."
 
 #: src/_components/time-answer.tsx
 msgctxt "AHugH9"
@@ -721,12 +721,12 @@ msgstr "Bu hedefe günde {main}, diğer hedeflerine toplam {other} ayrılır."
 #: src/_components/time-answer.tsx
 msgctxt "PNv_qq"
 msgid "Use {time} a day to cover everything"
-msgstr ""
+msgstr "Her şeyi kapsamak için günde {time} ayır"
 
 #: src/_components/time-answer.tsx
 msgctxt "7NHdvs"
 msgid "Use the suggested {time} a day"
-msgstr ""
+msgstr "Önerilen süreyi seç: günde {time}"
 
 #. A button that changes the plan's daily time to the one just found.
 #: src/_components/time-answer.tsx
@@ -794,25 +794,25 @@ msgstr "Beyaz kuşak"
 #: src/_utils/use-choice-left-out.ts
 msgctxt "8GYum4"
 msgid "Until you pick, your plan and mocks leave out {name}: {count, number} of the exam's {total, number} points."
-msgstr ""
+msgstr "Seçim yapana kadar {name} planının ve deneme sınavlarının dışında kalır: {count, number} / {total, number} puan."
 
 #. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
 #: src/_utils/use-choice-left-out.ts
 msgctxt "Rpl5Yb"
 msgid "Until you pick, your plan and mocks leave out {name}: {count, number} of the exam's {total, number} questions."
-msgstr ""
+msgstr "Seçim yapana kadar {name} planının ve deneme sınavlarının dışında kalır: {count, number} / {total, number} soru."
 
 #. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
 #: src/_utils/use-choice-left-out.ts
 msgctxt "T-mUNO"
 msgid "Until you pick, your plan and mocks leave out {name}: {count, plural, one {# question} other {# questions}}."
-msgstr ""
+msgstr "Seçim yapana kadar {name} planının ve deneme sınavlarının dışında kalır: {count, plural, other {# soru}}."
 
 #. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
 #: src/_utils/use-choice-left-out.ts
 msgctxt "8-nW5Q"
 msgid "Until you pick, your plan and mocks leave out {name}."
-msgstr ""
+msgstr "Seçim yapana kadar {name} planının ve deneme sınavlarının dışında kalır."
 
 #: src/_utils/use-citation-label.ts
 msgctxt "VjK2d_"
@@ -842,22 +842,22 @@ msgstr "Sınav belgelerinde yazıldığı gibi, {language} dilinde."
 #: src/_utils/use-score-range.ts
 msgctxt "4Z0cf0"
 msgid "{score}%"
-msgstr ""
+msgstr "%{score}"
 
 #: src/_utils/use-score-range.ts
 msgctxt "V3-s4p"
 msgid "{low}% to {high}%"
-msgstr ""
+msgstr "%{low}–%{high}"
 
 #: src/_utils/use-score-range.ts
 msgctxt "FxEDDu"
 msgid "Band {score}"
-msgstr ""
+msgstr "{score} puan"
 
 #: src/_utils/use-score-range.ts
 msgctxt "G_2OC9"
 msgid "Band {low} to {high}"
-msgstr ""
+msgstr "{low} ile {high} puan arası"
 
 #: src/_utils/use-score-range.ts
 msgctxt "zi1f8F"
@@ -908,17 +908,22 @@ msgstr "Dil"
 #: src/appearance/appearance-screen.tsx
 msgctxt "cXBJ7U"
 msgid "Privacy"
-msgstr ""
+msgstr "Gizlilik"
+
+#: src/appearance/appearance-screen.tsx
+msgctxt "72SFRq"
+msgid "Off for learners under 18 in your country"
+msgstr "Ülkende 18 yaşından küçükler için kapalı"
 
 #: src/appearance/appearance-screen.tsx
 msgctxt "8uEFmZ"
 msgid "Shows us how you use Zoonk, so we can improve it"
-msgstr ""
+msgstr "Zoonk’u nasıl kullandığını gösterir, böylece onu geliştirebiliriz"
 
 #: src/appearance/appearance-screen.tsx
 msgctxt "JPXk5m"
 msgid "Share usage data"
-msgstr ""
+msgstr "Kullanım verilerini paylaş"
 
 #: src/appearance/buddy-settings.tsx
 #: src/buddies/buddy-day.tsx
@@ -2455,7 +2460,7 @@ msgstr "İleri seviye"
 #: src/essay/essay-closed.tsx
 msgctxt "af7HsK"
 msgid "You skipped this essay."
-msgstr ""
+msgstr "Bu kompozisyonu atladın."
 
 #: src/essay/essay-feedback.tsx
 msgctxt "H9233U"
@@ -2691,7 +2696,7 @@ msgstr "İşlem tamamlanamadı. Metnin hâlâ burada. Birazdan tekrar dene."
 #: src/essay/essay-screen.tsx
 msgctxt "yDPN7m"
 msgid "You've reached your daily time limit. Your text stays here."
-msgstr ""
+msgstr "Günlük süre sınırına ulaştın. Metnin burada kalır."
 
 #: src/essay/essay-screen.tsx
 msgctxt "Vl53xq"
@@ -7452,7 +7457,7 @@ msgstr "Bu soru için kalan süre"
 #: src/mock/mock-notes.tsx
 msgctxt "ojUkTG"
 msgid "{name} is left out until you pick which one you take, in your plan."
-msgstr ""
+msgstr "Planında hangisine gireceğini seçene kadar {name} dışarıda kalır."
 
 #: src/mock/mock-notes.tsx
 msgctxt "rpHBhB"
@@ -7542,12 +7547,12 @@ msgstr "Bu deneme sınavı kaç soruyu doğru cevapladığını gösterir."
 #: src/mock/mock-option-labels.ts
 msgctxt "LB2EVt"
 msgid "Exam day {day} without {names}"
-msgstr ""
+msgstr "Sınavın {day}. günü ({names} hariç)"
 
 #: src/mock/mock-option-labels.ts
 msgctxt "24Y1kW"
 msgid "An exam day without {names}"
-msgstr ""
+msgstr "Bir sınav günü ({names} hariç)"
 
 #. The mock leaves out the exam's written part and has only its questions with set answers.
 #: src/mock/mock-option-labels.ts
@@ -7858,67 +7863,67 @@ msgstr "Planın"
 #: src/mock/mock-result-points.tsx
 msgctxt "cT7Wf1"
 msgid "{unit, select, percent {At {score}, below the {minimum} it needs} other {{short, plural, one {# point} other {# points}} short of the {minimum} it needs}}"
-msgstr ""
+msgstr "{unit, select, percent {{score} ile gereken {minimum} sınırının altında} other {{short, plural, other {# puan}} eksik; gereken puan: {minimum}}}"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "I-wYX9"
 msgid "{unit, select, percent {Reached the {minimum} it needs} other {Reached the {value, plural, one {# point} other {# points}} it needs}}"
-msgstr ""
+msgstr "{unit, select, percent {Gereken {minimum} sınırına ulaşıldı} other {Gereken {value, plural, other {# puana}} ulaşıldı}}"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "G7GP7-"
 msgid "Needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}}"
-msgstr ""
+msgstr "Gereken: {unit, select, percent {puanlarının {minimum} kadarı} other {{value, plural, other {# puan}}}}"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "8Qf9bm"
 msgid "Doesn't count toward the total"
-msgstr ""
+msgstr "Toplam puana dahil değil"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "GcvagU"
 msgid "Objective tests together"
-msgstr ""
+msgstr "Nesnel testlerin toplamı"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "5JW5j4"
 msgid "You'd be eliminated: the objective tests together {unit, select, percent {reach {score}, below the {minimum} they need} other {are {short, plural, one {# point} other {# points}} short of {minimum}}}."
-msgstr ""
+msgstr "Bu sonuçla elenirdin: nesnel testlerin toplamında {unit, select, percent {{score} ile gereken {minimum} sınırının altındasın} other {{short, plural, other {# puan}} eksiğin var; gereken puan: {minimum}}}."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "f6NtkC"
 msgid "You'd be eliminated: {name} {unit, select, percent {is at {score}, below the {minimum} it needs} other {is {short, plural, one {# point} other {# points}} short of {minimum}}}."
-msgstr ""
+msgstr "Bu sonuçla elenirdin: {name} için {unit, select, percent {{score} ile gereken {minimum} sınırının altındasın} other {{short, plural, other {# puan}} eksiğin var; gereken puan: {minimum}}}."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "IiVFOl"
 msgid "Meets the objective minimums checked here."
-msgstr ""
+msgstr "Burada kontrol edilen nesnel testlerin alt sınırlarını karşılıyor."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "iUqCgB"
 msgid "About {projected} of {max} points on the whole exam, projected from this mock. Only a full mock says whether you'd reach the minimums."
-msgstr ""
+msgstr "Bu deneme sınavına göre sınavın tamamında yaklaşık {projected} / {max} puan alacağın tahmin ediliyor. Alt sınırları karşılayıp karşılamayacağını ancak tam bir deneme sınavı gösterir."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "0FUIoF"
 msgid "Each test's points are projected onto its whole length. Only a full mock says whether you'd reach the minimums."
-msgstr ""
+msgstr "Her testteki puanına göre testin tamamında alabileceğin puan tahmin edilir. Alt sınırları karşılayıp karşılamayacağını ancak tam bir deneme sınavı gösterir."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JcMiUs"
 msgid "The objective tests together need {unit, select, percent {{minimum} of their points} other {{value, plural, one {# point} other {# points}}}}, and this mock doesn't have them all."
-msgstr ""
+msgstr "Nesnel testlerin toplamında {unit, select, percent {alınabilecek puanın {minimum} kadarı} other {{value, plural, other {# puan}}}} gerekiyor; bu deneme sınavında bu testlerin hepsi yok."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "VIKtKQ"
 msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}} and isn't in this mock."
-msgstr ""
+msgstr "{name} için {unit, select, percent {alınabilecek puanın {minimum} kadarı} other {{value, plural, other {# puan}}}} gerekiyor; bu test deneme sınavında yok."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
 msgid "By test"
-msgstr ""
+msgstr "Testlere göre"
 
 #: src/mock/mock-result-speaking.tsx
 msgctxt "VFOaix"
@@ -7988,7 +7993,7 @@ msgstr "En az bir bölümde yanıtını yazdığın için o bölümdeki konuşma
 #: src/mock/mock-result-view.tsx
 msgctxt "P0PLlQ"
 msgid "Points"
-msgstr ""
+msgstr "Puan"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "OVBe_v"
@@ -8366,7 +8371,7 @@ msgstr "Hedefim"
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "MBg8CD"
 msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
-msgstr ""
+msgstr "{exam, select, abitur {Abitur’u geçmek, {language} konuşmak…} bac {bac’ı geçmek, {language} konuşmak…} enem {ENEM’i geçmek, {language} konuşmak…} exani {EXANI-II’yi geçmek, {language} konuşmak…} kyotsu {Common Test’te başarılı olmak, {language} konuşmak…} matura {matura’yı geçmek, {language} konuşmak…} maturita {maturità’yı geçmek, {language} konuşmak…} suneung {CSAT sınavında başarılı olmak, {language} konuşmak…} yks {YKS’de başarılı olmak, {language} konuşmak…} other {SAT’ı geçmek, {language} konuşmak…}}"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "rsoIT2"
@@ -8660,7 +8665,7 @@ msgstr "Hedefini kaydedemedik. Birazdan tekrar dene."
 #: src/onboarding/entry/use-local-goal-example.ts
 msgctxt "l5pR0E"
 msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} kyotsu {Do well on the Common Test} matura {Pass the matura} maturita {Pass the maturità} suneung {Do well on the CSAT} yks {Do well on the YKS} other {Pass the SAT}}"
-msgstr ""
+msgstr "{exam, select, abitur {Abitur’u geçmek} bac {bac’ı geçmek} enem {ENEM’i geçmek} exani {EXANI-II’yi geçmek} kyotsu {Common Test’te başarılı olmak} matura {matura’yı geçmek} maturita {maturità’yı geçmek} suneung {CSAT sınavında başarılı olmak} yks {YKS’de başarılı olmak} other {SAT’ı geçmek}}"
 
 #. Shown when automated bot protection refuses to let this browser continue without an account.
 #: src/onboarding/goal-errors.ts
@@ -8887,12 +8892,12 @@ msgstr "Öğrendikçe arkadaşın da büyür."
 #: src/onboarding/steps/date-step.tsx
 msgctxt "5ib3Bu"
 msgid "Your plan paces your lessons to end by then."
-msgstr ""
+msgstr "Planın, derslerini o tarihe kadar bitirmen için temponu ayarlar."
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "nUTsrg"
 msgid "Your plan paces your lessons to end by the first day."
-msgstr ""
+msgstr "Planın, derslerini sınavın ilk gününe kadar bitirmen için temponu ayarlar."
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xM69fy"
@@ -9621,7 +9626,7 @@ msgstr "Son tarih"
 #: src/onboarding/understood/understood-date-row.ts
 msgctxt "oxqgs5"
 msgid "You pick this test's day when you book it. Booked already? Set it here."
-msgstr ""
+msgstr "Bu sınavın tarihini kayıt yaptırırken seçersin. Zaten kayıt yaptırdın mı? Tarihi buradan ayarla."
 
 #: src/onboarding/understood/understood-date-row.ts
 msgctxt "dnMNKB"
@@ -10294,7 +10299,7 @@ msgstr "{dateKind, select, month {Hedef tarihin olan {date} planından kaldırı
 #: src/plan/plan-full-course.tsx
 msgctxt "_KzTI7"
 msgid "When off, your plan ends at the exam."
-msgstr ""
+msgstr "Kapalıyken planın sınav tarihinde biter."
 
 #: src/plan/plan-notice.tsx
 msgctxt "3qUBgl"
@@ -10799,7 +10804,7 @@ msgstr "{document, select, notice {Planın sınav ilanını temel alır.} other 
 #: src/plan/use-change-sentence.ts
 msgctxt "B5ATMk"
 msgid "Daily time becomes {time}."
-msgstr ""
+msgstr "Günlük çalışma süresi {time} oluyor."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "bkqP1O"
@@ -10809,7 +10814,7 @@ msgstr "{date} tarihinden itibaren bir hafta boyunca çalışma süren yarıya i
 #: src/plan/use-change-sentence.ts
 msgctxt "ouCzFr"
 msgid "The weekly challenge moves to {date}."
-msgstr ""
+msgstr "Haftalık meydan okuma {date} tarihine alınıyor."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "VzP2ac"
@@ -10841,12 +10846,12 @@ msgstr "{count, plural, other {{skills} planına eklenir.}}"
 #: src/plan/use-choice-sentence.ts
 msgctxt "k1CuqL"
 msgid "The date moves to {date}."
-msgstr ""
+msgstr "Yeni tarih {date} olur."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "1feYRq"
 msgid "Your phase dates move, so more lessons fit before your goal's date."
-msgstr ""
+msgstr "Planındaki aşamaların tarihleri değişiyor; böylece hedef tarihinden önce daha fazla derse yer açılıyor."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "2rqIF8"
@@ -10861,7 +10866,7 @@ msgstr "Planında {subject} konusunu {group} için çalışırsın."
 #: src/plan/use-change-sentence.ts
 msgctxt "e5pmPD"
 msgid "Your plan changes."
-msgstr ""
+msgstr "Planın değişiyor."
 
 #. "With the exam around {date}" means "and the exam is around {date}". {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
@@ -13115,7 +13120,7 @@ msgstr "tüm konular, önce en çok zorlandıkların"
 #: src/today/today-week.tsx
 msgctxt "VlCnpE"
 msgid "daily time met"
-msgstr ""
+msgstr "günlük çalışma süresi tamamlandı"
 
 #: src/today/today-week.tsx
 msgctxt "F8phHs"
@@ -13223,7 +13228,7 @@ msgstr "Bir konunun dersleri, o konuya gelmene iki hafta kala planlanır. Bu kon
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "2bgkMA"
 msgid "{dateKind, select, month {From {start}} other {From {start}}}"
-msgstr ""
+msgstr "{dateKind, select, month {{start} itibarıyla} other {{start} itibarıyla}}"
 
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "l2bP9u"
@@ -13234,7 +13239,7 @@ msgstr "{count, plural, =1 {# ders} other {Yaklaşık # ders}}"
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "96EsHJ"
 msgid "{dateKind, select, month {{count} · from {start}} other {{count} · from {start}}}"
-msgstr ""
+msgstr "{dateKind, select, month {{count} · {start} itibarıyla} other {{count} · {start} itibarıyla}}"
 
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "c1J3nF"

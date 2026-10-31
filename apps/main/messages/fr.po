@@ -1232,7 +1232,7 @@ msgstr "Nom"
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "wubfpa"
 msgid "3-30 characters. Letters a–z, numbers, and underscores only."
-msgstr ""
+msgstr "3 à 30 caractères. Lettres de a à z, chiffres et tirets bas uniquement."
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx

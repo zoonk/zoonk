@@ -185,7 +185,7 @@ msgstr "{username} já está em uso"
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "wubfpa"
 msgid "3-30 characters. Letters a–z, numbers, and underscores only."
-msgstr ""
+msgstr "De 3 a 30 caracteres. Apenas letras de a a z, números e sublinhados."
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "9j8lDu"

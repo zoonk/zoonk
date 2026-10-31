@@ -185,7 +185,7 @@ msgstr "Nazwa {username} jest już zajęta"
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "wubfpa"
 msgid "3-30 characters. Letters a–z, numbers, and underscores only."
-msgstr ""
+msgstr "3–30 znaków. Tylko litery a–z, cyfry i podkreślenia."
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "9j8lDu"

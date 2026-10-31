@@ -8367,7 +8367,7 @@ msgstr "Je veux"
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "MBg8CD"
 msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
-msgstr ""
+msgstr "{exam, select, abitur {réussir l’Abitur, parler {language}…} bac {réussir le bac, parler {language}…} enem {réussir l’ENEM, parler {language}…} exani {réussir l’EXANI-II, parler {language}…} kyotsu {avoir de bons résultats au Common Test, parler {language}…} matura {réussir la matura, parler {language}…} maturita {réussir la maturità, parler {language}…} suneung {avoir de bons résultats au CSAT, parler {language}…} yks {avoir de bons résultats au YKS, parler {language}…} other {réussir le SAT, parler {language}…}}"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "rsoIT2"
@@ -8661,7 +8661,7 @@ msgstr "Nous n’avons pas pu enregistrer ton objectif. Réessaie dans un instan
 #: src/onboarding/entry/use-local-goal-example.ts
 msgctxt "l5pR0E"
 msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} kyotsu {Do well on the Common Test} matura {Pass the matura} maturita {Pass the maturità} suneung {Do well on the CSAT} yks {Do well on the YKS} other {Pass the SAT}}"
-msgstr ""
+msgstr "{exam, select, abitur {Réussir l’Abitur} bac {Réussir le bac} enem {Réussir l’ENEM} exani {Réussir l’EXANI-II} kyotsu {Avoir de bons résultats au Common Test} matura {Réussir la matura} maturita {Réussir la maturità} suneung {Avoir de bons résultats au CSAT} yks {Avoir de bons résultats au YKS} other {Réussir le SAT}}"
 
 #. Shown when automated bot protection refuses to let this browser continue without an account.
 #: src/onboarding/goal-errors.ts
@@ -8888,12 +8888,12 @@ msgstr "Ton compagnon grandit à mesure que tu apprends."
 #: src/onboarding/steps/date-step.tsx
 msgctxt "5ib3Bu"
 msgid "Your plan paces your lessons to end by then."
-msgstr ""
+msgstr "Ton plan répartit tes leçons pour que tu les termines d’ici là."
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "nUTsrg"
 msgid "Your plan paces your lessons to end by the first day."
-msgstr ""
+msgstr "Ton plan répartit tes leçons pour que tu les termines d’ici le premier jour."
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xM69fy"
@@ -10800,7 +10800,7 @@ msgstr "{document, select, notice {Ton plan suit l’avis d’examen.} other {To
 #: src/plan/use-change-sentence.ts
 msgctxt "B5ATMk"
 msgid "Daily time becomes {time}."
-msgstr ""
+msgstr "La durée quotidienne passe à {time}."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "bkqP1O"
@@ -10810,7 +10810,7 @@ msgstr "Une semaine allégée à partir du {date}, avec deux fois moins de temps
 #: src/plan/use-change-sentence.ts
 msgctxt "ouCzFr"
 msgid "The weekly challenge moves to {date}."
-msgstr ""
+msgstr "Le défi hebdomadaire passe au {date}."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "VzP2ac"
@@ -10842,12 +10842,12 @@ msgstr "{count, plural, one {{skills} s’ajoute à ton plan.} other {{skills} s
 #: src/plan/use-choice-sentence.ts
 msgctxt "k1CuqL"
 msgid "The date moves to {date}."
-msgstr ""
+msgstr "La date passe au {date}."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "1feYRq"
 msgid "Your phase dates move, so more lessons fit before your goal's date."
-msgstr ""
+msgstr "Les dates de tes phases changent pour inclure plus de leçons avant la date de ton objectif."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "2rqIF8"
@@ -10862,7 +10862,7 @@ msgstr "Ton plan porte sur {subject} pour {group}."
 #: src/plan/use-change-sentence.ts
 msgctxt "e5pmPD"
 msgid "Your plan changes."
-msgstr ""
+msgstr "Ton plan change."
 
 #. "With the exam around {date}" means "and the exam is around {date}". {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
@@ -13116,7 +13116,7 @@ msgstr "tous les sujets, en commençant par ceux que tu maîtrises le moins"
 #: src/today/today-week.tsx
 msgctxt "VlCnpE"
 msgid "daily time met"
-msgstr ""
+msgstr "durée quotidienne atteinte"
 
 #: src/today/today-week.tsx
 msgctxt "F8phHs"
@@ -13224,7 +13224,7 @@ msgstr "Les leçons d’un sujet sont planifiées deux semaines avant que tu l�
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "2bgkMA"
 msgid "{dateKind, select, month {From {start}} other {From {start}}}"
-msgstr ""
+msgstr "{dateKind, select, month {À partir de {start}} other {À partir du {start}}}"
 
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "l2bP9u"
@@ -13235,7 +13235,7 @@ msgstr "{count, plural, =1 {# leçon} other {Environ # leçons}}"
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "96EsHJ"
 msgid "{dateKind, select, month {{count} · from {start}} other {{count} · from {start}}}"
-msgstr ""
+msgstr "{dateKind, select, month {{count} · à partir de {start}} other {{count} · à partir du {start}}}"
 
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "c1J3nF"

@@ -131,7 +131,7 @@ msgstr "{time}（おすすめ）"
 #: src/_components/daily-time-picker.tsx
 msgctxt "GUkMRc"
 msgid "{time} (covers everything)"
-msgstr ""
+msgstr "{time}（全範囲を学べます）"
 
 #: src/_components/daily-time-picker.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -636,77 +636,77 @@ msgstr "いつ終わるか計算できませんでした。"
 #: src/_components/time-answer-texts.ts
 msgctxt "zUbsmj"
 msgid "{dateKind, select, month {Not even a whole day covers everything in depth by {date}.} other {Not even a whole day covers everything in depth by {date}.}}"
-msgstr ""
+msgstr "{dateKind, select, month {毎日1日中学習しても、{date}までに全範囲を深く学ぶことはできません。} other {毎日1日中学習しても、{date}までに全範囲を深く学ぶことはできません。}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "13 h 30 min".
 #: src/_components/time-answer-texts.ts
 msgctxt "I9fMB3"
 msgid "{dateKind, select, month {Covering everything in depth by {date} takes about {time} a day, more than most people can keep up.} other {Covering everything in depth by {date} takes about {time} a day, more than most people can keep up.}}"
-msgstr ""
+msgstr "{dateKind, select, month {{date}までに全範囲を深く学ぶには1日約{time}が必要で、多くの人には続けるのが難しい学習時間です。} other {{date}までに全範囲を深く学ぶには1日約{time}が必要で、多くの人には続けるのが難しい学習時間です。}}"
 
 #. Part of the goal never fits, whatever the time, so this is the most any daily time covers. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "8 h"; {share} a percentage, like "99%".
 #: src/_components/time-answer-texts.ts
 msgctxt "MTkVRt"
 msgid "{dateKind, select, month {Covering as much as any daily time can by {date}, about {share} in depth, takes about {time} a day, more than most people can keep up.} other {Covering as much as any daily time can by {date}, about {share} in depth, takes about {time} a day, more than most people can keep up.}}"
-msgstr ""
+msgstr "{dateKind, select, month {1日の学習時間をどれだけ増やしても、{date}までに深く学べるのは約{share}までです。それには1日約{time}が必要で、多くの人には続けるのが難しい学習時間です。} other {1日の学習時間をどれだけ増やしても、{date}までに深く学べるのは約{share}までです。それには1日約{time}が必要で、多くの人には続けるのが難しい学習時間です。}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
 msgctxt "AVgtRb"
 msgid "{dateKind, select, month {Covers about {share} of your exam topics in depth by {date}, starting with what comes up most.} other {Covers about {share} of your exam topics in depth by {date}, starting with what comes up most.}}"
-msgstr ""
+msgstr "{dateKind, select, month {よく出る内容から始めて、試験範囲の約{share}を{date}までに深く学びます。} other {よく出る内容から始めて、試験範囲の約{share}を{date}までに深く学びます。}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
 msgctxt "Tampv1"
 msgid "{dateKind, select, month {Covers about {share} of your goal in depth by {date}, starting with what matters most.} other {Covers about {share} of your goal in depth by {date}, starting with what matters most.}}"
-msgstr ""
+msgstr "{dateKind, select, month {特に重要な内容から始めて、目標に必要な内容の約{share}を{date}までに深く学びます。} other {特に重要な内容から始めて、目標に必要な内容の約{share}を{date}までに深く学びます。}}"
 
 #. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
 #: src/_components/time-answer-texts.ts
 msgctxt "llz5RA"
 msgid "Your plan then covers every exam topic, the ones asked most in more depth. That's about {share} of the exam studied in depth."
-msgstr ""
+msgstr "この学習計画では試験の全範囲を学び、よく出る内容をより深く学びます。深く学ぶ範囲は試験全体の約{share}です。"
 
 #. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
 #: src/_components/time-answer-texts.ts
 msgctxt "lKM-91"
 msgid "Your plan then starts with what the exam asks most, about {share} of it studied in depth. Topics it asks least may not fit."
-msgstr ""
+msgstr "この学習計画ではよく出る内容から始めて、試験全体の約{share}を深く学びます。あまり出ないトピックは計画に入りきらないかもしれません。"
 
 #. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
 #: src/_components/time-answer-texts.ts
 msgctxt "xjYmua"
 msgid "Your plan then covers every part of your goal, what matters most in more depth. That's about {share} of it studied in depth."
-msgstr ""
+msgstr "この学習計画では目標に必要な内容をひととおり学び、特に重要な内容をより深く学びます。深く学ぶ範囲は全体の約{share}です。"
 
 #. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
 #: src/_components/time-answer-texts.ts
 msgctxt "NaIXds"
 msgid "Your plan then starts with what matters most, about {share} of your goal studied in depth. The rest may not fit."
-msgstr ""
+msgstr "この学習計画では特に重要な内容から始めて、目標に必要な内容の約{share}を深く学びます。残りは計画に入りきらないかもしれません。"
 
 #: src/_components/time-answer-texts.ts
 msgctxt "QrYTpK"
 msgid "More study days would help."
-msgstr ""
+msgstr "学習できる日を増やすと、余裕が生まれます。"
 
 #. A sentence before what that time covers. {time} is a daily study time, like "4 h".
 #: src/_components/time-answer-texts.ts
 msgctxt "IaAonA"
 msgid "We suggest {time} a day."
-msgstr ""
+msgstr "1日{time}の学習をおすすめします。"
 
 #. The title of a suggestion to change the daily study time. {time} is like "4 h".
 #: src/_components/time-answer-texts.ts
 msgctxt "UE-bQq"
 msgid "We suggest {time} a day"
-msgstr ""
+msgstr "1日{time}の学習をおすすめします"
 
 #: src/_components/time-answer-texts.ts
 msgctxt "0CZ1fn"
 msgid "That's more than most people can keep up."
-msgstr ""
+msgstr "多くの人には続けるのが難しい学習時間です。"
 
 #: src/_components/time-answer.tsx
 msgctxt "AHugH9"
@@ -721,12 +721,12 @@ msgstr "1日の学習時間は、この目標が{main}、ほかの目標が合�
 #: src/_components/time-answer.tsx
 msgctxt "PNv_qq"
 msgid "Use {time} a day to cover everything"
-msgstr ""
+msgstr "全範囲を学べる1日{time}にする"
 
 #: src/_components/time-answer.tsx
 msgctxt "7NHdvs"
 msgid "Use the suggested {time} a day"
-msgstr ""
+msgstr "1日の学習時間をおすすめの{time}にする"
 
 #. A button that changes the plan's daily time to the one just found.
 #: src/_components/time-answer.tsx
@@ -794,25 +794,25 @@ msgstr "白帯"
 #: src/_utils/use-choice-left-out.ts
 msgctxt "8GYum4"
 msgid "Until you pick, your plan and mocks leave out {name}: {count, number} of the exam's {total, number} points."
-msgstr ""
+msgstr "選択するまでは、学習計画と模試に{name}は含まれません（{count, number}点分、試験全体は{total, number}点）。"
 
 #. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
 #: src/_utils/use-choice-left-out.ts
 msgctxt "Rpl5Yb"
 msgid "Until you pick, your plan and mocks leave out {name}: {count, number} of the exam's {total, number} questions."
-msgstr ""
+msgstr "選択するまでは、学習計画と模試に{name}は含まれません（{count, number}問分、試験全体は{total, number}問）。"
 
 #. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
 #: src/_utils/use-choice-left-out.ts
 msgctxt "T-mUNO"
 msgid "Until you pick, your plan and mocks leave out {name}: {count, plural, one {# question} other {# questions}}."
-msgstr ""
+msgstr "選択するまでは、学習計画と模試に{name}は含まれません（{count, plural, other {#問分}}）。"
 
 #. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
 #: src/_utils/use-choice-left-out.ts
 msgctxt "8-nW5Q"
 msgid "Until you pick, your plan and mocks leave out {name}."
-msgstr ""
+msgstr "選択するまでは、学習計画と模試に{name}は含まれません。"
 
 #: src/_utils/use-citation-label.ts
 msgctxt "VjK2d_"
@@ -842,22 +842,22 @@ msgstr "試験の資料にあるとおり、{language}で表記しています�
 #: src/_utils/use-score-range.ts
 msgctxt "4Z0cf0"
 msgid "{score}%"
-msgstr ""
+msgstr "{score}%"
 
 #: src/_utils/use-score-range.ts
 msgctxt "V3-s4p"
 msgid "{low}% to {high}%"
-msgstr ""
+msgstr "{low}%〜{high}%"
 
 #: src/_utils/use-score-range.ts
 msgctxt "FxEDDu"
 msgid "Band {score}"
-msgstr ""
+msgstr "バンドスコア{score}"
 
 #: src/_utils/use-score-range.ts
 msgctxt "G_2OC9"
 msgid "Band {low} to {high}"
-msgstr ""
+msgstr "バンドスコア{low}～{high}"
 
 #: src/_utils/use-score-range.ts
 msgctxt "zi1f8F"
@@ -908,17 +908,22 @@ msgstr "言語"
 #: src/appearance/appearance-screen.tsx
 msgctxt "cXBJ7U"
 msgid "Privacy"
-msgstr ""
+msgstr "プライバシーポリシー"
+
+#: src/appearance/appearance-screen.tsx
+msgctxt "72SFRq"
+msgid "Off for learners under 18 in your country"
+msgstr "お住まいの国では、18歳未満の方はオフです"
 
 #: src/appearance/appearance-screen.tsx
 msgctxt "8uEFmZ"
 msgid "Shows us how you use Zoonk, so we can improve it"
-msgstr ""
+msgstr "Zoonkの利用状況を把握し、改善に役立てます"
 
 #: src/appearance/appearance-screen.tsx
 msgctxt "JPXk5m"
 msgid "Share usage data"
-msgstr ""
+msgstr "利用データを共有する"
 
 #: src/appearance/buddy-settings.tsx
 #: src/buddies/buddy-day.tsx
@@ -2455,7 +2460,7 @@ msgstr "上級"
 #: src/essay/essay-closed.tsx
 msgctxt "af7HsK"
 msgid "You skipped this essay."
-msgstr ""
+msgstr "この小論文はスキップしました。"
 
 #: src/essay/essay-feedback.tsx
 msgctxt "H9233U"
@@ -2691,7 +2696,7 @@ msgstr "うまくいきませんでした。文章はここに残っています
 #: src/essay/essay-screen.tsx
 msgctxt "yDPN7m"
 msgid "You've reached your daily time limit. Your text stays here."
-msgstr ""
+msgstr "1日の学習時間の上限に達しました。書いた内容はここに残ります。"
 
 #: src/essay/essay-screen.tsx
 msgctxt "Vl53xq"
@@ -7452,7 +7457,7 @@ msgstr "この問題の残り時間"
 #: src/mock/mock-notes.tsx
 msgctxt "ojUkTG"
 msgid "{name} is left out until you pick which one you take, in your plan."
-msgstr ""
+msgstr "{name}は、学習計画でどれを受験するか選ぶまで含まれません。"
 
 #: src/mock/mock-notes.tsx
 msgctxt "rpHBhB"
@@ -7542,12 +7547,12 @@ msgstr "この模試では正解数を表示します。"
 #: src/mock/mock-option-labels.ts
 msgctxt "LB2EVt"
 msgid "Exam day {day} without {names}"
-msgstr ""
+msgstr "試験{day}日目（{names}を除く）"
 
 #: src/mock/mock-option-labels.ts
 msgctxt "24Y1kW"
 msgid "An exam day without {names}"
-msgstr ""
+msgstr "試験1日分（{names}を除く）"
 
 #. The mock leaves out the exam's written part and has only its questions with set answers.
 #: src/mock/mock-option-labels.ts
@@ -7858,67 +7863,67 @@ msgstr "学習計画"
 #: src/mock/mock-result-points.tsx
 msgctxt "cT7Wf1"
 msgid "{unit, select, percent {At {score}, below the {minimum} it needs} other {{short, plural, one {# point} other {# points}} short of the {minimum} it needs}}"
-msgstr ""
+msgstr "{unit, select, percent {{score}で、基準の{minimum}に届いていません} other {{short, plural, other {#点}}不足しています（基準は{minimum}）}}"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "I-wYX9"
 msgid "{unit, select, percent {Reached the {minimum} it needs} other {Reached the {value, plural, one {# point} other {# points}} it needs}}"
-msgstr ""
+msgstr "{unit, select, percent {必要な{minimum}に達しました} other {必要な{value, plural, other {#点}}に達しました}}"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "G7GP7-"
 msgid "Needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}}"
-msgstr ""
+msgstr "{unit, select, percent {満点の{minimum}} other {{value, plural, other {#点}}}}が必要です"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "8Qf9bm"
 msgid "Doesn't count toward the total"
-msgstr ""
+msgstr "合計には含まれません"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "GcvagU"
 msgid "Objective tests together"
-msgstr ""
+msgstr "選択式試験の合計"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "5JW5j4"
 msgid "You'd be eliminated: the objective tests together {unit, select, percent {reach {score}, below the {minimum} they need} other {are {short, plural, one {# point} other {# points}} short of {minimum}}}."
-msgstr ""
+msgstr "この結果では不合格になります。選択式試験の合計は{unit, select, percent {{score}で、基準の{minimum}未満です} other {{short, plural, other {#点}}足りず、基準の{minimum}に届いていません}}。"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "f6NtkC"
 msgid "You'd be eliminated: {name} {unit, select, percent {is at {score}, below the {minimum} it needs} other {is {short, plural, one {# point} other {# points}} short of {minimum}}}."
-msgstr ""
+msgstr "この結果では不合格になります。{name}は{unit, select, percent {{score}で、基準の{minimum}未満です} other {{short, plural, other {#点}}足りず、基準の{minimum}に届いていません}}。"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "IiVFOl"
 msgid "Meets the objective minimums checked here."
-msgstr ""
+msgstr "ここで確認した選択式試験の最低基準を満たしています。"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "iUqCgB"
 msgid "About {projected} of {max} points on the whole exam, projected from this mock. Only a full mock says whether you'd reach the minimums."
-msgstr ""
+msgstr "この模試から推定すると、試験全体では約{projected}点（{max}点満点）です。最低基準に達するかどうかは、試験全体を通した模試でのみ確認できます。"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "0FUIoF"
 msgid "Each test's points are projected onto its whole length. Only a full mock says whether you'd reach the minimums."
-msgstr ""
+msgstr "各試験の得点をもとに、全問解いた場合の得点を推定しています。最低基準に達するかどうかは、試験全体を通した模試でのみ確認できます。"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JcMiUs"
 msgid "The objective tests together need {unit, select, percent {{minimum} of their points} other {{value, plural, one {# point} other {# points}}}}, and this mock doesn't have them all."
-msgstr ""
+msgstr "選択式試験の合計では{unit, select, percent {満点の{minimum}} other {{value, plural, other {#点}}}}が必要ですが、この模試にはすべての選択式試験が含まれていません。"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "VIKtKQ"
 msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}} and isn't in this mock."
-msgstr ""
+msgstr "{name}は{unit, select, percent {満点の{minimum}} other {{value, plural, other {#点}}}}が必要ですが、この模試には含まれていません。"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
 msgid "By test"
-msgstr ""
+msgstr "試験別"
 
 #: src/mock/mock-result-speaking.tsx
 msgctxt "VFOaix"
@@ -7988,7 +7993,7 @@ msgstr "文字で回答したタスクがあるため、そのタスクの話し
 #: src/mock/mock-result-view.tsx
 msgctxt "P0PLlQ"
 msgid "Points"
-msgstr ""
+msgstr "得点"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "OVBe_v"
@@ -8366,7 +8371,7 @@ msgstr "やりたいこと"
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "MBg8CD"
 msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
-msgstr ""
+msgstr "{exam, select, abitur {Abiturに合格する、{language}を話せるようになる…} bac {bacに合格する、{language}を話せるようになる…} enem {ENEMに合格する、{language}を話せるようになる…} exani {EXANI-IIに合格する、{language}を話せるようになる…} kyotsu {共通テストでいい点を取る、{language}を話せるようになる…} matura {maturaに合格する、{language}を話せるようになる…} maturita {maturitàに合格する、{language}を話せるようになる…} suneung {수능でいい点を取る、{language}を話せるようになる…} yks {YKSでいい点を取る、{language}を話せるようになる…} other {SATに合格する、{language}を話せるようになる…}}"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "rsoIT2"
@@ -8660,7 +8665,7 @@ msgstr "目標を保存できませんでした。少し待ってからもう一
 #: src/onboarding/entry/use-local-goal-example.ts
 msgctxt "l5pR0E"
 msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} kyotsu {Do well on the Common Test} matura {Pass the matura} maturita {Pass the maturità} suneung {Do well on the CSAT} yks {Do well on the YKS} other {Pass the SAT}}"
-msgstr ""
+msgstr "{exam, select, abitur {Abiturに合格する} bac {bacに合格する} enem {ENEMに合格する} exani {EXANI-IIに合格する} kyotsu {共通テストでいい点を取る} matura {maturaに合格する} maturita {maturitàに合格する} suneung {수능でいい点を取る} yks {YKSでいい点を取る} other {SATに合格する}}"
 
 #. Shown when automated bot protection refuses to let this browser continue without an account.
 #: src/onboarding/goal-errors.ts
@@ -8887,12 +8892,12 @@ msgstr "学ぶにつれて、相棒も成長します。"
 #: src/onboarding/steps/date-step.tsx
 msgctxt "5ib3Bu"
 msgid "Your plan paces your lessons to end by then."
-msgstr ""
+msgstr "その日までにレッスンを終えられるペースで学習計画を立てます。"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "nUTsrg"
 msgid "Your plan paces your lessons to end by the first day."
-msgstr ""
+msgstr "試験初日までにレッスンを終えられるペースで学習計画を立てます。"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xM69fy"
@@ -9621,7 +9626,7 @@ msgstr "期限"
 #: src/onboarding/understood/understood-date-row.ts
 msgctxt "oxqgs5"
 msgid "You pick this test's day when you book it. Booked already? Set it here."
-msgstr ""
+msgstr "この試験は予約時に受験日を選びます。もう予約しましたか？ここで設定できます。"
 
 #: src/onboarding/understood/understood-date-row.ts
 msgctxt "dnMNKB"
@@ -10294,7 +10299,7 @@ msgstr "{dateKind, select, month {学習計画から{date}の期日を外しま�
 #: src/plan/plan-full-course.tsx
 msgctxt "_KzTI7"
 msgid "When off, your plan ends at the exam."
-msgstr ""
+msgstr "オフにすると、学習計画は試験日までになります。"
 
 #: src/plan/plan-notice.tsx
 msgctxt "3qUBgl"
@@ -10799,7 +10804,7 @@ msgstr "{document, select, notice {学習計画は試験要項に沿っていま
 #: src/plan/use-change-sentence.ts
 msgctxt "B5ATMk"
 msgid "Daily time becomes {time}."
-msgstr ""
+msgstr "1日の学習時間が{time}になります。"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "bkqP1O"
@@ -10809,7 +10814,7 @@ msgstr "{date}から1週間は、学習時間を半分にして軽めに進め�
 #: src/plan/use-change-sentence.ts
 msgctxt "ouCzFr"
 msgid "The weekly challenge moves to {date}."
-msgstr ""
+msgstr "週間チャレンジの日程が{date}に変わります。"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "VzP2ac"
@@ -10841,12 +10846,12 @@ msgstr "{count, plural, other {{skills}が学習計画に加わります。}}"
 #: src/plan/use-choice-sentence.ts
 msgctxt "k1CuqL"
 msgid "The date moves to {date}."
-msgstr ""
+msgstr "日付が{date}に変わります。"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "1feYRq"
 msgid "Your phase dates move, so more lessons fit before your goal's date."
-msgstr ""
+msgstr "各フェーズの日程が変わり、目標の日までにより多くのレッスンを計画に入れられます。"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "2rqIF8"
@@ -10861,7 +10866,7 @@ msgstr "{subject}を{group}向けに学ぶ計画です。"
 #: src/plan/use-change-sentence.ts
 msgctxt "e5pmPD"
 msgid "Your plan changes."
-msgstr ""
+msgstr "学習計画が変わります。"
 
 #. "With the exam around {date}" means "and the exam is around {date}". {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
@@ -13115,7 +13120,7 @@ msgstr "全トピックを苦手な順に"
 #: src/today/today-week.tsx
 msgctxt "VlCnpE"
 msgid "daily time met"
-msgstr ""
+msgstr "1日の学習時間を達成"
 
 #: src/today/today-week.tsx
 msgctxt "F8phHs"
@@ -13223,7 +13228,7 @@ msgstr "レッスンの内容は、そのトピックを学ぶ2 週間前に決�
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "2bgkMA"
 msgid "{dateKind, select, month {From {start}} other {From {start}}}"
-msgstr ""
+msgstr "{dateKind, select, month {{start}から} other {{start}から}}"
 
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "l2bP9u"
@@ -13234,7 +13239,7 @@ msgstr "{count, plural, =1 {#レッスン} other {約#レッスン}}"
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "96EsHJ"
 msgid "{dateKind, select, month {{count} · from {start}} other {{count} · from {start}}}"
-msgstr ""
+msgstr "{dateKind, select, month {{count} · {start}から} other {{count} · {start}から}}"
 
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "c1J3nF"

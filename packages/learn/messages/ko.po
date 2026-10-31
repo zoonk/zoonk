@@ -131,7 +131,7 @@ msgstr "{time} (추천)"
 #: src/_components/daily-time-picker.tsx
 msgctxt "GUkMRc"
 msgid "{time} (covers everything)"
-msgstr ""
+msgstr "{time} (모든 내용 학습)"
 
 #: src/_components/daily-time-picker.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -636,77 +636,77 @@ msgstr "언제 마칠지 계산하지 못했어요."
 #: src/_components/time-answer-texts.ts
 msgctxt "zUbsmj"
 msgid "{dateKind, select, month {Not even a whole day covers everything in depth by {date}.} other {Not even a whole day covers everything in depth by {date}.}}"
-msgstr ""
+msgstr "{dateKind, select, month {매일 하루 종일 공부해도 {date}까지 모든 내용을 깊이 있게 공부할 수는 없어요.} other {매일 하루 종일 공부해도 {date}까지 모든 내용을 깊이 있게 공부할 수는 없어요.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "13 h 30 min".
 #: src/_components/time-answer-texts.ts
 msgctxt "I9fMB3"
 msgid "{dateKind, select, month {Covering everything in depth by {date} takes about {time} a day, more than most people can keep up.} other {Covering everything in depth by {date} takes about {time} a day, more than most people can keep up.}}"
-msgstr ""
+msgstr "{dateKind, select, month {{date}까지 모든 내용을 깊이 있게 공부하려면 하루에 약 {time}씩 공부해야 하는데, 대부분의 사람이 꾸준히 이어 가기는 어려워요.} other {{date}까지 모든 내용을 깊이 있게 공부하려면 하루에 약 {time}씩 공부해야 하는데, 대부분의 사람이 꾸준히 이어 가기는 어려워요.}}"
 
 #. Part of the goal never fits, whatever the time, so this is the most any daily time covers. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "8 h"; {share} a percentage, like "99%".
 #: src/_components/time-answer-texts.ts
 msgctxt "MTkVRt"
 msgid "{dateKind, select, month {Covering as much as any daily time can by {date}, about {share} in depth, takes about {time} a day, more than most people can keep up.} other {Covering as much as any daily time can by {date}, about {share} in depth, takes about {time} a day, more than most people can keep up.}}"
-msgstr ""
+msgstr "{dateKind, select, month {하루에 아무리 오래 공부해도 {date}까지 깊이 있게 공부할 수 있는 분량은 최대 약 {share}예요. 이만큼 공부하려면 하루에 약 {time}씩 공부해야 하는데, 대부분의 사람이 꾸준히 이어 가기는 어려워요.} other {하루에 아무리 오래 공부해도 {date}까지 깊이 있게 공부할 수 있는 분량은 최대 약 {share}예요. 이만큼 공부하려면 하루에 약 {time}씩 공부해야 하는데, 대부분의 사람이 꾸준히 이어 가기는 어려워요.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
 msgctxt "AVgtRb"
 msgid "{dateKind, select, month {Covers about {share} of your exam topics in depth by {date}, starting with what comes up most.} other {Covers about {share} of your exam topics in depth by {date}, starting with what comes up most.}}"
-msgstr ""
+msgstr "{dateKind, select, month {시험 범위의 약 {share}를 {date}까지 깊이 있게 공부해요. 자주 출제되는 내용부터 시작해요.} other {시험 범위의 약 {share}를 {date}까지 깊이 있게 공부해요. 자주 출제되는 내용부터 시작해요.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
 msgctxt "Tampv1"
 msgid "{dateKind, select, month {Covers about {share} of your goal in depth by {date}, starting with what matters most.} other {Covers about {share} of your goal in depth by {date}, starting with what matters most.}}"
-msgstr ""
+msgstr "{dateKind, select, month {목표로 정한 내용의 약 {share}를 {date}까지 깊이 있게 공부해요. 가장 중요한 내용부터 시작해요.} other {목표로 정한 내용의 약 {share}를 {date}까지 깊이 있게 공부해요. 가장 중요한 내용부터 시작해요.}}"
 
 #. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
 #: src/_components/time-answer-texts.ts
 msgctxt "llz5RA"
 msgid "Your plan then covers every exam topic, the ones asked most in more depth. That's about {share} of the exam studied in depth."
-msgstr ""
+msgstr "그러면 시험 범위를 모두 공부하되, 자주 출제되는 내용은 더 깊이 있게 공부해요. 깊이 있게 공부하는 분량은 전체 시험 범위의 약 {share}예요."
 
 #. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
 #: src/_components/time-answer-texts.ts
 msgctxt "lKM-91"
 msgid "Your plan then starts with what the exam asks most, about {share} of it studied in depth. Topics it asks least may not fit."
-msgstr ""
+msgstr "그러면 자주 출제되는 내용부터 공부하고, 전체 시험 범위의 약 {share}를 깊이 있게 공부해요. 출제 빈도가 낮은 주제는 계획에 포함되지 않을 수 있어요."
 
 #. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
 #: src/_components/time-answer-texts.ts
 msgctxt "xjYmua"
 msgid "Your plan then covers every part of your goal, what matters most in more depth. That's about {share} of it studied in depth."
-msgstr ""
+msgstr "그러면 목표로 정한 내용을 모두 공부하되, 가장 중요한 내용은 더 깊이 있게 공부해요. 깊이 있게 공부하는 분량은 전체의 약 {share}예요."
 
 #. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
 #: src/_components/time-answer-texts.ts
 msgctxt "NaIXds"
 msgid "Your plan then starts with what matters most, about {share} of your goal studied in depth. The rest may not fit."
-msgstr ""
+msgstr "그러면 가장 중요한 내용부터 공부하고, 목표로 정한 내용의 약 {share}를 깊이 있게 공부해요. 나머지는 계획에 포함되지 않을 수 있어요."
 
 #: src/_components/time-answer-texts.ts
 msgctxt "QrYTpK"
 msgid "More study days would help."
-msgstr ""
+msgstr "공부하는 날을 늘리면 도움이 돼요."
 
 #. A sentence before what that time covers. {time} is a daily study time, like "4 h".
 #: src/_components/time-answer-texts.ts
 msgctxt "IaAonA"
 msgid "We suggest {time} a day."
-msgstr ""
+msgstr "하루 {time}씩 공부하는 걸 추천해요."
 
 #. The title of a suggestion to change the daily study time. {time} is like "4 h".
 #: src/_components/time-answer-texts.ts
 msgctxt "UE-bQq"
 msgid "We suggest {time} a day"
-msgstr ""
+msgstr "하루 {time}씩 공부하는 걸 추천해요"
 
 #: src/_components/time-answer-texts.ts
 msgctxt "0CZ1fn"
 msgid "That's more than most people can keep up."
-msgstr ""
+msgstr "대부분의 사람이 그만큼의 시간을 꾸준히 내기는 어려워요."
 
 #: src/_components/time-answer.tsx
 msgctxt "AHugH9"
@@ -721,12 +721,12 @@ msgstr "하루에 이 목표는 {main}, 다른 목표들은 합쳐서 {other}씩
 #: src/_components/time-answer.tsx
 msgctxt "PNv_qq"
 msgid "Use {time} a day to cover everything"
-msgstr ""
+msgstr "모든 내용을 공부할 수 있게 하루 {time}으로 설정하기"
 
 #: src/_components/time-answer.tsx
 msgctxt "7NHdvs"
 msgid "Use the suggested {time} a day"
-msgstr ""
+msgstr "추천 시간인 하루 {time}으로 설정하기"
 
 #. A button that changes the plan's daily time to the one just found.
 #: src/_components/time-answer.tsx
@@ -794,25 +794,25 @@ msgstr "흰띠"
 #: src/_utils/use-choice-left-out.ts
 msgctxt "8GYum4"
 msgid "Until you pick, your plan and mocks leave out {name}: {count, number} of the exam's {total, number} points."
-msgstr ""
+msgstr "선택하기 전까지 계획과 모의고사에서 {name} 부분({count, number}점, 시험 총점 {total, number}점)은 제외돼요."
 
 #. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
 #: src/_utils/use-choice-left-out.ts
 msgctxt "Rpl5Yb"
 msgid "Until you pick, your plan and mocks leave out {name}: {count, number} of the exam's {total, number} questions."
-msgstr ""
+msgstr "선택하기 전까지 계획과 모의고사에서 {name} 부분({count, number}문제, 시험 전체 {total, number}문제)은 제외돼요."
 
 #. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
 #: src/_utils/use-choice-left-out.ts
 msgctxt "T-mUNO"
 msgid "Until you pick, your plan and mocks leave out {name}: {count, plural, one {# question} other {# questions}}."
-msgstr ""
+msgstr "선택하기 전까지 계획과 모의고사에서 {name} 부분({count, plural, other {#문제}})은 제외돼요."
 
 #. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
 #: src/_utils/use-choice-left-out.ts
 msgctxt "8-nW5Q"
 msgid "Until you pick, your plan and mocks leave out {name}."
-msgstr ""
+msgstr "선택하기 전까지 계획과 모의고사에서 {name} 부분은 제외돼요."
 
 #: src/_utils/use-citation-label.ts
 msgctxt "VjK2d_"
@@ -842,22 +842,22 @@ msgstr "시험 문서에 쓰인 {language} 표현이에요."
 #: src/_utils/use-score-range.ts
 msgctxt "4Z0cf0"
 msgid "{score}%"
-msgstr ""
+msgstr "{score}%"
 
 #: src/_utils/use-score-range.ts
 msgctxt "V3-s4p"
 msgid "{low}% to {high}%"
-msgstr ""
+msgstr "{low}%~{high}%"
 
 #: src/_utils/use-score-range.ts
 msgctxt "FxEDDu"
 msgid "Band {score}"
-msgstr ""
+msgstr "밴드 {score}"
 
 #: src/_utils/use-score-range.ts
 msgctxt "G_2OC9"
 msgid "Band {low} to {high}"
-msgstr ""
+msgstr "밴드 {low}~{high}"
 
 #: src/_utils/use-score-range.ts
 msgctxt "zi1f8F"
@@ -908,17 +908,22 @@ msgstr "언어"
 #: src/appearance/appearance-screen.tsx
 msgctxt "cXBJ7U"
 msgid "Privacy"
-msgstr ""
+msgstr "개인정보 처리방침"
+
+#: src/appearance/appearance-screen.tsx
+msgctxt "72SFRq"
+msgid "Off for learners under 18 in your country"
+msgstr "거주 국가에서는 만 18세 미만 학습자가 이 설정을 켤 수 없어요"
 
 #: src/appearance/appearance-screen.tsx
 msgctxt "8uEFmZ"
 msgid "Shows us how you use Zoonk, so we can improve it"
-msgstr ""
+msgstr "Zoonk를 어떻게 사용하는지 알려 주고 서비스 개선에 도움이 돼요"
 
 #: src/appearance/appearance-screen.tsx
 msgctxt "JPXk5m"
 msgid "Share usage data"
-msgstr ""
+msgstr "사용 데이터 제공"
 
 #: src/appearance/buddy-settings.tsx
 #: src/buddies/buddy-day.tsx
@@ -2455,7 +2460,7 @@ msgstr "고급"
 #: src/essay/essay-closed.tsx
 msgctxt "af7HsK"
 msgid "You skipped this essay."
-msgstr ""
+msgstr "이 에세이를 건너뛰었어요."
 
 #: src/essay/essay-feedback.tsx
 msgctxt "H9233U"
@@ -2691,7 +2696,7 @@ msgstr "처리하지 못했어요. 쓴 글은 그대로 남아 있어요. 잠시
 #: src/essay/essay-screen.tsx
 msgctxt "yDPN7m"
 msgid "You've reached your daily time limit. Your text stays here."
-msgstr ""
+msgstr "하루 학습 시간 제한에 도달했어요. 작성한 글은 여기에 그대로 남아 있어요."
 
 #: src/essay/essay-screen.tsx
 msgctxt "Vl53xq"
@@ -7452,7 +7457,7 @@ msgstr "이 문제의 남은 시간"
 #: src/mock/mock-notes.tsx
 msgctxt "ojUkTG"
 msgid "{name} is left out until you pick which one you take, in your plan."
-msgstr ""
+msgstr "{name} 부분은 계획에서 응시할 항목을 고르기 전까지 제외돼요."
 
 #: src/mock/mock-notes.tsx
 msgctxt "rpHBhB"
@@ -7542,12 +7547,12 @@ msgstr "이 모의고사는 맞힌 문제 수를 보여 줘요."
 #: src/mock/mock-option-labels.ts
 msgctxt "LB2EVt"
 msgid "Exam day {day} without {names}"
-msgstr ""
+msgstr "시험 {day}일 차 ({names} 제외)"
 
 #: src/mock/mock-option-labels.ts
 msgctxt "24Y1kW"
 msgid "An exam day without {names}"
-msgstr ""
+msgstr "시험 하루 분량 ({names} 제외)"
 
 #. The mock leaves out the exam's written part and has only its questions with set answers.
 #: src/mock/mock-option-labels.ts
@@ -7858,67 +7863,67 @@ msgstr "내 계획"
 #: src/mock/mock-result-points.tsx
 msgctxt "cT7Wf1"
 msgid "{unit, select, percent {At {score}, below the {minimum} it needs} other {{short, plural, one {# point} other {# points}} short of the {minimum} it needs}}"
-msgstr ""
+msgstr "{unit, select, percent {{score}로 최소 기준 {minimum} 미달} other {{short, plural, other {#점}} 부족 (최소 기준 {minimum})}}"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "I-wYX9"
 msgid "{unit, select, percent {Reached the {minimum} it needs} other {Reached the {value, plural, one {# point} other {# points}} it needs}}"
-msgstr ""
+msgstr "{unit, select, percent {최소 기준 {minimum} 충족} other {최소 기준 {value, plural, other {#점}} 충족}}"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "G7GP7-"
 msgid "Needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}}"
-msgstr ""
+msgstr "{unit, select, percent {배점의 {minimum}} other {{value, plural, other {#점}}}} 필요"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "8Qf9bm"
 msgid "Doesn't count toward the total"
-msgstr ""
+msgstr "총점에 반영되지 않음"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "GcvagU"
 msgid "Objective tests together"
-msgstr ""
+msgstr "객관식 시험 합계"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "5JW5j4"
 msgid "You'd be eliminated: the objective tests together {unit, select, percent {reach {score}, below the {minimum} they need} other {are {short, plural, one {# point} other {# points}} short of {minimum}}}."
-msgstr ""
+msgstr "이 점수라면 탈락해요. 객관식 시험 합계가 {unit, select, percent {{score}로 최소 기준 {minimum}에 못 미쳐요} other {{short, plural, other {#점}} 부족해 최소 기준 {minimum}에 못 미쳐요}}."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "f6NtkC"
 msgid "You'd be eliminated: {name} {unit, select, percent {is at {score}, below the {minimum} it needs} other {is {short, plural, one {# point} other {# points}} short of {minimum}}}."
-msgstr ""
+msgstr "이 점수라면 탈락해요. {name} 점수가 {unit, select, percent {{score}로 최소 기준 {minimum}에 못 미쳐요} other {{short, plural, other {#점}} 부족해 최소 기준 {minimum}에 못 미쳐요}}."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "IiVFOl"
 msgid "Meets the objective minimums checked here."
-msgstr ""
+msgstr "여기서 확인한 객관식 시험의 최소 기준을 충족해요."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "iUqCgB"
 msgid "About {projected} of {max} points on the whole exam, projected from this mock. Only a full mock says whether you'd reach the minimums."
-msgstr ""
+msgstr "이 모의고사를 바탕으로 한 전체 시험 예상 점수는 약 {projected}점이에요(만점 {max}점). 최소 기준을 충족할지는 전체 모의고사를 풀어야 알 수 있어요."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "0FUIoF"
 msgid "Each test's points are projected onto its whole length. Only a full mock says whether you'd reach the minimums."
-msgstr ""
+msgstr "각 시험의 점수는 해당 시험의 전체 문제 수에 맞춰 환산했어요. 최소 기준을 충족할지는 전체 모의고사를 풀어야 알 수 있어요."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JcMiUs"
 msgid "The objective tests together need {unit, select, percent {{minimum} of their points} other {{value, plural, one {# point} other {# points}}}}, and this mock doesn't have them all."
-msgstr ""
+msgstr "객관식 시험 합계가 {unit, select, percent {전체 배점의 {minimum}} other {{value, plural, other {#점}}}} 이상이어야 하지만, 이 모의고사에는 모든 객관식 시험이 포함되어 있지 않아요."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "VIKtKQ"
 msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}} and isn't in this mock."
-msgstr ""
+msgstr "{name}에서는 {unit, select, percent {배점의 {minimum}} other {{value, plural, other {#점}}}} 이상 받아야 하지만, 이 모의고사에는 포함되어 있지 않아요."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
 msgid "By test"
-msgstr ""
+msgstr "시험별"
 
 #: src/mock/mock-result-speaking.tsx
 msgctxt "VFOaix"
@@ -7988,7 +7993,7 @@ msgstr "글로 답한 과제가 있어서 그 과제에서 실제로 어떻게 �
 #: src/mock/mock-result-view.tsx
 msgctxt "P0PLlQ"
 msgid "Points"
-msgstr ""
+msgstr "점수"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "OVBe_v"
@@ -8366,7 +8371,7 @@ msgstr "내 목표"
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "MBg8CD"
 msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
-msgstr ""
+msgstr "{exam, select, abitur {Abitur 합격하기, {language} 말하기…} bac {bac 합격하기, {language} 말하기…} enem {ENEM 합격하기, {language} 말하기…} exani {EXANI-II 합격하기, {language} 말하기…} kyotsu {Common Test 잘 보기, {language} 말하기…} matura {matura 합격하기, {language} 말하기…} maturita {maturità 합격하기, {language} 말하기…} suneung {수능 잘 보기, {language} 말하기…} yks {YKS 잘 보기, {language} 말하기…} other {SAT 합격하기, {language} 말하기…}}"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "rsoIT2"
@@ -8660,7 +8665,7 @@ msgstr "목표를 저장하지 못했어요. 잠시 후에 다시 시도해 보�
 #: src/onboarding/entry/use-local-goal-example.ts
 msgctxt "l5pR0E"
 msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} kyotsu {Do well on the Common Test} matura {Pass the matura} maturita {Pass the maturità} suneung {Do well on the CSAT} yks {Do well on the YKS} other {Pass the SAT}}"
-msgstr ""
+msgstr "{exam, select, abitur {Abitur 합격하기} bac {bac 합격하기} enem {ENEM 합격하기} exani {EXANI-II 합격하기} kyotsu {Common Test 잘 보기} matura {matura 합격하기} maturita {maturità 합격하기} suneung {수능 잘 보기} yks {YKS 잘 보기} other {SAT 합격하기}}"
 
 #. Shown when automated bot protection refuses to let this browser continue without an account.
 #: src/onboarding/goal-errors.ts
@@ -8791,7 +8796,7 @@ msgstr "계정 없이 무료로 시작할 수 있어요."
 #: src/onboarding/library-course-offer.tsx
 msgctxt "JHbf4S"
 msgid "A course in the Library fits your goal"
-msgstr ""
+msgstr "라이브러리에 목표에 맞는 코스가 있어요"
 
 #: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
@@ -8887,12 +8892,12 @@ msgstr "배울수록 짝꿍도 자라요."
 #: src/onboarding/steps/date-step.tsx
 msgctxt "5ib3Bu"
 msgid "Your plan paces your lessons to end by then."
-msgstr ""
+msgstr "그날까지 레슨을 마칠 수 있도록 진도를 조절해요."
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "nUTsrg"
 msgid "Your plan paces your lessons to end by the first day."
-msgstr ""
+msgstr "시험 첫날까지 레슨을 마칠 수 있도록 진도를 조절해요."
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xM69fy"
@@ -9621,7 +9626,7 @@ msgstr "기한"
 #: src/onboarding/understood/understood-date-row.ts
 msgctxt "oxqgs5"
 msgid "You pick this test's day when you book it. Booked already? Set it here."
-msgstr ""
+msgstr "예약할 때 시험 날짜를 정해요. 이미 예약했나요? 여기서 날짜를 설정해 주세요."
 
 #: src/onboarding/understood/understood-date-row.ts
 msgctxt "dnMNKB"
@@ -10294,7 +10299,7 @@ msgstr "{dateKind, select, month {계획에서 기한({date})을 없애요. 언�
 #: src/plan/plan-full-course.tsx
 msgctxt "_KzTI7"
 msgid "When off, your plan ends at the exam."
-msgstr ""
+msgstr "끄면 계획이 시험일에 끝나요."
 
 #: src/plan/plan-notice.tsx
 msgctxt "3qUBgl"
@@ -10799,7 +10804,7 @@ msgstr "{document, select, notice {시험 공고에 맞춘 계획이에요.} oth
 #: src/plan/use-change-sentence.ts
 msgctxt "B5ATMk"
 msgid "Daily time becomes {time}."
-msgstr ""
+msgstr "하루 학습 시간이 {time}으로 바뀌어요."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "bkqP1O"
@@ -10809,7 +10814,7 @@ msgstr "{date}부터 일주일 동안은 학습 시간을 절반으로 줄여요
 #: src/plan/use-change-sentence.ts
 msgctxt "ouCzFr"
 msgid "The weekly challenge moves to {date}."
-msgstr ""
+msgstr "주간 챌린지 날짜가 {date}로 바뀌어요."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "VzP2ac"
@@ -10841,12 +10846,12 @@ msgstr "{count, plural, other {{skills}이(가) 계획에 추가돼요.}}"
 #: src/plan/use-choice-sentence.ts
 msgctxt "k1CuqL"
 msgid "The date moves to {date}."
-msgstr ""
+msgstr "날짜가 {date}로 바뀌어요."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "1feYRq"
 msgid "Your phase dates move, so more lessons fit before your goal's date."
-msgstr ""
+msgstr "단계별 날짜가 바뀌어 목표 날짜 전에 더 많은 레슨을 공부할 수 있어요."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "2rqIF8"
@@ -10861,7 +10866,7 @@ msgstr "{subject} 학습을 {group}에 맞춰 계획해요."
 #: src/plan/use-change-sentence.ts
 msgctxt "e5pmPD"
 msgid "Your plan changes."
-msgstr ""
+msgstr "계획이 바뀌어요."
 
 #. "With the exam around {date}" means "and the exam is around {date}". {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
@@ -13115,7 +13120,7 @@ msgstr "모든 주제, 가장 취약한 주제부터"
 #: src/today/today-week.tsx
 msgctxt "VlCnpE"
 msgid "daily time met"
-msgstr ""
+msgstr "하루 학습 시간 달성"
 
 #: src/today/today-week.tsx
 msgctxt "F8phHs"
@@ -13223,7 +13228,7 @@ msgstr "주제별 레슨은 그 주제를 배우기 2주 전에 계획해요. �
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "2bgkMA"
 msgid "{dateKind, select, month {From {start}} other {From {start}}}"
-msgstr ""
+msgstr "{dateKind, select, month {{start}부터} other {{start}부터}}"
 
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "l2bP9u"
@@ -13234,7 +13239,7 @@ msgstr "{count, plural, =1 {레슨 #개} other {레슨 약 #개}}"
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "96EsHJ"
 msgid "{dateKind, select, month {{count} · from {start}} other {{count} · from {start}}}"
-msgstr ""
+msgstr "{dateKind, select, month {{count} · {start}부터} other {{count} · {start}부터}}"
 
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "c1J3nF"

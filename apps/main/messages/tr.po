@@ -1154,7 +1154,7 @@ msgstr "Hesabın silinsin mi?"
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "yF2UF2"
 msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
-msgstr ""
+msgstr "Hedeflerin, planların, ilerlemen, bellekteki bilgilerin ve yüklediğin dosyalar kalıcı olarak silinir. Bu işlem geri alınamaz."
 
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -1221,7 +1221,7 @@ msgstr "Ad"
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "wubfpa"
 msgid "3-30 characters. Letters a–z, numbers, and underscores only."
-msgstr ""
+msgstr "3-30 karakter. Yalnızca a–z harfleri, rakamlar ve alt çizgi kullanılabilir."
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
@@ -1288,81 +1288,81 @@ msgstr "Hayatına uygun örnekler ve planlar sunmak için Zoonk’un seninle ilg
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 msgctxt "Jgc-3V"
 msgid "Choose how to cancel"
-msgstr ""
+msgstr "Nasıl iptal edeceğini seç"
 
 #. Label for why the subscription ends now, in a legal cancellation form
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 msgctxt "AkCxS_"
 msgid "Reason"
-msgstr ""
+msgstr "Gerekçe"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 msgctxt "C_0PBN"
 msgid "Briefly, why you can't keep Plus until the end of the period."
-msgstr ""
+msgstr "Plus aboneliğini dönem sonuna kadar neden sürdüremeyeceğini kısaca açıkla."
 
 #. Confirms withdrawing from the contract with a full refund. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Widerruf bestätigen”, in French “Confirmer la rétractation”, in Spanish “Confirmar desistimiento”, in Portuguese “Confirmar retratação”, in Italian “Conferma recesso”, in Polish “Potwierdź odstąpienie od umowy”.
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 msgctxt "JdkOCO"
 msgid "Confirm withdrawal"
-msgstr ""
+msgstr "Cayma bildirimini onayla"
 
 #. Confirms canceling the subscription, at the end of the period or now for an important reason. In German it must read exactly “Jetzt kündigen” (BGB § 312k).
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 msgctxt "AmzBg2"
 msgid "Cancel now"
-msgstr ""
+msgstr "Şimdi iptal et"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 msgctxt "KEqLnF"
 msgid "We'll email you the confirmation."
-msgstr ""
+msgstr "Onayı sana e-postayla göndereceğiz."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "sy-pv5"
 msgid "Email"
-msgstr ""
+msgstr "E-posta"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 msgctxt "p1P-hQ"
 msgid "Request"
-msgstr ""
+msgstr "Talep"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 msgctxt "z_wUXE"
 msgid "Received"
-msgstr ""
+msgstr "Alındı"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
 msgctxt "L3xzht"
 msgid "We've refunded the full {amount} to the payment method you used. Your bank usually shows it within 5 to 10 business days."
-msgstr ""
+msgstr "Ödediğin {amount} tutarının tamamını kullandığın ödeme yöntemine iade ettik. İade genellikle 5 ila 10 iş günü içinde hesabına yansır."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
 msgctxt "4sPQbT"
 msgid "We've refunded {amount} for the days left to the payment method you used. Your bank usually shows it within 5 to 10 business days."
-msgstr ""
+msgstr "Kalan günler için {amount} tutarını kullandığın ödeme yöntemine iade ettik. İade genellikle 5 ila 10 iş günü içinde hesabına yansır."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
 msgctxt "RBJRQ0"
 msgid "We've refunded {amount} for the months that haven't started to the payment method you used. Your bank usually shows it within 5 to 10 business days."
-msgstr ""
+msgstr "Henüz başlamayan aylar için {amount} tutarını kullandığın ödeme yöntemine iade ettik. İade genellikle 5 ila 10 iş günü içinde hesabına yansır."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
 msgctxt "zG9LME"
 msgid "Plus has ended."
-msgstr ""
+msgstr "Plus aboneliğin sona erdi."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
 msgctxt "-g6ZnF"
 msgid "You keep Plus until {date}, then it ends."
-msgstr ""
+msgstr "Plus’ı {date} tarihine kadar kullanabilirsin, ardından aboneliğin sona erer."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
 msgctxt "a6637b"
 msgid "We've emailed the confirmation to {email}."
-msgstr ""
+msgstr "Onay e-postasını {email} adresine gönderdik."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
@@ -1373,146 +1373,146 @@ msgstr "Aboneliğin <mono>{date}</mono> tarihinde sona erecek."
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
 msgctxt "SBWnEw"
 msgid "We couldn't cancel your subscription. Try again or email hello@zoonk.com."
-msgstr ""
+msgstr "Aboneliğini iptal edemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
 msgctxt "0sJrli"
 msgid "That option isn't available anymore. Check your choice above and try again."
-msgstr ""
+msgstr "Bu seçenek artık kullanılamıyor. Yukarıdaki seçimini kontrol edip tekrar dene."
 
 #. The 14-day withdrawal from the contract with its full refund. Use the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "dTs6Jp"
 msgid "We received your withdrawal."
-msgstr ""
+msgstr "Cayma bildirimini aldık."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "aeHrbi"
 msgid "We received your cancellation."
-msgstr ""
+msgstr "İptal bildirimini aldık."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "S8L_pb"
 msgid "If {email} has Plus from our website, the confirmation will arrive there within a few minutes. No email? Check it's the address you subscribed with, or write to hello@zoonk.com."
-msgstr ""
+msgstr "Web sitemizden {email} adresiyle Plus’a aboneysen onay birkaç dakika içinde bu adrese gelir. E-posta gelmedi mi? Abone olurken bu adresi kullandığından emin ol veya hello@zoonk.com adresine yaz."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "RKaCAK"
 msgid "Subscribed in the App Store or Google Play? This doesn't cancel it. Cancel it there."
-msgstr ""
+msgstr "App Store veya Google Play üzerinden mi abone oldun? Bu işlem aboneliğini iptal etmez. Aboneliğini oradan iptal et."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "_kuMS2"
 msgid "You keep Plus until the period you paid for ends. After a yearly renewal, it ends with the current month, and we refund the rest."
-msgstr ""
+msgstr "Ücretini ödediğin dönem bitene kadar Plus’ı kullanmaya devam edersin. Yıllık yenilemeden sonra iptal edersen aboneliğin içinde bulunduğun ayın sonunda biter, kalan tutarı iade ederiz."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "aMFeUo"
 msgid "Cancel at the end of the period"
-msgstr ""
+msgstr "Dönem sonunda iptal"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "eCYQKH"
 msgid "Within 14 days of subscribing. Plus ends right away, and we refund everything."
-msgstr ""
+msgstr "Abone olduktan sonraki 14 gün içinde. Plus aboneliğin hemen sona erer ve ödediğin tutarın tamamını iade ederiz."
 
 #. The 14-day withdrawal from the contract with its full refund. In brackets, the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "67jMfM"
 msgid "Full refund (withdrawal)"
-msgstr ""
+msgstr "Tam para iadesi (cayma)"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "M1J5Bi"
 msgid "Plus ends right away, and we refund the days left."
-msgstr ""
+msgstr "Plus hemen sona erer ve kalan günlerin ücretini iade ederiz."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "5Avfh5"
 msgid "End now for an important reason"
-msgstr ""
+msgstr "Haklı bir nedenle hemen sonlandır"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "D8gqFG"
 msgid "The one you use for Zoonk"
-msgstr ""
+msgstr "Zoonk için kullandığın e-posta adresi"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "c2I4F9"
 msgid "We couldn't send your request. Try again or email hello@zoonk.com."
-msgstr ""
+msgstr "Talebini gönderemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "JmEP0L"
 msgid "Check your name and email, then try again."
-msgstr ""
+msgstr "Adını ve e-posta adresini kontrol edip tekrar dene."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "cEOHN2"
 msgid "Cancel Plus"
-msgstr ""
+msgstr "Plus’ı iptal et"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "qsB1Um"
 msgid "For Plus bought on our website. No login needed."
-msgstr ""
+msgstr "Web sitemizden satın alınan Plus için. Giriş yapmana gerek yok."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "ObvuQ4"
 msgid "Your last payment didn't go through. Canceling stops us from trying again."
-msgstr ""
+msgstr "Son ödemen alınamadı. İptal ettiğinde tekrar ödeme almayı denemeyiz."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "tXpyKb"
 msgid "Stop the unpaid renewal"
-msgstr ""
+msgstr "Ödemesi alınamayan yenilemeyi durdur"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "FLm13g"
 msgid "For the {count, plural, one {# month} other {# months}} that haven't started, we refund {amount}."
-msgstr ""
+msgstr "Henüz başlamamış {count, plural, other {# ay}} için {amount} iade ederiz."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "St4jDv"
 msgid "You won't be charged again."
-msgstr ""
+msgstr "Senden bir daha ücret alınmaz."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "HJBzay"
 msgid "Keep Plus until {date}"
-msgstr ""
+msgstr "Plus’ı {date} tarihine kadar kullan"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "rM1iWC"
 msgid "Plus ends right away, and we refund {amount}. You can do this until {date}."
-msgstr ""
+msgstr "Plus hemen sona erer ve {amount} iade ederiz. Bunu {date} tarihine kadar yapabilirsin."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "Je1aal"
 msgid "Plus ends right away, and we refund {amount} for the days left."
-msgstr ""
+msgstr "Plus hemen sona erer ve kalan günler için {amount} iade ederiz."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "8PqZ9h"
 msgid "Plus ends right away."
-msgstr ""
+msgstr "Plus hemen sona erer."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "t5tErU"
 msgid "There's no subscription to cancel on {email}."
-msgstr ""
+msgstr "{email} adresine bağlı iptal edilecek bir abonelik yok."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "ta4t1h"
 msgid "Plus, yearly"
-msgstr ""
+msgstr "Plus, yıllık"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "7VS06t"
 msgid "Plus, monthly"
-msgstr ""
+msgstr "Plus, aylık"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "AucmVG"
@@ -1589,12 +1589,12 @@ msgstr "Destek ekibiyle iletişime geç"
 #: src/app/[lang]/(app)/(settings)/subscription/refund-offer.tsx
 msgctxt "6vciLq"
 msgid "Until {date}, you can still end Plus now and get a full refund."
-msgstr ""
+msgstr "{date} tarihine kadar Plus’ı hemen sonlandırıp tam para iadesi alabilirsin."
 
 #: src/app/[lang]/(app)/(settings)/subscription/refund-offer.tsx
 msgctxt "nXq8w6"
 msgid "Get a full refund"
-msgstr ""
+msgstr "Tam para iadesi al"
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 msgctxt "bF03Os"
@@ -2357,7 +2357,7 @@ msgstr "{month} ayında YKS"
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "3parBE"
 msgid "Spanish for Mexico City"
-msgstr ""
+msgstr "Meksiko için İspanyolca"
 
 #. Use your language's name for London.
 #: src/app/[lang]/(home)/_components/example-plans.ts
@@ -2606,7 +2606,7 @@ msgstr "{month} ayına kadar veri analistliğine yükselmek"
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "vF1uwi"
 msgid "speak Spanish for my move to Mexico City in {month}"
-msgstr ""
+msgstr "{month} ayında Meksiko’ya taşındığımda İspanyolca konuşmak"
 
 #. An example goal a learner might type; {month} is a month name. Use your language's name for London.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
@@ -3090,12 +3090,12 @@ msgstr "Gerçek hayattan bir problem · Bölgelere göre satışlar"
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "720M2K"
 msgid "Both work. In Mexico people usually say “departamento” for a flat in a building, so it sounds more natural when you're renting in Mexico City."
-msgstr ""
+msgstr "İkisi de olur. Meksika’da apartman dairesine genellikle “departamento” denir, bu yüzden Meksiko’da ev kiralarken bu kelime kulağa daha doğal gelir."
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "L7mfuM"
 msgid "Why “departamento” and not “apartamento”?"
-msgstr ""
+msgstr "Neden “apartamento” değil de “departamento”?"
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "00sc5X"
@@ -3424,52 +3424,52 @@ msgstr "Hesabın silindi."
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "VqYaaL"
 msgid "Check the year and try again."
-msgstr ""
+msgstr "Yılı kontrol edip tekrar dene."
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "TCf3Ld"
 msgid "We couldn't save it. Check your connection and try again."
-msgstr ""
+msgstr "Kaydedemedik. Bağlantını kontrol edip tekrar dene."
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "wqPXuM"
 msgid "What year were you born?"
-msgstr ""
+msgstr "Hangi yıl doğdun?"
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "u7SgKI"
 msgid "We ask everyone once."
-msgstr ""
+msgstr "Bunu herkese bir kez soruyoruz."
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "Wr357G"
 msgid "Birth year"
-msgstr ""
+msgstr "Doğum yılı"
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "dUCA4K"
 msgid "Not now"
-msgstr ""
+msgstr "Sonraya bırak"
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "WCgBMi"
 msgid "Not just yet"
-msgstr ""
+msgstr "Henüz değil"
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "7dMiHf"
 msgid "You need to be {minimumAge, number} or older to use Zoonk, so we'll log you out. We'll be here when you are."
-msgstr ""
+msgstr "Zoonk’u kullanmak için en az {minimumAge, number} yaşında olman gerekiyor, bu yüzden oturumunu kapatacağız. O yaşa geldiğinde burada olacağız."
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "GuXkQM"
 msgid "You need to be {minimumAge, number} or older to use Zoonk. We'll be here when you are."
-msgstr ""
+msgstr "Zoonk’u kullanmak için en az {minimumAge, number} yaşında olman gerekiyor. O yaşa geldiğinde burada olacağız."
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "kAEQyV"
 msgid "OK"
-msgstr ""
+msgstr "Tamam"
 
 #: src/app/[lang]/challenge/[planItemId]/page.tsx
 #: src/app/[lang]/checkpoint/[blockId]/page.tsx
@@ -3517,7 +3517,7 @@ msgstr "Odak testi"
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 msgctxt "eBoUdl"
 msgid "Start lesson"
-msgstr ""
+msgstr "Derse başla"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx
@@ -3688,22 +3688,22 @@ msgstr "Bu ünite"
 #: src/app/[lang]/usage-data-notice.tsx
 msgctxt "zNLs8L"
 msgid "Usage data"
-msgstr ""
+msgstr "Kullanım verileri"
 
 #: src/app/[lang]/usage-data-notice.tsx
-msgctxt "9LGL8u"
-msgid "Can we use cookies to see how you use Zoonk, so we can improve it? <link>Privacy</link>"
-msgstr ""
+msgctxt "pu2Edv"
+msgid "Can we use cookies and session replays to see how you use Zoonk, so we can improve it? <link>Privacy</link>"
+msgstr "Zoonk’u nasıl kullandığını anlamak ve daha iyi hale getirmek için çerezleri ve oturum kayıtlarını kullanabilir miyiz? <link>Gizlilik</link>"
 
 #: src/app/[lang]/usage-data-notice.tsx
 msgctxt "pvtgR2"
 msgid "Decline"
-msgstr ""
+msgstr "Reddet"
 
 #: src/app/[lang]/usage-data-notice.tsx
 msgctxt "sjzLbX"
 msgid "Accept"
-msgstr ""
+msgstr "Kabul et"
 
 #: src/app/auth/apple/route.ts
 msgctxt "5JUHBB"
@@ -4224,7 +4224,7 @@ msgstr "Ücret iadesi alabilir miyim?"
 #: src/components/pricing/plus-questions.tsx
 msgctxt "ilifrv"
 msgid "If you subscribed on our website, <link>cancel</link> within 14 days for a full refund. After a yearly renewal, canceling refunds the months that haven't started. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
-msgstr ""
+msgstr "Web sitemizden abone olduysan 14 gün içinde <link>iptal ederek</link> ödediğin tutarın tamamını geri alabilirsin. Yıllık aboneliğin yenilendikten sonra iptal edersen henüz başlamamış ayların ücretini geri alırsın. App Store veya Google Play üzerinden yapılan satın alımlarda Apple’ın veya Google’ın iade kuralları geçerlidir."
 
 #: src/components/pricing/plus-questions.tsx
 #: src/components/public/public-footer.tsx
@@ -4381,13 +4381,13 @@ msgstr "Alt bilgi"
 #: src/components/public/public-footer.tsx
 msgctxt "gdJ1Ic"
 msgid "Cancel your subscription here"
-msgstr ""
+msgstr "Aboneliğini buradan iptal et"
 
 #. Footer link to withdraw within 14 days, which EU law requires. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Vertrag widerrufen”, in French “Renoncer au contrat ici”, in Spanish “Desistir del contrato aquí”, in Portuguese “Retrate-se do contrato aqui”, in Italian “Recedere dal contratto qui”, in Polish “Odstąp od umowy tutaj”.
 #: src/components/public/public-footer.tsx
 msgctxt "OxFgc6"
 msgid "Withdraw from contract here"
-msgstr ""
+msgstr "Sözleşmeden cayma hakkını buradan kullan"
 
 #: src/components/public/public-footer.tsx
 msgctxt "k7JNE3"
