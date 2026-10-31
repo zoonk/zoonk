@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.zoonk.android.BuildConfig
-import com.zoonk.android.R
 import com.zoonk.android.app.shell.GoalSwitch
 import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AppCache
@@ -25,10 +24,8 @@ import com.zoonk.android.data.clearCredentialState
 import com.zoonk.android.data.imageLoader
 import com.zoonk.android.data.perform
 import com.zoonk.android.feature.account.AccountStore
-import com.zoonk.android.feature.account.BirthYearGate
 import com.zoonk.android.feature.account.LiveAccountApi
 import com.zoonk.android.feature.account.PlayIntegrity
-import com.zoonk.android.feature.account.PreferencesAgeStops
 import com.zoonk.android.feature.activities.code.CodeSandbox
 import com.zoonk.android.feature.audio.ExoAudioOutput
 import com.zoonk.android.feature.audio.SpeechPlayer
@@ -113,7 +110,6 @@ import com.zoonk.android.feature.today.TodayStore
 import com.zoonk.android.feature.tutor.LiveTutorApi
 import com.zoonk.android.feature.tutor.TutorStore
 import com.zoonk.android.navigation.LearnerAccess
-import com.zoonk.api.models.BirthYearInput
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.SpeechClipRequest
@@ -181,17 +177,6 @@ class AppContainer private constructor(
             ?.takeIf { previewAccess == null }
             ?.let { PlayIntegrity(context, it, scope) }
     val account = AccountStore(LiveAccountApi(api, integrity), sessions, cache)
-    val birthYear =
-        BirthYearGate(
-            sessions = sessions,
-            summary = learnerSummary.summary,
-            checkAge = { birthYear -> perform { api.clients(null).account.checkBirthYear(BirthYearInput(birthYear)) } },
-            startGuestSession = account::startAsGuest,
-            saveBirthYear = learningProfile::saveBirthYear,
-            stops = PreferencesAgeStops(context),
-            onSignOutFailed = { snackbars.show(R.string.account_sign_out_failed) },
-            scope = scope,
-        )
     val memory = MemoryStore(LiveMemoryApi(api), cache)
     val feedback = FeedbackSender(LiveFeedbackApi(api), sessions)
     val subscriptions =
@@ -281,7 +266,7 @@ class AppContainer private constructor(
             api = LiveOnboardingApi(api),
             cache = cache,
             sessions = sessions,
-            startGuest = birthYear::startGuest,
+            startGuest = account::startAsGuest,
         )
 
     // Practice and checks (lane L6).

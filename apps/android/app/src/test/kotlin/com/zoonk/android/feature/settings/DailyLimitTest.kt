@@ -35,8 +35,8 @@ class DailyLimitTest {
     private val profile: LearningProfile =
         ApiJson.decodeFromString(
             """
-            {"activeGoalId":null,"availableGlasses":["round"],"birthYear":1990,"buddy":{"glasses":"round","kind":"zu","name":null,"picked":false},
-             "dailyLimitMinutes":200,"dailyTimes":[5,15,1440],"shareUsageData":null,"soundsEnabled":true,"usageDataLockedOff":false}
+            {"activeGoalId":null,"availableGlasses":["round"],"buddy":{"glasses":"round","kind":"zu","name":null,"picked":false},
+             "dailyLimitMinutes":200,"dailyTimes":[5,15,1440],"shareUsageData":null,"soundsEnabled":true}
             """.trimIndent(),
         )
 
@@ -51,11 +51,6 @@ class DailyLimitTest {
                 override suspend fun update(
                     session: AuthenticatedSession,
                     change: JsonObject,
-                ) = profile
-
-                override suspend fun saveBirthYear(
-                    session: AuthenticatedSession,
-                    birthYear: Long,
                 ) = profile
             }
         val store = LearningProfileStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)))

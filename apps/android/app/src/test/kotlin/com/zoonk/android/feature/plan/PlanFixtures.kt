@@ -165,12 +165,12 @@ internal fun learnerSummary(
     ApiJson.decodeFromString(
         """
         {"account":{"email":"ana@zoonk.test","image":null,"name":"Ana"},"activeGoalId":"$GOAL",
-         "analytics":{"adult":true,"disabled":false,"goal":null,"plan":"free","shareUsageData":null,"username":null},
+         "analytics":{"disabled":false,"goal":null,"plan":"free","shareUsageData":null,"username":null},
          "buddy":{"beltColor":"white","energy":null,"glasses":"round","kind":"zu","name":null,"studiedToday":false},
          "day":null,"goals":[{"courseChapterId":null,"courseId":null,"courseLevel":null,"dailyMinutes":20,"id":"$GOAL","isActive":true,"isSettingUp":false,"kind":"$kind","status":"$status",
           "targetDate":"2027-01-31","targetLanguage":null,"title":"$title"}],
          "identity":{"expiresAt":1793186000000,"isAnonymous":false,"signedInAt":1761650000000,"userId":"0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0a1"},
-         "level":null,"missions":null,"needsBirthYear":false,"nextChangeAt":1793186000000,
+         "level":null,"missions":null,"nextChangeAt":1793186000000,
          "places":{"exam":false,"mindMaps":true,"readyMistakes":0,"speaking":false},
          "readAt":1761650000000,"tier":"free","timeZone":null,"today":null}
         """.trimIndent(),

@@ -109,6 +109,24 @@ class DraftStoreTest {
         }
 
     @Test
+    fun aGuestWhoseStartIsCancelledOnceSignedInStillSavesDrafts() =
+        runTest {
+            val drafts = drafts()
+            val sessions = sessions(drafts).apply { restore() }
+            val start = launch { sessions.signIn(asGuest = true) { "guest" } }
+            launch {
+                sessions.state.first { it is SessionState.SignedIn }
+                start.cancel()
+            }
+            advanceUntilIdle()
+
+            drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).save(EssayDraft("kept"))
+            advanceUntilIdle()
+
+            assertEquals("""{"entries":{"essay:1":{"text":"kept"}}}""", entries(GUEST))
+        }
+
+    @Test
     fun aRegisteredLearnersDraftsNeverMoveToTheNextAccount() =
         runTest {
             val drafts = drafts()

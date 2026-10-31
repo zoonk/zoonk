@@ -83,7 +83,6 @@ import com.zoonk.android.R
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
-import com.zoonk.android.feature.account.BirthYearDialogs
 import com.zoonk.android.feature.buddy.BuddyTabIcon
 import com.zoonk.android.feature.buddy.buddyTabMissions
 import com.zoonk.android.feature.feedback.rememberSendFeedback
@@ -197,8 +196,6 @@ fun ZoonkApp(
                 snackbarHostState = snackbars,
             )
         }
-
-        BirthYearDialogs(app.birthYear)
     }
 }
 

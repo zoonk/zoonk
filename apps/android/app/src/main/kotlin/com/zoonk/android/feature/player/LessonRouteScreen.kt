@@ -252,17 +252,7 @@ private fun GuestGate(
 
     LaunchedEffect(attempt) {
         failure = null
-        when (val started = app.birthYear.startGuest()) {
-            is SignInResult.Failed -> {
-                failure = accountFailure(started.error, started.code)
-            }
-
-            SignInResult.Obsolete -> {
-                if (app.sessions.current == null) exits.close()
-            }
-
-            SignInResult.SignedIn -> {}
-        }
+        failure = (app.account.startAsGuest() as? SignInResult.Failed)?.let { accountFailure(it.error, it.code) }
     }
 
     GuestGateView(outline, failure, onClose = exits::close, onLogIn = { navigator.open(AppRoute.Login) }, onRetry = { attempt++ })

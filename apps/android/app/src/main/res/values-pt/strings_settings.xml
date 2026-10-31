@@ -44,7 +44,6 @@
   "settings_preferences_save_failed": "2133eb17c035b4a6f3b99fc91990813db74349c8b80a25d39bfeb6beb8334209",
   "settings_preferences_share_usage_data": "c0ad4b213ec440a4c8c1205c5cca7668090aa9216944571ac31ec56c9da9f9f5",
   "settings_preferences_share_usage_data_description": "033692e7e6adebde337e8bf67bc7aab31f4072abccfd830dc3f1dfb8718ee692",
-  "settings_preferences_share_usage_data_locked": "282b9a31348dfce223a347996bcb894f0a4f2cf37aaca2a34cd438913db2ccd8",
   "settings_preferences_sounds": "5dd41cffd2cfdbc54e13a2c4b2d0d6a4d9fa517f48a20e1b38c02a07acd8f5b1",
   "settings_preferences_sounds_description": "33d12e43074f515fa89ff29b15d48001cd9bc50711a4f7088a63e1bbe66c5e10",
   "settings_preferences_summary": "4562bb2fee3b898b0326d38d33dd9b148853e4df7bdbbec68613b0dd9d28c0f6",
@@ -114,6 +113,4 @@
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
     <string name="settings_preferences_share_usage_data">Compartilhar dados de uso</string>
     <string name="settings_preferences_share_usage_data_description">Mostra como você usa o Zoonk e ajuda a gente a melhorar o app</string>
-    <!-- Why the usage data switch is off and can't be turned on: the law doesn't let minors agree to it. -->
-    <string name="settings_preferences_share_usage_data_locked">Desativado para menores de 18 anos no seu país</string>
 </resources>

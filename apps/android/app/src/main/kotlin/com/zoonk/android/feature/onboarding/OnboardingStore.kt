@@ -118,7 +118,7 @@ val Onboarding.questionsLeft: Boolean get() = steps.any { it != OnboardingStep.P
 val Onboarding.courseSetupLeft: Boolean
     get() = "courseStart" in goal.details && steps.any { it != OnboardingStep.PLAN && it != OnboardingStep.BUDDY }
 
-/** A visitor's first write starts a guest session, as an anonymous sign-in does, once [startGuest] has their birth year. */
+/** A visitor's first write starts a guest session, as an anonymous sign-in does. */
 class OnboardingStore(
     private val api: OnboardingApi,
     private val cache: AppCache,

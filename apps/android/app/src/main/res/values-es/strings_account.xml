@@ -2,22 +2,11 @@
 <!-- eloqnt-fingerprints-v1
 {
   "account_agreement": "ad89688da82e9c47c6442181407d23ef6c689baf4e6daa9479c71937d70ce23a",
-  "account_below_minimum_age_description": "37a69e02f64e41744b81dab9022f08bf7e6e39c48a9e359c944a77e30101dde6",
-  "account_below_minimum_age_log_out_description": "2b570951f443b7177fe59ae20b23a99c9a3301fe085c7f32bd42ea4e60616500",
-  "account_below_minimum_age_ok": "99255f81dd0ed9c45ffb2ad19c46eb0df7d2564de8ebee21449a8e8107f2108e",
-  "account_below_minimum_age_title": "2c9ae65664622412b8e15fc7ab96cfce8c8b2b5db8990b5f515a7646520de921",
-  "account_birth_year_description": "b818ba8d532086696a81a8bd3a887854bbc1829e6ce689757568abbe4144d4b4",
-  "account_birth_year_invalid": "33a53e4d94b5605f2d28b39b629243e9ce5be430d27e867257ed0805d71901c1",
-  "account_birth_year_label": "da4ed771e245e5448402168a9eb9097044b400aafa21d0afe37c386f19a762ed",
-  "account_birth_year_not_now": "ebc7dbe1d8869ca3ea59d090ee0f768f06299e93440b8c7cd0a7bdc4e463cb11",
-  "account_birth_year_save_failed": "0e1c81390531dcf96fe6dca49347aa7643471844b9f7e06706ff200affe73576",
-  "account_birth_year_title": "573dc163b8c2499a59e9b9b62d955cee3ee28c32845663440e5de050e5a324af",
   "account_change": "a7c79f435e9fa6ed1732e6aa761cbee18cb416bdaa075c7e1cdb48d0d60f336f",
   "account_change_email": "8251b63f41b6e4366314af86f747ebd892bdd44d577ec378674821f935f3ae3d",
   "account_change_username": "70c9bbfee3b2876a6934c53837bfa384551208281a75352dbc1d932ea5d78aac",
   "account_check_email_description": "228f2cbedeb23c40949a610e6a4eae72bdeef4a101f872e3d5a42a17280eafce",
   "account_check_email_title": "1553b830596d08e4a2bf7c7ea51d31eb8edd1a74fc2ad29cb6c3b9f083074efa",
-  "account_closed_below_minimum_age_description": "70c8f3c5d3cec59f6be3ef293f921819d6075eebcc96f2c3bbeb692aa7fa0315",
   "account_code_label": "7af06b966dc72ee6ff2485dafda5b2234b4339bda95266113238417e463b47e0",
   "account_continue": "63a477316da21437e7aab02372e1892603298211029b3a6df63548cc1c20cbac",
   "account_continue_with_apple": "7edb6f77cf576e6583c79d4d7a34ae3214cdb6e3c3a070303538d60c5abf3d2b",
@@ -131,22 +120,4 @@
     <string name="account_sign_out_failed">Zoonk no pudo cerrar tu sesión. Revisa tu conexión e inténtalo de nuevo.</string>
     <string name="account_unavailable_title">No pudimos verificar tu cuenta</string>
     <string name="account_unavailable_description">Aún tienes la sesión iniciada. Puede ser un problema de conexión, así que inténtalo de nuevo en un momento.</string>
-    <!-- Asked once, before a new or existing account goes on learning. -->
-    <string name="account_birth_year_title">¿En qué año naciste?</string>
-    <string name="account_birth_year_description">Se lo preguntamos a todos una sola vez.</string>
-    <!-- Closes the birth year question without answering; nothing starts. -->
-    <string name="account_birth_year_not_now">Ahora no</string>
-    <!-- The label of the field where the learner types the four-digit year they were born, like 1998. -->
-    <string name="account_birth_year_label">Año de nacimiento</string>
-    <string name="account_birth_year_invalid">Revisa el año y vuelve a intentarlo.</string>
-    <string name="account_birth_year_save_failed">No se guardó. Vuelve a intentarlo.</string>
-    <!-- Title of a kind message to someone too young to use Zoonk where they live. -->
-    <string name="account_below_minimum_age_title">Aún no</string>
-    <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Kind and encouraging, never scolding. -->
-    <string name="account_below_minimum_age_description">Necesitas tener al menos %1$d años para usar Zoonk. Aquí estaremos cuando los cumplas.</string>
-    <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Shown to someone signed in: "log you out" means Zoonk ends their session in the app when they tap OK, the same action as the menu's "Log out". Kind and encouraging, never scolding. -->
-    <string name="account_below_minimum_age_log_out_description">Necesitas tener al menos %1$d años para usar Zoonk, así que cerraremos tu sesión. Aquí estaremos cuando los cumplas.</string>
-    <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Shown to someone signed in whose birth year is certainly below it: Zoonk has already deleted the account. Kind and encouraging, never scolding. -->
-    <string name="account_closed_below_minimum_age_description">Para usar Zoonk necesitas tener %1$d años o más, así que cerramos tu cuenta y eliminamos sus datos. Aquí estaremos cuando cumplas esa edad.</string>
-    <string name="account_below_minimum_age_ok">Aceptar</string>
 </resources>

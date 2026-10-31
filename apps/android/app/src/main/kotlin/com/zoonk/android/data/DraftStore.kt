@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.currentCoroutineContext
@@ -77,14 +78,17 @@ class DraftStore(
             val change = transition() ?: return
             val previous = current
             if (previous?.accountId == change.next) return
-            current = null
-            previous?.close(flush = previous.accountId == change.moveFrom)
-            withContext(io) {
-                directory.mkdirs()
-                if (change.next != null && change.moveFrom != null) merge(change.moveFrom, into = change.next)
-                directory.listFiles()?.filter { it.name != change.next?.let(::fileName) }?.forEach { it.delete() }
+            // [transition] already published the session, so a caller cancelled now must not leave it without drafts.
+            withContext(NonCancellable) {
+                current = null
+                previous?.close(flush = previous.accountId == change.moveFrom)
+                withContext(io) {
+                    directory.mkdirs()
+                    if (change.next != null && change.moveFrom != null) merge(change.moveFrom, into = change.next)
+                    directory.listFiles()?.filter { it.name != change.next?.let(::fileName) }?.forEach { it.delete() }
+                }
+                current = change.next?.let { AccountDrafts(it) }
             }
-            current = change.next?.let { AccountDrafts(it) }
         }
     }
 

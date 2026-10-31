@@ -1,6 +1,5 @@
 package com.zoonk.android.data
 
-import com.zoonk.api.models.BirthYearInput
 import com.zoonk.api.models.Buddy
 import com.zoonk.api.models.LearningProfile
 import kotlinx.coroutines.sync.Mutex
@@ -20,12 +19,6 @@ interface LearningProfileApi {
         session: AuthenticatedSession,
         change: JsonObject,
     ): LearningProfile
-
-    /** The first saved year stays. */
-    suspend fun saveBirthYear(
-        session: AuthenticatedSession,
-        birthYear: Long,
-    ): LearningProfile
 }
 
 class LiveLearningProfileApi(
@@ -38,14 +31,9 @@ class LiveLearningProfileApi(
         session: AuthenticatedSession,
         change: JsonObject,
     ): LearningProfile = perform { api.clients(session).account.updateCurrentUserLearningProfile(change) }.profile
-
-    override suspend fun saveBirthYear(
-        session: AuthenticatedSession,
-        birthYear: Long,
-    ): LearningProfile = perform { api.clients(session).account.saveCurrentUserBirthYear(BirthYearInput(birthYear)) }.profile
 }
 
-/** The learner's preferences (sounds, usage data, buddy, daily limit, active goal) and birth year: one read every screen shares. */
+/** The learner's preferences (sounds, usage data, buddy, daily limit, active goal): one read every screen shares. */
 class LearningProfileStore(
     private val api: LearningProfileApi,
     private val cache: AppCache,
@@ -60,12 +48,6 @@ class LearningProfileStore(
 
     suspend fun setShareUsageData(share: Boolean): Boolean =
         update({ it.copy(shareUsageData = share) }, buildJsonObject { put("shareUsageData", share) })
-
-    suspend fun saveBirthYear(birthYear: Long): MutationResult<LearningProfile> =
-        cache.mutate(
-            invalidating = setOf(DataDomain.LearningProfile),
-            replacing = { saved: LearningProfile -> listOf(profile.replacing(saved)) },
-        ) { session -> api.saveBirthYear(session, birthYear) }
 
     /** Null is no limit. */
     suspend fun setDailyLimit(minutes: Long?): Boolean =

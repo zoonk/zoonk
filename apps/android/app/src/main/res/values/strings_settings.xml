@@ -57,6 +57,4 @@
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
     <string name="settings_preferences_share_usage_data">Share usage data</string>
     <string name="settings_preferences_share_usage_data_description">Shows us how you use Zoonk, so we can improve it</string>
-    <!-- Why the usage data switch is off and can't be turned on: the law doesn't let minors agree to it. -->
-    <string name="settings_preferences_share_usage_data_locked">Off for learners under 18 in your country</string>
 </resources>

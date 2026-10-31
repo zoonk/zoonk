@@ -97,11 +97,6 @@ class BuddyViewModelTest {
             session: AuthenticatedSession,
             change: JsonObject,
         ): LearningProfile = error("Not used")
-
-        override suspend fun saveBirthYear(
-            session: AuthenticatedSession,
-            birthYear: Long,
-        ): LearningProfile = error("Not used")
     }
 
     private object NoStudyApi : StudyApi {
