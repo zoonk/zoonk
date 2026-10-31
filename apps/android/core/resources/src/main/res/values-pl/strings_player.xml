@@ -46,6 +46,7 @@
   "player_challenge_what_happened": "dfbff94a2f1489556beae558cfaa09add69ae73ed6a58cc70e3dfc2ae92dcf1d",
   "player_challenge_what_if": "808421e3fd9794b4f810a52681014e8dc20987426871b0f589a413164a6d4c7c",
   "player_challenge_you": "ae2e436e29724ed923f38ef22e8889563da96beff2773fbf0f3e2dbbdb1147af",
+  "player_challenge_your_options": "c5f9bd121f1b7dc32765419194e99eb3c326fe4bf871b08db693184d725bd754",
   "player_check_failed": "895869efb6ba2e8f5bf1c50942b208a1b4cae396cad38aaf39ff9b081c1ea5ac",
   "player_citation_from_material": "bdcc609bb15e184f118cc0dff462b5071107e8ffade924f525a24fd66bf913c4",
   "player_citation_not_in_material": "f62134ea75ae350b4cea101bf445c1fe3083416e1aa3c60845010cb1bf9d1f1f",
@@ -344,6 +345,8 @@
     <!-- A message read out by screen readers as it arrives in a challenge's conversation: who says it, then what they say, like "Bia: The customer is upset." -->
     <string name="player_challenge_said">%1$s: %2$s</string>
     <string name="player_challenge_what_happened">Co się stało</string>
+    <!-- The name of the list of choices the learner picks from at a challenge's decision, for TalkBack. -->
+    <string name="player_challenge_your_options">Dostępne opcje</string>
     <string name="player_challenge_complete">Wyzwanie ukończone</string>
     <string name="player_challenge_scenario_complete">Scenariusz ukończony</string>
     <string name="player_challenge_good">Co poszło dobrze</string>

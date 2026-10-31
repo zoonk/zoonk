@@ -103,6 +103,8 @@
     <string name="activities_dialogue_you_said">You said:</string>
     <string name="activities_dialogue_hear_line">Hear this line</string>
     <string name="activities_dialogue_hear_best">Hear the best reply</string>
+    <!-- The name of the list of replies the learner picks from in a conversation, for TalkBack. -->
+    <string name="activities_dialogue_your_reply">Your reply</string>
 
     <!-- Read by TalkBack when a row is lifted with the keyboard, like "Picked up Water is split at position 2." -->
     <string name="activities_sortable_picked_up">Picked up %1$s at position %2$d.</string>

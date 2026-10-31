@@ -46,6 +46,7 @@
   "player_challenge_what_happened": "6191605b83a9fe33fa5b1bf34de5030f3de37ad6fd131a0e0dbd051233c14412",
   "player_challenge_what_if": "048e1d23ccf365baef6e892ca6755f55a4a7e8f53f82333ca1489c00863184c3",
   "player_challenge_you": "82692250b5531f7672298424faea3f693fcbc1936acb011d7d20d88c219ebbab",
+  "player_challenge_your_options": "89b516ac2b05244f061f0d4d5d0ac3d2523530f434d8e49e03f753b69b768483",
   "player_check_failed": "d3c80a4f3a483d344ae107ef583663501d64894de7332993a0b416bc8a3825b7",
   "player_citation_from_material": "38fd0eaa320f1fd1915f890d3b01a7cc89428f6e771966a9e366359dd6e70944",
   "player_citation_not_in_material": "9dead427f8a8aee46f317c94b4118a33ab6d8a7f0b2fbeadb70d225519fe609b",
@@ -335,6 +336,8 @@
     <!-- A message read out by screen readers as it arrives in a challenge's conversation: who says it, then what they say, like "Bia: The customer is upset." -->
     <string name="player_challenge_said">%1$s：%2$s</string>
     <string name="player_challenge_what_happened">結果</string>
+    <!-- The name of the list of choices the learner picks from at a challenge's decision, for TalkBack. -->
+    <string name="player_challenge_your_options">選択肢</string>
     <string name="player_challenge_complete">チャレンジ完了</string>
     <string name="player_challenge_scenario_complete">シナリオ完了</string>
     <string name="player_challenge_good">よかった点</string>

@@ -599,9 +599,9 @@ fun ChoiceOptions(
     columns: Int = 1,
     keysAtTop: Boolean = false,
     keepsEveryOption: Boolean = false,
+    label: String = stringResource(R.string.player_answer_options),
     optionContent: @Composable (ChoiceOption) -> Unit = { RichInlineText(text = it.text, style = MaterialTheme.typography.bodyLarge) },
 ) {
-    val label = stringResource(R.string.player_answer_options)
     val shown =
         options.mapIndexedNotNull { index, option ->
             val picked = selectedId == option.id

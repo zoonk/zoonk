@@ -162,6 +162,8 @@
     <!-- A message read out by screen readers as it arrives in a challenge's conversation: who says it, then what they say, like "Bia: The customer is upset." -->
     <string name="player_challenge_said">%1$s: %2$s</string>
     <string name="player_challenge_what_happened">What happened</string>
+    <!-- The name of the list of choices the learner picks from at a challenge's decision, for TalkBack. -->
+    <string name="player_challenge_your_options">Your options</string>
     <string name="player_challenge_complete">Challenge complete</string>
     <string name="player_challenge_scenario_complete">Scenario complete</string>
     <string name="player_challenge_good">Nicely done</string>

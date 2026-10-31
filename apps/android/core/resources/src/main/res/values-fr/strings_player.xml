@@ -46,6 +46,7 @@
   "player_challenge_what_happened": "76be6f4e6f1d28639ba52bc090b73de6c2bd2528c9849e5072617cf755f2dfa8",
   "player_challenge_what_if": "04985f2ff6aac1a89f1f4d53829eefa1950e2b153691c12de1b9ef6e5eb99624",
   "player_challenge_you": "3e25244d7771edce056ff876d5e419916c664bd0af320332498f095bc4283ef1",
+  "player_challenge_your_options": "885a416249ac5c0f8822ccf2b777516f941ca46ca7e46082bf50e08de90ae61a",
   "player_check_failed": "6573e46bd968f338ca965bae277ddb64dbd4918468a1b56a3b2313748e299002",
   "player_citation_from_material": "2de4b9c8baa613aeffe59b68b955aa948a9e7efe183f468805b54b11d0ecb9d7",
   "player_citation_not_in_material": "22bcc2391f6d866c147ef24ad40db1a0f513f6508600de289ee6e7f1bf09150c",
@@ -341,6 +342,8 @@
     <!-- A message read out by screen readers as it arrives in a challenge's conversation: who says it, then what they say, like "Bia: The customer is upset." -->
     <string name="player_challenge_said">%1$s : %2$s</string>
     <string name="player_challenge_what_happened">Ce qui s’est passé</string>
+    <!-- The name of the list of choices the learner picks from at a challenge's decision, for TalkBack. -->
+    <string name="player_challenge_your_options">Tes choix</string>
     <string name="player_challenge_complete">Défi terminé</string>
     <string name="player_challenge_scenario_complete">Scénario terminé</string>
     <string name="player_challenge_good">Bien joué</string>

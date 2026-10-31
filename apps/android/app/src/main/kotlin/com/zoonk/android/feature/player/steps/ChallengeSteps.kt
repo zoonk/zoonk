@@ -291,6 +291,7 @@ private fun ChallengeConversation(
                         isGuess = false,
                         locked = state.phase != LessonPhase.Playing,
                         onSelect = { id -> actions.select(pickChallengeChoice(id, progress.confirmed)) },
+                        label = stringResource(R.string.player_challenge_your_options),
                     )
                 }
             } else if (progress is ChallengeProgress.Ended) {

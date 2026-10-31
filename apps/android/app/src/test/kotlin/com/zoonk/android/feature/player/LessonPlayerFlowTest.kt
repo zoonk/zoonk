@@ -591,6 +591,15 @@ class LessonPlayerFlowTest {
     }
 
     @Test
+    fun aChallengesChoicesAreNamedAsTheLearnersOptions() {
+        play(listOf(challengeStep("case"), summaryStep("end")))
+
+        tap("Start")
+
+        rule.onNode(hasContentDescription("Your options")).assertExists()
+    }
+
+    @Test
     fun aChallengesDecisionsArePickedWithNumberKeysToo() {
         play(listOf(challengeStep("case"), summaryStep("end")))
 

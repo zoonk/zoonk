@@ -23,6 +23,7 @@
   "activities_dialogue_hear_line": "7cc625d122fdac19126ff0b2d6e489310b603116e47c2212d9f4092d47d87da4",
   "activities_dialogue_they_say": "c9835371d08dcd7962a5fc58d6e204f9aee9783b6ef6bbf70419d4a8dbbfeea6",
   "activities_dialogue_you_said": "760e2ac61028cfb8a3fc3cdd1fb772cae6bf542709024b25833048bbebbe4b58",
+  "activities_dialogue_your_reply": "1f233f172ea047faffa7aa55a92c4c9e887c61e921502b32eb3b517a82588d8f",
   "activities_find_error_ai_answer": "80efb83a7c7c200645d036eb1cabbf4c05af9850004d03064e5fa1f0edb8c7ae",
   "activities_find_error_ai_asked": "79b48c269d38e0511dba5883e7023a576ffb0abf2a954ddd4dff721c64dee12d",
   "activities_find_error_ai_note": "88a5f5e7f8fb9f40cf0a9de01e96590e570787b212e20b0f3f1f955cc27daf5b",
@@ -164,6 +165,8 @@
     <string name="activities_dialogue_you_said">自分の発言：</string>
     <string name="activities_dialogue_hear_line">このセリフを聞く</string>
     <string name="activities_dialogue_hear_best">最適な返答を聞く</string>
+    <!-- The name of the list of replies the learner picks from in a conversation, for TalkBack. -->
+    <string name="activities_dialogue_your_reply">返答</string>
     <!-- Read by TalkBack when a row is lifted with the keyboard, like "Picked up Water is split at position 2." -->
     <string name="activities_sortable_picked_up">%1$sを%2$d番目の位置で持ち上げました。</string>
     <!-- Read by TalkBack as a lifted row moves, like "Water is split is over position 3." -->

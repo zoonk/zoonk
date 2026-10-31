@@ -237,6 +237,7 @@ private fun ActivityCheckArea(
                 isGuess = false,
                 locked = locked,
                 onSelect = { id -> onAnswerChange(id?.let { choiceAnswer(it) }) },
+                label = check.value.question,
             )
         }
     } else if (check is NumericCheckValue) {

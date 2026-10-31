@@ -46,6 +46,7 @@
   "player_challenge_what_happened": "1186241f292a549f7d64d152e697871a301ce6c97a918dd1a527180c6918e21e",
   "player_challenge_what_if": "a90ca944394d277a044f3ce9fc0265295c4666aa596d00c6499c9b8cfe83bc9b",
   "player_challenge_you": "64d4afbe99cad4fe41836f925f3aa9990b9d496f342dc567288db382c3164dc5",
+  "player_challenge_your_options": "6b96393b366c390eadcd6850c72942644613c6e669fc4a9546cf304934808f21",
   "player_check_failed": "624207ebf676c1120eaf4885f570184cbc6d24b06bb31439cb5ab3daaeee208b",
   "player_citation_from_material": "31933b12a8351fe754c1f03d5294b40730eb52b7b001d0b3fa79fee7904c47d1",
   "player_citation_not_in_material": "2bc41c0ab4ca49752fd693851b0db3f9a12bcf623e3e1449e3da0505c2009f31",
@@ -338,6 +339,8 @@
     <!-- A message read out by screen readers as it arrives in a challenge's conversation: who says it, then what they say, like "Bia: The customer is upset." -->
     <string name="player_challenge_said">%1$s: %2$s</string>
     <string name="player_challenge_what_happened">Ne oldu</string>
+    <!-- The name of the list of choices the learner picks from at a challenge's decision, for TalkBack. -->
+    <string name="player_challenge_your_options">Seçeneklerin</string>
     <string name="player_challenge_complete">Meydan okuma tamamlandı</string>
     <string name="player_challenge_scenario_complete">Senaryo tamamlandı</string>
     <string name="player_challenge_good">İyi yaptıkların</string>

@@ -46,6 +46,7 @@
   "player_challenge_what_happened": "5bcfcf5ec9c2e38938ca7860756ea33d3283f8f886daebc95d629ffb8b89502d",
   "player_challenge_what_if": "9e6aa5329d00beddd3b0afba42ca636f92ec29d6b20964f19429ad00a88351a4",
   "player_challenge_you": "ab84c86622703e251a7ad2cc9f5c9a6672f7dcf7da7bac0fcc3504bf1477467c",
+  "player_challenge_your_options": "2b1762f71b15051f20e27d638d365471e65f2e85bc186a205a2d37ccdb70f2a6",
   "player_check_failed": "4f26afa45db5a9764a780daea6a88b0989169ac11b810e6d44a9e3ff4eedbfda",
   "player_citation_from_material": "108a1fde8b24f6841ff933d5575762d34b943986477f83a460d839506023df3b",
   "player_citation_not_in_material": "fab9784325bca754b4f352062babb82149b465b4b5f69053dd15770933062cf8",
@@ -335,6 +336,8 @@
     <!-- A message read out by screen readers as it arrives in a challenge's conversation: who says it, then what they say, like "Bia: The customer is upset." -->
     <string name="player_challenge_said">%1$s: %2$s</string>
     <string name="player_challenge_what_happened">결과</string>
+    <!-- The name of the list of choices the learner picks from at a challenge's decision, for TalkBack. -->
+    <string name="player_challenge_your_options">선택지</string>
     <string name="player_challenge_complete">챌린지 완료</string>
     <string name="player_challenge_scenario_complete">상황 연습 완료</string>
     <string name="player_challenge_good">잘했어요</string>

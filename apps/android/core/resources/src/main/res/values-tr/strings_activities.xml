@@ -23,6 +23,7 @@
   "activities_dialogue_hear_line": "c36d9f381a81bfb50a065c84c4f8ffc8beb0931cda6de4a4a7080a4c49cc94a6",
   "activities_dialogue_they_say": "c250e628ec50f8f6b3aa99ca9e56e2a391df547d3313d07c050bd860e402b247",
   "activities_dialogue_you_said": "fa4eaced909f8cc48d44d2e70c290fb98bf65cedca5d18c9bcd1458f814bfb34",
+  "activities_dialogue_your_reply": "364dab4c5e0378651d6265d37911f20cb6363c3e22a5ad66d914e57b3124ee35",
   "activities_find_error_ai_answer": "c475cf603e33501b38ccea3d9c1481bd8b59f3c443fe333ebe54923bef30135c",
   "activities_find_error_ai_asked": "4da0961e3fc595f4beaf151a3a427430dba00d8102f5d3980f0903a2105b2eb6",
   "activities_find_error_ai_note": "d4b72f1b72040b1cb2341e32350e8ca9168b91d42d990afda6f8e249280d08f5",
@@ -164,6 +165,8 @@
     <string name="activities_dialogue_you_said">Şöyle dedin:</string>
     <string name="activities_dialogue_hear_line">Bu repliği dinle</string>
     <string name="activities_dialogue_hear_best">En uygun cevabı dinle</string>
+    <!-- The name of the list of replies the learner picks from in a conversation, for TalkBack. -->
+    <string name="activities_dialogue_your_reply">Cevabın</string>
     <!-- Read by TalkBack when a row is lifted with the keyboard, like "Picked up Water is split at position 2." -->
     <string name="activities_sortable_picked_up">%1$s, %2$d. sıradan alındı.</string>
     <!-- Read by TalkBack as a lifted row moves, like "Water is split is over position 3." -->

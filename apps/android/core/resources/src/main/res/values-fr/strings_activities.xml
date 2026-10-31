@@ -23,6 +23,7 @@
   "activities_dialogue_hear_line": "f9ec2f131455bb3d5118d50e977175e773ca116db6538ebd04bbe27822a28ebe",
   "activities_dialogue_they_say": "5d1c3bc029cd175a67a1eb18191e88a96009fec0b803cf3f637193224c93aee2",
   "activities_dialogue_you_said": "cd62b3dee6b0cec802e4f6a58ade526e0f434ae1fac3d48732c6be60feb7ca0a",
+  "activities_dialogue_your_reply": "2f8201e965cb0631a620101e88700934d4a46e008fd261f6a24fdbb8477f6667",
   "activities_find_error_ai_answer": "2d956a7f5715acc59dc164b7c1f7e36f2e66954182389a36af35ee5b78d4de07",
   "activities_find_error_ai_asked": "360791565b0e13ecdc2a0fb92d9b0b0176831151b44d8d8c7e947adbd72bfded",
   "activities_find_error_ai_note": "0a69b12da1966e5ef4bddb91a76753b4eba7c98db388b224dd05a6fe07e5f575",
@@ -164,6 +165,8 @@
     <string name="activities_dialogue_you_said">Tu as dit :</string>
     <string name="activities_dialogue_hear_line">Écouter cette réplique</string>
     <string name="activities_dialogue_hear_best">Écouter la meilleure réponse</string>
+    <!-- The name of the list of replies the learner picks from in a conversation, for TalkBack. -->
+    <string name="activities_dialogue_your_reply">Ta réponse</string>
     <!-- Read by TalkBack when a row is lifted with the keyboard, like "Picked up Water is split at position 2." -->
     <string name="activities_sortable_picked_up">%1$s saisi en position %2$d.</string>
     <!-- Read by TalkBack as a lifted row moves, like "Water is split is over position 3." -->

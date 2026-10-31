@@ -159,6 +159,20 @@ class ActivityKitFlowTest {
     }
 
     @Test
+    fun choicesAreNamedAfterWhatTheyAnswer() {
+        play("areaModel", isCorrect = true)
+
+        rule.onNode(hasContentDescription("What is the garden's area?")).assertExists()
+    }
+
+    @Test
+    fun aConversationsRepliesAreNamedAsTheLearnersReply() {
+        play("dialogueSimulator", isCorrect = true)
+
+        rule.onNode(hasContentDescription("Your reply")).assertExists()
+    }
+
+    @Test
     fun patternTableReadsAsATableARowCellAtATime() {
         play("patternTable", isCorrect = true)
 

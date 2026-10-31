@@ -89,6 +89,7 @@ private fun DialogueSimulatorActivity(props: ActivityProps) {
             locked = props.isLocked,
             keepsEveryOption = true,
             onSelect = { id -> props.onAnswerChange(id?.let { selectionAnswer(listOf(it)) }) },
+            label = stringResource(R.string.activities_dialogue_your_reply),
         ) { option ->
             ReplyContent(fields.replies.first { it.id == option.id }, fields.language, props.isChecked)
         }

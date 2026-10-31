@@ -23,6 +23,7 @@
   "activities_dialogue_hear_line": "0fbf385d9b2c04a923cb8e2595739aa1d5286cad528ab0471fc675c8b3cfa22b",
   "activities_dialogue_they_say": "a62920e792036c6dc65af5b9e657f0a6a12fa95bca7d03f4043bfdcb4f95e1f6",
   "activities_dialogue_you_said": "6a3987cc1253c8b40bcacc70d1c60fd4234ebe7a0455bfcbe37f37111c838256",
+  "activities_dialogue_your_reply": "a38d266643a4cf976022730d9998eb87e76b312917758a77759f6ac90f761db6",
   "activities_find_error_ai_answer": "e2b3b2fb53b7f30b0ff289641e891d503bb3912af41223907754b45b8118d77b",
   "activities_find_error_ai_asked": "491251f69acb4d2eaeae34c35d396e793c0e23bc457d990552f5504492b67279",
   "activities_find_error_ai_note": "1b52a53082023271eac322d6bbd0a41a3a9aa9df8d6b8a6227ae8d043a2b152c",
@@ -164,6 +165,8 @@
     <string name="activities_dialogue_you_said">내가 한 말:</string>
     <string name="activities_dialogue_hear_line">이 대사 듣기</string>
     <string name="activities_dialogue_hear_best">가장 알맞은 대답 듣기</string>
+    <!-- The name of the list of replies the learner picks from in a conversation, for TalkBack. -->
+    <string name="activities_dialogue_your_reply">내 답변</string>
     <!-- Read by TalkBack when a row is lifted with the keyboard, like "Picked up Water is split at position 2." -->
     <string name="activities_sortable_picked_up">%1$s 항목을 %2$d번째 위치에서 집어 들었어요.</string>
     <!-- Read by TalkBack as a lifted row moves, like "Water is split is over position 3." -->
