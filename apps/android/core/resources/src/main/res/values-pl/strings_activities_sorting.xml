@@ -43,7 +43,7 @@
   "activities_sorting_not_straight": "cd5b6cae0c0b45bf49e866306e7382b2b688c11d81de8d91a8755d8a2401b15c",
   "activities_sorting_nothing_here": "c19ef48b357394b0e3c114d87f5ce0f1bf413cae5cbc1dbd28736c7a0fded2e7",
   "activities_sorting_now_pick": "4d8c32b681703ff483f990cb9eb8090f17506e998860c804f25f069b848b7f33",
-  "activities_sorting_pairs_matched": "3e3a7de89e9b76fd82f0d88b4e101c7e4e19393b4a4028a3b9f27b909c2c52fb",
+  "activities_sorting_pairs_matched": "98f5db74d583e1f18c3f1fcb1c0344bb50ebc65f172022435fbf4b9f299a7d02",
   "activities_sorting_pick_a_name": "d38f5da343f8e90407bea93af0e467876de1fda03ceacf387e83e6975e9aca92",
   "activities_sorting_pick_cause": "f9407abdfcd798a432f9e8e9ed2aed0cd5bad268f16a65981f2bdeaf57f60dc1",
   "activities_sorting_place_on_timeline": "2b25680249607ac84ce07dc15886c163aec89123eeb1f5236c0b021fea66b7ad",
@@ -119,8 +119,13 @@
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">U ciebie na miejscu %1$d</string>
     <string name="activities_sorting_badge_match_pairs">Połącz w pary</string>
-    <!-- Pairs matched so far, like "Pairs matched: 1 of 3". -->
-    <string name="activities_sorting_pairs_matched">Dopasowane pary: %1$d z %2$d</string>
+    <!-- Pairs matched so far out of all of them, like "1 of 3 pairs matched". -->
+    <plurals name="activities_sorting_pairs_matched">
+        <item quantity="one">Dopasowano %1$d z %2$d par</item>
+        <item quantity="few">Dopasowano %1$d z %2$d par</item>
+        <item quantity="many">Dopasowano %1$d z %2$d par</item>
+        <item quantity="other">Dopasowano %1$d z %2$d par</item>
+    </plurals>
     <!-- Cards that look like they match one on the other side but don't. -->
     <plurals name="activities_sorting_cards_without_match">
         <item quantity="one">%d karta nie ma pary</item>

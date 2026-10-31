@@ -43,7 +43,7 @@
   "activities_sorting_not_straight": "169468194c57486c358d396a574dd288a18e884ad869ff04fde10aee8c7d4da0",
   "activities_sorting_nothing_here": "072f3b242c8caf4794af6702838fd009006f6a00ebc5ec7dc6906b7eb4334288",
   "activities_sorting_now_pick": "5477d5fa2eb5461c722a234d0a52091dfd1ce6fcbdf056ccaa5534c63c90522e",
-  "activities_sorting_pairs_matched": "ec1241470032d4c034c80eb90b74610c41a215a3ac98c732dc1bbf85afd8c288",
+  "activities_sorting_pairs_matched": "f23877e12a530c6ca273671c2e62c84949cc2f9abe53e82682a3eb2053218eb5",
   "activities_sorting_pick_a_name": "acbe14d5e62769fe2f62aa4ebb95c843062bc03e01cefef92fc26f006b10466f",
   "activities_sorting_pick_cause": "02449ab9f652bdbb2d4477b99097eabaa877f106d6cf05b323a840c2c9c73b14",
   "activities_sorting_place_on_timeline": "6a6939de908b4b427326ef05531c63502c1694569a98d590becb9fa1b3b75480",
@@ -113,8 +113,10 @@
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">並べた位置：%1$d番目</string>
     <string name="activities_sorting_badge_match_pairs">ペアを作る</string>
-    <!-- Pairs matched so far, like "Pairs matched: 1 of 3". -->
-    <string name="activities_sorting_pairs_matched">ペアが%1$d組できました（全%2$d組）</string>
+    <!-- Pairs matched so far out of all of them, like "1 of 3 pairs matched". -->
+    <plurals name="activities_sorting_pairs_matched">
+        <item quantity="other">%1$d組のペアがそろいました（全%2$d組）</item>
+    </plurals>
     <!-- Cards that look like they match one on the other side but don't. -->
     <plurals name="activities_sorting_cards_without_match">
         <item quantity="other">ペアのないカードが%d枚あります</item>

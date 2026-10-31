@@ -43,7 +43,7 @@
   "activities_sorting_not_straight": "65c6d7ab39f9b2e1e522150a69dbb7a6336f0c020af4a1e4262746248732dfc9",
   "activities_sorting_nothing_here": "160c3c0182edc078dda0f38c7442ae7be384f7b1b41644b7bf5be12e37f53e9d",
   "activities_sorting_now_pick": "9c7c6436880d10c72b6e1482bb841d6b80db96d1f2e025fb3017912fd401dde6",
-  "activities_sorting_pairs_matched": "36de11aae50444a85c008e3afb030befed484565cf9c3374e3fe31ecca2e5cdf",
+  "activities_sorting_pairs_matched": "6d4d0adc2f1db88401885bcfc10b5a524a20d961aa9b4c7996c88939df38430a",
   "activities_sorting_pick_a_name": "c6d08a9eafa324678cd576da65c2cb58ddffe435fc224fe6a33f84ebb409eb4a",
   "activities_sorting_pick_cause": "1c7c2abffa7556036fe7d835e2261db8c3ce6e3cbf23ce19eb38af2ba5d95930",
   "activities_sorting_place_on_timeline": "1ffb5d7af2d5e6be063c644a651289ac60a58f1512b969ba55b13a21c8d4963c",
@@ -117,8 +117,12 @@
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">Lo pusiste en %1$d</string>
     <string name="activities_sorting_badge_match_pairs">Forma parejas</string>
-    <!-- Pairs matched so far, like "Pairs matched: 1 of 3". -->
-    <string name="activities_sorting_pairs_matched">Pares formados: %1$d de %2$d</string>
+    <!-- Pairs matched so far out of all of them, like "1 of 3 pairs matched". -->
+    <plurals name="activities_sorting_pairs_matched">
+        <item quantity="one">%1$d de %2$d pares formados</item>
+        <item quantity="many">%1$d de %2$d pares formados</item>
+        <item quantity="other">%1$d de %2$d pares formados</item>
+    </plurals>
     <!-- Cards that look like they match one on the other side but don't. -->
     <plurals name="activities_sorting_cards_without_match">
         <item quantity="one">%d tarjeta no tiene pareja</item>

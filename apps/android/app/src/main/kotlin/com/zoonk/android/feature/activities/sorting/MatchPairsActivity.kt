@@ -157,7 +157,12 @@ private fun MatchPairsActivity(props: ActivityProps) {
             val traps = fields.distractors.size
             Text(
                 listOfNotNull(
-                    stringResource(R.string.activities_sorting_pairs_matched, progress.matched.size, pairIds.size),
+                    pluralStringResource(
+                        R.plurals.activities_sorting_pairs_matched,
+                        progress.matched.size,
+                        progress.matched.size,
+                        pairIds.size,
+                    ),
                     if (traps > 0) pluralStringResource(R.plurals.activities_sorting_cards_without_match, traps, traps) else null,
                 ).factsLine(),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

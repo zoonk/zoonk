@@ -43,7 +43,7 @@
   "activities_sorting_not_straight": "75fd2820d3d616832c8c21489f2bf7e9c072accba2eabfd10de3db89438a0966",
   "activities_sorting_nothing_here": "698d46961346de7ecd7c1d063c21ab67cd22ffa09a27a6b8d94b6504f54c6eec",
   "activities_sorting_now_pick": "94e2863384096f65340844f0cee4a0fcc51d58d36273753a7a94d7457c16eddc",
-  "activities_sorting_pairs_matched": "0a8a40b4147cbb57397e4023f45862977e192bc5ee02872a0f215fae407ae537",
+  "activities_sorting_pairs_matched": "ae81767f204280bd64aae16c407b6b902f1829cbb14857821cd055481772746c",
   "activities_sorting_pick_a_name": "07a4dae1649db3134de4f534a45cf6a72bb346b77f65c1882d2234bfc855bae9",
   "activities_sorting_pick_cause": "9f37b7651859212c583b07ee1e89e2b5d38ead54188921def03263d5f35a00bc",
   "activities_sorting_place_on_timeline": "de860efddcd5353198524e5378c6f1aeb602b02d1fe3fdeb86df3be20334394e",
@@ -117,8 +117,12 @@
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">Lo avevi messo in posizione %1$d</string>
     <string name="activities_sorting_badge_match_pairs">Abbina le coppie</string>
-    <!-- Pairs matched so far, like "Pairs matched: 1 of 3". -->
-    <string name="activities_sorting_pairs_matched">Coppie abbinate: %1$d su %2$d</string>
+    <!-- Pairs matched so far out of all of them, like "1 of 3 pairs matched". -->
+    <plurals name="activities_sorting_pairs_matched">
+        <item quantity="one">%1$d coppia abbinata su %2$d</item>
+        <item quantity="many">%1$d coppie abbinate su %2$d</item>
+        <item quantity="other">%1$d coppie abbinate su %2$d</item>
+    </plurals>
     <!-- Cards that look like they match one on the other side but don't. -->
     <plurals name="activities_sorting_cards_without_match">
         <item quantity="one">%d carta non ha abbinamenti</item>

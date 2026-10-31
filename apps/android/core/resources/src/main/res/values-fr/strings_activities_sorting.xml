@@ -43,7 +43,7 @@
   "activities_sorting_not_straight": "312b3a3e4a2a37244e296cb954fd29694c5311d67461972b1e3248d67a39d363",
   "activities_sorting_nothing_here": "eb3aa34008523e0a0360acc29c1763d68d83d05685a1bf719d16056f8f7bc2bb",
   "activities_sorting_now_pick": "8a0d8a07f9356b70f0cfd4be8853122fb2af54119a32a8323bb00ce74826734f",
-  "activities_sorting_pairs_matched": "1ac553e1521f426bbb390c3a47e97bea829c61d96b81420a801822f3e99b2278",
+  "activities_sorting_pairs_matched": "9940ac7e136a4afee35aee8a78da2a477bbc5bd898d6f547dcbbb8c3cc4120b3",
   "activities_sorting_pick_a_name": "d3778bf3b0affaf58f67900740ffa4ab93f350873ff1ae3d3d48a5604b9dbbb8",
   "activities_sorting_pick_cause": "9989566db95ccde10a72713daf392468c549705cb2c2a8c9522dfb12287e2856",
   "activities_sorting_place_on_timeline": "721e749d86084a1bcbbfce9b67412e0afb5181e37ac23168d3333422a73c0b0d",
@@ -117,8 +117,12 @@
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">Tu l’avais placé en %1$d</string>
     <string name="activities_sorting_badge_match_pairs">Associe les paires</string>
-    <!-- Pairs matched so far, like "Pairs matched: 1 of 3". -->
-    <string name="activities_sorting_pairs_matched">Paires associées : %1$d sur %2$d</string>
+    <!-- Pairs matched so far out of all of them, like "1 of 3 pairs matched". -->
+    <plurals name="activities_sorting_pairs_matched">
+        <item quantity="one">%1$d paire associée sur %2$d</item>
+        <item quantity="many">%1$d paires associées sur %2$d</item>
+        <item quantity="other">%1$d paires associées sur %2$d</item>
+    </plurals>
     <!-- Cards that look like they match one on the other side but don't. -->
     <plurals name="activities_sorting_cards_without_match">
         <item quantity="one">%d carte sans correspondance</item>

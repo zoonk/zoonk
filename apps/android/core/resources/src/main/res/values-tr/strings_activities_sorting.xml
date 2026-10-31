@@ -43,7 +43,7 @@
   "activities_sorting_not_straight": "db832e539cba0c47e5f86ccfaf147f03e57cb1f303094c5c64d6d457b44b16bf",
   "activities_sorting_nothing_here": "bcff10138db62f9d47011c494f2bb90137c81539387ed6e6316afaedd01d9250",
   "activities_sorting_now_pick": "d0f4982536dbc61289a6f7b0b9ab146146f9376cbeef01525087bae51b8bbcd8",
-  "activities_sorting_pairs_matched": "f799537bfc596f8bcdcacfe4b806019cae0de05b65793409eb38605c9575253b",
+  "activities_sorting_pairs_matched": "6cd66650a19f24493a45cc1c11478ecbb87a05cd05212bd01e2385a54c3b1719",
   "activities_sorting_pick_a_name": "9c7a572aca6a5fb59d96f557f2909d36548a50c585ee336827ba709f4cf28a71",
   "activities_sorting_pick_cause": "f0deda7ab0daf66f1671b9b431fe10b92eafae9d08d9f7b56f910048b1219aff",
   "activities_sorting_place_on_timeline": "c09e91a7e7ea4746c448f9ad3a4e84f94c5546f1e9412c6282248cfdf9dcb349",
@@ -115,8 +115,11 @@
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">Senin sıralamanda: %1$d</string>
     <string name="activities_sorting_badge_match_pairs">Eşleştir</string>
-    <!-- Pairs matched so far, like "Pairs matched: 1 of 3". -->
-    <string name="activities_sorting_pairs_matched">Eşleşen çift: %1$d (toplam %2$d)</string>
+    <!-- Pairs matched so far out of all of them, like "1 of 3 pairs matched". -->
+    <plurals name="activities_sorting_pairs_matched">
+        <item quantity="one">%1$d / %2$d çift eşleştirildi</item>
+        <item quantity="other">%1$d / %2$d çift eşleştirildi</item>
+    </plurals>
     <!-- Cards that look like they match one on the other side but don't. -->
     <plurals name="activities_sorting_cards_without_match">
         <item quantity="one">%d kartın eşi yok</item>

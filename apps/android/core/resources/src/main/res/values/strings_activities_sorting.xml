@@ -40,8 +40,11 @@
     <string name="activities_sorting_you_had_it_at">You had it at %1$d</string>
 
     <string name="activities_sorting_badge_match_pairs">Match pairs</string>
-    <!-- Pairs matched so far, like "Pairs matched: 1 of 3". -->
-    <string name="activities_sorting_pairs_matched">Pairs matched: %1$d of %2$d</string>
+    <!-- Pairs matched so far out of all of them, like "1 of 3 pairs matched". -->
+    <plurals name="activities_sorting_pairs_matched">
+        <item quantity="one">%1$d of %2$d pairs matched</item>
+        <item quantity="other">%1$d of %2$d pairs matched</item>
+    </plurals>
     <!-- Cards that look like they match one on the other side but don't. -->
     <plurals name="activities_sorting_cards_without_match">
         <item quantity="one">%d card has no match</item>

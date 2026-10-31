@@ -43,7 +43,7 @@
   "activities_sorting_not_straight": "c005ec73ada7302fa5dd6fb31899a97a43acb3759100ec84618ae27d51e9ef4f",
   "activities_sorting_nothing_here": "a7e8467dc4d022eb1e5f974681b6cae149b1194ff62f217d85d2eafe89b5be90",
   "activities_sorting_now_pick": "f0b8364cec1ce00980ac03e0d2936a018da7a42cb34d15c315ce6570c3545579",
-  "activities_sorting_pairs_matched": "b1fd8560e41732992165212414100edf258c3ed90c87afabae9da719b04a1f91",
+  "activities_sorting_pairs_matched": "4b0d58e0d24fabd19aef314cc2f1c3172ff47bc6ba2035a153f4b9ccb624681b",
   "activities_sorting_pick_a_name": "51967e9e477fd206dda1dd1f7069a306b0202f5725a52d906b6966136e99d122",
   "activities_sorting_pick_cause": "7486c25519373e474a3f87a81beb75bbe25a6bbe154d696857f87c1fe7bfb2be",
   "activities_sorting_place_on_timeline": "02e7ee9277bc843ee6e056328463f009e0d44feb323a2e67a0bab8bb0276fda0",
@@ -113,8 +113,10 @@
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">내가 놓은 위치: %1$d번째</string>
     <string name="activities_sorting_badge_match_pairs">짝 맞추기</string>
-    <!-- Pairs matched so far, like "Pairs matched: 1 of 3". -->
-    <string name="activities_sorting_pairs_matched">맞춘 짝: %1$d/%2$d쌍</string>
+    <!-- Pairs matched so far out of all of them, like "1 of 3 pairs matched". -->
+    <plurals name="activities_sorting_pairs_matched">
+        <item quantity="other">%1$d쌍 연결 완료(전체 %2$d쌍)</item>
+    </plurals>
     <!-- Cards that look like they match one on the other side but don't. -->
     <plurals name="activities_sorting_cards_without_match">
         <item quantity="other">카드 %d장은 짝이 없어요</item>

@@ -43,7 +43,7 @@
   "activities_sorting_not_straight": "fd826120298cca72481cc4b3d3398f1134de67c13c9e6008a4c88132c9456a73",
   "activities_sorting_nothing_here": "792b0b79131f8b6483cec11dba56cebc27243ae8287d15d24aeb74a4507641a4",
   "activities_sorting_now_pick": "fff67e123fbbdddc89859d56227744c52e80c3beb072354ad0282dfe4eb24b20",
-  "activities_sorting_pairs_matched": "dcba4c96461ed1c30c3557548d1029edb4659908c6898f5ad27c7163a82ccd8d",
+  "activities_sorting_pairs_matched": "2a5cae7e4d20c96fc3f4306ea0dddbd4b75e981703cfad876501a3ccad928601",
   "activities_sorting_pick_a_name": "a0633f5584a6c0639e9fb99d2f0fe219cc9045333ee4e2a5eb7752d24606baee",
   "activities_sorting_pick_cause": "5949c94bf257c173f319216f3600b2dbfb387da1c85c27cdc5f44bc76e08aea1",
   "activities_sorting_place_on_timeline": "f88e2eab83c88cbad87ce68d3eb994e1c4b8a460e7288e7543ee838acf968bce",
@@ -117,8 +117,12 @@
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">Você colocou em %1$d</string>
     <string name="activities_sorting_badge_match_pairs">Combine os pares</string>
-    <!-- Pairs matched so far, like "Pairs matched: 1 of 3". -->
-    <string name="activities_sorting_pairs_matched">Pares formados: %1$d de %2$d</string>
+    <!-- Pairs matched so far out of all of them, like "1 of 3 pairs matched". -->
+    <plurals name="activities_sorting_pairs_matched">
+        <item quantity="one">%1$d de %2$d pares formados</item>
+        <item quantity="many">%1$d de %2$d pares formados</item>
+        <item quantity="other">%1$d de %2$d pares formados</item>
+    </plurals>
     <!-- Cards that look like they match one on the other side but don't. -->
     <plurals name="activities_sorting_cards_without_match">
         <item quantity="one">%d cartão sem par</item>

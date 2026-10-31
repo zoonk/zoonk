@@ -43,7 +43,7 @@
   "activities_sorting_not_straight": "d833d9cbce585066f259f5952dc543fa8eaace491fa306a8148ee626e67ca43d",
   "activities_sorting_nothing_here": "8f0dfaf379468f4fad936b981da2b2e0b92d045cfa67ba19d7a55837ab8b9a77",
   "activities_sorting_now_pick": "f92f68657c2bafefdbff9cc9fa500e3c84c8837ef47aa7ee6cb046b0f865a9ff",
-  "activities_sorting_pairs_matched": "3f4885fd32952c5e2813cfcdeb76db6b0cafb5c283657f555fb22ea9b3c66d76",
+  "activities_sorting_pairs_matched": "bcb03dde98ea23d89249d41ed1f83901304b9a56bec83077e04e3c6719cae381",
   "activities_sorting_pick_a_name": "e6cb2e7c9efe75e4f90929761faeb9fee33310f3a546aa9285717bbc3c6b279b",
   "activities_sorting_pick_cause": "d1332e3b114cf10807de362da00963dbe97820332fb876bf816cda31af0eafee",
   "activities_sorting_place_on_timeline": "4c91c8d1d3718760fa361c3ad0a9afd5812e6484be03039d5b44afe27a05a02e",
@@ -115,8 +115,11 @@
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">Du hattest es bei %1$d eingeordnet</string>
     <string name="activities_sorting_badge_match_pairs">Finde Paare</string>
-    <!-- Pairs matched so far, like "Pairs matched: 1 of 3". -->
-    <string name="activities_sorting_pairs_matched">Zugeordnete Paare: %1$d von %2$d</string>
+    <!-- Pairs matched so far out of all of them, like "1 of 3 pairs matched". -->
+    <plurals name="activities_sorting_pairs_matched">
+        <item quantity="one">%1$d von %2$d Paaren gefunden</item>
+        <item quantity="other">%1$d von %2$d Paaren gefunden</item>
+    </plurals>
     <!-- Cards that look like they match one on the other side but don't. -->
     <plurals name="activities_sorting_cards_without_match">
         <item quantity="one">Für %d Karte gibt es keine passende Karte</item>
