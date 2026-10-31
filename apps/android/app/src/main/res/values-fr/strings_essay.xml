@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "essay_back_to_today": "a8ff6af980e7bfbc62beb5ebf6d5a54e63b3db8a43852b908988b3b280647ef5",
   "essay_comments": "3620187ec50cd012a22fb764bdb311af265f30c90121387bf04cf95bf5c3adad",
   "essay_criterion_addressing": "238e94d35351cd06a3495f2a695ae5ee8970855023f232fe88670c292a9a7ef4",
   "essay_criterion_argument": "9317165d8512500a740e90380b7a0eafe9708bcb2f543ae0e54ce85ecc1d5d1a",
@@ -47,6 +48,7 @@
   "essay_send": "34d22f2fc2f80ed144dadb0e0aa07b8bb066102c65ae5e0cc63141efb531ed5d",
   "essay_send_failed": "25428ac012886ad2b188b5ed728f16ee255590e2702c6422b93e0f6e9decf85b",
   "essay_skip_rewrite": "eeb161c0e662a2eb84b1e9de01aacb1996d4917d8b899c22b081afd1570f304f",
+  "essay_skipped": "920c1ab31ef8c49a908edc2384e0d5b8370a297de8a430e61839750fea6c4110",
   "essay_supporting_texts": "f59d91878e3d38763294e96287ffba29c201a174b7923e9c86b2da476fb0c53c",
   "essay_the_case": "c85cba78cbc1088e24c5aad0338438547e09d84023712abe7693f0fbc06f5cad",
   "essay_title": "0c89d33b9186be47d71e59da527de17e567f60efb3c094c945389e112a5038fb",
@@ -103,6 +105,9 @@
         <item quantity="many">%d mots</item>
         <item quantity="other">%d mots</item>
     </plurals>
+    <!-- On an essay the learner skipped, opened again from a link. -->
+    <string name="essay_skipped">Tu as sauté cette rédaction.</string>
+    <string name="essay_back_to_today">Retour à Aujourd’hui</string>
     <string name="essay_send_failed">L’envoi n’a pas fonctionné. Ton texte est toujours là. Réessaie dans un instant.</string>
     <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
     <string name="essay_daily_limit_reached">Tu as atteint ta limite de temps quotidienne. Ton texte est conservé ici.</string>

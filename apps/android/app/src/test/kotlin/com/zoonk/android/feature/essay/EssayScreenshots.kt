@@ -81,6 +81,7 @@ class EssayScreenshots {
     private fun essay(
         drafted: Boolean,
         tooShort: Boolean,
+        status: String,
     ): Essay {
         val drafts =
             if (drafted) {
@@ -94,7 +95,7 @@ class EssayScreenshots {
             Essay.serializer(),
             """{"blockId":"00000000-0000-4000-8000-0000000000b1","context":${ApiJson.encodeToString(String.serializer(), texts)},
             "drafts":$drafts,"gradesLeft":3,"question":"Escreva uma redação sobre os desafios da mobilidade urbana no Brasil.",
-            "rubric":"enem","sessionId":"00000000-0000-4000-8000-0000000000e1","status":"active"}""",
+            "rubric":"enem","sessionId":"00000000-0000-4000-8000-0000000000e1","status":"$status"}""",
         )
     }
 
@@ -106,8 +107,9 @@ class EssayScreenshots {
         grading: Boolean = false,
         rewrite: Boolean = false,
         secondStep: Boolean = false,
+        status: String = "active",
     ) {
-        val read = essay(drafted, tooShort)
+        val read = essay(drafted, tooShort, status)
         val api =
             object : EssayApi {
                 override suspend fun essay(
@@ -148,11 +150,14 @@ class EssayScreenshots {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
                 val navigator = rememberAppNavigator()
                 val grade = ui.grade
-                if (ui.mode == EssayMode.Grade && grade != null) {
+                if (ui.closed && grade == null) {
+                    SkippedEssay(read, navigator)
+                } else if ((ui.mode == EssayMode.Grade || ui.closed) && grade != null) {
                     EssayGradeSteps(
                         read,
                         grade,
                         finished = false,
+                        closed = ui.closed,
                         announce = false,
                         finishing = false,
                         finishFailed = false,
@@ -205,6 +210,18 @@ class EssayScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tabletGrade() = show("tablet-grade", drafted = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneClosedNextStep() = show("phone-closed-next-step", drafted = true, secondStep = true, status = "completed")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneSkipped() = show("phone-skipped", status = "skipped")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneClosedTooShort() = show("phone-closed-too-short", drafted = true, tooShort = true, status = "completed")
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")

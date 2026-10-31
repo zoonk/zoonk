@@ -34,6 +34,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -51,6 +52,9 @@ class EssayViewModelTest {
     private val sessionId = UUID.fromString("00000000-0000-4000-8000-0000000000e1")
     private var gradesLeft = 3
     private var drafted = false
+    private var status = "active"
+    private var essayReads = 0
+    private var onFinish: () -> Unit = {}
     private var clock = 0L
     private var grading: CompletableDeferred<Unit>? = null
     private var submit: (EssaySubmissionInput) -> EssayGrade = { grade() }
@@ -77,7 +81,7 @@ class EssayViewModelTest {
         return ApiJson.decodeFromString(
             Essay.serializer(),
             """{"blockId":"$blockId","context":null,"drafts":$drafts,"gradesLeft":$gradesLeft,"question":"Write about cities.",
-            "rubric":"enem","sessionId":"$sessionId","status":"active"}""",
+            "rubric":"enem","sessionId":"$sessionId","status":"$status"}""",
         )
     }
 
@@ -89,7 +93,7 @@ class EssayViewModelTest {
                     session: AuthenticatedSession,
                     blockId: UUID,
                     timeZone: String,
-                ) = essay()
+                ) = essay().also { essayReads++ }
 
                 override suspend fun submit(
                     session: AuthenticatedSession,
@@ -106,7 +110,10 @@ class EssayViewModelTest {
                     sessionId: UUID,
                     blockId: UUID,
                     timeZone: String,
-                ) = wonCompletion().also { finished += blockId }
+                ) = wonCompletion().also {
+                    onFinish()
+                    finished += blockId
+                }
             }
         val steps =
             object : SessionSteps {
@@ -321,6 +328,93 @@ class EssayViewModelTest {
 
             assertEquals(EssaySend.DailyLimitReached, viewModel.ui.value.send)
             assertEquals("Cities grow.", viewModel.ui.value.text)
+        }
+
+    @Test
+    fun aCompletedEssayShowsItsLastGradeAndTakesNoDraft() =
+        runTest(dispatcher) {
+            drafted = true
+            status = "completed"
+            val viewModel = viewModel()
+
+            assertTrue(viewModel.ui.value.closed)
+            assertEquals(EssayMode.Grade, viewModel.ui.value.mode)
+
+            viewModel.rewrite()
+            viewModel.write("Cities grow.")
+            viewModel.send()
+            advanceUntilIdle()
+
+            assertEquals(EssayMode.Grade, viewModel.ui.value.mode)
+            assertEquals(emptyList<EssaySubmissionInput>(), submitted)
+        }
+
+    @Test
+    fun anEssayFinishedElsewhereTurnsReadOnlyOnTheNextRead() =
+        runTest(dispatcher) {
+            drafted = true
+            val viewModel = viewModel()
+            viewModel.rewrite()
+
+            status = "completed"
+            viewModel.essay.refresh()
+            advanceUntilIdle()
+            viewModel.arrive(read(viewModel))
+            advanceUntilIdle()
+
+            assertTrue(viewModel.ui.value.closed)
+        }
+
+    @Test
+    fun aFinishThatFailsAfterTheEssayClosedElsewhereTurnsReadOnly() =
+        runTest(dispatcher) {
+            drafted = true
+            val viewModel = viewModel()
+            onFinish = {
+                status = "completed"
+                viewModel.arrive(essay())
+                throw ApiException(ApiError.Network)
+            }
+
+            viewModel.finish()
+            advanceUntilIdle()
+
+            assertTrue(viewModel.ui.value.closed)
+        }
+
+    @Test
+    fun aSendRefusedBecauseTheBlockClosedReadsTheEssayAgain() =
+        runTest(dispatcher) {
+            submit = {
+                status = "skipped"
+                throw ApiException(ApiError.Unavailable, "BLOCK_NOT_ACTIVE", status = 409)
+            }
+            val viewModel = viewModel()
+            val reads = essayReads
+            viewModel.write("Cities grow.")
+
+            viewModel.send()
+            advanceUntilIdle()
+            viewModel.arrive(read(viewModel))
+            advanceUntilIdle()
+
+            assertEquals(reads + 1, essayReads)
+            assertTrue(viewModel.ui.value.closed)
+        }
+
+    @Test
+    fun aSkippedEssayWithNoDraftTakesNoDraft() =
+        runTest(dispatcher) {
+            status = "skipped"
+            val viewModel = viewModel()
+
+            assertTrue(viewModel.ui.value.closed)
+
+            viewModel.write("Cities grow.")
+            viewModel.send()
+            advanceUntilIdle()
+
+            assertEquals(emptyList<EssaySubmissionInput>(), submitted)
         }
 
     @Test

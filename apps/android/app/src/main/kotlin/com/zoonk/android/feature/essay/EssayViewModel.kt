@@ -34,6 +34,8 @@ data class UnsentEssay(
     val sent: String? = null,
 )
 
+private val Essay.closed get() = status == Essay.Status.COMPLETED || status == Essay.Status.SKIPPED
+
 enum class EssayMode { Grade, Write }
 
 enum class EssaySend { Idle, Pending, Failed, LimitReached, DailyLimitReached }
@@ -50,6 +52,8 @@ data class EssayUi(
     val finishFailed: Boolean = false,
     /** The block is done, so only going on is left. */
     val finished: Boolean = false,
+    /** The essay's latest read says it was completed or skipped. */
+    val readClosed: Boolean = false,
     /** The learner went between the grade and the box, so TalkBack follows where they went. */
     val switched: Boolean = false,
 ) {
@@ -57,7 +61,10 @@ data class EssayUi(
     val grade: EssayGrade? get() = drafts?.firstOrNull()?.grade
     val words: Int get() = WORD.findAll(text).count()
     val unsent: Boolean get() = text.isNotBlank() && text != graded
-    val canSend: Boolean get() = words > 0 && send != EssaySend.Pending && gradesLeft > 0 && !finished
+
+    /** It shows what it is and takes no draft; a block finished in this visit goes on to the session instead. */
+    val closed: Boolean get() = readClosed && !finishing && !finished
+    val canSend: Boolean get() = words > 0 && send != EssaySend.Pending && gradesLeft > 0 && !finished && !closed
 }
 
 class EssayViewModel(
@@ -99,7 +106,7 @@ class EssayViewModel(
         if (mutableUi.value.drafts == null) {
             open()
         } else {
-            mutableUi.update { it.copy(drafts = essay.drafts, gradesLeft = essay.gradesLeft.toInt()) }
+            mutableUi.update { it.copy(drafts = essay.drafts, gradesLeft = essay.gradesLeft.toInt(), readClosed = essay.closed) }
         }
     }
 
@@ -146,6 +153,7 @@ class EssayViewModel(
                             else -> EssaySend.Failed
                         }
                     mutableUi.update { it.copy(send = send) }
+                    if (result.code == BLOCK_NOT_ACTIVE) essay.refresh()
                 }
 
                 MutationResult.Obsolete -> {
@@ -156,7 +164,8 @@ class EssayViewModel(
     }
 
     fun rewrite() {
-        if (!mutableUi.value.finished) mutableUi.update { it.copy(mode = EssayMode.Write, switched = true) }
+        val ui = mutableUi.value
+        if (!ui.finished && !ui.closed) mutableUi.update { it.copy(mode = EssayMode.Write, switched = true) }
     }
 
     fun seeGrade() = mutableUi.update { it.copy(mode = EssayMode.Grade, switched = true) }
@@ -192,6 +201,7 @@ class EssayViewModel(
                 gradesLeft = essay.gradesLeft.toInt(),
                 text = text,
                 mode = if (essay.drafts.isEmpty()) EssayMode.Write else EssayMode.Grade,
+                readClosed = essay.closed,
             )
         }
     }
@@ -237,6 +247,7 @@ class EssayViewModel(
     private companion object {
         const val ESSAY_LIMIT_REACHED = "ESSAY_LIMIT_REACHED"
         const val DAILY_LIMIT_REACHED = "DAILY_LIMIT_REACHED"
+        const val BLOCK_NOT_ACTIVE = "BLOCK_NOT_ACTIVE"
 
         /** The API's longest essay duration. */
         const val MAX_DURATION_MS = 5_400_000L

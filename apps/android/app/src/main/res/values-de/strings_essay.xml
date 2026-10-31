@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "essay_back_to_today": "0cdeb16979dacef3c9a7d880d8a3fdab160e2e224e4f0fb35977c73b0596c095",
   "essay_comments": "35c6f25591a472a947d75df09cf8747f2326e2c86d0b15271fe05a14ec14b8ac",
   "essay_criterion_addressing": "0756053ba566efbd8bcee7bebd50c286d92cdc4fd8c06e18b9206738feb3e3e6",
   "essay_criterion_argument": "d63dca4f0ba5e0935156288b5b8f00924affc0cf63fd586c63e43df02a506eeb",
@@ -47,6 +48,7 @@
   "essay_send": "209c56d4a03f7265c648d70d2c0664d92091c386de0bbf621490cc3cb7040a27",
   "essay_send_failed": "bf3f50fa0501be4fcb4cf69ea0d811505c9b59180fe235a90e72d830ab2c78d0",
   "essay_skip_rewrite": "a1273dc818ab5d2adba3396d8577a52978d0f0e04c8385f0786ab2d92d17033b",
+  "essay_skipped": "b9e860e7d7db76c8a9e168e70f9a1f94b608b49f0f8973cff66a4027b945be67",
   "essay_supporting_texts": "0b463bbf91ed65f3707de2de5d864b71b35ead28be07355a6ba23da8af3cde14",
   "essay_the_case": "f330964d9a93ab6e07be4c6b17e851951b63959aa4c4a9ebe82a06a20b45a3eb",
   "essay_title": "a6195ac16e7e620cc8f34f0358bf7b0f95ee4ed7ad0857e5cd4a69b31b07a461",
@@ -102,6 +104,9 @@
         <item quantity="one">%d Wort</item>
         <item quantity="other">%d Wörter</item>
     </plurals>
+    <!-- On an essay the learner skipped, opened again from a link. -->
+    <string name="essay_skipped">Du hast diesen Aufsatz übersprungen.</string>
+    <string name="essay_back_to_today">Zurück zu Heute</string>
     <string name="essay_send_failed">Das hat nicht geklappt. Dein Text ist noch da. Versuch es gleich noch einmal.</string>
     <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
     <string name="essay_daily_limit_reached">Du hast dein tägliches Zeitlimit erreicht. Dein Text bleibt hier.</string>

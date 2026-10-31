@@ -41,6 +41,9 @@
         <item quantity="one">%d word</item>
         <item quantity="other">%d words</item>
     </plurals>
+    <!-- On an essay the learner skipped, opened again from a link. -->
+    <string name="essay_skipped">You skipped this essay.</string>
+    <string name="essay_back_to_today">Back to Today</string>
     <string name="essay_send_failed">That didn\'t go through. Your text is still here. Try again in a moment.</string>
     <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
     <string name="essay_daily_limit_reached">You\'ve reached your daily time limit. Your text stays here.</string>

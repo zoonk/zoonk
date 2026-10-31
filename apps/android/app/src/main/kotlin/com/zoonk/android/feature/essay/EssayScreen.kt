@@ -87,6 +87,7 @@ import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.isLongText
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LocalStepHeading
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
@@ -177,8 +178,12 @@ private fun EssayLoaded(
             RunLoading(navigator::closeTask)
         }
 
-        ui.mode == EssayMode.Grade && grade != null -> {
-            EssayGradeSteps(essay, grade, ui.finished, ui.switched, finishing, finishFailed, viewModel, navigator)
+        ui.closed && grade == null -> {
+            SkippedEssay(essay, navigator)
+        }
+
+        (ui.mode == EssayMode.Grade || ui.closed) && grade != null -> {
+            EssayGradeSteps(essay, grade, ui.finished, ui.closed, ui.switched, finishing, finishFailed, viewModel, navigator)
         }
 
         else -> {
@@ -472,6 +477,7 @@ internal fun EssayGradeSteps(
     essay: Essay,
     grade: EssayGrade,
     finished: Boolean,
+    closed: Boolean,
     announce: Boolean,
     finishing: Boolean,
     finishFailed: Boolean,
@@ -502,7 +508,7 @@ internal fun EssayGradeSteps(
             CompositionLocalProvider(LocalStepHeading provides heading) {
                 RunPage(modifier) {
                     when {
-                        tooShort -> TooShort()
+                        tooShort -> TooShort(closed)
                         shown == 0 -> EssayGradeCard(grade, rubric)
                         else -> NextStep(grade)
                     }
@@ -516,14 +522,20 @@ internal fun EssayGradeSteps(
             bottomBar = {
                 TaskActionBar {
                     StepPagerActions(count, shown, onIndexChange = { index = it }) { main ->
-                        OutlinedButton(onClick = viewModel::finish, enabled = !finishing) {
-                            Text(stringResource(R.string.essay_skip_rewrite))
+                        if (closed) {
+                            Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = main) {
+                                Text(stringResource(R.string.essay_back_to_today))
+                            }
+                        } else {
+                            OutlinedButton(onClick = viewModel::finish, enabled = !finishing) {
+                                Text(stringResource(R.string.essay_skip_rewrite))
+                            }
+                            Button(
+                                onClick = viewModel::rewrite,
+                                enabled = !finished,
+                                modifier = main,
+                            ) { Text(stringResource(R.string.essay_rewrite)) }
                         }
-                        Button(
-                            onClick = viewModel::rewrite,
-                            enabled = !finished,
-                            modifier = main,
-                        ) { Text(stringResource(R.string.essay_rewrite)) }
                     }
                     if (shown == count - 1) {
                         if (finishFailed && !finishing) {
@@ -555,10 +567,39 @@ internal fun EssayGradeSteps(
 }
 
 @Composable
-private fun TooShort() {
+internal fun SkippedEssay(
+    essay: Essay,
+    navigator: AppNavigator,
+) {
+    TaskScaffold(
+        onClose = navigator::closeTask,
+        title = { EssayTitle(promptLabel(EssayRubric.of(essay.rubric.value))) },
+        bottomBar = {
+            TaskActionBar {
+                TaskActions { width ->
+                    Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = width) {
+                        Text(stringResource(R.string.essay_back_to_today))
+                    }
+                }
+            }
+        },
+    ) { padding ->
+        RunPage(Modifier.padding(padding)) {
+            QuestionTitle(essay.question)
+            Text(
+                stringResource(R.string.essay_skipped),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+        }
+    }
+}
+
+@Composable
+private fun TooShort(closed: Boolean) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         StepTitle(stringResource(R.string.essay_too_short), Modifier.stepHeading())
-        StepDetail(stringResource(R.string.essay_too_short_detail))
+        if (!closed) StepDetail(stringResource(R.string.essay_too_short_detail))
     }
 }
 
