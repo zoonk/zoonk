@@ -133,7 +133,10 @@ describe(linkGoalToExamBlueprint, () => {
     const [blueprint, named, refused] = await Promise.all([
       specialtyBlueprintFixture(),
       goalFixture({
-        details: { targetPosition: "Auditor Federal – Desenvolvimento de Sistemas" },
+        details: {
+          positionFromReading: "Auditor Federal – Desenvolvimento de Sistemas",
+          targetPosition: "Auditor Federal – Desenvolvimento de Sistemas",
+        },
         kind: "exam",
         prompt: "Passar na CGU como auditor",
         userId: user.id,

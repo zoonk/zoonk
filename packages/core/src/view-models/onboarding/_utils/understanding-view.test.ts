@@ -65,4 +65,21 @@ describe(toUnderstandingView, () => {
 
     expect(findExamDate).toHaveBeenCalledOnce();
   });
+
+  it("keeps the position the reading recorded beside it, so an exam choice can tell it from a typed one", async () => {
+    const view = await viewOf({
+      examDay: "official",
+      examName: `Civil Service Exam ${randomUUID()}`,
+      examTarget: "position",
+      kind: "exam",
+      subject: "the exam",
+      targetPosition: "Court analyst, information technology",
+      title: "Pass the civil service exam",
+    });
+
+    expect(view.status === "goals" ? view.goals[0]?.draft.details : null).toMatchObject({
+      positionFromReading: "Court analyst, information technology",
+      targetPosition: "Court analyst, information technology",
+    });
+  });
 });

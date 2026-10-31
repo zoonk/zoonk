@@ -114,6 +114,7 @@ async function toGoalView({
     nativeLanguage: goal.nativeLanguage,
     offeredNoticeDay: getOfferedNoticeDay({ dates: exam?.dates ?? [], goal, today }),
     onboardingId,
+    positionFromReading: goal.targetPosition,
     purpose: goal.purpose,
     reason: goal.reason,
     role: goal.role,

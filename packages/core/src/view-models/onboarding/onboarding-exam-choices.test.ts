@@ -158,6 +158,7 @@ describe("onboarding an exam with a choice", () => {
 
   it("takes the specialty the learner's stated position names without asking, and saves it with their next answer", async () => {
     const { goal, plan } = await specialtyGoal("passar no concurso da CGU para auditor de TI", {
+      positionFromReading: "Auditor de TI, desenvolvimento de sistemas",
       targetPosition: "Auditor de TI, desenvolvimento de sistemas",
     });
 
@@ -192,14 +193,14 @@ describe("onboarding an exam with a choice", () => {
     expect(onboarding.examChoices).toMatchObject([{ group: SPECIALTY, subject: null }]);
   });
 
-  it("takes the specialty from the position the learner types in onboarding", async () => {
+  it("takes the specialty when the position the learner types is its name", async () => {
     const { goal, plan } = await specialtyGoal("passar no concurso da CGU", {
       examTarget: "position",
     });
 
     await answerOnboardingQuestion({
       goalId: goal.id,
-      input: { question: "target", target: "Auditor Federal – Desenvolvimento de Sistemas" },
+      input: { question: "target", target: "Desenvolvimento de Sistemas" },
     });
 
     await expect(loadChoices(plan.id)).resolves.toStrictEqual([
@@ -210,6 +211,23 @@ describe("onboarding an exam with a choice", () => {
       steps: expect.arrayContaining(["examChoice"]),
     });
   });
+
+  it.each(["Ainda não sei, mas não quero Auditoria", "Possivelmente Auditoria"])(
+    "asks which specialty when the learner types %j as their position",
+    async (target) => {
+      const { goal, plan } = await specialtyGoal("passar no concurso da CGU", {
+        examTarget: "position",
+      });
+
+      await answerOnboardingQuestion({ goalId: goal.id, input: { question: "target", target } });
+
+      await expect(loadChoices(plan.id)).resolves.toStrictEqual([]);
+
+      await expect(loadOnboarding(goal.id)).resolves.toMatchObject({
+        steps: expect.arrayContaining(["examChoice"]),
+      });
+    },
+  );
 
   it("never picks for a learner who chose to decide later", async () => {
     const { goal, plan } = await specialtyGoal("passar no concurso da CGU", {

@@ -18,32 +18,58 @@ function saysOption({ option, said }: { option: Option; said: string }): boolean
   });
 }
 
-/** A whole option name, never a word a few of them share or one that's merely in it ("dados"). */
+function namesOption({ option, said }: { option: Option; said: string }): boolean {
+  return [option.name, option.shortName ?? ""].some((name) => {
+    const phrase = toPhrase(name);
+    return phrase.trim() !== "" && phrase === said;
+  });
+}
+
+/**
+ * The reading's position may hold more than the option ("Auditor de TI, desenvolvimento de
+ * sistemas"); a typed answer must be the option's name, since nothing filtered what it rejects or
+ * doubts ("possivelmente Auditoria").
+ */
 function findNamedOption({
   options,
-  texts,
+  read,
+  typed,
 }: {
   options: readonly Option[];
-  texts: readonly string[];
+  read: readonly string[];
+  typed: readonly string[];
 }): string | null {
-  const said = texts.map((text) => toPhrase(text));
-  const named = options.filter((option) => said.some((text) => saysOption({ option, said: text })));
+  const readPhrases = read.map((text) => toPhrase(text));
+  const typedPhrases = typed.map((text) => toPhrase(text));
+
+  const named = options.filter(
+    (option) =>
+      readPhrases.some((said) => saysOption({ option, said })) ||
+      typedPhrases.some((said) => namesOption({ option, said })),
+  );
 
   return named.length === 1 ? (named[0]?.name ?? null) : null;
 }
 
 /**
  * Only what the learner stated as theirs: the goal's own words can name an option for another
- * goal or with doubt, which the goal reading leaves out of the position it records.
+ * goal or with doubt, which the goal reading leaves out of the position it records. The position
+ * is the reading's while it still holds the value the reading wrote; a target answer or an edit
+ * on the understood screen replaces it with the learner's own typing.
  */
-function readStatedTexts(details: Record<string, unknown>): string[] {
+function readStatedTexts(details: Record<string, unknown>): { read: string[]; typed: string[] } {
   const followUps: unknown[] = Array.isArray(details.followUps) ? details.followUps : [];
+  const position = typeof details.targetPosition === "string" ? details.targetPosition : null;
+  const fromReading = position !== null && position === details.positionFromReading;
 
-  return [
-    details.targetPosition,
-    details.targetNote,
-    ...followUps.map((item) => (isJsonObject(item) ? item.answer : null)),
-  ].filter((text): text is string => typeof text === "string");
+  return {
+    read: fromReading ? [position] : [],
+    typed: [
+      fromReading ? null : position,
+      details.targetNote,
+      ...followUps.map((item) => (isJsonObject(item) ? item.answer : null)),
+    ].filter((text): text is string => typeof text === "string"),
+  };
 }
 
 /**
@@ -66,14 +92,14 @@ export function findNamedChoices({
     return [];
   }
 
-  const texts = readStatedTexts(details);
+  const { read, typed } = readStatedTexts(details);
 
   return listChoiceGroups(structure.subjects).flatMap((group) => {
     const isPicked = choices.some(
       (choice) => choice.group === group.name && findChoiceOption({ choice, structure }),
     );
 
-    const subject = isPicked ? null : findNamedOption({ options: group.options, texts });
+    const subject = isPicked ? null : findNamedOption({ options: group.options, read, typed });
     return subject ? [{ group: group.name, subject }] : [];
   });
 }
