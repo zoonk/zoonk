@@ -1,4 +1,5 @@
 import "server-only";
+import { setTimeout as wait } from "node:timers/promises";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
@@ -58,12 +59,6 @@ async function claimHandIn({
     : null;
 }
 
-async function waitForClaim() {
-  await new Promise((resolve) => {
-    setTimeout(resolve, CLAIM_POLL_MS);
-  });
-}
-
 /**
  * One request grades a hand-in; duplicates wait for its result without holding a database
  * connection. A failed finish may commit some answers; retrying records only the remaining ones.
@@ -97,7 +92,7 @@ export async function endMock({
   const claimed = await claimHandIn({ conditions, current, mock });
 
   if (!claimed) {
-    await waitForClaim();
+    await wait(CLAIM_POLL_MS);
     return endMock({ conditions, mock, owned, timeZone });
   }
 
