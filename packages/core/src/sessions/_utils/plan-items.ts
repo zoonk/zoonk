@@ -1,4 +1,4 @@
-import { type TransactionClient } from "@zoonk/db";
+import { type StudySessionBlock, type TransactionClient } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { after } from "next/server";
 import { trackLessonCanDos } from "../../language/units/can-do-events";
@@ -56,6 +56,23 @@ export async function completePlanItem(
   });
 
   await reduceCompletedPlans(tx, { checked, userId });
+}
+
+/** A review day's practice comes in several blocks: its plan item is done once none is left to do. */
+export async function isPlanItemFinished(
+  tx: TransactionClient,
+  { block, planItemId }: { block: Pick<StudySessionBlock, "id" | "sessionId">; planItemId: string },
+): Promise<boolean> {
+  const left = await tx.studySessionBlock.count({
+    where: {
+      id: { not: block.id },
+      payload: { equals: planItemId, path: ["planItemId"] },
+      sessionId: block.sessionId,
+      status: { in: ["active", "pending"] },
+    },
+  });
+
+  return left === 0;
 }
 
 /** A lost phase challenge retries on the local day after localDate, not later the same day. */

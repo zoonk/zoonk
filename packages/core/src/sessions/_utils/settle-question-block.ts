@@ -22,7 +22,7 @@ import { countAskableQuestions } from "./askable-questions";
 import { getBlockEvents } from "./block-events";
 import { getBlockElapsedMs, pausedBlockTiming } from "./block-timing";
 import { loadBlockSkillStates } from "./load-block-skill-states";
-import { completePlanItem, moveLostCheckpoint } from "./plan-items";
+import { completePlanItem, isPlanItemFinished, moveLostCheckpoint } from "./plan-items";
 import { type SessionAnswer, getBlockAnswers, loadSessionAnswers } from "./session-answers";
 import { trackBlockCompleted } from "./session-events";
 import { type ProgressChange, applySessionProgress } from "./session-progress";
@@ -312,9 +312,11 @@ export async function settleQuestionBlock(input: SettleInput): Promise<SettleQue
       if (payload.planItemId) {
         const item = { planItemId: payload.planItemId, userId };
 
-        await (done
-          ? completePlanItem(tx, { ...item, now: lock.completedAt })
-          : moveLostCheckpoint(tx, { ...item, localDate: session.localDate }));
+        if (!done) {
+          await moveLostCheckpoint(tx, { ...item, localDate: session.localDate });
+        } else if (await isPlanItemFinished(tx, { block, ...item })) {
+          await completePlanItem(tx, { ...item, now: lock.completedAt });
+        }
       }
 
       return {
