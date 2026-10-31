@@ -117,8 +117,8 @@ struct BuddyGoalStart: View {
           comment: "An example goal: France's school-leaving exam")
       case "es":
         String(
-          localized: "Pass the PAU", table: "Buddy",
-          comment: "An example goal: Spain's university entrance exam")
+          localized: "Pass the EXANI-II", table: "Buddy",
+          comment: "An example goal: Mexico's university admission exam")
       default:
         String(
           localized: "Pass the SAT", table: "Buddy",

@@ -6412,60 +6412,60 @@
         }
       }
     },
-    "Pass the PAU" : {
+    "Pass the EXANI-II" : {
       "comment" : "An example goal",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Abitur bestehen"
+            "value" : "Abitur bestehen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aprobar la PAU"
+            "value" : "Aprobar el EXANI-II"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réussir la PAU"
+            "value" : "Réussir le bac"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passar no vestibular"
+            "value" : "Passar no Enem"
           }
         }
       }
     },
-    "pass the PAU, speak %@…" : {
+    "pass the EXANI-II, speak %@…" : {
       "comment" : "Example goal in the empty goal box; the language is one the learner could speak",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "das Abitur bestehen, %@ sprechen…"
+            "value" : "Abitur bestehen, %@ sprechen…"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "aprobar la PAU, hablar %@…"
+            "value" : "aprobar el EXANI-II, hablar %@…"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "réussir la PAU, parler %@…"
+            "value" : "réussir le bac, parler %@…"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "passar no vestibular, falar %@…"
+            "value" : "passar no Enem, falar %@…"
           }
         }
       }

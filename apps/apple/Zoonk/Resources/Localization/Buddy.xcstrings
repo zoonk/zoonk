@@ -1591,31 +1591,31 @@
         }
       }
     },
-    "Pass the PAU" : {
-      "comment" : "An example goal: Spain's university entrance exam",
+    "Pass the EXANI-II" : {
+      "comment" : "An example goal: Mexico's university admission exam",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die PAU bestehen"
+            "value" : "Abitur bestehen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aprobar la PAU"
+            "value" : "Aprobar el EXANI-II"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réussir la PAU"
+            "value" : "Réussir le bac"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passar no vestibular"
+            "value" : "Passar no Enem"
           }
         }
       }

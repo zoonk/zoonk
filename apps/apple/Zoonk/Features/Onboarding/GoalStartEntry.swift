@@ -212,9 +212,9 @@ struct GoalEntrySections<Attachment: View>: View {
       LocalizedStringResource(
         "pass the ENEM, speak \(language)…", table: "Onboarding",
         comment: "Example goal in the empty goal box; the language is one the learner could speak")
-    case .pau:
+    case .exani:
       LocalizedStringResource(
-        "pass the PAU, speak \(language)…", table: "Onboarding",
+        "pass the EXANI-II, speak \(language)…", table: "Onboarding",
         comment: "Example goal in the empty goal box; the language is one the learner could speak")
     case .sat:
       LocalizedStringResource(
@@ -232,8 +232,9 @@ struct GoalEntrySections<Attachment: View>: View {
         LocalizedStringResource("Pass the bac", table: "Onboarding", comment: "An example goal")
       case .enem:
         LocalizedStringResource("Pass the ENEM", table: "Onboarding", comment: "An example goal")
-      case .pau:
-        LocalizedStringResource("Pass the PAU", table: "Onboarding", comment: "An example goal")
+      case .exani:
+        LocalizedStringResource(
+          "Pass the EXANI-II", table: "Onboarding", comment: "An example goal")
       case .sat:
         LocalizedStringResource("Pass the SAT", table: "Onboarding", comment: "An example goal")
       }
@@ -279,13 +280,13 @@ struct GoalEntrySections<Attachment: View>: View {
 /// Mirrors main's `useLocalGoalExample`.
 private enum LocalExample {
   enum Exam {
-    case abitur, bac, enem, pau, sat
+    case abitur, bac, enem, exani, sat
   }
 
   static var exam: Exam {
     switch Locale.current.language.languageCode?.identifier {
     case "de": .abitur
-    case "es": .pau
+    case "es": .exani
     case "fr": .bac
     case "pt": .enem
     default: .sat
