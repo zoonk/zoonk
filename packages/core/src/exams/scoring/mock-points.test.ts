@@ -532,7 +532,7 @@ describe("mocks that judge nothing", () => {
 });
 
 describe("incomplete notice evidence", () => {
-  it("keeps unknown objective answers in the score without judging the total", () => {
+  it("judges an unlisted paper when all subject counts are known", () => {
     const structure = examStructure({
       scoring: {
         parts: [part("P1", { maxPoints: 40 })],
@@ -560,8 +560,8 @@ describe("incomplete notice evidence", () => {
     });
 
     expect(result.earned).toBe(80);
-    expect(result.met).toBeNull();
-    expect(result.unjudged).toContainEqual({ minimum: { unit: "points", value: 50 }, name: null });
+    expect(result).toMatchObject({ max: 80, met: true });
+    expect(result.unjudged).toStrictEqual([]);
   });
 
   it("does not judge an unknown-length paper", () => {

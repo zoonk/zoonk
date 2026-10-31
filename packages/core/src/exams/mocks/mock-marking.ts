@@ -1,12 +1,13 @@
 import { type ItemFormat } from "@zoonk/db";
 import { apportion } from "@zoonk/utils/apportion";
 import { type ExamStructure, type MarkingRow } from "../../library/exams/blueprint-contract";
+import { getMarkingPenalty } from "../../library/exams/marking-penalty";
 import {
   getPartMaxPoints,
   getPartPointsPerQuestion,
   getPointsPerQuestion,
 } from "../../library/exams/part-points";
-import { getMarkingPenalty } from "../../library/exams/marking-penalty";
+import { listCountedSubjects } from "../choices/exam-choices";
 import { getWrongPenalty } from "../scoring/mock-scoring";
 import { getChoiceFormatKey } from "./mock-format-mix";
 import { findAreaSubject } from "./mock-options";
@@ -266,20 +267,36 @@ function toMockMarking({
           .flatMap((subject) => {
             const name = findPart({ parts, subject });
 
-            return name &&
-              !isWrittenSubject({ structure, subject }) &&
-              !parts.some((part) => part.name === name)
-              ? [
-                  {
-                    maxPoints: null,
-                    minimum: null,
-                    name,
-                    objective: true,
-                    qualifying: false,
-                    questions: null,
-                  },
-                ]
-              : [];
+            if (
+              !name ||
+              isWrittenSubject({ structure, subject }) ||
+              parts.some((part) => part.name === name)
+            ) {
+              return [];
+            }
+
+            const subjects = structure.subjects.filter(
+              (item) =>
+                findPart({ parts, subject: item }) === name &&
+                !isWrittenSubject({ structure, subject: item }),
+            );
+
+            const places = listCountedSubjects(subjects);
+
+            const questions = places.every((item) => item.questions !== null)
+              ? places.reduce((sum, item) => sum + (item.questions ?? 0), 0)
+              : null;
+
+            const part = {
+              maxPoints: null,
+              minimum: null,
+              name,
+              objective: true,
+              qualifying: false,
+              questions,
+            };
+
+            return [{ ...part, maxPoints: getPartMaxPoints({ marking: rows, part }) }];
           })
           .filter(
             (part, index, all) => all.findIndex((other) => other.name === part.name) === index,
