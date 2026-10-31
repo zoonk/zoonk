@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "explain_coming": "e26049e0f0bb0d2d9bf703d58b0fc95d5824ff9e20efe0be6674c96bfc43674f",
+  "explain_deeper": "1b003d890fc289df1c5c8ad261f85c2d5817c6c7864eeb8a25f8d61557aada8c",
+  "explain_deeper_course": "b33fb80e582703aa59fc3658b9a01021c955e79340b18b82413c62c24243eb12",
+  "explain_deeper_goal": "196df9c8fae85701ec6c6f5a83c0b2b05fa4dc368a98873b63c2cfdd5ecb985b",
+  "explain_deeper_subject": "e6072770fd6dd4a7b93e689ec4a636aba983986204575d20cbdd33e24d0ef63a",
+  "explain_go_further": "afe10189151611b49b01ce37ef175c18d4774a1c868f90c964380cde40285b4c",
+  "explain_load_failed": "098ff114d603ee52b89d6a356296c018dace1eaa28b4770a7cea666850ca2600",
+  "explain_no_plan": "2fb4915501779570d04f608779a2ffa5e7b24cdc0152b116db0460b76be9cf0e",
+  "explain_now_you_know": "a9a0a70e21829a865d960946cff18d828fafe8648a278d104cdb543b5e817a90",
+  "explain_one_question": "2bea9e94a8fca5dc36ccab19dacd8b768bc26c29f34c7e54c72407f5031fdb3d",
+  "explain_phase_find": "18ee444973fe002f0eb47b190f09b5013d57203c0cf72382b84c64a2e7d92d3d",
+  "explain_phase_find_line": "bfc4a34158060294c065cc56c523fac2cfc5f7a2215cc5af61aee3bb76b1e66c",
+  "explain_phase_read": "c5bc697346a12619c48975463d2083e79e53f9f153ada3659ed68656677cbdec",
+  "explain_phase_read_line": "b2f9c1895c6968d43bf6e643884bc02d0081a0521264541673f20b08bc2273fa",
+  "explain_phase_write": "cc1c3225bf6bb1a4ee697d469a1e0162c17e25371b516e1e1aff685ee595110e",
+  "explain_phase_write_line": "6eb3bffa117641ad49e85852c8af939cc120ceb126e435a92089ebd6c0f76b87",
+  "explain_phase_write_review": "1e8ef8321170b98243112013412168b965aa20e8fbd88b370dfd9fdcedcb12a0",
+  "explain_quick": "8128986f2e2210618a8e0f834de5b125f3989c769a3e43e8ae8daa2b9acae9ee",
+  "explain_recap": "2f168968c9e8eb61fe05de4cd043c32b7a57aed50194f8e3fc09276e492682be",
+  "explain_see": "800adbe6c71e9b8dd0c331a76cd7eb8485309db660ff923052518d2ef5f12b48",
+  "explain_slow": "8ca32fbbfd8ea85598da2671b29287956db8606e9b351a4b35520ab1a87ffe1a",
+  "explain_still_writing": "6855f2d54d9200ec66fdaabef1a39b0ba42242e684e46d751d235663060cd298",
+  "explain_try_again": "3f67b89d4efd2eefa51fe8a6cc6fee283eb45b8503c84db1e969e288ab4bf68e",
+  "explain_writing": "ec4bf19da90fac5c0d21b26b2278f91f40c95a993d0efad37f7a373d7f10d056"
+}
+-->
+<resources>
+    <string name="explain_writing">Przygotowujemy wyjaśnienie dla ciebie</string>
+    <string name="explain_phase_read">Czytamy twoje pytanie</string>
+    <string name="explain_phase_read_line">Czytamy twoje pytanie…</string>
+    <string name="explain_phase_find">Sprawdzamy, czy ktoś już o to pytał</string>
+    <string name="explain_phase_find_line">Szukamy pasującego wyjaśnienia…</string>
+    <string name="explain_phase_write">Przygotowujemy krótkie treści na około 5 ekranów</string>
+    <string name="explain_phase_write_line">Przygotowujemy ekran %1$d…</string>
+    <string name="explain_phase_write_review">Sprawdzamy fakty…</string>
+    <!-- Eyebrow over a quick explanation's title: %1$s is how long it takes, such as "5 min". -->
+    <string name="explain_quick">Krótkie wyjaśnienie · %1$s</string>
+    <string name="explain_no_plan">Nie musisz układać planu.</string>
+    <string name="explain_coming">Co cię czeka</string>
+    <string name="explain_one_question">1 krótkie pytanie na koniec</string>
+    <string name="explain_deeper">Zgłęb ten temat</string>
+    <!-- %1$s is a course's title. -->
+    <string name="explain_deeper_course">Ułóż plan nauki: %1$s</string>
+    <string name="explain_deeper_subject">Ułóż plan nauki całego przedmiotu</string>
+    <!-- A goal typed for the learner from the explanation's topic, which %1$s is, mid-sentence. -->
+    <string name="explain_deeper_goal">Chcę dogłębnie zrozumieć temat: %1$s</string>
+    <string name="explain_slow">To trwa dłużej niż zwykle.</string>
+    <string name="explain_still_writing">Nadal przygotowujemy wyjaśnienie. Pojawi się tutaj, gdy tylko będzie gotowe.</string>
+    <string name="explain_try_again">Spróbuj ponownie</string>
+    <string name="explain_see">Zobacz wyjaśnienie</string>
+    <string name="explain_load_failed">Nie udało nam się wczytać tego wyjaśnienia</string>
+    <string name="explain_now_you_know">Teraz już wiesz</string>
+    <plurals name="explain_recap">
+        <item quantity="one">W %1$s zdaniu</item>
+        <item quantity="few">W %1$s zdaniach</item>
+        <item quantity="many">W %1$s zdaniach</item>
+        <item quantity="other">W %1$s zdaniach</item>
+    </plurals>
+    <string name="explain_go_further">Chcesz dowiedzieć się więcej?</string>
+</resources>

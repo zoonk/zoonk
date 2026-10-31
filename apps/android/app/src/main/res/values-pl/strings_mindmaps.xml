@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mindmaps_alt": "fea4aa8dc4042f8ac10092daf77ca31fb20d19ad430b95e5f0b61fc06b5c1e2a",
+  "mindmaps_alt_chapter": "6f38c55d06f1c416973a3bd9e4bc35e2795c2bbfb74be23be8192093512a40c0",
+  "mindmaps_alt_sentence": "36d46f32eef48247e35f8d7aaa2e7d6cbc9d3931476a38175a216611c81331df",
+  "mindmaps_as_text": "1d92eee63774100f80ea61371b7c43800ec9f0a15f1e3fa57e33b681c26d5b66",
+  "mindmaps_as_text_note": "192dab3a88513934a02d51658e62c195d1fe68d71be3c9ac2c88353a213e7ec4",
+  "mindmaps_card_create": "40e885ede1139189f2d87d4beae1b82eb9a1461c71d47c34eccdf0605e50cc39",
+  "mindmaps_card_description": "c2040d17e4bd1f0337b3b3f49fc007ed994860db79f35fa4f9a5ea17e19ba17d",
+  "mindmaps_card_failed": "818abb27fec24be590b61ee050e2f8f9673877f6ddc2a044500d1d5bfbc59a68",
+  "mindmaps_card_generating": "2c6ba5f10783f1c9c8927a426b20806eeec5415e968665a1f4f2f49156ce3f32",
+  "mindmaps_card_generating_title": "7d3dc3c9559afdcde39d86fd5aeea10857212bd4e323df988dc0882647e9eeb8",
+  "mindmaps_card_title": "3b2315ca20e7918568fb6c33c1bfc2450c1ed59a61502284a9923908aefa14d1",
+  "mindmaps_card_unreachable": "7d237ad59d10795f7eb8fa03474bb0474eade4248e32f7d00d3ecb1638912d2e",
+  "mindmaps_chapter_count": "ea4643ee4b1157c3c4dfbb5289dbddc58bc39ddcb2b79342e6eaf004d32a56fc",
+  "mindmaps_chapter_number": "e84ccc4b88f24a70f4922ef06cd482fdbecbdb2fb277de969cde64c7fdd7b6b9",
+  "mindmaps_chapters_finished": "bdebeae0d0ee02a4e23035bcff0fd4ef87da55cc4d1cf245d6b655ccfe4cb4b8",
+  "mindmaps_continue": "7fded0e88c83a9ff8051bca3048b7596950e26f2e311f55c618887dc1740049e",
+  "mindmaps_count": "59489addd95336b7c5d410403f05490fb3e4cb3db204fc2a7cad088203bee430",
+  "mindmaps_create": "fcd7663d7e4bea0c517a4b72a630703cfdf4084f98507358f24e957c62829252",
+  "mindmaps_create_spoken": "7a8499c380462bddf7083a49f827093c44e66cd5599dc76cefc9f5d3326f3fef",
+  "mindmaps_download": "5bd9a949981450555e4da48bd7d5eb083b6b188467b31bddef39765bace4f6c0",
+  "mindmaps_drawing": "7ce669e8a315b19b756dab4281566c0f6eb0be3e160589df7ee913aa07323804",
+  "mindmaps_empty_description": "049a9c56d1bf2fd7abf74358c18fae5d18410108827923e213d0cadc55ce582b",
+  "mindmaps_empty_title": "4e6c43ae16e5a68ffc21168a23041b5eae8a2e68db13bb28caae8da4541a9710",
+  "mindmaps_failed_short": "ed5ab1432ec4d34d0a80630a0e9b6bab20201b02993813f86e4c2150da14a5d9",
+  "mindmaps_first_after": "1cc070dd386aa6305a86744119c1a422b3538904592eed1cf892f3097a66e07c",
+  "mindmaps_fit": "9bafcd2ee6f025fc1bc83c1def2764565640c2141003976cd91abff8206150b4",
+  "mindmaps_full_screen": "eaf2446e8d586ce4d7067b4f20aecd2e13b1d984e91900844179a8dec60861d0",
+  "mindmaps_in_short": "77b7d51daf54a6ee521a51bf712796780911ef3cbbdc0fa3a0a918b53059eef5",
+  "mindmaps_keep_studying": "712c8abc59dd244cad48a712f02314b0730c6c0cdded693ea87f9141c2c511b6",
+  "mindmaps_save_failed": "9cb169de24a54ebaaf05ee0183dfcb6b806a81d5be7994a182cda13220910b82",
+  "mindmaps_saved": "0b1651086bee40a6c62d45612f314495430124043b40184601d3c32b93ea69c0",
+  "mindmaps_try_again": "f13c7c35f5b1e59c239e589eec7184dc0d33af9935aed511e0dd498acb255a0d",
+  "mindmaps_try_again_spoken": "60c00845f54cd05ff67ee988b3a30642b1d4c2ff566b550f4779abb718674016",
+  "mindmaps_unreachable_short": "be5829ba009400d5e9d8c707ffd7d4f83b0fc3372893072b45b208715f32f040",
+  "mindmaps_viewer_hint": "9a1e1246f28101eb3253dc72ae3086a8d721c3587f122b3c7700ee730e27b4bf",
+  "mindmaps_zoom_in": "0ff28964e4b8342ab0e4856882036ead53bec2c341cf4d1b2bbd45dca526c988",
+  "mindmaps_zoom_out": "ab76d488222d17d13f238e1a3f8b39d7c42db2b3881dcf04e51bee8141eeb1a5"
+}
+-->
+<resources>
+    <!-- How many of the goal's mind maps are drawn: "3 maps". -->
+    <plurals name="mindmaps_count">
+        <item quantity="one">%1$s mapa</item>
+        <item quantity="few">%1$s mapy</item>
+        <item quantity="many">%1$s map</item>
+        <item quantity="other">%1$s map</item>
+    </plurals>
+    <!-- The group of mind maps when the goal's chapters have no subjects. -->
+    <string name="mindmaps_chapters_finished">Ukończone rozdziały</string>
+    <plurals name="mindmaps_chapter_count">
+        <item quantity="one">%d rozdział</item>
+        <item quantity="few">%d rozdziały</item>
+        <item quantity="many">%d rozdziałów</item>
+        <item quantity="other">%d rozdziałów</item>
+    </plurals>
+    <!-- A mind map tile's caption over the chapter's title. -->
+    <string name="mindmaps_chapter_number">Rozdział %1$s</string>
+    <string name="mindmaps_empty_title">Nie masz jeszcze map myśli</string>
+    <string name="mindmaps_empty_description">Ukończ rozdział, by powstała jego mapa myśli: najważniejsze treści na jednym obrazku.</string>
+    <!-- %1$s is the chapter the learner is in, %2$d the lessons left in it. -->
+    <plurals name="mindmaps_first_after">
+        <item quantity="one">Pierwsza mapa pojawi się po tym rozdziale: %1$s. Została %2$d lekcja.</item>
+        <item quantity="few">Pierwsza mapa pojawi się po tym rozdziale: %1$s. Zostały %2$d lekcje.</item>
+        <item quantity="many">Pierwsza mapa pojawi się po tym rozdziale: %1$s. Zostało %2$d lekcji.</item>
+        <item quantity="other">Pierwsza mapa pojawi się po tym rozdziale: %1$s. Zostało %2$d lekcji.</item>
+    </plurals>
+    <!-- Opens the chapter whose map comes next. -->
+    <string name="mindmaps_continue">Kontynuuj</string>
+    <string name="mindmaps_keep_studying">Ucz się dalej</string>
+    <!-- A mind map's description for screen readers when it has no words yet. -->
+    <string name="mindmaps_alt_chapter">Mapa myśli: %1$s</string>
+    <!-- A mind map's description for screen readers: its title, then its central idea. -->
+    <string name="mindmaps_alt">Mapa myśli: %1$s. %2$s</string>
+    <!-- The same, for a title that already ends a sentence. -->
+    <string name="mindmaps_alt_sentence">Mapa myśli: %1$s %2$s</string>
+    <!-- A tile for a map whose picture had mistakes, shown in words instead. -->
+    <string name="mindmaps_as_text">W formie tekstu</string>
+    <string name="mindmaps_drawing">Rysujemy…</string>
+    <!-- Makes a chapter's mind map. -->
+    <string name="mindmaps_create">Utwórz</string>
+    <string name="mindmaps_try_again">Spróbuj ponownie</string>
+    <!-- What screen readers say for a tile's Create, naming its chapter. -->
+    <string name="mindmaps_create_spoken">Utwórz mapę myśli: %1$s</string>
+    <!-- What screen readers say for a tile's Try again, naming its chapter. -->
+    <string name="mindmaps_try_again_spoken">Spróbuj ponownie utworzyć mapę myśli: %1$s</string>
+    <string name="mindmaps_failed_short">Tym razem nie udało się jej utworzyć.</string>
+    <string name="mindmaps_unreachable_short">Nie udało nam się połączyć z serwerem.</string>
+    <string name="mindmaps_card_title">Mapa myśli</string>
+    <string name="mindmaps_card_description">Najważniejsze treści rozdziału na jednym obrazku, do szybkiej powtórki.</string>
+    <string name="mindmaps_card_create">Utwórz mapę myśli</string>
+    <string name="mindmaps_card_generating_title">Rysujemy mapę myśli…</string>
+    <string name="mindmaps_card_generating">To zajmuje około pół minuty. Możesz opuścić tę stronę; mapa będzie tu na ciebie czekać.</string>
+    <string name="mindmaps_card_failed">Tym razem nie udało się utworzyć mapy myśli.</string>
+    <string name="mindmaps_card_unreachable">Nie udało nam się połączyć z serwerem. Sprawdź połączenie z internetem.</string>
+    <string name="mindmaps_as_text_note">Na obrazku były błędy, więc pokazujemy mapę myśli w formie tekstu.</string>
+    <string name="mindmaps_full_screen">Otwórz na pełnym ekranie</string>
+    <!-- Saves the mind map's picture. -->
+    <string name="mindmaps_download">Pobierz</string>
+    <string name="mindmaps_saved">Zapisano mapę myśli</string>
+    <string name="mindmaps_save_failed">Nie udało się zapisać mapy myśli. Spróbuj ponownie.</string>
+    <!-- Starts the one-line gist at the end of a mind map in words. -->
+    <string name="mindmaps_in_short">W skrócie:</string>
+    <string name="mindmaps_zoom_in">Powiększ</string>
+    <string name="mindmaps_zoom_out">Pomniejsz</string>
+    <string name="mindmaps_fit">Dopasuj do ekranu</string>
+    <string name="mindmaps_viewer_hint">Zsuń lub rozsuń palce, przewiń albo użyj + i -, by zmienić powiększenie; przeciągnij mapę lub użyj strzałek, by ją przesunąć.</string>
+</resources>

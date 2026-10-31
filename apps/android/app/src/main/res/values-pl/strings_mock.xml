@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mock_answer_sheet": "37d669c65244bc892ce4f87d688d0b37f8d6188d9e636d497fca922040dd58aa",
+  "mock_answered_count": "3ce1b3005e50b4c39b3a9f06cf4cbc99b444cce55c0650a2c364a2d256544bf3",
+  "mock_answers_saved": "a72134f323732c4b558a3a6ba756139e0529ee3985e0fa40afd8be85e64bb6d8",
+  "mock_break": "36edd23ebe46593b7ac03223c03a0dacabbe842c43876c6ffbd71e2bf5edf629",
+  "mock_break_detail": "54c28ede2472defcce1ffe60e752abb0adb118908147837f3384d8f2061e9484",
+  "mock_break_time_left": "4b08d9fdb17cd82510a2d45e540379314c39d2baba39acd02a540ab1bf71ae37",
+  "mock_cell_answered": "f0ca2d3657366e5906ef6e99479b9bc46899b9a5dd9293d0650da985e685d48e",
+  "mock_cell_flagged": "b85b77ebb50cd1d826dae4210b9c0d462cfefec8aa45ecce2a4d96f315be36a3",
+  "mock_continue": "e2064367195e94d1b392b9a0156b8f17dbae71123d1770b8aa75d1739973d67d",
+  "mock_continue_section": "973f7cae7364368a9e56e5ebf83629345fa5fee7b58d5fbc2da67b66307e2655",
+  "mock_essay_blank": "16c1fb57a4e8e1e27c0c000a01eea209c2983ba5c129c7e49fc20c9ed2caaf19",
+  "mock_essays_blank": "76029146367982858b53385c6d75baad1586ce88338637971bfa40aced672063",
+  "mock_every_answered": "261a0d4189c141a69e2ed1e378a5b0a4e2ba190e10df9e3ec6895b732f95eb73",
+  "mock_expired_detail": "e86fdd2a0eff7297b3c3f2ba5e854d4eefb57f5a6a6a9d1d27367c4168a930ea",
+  "mock_expired_title": "e07ec3207d714329967cd76cf88daf020148c0789ea894cd027d2c2d2874c37b",
+  "mock_flag": "b218d92fa4c803e9890892843b926927d937a5c796fb21ce502745c2ab9cccec",
+  "mock_flagged_count": "c64cf530531238547012bb52968a2da3ecb7596eb6ba823592704847ce779bb1",
+  "mock_full_day": "4b2b71f6c1cb2d21036ef79d504b95243d5185f6bd8d9ef0b2414f3e0265072d",
+  "mock_full_day_number": "6dbac290e4d256a5f86d7b46a6e2e8c79d460cfcabe6d1f3041f165cbbbf8fda",
+  "mock_go_to_today": "d667f2b51c4d86b7b5e471f5938843455dfe6e123703a6b05ce8b84b6a5add0c",
+  "mock_grading": "0c11436e0e0fcba31735f61ba7d6f504764fc144ffb342b674e1e60b78c776cf",
+  "mock_half_day": "23649151df7a331b280694d109c49e3267c824a9006a3294326bd9056bffda4e",
+  "mock_half_day_number": "4563f95aafd9ffd3026a2aea065038618d60b21d031ef95570f64fe37520335b",
+  "mock_hand_in": "383cd9ceb6d5d6b91af121f00065916e58a969d4ecdbfc808816ff9be73e83eb",
+  "mock_hand_in_final": "b69b690f58f01043377b3acb0a0a7503fe4b75b164a59aba500008171bfc9b6d",
+  "mock_hand_in_mock": "621dd865349f1a9b7fc9b619151e553fbae43d01adb9ee2c7350f343b4678cae",
+  "mock_hand_in_mock_title": "a9a6c87e8d8211e3bfb979f1e6f7d53946a08932c29d15088be8b0edf6286fdd",
+  "mock_hand_in_section": "8cc46e089fcdeeb67cf826fe88253eff7195214a2bb2a94a550f96c8686f33f8",
+  "mock_hand_in_section_title": "5cd0ecd39995acf03848650f223bd4e4bf1c45c6c07c5f09ce0746dc81f4d9f8",
+  "mock_handed_in": "fc240141bd2af39789b463eb282c8f045a7313fe51247d9dbe26687ad49b903e",
+  "mock_handed_in_title": "e1e2e99dfcf1dbd0f37e76cf30ac39d798836a4d911afaa79e03f7f1df64762c",
+  "mock_handing_in": "7a6df7750e8adcafc7086fd00ec77395f7b507debc106a203319e38a9952901a",
+  "mock_keep_answering": "ce9bac9f31a5c3be3277b6d9f2cf859731a0d26843e29469857c06da9bfbd3f1",
+  "mock_keep_going": "5de3e8d8b2cff4243c9a63094a70f7cd24b2ffd90ce07053ffd6cb06f6940daa",
+  "mock_label": "d1ba71945b457343743bc0e04200f74648fef518e534855ed276652111ccb4a4",
+  "mock_label_shape": "a727ea4c5e978c01dfc0085e7fa49b922de1bc555ac2a972e3e4b40cb8abc44a",
+  "mock_last_not_saved": "0f4c89f93fa17d922fcd16693229cc717cd128f2b61506de680921d8605d641e",
+  "mock_left_blank": "7ea161139a5bd53191cdcdcaf74e3c8b0d95759098cc5681125b2b3e10cc7b46",
+  "mock_left_blank_and_flagged": "f7a8cdbfb3381f4fb7805750f3878556c3e81f7567b9812c160d932fbf46416b",
+  "mock_left_blank_only": "57a917a2bf5757a50b22ef1b1a3ffd3ed16f2dbd3231a988f756d2434b3de535",
+  "mock_left_flagged": "fe9f06acce310af9cde66189e1086da1b3c790dd02bb013895a3cd39a70ec5be",
+  "mock_left_flagged_only": "3bc435f88f4f0e494308ad1bb412990419ba52dab5de551aea3153627b52022e",
+  "mock_legend": "71a6ce64df375db4b151be725ae93aedb93917ff28f7e28c89bd221c1ab175f7",
+  "mock_moves_forward": "b65cd634a9826ed08fa1e682db995a3a83d02b6e38fcaa4dca9316096de6a53b",
+  "mock_moves_forward_must": "7310517b3ce53cecc567124a4ce0e1d4cfb2ee2a41b539e141ba98ad9257e61c",
+  "mock_moves_must": "97ee1542015a3e659628e73406014d59d36f531eb2578d0d14e65066bfb0708b",
+  "mock_moves_review_any": "183dbf59f84adba4add83d9aa03f38621784f74afb1bcb38966ccc9914a3c9b1",
+  "mock_moves_review_changes": "8523b61fdfc54e5170182cf71922051d311267c2bda00f17bed19af05a16f0a2",
+  "mock_moves_review_none": "7ba20325fe6f80dd78d69ac227f39a455339135ef646bd589dcec3f64f41388f",
+  "mock_net_score": "d4ba2e1487e956bba39cbe34cf1e00833c7a480495397c90ee34c496ae0185cd",
+  "mock_next": "55199c3327ab2fe94df88252d10f525dd965ee3f4fa5744384df8cdc5d9c2f7f",
+  "mock_next_named": "df971af280fe32267112f97c21c590b0c35d8fcf8c6e628fcbcc704ef9aa28a2",
+  "mock_next_section": "89517ad4965e09b827e1f354464008cdee29149eecaa4667b9e33f91363b8503",
+  "mock_not_found_description": "e999aa9bf60ff7c85245fd06bd60e2db82482bf6c56ce83c4fef78de47c926eb",
+  "mock_not_found_title": "b9d8fc49a50667f4a8669de434dd0029e142f8f905af931c78ec783c786b4675",
+  "mock_not_saved_retrying": "f91d396fb8d18051cf66578684d6d6eb4aebc69523b1f12319ccd44181fca453",
+  "mock_place": "ff4722c9820bee57713c87e7af6c0dd977cbab69ab2826e7021e829a9ab9d278",
+  "mock_progress_label": "63b66069fb271fba4e4a0eedb6733ed4a4bebd0522b30e96f8e016ac5fbc83b0",
+  "mock_question_number": "0c163d8c70f660f9475520df4feab4e93263c713e5058348c3f62fd3bc98cc20",
+  "mock_question_place": "59521414e1c1cb0f83c934ad95da8090bf26ef7ad3028474e89d82e94732ad63",
+  "mock_question_place_area": "fe36f48895d97c8b85b69bef6aadec69ef916c24c7b2e332f81cd3998961a34b",
+  "mock_questions": "c2a7bf9779da93b4ec7b495fc4dd2e220464ff2596ed4ac96207b8fe96888389",
+  "mock_retry": "30da25d8bc126d84f49380af41efc0459b4a09ae3f3f75e463ebbeb7d9a04370",
+  "mock_reused": "7bebbf913cf5680bddb83ee943f6e769d2673afb8c59553a4b425ea0a43b9db6",
+  "mock_right_answers": "092e540f98eb045059104260eae064c8367d11611981305b37ff72659af95b21",
+  "mock_row_detail": "5dec8e5cfb87c97a35ef04a48edeb12eefe47066043117cf3a261c64c440b29f",
+  "mock_section_answered": "8a0d5d8f36c737a1dd5571416821ddcce18fb11c51220d8cf6c8b65888b6ef11",
+  "mock_section_number": "3927c9b6cec9f97e46e850f171127680e387c72f1c7ba6eba1072ccdacbb5373",
+  "mock_sections": "b432884c539056bb66f7bc31a1acfe16c681d86fac00b6a03c921d9ffb567240",
+  "mock_see_how": "61ae439ba050da951a88faac021544fb6409d151958c2c2badf2db0ad85a094a",
+  "mock_shape_of_questions": "af97c45fd7a7e7bc6aaafe9a56eef83ca60f4bb4ffd90a7837d46d30137a3894",
+  "mock_sheet": "64795ad9ca808ef7b7296f0b9ccab8fc0474d1c9bc0e7ea4f4872b96fd67dfef",
+  "mock_short": "6ec4a89d0a6c63e5e59ad5b32c171c5a72a3ad083e5b1220d8329e09565e2b08",
+  "mock_speaking": "85799a0ee3189076215ddab8d49033dd6a2a7c31c7ec777913be16dfc025b2b7",
+  "mock_speaking_all_done": "ea34832b2ba6386f9b3a00771cc31f22c258627e2fa6b698859092dc01011822",
+  "mock_speaking_done": "fdb52592ad6f98d57888e573655d02024e863cc671a1990926b3920ac35e8f7d",
+  "mock_speaking_hand_in_done": "32b54e4cbd1b487131d30555f63fcbc16b7b74e92370bcfb16918f5786945339",
+  "mock_speaking_hand_in_left": "91762762a4a4915cf6681b5384e3b29ec9af065bc7c490dc061dcd54d68ff300",
+  "mock_speaking_intro": "56c666163ccf78d7ff1a1f64f77dc8c21ca93d25def44fb9106ab28acb341053",
+  "mock_speaking_left": "43c874023fc88b6769540690dc4bce98de89cdfca6a7157fbed9097debc9474e",
+  "mock_speaking_start": "03dee79bd5178d68049e4c8e64717d165d0dc662c7f657e61ed9f4ef539b9710",
+  "mock_speaking_start_task": "63ef142f750249e910f50f056d5459fb43d7e40f46e4200225fb850c2d9d1c68",
+  "mock_speaking_start_task_number": "891ab3b81fb13438a06b770245bf5fd76d3f447072d3e33779999a4303fe0ff2",
+  "mock_speaking_task": "dc37adbe5ff245a7873de3eb1c2aa811e6478833145e749ef5043af1caa35b18",
+  "mock_speaking_writing": "a8a580f0d92a7d3639d8539c97d79457b57f6705e146b4ce3c2faa3300dbdc48",
+  "mock_start_next": "383a1c837bf45ab3ecd5a97d9bf931ce4e26b9d1e11c34a99559bff6d2c884f7",
+  "mock_starting_point": "a65ed0ba4e74e037329e031c75addf67f9cc3d83f0bc366ae606c9b7e8a5ecb7",
+  "mock_step_failed": "1d484730485cca19664817fb8f472544479a5528e04ffd174938c807f4026654",
+  "mock_step_failed_saved": "da2a8739b2b7a203370c5abd1cd25470e0974e4cc16c40a789f3f686149813be",
+  "mock_step_slow": "ef8913af33498a47437709d6dfee977ada69de3205c385a97a3c6b2f6a46fcd6",
+  "mock_take": "fcff274119601d616d11d487deaedf9390d60cfa8b120a6e195f9a03d57bfa3b",
+  "mock_take_new": "2462c7d4619d6fb30f7b76b38b17732f3074bf520d463e2883310162ab66e57e",
+  "mock_time_left_caption": "d707430c4fde1de1d0607fb39c45a52f046ab16ada53b3001db0506b6c4d9e85",
+  "mock_time_left_label": "062800f5626bef864274dcba2979f86b35294a6e6d5f395a5d94e623d6afcb59",
+  "mock_time_left_question": "5f0b67a249c423d11e5cf2b740fcb59fb15ce7f73cf25513f1b2c4646ae8f017",
+  "mock_time_up": "642ca76fe98188a2f39e3e5478f5c776a8cb269e43b88ef8330e9db4f4a34820",
+  "mock_title": "d774246727fe8e909c10cbbea407fcacc586d484c8061f3126607d91d724e87b",
+  "mock_words": "1d9d3c22f10d27d0c771f21a8dd4f8140daf039ccd35e27e4748379889dd711a",
+  "mock_written_part": "0f496cce0ce85beefb50cc21b9700a774139685f84d918b585e6872c26c21d06",
+  "mock_written_part_area": "f56b68c4b6c7021f13e3cf0635f9ddb3c5b1b4a85f58e40a02d9940d8c2651ca",
+  "mock_your_essay": "f3b2541f02e0bcb52782b2a069156e4b16b7c6862b01f1fa2e3ecd781cf88b6c"
+}
+-->
+<resources>
+    <string name="mock_title">Egzamin próbny %1$d</string>
+    <string name="mock_full_day">Cały dzień egzaminacyjny</string>
+    <string name="mock_half_day">Pół dnia egzaminacyjnego</string>
+    <string name="mock_full_day_number">Cały dzień egzaminacyjny, dzień %1$d</string>
+    <string name="mock_half_day_number">Pół dnia egzaminacyjnego, dzień %1$d</string>
+    <!-- A placement mock, the one that finds where the learner starts. -->
+    <string name="mock_starting_point">Punkt wyjścia</string>
+    <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
+    <string name="mock_net_score">Netto %1$s z %2$d</string>
+    <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60 right". -->
+    <plurals name="mock_right_answers">
+        <item quantity="one">%1$s z %2$d poprawnie</item>
+        <item quantity="few">%1$s z %2$d poprawnie</item>
+        <item quantity="many">%1$s z %2$d poprawnie</item>
+        <item quantity="other">%1$s z %2$d poprawnie</item>
+    </plurals>
+    <!-- %1$s is what the mock covered, such as "Mathematics"; it asked %2$d of the exam's %3$d questions. -->
+    <plurals name="mock_shape_of_questions">
+        <item quantity="one">%1$s, %2$d z %3$d pytań</item>
+        <item quantity="few">%1$s, %2$d z %3$d pytań</item>
+        <item quantity="many">%1$s, %2$d z %3$d pytań</item>
+        <item quantity="other">%1$s, %2$d z %3$d pytań</item>
+    </plurals>
+    <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
+    <string name="mock_row_detail">%1$s · %2$s</string>
+    <string name="mock_take">Podejdź do egzaminu próbnego</string>
+    <string name="mock_continue">Kontynuuj egzamin próbny</string>
+    <string name="mock_label">Egzamin próbny</string>
+    <!-- %1$s is what the mock covers, such as "Mathematics" or "A full exam day". -->
+    <string name="mock_label_shape">Egzamin próbny · %1$s</string>
+    <string name="mock_not_found_title">Nie udało się znaleźć tej strony</string>
+    <string name="mock_not_found_description">Link może być nieaktualny lub zawierać literówkę.</string>
+    <string name="mock_go_to_today">Przejdź do zakładki Dziś</string>
+    <!-- What screen readers call the section's countdown. -->
+    <string name="mock_time_left_label">Pozostały czas</string>
+    <!-- Under the section's countdown, such as "1:24:09". -->
+    <string name="mock_time_left_caption">pozostały czas</string>
+    <string name="mock_time_left_question">Czas pozostały na to pytanie</string>
+    <string name="mock_progress_label">Pytania z odpowiedzią w tej części</string>
+    <!-- Where the learner is among a section's questions: "12 of 45". -->
+    <string name="mock_place">%1$d z %2$d</string>
+    <string name="mock_written_part">Część pisemna</string>
+    <!-- %1$s is the essay's area, such as Portuguese. -->
+    <string name="mock_written_part_area">Część pisemna · %1$s</string>
+    <string name="mock_question_place">Pytanie %1$d z %2$d</string>
+    <!-- %3$s is the question's area, such as Mathematics. -->
+    <string name="mock_question_place_area">Pytanie %1$d z %2$d · %3$s</string>
+    <string name="mock_flag">Oznacz</string>
+    <string name="mock_next">Dalej</string>
+    <string name="mock_hand_in_mock">Oddaj egzamin próbny</string>
+    <string name="mock_hand_in_section">Oddaj tę część</string>
+    <string name="mock_handing_in">Oddajemy…</string>
+    <string name="mock_moves_review_any">Przegląd odpowiedzi: możesz wrócić do dowolnego pytania.</string>
+    <string name="mock_moves_review_none">Przegląd: nie możesz już zmienić żadnej odpowiedzi.</string>
+    <plurals name="mock_moves_review_changes">
+        <item quantity="one">Przegląd: możesz zmienić jeszcze %d odpowiedź.</item>
+        <item quantity="few">Przegląd: możesz zmienić jeszcze %d odpowiedzi.</item>
+        <item quantity="many">Przegląd: możesz zmienić jeszcze %d odpowiedzi.</item>
+        <item quantity="other">Przegląd: możesz zmienić jeszcze %d odpowiedzi.</item>
+    </plurals>
+    <string name="mock_moves_forward_must">Odpowiedz na każde pytanie, by przejść dalej. Nie możesz potem do niego wrócić.</string>
+    <string name="mock_moves_forward">Po przejściu dalej nie możesz już wrócić do pytania.</string>
+    <string name="mock_moves_must">Odpowiedz na każde pytanie, by przejść dalej.</string>
+    <string name="mock_hand_in_mock_title">Oddać egzamin próbny?</string>
+    <string name="mock_hand_in_section_title">Oddać tę część?</string>
+    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
+    <plurals name="mock_left_blank">
+        <item quantity="one">Na %d pytanie nie ma odpowiedzi</item>
+        <item quantity="few">Na %d pytania nie ma odpowiedzi</item>
+        <item quantity="many">Na %d pytań nie ma odpowiedzi</item>
+        <item quantity="other">Na %d pytań nie ma odpowiedzi</item>
+    </plurals>
+    <plurals name="mock_left_flagged">
+        <item quantity="one">%d jest oznaczone</item>
+        <item quantity="few">%d są oznaczone</item>
+        <item quantity="many">%d jest oznaczonych</item>
+        <item quantity="other">%d jest oznaczonych</item>
+    </plurals>
+    <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
+    <string name="mock_left_blank_and_flagged">%1$s i %2$s.</string>
+    <plurals name="mock_left_blank_only">
+        <item quantity="one">Na %d pytanie nie ma odpowiedzi.</item>
+        <item quantity="few">Na %d pytania nie ma odpowiedzi.</item>
+        <item quantity="many">Na %d pytań nie ma odpowiedzi.</item>
+        <item quantity="other">Na %d pytań nie ma odpowiedzi.</item>
+    </plurals>
+    <plurals name="mock_left_flagged_only">
+        <item quantity="one">%d pytanie jest oznaczone.</item>
+        <item quantity="few">%d pytania są oznaczone.</item>
+        <item quantity="many">%d pytań jest oznaczonych.</item>
+        <item quantity="other">%d pytań jest oznaczonych.</item>
+    </plurals>
+    <string name="mock_every_answered">Na wszystkie pytania udzielono odpowiedzi.</string>
+    <string name="mock_essay_blank">Wypracowanie jest puste.</string>
+    <plurals name="mock_essays_blank">
+        <item quantity="one">%d wypracowanie jest puste.</item>
+        <item quantity="few">%d wypracowania są puste.</item>
+        <item quantity="many">%d wypracowań jest pustych.</item>
+        <item quantity="other">%d wypracowań jest pustych.</item>
+    </plurals>
+    <string name="mock_hand_in_final">Po oddaniu nie zmienisz już odpowiedzi.</string>
+    <string name="mock_keep_answering">Odpowiadaj dalej</string>
+    <string name="mock_hand_in">Oddaj</string>
+    <string name="mock_sheet">Arkusz</string>
+    <string name="mock_answer_sheet">Karta odpowiedzi</string>
+    <!-- Read with mock_flagged_count: "12 answered · 2 flagged". -->
+    <plurals name="mock_answered_count">
+        <item quantity="one">%d z odpowiedzią</item>
+        <item quantity="few">%d z odpowiedzią</item>
+        <item quantity="many">%d z odpowiedzią</item>
+        <item quantity="other">%d z odpowiedzią</item>
+    </plurals>
+    <plurals name="mock_flagged_count">
+        <item quantity="one">%d oznaczone pytanie</item>
+        <item quantity="few">%d oznaczone pytania</item>
+        <item quantity="many">%d oznaczonych pytań</item>
+        <item quantity="other">%d oznaczonego pytania</item>
+    </plurals>
+    <string name="mock_questions">Pytania</string>
+    <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
+    <string name="mock_question_number">Pytanie %1$d</string>
+    <string name="mock_cell_answered">udzielono odpowiedzi</string>
+    <string name="mock_cell_flagged">oznaczone</string>
+    <string name="mock_legend">oznaczone · dowiesz się, jak ci poszło, dopiero na końcu, jak na egzaminie</string>
+    <plurals name="mock_reused">
+        <item quantity="one">%d pytanie się powtarza.</item>
+        <item quantity="few">%d pytania się powtarzają, najpierw te, na które padły błędne odpowiedzi.</item>
+        <item quantity="many">%d pytań się powtarza, najpierw te, na które padły błędne odpowiedzi.</item>
+        <item quantity="other">%d pytania się powtarza, najpierw te, na które padły błędne odpowiedzi.</item>
+    </plurals>
+    <!-- %1$d is how many questions this mock asks, %2$d how many the real exam asks. -->
+    <plurals name="mock_short">
+        <item quantity="one">Ten egzamin próbny zawiera %1$d z %2$d pytań: na razie jest za mało nowych.</item>
+        <item quantity="few">Ten egzamin próbny zawiera %1$d z %2$d pytań: na razie jest za mało nowych.</item>
+        <item quantity="many">Ten egzamin próbny zawiera %1$d z %2$d pytań: na razie jest za mało nowych.</item>
+        <item quantity="other">Ten egzamin próbny zawiera %1$d z %2$d pytań: na razie jest za mało nowych.</item>
+    </plurals>
+    <string name="mock_sections">Części</string>
+    <string name="mock_section_number">Część %1$d</string>
+    <!-- A section's status in the list of the mock's sections. -->
+    <string name="mock_handed_in">Oddano</string>
+    <!-- A section's answered questions of all of them: "12/45". -->
+    <string name="mock_section_answered">%1$d/%2$d</string>
+    <string name="mock_not_saved_retrying">Jeszcze nie zapisano · próbujemy ponownie</string>
+    <string name="mock_retry">Spróbuj ponownie</string>
+    <string name="mock_last_not_saved">Nie zapisano twojej ostatniej odpowiedzi.</string>
+    <string name="mock_step_failed_saved">Nie udało się. Twoje odpowiedzi są zapisane. Spróbuj ponownie za chwilę.</string>
+    <string name="mock_step_failed">Nie udało się. Spróbuj ponownie za chwilę.</string>
+    <string name="mock_step_slow">Wciąż oddajemy egzamin. Trwa to dłużej niż zwykle.</string>
+    <string name="mock_handed_in_title">Egzamin próbny oddany</string>
+    <string name="mock_see_how">Zobacz, jak poszło</string>
+    <string name="mock_grading">Oceniamy…</string>
+    <string name="mock_continue_section">Kontynuuj</string>
+    <string name="mock_time_up">Czas minął</string>
+    <string name="mock_answers_saved">Zapisano twoje dotychczasowe odpowiedzi.</string>
+    <string name="mock_break">Przerwa</string>
+    <string name="mock_break_time_left">Pozostały czas przerwy</string>
+    <string name="mock_break_detail">Kolejna część rozpocznie się automatycznie po zakończeniu przerwy.</string>
+    <!-- %1$s is the next section's name, such as Mathematics. -->
+    <string name="mock_next_named">Dalej: %1$s</string>
+    <string name="mock_next_section">Kolejna część</string>
+    <string name="mock_start_next">Rozpocznij kolejną część</string>
+    <string name="mock_expired_title">Czas minął pod twoją nieobecność</string>
+    <string name="mock_expired_detail">Większość pytań została bez odpowiedzi, więc egzamin nie ma wyniku i nie wpływa na twoje przygotowanie.</string>
+    <string name="mock_take_new">Rozwiąż nowy egzamin próbny</string>
+    <string name="mock_your_essay">Twoje wypracowanie</string>
+    <plurals name="mock_words">
+        <item quantity="one">%d słowo</item>
+        <item quantity="few">%d słowa</item>
+        <item quantity="many">%d słów</item>
+        <item quantity="other">%d słowa</item>
+    </plurals>
+    <string name="mock_speaking">Mówienie</string>
+    <string name="mock_speaking_intro">Każde zadanie to rozmowa na żywo z egzaminatorem, tak jak na egzaminie: jego rolę odgrywa sztuczna inteligencja. Karty z zadaniami przygotujemy, gdy zaczniesz. Zajmie to około pół minuty.</string>
+    <string name="mock_speaking_start">Rozpocznij część ustną</string>
+    <string name="mock_speaking_writing">Przygotowujemy karty z zadaniami…</string>
+    <plurals name="mock_speaking_left">
+        <item quantity="one">Wykonuj zadania po kolei. Każde to rozmowa, po której wrócisz tutaj. Pozostało %d zadanie.</item>
+        <item quantity="few">Wykonuj zadania po kolei. Każde to rozmowa, po której wrócisz tutaj. Pozostały %d zadania.</item>
+        <item quantity="many">Wykonuj zadania po kolei. Każde to rozmowa, po której wrócisz tutaj. Pozostało %d zadań.</item>
+        <item quantity="other">Wykonuj zadania po kolei. Każde to rozmowa, po której wrócisz tutaj. Pozostało %d zadania.</item>
+    </plurals>
+    <string name="mock_speaking_all_done">Wszystkie zadania ukończone. Oddaj tę część, aby przejść dalej.</string>
+    <!-- %2$s is how long the task lasts, such as "4–5 min". -->
+    <string name="mock_speaking_task">Zadanie %1$d · %2$s</string>
+    <!-- Status beside a speaking task the learner has finished. -->
+    <string name="mock_speaking_done">Ukończone</string>
+    <string name="mock_speaking_start_task">Zacznij</string>
+    <string name="mock_speaking_start_task_number">Zacznij zadanie %1$d</string>
+    <plurals name="mock_speaking_hand_in_left">
+        <item quantity="one">%d zadanie nie jest ukończone, więc nie oszacujemy wyniku tej części. Po oddaniu nie da się go już wykonać w tym egzaminie próbnym.</item>
+        <item quantity="few">%d zadania nie są ukończone, więc nie oszacujemy wyniku tej części. Po oddaniu nie da się ich już wykonać w tym egzaminie próbnym.</item>
+        <item quantity="many">%d zadań nie jest ukończonych, więc nie oszacujemy wyniku tej części. Po oddaniu nie da się ich już wykonać w tym egzaminie próbnym.</item>
+        <item quantity="other">%d zadania nie jest ukończone, więc nie oszacujemy wyniku tej części. Po oddaniu nie da się ich już wykonać w tym egzaminie próbnym.</item>
+    </plurals>
+    <string name="mock_speaking_hand_in_done">Wszystkie zadania ukończone. Po oddaniu tej części nie będzie już można ich powtórzyć w tym egzaminie próbnym.</string>
+    <string name="mock_keep_going">Kontynuuj</string>
+</resources>

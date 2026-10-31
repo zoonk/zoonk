@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "account_birth_year_save_failed": "efab1e4bf77162e3587d5d90e121683232eab91c32e895fc36fc34bca98dd804",
+  "account_change": "a0a42a3aa795682f6ddee76f159781cfcba14c48514c65e7d202e591fcb30d6c",
+  "account_change_email": "4e062b348372afaf65ed0320b99eec8f17fc21a5541fa2af0bce14e803e58f26",
+  "account_change_username": "244f1d22966de7ed229dcb16fbfba3735d7c14eebfbb804ede8c1ff8a41ae445",
+  "account_check_email_description": "b3f0172b144e3926293b8ff6c1f50ecf9bce7963b2a190dfba9a163642263581",
+  "account_check_email_title": "fb3a162bd926de2ca908ca96a8ecce834bb46a781a49042821320ac387521c81",
+  "account_code_label": "bd914820700b396611bfd1025f719f10bb62b7e00225d9d362c7a830590e75bb",
+  "account_continue": "29e8b3b8bccced68feb43c1f52302cb6a0ed4d4a9f12a1125bebd8545018da4e",
+  "account_continue_with_apple": "db3f64de5dbb1a407c4e851e028fb190e2805f843dd70100e9a68d00ec6a2e45",
+  "account_continue_with_google": "b39223662b843ae1292810dec1d9bba88c34b2a2564787602cfae664a8baa346",
+  "account_did_not_get_it": "fc2dc6ed284bf25eb39313ad18445e50554e05a82f821d9b2eaeb0f999810969",
+  "account_email": "3e8157ab894cfd27ae59d15fe836067c600cf06f9f5a8cd7d6467dc2c710d482",
+  "account_email_placeholder": "bc8cea9381cfaf4e5872661a956cbce3c82d78060db73779e5709a3d65b7156c",
+  "account_failure_bot_detected": "e33e077649d4855921dbfdc203e6720ea33f257365165de08a8a25284c839511",
+  "account_failure_code_expired": "4fff7b4d32e3b7081b113ffc2b3cbc7acdc7ecee933eaeee93d0c49ff6b55e9e",
+  "account_failure_code_locked": "8ddaec534cdeb50d04a79de3a3c017c2e4d73b98973d4a0376057a16bf9d0d9b",
+  "account_failure_disposable_email": "79d8fd59d22b8f41a4886100876055d365340667c6cf5e956b667a42e6dba706",
+  "account_failure_invalid_email": "2835d7bf4f1f2e1f2b1cbdfff136c1cb687c9aed23e26a3c33983343a2e69e7d",
+  "account_failure_network": "edaf76323da3f363b7f0c92cf4315cf3e4d3889c7eff258652fffce605c963cf",
+  "account_failure_rate_limited": "b43c0430073ca5717e0b24d9169cce321e6e52cb4e48a84f093486c55e3697d0",
+  "account_failure_sign_in": "b1d348e8c49936e269eae263912198623f40e5056db59fa44e9e812c1e76fc41",
+  "account_failure_wrong_code": "732ca44d0112d6bfdcc52f35e3555bc7837d8ad086b57a42f5e72697cf9f29de",
+  "account_menu_create_account": "9c2bb7a45cf8d0093de04d452d37eb7088202556cbc0da0e51d2c177fc06a47b",
+  "account_menu_help": "b1c1c5be45b586be1b07de9aab69f398f5de12638868bed0bb8c0c8d5ec5a373",
+  "account_menu_log_out": "ff1f429372657457a4dd2e0d7b8613dc29b2e777abf11534596ee7b64c659434",
+  "account_menu_pricing": "979af0c7fbc14f5ddb9de0f32929ce269d9e8fa64442073215c6c43b2eb005dd",
+  "account_menu_settings": "0dad92e7c49c9af585d547f3ece19190d2a0da5782ef9154da6e9fbda6f136bb",
+  "account_menu_subscription": "ec3ab83075d2898c31ea816766bb38fb0fea57790fc8276e56440b60d1f31eef",
+  "account_name": "476e803faef5f2ae05f2e5160152b3cc67e2b5e2d79de39d400844d3242a28a4",
+  "account_name_description": "13c4dc02d9c3f2cc53c55a2893855aec9e59ebdc6367ec952d0d0e09bdf7bf5d",
+  "account_new_code_failed": "4ce90ea9af144aa9347712b4802278d71643ec73d96b2825fdf5eac5e0f6ad89",
+  "account_new_code_sent": "c5444ca2d3e3bd6049ad58283f06bcaba9ce6b9aaf8af9617e8a60afda77d6d8",
+  "account_new_code_wait": "918f69c3a19597298642548d2957aab949919428989499f3b102e56a98c1702c",
+  "account_or": "2f02de2f70c6cccba857ef3a0f77dcc1bcd480fc1f99d2b519d1730affcd2377",
+  "account_privacy": "9c6c2ec2cf831df808fbbf237bd641bea6f81b4ccc84c843d15d9c454e9cc10b",
+  "account_save_failed": "cd10b42bddc7a91ad84d04f5320cbdbe99df4bfff99a17f8aed835d76a26123c",
+  "account_send_again": "aa36ccf6e839c1d805db7968d09fef01b0d7604b38c87379c375f404b76dbbc2",
+  "account_send_new_code": "e51dcd7bb40f6fd40561af27e7c2b226889b6f4345773a7f026f0fa7e8f45228",
+  "account_setup_description": "9d45eccfe330ad9365b6b5126a9a49ff4572f5248ee03c5078ee0020b236a2dc",
+  "account_setup_title": "efb8e74f3312b171a539413bf86ca25b626bb796608debca6f1955c93d9038e5",
+  "account_sign_in_expired": "63f3429d46cf4ca18de95dc039b3777d6dff5a8f949c7f1baaf7e531c53af8f6",
+  "account_sign_in_title": "af518390c16dbaf6328860d2c551427ae9c830de40ca6e806dd38fc548d1ce23",
+  "account_sign_out_failed": "18b79ba5284fe6fa868c5a257488f06c350328b5af83b1f1d9d9b7db98414add",
+  "account_terms": "73158147bf55eec60f77994dc2b165ee61cc3bfcc77c6c997f825172345f1e8a",
+  "account_unavailable_description": "f579b3139818bcbab680972f621b352104560477ddbd5780554cbf2aa90fa52a",
+  "account_unavailable_title": "8a952ffb5d0f0ab68932f81fb6e397bad5e5ab52117b4907579ca89e001b38a7",
+  "account_username": "06418da10607cb3d75eaad34592a15817b53d92d42dd7716f8c5ce646c281630",
+  "account_username_available": "2b02e8e0dbb22766ce17c8c70cee84c539732221d701d365cf6b2d2e08c85519",
+  "account_username_checking": "5782f5c9f4b15085e55849fd2ca977abcef1792bb951e1dc149e81476f045a25",
+  "account_username_line": "76f4ce7322e383222f8d378c623f05295a0946cb8abe1b644d6ce2664b92e1ee",
+  "account_username_taken": "61ebc5e8d49d410b475bf335bad35a3988ccb4991212eaf7b6f9de340dc24e68",
+  "account_welcome_description": "92e472bb19e2c9389fc35c829872f40d2c85c2afd8043927020360f3774c599c",
+  "account_welcome_note": "daa66838dc733403b932db57f3dfa84a79c83c7482a8f03f4c73bc1c8e2eb86e",
+  "account_welcome_title": "ada7b5195919a98ca7acf1c1073984e3c81d8c9c4c1db369f32c07df6866ec5d"
+}
+-->
+<resources>
+    <string name="account_welcome_title">Wiesz, czego się uczyć każdego dnia aż do wielkiego dnia.</string>
+    <string name="account_welcome_description">Podaj Zoonkowi swój cel i termin. Plan dopasowuje się do twojego rozkładu dnia i zmienia się, gdy zrobisz dzień przerwy.</string>
+    <string name="account_welcome_note">Zacznij za darmo, bez konta.</string>
+    <string name="account_terms">Regulamin</string>
+    <string name="account_privacy">Polityka prywatności</string>
+    <string name="account_sign_in_title">Zaloguj się lub utwórz konto</string>
+    <string name="account_sign_in_expired">Sesja logowania wygasła. Spróbuj ponownie.</string>
+    <string name="account_continue_with_google">Kontynuuj z Google</string>
+    <string name="account_continue_with_apple">Kontynuuj z Apple</string>
+    <string name="account_or">Lub</string>
+    <string name="account_email">E-mail</string>
+    <string name="account_email_placeholder">me@gmail.com</string>
+    <string name="account_continue">Kontynuuj</string>
+    <string name="account_check_email_title">Sprawdź pocztę</string>
+    <!-- %1$s is an email address. -->
+    <string name="account_check_email_description">Wpisz kod wysłany na adres %1$s.</string>
+    <string name="account_code_label">Kod z wiadomości e-mail</string>
+    <string name="account_send_new_code">Wyślij nowy kod</string>
+    <string name="account_did_not_get_it">Kod nie dotarł?</string>
+    <string name="account_send_again">Wyślij ponownie</string>
+    <string name="account_change_email">Zmień adres e-mail</string>
+    <!-- %1$s is an email address. -->
+    <string name="account_new_code_sent">Wysłaliśmy nowy kod na adres %1$s.</string>
+    <string name="account_new_code_wait">Poczekaj minutę, zanim poprosisz o kolejny kod.</string>
+    <string name="account_new_code_failed">Nie udało się wysłać nowego kodu. Spróbuj ponownie.</string>
+    <string name="account_failure_invalid_email">Wpisz poprawny adres e-mail</string>
+    <string name="account_failure_disposable_email">Nie obsługujemy tymczasowych adresów e-mail. Użyj innego adresu lub aliasu chroniącego prywatność.</string>
+    <string name="account_failure_bot_detected">Zabezpieczenia zablokowały tę próbę. Spróbuj opcji „Kontynuuj z Google” lub napisz na hello@zoonk.com.</string>
+    <string name="account_failure_network">Zoonk nie może się połączyć. Sprawdź połączenie i spróbuj ponownie.</string>
+    <string name="account_failure_rate_limited">Zbyt wiele prób. Poczekaj minutę i spróbuj ponownie.</string>
+    <string name="account_failure_wrong_code">Kod się nie zgadza. Sprawdź wiadomość i spróbuj ponownie.</string>
+    <string name="account_failure_code_expired">Ten kod wygasł. Poproś o nowy.</string>
+    <string name="account_failure_code_locked">Ten kod wpisano błędnie zbyt wiele razy. Poproś o nowy.</string>
+    <string name="account_failure_sign_in">Nie udało się zalogować. Spróbuj ponownie lub napisz na hello@zoonk.com</string>
+    <string name="account_setup_title">Jak mamy cię nazywać?</string>
+    <string name="account_setup_description">Możesz to później zmienić w swoim profilu.</string>
+    <string name="account_name">Imię</string>
+    <string name="account_name_description">Tak zwracają się do ciebie Zoonk i twój kumpel</string>
+    <string name="account_username">Nazwa użytkownika</string>
+    <!-- %1$s is a username. -->
+    <string name="account_username_line">Twoja nazwa użytkownika: @%1$s</string>
+    <string name="account_change">Zmień</string>
+    <string name="account_change_username">Zmień nazwę użytkownika</string>
+    <string name="account_username_checking">Sprawdzamy…</string>
+    <!-- %1$s is a username. -->
+    <string name="account_username_available">Nazwa %1$s jest dostępna</string>
+    <!-- %1$s is a username. -->
+    <string name="account_username_taken">Nazwa %1$s jest już zajęta</string>
+    <string name="account_save_failed">Nie udało się zapisać profilu. Spróbuj ponownie.</string>
+    <string name="account_menu_settings">Ustawienia</string>
+    <string name="account_menu_subscription">Subskrypcja</string>
+    <string name="account_menu_pricing">Cennik</string>
+    <string name="account_menu_help">Pomoc</string>
+    <string name="account_menu_log_out">Wyloguj się</string>
+    <string name="account_menu_create_account">Utwórz konto</string>
+    <string name="account_sign_out_failed">Zoonk nie może cię wylogować. Sprawdź połączenie i spróbuj ponownie.</string>
+    <string name="account_unavailable_title">Nie udało nam się sprawdzić twojego konta</string>
+    <string name="account_unavailable_description">Nie wylogowano cię. To może być problem z połączeniem, więc spróbuj ponownie za chwilę.</string>
+    <string name="account_birth_year_save_failed">Nie udało się zapisać. Spróbuj ponownie.</string>
+    <!-- %1$s is "Terms of Service" and %2$s is "Privacy Policy", each a link. -->
+    <!-- Asked once, before a new or existing account goes on learning. -->
+    <!-- Closes the birth year question without answering; nothing starts. -->
+    <!-- The label of the field where the learner types the four-digit year they were born, like 1998. -->
+    <!-- Title of a kind message to someone too young to use Zoonk where they live. -->
+    <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Kind and encouraging, never scolding. -->
+    <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Shown to someone signed in: "log you out" means Zoonk ends their session in the app when they tap OK, the same action as the menu's "Log out". Kind and encouraging, never scolding. -->
+</resources>

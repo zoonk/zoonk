@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_reasoning_argument_ready": "0eab20bab2dd826e2a838f98f1cfd9444c0a586474660e4e0cbc51e72dafb293",
+  "activities_reasoning_badge_build_argument": "03f992e2d2edfa3094ddaf9ca1da7ed7993cb93f1f0c0006cffe74f263409d90",
+  "activities_reasoning_badge_compare_sources": "52104939ec6cb0bcffb95196471d16328e9b3ba5fac3f113e50dcd50b59591e9",
+  "activities_reasoning_badge_explore_map": "629801d20c88408c8e5198384ff5b9b63926c532207b05326141fde08bbbff57",
+  "activities_reasoning_badge_fill_square": "a4ccee475884988844fb5b5a758b0019702144db26a113d6940448aec3eabd06",
+  "activities_reasoning_claim": "8232ef6f7e6b16701bae5c150dc2b103339b541409d6f00599a3a170eb3cdb55",
+  "activities_reasoning_evidence": "c974972fa4de9aff669ef0377c182e7d8177f1edc4a091bf0943d12ccdfbb843",
+  "activities_reasoning_evidence_chosen": "d7f402394a318d6ab1c25abd6542db6d9ef1e4d868e440bc29dcaea5f4af63c7",
+  "activities_reasoning_evidence_hint": "9816da02bcff0db3f1f09ea20859dfaeca7837758b924f3fe6970ea9cbd81251",
+  "activities_reasoning_grid_all_filled": "9c8213c1df8b1927404ecd37095a1276cb836c685a167fc601f4f58cbd7d9c77",
+  "activities_reasoning_grid_counted": "de07848309f105fd6535bbc342eb6810415104a1d8bf4eff15d3927365188346",
+  "activities_reasoning_grid_filled": "b7936b621cfdd133ab8b43ac5243be6cc114bd3c1410984a445e74b2c81faf4a",
+  "activities_reasoning_grid_products": "0366b30ecdfa334c3b8b55a17667306b087d3d7a2c371893b100a7ece6caf5d2",
+  "activities_reasoning_grid_punnett": "61ed5f8fcf0b17f034f01163e607f049bc98544a6c663a13a8bf674158daeaf5",
+  "activities_reasoning_grid_right": "63d323ecb0c237dab900be50120086e73efe9eea1a8507d12ca783bffa00448e",
+  "activities_reasoning_grid_square": "98f482eb7297fbf21ca73203c807b486aadb65460f12784e7f3f158243aec89d",
+  "activities_reasoning_grid_square_empty": "b6fa3098e869e7eec7e7abf716ff505ab167210783d8a62b51f76fbd2c1b25a3",
+  "activities_reasoning_grid_sums": "158de3e6bb11da503b6e53be91f08b37dc9cb031f92c1e022641f6005566c2ca",
+  "activities_reasoning_grid_traits": "0591f1bad3ccf56a052bd57c22c7b052992311e24589ce6cb580c1c582397e12",
+  "activities_reasoning_grid_value_trait": "354e738648694fac22c3888d35c415bb22874f44812796fab3f2b93cf19a10ab",
+  "activities_reasoning_grid_what_goes": "75ce31515c4559139a49febd6e08166acd9bfa239a371e9619c04d9b154475b2",
+  "activities_reasoning_grid_which_genotype": "1bcf617c1cbb84a01c822f610459810ce8897a759a70d1cdaaf8549a74ab996d",
+  "activities_reasoning_grid_your_answer": "967e5ba6dd183f2502bed5938b6a9825e9bcb8e852c173a5b255ae0ffd169f0b",
+  "activities_reasoning_map_africa": "661ae29852353adbf043605f8bb2e19efe1002589a509fe6aea4d0ea460edd25",
+  "activities_reasoning_map_americas": "42bf874f38933e5e5bd324e0f2ada0146e1f05bba7b6909972dd78f10a240f94",
+  "activities_reasoning_map_asia": "3c6505edfca9cb70bf37bc2a55f4171fe55de385fa915911862406e95dbd9a23",
+  "activities_reasoning_map_brazil_states": "58424fd34cc3478813e717acbca2cca4a01a570cc0085d9b1aef953f21b78dfb",
+  "activities_reasoning_map_description": "889b176e9f180a67a443e59af0629705a8e344a228d82c98865c73b288e97aa9",
+  "activities_reasoning_map_europe": "7d4b9f19d671073b512ffc60be19ff1590f3232ce7e31d46226e78a368e19bf6",
+  "activities_reasoning_map_europe_1914": "c7b99035756101878c2c7c1d1c537d84cc95e846905e601fb95d790906f7cd1e",
+  "activities_reasoning_map_explored": "de02664d45918fe50de7256d5263f290eff3b02d75c7a07e74e2f864cf607ab5",
+  "activities_reasoning_map_hint": "f499e831c6c16ce2dd298adadc9ab77240bcbb1125cd977525576498f4852827",
+  "activities_reasoning_map_label_africa": "cfb492737024e143a60e2ed7ae54437f1d1bfc3c0181dc20d049c793c75cb41b",
+  "activities_reasoning_map_label_antarctica": "ab89cdfd037479a4e6510822dd5944f8262bb187d03ea022c90183ee9e6ff331",
+  "activities_reasoning_map_label_asia": "c2ae4ea52b80c8b308e22519e65d8804c156ab5d09b5e373439168548448772a",
+  "activities_reasoning_map_label_austria_hungary": "5c11cc29b2a419f77c6e39afb6dd2ccb18c7a69c582e28aba528d8520cecde8b",
+  "activities_reasoning_map_label_europe": "41680835f64e1178d88362413212ae52829dcaae9fc1f472d55d564c2ab0e07f",
+  "activities_reasoning_map_label_france": "4f0f53fb9393e1fd20cf9eecbfd5b327389bb0d2cbc11138cd0c5f12fc709b89",
+  "activities_reasoning_map_label_german_empire": "9eba852c0d440119646246000847bb3c834f77dd257953ea8a6a25b6f2d61eea",
+  "activities_reasoning_map_label_italy": "7780c50d4eca6b8e8eb55ead5edd81ca5de507aac27d03d96f3a0490a22bd949",
+  "activities_reasoning_map_label_north_america": "7097f8d0a89d824d84bfafdc21305650f8a71c9bf35190275d525f40af158d58",
+  "activities_reasoning_map_label_oceania": "eb5481cfdbcd91ed38a761905d2f64334a7f61db9ba62775ca04379bbd432ca9",
+  "activities_reasoning_map_label_ottoman_empire": "ad421d4d2d21db6e353737dda2bf2b106c97491f57ee5ec6b3ec3ab75fd3e067",
+  "activities_reasoning_map_label_parthian_empire": "0c60b0a4788a8c234cf8f45063d8723b5d4af75eed6b074a07979f05cc4483f5",
+  "activities_reasoning_map_label_roman_empire": "1c81951bff3c9c946f957506f0562f8e19fd571f033a645cec54587df11074b0",
+  "activities_reasoning_map_label_russian_empire": "353451da7ccd0e9893dea24decd58bff04c5f51a96e888b20c67ca6467b2c8fd",
+  "activities_reasoning_map_label_serbia": "1b1925eb51fb49b4a6e5960df6950773ac544308ac6a62995893e3050a42c913",
+  "activities_reasoning_map_label_south_america": "7eaadadbfc18d8e58efde42f19b9d5196dd70d3a999d7de6caba42cfc7923f22",
+  "activities_reasoning_map_label_spain": "0f3e83c173bd5013dcd836ef03f12d8a0059919a6cedd5c009a6d91b048187fd",
+  "activities_reasoning_map_label_triple_alliance": "1a6c7cf1e309acb89644d6f14d6727636b2a130d3be3da18b3d6890b29480a21",
+  "activities_reasoning_map_label_triple_entente": "3cea10e5319172af481dab3cfceff93620f77e39ac98d42bd53d349cfa52b284",
+  "activities_reasoning_map_label_united_kingdom": "181ae734c0c927c546cc797194ebfc2b8ced5734fa056ebb13ce7edca7b13d96",
+  "activities_reasoning_map_london_1854": "40601b28ebc44a1f9579297d93b2271445073f5cac5504c5ae00aace5c23c925",
+  "activities_reasoning_map_note_borders": "377c2a799095c24683a3c8b8ac34ac391837b929b58970dd33a1f8e0ce3ed6db",
+  "activities_reasoning_map_note_london_1854": "a1d8f227efd4e27a1b8fa6c1b4ba0e297b34237a30897acf3291f1bfa71ee226",
+  "activities_reasoning_map_place": "1fc03cd8bee2fa42e776ad826d5d411d7f16700604cbd96884b867e66486397d",
+  "activities_reasoning_map_roman_empire_117": "0b90b1a69f13785734caf5ac107715517611ee7008a580116efab839ae87c74e",
+  "activities_reasoning_map_unavailable": "0520cc8f9125dadcdf382ba9e30754013e9677f4a4bf9ca39316d248742ebac7",
+  "activities_reasoning_map_usa_states": "658310c420f31b439e111d1c59163a2084da37914428b1e64941d177d9663151",
+  "activities_reasoning_map_world": "b9532e75260d49afdfa1c67d1cdb662e47c1b3ed868f87de3afef6fe531f54f1",
+  "activities_reasoning_map_world_continents": "d3793e6a586dd2af8439b34e3bf5535a33434a8ae67319842d097cdf3fdeb2cb",
+  "activities_reasoning_quote": "ecdb8863af86038043455c38d11733fb3a58f70395e9ea33ebc1534963695bfd",
+  "activities_reasoning_quotes": "a9af16dffb4670687eca87453ef6d26230345b6eff78b0ccdb1ef02aa41934c3",
+  "activities_reasoning_reasoning": "853f3b246582e297008787898cda8f3edbb21a8e97d777a6cd9c881675b3cbc3",
+  "activities_reasoning_reasoning_chosen": "02884cc56f89fea76fdc3607f9a3ec092b6ffe53b386703ae8b609a83bd8a4e9",
+  "activities_reasoning_reasoning_hint": "4af01ffac6d4d533c82851df3dbd1d4f64c59037fc43825694a8a00b3c4efffb",
+  "activities_reasoning_reasoning_next": "39525074075820f093b6c633ba3966c9f154bc832d1dedb15e6324ecfbbda2dc",
+  "activities_reasoning_source_mark": "b4e22216db3cdb6e9a9f36073fd45eeea90cba3aa20d32ededa804a3a5ebcf40",
+  "activities_reasoning_source_missed": "a46716692d7921f352e6d6e63ce4700a9b6ed57740c2d09f5dc995ca2e72a1fa",
+  "activities_reasoning_source_missed_passages": "86444240306cedc3b751068a9bf1adbb3cac95cabc42af41a0352ca6fb64022c",
+  "activities_reasoning_source_nothing_marked": "335847c42188049d71d0550b47b3df5593ae70e2ab249fe05ba5d50af70e9635",
+  "activities_reasoning_source_unmark": "625153763b5db3781b371982f9bce5bd9ad1c196be339bda826328d5145df3a3",
+  "activities_reasoning_source_what_to_mark": "827e5a3a14d54bc0d7e6d765d15abbb86ab1c04bc9e17a4045a63ab9051ebc4f",
+  "activities_reasoning_source_wrong_mark": "77f7f2ed9a9d32fa867d0204fd41917e1be6e191c9d1f2301969562ee8256f47",
+  "activities_reasoning_source_wrong_passages": "e511e2abe9512700a441d4a420490f458d781567c30c310d78e73e12a42d9eb8",
+  "activities_reasoning_source_you_marked": "ed6eff7cf2a19b655260f1a456deb6d4abf653a4e5f0d50247bf7ed48b1b927f",
+  "activities_reasoning_strong": "9f5046d1635a3876933e99174dc0e8f23c5cef3c55a093a08037a4321b493829",
+  "activities_reasoning_stronger_evidence": "d2b3a38ffe6b188c6c78ce53c963e87d20f0698615a57fdf5a096fe2b35fa675",
+  "activities_reasoning_stronger_reasoning": "a3ba6a793f52f411b72e1dec4e1449ea1e3a416381f3550a2bd07c1c8a22f9ff",
+  "activities_reasoning_take_quote_out": "e5b93e7c44302cfb0317dd8baf5bc95fb721819cde65e600c8fa9d3536de5ff4",
+  "activities_reasoning_take_reasoning_out": "c37f43465ab1f1df368a73ff2c61f9579822ed27ce6905fec84e9ff62ea1e137",
+  "activities_reasoning_use_as_evidence": "74fb067f3cfa45fd894a6cb5faa084b4c45b028f273b9a493064b98a77044fca",
+  "activities_reasoning_use_as_reasoning": "ba4ceaeda75b6cd05dd8065486c5beca38c5d5c202abe02fbab48c1030db0cf7",
+  "activities_reasoning_weak": "e76f6cac9f7379e49f99f6c6304be4cca656bafeb880a8457528b0a6a5c8321a"
+}
+-->
+<resources>
+    <!-- A grid like a Punnett square, where the learner fills each square. -->
+    <string name="activities_reasoning_badge_fill_square">Uzupełnij kwadrat</string>
+    <!-- What a Punnett square shows, for TalkBack: the trait, then each parent with its alleles, like "A Punnett square for Flower color: Purple parent (Pp) down the side, White parent (pp) across the top." -->
+    <string name="activities_reasoning_grid_punnett">Szachownica Punnetta. Cecha: %1$s. Z boku: %2$s (%3$s), u góry: %4$s (%5$s).</string>
+    <!-- What a grid of sums shows, for TalkBack, like "Two dice: First die (1, 2, 3) down the side, Second die (1, 2, 3) across the top, each square their sum." -->
+    <string name="activities_reasoning_grid_sums">%1$s. Z boku: %2$s (%3$s), u góry: %4$s (%5$s). Każde pole zawiera ich sumę.</string>
+    <!-- What a grid of products shows, for TalkBack, like "Times table: Number (2, 3, 4) down the side, Times (1, 2, 3) across the top, each square their product." -->
+    <string name="activities_reasoning_grid_products">%1$s. Z boku: %2$s (%3$s), u góry: %4$s (%5$s). Każde pole zawiera ich iloczyn.</string>
+    <!-- An empty square of the grid, for TalkBack: its number, then its row's and its column's values, like "Square 2, P and p: empty". -->
+    <string name="activities_reasoning_grid_square_empty">Pole %1$d, %2$s i %3$s: puste</string>
+    <!-- A filled square of the grid, for TalkBack: its number, its row's and its column's values, then what's in it, like "Square 2, P and p: Pp, Purple". -->
+    <string name="activities_reasoning_grid_square">Pole %1$d, %2$s i %3$s: %4$s</string>
+    <!-- A genotype and the trait it shows, for TalkBack, like "Pp, Purple". -->
+    <string name="activities_reasoning_grid_value_trait">%1$s, %2$s</string>
+    <!-- A checked square the learner filled wrong, for TalkBack: the right value, then the learner's, like "Pp, Purple. Your answer: pp". -->
+    <string name="activities_reasoning_grid_your_answer">%1$s. Twoja odpowiedź: %2$s</string>
+    <!-- How many squares show the thing the check counted, like "2 of 4 squares: White" or "6 of 36 squares: 7". -->
+    <plurals name="activities_reasoning_grid_counted">
+        <item quantity="one">%1$d z %2$d pola: %3$s</item>
+        <item quantity="few">%1$d z %2$d pól: %3$s</item>
+        <item quantity="many">%1$d z %2$d pól: %3$s</item>
+        <item quantity="other">%1$d z %2$d pól: %3$s</item>
+    </plurals>
+    <!-- After the check, like "3 of 4 squares right". -->
+    <plurals name="activities_reasoning_grid_right">
+        <item quantity="one">Poprawnie wypełniono %1$d z %2$d pola</item>
+        <item quantity="few">Poprawnie wypełniono %1$d z %2$d pól</item>
+        <item quantity="many">Poprawnie wypełniono %1$d z %2$d pól</item>
+        <item quantity="other">Poprawnie wypełniono %1$d z %2$d pól</item>
+    </plurals>
+    <!-- While filling, like "5 of 9 squares filled". -->
+    <plurals name="activities_reasoning_grid_filled">
+        <item quantity="one">Wypełniono %1$d z %2$d pola</item>
+        <item quantity="few">Wypełniono %1$d z %2$d pól</item>
+        <item quantity="many">Wypełniono %1$d z %2$d pól</item>
+        <item quantity="other">Wypełniono %1$d z %2$d pól</item>
+    </plurals>
+    <!-- How many filled squares show each trait so far, out of all the squares, like "Purple: 2 of 4 · White: 1 of 4". -->
+    <string name="activities_reasoning_grid_traits">%1$s: %2$d z %5$d · %3$s: %4$d z %5$d</string>
+    <string name="activities_reasoning_grid_all_filled">Wszystkie pola są wypełnione. Dotknij pola, by je zmienić.</string>
+    <!-- Asks for the genotype of a square of a Punnett square, like "Which genotype goes in square 2?" -->
+    <string name="activities_reasoning_grid_which_genotype">Który genotyp pasuje do pola %1$d?</string>
+    <!-- Asks for the value of a square of a grid of numbers, like "What goes in square 2?" -->
+    <string name="activities_reasoning_grid_what_goes">Co wpisać w polu %1$d?</string>
+    <!-- Two sources the learner reads side by side to mark passages in each. -->
+    <string name="activities_reasoning_badge_compare_sources">Porównaj źródła</string>
+    <!-- A TalkBack action on a source's text that marks one of its passages, like "Mark: The regulars fired on us". -->
+    <string name="activities_reasoning_source_mark">Zaznacz: %1$s</string>
+    <!-- A TalkBack action on a source's text that unmarks one of its passages, like "Unmark: The regulars fired on us". -->
+    <string name="activities_reasoning_source_unmark">Usuń zaznaczenie: %1$s</string>
+    <!-- For TalkBack, after a source's text: the passages the learner marked in it, separated by semicolons. -->
+    <string name="activities_reasoning_source_you_marked">Zaznaczono: %1$s.</string>
+    <!-- For TalkBack, after a source's text with no passage marked. -->
+    <string name="activities_reasoning_source_nothing_marked">Jeszcze nic nie zaznaczono.</string>
+    <!-- For TalkBack once checked, after a source's text: the passages the learner should have marked, separated by semicolons. -->
+    <string name="activities_reasoning_source_missed_passages">Nie zaznaczono: %1$s.</string>
+    <!-- For TalkBack once checked, after a source's text: the passages the learner marked by mistake, separated by semicolons. -->
+    <string name="activities_reasoning_source_wrong_passages">Błędnie zaznaczono: %1$s.</string>
+    <!-- Legend once checked: the tint of the passages the question was about. -->
+    <string name="activities_reasoning_source_what_to_mark">Co zaznaczyć</string>
+    <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->
+    <string name="activities_reasoning_source_missed">Niezaznaczone</string>
+    <!-- Legend once checked: the tint of a passage the learner marked by mistake. -->
+    <string name="activities_reasoning_source_wrong_mark">Błędne zaznaczenie</string>
+    <!-- A map the learner explores by tapping its numbered places. -->
+    <string name="activities_reasoning_badge_explore_map">Poznaj mapę</string>
+    <!-- How many of the map's places the learner has opened, out of all of them, like "2 of 3 explored". -->
+    <plurals name="activities_reasoning_map_explored">
+        <item quantity="one">Poznano %1$d z %2$d</item>
+        <item quantity="few">Poznano %1$d z %2$d</item>
+        <item quantity="many">Poznano %1$d z %2$d</item>
+        <item quantity="other">Poznano %1$d z %2$d</item>
+    </plurals>
+    <string name="activities_reasoning_map_hint">Dotknij miejsca z numerem, by zobaczyć, co tam jest.</string>
+    <!-- A numbered place on the map, like "1. Broad Street pump". -->
+    <string name="activities_reasoning_map_place">%1$d. %2$s</string>
+    <!-- What the map shows, for TalkBack, before its numbered places: its name and how many places it has, like "Map of Soho, London, in 1854 with 3 places to explore." -->
+    <plurals name="activities_reasoning_map_description">
+        <item quantity="one">%1$s: %2$d miejsce do poznania.</item>
+        <item quantity="few">%1$s: %2$d miejsca do poznania.</item>
+        <item quantity="many">%1$s: %2$d miejsc do poznania.</item>
+        <item quantity="other">%1$s: %2$d miejsca do poznania.</item>
+    </plurals>
+    <string name="activities_reasoning_map_unavailable">Nie można wyświetlić tej mapy. Przejdź do następnego ekranu.</string>
+    <string name="activities_reasoning_map_africa">Mapa Afryki</string>
+    <string name="activities_reasoning_map_americas">Mapa obu Ameryk</string>
+    <string name="activities_reasoning_map_asia">Mapa Azji</string>
+    <string name="activities_reasoning_map_brazil_states">Mapa Brazylii z podziałem na stany</string>
+    <string name="activities_reasoning_map_europe">Mapa Europy</string>
+    <string name="activities_reasoning_map_europe_1914">Mapa Europy w 1914 roku</string>
+    <!-- Soho is a district of London. -->
+    <string name="activities_reasoning_map_london_1854">Mapa Soho w mieście London z 1854 roku</string>
+    <string name="activities_reasoning_map_roman_empire_117">Mapa Cesarstwa Rzymskiego (117 n.e.)</string>
+    <string name="activities_reasoning_map_usa_states">Mapa Stanów Zjednoczonych z podziałem na stany</string>
+    <string name="activities_reasoning_map_world">Mapa świata</string>
+    <string name="activities_reasoning_map_world_continents">Mapa kontynentów świata</string>
+    <!-- Below a historical map whose borders are drawn simply. -->
+    <string name="activities_reasoning_map_note_borders">Granice są uproszczone.</string>
+    <!-- Below the 1854 map of Soho, drawn after the map the physician John Snow made of a cholera outbreak. -->
+    <string name="activities_reasoning_map_note_london_1854">Uproszczony plan ulic na podstawie mapy z 1854 roku (John Snow).</string>
+    <!-- Names written on the maps. -->
+    <string name="activities_reasoning_map_label_africa">Africa</string>
+    <string name="activities_reasoning_map_label_antarctica">Antarctica</string>
+    <string name="activities_reasoning_map_label_asia">Asia</string>
+    <string name="activities_reasoning_map_label_austria_hungary">Austria-Hungary</string>
+    <string name="activities_reasoning_map_label_europe">Europe</string>
+    <string name="activities_reasoning_map_label_france">France</string>
+    <string name="activities_reasoning_map_label_german_empire">German Empire</string>
+    <string name="activities_reasoning_map_label_italy">Italy</string>
+    <string name="activities_reasoning_map_label_north_america">North America</string>
+    <string name="activities_reasoning_map_label_oceania">Oceania</string>
+    <string name="activities_reasoning_map_label_ottoman_empire">Ottoman Empire</string>
+    <string name="activities_reasoning_map_label_parthian_empire">Parthian Empire</string>
+    <string name="activities_reasoning_map_label_roman_empire">Roman Empire</string>
+    <string name="activities_reasoning_map_label_russian_empire">Russian Empire</string>
+    <string name="activities_reasoning_map_label_serbia">Serbia</string>
+    <string name="activities_reasoning_map_label_south_america">South America</string>
+    <string name="activities_reasoning_map_label_spain">Spain</string>
+    <!-- The alliance of Germany, Austria-Hungary and Italy before the First World War. -->
+    <string name="activities_reasoning_map_label_triple_alliance">Triple Alliance</string>
+    <!-- The alliance of France, the United Kingdom and Russia before the First World War. -->
+    <string name="activities_reasoning_map_label_triple_entente">Triple Entente</string>
+    <string name="activities_reasoning_map_label_united_kingdom">United Kingdom</string>
+    <!-- An argument the learner builds from a claim, a quote as evidence and a line of reasoning. -->
+    <string name="activities_reasoning_badge_build_argument">Zbuduj argument</string>
+    <!-- The statement the argument sets out to support. -->
+    <string name="activities_reasoning_claim">Teza</string>
+    <!-- The part of an argument that quotes a source. -->
+    <string name="activities_reasoning_evidence">Dowód</string>
+    <!-- The part of an argument that explains how the quote proves the claim; also above the lines to pick for it. -->
+    <string name="activities_reasoning_reasoning">Uzasadnienie</string>
+    <!-- For TalkBack, after the learner puts a quote in the argument, like "Evidence: “It is too rash.”". The quote comes with its quotation marks. -->
+    <string name="activities_reasoning_evidence_chosen">Dowód: %1$s</string>
+    <!-- For TalkBack, after the learner puts a line of reasoning in the argument, like "Reasoning: Juliet herself sees the rush." -->
+    <string name="activities_reasoning_reasoning_chosen">Uzasadnienie: %1$s</string>
+    <string name="activities_reasoning_evidence_hint">Wybierz cytat, który najlepiej potwierdza tezę</string>
+    <string name="activities_reasoning_reasoning_hint">Wybierz wyjaśnienie, jak cytat potwierdza tezę</string>
+    <!-- The empty reasoning part while the evidence is still to pick. -->
+    <string name="activities_reasoning_reasoning_next">Następnie: wyjaśnij, jak cytat potwierdza tezę</string>
+    <string name="activities_reasoning_take_quote_out">Usuń cytat</string>
+    <string name="activities_reasoning_take_reasoning_out">Usuń uzasadnienie</string>
+    <!-- Above the quotes the learner picks the evidence from. -->
+    <string name="activities_reasoning_quotes">Cytaty</string>
+    <!-- What tapping a quote does, read by TalkBack as "Double-tap to use as evidence". -->
+    <string name="activities_reasoning_use_as_evidence">Użyj jako dowodu</string>
+    <!-- What tapping a line of reasoning does, read by TalkBack as "Double-tap to use as reasoning". -->
+    <string name="activities_reasoning_use_as_reasoning">Użyj jako uzasadnienia</string>
+    <string name="activities_reasoning_argument_ready">Twój argument jest gotowy. Sprawdź go lub usuń jedną z części, aby ją zmienić.</string>
+    <!-- After the check, on a part of the argument that supports the claim well. -->
+    <string name="activities_reasoning_strong">Przekonuje</string>
+    <!-- After the check, on a part of the argument that supports the claim poorly. -->
+    <string name="activities_reasoning_weak">Słabo przekonuje</string>
+    <!-- After the check, above the strong quote the learner didn't pick. -->
+    <string name="activities_reasoning_stronger_evidence">Mocniejszy dowód</string>
+    <!-- After the check, above the strong reasoning the learner didn't pick. -->
+    <string name="activities_reasoning_stronger_reasoning">Mocniejsze uzasadnienie</string>
+    <!-- A quote from a source, in the language's quotation marks. -->
+    <string name="activities_reasoning_quote">„%1$s”</string>
+</resources>
