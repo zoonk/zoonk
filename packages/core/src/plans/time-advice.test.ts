@@ -9,7 +9,6 @@ import { updateGoal } from "../goals/update-goal";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
-import { roundShare } from "./_utils/plan-feasibility-view";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
@@ -247,7 +246,7 @@ describe(getPlanTimeAdvice, () => {
       // eslint-disable-next-line no-await-in-loop -- Read the persisted result before accepting another time.
       const saved = await readFeasibility(goal.id);
       expect(saved?.fits).toBe(false);
-      expect(roundShare(saved?.coveredShare ?? 0)).toBe(preview.coveredShare);
+      expect(saved?.coveredShare).toBe(preview.coveredShare);
       // eslint-disable-next-line no-await-in-loop -- The time the Plan finds for the accepted week.
       const savedTime = await readPlanTime(goal.id);
       expect([preview.recommendedMinutes, savedTime.recommendedMinutes]).toStrictEqual([55, 55]);
@@ -275,7 +274,7 @@ describe(getPlanTimeAdvice, () => {
     const saved70 = await readFeasibility(goal.id);
     const time70 = await readPlanTime(goal.id);
     expect(saved70?.fits).toBe(false);
-    expect(roundShare(saved70?.coveredShare ?? 0)).toBe(preview70.coveredShare);
+    expect(saved70?.coveredShare).toBe(preview70.coveredShare);
     const at70 = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
     expect(parsePlanSettings(at70.settings).mockFunding.map((entry) => entry.date)).toStrictEqual([

@@ -97,7 +97,7 @@ describe(getFullTimeNote, () => {
     ).toBeNull();
 
     expect(getFullTimeNote({ found: FOCUS, line: SHORT, studiesEveryDay: true })).toStrictEqual({
-      full: { coveredShare: 1, minutes: 805 },
+      full: { coveredShare: 1, everything: true, minutes: 805 },
       kind: "takes",
       moreDays: false,
     });
@@ -171,11 +171,24 @@ describe("a goal part of which never fits, whatever the time", () => {
   it("says what the most any time covers takes, without more study days, past four hours", () => {
     expect(
       getFullTimeNote({ found: plateauAt(480), line: SHORT, studiesEveryDay: false }),
-    ).toStrictEqual({ full: { coveredShare: 0.99, minutes: 480 }, kind: "takes", moreDays: false });
+    ).toStrictEqual({
+      full: { coveredShare: 0.99, everything: false, minutes: 480 },
+      kind: "takes",
+      moreDays: false,
+    });
 
     expect(getOffer({ found: plateauAt(480), line: SHORT, minutes: 240 })).toStrictEqual({
       kind: "full",
       minutes: 480,
+    });
+  });
+
+  it("covers everything only at a time that covers it, whatever share the most rounds to", () => {
+    const found = foundTime({ ...focusAt(null), most: { coveredShare: 1, minutes: 480 } });
+
+    expect(getFullTimeNote({ found, line: SHORT, studiesEveryDay: false })).toMatchObject({
+      full: { everything: false, minutes: 480 },
+      moreDays: false,
     });
   });
 

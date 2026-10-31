@@ -50,6 +50,16 @@ describe(getSuggestedTime, () => {
     });
   });
 
+  it("never shows a suggestion that falls short as covering everything", () => {
+    expect(
+      getSuggestedTime({
+        coverageAt: () => ({ coreFits: true, coveredShare: 0.996 }),
+        everything: 300,
+        most: null,
+      }),
+    ).toMatchObject({ coveredShare: 0.99, kind: "focus", minutes: 240 });
+  });
+
   it("keeps to four hours when covering the most possible takes longer", () => {
     expect(
       getSuggestedTime({

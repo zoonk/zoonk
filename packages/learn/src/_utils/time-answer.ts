@@ -25,7 +25,7 @@ export function getSuggestedMinutes(found: PlanTimeToCover | null): number | nul
   return found?.suggested?.minutes ?? null;
 }
 
-export type FullTime = { coveredShare: number; minutes: number };
+export type FullTime = { coveredShare: number; everything: boolean; minutes: number };
 
 /**
  * The longest time worth studying: what covers everything, or as much as any time does when part
@@ -33,7 +33,12 @@ export type FullTime = { coveredShare: number; minutes: number };
  */
 export function getFullTime(found: PlanTimeToCover | null): FullTime | null {
   const minutes = found?.recommendedMinutes ?? null;
-  return minutes === null ? (found?.most ?? null) : { coveredShare: 1, minutes };
+
+  if (minutes !== null) {
+    return { coveredShare: 1, everything: true, minutes };
+  }
+
+  return found?.most ? { ...found.most, everything: false } : null;
 }
 
 export function getMarkedTimes(found: PlanTimeToCover | null): {
@@ -93,7 +98,7 @@ export function getFullTimeNote({
     return null;
   }
 
-  const neverFits = full !== null && full.coveredShare < 1;
+  const neverFits = full !== null && !full.everything;
   return { full, kind: "takes", moreDays: !studiesEveryDay && !neverFits };
 }
 

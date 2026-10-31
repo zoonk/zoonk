@@ -6,7 +6,7 @@ import { isPlanReady } from "./_utils/apply-plan-change";
 import { findOwnedPlan } from "./_utils/owned-plan";
 import { applyChangeOperations } from "./_utils/part-areas";
 import { type PlanContext } from "./_utils/plan-context";
-import { roundShare } from "./_utils/plan-feasibility-view";
+import { toShownShare } from "./_utils/plan-feasibility-view";
 import { buildPlanNumbersView } from "./_utils/plan-numbers-view";
 import { isPlanSetupTaskOwed } from "./_utils/plan-setup-tasks";
 import { computePlan } from "./_utils/replan";
@@ -17,8 +17,8 @@ import { getNoticeWaitState } from "./notice-wait";
 import { type LearnerPlanOperation } from "./plan-contract";
 import { getFullCourseEnd } from "./planner/after-exam";
 import { FITTING_DATE_TRIES } from "./planner/fitting-date";
+import { type MostCoverage } from "./planner/most-coverage";
 import { addDays, toIsoDate } from "./planner/plan-calendar";
-import { type MostCoverage } from "./planner/plan-feasibility";
 import { applyPlanOperations } from "./planner/plan-operations";
 import { type PlanState } from "./planner/plan-state";
 import { getScheduleOperations } from "./planner/schedule-operations";
@@ -241,7 +241,7 @@ export async function getPlanTimeAdvice({
 
   return {
     advice: {
-      coveredShare: feasibility.deadline ? roundShare(feasibility.coveredShare) : null,
+      coveredShare: feasibility.deadline ? toShownShare(feasibility) : null,
       endDate:
         !targetDate && end && hasCompleteSkillCoverage(computed.built.skillMinutes)
           ? toIsoDate(end)

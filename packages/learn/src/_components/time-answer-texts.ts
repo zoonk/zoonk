@@ -27,7 +27,7 @@ export function useTimeAnswerTexts() {
 
     const time = formatDuration(full.minutes);
 
-    return full.coveredShare >= 1
+    return full.everything
       ? t({
           description:
             'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "13 h 30 min".',

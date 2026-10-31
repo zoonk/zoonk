@@ -8,8 +8,12 @@ export type ShownFeasibility = Pick<
   "coreFits" | "coveredShare" | "deadline" | "deepensMostAsked" | "fits" | "measure" | "timeCovers"
 >;
 
-export function roundShare(share: number): number {
-  return Math.round(share * 100) / 100;
+const LARGEST_SHORT_SHARE = 0.99;
+
+/** Whole percents, where a share that falls short never shows as everything. */
+export function toShownShare({ coveredShare, fits }: { coveredShare: number; fits: boolean }) {
+  const rounded = Math.round(coveredShare * 100) / 100;
+  return fits || coveredShare >= 1 ? rounded : Math.min(rounded, LARGEST_SHORT_SHARE);
 }
 
 export function readShownFeasibility({
@@ -39,7 +43,7 @@ export function toFeasibilityView(
 ): NonNullable<PlanView["feasibility"]> {
   return {
     coreFits: feasibility.coreFits,
-    coveredShare: roundShare(feasibility.coveredShare),
+    coveredShare: toShownShare(feasibility),
     deadline: feasibility.deadline ? toIsoDate(feasibility.deadline) : null,
     deepensMostAsked: feasibility.deepensMostAsked,
     fits: feasibility.fits,
