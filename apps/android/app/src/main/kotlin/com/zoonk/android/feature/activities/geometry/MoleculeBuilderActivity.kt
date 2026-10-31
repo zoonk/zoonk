@@ -571,7 +571,6 @@ private fun MoleculeElements(
                                 ),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 style = MaterialTheme.typography.labelLarge,
-                                modifier = Modifier.clearAndSetSemantics {},
                             )
                         }
                     }

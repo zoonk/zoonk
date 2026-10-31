@@ -272,6 +272,13 @@ class GeometryFlowTest {
     }
 
     @Test
+    fun moleculeBuilderElementsTellTalkBackHowManyBondsTheyMake() {
+        play("moleculeBuilder", isCorrect = true)
+
+        rule.onNode(hasContentDescription("Add Carbon") and hasText("4 bonds")).assertExists()
+    }
+
+    @Test
     fun moleculeBuilderShowsACorrectBuildAfterOpenBonds() {
         play("moleculeBuilder", isCorrect = false)
 
