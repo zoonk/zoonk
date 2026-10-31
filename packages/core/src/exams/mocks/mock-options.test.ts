@@ -677,6 +677,7 @@ describe(getMockQuestionsShortfall, () => {
       option: dayTwo,
       plan: planOptionMock({ candidates: bank, option: dayTwo, structure: TWO_DAYS }),
       skills: skillIds.map((id) => ({ area: "Matemática", id })),
+      structure: TWO_DAYS,
     });
   }
 

@@ -1,7 +1,6 @@
 import { apportion } from "@zoonk/utils/apportion";
 import { interleave } from "@zoonk/utils/interleave";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { listAskedSkills } from "../../library/exams/format-sections";
 import { listSubjectNames } from "../../library/exams/subject-names";
 import { type MockFormat, getMockWritingFormat } from "./mock-format-mix";
 import {
@@ -133,28 +132,30 @@ export function getMockQuestionsShortfall({
   option,
   plan,
   skills,
-  structure = null,
+  structure,
 }: {
   candidates: readonly MockCandidate[];
   mix: readonly MockFormat[];
   option: { questions: number };
   plan: MockPlan;
   skills: readonly MockWritingSkill[];
-  structure?: ExamStructure | null;
+  structure: ExamStructure | null;
 }): MockFormatShortfall[] {
   const shortFormats = new Set(listShortFormats({ candidates, mix, option, plan }));
   const fresh = candidates.filter((candidate) => !candidate.answered);
 
   return countFormats({ candidates, mix, option, plan }).flatMap(({ format, needed, wanted }) => {
-    const eligible = listAskedSkills({ format, skills, structure }).filter(
-      (skill) =>
-        canWrite({ candidates, format, skill }) &&
-        getMockWritingFormat({
-          format,
-          names: skill.area ? listSubjectNames({ area: skill.area, structure }) : [],
-          structure,
-        }) !== null,
-    );
+    const eligible = skills.flatMap((skill) => {
+      const own = getMockWritingFormat({
+        format,
+        names: skill.area ? listSubjectNames({ area: skill.area, structure }) : [],
+        structure,
+      });
+
+      return own !== null && canWrite({ candidates, format: own, skill })
+        ? [{ format: own, skill }]
+        : [];
+    });
 
     const size = Math.max(needed, wanted);
 
@@ -173,41 +174,36 @@ export function getMockQuestionsShortfall({
           candidate.skillId === skill.id && (mix.length === 1 || candidate.format === format.key),
       ).length;
 
-    const holders = eligible.filter((skill) => holds(skill) >= target).length;
+    const holders = eligible.filter(({ skill }) => holds(skill) >= target).length;
     const room = Math.ceil(size / target) - holders;
 
     const byArea = Map.groupBy(
-      eligible.filter((skill) => holds(skill) < target),
-      (skill) => skill.area,
+      eligible.filter(({ skill }) => holds(skill) < target),
+      ({ skill }) => skill.area,
     );
 
     const written = interleave([...byArea.values()]).slice(0, Math.max(0, room));
 
-    const scoped = written.flatMap((skill) => {
-      const own = getMockWritingFormat({
-        format,
-        names: skill.area ? listSubjectNames({ area: skill.area, structure }) : [],
-        structure,
+    const scoped = written.map(({ format: own, skill }) => ({
+      format: own,
+      questionsPerSkill: target - holds(skill),
+      skill,
+    }));
+
+    const byLack = scoped.reduce((groups, { format: own, questionsPerSkill, skill }) => {
+      const key = JSON.stringify([questionsPerSkill, own.style]);
+      const previous = groups.get(key);
+
+      groups.set(key, {
+        format: own,
+        questionsPerSkill,
+        skillIds: [...(previous?.skillIds ?? []), skill.id],
+        target,
       });
 
-      return own ? [{ format: own, questionsPerSkill: target - holds(skill), skill }] : [];
-    });
+      return groups;
+    }, new Map<string, MockFormatShortfall>());
 
-    const byLack = Map.groupBy(scoped, (entry) =>
-      JSON.stringify([entry.questionsPerSkill, entry.format.style]),
-    );
-
-    return [...byLack.values()].flatMap((lacking) =>
-      lacking[0]
-        ? [
-            {
-              format: lacking[0].format,
-              questionsPerSkill: lacking[0].questionsPerSkill,
-              skillIds: lacking.map(({ skill }) => skill.id),
-              target,
-            },
-          ]
-        : [],
-    );
+    return [...byLack.values()];
   });
 }

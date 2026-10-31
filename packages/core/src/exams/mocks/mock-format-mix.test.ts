@@ -118,7 +118,6 @@ describe(getMockFormatMix, () => {
 
     expect(getMockFormatMix(enem)).toStrictEqual([
       {
-        formats: enem.formats,
         key: "choice:5",
         sections: [],
         share: 1,

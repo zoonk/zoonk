@@ -8,7 +8,6 @@ import {
   getMockFormatMix,
   getMockWritingFormat,
 } from "../exams/mocks/mock-format-mix";
-import { listAskedSkills } from "../library/exams/format-sections";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { listSubjectNames } from "../library/exams/subject-names";
 import { ANY_NUMBER } from "../library/items/_utils/numeric-entry";
@@ -160,7 +159,7 @@ export async function pickExamFormatSkills({
   const exam = toItemExam(blueprint);
 
   const picks = formats.flatMap((format) =>
-    listAskedSkills({ format, skills, structure })
+    skills
       .flatMap((skill) => {
         const own = getMockWritingFormat({
           format,

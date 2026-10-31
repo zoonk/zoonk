@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { type MockFormat, ONE_PICK_MIX } from "./mock-format-mix";
+import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { type MockFormat, ONE_PICK_MIX, getMockFormatMix } from "./mock-format-mix";
 import { type MockCandidate, type MockPlan } from "./mock-plan";
 import { getMockQuestionsShortfall } from "./mock-shortfall";
 
@@ -22,6 +23,57 @@ function numbers(sections: string[]): MockFormat {
 }
 
 describe(getMockQuestionsShortfall, () => {
+  it("writes a fresh mock when no skill area resolves to a format scope", () => {
+    const structure = {
+      formats: [
+        {
+          citation: { passage: "", sourceId: "notice" },
+          description: "Choose",
+          kind: "multipleChoice",
+          options: 5,
+          sections: ["Verbal"],
+        },
+        {
+          citation: { passage: "", sourceId: "notice" },
+          description: "Number",
+          kind: "numeric",
+          options: null,
+          sections: ["Quantitative"],
+        },
+      ],
+      mock: null,
+      rules: [],
+      subjects: [],
+    } as ExamStructure;
+
+    const writes = getMockQuestionsShortfall({
+      candidates: [],
+      mix: getMockFormatMix(structure),
+      option: { questions: 8 },
+      plan: {
+        day: null,
+        formatsWanted: { "choice:5": 4, "numeric:number:": 4 },
+        fullLength: true,
+        minutes: 8,
+        reused: 0,
+        sections: [],
+        written: [],
+      },
+      skills: [
+        { area: "Algebra", id: "algebra" },
+        { area: "Reading", id: "reading" },
+      ],
+      structure,
+    });
+
+    expect(
+      writes.map((write) => ({ key: write.format.key, skills: write.skillIds })),
+    ).toStrictEqual([
+      { key: "choice:5", skills: ["algebra", "reading"] },
+      { key: "numeric:number:", skills: ["algebra", "reading"] },
+    ]);
+  });
+
   it("requests enough fresh items for both routes", () => {
     const candidates: MockCandidate[] = Array.from({ length: 4 }, (_, index) => ({
       answered: false,
@@ -58,6 +110,7 @@ describe(getMockQuestionsShortfall, () => {
         option: { questions: 4 },
         plan,
         skills: [{ area: null, id: "skill" }],
+        structure: null,
       }),
     ).toStrictEqual([
       { format: ONE_PICK_MIX[0], questionsPerSkill: 4, skillIds: ["skill"], target: 8 },
@@ -88,6 +141,28 @@ describe(getMockQuestionsShortfall, () => {
         option: { questions: 4 },
         plan,
         skills,
+        structure: {
+          formats: [
+            {
+              citation: { passage: "", sourceId: "notice" },
+              description: "Type a number",
+              entry: { kind: "fraction", places: null },
+              kind: "numeric",
+              options: null,
+              sections: format.sections,
+            },
+            {
+              citation: { passage: "", sourceId: "notice" },
+              description: "Choose",
+              kind: "multipleChoice",
+              options: 5,
+              sections: ["Verbal Reasoning"],
+            },
+          ],
+          mock: null,
+          rules: [],
+          subjects: [],
+        },
       }).flatMap((write) => write.skillIds);
 
     expect(shortfall(numbers(["Quantitative Reasoning"]))).toStrictEqual(["ratios"]);

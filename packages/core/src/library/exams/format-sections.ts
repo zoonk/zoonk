@@ -1,6 +1,4 @@
 import { namesMatch } from "../../exams/_utils/name-match";
-import { type ExamStructure } from "./blueprint-contract";
-import { listSubjectNames } from "./subject-names";
 
 type SectionedFormat = { sections?: readonly string[] };
 
@@ -41,24 +39,4 @@ export function listAskedIn<Format extends SectionedFormat>({
   }
 
   return unscoped.length > 0 ? unscoped : [...formats];
-}
-
-
-export function listAskedSkills<Skill extends { area: string | null }>({
-  format,
-  skills,
-  structure = null,
-}: {
-  format: SectionedFormat;
-  skills: readonly Skill[];
-  structure?: Pick<ExamStructure, "subjects"> | null;
-}): Skill[] {
-  const asked = skills.filter(
-    (skill) =>
-      !format.sections?.length ||
-      skill.area === null ||
-      isAskedIn({ format, names: listSubjectNames({ area: skill.area, structure }) }),
-  );
-
-  return asked;
 }
