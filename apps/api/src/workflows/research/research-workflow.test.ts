@@ -1263,7 +1263,7 @@ describe(researchWorkflow, () => {
     ).resolves.toMatchObject({ board: "Cebraspe" });
   });
 
-  it("keeps the last edition's reading while a required annex of the new notice can't be read or copied", async () => {
+  it("reads a new notice whose annex can't be downloaded, keeping the annex for the next re-read", async () => {
     const { goal } = await examGoal();
     const { plan } = await replayTcdfResearch();
     const { data: recorded } = await findOfficialSources({} as never);
@@ -1280,6 +1280,8 @@ describe(researchWorkflow, () => {
       url: `https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/anexo-ii-${randomUUID()}.pdf`,
     };
 
+    const annexSource = await sourceFixture({ language: "pt", url: annex.url });
+
     vi.mocked(findOfficialSources).mockImplementation(async ({ unreadable = [] }) => ({
       ...TASK_RESULT,
       data: { ...recorded, documents: unreadable.length > 0 ? [] : [notice, annex] },
@@ -1294,6 +1296,17 @@ describe(researchWorkflow, () => {
     );
 
     const lastEdition = await examBlueprintFixture({
+      edition: {
+        check: null,
+        citations: [],
+        dates: [],
+        noticeUrl: null,
+        questionCount: null,
+        sourceHash: "last-edition",
+        sourceIds: [annexSource.id],
+        timeZone: null,
+        year: 2024,
+      },
       examDate: new Date(Date.now() - 300 * 86_400_000),
       identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
       language: "pt",
@@ -1315,7 +1328,11 @@ describe(researchWorkflow, () => {
       annex.url,
     ]);
 
-    expect(extractExamBlueprint).not.toHaveBeenCalled();
+    expect(extractExamBlueprint).toHaveBeenCalledOnce();
+
+    const stored = await prisma.examBlueprint.findUniqueOrThrow({ where: { id: lastEdition.id } });
+
+    expect(examEditionSchema.parse(stored.edition).sourceIds).toContain(annexSource.id);
   });
 
   it("keeps the exam's subjects and scoring when the check rejects every detail their passages don't state", async () => {

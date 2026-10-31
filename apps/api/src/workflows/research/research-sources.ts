@@ -87,8 +87,15 @@ function countType({ documentType }: Typed, documents: readonly Typed[]): number
   return documents.filter((document) => document.documentType === documentType).length;
 }
 
-function isRecovered({ copies, lost }: { copies: Typed[]; lost: Typed[] }): boolean {
-  return lost.every((document) => countType(document, copies) >= countType(document, lost));
+/** A lost part counts as copied when copies of its type cover every lost part of that type. */
+function listNotCopied({
+  copies,
+  lost,
+}: {
+  copies: Typed[];
+  lost: FoundSourceDocument[];
+}): FoundSourceDocument[] {
+  return lost.filter((document) => countType(document, copies) < countType(document, lost));
 }
 
 /** Some boards' sites refuse every download (Vunesp's answer 403), so copies are read from other sites. */
@@ -134,7 +141,7 @@ async function storeCopies({
 
 /**
  * `board` runs the edition the found documents are for; null outside exams or when they don't say.
- * `complete` is false when the notice's required annexes couldn't be read or copied.
+ * `notDownloaded` holds the addresses of the notice's required parts that couldn't be read or copied.
  */
 export async function findAndStoreSources({
   analytics,
@@ -148,7 +155,7 @@ export async function findAndStoreSources({
   plan: ExamResearchPlan | SourceResearchPlan;
   requireOfficial: boolean;
   topic: SourceTopic;
-}): Promise<{ board: string | null; complete: boolean; sourceIds: string[] }> {
+}): Promise<{ board: string | null; notDownloaded: string[]; sourceIds: string[] }> {
   const searchAnalytics = toPlanAnalytics({ analytics, personal: personalPlan });
   const found = await findSourcesStep({ analytics: searchAnalytics, plan, topic });
 
@@ -162,19 +169,19 @@ export async function findAndStoreSources({
   const hasOfficial = found.documents.some((document) => document.kind === "official");
 
   if (requireOfficial && !hasOfficial) {
-    return { board: null, complete: true, sourceIds: [] };
+    return { board: null, notDownloaded: [], sourceIds: [] };
   }
 
   const lost = listLostParts({ stored, topic, unreadable });
   const copies = await storeCopies({ analytics, lost, plan, searchAnalytics, topic });
-  const complete = isRecovered({ copies, lost });
+  const notDownloaded = listNotCopied({ copies, lost }).map((document) => document.url);
 
   // A notice's corrections and annexes read without it would stand in for the whole notice.
   if (
     found.documents.some((document) => isNotice(document)) &&
     ![...stored, ...copies].some((source) => isNotice(source))
   ) {
-    return { board: found.board, complete, sourceIds: [] };
+    return { board: found.board, notDownloaded, sourceIds: [] };
   }
 
   const readable =
@@ -187,7 +194,7 @@ export async function findAndStoreSources({
     .toSorted((first, second) => Number(isNotice(second)) - Number(isNotice(first)))
     .map((source) => source.sourceId);
 
-  return { board: found.board, complete, sourceIds: [...new Set(sourceIds)] };
+  return { board: found.board, notDownloaded, sourceIds: [...new Set(sourceIds)] };
 }
 
 async function findTopicSources({

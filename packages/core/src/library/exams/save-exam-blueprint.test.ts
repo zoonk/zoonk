@@ -11,7 +11,11 @@ import { describe, expect, it, vi } from "vitest";
 import { getExamBlueprintCacheTag } from "../../cache/tags";
 import { uniqueWord } from "../identity/_test-utils/identity-mocks";
 import { MAX_MATCHES_PER_TERM } from "../identity/_utils/text-search-sql";
-import { type BlueprintContent, examStructureSchema } from "./blueprint-contract";
+import {
+  type BlueprintContent,
+  examEditionSchema,
+  examStructureSchema,
+} from "./blueprint-contract";
 import { type ExamIdentity, buildExamIdentityKey } from "./exam-identity";
 import { type ExamRequest, findSameExam } from "./find-same-exam";
 import {
@@ -522,28 +526,30 @@ describe(saveExamBlueprint, () => {
     ]);
   });
 
-  it("keeps the last reading when a re-read's check finds a subject it missed, and records the check", async () => {
+  it("takes a re-read's new exam day and keeps a subject its check finds missing", async () => {
     const notice = await sourceFixture({ language: "pt" });
-    const examIdentity = identity({ board: "FGV" });
+    const examIdentity = identity();
 
-    const first = withSyllabus({
-      base: content({ questions: 80, sourceHash: notice.contentHash, sourceId: notice.id }),
-      examDate: "2026-12-13",
-      names: ["Direito Civil", "Ética Profissional"],
-      year: 2026,
-    });
+    const reading = ({ examDate, names }: { examDate: string; names: string[] }) =>
+      withSyllabus({
+        base: content({
+          questions: 80,
+          sourceHash: `${notice.contentHash}-${examDate}`,
+          sourceId: notice.id,
+        }),
+        examDate,
+        names,
+        year: 2026,
+      });
 
-    const saved = await saveExamBlueprint({
-      board: "FGV",
-      content: first,
+    await saveExamBlueprint({
+      content: reading({ examDate: "2026-12-13", names: ["Direito Civil", "Ética Profissional"] }),
       identity: examIdentity,
       provenance: PROVENANCE,
       sourceId: notice.id,
     });
 
-    const changedHash = `${notice.contentHash}-changed`;
-
-    await prisma.source.update({ data: { contentHash: changedHash }, where: { id: notice.id } });
+    const reread = reading({ examDate: "2026-12-20", names: ["Direito Civil"] });
 
     const missed = {
       citation: { passage: "Ética Profissional: 8 questões", sourceId: notice.id },
@@ -551,35 +557,141 @@ describe(saveExamBlueprint, () => {
       name: "Ética Profissional",
     };
 
-    const reread = withSyllabus({
-      base: content({ questions: 80, sourceHash: changedHash, sourceId: notice.id }),
-      examDate: "2026-12-20",
-      names: ["Direito Civil"],
-      year: 2026,
-    });
-
     const check = { checkedAt: new Date().toISOString(), problems: [missed] };
 
-    await expect(
-      previewExamBlueprintChanges({
-        content: { ...reread, edition: { ...reread.edition, check } },
-        identity: examIdentity,
-      }),
-    ).resolves.toStrictEqual([]);
-
-    const kept = await saveExamBlueprint({
+    const saved = await saveExamBlueprint({
       content: { ...reread, edition: { ...reread.edition, check } },
       identity: examIdentity,
       provenance: PROVENANCE,
       sourceId: notice.id,
     });
 
-    expect(subjectNames(kept.blueprint)).toStrictEqual(["Direito Civil", "Ética Profissional"]);
-    expect(kept.blueprint.examDate).toStrictEqual(saved.blueprint.examDate);
+    expect(saved.blueprint.examDate).toStrictEqual(new Date("2026-12-20T00:00:00.000Z"));
+    expect(subjectNames(saved.blueprint)).toStrictEqual(["Direito Civil", "Ética Profissional"]);
+  });
 
-    await expect(
-      findNoticeReading({ identity: examIdentity, sourceId: notice.id }),
-    ).resolves.toStrictEqual({ problems: [missed], read: true });
+  it("keeps the counts a missing annex would have given, takes the notice's other changes, and records the annex", async () => {
+    const [notice, annex] = await Promise.all([
+      sourceFixture({ language: "pt" }),
+      sourceFixture({
+        language: "pt",
+        url: `https://board.example.org/anexo-iii-${randomUUID()}.pdf`,
+      }),
+    ]);
+
+    const examIdentity = identity();
+
+    const reading = ({ counted, examDate }: { counted: boolean; examDate: string }) => {
+      const base = withSyllabus({
+        base: content({
+          questions: 35,
+          sourceHash: `${notice.contentHash}-${examDate}`,
+          sourceId: notice.id,
+        }),
+        examDate,
+        names: ["Língua Portuguesa", "Raciocínio Lógico"],
+        year: 2026,
+      });
+
+      return {
+        ...base,
+        edition: { ...base.edition, sourceIds: counted ? [notice.id, annex.id] : [notice.id] },
+        structure: {
+          ...base.structure,
+          subjects: base.structure.subjects.map((subject, index) => ({
+            ...subject,
+            questions: counted ? ([10, 5][index] ?? null) : null,
+          })),
+        },
+      };
+    };
+
+    await saveExamBlueprint({
+      content: reading({ counted: true, examDate: "2026-12-13" }),
+      identity: examIdentity,
+      provenance: PROVENANCE,
+      sourceId: notice.id,
+    });
+
+    const uncounted = reading({ counted: false, examDate: "2026-12-20" });
+
+    const missingCount = (subject: string, questions: number) => ({
+      citation: { passage: `${subject}: ${questions} questões`, sourceId: annex.id },
+      kind: "missingCount" as const,
+      questions,
+      subject,
+    });
+
+    const check = {
+      checkedAt: new Date().toISOString(),
+      problems: [missingCount("Língua Portuguesa", 10), missingCount("Raciocínio Lógico", 5)],
+    };
+
+    const saved = await saveExamBlueprint({
+      content: { ...uncounted, edition: { ...uncounted.edition, check } },
+      identity: examIdentity,
+      notDownloaded: [annex.url ?? ""],
+      provenance: PROVENANCE,
+      sourceId: notice.id,
+    });
+
+    expect(saved.blueprint.examDate).toStrictEqual(new Date("2026-12-20T00:00:00.000Z"));
+
+    expect(
+      examStructureSchema
+        .parse(saved.blueprint.structure)
+        .subjects.map((subject) => subject.questions),
+    ).toStrictEqual([10, 5]);
+
+    expect(examEditionSchema.parse(saved.blueprint.edition).sourceIds).toStrictEqual([
+      notice.id,
+      annex.id,
+    ]);
+  });
+
+  it("takes the next reading after a false finding, carrying over only the subject it names", async () => {
+    const notice = await sourceFixture({ language: "pt" });
+    const examIdentity = identity();
+
+    const read = async ({ examDate, missing }: { examDate: string; missing?: string }) => {
+      const base = withSyllabus({
+        base: content({
+          questions: 80,
+          sourceHash: `${notice.contentHash}-${examDate}`,
+          sourceId: notice.id,
+        }),
+        examDate,
+        names: ["Direito Civil", "Direito Penal"],
+        year: 2026,
+      });
+
+      const problems = missing
+        ? [
+            {
+              citation: { passage: missing, sourceId: notice.id },
+              kind: "missingSubject" as const,
+              name: missing,
+            },
+          ]
+        : [];
+
+      return saveExamBlueprint({
+        content: {
+          ...base,
+          edition: { ...base.edition, check: { checkedAt: new Date().toISOString(), problems } },
+        },
+        identity: examIdentity,
+        provenance: PROVENANCE,
+        sourceId: notice.id,
+      });
+    };
+
+    await read({ examDate: "2026-12-13" });
+    await read({ examDate: "2026-12-20", missing: "Direito Tributário" });
+    const next = await read({ examDate: "2026-12-27", missing: "Direito Tributário" });
+
+    expect(next.blueprint.examDate).toStrictEqual(new Date("2026-12-27T00:00:00.000Z"));
+    expect(subjectNames(next.blueprint)).toStrictEqual(["Direito Civil", "Direito Penal"]);
   });
 
   it("tells learners nothing when the same document is read again", async () => {

@@ -34,16 +34,12 @@ async function searchNextNotice({
 
   const plan = await planNextNoticeStep({ analytics, identity });
 
-  const { board, complete, sourceIds } = await findAndStoreSources({
+  const { board, notDownloaded, sourceIds } = await findAndStoreSources({
     analytics,
     plan,
     requireOfficial: true,
     topic: "exam",
   });
-
-  if (!complete) {
-    return;
-  }
 
   await readExamBlueprint({
     analytics,
@@ -51,6 +47,7 @@ async function searchNextNotice({
     board,
     identity,
     isNew: false,
+    notDownloaded,
     sourceIds,
   });
 }

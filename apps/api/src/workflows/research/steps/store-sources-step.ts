@@ -61,11 +61,3 @@ export async function keepReadableSourcesStep(stored: StoredSource[]): Promise<S
 
   return uniqueSources(stored.filter((source) => readable.has(source.sourceId)));
 }
-
-export async function canReadSourcesStep(sourceIds: string[]): Promise<boolean> {
-  "use step";
-
-  const readable = await listReadableSourceIds(sourceIds);
-
-  return readable.length === sourceIds.length;
-}

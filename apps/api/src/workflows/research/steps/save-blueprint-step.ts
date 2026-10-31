@@ -70,6 +70,7 @@ export async function saveBlueprintStep({
   board,
   check,
   identity,
+  notDownloaded,
   reading: unchecked,
   sourceId,
 }: {
@@ -77,6 +78,7 @@ export async function saveBlueprintStep({
   board: string | null;
   check: ReadingCheckInput | null;
   identity: ExamIdentity;
+  notDownloaded: string[];
   reading: BlueprintReading;
   sourceId: string;
 }): Promise<{
@@ -94,6 +96,7 @@ export async function saveBlueprintStep({
     board,
     content: reading.content,
     identity,
+    notDownloaded,
     notice,
     provenance: reading.provenance,
     sourceId,

@@ -92,27 +92,24 @@ async function joinRunningResearch({
 async function findExamSources({
   analytics,
   goal,
-  isNew,
   plan,
   uploads,
-}: ResearchContext<ExamResearchPlan> & { isNew: boolean }): Promise<{
+}: ResearchContext<ExamResearchPlan>): Promise<{
   board: string | null;
+  notDownloaded: string[];
   sourceIds: string[];
 }> {
   if (uploads.length > 0) {
-    return { board: null, sourceIds: uploads };
+    return { board: null, notDownloaded: [], sourceIds: uploads };
   }
 
-  const found = await findAndStoreSources({
+  return findAndStoreSources({
     analytics,
     personalPlan: goal.planPersonal,
     plan,
     requireOfficial: true,
     topic: "exam",
   });
-
-  // A stored reading stays until every required part of the new notice can be read.
-  return found.complete || isNew ? found : { board: found.board, sourceIds: [] };
 }
 
 async function researchExam(context: ResearchContext<ExamResearchPlan>): Promise<ResearchResult> {
@@ -156,7 +153,7 @@ async function researchExam(context: ResearchContext<ExamResearchPlan>): Promise
     return joined;
   }
 
-  const { board, sourceIds } = await findExamSources({ ...context, isNew: !blueprintId });
+  const { board, notDownloaded, sourceIds } = await findExamSources(context);
 
   // A reading of the learner's uploads is theirs, even when the exam is shared, so its calls never
   // reach providers that train on prompts.
@@ -167,6 +164,7 @@ async function researchExam(context: ResearchContext<ExamResearchPlan>): Promise
     exceptGoalId: goal.id,
     identity,
     isNew: !blueprintId,
+    notDownloaded,
     sourceIds,
   };
 
