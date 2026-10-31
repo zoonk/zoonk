@@ -12,7 +12,7 @@ import { getSessionCookieName } from "@zoonk/auth/cookies";
 import { RegisterSharedEventProperties } from "@zoonk/core/analytics/register-shared-properties";
 import { buildSharedEventProperties } from "@zoonk/core/analytics/shared-properties";
 import { AUTH_LOGIN_EXPIRED_ERROR } from "@zoonk/utils/origin";
-import { MAIN_URL } from "@zoonk/utils/url";
+import { PRIVACY_URL, TERMS_URL } from "@zoonk/utils/url";
 import { getExtracted, getLocale } from "next-intl/server";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -21,9 +21,6 @@ import { getCallbackHref, readRedirectTo } from "../_utils/auth-redirect";
 import { getReturnAppUrl } from "../_utils/return-app";
 import { EmailLoginForm } from "./email-login-form";
 import { SocialLogin } from "./social-login";
-
-const TERMS_URL = new URL("/terms", MAIN_URL).toString();
-const PRIVACY_URL = new URL("/privacy", MAIN_URL).toString();
 
 function TermsLink(children: ReactNode) {
   return <a href={TERMS_URL}>{children}</a>;

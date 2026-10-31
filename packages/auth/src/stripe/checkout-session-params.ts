@@ -1,10 +1,7 @@
-import { MAIN_URL } from "@zoonk/utils/url";
+import { TERMS_URL } from "@zoonk/utils/url";
 import { getRequestTranslation, getTranslation } from "../translations/get-translations";
 import type Stripe from "stripe";
 
-const TERMS_URL = new URL("/terms", MAIN_URL).toString();
-
-/** The page's Stripe locale (`pt-BR`) names its language; without one, the request's language decides. */
 function getCheckoutTranslation(stripeLocale?: string) {
   const language = stripeLocale?.split("-")[0];
   return language ? getTranslation(language) : getRequestTranslation();

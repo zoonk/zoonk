@@ -20,7 +20,6 @@ export function getTranslation(locale: string) {
   return translations[safeLocale]();
 }
 
-/** The language of the person making the current request: their saved choice, then their browser's. */
 export async function getRequestTranslation() {
   const [cookieStore, headerStore] = await Promise.all([cookies(), headers()]);
 
