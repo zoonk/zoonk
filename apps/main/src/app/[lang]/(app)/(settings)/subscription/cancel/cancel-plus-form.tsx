@@ -2,10 +2,11 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
+import { useFormatter } from "@zoonk/learn/formatter";
 import { Button } from "@zoonk/ui/components/button";
 import { formatPrice } from "@zoonk/utils/currency";
 import { Loader2Icon } from "lucide-react";
-import { useExtracted, useFormatter, useLocale } from "next-intl";
+import { useExtracted, useLocale } from "next-intl";
 import { createContext, use, useState, useTransition } from "react";
 import { type CancelPlusResult, cancelPlusAction } from "./cancel-plus-action";
 

@@ -39,11 +39,13 @@
           {
             "name": "next-intl",
             "importNames": ["useFormatter"],
+            "allowTypeImports": true,
             "message": "Use useFormatter from @zoonk/learn/formatter, which formats Spanish the Mexican way."
           },
           {
             "name": "next-intl/server",
             "importNames": ["getFormatter"],
+            "allowTypeImports": true,
             "message": "Use getFormatter from @/i18n/formatter, which formats Spanish the Mexican way."
           }
         ]

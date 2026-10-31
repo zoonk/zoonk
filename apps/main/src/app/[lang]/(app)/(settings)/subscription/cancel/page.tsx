@@ -1,3 +1,4 @@
+import { getFormatter } from "@/i18n/formatter";
 import { getPathname } from "@/i18n/navigation";
 import { getWebPlusCancellation } from "@zoonk/core/subscriptions/web-plus-cancellation";
 import { ListGroup } from "@zoonk/learn/list";
@@ -15,7 +16,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { formatPrice } from "@zoonk/utils/currency";
 import { type Metadata } from "next";
-import { getExtracted, getFormatter, getLocale } from "next-intl/server";
+import { getExtracted, getLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { ManagedSubscription } from "../managed-subscription";
 import { CancelPlusButton, CancelPlusForm } from "./cancel-plus-form";
