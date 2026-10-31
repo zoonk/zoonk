@@ -1,3 +1,4 @@
+import { listCountedSubjects } from "../../exams/choices/exam-choices";
 import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { type ExamStructure } from "./blueprint-contract";
 import {
@@ -51,14 +52,26 @@ export function getSubjectPoints({
   );
 
   if (part && isWrittenSubject({ structure, subject })) {
-    const subjects = structure.subjects.filter(
+    const subjects = listCountedSubjects(structure.subjects).filter(
       (item) => item.name === part.name || item.group === part.name,
     );
 
-    if (subjects.every((item) => isWrittenSubject({ structure, subject: item }))) {
-      const max = getPartMaxPoints({ marking: scoring?.marking ?? [], part });
-      return max === null ? null : max / subjects.length;
+    const objective = subjects.filter((item) => !isWrittenSubject({ structure, subject: item }));
+    const written = subjects.length - objective.length;
+
+    const max =
+      objective.length === 0
+        ? getPartMaxPoints({ marking: scoring?.marking ?? [], part })
+        : part.maxPoints;
+
+    const points = objective.map((item) => getSubjectPoints({ structure, subject: item }));
+
+    if (max === null || points.some((value) => value === null)) {
+      return null;
     }
+
+    const remaining = max - points.reduce<number>((sum, value) => sum + (value ?? 0), 0);
+    return remaining >= 0 && written > 0 ? remaining / written : null;
   }
 
   const questions = getPlannedSubjectQuestions({ structure, subject });

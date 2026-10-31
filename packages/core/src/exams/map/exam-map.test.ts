@@ -151,19 +151,50 @@ describe("mixed paper weights", () => {
     });
 
     const essay = structure.subjects.find((item) => item.name === "Essay");
-    expect(essay && getSubjectPoints({ structure, subject: essay })).toBeNull();
+    expect(essay && getSubjectPoints({ structure, subject: essay })).toBe(50);
   });
 });
 
 describe("mixed paper map shares", () => {
-  it("keeps a visible share for an essay whose point value is unknown", () => {
+  it.each([
+    { extraPoints: 0, shares: [0.8, 0.2] },
+    { extraPoints: 100, shares: [0.4, 0.1, 0.5] },
+  ])(
+    "uses the paper's remaining points for its essay with $extraPoints separate points",
+    ({ extraPoints, shares }) => {
+      const structure = scored({
+        scoring: { parts: [{ ...part("Paper", 80), maxPoints: 100 }] },
+        subjects: [
+          { ...subject("Objective", 80), group: "Paper" },
+          ...grouped("Paper", ["Essay"]),
+          ...(extraPoints ? [subject("Other", extraPoints)] : []),
+        ],
+      });
+
+      const map = buildExamMap({ frequency: [], skills: [], structure });
+
+      expect(map.subjects.map((item) => item.share)).toStrictEqual(shares);
+
+      expect(
+        structure.subjects.map((item) => getSubjectPoints({ structure, subject: item })),
+      ).toStrictEqual([80, 20, ...(extraPoints ? [extraPoints] : [])]);
+    },
+  );
+
+  it("shares the remaining points among the paper's written subjects", () => {
     const structure = scored({
-      scoring: { parts: [{ ...part("Paper", 50), maxPoints: 100 }] },
-      subjects: [{ ...subject("Objective", 50), group: "Paper" }, ...grouped("Paper", ["Essay"])],
+      scoring: {
+        marking: [row("Objective", 2)],
+        parts: [{ ...part("Paper", 40), maxPoints: 100 }],
+      },
+      subjects: [
+        { ...subject("Objective", 40), group: "Paper" },
+        ...grouped("Paper", ["Essay", "Redação"]),
+      ],
     });
 
     const map = buildExamMap({ frequency: [], skills: [], structure });
-    expect(map.subjects.map((item) => item.share)).toStrictEqual([0.5, 0.5]);
+    expect(map.subjects.map((item) => item.share)).toStrictEqual([0.8, 0.1, 0.1]);
   });
 
   it("uses the average known share for the essay while retaining relative objective weights", () => {
