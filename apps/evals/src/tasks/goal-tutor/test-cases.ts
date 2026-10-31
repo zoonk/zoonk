@@ -1179,6 +1179,28 @@ export const TEST_CASES: GoalTutorCase[] = [
     question: "meu plano cobre a prova toda?",
   }),
   goalCase({
+    context: {
+      ...ENEM_WITH_SETUP,
+      setup: {
+        ...ENEM_WITH_SETUP.setup,
+        coverage: { coreFits: false, coveredShare: 0.2, fits: false, measure: "exam" },
+      },
+    },
+    expectations: `${LOOKUP_EXPECTATIONS} A question about how much to study, with the exam close. Says, from the timeToCover lookup, that studying everything in depth by the exam takes about 13 h 25 min a day and that this is more than most people can keep up; recommends 4 hours a day instead and says what that plan does: every topic of the exam, the ones it asks most in more depth, about 60% of everything in depth. Saying or implying that 4 hours a day covers everything is a major error (cap 5.0), and so is a number not taken from the lookup (cap 5.0). It may say they can still choose the longer time. Writes only Portuguese: a word in another language or script is a major error (cap 6.0). Never promises a score. proposedChange is null or sets 4 hours a day.`,
+    id: "pt-enem-time-past-what-people-keep-up",
+    lookUps: {
+      timeToCover: {
+        fittingDate: null,
+        recommendedMinutes: 805,
+        status: "found",
+        suggested: { coveredShare: 0.6, everyTopic: true, kind: "focus", minutes: 240 },
+        targetDate: "2026-11-08",
+        what: "timeToCover",
+      },
+    },
+    question: "quantas horas por dia eu preciso estudar?",
+  }),
+  goalCase({
     context: UX_PLAN,
     expectations:
       "A beginner's doubt about UX: explains what a persona is simply, correctly, with one example; may relate it to her teaching (planning lessons for a class). proposedChange is null.",
