@@ -54,7 +54,7 @@ val DayStep.challengePhase: String?
 private val DayStep.hasCapsules: Boolean
     get() = kind == StudyBlock.Kind.REVIEW && capsules.isNotEmpty()
 
-internal val DayStep.practisesTopics: Boolean
+val DayStep.practisesTopics: Boolean
     get() = kind == StudyBlock.Kind.PRACTICE && topics.isNotEmpty() && !fullReview && !mistakesOnly
 
 @Composable

@@ -196,7 +196,7 @@ fun ItemCitationNote(
 private fun checkedAt(text: String): Instant? = runCatching { Instant.parse(text) }.getOrNull()
 
 /** About where a phone starts folding a set's text, and where an aside gives it half the window. */
-internal fun isLongText(text: String?): Boolean = (text?.length ?: 0) >= LONG_TEXT_CHARACTERS
+fun isLongText(text: String?): Boolean = (text?.length ?: 0) >= LONG_TEXT_CHARACTERS
 
 private const val LONG_TEXT_CHARACTERS = 400
 private const val FOLDED_LINES = 4

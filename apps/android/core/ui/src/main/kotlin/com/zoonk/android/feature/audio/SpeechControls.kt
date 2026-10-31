@@ -109,7 +109,7 @@ fun SpeechState.withoutFailure(): SpeechState = if (this is SpeechState.Failed) 
 
 /** A button icon that grows with the font, since it's what tells the states apart. */
 @Composable
-internal fun buttonIconSize(): Dp = ButtonDefaults.IconSize * LocalDensity.current.fontScale
+fun buttonIconSize(): Dp = ButtonDefaults.IconSize * LocalDensity.current.fontScale
 
 /** Sized for a button; [idle] should be too, with [buttonIconSize]. */
 @Composable

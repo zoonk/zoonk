@@ -283,7 +283,7 @@ internal fun announcedSeconds(
     }
 
 /** "0:45", as main's `formatClock` writes it. */
-internal fun formatClock(millis: Long): String {
+fun formatClock(millis: Long): String {
     val totalSeconds = ceil(millis / MILLIS_PER_SECOND.toDouble()).toLong()
     val hours = totalSeconds / SECONDS_PER_HOUR
     val minutes = totalSeconds / SECONDS_PER_MINUTE % MINUTES_PER_HOUR
@@ -335,7 +335,7 @@ private fun LessonLink(
 
 /** A quiet line with its symbol beside it, as main's `Callout`. */
 @Composable
-internal fun NoteRow(
+fun NoteRow(
     @DrawableRes icon: Int,
     text: @Composable () -> Unit,
 ) {
