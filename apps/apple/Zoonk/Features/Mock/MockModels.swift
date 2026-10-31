@@ -187,6 +187,8 @@ struct MockResult: Hashable, Decodable, Sendable {
   var minutesUsed: Double
   var net: Net?
   var plannedMinutes: Double
+  /// Nil for an exam not scored in points.
+  var points: MockPoints?
   var preparation: Preparation?
   var previous: Double?
   var topics: [Topic]
@@ -203,6 +205,67 @@ struct MockResult: Hashable, Decodable, Sendable {
     let change = Int((current - previous + 0.5).rounded(.down))
     return change == 0 ? nil : change
   }
+}
+
+struct PointsMinimum: Hashable, Decodable, Sendable {
+  enum Unit: String, Decodable, Sendable {
+    case points
+    case percent
+  }
+
+  var unit: Unit
+  var value: Double
+}
+
+struct MockPoints: Hashable, Decodable, Sendable {
+  struct Test: Hashable, Decodable, Sendable {
+    var asked: Double
+    var earned: Double
+    var max: Double?
+    /// Judged only by a full mock that asked the whole test.
+    var met: Bool?
+    var minimum: PointsMinimum?
+    /// For a mock that asked part of the test: its estimate for the whole test.
+    var projected: Double?
+    var short: Double?
+    /// Nil for the objective tests together.
+    var name: String?
+    /// It only has to reach its minimum and doesn't count toward the total.
+    var qualifying: Bool
+  }
+
+  struct Unjudged: Hashable, Decodable, Sendable {
+    var minimum: PointsMinimum
+    var name: String?
+  }
+
+  var asked: Double
+  var earned: Double
+  var max: Double?
+  var met: Bool?
+  var minimum: PointsMinimum?
+  var projected: Double?
+  var short: Double?
+  var parts: [Test]
+  var unjudged: [Unjudged]
+
+  /// Each test, and the tests together when they have a minimum. Misses come first, so what would
+  /// eliminate the learner is read before what went fine.
+  var tests: [Test] {
+    let together =
+      minimum == nil
+      ? []
+      : [
+        Test(
+          asked: asked, earned: earned, max: max, met: met, minimum: minimum,
+          projected: projected, short: short, name: nil, qualifying: false)
+      ]
+
+    let tests = parts + together
+    return tests.filter { $0.met == false } + tests.filter { $0.met != false }
+  }
+
+  var hasTests: Bool { !parts.isEmpty || minimum != nil || !unjudged.isEmpty }
 }
 
 struct NetCalibration: Hashable, Decodable, Sendable {

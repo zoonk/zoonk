@@ -268,6 +268,10 @@ private struct MockScoreSections: View {
       }
     }
 
+    if let points = result.points, points.hasTests {
+      MockPointsSection(points: points)
+    }
+
     if let passMarks = view.passMarks {
       Section {
         ForEach(passMarks.texts, id: \.self) { text in
@@ -293,6 +297,13 @@ private struct MockScoreSections: View {
   }
 
   private var score: (label: String, value: String) {
+    if let points = result.points {
+      return (
+        String(localized: "Points", table: "Mock", comment: "Label of a mock's score in points"),
+        MockLabels.points(points.earned, of: points.asked)
+      )
+    }
+
     if let irt = result.irt {
       return (
         String(localized: "Estimated score", table: "Mock", comment: "An IRT score's label"),
@@ -328,7 +339,8 @@ private struct MockScoreSections: View {
   }
 
   private var delta: (text: String, up: Bool)? {
-    guard let change = result.change else {
+    // The change measures right answers, never points, so a points headline can't take it.
+    guard let change = result.change, result.points == nil else {
       return nil
     }
 

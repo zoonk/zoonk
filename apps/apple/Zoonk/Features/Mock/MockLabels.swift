@@ -120,6 +120,31 @@ enum MockLabels {
     value.formatted(.number.precision(.fractionLength(0...2)))
   }
 
+  static func points(_ value: Double) -> String {
+    let rounded = (value * 100).rounded() / 100
+
+    return rounded == rounded.rounded()
+      ? String(localized: "\(Int(rounded)) points", table: "Mock", comment: "A number of points")
+      : String(
+        localized: "\(number(rounded)) points", table: "Mock",
+        comment: "A number of points with decimals, like 2.5 points")
+  }
+
+  static func points(_ value: Double, of total: Double) -> String {
+    String(
+      localized: "\(number(value)) of \(number(total))", table: "Mock",
+      comment: "Points of a total, like '182 of 260'")
+  }
+
+  static func percent(_ value: Double) -> String {
+    (value / 100).formatted(.percent.precision(.fractionLength(0...1)))
+  }
+
+  /// A points minimum is its number alone: the sentence around it says it's points.
+  static func minimum(_ minimum: PointsMinimum) -> String {
+    minimum.unit == .percent ? percent(minimum.value) : number(minimum.value)
+  }
+
   static func range(low: Double, high: Double) -> String {
     String(
       localized: "\(number(low.rounded()))–\(number(high.rounded()))", table: "Mock",

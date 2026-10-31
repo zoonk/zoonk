@@ -146,6 +146,111 @@
         }
       }
     },
+    "%@ needs %@ and isn't in this mock." : {
+      "comment" : "A test's minimum this mock couldn't check; the second argument is like '8 points'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für %1$@ sind mindestens %2$@ nötig. Der Test ist in dieser Probeprüfung nicht enthalten."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ needs %2$@ and isn't in this mock."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ necesita %2$@ y no se incluye en este simulacro."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ exige %2$@ et ne figure pas dans cet examen blanc."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ exige %2$@ e não está neste simulado."
+          }
+        }
+      }
+    },
+    "%@ needs %@ of its points and isn't in this mock." : {
+      "comment" : "A test's minimum share of points this mock couldn't check",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für %1$@ sind mindestens %2$@ der möglichen Punkte nötig. Der Test ist in dieser Probeprüfung nicht enthalten."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ needs %2$@ of its points and isn't in this mock."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ necesita el %2$@ de sus puntos y no se incluye en este simulacro."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ exige %2$@ des points possibles et ne figure pas dans cet examen blanc."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ exige %2$@ dos pontos e não está neste simulado."
+          }
+        }
+      }
+    },
+    "%@ of %@" : {
+      "comment" : "Points of a total, like '182 of 260'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ von %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ sur %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %2$@"
+          }
+        }
+      }
+    },
     "%@ of %lld" : {
       "comment" : "An area's right answers\nRight answers of the questions",
       "localizations" : {
@@ -212,6 +317,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ de %2$lld corretas"
+          }
+        }
+      }
+    },
+    "%@ points" : {
+      "comment" : "A number of points with decimals, like 2.5 points",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Punkte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ puntos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ points"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ pontos"
+          }
+        }
+      }
+    },
+    "%@ short of the %@ it needs" : {
+      "comment" : "A test that missed its minimum; the first argument is like '2 points'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es fehlen %1$@, um die nötigen %2$@ zu erreichen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ short of the %2$@ it needs"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A %1$@ del mínimo de %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il manque %1$@ pour atteindre les %2$@ nécessaires"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ abaixo do mínimo de %2$@"
           }
         }
       }
@@ -989,6 +1158,101 @@
                       "value" : "%arg das %2$lld perguntas estão prontas agora"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld points" : {
+      "comment" : "A number of points",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Punkt"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Punkte"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld point"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld points"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld punto"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld puntos"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld point"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld points"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ponto"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld pontos"
                 }
               }
             }
@@ -2166,6 +2430,41 @@
         }
       }
     },
+    "About %@ of %@ points on the whole exam, projected from this mock. Only a full mock says whether you'd reach the minimums." : {
+      "comment" : "A half mock's points projected onto the whole exam",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwa %1$@ von %2$@ Punkten für die gesamte Prüfung, aus dieser Probeprüfung hochgerechnet. Nur eine vollständige Probeprüfung zeigt, ob du die Mindestanforderungen erfüllen würdest."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "About %1$@ of %2$@ points on the whole exam, projected from this mock. Only a full mock says whether you'd reach the minimums."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aproximadamente %1$@ de %2$@ puntos en el examen completo, estimados a partir de este simulacro. Solo un simulacro completo permite saber si alcanzarías los mínimos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimation pour l’examen entier d’après cet examen blanc : environ %1$@ sur %2$@ points. Seul un examen blanc complet permet de savoir si tu atteindrais les seuils requis."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca de %1$@ de %2$@ pontos na prova inteira, estimados com base neste simulado. Só um simulado completo mostra se você atingiria as pontuações mínimas."
+          }
+        }
+      }
+    },
     "About %@ on the %@ scale, from %@ to %@." : {
       "comment" : "The mock's score on the exam's named scale",
       "localizations" : {
@@ -2503,6 +2802,41 @@
         }
       }
     },
+    "At %@, below the %@ it needs" : {
+      "comment" : "A test that missed its minimum share of points",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bei %1$@, unter dem Minimum (%2$@)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "At %1$@, below the %2$@ it needs"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con %1$@, por debajo del mínimo de %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À %1$@, en dessous des %2$@ nécessaires"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com %1$@, abaixo do mínimo de %2$@"
+          }
+        }
+      }
+    },
     "Below %@ on this paper, the whole exam isn't passed." : {
       "comment" : "A speaking paper's floor for the whole exam",
       "localizations" : {
@@ -2702,6 +3036,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Por área"
+          }
+        }
+      }
+    },
+    "By test" : {
+      "comment" : "Each test's points in a mock's result",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro Test"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por prueba"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par épreuve"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por prova"
           }
         }
       }
@@ -2975,6 +3338,35 @@
         }
       }
     },
+    "Doesn't count toward the total" : {
+      "comment" : "A qualifying test that only has to reach its minimum",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zählt nicht zur Gesamtpunktzahl"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No cuenta para el total"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ne compte pas dans le total"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não conta para o total"
+          }
+        }
+      }
+    },
     "Done" : {
       "comment" : "A speaking task that's done",
       "localizations" : {
@@ -3124,6 +3516,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pronto: seu plano vai dedicar mais tempo a essa área a partir de agora."
+          }
+        }
+      }
+    },
+    "Each test's points are projected onto its whole length. Only a full mock says whether you'd reach the minimums." : {
+      "comment" : "A half mock's points per test, projected onto each whole test",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Punkte jedes Tests werden auf den gesamten Test hochgerechnet. Nur eine vollständige Probeprüfung zeigt, ob du die Mindestanforderungen erfüllen würdest."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los puntos de cada prueba se usan para estimar cuántos obtendrías en la prueba completa. Solo un simulacro completo permite saber si alcanzarías los mínimos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les points de chaque épreuve sont estimés comme si tu l’avais passée en entier. Seul un examen blanc complet permet de savoir si tu atteindrais les seuils requis."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os pontos de cada prova são estimados para a prova inteira. Só um simulado completo mostra se você atingiria as pontuações mínimas."
           }
         }
       }
@@ -4221,6 +4642,35 @@
         }
       }
     },
+    "Meets the objective minimums checked here." : {
+      "comment" : "A full mock's result reached every minimum it could check",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erfüllt die hier geprüften Mindestanforderungen für objektiv bewertete Tests."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cumple los mínimos objetivos comprobados aquí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tous les seuils vérifiés ici pour les épreuves objectives sont atteints."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atinge os mínimos verificados aqui para as provas objetivas."
+          }
+        }
+      }
+    },
     "Mock exam" : {
       "comment" : "Names a mock exam's screen until it loads",
       "localizations" : {
@@ -4519,6 +4969,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mais tempo para %1$@ (%2$@ de %3$lld acertos)"
+          }
+        }
+      }
+    },
+    "Needs %@" : {
+      "comment" : "A test's minimum, which this mock doesn't judge; the argument is like '8 points'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mindestens %@ nötig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Necesita %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il faut %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exige %@"
+          }
+        }
+      }
+    },
+    "Needs %@ of its points" : {
+      "comment" : "A test's minimum share of points, which this mock doesn't judge",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mindestens %@ der möglichen Punkte nötig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Necesita el %@ de sus puntos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il faut %@ des points possibles"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exige %@ dos pontos"
           }
         }
       }
@@ -4906,6 +5414,35 @@
         }
       }
     },
+    "Objective tests together" : {
+      "comment" : "A mock result's row for the exam's objective tests counted together",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objektiv bewertete Tests insgesamt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pruebas objetivas en conjunto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ensemble des épreuves objectives"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total das provas objetivas"
+          }
+        }
+      }
+    },
     "One subject" : {
       "comment" : "A one-subject mock\nMocks of one subject",
       "localizations" : {
@@ -5047,6 +5584,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Escolha quanto da prova você quer fazer agora."
+          }
+        }
+      }
+    },
+    "Points" : {
+      "comment" : "Label of a mock's score in points",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Punkte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puntos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Points"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pontos"
           }
         }
       }
@@ -5390,6 +5956,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Perguntas para revisar"
+          }
+        }
+      }
+    },
+    "Reached the %@ it needs" : {
+      "comment" : "A test that reached its minimum; the argument is like '8 points' or '50%'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die nötigen %@ erreicht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ha alcanzado el mínimo de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seuil de %@ atteint"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atingiu o mínimo de %@"
           }
         }
       }
@@ -6702,6 +7297,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O edital não informa quantas perguntas há na prova."
+          }
+        }
+      }
+    },
+    "The objective tests together need %@ of their points, and this mock doesn't have them all." : {
+      "comment" : "A minimum share of points this mock couldn't check",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für die objektiv bewerteten Tests sind insgesamt mindestens %@ der möglichen Punkte nötig. Diese Probeprüfung enthält nicht alle davon."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las pruebas objetivas necesitan en conjunto el %@ de sus puntos y este simulacro no las incluye todas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour l’ensemble des épreuves objectives, il faut %@ des points possibles, mais elles ne figurent pas toutes dans cet examen blanc."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Juntas, as provas objetivas exigem %@ dos pontos, e este simulado não inclui todas elas."
+          }
+        }
+      }
+    },
+    "The objective tests together need %@, and this mock doesn't have them all." : {
+      "comment" : "A minimum this mock couldn't check; the argument is like '60 points'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für die objektiv bewerteten Tests sind insgesamt mindestens %@ nötig. Diese Probeprüfung enthält nicht alle davon."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las pruebas objetivas necesitan en conjunto %@ y este simulacro no las incluye todas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour l’ensemble des épreuves objectives, il faut %@, mais elles ne figurent pas toutes dans cet examen blanc."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Juntas, as provas objetivas exigem %@, e este simulado não inclui todas elas."
           }
         }
       }
@@ -8142,6 +8795,146 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você digitou a resposta em pelo menos uma tarefa, então a estimativa não considera sua fala nas tarefas respondidas por texto."
+          }
+        }
+      }
+    },
+    "You'd be eliminated: %@ is %@ short of %@." : {
+      "comment" : "Eliminated: the exam's rules disqualify a candidate below this minimum, whatever their total. A full mock missed a test's minimum; the second argument is like '2 points'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du würdest ausscheiden: Bei %1$@ fehlen dir %2$@, um %3$@ zu erreichen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "You'd be eliminated: %1$@ is %2$@ short of %3$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quedarías fuera: %1$@ se queda a %2$@ del mínimo de %3$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce résultat serait éliminatoire : %1$@ est %2$@ en dessous du minimum de %3$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esse resultado eliminaria você: %1$@ está %2$@ abaixo do mínimo de %3$@."
+          }
+        }
+      }
+    },
+    "You'd be eliminated: %@ is at %@, below the %@ it needs." : {
+      "comment" : "Eliminated: the exam's rules disqualify a candidate below this minimum, whatever their total. A full mock missed a test's minimum share",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du würdest ausscheiden: %1$@ liegt bei %2$@ und damit unter dem Minimum von %3$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "You'd be eliminated: %1$@ is at %2$@, below the %3$@ it needs."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quedarías fuera: %1$@ alcanza %2$@, por debajo del mínimo de %3$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce résultat serait éliminatoire : %1$@ atteint %2$@, en dessous du minimum de %3$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esse resultado eliminaria você: %1$@ está com %2$@, abaixo do mínimo de %3$@."
+          }
+        }
+      }
+    },
+    "You'd be eliminated: the objective tests together are %@ short of %@." : {
+      "comment" : "Eliminated: the exam's rules disqualify a candidate below this minimum, whatever their total. A full mock missed the objective tests' minimum; the first argument is like '2 points'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du würdest ausscheiden: Bei den objektiven Tests fehlen dir insgesamt %1$@, um %2$@ zu erreichen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "You'd be eliminated: the objective tests together are %1$@ short of %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quedarías fuera: en conjunto, las pruebas objetivas se quedan a %1$@ del mínimo de %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce résultat serait éliminatoire : le total des épreuves objectives est %1$@ en dessous du minimum de %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esse resultado eliminaria você: a soma das provas objetivas está %1$@ abaixo do mínimo de %2$@."
+          }
+        }
+      }
+    },
+    "You'd be eliminated: the objective tests together reach %@, below the %@ they need." : {
+      "comment" : "Eliminated: the exam's rules disqualify a candidate below this minimum, whatever their total. A full mock missed the objective tests' minimum share",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du würdest ausscheiden: Die objektiven Tests erreichen zusammen %1$@ und liegen damit unter dem Minimum von %2$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "You'd be eliminated: the objective tests together reach %1$@, below the %2$@ they need."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quedarías fuera: las pruebas objetivas suman %1$@, por debajo del mínimo de %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce résultat serait éliminatoire : le total des épreuves objectives atteint %1$@, en dessous du minimum de %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esse resultado eliminaria você: a soma das provas objetivas chega a %1$@, abaixo do mínimo de %2$@."
           }
         }
       }

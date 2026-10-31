@@ -29,7 +29,7 @@ final class MockResultChangeTests: XCTestCase {
       net: net.map {
         MockResult.Net(blank: 0, max: 60, net: $0, partial: 0, penalty: 0, right: 0, wrong: 0)
       },
-      plannedMinutes: 0, preparation: nil, previous: previous, topics: [], total: 60,
+      plannedMinutes: 0, points: nil, preparation: nil, previous: previous, topics: [], total: 60,
       unansweredAtTimeout: 0)
   }
 }
