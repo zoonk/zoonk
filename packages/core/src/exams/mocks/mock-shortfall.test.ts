@@ -9,6 +9,7 @@ describe(getMockQuestionsShortfall, () => {
       answered: false,
       area: null,
       difficulty: index,
+      itemFormat: "trueFalse" as const,
       itemId: String(index),
       skillId: "skill",
     }));

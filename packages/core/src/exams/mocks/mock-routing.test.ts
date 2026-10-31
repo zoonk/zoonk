@@ -9,6 +9,7 @@ describe(toRouting, () => {
         answered: false,
         area,
         difficulty: 0,
+        itemFormat: "trueFalse" as const,
         itemId: `${area}-${index}`,
         skillId: area,
       })),
@@ -27,6 +28,7 @@ describe(toRouting, () => {
       answered: false,
       area: null,
       difficulty: index,
+      itemFormat: "trueFalse" as const,
       itemId: String(index),
       skillId: "skill",
     }));
