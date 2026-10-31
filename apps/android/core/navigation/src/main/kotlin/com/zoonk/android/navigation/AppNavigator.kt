@@ -25,7 +25,7 @@ import com.zoonk.android.app.openWebPage
  * per tab, kept across tab switches; the selected tab; and the full-screen tasks over the frame.
  */
 @Stable
-class AppNavigator internal constructor(
+class AppNavigator(
     private val stacks: Map<AppTab, NavBackStack<NavKey>>,
     private val selected: MutableState<AppTab>,
     internal val tasks: NavBackStack<NavKey>,
@@ -40,7 +40,7 @@ class AppNavigator internal constructor(
     val isTaskOpen: Boolean
         get() = tasks.isNotEmpty()
 
-    internal var isSwitchingTabs = false
+    var isSwitchingTabs = false
         private set
 
     private val currentStack: NavBackStack<NavKey>
@@ -238,7 +238,7 @@ fun rememberAppNavigator(): AppNavigator {
  * back from another tab's root leads to Today), then the tasks.
  */
 @Composable
-internal fun AppNavigator.rememberEntries(entryProvider: (NavKey) -> NavEntry<NavKey>): List<NavEntry<NavKey>> {
+fun AppNavigator.rememberEntries(entryProvider: (NavKey) -> NavEntry<NavKey>): List<NavEntry<NavKey>> {
     val tabEntries = AppTab.entries.associateWith { tab -> key(tab) { rememberStackEntries(stack(tab), tab.name, entryProvider) } }
     val taskEntries = key("tasks") { rememberStackEntries(tasks, "tasks", entryProvider) }
     val selectedEntries = if (selectedTab == AppTab.Today) emptyList() else tabEntries.getValue(selectedTab)

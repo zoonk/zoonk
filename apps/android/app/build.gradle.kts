@@ -84,6 +84,7 @@ aboutLibraries {
 dependencies {
     // First, so our strings that replace a library's (close_sheet) win the resource merge.
     implementation(project(":core:resources"))
+    implementation(project(":core:navigation"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -141,6 +142,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.leakcanary.android)
 
+    testImplementation(testFixtures(project(":core:navigation")))
     testImplementation(composeBom)
     testImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.androidx.test.ext.junit)

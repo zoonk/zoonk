@@ -2,6 +2,7 @@
 activityCompose = "1.13.0"
 agp = "9.5.0"
 androidxAnnotation = "1.11.0"
+androidxCore = "1.19.1"
 # activity-compose alone resolves lifecycle 2.9.4, whose lint checks no longer load in current lint.
 androidxLifecycle = "2.11.0"
 androidxTest = "1.7.0"
@@ -66,8 +67,10 @@ lint-tests = { module = "com.android.tools.lint:lint-tests", version.ref = "lint
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidxAnnotation" }
+androidx-core = { module = "androidx.core:core", version.ref = "androidxCore" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 androidx-compose-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite" }
 androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }

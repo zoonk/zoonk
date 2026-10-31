@@ -21,40 +21,33 @@ data class PendingAppleSignIn(
     val startedAt: Long,
 )
 
-data class AppleCallback(
-    val state: String,
-    val code: String? = null,
-    val idToken: String? = null,
-    val user: String? = null,
-    val error: String? = null,
-) {
-    internal fun request(rawNonce: String): AppleSessionRequest? {
-        if (code.isNullOrBlank() || idToken.isNullOrBlank()) return null
-        return try {
-            val profile = user?.let { Json.parseToJsonElement(it).jsonObject }
-            val name = profile?.get("name")?.jsonObject
-            AppleSessionRequest(
-                authorizationCode = code,
-                idToken = idToken,
-                nonce = rawNonce,
-                client = AppleSessionRequest.Client.WEB,
-                user =
-                    profile?.let {
-                        AppleSessionRequestUser(
-                            email = it["email"]?.jsonPrimitive?.content,
-                            name =
-                                name?.let {
-                                    AppleSessionRequestUserName(
-                                        it["firstName"]?.jsonPrimitive?.content,
-                                        it["lastName"]?.jsonPrimitive?.content,
-                                    )
-                                },
-                        )
-                    },
-            )
-        } catch (_: IllegalArgumentException) {
-            null
-        }
+internal fun AppleCallback.request(rawNonce: String): AppleSessionRequest? {
+    val authorizationCode = code?.takeIf(String::isNotBlank) ?: return null
+    val token = idToken?.takeIf(String::isNotBlank) ?: return null
+    return try {
+        val profile = user?.let { Json.parseToJsonElement(it).jsonObject }
+        val name = profile?.get("name")?.jsonObject
+        AppleSessionRequest(
+            authorizationCode = authorizationCode,
+            idToken = token,
+            nonce = rawNonce,
+            client = AppleSessionRequest.Client.WEB,
+            user =
+                profile?.let {
+                    AppleSessionRequestUser(
+                        email = it["email"]?.jsonPrimitive?.content,
+                        name =
+                            name?.let {
+                                AppleSessionRequestUserName(
+                                    it["firstName"]?.jsonPrimitive?.content,
+                                    it["lastName"]?.jsonPrimitive?.content,
+                                )
+                            },
+                    )
+                },
+        )
+    } catch (_: IllegalArgumentException) {
+        null
     }
 }
 
