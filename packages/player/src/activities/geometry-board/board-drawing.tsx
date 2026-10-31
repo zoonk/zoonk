@@ -1,5 +1,7 @@
 "use client";
 
+import { cn } from "@zoonk/ui/lib/utils";
+import { DRAWING_LABEL_HALO } from "../_utils/drawing-label";
 import { BoardCorner, BoardFixedCorner } from "./board-corner";
 import { type BoardBounds, type BoardMeasure, type BoardPoint, hasMoved } from "./board-geometry";
 import { type BoardReading } from "./board-measure";
@@ -181,7 +183,7 @@ export function BoardDrawing({
             {point.label && (
               <text
                 aria-hidden="true"
-                className="fill-foreground stroke-background stroke-[4px] text-sm font-semibold [paint-order:stroke] [stroke-linejoin:round]"
+                className={cn("fill-foreground text-sm font-semibold", DRAWING_LABEL_HALO)}
                 dominantBaseline="middle"
                 textAnchor="middle"
                 x={awayFromMiddle(pixel, middle, LABEL_GAP).x}

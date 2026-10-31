@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { ActivityPlaceHandle } from "../_components/activity-place-handle";
 import { usePlotScales } from "../_components/activity-plot";
+import { DRAWING_LABEL_HALO } from "../_utils/drawing-label";
 import { type SnapRange } from "../_utils/snap-value";
 
 const PILL_HEIGHT = 26;
@@ -128,10 +129,7 @@ export function DistributionTails({
   const [from, to] = [x.toPixel(handles[0]), x.toPixel(handles[1])];
 
   return (
-    <g
-      aria-hidden="true"
-      className="fill-muted-foreground stroke-background stroke-[4px] [paint-order:stroke] [stroke-linejoin:round]"
-    >
+    <g aria-hidden="true" className={cn("fill-muted-foreground", DRAWING_LABEL_HALO)}>
       {from - left >= MIN_TAIL_ROOM && (
         <text textAnchor="end" x={from - TAIL_GAP} y={bottom - TAIL_RISE}>
           {below}

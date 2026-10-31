@@ -2,6 +2,7 @@
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
+import { DRAWING_LABEL_HALO } from "../_utils/drawing-label";
 import { type BoardMeasure, interiorAngles, sideSquares } from "./board-geometry";
 import { cornerWedge } from "./board-marks";
 import { type BoardReading } from "./board-measure";
@@ -14,7 +15,6 @@ const WEDGE_RADIUS = 26;
 const MIN_WEDGE_RADIUS = 12;
 const WEDGE_SHARE = 0.35;
 const SIDE_LABEL_GAP = 14;
-const HALO = "[paint-order:stroke] stroke-background stroke-[4px] [stroke-linejoin:round]";
 
 export function polygonPath(pixels: readonly Vector[]): string {
   return `${pixels.map((pixel, index) => `${index === 0 ? "M" : "L"}${pixel.x.toFixed(2)} ${pixel.y.toFixed(2)}`).join(" ")} Z`;
@@ -51,7 +51,7 @@ function BoardLabel({
 }) {
   return (
     <text
-      className={cn("text-sm font-semibold tabular-nums", HALO, className)}
+      className={cn("text-sm font-semibold tabular-nums", DRAWING_LABEL_HALO, className)}
       dominantBaseline="middle"
       textAnchor="middle"
       x={point.x}

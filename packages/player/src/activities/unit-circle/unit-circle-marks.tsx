@@ -1,13 +1,13 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { DRAWING_LABEL_HALO } from "../_utils/drawing-label";
 import { type TrigName } from "./use-unit-circle-format";
 
 type Vector = { x: number; y: number };
 
 const HALF_TURN = 180;
 const LABEL_GAP = 8;
-const HALO = "[paint-order:stroke] stroke-background stroke-[4px] [stroke-linejoin:round]";
 const SEGMENT_WIDTH = 4;
 const SIN_LABEL_GAP = 26;
 const LABEL_CHAR_WIDTH = 8.5;
@@ -45,7 +45,7 @@ export function DialLabel({
   return (
     <text
       aria-hidden="true"
-      className={cn("text-sm font-semibold tabular-nums", HALO, className)}
+      className={cn("text-sm font-semibold tabular-nums", DRAWING_LABEL_HALO, className)}
       dominantBaseline="middle"
       textAnchor={anchor}
       x={point.x}
