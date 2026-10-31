@@ -104,4 +104,30 @@ describe(placeLineLabels, () => {
     expect(box?.top).toBeGreaterThanOrEqual(area.top);
     expect(box && gapToSegment(box, segment)).toBeGreaterThanOrEqual(3);
   });
+
+  it("finds room for a long name away from its line rather than across it", () => {
+    const segment = { from: { x: 22, y: 218 }, to: { x: 293, y: 26 } };
+
+    const [box] = placeLineLabels({
+      area,
+      labels: [{ isUpper: true, segment, size: { height: 24, width: 240 } }],
+      marks: noMarks,
+    });
+
+    expect(box && gapToSegment(box, segment)).toBeGreaterThanOrEqual(3);
+    expect(box?.top).toBeGreaterThanOrEqual(area.top);
+    expect(box?.bottom).toBeLessThanOrEqual(area.bottom);
+  });
+
+  it("keeps a name too wide for the chart off its line, by its end", () => {
+    const segment = { from: { x: 22, y: 218 }, to: { x: 293, y: 26 } };
+
+    const [box] = placeLineLabels({
+      area,
+      labels: [{ isUpper: true, segment, size: { height: 24, width: 320 } }],
+      marks: noMarks,
+    });
+
+    expect(box && gapToSegment(box, segment)).toBeGreaterThanOrEqual(3);
+  });
 });

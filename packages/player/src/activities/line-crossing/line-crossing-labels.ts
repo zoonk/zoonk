@@ -27,10 +27,24 @@ function shifted(box: LabelBox, { x, y }: Point, step: number): LabelBox {
   };
 }
 
-function clampedInto(box: LabelBox, area: LabelBox): LabelBox {
-  const left = clamp(box.left, area.left, area.right - (box.right - box.left));
-  const top = clamp(box.top, area.top, area.bottom - (box.bottom - box.top));
-  return { bottom: top + box.bottom - box.top, left, right: left + box.right - box.left, top };
+function spotsAcross(area: LabelBox, start: LabelBox): LabelBox[] {
+  const [width, height] = [start.right - start.left, start.bottom - start.top];
+  const columns = Math.floor((area.right - area.left - width) / height) + 1;
+  const rows = Math.floor((area.bottom - area.top - height) / height) + 1;
+
+  if (columns < 1 || rows < 1) {
+    return [];
+  }
+
+  return Array.from({ length: columns * rows }, (_, index) => {
+    const left = area.left + (index % columns) * height;
+    const top = area.top + Math.floor(index / columns) * height;
+    return { bottom: top + height, left, right: left + width, top };
+  }).toSorted(
+    (first, second) =>
+      Math.hypot(first.left - start.left, first.top - start.top) -
+      Math.hypot(second.left - start.left, second.top - start.top),
+  );
 }
 
 function isInside(box: LabelBox, area: LabelBox): boolean {
@@ -115,16 +129,17 @@ function placeLineLabel({
     isInside(box, area) &&
     [label.segment, ...lines].every((segment) => !touchesSegment(box, segment));
 
-  const passes = [
+  const isClear = (box: LabelBox) => fits(box, []) && clearsMarks(box);
+  const offItsLine = (box: LabelBox) => fits(box, []);
+
+  const nearby = [
     (box: LabelBox, shift: Point) =>
       Math.hypot(shift.x, shift.y) <= CLEAR_OF_ALL_STEPS &&
       fits(box, marks.lines) &&
       clearsMarks(box),
-    (box: LabelBox) => fits(box, []) && clearsMarks(box),
-    (box: LabelBox) => fits(box, []),
-  ];
-
-  const shift = passes.reduce<Point | null>(
+    isClear,
+    offItsLine,
+  ].reduce<Point | null>(
     (found, pass) =>
       found ??
       NEAREST_SHIFTS.find((candidate) => pass(shifted(start, candidate, step), candidate)) ??
@@ -132,15 +147,21 @@ function placeLineLabel({
     null,
   );
 
-  return shift ? shifted(start, shift, step) : clampedInto(start, area);
+  if (nearby) {
+    return shifted(start, nearby, step);
+  }
+
+  const spots = spotsAcross(area, start);
+  return spots.find((box) => isClear(box)) ?? spots.find((box) => offItsLine(box)) ?? start;
 }
 
 /**
  * Where each line's name sits, in order: by its end of the line on the open side, or at the
  * nearest spot that clears the lines, the marks (drag handles, crossings, arrows) and the names
  * placed before it. When no spot close by clears every line, it keeps off its own line and the
- * marks, and when large text leaves no room for that, off its own line, so its halo never cuts the
- * line it names.
+ * marks, then just off its own line, searching the whole chart when nothing near is free. Its
+ * halo never cuts the line it names: with no free spot anywhere it stays by its end, on the line's
+ * open side.
  */
 export function placeLineLabels({
   area,
