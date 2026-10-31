@@ -13,16 +13,16 @@ struct PlacementStep: View {
   @State private var phase = Phase.loading
   @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
+  @State private var isStarting = false
   @State private var failed = false
-  @State private var isWaitLost = false
   @State private var waitRound = 0
   /// Neither a question's number nor the bar ever goes back while the plan is still being written.
   @State private var shown = (answered: 0, spent: 0.0)
 
-  private enum Phase {
+  enum Phase: Equatable {
     case loading
     case intro
-    case waiting
+    case waiting(failure: GenerationFailure?)
     case question(PracticeQuestion, labels: PracticeTrueFalseLabels)
     case done(forToday: Bool)
     case unavailable
@@ -33,6 +33,31 @@ struct PlacementStep: View {
       }
 
       return true
+    }
+
+    init(_ placement: GoalPlacement) {
+      switch placement.status {
+      case .asking:
+        guard let next = placement.next,
+          let question = try? PracticeJSON.recode(next, as: PracticeQuestion.self)
+        else {
+          self = .unavailable
+          return
+        }
+
+        self = .question(
+          question, labels: placement.trueFalseLabels == .rightWrong ? .rightWrong : .trueFalse)
+      case .done:
+        self = .done(forToday: placement.dayBudgetUsed)
+      case .unavailable, .failed:
+        self = .unavailable
+      case .preparing, .waitingForQuestions:
+        self = .waiting(failure: nil)
+      }
+    }
+
+    init(started placement: GoalPlacement?) {
+      self = placement.map(Phase.init) ?? .waiting(failure: .notStarted)
     }
   }
 
@@ -73,8 +98,8 @@ struct PlacementStep: View {
       ProgressView()
     case .intro:
       intro
-    case .waiting:
-      waiting
+    case .waiting(let failure):
+      waiting(failure)
     case .question(let question, let labels):
       PlacementQuestionScreen(
         subject: subject, number: shown.answered + 1, progress: shown.spent, question: question,
@@ -184,16 +209,17 @@ struct PlacementStep: View {
           "Skip and start from the basics", tableName: "Onboarding",
           comment: "Skips placement; the plan starts at the beginning")
       ) {
-        phase = .waiting
+        Task { await start() }
       } onSkip: {
         finish(fromScratch: true)
       }
     }
     .onboardingColumn()
-    .disabled(isSaving)
+    .disabled(isSaving || isStarting)
+    .environment(\.isSavingAnswer, isStarting)
   }
 
-  private var waiting: some View {
+  private func waiting(_ failure: GenerationFailure?) -> some View {
     Form {
       StepHeader(
         title: Text(
@@ -204,10 +230,9 @@ struct PlacementStep: View {
           tableName: "Onboarding",
           comment: "Why placement questions take a moment"))
 
-      if isWaitLost {
-        GenerationFailureSection(failure: .connection) {
-          isWaitLost = false
-          waitRound += 1
+      if let failure {
+        GenerationFailureSection(failure: failure, isActing: isStarting) {
+          retry(failure)
         }
       } else {
         Section {
@@ -276,6 +301,26 @@ struct PlacementStep: View {
     }
   }
 
+  /// Start reads first, so questions that already exist never flash the wait.
+  private func start() async {
+    isStarting = true
+    defer { isStarting = false }
+
+    let placement = try? await onboarding.placement(goalID: view.goal.id)
+    show(Phase(started: placement), from: placement)
+    waitRound += 1
+  }
+
+  private func retry(_ failure: GenerationFailure) {
+    guard failure == .connection else {
+      Task { await start() }
+      return
+    }
+
+    phase = .waiting(failure: nil)
+    waitRound += 1
+  }
+
   private func read() async {
     guard let placement = try? await onboarding.placement(goalID: view.goal.id) else {
       return
@@ -285,6 +330,10 @@ struct PlacementStep: View {
   }
 
   private func waitForQuestions() async {
+    guard case .waiting(failure: nil) = phase else {
+      return
+    }
+
     await read()
 
     guard case .waiting = phase else {
@@ -317,32 +366,24 @@ struct PlacementStep: View {
     }
 
     if !Task.isCancelled, case .waiting = phase {
-      isWaitLost = true
+      phase = .waiting(failure: .connection)
     }
   }
 
   private func show(_ placement: GoalPlacement) {
-    shown = (max(shown.answered, placement.answered), max(shown.spent, placement.dayBudgetSpent))
+    show(Phase(placement), from: placement)
+  }
 
-    switch placement.status {
-    case .asking:
-      guard let next = placement.next,
-        let question = try? PracticeJSON.recode(next, as: PracticeQuestion.self)
-      else {
-        phase = .unavailable
-        return
-      }
-
-      shownAt = .now
-      phase = .question(
-        question, labels: placement.trueFalseLabels == .rightWrong ? .rightWrong : .trueFalse)
-    case .done:
-      phase = .done(forToday: placement.dayBudgetUsed)
-    case .unavailable, .failed:
-      phase = .unavailable
-    case .preparing, .waitingForQuestions:
-      phase = .waiting
+  private func show(_ next: Phase, from placement: GoalPlacement?) {
+    if let placement {
+      shown = (max(shown.answered, placement.answered), max(shown.spent, placement.dayBudgetSpent))
     }
+
+    if case .question = next {
+      shownAt = .now
+    }
+
+    phase = next
   }
 
   private func submit(_ answer: PracticeAnswer, to question: PracticeQuestion) {
