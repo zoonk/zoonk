@@ -63,7 +63,11 @@
   "player_dont_know_yet": "28e2260534b8216d3ace4459d370ec241093e1d8930c7ce10dc60f453451d48b",
   "player_drawing_picture": "683f4921bd17f0dfc72b519de50b30ca69caba42ae6ed9b9df366ccf4e63929a",
   "player_enter_hint": "b24b318a5bc6902ff891b1324d9da77b3c070b291ff1f42f76ffff5d6d046a2b",
+  "player_explain_answer": "82ae2dd957f9a26490278c6a69c8fa543d7f02099248f4b129dc20f7ce9bce2d",
+  "player_explain_answer_failed": "9259bbbd8dd7cb34b54822d90200604b8b3ac4f41ae239870a7fac0a71dc1a27",
+  "player_explain_answer_title": "0fa2266d246239b02d0a9bed0b62e2c9b7b93063f06ada8d4afe28db17dea646",
   "player_explain_first": "cc912bbf4a3d3f444fdf2477a743bdf45bc277d981dc0c9fd4f69f09f90c0d9f",
+  "player_explaining_answer": "29cff769e3b0e15ea507fdca5c79caae457ed11c1017a8b96d56811bdba36ce4",
   "player_finish": "6125fb5faa5b30cf9bbab8563006825d7a16f261c6dc22abdf7b9105c9e2eadd",
   "player_free_limit_day_description": "76c8af95295ad087ad400f69242fd90fd345e0043c2ab77b9b662ad2e8285aff",
   "player_free_limit_day_title": "631638b4252caaa2628dad5093d61fad40098ff435bc13b9274a65fc320065ec",
@@ -210,6 +214,10 @@
     <string name="player_answer_feedback">回答へのフィードバック</string>
     <string name="player_spelled">つづり：</string>
     <string name="player_correct_answer_label">答え：</string>
+    <string name="player_explain_answer">自分の答えの解説を見る</string>
+    <string name="player_explaining_answer">答えを解説しています</string>
+    <string name="player_explain_answer_failed">今は解説できません。少し待ってからもう一度試してください。</string>
+    <string name="player_explain_answer_title">この答えが正解ではない理由</string>
     <string name="player_unchecked_compare">各問題で答え合わせができるのは1日に数回です。次の解答例と自分の答えを比べてみてください：</string>
     <plurals name="player_key_points">
         <item quantity="other">要点%1$s個 / 全%2$s個</item>

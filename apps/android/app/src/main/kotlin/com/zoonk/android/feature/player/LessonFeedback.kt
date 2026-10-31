@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,8 +17,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -32,6 +37,9 @@ import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
+import com.zoonk.android.ui.components.LimitNotice
+import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -85,6 +93,12 @@ private fun shownKeyPoints(result: StepResult): List<AnswerKeyPoint>? {
 
 private val OPTION_LANGUAGE_KINDS = setOf(StepKind.MultipleChoice, StepKind.Translation)
 
+/** Only a wrong typed answer the server checked can be explained: the API explains no other kind. */
+private fun canExplain(
+    step: LessonStep,
+    result: StepResult,
+): Boolean = step.kind == StepKind.TypedAnswer && result.checked && !result.isCorrect && !result.answerText.isNullOrBlank()
+
 /** What a checked answer got, under the question (main's `LessonStepResultView`). */
 @Composable
 fun LessonStepResultView(
@@ -92,6 +106,7 @@ fun LessonStepResultView(
     result: StepResult,
     next: ResultNext,
     hyperdriveStreak: Int?,
+    explainAnswer: @Composable () -> Unit = {},
 ) {
     val verdict = verdictOf(step, result)
     val keyPoints = shownKeyPoints(result)
@@ -124,7 +139,65 @@ fun LessonStepResultView(
             result.feedback?.let { RichText(text = it, style = MaterialTheme.typography.bodyMedium) }
         }
 
+        if (canExplain(step, result)) explainAnswer()
+
         ResultNote(next)
+    }
+}
+
+/** Main's "Explain my answer": after a failure or a limit the button stays, so the learner can ask again. */
+@Composable
+internal fun ExplainAnswer(
+    explanation: AnswerExplanation?,
+    onExplain: () -> Unit,
+    onCreateAccount: () -> Unit,
+    onSeePlus: () -> Unit,
+) {
+    val loading = explanation == AnswerExplanation.Loading
+
+    Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (explanation is AnswerExplanation.Explained) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    stringResource(R.string.player_explain_answer_title),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelLarge,
+                )
+                RichText(text = explanation.text, style = MaterialTheme.typography.bodyMedium)
+            }
+        } else {
+            OutlinedButton(onClick = onExplain, enabled = !loading, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
+                if (loading) {
+                    CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), strokeWidth = 2.dp)
+                } else {
+                    Icon(
+                        painterResource(R.drawable.ic_lightbulb),
+                        contentDescription = null,
+                        modifier = Modifier.size(ButtonDefaults.IconSize),
+                    )
+                }
+                Text(
+                    stringResource(if (loading) R.string.player_explaining_answer else R.string.player_explain_answer),
+                    Modifier.padding(start = ButtonDefaults.IconSpacing),
+                )
+            }
+        }
+
+        when (explanation) {
+            AnswerExplanation.Failed -> {
+                Text(
+                    stringResource(R.string.player_explain_answer_failed),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+
+            is AnswerExplanation.Refused -> {
+                LimitNotice(explanation.limit, LimitSubject.Help, onCreateAccount, onSeePlus)
+            }
+
+            else -> {}
+        }
     }
 }
 

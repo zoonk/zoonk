@@ -130,6 +130,18 @@ class FakeLessonPlayerApi(
         return grade(stepId, input)
     }
 
+    val explained = mutableListOf<Pair<String, String>>()
+    var explain: suspend (String) -> String = { "It names the droplets, not why they float." }
+
+    override suspend fun explainAnswer(
+        session: AuthenticatedSession,
+        stepId: String,
+        answer: String,
+    ): String {
+        explained += stepId to answer
+        return explain(answer)
+    }
+
     var spokenGrade: suspend () -> SpokenAnswerGrade = { throw ApiException(ApiError.Unavailable) }
     val spokenTakes = mutableListOf<String>()
 

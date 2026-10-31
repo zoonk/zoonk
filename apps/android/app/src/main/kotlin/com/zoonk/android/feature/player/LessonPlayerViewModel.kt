@@ -47,6 +47,7 @@ import com.zoonk.android.feature.player.model.toApi
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.player.model.writtenText
 import com.zoonk.android.feature.player.steps.isPlayable
+import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ChapterLesson
 import com.zoonk.api.models.LessonFit
@@ -87,6 +88,21 @@ data class LessonEnding(
     val fit: LessonFit? = null,
     val inSession: Boolean = false,
 )
+
+@Immutable
+sealed interface AnswerExplanation {
+    data object Loading : AnswerExplanation
+
+    data class Explained(
+        val text: String,
+    ) : AnswerExplanation
+
+    data class Refused(
+        val limit: Limit,
+    ) : AnswerExplanation
+
+    data object Failed : AnswerExplanation
+}
 
 /** An answer on its way to the server, sent again under the same attempt until the server has it. */
 private data class PendingCheck(
@@ -168,6 +184,11 @@ class LessonPlayerViewModel(
 
     val sessionMove: StateFlow<SessionMove> = sessionMover?.move ?: MutableStateFlow(SessionMove())
 
+    private val mutableExplanations = MutableStateFlow<Map<String, AnswerExplanation>>(emptyMap())
+
+    /** By screen: a wrong typed answer's explanation, once the learner asked for it. */
+    val explanations: StateFlow<Map<String, AnswerExplanation>> = mutableExplanations.asStateFlow()
+
     private var lesson: PlayableLesson? = null
     private var openedAt = 0L
     private var owner = sessions.current
@@ -197,6 +218,7 @@ class LessonPlayerViewModel(
         exampleLinesWrite = null
         writingExampleLines = false
         mutableEnding.value = LessonEnding(inSession = studySessionId != null)
+        mutableExplanations.value = emptyMap()
         mutableState.value = null
         startRun()
     }
@@ -376,6 +398,30 @@ class LessonPlayerViewModel(
                 slots.forEach { store.exampleLine(it).invalidate() }
                 writingExampleLines = false
             }
+    }
+
+    /** Why the typed answer in view misses: it may run AI, so only on the learner's tap. */
+    fun explainAnswer() {
+        val state = mutableState.value ?: return
+        val step = state.currentStep ?: return
+        val answer = state.results[step.id]?.answerText ?: return
+
+        if (mutableExplanations.value[step.id] == AnswerExplanation.Loading) return
+
+        mutableExplanations.update { it + (step.id to AnswerExplanation.Loading) }
+        work.launch {
+            val explained =
+                cache.mutate(invalidating = setOf(DataDomain.Allowance)) { session ->
+                    if (session == owner) store.api.explainAnswer(session, step.id, answer) else null
+                }
+            val explanation =
+                when (explained) {
+                    is MutationResult.Done -> explained.value?.let(AnswerExplanation::Explained)
+                    is MutationResult.Failed -> Limit.of(explained)?.let(AnswerExplanation::Refused) ?: AnswerExplanation.Failed
+                    MutationResult.Obsolete -> null
+                }
+            mutableExplanations.update { if (explanation == null) it - step.id else it + (step.id to explanation) }
+        }
     }
 
     private fun startRun() {

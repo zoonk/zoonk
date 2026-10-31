@@ -13,6 +13,7 @@ import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.toLessonLoad
 import com.zoonk.android.ui.components.Limit
+import com.zoonk.api.models.AnswerExplanationRequest
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LessonGeneration
 import com.zoonk.api.models.LessonReadiness
@@ -50,6 +51,13 @@ interface LessonPlayerApi {
         stepId: String,
         input: LessonStepCheckInput,
     ): LessonStepCheckResult
+
+    /** "Explain my answer" on a wrong typed answer: only on the learner's tap, since it may run AI. */
+    suspend fun explainAnswer(
+        session: AuthenticatedSession,
+        stepId: String,
+        answer: String,
+    ): String
 
     /** A spoken screen's take, graded by the server. */
     suspend fun speak(
@@ -126,6 +134,14 @@ class LiveLessonPlayerApi(
         stepId: String,
         input: LessonStepCheckInput,
     ) = perform { api.streamingClients(session).libraryLessons.createStepCheck(UUID.fromString(stepId), input) }
+
+    override suspend fun explainAnswer(
+        session: AuthenticatedSession,
+        stepId: String,
+        answer: String,
+    ) = perform {
+        api.streamingClients(session).libraryLessons.createStepAnswerExplanation(UUID.fromString(stepId), AnswerExplanationRequest(answer))
+    }.explanation
 
     override suspend fun speak(
         session: AuthenticatedSession,

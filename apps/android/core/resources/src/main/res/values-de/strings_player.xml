@@ -63,7 +63,11 @@
   "player_dont_know_yet": "fc0cb08c3ec16ab07e06e3cdab25d74857a5f2f9557ddd32927a8f5f9624bc09",
   "player_drawing_picture": "90f7c7d66c1ff5e61595c164b38b603c9220684add66268b58abd858af15b897",
   "player_enter_hint": "b24027399f9a335fa847429a35696af6a4f30ac77f29a70569c63126f1ca5f17",
+  "player_explain_answer": "8feeec474b21c2f48ff384c4ec122b83ea45bb243243b3ba7fa389d11a670ceb",
+  "player_explain_answer_failed": "b7cc15536427c429b200bc8244cd9a065b622e15db06c0b487d1294ba628fe77",
+  "player_explain_answer_title": "b7fbd1ede51e62ef9d8a0b677b4275afc03ee1ec58458a31bd5d6f314c1207d0",
   "player_explain_first": "b3de64aa110d227ca39f32b3eb6da66050ef31edf8ffbb6cae60cb2ef329d8b1",
+  "player_explaining_answer": "5bb81df5618cc57e7492dbfeaa63b30d0ecd6b6620935b80cb84b6e69c4a805b",
   "player_finish": "8d29d7d263c9b12062203bd70f7aae4928aa3774188f5281005f85e507faa516",
   "player_free_limit_day_description": "45aba3820874275fd63e7b2ca028c6d2f2da5bab18f3397c78470ec7396ed153",
   "player_free_limit_day_title": "8f71cd2a89946d1e3a48bef12349636925ceb2bc86156247fa21dd72145554f5",
@@ -210,6 +214,10 @@
     <string name="player_answer_feedback">Feedback zur Antwort</string>
     <string name="player_spelled">Geschrieben:</string>
     <string name="player_correct_answer_label">Antwort:</string>
+    <string name="player_explain_answer">Meine Antwort erklären</string>
+    <string name="player_explaining_answer">Wir erklären deine Antwort</string>
+    <string name="player_explain_answer_failed">Wir konnten es gerade nicht erklären. Versuch es gleich noch einmal.</string>
+    <string name="player_explain_answer_title">Warum diese Antwort nicht zutrifft</string>
     <string name="player_unchecked_compare">Jede Frage wird ein paar Mal am Tag geprüft. Vergleiche deine Antwort mit dieser:</string>
     <plurals name="player_key_points">
         <item quantity="one">%1$s von %2$s Kernpunkt</item>

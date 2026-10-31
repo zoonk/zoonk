@@ -40,6 +40,10 @@
     <string name="player_answer_feedback">Answer feedback</string>
     <string name="player_spelled">Spelled:</string>
     <string name="player_correct_answer_label">Answer:</string>
+    <string name="player_explain_answer">Explain my answer</string>
+    <string name="player_explaining_answer">Explaining your answer</string>
+    <string name="player_explain_answer_failed">We couldn\'t explain it right now. Try again in a moment.</string>
+    <string name="player_explain_answer_title">Why that answer misses</string>
     <string name="player_unchecked_compare">Each question is checked a few times a day. Compare your answer with this one:</string>
     <plurals name="player_key_points">
         <item quantity="one">%1$s of %2$s key point</item>

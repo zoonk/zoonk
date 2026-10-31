@@ -63,7 +63,11 @@
   "player_dont_know_yet": "c3ffdc0441acc26e7372c9d8c1d8f14a7e579250b9c6a601ad434ccebd385573",
   "player_drawing_picture": "3e0f196a982c1d6ee2b2c1f71a773cc7c95fe481aaf930a0fd476c5253fd1abb",
   "player_enter_hint": "9342536f0d87d8fa17faf16d03183fb6031d2ac2b625889d9ae5bdeb86387655",
+  "player_explain_answer": "4d5bff2faf0494c7d5eb63774ca267af56ba02d2bb761294f4069c10b03abf4f",
+  "player_explain_answer_failed": "96cb315160d2571217c30b6ae61aedfbc2a142ce6b6f2358a00e364eece9b15a",
+  "player_explain_answer_title": "3106af268babcee5862d215a0f303ccd986eee19c7a2315c26861f379eba792f",
   "player_explain_first": "fccc2a995158ab210dd96edb358f0f6d36a670fcac484c169dff921b6c46fcb5",
+  "player_explaining_answer": "d9ed402dae9204c7cc400e19cf43bd77920c38212dd3df04aa81f66d325f066c",
   "player_finish": "d5824258e72a7d853c32aa92a5fc617f6112d6df67613af917e22787cc0fa2d3",
   "player_free_limit_day_description": "1d96fa48af378ab37ddb17daf09e4f2dd081f9c44216ddc8138ccef345cffcac",
   "player_free_limit_day_title": "7ad8502fb59c63f752f65578bd85200c4247b43decb722f289101b0a26f5ddc0",
@@ -210,6 +214,10 @@
     <string name="player_answer_feedback">Cevap değerlendirmesi</string>
     <string name="player_spelled">Yazılışı:</string>
     <string name="player_correct_answer_label">Cevap:</string>
+    <string name="player_explain_answer">Cevabımı açıkla</string>
+    <string name="player_explaining_answer">Cevabını açıklıyoruz</string>
+    <string name="player_explain_answer_failed">Şu anda açıklayamadık. Biraz sonra tekrar dene.</string>
+    <string name="player_explain_answer_title">Bu cevap neden doğru değil</string>
     <string name="player_unchecked_compare">Her soruyu günde birkaç kez kontrol ediyoruz. Cevabını bununla karşılaştır:</string>
     <plurals name="player_key_points">
         <item quantity="one">%1$s / %2$s temel nokta</item>

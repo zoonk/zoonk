@@ -65,6 +65,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
@@ -438,7 +439,7 @@ private fun Content(
                         Notice(state, screen, viewModel)
                         // A screen's own picks (placed words, filled blanks) start over on the next screen and on a retry.
                         key(step.id, state.position) { StepView(step, state, screen, actions, navigator, language) }
-                        Result(state, screen, scroll, reveal)
+                        Result(state, screen, scroll, reveal, viewModel, exits)
                     }
                 }
             }
@@ -513,6 +514,8 @@ private fun Result(
     screen: LessonScreen,
     scroll: ScrollState,
     reveal: FeedbackReveal,
+    viewModel: LessonPlayerViewModel,
+    exits: LessonPlayerExits,
 ) {
     val step = screen.step ?: return
     val result = state.results[step.id] ?: return
@@ -540,7 +543,15 @@ private fun Result(
         if (showsOwnResult(step)) {
             LessonResultNotes(next, screen.hyperdriveStreak)
         } else {
-            LessonStepResultView(step, result, next, screen.hyperdriveStreak)
+            val explanations by viewModel.explanations.collectAsStateWithLifecycle()
+            LessonStepResultView(step, result, next, screen.hyperdriveStreak) {
+                ExplainAnswer(
+                    explanation = explanations[step.id],
+                    onExplain = viewModel::explainAnswer,
+                    onCreateAccount = { exits.open(AppRoute.Login) },
+                    onSeePlus = { exits.open(AppRoute.Subscription) },
+                )
+            }
         }
     }
 }
