@@ -5,13 +5,19 @@ export const USAGE_DATA_COOKIE = "ZOONK_USAGE_DATA";
 export const USAGE_DATA_COOKIE_MAX_AGE = 365 * 24 * 60 * 60;
 
 /**
- * Where analytics cookies wait for a visitor's yes: the EU and EEA (ePrivacy Directive), the UK
- * (PECR), Switzerland and Turkey (KVKK's cookie guidance).
+ * Where analytics cookies wait for a visitor's yes: the EU and EEA (ePrivacy Directive), with
+ * Åland, Svalbard and Jan Mayen, Bouvet Island, and every French overseas territory (France's cookie rule applies
+ * there too), whose codes aren't their country's; the UK (PECR), with Gibraltar, Jersey, Guernsey
+ * and the Isle of Man, which keep a cookie rule of their own; Switzerland; and Turkey (KVKK's cookie
+ * guidance).
  */
 export const USAGE_DATA_CONSENT_COUNTRIES = [
   "AT",
+  "AX",
   "BE",
   "BG",
+  "BL",
+  "BV",
   "CH",
   "CY",
   "CZ",
@@ -22,26 +28,42 @@ export const USAGE_DATA_CONSENT_COUNTRIES = [
   "FI",
   "FR",
   "GB",
+  "GF",
+  "GG",
+  "GI",
+  "GP",
   "GR",
   "HR",
   "HU",
   "IE",
+  "IM",
   "IS",
   "IT",
+  "JE",
   "LI",
   "LT",
   "LU",
   "LV",
+  "MF",
+  "MQ",
   "MT",
+  "NC",
   "NL",
   "NO",
+  "PF",
   "PL",
+  "PM",
   "PT",
+  "RE",
   "RO",
   "SE",
   "SI",
+  "SJ",
   "SK",
+  "TF",
   "TR",
+  "WF",
+  "YT",
 ];
 
 const CONSENT_COUNTRIES = new Set(USAGE_DATA_CONSENT_COUNTRIES);

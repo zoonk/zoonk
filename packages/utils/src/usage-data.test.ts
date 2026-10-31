@@ -8,6 +8,20 @@ describe(resolveUsageDataSharing, () => {
     }
   });
 
+  it("asks first in their territories that have a code of their own", () => {
+    const territories = ["RE", "GP", "MQ", "GF", "YT", "MF", "BL", "PM", "NC", "PF", "WF", "TF"];
+
+    for (const country of [...territories, "AX", "SJ", "BV", "GI", "JE", "GG", "IM"]) {
+      expect(resolveUsageDataSharing({ choice: null, country })).toBeNull();
+    }
+  });
+
+  it("shares without asking in territories outside those laws", () => {
+    for (const country of ["GL", "FO", "AW", "CW", "BQ", "BM"]) {
+      expect(resolveUsageDataSharing({ choice: null, country })).toBe(true);
+    }
+  });
+
   it("shares without asking elsewhere", () => {
     for (const country of ["US", "BR", "KR", "JP", "RU"]) {
       expect(resolveUsageDataSharing({ choice: null, country })).toBe(true);

@@ -32,6 +32,11 @@ describe("the usage notice script", () => {
     expect(asksFirst({ cookie: "", timeZone: "America/Sao_Paulo" })).toBe(false);
   });
 
+  it("asks in Réunion, by its own country code or its time zone", () => {
+    expect(asksFirst({ cookie: "ZOONK_COUNTRY=RE", timeZone: "Indian/Reunion" })).toBe(true);
+    expect(asksFirst({ cookie: "", timeZone: "Indian/Reunion" })).toBe(true);
+  });
+
   it("never asks once the visitor chose", () => {
     expect(asksFirst({ cookie: "ZOONK_COUNTRY=DE; ZOONK_USAGE_DATA=off", timeZone: "" })).toBe(
       false,
