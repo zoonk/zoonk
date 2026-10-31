@@ -13,7 +13,7 @@
   "essay_criterion_legal_basis": "724491923e9c12e9d958ead5eb4c84f2199974446ddbc09e13d290b23861d653",
   "essay_criterion_requests": "4a6217830957dda7ffc2e6e459bf9c9fb881a9504cfa46b2ceb8e217b2f7e799",
   "essay_criterion_topic": "8de4a92658057b054844d684acf5ce10bfedc10c2e1cfb3bbea801cba3f23a68",
-  "essay_daily_limit_reached": "3fac63b7704255361504b7a205e67c0758a1abd515482e84e68a073ffa3ff209",
+  "essay_daily_limit_reached": "7babc27b58d4d0dabc9a25d8c8c9e8f643687c41ae8616cf0caff11d0c7d0c40",
   "essay_element_action": "2212066319dfdfac4d733b3aeee46d1c0c602ec2f00f98ce56d03f8fd2495a1d",
   "essay_element_agent": "5c9963aa294553e1ae5b008462593b2ab7f48807ac058959f8d473947c1c167b",
   "essay_element_detail": "822df53f33c41a7041f472bd534c54db214a076b7f8a24ee86e477b1ea2ba657",
@@ -48,7 +48,7 @@
   "essay_send": "67b1842cc10279024f77260b717ffa1dc335862ba11afb1646c2ac3202b9e425",
   "essay_send_failed": "f00eec47485e97c928f03257cff5a5ea2fb571ae082f53694088616b8f4c6928",
   "essay_skip_rewrite": "fe6bfeed17f7ff34df8b58baf6ff03ad6ee67b244cc4a60c18e496d53a8ce3f0",
-  "essay_skipped": "9fdcf728f8930d76be36e450dbdd855eeae1c6abd5491ecf09db49da75659466",
+  "essay_skipped": "7525b0f165e75a3ca07b09ceca3d19e90fe26e10fc287f451c715d3d65db7d1a",
   "essay_supporting_texts": "244a36067a14a51ba3e8f1a7007dea87d60a3262196f7e4a241de2ab5c7a4dc4",
   "essay_the_case": "c71ffcb59d82e0e807a3ad887be0fd0e47648ed7d21c442abe3d375f201b63bf",
   "essay_title": "8b64a0fbd6bbaa68bba6401f53f4a6c094f18aa0ac5f19d469cffd45fa8f0023",
@@ -106,11 +106,11 @@
         <item quantity="other">%d palabras</item>
     </plurals>
     <!-- On an essay the learner skipped, opened again from a link. -->
-    <string name="essay_skipped">Te has saltado esta redacción.</string>
+    <string name="essay_skipped">Te saltaste esta redacción.</string>
     <string name="essay_back_to_today">Volver a Hoy</string>
     <string name="essay_send_failed">No se pudo completar. Tu texto sigue aquí. Inténtalo de nuevo en un momento.</string>
     <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
-    <string name="essay_daily_limit_reached">Has alcanzado tu límite de tiempo diario. Tu texto se queda aquí.</string>
+    <string name="essay_daily_limit_reached">Alcanzaste tu límite de tiempo diario. Tu texto se queda aquí.</string>
     <string name="essay_limit_reached">Ya alcanzaste el límite de hoy para calificar redacciones. Tu texto se queda aquí; envíalo mañana.</string>
     <string name="essay_grading">Estamos revisando tu redacción según cada criterio. Puede tardar hasta 30 segundos.</string>
     <string name="essay_grading_slow">Aún estamos calificando. Está tardando más de lo habitual.</string>
