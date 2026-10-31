@@ -9,6 +9,7 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
+import { answerBirthYear } from "./birth-year";
 import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
 
@@ -266,6 +267,7 @@ test.describe("A lesson still being written", () => {
     expect(writeRequests).toStrictEqual([]);
 
     await start.click();
+    await answerBirthYear(page);
 
     await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
     expect(writeRequests).toHaveLength(1);

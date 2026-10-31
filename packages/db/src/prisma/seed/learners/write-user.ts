@@ -74,6 +74,8 @@ export async function writeLearnerUser({
   const userId = await writeAccount(prisma, learner);
 
   const profile = {
+    // Seeded learners have already answered the app's birth-year question, as adults.
+    birthYear: 1990,
     buddyGlasses: learner.buddy?.glasses ?? "round",
     buddyKind: learner.buddy?.kind ?? null,
     buddyName: learner.buddy?.name ?? null,

@@ -14,6 +14,7 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { answerBirthYear } from "./birth-year";
 import { startCourseWithLevel } from "./course-start";
 import { expect, test } from "./fixtures";
 
@@ -94,6 +95,7 @@ test.describe("A visitor from a public lesson page", () => {
     await page.getByRole("button", { name: "No, it's more like a cloud" }).click();
 
     await expect(page).toHaveURL(/\/learn\/[0-9a-f-]{36}/u);
+    await answerBirthYear(page);
 
     await expect(
       page.getByText("It spreads out into a cloud of places where it could be."),

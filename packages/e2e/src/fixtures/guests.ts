@@ -1,6 +1,7 @@
 import { type Page } from "@playwright/test";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { getBaseURL } from "./base-url";
+import { E2E_BIRTH_YEAR, saveBirthYear } from "./users";
 
 async function readSessionUserId(page: Page): Promise<string | null> {
   const response = await page.request.get("/api/auth/get-session");
@@ -9,7 +10,7 @@ async function readSessionUserId(page: Page): Promise<string | null> {
   return isJsonObject(session) ? getString(session.user, "id") : null;
 }
 
-/** Returns the page's user id, signing in as a guest only when the page has no session. */
+/** Returns the page's user id, signing in as an adult guest only when the page has no session. */
 export async function ensureGuest(page: Page): Promise<string> {
   const current = await readSessionUserId(page);
 
@@ -32,5 +33,6 @@ export async function ensureGuest(page: Page): Promise<string> {
     throw new Error("The guest sign-in left no session.");
   }
 
+  await saveBirthYear({ birthYear: E2E_BIRTH_YEAR, userId: guestId });
   return guestId;
 }

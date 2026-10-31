@@ -13,6 +13,7 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { answerBirthYear } from "./birth-year";
 import { startCourseWithLevel } from "./course-start";
 import { type Page, expect, test } from "./fixtures";
 
@@ -114,6 +115,7 @@ test.describe("Starting a course from its page", () => {
     await expect(session.json()).resolves.toBeNull();
 
     await startCourseWithLevel(page);
+    await answerBirthYear(page);
     const goalId = await readGoalId(page);
 
     await expect(
