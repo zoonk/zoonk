@@ -39,6 +39,7 @@
   "player_challenge_much_lower": "cd5d79f917df6bdb055c11b88d8166abfddcd6dc4c1831a5f63d6f8bbb1b85b0",
   "player_challenge_no_change": "e61c09647c22d195038da994c86a6b93d0681fd7f17134617061889b39c3a6c2",
   "player_challenge_practice": "1f7f56cb9b0da2154b852f133928cd57ff2a42bb40cdd84028126b89e029ac18",
+  "player_challenge_said": "1add01dfc3bccd1938f37331007c89e636bbd5c4784690152cff59ce24a68156",
   "player_challenge_scenario_complete": "be3b339d720266fa20fdb093075c8018616b79a62b8454c78bca188a7a1f2753",
   "player_challenge_skills": "8b311614258e4283fd599c1f16f680cf458b63f6118d198bf1e3cf9ae1a27436",
   "player_challenge_team": "27f9089fe7cf68e2e99514aeb331791b02f2b83bc28894120845d48e2cc6e079",
@@ -331,6 +332,8 @@
     <string name="player_challenge_bit_lower">少し低下</string>
     <!-- Read by screen readers before the learner's own reply in a challenge's conversation. -->
     <string name="player_challenge_you">自分の返答：%1$s</string>
+    <!-- A message read out by screen readers as it arrives in a challenge's conversation: who says it, then what they say, like "Bia: The customer is upset." -->
+    <string name="player_challenge_said">%1$s：%2$s</string>
     <string name="player_challenge_what_happened">結果</string>
     <string name="player_challenge_complete">チャレンジ完了</string>
     <string name="player_challenge_scenario_complete">シナリオ完了</string>

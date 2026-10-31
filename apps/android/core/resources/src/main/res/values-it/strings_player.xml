@@ -39,6 +39,7 @@
   "player_challenge_much_lower": "a572f1c35b958b930b5b84dbd83ba2dcd327ae5b225e187aef90ddcf755a1f72",
   "player_challenge_no_change": "63cf8bd9cd8b2b594bf6ae6ef4c69f2e2601880387d1b46d743f87b517ceb48c",
   "player_challenge_practice": "5c2021af5ac8ecf27ffd2e116515ee1ef399694fb386f93b91490a37edcaa251",
+  "player_challenge_said": "6bff46ca30a231daa77e87394c18d19311cc7fbb7600d0c7a503f9f0525bdf2b",
   "player_challenge_scenario_complete": "dd4d791fa69210f0cfddf3cc28a9288ceaf6f4c0e2346db49ab96c065d2998fa",
   "player_challenge_skills": "d787c316628529a4f21f2edccdfecf1ec12a04f8e12ea26b48830efb5aded450",
   "player_challenge_team": "f901448b119d1fc4e48b8f095aa06610282139e9362cc16c4ab2733d07b18d25",
@@ -337,6 +338,8 @@
     <string name="player_challenge_bit_lower">in leggero calo</string>
     <!-- Read by screen readers before the learner's own reply in a challenge's conversation. -->
     <string name="player_challenge_you">Tu: %1$s</string>
+    <!-- A message read out by screen readers as it arrives in a challenge's conversation: who says it, then what they say, like "Bia: The customer is upset." -->
+    <string name="player_challenge_said">%1$s: %2$s</string>
     <string name="player_challenge_what_happened">Cos’è successo</string>
     <string name="player_challenge_complete">Sfida completata</string>
     <string name="player_challenge_scenario_complete">Scenario completato</string>

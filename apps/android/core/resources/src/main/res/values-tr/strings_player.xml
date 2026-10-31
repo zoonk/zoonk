@@ -39,6 +39,7 @@
   "player_challenge_much_lower": "bb2f500d019e7da6ab6d1397d398ef7f790e924e999da38eae12339470cf3849",
   "player_challenge_no_change": "6b7de7856fe635227e4a437f39b93bd68375dff39412591f2325a76ceadf9309",
   "player_challenge_practice": "0e52f079a3fb59504d48ce62d78e716262ee4b131fa5da4857ef0eb3077feefb",
+  "player_challenge_said": "cb9be45036d3d5db0c5b4a042b3637f2b2eef4a893d96c696b6e2ce4b9ef5392",
   "player_challenge_scenario_complete": "fedb7d2d81894dfa0911aebf9468edad03498f28995de904e33f9def7f9ebcdb",
   "player_challenge_skills": "3c61688c7cf6261637306727cabb5f04e07acad1970b24bda6ba141d97d27324",
   "player_challenge_team": "902258f8e89e4e760f1d02533ac7018e73140938af4504d30fb97b5feb07fc89",
@@ -334,6 +335,8 @@
     <string name="player_challenge_bit_lower">biraz daha düşük</string>
     <!-- Read by screen readers before the learner's own reply in a challenge's conversation. -->
     <string name="player_challenge_you">Sen: %1$s</string>
+    <!-- A message read out by screen readers as it arrives in a challenge's conversation: who says it, then what they say, like "Bia: The customer is upset." -->
+    <string name="player_challenge_said">%1$s: %2$s</string>
     <string name="player_challenge_what_happened">Ne oldu</string>
     <string name="player_challenge_complete">Meydan okuma tamamlandı</string>
     <string name="player_challenge_scenario_complete">Senaryo tamamlandı</string>

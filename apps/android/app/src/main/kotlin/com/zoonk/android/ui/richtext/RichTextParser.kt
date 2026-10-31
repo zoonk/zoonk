@@ -159,6 +159,9 @@ private fun parseMarkup(text: String): List<RichSegment> =
 /** A question, an option or a label is one line: its line breaks read as spaces. */
 fun toOneLine(text: String): String = text.replace(LINE_BREAK, " ")
 
+/** Lesson text without its markup, for TalkBack to read out. */
+fun plainText(text: String): String = parseRichInline(text).joinToString("") { it.text }
+
 /** Math first, so emphasis markers never touch LaTeX. */
 fun parseRichInline(text: String): List<RichSegment> {
     val math = findMath(text) ?: return parseMarkup(text)

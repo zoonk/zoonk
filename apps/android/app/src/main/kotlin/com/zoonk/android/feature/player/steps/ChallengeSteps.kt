@@ -30,6 +30,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -41,6 +42,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.player.engine.ChallengeDebrief
 import com.zoonk.android.feature.player.engine.ChallengeMeterState
 import com.zoonk.android.feature.player.engine.ChallengeMove
@@ -65,6 +67,7 @@ import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.richtext.plainText
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOf1Content.Variant
@@ -209,8 +212,28 @@ private fun ChallengeConversation(
     actions: StepActions,
 ) {
     val newest = remember { BringIntoViewRequester() }
+    val resources = LocalResources.current
+    val latest = moves.lastOrNull()
+    val jump = latest?.choice?.timeJump
+    val panel =
+        jump?.panel?.let { shown ->
+            listOfNotNull(shown.title) + shown.metrics.flatMap { listOfNotNull(it.label, it.value, it.note) } + listOfNotNull(shown.note)
+        }
+    val upcoming = (progress as? ChallengeProgress.Deciding)?.walk?.node
+
+    fun said(message: ChallengeMessage): String =
+        resources.getString(R.string.player_challenge_said, names.names[message.from] ?: message.from, plainText(names.fill(message.text)))
 
     LaunchedEffect(moves.size) { if (moves.isNotEmpty()) newest.bringIntoView() }
+    // Main's conversation log reads out what a decision brings, in the order it shows.
+    ActivityAnnouncement(
+        if (latest == null) {
+            ""
+        } else {
+            val shown = (listOfNotNull(jump?.label) + panel.orEmpty()).map(names::fill)
+            (latest.choice.replies.map(::said) + shown + upcoming?.messages.orEmpty().map(::said)).joinToString(" ")
+        },
+    )
 
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
         ChallengeMeters(challengeMeters(content, moves), names, moved = moves.isNotEmpty())

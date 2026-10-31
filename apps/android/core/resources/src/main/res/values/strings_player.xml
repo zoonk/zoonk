@@ -159,6 +159,8 @@
     <string name="player_challenge_bit_lower">a bit lower</string>
     <!-- Read by screen readers before the learner's own reply in a challenge's conversation. -->
     <string name="player_challenge_you">You: %1$s</string>
+    <!-- A message read out by screen readers as it arrives in a challenge's conversation: who says it, then what they say, like "Bia: The customer is upset." -->
+    <string name="player_challenge_said">%1$s: %2$s</string>
     <string name="player_challenge_what_happened">What happened</string>
     <string name="player_challenge_complete">Challenge complete</string>
     <string name="player_challenge_scenario_complete">Scenario complete</string>

@@ -7,11 +7,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
@@ -40,6 +43,7 @@ import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.language.listening
+import com.zoonk.android.feature.player.model.ChallengeStepContent
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
@@ -565,6 +569,28 @@ class LessonPlayerFlowTest {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
+    fun aChallengeTellsTalkBackWhatItsDecisionBringsInOrder() {
+        val walk = ApiJson.decodeFromString(ChallengeStepContent.serializer(), WEEK_LATER_CHALLENGE)
+        play(listOf(LessonStep("case", null, StepContent.Challenge(walk)), summaryStep("end")))
+
+        tap("Start")
+        tap("Ask what happened")
+        tap("Confirm")
+
+        val told =
+            rule
+                .onNode(
+                    SemanticsMatcher.keyIsDefined(SemanticsProperties.LiveRegion) and
+                        hasContentDescription("They wrote back.", substring = true),
+                ).fetchSemanticsNode()
+                .config[SemanticsProperties.ContentDescription]
+                .single()
+        val order = listOf("That calmed them.", "One week later", "Approved", "12", "They wrote back.").map(told::indexOf)
+        assertTrue(order.none { it < 0 })
+        assertEquals(order.sorted(), order)
+    }
+
+    @Test
     fun aChallengesDecisionsArePickedWithNumberKeysToo() {
         play(listOf(challengeStep("case"), summaryStep("end")))
 
@@ -598,3 +624,20 @@ class LessonPlayerFlowTest {
 }
 
 private const val BLANK_ID = "00000000-0000-4000-8000-0000000000ee"
+
+private const val WEEK_LATER_CHALLENGE =
+    """
+    {"variant":"work","setting":"Customer support","title":"A refund gone wrong","mission":"Calm the customer {{c1}} called about.",
+     "team":[{"id":"c1","ai":false,"expertise":"support","role":"Support lead"}],
+     "meters":[{"id":"trust","goodWhen":"high","label":"Customer trust","start":80}],"panels":[],
+     "skills":[{"id":"listen","name":"Listening","practice":"Repeat back what you heard."}],
+     "startNodeId":"n1",
+     "nodes":[
+       {"id":"n1","prompt":"What do you say first?","messages":[{"from":"c1","text":"The customer is upset."}],
+        "choices":[{"id":"ask","text":"Ask what happened","next":"n2","quality":"strong","effects":[],"notes":[],
+          "replies":[{"from":"c1","text":"That calmed them."}],
+          "timeJump":{"label":"One week later","panel":{"title":"Refunds","metrics":[{"label":"Approved","value":"12"}]}}}]},
+       {"id":"n2","prompt":"What now?","messages":[{"from":"c1","text":"They wrote back."}],
+        "choices":[{"id":"close","text":"Close the case","next":"end","quality":"strong","effects":[],"notes":[],"replies":[]}]}],
+     "endings":[{"id":"end","outcome":"The customer left calmer."}]}
+    """
