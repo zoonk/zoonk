@@ -11,6 +11,8 @@ export type LineOffsets = Readonly<Record<string, number>>;
 type Direction = "down" | "left" | "right" | "up";
 
 const HEADROOM = 1.25;
+const HANDLE_SHARE = 0.82;
+const HANDLE_SHARE_STEPS = 100;
 const MIN_SPAN = 1;
 const STEPS_PER_SHIFT = 4;
 const RELATIVE_SLACK = 1e-9;
@@ -118,4 +120,46 @@ export function changeDirection(before: number, after: number): "down" | "same" 
   }
 
   return after > before ? "up" : "down";
+}
+
+const HANDLE_SHARES = Array.from(
+  { length: HANDLE_SHARE_STEPS + 1 },
+  (_, step) => step / HANDLE_SHARE_STEPS,
+).toSorted((first, second) => Math.abs(first - HANDLE_SHARE) - Math.abs(second - HANDLE_SHARE));
+
+/**
+ * The chart's span and where each line's drag handle rests: 82% along the line, past the
+ * crossings, or the nearest point to that whose slide stays above zero. The span grows so each
+ * handle's whole slide stays on the chart.
+ */
+export function chartLayout({
+  amount,
+  axis,
+  lines,
+}: {
+  amount: number;
+  axis: ShiftAxis;
+  lines: readonly [Line, Line];
+}): { domain: Point; homes: readonly [Point, Point] } {
+  const fitted = chartDomain({ amount, axis, lines });
+  const { max, min } = shiftRange(amount);
+  const along = (point: Point) => (axis === "horizontal" ? point.x : point.y);
+
+  const homeOf = (line: Line) =>
+    pointAlong(
+      line,
+      fitted,
+      HANDLE_SHARES.find((share) => along(pointAlong(line, fitted, share)) + min >= 0) ??
+        HANDLE_SHARE,
+    );
+
+  const homes = [homeOf(lines[0]), homeOf(lines[1])] as const;
+  const reach = Math.max(...homes.map((home) => along(home) + max));
+
+  const domain =
+    axis === "horizontal"
+      ? { ...fitted, x: Math.max(fitted.x, reach) }
+      : { ...fitted, y: Math.max(fitted.y, reach) };
+
+  return { domain, homes };
 }

@@ -20,7 +20,7 @@ import {
   type LineOffsets,
   type Point,
   type ShiftAxis,
-  chartDomain,
+  chartLayout,
   crossingPoint,
   movedLine,
   visibleSegment,
@@ -41,6 +41,7 @@ function LineLabels({
   axis,
   crossings,
   domain,
+  homes,
   lines,
   offsets,
 }: {
@@ -49,6 +50,7 @@ function LineLabels({
   axis: ShiftAxis;
   crossings: { after: Point; before: Point | null };
   domain: Point;
+  homes: readonly [Point, Point];
   lines: readonly [ChartLine, ChartLine];
   offsets: LineOffsets;
 }) {
@@ -65,8 +67,15 @@ function LineLabels({
     top: scales.y.range[1],
   };
 
-  const handles = lines.map((line) => {
-    const { cx, cy } = handlePlace({ amount, axis, domain, line, offset: offsetOf(line), scales });
+  const handles = lines.map((line, index) => {
+    const { cx, cy } = handlePlace({
+      amount,
+      axis,
+      home: homes[index] ?? homes[0],
+      offset: offsetOf(line),
+      scales,
+    });
+
     return { cx, cy, radius: HANDLE_RADIUS + HANDLE_STROKE / 2 };
   });
 
@@ -166,7 +175,7 @@ export function LineCrossingChart({
   yLabel: string;
 }) {
   const clipId = useId();
-  const domain = chartDomain({ amount, axis, lines });
+  const { domain, homes } = chartLayout({ amount, axis, lines });
   const offsetOf = (line: ChartLine) => offsets[line.id] ?? 0;
   const shown = lines.map((line) => movedLine(line, offsetOf(line), axis));
   const moved = lines.filter((line) => offsetOf(line) !== 0);
@@ -215,6 +224,7 @@ export function LineCrossingChart({
         axis={axis}
         crossings={{ after, before: moved.length > 0 ? before : null }}
         domain={domain}
+        homes={homes}
         lines={lines}
         offsets={offsets}
       />
@@ -234,9 +244,8 @@ export function LineCrossingChart({
           axis={axis}
           className={LINE_TEXT_CLASSES[index] ?? ""}
           disabled={isChecked}
-          domain={domain}
+          home={homes[index] ?? homes[0]}
           key={line.id}
-          line={line}
           offset={offsetOf(line)}
           onChange={(offset) => onMove(line.id, offset)}
           {...handleText(line)}

@@ -3,19 +3,11 @@
 import { type LinearScale, createLinearScale } from "@zoonk/utils/plot-scale";
 import { ActivityPlaceHandle } from "../_components/activity-place-handle";
 import { usePlotScales } from "../_components/activity-plot";
-import {
-  type Line,
-  type Point,
-  type ShiftAxis,
-  pointAlong,
-  shiftRange,
-} from "./line-crossing-model";
+import { type Point, type ShiftAxis, shiftRange } from "./line-crossing-model";
 
 export const HANDLE_RADIUS = 14;
 export const HANDLE_STROKE = 2.5;
 const CHEVRON = 4;
-
-const HANDLE_SHARE = 0.82;
 
 function chevrons({ axis, cx, cy }: { axis: ShiftAxis; cx: number; cy: number }): string {
   return axis === "horizontal"
@@ -26,20 +18,17 @@ function chevrons({ axis, cx, cy }: { axis: ShiftAxis; cx: number; cy: number })
 export function handlePlace({
   amount,
   axis,
-  domain,
-  line,
+  home,
   offset,
   scales,
 }: {
   amount: number;
   axis: ShiftAxis;
-  domain: Point;
-  line: Line;
+  home: Point;
   offset: number;
   scales: { x: LinearScale; y: LinearScale };
 }) {
   const range = shiftRange(amount);
-  const home = pointAlong(line, domain, HANDLE_SHARE);
   const isSideways = axis === "horizontal";
   const along = isSideways ? scales.x : scales.y;
   const start = isSideways ? home.x : home.y;
@@ -61,9 +50,8 @@ export function LineHandle({
   axis,
   className,
   disabled,
-  domain,
+  home,
   label,
-  line,
   offset,
   onChange,
   valueText,
@@ -72,15 +60,14 @@ export function LineHandle({
   axis: ShiftAxis;
   className: string;
   disabled: boolean;
-  domain: Point;
+  home: Point;
   label: string;
-  line: Line;
   offset: number;
   onChange: (offset: number) => void;
   valueText: string;
 }) {
   const scales = usePlotScales();
-  const { cx, cy, range, scale } = handlePlace({ amount, axis, domain, line, offset, scales });
+  const { cx, cy, range, scale } = handlePlace({ amount, axis, home, offset, scales });
 
   return (
     <ActivityPlaceHandle

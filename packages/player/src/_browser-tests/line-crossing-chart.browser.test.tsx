@@ -77,6 +77,44 @@ function gapToHandle(label: SVGTextElement, name: string): number {
   return gapTo(label.getBoundingClientRect(), center) - box.width / 2;
 }
 
+function handlesOutsideTheChart(names: readonly string[]): string[] {
+  const chart = document.querySelector("figure svg")?.getBoundingClientRect();
+
+  return names.filter((name) => {
+    const ring = page
+      .getByRole("slider", { name: `Move the line ${name}` })
+      .element()
+      .querySelector("circle.fill-background")
+      ?.getBoundingClientRect();
+
+    return (
+      !chart ||
+      !ring ||
+      ring.left < chart.left ||
+      ring.right > chart.right ||
+      ring.top < chart.top ||
+      ring.bottom > chart.bottom
+    );
+  });
+}
+
+async function handlesOutsideAtEachEnd(names: readonly string[]): Promise<string[]> {
+  const outside: string[] = [];
+
+  for (const name of names) {
+    for (const key of ["Home", "End"]) {
+      // oxlint-disable-next-line no-await-in-loop -- Each move lands before the handles are read.
+      await pressOnSlider(`Move the line ${name}`, key, 1);
+
+      outside.push(
+        ...handlesOutsideTheChart(names).map((handle) => `${handle} with ${name} at ${key}`),
+      );
+    }
+  }
+
+  return outside;
+}
+
 async function expectNamesOffTheirLines() {
   await expect.element(page.getByRole("slider", { name: "Move the line Revenue" })).toBeVisible();
   const revenue = lineName("Revenue");
@@ -124,6 +162,20 @@ describe("line crossing chart", () => {
       );
 
       expect(Math.min(...gaps)).toBeGreaterThan(HALO);
+    });
+  });
+
+  it("keeps every handle inside the chart at both ends of each line's range", async () => {
+    await atViewport(PHONE, async () => {
+      openActivity({ template: "lineCrossing" });
+      await expect(handlesOutsideAtEachEnd(["Supply", "Demand"])).resolves.toStrictEqual([]);
+    });
+  });
+
+  it("keeps every handle inside the chart at both ends of each line's range, moved up and down", async () => {
+    await atViewport(PHONE, async () => {
+      openActivity({ content: breakEven, template: "lineCrossing" });
+      await expect(handlesOutsideAtEachEnd(["Cost", "Revenue"])).resolves.toStrictEqual([]);
     });
   });
 });

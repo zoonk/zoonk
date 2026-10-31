@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   changeDirection,
   chartDomain,
+  chartLayout,
   crossingPoint,
   lineShiftAnswer,
   moveLine,
@@ -90,6 +91,28 @@ describe(chartDomain, () => {
 
     expect(domain.x).toBeGreaterThan(farthest.x);
     expect(domain.y).toBeGreaterThan(farthest.y);
+  });
+});
+
+describe(chartLayout, () => {
+  it("leaves room on the chart for each handle's whole slide", () => {
+    const { domain, homes } = chartLayout({
+      amount: 2,
+      axis: "horizontal",
+      lines: [supply, demand],
+    });
+
+    const { max, min } = shiftRange(2);
+
+    expect(Math.min(...homes.map((home) => home.x + min))).toBeGreaterThanOrEqual(0);
+    expect(Math.max(...homes.map((home) => home.x + max))).toBeLessThanOrEqual(domain.x);
+  });
+
+  it("keeps a falling line's handle above zero when it slides down", () => {
+    const { homes } = chartLayout({ amount: 2, axis: "vertical", lines: [supply, demand] });
+    const { min } = shiftRange(2);
+
+    expect(homes[1].y + min).toBeGreaterThanOrEqual(0);
   });
 });
 
