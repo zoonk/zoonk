@@ -1,6 +1,5 @@
-import { type StepKind } from "@zoonk/db";
-import { segmentWords } from "@zoonk/utils/string";
-import { parseStepContent } from "../../steps/contract/content";
+import { parseStepContent } from "../../library/steps/contract/step-contract";
+import { type SelectedAnswer } from "./_utils/selected-answer-schema";
 import { buildAcceptedArrangeWordSequences } from "./arrange-words-answers";
 import {
   type AnswerResult,
@@ -8,15 +7,13 @@ import {
   checkFillBlankAnswer,
   checkMatchColumnsAnswer,
   checkMultipleChoiceAnswer,
-  checkSelectImageAnswer,
-  checkSortOrderAnswer,
   checkTranslationAnswer,
 } from "./check-answer";
-import { type SelectedAnswer } from "./completion-input-schema";
+import { type ExerciseKind } from "./exercise-content";
 
 export type CheckableStep = {
   content: unknown;
-  kind: StepKind;
+  kind: ExerciseKind;
   sentence?: { explanation?: string | null; sentence: string; translation: string } | null;
   word?: { id: string; word?: string } | null;
 };
@@ -52,25 +49,6 @@ function checkMatchColumnsStep(step: CheckableStep, answer: SelectedAnswer): Ans
   );
 }
 
-function checkSortOrderStep(step: CheckableStep, answer: SelectedAnswer): AnswerResult | null {
-  if (step.kind !== "sortOrder" || answer.kind !== "sortOrder") {
-    return null;
-  }
-
-  return checkSortOrderAnswer(parseStepContent("sortOrder", step.content), answer.userOrder);
-}
-
-function checkSelectImageStep(step: CheckableStep, answer: SelectedAnswer): AnswerResult | null {
-  if (step.kind !== "selectImage" || answer.kind !== "selectImage") {
-    return null;
-  }
-
-  return checkSelectImageAnswer(
-    parseStepContent("selectImage", step.content),
-    answer.selectedOptionId,
-  );
-}
-
 function checkTranslationStep(step: CheckableStep, answer: SelectedAnswer): AnswerResult | null {
   if (step.kind !== "translation" || answer.kind !== "translation" || !step.word) {
     return null;
@@ -84,12 +62,16 @@ function checkReadingStep(step: CheckableStep, answer: SelectedAnswer): AnswerRe
     return null;
   }
 
-  const acceptedWords = buildAcceptedArrangeWordSequences(step.sentence.sentence, []);
+  const acceptedWords = buildAcceptedArrangeWordSequences({
+    kind: "reading",
+    text: step.sentence.sentence,
+  });
+
   const result = checkArrangeWordsAnswer(acceptedWords, answer.arrangedWords);
 
   return {
     ...result,
-    correctAnswer: segmentWords(step.sentence.sentence).join(" "),
+    correctAnswer: step.sentence.sentence,
     feedback: step.sentence.explanation ?? null,
   };
 }
@@ -99,12 +81,16 @@ function checkListeningStep(step: CheckableStep, answer: SelectedAnswer): Answer
     return null;
   }
 
-  const acceptedWords = buildAcceptedArrangeWordSequences(step.sentence.translation, []);
+  const acceptedWords = buildAcceptedArrangeWordSequences({
+    kind: "listening",
+    text: step.sentence.translation,
+  });
+
   const result = checkArrangeWordsAnswer(acceptedWords, answer.arrangedWords);
 
   return {
     ...result,
-    correctAnswer: segmentWords(step.sentence.translation).join(" "),
+    correctAnswer: step.sentence.translation,
     feedback: step.sentence.explanation ?? null,
   };
 }
@@ -121,16 +107,9 @@ export function checkStepAnswer(step: CheckableStep, answer: SelectedAnswer): An
       return checkMultipleChoiceStep(step, answer);
     case "reading":
       return checkReadingStep(step, answer);
-    case "selectImage":
-      return checkSelectImageStep(step, answer);
-    case "sortOrder":
-      return checkSortOrderStep(step, answer);
     case "translation":
       return checkTranslationStep(step, answer);
     case "alphabet":
-    case "arrangeWords":
-    case "static":
-    case "visual":
     case "vocabulary":
       return null;
     default:

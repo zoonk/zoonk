@@ -2,11 +2,6 @@ import { getAuthor } from "@/lib/authors";
 
 type PostMetaProps = { date: string; authorId: string };
 
-/**
- * Displays post metadata below the title: date and author
- * with icon links to their social profiles.
- * Used inside each MDX post file.
- */
 export function PostMeta({ date, authorId }: PostMetaProps) {
   const author = getAuthor(authorId);
 

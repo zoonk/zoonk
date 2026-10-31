@@ -7,6 +7,8 @@ Source index:
 - https://developer.apple.com/design/human-interface-guidelines
 - https://developer.apple.com/tutorials/data/index/design--human-interface-guidelines.json
 
+The pages need JavaScript. Read any HIG page as JSON at `https://developer.apple.com/tutorials/data/design/human-interface-guidelines/<slug>.json` and any developer documentation page at `https://developer.apple.com/tutorials/data/documentation/<path>.json` (lowercased, with the symbol's signature, such as `swiftui/view/tabbarminimizebehavior(_:)`); `metadata.platforms` gives each API's availability.
+
 ## Core
 
 - [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines)
@@ -15,6 +17,7 @@ Source index:
 
 - [Getting started](https://developer.apple.com/design/human-interface-guidelines/getting-started)
 - [Designing for iOS](https://developer.apple.com/design/human-interface-guidelines/designing-for-ios)
+- [Designing for iPhone Duo](https://developer.apple.com/design/human-interface-guidelines/designing-for-iphone-duo)
 - [Designing for iPadOS](https://developer.apple.com/design/human-interface-guidelines/designing-for-ipados)
 - [Designing for macOS](https://developer.apple.com/design/human-interface-guidelines/designing-for-macos)
 - [Designing for tvOS](https://developer.apple.com/design/human-interface-guidelines/designing-for-tvos)
@@ -221,6 +224,31 @@ Source index:
 - [Tap to Pay on iPhone](https://developer.apple.com/design/human-interface-guidelines/tap-to-pay-on-iphone)
 - [VoiceOver](https://developer.apple.com/design/human-interface-guidelines/voiceover)
 - [Wallet](https://developer.apple.com/design/human-interface-guidelines/wallet)
+
+## Developer Documentation
+
+### Design and navigation
+
+- [Adopting Liquid Glass](https://developer.apple.com/documentation/TechnologyOverviews/adopting-liquid-glass)
+- [Applying Liquid Glass to custom views](https://developer.apple.com/documentation/swiftui/applying-liquid-glass-to-custom-views)
+- [Enhancing your app's content with tab navigation](https://developer.apple.com/documentation/swiftui/enhancing-your-app-content-with-tab-navigation)
+- [TabView](https://developer.apple.com/documentation/swiftui/tabview), [TabRole.search](https://developer.apple.com/documentation/swiftui/tabrole/search), [tabBarMinimizeBehavior(_:)](<https://developer.apple.com/documentation/swiftui/view/tabbarminimizebehavior(_:)>), [tabViewBottomAccessory](<https://developer.apple.com/documentation/swiftui/view/tabviewbottomaccessory(content:)>)
+- [ToolbarSpacer](https://developer.apple.com/documentation/swiftui/toolbarspacer), [ToolbarOverflowMenu](https://developer.apple.com/documentation/swiftui/toolbaroverflowmenu) (iOS 27)
+- [ArrangementView](https://developer.apple.com/documentation/swiftui/arrangementview) and [ReservedRegion](https://developer.apple.com/documentation/swiftui/reservedregion) (iOS 27.1, iPhone Duo)
+- [What's new in SwiftUI, by release](https://developer.apple.com/documentation/updates/swiftui)
+
+### Data flow and performance
+
+- [Observation](https://developer.apple.com/documentation/observation) and [Managing model data in your app](https://developer.apple.com/documentation/swiftui/managing-model-data-in-your-app)
+- [Understanding and improving SwiftUI performance](https://developer.apple.com/documentation/xcode/understanding-and-improving-swiftui-performance)
+- [Improving app responsiveness](https://developer.apple.com/documentation/xcode/improving-app-responsiveness)
+- [Gathering information about memory use](https://developer.apple.com/documentation/xcode/gathering-information-about-memory-use)
+- [Accessing cached data](https://developer.apple.com/documentation/foundation/accessing-cached-data) (`URLCache`)
+
+## Videos
+
+- WWDC25: [Meet Liquid Glass](https://developer.apple.com/videos/play/wwdc2025/219/), [Get to know the new design system](https://developer.apple.com/videos/play/wwdc2025/356/), [Build a SwiftUI app with the new design](https://developer.apple.com/videos/play/wwdc2025/323/), [What's new in SwiftUI](https://developer.apple.com/videos/play/wwdc2025/256/), [Optimize SwiftUI performance with Instruments](https://developer.apple.com/videos/play/wwdc2025/306/), [Explore concurrency in SwiftUI](https://developer.apple.com/videos/play/wwdc2025/266/)
+- WWDC26: [What's new in SwiftUI](https://developer.apple.com/videos/play/wwdc2026/269/), [Dive into lazy stacks and scrolling with SwiftUI](https://developer.apple.com/videos/play/wwdc2026/321/), [Profile, fix, and verify: Improve app responsiveness with Instruments](https://developer.apple.com/videos/play/wwdc2026/268/), [Design intuitive search experiences](https://developer.apple.com/videos/play/wwdc2026/292/), [Principles of great design](https://developer.apple.com/videos/play/wwdc2026/250/)
 
 ## Related Official Docs
 

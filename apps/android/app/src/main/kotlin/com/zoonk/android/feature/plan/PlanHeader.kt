@@ -1,0 +1,263 @@
+package com.zoonk.android.feature.plan
+
+import android.content.Intent
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
+import com.zoonk.android.R
+import com.zoonk.android.feature.feedback.FeedbackSheet
+import com.zoonk.android.feature.feedback.ReportProblemItem
+import com.zoonk.android.navigation.AppLink
+import com.zoonk.android.ui.characters.BuddyKind
+import com.zoonk.android.ui.characters.buddyName
+import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.LearnerSummaryGoal
+import kotlinx.datetime.toJavaLocalDate
+import java.time.temporal.ChronoUnit
+
+@Composable
+internal fun PlanHeader(
+    page: PlanPageState,
+    links: PlanLinks,
+    resume: Resume,
+    isSaving: Boolean,
+    onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    modifier: Modifier = Modifier,
+    report: FeedbackSheet? = null,
+    onAdjust: (() -> Unit)? = null,
+) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        PlanEyebrow(page)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            PlanTitle(Modifier.weight(1f))
+            onAdjust?.let { FilledTonalButton(onClick = it) { Text(stringResource(R.string.plan_adjust_plan)) } }
+            PlanMenu(page, links, resume, isSaving, onSetStatus, report)
+        }
+    }
+}
+
+@Composable
+private fun PlanEyebrow(page: PlanPageState) {
+    val target = page.plan.schedule.targetDate
+    val days = target?.let { ChronoUnit.DAYS.between(page.today, it.toJavaLocalDate()).toInt() }
+    val left =
+        when {
+            days == null || days < 0 -> {
+                null
+            }
+
+            days == 0 -> {
+                PlanDateWords(stringResource(R.string.plan_day_is_here), stringResource(R.string.plan_day_is_here))
+            }
+
+            page.plan.schedule.targetDateEstimated -> {
+                PlanDateWords(
+                    pluralStringResource(R.plurals.plan_days_left_estimate, days, days),
+                    pluralStringResource(R.plurals.plan_days_left_estimate_spoken, days, days),
+                )
+            }
+
+            else -> {
+                pluralStringResource(R.plurals.plan_days_left, days, days).let { PlanDateWords(it, it) }
+            }
+        }
+    val text = left?.let { stringResource(R.string.plan_eyebrow, page.goal.title, it.text) } ?: page.goal.title
+    val spoken = left?.let { stringResource(R.string.plan_eyebrow, page.goal.title, it.spoken) } ?: page.goal.title
+
+    Eyebrow(text, Modifier.semantics { contentDescription = spoken })
+}
+
+@Composable
+private fun PlanMenu(
+    page: PlanPageState,
+    links: PlanLinks,
+    resume: Resume,
+    isSaving: Boolean,
+    onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    report: FeedbackSheet?,
+) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var dialog by rememberSaveable { mutableStateOf<GoalDialog?>(null) }
+    val context = LocalContext.current
+    val shareTitle = stringResource(R.string.plan_share)
+    val shareUrl = sharePlanUrl(page, currentLocale().language)
+    val buddy = page.summary.buddy
+
+    Box {
+        IconButton(onClick = { expanded = true }) {
+            Icon(painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.plan_options))
+        }
+        MenuItems(
+            expanded,
+            page,
+            links,
+            resume,
+            isSaving,
+            onSetStatus,
+            report,
+            onDismiss = { expanded = false },
+            onDialog = { dialog = it },
+        )
+    }
+
+    dialog?.let { GoalStatusDialog(it, page, onSetStatus, onDismiss = { dialog = null }) }
+}
+
+@Composable
+private fun MenuItems(
+    expanded: Boolean,
+    page: PlanPageState,
+    links: PlanLinks,
+    resume: Resume,
+    isSaving: Boolean,
+    onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    report: FeedbackSheet?,
+    onDismiss: () -> Unit,
+    onDialog: (GoalDialog) -> Unit,
+) {
+    val context = LocalContext.current
+    val shareTitle = stringResource(R.string.plan_share)
+    val shareUrl = sharePlanUrl(page, currentLocale().language)
+    val libraryCourse = page.libraryCourse
+    val buddy = page.summary.buddy
+
+    DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
+        fun close(action: () -> Unit): () -> Unit =
+            {
+                onDismiss()
+                action()
+            }
+
+        if (links.hasExam) MenuItem(R.drawable.ic_school, stringResource(R.string.plan_about_exam), close(links::exam))
+        libraryCourse?.let { course ->
+            MenuItem(
+                R.drawable.ic_local_library,
+                stringResource(R.string.plan_full_course),
+                close { links.course(course.courseId.toString()) },
+            )
+        }
+        if (links.hasExam || libraryCourse != null) HorizontalDivider()
+
+        MenuItem(
+            R.drawable.ic_share,
+            shareTitle,
+            close {
+                val send =
+                    Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TITLE, page.goal.title)
+                        putExtra(Intent.EXTRA_TEXT, shareUrl)
+                    }
+                context.startActivity(Intent.createChooser(send, shareTitle))
+            },
+        )
+        MenuItem(
+            R.drawable.ic_contact_support,
+            stringResource(R.string.plan_talk_to, buddyName(BuddyKind.of(buddy.kind.value), buddy.name)),
+            close(links::buddy),
+        )
+        report?.let { ReportProblemItem(it, onClick = onDismiss) }
+
+        if (page.goal.status != LearnerSummaryGoal.Status.COMPLETED) {
+            HorizontalDivider()
+            if (page.isPaused) {
+                MenuItem(
+                    R.drawable.ic_play_arrow,
+                    stringResource(R.string.plan_resume_goal),
+                    close { if (resume == Resume.Confirm) onDialog(GoalDialog.Resume) else onSetStatus(GoalUpdateInput.Status.ACTIVE) },
+                    enabled = !isSaving && resume != Resume.Pending,
+                )
+            } else {
+                MenuItem(
+                    R.drawable.ic_pause,
+                    stringResource(R.string.plan_pause_goal),
+                    close { onSetStatus(GoalUpdateInput.Status.PAUSED) },
+                    enabled = !isSaving,
+                )
+            }
+        } else {
+            HorizontalDivider()
+        }
+        MenuItem(
+            R.drawable.ic_archive,
+            stringResource(R.string.plan_archive_goal),
+            close { onDialog(GoalDialog.Archive) },
+            enabled = !isSaving,
+        )
+    }
+}
+
+private enum class GoalDialog { Archive, Resume }
+
+@Composable
+private fun GoalStatusDialog(
+    dialog: GoalDialog,
+    page: PlanPageState,
+    onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val archive = dialog == GoalDialog.Archive
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(if (archive) R.string.plan_archive_title else R.string.plan_resume_title, page.goal.title)) },
+        text = { Text(stringResource(if (archive) R.string.plan_archive_description else R.string.plan_resume_effect)) },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDismiss()
+                    onSetStatus(if (archive) GoalUpdateInput.Status.ARCHIVED else GoalUpdateInput.Status.ACTIVE)
+                },
+            ) { Text(stringResource(if (archive) R.string.plan_archive else R.string.plan_resume)) }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.plan_cancel)) } },
+    )
+}
+
+@Composable
+private fun MenuItem(
+    @DrawableRes icon: Int,
+    text: String,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+) {
+    DropdownMenuItem(
+        text = { Text(text) },
+        onClick = onClick,
+        enabled = enabled,
+        leadingIcon = { Icon(painterResource(icon), contentDescription = null) },
+    )
+}
+
+/** Whoever opens the link sees only the subject and the plan's shape (main's `/plan-link/{planId}`). */
+private fun sharePlanUrl(
+    page: PlanPageState,
+    language: String,
+): String = AppLink.pageUrl("/plan-link/${page.plan.planId}", language)

@@ -15,6 +15,7 @@ const DAYS_7 = 7;
 export async function EngagementStats() {
   "use cache: private";
 
+  // oxlint-disable-next-line react/purity -- A cached Server Component reads the time once per cache entry and never re-renders on the client.
   const now = new Date();
 
   const { currentPeriodStart, previousPeriodStart } = getRollingUtcDateWindowStarts({
@@ -39,21 +40,21 @@ export async function EngagementStats() {
   ]);
 
   return (
-    <StatsSection subtitle="How learners interact with content" title="Engagement & Learning">
+    <StatsSection subtitle="How learners interact with content" title="Engagement & learning">
       <Stats
         description={`vs ${activeLearners.previousPeriod.toLocaleString()} in previous 7d`}
         help="Users who completed at least 1 lesson in the last 7 days"
         href="/stats/engagement"
         icon={<BookOpenIcon />}
-        title="Active Learners (7d)"
+        title="Active learners (7d)"
         value={activeLearners.currentPeriod.toLocaleString()}
       />
 
       <Stats
-        help="Correct step answers divided by all step attempts"
+        help="Correct answers divided by all answers"
         href="/stats/engagement"
         icon={<TargetIcon />}
-        title="Accuracy Rate"
+        title="Accuracy rate"
         value={`${accuracyRate.toFixed(1)}%`}
       />
 
@@ -61,7 +62,7 @@ export async function EngagementStats() {
         help="Completed lessons divided by lessons users started"
         href="/stats/engagement"
         icon={<CheckCircleIcon />}
-        title="Completion Rate"
+        title="Completion rate"
         value={`${completionRate.toFixed(1)}%`}
       />
 
@@ -69,21 +70,21 @@ export async function EngagementStats() {
         help="Average recorded duration for completed lessons"
         href="/stats/engagement"
         icon={<ClockIcon />}
-        title="Avg Time / Lesson"
+        title="Avg time / lesson"
         value={formatDuration(avgTime)}
       />
 
       <Stats
         help="Completed lessons divided by learners who completed at least 1 lesson"
         icon={<LayersIcon />}
-        title="Lessons / Learner"
+        title="Lessons / learner"
         value={avgLessonsPerLearner.toLocaleString()}
       />
 
       <Stats
         help="Total recorded lesson time across all learners"
         icon={<ClockIcon />}
-        title="Total Learning Time"
+        title="Total learning time"
         value={formatDuration(totalLearningTime)}
       />
     </StatsSection>

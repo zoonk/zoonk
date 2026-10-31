@@ -1,20 +1,30 @@
 {
   "name": "@zoonk/i18n",
   "private": true,
+  "bin": {
+    "reuse-translations": "./src/reuse-translations/cli.ts"
+  },
   "type": "module",
   "exports": {
     "./define-eloqnt-config": "./src/define-eloqnt-config.ts"
   },
   "scripts": {
+    "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@eloqnt/cli": "catalog:",
-    "ai-sdk-provider-codex-cli": "2.3.0"
+    "@eloqnt/format-apple-xcstrings": "catalog:",
+    "@eloqnt/format-po": "0.1.1",
+    "@formatjs/icu-messageformat-parser": "3.5.22",
+    "@zoonk/utils": "workspace:*",
+    "ai-sdk-provider-codex-cli": "2.3.0",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

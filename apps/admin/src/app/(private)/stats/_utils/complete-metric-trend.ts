@@ -4,10 +4,6 @@ import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 export type MetricTrendDataPoint = { date: string; label: string; value: number | null };
 const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
-/**
- * Normalizes the first visible bucket because yearly and all-time charts use
- * month and year boundaries even when a custom range begins mid-period.
- */
 function getFirstBucket({ date, period }: { date: Date; period: HistoryPeriod }): Date {
   if (period === "all") {
     return new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
@@ -20,10 +16,6 @@ function getFirstBucket({ date, period }: { date: Date; period: HistoryPeriod })
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 }
 
-/**
- * Advances by the interval represented on the selected chart so every missing
- * database bucket can be expressed deliberately instead of being bridged.
- */
 function getBucketAtIndex({
   firstBucket,
   index,
@@ -50,11 +42,6 @@ function getBucketAtIndex({
   );
 }
 
-/**
- * Calculates the exact output size before constructing the series. Array.from
- * can then build even a wide custom range in linear time without recursive
- * suffix copies or a call stack that grows with every visible bucket.
- */
 function getBucketCount({
   end,
   firstBucket,
@@ -76,11 +63,7 @@ function getBucketCount({
   return Math.floor((end.getTime() - firstBucket.getTime()) / MILLISECONDS_PER_DAY) + 1;
 }
 
-/**
- * Builds the full visible time domain. Additive metrics pass zero because no
- * activity is a real zero; rates and averages pass null because no attempts or
- * completions means the value is unknown, not 0% or zero seconds.
- */
+/** Additive metrics pass zero, a real zero; rates and averages pass null, since no data isn't 0%. */
 export function completeMetricTrend({
   dataPoints,
   emptyValue,

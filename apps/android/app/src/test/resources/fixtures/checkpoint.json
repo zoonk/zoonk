@@ -1,0 +1,21 @@
+{
+  "blockId": "2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
+  "checklist": [],
+  "kind": "boss",
+  "mock": false,
+  "nextPhase": null,
+  "passMark": 2,
+  "phase": { "index": 0, "name": "Cells" },
+  "planItemId": null,
+  "questions": [],
+  "reinforcementLessons": 0,
+  "rematch": false,
+  "result": null,
+  "retry": null,
+  "reward": { "badge": false, "brainPower": 30, "glasses": null, "phaseComplete": true },
+  "sessionId": "1b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
+  "status": "active",
+  "timeLimitMinutes": null,
+  "title": null,
+  "trueFalseLabels": "trueFalse"
+}

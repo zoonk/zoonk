@@ -7,6 +7,7 @@ enum CourseCategory: String, CaseIterable, Codable, Equatable, Sendable {
   case culture
   case economics
   case engineering
+  case exams
   case geography
   case health
   case history
@@ -18,6 +19,22 @@ enum CourseCategory: String, CaseIterable, Codable, Equatable, Sendable {
   case tech
 }
 
+/// After a content reset, a course can be listed before its chapters exist, and a chapter before
+/// its lessons. Pending outlines are written when the first learner starts them.
+enum CatalogGenerationStatus: String, Codable, Equatable, Sendable {
+  case completed
+  case failed
+  case pending
+  case running
+}
+
+enum CourseLevel: String, CaseIterable, Codable, Equatable, Sendable {
+  case overview
+  case beginner
+  case intermediate
+  case advanced
+}
+
 struct CourseOrganization: Codable, Equatable, Identifiable, Sendable {
   let id: String
   let logoURL: URL?
@@ -27,64 +44,165 @@ struct CourseOrganization: Codable, Equatable, Identifiable, Sendable {
 
 struct CourseSummary: Codable, Equatable, Identifiable, Sendable {
   let description: String?
+  let estimatedMinutes: Int
   let id: String
   let imageURL: URL?
   let language: String
+  let languageFlag: String?
+  /// 0 while its lessons aren't written yet.
+  let lessonCount: Int
   let organization: CourseOrganization
   let slug: String
-  let title: String
-}
-
-struct Course: Codable, Equatable, Identifiable, Sendable {
-  let categories: [CourseCategory]
-  let description: String?
-  let id: String
-  let imageURL: URL?
-  let language: String
-  let organization: CourseOrganization
-  let slug: String
+  let subject: CourseCategory?
   let targetLanguage: String?
   let title: String
 }
 
+/// A learner's own private course has no organization and is only readable with their session.
+struct Course: Codable, Equatable, Identifiable, Sendable {
+  /// Oldest first: the first is the course's subject.
+  let categories: [CourseCategory]
+  let description: String?
+  /// The course's published editions in every language, itself included.
+  let editions: [CourseEdition]
+  /// The page's example plan; nil for a learner's private course.
+  let examplePlan: CoursePlanExample?
+  let generationStatus: CatalogGenerationStatus
+  let id: String
+  let imageURL: URL?
+  let isExam: Bool
+  /// The page's copy; nil until the course's details are written.
+  let landingPage: CourseLandingPage?
+  let language: String
+  let languageFlag: String?
+  /// Every level the course covers, in order, including those with no chapter written yet; empty
+  /// until any chapter is written.
+  let levels: [CourseLevel]
+  let organization: CourseOrganization?
+  /// How long starting the course's "Not sure" quick test takes.
+  let quickTestMinutes: Int
+  let slug: String
+  let targetLanguage: String?
+  let title: String
+
+  var subject: CourseCategory? { categories.first }
+}
+
+struct CourseEdition: Codable, Equatable, Identifiable, Sendable {
+  let id: String
+  let language: String
+  let title: String
+}
+
+struct CourseLandingPage: Codable, Equatable, Sendable {
+  let audience: [String]
+  let outcomes: [String]
+  let valueProposition: String
+}
+
+/// Chapters can be shared by several courses, so `courseID`, `level` and `position` describe the
+/// course the chapter was listed or fetched in, not its only parent. `position` counts from 0 across
+/// the course's whole outline.
 struct CourseChapter: Codable, Equatable, Identifiable, Sendable {
   let courseID: String
   let description: String
+  let generationStatus: CatalogGenerationStatus
   let id: String
-  let imageURL: URL?
   let language: String
   let lessonCount: Int?
+  /// The chapter's lessons as its course's outline lists them; empty when read on its own.
+  let lessons: [CourseOutlineLesson]
+  let level: CourseLevel
+  let objectives: [String]
   let position: Int
   let slug: String
   let title: String
 }
 
-enum LessonKind: String, CaseIterable, Codable, Equatable, Sendable {
-  case alphabet
-  case custom
-  case explanation
-  case grammar
-  case listening
-  case practice
-  case quiz
-  case reading
-  case review
-  case translation
-  case tutorial
-  case vocabulary
+struct CourseOutlineLesson: Codable, Equatable, Identifiable, Sendable {
+  let estimatedMinutes: Int
+  let id: String
+  let title: String
 }
 
+/// Lessons can be shared by several chapters, so `chapterID`, `courseID` and `position` describe the
+/// listing, not the lesson's only parent.
 struct CourseLesson: Codable, Equatable, Identifiable, Sendable {
   let chapterID: String
   let courseID: String
   let description: String?
+  let estimatedMinutes: Int
+  let generationStatus: CatalogGenerationStatus
   let id: String
-  let imageURL: URL?
-  let kind: LessonKind
   let language: String
   let position: Int
   let slug: String
   let title: String?
+
+  /// An unwritten lesson is written when someone opens it.
+  var isWritten: Bool {
+    generationStatus == .completed
+  }
+}
+
+/// A shared chapter shows a different position and course in each course.
+struct CatalogChapterKey: Hashable, Sendable {
+  let chapterID: String
+  let courseID: String
+}
+
+struct CatalogLessonKey: Hashable, Sendable {
+  let courseID: String
+  let lessonID: String
+}
+
+/// A Library lesson's public page: what it teaches and its first screen, the same for everyone.
+struct CatalogLesson: Decodable, Equatable, Sendable {
+  struct Option: Decodable, Equatable, Identifiable, Sendable {
+    let id: String
+    let text: String
+  }
+
+  enum FirstScreen: Decodable, Equatable, Sendable {
+    /// Its options come without the right one: the lesson checks the answer.
+    case choice(context: String?, guess: Bool, options: [Option], question: String)
+    case start
+    case text(String)
+
+    private enum CodingKeys: String, CodingKey {
+      case context, guess, kind, options, question, text
+    }
+
+    init(from decoder: any Decoder) throws {
+      let container = try decoder.container(keyedBy: CodingKeys.self)
+
+      switch try container.decode(String.self, forKey: .kind) {
+      case "choice":
+        self = .choice(
+          context: try container.decodeIfPresent(String.self, forKey: .context),
+          guess: try container.decode(Bool.self, forKey: .guess),
+          options: try container.decode([Option].self, forKey: .options),
+          question: try container.decode(String.self, forKey: .question))
+      case "text":
+        self = .text(try container.decode(String.self, forKey: .text))
+      default:
+        self = .start
+      }
+    }
+  }
+
+  let description: String
+  let estimatedMinutes: Int
+  /// Nil until the lesson is written.
+  let firstScreen: FirstScreen?
+  let id: String
+  let summaryIdeas: [String]
+  let title: String
+}
+
+struct CourseCategoryCounts: Equatable, Sendable {
+  let counts: [CourseCategory: Int]
+  let total: Int
 }
 
 struct CourseCatalogPage: Codable, Equatable, Sendable {
@@ -97,115 +215,24 @@ struct CourseCatalogPage: Codable, Equatable, Sendable {
   }
 }
 
-struct CatalogChapterContinuation: Codable, Equatable, Sendable {
-  let canPrefetch: Bool
-  let chapterID: String
-  let chapterSlug: String
-  let completed: Bool
-  let courseID: String
-  let courseSlug: String
-  let hasStarted: Bool
-  let organizationSlug: String
-}
-
-struct CatalogEmptyContinuation: Codable, Equatable, Sendable {
-  let completed: Bool
-  let hasStarted: Bool
-}
-
-struct CatalogLessonContinuation: Codable, Equatable, Sendable {
-  let canPrefetch: Bool
-  let chapterID: String
-  let chapterSlug: String
-  let completed: Bool
-  let courseID: String
-  let courseSlug: String
-  let hasStarted: Bool
-  let lessonID: String
-  let lessonPosition: Int
-  let lessonSlug: String
-  let organizationSlug: String
-}
-
-enum CatalogContinuationTarget: Codable, Equatable, Sendable {
-  case chapter(CatalogChapterContinuation)
-  case empty(CatalogEmptyContinuation)
-  case lesson(CatalogLessonContinuation)
-
-  var completed: Bool {
-    switch self {
-    case .chapter(let target): target.completed
-    case .empty(let target): target.completed
-    case .lesson(let target): target.completed
-    }
-  }
-
-  var hasStarted: Bool {
-    switch self {
-    case .chapter(let target): target.hasStarted
-    case .empty(let target): target.hasStarted
-    case .lesson(let target): target.hasStarted
-    }
-  }
-}
-
-struct CourseChapterProgress: Codable, Equatable, Sendable {
-  let chapterID: String
-  let completedLessons: Int
-  let totalLessons: Int
-}
-
-struct CourseProgress: Codable, Equatable, Sendable {
-  let chapters: [CourseChapterProgress]
-  let percentComplete: Int?
-}
-
-struct ChapterLessonProgress: Codable, Equatable, Sendable {
-  let isCompleted: Bool
-  let lessonID: String
-}
-
-struct ChapterProgress: Codable, Equatable, Sendable {
-  let lessons: [ChapterLessonProgress]
-  let percentComplete: Int?
-}
-
 struct CourseDetail: Codable, Equatable, Sendable {
-  let continuation: CatalogContinuationTarget?
   let course: Course
   let chapters: [CourseChapter]
-  let progress: CourseProgress?
-
-  init(
-    continuation: CatalogContinuationTarget? = nil,
-    course: Course,
-    chapters: [CourseChapter],
-    progress: CourseProgress? = nil
-  ) {
-    self.continuation = continuation
-    self.course = course
-    self.chapters = chapters
-    self.progress = progress
-  }
+  var tryLessonID: String? = nil
 }
 
 struct ChapterDetail: Codable, Equatable, Sendable {
   let chapter: CourseChapter?
-  let continuation: CatalogContinuationTarget?
   let lessons: [CourseLesson]
-  let progress: ChapterProgress?
 
-  init(
-    chapter: CourseChapter? = nil,
-    continuation: CatalogContinuationTarget? = nil,
-    lessons: [CourseLesson],
-    progress: ChapterProgress? = nil
-  ) {
-    self.chapter = chapter
-    self.continuation = continuation
-    self.lessons = lessons
-    self.progress = progress
+  var tryLessonID: String? {
+    firstWrittenLessonID(lessons)
   }
+}
+
+/// Trying a written lesson costs nothing and opens at once.
+func firstWrittenLessonID(_ lessons: [CourseLesson]) -> String? {
+  lessons.first(where: \.isWritten)?.id
 }
 
 struct CatalogCourseSearchResult: Codable, Equatable, Identifiable, Sendable {
@@ -224,7 +251,6 @@ struct CatalogChapterSearchResult: Codable, Equatable, Identifiable, Sendable {
   let courseTitle: String
   let description: String
   let id: String
-  let imageURL: URL?
   let language: String
   let organizationSlug: String
   let slug: String
@@ -238,20 +264,6 @@ struct CatalogSearchResults: Codable, Equatable, Sendable {
   var isEmpty: Bool {
     chapters.isEmpty && courses.isEmpty
   }
-}
-
-enum CourseCatalogFailure: Error, Codable, Equatable, Sendable {
-  case network
-  case unavailable
-  case notFound
-}
-
-enum CourseCatalogLoadState<Value: Codable & Equatable & Sendable>: Codable, Equatable, Sendable {
-  case idle
-  case loading
-  case loaded(Value)
-  case empty
-  case failed(CourseCatalogFailure)
 }
 
 struct CourseCatalogQuery: Equatable, Sendable {

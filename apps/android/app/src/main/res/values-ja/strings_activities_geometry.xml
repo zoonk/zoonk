@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_geometry_badge_build_it": "111ea4ab86b5b4b431d34e8736dea5270cede274dbc8b37c08c20811b680b619",
+  "activities_geometry_badge_drag_corner": "674f1f4114069f1a1d6cf328106408d882c1210ba0df9cafa6425c9f9a12b7de",
+  "activities_geometry_badge_move_curve": "60d433a53dde4484e7acdb3b9b0ff94ee8a1f424879f46c3e2016eb47ac00516",
+  "activities_geometry_badge_turn_it": "fcc83adf91d372f9d7ed5d37def5aeb768c49e56ebb5d446155a46151cf2760f",
+  "activities_geometry_board_angles": "6728e6a1ff7f3d88fffd86c41cc8561e662ae9f579beb9825c15903318b77e2b",
+  "activities_geometry_board_angles_total": "e1acacd063cd55d476f8ac3dbf7ade15d66a051b6765828373832fc2fc6a785d",
+  "activities_geometry_board_area": "dc5729662ffecc94bb0a644c4c725df8e2f17f5791768c08c63af4b17931326f",
+  "activities_geometry_board_area_total": "5fe3ab35622e37c8cf76a3548a1931a819421312e6d83b1e6aff116972f76f64",
+  "activities_geometry_board_back_to_start": "8538b86fffefbb31be04b0ab17a9a8cf915f3b13a00fcfae17cdbcebcdfc20fd",
+  "activities_geometry_board_corner": "1240eaaeb37050a89b40fb64bce13ba9beae8dcfd2cd449425803eb0f5fb2868",
+  "activities_geometry_board_corner_value": "886148756050a79778292ed7f1c61ed5e69dced44b4edb84940b61fa2c6ce4c9",
+  "activities_geometry_board_fan": "98f9394dfff8d247861b0029ae55b685f303562d1ea0da9d5aa02bfd94248d69",
+  "activities_geometry_board_full_turn": "589f7fb3e7cd2f201b1e0a04afdaf134936bb7f90a3d987fa0baffbdb94e151e",
+  "activities_geometry_board_move_down": "cefb12b14d263f7e44857ad698264e7bc5ea0ab1507c91e908acc3ab67792dd0",
+  "activities_geometry_board_move_left": "ff29a35494ef9c407c742883487e34c85e2e94dffd16f92286ed38a2ed386f6d",
+  "activities_geometry_board_move_right": "d603d185d25c59e9e10d8fd9c692cb5bf13e0aa1613a0ad06831130177595b5d",
+  "activities_geometry_board_move_up": "524a5647802702eeb55189565629e2ca0f79d9cb2206162a9f9b990aacf1cf7c",
+  "activities_geometry_board_moving": "f5fc4c2978fd958d4b811aa3eda257982537efbcb381b9ab4e30d6326e86ad7c",
+  "activities_geometry_board_shape": "902af32b2bde5b2fc146c4abd4e8e7a046cf54c6b05f3a46956918a4e4748ec8",
+  "activities_geometry_board_sides": "a74f381a35601c05a078f3757f7413fbf692f0b98a729cbe96ae024e4da9e69c",
+  "activities_geometry_board_sides_total": "0a4a50b438763d97cd51614105f5f3b7eee1e878f2a34bc17ac5a3088790f256",
+  "activities_geometry_board_squares": "c87d29472b8f63d0cff686536884505002188b8579b47cb699bc001024117e10",
+  "activities_geometry_board_squares_total": "47d2d311d860b6ab38defbf75f2cbfcd4e9b71511545c6ef00f6026ec4467cf4",
+  "activities_geometry_board_straight_line": "aea05112061a153e1001e63efe317754f13890f6ff054ba99f851d5457998087",
+  "activities_geometry_cos": "e6b3fac40f89f903c785b9cd553c194f7aeb2413cf6447920a74fdaa881962cb",
+  "activities_geometry_element_boron": "0804631459b7c8443c97498e5c28a9ee1282730da52247fbf97e781ec4271482",
+  "activities_geometry_element_bromine": "b587995ef83baad40d0160e15b27f9d20ead9b0c975a4c99e73f60f4cf3ebe60",
+  "activities_geometry_element_carbon": "f4cc50d49cad10c697c6f59ce1ec8666e189a8921dcaab0352449a83adf50e7a",
+  "activities_geometry_element_chlorine": "023d0e964c2a34954ae91d8b40fc6d43f4a6b989a9bdc4586e1a168558c06902",
+  "activities_geometry_element_fluorine": "1e071afef12a3654f520b13cbca3e38810a50e4670ae01deb9a9318008b72744",
+  "activities_geometry_element_hydrogen": "481b3be40cd387140ab37e309c860acc2057ea35cf34282c685bca1b09fdf228",
+  "activities_geometry_element_iodine": "d1865e69cc1009c8b7bcf15e409744a0bcc1241a53f62843858e9cd8c9f6e3b9",
+  "activities_geometry_element_nitrogen": "332ed36bb13ccbe889f909392fc6089b128ef35d2e0662d69c79836759ca70a7",
+  "activities_geometry_element_oxygen": "36a40736883ba329e06ded1575109eda272251fbdb72c44e63762d2b0991a62b",
+  "activities_geometry_element_phosphorus": "07284ae87e32d4c87ba97254903344a0b45fb5db42649d4384864a229b3af7b9",
+  "activities_geometry_element_silicon": "484e8d12fca5325e373ec97ebe52bf894932138ff4a88b459d917755cc33e791",
+  "activities_geometry_element_sulfur": "0443997f8900a79201d098b70a18cae32a219ad8d3cda84832354307ef905635",
+  "activities_geometry_line_before": "01b6d1e1670a0a4fcc9522889bd4f137eca253a0e6e9895b94c5d78be6ebac34",
+  "activities_geometry_line_description": "ddbe9a72e2e6a38debe6388fb1f17a24a3bcbe305be8a04dcafeed5d7785980d",
+  "activities_geometry_line_goes_down": "d8e3781cab258d18eb6206c651349bc9b81e83aa637bf7afd80478af54fbd940",
+  "activities_geometry_line_goes_up": "c3c8195b4e9c5eeceeb5bef988b00392eca26c5dcfd8df080a6c79783292a13d",
+  "activities_geometry_line_hint": "e938a0f3a9d3ae23eca650474342a9a52ca37679508e9da61c17d1327efdb0a8",
+  "activities_geometry_line_move": "92286275bd3c7036d328ad99d5e823c9c89ffc7392f2ba8d3daf5951866017b7",
+  "activities_geometry_line_moved_down": "c04a88cb177e7ea425114c6919e89825abdffcdde3311f16feb7307eb2334c05",
+  "activities_geometry_line_moved_left": "b6b172d95619bc0b4e44937b8e30042653381383b8a2bc248f831f15e74f52ac",
+  "activities_geometry_line_moved_right": "898b52ebc2bb30b28cda76a566d89a438e08a3dff617aca5c9be10e43c819a8c",
+  "activities_geometry_line_moved_up": "c2a11937d44a36dd9aea3751eac7b1cdcac4995489aaf48fecc32e6ee395f987",
+  "activities_geometry_line_new_crossing": "17b312180c77a220fb12b6becf15f39e7611c77b00e13c4a4c581e0a25c360a7",
+  "activities_geometry_line_stays": "2a2598be82d3d024c2a8b9f92e3f2b4fd33026732aa0e50d023f74c327e0bdc1",
+  "activities_geometry_line_unmoved": "7b1d5a20b00a68412ef5ecbbecc462442b63d0995a0c0f64310bdbafff0c6fd7",
+  "activities_geometry_line_unmoved_line": "ca2df2bb25942f035859e5cb65642a434b649a5b3621823098103feebabe6d56",
+  "activities_geometry_line_what_happened": "e3c494c91d0c138471ee98797c2040f444c47cd99fbc00498c07376c7d691f44",
+  "activities_geometry_molecule_add": "f777ca9a9a89e06ab494e8cf9e0593e039471bf10e746d4b81f842e422b12f25",
+  "activities_geometry_molecule_add_bonded": "7b1b86d2151f47f13a6757e0a13159af3d4557b45eade9e56fe77b695bce9520",
+  "activities_geometry_molecule_added": "8c071a3e069ccd0a66ad231366e3b88cecbc2727361e45a0cd2432593c4daf66",
+  "activities_geometry_molecule_added_bonded": "01646c7ca2dfee21f133d298f6d08b9eb981f35e74ce2bed6c68d75cbbcc7831",
+  "activities_geometry_molecule_atom": "722efae40536e21544605b93a4b779816948d80d4da8f1dcaa5382f5257949b1",
+  "activities_geometry_molecule_atom_bonds": "8e0a1f292830b50a97b800b073103f9a4878267471f109513ced79a38cf9eaf2",
+  "activities_geometry_molecule_bonds": "518c3a32e663e00c04316779c81fcf8fe1edee8f5065713de6593b493ef6f9d9",
+  "activities_geometry_molecule_bonds_in_all": "a11950cd30128dac516616f1e10efa539dd05ec1e60295e5031716d0a41de291",
+  "activities_geometry_molecule_build": "896a67e1ebf587c074d4fa45e631668159e767e3a90470d6ffe72daf9dca0f45",
+  "activities_geometry_molecule_built": "12e5e4d2e04c6c43741c8a386b6a88cf1d105dc0a9be1035339b340a9664c9bf",
+  "activities_geometry_molecule_double_bond": "aa5a8777d369a071ed101fe12a85b12590659321e8bcf1cb09ce891b1ee3fff3",
+  "activities_geometry_molecule_example": "3aab4d61ec55a386f3f71938e4af859f84dfd21917d2fe3677ac65f283b27679",
+  "activities_geometry_molecule_full": "4135f873d12855170b670dd077bba092572ebb0d5cc775f33bd42f6a2454a470",
+  "activities_geometry_molecule_loose": "561eab269d388679d1228f47c154be0e83ef492ca19ad7b87c418233872a591d",
+  "activities_geometry_molecule_no_bond": "f495d0b46a356fc1cac60dc92495357f71660e10546015eb565ac945d753c2fa",
+  "activities_geometry_molecule_none_selected": "c21dfed5251d88cceeff4544bb5dc7c5642553b7136737721d9e8e5c5f6586bf",
+  "activities_geometry_molecule_open": "fa4eb05766c5c02a77e0c150b940d2b7394ff2a665c551d372ddb908cd02303c",
+  "activities_geometry_molecule_over": "c293d30f64d5d5903e2cb187754c2cda2aee9c96dc869bec88a8b2726ec89c0a",
+  "activities_geometry_molecule_remove": "d28a52361cf1372836fdb8e02e1966aec574806bdade04f292f1be7f5f0833c9",
+  "activities_geometry_molecule_remove_selected": "4c3020d3f51264d360add84734b4d1aff0d335ab80cdc168fa896260ef45152a",
+  "activities_geometry_molecule_removed": "c380f1098ab4839bcd50d707dacd12e96cd804c9c0bc17e2aaa8f796bc2f398a",
+  "activities_geometry_molecule_select_hint": "f3fafc53e317b7b5e9ae67f378122723e5a0c9b8a9984c35260757bc7471bf05",
+  "activities_geometry_molecule_selected": "4bb8e2a51fb1f12a9e7872d45a7b7d6018d98a7b78942bd073b6f51b7349a196",
+  "activities_geometry_molecule_selected_hint": "a06b5633f86a51ffa1d2fda8d18e60a9c78cc259a24c611a6d5c488b314bd83c",
+  "activities_geometry_molecule_single_bond": "c344a38dfce8bfd8db953e353b7744869ae9f32cc22c2a000f5ba4d75e92bb96",
+  "activities_geometry_molecule_start": "b83f0b3b1307526300b8e6828731f942946550609596526975c5dc01da7e1db9",
+  "activities_geometry_molecule_target": "d0c2827c86f27600d7c80e7d773b1ee086a788a7d66ac6f397900b4d8e70c831",
+  "activities_geometry_molecule_triple_bond": "c1c417ce095fcc73b8186976e0c18709d5b5a57301eae69d25d14381e5602618",
+  "activities_geometry_molecule_undo": "988456be582ebb81f873016c695599985880335d1188467d8e4e5a0ceb2f7381",
+  "activities_geometry_molecule_undone": "6ad9427abec96eee844c7d1eefd09aa2b0fb9ef9be96e79dad5eec0118b4d9b0",
+  "activities_geometry_radians": "c692fcd8d92a1ee4828d05f70e67967d0e7e665391fed48c78f86654d8f136c2",
+  "activities_geometry_sin": "e6ae0a5a47f98ad90026baa80b83eec9a22b62e858f0632e39bd213757dc8146",
+  "activities_geometry_tan": "eee565d51427b3d9a47d79fb195baefaf10717b313528c9fd6754ead4abbfb14",
+  "activities_geometry_undefined": "c2aa72d31c7cc6e29904955608d6f26bc69e814ecd4eea088bc2116f0688126b",
+  "activities_geometry_unit_circle_as_turns": "124a15fa7b791f818ce477fd576e8488160bdbfc61d9ce86634a596d504df844",
+  "activities_geometry_unit_circle_asks": "b65d8334d3104db0edfd6f192b3d1ef72ce18a61fee3061efd932da457be6eb6",
+  "activities_geometry_unit_circle_description": "54798dfd4facad2685acc274a04aa87012d4d6f3f241a38bc3c6d691a92ce1a3",
+  "activities_geometry_unit_circle_point": "027183f25d4cb065cfeb4934007db2bb59a5c5a0aaf82c4bd0d7f798a99cb6d8",
+  "activities_geometry_unit_circle_value": "62f36c727be226cb9775b43438485fcc72fd6ff63843d0d95ad438860d6354c0"
+}
+-->
+<resources>
+    <string name="activities_geometry_badge_turn_it">回す</string>
+    <!-- The unit circle's draggable point, for TalkBack. -->
+    <string name="activities_geometry_unit_circle_point">円周上の点</string>
+    <!-- The point's angle, then the values at it, like "30°. sin = 0.5, cos = 0.87". -->
+    <string name="activities_geometry_unit_circle_value">%1$s。%2$s</string>
+    <!-- The unit circle, for TalkBack: the angle, then the values at it, like "sin = 0.5, cos = 0.87". -->
+    <string name="activities_geometry_unit_circle_description">半径1の円で、点は%1$sの位置にあります。点の高さがサイン、中心からの横方向の距離がコサインです。値は%2$sです。</string>
+    <!-- The checked angle on a unit circle, for TalkBack, like "The question asks about 30°, where sin = 0.5." -->
+    <string name="activities_geometry_unit_circle_asks">%1$sについての問題です。この角度では%2$s = %3$sです。</string>
+    <!-- Above the sine and cosine waves. -->
+    <string name="activities_geometry_unit_circle_as_turns">点が回転すると</string>
+    <!-- Short name of sine ("sen" in Portuguese and Spanish). -->
+    <string name="activities_geometry_sin">sin</string>
+    <!-- Short name of cosine. -->
+    <string name="activities_geometry_cos">cos</string>
+    <!-- Short name of tangent. -->
+    <string name="activities_geometry_tan">tan</string>
+    <!-- A tangent that doesn't exist, at 90°. -->
+    <string name="activities_geometry_undefined">未定義</string>
+    <!-- An angle in radians, like "2.5 rad". -->
+    <string name="activities_geometry_radians">%1$s rad</string>
+    <string name="activities_geometry_badge_drag_corner">角をドラッグする</string>
+    <!-- A movable corner of a shape, for TalkBack, like "Corner A". -->
+    <string name="activities_geometry_board_corner">頂点%1$s</string>
+    <!-- Where a corner is, then what the board measures, like "At 1, 3. Angles: 72°, 45°, 63°." -->
+    <string name="activities_geometry_board_corner_value">座標は%1$s、%2$sです。%3$s</string>
+    <!-- TalkBack actions that move a shape's corner one grid step. -->
+    <string name="activities_geometry_board_move_left">左に動かす</string>
+    <string name="activities_geometry_board_move_right">右に動かす</string>
+    <string name="activities_geometry_board_move_up">上に動かす</string>
+    <string name="activities_geometry_board_move_down">下に動かす</string>
+    <!-- Puts a shape's corners back where they started. -->
+    <string name="activities_geometry_board_back_to_start">最初の位置に戻す</string>
+    <!-- A geometry board, for TalkBack. -->
+    <plurals name="activities_geometry_board_shape">
+        <item quantity="other">方眼上に%1$d個の頂点がある図形です。</item>
+    </plurals>
+    <plurals name="activities_geometry_board_moving">
+        <item quantity="other">%1$d個の頂点が動きます。</item>
+    </plurals>
+    <!-- A shape's angles, like "72°, 45°, 63°". -->
+    <string name="activities_geometry_board_angles">角度：%1$s。</string>
+    <string name="activities_geometry_board_angles_total">各角の大きさは%1$sで、合計は%2$sです。</string>
+    <!-- A shape's side lengths, like "4, 4.2, 3.2". -->
+    <string name="activities_geometry_board_sides">辺の長さ：%1$s。</string>
+    <string name="activities_geometry_board_sides_total">各辺の長さは%1$sで、周りの長さは%2$sです。</string>
+    <string name="activities_geometry_board_area_total">面積は%1$sです。</string>
+    <!-- The areas of the squares on a right triangle's two shorter sides, like "9, 16". -->
+    <string name="activities_geometry_board_squares">短い2辺をそれぞれ一辺とする正方形の面積：%1$s。</string>
+    <string name="activities_geometry_board_squares_total">短い2辺をそれぞれ1辺とする正方形の面積は%1$sです。最も長い辺を1辺とする正方形の面積は%2$sです。</string>
+    <!-- Above a shape's angles drawn side by side. -->
+    <string name="activities_geometry_board_fan">角を切り離して横に並べる</string>
+    <!-- What a triangle's three angles side by side make. -->
+    <string name="activities_geometry_board_straight_line">一直線</string>
+    <!-- What a four-sided shape's angles side by side make. -->
+    <string name="activities_geometry_board_full_turn">1回転</string>
+    <!-- Before a shape's area, like "Area 6". -->
+    <string name="activities_geometry_board_area">面積</string>
+    <string name="activities_geometry_badge_build_it">組み立てる</string>
+    <!-- The molecule to build, like "Target: CO₂". -->
+    <string name="activities_geometry_molecule_target">目標の分子：%1$s</string>
+    <!-- The molecule built so far, like "Built: CO". -->
+    <string name="activities_geometry_molecule_built">現在の分子：%1$s</string>
+    <!-- An atom: its element and its number, like "Oxygen 2". -->
+    <string name="activities_geometry_molecule_atom">%1$s %2$s</string>
+    <!-- An atom and how many of its bonds are made, for TalkBack, like "Oxygen 1: 1 of 2 bonds". -->
+    <plurals name="activities_geometry_molecule_atom_bonds">
+        <item quantity="other">%1$s：結合は%2$d本、最大%3$d本</item>
+    </plurals>
+    <string name="activities_geometry_element_boron">ホウ素</string>
+    <string name="activities_geometry_element_bromine">臭素</string>
+    <string name="activities_geometry_element_carbon">炭素</string>
+    <string name="activities_geometry_element_chlorine">塩素</string>
+    <string name="activities_geometry_element_fluorine">フッ素</string>
+    <string name="activities_geometry_element_hydrogen">水素</string>
+    <string name="activities_geometry_element_iodine">ヨウ素</string>
+    <string name="activities_geometry_element_nitrogen">窒素</string>
+    <string name="activities_geometry_element_oxygen">酸素</string>
+    <string name="activities_geometry_element_phosphorus">リン</string>
+    <string name="activities_geometry_element_sulfur">硫黄</string>
+    <string name="activities_geometry_element_silicon">ケイ素</string>
+    <!-- An element button, for TalkBack, like "Add Carbon". -->
+    <string name="activities_geometry_molecule_add">%1$sを追加する</string>
+    <!-- An element button while an atom is selected, like "Add Oxygen bonded to Carbon 1". -->
+    <string name="activities_geometry_molecule_add_bonded">%1$sを%2$sと結合させて追加する</string>
+    <!-- How many bonds an element makes, under its symbol. -->
+    <plurals name="activities_geometry_molecule_bonds">
+        <item quantity="other">結合%1$d本</item>
+    </plurals>
+    <string name="activities_geometry_molecule_undo">元に戻す</string>
+    <!-- Removes the selected atom, like "Remove Oxygen 2". -->
+    <string name="activities_geometry_molecule_remove">%1$sを取り除く</string>
+    <string name="activities_geometry_molecule_remove_selected">選択中の原子を取り除く</string>
+    <string name="activities_geometry_molecule_start">元素をタップして、最初の原子を追加してください。</string>
+    <!-- An atom with too many bonds, like "Oxygen 1 has more bonds than it can make." -->
+    <string name="activities_geometry_molecule_over">%1$sの結合が多すぎます。</string>
+    <plurals name="activities_geometry_molecule_open">
+        <item quantity="other">%1$d個の原子に結合できる部分が残っていて、点で示されています。</item>
+    </plurals>
+    <string name="activities_geometry_molecule_full">すべての原子が必要な数だけ結合しています。</string>
+    <!-- Like "Carbon 1 is selected. Tap another atom to bond them, or an element to add one bonded to it." -->
+    <string name="activities_geometry_molecule_selected_hint">%1$sを選択しています。別の原子をタップすると結合し、元素をタップすると結合した原子が追加されます。</string>
+    <string name="activities_geometry_molecule_select_hint">原子をタップして選択してください。</string>
+    <!-- Said to TalkBack after adding an atom, like "Added Carbon 1." -->
+    <string name="activities_geometry_molecule_added">%1$sを追加しました。</string>
+    <!-- Said to TalkBack after adding a bonded atom, like "Added Oxygen 1, bonded to Carbon 1." -->
+    <string name="activities_geometry_molecule_added_bonded">%1$sを追加し、%2$sと結合しました。</string>
+    <!-- Two atoms and the bond between them, like "Carbon 1 and Oxygen 1: no bond." -->
+    <string name="activities_geometry_molecule_no_bond">%1$sと%2$sの間に結合はありません。</string>
+    <string name="activities_geometry_molecule_single_bond">%1$sと%2$sは単結合でつながっています。</string>
+    <string name="activities_geometry_molecule_double_bond">%1$sと%2$sは二重結合でつながっています。</string>
+    <string name="activities_geometry_molecule_triple_bond">%1$sと%2$sは三重結合でつながっています。</string>
+    <!-- Said to TalkBack after removing an atom, like "Removed Oxygen 2." -->
+    <string name="activities_geometry_molecule_removed">%1$sを取り除きました。</string>
+    <!-- Said to TalkBack after undoing a change. -->
+    <string name="activities_geometry_molecule_undone">元に戻しました。</string>
+    <!-- Said to TalkBack after selecting an atom, like "Carbon 1 selected." -->
+    <string name="activities_geometry_molecule_selected">%1$sを選択しました。</string>
+    <string name="activities_geometry_molecule_none_selected">何も選択されていません。</string>
+    <!-- The molecule builder, for TalkBack, like "Build CO₂." -->
+    <string name="activities_geometry_molecule_build">%1$sを組み立ててください。</string>
+    <!-- An atom without bonds, for TalkBack, like "Hydrogen 3 has no bonds." -->
+    <string name="activities_geometry_molecule_loose">%1$sはどの原子とも結合していません。</string>
+    <!-- Above a complete molecule shown after checking. -->
+    <string name="activities_geometry_molecule_example">正解の一例</string>
+    <plurals name="activities_geometry_molecule_bonds_in_all">
+        <item quantity="other">結合は全部で%1$d本です。二重結合は2本と数えます。</item>
+    </plurals>
+    <!-- The badge of an activity where the learner drags a line on a chart; "curve" as in a supply or demand curve. -->
+    <string name="activities_geometry_badge_move_curve">曲線を動かす</string>
+    <!-- A line's draggable handle on a chart, for TalkBack, like "Move the line Supply". -->
+    <string name="activities_geometry_line_move">%1$sの線を動かす</string>
+    <!-- A line on a chart that the learner hasn't dragged, like "Supply hasn't moved". -->
+    <string name="activities_geometry_line_unmoved_line">%1$sはまだ動いていません</string>
+    <!-- A line on a chart dragged to the right, like "Supply moved right". -->
+    <string name="activities_geometry_line_moved_right">%1$sが右に動きました</string>
+    <!-- A line on a chart dragged to the left, like "Supply moved left". -->
+    <string name="activities_geometry_line_moved_left">%1$sが左に動きました</string>
+    <!-- A line on a chart dragged up, like "Cost moved up". -->
+    <string name="activities_geometry_line_moved_up">%1$sが上に動きました</string>
+    <!-- A line on a chart dragged down, like "Cost moved down". -->
+    <string name="activities_geometry_line_moved_down">%1$sが下に動きました</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Price per dozen goes up". -->
+    <string name="activities_geometry_line_goes_up">%1$sが上がります</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Eggs sold goes down". -->
+    <string name="activities_geometry_line_goes_down">%1$sが下がります</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Eggs sold stays the same". -->
+    <string name="activities_geometry_line_stays">%1$sは変わりません</string>
+    <!-- A hint under a chart of two lines, before the learner moves either. -->
+    <string name="activities_geometry_line_hint">ハンドルをドラッグして線を動かしてください。</string>
+    <!-- Beside the dashed line showing where a line was before the learner moved it. -->
+    <string name="activities_geometry_line_before">移動前</string>
+    <!-- Beside the dashed line showing how the line really moved, after checking the answer. -->
+    <string name="activities_geometry_line_what_happened">実際の動き</string>
+    <!-- A chart of two lines, for TalkBack: the lines' names, then the vertical axis against the horizontal one, like "A chart of two lines, Supply and Demand, with Price per dozen against Eggs sold." -->
+    <string name="activities_geometry_line_description">%1$sと%2$sの2本の線を示すグラフです。縦軸は%3$s、横軸は%4$sです。</string>
+    <!-- A chart of two lines, for TalkBack, before the learner moves either. -->
+    <string name="activities_geometry_line_unmoved">どちらの線もまだ動いていません。</string>
+    <!-- After checking, for TalkBack: the value where the two lines now cross, like "The new crossing is at 250." -->
+    <string name="activities_geometry_line_new_crossing">新しい交点は%1$sです。</string>
+</resources>

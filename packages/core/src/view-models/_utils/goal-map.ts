@@ -1,0 +1,220 @@
+import "server-only";
+import { type Goal, prisma } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { isUuid } from "@zoonk/utils/uuid";
+import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
+import { type GoalPlan } from "../../learner/_utils/goal-skill-graph";
+import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
+import { toSkillStatus } from "../../learner/_utils/skill-status";
+import { getRequestInstant } from "../../learner/facts/request-instant";
+import { findPlanPhase } from "../../plans/_utils/phase-states";
+import { isPlanFinished } from "../../plans/_utils/plan-end";
+import { type TodayLearnBlock } from "../../plans/_utils/up-next-item";
+import { parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
+import { type MapArea, type MapPhase } from "../map/map-contract";
+import { type MapItem, type MapNode, buildGoalMapAreas } from "./goal-map-areas";
+import { loadTodayLearnBlocks } from "./today-lesson-order";
+
+export type GoalMap = {
+  areas: MapArea[];
+  /** Each chapter's displayed course comes first. */
+  courseIds: string[];
+  finished: boolean;
+  plan: GoalPlan;
+  items: MapItem[];
+  phases: MapPhase[];
+  /** Today's lessons not done yet, as Today opens them (`loadTodayLearnBlocks`). */
+  todayBlocks: TodayLearnBlock[];
+  /** Shared next-item identity across screens. */
+  upNextItemId: string | null;
+};
+
+function pickCourseId({
+  chapter,
+  primaryCourseId,
+}: {
+  chapter: { courses: { courseId: string }[]; homeCourseId: string | null };
+  primaryCourseId: string | null;
+}) {
+  const courseIds = chapter.courses.map((placement) => placement.courseId);
+
+  if (primaryCourseId && courseIds.includes(primaryCourseId)) {
+    return primaryCourseId;
+  }
+
+  return chapter.homeCourseId ?? courseIds[0] ?? null;
+}
+
+async function loadPlanRows(goalId: string) {
+  const plan = await prisma.plan.findUnique({
+    select: {
+      items: {
+        orderBy: { position: "asc" },
+        select: {
+          chapterId: true,
+          id: true,
+          kind: true,
+          lessonId: true,
+          phase: true,
+          scheduledFor: true,
+          status: true,
+        },
+      },
+      phases: true,
+      settings: true,
+    },
+    where: { goalId },
+  });
+
+  return {
+    items: plan?.items ?? [],
+    phases: parsePlanPhases(plan?.phases),
+    settings: parsePlanSettings(plan?.settings),
+  };
+}
+
+async function loadAreaDetails({
+  chapterIds,
+  primaryCourseId,
+}: {
+  chapterIds: string[];
+  primaryCourseId: string | null;
+}) {
+  const chapters = await prisma.chapter.findMany({
+    select: { courses: { select: { courseId: true } }, homeCourseId: true, id: true, title: true },
+    where: { id: { in: chapterIds } },
+  });
+
+  return new Map(
+    chapters.map((chapter) => [
+      chapter.id,
+      {
+        courseId: pickCourseId({ chapter, primaryCourseId }),
+        courseIds: chapter.courses.map((placement) => placement.courseId),
+        title: chapter.title,
+      },
+    ]),
+  );
+}
+
+/** Caller supplies an owned goal; shares mastery, grouping, and Today's next lesson across map and chapter views. */
+export async function loadGoalMap({
+  goal,
+}: {
+  goal: Pick<Goal, "id" | "kind" | "primaryCourseId" | "targetDate" | "timezone" | "userId">;
+}): Promise<GoalMap> {
+  const now = await getRequestInstant();
+  const today = getDateInTimeZone({ date: now, timeZone: getAnswerTimeZone({ goal }) });
+
+  const [graph, rows, todayBlocks] = await Promise.all([
+    readGoalPlan(goal.id),
+    loadPlanRows(goal.id),
+    loadTodayLearnBlocks(goal),
+  ]);
+
+  const skillIds = graph.skills.map((skill) => skill.id);
+
+  // Areas without a chapter are phases ("phase:0"), which aren't ids a chapter query accepts.
+  const chapterIds = [
+    ...new Set([
+      ...rows.items.flatMap((item) => item.chapterId ?? []),
+      ...graph.skills.map((skill) => skill.areaId).filter((id) => isUuid(id)),
+    ]),
+  ];
+
+  const [texts, learnerSkills, areaDetails] = await Promise.all([
+    prisma.skill.findMany({
+      select: { description: true, id: true, name: true },
+      where: { id: { in: skillIds } },
+    }),
+    prisma.learnerSkill.findMany({ where: { skillId: { in: skillIds }, userId: goal.userId } }),
+    loadAreaDetails({ chapterIds, primaryCourseId: goal.primaryCourseId }),
+  ]);
+
+  const textById = new Map(texts.map((row) => [row.id, row]));
+  const learnerSkillById = new Map(learnerSkills.map((row) => [row.skillId, row]));
+  const itemSkills = new Map(graph.items.map((entry) => [entry.id, entry.skillIds]));
+
+  const nodes = graph.skills.flatMap((skill): MapNode[] => {
+    const text = textById.get(skill.id);
+
+    if (!text) {
+      return [];
+    }
+
+    const status = toSkillStatus({ learnerSkill: learnerSkillById.get(skill.id), now });
+
+    return [
+      {
+        areaId: skill.areaId,
+        phase: skill.phase,
+        skill: {
+          description: text.description,
+          fading: status.fading,
+          name: text.name,
+          prerequisiteIds: [...skill.prerequisiteIds],
+          retrievability: status.retrievability,
+          skillId: skill.id,
+          state: status.state,
+        },
+        title: skill.areaTitle,
+      },
+    ];
+  });
+
+  const items = rows.items.map((item) => ({ ...item, skillIds: itemSkills.get(item.id) ?? [] }));
+
+  const phaseChallengesRequired = await arePhaseChallengesRequired({
+    goalKind: goal.kind,
+    userId: goal.userId,
+  });
+
+  // An exam the learner goes on studying after has no deadline (see `isPlanFinished`).
+  const studiesPastTarget = goal.kind === "exam" && rows.settings.fullCourse;
+
+  const built = buildGoalMapAreas({
+    areaDetails,
+    items,
+    nodes,
+    phases: rows.phases,
+    progress: {
+      currentPhase: findPlanPhase({
+        goal,
+        items,
+        phaseChallengesRequired,
+        phases: rows.phases,
+        settings: rows.settings,
+        today,
+      }),
+      goalKind: goal.kind,
+      phaseChallengesRequired,
+      studiesPastTarget,
+      targetDate: goal.targetDate,
+      today,
+    },
+    todayBlocks,
+  });
+
+  const courseIds = built.areas.flatMap((area) => {
+    const details = areaDetails.get(area.areaId);
+    return [area.courseId ?? [], details?.courseIds ?? []].flat();
+  });
+
+  return {
+    ...built,
+    courseIds: [...new Set(courseIds)],
+    finished: isPlanFinished({
+      goalKind: goal.kind,
+      items,
+      phaseChallengesRequired,
+      phases: rows.phases,
+      studiesPastTarget,
+      targetDate: goal.targetDate,
+      today,
+    }),
+    items,
+    plan: graph,
+    todayBlocks,
+  };
+}

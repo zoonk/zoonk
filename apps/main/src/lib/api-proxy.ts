@@ -4,10 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 
-/**
- * Keeps user bearer auth separate from platform auth. Ambient browser cookies
- * must not become API credentials merely because the browser now calls Main.
- */
+/** Ambient browser cookies must not become API credentials just because the browser calls Main. */
 export async function proxyApiRequest(request: NextRequest): Promise<NextResponse> {
   const path = request.nextUrl.pathname;
 

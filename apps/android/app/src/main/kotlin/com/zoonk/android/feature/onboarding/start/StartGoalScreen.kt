@@ -1,0 +1,575 @@
+package com.zoonk.android.feature.onboarding.start
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
+import androidx.core.os.ConfigurationCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.zoonk.android.R
+import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.GenerationFailure
+import com.zoonk.android.data.GenerationKind
+import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.Resource
+import com.zoonk.android.data.SessionState
+import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
+import com.zoonk.android.feature.onboarding.GoalLimitReason
+import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.goalStartLimit
+import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.GenerationWait
+import com.zoonk.android.ui.components.GoalBox
+import com.zoonk.android.ui.components.GoalExamples
+import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.rememberGoalExamples
+import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.api.models.AllowanceResponse
+import com.zoonk.api.models.GoalUnderstanding
+import com.zoonk.api.models.OnboardingDraft
+
+@Composable
+fun StartGoalScreen(
+    route: AppRoute.StartGoal,
+    app: AppContainer,
+    navigator: AppNavigator,
+) {
+    val session by app.sessions.state.collectAsStateWithLifecycle()
+    val signedIn = session as? SessionState.SignedIn
+    StartGoalScreen(
+        route,
+        app.onboarding,
+        app.subscriptions.allowance,
+        sessionKey = signedIn?.session?.localId,
+        canAttach = signedIn?.isGuest == false,
+        navigator,
+    )
+}
+
+/** [sessionKey] names the session the screen shows, null for a visitor; material needs an account ([canAttach]). */
+@Composable
+fun StartGoalScreen(
+    route: AppRoute.StartGoal,
+    store: OnboardingStore,
+    allowance: Resource<AllowanceResponse>,
+    sessionKey: String?,
+    canAttach: Boolean,
+    navigator: AppNavigator,
+) {
+    val vm = viewModel { StartGoalViewModel(store, createSavedStateHandle(), route.goal, route.draftId, route.planId) }
+    val hasSession = sessionKey != null
+    LaunchedEffect(sessionKey) { vm.followSession(sessionKey) }
+    val caps by allowance.collectShown()
+    val upFront = caps.value?.goalStartLimit()
+    val language = appLanguage()
+    val screen = vm.flow.screen
+    val actions =
+        StartActions(
+            createAccount = { navigator.open(AppRoute.Login) },
+            seePlus = { navigator.open(AppRoute.Subscription) },
+            openPlan = { navigator.open(AppRoute.Plan()) },
+            toSetup = { goalId ->
+                navigator.closeSection()
+                navigator.open(AppRoute.GoalSetup(goalId))
+            },
+            toExplanation = { goalId ->
+                navigator.closeSection()
+                navigator.open(AppRoute.Explain(goalId))
+            },
+        )
+    val backInFlow: (() -> Unit)? =
+        when (screen) {
+            StartScreen.Questions -> {
+                { vm.backToEntry("") }
+            }
+
+            is StartScreen.Draft -> {
+                {
+                    vm.backToEntry(
+                        store.drafts[screen.id]
+                            .state.value.value
+                            ?.prompt
+                            .orEmpty(),
+                    )
+                }
+            }
+
+            else -> {
+                null
+            }
+        }
+
+    BackHandler(enabled = backInFlow != null) { backInFlow?.invoke() }
+
+    PageScaffold(
+        onBack = { backInFlow?.invoke() ?: navigator.back() },
+        actions = {
+            if (!hasSession) TextButton(onClick = { navigator.open(AppRoute.Login) }) { Text(stringResource(R.string.gate_log_in)) }
+        },
+    ) { padding ->
+        PageWithSupportingPane(
+            supportingPane = { HowItWorks(hasAccount = canAttach) },
+            modifier = Modifier.padding(padding).consumeWindowInsets(padding),
+        ) { _ ->
+            StartColumn {
+                when {
+                    upFront == GoalLimitReason.Guest && screen == StartScreen.Entry -> {
+                        GuestGoalGate(actions.createAccount, onBackToToday = { navigator.showRoot(AppTab.Today) })
+                    }
+
+                    screen == StartScreen.Entry -> {
+                        Entry(vm, route, canAttach, upFront, language, actions)
+                    }
+
+                    screen == StartScreen.Questions -> {
+                        MaterialQuestions(vm, language)
+                    }
+
+                    screen is StartScreen.Sending -> {
+                        UnderstandingWait(screen.goal, GenerationRun(), onRetry = null, since = vm.flow.waitStartedAt)
+                    }
+
+                    screen is StartScreen.Draft -> {
+                        Draft(vm, store, screen.id, hasSession, upFront, language, actions)
+                    }
+                }
+            }
+        }
+    }
+}
+
+private class StartActions(
+    val createAccount: () -> Unit,
+    val seePlus: () -> Unit,
+    val openPlan: () -> Unit,
+    val toSetup: (String) -> Unit,
+    val toExplanation: (String) -> Unit,
+)
+
+/** At least the window's height, so a screen's actions can sit at its bottom. */
+@Composable
+private fun StartColumn(content: @Composable ColumnScope.() -> Unit) {
+    BoxWithConstraints(Modifier.fillMaxSize().imePadding()) {
+        val windowHeight = maxHeight
+        Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+            Column(
+                modifier =
+                    Modifier
+                        .widthIn(max = 640.dp)
+                        .fillMaxWidth()
+                        .heightIn(min = windowHeight)
+                        .padding(horizontal = 24.dp, vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                content = content,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.Entry(
+    vm: StartGoalViewModel,
+    route: AppRoute.StartGoal,
+    canAttach: Boolean,
+    upFront: GoalLimitReason?,
+    language: String,
+    actions: StartActions,
+) {
+    val flow = vm.flow
+    val materialGoal = materialGoal(flow)
+    val submit = { words: String -> vm.submit(words, materialGoal, language) }
+
+    OnboardingHeading(
+        stringResource(R.string.onboarding_start_title),
+        stringResource(if (route.planId != null) R.string.onboarding_start_description_shared else R.string.onboarding_start_description),
+    )
+
+    upFront?.let { GoalLimitNotice(it, upFront = true, onOpenPlan = actions.openPlan, onSeePlus = actions.seePlus) }
+
+    GoalBox(
+        value = flow.words,
+        onValueChange = vm::setWords,
+        onSubmit = submit,
+        canSubmitEmpty = flow.attached.isNotEmpty() && flow.intent != null,
+        leading = {
+            IconButton(onClick = vm::toggleAttach) {
+                Icon(painterResource(R.drawable.ic_attach_file), contentDescription = stringResource(R.string.onboarding_study_material))
+            }
+        },
+    )
+
+    if (flow.attached.isNotEmpty()) AttachedChips(flow.attached, vm::removeAttached)
+    if (flow.attached.isNotEmpty() && !vm.isAttachOpen) MaterialIntentChoice(flow.intent, vm::setIntent)
+    if (vm.isAttachOpen && !canAttach) SignUpPrompt(actions.createAccount)
+    if (vm.isAttachOpen && canAttach) {
+        AttachPanel(
+            pending = vm.isAttaching,
+            error = vm.attachFailure?.let { attachErrorMessage(it) },
+            onFile = { vm.attachFile(it, language) },
+            onText = { vm.attachText(it, language) },
+            onLink = { vm.attachLink(it, language) },
+        )
+    }
+
+    GoalErrorAlert(vm.entryError, actions.createAccount, actions.openPlan, actions.seePlus)
+
+    GoalExamples(examples = rememberGoalExamples(), onPick = submit)
+}
+
+@Composable
+private fun materialGoal(flow: StartFlowState): String {
+    val notes = stringResource(R.string.onboarding_my_notes)
+    val titles = flow.attached.joinToString(", ") { it.title.ifBlank { notes } }
+    return stringResource(
+        if (flow.intent == MaterialIntent.Exam) R.string.onboarding_material_goal_exam else R.string.onboarding_material_goal_understand,
+        titles,
+    )
+}
+
+@Composable
+private fun ColumnScope.UnderstandingWait(
+    goal: String?,
+    run: GenerationRun,
+    onRetry: (() -> Unit)?,
+    since: Long? = null,
+) {
+    goal?.let { TypedGoal(it) }
+    GenerationWait(kind = GenerationKind.Understanding, run = run, onRetry = onRetry, since = since) {
+        OnboardingHeading(
+            stringResource(R.string.onboarding_understanding_title),
+            stringResource(R.string.onboarding_understanding_description),
+        )
+    }
+}
+
+@Composable
+private fun ColumnScope.Draft(
+    vm: StartGoalViewModel,
+    store: OnboardingStore,
+    id: String,
+    hasSession: Boolean,
+    upFront: GoalLimitReason?,
+    language: String,
+    actions: StartActions,
+) {
+    val resource = store.drafts[id]
+    val state by resource.collectShown()
+
+    when (val shown = state) {
+        is LoadState.Loaded -> {
+            DraftContent(vm, shown.value, upFront, language, actions)
+        }
+
+        is LoadState.Failed -> {
+            if (shown.error == ApiError.NotFound) {
+                LaunchedEffect(id) { vm.backToEntry("") }
+            } else {
+                LoadFailedMessage(onRetry = { vm.reloadRead() })
+            }
+        }
+
+        LoadState.Empty -> {
+            LaunchedEffect(id) { vm.backToEntry("") }
+        }
+
+        LoadState.Idle, LoadState.Loading -> {
+            // Only a signed-in learner's own draft can be read; anyone else starts from their words.
+            if (!hasSession) LaunchedEffect(id) { vm.backToEntry("") }
+            UnderstandingWait(goal = null, run = GenerationRun(), onRetry = null, since = vm.flow.waitStartedAt)
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.DraftContent(
+    vm: StartGoalViewModel,
+    draft: OnboardingDraft,
+    upFront: GoalLimitReason?,
+    language: String,
+    actions: StartActions,
+) {
+    val goalId = draft.goalId
+    if (goalId != null) {
+        LaunchedEffect(goalId) { actions.toSetup(goalId.toString()) }
+        return
+    }
+
+    LaunchedEffect(draft.id, draft.status, draft.generationId) { vm.follow(draft) }
+    LaunchedEffect(draft.id, draft.status) {
+        vm.settle(draft, explanation = { read, question -> explanationInput(read, question, language) }, onCreated = actions.toExplanation)
+    }
+
+    val back = { vm.backToEntry(draft.prompt) }
+    val limit = vm.draftLimit
+
+    when (val understanding = draft.understanding) {
+        null -> {
+            when {
+                limit != null -> {
+                    TypedGoal(draft.prompt)
+                    OnboardingHeading(stringResource(R.string.onboarding_understanding_title))
+                    GoalErrorAlert(limit, actions.createAccount, actions.openPlan, actions.seePlus)
+                }
+
+                vm.readFailed -> {
+                    UnderstandingWait(draft.prompt, failedRun(GenerationFailure.Connection), onRetry = vm::reloadRead)
+                }
+
+                draft.status == OnboardingDraft.Status.UNDERSTANDING && draft.generationId != null -> {
+                    val run by vm.follower.run.collectAsStateWithLifecycle()
+                    val canRetry = run.failure == GenerationFailure.Connection || vm.follower.canRestart
+                    UnderstandingWait(draft.prompt, run, onRetry = vm::retryRun.takeIf { canRetry }, since = vm.flow.waitStartedAt)
+                }
+
+                else -> {
+                    val failure =
+                        if (draft.status ==
+                            OnboardingDraft.Status.FAILED
+                        ) {
+                            GenerationFailure.Generation
+                        } else {
+                            GenerationFailure.NotStarted
+                        }
+                    if (vm.isRetrying) {
+                        UnderstandingWait(draft.prompt, GenerationRun(), onRetry = null, since = vm.flow.waitStartedAt)
+                    } else {
+                        UnderstandingWait(draft.prompt, failedRun(failure), onRetry = vm::retryRead)
+                    }
+                }
+            }
+        }
+
+        is GoalUnderstanding.GoalUnderstandingOneOfValue -> {
+            UnderstoodScreen(
+                goal = draft.prompt,
+                understanding = understanding.value,
+                material = vm.flow.attached.map { it.title },
+                isCreating = vm.isCreating,
+                error = vm.creationError,
+                goalLimit = upFront,
+                onConfirm = {
+                    val flow = vm.flow
+                    vm.confirm(
+                        understoodGoalsInput(
+                            understanding.value,
+                            flow.intent.takeIf { flow.attached.isNotEmpty() },
+                            flow.attached.map { it.id },
+                        ),
+                        onCreated = actions.toSetup,
+                    )
+                },
+                edits = FactEdits(vm.editing, vm.savingEdit, vm.failedEdit, vm::edit, vm::revise),
+                onRewrite = { vm.rewrite(it, language) },
+                onCreateAccount = actions.createAccount,
+                onSeePlus = actions.seePlus,
+                onOpenPlan = actions.openPlan,
+            )
+        }
+
+        is GoalUnderstanding.GoalUnderstandingOneOf1Value -> {
+            ExplainGoal(
+                goal = draft.prompt,
+                question = understanding.value.question,
+                isStarting = vm.isOpeningExplanation(draft),
+                error = vm.creationError,
+                onStart = { vm.create(explanationInput(draft, understanding.value.question, language), actions.toExplanation) },
+                onCreateAccount = actions.createAccount,
+                onOpenPlan = actions.openPlan,
+                onSeePlus = actions.seePlus,
+            )
+        }
+
+        is GoalUnderstanding.GoalUnderstandingOneOf2Value -> {
+            val instrument = understanding.value.instrument
+            val title = stringResource(R.string.onboarding_musicianship_title, instrument)
+            val subject = stringResource(R.string.onboarding_musicianship_subject)
+            InstrumentGoal(
+                goal = draft.prompt,
+                instrument = instrument,
+                isStarting = vm.isCreating,
+                error = vm.creationError,
+                waitlist = vm.waitlist,
+                isJoining = vm.isJoining,
+                onStartMusicianship = { vm.create(musicianshipInput(draft, instrument, title, subject, language), actions.toSetup) },
+                onJoinWaitlist = { vm.joinWaitlist(instrument, language) },
+                onCreateAccount = actions.createAccount,
+                onOpenPlan = actions.openPlan,
+                onSeePlus = actions.seePlus,
+            )
+        }
+
+        is GoalUnderstanding.GoalUnderstandingOneOf3Value -> {
+            if (understanding.value.status == com.zoonk.api.models.GoalUnderstandingOneOf3.Status.UNSAFE) {
+                DeclinedGoal(draft.prompt, back)
+            } else {
+                UnclearGoal(draft.prompt, back)
+            }
+        }
+    }
+}
+
+private fun failedRun(failure: GenerationFailure) = GenerationRun(status = GenerationRun.Status.Failed, failure = failure)
+
+@Composable
+private fun ColumnScope.MaterialQuestions(
+    vm: StartGoalViewModel,
+    language: String,
+) {
+    var question by rememberSaveable { mutableStateOf("") }
+    val ask = {
+        if (question.isNotBlank() && !vm.isAsking) {
+            vm.ask(question.trim(), language)
+            question = ""
+        }
+    }
+
+    OnboardingHeading(stringResource(R.string.onboarding_questions_title), stringResource(R.string.onboarding_questions_description))
+
+    Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        vm.turns.forEach { turn ->
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                TypedGoal(turn.question)
+                MaterialAnswer(turn.outcome)
+            }
+        }
+    }
+
+    if (vm.isAsking) {
+        Row(
+            modifier = Modifier.semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
+            Text(stringResource(R.string.onboarding_questions_reading), style = MaterialTheme.typography.bodyMedium)
+        }
+    }
+
+    if (isCompactWidth()) Spacer(Modifier.weight(1f))
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        OutlinedTextField(
+            value = question,
+            onValueChange = { question = it.take(MAX_QUESTION_LENGTH) },
+            modifier = Modifier.weight(1f),
+            label = { Text(stringResource(R.string.onboarding_your_question)) },
+            placeholder = { Text(stringResource(R.string.onboarding_question_placeholder)) },
+            maxLines = 6,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+            keyboardActions = KeyboardActions(onSend = { ask() }),
+        )
+        FilledIconButton(onClick = ask, enabled = question.isNotBlank() && !vm.isAsking) {
+            Icon(painterResource(R.drawable.ic_arrow_upward), contentDescription = stringResource(R.string.onboarding_ask))
+        }
+    }
+}
+
+@Composable
+private fun HowItWorks(hasAccount: Boolean) {
+    val steps =
+        listOf(
+            R.string.onboarding_how_it_works_say,
+            R.string.onboarding_how_it_works_answer,
+            R.string.onboarding_how_it_works_plan,
+        )
+    val current = stringResource(R.string.onboarding_how_it_works_current)
+    Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        SectionHeader(stringResource(R.string.onboarding_how_it_works))
+        steps.forEachIndexed { index, step ->
+            // The first step is where the learner is.
+            Row(
+                modifier =
+                    Modifier
+                        .semantics(mergeDescendants = true) { if (index == 0) stateDescription = current }
+                        .fillMaxWidth()
+                        .background(
+                            if (index ==
+                                0
+                            ) {
+                                MaterialTheme.colorScheme.surfaceContainerHigh
+                            } else {
+                                Color.Transparent
+                            },
+                            MaterialTheme.shapes.small,
+                        ).padding(horizontal = 8.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text(
+                    text = (index + 1).toString(),
+                    modifier = Modifier.clearAndSetSemantics {},
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                )
+                Text(stringResource(step), style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+        if (!hasAccount) {
+            Text(
+                stringResource(R.string.onboarding_start_free),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+}
+
+/** The language the app shows, which reads the learner's words and writes their titles. */
+@Composable
+internal fun appLanguage(): String =
+    ConfigurationCompat.getLocales(LocalConfiguration.current).getFirstMatch(APP_LANGUAGES)?.language ?: "en"
+
+private val APP_LANGUAGES = arrayOf("en", "de", "es", "fr", "it", "ja", "ko", "pl", "pt", "tr")
+private const val MAX_QUESTION_LENGTH = 500

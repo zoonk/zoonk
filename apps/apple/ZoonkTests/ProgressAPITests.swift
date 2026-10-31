@@ -5,63 +5,33 @@ import XCTest
 @testable import Zoonk
 
 final class ProgressAPITests: XCTestCase {
-  func testOverviewMapsGeneratedProgressPayload() async throws {
+  func testLevelMapsTheNextBelt() async throws {
     let api = makeProgressAPI(
       transport: ProgressResponseTransport(
-        expectedOperationID: "getCurrentUserProgress",
+        expectedOperationID: "getCurrentUserLevel",
         status: .ok,
         responseBody:
           #"""
           {
-            "activity": {
-              "learningDays": 12,
-              "totalLearningSeconds": 7200,
-              "totalLessonCompletions": 24
-            },
-            "energy": { "currentEnergy": 82.5 },
             "level": {
               "belt": "green",
               "bpPerLevel": 1000,
               "bpToNextLevel": 240,
               "isMaxLevel": false,
-              "level": 4,
+              "level": 10,
+              "nextBelt": { "belt": "blue", "brainPowerToGo": 240, "startBrainPower": 40000 },
               "progressInLevel": 760,
-              "totalBrainPower": 3760
-            },
-            "score": {
-              "correctAnswers": 41,
-              "incorrectAnswers": 9,
-              "score": 82,
-              "totalAnswers": 50
-            },
-            "scorePatterns": {
-              "strongestTime": {
-                "correctAnswers": 20,
-                "incorrectAnswers": 2,
-                "score": 90.9,
-                "totalAnswers": 22,
-                "period": "morning"
-              },
-              "strongestWeekday": {
-                "correctAnswers": 14,
-                "incorrectAnswers": 1,
-                "score": 93.3,
-                "totalAnswers": 15,
-                "dayOfWeek": "tuesday"
-              }
+              "totalBrainPower": 39760
             }
           }
           """#))
 
-    let overview = try await api.getOverview(token: "test-session")
+    let response = try await api.getLevel(token: "test-session")
+    let level = try XCTUnwrap(response)
 
-    XCTAssertEqual(overview.activity.learningDays, 12)
-    XCTAssertEqual(overview.energy, 82.5)
-    XCTAssertEqual(overview.level?.belt, .green)
-    XCTAssertEqual(overview.level?.totalBrainPower, 3_760)
-    XCTAssertEqual(overview.score?.correctAnswers, 41)
-    XCTAssertEqual(overview.strongestDaypart?.daypart, .morning)
-    XCTAssertEqual(overview.strongestWeekday?.weekday, .tuesday)
+    XCTAssertEqual(level.belt, .green)
+    XCTAssertEqual(
+      level.nextBelt, NextBelt(belt: .blue, brainPowerToGo: 240, startBrainPower: 40_000))
   }
 
   func testActivityMapsLogicalCalendarDates() async throws {
@@ -77,8 +47,8 @@ final class ProgressAPITests: XCTestCase {
               "totalLearningSeconds": 600,
               "totalLessonCompletions": 3,
               "days": [
-                { "date": "2026-08-19", "lessonCompletions": 1 },
-                { "date": "2026-08-20", "lessonCompletions": 2 }
+                { "activitiesCompleted": 1, "date": "2026-08-19", "lessonCompletions": 1 },
+                { "activitiesCompleted": 4, "date": "2026-08-20", "lessonCompletions": 2 }
               ]
             }
           }
@@ -88,8 +58,34 @@ final class ProgressAPITests: XCTestCase {
     let expectedDate = try XCTUnwrap(ProgressDate("2026-08-19"))
 
     XCTAssertEqual(activity.days.first?.date, expectedDate)
-    XCTAssertEqual(activity.days.last?.lessonCompletions, 2)
+    XCTAssertEqual(activity.days.last?.activitiesCompleted, 4)
     XCTAssertEqual(activity.summary.totalLessonCompletions, 3)
+  }
+
+  func testActivityCountsDaysWithoutNewLessons() async throws {
+    let api = makeProgressAPI(
+      transport: ProgressResponseTransport(
+        expectedOperationID: "getCurrentUserActivity",
+        status: .ok,
+        responseBody:
+          #"""
+          {
+            "activity": {
+              "learningDays": 1,
+              "totalLearningSeconds": 300,
+              "totalLessonCompletions": 0,
+              "days": [
+                { "activitiesCompleted": 3, "date": "2026-08-20", "lessonCompletions": 0 }
+              ]
+            }
+          }
+          """#))
+
+    let activity = try await api.getActivity(token: "test-session")
+
+    XCTAssertEqual(activity.days.map(\.activitiesCompleted), [3])
+    XCTAssertEqual(
+      activity.days.map { CalendarSteps.activity($0.activitiesCompleted, maximum: 3) }, [4])
   }
 
   func testEnergyPreservesDaysWithoutMeasurements() async throws {
@@ -146,6 +142,7 @@ final class ProgressAPITests: XCTestCase {
               "bpToNextLevel": 0,
               "isMaxLevel": true,
               "level": 10,
+              "nextBelt": null,
               "progressInLevel": 1000,
               "totalBrainPower": 2167500
             }
@@ -158,6 +155,7 @@ final class ProgressAPITests: XCTestCase {
     XCTAssertEqual(level.belt, .black)
     XCTAssertEqual(level.level, 10)
     XCTAssertTrue(level.isMaxLevel)
+    XCTAssertNil(level.nextBelt)
     XCTAssertEqual(level.totalBrainPower, 2_167_500)
   }
 
@@ -215,6 +213,10 @@ final class ProgressAPITests: XCTestCase {
           #"""
           {
             "patterns": {
+              "dayVerdict": { "kind": "notEnough", "points": null },
+              "minimumAnswers": 10,
+              "timeVerdict": { "kind": "best", "points": null },
+              "weekSpread": null,
               "strongestTime": {
                 "correctAnswers": 9,
                 "incorrectAnswers": 1,
@@ -255,21 +257,24 @@ final class ProgressAPITests: XCTestCase {
     XCTAssertEqual(patterns.weekdays.map(\.weekday), ProgressWeekday.allCases)
     XCTAssertEqual(patterns.strongestDaypart?.daypart, .morning)
     XCTAssertEqual(patterns.strongestWeekday?.weekday, .tuesday)
-    XCTAssertFalse(patterns.weekdays.first?.performance.hasAnswers ?? true)
+    XCTAssertEqual(patterns.weekdays.first?.performance.totalAnswers, 0)
+    XCTAssertEqual(patterns.dayVerdict, .notEnough)
+    XCTAssertEqual(patterns.timeVerdict.best?.daypart, .morning, "the best is the strongest time")
+    XCTAssertEqual(patterns.minimumAnswers, 10)
   }
 
   func testUnauthorizedResponseMapsToUnauthorized() async {
     let api = makeProgressAPI(
       transport: ProgressResponseTransport(
-        expectedOperationID: "getCurrentUserProgress",
+        expectedOperationID: "getCurrentUserActivity",
         status: .unauthorized,
         responseBody:
           #"{"error":{"code":"UNAUTHORIZED","message":"Sign in to continue"}}"#))
 
     do {
-      _ = try await api.getOverview(token: "test-session")
+      _ = try await api.getActivity(token: "test-session")
       XCTFail("Expected an unauthorized error")
-    } catch let error as ProgressAPIError {
+    } catch let error as APIError {
       XCTAssertEqual(error, .unauthorized)
     } catch {
       XCTFail("Unexpected error: \(error)")
@@ -281,9 +286,9 @@ final class ProgressAPITests: XCTestCase {
       transport: ProgressFailureTransport(failure: .network))
 
     do {
-      _ = try await api.getOverview(token: "test-session")
+      _ = try await api.getActivity(token: "test-session")
       XCTFail("Expected a network error")
-    } catch let error as ProgressAPIError {
+    } catch let error as APIError {
       XCTAssertEqual(error, .network)
     } catch {
       XCTFail("Unexpected error: \(error)")
@@ -295,7 +300,7 @@ final class ProgressAPITests: XCTestCase {
       transport: ProgressFailureTransport(failure: .cancellation))
 
     do {
-      _ = try await api.getOverview(token: "test-session")
+      _ = try await api.getActivity(token: "test-session")
       XCTFail("Expected cancellation")
     } catch is CancellationError {
       return
@@ -309,7 +314,7 @@ final class ProgressAPITests: XCTestCase {
       transport: ProgressFailureTransport(failure: .cancelledURL))
 
     do {
-      _ = try await api.getOverview(token: "test-session")
+      _ = try await api.getActivity(token: "test-session")
       XCTFail("Expected cancellation")
     } catch is CancellationError {
       return
@@ -330,7 +335,7 @@ final class ProgressAPITests: XCTestCase {
               "learningDays": 1,
               "totalLearningSeconds": 300,
               "totalLessonCompletions": 1,
-              "days": [{ "date": "2026-02-30", "lessonCompletions": 1 }]
+              "days": [{ "activitiesCompleted": 1, "date": "2026-02-30", "lessonCompletions": 1 }]
             }
           }
           """#))
@@ -338,8 +343,8 @@ final class ProgressAPITests: XCTestCase {
     do {
       _ = try await api.getActivity(token: "test-session")
       XCTFail("Expected an invalid response error")
-    } catch let error as ProgressAPIError {
-      XCTAssertEqual(error, .invalidResponse)
+    } catch let error as APIError {
+      XCTAssertEqual(error, .unavailable)
     } catch {
       XCTFail("Unexpected error: \(error)")
     }
@@ -348,16 +353,16 @@ final class ProgressAPITests: XCTestCase {
   func testServerErrorMapsToInvalidResponse() async {
     let api = makeProgressAPI(
       transport: ProgressResponseTransport(
-        expectedOperationID: "getCurrentUserProgress",
+        expectedOperationID: "getCurrentUserActivity",
         status: .internalServerError,
         responseBody:
           #"{"error":{"code":"INTERNAL_SERVER_ERROR","message":"Try again later"}}"#))
 
     do {
-      _ = try await api.getOverview(token: "test-session")
+      _ = try await api.getActivity(token: "test-session")
       XCTFail("Expected an invalid response error")
-    } catch let error as ProgressAPIError {
-      XCTAssertEqual(error, .invalidResponse)
+    } catch let error as APIError {
+      XCTAssertEqual(error, .unavailable)
     } catch {
       XCTFail("Unexpected error: \(error)")
     }
@@ -371,7 +376,6 @@ private func makeProgressAPI(transport: any ClientTransport) -> ProgressAPI {
       transport: transport))
 }
 
-/// Exercises generated operation selection and shared native authentication without an external server.
 private struct ProgressResponseTransport: ClientTransport {
   let expectedOperationID: String
   let status: HTTPResponse.Status

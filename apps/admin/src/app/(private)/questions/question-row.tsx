@@ -1,26 +1,45 @@
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { type ListedLessonQuestion } from "@/data/questions/list-lesson-questions";
-import { getAdminLessonLabel } from "@/lib/lesson-label";
-import { getAdminQuestionStatusVariant } from "@/lib/lesson-question";
+import {
+  getAdminQuestionLessonContext,
+  getAdminQuestionStatusVariant,
+} from "@/lib/lesson-question";
 import { Badge } from "@zoonk/ui/components/badge";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
+import { markdownToPlainText } from "@zoonk/utils/markdown-text";
 import Link from "next/link";
 
-export function QuestionRow({ question }: { question: ListedLessonQuestion }) {
-  const { lesson, user } = question.thread;
+function QuestionLessonCell({ question }: { question: ListedLessonQuestion }) {
+  const context = getAdminQuestionLessonContext(question.thread);
+
+  if (!context) {
+    return <span className="text-muted-foreground">Deleted lesson</span>;
+  }
 
   return (
-    <TableRow>
+    <>
+      <span className="line-clamp-1 font-medium">{context.course?.title ?? "—"}</span>
+      <span className="text-muted-foreground line-clamp-1 text-xs">
+        {[context.chapterTitle, context.lessonLabel].filter(Boolean).join(" · ")}
+      </span>
+    </>
+  );
+}
+
+export function QuestionRow({ question }: { question: ListedLessonQuestion }) {
+  const { user } = question.thread;
+
+  return (
+    <AdminTableRow>
       <TableCell className="max-w-72 min-w-56 whitespace-normal">
-        <Link
-          className="line-clamp-2 font-medium hover:underline"
-          href={`/questions/${question.id}`}
-          prefetch
-        >
-          {question.question}
-        </Link>
+        <AdminTableRowLink className="font-medium" href={`/questions/${question.id}`} prefetch>
+          <span className="line-clamp-2">{question.question}</span>
+        </AdminTableRowLink>
       </TableCell>
       <TableCell className="text-muted-foreground max-w-80 min-w-64 whitespace-normal">
-        <span className="line-clamp-2">{question.answer || "No answer yet"}</span>
+        <span className="line-clamp-2">
+          {question.answer ? markdownToPlainText(question.answer) : "No answer yet"}
+        </span>
       </TableCell>
       <TableCell className="max-w-48 min-w-40">
         <Link className="block hover:underline" href={`/users/${user.id}`} prefetch>
@@ -29,12 +48,7 @@ export function QuestionRow({ question }: { question: ListedLessonQuestion }) {
         </Link>
       </TableCell>
       <TableCell className="max-w-56 min-w-48 whitespace-normal">
-        <span className="line-clamp-1 font-medium">
-          {lesson?.chapter.course.title ?? "Deleted lesson"}
-        </span>
-        <span className="text-muted-foreground line-clamp-1 text-xs">
-          {lesson ? getAdminLessonLabel({ kind: lesson.kind, title: lesson.title }) : "—"}
-        </span>
+        <QuestionLessonCell question={question} />
       </TableCell>
       <TableCell>
         <div className="flex flex-col items-start gap-1">
@@ -49,6 +63,6 @@ export function QuestionRow({ question }: { question: ListedLessonQuestion }) {
           </time>
         </div>
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }

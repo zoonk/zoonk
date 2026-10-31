@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "player_language_all_matched": "b34a22ee72c5509380ef9cc9f6e25b0b54e121903c85592da5af132dd63d3aa4",
+  "player_language_alphabet": "dddfe3122eca275f49b48239fe771fb42527b586e5ae9868fbaa5e8937fa4096",
+  "player_language_blank": "a60fe62c90278997e798826596dd56681aa541b10b9765d3db24049c158677ca",
+  "player_language_blank_checked": "0e69666adfcf228ceb6500bda7f3d966d762eb34a4b2c01d0d9f9eaa583c9a29",
+  "player_language_blank_filled": "9ecd3f60856e693c90c1b0f6b195a549cfb336f49cfc626ead034fdfeea69248",
+  "player_language_checked_word": "fe759c1c82e7936e2b63363367f5873f6f6739e260c38882d9a7c022ecee51b7",
+  "player_language_correct": "d16f2b520d8dda6edd69e6d317f10c6e44ca1760984ce0e459c65a6d60f38b60",
+  "player_language_incorrect": "46df0629f29b4fd351e4d9b69ecf5a22d4a1f5a6e9d858d9974df1646aba0914",
+  "player_language_match_the_pairs": "92d0b32bffa50c416c82219d6949b35045a02e4a4f8deff671c5cbcd1d384d0f",
+  "player_language_matched": "1defdf61ee687dc137b453a858cef635bd7371927f1e916189292584d37dbcf4",
+  "player_language_move_earlier": "86f183d881c646186a9673391418a66c466f2c5ce038e1f7f4ff8f9d00b34279",
+  "player_language_move_later": "32f683a5948c3f5e441bef3a3117e7cc9e73461e337a5944f3721e56b229ef2a",
+  "player_language_not_a_pair": "c2672bf73d3e43bdaf0a91ed034c45c7ad9c8206c9f4eb939bb4bddd5676108e",
+  "player_language_pick_words": "21b45987a50a15d20175117932726f08ca2169dce71742f806bdf09ccbfdf343",
+  "player_language_play": "17fadedc0542cce2350837bd26383f415b9546bdfad9adf2e2b63ef1d3f2ea23",
+  "player_language_play_pronunciation": "cdde28721aa82af23572ddd18aa0b684e10a877ceb11edb65195626b4a6b6f4d",
+  "player_language_position": "d2d873ff08985577fd63df0f1800f529773ecf56975ad897bd2a25d70dd689fc",
+  "player_language_pronunciation_tip": "0c531cc5ab4afdab04d6d3ea2283a4f164ac06ce71bbb51765c97fbf62bac122",
+  "player_language_remove": "21274364169eafc1aeca18b071679aa591b8479301dfb528c1b6ea49de1bb238",
+  "player_language_selected": "7220b55352d0a07d82a44198d78d6d303c9d74454ca47b63ca3fe84f4ce6e423",
+  "player_language_show_translation": "42d1cbffdfd595f8b78e6ca92602d3313c7a5d8c0e4cb3cb86de21b0bc2d9af2",
+  "player_language_stop": "4be1104e58643b4c449e5af654861890bd9940b0c57f17ddc911b9ea0ebeb6e9",
+  "player_language_translate": "fe343639bb19d874ef2ae28d0c149dd6dd6aa70fa19a97d5650fd7207abf2e51",
+  "player_language_usage": "71a9feb2c08bf509ebce97dff251e017c06a0ec315645a370f1e43ac33adc91c",
+  "player_language_vocabulary": "0bab6f7c0389aacb48a2cd31b43ba2c8056a24f4e2da26851bce1f4ab39690cd",
+  "player_language_what_do_you_hear": "8fa1d2711df69c405a4e45f62c53fe5e9a8b83b6bdefa58933b76a9b92c8be2f",
+  "player_language_which_means_this": "00a8dc601c07d240507a72dc6f110dbea210afba27ed71798f9b29b2fdf365ee",
+  "player_language_word_bank": "a70c5322fd6fc9aca1ccd1cf7482fb8af98dee286f67f80712b9c5da6f4f56ab",
+  "player_language_your_answer": "229d8a9437bed764c02ceb9246799e7d31c5a1a63376af8ea932af4c7441274a"
+}
+-->
+<resources>
+    <string name="player_language_translate">Traduce</string>
+    <!-- Shown over a word to pick its match when the lesson is in the learner's own language. -->
+    <string name="player_language_which_means_this">¿Cuál significa lo mismo?</string>
+    <string name="player_language_what_do_you_hear">¿Qué escuchas?</string>
+    <string name="player_language_play">Reproducir</string>
+    <!-- Button that stops the sentence playing, a short label like a media player's Stop. -->
+    <string name="player_language_stop">Detener</string>
+    <string name="player_language_play_pronunciation">Reproducir la pronunciación</string>
+    <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->
+    <string name="player_language_vocabulary">Vocabulario: %1$s</string>
+    <!-- Screen reader name of an alphabet screen; %1$s is the letter. -->
+    <string name="player_language_alphabet">Alfabeto: %1$s</string>
+    <!-- Read before a note on how a word is used. -->
+    <string name="player_language_usage">Uso:</string>
+    <!-- Read before a tip on how to say a word. -->
+    <string name="player_language_pronunciation_tip">Consejo de pronunciación:</string>
+    <string name="player_language_word_bank">Banco de palabras</string>
+    <string name="player_language_your_answer">Tu respuesta</string>
+    <string name="player_language_pick_words">Elige palabras para formar tu respuesta</string>
+    <!-- Screen reader name of a placed word; %1$d is its place in the answer, %2$s the word. -->
+    <string name="player_language_position">Posición %1$d: %2$s</string>
+    <!-- Screen reader name of a checked word; %1$s is the word, %2$s says whether it's correct. -->
+    <string name="player_language_checked_word">%1$s. %2$s.</string>
+    <string name="player_language_correct">Correcta</string>
+    <string name="player_language_incorrect">Incorrecto</string>
+    <!-- Screen reader action that moves a placed word one place earlier in the answer. -->
+    <string name="player_language_move_earlier">Mover a la posición anterior</string>
+    <!-- Screen reader action that moves a placed word one place later in the answer. -->
+    <string name="player_language_move_later">Mover a la posición siguiente</string>
+    <!-- Screen reader action that shows a word's translation. -->
+    <string name="player_language_show_translation">Mostrar traducción</string>
+    <!-- Screen reader name of an empty blank; %1$d is its place in the sentence. -->
+    <string name="player_language_blank">Espacio %1$d</string>
+    <string name="player_language_blank_filled">Espacio %1$d: %2$s</string>
+    <!-- Screen reader action that takes a placed word back to the word bank. -->
+    <string name="player_language_remove">Quitar</string>
+    <!-- %1$d is the blank's place, %2$s the word, %3$s says whether it's correct. -->
+    <string name="player_language_blank_checked">Espacio %1$d: %2$s. %3$s.</string>
+    <string name="player_language_match_the_pairs">Relaciona los pares.</string>
+    <string name="player_language_all_matched">Relacionaste todos los pares. Presiona Comprobar para seguir.</string>
+    <!-- Screen reader state of a word already paired with its match. -->
+    <string name="player_language_matched">Emparejada</string>
+    <!-- Screen reader state of the word picked to pair next. -->
+    <string name="player_language_selected">Seleccionada</string>
+    <!-- Said by the screen reader when two picked words don't go together. -->
+    <string name="player_language_not_a_pair">No forman pareja</string>
+</resources>

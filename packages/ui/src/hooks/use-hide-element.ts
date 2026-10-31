@@ -1,13 +1,8 @@
 import { useLayoutEffect, useRef } from "react";
 
 /**
- * Hides an element on unmount.
- *
- * This is a workaround for next.js route caching, which uses React Activity to preserve a route's state:
- * https://github.com/vercel/next.js/issues/86577
- *
- * When `open` is provided, hidden is only removed on genuine close-to-open transitions,
- * preventing stale Activity state from flashing the element on back-navigation.
+ * Next.js keeps a route's state with React Activity: https://github.com/vercel/next.js/issues/86577.
+ * With `open`, it unhides only on a real close-to-open change, so stale state doesn't flash on back.
  */
 export function useHideElement<Element extends HTMLElement>(open?: boolean) {
   const ref = useRef<Element | null>(null);

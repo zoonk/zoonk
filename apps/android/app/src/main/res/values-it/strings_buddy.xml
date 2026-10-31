@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "buddy_picker_label": "143a7c38bab8cfb21c4f817ec3167b9a3ccf5cc60547e3e636f2304c2d382784",
+  "buddy_picker_name": "36f3aac769a1ffc45fc70b3cd38ae408cd7454a1ea78b321a874dd781a2910f2",
+  "buddy_tagline_beep": "988138d7b75b7b737df8ae8a4ff43816c94ddffe1704f477ff813d30c4355648",
+  "buddy_tagline_noodle": "4702386e0562c0278c1da7580e8dec0252be321ab41e85e7bf40852d77ecd20c",
+  "buddy_tagline_otto": "ee609fe5e40094a8d30c32961539e7701e176437a0089d08e14fa30c54372855",
+  "buddy_tagline_zu": "a2a600eefca0f27f2a43557496d6f766b74b35d92b170d05fa86e4f44b2dc650"
+}
+-->
+<resources>
+    <!-- Screen reader name of the group of buddies to pick from. -->
+    <string name="buddy_picker_label">Compagno</string>
+    <!-- Label of the field for a custom buddy name. -->
+    <string name="buddy_picker_name">Nome</string>
+    <!-- Under the buddy Zu, an alien, in the buddy picker. -->
+    <string name="buddy_tagline_zu">Curiosità da un altro pianeta</string>
+    <!-- Under the buddy Noodle, a brain, in the buddy picker. -->
+    <string name="buddy_tagline_noodle">Cervello con le gambe</string>
+    <!-- Under the buddy Beep, a robot, in the buddy picker. -->
+    <string name="buddy_tagline_beep">Robot che ama l’ordine</string>
+    <!-- Under the buddy Otto, an octopus, in the buddy picker. -->
+    <string name="buddy_tagline_otto">Polpo che sa tutto</string>
+</resources>

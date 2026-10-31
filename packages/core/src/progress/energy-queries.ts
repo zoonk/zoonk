@@ -1,19 +1,17 @@
-import { prisma } from "@zoonk/db";
 import {
   getContributionCalendarDateKey,
   getContributionCalendarDates,
 } from "@zoonk/utils/contribution-calendar";
+import { readLifetimeDailyProgress } from "./_utils/daily-progress-rows";
 import { projectEnergyTimeline } from "./_utils/energy-timeline";
 import { type EnergyCursor, type EnergyData, type EnergyDay, MAX_ENERGY } from "./energy";
 
 type EnergyRows = Awaited<ReturnType<typeof listEnergyCursors>>;
 
-/** Loads truthful learner-local Energy history without coupling the query to an app cache. */
 export function listEnergyCursors({ userId }: { userId: string }) {
-  return prisma.dailyProgress.findMany({ orderBy: { date: "asc" }, where: { userId } });
+  return readLifetimeDailyProgress(userId);
 }
 
-/** Maps a sparse projected timeline onto every date in the requested visible range. */
 function buildEnergyDays({
   endDate,
   projectedDays,
@@ -35,15 +33,11 @@ function buildEnergyDays({
   }));
 }
 
-/**
- * Synthetic inactive days always decay below their preceding cursor, so only
- * authoritative completion rows can contribute a day at maximum Energy.
- */
+/** Only stored completion rows can reach maximum Energy; synthetic gap days always decay. */
 function getFullEnergyDays(rows: EnergyRows): number {
   return rows.filter((row) => row.energyAtEnd >= MAX_ENERGY).length;
 }
 
-/** Builds the shared Energy history read model from authoritative completion rows. */
 export function buildEnergyData({
   currentEnergy,
   endDate,

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="listening_recording">Recording</string>
+    <string name="listening_play">Play the recording</string>
+    <string name="listening_play_again">Play it again</string>
+    <string name="listening_playing">Playing</string>
+    <string name="listening_stop">Stop</string>
+    <!-- How far the recording played: "0:42 of 2:10". -->
+    <string name="listening_elapsed">%1$s of %2$s</string>
+    <string name="listening_note_free">Listen again as often as you like.</string>
+    <string name="listening_note_restarted">The recording stopped before the end, so you can play it once more from the start.</string>
+    <string name="listening_note_used">You\'ve used every play. Answer from what you heard.</string>
+    <string name="listening_note_one_more">You can listen one more time.</string>
+    <string name="listening_note_once">You hear it once, like in the exam. Read the questions first.</string>
+    <string name="listening_note_twice">You hear it twice, like in the exam. Read the questions first.</string>
+    <string name="listening_failed">The recording didn\'t load. Check your connection and try again.</string>
+    <string name="listening_playing_note">Playing. It doesn\'t pause, like in the exam.</string>
+    <plurals name="listening_questions">
+        <item quantity="one">Question on this recording (%d)</item>
+        <item quantity="other">Questions on this recording (%d)</item>
+    </plurals>
+    <string name="listening_transcript">Transcript</string>
+</resources>

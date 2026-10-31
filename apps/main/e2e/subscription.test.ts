@@ -1,97 +1,15 @@
 import { randomUUID } from "node:crypto";
-import { type Browser, type Page } from "@playwright/test";
+import { type Browser, type Page, type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
-import { request } from "@zoonk/e2e/fixtures";
-import { setLocale } from "@zoonk/e2e/fixtures/locale";
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
+import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { expect, test } from "./fixtures";
+import { expectHydrated } from "./hydration";
 
-type TestSubscriptionProvider = "apple" | "google" | "stripe" | "zoonk";
+type StripeSubscriptionActionPath = "/api/auth/subscription/upgrade";
 
-type StripeSubscriptionActionPath =
-  | "/api/auth/subscription/cancel"
-  | "/api/auth/subscription/upgrade";
-
-/**
- * Billing page tests need to create subscriptions owned by different billing
- * systems so we can verify the page only shows actions that actually work.
- */
-async function createUserWithSubscription(
-  baseURL: string,
-  plan: string,
-  options?: { cancelAt?: Date; provider?: TestSubscriptionProvider },
-) {
+function getStripeSubscriptionFields() {
   const uniqueId = randomUUID().slice(0, 8);
-  const email = `e2e-sub-${uniqueId}@zoonk.test`;
-  const password = "password123";
-
-  const signupContext = await request.newContext({ baseURL });
-
-  const signupResponse = await signupContext.post("/api/auth/sign-up/email", {
-    data: { email, name: `E2E Sub ${uniqueId}`, password },
-  });
-
-  expect(signupResponse.ok()).toBe(true);
-  await signupContext.dispose();
-
-  const user = await prisma.user.findUniqueOrThrow({ where: { email } });
-
-  await prisma.subscription.create({
-    data: {
-      cancelAt: options?.cancelAt,
-      id: randomUUID(),
-      plan,
-      provider: options?.provider ?? "stripe",
-      referenceId: user.id,
-      status: "active",
-      ...getProviderSubscriptionFields({
-        provider: options?.provider ?? "stripe",
-        uniqueId,
-        userId: user.id,
-      }),
-    },
-  });
-
-  return email;
-}
-
-async function createAuthenticatedPage(browser: Browser, baseURL: string, email: string) {
-  const context = await request.newContext({ baseURL });
-
-  await context.post("/api/auth/sign-in/email", { data: { email, password: "password123" } });
-
-  const storageState = await context.storageState();
-  await context.dispose();
-
-  const browserContext = await browser.newContext({ storageState });
-  const page = await browserContext.newPage();
-
-  return { browserContext, page };
-}
-
-/** Apple access is period-bounded, while Stripe fixtures need provider identifiers for web billing controls. */
-function getProviderSubscriptionFields({
-  provider,
-  uniqueId,
-  userId,
-}: {
-  provider: TestSubscriptionProvider;
-  uniqueId: string;
-  userId: string;
-}) {
-  if (provider === "apple") {
-    return {
-      billingInterval: "month",
-      periodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      periodStart: new Date(),
-      providerProductId: "com.zoonk.plus.monthly",
-      providerSubscriptionId: `apple_test_e2e_${uniqueId}`,
-      userId,
-    };
-  }
-
-  if (provider !== "stripe") {
-    return {};
-  }
 
   return {
     stripeCustomerId: `cus_test_e2e_${uniqueId}`,
@@ -99,12 +17,33 @@ function getProviderSubscriptionFields({
   };
 }
 
-/**
- * Capture the billing handoff before it reaches Stripe's fake E2E API key.
- * This test only needs the request body sent by the subscription UI, so the
- * route responds locally and avoids turning a locale assertion into a Stripe
- * integration test.
- */
+async function createWebSubscriber() {
+  const user = await createE2EUser(getBaseURL());
+
+  await prisma.subscription.create({
+    data: {
+      id: randomUUID(),
+      periodEnd: new Date(Date.now() + 86_400_000),
+      periodStart: new Date(Date.now() - 30 * 86_400_000),
+      plan: "plus",
+      provider: "stripe",
+      referenceId: user.id,
+      status: "active",
+      ...getStripeSubscriptionFields(),
+    },
+  });
+
+  return user;
+}
+
+async function openWithSubscription(browser: Browser) {
+  const user = await createWebSubscriber();
+  const browserContext = await browser.newContext({ storageState: user.storageState });
+  const page = await browserContext.newPage();
+
+  return { browserContext, page, user };
+}
+
 async function captureStripeActionRequest({
   page,
   path,
@@ -127,247 +66,191 @@ async function captureStripeActionRequest({
     .then((actionRequest) => actionRequest.postDataJSON() as unknown);
 }
 
-/**
- * Drive checkout through the single visible Plus action because the locale is
- * added by the client-side Better Auth call, not by the server-rendered page.
- */
-async function requestPlusCheckout({
-  page,
-  subscribeLabel,
-}: {
-  page: Page;
-  subscribeLabel: string;
-}) {
-  const requestBody = captureStripeActionRequest({ page, path: "/api/auth/subscription/upgrade" });
-
-  await page.getByRole("button", { exact: true, name: subscribeLabel }).click();
-
-  return requestBody;
-}
-
-test.describe("Subscription Page - Unauthenticated", () => {
-  test("shows the Plus offer and requires login before subscribing", async ({ page }) => {
+test.describe("Subscription Page - Checkout", () => {
+  test("Subscribe sends a learner on the free plan to Plus checkout, coming back to confirm it", async ({
+    userWithoutProgress: page,
+  }) => {
     await page.goto("/subscription");
 
-    await expect(page.getByRole("heading", { level: 1, name: /learn anything/iu })).toBeVisible();
+    const checkout = captureStripeActionRequest({ page, path: "/api/auth/subscription/upgrade" });
+    await page.getByRole("button", { exact: true, name: "Subscribe" }).click();
 
-    await expect(page.getByRole("heading", { name: /know what to learn next/iu })).toBeVisible();
-    await expect(page.getByRole("heading", { name: /speak a new language/iu })).toBeVisible();
-
-    await expect(
-      page.getByRole("heading", { name: /keep learning until you get there/iu }),
-    ).toBeVisible();
-
-    const loginLink = page.getByRole("link", { name: /log in to subscribe/iu });
-    await expect(loginLink).toHaveAttribute("href", "/login?next=%2Fsubscription");
-    await expect(page.getByRole("button", { name: /monthly/iu })).toBeVisible();
-    await expect(page.getByRole("button", { name: /yearly/iu })).toBeVisible();
-    await expect(page.getByRole("radio")).toHaveCount(0);
-  });
-});
-
-test.describe("Subscription Page - No Subscription", () => {
-  test("shows one Plus offer with a direct subscribe action", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/subscription");
-
-    await expect(
-      authenticatedPage.getByRole("heading", { level: 1, name: /learn anything/iu }),
-    ).toBeVisible();
-
-    await expect(authenticatedPage.getByRole("button", { name: /^subscribe$/iu })).toBeVisible();
-
-    await expect(authenticatedPage.getByRole("button", { name: /monthly/iu })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-
-    await expect(authenticatedPage.getByRole("button", { name: /yearly/iu })).toBeVisible();
-    await expect(authenticatedPage.getByRole("radio")).toHaveCount(0);
-  });
-});
-
-test.describe("Subscription Page - Stripe Locale", () => {
-  test("passes Spanish locale to Stripe checkout", async ({ authenticatedPage }) => {
-    await setLocale(authenticatedPage, "es");
-    await authenticatedPage.goto("/subscription");
-
-    await expect(
-      requestPlusCheckout({ page: authenticatedPage, subscribeLabel: "Suscríbete" }),
-    ).resolves.toMatchObject({ locale: "es" });
-  });
-
-  test("passes Portuguese locale as Brazilian Portuguese to Stripe checkout", async ({
-    authenticatedPage,
-  }) => {
-    await setLocale(authenticatedPage, "pt");
-    await authenticatedPage.goto("/subscription");
-
-    await expect(
-      requestPlusCheckout({ page: authenticatedPage, subscribeLabel: "Assinar" }),
-    ).resolves.toMatchObject({ locale: "pt-BR" });
-  });
-
-  test("passes French locale to Stripe checkout", async ({ authenticatedPage }) => {
-    await setLocale(authenticatedPage, "fr");
-    await authenticatedPage.goto("/subscription");
-
-    await expect(
-      requestPlusCheckout({ page: authenticatedPage, subscribeLabel: "S’abonner" }),
-    ).resolves.toMatchObject({ locale: "fr" });
-  });
-
-  test("passes German locale to Stripe checkout", async ({ authenticatedPage }) => {
-    await setLocale(authenticatedPage, "de");
-    await authenticatedPage.goto("/subscription");
-
-    await expect(
-      requestPlusCheckout({ page: authenticatedPage, subscribeLabel: "Abonnieren" }),
-    ).resolves.toMatchObject({ locale: "de" });
-  });
-
-  test("keeps English Stripe checkout locale unset", async ({ authenticatedPage }) => {
-    await setLocale(authenticatedPage, "en");
-    await authenticatedPage.goto("/subscription");
-
-    const requestBody = await requestPlusCheckout({
-      page: authenticatedPage,
-      subscribeLabel: "Subscribe",
+    await expect(checkout).resolves.toMatchObject({
+      plan: "plus",
+      successUrl: "/subscription?stripe_checkout=complete",
     });
-
-    expect(requestBody).not.toHaveProperty("locale");
   });
 });
 
 test.describe("Subscription Page - With Plus Subscription", () => {
-  test("shows a direct cancellation action", async ({ browser, baseURL }) => {
-    const email = await createUserWithSubscription(baseURL!, "plus");
-    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+  test("shows a subscriber their plan instead of the offer, and cancels it in the app", async ({
+    browser,
+  }) => {
+    const { browserContext, page, user } = await openWithSubscription(browser);
+
+    await page.goto("/settings");
+
+    await page
+      .getByRole("navigation", { name: "Settings" })
+      .getByRole("link", { name: /^Subscription/u })
+      .click();
+
+    await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
+
+    await page.getByRole("link", { exact: true, name: "Cancel subscription" }).click();
+    await expect(page).toHaveURL(/\/subscription\/cancel$/u);
+    await page.getByRole("button", { exact: true, name: "Cancel now" }).click();
+    await expect(page.getByRole("status")).toContainText("You keep Plus until");
+
+    await expect
+      .poll(async () => prisma.subscription.findFirst({ where: { referenceId: user.id } }))
+      .toMatchObject({ cancelAtPeriodEnd: true, status: "active" });
 
     await page.goto("/subscription");
+    await page.getByRole("button", { exact: true, name: "Keep Plus" }).click();
 
-    await expect(page.getByText(/plus is active/iu)).toBeVisible();
-    await expect(page.getByRole("button", { name: /cancel subscription/iu })).toBeVisible();
-    await expect(page.getByRole("radio")).toHaveCount(0);
+    await expect(
+      page.getByRole("link", { exact: true, name: "Cancel subscription" }),
+    ).toBeVisible();
 
-    await browserContext.close();
-  });
-
-  test("starts cancellation and shows a loading state", async ({ browser, baseURL }) => {
-    const email = await createUserWithSubscription(baseURL!, "plus");
-    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
-
-    await page.goto("/subscription");
-
-    const requestBody = captureStripeActionRequest({ page, path: "/api/auth/subscription/cancel" });
-
-    const cancelButton = page.getByRole("button", { name: /cancel subscription/iu });
-    await cancelButton.click();
-    await expect(cancelButton).toBeDisabled();
-    await expect(requestBody).resolves.toMatchObject({ returnUrl: "/subscription" });
+    await expect
+      .poll(async () => prisma.subscription.findFirst({ where: { referenceId: user.id } }))
+      .toMatchObject({ cancelAt: null, cancelAtPeriodEnd: false, status: "active" });
 
     await browserContext.close();
   });
 });
 
-test.describe("Subscription Page - Provider Managed", () => {
-  test("Apple subscriptions direct users to App Store settings instead of Stripe controls", async ({
+test.describe("Subscription Page - Cancel Without Logging In", () => {
+  test("cancels a website subscription from its email, for a visitor who isn't logged in", async ({
     browser,
-    baseURL,
   }) => {
-    const email = await createUserWithSubscription(baseURL!, "plus", { provider: "apple" });
-    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+    const user = await createWebSubscriber();
+    const visitor = await browser.newContext();
+    const page = await visitor.newPage();
 
-    await page.goto("/subscription");
+    await page.goto("/subscription/cancel");
 
-    await expect(page.getByText(/managed through the app store/iu)).toBeVisible();
-    await expect(page.getByRole("link", { name: /manage in app store/iu })).toBeVisible();
+    const cancel = page.getByRole("button", { exact: true, name: "Cancel now" });
+    await expectHydrated(cancel);
 
-    await expect(page.getByRole("link", { name: /manage in app store/iu })).toHaveAttribute(
-      "href",
-      "https://apps.apple.com/account/subscriptions",
-    );
+    await page.getByLabel("Name").fill("Visitor Without A Login");
+    await page.getByLabel("Email", { exact: true }).fill(user.email);
+    await cancel.click();
 
-    await expect(page.getByRole("link", { name: /contact support/iu })).toHaveAttribute(
-      "href",
-      "/support",
-    );
+    await expect(page.getByRole("status")).toContainText("We received your cancellation.");
 
-    await expect(page.getByRole("button", { name: /cancel subscription/iu })).not.toBeVisible();
-    await expect(page.getByRole("button", { name: /^subscribe$/iu })).not.toBeVisible();
+    await expect
+      .poll(async () => prisma.subscription.findFirst({ where: { referenceId: user.id } }))
+      .toMatchObject({ cancelAtPeriodEnd: true, status: "active" });
 
-    await browserContext.close();
-  });
-
-  test("Google subscriptions direct users to Google Play instead of Stripe controls", async ({
-    browser,
-    baseURL,
-  }) => {
-    const email = await createUserWithSubscription(baseURL!, "plus", { provider: "google" });
-    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
-
-    await page.goto("/subscription");
-
-    await expect(page.getByText(/managed through google play/iu)).toBeVisible();
-
-    await expect(page.getByRole("link", { name: /manage in google play/iu })).toHaveAttribute(
-      "href",
-      "https://play.google.com/store/account/subscriptions",
-    );
-
-    await expect(page.getByRole("link", { name: /contact support/iu })).toHaveAttribute(
-      "href",
-      "/support",
-    );
-
-    await expect(page.getByRole("button", { name: /cancel subscription/iu })).not.toBeVisible();
-    await expect(page.getByRole("button", { name: /^subscribe$/iu })).not.toBeVisible();
-
-    await browserContext.close();
-  });
-
-  test("Zoonk-managed subscriptions send users to support instead of plan controls", async ({
-    browser,
-    baseURL,
-  }) => {
-    const email = await createUserWithSubscription(baseURL!, "plus", { provider: "zoonk" });
-    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
-
-    await page.goto("/subscription");
-
-    await expect(page.getByText(/managed by zoonk/iu)).toBeVisible();
-
-    await expect(page.getByRole("link", { name: /contact support/iu })).toHaveAttribute(
-      "href",
-      "/support",
-    );
-
-    await expect(page.getByRole("radio", { name: /free/iu })).not.toBeVisible();
-    await expect(page.getByRole("button", { name: /manage/iu })).not.toBeVisible();
-
-    await browserContext.close();
+    await visitor.close();
   });
 });
 
-test.describe("Subscription Page - With Cancelled Subscription", () => {
-  test("shows cancellation notice when cancel_at is set", async ({ browser, baseURL }) => {
-    const cancelAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-    const email = await createUserWithSubscription(baseURL!, "plus", { cancelAt });
-    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+test.describe("Subscription Page - Cancel From France", () => {
+  test("shows the request to check and change before it's sent", async ({ browser }) => {
+    const user = await createWebSubscriber();
 
-    await page.goto("/subscription");
-    await expect(page.getByText(/subscription will end on/iu)).toBeVisible();
-    await expect(page.getByRole("button", { name: /cancel subscription/iu })).not.toBeVisible();
+    const visitor = await browser.newContext({ extraHTTPHeaders: { "x-vercel-ip-country": "FR" } });
 
-    await browserContext.close();
+    const page = await visitor.newPage();
+    await page.goto("/subscription/cancel");
+
+    const next = page.getByRole("button", { exact: true, name: "Continue" });
+    await expectHydrated(next);
+
+    await page.getByLabel("Name").fill("Camille Martin");
+    await page.getByLabel("Email", { exact: true }).fill(user.email);
+    await next.click();
+
+    const review = page.getByRole("region", { name: "Check your request" });
+    await expect(review).toContainText("Camille Martin");
+
+    await review.getByRole("button", { exact: true, name: "Edit" }).click();
+    await expect(page.getByLabel("Name")).toHaveValue("Camille Martin");
+    await next.click();
+
+    await review.getByRole("button", { exact: true, name: "Notify cancellation" }).click();
+    await expect(page.getByRole("status")).toContainText("We received your cancellation.");
+
+    await expect
+      .poll(async () => prisma.subscription.findFirst({ where: { referenceId: user.id } }))
+      .toMatchObject({ cancelAtPeriodEnd: true, status: "active" });
+
+    await visitor.close();
   });
+});
 
-  test("does not show cancellation notice when cancel_at is null", async ({ browser, baseURL }) => {
-    const email = await createUserWithSubscription(baseURL!, "plus");
-    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+const CONFIRMATION_CHECK_MS = 3000;
 
-    await page.goto("/subscription");
-    await expect(page.getByText(/subscription will end on/iu)).not.toBeVisible();
+async function openBackFromCheckout(browser: Browser) {
+  const user = await createE2EUser(getBaseURL());
+  const context = await browser.newContext({ storageState: user.storageState });
+  const page = await context.newPage();
 
-    await browserContext.close();
+  const confirm = () =>
+    prisma.subscription.create({
+      data: {
+        id: randomUUID(),
+        plan: "plus",
+        provider: "stripe",
+        referenceId: user.id,
+        status: "active",
+        ...getStripeSubscriptionFields(),
+      },
+    });
+
+  return { confirm, context, page };
+}
+
+test.describe("Subscription Page - Back From Checkout", () => {
+  test("confirms the subscription instead of showing the offer, then shows the plan", async ({
+    browser,
+  }) => {
+    const { confirm, context, page } = await openBackFromCheckout(browser);
+
+    const firstAnswer = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname.endsWith("/subscription") &&
+        Boolean(response.request().headers()["next-action"]),
+    );
+
+    await page.clock.install();
+    await page.goto("/subscription?stripe_checkout=complete");
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Confirming your subscription" }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
+    // Its answer coming in is the signal: Playwright doesn't always see a streamed answer finish.
+    await firstAnswer;
+
+    const heldChecks: Route[] = [];
+
+    await page.route("**/subscription?stripe_checkout=complete", async (route) => {
+      if (route.request().headers()["next-action"]) {
+        heldChecks.push(route);
+        return;
+      }
+
+      await route.fallback();
+    });
+
+    await expect(async () => {
+      if (heldChecks.length === 0) {
+        await page.clock.fastForward(CONFIRMATION_CHECK_MS);
+      }
+
+      expect(heldChecks.length, "the page asks again").toBeGreaterThan(0);
+    }).toPass();
+
+    await confirm();
+    await Promise.all(heldChecks.map((route) => route.continue()));
+
+    await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
+    await context.close();
   });
 });

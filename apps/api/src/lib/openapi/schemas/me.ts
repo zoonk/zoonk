@@ -3,10 +3,6 @@ import { nativeAppleCredentialsSchema } from "@zoonk/auth/native-apple-contract"
 import { z } from "zod";
 import { usernameCandidateSchema } from "./usernames";
 
-/**
- * Requires PATCH callers to send at least one profile field while still letting
- * each field remain optional for partial updates.
- */
 function hasProfileUpdate(data: { name?: string; username?: string }) {
   return data.name !== undefined || data.username !== undefined;
 }

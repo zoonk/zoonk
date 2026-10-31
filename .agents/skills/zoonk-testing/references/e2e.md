@@ -8,6 +8,7 @@ Use the owning app's existing Playwright fixtures and `apps/<app>/e2e/` tests. E
 - Use Playwright's auto-waiting and assertions for the actual state: a saved indicator, validation message, enabled action, changed URL, or persisted record. Arbitrary sleeps and `networkidle` do not prove readiness.
 - Visibility does not prove an element is stable or receives pointer events. Investigate overlays, animations, stale elements, and product behavior before considering forced interactions. Do not use `force: true` as the standard fix for a flaky click.
 - `page.route()` intercepts browser requests, not downstream calls made on the server. Exercise real validation for server-action error cases or control the narrow external boundary through an existing test harness.
+- E2E has no model. A model call inside a workflow run never answers, so the run stays in progress as it does while a model writes; a call a request makes, or a run a request waits for (listed in `apps/api/e2e/gateway-fetch.ts`), fails at once, as an outage would. Write what a run would have written with a fixture instead of waiting for the run, and rely on the outage only for a request's own call.
 
 ```typescript
 await page.getByRole("button", { name: "Save" }).click();
@@ -15,6 +16,12 @@ await expect(page.getByRole("status")).toHaveText("Saved");
 ```
 
 Consult [Playwright actionability](https://playwright.dev/docs/actionability) or its [load-state guidance](https://playwright.dev/docs/api/class-page#page-wait-for-load-state) when diagnosing timing behavior.
+
+## Coverage
+
+- Add or extend an E2E test only for a risk that clears [the E2E bar](../SKILL.md#the-e2e-bar): a big deal for learners if it broke, likely enough to break, and nothing cheaper catches it.
+- Before adding a test, look for the flow that already reaches the screen or state and extend it. A new test pays for its own sign-in, fixtures and navigation, so it needs behavior of its own that no existing flow can reach.
+- Assert what guards the risk, not the screen's wording, layout or accessibility.
 
 ## Isolation and persistence
 
@@ -30,11 +37,11 @@ Use semantic drag handles and a deterministic target. If the pointer sensor requ
 
 ## Commands
 
-Build the owning app with its E2E configuration before running against a new revision. E2E uses a separate output directory, such as `.next-e2e`, and the package scripts load the test environment.
+Run from the repository root with an existing test path; the [development guide](../../../guides/development.md) owns build, database, and sandbox setup.
 
 ```bash
-mise x -- pnpm --filter main build:e2e
-mise x -- pnpm --filter main e2e e2e/path/to/test.test.ts
+mise x -- pnpm e2e:main e2e/path/to/test.test.ts
+mise x -- pnpm e2e:api e2e/path/to/test.test.ts
 ```
 
-Choose an existing test path and use the app's script rather than copying the placeholder. On macOS, browser-launching commands require escalated sandbox permissions on the first attempt. For a demonstrated timing or isolation concern, run the focused coverage with `--repeat-each=2` or another repetition count justified by the failure; a pass after an unexplained failure is insufficient.
+For a demonstrated timing or isolation concern, use `--repeat-each=2` or another repetition count justified by the failure; a pass after an unexplained failure is insufficient.

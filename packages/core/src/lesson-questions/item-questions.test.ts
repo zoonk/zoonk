@@ -1,0 +1,311 @@
+import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
+import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { runDeferredWork } from "../_test-utils/deferred-work";
+import { mockSession } from "../_test-utils/mock-session";
+import { trackServerEvent } from "../analytics/server";
+import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
+import { updateMemoryFromActivity } from "../memory/update-memory-from-activity";
+import { parseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
+import { claimLessonQuestionAnswer } from "./answer-lifecycle";
+import { type LessonQuestionContextInput } from "./contract";
+import { createLessonQuestion } from "./create-lesson-question";
+import { getLessonQuestion } from "./get-lesson-question";
+import { getLessonQuestionThread } from "./get-lesson-question-thread";
+
+vi.mock("../memory/update-memory-from-activity", () => ({ updateMemoryFromActivity: vi.fn() }));
+
+async function practiceQuestion() {
+  const user = await userFixture();
+  const { skills } = await learnerGoalFixture({ itemsPerSkill: 0, phases: [1], userId: user.id });
+
+  const item = await itemFixture({
+    content: choiceItemContent("Which number is even?"),
+    skillId: skills[0]?.id ?? "",
+  });
+
+  await mistakeFixture({ itemId: item.id, skillId: item.skillId, userId: user.id });
+
+  mockSession(user.id);
+  return { item, user };
+}
+
+function ask({
+  context,
+  itemId,
+  question = "Can you give me a hint?",
+}: {
+  context: LessonQuestionContextInput;
+  itemId: string;
+  question?: string;
+}) {
+  return createLessonQuestion({
+    input: { context, question, requestId: randomUUID() },
+    target: { itemId, kind: "item" },
+  });
+}
+
+function askedId(result: Awaited<ReturnType<typeof ask>>) {
+  return result.status === "created" ? result.question.id : "";
+}
+
+async function askAnswered({ answer, ...asked }: Parameters<typeof ask>[0] & { answer: string }) {
+  const questionId = askedId(await ask(asked));
+
+  await prisma.lessonQuestion.update({
+    data: { answer, status: "completed" },
+    where: { id: questionId },
+  });
+
+  return questionId;
+}
+
+async function claimedHistory(questionId: string) {
+  const claimed = await claimLessonQuestionAnswer({ questionId });
+
+  if (claimed.status !== "ready") {
+    throw new Error(`Expected a claimed answer, received ${claimed.status}`);
+  }
+
+  return claimed.claim.priorTurns;
+}
+
+function missQuestion({ itemId, userId }: { itemId: string; userId: string }) {
+  return attemptFixture({ answer: { selectedIndex: 1 }, isCorrect: false, itemId, userId });
+}
+
+async function askedScreen(result: Awaited<ReturnType<typeof ask>>) {
+  const stored = await prisma.lessonQuestion.findUniqueOrThrow({ where: { id: askedId(result) } });
+  const snapshot = parseLessonQuestionContextSnapshot(stored.contextSnapshot);
+
+  return "screen" in snapshot ? snapshot.screen : null;
+}
+
+describe("asking the buddy about a session's or practice's question", () => {
+  beforeEach(() => {
+    vi.mocked(updateMemoryFromActivity).mockResolvedValue([]);
+    mockSession(null);
+  });
+
+  it("shows the question without its answer before the check, and the learner's answer after it", async () => {
+    const { item, user } = await practiceQuestion();
+    const flush = runDeferredWork();
+
+    const before = await ask({ context: { answered: false, kind: "item" }, itemId: item.id });
+    await flush();
+
+    expect(before).toMatchObject({ question: { context: { kind: "item" } }, status: "created" });
+
+    await expect(askedScreen(before)).resolves.toStrictEqual({
+      answer: null,
+      language: item.language,
+      question: {
+        format: "multipleChoice",
+        options: ["Right answer", "Wrong answer"],
+        text: "Which number is even?",
+      },
+      scope: { kind: "item" },
+      set: null,
+      skill: expect.any(String),
+      version: 1,
+    });
+
+    expect(trackServerEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "Tutor Asked",
+        properties: { item_id: item.id, scope: "item" },
+      }),
+    );
+
+    await prisma.lessonQuestion.updateMany({
+      data: { answer: "Even numbers end in 0, 2, 4, 6 or 8.", status: "completed" },
+      where: { thread: { userId: user.id } },
+    });
+
+    await attemptFixture({
+      answer: { selectedIndex: 1 },
+      isCorrect: false,
+      itemId: item.id,
+      userId: user.id,
+    });
+
+    const after = await ask({ context: { answered: true, kind: "item" }, itemId: item.id });
+
+    await expect(askedScreen(after)).resolves.toMatchObject({
+      answer: { correctAnswer: "Right answer", isCorrect: false, learnerAnswer: "Wrong answer" },
+    });
+
+    await expect(
+      getLessonQuestionThread({ target: { itemId: item.id, kind: "item" } }),
+    ).resolves.toMatchObject({ status: "ready", thread: { questions: [{}, {}] } });
+
+    await expect(
+      prisma.lessonQuestionThread.findMany({ where: { userId: user.id } }),
+    ).resolves.toMatchObject([{ itemId: item.id, kind: "item" }]);
+  });
+
+  it("leaves what the buddy said about an earlier answer out of a hint's history until it's checked again", async () => {
+    const { item, user } = await practiceQuestion();
+
+    await askAnswered({
+      answer: "Even numbers end in 0, 2, 4, 6 or 8.",
+      context: { answered: false, kind: "item" },
+      itemId: item.id,
+    });
+
+    await missQuestion({ itemId: item.id, userId: user.id });
+
+    await askAnswered({
+      answer: "The right answer is the first one.",
+      context: { answered: true, kind: "item" },
+      itemId: item.id,
+      question: "Why was I wrong?",
+    });
+
+    const hint = askedId(
+      await ask({
+        context: { answered: false, kind: "item" },
+        itemId: item.id,
+        question: "Another hint?",
+      }),
+    );
+
+    await expect(claimedHistory(hint)).resolves.toStrictEqual([
+      { answer: "Even numbers end in 0, 2, 4, 6 or 8.", question: "Can you give me a hint?" },
+    ]);
+
+    await prisma.lessonQuestion.update({
+      data: { answer: "Look at the last digit.", status: "completed" },
+      where: { id: hint },
+    });
+
+    const afterRetry = askedId(
+      await ask({
+        context: { answered: true, kind: "item" },
+        itemId: item.id,
+        question: "So it's the last digit?",
+      }),
+    );
+
+    await expect(claimedHistory(afterRetry)).resolves.toStrictEqual([
+      { answer: "Even numbers end in 0, 2, 4, 6 or 8.", question: "Can you give me a hint?" },
+      { answer: "The right answer is the first one.", question: "Why was I wrong?" },
+      { answer: "Look at the last digit.", question: "Another hint?" },
+    ]);
+  });
+
+  it("says which turns were asked about the learner's checked answer", async () => {
+    const { item, user } = await practiceQuestion();
+    const target = { itemId: item.id, kind: "item" } as const;
+
+    const hint = await ask({ context: { answered: false, kind: "item" }, itemId: item.id });
+
+    await prisma.lessonQuestion.updateMany({
+      data: { answer: "Even numbers end in 0, 2, 4, 6 or 8.", status: "completed" },
+      where: { thread: { userId: user.id } },
+    });
+
+    await missQuestion({ itemId: item.id, userId: user.id });
+
+    const why = await ask({
+      context: { answered: true, kind: "item" },
+      itemId: item.id,
+      question: "Why was I wrong?",
+    });
+
+    expect(hint).toMatchObject({ question: { context: { answered: false, kind: "item" } } });
+    expect(why).toMatchObject({ question: { context: { answered: true, kind: "item" } } });
+
+    await expect(getLessonQuestionThread({ target })).resolves.toMatchObject({
+      thread: {
+        questions: [
+          { context: { answered: false, kind: "item" } },
+          { context: { answered: true, kind: "item" } },
+        ],
+      },
+    });
+
+    await expect(getLessonQuestion({ questionId: askedId(why) })).resolves.toMatchObject({
+      question: { context: { answered: true, kind: "item" } },
+    });
+
+    const thread = await getLessonQuestionThread({ target });
+    const question = await getLessonQuestion({ questionId: askedId(why) });
+
+    await prisma.lessonQuestion.update({
+      data: { answer: "The right answer is the first one.", status: "completed" },
+      where: { id: askedId(why) },
+    });
+
+    const again = await ask({
+      context: { answered: true, kind: "item" },
+      itemId: item.id,
+      question: "And the second option?",
+    });
+
+    expect(
+      [
+        ...(thread.status === "ready" ? (thread.thread?.questions ?? []) : []),
+        question.status === "ready" ? question.question : null,
+        again.status === "created" ? again.question : null,
+      ].map((turn) => turn?.context),
+    ).toStrictEqual([
+      { answered: false, kind: "item" },
+      { answered: true, kind: "item" },
+      { answered: true, kind: "item" },
+      { answered: true, kind: "item" },
+    ]);
+  });
+
+  it("keeps a question on a mock the learner is sitting, and a block that isn't theirs, out", async () => {
+    const { item, user } = await practiceQuestion();
+
+    await expect(
+      ask({ context: { answered: false, blockId: randomUUID(), kind: "item" }, itemId: item.id }),
+    ).resolves.toStrictEqual({ status: "invalidContext" });
+
+    await prisma.mockExam.create({
+      data: {
+        conditions: {
+          day: null,
+          examQuestions: null,
+          fullLength: true,
+          partialCredit: "allOrNothing",
+          purpose: "planned",
+          reused: 0,
+          scoring: "raw",
+          sections: [
+            {
+              essays: [],
+              itemIds: [item.id],
+              minutes: 60,
+              name: null,
+              questions: 1,
+              routing: null,
+            },
+          ],
+          shape: null,
+          startTime: null,
+          timeZone: null,
+          timedOutSections: [],
+          wrongPenalty: 1,
+        },
+        sectionStartedAt: new Date(),
+        userId: user.id,
+      },
+    });
+
+    await expect(
+      ask({ context: { answered: false, kind: "item" }, itemId: item.id }),
+    ).resolves.toStrictEqual({ status: "notFound" });
+
+    mockSession(null);
+
+    await expect(
+      ask({ context: { answered: false, kind: "item" }, itemId: item.id }),
+    ).resolves.toStrictEqual({ status: "unauthorized" });
+  });
+});

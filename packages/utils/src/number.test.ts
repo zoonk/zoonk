@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   type LocalizedNumberFormatter,
+  formatGoalProgress,
   formatMetricPercent,
   formatWholeNumber,
   validateOffset,
@@ -59,5 +60,18 @@ describe(formatMetricPercent, () => {
     expect(formatMetricPercent({ format: createFormatter("en-US"), value: 88.5153768537537 })).toBe(
       "88.5%",
     );
+  });
+});
+
+describe(formatGoalProgress, () => {
+  it("shows a long plan's first lessons instead of 0%", () => {
+    expect(formatGoalProgress({ format: createFormatter("en-US"), share: 6 / 3738 })).toBe("0.16%");
+    expect(formatGoalProgress({ format: createFormatter("pt-BR"), share: 6 / 3738 })).toBe("0,16%");
+  });
+
+  it("drops trailing zeros at whole percentages", () => {
+    expect(formatGoalProgress({ format: createFormatter("en-US"), share: 0 })).toBe("0%");
+    expect(formatGoalProgress({ format: createFormatter("en-US"), share: 0.25 })).toBe("25%");
+    expect(formatGoalProgress({ format: createFormatter("en-US"), share: 1 })).toBe("100%");
   });
 });

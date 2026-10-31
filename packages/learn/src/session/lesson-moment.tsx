@@ -1,0 +1,208 @@
+"use client";
+
+import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
+import { useExtracted, useFormatter } from "next-intl";
+import { type ReactNode } from "react";
+import { EnterButton } from "../_components/enter-button";
+import { MomentReadouts } from "../_components/moment-readouts";
+import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
+import { type TestOutStart } from "../_components/test-out-start-link";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { DayMoment } from "./day-moment";
+import { FailedMoment } from "./failed-moment";
+import { MomentHeader } from "./moment-header";
+import { PendingMoment } from "./pending-moment";
+import { SessionHeader } from "./session-header";
+import { type StudyMomentView, type StudySession } from "./session-types";
+import { StudyMoment } from "./study-moment";
+import { useMomentEvents } from "./use-moment-events";
+import { useMomentTitle } from "./use-moment-title";
+import { useSessionAction } from "./use-session-action";
+
+type LessonMomentCompletion = {
+  result:
+    | (ProgressCelebration & {
+        brainPower: number;
+        nextReviewAt: string | null;
+        studyBlock: StudyMomentView | null;
+      })
+    | null;
+  status: "failed" | "saved" | "saving";
+  testedOut: boolean;
+};
+
+type OutsideSessionResult = NonNullable<LessonMomentCompletion["result"]>;
+
+type LessonMomentSession = Pick<StudySession, "blocks">;
+
+function SavedMoment({
+  buddy,
+  moment,
+  onContinue,
+  onStartTestOut,
+  onStop,
+  session,
+  testedOut,
+}: {
+  buddy?: LearnBuddy | null;
+  moment: StudyMomentView;
+  onContinue: () => Promise<boolean>;
+  onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
+  onStop: () => Promise<boolean>;
+  session: LessonMomentSession;
+  testedOut: boolean;
+}) {
+  useMomentEvents({ moment });
+
+  return (
+    <StudyMoment
+      blocks={session.blocks}
+      buddy={buddy}
+      finishedChapterId={
+        session.blocks.find((block) => block.id === moment.blockId)?.chapterId ?? null
+      }
+      inLessonPlayer
+      kind="learn"
+      moment={moment}
+      next={session.blocks.find((block) => block.id === moment.nextBlockId) ?? null}
+      onContinue={onContinue}
+      onStartTestOut={onStartTestOut}
+      onStop={onStop}
+      testedOut={testedOut}
+    />
+  );
+}
+
+function OutsideSession({
+  buddy,
+  onContinue,
+  result,
+  title,
+}: {
+  buddy?: LearnBuddy | null;
+  onContinue: () => Promise<boolean>;
+  result: OutsideSessionResult | null;
+  title: string;
+}) {
+  const t = useExtracted();
+  const format = useFormatter();
+  const { failed, isPending, run } = useSessionAction({ action: onContinue, enterKey: true });
+
+  return (
+    <>
+      <TaskBody>
+        <MomentHeader title={title}>
+          {result && (
+            <MomentReadouts
+              brainPower={result.brainPower}
+              facts={[
+                result.nextReviewAt &&
+                  t("Review on {date}", {
+                    date: format.dateTime(new Date(result.nextReviewAt), {
+                      day: "numeric",
+                      month: "short",
+                    }),
+                  }),
+              ]}
+            />
+          )}
+        </MomentHeader>
+
+        {result && (
+          <DayMoment
+            buddy={buddy}
+            ceremony={result.ceremony}
+            missionMoment={null}
+            reached={result.reached}
+          />
+        )}
+      </TaskBody>
+
+      <TaskActionBar>
+        {failed && (
+          <p className="text-destructive-text text-sm" role="alert">
+            {t("We couldn't open the next step. Try again.")}
+          </p>
+        )}
+
+        <TaskActions>
+          <EnterButton disabled={isPending} onClick={run}>
+            {t("Continue")}
+          </EnterButton>
+        </TaskActions>
+      </TaskActionBar>
+    </>
+  );
+}
+
+/** Nothing until the lesson is saved, while the lesson's own header stays. */
+export function LessonMomentHeader({
+  completion,
+  exitHref,
+  menu,
+}: {
+  completion: LessonMomentCompletion;
+  exitHref: string;
+  menu?: ReactNode;
+}) {
+  const moment = completion.result?.studyBlock ?? null;
+
+  if (!moment) {
+    return null;
+  }
+
+  return <SessionHeader exitHref={exitHref} menu={menu} sessionBar={moment.sessionBar} />;
+}
+
+export function LessonMoment({
+  buddy,
+  completion,
+  onContinue,
+  onRetry,
+  onStartTestOut,
+  onStop,
+  session,
+}: {
+  buddy?: LearnBuddy | null;
+  completion: LessonMomentCompletion;
+  onContinue: () => Promise<boolean>;
+  onRetry: () => void;
+  onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
+  onStop: () => Promise<boolean>;
+  session: LessonMomentSession;
+}) {
+  const t = useExtracted();
+  const title = useMomentTitle({ kind: "learn", testedOut: completion.testedOut });
+  const moment = completion.result?.studyBlock ?? null;
+
+  if (completion.status === "failed") {
+    return <FailedMoment onRetry={onRetry} title={title} />;
+  }
+
+  if (!moment && completion.status === "saved") {
+    return (
+      <OutsideSession
+        buddy={buddy}
+        onContinue={onContinue}
+        result={completion.result}
+        title={title}
+      />
+    );
+  }
+
+  if (!moment) {
+    return <PendingMoment action={t("Continue")} title={title} />;
+  }
+
+  return (
+    <SavedMoment
+      buddy={buddy}
+      moment={moment}
+      onContinue={onContinue}
+      onStartTestOut={onStartTestOut}
+      onStop={onStop}
+      session={session}
+      testedOut={completion.testedOut}
+    />
+  );
+}

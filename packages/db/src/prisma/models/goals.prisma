@@ -1,0 +1,240 @@
+enum GoalKind {
+  learn
+  explain
+  language
+  exam
+}
+
+enum GoalStatus {
+  active
+  paused
+  completed
+  archived
+}
+
+enum PlanItemKind {
+  lesson
+  chapter
+  checkpoint
+  mock
+  review
+  boss
+}
+
+enum PlanItemStatus {
+  todo
+  done
+  skipped
+  testedOut @map("tested_out")
+}
+
+enum PlanSetupTask {
+  placement
+  routine
+  notice
+}
+
+enum SuggestedGoalStatus {
+  pending
+  accepted
+  dismissed
+}
+
+/// A waiting proposal is `replaced` when a newer change changes the same thing, so the learner
+/// never answers two that contradict.
+enum PlanChangeStatus {
+  proposed
+  applied
+  declined
+  undone
+  replaced
+}
+
+enum ResearchUploadReason {
+  noOfficialSource @map("no_official_source")
+  unverified
+  classMaterial    @map("class_material")
+}
+
+model Goal {
+  id                    String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId                String                 @map("user_id") @db.Uuid
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind                  GoalKind
+  status                GoalStatus             @default(active)
+  prompt                String
+  title                 String
+  details               Json                   @default("{}")
+  language              String                 @db.VarChar(10)
+  targetLanguage        String?                @map("target_language") @db.VarChar(10)
+  targetDate            DateTime?              @map("target_date") @db.Date
+  dailyMinutes          Int                    @map("daily_minutes") @db.SmallInt
+  /// Local time, such as "20:00".
+  studyTime             String?                @map("study_time") @db.VarChar(5)
+  timezone              String?
+  examBlueprintId       String?                @map("exam_blueprint_id") @db.Uuid
+  examBlueprint         ExamBlueprint?         @relation(fields: [examBlueprintId], references: [id], onDelete: SetNull)
+  primaryCourseId       String?                @map("primary_course_id") @db.Uuid
+  primaryCourse         Course?                @relation(fields: [primaryCourseId], references: [id], onDelete: SetNull)
+  generationRunId       String?                @map("generation_run_id")
+  /// Asking for research again follows this run instead of paying again, unless it failed.
+  researchRunId         String?                @map("research_run_id")
+  /// Cleared when the learner answers or dismisses it, or a later research run needs nothing.
+  researchUploadReason  ResearchUploadReason?  @map("research_upload_reason")
+  createdAt             DateTime               @default(now()) @map("created_at")
+  updatedAt             DateTime               @default(now()) @updatedAt @map("updated_at")
+  plan                  Plan?
+  studySessions         StudySession[]
+  activeProfile         UserLearningProfile?
+  learnerSources        LearnerSource[]
+  memoryInsights        MemoryInsight[]
+  languageConversations LanguageConversation[]
+  mistakePatterns       MistakePattern[]
+  mockExams             MockExam[]
+  examResult            ExamResult?
+  evaluationRuns        EvaluationRun[]
+  aiCalls               AiCall[]
+  questionThreads       LessonQuestionThread[] @relation("GoalQuestionThreads")
+  subjectThreads        LessonQuestionThread[] @relation("SubjectQuestionThreads")
+  tutorQuestions        LessonQuestion[]       @relation("TutorQuestionGoal")
+
+  @@index([userId, status])
+  @@index([examBlueprintId])
+  @@index([primaryCourseId])
+  @@map("goals")
+}
+
+model Plan {
+  id                  String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  goalId              String                 @unique @map("goal_id") @db.Uuid
+  goal                Goal                   @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  phases              Json                   @default("[]")
+  graph               Json                   @default("{}")
+  settings            Json                   @default("{}")
+  estimateHours       Float?                 @map("estimate_hours")
+  version             Int                    @default(1)
+  inputVersion        Int                    @default(0) @map("input_version")
+  /// Marks a layout stale; never rejects plan writes.
+  sourceVersion       Int                    @default(0) @map("source_version")
+  /// Valid for the plan version it was posted with (see `readPlanSummary`); a legacy value reads as
+  /// pending, never as a plan with no work.
+  summary             Json?
+  /// Full pre-cut skill dependencies, including aliases, for content-writer invalidation.
+  sourceSkillIds      String[]               @default([]) @map("source_skill_ids") @db.Uuid
+  model               String?
+  promptVersion       String?                @map("prompt_version")
+  runId               String?                @map("run_id")
+  generatedAt         DateTime?              @map("generated_at")
+  /// Set when the last build gave up before it had skills, so placement and the plan offer to try
+  /// again; cleared when a new run starts.
+  buildFailedAt       DateTime?              @map("build_failed_at")
+  /// Until then, a skill's missing placement questions are still coming.
+  placementPreparedAt DateTime?              @map("placement_prepared_at")
+  /// When the learner asked for the plan's lessons. The day reads as getting them until its
+  /// preparation finds none of them to outline or the ask goes stale.
+  lessonsAskedAt      DateTime?              @map("lessons_asked_at")
+  /// A plan built before research read the exam's notice waits for that reading until then; past
+  /// it, the reading arrives as a change the learner applies. Null when nothing is waited for.
+  noticeWaitUntil     DateTime?              @map("notice_wait_until")
+  /// A notice recorded before then is the plan's own, so Today never shows it as news.
+  noticeWaitEndedAt   DateTime?              @map("notice_wait_ended_at")
+  /// 0 to 1, as of the last planning, so a new day can tell when falling behind puts the date at
+  /// risk. Null for plans without a date.
+  coveredShare        Float?                 @map("covered_share")
+  /// A system refresh that would plan from the same inputs writes nothing, so opening the app with
+  /// nothing new never moves the plan.
+  inputsKey           String?                @map("inputs_key")
+  /// A task leaves the list in the same transaction as its effect, so a retry or a later request
+  /// finishes what's left and never repeats one.
+  setupTasks          PlanSetupTask[]        @default([]) @map("setup_tasks")
+  createdAt           DateTime               @default(now()) @map("created_at")
+  updatedAt           DateTime               @default(now()) @updatedAt @map("updated_at")
+  items               PlanItem[]
+  changes             PlanChange[]
+
+  @@index([sourceSkillIds], type: Gin)
+  @@map("plans")
+}
+
+model PlanItem {
+  id            String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  planId        String         @map("plan_id") @db.Uuid
+  plan          Plan           @relation(fields: [planId], references: [id], onDelete: Cascade)
+  position      Int
+  phase         Int            @db.SmallInt
+  kind          PlanItemKind
+  status        PlanItemStatus @default(todo)
+  lessonId      String?        @map("lesson_id") @db.Uuid
+  lesson        Lesson?        @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+  chapterId     String?        @map("chapter_id") @db.Uuid
+  chapter       Chapter?       @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+  skillId       String?        @map("skill_id") @db.Uuid
+  skill         Skill?         @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  /// A stand-in's size in its skill's lessons; null for every other item.
+  lessons       Int?           @db.SmallInt
+  /// Exact study time from the selected build; null until a legacy item is initialized.
+  minutes       Float?
+  /// Versioned workload, projected membership and consumed teaching interval facts.
+  facts         Json?
+  titleSnapshot String         @map("title_snapshot")
+  scheduledFor  DateTime?      @map("scheduled_for") @db.Date
+  completedAt   DateTime?      @map("completed_at")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([planId, position], name: "planPosition")
+  @@index([lessonId])
+  @@index([chapterId])
+  @@index([skillId])
+  @@map("plan_items")
+}
+
+/// `payload` holds what the planner needs to reverse it. Changes bigger than a lesson start
+/// `proposed` and wait for the learner's OK.
+model PlanChange {
+  id            String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  planId        String              @map("plan_id") @db.Uuid
+  plan          Plan                @relation(fields: [planId], references: [id], onDelete: Cascade)
+  kind          String
+  status        PlanChangeStatus    @default(applied)
+  reason        String
+  payload       Json                @default("{}")
+  model         String?
+  promptVersion String?             @map("prompt_version")
+  runId         String?             @map("run_id")
+  generatedAt   DateTime?           @map("generated_at")
+  createdAt     DateTime            @default(now()) @map("created_at")
+  tutorAnswers  LessonQuestion[]
+  snapshot      PlanChangeSnapshot?
+
+  @@index([planId, createdAt])
+  @@map("plan_changes")
+}
+
+/// Only a plan's latest change can be undone, so every commit deletes the plan's earlier snapshots. A re-plan for lessons written since keeps the open one, and undoing it re-plans after restoring.
+model PlanChangeSnapshot {
+  id        String     @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  changeId  String     @unique @map("change_id") @db.Uuid
+  change    PlanChange @relation(fields: [changeId], references: [id], onDelete: Cascade)
+  plan      Json
+  createdAt DateTime   @default(now()) @map("created_at")
+
+  @@map("plan_change_snapshots")
+}
+
+/// `courseId` has no foreign key, because a learner's own course is deleted once it's converted.
+model SuggestedGoal {
+  id           String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId       String              @map("user_id") @db.Uuid
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId     String              @map("course_id") @db.Uuid
+  title        String
+  lastActiveAt DateTime            @map("last_active_at")
+  status       SuggestedGoalStatus @default(pending)
+  respondedAt  DateTime?           @map("responded_at")
+  createdAt    DateTime            @default(now()) @map("created_at")
+
+  @@unique([userId, courseId], name: "userCourse")
+  @@index([userId, status])
+  @@map("suggested_goals")
+}

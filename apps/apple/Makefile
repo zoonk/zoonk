@@ -1,22 +1,26 @@
 PROJECT := Zoonk.xcodeproj
 APP_SCHEME := Zoonk
-SWIFT_SOURCES := Zoonk ZoonkTests ZoonkUITests
-CONFIGURATION ?= Release
+SWIFT_SOURCES := Zoonk ZoonkAPI/Package.swift ZoonkAPI/Sources ZoonkTests ZoonkUITests
+CONFIGURATION ?= Debug
 TEST_DESTINATION ?= platform=iOS Simulator,name=iPhone 17,OS=latest
-TEST_ARGUMENTS ?=
 XCODEBUILD_ARGUMENTS ?=
-XCODEBUILD := xcodebuild -quiet -skipPackagePluginValidation $(XCODEBUILD_ARGUMENTS) -project "$(PROJECT)"
+# The WebRTC package is a binary download; with the default Keychain credential lookup, xcodebuild
+# can wait forever on a Keychain prompt in non-interactive shells. Public downloads need no login.
+# Builds stay in the checkout, so removing an agent's worktree removes them too.
+XCODEBUILD := $(if $(CI),,node ../../scripts/dev/queue.mts) xcodebuild -quiet -skipPackagePluginValidation -packageAuthorizationProvider netrc -derivedDataPath DerivedData/Make $(XCODEBUILD_ARGUMENTS) -project "$(PROJECT)"
 BUILD_FLAGS := -configuration "$(CONFIGURATION)" CODE_SIGNING_ALLOWED=NO
 
-.PHONY: build build-ios test format format-check check
+.PHONY: build build-ios test ui-test format format-check check
 
 build: build-ios
 
 build-ios:
 	$(XCODEBUILD) -scheme "$(APP_SCHEME)" $(BUILD_FLAGS) -destination "generic/platform=iOS" build
 
-test:
-	$(XCODEBUILD) -scheme "$(APP_SCHEME)" -destination "$(TEST_DESTINATION)" CODE_SIGNING_ALLOWED=NO $(TEST_ARGUMENTS) test
+test: ONLY_TESTING ?= ZoonkTests
+ui-test: ONLY_TESTING ?= ZoonkUITests
+test ui-test:
+	$(XCODEBUILD) -scheme "$(APP_SCHEME)" -destination "$(TEST_DESTINATION)" CODE_SIGNING_ALLOWED=NO -parallel-testing-enabled NO -only-testing:"$(ONLY_TESTING)" test
 
 format:
 	xcrun swift-format format --recursive --in-place $(SWIFT_SOURCES)
@@ -24,4 +28,4 @@ format:
 format-check:
 	xcrun swift-format lint --recursive --parallel --strict $(SWIFT_SOURCES)
 
-check: format-check build test
+check: format-check test

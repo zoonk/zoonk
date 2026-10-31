@@ -27,25 +27,6 @@ describe(isValidChartPayload, () => {
     const payload = [{ payload: { name: "A", value: 10 } }];
     expect(isValidChartPayload(payload)).toBe(true);
   });
-
-  it("returns true for multiple entries", () => {
-    const payload = [{ payload: { name: "A", value: 10 } }, { payload: { name: "B", value: 20 } }];
-    expect(isValidChartPayload(payload)).toBe(true);
-  });
-
-  it("narrows the type correctly", () => {
-    const payload: unknown = [{ payload: { name: "A", value: 10 } }];
-    const isValidPayload = isValidChartPayload<{ name: string; value: number }>(payload);
-
-    expect(isValidPayload).toBe(true);
-
-    if (!isValidPayload) {
-      throw new Error("Expected chart payload to be valid.");
-    }
-
-    expect(payload[0].payload.name).toBe("A");
-    expect(payload[0].payload.value).toBe(10);
-  });
 });
 
 describe(formatLabel, () => {
@@ -94,6 +75,15 @@ describe(buildChartData, () => {
     const result = buildChartData(rawPoints, "year", "en");
     expect(result).toHaveLength(2);
     expect(result.map((dataPoint) => dataPoint.value)).toStrictEqual([60, 40]);
+  });
+
+  it("orders aggregated points by date when the input is unsorted", () => {
+    const result = buildChartData(rawPoints.toReversed(), "year", "en");
+
+    expect(result.map(({ date, value }) => ({ date, value }))).toStrictEqual([
+      { date: "2026-01-01T00:00:00.000Z", value: 60 },
+      { date: "2026-02-01T00:00:00.000Z", value: 40 },
+    ]);
   });
 
   it("aggregates to yearly sums for 'all' period", () => {

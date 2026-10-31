@@ -1,0 +1,176 @@
+import { generateMemoryInsight } from "@zoonk/ai/tasks/memory/insight";
+import { type SessionPattern, findSessionPatterns } from "@zoonk/ai/tasks/memory/session-patterns";
+import { prisma } from "@zoonk/db";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { skillFixture, skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { describe, expect, it, vi } from "vitest";
+import { mockSession } from "../../_test-utils/mock-session";
+import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
+import { createGoalPlan } from "../../plans/create-goal-plan";
+import { runSessionFollowUps, writeSessionInsight } from "../_test-utils/session-follow-ups";
+import { saveDailyInsight } from "./daily-insight";
+import { respondToMemoryInsight } from "./respond-to-memory-insight";
+
+const DAY_MS = 86_400_000;
+const NO_PATTERNS: SessionPattern[] = [];
+const ANSWERS_PER_DAY = 7;
+
+const PROVENANCE = {
+  generatedAt: "2026-09-26T12:00:00.000Z",
+  model: "openai/gpt-6-luna",
+  promptVersion: "memory-insight-test",
+  runId: "run-insight-plan-test",
+};
+
+const MESSAGE =
+  "You get percentages right until fractions show up. A 3-minute lesson on turning fractions into percentages should help.";
+
+async function setup() {
+  const [user, library, prerequisite] = await Promise.all([
+    userFixture(),
+    planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 2 }] }),
+    skillFixture({ name: "Fractions as percentages" }),
+  ]);
+
+  const weak = library.skills[1];
+
+  const [{ goal, plan }] = await Promise.all([
+    unplannedGoalFixture({ dailyMinutes: 20, language: "en", userId: user.id }),
+    skillPrerequisiteFixture({ prerequisiteId: prerequisite.id, skillId: weak?.id ?? "" }),
+  ]);
+
+  await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+  // Noon UTC keeps every answer of a day on that day, whenever the test runs.
+  const todayNoon = new Date().setUTCHours(12, 0, 0, 0);
+
+  await Promise.all(
+    Array.from({ length: 2 * ANSWERS_PER_DAY }, (_, index) =>
+      attemptFixture({
+        answeredAt: new Date(todayNoon - Math.floor(index / ANSWERS_PER_DAY) * DAY_MS - index),
+        isCorrect: index % 2 === 0,
+        skillId: weak?.id,
+        userId: user.id,
+      }),
+    ),
+  );
+
+  vi.mocked(findSessionPatterns).mockResolvedValue({
+    data: { patterns: NO_PATTERNS },
+    provenance: PROVENANCE,
+  } as Awaited<ReturnType<typeof findSessionPatterns>>);
+
+  vi.mocked(generateMemoryInsight).mockResolvedValue({
+    data: {
+      kind: "planChange",
+      lessonFocus: "Turning fractions into percentages",
+      message: MESSAGE,
+      skill: 1,
+      studyTime: null,
+    },
+    provenance: PROVENANCE,
+  } as Awaited<ReturnType<typeof generateMemoryInsight>>);
+
+  return { goal, plan, prerequisite, user, weak };
+}
+
+function planSkillIds(planId: string) {
+  return prisma.planItem
+    .findMany({ select: { skillId: true }, where: { planId } })
+    .then((items) => items.map((item) => item.skillId));
+}
+
+function endSession({ goalId, userId }: { goalId: string; userId: string }) {
+  return runSessionFollowUps({ goalId, userId });
+}
+
+describe("plan-change insights", () => {
+  it("adds a missing prerequisite through the planner, and dismissing undoes it", async () => {
+    const { goal, plan, prerequisite, user, weak } = await setup();
+
+    await endSession({ goalId: goal.id, userId: user.id });
+
+    expect(generateMemoryInsight).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        kinds: ["tip", "planChange", "scheduleIdea"],
+        skills: [
+          {
+            chapter: null,
+            covers: ["Fractions as percentages"],
+            lessons: 1,
+            name: "Fractions as percentages",
+            prepares: weak?.name,
+          },
+        ],
+      }),
+    );
+
+    const insight = await prisma.memoryInsight.findFirstOrThrow({ where: { userId: user.id } });
+
+    expect(insight).toMatchObject({ kind: "planChange", message: MESSAGE });
+
+    expect(insight.payload).toMatchObject({
+      planChangeStatus: "applied",
+      skillId: prerequisite.id,
+    });
+
+    await expect(planSkillIds(plan.id)).resolves.toContain(prerequisite.id);
+
+    const change = await prisma.planChange.findFirstOrThrow({
+      where: { planId: plan.id, reason: MESSAGE },
+    });
+
+    expect(change.status).toBe("applied");
+
+    mockSession(user.id);
+
+    const answer = await respondToMemoryInsight({
+      input: { status: "dismissed" },
+      insightId: insight.id,
+    });
+
+    expect(answer).toMatchObject({
+      insight: { planChange: null, status: "dismissed" },
+      status: "updated",
+    });
+
+    await expect(planSkillIds(plan.id)).resolves.not.toContain(prerequisite.id);
+  });
+
+  it("links a retried save to the plan change it already made, never proposing it twice", async () => {
+    const { goal, plan, user } = await setup();
+    const insight = await writeSessionInsight({ goalId: goal.id, userId: user.id });
+
+    if (!insight) {
+      throw new Error("Expected a claimed and written insight");
+    }
+
+    await saveDailyInsight({ ...insight, userId: user.id });
+    await saveDailyInsight({ ...insight, userId: user.id });
+
+    const changes = await prisma.planChange.findMany({
+      where: { planId: plan.id, reason: MESSAGE },
+    });
+
+    const saved = await prisma.memoryInsight.findFirstOrThrow({ where: { userId: user.id } });
+
+    expect(changes).toHaveLength(1);
+    expect(saved.payload).toMatchObject({ planChangeId: changes[0]?.id });
+  });
+
+  it("offers no plan change when the plan already teaches every prerequisite", async () => {
+    const { goal, prerequisite, user } = await setup();
+
+    await prisma.skillPrerequisite.deleteMany({ where: { prerequisiteId: prerequisite.id } });
+
+    await endSession({ goalId: goal.id, userId: user.id });
+
+    expect(generateMemoryInsight).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ kinds: ["tip", "scheduleIdea"], skills: [] }),
+    );
+
+    const insight = await prisma.memoryInsight.findFirstOrThrow({ where: { userId: user.id } });
+    expect(insight).toMatchObject({ kind: null, message: null });
+  });
+});

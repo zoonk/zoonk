@@ -1,0 +1,170 @@
+import { MS_PER_DAY } from "@zoonk/utils/date";
+import { getExtracted, getFormatter } from "next-intl/server";
+import { type ExamplePhase } from "./example-road";
+import {
+  type ExampleCalendar,
+  type ExampleGoal,
+  daysBetween,
+  getExampleCalendar,
+  getExampleSet,
+  getGoalDate,
+} from "./landing-examples";
+
+type ExamplePlan = {
+  dailyMinutes: number;
+  date: Date;
+  mark: { id: string; kind: string; targetLanguage: string | null; title: string };
+  name: string;
+  phases: readonly ExamplePhase[];
+  shortName: string;
+};
+
+type PhaseDays = { end: string; id: string; name: string; start: string };
+
+function shiftPhase(calendar: ExampleCalendar, { end, id, name, start }: PhaseDays) {
+  return { end: calendar.shift(end), id, name, start: calendar.shift(start) };
+}
+
+function addDays(date: Date, days: number): Date {
+  return new Date(date.getTime() + days * MS_PER_DAY);
+}
+
+const EXAM_WRITTEN = {
+  daysLeft: 26,
+  foundationsEnd: -4,
+  foundationsStart: -15,
+  gapsEnd: 10,
+  gapsStart: -3,
+  practiceEnd: 19,
+};
+
+const EXAM_GAPS_END = EXAM_WRITTEN.gapsEnd / EXAM_WRITTEN.daysLeft;
+const EXAM_PRACTICE_END = EXAM_WRITTEN.practiceEnd / EXAM_WRITTEN.daysLeft;
+
+async function getExamPhases({
+  date,
+  today,
+}: {
+  date: Date;
+  today: Date;
+}): Promise<ExamplePhase[]> {
+  const t = await getExtracted("planPhases");
+
+  const daysLeft = Math.max(daysBetween({ from: today, to: date }), 1);
+  const gapsEnd = Math.max(Math.round(daysLeft * EXAM_GAPS_END), 1);
+  const practiceEnd = Math.max(Math.round(daysLeft * EXAM_PRACTICE_END), gapsEnd + 1);
+
+  const phases = [
+    {
+      end: addDays(today, EXAM_WRITTEN.foundationsEnd),
+      id: "foundations",
+      name: t("Foundations"),
+      start: addDays(today, EXAM_WRITTEN.foundationsStart),
+    },
+    {
+      end: addDays(today, Math.min(gapsEnd, daysLeft)),
+      id: "gaps",
+      name: t("Fill the gaps"),
+      start: addDays(today, EXAM_WRITTEN.gapsStart),
+    },
+    {
+      end: addDays(today, practiceEnd),
+      id: "practice",
+      name: t("Practice"),
+      start: addDays(today, gapsEnd + 1),
+    },
+    { end: date, id: "final", name: t("Final stretch"), start: addDays(today, practiceEnd + 1) },
+  ];
+
+  return phases.filter((phase) => phase.start <= phase.end && phase.start <= date);
+}
+
+async function getMovePhases(calendar: ExampleCalendar): Promise<ExamplePhase[]> {
+  const t = await getExtracted("examplePhases");
+
+  return [
+    { end: "2026-10-09", id: "arriving", name: t("Arriving"), start: "2026-09-14" },
+    { end: "2026-11-20", id: "renting", name: t("Renting a flat"), start: "2026-10-10" },
+    { end: "2026-12-18", id: "bank", name: t("Bank and phone"), start: "2026-11-21" },
+    { end: "2027-01-29", id: "work", name: t("First week at work"), start: "2026-12-19" },
+    { end: "2027-02-12", id: "doctor", name: t("Doctor"), start: "2027-01-30" },
+    { end: "2027-03-01", id: "social", name: t("Social life"), start: "2027-02-13" },
+  ].map((phase) => shiftPhase(calendar, phase));
+}
+
+/** Example phases have their own namespace, so a word the app also uses can translate as a subject. */
+async function getJobPhases(calendar: ExampleCalendar): Promise<ExamplePhase[]> {
+  const t = await getExtracted("examplePhases");
+
+  return [
+    { end: "2026-10-09", id: "spreadsheets", name: t("Spreadsheets"), start: "2026-08-24" },
+    { end: "2026-12-04", id: "sql", name: t("SQL"), start: "2026-10-10" },
+    { end: "2027-02-12", id: "statistics", name: t("Statistics"), start: "2026-12-05" },
+    { end: "2027-04-16", id: "dashboards", name: t("Dashboards"), start: "2027-02-13" },
+    { end: "2027-06-10", id: "portfolio", name: t("Portfolio"), start: "2027-04-17" },
+  ].map((phase) => shiftPhase(calendar, phase));
+}
+
+export async function getExamplePlans(): Promise<Record<ExampleGoal, ExamplePlan>> {
+  const t = await getExtracted();
+  const format = await getFormatter();
+  const set = await getExampleSet();
+  const calendar = await getExampleCalendar();
+
+  const dates = {
+    exam: getGoalDate({ calendar, goal: "exam" }),
+    job: getGoalDate({ calendar, goal: "job" }),
+    move: getGoalDate({ calendar, goal: "move" }),
+  };
+
+  const examPhases = await getExamPhases({ date: dates.exam, today: calendar.today });
+  const movePhases = await getMovePhases(calendar);
+  const jobPhases = await getJobPhases(calendar);
+  const month = (date: Date) => format.dateTime(date, { month: "long", timeZone: "UTC" });
+
+  const examName = set.exam.planName(month(dates.exam));
+
+  const moveName =
+    set.move === "mexico-city"
+      ? t({
+          description: "An example goal's name. Use your language's name for Mexico City.",
+          message: "Spanish for Mexico City",
+        })
+      : t({ description: "Use your language's name for London.", message: "English for London" });
+
+  const jobName = t("Data analyst by {month}", { month: month(dates.job) });
+
+  return {
+    exam: {
+      dailyMinutes: 25,
+      date: dates.exam,
+      mark: { id: "example-exam", kind: "exam", targetLanguage: null, title: examName },
+      name: examName,
+      phases: examPhases,
+      shortName: set.exam.name,
+    },
+    job: {
+      dailyMinutes: 20,
+      date: dates.job,
+      mark: { id: "example-job", kind: "learn", targetLanguage: null, title: jobName },
+      name: jobName,
+      phases: jobPhases,
+      shortName: t("Data analyst"),
+    },
+    move: {
+      dailyMinutes: 30,
+      date: dates.move,
+      // Spanish shows Mexico's flag. English would show the US's, not London's, so the London
+      // goal keeps its letter.
+      mark: {
+        id: "example-move",
+        kind: set.move === "mexico-city" ? "language" : "learn",
+        targetLanguage: set.move === "mexico-city" ? "es" : null,
+        title: moveName,
+      },
+      name: moveName,
+      phases: movePhases,
+      shortName: moveName,
+    },
+  };
+}

@@ -7,7 +7,8 @@
     "dev": "node ../../scripts/dev/run-service.mts blog",
     "dev:app": "next dev",
     "dev:direct": "next dev -p 3300",
-    "start": "next start -p 3300",
+    "start": "node ../../scripts/dev/run-service.mts blog start:app",
+    "start:app": "next start",
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {

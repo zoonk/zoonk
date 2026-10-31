@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "player_language_all_matched": "66f2b7bc6a26e212634f32fbf519343c2b7165b86ccfc0e226f0d84f08ce2b7d",
+  "player_language_alphabet": "0e29bb42258d3a130bdf5f986a873a1037bd2a7eb679aaf7806d8bab5faf1433",
+  "player_language_blank": "dc8582f3e857a9701cc422a95a5ff924ec171d61423e87421e57f82ce35c40f3",
+  "player_language_blank_checked": "1e84823f5e091f10ff99e89e6917495dcbcc0f4f9cc0c24a32b58f75d49091a6",
+  "player_language_blank_filled": "19ed63c8d57ef1e6afd3d88b9d057c304f842f2d5686ef560ad8e9b21522b7e3",
+  "player_language_checked_word": "f4c49d38c57fa746def9b27d626bd4e78b6d094229b548f366b883ab7758dd26",
+  "player_language_correct": "aa2fd083df16d74bf65e300f4e0b3812f78772d048f2dcbb79174a3463c97ac0",
+  "player_language_incorrect": "5eeea3200cdf82018dc77aa296bdb94a6aeadf0e9937ef9e240c0fda0f5a8056",
+  "player_language_match_the_pairs": "e53d5cb42415cc15bcbbc6d347ae612e994395d5a4022ff523ed2045d64a51bb",
+  "player_language_matched": "5fde0d199809480b68bd484ff0eda4dceba9773c7a4169f40e67b39654b630a3",
+  "player_language_move_earlier": "70c42525ca482a0814452a4a14b2bd66e98c02d9c02dbd62eb03ab386ab425ed",
+  "player_language_move_later": "63b8354e8b84e14047e768e1654a6953ed10c998479f85e4039b5e393e276c85",
+  "player_language_not_a_pair": "8f9bbf63696b649449b020bccdada060d2946c114fe9a2ac2a09cf266e6ac2b2",
+  "player_language_pick_words": "72cd446eb0158d66c3448f9973e1de81a387f012f11f4146bb53a891a3c4b356",
+  "player_language_play": "48f401731c8fb2fd9a6253f85cf33b53cb9e4e25069e9c3a3127c175b2c092f1",
+  "player_language_play_pronunciation": "68e2f6a874f3d26c3a1d30f1d09ebb88a074db9796bdd6282d387a2617019124",
+  "player_language_position": "e4d401f6bc5982ab517d6f5ce8a02bc17d66ea4db282858ee6ad1fdd293eda41",
+  "player_language_pronunciation_tip": "658763c21978cc5e819e75b885b189bdad84eb39ce0df6f0ded777714cc6396e",
+  "player_language_remove": "449f72af8559b20e39e51fa9741f09e1718de8399d35d3e49f4686fb0edc7710",
+  "player_language_selected": "09347b3d336ee52c6f9f6571fad8991356b821d4238df074a6e4eb6a679437cc",
+  "player_language_show_translation": "6262567786529c3f686d60add806fedbd1e8c95fe7d10ebc982b512140752799",
+  "player_language_stop": "c799fb7e3445f63e4ee6297ce581cde18d2a33e0160da4fe473f8c72ef1f250e",
+  "player_language_translate": "28b6ffbf38aa4f51dafc3f422384a42483e6089951a663441d8b275f1fa43e74",
+  "player_language_usage": "6dfe4169db94ce9daa84bfdcf3ec527d723e75f2571c7978a0f77a7c6e2fe659",
+  "player_language_vocabulary": "15e9dd57c06672d043ea813b317abeba1c75df6b2b1ed15dc7d8d19f0efa900a",
+  "player_language_what_do_you_hear": "f4282d5a4d982f7b5b728765e6d1846d84986d45816bd8167796084646aa4c75",
+  "player_language_which_means_this": "6e7866af441c90b9c8cb0fe018702c274497b5ae25188f705c6ffabef8defba7",
+  "player_language_word_bank": "6a398fba8332e54324bf93a1662afced5c5d55683453a88603c788ad16221f67",
+  "player_language_your_answer": "fed650c9b4644dc5a1c8638da7ede795d974ea130a8939ecf115e700408216d3"
+}
+-->
+<resources>
+    <string name="player_language_translate">번역하기</string>
+    <!-- Shown over a word to pick its match when the lesson is in the learner's own language. -->
+    <string name="player_language_which_means_this">뜻이 같은 것은 무엇일까요?</string>
+    <string name="player_language_what_do_you_hear">어떤 말이 들리나요?</string>
+    <string name="player_language_play">재생</string>
+    <!-- Button that stops the sentence playing, a short label like a media player's Stop. -->
+    <string name="player_language_stop">정지</string>
+    <string name="player_language_play_pronunciation">발음 재생</string>
+    <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->
+    <string name="player_language_vocabulary">어휘: %1$s</string>
+    <!-- Screen reader name of an alphabet screen; %1$s is the letter. -->
+    <string name="player_language_alphabet">알파벳: %1$s</string>
+    <!-- Read before a note on how a word is used. -->
+    <string name="player_language_usage">쓰임:</string>
+    <!-- Read before a tip on how to say a word. -->
+    <string name="player_language_pronunciation_tip">발음 팁:</string>
+    <string name="player_language_word_bank">단어 모음</string>
+    <string name="player_language_your_answer">내 답</string>
+    <string name="player_language_pick_words">단어를 골라 답을 만드세요</string>
+    <!-- Screen reader name of a placed word; %1$d is its place in the answer, %2$s the word. -->
+    <string name="player_language_position">%1$d번째 단어: %2$s</string>
+    <!-- Screen reader name of a checked word; %1$s is the word, %2$s says whether it's correct. -->
+    <string name="player_language_checked_word">%1$s. %2$s.</string>
+    <string name="player_language_correct">정답</string>
+    <string name="player_language_incorrect">오답</string>
+    <!-- Screen reader action that moves a placed word one place earlier in the answer. -->
+    <string name="player_language_move_earlier">앞으로 옮기기</string>
+    <!-- Screen reader action that moves a placed word one place later in the answer. -->
+    <string name="player_language_move_later">뒤로 옮기기</string>
+    <!-- Screen reader action that shows a word's translation. -->
+    <string name="player_language_show_translation">번역 보기</string>
+    <!-- Screen reader name of an empty blank; %1$d is its place in the sentence. -->
+    <string name="player_language_blank">%1$d번째 빈칸</string>
+    <string name="player_language_blank_filled">%1$d번째 빈칸: %2$s</string>
+    <!-- Screen reader action that takes a placed word back to the word bank. -->
+    <string name="player_language_remove">빼기</string>
+    <!-- %1$d is the blank's place, %2$s the word, %3$s says whether it's correct. -->
+    <string name="player_language_blank_checked">빈칸 %1$d: %2$s. %3$s.</string>
+    <string name="player_language_match_the_pairs">짝을 맞추세요.</string>
+    <string name="player_language_all_matched">짝을 모두 맞췄어요. 계속하려면 확인을 누르세요.</string>
+    <!-- Screen reader state of a word already paired with its match. -->
+    <string name="player_language_matched">연결됨</string>
+    <!-- Screen reader state of the word picked to pair next. -->
+    <string name="player_language_selected">선택됨</string>
+    <!-- Said by the screen reader when two picked words don't go together. -->
+    <string name="player_language_not_a_pair">짝이 맞지 않아요</string>
+</resources>

@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_music_answer_on_guitar": "22117bdecb8dd6973e8bae6b773befb0642a058c1a2853a9542da7ce6111ea09",
+  "activities_music_badge_ear_training": "11633233fe881035b907dae8bb29bb7ba67a51cdd6b8019a511c6fd2e67b7002",
+  "activities_music_badge_play_it": "740c39473cf5361827c4860f4ff9ad5775922c44ce354e8a815caafd09ee2c78",
+  "activities_music_badge_read_listen": "c787d32e87375147154c5c887ada920a2a7cc2be2fba662401bfa7d2f4c4278a",
+  "activities_music_badge_tap_along": "34a0fcc683f16eea84fc4f8c16c5e8bed8db84e5f9704eb57d763758617ecd63",
+  "activities_music_bar_notes": "484998e6f0fe5688723d32bc8365f4f08ce3872069fecafdf0d5e4a5150f887a",
+  "activities_music_bar_of": "9ca926cea57d5270bdcc31a74e6a770f64131b5be7400db8b9ddc5626a857516",
+  "activities_music_bars": "39c607a2f4cef679af560971f05fd6b8538f9e9b8b31ad6d161a1fc9b6f893f1",
+  "activities_music_bpm": "197f3cab04a04d115498b0e497e49cafe21a93976ec2817c6694ba51bee71cde",
+  "activities_music_by_ear": "9b15f6f3303ea5f8fdcad0c9ac6f635910364cab1f8a277e48efd5ab7eeab0c7",
+  "activities_music_can_listen_now": "8fb69227d867414465d7bd68f38b3c9d2bc4573f5588ac182a2ea24d8f7ca2e0",
+  "activities_music_cant_listen_now": "e813e3e9b615c91c6978e0c2b59fd73e9ad7aec659fb1d383e66d4664549482b",
+  "activities_music_check_sound_again": "369377405e68fd62f7fe6a77efbb3342ecf4db3210856274c3877b3f1fa1e5c9",
+  "activities_music_chord_augmented": "f12ae7b532cb3754e50b4bd7cd2869cee9cc38c28bee87a735a12a580d9bba09",
+  "activities_music_chord_diminished": "927c6a7a519eeaa66b983083a099884e6811d5ee41ad4e630c8ff5b80159103d",
+  "activities_music_chord_dominant7": "821a106b0dfa4c8c4a8164c358a518a73cf73d969fe5ecb1f5e7b71d82bf89b0",
+  "activities_music_chord_major": "13cb62e571979ec976143aaee3c05df65dfff5f3431531b93bf30f844fd124a3",
+  "activities_music_chord_major7": "47062c15ac7af3bec40a642da6b8abce9ac04011152c471572c79da807c6d7bf",
+  "activities_music_chord_minor": "d09c1f45c25e82e2f8369a1076d3b4e69e5e6533824bd55a641c4920d4b15cca",
+  "activities_music_chord_minor7": "f844085100e87484423dcf9805e896d90d74c16067b89513fbf420f317212c4e",
+  "activities_music_continue": "f6de39418f70f9cdf500efcbe2f70b9a30b0e2d20c2776f4e93e047aa9283fde",
+  "activities_music_early_or_late": "c4253e8a508bf0efb7158d1649330d5c789d3abee7b429263a05d408ab243a23",
+  "activities_music_extra_taps": "1b0a9b38185ce60d6eed860d05a000990fc6930ef29973d4b74d2f5e8f2083bb",
+  "activities_music_fret": "9d95f3ab195a6f6f2b364d105e1600206c6cf23729d5cc68a6d10cd7e263b9a0",
+  "activities_music_frets": "ed0775607a3bd03a6536d5fc4192059e5d59365317de86788ee59393c9d9a465",
+  "activities_music_get_ready": "adc6a01c4c47d5ab1e13507ce73905b165a81848e55d28e1d78c17b8fe99575e",
+  "activities_music_guitar_strings": "9adde9ff0ea67d46bdfa716f7b3f72bae2469b60f2b5a7b6419d04901abed33c",
+  "activities_music_hear_it": "4f840f0bc3018dc09b75d84dd24aab29ac5e1ad8b204a723390824f4a288d72e",
+  "activities_music_higher_frets": "926a40a4693fa6b10e99a537f8bb5a391d606c6cff79f5e9fb59677c87e352c3",
+  "activities_music_listen_first": "c9c41204914225e5ce4940c087f9b1a9eaac7d3478eb16638b6f72ba6bd00010",
+  "activities_music_lower_frets": "3b54f63d611f9139e7719126f3fa3f032bf4acd12ca6b704068bbcea262a20da",
+  "activities_music_melody": "495e1ea6770075660ee22020b7aed0d225a16e5ff2633b43f9b7a22617586f7a",
+  "activities_music_no_hand_shape": "48133bb5beaf63132b6cc9236b5e72f53596700e2c4c0a550a9437cb0a18f70f",
+  "activities_music_no_notes": "e25f6ca3f1f3bbc325deeeaf09fffdb3539b4b857a451efafbd1c1f6962e648f",
+  "activities_music_not_played": "0eb6720b5277019be5b3b80ddfbf73ae589c3974aec2e1398e87679fa0339330",
+  "activities_music_note_count": "a4caaba4c1d0f0967701ef4351a1b67063f0ca91c8292cb1ca48824328493ac0",
+  "activities_music_note_flat": "a2a6eeeb8baa4c811d2582e541a1ea63e6e3b346ce3f760774608feaf38e8835",
+  "activities_music_note_sharp": "1a76a34341bb3c226d30f6cf2a8763257de9d687f7872a49e9a80f6373707d20",
+  "activities_music_on_the_keys": "261a97e6f965718d7d14648e622c1ab8f009c28593362049440f34d02df75769",
+  "activities_music_on_time": "0b61ba5cc8e7630a923a5aa8820f5cf412dae56e587d13aae83b6d391ab39a5d",
+  "activities_music_open_string": "d974826ef36f201cb6404d92680e4687e1b6a960bf97fffb682b72ce4c3d02eb",
+  "activities_music_or_space": "784742209c3e726455dae1bd80be91cb14f07f69918dc881a47ffa28c4ae43e9",
+  "activities_music_piano_keys": "23b280515a199c705ef331f478c13ad49cf9f1af04ef3dcaedd9b66eef06d6dc",
+  "activities_music_piano_nothing_pressed": "71f95cc2cc9790af9128c56c83381d94fa1c3cdffa0dc24945abecc920eeee8e",
+  "activities_music_piano_pressed": "2c534ff11a66c668146ad7e8966234ebab2d0a4831ba4e56687394acd699c425",
+  "activities_music_play_melody": "dfa8ef1bbed45101e1e2a3b2e653cd117f57806a996c0f99ddc217d49cb149db",
+  "activities_music_play_sound": "1dabcd90dc8bb97cfd58c59a5a3beb6ce1d4d4b90d6fb81221c0f9f2c055355f",
+  "activities_music_rhythm_description": "f8da96d2313b0cf284c4798f84afaa5cbbbf0e1afbcd120ca33ee71f5cdaf629",
+  "activities_music_rhythm_hits": "2d869ce3fe52b4ad60842fcb072f9f88539a06d4df72e557d3d01d59ec49e35b",
+  "activities_music_rhythm_round": "4ab3fbdb7b4d7be417198c3b5b47f82c9cba7d5cfdf9be3131eddde6b7b7de27",
+  "activities_music_rhythm_rounds": "7089f5667c87e8cb611fa6fa07bb1bda43d2c0e6add70d735ad443231cc515bb",
+  "activities_music_same_chord_guitar": "4d6a8718b856df8e5cfbbe27eb0baa73ae829341684299578e9b5e3aa04163f2",
+  "activities_music_same_notes_guitar": "43f42afaaee61685fb9df3040de7ca947d1353b4c5b8a1dd29b00d9ecc4015ef",
+  "activities_music_show_as": "a0c193d6ec6f45b91b81819660f38863bcd531647226f2f35e0f29f989c8fb69",
+  "activities_music_skip_for_now": "424c433e9f9c8f701442efd9a0b8c112821af3cbb0e2e6c1d088e5d900031b62",
+  "activities_music_sound_check_failed": "01e2cb0af93b803a01fed314e4af05cbd2d7627df9cf0054eaf7b7803d16b3f1",
+  "activities_music_sound_check_intro": "ef55aa19a044a129e4e5047e683005a1578dc4faca13dc8ac3f87b8d3e54e5bc",
+  "activities_music_sound_check_late": "5cae792bf7aeee5a607fc93a92aae7f5d68d7182468140704f9f04bc89d952cb",
+  "activities_music_sound_check_listen": "6ae4f40cb5e68850b2219b09e99e8d9602bef79d979b55a1f0d5cfdf25baa9a0",
+  "activities_music_sound_check_on_time": "dc2940c4ca94667b5cc9bda4e63b79ef13281baffc91017cf4aef8211bf42eb4",
+  "activities_music_sound_check_start": "dd1b5fc08f3acc94e8669a35a49d5543582d17fcef921f99ee07c8d192b342da",
+  "activities_music_sound_check_tap": "eae8aaf5e406ffc777460524cffa9eb592e98f1719adc3c3f6faeb65fa203ca0",
+  "activities_music_sound_check_title": "e99b2cf62b922f114e9ec860366090065053460ae98b1b5880bc1c3f548ede7e",
+  "activities_music_sound_notes": "81bf03150c31ab3bd9b11103226cc525d746a304b080e32a30c4e456baaac2ce",
+  "activities_music_sound_unavailable": "7ec9f272abe5ee62dc59b8c2490295427c16772cf4d906143050d4ae3b2c04a6",
+  "activities_music_staff": "c0603835c72edfd8430d9ce6220934f748df639d9acfbb2fa658dc5232a52374",
+  "activities_music_start_tapping": "637484f625764339038edeca5f5ac2597b93d7d4b3fe34c23d50904480bbc351",
+  "activities_music_stop": "1afbb23125a77ae9c46fef8fb0427a22d75546400a5f0bd3280d7d9e9b26954c",
+  "activities_music_string": "da32b8fcb70809957e6d70640c4614e095f97b596efa65f6c1b3c671b4fc71a4",
+  "activities_music_string_high_e": "41a464318e35960f7f8fc8670b17cfb83297e7059af1cc23a979d4478abf1963",
+  "activities_music_string_low_e": "c2012da7ff2b2f7c818a9b81d69559df577d6edb9ec009bd6f17de570c55673e",
+  "activities_music_string_position": "b42c57bcd3b31775e8d04ffb884ffc85e5488cc3e6b617886098858a922367a3",
+  "activities_music_tab": "e875fa6acbba2f4ecae96a00754e9766bb34ada584a4b75d6053e4ad2823fb76",
+  "activities_music_tap_early": "b7382d84022bd84f6bcc60cb8e3ff07408a921932216161c2e710d195e9d353f",
+  "activities_music_tap_here": "8eeed8ebe7087bf7f251c2fecbc61a92a17acda9936bd3de0563ca57a94b44bb",
+  "activities_music_tap_late": "6a4aa60f3fbd2223ac116e123a5db66b2a2e6d3c7fefee114b241729c1db695c",
+  "activities_music_tap_missed": "a9499728d086bb2fad40b74355f54a3b95cbc00fa91b1079430e14ab8837b1c8",
+  "activities_music_taps_on_time": "4284d9db6e23145b177ccbbd8b83e89944dcb8ec4f348e79adbfcdf26afcdcf0",
+  "activities_music_tempo": "c4e2d22cb1c08a92cf6349c9debacbaf0d116cba07890393c23b09fd9d7d3b31",
+  "activities_music_try_again": "2272d778237a2288e86b2d430a716252d29a1c3286ba082ca6cdc655be28a244"
+}
+-->
+<resources>
+    <string name="activities_music_badge_play_it">演奏する</string>
+    <!-- Training the ear to recognize notes and chords by their sound. -->
+    <string name="activities_music_badge_ear_training">耳のトレーニング</string>
+    <!-- Reading music while it plays. -->
+    <string name="activities_music_badge_read_listen">楽譜を見ながら聴く</string>
+    <!-- Tapping a rhythm in time with the beat. -->
+    <string name="activities_music_badge_tap_along">リズムに合わせてタップする</string>
+    <!-- A note name read aloud, like "F sharp". -->
+    <string name="activities_music_note_sharp">%1$sシャープ</string>
+    <!-- A note name read aloud, like "E flat". -->
+    <string name="activities_music_note_flat">%1$sフラット</string>
+    <!-- A chord's name: its root note, then the chord's kind, like "C major". -->
+    <string name="activities_music_chord_major">%1$sメジャー</string>
+    <string name="activities_music_chord_minor">%1$sマイナー</string>
+    <string name="activities_music_chord_augmented">%1$sオーギュメント</string>
+    <string name="activities_music_chord_diminished">%1$sディミニッシュ</string>
+    <string name="activities_music_chord_dominant7">%1$sドミナントセブンス</string>
+    <string name="activities_music_chord_major7">%1$sメジャーセブンス</string>
+    <string name="activities_music_chord_minor7">%1$sマイナーセブンス</string>
+    <!-- The title while the notes to find are only heard, not named. -->
+    <string name="activities_music_by_ear">音の聴き取り</string>
+    <!-- How many notes the target has, like "2 notes". -->
+    <plurals name="activities_music_note_count">
+        <item quantity="other">%d音</item>
+    </plurals>
+    <!-- Nothing is pressed on the instrument. -->
+    <string name="activities_music_no_notes">まだ音を選んでいません</string>
+    <!-- For TalkBack: the notes the instrument plays now, like "On the keys: C, E flat, G". -->
+    <string name="activities_music_on_the_keys">鍵盤で鳴る音：%1$s</string>
+    <!-- Plays the chord or notes to find by ear. -->
+    <string name="activities_music_play_sound">音を再生する</string>
+    <!-- Plays the notes on the keys. -->
+    <string name="activities_music_hear_it">聴く</string>
+    <!-- On a screen to find a sound by ear: shows the sound's notes as text instead, for the rest of the day. -->
+    <string name="activities_music_cant_listen_now">今は音を聴けない</string>
+    <!-- After "I can't listen now": goes back to finding sounds by ear. -->
+    <string name="activities_music_can_listen_now">今は音を聴ける</string>
+    <!-- The notes the sound plays, as text, like "The sound plays: C, G". -->
+    <string name="activities_music_sound_notes">鳴る音：%1$s</string>
+    <!-- Under an instrument when the device couldn't play sound. -->
+    <string name="activities_music_sound_unavailable">音を再生できませんでした。音名はすべて画面で確認できます。</string>
+    <!-- For TalkBack: the piano keyboard's name. -->
+    <string name="activities_music_piano_keys">ピアノの鍵盤</string>
+    <!-- For TalkBack: the checked piano keyboard, its lowest and highest notes, then the notes the learner pressed, like "A piano keyboard from C to B. Pressed: C, E flat, G." -->
+    <string name="activities_music_piano_pressed">%1$sから%2$sまでのピアノの鍵盤です。押した鍵盤：%3$s。</string>
+    <!-- For TalkBack: the checked piano keyboard, its lowest and highest notes, when the learner pressed no key, like "A piano keyboard from C to B. Nothing pressed." -->
+    <string name="activities_music_piano_nothing_pressed">%1$sから%2$sまでのピアノの鍵盤です。どの鍵盤も押していません。</string>
+    <!-- For TalkBack: the guitar neck's name. -->
+    <string name="activities_music_guitar_strings">ギターの弦</string>
+    <!-- Above a guitar shape that plays the chord on the keys. -->
+    <string name="activities_music_same_chord_guitar">同じコードをギターで弾く</string>
+    <!-- Above a guitar shape that plays the notes on the keys. -->
+    <string name="activities_music_same_notes_guitar">同じ音をギターで弾く</string>
+    <!-- Above a guitar shape that plays the right notes, after the check. -->
+    <string name="activities_music_answer_on_guitar">正解の音を弾く方法の例</string>
+    <!-- Under the piano when the pressed notes can't be played as one guitar shape. -->
+    <string name="activities_music_no_hand_shape">ギターでは、この音の組み合わせを一度に押さえられません。</string>
+    <!-- Moves the guitar neck's window toward the nut. -->
+    <string name="activities_music_lower_frets">低いフレットへ</string>
+    <!-- Moves the guitar neck's window up the neck. -->
+    <string name="activities_music_higher_frets">高いフレットへ</string>
+    <!-- Which frets of the guitar neck show, like "Frets 1 to 4". -->
+    <string name="activities_music_frets">%1$d〜%2$dフレット</string>
+    <!-- The thickest guitar string, read aloud. -->
+    <string name="activities_music_string_low_e">低音のE弦</string>
+    <!-- The thinnest guitar string, read aloud. -->
+    <string name="activities_music_string_high_e">高音のE弦</string>
+    <!-- A guitar string named by its open note, like "A string". -->
+    <string name="activities_music_string">%1$s弦</string>
+    <!-- A guitar string left silent (muted). -->
+    <string name="activities_music_not_played">弾かない</string>
+    <!-- A guitar string played open, with the note it sounds, like "Open, D". -->
+    <string name="activities_music_open_string">開放弦、%1$s</string>
+    <!-- A fret on a guitar string, with the note it sounds, like "Fret 3, G". -->
+    <string name="activities_music_fret">%1$dフレット、%2$s</string>
+    <!-- For TalkBack: one string of a guitar shape, like "A string: Fret 3, C". -->
+    <string name="activities_music_string_position">%1$s：%2$s</string>
+    <!-- The title of a melody that has none. -->
+    <string name="activities_music_melody">メロディー</string>
+    <!-- For TalkBack: the choice between showing the music as a staff or as guitar tab. -->
+    <string name="activities_music_show_as">楽譜の表示形式</string>
+    <!-- Music written on the five-line staff. -->
+    <string name="activities_music_staff">五線譜</string>
+    <!-- Guitar tablature: music written as fret numbers on the guitar's strings. -->
+    <string name="activities_music_tab">タブ譜</string>
+    <string name="activities_music_play_melody">メロディーを再生する</string>
+    <!-- Stops the melody playing. -->
+    <string name="activities_music_stop">停止</string>
+    <!-- Which bar of the melody is playing, like "Bar 2 of 4". -->
+    <string name="activities_music_bar_of">%1$d小節目（全%2$d小節）</string>
+    <!-- How many bars the melody has, like "4 bars". -->
+    <plurals name="activities_music_bars">
+        <item quantity="other">%d小節</item>
+    </plurals>
+    <!-- For TalkBack: the tempo menu with its choice, like "Tempo: 80 bpm". -->
+    <string name="activities_music_tempo">テンポ：%1$s</string>
+    <!-- Beats per minute, like "80 bpm". -->
+    <string name="activities_music_bpm">%1$d bpm</string>
+    <!-- For TalkBack: one bar of the melody and its notes, like "Bar 1: E, E, F, G." -->
+    <string name="activities_music_bar_notes">%1$d小節目：%2$s。</string>
+    <!-- The rhythm's tempo while one round plays, like "90 bpm · Round 1 of 2". -->
+    <string name="activities_music_rhythm_round">%1$d bpm · %2$d回目（全%3$d回）</string>
+    <!-- The rhythm's tempo and how many times it repeats, like "90 bpm · 2 rounds". -->
+    <plurals name="activities_music_rhythm_rounds">
+        <item quantity="other">%1$d bpm · %2$d回</item>
+    </plurals>
+    <!-- For TalkBack: the rhythm in words, like "A rhythm of 16 steps with a beat every 4. Tap on steps 1, 4, 7, 11, 13, over a click on every beat." -->
+    <plurals name="activities_music_rhythm_description">
+        <item quantity="other">%1$dステップのリズムで、%2$dステップごとに拍があります。拍ごとのクリック音を聞きながら、ステップ%3$sでタップしてください。</item>
+    </plurals>
+    <!-- The legend for the rhythm's steps to tap. -->
+    <string name="activities_music_rhythm_hits">タップする位置</string>
+    <!-- The legend for a tap that came on time. -->
+    <string name="activities_music_on_time">タイミングが合った</string>
+    <!-- The legend for a tap that came too early or too late. -->
+    <string name="activities_music_early_or_late">早い・遅い</string>
+    <!-- On the tap pad while the count-in clicks play. -->
+    <string name="activities_music_get_ready">まもなく始まります…</string>
+    <!-- The tap pad's label. -->
+    <string name="activities_music_tap_here">ここをタップ</string>
+    <!-- Under the tap pad when a keyboard is attached. -->
+    <string name="activities_music_or_space">またはSpaceキーを押す</string>
+    <!-- Plays one round of the rhythm with its clicks before the learner taps. -->
+    <string name="activities_music_listen_first">まず聞く</string>
+    <string name="activities_music_try_again">もう一度試す</string>
+    <string name="activities_music_start_tapping">タップを始める</string>
+    <!-- Measures again how late this device plays sound. -->
+    <string name="activities_music_check_sound_again">音の遅れをもう一度確認する</string>
+    <!-- How many of the rhythm's taps came on time, like "8 of 10 taps on time." The count is the total. -->
+    <plurals name="activities_music_taps_on_time">
+        <item quantity="other">タイミングが合ったタップは%1$d回でした（全%2$d回）。</item>
+    </plurals>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms early". The first value is which tap, counted from 1. -->
+    <string name="activities_music_tap_early">%1$s回目のタップは%2$d ミリ秒早かったです。</string>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms late". The first value is which tap, counted from 1. -->
+    <string name="activities_music_tap_late">%1$s回目のタップは%2$d ミリ秒遅れました。</string>
+    <!-- Which tap was missed, counted from 1, like "Tap 3 was missed." -->
+    <string name="activities_music_tap_missed">%1$s回目のタップがありませんでした。</string>
+    <!-- Taps that matched none of the rhythm's steps. -->
+    <plurals name="activities_music_extra_taps">
+        <item quantity="other">余分なタップが%d回ありました。</item>
+    </plurals>
+    <!-- The title of the one-time check of how late this device plays sound. -->
+    <string name="activities_music_sound_check_title">音のタイミングを調整</string>
+    <plurals name="activities_music_sound_check_intro">
+        <item quantity="other">ヘッドホンでは音が少し遅れて聞こえることがあります。一度、%1$d回のクリック音に合わせてタップすると、この端末でリズムを正しく判定できるようになります。</item>
+    </plurals>
+    <string name="activities_music_sound_check_listen">クリック音を聞いてください…</string>
+    <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
+    <string name="activities_music_sound_check_tap">クリック音に合わせてタップ · %1$d回目（全%2$d回）</string>
+    <string name="activities_music_sound_check_failed">クリック音とタップのタイミングを十分に確認できませんでした。もう一度、音が鳴るたびにタップしてみてください。</string>
+    <string name="activities_music_sound_check_on_time">この端末では音が遅れずに聞こえます。</string>
+    <!-- How late this device plays sound, like "about 120 ms late". -->
+    <string name="activities_music_sound_check_late">この端末では音が約%1$d ミリ秒遅れます。リズムの判定では、その遅れを補正します。</string>
+    <string name="activities_music_sound_check_start">音の確認を始める</string>
+    <string name="activities_music_skip_for_now">今はスキップする</string>
+    <string name="activities_music_continue">続ける</string>
+</resources>

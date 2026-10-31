@@ -1,54 +1,10 @@
+import Foundation
+
 let progressUITestSnapshotJSON =
   #"""
   {
-    "overview": {
-      "activity": {
-        "learningDays": 12,
-        "totalLearningSeconds": 7200,
-        "totalLessonCompletions": 24
-      },
-      "energy": 82,
-      "level": {
-        "belt": "green",
-        "bpPerLevel": 1000,
-        "bpToNextLevel": 240,
-        "isMaxLevel": false,
-        "level": 4,
-        "progressInLevel": 760,
-        "totalBrainPower": 3760
-      },
-      "score": {
-        "correctAnswers": 41,
-        "incorrectAnswers": 9,
-        "score": 82,
-        "totalAnswers": 50
-      },
-      "strongestDaypart": {
-        "daypart": "morning",
-        "performance": {
-          "correctAnswers": 20,
-          "incorrectAnswers": 2,
-          "score": 90.9,
-          "totalAnswers": 22
-        }
-      },
-      "strongestWeekday": {
-        "performance": {
-          "correctAnswers": 14,
-          "incorrectAnswers": 1,
-          "score": 93.3,
-          "totalAnswers": 15
-        },
-        "weekday": "tuesday"
-      }
-    },
     "activity": {
-      "days": [
-        { "date": "2026-05-31", "lessonCompletions": 2 },
-        { "date": "2026-06-30", "lessonCompletions": 5 },
-        { "date": "2026-07-31", "lessonCompletions": 8 },
-        { "date": "2026-08-20", "lessonCompletions": 9 }
-      ],
+      "days": \#(progressUITestActivityDaysJSON),
       "summary": {
         "learningDays": 12,
         "totalLearningSeconds": 7200,
@@ -57,12 +13,7 @@ let progressUITestSnapshotJSON =
     },
     "energy": {
       "currentEnergy": 82,
-      "days": [
-        { "date": "2026-05-31", "energy": null },
-        { "date": "2026-06-30", "energy": 64 },
-        { "date": "2026-07-31", "energy": 73 },
-        { "date": "2026-08-20", "energy": 82 }
-      ],
+      "days": \#(progressUITestEnergyDaysJSON),
       "insights": { "averageEnergy": 73, "fullEnergyDays": 3 }
     },
     "level": {
@@ -71,6 +22,7 @@ let progressUITestSnapshotJSON =
       "bpToNextLevel": 240,
       "isMaxLevel": false,
       "level": 4,
+      "nextBelt": { "belt": "blue", "brainPowerToGo": 6240, "startBrainPower": 10000 },
       "progressInLevel": 760,
       "totalBrainPower": 3760
     },
@@ -152,6 +104,8 @@ let progressUITestSnapshotJSON =
           }
         }
       ],
+      "dayVerdict": { "notEnough": {} },
+      "minimumAnswers": 10,
       "strongestDaypart": {
         "daypart": "morning",
         "performance": {
@@ -170,6 +124,20 @@ let progressUITestSnapshotJSON =
         },
         "weekday": "tuesday"
       },
+      "timeVerdict": {
+        "best": {
+          "_0": {
+            "daypart": "morning",
+            "performance": {
+              "correctAnswers": 20,
+              "incorrectAnswers": 2,
+              "score": 90.9,
+              "totalAnswers": 22
+            }
+          }
+        }
+      },
+      "weekSpread": null,
       "weekdays": [
         {
           "performance": { "correctAnswers": 0, "incorrectAnswers": 0, "score": 0, "totalAnswers": 0 },
@@ -204,29 +172,9 @@ let progressUITestSnapshotJSON =
   }
   """#
 
-let progressDaypartOnlyUITestSnapshotJSON =
+let progressEmptyUITestSnapshotJSON =
   #"""
   {
-    "overview": {
-      "activity": {
-        "learningDays": 0,
-        "totalLearningSeconds": 0,
-        "totalLessonCompletions": 0
-      },
-      "energy": null,
-      "level": null,
-      "score": null,
-      "strongestDaypart": {
-        "daypart": "morning",
-        "performance": {
-          "correctAnswers": 9,
-          "incorrectAnswers": 1,
-          "score": 90,
-          "totalAnswers": 10
-        }
-      },
-      "strongestWeekday": null
-    },
     "activity": {
       "days": [],
       "summary": {
@@ -242,32 +190,29 @@ let progressDaypartOnlyUITestSnapshotJSON =
   }
   """#
 
-let progressEmptyUITestSnapshotJSON =
-  #"""
-  {
-    "overview": {
-      "activity": {
-        "learningDays": 0,
-        "totalLearningSeconds": 0,
-        "totalLessonCompletions": 0
-      },
-      "energy": null,
-      "level": null,
-      "score": null,
-      "strongestDaypart": null,
-      "strongestWeekday": null
-    },
-    "activity": {
-      "days": [],
-      "summary": {
-        "learningDays": 0,
-        "totalLearningSeconds": 0,
-        "totalLessonCompletions": 0
-      }
-    },
-    "energy": null,
-    "level": null,
-    "patterns": null,
-    "score": null
+private let progressUITestDates: [String] = {
+  var calendar = Calendar(identifier: .gregorian)
+  calendar.timeZone = .gmt
+  let end = calendar.date(from: DateComponents(year: 2026, month: 8, day: 20))!
+  let start = calendar.date(byAdding: .day, value: -(52 * 7 + 4), to: end)!
+  var format = Date.ISO8601FormatStyle().year().month().day()
+  format.timeZone = .gmt
+
+  return (0...(52 * 7 + 4)).map {
+    calendar.date(byAdding: .day, value: $0, to: start)!.formatted(format)
   }
-  """#
+}()
+
+private let progressUITestActivityDaysJSON =
+  "["
+  + progressUITestDates.enumerated().map { index, date in
+    let count = date == "2026-08-20" ? 9 : (index % 5 == 0 ? index % 7 : 0)
+    return #"{ "activitiesCompleted": \#(count), "date": "\#(date)" }"#
+  }.joined(separator: ", ") + "]"
+
+private let progressUITestEnergyDaysJSON =
+  "["
+  + progressUITestDates.enumerated().map { index, date in
+    let energy = date == "2026-08-20" ? "82" : (index < 200 ? "null" : String(40 + index % 60))
+    return #"{ "date": "\#(date)", "energy": \#(energy) }"#
+  }.joined(separator: ", ") + "]"

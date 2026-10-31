@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "answer_tag_correct": "a46a5d3009df5c0c9e2e9711a31a97115319aab89f597c92dd203d9ee58b70f6",
+  "answer_tag_your_answer": "62b05972bb20a55ad3074547616da7ae1770e41bb49f8632ad06e76f05316a86",
+  "answer_tag_your_guess": "39a470de383c99efaf21890d739721fab6ae322e5601252e3a0f42e553bd069a",
+  "belt_black": "4a995cdff733ebd1c5b6b5fb246468d702f6a3943d7e5fa85835e49c740d0171",
+  "belt_blue": "2695f30c8e0621232a7275b69a5181d53ca0a4df9ef1850f657d8f89a3799469",
+  "belt_brown": "eb907ba7cb34e20a988f8ba0360d40dc339ea314485e6aad23450b1ba2908d33",
+  "belt_gray": "505e1c83013867c1415bf86fa62913d177b0ba653d387fcb03350dbcbdff7d81",
+  "belt_green": "d15ad55b5c2f61595ac38ff2877f73d634a9684008973f63126a9a5338fc3c66",
+  "belt_level": "fe39142aff461574525abc4ceaaa7c007d1f79b5077d21625a7dd25f33f9e315",
+  "belt_orange": "972289101c9c68ed9793cf2fe5b40d9e0282291ec1021b4b6e9d9b0cf254fca9",
+  "belt_purple": "4618a94ee1a87050dce0176292dd40a10c03b71cb0a77f5fc257acf4ad573f78",
+  "belt_red": "dfe390117ae16bb1dbf2097131eef76758f8798eb07348c41cb02f903caba925",
+  "belt_white": "8a582741fc9f1c3326140f658510ad572de670eae780b5194ab6be653febf36c",
+  "belt_yellow": "978d0a5e39edf7fd2916d58413df9229e31c1d0966c1f214713b40dcb7fc7e77",
+  "close_sheet": "2226e0bb1dd73bd5f3492587f5d4f2cadd3546ebe1a6eae6515e2ffff8ea0418",
+  "daily_time_covers_everything": "962930ca47f22b017499e0f4f005204fd4e6e03d7e93edeed734f9273eff72eb",
+  "daily_time_suggested": "a8ce19659a1859cd55aa58f665179d900d4ded45a33b6a2b58eb70db50118ef9",
+  "diff_line_spoken": "f66f3dacd3e54539f78d1b11c26a47e16c8b32eb8beaa9c1958ff67f5ac38139",
+  "disclosure_collapsed": "fa1bad44df758dfa625098ee66aee098f1952e1601d149bb16e36b7a94b449b6",
+  "disclosure_expanded": "27af94e7a4369888430cbe0ef55a24057455dfaad9c6d8691aa91621de99a6a1",
+  "gate_log_in": "3f1e893127f663b43010ec90f4b5e06e7a3ae15633e3cc836bb377fce475fff8",
+  "gate_session_ended_description": "23748cb2bb188e5fd1155f1fd762ea92d777c3748969e58350106b33cf3b4dd8",
+  "gate_session_ended_title": "a6c574a2be5c2a5a1a9c81bcf2d6decc0e86f7f80b9714edb07f647f8aaca731",
+  "gate_sign_in_description": "cc5a2dd7fdb5ab160d508461303c9789bab61642c8edee50f190fac5c942b208",
+  "gate_sign_in_title": "8a5e135549f45f9240e7f441a9eb2a59fcfa757ecf0061bf024cdfae6eb85e49",
+  "gate_start_free": "4f6cb625cea2e267aedb8b81a57dfe4b6e89b6b1ab4b882c9ee6fd4bc2247085",
+  "gate_start_goal": "f82275fe95452c39957ca373ced73406c90be17c5f226858fb0e249567668ad8",
+  "gate_start_goal_description": "c50cea4f46376451aace50b56fbdfd00dc8de2455f3468c23c43528acf4df4a9",
+  "gate_start_goal_title": "9eb2e139f9c41b9b08c46b6b972cb6d96481cbd16cca5aa2099958458fe50cd6",
+  "gate_start_something_new": "9d5fcca3665a2328d89a37393abf0b8825327810c365f0ccd22637cb38927384",
+  "lesson_summaries_title": "2bc180e0bc0a3d3aa46398616298bf8d1aaffafd192243ce41dc71eec154306f",
+  "lessons_coming_up": "c0ca0eac66c24c7d3ec1eb8d79833d421dd1c4a802b400f6c748d3125e2f573d",
+  "lessons_done": "c72bc8d69bf4896de630a2674b1467b23039094adebf73504ccfb5621b0c4506",
+  "lessons_done_count": "748bf7c16824f4045c811a2f84f5cb21d5f7d8116bf4c9690ad78eb32b592dbb",
+  "lessons_position": "2a657372973f462183545f2f859d01fd617af201d46c1d81c261dcca7bd310a8",
+  "lessons_title": "12443d3790163134d54734bdf11b0254f090569d72b5c87c0821aff89c2cf9be",
+  "lessons_up_next": "3d934ae26df298c84ff6ad3e7c8dc0a6a1ed81143bf2c83bf71260d92c691de3",
+  "list_row_states": "2e2886527e22ffcb16f2edba9ba71325b4f828eb88ae613ed720ac0a61c4035a",
+  "load_failed_description": "9ed9aa1cc4d8b5db49a0800506c38e9417168664c89a6b69e5748cee0193d4f2",
+  "load_failed_title": "cc1cc95a1f6e1e1b152e3b89be8f5c93fb18f106ca99b2b20955c9eea9050d60",
+  "load_failed_try_again": "fcf4e2a3446679a6aee46830a337f7c483876aab3a300142110336633923dca5",
+  "navigation_back": "612c1236cfb72db287ccfc6641f5a3eab287af4493e6b279b21e001250f746fc",
+  "navigation_buddy": "845354b26596c0b96604dd4c00bb010be10c1fd2648084cdf8f627f5421a3ef1",
+  "navigation_exam": "ac95c0d56fd0c9cc4630e504c887c710071adeeff29f24e6e7a1001bee49fd3a",
+  "navigation_mind_maps": "b1055fb3d20c40e9279c9fa8b6ea86e4c107efe0898763f966e76ce32ec0fa8b",
+  "navigation_mistakes": "1f57824caf03c70d707a0fc8563eb96d89bd6c5f2d89f591bfccad8fba00a818",
+  "navigation_plan": "2d96bcc0f5c7d720e9743a360f9059afc1a05ebd06c2c905b23725a0c521881a",
+  "navigation_speaking": "3748dc876f90eac9e94c9d3398b10c6b63a9f1c1119d519bfa8b126fbfeac634",
+  "navigation_statistics": "50e605bd81c1591010e99f38018ca36a3dfab09a4b2e82af64e80061839b5968",
+  "navigation_study": "bbc4c3383534af356e5029461ac65fed0b60433a84719cdaec1ece97cf16af40",
+  "navigation_today": "394c9afd2080d1e22c9243cc06d2b54686494f03178b7df2c63f3782e7f8cb49",
+  "navigation_user_menu": "0890331c80033fc75f70933760ad3841b8565014e674905a167f20d02e1e528f",
+  "not_found_description": "8191ddd8f0b473232b5bd8b6fc8c6b573bb0f82c899b46561c343c59e59995e7",
+  "not_found_go_home": "d8c5aa16a565b1b56b210a5e8a2acf1b88dc33b3ad8b0ea608a181bc376ba879",
+  "not_found_title": "12326177841bbc90578b294f5e0784ea93661a9b3e09d3fefdc431cd05ce4c8b",
+  "suggestion_save_failed": "02fbee30e383655064d1e2eb7fe48ce9521e4e2fc702ca3eeb5513fe63fa06cf",
+  "suggestion_view": "e3a1fb8f637296b1df8426e16ce50ab0f7e50bd50aacf93f195548bbe8f8599a",
+  "task_leave": "c1f53a985e7316412400f7f986d42a52663c3a0411340458979daf05c7a44180",
+  "test_out_skip_chapter": "f36c9c347db1421bc4790c959c318d570a9637919c8e020e1a9c8b1afbd640d2",
+  "test_out_skip_unit": "f555ce818d63ffdfec0b697b4ad97fa285ec832970e36a593a4a5ec58894ac01",
+  "test_out_title": "99d0a6baeb202c06b9c436031d22cbe2cd84ecfbbbc4f4d3b79c8ad07e1be040",
+  "web_page_unavailable": "9412c97ce9e2b4e9954ffc571950465206b6af7a2e17ea4c3a50b7dcf5a5a1c2"
+}
+-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="navigation_today">오늘</string>
+    <string name="navigation_plan">계획</string>
+    <string name="navigation_buddy">짝꿍</string>
+    <string name="navigation_study">학습</string>
+    <string name="navigation_mistakes">오답 노트</string>
+    <string name="navigation_exam">시험</string>
+    <string name="navigation_speaking">말하기</string>
+    <string name="navigation_mind_maps">마인드맵</string>
+    <string name="navigation_statistics">통계</string>
+    <string name="navigation_back">뒤로</string>
+    <string name="navigation_user_menu">사용자 메뉴</string>
+    <string name="task_leave">나가기</string>
+    <string name="gate_sign_in_title">계속하려면 로그인하세요</string>
+    <string name="gate_sign_in_description">로그인해 이어서 학습하거나 무료로 시작하세요.</string>
+    <string name="gate_session_ended_title">로그인 세션이 끝났어요</string>
+    <string name="gate_session_ended_description">로그인해 계획을 이어가세요.</string>
+    <string name="gate_log_in">로그인</string>
+    <string name="gate_start_free">무료로 시작하기</string>
+    <string name="gate_start_something_new">새로 시작하기</string>
+    <string name="gate_start_goal_title">목표부터 시작하기</string>
+    <string name="gate_start_goal_description">배우고 싶은 것을 알려 주세요. 목표에 도달할 때까지 매일 무엇을 공부할지 계획해 드려요.</string>
+    <string name="gate_start_goal">목표 시작하기</string>
+    <string name="belt_white">흰띠</string>
+    <string name="belt_yellow">노란띠</string>
+    <string name="belt_orange">주황띠</string>
+    <string name="belt_green">초록띠</string>
+    <string name="belt_blue">파란띠</string>
+    <string name="belt_purple">보라띠</string>
+    <string name="belt_brown">갈색띠</string>
+    <string name="belt_red">빨간띠</string>
+    <string name="belt_gray">회색띠</string>
+    <string name="belt_black">검은띠</string>
+    <string name="belt_level">%1$s, 레벨 %2$s</string>
+    <string name="answer_tag_correct">정답</string>
+    <string name="answer_tag_your_answer">내 답</string>
+    <string name="answer_tag_your_guess">내 예상</string>
+    <string name="load_failed_title">페이지를 불러오지 못했어요</string>
+    <string name="load_failed_description">인터넷 연결이나 서비스에 문제가 있을 수 있어요. 다시 시도하면 대부분 해결돼요.</string>
+    <string name="load_failed_try_again">다시 시도</string>
+    <string name="suggestion_view">보기</string>
+    <string name="suggestion_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
+    <string name="disclosure_expanded">펼쳐짐</string>
+    <string name="disclosure_collapsed">접힘</string>
+    <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->
+    <string name="diff_line_spoken">%1$s: %2$s</string>
+    <string name="lessons_title">레슨</string>
+    <!-- Lessons done of the total: "2 of 6". -->
+    <string name="lessons_done_count">%1$s/%2$s</string>
+    <!-- A lesson's number in its list: "3." -->
+    <string name="lessons_position">%1$s.</string>
+    <!-- TalkBack names each lesson's mark. Done: finished. Up next: the one lesson to do now. Coming up: the lessons after it, for later. The three must read as clearly different states. -->
+    <string name="lessons_done">완료</string>
+    <string name="lessons_up_next">다음 레슨</string>
+    <string name="lessons_coming_up">앞으로 배울 내용</string>
+    <!-- Heads the key ideas of each lesson in a chapter's or unit's summary. -->
+    <string name="lesson_summaries_title">요약</string>
+    <string name="test_out_title">이미 아는 내용인가요?</string>
+    <string name="test_out_skip_chapter">테스트를 보고 챕터 건너뛰기</string>
+    <string name="test_out_skip_unit">테스트를 보고 단원 건너뛰기</string>
+    <string name="not_found_title">페이지를 찾을 수 없어요</string>
+    <string name="not_found_description">오래된 링크이거나 주소가 잘못 입력되었을 수 있어요.</string>
+    <string name="not_found_go_home">홈으로 가기</string>
+    <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
+    <string name="list_row_states">%1$s, %2$s</string>
+    <!-- A toast, at most two short lines: a link did nothing because no app on the phone can open web pages. Same meaning as Android's own "No app can perform this action". -->
+    <string name="web_page_unavailable">이 페이지를 열 수 있는 앱이 없어요.</string>
+    <!-- Replaces Compose's own string of this name, whose Portuguese and German read as closing a spreadsheet. TalkBack's label for the dimmed area behind a bottom sheet, which closes the sheet. "Sheet" means a panel that slides up from the bottom of the screen, not a spreadsheet or a sheet of paper. -->
+    <string name="close_sheet" tools:override="true" tools:ignore="UnusedResources">하단 패널 닫기</string>
+    <!-- In the time a day picker's menu. %1$s is a daily study time, such as "4 h". The same word as "We suggest 4 h a day" and "Use the suggested 4 h a day" beside it: suggested, not recommended. -->
+    <string name="daily_time_suggested">%1$s (제안)</string>
+    <!-- In the time a day picker's menu: the time that covers the whole goal or exam. %1$s is a daily study time, such as "13 h 30 min". -->
+    <string name="daily_time_covers_everything">%1$s (모든 내용 학습 가능)</string>
+</resources>

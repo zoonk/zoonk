@@ -10,6 +10,8 @@ execFileSync(process.execPath, [fileURLToPath(new URL("check-catalogs.mts", impo
 
 const translationArguments = process.argv.slice(2);
 
+execFileSync("reuse-translations", [], { cwd: ANDROID_ROOT, stdio: "inherit" });
+
 execFileSync("eloqnt", ["translate", ...translationArguments], {
   cwd: ANDROID_ROOT,
   stdio: "inherit",

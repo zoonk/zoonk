@@ -1,0 +1,295 @@
+import "server-only";
+import { prisma } from "@zoonk/db";
+import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
+import { getAllowance } from "../../entitlements/get-allowance";
+import { loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
+import { loadNoticeDates } from "../../exams/_utils/notice-day";
+import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
+import { getExamDocument } from "../../exams/exam-document";
+import { getOwnLevel } from "../../learner/placement/placement-contract";
+import { listTaughtStandInSkills } from "../../lookahead/plan-outline-needs";
+import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status";
+import { loadStudyWeek } from "../../progress/_utils/load-study-week";
+import { getExamPrepAccess, getFreeWeekEnd } from "../../sessions/_utils/exam-access";
+import { loadTodayLearnBlocks } from "../../view-models/_utils/today-lesson-order";
+import { getNoticeWaitState } from "../notice-wait";
+import { type PlanView } from "../plan-view-contract";
+import { getSkillArea } from "../planner/graph-areas";
+import { getPlanCalendar, toIsoDate } from "../planner/plan-calendar";
+import { type PlanGraph, type PlanSettings } from "../planner/plan-state";
+import { foldChangeAreas } from "./fold-part-areas";
+import { loadPlanReadProjection } from "./load-plan-read";
+import { loadGraphPartAreas } from "./part-areas";
+import { findPlanPhase } from "./phase-states";
+import { loadPlanChangeViews } from "./plan-change-view";
+import { type PlanContext } from "./plan-context";
+import { loadPlanCourse } from "./plan-course";
+import { isPlanFinished } from "./plan-end";
+import { MINUTES_PER_HOUR, buildEstimateView } from "./plan-estimate-view";
+import { buildSavedPlanNumbersView } from "./plan-numbers-view";
+import { buildPlanPath } from "./plan-path-view";
+import { getSkillAreas } from "./plan-phase-views";
+import { type PlanReadContext } from "./plan-read-projection";
+import { buildScheduleView } from "./plan-schedule-view";
+import { getPlanSummaryBasis, readFreshPlanSummary } from "./plan-summary";
+import { buildPlanTimingView } from "./plan-timing-view";
+import { loadPlanTools, toPlanToolViews } from "./plan-tools";
+import { readSavedBases, readSavedFeasibility } from "./saved-plan-advice";
+import { getShortPlanShape, toShortPlanView } from "./short-plan-view";
+import { getWrittenPracticeView } from "./written-practice-view";
+
+function listAreaNames(graph: PlanGraph): string[] {
+  return [...new Set(graph.skills.map((skill) => getSkillArea({ graph, skill })))];
+}
+
+function buildAreas({
+  graph,
+  partAreas,
+  settings,
+}: {
+  graph: PlanGraph;
+  partAreas: ReadonlyMap<string, string>;
+  settings: PlanSettings;
+}): PlanView["areas"] {
+  const names = graph.skills.map((skill) => getSkillArea({ graph, skill }));
+
+  return listAreaNames(graph).map((name) => ({
+    focusPart: settings.focusParts.find((part) => part.area === name)?.name ?? null,
+    focused: settings.focusAreas.includes(name),
+    name,
+    partOf: partAreas.get(name) ?? null,
+    pastBasics: settings.pastBasicsAreas.includes(name),
+    reduced: settings.reducedAreas.includes(name),
+    skillCount: names.filter((area) => area === name).length,
+    skipped: settings.skippedAreas.includes(name),
+  }));
+}
+
+async function getAccess(context: PlanReadContext): Promise<PlanView["access"]> {
+  if (context.goal.kind !== "exam") {
+    return { freeUntil: null, freeWeekOver: false, mocksRequirePlus: false };
+  }
+
+  const allowance = await getAllowance();
+  const examPrep = allowance?.examPrep ?? null;
+
+  const freeUntil = getFreeWeekEnd({ examPrep, goal: context.goal, timeZone: context.timeZone });
+
+  return {
+    freeUntil: freeUntil ? toIsoDate(freeUntil) : null,
+    freeWeekOver: getExamPrepAccess({
+      examPrep,
+      goal: context.goal,
+      timeZone: context.timeZone,
+      today: context.today,
+    }).trialEnded,
+    mocksRequirePlus: !(examPrep?.includesMockExams ?? false),
+  };
+}
+
+async function loadChapterTitles(chapterIds: string[]): Promise<Map<string, string>> {
+  const chapters = await prisma.chapter.findMany({
+    select: { id: true, title: true },
+    where: { id: { in: chapterIds } },
+  });
+
+  return new Map(chapters.map((chapter) => [chapter.id, chapter.title]));
+}
+
+function readPlanStatus({
+  phaseChallengesRequired,
+  catchUp,
+  context,
+  freeWeekOver,
+  studiesPastTarget,
+}: {
+  phaseChallengesRequired: boolean;
+  catchUp: number;
+  context: PlanReadContext;
+  freeWeekOver: boolean;
+  studiesPastTarget: boolean;
+}): PlanView["status"] {
+  const { goal, items, phases, plan, today } = context;
+
+  return getPlanStatus({
+    catchUp,
+    freeWeekOver,
+    goalKind: goal.kind,
+    items,
+    minutesPerItem: getMinutesPerItem({
+      estimateHours: plan.estimateHours,
+      itemCount: items.length,
+    }),
+    phaseChallengesRequired,
+    phases,
+    studiesPastTarget,
+    targetDate: goal.targetDate,
+    today,
+  });
+}
+
+type PlanViewInput = { context: PlanContext; now: Date };
+
+export async function buildPlanView({
+  context: savedContext,
+  now,
+}: PlanViewInput): Promise<PlanView> {
+  const {
+    catchUp: selectedCatchUp,
+    context,
+    summary,
+  } = await loadPlanReadProjection({ context: savedContext, now });
+
+  const feasibility = readSavedFeasibility(summary);
+
+  const { goal, items, phases, state } = context;
+  const shortPlan = getShortPlanShape({ goal, settings: state.settings });
+
+  const phaseChallengesRequired = await arePhaseChallengesRequired({
+    goalKind: goal.kind,
+    userId: goal.userId,
+  });
+
+  const currentPhase = findPlanPhase({
+    goal,
+    items,
+    phaseChallengesRequired,
+    phases,
+    settings: state.settings,
+    today: context.today,
+  });
+
+  const chapterIds = [...new Set(items.flatMap((item) => item.chapterId ?? []))];
+
+  const [
+    changes,
+    access,
+    chapterTitles,
+    course,
+    tools,
+    studyWeek,
+    dateKind,
+    noticeDates,
+    catchUp,
+    examChoices,
+    todayBlocks,
+    partAreas,
+    taughtSkillIds,
+  ] = await Promise.all([
+    loadPlanChangeViews({
+      context: savedContext,
+      goal,
+      now,
+      planId: context.plan.id,
+      planVersion: context.plan.version,
+    }),
+    getAccess(context),
+    loadChapterTitles(chapterIds),
+    loadPlanCourse({ goal, items }),
+    loadPlanTools({ currentPhase, goal, items }),
+    loadStudyWeek({ localDate: context.today, userId: goal.userId }),
+    loadGoalDateKind(goal),
+    loadNoticeDates({
+      goal,
+      goalDate: state.goal.targetDate,
+      noticeDate: state.settings.noticeDate,
+      today: toIsoDate(context.today),
+    }),
+    Promise.resolve(selectedCatchUp),
+    loadExamChoiceViews({
+      choices: state.settings.examChoices,
+      examBlueprintId: goal.examBlueprintId,
+    }),
+    loadTodayLearnBlocks(goal),
+    loadGraphPartAreas({ examBlueprintId: goal.examBlueprintId, graph: state.graph }),
+    listTaughtStandInSkills({ goal, graph: state.graph, items }),
+  ]);
+
+  const skillAreas = getSkillAreas({
+    courseTitle: course?.title ?? null,
+    skills: state.graph.skills,
+  });
+
+  const studiedDates = new Set(
+    studyWeek.days.filter((day) => day.studied).map((day) => toIsoDate(day.date)),
+  );
+
+  const calendar = getPlanCalendar({ dailyMinutes: goal.dailyMinutes, settings: state.settings });
+  const fullCourse = goal.kind === "exam" && state.settings.fullCourse;
+
+  const status = readPlanStatus({
+    catchUp: catchUp.length,
+    context,
+    freeWeekOver: access.freeWeekOver,
+    phaseChallengesRequired,
+    studiesPastTarget: fullCourse,
+  });
+
+  const fresh = readFreshPlanSummary({
+    basis: getPlanSummaryBasis(context),
+    value: context.plan.summary,
+  });
+
+  const fitOffer = status?.kind === "pastDate" ? null : (summary?.advice.fitOffer ?? null);
+
+  return {
+    access,
+    areas: buildAreas({ ...state, partAreas }),
+    bases: readSavedBases({ context, settings: state.settings, summary }),
+    changes: changes.map((change) => foldChangeAreas({ change, partAreas })),
+    course,
+    currentPhase,
+    end: isPlanFinished({
+      goalKind: goal.kind,
+      items,
+      phaseChallengesRequired,
+      phases,
+      studiesPastTarget: fullCourse,
+      targetDate: goal.targetDate,
+      today: context.today,
+    })
+      ? { kind: "finished" }
+      : null,
+    estimate: buildEstimateView({ context }),
+    examChoices,
+    examDocument: getExamDocument(goal),
+    feasibility,
+    fitOffer: fitOffer && {
+      ...foldChangeAreas({ change: fitOffer, partAreas }),
+      canApply: fresh !== null,
+    },
+    goalId: goal.id,
+    notice: getNoticeWaitState({ noticeWaitUntil: context.plan.noticeWaitUntil, now }),
+    numbers: summary ? buildSavedPlanNumbersView(context) : null,
+    ownLevel: getOwnLevel({ goal }),
+    phases: buildPlanPath({
+      challengesOpen: phaseChallengesRequired && !access.freeWeekOver,
+      chapterTitles,
+      context,
+      currentPhase,
+      estimateMinutes:
+        summary?.selected.totalMinutes ?? (context.plan.estimateHours ?? 0) * MINUTES_PER_HOUR,
+      phaseChallengesRequired,
+      shortPlan,
+      skillAreas,
+      taughtSkillIds,
+      todayBlocks,
+    }),
+    planId: context.plan.id,
+    ready: savedContext.phases.length > 0,
+    schedule: buildScheduleView({ calendar, context, dateKind, fullCourse, noticeDates }),
+    shortPlan: toShortPlanView({ items, shape: shortPlan }),
+    status,
+    steering: {
+      difficultyBias: state.settings.difficultyBias,
+      lessonsStudied: items.filter((item) => item.kind === "lesson" && item.status === "done")
+        .length,
+      practiceBias: state.settings.practiceBias,
+      skippedActivities: state.settings.skippedActivities,
+    },
+    tools: toPlanToolViews({ settings: state.settings, tools }),
+    ...buildPlanTimingView({ access, calendar, context, skillAreas, studiedDates }),
+    weekTime: studyWeek.time,
+    writtenPractice: getWrittenPracticeView({ goal, graph: state.graph, settings: state.settings }),
+  };
+}

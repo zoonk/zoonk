@@ -1,0 +1,292 @@
+import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { describe, expect, it } from "vitest";
+import { discountMath, discountQuestion } from "../library/items/_test-utils/math-problems";
+import { pickExamFormatSkills } from "./exam-format-skills";
+
+const citation = { passage: "…", sourceId: "notice" };
+
+const INTEGER = { kind: "integer", places: null } as const;
+
+const JEE_FORMATS = [
+  { citation, description: "One correct option.", kind: "multipleChoice", options: 4 },
+  {
+    citation,
+    description: "One or more correct options.",
+    kind: "multipleChoice",
+    options: 4,
+    select: "all",
+  },
+  { citation, description: "Integer answer.", entry: INTEGER, kind: "numeric", options: null },
+] as const;
+
+const MATH_CONTENT = {
+  context: null,
+  math: discountMath,
+  otherSolutions: [],
+  question: discountQuestion,
+};
+
+async function jeeGoal() {
+  const [user, blueprint, skills] = await Promise.all([
+    userFixture(),
+    examBlueprintFixture({
+      identityKey: `exam-${randomUUID()}`,
+      name: "JEE Advanced",
+      structure: { formats: [...JEE_FORMATS], mock: null, rules: [], subjects: [] },
+    }),
+    Promise.all([1, 2, 3, 4, 5].map((index) => skillFixture({ name: `Unit ${index}` }))),
+  ]);
+
+  const goal = await goalFixture({ examBlueprintId: blueprint.id, kind: "exam", userId: user.id });
+  const weights = [1, 5, 3, 2, 5];
+
+  await planFixture({
+    goalId: goal.id,
+    graph: {
+      phases: [
+        { milestone: null, name: "Foundations" },
+        { milestone: null, name: "Exam practice" },
+      ],
+      skills: skills.map((skill, index) => ({
+        area: null,
+        lessons: 1,
+        name: skill.name,
+        phase: index < 4 ? 0 : 1,
+        skillId: skill.id,
+        weight: weights[index] ?? null,
+      })),
+    },
+  });
+
+  return { blueprint, goal, skills };
+}
+
+describe(pickExamFormatSkills, () => {
+  it("does not write a later-phase subject's format using first-phase skills", async () => {
+    const { blueprint, goal, skills } = await jeeGoal();
+
+    await Promise.all([
+      prisma.examBlueprint.update({
+        data: {
+          structure: {
+            formats: [{ ...JEE_FORMATS[2], sections: ["Physics"] }],
+            mock: null,
+            rules: [],
+            subjects: ["Chemistry", "Physics"].map((name) => ({
+              citation,
+              name,
+              questions: 6,
+              topics: [],
+              weight: null,
+            })),
+          },
+        },
+        where: { id: blueprint.id },
+      }),
+      prisma.plan.update({
+        data: {
+          graph: {
+            phases: [
+              { milestone: null, name: "Chemistry" },
+              { milestone: null, name: "Physics" },
+            ],
+            skills: skills.map((skill, index) => ({
+              area: index < 4 ? "Chemistry" : "Physics",
+              lessons: 1,
+              name: skill.name,
+              phase: index < 4 ? 0 : 1,
+              skillId: skill.id,
+              weight: 1,
+            })),
+          },
+        },
+        where: { goalId: goal.id },
+      }),
+    ]);
+
+    await expect(pickExamFormatSkills({ goalId: goal.id })).resolves.toStrictEqual([]);
+  });
+
+  it("filters formats before taking the highest-weight skills", async () => {
+    const { blueprint, goal, skills } = await jeeGoal();
+
+    await Promise.all([
+      prisma.examBlueprint.update({
+        data: {
+          structure: {
+            formats: [
+              { ...JEE_FORMATS[1], sections: ["Verbal"] },
+              { ...JEE_FORMATS[2], sections: ["Quantitative"] },
+            ],
+            mock: null,
+            rules: [],
+            subjects: ["Verbal", "Quantitative"].map((name) => ({
+              citation,
+              name,
+              questions: 6,
+              topics: [],
+              weight: null,
+            })),
+          },
+        },
+        where: { id: blueprint.id },
+      }),
+      prisma.plan.update({
+        data: {
+          graph: {
+            phases: [{ milestone: null, name: "Basics" }],
+            skills: skills
+              .slice(0, 4)
+              .map((skill, index) => ({
+                area: index < 3 ? "Quantitative" : "Verbal",
+                lessons: 1,
+                name: skill.name,
+                phase: 0,
+                skillId: skill.id,
+                weight: 10 - index,
+              })),
+          },
+        },
+        where: { goalId: goal.id },
+      }),
+    ]);
+
+    const picks = await pickExamFormatSkills({ goalId: goal.id });
+
+    expect(
+      picks
+        .filter((pick) => pick.answerFormat.format === "multipleChoice")
+        .map((pick) => pick.skill.id),
+    ).toStrictEqual([skills[3]?.id]);
+  });
+
+  it("writes a shared pick count in the options of the subject it's for", async () => {
+    const { blueprint, goal, skills } = await jeeGoal();
+    const twoOf = { ...JEE_FORMATS[1], select: 2 };
+
+    await Promise.all([
+      prisma.examBlueprint.update({
+        data: {
+          structure: {
+            formats: [
+              { ...twoOf, options: 6, sections: ["Verbal"] },
+              { ...twoOf, options: 4, sections: ["Quantitative"] },
+            ],
+            mock: null,
+            rules: [],
+            subjects: ["Verbal", "Quantitative"].map((name) => ({
+              citation,
+              name,
+              questions: 6,
+              topics: [],
+              weight: null,
+            })),
+          },
+        },
+        where: { id: blueprint.id },
+      }),
+      prisma.plan.update({
+        data: {
+          graph: {
+            phases: [{ milestone: null, name: "Basics" }],
+            skills: skills
+              .slice(0, 2)
+              .map((skill, index) => ({
+                area: index === 0 ? "Verbal" : "Quantitative",
+                lessons: 1,
+                name: skill.name,
+                phase: 0,
+                skillId: skill.id,
+                weight: 1,
+              })),
+          },
+        },
+        where: { goalId: goal.id },
+      }),
+    ]);
+
+    const picks = await pickExamFormatSkills({ goalId: goal.id });
+
+    expect(
+      picks.map((pick) => ({ options: pick.answerFormat.options, skillId: pick.skill.id })),
+    ).toStrictEqual([
+      { options: 6, skillId: skills[0]?.id },
+      { options: 4, skillId: skills[1]?.id },
+    ]);
+  });
+
+  it("picks first-phase skills by weight, skipping written ones", async () => {
+    const { blueprint, goal, skills } = await jeeGoal();
+    const [first, second, third, fourth] = skills;
+
+    await Promise.all([
+      itemFixture({
+        content: choiceItemContent(),
+        examBlueprintId: blueprint.id,
+        skillId: second?.id ?? "",
+      }),
+      itemFixture({
+        content: { ...choiceItemContent(), select: "all" },
+        examBlueprintId: blueprint.id,
+        skillId: first?.id ?? "",
+      }),
+    ]);
+
+    const picks = await pickExamFormatSkills({ goalId: goal.id });
+
+    expect(
+      picks
+        .filter((pick) => pick.answerFormat.format === "multipleChoice")
+        .map((pick) => [pick.skill.id, pick.skill.exam?.blueprintId]),
+    ).toStrictEqual([
+      [second?.id, blueprint.id],
+      [third?.id, blueprint.id],
+      [fourth?.id, blueprint.id],
+    ]);
+  });
+
+  it("asks for numbers on skills known to take them first, then untried ones, never ones found to take none", async () => {
+    const { blueprint, goal, skills } = await jeeGoal();
+    const [first, second, third, fourth] = skills;
+
+    await Promise.all([
+      prisma.skill.update({ data: { isQuantitative: false }, where: { id: second?.id } }),
+      itemFixture({ content: MATH_CONTENT, format: "numeric", skillId: first?.id ?? "" }),
+      itemFixture({
+        content: { ...MATH_CONTENT, entry: INTEGER },
+        examBlueprintId: blueprint.id,
+        format: "numeric",
+        skillId: fourth?.id ?? "",
+      }),
+    ]);
+
+    const picks = await pickExamFormatSkills({ goalId: goal.id });
+
+    expect(
+      picks.filter((pick) => pick.answerFormat.format === "numeric").map((pick) => pick.skill.id),
+    ).toStrictEqual([first?.id, third?.id]);
+  });
+
+  it("picks nothing for an exam asked in quick picks only", async () => {
+    const [user, blueprint] = await Promise.all([
+      userFixture(),
+      examBlueprintFixture({
+        identityKey: `exam-${randomUUID()}`,
+        structure: { formats: [JEE_FORMATS[0]], mock: null, rules: [], subjects: [] },
+      }),
+    ]);
+
+    const goal = await goalFixture({
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      userId: user.id,
+    });
+
+    await expect(pickExamFormatSkills({ goalId: goal.id })).resolves.toStrictEqual([]);
+  });
+});

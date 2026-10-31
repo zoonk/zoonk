@@ -1,0 +1,72 @@
+import {
+  type FoundSourceDocument,
+  findOfficialSources,
+} from "@zoonk/ai/tasks/research/find-official-sources";
+import { type ExamResearchPlan, type ResearchTopic } from "@zoonk/ai/tasks/research/plan";
+import { type SourceResearchPlan } from "@zoonk/ai/tasks/research/source-plan";
+import { toSourceUrl } from "@zoonk/core/library/sources/fetch";
+import { type ResearchAnalytics } from "../_utils/research-analytics";
+
+/** The prompt asks for 3 at most. */
+const MAX_COPIES = 3;
+
+function selectDocuments(documents: FoundSourceDocument[]): FoundSourceDocument[] {
+  const withUrls = documents.flatMap((document) => {
+    const url = toSourceUrl(document.url);
+    return url ? [{ ...document, url }] : [];
+  });
+
+  const unique = [...new Map(withUrls.map((document) => [document.url, document])).values()];
+
+  return unique.toSorted(
+    (first, second) => Number(second.kind === "official") - Number(first.kind === "official"),
+  );
+}
+
+function getSite(url: string): string {
+  return new URL(url).hostname.replace(/^www\./u, "");
+}
+
+/** A site that refuses downloads refuses them on its other addresses too (vunesp.com.br and documento.vunesp.com.br). */
+function selectCopies({
+  documents,
+  unreadable,
+}: {
+  documents: FoundSourceDocument[];
+  unreadable: readonly string[];
+}): FoundSourceDocument[] {
+  const blocked = unreadable.map((url) => getSite(url));
+
+  const isBlocked = (url: string) => {
+    const site = getSite(url);
+    return blocked.some((other) => site === other || site.endsWith(`.${other}`));
+  };
+
+  return selectDocuments(documents)
+    .filter((document) => !isBlocked(document.url))
+    .slice(0, MAX_COPIES);
+}
+
+/** The search tool is the `find-official-sources` eval's pick. */
+export async function findSourcesStep({
+  analytics,
+  plan,
+  topic,
+  unreadable = [],
+}: {
+  analytics: ResearchAnalytics;
+  plan: ExamResearchPlan | SourceResearchPlan;
+  topic: ResearchTopic;
+  unreadable?: string[];
+}): Promise<{ board: string | null; documents: FoundSourceDocument[]; officialFound: boolean }> {
+  "use step";
+
+  const { data } = await findOfficialSources({ analytics, plan, topic, unreadable });
+
+  const documents =
+    unreadable.length > 0
+      ? selectCopies({ documents: data.documents, unreadable })
+      : selectDocuments(data.documents);
+
+  return { board: data.board, documents, officialFound: data.officialFound };
+}

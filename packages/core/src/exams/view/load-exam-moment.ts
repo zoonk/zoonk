@@ -1,0 +1,99 @@
+import "server-only";
+import { type Goal, prisma } from "@zoonk/db";
+import { readSavedPlan } from "../../learner/facts/saved-plan";
+import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
+import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
+import {
+  type ShortPlanToday,
+  getDayBeforePlan,
+  loadShortPlanDay,
+} from "../../plans/_utils/load-short-plan-day";
+import { toIsoDate } from "../../plans/planner/plan-calendar";
+import { parsePlanPhases } from "../../plans/planner/plan-state";
+import { getExamCalendar, toExamDates } from "../_utils/exam-calendar";
+import {
+  getExamDayChecklist,
+  getExamStage,
+  getFinalStretchStart,
+} from "../final-stretch/final-stretch-rules";
+import { listExamTools } from "./_utils/exam-tools";
+import { loadExamWork } from "./_utils/exam-work";
+import { type ExamMomentView } from "./exam-view-contract";
+
+const CHECKLIST_STAGES = new Set<ExamMomentView["stage"]>(["dayBefore", "examDay"]);
+
+function pickDay({
+  days,
+  today,
+}: {
+  days: ReturnType<typeof getExamCalendar>["days"];
+  today: Date;
+}) {
+  const todayIso = toIsoDate(today);
+  return days.find((day) => day.date >= todayIso) ?? days.at(-1) ?? null;
+}
+
+export async function loadExamMoment({
+  goal,
+  includesMockExams,
+  shortPlan: selectedShortPlan,
+  today,
+}: {
+  shortPlan?: ShortPlanToday | null;
+  goal: Pick<
+    Goal,
+    | "createdAt"
+    | "details"
+    | "examBlueprintId"
+    | "id"
+    | "kind"
+    | "targetDate"
+    | "timezone"
+    | "title"
+    | "userId"
+  >;
+  includesMockExams: boolean;
+  today: Date;
+}): Promise<ExamMomentView | null> {
+  if (goal.kind !== "exam") {
+    return null;
+  }
+
+  const [blueprint, finalStretchStart] = await Promise.all([
+    goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
+    readSavedPlan(goal.userId, goal.id).then((plan) =>
+      getFinalStretchStart(parsePlanPhases(plan?.phases)),
+    ),
+  ]);
+
+  const calendar = getExamCalendar({ blueprint, goal });
+  const stage = getExamStage({ examDays: toExamDates(calendar), finalStretchStart, today });
+
+  if (stage === "preparing") {
+    return null;
+  }
+
+  const [work, mocksTaken, result, shortPlan] = await Promise.all([
+    loadExamWork({ goalId: goal.id, today }),
+    prisma.mockExam.count({ where: { goalId: goal.id, status: "finished" } }),
+    prisma.examResult.findUnique({ select: { id: true }, where: { goalId: goal.id } }),
+    selectedShortPlan === undefined ? loadShortPlanDay({ goal, today }) : selectedShortPlan,
+  ]);
+
+  const hasChecklist = CHECKLIST_STAGES.has(stage);
+  const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
+
+  return {
+    checklist: hasChecklist ? getExamDayChecklist(blueprint) : [],
+    day: pickDay({ days: calendar.days, today }),
+    dayBefore: getDayBeforePlan({ includesMockExams, shortPlan, today }),
+    examName: blueprint?.name ?? goal.title,
+    mocksTaken,
+    prepared: work.prepared,
+    resultReported: result !== null,
+    sessionsDone: work.sessionsDone,
+    stage,
+    timeZone: calendar.timeZone,
+    tools: hasChecklist ? listExamTools(structure) : [],
+  };
+}

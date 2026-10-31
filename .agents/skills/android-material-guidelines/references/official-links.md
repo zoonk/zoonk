@@ -61,6 +61,7 @@ Source indexes:
 - [Motion](https://m3.material.io/styles/motion/overview)
 - [Shape](https://m3.material.io/styles/shape/overview-principles)
 - [Typography](https://m3.material.io/styles/typography/overview)
+- [Type scale tokens](https://m3.material.io/styles/typography/type-scale-tokens)
 - [Icons](https://m3.material.io/styles/icons/overview)
 
 ## Material Components
@@ -108,6 +109,11 @@ For component-specific accessibility, behavior, and specs, use the matching Mate
 ## Implementation Docs
 
 - [Material Design 3 in Compose](https://developer.android.com/develop/ui/compose/designsystems/material3)
+- [Adaptive layouts in Compose](https://developer.android.com/develop/ui/compose/layouts/adaptive)
+- [Adaptive navigation (`NavigationSuiteScaffold`)](https://developer.android.com/develop/ui/compose/layouts/adaptive/build-adaptive-navigation)
+- [List-detail layout](https://developer.android.com/develop/ui/compose/layouts/adaptive/list-detail)
+- [Supporting pane layout](https://developer.android.com/develop/ui/compose/layouts/adaptive/build-a-supporting-pane-layout)
+- [Dynamic color](https://developer.android.com/develop/ui/views/theming/dynamic-colors)
 - [Design systems in Compose](https://developer.android.com/develop/ui/compose/designsystems)
 - [Adopt Compose for teams](https://developer.android.com/develop/ui/compose/adopt)
 - [Material Design for Android Views](https://developer.android.com/develop/ui/views/theming/look-and-feel)

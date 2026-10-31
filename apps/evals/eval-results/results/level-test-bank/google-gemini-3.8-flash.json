@@ -1,0 +1,70 @@
+{
+  "modelId": "google/gemini-3.8-flash",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "The explicit maximum of 5 applies because questions are clearly at the wrong prescribed level. B1 tests bin instructions, a laptop requirement, missing sales data, and appointment availability—all stated details, not main points or opinions. The B2 remote-work item tests an explicit main conclusion. Passage vocabulary increases substantially, and the B2 platform-purpose question fits its prescribed operation, but those strengths do not repair the mismatched questions. Speaking structures increase in complexity, although sentence length largely plateaus above B1.",
+          "score": 5,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "All 20 marked indexes identify the uniquely supported option; no question has two defensible answers or lacks a supported answer, so the maximum-of-4 trigger does not apply. Answers require passage information, and option lengths are generally comparable. The main weakness is distractor plausibility: claims such as fully remote work being superior in every respect, total rejection of the packaging proposal, and an excessively traditional gallery approach are relatively easy to eliminate.",
+          "score": 8,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "All passages and speaking sentences are in English, and all questions, options, and translations are in Brazilian Portuguese; no wrong-language cap applies. The English is generally correct and compatible with US usage, the Portuguese is natural overall, and situations vary substantially. However, the C1 gallery listening text has the register and construction of a written critical review rather than natural speech. The named business 'Sunrise Auto Repair' also conflicts with the no-brands requirement.",
+          "score": 8,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4434,
+          "inputTokens": 4437,
+          "outputTokens": 915,
+          "reasoningTokens": 274
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The question difficulty does not consistently match the prescribed CEFR progression. All four B1 questions ask for explicit details rather than a main point or stated opinion. The B2 remote-work question likewise asks for a directly stated conclusion rather than attitude, purpose, or an implied detail. These are substantive assessment-calibration failures despite increasingly advanced passage vocabulary.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several distractors are too easily dismissed, such as the C1 gallery option claiming an excessively traditional approach despite the multimedia installations. The C1 gallery listening passage sounds like a written review rather than natural speech. 'Sunrise Auto Repair' introduces a business brand despite the no-brands requirement.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the upper-level speaking progression more pronounced: B1 and B2 both contain 16 words, while C1 has 17. A roughly 20-word C1 sentence with an additional meaningful clause would better demonstrate the requested increase. Preserve the existing useful progression from simple statements to conditional inversion.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of US English passages and sentences for Brazilian learners: questions, options and translations in Brazilian Portuguese. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "pt-en-1",
+        "userInput": { "learnerLanguage": "pt", "targetLanguage": "en" }
+      }
+    }
+  ],
+  "taskId": "level-test-bank"
+}

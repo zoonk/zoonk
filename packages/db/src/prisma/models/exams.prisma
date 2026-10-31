@@ -1,0 +1,101 @@
+enum MockExamStatus {
+  active
+  finished
+}
+
+/// `conditions` fixes each section's questions and minutes when the mock starts. `result` keeps
+/// numbers and title snapshots, so it survives content changes. `listeningPlays` counts plays by
+/// item set id (`{ "<setId>": 1 }`), so another tab or device can't play past the exam's limit.
+/// `handInClaimedAt` marks the request grading a hand-in: duplicates wait for its result.
+model MockExam {
+  id               String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId           String                 @map("user_id") @db.Uuid
+  user             User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalId           String?                @map("goal_id") @db.Uuid
+  goal             Goal?                  @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  blockId          String?                @unique @map("block_id") @db.Uuid
+  block            StudySessionBlock?     @relation(fields: [blockId], references: [id], onDelete: SetNull)
+  examBlueprintId  String?                @map("exam_blueprint_id") @db.Uuid
+  examBlueprint    ExamBlueprint?         @relation(fields: [examBlueprintId], references: [id], onDelete: SetNull)
+  status           MockExamStatus         @default(active)
+  conditions       Json
+  sectionIndex     Int                    @default(0) @map("section_index") @db.SmallInt
+  sectionStartedAt DateTime               @map("section_started_at")
+  startedAt        DateTime               @default(now()) @map("started_at")
+  finishedAt       DateTime?              @map("finished_at")
+  handInClaimedAt  DateTime?              @map("hand_in_claimed_at")
+  result           Json?
+  listeningPlays   Json                   @default("{}") @map("listening_plays")
+  createdAt        DateTime               @default(now()) @map("created_at")
+  updatedAt        DateTime               @default(now()) @updatedAt @map("updated_at")
+  answers          MockExamAnswer[]
+  attempts         Attempt[]
+  questionThreads  LessonQuestionThread[]
+
+  @@index([userId, goalId, finishedAt])
+  @@index([goalId])
+  @@index([examBlueprintId])
+  @@map("mock_exams")
+}
+
+/// A null pick is a blank answer. `itemId` is a plain id: the graded answer becomes an `Attempt` at
+/// the end. `changes` counts changed answers in a section that limits them, like the GMAT's.
+model MockExamAnswer {
+  id         String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  mockExamId String   @map("mock_exam_id") @db.Uuid
+  mockExam   MockExam @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
+  itemId     String   @map("item_id") @db.Uuid
+  answer     Json?
+  flagged    Boolean  @default(false)
+  durationMs Int      @default(0) @map("duration_ms")
+  changes    Int      @default(0) @db.SmallInt
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([mockExamId, itemId], name: "mockItem")
+  @@map("mock_exam_answers")
+}
+
+/// The exam's name is a snapshot, so the row stays readable without its blueprint.
+model ExamResult {
+  id              String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId          String         @map("user_id") @db.Uuid
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalId          String?        @unique @map("goal_id") @db.Uuid
+  goal            Goal?          @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  examBlueprintId String?        @map("exam_blueprint_id") @db.Uuid
+  examBlueprint   ExamBlueprint? @relation(fields: [examBlueprintId], references: [id], onDelete: SetNull)
+  examName        String         @map("exam_name")
+  examDate        DateTime?      @map("exam_date") @db.Date
+  /// Null when the learner only says pass or fail.
+  score           Float?
+  /// "irt" for item response theory scales like ENEM's, "percent" or "points" (with `maxScore`).
+  scale           String?
+  maxScore        Float?         @map("max_score")
+  passed          Boolean?
+  /// On the result's scale; null when no estimate was shown.
+  estimateLow     Float?         @map("estimate_low")
+  estimateHigh    Float?         @map("estimate_high")
+  mocksTaken      Int            @default(0) @map("mocks_taken") @db.SmallInt
+  reportedAt      DateTime       @default(now()) @map("reported_at")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @default(now()) @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([examBlueprintId, reportedAt])
+  @@map("exam_results")
+}
+
+/// Claimed before the grader is called, so a draft sent twice at once is graded once. Recording the
+/// grade or failing deletes the claim; one older than any grade takes was left by a crash and can
+/// be taken again. `id` is the attempt id the grade is recorded under.
+model EssayGradeClaim {
+  id        String   @id @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  localDate DateTime @map("local_date") @db.Date
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId, localDate])
+  @@map("essay_grade_claims")
+}

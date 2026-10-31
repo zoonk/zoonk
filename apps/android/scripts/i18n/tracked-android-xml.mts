@@ -7,21 +7,41 @@ import {
   readFingerprints,
   stripFingerprints,
 } from "./fingerprints.mts";
+import { completePluralCategories } from "./plural-categories.mts";
 import { translationTemplate } from "./translation-template.mts";
 
 function decodeXml(content: string) {
   return createAndroidXmlCodec().decode(content);
 }
 
+const COMMENTED_RESOURCE =
+  /<!--(?<comment>(?:(?!-->)[\s\S])*)-->\s*<(?:string|plurals|string-array)\b[^>]*?\bname\s*=\s*(?<quote>["'])(?<name>.+?)\k<quote>/gu;
+
+/** The Android codec keeps a resource's comment for the XML but doesn't give it to translators. */
+function withTranslatorComments(xml: string, messages: ReturnType<typeof decodeXml>) {
+  const comments = new Map(
+    [...xml.matchAll(COMMENTED_RESOURCE)].map(({ groups }) => [
+      groups?.name,
+      groups?.comment?.trim(),
+    ]),
+  );
+
+  return messages.map((message) => {
+    const resource = Array.isArray(message.segments) ? String(message.segments[0]) : message.id;
+    const comment = comments.get(resource);
+    return comment ? { ...message, description: [comment] } : message;
+  });
+}
+
 /**
- * Treat stale values as missing so Eloqnt's existing lint and translate commands handle them.
- * Fingerprints travel with each locale's XML; CI needs neither Git history nor model credentials.
+ * Decodes stale translations as missing, so Eloqnt's lint and translate commands handle them.
+ * `readSources` returns every catalog's source XML because Eloqnt doesn't tell a codec which file it reads.
  */
 export function createTrackedAndroidXmlCodec({
-  readSource,
+  readSources,
   sourceLocale = "en",
 }: {
-  readSource: () => string;
+  readSources: () => string[];
   sourceLocale?: string;
 }) {
   return defineCodec(() => ({
@@ -29,11 +49,16 @@ export function createTrackedAndroidXmlCodec({
       const messages = decodeXml(stripFingerprints(content));
 
       if (locale === sourceLocale) {
-        return messages;
+        return withTranslatorComments(content, messages);
       }
 
       const fingerprints = readFingerprints(content);
-      const sources = new Map(decodeXml(readSource()).map((message) => [message.id, message]));
+
+      const sources = new Map(
+        readSources()
+          .flatMap((xml) => decodeXml(xml))
+          .map((message) => [message.id, message]),
+      );
 
       function markStale(target: (typeof messages)[number]) {
         const source = sources.get(target.id);
@@ -48,16 +73,23 @@ export function createTrackedAndroidXmlCodec({
       return messages.map((message) => markStale(message));
     },
     encode(messages, { locale, sourceMessagesById }) {
-      // Source XML owns printf types, XLIFF metadata, and resource kinds.
+      // The catalog's source XML owns printf types, XLIFF metadata, resource kinds, and comments.
       const codec = createAndroidXmlCodec();
-      const sourceXml = readSource();
+      const [sourceId] = sourceMessagesById.keys();
+
+      const sourceXml =
+        readSources().find((xml) => decodeXml(xml).some((message) => message.id === sourceId)) ??
+        "<resources />";
+
       codec.decode(locale === sourceLocale ? sourceXml : translationTemplate(sourceXml));
       const complete = completeMessages({ messages, sources: sourceMessagesById });
-      const xml = codec.encode(complete, { sourceMessagesById });
+      const encoded = codec.encode(complete, { sourceMessagesById });
 
       if (locale === sourceLocale) {
-        return xml;
+        return encoded;
       }
+
+      const xml = completePluralCategories({ locale, xml: encoded });
 
       function fingerprintEntry(target: (typeof messages)[number]): [string, string][] {
         const source = sourceMessagesById.get(target.id);

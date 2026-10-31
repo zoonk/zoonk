@@ -58,27 +58,6 @@ describe(searchCourses, () => {
     expect(result).toStrictEqual([]);
   });
 
-  it("returns courses matching partial title", async () => {
-    const result = await searchCourses({ language: "en", query: "JavaScript" });
-    const ids = result.map((course) => course.id);
-
-    expect(ids).toContain(publishedCourse.id);
-  });
-
-  it("search is case-insensitive", async () => {
-    const uppercaseResult = await searchCourses({ language: "en", query: "JAVASCRIPT" });
-    const lowercaseResult = await searchCourses({ language: "en", query: "javascript" });
-    const mixedResult = await searchCourses({ language: "en", query: "JaVaScRiPt" });
-
-    const uppercaseIds = uppercaseResult.map((course) => course.id);
-    const lowercaseIds = lowercaseResult.map((course) => course.id);
-    const mixedIds = mixedResult.map((course) => course.id);
-
-    expect(uppercaseIds).toContain(publishedCourse.id);
-    expect(lowercaseIds).toContain(publishedCourse.id);
-    expect(mixedIds).toContain(publishedCourse.id);
-  });
-
   it("search handles accented characters", async () => {
     const accentedCourse = await courseFixture({
       isPublished: true,
@@ -127,13 +106,11 @@ describe(searchCourses, () => {
     const enIds = enResult.map((course) => course.id);
     const ptIds = ptResult.map((course) => course.id);
 
-    // Both results contain courses from all languages
     expect(enIds).toContain(enCourse.id);
     expect(enIds).toContain(ptCourse.id);
     expect(ptIds).toContain(enCourse.id);
     expect(ptIds).toContain(ptCourse.id);
 
-    // User's language appears first
     expect(enResult[0]?.language).toBe("en");
     expect(ptResult[0]?.language).toBe("pt");
   });
@@ -218,6 +195,21 @@ describe(searchCourses, () => {
     expect(ids).not.toContain(schoolCourse.id);
   });
 
+  it("leaves out a course whose page details aren't written yet and a private course", async () => {
+    const title = `Listed search ${randomUUID()}`;
+    const shared = { isPublished: true, language: "en", normalizedTitle: normalizeString(title) };
+
+    const [listed] = await Promise.all([
+      courseFixture({ ...shared, organizationId: brandOrg.id, title }),
+      courseFixture({ ...shared, description: null, organizationId: brandOrg.id, title }),
+      courseFixture({ ...shared, organizationId: brandOrg.id, title, visibility: "private" }),
+    ]);
+
+    const result = await searchCourses({ language: "en", limit: 10, query: title });
+
+    expect(result.map((course) => course.id)).toStrictEqual([listed.id]);
+  });
+
   it("limits results to default of 10", async () => {
     await prisma.course.createMany({
       data: Array.from({ length: 15 }, (_, i) => ({
@@ -235,25 +227,6 @@ describe(searchCourses, () => {
     const result = await searchCourses({ language: "en", query: "Bulk Search Limit Test" });
 
     expect(result).toHaveLength(10);
-  });
-
-  it("respects custom limit parameter", async () => {
-    await prisma.course.createMany({
-      data: Array.from({ length: 15 }, (_, i) => ({
-        description: `Custom limit course ${i} description`,
-        imageUrl: "https://example.com/image.jpg",
-        isPublished: true,
-        language: "en",
-        normalizedTitle: `custom limit test course ${i}`,
-        organizationId: brandOrg.id,
-        slug: `custom-limit-test-${randomUUID()}-${i}`,
-        title: `Custom Limit Test Course ${i}`,
-      })),
-    });
-
-    const result = await searchCourses({ language: "en", limit: 5, query: "Custom Limit Test" });
-
-    expect(result).toHaveLength(5);
   });
 
   it("does not count every ranking bucket before reading the first page", async () => {

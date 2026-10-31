@@ -14,6 +14,10 @@ Ive describes simplicity as bringing order to complexity. Clear concepts, relati
 
 A screen can contain useful information without making everything compete. Let the current task lead, with supporting controls quieter but recognizable. Spacing, typography, alignment, and contrast should reveal relationships. Restraint means giving each element appropriate emphasis. [Linear's interface design](https://linear.app/now/behind-the-latest-design-refresh).
 
+## Quiet by default, color with a job
+
+Rams and Lubs's Braun ET66 calculator has a gray body, and color only on the keys that do something different; Linear's refresh asks every element not to "compete for attention you haven't earned". A calm study tool works the same way: neutral tone steps and hairlines give a page its order, and soft color marks only what carries a meaning, always the same one, so the few colored things are read rather than seen past. Louder moments stay rare enough to feel earned. [Core77 on the ET66](https://www.core77.com/posts/24935/braun-re-issuing-classic-et66-calculator-24935), [Linear](https://linear.app/now/behind-the-latest-design-refresh), [Vitsœ](https://www.vitsoe.com/us/about/good-design).
+
 ## Reduce uncertainty and effort
 
 The difficulty of choosing matters more than a fixed number of options or clicks. Give people clear destinations, helpful defaults, and enough information to decide confidently. Sequence separable decisions; keep comparisons together. Hide optional complexity only when its entry point remains easy to find. Repeated tasks should become efficient as people gain familiarity. [Krug](https://sensible.com/downloads/DMMT-Revisited-sample-chapter.pdf), [Nielsen](https://www.nngroup.com/articles/progressive-disclosure/).

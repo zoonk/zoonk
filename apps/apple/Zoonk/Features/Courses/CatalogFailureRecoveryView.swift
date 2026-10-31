@@ -4,11 +4,14 @@ enum CatalogFailureContext {
   case catalog
   case chapter
   case course
+  case lesson
 }
 
 struct CatalogFailureRecoveryView: View {
+  @Environment(\.dismiss) private var dismiss
+
   let context: CatalogFailureContext
-  let failure: CourseCatalogFailure
+  let failure: APIError
   let retry: @MainActor () async -> Void
 
   var body: some View {
@@ -21,17 +24,28 @@ struct CatalogFailureRecoveryView: View {
     } description: {
       description
     } actions: {
-      Button {
-        Task {
-          await retry()
+      if failure == .notFound {
+        // Retrying can't bring back deleted content, so leave the stale page instead.
+        Button(action: dismiss.callAsFunction) {
+          Text(
+            "Go back",
+            tableName: "Courses",
+            comment: "Leaves a course or chapter page whose content no longer exists.")
         }
-      } label: {
-        Text(
-          "Try again",
-          tableName: "Courses",
-          comment: "Retries loading catalog content after a failure.")
+        .buttonStyle(.mainAction)
+      } else {
+        Button {
+          Task {
+            await retry()
+          }
+        } label: {
+          Text(
+            "Try again",
+            tableName: "Courses",
+            comment: "Retries loading catalog content after a failure.")
+        }
+        .buttonStyle(.mainAction)
       }
-      .buttonStyle(.borderedProminent)
     }
     .frame(maxWidth: .infinity, minHeight: 360)
   }
@@ -79,6 +93,18 @@ struct CatalogFailureRecoveryView: View {
           "Chapter unavailable",
           tableName: "Courses",
           comment: "Title when a chapter cannot be loaded.")
+      }
+    case .lesson:
+      if failure == .notFound {
+        Text(
+          "Lesson not found",
+          tableName: "Courses",
+          comment: "Title when a lesson cannot be found.")
+      } else {
+        Text(
+          "Lesson unavailable",
+          tableName: "Courses",
+          comment: "Title when a lesson cannot be loaded.")
       }
     }
   }

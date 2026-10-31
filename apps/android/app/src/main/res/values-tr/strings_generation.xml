@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "generation_connection_lost": "744522c5aa4b807009fac622f166fcea91f22e04f51531a24a55a5aa5b516d7c",
+  "generation_connection_lost_description": "0ab176b8ba6dfb5f00c74b6a65f949f4976561b8113027cfc4488f1b7286c6da",
+  "generation_curriculum": "565d25ccd86b76948051731d664b8c5d45440f2db2e0f4b8c7cc6a9bd1f4bd47",
+  "generation_curriculum_plan": "d7e97f737fdde93c5c90b1c4fa6be395113d04cd4f2e06fba7bf0dac2d2a5522",
+  "generation_curriculum_plan_line_1": "e3fa4a81db5847b2bc654b4860d3676df63d67928e00f26e316496630ad81039",
+  "generation_curriculum_plan_line_2": "522cc114d104248c055cb2966d61d55c97ebca5db89b83236ca42df3af29ec3b",
+  "generation_curriculum_plan_line_3": "bf34330cf6d21f5b81d1fcf9bf9324430f39aa33bd5a00d08ad2643aef82437c",
+  "generation_failed": "d82fa5f42cc37f28e8405f41323432fcc47f16f8808155d214e0489bd6c6e6b3",
+  "generation_failed_description": "d21d9a30bdbd024210ef88467174d1470c972a6ed2aaba9f742c4e83413873d5",
+  "generation_first_lesson": "01391a7a647084301230c1f44ca8a4e8b2404ff814022b6ec1bfc3b82550c21e",
+  "generation_first_lesson_day": "352dc57424e5c7d3027fe69b11841886bd765586590bcfbb9c1d9fb43b9adbff",
+  "generation_first_lesson_day_line_1": "869f924a072d9ef1f3a09b8afc54bbeafabc4bc79ea9dc36069b2959e9fb537e",
+  "generation_first_lesson_day_line_2": "84b194a811f31389a031aeb9f2afe4e94e0d36861fbbf22b017581ad39cfbf80",
+  "generation_goal": "7495ff612fa1a62016861b00c72e81e8f90a58b80f887af50c24648b64c26d82",
+  "generation_goal_line_1": "1bbd6da69b9ed31ca6fcf88a64d0cd13c188cd7d8377cede828464b62b283d15",
+  "generation_goal_line_2": "b75be18547bebc424a124229a0db7937565b27542dc91e8a121e02b1e7e0a4c8",
+  "generation_level_test": "bf6cea2f2970b66cc63ea59f6433d05d0876b73254fa7955d16aacb68be0dd2b",
+  "generation_level_test_bank": "faad67ac8cd78d2ab0f2e07826bff8eea0509e53034af81cc7ed1560a1b740a7",
+  "generation_level_test_bank_line_1": "eb0c24774802e728cb46f12b3f099c67e5ab620e056a865a7907772c14fd8491",
+  "generation_level_test_bank_line_2": "978e4f2746c157d8530cfe78187b9e3b2599a57815646fd1412b35a43bb4e7ef",
+  "generation_level_test_bank_line_3": "e3e5e6a738be39a39434e181909d5f5eb6d3512225a8b55f17fa0c9aa2d5111d",
+  "generation_level_test_bank_line_4": "0efb75dae054211cae6fc10e7ce4776da7894ae7e6496eb16085bc2b290f69e3",
+  "generation_not_started": "9c1c652ffa031a6a3ed6dcca8d5616d1b47b38442c6a5a1bc4f6e3ddc5970cd1",
+  "generation_not_started_description": "d6aabab3eaa17c95493617e801b1351038226d1c0e2f175e99495efd2c9d8468",
+  "generation_notice": "507b95bb4536601552cf0f7d0f30fc99ec69d80139b1ca468f1f99e4711cfacb",
+  "generation_notice_line_1": "c2351f395705e7f88e0de4a9e051ab05ca3c58496e9b3722b4228733e1923939",
+  "generation_notice_line_2": "3bbc33a91b63dafb854dc9b32c8f346e2d0b9fd53d74133be064634919bf76d6",
+  "generation_phase_active": "c2c051864820391499a37fb0505ac2ead02368c92b064ba68800f7f1324b77a5",
+  "generation_phase_completed": "e3835fa9efd13e11e4e85df447c12a3f7485fbe41ae008d05d9f7345e023d020",
+  "generation_phase_failed": "d4fe35f009b6f7dbdc1439eaea40c06ddb84307f55626c345e7acc206729e27b",
+  "generation_phase_pending": "11e3b2acbec32bdc43a4c406700381b1deda62941969056149b60df9af60b3ff",
+  "generation_placement": "f35e953e3ac5713e31961e8b0c5c88c2b6a5ecc03af041616533fbb92f3155e7",
+  "generation_placement_questions": "d2f9c7225ba2222f59a4c600f825f7b38189d6c14ded3400dcc973a8d4726496",
+  "generation_placement_questions_line": "0491a479e6f9a465605b08cf945123a9253028c0c7662f2d5071281adc2792de",
+  "generation_question_line": "e181e7bd27e9042b769aba5ec295aeb0df64fdfc99e3311121184ccc60336374",
+  "generation_question_review": "b1bd1dff6971a36e9c38f0be68a83a8deb35588e48990fe6d240950740fa7f41",
+  "generation_reconnect": "f0b787c635df14eab74a5a03e0afcab83367b7826cfebca20133705505b6697f",
+  "generation_skills": "e2bef1f408cf084bcb15341c79621eec1a69266269aeb0d8f3265a121f9c8d2e",
+  "generation_skills_line_1": "f362b345f65d16e5fc3a64f1c4711f11a59dc7926c247b37503f9a307c2d2467",
+  "generation_skills_line_2": "f7a46887ada10db36e49212b5ee220b6f2809e1ec40018fbd91e9847bcf01176",
+  "generation_skills_line_3": "bbfd9b9d7197c5bc2d83d180e30a57143580eeb0f354d785d5a79989828158d9",
+  "generation_try_again": "d639a7ad0c2210e42e4bb974ea057a501bff513d86bb45e9f5e6537dcaaca978",
+  "generation_understanding": "5c1275d139a21236dd2f0d089bd45c4ce3883b9241793528802e2d2ad67702d1",
+  "generation_understanding_dates": "e88e6f170693663d4f0ba4c3780f2de751e3643073a1cc19869205a56edaffae",
+  "generation_understanding_dates_line_1": "0490448ed46b9b1eedede87b5978409699eaca018a4b5305cbe3eb7f2533c061",
+  "generation_understanding_dates_line_2": "b4da2a95e90af2c21dfb215a4be50776286f3b259d6270b4d1628287e6e2724e",
+  "generation_understanding_read": "4a8c4b11ba7529bbd2737bf884101dcd1a155e7ceac30319bce07e28c808703b",
+  "generation_understanding_read_line_1": "ea5016f81705d2051b0761c73f87aa268442deac3f75fcfb68d124559b17805b",
+  "generation_understanding_read_line_2": "d1e059192022cb548a862c6a7887b4aec3ed74126304d0f6337577608398ca66",
+  "generation_understanding_read_line_3": "18266c6fd6c90b751bc8dfe15ff72313ef4a26b6784db1ee1a1605f2495cb47d"
+}
+-->
+<resources>
+    <!-- Title when the updates of something being written stopped. -->
+    <string name="generation_connection_lost">Bağlantı kesildi</string>
+    <string name="generation_connection_lost_description">Güncellemeleri alamıyoruz. İşlem hâlâ sürüyor olabilir.</string>
+    <!-- Follows a run again after its updates stopped. -->
+    <string name="generation_reconnect">Yeniden bağlan</string>
+    <!-- Title when something being written failed. -->
+    <string name="generation_failed">Tamamlanamadı</string>
+    <string name="generation_failed_description">Bizim tarafımızda bir sorun oluştu.</string>
+    <!-- Title when something to be written never started. -->
+    <string name="generation_not_started">Başlatılamadı</string>
+    <string name="generation_not_started_description">İşlemi başlatamadık.</string>
+    <!-- Starts something that failed or never started again. -->
+    <string name="generation_try_again">Tekrar dene</string>
+    <!-- Screen reader state of a step of a wait. -->
+    <string name="generation_phase_pending">henüz başlamadı</string>
+    <string name="generation_phase_active">hazırlanıyor</string>
+    <string name="generation_phase_completed">tamamlandı</string>
+    <string name="generation_phase_failed">burada kesildi</string>
+    <!-- A detail line while questions are written, with the question's number. -->
+    <string name="generation_question_line">%1$d. soruyu hazırlıyoruz…</string>
+    <string name="generation_question_review">Cevapları kontrol ediyoruz…</string>
+    <string name="generation_goal">Hedefini inceliyoruz</string>
+    <string name="generation_goal_line_1">Cevaplarını okuyoruz…</string>
+    <string name="generation_goal_line_2">Ne kadar ayrıntıya gireceğimize karar veriyoruz…</string>
+    <!-- A step that only runs for a plan built from the learner's own material. -->
+    <string name="generation_notice">Materyalini okuyoruz</string>
+    <string name="generation_notice_line_1">İçerdiği konuları belirliyoruz…</string>
+    <string name="generation_notice_line_2">Konuları materyaldeki sıraya koyuyoruz…</string>
+    <string name="generation_skills">Gereken becerileri belirliyoruz</string>
+    <string name="generation_skills_line_1">Hedefin için gerekenleri listeliyoruz…</string>
+    <string name="generation_skills_line_2">Becerileri sıraya koyuyoruz…</string>
+    <string name="generation_skills_line_3">Önemli bir şeyin eksik kalmadığını kontrol ediyoruz…</string>
+    <!-- The wait while a typed goal is read. -->
+    <string name="generation_understanding">Hedefini okuyoruz</string>
+    <string name="generation_understanding_read">Hedefini inceliyoruz</string>
+    <string name="generation_understanding_read_line_1">Yazdıklarını okuyoruz…</string>
+    <string name="generation_understanding_read_line_2">Neyi hedeflediğini anlamaya çalışıyoruz…</string>
+    <string name="generation_understanding_read_line_3">Sınav mı, dil mi yoksa konu mu olduğunu kontrol ediyoruz…</string>
+    <string name="generation_understanding_dates">Sınav tarihlerini kontrol ediyoruz</string>
+    <string name="generation_understanding_dates_line_1">Sınav takvimine bakıyoruz…</string>
+    <!-- Shown while reading an exam's calendar. "Your year" is the year the learner takes the exam. -->
+    <string name="generation_understanding_dates_line_2">Sınava gireceğin yılın sınav takvimini buluyoruz…</string>
+    <!-- The wait while a plan is built. -->
+    <string name="generation_curriculum">Planını oluşturuyoruz</string>
+    <string name="generation_curriculum_plan">Planını çalışma günlerine göre düzenliyoruz</string>
+    <string name="generation_curriculum_plan_line_1">Kütüphane’de ders arıyoruz…</string>
+    <string name="generation_curriculum_plan_line_2">Becerileri çalışma günlerine dağıtıyoruz…</string>
+    <string name="generation_curriculum_plan_line_3">Planını kaydediyoruz…</string>
+    <!-- The wait while placement questions are written. -->
+    <string name="generation_placement">Sorularını hazırlıyoruz</string>
+    <string name="generation_placement_questions">Sorularını hazırlıyoruz</string>
+    <string name="generation_placement_questions_line">Sorularla ölçeceğimiz becerileri seçiyoruz…</string>
+    <!-- The wait while the first day of a plan is prepared. -->
+    <string name="generation_first_lesson">İlk gününü hazırlıyoruz</string>
+    <string name="generation_first_lesson_day">İlk gününü planlıyoruz</string>
+    <string name="generation_first_lesson_day_line_1">Kütüphane’de ders arıyoruz…</string>
+    <string name="generation_first_lesson_day_line_2">Nereden başlayacağını seçiyoruz…</string>
+    <!-- The wait while a language's level test questions are written. -->
+    <string name="generation_level_test">Seviye belirleme testini hazırlıyoruz</string>
+    <string name="generation_level_test_bank">Seviye testi sorularını hazırlıyoruz</string>
+    <string name="generation_level_test_bank_line_1">Başlangıçtan ileri seviyeye kadar metinler seçiyoruz…</string>
+    <string name="generation_level_test_bank_line_2">Okuma sorularını hazırlıyoruz…</string>
+    <string name="generation_level_test_bank_line_3">Dinleme sorularını hazırlıyoruz…</string>
+    <string name="generation_level_test_bank_line_4">Her sorunun tek bir doğru cevabı olduğunu kontrol ediyoruz…</string>
+</resources>

@@ -64,8 +64,14 @@ const nextLessonChapterResponseSchema = z
     completed: z.literal(false).meta({ description: "Whether all lessons are completed" }),
     courseId: z.uuid().meta({ description: "Course ID" }),
     courseSlug: z.string().meta({ description: "Course slug" }),
-    hasStarted: z.literal(true).meta({ description: "Whether the user has started" }),
-    organizationSlug: z.string().meta({ description: "Organization slug" }),
+    hasStarted: z.boolean().meta({ description: "Whether the user has started" }),
+    organizationSlug: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          "Organization slug; null for a learner's private course, which has no public page",
+      }),
     type: z.literal("chapter").meta({ description: "Continue at a chapter awaiting lessons" }),
   })
   .strict()
@@ -81,9 +87,19 @@ const nextLessonLessonResponseSchema = z
     courseSlug: z.string().meta({ description: "Course slug" }),
     hasStarted: z.boolean().meta({ description: "Whether the user has started" }),
     lessonId: z.uuid().meta({ description: "Lesson ID" }),
-    lessonPosition: z.number().int().min(0).meta({ description: "Lesson position in the chapter" }),
+    lessonPosition: z
+      .number()
+      .int()
+      .min(0)
+      .meta({ description: "0-based lesson position in the chapter" }),
     lessonSlug: z.string().meta({ description: "Lesson slug" }),
-    organizationSlug: z.string().meta({ description: "Organization slug" }),
+    organizationSlug: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          "Organization slug; null for a learner's private course, which has no public page",
+      }),
     type: z.literal("lesson").meta({ description: "Continue at a concrete lesson" }),
   })
   .strict()

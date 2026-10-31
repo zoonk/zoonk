@@ -1,24 +1,20 @@
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { type listUsers } from "@/data/users/list-users";
 import { Badge } from "@zoonk/ui/components/badge";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
-import Link from "next/link";
+import { TableCell } from "@zoonk/ui/components/table";
 
-/**
- * Admins can sort users by Brain Power or signup recency, so the row keeps both
- * values visible without making either sort mode require a separate detail page.
- */
 export function UserRow({
   user,
 }: {
   user: Awaited<ReturnType<typeof listUsers>>["users"][number];
 }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell>
-        <Link className="block" href={`/users/${user.id}`} prefetch>
+        <AdminTableRowLink className="block" href={`/users/${user.id}`} prefetch>
           <span className="font-medium">{user.name || "—"}</span>
           <span className="text-muted-foreground block text-xs">{user.email}</span>
-        </Link>
+        </AdminTableRowLink>
       </TableCell>
 
       <TableCell>{user.username || "—"}</TableCell>
@@ -36,6 +32,6 @@ export function UserRow({
           {user.plan}
         </Badge>
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }

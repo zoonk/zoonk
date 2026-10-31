@@ -8,5 +8,4 @@ Use these conventions for TypeScript and JavaScript in apps, packages, and repos
 - Preserve independent async work in `Promise.all` or `Promise.allSettled`; do not introduce waterfalls. Avoid holding an unawaited promise merely to overlap work when direct `Promise.all` expresses it clearly.
 - Use `safeAsync` where an operation needs explicit error handling. Let errors propagate when the owning boundary must handle them; do not turn infrastructure failures into successful empty results.
 - Prefer static imports. When moving symbols, update callers to the new file without compatibility re-exports or redundant aliases.
-- Use `/** ... */` comments for non-obvious reasons and constraints, not to narrate code or document self-explanatory props. Explain why that code is needed, not what it does.
 - Fix Knip reachability and cleanup problems; do not silence them with ignores, entry patterns, or `@public` unless the export is an intentionally supported external API.

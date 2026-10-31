@@ -1,0 +1,316 @@
+package com.zoonk.android.feature.practice
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.zoonk.android.R
+import com.zoonk.android.feature.player.LessonTitle
+import com.zoonk.android.feature.questions.ItemSet
+import com.zoonk.android.feature.questions.NoteRow
+import com.zoonk.android.feature.questions.QuestionFormat
+import com.zoonk.android.feature.questions.SetPlace
+import com.zoonk.android.feature.questions.TrueFalseWords
+import com.zoonk.android.feature.questions.plainItemLine
+import com.zoonk.android.feature.questions.savedAnswerText
+import com.zoonk.android.ui.components.Facts
+import com.zoonk.android.ui.components.FeedbackNote
+import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PendingLabel
+import com.zoonk.android.ui.components.StatusMessage
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.format.DateStyle
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.theme.withTabularFigures
+import java.time.Instant
+import java.time.ZoneId
+import com.zoonk.android.feature.questions.TimeMachine as TimeMachineFacts
+
+/** Where a wrong answer cancels a right one: this visit's count and what leaving blank is for. */
+@Composable
+internal fun SwipeScore(tally: NetTally) {
+    val right = pluralStringResource(R.plurals.practice_net_right, tally.right, tally.right)
+    val wrong = pluralStringResource(R.plurals.practice_net_wrong, tally.wrong, tally.wrong)
+    val net = stringResource(R.string.practice_net, tally.right - tally.wrong)
+
+    Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        val tally = stringResource(R.string.practice_net_tally, right, wrong, net)
+        val emphasis = SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium)
+        Text(
+            text =
+                buildAnnotatedString {
+                    append(tally)
+                    tally.lastIndexOf(net).takeIf { it >= 0 }?.let { addStyle(emphasis, it, it + net.length) }
+                },
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
+        )
+        Text(
+            text = stringResource(R.string.practice_net_hint),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+        )
+    }
+}
+
+/** Before the answer, only that the learner saw it: an earlier answer could give today's away. */
+@Composable
+internal fun TimeMachine(
+    machine: TimeMachineFacts,
+    format: QuestionFormat,
+    words: TrueFalseWords,
+) {
+    NoteRow(R.drawable.ic_history) { NoteText(timeMachineText(machine, format, words, right = null)) }
+}
+
+@Composable
+internal fun TimeMachineNote(
+    machine: TimeMachineFacts,
+    format: QuestionFormat,
+    words: TrueFalseWords,
+    right: Boolean,
+) {
+    FeedbackNote(timeMachineText(machine, format, words, right))
+}
+
+@Composable
+private fun timeMachineText(
+    machine: TimeMachineFacts,
+    format: QuestionFormat,
+    words: TrueFalseWords,
+    right: Boolean?,
+): String {
+    val date =
+        formatDate(Instant.parse(machine.answeredAt).atZone(ZoneId.systemDefault()).toLocalDate(), currentLocale(), DateStyle.DayMonth)
+    val answer =
+        machine.answer?.let {
+            if (format == QuestionFormat.TrueFalse) savedAnswerText(it, words) else plainItemLine(it).trimEnd('.')
+        }
+
+    return when {
+        right == null -> stringResource(R.string.practice_time_machine_seen, date)
+        machine.isCorrect && right -> stringResource(R.string.practice_time_machine_right_again, date)
+        machine.isCorrect -> stringResource(R.string.practice_time_machine_right_before, date)
+        !answer.isNullOrEmpty() -> stringResource(R.string.practice_time_machine_answered, date, answer)
+        else -> stringResource(R.string.practice_time_machine_tripped, date)
+    }
+}
+
+/**
+ * A run's result in place of its questions: the title first and saving while [saving], so nothing
+ * moves when the score arrives.
+ */
+@Composable
+internal fun RunDone(
+    title: String,
+    saving: Boolean,
+    modifier: Modifier = Modifier,
+    detail: String? = null,
+    content: @Composable () -> Unit,
+) {
+    Box(modifier.fillMaxWidth().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+        Column(
+            Modifier.runColumn().padding(vertical = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(text = title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+                detail?.let {
+                    Text(
+                        text = it,
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+            }
+            if (saving) {
+                Text(
+                    text = stringResource(R.string.player_saving_progress),
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            } else {
+                content()
+            }
+        }
+    }
+}
+
+@Composable
+internal fun RunPage(
+    modifier: Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Column(Modifier.runColumn(), verticalArrangement = Arrangement.spacedBy(24.dp), content = content)
+    }
+}
+
+@Composable
+internal fun RunIntro(
+    title: String,
+    detail: String,
+    facts: List<String> = emptyList(),
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(text = title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+            Text(text = detail, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+        }
+        if (facts.isNotEmpty()) Facts(facts)
+    }
+}
+
+/** A run's reading column, centered on wide windows, with every screen of the run on the same edges. */
+internal fun Modifier.runColumn(): Modifier = widthIn(max = RUN_WIDTH).fillMaxWidth().padding(horizontal = 16.dp)
+
+private val RUN_WIDTH = 640.dp
+
+@Composable
+internal fun RunFinished(
+    title: String,
+    action: String,
+    saving: Boolean,
+    onClose: () -> Unit,
+    detail: String? = null,
+    headerTitle: String? = null,
+    actions: (@Composable () -> Unit)? = null,
+    content: @Composable () -> Unit,
+) {
+    TaskScaffold(
+        onClose = onClose,
+        title = { headerTitle?.let { LessonTitle(it) } },
+        bottomBar = {
+            TaskActionBar {
+                if (actions != null) {
+                    actions()
+                } else {
+                    TaskActions { width -> BusyButton(action, busy = saving, enabled = true, modifier = width, onClick = onClose) }
+                }
+            }
+        },
+    ) { padding -> RunDone(title, saving, Modifier.fillMaxSize().padding(padding), detail, content) }
+}
+
+@Composable
+internal fun RunLoading(onClose: () -> Unit) {
+    TaskScaffold(onClose = onClose) { padding ->
+        Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+    }
+}
+
+@Composable
+internal fun RunLoadFailed(
+    onClose: () -> Unit,
+    onRetry: () -> Unit,
+) {
+    TaskScaffold(onClose = onClose) { padding -> LoadFailedMessage(onRetry = onRetry, modifier = Modifier.padding(padding)) }
+}
+
+@Composable
+internal fun RunNotFound(
+    onClose: () -> Unit,
+    description: String = stringResource(R.string.practice_not_found_description),
+) {
+    TaskScaffold(onClose = onClose) { padding ->
+        StatusMessage(
+            icon = R.drawable.ic_school,
+            title = stringResource(R.string.practice_not_found_title),
+            description = description,
+            modifier = Modifier.padding(padding),
+        ) { Button(onClick = onClose) { Text(stringResource(R.string.practice_close)) } }
+    }
+}
+
+/** A recording set's place and task; its player comes with the listening milestone. */
+@Composable
+internal fun ListeningSet(set: ItemSet) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SetPlace(set)
+        set.listening?.title?.let { Text(it, style = MaterialTheme.typography.titleMedium) }
+        set.listening?.task?.let {
+            Text(
+                it,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
+}
+
+/** A main action that shows it's working while its write is on its way; it keeps its colors then, as main's, so it doesn't read as unavailable. */
+@Composable
+internal fun BusyButton(
+    label: String,
+    busy: Boolean,
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    val colors =
+        if (busy) {
+            ButtonDefaults.buttonColors(
+                disabledContainerColor = MaterialTheme.colorScheme.primary,
+                disabledContentColor = MaterialTheme.colorScheme.onPrimary,
+            )
+        } else {
+            ButtonDefaults.buttonColors()
+        }
+    Button(onClick = onClick, enabled = enabled && !busy, modifier = modifier, colors = colors) { PendingLabel(busy, label) }
+}
+
+/** [onRetry] sends the same answer again: the only way to resend an "I don't know" or a time-up answer. */
+@Composable
+internal fun SaveErrorText(onRetry: (() -> Unit)? = null) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = stringResource(R.string.practice_save_error),
+            modifier = Modifier.weight(1f, fill = false).semantics { liveRegion = LiveRegionMode.Polite },
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        onRetry?.let { TextButton(onClick = it) { Text(stringResource(R.string.practice_try_again)) } }
+    }
+}
+
+@Composable
+internal fun NoteText(text: String) {
+    Text(text = text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+}

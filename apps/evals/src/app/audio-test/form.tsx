@@ -55,6 +55,7 @@ export function AudioTestForm() {
             id="language"
             name="language"
             placeholder="e.g. en, es, fr, pt, ja"
+            required
             type="text"
           />
         </div>

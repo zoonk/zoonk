@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "planlink_about": "f152297adc59b95a6b4fc364a51984368582aab20e366c5e7deb7f2af3202160",
+  "planlink_eyebrow": "0f78b7b274cfa1bdbef4fa1b002070dadd28f14b36db01a166980761fe8da982",
+  "planlink_facts": "6e5e4c3544664328ec819506ccad684107a01e1e2460f6702e3891de9304e49b",
+  "planlink_failed": "23a9ed836aa3ea6ad8198c718762bcb1754086bd7095ef96a7440767544121e6",
+  "planlink_make_it_yours": "137791e10fbe3244728465b6484eae4f328714b810d863df097f3649045f17a0",
+  "planlink_minutes_label": "8d2bbff76e455c1c58e084a28423f338663f8d996551f31f89b0c9c25e6ddf8b",
+  "planlink_not_found": "d3e3d29c65a942120b3aeaea1ae4b7584c231917934b1fd5bf60adee648325ab",
+  "planlink_not_found_description": "186a84700273e4b70a528fab96ad8162c590310a43b06aa88de85a8fb671dff1",
+  "planlink_phases": "bcffadbd2901ef12b641f3c295fb42f1073d1a98e577b921629a5648cb8d6f04",
+  "planlink_refused": "5209eed67c92a9f29850ce76f1b9ac3679d26acb0d729cf25a8d90cbf179cbe8",
+  "planlink_skills": "aa82813d5ffecb28e0cf68d4e6dd0186473d78fd1d942c5fc236b907594a65b1",
+  "planlink_start": "6ca8f2e9f80f575d3ae34a2a79a020dbf881582294b2ffa68d9becdca7b89730",
+  "planlink_study_plan": "46085e67ba8f048ea07ea4045da8a7ffb9719beb76aa9fb0289a99a59ca91b26"
+}
+-->
+<resources>
+    <!-- Above a shared plan's subject. -->
+    <string name="planlink_eyebrow">Un plan de estudio que alguien compartió contigo</string>
+    <!-- A shared plan without a subject, and the title over its phases. -->
+    <string name="planlink_study_plan">Un plan de estudio</string>
+    <string name="planlink_minutes_label">¿Cuánto tiempo al día?</string>
+    <!-- Starts the learner's own plan from a shared one. -->
+    <string name="planlink_start">Crear un plan a partir de este</string>
+    <string name="planlink_make_it_yours">Tendrás tu propio plan para la misma materia, a tu ritmo. Después, responderás unas preguntas para saltarte lo que ya sabes.</string>
+    <string name="planlink_refused">No puedes crear otro objetivo en este momento. Primero completa o pausa uno.</string>
+    <string name="planlink_failed">No funcionó. Vuelve a intentarlo en un momento.</string>
+    <!-- A shared plan's size: %1$s is its study time, such as "40 hr"; %2$s its phases, such as "5 phases"; %3$s its skills, such as "24 skills". -->
+    <string name="planlink_facts">~%1$s de estudio · %2$s · %3$s</string>
+    <plurals name="planlink_phases">
+        <item quantity="one">%d fase</item>
+        <item quantity="many">%d fases</item>
+        <item quantity="other">%d fases</item>
+    </plurals>
+    <plurals name="planlink_skills">
+        <item quantity="one">%d habilidad</item>
+        <item quantity="many">%d habilidades</item>
+        <item quantity="other">%d habilidades</item>
+    </plurals>
+    <!-- A phase's approximate study time. %1$s is a duration, such as "2 hr". -->
+    <string name="planlink_about">~%1$s</string>
+    <string name="planlink_not_found">Este plan no está disponible</string>
+    <string name="planlink_not_found_description">El enlace puede ser antiguo o la persona que compartió el plan dejó de hacerlo.</string>
+</resources>

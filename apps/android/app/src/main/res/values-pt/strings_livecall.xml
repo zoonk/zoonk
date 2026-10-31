@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "livecall_channel": "8eca2d3fd352f8ae8f54b87b5c69ea3651e619287e9e8c1bd5f00a3e3d471b4b"
+}
+-->
+<resources>
+    <!-- The notification channel of an ongoing call with an AI character. -->
+    <string name="livecall_channel">Conversas</string>
+</resources>

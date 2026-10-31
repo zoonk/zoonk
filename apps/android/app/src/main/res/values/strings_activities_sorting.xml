@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="activities_sorting_badge_sort_groups">Sort into groups</string>
+
+    <!-- Above the items still to sort into groups. -->
+    <string name="activities_sorting_to_sort">To sort</string>
+    <string name="activities_sorting_all_sorted">All sorted. Check when you\'re ready.</string>
+    <!-- How many items are in a group so far, like "1 of 3 sorted". -->
+    <plurals name="activities_sorting_sorted_count">
+        <item quantity="one">%1$d of %2$d sorted</item>
+        <item quantity="other">%1$d of %2$d sorted</item>
+    </plurals>
+    <!-- Places the picked item in a group, like "Put Melting ice in Same substance". Also a TalkBack action on each item. -->
+    <string name="activities_sorting_put_in">Put %1$s in %2$s</string>
+    <!-- In an empty group while an item is picked. -->
+    <string name="activities_sorting_put_it_here">Put it here</string>
+    <!-- In an empty group. -->
+    <string name="activities_sorting_nothing_here">Nothing here yet</string>
+    <!-- Read by TalkBack when an item is placed, like "Melting ice is in Same substance. 2 of 3 sorted." -->
+    <plurals name="activities_sorting_placed">
+        <item quantity="one">%1$s is in %2$s. %3$d of %4$d sorted.</item>
+        <item quantity="other">%1$s is in %2$s. %3$d of %4$d sorted.</item>
+    </plurals>
+    <!-- An item once checked, for TalkBack, like "Melting ice, right group". -->
+    <string name="activities_sorting_right_group">%1$s, right group</string>
+    <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
+    <string name="activities_sorting_wrong_group">%1$s, wrong group</string>
+    <!-- How many items were sorted right, like "2 of 3 in the right group". -->
+    <string name="activities_sorting_right_count">%1$d of %2$d in the right group</string>
+    <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
+    <string name="activities_sorting_belongs_in">%1$s belongs in %2$s.</string>
+
+    <string name="activities_sorting_badge_put_in_order">Put in order</string>
+    <!-- The name of the list of a process's steps the learner orders, for TalkBack. -->
+    <string name="activities_sorting_steps_in_your_order">Steps, in your order</string>
+    <string name="activities_sorting_drag_steps">Hold and drag the steps into order.</string>
+    <!-- Above a process's steps in their true order, once checked. -->
+    <string name="activities_sorting_right_order">The right order</string>
+    <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
+    <string name="activities_sorting_you_had_it_at">You had it at %1$d</string>
+
+    <string name="activities_sorting_badge_match_pairs">Match pairs</string>
+    <!-- Pairs matched so far, like "Pairs matched: 1 of 3". -->
+    <string name="activities_sorting_pairs_matched">Pairs matched: %1$d of %2$d</string>
+    <!-- Cards that look like they match one on the other side but don't. -->
+    <plurals name="activities_sorting_cards_without_match">
+        <item quantity="one">%d card has no match</item>
+        <item quantity="other">%d cards have no match</item>
+    </plurals>
+    <!-- The name of the two columns of cards, for TalkBack. -->
+    <string name="activities_sorting_cards_to_match">Cards to match</string>
+    <!-- A matched card, for TalkBack, like "pregnant, matched". -->
+    <string name="activities_sorting_card_matched">%1$s, matched</string>
+    <!-- A card with no match, for TalkBack, like "embarrassed, no match". -->
+    <string name="activities_sorting_card_no_match">%1$s, no match</string>
+    <!-- Read by TalkBack after a match, like "Matched éxito with success. Pairs matched: 2 of 3." -->
+    <string name="activities_sorting_matched">Matched %1$s with %2$s. Pairs matched: %3$d of %4$d.</string>
+    <!-- Starts the reason a picked card has no match, like "“embarrassed” has no match." -->
+    <string name="activities_sorting_no_match_note">“%1$s” has no match.</string>
+    <!-- Read by TalkBack after a wrong pair, like "éxito and pregnant don't go together." -->
+    <string name="activities_sorting_dont_go_together">%1$s and %2$s don\'t go together.</string>
+    <string name="activities_sorting_dont_go_together_short">Those two don\'t go together.</string>
+    <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
+    <string name="activities_sorting_not_quite">Not quite:</string>
+    <!-- Above the pairs the learner got wrong on the first try. -->
+    <string name="activities_sorting_missed_first_try">Missed on the first try</string>
+    <!-- A pair missed on the first try, like "embarazada goes with pregnant, not embarrassed." -->
+    <string name="activities_sorting_goes_with">%1$s goes with %2$s, not %3$s.</string>
+    <!-- Above the cards that look like a match but have none. -->
+    <string name="activities_sorting_look_alikes">Look-alikes with no match</string>
+
+    <string name="activities_sorting_badge_link_causes">Link causes</string>
+    <string name="activities_sorting_pick_cause">Pick a cause, then pick what it led to.</string>
+    <!-- After a cause is picked, like "Now pick what Years of drought led to." -->
+    <string name="activities_sorting_now_pick">Now pick what %1$s led to.</string>
+    <!-- Links made so far out of all, like "1 of 2 links". -->
+    <plurals name="activities_sorting_links_count">
+        <item quantity="one">%1$d of %2$d link</item>
+        <item quantity="other">%1$d of %2$d links</item>
+    </plurals>
+    <!-- On the picked card: what it caused comes next. -->
+    <string name="activities_sorting_cause">Cause</string>
+    <!-- A link that isn't in the story, like "Dust storms didn't lead straight to Prairie plowed for wheat here. Try another link." -->
+    <string name="activities_sorting_not_straight">%1$s didn\'t lead straight to %2$s here. Try another link.</string>
+    <!-- After a link is taken away, like "Removed: Years of drought led to Dust storms." -->
+    <string name="activities_sorting_removed">Removed: %1$s led to %2$s.</string>
+    <!-- After a link is made, like "Linked: Years of drought led to Dust storms." -->
+    <string name="activities_sorting_linked">Linked: %1$s led to %2$s.</string>
+    <!-- After a cause is picked, like "Years of drought picked. Now pick what it led to." -->
+    <string name="activities_sorting_cause_picked">%1$s picked. Now pick what it led to.</string>
+    <!-- The name of the list of causes and effects, for TalkBack. -->
+    <string name="activities_sorting_causes_and_effects">Causes and effects</string>
+    <!-- The name of the list of links made, for TalkBack. -->
+    <string name="activities_sorting_your_links">Your links</string>
+    <!-- Read by TalkBack in place of the arrow between a cause and its effect. -->
+    <string name="activities_sorting_led_to">led to</string>
+    <!-- Under a link the learner made that the story doesn't have. -->
+    <string name="activities_sorting_not_a_link">Not a link in this story</string>
+    <!-- Under a link the story has that the learner didn't make. -->
+    <string name="activities_sorting_missed_link">Missed link</string>
+    <!-- A button that takes a link away, like "Remove the link from Years of drought to Dust storms". -->
+    <string name="activities_sorting_remove_link">Remove the link from %1$s to %2$s</string>
+
+    <string name="activities_sorting_badge_place_in_time">Place in time</string>
+    <!-- A year before the common era, like "51 BCE". Keep the no-break space (U+00A0) between the year and its era, so they stay on one line. -->
+    <string name="activities_sorting_year_bce">%1$s BCE</string>
+    <!-- A year of the common era, on a timeline that also has BCE years, like "1969 CE". Keep the no-break space (U+00A0) between the year and its era, so they stay on one line. -->
+    <string name="activities_sorting_year_ce">%1$s CE</string>
+    <!-- What TalkBack reads for an event once the real dates show: its real year, then the learner's guess, like "51 BCE. Your guess: 2000 CE". -->
+    <string name="activities_sorting_year_and_guess">%1$s. Your guess: %2$s</string>
+    <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
+    <string name="activities_sorting_your_guess">Your guess: %1$s</string>
+    <plurals name="activities_sorting_events_to_place">
+        <item quantity="one">%d event to place</item>
+        <item quantity="other">%d events to place</item>
+    </plurals>
+    <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
+    <string name="activities_sorting_place_on_timeline">Place %1$s on the timeline</string>
+    <string name="activities_sorting_drag_onto_timeline">Tap to place, or hold and drag onto the timeline.</string>
+    <string name="activities_sorting_show_real_dates">Show the real dates</string>
+    <!-- The name of the list of gaps between dates, for TalkBack. -->
+    <string name="activities_sorting_time_between">Time between the dates</string>
+    <!-- An exact gap in years, like "66 years". -->
+    <plurals name="activities_sorting_years">
+        <item quantity="one">%1$s year</item>
+        <item quantity="other">%1$s years</item>
+    </plurals>
+    <!-- A rounded gap in years, like "about 2,000 years". -->
+    <plurals name="activities_sorting_about_years">
+        <item quantity="one">about %1$s year</item>
+        <item quantity="other">about %1$s years</item>
+    </plurals>
+    <!-- After a gap in years: the two events and their years, like "from Cleopatra rules Egypt (51 BCE) to Moon landing (1969 CE)". -->
+    <string name="activities_sorting_gap_between">from %1$s (%2$s) to %3$s (%4$s)</string>
+    <!-- What the timeline's drawing covers, for TalkBack, like "A timeline from 3000 BCE to 2000 CE." -->
+    <string name="activities_sorting_timeline_from">A timeline from %1$s to %2$s.</string>
+
+    <string name="activities_sorting_badge_label_it">Label it</string>
+    <!-- Read by TalkBack when a name goes on a numbered spot of the picture, like "Aorta on spot 5." -->
+    <string name="activities_sorting_name_on_spot">%1$s on spot %2$s.</string>
+    <!-- Read by TalkBack when a name is taken off its spot, like "Aorta taken off." -->
+    <string name="activities_sorting_name_taken_off">%1$s taken off.</string>
+    <!-- Above the names while a spot waits for one, like "Tap a name for spot 2, or hold and drag it onto any spot." -->
+    <string name="activities_sorting_tap_a_name">Tap a name for spot %1$d, or hold and drag it onto any spot.</string>
+    <string name="activities_sorting_every_spot_named">Every spot has a name. Tap a spot to change it.</string>
+    <!-- The name of the list of names to place, for TalkBack. -->
+    <string name="activities_sorting_names">Names</string>
+    <!-- Puts a name on a numbered spot, like "Put Aorta on spot 5". Also a TalkBack action on each name. -->
+    <string name="activities_sorting_put_on_spot">Put %1$s on spot %2$d</string>
+    <!-- The name of the list of numbered spots, for TalkBack. -->
+    <string name="activities_sorting_spots_to_label">Spots to label</string>
+    <!-- The name of the list that says what each number on an explored picture shows, for TalkBack. -->
+    <string name="activities_sorting_what_each_number_shows">What each number shows</string>
+    <!-- A numbered spot with no name yet, for TalkBack, like "Spot 3: empty". -->
+    <string name="activities_sorting_spot_empty">Spot %1$d: empty</string>
+    <!-- A numbered spot and its name, for TalkBack, like "Spot 3: Right ventricle". -->
+    <string name="activities_sorting_spot_named">Spot %1$d: %2$s</string>
+    <!-- On the spot waiting for a name. -->
+    <string name="activities_sorting_pick_a_name">Pick a name</string>
+    <!-- For TalkBack, after a spot's wrong name once checked, like "Correct answer: Right atrium". -->
+    <string name="activities_sorting_correct_answer">Correct answer: %1$s</string>
+</resources>

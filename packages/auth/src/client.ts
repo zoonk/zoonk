@@ -1,9 +1,11 @@
 import { stripeClient } from "@better-auth/stripe/client";
+import { safeAsync } from "@zoonk/utils/error";
+import { API_URL } from "@zoonk/utils/url";
 import {
   adminClient,
+  anonymousClient,
   emailOTPClient,
   inferOrgAdditionalFields,
-  oneTimeTokenClient,
   organizationClient,
   usernameClient,
 } from "better-auth/client/plugins";
@@ -12,22 +14,29 @@ import { type auth } from "./auth";
 import { BETTER_AUTH_BASE_PATH } from "./config";
 import { ac, admin, member, owner } from "./permissions";
 
-export function logout() {
-  void authClient.signOut({
-    fetchOptions: {
-      onSuccess: () => {
-        globalThis.location.href = "/";
-      },
-    },
-  });
+const centralAuthClient = createAuthClient({ baseURL: new URL("/v1/auth", API_URL).href });
+
+export function signOutAppHost() {
+  return authClient.signOut();
+}
+
+/** The app and central auth can share a database session, so this signs out of both. */
+export async function logout() {
+  const { data } = await safeAsync(() =>
+    Promise.all([signOutAppHost(), centralAuthClient.signOut()]),
+  );
+
+  if (data?.every((response) => !response.error)) {
+    globalThis.location.href = "/";
+  }
 }
 
 export const authClient = createAuthClient({
   basePath: BETTER_AUTH_BASE_PATH,
   plugins: [
     adminClient(),
+    anonymousClient(),
     emailOTPClient(),
-    oneTimeTokenClient(),
     organizationClient({
       ac,
       roles: { admin, member, owner },

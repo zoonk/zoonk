@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct CourseArtwork: View {
+  @Environment(\.imageLoader) private var images
+  @Environment(SessionStore.self) private var session: SessionStore?
+
   let imageURL: URL?
   var cornerRadius: CGFloat = 16
   var symbolTint: Color?
@@ -8,20 +11,13 @@ struct CourseArtwork: View {
 
   var body: some View {
     Group {
-      if let imageURL {
-        AsyncImage(url: imageURL) { phase in
-          switch phase {
-          case .success(let image):
-            image
-              .resizable()
-              .scaledToFill()
-          case .empty:
-            fallback.redacted(reason: .placeholder)
-          case .failure:
-            fallback
-          @unknown default:
-            fallback
-          }
+      if let imageURL, let images {
+        ArtworkImage(
+          loader: images,
+          token: session?.authenticatedSession?.bearerToken,
+          url: imageURL
+        ) { phase in
+          artwork(phase)
         }
       } else {
         fallback
@@ -34,12 +30,26 @@ struct CourseArtwork: View {
     .accessibilityHidden(true)
   }
 
+  @ViewBuilder
+  private func artwork(_ phase: ArtworkPhase) -> some View {
+    switch phase {
+    case .loaded(let image):
+      image
+        .resizable()
+        .scaledToFill()
+    case .loading:
+      fallback.redacted(reason: .placeholder)
+    case .failed:
+      fallback
+    }
+  }
+
   private var fallback: some View {
     ZStack {
       fallbackBackground
 
       Image(systemName: systemImage)
-        .font(.system(.largeTitle, design: .rounded, weight: .medium))
+        .font(.largeTitle.weight(.medium))
         .symbolRenderingMode(.hierarchical)
         .foregroundStyle(fallbackForeground)
     }
@@ -52,6 +62,45 @@ struct CourseArtwork: View {
   private var fallbackForeground: Color {
     symbolTint?.mix(with: .primary, by: 0.35) ?? Color(uiColor: .secondaryLabel)
   }
+}
+
+private enum ArtworkPhase {
+  case failed
+  case loaded(Image)
+  case loading
+}
+
+private struct ArtworkImage<Content: View>: View {
+  @State private var phase = ArtworkPhase.loading
+
+  let loader: ImageLoader
+  let token: String?
+  let url: URL
+  @ViewBuilder let content: (ArtworkPhase) -> Content
+
+  var body: some View {
+    // A picture already in memory shows in the first frame, before the task runs.
+    content(loader.cachedImage(for: url, token: token).map { .loaded(Image(uiImage: $0)) } ?? phase)
+      .task(id: ArtworkRequest(token: token, url: url)) {
+        await load()
+      }
+  }
+
+  private func load() async {
+    phase = .loading
+    let image = await loader.image(for: url, token: token)
+
+    guard !Task.isCancelled else {
+      return
+    }
+
+    phase = image.map { .loaded(Image(uiImage: $0)) } ?? .failed
+  }
+}
+
+private struct ArtworkRequest: Equatable {
+  let token: String?
+  let url: URL
 }
 
 #Preview {

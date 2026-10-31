@@ -7,37 +7,68 @@ import {
   createDocument,
 } from "zod-openapi";
 import { accountPaths } from "./paths/account";
+import { appAttestPaths } from "./paths/app-attest";
 import { catalogPaths } from "./paths/catalog";
 import { catalogResourcePaths } from "./paths/catalog-resources";
-import { courseEditionPaths } from "./paths/course-editions";
-import { coursePromptPaths } from "./paths/course-prompts";
+import { checkpointPaths } from "./paths/checkpoints";
+import { contentGenerationPaths } from "./paths/content-generation";
+import { courseDetailsRegenerationPaths } from "./paths/course-details-regenerations";
+import { courseEstimatePaths } from "./paths/course-estimates";
+import { courseGoalPaths } from "./paths/course-goals";
 import { currentLearningPaths } from "./paths/current-learning";
 import { currentUserProgressPaths } from "./paths/current-user-progress";
+import { exampleLinePaths } from "./paths/example-lines";
+import { examPaths } from "./paths/exams";
 import { feedbackPaths } from "./paths/feedback";
+import { filePaths } from "./paths/files";
 import { generationPaths } from "./paths/generations";
+import { goalMapPaths } from "./paths/goal-maps";
+import { goalPaths } from "./paths/goals";
+import { guestPaths } from "./paths/guests";
+import { instrumentWaitlistPaths } from "./paths/instrument-waitlist";
+import { languagePaths } from "./paths/language";
+import { languageConversationPaths } from "./paths/language-conversations";
+import { languageGoalPaths } from "./paths/language-goal";
+import { learnViewPaths } from "./paths/learn-views";
+import { learnerPaths } from "./paths/learner";
+import { learnerProfilePaths } from "./paths/learner-profile";
+import { learnerSummaryPaths } from "./paths/learner-summary";
 import { lessonQuestionPaths } from "./paths/lesson-questions";
-import { lessonResourcePaths } from "./paths/lesson-resources";
+import { lessonRegenerationPaths } from "./paths/lesson-regenerations";
+import { libraryLessonPaths } from "./paths/library-lessons";
+import { liveCallAdminPaths } from "./paths/live-calls";
+import { memoryPaths } from "./paths/memory";
+import { milestonePaths } from "./paths/milestones";
+import { mindMapPaths } from "./paths/mind-maps";
+import { mistakePaths } from "./paths/mistakes";
+import { mockSittingPaths } from "./paths/mock-sitting";
+import { mockPaths } from "./paths/mocks";
+import { onboardingPaths } from "./paths/onboarding";
+import { placementPaths } from "./paths/placement";
+import { planAdvicePaths } from "./paths/plan-advice";
+import { planChangedSincePaths } from "./paths/plan-changed-since";
+import { planPreviewPaths } from "./paths/plan-previews";
+import { planPaths } from "./paths/plans";
 import { progressPaths } from "./paths/progress";
+import { pronunciationPaths } from "./paths/pronunciation";
+import { researchSourcePaths } from "./paths/research-sources";
+import { reviewFlagPaths } from "./paths/review-flags";
 import { sessionPaths } from "./paths/sessions";
+import { skillOutlinePaths } from "./paths/skill-outlines";
+import { speechClipPaths } from "./paths/speech-clips";
+import { studySessionPaths } from "./paths/study-sessions";
 import { subscriptionPaths } from "./paths/subscriptions";
+import { todayPaths } from "./paths/today";
 import { usernamePaths } from "./paths/usernames";
 import { internalErrorResponse } from "./schemas/responses";
 import { SECURITY_SCHEMES, createSecuritySchemes } from "./security";
 
-/**
- * Documents the JSON error returned when a public product handler fails before
- * producing its response.
- */
 function withInternalErrorResponse(
   operation: ZodOpenApiOperationObject,
 ): ZodOpenApiOperationObject {
   return { ...operation, responses: { ...operation.responses, "500": internalErrorResponse } };
 }
 
-/**
- * Adds the shared unexpected-error response to every standard operation on one
- * product API path.
- */
 function withInternalErrorResponsesForPath(
   pathItem: ZodOpenApiPathItemObject,
 ): ZodOpenApiPathItemObject {
@@ -54,10 +85,6 @@ function withInternalErrorResponsesForPath(
   };
 }
 
-/**
- * Keeps the generated contract aligned with the shared product route boundary.
- * The health check owns its small infrastructure response directly.
- */
 function withInternalErrorResponses(paths: ZodOpenApiPathsObject): ZodOpenApiPathsObject {
   return Object.fromEntries(
     Object.entries(paths).map(([path, pathItem]) => [
@@ -69,20 +96,59 @@ function withInternalErrorResponses(paths: ZodOpenApiPathsObject): ZodOpenApiPat
 
 const paths = withInternalErrorResponses({
   ...accountPaths,
+  ...appAttestPaths,
   ...catalogPaths,
   ...catalogResourcePaths,
-  ...courseEditionPaths,
-  ...coursePromptPaths,
+  ...checkpointPaths,
+  ...contentGenerationPaths,
+  ...courseGoalPaths,
+  ...courseDetailsRegenerationPaths,
+  ...courseEstimatePaths,
   ...currentLearningPaths,
+  ...examPaths,
   ...generationPaths,
-  ...lessonResourcePaths,
+  ...guestPaths,
+  ...instrumentWaitlistPaths,
+  ...languagePaths,
+  ...languageGoalPaths,
+  ...languageConversationPaths,
+  ...liveCallAdminPaths,
+  ...pronunciationPaths,
+  ...speechClipPaths,
+  ...learnerProfilePaths,
+  ...learnerSummaryPaths,
+  ...libraryLessonPaths,
+  ...lessonRegenerationPaths,
+  ...reviewFlagPaths,
   ...lessonQuestionPaths,
   ...currentUserProgressPaths,
   ...usernamePaths,
   ...feedbackPaths,
+  ...filePaths,
   ...progressPaths,
   ...sessionPaths,
+  ...exampleLinePaths,
   ...subscriptionPaths,
+  ...learnerPaths,
+  ...learnViewPaths,
+  ...placementPaths,
+  ...goalPaths,
+  ...goalMapPaths,
+  ...planPaths,
+  ...planAdvicePaths,
+  ...planChangedSincePaths,
+  ...planPreviewPaths,
+  ...memoryPaths,
+  ...milestonePaths,
+  ...mindMapPaths,
+  ...skillOutlinePaths,
+  ...mistakePaths,
+  ...mockPaths,
+  ...mockSittingPaths,
+  ...onboardingPaths,
+  ...researchSourcePaths,
+  ...studySessionPaths,
+  ...todayPaths,
 });
 
 /** OpenAPI 3.0 uses singular `example`, while the canonical 3.1 schemas use JSON Schema's `examples` array. */
@@ -114,7 +180,7 @@ export function createOpenAPIDocument({
 }) {
   const securitySchemes = cookieName ? createSecuritySchemes({ cookieName }) : SECURITY_SCHEMES;
 
-  return createDocument(
+  const document = createDocument(
     {
       components: { securitySchemes },
       info: {
@@ -128,4 +194,6 @@ export function createOpenAPIDocument({
     },
     getDocumentOptions(openapi),
   );
+
+  return document;
 }

@@ -1,0 +1,209 @@
+import { CourseLevel } from "@zoonk/db/enums";
+import { type SupportedLocale, getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
+import { type PlanGraph, type PlanGraphSkill } from "../../plans/planner/plan-state";
+import { getChapterAreaFromEvidence } from "./chapter-area-evidence";
+
+const LEVEL_ORDER = Object.values(CourseLevel);
+
+/**
+ * Stored with the plan like the names a skill graph writes, so they're content, not interface copy.
+ */
+const LEVEL_PHASE_NAMES: Readonly<Record<SupportedLocale, Record<CourseLevel, string>>> = {
+  de: {
+    advanced: "Fortgeschritten",
+    beginner: "Anfänger",
+    intermediate: "Mittelstufe",
+    overview: "Überblick",
+  },
+  en: {
+    advanced: "Advanced",
+    beginner: "Beginner",
+    intermediate: "Intermediate",
+    overview: "Overview",
+  },
+  es: {
+    advanced: "Avanzado",
+    beginner: "Principiante",
+    intermediate: "Intermedio",
+    overview: "Panorama general",
+  },
+  fr: {
+    advanced: "Avancé",
+    beginner: "Débutant",
+    intermediate: "Intermédiaire",
+    overview: "Vue d’ensemble",
+  },
+  it: {
+    advanced: "Avanzato",
+    beginner: "Principiante",
+    intermediate: "Intermedio",
+    overview: "Panoramica",
+  },
+  ja: { advanced: "上級", beginner: "初級", intermediate: "中級", overview: "概要" },
+  ko: { advanced: "고급", beginner: "초급", intermediate: "중급", overview: "개요" },
+  pl: {
+    advanced: "Zaawansowany",
+    beginner: "Początkujący",
+    intermediate: "Średnio zaawansowany",
+    overview: "Przegląd",
+  },
+  pt: {
+    advanced: "Avançado",
+    beginner: "Iniciante",
+    intermediate: "Intermediário",
+    overview: "Visão geral",
+  },
+  tr: {
+    advanced: "İleri seviye",
+    beginner: "Başlangıç",
+    intermediate: "Orta seviye",
+    overview: "Genel bakış",
+  },
+};
+
+type OutlineSkill = { id: string; name: string };
+
+export type CourseOutlineChapter = {
+  area?: string | null;
+  chapterId: string;
+  level: CourseLevel;
+  lessons: OutlineSkill[][];
+  lessonIds: string[];
+  position: number;
+  tags: OutlineSkill[];
+};
+
+function compareChapters(a: CourseOutlineChapter, b: CourseOutlineChapter): number {
+  return LEVEL_ORDER.indexOf(a.level) - LEVEL_ORDER.indexOf(b.level) || a.position - b.position;
+}
+
+function sliceFromChapter({
+  chapters,
+  startChapterId,
+}: {
+  chapters: CourseOutlineChapter[];
+  startChapterId: string | null;
+}): CourseOutlineChapter[] {
+  const start = startChapterId
+    ? chapters.findIndex((chapter) => chapter.chapterId === startChapterId)
+    : 0;
+
+  return start === -1 ? [] : chapters.slice(start);
+}
+
+function findOwnTags(chapters: readonly CourseOutlineChapter[]): Set<string> {
+  const counts = Map.groupBy(
+    chapters.flatMap((chapter) => [...new Set(chapter.tags.map((tag) => tag.id))]),
+    (id) => id,
+  );
+
+  return new Set([...counts].flatMap(([id, found]) => (found.length === 1 ? [id] : [])));
+}
+
+function countSkillLessons(chapters: readonly CourseOutlineChapter[]): Map<string, number> {
+  const taught = chapters.flatMap((chapter) =>
+    chapter.lessons.flatMap((skills) => [...new Set(skills.map((skill) => skill.id))]),
+  );
+
+  return new Map([...Map.groupBy(taught, (id) => id)].map(([id, found]) => [id, found.length]));
+}
+
+function toChapterSkills({
+  chapter,
+  lessonCounts,
+  ownTags,
+}: {
+  chapter: CourseOutlineChapter;
+  lessonCounts: ReadonlyMap<string, number>;
+  ownTags: ReadonlySet<string>;
+}): { lessons: number; skill: OutlineSkill }[] {
+  const lessonSkills = chapter.lessons
+    .flat()
+    .map((skill) => ({ lessons: lessonCounts.get(skill.id) ?? 1, skill }));
+
+  const tags = chapter.tags
+    .filter((tag) => ownTags.has(tag.id))
+    .map((skill) => ({ lessons: chapter.lessons.length, skill }));
+
+  return [...lessonSkills, ...tags];
+}
+
+export function getCoursePlanOutline({
+  chapters,
+  startChapterId,
+}: {
+  chapters: readonly CourseOutlineChapter[];
+  startChapterId: string | null;
+}) {
+  const ordered = chapters.toSorted(compareChapters);
+  const planned = sliceFromChapter({ chapters: ordered, startChapterId });
+  const ownTags = findOwnTags(ordered);
+  const lessonCounts = countSkillLessons(planned);
+
+  const levels = [
+    ...new Set(
+      planned
+        .filter((chapter) => toChapterSkills({ chapter, lessonCounts, ownTags }).length > 0)
+        .map((chapter) => chapter.level),
+    ),
+  ];
+
+  return { chapters: planned, lessonCounts, levels, ownTags };
+}
+
+export function toCoursePlanGraph({
+  chapters,
+  course,
+  examGraph = null,
+  startChapterId,
+}: {
+  chapters: readonly CourseOutlineChapter[];
+  course: { id: string; language: string; title: string };
+  examGraph?: PlanGraph | null;
+  startChapterId: string | null;
+}): PlanGraph {
+  const {
+    chapters: planned,
+    lessonCounts,
+    levels,
+    ownTags,
+  } = getCoursePlanOutline({ chapters, startChapterId });
+
+  const names = LEVEL_PHASE_NAMES[getSupportedLocaleFromLanguage(course.language)];
+  const examSkills = new Map(examGraph?.skills.map((skill) => [skill.skillId, skill]));
+  const skillAreas = new Map(examGraph?.skills.map((skill) => [skill.skillId, skill.area]));
+
+  function getExamSkill(chapter: CourseOutlineChapter, skillId: string) {
+    return (
+      examSkills.get(skillId) ??
+      (getChapterAreaFromEvidence({ chapter, skillAreas })
+        ? chapter.tags.map((tag) => examSkills.get(tag.id)).find(Boolean)
+        : undefined)
+    );
+  }
+
+  const skills = planned.flatMap((chapter) =>
+    toChapterSkills({ chapter, lessonCounts, ownTags }).map(
+      ({ lessons, skill }): PlanGraphSkill => ({
+        area: chapter.area ?? getExamSkill(chapter, skill.id)?.area ?? course.title,
+        courseIds: [course.id],
+        lessons: Math.max(1, lessons),
+        name: skill.name,
+        outcome: getExamSkill(chapter, skill.id)?.outcome,
+        outlined: true,
+        phase: levels.indexOf(chapter.level),
+        skillId: skill.id,
+        topics: getExamSkill(chapter, skill.id)?.topics,
+        weight: getExamSkill(chapter, skill.id)?.weight ?? null,
+      }),
+    ),
+  );
+
+  return {
+    courseOutline: { courseId: course.id, levels, startChapterId },
+    phases: levels.map((level) => ({ milestone: null, name: names[level] })),
+    skills: skills.filter(
+      (skill, index) => skills.findIndex((other) => other.skillId === skill.skillId) === index,
+    ),
+  };
+}

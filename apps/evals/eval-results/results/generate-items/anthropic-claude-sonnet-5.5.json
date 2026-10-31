@@ -1,0 +1,253 @@
+{
+  "modelId": "anthropic/claude-sonnet-5.5",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The intended answers are scientifically defensible: temperature is the independent variable; the highest measured temperature-trial rate is at 37 °C; heat-induced structural disruption explains reduced activity; pH affects side-chain ionization and enzyme function; and the inhibitor data support competitive inhibition as the most likely interpretation. All cited table values are reproduced correctly, and the rubric totals 8 whole points. The unexplained difference between shared-condition baseline rates weakens experimental coherence, though it does not establish a wrong answer or factual error requiring a cap.",
+          "score": 8,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The rubric gives explicit point allocations and a useful model response, but several keyPoints bundle multiple independently checkable ideas. Accepted explanations are also too narrowly expressed around loss of substrate binding: scientifically correct answers about disrupted active-site chemistry or catalytic function should be accepted where appropriate. Distractor-specific requirements do not apply to this essay item.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "This reads like an AP Biology experimental free-response question: it supplies quantitative tables, uses lettered parts and AP task verbs, and requires structural explanations and evidence-based justification. Each point-bearing part has its own rubric row with two clearly allocated points, totaling 8 within the expressly permitted range. There is no evident copying or near-copying of a real College Board question.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The question directly assesses the requested enzyme-activity skill through temperature, pH, and inhibitor experiments. It varies the work across identifying a variable, describing a trend, explaining molecular mechanisms, and justifying an inhibition classification from data. Most of the work requires application rather than recall, the difficulty is appropriate for intermediate AP Biology, and all content is in English.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3130,
+          "inputTokens": 3133,
+          "outputTokens": 1078,
+          "reasoningTokens": 359
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Several keyPoints combine independently scorable ideas: the first combines identifying the independent variable with describing the temperature trend, and the third combines interpreting pH data with explaining a molecular mechanism. The rubric also narrowly requires impaired substrate binding for the temperature and pH explanations, without explicitly accepting correct explanations involving altered catalytic function. Additionally, the uninhibited rate at 37 °C, pH 7, and 2% peroxide is 7.4–7.5 mL/min in Experiments 1–2 but 6.0 mL/min in Experiment 3, with no explanation of experimental variability or separate preparations.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "State that each experiment uses independently prepared samples, or align the shared-condition baseline rates. Separate keyPoints into individual scoring claims and explicitly allow scientifically equivalent explanations, including reduced catalytic activity rather than only reduced substrate binding. Clarify that peroxide concentration is held constant in Experiments 1–2 but deliberately varied in Experiment 3.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "One original AP Biology free-response question in English on enzyme activity, with lettered parts that use AP task verbs (identify, describe, explain, predict or justify) around an experiment or data. Its rubric must read like AP scoring guidelines: one row per point-bearing part, each description saying exactly what earns the points, and every row with whole points (1 to 3), adding up to a realistic total for a short free-response question (4 to 10). It must not copy a real College Board question.",
+        "id": "en-ap-biology-free-response-essay-1",
+        "userInput": {
+          "count": 1,
+          "examFormat": {
+            "name": "AP Biology",
+            "style": "multipleChoice (4 options): questions on data, experiments and models. essay: free-response questions with parts (a), (b), (c) and (d) using task verbs (identify, describe, explain, predict, justify), scored with point-based scoring guidelines."
+          },
+          "format": "essay",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Explain how temperature, pH and inhibitors change an enzyme's shape and activity, using data from an experiment.",
+            "name": "Enzyme activity"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The constitutional reference is accurate: Constitutional Amendment 64 of 2010 added food to Article 6's social rights. The food-waste context is credible, and all five rubric rows correctly have null points. However, allowing a seven-line essay is factually incorrect for ENEM and triggers the cap of 7 for one item containing a factual error. No multiple-choice key is required for this essay task.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The rubric and outline provide useful guidance, but the key points are not consistently atomic. The first combines thesis clarity with two prescribed thematic connections, while the final point bundles all intervention elements and human-rights compliance. Accepted approaches are also unnecessarily narrowed by the required causal framing and two-argument minimum. There are no distractors or generic misconception labels, so those specific caps do not apply.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The Brazilian social theme, three short motivating texts, formal argumentative command, human-rights requirement, and five competencies closely resemble an ENEM essay exercise. Nevertheless, the incorrect minimum length would authorize a response that receives zero in the actual exam, making the scoring instructions inconsistent with that setting and warranting the cap of 7. The explicit five-element coaching is also more instructional than a standard exam command.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The single intermediate-level task directly exercises thesis construction, argument development, relevant knowledge, cohesion, and an intervention proposal rather than recall. The learner-facing material is in Brazilian Portuguese and stays within ENEM essay writing. With only one requested item, there is no repetition or set-level variety problem.",
+          "score": 9,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2989,
+          "inputTokens": 2992,
+          "outputTokens": 921,
+          "reasoningTokens": 208
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The instruction permitting 7–30 lines misstates an ENEM rule: an essay with seven lines or fewer receives zero for insufficient length. The prompt should require 8–30 lines. In addition, the key points risk unfair grading by requiring the thesis to connect food waste specifically to both food insecurity and poor coordination between actors, although other well-supported approaches can fully address the theme.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several key points combine independently assessable requirements, particularly the thesis criterion and the intervention criterion. Requiring at least two distinct arguments also presents a useful writing strategy as a mandatory scoring condition. In the sample intervention, educational campaigns are labeled as a detail of the collection-and-donation proposal, but they read more naturally as a separate action.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Separate the checklist into individually assessable ideas and explicitly accept alternative theses, argument structures, and interventions. Make the sample intervention's detail directly elaborate an existing element—for example, specify collection schedules or food-safety checks. For closer exam realism, retain the standard intervention command and move the five-element coaching into the guidance.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "One ENEM essay prompt (redação) in Brazilian Portuguese: a theme with short motivating texts and the standard command for a dissertative-argumentative text with an intervention proposal. The rubric uses ENEM's five competencies, and since ENEM's grid doesn't give its rows points of their own, every row's points is null.",
+        "id": "pt-enem-redacao-essay-1",
+        "userInput": {
+          "count": 1,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada. Redação: texto dissertativo-argumentativo com proposta de intervenção, corrigido pelas cinco competências."
+          },
+          "format": "essay",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Escrever um texto dissertativo-argumentativo com tese, argumentos com repertório e proposta de intervenção completa.",
+            "name": "Redação do ENEM"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations give 1.2 × 5 × 30 × $0.15 = $27.00; (0.060 − 0.009) × 10 × 5 × 365 × $0.12 = $111.69; and (1.5 × 6 − 0.6 × 8) × 90 × $0.13 = $49.14. Each item has exactly one defensible correct option, correctly keyed, and its worked explanation is accurate. No correctness cap applies.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Every distractor corresponds numerically to its stated mistake, including omitted days or hours, missing watt-to-kilowatt conversion, confusing energy with cost, calculating for one bulb, and comparing devices using the same runtime incorrectly. Labels are specific, and reasons explain both the error and how to correct it. No cap applies.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Each item provides a short, plausible household situation, a clear calculation command, and five concise options, consistent with the requested ENEM-style structure. However, placing every correct answer first makes the set unnecessarily predictable. The questions otherwise fit the requested setting; the out-of-place-set cap does not apply.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three questions require applying household energy and cost calculations rather than recalling definitions. The set progresses from one appliance's monthly cost to annual lighting savings and then a comparison involving unequal device runtimes. These are meaningfully different calculation structures, so the repeated-task cap does not apply. All learner-facing text is in US English.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3251,
+          "inputTokens": 3254,
+          "outputTokens": 901,
+          "reasoningTokens": 348
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The correct answer is the first option in all three items. This creates an avoidable answer-position pattern that can reward guessing rather than calculation.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Vary the correct-answer positions across the set while preserving the option-specific feedback.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "ENEM-style Natural Sciences items in US English about household electricity use (energy is power times time, in kWh, and its cost). Each item has a short everyday support text and 5 options; distractors come from typical mistakes such as not converting watts to kilowatts or minutes to hours, or using the wrong number of days. All learner-facing text must be in English.",
+        "id": "en-enem-natural-sciences-electricity-consumption-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Calculate the energy a household appliance uses from its power and time of use, and what it costs.",
+            "example": "A 5,500 W electric shower used 10 minutes a day for 30 days uses 27.5 kWh.",
+            "name": "Household electricity consumption"
+          }
+        }
+      }
+    }
+  ],
+  "taskId": "generate-items"
+}

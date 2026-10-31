@@ -1,7 +1,7 @@
 "use server";
 
 import { deleteModelResults, runEval } from "@/lib/eval-runner";
-import { getModelById, getModelEvaluationId, parseReasoning } from "@/lib/models";
+import { DEFAULT_REASONING, getModelById, getModelVariantId, parseReasoning } from "@/lib/models";
 import { generateOutputs } from "@/lib/output-generator";
 import { deleteModelOutputs } from "@/lib/output-loader";
 import { TASKS } from "@/tasks";
@@ -10,10 +10,6 @@ import { logError } from "@zoonk/utils/logger";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-/**
- * Clears both filesystem stores for the selected model and returns to the task
- * page, where the model becomes available for a completely fresh evaluation.
- */
 export async function deleteModelDataAction(formData: FormData) {
   const taskId = parseFormField(formData, "taskId");
   const modelId = parseFormField(formData, "modelId");
@@ -66,7 +62,9 @@ export async function generateOutputsAction(formData: FormData) {
     throw new Error("Model ID is required");
   }
 
-  if (!getModelById(modelId)) {
+  const model = getModelById(modelId);
+
+  if (!model) {
     throw new Error("Model not found");
   }
 
@@ -74,18 +72,21 @@ export async function generateOutputsAction(formData: FormData) {
     throw new Error("Reasoning level is required");
   }
 
-  const evaluationModelId = getModelEvaluationId({ modelId, reasoning });
+  const variantId = getModelVariantId({
+    modelId,
+    reasoning: model.kind === "generation" ? reasoning : DEFAULT_REASONING,
+  });
 
   try {
-    await generateOutputs(task, evaluationModelId);
+    await generateOutputs(task, variantId);
   } catch (error) {
     logError("Error generating outputs:", error);
     return;
   }
 
-  revalidatePath(`/tasks/${taskId}/${encodeURIComponent(evaluationModelId)}`);
+  revalidatePath(`/tasks/${taskId}/${encodeURIComponent(variantId)}`);
   revalidatePath(`/tasks/${taskId}`);
-  redirect(`/tasks/${taskId}/${encodeURIComponent(evaluationModelId)}`);
+  redirect(`/tasks/${taskId}/${encodeURIComponent(variantId)}`);
 }
 
 export async function runEvalAction(formData: FormData) {

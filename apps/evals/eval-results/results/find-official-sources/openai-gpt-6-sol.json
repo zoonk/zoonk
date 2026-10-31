@@ -1,0 +1,574 @@
+{
+  "modelId": "openai/gpt-6-sol",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["2026", "64"],
+          "officialDomains": ["inep.gov.br", "gov.br", "in.gov.br"]
+        },
+        "id": "enem-2026:native-1",
+        "userInput": {
+          "plan": {
+            "board": "INEP",
+            "country": "BR",
+            "edition": "2026",
+            "name": "ENEM",
+            "officialDomains": ["gov.br/inep", "enem.inep.gov.br", "download.inep.gov.br"],
+            "queries": ["edital ENEM 2026 INEP", "Enem 2026 datas de aplicação edital retificação"],
+            "role": null
+          },
+          "searchTool": "native"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["2026", "64"],
+          "officialDomains": ["inep.gov.br", "gov.br", "in.gov.br"]
+        },
+        "id": "enem-2026:exa-1",
+        "userInput": {
+          "plan": {
+            "board": "INEP",
+            "country": "BR",
+            "edition": "2026",
+            "name": "ENEM",
+            "officialDomains": ["gov.br/inep", "enem.inep.gov.br", "download.inep.gov.br"],
+            "queries": ["edital ENEM 2026 INEP", "Enem 2026 datas de aplicação edital retificação"],
+            "role": null
+          },
+          "searchTool": "exa"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["2026", "64"],
+          "officialDomains": ["inep.gov.br", "gov.br", "in.gov.br"]
+        },
+        "id": "enem-2026:parallel-1",
+        "userInput": {
+          "plan": {
+            "board": "INEP",
+            "country": "BR",
+            "edition": "2026",
+            "name": "ENEM",
+            "officialDomains": ["gov.br/inep", "enem.inep.gov.br", "download.inep.gov.br"],
+            "queries": ["edital ENEM 2026 INEP", "Enem 2026 datas de aplicação edital retificação"],
+            "role": null
+          },
+          "searchTool": "parallel"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["2026", "64"],
+          "officialDomains": ["inep.gov.br", "gov.br", "in.gov.br"]
+        },
+        "id": "enem-2026:perplexity-1",
+        "userInput": {
+          "plan": {
+            "board": "INEP",
+            "country": "BR",
+            "edition": "2026",
+            "name": "ENEM",
+            "officialDomains": ["gov.br/inep", "enem.inep.gov.br", "download.inep.gov.br"],
+            "queries": ["edital ENEM 2026 INEP", "Enem 2026 datas de aplicação edital retificação"],
+            "role": null
+          },
+          "searchTool": "perplexity"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["tc_df_26", "2026", "anace"],
+          "officialDomains": ["cebraspe.org.br", "tc.df.gov.br"]
+        },
+        "id": "tcdf-2026:native-1",
+        "userInput": {
+          "plan": {
+            "board": "Cebraspe",
+            "country": "BR",
+            "edition": "2026",
+            "name": "Concurso TCDF",
+            "officialDomains": ["cebraspe.org.br", "tc.df.gov.br"],
+            "queries": [
+              "edital TCDF 2026 analista administrativo de controle externo Cebraspe",
+              "TCDF 2026 edital retificação"
+            ],
+            "role": "Analista Administrativo de Controle Externo"
+          },
+          "searchTool": "native"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["tc_df_26", "2026", "anace"],
+          "officialDomains": ["cebraspe.org.br", "tc.df.gov.br"]
+        },
+        "id": "tcdf-2026:exa-1",
+        "userInput": {
+          "plan": {
+            "board": "Cebraspe",
+            "country": "BR",
+            "edition": "2026",
+            "name": "Concurso TCDF",
+            "officialDomains": ["cebraspe.org.br", "tc.df.gov.br"],
+            "queries": [
+              "edital TCDF 2026 analista administrativo de controle externo Cebraspe",
+              "TCDF 2026 edital retificação"
+            ],
+            "role": "Analista Administrativo de Controle Externo"
+          },
+          "searchTool": "exa"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["tc_df_26", "2026", "anace"],
+          "officialDomains": ["cebraspe.org.br", "tc.df.gov.br"]
+        },
+        "id": "tcdf-2026:parallel-1",
+        "userInput": {
+          "plan": {
+            "board": "Cebraspe",
+            "country": "BR",
+            "edition": "2026",
+            "name": "Concurso TCDF",
+            "officialDomains": ["cebraspe.org.br", "tc.df.gov.br"],
+            "queries": [
+              "edital TCDF 2026 analista administrativo de controle externo Cebraspe",
+              "TCDF 2026 edital retificação"
+            ],
+            "role": "Analista Administrativo de Controle Externo"
+          },
+          "searchTool": "parallel"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["tc_df_26", "2026", "anace"],
+          "officialDomains": ["cebraspe.org.br", "tc.df.gov.br"]
+        },
+        "id": "tcdf-2026:perplexity-1",
+        "userInput": {
+          "plan": {
+            "board": "Cebraspe",
+            "country": "BR",
+            "edition": "2026",
+            "name": "Concurso TCDF",
+            "officialDomains": ["cebraspe.org.br", "tc.df.gov.br"],
+            "queries": [
+              "edital TCDF 2026 analista administrativo de controle externo Cebraspe",
+              "TCDF 2026 edital retificação"
+            ],
+            "role": "Analista Administrativo de Controle Externo"
+          },
+          "searchTool": "perplexity"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["structure", "test", "digital"],
+          "officialDomains": ["collegeboard.org"]
+        },
+        "id": "sat:native-1",
+        "userInput": {
+          "plan": {
+            "board": "College Board",
+            "country": "US",
+            "edition": "2027",
+            "name": "SAT",
+            "officialDomains": ["satsuite.collegeboard.org", "collegeboard.org"],
+            "queries": [
+              "digital SAT test structure sections time questions",
+              "SAT test dates 2026-27"
+            ],
+            "role": null
+          },
+          "searchTool": "native"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["structure", "test", "digital"],
+          "officialDomains": ["collegeboard.org"]
+        },
+        "id": "sat:exa-1",
+        "userInput": {
+          "plan": {
+            "board": "College Board",
+            "country": "US",
+            "edition": "2027",
+            "name": "SAT",
+            "officialDomains": ["satsuite.collegeboard.org", "collegeboard.org"],
+            "queries": [
+              "digital SAT test structure sections time questions",
+              "SAT test dates 2026-27"
+            ],
+            "role": null
+          },
+          "searchTool": "exa"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["structure", "test", "digital"],
+          "officialDomains": ["collegeboard.org"]
+        },
+        "id": "sat:parallel-1",
+        "userInput": {
+          "plan": {
+            "board": "College Board",
+            "country": "US",
+            "edition": "2027",
+            "name": "SAT",
+            "officialDomains": ["satsuite.collegeboard.org", "collegeboard.org"],
+            "queries": [
+              "digital SAT test structure sections time questions",
+              "SAT test dates 2026-27"
+            ],
+            "role": null
+          },
+          "searchTool": "parallel"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["structure", "test", "digital"],
+          "officialDomains": ["collegeboard.org"]
+        },
+        "id": "sat:perplexity-1",
+        "userInput": {
+          "plan": {
+            "board": "College Board",
+            "country": "US",
+            "edition": "2027",
+            "name": "SAT",
+            "officialDomains": ["satsuite.collegeboard.org", "collegeboard.org"],
+            "queries": [
+              "digital SAT test structure sections time questions",
+              "SAT test dates 2026-27"
+            ],
+            "role": null
+          },
+          "searchTool": "perplexity"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["2027", "termine", "pruefung"],
+          "officialDomains": ["km.bayern.de", "isb.bayern.de"]
+        },
+        "id": "abitur-bayern-2027:native-1",
+        "userInput": {
+          "plan": {
+            "board": "Bayerisches Staatsministerium für Unterricht und Kultus",
+            "country": "DE",
+            "edition": "2027",
+            "name": "Abitur Bayern",
+            "officialDomains": ["km.bayern.de", "isb.bayern.de"],
+            "queries": [
+              "Abiturprüfung 2027 Termine Bayern",
+              "Abitur Bayern Prüfungsfächer Anforderungen"
+            ],
+            "role": null
+          },
+          "searchTool": "native"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["2027", "termine", "pruefung"],
+          "officialDomains": ["km.bayern.de", "isb.bayern.de"]
+        },
+        "id": "abitur-bayern-2027:exa-1",
+        "userInput": {
+          "plan": {
+            "board": "Bayerisches Staatsministerium für Unterricht und Kultus",
+            "country": "DE",
+            "edition": "2027",
+            "name": "Abitur Bayern",
+            "officialDomains": ["km.bayern.de", "isb.bayern.de"],
+            "queries": [
+              "Abiturprüfung 2027 Termine Bayern",
+              "Abitur Bayern Prüfungsfächer Anforderungen"
+            ],
+            "role": null
+          },
+          "searchTool": "exa"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["2027", "termine", "pruefung"],
+          "officialDomains": ["km.bayern.de", "isb.bayern.de"]
+        },
+        "id": "abitur-bayern-2027:parallel-1",
+        "userInput": {
+          "plan": {
+            "board": "Bayerisches Staatsministerium für Unterricht und Kultus",
+            "country": "DE",
+            "edition": "2027",
+            "name": "Abitur Bayern",
+            "officialDomains": ["km.bayern.de", "isb.bayern.de"],
+            "queries": [
+              "Abiturprüfung 2027 Termine Bayern",
+              "Abitur Bayern Prüfungsfächer Anforderungen"
+            ],
+            "role": null
+          },
+          "searchTool": "parallel"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["2027", "termine", "pruefung"],
+          "officialDomains": ["km.bayern.de", "isb.bayern.de"]
+        },
+        "id": "abitur-bayern-2027:perplexity-1",
+        "userInput": {
+          "plan": {
+            "board": "Bayerisches Staatsministerium für Unterricht und Kultus",
+            "country": "DE",
+            "edition": "2027",
+            "name": "Abitur Bayern",
+            "officialDomains": ["km.bayern.de", "isb.bayern.de"],
+            "queries": [
+              "Abiturprüfung 2027 Termine Bayern",
+              "Abitur Bayern Prüfungsfächer Anforderungen"
+            ],
+            "role": null
+          },
+          "searchTool": "perplexity"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "noticeHints": ["2027"], "officialDomains": ["education.gouv.fr"] },
+        "id": "bac-2027:native-1",
+        "userInput": {
+          "plan": {
+            "board": "Ministère de l'Éducation nationale",
+            "country": "FR",
+            "edition": "2027",
+            "name": "Baccalauréat général",
+            "officialDomains": ["education.gouv.fr", "eduscol.education.gouv.fr"],
+            "queries": [
+              "calendrier baccalauréat 2027 bulletin officiel",
+              "dates des examens 2027 éduscol"
+            ],
+            "role": null
+          },
+          "searchTool": "native"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Official site found, but not the current edition's document",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Official site found, but not the current edition's document",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Official site found, but not the current edition's document",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": { "noticeHints": ["2027"], "officialDomains": ["education.gouv.fr"] },
+        "id": "bac-2027:exa-1",
+        "userInput": {
+          "plan": {
+            "board": "Ministère de l'Éducation nationale",
+            "country": "FR",
+            "edition": "2027",
+            "name": "Baccalauréat général",
+            "officialDomains": ["education.gouv.fr", "eduscol.education.gouv.fr"],
+            "queries": [
+              "calendrier baccalauréat 2027 bulletin officiel",
+              "dates des examens 2027 éduscol"
+            ],
+            "role": null
+          },
+          "searchTool": "exa"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "noticeHints": ["2027"], "officialDomains": ["education.gouv.fr"] },
+        "id": "bac-2027:parallel-1",
+        "userInput": {
+          "plan": {
+            "board": "Ministère de l'Éducation nationale",
+            "country": "FR",
+            "edition": "2027",
+            "name": "Baccalauréat général",
+            "officialDomains": ["education.gouv.fr", "eduscol.education.gouv.fr"],
+            "queries": [
+              "calendrier baccalauréat 2027 bulletin officiel",
+              "dates des examens 2027 éduscol"
+            ],
+            "role": null
+          },
+          "searchTool": "parallel"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "noticeHints": ["2027"], "officialDomains": ["education.gouv.fr"] },
+        "id": "bac-2027:perplexity-1",
+        "userInput": {
+          "plan": {
+            "board": "Ministère de l'Éducation nationale",
+            "country": "FR",
+            "edition": "2027",
+            "name": "Baccalauréat général",
+            "officialDomains": ["education.gouv.fr", "eduscol.education.gouv.fr"],
+            "queries": [
+              "calendrier baccalauréat 2027 bulletin officiel",
+              "dates des examens 2027 éduscol"
+            ],
+            "role": null
+          },
+          "searchTool": "perplexity"
+        }
+      }
+    }
+  ],
+  "taskId": "find-official-sources"
+}

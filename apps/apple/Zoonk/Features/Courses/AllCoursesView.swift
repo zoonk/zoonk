@@ -2,126 +2,117 @@ import SwiftUI
 
 struct AllCoursesView: View {
   @Environment(CourseCatalogStore.self) private var catalog
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-  @State private var selectedCategory: CourseCategory?
+  /// Partially folded, iPhone Duo keeps the box and the categories on the page before the fold;
+  /// nil elsewhere.
+  @State private var leadingPageMargin: CGFloat?
 
-  let isSelected: Bool
-  let searchText: String
-  let onCreateCourse: () -> Void
+  @Binding var category: CourseCategory?
 
   var body: some View {
-    Group {
-      if catalogText(searchText) != nil {
-        CourseCatalogSearchResultsView(
-          query: searchText,
-          retry: { await catalog.searchCatalog(query: searchText, force: true) })
-      } else {
-        browseCatalog
+    List {
+      // In the page, not the bar's subtitle: that has one line, which cuts this sentence on iPhone.
+      Section {
+        Text(
+          "Start from a course, or tell Zoonk what you're getting ready for.",
+          tableName: "Courses", comment: "The line under the catalog's title"
+        )
+        .foregroundStyle(.secondary)
+        .listRowBackground(Color.clear)
       }
-    }
-    .task(id: isSelected ? selectedCategory?.rawValue ?? "" : nil) {
-      guard isSelected else { return }
-      await catalog.loadCoursesIfNeeded(category: selectedCategory)
-    }
-    .task(id: isSelected ? searchText : nil) {
-      guard isSelected else { return }
-      await updateSearchResults()
-    }
-  }
+      .listSectionMargins(.trailing, leadingPageMargin)
+      .listSectionSpacing(.compact)
 
-  private var browseCatalog: some View {
-    ScrollView {
-      VStack(spacing: 12) {
-        CourseCategorySelector(selection: $selectedCategory)
+      GoalStartEntry(isBoxOnly: true)
+        .listSectionMargins(.trailing, leadingPageMargin)
 
-        catalogContent
-          .padding(.horizontal, 16)
+      if let counts = catalog.categoryCounts.value {
+        Section {
+          CourseCategorySelector(
+            categories: populatedCategories(counts: counts, open: category),
+            selection: $category)
+        }
+        .listRowInsets(EdgeInsets())
+        .listRowBackground(Color.clear)
+        .listSectionMargins(.trailing, leadingPageMargin)
       }
-      .frame(maxWidth: 1_180, alignment: .leading)
-      .padding(.top, 4)
-      .padding(.bottom, horizontalSizeClass == .regular ? 32 : 20)
-      .frame(maxWidth: .infinity)
+
+      CatalogCourses(category: category)
     }
-    .scrollBounceBehavior(.basedOnSize)
-    .refreshable {
-      await catalog.loadCourses(category: selectedCategory, force: true)
+    // Section margins count from the list's whole bounds, which run under the vertical bar.
+    .onGeometryChange(for: CGFloat?.self) { proxy in
+      PaneSpace(proxy).fold.map {
+        proxy.size.width - $0.lowerBound + proxy.safeAreaInsets.trailing
+      }
+    } action: {
+      leadingPageMargin = $0
     }
+    .loads(catalog.courses(category: category), catalog.categoryCounts)
   }
 
-  private func updateSearchResults() async {
-    guard catalogText(searchText) != nil else {
-      catalog.clearSearch()
-      return
-    }
+}
 
-    catalog.prepareSearch(query: searchText)
-
-    do {
-      try await Task.sleep(for: .milliseconds(250))
-    } catch {
-      return
-    }
-
-    guard !Task.isCancelled else {
-      return
-    }
-
-    await catalog.searchCatalog(query: searchText)
+/// An empty category would only lead to "Start a goal", which the box above already offers. The
+/// open one stays listed, so the row always says where it is.
+func populatedCategories(
+  counts: CourseCategoryCounts, open: CourseCategory?, locale: Locale = .current
+) -> [CourseCategory] {
+  localizedCourseCategories(locale: locale).filter { category in
+    (counts.counts[category] ?? 0) > 0 || category == open
   }
+}
 
-  @ViewBuilder
-  private var catalogContent: some View {
-    switch catalog.coursesState {
+private struct CatalogCourses: View {
+  @Environment(CourseCatalogStore.self) private var catalog
+  @Environment(AppRouter.self) private var router
+
+  let category: CourseCategory?
+
+  var body: some View {
+    switch catalog.courses(category: category).state {
     case .idle, .loading:
-      CourseCatalogLoadingGrid()
+      ProgressView()
+        .frame(maxWidth: .infinity)
+        .listRowBackground(Color.clear)
+        .accessibilityLabel(
+          Text(
+            "Loading courses", tableName: "Courses",
+            comment: "Accessibility status while the course catalog loads."))
     case .loaded(let page):
-      CourseCatalogGrid(category: selectedCategory, page: page)
+      CourseCatalogGrid(category: category, page: page)
     case .empty:
-      CourseCatalogEmptyView(category: selectedCategory, onCreateCourse: onCreateCourse)
+      CourseCatalogEmptyView(category: category) { router.open(.startGoal()) }
+        .listRowBackground(Color.clear)
     case .failed(let failure):
       CatalogFailureRecoveryView(context: .catalog, failure: failure) {
-        await catalog.loadCourses(category: selectedCategory, force: true)
+        await catalog.courses(category: category).refresh()
       }
+      .listRowBackground(Color.clear)
     }
   }
 }
 
 private struct CourseCatalogEmptyView: View {
   let category: CourseCategory?
-  let onCreateCourse: () -> Void
+  let startGoal: () -> Void
 
   var body: some View {
     ContentUnavailableView {
       Label {
-        if let category {
-          Text(
-            "No \(String(localized: category.localizedTitle)) courses yet",
-            tableName: "Courses",
-            comment: "Title when a selected category does not contain any courses.")
-        } else {
-          Text(
-            "No courses yet",
-            tableName: "Courses",
-            comment: "Title when the public course catalog is empty.")
-        }
+        Text("No courses", tableName: "Courses", comment: "Title when the catalog has no courses")
       } icon: {
-        Image(systemName: category?.systemImage ?? "books.vertical")
+        Image(systemName: "square.and.pencil")
       }
     } description: {
       Text(
-        "Courses will appear here when they're available.",
-        tableName: "Courses",
-        comment: "Guidance when no public courses are available.")
+        "No courses available yet.", tableName: "Courses",
+        comment: "Guidance when the catalog or a category has no courses")
     } actions: {
-      if let category {
-        Button(action: onCreateCourse) {
+      if category != nil {
+        Button(action: startGoal) {
           Label {
             Text(
-              "Create a course about \(String(localized: category.localizedTitle))",
-              tableName: "Courses",
-              comment:
-                "Opens course creation from an empty category. The interpolated value is the category name."
-            )
+              "Start a goal", tableName: "Courses",
+              comment: "Opens the start of a new goal from an empty category")
           } icon: {
             Image(systemName: "plus")
           }
@@ -129,6 +120,5 @@ private struct CourseCatalogEmptyView: View {
         .buttonStyle(.bordered)
       }
     }
-    .frame(maxWidth: .infinity, minHeight: 280)
   }
 }

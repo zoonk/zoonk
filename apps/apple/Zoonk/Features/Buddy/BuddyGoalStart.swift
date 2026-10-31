@@ -1,0 +1,156 @@
+import SwiftUI
+
+/// An example fills the field for the learner to edit first.
+struct BuddyGoalStart: View {
+  @Environment(BuddyStore.self) private var store
+  @Environment(\.tutorPlaces) private var places
+
+  let name: String
+  @Binding var goal: String
+
+  var body: some View {
+    ScrollView {
+      VStack(alignment: .leading, spacing: 16) {
+        // The hello says the buddy is an AI, since it opens the conversation.
+        Text(
+          "Hi! I'm \(name), your AI study buddy. What do you want to learn, and by when? I'll turn it into a plan for every day until then.",
+          tableName: "Buddy",
+          comment: "The buddy's hello before the learner has a goal; the argument is its name")
+
+        if case .loaded = store.earlierQuestions.state {
+          Button {
+            places.open(.earlierQuestions)
+          } label: {
+            Label {
+              Text(
+                "Earlier questions", tableName: "Buddy",
+                comment: "Opens questions asked before the courses were rewritten")
+            } icon: {
+              Image(systemName: "clock.arrow.circlepath")
+            }
+          }
+          .buttonStyle(.borderless)
+        }
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .scenePadding()
+    }
+    .defaultScrollAnchor(.bottom, for: .initialOffset)
+    .scrollDismissesKeyboard(.interactively)
+    .safeAreaBar(edge: .bottom) {
+      VStack(alignment: .leading, spacing: 10) {
+        ScrollView(.horizontal) {
+          HStack(spacing: 8) {
+            ForEach(examples, id: \.self) { example in
+              Button(example) {
+                goal = example
+              }
+              .buttonStyle(.suggestionChip)
+            }
+          }
+        }
+        .scrollIndicators(.hidden)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(
+          Text("Examples", tableName: "Buddy", comment: "Example goals filled in with one tap"))
+
+        HStack(alignment: .bottom, spacing: 8) {
+          MultilineTextField(
+            text: $goal,
+            prompt: Text(
+              "What you want to learn", tableName: "Buddy", comment: "Placeholder of the goal field"
+            ),
+            label: Text("Your goal", tableName: "Buddy", comment: "The goal field for VoiceOver")
+          )
+          .lineLimit(1...4)
+          .onSubmit(start)
+          .padding(.leading, 16)
+          .padding(.vertical, 12)
+
+          Button(action: start) {
+            Text("Build my plan", tableName: "Buddy", comment: "Starts a goal with the words typed")
+          }
+          .buttonStyle(.mainAction)
+          .disabled(trimmedGoal.isEmpty)
+          .padding(6)
+        }
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 24, style: .continuous))
+      }
+      .scenePadding(.horizontal)
+      .padding(.vertical, 8)
+    }
+  }
+
+  private var trimmedGoal: String {
+    goal.trimmingCharacters(in: .whitespacesAndNewlines)
+  }
+
+  private func start() {
+    guard !trimmedGoal.isEmpty else {
+      return
+    }
+
+    places.open(.startGoal(goal: trimmedGoal))
+  }
+
+  private var examples: [String] {
+    let language =
+      Locale(identifier: Bundle.main.preferredLocalizations.first ?? "en")
+      .language.languageCode?.identifier ?? "en"
+    let spoken = language == "en" ? "es" : "en"
+    let spokenName =
+      Locale(identifier: language).localizedString(forLanguageCode: spoken) ?? spoken
+
+    let exam =
+      switch language {
+      case "pt":
+        String(
+          localized: "Pass the ENEM", table: "Buddy",
+          comment: "An example goal: Brazil's national exam")
+      case "de":
+        String(
+          localized: "Pass the Abitur", table: "Buddy",
+          comment: "An example goal: Germany's school-leaving exam")
+      case "fr":
+        String(
+          localized: "Pass the bac", table: "Buddy",
+          comment: "An example goal: France's school-leaving exam")
+      case "es":
+        String(
+          localized: "Pass the EXANI-II", table: "Buddy",
+          comment: "An example goal: Mexico's university admission exam")
+      case "it":
+        String(
+          localized: "Pass the maturità", table: "Buddy",
+          comment: "An example goal: Italy's school-leaving exam")
+      case "ja":
+        String(
+          localized: "Do well on the Common Test", table: "Buddy",
+          comment: "An example goal: Japan's Common Test for University Admissions")
+      case "ko":
+        String(
+          localized: "Do well on the CSAT", table: "Buddy",
+          comment: "An example goal: South Korea's college entrance exam (수능)")
+      case "pl":
+        String(
+          localized: "Pass the matura", table: "Buddy",
+          comment: "An example goal: Poland's school-leaving exam")
+      case "tr":
+        String(
+          localized: "Do well on the YKS", table: "Buddy",
+          comment: "An example goal: Turkey's university entrance exam")
+      default:
+        String(
+          localized: "Pass the SAT", table: "Buddy",
+          comment: "An example goal: the US college entrance exam")
+      }
+
+    return [
+      exam,
+      String(
+        localized: "Speak \(spokenName) for a job interview", table: "Buddy",
+        comment: "An example goal; the argument is a language"),
+      String(localized: "Understand quantum physics", table: "Buddy", comment: "An example goal"),
+    ]
+  }
+}

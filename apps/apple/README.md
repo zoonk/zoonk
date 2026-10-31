@@ -21,16 +21,19 @@ Build and run the Debug app from the repository root:
 
 Run commands from this directory:
 
-| Command             | Purpose                                                       |
-| ------------------- | ------------------------------------------------------------- |
-| `make build`        | Build the iPhone and iPad app in Release configuration.       |
-| `make build-ios`    | Build the iPhone and iPad app in Release configuration.       |
-| `make test`         | Run the app's test targets on the default iPhone simulator.   |
-| `make format`       | Format Swift source files in place.                           |
-| `make format-check` | Check Swift formatting without changing files.                |
-| `make check`        | Run formatting checks, build the app, and run its test suite. |
+| Command             | Purpose                                               |
+| ------------------- | ----------------------------------------------------- |
+| `make build`        | Build the iPhone and iPad app in Debug configuration. |
+| `make build-ios`    | Build the iPhone and iPad app in Debug configuration. |
+| `make test`         | Run the unit tests on the default iPhone simulator.   |
+| `make ui-test`      | Run the UI tests on the default iPhone simulator.     |
+| `make format`       | Format Swift source files in place.                   |
+| `make format-check` | Check Swift formatting without changing files.        |
+| `make check`        | Check formatting and run the unit tests.              |
 
-From the repository root, add `-C apps/apple`, for example `make -C apps/apple check`.
+From the repository root, add `-C apps/apple`, for example `make -C apps/apple check`. Before committing, run `pnpm apple:check` from the repository root: it also validates the translations.
+
+To check a Release build, run `make build CONFIGURATION=Release`.
 
 Override the test destination when the default simulator is unavailable:
 
@@ -41,20 +44,22 @@ make test TEST_DESTINATION='platform=iOS Simulator,name=iPhone 16 Pro,OS=latest'
 Run one test or test class by passing an Xcode test identifier:
 
 ```sh
-make test TEST_ARGUMENTS='-only-testing:ZoonkUITests/ZoonkUITests/testPrimaryTabsNavigateToTheirScreens'
+make ui-test ONLY_TESTING=ZoonkUITests/ZoonkUITests/testPrimaryScreenShowsTitleAndLogIn
 ```
 
 ## API client
 
-Xcode generates the internal Swift API client automatically during a normal build. A fresh clone does not need a separate SDK setup or generation command, and generated Swift files are not committed.
+The local `ZoonkAPI` Swift package generates the public Swift API client during a normal build, isolating it from app recompilation. The package also owns the hand-written lesson wire models used by the generator’s type overrides. A fresh clone does not need a separate SDK setup or generation command, and generated Swift files are not committed.
 
-The committed `Zoonk/openapi.json` file is an OpenAPI 3.0 compatibility projection generated from the same schemas as the public OpenAPI 3.1 contract. It must not be edited by hand. After changing the contract, run one command from the repository root:
+The committed `ZoonkAPI/Sources/ZoonkAPI/openapi.json` file is an OpenAPI 3.0 compatibility projection generated from the same schemas as the public OpenAPI 3.1 contract. It must not be edited by hand. After changing the contract, run one command from the repository root:
 
 ```sh
 pnpm openapi:generate
 ```
 
 CI checks the file byte-for-byte against the source contract, so a stale artifact cannot merge. Feature code should continue to call small hand-written clients such as `AccountAPIClient`; generated transport types stay behind those feature boundaries, while `APIClientFactory` owns shared transport and middleware configuration.
+
+The generator only builds the operations listed under `filter` in `ZoonkAPI/Sources/ZoonkAPI/openapi-generator-config.yaml`, plus the schemas they use, so endpoints the app doesn't call can't break its build. Add an operation there when a feature starts calling it.
 
 ## StoreKit testing
 
@@ -85,7 +90,7 @@ LocalizedStringResource(
 
 Build the app after adding or changing copy so Xcode extracts the source strings into the matching `.xcstrings` catalog. Then run `pnpm --filter apple i18n` from the repository root to translate missing Apple strings and `pnpm --filter apple i18n:lint` to validate every catalog. The root `pnpm i18n` and `pnpm i18n:lint` commands include the Apple app when running the same workflows for the full repository.
 
-Keep catalogs together in `Zoonk/Resources/Localization`, named by feature or app surface, and use the generic `pt` locale. Xcode resolves each catalog from its table basename, while Eloqnt automatically discovers every catalog in this directory. Do not edit generated translations or add manual extraction state for ordinary source-driven strings.
+Keep catalogs together in `Zoonk/Resources/Localization`, named by feature or app surface, and use the generic `pt` locale. Xcode resolves each catalog from its table basename, while Eloqnt automatically discovers every catalog in this directory. Fix translations through the [translation rules](../../AGENTS.md#translations), and don't add manual extraction state for ordinary source-driven strings.
 
 ## Continuous Integration
 

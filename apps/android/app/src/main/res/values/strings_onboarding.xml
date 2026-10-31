@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Title of the screen where a learner writes their goal. -->
+    <string name="onboarding_start_title">What do you want to achieve?</string>
+    <!-- Under the title. "Tell us in your own words" asks the learner to describe their goal. -->
+    <string name="onboarding_start_description">Tell us in your own words. We\'ll build the plan.</string>
+    <!-- Under the title when the goal starts from a plan someone shared. "Tell us in your own words" asks the learner to describe their goal. -->
+    <string name="onboarding_start_description_shared">Tell us in your own words. Your plan starts from the plan someone shared with you.</string>
+    <!-- Aside on wide screens. -->
+    <string name="onboarding_how_it_works">How it works</string>
+    <string name="onboarding_how_it_works_say">Say what you want to achieve</string>
+    <string name="onboarding_how_it_works_answer">Answer a few questions</string>
+    <string name="onboarding_how_it_works_plan">Get a plan with dates, and your first lesson</string>
+    <!-- Screen reader state of the step the learner is on in How it works. -->
+    <string name="onboarding_how_it_works_current">current step</string>
+    <string name="onboarding_start_free">Start free, no account needed.</string>
+    <!-- The goal written for material the learner attached without typing anything. %1$s lists the material's titles. -->
+    <string name="onboarding_material_goal_exam">Prepare for an exam on my material: %1$s</string>
+    <string name="onboarding_material_goal_understand">Understand my material: %1$s</string>
+    <!-- Stands for pasted text without a title, in a goal's words. -->
+    <string name="onboarding_my_notes">my notes</string>
+    <!-- Stands for pasted text without a title. -->
+    <string name="onboarding_your_text">Your text</string>
+
+    <string name="onboarding_limit_daily_explanations">You\'ve asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now.</string>
+    <string name="onboarding_limit_daily_goals">You\'ve started as many new goals as your plan allows today. Try again tomorrow.</string>
+    <string name="onboarding_limit_guest">Without an account, you can follow one goal. Create a free account to keep going.</string>
+    <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
+    <string name="onboarding_limit_guest_blocked">A security check blocked starting without an account. Create a free account to keep going.</string>
+    <string name="onboarding_limit_monthly_explanations">You\'ve asked as many new questions as the free plan allows this month. Try again next month, or get Plus to keep going now.</string>
+    <string name="onboarding_limit_monthly_goals">You\'ve started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.</string>
+    <string name="onboarding_limit_one_active_goal">The free plan follows one goal at a time. To start this one, pause your current goal from the menu on your Plan, or get Plus.</string>
+    <string name="onboarding_limit_sign_up_required">Create your free account to continue.</string>
+    <string name="onboarding_limit_slow_down">You\'re starting goals quickly. Try again in a few minutes.</string>
+    <string name="onboarding_read_limit_guest">Without an account, you can send a few new goals a day. Create a free account to keep going.</string>
+    <string name="onboarding_read_limit_plus">You\'ve sent as many new goals as your plan allows today. Try again tomorrow.</string>
+    <string name="onboarding_read_limit_free_month">You\'ve sent as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.</string>
+    <string name="onboarding_read_limit_free_day">You\'ve sent as many new goals as the free plan allows today. Try again tomorrow, or get Plus to keep going now.</string>
+    <string name="onboarding_error_one_moment">One moment. Try again in a few seconds.</string>
+    <string name="onboarding_error_could_not_read">We couldn\'t read your goal. Try again in a moment.</string>
+    <string name="onboarding_error_could_not_save">We couldn\'t save your goal. Try again in a moment.</string>
+    <string name="onboarding_save_failed">We couldn\'t save that. Try again.</string>
+    <!-- When the time a day is too short for every goal typed together. %1$s is a time, such as "20 min"; %2$d is how many goals. -->
+    <plurals name="onboarding_day_too_short">
+        <item quantity="one">Choose at least %1$s a day for your %2$d goal.</item>
+        <item quantity="other">Choose at least %1$s a day for your %2$d goals.</item>
+    </plurals>
+
+    <!-- Plus notice before typing, for a free learner who already follows a goal. -->
+    <string name="onboarding_plus_more_goals">More goals at once with Plus</string>
+    <string name="onboarding_plus_more_goals_up_front">The free plan follows one goal at a time. To start another, pause your current goal from the menu on your Plan. Quick questions work anytime.</string>
+    <string name="onboarding_go_to_plan">Go to your Plan</string>
+    <string name="onboarding_see_plus">See Plus</string>
+    <string name="onboarding_create_account">Create a free account</string>
+    <string name="onboarding_create_account_short">Create an account</string>
+    <string name="onboarding_guest_gate_title">Create a free account to start another goal</string>
+    <string name="onboarding_guest_gate_description">Without an account, you can follow one goal. Your plan and progress come with you.</string>
+    <string name="onboarding_back_to_today">Back to Today</string>
+
+    <!-- The wait while a typed goal is read. -->
+    <string name="onboarding_understanding_title">Understanding your goal</string>
+    <string name="onboarding_understanding_description">Next, you check what we understood.</string>
+
+    <string name="onboarding_understood_title">Here\'s what I understood</string>
+    <string name="onboarding_understood_description">You can change all of this later.</string>
+    <!-- When the learner's words became more than one goal. -->
+    <string name="onboarding_understood_description_shared">These goals share your daily time. You can change all of this later.</string>
+    <string name="onboarding_looks_right">Looks right</string>
+    <string name="onboarding_saving_goal">Saving your goal…</string>
+    <string name="onboarding_fix_something">Fix something</string>
+    <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
+    <string name="onboarding_what_you_wrote">What you wrote</string>
+    <string name="onboarding_rewrite_hint">We\'ll read it again. To fix one detail, use its pencil below.</string>
+    <string name="onboarding_read_again">Read it again</string>
+    <string name="onboarding_cancel">Cancel</string>
+    <string name="onboarding_save">Save</string>
+    <string name="onboarding_saving">Saving…</string>
+    <!-- Edit button of a fact. %1$s is the fact's label, like "Exam date". -->
+    <string name="onboarding_edit_fact">Edit %1$s</string>
+    <string name="onboarding_use_this_date">Use this date</string>
+    <!-- A link to where a fact came from. %1$s is a site or document name. -->
+    <string name="onboarding_source">Source: %1$s</string>
+
+    <string name="onboarding_row_goal">Goal</string>
+    <string name="onboarding_row_level">Level</string>
+    <!-- A small mark beside a fact the learner stated themselves. -->
+    <string name="onboarding_row_you_said">you said</string>
+    <string name="onboarding_row_language">Language</string>
+    <string name="onboarding_row_you_speak">You speak</string>
+    <string name="onboarding_row_course">Course</string>
+    <!-- Where the course is taught. %1$s is an institution\'s name, kept as a label because its article varies. -->
+    <string name="onboarding_row_where_note">Where: %1$s</string>
+    <string name="onboarding_row_where">Where</string>
+    <!-- For someone changing careers. -->
+    <string name="onboarding_row_role_you_want">The role you want</string>
+    <string name="onboarding_row_position">Position</string>
+    <string name="onboarding_row_level_aiming">Level you\'re aiming for</string>
+    <string name="onboarding_row_target_score">Target score</string>
+    <string name="onboarding_row_last_cutoff">Last cut-off</string>
+    <!-- A score on an exam\'s scale, like "712 out of 1,000". -->
+    <string name="onboarding_row_cutoff_score">%1$s out of %2$s</string>
+    <string name="onboarding_row_reason">Reason</string>
+    <string name="onboarding_row_what_you_do">What you do now</string>
+    <string name="onboarding_row_your_role">Your role</string>
+    <string name="onboarding_row_when_you_study">When you study</string>
+    <!-- %1$s is a duration, like "20 min". -->
+    <string name="onboarding_row_minutes_a_day">%1$s a day</string>
+    <string name="onboarding_row_material">Your material</string>
+    <string name="onboarding_row_material_note">Your plan and lessons follow this material</string>
+    <string name="onboarding_row_exam_date">Exam date</string>
+    <!-- An exam's dates when it takes several days. -->
+    <string name="onboarding_row_exam_dates">Exam dates</string>
+    <string name="onboarding_row_deadline">Deadline</string>
+    <plurals name="onboarding_row_days_left">
+        <item quantity="one">%d day left</item>
+        <item quantity="other">%d days left</item>
+    </plurals>
+    <string name="onboarding_row_to_be_confirmed">To be confirmed</string>
+    <!-- %1$s is a year. -->
+    <string name="onboarding_row_year_to_be_confirmed">%1$s, to be confirmed</string>
+    <!-- %1$s is a month and year, like "November 2027". -->
+    <string name="onboarding_row_date_to_be_confirmed">%1$s, to be confirmed</string>
+    <string name="onboarding_row_date_not_out_notice">The official date comes out in the exam\'s notice. Know it already? Set it here.</string>
+    <string name="onboarding_row_date_not_out_guide">The official date comes out on the exam\'s official calendar. Know it already? Set it here.</string>
+    <string name="onboarding_row_date_booked">You pick this test\'s day when you book it. Booked already? Set it here.</string>
+    <string name="onboarding_row_dates_estimated">From its usual dates. We\'ll tell you when the official ones are out.</string>
+    <string name="onboarding_row_pick_date">Pick your date</string>
+    <string name="onboarding_row_several_sittings">This exam is held several times a year. Until you pick one, your plan uses the first.</string>
+    <!-- %1$s is the exam's date, such as "November 8". -->
+    <string name="onboarding_row_notice_says">The exam notice says %1$s.</string>
+    <!-- %1$s is the exam's date, such as "November 8". -->
+    <string name="onboarding_row_guide_says">The exam\'s official calendar says %1$s.</string>
+
+    <!-- After a goal the learner typed turned out to be a question. -->
+    <string name="onboarding_explain_description">A short explanation written for you, about 5 minutes.</string>
+    <string name="onboarding_explain_it">Explain it</string>
+    <string name="onboarding_opening_explanation">Opening your explanation…</string>
+    <string name="onboarding_declined_title">We can\'t help with this goal</string>
+    <string name="onboarding_declined_description">Zoonk doesn\'t teach anything that could hurt you or others, gambling or ways to cheat. Is there something else you\'d like to learn?</string>
+    <string name="onboarding_try_another_goal">Try another goal</string>
+    <string name="onboarding_unclear_title">Tell us a bit more</string>
+    <string name="onboarding_unclear_description">What do you want to learn or be able to do? For example: “pass the driving test”, “understand statistics for work” or “speak French on my trip”.</string>
+    <string name="onboarding_write_again">Write my goal again</string>
+    <!-- %1$s is an instrument's name, such as "guitar". -->
+    <string name="onboarding_instrument_title">Lessons for playing %1$s are coming</string>
+    <string name="onboarding_instrument_description">To teach you to play, we need to hear you play, and we\'re still building that. Join the waitlist, and start with musicianship today: reading music, ear training and rhythm.</string>
+    <string name="onboarding_musicianship_card">Musicianship for %1$s: hear chords, read short melodies and keep the beat. No microphone needed.</string>
+    <string name="onboarding_start_musicianship">Start musicianship</string>
+    <string name="onboarding_join_waitlist">Join the waitlist</string>
+    <string name="onboarding_waitlist_joined">You\'re on the list. We\'ll let you know when lessons for playing are ready.</string>
+    <string name="onboarding_waitlist_sign_in">Create an account so we can let you know.</string>
+    <!-- Title of the goal that teaches musicianship for an instrument. %1$s is the instrument. -->
+    <string name="onboarding_musicianship_title">Musicianship for %1$s</string>
+    <!-- The subject of a musicianship goal, mid-sentence. -->
+    <string name="onboarding_musicianship_subject">musicianship</string>
+
+    <!-- The paperclip beside the goal box. -->
+    <string name="onboarding_study_material">Study your own material</string>
+    <string name="onboarding_material_description">Your plan and lessons will use it.</string>
+    <string name="onboarding_material_sign_up">Create a free account to add a PDF, a photo of your notes or any text to your goal.</string>
+    <string name="onboarding_upload_file">Upload a file</string>
+    <string name="onboarding_paste_text">Paste text</string>
+    <string name="onboarding_paste_link">Paste a link</string>
+    <string name="onboarding_paste_text_placeholder">Paste the syllabus, your notes or a chapter</string>
+    <string name="onboarding_add_text">Add text</string>
+    <string name="onboarding_link">Link</string>
+    <string name="onboarding_paste_link_placeholder">https://… an article, a class page or a PDF</string>
+    <string name="onboarding_add_link">Add link</string>
+    <string name="onboarding_adding_material">Adding your material…</string>
+    <!-- Removes an attached file or text. %1$s is its title. -->
+    <string name="onboarding_remove_material">Remove %1$s</string>
+    <string name="onboarding_attach_limit_plus">You\'ve added as much material as your plan allows today. Try again tomorrow.</string>
+    <string name="onboarding_attach_limit_month">You\'ve added as much material as the free plan allows this month. Try again next month, or get Plus to keep going now.</string>
+    <string name="onboarding_attach_limit_day">You\'ve added as much material as the free plan allows today. Try again tomorrow, or get Plus to keep going now.</string>
+    <string name="onboarding_attach_slow_down">You\'re adding material quickly. Try again in a few minutes.</string>
+    <string name="onboarding_attach_unsupported">We can\'t read this file. Try a PDF, a photo, Word, PowerPoint or text.</string>
+    <string name="onboarding_attach_sign_in">Create an account to add your own material.</string>
+    <string name="onboarding_attach_failed">We couldn\'t add that. Try again in a moment.</string>
+    <string name="onboarding_intent_title">What do you want to do?</string>
+    <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
+    <string name="onboarding_intent_exam">Prepare for an exam</string>
+    <string name="onboarding_intent_exam_description">Give a date and we\'ll plan up to it</string>
+    <string name="onboarding_intent_understand">Understand this material</string>
+    <string name="onboarding_intent_understand_description">Short lessons, in the right order</string>
+    <string name="onboarding_intent_questions">Ask questions</string>
+    <string name="onboarding_intent_questions_description">Answers show the page they came from</string>
+
+    <string name="onboarding_questions_title">Ask about your material</string>
+    <string name="onboarding_questions_description">Answers come from your pages and show where they came from.</string>
+    <string name="onboarding_questions_reading">Reading your material…</string>
+    <string name="onboarding_your_question">Your question</string>
+    <string name="onboarding_question_placeholder">E.g., why does glycolysis net only 2 ATP?</string>
+    <string name="onboarding_ask">Ask</string>
+    <!-- %1$s is a document\'s title, %2$s a page number. -->
+    <string name="onboarding_citation_page">%1$s, page %2$s</string>
+    <string name="onboarding_citation_slide">%1$s, slide %2$s</string>
+    <string name="onboarding_question_failed">We couldn\'t answer that. Try again in a moment.</string>
+    <string name="onboarding_question_sign_in">Create an account to ask about your material.</string>
+    <string name="onboarding_question_slow_down">You\'re asking quickly. Try again in a few minutes.</string>
+    <string name="onboarding_question_limit_plus">You\'ve asked as many questions as your plan allows today.</string>
+    <string name="onboarding_question_limit_month">You\'ve asked as many questions as the free plan allows this month. Ask again next month, or get Plus to keep going now.</string>
+    <string name="onboarding_question_limit_day">You\'ve asked as many questions as the free plan allows today. Ask again tomorrow, or get Plus to keep going now.</string>
+
+    <!-- Placement: a few questions that find where the plan starts. -->
+    <string name="onboarding_placement_title">Let\'s see what you already know</string>
+    <!-- %d is how many areas of the goal the questions cover. -->
+    <plurals name="onboarding_placement_description_areas">
+        <item quantity="one">A few quick questions about %d area, so your plan skips what you already know. There\'s no score, and “I don\'t know yet” is a fine answer.</item>
+        <item quantity="other">A few quick questions about %d areas, so your plan skips what you already know. There\'s no score, and “I don\'t know yet” is a fine answer.</item>
+    </plurals>
+    <string name="onboarding_placement_description">A few quick questions, so your plan skips what you already know. There\'s no score, and “I don\'t know yet” is a fine answer.</string>
+    <string name="onboarding_placement_mock_title">Or take a mock exam</string>
+    <!-- %1$s is a duration, such as "45 min". -->
+    <string name="onboarding_placement_mock_about">In the exam\'s format, about %1$s.</string>
+    <!-- %1$s and %2$s are durations, such as "20 min" and "1 hr". -->
+    <string name="onboarding_placement_mock_range">In the exam\'s format, from %1$s to %2$s. You pick how long.</string>
+    <!-- The name of Zoonk\'s paid plan, on a chip beside what needs it. -->
+    <string name="onboarding_placement_plus">Plus</string>
+    <string name="onboarding_placement_plus_description">Available with Plus</string>
+    <string name="onboarding_placement_start">Start</string>
+    <string name="onboarding_placement_skip_basics">Skip and start from the basics</string>
+    <string name="onboarding_placement_waiting_title">Getting your questions ready</string>
+    <string name="onboarding_placement_waiting_material">They come from the material you added. Reading it takes a few minutes.</string>
+    <string name="onboarding_placement_waiting_skills">They come from the skills your goal needs. It usually takes a minute or two.</string>
+    <string name="onboarding_placement_skip_for_now">Skip for now</string>
+    <string name="onboarding_placement_skip_note">Your first sessions will ask a few of these instead.</string>
+    <!-- Beside the subject, above a placement question. %1$d is its number. -->
+    <string name="onboarding_placement_question_number">Question %1$d</string>
+    <string name="onboarding_placement_progress">Questions answered</string>
+    <string name="onboarding_placement_your_answer">Your answer, in your own words</string>
+    <string name="onboarding_placement_dont_know">I don\'t know yet</string>
+    <string name="onboarding_placement_confirm">Confirm</string>
+    <string name="onboarding_placement_stop">Stop here and see my plan</string>
+    <string name="onboarding_placement_answer_failed">That didn\'t go through. Your answers are kept.</string>
+    <string name="onboarding_placement_try_again">Try again</string>
+    <!-- The two answers to a statement judged true or false. -->
+    <string name="onboarding_placement_true">True</string>
+    <string name="onboarding_placement_false">False</string>
+    <!-- An answer option judging a statement right, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
+    <string name="onboarding_placement_right">Right</string>
+    <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
+    <string name="onboarding_placement_wrong">Wrong</string>
+    <string name="onboarding_placement_see_plan">See my plan</string>
+    <plurals name="onboarding_placement_answered">
+        <item quantity="one">%d question answered</item>
+        <item quantity="other">%d questions answered</item>
+    </plurals>
+    <string name="onboarding_placement_mock_done">Mock exam done</string>
+    <string name="onboarding_placement_mock_set_title">Your mock exam set your starting point</string>
+    <!-- %d is how many questions the learner answered in the mock exam. "It" is the estimate of where the learner starts. -->
+    <plurals name="onboarding_placement_mock_set_description">
+        <item quantity="one">Based on %d answer. It gets more accurate every day.</item>
+        <item quantity="other">Based on %d answers. It gets more accurate every day.</item>
+    </plurals>
+    <!-- Zoonk has enough answers to place the learner for now. A friendly wrap-up, not impatience. -->
+    <string name="onboarding_placement_enough_title">That\'s enough questions for today</string>
+    <string name="onboarding_placement_enough_description">Your first sessions ask a few more to fine-tune your plan.</string>
+    <string name="onboarding_placement_set_title">Your starting point is set</string>
+    <!-- Under "Your starting point is set". "It" is that estimate of where the learner starts. -->
+    <string name="onboarding_placement_set_description">It gets more accurate every day.</string>
+    <string name="onboarding_placement_unavailable_title">Let\'s skip the questions</string>
+    <string name="onboarding_placement_unavailable_description">We couldn\'t prepare questions for this goal. Your first sessions will find your starting point instead.</string>
+    <string name="onboarding_placement_mock_waiting_title">Your mock exam is waiting</string>
+    <string name="onboarding_placement_mock_waiting_description">Go on where you left it, or stop now: your plan starts from the questions you answered.</string>
+    <string name="onboarding_placement_continue_mock">Continue the mock exam</string>
+    <string name="onboarding_placement_stop_mock">Stop and see my plan</string>
+
+    <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
+    <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
+    <string name="onboarding_language_test_title">Let\'s see your level in %1$s</string>
+    <!-- %1$s is how long the test takes, such as "3 min". -->
+    <string name="onboarding_language_test_description">About %1$s of reading, listening and one sentence out loud, so your plan starts at your level.</string>
+    <string name="onboarding_language_test_new_alphabet">New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it.</string>
+    <string name="onboarding_language_test_skip">Skip the test</string>
+    <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
+    <string name="onboarding_language_test_use_app_in">Use the app in %1$s</string>
+    <string name="onboarding_language_test_preparing_title">Preparing your level test</string>
+    <!-- %1$s is the name of the language the learner is learning, such as "Italian". -->
+    <string name="onboarding_language_test_preparing_description">The %1$s test is new in your language, so its questions are being written now. It usually takes a minute or two, and only this once.</string>
+    <string name="onboarding_language_test_skip_note">Your plan starts from the level you gave, and your first sessions fine-tune it.</string>
+    <!-- Answers a listening question without guessing. -->
+    <string name="onboarding_language_test_did_not_understand">I didn\'t understand the audio</string>
+    <!-- Replaces "I didn't understand the audio" while a listening question's audio can't play yet or failed; skipping doesn't count toward the level. -->
+    <string name="onboarding_language_test_skip_question">Skip this question</string>
+    <!-- Shown while a listening question's recording is still being made. -->
+    <string name="onboarding_language_test_audio_on_its_way">The voice message is on its way…</string>
+    <string name="onboarding_language_test_play">Play the message</string>
+    <string name="onboarding_language_test_play_again">Play the message again</string>
+    <string name="onboarding_language_test_message_loading">Getting the message ready. The first time can take a few seconds.</string>
+    <string name="onboarding_language_test_message">You got a voice message. Listen and answer.</string>
+    <string name="onboarding_language_test_say_it">Say it out loud</string>
+    <string name="onboarding_language_test_skip_part">Skip this part</string>
+    <string name="onboarding_language_test_done_title">Your level today</string>
+    <string name="onboarding_language_test_done_description">Based on the test. It gets more accurate every week.</string>
+    <string name="onboarding_language_test_build_plan">Build my plan</string>
+    <!-- Language skills, each beside its level. -->
+    <string name="onboarding_language_test_reading">Reading</string>
+    <string name="onboarding_language_test_listening">Listening</string>
+    <string name="onboarding_language_test_speaking">Speaking</string>
+    <string name="onboarding_language_test_writing">Writing</string>
+
+    <!-- Title while Zoonk is still building the learner's plan, before it is ready. -->
+    <string name="onboarding_reveal_building_title">Building your plan</string>
+    <string name="onboarding_reveal_building_description">We\'re choosing what to learn first and fitting it into your days. A new subject can take a minute or two.</string>
+    <!-- Above a published course's title, offered while the learner's plan is built. -->
+    <string name="onboarding_library_course_fits">A course in the Library fits your goal</string>
+    <string name="onboarding_reveal_reading_title">Reading the exam\'s official documents</string>
+    <string name="onboarding_reveal_reading_last_title">Reading the last edition\'s official documents</string>
+    <string name="onboarding_reveal_reading_notice">Your plan will follow the notice\'s subjects, topics and dates. This usually takes a few minutes.</string>
+    <string name="onboarding_reveal_reading_guide">Your plan will follow the official guide\'s parts, topics and dates. This usually takes a few minutes.</string>
+    <string name="onboarding_reveal_reading_last">The next edition\'s documents aren\'t out yet, so your plan follows the last one\'s subjects and topics. We\'ll tell you when the new ones are out. This usually takes a few minutes.</string>
+    <string name="onboarding_reveal_reading_done_step">Your plan, from what you told us</string>
+    <string name="onboarding_reveal_reading_step">Reading the official documents</string>
+    <string name="onboarding_reveal_created">Plan created</string>
+    <plurals name="onboarding_reveal_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="onboarding_reveal_about_days">
+        <item quantity="one">About %d day</item>
+        <item quantity="other">About %d days</item>
+    </plurals>
+    <!-- When a plan without a date ends at the learner's pace. %1$s is a day, such as "Nov 8". -->
+    <string name="onboarding_reveal_until_about">Until about %1$s</string>
+    <!-- When a plan without a date ends at the learner's pace. %1$s is a month and year, such as "March 2027". -->
+    <string name="onboarding_reveal_until_about_month">Until about %1$s</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="onboarding_reveal_daily">%1$s a day</string>
+    <!-- %1$s is the time on study weekdays and %2$s on weekend days, such as "30 min". -->
+    <string name="onboarding_reveal_daily_weekends">%1$s a day, %2$s on weekends</string>
+    <!-- Under a plan without a date that holds every part of a learn goal. -->
+    <string name="onboarding_reveal_pace_covers">Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then.</string>
+    <!-- Under a plan without a date that stops before every part of a learn goal. -->
+    <string name="onboarding_reveal_pace_time">Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then.</string>
+    <!-- The study time a plan adds up to. %1$s is a duration, such as "12 hr". -->
+    <string name="onboarding_reveal_start">Start</string>
+    <string name="onboarding_reveal_adjust">Adjust</string>
+    <string name="onboarding_reveal_save_note">Save your plan so it\'s here next time.</string>
+    <string name="onboarding_reveal_phases">Phases</string>
+    <string name="onboarding_reveal_chapters">Chapters</string>
+    <plurals name="onboarding_reveal_more_chapters">
+        <item quantity="one">%d more chapter</item>
+        <item quantity="other">%d more chapters</item>
+    </plurals>
+    <plurals name="onboarding_reveal_known_skills">
+        <item quantity="one">%d skill you already know</item>
+        <item quantity="other">%d skills you already know</item>
+    </plurals>
+    <!-- A new plan\'s chapter whose lessons are still being written. -->
+    <string name="onboarding_reveal_more_lessons">More lessons</string>
+    <string name="onboarding_reveal_usual_structure">This plan follows the exam\'s usual structure while we finish reading its official documents. If they change your plan, you\'ll decide on Today.</string>
+    <!-- Phases of an exam plan, named by what the learner does in them. -->
+    <string name="onboarding_reveal_phase_foundations">Foundations</string>
+    <string name="onboarding_reveal_phase_gaps">Fill the gaps</string>
+    <string name="onboarding_reveal_phase_practice">Practice</string>
+    <string name="onboarding_reveal_phase_final_stretch">Final stretch</string>
+    <!-- %1$d is the phase\'s place in the plan. -->
+    <string name="onboarding_reveal_phase_number">Phase %1$d</string>
+    <!-- Phases of a plan whose exam is days away. -->
+    <string name="onboarding_reveal_phase_map_and_gaps">Exam map and gaps</string>
+    <string name="onboarding_reveal_phase_mock_and_practice">Mock and practice</string>
+    <string name="onboarding_reveal_phase_full_review_and_practice">Full review and practice</string>
+    <string name="onboarding_reveal_phase_short_mock">Short mock and review</string>
+    <string name="onboarding_reveal_phase_full_review">Full review</string>
+    <string name="onboarding_reveal_phase_light_review">Light review</string>
+    <!-- Beside the phase the learner is in, in place of its start date. -->
+    <string name="onboarding_reveal_today">Today</string>
+    <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->
+    <string name="onboarding_reveal_phase_day">day %1$d of %2$d</string>
+    <!-- %1$d is the current phase\'s place, %2$d how many phases the plan has. -->
+    <string name="onboarding_reveal_phase_position">%1$d of %2$d</string>
+    <string name="onboarding_reveal_phase_place">phase %1$d of %2$d</string>
+    <!-- %1$s is a date, such as "November 8". -->
+    <string name="onboarding_reveal_notice_day_estimated">The exam\'s likely date is now %1$s.</string>
+    <string name="onboarding_reveal_notice_day_notice">The exam notice says %1$s.</string>
+    <string name="onboarding_reveal_notice_day_guide">The exam\'s official calendar says %1$s.</string>
+    <!-- %1$s is a month and year, such as "March 2027". -->
+    <string name="onboarding_reveal_no_sitting">No exam date in %1$s</string>
+    <string name="onboarding_reveal_free_week_over_title">Your free week of exam prep is over</string>
+    <!-- "Reviews" are reviews of lessons already done, a free feature separate from fixing mistakes. -->
+    <string name="onboarding_reveal_free_week_over_body">Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.</string>
+    <!-- What the learner\'s time a day covers. %1$s is a duration, such as "30 min". -->
+    <string name="onboarding_reveal_covers_nothing">%1$s a day isn\'t enough time to cover your goal.</string>
+    <string name="onboarding_reveal_covers_exam_deeper">%1$s a day studies every topic of the exam, the ones that come up most in more depth.</string>
+    <string name="onboarding_reveal_covers_exam_lighter">%1$s a day studies every topic of the exam, some of them in less depth.</string>
+    <string name="onboarding_reveal_covers_goal">%1$s a day studies every part of your goal, the ones that matter most in more depth.</string>
+    <string name="onboarding_reveal_covers_exam_after">%1$s a day doesn\'t reach every topic by the exam: the ones that come up least come after it.</string>
+    <string name="onboarding_reveal_covers_exam_left_out">%1$s a day doesn\'t reach every topic: the ones that come up least are left out.</string>
+    <string name="onboarding_reveal_covers_goal_left_out">%1$s a day doesn\'t reach every part of your goal: what comes last in your path is left out.</string>
+    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
+    <string name="onboarding_reveal_full_course_finish">At %1$s a day, you finish in %2$s, after the exam on %3$s. Until the exam, what comes up most comes first.</string>
+    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
+    <string name="onboarding_reveal_full_course_finish_month">At %1$s a day, you finish in %2$s, after the exam in %3$s. Until the exam, what comes up most comes first.</string>
+    <string name="onboarding_reveal_full_course">Until the exam, what comes up most comes first. What doesn\'t fit comes after it.</string>
+    <plurals name="onboarding_reveal_modules">
+        <item quantity="one">%d module</item>
+        <item quantity="other">%d modules</item>
+    </plurals>
+    <plurals name="onboarding_reveal_material_topics">
+        <item quantity="one">%d topic from your material</item>
+        <item quantity="other">%d topics from your material</item>
+    </plurals>
+    <plurals name="onboarding_reveal_notice_subjects">
+        <item quantity="one">%d subject from the notice</item>
+        <item quantity="other">%d subjects from the notice</item>
+    </plurals>
+    <plurals name="onboarding_reveal_guide_parts">
+        <item quantity="one">%d part from the official guide</item>
+        <item quantity="other">%d parts from the official guide</item>
+    </plurals>
+    <!-- %1$s lists subjects with their number of questions, such as "Math 45 · Languages 45". -->
+    <string name="onboarding_reveal_most_questions">Most questions: %1$s</string>
+    <plurals name="onboarding_reveal_topics">
+        <item quantity="one">%d topic</item>
+        <item quantity="other">%d topics</item>
+    </plurals>
+    <plurals name="onboarding_reveal_topics_all_planned">
+        <item quantity="one">%d topic, all in your plan</item>
+        <item quantity="other">%d topics, all in your plan</item>
+    </plurals>
+    <!-- %1$d topics left out of %2$d (the count the plural follows) don\'t fit in %3$s a day. -->
+    <plurals name="onboarding_reveal_topics_dont_fit">
+        <item quantity="one">%1$d of %2$d topic doesn\'t fit in %3$s a day</item>
+        <item quantity="other">%1$d of %2$d topics don\'t fit in %3$s a day</item>
+    </plurals>
+    <!-- %1$d topics in the plan, out of %2$d (the count the plural follows). -->
+    <plurals name="onboarding_reveal_topics_planned">
+        <item quantity="one">%1$d of %2$d topic in your plan</item>
+        <item quantity="other">%1$d of %2$d topics in your plan</item>
+    </plurals>
+    <string name="onboarding_reveal_weights">Weight by area</string>
+    <!-- An area\'s estimated weight. %1$s is a percentage, such as "20%". -->
+    <string name="onboarding_reveal_estimated_percent">~%1$s</string>
+    <string name="onboarding_reveal_estimated_material_area">~ Estimated: your material doesn\'t say how much this area weighs.</string>
+    <string name="onboarding_reveal_estimated_material_areas">~ Estimated: your material doesn\'t say how much these areas weigh.</string>
+    <string name="onboarding_reveal_estimated_guide_area">~ Estimated: the official guide doesn\'t say how much this area weighs.</string>
+    <string name="onboarding_reveal_estimated_guide_areas">~ Estimated: the official guide doesn\'t say how much these areas weigh.</string>
+    <string name="onboarding_reveal_estimated_notice_area">~ Estimated: the notice doesn\'t say how much this area weighs.</string>
+    <string name="onboarding_reveal_estimated_notice_areas">~ Estimated: the notice doesn\'t say how much these areas weigh.</string>
+    <string name="onboarding_intent_label">What you want to do with your material</string>
+    <string name="onboarding_continue">Continue</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_purpose_title">What do you want from it?</string>
+    <string name="onboarding_purpose_description">Pick what motivates you most.</string>
+    <string name="onboarding_purpose_label">What you want from it</string>
+    <string name="onboarding_purpose_overview">Get an overview</string>
+    <string name="onboarding_purpose_overview_description">The big ideas, no formulas</string>
+    <string name="onboarding_purpose_deep">Understand it in depth</string>
+    <string name="onboarding_purpose_deep_description">From the basics to advanced</string>
+    <string name="onboarding_purpose_work">Use it at work</string>
+    <string name="onboarding_purpose_work_description">Apply it to real projects</string>
+    <string name="onboarding_purpose_career_change">Change careers</string>
+    <string name="onboarding_purpose_career_change_description">Get ready for a new role</string>
+    <string name="onboarding_purpose_refresh">Refresh what I studied</string>
+    <string name="onboarding_purpose_refresh_description">Pick up what you left behind</string>
+    <string name="onboarding_purpose_other">Something else</string>
+    <string name="onboarding_purpose_other_description">Tell us later, in your own words</string>
+    <string name="onboarding_level_title">How much do you already know?</string>
+    <string name="onboarding_level_description">It only changes where your plan starts.</string>
+    <string name="onboarding_level_label">Your level</string>
+    <string name="onboarding_course_chapter_description">Your plan starts at this chapter and follows the course from there, in the time you have each day.</string>
+    <string name="onboarding_course_follows">Your plan follows this course, in the time you have each day.</string>
+    <!-- Before the lessons' count, like "3 chapters · 12 lessons". -->
+    <plurals name="onboarding_course_chapters">
+        <item quantity="one">%d chapter</item>
+        <item quantity="other">%d chapters</item>
+    </plurals>
+    <!-- After the chapters' count, like "3 chapters · 12 lessons". -->
+    <plurals name="onboarding_course_lessons">
+        <item quantity="one">%d lesson</item>
+        <item quantity="other">%d lessons</item>
+    </plurals>
+    <!-- Under the first chapters of a plan that starts at a chapter. -->
+    <plurals name="onboarding_course_more_chapters">
+        <item quantity="one">and %d more chapter</item>
+        <item quantity="other">and %d more chapters</item>
+    </plurals>
+    <plurals name="onboarding_course_daily_minutes">
+        <item quantity="one">%d minute a day for now. You can change it in the next steps.</item>
+        <item quantity="other">%d minutes a day for now. You can change it in the next steps.</item>
+    </plurals>
+    <string name="onboarding_course_build">Build my plan</string>
+    <!-- Read out while Build my plan starts the course. -->
+    <string name="onboarding_course_starting">Starting your plan…</string>
+    <string name="onboarding_course_failed">We couldn\'t start this course.</string>
+    <string name="onboarding_course_start_free">Start free, no account needed.</string>
+    <string name="onboarding_level_none">Nothing, I\'m just starting</string>
+    <string name="onboarding_level_none_description">From scratch, with everyday examples</string>
+    <string name="onboarding_level_basic">The basics</string>
+    <string name="onboarding_level_basic_description">I know a few things</string>
+    <string name="onboarding_level_intermediate">I studied it before</string>
+    <string name="onboarding_level_intermediate_description">We\'ll skip what you already know</string>
+    <string name="onboarding_level_advanced">I know it well</string>
+    <string name="onboarding_level_advanced_description">Only what\'s new or hard</string>
+    <string name="onboarding_level_test">Not sure, give me a quick test</string>
+    <!-- %1$s is a duration, like "2 min". -->
+    <string name="onboarding_level_test_description">Adapts to your answers, about %1$s</string>
+    <string name="onboarding_subjects_title">Which subjects do you already know well?</string>
+    <string name="onboarding_subjects_description">Your plan starts past their basics. A quick test places you in the rest.</string>
+    <string name="onboarding_subjects_label">Subjects you know well</string>
+    <string name="onboarding_subjects_none">None of them yet</string>
+    <string name="onboarding_subjects_from_scratch">I\'m starting from scratch</string>
+    <string name="onboarding_admission_title">Which course and score are you aiming for?</string>
+    <string name="onboarding_target_description">It helps your plan focus on what counts most.</string>
+    <string name="onboarding_target_label">Your target</string>
+    <string name="onboarding_admission_placeholder">E.g., medicine, 750 points</string>
+    <string name="onboarding_position_title">Which position are you applying for?</string>
+    <string name="onboarding_position_description">The notice can have a different exam for each position.</string>
+    <string name="onboarding_position_label">Position</string>
+    <string name="onboarding_reason_title">Why are you learning it?</string>
+    <string name="onboarding_reason_description">The situations you care about shape every lesson.</string>
+    <string name="onboarding_reason_label">Why</string>
+    <string name="onboarding_reason_placeholder">E.g., a job interview, travel</string>
+    <string name="onboarding_score_title">What score do you need?</string>
+    <string name="onboarding_score_placeholder">E.g., band 7, 100 points</string>
+    <string name="onboarding_follow_ups_title">Tell us a bit more</string>
+    <string name="onboarding_follow_ups_description">A couple of details make your plan fit better.</string>
+    <string name="onboarding_your_answer">Your answer</string>
+    <string name="onboarding_role_career_title">Where are you headed?</string>
+    <string name="onboarding_role_career_description">The plan covers what that role needs on day one.</string>
+    <string name="onboarding_role_work_title">What do you do at work?</string>
+    <string name="onboarding_role_work_description">We\'ll use cases from your work.</string>
+    <string name="onboarding_role_wanted_placeholder">E.g., data analyst, nurse</string>
+    <string name="onboarding_role_now_placeholder">E.g., teacher, student</string>
+    <string name="onboarding_role_placeholder">E.g., nurse, teacher</string>
+    <string name="onboarding_role_tasks">What you\'ll use it for</string>
+    <string name="onboarding_role_tasks_placeholder">E.g., reports, A/B tests</string>
+    <!-- %1$s is a date. -->
+    <string name="onboarding_exam_on">Your exam is on %1$s</string>
+    <!-- %1$s is an exam's first day, %2$s its second. -->
+    <string name="onboarding_exam_on_two">Your exam is on %1$s (and %2$s)</string>
+    <string name="onboarding_exam_ready">Your plan paces your lessons to end by then.</string>
+    <string name="onboarding_exam_ready_first_day">Your plan paces your lessons to end by the first day.</string>
+    <string name="onboarding_exam_expected">This is the expected date until the notice confirms it.</string>
+    <string name="onboarding_another_date">Another date</string>
+    <string name="onboarding_date_title">Is there a date you\'re aiming for?</string>
+    <string name="onboarding_date_description">Without a date, you study everything at your own pace, and we show when you reach each milestone.</string>
+    <string name="onboarding_date_none">No date, study everything</string>
+    <string name="onboarding_date_label">Date</string>
+    <!-- In the setup's plan so far, beside "Date", when the learner chose to study without a date. -->
+    <string name="onboarding_no_date">No date</string>
+    <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
+    <string name="onboarding_date_passed">Your date, %1$s, has passed.</string>
+    <!-- Leads the date question asked again because the goal's date is today. -->
+    <string name="onboarding_date_is_today">Your date is today, so there are no days left to plan.</string>
+    <string name="onboarding_exam_choice_title_one">Which one will you take?</string>
+    <string name="onboarding_exam_choice_title_other">Which ones will you take?</string>
+    <!-- Under the exam choice question. %1$d counts the options; %2$s is the notice's name for the choice, such as a specialty or the foreign language, in the notice's own language. -->
+    <plurals name="onboarding_exam_choice_options">
+        <item quantity="one">The exam offers %1$d option for %2$s. Your plan and mocks follow the one you pick, and you can change it in your plan.</item>
+        <item quantity="other">The exam offers %1$d options for %2$s. Your plan and mocks follow the one you pick, and you can change it in your plan.</item>
+    </plurals>
+    <!-- Under the exam choice question, for several choices. -->
+    <plurals name="onboarding_exam_choice_choices">
+        <item quantity="one">The exam has %1$d choice to make. Your plan and mocks follow your picks, and you can change them in your plan.</item>
+        <item quantity="other">The exam has %1$d choices to make. Your plan and mocks follow your picks, and you can change them in your plan.</item>
+    </plurals>
+    <string name="onboarding_decide_later">Decide later</string>
+    <string name="onboarding_buddy_title">Choose your buddy</string>
+    <string name="onboarding_buddy_description">Your buddy grows as you learn.</string>
+    <!-- Screen reader name of the step dots, like "Step 2 of 6". -->
+    <string name="onboarding_step_of">Step %1$d of %2$d</string>
+    <string name="onboarding_more">More</string>
+    <string name="onboarding_finish_later">Finish later</string>
+    <string name="onboarding_finish_later_description">Your answers are kept</string>
+    <string name="onboarding_start_over">Start over</string>
+    <string name="onboarding_start_over_description">Clears your answers</string>
+    <string name="onboarding_start_over_title">Start over?</string>
+    <string name="onboarding_start_over_confirm">Your answers for this goal are cleared, and you type a goal again.</string>
+    <string name="onboarding_plan_so_far">Your plan so far</string>
+    <string name="onboarding_time_a_day">Time a day</string>
+    <plurals name="onboarding_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <string name="onboarding_schedule_title">How much time can you study each day?</string>
+    <string name="onboarding_full_course">Study everything, even after the exam</string>
+    <string name="onboarding_full_course_rule">Until the exam, what comes up most comes first. What doesn\'t fit comes after it.</string>
+    <string name="onboarding_full_course_until_exam">Until the exam, what comes up most comes first.</string>
+    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
+    <string name="onboarding_full_course_finish">At %1$s a day, you finish in %2$s, after the exam on %3$s.</string>
+    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
+    <string name="onboarding_full_course_finish_month">At %1$s a day, you finish in %2$s, after the exam in %3$s.</string>
+    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
+    <string name="onboarding_weekend_time">Different time on weekends</string>
+    <string name="onboarding_schedule_time_label">Time a day</string>
+    <string name="onboarding_study_days">Study days</string>
+    <string name="onboarding_weekend_time_label">Time on weekends</string>
+    <string name="onboarding_answers_saved">Your answers are saved.</string>
+    <!-- On a setup question when the plan's run never started. -->
+    <string name="onboarding_plan_not_started">We couldn\'t start building your plan</string>
+    <!-- On a setup question when the plan's run failed. -->
+    <string name="onboarding_plan_stopped">Building your plan stopped</string>
+    <string name="onboarding_plan_answers_saved">Your answers are saved. Try again so it\'s ready when you finish.</string>
+    <!-- Detail lines while an exam's official documents are read. -->
+    <string name="onboarding_reveal_reading_line_notice">Finding the subjects and topics the notice lists…</string>
+    <string name="onboarding_reveal_reading_line_guide">Finding the parts and topics the official guide lists…</string>
+    <string name="onboarding_reveal_reading_line_dates">Checking the exam\'s dates and format…</string>
+    <string name="onboarding_reveal_reading_line_fit">Fitting them into your plan…</string>
+</resources>

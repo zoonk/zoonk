@@ -1,24 +1,94 @@
 # `de` styleguide
 
-- Use an informal, approachable register. Address the user as "du".
-- Use standard German spelling and grammar.
+## Voice and locale
+
+- Use German for Germany and informal “du”.
+- Localize illustrative exam examples for Germany, such as the Abitur.
+- Treat “Brain Power” as a product name without an article in short labels and headings.
+- Lines saying what Zoonk is doing while it works speak as “wir” (“Wir erstellen Seite 3…”), never as an infinitive or an imperative to the learner. The buddy speaks as “ich”.
+- Job roles, such as a learner's goal role: a neutral noun where German has one (“Pflegekraft”, “Lehrkraft”), otherwise the masculine generic (“Datenanalyst”). Never a gender colon or star (“Datenanalyst:in”), and never the field instead of the role (“Datenanalyse”).
+- Imperatives in sentences use the short “du” form: “Versuch es noch einmal.”, not “Versuche”.
+- Buttons, links and menu actions use the infinitive without an article: “Neues Ziel starten”, “Noch einmal versuchen”, not “Ein neues Ziel starten” or “Versuch es noch einmal”.
+- Hyphenate a compound that contains a name or several words: “App-Store-Abo”, “Google-Play-Kauf”, “Zoonk-App”.
 
 ## Glossary
 
-- "course": "Kurs"
-- "chapter": "Kapitel"
-- "lesson": "Lektion"
-- "hello@zoonk.com": "hello@zoonk.com"
-- "Brain Power": "Brain Power"
-- "BP": "BP"
-- "Energy": "Energie"
-- "score": "Score"
-- "listening": "Hören"
-- "level": "Level"
-- "step": "Schritt"
+- “daily time limit” (the learner's setting): “tägliches Zeitlimit”
+- “lesson”: “Lektion”
+- “goal” (the learner's goal): “Ziel”, not “Lernziel”
+- “plan” (study plan): “Plan”, also beside Plus; subscription plan (“the free plan”): “Tarif”
+- “Free” (subscription name): “Free”
+- “session” (study): “Lerneinheit”; sign-in session: “Sitzung”
+- “subject” (of an exam or a plan): “Fach”, not “Thema” (a topic)
+- “dates” of phases or exams: “Termine”, not “Daten”
+- “screen” (a lesson's page): “Seite”, not “Bildschirm”
+- “check” (an answer): “prüfen”
+- “write” (Zoonk generating content): “erstellen”; learner writing: “schreiben”
+- “Brain Power”: “Brain Power”
+- “score”: “Score”
+- “band” (an exam's score band): “Bandwert”
+- “level”: “Level”
+- “start over” (answers or a plan): “von vorn beginnen”, not “neu starten”
+- “position” (the post an exam is for): “Stelle”
+- “listening”: “Hören”
+- “Speaking”: “Sprechen”
+- “card”: “Karte”, not “Lernkarte”
+- “in a row” (right answers in a streak): “hintereinander”, not “in Folge”
+- “again”, including “Retry” and “Rematch”: “noch einmal”, not “erneut”
+- “longer than usual” (a wait): “länger als üblich”, not “länger als sonst”
+- “Ask about …” (to the buddy): “Frag etwas zu …”
+- “tap” (a beat the learner taps in a rhythm activity): “Schlag”, never “Tipp”; the verb: “tippe”, never “tipp”
+- “examiner” / “another candidate” (the AI's roles in a speaking exam): “prüfende Person” / “andere teilnehmende Person”
+- Speaking criteria “Fluency” / “Accuracy” / “Interaction”: “Redefluss” / “Korrektheit” / “Interaktion”
+- “musicianship”: “musikalische Grundlagen”
+- “You've reached today's study time”: “Deine Lernzeit für heute ist aufgebraucht”, in every line that starts with it
+- Ending a subscription “for an important reason” (BGB § 314): “aus wichtigem Grund”; that cancellation is an “außerordentliche Kündigung”
+- “Keep Plus” (turns a stopped renewal back on): “Plus behalten”
 
-## Special Cases
+## Feature names and states
 
-- Treat "Brain Power" as a product-like term. Do not add German articles before it in headings or short labels.
-- For belt colors, use masculine forms. For example, "White Belt" = "Weißer Gürtel", "Yellow Belt" = "Gelber Gürtel", etc. If it's color alone in the context of belts, use "Yellow" = "Gelb", "White" = "Weiß", etc.
-- For "thinking messages", keep this in mind: Infinitives as loading states feel static and impersonal in German. English "-ing" naturally implies ongoing action; German infinitives don't carry that.
+- “Buddy”: “Kumpel”
+- “Content”: “Inhalte”
+- Mission names and unlock conditions (missions list, first steps, rewards): infinitive: “Deine erste Lektion abschließen”
+- “call” (speaking practice): “Gespräch”, not “Anruf”
+- “Mistakes notebook”: “Fehlerheft”
+- “To fix” / “Fixed” (notebook tabs): “Noch offen” / “Korrigiert”
+- “New” / “Learning” / “Solid” / “Mastered” (mastery): “Neu” / “Im Aufbau” / “Sicher” / “Gemeistert”
+- “Known before”: “Schon bekannt”; “Known” (progress legend): “Bekannt”
+- “Preparation”: “Vorbereitung”
+- “the Trickster”: “der Trickser”
+- “Broken” / “Held” (shield): “Zerbrochen” / “Gehalten”
+- “Phase challenge”: “Phasen-Herausforderung”
+- “Weekly challenge”: “Wöchentliche Herausforderung”
+- “Mock exam”, including speaking mocks: “Probeprüfung”, not “Probeklausur”, “Probetest”, or “Simulation”
+- “Logbook”: “Logbuch”
+- “Fading” (needs review): “Nachlassend”
+- “Overview” (course level): “Überblick”
+- “Focus test”: “Fokustest”
+- “Weekly summary”: “Wochenrückblick”
+- “Full review”: “Vollständige Wiederholung”
+- “Purple belt”: “Lila Gürtel”, not “Violett”
+
+## Plan terminology
+
+- “Pace”: “Tempo”; the “On pace” / “Keeping pace” status: “Im Zeitplan”
+- “Finished”: “Abgeschlossen”
+- “Past date”: “Nach dem Zieldatum”, not “Beendet” or “Abgelaufen”
+- “Needs adjusting”: “Anpassung nötig”
+- “Too tight”: “Zu knapp”
+- “Even across skills”: “Alle Fähigkeiten gleichauf”
+- “left out”: “ausgelassen”, not “übersprungen”
+- “Daily time”: “Tägliche Lernzeit”, not “Zeitbudget”
+- “rest day”: “Pausentag”, not “Ruhetag”
+
+## Buddy names
+
+- “Zu”: “Zu”
+- “Noodle”: “Grips”
+- “Beep”: “Piep”
+- “Otto”: “Otto”
+
+## Formatting preference
+
+- Match the app's compact durations: “2 Std. 30 Min.”, “30 Sek.”.
+- A sentence ending with a duration placeholder (`{time}`, or an Android `%1$s` that holds a duration) takes no second period, since the duration ends with one: “Tägliche Lernzeit: %1$s”.

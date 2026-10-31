@@ -1,0 +1,35 @@
+import { describe, expect, it } from "vitest";
+import { page } from "vitest/browser";
+import { expectAccessibleScreen } from "../_test-utils/accessibility";
+import { atViewport } from "../_test-utils/browser-viewport";
+import { MODULE_LOAD_TIMEOUT_MS } from "../_test-utils/module-load";
+import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { previewEntries } from "../preview/preview-catalog";
+import { buildLesson } from "../preview/preview-lesson";
+
+const PHONE = { height: 812, width: 375 };
+
+const entries = previewEntries.filter((entry) => entry.states.includes("explore"));
+
+function exploredCanvas(): Element | null {
+  return document.querySelector("[data-slot='activity-explore'] figure");
+}
+
+describe("activities explored on explanation screens", () => {
+  it.each(entries.map((entry) => [entry.id, entry] as const))(
+    "draws %s on a phone",
+    async (_id, entry) => {
+      await atViewport(PHONE, async () => {
+        renderLessonPlayer({ lesson: buildLesson([entry.screen("explore")]) });
+
+        await expect.poll(exploredCanvas, { timeout: MODULE_LOAD_TIMEOUT_MS }).not.toBeNull();
+        await expect.element(page.getByRole("button", { name: /^Check/u })).not.toBeInTheDocument();
+
+        const labelledBy = exploredCanvas()?.getAttribute("aria-labelledby") ?? "";
+        const label = document.querySelector(`#${CSS.escape(labelledBy)}`);
+        expect(label?.textContent).toContain(entry.label);
+        await expectAccessibleScreen(`${entry.id} explored`);
+      });
+    },
+  );
+});

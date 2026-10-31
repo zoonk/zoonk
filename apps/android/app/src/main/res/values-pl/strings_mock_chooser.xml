@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mock_chooser_about": "9a98078c281609853537d20e245478a62bdd042ba308a8c08f75f0b36f0ae98e",
+  "mock_chooser_about_recommended": "92e7b84ed17be42ae837a5dc6a1cc21fe180ed8852eae59afc2d540ebbbef719",
+  "mock_chooser_failed": "b780d74b0af959a6bd01356150e3ebbaea3a11d764898deaa3aadeefeb055ef3",
+  "mock_chooser_full_day_number_without": "49622aead131901fcaf4c28ea6a4e61ba2ce02ff14f2381f6f24ba09fbddcdfe",
+  "mock_chooser_full_day_without": "eca724014e8a2324a8542903ebe70cedba23b7bd64c65ca010eadd96b839e4c7",
+  "mock_chooser_getting_ready": "e5c6a121e5b45426b49ab56d04f0c0314de073fedfea36cd261886347684f004",
+  "mock_chooser_last_mock": "b7d8423c88cd598464a9d867b311e1cc1c58db8a34c4bbc5314a3d41e4891acd",
+  "mock_chooser_left_out_choice": "1a1994be5085cdfe106c114f836e97289a2ddb4b6051a259fa63fa1409c8432e",
+  "mock_chooser_left_out_listening": "3b4a3fb784c7e4a0727e3099e65ae684a1f947540c69785f4ca86166398d24f2",
+  "mock_chooser_left_out_named": "0f0711f4c419681c5fb331bac5813fc374ae2cc7b2b2f4835e122185b385b5c2",
+  "mock_chooser_left_out_numeric": "d4eb00b5dee23eec8f854e9d07b43b7942d0ca2280dadbe0295dd2ba3970a408",
+  "mock_chooser_left_out_practical": "feb713f16ef061fbea50f18d829b8d98c7a132a74b741d3dcc3677be93f73e35",
+  "mock_chooser_left_out_practical_named": "c4074e6f1a5d5f35aeb5e91bd115a344b7a81da8f4bbc79bfb3730f7fe6f3dd6",
+  "mock_chooser_left_out_short_answer": "5198186d45621fc7851bd3ddc1790c5130ddd46b00bbd65568d70f237982a0f1",
+  "mock_chooser_left_out_speaking": "c85e8acadededdd75a706d7ed2711d3d5074cef7b515baf65e4455d874301502",
+  "mock_chooser_left_out_written": "82b451098cbedf3f570cbb3f8ea9c6c2094d46fed15c9424a5b8f081da290869",
+  "mock_chooser_not_enough": "f7f443f6f400eafad481ce535071b332acb99ec6b41ba28310dbaddf514c4040",
+  "mock_chooser_objective_only": "118b09e5d05c8183d1930fb7f9551137a6cb6c92f3ce3f453fee3d11e5d74688",
+  "mock_chooser_one_subject": "bb643e4c1836624c66a4933d36f9f6b91fd2556c2e8f6b5f2bd21e7a5ff0ca6e",
+  "mock_chooser_option_size": "7b6ec8198cfc89157c944d6dd0ec4c08f65bb8c897c325176984d3d4dc2d0beb",
+  "mock_chooser_option_size_spoken": "20746e909fa5d4011c2487254ead7fef4bc57f255f67b5dc98ed190e1ac9de54",
+  "mock_chooser_parts": "622378beeb5b0b07221f38b6adab0ab2353a4b0660235025f46e7e80d0f7a894",
+  "mock_chooser_pick_free": "32c23a48c61bbd60e70a0279af49d2499ed64db79163f065eec2786ecac0f11e",
+  "mock_chooser_picked": "90b608bff9681d853c489724b038f06a792422d8dab754f875918196604ed1c4",
+  "mock_chooser_placement_detail": "3842742c00696be2950e1d22aafff07d82bceac6674b1cabdb70ce20fdfd3ac4",
+  "mock_chooser_placement_long": "56b8161cc045a1ea68a1e6337dfe68489f7e1aa95f82d28aa15622f9b2eda21b",
+  "mock_chooser_placement_medium": "4af89e23eddae320e6f0bfdd90bf88c2fdb6658de07aaf2e1e75978649081e1a",
+  "mock_chooser_placement_note": "b28da02a3fa3e066b67676cd44456ba2e91d49377de6a015a51834b941926ab8",
+  "mock_chooser_placement_plus": "cf02aa0f2c44f383f994dd5758a5dca40a642c47134f07ce9a98fd915fc4be99",
+  "mock_chooser_placement_short": "2deef0e07f90bbc4a9de4e776b94429940017b6a89aa8d6af5b157228926404c",
+  "mock_chooser_placement_size": "6e90cf7e1fe3e1ffd3e05dd0005b2b8726e993b9b109e0639e67f181c6ede59f",
+  "mock_chooser_placement_size_spoken": "71292497d37007b9d49fe6c9d8d7380cedcdc2e480b867c69f2f69ed417b2478",
+  "mock_chooser_placement_start": "3ed5aafdcb1ff3b295f587c503233cb1d5f2b5356a0c0482b1e05982a14c392e",
+  "mock_chooser_placement_title": "a72718b31ce1ec1e892d7fc3f0d6fd7cc863b91cfd3914d5a012e9a322145f8d",
+  "mock_chooser_placement_top_subject": "37882414ee84db17a771bc14642322654c5917e7e4b7a76e2c073964b7585b3d",
+  "mock_chooser_placement_top_subjects": "19e317f6575b0548f72aeb9465596b212ab92d0367114f25ac45b2feed8c3504",
+  "mock_chooser_plus": "bbaaaaa1c44895b04b11d219c10e1605955951c9ad62fb149776b0a28f0816d3",
+  "mock_chooser_preparing": "b1da094a0b434725ae5d3b37716842fca39e6a26f6622cb429ef6af706b6983d",
+  "mock_chooser_preparing_detail": "eab9db4249c33a374766bbb01604cd66f7cb76eee9f94e3a07494f1040a6f95e",
+  "mock_chooser_questions": "4fac9353111e615edf7c100bf5df480248e9e87538bf8aaadb3bb3ba0288bc6d",
+  "mock_chooser_rule": "8bf399efd05517b096a1f68ba4bdab4b3ca039df375e4514f76d67739f188b38",
+  "mock_chooser_see_plus": "10d403c956b429cbda6fce77dbbce175f23cd354fdf091dea69ae433e674f341",
+  "mock_chooser_short": "24d7390a5053578cb50ad5e0e27d3026666b3806d52f4f6092b42426f88d377a",
+  "mock_chooser_short_day": "c722a12afcf771a1542725e2e336a1903d6ba7d8e40c84ec389128c39387e283",
+  "mock_chooser_short_month": "6dbd9670d44f7fb128ce7b0dc4c94787856888d5c26e3f89433a1aff8efb9dcf",
+  "mock_chooser_short_none": "d9a62b8e554597e59afcfcbba50eaae1b84d2dbc7c005d0ea33a0655e67c59b4",
+  "mock_chooser_size_guide_formats": "b9c32926cdc3a97a7cc5a6ad2855e1b6cc20e4809493e326c9c85f5d3d0a06ad",
+  "mock_chooser_size_guide_past_edition": "92748b197b8e57b175bb6bb3d5b556a241d4a5d2ddbf646e5b29b3a3bff904e0",
+  "mock_chooser_size_guide_questions": "209619ca9c0bca11ca468d61a11dee240d23868b2c6a7f04e8ca08c09dd27d67",
+  "mock_chooser_size_guide_subjects": "0c6d75e19063bb2723a73fc7bd6d866358285ec71229489699f7f52cb63b54b8",
+  "mock_chooser_size_guide_time": "35a8af3ce1a18ac1888c7a97a332f310ea2403e6add64af0f8e464d868d4493f",
+  "mock_chooser_size_latest_exam": "f97622836371922a6bd934cad95a6ed2c5d09bbf448fdc0051a03f88cd69a4a3",
+  "mock_chooser_size_material_formats": "9d68f08e7c860189bde3c5ca2420d250d1e4708a7e185c9dd61490a045f4b965",
+  "mock_chooser_size_material_length": "490796b57a57c3e6bb0147ea578a4645d8aeeba6db0f7032e8b8e248bd9f0422",
+  "mock_chooser_size_notice_formats": "d86c68cc907348be1adc0d39f05d6806ad5e236bd2c3233044cca40625189896",
+  "mock_chooser_size_notice_past_edition": "1bbd1347e8c84105042c383204527ec8b28b968d182f00781941b16adde0a672",
+  "mock_chooser_size_notice_questions": "279f57cffdd50ddcf44ea4f611af607e067437b7932021f6b7c52a2ab8157c92",
+  "mock_chooser_size_notice_subjects": "a59b20bb9e31146c21b364919cbd0bee27fb8b48c63d0b561dbd0825c6ff8095",
+  "mock_chooser_size_notice_time": "2af313d92644feb52f69847a1cb97d6866bc918ab04fa0cf0612c5147345f5d3",
+  "mock_chooser_size_past_edition": "daead7c286ac4dff31f4d23c44310b544efe7ef8559cbe724c6b8c13507fb810",
+  "mock_chooser_start": "ca34c5635b72b1e75b75b02db0d1aa60079665ca23ed1cfcded75997d05a215b",
+  "mock_chooser_start_with": "61e5df8a1b61b5d3dade87d4c66a2fc38759454cc47e8a112d999d0e26c103e9",
+  "mock_chooser_subjects": "712a928f42bbf4ec2f7b82e7a855da5fae17607ce15bac5e19de260f2d5caaa4",
+  "mock_chooser_time_limit": "b47e67e1ae3e5f8461336ef230ec9420a508cbf36d95e5e1d78733ea8f762bab",
+  "mock_chooser_title": "c96726ffa340d6e5b431b4b00b374a6373796194d024fc805b766fa80b36c795",
+  "mock_chooser_usually_takes": "bb9e64f1f1dd5218202dd2aec01cd917780a11a8ce16e0773e7ebf7533427dea",
+  "mock_chooser_writing": "529db79095009a9808650edd68063876b649b6e0702a658d511ba31360436689",
+  "mock_chooser_writing_questions": "92daccea4445b11888ba270e6f49bf105fc6b0488c18db257115e54e54b25bf0",
+  "mock_chooser_writing_questions_line": "e6e6235e57d52a4d69f7c8bbd7d7e404a8710fc4434c5805f68554438f2e81a8",
+  "mock_chooser_written": "6d2827eb90a01540eb3944bcb160be2d85b93db993d66c424c21c3ab6be5dede",
+  "mock_chooser_written_part": "272efedad6ba9b69ab030f86c8ac88068dbacdb107c7d3e1d61b5ac39a6734e9"
+}
+-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="mock_chooser_title">Podejdź do egzaminu próbnego</string>
+    <string name="mock_chooser_rule">Wynik zobaczysz dopiero na końcu, tak jak na prawdziwym egzaminie.</string>
+    <string name="mock_chooser_pick_free">Wybierz, jaką część egzaminu chcesz teraz rozwiązać.</string>
+    <string name="mock_chooser_start">Zacznij</string>
+    <string name="mock_chooser_getting_ready">Przygotowujemy…</string>
+    <plurals name="mock_chooser_start_with">
+        <item quantity="one">Zacznij od %d pytania</item>
+        <item quantity="few">Zacznij od %d pytań</item>
+        <item quantity="many">Zacznij od %d pytań</item>
+        <item quantity="other">Zacznij od %d pytań</item>
+    </plurals>
+    <string name="mock_chooser_see_plus">Poznaj Plus</string>
+    <string name="mock_chooser_plus">W pakiecie Plus masz egzaminy próbne: kiedy chcesz i co tydzień w swoim planie.</string>
+    <string name="mock_chooser_one_subject">Jeden przedmiot</string>
+    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$s lists them, such as "Specialty knowledge (P3)". -->
+    <string name="mock_chooser_full_day_without">Dzień egzaminu bez części: %1$s</string>
+    <!-- PluralsCandidate: %1$d names which exam day it is, not a count. -->
+    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$d is the exam day's number; %2$s lists the tests, such as "Foreign language". -->
+    <string name="mock_chooser_full_day_number_without" tools:ignore="PluralsCandidate">%1$d. dzień egzaminu bez części: %2$s</string>
+    <!-- After a mock's parts or subjects: the mock covers only the exam's objective part, questions with set answers, and leaves the exam day's written part out. -->
+    <string name="mock_chooser_objective_only">tylko część testowa</string>
+    <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
+    <string name="mock_chooser_written">+ %1$s</string>
+    <!-- A mock's size in a row: %1$d questions ("q" is short for questions) and about %2$s, a duration such as "5 hr". -->
+    <string name="mock_chooser_option_size">%1$d pytań · ~%2$s</string>
+    <!-- What screen readers say for a mock's size: %2$s is a duration such as "5 hr". -->
+    <plurals name="mock_chooser_option_size_spoken">
+        <item quantity="one">%1$d pytanie, około %2$s</item>
+        <item quantity="few">%1$d pytania, około %2$s</item>
+        <item quantity="many">%1$d pytań, około %2$s</item>
+        <item quantity="other">%1$d pytania, około %2$s</item>
+    </plurals>
+    <!-- A placement mock's questions in a row; "q" is short for questions. -->
+    <string name="mock_chooser_placement_size">%1$d pytań</string>
+    <plurals name="mock_chooser_placement_size_spoken">
+        <item quantity="one">%d pytanie</item>
+        <item quantity="few">%d pytania</item>
+        <item quantity="many">%d pytań</item>
+        <item quantity="other">%d pytania</item>
+    </plurals>
+    <!-- How many of the picked mock's questions the bank has now (%1$d) of the real exam's (%2$s), and about how long it takes (%3$s, a duration). -->
+    <plurals name="mock_chooser_short">
+        <item quantity="one">Na razie mamy %1$d z %2$s pytań, więc około %3$s zajmie ten egzamin próbny.</item>
+        <item quantity="few">Na razie mamy %1$d z %2$s pytań, więc około %3$s zajmie ten egzamin próbny.</item>
+        <item quantity="many">Na razie mamy %1$d z %2$s pytań, więc około %3$s zajmie ten egzamin próbny.</item>
+        <item quantity="other">Na razie mamy %1$d z %2$s pytań, więc około %3$s zajmie ten egzamin próbny.</item>
+    </plurals>
+    <string name="mock_chooser_short_day">Jutro będziemy mogli przygotować więcej pytań do twoich egzaminów próbnych.</string>
+    <string name="mock_chooser_short_month">W przyszłym miesiącu będziemy mogli przygotować więcej pytań do twoich egzaminów próbnych.</string>
+    <string name="mock_chooser_short_none">W banku pytań nie ma na razie więcej nowych pytań do tego egzaminu próbnego.</string>
+    <string name="mock_chooser_not_enough">Nie ma jeszcze wystarczająco dużo pytań do tego egzaminu próbnego. Wybierz pełny egzamin lub inny przedmiot.</string>
+    <string name="mock_chooser_failed">Nie udało się rozpocząć egzaminu próbnego. Spróbuj ponownie.</string>
+    <string name="mock_chooser_preparing">Przygotowujemy twój egzamin próbny</string>
+    <string name="mock_chooser_preparing_detail">Przygotowujemy dla ciebie pytania podobne do tych na egzaminie. Egzamin próbny rozpocznie się tutaj, gdy tylko będą gotowe.</string>
+    <string name="mock_chooser_writing">Przygotowujemy twój egzamin próbny</string>
+    <string name="mock_chooser_writing_questions">Przygotowujemy pytania takie jak na egzaminie</string>
+    <string name="mock_chooser_writing_questions_line">Wybieramy tematy pytań z każdego przedmiotu…</string>
+    <!-- The panel beside the options, about the one picked. -->
+    <string name="mock_chooser_picked">Wybrany egzamin próbny</string>
+    <string name="mock_chooser_questions">Pytania</string>
+    <string name="mock_chooser_time_limit">Limit czasu</string>
+    <string name="mock_chooser_usually_takes">Zwykle zajmuje</string>
+    <!-- %1$s is a duration, such as "1 hr 20 min". -->
+    <string name="mock_chooser_about">Około %1$s</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="mock_chooser_about_recommended">Około %1$s (polecamy)</string>
+    <string name="mock_chooser_subjects">Przedmioty</string>
+    <!-- The exam's sections a mock sits, such as Listening and Reading. -->
+    <string name="mock_chooser_parts">Części</string>
+    <!-- Under a part such as "Essay", which the learner writes rather than answers. -->
+    <string name="mock_chooser_written_part">Część pisemna</string>
+    <string name="mock_chooser_last_mock">Twój ostatni egzamin próbny</string>
+    <string name="mock_chooser_placement_title">Egzamin próbny, który określi twój poziom</string>
+    <string name="mock_chooser_placement_detail">Tak jak na egzaminie. Twój plan powstaje na podstawie twoich odpowiedzi.</string>
+    <string name="mock_chooser_placement_start">Rozpocznij egzamin próbny</string>
+    <string name="mock_chooser_placement_note">Możesz przerwać w każdej chwili: twój plan powstanie na podstawie twoich odpowiedzi. Wynik zobaczysz na końcu.</string>
+    <string name="mock_chooser_placement_plus">Egzaminy próbne są dostępne w Plus. Bez niego krótki zestaw pytań pomoże ustalić, od czego zacząć.</string>
+    <string name="mock_chooser_placement_top_subject">Przedmiot, który daje najwięcej punktów. W pierwszych dniach nauki dostaniesz pytania z pozostałych.</string>
+    <!-- %d is how many subjects a short placement mock asks, two or more, as in "The 3 subjects worth most": the three with the most weight in the exam's score. -->
+    <plurals name="mock_chooser_placement_top_subjects">
+        <item quantity="one">%d przedmiotów, które dają najwięcej punktów. W pierwszych dniach nauki dostaniesz pytania z pozostałych.</item>
+        <item quantity="few">%d przedmioty, które dają najwięcej punktów. W pierwszych dniach nauki dostaniesz pytania z pozostałych.</item>
+        <item quantity="many">%d przedmiotów, które dają najwięcej punktów. W pierwszych dniach nauki dostaniesz pytania z pozostałych.</item>
+        <item quantity="other">%d przedmiotów, które dają najwięcej punktów. W pierwszych dniach nauki dostaniesz pytania z pozostałych.</item>
+    </plurals>
+    <string name="mock_chooser_placement_short">Krótki test. W pierwszych dniach dokładniej określimy twój poziom.</string>
+    <string name="mock_chooser_placement_medium">Wszystkie przedmioty. Dobry punkt wyjścia.</string>
+    <string name="mock_chooser_placement_long">Najdokładniejsze określenie poziomu na początek.</string>
+    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
+    <string name="mock_chooser_size_past_edition">%1$s: liczba pytań z każdego przedmiotu według wyliczeń %2$s.</string>
+    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
+    <string name="mock_chooser_size_latest_exam">Liczba pytań z każdego przedmiotu na ostatnim egzaminie według wyliczeń %1$s.</string>
+    <!-- %2$s is a duration, such as "1 hr 20 min". -->
+    <plurals name="mock_chooser_size_material_length">
+        <item quantity="one">W twoich materiałach nie podano czasu trwania testu. W tym egzaminie próbnym masz %1$d pytanie i %2$s na rozwiązanie.</item>
+        <item quantity="few">W twoich materiałach nie podano czasu trwania testu. W tym egzaminie próbnym masz %1$d pytania i %2$s na rozwiązanie.</item>
+        <item quantity="many">W twoich materiałach nie podano czasu trwania testu. W tym egzaminie próbnym masz %1$d pytań i %2$s na rozwiązanie.</item>
+        <item quantity="other">W twoich materiałach nie podano czasu trwania testu. W tym egzaminie próbnym masz %1$d pytania i %2$s na rozwiązanie.</item>
+    </plurals>
+    <string name="mock_chooser_size_material_formats">W twoich materiałach nie podano liczby pytań każdego typu, więc dzielimy je po równo.</string>
+    <plurals name="mock_chooser_size_notice_questions">
+        <item quantity="one">W ogłoszeniu nie podano liczby pytań na egzaminie. Ten egzamin próbny zawiera %d pytanie.</item>
+        <item quantity="few">W ogłoszeniu nie podano liczby pytań na egzaminie. Ten egzamin próbny zawiera %d pytania.</item>
+        <item quantity="many">W ogłoszeniu nie podano liczby pytań na egzaminie. Ten egzamin próbny zawiera %d pytań.</item>
+        <item quantity="other">W ogłoszeniu nie podano liczby pytań na egzaminie. Ten egzamin próbny zawiera %d pytania.</item>
+    </plurals>
+    <plurals name="mock_chooser_size_guide_questions">
+        <item quantity="one">W informatorze nie podano liczby pytań na egzaminie. Ten egzamin próbny zawiera %d pytanie.</item>
+        <item quantity="few">W informatorze nie podano liczby pytań na egzaminie. Ten egzamin próbny zawiera %d pytania.</item>
+        <item quantity="many">W informatorze nie podano liczby pytań na egzaminie. Ten egzamin próbny zawiera %d pytań.</item>
+        <item quantity="other">W informatorze nie podano liczby pytań na egzaminie. Ten egzamin próbny zawiera %d pytania.</item>
+    </plurals>
+    <plurals name="mock_chooser_size_notice_past_edition">
+        <item quantity="one">W ogłoszeniu nie podano liczby pytań na egzaminie. Ten egzamin próbny zawiera %d pytanie, tyle samo co jedna z wcześniejszych edycji.</item>
+        <item quantity="few">W ogłoszeniu nie podano liczby pytań na egzaminie. Ten egzamin próbny zawiera %d pytania, tyle samo co jedna z wcześniejszych edycji.</item>
+        <item quantity="many">W ogłoszeniu nie podano liczby pytań na egzaminie. Ten egzamin próbny zawiera %d pytań, tyle samo co jedna z wcześniejszych edycji.</item>
+        <item quantity="other">W ogłoszeniu nie podano liczby pytań na egzaminie. Ten egzamin próbny zawiera %d pytania, tyle samo co jedna z wcześniejszych edycji.</item>
+    </plurals>
+    <plurals name="mock_chooser_size_guide_past_edition">
+        <item quantity="one">W informatorze nie podano liczby pytań na egzaminie. Ten egzamin próbny zawiera %d pytanie, tyle samo co jedna z wcześniejszych edycji.</item>
+        <item quantity="few">W informatorze nie podano liczby pytań na egzaminie. Ten egzamin próbny zawiera %d pytania, tyle samo co jedna z wcześniejszych edycji.</item>
+        <item quantity="many">W informatorze nie podano liczby pytań na egzaminie. Ten egzamin próbny zawiera %d pytań, tyle samo co jedna z wcześniejszych edycji.</item>
+        <item quantity="other">W informatorze nie podano liczby pytań na egzaminie. Ten egzamin próbny zawiera %d pytania, tyle samo co jedna z wcześniejszych edycji.</item>
+    </plurals>
+    <string name="mock_chooser_size_notice_subjects">W ogłoszeniu nie podano liczby pytań z każdego przedmiotu, więc dzielimy je po równo.</string>
+    <string name="mock_chooser_size_guide_subjects">W informatorze nie podano liczby pytań w każdej części, więc dzielimy je po równo.</string>
+    <string name="mock_chooser_size_notice_formats">W ogłoszeniu nie podano liczby pytań każdego typu, więc dzielimy je po równo.</string>
+    <string name="mock_chooser_size_guide_formats">W informatorze nie podano liczby pytań każdego typu, więc dzielimy je po równo.</string>
+    <!-- %1$s is a duration, such as "4 hr". -->
+    <string name="mock_chooser_size_notice_time">W ogłoszeniu nie podano czasu trwania egzaminu. W tym egzaminie próbnym masz %1$s na rozwiązanie.</string>
+    <!-- %1$s is a duration, such as "4 hr". -->
+    <string name="mock_chooser_size_guide_time">W informatorze nie podano czasu trwania egzaminu. W tym egzaminie próbnym masz %1$s na rozwiązanie.</string>
+    <!-- %1$s is the exam's name for a section, such as "Listening". -->
+    <string name="mock_chooser_left_out_named">%1$s: tej części nie ma jeszcze w egzaminach próbnych.</string>
+    <string name="mock_chooser_left_out_listening">Egzaminy próbne nie obejmują jeszcze słuchania.</string>
+    <string name="mock_chooser_left_out_speaking">Egzaminy próbne nie obejmują jeszcze części ustnej.</string>
+    <!-- %1$s is the exam's name for a practical test, such as "Driving test". -->
+    <string name="mock_chooser_left_out_practical_named">%1$s: to test praktyczny, więc nie może być częścią egzaminu próbnego.</string>
+    <string name="mock_chooser_left_out_practical">Praktycznej części egzaminu nie da się uwzględnić w egzaminie próbnym.</string>
+    <string name="mock_chooser_left_out_numeric">W pytaniach z odpowiedzią liczbową wybierasz odpowiedź z podanych opcji.</string>
+    <string name="mock_chooser_left_out_short_answer">W pytaniach wymagających krótkiej odpowiedzi wybierasz odpowiedź z podanych opcji.</string>
+    <!-- %1$s is the exam's name for a written part, such as "Essay". -->
+    <string name="mock_chooser_left_out_written">%1$s: tej części nie ma jeszcze w egzaminach próbnych, więc ćwiczysz ją podczas nauki pisania wypracowań.</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test, that the learner hasn't picked an option for yet. -->
+    <string name="mock_chooser_left_out_choice">%1$s: tę część uwzględnimy dopiero wtedy, gdy wybierzesz odpowiednią opcję w planie.</string>
+</resources>

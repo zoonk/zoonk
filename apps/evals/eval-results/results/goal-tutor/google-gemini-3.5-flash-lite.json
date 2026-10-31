@@ -1,0 +1,1389 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2346,
+          "inputTokens": 2349,
+          "outputTokens": 355,
+          "reasoningTokens": 166
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The answer is slightly longer than the usual 150-word target and repeats the initial distinction in the bullets. Otherwise, it correctly explains all five elements, identifies the classic Cebraspe certo/errado trap, accurately references the learner's recent mistake, and appropriately leaves proposedChange null.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "For a sharper exam-focused explanation, retain one concrete example and remove the repeated definitions. This would bring the response closer to the requested concise tutoring style without losing the key distinction.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A content doubt for a Cebraspe exam. Explains correctly that in a bound act (vinculado) the law sets every element and in a discretionary act (discricionário) the administration chooses only within motive and object (mérito), while competence, purpose and form stay bound. Mentions the classic certo/errado trap. proposedChange is null.\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking), it's offered and the answer says what its button does.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "pt-concurso-atos-1",
+        "userInput": {
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2027-01-10", "remainingHours": 320 },
+            "goal": {
+              "dailyMinutes": 120,
+              "kind": "exam",
+              "targetDate": "2027-01-17",
+              "title": "Concurso da Câmara dos Deputados: Analista Legislativo, Registro e Redação"
+            },
+            "language": "pt",
+            "mistakes": [
+              {
+                "answer": "Certo",
+                "correctAnswer": "Errado",
+                "question": "Julgue o item: no ato discricionário, a Administração pode decidir sobre a competência e a forma do ato conforme conveniência e oportunidade.",
+                "skill": "Atos administrativos: vinculados e discricionários"
+              }
+            ],
+            "next": [
+              {
+                "date": "2026-10-07",
+                "items": [
+                  { "kind": "lesson", "title": "Concordância verbal" },
+                  { "kind": "lesson", "title": "Poder Legislativo: composição da Câmara" }
+                ]
+              }
+            ],
+            "phase": {
+              "chapters": [
+                {
+                  "lessonsDone": 2,
+                  "lessonsTotal": 6,
+                  "state": "current",
+                  "title": "Atos administrativos"
+                },
+                {
+                  "lessonsDone": 0,
+                  "lessonsTotal": 5,
+                  "state": "upcoming",
+                  "title": "Concordância"
+                }
+              ],
+              "endDate": "2026-11-01",
+              "index": 0,
+              "kind": "foundations",
+              "name": ""
+            },
+            "scope": { "kind": "plan" },
+            "setup": {
+              "areas": [
+                { "focused": false, "name": "Língua Portuguesa", "skipped": false },
+                { "focused": false, "name": "Direito Administrativo", "skipped": false },
+                {
+                  "focused": false,
+                  "name": "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
+                  "skipped": false
+                },
+                { "focused": false, "name": "Língua Inglesa", "skipped": false },
+                {
+                  "focused": false,
+                  "name": "Reconhecimento de Fala e Transcrição",
+                  "skipped": false
+                }
+              ],
+              "coverage": {
+                "coveredShare": 1,
+                "fits": true,
+                "measure": "exam",
+                "recommendedMinutes": null
+              },
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "intermediate",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [0, 120, 120, 120, 120, 120, 240]
+            },
+            "status": {
+              "days": null,
+              "extraMinutesPerDay": null,
+              "kind": "onTrack",
+              "options": []
+            },
+            "today": {
+              "date": "2026-10-06",
+              "items": [
+                {
+                  "canDo": "Distinguir atos vinculados de discricionários em itens certo/errado",
+                  "kind": "lesson",
+                  "minutes": 12,
+                  "reason": "newSkill",
+                  "status": "pending",
+                  "title": "Discricionariedade e seus limites"
+                },
+                {
+                  "canDo": null,
+                  "kind": "practice",
+                  "minutes": 10,
+                  "reason": "mistakes",
+                  "status": "pending",
+                  "title": "Atos administrativos"
+                }
+              ],
+              "source": "session"
+            },
+            "version": 1
+          },
+          "learnerMemory": [],
+          "priorTurns": [],
+          "question": "qual a diferença entre ato vinculado e ato discricionário?"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2334,
+          "inputTokens": 2337,
+          "outputTokens": 348,
+          "reasoningTokens": 131
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The answer is roughly 200 words, exceeding the usual under-150-word target and making a simple correction less concise. It identifies the trap of mixing bound and discretionary elements, but only implicitly explains why Certo was tempting: 'conveniência e oportunidade' correctly evokes discretion, yet the item wrongly extends that freedom to competence and form.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "A brief concrete contrast would strengthen understanding: even when an authority may choose whether an act is appropriate, it cannot freely choose who has legal authority to perform it or disregard its legally required form. This could replace some introductory explanation rather than lengthen the answer.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Explains her latest mistake from `mistakes`: the item is Errado because competence and form are always bound, even in a discretionary act; says what made Certo tempting. proposedChange is null.\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking), it's offered and the answer says what its button does.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "pt-concurso-mistake-1",
+        "userInput": {
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2027-01-10", "remainingHours": 320 },
+            "goal": {
+              "dailyMinutes": 120,
+              "kind": "exam",
+              "targetDate": "2027-01-17",
+              "title": "Concurso da Câmara dos Deputados: Analista Legislativo, Registro e Redação"
+            },
+            "language": "pt",
+            "mistakes": [
+              {
+                "answer": "Certo",
+                "correctAnswer": "Errado",
+                "question": "Julgue o item: no ato discricionário, a Administração pode decidir sobre a competência e a forma do ato conforme conveniência e oportunidade.",
+                "skill": "Atos administrativos: vinculados e discricionários"
+              }
+            ],
+            "next": [
+              {
+                "date": "2026-10-07",
+                "items": [
+                  { "kind": "lesson", "title": "Concordância verbal" },
+                  { "kind": "lesson", "title": "Poder Legislativo: composição da Câmara" }
+                ]
+              }
+            ],
+            "phase": {
+              "chapters": [
+                {
+                  "lessonsDone": 2,
+                  "lessonsTotal": 6,
+                  "state": "current",
+                  "title": "Atos administrativos"
+                },
+                {
+                  "lessonsDone": 0,
+                  "lessonsTotal": 5,
+                  "state": "upcoming",
+                  "title": "Concordância"
+                }
+              ],
+              "endDate": "2026-11-01",
+              "index": 0,
+              "kind": "foundations",
+              "name": ""
+            },
+            "scope": { "kind": "plan" },
+            "setup": {
+              "areas": [
+                { "focused": false, "name": "Língua Portuguesa", "skipped": false },
+                { "focused": false, "name": "Direito Administrativo", "skipped": false },
+                {
+                  "focused": false,
+                  "name": "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
+                  "skipped": false
+                },
+                { "focused": false, "name": "Língua Inglesa", "skipped": false },
+                {
+                  "focused": false,
+                  "name": "Reconhecimento de Fala e Transcrição",
+                  "skipped": false
+                }
+              ],
+              "coverage": {
+                "coveredShare": 1,
+                "fits": true,
+                "measure": "exam",
+                "recommendedMinutes": null
+              },
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "intermediate",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [0, 120, 120, 120, 120, 120, 240]
+            },
+            "status": {
+              "days": null,
+              "extraMinutesPerDay": null,
+              "kind": "onTrack",
+              "options": []
+            },
+            "today": {
+              "date": "2026-10-06",
+              "items": [
+                {
+                  "canDo": "Distinguir atos vinculados de discricionários em itens certo/errado",
+                  "kind": "lesson",
+                  "minutes": 12,
+                  "reason": "newSkill",
+                  "status": "pending",
+                  "title": "Discricionariedade e seus limites"
+                },
+                {
+                  "canDo": null,
+                  "kind": "practice",
+                  "minutes": 10,
+                  "reason": "mistakes",
+                  "status": "pending",
+                  "title": "Atos administrativos"
+                }
+              ],
+              "source": "session"
+            },
+            "version": 1
+          },
+          "learnerMemory": [],
+          "priorTurns": [],
+          "question": "não entendi meu último erro, pode explicar?"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2292,
+          "inputTokens": 2295,
+          "outputTokens": 175,
+          "reasoningTokens": 72
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Optionally invite the learner to clarify whether she intended a later exam sitting in March. The answer otherwise correctly cites the OAB/FGV notice, confirms 10 January 2027 for the first phase, and leaves proposedChange null.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A question about a date the notice sets, not a plan change. Answers that the OAB notice (FGV) sets the 1ª fase for 10 January 2027, naming the notice as the source, so January is right; may say how to tell the buddy if she means a later exam on purpose. proposedChange MUST be null: proposing to move the exam to March is a major error (cap 5.0).\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking), it's offered and the answer says what its button does.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "pt-oab-date-question-1",
+        "userInput": {
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2027-01-09", "remainingHours": 190 },
+            "exam": {
+              "days": [{ "date": "2027-01-10", "label": "Realização da 1ª fase (prova objetiva)" }],
+              "formats": [
+                "Questões de múltipla escolha com quatro opções (A, B, C e D) e uma única resposta correta."
+              ],
+              "fromMaterial": false,
+              "name": "OAB Exame de Ordem Unificado",
+              "official": true,
+              "otherDates": [
+                { "date": "2026-10-05", "label": "Período de inscrições" },
+                { "date": "2027-01-27", "label": "Resultado preliminar da 1ª fase" },
+                {
+                  "date": "2027-02-28",
+                  "label": "Realização da 2ª fase (prova prático-profissional)"
+                }
+              ],
+              "questionCount": 80,
+              "rules": [
+                "O examinando é aprovado na 1ª fase ao obter o mínimo de 50% de acertos, correspondente a 40,00 pontos ou mais.",
+                "A prova objetiva é realizada sem consulta."
+              ],
+              "scoring": null,
+              "source": "https://oab.fgv.br/arq/651/edital-de-abertura-48-exame.pdf",
+              "subjects": [
+                { "group": null, "name": "Ética Profissional", "questions": 8 },
+                { "group": null, "name": "Direito Constitucional", "questions": 6 },
+                { "group": null, "name": "Direito Civil", "questions": 7 },
+                { "group": null, "name": "Direito Penal", "questions": 6 }
+              ]
+            },
+            "goal": {
+              "dailyMinutes": 120,
+              "kind": "exam",
+              "target": null,
+              "targetDate": "2027-01-10",
+              "title": "Passar na 1ª fase da OAB"
+            },
+            "language": "pt",
+            "mistakes": [],
+            "next": [],
+            "phase": null,
+            "scope": { "kind": "plan" },
+            "setup": {
+              "areas": [
+                { "focused": false, "name": "Ética Profissional", "skipped": false },
+                { "focused": false, "name": "Direito Constitucional", "skipped": false },
+                { "focused": false, "name": "Direito Civil", "skipped": false }
+              ],
+              "coverage": {
+                "coreFits": true,
+                "coreMinutes": null,
+                "coveredShare": 0.52,
+                "fits": false,
+                "measure": "exam",
+                "recommendedMinutes": 240
+              },
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "intermediate",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [120, 120, 120, 120, 120, 120, 120]
+            },
+            "status": {
+              "days": null,
+              "extraMinutesPerDay": null,
+              "kind": "onTrack",
+              "options": []
+            },
+            "today": null,
+            "version": 1
+          },
+          "learnerMemory": [],
+          "priorTurns": [],
+          "question": "eu disse que a prova era em março, mas apareceu janeiro. tá certo?"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2232,
+          "inputTokens": 2235,
+          "outputTokens": 400,
+          "reasoningTokens": 228
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The answer addresses 800 points, so the cap for ignoring that request does not apply. However, its advice to maintain practice and use the existing 60 minutes falls short of explaining the expected actionable lever: increasing practice or increasing daily study time based on coverage. It otherwise proposes the requested priorities, makes application conditional on tapping Apply, and promises no score.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the advice concrete using the context: the coverage estimate recommends 95 minutes daily. Offer that as an optional coverage improvement, or suggest more practice, without implying either guarantees 800 points or adding an unrequested time change to the proposal.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A two-part request. proposedChange puts Ciências da Natureza and Redação first. The tool returned that 'mirar 800 pontos' is left out: the answer says plainly that aiming for 800 doesn't change the plan by itself and what helps (more practice, or more daily time from coverage), without promising 800 or any score. Ignoring the 800 part is a major error (cap 6.0).\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking), it's offered and the answer says what its button does.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "pt-enem-focus-and-score-1",
+        "userInput": {
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2026-11-08", "remainingHours": 41 },
+            "goal": {
+              "dailyMinutes": 60,
+              "kind": "exam",
+              "targetDate": "2026-11-08",
+              "title": "ENEM 2026",
+              "target": "750 · Medicina, UFMG"
+            },
+            "language": "pt",
+            "next": [
+              {
+                "date": "2026-09-28",
+                "items": [
+                  { "kind": "lesson", "title": "Funções do 1º grau" },
+                  { "kind": "review", "title": "Revisão: porcentagem" }
+                ]
+              },
+              {
+                "date": "2026-09-29",
+                "items": [{ "kind": "lesson", "title": "Leitura de gráficos" }]
+              }
+            ],
+            "phase": {
+              "chapters": [
+                {
+                  "lessonsDone": 4,
+                  "lessonsTotal": 4,
+                  "state": "done",
+                  "title": "Porcentagem e razão"
+                },
+                { "lessonsDone": 1, "lessonsTotal": 5, "state": "current", "title": "Funções" }
+              ],
+              "endDate": "2026-10-11",
+              "index": 1,
+              "kind": "core",
+              "name": "Matemática que mais cai"
+            },
+            "scope": { "kind": "plan" },
+            "status": {
+              "days": null,
+              "extraMinutesPerDay": null,
+              "kind": "onTrack",
+              "options": []
+            },
+            "today": {
+              "date": "2026-09-27",
+              "items": [
+                {
+                  "canDo": null,
+                  "kind": "review",
+                  "minutes": 5,
+                  "reason": "reviewDue",
+                  "status": "pending",
+                  "title": "Porcentagem"
+                },
+                {
+                  "canDo": null,
+                  "kind": "checkpoint",
+                  "minutes": 45,
+                  "reason": "checkpoint",
+                  "status": "pending",
+                  "title": "Simulado da semana"
+                }
+              ],
+              "source": "session"
+            },
+            "version": 1,
+            "setup": {
+              "areas": [
+                { "focused": false, "name": "Matemática", "skipped": false },
+                { "focused": false, "name": "Linguagens", "skipped": false },
+                { "focused": false, "name": "Ciências da Natureza", "skipped": false },
+                { "focused": false, "name": "Ciências Humanas", "skipped": false },
+                { "focused": false, "name": "Redação", "skipped": false }
+              ],
+              "coverage": {
+                "coreFits": true,
+                "coreMinutes": null,
+                "coveredShare": 0.7,
+                "fits": false,
+                "measure": "exam",
+                "recommendedMinutes": 95
+              },
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "basic",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [60, 60, 60, 60, 60, 60, 60]
+            }
+          },
+          "learnerMemory": [],
+          "planChange": { "leftOut": ["mirar 800 pontos"] },
+          "priorTurns": [],
+          "question": "coloca natureza e redação primeiro e quero mirar 800"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2404,
+          "inputTokens": 2407,
+          "outputTokens": 318,
+          "reasoningTokens": 105
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required chapterTest for Língua Inglesa is not offered: offeredTools is null despite the answer inviting the learner to take a chapter test. The answer also omits that passing it skips up to 8 lessons she already knows. The proposedChange correctly targets English alone, but asks only for harder texts rather than explicitly starting English beyond its basics.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Make the intended reading level more concrete with one brief exam-relevant example, such as interpreting a B2 passage and judging whether a paraphrase preserves its meaning. This would clarify the difference from the basic vocabulary lessons without adding a lecture.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "One subject is too basic for her (Cebraspe English is a B2 reading). proposedChange asks for Língua Inglesa to start past its basics (only English, not every lesson harder; a global 'harder' alone is a major error, cap 6.0). offeredTools has chapterTest for Língua Inglesa, offered, and the answer says what it does (passing it skips up to 8 lessons she already knows). Never says English can't be changed on its own.\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking), it's offered and the answer says what its button does.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "pt-concurso-english-too-basic-1",
+        "userInput": {
+          "appTools": {
+            "chapterTest": { "chapter": "Citações diretas e autoria", "lessonsLeft": 8 }
+          },
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2027-01-10", "remainingHours": 320 },
+            "goal": {
+              "dailyMinutes": 120,
+              "kind": "exam",
+              "targetDate": "2027-01-17",
+              "title": "Concurso da Câmara dos Deputados: Analista Legislativo, Registro e Redação"
+            },
+            "language": "pt",
+            "mistakes": [
+              {
+                "answer": "Certo",
+                "correctAnswer": "Errado",
+                "question": "Julgue o item: no ato discricionário, a Administração pode decidir sobre a competência e a forma do ato conforme conveniência e oportunidade.",
+                "skill": "Atos administrativos: vinculados e discricionários"
+              }
+            ],
+            "next": [
+              {
+                "date": "2026-10-07",
+                "items": [
+                  { "kind": "lesson", "title": "Concordância verbal" },
+                  { "kind": "lesson", "title": "Poder Legislativo: composição da Câmara" }
+                ]
+              }
+            ],
+            "phase": {
+              "chapters": [
+                {
+                  "lessonsDone": 2,
+                  "lessonsTotal": 6,
+                  "state": "current",
+                  "title": "Atos administrativos"
+                },
+                {
+                  "lessonsDone": 0,
+                  "lessonsTotal": 5,
+                  "state": "upcoming",
+                  "title": "Concordância"
+                }
+              ],
+              "endDate": "2026-11-01",
+              "index": 0,
+              "kind": "foundations",
+              "name": ""
+            },
+            "scope": { "kind": "plan" },
+            "setup": {
+              "areas": [
+                { "focused": false, "name": "Língua Portuguesa", "skipped": false },
+                { "focused": false, "name": "Direito Administrativo", "skipped": false },
+                {
+                  "focused": false,
+                  "name": "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
+                  "skipped": false
+                },
+                { "focused": false, "name": "Língua Inglesa", "skipped": false },
+                {
+                  "focused": false,
+                  "name": "Reconhecimento de Fala e Transcrição",
+                  "skipped": false
+                }
+              ],
+              "coverage": {
+                "coveredShare": 1,
+                "fits": true,
+                "measure": "exam",
+                "recommendedMinutes": null
+              },
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "intermediate",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [0, 120, 120, 120, 120, 120, 240]
+            },
+            "status": {
+              "days": null,
+              "extraMinutesPerDay": null,
+              "kind": "onTrack",
+              "options": []
+            },
+            "today": {
+              "date": "2026-10-06",
+              "items": [
+                {
+                  "canDo": "Distinguir atos vinculados de discricionários em itens certo/errado",
+                  "kind": "lesson",
+                  "minutes": 12,
+                  "reason": "newSkill",
+                  "status": "pending",
+                  "title": "Discricionariedade e seus limites"
+                },
+                {
+                  "canDo": null,
+                  "kind": "practice",
+                  "minutes": 10,
+                  "reason": "mistakes",
+                  "status": "pending",
+                  "title": "Atos administrativos"
+                }
+              ],
+              "source": "session"
+            },
+            "version": 1
+          },
+          "learnerMemory": [],
+          "priorTurns": [],
+          "question": "As aulas de inglês de hoje estão muito básicas (quem disse o quê, ônibus, museu). A prova da Cebraspe usa textos bem mais difíceis. Dá pra subir o nível do inglês?"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2096,
+          "inputTokens": 2099,
+          "outputTokens": 493,
+          "reasoningTokens": 236
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The answer claims the call provides a character from the current unit, but toolResults establishes only the unit and available call lengths—not a character-based feature. This unsupported app-capability claim triggers the 6.5 cap.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "The correct conversationCall tool is offered, and the answer explains that its button opens spoken interview practice. However, it omits that this is a short call, despite the available 1–5-minute durations. The closing suggestion to adjust the plan toward written conversation also distracts from the learner's explicit preference for speaking.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Describe the button as opening a short, 1–5-minute spoken interview practice focused on talking about projects. Keep the relevant sample interview question and optional text practice, but make any follow-up about lesson changes support the learner's speaking goal rather than steer toward writing.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "He wants to practise the interview out loud. offeredTools has conversationCall, offered, and the answer says the button opens a short spoken call (practice for the interview); it may also offer to ask him interview questions right here in writing. Saying a mock interview or speaking practice isn't possible is a major error (cap 5.0). If proposedChange asks for harder lessons, the tool's caution says the plan would end on 27 November, weeks before 5 January, and the answer must say so.\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking), it's offered and the answer says what its button does.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "pt-interview-speaking-call-1",
+        "userInput": {
+          "appTools": {
+            "conversationCall": { "minutes": [1, 2, 3, 5], "unit": "Talking about your projects" }
+          },
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2026-12-20", "remainingHours": 40 },
+            "goal": {
+              "dailyMinutes": 45,
+              "kind": "language",
+              "targetDate": "2027-01-05",
+              "title": "English for a job interview"
+            },
+            "language": "pt",
+            "mistakes": [],
+            "next": [],
+            "phase": {
+              "chapters": [
+                {
+                  "lessonsDone": 2,
+                  "lessonsTotal": 5,
+                  "state": "current",
+                  "title": "Talking about your projects"
+                }
+              ],
+              "endDate": "2026-11-01",
+              "index": 0,
+              "kind": "learn",
+              "name": "Interview basics"
+            },
+            "scope": { "kind": "plan" },
+            "setup": {
+              "areas": [],
+              "coverage": null,
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "intermediate",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [0, 45, 45, 45, 45, 45, 0]
+            },
+            "status": { "days": 2, "extraMinutesPerDay": 10, "kind": "behind", "options": [] },
+            "today": {
+              "date": "2026-10-06",
+              "items": [
+                {
+                  "canDo": "Describe a data project with past tenses and impact numbers",
+                  "kind": "lesson",
+                  "minutes": 12,
+                  "reason": "newSkill",
+                  "status": "pending",
+                  "title": "My last project"
+                },
+                {
+                  "canDo": null,
+                  "kind": "review",
+                  "minutes": 6,
+                  "reason": "reviewDue",
+                  "status": "pending",
+                  "title": "Interview phrases"
+                }
+              ],
+              "source": "session"
+            },
+            "version": 1
+          },
+          "learnerMemory": [],
+          "planChange": {
+            "cautions": [
+              { "endDate": "2026-11-27", "kind": "endsBeforeDate", "targetDate": "2027-01-05" }
+            ]
+          },
+          "priorTurns": [],
+          "question": "as aulas estão fáceis, é muito \"traduza esta palavra\". quero treinar conversa de entrevista falando, tipo uma simulação de entrevista. dá pra fazer isso?"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2574,
+          "inputTokens": 2577,
+          "outputTokens": 376,
+          "reasoningTokens": 106
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The central answer is legally outdated: it incorrectly says an employment contract cannot assign sucumbência fees to the company. Under STF ADI 1194, article 21's default entitlement is waivable, and article 24 §3 was struck down, allowing contractual allocation to the employer. Omitting this STF position is also an explicit major gap. The default entitlement and the agreed sharing rule for law-firm employers are correctly stated, but do not cure the incorrect contractual prohibition. Searches are non-null, yet the answer fails to incorporate the controlling ruling. The wrong-law cap of 6.0 applies.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Add a short example contrasting an ordinary company's employment contract that allocates the fees to the employer with a law firm's agreed sharing arrangement. For OAB preparation, explicitly flag the exam trap: the lawyer's statutory default entitlement is not an absolute prohibition on contracting otherwise.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Sofia's own wording of the sucumbência doubt (Oct 2026), which once got an answer from outdated law without a search. Correct and current: by default the honorários de sucumbência belong to the employed lawyer (art. 21 caput, Lei 8.906/94); the STF (ADI 1194) read art. 21 as waivable and struck art. 24 §3, so the employment contract or an agreement may give them to the employer; with a law firm as employer they're shared as the parties agree (art. 21, sole paragraph). Saying a clause giving them to the company is void, or that in a regular company they always belong to the lawyer, is outdated law (cap 6.0); omitting the STF position is a major gap. searches must not be null: the answer rests on law a ruling changed. No 'gabarita' or promise.\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking), it's offered and the answer says what its button does.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "pt-oab-sucumbencia-contract-clause-1",
+        "userInput": {
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2027-01-09", "remainingHours": 190 },
+            "exam": {
+              "days": [{ "date": "2027-01-10", "label": "Realização da 1ª fase (prova objetiva)" }],
+              "formats": [
+                "Questões de múltipla escolha com quatro opções (A, B, C e D) e uma única resposta correta."
+              ],
+              "fromMaterial": false,
+              "name": "OAB Exame de Ordem Unificado",
+              "official": true,
+              "otherDates": [
+                { "date": "2026-10-05", "label": "Período de inscrições" },
+                { "date": "2027-01-27", "label": "Resultado preliminar da 1ª fase" },
+                {
+                  "date": "2027-02-28",
+                  "label": "Realização da 2ª fase (prova prático-profissional)"
+                }
+              ],
+              "questionCount": 80,
+              "rules": [
+                "O examinando é aprovado na 1ª fase ao obter o mínimo de 50% de acertos, correspondente a 40,00 pontos ou mais.",
+                "A prova objetiva é realizada sem consulta."
+              ],
+              "scoring": null,
+              "source": "https://oab.fgv.br/arq/651/edital-de-abertura-48-exame.pdf",
+              "subjects": [
+                { "group": null, "name": "Ética Profissional", "questions": 8 },
+                { "group": null, "name": "Direito Constitucional", "questions": 6 },
+                { "group": null, "name": "Direito Civil", "questions": 7 },
+                { "group": null, "name": "Direito Penal", "questions": 6 }
+              ]
+            },
+            "goal": {
+              "dailyMinutes": 120,
+              "kind": "exam",
+              "target": null,
+              "targetDate": "2027-01-10",
+              "title": "Passar na 1ª fase da OAB"
+            },
+            "language": "pt",
+            "mistakes": [],
+            "next": [],
+            "phase": null,
+            "scope": { "kind": "plan" },
+            "setup": {
+              "areas": [
+                { "focused": false, "name": "Ética Profissional", "skipped": false },
+                { "focused": false, "name": "Direito Constitucional", "skipped": false },
+                { "focused": false, "name": "Direito Civil", "skipped": false }
+              ],
+              "coverage": {
+                "coreFits": true,
+                "coreMinutes": null,
+                "coveredShare": 0.52,
+                "fits": false,
+                "measure": "exam",
+                "recommendedMinutes": 240
+              },
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "intermediate",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [120, 120, 120, 120, 120, 120, 120]
+            },
+            "status": {
+              "days": null,
+              "extraMinutesPerDay": null,
+              "kind": "onTrack",
+              "options": []
+            },
+            "today": null,
+            "version": 1
+          },
+          "learnerMemory": [],
+          "priorTurns": [],
+          "question": "advogado empregado de empresa: os honorários de sucumbência são dele ou do empregador? o contrato pode dizer que vão pra empresa? e se o empregador for uma sociedade de advogados?"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2572,
+          "inputTokens": 2575,
+          "outputTokens": 306,
+          "reasoningTokens": 124
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The answer omits both required figures: 45 lessons added and 21 left out. Referring Lucas to the card does not satisfy the requirement to state both numbers. It also describes Ondas and Calor as postponed (“para depois”), although the tool says they are left out of the plan. This misrepresents the trade-off Lucas needs to understand before tapping Apply.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Make proposedChange a complete, self-contained sentence explicitly prioritizing biologia and química within Ciências da Natureza while reducing emphasis on física, rather than simply repeating the learner’s informal message. The answer correctly makes application conditional on tapping Aplicar and does not promise a score.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Lucas asks for more biology and chemistry, less physics. proposedChange focuses biologia and química in Ciências da Natureza, keeping those words. The tool says the change adds 45 lessons and leaves out 21, and that Ondas and Calor (physics) stay out of the plan. The answer gives both numbers (adds 45, leaves out 21), never a net figure or only the 45, and names Ondas and Calor as left out before he applies it. Saying physics keeps its basics, its core or isn't left out is a major error (cap 6.0); so is giving only the lessons added (cap 6.5). No promise of 750.\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking), it's offered and the answer says what its button does.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "pt-enem-bio-chem-physics-left-out-1",
+        "userInput": {
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2026-11-08", "remainingHours": 41 },
+            "goal": {
+              "dailyMinutes": 60,
+              "kind": "exam",
+              "targetDate": "2026-11-08",
+              "title": "ENEM 2026",
+              "target": "750 · Medicina, UFMG"
+            },
+            "language": "pt",
+            "next": [
+              {
+                "date": "2026-09-28",
+                "items": [
+                  { "kind": "lesson", "title": "Funções do 1º grau" },
+                  { "kind": "review", "title": "Revisão: porcentagem" }
+                ]
+              },
+              {
+                "date": "2026-09-29",
+                "items": [{ "kind": "lesson", "title": "Leitura de gráficos" }]
+              }
+            ],
+            "phase": {
+              "chapters": [
+                {
+                  "lessonsDone": 4,
+                  "lessonsTotal": 4,
+                  "state": "done",
+                  "title": "Porcentagem e razão"
+                },
+                { "lessonsDone": 1, "lessonsTotal": 5, "state": "current", "title": "Funções" }
+              ],
+              "endDate": "2026-10-11",
+              "index": 1,
+              "kind": "core",
+              "name": "Matemática que mais cai"
+            },
+            "scope": { "kind": "plan" },
+            "status": {
+              "days": null,
+              "extraMinutesPerDay": null,
+              "kind": "onTrack",
+              "options": []
+            },
+            "today": {
+              "date": "2026-09-27",
+              "items": [
+                {
+                  "canDo": null,
+                  "kind": "review",
+                  "minutes": 5,
+                  "reason": "reviewDue",
+                  "status": "pending",
+                  "title": "Porcentagem"
+                },
+                {
+                  "canDo": null,
+                  "kind": "checkpoint",
+                  "minutes": 45,
+                  "reason": "checkpoint",
+                  "status": "pending",
+                  "title": "Simulado da semana"
+                }
+              ],
+              "source": "session"
+            },
+            "version": 1,
+            "setup": {
+              "areas": [
+                { "focused": false, "name": "Matemática", "skipped": false },
+                { "focused": false, "name": "Linguagens", "skipped": false },
+                { "focused": false, "name": "Ciências da Natureza", "skipped": false },
+                { "focused": false, "name": "Ciências Humanas", "skipped": false },
+                { "focused": false, "name": "Redação", "skipped": false }
+              ],
+              "coverage": {
+                "coreFits": true,
+                "coreMinutes": null,
+                "coveredShare": 0.7,
+                "fits": false,
+                "measure": "exam",
+                "recommendedMinutes": 95
+              },
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "basic",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [60, 60, 60, 60, 60, 60, 60]
+            },
+            "exam": {
+              "days": [
+                { "date": "2026-11-08", "label": "1º dia: Linguagens, Ciências Humanas e Redação" },
+                { "date": "2026-11-15", "label": "2º dia: Ciências da Natureza e Matemática" }
+              ],
+              "formats": ["Questões de múltipla escolha com cinco alternativas (A a E)."],
+              "fromMaterial": false,
+              "name": "ENEM 2026",
+              "official": true,
+              "otherDates": [],
+              "questionCount": 180,
+              "rules": [],
+              "scoring": "Teoria de Resposta ao Item (TRI)",
+              "source": "https://www.gov.br/inep/edital-enem-2026.pdf",
+              "subjects": [
+                { "group": null, "name": "Linguagens", "questions": 45 },
+                { "group": null, "name": "Ciências Humanas", "questions": 45 },
+                { "group": null, "name": "Ciências da Natureza", "questions": 45 },
+                { "group": null, "name": "Matemática", "questions": 45 },
+                { "group": null, "name": "Redação", "questions": null }
+              ]
+            }
+          },
+          "learnerMemory": [],
+          "planChange": {
+            "effect": {
+              "areaStarts": [
+                { "after": "2026-10-08", "area": "Ciências da Natureza", "before": "2026-10-12" }
+              ],
+              "endDateAfter": null,
+              "endDateBefore": null,
+              "lessonsAdded": 45,
+              "lessonsRemoved": 21,
+              "topicsAdded": [
+                {
+                  "area": "Ciências da Natureza",
+                  "topics": ["Hereditariedade", "Compostos de carbono"]
+                }
+              ],
+              "topicsLeftOut": [{ "area": "Ciências da Natureza", "topics": ["Ondas", "Calor"] }]
+            }
+          },
+          "priorTurns": [],
+          "question": "quero mais biologia e química, física pode ser menos"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2648,
+          "inputTokens": 2651,
+          "outputTokens": 600,
+          "reasoningTokens": 269
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The response does not explain why Filosofia appears today—the plan's order—or clearly say whether today's session remains unchanged or Filosofia receives less room. Mentioning its two questions does not resolve that complaint. It also says Processo Civil's start 'foi adiantado', presenting a proposed change as already made despite the later application instruction (cap 6.5). Finally, the tool reports 45 lessons removed, but does not establish that they come from the reduced subject or guarantee that the revised plan fits the deadline. The answer should state that 45 lessons no longer fit before the target date.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "The answer gives the new Processo Civil start date, 8 October, but omits the original 12 October date requested by the expectations. It also refers vaguely to a button below the screen rather than explicitly telling the learner to tap Apply on the proposed-change card.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a more balanced acknowledgment instead of calling the preference an 'excellent strategic choice' solely from question counts. State explicitly that Filosofia remains in the plan because it still accounts for two questions, while Processo Civil gains time and depth. This would also make 'em vez de Filosofia' less ambiguous.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "A request in parts: Sundays with one hour, today's eight Filosofia lessons when Filosofia has few questions, and more Processo Civil. proposedChange asks for one hour on Sundays and more time and depth for Direito Processual Civil, in one call. The answer covers each part: Sundays, Processo Civil (starting 8 Oct instead of 12 Oct), and Filosofia: why it's in today (the plan's order; it has 2 questions) and that the change gives it less room, or that today's session stays as it is. Ignoring the Filosofia part is a major error (cap 6.5). Leaving Filosofia out of the plan or suggesting it is a major error (cap 5.0). Says the 45 lessons that no longer fit before the date.\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking), it's offered and the answer says what its button does.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "pt-oab-sundays-less-philosophy-1",
+        "userInput": {
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2027-01-09", "remainingHours": 190 },
+            "exam": {
+              "days": [{ "date": "2027-01-10", "label": "Realização da 1ª fase (prova objetiva)" }],
+              "formats": [
+                "Questões de múltipla escolha com quatro opções (A, B, C e D) e uma única resposta correta."
+              ],
+              "fromMaterial": false,
+              "name": "OAB Exame de Ordem Unificado",
+              "official": true,
+              "otherDates": [
+                { "date": "2026-10-05", "label": "Período de inscrições" },
+                { "date": "2027-01-27", "label": "Resultado preliminar da 1ª fase" },
+                {
+                  "date": "2027-02-28",
+                  "label": "Realização da 2ª fase (prova prático-profissional)"
+                }
+              ],
+              "questionCount": 80,
+              "rules": [
+                "O examinando é aprovado na 1ª fase ao obter o mínimo de 50% de acertos, correspondente a 40,00 pontos ou mais.",
+                "A prova objetiva é realizada sem consulta."
+              ],
+              "scoring": null,
+              "source": "https://oab.fgv.br/arq/651/edital-de-abertura-48-exame.pdf",
+              "subjects": [
+                { "group": null, "name": "Ética Profissional", "questions": 8 },
+                { "group": null, "name": "Direito Constitucional", "questions": 6 },
+                { "group": null, "name": "Direito Civil", "questions": 7 },
+                { "group": null, "name": "Direito Penal", "questions": 6 },
+                { "group": null, "name": "Filosofia do Direito", "questions": 2 },
+                { "group": null, "name": "Direito Processual Civil", "questions": 6 }
+              ]
+            },
+            "goal": {
+              "dailyMinutes": 120,
+              "kind": "exam",
+              "target": null,
+              "targetDate": "2027-01-10",
+              "title": "Passar na 1ª fase da OAB"
+            },
+            "language": "pt",
+            "mistakes": [],
+            "next": [],
+            "phase": null,
+            "scope": { "kind": "plan" },
+            "setup": {
+              "areas": [
+                { "focused": false, "name": "Ética Profissional", "skipped": false },
+                { "focused": false, "name": "Direito Constitucional", "skipped": false },
+                { "focused": false, "name": "Direito Civil", "skipped": false },
+                { "focused": false, "name": "Filosofia do Direito", "skipped": false },
+                { "focused": false, "name": "Direito Processual Civil", "skipped": false }
+              ],
+              "coverage": {
+                "coreFits": true,
+                "coreMinutes": null,
+                "coveredShare": 0.52,
+                "fits": false,
+                "measure": "exam",
+                "recommendedMinutes": 240
+              },
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "intermediate",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [120, 120, 120, 120, 120, 120, 120]
+            },
+            "status": {
+              "days": null,
+              "extraMinutesPerDay": null,
+              "kind": "onTrack",
+              "options": []
+            },
+            "today": {
+              "date": "2026-10-11",
+              "items": [
+                {
+                  "canDo": "Distinguir jusnaturalismo de positivismo jurídico",
+                  "kind": "learn",
+                  "minutes": 6,
+                  "reason": "newSkill",
+                  "status": "pending",
+                  "title": "Jusnaturalismo e positivismo"
+                },
+                {
+                  "canDo": "Reconhecer a teoria pura do direito de Kelsen",
+                  "kind": "learn",
+                  "minutes": 6,
+                  "reason": "newSkill",
+                  "status": "pending",
+                  "title": "Kelsen e a norma fundamental"
+                }
+              ],
+              "source": "session"
+            },
+            "version": 1
+          },
+          "learnerMemory": [],
+          "planChange": {
+            "effect": {
+              "areaStarts": [
+                {
+                  "after": "2026-10-08",
+                  "area": "Direito Processual Civil",
+                  "before": "2026-10-12"
+                }
+              ],
+              "endDateAfter": null,
+              "endDateBefore": null,
+              "lessonsAdded": 0,
+              "lessonsRemoved": 45
+            }
+          },
+          "priorTurns": [],
+          "question": "aos domingos eu só consigo estudar 1 hora. e hoje me deu 8 aulas de filosofia, que tem poucas questões; prefiro mais processo civil"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2083,
+          "inputTokens": 2086,
+          "outputTokens": 474,
+          "reasoningTokens": 273
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The feedback correctly confirms osmosis toward the more concentrated, hypertonic environment and the resulting water loss and shrinkage. However, it omits the required suggestion for what the learner could add: the membrane's semipermeability or the name of the shrinkage (crenation in an animal cell). It also does not explicitly confirm that water crosses the semipermeable membrane. These omissions make otherwise accurate, age-appropriate feedback incomplete. proposedChange is correctly null.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Before offering another question, add a short refinement such as: 'Para completar, diga que a membrana é semipermeável: a água passa por ela por osmose e sai para o meio hipertônico, fazendo a célula encolher.'",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Pedro answers the essay question the buddy asked, correctly. The answer says specifically what's right (water moves by osmosis toward the more concentrated, hypertonic side, through the semipermeable membrane; the cell loses water and shrinks) and what could be added (the name of the shrinking, or the role of the membrane), at a 15-year-old's level. Grading it as a score ('nota 10', 'resposta perfeita, nota máxima') or saying what the teacher or graders look for is a major error (cap 6.5). proposedChange is null.\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking), it's offered and the answer says what its button does.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "pt-class-test-osmosis-feedback-1",
+        "userInput": {
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2026-10-08", "remainingHours": 2 },
+            "exam": {
+              "days": [{ "date": "2026-10-09", "label": "Prova de biologia" }],
+              "formats": ["Questões de completar a tabela e de múltipla escolha."],
+              "fromMaterial": true,
+              "name": "Prova de Biologia",
+              "official": false,
+              "otherDates": [],
+              "questionCount": null,
+              "rules": ["Não cai divisão celular (mitose fica para o próximo bimestre)."],
+              "scoring": null,
+              "source": null,
+              "subjects": [
+                { "group": null, "name": "Teoria celular", "questions": null },
+                { "group": null, "name": "Organelas", "questions": null },
+                { "group": null, "name": "Vírus", "questions": null }
+              ]
+            },
+            "goal": {
+              "dailyMinutes": 45,
+              "kind": "exam",
+              "target": null,
+              "targetDate": "2026-10-09",
+              "title": "Prova de biologia"
+            },
+            "language": "pt",
+            "mistakes": [],
+            "next": [],
+            "phase": null,
+            "scope": { "kind": "plan" },
+            "setup": {
+              "areas": [{ "focused": false, "name": "Biologia", "skipped": false }],
+              "coverage": null,
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "intermediate",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [45, 45, 45, 45, 45, 45, 45]
+            },
+            "status": {
+              "days": null,
+              "extraMinutesPerDay": null,
+              "kind": "onTrack",
+              "options": []
+            },
+            "today": null,
+            "version": 1
+          },
+          "learnerMemory": [],
+          "priorTurns": [
+            {
+              "answer": "Aqui vai uma bem clássica de prova: uma célula animal é colocada em uma solução muito salgada. O que acontece com ela e por quê? Responda em duas ou três frases.",
+              "question": "sim, manda a dissertativa"
+            }
+          ],
+          "question": "a celula perde agua por osmose porque fora ta mais concentrado (hipertonico), ai a agua sai pela membrana e a celula murcha"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2057,
+          "inputTokens": 2060,
+          "outputTokens": 329,
+          "reasoningTokens": 143
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The feedback correctly confirms the research-based fictional archetype and shared-trait grouping, but does not explain what is missing or vague in the learner's answer. It should identify the persona's context of use as a missing detail and explicitly clarify that segments group real users. 'Spot on!' alone makes the answer sound complete.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "A brief paired example showing a persona and its corresponding segment would make the distinction more concrete; the current example illustrates only a segment.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Maya answers, in English, the practice question the buddy asked. The answer says specifically what's right (a persona is a fictional, research-based archetype with goals and context; a segment groups real users by shared traits) and what's missing or vague, in English. Grading it as a score ('full marks', '10/10') or saying what hiring managers or graders look for as a fact is a major error (cap 6.5). proposedChange is null.\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking), it's offered and the answer says what its button does.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "en-ux-persona-feedback-1",
+        "userInput": {
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2027-03-30", "remainingHours": 150 },
+            "goal": {
+              "dailyMinutes": 60,
+              "kind": "learn",
+              "targetDate": "2027-04-05",
+              "title": "Work as a UX designer"
+            },
+            "language": "en",
+            "mistakes": [],
+            "next": [],
+            "phase": {
+              "chapters": [
+                {
+                  "lessonsDone": 1,
+                  "lessonsTotal": 4,
+                  "state": "current",
+                  "title": "Pesquisa com usuários"
+                }
+              ],
+              "endDate": "2026-11-15",
+              "index": 0,
+              "kind": "learn",
+              "name": "Fundamentos de UX"
+            },
+            "scope": { "kind": "plan" },
+            "setup": {
+              "areas": [
+                { "focused": false, "name": "Pesquisa com usuários", "skipped": false },
+                { "focused": false, "name": "Arquitetura da informação", "skipped": false },
+                { "focused": false, "name": "Prototipação no Figma", "skipped": false },
+                { "focused": false, "name": "Portfólio", "skipped": false }
+              ],
+              "coverage": {
+                "coveredShare": 1,
+                "fits": true,
+                "measure": "goal",
+                "recommendedMinutes": null
+              },
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "none",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [60, 60, 60, 60, 60, 60, 60]
+            },
+            "status": {
+              "days": null,
+              "extraMinutesPerDay": null,
+              "kind": "onTrack",
+              "options": []
+            },
+            "today": {
+              "date": "2026-10-06",
+              "items": [
+                {
+                  "canDo": "Planejar uma entrevista com usuários",
+                  "kind": "lesson",
+                  "minutes": 15,
+                  "reason": "newSkill",
+                  "status": "pending",
+                  "title": "Roteiro de entrevista"
+                }
+              ],
+              "source": "plan"
+            },
+            "version": 1
+          },
+          "learnerMemory": [],
+          "priorTurns": [
+            {
+              "answer": "Quick check: in two sentences, what's the difference between a persona and a user segment?",
+              "question": "can you quiz me on personas?"
+            }
+          ],
+          "question": "a persona is like a made up person based on research with goals and frustrations, a segment is just a group of users that share something like age or plan"
+        }
+      }
+    }
+  ],
+  "taskId": "goal-tutor"
+}

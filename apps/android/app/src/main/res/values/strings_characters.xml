@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- A buddy's own name, used until the learner names it. -->
+    <string name="buddy_name_zu">Zu</string>
+    <string name="buddy_name_noodle">Noodle</string>
+    <string name="buddy_name_beep">Beep</string>
+    <string name="buddy_name_otto">Otto</string>
+</resources>

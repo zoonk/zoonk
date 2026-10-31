@@ -9,33 +9,20 @@ export type EnergyTimelineProjection = {
 type EnergyTimelineSummary = { dayCount: number; energySum: number };
 type EnergyTimelineSegment = { cursor: EnergyCursor; endDate: Date };
 
-/**
- * Energy dates are UTC-midnight calendar labels, so their timestamp distance
- * gives the exact number of learner-local calendar days between them.
- */
+/** Dates are UTC-midnight local-day labels, so timestamp distance counts calendar days exactly. */
 function getDateDifference({ endDate, startDate }: { endDate: Date; startDate: Date }): number {
   return Math.round((endDate.getTime() - startDate.getTime()) / MS_PER_DAY);
 }
 
-/**
- * Sorting a copy lets callers pass Prisma results or fixture data without
- * making timeline correctness depend on query ordering or mutating the input.
- */
 function sortEnergyCursors(cursors: EnergyCursor[]): EnergyCursor[] {
   return cursors.toSorted((first, second) => first.date.getTime() - second.date.getTime());
 }
 
-/**
- * Each authoritative cursor owns only the missing dates before the next cursor.
- * The later cursor is excluded here because its stored Energy must win.
- */
+/** The next stored cursor is authoritative; gap projection must not include its date. */
 function getMissingDayCount({ cursor, endDate }: { cursor: EnergyCursor; endDate: Date }): number {
   return Math.max(0, getDateDifference({ endDate, startDate: cursor.date }) - 1);
 }
 
-/**
- * Calculates a decayed value from one cursor while preserving the zero floor.
- */
 function getEnergyAfterDays({
   cursor,
   dayOffset,
@@ -46,10 +33,6 @@ function getEnergyAfterDays({
   return Math.max(MIN_ENERGY, cursor.energyAtEnd - dayOffset * DAILY_DECAY);
 }
 
-/**
- * Gives each cursor the next authoritative date, or the effective target for
- * the final trailing segment, so every missing date has exactly one owner.
- */
 function buildEnergyTimelineSegments({
   cursors,
   effectiveTargetDate,
@@ -63,10 +46,6 @@ function buildEnergyTimelineSegments({
   }));
 }
 
-/**
- * Sums a run of missing inactive days arithmetically, including the zero-valued
- * tail in its day count without allocating an entry for every lifetime date.
- */
 function summarizeMissingDays({
   cursor,
   missingDayCount,
@@ -86,10 +65,6 @@ function summarizeMissingDays({
   return { dayCount: missingDayCount, energySum };
 }
 
-/**
- * Adds one cursor and its synthetic interval to an accumulated lifetime
- * summary. Naming the operation keeps the timeline pipeline declarative.
- */
 function addEnergySegmentToSummary(
   summary: EnergyTimelineSummary,
   segment: EnergyTimelineSegment,
@@ -105,10 +80,6 @@ function addEnergySegmentToSummary(
   };
 }
 
-/**
- * Computes the all-time Energy average from cursor-sized segments, so a learner
- * with years at 0% does not require years of synthetic objects in memory.
- */
 function summarizeEnergyTimeline(segments: EnergyTimelineSegment[]): EnergyTimelineSummary {
   return segments.reduce((summary, segment) => addEnergySegmentToSummary(summary, segment), {
     dayCount: 0,
@@ -116,10 +87,6 @@ function summarizeEnergyTimeline(segments: EnergyTimelineSegment[]): EnergyTimel
   });
 }
 
-/**
- * Expands only the missing part of one segment that intersects the requested
- * visible range. This keeps a bounded chart independent of lifetime length.
- */
 function buildVisibleMissingDays({
   cursor,
   endDate,
@@ -153,10 +120,6 @@ function buildVisibleMissingDays({
   });
 }
 
-/**
- * Adds an authoritative cursor when it is visible, followed by only the
- * synthetic inactive dates before the next authoritative cursor.
- */
 function buildVisibleSegment({
   cursor,
   endDate,
@@ -181,10 +144,6 @@ function buildVisibleSegment({
   return [...cursorDay, ...missingDays];
 }
 
-/**
- * Maps the complete sparse timeline to only the dates the current view can
- * render, leaving old inactive intervals represented only in the summary.
- */
 function buildVisibleEnergyDays({
   segments,
   visibleEndDate,
@@ -199,11 +158,7 @@ function buildVisibleEnergyDays({
   );
 }
 
-/**
- * Derives historical Energy from truthful learner-local completion dates.
- * UserProgress owns the current value separately, so this projection only
- * fills calendar gaps and calculates the allocation-bounded lifetime average.
- */
+/** Historical projection only; UserProgress remains authoritative for current Energy. */
 export function projectEnergyTimeline({
   cursors,
   targetDate,

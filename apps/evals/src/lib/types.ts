@@ -1,5 +1,4 @@
 import { type Reasoning } from "@zoonk/ai/provider-options";
-import { type LanguageModelUsage } from "ai";
 import z from "zod";
 
 const MIN_SCORE = 6;
@@ -37,13 +36,12 @@ export type TestCase<TExpected = unknown, TInput = Record<string, unknown>> = {
   userInput: TInput;
   expectations?: string;
   expected?: TExpected;
+  language?: string;
+  origin?: "production";
 };
 
-/**
- * Judge-based scoring needs a prose rubric, while deterministic scorers can
- * omit it and rely only on structured expected values. This keeps the runtime
- * requirement explicit at the boundary that invokes a judge.
- */
+export type LatencyBudget = { p50: number; p95: number };
+
 export function getJudgeExpectations(testCase: TestCase): string {
   if (!testCase.expectations) {
     throw new Error(`Test case ${testCase.id} requires expectations for judge-based scoring.`);
@@ -52,11 +50,6 @@ export function getJudgeExpectations(testCase: TestCase): string {
   return testCase.expectations;
 }
 
-/**
- * Keeps judge mode exclusive to tasks that rely on model-based scoring. A custom
- * scorer is the source of truth for deterministic scoring, even when older test
- * cases still contain prose expectations that were originally written for a judge.
- */
 export function supportsJudgeMode(task: Pick<RegisteredTask, "score" | "testCases">): boolean {
   return (
     !task.score &&
@@ -65,14 +58,53 @@ export function supportsJudgeMode(task: Pick<RegisteredTask, "score" | "testCase
   );
 }
 
-type TaskResult<T = unknown> = {
-  data: T;
-  usage: LanguageModelUsage;
-  userPrompt: string;
-  systemPrompt: string;
+type TaskUsage = {
+  inputTokens: number | undefined;
+  outputTokens: number | undefined;
+  inputTokenDetails?: { cacheReadTokens: number | undefined; cacheWriteTokens: number | undefined };
+  outputTokenDetails?: { reasoningTokens: number | undefined };
 };
 
-type TaskScoreResult = { score: number; steps: Score["steps"]; categoryScores?: CategoryScore[] };
+export type TokenUsage = {
+  inputTokens: number;
+  outputTokens: number;
+  cacheReadTokens?: number;
+  cacheWriteTokens?: number;
+  reasoningTokens?: number;
+};
+
+export function toTokenUsage(usage: TaskUsage): TokenUsage {
+  return {
+    cacheReadTokens: usage.inputTokenDetails?.cacheReadTokens,
+    cacheWriteTokens: usage.inputTokenDetails?.cacheWriteTokens,
+    inputTokens: usage.inputTokens ?? 0,
+    outputTokens: usage.outputTokens ?? 0,
+    reasoningTokens: usage.outputTokenDetails?.reasoningTokens,
+  };
+}
+
+type TaskResult<T = unknown> = {
+  data: T;
+  usage: TaskUsage;
+  extraCalls?: ModelCall[];
+  userPrompt: string;
+  systemPrompt: string;
+  probabilities?: Record<string, number>;
+};
+
+export type ClassificationOutcome = { expected: string; predicted: string | null };
+
+export type ModelCall = { modelId: string; usage: TokenUsage };
+
+export type JudgeRun = ModelCall;
+
+export type TaskScoreResult = {
+  score: number;
+  steps: Score["steps"];
+  categoryScores?: CategoryScore[];
+  classification?: ClassificationOutcome;
+  judge?: JudgeRun;
+};
 
 type TaskScoreParams<TExpected = unknown> = { output: string; testCase: TestCase<TExpected> };
 
@@ -86,54 +118,47 @@ type TaskGenerateInput<TInput> = TInput & {
   reasoning?: Reasoning;
 };
 
-export type EvalResult = {
+export type EvalResult = TokenUsage & {
   testCase: TestCase;
   output: string;
+  extraCalls?: ModelCall[];
   steps: Score["steps"];
   categoryScores?: CategoryScore[];
-  inputTokens: number;
-  outputTokens: number;
+  classification?: ClassificationOutcome;
+  judge?: JudgeRun;
   duration: number;
 };
 
 export type TaskEvalResults = { taskId: string; modelId: string; results: EvalResult[] };
 
-/**
- * The default input is never because the task registry stores many tasks with
- * different input shapes. A registry task is safe to inspect, but execution
- * must happen through the paired test case data for that concrete task.
- */
+/** Execute registry tasks only with their paired test case; the default input type intentionally forbids arbitrary input. */
 export type Task<TInput = never, TOutput = unknown, TExpected = unknown> = {
   id: string;
   name: string;
   description: string;
   testCases: TestCase<TExpected, TInput>[];
   generate: (input: TaskGenerateInput<TInput>) => Promise<TaskResult<TOutput>>;
+  evaluate?: (input: TaskGenerateInput<TInput>) => Promise<TaskResult<TOutput>>;
   score?: TaskScorer<TExpected>;
   scoreCategories?: ScoreCategory[];
+  latencyBudget?: LatencyBudget;
+  output?: "image" | "speech" | "transcription";
 };
 
-/**
- * The task registry stores many tasks with incompatible input and expected
- * shapes. Individual task files keep their concrete Task type, while registry
- * consumers use this erased shape and only call generate/score with the paired
- * test case that came from the same task entry.
- */
+/** Only invoke generate or score with the test case paired with this type-erased task. */
 export type RegisteredTask = Omit<Task<never, unknown, never>, "score" | "testCases"> & {
   testCases: TestCase[];
   score?: (params: never) => Promise<TaskScoreResult> | TaskScoreResult;
 };
 
-// === Output Types (Separated from Eval Results) ===
-
-export type OutputEntry = {
+export type OutputEntry = TokenUsage & {
   testCaseId: string;
   output: string;
-  inputTokens: number;
-  outputTokens: number;
+  extraCalls?: ModelCall[];
   duration: number;
   systemPrompt: string;
   userPrompt: string;
+  probabilities?: Record<string, number>;
 };
 
 export type ModelOutputs = {
@@ -152,17 +177,15 @@ export type TaskModelOutputResults = {
   outputs: TestCaseOutput[];
 };
 
-// === Scored Result Types (Without output data) ===
-
 export type ScoredResult = {
   testCase: TestCase;
   steps: Score["steps"];
   categoryScores?: CategoryScore[];
+  classification?: ClassificationOutcome;
+  judge?: JudgeRun;
 };
 
 export type ScoredTaskResults = { taskId: string; modelId: string; results: ScoredResult[] };
-
-// === Battle Mode Types ===
 
 export type ModelRanking = {
   modelId: string;
@@ -172,7 +195,7 @@ export type ModelRanking = {
   categoryScores?: CategoryScore[];
 };
 
-type JudgeRanking = { judgeId: string; rankings: ModelRanking[] };
+type JudgeRanking = { judgeId: string; rankings: ModelRanking[]; usage?: TokenUsage };
 
 export type BattleMatchup = {
   taskId: string;
@@ -186,10 +209,10 @@ export type BattleLeaderboardEntry = {
   modelId: string;
   modelName: string;
   provider: string;
-  totalScore: number;
   averageScore: number;
-  averageDuration: number;
-  averageCost: number;
+  latencyP50: number;
+  latencyP95: number;
+  costPer1000Runs: number;
   scoresByJudge: Record<string, number>;
   scoresByTestCase: Record<string, number>;
   categoryScores: CategoryScoreSummary[];

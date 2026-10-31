@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "session_block_bonus_practice": "8e383e8c1bf854e22fb0e4349c2c4c29555355105675ab8ebec1c6b86e38e96b",
+  "session_block_challenge_questions": "4ee5d92f08f27bb9ddc4f489834b48ce5ebd185c6eebd71260da3179eb578756",
+  "session_block_challenge_rematch": "6661357a065e5ec918f3461cdb4d3f8bac401bdaa58636bfd42d5765dc6e7947",
+  "session_block_final_challenge": "66b6b5f3fd839f57d7da7125e8dd805d0ef23de1ad2d8cc661b2e03baaa7f4f7",
+  "session_block_full_review": "1a746ea9a3f7a742bdb9a49d0831195486a43675426afa6540545e5dd3ec8e58",
+  "session_block_full_review_questions": "51329a760a4d59818a4bd8357916681c28adf0733a064ae60556b70d47e99e82",
+  "session_block_live_call": "05dd87d6be4c0026ae6bdaf973892739cdf252df424b1a05690008e6a5e9d263",
+  "session_block_mixed_practice": "2d286e8c58747b942d78450048a1ded1e1aa421532554835732b50be00951702",
+  "session_block_mock_exam": "15ed4b33b136261cfd0247f453b6dee198d5cb4129a6b4b0b3fe6c3bcbc81a43",
+  "session_block_new_lesson": "012b8afe3e4a820f645bcb0a1ebab3593ffeda29900cfb7ffba72a9256259e8e",
+  "session_block_phase_challenge": "d8ead1669d83fbfa6262565b6b58ed263e3262da2362595e64401568c3bda919",
+  "session_block_phase_live_call": "547b4ed872da33f4320ed10f748de39895aa3c947a17ac5cede689f1485cb073",
+  "session_block_phase_questions": "bab7a74d0f566fa8bd16e2fd4bf21f758e48d99aca47c7f74bc259b3fceb5ea4",
+  "session_block_practice_mistakes": "39fb8deac9f6d72514ca750630c57498c745c4196e28844245e9495a1c76de58",
+  "session_block_questions": "19a794b7faf89c0a67ea3d017cea54e88034da483af3d7094e6b714b872e9340",
+  "session_block_quick_review": "c344a58a911784d41b4ec95b891c91c1d5a2bc31c04c4a68a94826c213cf3df9",
+  "session_block_rematch_lesson": "eb631647b8056ee099a86527f811c375a903bd3e705aa4a23968e856f1b8b655",
+  "session_block_review_topics": "382178e839ccfe6618409366a15b4fb9c7534453c41df1625829f5a1a05dbc05",
+  "session_block_review_topics_and_known": "e9dc4ec0a7ed62d3c3c292064a6cdd84d9c5f103cfcb40e8a2e66065ffb0b1a3",
+  "session_block_reviews": "6749bbd4c699936addcef82e5d02142182d913414f712071e50b70efb691a376",
+  "session_block_weakest": "d8d3e6cc1b18b45f14b0d2672e151043434dfa2b10b506af53f08609ea7685f4",
+  "session_block_weekly_challenge": "428cb49bf066815db87d79f3619e1d330e4f1af38a6bcec36a07d5259ed923d1",
+  "session_block_what_you_know": "436e680ef117da403ee6e9272e3078a4c684c4bb575811d24af768e667a00dec",
+  "session_block_writing_practice": "4dba196e6fd4c6ea71a0d1046863fb742cc3425a7c158698b8fcf83d2ce61c0c",
+  "session_energy_at": "dca9a24b19bc3109e3839ddeee99b7f37b3e2b290bd7b4df4788a715d44f13f7",
+  "session_energy_detail": "5501eca9ed4d28c14be76ed4730f0deba072a4e9104ea0dc064901b084ebb2e7",
+  "session_energy_glowing": "318914c13384d13bd06ba1022d933543480117abfce96ada609d21fdb15aaa90",
+  "session_energy_glowing_brightest": "7f4bb76ad02c5ea1600bc961951a0d151eb2233a401f4d55b4bb857ddcda168b",
+  "session_energy_max": "2989a6614b8b626ed9361defeab1a1000ea2f5c7d0f39bdd2ebcd9ead6a793c9",
+  "session_level_up": "b11c966a1fdc28af53818eab0d694f37c1588a9fd51f2b125d779ef61060f9ba",
+  "session_next_eyebrow": "5806dd98bbc4def222990ed89d32c1874410d3f350f46602ee8de898bb37c58e",
+  "session_next_instead": "89da6d38cac031e901f6d8a03efb8d0df0f2101e97fe38b321f4b5580395ace6",
+  "session_next_lesson_ready": "33fbd98216ad37d4342ee22ed126450634a737040aaf70c5931b2046d030c2ce",
+  "session_next_start": "2ce9cf29eb98766e210c3858b4e740f6977e95e735f63cd644fec32068d8aae4",
+  "session_next_stop": "0c3ea72636d0f181528d259ebb0a3ec93bd94cceddc2d77f9c88c398b6d4e360",
+  "session_next_stop_failed": "7fc4f563b2bcc965a405745f3d9c19f917a3e2a6006ac6a3f44719aaac24e1a8",
+  "session_next_while_waiting": "de950ac6ae4cc7ae0fe8b154cd9c9efa80ad6e55acc4845e17b9b8eea6daf53f",
+  "session_next_writing_note": "63cd560c92141bf1034eb5dcf419c4337d2518629630b329178ffa7472ccb906",
+  "session_opening_slow": "6910940508c5ce305852f8c8f5da24274aef65f6c7e1b122971ad459d22ff19f",
+  "session_opening_very_slow": "db62f4bf88f9522ac8b876b8e0216011ec76fe72fedf55ecaf41a4fe72ee77e2",
+  "session_summary_back_on": "12006d67abedff1315b90191483ca472da61f984982a6ecc069ae33c2829b986",
+  "session_summary_brain_power": "89f7f72963b04922627746a0202c96a5f0726b72364869e0c3b9707063fac26d",
+  "session_summary_buddy_happy": "fcdc5ef09af23f6add015dbe503c9c53cf7d69ee73ee531663ef016fbaac401d",
+  "session_summary_create_account": "2d60c0b2f36b99f2dd856887cd3c9a741f3f24c12caf088a07368fa131045881",
+  "session_summary_done_for_now": "d8d62528a0833843beb8f2ef3dba9c2248a5df2c843cdc041317cab747ceff83",
+  "session_summary_done_in": "bc73e767763a0bae9c1d78c6b904f36243efb4b3b21f70f6f32f6df0f057773f",
+  "session_summary_done_under_minute": "cf0b4821c40c72aee98fc4c3ad4c3ce39e3b5038ce67ead759a7b1d64fe6cf04",
+  "session_summary_earned_today": "d0123601f1da4fa616574f00c258a12884095307a5c2f7fd706c4da24721e2b2",
+  "session_summary_eyebrow": "ec6155b401a98628e6746b7222952094ff34df44daff256c7bcf51666aaef034",
+  "session_summary_finish": "0c6abd0b31fa64ed8f2c7e55d2a65adad32333d569e7ee969d31e8b11cd329b3",
+  "session_summary_keep_going": "38102d99854a629f45dd7eecfea19f04af89ae52bcdb3a780578fe6fcfcebf5a",
+  "session_summary_levels_gained": "06d77173ed46ff0889fe14cd5482d750df233580d5527535f3700e68137a2079",
+  "session_summary_mission_done": "2f09459de1490b117aee6f1583b9dc5c28286babd29293f08b1f9ccccae4a6d0",
+  "session_summary_missions_done": "617d15f691f26f537a172223a3c0bb5dda3aa1bdd77b29b4e79d7b44bd334c36",
+  "session_summary_net": "f47c545187d9024990dc447e7cf979b7db81328b80fa9404c0fe2c9844f0dcb3",
+  "session_summary_plus": "ab9594b16e8f3bfba11c80e84b8b20044951f8dce68f91d14491dbe1d073fc0c",
+  "session_summary_preparation": "76a7dcbe744a206689bfced1bf12c67a36480fc681ad517a2726c18b53380472",
+  "session_summary_progress": "8565284125f026d7e8faa688982b83c0fe5e27d24c74e92cffccc308df512262",
+  "session_summary_rewards": "9f0e82f7d76de689df45e0163a2f73cfdd32b557024a1c29043302eacaa94b9f",
+  "session_summary_right": "541dcbcefe998a2cc2f00e591247adad465d58999cd3b2cdccc3c3e75c483f32",
+  "session_summary_right_spoken": "ac8589fdc34e993ebca874ec53c7507b414a3e0304e146c7bc37e1021fb4e81b",
+  "session_summary_save_note": "43fc0af6b5299edf52943a27399752427ed1c74eb069fb352724297f834e91f2",
+  "session_summary_see_mistakes": "b0062c972569f8a37d52c04cb626466a16684922266f4221b3aaad41f40571cc",
+  "session_summary_skills_rose": "7557d963ae27986cfd07750c706baddd6406424ea1cb7de70be3173e8131ed8b",
+  "session_summary_so_far": "8599d602f917b1b76442431d775485d4e4f8ac0cfc4ca449f69232e8cc136c0a",
+  "session_summary_streak": "8bea2177058aa03cdb6f6454b16477c49ca3a68c720ae27c6d6d219608e1ae31",
+  "session_summary_to_review": "c554c3397f1a66731ecb5fadb7d0939e4ac9ccb3f513a4df048ca34a31716f98",
+  "session_summary_tomorrow": "5845b56f33287f1a6d377cbf843784306ecf5b646d544d6e6cc69a203c040956",
+  "session_topics_and_more": "fbffcf62379f9f6c97343928b6eec9f4e12cad49e4deb4ad6931de2242b49e6f"
+}
+-->
+<resources>
+    <string name="session_block_mock_exam">모의고사</string>
+    <string name="session_block_weekly_challenge">주간 챌린지</string>
+    <string name="session_block_final_challenge">마지막 챌린지</string>
+    <string name="session_block_challenge_rematch">챌린지, 두 번째 도전</string>
+    <string name="session_block_phase_challenge">단계 챌린지</string>
+    <!-- The first week's warm-up: only placement's questions, which check rather than review. -->
+    <string name="session_block_what_you_know">이미 아는 내용</string>
+    <string name="session_block_reviews">복습</string>
+    <string name="session_block_quick_review">간단 복습</string>
+    <string name="session_block_new_lesson">새 레슨</string>
+    <string name="session_block_writing_practice">쓰기 연습</string>
+    <string name="session_block_full_review">총복습</string>
+    <string name="session_block_practice_mistakes">틀린 문제 연습</string>
+    <string name="session_block_bonus_practice">추가 연습</string>
+    <string name="session_block_mixed_practice">섞어서 연습하기</string>
+    <string name="session_block_rematch_lesson">재도전 전 짧은 레슨</string>
+    <plurals name="session_block_questions">
+        <item quantity="other">%d문제</item>
+    </plurals>
+    <plurals name="session_block_weakest">
+        <item quantity="other">오늘 예정된 복습 없음 · 가장 취약한 주제 %d문제</item>
+    </plurals>
+    <!-- %2$s lists the topics reviewed, such as "Fractions, Ratios and 2 more topics". -->
+    <plurals name="session_block_review_topics">
+        <item quantity="other">%1$d문제 · %2$s</item>
+    </plurals>
+    <plurals name="session_block_review_topics_and_known">
+        <item quantity="other">%1$d문제 · %2$s, 이미 아는 내용도 포함</item>
+    </plurals>
+    <!-- %2$s is the phase's name. -->
+    <plurals name="session_block_phase_questions">
+        <item quantity="other">%2$s · %1$d문제, 힌트 없음</item>
+    </plurals>
+    <!-- %1$s is the phase's name; a language unit's challenge is a live call with the Trickster. -->
+    <string name="session_block_phase_live_call">%1$s · 실시간 대화</string>
+    <string name="session_block_live_call">실시간 대화</string>
+    <plurals name="session_block_challenge_questions">
+        <item quantity="other">%d문제, 힌트 없음</item>
+    </plurals>
+    <!-- %d is the review's total number of questions, not a count per topic; the review covers every topic, weakest first. -->
+    <plurals name="session_block_full_review_questions">
+        <item quantity="other">모든 주제에서 총 %d문제, 가장 취약한 주제부터</item>
+    </plurals>
+    <!-- %1$s names the first topics; %2$d counts the rest. -->
+    <plurals name="session_topics_and_more">
+        <item quantity="other">%1$s 외 %2$d개 주제</item>
+    </plurals>
+    <string name="session_opening_slow">다음 단계를 열고 있어요…</string>
+    <string name="session_opening_very_slow">평소보다 오래 걸리고 있어요. 자동으로 열리니 다시 누르지 않아도 돼요.</string>
+    <string name="session_level_up">레벨이 올랐어요!</string>
+    <!-- %1$s is the learner's Energy as a share, such as 70%. -->
+    <string name="session_energy_at">에너지 %1$s</string>
+    <!-- %1$s is the learner's Energy as a share, such as 100%. -->
+    <string name="session_energy_max">최대 에너지: %1$s</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="session_energy_glowing_brightest">%1$s(이)가 가장 밝게 빛나고 있어요.</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="session_energy_glowing">%1$s(이)가 이제 빛나고 있어요.</string>
+    <string name="session_energy_detail">문제를 맞히면 올라가요. 하루 쉬면 조금 내려가요.</string>
+    <string name="session_summary_eyebrow">오늘의 학습</string>
+    <string name="session_summary_done_for_now">일단 여기까지</string>
+    <string name="session_summary_done_under_minute">1분도 안 돼 끝냈어요</string>
+    <!-- %1$s is how long the session took, such as "13 min". -->
+    <string name="session_summary_done_in">%1$s 만에 완료</string>
+    <!-- After Stop for today; %1$s is the time studied, such as "13 min". -->
+    <string name="session_summary_so_far">지금까지 %1$s</string>
+    <string name="session_summary_right">정답</string>
+    <!-- What TalkBack says for "3/5" right answers. -->
+    <string name="session_summary_right_spoken">정답 %1$d개, 전체 %2$d개</string>
+    <!-- Right minus wrong on questions that take points off for a wrong answer. -->
+    <string name="session_summary_net">감점 후 %1$s</string>
+    <string name="session_summary_preparation">준비도</string>
+    <string name="session_summary_progress">진도</string>
+    <!-- How many skills come back for review on later days. -->
+    <string name="session_summary_to_review">복습 예정</string>
+    <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
+    <string name="session_summary_back_on">%1$s에 복습</string>
+    <string name="session_summary_brain_power">두뇌력</string>
+    <!-- Points earned, such as "+120". -->
+    <string name="session_summary_plus">+%1$s</string>
+    <string name="session_summary_skills_rose">숙련도가 오른 스킬</string>
+    <string name="session_summary_tomorrow">내일</string>
+    <string name="session_summary_earned_today">오늘 얻은 보상</string>
+    <string name="session_summary_rewards">보상</string>
+    <!-- The learner's study buddy, by name, as TalkBack describes the picture. -->
+    <string name="session_summary_buddy_happy">오늘 하루에 만족한 %1$s</string>
+    <!-- The day's only mission is done. -->
+    <string name="session_summary_mission_done">완료</string>
+    <plurals name="session_summary_missions_done">
+        <item quantity="other">%d개 모두 완료</item>
+    </plurals>
+    <plurals name="session_summary_levels_gained">
+        <item quantity="other">+%d레벨</item>
+    </plurals>
+    <!-- %1$s is how many questions in a row were right, such as "5". -->
+    <string name="session_summary_streak">%1$s문제 연속 정답</string>
+    <string name="session_summary_see_mistakes">오답 보기</string>
+    <string name="session_summary_keep_going">계속하기</string>
+    <string name="session_summary_finish">마치기</string>
+    <string name="session_summary_save_note">다음에도 볼 수 있도록 계획을 저장하세요.</string>
+    <string name="session_summary_create_account">계정 만들기</string>
+    <!-- Above the title of the session's next step. -->
+    <string name="session_next_eyebrow">다음 단계</string>
+    <string name="session_next_start">시작하기</string>
+    <string name="session_next_writing_note">맞춤 레슨을 만들고 있어요. 보통 2분 정도면 준비돼요.</string>
+    <string name="session_next_lesson_ready">레슨이 준비됐어요.</string>
+    <string name="session_next_stop">오늘 학습 마치기</string>
+    <string name="session_next_stop_failed">학습을 중단하지 못했어요. 다시 시도해 보세요.</string>
+    <!-- A button on the session's next step while its lesson is prepared: %1$s is another step's title, such as "Review", to do meanwhile. -->
+    <string name="session_next_while_waiting">기다리는 동안 %1$s</string>
+    <!-- A button on the session's next step when its lesson can't be written now: %1$s is another step's title, such as "Review", to do instead. -->
+    <string name="session_next_instead">대신 %1$s</string>
+</resources>

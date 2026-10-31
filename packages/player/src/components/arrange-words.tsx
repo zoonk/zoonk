@@ -2,12 +2,15 @@
 
 import { type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
+import {
+  buildAcceptedArrangeWordSequences,
+  getAcceptedArrangeWordLengths,
+} from "@zoonk/core/player/contracts/arrange-words-answers";
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useCallback, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
-import { type SelectedAnswer, type StepResult } from "../player-reducer";
+import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { useWordAudio } from "../use-word-audio";
 import { ArrangeWordsAnswerArea, type PlacedWord } from "./arrange-words-answer-area";
 import { InteractiveStepLayout } from "./step-layouts";
@@ -16,11 +19,6 @@ import { WordBankOptionButton } from "./word-bank-option-content";
 type WordBankTile = { index: number; isUsed: boolean; key: string; option: WordBankOption };
 type PlacedWordWithBankIndex = PlacedWord & { wordBankIndex: number | null };
 
-/**
- * Submitted answers preserve only their words, so a restored result cannot
- * identify which duplicate bank tile originally supplied each word. Matching
- * those untracked words by occurrence keeps the completed-answer view stable.
- */
 function isUntrackedOccurrenceUsed({
   index,
   option,
@@ -43,10 +41,6 @@ function isUntrackedOccurrenceUsed({
   return usedCount >= occurrenceCount;
 }
 
-/**
- * Duplicate words are valid, so interactive selections use the original bank
- * index to keep the tapped tile attached to the placed answer.
- */
 function getWordBankTile({
   index,
   option,
@@ -65,10 +59,6 @@ function getWordBankTile({
   return { index, isUsed, key: `bank-${option.word}-${index}`, option };
 }
 
-/**
- * The word bank keeps used words in place as disabled placeholders so selecting
- * a tile does not make the remaining choices jump around.
- */
 function getWordBankTiles({
   placedWords,
   words,
@@ -94,14 +84,7 @@ function WordBank({
   const tiles = getWordBankTiles({ placedWords, words });
 
   return (
-    <div
-      aria-label={t("Word bank")}
-      className={cn(
-        "mt-auto flex flex-wrap gap-2.5 pt-6 sm:pt-8 lg:mt-0 lg:pt-0",
-        disabled && "pointer-events-none opacity-50",
-      )}
-      role="group"
-    >
+    <div aria-label={t("Word bank")} className="flex flex-wrap gap-2.5" role="group">
       {tiles.map((tile) => (
         <WordBankOptionButton
           disabled={disabled}
@@ -116,34 +99,37 @@ function WordBank({
 }
 
 export function ArrangeWordsInteraction({
-  acceptedWordLengths,
+  answer,
   answerKind,
   children,
-  correctWords,
   onSelectAnswer,
   result,
   selectedAnswer,
-  stepId,
   wordBankOptions,
 }: {
-  acceptedWordLengths: number[];
+  answer: string;
   answerKind: "reading" | "listening";
   children: React.ReactNode;
-  correctWords: string[];
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  onSelectAnswer: (answer: SelectedAnswer | null) => void;
   result?: StepResult;
   selectedAnswer?: SelectedAnswer;
-  stepId: string;
   wordBankOptions: WordBankOption[];
 }) {
   const { trigger } = useWebHaptics();
+
+  const acceptedWordSequences = buildAcceptedArrangeWordSequences({
+    kind: answerKind,
+    text: answer,
+  });
+
+  const correctWords = acceptedWordSequences[0] ?? [];
+  const acceptedWordLengths = getAcceptedArrangeWordLengths(acceptedWordSequences);
 
   const [placedWords, setPlacedWords] = useState<PlacedWordWithBankIndex[]>(() => {
     if (result?.answer?.kind === answerKind && "arrangedWords" in result.answer) {
       return result.answer.arrangedWords.map((word, index) => ({
         audioUrl: null,
         id: String(index),
-        pronunciation: null,
         romanization: null,
         translation: null,
         word,
@@ -160,89 +146,71 @@ export function ArrangeWordsInteraction({
 
   const maxAnswerLength = Math.max(...acceptedWordLengths, correctWords.length);
 
-  const syncSelectedAnswer = useCallback(
-    (next: PlacedWordWithBankIndex[]) => {
-      const arrangedWords = next.map((placedWord) => placedWord.word);
+  const syncSelectedAnswer = (next: PlacedWordWithBankIndex[]) => {
+    const arrangedWords = next.map((placedWord) => placedWord.word);
 
-      if (acceptedWordLengths.includes(next.length)) {
-        onSelectAnswer(stepId, { arrangedWords, kind: answerKind });
-        return;
-      }
+    if (acceptedWordLengths.includes(next.length)) {
+      onSelectAnswer({ arrangedWords, kind: answerKind });
+      return;
+    }
 
-      if (selectedAnswer) {
-        onSelectAnswer(stepId, null);
-      }
-    },
-    [acceptedWordLengths, answerKind, onSelectAnswer, selectedAnswer, stepId],
-  );
+    if (selectedAnswer) {
+      onSelectAnswer(null);
+    }
+  };
 
-  const handlePlace = useCallback(
-    (tile: WordBankTile) => {
-      if (result || placedWords.length >= maxAnswerLength) {
-        return;
-      }
+  const handlePlace = (tile: WordBankTile) => {
+    if (result || placedWords.length >= maxAnswerLength) {
+      return;
+    }
 
-      void play(tile.option.audioUrl);
+    void play(tile.option.audioUrl);
 
-      const placed: PlacedWordWithBankIndex = {
-        ...tile.option,
-        id: String(idCounter.current),
-        wordBankIndex: tile.index,
-      };
+    const placed: PlacedWordWithBankIndex = {
+      ...tile.option,
+      id: String(idCounter.current),
+      wordBankIndex: tile.index,
+    };
 
-      idCounter.current += 1;
-      const next = [...placedWords, placed];
-      setPlacedWords(next);
+    idCounter.current += 1;
+    const next = [...placedWords, placed];
+    setPlacedWords(next);
+    syncSelectedAnswer(next);
+  };
 
-      syncSelectedAnswer(next);
-    },
-    [maxAnswerLength, placedWords, play, result, syncSelectedAnswer],
-  );
+  const handleRemove = (index: number) => {
+    const next = placedWords.filter((_, idx) => idx !== index);
+    setPlacedWords(next);
+    syncSelectedAnswer(next);
+  };
 
-  const handleRemove = useCallback(
-    (index: number) => {
-      const next = placedWords.filter((_, idx) => idx !== index);
-      setPlacedWords(next);
-      syncSelectedAnswer(next);
-    },
-    [placedWords, syncSelectedAnswer],
-  );
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
 
-  const handleDragStart = useCallback(() => {
-    void trigger("selection");
-  }, [trigger]);
+    if (!over || active.id === over.id) {
+      return;
+    }
 
-  const handleDragEnd = useCallback(
-    (event: DragEndEvent) => {
-      const { active, over } = event;
+    const oldIndex = placedWords.findIndex((pw) => pw.id === String(active.id));
+    const newIndex = placedWords.findIndex((pw) => pw.id === String(over.id));
 
-      if (!over || active.id === over.id) {
-        return;
-      }
+    if (oldIndex === -1 || newIndex === -1) {
+      return;
+    }
 
-      const oldIndex = placedWords.findIndex((pw) => pw.id === String(active.id));
-      const newIndex = placedWords.findIndex((pw) => pw.id === String(over.id));
-
-      if (oldIndex === -1 || newIndex === -1) {
-        return;
-      }
-
-      const reordered = arrayMove(placedWords, oldIndex, newIndex);
-      setPlacedWords(reordered);
-
-      syncSelectedAnswer(reordered);
-    },
-    [placedWords, syncSelectedAnswer],
-  );
+    const reordered = arrayMove(placedWords, oldIndex, newIndex);
+    setPlacedWords(reordered);
+    syncSelectedAnswer(reordered);
+  };
 
   return (
-    <InteractiveStepLayout className="my-0 flex-1 lg:my-auto lg:flex-none">
+    <InteractiveStepLayout>
       {children}
 
       <ArrangeWordsAnswerArea
         correctWords={correctWords}
         onDragEnd={handleDragEnd}
-        onDragStart={handleDragStart}
+        onDragStart={() => void trigger("selection")}
         onRemove={handleRemove}
         placedWords={placedWords}
         result={result}

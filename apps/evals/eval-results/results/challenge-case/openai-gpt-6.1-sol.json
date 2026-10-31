@@ -1,0 +1,320 @@
+{
+  "modelId": "openai/gpt-6.1-sol",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The junior marketing analyst role, fictional retailer, checkout conversion data, afternoon meeting, and pressure to preserve a launch slot form a credible workplace case. The experiment is directly relevant to the role, and the scheduling cost makes the problem practical rather than merely academic.",
+          "score": 9,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices change replies, meters, routes, and rollout outcomes; the week-long time jump supplies updated counts. Strong choices vary in position, and excessive caution is appropriately rejected after the final test. However, every decision strongly signals its correct answer through preceding guidance and transparently flawed alternatives. The explicit obvious-answer cap therefore applies.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The product manager, experimentation analyst, and AI have distinct functions. The manager pushes for speed, the analyst challenges unsupported conclusions and checks assumptions, and the AI supplies useful calculations. Asking for help is an actionable, valued choice. Colleagues use role IDs and placeholders rather than personal names, and the learner is unnamed.",
+          "score": 10,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback identifies the learner's specific strategy, praises checking and revising rather than intelligence, and gives actionable corrections. Communication feedback includes better wording. Each skill has a short, feasible practice activity, and each summary sentence reinforces a distinct learning idea.",
+          "score": 10,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The purchase rates, 0.6-percentage-point difference, 20% relative increase, and six additional purchases per 1,000 visitors are correct. A standard pooled two-proportion test gives approximately p = 0.453 initially and p = 0.018 at the final sample, matching the result. The case correctly distinguishes insufficient evidence from equality, uses the planned final threshold, and never treats early data as proof of a winner.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The English and number formatting are appropriate, hypothesis testing and p-values receive accessible explanations, and no future gain is promised. However, 'two-sided' is introduced without explanation despite the beginner-level requirement to explain technical terms in the chat.",
+          "score": 8,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 5959,
+          "inputTokens": 5962,
+          "outputTokens": 1179,
+          "reasoningTokens": 411
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The correct answer is conspicuous at every decision: colleagues usually state the preferred reasoning immediately before the choices, while alternatives explicitly defer statistical checking, claim an unsupported win, or demand certainty. Although choices have real consequences and the strong option changes position, this triggers the decisions category's maximum score of 6.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The beginner-facing calculation introduces a 'two-sided comparison' without explaining what two-sided means. The p-value itself is explained clearly, but this additional technical term remains unexplained.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the held ending branch-specific: postponing an early rollout to complete the planned sample is a sound strategy, whereas postponing after the completed test to seek certainty is unnecessary. Distinct ending summaries would reinforce that difference rather than describing both only as a delayed launch.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A marketing or e-commerce analyst judging an A/B test before a meeting, where a colleague wants to ship now. The strong path checks whether the gap could be chance and how many visitors each version had, uses the AI or a data colleague to test significance, and explains the result in plain words. Numbers must be consistent (a small gap on a small sample shouldn't be called significant). Must not teach that a single day of data proves a winner.",
+        "id": "en-ab-test-work-1",
+        "userInput": {
+          "chapterDescription": "Tell a real difference from chance in experiments like A/B tests.",
+          "chapterTitle": "Hypothesis testing",
+          "courseTitle": "Statistics",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Decide whether a gap between two groups could be chance.",
+              "name": "Tell a real difference from chance"
+            },
+            {
+              "description": "Know how many observations a comparison needs.",
+              "name": "Choose a sample size"
+            },
+            {
+              "description": "Explain a test result to people who aren't data people.",
+              "name": "Explain a test result"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The museum apparatus is concrete and the chapter's ideas determine what appears on the screen. However, the mission is to prepare a demonstration, and subsequent decisions repeatedly concern what to show visitors. This educational preparation framing triggers the meta-task cap of 6 rather than delivering the requested light hypothetical experience.",
+          "score": 6,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices produce different replies, meter changes, and endings, and the strong option changes position. Nevertheless, the initial explanation directly motivates dimming, and both later branches explicitly identify the missing observation before offering the choice to obtain it or stop. The right answer is obvious at every step, triggering the cap of 6. The time jumps also supply no new numerical observations.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "Two unnamed colleagues have distinct, relevant expertise and give useful explanations. However, there is no explicit option to ask either colleague for advice or interpretation; equipment requests are the only direct requests in the choices. Their voices are also largely instructional and aligned, with little difference in priorities or productive disagreement.",
+          "score": 7,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback is specific to the chosen observation strategy, praises actions rather than intelligence, and kindly explains what additional observation would help. Improvement notes provide concrete next actions and examples. Both skill practices are short, feasible activities, and the summaries identify the concepts practiced. Neither the generic-feedback nor judgmental-feedback cap is triggered.",
+          "score": 10,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The overview physics is sound: at a fixed light color, reducing brightness reduces the arrival rate rather than the energy of each packet; individual localized detections can accumulate into a two-opening interference pattern. The result does not invoke magic or conscious observation, and its branches and endings remain consistent with the observations collected. No wrong-fact cap is triggered.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "Every path has exactly two decisions, the learner-facing text is accessible Brazilian Portuguese, and there are no formulas or promises of outcomes. However, introducing 'fóton' violates the task's explicit restriction against jargon beyond simply explained 'quantum', even though the additional term is explained. The presentation is also more instructional than playful.",
+          "score": 7,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4615,
+          "inputTokens": 4618,
+          "outputTokens": 1138,
+          "reasoningTokens": 267
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The activity is framed as preparing an educational demonstration for visitors rather than experiencing a playful hypothetical: the mission and both second-step prompts focus on what to present. This triggers the realism cap for a meta task. The preferred choices are also obvious throughout: colleagues explain why dimming or accumulating arrivals is needed immediately before those choices, while alternatives simply stop with incomplete evidence. This triggers the decisions cap despite meaningful branching. No decision explicitly offers asking for advice; requesting equipment adjustments is not a substitute for consulting a colleague.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The result introduces 'fóton', which is explained but still exceeds the explicit restriction against jargon beyond 'quantum'. The colleagues have distinct functions, but mostly provide agreeable instructional commentary rather than expressing different priorities. Both time jumps update qualitative observations without providing new numerical measurements, as requested by the decisions rubric.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the learner's immediate goal a playful discovery rather than preparing a presentation. Give the choices plausible competing benefits, so collecting more evidence is not always the plainly superior option. Add a genuine consultation choice whose answer helps the learner choose an observation method, and replace 'fóton' with the already established plain-language description of a light packet.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A light \"E se?\" scenario in Brazilian Portuguese about energy coming in packets (quanta), for example \"E se a luz não viesse em pacotes?\" or a curious situation with a lamp, a solar panel or a camera. Two decisions per path, playful, no formulas, no jargon beyond \"quantum\" explained simply. Must be scientifically correct at an overview level (no claims that quantum effects are magic or that observation needs a conscious observer).",
+        "id": "pt-quantum-what-if-1",
+        "userInput": {
+          "chapterDescription": "A energia da luz e da matéria vem em pacotes chamados quanta.",
+          "chapterTitle": "O que é um quantum",
+          "courseTitle": "Física quântica",
+          "language": "pt",
+          "level": "overview",
+          "skills": [
+            {
+              "description": "A energia vem em pacotes mínimos, não em qualquer quantidade.",
+              "name": "Explicar que a energia vem em pacotes"
+            },
+            {
+              "description": "A luz se comporta como onda e como partícula.",
+              "name": "Reconhecer a dualidade onda-partícula"
+            }
+          ],
+          "variant": "whatIf"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The fictional store, overlapping exports, junior analyst role, staffing meeting, and 25-minute deadline form a credible workplace task. The scale is appropriate, and the manager's need for a usable count creates practical pressure. This is genuine analyst work rather than a disguised knowledge quiz.",
+          "score": 9,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices change replies, reliability, time, and outcomes, and the provisional report is a legitimate middle option. However, every decision is heavily signposted by preceding warnings or assurances, making the preferred answer obvious. The explicit maximum of 6 therefore applies. The shared verified ending also weakens the distinction between timely completion and late repair.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The analyst, fulfillment manager, and AI have distinct functions and useful contributions. The manager pushes for a report, the analyst challenges unsupported cleanup, and the AI produces drafts and reconciliations. Asking for help is actionable and valuable. No colleague or learner is named in the narrative.",
+          "score": 10,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback identifies the specific strategy used or the unsupported action taken, remains kind, and gives actionable alternatives. Communication corrections include usable example wording. Each skill has a short practical exercise, and the summary reinforces the three central lessons without praising innate ability.",
+          "score": 10,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "All reported counts reconcile: 70 exact Shipped plus 46 other nonblank statuses plus four blanks equals 120; removing six shipped duplicates and normalizing ten labels yields 74 Shipped, 36 Pending, and four unknown across 114 orders. Resolving the blanks yields 77 Shipped and 37 Pending. The incomplete draft correctly totals 110. Unsafe deletion and unverified AI acceptance are portrayed as mistakes, not taught as correct practice.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The language and workload fit a beginner workplace case. Data cleaning is explicitly explained, and repeated copies, inconsistent labels, unknown statuses, and provisional reporting are explained through concrete dialogue. Learner-facing content is in English with appropriate number formatting, and there are no promises of jobs, grades, or guaranteed results.",
+          "score": 9,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 5882,
+          "inputTokens": 5885,
+          "outputTokens": 1223,
+          "reasoningTokens": 419
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The decisions consistently reveal the preferred answer before the learner chooses. Colleagues explicitly warn against deleting blank-status orders, accepting unchecked AI output, and presenting incomplete totals; the alternatives then repeat those warned-against actions. Even the final verification choice comes with assurance that the manager can wait. This triggers the decisions category's maximum score of 6 for an obvious right answer at every step, despite meaningful branching and a useful provisional option.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "On-time verification and late repair share the same verified ending, which omits the missed deadline. The repair branch acknowledges lateness earlier, but its final outcome loses an important consequence of the learner's choices.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Include a small source-data excerpt or before-and-after comparison so the learner can actually inspect an AI change rather than always receiving colleagues' verification. Make some choices involve defensible tradeoffs before colleagues disclose which approach is best.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A first-weeks case for someone new to data analysis (a career changer in a junior analyst role): a messy spreadsheet (duplicates, blanks, inconsistent dates or names) and a manager who needs numbers soon. The strong path inspects and cleans before summarizing, uses the AI assistant to speed up the work but checks what it produced, and tells the manager about the limits of the data. Numbers must add up after cleaning.",
+        "id": "en-career-change-data-cleaning-1",
+        "userInput": {
+          "chapterDescription": "Find and fix the problems in real-world data before analyzing it.",
+          "chapterTitle": "Cleaning messy data",
+          "courseTitle": "Data analysis",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Spot duplicates, blanks and inconsistent entries.",
+              "name": "Find problems in a data set"
+            },
+            {
+              "description": "Fix or remove bad rows and say what you changed.",
+              "name": "Clean data safely"
+            },
+            {
+              "description": "Check an AI assistant's output before using it.",
+              "name": "Check what AI produced"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    }
+  ],
+  "taskId": "challenge-case"
+}

@@ -1,65 +1,56 @@
 "use client";
 
+import { AnswerOption, AnswerOptionGroup } from "@zoonk/learn/answer-option";
+import { type AnswerOptionResult } from "@zoonk/learn/answer-tone";
+import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { usePlayerInteractionState } from "../player-context";
-import { useOptionKeyboard } from "../use-option-keyboard";
-import { OptionCard } from "./option-card";
+import { getNumberKeyShortcut } from "../player-shortcuts";
 import { PlayerRichText } from "./player-rich-text";
 import { ContextText, QuestionText } from "./question-text";
-import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 
-type PlayerChoiceOptionResultState = "correct" | "incorrect";
+type PlayerChoiceSceneOption = { content: React.ReactNode; isCorrect: boolean; key: string };
 
-type PlayerChoiceSceneOption = {
-  content: React.ReactNode;
-  disabled?: boolean;
-  isDimmed?: boolean;
-  isSelected: boolean;
-  key: string;
-  resultState?: PlayerChoiceOptionResultState | null;
-};
+function getOptionResult({
+  isChecked,
+  isCorrect,
+  isGuess,
+  isPicked,
+}: {
+  isChecked: boolean;
+  isCorrect: boolean;
+  isGuess: boolean;
+  isPicked: boolean;
+}): AnswerOptionResult | null {
+  if (!isChecked) {
+    return null;
+  }
 
-/**
- * Provides the shared shell for all choice-based scenes.
- *
- * Multiple choice and translation choices need the same centered layout,
- * spacing, and action placement. Keeping that shell here means future layout
- * changes land once for the whole family.
- */
+  if (isCorrect) {
+    return "right";
+  }
+
+  if (!isPicked) {
+    return null;
+  }
+
+  return isGuess ? "guess" : "wrong";
+}
+
 export function PlayerChoiceScene({ children }: { children: React.ReactNode }) {
   return <InteractiveStepLayout data-slot="player-choice-scene">{children}</InteractiveStepLayout>;
 }
 
-/**
- * Keeps prompt copy grouped consistently above the option list.
- *
- * Some scenes show an eyebrow, some show context, some show only a question.
- * This wrapper gives all of them the same vertical rhythm.
- */
 export function PlayerChoiceScenePrompt({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-2 sm:gap-6" data-slot="player-choice-scene-prompt">
+    <div className="flex flex-col gap-3" data-slot="player-choice-scene-prompt">
       {children}
     </div>
   );
 }
 
-/**
- * Reuses the shared eyebrow styling for choice scenes that need a short label
- * above the question.
- */
-export function PlayerChoiceSceneEyebrow({ children }: { children: React.ReactNode }) {
-  return <SectionLabel>{children}</SectionLabel>;
-}
-
-/**
- * Replaces the player-name placeholder before rendering contextual copy.
- *
- * Choice scenes often reuse authored text that may contain the learner's name,
- * so the replacement logic needs to stay in the shared scene layer rather than
- * being repeated in every adapter component.
- */
 export function PlayerChoiceSceneContext({ children }: { children?: string | null }) {
   if (!children) {
     return null;
@@ -68,12 +59,6 @@ export function PlayerChoiceSceneContext({ children }: { children?: string | nul
   return <ContextText>{children}</ContextText>;
 }
 
-/**
- * Replaces the player-name placeholder before rendering the main question.
- *
- * This keeps multiple-choice and translation prompts aligned on the same copy
- * treatment even though they come from different step kinds.
- */
 export function PlayerChoiceSceneQuestion({ children }: { children?: string | null }) {
   if (!children) {
     return null;
@@ -82,68 +67,86 @@ export function PlayerChoiceSceneQuestion({ children }: { children?: string | nu
   return <QuestionText>{children}</QuestionText>;
 }
 
-/**
- * Keeps the primary option copy consistent across all choice scenes.
- *
- * Multiple choice and translation choices all present one tappable answer
- * label. Centralizing that text treatment here prevents each adapter from
- * quietly diverging when option typography changes in the future.
- */
 export function PlayerChoiceSceneOptionText({ children }: { children: React.ReactNode }) {
   return (
-    <span className="text-base leading-6" data-slot="player-choice-scene-option-text">
+    <span data-slot="player-choice-scene-option-text">
       {typeof children === "string" ? <PlayerRichText text={children} /> : children}
     </span>
   );
 }
 
-/**
- * Renders the shared option list and owns the numeric keyboard shortcuts.
- *
- * This exists so the option-card layout, radiogroup semantics, and keyboard
- * interaction cannot drift between multiple-choice and translation adapters.
- */
 export function PlayerChoiceSceneOptions({
   ariaLabel,
-  keyboardEnabled = true,
+  isChecked = false,
+  isGuess = false,
+  isLocked = false,
+  keepsEveryOption = false,
+  layout = "list",
   onSelect,
   options,
+  selectedKey,
 }: {
   ariaLabel?: string;
-  keyboardEnabled?: boolean;
-  onSelect: (index: number) => void;
+  isChecked?: boolean;
+  isGuess?: boolean;
+  isLocked?: boolean;
+  keepsEveryOption?: boolean;
+  layout?: "grid" | "list";
+  onSelect: (key: string) => void;
   options: readonly PlayerChoiceSceneOption[];
+  selectedKey: string | null;
 }) {
   const t = useExtracted();
   const interactionState = usePlayerInteractionState();
+  const isDisabled = isLocked || isChecked;
 
-  useOptionKeyboard({
-    enabled: keyboardEnabled,
-    interactionState,
-    onSelect,
-    optionCount: options.length,
+  useNumberKeys({
+    count: options.length,
+    enabled: !isDisabled && interactionState !== "paused",
+    onPick: (index) => {
+      const option = options[index];
+
+      if (option) {
+        onSelect(option.key);
+      }
+    },
   });
 
   return (
-    <div
+    <AnswerOptionGroup
       aria-label={ariaLabel ?? t("Answer options")}
-      className="flex flex-col gap-3"
+      className={cn(layout === "grid" && "grid grid-cols-2 gap-3")}
       data-slot="player-choice-scene-options"
-      role="radiogroup"
     >
-      {options.map((option, index) => (
-        <OptionCard
-          disabled={option.disabled}
-          index={index}
-          isDimmed={option.isDimmed}
-          isSelected={option.isSelected}
-          key={option.key}
-          onSelect={() => onSelect(index)}
-          resultState={option.resultState ?? null}
-        >
-          {option.content}
-        </OptionCard>
-      ))}
-    </div>
+      {options.map((option, index) => {
+        const isPicked = selectedKey === option.key;
+
+        const result = getOptionResult({
+          isChecked,
+          isCorrect: option.isCorrect,
+          isGuess,
+          isPicked,
+        });
+
+        if (isChecked && !result && !keepsEveryOption && !isGuess) {
+          return null;
+        }
+
+        return (
+          <AnswerOption
+            aria-keyshortcuts={getNumberKeyShortcut(index) ?? undefined}
+            disabled={isDisabled}
+            key={option.key}
+            layout={layout === "grid" ? "stacked" : "row"}
+            marker={index + 1}
+            onClick={() => onSelect(option.key)}
+            picked={isPicked}
+            result={result}
+          >
+            {option.content}
+          </AnswerOption>
+        );
+      })}
+    </AnswerOptionGroup>
   );
 }

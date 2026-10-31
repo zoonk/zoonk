@@ -1,11 +1,15 @@
-import { type PlayerQuestionContext } from "../player-context";
+import { type LessonQuestionContext } from "./lesson-question-context";
 
-export function getLessonQuestionScope(context: PlayerQuestionContext) {
-  return context.kind === "lesson" ? "lesson" : context.step.id;
+export function getLessonQuestionScope(context: LessonQuestionContext) {
+  if (context.kind === "item") {
+    return `item:${context.itemId}`;
+  }
+
+  return context.kind === "step" || context.kind === "answer" ? context.step.id : context.kind;
 }
 
-export function getLessonQuestionScopeQuery(context: PlayerQuestionContext) {
-  return context.kind === "lesson"
-    ? { contextKind: "lesson" as const }
-    : { stepId: context.step.id };
+export function getLessonQuestionScopeQuery(context: LessonQuestionContext) {
+  return context.kind === "step" || context.kind === "answer"
+    ? { stepId: context.step.id }
+    : { contextKind: context.kind };
 }

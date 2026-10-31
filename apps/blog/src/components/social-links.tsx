@@ -24,7 +24,6 @@ const SOCIAL_LINKS = [
   { icon: FacebookBrandIcon, label: "Facebook", url: "https://www.facebook.com/zoonkcom" },
 ];
 
-/** Social media icon links displayed in the footer on all pages. */
 export function SocialLinks() {
   return (
     <nav className="flex flex-wrap gap-3" aria-label="Social media">

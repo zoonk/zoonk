@@ -1,22 +1,100 @@
 # `es` styleguide
 
-- Use an informal, approachable register. Address the user as "tú".
+## Voice and locale
+
+- Use Latin American Spanish, with Mexico as the reference variety, worded so it reads naturally anywhere in Latin America and among US Spanish speakers: no slang or words only Mexico uses (“chido”, “padre”, “ahorita”, “platicar”, “checar”).
+- Informal “tú” for one person and “ustedes” for a group; never “vosotros” or “vos”.
+- For what just happened, use the preterite: “Dijiste”, not “Has dicho”; “No pudimos…”, not “No hemos podido…”.
+- Use Latin American words, not Spain's: “computadora”, “celular”, “jugo”, “boleto”, “departamento”, “video”, “lentes”, “Configuración” (settings), “ingresar” (type in), “administrar” (manage), not “ordenador”, “móvil”, “zumo”, “billete”, “piso”, “vídeo”, “gafas”, “Ajustes”, “introducir”, “gestionar”. Never “vale” or “coger”.
+- Buttons, links and menu actions use the infinitive: “Crear una cuenta gratis”, not “Crea una cuenta gratis”. An option the learner says in their own voice keeps the first person: “Ya lo sé”, “No sé, quiero una prueba rápida”. Reflexive infinitives speak to the learner: “Ponerte al día”, “Elegir en qué enfocarte”, not “Ponerse”, “enfocarse”.
+- Translate place, country and empire names, including map labels: “Europa”, “Reino Unido”, “Imperio romano”.
+- Localize illustrative exam examples for Mexico, such as the EXANI-II and the UNAM's admission exam.
+- Treat “Poder Mental” as a product name without an article in short labels and headings.
 
 ## Glossary
 
-- "course": "curso"
-- "chapter": "capítulo"
-- "lesson": "lección"
-- "hello@zoonk.com": "contacto@zoonk.com"
-- "Brain Power": "Poder Mental"
-- "BP": "PM"
-- "Energy": "Energía"
-- "score": "Puntuación"
-- "learning": "estudio" (eg "learning days" = "días de estudio")
-- "listening": "escucha"
-- "step": "paso"
+- “goal”: “objetivo”; “start a goal”: “crear un objetivo”, not “empezar un objetivo”; “target” (a score or course aimed for): “meta”; “milestone”: “hito”
+- “course” (the degree an admission exam aims for): “carrera”
+- “continue” (something unfinished, like a mock or a session): “continuar”, not “retomar”
+- “check” (an answer): “comprobar”
+- “guess” (a pick that doesn't count): “suposición”, never “respuesta”
+- “write” (Zoonk generating content): “preparar”; learner writing: “escribir”
+- “learning” (study days): “estudio”
+- “Brain Power”: “Poder Mental”
+- “score”, including an exam's: “puntaje”, not “puntuación” or “nota”; the admission cut-off: “puntaje mínimo”
+- “grade” (an essay): “calificar”, and the result “calificación”, not “corregir” or “nota”; “fix” (a mistake): “corregir”
+- “band” (an exam's score band): “banda”
+- “subject” (of an exam or a plan): “materia”, not “asignatura”
+- “prerequisite”: “requisito previo”, not “conocimiento previo”
+- “yet” / “still”: “aún”, not “todavía”
+- “keep” before a verb (“Keep learning”): “seguir”, not “continuar”
+- “skip”: “saltar(se)”, not “omitir”
+- “resume” (a paused goal): “reanudar”, not “retomar”
+- “expire” (a code or a session): “expirar”, not “caducar” or “vencer”
+- “Got it”: “Entendido”
+- “rent” (a home): “rentar”, and “the rent”: “la renta”, not “alquilar” or “alquiler”
+- “fair use”: “uso justo”
+- “upload” (a file sent to Zoonk): “archivo subido”; the verb: “subir”
+- “BCE” / “CE” (after a year): “a. C.” / “d. C.”
+- Language skills “Listening” / “Speaking” / “Reading” / “Writing” / “Words”: “Escucha” / “Expresión oral” / “Lectura” / “Expresión escrita” / “Vocabulario”
+- “Use of language” (a speaking exam criterion): “Uso de la lengua”
+- “card”: “tarjeta”, not “carta”
+- “tap” (the screen): “tocar”; a key: “presionar”, not “pulsar”
+- “bpm” (a tempo): “bpm”, not “ppm”
+- “link” (between a cause and its effect): “relación”, not “conexión”
+- “Free” (subscription name): “Gratis”; “the free plan”: “el plan gratis”, lowercase
+- “Get Plus”: “obtener Plus”, not “pasarse a Plus” or “hacerse Plus”
+- “hello@zoonk.com”: “contacto@zoonk.com”
+- “App Store”: always with its article, as Apple writes it in Latin America, also where English has none: “Administrar en el App Store”, “Google Play y el App Store”
+- “You've reached today's study time”: “Completaste tu tiempo de estudio de hoy”, in every line that starts with it
+- Ending a subscription “for an important reason”: “por causa justificada”
+- “Keep Plus” (turns a stopped renewal back on): “Conservar Plus”
 
-## Special Cases
+## Feature names and states
 
-- Treat "Poder Mental" as a product-like term in short labels and headings. For example, write "¿Qué es Poder Mental?" instead of adding a leading article.
-- Use an article or possessive with "Poder Mental" only when the sentence sounds more natural with one. For example, "Aumentaste tu Poder Mental".
+- “Buddy”: “Compañero”
+- Mission names (missions list, first steps) and activity badges (what the learner does, above the prompt): “tú” imperative: “Completa tu primera lección”, “Lee la gráfica”, “Ordena”
+- “essay”: “redacción”, not “ensayo”; “Writing practice” (essays): “Práctica de redacción”
+- “Mistakes notebook”: “Cuaderno de errores”; “Practice mistakes” / “Practice your mistakes”: “Practicar con tus errores”
+- “Saved to your mistakes”: “Guardado en tu cuaderno de errores”, in every line that starts with it
+- “To fix” / “Fixed” (notebook tabs): “Por corregir” / “Corregidos”
+- “full review” (language exam preparation): “revisión completa”; spaced review: “repaso”
+- “New” / “Learning” / “Solid” / “Mastered” (mastery): “Nuevo” / “Aprendiendo” / “Firme” / “Dominado”
+- “Known before”: “Ya conocidos”; “Known” (progress legend): “Ya lo sabías”
+- “Preparation”: “Preparación”
+- “the Trickster”: “el Tramposo”
+- “Broken” / “Held” (shield): “Roto” / “Resistió”
+- “Phase challenge”: “Desafío de la fase”, not “reto”, “control”, or “examen”
+- “Weekly challenge”: “Desafío semanal”
+- “Mock exam”, including speaking mocks: “Simulacro”; standalone title: “Simulacro de examen”
+- “Logbook”: “Bitácora”
+- “Fading” (needs review): “Por repasar”
+- “Overview” (course level): “Panorama general”
+- “Focus test”: “Prueba de enfoque”
+
+## Plan terminology
+
+- Phases “Foundations” / “Fill the gaps” / “Practice” / “Final stretch”: “Bases” / “Cubrir lo que falta” / “Práctica” / “Recta final”
+- “Finished”: “Completado”
+- “Past date” / “Past your date”: “Fecha pasada”, not “Terminado”, “Caducado”, or “Vencido”
+- “Needs adjusting”: “Necesita ajustes”
+- “Too tight”: “Demasiado ajustado”
+- “Even across skills”: “Equilibrado en todas las habilidades”
+- “left out”: “omitir”, not “saltar”
+- “On pace” / “Keeping pace”: “Al día”, not “A buen ritmo”
+- “Daily time”: “Tiempo diario”
+
+## Buddy names
+
+- “Zu”: “Zu”
+- “Noodle”: “Coco”
+- “Beep”: “Bip”
+- “Otto”: “Oto”
+
+## Formatting preference
+
+- Write numbers the Mexican way, with no space before “%”: “1,234.56”, “50%”.
+- Match the app's compact durations: “2 h 30 min”, “30 s”.
+- “About {time}”: “aproximadamente {time}”, not “unos {time}”.
+- Quote with “”, not «».
+- Keys “Enter” / “Shift”: “Enter” / “Shift”.

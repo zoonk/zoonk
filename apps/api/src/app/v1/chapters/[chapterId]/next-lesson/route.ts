@@ -1,23 +1,15 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { handleNextLesson } from "@/lib/api-handlers/next-lesson";
-import { chapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { toNextLessonResponse } from "@/lib/api-handlers/next-lesson";
+import { readChapterContext } from "@/lib/chapter-context";
+import { getCatalogChapterNextLesson } from "@zoonk/core/catalog/next-lesson";
 
-/**
- * Converts a validated chapter resource path into a next-lesson scope.
- */
 async function getChapterNextLesson(
-  _request: Request,
+  request: Request,
   context: RouteContext<"/v1/chapters/[chapterId]/next-lesson">,
 ) {
-  const parsed = parsePathParams({ params: await context.params, schema: chapterPathParamsSchema });
+  const parsed = await readChapterContext({ context, request });
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  return handleNextLesson({ scope: { chapterId: parsed.data.chapterId } });
+  return toNextLessonResponse(await getCatalogChapterNextLesson(parsed));
 }
 
 export const GET = withApiErrorBoundary(getChapterNextLesson);

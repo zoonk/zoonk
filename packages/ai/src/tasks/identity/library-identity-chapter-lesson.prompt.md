@@ -1,0 +1,1 @@
+- Don't reuse a candidate written for another exam or audience than the request's goal when that changes what is taught, such as an essay chapter built on one exam's grading criteria for a goal preparing another exam.

@@ -1,0 +1,614 @@
+import { randomInt, randomUUID } from "node:crypto";
+import { request } from "@playwright/test";
+import { languageConversationSetupSchema } from "@zoonk/core/language/conversations/contract";
+import { getAlphabetIdentityKey } from "@zoonk/core/library/language/alphabet-identity";
+import { prisma } from "@zoonk/db";
+import { expect, test } from "@zoonk/e2e/fixtures";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  LIVE_CALL_SDP_OFFER,
+  RENTING_SCENARIO,
+  alphabetLessonFixture,
+  languageGoalFixture,
+} from "@zoonk/testing/fixtures/language";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
+import { createAuthenticatedApiContext } from "./helpers/auth";
+
+const OFFER = { sdp: LIVE_CALL_SDP_OFFER };
+
+const LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
+const FREE_CALL_SECONDS = 120;
+const DAY_MS = 86_400_000;
+
+async function ensureLevelTestBank() {
+  const questions = LEVELS.flatMap((level) =>
+    (["reading", "listening"] as const).flatMap((skill) =>
+      [0, 1].map((index) => ({
+        answerIndex: 0,
+        id: `${skill}-${level}-${index}`,
+        level,
+        options: ["Certa", "Errada 1", "Errada 2", "Errada 3"],
+        passage: `A ${skill} passage at ${level}.`,
+        question: "O que diz o texto?",
+        skill,
+      })),
+    ),
+  );
+
+  const content = {
+    questions,
+    speaking: LEVELS.map((level) => ({
+      level,
+      sentence: `A sentence at ${level}.`,
+      translation: "Uma frase.",
+    })),
+  };
+
+  await prisma.languageLevelTest.upsert({
+    create: {
+      content,
+      language: "pt",
+      model: "test",
+      promptVersion: "test",
+      runId: "test",
+      targetLanguage: "en",
+    },
+    update: { content },
+    where: { languagePair: { language: "pt", targetLanguage: "en" } },
+  });
+}
+
+test.describe("Language goal API", () => {
+  let baseURL: string;
+
+  test.beforeAll(() => {
+    baseURL = process.env.E2E_BASE_URL ?? "";
+  });
+
+  test.afterAll(async () => {
+    await prisma.$disconnect();
+  });
+
+  test("requires authentication", async () => {
+    const apiContext = await request.newContext({ baseURL });
+
+    const [progress, conversation, pattern, notebookPattern] = await Promise.all([
+      apiContext.get(`/v1/goals/${randomUUID()}/language-progress`),
+      apiContext.post("/v1/language-conversations", {
+        data: { chapterId: randomUUID(), kind: "practice", minutes: 2 },
+      }),
+      apiContext.get(`/v1/mistake-patterns/${randomUUID()}`),
+      apiContext.get(`/v1/goals/${randomUUID()}/mistake-pattern`),
+    ]);
+
+    expect([
+      progress.status(),
+      conversation.status(),
+      pattern.status(),
+      notebookPattern.status(),
+    ]).toStrictEqual([401, 401, 401, 401]);
+
+    await apiContext.dispose();
+  });
+
+  test("lists a new script's alphabet lesson and skips it for a learner who reads it", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "language-alphabet",
+    });
+
+    const [{ goal }, lesson, other] = await Promise.all([
+      languageGoalFixture({ userId: user.id }),
+      alphabetLessonFixture({ identityKey: getAlphabetIdentityKey("ru"), targetLanguage: "ru" }),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    await prisma.goal.update({ data: { targetLanguage: "ru" }, where: { id: goal.id } });
+
+    const alphabetOf = async (): Promise<unknown> => {
+      const units = await apiContext.get(`/v1/goals/${goal.id}/language-units`);
+      const body: { alphabet: unknown } = await units.json();
+      return body.alphabet;
+    };
+
+    expect(await alphabetOf()).toStrictEqual({
+      canDo: "Ler e dizer as primeiras letras do cirílico",
+      lessonId: lesson.id,
+      minutes: 5,
+      pending: true,
+      title: "Seu primeiro cirílico",
+    });
+
+    const anonymous = await request.newContext({ baseURL });
+
+    const [skipped, again, notLanguage, missing, invalid, unauthorized] = await Promise.all([
+      apiContext.post(`/v1/goals/${goal.id}/alphabet-skips`),
+      apiContext.post(`/v1/goals/${goal.id}/alphabet-skips`),
+      apiContext.post(`/v1/goals/${other.id}/alphabet-skips`),
+      apiContext.post(`/v1/goals/${randomUUID()}/alphabet-skips`),
+      apiContext.post("/v1/goals/not-a-uuid/alphabet-skips"),
+      anonymous.post(`/v1/goals/${goal.id}/alphabet-skips`),
+    ]);
+
+    expect(
+      [skipped, again, notLanguage, missing, invalid, unauthorized].map((response) =>
+        response.status(),
+      ),
+    ).toStrictEqual([204, 204, 422, 404, 400, 401]);
+
+    expect(await alphabetOf()).toMatchObject({ lessonId: lesson.id, pending: false });
+
+    await Promise.all([apiContext.dispose(), anonymous.dispose()]);
+  });
+
+  test("offers a Cambridge goal its speaking paper, locked without Plus, and starts a task with Plus", async () => {
+    const [free, plus] = await Promise.all([
+      createAuthenticatedApiContext({ baseURL, prefix: "exam-speaking-free" }),
+      createAuthenticatedApiContext({ baseURL, prefix: "exam-speaking-plus" }),
+    ]);
+
+    const [freeGoal, plusGoal] = await Promise.all([
+      languageGoalFixture({ userId: free.user.id }),
+      languageGoalFixture({ userId: plus.user.id }),
+      prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: plus.user.id, status: "active" },
+      }),
+    ]);
+
+    await prisma.goal.updateMany({
+      data: { details: { level: "A2", reason: "Vou fazer o Cambridge B2 First em novembro" } },
+      where: { id: { in: [freeGoal.goal.id, plusGoal.goal.id] } },
+    });
+
+    const progress = await free.apiContext.get(`/v1/goals/${freeGoal.goal.id}/language-progress`);
+
+    expect(await progress.json()).toMatchObject({
+      speaking: { access: "plusRequired", exam: "cambridge", language: "en", title: "B2 First" },
+      speakingMock: null,
+    });
+
+    const paper = await free.apiContext.get(`/v1/goals/${freeGoal.goal.id}/speaking-paper`);
+
+    expect(paper.status()).toBe(200);
+
+    expect(await paper.json()).toMatchObject({
+      access: "plusRequired",
+      exam: "cambridge",
+      tasks: expect.arrayContaining([expect.objectContaining({ key: "p1", lastTry: null })]),
+      title: "B2 First",
+    });
+
+    const refused = await free.apiContext.post("/v1/language-conversations", {
+      data: { goalId: freeGoal.goal.id, kind: "examSpeaking", task: "p1" },
+    });
+
+    expect(refused.status()).toBe(402);
+    expect(await refused.json()).toMatchObject({ error: { code: "PLUS_REQUIRED" } });
+
+    const waiting = await prisma.languageConversation.create({
+      data: {
+        goalId: plusGoal.goal.id,
+        kind: "examSpeaking",
+        language: "pt",
+        level: "B2",
+        minutes: 2,
+        scenario: {
+          ...RENTING_SCENARIO,
+          examTask: {
+            card: {
+              instructions: ["Answer the examiner's questions about yourself."],
+              photos: [],
+              prompts: [],
+              summary: "Responda às perguntas da examinadora sobre você.",
+              table: null,
+              text: null,
+            },
+            exam: "cambridge",
+            level: "B2",
+            task: "p1",
+          },
+        },
+        targetLanguage: "en",
+        titleSnapshot: "Part 1: Interview",
+        userId: plus.user.id,
+      },
+    });
+
+    const [started, missing] = await Promise.all([
+      plus.apiContext.post("/v1/language-conversations", {
+        data: { goalId: plusGoal.goal.id, kind: "examSpeaking", task: "p1" },
+      }),
+      plus.apiContext.post("/v1/language-conversations", {
+        data: { goalId: plusGoal.goal.id, kind: "examSpeaking", task: "p9" },
+      }),
+    ]);
+
+    expect([started.status(), missing.status()]).toStrictEqual([201, 404]);
+    expect(await started.json()).toStrictEqual({ conversationId: waiting.id });
+
+    const view = await plus.apiContext.get(`/v1/language-conversations/${waiting.id}`);
+
+    expect(await view.json()).toMatchObject({
+      examTask: {
+        exam: "cambridge",
+        number: 1,
+        sectionId: null,
+        task: { key: "p1", name: "Part 1: Interview", role: "examiner" },
+        taskCount: 4,
+        title: "B2 First",
+      },
+      kind: "examSpeaking",
+      minutes: 2,
+    });
+
+    await Promise.all([free.apiContext.dispose(), plus.apiContext.dispose()]);
+  });
+
+  test("starts a practice call, keeps it private and finishes it once", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "language-call",
+    });
+
+    const { renting } = await languageGoalFixture({ userId: user.id });
+
+    const started = await apiContext.post("/v1/language-conversations", {
+      data: { chapterId: renting.id, kind: "practice", minutes: 2 },
+    });
+
+    expect(started.status()).toBe(201);
+    const { conversationId } = await started.json();
+    expect(started.headers().location).toBe(`/v1/language-conversations/${conversationId}`);
+
+    const view = await apiContext.get(`/v1/language-conversations/${conversationId}`);
+
+    expect(await view.json()).toMatchObject({
+      character: RENTING_SCENARIO.character,
+      exam: null,
+      kind: "practice",
+      minutes: 2,
+      result: null,
+      status: "ready",
+    });
+
+    const { apiContext: stranger } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "language-stranger",
+    });
+
+    const turns = [{ speaker: "character", text: RENTING_SCENARIO.openingLine }];
+    const checks = `/v1/language-conversations/${conversationId}/objective-checks`;
+
+    const [hidden, hiddenCheck, notConnected] = await Promise.all([
+      stranger.get(`/v1/language-conversations/${conversationId}`),
+      stranger.post(checks, { data: { turns } }),
+      apiContext.post(checks, { data: { turns } }),
+    ]);
+
+    expect([hidden.status(), hiddenCheck.status(), notConnected.status()]).toStrictEqual([
+      404, 404, 422,
+    ]);
+
+    const reserved = await apiContext.post(
+      `/v1/language-conversations/${conversationId}/connections`,
+    );
+
+    expect(reserved.status()).toBe(201);
+    const setup = languageConversationSetupSchema.parse(await reserved.json());
+    const connected = await apiContext.post(setup.sessionUrl, { data: OFFER });
+    expect(connected.status()).toBe(201);
+
+    const completion = {
+      connectionId: setup.connectionId,
+      spokenSeconds: 0,
+      turns,
+      usedHelp: true,
+    };
+
+    const [first, again] = [
+      await apiContext.post(`/v1/language-conversations/${conversationId}/completions`, {
+        data: completion,
+      }),
+      await apiContext.post(`/v1/language-conversations/${conversationId}/completions`, {
+        data: completion,
+      }),
+    ];
+
+    expect(first.status()).toBe(200);
+
+    expect(await first.json()).toMatchObject({
+      result: { brainPower: 0, feedback: null, stars: 1 },
+      status: "completed",
+    });
+
+    expect(await again.json()).toStrictEqual(await first.json());
+
+    const [reconnect, lateCheck] = await Promise.all([
+      apiContext.post(`/v1/language-conversations/${conversationId}/connections`),
+      apiContext.post(checks, { data: { turns } }),
+    ]);
+
+    expect([reconnect.status(), lateCheck.status()]).toStrictEqual([409, 409]);
+
+    await Promise.all([apiContext.dispose(), stranger.dispose()]);
+  });
+
+  test("connects again a call from an earlier day against today's time, and stops at the free plan's daily call time", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "language-call-limit",
+    });
+
+    const { renting } = await languageGoalFixture({ userId: user.id });
+
+    const start = async (): Promise<string> => {
+      const started = await apiContext.post("/v1/language-conversations", {
+        data: { chapterId: renting.id, kind: "practice", minutes: 2 },
+      });
+
+      const { conversationId } = (await started.json()) as { conversationId: string };
+      return conversationId;
+    };
+
+    const oldCall = await start();
+
+    await prisma.languageConversation.update({
+      data: { createdAt: new Date(Date.now() - DAY_MS) },
+      where: { id: oldCall },
+    });
+
+    const reopened = await apiContext.post(`/v1/language-conversations/${oldCall}/connections`);
+    expect(reopened.status()).toBe(201);
+    const reopenedSetup = languageConversationSetupSchema.parse(await reopened.json());
+
+    const released = await apiContext.post(reopenedSetup.sessionUrl.replace(/\/sdp$/u, "/end"));
+    expect(released.status()).toBe(200);
+
+    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 30, userId: user.id });
+
+    const nextCall = await start();
+
+    const shortened = await apiContext.post(
+      `/v1/language-conversations/${await start()}/connections`,
+    );
+
+    expect(shortened.status()).toBe(201);
+    const setup = languageConversationSetupSchema.parse(await shortened.json());
+    expect(setup.endsAtLimit).toBe("day");
+
+    await expect(
+      prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
+    ).resolves.toMatchObject({ heldSeconds: 90 });
+
+    const replacing = await apiContext.post(`/v1/language-conversations/${nextCall}/connections`);
+    expect(replacing.status()).toBe(201);
+
+    await expect(
+      prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
+    ).resolves.toMatchObject({ costMicros: 0, state: "ended" });
+
+    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 90, userId: user.id });
+    const limited = await apiContext.post(`/v1/language-conversations/${nextCall}/connections`);
+
+    expect(limited.status()).toBe(429);
+
+    await expect(limited.json()).resolves.toMatchObject({
+      error: {
+        code: "CONVERSATION_LIMIT_REACHED",
+        details: { limit: FREE_CALL_SECONDS, period: "day", resource: "callSeconds" },
+        message: "No more call time on your plan today",
+      },
+    });
+
+    await apiContext.dispose();
+  });
+
+  test("runs the level test and sets a level for each skill it tested", async () => {
+    await ensureLevelTestBank();
+
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "language-level",
+    });
+
+    const { goal } = await languageGoalFixture({ userId: user.id });
+    const path = `/v1/goals/${goal.id}/language-level-test`;
+
+    const firstResponse = await apiContext.get(path);
+    const first = await firstResponse.json();
+
+    expect(first).toMatchObject({
+      next: { kind: "question", question: { level: "A2", skill: "reading" } },
+      status: "ready",
+    });
+
+    expect(first.next.question.answerIndex).toBeUndefined();
+
+    const answered = await apiContext.post(`${path}/answers`, {
+      data: { answerIndex: 0, questionId: first.next.question.id },
+    });
+
+    expect(await answered.json()).toMatchObject({ answered: 1, lastCorrect: true });
+
+    const stale = await apiContext.post(`${path}/answers`, {
+      data: { answerIndex: 0, questionId: first.next.question.id },
+    });
+
+    expect(stale.status()).toBe(422);
+
+    const finished = await apiContext.post(`${path}/completions`);
+
+    expect(finished.status()).toBe(200);
+
+    await apiContext.dispose();
+  });
+
+  test("never writes the questions when the test is shown: the learner's tap starts their run", async () => {
+    await ensureLevelTestBank();
+
+    const [{ apiContext, user }, { apiContext: stranger }, anonymous] = await Promise.all([
+      createAuthenticatedApiContext({ baseURL, prefix: "level-bank" }),
+      createAuthenticatedApiContext({ baseURL, prefix: "level-bank-stranger" }),
+      request.newContext({ baseURL }),
+    ]);
+
+    const [{ goal: newPair }, { goal: writtenPair }, learnGoal] = await Promise.all([
+      languageGoalFixture({ userId: user.id }),
+      languageGoalFixture({ userId: user.id }),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    const letters = Array.from({ length: 5 }, () => String.fromCodePoint(97 + randomInt(26)));
+    const language = `${letters.slice(0, 3).join("")}-${letters.slice(3).join("").toUpperCase()}`;
+    const pair = { language, targetLanguage: "en" };
+    await prisma.goal.update({ data: pair, where: { id: newPair.id } });
+
+    const path = `/v1/goals/${newPair.id}/language-level-test`;
+    const shown = await apiContext.get(path);
+
+    expect(await shown.json()).toStrictEqual({
+      expectedSeconds: 120,
+      showAlphabetNote: false,
+      startedAt: null,
+      status: "preparing",
+    });
+
+    await expect(prisma.languageLevelTest.count({ where: pair })).resolves.toBe(0);
+
+    const [started, ready, ...refused] = await Promise.all([
+      apiContext.post(`${path}/generations`),
+      apiContext.post(`/v1/goals/${writtenPair.id}/language-level-test/generations`),
+      anonymous.post(`${path}/generations`),
+      stranger.post(`${path}/generations`),
+      apiContext.post(`/v1/goals/${learnGoal.id}/language-level-test/generations`),
+    ]);
+
+    expect(started.status()).toBe(202);
+
+    expect(await started.json()).toStrictEqual({
+      generationId: expect.any(String),
+      status: "started",
+    });
+
+    expect(ready.status()).toBe(200);
+    expect(await ready.json()).toStrictEqual({ generationId: null, status: "ready" });
+
+    expect(refused.map((response) => response.status())).toStrictEqual([401, 404, 422]);
+
+    await Promise.all([apiContext.dispose(), stranger.dispose(), anonymous.dispose()]);
+  });
+
+  test("shows a noticed pattern and scores its drill", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "language-pattern",
+    });
+
+    const { goal } = await languageGoalFixture({ userId: user.id });
+
+    const pattern = await prisma.mistakePattern.create({
+      data: {
+        content: {
+          contrast: [{ example: "since 2020", label: "since + quando começou" }],
+          drill: [
+            {
+              answer: "for",
+              feedback: "Duração.",
+              options: ["since", "for", "from"],
+              sentence: "I've lived here ___ six years.",
+            },
+          ],
+          examples: [
+            {
+              answer: "I live here since 2020",
+              correctAnswer: "I've lived here since 2020",
+              format: "typedAnswer",
+            },
+          ],
+          rule: "Começou no passado e continua? Use have + particípio.",
+        },
+        goalId: goal.id,
+        kind: "pattern",
+        language: "en",
+        model: "test",
+        promptVersion: "test",
+        runId: "test",
+        title: "since e for",
+        userId: user.id,
+      },
+    });
+
+    const offered = await apiContext.get(`/v1/goals/${goal.id}/mistake-pattern`);
+
+    expect(await offered.json()).toStrictEqual({
+      pattern: { id: pattern.id, kind: "pattern", title: "since e for" },
+    });
+
+    const view = await apiContext.get(`/v1/mistake-patterns/${pattern.id}`);
+
+    expect(await view.json()).toMatchObject({
+      occurrences: 1,
+      practiced: false,
+      title: "since e for",
+    });
+
+    const drill = { answers: ["for"], requestId: randomUUID() };
+
+    const practice = await apiContext.post(`/v1/mistake-patterns/${pattern.id}/practices`, {
+      data: drill,
+    });
+
+    const result = await practice.json();
+    expect(result).toMatchObject({ correct: 1, total: 1 });
+
+    const retry = await apiContext.post(`/v1/mistake-patterns/${pattern.id}/practices`, {
+      data: drill,
+    });
+
+    expect(await retry.json()).toStrictEqual(result);
+
+    const dismissed = await apiContext.post(`/v1/mistake-patterns/${pattern.id}/dismissals`);
+    expect(dismissed.status()).toBe(204);
+
+    const afterDismissal = await apiContext.get(`/v1/goals/${goal.id}/mistake-pattern`);
+    expect(await afterDismissal.json()).toStrictEqual({ pattern: null });
+
+    const otherGoal = await goalFixture({ userId: user.id });
+    const other = await apiContext.get(`/v1/goals/${otherGoal.id}/mistake-pattern`);
+    expect(await other.json()).toStrictEqual({ pattern: null });
+
+    await apiContext.dispose();
+  });
+
+  test("keeps the level test to its learner's language goal", async () => {
+    const [{ apiContext, user }, { apiContext: stranger }, anonymous] = await Promise.all([
+      createAuthenticatedApiContext({ baseURL, prefix: "level-owner" }),
+      createAuthenticatedApiContext({ baseURL, prefix: "level-stranger" }),
+      request.newContext({ baseURL }),
+    ]);
+
+    const [{ goal }, learnGoal] = await Promise.all([
+      languageGoalFixture({ userId: user.id }),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    const path = `/v1/goals/${goal.id}/language-level-test`;
+    const answer = { data: { answerIndex: 0, questionId: "reading-A2-0" } };
+
+    const responses = await Promise.all([
+      anonymous.post(`${path}/answers`, answer),
+      anonymous.post(`${path}/completions`),
+      stranger.post(`${path}/answers`, answer),
+      stranger.post(`${path}/completions`),
+      apiContext.post("/v1/goals/not-a-goal/language-level-test/answers", answer),
+      apiContext.post(`${path}/answers`, { data: { answerIndex: 9, questionId: "reading-A2-0" } }),
+      apiContext.post(`/v1/goals/${learnGoal.id}/language-level-test/completions`),
+    ]);
+
+    expect(responses.map((response) => response.status())).toStrictEqual([
+      401, 401, 404, 404, 400, 400, 422,
+    ]);
+
+    await Promise.all([apiContext.dispose(), stranger.dispose(), anonymous.dispose()]);
+  });
+});

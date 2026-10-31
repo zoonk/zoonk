@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "recap_days_studied": "215788618a980fa5dec30fffb3d1442e3b3fc25e373add41cbce08e844fee582",
+  "recap_first_summary": "7761abae9c9488f5f79b203cdce7fd1dfa70c3a00da67b70478486c0f8319910",
+  "recap_first_summary_detail": "8d118af14677e8f375866ad31d8c3d8a719c7f22af098e36ee57e0c22daa1fb5",
+  "recap_fresh_week": "9d2b1900c6e4c522d70e60d37dcf6e37f73d9db6220da0278517976729ef19e6",
+  "recap_learned": "8627c492da230457ba0d6def9b31dec6df77c82425b4eb63d085115e76d58085",
+  "recap_lets_go": "d7755c85d31e14500f81fe8650167f56ee5c0df4e832745b15b2967b91004d9c",
+  "recap_mastered": "e69a1ec87051b85f7bc53aca0f7aed029bb78ad0033ab825da116c61e0b0dbb4",
+  "recap_mistake_fixed": "783d6c085143c9744e33852217496189e04cda6713dd1941749bdc6a18401778",
+  "recap_mistakes_fixed": "38d1981189f8e3865600e50e83da8a81f437825385d8592734f01f1085d73a36",
+  "recap_more_questions": "491ae6e9e34c4e803abd1d5c102753fb1c87152013263990257c10a1ccb0a131",
+  "recap_more_time": "c8a9b12b672f22b8e5ec1ed326aa4bc2f0fc2f3ff6f544c0798cb34d26d26efd",
+  "recap_new_idea": "07316eb1277a1efd9a75b646e6583d57f76c03e7605ea861a4a274f60bcb1f14",
+  "recap_new_ideas": "55635f5cd3a160d3d2ec66bffa70a026b115c5990f95714a817ac6fbbc758f3e",
+  "recap_next_week": "d443e45109740ca321b4d0e32d641dd884d9cfc4add0518968e97d235d0c7afc",
+  "recap_phase_done": "94f95055f5c4d7a58352953641fd21d6375143090f5697430b30f8ef80f87acd",
+  "recap_questions": "dbf61de5bb0f9f1074999e15af0acaa5277545c1b62be2bb89469c1779c7de29",
+  "recap_quiet_week": "4a52176717489a23784324dcfd382c14525e337d587e89d5168f067735b3d2a6",
+  "recap_review": "60a22924a028ae0d7ac24d83c63db1ddb4bc160aa482d21dbe452332f427b012",
+  "recap_reviews": "21c08c2249e7edc524cd7ae9b9055541ba13b08ea923aecc546fc04c430f478e",
+  "recap_solid": "65ec31162a1e7deb375985b681a48a4d81b7e93c529341decb74b61a8402b035",
+  "recap_time": "e988f7cc9ac689b5fee11a56cccb6434e4bb60fc72f27c57aaed037e9c656047",
+  "recap_trap_hunter_badge": "c7b4eaa9b1aabf0600de5dfde478d3dd531e89ef32e7eb185cf21efaba10fea6",
+  "recap_trap_hunter_badges": "db637b2d23f559fa5ee756a833296416e1db65a22a45e38d9a697c81b1bec14b",
+  "recap_turnaround": "e239717cdf8ccb35193dc75fb5b249a4a899e2439de243aaff218de3f6a5db92",
+  "recap_turnaround_chart": "6162b3b9a282ec984837153a591999c52b7cf8bcc4165c27a07a65806f217c72",
+  "recap_turnaround_detail": "d8a6c33cfc1f9efb4d65715e46a3b3a7a5f0d29ed5b3b0dee42b5ad39c5213d2",
+  "recap_weekly_summary": "8848bd99ccc053530a255cf41a9fdd335f7c88cf28cf3c72bfde2af8f6c09367",
+  "recap_what_a_week": "67acad84e0e7f2a898936e510aa16f5d99295e66420a1f2de9ebbfbcca472f24",
+  "recap_what_a_week_name": "61a8fccb43a41a3af20572648d46d41c2e19fee0915d0177c613e88b213b3334"
+}
+-->
+<resources>
+    <plurals name="recap_days_studied">
+        <item quantity="other">%d日間学習</item>
+    </plurals>
+    <!-- %1$s is a duration, such as "20 min". -->
+    <string name="recap_more_time">前の週より%1$s長く学習しました！</string>
+    <plurals name="recap_more_questions">
+        <item quantity="other">前の週より%d問多く解きました！</item>
+    </plurals>
+    <!-- %1$s is the phase's number, %2$s its name. -->
+    <string name="recap_phase_done">フェーズ%1$s · %2$sを完了</string>
+    <!-- %1$s is the week's dates, such as "Oct 20 – 26". -->
+    <string name="recap_weekly_summary">週間まとめ · %1$s</string>
+    <!-- %1$s is the learner's first name. -->
+    <string name="recap_what_a_week_name">充実した1週間でしたね、%1$sさん！</string>
+    <string name="recap_what_a_week">充実した1週間でしたね！</string>
+    <string name="recap_time">時間</string>
+    <string name="recap_questions">問題</string>
+    <string name="recap_quiet_week">静かな1週間</string>
+    <string name="recap_first_summary">最初のまとめは日曜日に見られます</string>
+    <string name="recap_fresh_week">毎週が新しいスタートです。</string>
+    <string name="recap_first_summary_detail">1週間の学習を数字で振り返り、いちばん伸びたスキルも確認できます。</string>
+    <string name="recap_turnaround">いちばん伸びたスキル</string>
+    <!-- %1$s and %2$s are percentages: "40% → 85% right answers". -->
+    <string name="recap_turnaround_detail">正答率 %1$s → %2$s</string>
+    <!-- %1$s is a skill's name. -->
+    <plurals name="recap_mastered">
+        <item quantity="other">%1$sが習得済みになりました。思い出せた日が%2$d日になりました。</item>
+    </plurals>
+    <string name="recap_solid">%1$sが定着しました。別の日にも繰り返し正解できました。</string>
+    <string name="recap_turnaround_chart">このスキルの曜日ごとの正解状況</string>
+    <string name="recap_learned">学んだこと</string>
+    <!-- A count stands beside these; the singular reads beside 1. -->
+    <string name="recap_new_idea">新しく学んだこと</string>
+    <string name="recap_new_ideas">新しく学んだこと</string>
+    <string name="recap_review">復習</string>
+    <string name="recap_reviews">復習</string>
+    <string name="recap_mistake_fixed">克服した間違い</string>
+    <string name="recap_mistakes_fixed">克服した間違い</string>
+    <string name="recap_trap_hunter_badge">ひっかけハンターのバッジ</string>
+    <string name="recap_trap_hunter_badges">ひっかけハンターのバッジ</string>
+    <string name="recap_next_week">来週</string>
+    <string name="recap_lets_go">始める</string>
+</resources>

@@ -1,35 +1,29 @@
-import { prisma } from "@zoonk/db";
-import { cacheTag } from "next/cache";
+import { type TransactionClient, prisma } from "@zoonk/db";
+import { cacheTag, io } from "next/cache";
 import { getUserSubscriptionCacheTag } from "../cache/tags";
+import { getActiveSubscriptionQuery, readActiveSubscription } from "../learner/facts/subscription";
 import { getSession } from "../users/get-session";
 
-/**
- * Keeps the active and trialing status rule in one query while letting callers
- * choose whether the result is a cached display read or a fresh permission
- * check.
- */
-function findActiveSubscription(userId: string) {
+/** Workflow bridges pass the goal owner, never a caller-selected identity. */
+export async function findActiveSubscription(userId: string) {
+  await io();
   const now = new Date();
 
-  return prisma.subscription.findFirst({
-    orderBy: { id: "desc" },
-    where: {
-      OR: [
-        { provider: { not: "apple" } },
-        { endedAt: null, periodEnd: { gt: now }, provider: "apple" },
-      ],
-      referenceId: userId,
-      status: { in: ["active", "trialing"] },
-    },
-  });
+  return findActiveSubscriptionForUser({ now, userId });
 }
 
-/**
- * Resolves billing state from the authenticated learner rather than accepting
- * a caller-selected user id. The private cache keeps the full authenticated
- * read together for instant navigation and deduplicates repeated calls in one
- * render tree.
- */
+export function findActiveSubscriptionForUser({
+  client = prisma,
+  now,
+  userId,
+}: {
+  client?: TransactionClient;
+  now: Date;
+  userId: string;
+}) {
+  return client.subscription.findFirst(getActiveSubscriptionQuery({ now, userId }));
+}
+
 export async function getActiveSubscription() {
   "use cache: private";
 
@@ -40,14 +34,10 @@ export async function getActiveSubscription() {
   }
 
   cacheTag(getUserSubscriptionCacheTag(session.user.id));
-  return findActiveSubscription(session.user.id);
+  return readActiveSubscription(session.user.id);
 }
 
-/**
- * Rechecks billing state when it controls a write or workflow start. Session
- * resolution is still deduplicated, but a canceled subscription cannot retain
- * write access through a previously cached display read.
- */
+/** Recheck billing for writes so a cached display read cannot preserve canceled access. */
 export async function hasActiveSubscription() {
   const session = await getSession();
 

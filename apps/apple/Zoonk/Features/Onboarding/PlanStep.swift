@@ -1,0 +1,895 @@
+import SwiftUI
+
+/// The reveal waits for the plan it reads, as main's does. An exam's plan first waits for research to
+/// read its official documents, so the learner sees the plan they follow.
+struct PlanStep: View {
+  let view: GoalOnboarding
+
+  @Environment(PlanStore.self) private var plans
+  /// Once the wait shows, reading the plan again never swaps it for a spinner.
+  @State private var isWaiting = false
+
+  private static var noticeCheck: Duration { .seconds(3) }
+
+  var body: some View {
+    let plan = plans.plan(goalId: view.goal.id)
+
+    Group {
+      switch plan.value?.plan {
+      case let ready? where ready.ready && ready.notice != .reading:
+        PlanReveal(view: view, plan: ready)
+      case let reading? where reading.ready:
+        NoticeReadingView(
+          document: reading.examDocument, lastEdition: reading.schedule.targetDateEstimated
+        )
+        .onboardingColumn()
+        .task {
+          while !Task.isCancelled {
+            try? await Task.sleep(for: Self.noticeCheck)
+            await plan.refresh()
+          }
+        }
+      default:
+        switch (plan.state, isWaiting) {
+        case (.idle, false), (.loading, false):
+          StepLoading()
+        default:
+          PlanBuilding(view: view, readResult: { await readUntilReady(plan) }) {
+            if let course = view.libraryCourse {
+              LibraryCourseOffer(
+                courseID: course.courseId, title: course.title, chapters: course.chapterCount)
+            }
+          }
+          .onboardingColumn()
+          .onAppear { isWaiting = true }
+        }
+      }
+    }
+    .loads(plan, refreshable: false)
+  }
+
+  private func readUntilReady(_ plan: Resource<PlanRead>) async -> Bool {
+    for attempt in 0..<5 {
+      await plan.refresh()
+
+      if plan.value?.plan.ready == true {
+        return true
+      }
+
+      do {
+        try await Task.sleep(for: .seconds(attempt + 1))
+      } catch {
+        return true
+      }
+    }
+
+    return false
+  }
+}
+
+/// Main's `PlanBuilding`: the goal's run while its plan is built, which both the reveal and the time
+/// question wait for.
+struct PlanBuilding<Trailing: View>: View {
+  let view: GoalOnboarding
+  let readResult: () async -> Bool
+  var onRunEnd: (() -> Void)?
+  @ViewBuilder let trailing: () -> Trailing
+
+  @Environment(OnboardingStore.self) private var onboarding
+
+  var body: some View {
+    GenerationWaitView(
+      title: LocalizedStringResource(
+        "Building your plan", table: "Onboarding", comment: "Title while a goal's plan is built"),
+      description: LocalizedStringResource(
+        "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
+        table: "Onboarding", comment: "Shown while a goal's plan is built"),
+      stoppedDescription: LocalizedStringResource(
+        "Your answers are saved.", table: "Onboarding",
+        comment: "Shown when a goal's plan stopped building, over the way to try again"),
+      generationID: view.generationId,
+      kind: .curriculum,
+      readGenerationID: {
+        let goal = onboarding.onboarding(goalID: view.goal.id)
+        await goal.refresh()
+        return goal.value?.generationId
+      },
+      restart: { try await onboarding.writeGoal(goalID: view.goal.id) },
+      readResult: readResult,
+      onRunEnd: onRunEnd,
+      leading: { EmptyView() },
+      trailing: trailing)
+  }
+}
+
+/// Main's `LibraryCourseOffer`: a published course that teaches the goal, open while the plan is
+/// built.
+private struct LibraryCourseOffer: View {
+  @Environment(AppRouter.self) private var router
+
+  let courseID: String
+  let title: String
+  let chapters: Int
+
+  var body: some View {
+    Section {
+      Button {
+        router.open(.course(courseId: courseID, title: title))
+      } label: {
+        Label {
+          VStack(alignment: .leading, spacing: 2) {
+            Text(
+              "A course in the Library fits your goal", tableName: "Onboarding",
+              comment: "Above a Library course that teaches the learner's goal"
+            )
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+
+            Text(title)
+
+            if chapters > 0 {
+              Text(
+                "\(chapters) chapters", tableName: "Courses",
+                comment: "How many chapters a course or an exam area has"
+              )
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+            }
+          }
+        } icon: {
+          Image(systemName: "book")
+        }
+      }
+      .tint(.primary)
+    }
+  }
+}
+
+/// Main's `RevealNoticeDay`: research found the exam's day after the plan was built, or the month
+/// the learner named has no sitting; the plan keeps its date until the learner switches.
+private struct RevealNoticeDay: View {
+  @Environment(PlanStore.self) private var plans
+  @Binding var isSaving: Bool
+  @Binding var failed: Bool
+
+  let goalID: String
+  let plan: GoalPlan
+
+  var body: some View {
+    let schedule = plan.schedule
+
+    if plan.notice != .usual {
+      if let noticeDay = schedule.noticeDay {
+        Section {
+          planNoticeDayText(noticeDay, document: plan.examDocument)
+
+          Button {
+            use(noticeDay.date)
+          } label: {
+            Text("Use this date", tableName: "Plan", comment: "Takes the notice's day as the date")
+          }
+
+          failure
+        }
+        .disabled(isSaving)
+      } else if let noSitting = schedule.noSitting, let month = studyDate(noSitting.month) {
+        Section {
+          Text(
+            "No exam date in \(month.formatted(.studyDay.month(.wide)))", tableName: "Exam",
+            comment: "An exam with no sitting in the learner's month")
+
+          ForEach(noSitting.closest, id: \.self) { closest in
+            if let date = studyDate(closest) {
+              Button {
+                use(closest)
+              } label: {
+                Text(
+                  "Use \(date.formatted(.studyDay.month(.wide).day().year()))", tableName: "Exam",
+                  comment: "Moves the plan to one of the closest sittings")
+              }
+            }
+          }
+
+          failure
+        }
+        .disabled(isSaving)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var failure: some View {
+    if failed {
+      Text(
+        "That didn't go through. Try again in a moment.", tableName: "Exam",
+        comment: "Changing the date failed"
+      )
+      .foregroundStyle(.destructive)
+    }
+  }
+
+  private func use(_ date: String) {
+    isSaving = true
+    failed = false
+
+    Task {
+      switch await plans.change(goalId: goalID, edits: [.targetDate(date)]) {
+      case .done(.applied), .done(.undone), .done(.unchanged), .obsolete: break
+      case .done(.invalid), .failed: failed = true
+      }
+
+      isSaving = false
+    }
+  }
+}
+
+/// Main's `PlanChoiceLines`: which option of each exam choice the plan follows. An unpicked choice
+/// is the plan suggestion's to ask.
+private struct RevealExamChoices: View {
+  let plan: GoalPlan
+  let change: (_ group: String) -> Void
+
+  var body: some View {
+    ForEach(plan.examChoices) { choice in
+      if let line = choice.followingLine {
+        Section {
+          Text(line)
+            .foregroundStyle(.secondary)
+
+          Button {
+            change(choice.group)
+          } label: {
+            Text(
+              "Change", tableName: "Plan",
+              comment:
+                "Opens the plan's settings to change the option of an exam's choice it follows")
+          }
+        }
+      }
+    }
+  }
+}
+
+/// Main's `NoticeReading`; `lastEdition` while the next edition's documents aren't out, so the plan
+/// follows the last one's.
+struct NoticeReadingView: View {
+  let document: ExamDocument
+  let lastEdition: Bool
+  /// Set once asking the plan failed: shows that, with the way to ask again.
+  var reconnect: (() -> Void)?
+
+  var body: some View {
+    List {
+      StepHeader(title: title, description: description)
+
+      Section {
+        LabeledContent {
+          Image(systemName: "checkmark")
+            .fontWeight(.semibold)
+            .foregroundStyle(.success)
+            .accessibilityLabel(
+              Text("Done", tableName: "Onboarding", comment: "A finished step of a wait"))
+        } label: {
+          Text(
+            "Your plan, from what you told us", tableName: "Onboarding",
+            comment: "The done step while an exam's official documents are read")
+        }
+
+        LabeledContent {
+          ProgressView()
+        } label: {
+          Text(
+            "Reading the official documents", tableName: "Onboarding",
+            comment: "The step going while an exam's official documents are read")
+        }
+      }
+
+      if let reconnect {
+        GenerationFailureSection(failure: .connection, act: reconnect)
+      }
+    }
+  }
+
+  private var title: Text {
+    lastEdition
+      ? Text(
+        "Reading the last edition's official documents", tableName: "Onboarding",
+        comment: "Title while the last edition of an exam's official documents is read")
+      : Text(
+        "Reading the exam's official documents", tableName: "Onboarding",
+        comment: "Title while an exam's official documents are read")
+  }
+
+  private var description: Text {
+    if lastEdition {
+      return Text(
+        "The next edition's documents aren't out yet, so your plan follows the last one's subjects and topics. We'll tell you when the new ones are out. This usually takes a few minutes.",
+        tableName: "Onboarding", comment: "While the last edition of an exam's documents is read")
+    }
+
+    switch document {
+    case .notice:
+      return Text(
+        "Your plan will follow the notice's subjects, topics and dates. This usually takes a few minutes.",
+        tableName: "Onboarding", comment: "While an exam's public notice is read")
+    case .guide:
+      return Text(
+        "Your plan will follow the official guide's parts, topics and dates. This usually takes a few minutes.",
+        tableName: "Onboarding", comment: "While a language certificate's official guide is read")
+    }
+  }
+}
+
+private struct PlanReveal: View {
+  let view: GoalOnboarding
+  let plan: GoalPlan
+
+  @Environment(AppRouter.self) private var router
+  @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(PlanStore.self) private var plans
+  @Environment(TodayStore.self) private var today
+  @State private var adjusting: AdjustPlanSheet.Section?
+  @State private var sheet: PlanSheet?
+  @State private var showsTopics = false
+  @State private var openingToday: Task<Void, Never>?
+  @State private var showsTodayProgress = false
+  @State private var isChangingDate = false
+  @State private var dateChangeFailed = false
+
+  var body: some View {
+    let goal = learnerGoal
+    let context = PlanContext(
+      goal: goal, plan: plan, adjust: { adjusting = $0 }, show: { sheet = $0 })
+    let syllabus = plans.syllabus(goalId: goal.id)
+    let structure = syllabus.value.flatMap { $0.hasSubjectPages ? $0 : nil }
+
+    PaneSplit {
+      List {
+        heroSections(goal: goal)
+      }
+    } secondary: {
+      List {
+        detailSections(context: context, syllabus: syllabus.value, structure: structure)
+      }
+    } single: {
+      List {
+        heroSections(goal: goal)
+        detailSections(context: context, syllabus: syllabus.value, structure: structure)
+      }
+      .onboardingColumn()
+    }
+    .loads(syllabus, refreshable: false)
+    .onDisappear { openingToday?.cancel() }
+    .planSheets($sheet, context: context, syllabus: syllabus.value)
+    .sheet(item: $adjusting) { section in
+      AdjustPlanSheet(goal: goal, plan: plan, section: section, store: plans)
+    }
+    .sheet(isPresented: $showsTopics) {
+      if let structure {
+        SyllabusTopicsSheet(syllabus: structure)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private func heroSections(goal: LearnerGoal) -> some View {
+    Section {
+      VStack(alignment: .leading, spacing: 6) {
+        Label {
+          Text(
+            "Plan created", tableName: "Onboarding",
+            comment: "Eyebrow over a goal whose plan was just built")
+        } icon: {
+          Image(systemName: "checkmark.circle.fill")
+        }
+        .font(.subheadline.weight(.semibold))
+        .foregroundStyle(.success)
+
+        Text(goal.title)
+          .font(.title2.bold())
+          .accessibilityAddTraits(.isHeader)
+
+        Text(facts.joined(separator: " · "))
+          .font(.subheadline)
+          .monospacedDigit()
+          .foregroundStyle(.secondary)
+
+        if let pace = paceLine(goal: goal) {
+          Text(pace)
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        }
+      }
+      .listRowBackground(Color.clear)
+    }
+
+    RevealNoticeDay(
+      isSaving: $isChangingDate, failed: $dateChangeFailed, goalID: goal.id, plan: plan)
+
+    RevealExamChoices(plan: plan) { adjusting = .choice($0) }
+
+    Section {
+      VStack(spacing: 12) {
+        Button(action: openToday) {
+          HStack {
+            if showsTodayProgress {
+              ProgressView()
+            }
+
+            Text(
+              "Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day")
+          }
+          .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+        .disabled(showsTodayProgress)
+
+        Button {
+          adjusting = .top
+        } label: {
+          Text(
+            "Adjust", tableName: "Onboarding", comment: "Opens the plan's settings to change it"
+          )
+          .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.bordered)
+      }
+      .controlSize(.large)
+      .keepsOffFold()
+      .listRowInsets(EdgeInsets())
+      .listRowBackground(Color.clear)
+    } footer: {
+      if learner.summary.value?.identity.isAnonymous == true {
+        VStack(alignment: .leading, spacing: 8) {
+          Text(
+            "Save your plan so it's here next time.", tableName: "Onboarding",
+            comment: "A guest's plan isn't saved to an account yet")
+          Button {
+            router.present(.signIn)
+          } label: {
+            Text(
+              "Create an account", tableName: "Onboarding", comment: "Opens sign-up from the plan"
+            )
+          }
+        }
+      }
+    }
+  }
+
+  @ViewBuilder
+  private func detailSections(
+    context: PlanContext, syllabus: GoalSyllabus?, structure: GoalSyllabus?
+  ) -> some View {
+    // A plan of one phase has nothing to draw in time: its chapters say its shape instead.
+    if plan.roadPhases.count > 1 {
+      PlanRoadmapSection(context: context, structure: structure, listsPhases: true)
+    } else {
+      RevealChapters(plan: plan)
+    }
+
+    if plan.notice == .usual {
+      Section {
+      } footer: {
+        Text(
+          "This plan follows the exam's usual structure while we finish reading its official documents. If they change your plan, you'll decide on Today.",
+          tableName: "Onboarding",
+          comment: "Under a plan revealed before its exam's official documents were read")
+      }
+    }
+
+    if let syllabus {
+      AreaWeights(syllabus: syllabus)
+    }
+
+    PlanSuggestionSection(context: context)
+
+    if let structure {
+      Section {
+        Text(syllabusSummary(structure, dailyMinutes: plan.schedule.dailyMinutes))
+          .foregroundStyle(.secondary)
+
+        Button {
+          showsTopics = true
+        } label: {
+          Text("See topics", tableName: "Onboarding", comment: "Opens what the plan studies")
+        }
+      }
+    } else if plan.roadPhases.count > 1 {
+      PlanPathSection(context: context)
+    }
+  }
+
+  /// Today shows once it has read the new plan's day; a read slower than a moment shows on Start.
+  private func openToday() {
+    guard openingToday == nil else {
+      return
+    }
+
+    openingToday = Task {
+      let progress = Task {
+        try await Task.sleep(for: .milliseconds(400))
+        showsTodayProgress = true
+      }
+
+      await today.today.load()
+      progress.cancel()
+      showsTodayProgress = false
+      openingToday = nil
+
+      if !Task.isCancelled {
+        router.showRoot(of: .today)
+      }
+    }
+  }
+
+  /// The goal as the plan's sections read it; the summary has it only once it refreshes.
+  private var learnerGoal: LearnerGoal {
+    LearnerGoal(
+      dailyMinutes: plan.schedule.dailyMinutes,
+      id: view.goal.id,
+      kind: LearnerGoal.Kind(rawValue: view.goal.kind.rawValue) ?? .learn,
+      status: .active,
+      targetDate: plan.schedule.targetDate,
+      title: view.goal.title)
+  }
+
+  /// A language ends at its level and an exam at its date; a learn goal without a date runs as long
+  /// as its subject takes, so the reveal says what sets that. Planning without a date stops at the
+  /// longest plan there can be, so only a plan holding every part says it does.
+  private func paceLine(goal: LearnerGoal) -> String? {
+    guard goal.kind == .learn, plan.schedule.targetDate == nil, plan.estimate.endDate != nil else {
+      return nil
+    }
+
+    return plan.feasibility?.fits == true
+      ? String(
+        localized:
+          "Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then.",
+        table: "Onboarding", comment: "Under a plan without a date that holds the whole goal")
+      : String(
+        localized:
+          "Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then.",
+        table: "Onboarding", comment: "Under a plan without a date that the time a day limits")
+  }
+
+  private var facts: [String] {
+    let schedule = plan.schedule
+    var facts: [String] = []
+
+    if let targetDate = schedule.targetDate, targetDate >= plan.today {
+      let days = PlanDate.days(from: plan.today, to: targetDate)
+      facts.append(
+        schedule.targetDateEstimated
+          ? String(
+            localized: "About \(days) days", table: "Onboarding",
+            comment: "How long until a goal's estimated date")
+          : String(
+            localized: "\(days) days", table: "Onboarding", comment: "How long until a goal's date")
+      )
+    } else if schedule.targetDate == nil, let endDate = plan.estimate.endDate {
+      // The month when it's far off; the day within a few weeks, so it never reads "October" in October.
+      let isNear = PlanDate.days(from: plan.week.startDate, to: endDate) <= 42
+      let end = PlanDate.text(endDate, today: plan.today, month: !isNear)
+      facts.append(
+        isNear
+          ? String(
+            localized: "Until about \(end)", table: "Onboarding",
+            comment:
+              "When a plan without a date ends at this pace; the argument is a date like 'May 5'")
+          : String(
+            localized: "Until sometime in \(end)", table: "Onboarding",
+            comment:
+              "When a plan without a date ends at this pace; the argument is a month like 'October 2027'"
+          ))
+    }
+
+    return facts + scheduleFacts
+  }
+
+  /// The time a day and, unless it's every day, which days: what the plan's settings say.
+  private var scheduleFacts: [String] {
+    let schedule = plan.schedule
+    let weekdays = planDurationText(minutes: Double(schedule.shape.weekdays))
+    let time =
+      if let weekend = schedule.shape.weekend {
+        String(
+          localized:
+            "\(weekdays) a day, \(planDurationText(minutes: Double(weekend))) on weekends",
+          table: "Onboarding",
+          comment: "How long the learner studies each weekday, then on Saturdays and Sundays")
+      } else {
+        String(
+          localized: "\(weekdays) a day", table: "Onboarding",
+          comment: "How long the learner studies each day")
+      }
+
+    let everyDay = schedule.weekdayMinutes.allSatisfy { $0 > 0 }
+    return everyDay ? [time] : [time, studyDaysText(schedule.weekdayMinutes)]
+  }
+}
+
+/// Lessons still being written ahead aren't chapters yet.
+private struct RevealChapters: View {
+  let plan: GoalPlan
+
+  private static let shown = 5
+
+  var body: some View {
+    let chapters = plan.roadPhases.flatMap(\.chapters).filter { !($0.writing && !$0.far) }
+    let rest = chapters.count - Self.shown
+
+    if !chapters.isEmpty {
+      Section {
+        ForEach(Array(chapters.prefix(Self.shown).enumerated()), id: \.element.id) {
+          index, chapter in
+          Label {
+            chapter.title.isEmpty
+              ? Text(
+                "More lessons", tableName: "Onboarding",
+                comment: "A new plan's chapter whose lessons are still being written")
+              : Text(chapter.title)
+          } icon: {
+            Text(index + 1, format: .number)
+              .monospacedDigit()
+              .foregroundStyle(.secondary)
+          }
+        }
+      } header: {
+        Text("Chapters", tableName: "Onboarding", comment: "Header over a new plan's chapters")
+      } footer: {
+        if rest > 0 {
+          Text(
+            "\(rest) more chapters", tableName: "Onboarding",
+            comment: "Under a new plan's first chapters: how many more it holds")
+        }
+      }
+    }
+  }
+}
+
+/// Main's `useSyllabusSummaryText`: the plan's subjects in one line.
+func syllabusSummary(_ syllabus: GoalSyllabus, dailyMinutes: Int) -> String {
+  let firstSubjects = syllabus.subjects.prefix(2).map(\.shortName).joined(separator: " · ")
+  let noticeSubjects = syllabus.subjects.filter { $0.source == "notice" }.count
+  let coverage = syllabusCoverage(syllabus, dailyMinutes: dailyMinutes)
+  let title: String
+  let detail: String?
+
+  if syllabus.kind != "notice" {
+    title = String(
+      localized: "\(syllabus.subjects.count) modules", table: "Onboarding",
+      comment: "How many modules a plan has")
+    detail = firstSubjects
+  } else if syllabus.fromMaterial {
+    title = String(
+      localized:
+        "\(syllabus.topicCount > 0 ? syllabus.topicCount : noticeSubjects) topics from your material",
+      table: "Onboarding", comment: "How many topics the learner's material lists")
+    detail =
+      syllabus.topicCount == 0 ? firstSubjects : syllabus.topicsMapped ? coverage : nil
+  } else {
+    title =
+      syllabus.examDocument == .notice
+      ? String(
+        localized: "\(noticeSubjects) subjects from the notice", table: "Onboarding",
+        comment: "How many subjects the exam notice lists")
+      : String(
+        localized: "\(noticeSubjects) parts from the official guide", table: "Onboarding",
+        comment: "How many parts the exam's official guide lists")
+
+    if syllabus.topicCount == 0 {
+      detail = heaviestSubjects(syllabus) ?? firstSubjects
+    } else if !syllabus.topicsMapped {
+      detail = String(
+        localized: "\(syllabus.topicCount) topics", table: "Onboarding",
+        comment: "How many topics the exam notice lists")
+    } else {
+      detail = coverage
+    }
+  }
+
+  return [title, detail].compactMap { $0?.isEmpty == false ? $0 : nil }.joined(separator: " · ")
+}
+
+/// A subject's basics the learner starts past aren't left out: the plan counts them as known.
+private func syllabusCoverage(_ syllabus: GoalSyllabus, dailyMinutes: Int) -> String {
+  let topics = syllabus.subjects.flatMap(\.topics)
+  let out = topics.filter { $0.status == "notPlanned" && $0.notPlannedReason != "pastBasics" }
+  let total = syllabus.topicCount
+
+  if out.isEmpty {
+    return String(
+      localized: "\(total) topics, all in your plan", table: "Onboarding",
+      comment: "Every topic of the goal fits in the plan")
+  }
+
+  if out.allSatisfy({ $0.notPlannedReason == "time" }) {
+    return String(
+      localized:
+        "\(out.count) of \(total) topics don't fit in \(planDurationText(minutes: Double(dailyMinutes))) a day",
+      table: "Onboarding", comment: "Topics left out because the daily time can't reach them")
+  }
+
+  return String(
+    localized: "\(total - out.count) of \(total) topics in your plan", table: "Onboarding",
+    comment: "Topics the plan holds of the goal's topics")
+}
+
+private func heaviestSubjects(_ syllabus: GoalSyllabus) -> String? {
+  let subjects = syllabus.subjects.filter { $0.source == "notice" }
+  let counted = subjects.compactMap { subject in subject.questions.map { (subject, $0) } }
+
+  guard !counted.isEmpty, counted.count == subjects.count else {
+    return nil
+  }
+
+  let heaviest = counted.prefix(3).map { "\($0.0.shortName) \($0.1)" }.joined(separator: " · ")
+  return String(
+    localized: "Most questions: \(heaviest)", table: "Onboarding",
+    comment: "The exam's subjects with the most questions and how many each has")
+}
+
+/// Main's topics sheet: each subject with how much it asks and its topics.
+private struct SyllabusTopicsSheet: View {
+  @Environment(\.dismiss) private var dismiss
+
+  let syllabus: GoalSyllabus
+
+  var body: some View {
+    NavigationStack {
+      List {
+        ForEach(syllabus.subjects) { subject in
+          if subject.topics.isEmpty {
+            label(subject)
+          } else {
+            DisclosureGroup {
+              ForEach(subject.topics) { topic in
+                Text(topic.name)
+                  .foregroundStyle(topic.status == "notPlanned" ? .secondary : .primary)
+              }
+            } label: {
+              label(subject)
+            }
+          }
+        }
+      }
+      .navigationTitle(
+        Text("What you'll study", tableName: "Onboarding", comment: "Title of the topics sheet")
+      )
+      .toolbarTitleDisplayMode(.inline)
+      .toolbar {
+        ToolbarItem(placement: .cancellationAction) {
+          Button(role: .close) {
+            dismiss()
+          }
+        }
+      }
+    }
+  }
+
+  private func label(_ subject: SyllabusSubject) -> some View {
+    VStack(alignment: .leading, spacing: 2) {
+      Text(subject.name)
+
+      if let line = subjectLine(subject) {
+        Text(line)
+          .font(.footnote)
+          .monospacedDigit()
+          .foregroundStyle(.secondary)
+      }
+    }
+  }
+
+  private func subjectLine(_ subject: SyllabusSubject) -> String? {
+    let total = subject.topics.count
+    let leftOut = subject.topics.filter { $0.status == "notPlanned" }.count
+    let topics: String? =
+      leftOut > 0
+      ? String(
+        localized: "\(total) topics, \(leftOut) out of your plan", table: "Onboarding",
+        comment: "A subject's topics and how many the plan leaves out")
+      : total > 0
+        ? String(
+          localized: "\(total) topics", table: "Onboarding",
+          comment: "How many topics the exam notice lists")
+        : nil
+    let questions = subject.questions.flatMap { count in
+      count > 0
+        ? String(
+          localized: "\(count) questions", table: "Onboarding",
+          comment: "How many questions a subject has on the exam")
+        : nil
+    }
+    let parts = [questions, topics].compactMap(\.self)
+
+    return parts.isEmpty ? nil : parts.joined(separator: " · ")
+  }
+}
+
+private struct AreaWeights: View {
+  let syllabus: GoalSyllabus
+
+  var body: some View {
+    let weighed = syllabus.subjects
+      .compactMap { subject in subject.displayWeight.map { (subject, $0) } }
+      .sorted { $0.1.share > $1.1.share }
+    let assumed = weighed.filter { $0.1.basis == .assumed }.count
+
+    if weighed.count >= 2 {
+      Section {
+        ForEach(weighed, id: \.0.id) { subject, weight in
+          VStack(alignment: .leading, spacing: 6) {
+            PlanPathRow {
+              Text(subject.name)
+            } value: {
+              Text(percentText(weight))
+                .font(.subheadline)
+                .monospacedDigit()
+                .foregroundStyle(.secondary)
+            }
+
+            ProgressView(value: weight.share)
+              .tint(.primary)
+              .accessibilityHidden(true)
+          }
+          .accessibilityElement(children: .combine)
+        }
+      } header: {
+        Text(
+          "Weight by area", tableName: "Onboarding",
+          comment: "Header over an exam's areas and how much each weighs")
+      } footer: {
+        if assumed > 0 {
+          Text(estimateNote(assumed))
+        }
+      }
+    }
+  }
+
+  private func percentText(_ weight: SyllabusSubject.DisplayWeight) -> String {
+    let percent = (Double(weight.percent) / 100).formatted(.percent)
+
+    return weight.basis == .assumed
+      ? String(
+        localized: "~\(percent)", table: "Onboarding",
+        comment: "An area's weight the official documents don't give, so it's estimated")
+      : percent
+  }
+
+  private func estimateNote(_ count: Int) -> String {
+    switch (syllabus.fromMaterial, syllabus.examDocument, count == 1) {
+    case (true, _, true):
+      String(
+        localized: "~ Estimated: your material doesn't say how much this area weighs.",
+        table: "Onboarding",
+        comment: "Under a weight estimated because the learner's material doesn't give it")
+    case (true, _, false):
+      String(
+        localized: "~ Estimated: your material doesn't say how much these areas weigh.",
+        table: "Onboarding",
+        comment: "Under weights estimated because the learner's material doesn't give them")
+    case (false, .guide, true):
+      String(
+        localized: "~ Estimated: the official guide doesn't say how much this area weighs.",
+        table: "Onboarding",
+        comment: "Under a weight estimated because the exam's official guide doesn't give it")
+    case (false, .guide, false):
+      String(
+        localized: "~ Estimated: the official guide doesn't say how much these areas weigh.",
+        table: "Onboarding",
+        comment: "Under weights estimated because the exam's official guide doesn't give them")
+    case (false, .notice, true):
+      String(
+        localized: "~ Estimated: the notice doesn't say how much this area weighs.",
+        table: "Onboarding",
+        comment: "Under a weight estimated because the exam notice doesn't give it")
+    case (false, .notice, false):
+      String(
+        localized: "~ Estimated: the notice doesn't say how much these areas weigh.",
+        table: "Onboarding",
+        comment: "Under weights estimated because the exam notice doesn't give them")
+    }
+  }
+
+}

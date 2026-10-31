@@ -1,15 +1,15 @@
 ---
 name: android-material-guidelines
-description: Use when designing, reviewing, or implementing Android UI or features for phones, tablets, foldables, ChromeOS, desktop windowing, Wear OS, Android TV, Android for Cars, Android XR, widgets, Jetpack Compose, Material 3, Material Design, adaptive layouts, dynamic color, icons, dark theme, edge-to-edge UI, accessibility, or when porting web or iOS features to Android. Ensures current official Android Developers and Material Design guidance is checked and Android conventions are preferred over copying other platforms.
+description: Use when designing, reviewing, or implementing Android UI or features for phones, tablets, foldables, ChromeOS, desktop windowing, Wear OS, Android TV, Android for Cars, Android XR, widgets, Jetpack Compose, Material 3, Material Design, adaptive layouts, dynamic color, icons, dark theme, edge-to-edge UI, accessibility, or when porting web or iOS features to Android. Ensures the app uses Material 3 and Android defaults (theme roles, type scale, Material Symbols, components, adaptive layouts) that express the meaning of Zoonk's design system, following current official Android Developers and Material Design guidance.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.0.0"
+  version: "3.1.0"
 ---
 
 # Android Material Guidelines
 
-This skill is a workflow, not a frozen copy of Google's Android or Material Design docs. Google's official Android Developers and Material Design docs are the source of truth.
+This skill is a workflow, not a frozen copy of Google's Android or Material Design docs. Google's official Android Developers and Material Design docs are the source of truth for components, styles, and behavior; Zoonk's design system is the source of truth for what things mean.
 
 ## Required Workflow
 
@@ -17,14 +17,14 @@ This skill is a workflow, not a frozen copy of Google's Android or Material Desi
 2. Read the current official Android and Material pages that match the feature, component, interaction, and form factor. Start with [references/official-links.md](references/official-links.md).
 3. If a Material page requires JavaScript, use the official Material sitemap to find the current page:
    - `https://m3.material.io/sitemap.xml`
-4. Prefer Android and Material conventions first. Use custom UI only when Material components, Android system patterns, or form-factor guidance do not fit the product need.
-5. Before finishing, review the work against the relevant Android form-factor page, Material foundation pages, and component pages.
+4. Choose the default Material or AndroidX component first, styled only through `MaterialTheme` roles and [the design-system mapping](references/design-system.md). Only build custom UI when no platform component can carry the design, and give it the same accessibility, input, and adaptive behavior as the platform one.
+5. Before finishing, review the work against the relevant Android form-factor page, Material foundation pages, and component pages, and compare its meaning (hierarchy, states, colors' jobs) with the matching `main` screen.
 
 ## Product Rule
 
-Preserve product intent, not web or iOS implementation details. Zoonk's `main` app is a web app, and Apple apps have their own conventions. When porting a feature to Android, do not map the same layout, navigation, density, controls, or visual treatment by default. Design the native version for the Android surface, screen size, and input method in front of you.
+Zoonk's Android app uses what Material 3 and Android provide by default instead of re-implementing the web design system, so the platform handles resizing, font scaling, contrast, accessibility, dark theme, and new devices. The design system defines meaning: roles, hierarchy, screen structure, and which color means what. Express that meaning through the closest Material role, type style, symbol, or component; take components, navigation containers, gestures, input, and accessibility behavior from Android. Add a custom style or asset only where no platform equivalent carries the meaning (such as belt and character artwork), and make it adapt to dark theme, contrast, and font scale too. Do not port web or iOS implementation details such as HTML layout tricks, hover-only affordances, pixel values from `main`, or iOS-specific controls.
 
-Examples:
+Examples of native behavior:
 
 - Mobile Android should use Material 3, Android navigation patterns, edge-to-edge layout, system bars, touch targets, and adaptive layouts.
 - Tablets, foldables, ChromeOS, and desktop windowing should use window size classes, canonical layouts, panes, keyboard and pointer behavior, and resizable layouts.
@@ -35,12 +35,17 @@ Examples:
 
 ## Design Defaults
 
-- Prefer Jetpack Compose with Material 3 components for new native Android UI unless the local app architecture requires Views.
-- Prefer Material color schemes, dynamic color where appropriate, semantic roles, typography, shape, motion, and design tokens.
-- Prefer Material Symbols or platform-standard icons for standard actions and objects. Use custom icons only when no official symbol communicates the concept.
-- Support dark theme, accessibility, font scaling, contrast, reduced motion, system gestures, edge-to-edge behavior, and proper system bar handling.
-- Use platform-provided components and AndroidX libraries before custom controls.
-- Keep platform differences intentional. A feature can share the same domain model and product goal across Android, Apple, and web while using different native UI on each platform.
+- Prefer Jetpack Compose with default Material 3 components for new Android UI unless the local app architecture requires Views. Use platform-provided components and AndroidX libraries before custom controls.
+- Style through `MaterialTheme.colorScheme`, `MaterialTheme.typography`, and `MaterialTheme.shapes`, plus `MaterialTheme.zoonk` for the meanings Material has no role for. Never put raw colors, fixed font sizes, or fixed frames in composables; sizes come from the content, the component defaults, and the window.
+- Use the default Material 3 type scale in `sp` so text follows the device's font scale; map each design-system type role to the closest Material style ([mapping](references/design-system.md#type)) instead of copying `main`'s pixel sizes.
+- Map each color's meaning from the design system (`apps/playground/src/design-system/`, rules in [the zoonk-design skill's color reference](../zoonk-design/references/color.md)) onto Material color roles with [the mapping](references/design-system.md#color-roles): `primary` is the ink text color, picks are ink, progress and the learner's place a soft blue (`tertiary`), wrong a soft pink-red (`error`), Brain Power violet (`MaterialTheme.zoonk.brain`), never a green for done. Material components that default to `primary` for progress (progress indicators) take `tertiary` explicitly.
+- Color scheme: use Zoonk's scheme, not wallpaper dynamic color. It's the same rule as Apple, whose system colors don't follow the wallpaper: wallpaper colors would drop the design system's meanings. The scheme has light and dark plus more-contrast variants; pick the variant from the device's contrast level (`UiModeManager.getContrast()`, API 34+: 0.5 and up takes the more-contrast scheme), so contrast is handled the standard Material way.
+- Use Material Symbols for actions and objects, choosing the closest match to the meaning of the icon `main` and Apple use. Deliver them as vector drawables in one style (Outlined, weight 400, grade 0, optical size 24), filled only for a selected navigation item, `autoMirrored` when directional ([how to add one](references/design-system.md#icons)). The `material-icons-extended` library is frozen and no longer recommended. Use custom icons only when no symbol communicates the concept.
+- Use Material adaptive layouts for phones, foldables, tablets, ChromeOS, and desktop windowing: window size classes, `NavigationSuiteScaffold` for top-level navigation (bar, rail, drawer by window size; `NavigationSuiteType.None` while a full-screen task covers the app), and the list-detail and supporting-pane scenes where content benefits from panes.
+- Search is a Material `SearchBar` in the top app bar (full-screen when expanded on compact windows, docked on large ones), not a navigation destination.
+- Prefer components in the stable Material 3 release the Compose BOM brings. Don't opt into `@ExperimentalMaterial3ExpressiveApi` or other experimental Material APIs; Expressive components come in when they're stable.
+- Support dark theme, accessibility, font scaling, contrast, reduced motion (the animator duration scale), system gestures, predictive back, edge-to-edge behavior, and proper system bar handling; the defaults above provide most of it.
+- Keep platform differences intentional. Look and behavior follow Android; the meaning stays Zoonk's.
 
 ## Official Starting Points
 
@@ -52,3 +57,6 @@ Examples:
 - Material Design 3 in Compose: https://developer.android.com/develop/ui/compose/designsystems/material3
 - Material Design for Android Views: https://developer.android.com/develop/ui/views/theming/look-and-feel
 - Adaptive apps: https://developer.android.com/adaptive-apps
+- Adaptive layouts in Compose: https://developer.android.com/develop/ui/compose/layouts/adaptive
+- Material Symbols in Compose: https://developer.android.com/develop/ui/compose/graphics/images/material
+- Contrast levels: https://m3.material.io/foundations/designing/color-contrast

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "essay_back_to_today": "2ee39ceb046908efd1e307d0a32fc39acac44c911da5515d6e2538254f907853",
+  "essay_comments": "1394af1e5f1737669eddc1ab456a70f42aeb36e830fb434b07f23a0d186c8520",
+  "essay_criterion_addressing": "ff673a2da41a523c15e818eea56bd3fd8a9468f02eab181cfb4946510f62bd49",
+  "essay_criterion_argument": "36ff048a52010eebcf776540dce0f824654a84181c439482f90cc2226f7f0f80",
+  "essay_criterion_closing": "6080b3fe5a05faeb297d83b1017a235ecf272bd18fa10d315540d817f09b963f",
+  "essay_criterion_cohesion": "e0553ddd552dfb822bce654241d35d6f0d7b75e1a7af4523e85cc32dea785848",
+  "essay_criterion_facts": "ae7c94b3a8b3f18689a3e1a816e6010815e149008317d45b576a6b3fd244ca77",
+  "essay_criterion_formal_writing": "03c73d2338fb265d61ea628a5404b2ec86dd84ed756863c31c6049ab6fa6437a",
+  "essay_criterion_intervention": "9615f28c2def9701ec50a25dae74fabded0018d6781c10db5af08b4d434809da",
+  "essay_criterion_legal_basis": "18699697b94b1367bedf46fff2efb85c0f0b25875f6a4e69500d61cf7076bb95",
+  "essay_criterion_requests": "87fef4f4a271e1a57939479ed374a8fb117fe3e1deeea8ab0755dff0f35fe0fc",
+  "essay_criterion_topic": "bfe7c8a8024c170885642c0809411a161d4187b4fc4dc5c18554f657458c23da",
+  "essay_daily_limit_reached": "c201332f1e616e24923044485f5f8bd51b66f39823d19dfd75cbe0df1f6c70ed",
+  "essay_element_action": "e11a07e21b4c02653323dd6b9e38f8824d050037e1cb1e49423b1e7d97c72892",
+  "essay_element_agent": "9c5f76d5d95128227430405eec094189871d1117ea8da0ec7dd0d2e804810822",
+  "essay_element_detail": "8bc090561f2a9f6ce59658285a707ed3029eeede263c1a9bf52f4b6a1218dbec",
+  "essay_element_effect": "aa2a5a99064b07e324c1b116e52f93df0d168ba8969dc4d29f1517c4eef80bb2",
+  "essay_element_means": "ddeeffe0d1e3b37e8ddddad21e62d46f946969f63bf464e27d2a720507ea7d27",
+  "essay_element_missing": "542ae41776decadf65a757205b60aba95ca813b5ad2b76aa3898766b27265cf4",
+  "essay_element_present": "f5ab4052a92a2d6a591661929bc07c3f7dd7f6f8e844904e3ced2c1f1e3957eb",
+  "essay_finish_failed": "696adf7b1a44695c0b97d1587fa56cca14a16de9a2c9f4b9c58c0ac461830c71",
+  "essay_for_example": "b3007d40b9b8f212c6b5be304a780696bb16afa60ae61b3d1e05b7727957ef2c",
+  "essay_full_marks": "46f549bcbef9efc7130abb101455443408ff943350692ddc8c887321d957e22f",
+  "essay_grade_rewrite": "9f913370c49bd238872a809dae6b488ae0b694c6bab3843bb5dba7c3601d3b6b",
+  "essay_grading": "462bc053b5de78ee4f2e70e685058c4a534e275d76da8c19d8ef9392da209205",
+  "essay_grading_button": "50a3615911321a806061619e687d0c4f96eed5a83caacbe52c7693f25fcc9426",
+  "essay_grading_slow": "7ce73f075a0f0908668070cdd6522a0b90f57822f2e663d19ba01569516045c6",
+  "essay_keep_writing": "b2de857194238bd5307b6d1fefeb4f21aa6233fd81b374472599942c90dc2750",
+  "essay_last_grade": "a1ab7f49d59f7d91f18f982e3551e7e9d30f254447033afda7181fca625f4c54",
+  "essay_leave_description": "b3e29ebf2b4cd94881af861963a4f6c74b722b5a9b82c2d10242b1a74c2a5d8d",
+  "essay_leave_title": "7730fc59196c9399d5b3ce89bbe2f3d8895ac0c9a96be67ccfb32d0b7109b6c7",
+  "essay_limit_reached": "789bd3c6766544c3cdcfa5f05f93777dc8c82a5b5230e75596e83a4e8cfbd29f",
+  "essay_motivating_texts": "b183405a837e23485c5fb428c37d85d6c6247a8aef6843ce967552f51a4d8a5d",
+  "essay_next_step": "c99aca494c63df9f4f4ba2f16f459351b448e9e8ce334547afd8735309ae7137",
+  "essay_next_step_named": "fd888a7e504e5d6eb17047906615a2eb23847743348d667154175456c48229bc",
+  "essay_nothing_left": "de0de240a1b85e9b48b3ff63b7be81c74e0663904fa65195fe39361d37c601dc",
+  "essay_proposal_elements": "cb5d2c4980ebaa4b2192c50d6e3489d0278c5a6230a9d172111edfd7e6dad250",
+  "essay_range": "e405aae6d0e4072c923e2c667c490efbadb845eaa9fac3f3658778ffbf9d4409",
+  "essay_rewrite": "111ad1d3e5c6f4bec49e56c1c51c1839203444bf4e3ed840cff21058b010bb05",
+  "essay_rewrite_label": "ff673351308f9a35eb87f9c66e6556f27e9cbee058719c874dea5618955e2b4e",
+  "essay_scale": "3add3bc3b18ba0ad74d13cfb94db9a4e5a856924d103a17939e78b0467848f7e",
+  "essay_score_of": "10e1a7291d55820f75166b665966d983fbce501d1078d94ebcd6f28536c9b0b0",
+  "essay_see_comments": "7955690aded7a395da58ceaf3fdfa756d99eca5de9a924e9854e9e4be0a03e31",
+  "essay_see_grade": "2e5fbb82ac41ef978c65bc1e466f25667e315ad78f1450e7d824d60659f35b14",
+  "essay_send": "62886978de76a32b3bcdf1a938e72a33a12fa45b44178262e5d299b95b851795",
+  "essay_send_failed": "620484cfceb1898f324c6765faf8d4332fd15f2d7221626e77235863d80b6fb6",
+  "essay_skip_rewrite": "38d209182fd6e03a808f25f52f6b3f30e25074782c984ca79c9030a7506f2028",
+  "essay_skipped": "be168f28ba3b7e44b507e076434363eac5d25b84752da0979fab572294cce9af",
+  "essay_supporting_texts": "284247f75176a73283ece11d20d21dc967460d7094a301abf75a6aac733da29e",
+  "essay_the_case": "f49fccea8d964c1d742be1ddc878a0adf8120fb67b6b0841f1c49f312934d622",
+  "essay_title": "a9328f75b055cff2585692b490da4c10949681f8df012d8683828113346659f1",
+  "essay_title_ap": "f03afac7657110bb807deac4c7b0a146319c4731eb30b45d52ad7daa3a30c7d6",
+  "essay_title_enem": "d3b5c42028536bac035e7eb22c383b7ab6838220f8b13b1aa0223456db911503",
+  "essay_too_short": "3d8aefb08bd62a6e6ce4857ff61e8930043a71ee8c982c7e27ea39092285dded",
+  "essay_too_short_detail": "a3940d32f70347efefa58f7ad1c85cc5f0bb3058fe1a89713de791d952c28d3b",
+  "essay_what_to_rewrite": "43be399b6f5f7a630da0b2c788fe03edad90210076a9d1b4bed7e38d9b9b67d1",
+  "essay_words": "c8c344619014c086de826917c12701f45685f0c6dcf380edfa9483fa1825190c",
+  "essay_your_answer": "e186183a2b983253026ecfcc29923515a92a825f9a57eca5b904db3378f9926c",
+  "essay_your_essay": "e4ed6b32b6e7724ab7024a55c8f2c285455a9e59d77b53749e52068d178bd376"
+}
+-->
+<resources>
+    <string name="essay_your_essay">Kompozisyonun</string>
+    <string name="essay_your_answer">Cevabın</string>
+    <!-- A score's range, such as "610–680". -->
+    <string name="essay_range">%1$s–%2$s</string>
+    <!-- %1$s is the essay's highest possible score. -->
+    <string name="essay_scale">Tahmini puan, 0 ile %1$s arasında</string>
+    <!-- A criterion's score, such as "160 of 200". -->
+    <string name="essay_score_of">%1$s / %2$s</string>
+    <string name="essay_criterion_formal_writing">Resmî dil kullanımı</string>
+    <!-- Enem essay competence 2: addressing the set theme and drawing on outside knowledge. -->
+    <string name="essay_criterion_topic">Konu ve kaynak kullanımı</string>
+    <string name="essay_criterion_argument">Görüşü savunma</string>
+    <string name="essay_criterion_cohesion">Bağdaşıklık</string>
+    <string name="essay_criterion_intervention">Çözüm önerisi</string>
+    <string name="essay_criterion_addressing">Hitap ve taraflar</string>
+    <string name="essay_criterion_facts">Olaylar</string>
+    <string name="essay_criterion_legal_basis">Hukuki dayanak</string>
+    <string name="essay_criterion_requests">Talepler</string>
+    <!-- OAB legal brief criterion: the brief's closing (claim value, place, date, lawyer and OAB number) and its form. -->
+    <string name="essay_criterion_closing">Sonuç ve biçim</string>
+    <string name="essay_next_step">Sonraki adım</string>
+    <string name="essay_what_to_rewrite">Yeniden yazılacak kısım</string>
+    <string name="essay_for_example">Örneğin: %1$s</string>
+    <string name="essay_nothing_left">Üzerinde çalışılacak bir şey kalmadı</string>
+    <string name="essay_full_marks">Bu tahmine göre her ölçütten tam puan aldın.</string>
+    <!-- The header of a writing block graded by the item's own criteria, or by the OAB exam's. -->
+    <string name="essay_title">Yazma çalışması</string>
+    <string name="essay_title_ap">Açık uçlu yanıt · AP puanlama yönergeleri</string>
+    <string name="essay_title_enem">Kompozisyon · ENEM değerlendirme ölçütleri</string>
+    <string name="essay_supporting_texts">Destekleyici metinler</string>
+    <!-- The texts an ENEM essay prompt gives to motivate the essay. -->
+    <string name="essay_motivating_texts">Yönlendirici metinler</string>
+    <!-- The legal case an OAB written exam answer is about. -->
+    <string name="essay_the_case">Olay</string>
+    <!-- The grade of the learner's last essay draft. -->
+    <string name="essay_last_grade">Son notun</string>
+    <string name="essay_rewrite_label">Geliştirmen gereken yerleri yeniden yaz</string>
+    <plurals name="essay_words">
+        <item quantity="one">%d kelime</item>
+        <item quantity="other">%d kelime</item>
+    </plurals>
+    <!-- On an essay the learner skipped, opened again from a link. -->
+    <string name="essay_skipped">Bu kompozisyonu atladın.</string>
+    <string name="essay_back_to_today">Bugün’e dön</string>
+    <string name="essay_send_failed">İşlem tamamlanamadı. Metnin hâlâ burada. Birazdan tekrar dene.</string>
+    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
+    <string name="essay_daily_limit_reached">Günlük süre sınırına ulaştın. Yazdıkların burada kalacak.</string>
+    <string name="essay_limit_reached">Bugünkü kompozisyon değerlendirme haklarını kullandın. Metnin burada kalacak; yarın gönder.</string>
+    <string name="essay_grading">Kompozisyonunu her ölçüte göre inceliyoruz. Bu işlem 30 saniyeye kadar sürebilir.</string>
+    <string name="essay_grading_slow">Değerlendirmeye devam ediyoruz. Normalden uzun sürüyor.</string>
+    <string name="essay_skip_rewrite">Yeniden yazmayı atla</string>
+    <string name="essay_grading_button">Değerlendiriyoruz…</string>
+    <string name="essay_grade_rewrite">Yeni taslağı değerlendir</string>
+    <string name="essay_send">Değerlendirmeye gönder</string>
+    <string name="essay_leave_title">Şimdilik çıkmak ister misin?</string>
+    <string name="essay_leave_description">Metnin bu cihazda saklanır, geri döndüğünde seni burada bekler.</string>
+    <string name="essay_keep_writing">Yazmaya devam et</string>
+    <!-- %1$s is the criterion to work on next, such as "Argument". -->
+    <string name="essay_next_step_named">Sonraki adım: %1$s</string>
+    <string name="essay_see_grade">Notunu gör</string>
+    <string name="essay_too_short">Not verilemeyecek kadar kısa</string>
+    <string name="essay_too_short_detail">Kompozisyonun tamamını yaz, sonra yeniden gönder.</string>
+    <string name="essay_rewrite">Yeniden yaz</string>
+    <string name="essay_finish_failed">İşlem tamamlanamadı. Birazdan tekrar dene.</string>
+    <string name="essay_see_comments">Her ölçütle ilgili yorumları gör</string>
+    <string name="essay_comments">Yorumlar</string>
+    <string name="essay_proposal_elements">Önerinin beş unsuru</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: who carries it out. -->
+    <string name="essay_element_agent">Kim yapacak</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: the action itself. -->
+    <string name="essay_element_action">Ne yapacak</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: how it's carried out. -->
+    <string name="essay_element_means">Hangi yolla</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: its purpose. -->
+    <string name="essay_element_effect">Ne amaçla</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: a detail of one of the others. -->
+    <string name="essay_element_detail">Bir ayrıntı</string>
+    <!-- Whether an element of the proposal is in the essay. -->
+    <string name="essay_element_present">Var</string>
+    <!-- Whether an element of the proposal is in the essay. -->
+    <string name="essay_element_missing">Eksik</string>
+</resources>

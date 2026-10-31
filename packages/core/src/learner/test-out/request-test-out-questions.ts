@@ -1,0 +1,67 @@
+import "server-only";
+import { getRequestPlatform } from "../../analytics/request-platform";
+import { type AnalyticsPlatform } from "../../analytics/shared-properties";
+import { claimAssist } from "../../entitlements/claim-usage";
+import { type RefusedUsage } from "../../entitlements/contract";
+import { findOwnedGoal } from "../_utils/owned-goal";
+import { loadChapterTestOut } from "./get-chapter-test-out";
+
+/** On start, the caller must generate questionsPerSkill for each skillId using the supplied analytics. */
+export type TestOutQuestionsRequest =
+  | { status: "ready" }
+  | {
+      analytics: { distinctId: string; goalId: string; platform: AnalyticsPlatform | null };
+      /** How many questions each of those skills needs: several in a chapter of few skills. */
+      questionsPerSkill: number;
+      skillIds: string[];
+      status: "start";
+    }
+  | { decision: RefusedUsage; status: "refused" }
+  | { status: "notFound" }
+  | { status: "nothingToSkip" }
+  | { status: "plusRequired" }
+  | { status: "unauthorized" };
+
+/** Learner action only; claims AI help before requesting missing questions and writes nothing for complete or Plus-gated tests. */
+export async function requestTestOutQuestions({
+  chapterId,
+  goalId,
+}: {
+  chapterId: string;
+  goalId: string;
+}): Promise<TestOutQuestionsRequest> {
+  const owned = await findOwnedGoal(goalId);
+
+  if (owned.status !== "ready") {
+    return owned;
+  }
+
+  const result = await loadChapterTestOut({ chapterId, goal: owned.goal, userId: owned.userId });
+
+  if (result.status !== "ready") {
+    return result;
+  }
+
+  const { testOut } = result;
+
+  if (testOut.needsItems.length === 0) {
+    return { status: "ready" };
+  }
+
+  const decision = await claimAssist();
+
+  if (decision.status === "unauthorized") {
+    return decision;
+  }
+
+  if (decision.status !== "allowed") {
+    return { decision, status: "refused" };
+  }
+
+  return {
+    analytics: { distinctId: owned.userId, goalId, platform: await getRequestPlatform() },
+    questionsPerSkill: testOut.questionsPerSkill,
+    skillIds: testOut.needsItems,
+    status: "start",
+  };
+}

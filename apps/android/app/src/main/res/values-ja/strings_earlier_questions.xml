@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "earlier_questions_description": "a33874e97cf4bd76934f2a3a18ba1eb55b5bd1340609fd1472ba6be952d38cd2",
+  "earlier_questions_empty": "35b3f49149df2569e3be6d58ea087e03524ead45d7505c081a0b81e601d223d3",
+  "earlier_questions_from": "dfdbbfaabe7dbc284f7d646ee0a11a80670e47399af9aef8b2728fd1014ab85c",
+  "earlier_questions_from_course": "6560f0fb9a319a5b385ec5f74192b96181a51a9436109b37751dd76b9e3bddf4",
+  "earlier_questions_from_course_lesson": "294119a677ab981fd872fcf1f3e01be0ac72ce72d70e4ce598850accf53e1dfb",
+  "earlier_questions_from_lesson": "4a5f272ca923d22152aac572b86e0fe4d38731cf3510740a4d96fc785ed16c9f",
+  "earlier_questions_no_answer": "89b75e4ef3b435a6f58ffe04bfea6c840a62b9a9ca8ddcecb41a5835777f1351",
+  "earlier_questions_older": "5962f278d5db2d6a91fff7f800127ffcc7054a58289d27b39df36d17f1e56811",
+  "earlier_questions_older_failed": "8dfbdd919d43e93b8ea81507655c880146e0cfd697ef20734b64a108fe090b8c",
+  "earlier_questions_title": "bdc0f9ec3c7be44a5ddca6e0f7c3a1c8cb8bba04cf54ff5656e118787ccd049f"
+}
+-->
+<resources>
+    <!-- Title of the page that keeps the questions the learner asked about lessons before every course was rewritten. -->
+    <string name="earlier_questions_title">以前の質問</string>
+    <!-- Keep "before we rewrote them": every course was rewritten, which is why these questions moved here. -->
+    <string name="earlier_questions_description">コースをすべて書き直す前にした質問です。レッスンの内容が変わったため、ここで読み返せるように残しています。</string>
+    <string name="earlier_questions_empty">以前の質問はありません。</string>
+    <!-- Above a question about a lesson that no longer exists. %1$s is the course's title as the learner saw it, %2$s the lesson's. -->
+    <string name="earlier_questions_from_course_lesson">改訂前の%1$s · %2$s</string>
+    <!-- Above a question about a lesson that no longer exists. %1$s is the course's title as the learner saw it. -->
+    <string name="earlier_questions_from_course">改訂前の%1$s</string>
+    <!-- Above a question about a lesson that no longer exists, when the course's title wasn't saved. %1$s is the lesson's title. -->
+    <string name="earlier_questions_from_lesson">改訂前のこのコース · %1$s</string>
+    <!-- Above a question about a lesson that no longer exists, when neither title was saved. -->
+    <string name="earlier_questions_from">改訂前のこのコース</string>
+    <string name="earlier_questions_no_answer">回答は保存されていません。</string>
+    <!-- Loads the next page of the learner's earlier questions. -->
+    <string name="earlier_questions_older">さらに前の質問</string>
+    <string name="earlier_questions_older_failed">さらに前の質問を読み込めませんでした。もう一度試してください。</string>
+</resources>

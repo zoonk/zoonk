@@ -19,6 +19,7 @@ const TARGET = `<resources>
   <string name="greeting">¡Hola, %1$s!</string>
   <plurals name="lessons">
     <item quantity="one">%1$d lección</item>
+    <item quantity="many">%1$d lecciones</item>
     <item quantity="other">%1$d lecciones</item>
   </plurals>
   <string-array name="levels"><item>Principiante</item><item>Avanzado</item></string-array>
@@ -35,7 +36,7 @@ function sourceMessages(source: string) {
 }
 
 function translatedXml({ source = SOURCE, target = TARGET } = {}) {
-  const codec = createTrackedAndroidXmlCodec({ readSource: () => source });
+  const codec = createTrackedAndroidXmlCodec({ readSources: () => [source] });
 
   return codec.encode(createAndroidXmlCodec().decode(target), {
     locale: "es",
@@ -44,7 +45,7 @@ function translatedXml({ source = SOURCE, target = TARGET } = {}) {
 }
 
 function readTranslations({ source = SOURCE, target = translatedXml(), locale = "es" } = {}) {
-  return createTrackedAndroidXmlCodec({ readSource: () => source }).decode(target, {
+  return createTrackedAndroidXmlCodec({ readSources: () => [source] }).decode(target, {
     ...CONTEXT,
     locale,
   });
@@ -103,7 +104,7 @@ test("edited targets and targets copied into a different locale cannot reuse fin
 });
 
 test("partial writes do not certify untranslated messages", () => {
-  const codec = createTrackedAndroidXmlCodec({ readSource: () => SOURCE });
+  const codec = createTrackedAndroidXmlCodec({ readSources: () => [SOURCE] });
   const pending = codec.decode(TARGET, CONTEXT);
 
   const updated = pending.map((message) =>
@@ -125,7 +126,7 @@ test("partial writes do not certify untranslated messages", () => {
 });
 
 test("partial arrays cannot shift translated items onto a different source index", () => {
-  const codec = createTrackedAndroidXmlCodec({ readSource: () => SOURCE });
+  const codec = createTrackedAndroidXmlCodec({ readSources: () => [SOURCE] });
 
   const messages = codec
     .decode(TARGET, CONTEXT)
@@ -166,7 +167,7 @@ test("removed source IDs remain visible to Eloqnt's superfluous-key rule", () =>
 });
 
 test("source resources are never treated as untranslated or stamped", () => {
-  const codec = createTrackedAndroidXmlCodec({ readSource: () => SOURCE });
+  const codec = createTrackedAndroidXmlCodec({ readSources: () => [SOURCE] });
   const messages = codec.decode(SOURCE, { locale: "en", sourceLocale: "en" });
   assert.ok(messages.every((message) => message.message));
   assert.ok(!messages.some((message) => message.id === "brand"));
@@ -179,6 +180,21 @@ test("source resources are never treated as untranslated or stamped", () => {
 
 test("non-translatable resources stay in the default locale, not in generated targets", () => {
   assert.doesNotMatch(translatedXml(), /name="brand"/u);
+});
+
+test("a non-translatable resource's comment stays with it in the default locale", () => {
+  const source = SOURCE.replace(
+    '  <string name="brand"',
+    '  <!-- The product\'s name, never translated. -->\n  <string name="brand"',
+  ).replace(
+    '  <string name="title">',
+    '  <!-- The home screen\'s title. -->\n  <string name="title">',
+  );
+
+  const xml = translatedXml({ source });
+
+  assert.doesNotMatch(xml, /never translated/u);
+  assert.match(xml, /The home screen's title/u);
 });
 
 test("source-template filtering preserves XML escaping, CDATA, XLIFF, and formatting attributes", () => {
@@ -197,5 +213,65 @@ test("source-template filtering preserves XML escaping, CDATA, XLIFF, and format
     createAndroidXmlCodec()
       .decode(source)
       .map((message) => message.message),
+  );
+});
+
+test("each catalog's target is written from its own source and checked against it", () => {
+  const today = `<resources>
+  <!-- Today -->
+  <string name="today_title">Today</string>
+</resources>`;
+
+  const codec = createTrackedAndroidXmlCodec({ readSources: () => [SOURCE, today] });
+
+  const messages = createAndroidXmlCodec()
+    .decode(today)
+    .map((message) => ({ ...message, message: "Hoy" }));
+
+  const target = codec.encode(messages, {
+    locale: "es",
+    sourceMessagesById: sourceMessages(today),
+  });
+
+  assert.match(target, /<!-- Today -->/u);
+  assert.doesNotMatch(target, /name="(?:brand|title|levels)"/u);
+
+  function decode(sources: string[]) {
+    return createTrackedAndroidXmlCodec({ readSources: () => sources }).decode(target, CONTEXT);
+  }
+
+  assert.equal(decode([SOURCE, today])[0]?.message, "Hoy");
+  assert.equal(decode([SOURCE, today.replace(">Today<", ">Your day<")])[0]?.message, "");
+});
+
+test("a plural gets every category its locale has, and stays fresh", () => {
+  const target = translatedXml({
+    target: TARGET.replace(/\n *<item quantity="many">.*<\/item>/u, ""),
+  });
+
+  assert.match(target, /<item quantity="many">%1\$d lecciones<\/item>/u);
+  assert.ok(readTranslations({ target }).every((message) => message.message !== ""));
+});
+
+test("translators get each resource's comment as its description", () => {
+  const source = `<resources>
+  <!-- A screen's name. -->
+  <string name="title">Home</string>
+  <string name="greeting">Hello, %1$s!</string>
+  <!-- Skill levels. -->
+  <string-array name = 'levels'><item>Beginner</item><item>Advanced</item></string-array>
+</resources>`;
+
+  assert.deepEqual(
+    readTranslations({ locale: "en", source, target: source }).map((message) => [
+      message.id,
+      message.description,
+    ]),
+    [
+      ["title", ["A screen's name."]],
+      ["greeting", []],
+      ["levels.0", ["Skill levels."]],
+      ["levels.1", ["Skill levels."]],
+    ],
   );
 });

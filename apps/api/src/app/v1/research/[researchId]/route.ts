@@ -1,0 +1,26 @@
+import { errors } from "@/lib/api-errors";
+import { withApiErrorBoundary } from "@/lib/api-handler";
+import { researchPathParamsSchema } from "@/lib/openapi/schemas/research-sources";
+import { readPathParams } from "@/lib/request-input";
+import { readClientRunStatus } from "@/workflows/_shared/run-activity";
+import { researchResultSchema } from "@/workflows/research/research-result";
+import { NextResponse } from "next/server";
+import { getRun } from "workflow/api";
+
+async function getResearch(_request: Request, context: RouteContext<"/v1/research/[researchId]">) {
+  const parsed = await readPathParams(context, researchPathParamsSchema);
+
+  const run = getRun(parsed.researchId);
+  const status = await readClientRunStatus(run.runId);
+
+  if (!status) {
+    return errors.notFound("Research not found");
+  }
+
+  const result =
+    status === "completed" ? researchResultSchema.safeParse(await run.returnValue).data : null;
+
+  return NextResponse.json({ id: run.runId, result: result ?? null, status });
+}
+
+export const GET = withApiErrorBoundary(getResearch);

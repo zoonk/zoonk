@@ -1,20 +1,67 @@
 import { stripe } from "@better-auth/stripe";
 import { PAID_PLANS } from "@zoonk/utils/subscription";
+import { z } from "zod";
+import { getCheckoutSessionParams } from "./checkout-session-params";
 import { stripeClient } from "./client";
+import { sendPlusPurchaseConfirmation } from "./purchase-confirmation";
+import { reportSubscriptionChange } from "./subscription-events";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? "";
 
-type StripePluginOptions = { createCustomerOnSignUp?: boolean };
+const upgradeBodySchema = z.object({
+  annual: z.boolean().optional(),
+  locale: z.string().optional(),
+  metadata: z.object({ timeZone: z.string().optional() }).optional(),
+});
 
-export function stripePlugin({ createCustomerOnSignUp = true }: StripePluginOptions = {}) {
+type ReportedSubscription = { plan: string; referenceId: string };
+
+function reportChange(change: "canceled" | "started", subscription: ReportedSubscription) {
+  return reportSubscriptionChange({
+    change,
+    plan: subscription.plan,
+    referenceId: subscription.referenceId,
+  });
+}
+
+export function stripePlugin() {
   return stripe({
-    createCustomerOnSignUp,
+    createCustomerOnSignUp: false,
     organization: { enabled: true },
     stripeClient,
     stripeWebhookSecret: webhookSecret,
     subscription: {
       enabled: true,
-      getCheckoutSessionParams: () => ({ params: { allow_promotion_codes: true } }),
+      getCheckoutSessionParams: async (_data, _request, ctx) => {
+        const { annual, locale, metadata } = upgradeBodySchema.parse(ctx.body);
+
+        return {
+          params: await getCheckoutSessionParams({
+            annual: annual === true,
+            locale,
+            timeZone: metadata?.timeZone,
+          }),
+        };
+      },
+      // Canceling keeps Plus until the period ends, so the decision counts when it becomes
+      // pending; a subscription ended right away (or by failed payments) was never pending.
+      onSubscriptionCancel: ({ subscription }) => reportChange("canceled", subscription),
+      // Stripe confirmed a checkout; the learner may never come back to the page it returns to.
+      // Better Auth logs a failure here, and Stripe isn't asked to retry the webhook.
+      onSubscriptionComplete: async ({ stripeSubscription, subscription }) => {
+        await Promise.all([
+          reportChange("started", subscription),
+          sendPlusPurchaseConfirmation({
+            referenceId: subscription.referenceId,
+            stripeSubscription,
+          }),
+        ]);
+      },
+      onSubscriptionDeleted: async ({ subscription }) => {
+        if (!subscription.cancelAtPeriodEnd && !subscription.cancelAt) {
+          await reportChange("canceled", subscription);
+        }
+      },
       plans: PAID_PLANS.map((plan) => ({
         annualDiscountLookupKey: plan.annualLookupKey,
         lookupKey: plan.lookupKey,

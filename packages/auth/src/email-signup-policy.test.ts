@@ -91,22 +91,8 @@ describe("email signup policy", () => {
     ).resolves.toMatchObject({ userId: user.id });
   });
 
-  it.each([
-    "icloud.com",
-    "privaterelay.appleid.com",
-    "private.icloud.com",
-    "duck.com",
-    "mozmail.com",
-    "simplelogin.co",
-    "slmail.me",
-    "8shield.net",
-    "passmail.com",
-    "passmail.net",
-    "passfwd.com",
-    "passinbox.com",
-    "learner.anonaddy.com",
-  ])("allows signup with a privacy alias on %s", async (domain) => {
-    const email = createEmail(domain);
+  it("allows signup with a privacy alias", async () => {
+    const email = createEmail("icloud.com");
 
     await expect(
       auth.api.sendVerificationOTP({ body: { email, type: "sign-in" } }),

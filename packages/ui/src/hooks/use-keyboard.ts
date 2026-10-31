@@ -1,4 +1,6 @@
-import { useEffect, useEffectEvent } from "react";
+import { use, useEffectEvent, useLayoutEffect, useRef } from "react";
+import { PopupShortcutLayer } from "./_utils/popup-shortcut-layer";
+import { getNumberKeyIndex, isScreenShortcut } from "./_utils/screen-shortcut";
 
 type KeyboardModifiers = {
   altKey?: boolean;
@@ -9,17 +11,9 @@ type KeyboardModifiers = {
 
 type ModifierMode = "all" | "any" | "none";
 
-function isEditableTarget(target: EventTarget | null): boolean {
-  if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
-    return true;
-  }
-
-  if (target instanceof HTMLElement && target.isContentEditable) {
-    return true;
-  }
-
-  return false;
-}
+/** `void` means handled, `false` means not handled (`preventDefault` is skipped). */
+// oxlint-disable-next-line @typescript-eslint/no-invalid-void-type -- `void` is the correct return type here; `undefined` breaks contextual typing for callbacks like `() => toggle()`
+type ShortcutResult = false | void;
 
 function hasAnyModifier(event: KeyboardEvent): boolean {
   return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
@@ -73,74 +67,38 @@ function checkModifiers({
   return checks.every(Boolean);
 }
 
-/**
- * A custom hook that executes a callback when a keyboard shortcut is pressed.
- *
- * @param key The shortcut key to listen for.
- * @param callback The function to call when the shortcut is pressed.
- * @param options Optional configuration for modifier keys and matching mode.
- *
- * Callbacks return `void` (handled — `preventDefault` is called) or
- * `false` (not handled — `preventDefault` is skipped).
- *
- * @example
- * // Cmd+K OR Ctrl+K (cross-platform toggle)
- * useKeyboardCallback("k", () => toggle(), {
- *   mode: "any",
- *   modifiers: { ctrlKey: true, metaKey: true },
- * });
- *
- * @example
- * // Just Enter, no modifiers allowed
- * useKeyboardCallback("Enter", () => submit(), { mode: "none" });
- *
- * @example
- * // Conditionally handle — return false to skip preventDefault
- * useKeyboardCallback("ArrowRight", () => {
- *   if (!canNavigate) return false;
- *   goNext();
- * }, { mode: "none" });
- */
 export function useKeyboardCallback(
   key: string,
-  // oxlint-disable-next-line @typescript-eslint/no-invalid-void-type -- `void` is the correct return type here; `undefined` breaks contextual typing for callbacks like `() => toggle()`
-  callback: () => false | void,
+  callback: (event: KeyboardEvent) => ShortcutResult,
   options: {
-    /**
-     * Skip the callback when the event target is an input, textarea, or contenteditable element.
-     */
-    ignoreEditable?: boolean;
-    /**
-     * How to match modifiers:
-     * - "all": ALL specified modifiers must be pressed (AND) — default
-     * - "any": ANY specified modifier triggers (OR)
-     * - "none": NO modifier keys can be pressed
-     */
+    /** `all` (the default) needs every modifier, `any` one of them, `none` no modifier at all. */
     mode?: ModifierMode;
-    /**
-     * Modifiers to check. If undefined/empty, modifiers are ignored (just the key matters).
-     */
+    /** With none given, only the key matters. */
     modifiers?: KeyboardModifiers;
+    /** Leaves the key to the control in focus and acts once however long the key is held. */
+    screen?: boolean;
   } = {},
 ) {
-  const { ignoreEditable = false, mode = "all", modifiers } = options;
+  const { mode = "all", modifiers, screen = false } = options;
+  const inPopup = use(PopupShortcutLayer);
   const { altKey, ctrlKey, metaKey, shiftKey } = modifiers ?? {};
 
   const onKeyPress = useEffectEvent((event: KeyboardEvent) => {
-    const handled = callback();
+    const handled = callback(event);
 
     if (handled !== false) {
       event.preventDefault();
     }
   });
 
-  useEffect(() => {
+  // Before paint, so a key pressed as soon as its screen shows already works.
+  useLayoutEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key !== key) {
         return;
       }
 
-      if (ignoreEditable && isEditableTarget(event.target)) {
+      if (screen && !isScreenShortcut(event, { inPopup })) {
         return;
       }
 
@@ -153,5 +111,92 @@ export function useKeyboardCallback(
 
     globalThis.addEventListener("keydown", handleKeyDown);
     return () => globalThis.removeEventListener("keydown", handleKeyDown);
-  }, [key, mode, ignoreEditable, altKey, ctrlKey, metaKey, shiftKey]);
+  }, [key, mode, screen, inPopup, altKey, ctrlKey, metaKey, shiftKey]);
+}
+
+/** Return `false` when the action can't run, so Enter keeps its default. */
+export function useEnterKey(
+  callback: () => ShortcutResult,
+  { enabled = true }: { enabled?: boolean } = {},
+) {
+  useKeyboardCallback("Enter", () => (enabled ? callback() : false), {
+    mode: "none",
+    screen: true,
+  });
+}
+
+export function useEnterClick<Target extends HTMLElement>({
+  enabled = true,
+}: { enabled?: boolean } = {}) {
+  const ref = useRef<Target>(null);
+
+  useEnterKey(
+    () => {
+      if (!ref.current) {
+        return false;
+      }
+
+      ref.current.click();
+    },
+    { enabled },
+  );
+
+  return ref;
+}
+
+/** Only for a full-screen task whose leaving loses nothing. */
+export function useEscapeClick<Target extends HTMLElement>({
+  enabled = true,
+}: { enabled?: boolean } = {}) {
+  const ref = useRef<Target>(null);
+
+  useKeyboardCallback(
+    "Escape",
+    () => {
+      if (!enabled || !ref.current) {
+        return false;
+      }
+
+      ref.current.click();
+    },
+    { mode: "none", screen: true },
+  );
+
+  return ref;
+}
+
+/** Return `false` from `onPick` for a key that picked nothing. */
+export function useNumberKeys({
+  count,
+  enabled = true,
+  onPick,
+}: {
+  count: number;
+  enabled?: boolean;
+  onPick: (index: number) => ShortcutResult;
+}) {
+  const pick = useEffectEvent(onPick);
+  const inPopup = use(PopupShortcutLayer);
+
+  // Before paint, like `useKeyboardCallback`: a question's keys work once it shows.
+  useLayoutEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      const index = getNumberKeyIndex(event);
+
+      if (index === null || index >= count || !isScreenShortcut(event, { inPopup })) {
+        return;
+      }
+
+      if (pick(index) !== false) {
+        event.preventDefault();
+      }
+    }
+
+    globalThis.addEventListener("keydown", handleKeyDown);
+    return () => globalThis.removeEventListener("keydown", handleKeyDown);
+  }, [count, enabled, inPopup]);
 }

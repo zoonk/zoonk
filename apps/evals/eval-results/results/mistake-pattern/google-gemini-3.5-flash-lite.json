@@ -1,0 +1,336 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "No part passed the code checks. Kind is none instead of pattern. Mistake numbers [] don't match the labeled [1, 3, 4]. The drill has 0 questions or a malformed one instead of 5 well-formed questions.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No part passed the code checks. Kind is none instead of pattern. Mistake numbers [] don't match the labeled [1, 3, 4]. The drill has 0 questions or a malformed one instead of 5 well-formed questions.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No part passed the code checks. Kind is none instead of pattern. Mistake numbers [] don't match the labeled [1, 3, 4]. The drill has 0 questions or a malformed one instead of 5 well-formed questions.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "A Brazilian learner of English mixes up \"since\" and \"for\" (mistakes 1, 3 and 4), from Portuguese \"desde\" and \"há\". Mistake 2 (missing article) and 6 (a typo) are unrelated, and 5 may be a recognition slip. The rule should explain \"for\" with a length of time and \"since\" with a starting point, and the drill should mix both answers. In Brazilian Portuguese.",
+        "expected": { "kind": "pattern", "mistakeNumbers": [1, 3, 4] },
+        "id": "pt-en-since-for-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "mistakes": [
+            {
+              "answer": "since",
+              "correctAnswer": "for",
+              "format": "fillBlank",
+              "question": "I've worked here ___ two years."
+            },
+            {
+              "answer": "She is nurse.",
+              "correctAnswer": "She is a nurse.",
+              "format": "typed",
+              "question": "Translate: 'Ela é enfermeira.'"
+            },
+            {
+              "answer": "I know her for 2015.",
+              "correctAnswer": "I've known her since 2015.",
+              "format": "typed",
+              "question": "Translate: 'Conheço ela desde 2015.'"
+            },
+            {
+              "answer": "since",
+              "correctAnswer": "for",
+              "format": "multipleChoice",
+              "question": "They have been married ___ ten years."
+            },
+            {
+              "answer": "The child are playing outside",
+              "correctAnswer": "The children are playing outside.",
+              "format": "spoken",
+              "question": "Say: 'The children are playing outside.'"
+            },
+            {
+              "answer": "Thank you for the halp.",
+              "correctAnswer": "Thank you for the help.",
+              "format": "typed",
+              "question": "Translate: 'Obrigado pela ajuda.'"
+            }
+          ],
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "rule",
+          "reasoning": "Correctly identifies all four mistakes as typos. The short title and single reassuring rule line describe spelling slips rather than inventing a grammatical pattern or knowledge gap.",
+          "score": 10,
+          "label": "Right pattern, true rule",
+          "weight": 40
+        },
+        {
+          "categoryId": "drill",
+          "reasoning": "Both contrast and drill are empty, exactly as required for typos.",
+          "score": 10,
+          "label": "Contrast and drill",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The title and rule use natural Brazilian Portuguese. The wording is plain, kind, and free of blame or jargon.",
+          "score": 10,
+          "label": "Language and tone",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1459,
+          "outputTokens": 286,
+          "reasoningTokens": 33
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "All four mistakes are spelling slips in words the learner clearly knows (\"expensve\", \"hopsital\", \"staion\", \"se\" for \"see\"). The kind is typos with a kind line saying so, and no drill or contrast. In Brazilian Portuguese.",
+        "expected": { "kind": "typos", "mistakeNumbers": [1, 2, 3, 4] },
+        "id": "pt-en-typos-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "mistakes": [
+            {
+              "answer": "The rent is expensve.",
+              "correctAnswer": "The rent is expensive.",
+              "format": "typed",
+              "question": "Translate: 'O aluguel é caro.'"
+            },
+            {
+              "answer": "I work at the hopsital.",
+              "correctAnswer": "I work at the hospital.",
+              "format": "typed",
+              "question": "Translate: 'Eu trabalho no hospital.'"
+            },
+            {
+              "answer": "Where is the staion?",
+              "correctAnswer": "Where is the station?",
+              "format": "typed",
+              "question": "Translate: 'Onde fica a estação?'"
+            },
+            {
+              "answer": "se",
+              "correctAnswer": "see",
+              "format": "fillBlank",
+              "question": "Can I ___ the apartment on Saturday?"
+            }
+          ],
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "rule",
+          "reasoning": "Correctly identifies no shared pattern across the unrelated mistakes and leaves the title and rule empty, as required.",
+          "score": 10,
+          "label": "Right pattern, true rule",
+          "weight": 40
+        },
+        {
+          "categoryId": "drill",
+          "reasoning": "Both contrast and drill are empty, which explicitly earns 10 for kind none.",
+          "score": 10,
+          "label": "Contrast and drill",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "No learner-facing text is required for this no-pattern result. There are no wrong-language fields or tone issues.",
+          "score": 10,
+          "label": "Language and tone",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1402,
+          "outputTokens": 241,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "The mistakes have different causes: a word meaning (pharmacy), the third-person \"-s\", a contraction that may be a recognition slip, and a different room word. No pattern: kind none, empty title and rule, no drill.",
+        "expected": { "kind": "none", "mistakeNumbers": [] },
+        "id": "pt-en-unrelated-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "mistakes": [
+            {
+              "answer": "fazenda",
+              "correctAnswer": "farmácia",
+              "format": "multipleChoice",
+              "question": "What does 'pharmacy' mean?"
+            },
+            {
+              "answer": "go",
+              "correctAnswer": "goes",
+              "format": "fillBlank",
+              "question": "She ___ to work by bus."
+            },
+            {
+              "answer": "I like a table for two",
+              "correctAnswer": "I'd like a table for two.",
+              "format": "spoken",
+              "question": "Say: 'I'd like a table for two.'"
+            },
+            {
+              "answer": "He is in the kitchen.",
+              "correctAnswer": "He is in the bedroom.",
+              "format": "typed",
+              "question": "Translate: 'Ele está no quarto.'"
+            }
+          ],
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "rule",
+          "reasoning": "The broad ser/estar pattern is correctly recognized, and the unrelated plural mistake is excluded. However, the permanent/temporary distinction is false as a general rule, triggering the maximum score of 4. The explanation also omits the English 'to be' connection and fails to include mistake 5.",
+          "score": 4,
+          "label": "Right pattern, true rule",
+          "weight": 40
+        },
+        {
+          "categoryId": "drill",
+          "reasoning": "There are five new sentences, mixed answers, and explanatory feedback. However, 'El libro ___ muy interesante' permits both options in Mexican Spanish, triggering the maximum score of 5. Some feedback also reinforces the inaccurate permanence explanation. The contrasts illustrate states and occupations but not location.",
+          "score": 5,
+          "label": "Contrast and drill",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The title, rule, labels, and feedback are in plain US-compatible English; examples, drill sentences, and options are in Spanish suitable for Mexican Spanish. The tone is neutral and nonjudgmental, with no language-switching or instruction-following issue.",
+          "score": 10,
+          "label": "Language and tone",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1862,
+          "outputTokens": 657,
+          "reasoningTokens": 140
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The rule incorrectly frames ser versus estar as permanent versus temporary: occupations need not be permanent, and estar also describes lasting states and locations. The drill also has an ambiguous question: both 'El libro es muy interesante' and 'El libro está muy interesante' are natural in Mexican Spanish, so marking only 'es' correct is misleading.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The selected mistakes omit mistake 5, which directly demonstrates the same ser/estar confusion. The explanation does not connect the confusion to English using one verb, 'to be.' The title and labels inconsistently compare the infinitive 'ser' with the conjugated form 'está,' even above an example using 'estoy.'",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use clearly paired contrasts for what someone or something is versus its state or location. Include a location example in the contrast section so all parts of the corrected rule are illustrated before the drill.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A US English speaker learning Mexican Spanish mixes up \"ser\" and \"estar\" (mistakes 1, 2, 3 and 5): English has one verb \"to be\". Mistake 4 (a missing plural) is unrelated. The rule should say \"estar\" is for states and location, \"ser\" for what something is (like a job), with a drill that mixes \"es\" and \"está\" forms. In US English.",
+        "expected": { "kind": "pattern", "mistakeNumbers": [1, 2, 3, 5] },
+        "id": "en-es-ser-estar-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "mistakes": [
+            {
+              "answer": "es",
+              "correctAnswer": "está",
+              "format": "fillBlank",
+              "question": "La tienda ___ cerrada hoy."
+            },
+            {
+              "answer": "Soy cansado.",
+              "correctAnswer": "Estoy cansado.",
+              "format": "typed",
+              "question": "Translate: 'I'm tired.'"
+            },
+            {
+              "answer": "es",
+              "correctAnswer": "está",
+              "format": "multipleChoice",
+              "question": "¿Dónde ___ el museo?"
+            },
+            {
+              "answer": "Tengo dos hermano.",
+              "correctAnswer": "Tengo dos hermanos.",
+              "format": "typed",
+              "question": "Translate: 'I have two brothers.'"
+            },
+            {
+              "answer": "Mi hermana está médica",
+              "correctAnswer": "Mi hermana es médica.",
+              "format": "spoken",
+              "question": "Say: 'Mi hermana es médica.'"
+            }
+          ],
+          "targetLanguage": "es"
+        }
+      }
+    }
+  ],
+  "taskId": "mistake-pattern"
+}

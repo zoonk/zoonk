@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_geometry_badge_build_it": "a48d336bb9072cfc20fb73aa7ec593b837bc875a293acedd2b6968676e147d3e",
+  "activities_geometry_badge_drag_corner": "ea26cf7aa102fe555102bb85066b0f03d68b6afe6e5f5a4e0b21c3e9d7b0a948",
+  "activities_geometry_badge_move_curve": "abbe633126f23297eba2e229fb7c284e5f7c023cc9b6f14400747efe0c990d4e",
+  "activities_geometry_badge_turn_it": "050f58a68b678db1f64e14ff75a28739e760fbe8939c9b41aeb5be8ae29439f0",
+  "activities_geometry_board_angles": "f666ca327896b24f77adbe5a38b453e6d4f2c9138dcf9fe0e63ba1bfd47a4cf1",
+  "activities_geometry_board_angles_total": "a5dcb565ec091baea685bcac719114a40b4955fb9250e528963fce9393c633ec",
+  "activities_geometry_board_area": "7342c5bbae6420e7dbf4d0dc388a619c5f54c4a04ca1d565f5109fa3e0d46f8b",
+  "activities_geometry_board_area_total": "a75a21d09b895fb439f693242a565bc047d2e40c6fd78ffd28a1fdcacaa913f3",
+  "activities_geometry_board_back_to_start": "8876029af94f960e4e3cda42363c7b5ef08c9bcb2bf5fda9dfd53c74b982d79a",
+  "activities_geometry_board_corner": "a12985194ff1f0841d444b887b678a137aa985257cef9280e28323802a7b05c9",
+  "activities_geometry_board_corner_value": "596eece64fa0d0d6651498999eb0839cae0dad73f0244c67932308fa3084a841",
+  "activities_geometry_board_fan": "51f12958baedcba80cc26834f7dd1a0b529f2862869ada752f9903bf430c06f0",
+  "activities_geometry_board_full_turn": "cd2f791d4b70a6b7d14ede25f382e0336a069aa90e9b5ef2569211df23a9647c",
+  "activities_geometry_board_move_down": "341ff6d6e1dddfaab20e65592bccc5b35f0e2367708000fecfd90bc83698cc38",
+  "activities_geometry_board_move_left": "f09a2151b49a42c94fc9d7ca18c40fb0b2941e7a4c01f06fe72eb16a60b61822",
+  "activities_geometry_board_move_right": "bcc738b80f468f8ca12b63dc8ed6169d795995598816ef1c02b1ae01f49067f2",
+  "activities_geometry_board_move_up": "c0959baa9ca2c4281f1515b578b97d0d67ede293201c0b276de91254671ad4f9",
+  "activities_geometry_board_moving": "1326f0c4e857697a021b83e7124e11b3031b8ad6f4ac1ac88f29ab1f76c9836d",
+  "activities_geometry_board_shape": "52351d16ce154f23d92bcd8af020b1662ec5a2849ee8b83b1f8669a2ebba103b",
+  "activities_geometry_board_sides": "dc17440655c06d4d28b48bb71f604112b5b8dd45ac49ebff466cb7631685c70a",
+  "activities_geometry_board_sides_total": "b4dee4613429eaf28ffeff2b96091228b334538368d9f885223a3b8949f78215",
+  "activities_geometry_board_squares": "75d3ad3ef77ee74564f88b9693cc474c83140ff35a08fd6c230d9ce686f0bc72",
+  "activities_geometry_board_squares_total": "99b17699a120526b1d18a4841db3e4858b61e3f68af53247a4153b828cfc1398",
+  "activities_geometry_board_straight_line": "3cb4c57b0a5d4cb0e225eb951c6177fdfde26b6519e3fc7afbe53f1e24a01d3b",
+  "activities_geometry_cos": "84fe5281f4300bae26b2a5137211eb7620ceeb4a24c3f9874ba4cdc41bb63887",
+  "activities_geometry_element_boron": "1baf3f3c1d26eba3e8fbb950b273ba72699fc058f00f16e7cc0808c3f731fb8f",
+  "activities_geometry_element_bromine": "48b35a4af5f5f16cdd8f88bbcc9823758cd59819f3d55e549d179313ed2819f0",
+  "activities_geometry_element_carbon": "1031126d366077b8a96e528449c923c5573c483cd617307f0052ba26a0331685",
+  "activities_geometry_element_chlorine": "d1d566870e47c7a86ee42903e698eef59d15b253fc4a73728079fe8f3575f4b6",
+  "activities_geometry_element_fluorine": "ec31cdb20f5ad6789ce1124dbd81c35626071cbfc841c8781a14ed5b561b275d",
+  "activities_geometry_element_hydrogen": "4a697784a5e58cb7b972af14a12d8818353d041d6098d30f098aad33199d65e5",
+  "activities_geometry_element_iodine": "979ba6387516b4ed2305022260c4edfc4848edfcf76563c0c3a0f41f88e9608f",
+  "activities_geometry_element_nitrogen": "8d3ac0b288352b5418929620a72277a725343bd53ab157d896380a569225c740",
+  "activities_geometry_element_oxygen": "ea4c3c07e64e1fc69b41bc9afa57052ae704275f065dd3fd5bb3db3776eb4264",
+  "activities_geometry_element_phosphorus": "30e5352bfa29211fe8159e9f2159a69d8083ad81b8090b34af8015554857febe",
+  "activities_geometry_element_silicon": "9b404ee7024491296007a2703289c66cf9106cbf476aeca9272c97bac53c03d3",
+  "activities_geometry_element_sulfur": "c06bab867bfa687d1b2f3000bec777c06457c896864ceb049d500a4399696171",
+  "activities_geometry_line_before": "22000a82dc7d8e4dd7d72436f03773c717091514160a4d1b2c321a04edd317e0",
+  "activities_geometry_line_description": "9f762bb1824c39c5c3fffaa06bc1534533087bb019eda06adae02abdf7ec1d8c",
+  "activities_geometry_line_goes_down": "21a793ef536f110b7380dc424873c6b8ed0330e42bb6a4820cf0e314976f0bc0",
+  "activities_geometry_line_goes_up": "3851459d6850375fe55f606f2a81c66decc1ed7476a955c1ad30f92f1f6d5012",
+  "activities_geometry_line_hint": "3a30dc4e574c00b1d63066e00b44081badf3b1f251092b75a7021a66d71fdaa2",
+  "activities_geometry_line_move": "cb9277c485e63c1a2b984b6a4abaa5c62231ca237a6d3fca644161633c3adea0",
+  "activities_geometry_line_moved_down": "bf5cb118800fc02e8b7194e03883cbc889a968d38437364eef7f23c83dcb485d",
+  "activities_geometry_line_moved_left": "53007a587b1a176a49db95f9f8ab8249727a0c54560e202eb2427a0963c9bc20",
+  "activities_geometry_line_moved_right": "f22c5dfb7271d7243a97631094e55e091f003c0819248681a851685b15277b68",
+  "activities_geometry_line_moved_up": "a38e461916f7bcdfd108ffee62027d9f61357cf755c2f76cb8723e0929545969",
+  "activities_geometry_line_new_crossing": "a7189640aed78e1f5d1e5397f1428b2790a283308f69c17338d9b1589fd439cb",
+  "activities_geometry_line_stays": "56df3cfbde501bb57f037f173d13bb52f5962d3d415fa101eb4366b958e0f3e8",
+  "activities_geometry_line_unmoved": "8298c2dd1e51fc934688abdd4b223c53efc6a7535515a9cfb95990b8f8246c59",
+  "activities_geometry_line_unmoved_line": "9c43db7dce967f6e4d0790dad2b6f50d9d9e88739a185b4a0f630c53318b34e4",
+  "activities_geometry_line_what_happened": "0f93b95495ee370d0b0b955bb016bdfb7d4d69a1a92d855fb27a9036e79df21b",
+  "activities_geometry_molecule_add": "f70966883856a297d9a4f74fbc3af657dbe77e4a7cd4a2627ec4eae88dc28182",
+  "activities_geometry_molecule_add_bonded": "78923d7df6c0a58aedbe12db85083ea61995ca216b0c5371d3a0a4ba7bcbfab8",
+  "activities_geometry_molecule_added": "80ccf95ccd760fae1c6a776beacc2530533ae3b9259916eeaca8b969f4793b21",
+  "activities_geometry_molecule_added_bonded": "2427838e0e20d852969ca5164961b8462956d21abe65791b4d5f0cd1c1f49f6a",
+  "activities_geometry_molecule_atom": "6ab3fd828d7beabbdc0d0f32ec22be22ae644ba88fdeb76882174ca4620e1618",
+  "activities_geometry_molecule_atom_bonds": "935d782266b3b6b428c72c2e6114e3866f4a0b10a4ff82cabfa11588f4affcaf",
+  "activities_geometry_molecule_bonds": "c8c925753c44fab4203eccd97202b8c93064f7126f1b21bdbb923dfa8fe21e27",
+  "activities_geometry_molecule_bonds_in_all": "5d792d2fd2e1649d40afa7b35fb44dd355a7ab60441570bf3dfae64ca39752ee",
+  "activities_geometry_molecule_build": "ebaff92b9bb8ea20d49a083bcf1fbcd39068c50185b48d0aa1638f865cdf1def",
+  "activities_geometry_molecule_built": "2ce3f57eedf7e44bb182d8a637ef06436aa94b04eb3834301d2113cb80fc54ed",
+  "activities_geometry_molecule_double_bond": "09a8eca7865115393192446794da517fe5020f8e16d4f49cf7ce3302fee7491e",
+  "activities_geometry_molecule_example": "d9fb401c4543b30058780947fd82bf78f155bab7c7ebbdea2c66b949a78ed9ff",
+  "activities_geometry_molecule_full": "59ac69ec70b0d3408da6891072c37422281f40100809812805747958d114d52f",
+  "activities_geometry_molecule_loose": "f992d35b3d6690e715faedd30e91fe1b871e5a4f85bb718a3fd811727df2f882",
+  "activities_geometry_molecule_no_bond": "5cdc3f5de10901594c3f38fd0f8e4323da503c89beae203dcf932be38f601b7b",
+  "activities_geometry_molecule_none_selected": "65bf454ea0f674b866cc27a2ffa78054dcfa1f8fe3067b4294e0f5aee82b69c2",
+  "activities_geometry_molecule_open": "421a9af5fef970243cba9ac056d2f1aec57beb5d52101ac36073f6fb5ea0a4ad",
+  "activities_geometry_molecule_over": "94ce86e657220a39eb4b337f985c02034be1c71edda69573c2d2ecaaa54aa608",
+  "activities_geometry_molecule_remove": "ac2983edc5f88c2449858d091f61465a338952a4309ad19d9548d3615e9c9d20",
+  "activities_geometry_molecule_remove_selected": "6c2fd043a9569578ea6a28a979d9fda89b8874a3bac13a143ab09ddc4718d96c",
+  "activities_geometry_molecule_removed": "27801b0266ae3d60ebbc0bd1a3e51fba130f2e47ffe302f6654f24216a0b779d",
+  "activities_geometry_molecule_select_hint": "20d49086ddebfb1f433997e4f2be6145cbe679057e387040f72c2cb646aca0ff",
+  "activities_geometry_molecule_selected": "866b8e8290a39d35f7fe557cad2eb5f98d32824f43be612c5c33c9b80a73ac67",
+  "activities_geometry_molecule_selected_hint": "697ffa2d41dc168f77ff33f2a2729ca2914460ff86a6e5137318d9d9466f127a",
+  "activities_geometry_molecule_single_bond": "42a4d31867b726515d3bd73858919e4585ed4018946ae4c1c9342fb6ebc97303",
+  "activities_geometry_molecule_start": "a140dd349894802b73d98224838e04845f57342bbee26aa6237b7177fba7b1b0",
+  "activities_geometry_molecule_target": "2e2259ed9102ea0d29813d7d41c697e67a4f056e56cd83f62ea66556e0af6c3c",
+  "activities_geometry_molecule_triple_bond": "676cce6584dbb2d5ba2b2c7449dd2ba9f316bb66562c0de9f14212aa9d7e7e61",
+  "activities_geometry_molecule_undo": "b1764c9b686ccd48b5a401462ce3b26f47239d97435f8b9d982118565726a0fd",
+  "activities_geometry_molecule_undone": "f2093d8979b5b5f7e201b21e1145fafa0b71ce1afe4346074dc6fae3567e0075",
+  "activities_geometry_radians": "02f8d1589d230f851c73c74ad9e94dfb46be9ac4b7314ad84ddd6c26d2409b73",
+  "activities_geometry_sin": "46caca7d188185631a70e1d0972c353c1d826ec97360e60fb89de52542c003d5",
+  "activities_geometry_tan": "f7914ae6083584e3440440218cee809dedd9d98d0b6795e5cd84813701b92ced",
+  "activities_geometry_undefined": "6ffb4ace23dbd0d1f7f5ea7a76d077ad585a0b848517374a7a5e4b71f485b7bd",
+  "activities_geometry_unit_circle_as_turns": "1958f385f6fbb76e8ca788d3f2b1ed584639a7f09092ec59bb0da37174f2f4a6",
+  "activities_geometry_unit_circle_asks": "4dcbc28b4aef47af65096531add389e424f8625563bb2c594df7649dddf4025b",
+  "activities_geometry_unit_circle_description": "121731460ebb59da7aec7da7bffa4ab953b42cfd8a092a46236a910b73931919",
+  "activities_geometry_unit_circle_point": "8ed7d403f2bb3bf344555dd8626c753cfa1c68d15a4ba871d01e6d848f6a2441",
+  "activities_geometry_unit_circle_value": "261ec7d3e4f3f7241276a560f01b4a58d366d9427d97ba90f8626e30eada191c"
+}
+-->
+<resources>
+    <string name="activities_geometry_badge_turn_it">Ruota</string>
+    <!-- The unit circle's draggable point, for TalkBack. -->
+    <string name="activities_geometry_unit_circle_point">Punto sulla circonferenza</string>
+    <!-- The point's angle, then the values at it, like "30°. sin = 0.5, cos = 0.87". -->
+    <string name="activities_geometry_unit_circle_value">%1$s. %2$s</string>
+    <!-- The unit circle, for TalkBack: the angle, then the values at it, like "sin = 0.5, cos = 0.87". -->
+    <string name="activities_geometry_unit_circle_description">Una circonferenza di raggio 1 con un punto a %1$s. L’altezza del punto è il seno e la sua distanza orizzontale dal centro è il coseno: %2$s.</string>
+    <!-- The checked angle on a unit circle, for TalkBack, like "The question asks about 30°, where sin = 0.5." -->
+    <string name="activities_geometry_unit_circle_asks">La domanda riguarda %1$s, dove %2$s = %3$s.</string>
+    <!-- Above the sine and cosine waves. -->
+    <string name="activities_geometry_unit_circle_as_turns">Mentre il punto ruota</string>
+    <!-- Short name of sine ("sen" in Portuguese and Spanish). -->
+    <string name="activities_geometry_sin">sen</string>
+    <!-- Short name of cosine. -->
+    <string name="activities_geometry_cos">cos</string>
+    <!-- Short name of tangent. -->
+    <string name="activities_geometry_tan">tg</string>
+    <!-- A tangent that doesn't exist, at 90°. -->
+    <string name="activities_geometry_undefined">non definita</string>
+    <!-- An angle in radians, like "2.5 rad". -->
+    <string name="activities_geometry_radians">%1$s rad</string>
+    <string name="activities_geometry_badge_drag_corner">Trascina un vertice</string>
+    <!-- A movable corner of a shape, for TalkBack, like "Corner A". -->
+    <string name="activities_geometry_board_corner">Vertice %1$s</string>
+    <!-- Where a corner is, then what the board measures, like "At 1, 3. Angles: 72°, 45°, 63°." -->
+    <string name="activities_geometry_board_corner_value">In %1$s, %2$s. %3$s</string>
+    <!-- TalkBack actions that move a shape's corner one grid step. -->
+    <string name="activities_geometry_board_move_left">Sposta a sinistra</string>
+    <string name="activities_geometry_board_move_right">Sposta a destra</string>
+    <string name="activities_geometry_board_move_up">Sposta in alto</string>
+    <string name="activities_geometry_board_move_down">Sposta in basso</string>
+    <!-- Puts a shape's corners back where they started. -->
+    <string name="activities_geometry_board_back_to_start">Ripristina la posizione iniziale</string>
+    <!-- A geometry board, for TalkBack. -->
+    <plurals name="activities_geometry_board_shape">
+        <item quantity="one">Una figura con %1$d vertice su una griglia.</item>
+        <item quantity="many">Una figura con %1$d vertici su una griglia.</item>
+        <item quantity="other">Una figura con %1$d vertici su una griglia.</item>
+    </plurals>
+    <plurals name="activities_geometry_board_moving">
+        <item quantity="one">%1$d vertice si muove.</item>
+        <item quantity="many">%1$d vertici si muovono.</item>
+        <item quantity="other">%1$d vertici si muovono.</item>
+    </plurals>
+    <!-- A shape's angles, like "72°, 45°, 63°". -->
+    <string name="activities_geometry_board_angles">Angoli: %1$s.</string>
+    <string name="activities_geometry_board_angles_total">Angoli: %1$s, per un totale di %2$s.</string>
+    <!-- A shape's side lengths, like "4, 4.2, 3.2". -->
+    <string name="activities_geometry_board_sides">Lati: %1$s.</string>
+    <string name="activities_geometry_board_sides_total">Lati: %1$s, per un perimetro di %2$s.</string>
+    <string name="activities_geometry_board_area_total">Area: %1$s.</string>
+    <!-- The areas of the squares on a right triangle's two shorter sides, like "9, 16". -->
+    <string name="activities_geometry_board_squares">Aree dei quadrati sui due lati più corti: %1$s.</string>
+    <string name="activities_geometry_board_squares_total">Quadrati sui due lati più corti: %1$s. Quadrato sul lato più lungo: %2$s.</string>
+    <!-- Above a shape's angles drawn side by side. -->
+    <string name="activities_geometry_board_fan">Strappa gli angoli e affiancali</string>
+    <!-- What a triangle's three angles side by side make. -->
+    <string name="activities_geometry_board_straight_line">una linea retta</string>
+    <!-- What a four-sided shape's angles side by side make. -->
+    <string name="activities_geometry_board_full_turn">un giro completo</string>
+    <!-- Before a shape's area, like "Area 6". -->
+    <string name="activities_geometry_board_area">Area</string>
+    <string name="activities_geometry_badge_build_it">Costruisci</string>
+    <!-- The molecule to build, like "Target: CO₂". -->
+    <string name="activities_geometry_molecule_target">Obiettivo: %1$s</string>
+    <!-- The molecule built so far, like "Built: CO". -->
+    <string name="activities_geometry_molecule_built">Costruita: %1$s</string>
+    <!-- An atom: its element and its number, like "Oxygen 2". -->
+    <string name="activities_geometry_molecule_atom">%1$s %2$s</string>
+    <!-- An atom and how many of its bonds are made, for TalkBack, like "Oxygen 1: 1 of 2 bonds". -->
+    <plurals name="activities_geometry_molecule_atom_bonds">
+        <item quantity="one">%1$s: %2$d su %3$d legame</item>
+        <item quantity="many">%1$s: %2$d su %3$d legami</item>
+        <item quantity="other">%1$s: %2$d su %3$d legami</item>
+    </plurals>
+    <string name="activities_geometry_element_boron">Boro</string>
+    <string name="activities_geometry_element_bromine">Bromo</string>
+    <string name="activities_geometry_element_carbon">Carbonio</string>
+    <string name="activities_geometry_element_chlorine">Cloro</string>
+    <string name="activities_geometry_element_fluorine">Fluoro</string>
+    <string name="activities_geometry_element_hydrogen">Idrogeno</string>
+    <string name="activities_geometry_element_iodine">Iodio</string>
+    <string name="activities_geometry_element_nitrogen">Azoto</string>
+    <string name="activities_geometry_element_oxygen">Ossigeno</string>
+    <string name="activities_geometry_element_phosphorus">Fosforo</string>
+    <string name="activities_geometry_element_sulfur">Zolfo</string>
+    <string name="activities_geometry_element_silicon">Silicio</string>
+    <!-- An element button, for TalkBack, like "Add Carbon". -->
+    <string name="activities_geometry_molecule_add">Aggiungi %1$s</string>
+    <!-- An element button while an atom is selected, like "Add Oxygen bonded to Carbon 1". -->
+    <string name="activities_geometry_molecule_add_bonded">Aggiungi %1$s legato a %2$s</string>
+    <!-- How many bonds an element makes, under its symbol. -->
+    <plurals name="activities_geometry_molecule_bonds">
+        <item quantity="one">%1$d legame</item>
+        <item quantity="many">%1$d legami</item>
+        <item quantity="other">%1$d legami</item>
+    </plurals>
+    <string name="activities_geometry_molecule_undo">Annulla</string>
+    <!-- Removes the selected atom, like "Remove Oxygen 2". -->
+    <string name="activities_geometry_molecule_remove">Rimuovi %1$s</string>
+    <string name="activities_geometry_molecule_remove_selected">Rimuovi l’atomo selezionato</string>
+    <string name="activities_geometry_molecule_start">Tocca un elemento per aggiungerne il primo atomo.</string>
+    <!-- An atom with too many bonds, like "Oxygen 1 has more bonds than it can make." -->
+    <string name="activities_geometry_molecule_over">%1$s ha più legami di quanti ne può formare.</string>
+    <plurals name="activities_geometry_molecule_open">
+        <item quantity="one">%1$d atomo ha legami liberi, indicati da puntini.</item>
+        <item quantity="many">%1$d atomi hanno legami liberi, indicati da puntini.</item>
+        <item quantity="other">%1$d atomi hanno legami liberi, indicati da puntini.</item>
+    </plurals>
+    <string name="activities_geometry_molecule_full">Ogni atomo ha formato tutti i suoi legami.</string>
+    <!-- Like "Carbon 1 is selected. Tap another atom to bond them, or an element to add one bonded to it." -->
+    <string name="activities_geometry_molecule_selected_hint">%1$s è selezionato. Tocca un altro atomo per legarli, o un elemento per aggiungerne uno legato a quello selezionato.</string>
+    <string name="activities_geometry_molecule_select_hint">Tocca un atomo per selezionarlo.</string>
+    <!-- Said to TalkBack after adding an atom, like "Added Carbon 1." -->
+    <string name="activities_geometry_molecule_added">Aggiunto %1$s.</string>
+    <!-- Said to TalkBack after adding a bonded atom, like "Added Oxygen 1, bonded to Carbon 1." -->
+    <string name="activities_geometry_molecule_added_bonded">Aggiunto %1$s, legato a %2$s.</string>
+    <!-- Two atoms and the bond between them, like "Carbon 1 and Oxygen 1: no bond." -->
+    <string name="activities_geometry_molecule_no_bond">%1$s e %2$s: nessun legame.</string>
+    <string name="activities_geometry_molecule_single_bond">%1$s e %2$s: legame singolo.</string>
+    <string name="activities_geometry_molecule_double_bond">%1$s e %2$s: legame doppio.</string>
+    <string name="activities_geometry_molecule_triple_bond">%1$s e %2$s: legame triplo.</string>
+    <!-- Said to TalkBack after removing an atom, like "Removed Oxygen 2." -->
+    <string name="activities_geometry_molecule_removed">Rimosso %1$s.</string>
+    <!-- Said to TalkBack after undoing a change. -->
+    <string name="activities_geometry_molecule_undone">Operazione annullata.</string>
+    <!-- Said to TalkBack after selecting an atom, like "Carbon 1 selected." -->
+    <string name="activities_geometry_molecule_selected">%1$s selezionato.</string>
+    <string name="activities_geometry_molecule_none_selected">Nessuna selezione.</string>
+    <!-- The molecule builder, for TalkBack, like "Build CO₂." -->
+    <string name="activities_geometry_molecule_build">Costruisci %1$s.</string>
+    <!-- An atom without bonds, for TalkBack, like "Hydrogen 3 has no bonds." -->
+    <string name="activities_geometry_molecule_loose">%1$s non ha legami.</string>
+    <!-- Above a complete molecule shown after checking. -->
+    <string name="activities_geometry_molecule_example">Un esempio corretto</string>
+    <plurals name="activities_geometry_molecule_bonds_in_all">
+        <item quantity="one">%1$d legame in totale, contando un legame doppio come due.</item>
+        <item quantity="many">%1$d legami in totale, contando un legame doppio come due.</item>
+        <item quantity="other">%1$d legami in totale, contando un legame doppio come due.</item>
+    </plurals>
+    <!-- The badge of an activity where the learner drags a line on a chart; "curve" as in a supply or demand curve. -->
+    <string name="activities_geometry_badge_move_curve">Sposta una curva</string>
+    <!-- A line's draggable handle on a chart, for TalkBack, like "Move the line Supply". -->
+    <string name="activities_geometry_line_move">Sposta la linea %1$s</string>
+    <!-- A line on a chart that the learner hasn't dragged, like "Supply hasn't moved". -->
+    <string name="activities_geometry_line_unmoved_line">%1$s: nessuno spostamento</string>
+    <!-- A line on a chart dragged to the right, like "Supply moved right". -->
+    <string name="activities_geometry_line_moved_right">%1$s: spostamento a destra</string>
+    <!-- A line on a chart dragged to the left, like "Supply moved left". -->
+    <string name="activities_geometry_line_moved_left">%1$s: spostamento a sinistra</string>
+    <!-- A line on a chart dragged up, like "Cost moved up". -->
+    <string name="activities_geometry_line_moved_up">%1$s: spostamento verso l’alto</string>
+    <!-- A line on a chart dragged down, like "Cost moved down". -->
+    <string name="activities_geometry_line_moved_down">%1$s: spostamento verso il basso</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Price per dozen goes up". -->
+    <string name="activities_geometry_line_goes_up">%1$s: in aumento</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Eggs sold goes down". -->
+    <string name="activities_geometry_line_goes_down">%1$s: in diminuzione</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Eggs sold stays the same". -->
+    <string name="activities_geometry_line_stays">%1$s: nessuna variazione</string>
+    <!-- A hint under a chart of two lines, before the learner moves either. -->
+    <string name="activities_geometry_line_hint">Trascina una linea usando la maniglia.</string>
+    <!-- Beside the dashed line showing where a line was before the learner moved it. -->
+    <string name="activities_geometry_line_before">Prima</string>
+    <!-- Beside the dashed line showing how the line really moved, after checking the answer. -->
+    <string name="activities_geometry_line_what_happened">Cos’è successo</string>
+    <!-- A chart of two lines, for TalkBack: the lines' names, then the vertical axis against the horizontal one, like "A chart of two lines, Supply and Demand, with Price per dozen against Eggs sold." -->
+    <string name="activities_geometry_line_description">Un grafico con due linee, %1$s e %2$s, con %3$s sull’asse verticale e %4$s su quello orizzontale.</string>
+    <!-- A chart of two lines, for TalkBack, before the learner moves either. -->
+    <string name="activities_geometry_line_unmoved">Nessuna delle due linee è stata ancora spostata.</string>
+    <!-- After checking, for TalkBack: the value where the two lines now cross, like "The new crossing is at 250." -->
+    <string name="activities_geometry_line_new_crossing">Il nuovo punto d’intersezione è a %1$s.</string>
+</resources>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- A badge on an activity where the learner places a dot along a number line. -->
+    <string name="activities_math_badge_place_it">Place it</string>
+    <!-- A badge on an activity whose sliders change a model's results. -->
+    <string name="activities_math_badge_try_it">Try it</string>
+    <!-- A short badge on an activity where the learner takes blocks off a balance scale by hand. -->
+    <string name="activities_math_badge_hands_on">Hands on</string>
+    <!-- A short badge on an activity where the learner drags handles along a distribution's curve; one word where the language allows. -->
+    <string name="activities_math_badge_explore">Explore</string>
+    <!-- A badge on an activity where the learner splits a rectangle or a bar into easy parts. -->
+    <string name="activities_math_badge_split_it">Split it</string>
+    <!-- A short badge on an activity where the learner guesses how often something random happens before a simulation runs it. -->
+    <string name="activities_math_badge_predict_first">Predict first</string>
+    <!-- A short badge on an activity that runs many random polls or samples; a verb, one word where the language allows. -->
+    <string name="activities_math_badge_simulate">Simulate</string>
+
+    <!-- A number line's name, then the unit its values are measured in, like "Temperature in °C" or "Distance in km". -->
+    <string name="activities_math_number_line_label">%1$s in %2$s</string>
+    <!-- The dot the learner drags along the number line, for TalkBack. -->
+    <string name="activities_math_number_line_answer">Your answer on the number line</string>
+    <!-- What the number line shows, for TalkBack: its name, its ends, where it starts and where the learner's dot is, like "A number line for Temperature from -5 to 7. It starts at -3 °C, and your dot is at 5 °C." -->
+    <string name="activities_math_number_line_description">A number line for %1$s from %2$s to %3$s. It starts at %4$s, and your dot is at %5$s.</string>
+    <!-- Once checked, the jumps the line takes and where they land, like "The jumps go +3, +5 and land at 5 °C." -->
+    <string name="activities_math_number_line_jumps">The jumps go %1$s and land at %2$s.</string>
+
+    <!-- One result of a model at another value of its slider, like "Value after 20 years at 5%: $2,653". -->
+    <string name="activities_math_formula_compared">%1$s at %2$s: %3$s</string>
+    <!-- What a model's slider says to TalkBack: its value, then the result it drives, like "7%. Value after 20 years: $3,870". -->
+    <string name="activities_math_formula_slider_value">%1$s. %2$s: %3$s</string>
+    <!-- A result's value before the what-ifs were switched on, like "$1,500 before". -->
+    <string name="activities_math_formula_before">%1$s before</string>
+    <!-- How much a result changed since the sliders' starting values, like "+$1,216 from the start". -->
+    <string name="activities_math_formula_from_start">%1$s from the start</string>
+    <!-- What a model shows, for TalkBack: the result it charts and the slider across its axis, like "Sliders and a chart of Value after 20 years across Rate per year." -->
+    <string name="activities_math_formula_description">Sliders and a chart of %1$s across %2$s.</string>
+    <!-- What-ifs are events that change a model, like "Rent goes up $500". -->
+    <string name="activities_math_formula_no_what_ifs">No what-ifs switched on.</string>
+    <!-- The what-ifs switched on, listed, like "What-ifs switched on: Rent goes up $500." -->
+    <string name="activities_math_formula_what_ifs_on">What-ifs switched on: %1$s.</string>
+    <!-- One result and its value, for TalkBack, like "Monthly profit: $1,000." -->
+    <string name="activities_math_formula_readout">%1$s: %2$s.</string>
+    <!-- One result, its value and how it changed, for TalkBack, like "Monthly profit: $1,000, $1,500 before." -->
+    <string name="activities_math_formula_readout_note">%1$s: %2$s, %3$s.</string>
+    <!-- The charted result at the model's comparison point, for TalkBack, like "For comparison, at 5% it's $2,653." -->
+    <string name="activities_math_formula_comparison">For comparison, at %1$s it\'s %2$s.</string>
+    <!-- The name of the group of what-if switches, for TalkBack. -->
+    <string name="activities_math_formula_what_if_events">What-if events</string>
+    <!-- The chart legend's solid line when what-ifs are on. -->
+    <string name="activities_math_formula_with_what_ifs">With the what-ifs</string>
+    <!-- The chart legend's solid line: the model as the sliders set it now. -->
+    <string name="activities_math_formula_now">Now</string>
+    <!-- The chart legend's dashed line: the model before the what-ifs were switched on. -->
+    <string name="activities_math_formula_before_curve">Before</string>
+    <!-- The chart legend's dashed line: the model at the sliders' starting values. -->
+    <string name="activities_math_formula_at_start">At the start</string>
+
+    <!-- The range between a distribution's two handles, like "IQ score from 90 to 110". -->
+    <string name="activities_math_distribution_range">%1$s from %2$s to %3$s</string>
+    <!-- What a distribution handle says to TalkBack: its value, then the share between the handles, like "90 IQ points. 49.5% between the handles." -->
+    <string name="activities_math_distribution_handle_value">%1$s. %2$s between the handles.</string>
+    <!-- Once checked, the target range and its share, like "70 to 130: 95.4%". -->
+    <string name="activities_math_distribution_target">%1$s to %2$s: %3$s</string>
+    <!-- The handle at the low end of the range, for TalkBack. -->
+    <string name="activities_math_distribution_lower">Lower handle</string>
+    <!-- The handle at the high end of the range, for TalkBack. -->
+    <string name="activities_math_distribution_upper">Upper handle</string>
+    <!-- What a normal distribution shows, for TalkBack, like "A bell curve of IQ score, with an average of 100 IQ points and a standard deviation of 15 IQ points." -->
+    <string name="activities_math_distribution_normal">A bell curve of %1$s, with an average of %2$s and a standard deviation of %3$s.</string>
+    <!-- What a uniform distribution shows, for TalkBack, like "A flat distribution of Waiting time, from 0 min to 10 min." -->
+    <string name="activities_math_distribution_uniform">A flat distribution of %1$s, from %2$s to %3$s.</string>
+    <!-- The shares inside and outside the handles, for TalkBack, like "49.5% of values fall between 90 IQ points and 110 IQ points, 25.2% below and 25.2% above." -->
+    <string name="activities_math_distribution_shares">%1$s of values fall between %2$s and %3$s, %4$s below and %5$s above.</string>
+
+    <!-- The parts a rectangle or bar is split into, for TalkBack, like "Split into 4 parts: 200, 30, 80, 12." -->
+    <plurals name="activities_math_area_parts">
+        <item quantity="one">Split into %1$d part: %2$s.</item>
+        <item quantity="other">Split into %1$d parts: %2$s.</item>
+    </plurals>
+    <!-- The parts' sum with its unit, like "Together they make 322 m²." -->
+    <string name="activities_math_area_total">Together they make %1$s.</string>
+    <!-- A handle that moves where the rectangle's width is split, for TalkBack. -->
+    <string name="activities_math_area_split_width">Split across the width</string>
+    <!-- A handle that moves where the rectangle's height is split, for TalkBack. -->
+    <string name="activities_math_area_split_height">Split across the height</string>
+    <!-- What the balance shows, for TalkBack: each pan as an expression, like "A balance. Left pan: 4x + 1. Right pan: 2x + 7." -->
+    <string name="activities_math_balance_description">A balance. Left pan: %1$s. Right pan: %2$s.</string>
+    <!-- After the balance's description, for TalkBack, when both pans weigh the same. -->
+    <string name="activities_math_balance_level">The pans are level.</string>
+    <!-- After the balance's description, for TalkBack, when the left pan weighs more. -->
+    <string name="activities_math_balance_left_heavier">The left pan is heavier.</string>
+    <!-- After the balance's description, for TalkBack, when the right pan weighs more. -->
+    <string name="activities_math_balance_right_heavier">The right pan is heavier.</string>
+    <!-- A short label under the pan of a balance scale that weighs more. -->
+    <string name="activities_math_balance_heavier">Heavier</string>
+    <!-- Before a hint after a move that tipped the scale, like "Not quite: Take the same off both sides." -->
+    <string name="activities_math_balance_not_quite">Not quite:</string>
+    <!-- The name of the buttons that take things off the scale's left pan. -->
+    <string name="activities_math_balance_left_side">Left side</string>
+    <!-- The name of the buttons that take things off the scale's right pan. -->
+    <string name="activities_math_balance_right_side">Right side</string>
+    <!-- A button, for TalkBack: take one of something off the left pan, like "Take off the left side: One bag of rice". -->
+    <string name="activities_math_balance_take_left">Take off the left side: %1$s</string>
+    <!-- A button, for TalkBack: take one of something off the right pan, like "Take off the right side: 1 kg". -->
+    <string name="activities_math_balance_take_right">Take off the right side: %1$s</string>
+    <!-- A button that divides both pans into as many equal groups as there are bags, like "Split both sides into 2 equal groups". -->
+    <string name="activities_math_balance_split">Split both sides into %1$s equal groups</string>
+    <!-- A button that takes back the last move on the balance. -->
+    <string name="activities_math_balance_undo">Undo</string>
+    <!-- The name of the list of a balance problem's worked steps, for TalkBack. -->
+    <string name="activities_math_balance_steps">Solution steps</string>
+    <!-- Before a worked step the learner has reached, for TalkBack. -->
+    <string name="activities_math_balance_done">Done:</string>
+    <!-- Before the worked step the learner hasn't reached yet, for TalkBack. -->
+    <string name="activities_math_balance_next">Next:</string>
+    <!-- A worked step: the move, then the equation it gives, like "Take 2 bags off each side: 2x + 1 = 7". -->
+    <string name="activities_math_balance_step">%1$s: %2$s</string>
+    <!-- The name of the list of moves to pick from when solving an equation step by step, for TalkBack. -->
+    <string name="activities_math_balance_pick_move">Pick the next move</string>
+
+    <!-- How many times a random experiment runs, then what one run is, like "1,000 runs of 10 flips". -->
+    <string name="activities_math_chance_runs">%1$s runs of %2$s</string>
+    <!-- The chance the learner guessed, as a percent, like "Your guess: 25%". -->
+    <string name="activities_math_chance_your_guess">Your guess: %1$s</string>
+    <!-- Shown where the simulation's chart will be, before the learner checks a guess. -->
+    <string name="activities_math_chance_pick_first">Pick your guess, then check it to run the simulation.</string>
+    <!-- Once the runs are in: the event, how often it came up, and its exact chance, like "Exactly 5 heads in 24% of the runs. The exact chance is 25%." -->
+    <string name="activities_math_chance_result">%1$s in %2$s of the runs. The exact chance is %3$s.</string>
+    <!-- What the simulation shows, for TalkBack: the runs, the event and how often it came up, like "1,000 runs of 10 flips: Exactly 5 heads came up in 24% of them." -->
+    <string name="activities_math_chance_description">%1$s: %2$s came up in %3$s of them.</string>
+    <!-- Under a chart of runs with two outcomes, the bar for runs where the event happened. -->
+    <string name="activities_math_chance_yes">Yes</string>
+    <!-- Under a chart of runs with two outcomes, the bar for runs where the event didn't happen. -->
+    <string name="activities_math_chance_no">No</string>
+    <!-- A button that runs the random simulation again with new random draws. -->
+    <string name="activities_math_run_again">Run again</string>
+    <!-- Above the margin of error of many random polls, like "95% of samples land within ±9.8 points"; %1$s is the share, "95%". -->
+    <string name="activities_math_sampling_within">%1$s of samples land within</string>
+    <!-- The name of the slider that picks how big each random sample is. -->
+    <string name="activities_math_sampling_size">Sample size</string>
+    <!-- What the sampling simulation shows, for TalkBack, like "200 samples of 400 from Example town. The true value is 50%; 95% of samples landed between 45% and 55%." -->
+    <string name="activities_math_sampling_summary">%1$s samples of %2$s from %3$s. The true value is %4$s; 95%% of samples landed between %5$s and %6$s.</string>
+    <!-- Under the chart, where the middle 95% of the samples landed, like "45% to 55%". -->
+    <string name="activities_math_sampling_range">%1$s to %2$s</string>
+    <!-- Above a dashed line on the chart at the population's real value, like "True value: 50%". -->
+    <string name="activities_math_sampling_truth">True value: %1$s</string>
+    <!-- What the sample size slider says to TalkBack: the size, then the margin it gives, like "400. 95% of samples within ±4.9 points." -->
+    <string name="activities_math_sampling_slider_value">%1$s. 95%% of samples within %2$s.</string>
+    <!-- Once every sample is drawn, how many and of what size, like "200 samples of 400". -->
+    <string name="activities_math_sampling_done">%1$s samples of %2$s</string>
+    <!-- While samples are being drawn, like "Running 120 of 200…". -->
+    <string name="activities_math_sampling_running">Running %1$s of %2$s…</string>
+    <!-- The heading of a box with each sample size's margin of error as the formula gives it. -->
+    <string name="activities_math_sampling_math">What the math says</string>
+    <!-- How the margin of error changes from the smallest sample to the largest, like "From 100 to 400, the margin shrinks to 50% of its size." -->
+    <string name="activities_math_sampling_shrinks">From %1$s to %2$s, the margin shrinks to %3$s of its size.</string>
+    <!-- A margin of error around a mean, plus or minus an amount with its unit, like "±3 cm". -->
+    <string name="activities_math_sampling_margin">±%1$s</string>
+    <!-- A margin of error in percentage points, like "±9.8 points"; the number can have decimals. -->
+    <plurals name="activities_math_sampling_margin_points">
+        <item quantity="one">±%1$s point</item>
+        <item quantity="other">±%1$s points</item>
+    </plurals>
+    <!-- A margin of error in percentage points with decimals, like "±9.8 points", in the form a language gives decimal numbers (Polish "±9,8 punktu"). -->
+    <string name="activities_math_sampling_margin_points_decimal">±%1$s points</string>
+</resources>

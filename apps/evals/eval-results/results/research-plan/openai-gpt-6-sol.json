@@ -1,0 +1,138 @@
+{
+  "modelId": "openai/gpt-6-sol",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "BR",
+          "domains": ["inep.gov.br", "gov.br"],
+          "language": "pt",
+          "nameIncludes": ["enem"]
+        },
+        "id": "enem-2026-1",
+        "userInput": { "goal": "quero passar no ENEM desse ano pra enfermagem", "topic": "exam" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "BR",
+          "domains": ["cebraspe.org.br", "tc.df.gov.br"],
+          "language": "pt",
+          "nameIncludes": ["tcdf", "tribunal de contas do distrito federal"],
+          "roleIncludes": "analista"
+        },
+        "id": "tcdf-2026-1",
+        "userInput": {
+          "goal": "passar no concurso do TCDF 2026 para analista administrativo de controle externo",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "US",
+          "domains": ["collegeboard.org"],
+          "language": "en",
+          "nameIncludes": ["sat"]
+        },
+        "id": "sat-1",
+        "userInput": { "goal": "Get a 1450 on the SAT in March 2027", "topic": "exam" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "DE",
+          "domains": ["km.bayern.de", "isb.bayern.de", "bayern.de"],
+          "language": "de",
+          "nameIncludes": ["abitur"]
+        },
+        "id": "abitur-bayern-1",
+        "userInput": {
+          "goal": "Abitur 2027 in Bayern: Mathe und Deutsch schriftlich",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "FR",
+          "domains": ["education.gouv.fr", "eduscol.education.gouv.fr"],
+          "language": "fr",
+          "nameIncludes": ["bac"]
+        },
+        "id": "bac-2027-1",
+        "userInput": {
+          "goal": "réussir le bac général 2027, philo et spécialités",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "BR",
+          "domains": ["gov.br/receitafederal", "receita"],
+          "language": "pt",
+          "nameIncludes": ["imposto de renda", "irpf"]
+        },
+        "id": "irpf-2027-1",
+        "userInput": { "goal": "declarar meu imposto de renda 2027 sozinho", "topic": "regulation" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "ZZ",
+          "domains": ["nextjs.org"],
+          "language": "en",
+          "nameIncludes": ["next.js", "nextjs"]
+        },
+        "id": "nextjs-1",
+        "userInput": {
+          "goal": "what's new in the latest Next.js version and how to migrate",
+          "topic": "software"
+        }
+      }
+    }
+  ],
+  "taskId": "research-plan"
+}

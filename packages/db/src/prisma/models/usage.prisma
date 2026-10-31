@@ -1,0 +1,42 @@
+enum UsageKind {
+  lessonStart   @map("lesson_start")
+  explanation
+  goal
+  tutorMessage  @map("tutor_message")
+  upload
+  conversation
+  assist
+  /// Reading one that exists is free.
+  mindMap       @map("mind_map")
+  /// One that exists or is being written is free.
+  outline
+  /// Past the plan's fair use, the mock asks questions the learner answered before instead.
+  mockQuestions @map("mock_questions")
+}
+
+/// A lesson counts the first time a learner starts it, reused or generated. `targetId` is a plain
+/// id, so usage survives content changes. `seconds` is a live call's time: the most it may run when
+/// it connects, then how long it ran once it ends; 0 for every other use.
+model UsageRecord {
+  id         String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind       UsageKind
+  targetId   String    @map("target_id") @db.Uuid
+  generated  Boolean   @default(false)
+  costMicros Int       @default(0) @map("cost_micros")
+  seconds    Int       @default(0)
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@unique([userId, kind, targetId], name: "userUsageTarget")
+  @@index([userId, createdAt])
+  @@map("usage_records")
+}
+
+/// All guests share one daily ceiling, however many there are. Accounts never take from it.
+model GuestSpendDay {
+  day         DateTime @id @db.Date
+  spentMicros Int      @default(0) @map("spent_micros")
+
+  @@map("guest_spend_days")
+}

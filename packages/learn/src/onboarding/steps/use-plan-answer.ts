@@ -1,0 +1,113 @@
+"use client";
+
+import { useRef, useState } from "react";
+import { type PollStatus, usePoll } from "../../_utils/use-poll";
+import { createRequestLane } from "./request-lane";
+
+const POLL_MS = 3000;
+
+/** After the first answer, days tapped in a row or a picker's wheel passing times ask once. */
+const SETTLE_MS = 300;
+
+function settle(signal: AbortSignal): Promise<void> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(resolve, SETTLE_MS);
+
+    signal.addEventListener(
+      "abort",
+      () => {
+        clearTimeout(timer);
+        resolve();
+      },
+      { once: true },
+    );
+  });
+}
+
+export type PlanAnswer<Answer> = {
+  /** The answer for what's asked about now; null while it's on its way. */
+  answer: Answer | null;
+  /** The first ready answer the screen got. */
+  first: Answer | null;
+  /** The answer for what's asked about now, or else the last one that came. */
+  last: Answer | null;
+  restart: () => void;
+  /** "failed" as soon as an ask about what's shown goes unanswered too long, while it keeps asking. */
+  status: PollStatus;
+};
+
+type Answered<Answer> = {
+  byKey: ReadonlyMap<string, Answer>;
+  first: Answer | null;
+  last: Answer | null;
+};
+
+/**
+ * Asks every few seconds while the plan isn't ready, then once for each new `key`, keeping each
+ * answer so going back to an earlier choice needs no new one; `paused` stops asking again a plan
+ * whose run stopped, and `planMade` asks again at once when the run says the plan exists. Each ask
+ * plans the goal, so one is out at a time and the latest `key` goes next.
+ */
+export function usePlanAnswer<Answer extends { ready: boolean }>({
+  ask,
+  enabled,
+  key,
+  paused,
+  planMade,
+}: {
+  ask: () => Promise<Answer | null>;
+  enabled: boolean;
+  key: string;
+  paused: boolean;
+  planMade: boolean;
+}): PlanAnswer<Answer> {
+  const [answered, setAnswered] = useState<Answered<Answer>>({
+    byKey: new Map(),
+    first: null,
+    last: null,
+  });
+
+  const lane = useRef(createRequestLane<Answer | null>());
+  const [missed, setMissed] = useState<string | null>(null);
+  const answer = answered.byKey.get(key) ?? null;
+
+  const poll = usePoll({
+    active: enabled && !answer?.ready && !(paused && answer !== null),
+    intervalMs: POLL_MS,
+    key: planMade ? `${key}:planMade` : key,
+    onPoll: async (signal) => {
+      if (answered.last) {
+        await settle(signal);
+      }
+
+      const next = await lane.current({ key, request: ask, signal });
+
+      if (!next) {
+        if (signal.aborted) {
+          return;
+        }
+
+        setMissed(key);
+        throw new Error("The plan couldn't be asked about the schedule");
+      }
+
+      setAnswered((current) => ({
+        byKey: new Map(current.byKey).set(key, next),
+        first: current.first ?? (next.ready ? next : null),
+        last: next,
+      }));
+    },
+    timeoutMs: Infinity,
+  });
+
+  return {
+    answer,
+    first: answered.first,
+    last: answer ?? answered.last,
+    restart: () => {
+      setMissed(null);
+      poll.restart();
+    },
+    status: missed === key && !answer ? "failed" : poll.status,
+  };
+}

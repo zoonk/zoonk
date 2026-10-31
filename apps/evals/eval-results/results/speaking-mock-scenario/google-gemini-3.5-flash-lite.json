@@ -1,0 +1,237 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "examFit",
+          "reasoning": "The result clearly identifies this as IELTS Speaking practice, explicitly denies official-test status, and follows the recognizable three-part structure. The examiner is neutral and polite, with no correction or grading behavior. Topics are everyday and safe, with no identifiable copied test material.",
+          "score": 9,
+          "label": "Follows the exam",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening supplies a natural examiner greeting and the first identification question. The hints are accessible at B1, so the above-level cap does not apply. However, the hints about a 'good option' for change and weekend preferences include answer-like content rather than only reusable ways to sustain speech.",
+          "score": 8,
+          "label": "Opening and hints",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "All three IELTS parts appear once and in order. Their English labels are appropriate, and each Portuguese description clearly states what the candidate does.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 20
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The brief is in English and targets five minutes, but it gives instructions to generate questions rather than writing out everything the examiner says. Part 1 and Part 3 question items are absent, triggering the maximum score of 5. Part 3 also specifies only two questions. The cue-card topic and four prompts are supplied, but not as a complete examiner-facing script.",
+          "score": 3,
+          "label": "Examiner's script",
+          "weight": 20
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "Fields are assigned to the correct languages, and the situation explicitly says the mock is shorter than the real test. There are no emojis or em dashes. However, pervasive missing Portuguese diacritics undermine natural written Brazilian Portuguese, and 'centre' does not match US English. No wrong-language-field cap is triggered.",
+          "score": 7,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1983,
+          "outputTokens": 865,
+          "reasoningTokens": 216
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The character brief is an outline rather than the required examiner script. It does not write out the Part 1 questions or any Part 3 questions, and it requests only two Part 3 questions instead of three or four. Although the meal topic and four cue-card prompts are present, the examiner's cue-card presentation and transitions are not scripted.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Portuguese accents are consistently missing, reducing naturalness and polish. 'Test centre' uses British rather than the requested US spelling. Two hints include unnecessary answer content about changing something or weekend preferences instead of functioning purely as general speaking support.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a simple timing plan across the three parts, including preparation and speaking time for Part 2, to make the five-minute mock easier to run consistently.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "IELTS Speaking practice mock for a Brazilian candidate at B1. The character is the examiner (role \"examinador\" or \"examinadora\"), the objectives are the three parts in order with labels like \"Part 1: About you\", \"Part 2: Cue card\", \"Part 3: Discussion\", and the brief has the Part 1 questions, the full Part 2 cue card (topic and four bullet prompts) and Part 3 questions linked to the cue card topic, run in about 5 minutes. The opening line is the examiner's greeting and first question. Title and situation call it a practice mock in Brazilian Portuguese, shorter than the real test, never an official test. Hints are phrases to keep talking.",
+        "id": "pt-en-b1-ielts-speaking-1",
+        "userInput": {
+          "exam": "ielts",
+          "learnerLanguage": "pt",
+          "level": "B1",
+          "minutes": 5,
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "examFit",
+          "reasoning": "The result clearly presents a TOEFL iBT practice mock, explicitly denies official-test status, and uses the expected two-task format. The examiner is neutral, provides no correction or grading, and uses safe academic topics. There is no evident copying from published materials.",
+          "score": 9,
+          "label": "Follows the exam",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening greets the candidate, gives Listen and Repeat directions, establishes the campus setting, and ends with the first sentence. The hints are short, general A2-accessible frames for reasons, examples, and predictions; none supplies a topic answer or requests repetition.",
+          "score": 10,
+          "label": "Opening and hints",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "Both required objectives appear exactly once and in the correct order. Their Portuguese descriptions explain what the candidate does in each task.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 20
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief contains seven campus-related sentences, growing from five words to fifteen words and incorporating dependent and relative clauses. It also supplies a one-sentence interview introduction, four questions, and once-only delivery with approximately 45 seconds per answer. However, the second question elicits a routine rather than an experience, and the timing guidance is not written as candidate-facing speech. All task items are present, so the missing-items cap does not apply.",
+          "score": 7,
+          "label": "Examiner's script",
+          "weight": 20
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "All fields use their assigned languages, and the situation explicitly says the practice is shorter than the real exam. There are no emojis or em dashes. However, pervasive missing Portuguese accents reduce naturalness and correctness, and “Test centre” does not follow the requested US English variant. These are orthographic and variant issues, not wrong-language fields, so the wrong-language cap does not apply.",
+          "score": 7,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2084,
+          "outputTokens": 972,
+          "reasoningTokens": 320
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The second interview question asks about a usual exam-preparation routine rather than asking the candidate to describe an experience. This misses the required progression from a personal fact to an experience, a broader opinion, and a prediction.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The Portuguese fields consistently omit required accents, including in “Prático,” “Você,” “acadêmica,” and “opiniões.” “Test centre” uses British spelling instead of the requested US English “Test center.”",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the interview transition explicitly candidate-facing and write out the spoken timing instruction. The approximately 45-second allowance currently appears only in the operational notes, rather than in what the examiner tells the candidate.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "TOEFL iBT Speaking practice mock for a Brazilian candidate at A2. The character is the examiner (role \"examinador\" or \"examinadora\"), the objectives are \"Listen and Repeat\" then \"Take an Interview\", and the brief has a campus or academic setting with seven original sentences that start at about 5 words and grow to 14 to 20 with dependent or relative clauses, then a one-sentence interview introduction and four questions going from a brief fact about the candidate to describing an experience, an opinion on a broader issue and a prediction, each said once with about 45 seconds per answer. The opening line greets, gives the Listen and Repeat directions and the setting, and ends with the first sentence. Title and situation, in Brazilian Portuguese, call it a practice mock shorter than the real section, never an official test. Hints help interview answers (a reason, an example, a prediction) at A2 and never ask the examiner to repeat.",
+        "id": "pt-en-a2-toefl-speaking-1",
+        "userInput": {
+          "exam": "toefl",
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "minutes": 5,
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "examFit",
+          "reasoning": "The result explicitly presents an IELTS practice mock, never an official test. It uses the IELTS three-part structure, safe everyday topics, and a neutral examiner instructed not to correct or grade. There is no evidence of copied test material or a wrong-exam format.",
+          "score": 10,
+          "label": "Follows the exam",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening appropriately includes a greeting, the examiner's name, and a first Part 1 question. The wording and hints are accessible at B2. However, the travel-opinion hint gives topic-specific answer content rather than a general speaking aid. The cap for mostly above-level hints does not apply.",
+          "score": 7,
+          "label": "Opening and hints",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "All three IELTS parts appear once and in the correct order. Each description clearly states what the candidate does, and the labels accurately identify the parts.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 20
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The brief supplies instructions to improvise rather than everything the examiner says. It omits the actual Part 1 and Part 3 questions, specifies insufficient question counts, and provides neither a complete cue card nor its four prompts. Missing part items triggers the maximum score of 5; the extensive omissions warrant a lower score.",
+          "score": 2,
+          "label": "Examiner's script",
+          "weight": 20
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "All fields are in English, and the situation clearly states that the mock is shorter than the actual test. There are no emojis or em dashes. However, the place uses British \"Centre\" rather than US \"Center,\" and the title does not explicitly indicate the shortened format. The wrong-language cap does not apply to this spelling-variant issue.",
+          "score": 8,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1968,
+          "outputTokens": 874,
+          "reasoningTokens": 197
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The character brief is an outline, not a complete examiner script. It specifies only two Part 1 and two Part 3 questions instead of the required three or four, without writing any of them out. Part 2 lacks the full cue card and its four bullet prompts. These omissions prevent the mock from being run as supplied. One hint, \"In my opinion, travel is very important,\" supplies a topic-specific answer, contrary to the requirement for general speaking phrases.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "\"Test Centre\" uses British spelling rather than the requested US English \"Test Center.\" The situation clearly explains that the mock is shorter than the real test, but the title does not identify it as shortened.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add brief timing guidance and fully written transitions between parts so the complete script can reliably fit five minutes. Replace the travel-specific hint with a reusable phrase such as \"In my opinion, ...\".",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "IELTS Speaking practice mock for a B2 candidate who uses the app in English. The character is the examiner (role \"examiner\"), the objectives are the three parts in order with labels like \"Part 1: About you\", \"Part 2: Cue card\", \"Part 3: Discussion\", and the brief has 3 or 4 Part 1 questions, the full Part 2 cue card (topic and four bullet prompts) and 3 or 4 Part 3 questions linked to the cue card topic, run in about 5 minutes. The examiner's wording is the exam's usual clear wording, not simplified. The opening line is the examiner's greeting, name and first Part 1 question. Title and situation, in US English, call it a practice mock shorter than the real test, never an official test. Hints are general phrases at B2 to buy time, give an opinion or add an example, never an answer about the topic.",
+        "id": "en-en-b2-ielts-speaking-1",
+        "userInput": {
+          "exam": "ielts",
+          "learnerLanguage": "en",
+          "level": "B2",
+          "minutes": 5,
+          "targetLanguage": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "speaking-mock-scenario"
+}

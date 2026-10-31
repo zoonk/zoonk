@@ -4,10 +4,6 @@ import { serializeLevel } from "@/lib/progress-serializers";
 import { getCurrentUserLevel } from "@zoonk/core/progress/get-belt-level";
 import { NextResponse } from "next/server";
 
-/**
- * Returns the authenticated learner's current belt and level progression while
- * preserving null for a learner who has not begun learning.
- */
 async function getCurrentUserLevelRoute() {
   const resource = await getCurrentUserLevel();
 

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "goal_switcher_current_goal": "1fd66577d8c4e49fa39ae23bcaed17af329899cff1559705d1f0d9d11460bd75",
+  "goal_switcher_daily": "e112eec6bc499a52b473a1ba9f27ac0b2bf15224165b0610560dc90a3ace59c1",
+  "goal_switcher_explore_courses": "6aaa2cfb7786aff2bef2b651bb3fc220c6dcfadeccf55d4e1528f86053170aa0",
+  "goal_switcher_failed": "bb1a6b9edec385c5de6dffa72968af6417edee3527f7a38b8445314397a4fad8",
+  "goal_switcher_finished": "88826e61702fe33af79d30b57b74a389832d488fbc9377d991bc662737ed887f",
+  "goal_switcher_new_goal": "96f3898d14dd4868a161948ae228d817d9a48729c4a49659db4ad8748cad3405",
+  "goal_switcher_paused": "a4d6fb7d5dce93d3631131d04001f8fb577f21265d6140024d5c8cb3b8ab5ec4",
+  "goal_switcher_quick_explanations": "14744fd32dcec1e336bf91788faa4b9c058c3c4d5a0d54ee1a8c7435fe5f952c",
+  "goal_switcher_start_goal": "e048d1f9bccd368a296c8eac9fc9cb012032009d23e83f076106b277c0284294",
+  "goal_switcher_your_goals": "f9593f279faa1cd19b10135a0a7e0d410f66a43be3cf7997eda9e5056790d895"
+}
+-->
+<resources>
+    <string name="goal_switcher_start_goal">Inizia un obiettivo</string>
+    <!-- Read by TalkBack on the top bar's goal button; %1$s is the goal's title. -->
+    <string name="goal_switcher_current_goal">%1$s, obiettivo attuale. Cambia obiettivo</string>
+    <string name="goal_switcher_your_goals">I tuoi obiettivi</string>
+    <string name="goal_switcher_quick_explanations">Spiegazioni rapide</string>
+    <string name="goal_switcher_new_goal">Inizia un nuovo obiettivo</string>
+    <string name="goal_switcher_explore_courses">Esplora i corsi</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="goal_switcher_daily">%1$s al giorno</string>
+    <string name="goal_switcher_finished">Completato</string>
+    <string name="goal_switcher_paused">In pausa</string>
+    <string name="goal_switcher_failed">Non siamo riusciti a cambiare obiettivo. Riprova.</string>
+</resources>

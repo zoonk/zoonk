@@ -1,0 +1,384 @@
+import SwiftUI
+
+/// One job: start or continue today's session.
+struct TodayScreen: View {
+  @Environment(SessionStore.self) private var session
+  @Environment(TodayStore.self) private var store
+
+  var body: some View {
+    content
+      .navigationTitle(Text("Today", tableName: "Today", comment: "Today tab's title"))
+  }
+
+  @ViewBuilder
+  private var content: some View {
+    if session.authenticatedSession == nil {
+      TodayStartGoal()
+    } else {
+      signedIn
+        .loads(store.today)
+    }
+  }
+
+  @ViewBuilder
+  private var signedIn: some View {
+    switch store.today.state {
+    case .loaded(.day(let view)):
+      TodayDayView(view: view)
+        // A new day (midnight, a goal switch) draws fresh: folds and busy taps were the old day's.
+        .id("\(view.goal.id):\(view.session.localDate)")
+    case .loaded(.noGoal(let suggestion)):
+      if let suggestion {
+        TodaySuggestedGoal(suggestion: suggestion)
+      } else {
+        TodayStartGoal()
+      }
+    case .loaded(.preparing(let goalID, let title)):
+      TodayPreparing(goalID: goalID, title: title)
+    case .loaded(.goalNotActive):
+      TodayGoalPaused()
+    case .failed(let error) where error != .unauthorized:
+      ContentUnavailableView {
+        Label {
+          Text("Today didn't load", tableName: "Today", comment: "Today failed to load")
+        } icon: {
+          Image(systemName: "wifi.exclamationmark")
+        }
+      } description: {
+        Text(
+          "Check your connection and try again.", tableName: "Today",
+          comment: "Today failed to load")
+      } actions: {
+        Button {
+          Task { await store.today.refresh() }
+        } label: {
+          Text("Try again", tableName: "Today", comment: "Retries loading Today")
+        }
+        .buttonStyle(.bordered)
+      }
+    default:
+      ProgressView()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+  }
+}
+
+/// A goal typed and not confirmed yet, on the web or here, comes back where it was left.
+private struct TodayStartGoal: View {
+  @Environment(AppRouter.self) private var router
+  @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(OnboardingStore.self) private var onboarding
+
+  var body: some View {
+    List {
+      if let explanation = learner.summary.value?.openExplanations.last {
+        Section {
+          Label {
+            VStack(alignment: .leading, spacing: 2) {
+              Text(explanation.title)
+              Text("Quick explanation", tableName: "Today", comment: "An unfinished explanation")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+            }
+          } icon: {
+            Image(systemName: "play")
+              .foregroundStyle(.secondary)
+          }
+
+          Button {
+            router.open(.explain(goalId: explanation.id))
+          } label: {
+            Text(
+              "Continue explanation", tableName: "Today",
+              comment: "Opens the learner's unfinished quick explanation")
+          }
+        } header: {
+          Text(
+            "Your quick explanation", tableName: "Today",
+            comment: "The learner's unfinished quick explanation")
+        }
+      }
+
+      if let draft = onboarding.resume.value?.draft {
+        Section {
+          Text(draft.prompt)
+
+          Button {
+            router.open(.startGoal(draftId: draft.draftId))
+          } label: {
+            Text(
+              "Continue", tableName: "Today",
+              comment: "Opens the goal the learner typed and hasn't confirmed yet")
+          }
+        } header: {
+          Text(
+            "What you wrote", tableName: "Onboarding",
+            comment: "Header over the learner's typed goal")
+        }
+      }
+
+      GoalStartEntry()
+    }
+    .loads(onboarding.resume, refreshable: false)
+    .navigationSubtitle(Text(Date.now, format: .dateTime.weekday(.abbreviated).month().day()))
+  }
+}
+
+private struct TodaySuggestedGoal: View {
+  let suggestion: SuggestedGoal
+
+  var body: some View {
+    List {
+      SuggestedGoalSection(suggestion: suggestion)
+    }
+    .navigationSubtitle(
+      Text("Welcome back", tableName: "Today", comment: "Greets a learner back with no goal"))
+  }
+}
+
+/// A goal left halfway through its questions has no plan coming until they're answered, so Today
+/// says what's missing and leads back to them.
+private struct TodayPreparing: View {
+  @Environment(AppRouter.self) private var router
+  @Environment(OnboardingStore.self) private var onboarding
+  @Environment(PlanStore.self) private var plans
+  @Environment(TodayStore.self) private var store
+  @State private var attempt = 0
+  @State private var stoppedFollowing = false
+
+  let goalID: String
+  let title: String
+
+  var body: some View {
+    let setup = onboarding.onboarding(goalID: goalID)
+    let answersLeft = setup.value?.steps.contains { $0.rawValue != "plan" } == true
+
+    Group {
+      if answersLeft {
+        ContentUnavailableView {
+          Label {
+            Text(
+              "Your plan for \(title) needs a few more answers.", tableName: "Today",
+              comment: "A goal left halfway through its questions")
+          } icon: {
+            Image(systemName: "list.bullet.clipboard")
+          }
+        } description: {
+          Text(
+            "It's built from what you tell us.", tableName: "Today",
+            comment: "Why the goal's questions matter; \"It\" is the learner's plan")
+        } actions: {
+          Button {
+            router.open(.goalSetup(goalId: goalID))
+          } label: {
+            Text("Continue setting up", tableName: "Today", comment: "Opens the goal's questions")
+          }
+          .buttonStyle(.mainAction)
+          .controlSize(.large)
+        }
+      } else {
+        ContentUnavailableView {
+          Label {
+            Text("Building your plan", tableName: "Today", comment: "A plan is being built")
+          } icon: {
+            ProgressView()
+          }
+        } description: {
+          Text(
+            "Building your plan for \(title)", tableName: "Today",
+            comment: "A plan is being built for the goal")
+        } actions: {
+          if stoppedFollowing {
+            Button {
+              stoppedFollowing = false
+              attempt += 1
+            } label: {
+              Text("Try again", tableName: "Today", comment: "Retries loading Today")
+            }
+            .buttonStyle(.bordered)
+          }
+        }
+        .task(id: "\(goalID):\(attempt)") {
+          await waitForPlan()
+
+          // Still here: the build's events ended without the day showing.
+          if !Task.isCancelled {
+            stoppedFollowing = true
+          }
+        }
+      }
+    }
+    .loads(setup, refreshable: false)
+  }
+
+  /// Follows the plan's build. Once the plan is saved, each further step of the build reads Today
+  /// again until the first day shows, which leaves this screen and ends the task.
+  private func waitForPlan() async {
+    guard let token = plans.cache.session.authenticatedSession?.bearerToken else {
+      return
+    }
+
+    if let id = try? await plans.api.goalGenerationId(token: token, goalId: goalID) {
+      var run = PlanBuildingRun()
+
+      do {
+        for try await event in plans.api.generationEvents(id: id, token: token) {
+          run.record(event)
+
+          if run.isPlanSaved {
+            await store.today.refresh()
+          }
+        }
+      } catch {}
+    }
+
+    guard !Task.isCancelled else {
+      return
+    }
+
+    await store.today.refresh()
+  }
+}
+
+/// Resuming a paused goal says first when it moves lessons the pause left behind.
+private struct TodayGoalPaused: View {
+  @Environment(AppRouter.self) private var router
+  @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(PlanStore.self) private var plans
+  @State private var isResuming = false
+  @State private var failure: GoalStatusOutcome?
+  @State private var resumeTask: Task<Void, Never>?
+
+  private var goal: LearnerGoal? {
+    let summary = learner.summary.value
+    return summary?.goals.first { $0.id == summary?.activeGoalID }
+  }
+
+  var body: some View {
+    if let goal, goal.status == .completed {
+      ContentUnavailableView {
+        Label {
+          Text(
+            "You finished \(goal.title).", tableName: "Today", comment: "Today for a finished goal")
+        } icon: {
+          Image(systemName: "flag.checkered")
+        }
+      } description: {
+        Text(
+          "Start a new goal, or pick another one above.", tableName: "Today",
+          comment: "Today for a finished goal")
+      } actions: {
+        newGoal(prominent: true)
+      }
+    } else {
+      paused
+    }
+  }
+
+  private var paused: some View {
+    ContentUnavailableView {
+      Label {
+        if let goal {
+          Text("\(goal.title) is paused.", tableName: "Today", comment: "Today for a paused goal")
+        } else {
+          Text("This goal is paused.", tableName: "Today", comment: "Today for a paused goal")
+        }
+      } icon: {
+        Image(systemName: "pause.circle")
+      }
+    } description: {
+      VStack(spacing: 8) {
+        Text(
+          "Nothing is planned until you resume it.", tableName: "Today",
+          comment: "Today for a paused goal")
+
+        if let goal, plans.resumeChangesPlan(goalId: goal.id).value == true {
+          Text(
+            "Your plan picks up from today, starting with the lessons planned for the days you paused.",
+            tableName: "Today", comment: "What resuming the paused goal moves")
+        }
+
+        if failure == .limitReached {
+          Text(
+            "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
+            tableName: "Today", comment: "Why resuming the goal failed on the free plan"
+          )
+          .foregroundStyle(.destructive)
+        } else if failure != nil {
+          Text(
+            "Couldn't save. Check your connection and try again.", tableName: "Today",
+            comment: "Resuming the goal failed"
+          )
+          .foregroundStyle(.destructive)
+        }
+      }
+    } actions: {
+      if let goal {
+        Button {
+          resume(goal)
+        } label: {
+          Text("Resume \(goal.title)", tableName: "Today", comment: "Resumes the paused goal")
+            .lineLimit(1)
+        }
+        .buttonStyle(.mainAction)
+        .controlSize(.large)
+        .disabled(isResuming)
+      }
+
+      newGoal(prominent: goal == nil)
+    }
+    .modifier(ResumePreviewLoading(goalID: goal?.id))
+    .onDisappear {
+      resumeTask?.cancel()
+    }
+  }
+
+  @ViewBuilder
+  private func newGoal(prominent: Bool) -> some View {
+    let button = Button {
+      router.open(.startGoal())
+    } label: {
+      Text("New goal", tableName: "Today", comment: "Starts a new goal")
+    }
+
+    if prominent {
+      button.buttonStyle(.mainAction).controlSize(.large)
+    } else {
+      button.buttonStyle(.bordered).controlSize(.large)
+    }
+  }
+
+  /// The button stays busy until the day replaces this screen.
+  private func resume(_ goal: LearnerGoal) {
+    resumeTask?.cancel()
+    resumeTask = Task {
+      isResuming = true
+      failure = nil
+
+      switch await plans.setStatus(.active, goalId: goal.id) {
+      case .done(.saved), .obsolete:
+        break
+      case .done(let refused):
+        failure = refused
+        isResuming = false
+      case .failed:
+        failure = .failed
+        isResuming = false
+      }
+    }
+  }
+}
+
+private struct ResumePreviewLoading: ViewModifier {
+  @Environment(PlanStore.self) private var plans
+
+  let goalID: String?
+
+  func body(content: Content) -> some View {
+    if let goalID {
+      content.loads(plans.resumeChangesPlan(goalId: goalID), refreshable: false)
+    } else {
+      content
+    }
+  }
+}

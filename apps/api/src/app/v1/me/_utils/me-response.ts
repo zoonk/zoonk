@@ -1,13 +1,11 @@
+import { toApiImageUrl } from "@/lib/file-urls";
 import { type CurrentUser } from "@zoonk/core/users/current";
 import { type Subscription } from "@zoonk/db";
 import { serializeDate } from "@zoonk/utils/date";
 
 type ActiveSubscription = Subscription | null;
 
-/**
- * Keeps `/v1/me` focused on the profile fields native clients need instead of
- * exposing raw Better Auth session internals such as tokens and IP metadata.
- */
+/** Picks fields so Better Auth's tokens and IP metadata never reach clients. */
 function serializeUser(user: CurrentUser) {
   return {
     analyticsDisabled: user.analyticsDisabled,
@@ -16,17 +14,14 @@ function serializeUser(user: CurrentUser) {
     email: user.email,
     emailVerified: user.emailVerified,
     id: user.id,
-    image: user.image ?? null,
+    image: user.image ? toApiImageUrl(user.image) : null,
     name: user.name,
     updatedAt: serializeDate(user.updatedAt) ?? "",
     username: user.username ?? null,
   };
 }
 
-/**
- * Returns only account-state fields that are useful to clients for gating paid
- * features, leaving provider-specific identifiers and billing internals private.
- */
+/** Picks fields so provider identifiers and billing internals stay private. */
 function serializeSubscription(subscription: ActiveSubscription) {
   if (!subscription) {
     return null;
@@ -44,10 +39,6 @@ function serializeSubscription(subscription: ActiveSubscription) {
   };
 }
 
-/**
- * Builds the public `/v1/me` response from fresh auth, provider, and
- * subscription reads so GET and PATCH return the exact same response shape.
- */
 export function createMeResponse({
   hasAppleAccount,
   subscription,

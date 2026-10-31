@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="session_block_mock_exam">Mock exam</string>
+    <string name="session_block_weekly_challenge">Weekly challenge</string>
+    <string name="session_block_final_challenge">Final challenge</string>
+    <string name="session_block_challenge_rematch">Challenge, second try</string>
+    <string name="session_block_phase_challenge">Phase challenge</string>
+    <!-- The first week's warm-up: only placement's questions, which check rather than review. -->
+    <string name="session_block_what_you_know">What you already know</string>
+    <string name="session_block_reviews">Reviews</string>
+    <string name="session_block_quick_review">Quick review</string>
+    <string name="session_block_new_lesson">New lesson</string>
+    <string name="session_block_writing_practice">Writing practice</string>
+    <string name="session_block_full_review">Full review</string>
+    <string name="session_block_practice_mistakes">Practice mistakes</string>
+    <string name="session_block_bonus_practice">Bonus practice</string>
+    <string name="session_block_mixed_practice">Mixed practice</string>
+    <string name="session_block_rematch_lesson">Short lesson before the rematch</string>
+    <plurals name="session_block_questions">
+        <item quantity="one">%d question</item>
+        <item quantity="other">%d questions</item>
+    </plurals>
+    <plurals name="session_block_weakest">
+        <item quantity="one">No reviews due today · %d question on your weakest topics</item>
+        <item quantity="other">No reviews due today · %d questions on your weakest topics</item>
+    </plurals>
+    <!-- %2$s lists the topics reviewed, such as "Fractions, Ratios and 2 more topics". -->
+    <plurals name="session_block_review_topics">
+        <item quantity="one">%1$d question · %2$s</item>
+        <item quantity="other">%1$d questions · %2$s</item>
+    </plurals>
+    <plurals name="session_block_review_topics_and_known">
+        <item quantity="one">%1$d question · %2$s, plus what you already know</item>
+        <item quantity="other">%1$d questions · %2$s, plus what you already know</item>
+    </plurals>
+    <!-- %2$s is the phase's name. -->
+    <plurals name="session_block_phase_questions">
+        <item quantity="one">%2$s · %1$d question, no hints</item>
+        <item quantity="other">%2$s · %1$d questions, no hints</item>
+    </plurals>
+    <!-- %1$s is the phase's name; a language unit's challenge is a live call with the Trickster. -->
+    <string name="session_block_phase_live_call">%1$s · a live call</string>
+    <string name="session_block_live_call">A live call</string>
+    <plurals name="session_block_challenge_questions">
+        <item quantity="one">%d question, no hints</item>
+        <item quantity="other">%d questions, no hints</item>
+    </plurals>
+    <!-- %d is the review's total number of questions, not a count per topic; the review covers every topic, weakest first. -->
+    <plurals name="session_block_full_review_questions">
+        <item quantity="one">%d question on every topic, your weakest first</item>
+        <item quantity="other">%d questions on every topic, your weakest first</item>
+    </plurals>
+    <!-- %1$s names the first topics; %2$d counts the rest. -->
+    <plurals name="session_topics_and_more">
+        <item quantity="one">%1$s and %2$d more topic</item>
+        <item quantity="other">%1$s and %2$d more topics</item>
+    </plurals>
+    <string name="session_opening_slow">Opening your next step…</string>
+    <string name="session_opening_very_slow">This is taking longer than usual. It opens on its own, no need to tap again.</string>
+    <string name="session_level_up">Level up!</string>
+    <!-- %1$s is the learner's Energy as a share, such as 70%. -->
+    <string name="session_energy_at">Energy at %1$s</string>
+    <!-- %1$s is the learner's Energy as a share, such as 100%. -->
+    <string name="session_energy_max">Max Energy: %1$s</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="session_energy_glowing_brightest">%1$s is glowing as bright as it gets.</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="session_energy_glowing">%1$s is glowing now.</string>
+    <string name="session_energy_detail">Right answers raise it. A day away lowers it a little.</string>
+    <string name="session_summary_eyebrow">Today\'s session</string>
+    <string name="session_summary_done_for_now">Done for now</string>
+    <string name="session_summary_done_under_minute">Done in under a minute</string>
+    <!-- %1$s is how long the session took, such as "13 min". -->
+    <string name="session_summary_done_in">Done in %1$s</string>
+    <!-- After Stop for today; %1$s is the time studied, such as "13 min". -->
+    <string name="session_summary_so_far">%1$s so far</string>
+    <string name="session_summary_right">Right</string>
+    <!-- What TalkBack says for "3/5" right answers. -->
+    <string name="session_summary_right_spoken">%1$d of %2$d</string>
+    <!-- Right minus wrong on questions that take points off for a wrong answer. -->
+    <string name="session_summary_net">net %1$s</string>
+    <string name="session_summary_preparation">Preparation</string>
+    <string name="session_summary_progress">Progress</string>
+    <!-- How many skills come back for review on later days. -->
+    <string name="session_summary_to_review">To review</string>
+    <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
+    <string name="session_summary_back_on">Back on %1$s</string>
+    <string name="session_summary_brain_power">Brain Power</string>
+    <!-- Points earned, such as "+120". -->
+    <string name="session_summary_plus">+%1$s</string>
+    <string name="session_summary_skills_rose">Skills that rose</string>
+    <string name="session_summary_tomorrow">Tomorrow</string>
+    <string name="session_summary_earned_today">Earned today</string>
+    <string name="session_summary_rewards">Rewards</string>
+    <!-- The learner's study buddy, by name, as TalkBack describes the picture. -->
+    <string name="session_summary_buddy_happy">%1$s, happy with today</string>
+    <!-- The day's only mission is done. -->
+    <string name="session_summary_mission_done">Done</string>
+    <plurals name="session_summary_missions_done">
+        <item quantity="one">All %d done</item>
+        <item quantity="other">All %d done</item>
+    </plurals>
+    <plurals name="session_summary_levels_gained">
+        <item quantity="one">+%d level</item>
+        <item quantity="other">+%d levels</item>
+    </plurals>
+    <!-- %1$s is how many questions in a row were right, such as "5". -->
+    <string name="session_summary_streak">%1$s right in a row</string>
+    <string name="session_summary_see_mistakes">See mistakes</string>
+    <string name="session_summary_keep_going">Keep going</string>
+    <string name="session_summary_finish">Finish</string>
+    <string name="session_summary_save_note">Save your plan so it\'s here next time.</string>
+    <string name="session_summary_create_account">Create an account</string>
+    <!-- Above the title of the session's next step. -->
+    <string name="session_next_eyebrow">Up next</string>
+    <string name="session_next_start">Start</string>
+    <string name="session_next_writing_note">This lesson is being written for you. It\'s usually ready in about two minutes.</string>
+    <string name="session_next_lesson_ready">Your lesson is ready.</string>
+    <string name="session_next_stop">Stop for today</string>
+    <string name="session_next_stop_failed">We couldn\'t stop the session. Try again.</string>
+    <!-- A button on the session's next step while its lesson is prepared: %1$s is another step's title, such as "Review", to do meanwhile. -->
+    <string name="session_next_while_waiting">While you wait: %1$s</string>
+    <!-- A button on the session's next step when its lesson can't be written now: %1$s is another step's title, such as "Review", to do instead. -->
+    <string name="session_next_instead">Instead: %1$s</string>
+</resources>

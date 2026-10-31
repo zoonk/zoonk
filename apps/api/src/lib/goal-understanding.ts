@@ -1,0 +1,28 @@
+import "server-only";
+import { isRunActive } from "@/workflows/_shared/run-activity";
+import { goalUnderstandingWorkflow } from "@/workflows/onboarding/goal-understanding-workflow";
+import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
+import { recordUnderstandingRun } from "@zoonk/core/view-models/onboarding/understanding-run";
+import { start } from "workflow/api";
+
+export async function isUnderstandingRunning(draft: OnboardingDraftView): Promise<boolean> {
+  return (
+    draft.status === "understanding" &&
+    draft.generationId !== null &&
+    (await isRunActive(draft.generationId))
+  );
+}
+
+/** Saved on the draft right away, so a second start in the meantime follows it. */
+export async function startUnderstandingRun(
+  draft: OnboardingDraftView,
+): Promise<OnboardingDraftView> {
+  const run = await start(goalUnderstandingWorkflow, [{ draftId: draft.id }]);
+  await recordUnderstandingRun({ draftId: draft.id, runId: run.runId });
+
+  return { ...draft, generationId: run.runId };
+}
+
+export function getUnderstandingLocation(draftId: string): string {
+  return `/v1/goal-understandings/${encodeURIComponent(draftId)}`;
+}

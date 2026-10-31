@@ -1,10 +1,13 @@
 const SLUG_MAX_LENGTH = 50;
-const NAME_PLACEHOLDER = "{{NAME}}";
 const WORD_CONNECTOR_PATTERN = /^[-'’‐‑‒–]$/u;
 const wordSegmenter = new Intl.Segmenter(undefined, { granularity: "word" });
 
+/** Recomposed after, so Japanese voiced kana ("が") and Korean syllables ("한") stay whole. */
 export function removeAccents(str: string): string {
-  return str.normalize("NFD").replaceAll(/[\u0300-\u036F]/gu, "");
+  return str
+    .normalize("NFD")
+    .replaceAll(/[\u0300-\u036F]/gu, "")
+    .normalize("NFC");
 }
 
 export function normalizeString(str: string): string {
@@ -25,38 +28,6 @@ export function toSlug(str: string): string {
     .replaceAll(/^-|-$/gu, "");
 }
 
-function nextAvailableSlug(base: string, taken: Set<string>): string {
-  let counter = 1;
-
-  while (taken.has(`${base}-${counter}`)) {
-    counter += 1;
-  }
-
-  return `${base}-${counter}`;
-}
-
-export function deduplicateSlugs<T extends { slug: string }>(items: T[]): T[] {
-  const taken = new Set<string>(items.map((item) => item.slug));
-  const seen = new Set<string>();
-
-  return items.map((item) => {
-    if (!seen.has(item.slug)) {
-      seen.add(item.slug);
-      return item;
-    }
-
-    const candidate = nextAvailableSlug(item.slug, taken);
-    taken.add(candidate);
-    return { ...item, slug: candidate };
-  });
-}
-
-/**
- * Different parts of the app can send the same text with tiny formatting differences,
- * such as extra spaces, accents, or a space before punctuation.
- * Return one stable copy of each text so we do not compare or save duplicates like
- * "Bonjour !" and "Bonjour!".
- */
 export function deduplicateNormalizedTexts(texts: string[]): string[] {
   return [
     ...new Map(
@@ -67,14 +38,6 @@ export function deduplicateNormalizedTexts(texts: string[]): string[] {
       }),
     ).values(),
   ];
-}
-
-/**
- * Converts optional free-text fields into the database representation for missing text.
- * This keeps blank generated fields from being saved as meaningful strings.
- */
-export function emptyToNull(value?: string | null): string | null {
-  return value?.trim() || null;
 }
 
 export function ensureLocaleSuffix(value: string, language: string): string {
@@ -95,26 +58,62 @@ export function normalizePunctuation(text: string): string {
   return text.replaceAll(/(?<!\s)\s+(?<punctuation>[!?.,;:!?。、！？؟])/gu, "$<punctuation>");
 }
 
+/**
+ * The app never shows em dashes: one that opens a line or closes a clause before punctuation goes,
+ * any other becomes a comma. En dashes stay: they join ranges ("B1–B2").
+ */
+export function replaceEmDashes(text: string): string {
+  if (!text.includes("—")) {
+    return text;
+  }
+
+  return text
+    .replaceAll(/^[ \t]*—[ \t]*/gmu, "")
+    .replaceAll(/[ \t]*—[ \t]*(?=[,.;:!?)]|$)/gmu, "")
+    .replaceAll(/[ \t]*—[ \t]*/gu, ", ");
+}
+
+const OPEN_DASH_TAIL = /[ \t—]*$/u;
+
+/**
+ * `push` holds back a trailing dash and its spaces until the next piece says what follows. Joined,
+ * the returned pieces read as `replaceEmDashes` reads the whole text.
+ */
+export function createEmDashReplacer(): { end: () => string; push: (piece: string) => string } {
+  let held = "";
+  let atLineStart = true;
+
+  // A piece that continues a line doesn't open one: a mark in front keeps a dash there mid-line.
+  const replace = (text: string) => {
+    const replaced = atLineStart ? replaceEmDashes(text) : replaceEmDashes(`x${text}`).slice(1);
+    atLineStart = text ? text.endsWith("\n") : atLineStart;
+    return replaced;
+  };
+
+  return {
+    end: () => {
+      const rest = replace(held);
+      held = "";
+      return rest;
+    },
+    push: (piece) => {
+      const text = held + piece;
+      held = OPEN_DASH_TAIL.exec(text)?.[0] ?? "";
+      return replace(text.slice(0, text.length - held.length));
+    },
+  };
+}
+
 export function stripPunctuation(text: string): string {
   return text.replaceAll(/[^\p{L}\p{N}\s]/gu, "");
 }
 
-/**
- * Check whether the last character of a token is a word connector
- * (hyphen, apostrophe, or similar). Used to decide if the next
- * word-like segment should merge into the current token.
- */
 function endsWithConnector(token: string): boolean {
   const lastChar = token.at(-1);
   return lastChar !== undefined && WORD_CONNECTOR_PATTERN.test(lastChar);
 }
 
-/**
- * Intl.Segmenter is good at finding word boundaries in scripts like Japanese or Chinese,
- * but it also splits connector-linked tokens such as "gato-123", "l'heure", or
- * "allez-vous?" into pieces. Rebuild those runs into one token so the player, answer
- * checker, and other consumers keep one shared tokenization rule.
- */
+/** Intl.Segmenter splits connector-linked runs like "gato-123" and "l'heure"; this rejoins them. */
 function segmentNonSpaceText(text: string): string[] {
   const tokens: string[] = [];
   let prefix = "";
@@ -139,11 +138,6 @@ function segmentNonSpaceText(text: string): string[] {
   return tokens;
 }
 
-/**
- * Segments text into display tokens for word-based lessons. Space-delimited text
- * keeps punctuation attached to the preceding word, while non-space text uses
- * `Intl.Segmenter` and then merges connector-linked runs back together.
- */
 export function segmentWords(text: string): string[] {
   const normalizedText = normalizePunctuation(text);
 
@@ -154,47 +148,104 @@ export function segmentWords(text: string): string[] {
   return segmentNonSpaceText(normalizedText);
 }
 
-export function extractUniqueSentenceWords(sentences: string[]): string[] {
-  const words = sentences.flatMap((sentence) =>
-    segmentWords(sentence).flatMap((token) => {
-      const stripped = stripPunctuation(token).toLowerCase();
-      return stripped.length > 0 ? [stripped] : [];
-    }),
+const JAPANESE_SCRIPT = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
+const HIRAGANA = /\p{Script=Hiragana}/u;
+const KATAKANA = /\p{Script=Katakana}/u;
+const LETTER_OR_NUMBER = /[\p{L}\p{N}]/u;
+const OPENING_PUNCTUATION = /[\p{Ps}\p{Pi}]/u;
+const MODIFIER_LETTER = /\p{Lm}/u;
+
+type PhraseScript = "hiragana" | "katakana" | "other";
+
+/** Marks that lengthen, voice or repeat a sound ("ー", "ﾞ", "々") continue the word they follow. */
+function getPhraseScript(char: string): PhraseScript | null {
+  if (MODIFIER_LETTER.test(char) || !LETTER_OR_NUMBER.test(char)) {
+    return null;
+  }
+
+  if (HIRAGANA.test(char)) {
+    return "hiragana";
+  }
+
+  return KATAKANA.test(char) ? "katakana" : "other";
+}
+
+/**
+ * A phrase starts at a kanji, katakana or Latin word and takes the kana after it, so particles and
+ * endings stay on their word ("駅まで", "飲みます"); an opening bracket starts one too.
+ */
+function splitJapanesePhrases(text: string): string[] {
+  const phrases: string[] = [];
+  let previous: PhraseScript | null = null;
+
+  for (const char of text) {
+    const script = getPhraseScript(char);
+    const opens = OPENING_PUNCTUATION.test(char);
+    const startsWord = script !== null && script !== "hiragana" && previous !== script;
+
+    if (phrases.length === 0 || opens || (startsWord && previous !== null)) {
+      phrases.push(char);
+    } else {
+      phrases[phrases.length - 1] += char;
+    }
+
+    previous = opens ? null : (script ?? previous);
+  }
+
+  return phrases;
+}
+
+/**
+ * The words a learner arranges in their own language, one of the app's languages. Japanese, the
+ * only one without spaces, splits into phrases the same way on every platform, since a dictionary
+ * split cuts its words apart ("飲|み|ます"); the others split as `segmentWords` does.
+ */
+export function segmentLearnerWords(text: string): string[] {
+  const normalizedText = normalizePunctuation(text);
+
+  if (!JAPANESE_SCRIPT.test(normalizedText)) {
+    return segmentWords(normalizedText);
+  }
+
+  return normalizedText
+    .split(/\s+/u)
+    .filter(Boolean)
+    .flatMap((piece) => splitJapanesePhrases(piece));
+}
+
+const NO_SPACE_SCRIPT =
+  /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Thai}\p{Script=Lao}\p{Script=Khmer}\p{Script=Myanmar}]/u;
+
+/** Text in a script without spaces (Japanese, Chinese, Thai) counts the words a dictionary finds. */
+export function countWords(text: string): number {
+  return text
+    .split(/\s+/u)
+    .flatMap((piece) => (NO_SPACE_SCRIPT.test(piece) ? segmentNonSpaceText(piece) : [piece]))
+    .filter((word) => LETTER_OR_NUMBER.test(word)).length;
+}
+
+export function getFirstSentence(text: string, locale: string): string {
+  const [first] = new Intl.Segmenter(locale, { granularity: "sentence" }).segment(text.trim());
+
+  return first?.segment.trim() ?? "";
+}
+
+export function pickAvailableSlug({
+  base,
+  taken,
+}: {
+  base: string;
+  taken: readonly string[];
+}): string {
+  const takenSlugs = new Set(taken);
+
+  if (!takenSlugs.has(base)) {
+    return base;
+  }
+
+  const suffix = Array.from({ length: takenSlugs.size + 1 }, (_, index) => index + 2).find(
+    (candidate) => !takenSlugs.has(`${base}-${candidate}`),
   );
 
-  return [...new Set(words)];
-}
-
-/**
- * Capitalize the first letter of a string without mutating the rest.
- * Needed after stripping a leading `{{NAME}}` placeholder so the
- * remaining sentence still starts with an uppercase letter.
- */
-function capitalizeFirst(text: string): string {
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
-/**
- * Replace `{{NAME}}` placeholders with the user's display name.
- * When the user is unauthenticated (`name` is null), strip the
- * placeholder and any surrounding comma-space punctuation, then
- * capitalize the result so sentences that started with `{{NAME}}`
- * still begin with an uppercase letter.
- */
-export function replaceNamePlaceholder(text: string, name: string | null): string {
-  if (!text.includes(NAME_PLACEHOLDER)) {
-    return text;
-  }
-
-  if (name) {
-    return text.replaceAll(NAME_PLACEHOLDER, name);
-  }
-
-  const stripped = text
-    .replaceAll(/\{\{NAME\}\},\s*/gu, "")
-    .replaceAll(/,\s*\{\{NAME\}\}/gu, "")
-    .replaceAll(NAME_PLACEHOLDER, "")
-    .trim();
-
-  return capitalizeFirst(stripped);
+  return `${base}-${suffix}`;
 }

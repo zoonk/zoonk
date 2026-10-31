@@ -5,6 +5,7 @@ import { logError, logInfo } from "@zoonk/utils/logger";
 import { getBattleLeaderboard } from "./battle-loader";
 import { resolveBattleMatchupModelIds } from "./battle-mapping";
 import { generateBattleRankings } from "./battle-score";
+import { canJudge } from "./models";
 import {
   getAllOutputsForTask,
   getModelsWithCompleteOutputs,
@@ -25,10 +26,9 @@ import {
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
 
-// Battle judges - easy to extend
 const BATTLE_JUDGES_CONFIG: readonly string[] = [
   "anthropic/claude-opus-5.5",
-  "google/gemini-3.1-pro-preview",
+  "google/gemini-4-argon",
   "openai/gpt-6-astra",
 ];
 
@@ -108,9 +108,22 @@ function extractMappingFromMatchup(
   }));
 }
 
-function getMissingJudges(matchup: BattleMatchup): string[] {
+function canJudgeAny({ judgeId, modelIds }: { judgeId: string; modelIds: string[] }): boolean {
+  return modelIds.some((modelId) => canJudge({ judgeId, modelId }));
+}
+
+function getMissingJudges({
+  matchup,
+  modelIds,
+}: {
+  matchup: BattleMatchup;
+  modelIds: string[];
+}): string[] {
   const existingJudges = new Set(matchup.judgments.map((judgment) => judgment.judgeId));
-  return BATTLE_JUDGES_CONFIG.filter((judgeId) => !existingJudges.has(judgeId));
+
+  return BATTLE_JUDGES_CONFIG.filter(
+    (judgeId) => !existingJudges.has(judgeId) && canJudgeAny({ judgeId, modelIds }),
+  );
 }
 
 function hasNewModels(existingMatchup: BattleMatchup, currentModelIds: string[]): boolean {
@@ -126,36 +139,18 @@ type Mapping = { anonymousId: string; modelId: string }[];
 type AnonymizedOutput = { anonymousId: string; output: string }[];
 type JudgeRunResult = { failures: Error[]; judgments: BattleMatchup["judgments"] };
 
-/**
- * Narrows settled results before their values are collected. Battle mode uses
- * the same helper for judge and test-case waves so fulfilled work is preserved
- * without duplicating status branches inside array transformations.
- */
 function isFulfilled<T>(result: PromiseSettledResult<T>): result is PromiseFulfilledResult<T> {
   return result.status === "fulfilled";
 }
 
-/**
- * Narrows rejected results so unknown promise rejection values can be
- * normalized into real Error instances before they are logged or aggregated.
- */
 function isRejected<T>(result: PromiseSettledResult<T>): result is PromiseRejectedResult {
   return result.status === "rejected";
 }
 
-/**
- * Keeps every successful result from a settled parallel wave. A failed judge
- * must not erase other judges that completed and can be persisted for the next
- * incremental battle run.
- */
 function getFulfilledValues<T>(results: PromiseSettledResult<T>[]): T[] {
   return results.filter((result) => isFulfilled(result)).map((result) => result.value);
 }
 
-/**
- * Converts all rejected values from a settled wave into Error instances so an
- * AggregateError can retain every failure instead of reporting only the first.
- */
 function getRejectedErrors<T>(results: PromiseSettledResult<T>[]): Error[] {
   return results.filter((result) => isRejected(result)).map((result) => toError(result.reason));
 }
@@ -200,10 +195,6 @@ function getAnonymizationForBattle(
   return { anonymizedOutputs, mapping };
 }
 
-/**
- * Runs one judge independently so the enclosing settled wave can retain both
- * the judge identity and any rankings it successfully produced.
- */
 async function runJudge(params: {
   judgeId: string;
   anonymizedOutputs: AnonymizedOutput;
@@ -213,25 +204,21 @@ async function runJudge(params: {
   scoreCategories?: ScoreCategory[];
 }): Promise<BattleMatchup["judgments"][number]> {
   const { judgeId, anonymizedOutputs, expectations, userPrompt, mapping, scoreCategories } = params;
+  const eligibleMapping = mapping.filter((entry) => canJudge({ judgeId, modelId: entry.modelId }));
+  const eligibleIds = new Set(eligibleMapping.map((entry) => entry.anonymousId));
 
-  return {
+  const { rankings, usage } = await generateBattleRankings({
+    anonymizedOutputs: anonymizedOutputs.filter((output) => eligibleIds.has(output.anonymousId)),
+    expectations,
     judgeId,
-    rankings: await generateBattleRankings({
-      anonymizedOutputs,
-      expectations,
-      judgeId,
-      mapping,
-      scoreCategories,
-      userPrompt,
-    }),
-  };
+    mapping: eligibleMapping,
+    scoreCategories,
+    userPrompt,
+  });
+
+  return { judgeId, rankings, usage };
 }
 
-/**
- * Lets all configured judges finish even when one fails. Successful judgments
- * are returned separately from failures so the caller can save partial work
- * before surfacing an incomplete matchup.
- */
 async function runJudges(params: {
   judgesToRun: readonly string[];
   anonymizedOutputs: AnonymizedOutput;
@@ -252,11 +239,6 @@ async function runJudges(params: {
   return { failures: getRejectedErrors(results), judgments: getFulfilledValues(results) };
 }
 
-/**
- * Builds and persists one matchup while retaining any judge results that
- * succeeded. Failed judges remain missing in the saved matchup so the existing
- * incremental path retries only those judges on the next run.
- */
 async function runBattleForTestCase({
   allOutputs,
   existingMatchup,
@@ -291,8 +273,8 @@ async function runBattleForTestCase({
   const { mapping, anonymizedOutputs } = getAnonymizationForBattle(modelOutputs, effectiveExisting);
 
   const judgesToRun = effectiveExisting
-    ? getMissingJudges(effectiveExisting)
-    : [...BATTLE_JUDGES_CONFIG];
+    ? getMissingJudges({ matchup: effectiveExisting, modelIds: currentModelIds })
+    : BATTLE_JUDGES_CONFIG.filter((judgeId) => canJudgeAny({ judgeId, modelIds: currentModelIds }));
 
   if (judgesToRun.length === 0 && effectiveExisting) {
     return effectiveExisting;
@@ -340,10 +322,6 @@ async function runBattleForTestCase({
   return matchup;
 }
 
-/**
- * Runs one test case and logs completion only after its matchup is safely
- * persisted. Keeping this unit named leaves the outer settled wave declarative.
- */
 async function runBattleTestCase({
   completeOutputs,
   task,
@@ -374,7 +352,6 @@ export async function runBattleMode(task: RegisteredTask): Promise<void> {
 
   logInfo(`\n=== Starting Battle Mode for task: ${task.name} ===\n`);
 
-  // Get all models with complete outputs
   const completeModels = await getModelsWithCompleteOutputs({ runsPerTestCase: 1, task });
 
   if (completeModels.length < 2) {
@@ -385,10 +362,8 @@ export async function runBattleMode(task: RegisteredTask): Promise<void> {
 
   logInfo(`Found ${completeModels.length} models with complete outputs`);
 
-  // Load all outputs
   const allOutputs = await getAllOutputsForTask(task.id);
 
-  // Filter to only include complete models
   const completeOutputs = new Map<string, ModelOutputs>();
 
   for (const modelId of completeModels) {
@@ -399,7 +374,6 @@ export async function runBattleMode(task: RegisteredTask): Promise<void> {
     }
   }
 
-  // Run battles for each test case (incremental - only runs missing judges)
   const battleResults = await Promise.allSettled(
     task.testCases.map((testCase) => runBattleTestCase({ completeOutputs, task, testCase })),
   );
@@ -419,6 +393,6 @@ export async function runBattleMode(task: RegisteredTask): Promise<void> {
   logInfo("Top 3 models:");
 
   leaderboard.slice(0, 3).forEach((entry, i) => {
-    logInfo(`  ${i + 1}. ${entry.modelName}: ${entry.totalScore} points`);
+    logInfo(`  ${i + 1}. ${entry.modelName}: ${entry.averageScore.toFixed(2)} average`);
   });
 }

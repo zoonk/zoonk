@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "language_alphabet_anytime": "91155c7af26915db545f8c7476fc515105faf49402e45606e06744032b5f2587",
+  "language_alphabet_first_next_session": "74116305934c8a108ebb9fa5b7f231a4c634ea8b5502ce3ad982ce8a7d5c1c7d",
+  "language_alphabet_skip": "c80ec36c323f4232c9dbaef8590e9f8513e48f070153640d045c32a5d234d1ce",
+  "language_alphabet_skip_failed": "fffd59cf12dde40e22cfb9941a4dab9bc3f4d205612136766d391f5c625b3da4",
+  "language_can_already": "3da8bff22819b07e6f0bb389f519edcab605148ebc78f2d2b561787afada168d",
+  "language_can_do_not_yet": "8a900297345b752fe01b12ffa439dc39d4c0cabd2bd6ed5edd8f604fbd3061a2",
+  "language_level": "cbcab170818c95ddfdb82c4e42689f31a1799d5ec31ba481ae4f0e671b44dfe0",
+  "language_level_by_skill": "745827e63aa07634a527c35e717bd2175606d27606ac3b3eff1d0015282b7179",
+  "language_level_down": "c12f4ba1723d4bcc31fd728b58fae0895786640c9b1dd61e9c3aa50ab5c40dc6",
+  "language_level_goal": "9e261aadab0e4439091c1b7dfc4f65ede67a2719dd4b5e6c5c4680628cdde4c7",
+  "language_level_goal_by": "80b61e492cea43620a2570072d4c0c34d5c4d90446903b464d9b1c3ddc5b94dc",
+  "language_level_rose": "6f861273c8ec8ae5640f52954b72695d570deee8021b3e2b97943a7ef962702a",
+  "language_level_toward": "a2c8c71894b35c6730d0c0d0aa2c7c0b0d40f9c57d58e616af0c7296ec2e54cc",
+  "language_level_toward_goal": "eb31ddfb72db83757e2d5b8af0d15218ac602a48641df5faefcc8b714f7dd299",
+  "language_level_toward_spoken": "4f858cf3844c23b103df11f2c0d4b1b4f3ac03ad462a6c3c5d22c2c45be42ad6",
+  "language_level_up": "572d8d07da6be83268c5131a603a5122bc422cceb3549f1625045cfd767bacad",
+  "language_levels_move": "c961bdc961b541685cb943982fe033ee30884f99da5a1ccc81118813825daffa",
+  "language_levels_rose": "64899ea2fd3e5b68cc93a207f468481eb580057fdc0547510f337a885783cb2b",
+  "language_pattern_noticed": "ee055190afd8e2d14cfec8505e3134a77a761fe561a4f913f07bae8558a33ca7",
+  "language_pattern_noticed_summary": "afc6701b01cd318c76d13e71639aefb09e0d84ff40276462afdeabebdf5b70b3",
+  "language_pattern_practice": "888c657ade348f679c36d2b6e1e56ff0053ade264e2bcec1e7ef893bcf5148d8",
+  "language_pattern_typos": "ddf1af6effed1a8009f78c0aa5f69c07ede3465b9edb3a35e3236b56089a4389",
+  "language_pattern_typos_description": "eb05e5072682fad3dac17ee4da96ea78393b89fd5af6874424019ee7a83d4151",
+  "language_say_again": "320993a77f6cec9696102b214cdfcc0d73e6818ed2cf9ba31d3e84585c2a270a",
+  "language_say_them": "d88b5bc1445a3403ba7bb03ea894cc9b91c0fcf3bc17a6e91a913f2677af161d",
+  "language_see_your_plan": "9736d03e96607ab584843f6c2d7a363f5458f4001a9d84661f157efbd73432db",
+  "language_skill_level": "0b28c3021630ea500c087bee1e5599e5945bb04a794ad360748749510e666c84",
+  "language_skill_level_trend": "c6cb4ffbc0eb3852a3099d1e5385a88775a1eacbd799a5dc9af8e1a6a271aa7a",
+  "language_skill_listening": "7f28a85faddbf6527ab11923d92e34440e3d6f77148b88f08b6bdb78d20e768d",
+  "language_skill_reading": "a59cb5601200cd629015615e6c3a9687695eda2d49b1e2e83abf8ae5c6d5fac6",
+  "language_skill_speaking": "e978bf2b2c1a514f7eff2666d7203eff94334bffad012da2a7fd52eddb8bcc1a",
+  "language_skill_words": "a47233431d3922e85c2cb447f6de1b44092bb67daa1a16b711b9b1a67f1178b4",
+  "language_skill_writing": "ac50c7a5aedcdc1decb4cdc0a23db7794acb524bbe63ccbce109433af3ec6da8",
+  "language_typos_open": "bc9602870ce89f98b9701671433d38387933eb82ebfc24eaf44d9df59770076f",
+  "language_unit_about": "ca463739ab1a1ab8e3f967ecc30e279517df7c7d8cb4e5e310524ee1b2bdcce3",
+  "language_unit_continue": "7b38f0f909ee0aacdc5a3efaf7361544014bf8bd92b88cb075b65823449cf799",
+  "language_unit_done_share": "7becbfa38277cbe19bb6ac164a65d750f0932dfca08538712bd4ee26f2046f24",
+  "language_unit_eyebrow": "7446c8d3a03055aab0e48089f590332495bf87cf6b7420dcf611cb9e57ecf1e2",
+  "language_unit_grammar_tips": "0e0b3388a8a1bc5ae998514c4414e324ec0e228cc4f8626094f9d63d178dcb83",
+  "language_unit_lessons": "6af12a51258d9864cb1798d1ab418598ed0a3359deeb98f2fcf753e1ad44c175",
+  "language_unit_mistakes": "44fc45071f8e63445e7a601454634189e2f3a3eebcc5794e6e5586484659a1bb",
+  "language_unit_objectives": "c4b909a47b4fe941724454e4736d34bf9920fa94f345b153ba52e9ffb5783321",
+  "language_unit_practice": "6dc18d64f605dde66e81b35d0ce15b1e0c55a6dbf5874214b13730f92a4f2b45",
+  "language_unit_progress": "7a739193279038023f4d40e62278053b1fc0236be8cece218165f08e827ce651",
+  "language_unit_reference": "bf172d96a8d8b2553d58dcdfb225078f032b322f8fb0b90292afe789530b771d",
+  "language_unit_start": "ebfc464a75518a2e04dba46b7469476fe016e2aefef9fb56176106729ffff853",
+  "language_unit_summary": "069c082228090b7e64f237a7bfc4cad340e501eb86e9bc4daef5d83387fb99ac",
+  "language_unit_words": "db9371eb07ac7b4cbcefcde1fd13d651eabe05377bda3a8b4042402d7e028d08",
+  "language_unit_words_more": "562713023b8d42ab97bcc8fe3a8f3b122db32d2d4c82fab62150b7b59241564f"
+}
+-->
+<resources>
+    <!-- A unit's place and its levels: "Unit 3 · A1–A2". -->
+    <string name="language_unit_eyebrow">Ünite %1$s · %2$s</string>
+    <plurals name="language_unit_lessons">
+        <item quantity="one">%d ders</item>
+        <item quantity="other">%d ders</item>
+    </plurals>
+    <!-- How much of the unit is done, the unit being the subject: "33% done". -->
+    <string name="language_unit_done_share">%1$s tamamlandı</string>
+    <string name="language_unit_start">Başla</string>
+    <string name="language_unit_continue">Devam et</string>
+    <string name="language_unit_objectives">Bu ünitenin sonunda</string>
+    <string name="language_unit_progress">İlerleme</string>
+    <string name="language_unit_practice">Alıştırma yap</string>
+    <string name="language_unit_mistakes">Yanlışların</string>
+    <!-- Heading over material to look things up in, such as grammar tips and words, rather than lessons to do. -->
+    <string name="language_unit_reference">Başvuru kaynakları</string>
+    <string name="language_unit_grammar_tips">Dil bilgisi ipuçları</string>
+    <string name="language_unit_words">Bu ünitedeki kelimeler</string>
+    <!-- A few of the unit's words, then how many more it teaches: "hola · gracias · adiós and 12 more". -->
+    <string name="language_unit_words_more">%1$s ve %2$s kelime daha</string>
+    <string name="language_unit_summary">Ünite özeti</string>
+    <!-- TalkBack's name for the pane beside the unit's lessons. -->
+    <string name="language_unit_about">Bu ünite hakkında</string>
+    <string name="language_skill_reading">Okuma</string>
+    <string name="language_skill_listening">Dinleme</string>
+    <string name="language_skill_speaking">Konuşma</string>
+    <string name="language_skill_words">Kelime bilgisi</string>
+    <string name="language_skill_writing">Yazma</string>
+    <!-- Heads the learner's level in each skill (reading, listening, speaking, writing), on the CEFR scale from A1 to C2. -->
+    <string name="language_level_by_skill">Beceriye göre seviye</string>
+    <!-- The level the learner aims for and when: "Goal B2 by June 2027". %1$s is a CEFR level, %2$s a month and year. -->
+    <string name="language_level_goal_by">Hedef %1$s · %2$s tarihine kadar</string>
+    <!-- The level the learner aims for: "Goal B2". -->
+    <string name="language_level_goal">Hedef %1$s</string>
+    <!-- What TalkBack says for a skill's row: "Reading, B1". -->
+    <string name="language_skill_level">%1$s, %2$s</string>
+    <!-- What TalkBack says for a skill's row that moved: "Reading, B1, up since the level test". -->
+    <string name="language_skill_level_trend">%1$s, %2$s, %3$s</string>
+    <!-- Read by TalkBack after a skill's level that went up since the learner's first level test. -->
+    <string name="language_level_up">seviye testinden beri yükseldi</string>
+    <!-- Read by TalkBack after a skill's level that went down since the learner's first level test. -->
+    <string name="language_level_down">seviye testinden beri düştü</string>
+    <string name="language_levels_move">Pratik yaptıkça seviyelerin değişir. Her hafta becerilerini daha doğru yansıtır.</string>
+    <!-- One skill rose: "Speaking went up to B1 since the level test." -->
+    <string name="language_level_rose">%1$s seviyen seviye testinden beri %2$s seviyesine yükseldi.</string>
+    <!-- The count is how many skills rose, always two or more; %1$s lists them: "Speaking and Writing went up since the level test." -->
+    <plurals name="language_levels_rose">
+        <item quantity="one">%1$s seviyelerin seviye testinden beri yükseldi.</item>
+        <item quantity="other">%1$s seviyelerin seviye testinden beri yükseldi.</item>
+    </plurals>
+    <!-- Heads the list of things the learner is now able to do in the language, from the units they finished. -->
+    <string name="language_can_already">Artık şunları yapabiliyorum…</string>
+    <!-- Read by TalkBack after the next thing the learner will be able to do, which they can't do yet. -->
+    <string name="language_can_do_not_yet">Henüz değil</string>
+    <!-- What TalkBack says for a level and the level the learner aims for, shown as "B1 → B2": "B1, goal B2". -->
+    <string name="language_level_toward_goal">%1$s, hedef %2$s</string>
+    <string name="language_pattern_noticed">Tekrarlayan bir hata fark ettik</string>
+    <string name="language_pattern_typos">Sadece yazım hataları</string>
+    <string name="language_pattern_typos_description">Son yanlışların dalgınlıktan kaynaklandı. Öğrenmen gereken bir kural yok.</string>
+    <!-- A practice row. %d is how many words are due to be said out loud again, a count, never a word's number: "Say 2 words again" means repeat two words. -->
+    <plurals name="language_say_again">
+        <item quantity="one">%d kelimeyi tekrar söyle</item>
+        <item quantity="other">%d kelimeyi tekrar söyle</item>
+    </plurals>
+    <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
+    <string name="language_alphabet_first_next_session">Sonraki çalışmanda ilk sırada · %1$s</string>
+    <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
+    <string name="language_alphabet_anytime">İstediğin zaman çalış · %1$s</string>
+    <!-- Skips the alphabet lesson for a learner who reads the script. -->
+    <string name="language_alphabet_skip">Zaten okuyabiliyorum</string>
+    <string name="language_alphabet_skip_failed">Kaydedilemedi. Tekrar dene.</string>
+    <!-- Button that opens the words to say aloud again; "them" is those words. -->
+    <string name="language_say_them">Sesli söyle</string>
+    <!-- Opens the noticed typos. -->
+    <string name="language_typos_open">Aç</string>
+    <!-- %1$s names the rule the learner keeps getting wrong. -->
+    <string name="language_pattern_noticed_summary">Tekrarlayan bir hata fark ettik: %1$s</string>
+    <!-- Opens the noticed pattern. -->
+    <string name="language_pattern_practice">Alıştırma yap</string>
+    <string name="language_level">Seviye</string>
+    <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
+    <string name="language_level_toward">%1$s → %2$s</string>
+    <!-- What TalkBack reads for "A2 → B1": %1$s is the level now, %2$s the level the learner aims for. -->
+    <string name="language_level_toward_spoken">%1$s, hedef %2$s</string>
+    <!-- Opens the Plan from Today's level. -->
+    <string name="language_see_your_plan">Planını gör</string>
+</resources>

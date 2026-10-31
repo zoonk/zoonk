@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mindmaps_alt": "0a17df55dc3bf0257514fa2c3afa4326ae6043932854c32331c048a3b3b124aa",
+  "mindmaps_alt_chapter": "df8fac2ca25d3eaf319a6de7491e5d3b1c8a6c6327ebbcc25f27c7a5e3d6e0f9",
+  "mindmaps_alt_sentence": "439dfcd179134086ecf7225b5676a4f980ca0b1b814a1fd8f96bfe28ddbac2f3",
+  "mindmaps_as_text": "c8ec3abda3b8c2348e3b51643bbd1316b753885190580bcd70d0874a3091c452",
+  "mindmaps_as_text_note": "fbb2a5d0a970cd5392f8d49a3467046720a0ee8ebbbf446446079ad564b221a7",
+  "mindmaps_card_create": "683f1b2954dbf1241290c5bf28262b990811c7a8a380d083d1444f46f235cd4b",
+  "mindmaps_card_description": "9a6565ce4f505f7859b155c1e5defe739a301cf582e8c062c7c8bf1260bded5c",
+  "mindmaps_card_failed": "299e53d857457bc0257f329e3c84ce244b872631e5198d935c48a83fd3bfb909",
+  "mindmaps_card_generating": "05504deebcb8a5b59813504dee10ec3377e27cc7b6a47f703c05ea4574f5764b",
+  "mindmaps_card_generating_title": "9f5aa6669e985fa4a95a82a51fb1d3da1954578bf4de61303c81f297b647e800",
+  "mindmaps_card_title": "1d0ed1c1ebd4d75d316d2e12e108c9f3783d0a7cddbaf1094a8460b850fb4cd4",
+  "mindmaps_card_unreachable": "ed331280fc66355f5ccd629b577420d73ec877ce4999a3811979cac357ed248e",
+  "mindmaps_chapter_count": "25b5778eb0f10519cf6a0e82dc049c224548f5e2aa963b55fb05251e75207ff0",
+  "mindmaps_chapter_number": "8a6706a3a2c2a0d80f37dd7bdd4e2b19fd72e37dc5231f5cab21dfa14c7e3163",
+  "mindmaps_chapters_finished": "c8aa8e5d0d51125ff84ccc1319a42611219b93d1a54795f0c256ca3a73731364",
+  "mindmaps_continue": "b742b8303a3da8e7c5dd7942d7513f1e315b40373b81c6d952e1ca76a417115a",
+  "mindmaps_count": "9c3fa85742f06d4be14962d397112447541abd108fbe1f64af8bb973b5d57716",
+  "mindmaps_create": "4fb9ee6373de0a1f6ccdde1782c0504b7fb6b76b3533d1b2d98791829cca7ea1",
+  "mindmaps_create_spoken": "6cbd0db6b49dcad6585900388dc25abe7665ce5bc126b9d794119ee6a3578522",
+  "mindmaps_download": "e8e0d7f6649667b998778a6a9ac3710bcf1c26f5820c45fc69e2e2fbb960423c",
+  "mindmaps_drawing": "17b16b4fe04812644a7a8343f71830d90a6c233c32e54ee86d66777592a7416b",
+  "mindmaps_empty_description": "92b3da6d4861cdec20c15a85560f205bf91bc83373053f54ab21a5ef167f7ac9",
+  "mindmaps_empty_title": "ea63fdc49d6f5530cdadde0b6389228d1fad5acd93ceb6295167771475597ce3",
+  "mindmaps_failed_short": "ed4b679cf8c29d0485820b3edf380309305e17ee739ff2dd62267c3000505b17",
+  "mindmaps_first_after": "f6722eab928e201171ed17fbe7f0b74f0458b17c52f41dbceeec29eadfe405d4",
+  "mindmaps_fit": "25bb327d7426d900d38a8f3e341ea10e2843f67ceab5143fe12313a9419eaf7b",
+  "mindmaps_full_screen": "d61828172d858dcbf5390d955054a0842e024abe2ef2a995dee190be74fb5962",
+  "mindmaps_in_short": "f0d66cba29693fc07d5eaa4b72204893e7db8d2905cdbdf1e417ef90a15f3ad7",
+  "mindmaps_keep_studying": "fbef05effc8eda9e1183c733635447826cef97c8230d082ca501299363761216",
+  "mindmaps_save_failed": "8a884e1f8793d596248094d48824eb635f74793dcee74f2f5d3fdef58c6d343c",
+  "mindmaps_saved": "94bb487abd006eede8dd8525985e40e6dbbc107fff9cd735212b9518a87a839b",
+  "mindmaps_try_again": "0084ff78e11bba0480a92380c3f6b03d17f7733a09e05b8ae2278ec775c60b74",
+  "mindmaps_try_again_spoken": "6f746677bb9f9a77f935b26760c990abc0d2df5c994c4920b13bd65270c25e76",
+  "mindmaps_unreachable_short": "651484964f034862f1d4bb475f0c498922084590f08539be0629be3f8982bb31",
+  "mindmaps_viewer_hint": "6426aed7e665d16a415c8a413866afed750125905a8d7305bace5a16e3fae9d4",
+  "mindmaps_zoom_in": "fd8f1240e05d2124eb5cf536185a0f2b59cbaa4202468c23d294b81c100d584f",
+  "mindmaps_zoom_out": "1f451ac16fd49cd0a0d987eeb129e0df7b1fafca1ff0505ac1bb03453ea684b2"
+}
+-->
+<resources>
+    <!-- How many of the goal's mind maps are drawn: "3 maps". -->
+    <plurals name="mindmaps_count">
+        <item quantity="other">マップ%1$s枚</item>
+    </plurals>
+    <!-- The group of mind maps when the goal's chapters have no subjects. -->
+    <string name="mindmaps_chapters_finished">学習を終えた章</string>
+    <plurals name="mindmaps_chapter_count">
+        <item quantity="other">%d章</item>
+    </plurals>
+    <!-- A mind map tile's caption over the chapter's title. -->
+    <string name="mindmaps_chapter_number">第%1$s章</string>
+    <string name="mindmaps_empty_title">マインドマップはまだありません</string>
+    <string name="mindmaps_empty_description">章を終えると、その要点を1枚の図にまとめたマインドマップを作成できます。</string>
+    <!-- %1$s is the chapter the learner is in, %2$d the lessons left in it. -->
+    <plurals name="mindmaps_first_after">
+        <item quantity="other">最初のマインドマップは%1$sを終えると見られます。あと%2$dレッスンです。</item>
+    </plurals>
+    <!-- Opens the chapter whose map comes next. -->
+    <string name="mindmaps_continue">続ける</string>
+    <string name="mindmaps_keep_studying">学習を続ける</string>
+    <!-- A mind map's description for screen readers when it has no words yet. -->
+    <string name="mindmaps_alt_chapter">%1$sのマインドマップ</string>
+    <!-- A mind map's description for screen readers: its title, then its central idea. -->
+    <string name="mindmaps_alt">マインドマップ：%1$s。%2$s</string>
+    <!-- The same, for a title that already ends a sentence. -->
+    <string name="mindmaps_alt_sentence">マインドマップ：%1$s %2$s</string>
+    <!-- A tile for a map whose picture had mistakes, shown in words instead. -->
+    <string name="mindmaps_as_text">テキスト表示</string>
+    <string name="mindmaps_drawing">作成しています…</string>
+    <!-- Makes a chapter's mind map. -->
+    <string name="mindmaps_create">作成する</string>
+    <string name="mindmaps_try_again">もう一度試す</string>
+    <!-- What screen readers say for a tile's Create, naming its chapter. -->
+    <string name="mindmaps_create_spoken">%1$sのマインドマップを作成する</string>
+    <!-- What screen readers say for a tile's Try again, naming its chapter. -->
+    <string name="mindmaps_try_again_spoken">%1$sのマインドマップをもう一度作成する</string>
+    <string name="mindmaps_failed_short">今回は作成できませんでした。</string>
+    <string name="mindmaps_unreachable_short">サーバーに接続できませんでした。</string>
+    <string name="mindmaps_card_title">マインドマップ</string>
+    <string name="mindmaps_card_description">章の要点を1枚の図にまとめ、ひと目で復習できます。</string>
+    <string name="mindmaps_card_create">マインドマップを作成する</string>
+    <string name="mindmaps_card_generating_title">マインドマップを作成しています…</string>
+    <string name="mindmaps_card_generating">30 秒ほどかかります。このページを離れても、戻ればここで見られます。</string>
+    <string name="mindmaps_card_failed">今回はマインドマップを作成できませんでした。</string>
+    <string name="mindmaps_card_unreachable">サーバーに接続できませんでした。インターネット接続を確認してください。</string>
+    <string name="mindmaps_as_text_note">図に間違いがあったため、マインドマップをテキストで表示しています。</string>
+    <string name="mindmaps_full_screen">全画面表示</string>
+    <!-- Saves the mind map's picture. -->
+    <string name="mindmaps_download">ダウンロード</string>
+    <string name="mindmaps_saved">マインドマップを保存しました</string>
+    <string name="mindmaps_save_failed">マインドマップを保存できませんでした。もう一度試してください。</string>
+    <!-- Starts the one-line gist at the end of a mind map in words. -->
+    <string name="mindmaps_in_short">まとめ：</string>
+    <string name="mindmaps_zoom_in">拡大</string>
+    <string name="mindmaps_zoom_out">縮小</string>
+    <string name="mindmaps_fit">画面に合わせる</string>
+    <string name="mindmaps_viewer_hint">ピンチ操作やスクロール、+と-で拡大・縮小できます。ドラッグや矢印キーで移動できます。</string>
+</resources>

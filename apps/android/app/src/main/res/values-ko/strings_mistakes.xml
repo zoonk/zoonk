@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mistakes_cause_fixed": "6f8150ecc61ab90147284b198a1540577bccc2eee6b80d22a905c7e7f58a2404",
+  "mistakes_cause_gap": "f046fac2f5ce403bd2cf1d60c739070ce9edabcff3031093e2e20617809e40d3",
+  "mistakes_cause_guess": "5d3c2d10075fb21adb6f3ada4b19af8916dd2345f61f6eaa6d5f1770a9435c49",
+  "mistakes_cause_misread": "a16caae07cfab5e538157ab1703f5732108e304a3d5caeed56f3581e5a37f439",
+  "mistakes_cause_time": "2148214bbd460cbcfb25eb7cc777f405e3908ed0c1bb8235e271377e6d4b1bce",
+  "mistakes_cause_trap": "508e2bc4655710bb8a35e60f0c3be964cda7b0acbef43a27a8f312680859d365",
+  "mistakes_cause_unsorted": "b96c4a3a2d5b1a194152d103043947224e7d52d78b8ebdd1d64c918105f15c3d",
+  "mistakes_come_back_tomorrow": "707041210fd7e03e71a3c164eeaa77059a6381723af3fd6d78e17725688cfb77",
+  "mistakes_empty_fixed": "90eebfd2550890b54cce1165f4d8b6b7abdadbe7d91905d3e79e5a742c17a566",
+  "mistakes_empty_open": "87e818e7ef719131084b089123eca9f49f6fdce266aaf07765feaa63a896d9f9",
+  "mistakes_fixed_count": "004f31b554f6deafe3613e9fecf584bc999dd5c44d475f1ac0f71a000df3dfa2",
+  "mistakes_more_failed": "757ce2a0ccb2e6dff9298cc6f76cf0bfe05624945f82ec11fc1e2abc84c8e78b",
+  "mistakes_not_found_description": "39dea559655461425f7f1e78e81984dc57fcd5b8d37b58470eb4dbc8b0e8b660",
+  "mistakes_notebook_title": "d40cf5ca793f470a5d20fd433667d7df2541444580babf55a2324da5a6fa51d1",
+  "mistakes_nothing_description": "4f162d4982938abfa5fa323591dcdc93b7ecf38c624cf8468c9be86d5495015d",
+  "mistakes_nothing_title": "82d12cceabba49b1cafea36d00ba9da95bb9e6b27a9a7b3f0fcc6536c78ccba2",
+  "mistakes_open_lesson": "4b01687efc3da90c3567e0b3996c6e593034491bc912b7c2434048f622e8637b",
+  "mistakes_other_questions": "39cd6face3c1d1d861c190c57a1b22e48a6a47b42cad51d1f0f69b780caa60ee",
+  "mistakes_practice": "119bf53fe90131d5260eaf3b73a9605bc5a6d6a08e2ab0c266447f95695db4e0",
+  "mistakes_practice_comes_back": "84aa968dff669a38bb9ebeecba9de1d6a976c9aba0181dbeaafecd8180cfe8d7",
+  "mistakes_practice_end": "0e1807865ecde7acfdad2ee5878116b17ad7f2012f02d767f47b97af90a7c106",
+  "mistakes_practice_fixed": "e9894e560d70f22ec1b989115f6d501be5644281b881ca9b16e69ae85ae87b17",
+  "mistakes_practice_skill": "f0576f57eccc9b8134fd63f3b176a35283ab1adf70dc44cb1bbf997be40c8fd5",
+  "mistakes_practice_title": "44d9d18aac7f7cf0cd7d76cd6336f2bff590737c4b59939cb351fbd3af15c29d",
+  "mistakes_practice_tomorrow": "d63d4642fee683df08b1b92d6b05a6524b836e7d7a2ef99c79e5943e0c339a1b",
+  "mistakes_ready": "90d4aa9013bcda3b87e389330a362cbc19a8d08e192156080267228d751c1df9",
+  "mistakes_show_more": "d8f773766fe6c02ee2ad62e8859eacefaa1edc5a2b19a661adce6dc795b35701",
+  "mistakes_tab_fixed": "db001deb7f1ffcdef29cb3e3469e7b7896a56506013325bee5e7425a127952c5",
+  "mistakes_tab_open": "689bae731b01d27ce9433f2a184a2fd0074a90dc9b2f47307a3abedf4b95aec3",
+  "mistakes_tomorrow": "0bdc61f028c846d0837e2e1d135e4c971b238d4e357c3ed1fea0b46f8341162d"
+}
+-->
+<resources>
+    <string name="mistakes_practice_title">틀린 문제 연습</string>
+    <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
+    <string name="mistakes_practice_end">연습 끝내기. 지금까지 푼 문제의 결과는 반영돼요.</string>
+    <string name="mistakes_practice_comes_back">나머지 문제는 더 오래 기억에 남도록 다른 날 다시 나와요.</string>
+    <plurals name="mistakes_practice_fixed">
+        <item quantity="other">오답 %d개를 고쳤어요</item>
+    </plurals>
+    <string name="mistakes_not_found_description">이미 고쳤거나 삭제된 문제일 수 있어요.</string>
+    <string name="mistakes_nothing_title">아직 연습할 문제가 없어요</string>
+    <string name="mistakes_nothing_description">틀린 문제는 다음 날부터 다시 연습할 수 있어요.</string>
+    <string name="mistakes_notebook_title">오답 노트</string>
+    <plurals name="mistakes_ready">
+        <item quantity="other">%d개를 연습할 수 있어요</item>
+    </plurals>
+    <plurals name="mistakes_tomorrow">
+        <item quantity="other">%d개는 내일 연습할 수 있어요</item>
+    </plurals>
+    <plurals name="mistakes_fixed_count">
+        <item quantity="other">%d개를 고쳤어요</item>
+    </plurals>
+    <string name="mistakes_come_back_tomorrow">틀린 문제는 다음 날부터 다시 연습할 수 있어요.</string>
+    <string name="mistakes_practice">틀린 문제 연습</string>
+    <!-- The notebook's tab of mistakes the learner hasn't fixed yet. -->
+    <string name="mistakes_tab_open">고칠 문제</string>
+    <!-- The notebook's tab of mistakes the learner fixed in practice. -->
+    <string name="mistakes_tab_fixed">고친 문제</string>
+    <!-- Mistakes on questions that aren't tied to a skill. -->
+    <string name="mistakes_other_questions">기타 문제</string>
+    <string name="mistakes_empty_open">지금은 고칠 문제가 없어요. 레슨과 복습에서 틀린 문제가 여기에 표시돼요.</string>
+    <string name="mistakes_empty_fixed">연습해서 고친 문제는 여기에 표시돼요.</string>
+    <string name="mistakes_show_more">더 보기</string>
+    <string name="mistakes_more_failed">불러오지 못했어요. 다시 시도해 보세요.</string>
+    <!-- Why the learner got a question wrong: they didn't know the content yet. Not missing course content. -->
+    <string name="mistakes_cause_gap">아직 모르는 내용</string>
+    <!-- Why the learner got a question wrong: they misread the question. -->
+    <string name="mistakes_cause_misread">문제를 잘못 읽음</string>
+    <string name="mistakes_cause_trap">함정에 빠짐</string>
+    <string name="mistakes_cause_time">시간 부족</string>
+    <string name="mistakes_cause_guess">찍어서 고름</string>
+    <string name="mistakes_cause_unsorted">아직 분류 안 됨</string>
+    <!-- %1$s is why the learner got the question wrong, such as "Misread". -->
+    <string name="mistakes_cause_fixed">%1$s · 고침</string>
+    <string name="mistakes_practice_tomorrow">내일 연습할 수 있어요</string>
+    <string name="mistakes_practice_skill">이 스킬 연습하기</string>
+    <string name="mistakes_open_lesson">레슨 열기</string>
+</resources>

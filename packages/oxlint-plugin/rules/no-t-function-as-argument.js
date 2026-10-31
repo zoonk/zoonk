@@ -21,12 +21,10 @@ export default defineRule({
       CallExpression(node) {
         const callee = node.callee.type === "MemberExpression" ? node.callee.object : node.callee;
 
-        // Skip if this is calling t itself (t("key") or t.rich("key"))
         if (isTranslationIdentifier({ node: callee, sourceCode: context.sourceCode })) {
           return;
         }
 
-        // Check if any argument is the t variable
         for (const arg of node.arguments) {
           if (isTranslationIdentifier({ node: arg, sourceCode: context.sourceCode })) {
             context.report({
@@ -36,7 +34,6 @@ export default defineRule({
             });
           }
 
-          // Also check object properties: someHelper({ translate: t }) or { t }
           if (arg.type === "ObjectExpression") {
             for (const prop of arg.properties) {
               checkObjectProperty(prop, context);

@@ -1,0 +1,282 @@
+import "server-only";
+import { LiveCallCreationRefusedError } from "@zoonk/ai/tasks/language/live-call-creation";
+import {
+  createLiveCallSession,
+  hangUpLiveCallSession,
+} from "@zoonk/ai/tasks/language/live-call-session";
+import { getLiveConversationVoice } from "@zoonk/ai/tasks/language/live-conversation-models";
+import { type LiveCallConnection, prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
+import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { getAllowanceCacheTag } from "../../cache/tags";
+import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
+import { lockFreeCallDay } from "../../entitlements/_utils/free-call-spend";
+import { refreshLiveCallViewer } from "../../entitlements/_utils/live-call-viewer";
+import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
+import { getLiveCallCostMicros } from "../../entitlements/limits";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { buildConversationInstructions } from "./_utils/conversation-view";
+import { getEndingCharge, isWithinConnectWindow } from "./_utils/live-call-money";
+import { isPlusOnlyLiveCall } from "./_utils/live-call-plus";
+import { readLiveCallAdmission } from "./_utils/live-call-policy";
+import { settleLiveCall } from "./_utils/settle-live-call";
+import { type LiveCallSdpInput } from "./conversation-contract";
+import { endLiveCall } from "./end-live-call";
+
+export type RedeemLiveCallSdpResult =
+  | { sdp: string; sessionId: string; status: "ready" }
+  | {
+      status:
+        | "unauthorized"
+        | "notFound"
+        | "callsPaused"
+        | "conversationEnded"
+        | "plusRequired"
+        | "connectionExpired"
+        | "connectionUsed"
+        | "previousConnectionClosing"
+        | "retryable";
+    };
+
+type Refusal = Exclude<RedeemLiveCallSdpResult, { status: "ready" }>;
+
+type OwnedLiveCallConnection = LiveCallConnection & { userId: string };
+
+type Prepared =
+  | Refusal
+  | {
+      connection: OwnedLiveCallConnection;
+      instructions: string;
+      status: "prepared";
+      voice: string;
+    };
+
+function unusableReservation({
+  connection,
+  now,
+}: {
+  connection: LiveCallConnection;
+  now: Date;
+}): Refusal | null {
+  if (connection.state === "reserved") {
+    return isWithinConnectWindow({ connection, now }) && connection.deadlineAt > now
+      ? null
+      : { status: "connectionExpired" };
+  }
+
+  return connection.state === "ended" && connection.startedAt === null
+    ? { status: "connectionExpired" }
+    : { status: "connectionUsed" };
+}
+
+async function prepareCreation({
+  connectionId,
+  conversationId,
+  isGuest,
+  userId,
+}: {
+  connectionId: string;
+  conversationId: string;
+  isGuest: boolean;
+  userId: string;
+}): Promise<Prepared> {
+  return writeLearnerChange<Prepared>({ userId }, async (transaction) => {
+    await lockUsageForViewer({ transaction, userId });
+
+    const [connection, conversation] = await Promise.all([
+      transaction.liveCallConnection.findFirst({
+        where: { conversationId, id: connectionId, userId },
+      }),
+      transaction.languageConversation.findFirst({
+        include: { chapter: { select: { id: true, title: true } } },
+        where: { id: conversationId, userId },
+      }),
+    ]);
+
+    if (!connection || !conversation) {
+      return unchanged({ status: "notFound" as const });
+    }
+
+    const now = new Date();
+    const instructions = buildConversationInstructions(conversation);
+
+    if (!instructions || conversation.reviewRunId !== null) {
+      return unchanged({ status: "conversationEnded" as const });
+    }
+
+    const viewer = await refreshLiveCallViewer({ isGuest, now, transaction, userId });
+
+    if (isPlusOnlyLiveCall(conversation.kind) && viewer?.tier !== "plus") {
+      return unchanged({ status: "plusRequired" as const });
+    }
+
+    if ((await readLiveCallAdmission({ transaction, userId })) === null) {
+      return unchanged({ status: "callsPaused" as const });
+    }
+
+    if (connection.freeSpendDay && connection.state === "reserved") {
+      await lockFreeCallDay({ day: connection.freeSpendDay, transaction });
+    }
+
+    const lockedAt = new Date();
+    const unusable = unusableReservation({ connection, now: lockedAt });
+
+    if (unusable) {
+      return unchanged(unusable);
+    }
+
+    const starting = await transaction.liveCallConnection.update({
+      data: { startedAt: lockedAt, state: "starting" },
+      where: { id: connection.id },
+    });
+
+    return {
+      connection: { ...starting, userId },
+      instructions,
+      status: "prepared" as const,
+      voice: getLiveConversationVoice(conversation.targetLanguage),
+    };
+  });
+}
+
+async function settleFailedCreation({
+  connection,
+  refused,
+}: {
+  connection: OwnedLiveCallConnection;
+  refused: boolean;
+}): Promise<void> {
+  await prisma.$transaction(async (transaction) => {
+    await lockUsageForViewer({ transaction, userId: connection.userId });
+
+    const current = await transaction.liveCallConnection.findUniqueOrThrow({
+      where: { id: connection.id },
+    });
+
+    if (current.providerSessionId) {
+      return;
+    }
+
+    const now = new Date();
+
+    await settleLiveCall({
+      connection: current,
+      ...(refused
+        ? { costMicros: getLiveCallCostMicros(0), learnerSeconds: 0 }
+        : getEndingCharge({ connection: current, now })),
+      endReason: refused ? "refused" : "failed",
+      now,
+      transaction,
+    });
+  });
+
+  revalidateCacheTags([getAllowanceCacheTag(connection.userId)]);
+}
+
+type Created = { status: "live" } | { settled: boolean; status: "unwanted" };
+
+async function recordCreatedSession({
+  connection,
+  providerSessionId,
+}: {
+  connection: OwnedLiveCallConnection;
+  providerSessionId: string;
+}): Promise<Created> {
+  return writeLearnerChange<Created>({ userId: connection.userId }, async (transaction) => {
+    await lockUsageForViewer({ transaction, userId: connection.userId });
+
+    const [current, conversation] = await Promise.all([
+      transaction.liveCallConnection.findUniqueOrThrow({ where: { id: connection.id } }),
+      transaction.languageConversation.findUnique({ where: { id: connection.conversationId } }),
+    ]);
+
+    const wanted =
+      current.state === "starting" &&
+      current.endReason === null &&
+      conversation?.status === "ready" &&
+      conversation.reviewRunId === null;
+
+    await transaction.liveCallConnection.update({
+      data: { providerSessionId, ...(wanted ? { state: "live" as const } : {}) },
+      where: { id: current.id },
+    });
+
+    if (!wanted) {
+      return { settled: current.state === "ended", status: "unwanted" };
+    }
+
+    await transaction.languageConversation.updateMany({
+      data: { liveModel: "openai/gpt-live-1", startedAt: current.startedAt },
+      where: { id: current.conversationId, startedAt: null },
+    });
+
+    return { status: "live" };
+  });
+}
+
+export async function redeemLiveCallSdp({
+  connectionId,
+  conversationId,
+  input,
+}: {
+  connectionId: string;
+  conversationId: string;
+  input: LiveCallSdpInput;
+}): Promise<RedeemLiveCallSdpResult> {
+  const viewer = await getEntitlementViewer();
+
+  if (!viewer) {
+    return { status: "unauthorized" };
+  }
+
+  const prepared = await prepareCreation({
+    connectionId,
+    conversationId,
+    isGuest: viewer.isGuest,
+    userId: viewer.userId,
+  });
+
+  if (prepared.status !== "prepared") {
+    return prepared;
+  }
+
+  const { connection } = prepared;
+
+  const created = await safeAsync(() =>
+    createLiveCallSession({
+      instructions: prepared.instructions,
+      sdp: input.sdp,
+      voice: prepared.voice,
+    }),
+  );
+
+  if (!created.data) {
+    await settleFailedCreation({
+      connection,
+      refused: created.error instanceof LiveCallCreationRefusedError,
+    });
+
+    return { status: "retryable" };
+  }
+
+  const { sessionId } = created.data;
+
+  const recorded = await safeAsync(() =>
+    recordCreatedSession({ connection, providerSessionId: sessionId }),
+  );
+
+  if (recorded.error) {
+    await safeAsync(() => hangUpLiveCallSession(sessionId));
+    throw recorded.error;
+  }
+
+  if (recorded.data.status === "unwanted") {
+    await (recorded.data.settled
+      ? safeAsync(() => hangUpLiveCallSession(sessionId))
+      : endLiveCall({ connectionId, reason: "completion" }));
+
+    return { status: "previousConnectionClosing" };
+  }
+
+  return { ...created.data, status: "ready" };
+}

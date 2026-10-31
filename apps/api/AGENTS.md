@@ -1,5 +1,7 @@
 - Treat the public OpenAPI document as a product contract. Reuse runtime Zod boundary schemas in the document, give public operations stable `operationId` and security declarations, make compatibility an explicit product decision instead of adding aliases by default, and keep Better Auth's infrastructure routes out of the public product API.
 - Add public API endpoints to `document.ts`. Unversioned same-origin UI transport routes stay out of the public OpenAPI document, but require an explicit architecture record, CSRF protection for cookie-authenticated mutations, and E2E coverage.
+- `src/app` and `src/lib` deliver, as Main does (root `AGENTS.md`): the rules they need, interactive model calls included, live in core, and a route returns or streams the result. Generation runs in `src/workflows` steps that call core.
+- When a capability answers that the content it needs isn't written yet, the route starts the run that writes it and answers `202` with its `generationId`. The run claims the content's key (`claimRunToken`), so a second request follows the run already writing it.
 - Workflow files containing `"use workflow"` cannot call Node APIs directly; put those calls in `"use step"` functions. Prefer linear waves of independent work with `Promise.allSettled`. Installed workflow docs are in `apps/api/node_modules/workflow/docs/`.
 
 <!-- BEGIN:nextjs-agent-rules -->

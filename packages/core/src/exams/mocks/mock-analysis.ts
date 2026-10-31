@@ -1,0 +1,188 @@
+import { type IrtItem, estimateAbility, getIrtCoherence, toScaleRange } from "../scoring/irt";
+import { getPointsScope, scoreMockPoints } from "../scoring/mock-points";
+import { type NetOutcome, getNetCalibration, getNetScore } from "../scoring/net-score";
+import { type MockConditions, type MockResult, type MockScoring } from "./mock-contract";
+import { type ItemMarking } from "./mock-points-contract";
+
+const MS_PER_SECOND = 1000;
+const SECONDS_PER_MINUTE = 60;
+const PERCENT = 100;
+const POINT_DECIMALS = 100;
+
+export type GradedMockAnswer = {
+  area: string | null;
+  credit: number;
+  durationMs: number;
+  flagged: boolean;
+  irtItem: IrtItem;
+  marking: ItemMarking;
+  outcome: NetOutcome;
+  section: number;
+  skill: { id: string; name: string };
+  timedOut: boolean;
+};
+
+type AreaGroup = { answers: GradedMockAnswer[]; name: string };
+
+function groupByArea({
+  answers,
+  conditions,
+}: {
+  answers: readonly GradedMockAnswer[];
+  conditions: MockConditions;
+}): AreaGroup[] {
+  const nameOf = (answer: GradedMockAnswer) =>
+    answer.area ?? conditions.sections[answer.section]?.name ?? "";
+
+  const names = [...new Set(answers.map((answer) => nameOf(answer)))];
+  return names.map((name) => ({ answers: answers.filter((item) => nameOf(item) === name), name }));
+}
+
+function getTargetSeconds({
+  conditions,
+  sections,
+}: {
+  conditions: MockConditions;
+  sections: readonly number[];
+}): number | null {
+  const paces = [...new Set(sections)].flatMap((index) => {
+    const section = conditions.sections[index];
+
+    return section && section.questions > 0
+      ? [(section.minutes * SECONDS_PER_MINUTE) / section.questions]
+      : [];
+  });
+
+  return paces.length > 0 ? paces.reduce((sum, pace) => sum + pace, 0) / paces.length : null;
+}
+
+function countPoints(answers: readonly GradedMockAnswer[]): number {
+  const points = answers.reduce((sum, answer) => sum + answer.credit, 0);
+  return Math.round(points * POINT_DECIMALS) / POINT_DECIMALS;
+}
+
+function toResponses(answers: readonly GradedMockAnswer[]) {
+  return answers.map((answer) => ({ correct: answer.outcome === "right", item: answer.irtItem }));
+}
+
+function averageSeconds(answers: readonly GradedMockAnswer[]): number {
+  const total = answers.reduce((sum, answer) => sum + answer.durationMs, 0);
+  return answers.length > 0 ? Math.round(total / answers.length / MS_PER_SECOND) : 0;
+}
+
+function toAreaResult({
+  conditions,
+  group,
+  scoring,
+}: {
+  conditions: MockConditions;
+  group: AreaGroup;
+  scoring: MockScoring;
+}): MockResult["areas"][number] {
+  const { answers, name } = group;
+
+  return {
+    correct: countPoints(answers),
+    name,
+    score: scoring === "irt" ? toScaleRange(estimateAbility(toResponses(answers))) : null,
+    secondsPerQuestion: averageSeconds(answers),
+    targetSecondsPerQuestion: getTargetSeconds({
+      conditions,
+      sections: answers.map((answer) => answer.section),
+    }),
+    total: answers.length,
+  };
+}
+
+function getOverallIrt(groups: readonly AreaGroup[]): MockResult["irt"] {
+  const estimates = groups.map((group) => estimateAbility(toResponses(group.answers)));
+
+  if (estimates.length === 0) {
+    return null;
+  }
+
+  const theta = estimates.reduce((sum, estimate) => sum + estimate.theta, 0) / estimates.length;
+
+  const se =
+    Math.sqrt(estimates.reduce((sum, estimate) => sum + estimate.se ** 2, 0)) / estimates.length;
+
+  return { ...toScaleRange({ se, theta }), se, theta };
+}
+
+function toTopicResults(answers: readonly GradedMockAnswer[]): MockResult["topics"] {
+  return [...Map.groupBy(answers, (answer) => answer.skill.id).values()].flatMap((group) => {
+    const [first] = group;
+
+    return first
+      ? [
+          {
+            area: first.area,
+            correct: group.filter((answer) => answer.outcome === "right").length,
+            name: first.skill.name,
+            skillId: first.skill.id,
+            total: group.length,
+          },
+        ]
+      : [];
+  });
+}
+
+export function getMockMeasure(result: Pick<MockResult, "correct" | "irt" | "net" | "total">) {
+  if (result.irt) {
+    return result.irt.score;
+  }
+
+  if (result.net) {
+    return result.net.net;
+  }
+
+  return result.total > 0 ? Math.round((result.correct / result.total) * PERCENT) : 0;
+}
+
+export function analyzeMock({
+  answers,
+  conditions,
+  minutesUsed,
+  preparation,
+  previous,
+}: {
+  answers: readonly GradedMockAnswer[];
+  conditions: MockConditions;
+  minutesUsed: number;
+  preparation: MockResult["preparation"];
+  previous: number | null;
+}): MockResult {
+  const { marking, scoring } = conditions;
+  const groups = groupByArea({ answers, conditions });
+  const correct = countPoints(answers);
+
+  const netAnswers = answers.map((answer) => ({
+    ...answer,
+    points: answer.marking.points,
+    wrongPenalty: answer.marking.wrongPenalty,
+  }));
+
+  return {
+    areas: groups.map((group) => toAreaResult({ conditions, group, scoring })),
+    blank: answers.filter((answer) => answer.outcome === "blank").length,
+    calibration: scoring === "net" ? getNetCalibration({ answers: netAnswers }) : null,
+    coherence: scoring === "irt" ? getIrtCoherence(toResponses(answers)) : null,
+    correct,
+    irt: scoring === "irt" ? getOverallIrt(groups) : null,
+    minutesUsed,
+    net:
+      scoring === "net"
+        ? getNetScore({ answers: netAnswers, penalty: conditions.wrongPenalty })
+        : null,
+    plannedMinutes: conditions.sections.reduce((sum, section) => sum + section.minutes, 0),
+    points: marking
+      ? scoreMockPoints({ answers, marking, scope: getPointsScope(conditions) })
+      : null,
+    preparation,
+    previous,
+    scoring,
+    topics: toTopicResults(answers),
+    total: answers.length,
+    unansweredAtTimeout: answers.filter((answer) => answer.timedOut).length,
+  };
+}

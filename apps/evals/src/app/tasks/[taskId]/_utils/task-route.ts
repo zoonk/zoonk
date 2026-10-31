@@ -4,11 +4,6 @@ import { cache } from "react";
 
 export type TaskRouteParams = Promise<{ taskId: string }>;
 
-/**
- * Resolves and validates the shared task route value once so sibling
- * Suspense regions can render independently without repeating route lookup
- * work or drifting on invalid-task behavior.
- */
 export const getTaskRoute = cache(async (taskId: string) => {
   const task = getTaskById(taskId);
 

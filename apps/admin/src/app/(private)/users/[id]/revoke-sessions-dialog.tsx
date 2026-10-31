@@ -8,21 +8,23 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
-import { Button } from "@zoonk/ui/components/button";
-import { useState } from "react";
+import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { revokeSessionsAction } from "./_actions/revoke-sessions";
 
-export function RevokeSessionsDialog({ userId, userName }: { userId: string; userName: string }) {
-  const [open, setOpen] = useState(false);
-
+export function RevokeSessionsDialog({
+  onOpenChange,
+  open,
+  userId,
+  userName,
+}: {
+  onOpenChange: (open: boolean) => void;
+  open: boolean;
+  userId: string;
+  userName: string;
+}) {
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger render={<Button variant="outline" size="sm" />}>
-        Revoke Sessions
-      </AlertDialogTrigger>
-
+    <AlertDialog onOpenChange={onOpenChange} open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Revoke all sessions?</AlertDialogTitle>
@@ -34,16 +36,16 @@ export function RevokeSessionsDialog({ userId, userName }: { userId: string; use
         <form
           action={async (formData) => {
             await revokeSessionsAction(formData);
-            setOpen(false);
+            onOpenChange(false);
           }}
         >
           <input type="hidden" name="userId" value={userId} />
 
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button type="submit" variant="destructive">
-              Revoke Sessions
-            </Button>
+            <SubmitButton className="w-auto" variant="destructive">
+              Revoke sessions
+            </SubmitButton>
           </AlertDialogFooter>
         </form>
       </AlertDialogContent>

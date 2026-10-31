@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "research_change_label": "359ba97488e72021354f5df9fab36fe9327525b9a289948b39d480fbbf48edf5",
+  "research_class_action": "aee3c3fb8729e7184904481f1f3827b35ab797794af3b7ba80bff620d1def056",
+  "research_class_body": "ad8f2c76ea226723d7106442745c9015a2a3a6b2f1dc90e4a26786122194aa90",
+  "research_class_title": "9971b9501c068667df3d1f0203fcbf3d4abeac267d00f4aa8ce852ab1f69a524",
+  "research_guide_action": "cadc0a80f445bd31eb089cae091dd9bea6bb08b0998e10862a4df065f98673a5",
+  "research_guide_body": "6eba85d3149fe793d36793c669c8cef907bfce73c0aed104f4f5b9ece266044b",
+  "research_guide_title": "f210208f7b8529c95179cde0f81101ad86b9cbff0765d1cd60b2aec418b7afba",
+  "research_not_now": "6fc3ef3799a2aa164b5e73ead6fe9ee3cbe57a85903eb70297bd3ff90461f5ca",
+  "research_notice_action": "fc74b45e473512f996398675ab0b13a47d41f642db07f5ea4c61a11bd115cadf",
+  "research_notice_body": "5688ba66d452da3377b58091cd9b838f7ca92f0ca3a4daf5f34fdf110214d080",
+  "research_notice_title": "c521f1ad00d6ff40bbbecedaa17f9ae3a4666ff2ffc273df1fe26ac286147c54",
+  "research_source_action": "12508eade39b3ab67f75b2c313d950286c8c0a9957625bd263f57d2572531b7d",
+  "research_source_body": "968bd98beddb510f900a762185b875fe5cbf161d8eb0f411c20a3f2ceb5ba58a",
+  "research_source_title": "626d4dd90d20d5b31bcd5af6fad69b75d669e2d60fdef1a170c2fc867eb8cb17",
+  "research_unverified_guide_body": "3ee34c16740c889c288ee365b389e49df84f2700384b04a2564764e2a34451ab",
+  "research_unverified_notice_body": "369ff57db8d1ea6f93fbcdfa04d4892008f3c049f940251ff9dc7b0a1fe3a426",
+  "research_unverified_title": "7f3862f9db800e63dfb27504488900a1c28c8b377873633c62e5ed4ab3f0a6d3",
+  "research_upload_label": "0c0e75ed0e1b9238a275522810da540f2192e85b6a6a83a8ba83900d85a6bd66",
+  "research_upload_open": "77dbb6f71fa431056fe61753813c3f327a4bc657434281a6b226deef4f340881",
+  "research_upload_sending": "a9767c513eb3f37c2ba4f29d17848e84dd7339671c1166cf7a2bb95664b12f69",
+  "research_upload_thanks": "bb6ab066e50195a2c9f8af644ecf7c457113f366ec9c86a80a563cf1c1d306e5"
+}
+-->
+<resources>
+    <!-- Names Today's notice when research needs the learner to upload a document. -->
+    <string name="research_upload_label">学習計画に資料が必要です</string>
+    <!-- Opens the upload ask from Today's notice line. -->
+    <string name="research_upload_open">アップロード</string>
+    <string name="research_upload_thanks">ありがとうございます。今、資料を読み込んでいます。数分で学習計画が更新されます。</string>
+    <string name="research_upload_sending">読み取りのために送信しています…</string>
+    <string name="research_not_now">今はしない</string>
+    <string name="research_class_title">授業の資料を追加する</string>
+    <string name="research_class_body">先生が作るテストは公開されていません。授業に合った学習計画にするために、スライドやノート、トピックの一覧をアップロードしてください。</string>
+    <string name="research_class_action">資料をアップロードする</string>
+    <string name="research_source_title">公式資料が見つかりませんでした</string>
+    <string name="research_source_body">内容に沿ったレッスンを作成できるよう、学習に使っている公式のテキストやガイドをアップロードしてください。</string>
+    <string name="research_source_action">文書をアップロードする</string>
+    <!-- An exam's notice: the official document that announces it and lists what it covers. -->
+    <string name="research_notice_title">公式の要項が見つかりませんでした</string>
+    <string name="research_notice_body">実際の試験に沿った学習計画を立てるため、要項をアップロードしてください。</string>
+    <string name="research_notice_action">要項をアップロードする</string>
+    <string name="research_guide_title">公式ガイドが見つかりませんでした</string>
+    <string name="research_guide_body">実際の試験に沿った学習計画を立てるため、公式ガイドをアップロードしてください。</string>
+    <string name="research_guide_action">公式ガイドをアップロードする</string>
+    <string name="research_unverified_title">試験の詳細を確認できませんでした</string>
+    <string name="research_unverified_notice_body">見つかった資料は試験情報と一致しませんでした。実際の試験に沿った学習計画を立てるため、公式の要項をアップロードしてください。</string>
+    <string name="research_unverified_guide_body">見つかった資料は試験情報と一致しませんでした。実際の試験に沿った学習計画を立てるため、公式ガイドをアップロードしてください。</string>
+    <!-- Names Today's notice that says what changed in a source the goal follows, like a new exam notice. -->
+    <string name="research_change_label">変更点</string>
+</resources>

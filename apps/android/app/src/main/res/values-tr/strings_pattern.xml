@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "pattern_also_came_up": "1d19dd95c108d5463752ff9bf62f9e28f518d63ae9b14aad38bf97a6d3eb3ba6",
+  "pattern_correct_version": "d652af13e82af7ee347c4ef3486c1ad9af99f480cb7a85417a6ae5f8006e0043",
+  "pattern_done": "776f334291b29a12d13595a49f98b534f64f778e5645216f5ba283a73439962d",
+  "pattern_got_it": "28918db36d36fb91e70a7bc86028ab58ba0870a6261546bcee58786627dc096e",
+  "pattern_just_typos": "fa30cd3de497833bff80496f5cdbe0815d119691277593ab5b2a86587e9a794c",
+  "pattern_keep_going": "415bf44e348a976e852d7cc7ad1c3a005598e4d128760fc17ddaf426d7aa13cd",
+  "pattern_noticed": "243ec016def3ec1ef3650b61b61528b408f37469d2e41e35242fefe1b68366b8",
+  "pattern_practice": "a08207d8ef219213d7b30ed31e3e596fb7abd94644acd912728e7b8098c49c4e",
+  "pattern_quoted": "8ea46b38b2a7a842c358f0efd7f051bbb7c781bddca77662bc0538ad76e7d1b0",
+  "pattern_rule": "2ab8168385de4c08403cf2d8de803402f5bbd203a9a5463aff206710723347b3",
+  "pattern_see_how_you_did": "4048f499c91ce378adb551512b699ab5a97eb02149305d9aac3cd59f9a51a880",
+  "pattern_see_rule": "98bd228f5d3043ac4d709d693a8e0c265cf96ef8f3983765be75ba5257c1bbe1",
+  "pattern_seen": "cb423ea751202693b7ed050f934fea231c39cc5df20b70bc5aa60961eceb929d",
+  "pattern_seen_times": "c5b2c81c6ef2e953c1211714ef01c7b6a6e0a040f59482b355f56966d6b5c737",
+  "pattern_title": "406b4d66677f34ad43c943e204c028a3fc2cca91bb0fca46f1e6923ea74fb1ab",
+  "pattern_typos_detail": "5bfc6057455a302c4c5a2fd86eee4718c8e97d08a669a9d6748758fa37ec40c4",
+  "pattern_where_you_slipped": "1f0fbde3cd3ee64e7bde61d51d9821386326de2c75c7ec90b1fe0e7bf3bb12ae",
+  "pattern_you_said": "7657e844203434bc15e4662fb17401029eba9016f2baa2b350d9e4b359b569e1"
+}
+-->
+<resources>
+    <!-- A rule the learner keeps getting wrong, found in their recent answers. -->
+    <string name="pattern_title">Tekrarlayan hata</string>
+    <string name="pattern_noticed">Tekrarlayan bir hata fark ettik</string>
+    <string name="pattern_seen">Son yanıtlarında görüldü.</string>
+    <!-- %d is how many times the mistake came up. Every form shows the number as %d; English says “once” only because it reads better. -->
+    <plurals name="pattern_seen_times">
+        <item quantity="one">Son yanıtlarında %d kez görüldü.</item>
+        <item quantity="other">Son yanıtlarında %d kez görüldü.</item>
+    </plurals>
+    <!-- Starts a short practice of the rule on this page; "this" is the rule. %1$s is how long it takes, like "3 min". -->
+    <string name="pattern_practice">Bu kuralı pekiştir · %1$s</string>
+    <!-- Heads the learner's other sentences that show the same mistake. -->
+    <string name="pattern_also_came_up">Görüldüğü diğer cümleler</string>
+    <!-- A sentence the learner said or wrote, in quotation marks. -->
+    <string name="pattern_quoted">“%1$s”</string>
+    <string name="pattern_rule">Kural</string>
+    <!-- Read aloud before the learner's own wrong sentence. -->
+    <string name="pattern_you_said">Şöyle dedin</string>
+    <!-- Read aloud before the corrected sentence. -->
+    <string name="pattern_correct_version">Doğru hâli</string>
+    <!-- Heads the learner's own wrong sentence beside its corrected version. -->
+    <string name="pattern_where_you_slipped">Hata yaptığın yer</string>
+    <string name="pattern_see_rule">Kuralı gör</string>
+    <!-- After the practice's last question, opens its result. -->
+    <string name="pattern_see_how_you_did">Sonucunu gör</string>
+    <string name="pattern_got_it">Bu kuralı öğrendin.</string>
+    <string name="pattern_keep_going">Kuralı bilmek ilk adım. Kullandıkça kolaylaşır.</string>
+    <!-- The button that closes the practice result or the typos note and leaves the screen. -->
+    <string name="pattern_done">Kapat</string>
+    <string name="pattern_just_typos">Sadece yazım hataları</string>
+    <string name="pattern_typos_detail">Son hataların yazarken yaptığın ufak yanlışlardı; bilmediğin bir kuraldan kaynaklanmıyordu. Alıştırma yapmana gerek yok.</string>
+</resources>

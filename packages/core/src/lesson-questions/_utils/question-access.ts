@@ -1,45 +1,35 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
-import { hasActiveSubscription } from "../../auth/subscription";
-import { getLessonAccessRequirement } from "../../lessons/access";
-import { getReadableLessonWhere } from "../../lessons/read-access";
+import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 
-/**
- * Authenticated learners can ask about lessons available to their current plan. Publication,
- * ownership, and paid-chapter checks are re-evaluated for every question operation.
- */
+function findLibraryLesson({ lessonId, userId }: { lessonId: string; userId: string }) {
+  return prisma.lesson.findFirst({
+    include: { homeChapter: { include: { homeCourse: true } } },
+    omit: { spec: true, summary: true },
+    where: { ...libraryRowsVisibleTo(userId), contentStatus: "completed", id: lessonId },
+  });
+}
+
+export type LibraryQuestionLesson = NonNullable<Awaited<ReturnType<typeof findLibraryLesson>>>;
+
+type LessonQuestionAccess =
+  | { status: "notFound" }
+  | { lesson: LibraryQuestionLesson; status: "ready" };
+
+/** Recheck publication and ownership for every operation; claim tutor allowance per answer. */
 export async function getLessonQuestionAccess({
   lessonId,
   userId,
 }: {
   lessonId: string;
   userId: string;
-}) {
+}): Promise<LessonQuestionAccess> {
   if (!isUuid(lessonId)) {
-    return { status: "notFound" as const };
+    return { status: "notFound" };
   }
 
-  const lesson = await prisma.lesson.findFirst({
-    include: { chapter: { include: { course: true } } },
-    where: getReadableLessonWhere({ lessonId, userId }),
-  });
+  const lesson = await findLibraryLesson({ lessonId, userId });
 
-  if (!lesson || lesson.generationStatus !== "completed") {
-    return { status: "notFound" as const };
-  }
-
-  if (
-    getLessonAccessRequirement({ lesson }) === "subscription" &&
-    !(await hasActiveSubscription())
-  ) {
-    return { status: "subscriptionRequired" as const };
-  }
-
-  return { lesson, status: "ready" as const };
+  return lesson ? { lesson, status: "ready" } : { status: "notFound" };
 }
-
-export type LessonQuestionAccessLesson = Extract<
-  Awaited<ReturnType<typeof getLessonQuestionAccess>>,
-  { status: "ready" }
->["lesson"];

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "testout_already_skipped": "25ec930102d744e5229d0d8e271e432c369563945e391dc07a0d0c9adc0e51a4",
+  "testout_aside_title": "a9af4f260e456d338d46e917c6e050fbde0d2efc73a40004f2b31f6231720dab",
+  "testout_continue": "3cd74b462dc6f90461968b802612ab6eeef2e1a5fa3e6fa91842877cef128c16",
+  "testout_intro_detail": "6d9c7fbf4224a3a7aa3eb72febb452d405e1aa83b6c21f56806a277b35ba077e",
+  "testout_intro_title": "abc671b2b9457ec40d882f83f1805112649de7cdc8d4db8d1d6bde78bdefb57c",
+  "testout_lessons_back": "80dc28f14f39f859e343d587394fb7b1365b8433eb18efa66af9323784bc0831",
+  "testout_lessons_left": "c149c9136ffb7f3dff070cd2347b1a27f88ea1ce75518d4d7d854ec6df75df55",
+  "testout_lessons_off": "7a3f0cf0f46e08f09c0d6ac7bf702ac5e919bacaa2ed32bd7124699864d2fa99",
+  "testout_not_passed": "04e00e700d2246bc94d40ec048921d7779592cdb0dfd676b03c1385da2b063b1",
+  "testout_not_passed_detail": "8b675da9769d5c1cafade4c53ba5f9387e40d6cc3a9bd1b236f1e3ce01114d63",
+  "testout_passed": "ffbc86cacb77eef1761180415adf92ac3cf913667afd7994cfce1ce6b7b3dfe3",
+  "testout_rule": "bea63b53ed080024fa5dd43c3b5a48b3657a4f535204a39d6aa1283b72360f05",
+  "testout_see_plus": "7c54761d1aa6e7c89ecd07f67d7c41a6518045140454dc6fe9e1c0cf3b49023e",
+  "testout_start": "b4e04bebaa3174b1e10c18763bed95c8699a2bb126449a2b87566e6bc58978cc",
+  "testout_starting": "5aa402897965903cb37a5edf34143c77c3201f4be2709330b7cd1defd40ee8ec",
+  "testout_this_chapter": "897cb52b2a79249f07061e0dcd609a982d9df664897413c544c4eb642f9467f5",
+  "testout_title": "a2273270649d63d5f66a59b486143aeb9c956b6cfaa1b3721a1a6447d047394e",
+  "testout_writing": "97d81b3d9c0f962562ae7e183e93c2c2d4d3dabacb3d46b13909fbaa7066db54",
+  "testout_writing_detail": "371133a620f477a0fe5ae7918cad4beff1cecd6d1d3e494cf4db2f19ac18b9a1",
+  "testout_writing_line": "50b8e6d35ec17071f8a931dd44deb823a52ee3cb2d06cedd8f21e080067de700",
+  "testout_writing_questions": "84b364f030dffd5cbc235116a3e7557b1e40ca168b2fdcd7ee3e9830d3fad7e2",
+  "testout_writing_title": "d2a974385752c5d381e6b8925b0e2d5aae4ad3173ff6e41e25d2b911824c8b0c"
+}
+-->
+<resources>
+    <!-- A chapter test-out's title. %1$s is the chapter's name. -->
+    <string name="testout_title">건너뛰기 테스트: %1$s</string>
+    <!-- Stands in for a chapter's name while it isn't known. -->
+    <string name="testout_this_chapter">이 챕터</string>
+    <string name="testout_intro_title">이미 아는 내용인가요?</string>
+    <string name="testout_intro_detail">이 챕터에 관한 문제 몇 개가 나와요. 잘 풀면 이미 아는 내용은 계획에서 건너뛰어요.</string>
+    <string name="testout_start">테스트 시작하기</string>
+    <string name="testout_starting">시작하고 있어요…</string>
+    <string name="testout_see_plus">Plus 알아보기</string>
+    <string name="testout_writing">문제를 만들고 있어요</string>
+    <string name="testout_writing_questions">이 챕터의 문제를 만들고 있어요</string>
+    <string name="testout_writing_line">문제로 확인할 스킬을 고르고 있어요…</string>
+    <string name="testout_writing_title">테스트를 준비하고 있어요</string>
+    <string name="testout_writing_detail">이 챕터에 관한 문제 몇 개를 만들고 있어요. 준비되면 여기에서 테스트가 열려요.</string>
+    <!-- A chapter test-out's rule above each question. %1$d is the share of right answers that passes, such as 80. -->
+    <string name="testout_rule">%1$d%% 이상 맞히면 챕터를 건너뛰어요. 피드백은 끝난 뒤에 확인할 수 있어요.</string>
+    <string name="testout_aside_title">통과하면 건너뛰는 내용</string>
+    <plurals name="testout_lessons_left">
+        <item quantity="other">남은 레슨 %d개</item>
+    </plurals>
+    <string name="testout_passed">이미 아는 내용이에요</string>
+    <string name="testout_not_passed">아직 몰라도 괜찮아요</string>
+    <string name="testout_not_passed_detail">이 챕터는 계획에 그대로 남고, 답변을 바탕으로 알맞은 수준에서 시작해요.</string>
+    <!-- The learner passed this chapter\'s test. "It" is the chapter. -->
+    <string name="testout_already_skipped">계획에서 이미 건너뛴 챕터예요.</string>
+    <!-- The learner passed this chapter\'s test, so these lessons left the plan. -->
+    <plurals name="testout_lessons_off">
+        <item quantity="other">레슨 %d개를 계획에서 뺐어요.</item>
+    </plurals>
+    <string name="testout_lessons_back">레슨을 계획에 다시 넣었어요.</string>
+    <string name="testout_continue">계속하기</string>
+</resources>

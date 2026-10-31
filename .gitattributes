@@ -15,7 +15,7 @@ packages/*/messages/*.po linguist-generated=true
 apps/apple/Zoonk/Resources/Localization/*.xcstrings linguist-generated=true
 
 # Apple API contract exported by pnpm openapi:generate.
-apps/apple/Zoonk/openapi.json linguist-generated=true
+apps/apple/ZoonkAPI/Sources/ZoonkAPI/openapi.json linguist-generated=true
 
 # Xcode's generated workspace metadata. The project and shared schemes are source configuration.
 apps/apple/Zoonk.xcodeproj/project.xcworkspace/contents.xcworkspacedata linguist-generated=true

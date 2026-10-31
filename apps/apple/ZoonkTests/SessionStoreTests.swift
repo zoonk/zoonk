@@ -4,6 +4,358 @@ import XCTest
 
 final class SessionStoreTests: XCTestCase {
   @MainActor
+  func testDeletionCodeUsesCurrentAccountAndOriginalBearerWhileLoginStaysAnonymous() async {
+    let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
+    api.emailCodeResult = .success(())
+    let store = SessionCredentialStoreSpy(token: "old-session")
+    let session = makeSession(api: api, credentialStore: store)
+    await session.restore()
+    let sent = await session.sendAccountDeletionEmailCode()
+    XCTAssertTrue(sent)
+    XCTAssertEqual(api.emailCodeRequests.last?.email, "learner@zoonk.test")
+    XCTAssertEqual(api.emailCodeRequests.last?.token, "old-session")
+    let loginSent = await session.sendEmailCode(email: "another@zoonk.test")
+    XCTAssertTrue(loginSent)
+    XCTAssertNil(api.emailCodeRequests.last?.token)
+    XCTAssertEqual(store.savedTokens, [])
+  }
+
+  @MainActor
+  func testDeletionCodeDeliveryKeepsActionableErrorsAndUsesDeliveryFallback() async {
+    let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "old-session"))
+    await session.restore()
+    for (error, failure) in [
+      (AccountAPIError.botDetected, AccountFailure.botDetected),
+      (.network, .network), (.rateLimited, .rateLimited), (.invalidEmail, .invalidEmail),
+      (.invalidResponse, .emailCodeDelivery), (.unauthorized, .emailCodeDelivery),
+    ] {
+      api.emailCodeResult = .failure(error)
+      let sent = await session.sendAccountDeletionEmailCode()
+      XCTAssertFalse(sent)
+      XCTAssertEqual(session.failure, failure)
+      XCTAssertNotNil(session.account)
+    }
+  }
+
+  @MainActor
+  func testDeletionCodeIgnoresSuccessAndFailureAfterCredentialReplacement() async {
+    for error in [AccountAPIError?.none, .some(.network)] {
+      let account = makeAccount()
+      let api = SessionStoreAPIStub(currentAccountResult: .success(account))
+      let gate = CurrentAccountRequestGate()
+      api.emailCodeHandler = { _, _ in
+        _ = await gate.load()
+        if let error { throw error }
+      }
+      let store = SessionCredentialStoreSpy(token: "old-session")
+      let session = makeSession(api: api, credentialStore: store)
+      await session.restore()
+      let request = Task { await session.sendAccountDeletionEmailCode() }
+      await gate.waitUntilStarted()
+      store.token = "replacement-session"
+      gate.resume(returning: account)
+      let sent = await request.value
+      XCTAssertFalse(sent)
+      XCTAssertNil(session.failure)
+      XCTAssertEqual(store.token, "replacement-session")
+      XCTAssertFalse(session.isWorking)
+    }
+  }
+
+  @MainActor
+  func testDeletionCodeAcceptsDeliveryAfterNewInteractiveOperation() async {
+    let account = makeAccount()
+    let api = SessionStoreAPIStub(currentAccountResult: .success(account))
+    let gate = CurrentAccountRequestGate()
+    api.emailCodeHandler = { _, _ in _ = await gate.load() }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "old-session"))
+    await session.restore()
+    let request = Task { await session.sendAccountDeletionEmailCode() }
+    await gate.waitUntilStarted()
+    session.reportSignInFailure()
+    gate.resume(returning: account)
+    let sent = await request.value
+    XCTAssertTrue(sent)
+    XCTAssertEqual(session.failure, .signIn)
+    XCTAssertFalse(session.isWorking)
+  }
+
+  @MainActor
+  func testDeletionCodeIgnoresSuccessAndFailureAfterAccountReplacement() async {
+    for error in [AccountAPIError?.none, .some(.network)] {
+      let account = makeAccount(userID: "account-a")
+      let replacementAccount = makeAccount(userID: "account-b")
+      let api = SessionStoreAPIStub(
+        currentAccountResult: .success(account),
+        emailSignInResult: .success("replacement-session"))
+      let gate = CurrentAccountRequestGate()
+      api.emailCodeHandler = { _, _ in
+        _ = await gate.load()
+        if let error { throw error }
+      }
+      let store = SessionCredentialStoreSpy(token: "old-session")
+      let session = makeSession(api: api, credentialStore: store)
+      await session.restore()
+      let request = Task { await session.sendAccountDeletionEmailCode() }
+      await gate.waitUntilStarted()
+      api.currentAccountResult = .success(replacementAccount)
+      await session.signInWithEmailCode(email: replacementAccount.user.email, code: "123456")
+      gate.resume(returning: account)
+
+      let sent = await request.value
+      XCTAssertFalse(sent)
+      XCTAssertEqual(session.state, .signedIn(replacementAccount))
+      XCTAssertEqual(session.authenticatedSession?.bearerToken, "replacement-session")
+      XCTAssertEqual(store.token, "replacement-session")
+      XCTAssertEqual(store.deleteCallCount, 0)
+      XCTAssertNil(session.failure)
+      XCTAssertFalse(session.isWorking)
+    }
+  }
+
+  @MainActor
+  func testDeletionCodeIgnoresSuccessAndFailureAfterSignOut() async {
+    for error in [AccountAPIError?.none, .some(.network)] {
+      let account = makeAccount()
+      let api = SessionStoreAPIStub(
+        currentAccountResult: .success(account), signOutResult: .success(()))
+      let gate = CurrentAccountRequestGate()
+      api.emailCodeHandler = { _, _ in
+        _ = await gate.load()
+        if let error { throw error }
+      }
+      let store = SessionCredentialStoreSpy(token: "old-session")
+      let session = makeSession(api: api, credentialStore: store)
+      await session.restore()
+      let request = Task { await session.sendAccountDeletionEmailCode() }
+      await gate.waitUntilStarted()
+      await session.signOut()
+      gate.resume(returning: account)
+
+      let sent = await request.value
+      XCTAssertFalse(sent)
+      XCTAssertEqual(session.state, .signedOut)
+      XCTAssertNil(session.authenticatedSession)
+      XCTAssertNil(store.token)
+      XCTAssertNil(session.failure)
+      XCTAssertFalse(session.isWorking)
+    }
+  }
+
+  @MainActor
+  func testBackgroundStoreKitDoesNotStrandDeliveryOrDeletionBusyState() async {
+    let cases: [(Bool, AccountAPIError?)] = [
+      (false, nil), (true, nil), (false, .network), (true, .network),
+    ]
+    for (isDeletion, error) in cases {
+      let account = makeAccount()
+      let api = SessionStoreAPIStub(currentAccountResult: .success(account))
+      api.appleSubscriptionResult = .success(
+        AppleSubscriptionSynchronization(account: account, isActive: true))
+      let gate = CurrentAccountRequestGate()
+      api.emailCodeHandler = { _, _ in
+        _ = await gate.load()
+        if let error { throw error }
+      }
+      api.deletionHandler = { _, _, _ in
+        _ = await gate.load()
+        if let error { throw error }
+        return AccountDeletionResponse(appleAuthorizationRevoked: nil)
+      }
+      let store = SessionCredentialStoreSpy(token: "old-session")
+      let session = makeSession(api: api, credentialStore: store)
+      await session.restore()
+      let request = Task<AccountDeletionResult?, Never> {
+        if isDeletion {
+          return await session.deleteAccount(reauthorizedEmail: account.user.email, code: "123456")
+        }
+        let sent = await session.sendAccountDeletionEmailCode()
+        XCTAssertEqual(sent, error == nil)
+        return nil
+      }
+      await gate.waitUntilStarted()
+      let synchronized = await session.synchronizeAppleSubscription(
+        signedTransaction: "transaction", expectedAccountID: account.user.id)
+      XCTAssertEqual(synchronized, .synchronizedActive)
+      XCTAssertTrue(session.isWorking)
+      gate.resume(returning: account)
+      let result = await request.value
+      XCTAssertEqual(result, isDeletion ? (error == nil ? .deleted : .failed) : nil)
+      XCTAssertFalse(session.isWorking)
+      XCTAssertEqual(session.failure, error == nil ? nil : .network)
+      XCTAssertEqual(session.state, isDeletion && error == nil ? .signedOut : .signedIn(account))
+      XCTAssertEqual(store.token, isDeletion && error == nil ? nil : "old-session")
+    }
+  }
+
+  @MainActor
+  func testAuthorizationFailureDoesNotStrandDeliveryOrDeletionBusyState() async {
+    let cases: [(Bool, AccountAPIError?)] = [
+      (false, nil), (true, nil), (false, .network), (true, .network),
+    ]
+    for (isDeletion, error) in cases {
+      let account = makeAccount()
+      let api = SessionStoreAPIStub(currentAccountResult: .success(account))
+      let gate = CurrentAccountRequestGate()
+      api.emailCodeHandler = { _, _ in
+        _ = await gate.load()
+        if let error { throw error }
+      }
+      api.deletionHandler = { _, _, _ in
+        _ = await gate.load()
+        if let error { throw error }
+        return AccountDeletionResponse(appleAuthorizationRevoked: nil)
+      }
+      let store = SessionCredentialStoreSpy(token: "old-session")
+      let session = makeSession(api: api, credentialStore: store)
+      await session.restore()
+      let request = Task<AccountDeletionResult?, Never> {
+        if isDeletion {
+          return await session.deleteAccount(reauthorizedEmail: account.user.email, code: "123456")
+        }
+        let sent = await session.sendAccountDeletionEmailCode()
+        XCTAssertEqual(sent, error == nil)
+        return nil
+      }
+      await gate.waitUntilStarted()
+      session.reportSignInFailure()
+      gate.resume(returning: account)
+      let result = await request.value
+      XCTAssertEqual(result, isDeletion ? (error == nil ? .deleted : .failed) : nil)
+      XCTAssertFalse(session.isWorking)
+      XCTAssertEqual(session.failure, isDeletion && error == nil ? nil : .signIn)
+      XCTAssertEqual(session.state, isDeletion && error == nil ? .signedOut : .signedIn(account))
+      XCTAssertEqual(store.token, isDeletion && error == nil ? nil : "old-session")
+    }
+  }
+
+  @MainActor
+  func testOldDeletionCodeCompletionKeepsNewerOperationWorking() async {
+    let account = makeAccount()
+    let api = SessionStoreAPIStub(currentAccountResult: .success(account))
+    let deliveryGate = CurrentAccountRequestGate()
+    let profileGate = CurrentAccountRequestGate()
+    api.emailCodeHandler = { _, _ in _ = await deliveryGate.load() }
+    api.updateProfileHandler = { _, _, _ in await profileGate.load() }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "old-session"))
+    await session.restore()
+    let delivery = Task { await session.sendAccountDeletionEmailCode() }
+    await deliveryGate.waitUntilStarted()
+    let profile = Task { await session.updateProfile(name: "Updated", username: "learner") }
+    await profileGate.waitUntilStarted()
+    deliveryGate.resume(returning: account)
+    let sent = await delivery.value
+    XCTAssertTrue(sent)
+    XCTAssertTrue(session.isWorking)
+    profileGate.resume(returning: makeAccount(name: "Updated"))
+    let saved = await profile.value
+    XCTAssertTrue(saved)
+    XCTAssertFalse(session.isWorking)
+  }
+
+  @MainActor
+  func testEmailDeletionDoesNotClearReplacementCredentialOrPublishLateFailure() async {
+    for error in [
+      AccountAPIError?.none, .some(.accountMismatch), .some(.unauthorized), .some(.network),
+    ] {
+      let account = makeAccount()
+      let api = SessionStoreAPIStub(currentAccountResult: .success(account))
+      let gate = CurrentAccountRequestGate()
+      api.deletionHandler = { _, _, _ in
+        _ = await gate.load()
+        if let error { throw error }
+        return AccountDeletionResponse(appleAuthorizationRevoked: nil)
+      }
+      let store = SessionCredentialStoreSpy(token: "old-session")
+      let session = makeSession(api: api, credentialStore: store)
+      await session.restore()
+      let request = Task {
+        await session.deleteAccount(reauthorizedEmail: account.user.email, code: "123456")
+      }
+      await gate.waitUntilStarted()
+      store.token = "replacement-session"
+      gate.resume(returning: account)
+      let result = await request.value
+      XCTAssertEqual(result, .failed)
+      XCTAssertNil(session.failure)
+      XCTAssertEqual(store.token, "replacement-session")
+      XCTAssertEqual(store.deleteCallCount, 0)
+    }
+  }
+
+  @MainActor
+  func testEmailDeletionUsesOriginalBearerAndCodeWithoutSigningIn() async {
+    let account = makeAccount()
+    let api = SessionStoreAPIStub(currentAccountResult: .success(account))
+    api.deletionHandler = { token, apple, email in
+      XCTAssertEqual(token, "old-session")
+      XCTAssertNil(apple)
+      XCTAssertEqual(email?.email, account.user.email)
+      XCTAssertEqual(email?.otp, "123456")
+      return AccountDeletionResponse(appleAuthorizationRevoked: nil)
+    }
+    let store = SessionCredentialStoreSpy(token: "old-session")
+    let session = makeSession(api: api, credentialStore: store)
+    await session.restore()
+    let result = await session.deleteAccount(reauthorizedEmail: account.user.email, code: "123456")
+    XCTAssertEqual(result, .deleted)
+    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertNil(store.token)
+    XCTAssertEqual(store.savedTokens, [])
+  }
+
+  @MainActor
+  func testEmailDeletionKeepsRecoverableCodeAndDeliveryErrors() async {
+    for (error, failure) in [
+      (AccountAPIError.invalidCode, AccountFailure.invalidCode),
+      (.accountMismatch, .accountMismatch), (.rateLimited, .rateLimited),
+      (.network, .network), (.invalidResponse, .accountDeletion),
+    ] {
+      let account = makeAccount()
+      let api = SessionStoreAPIStub(currentAccountResult: .success(account))
+      api.deletionHandler = { _, _, _ in throw error }
+      let store = SessionCredentialStoreSpy(token: "old-session")
+      let session = makeSession(api: api, credentialStore: store)
+      await session.restore()
+      let result = await session.deleteAccount(
+        reauthorizedEmail: account.user.email, code: "123456")
+      XCTAssertEqual(result, .failed)
+      XCTAssertEqual(session.failure, failure)
+      XCTAssertEqual(session.state, .signedIn(account))
+      XCTAssertEqual(store.token, "old-session")
+      XCTAssertEqual(store.deleteCallCount, 0)
+    }
+  }
+
+  @MainActor
+  func testAmbiguousEmailDeletionCannotReconcileOverReplacementCredential() async {
+    let account = makeAccount()
+    let api = SessionStoreAPIStub(currentAccountResult: .success(account))
+    api.deletionHandler = { _, _, _ in throw AccountAPIError.network }
+    let store = SessionCredentialStoreSpy(token: "old-session")
+    let session = makeSession(api: api, credentialStore: store)
+    await session.restore()
+    let gate = CurrentAccountRequestGate()
+    api.currentAccountHandler = { _ in await gate.load() }
+    let request = Task {
+      await session.deleteAccount(reauthorizedEmail: account.user.email, code: "123456")
+    }
+    await gate.waitUntilStarted()
+    store.token = "replacement-session"
+    gate.resume(returning: makeAccount(name: "Old snapshot"))
+    let result = await request.value
+    XCTAssertEqual(result, .failed)
+    XCTAssertEqual(session.state, .signedIn(account))
+    XCTAssertNil(session.failure)
+    XCTAssertEqual(store.token, "replacement-session")
+    XCTAssertEqual(store.deleteCallCount, 0)
+  }
+
+  @MainActor
   func testDisposableEmailRejectionKeepsEmailEntryRecoverable() async {
     let api = SessionStoreAPIStub()
     api.emailCodeResult = .failure(.disposableEmail)
@@ -160,6 +512,46 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testAGuestThatFinishesAfterASignInKeepsTheSignIn() async {
+    let account = makeAccount()
+    let api = SessionStoreAPIStub(emailSignInResult: .success("account-session"))
+    api.guestSignInResult = .success("guest-session")
+    let credentialStore = SessionCredentialStoreSpy()
+    let session = makeSession(api: api, credentialStore: credentialStore)
+    let guest = makeAccount(userID: "guest")
+    api.currentAccountHandler = { token in
+      guard token == "guest-session" else {
+        return account
+      }
+
+      await session.signInWithEmailCode(email: "learner@zoonk.test", code: "123456")
+      return guest
+    }
+
+    let started = await session.continueAsGuest()
+
+    XCTAssertTrue(started)
+    XCTAssertEqual(session.state, .signedIn(account))
+    XCTAssertEqual(credentialStore.savedTokens, ["account-session"])
+  }
+
+  @MainActor
+  func testSigningInFromAGuestSessionSendsItSoTheGuestsPlanMovesToTheAccount() async {
+    let account = makeAccount()
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(account),
+      emailSignInResult: .success("account-session"))
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "guest-session"))
+
+    await session.restore()
+    await session.signInWithEmailCode(email: "learner@zoonk.test", code: "123456")
+
+    XCTAssertEqual(api.emailSignInGuestTokens, ["guest-session"])
+    XCTAssertEqual(session.authenticatedSession?.bearerToken, "account-session")
+  }
+
+  @MainActor
   func testEmailSignInSurfacesRateLimitRecovery() async {
     let session = makeSession(
       api: SessionStoreAPIStub(emailSignInResult: .failure(.rateLimited)),
@@ -191,6 +583,37 @@ final class SessionStoreTests: XCTestCase {
     XCTAssertEqual(result, .synchronizedActive)
     XCTAssertEqual(api.appleSignedTransactions, ["signed-transaction"])
     XCTAssertEqual(session.state, .signedIn(subscribedAccount))
+  }
+
+  @MainActor
+  func testASubscriptionChangeReadsWhatItDecidesAgainWithNoScreenOpen() async {
+    let api = SessionStoreAPIStub(
+      appleSubscriptionResult: .success(
+        AppleSubscriptionSynchronization(
+          account: makeAccount(
+            subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active")),
+          isActive: true)),
+      currentAccountResult: .success(makeAccount()))
+    let session = makeSession(
+      api: api,
+      credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    let cache = AppCache(session: session)
+    let reads = ReadCount()
+    let allowance: Resource<Int> = cache.resource(
+      audience: .signedIn, domains: [.userSubscription]
+    ) { _ in
+      reads.count += 1
+      return reads.count
+    }
+    await allowance.load()
+
+    _ = await session.synchronizeAppleSubscription(
+      signedTransaction: "signed-transaction",
+      expectedAccountID: "session-store-test-user")
+    await allowance.load()
+
+    XCTAssertEqual(reads.count, 2, "Plus shows without waiting for the old read to go stale")
   }
 
   @MainActor
@@ -466,6 +889,68 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testLaterAppleSubscriptionSynchronizationWinsAgainstAnEarlierProfileResponse() async {
+    let freeAccount = makeAccount()
+    let subscribedAccount = makeAccount(
+      subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active"))
+    let profileUpdate = CurrentAccountRequestGate()
+    let api = SessionStoreAPIStub(
+      appleSubscriptionResult: .success(
+        AppleSubscriptionSynchronization(account: subscribedAccount, isActive: true)),
+      currentAccountResult: .success(freeAccount))
+    api.updateProfileHandler = { _, _, _ in await profileUpdate.load() }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let profileTask = Task {
+      await session.updateProfile(name: "Updated learner", username: "learner")
+    }
+    await profileUpdate.waitUntilStarted()
+    let synchronized = await session.synchronizeAppleSubscription(
+      signedTransaction: "signed-transaction", expectedAccountID: freeAccount.user.id)
+    profileUpdate.resume(returning: makeAccount(name: "Updated learner"))
+    let saved = await profileTask.value
+
+    XCTAssertFalse(saved)
+    XCTAssertEqual(synchronized, .synchronizedActive)
+    XCTAssertEqual(session.state, .signedIn(subscribedAccount))
+    XCTAssertFalse(session.isWorking)
+  }
+
+  @MainActor
+  func testLaterAppleSubscriptionSynchronizationWinsAgainstDeletionReconciliation() async {
+    let freeAccount = makeAccount()
+    let subscribedAccount = makeAccount(
+      subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active"))
+    let api = SessionStoreAPIStub(
+      appleSubscriptionResult: .success(
+        AppleSubscriptionSynchronization(account: subscribedAccount, isActive: true)),
+      currentAccountResult: .success(freeAccount))
+    api.deletionHandler = { _, _, _ in throw AccountAPIError.network }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    let reconciliation = CurrentAccountRequestGate()
+    api.currentAccountHandler = { _ in await reconciliation.load() }
+
+    let deletionTask = Task {
+      await session.deleteAccount(reauthorizedEmail: freeAccount.user.email, code: "123456")
+    }
+    await reconciliation.waitUntilStarted()
+    let synchronized = await session.synchronizeAppleSubscription(
+      signedTransaction: "signed-transaction", expectedAccountID: freeAccount.user.id)
+    reconciliation.resume(returning: freeAccount)
+    let result = await deletionTask.value
+
+    XCTAssertEqual(result, .failed)
+    XCTAssertEqual(synchronized, .synchronizedActive)
+    XCTAssertEqual(session.state, .signedIn(subscribedAccount))
+    XCTAssertEqual(session.failure, .network)
+    XCTAssertFalse(session.isWorking)
+  }
+
+  @MainActor
   func testExpiringAnOldSessionPreservesANewerSynchronizedCredential() async throws {
     let accountA = makeAccount(userID: "account-a")
     let accountB = makeAccount(userID: "account-b")
@@ -481,7 +966,7 @@ final class SessionStoreTests: XCTestCase {
 
     XCTAssertEqual(credentialStore.token, "account-b-session")
     XCTAssertEqual(credentialStore.deleteCallCount, 0)
-    XCTAssertEqual(session.authenticatedSession?.accountID, "account-b")
+    XCTAssertEqual(session.account?.user.id, "account-b")
     XCTAssertEqual(session.authenticatedSession?.bearerToken, "account-b-session")
   }
 
@@ -511,6 +996,255 @@ final class SessionStoreTests: XCTestCase {
     XCTAssertFalse(didUpdateProfile)
     XCTAssertEqual(session.state, .signedOut)
     XCTAssertNil(session.authenticatedSession)
+  }
+
+  @MainActor
+  func testAnUnauthorizedWebPlusCancellationSignsTheSessionOut() async {
+    let credentialStore = SessionCredentialStoreSpy(token: "stored-session")
+    let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
+    api.webPlusCancellationHandler = { _ in throw AccountAPIError.unauthorized }
+    let session = makeSession(api: api, credentialStore: credentialStore)
+    await session.restore()
+
+    let preview = await session.webPlusCancellation()
+
+    XCTAssertEqual(preview, .failed)
+    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertNil(credentialStore.token)
+  }
+
+  @MainActor
+  func testAWebPlusCancellationAnsweringAfterTheSessionEndedIsDropped() async throws {
+    let request = CurrentAccountRequestGate()
+    let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
+    api.webPlusCancellationHandler = { _ in
+      _ = await request.load()
+      return WebPlusCancellation(
+        withdrawal: nil, periodEnd: .init(endsAt: Date(timeIntervalSince1970: 0), refund: nil))
+    }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    let endedSession = try XCTUnwrap(session.authenticatedSession)
+
+    let cancellation = Task { await session.webPlusCancellation() }
+    await request.waitUntilStarted()
+    await session.expire(endedSession)
+    request.resume(returning: makeAccount())
+
+    let preview = await cancellation.value
+    XCTAssertEqual(preview, .failed)
+  }
+
+  @MainActor
+  func testNothingLeftToCancelRefreshesTheAccount() async {
+    let ending = makeAccount(
+      subscription: makeWebSubscription(cancelAt: Date(timeIntervalSince1970: 0)))
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(makeAccount(subscription: makeWebSubscription())))
+    api.webPlusCancellationHandler = { _ in throw AccountAPIError.noWebSubscription }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    api.currentAccountResult = .success(ending)
+
+    let preview = await session.webPlusCancellation()
+
+    XCTAssertEqual(preview, .nothingToCancel)
+    XCTAssertEqual(session.account, ending)
+  }
+
+  @MainActor
+  func testCancelingWebPlusReturnsTheRefundAndRefreshesTheAccount() async {
+    let refund = Money(amount: 29.9, currency: "BRL")
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(makeAccount(subscription: makeWebSubscription())))
+    api.cancelWebPlusHandler = { _, _ in refund }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    api.currentAccountResult = .success(makeAccount())
+
+    let result = await session.cancelWebPlus(withdraw: true)
+
+    XCTAssertEqual(result, .canceled(refund: refund))
+    XCTAssertEqual(api.cancelWebPlusRequests.map(\.withdraw), [true])
+    XCTAssertEqual(api.cancelWebPlusRequests.map(\.token), ["stored-session"])
+    XCTAssertNil(session.account?.account.subscription)
+  }
+
+  @MainActor
+  func testAClosedCancellationChoiceRefreshesTheAccount() async {
+    let ending = makeAccount(
+      subscription: makeWebSubscription(cancelAt: Date(timeIntervalSince1970: 0)))
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(makeAccount(subscription: makeWebSubscription())))
+    api.cancelWebPlusHandler = { _, _ in throw AccountAPIError.cancellationChoiceClosed }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    api.currentAccountResult = .success(ending)
+
+    let result = await session.cancelWebPlus(withdraw: true)
+
+    XCTAssertEqual(result, .choiceClosed)
+    XCTAssertEqual(session.account, ending)
+  }
+
+  @MainActor
+  func testAClosedRefundIsReadAgainThoughThePlanStaysTheSame() async {
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(
+        makeAccount(subscription: makeWebSubscription(cancelAt: Date(timeIntervalSince1970: 0)))))
+    api.cancelWebPlusHandler = { _, _ in throw AccountAPIError.cancellationChoiceClosed }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    let cache = AppCache(session: session)
+    var withdrawal: WebPlusCancellation.Withdrawal? = .init(
+      refund: Money(amount: 29.9, currency: "BRL"), until: Date(timeIntervalSince1970: 0))
+    let choices: Resource<WebPlusCancellation> = cache.resource(
+      audience: .signedIn, domains: [.userSubscription]
+    ) { _ in WebPlusCancellation(withdrawal: withdrawal, periodEnd: nil) }
+    await choices.load()
+
+    withdrawal = nil
+    let result = await session.cancelWebPlus(withdraw: true)
+    await choices.load()
+
+    XCTAssertEqual(result, .choiceClosed)
+    XCTAssertNil(choices.value?.withdrawal)
+  }
+
+  @MainActor
+  func testKeepingPlusTurnsTheRenewalBackOnAndReadsThePlanAgain() async {
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(
+        makeAccount(subscription: makeWebSubscription(cancelAt: Date(timeIntervalSince1970: 0)))))
+    api.keepWebPlusHandler = { _ in }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    let cache = AppCache(session: session)
+    var canResumeRenewal = true
+    let choices: Resource<WebPlusCancellation> = cache.resource(
+      audience: .signedIn, domains: [.userSubscription]
+    ) { _ in
+      WebPlusCancellation(withdrawal: nil, periodEnd: nil, canResumeRenewal: canResumeRenewal)
+    }
+    await choices.load()
+
+    canResumeRenewal = false
+    api.currentAccountResult = .success(makeAccount(subscription: makeWebSubscription()))
+    let kept = await session.keepWebPlus()
+    await choices.load()
+
+    XCTAssertTrue(kept)
+    XCTAssertEqual(api.keepWebPlusTokens, ["stored-session"])
+    XCTAssertNil(session.account?.account.subscription?.cancelAt)
+    XCTAssertEqual(choices.value?.canResumeRenewal, false)
+  }
+
+  @MainActor
+  func testKeptPlusShowsRenewingWhenTheAccountCantBeReadAgain() async {
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(
+        makeAccount(subscription: makeWebSubscription(cancelAt: Date(timeIntervalSince1970: 0)))))
+    api.keepWebPlusHandler = { _ in }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    api.currentAccountResult = .failure(.network)
+    let kept = await session.keepWebPlus()
+
+    XCTAssertTrue(kept)
+    XCTAssertEqual(session.account, makeAccount(subscription: makeWebSubscription()))
+  }
+
+  @MainActor
+  func testALateKeptPlusLeavesACancellationMadeMeanwhile() async {
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(
+        makeAccount(subscription: makeWebSubscription(cancelAt: Date(timeIntervalSince1970: 0)))))
+    let keepResponse = CurrentAccountRequestGate()
+    api.keepWebPlusHandler = { _ in _ = await keepResponse.load() }
+    api.cancelWebPlusHandler = { _, _ in nil }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let keep = Task { await session.keepWebPlus() }
+    await keepResponse.waitUntilStarted()
+    let endingAgain = makeAccount(
+      subscription: makeWebSubscription(cancelAt: Date(timeIntervalSince1970: 60)))
+    api.currentAccountResult = .success(endingAgain)
+    _ = await session.cancelWebPlus(withdraw: false)
+    api.currentAccountResult = .failure(.network)
+    keepResponse.resume(returning: endingAgain)
+    _ = await keep.value
+
+    XCTAssertEqual(session.account, endingAgain)
+  }
+
+  @MainActor
+  func testKeepingPlusThatCantBeKeptAnymoreReadsThePlanAgain() async {
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(
+        makeAccount(subscription: makeWebSubscription(cancelAt: Date(timeIntervalSince1970: 0)))))
+    api.keepWebPlusHandler = { _ in throw AccountAPIError.cancellationChoiceClosed }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    let cache = AppCache(session: session)
+    var canResumeRenewal = true
+    let choices: Resource<WebPlusCancellation> = cache.resource(
+      audience: .signedIn, domains: [.userSubscription]
+    ) { _ in
+      WebPlusCancellation(withdrawal: nil, periodEnd: nil, canResumeRenewal: canResumeRenewal)
+    }
+    await choices.load()
+
+    canResumeRenewal = false
+    let keptElsewhere = makeAccount(subscription: makeWebSubscription())
+    api.currentAccountResult = .success(keptElsewhere)
+    let kept = await session.keepWebPlus()
+    await choices.load()
+
+    XCTAssertTrue(kept, "Nothing failed: the plan and preview say what's true now")
+    XCTAssertEqual(session.account, keptElsewhere)
+    XCTAssertEqual(choices.value?.canResumeRenewal, false)
+  }
+
+  @MainActor
+  func testKeepingPlusThatFailsKeepsTheAccount() async {
+    let ending = makeAccount(
+      subscription: makeWebSubscription(cancelAt: Date(timeIntervalSince1970: 0)))
+    let api = SessionStoreAPIStub(currentAccountResult: .success(ending))
+    api.keepWebPlusHandler = { _ in throw AccountAPIError.network }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let kept = await session.keepWebPlus()
+
+    XCTAssertFalse(kept)
+    XCTAssertEqual(session.account, ending)
+  }
+
+  @MainActor
+  func testAFailedWebPlusCancellationKeepsTheAccount() async {
+    let account = makeAccount(subscription: makeWebSubscription())
+    let api = SessionStoreAPIStub(currentAccountResult: .success(account))
+    api.cancelWebPlusHandler = { _, _ in throw AccountAPIError.network }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let result = await session.cancelWebPlus(withdraw: false)
+
+    XCTAssertEqual(result, .failed)
+    XCTAssertEqual(session.account, account)
   }
 
   @MainActor
@@ -550,6 +1284,87 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testLaunchReadsStartWithTheStoredTokenAndSurviveItsValidation() async {
+    let account = makeAccount()
+    let api = SessionStoreAPIStub(currentAccountResult: .success(account))
+    let validation = CurrentAccountRequestGate()
+    api.currentAccountHandler = { _ in await validation.load() }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    var readTokens = [String?]()
+    let today = AppCache(session: session).resource(audience: .signedIn) { owner in
+      readTokens.append(owner?.bearerToken)
+      return 1
+    }
+
+    let restore = Task { await session.restore() }
+    await validation.waitUntilStarted()
+    await today.load()
+
+    XCTAssertEqual(today.state, .loaded(1))
+    XCTAssertEqual(session.state, .restoring)
+
+    validation.resume(returning: account)
+    await restore.value
+    await today.load()
+
+    XCTAssertEqual(session.state, .signedIn(account))
+    XCTAssertEqual(today.state, .loaded(1))
+    XCTAssertEqual(readTokens, ["stored-session"])
+  }
+
+  @MainActor
+  func testAnUnauthorizedLaunchReadSignsOut() async {
+    let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
+    let validation = CurrentAccountRequestGate()
+    api.currentAccountHandler = { _ in await validation.load() }
+    let credentials = SessionCredentialStoreSpy(token: "stored-session")
+    let session = makeSession(api: api, credentialStore: credentials)
+    let today: Resource<Int> = AppCache(session: session).resource(audience: .signedIn) { _ in
+      throw APIError.unauthorized
+    }
+
+    let restore = Task { await session.restore() }
+    await validation.waitUntilStarted()
+    await today.load()
+    validation.resume(returning: makeAccount())
+    await restore.value
+
+    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertNil(credentials.token)
+    XCTAssertEqual(today.state, .idle)
+  }
+
+  @MainActor
+  func testLaunchReadsOfAReplacedTokenAreDropped() async {
+    let other = makeAccount(userID: "other-user")
+    let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
+    let validation = CurrentAccountRequestGate()
+    api.currentAccountHandler = { token in
+      token == "stored-session" ? await validation.load() : other
+    }
+    let credentials = SessionCredentialStoreSpy(token: "stored-session")
+    let session = makeSession(api: api, credentialStore: credentials)
+    var readTokens = [String?]()
+    let today = AppCache(session: session).resource(audience: .signedIn) { owner in
+      readTokens.append(owner?.bearerToken)
+      return readTokens.count
+    }
+
+    let restore = Task { await session.restore() }
+    await validation.waitUntilStarted()
+    await today.load()
+    credentials.token = "other-session"
+    validation.resume(returning: makeAccount())
+    await restore.value
+    await today.load()
+
+    XCTAssertEqual(session.state, .signedIn(other))
+    XCTAssertEqual(today.state, .loaded(2))
+    XCTAssertEqual(readTokens, ["stored-session", "other-session"])
+  }
+
+  @MainActor
   private func makeSession(
     api: any AccountAPIClient = SessionStoreAPIStub(),
     credentialStore: SessionCredentialStoreSpy,
@@ -559,6 +1374,10 @@ final class SessionStoreTests: XCTestCase {
       api: api,
       credentialStore: credentialStore,
       googleAuthentication: googleAuthentication)
+  }
+
+  private func makeWebSubscription(cancelAt: Date? = nil) -> AccountSubscription {
+    AccountSubscription(plan: "plus", provider: "stripe", status: "active", cancelAt: cancelAt)
   }
 
   @MainActor
@@ -581,6 +1400,11 @@ final class SessionStoreTests: XCTestCase {
   }
 }
 
+@MainActor
+private final class ReadCount {
+  var count = 0
+}
+
 private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
   private(set) var appleSignedTransactions = [String]()
   var appleSubscriptionResult: Result<AppleSubscriptionSynchronization, AccountAPIError> = .failure(
@@ -591,10 +1415,24 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
   var currentAccountError: Error?
   var currentAccountHandler: (@MainActor (String) async throws -> CurrentAccount)?
   var emailSignInResult: Result<String, AccountAPIError> = .failure(.invalidResponse)
+  var guestSignInResult: Result<String, AccountAPIError> = .failure(.invalidResponse)
+  var emailCodeRequests = [(email: String, token: String?)]()
+  var emailSignInGuestTokens = [String?]()
+  var emailCodeHandler: (@MainActor (String, String?) async throws -> Void)?
+  var deletionHandler:
+    (
+      @MainActor (String, AppleSignInCredentials?, EmailReauthenticationCredentials?) async throws
+        -> AccountDeletionResponse
+    )?
   var emailCodeResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
   var signOutResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
   var updateProfileHandler: (@MainActor (String, String, String) async throws -> CurrentAccount)?
   var updateProfileResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse)
+  var webPlusCancellationHandler: (@MainActor (String) async throws -> WebPlusCancellation)?
+  var cancelWebPlusHandler: (@MainActor (String, Bool) async throws -> Money?)?
+  private(set) var cancelWebPlusRequests = [(token: String, withdraw: Bool)]()
+  var keepWebPlusHandler: (@MainActor (String) async throws -> Void)?
+  private(set) var keepWebPlusTokens = [String]()
 
   init(
     appleSubscriptionResult: Result<AppleSubscriptionSynchronization, AccountAPIError> = .failure(
@@ -609,6 +1447,34 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
     self.emailSignInResult = emailSignInResult
     self.signOutResult = signOutResult
     self.updateProfileResult = updateProfileResult
+  }
+
+  func webPlusCancellation(token: String) async throws -> WebPlusCancellation {
+    guard let webPlusCancellationHandler else {
+      throw AccountAPIError.invalidResponse
+    }
+
+    return try await webPlusCancellationHandler(token)
+  }
+
+  func cancelWebPlus(token: String, withdraw: Bool) async throws -> Money? {
+    cancelWebPlusRequests.append((token, withdraw))
+
+    guard let cancelWebPlusHandler else {
+      throw AccountAPIError.invalidResponse
+    }
+
+    return try await cancelWebPlusHandler(token, withdraw)
+  }
+
+  func keepWebPlus(token: String) async throws {
+    keepWebPlusTokens.append(token)
+
+    guard let keepWebPlusHandler else {
+      throw AccountAPIError.invalidResponse
+    }
+
+    try await keepWebPlusHandler(token)
   }
 
   func synchronizeAppleSubscription(
@@ -636,12 +1502,31 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
     return try currentAccountResult.get()
   }
 
-  func signInWithEmailCode(email: String, code: String) async throws -> String {
-    try emailSignInResult.get()
+  func signInWithEmailCode(email: String, code: String, guestToken: String?) async throws
+    -> String
+  {
+    emailSignInGuestTokens.append(guestToken)
+    return try emailSignInResult.get()
   }
 
-  func sendEmailCode(email: String) async throws {
+  func signInAsGuest() async throws -> String {
+    try guestSignInResult.get()
+  }
+
+  func sendEmailCode(email: String, token: String?) async throws {
+    emailCodeRequests.append((email, token))
+    if let emailCodeHandler { return try await emailCodeHandler(email, token) }
     try emailCodeResult.get()
+  }
+
+  func deleteAccount(
+    token: String, appleCredentials: AppleSignInCredentials?,
+    emailCredentials: EmailReauthenticationCredentials?
+  ) async throws -> AccountDeletionResponse {
+    if let deletionHandler {
+      return try await deletionHandler(token, appleCredentials, emailCredentials)
+    }
+    throw AccountAPIError.invalidResponse
   }
 
   func signOut(token: String) async throws {
@@ -725,19 +1610,45 @@ extension AccountAPIClient {
     throw AccountAPIError.invalidResponse
   }
 
-  func sendEmailCode(email: String) async throws {
+  func sendEmailCode(email: String, token: String?) async throws {
     throw AccountAPIError.invalidResponse
   }
 
-  func signInWithApple(_ credentials: AppleSignInCredentials) async throws -> String {
+  func signInWithApple(_ credentials: AppleSignInCredentials, guestToken: String?) async throws
+    -> String
+  {
     throw AccountAPIError.invalidResponse
   }
 
-  func signInWithGoogle(idToken: String) async throws -> String {
+  func signInWithGoogle(idToken: String, guestToken: String?) async throws -> String {
+    throw AccountAPIError.invalidResponse
+  }
+
+  func signInAsGuest() async throws -> String {
     throw AccountAPIError.invalidResponse
   }
 
   func updateProfile(token: String, name: String, username: String) async throws -> CurrentAccount {
+    throw AccountAPIError.invalidResponse
+  }
+
+  func getUsernameSuggestion(token: String) async throws -> String? {
+    throw AccountAPIError.invalidResponse
+  }
+
+  func isUsernameAvailable(_ username: String) async throws -> Bool {
+    throw AccountAPIError.invalidResponse
+  }
+
+  func webPlusCancellation(token: String) async throws -> WebPlusCancellation {
+    throw AccountAPIError.invalidResponse
+  }
+
+  func cancelWebPlus(token: String, withdraw: Bool) async throws -> Money? {
+    throw AccountAPIError.invalidResponse
+  }
+
+  func keepWebPlus(token: String) async throws {
     throw AccountAPIError.invalidResponse
   }
 }

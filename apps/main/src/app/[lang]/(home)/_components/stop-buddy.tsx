@@ -1,0 +1,168 @@
+import { ProductWindow } from "@/components/public/product-window";
+import {
+  Stop,
+  StopBody,
+  StopEyebrow,
+  StopHeader,
+  StopLead,
+  StopMark,
+  StopTitle,
+} from "@/components/public/stop";
+import { Variant } from "@/components/public/variant-switch";
+import { Buddy } from "@zoonk/ui/components/buddy";
+import { CornerDownRightIcon } from "lucide-react";
+import { getExtracted } from "next-intl/server";
+import { EXAMPLE_GOALS, type ExampleGoal, GOAL_SWITCH, getExampleSet } from "./landing-examples";
+
+const STOP_TITLE_ID = "stop-buddy";
+
+function ZuFace({ className }: { className?: string }) {
+  return (
+    <Buddy
+      beltColor="white"
+      className={className}
+      crop="face"
+      energy={null}
+      glasses="round"
+      kind="zu"
+    />
+  );
+}
+
+type Exchange = { answer: string; ask: string; context: string; lang?: string; quote: string };
+
+async function getExchanges(): Promise<Record<ExampleGoal, Exchange>> {
+  const t = await getExtracted();
+  const set = await getExampleSet();
+  const { sql } = set.job;
+  const { practice } = set.exam;
+
+  const exam: Exchange = {
+    answer: practice.answer,
+    ask: practice.ask,
+    context: t("Mock exam {mock, number} · Question {question, number} · {subject}", {
+      mock: 2,
+      question: 4,
+      subject: practice.subject.name,
+    }),
+    quote: practice.question,
+  };
+
+  return {
+    exam,
+    job: {
+      answer: t(
+        "Without it, SUM adds every row into one total. GROUP BY {column} makes one total per region, so you can compare them, and ORDER BY puts the biggest first.",
+        { column: sql.region },
+      ),
+      ask: t("Why do I need GROUP BY here?"),
+      context: t("Real problem · Sales by region"),
+      quote: `SELECT ${sql.region}, SUM(${sql.sales}) AS total FROM ${sql.orders}…`,
+    },
+    move:
+      set.move === "mexico-city"
+        ? {
+            answer: t({
+              description:
+                "The buddy answers a learner of Spanish. Keep only “departamento” and “apartamento” in Spanish, the words being taught; translate the rest, Mexico and Mexico City included.",
+              message:
+                "Both work. In Mexico people usually say “departamento” for a flat in a building, so it sounds more natural when you're renting in Mexico City.",
+            }),
+            ask: t("Why “departamento” and not “apartamento”?"),
+            context: t("Lesson · Calling about an apartment"),
+            lang: "es",
+            quote: "¿Puedo ver el departamento el sábado?",
+          }
+        : {
+            answer: t({
+              description:
+                "The buddy answers a learner of English. Keep only “flat” and “apartment” in English, the words being taught; translate the rest, London and the US included. “there” is London.",
+              message:
+                "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there.",
+            }),
+            ask: t({
+              description:
+                "A learner of English asks about the English words “flat” and “apartment”.",
+              message: "Why “flat” and not “apartment”?",
+            }),
+            context: t("Lesson · Calling about an apartment"),
+            lang: "en",
+            quote: "Can I see the flat on Saturday?",
+          },
+  };
+}
+
+async function Conversation({ exchange }: { exchange: Exchange }) {
+  const t = await getExtracted();
+  const tBuddy = await getExtracted("buddyNames");
+
+  return (
+    <ProductWindow className="flex flex-col gap-5 p-5 sm:p-7">
+      <div className="flex flex-col gap-1 border-l-2 pl-3.5">
+        <p className="text-faint font-mono text-xs leading-4 uppercase">{exchange.context}</p>
+        <p className="text-muted-foreground line-clamp-2 text-sm leading-snug" lang={exchange.lang}>
+          {exchange.quote}
+        </p>
+      </div>
+
+      <p className="bg-muted ml-auto w-fit max-w-[80%] rounded-2xl rounded-br-md px-3.5 py-2.5 text-[0.9375rem] leading-snug text-pretty">
+        {exchange.ask}
+      </p>
+
+      <div className="grid grid-cols-[2.25rem_minmax(0,1fr)] gap-3">
+        <ZuFace className="size-9" />
+
+        <div className="flex min-w-0 flex-col gap-1">
+          <p className="text-[0.8125rem] font-semibold">{tBuddy("Zu")}</p>
+          <p className="max-w-column text-base leading-relaxed text-pretty">{exchange.answer}</p>
+
+          <p className="text-muted-foreground mt-3 flex items-start gap-2 text-[0.8125rem] leading-snug">
+            <CornerDownRightIcon aria-hidden="true" className="mt-px size-3.5 shrink-0" />
+            <span className="text-pretty">
+              {[t("Explain it more simply"), t("I want to go deeper")].join(" · ")}
+            </span>
+          </p>
+        </div>
+      </div>
+    </ProductWindow>
+  );
+}
+
+export async function StopBuddy() {
+  const t = await getExtracted();
+  const exchanges = await getExchanges();
+
+  return (
+    <Stop
+      aria-labelledby={STOP_TITLE_ID}
+      band
+      rail
+      className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,40rem)] lg:items-start lg:gap-16"
+    >
+      <StopHeader>
+        <StopEyebrow>
+          <StopMark>
+            <ZuFace className="size-5" />
+          </StopMark>
+          {t("11 pm · one question")}
+        </StopEyebrow>
+
+        <StopTitle id={STOP_TITLE_ID}>{t("Stuck? Ask Zu.")}</StopTitle>
+
+        <StopLead>
+          {t(
+            "Your AI study buddy explains any question as simply as you need, right where you got stuck.",
+          )}
+        </StopLead>
+      </StopHeader>
+
+      <StopBody className="max-w-form lg:mt-0">
+        {EXAMPLE_GOALS.map((goal) => (
+          <Variant key={goal} name={GOAL_SWITCH} value={goal}>
+            <Conversation exchange={exchanges[goal]} />
+          </Variant>
+        ))}
+      </StopBody>
+    </Stop>
+  );
+}

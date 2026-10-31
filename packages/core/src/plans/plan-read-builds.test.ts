@@ -1,0 +1,161 @@
+import { randomUUID } from "node:crypto";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { describe, expect, it, vi } from "vitest";
+import { mockSession } from "../_test-utils/mock-session";
+import { createLessonQuestion } from "../lesson-questions/create-lesson-question";
+import { seedPersonaCopy } from "../seed/seed";
+import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { createSetUpGoalPlan } from "./_test-utils/set-up-plan";
+import { getPlanBasesAdvice } from "./get-bases-advice";
+import { getGoalPlan } from "./get-goal-plan";
+import { findPlanTimeToCover, getPlanTimeAdvice } from "./get-time-advice";
+import { type buildPlan } from "./planner/build-plan";
+import { type getFittingFloor } from "./planner/fitting-floor";
+
+const builds = vi.hoisted(() => ({ depth: 0, laidOut: 0 }));
+
+/** With the floor off, the search tries every time from the least, as it did before it had one. */
+const floor = vi.hoisted(() => ({ off: false }));
+
+vi.mock("./planner/fitting-floor", async (importOriginal) => {
+  const actual = await importOriginal<{ getFittingFloor: typeof getFittingFloor }>();
+
+  return {
+    getFittingFloor: (...args: Parameters<typeof getFittingFloor>) =>
+      floor.off ? 0 : actual.getFittingFloor(...args),
+  };
+});
+
+vi.mock("./planner/build-plan", async (importOriginal) => {
+  const actual = await importOriginal<{ buildPlan: typeof buildPlan }>();
+
+  return {
+    ...actual,
+    buildPlan: (...args: Parameters<typeof buildPlan>) => {
+      if (builds.depth === 0) {
+        builds.laidOut += 1;
+      }
+
+      builds.depth += 1;
+
+      try {
+        return actual.buildPlan(...args);
+      } finally {
+        builds.depth -= 1;
+      }
+    },
+  };
+});
+
+async function countBuilds<Result>(read: () => Promise<Result>) {
+  builds.laidOut = 0;
+  const result = await read();
+  return { builds: builds.laidOut, result };
+}
+
+describe("plans laid out per read", () => {
+  // It builds Ana's exam plan several times over, past the default timeout on CI's slower runners.
+  it("reads Ana's exam plan, her time advice and a buddy turn from her own plan, never searching other daily times", async () => {
+    const copyKey = randomUUID();
+
+    const user = await seedPersonaCopy({
+      copyKey,
+      email: `builds-${copyKey}@zoonk.test`,
+      persona: "exam",
+    });
+
+    mockSession(user.userId);
+
+    const plan = await countBuilds(() => getGoalPlan(user.goalId));
+    expect(plan.result.status).toBe("ready");
+    expect.soft(plan.builds, "Plan").toBeLessThanOrEqual(3);
+
+    const own = await countBuilds(() => getPlanTimeAdvice({ goalId: user.goalId, input: {} }));
+    expect(own.result.status).toBe("ready");
+    expect.soft(own.builds, "time advice at her own time").toBeLessThanOrEqual(2);
+
+    const other = await countBuilds(() =>
+      getPlanTimeAdvice({ goalId: user.goalId, input: { dailyMinutes: 120 } }),
+    );
+
+    expect(other.result.status).toBe("ready");
+    expect.soft(other.builds, "time advice at another time").toBeLessThanOrEqual(3);
+
+    const turn = await countBuilds(() =>
+      createLessonQuestion({
+        input: { context: { kind: "plan" }, question: "What's next?", requestId: randomUUID() },
+        target: { goalId: user.goalId, kind: "plan" },
+      }),
+    );
+
+    expect(turn.result.status).toBe("created");
+    expect.soft(turn.builds, "a buddy turn not about time").toBeLessThanOrEqual(3);
+
+    const found = await countBuilds(() => findPlanTimeToCover({ goalId: user.goalId, input: {} }));
+
+    expect(found.result.status).toBe("ready");
+    expect(found.builds, "Find searches other daily times").toBeGreaterThan(plan.builds);
+
+    const advice = await countBuilds(() => getPlanBasesAdvice(user.goalId));
+    expect(advice.result.status).toBe("ready");
+  }, 120_000);
+
+  // It plans Ana's exam at each daily time twice over, past the default timeout on CI's slower runners.
+  it("finds the time that covers Ana's exam without planning every time under it, and finds the same one", async () => {
+    const copyKey = randomUUID();
+
+    const user = await seedPersonaCopy({
+      copyKey,
+      email: `floor-${copyKey}@zoonk.test`,
+      persona: "exam",
+    });
+
+    mockSession(user.userId);
+
+    const find = () =>
+      findPlanTimeToCover({ goalId: user.goalId, input: { studyDays: [1, 2, 3, 4, 5] } });
+
+    floor.off = true;
+    const everyTime = await countBuilds(find);
+    floor.off = false;
+    const fromFloor = await countBuilds(find);
+
+    expect(everyTime.result).toMatchObject({ time: { recommendedMinutes: expect.any(Number) } });
+    expect(fromFloor.result).toStrictEqual(everyTime.result);
+    expect(fromFloor.builds).toBeLessThan(everyTime.builds / 2);
+  }, 120_000);
+
+  it("finds no time for a date that has passed without searching every daily time", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2020-09-28T12:00:00Z"));
+
+    const user = await userFixture();
+    const library = await planLibraryFixture({ skills: [{ lessons: 6 }, { lessons: 6 }] });
+
+    const { goal } = await unplannedGoalFixture({
+      dailyMinutes: 5,
+      details: { placementDeclined: true },
+      settings: { startDate: "2020-09-28" },
+      targetDate: new Date("2020-10-19T00:00:00Z"),
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
+    mockSession(user.id);
+    vi.setSystemTime(new Date("2020-10-20T12:00:00Z"));
+
+    const found = await countBuilds(() =>
+      findPlanTimeToCover({ goalId: goal.id, input: { studyDays: [1, 2, 3, 4, 5] } }),
+    );
+
+    vi.useRealTimers();
+
+    expect(found.result).toMatchObject({
+      status: "ready",
+      time: { recommendedMinutes: null, suggested: null, targetDate: "2020-10-19" },
+    });
+
+    expect(found.builds).toBeLessThanOrEqual(2);
+  });
+});

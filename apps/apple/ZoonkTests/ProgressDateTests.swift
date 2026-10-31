@@ -23,27 +23,4 @@ final class ProgressDateTests: XCTestCase {
     XCTAssertNil(ProgressDate("2026-02-30"))
     XCTAssertNil(ProgressDate("July 27, 2026"))
   }
-
-  func testDaypartTimeRangesUseTheExpectedClockBoundaries() {
-    let locale = Locale(identifier: "en_US")
-    let expectedRanges = [
-      "12:00 AM–6:00 AM",
-      "6:00 AM–12:00 PM",
-      "12:00 PM–6:00 PM",
-      "6:00 PM–12:00 AM",
-    ]
-
-    XCTAssertEqual(
-      ProgressDaypart.allCases.map {
-        normalizedWhitespace($0.localizedTimeRange(locale: locale))
-      },
-      expectedRanges)
-  }
-
-  private func normalizedWhitespace(_ value: String) -> String {
-    value.replacingOccurrences(
-      of: #"\s+"#,
-      with: " ",
-      options: .regularExpression)
-  }
 }

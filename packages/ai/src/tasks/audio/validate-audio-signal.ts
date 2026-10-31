@@ -1,6 +1,5 @@
 import { type SpeechModelName } from "./speech-models";
 
-const MAX_AUDIO_DURATION_SECONDS = 18;
 const MIN_AUDIBLE_AMPLITUDE = 0.005;
 const MIN_AUDIBLE_DURATION_SECONDS = 0.04;
 
@@ -10,11 +9,7 @@ export type DecodedAudio = {
   samplesDecoded: number;
 };
 
-/**
- * Checks one decoded sample frame across every channel. Using the strongest
- * channel avoids rejecting valid stereo audio when speech is intentionally
- * present on only one side.
- */
+/** The strongest channel counts, so stereo with speech on one side passes. */
 function isSampleFrameAudible({
   channelData,
   sampleIndex,
@@ -28,9 +23,8 @@ function isSampleFrameAudible({
 }
 
 /**
- * Requires at least 40 ms of meaningful signal so isolated clicks or decoder
- * noise do not count as speech. The amplitude floor sits inside the large gap
- * measured between near-silent and spoken files in the production audio corpus.
+ * Clicks and decoder noise don't count as speech. The amplitude floor sits inside the gap measured
+ * between near-silent and spoken files in the production audio corpus.
  */
 function hasSustainedAudibleSignal({
   channelData,
@@ -54,22 +48,19 @@ function hasSustainedAudibleSignal({
   return audibleSampleFrames >= minimumAudibleSampleFrames;
 }
 
-/**
- * Applies the provider-independent quality rules after a codec-specific parser
- * has produced normalized PCM samples. This gives every speech provider one
- * audibility and prompt-leak contract regardless of its transport details.
- */
 export function assertAudibleAudioSignal({
   audio,
+  maxSeconds,
   model,
 }: {
   audio: DecodedAudio;
+  maxSeconds: number;
   model: SpeechModelName;
 }): void {
   const durationSeconds = audio.samplesDecoded / audio.sampleRate;
 
-  if (durationSeconds > MAX_AUDIO_DURATION_SECONDS) {
-    throw new Error(`${model} returned audio longer than ${MAX_AUDIO_DURATION_SECONDS} seconds`);
+  if (durationSeconds > maxSeconds) {
+    throw new Error(`${model} returned audio longer than ${maxSeconds} seconds`);
   }
 
   if (!hasSustainedAudibleSignal(audio)) {

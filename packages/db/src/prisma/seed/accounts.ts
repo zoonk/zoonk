@@ -1,10 +1,12 @@
-import { type PrismaClient } from "../../generated/prisma/client";
-import { type SeedUsers } from "./users";
+import { type PrismaClient, type User } from "../../generated/prisma/client";
 
 const CREDENTIAL_PROVIDER_ID = "credential";
 const TEST_PASSWORD = "password123";
 
-export async function seedAccounts(prisma: PrismaClient, users: SeedUsers): Promise<void> {
+export async function seedAccounts(
+  prisma: PrismaClient,
+  users: Readonly<Record<string, Pick<User, "id">>>,
+): Promise<void> {
   const accountData = Object.values(users).map((user) => ({
     accountId: user.id,
     password: TEST_PASSWORD,

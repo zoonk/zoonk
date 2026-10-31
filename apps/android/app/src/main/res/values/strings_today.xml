@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="today_title">Today</string>
+    <string name="today_day_is_here">The day is here</string>
+    <plurals name="today_days_left">
+        <item quantity="one">%d day left</item>
+        <item quantity="other">%d days left</item>
+    </plurals>
+    <!-- The goal's date is the likely day of an exam whose notice isn't out yet. -->
+    <plurals name="today_days_left_estimated">
+        <item quantity="one">~%d day left</item>
+        <item quantity="other">~%d days left</item>
+    </plurals>
+    <string name="today_behind">Behind</string>
+    <string name="today_pace_one_day_ahead">One day ahead</string>
+    <plurals name="today_pace_ahead">
+        <item quantity="one">%d day ahead</item>
+        <item quantity="other">%d days ahead</item>
+    </plurals>
+    <string name="today_pace_one_day_behind">One day behind</string>
+    <plurals name="today_pace_behind_days">
+        <item quantity="one">%d day behind</item>
+        <item quantity="other">%d days behind</item>
+    </plurals>
+    <plurals name="today_pace_lessons_to_catch_up">
+        <item quantity="one">%d lesson to catch up</item>
+        <item quantity="other">%d lessons to catch up</item>
+    </plurals>
+    <plurals name="today_pace_challenges_left">
+        <item quantity="one">%d challenge left</item>
+        <item quantity="other">%d challenges left</item>
+    </plurals>
+    <string name="today_pace_finished">Plan finished</string>
+    <string name="today_pace_needs_adjusting">Needs adjusting</string>
+    <string name="today_pace_on_track">Keeping pace</string>
+    <string name="today_pace_past_date">Past your date</string>
+    <!-- %1$s is the exam's name, such as "ENEM". -->
+    <string name="today_exam_tomorrow">%1$s tomorrow</string>
+    <string name="today_exam_today">%1$s today</string>
+
+    <string name="today_time_left">%1$s left</string>
+    <string name="today_time_studied">%1$s studied</string>
+    <!-- How many of today's session steps are done; %1$s and %2$s are formatted numbers: "2 of 5 done". -->
+    <string name="today_steps_done">%1$s of %2$s done</string>
+
+    <!-- %1$s is a duration, such as "55 min". -->
+    <string name="today_fresh_start_welcome_back">Welcome back! Today is lighter, about %1$s, so it\'s easy to pick up again.</string>
+    <string name="today_fresh_start_welcome_back_trial_ended">Welcome back! Today takes about %1$s, so it\'s easy to pick up again.</string>
+    <string name="today_fresh_start_new_phase">A new phase starts today, with an easy warm-up first.</string>
+    <string name="today_fresh_start_new_week">A fresh week. Today starts with an easy warm-up.</string>
+
+    <!-- %d is how many of today's session steps are done. -->
+    <plurals name="today_done_count">
+        <item quantity="one">%d done</item>
+        <item quantity="other">%d done</item>
+    </plurals>
+    <plurals name="today_more_count">
+        <item quantity="one">+%d more</item>
+        <item quantity="other">+%d more</item>
+    </plurals>
+    <string name="today_step_done">Done</string>
+    <!-- TalkBack's state for the session's next step. -->
+    <string name="today_step_next">Next step</string>
+    <string name="today_step_skipped">Skipped</string>
+    <string name="today_step_counts_toward_mission">Counts toward a mission</string>
+    <string name="today_step_being_written">Being written for you…</string>
+    <!-- A step's label. It and today_step_catching_up_subject label the same kind of step, so both take the same grammatical form. -->
+    <string name="today_step_catching_up">Catching up</string>
+    <!-- %1$s is the subject the block studies. Labels the same kind of step as today_step_catching_up, so both take the same grammatical form. -->
+    <string name="today_step_catching_up_subject">Catching up · %1$s</string>
+    <string name="today_step_often_tested">Often tested</string>
+    <string name="today_step_often_tested_label">%1$s · often tested</string>
+    <string name="today_step_after_lessons">After today\'s lessons</string>
+    <!-- %1$s is the phase's name. -->
+    <string name="today_step_after_lessons_phase">%1$s · after today\'s lessons</string>
+    <string name="today_step_after_challenge">After the challenge before it</string>
+    <string name="today_step_after_challenge_phase">%1$s · after the challenge before it</string>
+
+    <string name="today_done">Today\'s session is complete.</string>
+    <string name="today_done_day_off">You studied on your day off.</string>
+    <string name="today_see_summary">See today\'s summary</string>
+    <string name="today_rest">No study planned today.</string>
+    <string name="today_rest_next_lessons_welcome_back">Welcome back! Your next lessons are here if you\'d like to study.</string>
+    <string name="today_rest_next_lessons">Your next lessons are here if you\'d like to study.</string>
+    <string name="today_rest_welcome_back">Welcome back! Today is a rest day in your plan, so enjoy it.</string>
+    <string name="today_rest_enjoy">Enjoy your day off!</string>
+    <string name="today_waiting">Getting today\'s lessons ready…</string>
+    <string name="today_waiting_detail">They show up here on their own.</string>
+    <string name="today_waiting_stalled">Today\'s lessons are taking longer than usual.</string>
+    <string name="today_waiting_stalled_detail">Come back in a few minutes.</string>
+    <plurals name="today_past_date_exam">
+        <item quantity="one">%d lesson was left before your exam.</item>
+        <item quantity="other">%d lessons were left before your exam.</item>
+    </plurals>
+    <plurals name="today_past_date">
+        <item quantity="one">Your date came with %d lesson left.</item>
+        <item quantity="other">Your date came with %d lessons left.</item>
+    </plurals>
+    <string name="today_past_date_detail">Adjust your plan to keep going.</string>
+    <!-- The daily time limit is a setting that stops study for the day; it's shorter than the plan's time for today. %1$s is a duration, such as "3 hr". -->
+    <string name="today_limit_stops">Today stops at your daily time limit of %1$s.</string>
+    <!-- The daily time limit is a setting that stops study for the day. %1$s is a duration, such as "3 hr". -->
+    <string name="today_limit_reached">You\'ve reached your daily time limit of %1$s.</string>
+    <!-- A link to the setting for the daily time limit. -->
+    <string name="today_change_limit">Change limit</string>
+    <string name="today_see_you_next_session">See you in your next session!</string>
+    <string name="today_see_you_tomorrow">See you tomorrow!</string>
+    <!-- %1$s is a weekday, such as "Monday". -->
+    <string name="today_see_you_day">See you %1$s!</string>
+    <string name="today_nothing_to_review">Nothing to review today.</string>
+    <string name="today_nothing_new">Nothing new for today.</string>
+    <string name="today_nothing_new_detail">You\'ve done every lesson in your plan, or already know it.</string>
+
+    <string name="today_up_next">Up next in your plan</string>
+    <string name="today_start_session">Start session</string>
+    <string name="today_continue_session">Continue session</string>
+    <string name="today_keep_learning">Keep learning</string>
+    <string name="today_practice_minutes">Practice for %1$s minutes</string>
+    <string name="today_see_plan">See your plan</string>
+    <string name="today_lessons_not_written">Today\'s lessons aren\'t written yet.</string>
+    <string name="today_get_lessons">Get today\'s lessons</string>
+    <string name="today_open_failed">We couldn\'t open the next step. Try again.</string>
+    <string name="today_keep_learning_failed">We couldn\'t open your next lessons. Try again.</string>
+
+    <string name="today_welcome_back">Welcome back</string>
+    <!-- %1$s is a course's title. -->
+    <string name="today_suggested_goal_question">Continue %1$s?</string>
+    <string name="today_suggested_goal_detail">Build a plan in 1 minute.</string>
+    <string name="today_suggested_goal_accept">Build my plan</string>
+    <string name="today_not_now">Not now</string>
+    <string name="today_save_failed">That didn\'t save. Try again.</string>
+
+    <string name="today_finished">Finished</string>
+    <!-- %1$s is the goal's title. -->
+    <string name="today_finished_goal">You finished %1$s.</string>
+    <string name="today_finished_detail">Start a new goal, or pick another one above.</string>
+    <string name="today_start_new_goal">Start a new goal</string>
+    <string name="today_paused">Paused</string>
+    <string name="today_paused_goal">%1$s is paused.</string>
+    <string name="today_paused_this_goal">This goal is paused.</string>
+    <!-- "It" is the learner's paused goal. -->
+    <string name="today_paused_detail">Nothing is planned until you resume it.</string>
+    <string name="today_resume_goal">Resume %1$s</string>
+    <string name="today_new_goal">New goal</string>
+    <string name="today_resume_effect">Your plan picks up from today, starting with the lessons planned for the days you paused.</string>
+    <string name="today_resume_goal_limit">The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.</string>
+    <string name="today_setting_up">Setting up</string>
+    <string name="today_setting_up_goal">Your plan for %1$s needs a few more answers.</string>
+    <string name="today_setting_up_detail">It\'s built from what you tell us.</string>
+    <string name="today_continue_setting_up">Continue setting up</string>
+    <string name="today_building_plan">Building your plan</string>
+    <string name="today_building_plan_goal">Building your plan for %1$s</string>
+    <string name="today_building_plan_detail">It usually takes a minute or two. Your first day opens here as soon as it\'s ready.</string>
+    <string name="today_quick_explanation">Quick explanation</string>
+    <string name="today_continue_explanation">Continue explanation</string>
+    <string name="today_session_ended_description">Each day\'s lessons, reviews and practice for your goal.</string>
+    <string name="today_week_title">This week</string>
+    <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
+    <plurals name="today_week_days">
+        <item quantity="one">%1$s of %2$d day</item>
+        <item quantity="other">%1$s of %2$d days</item>
+    </plurals>
+    <!-- Read by TalkBack; both are durations, such as "1 hr 20 min of 3 hr 45 min". -->
+    <string name="today_week_time">%1$s of %2$s studied this week</string>
+    <!-- Read by TalkBack for each day of the week: "Monday: daily time met". -->
+    <string name="today_week_day">%1$s: %2$s</string>
+    <!-- "Saturday: weekly challenge, not studied". -->
+    <string name="today_week_challenge_day">%1$s: %2$s, %3$s</string>
+    <string name="today_week_goal_reached">daily time met</string>
+    <string name="today_week_studied">studied</string>
+    <string name="today_week_exam_day">exam day</string>
+    <string name="today_week_deadline">your goal\'s date</string>
+    <string name="today_week_before_plan">before your plan</string>
+    <string name="today_week_after_date">after your date</string>
+    <string name="today_week_rest_day">rest day</string>
+    <string name="today_week_today">today</string>
+    <string name="today_week_planned">planned</string>
+    <string name="today_week_not_studied">not studied</string>
+    <string name="today_week_full_review_name">full review</string>
+    <string name="today_week_mock_name">mock exam</string>
+    <string name="today_week_challenge_name">weekly challenge</string>
+    <string name="today_week_full_review_detail">every topic, your weakest first</string>
+    <!-- %1$s is a formatted number of minutes. -->
+    <string name="today_study_minutes">Study for %1$s minutes</string>
+    <string name="today_study_more_minutes">Study %1$s more minutes</string>
+    <plurals name="today_catch_up_next_days">
+        <item quantity="one">Your next days start with the %d lesson left to catch up.</item>
+        <item quantity="other">Your next days start with the %d lessons left to catch up.</item>
+    </plurals>
+    <plurals name="today_catch_up_before_exam">
+        <item quantity="one">You can still catch up on %d lesson today, if you have time.</item>
+        <item quantity="other">You can still catch up on %d lessons today, if you have time.</item>
+    </plurals>
+    <plurals name="today_catch_up_tomorrow">
+        <item quantity="one">%d more lesson to catch up comes first tomorrow.</item>
+        <item quantity="other">%d more lessons to catch up come first tomorrow.</item>
+    </plurals>
+    <!-- %1$s is a duration, such as "25 min". -->
+    <string name="today_catch_up_today">Catch up today · +%1$s</string>
+    <!-- %1$s is a weekday, such as "Saturday". -->
+    <string name="today_see_day_challenge">See %1$s\'s challenge</string>
+    <string name="today_see_day_mock">See %1$s\'s mock exam</string>
+    <!-- %1$s is the learner's buddy's name. -->
+    <string name="today_practice_with_buddy">Practice with %1$s</string>
+    <string name="today_already_know_this">Already know this?</string>
+    <string name="today_take_the_test">Take the test</string>
+    <!-- Lessons from earlier days the learner hasn't finished; %1$s is how many, as a number. -->
+    <string name="today_earlier_work">Earlier unfinished work · %1$s</string>
+    <string name="today_earlier_work_detail">Start with these. Starting your session fits the plan to today\'s time.</string>
+    <string name="today_practice_anytime">Practice anytime</string>
+    <string name="today_mistakes_notebook">Mistakes notebook</string>
+    <string name="today_mistakes_redo">Redo what you got wrong</string>
+    <string name="today_mistakes_return_tomorrow">Today\'s mistakes return tomorrow</string>
+    <plurals name="today_mistakes_ready">
+        <item quantity="one">%d ready to practice</item>
+        <item quantity="other">%d ready to practice</item>
+    </plurals>
+    <plurals name="today_mistakes_tomorrow">
+        <item quantity="one">%d available tomorrow</item>
+        <item quantity="other">%d available tomorrow</item>
+    </plurals>
+    <!-- %1$s is the mock's date, such as Nov 3. Today is shorter so time is set aside for that mock. -->
+    <string name="today_mock_funding">Lighter day: saving time for the mock exam on %1$s</string>
+    <!-- %1$s is the mock's date, such as Nov 3. Zoonk sets time aside for that mock. -->
+    <string name="today_mock_funding_welcome_back">Saving time for the mock exam on %1$s</string>
+    <string name="today_take_mock">Take a mock exam</string>
+    <string name="today_take_mock_detail">Whenever you want: a full exam day or half a day</string>
+    <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
+    <string name="today_take_mock_detail_by_subject">Whenever you want: a full exam day, half a day or one subject</string>
+    <string name="today_continue_mock">Continue your mock exam</string>
+    <string name="today_continue_mock_detail">It\'s where you left it</string>
+    <string name="today_exam_speaking">Exam-style speaking</string>
+    <!-- %1$s is the exam's name, such as IELTS. -->
+    <string name="today_exam_speaking_detail">%1$s tasks on a call</string>
+    <string name="today_notice_exam">Your exam</string>
+    <string name="today_notice_exam_access">Exam prep on the free plan</string>
+    <string name="today_notice_suggested_goal">Suggested goal</string>
+    <string name="today_insight_label">From your recent answers</string>
+    <string name="today_insight_add_it">Add it</string>
+    <string name="today_insight_no_thanks">No thanks</string>
+    <string name="today_insight_keep_it">Keep it</string>
+    <!-- %1$s is a time of day, such as "19:00". Moves the time of day the learner studies, not how long they study. -->
+    <string name="today_insight_move_time">Move my study time to %1$s</string>
+    <string name="today_insight_got_it">Got it</string>
+    <!-- Confirms that the time of day the learner studies moved, not how long they study. -->
+    <string name="today_insight_time_moved">Study time moved.</string>
+    <!-- After declining to move it: the time of day the learner studies stays the same. -->
+    <string name="today_insight_time_stays">Your study time stays the same.</string>
+    <string name="today_plan_stays">Your plan stays as it was.</string>
+    <string name="today_noted">Noted.</string>
+    <string name="today_undo">Undo</string>
+    <string name="today_notice_exam_choice">Exam choice</string>
+    <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
+    <string name="today_exam_choice_question">%1$s: which one will you take?</string>
+    <string name="today_exam_choice_choose">Choose</string>
+    <string name="today_notice_plan_change">Suggested change</string>
+    <string name="today_plan_suggestion">Plan suggestion</string>
+    <string name="today_plan_apply">Apply</string>
+    <string name="today_plan_use_my_date">Use my date anyway</string>
+    <!-- Declines a suggested change to the plan's dates and keeps the learner's own plan. -->
+    <string name="today_plan_keep_mine">Keep mine</string>
+    <string name="today_next_suggestion">Next suggestion</string>
+    <string name="today_notice_falling_behind">Plan change</string>
+    <!-- %1$s is the learner's time a day, such as 30 min; %2$s and %3$s are shares, such as 72% and 80%. -->
+    <string name="today_behind_exam">At %1$s a day, your plan now covers %2$s of the exam, down from %3$s.</string>
+    <!-- %1$s is the learner's time a day, such as 30 min; %2$s and %3$s are shares, such as 72% and 80%. -->
+    <string name="today_behind_goal">At %1$s a day, your plan now covers %2$s of your goal, down from %3$s.</string>
+    <string name="today_more_time_a_day">More time a day</string>
+    <string name="today_more_time_or_later_date">More time or a later date</string>
+    <string name="today_choose_focus">Choose where to focus</string>
+    <string name="today_study_everything">Study everything</string>
+    <string name="today_keep_my_time">Keep my time</string>
+    <string name="today_behind_kept">Noted. You keep your time, with less depth where it counts least.</string>
+    <string name="today_connection_lost">Connection lost</string>
+    <string name="today_connection_lost_detail">We stopped getting updates. It may still be working.</string>
+    <string name="today_reconnect">Reconnect</string>
+    <!-- The title of a card beside Today's page: how much of the goal is done, as a percent. -->
+    <string name="today_progress">Progress</string>
+    <!-- The title of a card beside Today's page: how ready the learner is for their exam, as a percent. -->
+    <string name="today_preparation">Preparation</string>
+    <!-- A link at the end of the progress card that opens the learner's plan. -->
+    <string name="today_see_your_plan">See your plan</string>
+    <!-- A short line beside the preparation percent: %1$s is how many points it rose this week, such as "5". -->
+    <string name="today_week_gain">+%1$s this week</string>
+    <!-- A short line beside the preparation percent: %1$s is how many points it fell this week, a negative number such as "-3". -->
+    <string name="today_week_loss">%1$s this week</string>
+    <!-- Read by screen readers for the progress card's lesson cells: %s is how many lessons are planned today. -->
+    <plurals name="today_progress_lessons_today">
+        <item quantity="one">Today: %s lesson</item>
+        <item quantity="other">Today: %s lessons</item>
+    </plurals>
+    <!-- A legend label in the progress card: lessons the learner studied. -->
+    <string name="today_progress_studied">Studied</string>
+    <!-- A legend label in the progress card: lessons skipped because the learner already knew them. -->
+    <string name="today_progress_known">Known</string>
+    <!-- A legend label in the progress card, and a small tag on a subject's row: lessons or a subject planned for today. -->
+    <string name="today_progress_today">Today</string>
+    <!-- A row at the end of today's list, holding the place of the day's next lessons. -->
+    <string name="today_coming_title">Your next lessons</string>
+    <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
+    <string name="today_coming_writing">Being written for you…</string>
+    <!-- Under "Your next lessons" when their writing has taken a while. -->
+    <string name="today_coming_stalled">Taking longer than usual</string>
+    <!-- Under "Your next lessons" when nobody is writing them, before the "Get today's lessons" link. -->
+    <string name="today_coming_not_written">Not written yet.</string>
+</resources>

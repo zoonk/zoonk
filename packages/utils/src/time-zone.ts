@@ -1,29 +1,50 @@
-/**
- * DateTimeFormat returns multiple part kinds, so this helper makes the required
- * calendar fields explicit before they become a UTC date-only value.
- */
+const MS_PER_SECOND = 1000;
+
+const DATE_PARTS = { day: "numeric", month: "numeric", year: "numeric" } as const;
+
+const DATE_TIME_PARTS = {
+  ...DATE_PARTS,
+  hour: "numeric",
+  hourCycle: "h23",
+  minute: "numeric",
+  second: "numeric",
+} as const;
+
+const HOUR_PARTS = { hour: "numeric", hourCycle: "h23" } as const;
+
+function formatterCache(options: Intl.DateTimeFormatOptions) {
+  const formatters = new Map<string, Intl.DateTimeFormat>();
+
+  return (timeZone: string): Intl.DateTimeFormat => {
+    const cached = formatters.get(timeZone);
+
+    if (cached) {
+      return cached;
+    }
+
+    const formatter = new Intl.DateTimeFormat("en", { ...options, timeZone });
+    formatters.set(timeZone, formatter);
+    return formatter;
+  };
+}
+
+const dateFormatter = formatterCache(DATE_PARTS);
+const dateTimeFormatter = formatterCache(DATE_TIME_PARTS);
+const hourFormatter = formatterCache(HOUR_PARTS);
+
 function getNumericDatePart({
   dateParts,
   type,
 }: {
   dateParts: Intl.DateTimeFormatPart[];
-  type: "day" | "month" | "year";
+  type: "day" | "hour" | "minute" | "month" | "second" | "year";
 }): number {
   return Number(dateParts.find((part) => part.type === type)?.value);
 }
 
-/**
- * Converts an instant into the UTC-midnight label for its calendar date in one
- * IANA timezone. Domain code can then compare Postgres date values without
- * introducing the server's timezone.
- */
+/** The zone's calendar date as a UTC-midnight Date, the way Postgres date columns read. */
 export function getDateInTimeZone({ date, timeZone }: { date: Date; timeZone: string }): Date {
-  const dateParts = new Intl.DateTimeFormat("en", {
-    day: "numeric",
-    month: "numeric",
-    timeZone,
-    year: "numeric",
-  }).formatToParts(date);
+  const dateParts = dateFormatter(timeZone).formatToParts(date);
 
   return new Date(
     Date.UTC(
@@ -34,11 +55,30 @@ export function getDateInTimeZone({ date, timeZone }: { date: Date; timeZone: st
   );
 }
 
-/**
- * Intl uses the runtime's timezone database as the source of truth. Constructing
- * a formatter is a small, deterministic way to reject forged or unsupported
- * timezone names before they reach calendar calculations.
- */
+/** `hourCycle: "h23"` keeps midnight at 0, not 24. */
+export function getHourInTimeZone({ date, timeZone }: { date: Date; timeZone: string }): number {
+  const hour = hourFormatter(timeZone)
+    .formatToParts(date)
+    .find((part) => part.type === "hour")?.value;
+
+  return Number(hour);
+}
+
+export function getTimeZoneOffsetMs({ date, timeZone }: { date: Date; timeZone: string }): number {
+  const dateParts = dateTimeFormatter(timeZone).formatToParts(date);
+
+  const wallClock = Date.UTC(
+    getNumericDatePart({ dateParts, type: "year" }),
+    getNumericDatePart({ dateParts, type: "month" }) - 1,
+    getNumericDatePart({ dateParts, type: "day" }),
+    getNumericDatePart({ dateParts, type: "hour" }),
+    getNumericDatePart({ dateParts, type: "minute" }),
+    getNumericDatePart({ dateParts, type: "second" }),
+  );
+
+  return wallClock - Math.floor(date.getTime() / MS_PER_SECOND) * MS_PER_SECOND;
+}
+
 export function isValidTimeZone(timeZone: string): boolean {
   try {
     new Intl.DateTimeFormat("en", { timeZone }).format();
@@ -48,11 +88,6 @@ export function isValidTimeZone(timeZone: string): boolean {
   }
 }
 
-/**
- * Reads the browser or host process timezone once at the point where a local
- * calendar event is created. UTC is a deterministic fallback for runtimes that
- * do not expose an IANA name.
- */
 export function getLocalTimeZone(): string {
   return new Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 }

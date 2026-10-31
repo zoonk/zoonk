@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_reasoning_argument_ready": "382f00bbd358eeb1e7ce89ec2bc3329d66f525762fe22df1b8a146d554957417",
+  "activities_reasoning_badge_build_argument": "ce42b15f9a27e318daf8d0418de19c4fd5ecc6a4fb9d01bcdd4970e08c7ded62",
+  "activities_reasoning_badge_compare_sources": "bfb3aeef35c0872b8d85c3dca98c22d7927c7b3d5aeddd7cf857b83b1603c2e2",
+  "activities_reasoning_badge_explore_map": "3b9c56a7c2e4a1f6f559030a02974ef03f125726715fe0419efed5bf9e4581d0",
+  "activities_reasoning_badge_fill_square": "0ba658f20462995148bba6ba6bedf5257c171c0c08347afb4f7ea8c6075bb8d1",
+  "activities_reasoning_claim": "b3f165c666542c76f2659de813d44a96937df64a182005bcea9bcae48213b59e",
+  "activities_reasoning_evidence": "4901f0135f22cb54af520b63b8e657192934c28897ec47dbd9760e236497de4e",
+  "activities_reasoning_evidence_chosen": "295b370733eecf16ef07c3c0b93b6c3983d9f188d5e2694af765709a7c767871",
+  "activities_reasoning_evidence_hint": "6d07eac635fc69559496fff63b639f3778389b932d8a5539539033734722827e",
+  "activities_reasoning_grid_all_filled": "5a55ef7d833287127eca966c631061af91b1fbb51d052aa45f8ab4a2bad7a2ef",
+  "activities_reasoning_grid_counted": "a82b5d66c7b255613b368b80ea81f2c065a53acaa5ee14309dd444058b048f1d",
+  "activities_reasoning_grid_filled": "e7fd4319fa9fcd6f97fb1b4457c9d84b2281f77cd36c34014a3d488a95b78ec7",
+  "activities_reasoning_grid_products": "af01b5dcccc82dd000f01816ffc466968e12c758e7bd662e2d1f526cee82e6dc",
+  "activities_reasoning_grid_punnett": "5de223c83bc9406417dc0ff83eba41136927fedc596967e5dd2d256f5c8793fa",
+  "activities_reasoning_grid_right": "c99c4a3820eb1ecc31b34151c41b0a9b9b2e4543b6009461d63e735020fc3093",
+  "activities_reasoning_grid_square": "52d32eac4807d6e8ec8abb684b09708daf54de3c01d92177da951ede3bc866f2",
+  "activities_reasoning_grid_square_empty": "20ada9bab014d587a4bdd986cbed43105075b2f6b1fad4a51590a0b9757df87a",
+  "activities_reasoning_grid_sums": "c246b1e36ad0f1280f41899f119c8c25d16a4e33c9de1799cd7f1d288f59d9f1",
+  "activities_reasoning_grid_traits": "13fcfb86c69f44ec4456bd41bc8f084373067ad5648055f2df7fc7e58105df76",
+  "activities_reasoning_grid_value_trait": "296b9c4fc3f5db5ec069c6af7c6aab1f4f60f2be13771803892587cb69bd79c5",
+  "activities_reasoning_grid_what_goes": "9558a0fe3e272187e904443c8cbb114c2ae5ca84b7a844093ad16641cdb20047",
+  "activities_reasoning_grid_which_genotype": "8d5f4cf7513c7486b65d5bd8a3161501283e03d9099c31df1c8ce57e933507df",
+  "activities_reasoning_grid_your_answer": "7f81822c540ca8b85dc8ba5cd4dc611221d67dbe020930acad7980dad67a3690",
+  "activities_reasoning_map_africa": "70cc02aed6e793ac2f506a3dfcff98dba69b2f65a012877c7fe019ccfc61815c",
+  "activities_reasoning_map_americas": "156f38b213356da4b4f2686b04148d81af971c4839e262de8176b9bfe0d39f06",
+  "activities_reasoning_map_asia": "257aa43c45136475a02a137c48e34c7c87e514b533c6ef2bbeb8d61356c22bcf",
+  "activities_reasoning_map_brazil_states": "005e8410fc73479a23d3242483d4a0ea3af8b87ef06158405352a43a3c783971",
+  "activities_reasoning_map_description": "39867444748b69610c6479764b1fbe88c9b71e1452b95f70b0c13d6812967b63",
+  "activities_reasoning_map_europe": "17ea2df9fda18be04b7ef16048bbedfc372dd010e0cf241eff4704ca3f51c4b1",
+  "activities_reasoning_map_europe_1914": "d7d60a1b3e2ff2644d0618c72f7bcf7fb606324ecb952507647db4752ff91143",
+  "activities_reasoning_map_explored": "2e181750e08a879dfe87513bb6c7125ae374bc9e43650bd53a930ec5898ab6c9",
+  "activities_reasoning_map_hint": "1ba32357fd539f57c3ed2040c1693e6f5df79544a330080e14f369abe1288a11",
+  "activities_reasoning_map_label_africa": "517d42f92592b87566d3ebacce09ccc6d77689b219c9937165d2bf32c2bad3ad",
+  "activities_reasoning_map_label_antarctica": "6d3810ec0e0daf88cf535a20a4348ad1689dec7d5a129441e0275559ea6308d2",
+  "activities_reasoning_map_label_asia": "fa226b1760a86edba9e28aa26cdf9cfe8191bd468b00e02e19cc1e9bfa8ab6b1",
+  "activities_reasoning_map_label_austria_hungary": "91cd584c654229aa60b5a08f569f48dee62a6b97606541e3a99e051fa50c4066",
+  "activities_reasoning_map_label_europe": "7de76c0ace45256280f3aa133610ba6f9f7519223b1666b12a01d32acc24fd02",
+  "activities_reasoning_map_label_france": "250adbf271a7a1428bb4a32dd0d7446bfb975ce803a26148a32d37ab9079c04b",
+  "activities_reasoning_map_label_german_empire": "3b3d81d0c7b5f76491ef993c5e16c3a1a16a26c18663613aa4f9d721828206fb",
+  "activities_reasoning_map_label_italy": "e33e62b30cf8f55dbdd5aa771012c12bd472e59c64e7b296a8907c79b7b3c2b5",
+  "activities_reasoning_map_label_north_america": "cf54c6eeb51ac81cb2736be39981ee5ef39b1c95a572e40099d649ab6683d146",
+  "activities_reasoning_map_label_oceania": "e29e34bd32c2d8020e0d2dd3b5ec9cded26eba502a28b5a031805dcaebc90726",
+  "activities_reasoning_map_label_ottoman_empire": "eadf6f9c1be8120a47f717622320573d12530ff3c4979badde3411f10861522d",
+  "activities_reasoning_map_label_parthian_empire": "eaa7e3baf60ddd1964fe8b80b4a2760d97eba5feaa2e58a318dc5c3109844b75",
+  "activities_reasoning_map_label_roman_empire": "d0e9d2b923c788a10856130972262bd4cea1d6693341dcb3e829941af0983823",
+  "activities_reasoning_map_label_russian_empire": "014a1412fc7e4badcb2f188e1f27c9e3fbda94198a88f1a6085bed3e97c7358d",
+  "activities_reasoning_map_label_serbia": "cca948365da46b64fbb39bc1ea00539bd439329a9899ef60d47c927ad825ee10",
+  "activities_reasoning_map_label_south_america": "66f423b01df0860e2378ce2349e61130fced8f178050314244bae5952fb84d8d",
+  "activities_reasoning_map_label_spain": "ae9e4c8869961d4fd172742f0b6d6078b3918ae73c45f39358baeedaccbeb7fe",
+  "activities_reasoning_map_label_triple_alliance": "38bb5456e74eb6d95e1df7ae48a9e1f65a2e19b7587ecd9b5a75c33c466641f2",
+  "activities_reasoning_map_label_triple_entente": "fe99cfb6aadb6dc59048aca49d98af1f3ed7e125b52307c676fce3d4625b8c07",
+  "activities_reasoning_map_label_united_kingdom": "1b1721acd1f1d1eb3dc10a058ba25371a0ca587de720ff581bb6e84a1e5addc4",
+  "activities_reasoning_map_london_1854": "5cdcfbdeb8d4a01430e36031c3cb034fa1a26c21a54f951fe8bf193f5464ad43",
+  "activities_reasoning_map_note_borders": "a6eace15dbcd8ad148cd771c570819d4b5dfb909e75967f4b37c1df2bbde759f",
+  "activities_reasoning_map_note_london_1854": "02d220f3fbcd3b953bfab081f9595160b5752d9ca67ad886bef3dc165c6824c2",
+  "activities_reasoning_map_place": "2af4ed4e62c7d3b297c7ae2a7995fb5b78920ceed3df140f4a8a5b9f0a683eee",
+  "activities_reasoning_map_roman_empire_117": "7b141dde0c99778cbdcceefda60e7f705bf566349fe1350e4ea89923e0c1d797",
+  "activities_reasoning_map_unavailable": "7edb0c62402f2fac3f82b08acfc5bbf90cff1faf069bffb080092e593ad3e201",
+  "activities_reasoning_map_usa_states": "9d63908011cb06c25c51ad836a2fc22ebf41f55db4583da77d079f5d65bbfb4a",
+  "activities_reasoning_map_world": "8d0a1097da9da9c5015512e9eb35c4210832e2ee97a9588e0fa51a0ff2f8f622",
+  "activities_reasoning_map_world_continents": "36aa32e7002425a219c9d133d085e1e1042a4c7b16c2ed6afa700b0dc889bf5f",
+  "activities_reasoning_quote": "830f2d9009eac71280df10e95902e43387eea14a6613d72f41114e20ebb1e66b",
+  "activities_reasoning_quotes": "06e5a6103f03c25807bcbec540f547ab9614ec454eb4cdd5c18814d1f7076c8e",
+  "activities_reasoning_reasoning": "6767b138d52b0b59461942f905d94d5548e1a8468237872ba1ee5005d5e6d13e",
+  "activities_reasoning_reasoning_chosen": "89528faf060d38d2c82d82bb5e36e82126cad8f7461a7bbfe96d813e12d53862",
+  "activities_reasoning_reasoning_hint": "d5aa0fddeb58ddeb3620cbd6d0882030a14beb62f4788f3a3c8198ac549b9d27",
+  "activities_reasoning_reasoning_next": "68cc4da45d9f0f52ff616413c433d9afb0f0eba856ec6d42b55a48a81ea23303",
+  "activities_reasoning_source_mark": "c2783d55c6aee2591a7ed5ad110e2593e566ee2768885af72bff2b11d7ff8fcb",
+  "activities_reasoning_source_missed": "40e5fa0de80f31e2731b6a0b637e2bfe7c5dab8b5a6a0bcbc06e92f4a531ba3d",
+  "activities_reasoning_source_missed_passages": "bf0c8df50a5ef769858cf0eae685e5e611ab7a550521cb4fbafaca89b6d1b99c",
+  "activities_reasoning_source_nothing_marked": "d56ae19190d8383c06a76c7e4d021a9d553762ca136a4bbc39e79a26efa04e53",
+  "activities_reasoning_source_unmark": "d7c67a31157754afed482bdf9514ce27a6b42fd0fd061178f3db8a572e0ff7e1",
+  "activities_reasoning_source_what_to_mark": "9989cf1f936c43a4f4ee3bef4910f077ef4d03bfc724924435158a4ea1e320c5",
+  "activities_reasoning_source_wrong_mark": "7643b5e18dcd1995712c518c9e78f1ff520d2cfa56b5656004a979669068fd12",
+  "activities_reasoning_source_wrong_passages": "98ad377c442c49d11bd2ed4d19dbdc2c2521ed9802aca180d503224b1c604565",
+  "activities_reasoning_source_you_marked": "cd10f5ec509ab82c65af7f43218cb9f0556730461baa9c8d96330aeb03d909d3",
+  "activities_reasoning_strong": "1e6cea7cae841da48306c35ac860cdef25d99119e047774ed3f927d65c60a15f",
+  "activities_reasoning_stronger_evidence": "cbf597e516cf5bbc8bab25ec3e546a1fd89ced24523e7430fa48ddc17aa3f281",
+  "activities_reasoning_stronger_reasoning": "7010637afd2830c086cfb66ccf005562ce985d2b3baa69aeda0c0d7f0e44d6c9",
+  "activities_reasoning_take_quote_out": "a9b34cda59b36409b497f5d0815dd7ba4faf85df96abd2f7f8af36d7222fb6b0",
+  "activities_reasoning_take_reasoning_out": "d6faeb2535194bb2496914d2fca8f7bd0281b0e69ceb6f11ba87eaf951e128f4",
+  "activities_reasoning_use_as_evidence": "6f46e003c590623066a9ba37cb3353a2048279d110c12a32184c674ca026920c",
+  "activities_reasoning_use_as_reasoning": "75a407523fd72efe8f26c623df305de05bdfd6afcff64c95345ab65367c72a79",
+  "activities_reasoning_weak": "76c77a111c9052bc73c03208908131146d8e720d2a8336084d71f4650f52f380"
+}
+-->
+<resources>
+    <!-- A grid like a Punnett square, where the learner fills each square. -->
+    <string name="activities_reasoning_badge_fill_square">マスを埋める</string>
+    <!-- What a Punnett square shows, for TalkBack: the trait, then each parent with its alleles, like "A Punnett square for Flower color: Purple parent (Pp) down the side, White parent (pp) across the top." -->
+    <string name="activities_reasoning_grid_punnett">%1$sのパネットの方形です。左側に%2$s（%3$s）、上側に%4$s（%5$s）が並んでいます。</string>
+    <!-- What a grid of sums shows, for TalkBack, like "Two dice: First die (1, 2, 3) down the side, Second die (1, 2, 3) across the top, each square their sum." -->
+    <string name="activities_reasoning_grid_sums">%1$s：左側に%2$s（%3$s）、上側に%4$s（%5$s）が並び、各マスには縦と横の数を足した値が入ります。</string>
+    <!-- What a grid of products shows, for TalkBack, like "Times table: Number (2, 3, 4) down the side, Times (1, 2, 3) across the top, each square their product." -->
+    <string name="activities_reasoning_grid_products">%1$s：左側に%2$s（%3$s）、上側に%4$s（%5$s）が並び、各マスには縦と横の数を掛け合わせた値が入ります。</string>
+    <!-- An empty square of the grid, for TalkBack: its number, then its row's and its column's values, like "Square 2, P and p: empty". -->
+    <string name="activities_reasoning_grid_square_empty">%1$d番のマス、%2$sと%3$s：空欄</string>
+    <!-- A filled square of the grid, for TalkBack: its number, its row's and its column's values, then what's in it, like "Square 2, P and p: Pp, Purple". -->
+    <string name="activities_reasoning_grid_square">%1$d番のマス、%2$sと%3$s：%4$s</string>
+    <!-- A genotype and the trait it shows, for TalkBack, like "Pp, Purple". -->
+    <string name="activities_reasoning_grid_value_trait">%1$s、%2$s</string>
+    <!-- A checked square the learner filled wrong, for TalkBack: the right value, then the learner's, like "Pp, Purple. Your answer: pp". -->
+    <string name="activities_reasoning_grid_your_answer">%1$s。回答：%2$s</string>
+    <!-- How many squares show the thing the check counted, like "2 of 4 squares: White" or "6 of 36 squares: 7". -->
+    <plurals name="activities_reasoning_grid_counted">
+        <item quantity="other">%1$dマス（全%2$dマス）：%3$s</item>
+    </plurals>
+    <!-- After the check, like "3 of 4 squares right". -->
+    <plurals name="activities_reasoning_grid_right">
+        <item quantity="other">%1$dマス正解（全%2$dマス）</item>
+    </plurals>
+    <!-- While filling, like "5 of 9 squares filled". -->
+    <plurals name="activities_reasoning_grid_filled">
+        <item quantity="other">%1$dマス入力済み（全%2$dマス）</item>
+    </plurals>
+    <!-- How many filled squares show each trait so far, out of all the squares, like "Purple: 2 of 4 · White: 1 of 4". -->
+    <string name="activities_reasoning_grid_traits">%1$s：%2$dマス（全%5$dマス） · %3$s：%4$dマス（全%5$dマス）</string>
+    <string name="activities_reasoning_grid_all_filled">すべてのマスが埋まっています。変更したいマスをタップしてください。</string>
+    <!-- Asks for the genotype of a square of a Punnett square, like "Which genotype goes in square 2?" -->
+    <string name="activities_reasoning_grid_which_genotype">%1$d番のマスに入る遺伝子型はどれですか？</string>
+    <!-- Asks for the value of a square of a grid of numbers, like "What goes in square 2?" -->
+    <string name="activities_reasoning_grid_what_goes">%1$d番のマスに入る数は何ですか？</string>
+    <!-- Two sources the learner reads side by side to mark passages in each. -->
+    <string name="activities_reasoning_badge_compare_sources">資料を比べる</string>
+    <!-- A TalkBack action on a source's text that marks one of its passages, like "Mark: The regulars fired on us". -->
+    <string name="activities_reasoning_source_mark">印を付ける：%1$s</string>
+    <!-- A TalkBack action on a source's text that unmarks one of its passages, like "Unmark: The regulars fired on us". -->
+    <string name="activities_reasoning_source_unmark">印を外す：%1$s</string>
+    <!-- For TalkBack, after a source's text: the passages the learner marked in it, separated by semicolons. -->
+    <string name="activities_reasoning_source_you_marked">印を付けた箇所は%1$sです。</string>
+    <!-- For TalkBack, after a source's text with no passage marked. -->
+    <string name="activities_reasoning_source_nothing_marked">まだ印を付けていません。</string>
+    <!-- For TalkBack once checked, after a source's text: the passages the learner should have marked, separated by semicolons. -->
+    <string name="activities_reasoning_source_missed_passages">見落とした箇所は%1$sです。</string>
+    <!-- For TalkBack once checked, after a source's text: the passages the learner marked by mistake, separated by semicolons. -->
+    <string name="activities_reasoning_source_wrong_passages">誤って印を付けた箇所は%1$sです。</string>
+    <!-- Legend once checked: the tint of the passages the question was about. -->
+    <string name="activities_reasoning_source_what_to_mark">印を付ける箇所</string>
+    <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->
+    <string name="activities_reasoning_source_missed">見落とし</string>
+    <!-- Legend once checked: the tint of a passage the learner marked by mistake. -->
+    <string name="activities_reasoning_source_wrong_mark">誤って付けた印</string>
+    <!-- A map the learner explores by tapping its numbered places. -->
+    <string name="activities_reasoning_badge_explore_map">地図を探索する</string>
+    <!-- How many of the map's places the learner has opened, out of all of them, like "2 of 3 explored". -->
+    <plurals name="activities_reasoning_map_explored">
+        <item quantity="other">%1$dか所を探索済み（全%2$dか所）</item>
+    </plurals>
+    <string name="activities_reasoning_map_hint">番号の付いた場所をタップすると、何があるか見られます。</string>
+    <!-- A numbered place on the map, like "1. Broad Street pump". -->
+    <string name="activities_reasoning_map_place">%1$d. %2$s</string>
+    <!-- What the map shows, for TalkBack, before its numbered places: its name and how many places it has, like "Map of Soho, London, in 1854 with 3 places to explore." -->
+    <plurals name="activities_reasoning_map_description">
+        <item quantity="other">%1$sです。探索できる場所が%2$dか所あります。</item>
+    </plurals>
+    <string name="activities_reasoning_map_unavailable">この地図を表示できません。次の画面に進んでください。</string>
+    <string name="activities_reasoning_map_africa">アフリカの地図</string>
+    <string name="activities_reasoning_map_americas">南北アメリカの地図</string>
+    <string name="activities_reasoning_map_asia">アジアの地図</string>
+    <string name="activities_reasoning_map_brazil_states">ブラジルの州別地図</string>
+    <string name="activities_reasoning_map_europe">ヨーロッパの地図</string>
+    <string name="activities_reasoning_map_europe_1914">1914年のヨーロッパの地図</string>
+    <!-- Soho is a district of London. -->
+    <string name="activities_reasoning_map_london_1854">1854年のLondon・Sohoの地図</string>
+    <string name="activities_reasoning_map_roman_empire_117">西暦117年のローマ帝国の地図</string>
+    <string name="activities_reasoning_map_usa_states">アメリカ合衆国の州別地図</string>
+    <string name="activities_reasoning_map_world">世界地図</string>
+    <string name="activities_reasoning_map_world_continents">大陸を示した世界地図</string>
+    <!-- Below a historical map whose borders are drawn simply. -->
+    <string name="activities_reasoning_map_note_borders">境界線は簡略化しています。</string>
+    <!-- Below the 1854 map of Soho, drawn after the map the physician John Snow made of a cholera outbreak. -->
+    <string name="activities_reasoning_map_note_london_1854">John Snowの1854年の地図を基に、通りの配置を簡略化しています。</string>
+    <!-- Names written on the maps. -->
+    <string name="activities_reasoning_map_label_africa">Africa</string>
+    <string name="activities_reasoning_map_label_antarctica">Antarctica</string>
+    <string name="activities_reasoning_map_label_asia">Asia</string>
+    <string name="activities_reasoning_map_label_austria_hungary">Austria-Hungary</string>
+    <string name="activities_reasoning_map_label_europe">Europe</string>
+    <string name="activities_reasoning_map_label_france">France</string>
+    <string name="activities_reasoning_map_label_german_empire">German Empire</string>
+    <string name="activities_reasoning_map_label_italy">Italy</string>
+    <string name="activities_reasoning_map_label_north_america">North America</string>
+    <string name="activities_reasoning_map_label_oceania">Oceania</string>
+    <string name="activities_reasoning_map_label_ottoman_empire">Ottoman Empire</string>
+    <string name="activities_reasoning_map_label_parthian_empire">Parthian Empire</string>
+    <string name="activities_reasoning_map_label_roman_empire">Roman Empire</string>
+    <string name="activities_reasoning_map_label_russian_empire">Russian Empire</string>
+    <string name="activities_reasoning_map_label_serbia">Serbia</string>
+    <string name="activities_reasoning_map_label_south_america">South America</string>
+    <string name="activities_reasoning_map_label_spain">Spain</string>
+    <!-- The alliance of Germany, Austria-Hungary and Italy before the First World War. -->
+    <string name="activities_reasoning_map_label_triple_alliance">Triple Alliance</string>
+    <!-- The alliance of France, the United Kingdom and Russia before the First World War. -->
+    <string name="activities_reasoning_map_label_triple_entente">Triple Entente</string>
+    <string name="activities_reasoning_map_label_united_kingdom">United Kingdom</string>
+    <!-- An argument the learner builds from a claim, a quote as evidence and a line of reasoning. -->
+    <string name="activities_reasoning_badge_build_argument">論を組み立てる</string>
+    <!-- The statement the argument sets out to support. -->
+    <string name="activities_reasoning_claim">主張</string>
+    <!-- The part of an argument that quotes a source. -->
+    <string name="activities_reasoning_evidence">根拠</string>
+    <!-- The part of an argument that explains how the quote proves the claim; also above the lines to pick for it. -->
+    <string name="activities_reasoning_reasoning">理由付け</string>
+    <!-- For TalkBack, after the learner puts a quote in the argument, like "Evidence: “It is too rash.”". The quote comes with its quotation marks. -->
+    <string name="activities_reasoning_evidence_chosen">根拠：%1$s</string>
+    <!-- For TalkBack, after the learner puts a line of reasoning in the argument, like "Reasoning: Juliet herself sees the rush." -->
+    <string name="activities_reasoning_reasoning_chosen">理由付け：%1$s</string>
+    <string name="activities_reasoning_evidence_hint">主張を最もよく裏づける引用文を選んでください</string>
+    <string name="activities_reasoning_reasoning_hint">引用文が主張をどう裏づけるか、説明を選んでください</string>
+    <!-- The empty reasoning part while the evidence is still to pick. -->
+    <string name="activities_reasoning_reasoning_next">次は、引用が主張をどう裏付けるか説明してください</string>
+    <string name="activities_reasoning_take_quote_out">引用文を外す</string>
+    <string name="activities_reasoning_take_reasoning_out">理由づけを外す</string>
+    <!-- Above the quotes the learner picks the evidence from. -->
+    <string name="activities_reasoning_quotes">引用</string>
+    <!-- What tapping a quote does, read by TalkBack as "Double-tap to use as evidence". -->
+    <string name="activities_reasoning_use_as_evidence">根拠に使う</string>
+    <!-- What tapping a line of reasoning does, read by TalkBack as "Double-tap to use as reasoning". -->
+    <string name="activities_reasoning_use_as_reasoning">理由付けに使う</string>
+    <string name="activities_reasoning_argument_ready">主張・根拠・理由づけがそろいました。答え合わせに進むか、一部を外して変更してください。</string>
+    <!-- After the check, on a part of the argument that supports the claim well. -->
+    <string name="activities_reasoning_strong">説得力がある</string>
+    <!-- After the check, on a part of the argument that supports the claim poorly. -->
+    <string name="activities_reasoning_weak">説得力が弱い</string>
+    <!-- After the check, above the strong quote the learner didn't pick. -->
+    <string name="activities_reasoning_stronger_evidence">より説得力のある根拠</string>
+    <!-- After the check, above the strong reasoning the learner didn't pick. -->
+    <string name="activities_reasoning_stronger_reasoning">より説得力のある理由付け</string>
+    <!-- A quote from a source, in the language's quotation marks. -->
+    <string name="activities_reasoning_quote">「%1$s」</string>
+</resources>

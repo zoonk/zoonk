@@ -1,2 +1,13 @@
 @import "@zoonk/ui/globals.css";
 @import "@zoonk/player/questions/styles.css";
+
+/* Main's stylesheet loads on every page, so it skips the other apps' sources. */
+@source not "../../../admin";
+@source not "../../../api";
+@source not "../../../blog";
+@source not "../../../evals";
+@source not "../../../mailbox";
+
+/* Lets a static page show a learner their account's place, not a visitor's way in, before their summary arrives. */
+@custom-variant signed-in (&:where([data-signed-in] *));
+@custom-variant usage-notice (&:where([data-usage-notice] *));

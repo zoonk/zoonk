@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "speaking_eyebrow": "511991acae0c7e8a10320f67f609c962e8e5ddba433e9a53c9407231a7ca94d0",
+  "speaking_facts": "a48c4d8bbcfa4c7d641599fdf7bd6a54590d0759fc17538297eee59854b26a80",
+  "speaking_footer": "ec32fd5d8081322f82a672df802cc2ac24a2389e18d5ef0233855f24f883e8d6",
+  "speaking_footer_partner": "f4e6957c2b268622d156ef01324026ccfaa83c69e807810d64b9019f0408a7f4",
+  "speaking_last_at": "4c39fa0ff7cf174f7f30d5b50f8bd91241907ee99b94a737b7eecbad8c5ae6e0",
+  "speaking_last_below": "a0ef7cd1db2f40104f96c3668ffbac0709d0a9e4ca4f256cf32acac795799d8c",
+  "speaking_last_near": "ecc471b546768fae883427be25950b7ed3d430b7e514f0d8141129c3aa8f0d44",
+  "speaking_last_none": "62cb7fd3b3e63e1aa7586ec89136f099d5c67a72ce05fd7ff621a2cbd3516c04",
+  "speaking_last_result": "5590b907ff18df5f3a92b2440b26e513b3a0b593956ce721311b36bf96e97eac",
+  "speaking_mock_failed": "e035c72ad876f19b49b5ce4fd7badf8603732e323d269d3ea6cd0138cd6fde0b",
+  "speaking_mock_ielts": "81e64b74389ea86547cd89ef4bbc78aba3b763db28180f912b7d383e69e7aba6",
+  "speaking_mock_opens": "df6de5e98cea9832f69ba9b09c21c2271f6c200a3bf34de1e5a70890e72b08ac",
+  "speaking_mock_start": "93272da0ba3c2c86511f25e7794466119ded8cc31be01019d7a57841f6a9dab8",
+  "speaking_mock_toefl": "8c8df0a0ebc20838e3e64b65418593a50563ee02ee7be8036508cce4ea25c948",
+  "speaking_no_time_day": "9770e4471bc72142c3ecf4d4d23762b1b314d7600db5e962bd55c36bdba31313",
+  "speaking_no_time_month": "e54ebf57b154442b1cec4cec42aad223b16fd07bf7a13a8370ce0ecceae2fa42",
+  "speaking_official": "23a44811ed9e4cf8d422d3215be09d78f64e0be0afa1ee1a94267189677b4e6d",
+  "speaking_official_format": "3b629e14f488149d7c6b4ed89123d5e4d10666d0393a83f10ad6da7936090524",
+  "speaking_opens_when_ready": "ae8a4bbb9491d05e2dae2e0d8eae2422a16a7705de0ccec5fd38f3c10087e539",
+  "speaking_plus": "72151c7d535b32fcab65968b8ea1897f85b5117bbd01aaa192b6a81bb50d2612",
+  "speaking_prep": "d9a4a21be823f6916f4f73a2402248f885fff60a65a7b39383eee8452b08b24d",
+  "speaking_prep_shared": "e1de5c77821f150189a20e87a7ec85e23f7c55130c3ccb274d2d48e7348ce246",
+  "speaking_rated_on": "82ee744201d74098ddbdee7fd8669a9285984d7059291b96a37874ac35c762ec",
+  "speaking_row": "e4155ef5b0729a984581a81f279cec81a9fbf31b5bb9b9c487eb63d634b8a7a3",
+  "speaking_section": "be53c5448332c079799dc0cf4b5c74e4301c43ed3da1ee521e0a658495a3930a",
+  "speaking_start_failed": "80f6ae218bd2165eef074ccae1f47b3e3e8b7f9ee55ea8d2cf4c497b337d32bb",
+  "speaking_start_task": "41167efc64da56cd2fbdfe1651367c7da97919a8a3a774cebc1499684dfc5f4b",
+  "speaking_tasks": "322fa46e45de896150f3464a494d084378ef8f74a6533e2d562e714b70b8437d",
+  "speaking_title": "7581e6599dbb7206ea4041c3e0bf22c38454f744f241f57b959e285b89124019",
+  "speaking_writing_mock": "9160f4401841bafaf31d1ccecf2c9f74c6f577720f50b33ffb3df0fc6c35b275",
+  "speaking_writing_mock_line_1": "4794d130bd1425a1c2eda751327bf48bf80c7ca2b96b632ee56903153a0092a4",
+  "speaking_writing_mock_line_2": "82510f929d22f3ddc756983a1ba3180dd321829265ce174ea2f4620f21432fb4",
+  "speaking_writing_mock_line_3": "6119f4c6bee421de4f3b311bced2ef96e9460419aa5fbcac16c08111615511ae",
+  "speaking_writing_mock_line_4": "63407f7c21b3e040994087e7361a7521503152d761f94c1eae308f0e7b1f9487",
+  "speaking_writing_mock_phase": "0e4a99e2aaf22c2ddc6cdaa42930881b856b5f41b892cdece9e1f5487a98a08e"
+}
+-->
+<resources>
+    <!-- Practicing an official language exam's speaking paper (DELE, DELF, Goethe, Cambridge) on calls with an AI in the examiner's place. -->
+    <string name="speaking_title">Práctica de expresión oral</string>
+    <string name="speaking_eyebrow">Expresión oral tipo examen</string>
+    <!-- The paper's task count and how long its speaking part lasts in the exam, such as "4 tasks · 15 min in the exam". -->
+    <plurals name="speaking_facts">
+        <item quantity="one">%1$d tarea · %2$s en el examen</item>
+        <item quantity="many">%1$d tareas · %2$s en el examen</item>
+        <item quantity="other">%1$d tareas · %2$s en el examen</item>
+    </plurals>
+    <string name="speaking_official">%1$s es un examen oficial. Practica sus tareas de expresión oral, vayas a presentarlo o no.</string>
+    <string name="speaking_tasks">Tareas</string>
+    <!-- The exam page's speaking section, with the paper's title beside it. -->
+    <string name="speaking_section">Expresión oral</string>
+    <string name="speaking_plus">Plus incluye la práctica de expresión oral: todas las tareas de la prueba por llamada y una evaluación orientativa según los criterios oficiales después de cada una.</string>
+    <string name="speaking_opens_when_ready">Tu tarea se abrirá en cuanto esté lista la tarjeta.</string>
+    <string name="speaking_no_time_month">No te queda suficiente tiempo de llamada este mes para esta tarea</string>
+    <string name="speaking_no_time_day">No te queda suficiente tiempo de llamada hoy para esta tarea</string>
+    <string name="speaking_start_failed">La tarea no se inició. Vuelve a intentarlo en un momento.</string>
+    <string name="speaking_footer_partner">Una IA toma el lugar del examinador humano o de la otra persona que presenta el examen. Cada intento tiene una tarjeta nueva y, al terminar, recibes una evaluación orientativa según los criterios oficiales del examen, no un puntaje oficial.</string>
+    <string name="speaking_footer">Una IA toma el lugar del examinador humano. Cada intento tiene una tarjeta nueva y, al terminar, recibes una evaluación orientativa según los criterios oficiales del examen, no un puntaje oficial.</string>
+    <string name="speaking_official_format">Formato oficial</string>
+    <string name="speaking_start_task">Iniciar esta tarea</string>
+    <string name="speaking_last_result">Ver tu último resultado</string>
+    <string name="speaking_last_none">Último intento: sin estimación</string>
+    <!-- How many criteria were at the exam's level on the last try, such as "Last try: 3 of 4 at B2". -->
+    <string name="speaking_last_at">Último intento: %1$s de %2$s al nivel %3$s</string>
+    <string name="speaking_last_near">Último intento: %1$s de %2$s cerca del nivel %3$s</string>
+    <string name="speaking_last_below">Último intento: por debajo del nivel %1$s</string>
+    <!-- Preparation time shared by several tasks, such as "20 min to prepare tasks 1 and 2". -->
+    <string name="speaking_prep_shared">%1$s para preparar las tareas %2$s</string>
+    <string name="speaking_prep">%1$s de preparación</string>
+    <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
+    <string name="speaking_rated_on">Criterios de evaluación: %1$s.</string>
+    <!-- A row into the speaking paper's practice: the exam and level, such as "DELE B2 tasks on a call". -->
+    <string name="speaking_row">Tareas de %1$s en una llamada</string>
+    <!-- A band is the exam's score for each criterion. -->
+    <string name="speaking_mock_ielts">Una prueba breve de expresión oral con un examinador. Al terminar, una banda estimada para cada criterio.</string>
+    <!-- A band is the exam's score for each criterion. -->
+    <string name="speaking_mock_toefl">Repite frases y luego participa en una breve entrevista con un examinador. Al terminar, una banda estimada del 1 al 6 para cada criterio.</string>
+    <string name="speaking_mock_start">Iniciar el simulacro</string>
+    <string name="speaking_mock_opens">Tu simulacro se abrirá en cuanto esté listo.</string>
+    <string name="speaking_mock_failed">El simulacro no se inició. Inténtalo de nuevo en un momento.</string>
+    <string name="speaking_writing_mock">Preparando tu simulacro</string>
+    <string name="speaking_writing_mock_phase">Preparando el guion del examinador</string>
+    <string name="speaking_writing_mock_line_1">Eligiendo a tu examinador…</string>
+    <string name="speaking_writing_mock_line_2">Preparando las preguntas del examinador…</string>
+    <string name="speaking_writing_mock_line_3">Ajustando las partes para que duren aproximadamente cinco minutos…</string>
+    <string name="speaking_writing_mock_line_4">Agregando frases de apoyo…</string>
+</resources>

@@ -1,6 +1,5 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
+import { readBody } from "@/lib/request-input";
 import { signInWithNativeApple } from "@zoonk/auth/native-apple";
 import { nativeAppleCredentialsSchema } from "@zoonk/auth/native-apple-contract";
 import { safeAsync } from "@zoonk/utils/error";
@@ -8,15 +7,11 @@ import { type NextRequest, NextResponse } from "next/server";
 import { getAppleSessionErrorResponse } from "../_utils/session-errors";
 
 async function createAppleSession(request: NextRequest) {
-  const parsed = await parseBody(request, nativeAppleCredentialsSchema);
-
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
+  const parsed = await readBody(request, nativeAppleCredentialsSchema);
 
   const { data: session, error } = await safeAsync(() =>
     signInWithNativeApple({
-      credentials: parsed.data,
+      credentials: parsed,
       headers: request.headers,
       requestURL: request.url,
     }),

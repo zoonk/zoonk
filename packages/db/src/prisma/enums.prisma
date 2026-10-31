@@ -9,6 +9,20 @@ enum LessonQuestionContextKind {
   lesson
   step
   answer
+  chapter
+  plan
+  mock
+  subject
+  item
+}
+
+enum TutorThreadKind {
+  lesson
+  chapter
+  plan
+  mock
+  subject
+  item
 }
 
 enum LessonQuestionStatus {
@@ -16,49 +30,6 @@ enum LessonQuestionStatus {
   running
   completed
   failed
-}
-
-enum GenerationQuotaPeriod {
-  day
-  month
-}
-
-enum GenerationQuotaResource {
-  course
-  chapter
-  lesson
-  lessonQuestion
-}
-
-enum LessonKind {
-  alphabet
-  custom
-  explanation
-  grammar
-  listening
-  practice
-  quiz
-  reading
-  review
-  translation
-  tutorial
-  vocabulary
-}
-
-enum StepKind {
-  alphabet
-  arrangeWords   @map("arrange_words")
-  fillBlank      @map("fill_blank")
-  listening
-  matchColumns   @map("match_columns")
-  multipleChoice @map("multiple_choice")
-  reading
-  selectImage    @map("select_image")
-  sortOrder      @map("sort_order")
-  static
-  translation
-  visual
-  vocabulary
 }
 
 enum CourseFormat {
@@ -70,14 +41,6 @@ enum CourseFormat {
   personalized
   practical
   question
-}
-
-enum CoursePromptIntent {
-  ambiguous
-  exam
-  learn
-  question
-  unsafe
 }
 
 enum SubscriptionProvider {

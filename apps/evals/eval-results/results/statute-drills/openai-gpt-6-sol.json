@@ -1,0 +1,194 @@
+{
+  "modelId": "openai/gpt-6-sol",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "Drill 3 is keyed false even though its narrower prohibition follows from the supplied text; its explanation adds an exclusivity condition absent from the statement. This triggers the maximum score of 7 for one wrong key. The other five keys are supported, and all reasons quote the supplied provisions accurately and cite the correct references.",
+          "score": 7,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "The night/day and detention/reclusion substitutions are precise single-element traps with specific misconception labels. The conjunction substitution also changes just one element, but it fails to create the exclusive condition claimed by the explanation and therefore is not a reliable false-statement trap. The cap for several defective traps is not triggered.",
+          "score": 8,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "All six drills use the requested Cebraspe right/wrong format, with three intended true and three intended false answers. Statements retain constitutional wording, and explanations and misconception labels are clear Brazilian Portuguese that identify the substitutions. The erroneous key is assessed under legal accuracy rather than treated as a separate language or format failure.",
+          "score": 10,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "All five supplied provisions are covered. The two caput drills test different elements, and the traps are not repetitive. However, the difficulty spread is more nominal than substantive: the hard caput drill is straightforward textual recall, and the other hard drill relies on an unsound distinction.",
+          "score": 8,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2649,
+          "inputTokens": 2652,
+          "outputTokens": 896,
+          "reasoningTokens": 314
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Drill 3 has a wrong false key under the rubric’s rule that incomplete statements remain true. Prohibiting treatment that is either inhuman or degrading also prohibits treatment that is both. The statement does not say that only treatment meeting both conditions is prohibited; its explanation incorrectly introduces that restriction.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Difficulty calibration is weak: drill 6 is labeled hard but merely reproduces the caput’s list of beneficiaries and rights without a demanding distinction.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Replace drill 3 with an unambiguous single-element contradiction, such as changing “ninguém” to “alguém,” and name the quantifier change in its misconception. This would restore three genuinely false statements.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Cebraspe-style right/wrong statements in Brazilian Portuguese on article 5 of the Brazilian Constitution (caput and items II, III, XI and XLII). True statements repeat or faithfully paraphrase the given text; false ones change exactly one element, as Cebraspe does (for example \"todos\" to \"quase todos\", \"durante o dia\" to \"a qualquer hora\", \"determinação judicial\" to \"determinação policial\", \"inafiançável\" to \"afiançável\"), and their misconception names that trap. Check every statement against the given text, not memory, and that roughly half are false.",
+        "id": "pt-cebraspe-cf88-art5-direitos-fundamentais-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Art. 5º, caput",
+              "text": "Art. 5º Todos são iguais perante a lei, sem distinção de qualquer natureza, garantindo-se aos brasileiros e aos estrangeiros residentes no País a inviolabilidade do direito à vida, à liberdade, à igualdade, à segurança e à propriedade, nos termos seguintes:"
+            },
+            {
+              "reference": "Art. 5º, II",
+              "text": "II - ninguém será obrigado a fazer ou deixar de fazer alguma coisa senão em virtude de lei;"
+            },
+            {
+              "reference": "Art. 5º, III",
+              "text": "III - ninguém será submetido a tortura nem a tratamento desumano ou degradante;"
+            },
+            {
+              "reference": "Art. 5º, XI",
+              "text": "XI - a casa é asilo inviolável do indivíduo, ninguém nela podendo penetrar sem consentimento do morador, salvo em caso de flagrante delito ou desastre, ou para prestar socorro, ou, durante o dia, por determinação judicial;"
+            },
+            {
+              "reference": "Art. 5º, XLII",
+              "text": "XLII - a prática do racismo constitui crime inafiançável e imprescritível, sujeito à pena de reclusão, nos termos da lei;"
+            }
+          ],
+          "count": 6,
+          "language": "pt",
+          "law": {
+            "shortName": "CF/88",
+            "title": "Constituição da República Federativa do Brasil de 1988",
+            "url": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm"
+          },
+          "style": "cebraspe"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "All keys agree with the supplied texts. The incomplete true statement about processor notification remains true under the rubric, and its explanation explicitly restores the timing requirement. Both gap passages reproduce source sentences with the correct phrase removed. Each multiple-choice question has exactly one textual match, and all explanations quote and reference the relevant paragraph correctly. No cap applies.",
+          "score": 10,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "The false statement changes only “unlikely” to “likely.” Wrong options change only the notification timing or the actor enabled to verify compliance. Their misconceptions identify those precise substitutions. Both gaps remove substantive legal content rather than grammatical filler. No cap applies.",
+          "score": 10,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "The six drills provide the requested generic mix: two true/false statements, two fill-in-the-blank passages, and two four-option multiple-choice questions. Wording remains close to the supplied law, and explanations and misconceptions are clear English that identify the changes. No cap applies.",
+          "score": 10,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "Coverage is balanced at two drills per paragraph, includes all three difficulty labels, and does not test the same element in the same way twice. No concentration or repetition cap applies. A useful refinement would be to test the universal documentation duty directly, rather than only including it in the remedial-action gap passage.",
+          "score": 9,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3054,
+          "inputTokens": 3057,
+          "outputTokens": 763,
+          "reasoningTokens": 282
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Consider directly testing the requirement to document every breach. Article 33(5)'s “any personal data breaches” appears in a passage, but neither associated question tests that quantifier.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A generic mix of drills in US English on GDPR Article 33 (paragraphs 1, 2 and 5): true/false statements, fill-in-the-blank passages copied word for word with one load-bearing gap (such as \"72 hours\", \"controller\", \"processor\", \"without undue delay\") and 4-option multiple choice on the literal text. False statements and wrong options change exactly one element (the 72-hour deadline, who notifies whom, the \"unlikely to result in a risk\" exception, the duty to document every breach). Check every drill against the given text.",
+        "id": "en-generic-gdpr-art33-breach-notification-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Article 33(1)",
+              "text": "1. In the case of a personal data breach, the controller shall without undue delay and, where feasible, not later than 72 hours after having become aware of it, notify the personal data breach to the supervisory authority competent in accordance with Article 55, unless the personal data breach is unlikely to result in a risk to the rights and freedoms of natural persons. Where the notification to the supervisory authority is not made within 72 hours, it shall be accompanied by reasons for the delay."
+            },
+            {
+              "reference": "Article 33(2)",
+              "text": "2. The processor shall notify the controller without undue delay after becoming aware of a personal data breach."
+            },
+            {
+              "reference": "Article 33(5)",
+              "text": "5. The controller shall document any personal data breaches, comprising the facts relating to the personal data breach, its effects and the remedial action taken. That documentation shall enable the supervisory authority to verify compliance with this Article."
+            }
+          ],
+          "count": 6,
+          "language": "en",
+          "law": {
+            "shortName": "GDPR",
+            "title": "Regulation (EU) 2016/679 (General Data Protection Regulation)",
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016R0679"
+          },
+          "style": "generic"
+        }
+      }
+    }
+  ],
+  "taskId": "statute-drills"
+}

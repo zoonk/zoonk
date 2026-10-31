@@ -1,23 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "navigation_courses": "5639c488b7b49d72988be79557312173d716639f6d4079eca21e3f149e318a3a",
-  "navigation_home": "3b492fc4893d06b546b99ab43e9d3ab761a31dc9c78148e5721259955a6b00ac",
-  "navigation_new": "522edbc01a2678fc025a24b56993c8c498e9042f99c2be2fd86cb967c88f52c2",
-  "navigation_progress": "79f538a807fb90b61b39435ae1c86628f53b6f2aedb5d63d6042e8f260b5587c",
-  "placeholder_courses": "a96c7785f7ae4c5e93839585758f8709ef728d2c19b052f7d8c737b5f4a64b05",
-  "placeholder_home": "316f047fa2a5ef5d4a0988e88230ec7ccbe87daff51346229ab51d9d7899b70c",
-  "placeholder_new_course": "de4a70f808268a78c9238714bee5c1927169fa90abf8743047bd7b70cd6aafff",
-  "placeholder_progress": "4026a356ad37dac8b6fd066dac1963a53f9d53a60fb0d2a8fd2785ad9a31c7e0"
+  "answer_tag_correct": "b1c83078b74a9180fddf50be37e172dea26c0b9ea3240e36ebdba53e037335d5",
+  "answer_tag_your_answer": "f21a660d020fdc139f14ef8785f5fcc21501ff4cf40515c6fa157e73de215482",
+  "answer_tag_your_guess": "1da3ccf30863913e98ae6bac3aa72a2d1d53028c659ea379eaa74377bd8b5339",
+  "belt_black": "b3b0ce9935f967c4851912520d6f98fc56b3632368674fa8bbbd1e3d83aa0a39",
+  "belt_blue": "5a3eeadb6c2358dea42214e01d6f53cc436fc2eeeefac2ab5702d27356289f68",
+  "belt_brown": "c59ebe56631e4a85fe245a131490cc6102e98519a37821ebfa0d075043c8b69f",
+  "belt_gray": "7d4add97dd51d05550974960df8c5766fe97b1ab4099f0974db982fc223e5361",
+  "belt_green": "a5e6f4ea55b35f1d19a4006885e1d9599e797139a6c651ffa895201df287a0a1",
+  "belt_level": "94006d540719d21b4a42d9e43b5cfa3a11dc9b4c1e2c7ad6ac51e18b84994847",
+  "belt_orange": "1f63c0d16783148e7a1a00ab1653d2fc355c3d3d84223ee6ae8cf52ccc97dd30",
+  "belt_purple": "1f0ba2f0a5f52773cd09215f39dda1a707e81656f643ca12647534eef42e225b",
+  "belt_red": "fe93443f09d2cc8a014820bf1db79fa2e108e040049e1cc29b6e934dd6d4a7fe",
+  "belt_white": "fd145aa314fa6543afb18c900913ee4b68364d0777fc81cd1fc85d0f600efe85",
+  "belt_yellow": "cad650ac9deaec8a4d6c37ed40821e69b39cb1811790e0468314fe4534bd3c4c",
+  "close_sheet": "464acccebb7cee39bf4ef3dc02111c058a607e9f9260abd16b605207f2df5d35",
+  "daily_time_covers_everything": "043df994ec5669ae29d044447cd6da836f51bc4fcb8b11e5fe3f999409a1ff91",
+  "daily_time_suggested": "afe5e37719776c9a48caa574375dfd4e6cccab3b373503784207540b5ee1feeb",
+  "diff_line_spoken": "579a15cfdda7ec86ca37638e30e84df1b3f8f926c3bdcf934c099d1c486d6d25",
+  "disclosure_collapsed": "6f9dca9787c560ef2907407e1cd5a0b0a9e3c21ad7925d5ff08322f0ceed91f3",
+  "disclosure_expanded": "64f71b708f9418463055126f7acda187b619635e3ee7b19c49bad0430679a196",
+  "gate_log_in": "772b65c922e7aa6ef30b7dad741657f19021095b9da76931416bc9da26374101",
+  "gate_session_ended_description": "7126f430fbc2e101277c10d15e10148ddc30b150cedddbc52720ac4cce052612",
+  "gate_session_ended_title": "d3dcae4aac285689e6e1a081b57f704668d2ec4824d9846a0958467ee2adfee6",
+  "gate_sign_in_description": "410a5427ad2f3e182c7acfd5b25cbffb519651c225933bed7d91be299896f8d0",
+  "gate_sign_in_title": "7c683ad5e2f602a68fe51d6dc2be9a35543f63d6e5ab5d265b42d8024278c4fd",
+  "gate_start_free": "0fb55a9738941b1c872dc8fc32c0f2131d71fc01365e614b60dae255220abc52",
+  "gate_start_goal": "c87d40d30a9a6eef24c756266c135eb9032665221bed77d477db715add88085c",
+  "gate_start_goal_description": "28f6e5898bc1e5ff285d0136add93d92605d7bd0335e7a387be8139602850bb6",
+  "gate_start_goal_title": "b2bf60c7d698ff9c259faf93c1beb09c982439ac586b8fd82eb9cbad3df0b0ca",
+  "gate_start_something_new": "1fd8c025fef3409b4a76578cd54eb084658b2798690ae7c0180ed76046806bf7",
+  "lesson_summaries_title": "b5240cc2ba409b5352441a2107d143a60d5a0d78e558dddf2b6ae4fb4acbfb3f",
+  "lessons_coming_up": "1dc393297fe6fb4563a0b20b901d843a8de2e72eaf025ac8b74b623a857d3768",
+  "lessons_done": "c4aa3bb9cb704e61ab19956c20620ce36661cfb9e176620da92ff6518ee12f6c",
+  "lessons_done_count": "e51557388da18380715c2ca5b4ede818877c85eb6eec2f53284df7dafb72950e",
+  "lessons_position": "544c9bf2ae35579b4b58fd73d82242ae3ee266cb020aea424b1083af7e6d6d45",
+  "lessons_title": "0f2a283125c77bf67522eedf5032044d1468ab0b5eda8c6637625c61e93692c2",
+  "lessons_up_next": "b57f9b5d70d0fd3b6513dbf5612f11aa6383d0a9239c226842a2503dd542e4cb",
+  "list_row_states": "fc9f319c90153a44d507f801420669bee7b7d60b7c2bdc9268536b732f9c3276",
+  "load_failed_description": "38f3bba457d804a7e8d7807a85a0b444e5d67da77d1c393f5149cb0b4f2b1b8f",
+  "load_failed_title": "b0ba24a7686b01181caf4f97dac893c82942d320a440693a425a4bc4a4320213",
+  "load_failed_try_again": "e0fbb12306ca8e296e4a29357180b3531c82eae34750a2fe74a5348814650ea5",
+  "navigation_back": "afa907f7f0a6a5cdca735e48e8ec9a6199bb04e2989a6c03dbcce0166e9b8ba4",
+  "navigation_buddy": "7af21930a62dbc0e8c578fc5848d245c71aa80842190d4c2de35ff5e7696cf8d",
+  "navigation_exam": "543b46265c4aa2ce2e4e9812eb9eac18184e20b9d6563239859f55bb1651faee",
+  "navigation_mind_maps": "324a68241b7d169e35fee3ff4af6f72dd461b60b3ce7b48ded59135e7fcfb3bc",
+  "navigation_mistakes": "33c940f405b0aebe8ee852196c4570afd5188f05a1fd3d5b02864bcc9a6440a3",
+  "navigation_plan": "629ad233c314ca403c83cf2bb3498296954c247f607d76df1050d681049820f2",
+  "navigation_speaking": "4ef54b7141e311cb926dbf42ee8bfa89b1ae1cdd7281b70c854a8f8909b9375b",
+  "navigation_statistics": "94db977aebfba7bef8a44ff38e817e5308b9581ba5fb32eb80eff297a5c292fb",
+  "navigation_study": "051cb8f8f5b8edd416ba7f932489129a8517be830f9c11c2ee16c159d181fe12",
+  "navigation_today": "de857016589edaad4a7a18f8f66a03cbd3e0a0483b49f21acd268a996a6d0e7c",
+  "navigation_user_menu": "5799775025868fe68723cf9058ddd37482169ceba20b7322d3c0cc17efc9fa60",
+  "not_found_description": "f0c5df7f84177bcebc5d36bd7be89ee4986e7022751699bd79056d70771fd4b2",
+  "not_found_go_home": "8991f7934124c7dd48c8301ecb5bba9e6185dacc1a64c0d3e58429ef7f6e95d9",
+  "not_found_title": "6be6cc1e91ab29b4b09a3d4b085b009cdd3999e4c21f3e408311c581e03f4a94",
+  "suggestion_save_failed": "480f9201290520e75e0153ad10c21d55772b1d3ee204c42276469109145f20ab",
+  "suggestion_view": "87e0754a658b539b073255533eaad7665d04cf81e81cefabfde2ef18471f35a7",
+  "task_leave": "35cab1a652e1aed3abba5390d6e524cfee544775b6c5e81e98651f5c04fac094",
+  "test_out_skip_chapter": "9f0fcc87eab9ac5122963c3d62a6cdad48509d129d0594f7e5fee220ffea1097",
+  "test_out_skip_unit": "d17b518f9774188bf3407681484e8d4ad105c0d53eefc266aa1da5cbaf5dc307",
+  "test_out_title": "00d4a6c3257a27b4bc6dda336babd71ab48dce563575e757de6dd67bfc083ccb",
+  "web_page_unavailable": "bc5aec9f00829f3232d9ced3e688494e832c12f45ede614008713b3d2d87f264"
 }
 -->
-<resources>
-    <string name="navigation_home">Inicio</string>
-    <string name="navigation_new">Nuevo</string>
-    <string name="navigation_courses">Cursos</string>
-    <string name="navigation_progress">Progreso</string>
-    <string name="placeholder_home">Pantalla de inicio</string>
-    <string name="placeholder_new_course">Pantalla de nuevo curso</string>
-    <string name="placeholder_courses">Pantalla de cursos</string>
-    <string name="placeholder_progress">Pantalla de progreso</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="navigation_today">Hoy</string>
+    <string name="navigation_plan">Plan</string>
+    <string name="navigation_buddy">Compañero</string>
+    <string name="navigation_study">Estudio</string>
+    <string name="navigation_mistakes">Cuaderno de errores</string>
+    <string name="navigation_exam">Examen</string>
+    <string name="navigation_speaking">Expresión oral</string>
+    <string name="navigation_mind_maps">Mapas mentales</string>
+    <string name="navigation_statistics">Estadísticas</string>
+    <string name="navigation_back">Volver</string>
+    <string name="navigation_user_menu">Menú de usuario</string>
+    <string name="task_leave">Salir</string>
+    <string name="gate_sign_in_title">Inicia sesión para continuar</string>
+    <string name="gate_sign_in_description">Inicia sesión para seguir donde lo dejaste o empieza gratis.</string>
+    <string name="gate_session_ended_title">Tu sesión terminó</string>
+    <string name="gate_session_ended_description">Inicia sesión para retomar tu plan.</string>
+    <string name="gate_log_in">Iniciar sesión</string>
+    <string name="gate_start_free">Empezar gratis</string>
+    <string name="gate_start_something_new">Empezar algo nuevo</string>
+    <string name="gate_start_goal_title">Empieza con un objetivo</string>
+    <string name="gate_start_goal_description">Cuéntanos qué quieres aprender y organizaremos tu estudio día a día hasta que lo logres.</string>
+    <string name="gate_start_goal">Crear un objetivo</string>
+    <string name="belt_white">Cinturón blanco</string>
+    <string name="belt_yellow">Cinturón amarillo</string>
+    <string name="belt_orange">Cinturón naranja</string>
+    <string name="belt_green">Cinturón verde</string>
+    <string name="belt_blue">Cinturón azul</string>
+    <string name="belt_purple">Cinturón morado</string>
+    <string name="belt_brown">Cinturón café</string>
+    <string name="belt_red">Cinturón rojo</string>
+    <string name="belt_gray">Cinturón gris</string>
+    <string name="belt_black">Cinturón negro</string>
+    <string name="belt_level">%1$s, nivel %2$s</string>
+    <string name="answer_tag_correct">Correcta</string>
+    <string name="answer_tag_your_answer">Tu respuesta</string>
+    <string name="answer_tag_your_guess">Tu suposición</string>
+    <string name="load_failed_title">Esta página no cargó</string>
+    <string name="load_failed_description">Puede deberse a tu conexión o a un problema nuestro. Volver a intentarlo suele solucionarlo.</string>
+    <string name="load_failed_try_again">Intentar de nuevo</string>
+    <string name="suggestion_view">Ver</string>
+    <string name="suggestion_save_failed">No se pudo guardar. Inténtalo de nuevo.</string>
+    <string name="disclosure_expanded">Expandido</string>
+    <string name="disclosure_collapsed">Contraído</string>
+    <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->
+    <string name="diff_line_spoken">%1$s: %2$s</string>
+    <string name="lessons_title">Lecciones</string>
+    <!-- Lessons done of the total: "2 of 6". -->
+    <string name="lessons_done_count">%1$s de %2$s</string>
+    <!-- A lesson's number in its list: "3." -->
+    <string name="lessons_position">%1$s.</string>
+    <!-- TalkBack names each lesson's mark. Done: finished. Up next: the one lesson to do now. Coming up: the lessons after it, for later. The three must read as clearly different states. -->
+    <string name="lessons_done">Completada</string>
+    <string name="lessons_up_next">A continuación</string>
+    <string name="lessons_coming_up">Más adelante</string>
+    <!-- Heads the key ideas of each lesson in a chapter's or unit's summary. -->
+    <string name="lesson_summaries_title">Resúmenes</string>
+    <string name="test_out_title">¿Ya lo sabes?</string>
+    <string name="test_out_skip_chapter">Hacer la prueba y saltarse el capítulo</string>
+    <string name="test_out_skip_unit">Hacer la prueba y saltarse la unidad</string>
+    <string name="not_found_title">No pudimos encontrar esta página</string>
+    <string name="not_found_description">El enlace puede estar desactualizado o mal escrito.</string>
+    <string name="not_found_go_home">Ir a la página de inicio</string>
+    <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
+    <string name="list_row_states">%1$s, %2$s</string>
+    <!-- A toast, at most two short lines: a link did nothing because no app on the phone can open web pages. Same meaning as Android's own "No app can perform this action". -->
+    <string name="web_page_unavailable">Ninguna aplicación puede abrir esta página.</string>
+    <!-- Replaces Compose's own string of this name, whose Portuguese and German read as closing a spreadsheet. TalkBack's label for the dimmed area behind a bottom sheet, which closes the sheet. "Sheet" means a panel that slides up from the bottom of the screen, not a spreadsheet or a sheet of paper. -->
+    <string name="close_sheet" tools:override="true" tools:ignore="UnusedResources">Cerrar panel</string>
+    <!-- In the time a day picker's menu. %1$s is a daily study time, such as "4 h". The same word as "We suggest 4 h a day" and "Use the suggested 4 h a day" beside it: suggested, not recommended. -->
+    <string name="daily_time_suggested">%1$s (sugerido)</string>
+    <!-- In the time a day picker's menu: the time that covers the whole goal or exam. %1$s is a daily study time, such as "13 h 30 min". -->
+    <string name="daily_time_covers_everything">%1$s (cubre todo)</string>
 </resources>

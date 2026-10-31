@@ -7,7 +7,6 @@ function getDefaultApiUrl(): string {
     return "http://localhost:4000";
   }
 
-  // API previews use their own host; consumers receive its URL explicitly from CI.
   if (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
   }
@@ -22,3 +21,24 @@ function getDefaultApiUrl(): string {
 export const API_URL = getDefaultApiUrl();
 export const BLOG_URL = "https://blog.zoonk.com";
 export const SITE_URL = "https://www.zoonk.com";
+
+/** Server-only: read at runtime, so development and E2E point it at their own main app. */
+function getDefaultMainUrl(): string {
+  if (process.env.MAIN_APP_URL) {
+    return process.env.MAIN_APP_URL;
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    return "http://localhost:3000";
+  }
+
+  return SITE_URL;
+}
+
+export const MAIN_URL = getDefaultMainUrl();
+
+export const TERMS_URL = new URL("/terms", MAIN_URL).toString();
+
+export const PRIVACY_URL = new URL("/privacy", MAIN_URL).toString();
+
+export const CANCEL_SUBSCRIPTION_URL = new URL("/subscription/cancel", MAIN_URL).toString();

@@ -7,7 +7,6 @@ enum AuthenticationNonceError: Error {
 }
 
 enum AuthenticationNonce {
-  /// Creates an unpredictable, URL-safe nonce so a captured Apple identity token cannot be replayed in another sign-in attempt.
   static func make() throws -> String {
     var bytes = [UInt8](repeating: 0, count: 32)
     let status = SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes)
@@ -22,7 +21,7 @@ enum AuthenticationNonce {
       .replacingOccurrences(of: "=", with: "")
   }
 
-  /// Hashes the raw nonce before it leaves the device while keeping the original value for the API's verification request.
+  /// Apple gets the hash; the API's verification request carries the raw nonce.
   static func hash(_ nonce: String) -> String {
     SHA256.hash(data: Data(nonce.utf8)).map { String(format: "%02x", $0) }.joined()
   }

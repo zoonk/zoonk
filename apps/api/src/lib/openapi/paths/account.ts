@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { accountDataExportSchema } from "../schemas/account-export";
 import {
   meDeletionResponseSchema,
   meDeletionSchema,
@@ -12,6 +13,7 @@ import {
   internalErrorResponse,
   unauthorizedResponse,
 } from "../schemas/responses";
+import { usernameSuggestionResponseSchema } from "../schemas/usernames";
 import { AUTHENTICATED_SECURITY, PUBLIC_SECURITY } from "../security";
 
 export const accountPaths = {
@@ -79,6 +81,40 @@ export const accountPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Update current user",
+      tags: ["Account"],
+    },
+  },
+  "/me/export": {
+    get: {
+      description:
+        "Everything Zoonk keeps about the learner as one JSON download: the account, learning profile, goals and plans, the progress ledger, answers, skills, mistakes, milestones, memory and feedback.",
+      operationId: "exportCurrentUserData",
+      responses: {
+        "200": {
+          content: { "application/json": { schema: accountDataExportSchema } },
+          description: "The learner's data, sent as an attachment",
+        },
+        "401": unauthorizedResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Export the current user's data",
+      tags: ["Account"],
+    },
+  },
+  "/me/username-suggestion": {
+    get: {
+      description:
+        "What profile setup suggests for a new account, as main's setup page does. Availability is advisory: the profile update decides.",
+      operationId: "getCurrentUserUsernameSuggestion",
+      responses: {
+        "200": {
+          content: { "application/json": { schema: usernameSuggestionResponseSchema } },
+          description: "The suggested username",
+        },
+        "401": unauthorizedResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Suggest a username for the current user",
       tags: ["Account"],
     },
   },

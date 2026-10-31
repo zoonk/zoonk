@@ -1,7 +1,7 @@
 import Foundation
 
 struct CurrentAccount: Decodable, Equatable {
-  let account: AccountAccess
+  var account: AccountAccess
   let user: AccountUser
 
   var needsProfileSetup: Bool {
@@ -11,7 +11,7 @@ struct CurrentAccount: Decodable, Equatable {
 
 struct AccountAccess: Decodable, Equatable {
   let deletion: AccountDeletionRequirements
-  let subscription: AccountSubscription?
+  var subscription: AccountSubscription?
 
   var subscriptionAction: AccountSubscriptionAction {
     guard let subscription else {
@@ -40,10 +40,55 @@ struct AccountDeletionRequirements: Decodable, Equatable {
   let hasAppleAccount: Bool
 }
 
-struct AccountSubscription: Decodable, Equatable {
+struct AccountSubscription: Decodable, Equatable, Hashable {
   let plan: String
   let provider: String
   let status: String?
+  var cancelAt: Date? = nil
+  var periodEnd: Date? = nil
+}
+
+struct Money: Equatable {
+  /// In the currency's major unit: 29.9 is R$ 29,90.
+  let amount: Double
+  let currency: String
+
+  var formatted: String {
+    amount.formatted(.currency(code: currency))
+  }
+}
+
+struct WebPlusCancellation: Equatable {
+  struct Withdrawal: Equatable {
+    let refund: Money
+    let until: Date
+  }
+
+  struct PeriodEnd: Equatable {
+    let endsAt: Date
+    let refund: Money?
+  }
+
+  /// Within 14 days of subscribing: Plus ends now and the whole payment is refunded.
+  let withdrawal: Withdrawal?
+  /// Stopping the renewal; after a yearly renewal it refunds the months that haven't started.
+  let periodEnd: PeriodEnd?
+  /// Only the renewal is stopped, so Plus can be kept and renew as before.
+  var canResumeRenewal = false
+  /// Deleting the account ends Plus right away and refunds this.
+  var accountDeletionRefund: Money? = nil
+}
+
+enum WebPlusCancellationPreview: Equatable {
+  case choices(WebPlusCancellation)
+  case nothingToCancel
+  case failed
+}
+
+enum WebPlusCancellationResult: Equatable {
+  case canceled(refund: Money?)
+  case choiceClosed
+  case failed
 }
 
 struct AppleSubscriptionSynchronization: Equatable {
@@ -96,9 +141,15 @@ enum AccountSessionState: Equatable {
   case signedOut
   case signedIn(CurrentAccount)
   case unavailable
+
+  var account: CurrentAccount? {
+    if case .signedIn(let account) = self { account } else { nil }
+  }
 }
 
 enum AccountFailure: Equatable {
+  case botDetected
+  case emailCodeDelivery
   case accountDeletion
   case accountMismatch
   case disposableEmail

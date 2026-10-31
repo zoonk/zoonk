@@ -1,0 +1,36 @@
+enum FeedbackContentKind {
+  course
+  chapter
+  lesson
+  step
+  stepVariant       @map("step_variant")
+  item
+  mediaAsset        @map("media_asset")
+  answerExplanation @map("answer_explanation")
+  lessonQuestion    @map("lesson_question")
+  plan
+  planChange        @map("plan_change")
+}
+
+enum FeedbackStatus {
+  new
+  read
+  replied
+}
+
+/// Also emailed to the team. The user link is cleared when the account is deleted.
+model Feedback {
+  id        String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId    String?        @map("user_id") @db.Uuid
+  user      User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email     String?
+  message   String
+  context   Json           @default("{}")
+  status    FeedbackStatus @default(new)
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @default(now()) @updatedAt @map("updated_at")
+
+  @@index([status, createdAt])
+  @@index([userId])
+  @@map("feedback")
+}

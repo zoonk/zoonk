@@ -1,0 +1,317 @@
+{
+  "modelId": "google/gemini-3.8-live",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "role",
+          "reasoning": "Linda uses the exact opening, stays in character, provides accurate availability, rent, utilities, and deposit facts, and confirms an allowed viewing time before closing politely. She never corrects grammar or exposes evaluation machinery. The unsolicited viewing question slightly weakens the requirement to let the learner do the asking. No score cap is triggered.",
+          "score": 8,
+          "label": "Stays in role and scenario",
+          "weight": 40
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The language is generally simple, natural US English, with one or two sentences per turn. The requested Portuguese help is limited to one short clarification, immediately followed by English. However, several replies are longer than the roughly ten-word target, and 'in advance' adds vocabulary rather than making the English restatement clearly simpler. These are modest weaknesses, not clearly above-level language; no cap is triggered.",
+          "score": 8,
+          "label": "At the learner's level and language",
+          "weight": 35
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "All three objectives are marked immediately after the relevant learner lines: asking about availability, asking the deposit amount, and requesting a specific available viewing time. The viewing mark follows the learner's Saturday-at-ten request, not the earlier rent question or Linda's invitation. No objective is marked prematurely.",
+          "score": 10,
+          "label": "Objectives marked when achieved",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2041,
+          "inputTokens": 2044,
+          "outputTokens": 698,
+          "reasoningTokens": 237
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Minor departures from the requested interaction style: Linda proactively asks whether Marcos wants a viewing instead of leaving him to ask. Some replies also exceed the roughly ten-word target, particularly the deposit explanation with its added question.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Remove unnecessary follow-up questions to keep the exchange learner-led and concise. After the Portuguese clarification, use simpler English such as: 'You pay two months’ rent before moving in.'",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Linda, a Toronto landlord, talks with Marcos (A2, Brazilian Portuguese speaker) in US English. She opens with her line, answers in short, simple sentences (about 10 words), and gives the facts from her notes (still available, $2,400, first and last month's deposit, Saturday 10am or 2pm). When he asks in Portuguese what \"deposit\" means, she gives one short clarification in Portuguese and goes back to simple English. She never corrects his grammar (\"The apartment is still available?\", \"Is included the utilities?\"), marks each objective when he achieves it, and wraps up once the viewing is booked.",
+        "expected": {
+          "objectivesMet": ["Is it available?", "Ask about the deposit", "Book a viewing"]
+        },
+        "id": "pt-en-a2-renting-1",
+        "userInput": {
+          "call": {
+            "kind": "unit",
+            "learnerLanguage": "pt",
+            "level": "A2",
+            "minutes": 2,
+            "scenario": {
+              "character": { "name": "Linda", "place": "Queen Street", "role": "proprietária" },
+              "characterBrief": "You are Linda, a friendly landlord renting a one-bedroom apartment on Queen Street, Toronto. Rent is $2,400 a month, utilities not included, deposit is first and last month's rent. The apartment is still available. You can show it on Saturday at 10am or 2pm. Speak simply and slowly.",
+              "hints": [
+                "Is the apartment still available?",
+                "How much is the deposit?",
+                "Can I see it on Saturday?",
+                "Are utilities included?"
+              ],
+              "objectives": [
+                {
+                  "description": "Perguntar se o apartamento ainda está livre",
+                  "label": "Is it available?"
+                },
+                {
+                  "description": "Marcar um horário para ver o apartamento",
+                  "label": "Book a viewing"
+                },
+                { "description": "Perguntar quanto é a caução", "label": "Ask about the deposit" }
+              ],
+              "openingLine": "Hi! Are you calling about the apartment on Queen Street?",
+              "situation": "Você viu um anúncio de apartamento em Toronto e liga para a proprietária para saber se ainda está disponível e marcar uma visita.",
+              "title": "Ligar para marcar uma visita"
+            },
+            "targetLanguage": "en"
+          },
+          "learnerTurns": [
+            "Hello, yes. The apartment is still available?",
+            "Good! How much is the rent? Is included the utilities?",
+            "And how much is the deposit?",
+            "Desculpa, o que é 'first and last month'?",
+            "Ok, I understand. Can I see the apartment on Saturday, at ten?"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "role",
+          "reasoning": "Mariana uses the required opening, stays in character, acknowledges London, and supplies the correct hours and home-office days. She proposes 1pm and mentions a meeting, but does not explicitly state that the meeting is at 12:30. The requested final team welcome is absent, though the lunch agreement is still pending. She never corrects Tom or discusses evaluation machinery.",
+          "score": 8,
+          "label": "Stays in role and scenario",
+          "weight": 40
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The dialogue is understandable B1 Brazilian Portuguese, with natural local vocabulary and no English-language detour. However, the introduction response exceeds the two-sentence turn limit, and “Adoraríamos!” is an unnatural plural response from Mariana to an invitation addressed to her personally. No wrong-language or clearly-above-level cap applies.",
+          "score": 8,
+          "label": "At the learner's level and language",
+          "weight": 35
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The introduction is marked immediately after Tom identifies himself and his role. The work-schedule objective is marked after he asks about both hours and home-office availability. The lunch objective correctly remains unmarked: Tom has invited Mariana, but has not yet agreed to her proposed time. No objective is marked prematurely.",
+          "score": 10,
+          "label": "Objectives marked when achieved",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "8 of 9 parts passed. \"Combinar um almoço\" was never marked, though the learner achieved it.",
+          "score": 9,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2145,
+          "inputTokens": 2148,
+          "outputTokens": 815,
+          "reasoningTokens": 347
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "There is no closing welcome to the team, although Mariana welcomes Tom earlier. The response after his introduction contains three sentences rather than the required one or two. “Adoraríamos!” also awkwardly answers a personal lunch invitation in the plural.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the meeting time explicit: “Hoje tenho uma reunião às doze e meia. Podemos almoçar à uma?” React more specifically to Tom’s agency experience, rather than mainly commenting on London.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Mariana, a team manager in São Paulo, talks with Tom (B1, US English speaker) in Brazilian Portuguese (\"você\", Brazilian words). She speaks naturally in clear sentences of up to about 15 words, reacts to what he says (his London agency), gives the facts from her notes (9 to 6, home office on Mondays and Fridays) and, when he invites her to lunch, mentions her 12:30 meeting and suggests 1pm. She never corrects him, marks each objective as he achieves it and welcomes him to the team at the end.",
+        "expected": {
+          "objectivesMet": ["Apresentar-se", "Perguntar sobre o horário", "Combinar um almoço"]
+        },
+        "id": "en-pt-b1-work-1",
+        "userInput": {
+          "call": {
+            "kind": "unit",
+            "learnerLanguage": "en",
+            "level": "B1",
+            "minutes": 3,
+            "scenario": {
+              "character": {
+                "name": "Mariana",
+                "place": "Estúdio Pixel, São Paulo",
+                "role": "team manager"
+              },
+              "characterBrief": "Friendly, relaxed team manager at a small design studio in São Paulo. Facts: work hours 9am to 6pm, hybrid, home office on Mondays and Fridays; team of six designers; weekly meeting Tuesday at 10am; she usually eats lunch at a self-service restaurant nearby around 12:30. The learner is the new designer starting today. Twist: today she has a meeting at 12:30, so she suggests lunch at 1pm instead. Wrap up by welcoming them to the team.",
+              "hints": [
+                "Prazer, eu sou o novo designer.",
+                "Qual é o horário de trabalho?",
+                "A gente pode trabalhar de casa?",
+                "Você quer almoçar comigo hoje?"
+              ],
+              "objectives": [
+                {
+                  "description": "Say who you are and what you'll do on the team.",
+                  "label": "Apresentar-se"
+                },
+                {
+                  "description": "Find out the work hours and home office days.",
+                  "label": "Perguntar sobre o horário"
+                },
+                {
+                  "description": "Invite Mariana to lunch and agree on a time.",
+                  "label": "Combinar um almoço"
+                }
+              ],
+              "openingLine": "Oi! Você deve ser o novo designer, né? Eu sou a Mariana. Seja bem-vindo!",
+              "situation": "It's your first day at a design studio in São Paulo. Meet Mariana, your team manager, introduce yourself and ask about how things work.",
+              "title": "Meet your new manager"
+            },
+            "targetLanguage": "pt"
+          },
+          "learnerTurns": [
+            "Oi, Mariana! Prazer. Eu sou o Tom, eu vou ser o novo designer de aplicativos. Comecei hoje.",
+            "Eu trabalhei três anos numa agência em Londres. Eu gosto muito de design de aplicativos.",
+            "Qual é o horário de trabalho aqui? A gente pode trabalhar de casa alguns dias?",
+            "Legal! Você quer almoçar comigo hoje? Eu não conheço os restaurantes daqui."
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "role",
+          "reasoning": "Javier uses the exact opening, starts defensively, becomes reasonable, and accepts an allowed schedule while preserving Friday rehearsals. He stays in character and closes politely without teaching or discussing objectives. However, he never offers or acknowledges the rug, leaving the learner's explicit reference to that measure unresolved.",
+          "score": 8,
+          "label": "Stays in role and scenario",
+          "weight": 40
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The dialogue stays entirely in natural Spain Spanish, with suitable conversational expressions such as “darlo todo” and no inappropriate simplification for C1. Questions are asked one at a time. However, the final character turn has three sentences rather than the required one or two.",
+          "score": 8,
+          "label": "At the learner's level and language",
+          "weight": 35
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "“Explicar el problema” is correctly marked immediately after the learner politely explains the noise and loss of sleep. “Llegar a un acuerdo” is marked after a proposal, before Javier accepts and before the learner confirms the deal. This triggers the explicit maximum score of 5 for premature marking.",
+          "score": 5,
+          "label": "Objectives marked when achieved",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2156,
+          "inputTokens": 2159,
+          "outputTokens": 596,
+          "reasoningTokens": 166
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "“Llegar a un acuerdo” is marked prematurely: the learner has proposed terms, but Javier has not yet accepted them. The mark should follow the final learner turn, which explicitly confirms the agreement.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Javier never offers or confirms the rug, so the learner's thanks for it go unaddressed. The closing also contains three sentences, exceeding the required one or two sentences per turn.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "Javier, an upstairs neighbor in Madrid, talks with a C1 learner (US English speaker) in natural Spain Spanish, at a normal pace with everyday idioms. He's a little defensive at first, then reasonable, and only agrees to what his notes allow (stop by 10pm on weeknights, a rug, Fridays stay his band's night). He never switches to English, never corrects the learner, marks \"Explicar el problema\" once the learner explains the noise and \"Llegar a un acuerdo\" once they agree on terms, then wraps up in a friendly way.",
+        "expected": { "objectivesMet": ["Explicar el problema", "Llegar a un acuerdo"] },
+        "id": "en-es-c1-neighbor-1",
+        "userInput": {
+          "call": {
+            "kind": "unit",
+            "learnerLanguage": "en",
+            "level": "C1",
+            "minutes": 3,
+            "scenario": {
+              "character": {
+                "name": "Javier",
+                "place": "el piso de arriba, Madrid",
+                "role": "neighbor"
+              },
+              "characterBrief": "Javier, 40, lives upstairs in a Madrid block of flats. He rehearses with his band on weeknights until midnight and didn't realize the noise carries. He's defensive at first (it's his home, he has the right to play), then reasonable: he can stop by 10pm on weeknights and put a rug down, but Fridays are his band's night. Speak like an educated Madrileño: natural, fast, with everyday idioms.",
+              "hints": [
+                "Perdona que te moleste, pero...",
+                "¿Podríamos llegar a un acuerdo?",
+                "Entiendo que es tu casa, pero..."
+              ],
+              "objectives": [
+                {
+                  "description": "Explain the noise problem politely but clearly.",
+                  "label": "Explicar el problema"
+                },
+                {
+                  "description": "Agree on times or measures that work for both of you.",
+                  "label": "Llegar a un acuerdo"
+                }
+              ],
+              "openingLine": "Hola, ¿qué tal? ¿Eres el vecino del tercero, no?",
+              "situation": "Your upstairs neighbor in Madrid plays music late on weeknights and you can't sleep. Knock on his door and sort it out without falling out with him.",
+              "title": "Talk to a noisy neighbor"
+            },
+            "targetLanguage": "es"
+          },
+          "learnerTurns": [
+            "Sí, soy yo. Perdona que te moleste a estas horas, pero es que llevo semanas sin pegar ojo por la música de los ensayos.",
+            "Entiendo que es tu casa y que tienes todo el derecho a tocar, pero entre semana me levanto a las seis y media para trabajar.",
+            "¿Y si entre semana acabáis a las diez? Los viernes, por mí, podéis alargarlo sin problema.",
+            "Perfecto, trato hecho. Y lo de la alfombra me parece un detalle. ¡Muchas gracias, Javier!"
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "live-conversation"
+}

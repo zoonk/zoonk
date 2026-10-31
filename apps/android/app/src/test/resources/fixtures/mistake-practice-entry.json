@@ -1,0 +1,7 @@
+{
+  "cause": "misread",
+  "drill": { "kind": "retry", "lesson": null, "timeLimitSeconds": null },
+  "mistakeId": "7b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
+  "questions": [],
+  "snapshot": { "answer": "Moon", "question": "Which is a planet?" }
+}

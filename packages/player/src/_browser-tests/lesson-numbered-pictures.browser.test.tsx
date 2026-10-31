@@ -1,0 +1,149 @@
+import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
+import { numberedCheckContent } from "@zoonk/testing/fixtures/playable-step-contents";
+import { describe, expect, it, onTestFinished, vi } from "vitest";
+import { page } from "vitest/browser";
+import { expectAccessibleScreen } from "../_test-utils/accessibility";
+import { press } from "../_test-utils/activity-player";
+import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
+import { buildLesson } from "../preview/preview-lesson";
+import {
+  activityStep,
+  explanationStep,
+  inlineImage,
+  numberedCheckStep,
+} from "../preview/preview-steps";
+
+const heart = activityContentFixtures.labeledDiagram;
+const OVARY = numberedCheckContent.options.find((option) => option.isCorrect);
+const PICTURE_POLL_MS = 4000;
+const NEXT = { text: "Seeds grow inside the ovary.", title: "Inside the ovary" };
+
+describe("numbered pictures", () => {
+  it("asks which number marks a part, on the picture with the numbers", async () => {
+    renderLessonPlayer({ lesson: buildLesson([numberedCheckStep()]) });
+
+    await expect
+      .element(page.getByRole("img", { name: numberedCheckContent.image.alt }))
+      .toBeVisible();
+
+    await expectAccessibleScreen("a numbered picture question");
+
+    await page.getByRole("radio", { name: OVARY?.text }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+  });
+
+  it("waits for a numbered picture before taking answers", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+
+    const step = numberedCheckStep({ drawn: false, imagePending: true });
+    const lesson = buildLesson([step]);
+
+    const getLessonPictures = vi
+      .fn<NonNullable<LessonPlayerAdapters["getLessonPictures"]>>()
+      .mockResolvedValue([]);
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
+
+    await Promise.all(
+      numberedCheckContent.options.map(async (option) => {
+        await expect
+          .element(page.getByRole("radio", { exact: true, name: option.text }))
+          .toBeDisabled();
+      }),
+    );
+
+    getLessonPictures.mockResolvedValue([
+      { image: inlineImage({ alt: numberedCheckContent.image.alt }), stepId: step.id },
+    ]);
+
+    await vi.advanceTimersByTimeAsync(PICTURE_POLL_MS);
+
+    await expect
+      .element(page.getByRole("img", { name: numberedCheckContent.image.alt }))
+      .toBeVisible();
+
+    await Promise.all(
+      numberedCheckContent.options.map(async (option) => {
+        await expect
+          .element(page.getByRole("radio", { exact: true, name: option.text }))
+          .toBeEnabled();
+      }),
+    );
+  });
+
+  it("waits for a labeled diagram's numbered picture before taking labels", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+
+    const step = activityStep({ content: heart, image: null, imagePending: true });
+    const lesson = buildLesson([step]);
+    const firstSpot = page.getByRole("button", { exact: true, name: "Put Right atrium on spot 1" });
+    const labeled = page.getByRole("button", { name: "Spot 1: Right atrium" });
+
+    const getLessonPictures = vi
+      .fn<NonNullable<LessonPlayerAdapters["getLessonPictures"]>>()
+      .mockResolvedValue([]);
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
+
+    await expect.element(page.getByRole("status")).toHaveTextContent("Drawing the picture…");
+    await expect.element(page.getByText(heart.fields.picture.alt)).toBeVisible();
+    await expect.element(firstSpot).toBeDisabled();
+
+    getLessonPictures.mockResolvedValue([
+      { image: inlineImage({ alt: heart.fields.picture.alt }), stepId: step.id },
+    ]);
+
+    await vi.advanceTimersByTimeAsync(PICTURE_POLL_MS);
+    await expect.element(page.getByRole("img", { name: heart.fields.picture.alt })).toBeVisible();
+    await firstSpot.click();
+    await expect.element(labeled).toBeVisible();
+  });
+
+  it("leaves out numbered questions whose picture never came, and goes on", async () => {
+    const diagram = activityStep({ content: heart, image: null });
+
+    const lesson = buildLesson([
+      diagram,
+      numberedCheckStep({ drawn: false }),
+      explanationStep(NEXT),
+    ]);
+
+    renderLessonPlayer({ lesson });
+
+    await expect.element(page.getByText(NEXT.text)).toBeVisible();
+    await expect.element(page.getByText(numberedCheckContent.question)).not.toBeInTheDocument();
+
+    await press("ArrowLeft");
+    await expect.element(page.getByText(NEXT.text)).toBeVisible();
+  });
+
+  it("shows an explanation's words without the key of a diagram whose picture never came", async () => {
+    const explore = { fields: heart.fields, template: "labeledDiagram" };
+    const key = page.getByRole("list", { name: "What each number shows" });
+
+    const drawn = explanationStep(
+      { explore, text: "The heart has four chambers." },
+      { image: inlineImage({ alt: heart.fields.picture.alt }) },
+    );
+
+    const lost = explanationStep({ explore, text: NEXT.text });
+
+    renderLessonPlayer({ lesson: buildLesson([drawn, lost]) });
+
+    await expect.element(key).toBeVisible();
+
+    await press("ArrowRight");
+    await expect.element(page.getByText(NEXT.text)).toBeVisible();
+    await expect.element(key).not.toBeInTheDocument();
+  });
+});

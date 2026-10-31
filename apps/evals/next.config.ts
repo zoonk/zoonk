@@ -1,9 +1,10 @@
+import { availableParallelism } from "node:os";
 import { type NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["**.local"],
   cacheComponents: true,
-  experimental: { turbopackRustReactCompiler: true, typedEnv: true },
+  experimental: { cpus: availableParallelism(), turbopackRustReactCompiler: true, typedEnv: true },
   images: {
     remotePatterns: [
       new URL("https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/**"),
@@ -13,12 +14,7 @@ const nextConfig: NextConfig = {
   pageExtensions: ["ts", "tsx"],
   partialPrefetching: true,
   reactCompiler: true,
-  turbopack: {
-    rules: {
-      // Allow to import MDX files used for AI prompts
-      "*.md": { as: "*.js", loaders: ["raw-loader"] },
-    },
-  },
+  turbopack: { rules: { "*.md": { as: "*.js", loaders: ["raw-loader"] } } },
   typedRoutes: true,
   typescript: { ignoreBuildErrors: true },
 };

@@ -13,12 +13,9 @@ import {
 import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Fragment } from "react";
-import { STATS_ANALYSIS_GROUPS, type StatsAnalysisView } from "../_utils/stats-analysis";
+import { type StatsAnalysisView } from "../_utils/stats-analysis";
+import { STATS_ANALYSIS_GROUPS } from "../_utils/stats-analysis-groups";
 
-/**
- * Builds the destination locally so switching analysis always keeps the useful
- * date context, including while a view temporarily hides period controls.
- */
 function buildAnalysisHref({
   periodQuery,
   view,
@@ -32,11 +29,6 @@ function buildAnalysisHref({
   return `${view.path}?${searchParams.toString()}`;
 }
 
-/**
- * The picker turns the old three-page dashboard into one focused explorer:
- * only one metric is visible, while every existing analysis remains one click
- * away in a grouped, keyboard-accessible menu.
- */
 export function StatsAnalysisPicker({
   periodQuery,
   selectedView,

@@ -28,9 +28,9 @@ describe(calculateCourseContinueProgressPercent, () => {
     expect(
       calculateCourseContinueProgressPercent({
         chapters: [
-          { completedLessons: 3, generationStatus: "completed", totalLessons: 3 },
-          { completedLessons: 1, generationStatus: "completed", totalLessons: 2 },
-          { completedLessons: 0, generationStatus: "completed", totalLessons: 2 },
+          { completedLessons: 3, outlineStatus: "completed", totalLessons: 3 },
+          { completedLessons: 1, outlineStatus: "completed", totalLessons: 2 },
+          { completedLessons: 0, outlineStatus: "completed", totalLessons: 2 },
         ],
       }),
     ).toBe(57);
@@ -40,9 +40,9 @@ describe(calculateCourseContinueProgressPercent, () => {
     expect(
       calculateCourseContinueProgressPercent({
         chapters: [
-          { completedLessons: 1, generationStatus: "completed", totalLessons: 3 },
-          { completedLessons: 1, generationStatus: "completed", totalLessons: 2 },
-          { completedLessons: 0, generationStatus: "pending", totalLessons: 0 },
+          { completedLessons: 1, outlineStatus: "completed", totalLessons: 3 },
+          { completedLessons: 1, outlineStatus: "completed", totalLessons: 2 },
+          { completedLessons: 0, outlineStatus: "pending", totalLessons: 0 },
         ],
       }),
     ).toBe(25);
@@ -50,8 +50,8 @@ describe(calculateCourseContinueProgressPercent, () => {
 
   it("never estimates below the lesson rows that already exist", () => {
     const chapters: CourseContinueProgressChapter[] = [
-      { completedLessons: 1, generationStatus: "completed", totalLessons: 1 },
-      { completedLessons: 0, generationStatus: "pending", totalLessons: 4 },
+      { completedLessons: 1, outlineStatus: "completed", totalLessons: 1 },
+      { completedLessons: 0, outlineStatus: "pending", totalLessons: 4 },
     ];
 
     expect(calculateCourseContinueProgressPercent({ chapters })).toBe(20);

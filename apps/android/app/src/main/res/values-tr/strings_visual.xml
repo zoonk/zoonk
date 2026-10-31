@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "visual_chart_point": "2c0b130a64a0636a8ab1cf5cd41e151829ff26540e2e84f6cc9ea3a798758b20",
+  "visual_chart_series_value": "6c487ce70ce83a9bd1977139bdb21598313777d0511d6bd8a68a80ee17ab8d39",
+  "visual_chart_summary": "3d9ba3cd91d01199fbed0340d7ded29ce7f34ad4aadb685b0784f529a2e56e3c",
+  "visual_source": "85f8d7e2dbce6ae1b4fba5884005f150d346820e404adc510a3bd0233566b806"
+}
+-->
+<resources>
+    <string name="visual_source">Kaynak: %1$s</string>
+    <!-- A chart read aloud: what it measures (%1$s) by what (%2$s), then each category with its values (%3$s). -->
+    <string name="visual_chart_summary">%1$s, %2$s bazında. %3$s</string>
+    <!-- One category of a chart read aloud: the category (%1$s) and its value or values (%2$s). -->
+    <string name="visual_chart_point">%1$s: %2$s</string>
+    <!-- One series' value in a category of a chart read aloud: the series' name (%1$s) and its value (%2$s). -->
+    <string name="visual_chart_series_value">%1$s %2$s</string>
+</resources>

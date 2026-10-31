@@ -1,0 +1,53 @@
+"use client";
+
+import { useFormatNumber } from "@zoonk/learn/format-number";
+import { useExtracted } from "next-intl";
+import { computeActivityValue } from "../_utils/compute-activity-value";
+import { type RandomSimulationMode } from "./random-simulation-mode";
+import { useSamplingFormat } from "./use-sampling-format";
+
+type Content = RandomSimulationMode<"sampling">["content"];
+
+const PERCENT = 100;
+const MIDDLE_95 = 1.96;
+
+export function SamplingExpectedSpread({ content }: { content: Content }) {
+  const t = useExtracted();
+  const format = useFormatNumber();
+  const { fields } = content;
+  const { formatMargin, formatSize } = useSamplingFormat(fields);
+  const ratio = computeActivityValue(content);
+  const [smallest, largest] = [fields.sampleSizes[0] ?? 1, fields.sampleSizes.at(-1) ?? 1];
+
+  const margins = fields.sampleSizes.map((size) => ({
+    margin:
+      (computeActivityValue(content, { inputs: { sampleSize: size }, output: "standardError" }) ??
+        0) * MIDDLE_95,
+    size,
+  }));
+
+  return (
+    <div className="bg-background flex flex-col gap-2 rounded-xl border px-4 py-3 text-sm">
+      <p className="font-medium">{t("What the math says")}</p>
+
+      <ul className="flex flex-col gap-1 tabular-nums">
+        {margins.map((item) => (
+          <li className="flex justify-between gap-3" key={item.size}>
+            <span className="text-muted-foreground">{formatSize(item.size)}</span>
+            <span className="font-medium">{formatMargin(item.margin)}</span>
+          </li>
+        ))}
+      </ul>
+
+      {ratio !== null && (
+        <p className="text-muted-foreground leading-snug">
+          {t("From {smallest} to {largest}, the margin shrinks to {share} of its size.", {
+            largest: formatSize(largest),
+            share: format(ratio * PERCENT, { maximumFractionDigits: 1, unit: "%" }),
+            smallest: formatSize(smallest),
+          })}
+        </p>
+      )}
+    </div>
+  );
+}

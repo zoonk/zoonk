@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "goal_switcher_current_goal": "6154d2c0ccd078fc9600daa31671cab5dc4467431834f52980f919da8822e2b4",
+  "goal_switcher_daily": "35c091541a4a12e24d9d7fd5a328c7a1b38c333715ffd8562e6681af9778094d",
+  "goal_switcher_explore_courses": "d29cc9c1182abbed7cad355c41fa0f74f15c66256f3a4ddbd0fe48612b6f7788",
+  "goal_switcher_failed": "20436d39669c11fdc938cba332351567dd99ca33f1f0fc9b9040db8bb7bc4057",
+  "goal_switcher_finished": "b6819625e3455af1a73ffec87a17c51700f2bcb76addaef4ce94a316cd6da17e",
+  "goal_switcher_new_goal": "fbdf292145fb8dc6d39ac8b953d81049580ae9c183981281cae161da2dd0d6d0",
+  "goal_switcher_paused": "f8c7eda102710b4d91cc8f614fdb353bc9438a50f746d2c12cbebf3686a0134e",
+  "goal_switcher_quick_explanations": "b8752c7ae4d3085793773cbe2fbf89344fd93998fd789dcaa1f52b10c251b9ae",
+  "goal_switcher_start_goal": "c457ad26a6239d908b7d3ba114f0270209278daace9aef6175c02fdf427bb66c",
+  "goal_switcher_your_goals": "9090922cd9f88968b1922e33499c038cbdbc5303038e34a745b2fe56e97facc1"
+}
+-->
+<resources>
+    <string name="goal_switcher_start_goal">Bir hedefe başla</string>
+    <!-- Read by TalkBack on the top bar's goal button; %1$s is the goal's title. -->
+    <string name="goal_switcher_current_goal">%1$s, şu anki hedefin. Hedef değiştir</string>
+    <string name="goal_switcher_your_goals">Hedeflerin</string>
+    <string name="goal_switcher_quick_explanations">Kısa açıklamalar</string>
+    <string name="goal_switcher_new_goal">Yeni bir hedefe başla</string>
+    <string name="goal_switcher_explore_courses">Kursları keşfet</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="goal_switcher_daily">Günde %1$s</string>
+    <string name="goal_switcher_finished">Tamamlandı</string>
+    <string name="goal_switcher_paused">Duraklatıldı</string>
+    <string name="goal_switcher_failed">Hedefini değiştiremedik. Tekrar dene.</string>
+</resources>

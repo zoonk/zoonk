@@ -1,7 +1,9 @@
+import { APP_ATTESTATION_INVALID_ERROR_CODE } from "@zoonk/auth/app-attest-contract";
 import { DISPOSABLE_EMAIL_ERROR_CODE } from "@zoonk/auth/email-signup-contract";
 
 export const sessionErrorCodes = {
   accountDisabled: "ACCOUNT_DISABLED",
+  appAttestationInvalid: APP_ATTESTATION_INVALID_ERROR_CODE,
   appleAuthorizationInvalid: "APPLE_AUTHORIZATION_INVALID",
   disposableEmail: DISPOSABLE_EMAIL_ERROR_CODE,
   emailCodeExpired: "EMAIL_SIGN_IN_CODE_EXPIRED",

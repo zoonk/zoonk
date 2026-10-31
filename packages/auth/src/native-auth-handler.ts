@@ -13,32 +13,41 @@ function getRetryAfter(headers: Headers) {
 }
 
 /**
- * Runs native product facades through Better Auth's HTTP boundary so its
- * origin hooks and atomic IP rate limiter remain authoritative.
+ * Goes through Better Auth's HTTP boundary so its origin hooks and IP rate limiter apply. Without a
+ * body it's a GET. A refused or failed answer throws, so no caller mistakes an outage for no session.
  */
-export async function callNativeAuthHandler({
+export async function sendNativeAuthRequest({
   body,
   handler,
   headers,
   path,
+  query = {},
   requestURL,
 }: {
-  body: unknown;
+  body?: unknown;
   handler: (request: Request) => Promise<Response>;
   headers: Headers;
   path: string;
+  query?: Record<string, string>;
   requestURL: string;
 }) {
   const url = new URL(requestURL);
   url.pathname = `${BETTER_AUTH_BASE_PATH}${path}`;
-  url.search = "";
+  url.search = new URLSearchParams(query).toString();
 
   const requestHeaders = new Headers(headers);
   requestHeaders.delete("content-length");
-  requestHeaders.set("content-type", "application/json");
+
+  if (body !== undefined) {
+    requestHeaders.set("content-type", "application/json");
+  }
 
   const response = await handler(
-    new Request(url, { body: JSON.stringify(body), headers: requestHeaders, method: "POST" }),
+    new Request(url, {
+      body: body === undefined ? undefined : JSON.stringify(body),
+      headers: requestHeaders,
+      method: body === undefined ? "GET" : "POST",
+    }),
   );
 
   const responseBody: unknown = await response.json().catch(() => null);
@@ -51,5 +60,16 @@ export async function callNativeAuthHandler({
     });
   }
 
-  return responseBody;
+  return { body: responseBody, headers: response.headers };
+}
+
+export async function callNativeAuthHandler(request: {
+  body: unknown;
+  handler: (request: Request) => Promise<Response>;
+  headers: Headers;
+  path: string;
+  requestURL: string;
+}) {
+  const { body } = await sendNativeAuthRequest(request);
+  return body;
 }

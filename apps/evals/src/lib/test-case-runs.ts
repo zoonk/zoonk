@@ -2,18 +2,10 @@ import { type TestCase } from "./types";
 
 type TestCaseRunProgress = { completedRuns: number; totalRuns: number };
 
-/**
- * Removes only the generated numeric run suffix so repeated outputs can be
- * grouped without changing test case ids that already contain dashes or numbers.
- */
 export function getBaseTestCaseId(testCaseRunId: string): string {
   return testCaseRunId.replace(/-\d+$/u, "");
 }
 
-/**
- * Gives every generated run a stable id so generation, progress, and scoring
- * all refer to the same saved output entry.
- */
 export function getTestCaseRunId({
   runNumber,
   testCaseId,
@@ -24,11 +16,6 @@ export function getTestCaseRunId({
   return `${testCaseId}-${runNumber}`;
 }
 
-/**
- * Expands the current test case registry into the exact run ids that should
- * exist. Historical runs and outputs for removed cases are intentionally not
- * included because they must not make the current task look complete.
- */
 function getExpectedTestCaseRunIds({
   runsPerTestCase,
   testCases,
@@ -43,11 +30,6 @@ function getExpectedTestCaseRunIds({
   );
 }
 
-/**
- * Counts only unique saved ids that are still required by the current task.
- * This keeps extra historical runs, removed cases, and duplicate entries from
- * inflating progress or incorrectly marking the task complete.
- */
 export function getTestCaseRunProgress({
   completedRunIds,
   runsPerTestCase,

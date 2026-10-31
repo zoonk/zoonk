@@ -1,0 +1,1 @@
+export const MAX_ONBOARDING_ANSWER_LENGTH = 200;

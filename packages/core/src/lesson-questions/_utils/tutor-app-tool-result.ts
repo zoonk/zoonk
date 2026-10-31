@@ -1,0 +1,62 @@
+import { type GoalTutorAppToolResult } from "@zoonk/ai/tasks/tutor/goal-tutor-cards";
+import { type GoalTutorAppTool } from "@zoonk/ai/tasks/tutor/goal-tutor-tools";
+import { type TutorToolOffer } from "../contract";
+import { type offerTutorTool } from "../offer-tutor-tool";
+
+type OfferedDetails = Extract<GoalTutorAppToolResult, { status: "offered" }>["offered"];
+
+function describeOffer(offer: TutorToolOffer): OfferedDetails {
+  switch (offer.kind) {
+    case "startGoal":
+      return offer.course ? { course: offer.course.title } : {};
+    case "chapterTest":
+      return { chapter: offer.chapterTitle, lessonsLeft: offer.lessonsLeft };
+    case "mockExam":
+      return { subjects: offer.subjects };
+    case "essay":
+      return { cadence: offer.cadence, subject: offer.subject };
+    case "mistakes":
+      return { mistakes: offer.open };
+    case "conversationCall":
+      return offer.call.limit
+        ? { callTimeUsed: offer.call.limit.period, unit: offer.unitTitle }
+        : { minutes: offer.call.minutes, unit: offer.unitTitle };
+    case "pronunciation":
+      return { words: offer.words };
+    case "plus":
+      return { subscribed: offer.subscribed };
+    case "chooseFocus":
+    case "stats":
+    case "logbook":
+    case "memory":
+      return {};
+    default:
+      return offer satisfies never;
+  }
+}
+
+function isLocked(offer: TutorToolOffer): boolean {
+  return "access" in offer && offer.access === "plusRequired";
+}
+
+export function toAppToolResult({
+  result,
+  tool,
+}: {
+  result: Awaited<ReturnType<typeof offerTutorTool>>;
+  tool: GoalTutorAppTool;
+}): GoalTutorAppToolResult {
+  if (result.status !== "offered") {
+    return {
+      reason: result.status === "unavailable" ? result.reason : "unavailable",
+      status: "unavailable",
+      tool,
+    };
+  }
+
+  const offered = describeOffer(result.offer);
+
+  return isLocked(result.offer)
+    ? { offered, plusRequired: true, status: "offered", tool }
+    : { offered, status: "offered", tool };
+}

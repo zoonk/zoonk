@@ -3,7 +3,7 @@
   "ignore": ["**/*.d.**.ts"],
   "ignoreIssues": { "**/.next/**/types/routes.d.ts": ["types"] },
   "ignoreWorkspaces": ["packages/e2e!", "packages/testing!"],
-  "ignoreBinaries": ["build-and-start", "make", "psql", "turbo!"],
+  "ignoreBinaries": ["build-and-start", "make", "osascript", "psql", "turbo!"],
   "ignoreDependencies": [
     "@prisma/client",
     "@tailwindcss/postcss",
@@ -15,9 +15,9 @@
   "includeEntryExports": true,
   "tags": ["-lintignore", "-internal", "-public"],
   "workspaces": {
-    ".": { "project": ["scripts/**/*.mts"] },
+    ".": { "entry": ["scripts/worktree/claude-create.mts"], "project": ["scripts/**/*.mts"] },
     "apps/android": {
-      "entry": [".eloqnt/config.ts", ".eloqnt/android-xml.ts"],
+      "entry": [".eloqnt/config.ts", ".eloqnt/android-xml.ts", "scripts/sandbox/sandbox-page.mts"],
       "project": [".eloqnt/**/*.ts", "scripts/**/*.mts", "!scripts/run-emulator.mts"]
     },
     "apps/apple": {
@@ -26,24 +26,43 @@
       "project": ["!scripts/run-simulator.mts"]
     },
     "apps/api": {
-      "entry": [".eloqnt/config.ts", "scripts/*.ts"],
+      "entry": [".eloqnt/config.ts", "e2e/gateway-fetch.ts", "scripts/*.ts"],
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
     },
     "apps/blog": { "project": ["src/**/*.{ts,tsx,mdx}!"] },
+    "apps/evals": { "entry": ["scripts/*.{ts,mts}!"] },
     "apps/mailbox": { "project": ["src/**/*.{ts,tsx,css}!", "!src/server/**!"] },
     "apps/main": {
-      "entry": [".eloqnt/config.ts", "src/app/*/privacy/*.mdx", "src/app/*/terms/*.mdx"],
+      "entry": [
+        ".eloqnt/config.ts",
+        "e2e/prepare-data.ts",
+        "src/app/*/privacy/*.mdx",
+        "src/app/*/terms/*.mdx"
+      ],
       "project": ["src/**/*.{ts,tsx,mdx,css}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
+    },
+    "packages/ai": {
+      "entry": ["scripts/*.ts!"],
+      "project": ["src/**/*.ts!", "!**/_test-utils/**!"]
+    },
+    "packages/auth": {
+      "project": ["src/**/*.ts!", "!**/_test-utils/**!", "!src/{e2e,testing}.ts"]
     },
     "packages/core": { "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"] },
     "packages/db": {
-      "entry": ["prisma.config.ts", "src/prisma/sync-content.{ts,mts}!"],
-      "ignore": ["src/prisma/seed.ts", "src/prisma/seed/**"],
+      "entry": ["prisma.config.ts", "src/prisma/sync-content.ts!"],
+      "project": ["**/*.{ts,mts}!", "!src/prisma/seed.ts!", "!src/test-{database,environment}.ts!"],
+      "ignore": ["src/prisma/seed/**"],
       "prisma": false
     },
-    "packages/player": {
+    "packages/i18n": { "entry": ["src/precompiled-formats/cli.ts!"] },
+    "packages/learn": {
       "entry": [".eloqnt/config.ts"],
       "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"]
+    },
+    "packages/player": {
+      "entry": [".eloqnt/config.ts", "scripts/base-maps/build-base-maps.ts!"],
+      "project": ["src/**/*.{ts,tsx}!", "scripts/**/*.ts!", "!**/_test-utils/**!"]
     },
     "packages/ui": { "includeEntryExports": false }
   }

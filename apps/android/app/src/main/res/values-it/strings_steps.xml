@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "steps_continue": "69faf3452522644eff2aace77e8a10715bab90252c2e3766f049f72ee7e7d6a5",
+  "steps_progress": "ca97865a13655ba70db95363d230696199e2b2904da3b9bc6ad260ae66b06629"
+}
+-->
+<resources>
+    <string name="steps_continue">Continua</string>
+    <!-- Read by TalkBack for the step dots: "Step 2 of 4". -->
+    <string name="steps_progress">Passaggio %1$d di %2$d</string>
+</resources>

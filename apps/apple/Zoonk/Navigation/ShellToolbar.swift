@@ -1,0 +1,383 @@
+import SwiftUI
+
+struct ShellToolbar: ViewModifier {
+  @Environment(AppRouter.self) private var router
+  @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(SessionStore.self) private var session
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+  @Environment(\.isToolbarVertical) private var isToolbarVertical
+
+  let isShown: Bool
+
+  /// When a screen's own items crowd the bar, iOS 27 moves the level into the overflow menu before
+  /// the account.
+  func body(content: Content) -> some View {
+    if !isShown {
+      content
+    } else if #available(iOS 27, *) {
+      content.toolbar { items(account: account.visibilityPriority(.high)) }
+    } else {
+      content.toolbar { items(account: account) }
+    }
+  }
+
+  /// iPhone Duo's folded vertical bar can't fit the tab's title and the goal's name, and the system
+  /// would drop the title; the menu still names every goal.
+  private var isSwitcherCompact: Bool {
+    isToolbarVertical && horizontalSizeClass == .compact
+  }
+
+  @ToolbarContentBuilder
+  private func items(account: some ToolbarContent) -> some ToolbarContent {
+    switch session.state {
+    case .restoring where session.authenticatedSession == nil:
+      ToolbarItem(placement: .topBarTrailing) {
+        EmptyView()
+      }
+    case .signedOut:
+      ToolbarItem(placement: .topBarTrailing) {
+        Button {
+          router.present(.signIn)
+        } label: {
+          Text("Log in", tableName: "Navigation", comment: "Opens sign-in")
+        }
+      }
+    case .restoring, .signedIn, .unavailable:
+      if let summary = learner.summary.value {
+        ToolbarItem(placement: .topBarLeading) {
+          GoalSwitcher(summary: summary, isCompact: isSwitcherCompact)
+        }
+
+        if let level = summary.level {
+          ToolbarItem(placement: .topBarTrailing) {
+            LevelButton(level: level)
+          }
+
+          ToolbarSpacer(.fixed, placement: .topBarTrailing)
+        }
+      } else {
+        ToolbarItem(placement: .topBarLeading) {
+          GoalSwitcherPlaceholder(isCompact: isSwitcherCompact)
+        }
+
+        ToolbarItem(placement: .topBarTrailing) {
+          LevelPlaceholder()
+        }
+
+        ToolbarSpacer(.fixed, placement: .topBarTrailing)
+      }
+
+      account
+    }
+  }
+
+  private var account: some ToolbarContent {
+    ToolbarItem(placement: .topBarTrailing) {
+      AccountToolbarButton {
+        router.present(.account)
+      }
+    }
+    .sharedBackgroundVisibility(.hidden)
+  }
+}
+
+private struct LevelButton: View {
+  @Environment(AppRouter.self) private var router
+
+  let level: LearnerLevel
+
+  var body: some View {
+    let belt = level.belt
+
+    Button {
+      router.open(.statistics)
+    } label: {
+      HStack(spacing: 6) {
+        BeltDot(belt: belt)
+
+        Text(level.level, format: .number)
+          .monospacedDigit()
+      }
+    }
+    .accessibilityLabel(
+      Text(
+        "\(Text(belt.localizedTitle)), level \(level.level). Statistics", tableName: "Navigation",
+        comment:
+          "Spoken label of the toolbar button with the learner's belt and level, which opens their statistics"
+      ))
+  }
+}
+
+/// Holds the goal switcher's place while the learner's summary is read, so the bar keeps its shape
+/// when it arrives; a failed read says so instead of leaving the place empty.
+private struct GoalSwitcherPlaceholder: View {
+  @Environment(LearnerSummaryStore.self) private var learner
+
+  let isCompact: Bool
+
+  var body: some View {
+    if case .failed = learner.summary.state {
+      Button {
+        Task { await learner.summary.refresh() }
+      } label: {
+        HStack(spacing: 4) {
+          Image(systemName: "arrow.clockwise")
+
+          if !isCompact {
+            Text("Try again", tableName: "Navigation", comment: "Reads the learner's goals again")
+              .lineLimit(1)
+          }
+        }
+        .fontWeight(.semibold)
+      }
+      .accessibilityLabel(
+        Text(
+          "Your goals didn't load. Try again", tableName: "Navigation",
+          comment: "Spoken label of the toolbar button shown when the learner's goals didn't load"
+        ))
+    } else {
+      HStack(spacing: 4) {
+        if isCompact {
+          Image(systemName: "target")
+        } else {
+          startGoalTitle
+
+          Image(systemName: "chevron.down")
+            .imageScale(.small)
+        }
+      }
+      .fontWeight(.semibold)
+      .placeholderShape()
+    }
+  }
+}
+
+private struct LevelPlaceholder: View {
+  var body: some View {
+    HStack(spacing: 6) {
+      BeltDot(belt: .white)
+
+      Text(verbatim: "1")
+    }
+    .placeholderShape()
+  }
+}
+
+extension View {
+  /// The bar turns a toolbar item's text and images into its own, which reach accessibility even
+  /// when the item hides them, so a placeholder keeps only their size and draws a shape.
+  fileprivate func placeholderShape() -> some View {
+    fixedSize()
+      .hidden()
+      .background(.quaternary, in: .capsule)
+  }
+}
+
+/// Acting on one goal (pause, archive) lives on the Plan.
+private struct GoalSwitcher: View {
+  @Environment(AppRouter.self) private var router
+  @Environment(LearnerSummaryStore.self) private var learner
+  @State private var pendingGoalId: String?
+  /// Caps a long goal title so it truncates in the bar instead of moving to its overflow menu.
+  @ScaledMetric(relativeTo: .body) private var maxTitleWidth: CGFloat = 140
+
+  let summary: LearnerSummary
+  let isCompact: Bool
+
+  var body: some View {
+    let followed = summary.followedGoals
+    let explanations = summary.openExplanations
+
+    if followed.isEmpty && explanations.isEmpty {
+      Button {
+        router.open(.startGoal())
+      } label: {
+        // A toolbar draws a Label as its icon alone; main's link says "Start a goal" beside it.
+        HStack(spacing: 4) {
+          Image(systemName: "plus")
+
+          if !isCompact {
+            startGoalTitle
+              .lineLimit(1)
+          }
+        }
+        .fontWeight(.semibold)
+      }
+      .accessibilityLabel(startGoalTitle)
+    } else {
+      Menu {
+        if !followed.isEmpty {
+          Section {
+            ForEach(followed, id: \.id) { goal in
+              Toggle(isOn: isShown(goal)) {
+                Text(goal.title)
+                Text(goalLine(goal))
+              }
+            }
+          } header: {
+            Text(
+              "Your goals", tableName: "Navigation",
+              comment: "Heading over the learner's goals in the goal switcher")
+          }
+        }
+
+        if !explanations.isEmpty {
+          Section {
+            ForEach(explanations, id: \.id) { goal in
+              Button {
+                router.open(.explain(goalId: goal.id))
+              } label: {
+                Label(goal.title, systemImage: "lightbulb")
+              }
+            }
+          } header: {
+            Text(
+              "Quick explanations", tableName: "Navigation",
+              comment: "Heading over the quick explanations the learner hasn't finished")
+          }
+        }
+
+        Section {
+          Button {
+            router.open(.startGoal())
+          } label: {
+            Label {
+              Text(
+                "Start a new goal", tableName: "Navigation",
+                comment: "Goal switcher option that starts another goal")
+            } icon: {
+              Image(systemName: "plus")
+            }
+          }
+
+          Button {
+            router.open(.catalog)
+          } label: {
+            Label {
+              Text(
+                "Explore courses", tableName: "Navigation",
+                comment: "Goal switcher option that opens the course catalog")
+            } icon: {
+              Image(systemName: "square.grid.2x2")
+            }
+          }
+        }
+      } label: {
+        if isCompact {
+          Image(systemName: "target")
+        } else {
+          HStack(spacing: 4) {
+            if let goal = shownGoal {
+              Text(goal.title)
+                .lineLimit(1)
+                .frame(maxWidth: maxTitleWidth)
+            } else {
+              startGoalTitle
+            }
+
+            Image(systemName: "chevron.down")
+              .imageScale(.small)
+              .foregroundStyle(.secondary)
+              .accessibilityHidden(true)
+          }
+          .fontWeight(.semibold)
+        }
+      }
+      .accessibilityLabel(shownGoal.map { Text($0.title) } ?? startGoalTitle)
+      .accessibilityHint(
+        Text(
+          "Current goal. Switch goal", tableName: "Navigation",
+          comment: "Spoken hint of the goal switcher, after the current goal's title"))
+    }
+  }
+
+  private var shownGoal: LearnerGoal? {
+    summary.followedGoals.first { $0.id == pendingGoalId } ?? summary.shownGoal
+  }
+
+  private func isShown(_ goal: LearnerGoal) -> Binding<Bool> {
+    Binding(
+      get: { shownGoal?.id == goal.id },
+      set: { isOn in
+        guard isOn, shownGoal?.id != goal.id else {
+          return
+        }
+
+        pendingGoalId = goal.id
+
+        Task {
+          await learner.switchGoal(to: goal.id)
+          router.popToRoots()
+          pendingGoalId = nil
+        }
+      })
+  }
+}
+
+private var startGoalTitle: Text {
+  Text(
+    "Start a goal", tableName: "Navigation",
+    comment: "Opens Today, where the learner starts a goal")
+}
+
+private func goalLine(_ goal: LearnerGoal) -> String {
+  switch goal.status {
+  case .paused:
+    return String(
+      localized: "Paused", table: "Navigation", comment: "A goal the learner paused")
+  case .completed:
+    return String(
+      localized: "Finished", table: "Navigation", comment: "A goal the learner finished")
+  case .active, .archived:
+    let time = Duration.seconds(goal.dailyMinutes * 60)
+      .formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))
+    let perDay = String(
+      localized: "\(time) a day", table: "Navigation",
+      comment: "How long the learner studies a goal each day, such as 45 min a day")
+
+    guard let days = daysLeft(until: goal.targetDate) else {
+      return perDay
+    }
+
+    let left =
+      days == 0
+      ? String(
+        localized: "The day is here", table: "Navigation",
+        comment: "A goal whose target date is today")
+      : String(
+        localized: "\(days) days left", table: "Navigation",
+        comment: "Days until a goal's target date")
+
+    return "\(perDay) · \(left)"
+  }
+}
+
+private func daysLeft(until targetDate: String?) -> Int? {
+  guard let targetDate,
+    let date = try? Date(targetDate, strategy: .iso8601.year().month().day())
+  else {
+    return nil
+  }
+
+  var calendar = Calendar(identifier: .gregorian)
+  calendar.timeZone = .gmt
+  let today = calendar.date(
+    from: Calendar.current.dateComponents([.year, .month, .day], from: .now))
+  guard let today,
+    let days = calendar.dateComponents([.day], from: today, to: date).day, days >= 0
+  else {
+    return nil
+  }
+
+  return days
+}
+
+extension EnvironmentValues {
+  var isToolbarVertical: Bool {
+    if #available(iOS 27.1, *) {
+      toolbarVerticalEdge != nil
+    } else {
+      false
+    }
+  }
+}

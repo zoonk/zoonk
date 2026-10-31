@@ -1,0 +1,944 @@
+{
+  "modelId": "openai/gpt-6-sol",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations confirm all four keys: 0.80 × 1.30 = 1.04, giving a 4% increase; 936 ÷ (0.80 × 1.30 × 0.90) = R$ 1,000; 0.08 × (22 × 6 + 8 × 10) × 0.90 = R$ 15.264, rounded to R$ 15.26; and (1.2 × 0.25 + 0.4 × 0.75) × 20 × 1 = R$ 12. Each question has exactly one defensible correct option, and the worked explanations agree with the calculations.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "All distractors correspond to identifiable learner mistakes, and recomputing the described mistakes produces the listed values. For example, omitting the first discount gives 936 ÷ (1.30 × 0.90) = 800, and treating 80 W as 0.8 kW gives R$ 152.64. Labels are specific, and feedback explains the erroneous operation or omitted step rather than merely announcing the correct answer.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The questions use concise everyday support texts, clear commands, five parallel alternatives, and one correct answer, consistent with ENEM-style quantitative items. The financial and household-energy assumptions are plausible, the language is appropriate Brazilian Portuguese, and option length does not reveal the answers.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All four questions require application of their assigned skill, with exactly two multiple-choice questions per skill and no typed questions. However, the percentage pair remains in essentially the same commercial-service repricing situation, including identical first two rates. The electricity pair varies the operating details but repeats the same monthly-cost task through summed power–time products. This does not meet the required variation in both situation and what is asked; the repeated-task weakness limits the category to 7.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4026,
+          "outputTokens": 1252,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The within-skill variety requirement is not fully met. Both percentage questions concern sequential repricing of a paid service and even repeat the initial 20% discount and 30% increase; asking for the original price adds mathematical variety but does not provide a substantively different situation. Both electricity questions ask for monthly expenditure, despite the explicit requirement that the two questions differ in what they ask.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Use a non-price context for one percentage question while retaining its inverse calculation. For electricity, retain the useful contrast between variable operating schedules and variable power, but make one question ask for an allowable operating time or a comparison between usage plans. A non-unit tariff in the washing-machine item would also make the conversion from energy to cost meaningful.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Mock exam questions in Brazilian Portuguese for two ENEM skills: exactly two ENEM-style multiple-choice questions per skill (short support text, a command, 5 options, distractors from typical mistakes) and no typed questions. Each skill lists the situations its questions in the bank already use (USED_SITUATIONS): no new question uses one of them again with other names, places or numbers, and a skill's two new questions differ from each other in situation and in what they ask. Each question tests only its own skill and reads like a real ENEM question at its level. The math must be right.",
+        "id": "pt-enem-mock-quick-only-1",
+        "userInput": {
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "language": "pt",
+          "quickCount": 2,
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+              "level": "intermediate",
+              "name": "Aumentos e descontos percentuais sucessivos",
+              "usedSituations": [
+                "Uma loja aumentou o preço de um produto em 10% e, no mês seguinte, deu 10% de desconto."
+              ]
+            },
+            {
+              "description": "Calcular a energia que um aparelho doméstico consome a partir da potência e do tempo de uso, e quanto isso custa.",
+              "level": "intermediate",
+              "name": "Consumo de energia elétrica em casa",
+              "usedSituations": [
+                "Um chuveiro elétrico de 5.500 W é usado 30 minutos por dia durante um mês."
+              ]
+            }
+          ],
+          "typedCount": 0
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Solving the three multiple-choice items independently yields the keyed answer in each case. The alternatives contain identifiable pragmatic, pronoun, meaning, tense, or cause-and-effect errors. The typed sample answers satisfy their stated content requirements. No factual or numerical error triggers a correctness cap.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Distractors generally represent recognizable language-learning mistakes, including reversing speaker pronouns, confusing two meanings of 'push back,' and confusing 'earlier' with 'later.' Their Portuguese explanations identify what went wrong rather than merely repeating the answer. Empty accepted-answer lists are appropriate for these constructed responses. However, the opening typed item's experience-and-relevance criterion bundles independently gradable ideas.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The exchanges themselves are plausible workplace English, and option lengths do not noticeably reveal the keys. However, every interview is situated in Brazil instead of Toronto, and one explicitly concerns an administrative assistant position rather than data analysis. The set therefore looks out of place in the requested setting, triggering the at-most-7 cap; the repeated mismatch warrants 6.",
+          "score": 6,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Each skill has one multiple-choice and one English typed-response item. English is genuinely necessary to answer, while instructions, explanations, and grading criteria are in Portuguese. The set varies greeting, clarification, and project-description tasks rather than testing interview etiquette. Its weaknesses are limited B1–B2 difficulty spread, especially in the basic greeting item, and the administrative-role introduction's weaker fit to the requested analyst interview.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3902,
+          "outputTokens": 920,
+          "reasoningTokens": 300
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The interview setting consistently contradicts the requested Toronto context: all six situations name Brazilian cities. The opening typed item explicitly targets an administrative assistant vacancy rather than a data analyst role, and several other situations lack an analyst-specific context. These are substantive task-fit failures.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The opening typed item's final key point combines mentioning relevant experience with connecting that experience to the vacancy. These should be separate, independently checkable criteria.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Improve placement usefulness by spreading difficulty more clearly across B1–B2. The opening multiple-choice item mainly distinguishes basic greeting formulas and pronouns; a more demanding opening exchange could assess how the candidate briefly connects their background to an analyst position.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions for a Brazilian learning US English for a job interview in Toronto, three situation skills at B1 to B2 (intermediate). Every question practices English itself: what the learner reads, chooses or writes as the language (the interviewer's line, the reply options, the typed answer) is in natural US English at about B1 to B2, while the setup, the question, reasons and feedback are in Brazilian Portuguese. Never a question about interview manners or steps that a learner could answer without knowing English, and never a question written entirely in Portuguese. Each skill also has one typed question whose answer is written in English, with key points saying what it must express. Situations are a data analyst's interview, varied, without the learner's own name.",
+        "id": "pt-en-language-interview-placement-1",
+        "userInput": {
+          "quickCount": 1,
+          "typedCount": 1,
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Cumprimentar o entrevistador, apresentar-se e conduzir os primeiros minutos da conversa.",
+              "level": "intermediate",
+              "name": "Iniciar uma entrevista de emprego"
+            },
+            {
+              "description": "Pedir para repetir, reformular ou falar mais devagar sem perder a confiança.",
+              "level": "intermediate",
+              "name": "Pedir esclarecimentos na entrevista"
+            },
+            {
+              "description": "Contar um projeto de dados com o problema, o que você fez e o resultado.",
+              "level": "intermediate",
+              "name": "Apresentar um projeto de dados"
+            }
+          ],
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The food, cinema, and mate keys are supported by their texts. The museum key relies on reversing a one-way condition: icon implies public domain, but no icon does not necessarily imply restricted reproduction. The text needs an explicit exhaustive classification to make the keyed requirement secure. This is one underdetermined question, triggering the cap of 7.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most feedback identifies specific mistakes and explains the relevant textual distinction, especially consultation versus reproduction and the cultural meaning of 'gracias'. However, the cinema explanation about a mistaken pronoun referent cannot produce its option's claim that wordplay will be removed: 'mantendrá' means it will be retained. Several other distractors are insufficiently plausible. The explicit mismatch triggers the cap of 7.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The result provides four short contextualized Spanish texts, Portuguese commands and explanations, and five alternatives per question, broadly matching the requested ENEM structure. Nevertheless, the cinema alternatives do not consistently answer the command asking for a justification, giving away the correct answer through response type. Some distractors also feel manufactured rather than like credible ENEM reading errors.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "There are two questions per skill with distinct texts, and the cultural convention and museum-use scenarios appropriately require applying information. The language split is appropriate. However, the food item can largely be solved through everyday nutritional knowledge and option elimination, weakening the explicit requirement that Spanish comprehension be necessary. The purportedly hard items also offer limited additional linguistic or inferential demand.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4158,
+          "outputTokens": 1659,
+          "reasoningTokens": 946
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The museum question does not securely establish its key: saying that download icons appear only beside public-domain images does not establish that every public-domain image has an icon. Consequently, the absence of an icon alone does not establish that authorization is required. The food question also weakens the required dependence on Spanish comprehension: familiar nutritional advice and conspicuously unreasonable alternatives make its answer readily selectable without interpreting the Spanish qualification.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The cinema question's fourth distractor has a mismatched explanation: interpreting 'los mantendrá' as referring to wordplay would mean retaining the wordplay, not removing it. Several distractors are weakly motivated, particularly treating concentrated juice as proof of no sugars and keeping the mate vessel until someone requests it. In the cinema question, the correct option is also the only option that directly supplies the requested justification.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "State explicitly that all public-domain images, and only those images, carry the download icon. Build distractors around identifiable Spanish expressions and make every cinema alternative a competing justification. Increase the genuine inference required by the questions labeled hard rather than relying primarily on short paraphrases.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in Brazilian Portuguese for two skills of ENEM's foreign language test in Spanish, the option the learner picked of the exam's choice. As in ENEM, each question's support text is in Spanish (a notice, a chronicle, a website, an ad, a song or another real genre), while the setup, the command, the options, and the reasons are in Brazilian Portuguese. Never English, never a text-free grammar or translation drill, and never a question a reader of Portuguese could answer without understanding the Spanish (distractors come from real misreadings: false friends such as \"apenas\", \"exquisito\" or \"embarazada\", a detail read in isolation, a cognate taken at face value). Check every key against the Spanish text. Each skill has two ENEM-style multiple-choice questions with 5 options; a skill's two questions use different texts.",
+        "id": "pt-enem-placement-spanish-option-1",
+        "userInput": {
+          "quickCount": 2,
+          "typedCount": 0,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Usar vocabulário, expressões e estruturas linguísticas para entender o tema e a função de textos em espanhol.",
+              "level": "intermediate",
+              "name": "Interpretar vocabulário e estruturas de textos em espanhol"
+            },
+            {
+              "description": "Usar o espanhol para obter informações e conhecer tecnologias e culturas em textos de diferentes fontes.",
+              "level": "intermediate",
+              "name": "Usar o espanhol para acessar informações e culturas"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All nine keys are defensible. The principles items correctly distinguish official publicity from personal promotion, recognize lawful efficiency improvements, and reject qualification as sufficient justification for direct nepotism. The administrative-act items correctly distinguish illegality from discretionary withdrawal, identify prospective revocation effects, and allow convalidation of a curable competence defect. These conclusions align with article 37, Law 9.784/1999 articles 53–55, and STF Precedent 473. The police-power items correctly allow legally grounded urgent interdiction, prohibit seizure solely to compel tax payment, and distinguish imposing a fine from forcibly collecting it. No correctness cap applies.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Each false assertion targets a specific, realistic misconception: treating public information as permission for personal promotion, revoking an unlawful act, treating every competence defect as incurable, or using seizure to compel tax payment. The labels accurately identify these mistakes, and the explanations explain the relevant distinction rather than merely announcing the correct judgment. No cap applies.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The result consistently uses Brazilian Portuguese and single assertions judged Certo or Errado, with no multiple-choice substitution. The hypothetical administrative situations and traps are credible for Cebraspe. The five-to-four truth balance meets the requested approximate balance, and the concise legal wording fits the exam setting. No realism cap applies.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Each skill receives three contextual applications rather than definition-recall questions. The sets cover distinct focal points, remain within their assigned skills, and do not directly disclose another item's judgment. However, the difficulty spread is modest: the hard nepotism and traffic-fine items do not clearly demand more reasoning than the medium items. The recall/repetition cap is not triggered.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3438,
+          "outputTokens": 1286,
+          "reasoningTokens": 672
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Difficulty differentiation is limited. In particular, the nepotism and traffic-fine items labeled hard are straightforward applications with conspicuous cues, rather than clearly more demanding judgments than the medium items.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Make the harder items require distinguishing legally relevant facts from plausible distractions while retaining one clear judgment and one trap per false assertion. Preserve the current balance of five true and four false statements.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in Brazilian Portuguese for three Brazilian administrative-law skills of a Cebraspe exam. Each skill has three Cebraspe-style assertions judged Certo or Errado (true/false), never multiple choice: a false one hides one realistic trap (a swapped concept, a wrong exception, an absolute word). Check the legal accuracy of every statement against the Constitution's article 37, Law 9.784/1999 and STF Precedent 473. Each question tests only its own skill, a skill's three statements test different points of it and never settle each other's judgment, and about half of all statements are true.",
+        "id": "pt-cebraspe-placement-true-false-1",
+        "userInput": {
+          "quickCount": 3,
+          "typedCount": 0,
+          "examFormat": {
+            "name": "Cebraspe (concurso público)",
+            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
+          },
+          "language": "pt",
+          "quickFormat": "trueFalse",
+          "skills": [
+            {
+              "description": "Aplicar os princípios da administração pública do art. 37 da Constituição a situações concretas.",
+              "level": "intermediate",
+              "name": "Princípios da administração pública (LIMPE)"
+            },
+            {
+              "description": "Distinguir quando a administração deve anular um ato administrativo e quando pode revogá-lo, e os efeitos de cada um.",
+              "level": "intermediate",
+              "name": "Anulação e revogação de atos administrativos"
+            },
+            {
+              "description": "Reconhecer o poder de polícia, seus atributos e limites, em situações da administração pública.",
+              "level": "intermediate",
+              "name": "Poder de polícia"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent review supports the keyed answers and legal explanations in the other five questions under articles 5, XVI, LXXII and LXIX. However, the first assembly item assumes that overlapping locations and times necessarily create interference. Its feedback invokes a risk of frustrating the earlier gathering rather than establishing interference. Keeping both gatherings unchanged can therefore also be defensible on the stated facts, triggering the cap of 7 for one question with multiple defensible answers.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most feedback clearly explains the learner's mistake, especially the distinctions among constitutional remedies and the inability to produce essential expert evidence in mandado de segurança. Labels are specific rather than generic. Nevertheless, several distractors are weakly motivated: a written refusal supposedly preventing habeas data, monetary amounts supposedly preventing it, and a second notice supposedly curing the presence of weapons. These implausible distractors trigger the cap of 7.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "No exam is named. The questions use credible Brazilian civic and administrative settings, including public gatherings, medical records, public-works information, recruitment and business licensing. Commands are direct, and option length does not systematically disclose the answer. The set fits the requested everyday constitutional-law setting.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The result supplies two Portuguese multiple-choice questions for each skill and requires application to concrete circumstances. The assembly questions introduce competing gatherings and weapons rather than merely relocating the previously used authorization scenario. The habeas data questions concern rectification and impersonal public information rather than repeating access to one's own records. Each pair tests distinct aspects. Difficulty is less well calibrated: the supposedly hard habeas data item is a simple scope distinction with weak alternatives, limiting the intended intermediate-level progression.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4538,
+          "outputTokens": 1058,
+          "reasoningTokens": 359
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The first assembly question does not establish that the two gatherings would actually interfere with each other. Sharing a street segment and time does not necessarily frustrate the earlier gathering under article 5, XVI. Consequently, keeping both gatherings unchanged is also defensible if they can coexist, undermining the question's single-answer validity.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Several distractors lack a convincing learner misconception, particularly treating a written refusal or the presence of monetary amounts as barriers to habeas data, and treating a second notice as a remedy for an armed gathering. Their labels describe the selected errors but do not make those errors realistic. The habeas data question labeled hard also requires only a straightforward personal-versus-impersonal distinction.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The mandado de segurança feedback could explicitly connect the documentary-proof requirement to direito líquido e certo, helping learners associate the practical reasoning with the constitutional terminology.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Questions in Brazilian Portuguese for three constitutional-law skills (two multiple-choice questions each). Each skill lists the situations its questions in the bank already use (USED_SITUATIONS): no new question may use one of those situations again with other names, places or numbers (a meeting in a public square for the right of assembly; a request for one's own records for habeas data), and a skill's two new questions differ from each other too. Check the legal accuracy against the Constitution's article 5 (XVI, LXXII, LXIX).",
+        "id": "pt-constitutional-mock-avoids-used-situations-1",
+        "userInput": {
+          "quickCount": 2,
+          "typedCount": 0,
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Aplicar o direito de reunião (art. 5º, XVI) a situações concretas: aviso prévio, autorização, armas, local.",
+              "level": "intermediate",
+              "name": "Direito de reunião",
+              "usedSituations": [
+                "Moradores de um bairro marcaram uma reunião pacífica em uma praça pública, sem armas, e avisaram a prefeitura com antecedência.",
+                "Um grupo quer se reunir em praça pública sem pedir autorização ao poder público."
+              ]
+            },
+            {
+              "description": "Reconhecer quando cabe habeas data (art. 5º, LXXII) e distingui-lo do mandado de segurança.",
+              "level": "intermediate",
+              "name": "Habeas data",
+              "usedSituations": [
+                "Uma pessoa pediu ao órgão público acesso aos próprios dados cadastrais e teve o pedido negado."
+              ]
+            },
+            {
+              "description": "Reconhecer quando cabe mandado de segurança (art. 5º, LXIX) e seus requisitos.",
+              "level": "intermediate",
+              "name": "Mandado de segurança"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculation gives x = 8; 10 hours from 60 + 22(h − 4) − 22 = 170; a 15% decrease; and a 10% increase. The model interpretations correctly identify 120 gallons initially and a drone initially 18 miles away approaching at 0.6 mile per minute. Every question has exactly one defensible correct answer, and the worked explanations are accurate.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "All distractors have specific, plausible misconception labels and explanations identifying the actual mistake. Recomputing the stated algebra mistakes produces 20/3, 10/3, and 22/3; the earnings mistakes produce 9, 6, and 8 hours. The percent distractors likewise follow from the stated comparisons and denominators. Model feedback clearly addresses coefficient swaps, signs, initial time, and units.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "All six items use concise contexts or equations, direct questions, and four options appropriate for Digital SAT Math. The language is plain US English, the situations are credible, and option lengths do not conspicuously reveal the answers.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Each skill has two application questions confined to its intended domain. The pairs vary context and task: symbolic versus contextual equation solving, decrease versus net increase across an intermediate observation, and intercept interpretation versus interpreting both coefficients. However, the percent-change and linear-model pairs provide only a modest difficulty spread despite labeling their second questions hard, limiting their usefulness for distinguishing intermediate proficiency.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4260,
+          "outputTokens": 942,
+          "reasoningTokens": 355
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The difficulty progression is weaker than the labels suggest. The percent-change question labeled hard requires only selecting the endpoints and calculating 20/200, while the hard linear-model question directly interprets two coefficients. These offer limited additional challenge for intermediate-level placement.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Strengthen the second percent-change and linear-model questions with a modest additional reasoning demand within their respective skills, or recalibrate their difficulty labels. Preserve the concise wording and the accurately explained distractors.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in US English for three Digital SAT skills, each with two SAT-style multiple-choice questions (concise context, a direct question, 4 options, distractors from real slips such as sign errors or dividing by the new value). The math must be right. Each question tests only its own skill, and a skill's two questions use different situations and ask different things.",
+        "id": "en-sat-placement-three-skills-1",
+        "userInput": {
+          "quickCount": 2,
+          "typedCount": 0,
+          "examFormat": {
+            "name": "Digital SAT Math",
+            "optionCount": 4,
+            "style": "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing."
+          },
+          "language": "en",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Solve linear equations in one variable, including ones with parentheses and fractions.",
+              "level": "intermediate",
+              "name": "Solving linear equations in one variable"
+            },
+            {
+              "description": "Compute the percent increase or decrease between an original and a new value.",
+              "level": "intermediate",
+              "name": "Percent change"
+            },
+            {
+              "description": "Interpret the slope and y-intercept of a linear model in the context of a real situation.",
+              "level": "intermediate",
+              "name": "Interpreting linear models"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All six questions have exactly one defensible answer, and every key is correct. Independent calculations give 510 ÷ (1.20 × 0.85) = 500; 800 × 0.75 × 1.20 = 720; recycling increases of 16, 22, 24, 5, and 23 kg, making C correct; and only Leste satisfies both strict inequalities. Electricity costs are 0.15 × 8 × 30 × 0.90 = R$32.40 and (1 × 2 + 0.005 × 22) × 30 × 0.80 = R$50.64. The worked solutions are accurate, and the tariffs are explicitly assumptions rather than claims about actual local rates.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most distractors have specific, reproducible explanations, including adding successive percentage rates, ignoring a stage, confusing kWh with reais, and incorrect watt-to-kilowatt conversion. However, comparing final quantities in the recycling table would identify D, not the attributed option B. This triggers the explicit maximum of 7 for a reason naming a mistake that does not yield its option. The feedback for E also mostly restates the correct comparison instead of diagnosing how the learner went wrong.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The questions use Brazilian Portuguese, short everyday contexts, clear commands, and five options with one correct answer. The percentage and electricity items are credible straightforward ENEM-style applications. The appointment-table item is noticeably less authentic: it asks learners to apply arbitrary thresholds without explaining why those thresholds matter, giving it a worksheet-like quality. This is a localized weakness rather than making the entire set out of place for ENEM.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All questions require application of their assigned skills, remain within those skills, and are written in Portuguese. Tables are correctly placed in context as GFM pipe tables. The percentage pair varies inverse versus forward calculation, and the table pair varies change comparison versus filtering. The electricity pair, however, repeats monthly-cost estimation using the same underlying procedure; the standby term changes complexity but not what is asked. This fails the explicit pair-variety requirement and warrants the maximum of 7 for repeated testing in the same way.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5097,
+          "outputTokens": 1378,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The two electricity questions both ask for monthly cost using power × operating time × tariff. Adding standby consumption increases complexity but does not satisfy the requirement that the pair ask different things. In the recycling question, the explanation for Ponto B attributes the choice to comparing final quantities, but that mistake would select Ponto D (95 kg), not B (92 kg).",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Some recycling distractor feedback is weakly diagnostic: the explanation for Ponto E merely contrasts its 23 kg increase with C's 24 kg, while its label describes the wrong selection rather than explaining a realistic mistake. The appointment-table question also reads more like a bare school worksheet filter than a contextualized ENEM problem: no practical purpose is supplied for the two thresholds.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Retain one electricity-cost question and make the other ask for energy consumption, allowable operating time, or savings from changing usage. For the recycling question, design the table and distractors together so each wrong selection follows reproducibly from its named mistake. Give the appointment thresholds a practical role, such as selecting a unit for a pilot program.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in Brazilian Portuguese for three ENEM skills, each skill with two ENEM-style multiple-choice questions (short support text, a command, 5 options, distractors from typical mistakes such as adding successive percentages or misreading a table row). Each question tests only its own skill, and a skill's two questions use different situations, ask different things and never give away each other's answer. Tables go in `context` as GFM pipe tables. Every question reads like a typical ENEM question at its level, never like a primary-school exercise.",
+        "id": "pt-enem-placement-three-skills-1",
+        "userInput": {
+          "quickCount": 2,
+          "typedCount": 0,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+              "level": "intermediate",
+              "name": "Aumentos e descontos percentuais sucessivos"
+            },
+            {
+              "description": "Ler e comparar dados apresentados em tabelas para responder a perguntas sobre valores, diferenças e variações.",
+              "level": "beginner",
+              "name": "Leitura de dados em tabelas"
+            },
+            {
+              "description": "Calcular a energia que um aparelho doméstico consome a partir da potência e do tempo de uso, e quanto isso custa.",
+              "level": "intermediate",
+              "name": "Consumo de energia elétrica em casa"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All six questions have one defensible correct answer, and each key matches it. The respiration and photosynthesis statements are accurate at the requested beginner level. The enzyme explanations fit the observations, and breaking down equal amounts in 2 minutes rather than 10 correctly indicates faster activity. No factual-error or answer-key cap applies.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Every wrong option has a specific label and explanatory feedback, and most identify useful confusions. However, several traps are implausible: producing sunlight from glucose, cooling removing the enzyme, and an enzyme finishing before encountering its target. Labels describing these choices do not make them realistic learner misconceptions. The cap of 7 for several implausible distractors applies.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Swimming, caring for fish, growing plants, and simple enzyme investigations are appropriate non-exam settings. The wording is generally accessible, and option lengths do not systematically reveal the answers. The milk investigation is less concrete because it never identifies the observable change being measured. The set is not broadly out of place, so the setting-mismatch cap does not apply.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "There are exactly two multiple-choice questions per skill, all in US English, with distinct situations and targets within each pair. The enzyme questions genuinely require diagnosis and comparison. However, both respiration questions and much of the photosynthesis pair can be answered by recalling a location, input, or standard process sentence without using the situation. Most questions therefore remain essentially recall, triggering the cap of 7.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4028,
+          "outputTokens": 872,
+          "reasoningTokens": 221
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several distractors are implausible rather than diagnostic of realistic beginner mistakes, especially cells turning glucose into sunlight, cooling removing an enzyme, and an enzyme finishing its work before reaching the milk. Also, four questions largely retrieve familiar facts or process descriptions; their contexts do little to require application. This weakens the set's placement value.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The heated-enzyme question never specifies what change the enzyme produces in milk. Its comparison remains answerable, but the vague observation makes the situation less concrete and clear than it could be.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Replace the weakest distractors with believable mistakes, such as assuming heat always increases enzyme activity or that cooling necessarily restores an enzyme's original shape. Convert some respiration and photosynthesis recall questions into one-step predictions about changed conditions, while retaining the distinct targets within each pair.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in US English for three beginner biology skills without an exam: everyday, clear questions. Each skill gets two multiple-choice questions with a misconception behind every wrong option, in different situations and asking different things (for cellular respiration, for example: what is broken down, what is used, where the energy is stored). Each question tests only its own skill.",
+        "id": "en-biology-placement-no-exam-1",
+        "userInput": {
+          "quickCount": 2,
+          "typedCount": 0,
+          "language": "en",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Explain how cells release energy from glucose using oxygen, and where it happens.",
+              "level": "beginner",
+              "name": "Cellular respiration"
+            },
+            {
+              "description": "Explain how plants use light, water and carbon dioxide to make sugar and release oxygen.",
+              "level": "beginner",
+              "name": "Photosynthesis"
+            },
+            {
+              "description": "Explain how temperature and pH change how fast an enzyme works, and why too much heat stops it.",
+              "level": "beginner",
+              "name": "Enzyme activity"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All six questions have exactly one defensible correct answer, correctly keyed. Independent calculations give 7,5%, 1,5%, R$ 2.035.000.000,00, the unique interval member R$ 1.025.000.000,00, R$ 42,97, and 46,16 kg. The unrounded per-capita results are 42,96875 and 46,15625, so the worked rounding is accurate. No correctness cap is triggered.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The distractors identify specific plausible mistakes, including choosing the wrong denominator, confusing a decimal ratio with a percentage, shifting place values, including excluded interval endpoints, truncating, and rounding to the wrong precision. Recomputing the stated mistakes produces the listed values, including the factor-of-ten per-capita alternatives. Feedback explains the learner's mistake rather than merely supplying the correct answer. No cap is triggered.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Each question provides a short contextual support text, a clear command, and five similarly formatted alternatives with one correct answer. The public-service, budgeting, accessibility, and waste-collection settings are compatible with ENEM-style quantitative questions. Brazilian number and currency conventions are used consistently, and option wording does not reveal the answers. The set does not trigger the out-of-place cap.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All questions require application, stay within their assigned skills, and use Portuguese learner-facing text. However, both percentage items repeat the same direct calculation, and both per-capita items repeat division followed by two-decimal rounding with substantially parallel distractors. The explicit cap for two questions testing the same thing in the same way therefore applies. The two large-number contexts are also both construction-finance scenarios, and the labeled difficulty progression is not well reflected in the operations required.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4859,
+          "outputTokens": 995,
+          "reasoningTokens": 299
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The paired percentage questions both ask for part ÷ total × 100, and the paired per-capita questions both ask for total ÷ population rounded to two decimal places. These repeat the same skill in the same way, triggering the skill-variety cap. The large-number pair also uses two closely related construction-finance situations rather than clearly different settings.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Make the difficulty progression substantive rather than relying on larger numbers and difficulty labels. For example, have one percentage question require selecting the appropriate total from a short table, and one per-capita question compare calculated averages. Use a population or readership setting for one large-number question to distinguish it from the construction-budget question.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in Brazilian Portuguese for three ENEM skills about large quantities and decimals, each skill with two ENEM-style multiple-choice questions (short support text, a command, 5 options, distractors from typical mistakes). Every number is written the Brazilian way: thousands grouped with a dot (12.500; 40.000.000 or 40 milhões), a decimal comma (3,5; 0,03%), money as R$ 1.250,00, and never a run of digits such as 40000000 or 12500. Options that are values use the same format as the text. Each question tests only its own skill, and a skill's two questions use different situations and never give away each other's answer.",
+        "id": "pt-enem-placement-large-numbers-1",
+        "userInput": {
+          "quickCount": 2,
+          "typedCount": 0,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Calcular que porcentagem uma parte representa de um total na casa dos milhares ou dos milhões.",
+              "level": "intermediate",
+              "name": "Porcentagem de uma parte em um total grande"
+            },
+            {
+              "description": "Ler, escrever e comparar números na casa dos milhões e dos bilhões, como populações e orçamentos públicos.",
+              "level": "beginner",
+              "name": "Leitura e comparação de números grandes"
+            },
+            {
+              "description": "Calcular valores por pessoa, como gasto ou consumo per capita, dividindo um total grande pela população e arredondando o resultado.",
+              "level": "intermediate",
+              "name": "Valores per capita com decimais"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Both keyed answers are the best supported choices. In the first question, recording a provisional answer and moving on preserves the benefit of elimination while protecting time for other questions. The alternative of returning only after everything else is finished, without recording an answer, introduces an avoidable risk of leaving the item unanswered. In the second, two simultaneous changes do not establish that publicity alone caused the increase. No factual or numerical errors are present.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The distractors represent recognizable mistakes: pursuing certainty without a time limit, using answer length as a shortcut, neglecting answer-transfer time, making an unsupported causal attribution, and abandoning evidence through guessing or excessive doubt. Labels are specific, and explanations generally identify why each decision is worse rather than merely repeating the key.",
+          "score": 9,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Both items use short contextual passages, clear commands, five alternatives, and plausible situations during an ENEM simulation. Answer-sheet timing is treated as a scoring-related time constraint rather than an exam-day procedure. However, conspicuously extreme wording in several alternatives makes the preferred strategy easier to identify from presentation alone, weakening exam-like discrimination.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The set is entirely in Portuguese and covers two complementary applications: managing a difficult unfinished question and deciding whether to change an answer during final review. Neither item is definition recall. The main limitation is that the second context already articulates the decisive distinction between the alternatives, reducing the learner's opportunity to demonstrate independent comparison at an intermediate level.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2960,
+          "outputTokens": 1505,
+          "reasoningTokens": 898
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The second question largely supplies the reasoning needed to answer it: the context explicitly says the text does not support attributing the increase only to publicity. This makes the comparison less demanding than the intermediate skill suggests. Some alternatives also advertise their weakness through extreme commitments, such as rereading until time expires or filling the answer sheet only if time remains.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "In the second question, present the two competing interpretations without explaining their evidential status in advance. Keep the simultaneous changes as the evidence learners must evaluate. Make the time-management distractors represent more tempting, bounded decisions rather than overtly unlimited persistence.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in Brazilian Portuguese for one ENEM test-taking skill: two ENEM-style multiple-choice questions, both set in a situation during the exam, each asking how to handle a question in the exam, with one best option and wrong options that are tempting but worse strategies, never a sound strategy marked wrong because another one is listed as right. The test-taking skill is about scoring well (time, choosing between close options), never the exam day's procedures.",
+        "id": "pt-enem-placement-test-taking-1",
+        "userInput": {
+          "quickCount": 2,
+          "typedCount": 0,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Decidir entre alternativas próximas e administrar o tempo de uma questão difícil durante a prova.",
+              "level": "intermediate",
+              "name": "Decidir entre alternativas e administrar o tempo"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "placement-items"
+}

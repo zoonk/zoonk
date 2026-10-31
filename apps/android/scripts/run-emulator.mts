@@ -3,6 +3,7 @@ import { type ChildProcess, type SpawnSyncReturns, spawn, spawnSync } from "node
 import { accessSync, constants } from "node:fs";
 import { homedir, platform } from "node:os";
 import path from "node:path";
+import { waitForTurn } from "../../../scripts/dev/queue.mts";
 
 type DeviceFamily = "phone" | "tablet";
 
@@ -559,7 +560,8 @@ function installAndLaunchApp({
   process.stdout.write(`Installing ${APK_FILE_NAME} on ${serial}...\n`);
 
   runCommand({
-    arguments: ["-s", serial, "install", "-r", apkPath],
+    // -g grants the debug build's local network permission, which Android 17 requires to reach the Mac's API.
+    arguments: ["-s", serial, "install", "-r", "-g", apkPath],
     command: adbPath,
     environment,
     workingDirectory: androidDirectory,
@@ -589,7 +591,14 @@ async function runAndroidApp(options: CliOptions) {
     serial,
   });
 
-  buildApp(toolchain);
+  const turn = await waitForTurn();
+
+  try {
+    buildApp(toolchain);
+  } finally {
+    turn?.release();
+  }
+
   installAndLaunchApp({ adbPath: toolchain.adbPath, environment: toolchain.environment, serial });
   process.stdout.write(`Zoonk is running on ${selection.avdName} (${serial}).\n`);
 }

@@ -35,30 +35,19 @@ const appleConfiguration: AppleConfiguration | null =
     ? { ...appleSigningConfiguration, appBundleIdentifier: APPLE_APP_BUNDLE_IDENTIFIER }
     : null;
 
-/**
- * Exposes the complete server-only Apple configuration to the native token
- * exchange without allowing any request to choose a client identifier.
- */
 export function getAppleConfiguration() {
   return appleConfiguration;
 }
 
 /**
- * Supplies Better Auth's required email field on repeat Apple sign-ins, where
- * Apple intentionally omits the email claim. The placeholder is never a
- * delivery address; the existing provider account remains anchored by the
- * stable Apple subject and keeps the real or relay email saved on first sign-in.
+ * Apple omits the email on repeat sign-ins, but Better Auth requires one. The placeholder is never a
+ * delivery address; the account keeps the email saved on first sign-in.
  */
 function mapAppleProfileToUser(profile: AppleProfile) {
   return { email: profile.email ?? `${profile.sub}@apple.placeholder.local` };
 }
 
-/**
- * Signs a client secret for the identifier that will be sent to Apple. Web
- * authorization codes use the Services ID, while native codes use the app's
- * bundle identifier, so one globally cached secret would be invalid for one of
- * those two flows.
- */
+/** Web codes use the Services ID and native codes the bundle ID, so each needs its own secret. */
 export async function getAppleClientSecret({
   clientIdentifier,
   configuration,
@@ -73,7 +62,7 @@ export async function getAppleClientSecret({
     return cached.token;
   }
 
-  const ttlSec = 2_592_000; // 1 month
+  const ttlSec = 30 * 24 * 60 * 60;
   const privateKeyPEM = configuration.privateKey.replaceAll(String.raw`\n`, "\n");
   const key = await importPKCS8(privateKeyPEM, "ES256");
 
@@ -91,6 +80,12 @@ export async function getAppleClientSecret({
   return token;
 }
 
+/**
+ * The web flow signs in through Apple's redirect, never with an ID token, so
+ * the public social endpoint refuses Apple ID tokens: otherwise an identity
+ * token intercepted on its way to the Android app would sign in there without
+ * the raw nonce (Better Auth checks a nonce only when the request sends one).
+ */
 export const appleProvider = appleSigningConfiguration
   ? {
       apple: {
@@ -99,6 +94,7 @@ export const appleProvider = appleSigningConfiguration
           clientIdentifier: appleSigningConfiguration.clientId,
           configuration: appleSigningConfiguration,
         }),
+        disableIdTokenSignIn: true,
         mapProfileToUser: mapAppleProfileToUser,
       },
     }
@@ -106,25 +102,21 @@ export const appleProvider = appleSigningConfiguration
 
 const configuredAppleProvider = appleProvider.apple ? apple(appleProvider.apple) : null;
 
-/**
- * Uses Better Auth's built-in provider metadata as the source of truth for the
- * issuer required when verifying Apple identity tokens.
- */
 export function getAppleIdentityTokenIssuer() {
   return configuredAppleProvider?.idToken.issuer;
 }
 
-/**
- * Gives the private native auth boundary an Apple provider that validates the
- * app bundle audience. The public provider intentionally omits this option so
- * Better Auth's generic social endpoint accepts only the web Services ID.
- */
+/** Accepts both audiences (the iOS bundle id and the Android Services ID); runs only after Zoonk verified the token's client and raw nonce. */
 export function getNativeAppleProvider() {
   if (!appleConfiguration || !appleProvider.apple) {
     return {};
   }
 
   return {
-    apple: { ...appleProvider.apple, appBundleIdentifier: appleConfiguration.appBundleIdentifier },
+    apple: {
+      ...appleProvider.apple,
+      audience: [appleConfiguration.appBundleIdentifier, appleConfiguration.clientId],
+      disableIdTokenSignIn: false,
+    },
   };
 }

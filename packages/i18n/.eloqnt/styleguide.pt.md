@@ -1,44 +1,99 @@
 # `pt` styleguide
 
-- Use an informal, approachable register. Address the user as "você".
-- Use Brazilian Portuguese (pt-BR) spelling and grammar.
-- Use Zoonk as masculine (o Zoonk, no Zoonk, do Zoonk, etc).
-- Translations should be like regular people speak in everyday language. For example:
-  - "You can create it" = "Você pode criar ela/ele" (not "Você pode criá-la/o")
-  - using "-la" or "-lo" is too formal and not how people speak in Brazil.
+## Voice and locale
+
+- Use Brazilian Portuguese (pt-BR) and informal “você”.
+- Prefer everyday speech: “a gente” for “we”, “te ajuda” for “helps you”, and “criar ela” over “criá-la”.
+- “Zoonk”, “Plus” and “Zoonk Plus” always take the masculine article: “O Zoonk cria”.
+- Localize illustrative exam examples for Brazil: Enem (not “ENEM”), vestibular, concursos públicos, and prova da OAB.
+- Treat “Poder Mental” as a product name without an article in short labels and headings. Amounts take “de”: “+10 de Poder Mental”.
 
 ## Glossary
 
-- "course": "curso"
-- "chapter": "capítulo"
-- "lesson": "aula"
-- "hello@zoonk.com": "contato@zoonk.com"
-- "SAT": "Enem"
-- "Bar exam": "prova da OAB"
-- "exam": "prova"
-- "learning": "estudo" (eg "learning days" = "dias de estudo")
-- "Brain Power": "Poder Mental"
-- "BP": "PM"
-- "Energy": "Energia"
-- "helps you": "te ajuda"
-- "questions": "perguntas"
-- "practice questions": "perguntas práticas"
-- "options": "alternativas" (when used in the context of multiple choice questions)
-- "listening": "escuta"
-- "complete" (imperative, as in "Complete lessons"): "complete" (not "conclua")
-- "completed": "completou"
-- "we": "a gente"
-- "quiz": "quiz"
-- "language": "idioma"
-- "score": "Pontuação"
-- "step": "passo"
+- “daily time limit” (the learner's setting): “limite diário de tempo”
+- “lesson”: “aula”, not “lição”
+- “exam”: “prova”
+- “subject”: “matéria”, not “disciplina”
+- “topic”: “tópico”, not “assunto” or “tema”
+- “notice” (official exam announcement): “edital”
+- “syllabus” (what an exam's notice or a class covers): “conteúdo programático”
+- “learning” (study days): “estudo”
+- “goal” (the learner's goal): “meta”; goal of a call, lesson, or activity: “objetivo”
+- “start a goal”: “começar uma meta”
+- “check” (an answer): “conferir”; “grade” (an essay) and “fix” (a mistake): “corrigir”
+- “say” (aloud, in pronunciation or speaking practice): “falar”; words left to say again: “repetir”
+- “write” (Zoonk generating content): “criar”; learner writing: “escrever”
+- “share” (personal facts): “contar”
+- “question” in a lesson, practice or chat: “pergunta”; an exam or mock exam item: “questão”
+- “task” (a speaking exam's task): “tarefa”, not “atividade” (a lesson activity)
+- “practice questions”: “perguntas de prática”, not “perguntas práticas”
+- “options” (multiple choice): “alternativas”
+- “guess”, and the learner's “estimate” before the answer shows: “palpite”; a blind guess on an exam question: “chutar”; an estimated score: “estimativa”
+- “security check”: “sistema de segurança”, not “verificação”
+- “picture” / “image”: “imagem”, not “figura”
+- “learning path”: “trilha”
+- “prerequisite”: “base”, not “pré-requisito”
+- “Brain Power”: “Poder Mental”
+- “score”, including an exam's “band”: “pontuação”, not “nota” or “faixa”; the admission cut-off stays “nota de corte”
+- “again”, including “Retry”: “de novo”, not “novamente”
+- “listening”: “escuta”
+- “Speaking”: “Conversação”
+- “Free” (subscription name): “Grátis”
+- “Get Plus”: “assinar o Plus”, not “mudar para o Plus”
+- “language”: “idioma”
+- “card”: “cartão”, not “carta”
+- “badge”: “insígnia”; the Trickster's “trap”: “pegadinha”
+- “musicianship”: “formação musical”
+- “email”: “e-mail”
+- “hello@zoonk.com”: “contato@zoonk.com”
+- “Send feedback” (to Zoonk): “Enviar feedback”, not “Enviar comentários”
+- “You've reached today's study time”: “Você usou todo o seu tempo de estudo de hoje”, in every line that starts with it
+- Ending a subscription “for an important reason”: “por motivo justificado”
+- “Keep Plus” (turns a stopped renewal back on): “Manter o Plus”
 
-## Special Cases
+## Feature names and states
 
-- Treat "Poder Mental" as a product-like term in short labels and headings. For example, write "O que é Poder Mental?" instead of adding a leading article.
-- Use an article or possessive with "Poder Mental" only when the sentence sounds more natural with one. For example, "Você aumentou o Poder Mental".
-- When translating exam names, adapt them to Brazilian Portuguese. For example, SAT, AP, Bar, etc aren't relevant to Brazilian audiences. Instead, use concurso público, Enem, vestibular, etc. as appropriate. For example, instead of "SAT prep course", use "curso preparatório para o Enem" or "curso preparatório para concurso público", depending on the context.
-- For belt colors, use feminine forms. For example, "White Belt" = "Faixa Branca", "Yellow Belt" = "Faixa Amarela", etc. If it's color alone in the context of belts, use "Yellow" = "Amarela", "White" = "Branca", etc.
-- Don't use "{verb} você". Instead, use "te {verb}". For example, instead of "We help you learn", use "A gente te ajuda a aprender".
-- When "path" is used in the context of a learning path, use "trilha". For example, "The path starts with the basics" = "A trilha começa com o básico", not "O caminho começa com o básico".
-- Don't repeat articles and pronouns unnecessarily. For example, instead of "nossos termos de uso e nossa política de privacidade", use "nossos termos de uso e política de privacidade"; instead of "um nome e um email", use "um nome e email"; etc.
+- “Buddy”: “Parceiro”
+- Mission names (missions list, first steps): infinitive: “Concluir sua primeira aula”
+- “call” (speaking practice): “conversa”, not “chamada” or “ligação”
+- “Mistakes notebook”: “Caderno de erros”
+- “Saved to your mistakes”: “Salvo no seu caderno de erros”, in every line that starts with it
+- “To fix” / “Fixed” (notebook tabs): “Para corrigir” / “Corrigidos”
+- “practice mistakes”: “praticar o que você errou”
+- “New” / “Learning” / “Solid” / “Mastered” (mastery): “Novo” / “Aprendendo” / “Firme” / “Dominado”
+- “Known before”: “Você já sabia”; “Known” (progress legend): “Já sabia”
+- “Preparation”: “Preparo”
+- “the Trickster”: “o Pegadinha”
+- “Broken” / “Held” (shield): “Quebrado” / “Resistiu”
+- “Phase challenge”: “Desafio da fase”, not “avaliação”, “ponto de controle”, or “etapa”
+- “Step” the learner takes or follows (the next step, a solution’s or worked example’s steps, a run’s steps): “passo” (“Próximo passo”, “Passo 2”); “etapa” only for a stage of a process or a flow (“as etapas da fotossíntese”, “nas próximas etapas”)
+- “Weekly challenge”: “Desafio semanal”
+- “Mock exam”, including speaking mocks: “Simulado”, not “prova simulada” or “simulação”
+- “Logbook”: “Diário de bordo”
+- “Fading” (needs review): “Para revisar”
+- “Focus test”: “Teste de foco”
+- “Right” / “Wrong” (Cebraspe-style exam judgment): “Certo” / “Errado”
+
+## Plan terminology
+
+- “Paused” (pace): “Em pausa”; paused goal: “Pausada”
+- “Finished” (plan): “Concluído”; finished goal: “Concluída”
+- “Past date”: “Passou da data”, not “Encerrado”, “Expirado”, or “Vencido”
+- “Needs adjusting”: “Precisa de ajustes”
+- “Too tight”: “Apertado demais”
+- “Even across skills”: “Habilidades no mesmo nível”
+- “left out”: “ficar de fora”, not “pulado” or “ignorado”
+- “skipped” (known through placement): “pulado”, not “ignorado”
+- “Daily time”: “Tempo diário”, not “Tempo por dia”
+
+## Buddy names
+
+- “Zu”: “Zu”
+- “Noodle”: “Cuca”
+- “Beep”: “Bip”
+- “Otto”: “Oto”
+- “Ask {name}”: “Pergunte para {name}”
+
+## Formatting preference
+
+- Match the app's compact durations: “2 h 30 min”, “30 s”.

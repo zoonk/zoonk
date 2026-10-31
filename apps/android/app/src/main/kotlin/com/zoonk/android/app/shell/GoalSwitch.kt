@@ -1,0 +1,57 @@
+package com.zoonk.android.app.shell
+
+import com.zoonk.android.data.Resource
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import java.util.UUID
+
+/**
+ * The goal the learner switched to, until the tabs show it: they still show the previous goal
+ * meanwhile, and a tap on Today's Start would open that goal's session.
+ */
+class GoalSwitch(
+    private val makeActive: suspend (UUID) -> Boolean,
+) {
+    private val target = MutableStateFlow<UUID?>(null)
+    private val writing = MutableStateFlow(false)
+
+    val pending: StateFlow<UUID?> = target.asStateFlow()
+
+    /** The switch is being saved; until it is, the tabs can't have read the new goal. */
+    val saving: StateFlow<Boolean> = writing.asStateFlow()
+
+    /**
+     * [shown] are the reads that show the active goal, read again once it's saved; [shows] says when
+     * they do. False when the switch couldn't be saved; null for a pick while one is saving, which is ignored.
+     */
+    suspend fun select(
+        goalId: UUID,
+        shown: List<Resource<*>>,
+        shows: (UUID) -> Boolean,
+    ): Boolean? {
+        if (writing.value) return null
+        writing.value = true
+        target.value = goalId
+
+        try {
+            val saved = makeActive(goalId)
+            if (saved) {
+                coroutineScope { shown.forEach { launch { it.refresh() } } }
+                if (shows(goalId)) settle(goalId)
+            } else {
+                settle(goalId)
+            }
+            return saved
+        } finally {
+            writing.value = false
+        }
+    }
+
+    /** A tab shows [goalId] now (or no goal's day at all), so the switch is over. */
+    fun settle(goalId: UUID) {
+        target.compareAndSet(goalId, null)
+    }
+}

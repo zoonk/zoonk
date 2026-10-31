@@ -12,6 +12,7 @@ export async function getCategories(): Promise<CategoryInfo[]> {
     { icon: CATEGORY_ICONS.culture, key: "culture", label: t("Culture") },
     { icon: CATEGORY_ICONS.economics, key: "economics", label: t("Economics") },
     { icon: CATEGORY_ICONS.engineering, key: "engineering", label: t("Engineering") },
+    { icon: CATEGORY_ICONS.exams, key: "exams", label: t("Exams") },
     { icon: CATEGORY_ICONS.geography, key: "geography", label: t("Geography") },
     { icon: CATEGORY_ICONS.health, key: "health", label: t("Health") },
     { icon: CATEGORY_ICONS.history, key: "history", label: t("History") },
@@ -24,11 +25,7 @@ export async function getCategories(): Promise<CategoryInfo[]> {
   ];
 }
 
-/**
- * Resolves route category slugs to their translated display labels so UI copy
- * never exposes internal values such as "tech" instead of "Technology".
- */
-export async function getCategoryLabel(category: CourseCategory): Promise<string> {
+async function getCategoryLabel(category: CourseCategory): Promise<string> {
   const categories = await getCategories();
 
   return categories.find((cat) => cat.key === category)?.label ?? "";
@@ -47,12 +44,16 @@ export async function getCategoryMeta(params: { category: CourseCategory }) {
   };
 }
 
-export async function getCategoryHeader(category: CourseCategory) {
+export async function getCategoryTitles(): Promise<Record<string, string>> {
   const t = await getExtracted();
-  const label = await getCategoryLabel(category);
+  const categories = await getCategories();
 
-  return {
-    description: t("Explore all {category} courses", { category: label }),
-    title: t("{category} courses", { category: label }),
-  };
+  return Object.fromEntries(
+    categories.map(({ key, label }) => [key, t("Courses in {category}", { category: label })]),
+  );
+}
+
+export async function getCategoryNames(): Promise<Record<string, string>> {
+  const categories = await getCategories();
+  return Object.fromEntries(categories.map(({ key, label }) => [key, label]));
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "steps_continue": "c6758f558d79db354324f78c5ec9d30237e450f1800afd779031bebeefebda0b",
+  "steps_progress": "b2c2de3c28d79ab2c05fc2f668ccfbc85b6a28a8a87a3294fc1ca65ca7fcae0b"
+}
+-->
+<resources>
+    <string name="steps_continue">Devam et</string>
+    <!-- Read by TalkBack for the step dots: "Step 2 of 4". -->
+    <string name="steps_progress">Adım %1$d, toplam %2$d</string>
+</resources>

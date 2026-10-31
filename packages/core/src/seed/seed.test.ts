@@ -1,0 +1,68 @@
+import { prisma } from "@zoonk/db";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { addDays, toIsoDate } from "../plans/planner/plan-calendar";
+import { readMissionDocument } from "../sessions/missions/catalog";
+import { seedPersonaCopy } from "./seed";
+
+const FRIDAY = new Date("2026-10-16T20:52:12Z");
+const TODAY = new Date("2026-10-16T00:00:00Z");
+const HISTORY_DAYS = 14;
+
+const ANA_STUDY_DATES = Array.from({ length: HISTORY_DAYS }, (_, index) =>
+  toIsoDate(addDays(TODAY, index - HISTORY_DAYS)),
+);
+
+async function listStudyDates(userId: string): Promise<string[]> {
+  const days = await prisma.dailyProgress.findMany({
+    orderBy: { date: "asc" },
+    select: { date: true },
+    where: { date: { lt: TODAY }, userId },
+  });
+
+  return days.map((day) => toIsoDate(day.date));
+}
+
+describe("a persona's copy", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(FRIDAY);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it.each(["535d0cba", "ef53361d"])(
+    "has Ana's study days and her Friday under copy key %s",
+    async (copyKey) => {
+      const copy = await seedPersonaCopy({
+        copyKey,
+        email: `persona-copy-${copyKey}@zoonk.test`,
+        persona: "exam",
+      });
+
+      const [dates, today] = await Promise.all([
+        listStudyDates(copy.userId),
+        prisma.studySession.findFirstOrThrow({
+          select: { freshStart: true },
+          where: { localDate: TODAY, userId: copy.userId },
+        }),
+      ]);
+
+      expect({ dates, freshStart: today.freshStart }).toStrictEqual({
+        dates: ANA_STUDY_DATES,
+        freshStart: null,
+      });
+
+      const sessions = await prisma.studySession.findMany({
+        where: { localDate: { lt: TODAY }, userId: copy.userId },
+      });
+
+      const missions = sessions.map((session) => readMissionDocument(session.missions));
+
+      expect(missions).toHaveLength(HISTORY_DAYS);
+      expect(missions.every((document) => document !== null)).toBe(true);
+      expect(missions.some((document) => (document?.picks.length ?? 0) > 0)).toBe(true);
+    },
+  );
+});

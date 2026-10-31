@@ -2,8 +2,7 @@ import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { prisma } from "@zoonk/db";
 import { isLocalhostSupported } from "@zoonk/utils/environment";
 import { getAllowedHosts, getBaseUrl, getDevelopmentTrustedOrigins } from "@zoonk/utils/origin";
-import { IS_RELAUNCH_WAITLIST_ENABLED } from "@zoonk/utils/relaunch";
-import { APIError, createAuthMiddleware } from "better-auth/api";
+import { getIP } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import {
   admin as adminPlugin,
@@ -17,29 +16,34 @@ import { deleteUserDependenciesBeforeAuthDelete } from "./account-deletion";
 import {
   AUTH_ADVANCED_OPTIONS,
   AUTH_MEMBERSHIP_LIMIT,
-  AUTH_ORGANIZATION_LIMIT,
   BETTER_AUTH_BASE_PATH,
   COOKIE_CACHE_MINUTES,
   IS_COOKIE_CACHE_ENABLED,
   SESSION_EXPIRES_IN_DAYS,
 } from "./config";
-import { ensureUserProgressAfterAuthCreate } from "./db-hooks";
+import {
+  ensureUserProgressAfterAuthCreate,
+  reportSignInAfterSessionCreate,
+  reportSignUpAfterAuthCreate,
+} from "./db-hooks";
 import { createEmailOTPPlugin } from "./email-otp-plugin";
-import { validateEmailBeforeOTP, validateEmailBeforeUserCreate } from "./email-signup-policy";
+import { validateEmailBeforeOTP } from "./email-signup-policy";
+import { guardUserCreation } from "./guests/account-creation-guard";
 import { ac, admin, member, owner } from "./permissions";
+import { accessGuardsPlugin } from "./plugins/access-guards";
+import { appAttestPlugin } from "./plugins/app-attest";
+import { botCheckPlugin } from "./plugins/bot-check";
+import { guestPlugin } from "./plugins/guest";
+import { sessionHintPlugin } from "./plugins/session-hint";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
+import { nameProviderAccount } from "./provider-username";
 import { appleProvider } from "./providers/apple";
 import { googleProvider } from "./providers/google";
 import { stripePlugin } from "./stripe/plugin";
 import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH, normalizeUsername } from "./username-rules";
 import { isUsernameAllowed } from "./username-validator";
 
-/**
- * Base auth config shared between production and E2E.
- * Does NOT include rateLimit or emailAndPassword - those differ per environment.
- */
 export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
-  account: { accountLinking: { enabled: true } },
   advanced: AUTH_ADVANCED_OPTIONS,
   appName: "Zoonk",
   basePath: BETTER_AUTH_BASE_PATH,
@@ -50,26 +54,69 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
   },
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   databaseHooks: {
+    session: {
+      create: {
+        after: async (session, context) => {
+          await prisma.accessRecord.create({
+            data: {
+              createdAt: session.createdAt,
+              id: session.id,
+              ipAddress: context?.headers
+                ? (getIP(context.headers, {
+                    advanced: {
+                      ipAddress: {
+                        ...context.context.options.advanced?.ipAddress,
+                        ipv6Subnet: 128,
+                      },
+                    },
+                  }) ?? session.ipAddress)
+                : session.ipAddress,
+              userId: session.userId,
+            },
+          });
+        },
+      },
+    },
     user: {
-      create: { after: ensureUserProgressAfterAuthCreate, before: validateEmailBeforeUserCreate },
+      create: {
+        after: async (user, context) => {
+          await ensureUserProgressAfterAuthCreate(user, context);
+          await reportSignUpAfterAuthCreate(user, context);
+        },
+        before: async (user, context) => {
+          await guardUserCreation(user, context);
+          return nameProviderAccount(user, context);
+        },
+      },
     },
   },
-  hooks: {
-    before: createAuthMiddleware(async (context) => {
-      if (IS_RELAUNCH_WAITLIST_ENABLED && context.path === "/subscription/upgrade") {
-        throw new APIError("FORBIDDEN", { code: "SUBSCRIPTIONS_PAUSED" });
-      }
-
-      await validateEmailBeforeOTP(context);
-    }),
-  },
+  hooks: { before: validateEmailBeforeOTP },
   session: {
     cookieCache: { enabled: IS_COOKIE_CACHE_ENABLED, maxAge: 60 * COOKIE_CACHE_MINUTES },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
   },
   trustedOrigins: ["https://appleid.apple.com", ...getDevelopmentTrustedOrigins()],
   user: { deleteUser: { beforeDelete: deleteUserDependenciesBeforeAuthDelete, enabled: true } },
+  // Better Auth would delete every expired code on any sign-in, so a learner back with an expired
+  // code would hear it's wrong instead of expired. Expired codes stay until the daily sweep.
+  verification: { disableCleanup: true },
 };
+
+/**
+ * For the instances learners sign in with. Account deletion's reauthorization signs in only to
+ * prove who's deleting, and native Apple reports once its whole sign-in has succeeded.
+ */
+export const signInDatabaseHooks = {
+  ...baseAuthConfig.databaseHooks,
+  session: {
+    create: {
+      after: async (session, context) => {
+        await baseAuthConfig.databaseHooks?.session?.create?.after?.(session, context);
+        await reportSignInAfterSessionCreate(session, context);
+      },
+    },
+  },
+} satisfies BetterAuthOptions["databaseHooks"];
 
 export const baseAuthPlugins = [
   adminPlugin(),
@@ -82,11 +129,8 @@ export const baseAuthPlugins = [
   }),
   organization({
     ac,
-    // Temporarily disable organization creation
-    // We'll support this in the future
     allowUserToCreateOrganization: false,
     membershipLimit: AUTH_MEMBERSHIP_LIMIT,
-    organizationLimit: AUTH_ORGANIZATION_LIMIT,
     roles: { admin, member, owner },
     schema: {
       organization: {
@@ -97,12 +141,18 @@ export const baseAuthPlugins = [
 ] as const;
 
 export const fullPlugins = [
+  botCheckPlugin(),
+  appAttestPlugin(),
   createEmailOTPPlugin({ storeOTP: "hashed" }),
   oneTimeToken({ storeToken: "hashed" }),
   bearer(),
   stripePlugin(),
   trustedOriginPlugin(),
-  // NextCookies should be the last plugin in the array
+  guestPlugin(),
+  accessGuardsPlugin(),
+  // The session hint pairs with the session cookie every earlier hook may have written, and
+  // NextCookies (always last) hands both to Next.js.
+  sessionHintPlugin(),
   nextCookies(),
 ] as const;
 

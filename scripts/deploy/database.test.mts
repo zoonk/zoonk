@@ -5,7 +5,6 @@ import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vites
 
 const cli = vi.hoisted(() => ({ commands: [] as string[][] }));
 
-// The provider CLI is an external boundary; never launch it against a live database in tests.
 vi.mock("node:child_process", () => ({
   execFile: (
     _file: string,
@@ -51,7 +50,7 @@ describe("Deployment database selection", () => {
 
   it.each(["staging", "production"])("selects the explicit %s database", async (target) => {
     vi.stubEnv("DEPLOY_TARGET", target);
-    // Never retrieve live database credentials in tests; Neon is the external boundary.
+
     vi.stubGlobal("fetch", (url: URL) => {
       if (url.pathname.endsWith("/branches")) {
         return Promise.resolve(

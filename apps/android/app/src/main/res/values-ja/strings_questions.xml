@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "questions_correct": "7bd1eec35b36841853dc9c6f0bef225e61d2ad574e0cd5baceb64bb6b1294aac",
+  "questions_dont_know_yet": "286d2d2cc2dc390328ba9f83dde15c693c4fb56d6edf854fb6167634412f417a",
+  "questions_drill_last_answer": "31350ed538b121efc5580de6c42bae700075ffce216657ca76c66eb7a5e4c79d",
+  "questions_drill_no_guessing": "5302abc1d9f68b4b85b1a3743cd0b6a370531bff5921ffd52a7756a69ad8d5f8",
+  "questions_drill_not_sure": "b2cfdf96738aa7e68645bbfbcd9ddd1eae986680df12eea5538decefd24e616e",
+  "questions_drill_not_sure_praise": "5a6b9c0b546b998959ea3b06968fb8fc6ac5ebf627bbfbddfef19d0a9c8f9f17",
+  "questions_drill_open_lesson": "9a7c055ec459d31377fec63f182f9296dcdd321a16a658546a185252659bd7df",
+  "questions_drill_read_carefully": "408eb2e038bdf39a7a58ee085ce2a21551fc89d48b6f759e113e9ae2889fe0cb",
+  "questions_drill_reteach": "7df534d309f695809848e76823da56d1576debffe9b01f82c75e478d239dfbe6",
+  "questions_drill_reteach_ideas": "2f8855fd45031f6f0ce8637e58750477a4487fe38eed12b892166b77d6d72248",
+  "questions_drill_retry": "d42843940e12910a2034922932f4e55ff0a03d9b62139d8e578b4a16545fe0fa",
+  "questions_drill_seconds_left": "20b4509eefea5d95024b61a6e97b463ac5c27da451c2fd60703e96995b3797e9",
+  "questions_drill_show_answers": "9b78e40247234b8ea60a1a23edcdde9bf4355ada786f9118ecd1eda92e00989f",
+  "questions_drill_spot_the_trap": "a8c0350ea559b3755503564b1bdc1fae56451588eb46f13c468ce1ee96e1a550",
+  "questions_drill_start": "98932062454bf626b93124b4c41671b651152147df74011505e5079f0eb5ca85",
+  "questions_drill_time_left": "db91f9e6a6f1e1dee9cb7854892b04dd78c010886de5c08c4d094a7973011cff",
+  "questions_drill_time_up": "e68f3ef17c15d7a60ac6e5f0e4cebebd3ccd985623c901cc47175ab74b03fbae",
+  "questions_drill_timed": "c1f4827b15bd9cdee34988eb1a97f553634b77b2225546428d837b4570b3f884",
+  "questions_drill_timed_out": "51762b1264206c8f98d82acd1f423b0e0be78d8fd8a88dec4566ad4e4f419ed8",
+  "questions_drill_trap": "163951ea7f6e4c53c4fc5a664bfe57a5a9beddc1087a0bdde7d69891da1f8d3e",
+  "questions_entry_decimals": "832815d7e12ba6da3b2ce2a74000257d6a8c81a1bd3daeefa1538531e8eda3f6",
+  "questions_entry_fraction": "be5aeb9f01e9add0839fac5c411bbe1a2b7fa9db3e61b8b9e25feb23f1d4ba41",
+  "questions_entry_integer": "5b7c62dd116028e4939a85cf0ae5f5c3040fca4497543ca0dc8769b9b14af760",
+  "questions_false": "903219b7bea6e96bf5ececf77ed939c48008ddb50f845e4182e5c9ef7e1a46b9",
+  "questions_feedback_label": "d950a821df341a5733a090e90f4062822b74f601cb2e463e0d03edb0e73df253",
+  "questions_invalid_fraction": "7d25b0de0708846058ba4afd77ce1fdc6d16957eb1e52b426a1d9f9d5143c7d3",
+  "questions_invalid_integer": "9c47ca06387b27c5d53fa99ccb8e8b122a232ea599de95574ce41e6c23a951ca",
+  "questions_invalid_number": "439085f99d66f858b66204021a51d9d98b574ee57b38b612b71d0c266740c9e5",
+  "questions_leave_blank": "f1cc9298bc1cb58dc1eab3b7e3c0c239683cc6309cc6f9b2516ce1a2a74619f8",
+  "questions_left_blank": "5edd9588baf22604dbae2527694ae511e86adf74935ffb77e49332fc2e35b2ed",
+  "questions_mark_correct": "e72879bb7442482be03d30a09fffc1b258f4daddd018d01d88fc187788847469",
+  "questions_mark_wrong": "c6343e2a052d1cfa61c90dbf1ed00e7505a44555bbbd91e50d8a451268426896",
+  "questions_matched_with": "256e1cff86b2858ccaa312b7c78ef3f68728d00564cc96644e967c11190c23db",
+  "questions_mistake_fixed": "cd5460a3f4fe549052ed9d0a9c456ae159294f5156ef4457e6f1bf702e4eeb58",
+  "questions_mistakes_fixed": "dd935979acfeac761f921a8a20c7b70c1809d9eb0de4415e40c7d70576d69c5b",
+  "questions_not_quite": "38468003acf180f62333d09da61f8fe53000399a705d79a560106afd78291ee7",
+  "questions_open_source": "3d2df58ee3b09bf7609108beec3042627839112130827c06c44e734c127bd311",
+  "questions_order_hint": "ec866cd8cb1fe8b35283c309e1ef990efa638d8ef47bf514647683ca9e7866b4",
+  "questions_pick_all": "b243c73a143410df84faea675eb40ac9a33296249cb0e4cdeea94f23804f0420",
+  "questions_pick_count": "294a260c9774c85614feb4fcd1d7a9ca927ac87f39e2bdef824276feaa407400",
+  "questions_place": "9be392a90251ce415dd45e2c29dd34a4ec68f6549aa2df06153057f31242af57",
+  "questions_place_right": "f7be98884c9c2868ed4d228f7931331b637fc7f9dbd9ad8b4bd90e8600267e0f",
+  "questions_place_wrong": "bab336ae6b2d73c4689cd62330e7a04a708e96527e1b0dac24df328f9c174779",
+  "questions_placement_note": "9dd353609a1676c8c29f6e3e4503bd7b41eb71ccea9588f13c9cca6bdb4e1984",
+  "questions_quoted_source": "f2721ec1f57dd3ad7817215ef97fad7c1d83851ac94cb1f19d14f1261015539a",
+  "questions_read_again": "fca8c8165d46b7f45dde6c486ea37bd611908ae055264b02cf7089801457f2a3",
+  "questions_result": "8e4def5ae20f6d0aa55ab0d72c22b65ec1f2db5bf0101003a4751335cc76832a",
+  "questions_right": "62a40bcddb8d456520e2cf539b0b27a2a18d1aa741dca3c10fdbf0bda3a0f69b",
+  "questions_right_answer": "8b60dc780199ae0b45632baf05f2a9245e2a858cf9e5126241a847296f0609f3",
+  "questions_saved": "1f61e64c95e98651ad209c08719064910d8b3956bac15a8019a683afa2dd45ca",
+  "questions_saved_tomorrow": "e8c970e9d7cfa48b88947ae3bad4427ba395251e8f5172a1efa1eca6b3665209",
+  "questions_set_place_audio": "c694af5ca16ed3498efe639492ccced139e137b0c8a3ac7cc68d6ddc136d58e9",
+  "questions_set_place_case": "e10b7bab0b9c6b829955eb6b66bf0a34b5f4a7c76a6deb1ce7dee635299d135c",
+  "questions_set_place_chart": "1e38c682e85f54927176ba84676bff904c7684162e372da1f3e623d497adf36f",
+  "questions_set_place_text": "e3814e7027d3ae62909c658672c94a2395e2a9824e99ea3885362ab322a5c389",
+  "questions_show_less": "98c190d851de95a6fa7305704c62c4557ab3e5c187ba54a0c9c14de54f652362",
+  "questions_source_checked": "9f6175c968f1f3064319c2e944edf8c8374fb754472cb4ed9157efbafcff7a00",
+  "questions_source_checked_by": "6b68a924ae6d4738185acea2f1c1b273c60180b60b12bb0a2089edddd67421a6",
+  "questions_sources_chip": "bb2fdf0c474758fa9d95d56ca058e04eed46d7b68d1f15efeca084b31c04c7da",
+  "questions_streak": "76b03d35ca10fba96805abdab9011dfa2afd26c6c75d2000165ae4339fbff2c3",
+  "questions_true": "f6cf4c903c2c674f1d918e543835b6a2a8908b3d249df3a439c37cf984dbe483",
+  "questions_wrong": "b2a4ba73d5b7f6523853a768dc74a29973d7dedfc4de64bb0412ae05dd6e5a69",
+  "questions_your_answer": "f0d00a06c0d4f36b8a99844cf17634584679784735adaee80959f5303c51b5d6"
+}
+-->
+<resources>
+    <string name="questions_pick_all">当てはまるものをすべて選んでください。</string>
+    <plurals name="questions_pick_count">
+        <item quantity="other">選択肢を%d個選んでください。</item>
+    </plurals>
+    <string name="questions_true">正しい</string>
+    <string name="questions_false">間違っている</string>
+    <!-- An answer option judging a statement right, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
+    <string name="questions_right">正しい</string>
+    <!-- An answer option judging a statement wrong, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
+    <string name="questions_wrong">誤っている</string>
+    <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
+    <string name="questions_leave_blank">回答しない</string>
+    <string name="questions_order_hint">手順を正しい順番にタップしてください。</string>
+    <!-- The place a step was put in, read aloud. -->
+    <string name="questions_place">%1$d番目</string>
+    <string name="questions_place_right">%1$d番目、正しい位置です</string>
+    <string name="questions_place_wrong">%1$d番目、位置が違います</string>
+    <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
+    <string name="questions_matched_with">%1$s、%2$sとペアになっています</string>
+    <string name="questions_your_answer">選んだ答え</string>
+    <string name="questions_mark_correct">正解</string>
+    <string name="questions_mark_wrong">不正解</string>
+    <plurals name="questions_entry_decimals">
+        <item quantity="other">四捨五入して小数点以下%d桁にしてください。</item>
+    </plurals>
+    <string name="questions_entry_fraction">2/3のような分数か、小数で入力してください。</string>
+    <string name="questions_entry_integer">整数で入力してください。</string>
+    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
+    <string name="questions_invalid_number">%1$sのような数値を入力してください。</string>
+    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
+    <string name="questions_invalid_fraction">2/3のような分数か、%1$sのような数値を入力してください。</string>
+    <string name="questions_invalid_integer">12のような整数を入力してください。</string>
+    <string name="questions_feedback_label">回答へのフィードバック</string>
+    <string name="questions_correct">正解です！</string>
+    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
+    <string name="questions_not_quite">正解ではありません</string>
+    <string name="questions_left_blank">未回答</string>
+    <string name="questions_dont_know_yet">まだわからない</string>
+    <plurals name="questions_streak">
+        <item quantity="other">%d問連続正解</item>
+    </plurals>
+    <string name="questions_right_answer">正解：%1$s</string>
+    <!-- Names the last line of a worked solution for TalkBack, read before it as in "Result: x = 4". -->
+    <string name="questions_result">結果</string>
+    <string name="questions_mistake_fixed">間違いを克服しました。間違いノートから外れます。</string>
+    <!-- Always several: one fixed mistake reads questions_mistake_fixed. -->
+    <plurals name="questions_mistakes_fixed">
+        <item quantity="other">%d件の間違いを克服しました。間違いノートから削除されます。</item>
+    </plurals>
+    <string name="questions_saved">間違いノートに保存しました</string>
+    <string name="questions_saved_tomorrow">間違いノートに保存しました · 明日また出てきます</string>
+    <string name="questions_show_less">折りたたむ</string>
+    <string name="questions_read_again">全文をもう一度読む</string>
+    <string name="questions_set_place_audio">この音声の%1$d問目／全%2$d問</string>
+    <string name="questions_set_place_case">この事例の%1$d問目／全%2$d問</string>
+    <string name="questions_set_place_chart">この図表の%1$d問目／全%2$d問</string>
+    <string name="questions_set_place_text">この文章の%1$d問目／全%2$d問</string>
+    <string name="questions_placement_note">学習計画を調整しています。ここで間違えても、間違いノートには保存されません。</string>
+    <!-- %1$s names the exam and year the question was printed in. -->
+    <string name="questions_quoted_source">過去問 · %1$s</string>
+    <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
+    <string name="questions_sources_chip">出典 · %1$sに確認済み</string>
+    <string name="questions_source_checked_by">%1$s · %2$sに確認済み</string>
+    <string name="questions_source_checked">%1$sに確認済み</string>
+    <string name="questions_open_source">出典を開く</string>
+    <string name="questions_drill_reteach_ideas">まず考え方を学んでから、問題をいくつか解きます。</string>
+    <string name="questions_drill_reteach">つまずいた内容について、問題をいくつか解きます。</string>
+    <string name="questions_drill_read_carefully">一語一語よく読んでから答えましょう。</string>
+    <string name="questions_drill_spot_the_trap">ひっかけがあります。見つけてから答えましょう。</string>
+    <plurals name="questions_drill_timed">
+        <item quantity="other">本番と同じく、1問あたり%d秒です。</item>
+    </plurals>
+    <string name="questions_drill_no_guessing">自信があるときだけ答えましょう。自信がないと言っても大丈夫です。</string>
+    <string name="questions_drill_retry">もう一度やってみましょう。</string>
+    <string name="questions_drill_start">問題を始める</string>
+    <!-- %1$s is the learner's earlier answer, in their words or an option's. -->
+    <string name="questions_drill_last_answer">前回の回答：%1$s</string>
+    <string name="questions_drill_timed_out">時間切れです。この問題は不正解として記録され、後の練習でもう一度出てきます。</string>
+    <string name="questions_drill_not_sure_praise">いい判断です。当てずっぽうで答えるより、自信がないと伝えるほうがいいです。</string>
+    <string name="questions_drill_trap">ひっかけ：</string>
+    <string name="questions_drill_time_up">時間切れ</string>
+    <string name="questions_drill_time_left">残り時間</string>
+    <plurals name="questions_drill_seconds_left">
+        <item quantity="other">残り%d秒</item>
+    </plurals>
+    <string name="questions_drill_show_answers">読み終えたので答えを見る</string>
+    <string name="questions_drill_not_sure">自信がない</string>
+    <string name="questions_drill_open_lesson">レッスンを復習する</string>
+</resources>

@@ -1,10 +1,10 @@
+import { getAccuracyRate } from "@/data/stats/get-accuracy-rate";
 import { getAccuracyRateTrend } from "@/data/stats/get-accuracy-rate-trend";
 import { getActiveLearnerTrend } from "@/data/stats/get-active-learner-trend";
 import { getAvgLessonTimeTrend } from "@/data/stats/get-avg-lesson-time-trend";
 import { getAvgTimeByLessonKind } from "@/data/stats/get-avg-time-by-lesson-kind";
 import { getCompletionRateTrend } from "@/data/stats/get-completion-rate-trend";
 import { getLearningTimeTrend } from "@/data/stats/get-learning-time-trend";
-import { getPeriodAccuracyRate } from "@/data/stats/get-period-accuracy-rate";
 import { getPeriodActiveLearners } from "@/data/stats/get-period-active-learners";
 import { getPeriodAvgLessonTime } from "@/data/stats/get-period-avg-lesson-time";
 import { getPeriodCompletionRate } from "@/data/stats/get-period-completion-rate";
@@ -19,11 +19,6 @@ import { type EngagementAnalysisView } from "../_utils/stats-analysis";
 import { type StatsPeriod } from "../_utils/stats-period";
 import { LessonBreakdownTable } from "./lesson-breakdown-table";
 
-/**
- * Loads one Engagement question at a time. Learner milestones are handled by
- * their existing independent component because they use all-time thresholds
- * rather than a calendar period.
- */
 export async function EngagementMetrics({
   statsPeriod,
   view,
@@ -65,10 +60,6 @@ export async function EngagementMetrics({
   return <ActiveLearnerAnalysis statsPeriod={statsPeriod} />;
 }
 
-/**
- * Active learners are distinct people across the selected period, while the
- * bars show distinct learners inside each visible calendar bucket.
- */
 async function ActiveLearnerAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
 
@@ -97,16 +88,12 @@ async function ActiveLearnerAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod
   );
 }
 
-/**
- * Accuracy uses all answered steps for the headline and the same correct-share
- * calculation inside each chart bucket.
- */
 async function AccuracyAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
 
   const [currentValue, previousValue, trend] = await Promise.all([
-    getPeriodAccuracyRate(current.start, current.end),
-    getPeriodAccuracyRate(previous.start, previous.end),
+    getAccuracyRate(current.start, current.end),
+    getAccuracyRate(previous.start, previous.end),
     getAccuracyRateTrend(current.start, current.end, chartPeriod),
   ]);
 
@@ -121,7 +108,7 @@ async function AccuracyAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   return (
     <AdminAnalysisTrend
       comparison={{ comparisonLabel, current: currentValue, previous: previousValue }}
-      description="Correct step answers divided by all step attempts in the selected period."
+      description="Correct answers divided by all answers in the selected period."
       value={`${currentValue.toFixed(1)}%`}
     >
       <AdminMetricTrendChart dataPoints={dataPoints} label="Accuracy rate" valueFormat="percent" />
@@ -129,10 +116,6 @@ async function AccuracyAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   );
 }
 
-/**
- * Completion uses started lessons as its denominator, preserving the existing
- * definition while making changes across calendar buckets visible.
- */
 async function CompletionAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
 
@@ -165,10 +148,6 @@ async function CompletionAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod })
   );
 }
 
-/**
- * Average lesson time is non-additive, so each bar represents one independent
- * bucket and leaves buckets without completions empty instead of inventing zero seconds.
- */
 async function AverageLessonTimeAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
 
@@ -201,10 +180,6 @@ async function AverageLessonTimeAnalysis({ statsPeriod }: { statsPeriod: StatsPe
   );
 }
 
-/**
- * Total learning time is additive, so bars show the contribution of each
- * bucket while the headline answers the period-wide total.
- */
 async function LearningTimeAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
 

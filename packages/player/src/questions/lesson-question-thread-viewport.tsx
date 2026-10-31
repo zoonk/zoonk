@@ -13,7 +13,6 @@ import { ArrowDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect } from "react";
 
-/** Reopening an explanation should show that answer, not the thread's latest turn. */
 function QuestionScrollTarget({ questionId }: { questionId: string | null | undefined }) {
   const { scrollToMessage } = useMessageScroller();
 
@@ -64,7 +63,7 @@ export function ThreadViewportSkeleton() {
       <div aria-hidden="true" className="flex flex-col gap-6">
         <div className="flex flex-col items-end gap-2">
           <Skeleton className="h-3 w-20" />
-          <Skeleton className="h-16 w-3/4 rounded-2xl" />
+          <Skeleton className="h-16 w-3/4 rounded-xl" />
         </div>
         <div className="flex flex-col gap-2">
           <Skeleton className="h-4 w-full" />

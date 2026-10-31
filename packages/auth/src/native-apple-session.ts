@@ -1,19 +1,21 @@
 import { AsyncLocalStorage } from "node:async_hooks";
+import { prisma } from "@zoonk/db";
 import { type BetterAuthPlugin } from "better-auth";
 import { createAuthEndpoint } from "better-auth/api";
 import { betterAuth } from "better-auth/minimal";
+import { bearer } from "better-auth/plugins";
 import { type BetterAuthOptions } from "better-auth/types";
 import { z } from "zod";
+import { linkGuestAccount } from "./guests/link-guest-account";
 import { type NativeAppleCredentials } from "./native-apple-contract";
 import { callNativeAuthHandler } from "./native-auth-handler";
 import { getNativeAppleProvider } from "./providers/apple";
 import { baseAuthConfig, baseAuthPlugins } from "./server";
 import { stripePlugin } from "./stripe/plugin";
 
-export type NativeAppleAuthChanges = { accountId?: string; sessionToken?: string; userId?: string };
+export type NativeAppleAuthChanges = { sessionToken?: string };
 
 const nativeAppleAuthChanges = new AsyncLocalStorage<NativeAppleAuthChanges>();
-const baseUserCreateAfter = baseAuthConfig.databaseHooks?.user?.create?.after;
 
 function nativeAppleRateLimitPlugin() {
   return {
@@ -30,21 +32,6 @@ function nativeAppleRateLimitPlugin() {
 
 const nativeAppleDatabaseHooks = {
   ...baseAuthConfig.databaseHooks,
-  account: {
-    ...baseAuthConfig.databaseHooks?.account,
-    create: {
-      ...baseAuthConfig.databaseHooks?.account?.create,
-      after: async (account, context) => {
-        const changes = nativeAppleAuthChanges.getStore();
-
-        if (changes) {
-          changes.accountId = account.id;
-        }
-
-        await baseAuthConfig.databaseHooks?.account?.create?.after?.(account, context);
-      },
-    },
-  },
   session: {
     ...baseAuthConfig.databaseHooks?.session,
     create: {
@@ -60,29 +47,9 @@ const nativeAppleDatabaseHooks = {
       },
     },
   },
-  user: {
-    ...baseAuthConfig.databaseHooks?.user,
-    create: {
-      ...baseAuthConfig.databaseHooks?.user?.create,
-      after: async (user, context) => {
-        const changes = nativeAppleAuthChanges.getStore();
-
-        if (changes) {
-          changes.userId = user.id;
-        }
-
-        await baseUserCreateAfter?.(user, context);
-      },
-    },
-  },
 } satisfies BetterAuthOptions["databaseHooks"];
 
-/**
- * Builds an Apple-only Better Auth boundary for native ID-token sign-in. The
- * deletion variant disables signup. Both variants retain profile hooks but
- * defer Stripe customer creation until checkout so a failed native provider
- * transaction has no external billing resource to roll back.
- */
+/** The bearer plugin reads the guest a sign-in may carry (`linkNativeAppleGuest`). */
 function createNativeAppleAuth({ disableSignUp }: { disableSignUp: boolean }) {
   const appleProvider = getNativeAppleProvider();
 
@@ -93,11 +60,7 @@ function createNativeAppleAuth({ disableSignUp }: { disableSignUp: boolean }) {
   return betterAuth({
     ...baseAuthConfig,
     databaseHooks: nativeAppleDatabaseHooks,
-    plugins: [
-      ...baseAuthPlugins,
-      stripePlugin({ createCustomerOnSignUp: false }),
-      nativeAppleRateLimitPlugin(),
-    ],
+    plugins: [...baseAuthPlugins, bearer(), stripePlugin(), nativeAppleRateLimitPlugin()],
     rateLimit: { enabled: true, storage: "database" },
     socialProviders: nativeAppleProvider,
   });
@@ -116,11 +79,6 @@ export type NativeAppleSessionRequest = {
   requestURL: string;
 };
 
-/**
- * Runs one provider assertion inside request-local change tracking. If Better
- * Auth fails after creating any local auth rows, the caller receives their
- * exact IDs so it can roll back only this sign-in attempt.
- */
 async function attemptNativeAppleSignIn({
   signIn,
 }: {
@@ -146,7 +104,7 @@ function getNativeAppleSignInBody(credentials: NativeAppleCredentials) {
   } as const;
 }
 
-/** Rejects over-limit Apple attempts before consuming their single-use provider grant. */
+/** Call before signing in: an over-limit attempt must not consume Apple's single-use grant. */
 export async function enforceNativeAppleSignInRateLimit({
   headers,
   requestURL,
@@ -160,7 +118,6 @@ export async function enforceNativeAppleSignInRateLimit({
   });
 }
 
-/** Creates the normal native Apple session after the request has passed its rate-limit gate. */
 export function signInWithNativeAppleAccount({
   credentials,
   headers,
@@ -171,10 +128,34 @@ export function signInWithNativeAppleAccount({
   });
 }
 
-/** Creates a fresh session for a linked Apple account without permitting signup. */
 export function signInWithExistingAppleAccount(credentials: NativeAppleCredentials) {
   return attemptNativeAppleSignIn({
     signIn: () =>
       existingAppleAccountAuth.api.signInSocial({ body: getNativeAppleSignInBody(credentials) }),
   });
+}
+
+/** Call only once the sign-in can't roll back: deleting a new account would delete what moved. A failed move changes nothing. */
+export async function linkNativeAppleGuest({
+  headers,
+  userId,
+}: {
+  headers: Headers;
+  userId: string;
+}) {
+  const current = await nativeAppleAuth.api.getSession({
+    headers,
+    query: { disableCookieCache: true, disableRefresh: true },
+  });
+
+  const guest = current
+    ? await prisma.user.findUnique({
+        select: { id: true },
+        where: { id: current.user.id, isAnonymous: true },
+      })
+    : null;
+
+  if (guest) {
+    await linkGuestAccount({ account: { id: userId }, guestUserId: guest.id });
+  }
 }

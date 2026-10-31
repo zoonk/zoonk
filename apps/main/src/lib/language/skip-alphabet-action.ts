@@ -1,0 +1,25 @@
+"use server";
+
+import { skipAlphabetIntro } from "@zoonk/core/language/alphabet/skip";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+const goalIdSchema = z.uuid();
+
+export async function skipAlphabetAction(goalId: unknown): Promise<boolean> {
+  const parsed = goalIdSchema.safeParse(goalId);
+
+  if (!parsed.success) {
+    return false;
+  }
+
+  const result = await skipAlphabetIntro(parsed.data);
+
+  if (result.status !== "skipped") {
+    return false;
+  }
+
+  revalidatePath("/[lang]/plan", "page");
+  revalidatePath("/[lang]/today", "page");
+  return true;
+}

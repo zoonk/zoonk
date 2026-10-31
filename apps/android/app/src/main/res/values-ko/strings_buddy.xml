@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "buddy_picker_label": "11f8185faf4590e47ad92f6c7092619a75ce7d66ecbf75eda2f1b1865448aebd",
+  "buddy_picker_name": "5da6d7fb8564472933d9f98c66df9c4c2fbd5759f7b20e0c634d384650a8ec89",
+  "buddy_tagline_beep": "6da13c4c7ad0eca693075f7a2be375db1141cf5e693b0a6ed5ff3e102d6a9594",
+  "buddy_tagline_noodle": "ee85977a38ef39abf27a67bec23e6b3081a3fda1480b4057eb116034b5d0f58e",
+  "buddy_tagline_otto": "59b63bab9287feca81ade2132e2e81f9c47c0f319f18492ada6511d07a1e2c0a",
+  "buddy_tagline_zu": "f98472299c80a58b22d495558140c5560c5b3ca577789ea5c7227a17205ae048"
+}
+-->
+<resources>
+    <!-- Screen reader name of the group of buddies to pick from. -->
+    <string name="buddy_picker_label">짝꿍</string>
+    <!-- Label of the field for a custom buddy name. -->
+    <string name="buddy_picker_name">이름</string>
+    <!-- Under the buddy Zu, an alien, in the buddy picker. -->
+    <string name="buddy_tagline_zu">호기심 많은 외계인</string>
+    <!-- Under the buddy Noodle, a brain, in the buddy picker. -->
+    <string name="buddy_tagline_noodle">다리 달린 뇌</string>
+    <!-- Under the buddy Beep, a robot, in the buddy picker. -->
+    <string name="buddy_tagline_beep">깔끔한 로봇</string>
+    <!-- Under the buddy Otto, an octopus, in the buddy picker. -->
+    <string name="buddy_tagline_otto">뭐든 아는 문어</string>
+</resources>

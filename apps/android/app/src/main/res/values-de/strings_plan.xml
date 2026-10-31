@@ -1,0 +1,1548 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "plan_about_exam": "5bdae24b0a9acff688ef04f1b102aa574f0dac9af148f407f780e5afc1ec3297",
+  "plan_activity_listening": "939c41325dc1992a5e821d55a5821021cc610863be75d118e35b241413b48de9",
+  "plan_activity_speaking": "c018474fc3943090d0d87b7fcd95dca65d1d2be65ee0e59e1f1e3c75696a30dc",
+  "plan_activity_vocabulary": "e5ff2aeadaab3e79d9498c29dce70474c5370ab022aa0d5be739b76676f8b63d",
+  "plan_activity_writing": "71f5a44b76cb38f5c051846a0a57439e764f1fd4d1ad1adda13b4c24c765df4b",
+  "plan_adjust": "17d968b2ecae31edf2f560b107cb334069f67e6f16e59cf98cd13a0814783d0d",
+  "plan_adjust_plan": "723d6237a355fb2b884c652fe03cf9553d83a96e96d86bf238461b39de74d6fd",
+  "plan_all_prerequisites": "d081b7edfe9e8d089195a4bf70785bba9fda59223feb292981db07d826c0b7d5",
+  "plan_apply": "b811917a0a95e5a97fe9cb764c664cf2c9b93cc3abeb21c94adef6287c4b8f1f",
+  "plan_archive": "432a4983619fdd4afc384d4c7ed910a864be9529a481691e5445aa7a1a86ee3b",
+  "plan_archive_description": "babdebe185826369e770fb5fb007eae9ef068742750ee659e95540bc61d3e469",
+  "plan_archive_goal": "fafc99fcae049d6b1c2a7cbcc4c23745f3dc382d680238b6042c15324ff1c394",
+  "plan_archive_title": "33954c05fbde10aaa409530993df12d18ad150258f8d2f858f74c7f731bae888",
+  "plan_base_deep": "ae019db7b0f6a796179f137668644fd69c6c49c09b51644b3f290e7abf5fe586",
+  "plan_base_deep_description": "a793374a6cf66bd0db9815fdea22fdda6b9760c81a480ad220291f827f3789fd",
+  "plan_base_essential": "82eff5f2c23254151d7acd411c067276019f3e2eabceee04388a02b8f0c57cfb",
+  "plan_base_essential_description": "4e080aca0356601b89ca3f4302f74c5bfd0c3cc781f03080def8193d0bec07df",
+  "plan_base_names_time": "86d4df2a954c2097b8d9f83c29cf8690b2ab150fe3d0a399b77b5ff6443d7088",
+  "plan_base_quick": "4437ccdd06f97f948c676012c822e1cd23553883a2eccdde951b6a5b097a2998",
+  "plan_base_quick_description": "4f72d1b230f4528f99626aa79d97ef6afec6f8d127eafdce887de83fedb855b5",
+  "plan_base_skip": "c95d710308f916ff8af6d9f0ac3191f8db0812de25c2b0cee57369433c7d59d4",
+  "plan_base_skip_description": "a66de8a95a3d1c29976cd73d163851b0d9ef49a3dee9c44dcce4aebc33e3a5bf",
+  "plan_base_studied": "ee28d1aace049ed30f1f07dea2bdc7c65a7a5e310a20d7e2f77a9503b4efdbdb",
+  "plan_base_studied_name": "a64fa3d48ba15096d49ab0b9dc506154c9f17d2f235da28f9429dce9945176d7",
+  "plan_bases_deep": "b3da1d7220484edb1a2ba9439168821b1c8802e86b7ec9003e333e88d252af2b",
+  "plan_bases_differ": "f5426e9029d777872ab46f62299e2ea7f2abf5d258cd3ba5a3050773b974cfea",
+  "plan_bases_essential": "168a0c705ee000f3f45ac7fff50619b3c6ad909a058bb83ecc1a6beb6cad1a4d",
+  "plan_bases_everything_fits": "3ee1e7944b8eae7ca253c4ebb46cac8e5d723529d306e9a1307e5b2dfad18d9c",
+  "plan_bases_exam_share": "5d924ff6b9d7fc71fd4970aa41a9f16bf5abd28592c2d5c1ea3e4dc53f80d426",
+  "plan_bases_exam_share_same": "badd726cd24c001b351ecf85b25396f6ddf0ebe52c979be09526c8742d03ec01",
+  "plan_bases_goal_share": "da4b955f733da6b4f5a26c471243533b7809cb395b477b2cae2bddeff28a0cfe",
+  "plan_bases_goal_share_same": "f6f14d2fed5cdd7cf6c90ff0b4e6a7fddf8ee25c36c37beb46285e20ae4b9f2d",
+  "plan_bases_known": "38dd5a7d2666d0cabd5801e7c4a4c2943d07a38b7bd02cf946bb5e6d6857d6d7",
+  "plan_bases_mixed": "c72fba02e008fde040c44d138adc1945232dfb5ba3f00ed4df0333a3c4e1e83d",
+  "plan_bases_quick": "4f414e0088b2ebe0e922f385a66644e53aa166353c61231cfb15c36f52643857",
+  "plan_bases_show_known": "d4d1c288d054587493d3880a2e7ed26ba79475b6819d99cb114e0509d16358e7",
+  "plan_bases_skip": "c9f5c3ca368adc0701c68567096e39a81415388dc299cec6ed934623a883637b",
+  "plan_bases_studied_stay": "59d83177e119d0253b71949ed7863929b92d78388b8280bae523d10f48194871",
+  "plan_bases_topics_come_in": "d50b084c9327ae284985043a01488f15a07a72320ee2c7854a2c304f70eeaa2b",
+  "plan_bases_topics_leave": "e733bc4ac2db86b832d878e2d00410f18354769e5b6ca58c64f1fd014df22c7c",
+  "plan_building_description": "ea2eaf7b0f712c99cfa8f9c29bf696db3cc06ba76eec56ec53c93f552183da36",
+  "plan_building_eyebrow": "721f85911e5e72603710968e291d52a5836df42652485c9d92e0d8dc5a4a5324",
+  "plan_cadence_biweekly": "35307f6c564b85d9eab627622e71a9746d98d72cb2114a13d48522841b4ae57f",
+  "plan_cadence_biweekly_effect": "342267e9f151f3297021ee0709e068c12034923f3b81198d3d9dad66e168f353",
+  "plan_cadence_final_weeks": "b9a4c4f42d948841b4dc72bd3a565a47ec9c1a08676b1b65f6507badefc8756a",
+  "plan_cadence_final_weeks_effect": "cb00912abfb6e2ed278df08c423b04666071225cd4751e992a27cab8d955b236",
+  "plan_cadence_weekly": "926f6d01b26732890b6f7c20426ff9bf0eabd2b550ac19a93b7185dcff4504f8",
+  "plan_cadence_weekly_effect": "661fc3c8d8ff38f8b30f09adea486a91dd6779fd9ec6f8157e9d215c1ac4b7df",
+  "plan_cancel": "4a6066629d56c6438adde1b5b43ee6d3524e9b7ac82b536bd5970ab3eb09a70a",
+  "plan_catch_up": "18a0ba7b9dfb32db437ff59f5c30176df6b541aeeb93aba7f434d380e5062910",
+  "plan_challenge_after_previous": "1c13aff758dfe773e6c369ed58770ca680aae37f87fb05760827a50e54d2748d",
+  "plan_challenge_left_out": "4a5553ade8265200ec104539b9bd28773e62deba0df32490597cc8b2bfa495d2",
+  "plan_challenge_live_call": "d66056f428354919892c724e4975a4e86d83b4d489face5ca69b7a7237ea755e",
+  "plan_challenge_next_session": "f6d750f467203daafe273267ce6b4f39aa1f607fba79dc5591feb8ed42031574",
+  "plan_challenge_no_time": "cf26b03fff9fc37af6ccc811b0f839cd7ff3a33542e279270c083e71a4ae83fd",
+  "plan_challenge_opens_after_lessons": "07780a474902a1457285dc7639049e27779c703aa214fc3173701c54bd2856ae",
+  "plan_challenge_questions": "190092701fcaa2a0462abdb1bf8e33d450ec8835cd628d6977595dcdb69c94b0",
+  "plan_challenge_won": "8c5790dc42fc8970a5d979cd6552f58523228a1cf96fb88372bd8673d846d843",
+  "plan_change_about_more_fit": "503e58256eefcb948dca0a6753df3a9a852d6718f98e3c5c8f3262e4df0e5c4f",
+  "plan_change_about_more_lessons": "27675525e84b66eabf4b576e8e2189d9dffaba3838ad023d04b45eba81e91ca7",
+  "plan_change_activities_back": "f794d88441915a59190b5c7bdb359ade1a68938d2dcef937cd91a22033420982",
+  "plan_change_activities_left_out": "824032240603fb9e1a54dbc48a18d55115e17044bc8ab529a773e08e6bd386df",
+  "plan_change_add_to_plan": "f71ea57402220f5601e24af11a80c7e49c561ac351ea33720bfd5a94da6227ee",
+  "plan_change_adds": "61890260beaf3b10c47fad89fe444c16e0ca47072d70eeecb5fa0654c8660b4b",
+  "plan_change_adds_about": "3ac5653d0e1c8f96dd1f068e6f6230d74590e98c4603bf85cffd6f9e716dedb8",
+  "plan_change_adds_and_leaves_out": "122db1296c179ee2d7467db1f60028ef3af3b675b6e8447d4060e7b86a771fc0",
+  "plan_change_after": "1eaedcebf57a2eb3bbb2eaee3ad8de433d688b057408963097614b457d35aea9",
+  "plan_change_area_fewer": "c8fa31b22ddd018394413538c9128d373899d9ce49ab200d0b90f00ad9d88de8",
+  "plan_change_area_gets_about_more": "db04c48a837bc9251a833f214b7a943da8330e9f590c7594315d8dde9b0776ad",
+  "plan_change_area_gets_more": "93b97264d4b77f4fbe8f7af1ff03c7245e24e485dae12288a129a78c131956bf",
+  "plan_change_area_lessons_to_go": "6372fe17f854487c43dc8edaa4be261c9a50791f1f464386f1152a0e61238a7b",
+  "plan_change_area_to_go": "5a9e4d3f59884e584aa0204b117c585fa3cc9be804b9cc0777dfc56d24c30446",
+  "plan_change_areas_back": "641690f743f4a7dc6531d083998b71febf292afd1c79a6a6902e08f18ae9c006",
+  "plan_change_areas_left_out": "6ff2127ab1a4f89c3c568509280203137806160761ff662b587c18239b9bb9d6",
+  "plan_change_back_in_lessons": "e748bdc99249e96270dfc91a3c5023d15d2c3f5eba3e4a28deb97bdf3a99d0e8",
+  "plan_change_back_in_plan": "50e00f88424f73a5d92e4575c16eb88f9b04b41e0ac96bc703add79cb7db94df",
+  "plan_change_bases_deep": "c4291593d9f12c50ad72b5dca7ac71c90bfa933b4746680d1056cf76dcb1845d",
+  "plan_change_bases_essential": "c9a96a4abed5b39eaed3a173828a4a7802f956270b09387a2ccf65b5250f08f7",
+  "plan_change_bases_quick": "0bb43e63beadd9b59745cb7bffe8c1e8129e06197c252b1f8710f9e68567975a",
+  "plan_change_bases_skip": "5ff65e5e42a8c6c6309bc45c87f69a1da8c8355e94ad6e0572122ac96b4ca419",
+  "plan_change_calendar_says": "46b89335632c65dbb54f8f434d0ef490cb2c8b691ce5fb7812a346dedec196f9",
+  "plan_change_calendar_sets_date": "2a4f4931d3d67d5db36557eabcf4c32692eded52fadc53c5cdd88fef37b0052e",
+  "plan_change_changed": "6203b5e094be20d038ac757f19163d64280d1042d285c834b2db3cb31c2ff803",
+  "plan_change_daily_time": "b36a309dc7b452cbb29aae60f882093b6068b684abb2b714079a351074c1bca3",
+  "plan_change_daily_time_changed": "009b085c700be767b31884a5c8062aa76929109f598fde01caeaee298fa7f189",
+  "plan_change_date_moved": "6e6d8aa1817f2d1daad6e7c0e77ca1f4a14328c518b533f062b591d81bd21962",
+  "plan_change_days_time": "7a6bbfe99db83897b895dd692d74b97d7274afe033fb84a3a3b8f73bac73c6b5",
+  "plan_change_easier": "761c4c6398b3d39c98756d9f28956703226a4fde70c63e2e086258e079d0b0e0",
+  "plan_change_ends_around_instead": "b4ec44538f810b11fd2604377f0461b706b712782f84033d5f330b85cbecc828",
+  "plan_change_ends_around_instead_month": "bf72e86e09929487925e95dd1cfc727fa2b2b4def71aee32d2955e38391f2ac7",
+  "plan_change_ends_at_exam": "5dff8b229f040887f24125f43e2ab2c6fca7d012dc2678cb877a52bb4da614d8",
+  "plan_change_ends_instead": "0a9543e682c113d9f9cd6aa8b4d3252f817476ff6895ea8c80dce8d1da5573d4",
+  "plan_change_exam_choice": "af3d9477bd3a2206fe36ace65626a9e4777f9454977bea46bc92c30fe2cd2a9a",
+  "plan_change_fewer": "0fb5be04e1ebd89f73d1ac2c9d3fae16ad18c9259fdd3519a3897bd6cbe49a6a",
+  "plan_change_fewer_lessons": "e06465afaf64290bb8df3735cf256bdadb47b607ff502a9f33bc1f1354da1bda",
+  "plan_change_finish_area_instead": "444f31a4494389bec126c0c2e9a900b9f5b435a452ddc744febe9d66663f6d65",
+  "plan_change_finish_around": "ee193b592fd3f82874f3a6a29dddebbaa94870fc97fec2bb7717d048b42c5cf0",
+  "plan_change_fit_lessons": "1ca598750dbd4841661c0b5f0e36117a0154367026ce47bd20b559e0b24f4323",
+  "plan_change_follows_guide": "defd811968bac0131689778331d39dc75579fcb8c29f0fd4f5af7639dc9701fa",
+  "plan_change_follows_notice": "6ee573fce663a4af021ee973329559c4627030f49bc94fa0ef20e0fdfb0cb1a0",
+  "plan_change_from_now_on": "b8551c577656311c1d8ba41850ab4cd8f79124155fc51f3b90ab79a0878cc0b6",
+  "plan_change_full_course": "bc3e3170dab49564566e0786772a71d78274e0109e63d5affd04c8f0b11271be",
+  "plan_change_goal_date": "cdd202d0b2ceb9602fc1bebaf183d3fb709e123bccaa38c5dc5f3b0c5f172263",
+  "plan_change_goal_date_line": "21e3121a671c5ccd1b76c365a11f9a7e4f95e0331eef822d6113f48b300aa3fa",
+  "plan_change_goal_takes_about_more": "3f7c0e78f0211af2259af6d9bdcd4fbee95c5c7064a63ed6524bde1648962332",
+  "plan_change_goal_takes_fewer": "fabf4d606c02a2013c82a3a021f2e8dcdc73caeb1a8aa71a5dcad5a3dab49019",
+  "plan_change_goal_takes_more": "049b8ac4449f52e0ba8a30778f6cebc7eff31433571e5faecd381059cbfe35c8",
+  "plan_change_harder": "5b6f2546e3475776995ee71e4f901097df94f7e0a589f9f940f900d1438da765",
+  "plan_change_keep_notice_date": "ac8aa1419adee7732f6b955a300d07a41d67ba51f2de6ad05227b26673a10c3f",
+  "plan_change_keep_official_date": "e19a98cbf12a7dfc2045a26be5fbffe61f217169768ebc1a0887ffd40e83bbcf",
+  "plan_change_leave_out": "719fd9531ee1e1451dcd57c69ed4aa35543db23093f78978a92a91d206cf8f7c",
+  "plan_change_leave_out_of_plan": "878a77b6a8f0463c9cb1dad9af83c43f6883979dc1f185dba8503327da81bad3",
+  "plan_change_leaves_out": "3c0a3a5dddcf7cef4dd750551f3f13797d0890eed4efa01123351966ae6d1ff5",
+  "plan_change_left_out": "281f4b3d71e572b40eadee137056a233220c42c81b4700771277e2e9ec9fee86",
+  "plan_change_left_out_include": "38acc3b409271fc63f6db7968cdc896d60a889bf12b3f949bdc0438e7b076d41",
+  "plan_change_less_time_for": "ddf2121b58bd0e7ad0f713d9a556ec40418e66efed93d8043956783482610f13",
+  "plan_change_light_week": "eddcdd7f35baccfface33a15c146114e306e1ef8b2eb7b25cb78ee50ce7baf6b",
+  "plan_change_likely_date": "46686960ab54fb315cc375032e04837d77fad1634aa5e896a8d0fa554ca09465",
+  "plan_change_missed_days": "728742058049a70bb49bd6829b5d1d994630ec28a8bf4d91b57e4b71d7643b6c",
+  "plan_change_mocks_on": "9d6d9aa6ee9a2116bf3d66f3fca5dc7e20a0b8fd125fb66c6d35cc4edef1760c",
+  "plan_change_more_and_fewer": "3d7c687eb33774e638ce90296242f025fdcc19d08c2534ee74ab2a1553cc6298",
+  "plan_change_more_explanation": "ba404545cbf68f3e8e352fd85b8b97fb794e01107a8495457903321755d07621",
+  "plan_change_more_fit": "8b4717448b6a966cffe64af5e7f3f3f030963e4198e069988df548c2050a130a",
+  "plan_change_more_lessons": "23030538a387bc948956817681ef2bb190ea5942ccd1910fc86e07e2b1d402d8",
+  "plan_change_more_practice": "b544af18fceb9f4d0968e47ba926ee835e3e564966032c7dba104bb0cd71ccfe",
+  "plan_change_more_time_for": "ea0dc65ac69f8b54dd785fc172e688fd1b53c05c66934ac28ab54560e6822f09",
+  "plan_change_named": "277146b2e308902ce7b914214474e109981ac1ee1c521407eb779f06fab20be1",
+  "plan_change_names_and_more": "9b09762fe8c81b00b471a5761278a42c0da4b2968eaf5b1d56785eeade625a10",
+  "plan_change_names_and_more_topics": "eb2727d325cef2a88633489fa9b4009b1855d97b91064bcca6dc720328abd096",
+  "plan_change_new_lessons_before_basics": "27eb5ff6f7b60ea5e9611a117a2d02a46c50fd62537cf4d8422b361500afc8e8",
+  "plan_change_new_lessons_start": "8854d0d0babbb08bad06c33c44d43e74411d006011d5ef4d22577429eacb12dd",
+  "plan_change_next_mock": "7ef6569c03ba66dad745c1c9eb0c0e9f5da5508adf90e8f46ac5f52aa296ae98",
+  "plan_change_next_mock_moves": "57e2187cea9057414d46cdd1d0a12f6eccb00195f8e8b6d69720ddf5000c831b",
+  "plan_change_no_deadline": "d7ed8a2fbc327ac9e59fbb55b4e416cfcf1c6f9df15f381012d4c4f539cbb0e6",
+  "plan_change_no_longer_fit": "49ac688cd753ca7df9c45af566492f8922259594b6dc74435a49ab7cf656d533",
+  "plan_change_notice_says": "35d0dc8b500a8a378291bf2fa0c8e4d75006e96dc7c294c9eb6fb691ae351335",
+  "plan_change_notice_sets_date": "cd26eeb117124a4d4a277ed65ccee2c94a730d2a62a29f65a41ed10f9af951f5",
+  "plan_change_now": "493dc7291cc10044e78c8c92c3a548f528dfde57727f1d04e41436b8b7faa1b0",
+  "plan_change_now_in_plan": "3f837936de7447d2fd8f8e3b94b0f7cdd704330e42ed478610e641477816a73e",
+  "plan_change_other_subjects": "c24f8230e3896ec901c8db18d5f0e23d3248da219000385dd656b07e8df38877",
+  "plan_change_out_of_plan": "e04f9504df5dc8392d7b17c8cb0227fd03fd1aa7a2263811c5d8a56780002b0f",
+  "plan_change_own_level_first": "2dda8dd35893666f20b516ec04f6bcbea97d52b596bc770d37bd97a81d60479a",
+  "plan_change_phase_dates_late_many": "b998414f1efcb822eb05c693f137eab84e6d706d6bfb14f4c77f8c5dbe8d1537",
+  "plan_change_phase_dates_late_one": "01eecba4d05a1e9f0b8357d56f4c818b2072f13739777370e2710c477d144b43",
+  "plan_change_phase_dates_lessons": "b5b1c9890d713ce2487f1ce924938c5cee246d247b34620840e66de9328eb74e",
+  "plan_change_phase_dates_moved": "462501061e2e9624d6b16455135887cb8a2bdd299ebda3036c25d62426e9ade7",
+  "plan_change_phase_dates_outcomes": "72420737a6a67ad2013ca3a38940c73a7b61d1098c62034169a61db62e751081",
+  "plan_change_phase_dates_rest_many": "7cff4498b7b50029651310d2df05e29f53bf261502b8e515ef1fc48a84c5dd98",
+  "plan_change_phase_dates_rest_one": "1f21d4dec69cd3e898dc2c737b4076c7d1b7fcffbb06e6afb7a7d416db20a928",
+  "plan_change_phase_dates_room": "ccb054b6d4b9336f0154f980f64d289323d29a0a810192bf877994d59eacefbe",
+  "plan_change_phase_end_row": "cb423c71c5fd2ede1061a9bba04800e93965580aa9a0d19946d7ca83c45b2a10",
+  "plan_change_phase_ends": "8d6ffb623542c5730e7782483f51a31a46988721ea5ef5b60429c309a79fdc73",
+  "plan_change_placement_changed": "2f356410a548cf169c6d5d81750696d8712aec4b52995334ff77f62ddf2c0d20",
+  "plan_change_plan_ends": "c2e9e643d1adf41f19be08b176bd022b10924e6b593a82a07555c7821b7066fd",
+  "plan_change_read_guide": "0541d97e6407a978767410b0bb05e93e95438767a39811cdec2fbba5a0a4b6c3",
+  "plan_change_read_guide_around": "9020c1696a782cb78b20f8e69902dbd8bd0e7d31ec9b0d776ee09ef60a91985c",
+  "plan_change_read_guide_on": "1a1ead5602ff7e7d221dee6c82f938c80a8d9d6f3c67a91509ceb55ae2064903",
+  "plan_change_read_notice": "c1794a3adf591b6e1fa048946d4b4cae0b34e8527be9dde8fc900a3ec073dd17",
+  "plan_change_read_notice_around": "8cd7cfb1a48d73f6aaa4b448df625f7f92a6669e760ff91a56a78c8869c26466",
+  "plan_change_read_notice_on": "31d51d4549eb20570c057b26f330576bf863db955635fd6860e31fba592d1833",
+  "plan_change_rebalance": "83be27c1e411e61232e274e2fa15104171b30a1ef02192f69d06836c952229c0",
+  "plan_change_relearn_subjects": "7b56c169cd3ee966ccb5312c31033b4c1cd6811c69db0a5872e668458fb0fc58",
+  "plan_change_relearn_topics": "71664c4a2782e8e6e8fbc8441ca8256025d19ca5de24dc0304745b2d02e3dfb2",
+  "plan_change_rest_day": "f317e02782c07836c43e8be036b9177760b0c8805a3b36cf64d111b80b4fa3aa",
+  "plan_change_review_first": "0bc94c60963a4a2a4d4be2577d0a23fb0f484a7edfe7a618eae16e43af358861",
+  "plan_change_sentence": "105e2d47ce84e3ee00f9885871fcfd05b32698b71e6b4cec7ee0fd610f07c168",
+  "plan_change_skills_come_in": "6a706a82ba9441236fbae1a2161904d9947af4c26765569bc13e0ab3cf7a7d80",
+  "plan_change_start_area_instead": "c9480e970282563454e2773568854b32ec6e6abcf7e376ab7ea1deb484009c35",
+  "plan_change_start_area_on": "42544448ff155ff8a6cfd69e4879c556b6ae8985a57dbdf4f3f100ecaa451424",
+  "plan_change_start_from_basics": "86bdf89ea2fe5cf43ef6633d2640f7ccfd0ccaafeadaba7e375ce30a369c447d",
+  "plan_change_start_past_basics": "d8d2728ce0b427316c6f51a128e95b7c4ae504e6e41ef74a299afd96ac62629d",
+  "plan_change_still_finish_area": "4ffb5efe8668c4ae4bf88cd0abd25b5b797efa7b636d86b7fe8edb55900cac7e",
+  "plan_change_still_start_area": "6746bce34a821995dbba14f10a8157c00117f641cc4caeda150a4edccc01b214",
+  "plan_change_such_as": "a76b8574b040f7bcf1f12333a35476176c391a025a83c90a31f40a2053a7cebf",
+  "plan_change_suggest_easier": "fa8fb7d0c36b2ab8b3e2c4082cd3bf81ac3fd7f17bb0c3947cab00628244f268",
+  "plan_change_suggest_harder": "57e86a48d273f29be682a9e511bdd02bfa873b434655904ce60201c134f493f7",
+  "plan_change_suggest_more_explanation": "d5f94055ec929986e0fd9c32869be3621c116f4a173f5717392c27bd419e08ad",
+  "plan_change_suggest_more_practice": "7c12a26d3452bc12c5aa2dbe7aed081ce7fbfc7152e63d9ac693228cc17e0a89",
+  "plan_change_suggest_usual_difficulty": "cb04a6bf5da9d70194ad615f0c637ef4774064d4b78ff465566c6192777f555b",
+  "plan_change_tested_out": "8f7ba7f58ab05f0a53ffdd414806d3133cb14e0cf856a850d15a01a411d9652a",
+  "plan_change_time_lessons_need": "b4c3b3c626105bbd18fead03879ddd45b08bf8970f9374ba7a7b46e2f0604546",
+  "plan_change_today_changed": "ff4d243383dd012011f7893b682d5344ee6515e19e772c485d86620132dcaf1c",
+  "plan_change_today_unchanged": "f0da0611a9ff91bac62ef07d9c991756f975e37a6ec13d9690651d3fbbd9fba6",
+  "plan_change_tool_have": "d49cb2b79ea069edeb8e6514c1083acb499f424f701fc399d7c9ec3a8215c07a",
+  "plan_change_tool_none": "e13200baf5501ca2f1d80a9df8d242cfe4c50a180edeac77f11657306d34d575",
+  "plan_change_tool_setup": "cba82bb94b5aeeed7fe1bb670b3703ae5b8743895ac0adcb86f07a13e145fabb",
+  "plan_change_topics_leave": "e63692e4839ef24b6fac1dfc8b3263243cb1935ce966fb0d1bb92129d3caa2eb",
+  "plan_change_topics_no_longer_fit": "0004798bd5898931f0ebc492d82f57e70bd8af9c6240c288738c8a27a167bf0a",
+  "plan_change_topics_now_fit": "cfc580ae5b8f57fde5dfb30adeecb1150a44547e11e971b5acd1eda8f4d8be62",
+  "plan_change_undone": "373516902ecd7af73c7e56c756fb46e08e42bb36808ac110c136a1e7bb83f339",
+  "plan_change_until": "a2111889367ff7b86b131a408c1ea09cb4615ee8d9a706ceff6b15895061754e",
+  "plan_change_unwritten": "d129078fa8388c97a68e7171d3cff632f71bdd7e9e733c1c04c0b88128ea02ea",
+  "plan_change_unwritten_skill": "4b2f20c3ac11d006af7e7321339a1179e794924c7d0042b9074cdb50f843578d",
+  "plan_change_usual_difficulty": "0ccebddca87bfbba112ea8c988b7887dd35dd624e021cf85bd56f00ccf7bfce0",
+  "plan_change_weekly_challenge": "84cb48fc948d7fa6200fd04c79ace66b8bd3666897ff2f0f9f903914c37cac81",
+  "plan_change_weekly_challenge_moved": "5472ddbb4643a8e501b100b668eb70ef0c64fd0ebaa2e03184c83063debadd09",
+  "plan_change_weekly_challenges_move": "e331005da5dc65bd6f8b7f2c6deaa78c21287aaa9c69abe1ee56a658adf337b2",
+  "plan_change_weekly_challenges_on": "8a381a4b05107568da4e9be5fca838d1061d75d8c09462c201edc989820d5a0b",
+  "plan_change_weekly_mocks_move": "46f577038acd2203f8b3584d8b1a09bb2fd6f4f3c2edbbc4a57ceca75e77432a",
+  "plan_change_writing_biweekly": "e577b03377c622b4ec601257bea5c83b91426090478e596cad464ab10d2907ce",
+  "plan_change_writing_final_weeks": "999a211955274670c284be05ab0234eb188b0ab9ab0e27f6e77de937dfdf2841",
+  "plan_change_writing_weekly": "eacddc0de4507b245ed2dcb3a9d61dc256a69bb4677971cd96ad078581f47161",
+  "plan_check_failed": "1c6af437a5a06f9eb6e3d844c2d660f72a8890e31b84dc60626f260d898fcafd",
+  "plan_checking_changes": "27de2c4b5ec229e9e61d4b1902535766eb60d2a4b8646b2e963d19ab9351d359",
+  "plan_choice_change": "12efc37f2824830ec4d0c269a5348f1abb70314c7916c4e9a62a7b66f1dfda0c",
+  "plan_choice_following": "13aca0cc3d2810a745e2f990e07ecbc696b5b2e3b0b2c9989e3ab2013a123f17",
+  "plan_choose": "a35d7987b869a9eee1483537c185e625ba0877a409e0b349a133b3f74d377cf1",
+  "plan_choose_by_subject": "2254d91fd0dcfda6e5145568fc1efdecf61dff1084cd1010e621ab07c83abf61",
+  "plan_choose_focus": "80edafeba296575c8fcb8e0d3ba652d1e9f5dbb16369715dcba48f6a164d30b2",
+  "plan_choose_focus_yourself": "d9bf942e4b34270f802771452b8f24331312a9d2ab1eb83b4523f8a6f4494317",
+  "plan_choose_prerequisites": "537b3398002da64126aaac54e94d48eebe6c6376230a3b55ed868b56bfde6f66",
+  "plan_continue": "ef96d556adbf63144ee145f88b9cfe3194db6f955f5c39cdeffada596d5e04ca",
+  "plan_continue_at": "2c34f6906c851a6d0ef50f28665ecd4bd7999334e0a70cb2e0f56bc48680b1ef",
+  "plan_continues_on": "fd7066361d8d855b5de8532381037fea80d6a84ed13b3fcf1cafc289c47f1d1c",
+  "plan_continues_today": "df299a559b5826dd1482b30c4f036326edced4da95b83b5ba7d24eeda21a6e66",
+  "plan_couldnt_check_changes": "0d17019de2d4c4fadd6692296edd67775ac9d2fd84a5233f28fafe37a8b35a29",
+  "plan_coverage": "b3a36ef7a60a80af46db9111619bbbfebc519b3a11bcea2ac612140fc8ea9ada",
+  "plan_coverage_caption": "7e426ff9581d4bbc097c98a33b86ea745cc79f9bc669b1bf997e5f10e4a2b5d3",
+  "plan_covered_not_enough": "e35055a4d58f560aadfd0a7b686877d4c0bd793803717c5a3d03b3e3c9774a95",
+  "plan_date_estimate": "6dbdfc78caed94556523acdb0ff5dbf236858a42db61fe18da32c0559ce37c52",
+  "plan_date_estimate_spoken": "621950205e46c0c93478472ef65f090ea8f6d5c04f6e5c8ca1109685cc197bf2",
+  "plan_date_range": "c5768e61a3f773fe32e40f50a5abbd38fb7afd435d5aa6bbee59a695d5a4f007",
+  "plan_date_to_be_confirmed": "1219e217851a6c914f5a9f7199bd585df29064b0c9ff43250a78a99a32416894",
+  "plan_day_done": "8ccb2c266325c03dbb03584b62f0b129ef6e1b2fd18f3807aedae7ac3a01ba56",
+  "plan_day_is_here": "d49559def87e6792d416493465752c5b7aa3b7d68013272353549abda7319f5b",
+  "plan_day_missed": "710e88cb37d94539c272097d6b768b5fec87ec2b525db729ef0e2d686555cd64",
+  "plan_day_planned": "2338898cc122c1ec1f17753965bbbe5480b03936f8c0dc65fe058141c8bedb04",
+  "plan_day_range": "4336934c5af6c01e3c417dd958a6e9ec2e8c38cce48380d8d1593951a644b848",
+  "plan_day_rest": "ee56d3d0b03547233f7ca8d6ef1a4754c0105b3b75377174271899d53381bce1",
+  "plan_day_today": "a59b4b95c5a788d15a056cd3f70cf0b306a126e438b1ea9719988b0306ffe0d2",
+  "plan_days_left": "bf2ae8c5d8d77f6d0f98d98e2fe74649bd798130fce7e6df0f25a5fa6a768187",
+  "plan_days_left_estimate": "1543ce75c3bdcba2d9c4d2ec3239ee0aa16a2fc22f1911593430587906346a50",
+  "plan_days_left_estimate_spoken": "1e715e84b5d6bf0ba05e95282c400ea4d8875702a9c87a5f3de53b1da16669ee",
+  "plan_deadline": "039c47f0861b1c9dec95cff4936f8921748d42ab34c24cfea7a2930239f30ebc",
+  "plan_different_choices": "d0dee4f15ceabb01673c27ce867695ceb27fdcb840ee81b66ac8df616a532394",
+  "plan_done": "0b59b4583b47dcad4b6a2f84a9d772dc0a04381eee043c6af331ad67faa747e5",
+  "plan_done_suffix": "359ece91c3f0653f641edf9bc5b67852c6883d0235ad1fc7251bd29ff3cf911d",
+  "plan_editor_close": "ae26216a81d7ffa447aec80503f4a52e065791ff87da8ed51d3d6e78d9b54c98",
+  "plan_editor_title": "f311ab287f0dbcd4c96412d6329fb4b93d4b5237bd971cbd258241c192f39988",
+  "plan_estimate_based_on": "1f3168fa02f322c306d4e24bcaa6777e42d5ee66c6b166ba6b08967f32aba687",
+  "plan_estimate_based_on_last": "86b6d05ddd46d6851c6f9d874b70a745e29d7df281b273f229963fe2454faa1e",
+  "plan_estimate_waits": "fe4aaca2586a14499d1158edbdf70b41620e388fd99794d488bc49a0e4fed9ad",
+  "plan_estimated_score": "7945c81279e5e3cceee7d6444fac1882bf0b5d514ce94fee80924050bd9c73c2",
+  "plan_even_across_skills": "a01fec131f0f399ffa019b230182f9db15637712b736eace4bd57e22cbf1ec41",
+  "plan_every_day": "dff76e68074267fac608ca3548d475c2b38a68853e7de1fbc8c1bf6ffaf92e45",
+  "plan_everything": "1b2cfc1c8ce6b801ab5288f66dbed792c53328d6dd2984ed0b14c766d415fbde",
+  "plan_exam_choice_left_out": "348abb97c6ac23a112c47afad673e425f505bab58fbdfb731e4e217f876c647d",
+  "plan_exam_choice_left_out_points": "6381ff9a860b5ff354e3a367308b1a72317c68e569a96b60844f998195047388",
+  "plan_exam_choice_left_out_questions": "2703030e246c5919b8ffaa4cd9637e08379def2950042e75f55cd7803f0af8f4",
+  "plan_exam_choice_left_out_questions_of": "cbbfeec84fdf76b363172d7b784eed0f2bef29b9fe3f2804f5e2c5ba42dfd564",
+  "plan_exam_choice_question": "6de25e6d9c9a6a3059ed8336ae9a74da2ead5ae6bd90dd07bec2cea70e6abeae",
+  "plan_exam_date": "41a05252c5d853f8537f4ee8b40bfe29e2d2e6e6e4ee696a5ad46f2dd843f02c",
+  "plan_exam_date_label": "3d312463f51af5546e663d32b6a6e837a34a6ae9277f777a12158e9510fa890d",
+  "plan_exam_day": "9dd20b958bfe79dbc1f5d50d63963b0eadba74458cd6427d547a3d598d2b5fad",
+  "plan_eyebrow": "ff989cbeb5598d09415dee067dac17edc299ffe8165642dfc7b11a490eb212d3",
+  "plan_far_count_from": "43d95ab6a58257fd0cbe128c8829c4f7db71b0675a8ffed4bac654c94ad2258c",
+  "plan_far_count_from_month": "dbaf3953c19629f0b0003ef7a79d61c7856f04ae1938d27d91213bb718d4485c",
+  "plan_far_explain": "8a8c5c493c19529bbe52954fcfbaefabe3b5958241f215475094122497de5b2c",
+  "plan_far_from": "684018d6c7236fddada034d25240163a614dbdc7cbe8eeda15f726f5616bb12f",
+  "plan_far_from_month": "9280a41977fecb2d103eb52995bd1c2f7578d327792bf1b2cae182404eb25a80",
+  "plan_far_lessons": "d0a81aef8bc53432792c763ae7a5459937db7f16bb87a6b38080279f6db0e6ec",
+  "plan_far_lessons_about": "71b1fe45f9ccde0331e8379d206a7f01b0e1910bcb1e09ab8460ba8b6a5b44f7",
+  "plan_far_nothing_left": "a5bb89be5729bc84f4b12e658fc13e59a10e1a149e56e359c18b342e4c4bce2f",
+  "plan_far_see_lessons": "691b290fe28adf03f18b5962450bb403b32fd645810ed59dd84c43ca95ac05ef",
+  "plan_far_unreachable": "a072a8b1152707ec235018a17ec4723997f346f49c9ce7a3506a3c2efe84556f",
+  "plan_far_writing": "f6a5268250df1407e697b0d2e59fb89f0770f04da55505ddab3c112183e3a49d",
+  "plan_find": "30377d34886e55f65dd23b3f8358596c061b51bf3710f619c6e59a371857d62d",
+  "plan_find_building": "b19c8cb593fe4faf8dd134d0401a093815e73668a7df0ce3a9abf13f18ead1ae",
+  "plan_find_failed": "bb2e7e98a6f36a32fd525b18df47bc0d1b129dcd974d6653d54d29cd46c63eeb",
+  "plan_find_fitting_date": "1612d183c0b1cee9afc2717cac240210e601fb848f35f374eea0aa08e0577741",
+  "plan_find_no_date": "f38cfa237d996d8451edf88215d58701b99543f55f342b60449764a053aeec44",
+  "plan_finding": "612b6f66b6b027f4f6660b84d24f1e6fe83e9f96ca4f9786ad7553c323b056cd",
+  "plan_finish": "b7ac26455cec76afa8a46f34115beb239ae5407151f4cdb8e9af111eb8b348af",
+  "plan_finish_after_exam": "d3ccab12d46d52bb7b63553b093ff95420a645dd92916c2d5d69ab2affd662c9",
+  "plan_finish_after_exam_month": "d3ad0a309ddaeb61b99a5824d37c220168779a8e45e4f74b5f35ab3bf72d828f",
+  "plan_finish_around": "8e1551710fb54fa22df18127cffb4d13f18d96d9a58fd0d453bc6a065d237009",
+  "plan_finish_working": "61fad240449cc4e8a41317e82eed1ffcc1fed80f2997f8fa3521b78f4f6ce203",
+  "plan_finished_title": "683e031a676874792ce1fbb61516c3e562c70c623a43cebc52d3b45c5ab4c0c4",
+  "plan_focus_already_in": "16352ec2f65ebb4cf9fc8428f02fa6278e0b5c7dc4987ec2aa57ac262f696897",
+  "plan_focus_cant_move": "e01d446817492630eb9702c57f70c1e68d69b5dd6ef851aa0b357881464270c3",
+  "plan_focus_includes": "75fadde81d0b4240b92fbffedcb506de212f39ecf7e96e026bfed5812eb0aea3",
+  "plan_focus_on_these": "cef48e62e3379ed3d64ceea98686ad560f28062a763218f855c51cb438840ea1",
+  "plan_focus_only": "021973b613c87e47147675868a8b71c7e9d5ac259745cefa58c40eaf33ddbb70",
+  "plan_fridays": "a73f8ddb2136c00c4f9eb9205aafd0d0e624f362a844d26dc551645e6b9b8ced",
+  "plan_full_course": "3aeb35c1aaff06d5659736c71cc09e08b4ce82dc96316ff41e006c7c5c0ffcb5",
+  "plan_full_course_off": "89557a85efedf7385058cbb72a65c494b50c73bf4c4574e2aa0e39b0e686757e",
+  "plan_full_course_on_exam": "2736f5bdd7b63e126c8221c317d024403d54e537654d6e3f3f0216206a73ca24",
+  "plan_full_course_on_exam_unknown_end": "afe5e5462e322e52c0109de9eae716fe80bfd849430d068cd4cf5d1567373c10",
+  "plan_full_course_rule_exam": "84dd2ee76414751a53dd15c56bec07c5ab3f601c814aa165670660ac10e6d147",
+  "plan_full_course_rule_goal": "3409aa1b91ef32e9e680f392961c0a23ade4420a190666afabee12d60fd8b211",
+  "plan_full_course_rule_goal_month": "648c3753f8c5c8e6347fad4ec072b942a826a9ae1a2b778d249d06bf3260b323",
+  "plan_full_course_switch": "ce984089e0983e9fd0636c811ea4a72095967f054b799971aea47db9413f55fc",
+  "plan_full_reviews": "6591f460925bbd8f75c5d669db4784dada8fec7198ea88dff99d8b72c9778979",
+  "plan_full_reviews_done": "a9d0d8008d8686d3f9ceac6f3e0fd98d4be40e140a82d782bbd3c1f89dad68dd",
+  "plan_gain_this_week": "e4aa8a5299d029c6c4b0b065509853ad614528a2ab67e4e618c174913c60972f",
+  "plan_get_recommendation": "a6c3d93dd50083109106bbe84182ccd1bf7d4229f8c20c6028ce65aa2e3aba3a",
+  "plan_getting_recommendation": "d30ca44dd8e948a65549f85a39eee25f1f9aafd61449711727190831a5aa0328",
+  "plan_go_to_today": "d6a62283d93aeff8d3ba9d28390281e7fe6d6c1498f2484b1cbdb0176956624a",
+  "plan_goal_date": "b446fe7ede82a727c514a3c58637afe97d9793532cbb0a8f58fac837ebe95cbc",
+  "plan_goal_limit_reached": "cab1c598e2eb82c9c111326ec2f56e28a3dd74255ed087e23f29dfd85d41fcb2",
+  "plan_goal_paused": "5c1f2ed785917c36368a00cdf1b86bde2cc24d1a02dc27e51e8a2429b01bcf76",
+  "plan_going_deeper": "ccbc15320f0aa6f91b10820d28a901211029624fb95e0791b0b1ddb3bed61465",
+  "plan_how_is_it_going": "4d96893452c575e376dc9f3d191ce8aeac20b499279d01826b1aa2d1ac127985",
+  "plan_last_week_recap": "11d91d99bfe59050e1325bc37214aa85cef3ec0df8276e64a42bd69838ec7e1a",
+  "plan_lessons": "99948753edd71a789e3be2c03926c6c38f227595fc5cf4d5185c4e955bd97c4f",
+  "plan_lessons_being_written_from": "bed195cbed3ad9f4276f1079d8f9ca9a7b9690db4840bdb53e78c0891f67cd77",
+  "plan_lessons_count": "3ec65a1f9dad270be6745d3675650393a63c41265d7ad61ffb0ddff45411e9bf",
+  "plan_lessons_done_challenge_on": "ce3c260ca10b874a3a59ab65867c426287387e9ea6a857c22cb9ccd712acd7ef",
+  "plan_lessons_done_of": "a9bce00871f113a2e5afe30edfbccf9510a09cba8c6431db29620f512130a5f9",
+  "plan_lessons_left": "6706051b5a8d345d55723b56befc82276738a297198efbd4aae409d0ce01c17b",
+  "plan_lessons_left_out": "45bd41040d7213ce2b79fb655064138fe282f9c011794304cf98f1558c5af1ef",
+  "plan_lessons_of": "4e8e75e99f0c4d8ff893de393b5c7e00c8a7e992ba9af24df129332cf58c436a",
+  "plan_lessons_on_the_way": "222dae0a6aa2f39fcef4e1964a16619219852d29fd8bd46770ad53ba0436d35e",
+  "plan_lessons_studied": "a269ca00b6ec777056cb5bd365b8272291cbf0abf66e16bf2bd86ceccb211c8c",
+  "plan_level": "45818468f1ffe08485b1f8ccd6a42dd37d1d189ce7b2dd3f363ba1b9e466b0a5",
+  "plan_long_term_memory": "f534bd1bca7e18384be8b94e394cc40d5dcda1e8578772f88af963f2d83e9325",
+  "plan_loss_this_week": "6c4f9af3960dae0aee639de55fbb509ce98906e00cdb8a158a7676aac12d2dc5",
+  "plan_mastery": "b1a9105e7cc7e29b751a5f13eb9627414b0193a4893840ff3482625c192259ae",
+  "plan_mastery_caption": "ae0733b46c6d19d1ba79a66170f8b8713e2c933a65b3e0185c3a86181379312c",
+  "plan_mastery_waits": "66e66f26775bdbb95f4bbc3c7949e33f4ebc2950cf5b8e365789636cf651b40e",
+  "plan_measure_full_reviews": "2c88af2fb05c90ba05c60dfb18d098fbbaf2d319792942c3e2504392360a66b7",
+  "plan_measure_mocks": "0873591426126b9f5c74ac5edaf5de3db4e4d1cee601708b97781d67bfe7c08e",
+  "plan_measure_progress": "eaa916a9dd563482087504a574dffd8ebfbf97e53e9fa1ef28821d9abdbdb698",
+  "plan_mind_maps": "75961fe393f5d8b8b2b92ffe474196919ac5f91352a032728c1bdbe0fa351f18",
+  "plan_mock_exam": "125cdfb703981466dc7f5774f9d78a15b97cf80999546adfc5d4a69c4af40232",
+  "plan_mock_exams": "3f1b1d86a76d1f5e70131fb01f3c2d5e107083560ea6edbfca6376c00c0d4f75",
+  "plan_mock_exams_count": "2296af998315a421e3ba3823a04bac077f55198f779231549423bd3b23dd2074",
+  "plan_mock_exams_taken": "43dc441fb376a1834bc9a365ab5a703713117d38c920e9fbed63943fbd1364a4",
+  "plan_mock_next_sitting": "10ed02208ab43f3ba86f0e1f03b6f378d35d252b2b4674f56197eff0fbd5575e",
+  "plan_mocks_every_weeks": "e68319afad9aae291101fdef43db46e8cf76580cd0eed20610918b0872cd95c8",
+  "plan_mocks_next": "91a8383a61c0694b783f4c4f0a2e4fb6d430670e5ff9a8afbc0b95b378a07b8d",
+  "plan_mocks_next_sitting": "49f5b935529025fdd7bce52e401089d0a127accbabb932274e338ce8ec2188c3",
+  "plan_mocks_next_sitting_on": "94646aacc24b4353d4879b069bfe3f85b2821be073d79f98636a3e9a1758703b",
+  "plan_mondays": "d80f854b697e88e65576561f1cb35efcc3e195d771a4d1296a4de10e5f6e4585",
+  "plan_more": "e90481faf60f326f9313c9480a25138d5bca6f1452cad389157e9fcacec42190",
+  "plan_more_chapters": "9db098536baa8382cabc60e60e3d8705775219f53de84807a61264422de1dc4c",
+  "plan_more_explanation": "42c5a12710bbaea8a18f9f38c0654fd6e34febee591eefa0fa5ac76a3413efc3",
+  "plan_more_lessons": "8bcf0b9d368244fe25241f347139d6634ac9c25b13ad6ede56c320aa0bb1c9cc",
+  "plan_more_lessons_challenge_on": "749a829a90aacfc749594e7335062352a816e11f824ba0f3e3ce506ecb534f06",
+  "plan_more_lessons_fit": "d778f05a8df235290f21f36bfd31a1957969d5f2bd03feb19d12754b3e429608",
+  "plan_more_lessons_on_the_way": "948553f27fa6d9cf74edb00df2f27cd21ece2eebb4aa699ef9afae6c78808501",
+  "plan_more_practice": "74134b65134cfd3d3b050e7c3b6b5c0f528d82b3dc11673918fb74941b745fa4",
+  "plan_most_asked_first_until_exam": "9f98fe2fca31a81815af4b28957888bca4eae540ad65f8b5168437643a75aa0f",
+  "plan_move_date": "89dcf5fe9be898b5b02e328568999da8a306cc7a552835c451380b0514ddf967",
+  "plan_move_date_covers_whats_left": "c3e6b0d22cdde678de491d597976b9694cc72e766c9f542a25aed9c884a0805a",
+  "plan_move_date_to": "6dae3f7763595ccecf12d8fa168043f6fc4af618efa0d9ddfb69c26cd8d49b2f",
+  "plan_named_month_note": "2bc11699a96f1d082a729e7a0bcd4628b030dacab9d0fbacb975b1c0ea63ec83",
+  "plan_next_on_path": "8378ba2f72cc63f0f08f21e02bf616b5c4c67a8b2bea3d673904a3c31f1219f0",
+  "plan_no_change_this_week": "751447a17e2e16a9a1b072a21ed928465e997d09875267651eefd376d0b1553e",
+  "plan_no_date": "aaa70661b2d901147ed8a6e0103427c9d17edf1a62fd4690cecbf11b7056d650",
+  "plan_no_deadline_note": "0ddf291db0edb4f757dd60bcd1cd0428689d8c7f1dc9ba1bcbd7ededd7230840",
+  "plan_no_goal_description": "275598c8f2ffd26aaaf6c0da6336c2b222cf3e6659bbe07a189555395df45750",
+  "plan_no_lessons_studied_yet": "c597f000a0c37038c51970286f4c829d6494ad0bc794a3a05da48d13d049ef06",
+  "plan_no_longer_fits": "3af074f97eac4611cb8c9b57fa1055f13ab59c5a392568a890a06bd4931d86a9",
+  "plan_not_in_your_plan": "20a7b6d4e1a63617536491b04cf18be32473e118703ae77c0d7ee51667211cff",
+  "plan_not_now": "b36d5de4c61fcc76752cd6d144b952874e968b71e52e6760fc2c7fb3aa6c21b6",
+  "plan_not_yet": "3f0ef141931fec72d2100faead4f88e470d379014ef9781061de8355659ada0b",
+  "plan_nothing_planned": "e28902ac6b68d46f7ec013f492c5485ce0a0886bfb6972a4c85a0d02fd751415",
+  "plan_nothing_planned_until_resume": "1ca5f3d536a6bdc418f3155fcdc27353c72736d12e193eb88c803a8e4917e6a4",
+  "plan_options": "20ba5d8e946906cb0697a069be299a60fe73bb4768c5c7d59cf2738c1a2ec168",
+  "plan_other_options": "ab4da7e7547430f8f3e4a803ed1f311860697ed923417fdacd58b8aa10f030b7",
+  "plan_pace": "c3efd7e3bdd4539222f91923c9b7d396f7aaf936a4680cb9c5bf5089736c6628",
+  "plan_pace_challenges_left": "c2e1c34123948a86aa7b4c462bf282cfabf3bb36a49de55d36407715ddf325cb",
+  "plan_pace_days": "5e9d90548bb043b5f5452163aa83b95fcf806ec41f2d5e6bccaa1c78609a1f41",
+  "plan_pace_days_ahead": "4896a0a57d3306e9ae45d94cdf99cfd277fedb818cb6dd26c93f9ba9237c617b",
+  "plan_pace_days_behind": "7dc7f604258146c1220170ce89904371c6ca43dc19914b449fd88621f517fe0d",
+  "plan_pace_earlier_lessons_first": "9a79c7b5f08d75f8b32207fee6f0c795eaaf25b5f221a4c9d4fce57ffbb1649f",
+  "plan_pace_finished": "bdc07f0d50f318345e9c9bb88326e33e4d722b9f9e2690128a2f188bc24daa46",
+  "plan_pace_keeping_pace": "4a02d7ee9402c19c8f1f108c26b22cd392c0872f1ecdd84ad221ff4e090e2ded",
+  "plan_pace_lessons_to_catch_up": "e5bfd50aebbb9a654992b2c714f2d5aea2037b5bf45078f0850428c30ec45ad6",
+  "plan_pace_more_minutes": "af2530f1462fd64281c424a2a402d2e1fcc1ec436523c6ab0cc8fa80445dcacd",
+  "plan_pace_needs_adjusting": "fe59de8c4d0348e1583e2e979e7e052b2d10640bcad639952e82f7be418a8e08",
+  "plan_pace_no_longer_fits": "2a6e069cda4fa94fd1a161b36cc1c7400f45bcef1536ff3df0cf7779ef529e49",
+  "plan_pace_one_day_ahead": "45ddf3dbe18f388f85b40d8a236c926e513e084bdbc1fd73158f08daf9994bd3",
+  "plan_pace_one_day_behind": "67304f04ecea128006bb9e6d31e656487365beed80775bedc22dae76374d4cf0",
+  "plan_pace_past_your_date": "4cf6f4cb974b89a4a26309035b599cf6c217484e9cbaf00fc03f39661dfbdf63",
+  "plan_pace_value_ahead": "f340d8e6f3fcb2aed6098aaa42d1050bf0d1ff035f46f9a7196aa38aaf2df198",
+  "plan_pace_value_behind": "80d3f8746a6683f2b4ba549b037727fc0e49a4ddac2e6b170e5141c7e8eb6089",
+  "plan_pace_value_challenges": "021805c091121916a76745dc2dd5150cd85fdf4e1e65c91256d97e56fee1009c",
+  "plan_pace_value_finished": "cceb18e1bd53c722f85fe9e457028f94aae6f5ab08cefb4f3c6e57bff62868af",
+  "plan_pace_value_on_pace": "010bd184452c9b0da9e93f75d6f0d0139137a97a6c4eca9c04821a882fe86735",
+  "plan_pace_value_past_date": "75aab2c5272a294d0363fd1967c03fefc5a927184e246b83de5bb6e742d07ece",
+  "plan_pace_value_paused": "daee3760e37b95476a41424a69dbea28fea7beda139485cf5426a6f90b916599",
+  "plan_pace_value_too_tight": "2166ff56f1253abd2c16c0fbb513b817ff53909d83184684b92b2b5227eae1cc",
+  "plan_pace_win_challenge": "5f1007dba61d85eb4e63c03064fbec07df627a23a6e82514f372b429170d0000",
+  "plan_pace_win_challenges": "f7c5a0f0804be13735bc8a209449d13c73b649eb164edd5edae8fa329b4735f1",
+  "plan_past_date_exam_sentence": "8403ea3e03fe5ee830d44092ca29d1ecb8199bb7fb3a5ef8955d05d09c925d9c",
+  "plan_past_date_exam_title": "fafed1f7b4dd5902476ba0aad793b98dc3e98293e988cec7cfca28fb5517cffd",
+  "plan_past_date_goal_sentence": "77c86446856c9f932bd257d7a8edf4e40cf751044357de7841b8454b93e49cb6",
+  "plan_past_date_goal_title": "050aa83150236091ca2184528c5b25fdbaf9e917b99fba62dc75f2666bb8ac30",
+  "plan_pause_goal": "ca6760c7890b9fb7f502138e0dc182709a5a3ee37d291202d2f3ce8c11bd14fa",
+  "plan_phase_after_exam": "3e4c74267eb90dd1ac6dce22e1102442b3c1fedf652fc4f2e2762104a6c27b63",
+  "plan_phase_challenge": "ff0f4ffd45a49e23c00d2599dec52cd9eb5859d8c9721dae7914cc29a7533e61",
+  "plan_phase_final_stretch": "dbc1e49ef964e2c31e2338d8a43dfb0f027cb3799ba900142385e7c5bcdbe389",
+  "plan_phase_foundations": "c09de809004b81ad9ddae1ee7985e8d22d8f0632ba841b8627e71e94c21ad99c",
+  "plan_phase_gaps": "0f0449a4597bebe4ddab398185d8f1a1c21eb92ef3625a617012a86b411caa0e",
+  "plan_phase_lessons_being_written": "a1342e167d064f1b2822c2df911374663d99d2fbde84657555f9540503690a2e",
+  "plan_phase_number": "efbfa99861441c5ef34027c6ce3853e975353c6b72737d538e5fc02fa8388dd5",
+  "plan_phase_practice": "b9829807f6d1d3ff03567e2eca7d3199dd677e585ee7159e2c12d11d6e43424f",
+  "plan_phases_done": "cf39b3ecbf6853539a41c5f348fc08144b4f85b3c9cb7f9c27fe5d000c0ab45c",
+  "plan_pick_date": "17f2a3a4d0b8710c89c76d69f94c3c7aad23da9b5684aacf1a30a16bcd1522a6",
+  "plan_practice": "18dc6edad404cc4c29736e7c8e97bc4493e843a5b131e780571bc2eb14503f5c",
+  "plan_preparation": "d79c186276a418733863a17fa7f5beb02c6e9f37e850e3fbcadf15d4d73b3bb2",
+  "plan_prerequisites": "57792c042355caf1359814a80b3f924c7b4da1fa00eacb3aaf98073a2cb20723",
+  "plan_prerequisites_exam": "d33321b3bbd3e49215607c0dfeeb6e81048950fb9b80a0e9fdc37accb72eb24a",
+  "plan_prerequisites_goal": "b756cbb5da770107e2d3114210ce40a3c329e0c1b324ff5b1810aad933b25865",
+  "plan_preview": "116de3f21290f77a84e9f4f916698bda17104b594ce383bc9f343709b4b7027c",
+  "plan_progress": "59f20748503668c0559c80f2424095abf252107d959ad625b54f3ec7c056ea14",
+  "plan_recommend_deep": "f527c2f7b81ec9864f5daabb2f15055f28eef670c215aeb26ee9ee27fec9dcdb",
+  "plan_recommend_essential_exam": "11b81e0f8b0fbdaa9e188fec4a77d46299d572a7cc2bd07128b7c1e1d9a134a9",
+  "plan_recommend_essential_goal": "89aae79b8a9f79902d33ca69eba479896492a782740a385edc88dfa79ba58287",
+  "plan_recommend_quick_exam": "f3cba25814df969c1f0696680d0583a50d2a5582a9ac460ea6899b31957c0bae",
+  "plan_recommend_quick_goal": "be84819af33e3a81d1c089df9c7f2d620101c9a12e951fa1e67b1b9e650e973e",
+  "plan_recommendation_failed": "6e13a436cceed5a9864aaf3e85ddf00c63f74ff60c9d6fc9a591a268b85bbccd",
+  "plan_recommendation_followed": "f9eabd43c8148795cb2ee322e14ab54f259db9cd2dd164e1e7cfadef3a66fefb",
+  "plan_recommended": "d5ce82564f3a495b934eac20e0723a4cb0c360e35c7729089b79cd61e0e1985f",
+  "plan_resume": "bd1bf65b6d3a8d86e3f200dd8c91f8d96deda2722030584ae01e5b3f5da6f1e9",
+  "plan_resume_effect": "d569bf320caa4ed2d6a0433f428d710c6d37a880764a6566e68c9c6b143af562",
+  "plan_resume_goal": "40c364e0ed63ae980f5d5de03ad529c833e4b8947e89bca8a57304121855baf8",
+  "plan_resume_title": "55422a6602df96fa7445111b851e143fa6b9a046c301df7da3c822cf5aadd702",
+  "plan_retention_caption": "79192629aa8d09bd53eed1f626e1d5d38a165c071d6e2feb44c1f8630862d0b6",
+  "plan_roadmap_day_of": "141e386b7ad35528e7bd1b41f61e9acb2f47b9b9be2c5455d1754b91b5eb396b",
+  "plan_roadmap_from": "efecfffd85f0c55e38dd4e9487bedca9570729f8e5234fab519a30fd4c1fe215",
+  "plan_roadmap_number_of": "33e8fc1cdedc66166ccc12b01b76a6041189a2ead4db8332d061b8d278605456",
+  "plan_roadmap_phase_of": "0bece71d0fcafa6e90317590d8b3007d6bd2cbf8d676dad7a67b7eb5f49ec7c5",
+  "plan_roadmap_until": "c8a8b991dcab569ef12eed4c200537a2c9211a41bbed7e1b4046b222e5925bd8",
+  "plan_roadmap_until_about": "0a5707e331cb0a68c69e0e0d418c9bce6018fe5cc687cdc4a51b679e992561f4",
+  "plan_roadmap_until_about_month": "3b4a0f4bcf7499d6b920f08f9d759d98101f3baf10d707eab9bc3b52728a6c94",
+  "plan_roadmap_until_month": "b05bd554688232ac595877028e11eb68505a1cb5c58d48fa4cfa7f1472427dc1",
+  "plan_saturdays": "e8e95e642c523bd600584dd986683563d404a127c436da904d71a8c1c1f1536d",
+  "plan_save": "bfe7bd58174f2064ae04ec29e778dab8a0b5175dc11ecf9c7fb864b66c286e9b",
+  "plan_save_choices": "ae8f2f8f7fe45c24b6ab6f8adb38114913d74df493e4f67fc79ca9fe1af3ffc7",
+  "plan_save_failed": "1465488f3df58bc810dd67a9ea969d432f1d4717b7d633a09d72edd89683b859",
+  "plan_saving": "8faaaae3030f691af3fb166f69bee5ae7f6295476fad15cb14d280d1fca47d41",
+  "plan_score_band": "ac7854b5af0736f7853d17fc54bf1c7c2a1686a5a13749375a771c9d30d53cf4",
+  "plan_score_band_range": "50e36ebd05ddd9d28d01fff5d7ad32b73240f32d5dea777ddb6cf0837df17957",
+  "plan_score_percent": "549d7473d84de9bb35618f31d0c0cce36b2b2905603076d05699dc180aa86d2d",
+  "plan_score_percent_range": "0af58cd17b0a9b65a2de7c49ce2ebd60550a9e8e35a59fc32283ded511cfa4ec",
+  "plan_score_range": "ff14ce8f5b0765ea90618776915ac37d3a163ffaefef6eadec5d9e7d2e1908ba",
+  "plan_setup_left_description": "270cdc917e5c4a449feddc24c7202dc2e6cfba772ee4ae8b19e201af4d21ece5",
+  "plan_setup_left_title": "29b693c738e622349203f54e9e160108197352e9f3b3089689da6bb9f78975c8",
+  "plan_share": "76813c60f5b1c4c3a1f516c9750004fa2c1d7f930aba9d45c04c8e9a3a06355f",
+  "plan_sheet_done": "e5c746e878b67718d7aa0a8e4a06134ed9cacfcf5dded7d87a98993ccff460f4",
+  "plan_short_day": "9663e9f9018e1c470f21de5e69205a50f7f5e87433136f5db2da2ebb208717d3",
+  "plan_short_days": "eb410bc79a7eca25924e1a361d2d32dca1fa2cdff7685cebb9db631b6254d5f1",
+  "plan_short_full_review": "44dff8cc5b572bd56d0a849373e97ce0293e0d37638f52de71a7838dafbb0fd4",
+  "plan_short_full_review_and_practice": "2502b29f1815647e3a702b2a636259b1a2c8157dbc64c10b4ca92076b65a9be3",
+  "plan_short_light_review": "9ebc70742d9cd73f77761ff35cff3fbcc8be04067a0bb55752ae0d8863b1c031",
+  "plan_short_map_and_gaps": "fc2c35a45a5310d6354132d5f5c6b09a8b38c46a691045cda084b0e8d93d1054",
+  "plan_short_mock_and_practice": "3544b847f879573413e6bef6726702249a0ad68855e5b861c1d9ea929e8db1c3",
+  "plan_short_mock_and_review": "469f92b3d088dd8c97e08efe8e562318c5b11ad62c83ba741ae8d584f14c7614",
+  "plan_show_fewer_chapters": "3fcb7bd3a6816305f3d9a468dd398fbde89717a09d3999a21239e3a7ba8b5a50",
+  "plan_skill_leads": "5fbcf5dede298d6698c4f404d3e921948e000e763e8b86f0057f1d7f90a4b0c2",
+  "plan_skills_you_know": "1ead470d797c7154f28ff65460e5db801ea50c8421188f0dcdf6af5c0c73ad46",
+  "plan_skipped": "d27a1b4db78cd5c32f2bb065f19e7aa78d5526cce010edaa158dac8b28047a69",
+  "plan_skipped_known": "5df9d874072499cb08fff8043a6ac20e71c2630d6ce2b4ce3c8dc46d32047d39",
+  "plan_stays_as_it_is": "f457cbbab7e26ce95a118b7c21063431f9c5090f6ab35db4181c6658e6217ce7",
+  "plan_still_building": "bceb68b132ab0314c6dbc620ad7cc92ef45b4924441212f55e9d611810cccb96",
+  "plan_still_fading": "a2bdb1b768b68f086a4a16060eb59967f124c031f221299aab9b4b9b28c3c5fe",
+  "plan_still_first_challenge": "d44e317c1cf7a45d1913c6261e2c4ef6c5fd3aee609af9c59dac260410433110",
+  "plan_still_first_mock": "935df7c9b363fd494386e52f33f56b017a5a13cb3b2bdbba460f22b693998a09",
+  "plan_still_full_review": "0871b8aab86bb635e31fda8b4c778b9e787b63fc810c53527f27cb2722bf132b",
+  "plan_still_keep_fresh": "7cd60a8eadf1ea049c7545c50f81e976d03dae27753483d92df3f416f9f50998",
+  "plan_still_skills_solid": "2e99224737ed70aacecc755043a98fc1de417100c554d53cfc4526ff26b6086f",
+  "plan_still_time_in_plan": "4f23026484cb8194e4d3233d01905e20a8e2029e1aac1787777586fc66b6ac15",
+  "plan_still_to_do": "9f29e369d89e5cb8a500d76f84a94ef0b51d2cbf0238ddc933fcdd0aa2eaa12b",
+  "plan_still_topics_solid": "9527c0ffd1a9c5a503a24a2b929bb2052c1057a1a03c1f8301a8e92150b43fbf",
+  "plan_study_days": "6b1565b71becdee39e72b9a89796eba8f58293a30226e3a0f590b3fbb202c704",
+  "plan_study_everything": "c8f7dd035b03271b29422288c39327142968addb934e95693368d0810a08a761",
+  "plan_study_everything_after_exam": "a1c56a151f108b2b1c4af6ac6e4b5fc89f5a8f21ade42c1a9bf915a62e17facf",
+  "plan_study_everything_exam_description": "1b8aac95baed94e178505086415fb535e1440d384d252fc2b38cfaa81aa2e0e4",
+  "plan_study_everything_goal_description": "18991d5b5ab8fcd602e1040e1ea1c3017bd913cb1dfed402130ad1f49431293b",
+  "plan_study_next": "36bef8a461cf8e3524fae80371f64093b8daffb53b502aa0c119aaf97a253d81",
+  "plan_suggestion": "9fd219a6d3c7cbbd45bba00c008502952ff1d0f0c5f57733469bf429604e375a",
+  "plan_suggestion_next": "7d9555d318268234f3a19e617bf7d649bc0f2d75900a70cafb7d66091b34bd0b",
+  "plan_suggestion_position": "91248ca065f527f60305b9c252f789aed93a4334dce6c1c7bb57051df211b0e6",
+  "plan_suggestion_previous": "498a5ab5c80a33a25f68db69b8c086bc551751f88581022ffdc325667fe52776",
+  "plan_sundays": "1cbe53139fce734b53c79153b295f24c1694565f9b514aa88f2e1db63358f328",
+  "plan_system_phone": "590e2b62607d52bd511bb755082d86e65420cb7469e41521281eaaf74260b6fd",
+  "plan_take_short_test": "791cb06e88534489ed865e5e4643da4da87382bcbb1d9facf0aed5abcb4d8bf3",
+  "plan_talk_to": "2947fe997e263a8d6ebe1a1c300cfeb9992eb2b2b776e87c78f46f466f3c247d",
+  "plan_tell_buddy": "04b9cb4cd615878838f88800302aaa7c9b78465ab6366962c1472695952229bc",
+  "plan_tell_buddy_description": "4ba9ef6f3fae1b98791ddb74e1aba8e36377fe1d6fb649e8c4466579fefa2d56",
+  "plan_tell_buddy_description_modules": "d4e9e1158a7004207e30b25a042c71036734c5390ff26c5f8269329ec220a052",
+  "plan_test_chooses_for_you": "ce0e4afd6ed7219446dea93bc349c419c399ba996b7607f8fdc83a0c41c123bf",
+  "plan_then_covers_everything": "35ddea0d1fac9e1038021824e0ec551a48177556d2846c0478399dbf6160ff73",
+  "plan_this_week": "44062bfe95423eba0ded476eeb0884ffc7e410ae398864af3f3f38a1613afe37",
+  "plan_thursdays": "f9385653e23e1eb64a580e4a508ef623e7d99f9eb8f03deeb345a21045ee906c",
+  "plan_time_a_day": "02c2db4e9f4c4acf1d31fdca0683f4a0ea5d86c2733afe54167f928bd8f89d32",
+  "plan_time_a_day_label": "2a133d36a57de278ea26a15179ffa89ac040602d0057e6a9000db8773cfc521b",
+  "plan_time_ask_failed": "4d91ffdb7f51560aba2504da39de637005a308eb81ee33f28bb88fa8d70a61dd",
+  "plan_time_asking": "eaa8bcd2fe68bf62d73b84bde05508584bea267344e31896aacbe7dd55a8aace",
+  "plan_time_covers_everything_by": "612ba8b7b5a86e9fd9f86957f4f426df25dae4e484a4487721df95c2ab2bfb91",
+  "plan_time_covers_everything_by_month": "299e1170454b9790ebe285a332edb395284c081b260d552c5fb1f82c69ef6eb1",
+  "plan_time_covers_everything_in_depth": "2f0b6d72123f7d08d277d23b2c4983e96639de7c8ce25b48df07cdb3ee62de6d",
+  "plan_time_covers_exam_all": "325370328dc566e33bb485192e1406e1381d70db9572cf33d231990d83044243",
+  "plan_time_covers_exam_all_month": "2aff7031438aec866e9ed5284cea76b6ad33313ac66ba0b5f293418077e438a2",
+  "plan_time_covers_goal_all": "f5e0b96df8686094cc723332bcb183cdfd546c278d5c39a4353e9ddfea9fd9d4",
+  "plan_time_covers_goal_all_month": "3b99f2ac08ac7040f2a4f1fccd42fe9c4ec06f9def15f30aa058df6b9187ec36",
+  "plan_time_find_failed": "bfd4e3ef1ccc8717c60d1ec4a3d0cc755eecc2c21ab03bd73f30d9d9a0b68e35",
+  "plan_time_finish_failed": "12e6e6a38c80b434236a3c6e5faa2c6ece686f10cf3b13327672d6804478339f",
+  "plan_time_finish_unknown": "cc322bc333a77a877df815615dfd6508421b1dd159e5925faf10311deaddab1b",
+  "plan_time_focus_exam_every_topic": "9c20ce8baa328b7417f7a2b1b006541b89ca4780ee8d74db9b56beffa9f81766",
+  "plan_time_focus_exam_most_asked": "518c82a9de6292f1a8c2a6605c1c58d84dbfa7f06c2a61c948a9dd17f85ddfa5",
+  "plan_time_focus_goal_every_part": "41426c6d4c05d52d9c711c18515c75a0610254f117b97c3d2534cdfdebf564b7",
+  "plan_time_focus_goal_most_important": "3d9e4bc1177537c70a5d877f38174ce0f5ea1305c1a26d5bfc5005f359ed55f9",
+  "plan_time_more_days": "5594d97fbbc8c5f532a146085ff1cb9b0c68c42d3a8160bb14a1818ad2a2acff",
+  "plan_time_no_days": "4a63c77e739ec1809fac4a8d16c3e4aaf581106e2382f7a6e5fb0eec372ef7bf",
+  "plan_time_none": "5b92955d839f373d303ebff56f17bdee6d6e1aaf23cf447f740f1577e2d48f95",
+  "plan_time_none_month": "4806490657aac2bf72291a8eb82779942d5a2bde59770486e8b823b7bcf9286b",
+  "plan_time_on_weekends": "9889e6bb0cc87842edb6d80d715a534406315d983f3039694165b664603ac28d",
+  "plan_time_past_date": "b0f90680d50b13ec5baab60e03c6955668abb1a1fd54085682790e921ac9e70b",
+  "plan_time_past_date_month": "71e04fb991e7263158759451e7b8c8fe98ce513341dc2616e4be0c63678de6b5",
+  "plan_time_share_exam": "ac2e97763235aee0036c9a9b43ca9db93e34a7cfbd0df11fb04f02dbf8e4ebf5",
+  "plan_time_share_exam_month": "3025423bcbc1d20c16d066f2e6c19e17a43000bf72531abdfdd5043d1bf2f238",
+  "plan_time_share_goal": "6745b5b2ecdb6dd89150e16d73bd590474a3d959c48e7635b6dbbfd9df7738f1",
+  "plan_time_share_goal_month": "39b0fd514791e37b2c5ea01396c1accdc850286b5c52c4f2cb4811f67e3e0928",
+  "plan_time_split_many": "299784e345010726b67ff165695cc3863bf16b252315171125883d58568763df",
+  "plan_time_split_one": "21e5e94dd550e37a1e76389f7095d321fd0bc289825711c1837c895015bd44f8",
+  "plan_time_suggest": "1ecd1d28d69d824ac74917dd7af61b2adc464781f97528f7ced9efdf90b54628",
+  "plan_time_suggest_title": "5d1a1f021c4ab792d4bd596c8dc8aac3fad1c9c46395e9f6aa62dd688451c07f",
+  "plan_time_takes_everything": "ba1231b14313654618f509241885951879971b38aa0ef3cfa64b1ab2773cd9c0",
+  "plan_time_takes_everything_month": "0868f620057684a47de1bf08de665043b82146a146cd271615225eac27cd7cb2",
+  "plan_time_takes_exam_all": "ebdfadec577632b5c4181b1fea44369bb63afddcc11a758709105984487aaa76",
+  "plan_time_takes_exam_all_month": "29a66765a402c4b07ef20b10ea810f0715c27dae8ad123a36dafc1894079f3f1",
+  "plan_time_takes_goal_all": "4eb025a2144aedd6436c135cd723ed3643d9733cdd71a46c2ccdaa343b38fb97",
+  "plan_time_takes_goal_all_month": "6fd84b75e2127f841c7d50c74fc3258068db2eb89c1ba424607a491522d31f07",
+  "plan_time_takes_most": "a67afc59f70aa1c9036f7706728bc7ccd31748afd15078635368e4b1c9b7a852",
+  "plan_time_takes_most_month": "6d229b7859f57383dd46d5a15cfde0a10a6c7c660ace6996bf7076ae3dd61cb2",
+  "plan_time_too_long": "25600fdb18517bf0e1a4294887d2dbc29bf7f871156a48bb36ca9618cac1c817",
+  "plan_time_use_suggested": "8595deeff2ac784e1cfdd59b90e3ac9857970b22c20cfe24522b6f3a7ed0634b",
+  "plan_time_use_to_cover_everything": "8368007d692d856a9807bdb5e49e32d6f415823b6903a88a7a5f2aafcdb9e321",
+  "plan_time_weekends": "b2e1a448746b132413e98799d7f0dfef30b5a3bad6a37b77ee45e766590e9348",
+  "plan_time_working": "ddbe48e7ce60f345f99db9ca3fba099418be56cb793441f33422da89af27b0d4",
+  "plan_title": "ee72226d53de3d9dbf47f949706e4ddba7435afb303293719bb7c660976bbc8b",
+  "plan_to_be_confirmed": "d2c00358c9170a1a087911c3ddf35eb6ac424401182cd9aa742b78d0cd3f36eb",
+  "plan_today": "2d590e714dd4fb1110d6877ecf5c4bbf19ecd6e0061c8146edf7f1a89058ca25",
+  "plan_too_easy": "a52cf366f0c0184f3d83e448852904cba7c184e58b1e9b190a78c10154d1e523",
+  "plan_too_hard": "d53f446183164c8d94c8a0258d276ba20d145c903ceee8d8c38243865c5832bb",
+  "plan_tool_change": "6df92fcae331772c8f345c902b719cf470a198c05ec36d1cf94475eb723aabd3",
+  "plan_tool_change_how": "219d97baeeac1f3d40a6a7e430a055e5b984cf34bd76d3bcd359590a14f97db0",
+  "plan_tool_choose_how": "7be95394dc660e21b807f65048587b1f7bc12a7ee77db617e751fb42b93ed0f1",
+  "plan_tool_device": "8e3c0fa9b1288d7986c9b62593fc9bd715f8dafed751ae0570d17f316173eb1a",
+  "plan_tool_examples_only": "4caa5c1408c6c4ea7c5170d92d7e59b6b844590bc28eebde2dd6ede1a7dd01b9",
+  "plan_tool_have": "e4a96e5e1f6f9acec2bd569e0389567797fe4aea4ded0040c7179c429137c650",
+  "plan_tool_have_description": "5921cfc8fcaaf06e3b149db4d2765c62bd26d0a0086eb58a6a11679dd8fccea3",
+  "plan_tool_have_it": "0fa25201140edf096afde3b974ef1a1cd4e7567fe32aec4a0ef1172cc70a7484",
+  "plan_tool_how": "65f23398724001c108c24c2c799ada3ed9095c0df1628a1960fb4792bbae0c12",
+  "plan_tool_needed": "91b95f7fd5b0563a63c95385a37b8db20b8ba8861afe07289b3bbd8740d78e22",
+  "plan_tool_none": "122be78d70cff41181c8e5586a962bcf75b5d09443b4ccacdaff7208f85e2982",
+  "plan_tool_none_description": "eada3191f182b89e63d3f456639cfc28ff8405cbbc6b4b1af3876a7e796f894b",
+  "plan_tool_optional": "77b9383bc9ef796ea3d10d12a12189dace5ab07eaacf2b0901b89b93981d4099",
+  "plan_tool_setup": "004f2a7657bcf1c9cd7ab2d65611f3bee29a201ade8da035221d365096783e33",
+  "plan_tool_setup_description": "9ffa00e0b801394062c4fcdaaf67a1b3bf9d5195030fd9a31a7b19def8652a4d",
+  "plan_tool_setup_first": "0e59739dcd96fefc3377aa0b8381478328c339125e9469e22d12e1f0c03387c6",
+  "plan_tool_setup_for": "662a4c93f96d75b57673888a26a8ca93b892003a075c36da9543c0b6eb915f26",
+  "plan_tool_updates_when_ready": "72cbc2efe523c4b1da95cf04395ade41462c40cf61620ae77cee2e9c44358bc4",
+  "plan_tool_writing_setup": "c91ff241f67fa903827106bb134453b8ef7f0e69c99eea12f669ae9c18690fe1",
+  "plan_tool_writing_setup_line_1": "86615be109a8afe4cc230ff961e2bb84cfe0975585d2ba58dca6228c12da4173",
+  "plan_tool_writing_setup_line_2": "b638c19fa25f9f56e565d62f7811079416e019b22f0a76d3eb22f787d7e2692f",
+  "plan_tool_writing_setup_line_3": "fcd991055a2903c31eba4c6e54e5c34380c171bd1a63c8694ee280e4417d9271",
+  "plan_tool_writing_setup_phase": "153f44b958470cfbb9c443dfff2b5f71088fb78e2854496bcbc32e31d52dfe94",
+  "plan_tools_later": "4e44a56dc87436df4e70755489f5e08dc5d49b8888202071ebd0b0441b767c4f",
+  "plan_tools_none": "28178bea0e00c29a2ae8d7e452b2c727214d2445fe0adc8ceb83aa76f96a423b",
+  "plan_tools_title": "8d24fd600c7915ed2c844b3ae2d92ddfe025856ec493c75c96d1d0d2e9d079c3",
+  "plan_tools_without": "7a1af7ae07837fbe62c7519d0bbe6dd3e9d8c526526a320405e4b3ee302a01e0",
+  "plan_try_again": "64cf1db814134a71e9bc16954324b943392d655500f7ab9f9369553410b75efc",
+  "plan_tuesdays": "592cda714fd06aafe2b52aa904d3eb79d09e57c949f3b83edd7c384e37fd2bb4",
+  "plan_undo": "0bfc41ac13e8cdefc58ba156f78598a8c52268c4dbe84ec50a00fca2faff3d81",
+  "plan_unit_lessons_being_written": "20ef4bcc1429a5c22d8942234eda9f3af85bfc848d877350831902e9a7f6be49",
+  "plan_until": "09fef8ad3ce07cff3098905a25218765098dd91ba8bc7c79e58d08b2af88bd28",
+  "plan_until_estimate": "d6a7a56b628d80645a1f3e37226ab9b0ec48b8656e077d35a5ebba061366ef73",
+  "plan_until_estimate_spoken": "581dc5f36b5f49fcda894b583d282138bcdd7333663ac6c82df0f66cf501bba4",
+  "plan_up_next": "4035049bbd9630a764c1dcc08376c42316860adad6a175846f225dbc5cd47148",
+  "plan_up_next_suffix": "e2831cc86ab189d607c04e8a9770ca2d14ea8a78e868480fb6199e5b9272f642",
+  "plan_updated": "ec58b6273f79d8ded911d7095aa36511656459e73d367cb0f99f42170b72eb15",
+  "plan_updated_sentence": "d0ef26715984f152c3423371a83f53eaff400ac238803c9867d1f0cd7df60a13",
+  "plan_use_this_date": "496754ba70e688e624568d56fa796bbe3297c6cd961f5fa3e4558dc50fc80416",
+  "plan_use_time": "b6d843d52f6465fd9b01e5692fcd9c6a543b528c2ba1454ef59a21c42f7b0082",
+  "plan_wednesdays": "229b05adbfe0216f11052f4d9189235e18fbf4ae60be89a71ddb6d56dabd6c8e",
+  "plan_week_day": "43b4e08a0adb3c4c4ed011da6e5991a0b4d29d4d838deb977a4b0942e6332cc1",
+  "plan_week_time": "d717c234196d1fe247d121b2fd036b20824f83f68f2fa473711b81e5d621c2c4",
+  "plan_weekend_time_differs": "483dd137c6f67ecd32ae7e646d836b59c5fc75fae36370ff57d678386245d8fd",
+  "plan_weekly_challenges": "60ee800ddd0f6ff9212d1ac6d69d6a93a27cf217951290bf25e45675ed6376a0",
+  "plan_weekly_challenges_count": "0df76c389cafc17aa243d25378a435a527ae4286f5ec3fc7c784d4ae9076ea38",
+  "plan_what_you_practice": "b48053cf02e54c10370cf9e9325e7f850ec39b499e5c5b7079345ca85219a528",
+  "plan_when_to_practice": "d33cbb641199b2434e4a81dffc2a50f6be633b13b8cf641cd6af114b68550606",
+  "plan_where_to_focus": "1696dd862d6d8a3131c54de43ce21a1c6e48bab8f0ec1bc6a5d34d563e52e08c",
+  "plan_where_to_focus_description": "ede6eec785c02bf530fd6001553608e1242781d83c7d1e50ca238a1641a4d85c",
+  "plan_working_out_coverage": "3e30e0d4df731388a91659695e8c4a63049560c660bf2bacc537426a8470fe77",
+  "plan_you_are_here_suffix": "ca1c50296dc98d0fc84b212b89df76c6d6f4b0ae9f3be99a25d9a67524aba852",
+  "plan_your_level": "caee29928f7acb9321f1a01b97536760641519eb5a97dcc4224d4de60f2c2e13",
+  "plan_your_pace": "5fd1e8f7772657cb0350427833aac96e5b7bec63cd7a9c323fe52a41455bc0ad",
+  "plan_your_path": "7a43c6854f07a0f5765351abe3381ad0fe64b203004720ef708ca6a13f607b7b",
+  "plan_your_plan": "3f36aa51728c0611049895f4b043ba1ee11fa403490cbed8b415f273cebc5e83",
+  "plan_your_preparation": "49ccb7a85368d518a3c996a89c5edd442776ac8ead8820129c93ccfe5bd72940",
+  "plan_your_progress": "02c12f8ad0f64a1939ff3526366efeb20bd3fd65806e8372e8fe62a0d5e0ce46"
+}
+-->
+<resources>
+    <string name="plan_title">Plan</string>
+    <string name="plan_eyebrow">%1$s · %2$s</string>
+    <string name="plan_day_is_here">Der Tag ist da</string>
+    <plurals name="plan_days_left">
+        <item quantity="one">Noch %d Tag</item>
+        <item quantity="other">Noch %d Tage</item>
+    </plurals>
+    <plurals name="plan_days_left_estimate">
+        <item quantity="one">Noch ~%d Tag</item>
+        <item quantity="other">Noch ~%d Tage</item>
+    </plurals>
+    <plurals name="plan_days_left_estimate_spoken">
+        <item quantity="one">Noch etwa %d Tag</item>
+        <item quantity="other">Noch etwa %d Tage</item>
+    </plurals>
+    <string name="plan_date_estimate">~%1$s</string>
+    <string name="plan_date_estimate_spoken">Etwa %1$s</string>
+    <string name="plan_date_range">%1$s – %2$s</string>
+    <string name="plan_no_goal_description">Sag uns, was du lernen möchtest, und wir planen jeden Tag bis zu deinem Ziel.</string>
+    <string name="plan_setup_left_title">Dein Plan kommt nach ein paar Fragen</string>
+    <string name="plan_setup_left_description">Beantworte sie und wir planen jeden Tag bis zu deinem Ziel.</string>
+    <string name="plan_continue">Weiter</string>
+    <string name="plan_building_eyebrow">%1$s · Wir erstellen deinen Plan</string>
+    <string name="plan_building_description">Das dauert normalerweise ein bis zwei Minuten. Dein Plan öffnet sich hier, sobald er fertig ist.</string>
+    <string name="plan_options">Planoptionen</string>
+    <string name="plan_adjust_plan">Plan anpassen</string>
+    <string name="plan_about_exam">Über die Prüfung</string>
+    <string name="plan_full_course">Gesamten Kurs ansehen</string>
+    <string name="plan_share">Plan teilen</string>
+    <string name="plan_talk_to">Mit %1$s sprechen</string>
+    <string name="plan_pause_goal">Dieses Ziel pausieren</string>
+    <string name="plan_resume_goal">Dieses Ziel fortsetzen</string>
+    <string name="plan_archive_goal">Dieses Ziel archivieren</string>
+    <string name="plan_archive_title">%1$s archivieren?</string>
+    <string name="plan_archive_description">Es wird aus deinen Zielen entfernt und sein Plan gestoppt. Dein Lernfortschritt bleibt erhalten.</string>
+    <string name="plan_archive">Archivieren</string>
+    <string name="plan_resume_title">%1$s fortsetzen?</string>
+    <string name="plan_resume_effect">Dein Plan geht heute weiter. Du beginnst mit den Lektionen, die für die Tage deiner Pause geplant waren.</string>
+    <string name="plan_resume">Fortsetzen</string>
+    <string name="plan_cancel">Abbrechen</string>
+    <string name="plan_goal_limit_reached">Im Free-Tarif kannst du jeweils ein Ziel verfolgen. Pausiere dein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus für mehr Ziele.</string>
+    <string name="plan_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
+    <plurals name="plan_phases_done">
+        <item quantity="one">%1$d von %2$d Phase abgeschlossen</item>
+        <item quantity="other">%1$d von %2$d Phasen abgeschlossen</item>
+    </plurals>
+    <string name="plan_roadmap_day_of">Tag %1$d von %2$d</string>
+    <string name="plan_roadmap_number_of">%1$d von %2$d</string>
+    <string name="plan_roadmap_phase_of">Phase %1$d von %2$d</string>
+    <string name="plan_roadmap_from">Ab %1$s</string>
+    <!-- %1$s is the day the plan ends, such as "Nov 3". -->
+    <string name="plan_roadmap_until">Bis zum %1$s</string>
+    <!-- %1$s is the month the plan ends, such as "May" or "May 2027". -->
+    <string name="plan_roadmap_until_month">Bis %1$s</string>
+    <!-- An estimated end. %1$s is the day the plan ends, such as "Nov 3". -->
+    <string name="plan_roadmap_until_about">Bis etwa %1$s</string>
+    <!-- An estimated end. %1$s is the month the plan ends, such as "May" or "May 2027". -->
+    <string name="plan_roadmap_until_about_month">Bis etwa %1$s</string>
+    <string name="plan_today">Heute</string>
+    <string name="plan_mock_exam">Probeprüfung</string>
+    <string name="plan_phase_challenge">Phasen-Herausforderung</string>
+    <string name="plan_exam_day">Prüfungstag</string>
+    <string name="plan_goal_date">Zieldatum</string>
+    <string name="plan_exam_date_label">%1$s · Prüfung</string>
+    <string name="plan_you_are_here_suffix">, hier bist du</string>
+    <string name="plan_done_suffix">, abgeschlossen</string>
+    <string name="plan_up_next_suffix">, als Nächstes</string>
+    <string name="plan_phase_number">Phase %1$d</string>
+    <string name="plan_phase_foundations">Grundlagen</string>
+    <string name="plan_phase_gaps">Lücken schließen</string>
+    <string name="plan_phase_practice">Üben</string>
+    <string name="plan_phase_final_stretch">Endspurt</string>
+    <string name="plan_phase_after_exam">Nach der Prüfung</string>
+    <string name="plan_short_map_and_gaps">Prüfungsüberblick und Lücken</string>
+    <string name="plan_short_mock_and_practice">Probeprüfung und Übung</string>
+    <string name="plan_short_full_review_and_practice">Vollständige Wiederholung und Übung</string>
+    <string name="plan_short_mock_and_review">Kurze Probeprüfung und Wiederholung</string>
+    <string name="plan_short_full_review">Vollständige Wiederholung</string>
+    <string name="plan_short_light_review">Kurze Wiederholung</string>
+    <string name="plan_short_day">Tag %1$d von %2$d</string>
+    <string name="plan_short_days">Tag %1$d bis %2$d von %3$d</string>
+    <string name="plan_your_path">Dein Weg</string>
+    <string name="plan_lessons_count">%1$d / %2$d</string>
+    <plurals name="plan_lessons_done_of">
+        <item quantity="one">%1$d von %2$d Lektion abgeschlossen</item>
+        <item quantity="other">%1$d von %2$d Lektionen abgeschlossen</item>
+    </plurals>
+    <string name="plan_until">bis %1$s</string>
+    <string name="plan_until_estimate">bis ~%1$s</string>
+    <string name="plan_until_estimate_spoken">bis etwa %1$s</string>
+    <string name="plan_not_in_your_plan">Nicht in deinem Plan</string>
+    <plurals name="plan_lessons_left_out">
+        <item quantity="one">%d Lektion wurde ausgelassen</item>
+        <item quantity="other">%d Lektionen wurden ausgelassen</item>
+    </plurals>
+    <string name="plan_challenge_left_out">Herausforderung ausgelassen</string>
+    <!-- On a phase of the learner's plan: the plan has no room for its challenge before their goal's date. -->
+    <string name="plan_challenge_no_time">Vor deinem Zieldatum bleibt keine Zeit für die Herausforderung dieser Phase</string>
+    <string name="plan_continues_today">Geht heute weiter</string>
+    <!-- %1$s is the day the plan resumes, such as "Nov 3". -->
+    <string name="plan_continues_on">Weiter am %1$s</string>
+    <string name="plan_more_lessons_challenge_on">Weitere Lektionen folgen · Herausforderung am %1$s</string>
+    <string name="plan_more_lessons_on_the_way">Weitere Lektionen folgen</string>
+    <string name="plan_lessons_done_challenge_on">Lektionen abgeschlossen · Herausforderung am %1$s</string>
+    <string name="plan_up_next">Als Nächstes</string>
+    <string name="plan_skipped">Übersprungen</string>
+    <string name="plan_done">Abgeschlossen</string>
+    <plurals name="plan_skills_you_know">
+        <item quantity="one">%d Fähigkeit, die du schon beherrschst</item>
+        <item quantity="other">%d Fähigkeiten, die du schon beherrschst</item>
+    </plurals>
+    <string name="plan_more_lessons">Weitere Lektionen</string>
+    <string name="plan_lessons_on_the_way">Lektionen folgen</string>
+    <string name="plan_skipped_known">Übersprungen, weil du es schon kennst</string>
+    <string name="plan_going_deeper">Ein früheres Thema vertiefen</string>
+    <!-- %1$s is a day this month, such as "Nov 3". -->
+    <string name="plan_far_from">Ab dem %1$s</string>
+    <!-- %1$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "Dès %1$s"). -->
+    <string name="plan_far_from_month">Ab %1$s</string>
+    <plurals name="plan_far_lessons">
+        <item quantity="one">%d Lektion</item>
+        <item quantity="other">%d Lektionen</item>
+    </plurals>
+    <plurals name="plan_far_lessons_about">
+        <item quantity="one">Etwa %d Lektion</item>
+        <item quantity="other">Etwa %d Lektionen</item>
+    </plurals>
+    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a day this month, such as "Nov 3". -->
+    <string name="plan_far_count_from">%1$s · ab %2$s</string>
+    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "dès %2$s"). -->
+    <string name="plan_far_count_from_month">%1$s · ab %2$s</string>
+    <!-- A far topic's sheet: why its lessons aren't there yet. -->
+    <string name="plan_far_explain">Die Lektionen zu einem Thema werden zwei Wochen vorher geplant. Die Lektionen zu diesem Thema kannst du dir jetzt ansehen.</string>
+    <!-- Writes a far topic's lessons now. -->
+    <string name="plan_far_see_lessons">Lektionen ansehen</string>
+    <!-- Write the duration out in words, not as "30 s". -->
+    <string name="plan_far_writing">Wir bereiten die Lektionen vor… Das dauert etwa eine halbe Minute.</string>
+    <string name="plan_far_unreachable">Wir konnten den Server nicht erreichen. Prüfe deine Verbindung.</string>
+    <string name="plan_far_nothing_left">Für dieses Thema gibt es nichts mehr vorzubereiten.</string>
+    <plurals name="plan_more_chapters">
+        <item quantity="one">%d weiteres Kapitel</item>
+        <item quantity="other">%d weitere Kapitel</item>
+    </plurals>
+    <string name="plan_show_fewer_chapters">Weniger Kapitel anzeigen</string>
+    <!-- %1$s is one or more subject or area names, separated by commas. -->
+    <string name="plan_lessons_being_written_from">Wir erstellen Lektionen zu %1$s.</string>
+    <string name="plan_unit_lessons_being_written">Wir erstellen weitere Lektionen für diese Einheit.</string>
+    <string name="plan_phase_lessons_being_written">Wir erstellen weitere Lektionen für diese Phase.</string>
+    <!-- Status beside a phase challenge the learner has won. -->
+    <string name="plan_challenge_won">Gewonnen</string>
+    <string name="plan_challenge_next_session">In deiner nächsten Lerneinheit</string>
+    <string name="plan_challenge_after_previous">Nach der vorherigen Herausforderung</string>
+    <string name="plan_challenge_opens_after_lessons">Nach den Lektionen dieser Phase verfügbar</string>
+    <string name="plan_challenge_questions">Fragen zu dieser Phase ohne Hinweise</string>
+    <string name="plan_challenge_live_call">Ein Live-Gespräch, in dem du dich verständlich machst</string>
+    <string name="plan_mock_next_sitting">Probeprüfung für den nächsten Prüfungstermin</string>
+    <plurals name="plan_mock_exams_count">
+        <item quantity="one">%d Probeprüfung</item>
+        <item quantity="other">%d Probeprüfungen</item>
+    </plurals>
+    <plurals name="plan_mocks_next_sitting">
+        <item quantity="one">%d Probeprüfung für den nächsten Prüfungstermin</item>
+        <item quantity="other">%d Probeprüfungen für den nächsten Prüfungstermin</item>
+    </plurals>
+    <plurals name="plan_mocks_next_sitting_on">
+        <item quantity="one">%1$d Probeprüfung für den nächsten Prüfungstermin am %2$s</item>
+        <item quantity="other">%1$d Probeprüfungen für den nächsten Prüfungstermin am %2$s</item>
+    </plurals>
+    <plurals name="plan_lessons_of">
+        <item quantity="one">%1$d von %2$d Lektion</item>
+        <item quantity="other">%1$d von %2$d Lektionen</item>
+    </plurals>
+    <string name="plan_next_on_path">Als Nächstes auf deinem Weg</string>
+    <string name="plan_date_to_be_confirmed">Datum wird noch bestätigt</string>
+    <string name="plan_more">Mehr</string>
+    <string name="plan_mind_maps">Mindmaps</string>
+    <string name="plan_your_plan">Dein Plan</string>
+    <string name="plan_exam_date">Prüfungstermin</string>
+    <string name="plan_time_a_day_label">Tägliche Lernzeit</string>
+    <string name="plan_study_days">Lerntage</string>
+    <string name="plan_mock_exams">Probeprüfungen</string>
+    <string name="plan_choose">Auswählen</string>
+    <!-- %1$s is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it. -->
+    <string name="plan_choice_following">Folgt dem Lehrplan für %1$s</string>
+    <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
+    <string name="plan_choice_change">Ändern</string>
+    <string name="plan_practice">Üben</string>
+    <string name="plan_everything">Alles</string>
+    <string name="plan_to_be_confirmed">Wird noch bestätigt</string>
+    <string name="plan_no_date">Kein Datum</string>
+    <string name="plan_time_weekends">%1$s · %2$s am Wochenende</string>
+    <string name="plan_every_day">Jeden Tag</string>
+    <string name="plan_day_range">%1$s – %2$s</string>
+    <string name="plan_mocks_next">Nächster Termin: %1$s</string>
+    <plurals name="plan_mocks_every_weeks">
+        <item quantity="one">%1$s, jede %2$d Woche</item>
+        <item quantity="other">%1$s, alle %2$d Wochen</item>
+    </plurals>
+    <string name="plan_sundays">Sonntags</string>
+    <string name="plan_mondays">Montags</string>
+    <string name="plan_tuesdays">Dienstags</string>
+    <string name="plan_wednesdays">Mittwochs</string>
+    <string name="plan_thursdays">Donnerstags</string>
+    <string name="plan_fridays">Freitags</string>
+    <string name="plan_saturdays">Samstags</string>
+    <string name="plan_activity_vocabulary">Neue Wörter</string>
+    <string name="plan_activity_listening">Hören</string>
+    <string name="plan_activity_writing">Schreiben</string>
+    <string name="plan_activity_speaking">Sprechen</string>
+    <string name="plan_pace">Tempo</string>
+    <string name="plan_your_pace">Dein Tempo</string>
+    <string name="plan_pace_value_finished">Abgeschlossen</string>
+    <string name="plan_pace_value_past_date">Nach dem Zieldatum</string>
+    <string name="plan_pace_value_challenges">Herausforderungen</string>
+    <string name="plan_pace_value_paused">Pausiert</string>
+    <string name="plan_pace_value_ahead">Voraus</string>
+    <string name="plan_pace_value_behind">Im Rückstand</string>
+    <string name="plan_pace_value_too_tight">Zu knapp</string>
+    <string name="plan_pace_value_on_pace">Im Zeitplan</string>
+    <string name="plan_time_a_day">%1$s pro Tag</string>
+    <string name="plan_nothing_planned">Nichts geplant</string>
+    <!-- "It" is the learner's paused goal. -->
+    <string name="plan_nothing_planned_until_resume">Solange dein Ziel pausiert ist, wird nichts geplant.</string>
+    <plurals name="plan_lessons_left">
+        <item quantity="one">Noch %d Lektion</item>
+        <item quantity="other">Noch %d Lektionen</item>
+    </plurals>
+    <string name="plan_pace_one_day_ahead">Einen Tag voraus</string>
+    <plurals name="plan_pace_days_ahead">
+        <item quantity="one">%d Tag voraus</item>
+        <item quantity="other">%d Tage voraus</item>
+    </plurals>
+    <string name="plan_pace_one_day_behind">Einen Tag im Rückstand</string>
+    <plurals name="plan_pace_days_behind">
+        <item quantity="one">%d Tag im Rückstand</item>
+        <item quantity="other">%d Tage im Rückstand</item>
+    </plurals>
+    <plurals name="plan_pace_lessons_to_catch_up">
+        <item quantity="one">%d Lektion aufzuholen</item>
+        <item quantity="other">%d Lektionen aufzuholen</item>
+    </plurals>
+    <plurals name="plan_pace_challenges_left">
+        <item quantity="one">Noch %d Herausforderung</item>
+        <item quantity="other">Noch %d Herausforderungen</item>
+    </plurals>
+    <string name="plan_pace_finished">Plan abgeschlossen</string>
+    <string name="plan_pace_needs_adjusting">Anpassung nötig</string>
+    <string name="plan_pace_keeping_pace">Im Zeitplan</string>
+    <string name="plan_pace_past_your_date">Nach dem Zieldatum</string>
+    <string name="plan_pace_win_challenge">Alle Lektionen sind geschafft: Gewinne die Herausforderung, um deinen Plan abzuschließen.</string>
+    <string name="plan_pace_win_challenges">Alle Lektionen sind geschafft: Gewinne die Herausforderungen, um deinen Plan abzuschließen.</string>
+    <string name="plan_pace_no_longer_fits">Dein Plan passt nicht mehr in die verbleibende Zeit.</string>
+    <plurals name="plan_pace_earlier_lessons_first">
+        <item quantity="one">Zuerst kommt %d Lektion von einem früheren Tag. Sobald du sie abgeschlossen hast, bist du wieder im Tempo.</item>
+        <item quantity="other">Zuerst kommen %d Lektionen von früheren Tagen. Sobald du sie abgeschlossen hast, bist du wieder im Tempo.</item>
+    </plurals>
+    <plurals name="plan_pace_days">
+        <item quantity="one">%d Tag</item>
+        <item quantity="other">%d Tage</item>
+    </plurals>
+    <plurals name="plan_pace_more_minutes">
+        <item quantity="one">%1$d Minute mehr pro Tag für %2$s und du bist wieder im Tempo.</item>
+        <item quantity="other">%1$d Minuten mehr pro Tag für %2$s und du bist wieder im Tempo.</item>
+    </plurals>
+    <plurals name="plan_past_date_exam_sentence">
+        <item quantity="one">Vor deiner Prüfung war noch %d Lektion offen.</item>
+        <item quantity="other">Vor deiner Prüfung waren noch %d Lektionen offen.</item>
+    </plurals>
+    <plurals name="plan_past_date_goal_sentence">
+        <item quantity="one">An deinem Zieldatum war noch %d Lektion offen.</item>
+        <item quantity="other">An deinem Zieldatum waren noch %d Lektionen offen.</item>
+    </plurals>
+    <string name="plan_this_week">Diese Woche</string>
+    <string name="plan_week_time">%1$s von %2$s</string>
+    <string name="plan_week_day">%1$s: %2$s</string>
+    <string name="plan_day_done">erledigt</string>
+    <string name="plan_day_missed">nicht gelernt</string>
+    <string name="plan_day_rest">Pausentag</string>
+    <string name="plan_day_today">heute</string>
+    <string name="plan_day_planned">geplant</string>
+    <string name="plan_last_week_recap">Rückblick auf letzte Woche</string>
+    <string name="plan_preparation">Vorbereitung</string>
+    <string name="plan_progress">Fortschritt</string>
+    <string name="plan_your_preparation">Deine Vorbereitung</string>
+    <string name="plan_your_progress">Dein Fortschritt</string>
+    <!-- A language goal's standing: its level across skills, such as "B1". -->
+    <string name="plan_level">Level</string>
+    <string name="plan_your_level">Dein Level</string>
+    <!-- Under a language goal's level when all of its skills (reading, listening, speaking, writing) are at the same level. -->
+    <string name="plan_even_across_skills">Alle Fähigkeiten gleichauf</string>
+    <!-- Under a language goal's level: the skill where the learner's level is highest, such as "Reading leads". -->
+    <string name="plan_skill_leads">%1$s liegt vorn</string>
+    <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->
+    <string name="plan_no_lessons_studied_yet">Noch keine Lektionen gelernt</string>
+    <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->
+    <plurals name="plan_lessons_studied">
+        <item quantity="one">%1$s Lektion gelernt</item>
+        <item quantity="other">%1$s Lektionen gelernt</item>
+    </plurals>
+    <string name="plan_no_change_this_week">Keine Veränderung diese Woche</string>
+    <plurals name="plan_gain_this_week">
+        <item quantity="one">+%d diese Woche</item>
+        <item quantity="other">+%d diese Woche</item>
+    </plurals>
+    <plurals name="plan_loss_this_week">
+        <item quantity="one">%d diese Woche</item>
+        <item quantity="other">%d diese Woche</item>
+    </plurals>
+    <string name="plan_estimate_waits">Mach weitere Probeprüfungen über den ganzen Prüfungsstoff oder die Hälfte davon, um deinen geschätzten Score zu sehen.</string>
+    <string name="plan_estimated_score">Geschätzter Score</string>
+    <string name="plan_estimate_based_on_last">Basierend auf deiner letzten Probeprüfung</string>
+    <plurals name="plan_estimate_based_on">
+        <item quantity="one">Basierend auf deiner letzten %d Probeprüfung</item>
+        <item quantity="other">Basierend auf deinen letzten %d Probeprüfungen</item>
+    </plurals>
+    <string name="plan_score_percent">%1$s%%</string>
+    <string name="plan_score_percent_range">%1$s%% bis %2$s%%</string>
+    <string name="plan_score_band">Band %1$s</string>
+    <string name="plan_score_band_range">Band %1$s bis %2$s</string>
+    <string name="plan_score_range">%1$s bis %2$s</string>
+    <string name="plan_lessons">Lektionen</string>
+    <string name="plan_coverage">Abdeckung</string>
+    <plurals name="plan_coverage_caption">
+        <item quantity="one">%1$d von %2$d Fähigkeit, nach Bedeutung gewichtet</item>
+        <item quantity="other">%1$d von %2$d Fähigkeiten, nach Bedeutung gewichtet</item>
+    </plurals>
+    <string name="plan_mastery">Beherrschung</string>
+    <string name="plan_mastery_waits">Wird nach ein paar Übungsfragen angezeigt</string>
+    <plurals name="plan_mastery_caption">
+        <item quantity="one">%1$d von %2$d richtig</item>
+        <item quantity="other">%1$d von %2$d richtig</item>
+    </plurals>
+    <string name="plan_long_term_memory">Langzeitgedächtnis</string>
+    <string name="plan_retention_caption">Von dem, was du gelernt hast</string>
+    <string name="plan_not_yet">Noch nicht</string>
+    <string name="plan_full_reviews">Vollständige Wiederholungen</string>
+    <string name="plan_weekly_challenges">Wöchentliche Herausforderungen</string>
+    <plurals name="plan_full_reviews_done">
+        <item quantity="one">%d vollständige Wiederholung abgeschlossen</item>
+        <item quantity="other">%d vollständige Wiederholungen abgeschlossen</item>
+    </plurals>
+    <plurals name="plan_weekly_challenges_count">
+        <item quantity="one">%d wöchentliche Herausforderung</item>
+        <item quantity="other">%d wöchentliche Herausforderungen</item>
+    </plurals>
+    <plurals name="plan_mock_exams_taken">
+        <item quantity="one">%d Probeprüfung absolviert</item>
+        <item quantity="other">%d Probeprüfungen absolviert</item>
+    </plurals>
+    <string name="plan_measure_progress">Dein Fortschritt zeigt, welchen Anteil der Lektionen in deinem Plan du gelernt hast oder schon kanntest. Beherrschung, Gedächtnis und wöchentliche Herausforderungen zeigen, wie gut du sie beherrschst.</string>
+    <string name="plan_measure_full_reviews">Deine Vorbereitung berücksichtigt deine Fächer entsprechend ihrer Gewichtung in der Prüfung. Die Vorbereitung auf ein Fach ergibt sich daraus, wie viel du gelernt hast und wie gut du es beherrschst: anhand richtiger Antworten, deines Gedächtnisses und vollständiger Wiederholungen. Schwierigere und häufigere Themen zählen mehr. Ein Fach bleibt unter 75%%, bis du diese Themen beantwortet und eine vollständige Wiederholung im Format deiner Prüfung gemacht hast.</string>
+    <string name="plan_measure_mocks">Deine Vorbereitung berücksichtigt deine Fächer entsprechend ihrer Gewichtung in der Prüfung. Die Vorbereitung auf ein Fach ergibt sich daraus, wie viel du gelernt hast und wie gut du es beherrschst: anhand richtiger Antworten, deines Gedächtnisses und Probeprüfungen. Schwierigere und häufigere Themen zählen mehr. Ein Fach bleibt unter 75%%, bis du diese Themen beantwortet und eine Probeprüfung absolviert hast.</string>
+    <string name="plan_still_to_do">Noch zu erledigen</string>
+    <!-- An item in the "Still to do" list, worded like the others, such as "Take your first mock exam". -->
+    <string name="plan_still_topics_solid">Die wichtigsten Themen auf „Sicher“ bringen</string>
+    <string name="plan_still_skills_solid">Erreiche bei jeder Fähigkeit die Stufe „Sicher“</string>
+    <string name="plan_still_time_in_plan">Etwa %1$s in deinem Plan</string>
+    <string name="plan_still_keep_fresh">Halte das Gelernte frisch</string>
+    <plurals name="plan_still_fading">
+        <item quantity="one">%d Fähigkeit lässt nach und ist wieder in deinen Wiederholungen</item>
+        <item quantity="other">%d Fähigkeiten lassen nach und sind wieder in deinen Wiederholungen</item>
+    </plurals>
+    <string name="plan_still_full_review">Mach eine vollständige Wiederholung im Format deiner Prüfung</string>
+    <string name="plan_still_first_mock">Absolviere deine erste Probeprüfung</string>
+    <string name="plan_still_first_challenge">Mach deine erste wöchentliche Herausforderung</string>
+    <string name="plan_change_today_changed">Das steht in deinem Plan und deine heutige Lerneinheit richtet sich danach.</string>
+    <string name="plan_change_today_unchanged">Das steht ab deinem nächsten Lerntag in deinem Plan. Deine heutige Lerneinheit bleibt, wie sie ist.</string>
+    <string name="plan_change_from_now_on">Dein Plan richtet sich ab jetzt danach.</string>
+    <string name="plan_change_changed">Dein Plan hat sich geändert.</string>
+    <string name="plan_change_own_level_first">Für dein neues Level kommen diese zuerst: %1$s.</string>
+    <string name="plan_change_rebalance">Mehr Zeit für %1$s, wo sie am meisten gebraucht wird.</string>
+    <string name="plan_change_follows_notice">Dein Plan richtet sich nach der Prüfungsausschreibung.</string>
+    <string name="plan_change_follows_guide">Dein Plan richtet sich nach dem offiziellen Prüfungsleitfaden.</string>
+    <string name="plan_change_read_notice_around">Wir haben die Prüfungsausschreibung gelesen: Dein Plan kann sich nach ihren Fächern richten, mit der Prüfung ungefähr am %1$s.</string>
+    <string name="plan_change_read_guide_around">Wir haben den offiziellen Prüfungsleitfaden gelesen: Dein Plan kann sich an den Prüfungsteilen orientieren. Ungefährer Prüfungstermin: %1$s.</string>
+    <string name="plan_change_read_notice_on">Wir haben die Prüfungsausschreibung gelesen: Dein Plan kann sich nach ihren Fächern richten, mit der Prüfung am %1$s.</string>
+    <string name="plan_change_read_guide_on">Wir haben den offiziellen Prüfungsleitfaden gelesen: Dein Plan kann sich nach seinen Teilen richten, mit der Prüfung am %1$s.</string>
+    <string name="plan_change_read_notice">Wir haben die Prüfungsausschreibung gelesen: Dein Plan kann sich nach ihren Fächern und Themen richten.</string>
+    <string name="plan_change_read_guide">Wir haben den offiziellen Prüfungsleitfaden gelesen: Dein Plan kann sich nach seinen Teilen und Themen richten.</string>
+    <!-- %1$s is the exam's date, such as "November 8". -->
+    <string name="plan_change_likely_date">Der voraussichtliche Prüfungstermin ist jetzt der %1$s.</string>
+    <!-- %1$s is the exam's date, such as "November 8". -->
+    <string name="plan_change_notice_says">Laut Prüfungsausschreibung ist der Termin am %1$s.</string>
+    <!-- %1$s is the exam's date, such as "November 8". -->
+    <string name="plan_change_calendar_says">Laut offiziellem Prüfungskalender ist der Termin am %1$s.</string>
+    <string name="plan_change_notice_sets_date">Laut Prüfungsausschreibung findet die Prüfung am %1$s statt.</string>
+    <string name="plan_change_calendar_sets_date">Laut offiziellem Prüfungskalender findet die Prüfung am %1$s statt.</string>
+    <string name="plan_change_keep_notice_date">Datum aus der Ausschreibung beibehalten</string>
+    <string name="plan_change_keep_official_date">Offizielles Datum beibehalten</string>
+    <string name="plan_change_daily_time">Tägliche Lernzeit: %1$s</string>
+    <string name="plan_change_weekly_challenge">Wöchentliche Herausforderung: %1$s.</string>
+    <string name="plan_change_goal_date">Zieldatum: %1$s.</string>
+    <string name="plan_change_leave_out">Auslassen: %1$s.</string>
+    <string name="plan_change_back_in_lessons">Wieder in deinen Lektionen: %1$s.</string>
+    <string name="plan_change_leave_out_of_plan">Aus dem Plan auslassen: %1$s.</string>
+    <string name="plan_change_back_in_plan">Wieder im Plan: %1$s.</string>
+    <string name="plan_change_add_to_plan">Zu deinem Plan hinzufügen: %1$s.</string>
+    <string name="plan_change_suggest_more_practice">Mehr Übung.</string>
+    <string name="plan_change_suggest_more_explanation">Mehr Erklärungen.</string>
+    <string name="plan_change_suggest_harder">Schwierigere Inhalte.</string>
+    <string name="plan_change_suggest_easier">Einfachere Inhalte.</string>
+    <string name="plan_change_suggest_usual_difficulty">Lektionen im gewohnten Schwierigkeitsgrad.</string>
+    <string name="plan_change_daily_time_changed">Tägliche Lernzeit auf %1$s geändert</string>
+    <string name="plan_change_rest_day">%1$s: Pausentag.</string>
+    <string name="plan_change_days_time">%1$s: %2$s pro Tag.</string>
+    <string name="plan_change_light_week">Eine leichte Woche ab %1$s mit halbierter Lernzeit.</string>
+    <string name="plan_change_weekly_challenge_moved">Die wöchentliche Herausforderung verschiebt sich auf den %1$s.</string>
+    <!-- %1$s is one or more activities joined as a list, such as "Listening" or "New words and Writing". -->
+    <string name="plan_change_activities_left_out">%1$s: in deinen Lektionen ausgelassen.</string>
+    <!-- %1$s is one or more activities joined as a list, such as "Listening" or "New words and Writing". -->
+    <string name="plan_change_activities_back">%1$s: wieder in deinen Lektionen.</string>
+    <string name="plan_change_more_practice">Ab jetzt mehr Übung.</string>
+    <string name="plan_change_more_explanation">Ab jetzt mehr Erklärungen.</string>
+    <!-- "The basics" are the simple parts of topics the learner already does well, not the plan's prerequisites. -->
+    <string name="plan_change_harder">Ab jetzt schwieriger: anspruchsvollere Übungen. Einfache Inhalte, die du schon gut beherrschst, werden übersprungen.</string>
+    <string name="plan_change_easier">Ab jetzt einfachere Inhalte.</string>
+    <string name="plan_change_usual_difficulty">Ab jetzt Lektionen im gewohnten Schwierigkeitsgrad.</string>
+    <string name="plan_change_writing_weekly">Ab jetzt jede Woche Schreibübungen.</string>
+    <string name="plan_change_writing_biweekly">Ab jetzt alle zwei Wochen Schreibübungen.</string>
+    <string name="plan_change_writing_final_weeks">Ab jetzt Schreibübungen nur in den letzten Wochen.</string>
+    <plurals name="plan_change_skills_come_in">
+        <item quantity="one">%1$s kommt in deinen Plan.</item>
+        <item quantity="other">%1$s kommen in deinen Plan.</item>
+    </plurals>
+    <string name="plan_change_date_moved">Der Termin verschiebt sich auf den %1$s.</string>
+    <string name="plan_change_phase_dates_moved">Deine Phasentermine verschieben sich, sodass vor deinem Zieldatum mehr Lektionen in den Plan passen.</string>
+    <string name="plan_change_fit_lessons">Die Lektionen, für die deine Zeit reicht, kommen in deinen Plan.</string>
+    <string name="plan_change_exam_choice">Dein Plan sieht vor, dass du %1$s für %2$s lernst.</string>
+    <string name="plan_change_no_deadline">Kein Zieldatum: Du lernst alles in deinem eigenen Tempo.</string>
+    <string name="plan_change_full_course">Du lernst alles: Was nicht vor die Prüfung passt, kommt danach.</string>
+    <string name="plan_change_ends_at_exam">Dein Plan endet wieder mit der Prüfung.</string>
+    <plurals name="plan_change_bases_deep">
+        <item quantity="one">%d Grundlage wird vertieft gelernt.</item>
+        <item quantity="other">%d Grundlagen werden vertieft gelernt.</item>
+    </plurals>
+    <plurals name="plan_change_bases_essential">
+        <item quantity="one">Bei %d Grundlage lernst du das Wesentliche.</item>
+        <item quantity="other">Bei %d Grundlagen lernst du das Wesentliche.</item>
+    </plurals>
+    <plurals name="plan_change_bases_quick">
+        <item quantity="one">Für %d Grundlage gibt es eine kurze Lektion.</item>
+        <item quantity="other">Für %d Grundlagen gibt es jeweils eine kurze Lektion.</item>
+    </plurals>
+    <plurals name="plan_change_bases_skip">
+        <item quantity="one">%d Grundlage wird übersprungen.</item>
+        <item quantity="other">%d Grundlagen werden übersprungen.</item>
+    </plurals>
+    <string name="plan_change_more_time_for">Mehr Zeit für %1$s.</string>
+    <string name="plan_change_less_time_for">Weniger Zeit für %1$s.</string>
+    <!-- %1$s is one or more of the exam's areas joined as a list, such as "Math" or "Math and History". -->
+    <string name="plan_change_areas_left_out">%1$s: im Plan ausgelassen.</string>
+    <!-- %1$s is one or more of the exam's areas joined as a list, such as "Math" or "Math and History". -->
+    <string name="plan_change_areas_back">%1$s: wieder im Plan.</string>
+    <string name="plan_change_start_past_basics">Einstieg nach den Grundlagen: %1$s.</string>
+    <string name="plan_change_start_from_basics">Du beginnst wieder mit den Grundlagen: %1$s.</string>
+    <string name="plan_change_tool_setup">Eine Lektion zum Einrichten von %1$s auf %2$s kommt, bevor du es brauchst.</string>
+    <string name="plan_change_tool_have">Du hast %1$s, also musst du nichts einrichten.</string>
+    <string name="plan_change_tool_none">Keine Installation für %1$s: Du lernst mit Beispielen.</string>
+    <string name="plan_system_phone">Nur Smartphone</string>
+    <string name="plan_change_missed_days">Offene Lektionen aus früheren Tagen kommen zuerst, der Rest deines Plans wurde nach hinten verschoben.</string>
+    <plurals name="plan_change_tested_out">
+        <item quantity="one">Du hast gezeigt, dass du den Stoff von %d Lektion schon kennst. Sie steht deshalb nicht mehr in deinem Plan.</item>
+        <item quantity="other">Du hast gezeigt, dass du den Stoff von %d Lektionen schon kennst. Sie stehen deshalb nicht mehr in deinem Plan.</item>
+    </plurals>
+    <plurals name="plan_change_relearn_topics">
+        <item quantity="one">%1$s steht wieder in deinem Plan: Du hast dazu eine Frage falsch beantwortet.</item>
+        <item quantity="other">%1$s stehen wieder in deinem Plan: Du hast dazu Fragen falsch beantwortet.</item>
+    </plurals>
+    <plurals name="plan_change_other_subjects">
+        <item quantity="one">%d weiteres Fach</item>
+        <item quantity="other">%d weitere Fächer</item>
+    </plurals>
+    <plurals name="plan_change_relearn_subjects">
+        <item quantity="one">%1$d Thema aus %2$s steht wieder in deinem Plan: Du hast dazu eine Frage falsch beantwortet.</item>
+        <item quantity="other">%1$d Themen aus %2$s stehen wieder in deinem Plan: Du hast dazu Fragen falsch beantwortet.</item>
+    </plurals>
+    <plurals name="plan_change_goal_takes_fewer">
+        <item quantity="one">Für dein Ziel brauchst du %d Lektion weniger.</item>
+        <item quantity="other">Für dein Ziel brauchst du %d Lektionen weniger.</item>
+    </plurals>
+    <plurals name="plan_change_goal_takes_about_more">
+        <item quantity="one">Für dein Ziel brauchst du etwa %d Lektion mehr.</item>
+        <item quantity="other">Für dein Ziel brauchst du etwa %d Lektionen mehr.</item>
+    </plurals>
+    <plurals name="plan_change_goal_takes_more">
+        <item quantity="one">Für dein Ziel brauchst du %d Lektion mehr.</item>
+        <item quantity="other">Für dein Ziel brauchst du %d Lektionen mehr.</item>
+    </plurals>
+    <plurals name="plan_change_no_longer_fit">
+        <item quantity="one">%d Lektion passt nicht mehr bis zu deinem Zieldatum.</item>
+        <item quantity="other">%d Lektionen passen nicht mehr bis zu deinem Zieldatum.</item>
+    </plurals>
+    <plurals name="plan_change_about_more_fit">
+        <item quantity="one">Bis zu deinem Zieldatum passt etwa %d weitere Lektion.</item>
+        <item quantity="other">Bis zu deinem Zieldatum passen etwa %d weitere Lektionen.</item>
+    </plurals>
+    <plurals name="plan_change_more_fit">
+        <item quantity="one">Bis zu deinem Zieldatum passt %d weitere Lektion.</item>
+        <item quantity="other">Bis zu deinem Zieldatum passen %d weitere Lektionen.</item>
+    </plurals>
+    <string name="plan_change_time_lessons_need">Wir planen jetzt die Zeit ein, die du für deine Lektionen brauchst.</string>
+    <plurals name="plan_change_topics_no_longer_fit">
+        <item quantity="one">%1$s passt nicht mehr bis zu deinem Zieldatum.</item>
+        <item quantity="other">%1$s passen nicht mehr bis zu deinem Zieldatum.</item>
+    </plurals>
+    <plurals name="plan_change_topics_now_fit">
+        <item quantity="one">%1$s passt jetzt bis zu deinem Zieldatum.</item>
+        <item quantity="other">%1$s passen jetzt bis zu deinem Zieldatum.</item>
+    </plurals>
+    <string name="plan_change_now_in_plan">Jetzt in deinem Plan: %1$s.</string>
+    <string name="plan_change_out_of_plan">Nicht mehr in deinem Plan: %1$s.</string>
+    <string name="plan_change_placement_changed">Deine Antworten im Einstufungstest haben geändert, was bis zu deinem Zieldatum passt.</string>
+    <string name="plan_change_phase_dates_late_many">Einige Lektionen dauern länger als geplant. Die Herausforderungen zum Abschluss dieser Phasen kommen deshalb jetzt vor den Lektionen. Verschiebst du die Termine, kannst du die Lektionen zuerst abschließen.</string>
+    <plurals name="plan_change_phase_dates_late_one">
+        <item quantity="one">Einige Lektionen dauern länger als geplant. Deshalb kommt die Herausforderung zum Abschluss von %1$s jetzt vor den Lektionen. Wenn du das Phasenende um %2$d Tag verschiebst, passen die Lektionen davor.</item>
+        <item quantity="other">Einige Lektionen dauern länger als geplant. Deshalb kommt die Herausforderung zum Abschluss von %1$s jetzt vor den Lektionen. Wenn du das Phasenende um %2$d Tage verschiebst, passen die Lektionen davor.</item>
+    </plurals>
+    <plurals name="plan_change_phase_dates_rest_many">
+        <item quantity="one">%d Phasen-Herausforderung fällt auf einen Tag, an dem du pausierst. Wenn du deine Phasendaten verschiebst, fällt sie auf einen Lerntag.</item>
+        <item quantity="other">%d Phasen-Herausforderungen fallen auf Tage, an denen du pausierst. Wenn du deine Phasendaten verschiebst, fallen sie auf Lerntage.</item>
+    </plurals>
+    <string name="plan_change_phase_dates_rest_one">%1$s endet mit einer Herausforderung am %2$s, einem deiner Pausentage. Wenn du deine Phasentermine verschiebst, fällt sie auf einen Lerntag.</string>
+    <string name="plan_change_phase_dates_outcomes">Wenn du deine Phasentermine beibehältst, bleibt bis zu deinem Zieldatum kein Platz für %1$s. Verschiebst du die Termine, passt alles hinein.</string>
+    <string name="plan_change_phase_dates_lessons">Einige Lektionen dauern länger oder kürzer als geplant. Wenn du deine Phasendaten verschiebst, passen mehr davon vor dein Zieldatum.</string>
+    <string name="plan_change_phase_dates_room">Für eine Phasen-Herausforderung reicht die Zeit am geplanten Tag nicht aus. Wenn du deine Phasentermine verschiebst, passt sie in den Plan.</string>
+    <string name="plan_change_phase_ends">%1$s endet am %2$s statt am %3$s.</string>
+    <!-- %1$s is a phase's name; %2$s is its new end date and %3$s the old one, such as "November 8". -->
+    <string name="plan_change_phase_end_row">%1$s: %2$s (vorher %3$s)</string>
+    <string name="plan_change_ends_instead">Endet am %1$s statt am %2$s.</string>
+    <!-- %1$s and %2$s are days, like "May 5". -->
+    <string name="plan_change_ends_around_instead">Endet etwa am %1$s statt am %2$s.</string>
+    <!-- %1$s and %2$s are months and years, like "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
+    <string name="plan_change_ends_around_instead_month">Endet etwa im %1$s statt im %2$s.</string>
+    <!-- %1$s is a month and year, like "March 2027". -->
+    <string name="plan_change_finish_around">Du bist etwa im %1$s fertig.</string>
+    <string name="plan_change_start_area_on">Du beginnst %1$s am %2$s.</string>
+    <string name="plan_change_start_area_instead">Du beginnst %1$s am %2$s statt am %3$s.</string>
+    <string name="plan_change_still_start_area">Du beginnst %1$s weiterhin am %2$s.</string>
+    <string name="plan_change_still_finish_area">Du schließt %1$s weiterhin etwa am %2$s ab, mit allen Lektionen: Alles passt bis zu deinem Zieldatum.</string>
+    <plurals name="plan_change_area_gets_about_more">
+        <item quantity="one">Für %1$s kommt etwa %2$d Lektion dazu. Du schließt es deshalb etwa am %3$s statt am %4$s ab.</item>
+        <item quantity="other">Für %1$s kommen etwa %2$d Lektionen dazu. Du schließt es deshalb etwa am %3$s statt am %4$s ab.</item>
+    </plurals>
+    <plurals name="plan_change_area_gets_more">
+        <item quantity="one">Für %1$s kommt %2$d Lektion dazu. Du schließt es deshalb etwa am %3$s statt am %4$s ab.</item>
+        <item quantity="other">Für %1$s kommen %2$d Lektionen dazu. Du schließt es deshalb etwa am %3$s statt am %4$s ab.</item>
+    </plurals>
+    <plurals name="plan_change_area_fewer">
+        <item quantity="one">Für %1$s bleibt %2$d Lektion weniger. Du schließt es deshalb etwa am %3$s statt am %4$s ab.</item>
+        <item quantity="other">Für %1$s bleiben %2$d Lektionen weniger. Du schließt es deshalb etwa am %3$s statt am %4$s ab.</item>
+    </plurals>
+    <string name="plan_change_finish_area_instead">Du schließt %1$s etwa am %2$s statt am %3$s ab.</string>
+    <plurals name="plan_change_area_lessons_to_go">
+        <item quantity="one">%1$s: Noch %2$d Lektion statt %3$d.</item>
+        <item quantity="other">%1$s: Noch %2$d Lektionen statt %3$d.</item>
+    </plurals>
+    <string name="plan_change_new_lessons_start">Die neuen Lektionen beginnen am %1$s.</string>
+    <string name="plan_change_new_lessons_before_basics">Die neuen Lektionen beginnen am %1$s, vor den Grundlagen.</string>
+    <string name="plan_change_review_first">Deine Wiederholung am %1$s beginnt mit %2$s.</string>
+    <string name="plan_change_weekly_mocks_move">Die wöchentlichen Probeprüfungen werden auf %1$s verschoben.</string>
+    <string name="plan_change_weekly_challenges_move">Die wöchentlichen Herausforderungen werden auf %1$s verschoben.</string>
+    <string name="plan_change_next_mock_moves">Deine nächste Probeprüfung wird auf %1$s verschoben.</string>
+    <plurals name="plan_change_topics_leave">
+        <item quantity="one">%1$d Thema fällt weg: %2$s.</item>
+        <item quantity="other">%1$d Themen fallen weg: %2$s.</item>
+    </plurals>
+    <plurals name="plan_change_names_and_more">
+        <item quantity="one">%1$s und %2$d weitere</item>
+        <item quantity="other">%1$s und %2$d weitere</item>
+    </plurals>
+    <plurals name="plan_change_names_and_more_topics">
+        <item quantity="one">%1$s und %2$d weiteres Thema</item>
+        <item quantity="other">%1$s und %2$d weitere Themen</item>
+    </plurals>
+    <plurals name="plan_change_unwritten_skill">
+        <item quantity="one">%1$s (etwa %2$d)</item>
+        <item quantity="other">%1$s (etwa %2$d)</item>
+    </plurals>
+    <string name="plan_change_unwritten">Noch nicht erstellte Lektionen: %1$s.</string>
+    <string name="plan_change_left_out">Ausgelassene Lektionen: %1$s.</string>
+    <!-- %1$s lists up to three of the lessons left out by title, such as "Fractions, Ratios and Percentages". -->
+    <string name="plan_change_left_out_include">Zu den ausgelassenen Lektionen gehören %1$s.</string>
+    <plurals name="plan_change_adds">
+        <item quantity="one">Fügt %d Lektion hinzu</item>
+        <item quantity="other">Fügt %d Lektionen hinzu</item>
+    </plurals>
+    <plurals name="plan_change_adds_about">
+        <item quantity="one">Fügt etwa %d Lektion hinzu</item>
+        <item quantity="other">Fügt etwa %d Lektionen hinzu</item>
+    </plurals>
+    <plurals name="plan_change_more_lessons">
+        <item quantity="one">%d weitere Lektion</item>
+        <item quantity="other">%d weitere Lektionen</item>
+    </plurals>
+    <plurals name="plan_change_about_more_lessons">
+        <item quantity="one">Etwa %d weitere Lektion</item>
+        <item quantity="other">Etwa %d weitere Lektionen</item>
+    </plurals>
+    <plurals name="plan_change_leaves_out">
+        <item quantity="one">Lässt %d Lektion aus</item>
+        <item quantity="other">Lässt %d Lektionen aus</item>
+    </plurals>
+    <plurals name="plan_change_fewer_lessons">
+        <item quantity="one">%d Lektion weniger</item>
+        <item quantity="other">%d Lektionen weniger</item>
+    </plurals>
+    <plurals name="plan_change_fewer">
+        <item quantity="one">%d weniger</item>
+        <item quantity="other">%d weniger</item>
+    </plurals>
+    <plurals name="plan_change_adds_and_leaves_out">
+        <item quantity="one">%1$s und lässt %2$d aus</item>
+        <item quantity="other">%1$s und lässt %2$d aus</item>
+    </plurals>
+    <string name="plan_change_more_and_fewer">%1$s und %2$s</string>
+    <string name="plan_change_sentence">%1$s.</string>
+    <string name="plan_change_named">%1$s: %2$s.</string>
+    <string name="plan_change_such_as">%1$s, zum Beispiel %2$s.</string>
+    <string name="plan_change_undone">Rückgängig gemacht. Dein Plan ist wieder wie zuvor.</string>
+    <string name="plan_change_now">Jetzt</string>
+    <string name="plan_change_after">Nach der Änderung</string>
+    <string name="plan_change_goal_date_line">Zieldatum: %1$s</string>
+    <string name="plan_change_plan_ends">Plan endet am %1$s</string>
+    <!-- %1$s is a phase or an exam area; %2$s is the day it ends, such as "Nov 3". -->
+    <string name="plan_change_until">%1$s bis %2$s</string>
+    <plurals name="plan_change_area_to_go">
+        <item quantity="one">%1$s: noch %2$d Lektion</item>
+        <item quantity="other">%1$s: noch %2$d Lektionen</item>
+    </plurals>
+    <string name="plan_change_next_mock">Nächste Probeprüfung: %1$s</string>
+    <string name="plan_change_mocks_on">Probeprüfungen am %1$s</string>
+    <string name="plan_change_weekly_challenges_on">Wöchentliche Herausforderungen am %1$s</string>
+    <string name="plan_editor_title">Plan anpassen</string>
+    <string name="plan_editor_close">Schließen</string>
+    <string name="plan_undo">Rückgängig</string>
+    <string name="plan_deadline">Zieldatum</string>
+    <string name="plan_named_month_note">Vorerst %1$s. Wähle den Tag, sobald du ihn kennst.</string>
+    <string name="plan_no_deadline_note">Ohne Zieldatum lernst du alles in deinem eigenen Tempo. Mit einem Zieldatum ist dein Plan so abgestimmt, dass du bis dahin das Wichtigste lernst.</string>
+    <string name="plan_pick_date">Datum wählen</string>
+    <string name="plan_save">Speichern</string>
+    <string name="plan_use_this_date">Dieses Datum verwenden</string>
+    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
+    <string name="plan_weekend_time_differs">Andere Lerndauer am Wochenende</string>
+    <string name="plan_time_on_weekends">Lernzeit am Wochenende</string>
+    <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
+    <string name="plan_exam_choice_question">%1$s: Welches Fach wählst du?</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s and %3$s are points of the exam's score. -->
+    <string name="plan_exam_choice_left_out_points">Bis du eine Auswahl triffst, lassen dein Plan und deine Probeprüfungen %1$s aus: %2$s von insgesamt %3$s Punkten in der Prüfung.</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions; %3$s is the exam's. -->
+    <string name="plan_exam_choice_left_out_questions_of">Bis du eine Auswahl triffst, lassen dein Plan und deine Probeprüfungen %1$s aus: %2$s von insgesamt %3$s Fragen der Prüfung.</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions. -->
+    <plurals name="plan_exam_choice_left_out_questions">
+        <item quantity="one">Bis du eine Auswahl triffst, lassen dein Plan und deine Probeprüfungen %1$s mit %2$s Frage aus.</item>
+        <item quantity="other">Bis du eine Auswahl triffst, lassen dein Plan und deine Probeprüfungen %1$s mit %2$s Fragen aus.</item>
+    </plurals>
+    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. -->
+    <string name="plan_exam_choice_left_out">Bis du eine Auswahl triffst, lassen dein Plan und deine Probeprüfungen %1$s aus.</string>
+    <string name="plan_prerequisites">Voraussetzungen</string>
+    <string name="plan_choose_prerequisites">Voraussetzungen auswählen</string>
+    <string name="plan_prerequisites_exam">Häufige Prüfungsthemen bauen auf diesen Grundlagen auf.</string>
+    <string name="plan_prerequisites_goal">Die abschließende Aufgabe deines Ziels baut auf diesen Grundlagen auf.</string>
+    <plurals name="plan_bases_mixed">
+        <item quantity="one">%1$d Grundlage, %2$s nach deiner Wahl.</item>
+        <item quantity="other">%1$d Grundlagen, %2$s nach deiner Wahl.</item>
+    </plurals>
+    <!-- %1$d is how many prerequisites; %2$s is the time all of them take together, such as "2 h". -->
+    <plurals name="plan_bases_deep">
+        <item quantity="one">%1$d Grundlage, %2$s zum Vertiefen.</item>
+        <item quantity="other">%1$d Grundlagen, %2$s zum Vertiefen.</item>
+    </plurals>
+    <!-- %1$d is how many prerequisites; %2$s is the time all of them take together, such as "2 h". -->
+    <plurals name="plan_bases_quick">
+        <item quantity="one">%1$d Grundlage, %2$s für eine kurze Lektion.</item>
+        <item quantity="other">%1$d Grundlagen, %2$s für je eine kurze Lektion.</item>
+    </plurals>
+    <plurals name="plan_bases_skip">
+        <item quantity="one">%1$d Grundlage, übersprungen.</item>
+        <item quantity="other">%1$d Grundlagen, alle übersprungen.</item>
+    </plurals>
+    <!-- %1$d is how many prerequisites; %2$s is the time all of them take together, such as "2 h". -->
+    <plurals name="plan_bases_essential">
+        <item quantity="one">%1$d Grundlage, %2$s für das Wichtigste.</item>
+        <item quantity="other">%1$d Grundlagen, %2$s für das Wichtigste.</item>
+    </plurals>
+    <plurals name="plan_bases_known">
+        <item quantity="one">%d Grundlage, die du nachweislich kennst, ist bereits aus deinem Plan entfernt.</item>
+        <item quantity="other">%d Grundlagen, die du nachweislich kennst, sind bereits aus deinem Plan entfernt.</item>
+    </plurals>
+    <string name="plan_bases_show_known">Du kennst schon einige Grundlagen? Zeig es in einem Test, dann werden sie automatisch aus deinem Plan entfernt.</string>
+    <string name="plan_base_deep">Ausführlich</string>
+    <string name="plan_base_essential">Das Wesentliche</string>
+    <string name="plan_base_quick">Kurze Lektion</string>
+    <string name="plan_base_skip">Überspringen</string>
+    <string name="plan_base_deep_description">Jede Lektion</string>
+    <string name="plan_base_essential_description">Das erste Drittel der Lektionen</string>
+    <string name="plan_base_quick_description">Je eine kurze Lektion</string>
+    <string name="plan_base_skip_description">Im Plan auslassen</string>
+    <string name="plan_all_prerequisites">Alle Voraussetzungen</string>
+    <string name="plan_recommended">Empfohlen</string>
+    <string name="plan_bases_differ">Für deine Grundlagen gelten unterschiedliche Einstellungen. Wenn du oben eine auswählst, gilt sie für alle.</string>
+    <string name="plan_bases_studied_stay">Bereits gelernte Voraussetzungen bleiben als gelernt erhalten.</string>
+    <string name="plan_choose_by_subject">Nach Fach wählen</string>
+    <string name="plan_base_studied_name">%1$s (gelernt)</string>
+    <string name="plan_base_names_time">%1$s · %2$s</string>
+    <string name="plan_different_choices">Unterschiedliche Einstellungen</string>
+    <string name="plan_base_studied">Gelernt</string>
+    <string name="plan_get_recommendation">Empfehlung erhalten</string>
+    <string name="plan_getting_recommendation">Wir erstellen eine Empfehlung…</string>
+    <string name="plan_recommendation_failed">Wir konnten keine Empfehlung erstellen.</string>
+    <string name="plan_still_building">Dein Plan wird noch erstellt. Versuch es gleich noch einmal.</string>
+    <string name="plan_recommend_deep">Deine Zeit reicht für alles. Deshalb empfehlen wir, jede Grundlage ausführlich zu behandeln.</string>
+    <plurals name="plan_recommend_quick_exam">
+        <item quantity="one">Noch %d Tag: Wir empfehlen je eine kurze Lektion zu jeder Grundlage, damit Zeit für die häufigsten Prüfungsthemen bleibt.</item>
+        <item quantity="other">Noch %d Tage: Wir empfehlen je eine kurze Lektion zu jeder Grundlage, damit Zeit für die häufigsten Prüfungsthemen bleibt.</item>
+    </plurals>
+    <plurals name="plan_recommend_quick_goal">
+        <item quantity="one">Noch %d Tag: Wir empfehlen je eine kurze Lektion zu jeder Grundlage, damit Zeit für das bleibt, was für dein Ziel am wichtigsten ist.</item>
+        <item quantity="other">Noch %d Tage: Wir empfehlen je eine kurze Lektion zu jeder Grundlage, damit Zeit für das bleibt, was für dein Ziel am wichtigsten ist.</item>
+    </plurals>
+    <string name="plan_recommend_essential_exam">Wir empfehlen das Wichtigste, damit du die Themen verstehst, die darauf aufbauen.</string>
+    <string name="plan_recommend_essential_goal">Wir empfehlen das Wichtigste, damit du verstehst, was darauf aufbaut.</string>
+    <string name="plan_recommendation_followed">Dein Plan folgt der Empfehlung bereits.</string>
+    <string name="plan_checking_changes">Wir prüfen, was sich ändert…</string>
+    <string name="plan_check_failed">Wir konnten nicht prüfen, was sich ändert.</string>
+    <string name="plan_stays_as_it_is">Dein Plan bleibt unverändert.</string>
+    <string name="plan_save_choices">Auswahl speichern</string>
+    <plurals name="plan_bases_topics_come_in">
+        <item quantity="one">%1$d Thema kommt hinzu: %2$s.</item>
+        <item quantity="other">%1$d Themen kommen hinzu: %2$s.</item>
+    </plurals>
+    <plurals name="plan_bases_topics_leave">
+        <item quantity="one">%1$d Thema entfällt: %2$s.</item>
+        <item quantity="other">%1$d Themen entfallen: %2$s.</item>
+    </plurals>
+    <string name="plan_bases_everything_fits">Dann passt alles bis zu deinem Zieldatum in den Plan.</string>
+    <string name="plan_bases_exam_share_same">Bis zu deinem Zieldatum: %1$s des Prüfungsstoffs, wie bisher.</string>
+    <string name="plan_bases_goal_share_same">Bis zu deinem Zieldatum: %1$s deines Ziels, wie bisher.</string>
+    <string name="plan_bases_exam_share">Bis zu deinem Zieldatum: %1$s des Prüfungsstoffs statt bisher %2$s.</string>
+    <string name="plan_bases_goal_share">Bis zu deinem Zieldatum: %1$s deines Ziels statt bisher %2$s.</string>
+    <string name="plan_tools_title">Das wirst du nutzen</string>
+    <string name="plan_tool_have_it">Du hast es</string>
+    <string name="plan_tool_setup_for">Einrichtungslektion für %1$s</string>
+    <string name="plan_tool_setup_first">Zuerst eine Einrichtungslektion</string>
+    <string name="plan_tool_examples_only">Nur Beispiele</string>
+    <string name="plan_tool_needed">Zum Üben nötig</string>
+    <string name="plan_tool_optional">Optional</string>
+    <string name="plan_tool_change">Ändern</string>
+    <string name="plan_tool_change_how">Ändere, wie du %1$s nutzen wirst</string>
+    <string name="plan_tool_choose_how">Wähle, wie du %1$s nutzen wirst</string>
+    <string name="plan_tools_none">Keine Tools? Du kannst alles anhand von Beispielen lernen.</string>
+    <string name="plan_tools_without">Du wirst nicht an deinem eigenen Computer üben. Stattdessen nutzen die Lektionen Beispiele und Simulationen.</string>
+    <string name="plan_tools_later">Später mehr: %1$s</string>
+    <string name="plan_tool_how">Wie wirst du es nutzen?</string>
+    <string name="plan_tool_have">Ich habe es</string>
+    <string name="plan_tool_have_description">Du übst auf deinem eigenen Gerät.</string>
+    <string name="plan_tool_setup">Ich richte es ein</string>
+    <string name="plan_tool_setup_description">Eine kurze Lektion zeigt dir, wie es geht, direkt bevor du es brauchst.</string>
+    <string name="plan_tool_none">Ohne Installation</string>
+    <string name="plan_tool_none_description">Lerne anhand von Beispielen. Du übst nicht auf deinem eigenen Computer.</string>
+    <string name="plan_tool_updates_when_ready">Dein Plan wird aktualisiert, sobald alles fertig ist.</string>
+    <string name="plan_tool_writing_setup">Wir fügen eine Lektion zur Einrichtung hinzu</string>
+    <string name="plan_tool_writing_setup_phase">Wir erstellen die Einrichtungsanleitung für dein Gerät</string>
+    <string name="plan_tool_writing_setup_line_1">Wir prüfen die Voraussetzungen für die Einrichtung…</string>
+    <string name="plan_tool_writing_setup_line_2">Wir erstellen die Anleitung zur Installation…</string>
+    <string name="plan_tool_writing_setup_line_3">Wir ergänzen einen kurzen Test, ob alles funktioniert…</string>
+    <string name="plan_tool_device">Dein Gerät</string>
+    <string name="plan_what_you_practice">Was du übst</string>
+    <string name="plan_when_to_practice">Wann du %1$s übst</string>
+    <string name="plan_cadence_weekly">Jede Woche</string>
+    <string name="plan_cadence_biweekly">Alle zwei Wochen</string>
+    <string name="plan_cadence_final_weeks">Nur in den letzten Wochen</string>
+    <string name="plan_cadence_weekly_effect">Empfohlen: jede Woche ein wenig üben. Das verbessert dein Schreiben am meisten.</string>
+    <string name="plan_cadence_biweekly_effect">Der gleiche Übungsumfang alle zwei Wochen: weniger verteilt, dafür mehr auf einmal.</string>
+    <string name="plan_cadence_final_weeks_effect">Weniger verteilt, dafür gebündelt in den letzten Wochen vor der Prüfung.</string>
+    <string name="plan_how_is_it_going">Wie läuft es?</string>
+    <string name="plan_too_easy">Zu leicht</string>
+    <string name="plan_too_hard">Zu schwer</string>
+    <string name="plan_more_practice">Mehr Übung</string>
+    <string name="plan_more_explanation">Mehr Erklärungen</string>
+    <string name="plan_tell_buddy">Etwas anderes? Sag es %1$s</string>
+    <string name="plan_tell_buddy_description">In deinen eigenen Worten, zum Beispiel „am Wochenende weniger“. Du siehst die Änderung, bevor sie übernommen wird.</string>
+    <string name="plan_tell_buddy_description_modules">In deinen eigenen Worten, zum Beispiel „ein Modul überspringen“ oder „am Wochenende weniger lernen“. Du siehst die Änderung, bevor sie übernommen wird.</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_none">Selbst wenn du den ganzen Tag lernst, bleibt bis zum %1$s nicht genug Zeit, um alles gründlich durchzuarbeiten.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_none_month">Selbst wenn du den ganzen Tag lernst, bleibt bis %1$s nicht genug Zeit, um alles gründlich durchzuarbeiten.</string>
+    <!-- %1$s is a day, such as "May 5"; %2$s is a daily study time, such as "13 h 30 min". -->
+    <string name="plan_time_takes_everything">Um bis zum %1$s alles gründlich durchzuarbeiten, sind etwa %2$s pro Tag nötig. Das ist auf Dauer für die meisten zu viel.</string>
+    <!-- %1$s is a month and year, such as "May 2027"; %2$s is a daily study time, such as "13 h 30 min". -->
+    <string name="plan_time_takes_everything_month">Um bis %1$s alles gründlich durchzuarbeiten, sind etwa %2$s pro Tag nötig. Das ist auf Dauer für die meisten zu viel.</string>
+    <!-- Part of the goal never fits, whatever the time, so this is the most any daily time covers. %1$s is a day, such as "May 5"; %2$s a percentage, such as "99%"; %3$s a daily study time, such as "8 h". -->
+    <string name="plan_time_takes_most">Bis zum %1$s lassen sich höchstens etwa %2$s der Inhalte gründlich durcharbeiten. Dafür sind rund %3$s pro Tag nötig. Das ist auf Dauer für die meisten zu viel.</string>
+    <!-- Part of the goal never fits, whatever the time, so this is the most any daily time covers. %1$s is a month and year, such as "May 2027"; %2$s a percentage, such as "99%"; %3$s a daily study time, such as "8 h". -->
+    <string name="plan_time_takes_most_month">Bis %1$s lassen sich höchstens etwa %2$s der Inhalte gründlich durcharbeiten. Dafür sind rund %3$s pro Tag nötig. Das ist auf Dauer für die meisten zu viel.</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
+    <string name="plan_time_share_exam">Behandelt etwa %1$s deines Prüfungsstoffs bis zum %2$s ausführlich, die häufigsten Prüfungsthemen zuerst.</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_share_exam_month">Behandelt etwa %1$s deines Prüfungsstoffs bis %2$s ausführlich, die häufigsten Prüfungsthemen zuerst.</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
+    <string name="plan_time_share_goal">Behandelt etwa %1$s der Inhalte für dein Ziel bis zum %2$s ausführlich, die wichtigsten zuerst.</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_share_goal_month">Behandelt etwa %1$s der Inhalte für dein Ziel bis %2$s ausführlich, die wichtigsten zuerst.</string>
+    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
+    <string name="plan_time_focus_exam_every_topic">Dein Plan behandelt dann alle Prüfungsthemen und geht auf die häufigsten davon genauer ein. So lernst du etwa %1$s des Prüfungsstoffs gründlich.</string>
+    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
+    <string name="plan_time_focus_exam_most_asked">Dein Plan beginnt dann mit den häufigsten Prüfungsthemen. Etwa %1$s des Prüfungsstoffs lernst du gründlich. Für selten geprüfte Themen reicht die Zeit vielleicht nicht.</string>
+    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
+    <string name="plan_time_focus_goal_every_part">Dein Plan deckt dann alle Inhalte für dein Ziel ab und geht auf die wichtigsten genauer ein. So lernst du etwa %1$s der Inhalte gründlich.</string>
+    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
+    <string name="plan_time_focus_goal_most_important">Dein Plan beginnt dann mit den wichtigsten Inhalten. Etwa %1$s der Inhalte für dein Ziel lernst du gründlich. Für den Rest reicht die Zeit vielleicht nicht.</string>
+    <string name="plan_time_more_days">Mehr Lerntage würden helfen.</string>
+    <!-- A sentence before what that time covers. %1$s is a daily study time, such as "4 h". -->
+    <string name="plan_time_suggest">Wir empfehlen %1$s pro Tag.</string>
+    <!-- The title of a suggestion to change the daily study time. %1$s is a daily study time, such as "4 h". -->
+    <string name="plan_time_suggest_title">Wir empfehlen %1$s pro Tag</string>
+    <string name="plan_time_too_long">Das ist mehr, als die meisten Menschen auf Dauer schaffen.</string>
+    <!-- After the line about the time a day, when two goals were typed together. %1$s is this goal's time, %2$s the other goal's, such as "20 min". -->
+    <string name="plan_time_split_one">Für dieses Ziel sind %1$s pro Tag eingeplant, für dein anderes Ziel %2$s</string>
+    <!-- After the line about the time a day, when three or more goals were typed together. %1$s is this goal's time, %2$s the others' time together. -->
+    <string name="plan_time_split_many">Für dieses Ziel sind %1$s pro Tag eingeplant, für deine anderen Ziele zusammen %2$s</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_takes_exam_all">So viel Zeit brauchst du, um bis zum %1$s alle deine Prüfungsthemen durchzugehen.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_takes_exam_all_month">So viel Zeit brauchst du, um bis %1$s alle deine Prüfungsthemen durchzugehen.</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_takes_goal_all">So viel Zeit brauchst du, um bis zum %1$s alle Inhalte für dein Ziel durchzugehen.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_takes_goal_all_month">So viel Zeit brauchst du, um bis %1$s alle Inhalte für dein Ziel durchzugehen.</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_covers_exam_all">Deckt bis zum %1$s alle deine Prüfungsthemen ab.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_covers_exam_all_month">Deckt bis %1$s alle deine Prüfungsthemen ab.</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_covers_goal_all">Deckt bis zum %1$s alle Inhalte für dein Ziel ab.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_covers_goal_all_month">Deckt bis %1$s alle Inhalte für dein Ziel ab.</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_past_date">Dein Termin am %1$s ist schon vorbei. Auf der nächsten Seite kannst du einen neuen wählen.</string>
+    <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
+    <string name="plan_time_past_date_month">Dein Termin im %1$s ist schon vorbei. Auf der nächsten Seite kannst du einen neuen wählen.</string>
+    <string name="plan_time_finish_unknown">Für diesen Zeitplan können wir kein Abschlussdatum schätzen. Versuch es mit mehr Zeit oder mehr Lerntagen.</string>
+    <string name="plan_time_finish_failed">Wir konnten nicht berechnen, wann du fertig wärst.</string>
+    <string name="plan_time_no_days">Wähle mindestens einen Lerntag.</string>
+    <string name="plan_time_working">Wir berechnen, wie viel Zeit du für dein Ziel brauchst…</string>
+    <string name="plan_time_find_failed">Wir konnten nicht berechnen, wie viel Zeit du für dein Ziel brauchst.</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="plan_time_asking">Wir berechnen, wie viel du mit %1$s pro Tag lernen kannst…</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="plan_time_ask_failed">Wir konnten nicht berechnen, wie viel du mit %1$s pro Tag lernen kannst.</string>
+    <!-- A button under the time a day. %1$s is a daily study time, such as "45 min". Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything". -->
+    <string name="plan_time_use_to_cover_everything">Mit %1$s pro Tag alles abdecken</string>
+    <!-- A button under the time a day that goes back to the suggested time. %1$s is a daily study time, such as "4 h". -->
+    <string name="plan_time_use_suggested">Empfehlung von %1$s pro Tag übernehmen</string>
+    <string name="plan_working_out_coverage">Wir ermitteln, was du in deiner Zeit schaffen kannst…</string>
+    <!-- %1$s is a month and year, like "March 2027". -->
+    <string name="plan_finish_around">Du bist etwa im %1$s fertig.</string>
+    <string name="plan_finish_working">Wir berechnen, wann du fertig wirst…</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_covers_everything_by">Mit deiner Lernzeit schaffst du bis zum %1$s alles</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_covers_everything_by_month">Mit deiner Lernzeit schaffst du bis %1$s alles</string>
+    <string name="plan_covered_not_enough">%1$s am Tag reichen nicht aus, um dein Ziel vollständig abzudecken.</string>
+    <!-- A button that works out the daily time that covers the whole goal. Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything". -->
+    <string name="plan_find">Zeit ermitteln, die für alles reicht</string>
+    <string name="plan_finding">Wir ermitteln die nötige Zeit…</string>
+    <string name="plan_try_again">Versuch es noch einmal</string>
+    <string name="plan_find_building">Dein Plan wird noch erstellt. Versuch es gleich noch einmal.</string>
+    <string name="plan_find_failed">Wir konnten die benötigte Zeit nicht ermitteln.</string>
+    <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->
+    <string name="plan_find_fitting_date">Mit %1$s pro Tag deckt dein Plan bis zum %2$s alles ab.</string>
+    <string name="plan_find_no_date">Wir konnten kein Datum finden, bis zu dem du alles schaffst.</string>
+    <!-- A button that changes the plan's daily time to the one just found. %1$s is a daily study time, such as "45 min". -->
+    <string name="plan_use_time">Täglich %1$s einplanen</string>
+    <string name="plan_move_date">Verschiebe dein Zieldatum, um alles abzudecken</string>
+    <!-- %1$s is a date, such as "November 8". -->
+    <string name="plan_move_date_to">Verschieb dein Zieldatum auf den %1$s</string>
+    <string name="plan_full_course_switch">Alles lernen, auch nach der Prüfung</string>
+    <string name="plan_full_course_off">Ist diese Option ausgeschaltet, endet dein Plan mit der Prüfung.</string>
+    <string name="plan_full_course_on_exam">%1$s Bis zur Prüfung kommen die Themen zuerst, die am häufigsten vorkommen.</string>
+    <string name="plan_full_course_on_exam_unknown_end">Bis zur Prüfung kommen die Themen zuerst, die am häufigsten vorkommen. Was du bis dahin nicht schaffst, folgt danach.</string>
+    <string name="plan_finish">Mit %1$s am Tag bist du in %2$s fertig.</string>
+    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
+    <string name="plan_finish_after_exam">Mit %1$s pro Tag bist du im %2$s fertig, also nach der Prüfung am %3$s.</string>
+    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
+    <string name="plan_finish_after_exam_month">Mit %1$s pro Tag bist du im %2$s fertig, also nach der Prüfung im %3$s.</string>
+    <string name="plan_full_course_rule_exam">Bis zur Prüfung ändert sich nichts: Was am häufigsten drankommt, kommt zuerst, dazu Probeprüfungen und die letzte Lernphase. Was nicht hineinpasst, kommt danach.</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_full_course_rule_goal">Dein Zieltermin am %1$s wird aus deinem Plan entfernt. Du kannst jederzeit wieder einen festlegen.</string>
+    <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
+    <string name="plan_full_course_rule_goal_month">Dein Zieltermin im %1$s wird aus deinem Plan entfernt. Du kannst jederzeit wieder einen festlegen.</string>
+    <string name="plan_study_everything">Alles lernen</string>
+    <string name="plan_study_everything_exam_description">Alle Themen in deinem Tempo lernen, auch nach der Prüfung.</string>
+    <string name="plan_study_everything_goal_description">Alles für dein Ziel in deinem Tempo lernen, ohne Enddatum.</string>
+    <string name="plan_sheet_done">Fertig</string>
+    <string name="plan_choose_focus">Wähle deine Schwerpunkte</string>
+    <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
+    <string name="plan_where_to_focus">Schwerpunkte setzen</string>
+    <string name="plan_where_to_focus_description">Die gewählten Fächer kommen zuerst und werden vertieft.</string>
+    <string name="plan_take_short_test">Mach einen kurzen Test</string>
+    <string name="plan_test_chooses_for_you">Deine Antworten bestimmen die Schwerpunkte</string>
+    <string name="plan_choose_focus_yourself">Oder wähle sie selbst</string>
+    <string name="plan_focus_includes">Enthält %1$s</string>
+    <string name="plan_focus_only">Nur %1$s</string>
+    <string name="plan_focus_already_in">Nichts geändert: Alle Lektionen zu %1$s sind bereits in deinem Plan.</string>
+    <string name="plan_focus_cant_move">Nichts geändert: %1$s beginnen bereits so früh, wie es die nötigen Grundlagen erlauben. Für mehr davon reicht deine Zeit nicht. Mit mehr Zeit am Tag passt mehr hinein.</string>
+    <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
+    <string name="plan_focus_on_these">Diese Schwerpunkte setzen</string>
+    <string name="plan_saving">Wir speichern…</string>
+    <string name="plan_couldnt_check_changes">Wir konnten nicht prüfen, was sich ändert.</string>
+    <string name="plan_then_covers_everything">Dein Plan deckt dann alles vertieft ab.</string>
+    <string name="plan_apply">Übernehmen</string>
+    <string name="plan_not_now">Jetzt nicht</string>
+    <string name="plan_suggestion_previous">Zurück</string>
+    <string name="plan_suggestion_next">Weiter</string>
+    <string name="plan_suggestion_position">%1$s von %2$s</string>
+    <string name="plan_goal_paused">%1$s ist pausiert</string>
+    <string name="plan_no_longer_fits">Dein Plan passt nicht mehr</string>
+    <string name="plan_catch_up">Du hast etwas aufzuholen</string>
+    <string name="plan_adjust">Anpassen</string>
+    <string name="plan_go_to_today">Zu Heute</string>
+    <string name="plan_suggestion">Planvorschlag</string>
+    <string name="plan_updated">Plan aktualisiert</string>
+    <string name="plan_updated_sentence">Dein Plan ist aktualisiert.</string>
+    <string name="plan_preview">Vorschau</string>
+    <string name="plan_other_options">Weitere Optionen</string>
+    <string name="plan_study_everything_after_exam">Alles lernen, auch nach der Prüfung</string>
+    <string name="plan_most_asked_first_until_exam">Bis zur Prüfung kommt zuerst, was am häufigsten drankommt.</string>
+    <string name="plan_time_covers_everything_in_depth">Mit %1$s am Tag kannst du alles vertieft lernen</string>
+    <plurals name="plan_more_lessons_fit">
+        <item quantity="one">%1$d weitere Lektion passt in deine Lernzeit</item>
+        <item quantity="other">%1$d weitere Lektionen passen in deine Lernzeit</item>
+    </plurals>
+    <plurals name="plan_past_date_goal_title">
+        <item quantity="one">An deinem Zieldatum war noch %1$d Lektion offen</item>
+        <item quantity="other">An deinem Zieldatum waren noch %1$d Lektionen offen</item>
+    </plurals>
+    <plurals name="plan_past_date_exam_title">
+        <item quantity="one">Vor deiner Prüfung war noch %1$d Lektion offen</item>
+        <item quantity="other">Vor deiner Prüfung waren noch %1$d Lektionen offen</item>
+    </plurals>
+    <string name="plan_move_date_covers_whats_left">Verschiebe dein Zieldatum, damit deine Zeit für den Rest reicht.</string>
+    <string name="plan_finished_title">Du hast deinen Plan abgeschlossen</string>
+    <string name="plan_study_next">Das kannst du als Nächstes lernen.</string>
+    <string name="plan_continue_at">Weiter bei %1$s</string>
+</resources>

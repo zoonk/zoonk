@@ -1,7 +1,6 @@
 import { test as baseTest } from "@playwright/test";
 
-export type { Page, Route } from "@playwright/test";
-export { expect, request } from "@playwright/test";
+export { expect } from "@playwright/test";
 
 export const test = baseTest.extend({
   // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern

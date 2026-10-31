@@ -1,22 +1,36 @@
 "use client";
 
+import { getPageRetry } from "@/components/errors/page-retry";
 import { captureException } from "@sentry/nextjs";
-import NextError from "next/error";
-import { useEffect } from "react";
+import { DEFAULT_LOCALE } from "@zoonk/utils/locale";
+import { Suspense, lazy, useEffect } from "react";
+import "./globals.css";
 
-export default function GlobalError({ error }: { error: Error & { digest?: string } }) {
+const PAGE_TITLE = "Zoonk";
+
+/** Every page ships this boundary, so its content and messages load only when it's needed. */
+const GlobalErrorContent = lazy(() => import("@/components/errors/global-error-content"));
+
+export default function GlobalError({
+  error,
+  retry,
+}: {
+  error: Error & { digest?: string };
+  retry: () => void;
+}) {
   useEffect(() => {
     captureException(error);
   }, [error]);
 
   return (
-    <html lang="en">
-      <body>
-        {/* `NextError` is the default Next.js error page component. Its type
-        definition requires a `statusCode` prop. However, since the App Router
-        does not expose status codes for errors, we simply pass 0 to render a
-        generic error message. */}
-        <NextError statusCode={0} />
+    <html lang={DEFAULT_LOCALE}>
+      <head>
+        <title>{PAGE_TITLE}</title>
+      </head>
+      <body className="bg-background text-foreground font-sans antialiased">
+        <Suspense fallback={null}>
+          <GlobalErrorContent onRetry={getPageRetry({ error, retry })} />
+        </Suspense>
       </body>
     </html>
   );

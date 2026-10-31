@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "pattern_also_came_up": "157bf256c245ffd0a56b555af42d365c08fe32700e9604b8a36417fffa1ef8a9",
+  "pattern_correct_version": "ea22a721f594ef8b5f179e462ac4091f16a121e03e545aafca8dc4c2088adade",
+  "pattern_done": "03593f4c1e75013856bee1a3e22705b19ef865a7174910646491c8b52be269a3",
+  "pattern_got_it": "f48d268cbfd188e84de8a1bcebc676fbd3cb81a8e94b3871eec28d302aaab0ea",
+  "pattern_just_typos": "b6b3fef5c28fae32ccbf40be3f932ace50802819701d1be00da835f7765c9ebb",
+  "pattern_keep_going": "eeb24b524cbe65709e11a093001b7f0c6cc000cb086b6eb648a5019e4827b257",
+  "pattern_noticed": "755b75be0dd96cec5cac12980f71a1ff48fa214f26883c06f462f3fba01bf625",
+  "pattern_practice": "8325c9826d92faad6f597a45b1292586e1028b5512c0a04661533312cd896244",
+  "pattern_quoted": "e3d9c92fe98756d4e6a256964deafd9b7a8308716698a5b46c33570e45a06910",
+  "pattern_rule": "d85eb41fdba3988bad1fde2a47688e4e6eac2234f8703ac569c80a286390fa0b",
+  "pattern_see_how_you_did": "c457efede4199c8e3a06de2e94a522d003135af374593336d146cdcf9fc7063b",
+  "pattern_see_rule": "4ee33b2e49fa5d12fbc149e9f65874d5d0e1e0ad9dd7eb0342d95773cf3b2686",
+  "pattern_seen": "0c61234307065a683409c942524ecec55c43554456a43103e035b117bb01bafb",
+  "pattern_seen_times": "2f1e753d8764524fe5b5e2ba2e99ded17d56470203d8f27f2bf8365258bc48f4",
+  "pattern_title": "0df2831a243f1947b0b5109ef4e1d37a616ead6670094be85a83ef7e93c448be",
+  "pattern_typos_detail": "5e2ba4b561489e5bf660982e1fedd11dbdbee6fbb60c5ed7b02447b66614e23a",
+  "pattern_where_you_slipped": "175a7e83487fd5c09bec09ebc1f754e550c61467aa332228492b9732625975ad",
+  "pattern_you_said": "24951a28c2adeecc0f59e151650cb5da64413c4b88276e1678d9b5e9e718e8c7"
+}
+-->
+<resources>
+    <!-- A rule the learner keeps getting wrong, found in their recent answers. -->
+    <string name="pattern_title">Fehlermuster</string>
+    <string name="pattern_noticed">Uns ist ein Muster aufgefallen</string>
+    <string name="pattern_seen">Das kam in deinen letzten Antworten vor.</string>
+    <!-- %d is how many times the mistake came up. Every form shows the number as %d; English says “once” only because it reads better. -->
+    <plurals name="pattern_seen_times">
+        <item quantity="one">Das kam %d Mal in deinen letzten Antworten vor.</item>
+        <item quantity="other">Das kam %d Mal in deinen letzten Antworten vor.</item>
+    </plurals>
+    <!-- Starts a short practice of the rule on this page; "this" is the rule. %1$s is how long it takes, like "3 min". -->
+    <string name="pattern_practice">Diese Regel üben · %1$s</string>
+    <!-- Heads the learner's other sentences that show the same mistake. -->
+    <string name="pattern_also_came_up">Auch in diesen Sätzen</string>
+    <!-- A sentence the learner said or wrote, in quotation marks. -->
+    <string name="pattern_quoted">„%1$s“</string>
+    <string name="pattern_rule">Die Regel</string>
+    <!-- Read aloud before the learner's own wrong sentence. -->
+    <string name="pattern_you_said">Du hast gesagt</string>
+    <!-- Read aloud before the corrected sentence. -->
+    <string name="pattern_correct_version">Richtig heißt es</string>
+    <!-- Heads the learner's own wrong sentence beside its corrected version. -->
+    <string name="pattern_where_you_slipped">Hier lag der Fehler</string>
+    <string name="pattern_see_rule">Regel ansehen</string>
+    <!-- After the practice's last question, opens its result. -->
+    <string name="pattern_see_how_you_did">Ergebnis ansehen</string>
+    <string name="pattern_got_it">Du beherrschst diese Regel.</string>
+    <string name="pattern_keep_going">Die Regel zu kennen, ist der erste Schritt. Mit jeder Anwendung wird es leichter.</string>
+    <!-- The button that closes the practice result or the typos note and leaves the screen. -->
+    <string name="pattern_done">Schließen</string>
+    <string name="pattern_just_typos">Nur Tippfehler</string>
+    <string name="pattern_typos_detail">Deine letzten Fehler waren Tippfehler. Du hast dabei keine Regel übersehen. Es gibt nichts zu üben.</string>
+</resources>

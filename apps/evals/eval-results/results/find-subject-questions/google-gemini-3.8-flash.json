@@ -1,0 +1,148 @@
+{
+  "modelId": "google/gemini-3.8-flash",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "counts": {}, "status": "any" },
+        "id": "pt-camara-registro-redacao-1",
+        "userInput": {
+          "board": "Cebraspe",
+          "exam": "Concurso da Câmara dos Deputados, Analista Legislativo – Registro e Redação",
+          "subjects": [
+            "Língua Portuguesa",
+            "Língua Inglesa",
+            "Noções de Direito Administrativo e Administração Pública",
+            "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
+            "Tecnologia da Informação e Dados",
+            "Linguística",
+            "Reconhecimento de Fala, Transcrição e Inteligência Artificial",
+            "Processo Legislativo e Regimento Interno da Câmara dos Deputados",
+            "Ciência Política"
+          ],
+          "today": "2026-10-06",
+          "total": 180
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "counts": { "20": 8 }, "status": "found" },
+        "id": "pt-oab-1a-fase-1",
+        "userInput": {
+          "board": "FGV",
+          "exam": "OAB Exame de Ordem Unificado, 1ª fase",
+          "subjects": [
+            "Direito Administrativo",
+            "Direito Civil",
+            "Direito Processual Civil",
+            "Direito Constitucional",
+            "Direito do Trabalho",
+            "Direito Processual do Trabalho",
+            "Direito Empresarial",
+            "Direito Penal",
+            "Direito Processual Penal",
+            "Direito Tributário e Processual Tributário",
+            "Direitos Humanos",
+            "Direito do Consumidor",
+            "Direito da Criança e do Adolescente",
+            "Direito Ambiental",
+            "Direito Internacional",
+            "Filosofia do Direito",
+            "Direito Financeiro",
+            "Direito Previdenciário",
+            "Direito Eleitoral",
+            "Estatuto da Advocacia e da OAB, Regulamento Geral e Código de Ética e Disciplina da OAB"
+          ],
+          "today": "2026-10-06",
+          "total": 80
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "Missed the published distribution", "kind": "majorErrors", "score": 8 },
+        { "conclusion": "Missed the published distribution", "kind": "minorErrors", "score": 8 },
+        {
+          "conclusion": "Missed the published distribution",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": { "counts": {}, "status": "found" },
+        "id": "pt-oab-1a-fase-without-ethics-1",
+        "userInput": {
+          "board": "FGV",
+          "exam": "OAB Exame de Ordem Unificado, 1ª fase",
+          "subjects": [
+            "Direito Administrativo",
+            "Direito Civil",
+            "Direito Processual Civil",
+            "Direito Constitucional",
+            "Direito do Trabalho",
+            "Direito Processual do Trabalho",
+            "Direito Empresarial",
+            "Direito Penal",
+            "Direito Processual Penal",
+            "Direito Tributário e Processual Tributário",
+            "Direitos Humanos",
+            "Direito do Consumidor",
+            "Direito da Criança e do Adolescente",
+            "Direito Ambiental",
+            "Direito Internacional",
+            "Filosofia do Direito",
+            "Direito Financeiro",
+            "Direito Previdenciário",
+            "Direito Eleitoral"
+          ],
+          "today": "2026-10-06",
+          "total": 80
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "counts": {}, "status": "unknown" },
+        "id": "pt-cgu-2026-new-board-and-syllabus-1",
+        "userInput": {
+          "board": "Cebraspe",
+          "exam": "CGU, Auditor Federal de Finanças e Controle",
+          "subjects": [
+            "Estado, Democracia, Direitos e Ciência Política",
+            "Sociedade Brasileira, Desigualdades, Diversidade e Desenvolvimento",
+            "Ética Pública e Responsabilidade Profissional",
+            "Administração Pública e Fundamentos de Políticas Públicas",
+            "Fundamentos de Governança, Riscos e Integridade Pública e Privada",
+            "Fundamentos de Transparência, Ouvidoria e Participação Social",
+            "Fundamentos de Direito Público Aplicado, Controle e Responsabilização",
+            "Fundamentos de Evidências, Dados e Inteligência Artificial",
+            "Fundamentos de Auditoria Governamental e Atuação Integrada da CGU",
+            "Auditoria Governamental: Avaliação, Consultoria e Apuração",
+            "Finanças Públicas, Orçamento e Contabilidade Pública",
+            "Políticas Públicas e Métodos de Investigação e Avaliação",
+            "Auditoria de Contratações, Transferências e Execução de Recursos",
+            "Integridade, Transparência e Responsabilização Aplicadas ao Controle Público"
+          ],
+          "today": "2026-10-30",
+          "total": 170
+        }
+      }
+    }
+  ],
+  "taskId": "find-subject-questions"
+}

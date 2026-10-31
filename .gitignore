@@ -32,6 +32,9 @@ coverage
 # Build Outputs
 .next/
 .next-e2e/
+.swc/
+.workflow-data/
+.workflow-vitest/
 out/
 build
 dist
@@ -61,6 +64,7 @@ yarn-error.log*
 .idea/
 *.pem
 .playwright-mcp
+.vitest
 .vitest-attachments
 __screenshots__
 
@@ -72,6 +76,7 @@ i18n.cache
 debug.log
 .claude/agent-memory
 .claude/plans
+.claude/worktrees
 
 # Temporary tasks for AI agents
 /tasks/

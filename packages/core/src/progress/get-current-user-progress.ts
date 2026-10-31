@@ -1,4 +1,5 @@
 import "server-only";
+import { type ProgressHistoryOptions } from "./_utils/daily-progress-rows";
 import { type EnergyLevelData } from "./energy";
 import { type BeltLevelDetails, getBeltLevel } from "./get-belt-level";
 import { getEnergyLevel } from "./get-energy-level";
@@ -20,21 +21,18 @@ export type CurrentUserProgress = {
   scorePatterns: StrongestScorePatterns | null;
 };
 
-/**
- * Returns the compact learner progress resource used by Home without loading
- * the 53-week calendars or complete Score pattern breakdowns needed only by
- * detail screens. A missing Activity result identifies an unauthenticated
- * request because authenticated learners always have zero-valued totals.
- */
-export async function getCurrentUserProgress(): Promise<CurrentUserProgress | null> {
+/** Compact summary without detail calendars or Score patterns; null means unauthenticated. */
+export async function getCurrentUserProgress({
+  history,
+}: ProgressHistoryOptions = {}): Promise<CurrentUserProgress | null> {
   "use cache: private";
 
   const [activity, energy, level, score, scorePatterns] = await Promise.all([
-    getLearningActivityTotals(),
+    history ? getLearningActivityTotals({ history }) : getLearningActivityTotals(),
     getEnergyLevel(),
     getBeltLevel(),
-    getScore(),
-    getScorePatterns(),
+    history ? getScore({ history }) : getScore(),
+    history ? getScorePatterns({ history }) : getScorePatterns(),
   ]);
 
   if (!activity) {

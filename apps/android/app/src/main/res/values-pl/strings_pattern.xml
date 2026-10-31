@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "pattern_also_came_up": "3152ec3023673933aa7b07374e64f38f956f52dbbaa957566df29edfd76bfa8d",
+  "pattern_correct_version": "882196684f11a79dbf7ae7d74ba12316dddd6d5431a5d088bd6b4e0167ab3d32",
+  "pattern_done": "6ab263120984ddde5be10ec29b2821c23e7bccfeac99ebedbaa7e8e9a183a373",
+  "pattern_got_it": "1d34ab8ccb4e11803bade01737e59c8c2c324ba397c2e87e86c33257f837d8ad",
+  "pattern_just_typos": "7ab9a795cd5e20fc63bea8994fc6248087b5c368b99064b14e060eb5a4b69e7c",
+  "pattern_keep_going": "e95e6b99ef9bb7f1c7447b76f8a3f7567772649b6408decb311549872500ea25",
+  "pattern_noticed": "43a84d7af1d0a739b53ebd16cf23a933b8d3875e988b8984bfb36f92edbaf8e7",
+  "pattern_practice": "36088af13d804b7c4ea0474b6bc0d0b84c35c9d5648ff16a24f57d446be3afed",
+  "pattern_quoted": "84cebeaa547f8f2a6bce843c3ee13eef6316e3ecf470dc17a024fdcafee23813",
+  "pattern_rule": "8402de96e275072a3e6a28040af298ff2505cb96204d0acd559f72ae9b2ba4b9",
+  "pattern_see_how_you_did": "9523929fe2c6123e277f4eb6c710535d02e35f8657b9531f39668cb6b8fb7978",
+  "pattern_see_rule": "f49a834b03675bae4a09960afaac364bb2c3aae32d03d276be1971253fe9f51a",
+  "pattern_seen": "45deec57c4640bcf9e9d41d8e648c8bfd10ec1cd2937c136001d538e235173e0",
+  "pattern_seen_times": "b60305b1a231c2bca1ea73896e426188155b4ea891f618fa0b8ab30bfb10dd07",
+  "pattern_title": "193d236236bc24725d5fa93a1c09fca3c568b5c1e03fd39fed57df3ed1a5f9bd",
+  "pattern_typos_detail": "d05a72f475f8b727ecfde0c7a3741eeedb536412e3721ff848b442d2cc513551",
+  "pattern_where_you_slipped": "4cb2e3bf971b5809e7ca7670a32d901baac11ace12ffdcbb8582e57a6c1ac668",
+  "pattern_you_said": "5f158d22cb628f227b7089fa0ef1cad4f3eb818c6fbfa4cd085cee2de8318575"
+}
+-->
+<resources>
+    <!-- A rule the learner keeps getting wrong, found in their recent answers. -->
+    <string name="pattern_title">Powtarzający się błąd</string>
+    <string name="pattern_noticed">Zauważyliśmy powtarzający się błąd</string>
+    <string name="pattern_seen">Ten błąd pojawił się w twoich ostatnich odpowiedziach.</string>
+    <!-- %d is how many times the mistake came up. Every form shows the number as %d; English says “once” only because it reads better. -->
+    <plurals name="pattern_seen_times">
+        <item quantity="one">Ten błąd pojawił się %d raz w twoich ostatnich odpowiedziach.</item>
+        <item quantity="few">Ten błąd pojawił się %d razy w twoich ostatnich odpowiedziach.</item>
+        <item quantity="many">Ten błąd pojawił się %d razy w twoich ostatnich odpowiedziach.</item>
+        <item quantity="other">Ten błąd pojawił się %d razy w twoich ostatnich odpowiedziach.</item>
+    </plurals>
+    <!-- Starts a short practice of the rule on this page; "this" is the rule. %1$s is how long it takes, like "3 min". -->
+    <string name="pattern_practice">Przećwicz tę zasadę · %1$s</string>
+    <!-- Heads the learner's other sentences that show the same mistake. -->
+    <string name="pattern_also_came_up">Ten sam błąd w innych zdaniach</string>
+    <!-- A sentence the learner said or wrote, in quotation marks. -->
+    <string name="pattern_quoted">„%1$s”</string>
+    <string name="pattern_rule">Zasada</string>
+    <!-- Read aloud before the learner's own wrong sentence. -->
+    <string name="pattern_you_said">Twoja wypowiedź</string>
+    <!-- Read aloud before the corrected sentence. -->
+    <string name="pattern_correct_version">Poprawna wersja</string>
+    <!-- Heads the learner's own wrong sentence beside its corrected version. -->
+    <string name="pattern_where_you_slipped">Co poszło nie tak</string>
+    <string name="pattern_see_rule">Zobacz zasadę</string>
+    <!-- After the practice's last question, opens its result. -->
+    <string name="pattern_see_how_you_did">Zobacz, jak ci poszło</string>
+    <string name="pattern_got_it">Masz tę zasadę opanowaną.</string>
+    <string name="pattern_keep_going">Znajomość zasady to pierwszy krok. Im częściej ją stosujesz, tym łatwiej ci idzie.</string>
+    <!-- The button that closes the practice result or the typos note and leaves the screen. -->
+    <string name="pattern_done">Zamknij</string>
+    <string name="pattern_just_typos">To tylko literówki</string>
+    <string name="pattern_typos_detail">Twoje ostatnie błędy to pomyłki przy pisaniu, a nie problem ze znajomością reguł. Nie ma tu nic do przećwiczenia.</string>
+</resources>

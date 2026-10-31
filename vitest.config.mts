@@ -1,5 +1,15 @@
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  test: { environment: "node", include: ["scripts/deploy/*.test.mts"] },
+  test: {
+    environment: "node",
+    include: [
+      "scripts/deploy/*.test.mts",
+      "scripts/dev/*.test.mts",
+      "scripts/e2e/*.test.mts",
+      "scripts/perf/*.test.mts",
+      "scripts/verify/*.test.mts",
+      "scripts/worktree/*.test.mts",
+    ],
+  },
 });

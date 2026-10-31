@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "richtext_math_cubed": "6bfa548cade12f11df451231a8bd8ddd20dbd7b05ded71c0f60340c6bbc91d42",
+  "richtext_math_fraction": "caa495d110c851f800f462b1ebd43caa600d7548311eee73446c584fcd6db7f0",
+  "richtext_math_power": "0a3a75ee0264397d30ce3529fa410fe336d3bda2af7b89cf91ca6b6b8df1b7c8",
+  "richtext_math_root": "40c04f09313c659d6df8f12803fe8043f73f29a66e06f4993f30cded7a8ad54f",
+  "richtext_math_squared": "212335d3cbdeb008f510d9c5b715fcb8d5daab50260d8b91f4249fa84ceeaceb",
+  "richtext_math_subscript": "26d047125a64437c0c0e063e80686edd87571e8ec5f0cbbb232cd8f87f3d5711"
+}
+-->
+<resources>
+    <!-- Screen reader words for a formula, said after its base: "x squared". -->
+    <string name="richtext_math_squared">karesi</string>
+    <!-- Screen reader words for a formula, said after its base: "x cubed". -->
+    <string name="richtext_math_cubed">küpü</string>
+    <!-- Screen reader words for an exponent, said after its base: "2 to the power of 10". -->
+    <string name="richtext_math_power">üzeri %1$s</string>
+    <!-- Screen reader words for an index, said after its base: "x sub 1". -->
+    <string name="richtext_math_subscript">alt indis %1$s</string>
+    <!-- Screen reader words for a fraction: "1 over 4". -->
+    <string name="richtext_math_fraction">%1$s bölü %2$s</string>
+    <!-- Screen reader words for a square root: "square root of 2". -->
+    <string name="richtext_math_root">karekök %1$s</string>
+</resources>

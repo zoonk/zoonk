@@ -10,7 +10,12 @@
       "de",
       "es",
       "fr",
+      "it",
+      "ja",
+      "ko",
+      "pl",
       "pt",
+      "tr",
     ],
   },
   "packages": [
@@ -22,21 +27,24 @@
       },
     }, {
       "kind": "remote",
-      "repository": "https://github.com/apple/swift-openapi-generator",
+      "repository": "https://github.com/stasel/WebRTC",
       "version": {
-        "up-to-next-major-version": "1.13.1",
+        "up-to-next-major-version": "156.0.0",
       },
+    }, {
+      "kind": "local",
+      "path": "ZoonkAPI",
     }, {
       "kind": "remote",
       "repository": "https://github.com/apple/swift-openapi-runtime",
       "version": {
-        "up-to-next-major-version": "1.12.1",
+        "up-to-next-major-version": "1.13.0",
       },
     }, {
       "kind": "remote",
       "repository": "https://github.com/apple/swift-openapi-urlsession",
       "version": {
-        "up-to-next-major-version": "1.3.1",
+        "up-to-next-major-version": "1.3.2",
       },
     }, {
       "kind": "remote",
@@ -94,15 +102,17 @@
         { "name": "Debug", "file": "Debug.xcconfig" },
         { "name": "Release", "file": "Release.xcconfig" },
       ],
-      "dependencies": [
-        { "kind": "package", "package": "swift-openapi-generator", "product-name": "OpenAPIGenerator", "product-type": "build-tool-plugin" },
-      ],
       "build-phases": [
         "compile-sources",
         "frameworks",
         "resources",
       ],
       "package-product-members": [
+        {
+          "package": "ZoonkAPI",
+          "product-name": "ZoonkAPI",
+          "build-phase": { "build-phase": "frameworks" },
+        },
         {
           "package": "GoogleSignIn-iOS",
           "product-name": "GoogleSignIn",
@@ -119,10 +129,15 @@
           "package": "swift-openapi-urlsession",
           "product-name": "OpenAPIURLSession",
           "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "WebRTC",
+          "product-name": "WebRTC",
+          "build-phase": { "build-phase": "frameworks" },
         },
       ],
       "build-settings": {
         "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
+        "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentColor",
         "CODE_SIGN_ENTITLEMENTS": "Zoonk/Zoonk.entitlements",
         "CODE_SIGN_STYLE": "Automatic",
         "CURRENT_PROJECT_VERSION": "1",
@@ -131,7 +146,7 @@
         "GENERATE_INFOPLIST_FILE": "NO",
         "INFOPLIST_KEY_CFBundleDisplayName": "Zoonk",
         "INFOPLIST_KEY_LSApplicationCategoryType": "public.app-category.education",
-        "IPHONEOS_DEPLOYMENT_TARGET": "18.0",
+        "IPHONEOS_DEPLOYMENT_TARGET": "26.0",
         "LD_RUNPATH_SEARCH_PATHS": "@executable_path/Frameworks",
         "MARKETING_VERSION": "1.0",
         "PRODUCT_NAME": "$(TARGET_NAME)",
@@ -167,7 +182,7 @@
         "CURRENT_PROJECT_VERSION": "1",
         "DEVELOPMENT_TEAM": "CGXYKAQUT9",
         "GENERATE_INFOPLIST_FILE": "YES",
-        "IPHONEOS_DEPLOYMENT_TARGET": "18.0",
+        "IPHONEOS_DEPLOYMENT_TARGET": "26.0",
         "MARKETING_VERSION": "1.0",
         "PRODUCT_BUNDLE_IDENTIFIER[config=Debug]": "com.zoonk.dev.ZoonkTests",
         "PRODUCT_BUNDLE_IDENTIFIER[config=Release]": "com.zoonk.ZoonkTests",
@@ -201,7 +216,7 @@
         "CURRENT_PROJECT_VERSION": "1",
         "DEVELOPMENT_TEAM": "CGXYKAQUT9",
         "GENERATE_INFOPLIST_FILE": "YES",
-        "IPHONEOS_DEPLOYMENT_TARGET": "18.0",
+        "IPHONEOS_DEPLOYMENT_TARGET": "26.0",
         "MARKETING_VERSION": "1.0",
         "PRODUCT_BUNDLE_IDENTIFIER[config=Debug]": "com.zoonk.dev.ZoonkUITests",
         "PRODUCT_BUNDLE_IDENTIFIER[config=Release]": "com.zoonk.ZoonkUITests",

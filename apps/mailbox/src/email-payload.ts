@@ -8,7 +8,6 @@ export type EmailPayload = {
   replyTo?: string;
 };
 
-/** Validates the message fields shared by captured inbox responses and local writes. */
 export function isEmailPayload(value: unknown): value is EmailPayload & Record<string, unknown> {
   return (
     isJsonObject(value) &&

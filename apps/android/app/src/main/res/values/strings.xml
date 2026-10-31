@@ -1,12 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name" translatable="false">Zoonk</string>
-    <string name="navigation_home">Home</string>
-    <string name="navigation_new">New</string>
-    <string name="navigation_courses">Courses</string>
-    <string name="navigation_progress">Progress</string>
-    <string name="placeholder_home">Home screen</string>
-    <string name="placeholder_new_course">New course screen</string>
-    <string name="placeholder_courses">Courses screen</string>
-    <string name="placeholder_progress">Progress screen</string>
+    <string name="navigation_today">Today</string>
+    <string name="navigation_plan">Plan</string>
+    <string name="navigation_buddy">Buddy</string>
+    <string name="navigation_study">Study</string>
+    <string name="navigation_mistakes">Mistakes notebook</string>
+    <string name="navigation_exam">Exam</string>
+    <string name="navigation_speaking">Speaking</string>
+    <string name="navigation_mind_maps">Mind maps</string>
+    <string name="navigation_statistics">Statistics</string>
+    <string name="navigation_back">Back</string>
+    <string name="navigation_user_menu">User menu</string>
+    <string name="task_leave">Leave</string>
+    <string name="gate_sign_in_title">Log in to continue</string>
+    <string name="gate_sign_in_description">Log in to pick up where you left off, or start free.</string>
+    <string name="gate_session_ended_title">Your session ended</string>
+    <string name="gate_session_ended_description">Log in to pick up your plan.</string>
+    <string name="gate_log_in">Log in</string>
+    <string name="gate_start_free">Start free</string>
+    <string name="gate_start_something_new">Start something new</string>
+    <string name="gate_start_goal_title">Start with a goal</string>
+    <string name="gate_start_goal_description">Tell us what you want to learn, and we\'ll plan every day until you get there.</string>
+    <string name="gate_start_goal">Start a goal</string>
+    <string name="belt_white">White belt</string>
+    <string name="belt_yellow">Yellow belt</string>
+    <string name="belt_orange">Orange belt</string>
+    <string name="belt_green">Green belt</string>
+    <string name="belt_blue">Blue belt</string>
+    <string name="belt_purple">Purple belt</string>
+    <string name="belt_brown">Brown belt</string>
+    <string name="belt_red">Red belt</string>
+    <string name="belt_gray">Gray belt</string>
+    <string name="belt_black">Black belt</string>
+    <string name="belt_level">%1$s, level %2$s</string>
+    <string name="answer_tag_correct">Correct</string>
+    <string name="answer_tag_your_answer">Your answer</string>
+    <string name="answer_tag_your_guess">Your guess</string>
+    <string name="load_failed_title">This page didn\'t load</string>
+    <string name="load_failed_description">It might be your connection or a problem on our side. Trying again usually fixes it.</string>
+    <string name="load_failed_try_again">Try again</string>
+    <string name="suggestion_view">View</string>
+    <string name="suggestion_save_failed">That didn\'t save. Try again.</string>
+    <string name="disclosure_expanded">Expanded</string>
+    <string name="disclosure_collapsed">Collapsed</string>
+    <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->
+    <string name="diff_line_spoken">%1$s: %2$s</string>
+    <string name="lessons_title">Lessons</string>
+    <!-- Lessons done of the total: "2 of 6". -->
+    <string name="lessons_done_count">%1$s of %2$s</string>
+    <!-- A lesson's number in its list: "3." -->
+    <string name="lessons_position">%1$s.</string>
+    <!-- TalkBack names each lesson's mark. Done: finished. Up next: the one lesson to do now. Coming up: the lessons after it, for later. The three must read as clearly different states. -->
+    <string name="lessons_done">Done</string>
+    <string name="lessons_up_next">Up next</string>
+    <string name="lessons_coming_up">Coming up</string>
+    <!-- Heads the key ideas of each lesson in a chapter's or unit's summary. -->
+    <string name="lesson_summaries_title">Summaries</string>
+    <string name="test_out_title">Already know this?</string>
+    <string name="test_out_skip_chapter">Take the test and skip the chapter</string>
+    <string name="test_out_skip_unit">Take the test and skip the unit</string>
+    <string name="not_found_title">We couldn\'t find this page</string>
+    <string name="not_found_description">The link may be old or mistyped.</string>
+    <string name="not_found_go_home">Go to the home page</string>
+    <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
+    <string name="list_row_states">%1$s, %2$s</string>
+    <!-- A toast, at most two short lines: a link did nothing because no app on the phone can open web pages. Same meaning as Android's own "No app can perform this action". -->
+    <string name="web_page_unavailable">No app can open this page.</string>
+    <!-- Replaces Compose's own string of this name, whose Portuguese and German read as closing a spreadsheet. TalkBack's label for the dimmed area behind a bottom sheet, which closes the sheet. "Sheet" means a panel that slides up from the bottom of the screen, not a spreadsheet or a sheet of paper. -->
+    <string name="close_sheet" tools:override="true" tools:ignore="UnusedResources">Close sheet</string>
+    <!-- In the time a day picker's menu. %1$s is a daily study time, such as "4 h". The same word as "We suggest 4 h a day" and "Use the suggested 4 h a day" beside it: suggested, not recommended. -->
+    <string name="daily_time_suggested">%1$s (suggested)</string>
+    <!-- In the time a day picker's menu: the time that covers the whole goal or exam. %1$s is a daily study time, such as "13 h 30 min". -->
+    <string name="daily_time_covers_everything">%1$s (covers everything)</string>
 </resources>

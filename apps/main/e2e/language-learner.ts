@@ -1,0 +1,13 @@
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
+import { createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+
+export async function createLanguageLearner({ withSubscription = false } = {}) {
+  const user = await createE2EUser(getBaseURL(), { withSubscription });
+  const fixture = await languageGoalFixture({ userId: user.id });
+
+  await learningProfileFixture({ activeGoalId: fixture.goal.id, userId: user.id });
+
+  return { ...fixture, user };
+}

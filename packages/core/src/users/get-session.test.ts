@@ -5,6 +5,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getUserSessionCacheTag } from "../cache/tags";
 import { getSession } from "./get-session";
 
+// `setup-tests.ts` replaces it for every other test: this one tests the real one.
+vi.unmock("./get-session");
+
 const authMocks = vi.hoisted(() => ({ getSession: vi.fn<(input: unknown) => Promise<unknown>>() }));
 
 vi.mock("@zoonk/auth", () => ({ auth: { api: { getSession: authMocks.getSession } } }));

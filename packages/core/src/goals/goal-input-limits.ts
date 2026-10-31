@@ -1,0 +1,1 @@
+export const MAX_GOAL_PROMPT_LENGTH = 2000;

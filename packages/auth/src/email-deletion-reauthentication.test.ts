@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { EmailAccountDeletionError } from "./email-deletion-contract";
+import { AccountDeletionEmailMismatchError } from "./email-deletion-contract";
 import { createEmailDeletionReauthentication } from "./email-deletion-reauthentication";
 
 const mocks = vi.hoisted(() => ({
@@ -17,10 +17,6 @@ vi.mock("./server", () => ({ baseAuthConfig: {}, baseAuthPlugins: [] }));
 
 const credentials = { email: "learner@example.com", otp: "123456" };
 
-/**
- * Persists the user and session returned by the mocked OTP provider so identity
- * mismatch cleanup is verified through Prisma rather than a database-shaped spy.
- */
 async function createTestSession() {
   const userId = randomUUID();
   const token = `email-reauthentication-${randomUUID()}`;
@@ -80,7 +76,7 @@ describe(createEmailDeletionReauthentication, () => {
     });
 
     await expect(reauthorize({ credentials, expectedUserId: randomUUID() })).rejects.toBeInstanceOf(
-      EmailAccountDeletionError,
+      AccountDeletionEmailMismatchError,
     );
 
     await expect(

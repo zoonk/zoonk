@@ -2,17 +2,12 @@ import { prisma } from "@zoonk/db";
 import { betterAuth } from "better-auth/minimal";
 import { type BetterAuthOptions } from "better-auth/types";
 import {
+  AccountDeletionEmailMismatchError,
   type EmailAccountDeletionCredentials,
-  EmailAccountDeletionError,
 } from "./email-deletion-contract";
 import { type EmailOTPStorage, createEmailOTPPlugin } from "./email-otp-plugin";
 import { baseAuthConfig, baseAuthPlugins } from "./server";
 
-/**
- * Removes the session created after a valid OTP before rejecting an identity
- * mismatch. A user must never retain a session for another account merely
- * because they entered that account's code during deletion reauthentication.
- */
 async function throwAfterSessionCleanup({
   error,
   sessionToken,
@@ -29,11 +24,6 @@ async function throwAfterSessionCleanup({
   throw error;
 }
 
-/**
- * Builds a server-only Better Auth email OTP verifier that can authenticate an
- * existing user but can never create one. Calling `signInEmailOTP` consumes the
- * OTP atomically and returns the fresh session required by account deletion.
- */
 export function createEmailDeletionReauthentication({
   rateLimit,
   storeOTP,
@@ -47,11 +37,7 @@ export function createEmailDeletionReauthentication({
     rateLimit,
   });
 
-  /**
-   * Verifies the code and then binds the resulting fresh session to the user
-   * from the original bearer request. This comparison prevents a valid code
-   * for another Zoonk account from authorizing the caller's deletion request.
-   */
+  /** Throws `AccountDeletionEmailMismatchError` when the verified email belongs to another account. */
   return async function reauthorizeEmailForAccountDeletion({
     credentials,
     expectedUserId,
@@ -63,7 +49,7 @@ export function createEmailDeletionReauthentication({
 
     if (session.user.id !== expectedUserId) {
       return throwAfterSessionCleanup({
-        error: new EmailAccountDeletionError(
+        error: new AccountDeletionEmailMismatchError(
           "Email reauthorization does not match the current user",
         ),
         sessionToken: session.token,

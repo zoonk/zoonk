@@ -1,0 +1,495 @@
+{
+  "modelId": "openai/gpt-6-sol",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The explanation correctly connects microwave energy with molecular motion and warming, acknowledges that water is not the only absorber, and accurately describes uneven heating and heat redistribution. It makes neither the inside-out cooking claim nor the radioactivity claim.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "There are five short screens, a familiar opening, and a coherent progression to practical advice. However, screen 3 introduces multiple distinct ideas rather than concentrating on the central water-motion explanation, triggering the cap of 7.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "Most language is accessible and there are no formulas. However, “electric field” and “charged particles” appear without preceding plain-language explanations, triggering the cap of 7 for two unexplained terms.",
+          "score": 7,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The leftovers opening, uneven-heating explanation with a turntable, and chili-stirring example give concrete everyday grounding on most screens. The examples are useful and do not rely on misleading comparisons.",
+          "score": 10,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "There is one clearly best option, the options have comparable lengths and tones, and every option receives explanatory feedback. However, the question reuses reheated chili and essentially asks the reader to select the procedure just presented, rather than use the main idea in a new situation.",
+          "score": 7,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The title is short and recognizable, the recap has three brief bullets in story order, and Everyday Physics is a suitable beginner course with three relevant follow-up questions. The recap could be more informative by replacing its general absorption statement with the specific connection between molecular motion and heat.",
+          "score": 9,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2101,
+          "inputTokens": 2104,
+          "outputTokens": 1095,
+          "reasoningTokens": 456
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Screen 3 overloads the central explanation with water-molecule motion, charged-particle motion, and other absorbers. It also introduces “electric field” and “charged particles” without first explaining their plain-language meanings. The check repeats the chili situation and actions already taught instead of applying the main idea to a new situation.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Make the recap more informative by explicitly connecting water-molecule motion to heat. A check comparing a cup of water with an empty microwave-safe plate would test transfer better than another chili-reheating question.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Microwaves make water molecules in food jiggle, and that motion is heat. Penalize the common myth that microwaves cook \"from the inside out\" and any claim that they make food radioactive. A good practical example: why a cup of water heats but an empty plate barely warms, or why food heats unevenly.",
+        "id": "en-microwave-1",
+        "userInput": { "language": "en", "question": "How does a microwave heat food?" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The definition, purchasing-power explanation, possible causes, and description of the IPCA are substantively correct. The response appropriately distinguishes a single price increase from a general rise and makes no investment recommendation. Explicitly saying that the general rise continues over time would sharpen the definition, but 'ao longo do tempo' is not a false simplification.",
+          "score": 9,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "There are six short screens and a familiar supermarket hook. However, the last screen repeats the income-and-prices point from screen 3 and adds an unrelated professional referral. Screen 5 combines measurement with personal variation around the average. The explicit cap of 7 therefore applies.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "The Brazilian Portuguese is accessible, with no formulas. Inflation and purchasing power are introduced through plain explanations, and the price-basket explanation precedes the IPCA reference. The language is generally suitable for a curious 12-year-old.",
+          "score": 9,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The R$ 100 supermarket example is concrete and familiar. Tomatoes, shopping bags, production and transport, and the basket of household expenses provide further everyday grounding across most screens. The comparisons do not mislead.",
+          "score": 9,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "The single check asks the reader to apply the distinction between an isolated price rise and general inflation to bread prices. It has one defensible correct answer, comparably sized options, and explanatory feedback for each. It is a valid, though fairly close, transfer from the tomato example.",
+          "score": 9,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The title is short, neutral, and directly recognizable. The recap has three short bullets following the teaching order: definition, purchasing power, then causes and measurement. 'Economia' is a sensible broad beginner course, and all three follow-up questions naturally extend the explanation.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2153,
+          "inputTokens": 2156,
+          "outputTokens": 1053,
+          "reasoningTokens": 364
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The screen progression has a concrete structural weakness: screen 6 repeats screen 3's point about income lagging behind prices, then adds an unnecessary referral about debts and investments. Screen 5 also introduces both inflation measurement and differences between personal experience and the average. These trigger the clarity cap for repetition and multiple new ideas on one screen.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Make the continuing nature of inflation more explicit with an everyday phrase such as prices continuing to rise over several months. Replace the final screen with a concrete concluding example rather than a repeated explanation and financial-advice disclaimer.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in Brazilian Portuguese: inflation is a general, continuous rise in prices that makes money buy less. A good story uses everyday Brazilian examples (supermarket, bus fare) and can mention that a little inflation is normal. No formulas.",
+        "id": "pt-inflacao-1",
+        "userInput": { "language": "pt", "question": "o que é inflação?" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The statements about sunlight, molecular scattering, sunsets, and the Moon are accurate, and there is no ocean-reflection misconception. However, the explicitly expected explanation of blue rather than violet—using the Sun's spectrum and human vision—is missing. No false-simplification cap is triggered.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Five short screens progress from a familiar noon-versus-sunset observation through sunlight's colors, scattering, the blue sky, and sunset. Each screen has a distinct central idea, and the last resolves the opening contrast. No multi-idea, repetition, or premature-ending cap is triggered.",
+          "score": 10,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "The language is accessible and contains no formulas or symbols. Scattering is explained as light spreading in new directions, but \"molecules\" is introduced without an everyday explanation first. This is one unexplained technical term, so the cap for two or more terms is not triggered.",
+          "score": 8,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The noon-and-sunset comparison, rainbow, and sunset light path provide concrete experiences across most screens. They directly support the explanation without misleading analogies.",
+          "score": 10,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "The single Moon question transfers the scattering principle to a new situation. It has one clearly correct answer, comparably styled options, and individual feedback explaining the relevant distinction for each choice.",
+          "score": 10,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The title is short and recognizable, the three recap bullets follow the teaching order, and Everyday Physics is a suitable beginner course. The three follow-up questions are relevant, but the sunset question asks for an explanation already supplied rather than extending the lesson.",
+          "score": 8,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2061,
+          "inputTokens": 2064,
+          "outputTokens": 982,
+          "reasoningTokens": 306
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation omits why the sky looks blue rather than violet. The expectations explicitly require the roles of our eyes and the Sun's spectrum; explaining stronger blue-than-red scattering alone leaves this part unanswered.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "\"Air molecules\" appears without first explaining what molecules are in everyday words. Also, \"Why are sunsets red?\" repeats material already taught rather than offering a genuinely new follow-up.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a sixth screen explaining that violet scatters strongly too, but sunlight contains less violet and our eyes are less sensitive to it. Introduce molecules as the tiny particles that make up air, and replace the sunset follow-up with a new question such as why the sky becomes darker at high altitude.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Sunlight scatters off air molecules, and blue light scatters much more than red (Rayleigh scattering); our eyes and the sun's spectrum explain why it looks blue and not violet. Sunsets are red because light crosses more air. Penalize \"the sky reflects the ocean\".",
+        "id": "en-sky-blue-1",
+        "userInput": { "language": "en", "question": "why is the sky blue" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The explanation correctly describes vaccine targets, weakened germs, instructions for producing a germ component, immune memory, variable protection, and additional doses. It does not claim vaccines cause the disease or guarantee protection. Calendar guidance is general rather than personalized medical advice, and individual circumstances are appropriately referred to a health professional. No factual-error cap applies.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "There are six short screens, beginning with a familiar bus scene and progressing coherently through training, memory, and protection. However, screen 6 introduces several distinct ideas: waning protection or multidose schedules, following a calendar, and consulting about particular health circumstances. This triggers the maximum score of 7 for packing multiple new ideas into one screen.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "Most wording is accessible Brazilian Portuguese, with useful everyday expressions such as training and remembering. However, 'anticorpos' and 'imunidade baixa' are introduced without first explaining their plain-language meanings. These two unexplained technical expressions trigger the maximum score of 7. No formulas are present.",
+          "score": 7,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The bus exposure and workplace flu examples are concrete, recognizable situations. The preview, training, and memory comparisons help connect the mechanism to familiar ideas without materially misleading the reader. Concrete anchors appear throughout most screens.",
+          "score": 9,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "The single check has one clearly correct answer, similarly sized options, and feedback explaining every option. It asks the reader to interpret an outcome, but that outcome closely repeats screen 5's example of infection despite vaccination with reduced severity. A more distinct situation would test transfer more effectively.",
+          "score": 8,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The recap contains three short points in the order taught: exposure to a target, recognition and memory, then variable protection and additional doses. The suggested human-body course is suitable for beginners, the three follow-up questions are natural, and the title is short, neutral, and recognizable.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2261,
+          "inputTokens": 2264,
+          "outputTokens": 1058,
+          "reasoningTokens": 337
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Screen 6 combines reasons for additional doses, vaccination-schedule guidance, and advice about individual health circumstances rather than teaching one idea. 'Anticorpos' and 'imunidade baixa' appear without plain-language explanations. The check closely echoes the vaccinated-but-still-infected example already taught, so it tests limited transfer.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make the safe-training idea explicit when introducing the vaccine's target. Keep the final screen focused on why additional doses may be needed, explain unfamiliar health terms before naming them, and use a check scenario that requires applying immune memory more distinctly.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in Brazilian Portuguese of how a vaccine trains the immune system with a harmless piece or version of a germ, so the body recognizes it later. Must be accurate and must not give personal medical advice; saying to talk to a health professional about a specific case is fine. Penalize claims that vaccines give the disease or are 100% effective.",
+        "id": "pt-vacina-1",
+        "userInput": { "language": "pt", "question": "Como funciona uma vacina?" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Correctly explains earning interest on past interest and the resulting acceleration. The 100-to-110-to-121 example is accurate, the unchanged rate is explicitly conditional, and debt compounding is appropriately qualified. No specific investment is recommended.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Five short screens progress from a familiar savings example through retaining interest, earning interest on it, growth over time, and the same mechanism on debt. Each screen has one central teaching idea, and the explanation fully answers the question.",
+          "score": 10,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "Uses accessible language and introduces the term compound interest only after demonstrating and explaining the idea. Numbers illustrate the example without formulas, equations, or code.",
+          "score": 10,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The savings-account example is concrete and develops across three screens. The snowball comparison illustrates increasing growth, and the final screen connects the concept to unpaid debt. Most screens provide concrete grounding.",
+          "score": 10,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "The single check applies the mechanism to a new comparison between keeping and withdrawing interest. It has one clearly correct option, similarly sized and toned alternatives, and individual feedback explaining each answer.",
+          "score": 10,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The recap contains three short bullets following the teaching sequence. Personal Finance is a suitable broad beginner course, the three follow-up questions are natural extensions, and the title is short, neutral, and directly recognizable.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2105,
+          "inputTokens": 2108,
+          "outputTokens": 664,
+          "reasoningTokens": 166
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "Compound interest means earning interest on past interest, so growth speeds up over time. The question doesn't ask for a formula, so none should appear; numbers in an example are fine. Must not recommend a specific investment.",
+        "id": "en-compound-interest-1",
+        "userInput": {
+          "language": "en",
+          "question": "I never understood how compound interest works"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The equations, discriminant calculation, roots and garden dimensions are correct. The explanation correctly restricts the discriminant's solution-count rule to real solutions and rejects a negative length without denying that it solves the equation. The check and its feedback are also mathematically correct.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "There are six short screens, a familiar opening problem and a coherent progression that resolves that problem. However, screen 4 teaches both calculating delta and interpreting its sign, triggering the cap of 7 for multiple new ideas on one screen.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "Formulas are explicitly requested, so their inclusion is appropriate. However, “soluções reais” and “raiz” are used before their meanings are explained, triggering the cap of 7. The formula also lacks verbal explanations of negating b, taking the square root and dividing the entire numerator by 2a.",
+          "score": 7,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The garden is a concrete everyday application, carried through the setup, coefficient identification, calculation and interpretation. Most screens contain specific numbers or direct references to this example, and the distinction between algebraic solutions and physically possible lengths is useful and accurate.",
+          "score": 10,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "The single check asks the reader to solve a new quadratic rather than recall a sentence. It has exactly one correct option, similarly structured options and feedback explaining why each answer is right or wrong. Showing the signed coefficients in the feedback would make the transfer slightly clearer.",
+          "score": 9,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The recap has three short bullets matching the teaching sequence. “Álgebra básica” is an appropriate beginner course, and the three follow-up questions are natural extensions. The title is neutral, recognizable and concise.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2470,
+          "inputTokens": 2473,
+          "outputTokens": 999,
+          "reasoningTokens": 274
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The requested word-by-word explanation of the formula is incomplete. The result explains ±, but does not explain −b as the opposite of b, √Δ as the square root of delta, or that the whole numerator is divided by twice a. The worked example is correct, but these omissions limit a beginner's ability to apply the formula independently.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Screen 4 introduces both how to calculate delta and how its sign determines the number of real solutions, packing two new ideas into one screen. The terms “soluções reais” and “raiz” also appear without plain-language explanations.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The check's feedback could identify a = 1, b = −4 and c = 3 before calculating. This would reinforce how to carry a negative coefficient into the formula, a useful extension of the positive-b worked example.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in Brazilian Portuguese. The question asks for the quadratic formula (fórmula de Bhaskara), so showing it is allowed and expected, but each part must be explained in words, with what the discriminant (delta) tells you about the number of solutions and one worked example with small numbers.",
+        "id": "pt-bhaskara-formula-pedida-1",
+        "userInput": { "language": "pt", "question": "me explica a fórmula de Bhaskara" }
+      }
+    }
+  ],
+  "taskId": "quick-explanation"
+}

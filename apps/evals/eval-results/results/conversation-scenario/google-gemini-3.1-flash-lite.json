@@ -1,0 +1,162 @@
+{
+  "modelId": "google/gemini-3.1-flash-lite",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "This is an everyday apartment-rental call directly within the unit. Sarah is a plausible US landlord, the place name is short, and the dollar rent and viewing times are realistic.",
+          "score": 10,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening greets, identifies Sarah, and invites the learner to speak without completing an objective. The hints are short, complete, usable A2 sentences and cover all listed objectives.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The three objectives are ordered naturally, observable in speech, and achievable in a short call. Their labels meet the verb-first and length requirements. However, asking what rent includes is not an objective despite being a central unit skill, and suggesting a viewing time does not necessarily complete a booking.",
+          "score": 8,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, A2 guidance, concrete rent and utility facts, viewing slots, a simple twist, and a closing instruction. The listed objectives have sufficient factual support, so the missing-objective-facts cap is not triggered. However, the requested address confirmation lacks a complete address, and the instruction to reject the first suggested time and offer 'the other one' is underspecified when the learner proposes a different slot.",
+          "score": 7,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The title, situation, role, and objective descriptions are natural Brazilian Portuguese. The place, opening, labels, and hints are English, and the brief is English. There are no emojis or em dashes and no wrong-language fields.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1926,
+          "inputTokens": 1929,
+          "outputTokens": 1102,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The objectives omit asking what is included in the rent, a central unit skill, although a hint supports it. The brief instructs Sarah to confirm the address without supplying a complete address. Its scheduling twist also assumes the learner will first suggest one of the two listed slots, making 'offer the other one' unclear for other suggestions.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the booking objective require agreeing on a day and time, rather than only suggesting one, so successful completion clearly represents a booked viewing.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian learner of US English at A2, renting an apartment. A call to a landlord or agent to ask about a flat and book a viewing, with objectives like asking the rent, asking what's included and booking a day. US name and dollars. Opening line and hints short and simple (A2). Title, situation and descriptions in Brazilian Portuguese.",
+        "id": "pt-en-a2-renting-1",
+        "userInput": {
+          "canDo": [
+            "Ligar para marcar uma visita a um apartamento",
+            "Perguntar o que está incluído no aluguel",
+            "Entender um anúncio de aluguel"
+          ],
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "targetLanguage": "en",
+          "unitDescription": "Encontre um apartamento, pergunte sobre o aluguel e marque uma visita",
+          "unitTitle": "Alugando um apartamento"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "The landlord call, Mexican rent terminology, peso amount, Condesa location, and viewing arrangements fit the unit and everyday life. Diego is a plausible character. However, the result omits the deposit mentioned in the rental expectations and unit description.",
+          "score": 8,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening greets, identifies Diego, and invites the learner to speak without answering an objective. Its vocabulary and structures are accessible at A2. The hints are short, complete utterances covering all three objectives.",
+          "score": 9,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "There are three speech-checkable objectives in a natural sequence: ask the rent, check inclusions, and arrange a viewing. Each label starts with a verb and contains two to five words. The descriptions are actionable, and the goals are achievable in a short call.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, an A2 instruction, concrete rent and utility facts, viewing times, a simple scheduling twist, and a closing instruction. However, Tuesday is inconsistently described as both available and taken, and no deposit amount is supplied. The missing-objective-facts cap does not apply because the three stated objectives have the facts they require.",
+          "score": 7,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The Spanish title and role violate the requirement that these fields be in the learner's language, triggering the maximum score of 5. The opening also uses tú forms rather than the required usted register. The remaining fields largely use the correct languages, and there are no emojis or em dashes.",
+          "score": 5,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2357,
+          "outputTokens": 934,
+          "reasoningTokens": 326
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The title and character role are in Spanish instead of US English. The opening uses informal address (“hablas” and “te”) despite the explicit requirement to use usted.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The deposit is omitted entirely, leaving part of the stated rental context unsupported. The brief also contradicts itself by describing Tuesday at 4:00 p.m. as available and then instructing Diego to say it is already taken.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a short, reusable availability question to the hints so learners can negotiate a viewing rather than rely solely on the preselected Thursday appointment.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Mexican Spanish at A2, renting an apartment in Mexico City. A call to a landlord (\"dueño\" or \"dueña\") about a \"departamento\", with pesos, Mexican vocabulary (\"renta\", \"depósito\", \"servicios\", \"departamento\", not \"piso\") and \"usted\". Opening line and hints short (A2). Title, situation and descriptions in US English.",
+        "id": "en-es-a2-renting-1",
+        "userInput": {
+          "canDo": ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
+          "learnerLanguage": "en",
+          "level": "A2",
+          "targetLanguage": "es",
+          "unitDescription": "Find an apartment, ask about the rent and the deposit, and arrange a viewing",
+          "unitTitle": "Renting an apartment in Mexico City"
+        }
+      }
+    }
+  ],
+  "taskId": "conversation-scenario"
+}

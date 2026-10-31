@@ -1,19 +1,26 @@
 import "server-only";
+import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { type LessonQuestionAnswerCompletion } from "@zoonk/ai/tasks/lessons/question";
 import { prisma } from "@zoonk/db";
+import { replaceEmDashes } from "@zoonk/utils/string";
 import { isUuid } from "@zoonk/utils/uuid";
-import { claimGenerationQuotaIfNeeded } from "../generation-quotas/claim-generation-quota";
+import { claimUsage } from "../entitlements/claim-usage";
+import { type UsageDecision } from "../entitlements/contract";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
+import { type MemoryChange } from "../memory/memory-contract";
 import { getSession } from "../users/get-session";
-import {
-  type ClaimLessonQuestionAnswerInput,
-  claimAnswerInTransaction,
-} from "./_utils/answer-claim";
-import { getLessonQuestionAccess } from "./_utils/question-access";
+import { claimAnswerInTransaction } from "./_utils/answer-claim";
+import { loadLearnerNames } from "./_utils/learner-names";
 import { lessonQuestionResourceOmit } from "./_utils/question-resource";
+import { getSharedAnswerKey, saveSharedAnswer } from "./_utils/shared-answers";
+import { findTutorMemory, markTutorMemoryUsed, rememberTutorExchange } from "./_utils/tutor-memory";
+import { type TutorSubject, findThreadSubject } from "./_utils/tutor-subject";
 
 type CompleteLessonQuestionAnswerInput = LessonQuestionAnswerCompletion & {
   questionId: string;
   revision: number;
+  /** Only the claim may decide sharing; never derive it from learner input. */
+  shareAnswer?: boolean;
 };
 
 async function getQuestionAnswerAccess({
@@ -27,11 +34,7 @@ async function getQuestionAnswerAccess({
     where: { questions: { some: { id: questionId } }, userId },
   });
 
-  if (!thread?.lessonId) {
-    return { status: "notFound" as const };
-  }
-
-  return getLessonQuestionAccess({ lessonId: thread.lessonId, userId });
+  return thread ? findThreadSubject({ thread, userId }) : { status: "notFound" as const };
 }
 
 function markClaimedLessonQuestionAnswerFailed({
@@ -43,36 +46,98 @@ function markClaimedLessonQuestionAnswerFailed({
   revision: number;
   userId: string;
 }) {
-  return prisma.lessonQuestion.updateMany({
-    data: { status: "failed" },
-    where: { generationRevision: revision, id: questionId, status: "running", thread: { userId } },
+  return writeLearnerChange({ userId }, async (tx) => {
+    const updated = await tx.lessonQuestion.updateMany({
+      data: { status: "failed" },
+      where: {
+        generationRevision: revision,
+        id: questionId,
+        status: "running",
+        thread: { userId },
+      },
+    });
+
+    return updated.count > 0 ? updated : unchanged(updated);
   });
 }
 
-/** Releases the provider-less revision before propagating a quota infrastructure failure. */
-async function claimLessonQuestionQuota({
-  questionId,
-  revision,
+/** Release the claimed revision before propagating infrastructure failures. */
+async function claimTutorUsage({
+  question,
   userId,
 }: {
-  questionId: string;
-  revision: number;
+  question: { questionId: string; revision: number };
   userId: string;
-}) {
+}): Promise<UsageDecision> {
   try {
-    return await claimGenerationQuotaIfNeeded({
-      resource: "lessonQuestion",
-      shouldClaimQuota: true,
-      targetId: questionId,
-    });
+    return await claimUsage({ kind: "tutorMessage", targetId: question.questionId });
   } catch (error) {
-    await markClaimedLessonQuestionAnswerFailed({ questionId, revision, userId });
+    await markClaimedLessonQuestionAnswerFailed({
+      questionId: question.questionId,
+      revision: question.revision,
+      userId,
+    });
+
     throw error;
   }
 }
 
-/** Atomically claims a pending, failed, or abandoned answer generation for its owner. */
-export async function claimLessonQuestionAnswer(input: ClaimLessonQuestionAnswerInput) {
+type AnswerClaimOutcome = Awaited<ReturnType<typeof claimAnswerInTransaction>>;
+
+type ClaimedQuestion = Extract<AnswerClaimOutcome, { status: "ready" }>["claim"];
+
+/** Shared answers never read personal memory; allowance must succeed before any memory read. */
+async function claimTutorAnswer({
+  question,
+  subject,
+  userId,
+}: {
+  question: ClaimedQuestion;
+  subject: TutorSubject;
+  userId: string;
+}): Promise<
+  | { learnerMemory: string[]; shareAnswer: boolean; status: "ready" }
+  | Exclude<UsageDecision, { status: "allowed" }>
+> {
+  const usage = await claimTutorUsage({ question, userId });
+
+  if (usage.status !== "allowed") {
+    await markClaimedLessonQuestionAnswerFailed({
+      questionId: question.questionId,
+      revision: question.revision,
+      userId,
+    });
+
+    return usage;
+  }
+
+  if (question.shareAnswer) {
+    return { learnerMemory: [], shareAnswer: true, status: "ready" };
+  }
+
+  const facts = await findTutorMemory({
+    language: subject.language,
+    question: question.question,
+    userId,
+  });
+
+  const learnerMemory = await markTutorMemoryUsed({ facts, userId });
+
+  return { learnerMemory, shareAnswer: false, status: "ready" };
+}
+
+function getAnswerAnalytics({
+  goalId,
+  userId,
+}: {
+  goalId: string | null;
+  userId: string;
+}): Pick<AiGenerationContext, "distinctId" | "goalId"> {
+  return goalId ? { distinctId: userId, goalId } : { distinctId: userId };
+}
+
+/** Requires the owner session; an existing shared answer completes immediately without allowance or memory reads. */
+export async function claimLessonQuestionAnswer(input: { questionId: string }) {
   const session = await getSession();
 
   if (!session) {
@@ -83,10 +148,8 @@ export async function claimLessonQuestionAnswer(input: ClaimLessonQuestionAnswer
     return { status: "notFound" as const };
   }
 
-  const access = await getQuestionAnswerAccess({
-    questionId: input.questionId,
-    userId: session.user.id,
-  });
+  const userId = session.user.id;
+  const access = await getQuestionAnswerAccess({ questionId: input.questionId, userId });
 
   if (access.status !== "ready") {
     return access;
@@ -94,31 +157,46 @@ export async function claimLessonQuestionAnswer(input: ClaimLessonQuestionAnswer
 
   const now = new Date();
 
-  const claimed = await prisma.$transaction((transaction) =>
-    claimAnswerInTransaction({ input, now, transaction, userId: session.user.id }),
-  );
+  const claimed = await writeLearnerChange<AnswerClaimOutcome>({ userId }, async (transaction) => {
+    const result = await claimAnswerInTransaction({ input, now, transaction, userId });
+
+    return result.status === "conflict" || result.status === "notFound"
+      ? unchanged(result)
+      : result;
+  });
 
   if (claimed.status !== "ready") {
     return claimed;
   }
 
-  const quota = await claimLessonQuestionQuota({
-    questionId: claimed.claim.questionId,
-    revision: claimed.claim.revision,
-    userId: session.user.id,
-  });
+  const { contextSnapshot, goalId, priorTurns, question, questionId, revision } = claimed.claim;
 
-  if (quota.status === "ready") {
-    return claimed;
+  const [tutor, learnerNames] = await Promise.all([
+    claimTutorAnswer({ question: claimed.claim, subject: access.subject, userId }),
+    loadLearnerNames(userId),
+  ]);
+
+  if (tutor.status !== "ready") {
+    return { decision: tutor, status: "usageRefused" as const };
   }
 
-  await markClaimedLessonQuestionAnswerFailed({
-    questionId: claimed.claim.questionId,
-    revision: claimed.claim.revision,
-    userId: session.user.id,
-  });
+  const { learnerMemory, shareAnswer } = tutor;
 
-  return quota;
+  return {
+    claim: {
+      analytics: getAnswerAnalytics({ goalId, userId }),
+      contextSnapshot,
+      learnerMemory,
+      /** Only use these names to exclude them from outgoing web searches. */
+      learnerNames,
+      priorTurns,
+      question,
+      questionId,
+      revision,
+      shareAnswer,
+    },
+    status: "ready" as const,
+  };
 }
 
 async function getConditionalWriteOutcome({
@@ -142,7 +220,64 @@ async function getConditionalWriteOutcome({
   return exists ? { status: "stale" as const } : { status: "notFound" as const };
 }
 
-/** Persists a model completion only when it still owns the current generation revision. */
+/** Only the claimed revision may save; the stored text must match what the learner saw streamed. */
+function saveCompletedAnswer({
+  input,
+  userId,
+}: {
+  input: CompleteLessonQuestionAnswerInput;
+  userId: string;
+}) {
+  const { questionId, revision, shareAnswer, ...generated } = input;
+  const completion = { ...generated, answer: replaceEmDashes(generated.answer) };
+
+  const provenance = {
+    generatedAt: new Date(completion.generatedAt),
+    model: completion.model,
+    promptVersion: completion.promptVersion,
+    runId: completion.runId,
+  };
+
+  return writeLearnerChange({ userId }, async (transaction) => {
+    const updated = await transaction.lessonQuestion.updateMany({
+      data: {
+        ...provenance,
+        answer: completion.answer,
+        finishReason: completion.finishReason,
+        provider: completion.provider,
+        status: "completed",
+      },
+      where: {
+        generationRevision: revision,
+        id: questionId,
+        status: "running",
+        thread: { userId },
+      },
+    });
+
+    const question =
+      updated.count > 0 && shareAnswer
+        ? await transaction.lessonQuestion.findUniqueOrThrow({ where: { id: questionId } })
+        : null;
+
+    const key = question && getSharedAnswerKey({ hasPriorTurns: false, question });
+
+    if (question && key) {
+      await saveSharedAnswer({
+        answer: completion.answer,
+        key,
+        provenance,
+        question: question.question,
+        questionId,
+        transaction,
+      });
+    }
+
+    return updated.count > 0 ? updated.count : unchanged(updated.count);
+  });
+}
+
+/** Saves only the current owned revision; learn personal memory separately after completion. */
 export async function completeLessonQuestionAnswer(input: CompleteLessonQuestionAnswerInput) {
   const session = await getSession();
 
@@ -154,33 +289,31 @@ export async function completeLessonQuestionAnswer(input: CompleteLessonQuestion
     return { status: "notFound" as const };
   }
 
-  const updated = await prisma.lessonQuestion.updateMany({
-    data: {
-      answer: input.answer,
-      finishReason: input.finishReason,
-      inputTokens: input.inputTokens ?? null,
-      model: input.model,
-      outputTokens: input.outputTokens ?? null,
-      provider: input.provider,
-      status: "completed",
-      totalTokens: input.totalTokens ?? null,
-    },
-    where: {
-      generationRevision: input.revision,
-      id: input.questionId,
-      status: "running",
-      thread: { userId: session.user.id },
-    },
-  });
+  const updatedCount = await saveCompletedAnswer({ input, userId: session.user.id });
 
   return getConditionalWriteOutcome({
     questionId: input.questionId,
-    updatedCount: updated.count,
+    updatedCount,
     userId: session.user.id,
   });
 }
 
-/** Marks only the current owned generation revision as retryable after a streaming failure. */
+/** Shared, unsaved, or another learner's answers never affect memory; failures are logged without failing the answer. */
+export async function rememberLessonQuestionAnswer({
+  questionId,
+}: {
+  questionId: string;
+}): Promise<MemoryChange[]> {
+  const session = await getSession();
+
+  if (!session || !isUuid(questionId)) {
+    return [];
+  }
+
+  return rememberTutorExchange({ questionId, userId: session.user.id });
+}
+
+/** Changes only the owned current revision; stale streaming failures have no effect. */
 export async function failLessonQuestionAnswer({
   questionId,
   revision,

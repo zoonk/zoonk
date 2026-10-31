@@ -1,0 +1,157 @@
+{
+  "modelId": "openai/gpt-6.1-terra",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "found": ["Ciências da Natureza e suas Tecnologias"],
+          "notHigh": ["A Mecânica e o funcionamento do Universo"],
+          "notLow": [
+            "Ecologia e ciências ambientais",
+            "Hereditariedade e diversidade da vida",
+            "Compostos de Carbono"
+          ]
+        },
+        "id": "pt-enem-natureza-1",
+        "userInput": {
+          "board": "Inep",
+          "exam": "ENEM",
+          "subjects": [
+            {
+              "name": "Ciências da Natureza e suas Tecnologias",
+              "topics": [
+                "Conhecimentos básicos e fundamentais",
+                "O movimento, o equilíbrio e a descoberta de leis físicas",
+                "Energia, trabalho e potência",
+                "A Mecânica e o funcionamento do Universo",
+                "Fenômenos Elétricos e Magnéticos",
+                "Oscilações, ondas, óptica e radiação",
+                "O calor e os fenômenos térmicos",
+                "Transformações químicas",
+                "Representação das transformações químicas",
+                "Materiais, suas propriedades e usos",
+                "Água",
+                "Transformações químicas e energia",
+                "Dinâmica das transformações químicas",
+                "Transformação Química e Equilíbrio",
+                "Compostos de Carbono",
+                "Relações da Química com as tecnologias, a sociedade e o meio ambiente",
+                "Energias químicas no cotidiano",
+                "Moléculas, células e tecidos",
+                "Hereditariedade e diversidade da vida",
+                "Identidade dos seres vivos",
+                "Ecologia e ciências ambientais",
+                "Origem e evolução da vida",
+                "Qualidade de vida das populações humanas"
+              ]
+            }
+          ],
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "found": [], "notHigh": [], "notLow": [] },
+        "id": "pt-enem-humanas-1",
+        "userInput": {
+          "board": "Inep",
+          "exam": "ENEM",
+          "subjects": [
+            {
+              "name": "Ciências Humanas e suas Tecnologias",
+              "topics": [
+                "Diversidade cultural, conflitos e vida em sociedade",
+                "Formas de organização social, movimentos sociais, pensamento político e ação do Estado",
+                "Características e transformações das estruturas produtivas",
+                "Os domínios naturais e a relação do ser humano com o ambiente",
+                "Representação espacial"
+              ]
+            }
+          ],
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "found": [],
+          "notHigh": [],
+          "notLow": ["1 Compreensão e interpretação de textos de gêneros variados"]
+        },
+        "id": "pt-camara-portugues-1",
+        "userInput": {
+          "board": "Cebraspe",
+          "exam": "Concurso da Câmara dos Deputados, Analista Legislativo – Registro e Redação",
+          "subjects": [
+            {
+              "name": "Língua Portuguesa",
+              "topics": [
+                "1 Compreensão e interpretação de textos de gêneros variados",
+                "2 Reconhecimento de tipos e gêneros textuais",
+                "3 Domínio da ortografia",
+                "4 Domínio dos mecanismos de coesão textual",
+                "5 Domínio da estrutura morfossintática do período",
+                "5.4 Emprego dos sinais de pontuação",
+                "5.5 Concordância verbal e nominal",
+                "5.7 Emprego do sinal indicativo de crase",
+                "6 Reescrita de frases e parágrafos do texto"
+              ]
+            }
+          ],
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "found": [], "notHigh": [], "notLow": [], "onlyFound": true },
+        "id": "pt-cgu-2026-new-board-and-syllabus-1",
+        "userInput": {
+          "board": "Cebraspe",
+          "exam": "CGU, Auditor Federal de Finanças e Controle",
+          "subjects": [
+            {
+              "name": "Administração Pública e Fundamentos de Políticas Públicas",
+              "topics": [
+                "1 Organização administrativa",
+                "1.1 Administração direta e indireta; descentralização e desconcentração; agentes públicos; funções da administração pública: formulação, execução, regulação e controle de políticas e ações públicas; arranjos de cooperação com entes federativos e entidades não estatais",
+                "2 Modelos de administração",
+                "2.1 Burocracia e profissionalização; gestão orientada a resultados; participação e governança; limites e contribuições de diferentes modelos na realidade brasileira",
+                "3 Políticas públicas",
+                "3.1 Problema público, agenda e formulação; instrumentos de ação estatal; implementação, monitoramento e avaliação; intersetorialidade e atores governamentais e sociais",
+                "4 Planejamento e recursos",
+                "4.1 Funções do planejamento e do orçamento; relação entre PPA, LDO e LOA; receita e despesa em nível conceitual; restrições fiscais, escolhas alocativas e sustentabilidade das ações",
+                "5 Serviços e transformação digital",
+                "5.1 Orientação ao usuário; simplificação e acessibilidade; coordenação de serviços; oportunidades e riscos da automação e da inteligência artificial na administração"
+              ]
+            }
+          ],
+          "today": "2026-10-30"
+        }
+      }
+    }
+  ],
+  "taskId": "find-topic-frequency"
+}

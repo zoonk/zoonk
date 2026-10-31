@@ -1,0 +1,102 @@
+"use client";
+
+import { useExtracted } from "next-intl";
+import { MomentReadouts } from "../../_components/moment-readouts";
+import { type LearnBuddy } from "../../buddies/use-buddy-name";
+import { ChoiceQuestion, type ChoiceQuestionView } from "../../questions/choice-question";
+import { DayMoment } from "../../session/day-moment";
+import { MomentHeader } from "../../session/moment-header";
+import { type DrillQuestion, toDrillFeedback } from "./pattern-drill-feedback";
+import { type PatternPracticeResult } from "./use-pattern-drill";
+
+/**
+ * Not a bank item: the question reads only its format, options and text, so the ids just name the
+ * sentence.
+ */
+function toChoiceQuestion({
+  index,
+  question,
+}: {
+  index: number;
+  question: DrillQuestion;
+}): ChoiceQuestionView {
+  return {
+    context: null,
+    format: "multipleChoice",
+    image: null,
+    itemId: `pattern-drill-${index}`,
+    options: question.options,
+    question: question.sentence,
+    select: 1,
+    skillId: "",
+    visual: null,
+  };
+}
+
+export function PatternDrillQuestion({
+  answer,
+  index,
+  onPick,
+  picked,
+  question,
+}: {
+  answer: string | null;
+  index: number;
+  onPick: (option: string) => void;
+  picked: string | null;
+  question: DrillQuestion;
+}) {
+  const selectedIndex = picked === null ? -1 : question.options.indexOf(picked);
+
+  return (
+    <ChoiceQuestion
+      feedback={toDrillFeedback({ answer, question })}
+      onSelect={(choice) => {
+        const option =
+          choice && "selectedIndex" in choice ? question.options[choice.selectedIndex] : null;
+
+        if (option !== undefined && option !== null) {
+          onPick(option);
+        }
+      }}
+      question={toChoiceQuestion({ index, question })}
+      selected={selectedIndex === -1 ? null : { selectedIndex }}
+    />
+  );
+}
+
+export function PatternDrillResult({
+  buddy,
+  result,
+}: {
+  buddy?: LearnBuddy | null;
+  result: PatternPracticeResult;
+}) {
+  const t = useExtracted();
+  const allRight = result.correct === result.total;
+
+  return (
+    <>
+      <MomentHeader
+        detail={
+          allRight
+            ? t("You've got this rule.")
+            : t("Knowing the rule is the first step. It gets easier each time you use it.")
+        }
+        title={t("Practice done")}
+      >
+        <MomentReadouts
+          brainPower={result.brainPower}
+          score={{ answered: result.total, correct: result.correct }}
+        />
+      </MomentHeader>
+
+      <DayMoment
+        buddy={buddy}
+        ceremony={result.ceremony}
+        missionMoment={result.missionMoment ?? null}
+        reached={result.reached}
+      />
+    </>
+  );
+}

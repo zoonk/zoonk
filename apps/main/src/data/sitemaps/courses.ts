@@ -1,22 +1,27 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getSitemapCourseWhere } from "./course-where";
+import { getSitemapPageRowIds, isSitemapPage, warnIfSitemapPageIsFull } from "./sitemap-pages";
 
-export const SITEMAP_BATCH_SIZE = 5000;
+type SitemapCourse = { brandSlug: string; courseSlug: string; language: string; updatedAt: Date };
 
-export async function countSitemapCourses(): Promise<number> {
-  return prisma.course.count({ where: await getSitemapCourseWhere() });
-}
+async function listSitemapCoursePage(page: number): Promise<SitemapCourse[]> {
+  "use cache";
 
-export async function listSitemapCourses(
-  page: number,
-): Promise<{ brandSlug: string; courseSlug: string; language: string; updatedAt: Date }[]> {
+  const where = await getSitemapCourseWhere();
+  const listed = await prisma.course.findMany({ select: { id: true }, where });
+  const ids = getSitemapPageRowIds({ listed, page, resource: "courses" });
+  warnIfSitemapPageIsFull({ page, resource: "courses", rows: ids.length });
+
   const courses = await prisma.course.findMany({
-    include: { organization: true },
     orderBy: { id: "asc" },
-    skip: page * SITEMAP_BATCH_SIZE,
-    take: SITEMAP_BATCH_SIZE,
-    where: await getSitemapCourseWhere(),
+    select: {
+      language: true,
+      organization: { select: { slug: true } },
+      slug: true,
+      updatedAt: true,
+    },
+    where: { ...where, id: { in: ids } },
   });
 
   return courses.map((course) => ({
@@ -25,4 +30,8 @@ export async function listSitemapCourses(
     language: course.language,
     updatedAt: course.updatedAt,
   }));
+}
+
+export async function listSitemapCourses(page: number): Promise<SitemapCourse[]> {
+  return isSitemapPage({ page, resource: "courses" }) ? listSitemapCoursePage(page) : [];
 }

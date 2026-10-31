@@ -1,71 +1,92 @@
-import { Login, LoginDivider, LoginFooter, LoginHeader, LoginTitle } from "@/components/login";
-import { getSession } from "@zoonk/core/users/session";
-import { FullPageLoading } from "@zoonk/ui/components/loading";
+import { AuthFrame } from "@/components/auth-frame";
+import {
+  Login,
+  LoginDescription,
+  LoginDivider,
+  LoginFooter,
+  LoginHeader,
+  LoginTitle,
+} from "@/components/login";
+import { auth } from "@zoonk/auth";
+import { getSessionCookieName } from "@zoonk/auth/cookies";
+import { AUTH_LOGIN_EXPIRED_ERROR } from "@zoonk/utils/origin";
+import { PRIVACY_URL, TERMS_URL } from "@zoonk/utils/url";
 import { getExtracted } from "next-intl/server";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { type ReactNode, Suspense } from "react";
+import { type ReactNode } from "react";
+import { getCallbackHref, readRedirectTo } from "../_utils/auth-redirect";
+import { getReturnAppUrl } from "../_utils/return-app";
 import { EmailLoginForm } from "./email-login-form";
 import { SocialLogin } from "./social-login";
 
-/**
- * Keeps the rich-text replacement stable between renders. The translation
- * parser calls this function only for the terms placeholder, so the login view
- * can pass a module-level renderer instead of creating a new component inside
- * the page render.
- */
 function TermsLink(children: ReactNode) {
-  return <a href="https://zoonk.com/terms">{children}</a>;
+  return <a href={TERMS_URL}>{children}</a>;
 }
 
-/**
- * Keeps the rich-text replacement stable between renders. The translation
- * parser calls this function only for the privacy placeholder, so the login
- * view can pass a module-level renderer instead of creating a new component
- * inside the page render.
- */
 function PrivacyLink(children: ReactNode) {
-  return <a href="https://zoonk.com/privacy">{children}</a>;
+  return <a href={PRIVACY_URL}>{children}</a>;
 }
 
-async function LoginView({ searchParams }: PageProps<"/auth/login">) {
-  const { redirectTo } = await searchParams;
+async function hasSessionCookie(): Promise<boolean> {
+  const store = await cookies();
+  return [true, false].some((secure) => store.has(getSessionCookieName({ secure })));
+}
 
-  const session = await getSession();
-
-  if (session && redirectTo) {
-    redirect(`/auth/callback?redirectTo=${encodeURIComponent(String(redirectTo))}`);
+/** Only a browser with a session cookie waits for the session's lookup; everyone else gets the form at once. */
+async function redirectWhenSignedIn({
+  error,
+  redirectTo,
+}: {
+  error?: string | string[];
+  redirectTo: string | null;
+}) {
+  if (error !== undefined || !(await hasSessionCookie())) {
+    return;
   }
+
+  // A revoked session can remain in the signed cookie cache after another app logs out.
+  if (
+    await auth.api.getSession({ headers: await headers(), query: { disableCookieCache: true } })
+  ) {
+    redirect(getCallbackHref(redirectTo));
+  }
+}
+
+export default async function LoginPage({ searchParams }: PageProps<"/auth/login">) {
+  const params = await searchParams;
+  const redirectTo = readRedirectTo(params.redirectTo);
+
+  await redirectWhenSignedIn({ error: params.error, redirectTo });
 
   const t = await getExtracted();
 
   return (
-    <>
-      <LoginHeader>
-        <LoginTitle>{t("Sign in or create an account")}</LoginTitle>
-      </LoginHeader>
+    <AuthFrame appUrl={getReturnAppUrl(redirectTo)}>
+      <Login>
+        <LoginHeader>
+          <LoginTitle>{t("Sign in or create an account")}</LoginTitle>
 
-      <SocialLogin redirectTo={redirectTo ? String(redirectTo) : undefined} />
+          {params.error === AUTH_LOGIN_EXPIRED_ERROR && (
+            <LoginDescription role="status">
+              {t("That sign-in expired. Try again.")}
+            </LoginDescription>
+          )}
+        </LoginHeader>
 
-      <LoginDivider>{t("Or")}</LoginDivider>
+        <SocialLogin redirectTo={redirectTo} />
 
-      <EmailLoginForm redirectTo={redirectTo ? String(redirectTo) : undefined} />
+        <LoginDivider>{t("Or")}</LoginDivider>
 
-      <LoginFooter>
-        {t.rich(
-          "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
-          { privacy: PrivacyLink, terms: TermsLink },
-        )}
-      </LoginFooter>
-    </>
-  );
-}
+        <EmailLoginForm redirectTo={redirectTo} />
 
-export default async function LoginPage(props: PageProps<"/auth/login">) {
-  return (
-    <Login>
-      <Suspense fallback={<FullPageLoading />}>
-        <LoginView {...props} />
-      </Suspense>
-    </Login>
+        <LoginFooter>
+          {t.rich(
+            "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
+            { privacy: PrivacyLink, terms: TermsLink },
+          )}
+        </LoginFooter>
+      </Login>
+    </AuthFrame>
   );
 }

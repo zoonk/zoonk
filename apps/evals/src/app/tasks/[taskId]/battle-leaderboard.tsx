@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDollars, formatSeconds } from "@/lib/format";
 import { type BattleLeaderboardEntry } from "@/lib/types";
 import {
   Table,
@@ -15,20 +16,20 @@ import { useState } from "react";
 type SortKey =
   | "modelName"
   | "provider"
-  | "totalScore"
   | "averageScore"
-  | "averageDuration"
-  | "averageCost";
+  | "latencyP50"
+  | "latencyP95"
+  | "costPer1000Runs";
 
 type SortDirection = "asc" | "desc";
 
 const DEFAULT_SORT_DIRECTIONS: Record<SortKey, SortDirection> = {
-  averageCost: "desc",
-  averageDuration: "desc",
   averageScore: "desc",
+  costPer1000Runs: "desc",
+  latencyP50: "desc",
+  latencyP95: "desc",
   modelName: "asc",
   provider: "asc",
-  totalScore: "desc",
 };
 
 function getDefaultSortDirection(key: SortKey): SortDirection {
@@ -59,11 +60,13 @@ function sortEntries(
 export function BattleLeaderboard({
   taskId,
   entries,
+  judgeCost,
 }: {
   taskId: string;
   entries: BattleLeaderboardEntry[];
+  judgeCost: number;
 }) {
-  const [sortKey, setSortKey] = useState<SortKey>("totalScore");
+  const [sortKey, setSortKey] = useState<SortKey>("averageScore");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   const sortedEntries = sortEntries(entries, sortKey, sortDirection);
@@ -88,69 +91,77 @@ export function BattleLeaderboard({
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-10">#</TableHead>
+    <div className="flex flex-col gap-2">
+      <p className="text-muted-foreground text-sm">
+        Judges never score their own model family, so models are ranked by average score. Judge cost
+        so far: {formatDollars(judgeCost)}.
+      </p>
 
-          <TableHead className="cursor-pointer" onClick={() => handleSort("modelName")}>
-            Model {sortKey === "modelName" && (sortDirection === "asc" ? "↑" : "↓")}
-          </TableHead>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-10">#</TableHead>
 
-          <TableHead className="cursor-pointer" onClick={() => handleSort("provider")}>
-            Provider {sortKey === "provider" && (sortDirection === "asc" ? "↑" : "↓")}
-          </TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort("modelName")}>
+              Model {sortKey === "modelName" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
 
-          <TableHead className="cursor-pointer" onClick={() => handleSort("totalScore")}>
-            Total Points {sortKey === "totalScore" && (sortDirection === "asc" ? "↑" : "↓")}
-          </TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort("provider")}>
+              Provider {sortKey === "provider" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
 
-          <TableHead className="cursor-pointer" onClick={() => handleSort("averageScore")}>
-            Avg Score {sortKey === "averageScore" && (sortDirection === "asc" ? "↑" : "↓")}
-          </TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort("averageScore")}>
+              Avg Score {sortKey === "averageScore" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
 
-          {categories.map((category) => (
-            <TableHead key={category.categoryId}>{category.label}</TableHead>
-          ))}
+            {categories.map((category) => (
+              <TableHead key={category.categoryId}>{category.label}</TableHead>
+            ))}
 
-          <TableHead className="cursor-pointer" onClick={() => handleSort("averageDuration")}>
-            Avg Duration {sortKey === "averageDuration" && (sortDirection === "asc" ? "↑" : "↓")}
-          </TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort("latencyP50")}>
+              p50 {sortKey === "latencyP50" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
 
-          <TableHead className="cursor-pointer" onClick={() => handleSort("averageCost")}>
-            Avg Cost {sortKey === "averageCost" && (sortDirection === "asc" ? "↑" : "↓")}
-          </TableHead>
-        </TableRow>
-      </TableHeader>
+            <TableHead className="cursor-pointer" onClick={() => handleSort("latencyP95")}>
+              p95 {sortKey === "latencyP95" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
 
-      <TableBody>
-        {sortedEntries.map((entry, index) => (
-          <TableRow key={entry.modelId}>
-            <TableCell className="font-medium">{index + 1}</TableCell>
-            <TableCell>
-              <Link href={`/tasks/${taskId}/${encodeURIComponent(entry.modelId)}`}>
-                {entry.modelName}
-              </Link>
-            </TableCell>
-            <TableCell>{entry.provider}</TableCell>
-            <TableCell className="font-semibold">{entry.totalScore.toFixed(1)}</TableCell>
-            <TableCell>{entry.averageScore.toFixed(2)}</TableCell>
-            {categories.map((category) => {
-              const categoryScore = entry.categoryScores.find(
-                (score) => score.categoryId === category.categoryId,
-              );
-
-              return (
-                <TableCell key={category.categoryId}>
-                  {categoryScore?.score.toFixed(2) ?? "—"}
-                </TableCell>
-              );
-            })}
-            <TableCell>{entry.averageDuration.toFixed(2)}s</TableCell>
-            <TableCell>${entry.averageCost.toFixed(2)}</TableCell>
+            <TableHead className="cursor-pointer" onClick={() => handleSort("costPer1000Runs")}>
+              Cost / 1k runs{" "}
+              {sortKey === "costPer1000Runs" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+
+        <TableBody>
+          {sortedEntries.map((entry, index) => (
+            <TableRow key={entry.modelId}>
+              <TableCell className="font-medium">{index + 1}</TableCell>
+              <TableCell>
+                <Link href={`/tasks/${taskId}/${encodeURIComponent(entry.modelId)}`}>
+                  {entry.modelName}
+                </Link>
+              </TableCell>
+              <TableCell>{entry.provider}</TableCell>
+              <TableCell className="font-semibold">{entry.averageScore.toFixed(2)}</TableCell>
+              {categories.map((category) => {
+                const categoryScore = entry.categoryScores.find(
+                  (score) => score.categoryId === category.categoryId,
+                );
+
+                return (
+                  <TableCell key={category.categoryId}>
+                    {categoryScore?.score.toFixed(2) ?? "—"}
+                  </TableCell>
+                );
+              })}
+              <TableCell>{formatSeconds(entry.latencyP50)}</TableCell>
+              <TableCell>{formatSeconds(entry.latencyP95)}</TableCell>
+              <TableCell>{formatDollars(entry.costPer1000Runs)}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

@@ -1,16 +1,12 @@
 import { getApplePublicKey } from "better-auth/social-providers";
 import { decodeProtectedHeader, jwtVerify } from "jose";
-import { getAppleConfiguration, getAppleIdentityTokenIssuer } from "./apple";
+import { getAppleIdentityTokenIssuer } from "./apple";
 import { AppleAuthorizationError } from "./apple-rest";
 
 const HEX_RADIX = 16;
 const publicKeyPromises = new Map<string, ReturnType<typeof getApplePublicKey>>();
 
-/**
- * Reuses Apple's signing key while validating both identity tokens from one
- * native authorization. A rejected lookup is removed so a temporary Apple
- * outage cannot poison this process until it restarts.
- */
+/** A rejected lookup is dropped so a temporary Apple outage can't poison the cache until a restart. */
 function getCachedApplePublicKey(keyIdentifier: string) {
   const cached = publicKeyPromises.get(keyIdentifier);
 
@@ -28,10 +24,6 @@ function getCachedApplePublicKey(keyIdentifier: string) {
   return pending;
 }
 
-/**
- * Keeps a temporary failure to load Apple's signing keys distinct from a bad
- * user credential so clients can retry instead of treating the login as invalid.
- */
 async function getAvailableApplePublicKey(keyIdentifier: string) {
   try {
     return await getCachedApplePublicKey(keyIdentifier);
@@ -40,18 +32,10 @@ async function getAvailableApplePublicKey(keyIdentifier: string) {
   }
 }
 
-/**
- * Authentication Services hashes the raw nonce before adding it to Apple's
- * request. Accepting both representations also matches Better Auth's Apple
- * verifier, which keeps this explicit verification aligned with sign-in.
- */
+/** Only the raw nonce passes, so an intercepted token's claim sent back as the nonce fails. */
 async function nonceMatches({ claim, nonce }: { claim: unknown; nonce: string }) {
   if (typeof claim !== "string") {
     return false;
-  }
-
-  if (claim === nonce) {
-    return true;
   }
 
   const encodedNonce = new TextEncoder().encode(nonce);
@@ -64,22 +48,18 @@ async function nonceMatches({ claim, nonce }: { claim: unknown; nonce: string })
   return claim === hashedNonce;
 }
 
-/**
- * Validates that an identity token was signed by Apple for this native app and
- * returns its trusted issuer and stable Apple subject. The verified subject
- * must match the existing account scoped to Apple's provider.
- */
 export async function verifyNativeAppleIdentityToken({
+  clientIdentifier,
   nonce,
   token,
 }: {
+  clientIdentifier: string;
   nonce?: string;
   token: string;
 }) {
-  const configuration = getAppleConfiguration();
   const issuer = getAppleIdentityTokenIssuer();
 
-  if (!configuration || !issuer) {
+  if (!issuer) {
     throw new AppleAuthorizationError("configuration");
   }
 
@@ -93,12 +73,7 @@ export async function verifyNativeAppleIdentityToken({
     const { payload } = await jwtVerify(
       token,
       await getAvailableApplePublicKey(protectedHeader.kid),
-      {
-        algorithms: ["RS256"],
-        audience: configuration.appBundleIdentifier,
-        issuer,
-        maxTokenAge: "1h",
-      },
+      { algorithms: ["RS256"], audience: clientIdentifier, issuer, maxTokenAge: "1h" },
     );
 
     const validNonce = nonce ? await nonceMatches({ claim: payload.nonce, nonce }) : true;

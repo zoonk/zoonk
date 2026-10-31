@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "essay_back_to_today": "0fb37acee9d961dfcac07949bc4b7e375b9c362614ea334010b37c4172021538",
+  "essay_comments": "1b6abfee4a53a7452ec8f19e9fb6db1325014a8de5c612521fbf2058202530b1",
+  "essay_criterion_addressing": "d4d8b9d3951bf1c3b552cdad8fc645fd16618fb750455bf8fbb9e58afd2b50bf",
+  "essay_criterion_argument": "4bf0e2f5de756418d116b826829dca916e91210a34ce1119adca204070272fa7",
+  "essay_criterion_closing": "abd123009de5f545eaec70801c28aa6a1470cb3db741108f46412a8dd5467c88",
+  "essay_criterion_cohesion": "36a2f0dacbe55c3689fd5059b2b0d5b81f2129c88ae2b543b3bc07899e1edb1b",
+  "essay_criterion_facts": "a24f73f722db1cad9ba2fc8f0076d66ac1910ea211e56dffb4691849fd79deb8",
+  "essay_criterion_formal_writing": "599c25e16aa750ae86302e4b5deb2a453b8e7f557087cd91260416c87490ea02",
+  "essay_criterion_intervention": "24a5eac0fd5beaad5698c6cc1a0ba77f6469d89623e0bc112c953c37f25ebf5f",
+  "essay_criterion_legal_basis": "6736bbf33c22bf0d5765550a2bf1b45beee9211325ac0f8fea4566521e93e6b5",
+  "essay_criterion_requests": "65a95a4b92bc79932abed68e5938cef60d62a876a78d30594d818dccb9223b8b",
+  "essay_criterion_topic": "111e62bc2f4ccee1350a7973c3759abbf1134ba00a542ca3215e0a896be18af3",
+  "essay_daily_limit_reached": "74aa4bd72efc4f1ad9afb9c4c5ee303c53401b15bc01632babf2d76f70dcb106",
+  "essay_element_action": "33766196d912aad37f60d309ed9984a337aeafec948f7563e22f380f0d768830",
+  "essay_element_agent": "9a18e228f3f787d40d437527f239e636c403507dd8819f04727701058965bea8",
+  "essay_element_detail": "01b432b746d4a81e48fae6eb66cbed722dfa3df6fd7972923b5338ac46e7f850",
+  "essay_element_effect": "d300c50b3e042d121f1e16c3885cacdf05d05510afc9247daf26c6ac0d31d51a",
+  "essay_element_means": "1062c70aa306791620b0a71b55dfa4def6cdb440649d7da95b317718b8c4e3e2",
+  "essay_element_missing": "26b6b9c273d0213d0903f8154d0a4f07929638ca789e36784c41c66afc858f19",
+  "essay_element_present": "5cdbe76c7b9a43ba82e6eaca01c7c8eddb2ad1bec9e6d1e0216ad5a09f5fee77",
+  "essay_finish_failed": "e479620fa9132bad309a57757bee3d7e3e0064ffde90fdcb645784916192d573",
+  "essay_for_example": "231219130bddfe272c30ff67b2b20e03ec88795eb02133973cf43d0afbac6cc4",
+  "essay_full_marks": "2516c19cc89fa455ada912c213f50f054c1eecb3579cb77a9f360758b3050cda",
+  "essay_grade_rewrite": "4b82cf6c6b8a0f0618c2c11befdc078cd2f35949146b490748dc551c0db4f010",
+  "essay_grading": "50bbb16635bed3e3791645a171c409ff3bbbe641e4df4b9604223dfd87574750",
+  "essay_grading_button": "0cf3825f2a6da78dc69e3eb6934218537b15eb5ba529bb5416f8dff2d747d915",
+  "essay_grading_slow": "e79e3b65c00b4c1acd4f77aaf87633d3990cc44e99be83bb3edd6a03d1d790e2",
+  "essay_keep_writing": "704e09e91241109ee067e894663320b80885d8ec6c17d2b4a5b7a1331ede49a9",
+  "essay_last_grade": "341ded9c2074965018a5e92ab216e433460b780d7fcea25e2fb57c9f01c1c504",
+  "essay_leave_description": "e2d44e474af1adc790adbcc42cf51f73516fff6dbce896f965539b49002e9a84",
+  "essay_leave_title": "6b763a82e99afbbd6c27283d4bcd451dc7bc049a46ef0ea1ce8a00541fde6730",
+  "essay_limit_reached": "67cb24eb96dcd626a2bfca6e91c2f5a4376d81fce19e3a9e28352151e4ff6fc3",
+  "essay_motivating_texts": "77c64ea0404a13a023dc4a37ddc43af64df5e8321ebdb4e509db6b04652b6bc5",
+  "essay_next_step": "339dcf2d23fef02a15f4de9a5c099326883369782033b3adfec093f063838e55",
+  "essay_next_step_named": "7a996678da9f09ab71dac617a646214f4cf6b59b73456beea912218cf7ee7d97",
+  "essay_nothing_left": "41ec9b30e45ad0795ba3a7d3bf97676ab8e2f724f4a276737c3d1050abac50ab",
+  "essay_proposal_elements": "ba6d44d0963f62a378f190a69a5440c20227a45e8075ea75ac553d53f7eefa32",
+  "essay_range": "7b431eded1eb4277df8dd23e18d448582b8953c70f50921419f5b5b300389568",
+  "essay_rewrite": "d091d4c59ce6fb7865739cc596d38015cb4fab17baaac86c0933ce39e7bcb307",
+  "essay_rewrite_label": "1e02dda255a3d80aaf8997886c5bd80b006993fecc61cc6b412fa9e4707a4644",
+  "essay_scale": "f7acab4ee798c94699eb75eaf623069fca2b0a67e729fb9c41af48731bac05c6",
+  "essay_score_of": "4fa1b62ffeef28f08e5f752dfebbb0c4950fcf8558da842500c714c59fff7227",
+  "essay_see_comments": "65b6dc9bdbc8ced9d3ac30a0240a09e1725280f4a7570ea4fc52b5e068daa7de",
+  "essay_see_grade": "64ab7a9be69ed5743ebe6790ed0fa2a4978b5208514ffcc1f5d704d1ab79172f",
+  "essay_send": "92f5b2831d8a26ac5b14a59afad77d9fd5a1098b2dd5073f7a3ff8ef90a00291",
+  "essay_send_failed": "0a398e9aaef27bcfcffcbc8deb71532e325af4b7c7b281ef081894c4fe75e584",
+  "essay_skip_rewrite": "8a3340451ce89f60d20c15c913864222bf72afac8b9b95037fdf0d733fe0fa67",
+  "essay_skipped": "7e18004453348ee31350773d8774eac143565a80a44b4a614ef1f0a43aa26216",
+  "essay_supporting_texts": "e5948a078a130f89745541ab5414510956c3f29ceeb11c5fba3ea98ae0539ac6",
+  "essay_the_case": "4672cb4881d950aa3d7bd3cda871fa846f00f688166efa740d9cd81f84d72e24",
+  "essay_title": "efb83fbbe10414a437b2d1cd582f93a365dc13e70f2914ae8486ff7a575932c4",
+  "essay_title_ap": "7c70a6466af4b3e7f5260003855da7c207b0307e537b56f5e839ae9ac8549f23",
+  "essay_title_enem": "199ed3bf7532154da6f2bd5330bd7301a42f4a497ae81d84aef6de9c908e905f",
+  "essay_too_short": "a50fb62bd1893ef1e5250ce88df1637b6f671896e1a98720c239f5789f913a3d",
+  "essay_too_short_detail": "db9b78468e02b33ac0fdd0b1ca5f1a8b4a059c4b7204a92cdef2457ee89ec822",
+  "essay_what_to_rewrite": "1d753cba557d38b109e10e8e4e4f65a551de837ed94a06eb303ad903b7b3e541",
+  "essay_words": "69ccf9c4b2f679bc029c42fd8e9478574fdcd1fca4f981da5116a3a76e94b7b6",
+  "essay_your_answer": "d8840b4c37d478cc8b77814e31ccddc82fe87f13890004cc314af4903b582cea",
+  "essay_your_essay": "c2c04a5aeffd199a811e1b9b8ae607539f2c6b4baff0af844409a345335b9a59"
+}
+-->
+<resources>
+    <string name="essay_your_essay">내 에세이</string>
+    <string name="essay_your_answer">내 답</string>
+    <!-- A score's range, such as "610–680". -->
+    <string name="essay_range">%1$s–%2$s</string>
+    <!-- %1$s is the essay's highest possible score. -->
+    <string name="essay_scale">예상 점수, 0~%1$s</string>
+    <!-- A criterion's score, such as "160 of 200". -->
+    <string name="essay_score_of">%1$s / %2$s</string>
+    <string name="essay_criterion_formal_writing">격식 있는 글쓰기</string>
+    <!-- Enem essay competence 2: addressing the set theme and drawing on outside knowledge. -->
+    <string name="essay_criterion_topic">주제와 배경지식 활용</string>
+    <string name="essay_criterion_argument">논증</string>
+    <string name="essay_criterion_cohesion">글의 연결성</string>
+    <string name="essay_criterion_intervention">해결 방안 제안</string>
+    <string name="essay_criterion_addressing">수신처와 당사자</string>
+    <string name="essay_criterion_facts">사실관계</string>
+    <string name="essay_criterion_legal_basis">법적 근거</string>
+    <string name="essay_criterion_requests">청구 사항</string>
+    <!-- OAB legal brief criterion: the brief's closing (claim value, place, date, lawyer and OAB number) and its form. -->
+    <string name="essay_criterion_closing">마무리와 형식</string>
+    <string name="essay_next_step">다음 단계</string>
+    <string name="essay_what_to_rewrite">다시 쓸 부분</string>
+    <string name="essay_for_example">예: %1$s</string>
+    <string name="essay_nothing_left">더 고칠 부분이 없어요</string>
+    <string name="essay_full_marks">모든 평가 기준에서 예상 점수가 만점이에요.</string>
+    <!-- The header of a writing block graded by the item's own criteria, or by the OAB exam's. -->
+    <string name="essay_title">쓰기 연습</string>
+    <string name="essay_title_ap">서술형 · AP 채점 기준</string>
+    <string name="essay_title_enem">논술 · ENEM 채점 기준</string>
+    <string name="essay_supporting_texts">참고 지문</string>
+    <!-- The texts an ENEM essay prompt gives to motivate the essay. -->
+    <string name="essay_motivating_texts">제시문</string>
+    <!-- The legal case an OAB written exam answer is about. -->
+    <string name="essay_the_case">사건</string>
+    <!-- The grade of the learner's last essay draft. -->
+    <string name="essay_last_grade">최근 채점 결과</string>
+    <string name="essay_rewrite_label">수정할 부분 다시 쓰기</string>
+    <plurals name="essay_words">
+        <item quantity="other">%d단어</item>
+    </plurals>
+    <!-- On an essay the learner skipped, opened again from a link. -->
+    <string name="essay_skipped">이 에세이는 건너뛰었어요.</string>
+    <string name="essay_back_to_today">오늘로 돌아가기</string>
+    <string name="essay_send_failed">처리하지 못했어요. 쓴 글은 그대로 남아 있어요. 잠시 후 다시 시도해 보세요.</string>
+    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
+    <string name="essay_daily_limit_reached">하루 학습 시간 제한에 도달했어요. 쓴 글은 여기에 그대로 남아 있어요.</string>
+    <string name="essay_limit_reached">오늘 에세이 채점 횟수를 다 썼어요. 쓴 글은 그대로 남아 있으니 내일 보내세요.</string>
+    <string name="essay_grading">평가 기준별로 에세이를 살펴보고 있어요. 최대 30초가 걸릴 수 있어요.</string>
+    <string name="essay_grading_slow">아직 채점하고 있어요. 평소보다 시간이 더 걸리고 있어요.</string>
+    <string name="essay_skip_rewrite">고쳐 쓰기 건너뛰기</string>
+    <string name="essay_grading_button">채점 중…</string>
+    <string name="essay_grade_rewrite">수정한 글 채점하기</string>
+    <string name="essay_send">채점 요청하기</string>
+    <string name="essay_leave_title">잠시 나갈까요?</string>
+    <string name="essay_leave_description">작성한 글은 이 기기에 저장돼 돌아오면 이어서 쓸 수 있어요.</string>
+    <string name="essay_keep_writing">계속 쓰기</string>
+    <!-- %1$s is the criterion to work on next, such as "Argument". -->
+    <string name="essay_next_step_named">다음 단계: %1$s</string>
+    <string name="essay_see_grade">점수 보기</string>
+    <string name="essay_too_short">채점하기에는 너무 짧아요</string>
+    <string name="essay_too_short_detail">에세이를 끝까지 쓴 뒤 다시 보내세요.</string>
+    <string name="essay_rewrite">고쳐 쓰기</string>
+    <string name="essay_finish_failed">처리하지 못했어요. 잠시 후에 다시 시도해 보세요.</string>
+    <string name="essay_see_comments">평가 기준별 의견 보기</string>
+    <string name="essay_comments">평가 의견</string>
+    <string name="essay_proposal_elements">제안의 다섯 가지 요소</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: who carries it out. -->
+    <string name="essay_element_agent">실행 주체</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: the action itself. -->
+    <string name="essay_element_action">실행 내용</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: how it's carried out. -->
+    <string name="essay_element_means">실행 방법</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: its purpose. -->
+    <string name="essay_element_effect">목적</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: a detail of one of the others. -->
+    <string name="essay_element_detail">세부 내용</string>
+    <!-- Whether an element of the proposal is in the essay. -->
+    <string name="essay_element_present">있음</string>
+    <!-- Whether an element of the proposal is in the essay. -->
+    <string name="essay_element_missing">없음</string>
+</resources>

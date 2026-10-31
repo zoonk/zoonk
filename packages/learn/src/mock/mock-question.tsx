@@ -1,0 +1,195 @@
+"use client";
+
+import { MAX_ESSAY_CHARACTERS } from "@zoonk/core/exams/essays/contract";
+import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
+import { InputGroup, InputGroupInput } from "@zoonk/ui/components/input-group";
+import { Textarea } from "@zoonk/ui/components/textarea";
+import { formatLocalizedNumber } from "@zoonk/utils/localized-number";
+import { countWords } from "@zoonk/utils/string";
+import { useExtracted } from "next-intl";
+import { useId } from "react";
+import { useAppLocale } from "../_utils/locale";
+import { useWritingName } from "../essay/essay-labels";
+import { EssayWordCount } from "../essay/essay-word-count";
+import { ItemSetStimulus } from "../questions/item-set-stimulus";
+import { ItemStem, ItemSupport, QUESTION_TEXT_CLASS } from "../questions/item-text";
+import { NumericAnswerField } from "../questions/numeric-answer-field";
+import { isMultiPick } from "../questions/pick-rule";
+import { useMockScreen } from "./mock-context";
+import { MockOptions, MockPicks, useLocked } from "./mock-options";
+
+const MAX_TYPED_ANSWER = 500;
+
+const NUMBER_DIGITS = 4;
+
+function MockNumberAnswer({ question }: { question: MockQuestion }) {
+  const locale = useAppLocale();
+  const { runner } = useMockScreen();
+  const locked = useLocked();
+  const answer = runner.drafts[question.itemId]?.answer ?? null;
+
+  const saved =
+    answer && "number" in answer
+      ? formatLocalizedNumber({
+          grouping: false,
+          locale,
+          maximumFractionDigits: NUMBER_DIGITS,
+          value: answer.number,
+        })
+      : "";
+
+  return (
+    <NumericAnswerField
+      defaultText={saved}
+      entry={question.entry}
+      locked={locked}
+      onChange={(value) => runner.write(value === null ? null : { number: value })}
+      onSubmit={(value) => runner.answer({ number: value })}
+      result={null}
+      unit={question.unit}
+    />
+  );
+}
+
+function MockWordAnswer({ question }: { question: MockQuestion }) {
+  const t = useExtracted();
+  const inputId = useId();
+  const { runner } = useMockScreen();
+  const locked = useLocked();
+  const answer = runner.drafts[question.itemId]?.answer ?? null;
+
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="sr-only" htmlFor={inputId}>
+        {t("Your answer")}
+      </label>
+      <InputGroup className="bg-background h-14 rounded-lg">
+        <InputGroupInput
+          autoCapitalize="off"
+          autoComplete="off"
+          autoCorrect="off"
+          autoFocus
+          className="text-lg disabled:opacity-100 md:text-lg"
+          disabled={locked}
+          enterKeyHint="done"
+          id={inputId}
+          maxLength={MAX_TYPED_ANSWER}
+          onChange={(event) => runner.write({ text: event.target.value })}
+          spellCheck={false}
+          value={answer && "text" in answer ? answer.text : ""}
+        />
+      </InputGroup>
+    </div>
+  );
+}
+
+function EssayAnswer({ question }: { question: MockQuestion }) {
+  const textId = useId();
+  const { runner } = useMockScreen();
+  const writingName = useWritingName();
+  const answer = runner.drafts[question.itemId]?.answer ?? null;
+  const text = answer && "text" in answer ? answer.text : "";
+  const words = countWords(text);
+
+  return (
+    <section className="flex flex-col gap-2">
+      <label className="text-sm font-medium" htmlFor={textId}>
+        {writingName(runner.view.essayRubric ?? "custom")}
+      </label>
+      <Textarea
+        className="min-h-72 text-base leading-relaxed"
+        aria-describedby={`${textId}-count`}
+        id={textId}
+        maxLength={MAX_ESSAY_CHARACTERS}
+        onChange={(event) => runner.write({ text: event.target.value })}
+        readOnly={runner.pending}
+        value={text}
+      />
+      <EssayWordCount id={`${textId}-count`} words={words} />
+    </section>
+  );
+}
+
+export function useQuestionPlace(question: MockQuestion): string {
+  const t = useExtracted();
+  const { runner } = useMockScreen();
+
+  if (question.format === "essay") {
+    return question.area ? t("Written part · {area}", { area: question.area }) : t("Written part");
+  }
+
+  const place = { number: String(question.number), total: String(runner.view.questions) };
+
+  return question.area
+    ? t("Question {number} of {total} · {area}", { ...place, area: question.area })
+    : t("Question {number} of {total}", place);
+}
+
+function MockAnswerInput({ question }: { question: MockQuestion }) {
+  switch (question.format) {
+    case "essay":
+      return <EssayAnswer question={question} />;
+    case "numeric":
+      return <MockNumberAnswer question={question} />;
+    case "typed":
+      return <MockWordAnswer question={question} />;
+    case "multipleChoice":
+    case "trueFalse":
+      return isMultiPick(question.select) ? (
+        <MockPicks question={question} select={question.select} />
+      ) : (
+        <MockOptions question={question} />
+      );
+    default:
+      return null;
+  }
+}
+
+/** Keyed by its set, so it keeps playing while the learner answers along, as in the exam. */
+export function MockRecording({ question }: { question: MockQuestion }) {
+  const { runner } = useMockScreen();
+  const { set } = question;
+
+  if (!set?.listening) {
+    return null;
+  }
+
+  const onRecording = (runner.view.current?.questions ?? []).filter(
+    (other) => other.set?.id === set.id,
+  );
+
+  const played = runner.view.current?.plays.find((plays) => plays.setId === set.id)?.played ?? 0;
+
+  return (
+    <ItemSetStimulus
+      askedIn={runner.view.blockId}
+      key={set.id}
+      questions={{
+        current: onRecording.findIndex((other) => other.itemId === question.itemId),
+        prompts: onRecording.map((other) => other.question),
+      }}
+      served={{ played, record: () => runner.play(set.id) }}
+      set={set}
+    />
+  );
+}
+
+export function MockQuestionCard({ question }: { question: MockQuestion }) {
+  const { runner } = useMockScreen();
+  const previous = runner.view.current?.questions[runner.position - 1];
+
+  return (
+    <div className="flex flex-col gap-4" data-slot="mock-question">
+      {question.set && !question.set.listening && (
+        <ItemSetStimulus continued={previous?.set?.id === question.set.id} set={question.set} />
+      )}
+
+      <ItemSupport context={question.context} image={question.image} visual={question.visual} />
+      <div className={QUESTION_TEXT_CLASS}>
+        <ItemStem text={question.question} heading="h2" />
+      </div>
+
+      <MockAnswerInput question={question} />
+    </div>
+  );
+}

@@ -15,10 +15,6 @@ import { SubscriptionStatusFilter } from "./subscription-status-filter";
 
 export const metadata: Metadata = { title: "Subscriptions" };
 
-/**
- * This route gives support one subscription lifecycle log with shareable status
- * filters instead of splitting active, canceled, and incomplete records.
- */
 export default function SubscriptionsPage({ searchParams }: PageProps<"/subscriptions">) {
   return (
     <Container>

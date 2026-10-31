@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Recorded answers; asked on the first Record tap. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Live calls: WebRTC follows the network and sets call audio; a microphone service keeps the call in the background. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+
     <application
+        android:name=".app.ZoonkApplication"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,12 +22,32 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- The pages main's assetlinks.json lets the app open: shared plans and the sign-in return. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="zoonk.com" />
+                <data android:host="www.zoonk.com" />
+                <data android:pathPrefix="/plan-link/" />
+                <data android:pathPattern="/.*/plan-link/.*" />
+                <data android:path="/auth/apple" />
+            </intent-filter>
         </activity>
+
+        <service
+            android:name=".feature.livecall.LiveCallService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
     </application>
 </manifest>

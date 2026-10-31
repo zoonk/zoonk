@@ -20,20 +20,12 @@ import { BattleMatchupList, BattleMatchupListSkeleton } from "./battle-matchup-l
 
 type BattlesRouteProps = { params: TaskRouteParams };
 
-/**
- * Streams the task label independently while the Home and Battles breadcrumb
- * items remain available in the shared route shell.
- */
 async function BattlesTaskBreadcrumb({ params }: BattlesRouteProps) {
   const { task, taskId } = await getTaskRouteFromParams(params);
 
   return <TaskLinkBreadcrumb taskId={taskId} taskName={task.name} />;
 }
 
-/**
- * Reads mutable battle files behind the page body's Suspense boundary so the
- * stable title and navigation never wait on filesystem work.
- */
 async function BattleResults({ params }: BattlesRouteProps) {
   const { taskId } = await getTaskRouteFromParams(params);
   const matchups = await getBattleMatchups(taskId);
@@ -41,10 +33,6 @@ async function BattleResults({ params }: BattlesRouteProps) {
   return <BattleMatchupList matchups={matchups} />;
 }
 
-/**
- * Prefetches the stable battles page structure and limits runtime streaming to
- * the URL-dependent task label and its current result list.
- */
 export default function BattlesPage({ params }: BattlesRouteProps) {
   return (
     <main className="flex flex-col gap-4">

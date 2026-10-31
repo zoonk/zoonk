@@ -1,9 +1,8 @@
 "use client";
 
-import { type StepImage } from "@zoonk/core/steps/contract/image";
+import { type ExerciseImage } from "@zoonk/core/library/steps/contract/language-exercises";
 import Image from "next/image";
 import { useState } from "react";
-import { STEP_IMAGE_SIZES } from "../image-config";
 
 function StepImageFallback({ prompt }: { prompt: string }) {
   return (
@@ -13,13 +12,7 @@ function StepImageFallback({ prompt }: { prompt: string }) {
   );
 }
 
-/**
- * Readable lesson steps now own their illustration directly. This component
- * keeps the render/fallback behavior shared between explanation and tutorial
- * steps so a missing upload still leaves the learner with the intended prompt.
- * Images are contained so diagrams and screenshots are not clipped.
- */
-export function StepImageView({ image }: { image: StepImage }) {
+export function StepImageView({ image }: { image: ExerciseImage }) {
   const [errorUrl, setErrorUrl] = useState<string | null>(null);
 
   if (!image.url || errorUrl === image.url) {
@@ -34,7 +27,7 @@ export function StepImageView({ image }: { image: StepImage }) {
         fill
         loading="eager"
         onError={() => setErrorUrl(image.url ?? null)}
-        sizes={STEP_IMAGE_SIZES}
+        sizes="(max-width: 1024px) 100vw, 50vw"
         src={image.url}
       />
     </div>

@@ -1,0 +1,53 @@
+// Nothing here points at a learner: no user, goal or mock id, days instead of times, and random ids
+// (unlike uuidv7, `gen_random_uuid()` doesn't say when a row was written).
+
+model AnonymousFirstAnswer {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  itemId    String  @map("item_id") @db.Uuid
+  item      Item    @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  isCorrect Boolean @map("is_correct")
+
+  @@index([itemId])
+  @@map("anonymous_first_answers")
+}
+
+/// `mockKey` groups one mock's answers and `learnerKey` one learner's mocks, both random, so the
+/// pace still counts mocks and learners.
+model AnonymousMockAnswer {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  examBlueprintId String        @map("exam_blueprint_id") @db.Uuid
+  examBlueprint   ExamBlueprint @relation(fields: [examBlueprintId], references: [id], onDelete: Cascade)
+  mockKey         String        @map("mock_key") @db.Uuid
+  learnerKey      String        @map("learner_key") @db.Uuid
+  finishedOn      DateTime      @map("finished_on") @db.Date
+  durationMs      Int           @map("duration_ms")
+
+  @@index([examBlueprintId, finishedOn])
+  @@map("anonymous_mock_answers")
+}
+
+model AnonymousLessonPace {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  lessonId  String   @map("lesson_id") @db.Uuid
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  localDate DateTime @map("local_date") @db.Date
+  seconds   Int
+
+  @@index([localDate])
+  @@map("anonymous_lesson_paces")
+}
+
+model AnonymousExamResult {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  examBlueprintId String        @map("exam_blueprint_id") @db.Uuid
+  examBlueprint   ExamBlueprint @relation(fields: [examBlueprintId], references: [id], onDelete: Cascade)
+  score           Float
+  scale           String
+  maxScore        Float?        @map("max_score")
+  estimateLow     Float         @map("estimate_low")
+  estimateHigh    Float         @map("estimate_high")
+  reportedOn      DateTime      @map("reported_on") @db.Date
+
+  @@index([examBlueprintId, reportedOn])
+  @@map("anonymous_exam_results")
+}

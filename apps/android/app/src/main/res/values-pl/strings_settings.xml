@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "settings_account": "429a15321de7af1ea259698d25ba56e7d5add11dd1e9b9f88c2544ee79fa25ad",
+  "settings_account_deleted": "a1ff0c796ac90b34645771d53242ba5dcb108a53e7acb4a0eeb51484b693176f",
+  "settings_account_deleted_title": "8ceaf3d68719c591cfb6c4bd8cb0b1c64ff37c11625e5a312b14685be431b2b6",
+  "settings_apple_not_revoked": "44e5b63eecea77892508687355688a1c685d0e6cc6ab64be2b07665d16c577af",
+  "settings_cancel": "d46528908c856030862c6a9b539d1d5cb68ec94309e008728eaa096f395642a9",
+  "settings_delete_account": "078b6b87dd140b31c664e26f85ccc7a52f0bb1fcaea8b20ed81cab9cc8b50350",
+  "settings_delete_account_description": "b39ee67fdcfecbc01c23cf189af5c910dcdfc321165c6b4e14bf4241a30e1e58",
+  "settings_delete_code_description": "dc469b47d61fdeb8f58e11dd91bbbf831384271887cffa540828e26d2f3c2f76",
+  "settings_delete_code_title": "c1cbdf2b7db003617fc387b98eac5ece09b3af2271ced759770123bed765b0db",
+  "settings_delete_confirm_description": "9c5579483541b2095a2f0d7e472389ec5aaf86cbce3ea0a52ce1b4d88f7ea1f8",
+  "settings_delete_confirm_title": "9101a4be064896ee9d18fc802359e5fc75c9eb5e81b68e22bebb968ca06e977d",
+  "settings_delete_ellipsis": "d37bb173236a127ef692399056b40779eec61f4a142f86d80cf541ba710d377d",
+  "settings_delete_failed": "f2e03e8fdc5577e6ec4b91b93ca88dbd845874e266dfffc53e540c32b6d4b4e2",
+  "settings_delete_my_account": "0155b6e2a31dd6ca6edd159f98688d5f2b39dd30e808bfa06ce50f508cf133d7",
+  "settings_delete_verify": "20d0bab71357934c27ee3572bc8728f0970af80aee15bae0d6ea7dc39997dfaa",
+  "settings_done": "ff86c7d43f2f830c547d02cce7d78225b6194a59ec3c8eeb46371380690bb7be",
+  "settings_download": "55edef2f7e1a929109c5e880324a0ffdd765ca8aa3c30e1dbe5535babf52181e",
+  "settings_download_data": "10be06da8d6127e0ca030d4fe6a90e028a11fc1c88d33306c0e94e51f2cbe4fa",
+  "settings_download_data_description": "e7ea486b1767a01b72b42ad35d939a5fcda9ecaebd9e6c10a59019da652e9191",
+  "settings_download_failed": "5e8f08e3b629dc1a974de40c05c133868502df5576d5f27b5383465e013fb6b5",
+  "settings_download_preparing": "1b9ec734eb211e6e96b8411ce9d04cea64112d080bb29c0ffe8063faf15a6881",
+  "settings_licenses": "26e7d1b874199d72c39e01b1920ca4b8305cb1726f6218ea56b4dcc8af51a2d2",
+  "settings_licenses_read": "6852513043299ab1383d110723ad29a3aea239518787ff1ce29410b88438368b",
+  "settings_licenses_website": "48d264ccd51cbd63002e0256c424227561c535170fbbda90a7148a07fdf082cf",
+  "settings_manage_apple": "4f322422b2930bb137157fe34fd05e4907cb80f29c6a820f132386d7447af4d6",
+  "settings_memory": "c581eb8e2e5e0f6f7b82544b9e548ec1e50623e379741ee5e6b32b72ce439d51",
+  "settings_preferences": "9fff4c96ea2ce1fa1e80f098d045e239dd36d416803df0a4c92a7163b877d0c0",
+  "settings_preferences_app_language": "674e29bc7c4f97e1a086bb3874ccc3dba038a4e14d1e053382999459bd5ac663",
+  "settings_preferences_buddy": "239989acfc4c2113cfa38e590f1733e6b5aaebd8ab804c93d026feea6a4f387f",
+  "settings_preferences_buddy_line": "2d50702fc142ec469e3e7d0d6cac8ec315721bb5d7b6071509a7111ffbd97cd8",
+  "settings_preferences_change": "26325fe63fbb8484be2e96ac24faa2ef7312e2d9dac697f3ce6ef1a53a9d58fb",
+  "settings_preferences_choose_buddy": "069d2bec08f5882b9969a76e113bec243acb66c82bd8197b65eff2afac2f62b2",
+  "settings_preferences_daily_limit": "2ca6537a17d15decf4174d1c71284f0266ddb2ad8ee6bc2f281b72a3adba8d32",
+  "settings_preferences_daily_limit_description": "6d16dbfe24b8bf671639481865d9fdadddc6ced2b34bc296fa4d25209e75f30c",
+  "settings_preferences_description": "bed43abfe7f34be7cfdf047e389c728c1bf277d15491f0a7960d38d30740f6e9",
+  "settings_preferences_language": "25fba28cd51aa6d785fc54f382c006a3448da46386ded7bd498c83446dfdda36",
+  "settings_preferences_lessons": "6abf04ac0bbda591090cebf73239a21caebd913c52dc26fee27ca0eeeabc0b43",
+  "settings_preferences_limit_a_day": "6bd4e2eef69f39b6a56053e8db402416dd3e60e367d6950a2460c8f8d269e65c",
+  "settings_preferences_no_limit": "f7537cc9b65866f4dd5fa560f26b5dcc78d75770324657019087115f7291020b",
+  "settings_preferences_on_this_device": "7ba7920b539040ef656f503b8a8d8c7550ca3df7c2cc05504ba27a4bb035192b",
+  "settings_preferences_save_failed": "2eb38cf5d6a4d5cd309a9a2b012c781367ba6df0c99426217f7002e4570317ef",
+  "settings_preferences_share_usage_data": "e9efb9a8dfe52b4f2fd6ab86c381c6b2c29a9b036a6e15e9682dcbbd83c09dab",
+  "settings_preferences_share_usage_data_description": "25a0dc6db4e721a36b62a3a7050964dc435f4872b72d39f75de0623b517066f2",
+  "settings_preferences_sounds": "153b3d587642ab8953023d417bba56aa3ef3d0ddeb3c0d31e4c4c7fed670918c",
+  "settings_preferences_sounds_description": "9dcc0bff12439e277bdac18bab4b03c68ca899ae33ea1be944767c7d5c361f16",
+  "settings_preferences_summary": "bd824fccac233ad2871b712254f83a1741913da594e23a97f69a7cb99da9985e",
+  "settings_profile": "3afd1a8cc01c5c640f39fce916586cde97065c9a1df61846e4d920dc57c3a78f",
+  "settings_profile_description": "acfd1eb812ee4c631907ea4382533a7f2334f56a9dd133917b9d6b18fd2fcacd",
+  "settings_profile_needs_account": "56d434f1c69a6347e7d0cd2b75e64e1d40762b001cfa2ac2945e66e90695d4b0",
+  "settings_save": "47114129d2d9f8f624ddf94e1fc5432d4d987387f1a5c176990819ef75764b3f",
+  "settings_saved": "0dc1fc728a9b4a211638f519e56fab295c4756c812d7384bfe3c9b55069eece9",
+  "settings_your_data": "e6be9168b51721e31a9c9b8a23d34573b0001d7af978f580dc51c35f541ced1a"
+}
+-->
+<resources>
+    <string name="settings_preferences">Preferencje</string>
+    <string name="settings_memory">Pamięć</string>
+    <!-- %1$s is the buddy's name and %2$s the app's language, like "Zu · English". -->
+    <string name="settings_preferences_summary">%1$s · %2$s</string>
+    <string name="settings_profile">Profil</string>
+    <string name="settings_profile_needs_account">Utwórz konto, żeby mieć profil. Zachowasz swój plan i postępy.</string>
+    <string name="settings_account">Konto</string>
+    <string name="settings_save">Zapisz</string>
+    <string name="settings_saved">Zapisano.</string>
+    <string name="settings_your_data">Twoje dane</string>
+    <string name="settings_download_data">Pobierz moje dane</string>
+    <string name="settings_download_data_description">Wszystko, co Zoonk przechowuje o tobie, w jednym pliku</string>
+    <string name="settings_download">Pobierz</string>
+    <string name="settings_download_preparing">Przygotowujemy…</string>
+    <string name="settings_download_failed">Nie udało się przygotować pliku do pobrania. Spróbuj ponownie.</string>
+    <string name="settings_delete_account">Usuń konto</string>
+    <string name="settings_delete_my_account">Usuń moje konto</string>
+    <string name="settings_delete_account_description">Trwale usuwa twoje konto i wszystkie jego dane. Plus kupiony na stronie zostanie anulowany; zakupami w Google Play i App Store zarządzasz w tych sklepach.</string>
+    <string name="settings_delete_ellipsis">Usuń…</string>
+    <string name="settings_delete_confirm_title">Usunąć konto?</string>
+    <string name="settings_delete_confirm_description">Twoje cele, plany, postępy, zapamiętane informacje i przesłane pliki zostaną usunięte na zawsze. Nie można tego cofnąć.</string>
+    <string name="settings_cancel">Anuluj</string>
+    <string name="settings_delete_code_title">Potwierdź, że to ty</string>
+    <!-- %1$s is the account's email address. -->
+    <string name="settings_delete_code_description">Dla bezpieczeństwa wpisz kod, który wysłaliśmy na adres %1$s.</string>
+    <string name="settings_delete_verify">Potwierdź i usuń</string>
+    <string name="settings_delete_failed">Nie udało się usunąć twojego konta. Spróbuj ponownie lub napisz na hello@zoonk.com.</string>
+    <string name="settings_account_deleted">Usunięto twoje konto.</string>
+    <string name="settings_account_deleted_title">Konto usunięte</string>
+    <string name="settings_apple_not_revoked">Twoje dane w Zoonku zostały usunięte, ale Apple nie mogło potwierdzić usunięcia Zoonka z twojego Apple ID. Aby dokończyć, usuń Zoonka z usługi Sign in with Apple.</string>
+    <string name="settings_manage_apple">Zarządzaj usługą Sign in with Apple</string>
+    <string name="settings_done">Zakończ</string>
+    <string name="settings_preferences_buddy">Twój kumpel</string>
+    <string name="settings_preferences_change">Zmień</string>
+    <string name="settings_preferences_choose_buddy">Wybierz swojego kumpla</string>
+    <!-- %1$s is the buddy's stage ("Baby") and %2$s what it wears ("Round glasses"). -->
+    <string name="settings_preferences_buddy_line">%1$s · %2$s</string>
+    <string name="settings_preferences_lessons">Lekcje</string>
+    <string name="settings_preferences_sounds">Dźwięki</string>
+    <string name="settings_preferences_sounds_description">Gdy odpowiesz poprawnie lub skończysz</string>
+    <string name="settings_preferences_daily_limit">Dzienny limit czasu nauki</string>
+    <string name="settings_preferences_daily_limit_description">Po tym czasie kończysz naukę na dziś.</string>
+    <string name="settings_preferences_no_limit">Bez limitu</string>
+    <!-- %1$s is a duration, like "45 min". -->
+    <string name="settings_preferences_limit_a_day">%1$s dziennie</string>
+    <string name="settings_preferences_language">Język</string>
+    <string name="settings_preferences_app_language">Język aplikacji</string>
+    <string name="settings_preferences_on_this_device">Na tym urządzeniu</string>
+    <string name="settings_preferences_save_failed">Nie udało się zapisać. Spróbuj ponownie.</string>
+    <string name="settings_licenses">Licencje otwartego oprogramowania</string>
+    <string name="settings_licenses_website">Otwórz stronę</string>
+    <string name="settings_licenses_read">Przeczytaj licencję</string>
+    <string name="settings_profile_description">Twoje imię, nazwa użytkownika i konto.</string>
+    <string name="settings_preferences_description">Twój kumpel, lekcje i język po twojemu.</string>
+    <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
+    <string name="settings_preferences_share_usage_data">Udostępniasz dane o korzystaniu z aplikacji</string>
+    <string name="settings_preferences_share_usage_data_description">Pokazuje nam, jak korzystasz z Zoonka, żebyśmy mogli go ulepszać</string>
+</resources>

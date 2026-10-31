@@ -1,9 +1,4 @@
-/**
- * Sets a browser cookie through the Cookie Store API when the browser supports
- * it, and falls back to `document.cookie` for older browsers or insecure HTTP
- * contexts. Await this when the next step depends on the cookie being stored
- * before navigation or reload.
- */
+/** Await this when the next step depends on the cookie being stored before navigation or reload. */
 export async function setCookie(
   name: string,
   value: string,
@@ -16,7 +11,6 @@ export async function setCookie(
 ): Promise<void> {
   const { expires, maxAge, path = "/", sameSite = "lax" } = options;
 
-  // Cookie Store API is available and we're in a secure context
   if ("cookieStore" in globalThis && globalThis.isSecureContext) {
     const cookieOptions: CookieInit = { name, path, sameSite, value };
 
@@ -30,7 +24,6 @@ export async function setCookie(
     return;
   }
 
-  // Fallback to document.cookie for older browsers or non-HTTPS
   const parts = [`${encodeURIComponent(name)}=${encodeURIComponent(value)}`];
 
   if (maxAge !== undefined) {
@@ -43,4 +36,20 @@ export async function setCookie(
 
   // eslint-disable-next-line unicorn/no-document-cookie -- Fallback for older browsers
   document.cookie = parts.join("; ");
+}
+
+function decodeCookieValue(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+/** Reads `document.cookie`, so never an httpOnly cookie. */
+export function readCookie(name: string): string | null {
+  const prefix = `${encodeURIComponent(name)}=`;
+  const entry = document.cookie.split(/;\s*/u).find((cookie) => cookie.startsWith(prefix));
+
+  return entry === undefined ? null : decodeCookieValue(entry.slice(prefix.length));
 }

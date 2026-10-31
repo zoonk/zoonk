@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_math_area_parts": "55c67bf8455dcf598d43f5c110f28e7db7c6b2100b0332b7a39fbe738d70cc98",
+  "activities_math_area_split_height": "2331147cea6559d2bdc975e9fe32b2caf11e0f4657fb1f51b52c03cee864d3ec",
+  "activities_math_area_split_width": "136209e10470d91a0368e7fa0524324931f7de439272156967d8c78a32b88bc0",
+  "activities_math_area_total": "acefd8e05870def09d7c14ad97573ef6fc9287465ebd971c08e8fcde787d5d03",
+  "activities_math_badge_explore": "cebf9d4f804cf488c90030deb83bcc6059a701ab783c66e6477b9d50ee19259e",
+  "activities_math_badge_hands_on": "82c76c616eb89289e269c42aec31ed59362a3fc25e8f3d99744fa4799eccd42b",
+  "activities_math_badge_place_it": "766e3986b1e6d307dc12ebfb926c22cbe270ca25ae0f3103da433088f8f89084",
+  "activities_math_badge_predict_first": "f7389507acf27f7fa54204b2141381f027ecdaad96d21a9eeb51731c01c8fbf4",
+  "activities_math_badge_simulate": "61c32cd34100dea107319d1c104b100bdfb6f6dfd10c35e850e1d6bdcdbe4b4d",
+  "activities_math_badge_split_it": "3257f5747576947c4eb0ca13a639652c138a4cdce19912cbdfbfeb1711d256ce",
+  "activities_math_badge_try_it": "a19055b0e29d4a00c404894d81c848e145e5a8179025347b4a298a771fbf7ee0",
+  "activities_math_balance_description": "a1d9a10c4f8e561c209eedd60ec8c28359134be8cdad1bc00e2aaf44be311693",
+  "activities_math_balance_done": "a7a575a0a3218d6076d77fc8f123098577fca3246658772cba8cd9fab1fd055c",
+  "activities_math_balance_heavier": "9b6f8a505e9623c64ba9703ebb672de784ba1f8fdd86ef8b8d0640653a311926",
+  "activities_math_balance_left_heavier": "4e19035b616149157bb9531eff648d4afd17a0f889f323bed36ea5396138b76e",
+  "activities_math_balance_left_side": "c8d57afd5d3c64a07e2e495f091491c9c938cda4ebedc20eaebf106630d00e80",
+  "activities_math_balance_level": "f01689308b0c41774075c2eb8f61a079460b0a152b8f5637357e4e1a971c6083",
+  "activities_math_balance_next": "f3f29c62177d8b5e21af9f3e666e84c9cfd33bd1ad65d20df51e3e407e08e9cb",
+  "activities_math_balance_not_quite": "400176482c848732d4621f1b5c0070fee6a5d016a7fb7c1d0e3b8c0d2677003a",
+  "activities_math_balance_pick_move": "497342003c865e04b3865d49c0a02b2289654498de43fba18f624aaa972cd47a",
+  "activities_math_balance_right_heavier": "369f8f1409e75faaa31be7ffeeaa79af339d5e0459f67e18b7d4469b05e3e28b",
+  "activities_math_balance_right_side": "082cfca3ea5f63cd238569e0f84e4b9118313dd73400887fc01e3625205cf2db",
+  "activities_math_balance_split": "af08ffbc6b07784128ca21ea13428fbd49b62631e57860f87f47a4a3c1de90a2",
+  "activities_math_balance_step": "8c58c0833122aa2548a3344ab8e9d0de614a75aae86678d3346c37047ebe52cf",
+  "activities_math_balance_steps": "31a2b6cb3fa4fc1b577e7f0eec118241686a634a066a6c4f21c44b46521e5655",
+  "activities_math_balance_take_left": "d23fcebae758175b1f99ddce74d67ba62b2aef7e064a92abc7b52bbd36c23bc6",
+  "activities_math_balance_take_right": "f9ec2d103ac191cadf1229707c094cae4ceab42c6f8b72fdd8557385421b47fd",
+  "activities_math_balance_undo": "b891221296f4ed0acb536abe0a34763d121a45aedc1043989977a07bd459149d",
+  "activities_math_chance_description": "0fea01fd1c287cf5880c5e72b078ae3b5872e25f9390ceabf6fd400ed9c91876",
+  "activities_math_chance_no": "3396729331c40d833f9755361a311295f44701e9c2b43845a9bcb27e68ddb714",
+  "activities_math_chance_pick_first": "61eb0d306c8b93fff1aa1c86d430dc2bbb0a7d0ef79f5d071760ec71f3aafa51",
+  "activities_math_chance_result": "a6837a53e466c4d8c5aaf453cdb509e2d248fd5906244f404d64d879fad3ed10",
+  "activities_math_chance_runs": "f10dacd78db8f61f2e714c0d6cea6e0fa61a3b7097aa43371fde5a103604342e",
+  "activities_math_chance_yes": "411368e6fb80f1344b7db2d3f74000d5999235093d6545c85ebfeee3399a8239",
+  "activities_math_chance_your_guess": "721cfb96b197d1303284f3e690d865b9d0e5eac7e6ba986dcbad4d8e36810499",
+  "activities_math_distribution_handle_value": "0d6bc2d9f703acc50896a2d58a6c0c8fdfc82e385640852b7030ca147f1da2bf",
+  "activities_math_distribution_lower": "ce6bb07f11dedcde352602e9032db055bb36fbdf7cf4aef616621c2b8511cd8a",
+  "activities_math_distribution_normal": "f93eaaf47328eceb1ef549beaf0985f3a8fe8fc77c74f2b3cc4d87a78d2a125c",
+  "activities_math_distribution_range": "b9e92adf9a5eff8a5efd272b68cbb8790a8d89a43b07a21a8cdb5c12a27edba1",
+  "activities_math_distribution_shares": "4c1feec394842f6cdf6e3b5a1c2607e0751bd8323d7a110be3b4737750a68091",
+  "activities_math_distribution_target": "ca5fbbff64894f9f7a4b2c26a3842bc3ccc407b0e7e7952ff7c0dfb95b408fe6",
+  "activities_math_distribution_uniform": "dad90c249ed00d1edcce196c274c7d348fc6f1271df53c2734d51eb79b07bcab",
+  "activities_math_distribution_upper": "5330a6c3d94e71d078c059239f09768395586257202fe7fd4e30466320023ea9",
+  "activities_math_formula_at_start": "8395936a42bcd74fa454fc100129fb511ed330ac0ed4badf126bdfa593984b17",
+  "activities_math_formula_before": "995d08636f03f07660cbdef18464181587dd5ff9e1e5739827a482b78d25f9db",
+  "activities_math_formula_before_curve": "b270fc4c9861b97956131e012c69bb4467867ca196df396c79897ad08fc44ed2",
+  "activities_math_formula_compared": "a58aff92c440590187e6bc78f98d38ba7a49d9dd208a1f5c559e556cc965548d",
+  "activities_math_formula_comparison": "01c3c6a6ce9489c092568968d668e61845d21237c6b7173678ca9032a9c55419",
+  "activities_math_formula_description": "f02beb5d3368bf7596e24f8712a3acbcff3f56b3ff48e460193ac621d35d0a76",
+  "activities_math_formula_from_start": "0bde947b99ca95e483fd9e9b96afad60095df46f7d724eb315f36cfec7a145c4",
+  "activities_math_formula_no_what_ifs": "4807b8015f35fd6bf98014a4237e3b8f0c11847c79d23edf4eaeb67d2cba1415",
+  "activities_math_formula_now": "531300bd6fae0ac21bf773d84bfd570010335241d8bf7745d5e046f3a9fdb91b",
+  "activities_math_formula_readout": "eacbca3189f3b46ff24b45586900295e200a3a097a71949348f50ffc51b662d1",
+  "activities_math_formula_readout_note": "293354c22ee65c7fdde30d2707fde2875238df0c8f3d355b35d5aa1965dfb9e8",
+  "activities_math_formula_slider_value": "f0e1f34c3283aa28b679a57477bc3869445cd153eb427dd815ed96e94c280513",
+  "activities_math_formula_what_if_events": "95070930eba51b7aa3eab6b8445a8c60e7d71c29b19219a15eeba4736fa95eb5",
+  "activities_math_formula_what_ifs_on": "300559543401138acaae0ee2d53fab016cfcd3514e2ab0fc4ba00d47aac7ebd7",
+  "activities_math_formula_with_what_ifs": "c0bc8536f95d5d1323721540dc218bc45f9be75a70458a1b745cc3cfa7ec6f99",
+  "activities_math_number_line_answer": "ee59f371c6e16652f6792ebf0febe33d7ebaff2fb0cbc4986f55b23c847185fb",
+  "activities_math_number_line_description": "4c7c7cc52870bf434ffa0f543c2cefe07216cc671a978742f7299dc0338ffe78",
+  "activities_math_number_line_jumps": "45eef8efdfda94a2d1f7853cd735dbcc5c0393b64b67a3ace3c1117f40059892",
+  "activities_math_number_line_label": "30850d22384984c3a415761f68812717fa0a5431fc6855f52f949dddbd46e4a5",
+  "activities_math_run_again": "950b6a92b4c1bfa4f04995011d5c639cd6b0cef32368b399f21fc8b0a2da70aa",
+  "activities_math_sampling_done": "c5479ca35a05db128dc851b56228076ede5bbd0caddb37f6b5ed02c6308581cb",
+  "activities_math_sampling_margin": "dab4793413b8664f200940ed5f17a16acbec213967cad999d9ad3d12e394ba60",
+  "activities_math_sampling_margin_points": "eadbd3a37375a617a29020dc12cee5a6c280488b4d07dc09e03665fcdd9af790",
+  "activities_math_sampling_margin_points_decimal": "53032678e131c3df390fe83106bdde014bdcc90a20f9034ea6d0da33725be66d",
+  "activities_math_sampling_math": "ca225d0b6e86eee90dea1573a98b950f8cbb88e144c66a35a91c9ab6dc46b694",
+  "activities_math_sampling_range": "df5a7a2835363fa9c7f76b5acddb3e0ff0a6409b8f896ff20211459653aa589b",
+  "activities_math_sampling_running": "620383326665a1e1218b961e1b360dd6b35018f351c6bde20bc4a70838cd118f",
+  "activities_math_sampling_shrinks": "1437dd0d2aa0efd1d965ef4f92bb59ce0e9b007f893a39c877ecd9b658371aa3",
+  "activities_math_sampling_size": "298e37d797ee6266ad6996bf6454e9e9110550c7f29abe32030be4496a009844",
+  "activities_math_sampling_slider_value": "94a37685427db69301516e20974efea00eeb07f205bc2e95d738819ce3971802",
+  "activities_math_sampling_summary": "db27ff3832f14e2d930b82a6c6e73b7d18a1777870a4be1bf8d4328352994e61",
+  "activities_math_sampling_truth": "060e9e5dc6f04e00bbc629354a6478b066223a6f0eea8c220bd1ddd5f12ee72e",
+  "activities_math_sampling_within": "5bff803d98431a16391642b74f82a6b4cc07949220b9862d7990daab927f3a11"
+}
+-->
+<resources>
+    <!-- A badge on an activity where the learner places a dot along a number line. -->
+    <string name="activities_math_badge_place_it">Ordne ein</string>
+    <!-- A badge on an activity whose sliders change a model's results. -->
+    <string name="activities_math_badge_try_it">Probier es aus</string>
+    <!-- A short badge on an activity where the learner takes blocks off a balance scale by hand. -->
+    <string name="activities_math_badge_hands_on">Selbst machen</string>
+    <!-- A short badge on an activity where the learner drags handles along a distribution's curve; one word where the language allows. -->
+    <string name="activities_math_badge_explore">Erkunden</string>
+    <!-- A badge on an activity where the learner splits a rectangle or a bar into easy parts. -->
+    <string name="activities_math_badge_split_it">Teil es auf</string>
+    <!-- A short badge on an activity where the learner guesses how often something random happens before a simulation runs it. -->
+    <string name="activities_math_badge_predict_first">Schätz zuerst</string>
+    <!-- A short badge on an activity that runs many random polls or samples; a verb, one word where the language allows. -->
+    <string name="activities_math_badge_simulate">Simulier</string>
+    <!-- A number line's name, then the unit its values are measured in, like "Temperature in °C" or "Distance in km". -->
+    <string name="activities_math_number_line_label">%1$s in %2$s</string>
+    <!-- The dot the learner drags along the number line, for TalkBack. -->
+    <string name="activities_math_number_line_answer">Deine Antwort auf dem Zahlenstrahl</string>
+    <!-- What the number line shows, for TalkBack: its name, its ends, where it starts and where the learner's dot is, like "A number line for Temperature from -5 to 7. It starts at -3 °C, and your dot is at 5 °C." -->
+    <string name="activities_math_number_line_description">Ein Zahlenstrahl für %1$s von %2$s bis %3$s. Er beginnt bei %4$s, und dein Punkt liegt bei %5$s.</string>
+    <!-- Once checked, the jumps the line takes and where they land, like "The jumps go +3, +5 and land at 5 °C." -->
+    <string name="activities_math_number_line_jumps">Die Sprünge verlaufen %1$s und landen bei %2$s.</string>
+    <!-- One result of a model at another value of its slider, like "Value after 20 years at 5%: $2,653". -->
+    <string name="activities_math_formula_compared">%1$s bei %2$s: %3$s</string>
+    <!-- What a model's slider says to TalkBack: its value, then the result it drives, like "7%. Value after 20 years: $3,870". -->
+    <string name="activities_math_formula_slider_value">%1$s. %2$s: %3$s</string>
+    <!-- A result's value before the what-ifs were switched on, like "$1,500 before". -->
+    <string name="activities_math_formula_before">%1$s zuvor</string>
+    <!-- How much a result changed since the sliders' starting values, like "+$1,216 from the start". -->
+    <string name="activities_math_formula_from_start">%1$s seit dem Anfang</string>
+    <!-- What a model shows, for TalkBack: the result it charts and the slider across its axis, like "Sliders and a chart of Value after 20 years across Rate per year." -->
+    <string name="activities_math_formula_description">Regler und ein Diagramm zu %1$s im Verlauf von %2$s.</string>
+    <!-- What-ifs are events that change a model, like "Rent goes up $500". -->
+    <string name="activities_math_formula_no_what_ifs">Keine Was-wäre-wenn-Szenarien aktiviert.</string>
+    <!-- The what-ifs switched on, listed, like "What-ifs switched on: Rent goes up $500." -->
+    <string name="activities_math_formula_what_ifs_on">Was-wäre-wenn-Szenarien aktiviert: %1$s.</string>
+    <!-- One result and its value, for TalkBack, like "Monthly profit: $1,000." -->
+    <string name="activities_math_formula_readout">%1$s: %2$s.</string>
+    <!-- One result, its value and how it changed, for TalkBack, like "Monthly profit: $1,000, $1,500 before." -->
+    <string name="activities_math_formula_readout_note">%1$s: %2$s, %3$s.</string>
+    <!-- The charted result at the model's comparison point, for TalkBack, like "For comparison, at 5% it's $2,653." -->
+    <string name="activities_math_formula_comparison">Zum Vergleich: Bei %1$s sind es %2$s.</string>
+    <!-- The name of the group of what-if switches, for TalkBack. -->
+    <string name="activities_math_formula_what_if_events">Was-wäre-wenn-Ereignisse</string>
+    <!-- The chart legend's solid line when what-ifs are on. -->
+    <string name="activities_math_formula_with_what_ifs">Mit den Was-wäre-wenn-Szenarien</string>
+    <!-- The chart legend's solid line: the model as the sliders set it now. -->
+    <string name="activities_math_formula_now">Jetzt</string>
+    <!-- The chart legend's dashed line: the model before the what-ifs were switched on. -->
+    <string name="activities_math_formula_before_curve">Zuvor</string>
+    <!-- The chart legend's dashed line: the model at the sliders' starting values. -->
+    <string name="activities_math_formula_at_start">Am Anfang</string>
+    <!-- The range between a distribution's two handles, like "IQ score from 90 to 110". -->
+    <string name="activities_math_distribution_range">%1$s von %2$s bis %3$s</string>
+    <!-- What a distribution handle says to TalkBack: its value, then the share between the handles, like "90 IQ points. 49.5% between the handles." -->
+    <string name="activities_math_distribution_handle_value">%1$s. %2$s zwischen den Reglern.</string>
+    <!-- Once checked, the target range and its share, like "70 to 130: 95.4%". -->
+    <string name="activities_math_distribution_target">%1$s bis %2$s: %3$s</string>
+    <!-- The handle at the low end of the range, for TalkBack. -->
+    <string name="activities_math_distribution_lower">Unterer Regler</string>
+    <!-- The handle at the high end of the range, for TalkBack. -->
+    <string name="activities_math_distribution_upper">Oberer Regler</string>
+    <!-- What a normal distribution shows, for TalkBack, like "A bell curve of IQ score, with an average of 100 IQ points and a standard deviation of 15 IQ points." -->
+    <string name="activities_math_distribution_normal">Eine Glockenkurve für %1$s mit einem Mittelwert von %2$s und einer Standardabweichung von %3$s.</string>
+    <!-- What a uniform distribution shows, for TalkBack, like "A flat distribution of Waiting time, from 0 min to 10 min." -->
+    <string name="activities_math_distribution_uniform">Eine gleichmäßige Verteilung für %1$s von %2$s bis %3$s.</string>
+    <!-- The shares inside and outside the handles, for TalkBack, like "49.5% of values fall between 90 IQ points and 110 IQ points, 25.2% below and 25.2% above." -->
+    <string name="activities_math_distribution_shares">%1$s der Werte liegen zwischen %2$s und %3$s, %4$s darunter und %5$s darüber.</string>
+    <!-- The parts a rectangle or bar is split into, for TalkBack, like "Split into 4 parts: 200, 30, 80, 12." -->
+    <plurals name="activities_math_area_parts">
+        <item quantity="one">In %1$d Teil aufgeteilt: %2$s.</item>
+        <item quantity="other">In %1$d Teile aufgeteilt: %2$s.</item>
+    </plurals>
+    <!-- The parts' sum with its unit, like "Together they make 322 m²." -->
+    <string name="activities_math_area_total">Zusammen ergeben sie %1$s.</string>
+    <!-- A handle that moves where the rectangle's width is split, for TalkBack. -->
+    <string name="activities_math_area_split_width">Teilung entlang der Breite</string>
+    <!-- A handle that moves where the rectangle's height is split, for TalkBack. -->
+    <string name="activities_math_area_split_height">Teilung entlang der Höhe</string>
+    <!-- What the balance shows, for TalkBack: each pan as an expression, like "A balance. Left pan: 4x + 1. Right pan: 2x + 7." -->
+    <string name="activities_math_balance_description">Eine Waage. Linke Waagschale: %1$s. Rechte Waagschale: %2$s.</string>
+    <!-- After the balance's description, for TalkBack, when both pans weigh the same. -->
+    <string name="activities_math_balance_level">Die Waagschalen sind im Gleichgewicht.</string>
+    <!-- After the balance's description, for TalkBack, when the left pan weighs more. -->
+    <string name="activities_math_balance_left_heavier">Die linke Waagschale ist schwerer.</string>
+    <!-- After the balance's description, for TalkBack, when the right pan weighs more. -->
+    <string name="activities_math_balance_right_heavier">Die rechte Waagschale ist schwerer.</string>
+    <!-- A short label under the pan of a balance scale that weighs more. -->
+    <string name="activities_math_balance_heavier">Schwerer</string>
+    <!-- Before a hint after a move that tipped the scale, like "Not quite: Take the same off both sides." -->
+    <string name="activities_math_balance_not_quite">Noch nicht ganz:</string>
+    <!-- The name of the buttons that take things off the scale's left pan. -->
+    <string name="activities_math_balance_left_side">Linke Seite</string>
+    <!-- The name of the buttons that take things off the scale's right pan. -->
+    <string name="activities_math_balance_right_side">Rechte Seite</string>
+    <!-- A button, for TalkBack: take one of something off the left pan, like "Take off the left side: One bag of rice". -->
+    <string name="activities_math_balance_take_left">Links wegnehmen: %1$s</string>
+    <!-- A button, for TalkBack: take one of something off the right pan, like "Take off the right side: 1 kg". -->
+    <string name="activities_math_balance_take_right">Rechts wegnehmen: %1$s</string>
+    <!-- A button that divides both pans into as many equal groups as there are bags, like "Split both sides into 2 equal groups". -->
+    <string name="activities_math_balance_split">Teil beide Seiten in %1$s gleich große Gruppen</string>
+    <!-- A button that takes back the last move on the balance. -->
+    <string name="activities_math_balance_undo">Rückgängig</string>
+    <!-- The name of the list of a balance problem's worked steps, for TalkBack. -->
+    <string name="activities_math_balance_steps">Lösungsschritte</string>
+    <!-- Before a worked step the learner has reached, for TalkBack. -->
+    <string name="activities_math_balance_done">Erledigt:</string>
+    <!-- Before the worked step the learner hasn't reached yet, for TalkBack. -->
+    <string name="activities_math_balance_next">Als Nächstes:</string>
+    <!-- A worked step: the move, then the equation it gives, like "Take 2 bags off each side: 2x + 1 = 7". -->
+    <string name="activities_math_balance_step">%1$s: %2$s</string>
+    <!-- The name of the list of moves to pick from when solving an equation step by step, for TalkBack. -->
+    <string name="activities_math_balance_pick_move">Wähl den nächsten Schritt</string>
+    <!-- How many times a random experiment runs, then what one run is, like "1,000 runs of 10 flips". -->
+    <string name="activities_math_chance_runs">%1$s Durchläufe mit jeweils %2$s</string>
+    <!-- The chance the learner guessed, as a percent, like "Your guess: 25%". -->
+    <string name="activities_math_chance_your_guess">Deine Schätzung: %1$s</string>
+    <!-- Shown where the simulation's chart will be, before the learner checks a guess. -->
+    <string name="activities_math_chance_pick_first">Wähl deine Schätzung und prüf sie, um die Simulation zu starten.</string>
+    <!-- Once the runs are in: the event, how often it came up, and its exact chance, like "Exactly 5 heads in 24% of the runs. The exact chance is 25%." -->
+    <string name="activities_math_chance_result">%1$s in %2$s der Durchläufe. Die genaue Wahrscheinlichkeit beträgt %3$s.</string>
+    <!-- What the simulation shows, for TalkBack: the runs, the event and how often it came up, like "1,000 runs of 10 flips: Exactly 5 heads came up in 24% of them." -->
+    <string name="activities_math_chance_description">%1$s: %2$s trat in %3$s der Durchläufe auf.</string>
+    <!-- Under a chart of runs with two outcomes, the bar for runs where the event happened. -->
+    <string name="activities_math_chance_yes">Ja</string>
+    <!-- Under a chart of runs with two outcomes, the bar for runs where the event didn't happen. -->
+    <string name="activities_math_chance_no">Nein</string>
+    <!-- A button that runs the random simulation again with new random draws. -->
+    <string name="activities_math_run_again">Noch einmal ausführen</string>
+    <!-- Above the margin of error of many random polls, like "95% of samples land within ±9.8 points"; %1$s is the share, "95%". -->
+    <string name="activities_math_sampling_within">%1$s der Stichproben liegen innerhalb von</string>
+    <!-- The name of the slider that picks how big each random sample is. -->
+    <string name="activities_math_sampling_size">Stichprobengröße</string>
+    <!-- What the sampling simulation shows, for TalkBack, like "200 samples of 400 from Example town. The true value is 50%; 95% of samples landed between 45% and 55%." -->
+    <string name="activities_math_sampling_summary">%1$s Stichproben mit je %2$s aus %3$s. Der tatsächliche Wert beträgt %4$s; 95%% der Stichproben lagen zwischen %5$s und %6$s.</string>
+    <!-- Under the chart, where the middle 95% of the samples landed, like "45% to 55%". -->
+    <string name="activities_math_sampling_range">%1$s bis %2$s</string>
+    <!-- Above a dashed line on the chart at the population's real value, like "True value: 50%". -->
+    <string name="activities_math_sampling_truth">Tatsächlicher Wert: %1$s</string>
+    <!-- What the sample size slider says to TalkBack: the size, then the margin it gives, like "400. 95% of samples within ±4.9 points." -->
+    <string name="activities_math_sampling_slider_value">%1$s. 95%% der Stichproben liegen innerhalb von %2$s.</string>
+    <!-- Once every sample is drawn, how many and of what size, like "200 samples of 400". -->
+    <string name="activities_math_sampling_done">%1$s Stichproben mit je %2$s</string>
+    <!-- While samples are being drawn, like "Running 120 of 200…". -->
+    <string name="activities_math_sampling_running">Wir ziehen %1$s von %2$s Stichproben…</string>
+    <!-- The heading of a box with each sample size's margin of error as the formula gives it. -->
+    <string name="activities_math_sampling_math">Was die Mathematik sagt</string>
+    <!-- How the margin of error changes from the smallest sample to the largest, like "From 100 to 400, the margin shrinks to 50% of its size." -->
+    <string name="activities_math_sampling_shrinks">Von %1$s auf %2$s schrumpft die Fehlerspanne auf %3$s ihrer Größe.</string>
+    <!-- A margin of error around a mean, plus or minus an amount with its unit, like "±3 cm". -->
+    <string name="activities_math_sampling_margin">±%1$s</string>
+    <!-- A margin of error in percentage points, like "±9.8 points"; the number can have decimals. -->
+    <plurals name="activities_math_sampling_margin_points">
+        <item quantity="one">±%1$s Prozentpunkt</item>
+        <item quantity="other">±%1$s Prozentpunkte</item>
+    </plurals>
+    <!-- A margin of error in percentage points with decimals, like "±9.8 points", in the form a language gives decimal numbers (Polish "±9,8 punktu"). -->
+    <string name="activities_math_sampling_margin_points_decimal">±%1$s Prozentpunkte</string>
+</resources>

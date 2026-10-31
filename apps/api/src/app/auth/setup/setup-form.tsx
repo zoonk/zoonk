@@ -17,15 +17,23 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/componen
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useActionState } from "react";
+import { useActionState, useId, useState } from "react";
 import { setupProfileAction } from "./actions";
 
-function UsernameDescription({ status, username }: { status: UsernameStatus; username: string }) {
+function UsernameDescription({
+  id,
+  status,
+  username,
+}: {
+  id: string;
+  status: UsernameStatus;
+  username: string;
+}) {
   const t = useExtracted();
 
   if (status === "checking") {
     return (
-      <p className="text-muted-foreground flex items-center gap-1 text-sm">
+      <p className="text-muted-foreground flex items-center gap-1 text-sm" id={id}>
         <Spinner className="size-3" />
         {t("Checking...")}
       </p>
@@ -33,49 +41,79 @@ function UsernameDescription({ status, username }: { status: UsernameStatus; use
   }
 
   if (status === "available") {
-    return <p className="text-success text-sm">{t("{username} is available", { username })}</p>;
+    return (
+      <p className="text-success-text text-sm" id={id}>
+        {t("{username} is available", { username })}
+      </p>
+    );
   }
 
   if (status === "taken") {
     return (
-      <p className="text-destructive text-sm">{t("{username} is already taken", { username })}</p>
+      <p className="text-destructive-text text-sm" id={id}>
+        {t("{username} is already taken", { username })}
+      </p>
     );
   }
 
   return (
     <p
-      className={cn("text-sm", {
-        "text-destructive": status === "invalid",
-        "text-muted-foreground": status === "idle",
-      })}
+      className={cn(
+        "text-sm",
+        status === "invalid" ? "text-destructive-text" : "text-muted-foreground",
+      )}
+      id={id}
     >
-      {t("3-30 characters. Letters, numbers, and underscores only.")}
+      {t("3-30 characters. Letters a–z, numbers, and underscores only.")}
+    </p>
+  );
+}
+
+function UsernameLine({ onChange, username }: { onChange: () => void; username: string }) {
+  const t = useExtracted();
+
+  return (
+    <p className="text-muted-foreground flex flex-wrap items-center gap-x-1 text-sm">
+      <input name="username" type="hidden" value={username} />
+      {t("Your username: @{username}", { username })}
+      <span aria-hidden="true">{" · "}</span>
+      <button
+        aria-label={t("Change username")}
+        className="text-foreground focus-visible:ring-ring/50 inline-flex min-h-11 items-center rounded-md px-1 font-medium underline-offset-4 outline-none hover:underline focus-visible:ring-[3px]"
+        onClick={onChange}
+        type="button"
+      >
+        {t("Change")}
+      </button>
     </p>
   );
 }
 
 export function SetupProfileForm({
   defaultName,
+  defaultUsername,
   redirectTo,
 }: {
   defaultName: string;
-  redirectTo: string;
+  defaultUsername: string;
+  redirectTo: string | null;
 }) {
   const t = useExtracted();
-  const { setUsername, status, username } = useUsernameAvailability();
-
+  const descriptionId = useId();
+  const { setUsername, status, username } = useUsernameAvailability(defaultUsername);
+  const [isChangingUsername, setIsChangingUsername] = useState(!defaultUsername);
   const boundAction = setupProfileAction.bind(null, redirectTo);
   const [state, formAction] = useActionState(boundAction, { status: "idle" as const });
-
-  const hasError = state.status === "error";
-  const isSubmitDisabled = status !== "idle" && status !== "available";
+  const canSubmit = status === "idle" || status === "available";
+  const showsUsernameField = isChangingUsername || state.status === "usernameTaken";
 
   return (
     <SetupForm action={formAction}>
       <SetupField>
         <SetupLabel htmlFor="name">{t("Name")}</SetupLabel>
         <SetupInput
-          autoComplete="off"
+          autoComplete="name"
+          autoFocus
           defaultValue={defaultName}
           id="name"
           name="name"
@@ -83,34 +121,43 @@ export function SetupProfileForm({
         />
       </SetupField>
 
-      <SetupField>
-        <SetupLabel htmlFor="username">{t("Username")}</SetupLabel>
-        <InputGroup>
-          <InputGroupAddon>@</InputGroupAddon>
+      {showsUsernameField ? (
+        <SetupField>
+          <SetupLabel htmlFor="username">{t("Username")}</SetupLabel>
+          <InputGroup>
+            <InputGroupAddon>@</InputGroupAddon>
+            <InputGroupInput
+              aria-describedby={descriptionId}
+              aria-invalid={status === "invalid" || status === "taken"}
+              autoCapitalize="none"
+              autoComplete="username"
+              autoCorrect="off"
+              autoFocus={Boolean(defaultUsername)}
+              id="username"
+              maxLength={USERNAME_MAX_LENGTH}
+              minLength={USERNAME_MIN_LENGTH}
+              name="username"
+              onChange={(event) => setUsername(event.target.value)}
+              required
+              spellCheck={false}
+              value={username}
+            />
+          </InputGroup>
+          <UsernameDescription id={descriptionId} status={status} username={username} />
+        </SetupField>
+      ) : (
+        <UsernameLine onChange={() => setIsChangingUsername(true)} username={username} />
+      )}
 
-          <InputGroupInput
-            autoCapitalize="none"
-            autoComplete="off"
-            autoCorrect="off"
-            id="username"
-            maxLength={USERNAME_MAX_LENGTH}
-            minLength={USERNAME_MIN_LENGTH}
-            name="username"
-            onChange={(event) => setUsername(event.target.value)}
-            placeholder={t("your-username")}
-            required
-            spellCheck={false}
-            value={username}
-          />
-        </InputGroup>
-        <UsernameDescription status={status} username={username} />
-      </SetupField>
-
-      <SetupError hasError={hasError}>
-        {t("Failed to set up your profile. Please try again or contact hello@zoonk.com")}
+      <SetupError hasError={state.status === "usernameTaken"}>
+        {t("{username} is already taken", { username })}
       </SetupError>
 
-      <SetupSubmit disabled={isSubmitDisabled}>{t("Continue")}</SetupSubmit>
+      <SetupError hasError={state.status === "error"}>
+        {t("We couldn't save your profile. Try again.")}
+      </SetupError>
+
+      <SetupSubmit disabled={!canSubmit}>{t("Continue")}</SetupSubmit>
     </SetupForm>
   );
 }

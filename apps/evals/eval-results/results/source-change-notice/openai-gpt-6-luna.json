@@ -1,0 +1,114 @@
+{
+  "modelId": "openai/gpt-6-luna",
+  "results": [
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 941,
+          "outputTokens": 242,
+          "reasoningTokens": 137
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The sentence says only “a prova,” rather than explicitly identifying “a prova objetiva” as required. Otherwise, it correctly names the notice change first, gives the new count of 100 questions, and meets the language, length, and neutrality constraints.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n- One plain sentence in the requested language, at most 120 characters.\n- Names what changed first (the notice, the law, the documentation), then the most important new value.\n- States only what the changes show: no reasons, no advice, no judgment of whether the change is good.\n- No em dashes, exclamation marks or emoji, and no promise of any result.\n\n- Says the notice changed and the objective test now has 100 items (or questions), in Portuguese.",
+        "id": "tcdf-question-count-1",
+        "userInput": {
+          "changes": "[{\"after\":100,\"before\":120,\"field\":\"edition.questionCount\"}]",
+          "language": "pt",
+          "source": "Concurso TCDF, Analista Administrativo de Controle Externo"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1018,
+          "outputTokens": 98,
+          "reasoningTokens": 41
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n- One plain sentence in the requested language, at most 120 characters.\n- Names what changed first (the notice, the law, the documentation), then the most important new value.\n- States only what the changes show: no reasons, no advice, no judgment of whether the change is good.\n- No em dashes, exclamation marks or emoji, and no promise of any result.\n\n- Says the exam date moved to 22 November 2026 (in Portuguese), and may add \"e mais\" for the other change.",
+        "id": "exam-date-moved-1",
+        "userInput": {
+          "changes": "[{\"after\":[{\"date\":\"2026-11-22\",\"kind\":\"exam\",\"label\":\"Provas objetivas e discursiva\"}],\"before\":[{\"date\":\"2026-11-08\",\"kind\":\"exam\",\"label\":\"Provas objetivas e discursiva\"}],\"field\":\"edition.dates\"},{\"after\":[{\"text\":\"Será permitido o uso de caneta transparente.\"}],\"before\":[],\"field\":\"rules\"}]",
+          "language": "pt",
+          "source": "Concurso TCDF"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 957,
+          "outputTokens": 404,
+          "reasoningTokens": 347
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n- One plain sentence in the requested language, at most 120 characters.\n- Names what changed first (the notice, the law, the documentation), then the most important new value.\n- States only what the changes show: no reasons, no advice, no judgment of whether the change is good.\n- No em dashes, exclamation marks or emoji, and no promise of any result.\n\n- In English, says the documentation changed and names the removed API or the new version from the lines.",
+        "id": "software-docs-1",
+        "userInput": {
+          "changes": "- The `getServerSideProps` API is supported in the pages router.\n+ Version 17 removes `getServerSideProps`; use Server Components to fetch data.",
+          "language": "en",
+          "source": "Next.js documentation"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 980,
+          "outputTokens": 178,
+          "reasoningTokens": 121
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n- One plain sentence in the requested language, at most 120 characters.\n- Names what changed first (the notice, the law, the documentation), then the most important new value.\n- States only what the changes show: no reasons, no advice, no judgment of whether the change is good.\n- No em dashes, exclamation marks or emoji, and no promise of any result.\n\n- In German, says the dates changed and gives the new Mathematik date (6 May 2027).",
+        "id": "abitur-date-1",
+        "userInput": {
+          "changes": "[{\"after\":[{\"date\":\"2027-05-06\",\"kind\":\"exam\",\"label\":\"Mathematik\"}],\"before\":[{\"date\":\"2027-05-05\",\"kind\":\"exam\",\"label\":\"Mathematik\"}],\"field\":\"edition.dates\"}]",
+          "language": "de",
+          "source": "Abitur Bayern 2027"
+        }
+      }
+    }
+  ],
+  "taskId": "source-change-notice"
+}

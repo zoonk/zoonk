@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="activities_geometry_badge_turn_it">Turn it</string>
+
+    <!-- The unit circle's draggable point, for TalkBack. -->
+    <string name="activities_geometry_unit_circle_point">Point on the circle</string>
+    <!-- The point's angle, then the values at it, like "30°. sin = 0.5, cos = 0.87". -->
+    <string name="activities_geometry_unit_circle_value">%1$s. %2$s</string>
+    <!-- The unit circle, for TalkBack: the angle, then the values at it, like "sin = 0.5, cos = 0.87". -->
+    <string name="activities_geometry_unit_circle_description">A circle of radius 1 with a point at %1$s. Its height is the sine and its sideways distance from the center is the cosine: %2$s.</string>
+    <!-- The checked angle on a unit circle, for TalkBack, like "The question asks about 30°, where sin = 0.5." -->
+    <string name="activities_geometry_unit_circle_asks">The question asks about %1$s, where %2$s = %3$s.</string>
+    <!-- Above the sine and cosine waves. -->
+    <string name="activities_geometry_unit_circle_as_turns">As the point turns</string>
+    <!-- Short name of sine ("sen" in Portuguese and Spanish). -->
+    <string name="activities_geometry_sin">sin</string>
+    <!-- Short name of cosine. -->
+    <string name="activities_geometry_cos">cos</string>
+    <!-- Short name of tangent. -->
+    <string name="activities_geometry_tan">tan</string>
+    <!-- A tangent that doesn't exist, at 90°. -->
+    <string name="activities_geometry_undefined">undefined</string>
+    <!-- An angle in radians, like "2.5 rad". -->
+    <string name="activities_geometry_radians">%1$s rad</string>
+
+    <string name="activities_geometry_badge_drag_corner">Drag a corner</string>
+    <!-- A movable corner of a shape, for TalkBack, like "Corner A". -->
+    <string name="activities_geometry_board_corner">Corner %1$s</string>
+    <!-- Where a corner is, then what the board measures, like "At 1, 3. Angles: 72°, 45°, 63°." -->
+    <string name="activities_geometry_board_corner_value">At %1$s, %2$s. %3$s</string>
+    <!-- TalkBack actions that move a shape's corner one grid step. -->
+    <string name="activities_geometry_board_move_left">Move left</string>
+    <string name="activities_geometry_board_move_right">Move right</string>
+    <string name="activities_geometry_board_move_up">Move up</string>
+    <string name="activities_geometry_board_move_down">Move down</string>
+    <!-- Puts a shape's corners back where they started. -->
+    <string name="activities_geometry_board_back_to_start">Back to the start</string>
+    <!-- A geometry board, for TalkBack. -->
+    <plurals name="activities_geometry_board_shape">
+        <item quantity="one">A shape with %1$d corner on a grid.</item>
+        <item quantity="other">A shape with %1$d corners on a grid.</item>
+    </plurals>
+    <plurals name="activities_geometry_board_moving">
+        <item quantity="one">%1$d corner moves.</item>
+        <item quantity="other">%1$d corners move.</item>
+    </plurals>
+    <!-- A shape's angles, like "72°, 45°, 63°". -->
+    <string name="activities_geometry_board_angles">Angles: %1$s.</string>
+    <string name="activities_geometry_board_angles_total">Angles: %1$s, adding up to %2$s.</string>
+    <!-- A shape's side lengths, like "4, 4.2, 3.2". -->
+    <string name="activities_geometry_board_sides">Sides: %1$s.</string>
+    <string name="activities_geometry_board_sides_total">Sides: %1$s, adding up to a perimeter of %2$s.</string>
+    <string name="activities_geometry_board_area_total">Area: %1$s.</string>
+    <!-- The areas of the squares on a right triangle's two shorter sides, like "9, 16". -->
+    <string name="activities_geometry_board_squares">Squares on the two shorter sides: %1$s.</string>
+    <string name="activities_geometry_board_squares_total">Squares on the two shorter sides: %1$s. Square on the longest side: %2$s.</string>
+    <!-- Above a shape's angles drawn side by side. -->
+    <string name="activities_geometry_board_fan">Tear off the corners and put them side by side</string>
+    <!-- What a triangle's three angles side by side make. -->
+    <string name="activities_geometry_board_straight_line">a straight line</string>
+    <!-- What a four-sided shape's angles side by side make. -->
+    <string name="activities_geometry_board_full_turn">a full turn</string>
+    <!-- Before a shape's area, like "Area 6". -->
+    <string name="activities_geometry_board_area">Area</string>
+
+    <string name="activities_geometry_badge_build_it">Build it</string>
+    <!-- The molecule to build, like "Target: CO₂". -->
+    <string name="activities_geometry_molecule_target">Target: %1$s</string>
+    <!-- The molecule built so far, like "Built: CO". -->
+    <string name="activities_geometry_molecule_built">Built: %1$s</string>
+    <!-- An atom: its element and its number, like "Oxygen 2". -->
+    <string name="activities_geometry_molecule_atom">%1$s %2$s</string>
+    <!-- An atom and how many of its bonds are made, for TalkBack, like "Oxygen 1: 1 of 2 bonds". -->
+    <plurals name="activities_geometry_molecule_atom_bonds">
+        <item quantity="one">%1$s: %2$d of %3$d bond</item>
+        <item quantity="other">%1$s: %2$d of %3$d bonds</item>
+    </plurals>
+    <string name="activities_geometry_element_boron">Boron</string>
+    <string name="activities_geometry_element_bromine">Bromine</string>
+    <string name="activities_geometry_element_carbon">Carbon</string>
+    <string name="activities_geometry_element_chlorine">Chlorine</string>
+    <string name="activities_geometry_element_fluorine">Fluorine</string>
+    <string name="activities_geometry_element_hydrogen">Hydrogen</string>
+    <string name="activities_geometry_element_iodine">Iodine</string>
+    <string name="activities_geometry_element_nitrogen">Nitrogen</string>
+    <string name="activities_geometry_element_oxygen">Oxygen</string>
+    <string name="activities_geometry_element_phosphorus">Phosphorus</string>
+    <string name="activities_geometry_element_sulfur">Sulfur</string>
+    <string name="activities_geometry_element_silicon">Silicon</string>
+    <!-- An element button, for TalkBack, like "Add Carbon". -->
+    <string name="activities_geometry_molecule_add">Add %1$s</string>
+    <!-- An element button while an atom is selected, like "Add Oxygen bonded to Carbon 1". -->
+    <string name="activities_geometry_molecule_add_bonded">Add %1$s bonded to %2$s</string>
+    <!-- How many bonds an element makes, under its symbol. -->
+    <plurals name="activities_geometry_molecule_bonds">
+        <item quantity="one">%1$d bond</item>
+        <item quantity="other">%1$d bonds</item>
+    </plurals>
+    <string name="activities_geometry_molecule_undo">Undo</string>
+    <!-- Removes the selected atom, like "Remove Oxygen 2". -->
+    <string name="activities_geometry_molecule_remove">Remove %1$s</string>
+    <string name="activities_geometry_molecule_remove_selected">Remove the selected atom</string>
+    <string name="activities_geometry_molecule_start">Tap an element to add its first atom.</string>
+    <!-- An atom with too many bonds, like "Oxygen 1 has more bonds than it can make." -->
+    <string name="activities_geometry_molecule_over">%1$s has more bonds than it can make.</string>
+    <plurals name="activities_geometry_molecule_open">
+        <item quantity="one">%1$d atom has open bonds, shown as dots.</item>
+        <item quantity="other">%1$d atoms have open bonds, shown as dots.</item>
+    </plurals>
+    <string name="activities_geometry_molecule_full">Every atom has all its bonds.</string>
+    <!-- Like "Carbon 1 is selected. Tap another atom to bond them, or an element to add one bonded to it." -->
+    <string name="activities_geometry_molecule_selected_hint">%1$s is selected. Tap another atom to bond them, or an element to add one bonded to it.</string>
+    <string name="activities_geometry_molecule_select_hint">Tap an atom to select it.</string>
+    <!-- Said to TalkBack after adding an atom, like "Added Carbon 1." -->
+    <string name="activities_geometry_molecule_added">Added %1$s.</string>
+    <!-- Said to TalkBack after adding a bonded atom, like "Added Oxygen 1, bonded to Carbon 1." -->
+    <string name="activities_geometry_molecule_added_bonded">Added %1$s, bonded to %2$s.</string>
+    <!-- Two atoms and the bond between them, like "Carbon 1 and Oxygen 1: no bond." -->
+    <string name="activities_geometry_molecule_no_bond">%1$s and %2$s: no bond.</string>
+    <string name="activities_geometry_molecule_single_bond">%1$s and %2$s: single bond.</string>
+    <string name="activities_geometry_molecule_double_bond">%1$s and %2$s: double bond.</string>
+    <string name="activities_geometry_molecule_triple_bond">%1$s and %2$s: triple bond.</string>
+    <!-- Said to TalkBack after removing an atom, like "Removed Oxygen 2." -->
+    <string name="activities_geometry_molecule_removed">Removed %1$s.</string>
+    <!-- Said to TalkBack after undoing a change. -->
+    <string name="activities_geometry_molecule_undone">Undone.</string>
+    <!-- Said to TalkBack after selecting an atom, like "Carbon 1 selected." -->
+    <string name="activities_geometry_molecule_selected">%1$s selected.</string>
+    <string name="activities_geometry_molecule_none_selected">Nothing selected.</string>
+    <!-- The molecule builder, for TalkBack, like "Build CO₂." -->
+    <string name="activities_geometry_molecule_build">Build %1$s.</string>
+    <!-- An atom without bonds, for TalkBack, like "Hydrogen 3 has no bonds." -->
+    <string name="activities_geometry_molecule_loose">%1$s has no bonds.</string>
+    <!-- Above a complete molecule shown after checking. -->
+    <string name="activities_geometry_molecule_example">One correct build</string>
+    <plurals name="activities_geometry_molecule_bonds_in_all">
+        <item quantity="one">%1$d bond in all, counting a double bond as two.</item>
+        <item quantity="other">%1$d bonds in all, counting a double bond as two.</item>
+    </plurals>
+
+    <!-- The badge of an activity where the learner drags a line on a chart; "curve" as in a supply or demand curve. -->
+    <string name="activities_geometry_badge_move_curve">Move a curve</string>
+    <!-- A line's draggable handle on a chart, for TalkBack, like "Move the line Supply". -->
+    <string name="activities_geometry_line_move">Move the line %1$s</string>
+    <!-- A line on a chart that the learner hasn't dragged, like "Supply hasn't moved". -->
+    <string name="activities_geometry_line_unmoved_line">%1$s hasn\'t moved</string>
+    <!-- A line on a chart dragged to the right, like "Supply moved right". -->
+    <string name="activities_geometry_line_moved_right">%1$s moved right</string>
+    <!-- A line on a chart dragged to the left, like "Supply moved left". -->
+    <string name="activities_geometry_line_moved_left">%1$s moved left</string>
+    <!-- A line on a chart dragged up, like "Cost moved up". -->
+    <string name="activities_geometry_line_moved_up">%1$s moved up</string>
+    <!-- A line on a chart dragged down, like "Cost moved down". -->
+    <string name="activities_geometry_line_moved_down">%1$s moved down</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Price per dozen goes up". -->
+    <string name="activities_geometry_line_goes_up">%1$s goes up</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Eggs sold goes down". -->
+    <string name="activities_geometry_line_goes_down">%1$s goes down</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Eggs sold stays the same". -->
+    <string name="activities_geometry_line_stays">%1$s stays the same</string>
+    <!-- A hint under a chart of two lines, before the learner moves either. -->
+    <string name="activities_geometry_line_hint">Drag a line by its handle.</string>
+    <!-- Beside the dashed line showing where a line was before the learner moved it. -->
+    <string name="activities_geometry_line_before">Before</string>
+    <!-- Beside the dashed line showing how the line really moved, after checking the answer. -->
+    <string name="activities_geometry_line_what_happened">What happened</string>
+    <!-- A chart of two lines, for TalkBack: the lines' names, then the vertical axis against the horizontal one, like "A chart of two lines, Supply and Demand, with Price per dozen against Eggs sold." -->
+    <string name="activities_geometry_line_description">A chart of two lines, %1$s and %2$s, with %3$s against %4$s.</string>
+    <!-- A chart of two lines, for TalkBack, before the learner moves either. -->
+    <string name="activities_geometry_line_unmoved">Neither line has moved yet.</string>
+    <!-- After checking, for TalkBack: the value where the two lines now cross, like "The new crossing is at 250." -->
+    <string name="activities_geometry_line_new_crossing">The new crossing is at %1$s.</string>
+</resources>

@@ -10,6 +10,7 @@ import {
   type ScoredResult,
   type ScoredTaskResults,
   type TaskEvalResults,
+  type TaskScoreResult,
   type TestCase,
   getJudgeExpectations,
 } from "./types";
@@ -48,10 +49,6 @@ async function saveScoredResults(taskId: string, modelId: string, results: Score
   await fs.writeFile(filePath, JSON.stringify(taskResults, null, 2));
 }
 
-/**
- * Removes every scored result for one task and model so regenerated outputs
- * cannot be paired with scores from an earlier evaluation.
- */
 export async function deleteModelResults({
   modelId,
   taskId,
@@ -60,6 +57,28 @@ export async function deleteModelResults({
   taskId: string;
 }): Promise<void> {
   await fs.rm(getResultsFilePath(taskId, modelId), { force: true });
+}
+
+export async function removeModelResultRuns({
+  modelId,
+  runIds,
+  taskId,
+}: {
+  modelId: string;
+  runIds: ReadonlySet<string>;
+  taskId: string;
+}): Promise<void> {
+  const results = await loadExistingScoredResults(taskId, modelId);
+
+  if (results.length === 0) {
+    return;
+  }
+
+  await saveScoredResults(
+    taskId,
+    modelId,
+    results.filter((result) => !runIds.has(result.testCase.id)),
+  );
 }
 
 async function scoreOutput({
@@ -73,7 +92,7 @@ async function scoreOutput({
 }): Promise<ScoredResult> {
   logInfo(`Scoring output: ${output.testCaseId}`);
 
-  const scoreResult = task.score
+  const scoreResult: TaskScoreResult = task.score
     ? await task.score({ output: output.output, testCase } as never)
     : await generateScore({
         expectations: getJudgeExpectations(testCase),
@@ -88,6 +107,8 @@ async function scoreOutput({
 
   return {
     categoryScores: scoreResult.categoryScores,
+    classification: scoreResult.classification,
+    judge: scoreResult.judge,
     steps: scoreResult.steps,
     testCase: testCaseWithRun,
   };
@@ -102,7 +123,6 @@ export async function runEval(task: RegisteredTask, modelId: string): Promise<Ta
 
   logInfo(`\nStarting eval for task: ${task.name}, model: [${safeModelId}]`);
 
-  // Load pre-generated outputs
   const modelOutputs = await loadModelOutputs(task.id, modelId);
 
   if (!modelOutputs || modelOutputs.outputs.length === 0) {
@@ -111,11 +131,9 @@ export async function runEval(task: RegisteredTask, modelId: string): Promise<Ta
 
   logInfo(`Found ${modelOutputs.outputs.length} outputs to score`);
 
-  // Load existing scored results
   const existingResults = await loadExistingScoredResults(task.id, modelId);
   logInfo(`Found ${existingResults.length} existing scored results`);
 
-  // Find outputs that haven't been scored yet
   const outputsToScore = modelOutputs.outputs.filter(
     (output) => !isAlreadyScored(existingResults, output.testCaseId),
   );
@@ -173,11 +191,17 @@ function combineOutputsAndResults(
     }
 
     return {
+      cacheReadTokens: output.cacheReadTokens,
+      cacheWriteTokens: output.cacheWriteTokens,
       categoryScores: scored.categoryScores,
+      classification: scored.classification,
       duration: output.duration,
+      extraCalls: output.extraCalls,
       inputTokens: output.inputTokens,
+      judge: scored.judge,
       output: output.output,
       outputTokens: output.outputTokens,
+      reasoningTokens: output.reasoningTokens,
       steps: scored.steps,
       testCase: scored.testCase,
     };
@@ -200,24 +224,6 @@ export const getTaskResults = cache(
       return null;
     }
 
-    const results = scoredResults.flatMap((scored) => {
-      const output = modelOutputs.outputs.find((entry) => entry.testCaseId === scored.testCase.id);
-
-      if (!output) {
-        return [];
-      }
-
-      return {
-        categoryScores: scored.categoryScores,
-        duration: output.duration,
-        inputTokens: output.inputTokens,
-        output: output.output,
-        outputTokens: output.outputTokens,
-        steps: scored.steps,
-        testCase: scored.testCase,
-      };
-    });
-
-    return { modelId, results, taskId };
+    return combineOutputsAndResults(taskId, modelId, modelOutputs.outputs, scoredResults);
   },
 );

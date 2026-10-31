@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mock_result_about_points": "f1676ce633b0df182be5588662f95166a325a575211e015ca079d2249549bdaa",
+  "mock_result_about_range": "488e341c85fe8a1646f0692f5bc47551518650e34d342b95859e9762540ad5ce",
+  "mock_result_after": "0c8f9fc74656f04c91aa972771f309ff6707e8a890594666a96844bb7de30239",
+  "mock_result_already_changed": "6c63814e139002530a2db2f74bb9e36ef40c354a1882565b55c1d38d26c963f4",
+  "mock_result_already_in": "b62ac22d798cda90d7898edfd0d24d7088890bfa7c6dcbe8ba7c06aa4ecf6c32",
+  "mock_result_apply": "7f0d7965d343dd2e03e6035d3ddb81b09399874a6da7798e47010b145fd75186",
+  "mock_result_below_percent": "6b2f7277eb78ffec8d796c0d7afe0ff36ca08ce117a5209fa60506f5ea845f20",
+  "mock_result_blank": "6a20d73e618cb9f8be11638dc675584605cee36d678d80d27504a330d13c5c52",
+  "mock_result_blank_exam_day": "333d94bab123fbc2f573e8cde2b0be4369e44e9563caac25731b74fc1072b690",
+  "mock_result_blank_gain": "e03108645e16097f33f7a568bfc55103fef243f5b7c73b32ebcb7aa138a2bd4e",
+  "mock_result_blank_this_score": "5389820229388da40489ea429e979678f79e766997a2bcbc8ee309aeabe70ec3",
+  "mock_result_by_area": "5db127a0dcaeedaaaed36e1aa3a54ab478ef29651a3a9aed05c85fbcea4c0613",
+  "mock_result_by_test": "f6cf0251356e3618c9ee48049f953ba8bcbae200446d1a47b4e124953eb2b353",
+  "mock_result_by_topic": "1e662e36c3a0898434f112d6b207cf553dcacd1bf86f94d071e3b514561ce208",
+  "mock_result_calibration": "763523c98ed91889ce575c796249d0f4127b08c41f53e2ffdb9dbf21bfc411d7",
+  "mock_result_calibration_detail": "da58a4cc377786ef12400d5c3045862b25a05fef4688d2b473be088ff41dc800",
+  "mock_result_cant_move": "c000410c572bfd5295d0b69ff616f62506ad0cfaef3d8b7dd6dfb8b43ad49b54",
+  "mock_result_consistency": "921b0e9d7be7397a501890b13fe4a62181c70fee47526aea09e860895567caec",
+  "mock_result_consistency_detail": "0e2722b107a61978a422fb00e97f5ad63b299e664893c0dd02f7fd2009b19f3f",
+  "mock_result_continue": "0897f75959b4f02efc8abda3b02612b48cedd47220d35f321b6ad773d5c58177",
+  "mock_result_continue_session": "3cbd6ab2b31dc8c321756c8990cf07875174c562e0b7ad08a7a131a21b02dbc6",
+  "mock_result_done": "afe8cca399366c6b147e78770a51804b41d9bb6c53bbe8231f959ac4a1ace706",
+  "mock_result_down": "416437700fbe774e77f0c045cff7bcfeda43344c47d00564060ec6b3108de864",
+  "mock_result_easy_wrong": "d111c7a927ce1bf1e3ce9721c556370ebaf8dfac31b2df14d29308ddc03a0c4b",
+  "mock_result_eliminated_percent": "623809c7131d8cb69239b9d8035d3ea927ac7d49d9ed49e13c06a29a9ca0877f",
+  "mock_result_eliminated_points": "ad989e5c974d4f0bef7501e350d12242ee8f0fd2b1fe088ee7093edf6e34481b",
+  "mock_result_eliminated_points_decimal": "e59adff59a03f438f729b9d58d5cbc4e1df3a8d25f007c52702e97ee0d1d9914",
+  "mock_result_eliminated_together_percent": "25b91a22d81a16cd95a027f8eabf246cc0a1efa95d1cfb49142250bc00df9977",
+  "mock_result_eliminated_together_points": "d7827f7db29e14a1a3e0b3bff621051d9d5a865a77a262cebdb4ca84d44cafab",
+  "mock_result_eliminated_together_points_decimal": "43a6b82dbc413e8c4f74cb6baa039cda6de2aab555927c3bb37d3bd2d4a84d3b",
+  "mock_result_estimate_detail": "580d13bcf41a6d09ab10ba33dc25d58de2dff5f0d8b99204619dc2e4cc656dc7",
+  "mock_result_estimated_score": "786ce13eb81c8492f34933d5cd044623ce0c0cd92934824a8624b017c7470de6",
+  "mock_result_focus_done": "06e3d9701c2ddea4f4a25e30df6822ff00e36219c2b4cfafb761e07ba8bbb2df",
+  "mock_result_focus_title": "a12f7aa13e4b6cd9bb63ce6db41e6094c677b6c98459ad96438f550664da46b2",
+  "mock_result_grade_it": "3a18c875a628b310118766b06c4172c6d098921d679f56e7c8d18935918d9254",
+  "mock_result_grading": "39f0ac41f32fe2d2677632c3ee71a66f297922334d3a36b686462776f5ddeeb1",
+  "mock_result_grading_failed": "576e6e9dcc9d3a13765a959c026c06596db5367b29240ad199137c98bdef122f",
+  "mock_result_grading_limit": "4caeb9a6d2df08dfb3a4ac1c675b48d866f2f4b37c29507ac06057bb15fb5927",
+  "mock_result_grading_slow": "1225a45cdd1069e72f4580ac1419257a63a4608f656f57818cf4ec6fa48adacc",
+  "mock_result_hard_right": "d88729807a1490c26caab70651d35e55b0515d8bd3052cd7319768da5bd742a9",
+  "mock_result_insights": "6bf0816db71087f57ec94b2697bea682692b80efcd0eb8d7f84d52e8c4b21f3e",
+  "mock_result_keep_answering": "f5c69914804f1599e0b4fbb759f58493072b6efb96343d81ba7ebeb503fe9bc3",
+  "mock_result_keep_plan": "9b4724db14919bca782ba71d78a4b79e8e35585c89feab96433dcbf6df10a22a",
+  "mock_result_left_at_timeout": "c07d8fdd7ef8c7a78bce8b470edd479225f2d589f50db8bc8092b81271dd7ffe",
+  "mock_result_left_blank": "5cef8730f6afcb44f2d729387e7198c7181e2824e54a514f847f8f0bbb00639d",
+  "mock_result_left_out_written_in_full": "cd68f4b4792fa5624a6924ec0d700d37095e40a00144cd1ae945b83362027ae6",
+  "mock_result_lessons_less": "b4f15c506b718c5bad13e39737767a03441def3ad853d1c866e09e075c32059c",
+  "mock_result_meets_minimums": "e9f529eea750aaab16c428ae9bc4abadc00e28e12d9d5423d7507c7dd494d748",
+  "mock_result_mistakes_to_review": "83fa43e64b733dcf4e7aaf7afefdacc08ea15ade4c42deeb90863fb5a1b32b40",
+  "mock_result_more_time": "c905c16b91afa9782458d6201ef7c7468a348af6f83b9379e63a4354bd0924a1",
+  "mock_result_more_topics": "ff93b87e069edf3130e8440e840884641a1e5c20a24c84ecf363f05d49629533",
+  "mock_result_needs_percent": "2d02f3cb373d4544fb048433ee1dc3c1123b3c6538867a8c969522a592d40b4e",
+  "mock_result_needs_points": "3f31a88ecb62ea2a6c6b15fa6d0ce0a0fe59b914741c691411c9f0e3c2658ef8",
+  "mock_result_needs_points_decimal": "15498e50cb6f9e4d00a89ade567e3fbcf5be28468d553168a55a858159b51244",
+  "mock_result_net_score": "e1186422b08224ee76c527bef6ca208695f2c57f68214ab3ca11d27e698e28b1",
+  "mock_result_new": "a9c2295ac6c81f599cfa8924179a48b584e5bba9b8f735c8c332d11d608f4454",
+  "mock_result_no_estimate": "f8f9ec781f96762388ee1ffd7a31f183e204cb086ac616d08adbdc9a3c57cae9",
+  "mock_result_not_done": "60369093e58e2a77c74cb861cb4e65519aadbdbd0c991846d462e21317104684",
+  "mock_result_not_every_task": "88d21302e3ea7506d784176c1268aefe9ecd6c9aa11ecba8798511c57dbe089c",
+  "mock_result_not_graded": "5a08675ce22a3d5c283164f831e76cfd0071490bcb3d932b126a4421d44f96e2",
+  "mock_result_not_now": "7a67b404ab951f9fccc1bf3df9f1518979df3ae68697aae60e0e414f63f28f98",
+  "mock_result_notice_scoring": "cc06c1f2550fa1d32144c2f8f2e7b92377c5f3bbf1aa2aebea18f4ab10ee2191",
+  "mock_result_now": "52274a3f1379db5a8f4156d968aac51a2f454bcde9be6205cd92e1211ea82c2d",
+  "mock_result_of": "bdd019de4a7236e4a2000827e01615b814623a74498c817e6799e914d685666f",
+  "mock_result_off_plan": "7946628183bb1f04e26387b994035012414ca999dee61dee8b7e510c1e52bb49",
+  "mock_result_partly_right": "3556b27162a4a95871fe9b151c48f2b28d8dc43512d0eb3b69fab6d8c2404ef7",
+  "mock_result_partly_right_note": "bdda069a90aa6f7312160bd39b116ef9b8319fee3bb92ae794d0545668c936c1",
+  "mock_result_pass_floor": "4c39c91b9a772a7f2cfcfa898e7c125dc7aa8a26f6d4eb777d10198db9b0a02b",
+  "mock_result_pass_group": "452ad3c1b3a628bb02326b6774c0557ae25de2634bc85d3ec05807223097982e",
+  "mock_result_pass_marks_language": "0c1a9a8b658f02ebe2b1d293551273c2ec6c8428211658edd438252feb706a93",
+  "mock_result_pass_paper": "5ee08634409724028a082afda43e5b06662d3b697f08238d30a9098c2c370d54",
+  "mock_result_pass_score": "c23a2c639f383d046913a86c19047b403fd4b5caef048aef9d09ea34882a340b",
+  "mock_result_plan_not_saved": "82a54a7e566c0f45e5f24f8b64fb230157f0ceb1856a0d42637316caccb47a36",
+  "mock_result_plan_stays": "5d44c822d50768db5d1322ce2e062d069f7a516b7998d6ff972d005b6a77189c",
+  "mock_result_points": "cd2f59bb462ea1e0d9171e23ecebe517d2a7907a9135f0279eb7da79681b3ebb",
+  "mock_result_points_of": "d496fea74312d8ee6fbfbd9b8fa3f4f2992990cefa220cb18b69b7d8e5c6599f",
+  "mock_result_preparation_counts": "5305fac7521366b8aa53bef1b200d4b8ab09c15cff691970cc054dac3ef509c0",
+  "mock_result_preparation_fell": "986ac12cbf0744741af1276c5696afcb7cc1304f4f65419d578d654a323b467f",
+  "mock_result_projected_tests": "5463677d5bb17a48fe4490406639b202e184e10e4deb8a96ac78419cd984c8df",
+  "mock_result_projected_total": "d09073a2af8f5c64adb3fc7f10038c5120dc73e714ce76512b2fccd5c89ef521",
+  "mock_result_qualifying": "6e3c9484e5e17997a14208556e185727a365d2ab965d22d064af25da5b984b4f",
+  "mock_result_question": "824f18f4ba50d37ae948d20c6a795a915def874b1639e0705b8429ca06bd5ba1",
+  "mock_result_question_area": "1ee719c030f72af991fe1f7ecf27f05d5a10c163c0619418122b3ca3b67b1160",
+  "mock_result_range": "01ad869a7062268e7a2ab77e3ac72b2ffe786f7fa5c50d97e4303e20aa2b1e3d",
+  "mock_result_reached_percent": "6e7a04b3e6b89251fab0040d505c958fb9045924a07be5487e8f76fc7ce9f59c",
+  "mock_result_reached_points": "bddd386446f6bdccaf0fb94eae67d57b3439f75dac5b8d126d143e6bd58d85ef",
+  "mock_result_reached_points_decimal": "35b513dfba0f5447f5bcb45bc20a231db98f0d4f74cf1ef86921fb82054c2e44",
+  "mock_result_relative": "be5de44bcc5273773ff2765483a4191b2261a9e2861cade749ead06fd30819f1",
+  "mock_result_review": "742165ee48fe505b8f49539fe2ed3f11afd2db7d7b475cd76e0928fd8cac78de",
+  "mock_result_review_mistake": "fcfb28193a1a09371c38a6a754dee51537c5d8fcd193c0b184f125e4a42e56ed",
+  "mock_result_review_mistakes": "8283d840a26404c4c6000a51bd1bf1d2b210a9c95f3d49a03125ad5d8eee301d",
+  "mock_result_right": "1a340437215b5dc41304857daadf6df08f98ffdba0eab98333a7e9133b688a67",
+  "mock_result_right_answers": "b8f37869d7c79efaa5d5b526721e616d38b1a7abeccf172c43a65673f68e26c5",
+  "mock_result_right_of": "5167a42ce71475be90fc6131a86f1c729c4c4ae2bb56139c802ef41e0098f895",
+  "mock_result_scale": "d7096df108b8413aaed2273a27f465e5c39447e0ce47e30432062e9afb7bf5a4",
+  "mock_result_scale_named": "fd905391b3e4e6f98fba50f02cda4ad63fa071faeda9a9f09db5ce4a1d964103",
+  "mock_result_scale_score": "84e679dffc81cb31dab3647b886520a80a47c63980f7b59b58907e73cfc34c6b",
+  "mock_result_scale_score_named": "7936cbba1e6f7cb505316c5b6c6f48038bf05f9c2d963b6b3dfff16ddc5f2b61",
+  "mock_result_see_feedback": "81e4d2f4db02ab69cc91b86040866b581f084af3c4ba494aefef019eeb24c542",
+  "mock_result_see_plan": "40d2187f99b05b9e4573bf7353d53f48510f96cd4fcabfae57ad3d345da1ff6a",
+  "mock_result_see_question": "0c21a097530833a49f4acca01cda522163800cef9403f3fc8d5c2e1ceeccd5bc",
+  "mock_result_see_questions": "970171da3f455245c7fdd5371b57be25e4f31c8484f3bd4a89b04af4cd168acf",
+  "mock_result_short_points": "f9ebd72f2073aab1507c25cd37b01b90c7adf04898c314c8ce7fbd0a22e303bd",
+  "mock_result_short_points_decimal": "35e9d62ad38c43033e2a9b54fddc49b35cdf9e0b10a5b4321757ea65f2303c3d",
+  "mock_result_shows_right": "f07be278f8ced6ccecacb8654fc5bba7d2b6aa120ae7a3d7f8106e3895e68e46",
+  "mock_result_skip_done": "72afd815f251271c898b034a4b9894f7c1072071e40a05d7e8358a5375e26509",
+  "mock_result_skip_title": "9dcedfb2f398ab7fb91541391b2b93e0eb6f7c42f9ad9dbcc83deadac6fe6919",
+  "mock_result_subjects": "ce299760dbd8557d426e244a6c882fb6d8dc1e6f49227bc6b7f59738e1737ac3",
+  "mock_result_task_not_graded": "e257cb7458dea75be7da3b7a7fee56a6df97f91159af57c2be46f849b737ce0c",
+  "mock_result_tests_together": "31363f54f683d3baef1dded4ed8e831d91560fb38c3c1054f08472807e2bf657",
+  "mock_result_timing": "92b32408930d543d2359f5b1f0eff0ab32b70d7fe3d79478161746f356be5ac8",
+  "mock_result_timing_area": "2850f75a144bcca4604368930bdc56e54980d0e0277111c872b1de2877661e5c",
+  "mock_result_to_pass_guide": "e5fbc93ff40ccecf81e38b17efbcb497a5429d2eb399231893ca021ce40dd9ef",
+  "mock_result_to_pass_notice": "0db25c1d5b47cfc8eebeba6205a69ae3407a87ceabf0307a6bb40b063e237ace",
+  "mock_result_too_short": "856f16e32de928f0e2c457a245af76094e038901def69776e007b2432976f815",
+  "mock_result_typed_estimate": "844b8d40ade252e3b147689c5147522e31d04d20b4bc3fbb31c71ae8160a79c7",
+  "mock_result_typed_no_estimate": "88af6257e279a02108561c0607cb7cdb76360e5d814df9f847712004613891e9",
+  "mock_result_unjudged_percent": "c8e95bc0fab48cd10d9ecf601cf1e63e3c7394cab516e78bb7c279e782c984a0",
+  "mock_result_unjudged_points": "d91e9ad896d0fa37330dfaada54beb0acd28df051b791c184badca2e2dc77ace",
+  "mock_result_unjudged_points_decimal": "1dd51ce7e526a1c40aad8ece856358c3e201590a5e96e5eaa940a23dbec0d67a",
+  "mock_result_unjudged_together_percent": "35a0b9181cc9851a2190aa036637f6d38c946ce320dbbce512e6a278b629bd48",
+  "mock_result_unjudged_together_points": "f7e82a0d73d0be804e284dd58da33a98ce28dfcdc8bdbb56991c327670511c2d",
+  "mock_result_unjudged_together_points_decimal": "6c4eef2b6ea236ff15f3afaa6cc23dea9be8e756f681ad1958e8325d33966e58",
+  "mock_result_up": "47418c2fda33d1ad2ce515c50643c6c37d6182c6f0af9b3cd4ca5cfad49d51f0",
+  "mock_result_written_part": "a84b6e1a11deb5567b7c7599350b19fdb30792ce119065a9429b6024866c9987",
+  "mock_result_wrong": "8bf24bc3ddd634fc87543a0fd5ec5fbd9ccc6ecb6fcdef10d870db115b8b0928",
+  "mock_result_your_plan": "7bab11fffba1ccda2b2510b496c47828eeef93e79e38731fbda21eea43063420",
+  "mock_result_your_preparation": "aefc217f82e056986801c05c4a838a5407f0ee1403c438f79971ef729a216c2b"
+}
+-->
+<resources>
+    <!-- %1$s is the mock's title, such as "Mock exam 3". -->
+    <string name="mock_result_done">%1$s tamamlandı</string>
+    <string name="mock_result_estimated_score">Tahmini puan</string>
+    <string name="mock_result_net_score">%1$d üzerinden net puan</string>
+    <string name="mock_result_right_answers">Doğru cevaplar</string>
+    <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60". -->
+    <string name="mock_result_of">%1$s / %2$d</string>
+    <!-- A score's range, such as "610–680". -->
+    <string name="mock_result_range">%1$s–%2$s</string>
+    <plurals name="mock_result_subjects">
+        <item quantity="one">%d branş</item>
+        <item quantity="other">%d branş</item>
+    </plurals>
+    <string name="mock_result_up">Son deneme sınavına göre +%1$s</string>
+    <!-- %1$s is the drop with its minus sign, such as "−12". -->
+    <string name="mock_result_down">Son deneme sınavına göre %1$s</string>
+    <string name="mock_result_right">Doğru</string>
+    <string name="mock_result_wrong">Yanlış</string>
+    <string name="mock_result_partly_right">Kısmen doğru</string>
+    <string name="mock_result_blank">Boş</string>
+    <string name="mock_result_blank_exam_day">Boş bıraktığın sorular gerçek sınavda olduğu gibi yanlış sayılır.</string>
+    <string name="mock_result_blank_this_score">Bu puan hesaplanırken boş bıraktığın sorular yanlış sayılır.</string>
+    <string name="mock_result_to_pass_notice">İlana göre geçme şartları</string>
+    <string name="mock_result_to_pass_guide">Resmî kılavuza göre geçme şartları</string>
+    <!-- %1$s is a language's name, such as "Portuguese". -->
+    <string name="mock_result_pass_marks_language">Sınav belgelerindeki %1$s ifadelerle.</string>
+    <!-- %1$s is the scale's name, such as "ENEM"; %2$s and %3$s are its lowest and highest scores. -->
+    <string name="mock_result_scale_named">Gerçek sınav, %1$s ölçeğinde %2$s ile %3$s arasında puanlanır.</string>
+    <string name="mock_result_scale">Gerçek sınav %1$s ile %2$s arasında puanlanır.</string>
+    <!-- %1$s is the mock's score on the exam's scale; %2$s is the scale's name; %3$s and %4$s are its lowest and highest scores. -->
+    <string name="mock_result_scale_score_named">Yaklaşık %1$s (%2$s ölçeği: %3$s–%4$s).</string>
+    <string name="mock_result_scale_score">Yaklaşık %1$s puan (sınavın ölçeği: %2$s–%3$s).</string>
+    <string name="mock_result_pass_score">Geçmek için: %1$s veya üzeri.</string>
+    <!-- %1$s is the rule in the notice's own words. -->
+    <string name="mock_result_notice_scoring">Gerçek sınavdaki puanlama: %1$s</string>
+    <string name="mock_result_relative">Gerçek sonucun, seninle aynı sınava giren herkesin başarısına bağlıdır.</string>
+    <string name="mock_result_shows_right">Bu deneme sınavı kaç soruyu doğru cevapladığını gösterir.</string>
+    <string name="mock_result_left_out_written_in_full">%1$s yalnızca tam deneme sınavlarında var.</string>
+    <!-- The label under a mock's score when it's counted in the exam's own points. -->
+    <string name="mock_result_points">Puan</string>
+    <!-- Points earned of the points possible, such as "182 of 260"; either can be a decimal. -->
+    <string name="mock_result_points_of">%1$s / %2$s</string>
+    <!-- A section of a mock's result: one row for each test of the exam, with its points and the least it must reach. -->
+    <string name="mock_result_by_test">Testlere göre</string>
+    <!-- A row for the exam's objective tests counted together, against the least they must reach together. -->
+    <string name="mock_result_tests_together">Nesnel testlerin toplamı</string>
+    <!-- A qualifying test: it only has to reach its minimum, and its points aren't added to the exam's total. -->
+    <string name="mock_result_qualifying">Toplam puana eklenmez</string>
+    <!-- Under a test that missed its minimum. %1$s is its score as a percent of its points, such as "38%"; %2$s is the percent it needs, such as "40%". -->
+    <string name="mock_result_below_percent">%1$s ile gereken %2$s oranının altında</string>
+    <!-- Under a test that missed its minimum. %1$s is how many points it's short, possibly a decimal; %2$s is the points it needs. -->
+    <plurals name="mock_result_short_points">
+        <item quantity="one">%1$s puan eksik; en az %2$s puan gerekiyor</item>
+        <item quantity="other">%1$s puan eksik; en az %2$s puan gerekiyor</item>
+    </plurals>
+    <!-- Under a test that missed its minimum, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is how many points it's short, with decimals; %2$s is the points it needs. -->
+    <string name="mock_result_short_points_decimal">%1$s puan eksik; %2$s puan gerekiyor</string>
+    <!-- Under a test that reached its minimum. %1$s is the percent of its points it needs, such as "40%". -->
+    <string name="mock_result_reached_percent">Gereken %1$s oranına ulaştı</string>
+    <!-- Under a test that reached its minimum. %1$s is the points it needs, possibly a decimal. -->
+    <plurals name="mock_result_reached_points">
+        <item quantity="one">Gereken %1$s puana ulaştı</item>
+        <item quantity="other">Gereken %1$s puana ulaştı</item>
+    </plurals>
+    <!-- Under a test that reached its minimum, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is the points it needs, with decimals. -->
+    <string name="mock_result_reached_points_decimal">Gereken %1$s puana ulaşıldı</string>
+    <!-- Under a test whose minimum this mock can't judge. %1$s is the percent of its points it needs, such as "40%". -->
+    <string name="mock_result_needs_percent">Puanın en az %1$s kadarını almak gerekiyor</string>
+    <!-- Under a test whose minimum this mock can't judge. %1$s is the points it needs, possibly a decimal. -->
+    <plurals name="mock_result_needs_points">
+        <item quantity="one">En az %1$s puan gerekiyor</item>
+        <item quantity="other">En az %1$s puan gerekiyor</item>
+    </plurals>
+    <!-- Under a test whose minimum this mock can't judge, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is the points it needs, with decimals. -->
+    <string name="mock_result_needs_points_decimal">%1$s puan gerekiyor</string>
+    <!-- A full mock's verdict when the objective tests together missed their minimum. %1$s is their score as a percent of their points; %2$s is the percent they need. -->
+    <string name="mock_result_eliminated_together_percent">Elenirdin: nesnel testlerde toplam %1$s ile gereken %2$s oranının altında kaldın.</string>
+    <!-- A full mock's verdict when the objective tests together missed their minimum. %1$s is how many points they're short, possibly a decimal; %2$s is the points they need. -->
+    <plurals name="mock_result_eliminated_together_points">
+        <item quantity="one">Elenirdin: nesnel testlerde toplam %1$s puan eksikle gereken %2$s puana ulaşamadın.</item>
+        <item quantity="other">Elenirdin: nesnel testlerde toplam %1$s puan eksikle gereken %2$s puana ulaşamadın.</item>
+    </plurals>
+    <!-- A full mock's verdict when the objective tests together missed their minimum, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is how many points they're short, with decimals; %2$s is the points they need. -->
+    <string name="mock_result_eliminated_together_points_decimal">Elenirdin: objektif testlerde toplam %1$s puan eksik; %2$s puan gerekiyor.</string>
+    <!-- A full mock's verdict when one test missed its minimum. %1$s is the test, such as "P1"; %2$s is its score as a percent of its points; %3$s is the percent it needs. -->
+    <string name="mock_result_eliminated_percent">Elenirdin: %1$s, %2$s ile gereken %3$s oranının altında kaldı.</string>
+    <!-- A full mock's verdict when one test missed its minimum. %1$s is the test, such as "P1"; %2$s is how many points it's short, possibly a decimal; %3$s is the points it needs. -->
+    <plurals name="mock_result_eliminated_points">
+        <item quantity="one">Elenirdin: %1$s, %2$s puan eksikle gereken %3$s puana ulaşamadı.</item>
+        <item quantity="other">Elenirdin: %1$s, %2$s puan eksikle gereken %3$s puana ulaşamadı.</item>
+    </plurals>
+    <!-- A full mock's verdict when one test missed its minimum, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is the test, such as "P1"; %2$s is how many points it's short, with decimals; %3$s is the points it needs. -->
+    <string name="mock_result_eliminated_points_decimal">Elenirdin: %1$s için %2$s puan eksik; %3$s puan gerekiyor.</string>
+    <string name="mock_result_meets_minimums">Burada kontrol edilen nesnel testlerin alt sınırlarını karşılıyor.</string>
+    <!-- A part of the exam's mock, projected onto the whole exam. %1$s is the projected points; %2$s the exam's most points. -->
+    <string name="mock_result_projected_total">Bu deneme sınavına göre sınavın tamamında yaklaşık %1$s / %2$s puan alabilirsin. Gereken puanlara ulaşıp ulaşamayacağını yalnızca tam bir deneme sınavı gösterir.</string>
+    <string name="mock_result_projected_tests">Her testteki puanına göre testin tamamında alabileceğin puan tahmin edilir. Alt sınırları karşılayıp karşılamayacağını ancak tam bir deneme sınavı gösterir.</string>
+    <!-- A minimum this mock couldn't check. %1$s is the percent of their points the objective tests need together, such as "50%". -->
+    <string name="mock_result_unjudged_together_percent">Nesnel testlerde toplam puanın en az %1$s kadarını almak gerekiyor, ancak bu deneme sınavında testlerin tamamı yok.</string>
+    <!-- A minimum this mock couldn't check. %1$s is the points the objective tests need together, possibly a decimal. -->
+    <plurals name="mock_result_unjudged_together_points">
+        <item quantity="one">Nesnel testlerde toplam en az %1$s puan gerekiyor, ancak bu deneme sınavında testlerin tamamı yok.</item>
+        <item quantity="other">Nesnel testlerde toplam en az %1$s puan gerekiyor, ancak bu deneme sınavında testlerin tamamı yok.</item>
+    </plurals>
+    <!-- A minimum this mock couldn't check, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is the points the objective tests need together, with decimals. -->
+    <string name="mock_result_unjudged_together_points_decimal">Objektif testlerde toplam %1$s puan gerekiyor ve bu deneme sınavında bu testlerin hepsi yer almıyor.</string>
+    <!-- A minimum this mock couldn't check. %1$s is the test, such as "Essay"; %2$s is the percent of its points it needs, such as "50%". -->
+    <string name="mock_result_unjudged_percent">%1$s için en az %2$s almak gerekiyor, ancak bu test bu deneme sınavında yok.</string>
+    <!-- A minimum this mock couldn't check. %1$s is the test, such as "Essay"; %2$s is the points it needs, possibly a decimal. -->
+    <plurals name="mock_result_unjudged_points">
+        <item quantity="one">%1$s için en az %2$s puan gerekiyor, ancak bu test bu deneme sınavında yok.</item>
+        <item quantity="other">%1$s için en az %2$s puan gerekiyor, ancak bu test bu deneme sınavında yok.</item>
+    </plurals>
+    <!-- A minimum this mock couldn't check, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is the test, such as "Essay"; %2$s is the points it needs, with decimals. -->
+    <string name="mock_result_unjudged_points_decimal">Bu deneme sınavında yer almayan %1$s için %2$s puan gerekiyor.</string>
+    <string name="mock_result_by_topic">Konulara göre</string>
+    <string name="mock_result_by_area">Alanlara göre</string>
+    <plurals name="mock_result_more_topics">
+        <item quantity="one">%d konu daha</item>
+        <item quantity="other">%d konu daha</item>
+    </plurals>
+    <string name="mock_result_insights">Deneme sınavının gösterdikleri</string>
+    <string name="mock_result_timing">Süre</string>
+    <!-- %1$d is the seconds the learner took per question in one subject; %2$s is that subject's name, such as "Mathematics"; %3$s is the seconds to aim for. -->
+    <plurals name="mock_result_timing_area">
+        <item quantity="one">Soru başına %1$d saniye harcadın (%2$s). %3$s veya daha azını hedefle.</item>
+        <item quantity="other">Soru başına %1$d saniye harcadın (%2$s). %3$s veya daha azını hedefle.</item>
+    </plurals>
+    <plurals name="mock_result_left_at_timeout">
+        <item quantity="one">Süre dolduğunda %d soru kalmıştı.</item>
+        <item quantity="other">Süre dolduğunda %d soru kalmıştı.</item>
+    </plurals>
+    <string name="mock_result_consistency">Tutarlılık</string>
+    <!-- Read with mock_result_consistency_detail: "3 easy ones wrong, 2 hard ones right." -->
+    <plurals name="mock_result_easy_wrong">
+        <item quantity="one">%d kolay soru yanlış</item>
+        <item quantity="other">%d kolay soru yanlış</item>
+    </plurals>
+    <plurals name="mock_result_hard_right">
+        <item quantity="one">%d zor soru doğru</item>
+        <item quantity="other">%d zor soru doğru</item>
+    </plurals>
+    <!-- %1$s is mock_result_easy_wrong, %2$s is mock_result_hard_right. -->
+    <string name="mock_result_consistency_detail">%1$s, %2$s. Bu durum puanına olumsuz yansır: önce kolay soruları gözden geçir.</string>
+    <string name="mock_result_calibration">Ne zaman boş bırakmalısın</string>
+    <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
+    <plurals name="mock_result_right_of">
+        <item quantity="one">%1$d / %2$d doğru</item>
+        <item quantity="other">%1$d / %2$d doğru</item>
+    </plurals>
+    <!-- %1$s is how the sure answers went, %2$s how those flagged as unsure went, each a mock_result_right_of. -->
+    <string name="mock_result_calibration_detail">Emin oldukların: %1$s. Emin olmadığını belirttiklerin: %2$s.</string>
+    <!-- %1$s can be a decimal, such as "1.5". -->
+    <plurals name="mock_result_blank_gain">
+        <item quantity="one">Emin olmadıklarını boş bıraksaydın %1$s puan daha alırdın.</item>
+        <item quantity="other">Emin olmadıklarını boş bıraksaydın %1$s puan daha alırdın.</item>
+    </plurals>
+    <string name="mock_result_keep_answering">Emin olmadığın sorulardan da puan kazandın, bu yüzden emin olmasan da cevaplamaya devam et.</string>
+    <string name="mock_result_review">Gözden geçirilecek sorular</string>
+    <string name="mock_result_see_question">Soruyu gör</string>
+    <plurals name="mock_result_see_questions">
+        <item quantity="one">%d soruyu gör</item>
+        <item quantity="other">%d soruyu gör</item>
+    </plurals>
+    <!-- %2$s is the question's subject, such as "Mathematics". -->
+    <string name="mock_result_question_area">Soru %1$d · %2$s</string>
+    <string name="mock_result_question">Soru %1$d</string>
+    <string name="mock_result_left_blank">Boş bıraktın.</string>
+    <string name="mock_result_partly_right_note">Kısmen doğru: bu sorudan kısmi puan aldın.</string>
+    <string name="mock_result_written_part">Yazılı bölüm · %1$d / %2$d</string>
+    <string name="mock_result_too_short">Not verilemeyecek kadar kısa</string>
+    <string name="mock_result_grading">Sınavın değerlendirme ölçütlerine göre not veriyoruz. 30 saniyeye kadar sürebilir.</string>
+    <string name="mock_result_grading_slow">Değerlendirmeye devam ediyoruz. Normalden uzun sürüyor.</string>
+    <string name="mock_result_grading_failed">İşlem tamamlanamadı. Birazdan tekrar dene.</string>
+    <string name="mock_result_not_graded">Henüz not verilmedi.</string>
+    <string name="mock_result_grading_limit">Bugünkü kompozisyon değerlendirme haklarını kullandın. Yarın tekrar dene.</string>
+    <string name="mock_result_grade_it">Değerlendir</string>
+    <string name="mock_result_no_estimate">Tahmin yok</string>
+    <!-- %1$s is the estimated points, %2$s the paper's total. -->
+    <string name="mock_result_about_points">Yaklaşık %1$s / %2$s</string>
+    <string name="mock_result_about_range">Yaklaşık %1$s–%2$s / %3$s</string>
+    <string name="mock_result_estimate_detail">Bu bir tahmin, resmî puan değil.</string>
+    <string name="mock_result_not_every_task">Tüm bölümler tamamlanmadığı için bu oturumun puan tahmini yok.</string>
+    <string name="mock_result_typed_no_estimate">En az bir bölümde yazarak yanıt verdin. Yazılı yanıtlar nasıl konuştuğunu göstermediği için konuşma kısmının puan tahmini yok. Bir dahaki sefere tahmin almak için her bölümde sesli yanıt ver.</string>
+    <string name="mock_result_task_not_graded">Bir bölüm değerlendirilemediği için konuşma kısmının puan tahmini yok.</string>
+    <string name="mock_result_typed_estimate">En az bir bölümde yanıtını yazdığın için o bölümdeki konuşma becerin puan tahminine dahil edilmedi.</string>
+    <!-- %1$s is the points the exam asks for, %2$s the points of this paper and listening together. -->
+    <string name="mock_result_pass_group">Bu bölüm ve dinlemenin toplamında en az %1$s gerekiyor (toplam %2$s üzerinden).</string>
+    <string name="mock_result_pass_paper">Bu bölümden en az %1$s alman gerekiyor.</string>
+    <string name="mock_result_pass_floor">Bu bölümden en az %1$s almazsan sınavı geçemezsin.</string>
+    <string name="mock_result_see_feedback">Geri bildirimi gör</string>
+    <string name="mock_result_not_done">Tamamlanmadı</string>
+    <string name="mock_result_your_preparation">Hazırlığın</string>
+    <string name="mock_result_your_plan">Planın</string>
+    <string name="mock_result_preparation_fell">Deneme sınavı eksik kalanları gösterdi.</string>
+    <string name="mock_result_preparation_counts">Bu deneme sınavındaki sonuçların hazırlık düzeyine yansıyor.</string>
+    <plurals name="mock_result_skip_title">
+        <item quantity="one">%d konuda tüm soruları doğru yaptın</item>
+        <item quantity="other">%d konuda tüm soruları doğru yaptın</item>
+    </plurals>
+    <!-- %1$s is a subject, such as "Mathematics". -->
+    <string name="mock_result_focus_title">%1$s için daha fazla zaman ayıralım mı?</string>
+    <plurals name="mock_result_lessons_less">
+        <item quantity="one">%d ders daha az</item>
+        <item quantity="other">%d ders daha az</item>
+    </plurals>
+    <!-- %1$s is a subject, %2$s how it went, such as "4 of 10 right". -->
+    <string name="mock_result_more_time">%1$s için daha fazla zaman (%2$s)</string>
+    <string name="mock_result_new">Yeni</string>
+    <string name="mock_result_off_plan">Planından çıkanlar</string>
+    <string name="mock_result_apply">Uygula</string>
+    <string name="mock_result_keep_plan">Planımı koru</string>
+    <string name="mock_result_plan_stays">Planın olduğu gibi kalıyor.</string>
+    <string name="mock_result_plan_not_saved">Kaydedilemedi. Tekrar dene.</string>
+    <plurals name="mock_result_skip_done">
+        <item quantity="one">Tamam: planından %d ders çıkarıldı.</item>
+        <item quantity="other">Tamam: planından %d ders çıkarıldı.</item>
+    </plurals>
+    <string name="mock_result_focus_done">Tamamlandı: planın artık bu alana daha fazla zaman ayırıyor.</string>
+    <string name="mock_result_already_in">Planında bu alanın tüm dersleri zaten var, bu yüzden değişiklik gerekmedi.</string>
+    <string name="mock_result_cant_move">Gerekli ön bilgiler nedeniyle zaten mümkün olan en erken tarihte başlıyor.</string>
+    <string name="mock_result_already_changed">Planın zaten değişti, bu yüzden burada yapılacak bir şey kalmadı.</string>
+    <string name="mock_result_after">Bu deneme sınavından sonra</string>
+    <string name="mock_result_now">Şimdi</string>
+    <plurals name="mock_result_mistakes_to_review">
+        <item quantity="one">Gözden geçirilecek %d hata</item>
+        <item quantity="other">Gözden geçirilecek %d hata</item>
+    </plurals>
+    <string name="mock_result_see_plan">Planımı gör</string>
+    <string name="mock_result_continue">Devam et</string>
+    <string name="mock_result_review_mistake">Hatayı gözden geçir</string>
+    <plurals name="mock_result_review_mistakes">
+        <item quantity="one">%d hatayı gözden geçir</item>
+        <item quantity="other">%d hatayı gözden geçir</item>
+    </plurals>
+    <string name="mock_result_continue_session">Bugünkü çalışmana devam et</string>
+    <string name="mock_result_not_now">Sonraya bırak</string>
+</resources>

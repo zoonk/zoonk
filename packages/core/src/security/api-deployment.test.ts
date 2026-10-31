@@ -2,9 +2,6 @@ import { getVercelOidcToken } from "@vercel/oidc";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getApiDeploymentHeaders } from "./api-deployment";
 
-/** Vercel Function credentials are an external provider boundary unavailable in local tests. */
-vi.mock("@vercel/oidc", () => ({ getVercelOidcToken: vi.fn() }));
-
 describe("API deployment authentication", () => {
   beforeEach(() => {
     vi.mocked(getVercelOidcToken).mockResolvedValue("provider-token");

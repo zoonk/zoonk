@@ -1,4 +1,3 @@
-// Zoonk routes, products, features, locale codes, and HTTP status codes
 export const zoonkSpecific = [
   "catalog",
   "courses",

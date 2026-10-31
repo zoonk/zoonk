@@ -1,8 +1,9 @@
 import Foundation
 import Observation
 
+/// A bearer token belongs to one account, so the token is the identity: a restored session is the
+/// same before and after `GET /me` names its account.
 struct AuthenticatedSession: Hashable, Sendable {
-  let accountID: String
   let bearerToken: String
 }
 
@@ -11,16 +12,29 @@ struct AuthenticatedSession: Hashable, Sendable {
 final class SessionStore {
   private(set) var failure: AccountFailure?
   private(set) var isWorking = false
-  private(set) var state = AccountSessionState.restoring
+  private(set) var state = AccountSessionState.restoring {
+    didSet {
+      if oldValue.account?.account.subscription != account?.account.subscription {
+        subscriptionChanged?()
+      }
+    }
+  }
+  /// A purchase, a restore, a web cancellation, StoreKit's updates and the account refresh all
+  /// change it here, with or without a window open.
+  @ObservationIgnored var subscriptionChanged: (@MainActor () -> Void)?
 
   private let api: any AccountAPIClient
   private let credentialStore: any SessionCredentialStoring
   private let googleAuthentication: any GoogleAuthenticating
   private let skipsCredentialReconciliation: Bool
   private var interactiveOperationRevision = UUID()
+  private var accountRefreshRevision = UUID()
+  private var workingOperationRevision: UUID?
   private var isReconciling = false
   private var didRestore = false
   private var token: String?
+  /// The Keychain's token while launch validates it, so the launch reads start alongside `GET /me`.
+  private var restoringToken: String?
 
   private enum StoredCredentialValidation {
     case active(CurrentAccount)
@@ -49,22 +63,23 @@ final class SessionStore {
   }
 
   var account: CurrentAccount? {
-    guard case .signedIn(let account) = state else {
-      return nil
-    }
-
-    return account
+    state.account
   }
 
   var authenticatedSession: AuthenticatedSession? {
-    guard let account, let token else {
+    if account != nil, let token {
+      return AuthenticatedSession(bearerToken: token)
+    }
+
+    guard state == .restoring, let restoringToken else {
       return nil
     }
 
-    return AuthenticatedSession(accountID: account.user.id, bearerToken: token)
+    return AuthenticatedSession(bearerToken: restoringToken)
   }
 
-  /// Clears an expired bearer token only when both memory and the synchronized Keychain still contain that session, preventing a late response from deleting a newer credential from another device.
+  /// Only when memory and the Keychain still hold that session, so a late response never deletes a
+  /// newer credential from another device.
   func expire(_ authenticatedSession: AuthenticatedSession) async {
     guard self.authenticatedSession == authenticatedSession else {
       return
@@ -96,19 +111,19 @@ final class SessionStore {
     googleAuthentication.isAvailable
   }
 
-  /// Supplies isolated session state to SwiftUI previews and Debug UI runs without reading the user's Keychain.
   static func preview(account: CurrentAccount? = nil) -> SessionStore {
     let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
     let api = AccountAPI(clients: clients)
+    let token = account == nil ? nil : "preview-session"
     let store = SessionStore(
       api: api,
-      credentialStore: InMemorySessionCredentialStore(),
+      credentialStore: InMemorySessionCredentialStore(token: token),
       googleAuthentication: GoogleAuthenticationClient(),
       skipsCredentialReconciliation: true)
     store.didRestore = true
+    store.token = token
 
     if let account {
-      store.token = "preview-session"
       store.state = .signedIn(account)
     } else {
       store.state = .signedOut
@@ -117,7 +132,6 @@ final class SessionStore {
     return store
   }
 
-  /// Restores a synchronized bearer token and validates it with the server before showing any authenticated account data.
   func restore() async {
     guard !skipsCredentialReconciliation, !didRestore, !isReconciling, !isWorking else {
       return
@@ -127,31 +141,32 @@ final class SessionStore {
     isReconciling = true
     state = .restoring
     failure = nil
-    defer { isReconciling = false }
+    defer {
+      isReconciling = false
+      restoringToken = nil
+    }
 
     if !(await loadLatestCredential()) {
       didRestore = false
     }
   }
 
-  /// Retries validation after a temporary service or connectivity failure without discarding the still-valid Keychain token.
   func retryRestore() async {
     guard !isReconciling, !isWorking else {
       return
     }
 
     isReconciling = true
-    isWorking = true
+    let workingRevision = startWorkingOperation()
     failure = nil
     defer {
       isReconciling = false
-      isWorking = false
+      finishWorkingOperation(workingRevision)
     }
 
     _ = await loadLatestCredential()
   }
 
-  /// Reconciles the in-memory account with iCloud Keychain after another Apple device adds, replaces, or removes the shared session credential.
   func reconcileSynchronizedCredential() async {
     guard !skipsCredentialReconciliation, didRestore, !isReconciling, !isWorking else {
       return
@@ -163,12 +178,11 @@ final class SessionStore {
     _ = await loadLatestCredential()
   }
 
-  /// Begins the localized email flow without changing the session until the user proves ownership with the received code.
   func sendEmailCode(email: String) async -> Bool {
     markInteractiveOperationStarted()
-    isWorking = true
+    let workingRevision = startWorkingOperation()
     failure = nil
-    defer { isWorking = false }
+    defer { finishWorkingOperation(workingRevision) }
 
     do {
       try await api.sendEmailCode(email: email)
@@ -179,46 +193,104 @@ final class SessionStore {
     }
   }
 
-  /// Completes email sign-in and persists only the resulting Zoonk session, never the one-time code.
+  /// Uses the account's own bearer, without creating or refreshing a session.
+  func sendAccountDeletionEmailCode() async -> Bool {
+    guard let authenticatedSession, let account else { return false }
+
+    markInteractiveOperationStarted()
+    let revision = interactiveOperationRevision
+    let workingRevision = startWorkingOperation()
+    failure = nil
+    defer { finishWorkingOperation(workingRevision) }
+
+    do {
+      try await api.sendEmailCode(
+        email: account.user.email, token: authenticatedSession.bearerToken)
+      return isCurrentAccountSession(authenticatedSession)
+    } catch {
+      guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
+        return false
+      }
+      switch error as? AccountAPIError {
+      case .botDetected: failure = .botDetected
+      case .disposableEmail: failure = .disposableEmail
+      case .invalidEmail: failure = .invalidEmail
+      case .network: failure = .network
+      case .rateLimited: failure = .rateLimited
+      default: failure = .emailCodeDelivery
+      }
+      return false
+    }
+  }
+
   func signInWithEmailCode(email: String, code: String) async {
     markInteractiveOperationStarted()
-    isWorking = true
+    let workingRevision = startWorkingOperation()
     failure = nil
-    defer { isWorking = false }
+    defer { finishWorkingOperation(workingRevision) }
 
     do {
-      let token = try await api.signInWithEmailCode(email: email, code: code)
+      let token = try await api.signInWithEmailCode(
+        email: email, code: code, guestToken: self.token)
       try await completeSignIn(token: token)
     } catch {
       failure = getFailure(error)
     }
   }
 
-  /// Sends Apple's native credential to the API and stores only the Zoonk session returned after server verification.
+  /// True once a session exists. A session that starts while the guest is being made stays, and
+  /// the guest goes unused.
+  func continueAsGuest() async -> Bool {
+    if authenticatedSession != nil {
+      return true
+    }
+
+    markInteractiveOperationStarted()
+    let workingRevision = startWorkingOperation()
+    failure = nil
+    defer { finishWorkingOperation(workingRevision) }
+
+    do {
+      let token = try await api.signInAsGuest()
+      let account = try await api.getCurrentAccount(token: token)
+
+      guard authenticatedSession == nil else {
+        return true
+      }
+
+      try credentialStore.save(token)
+      self.token = token
+      state = .signedIn(account)
+      return true
+    } catch {
+      failure = getFailure(error)
+      return false
+    }
+  }
+
   func signInWithApple(_ credentials: AppleSignInCredentials) async {
     markInteractiveOperationStarted()
-    isWorking = true
+    let workingRevision = startWorkingOperation()
     failure = nil
-    defer { isWorking = false }
+    defer { finishWorkingOperation(workingRevision) }
 
     do {
-      let token = try await api.signInWithApple(credentials)
+      let token = try await api.signInWithApple(credentials, guestToken: self.token)
       try await completeSignIn(token: token)
     } catch {
       failure = getFailure(error)
     }
   }
 
-  /// Uses Google's native SDK to obtain a signed ID token, then asks Better Auth to verify it and create the Zoonk session.
   func signInWithGoogle(from anchor: GoogleAuthenticationAnchor) async {
     markInteractiveOperationStarted()
-    isWorking = true
+    let workingRevision = startWorkingOperation()
     failure = nil
-    defer { isWorking = false }
+    defer { finishWorkingOperation(workingRevision) }
 
     do {
       let identityToken = try await googleAuthentication.signIn(from: anchor)
-      let token = try await api.signInWithGoogle(idToken: identityToken)
+      let token = try await api.signInWithGoogle(idToken: identityToken, guestToken: self.token)
       try await completeSignIn(token: token)
     } catch GoogleAuthenticationError.canceled {
       failure = nil
@@ -228,12 +300,131 @@ final class SessionStore {
     }
   }
 
-  /// Returns Google OAuth callbacks to the SDK instance that owns the active native sign-in flow.
   func handleGoogleSignInURL(_ url: URL) {
     googleAuthentication.handle(url)
   }
 
-  /// Saves first-time setup and later profile edits through the same authenticated product API.
+  /// What profile setup offers a new account; nil when every one is taken or it didn't load.
+  func usernameSuggestion() async -> String? {
+    guard let authenticatedSession else {
+      return nil
+    }
+
+    return try? await api.getUsernameSuggestion(token: authenticatedSession.bearerToken)
+  }
+
+  /// Nil when the check didn't answer; saving decides then.
+  func isUsernameAvailable(_ username: String) async -> Bool? {
+    try? await api.isUsernameAvailable(username)
+  }
+
+  /// Nothing left to cancel refreshes the account. A session that ended meanwhile fails; an
+  /// unauthorized answer signs that session out.
+  func webPlusCancellation() async -> WebPlusCancellationPreview {
+    guard let authenticatedSession else {
+      return .failed
+    }
+
+    do {
+      let cancellation = try await api.webPlusCancellation(token: authenticatedSession.bearerToken)
+      return self.authenticatedSession == authenticatedSession ? .choices(cancellation) : .failed
+    } catch AccountAPIError.noWebSubscription {
+      guard self.authenticatedSession == authenticatedSession else {
+        return .failed
+      }
+
+      await reloadAccount(for: authenticatedSession)
+      return .nothingToCancel
+    } catch AccountAPIError.unauthorized {
+      await expire(authenticatedSession)
+      return .failed
+    } catch {
+      return .failed
+    }
+  }
+
+  /// Refreshes the account once Plus is canceled or the choice closed. A session that ended
+  /// meanwhile fails; an unauthorized answer signs that session out.
+  func cancelWebPlus(withdraw: Bool) async -> WebPlusCancellationResult {
+    guard let authenticatedSession else {
+      return .failed
+    }
+
+    let result: WebPlusCancellationResult
+    do {
+      let refund = try await api.cancelWebPlus(
+        token: authenticatedSession.bearerToken, withdraw: withdraw)
+      result = .canceled(refund: refund)
+    } catch AccountAPIError.cancellationChoiceClosed {
+      result = .choiceClosed
+    } catch AccountAPIError.unauthorized {
+      await expire(authenticatedSession)
+      return .failed
+    } catch {
+      return .failed
+    }
+
+    guard self.authenticatedSession == authenticatedSession else {
+      return .failed
+    }
+
+    // A closed choice can leave the account as it was while what's left to cancel changed.
+    subscriptionChanged?()
+    await reloadAccount(for: authenticatedSession)
+    return result
+  }
+
+  /// False when it failed. Plus renewing again, or a renewal that can't be turned back on anymore,
+  /// refreshes the account and what's left to cancel; Plus renewing again shows even when that read
+  /// fails, unless the account changed meanwhile. A session that ended meanwhile fails; an
+  /// unauthorized answer signs that session out.
+  func keepWebPlus() async -> Bool {
+    guard let authenticatedSession else {
+      return false
+    }
+
+    let keepRevision = accountRefreshRevision
+    let renews: Bool
+    do {
+      try await api.keepWebPlus(token: authenticatedSession.bearerToken)
+      renews = true
+    } catch AccountAPIError.cancellationChoiceClosed {
+      renews = false
+    } catch AccountAPIError.unauthorized {
+      await expire(authenticatedSession)
+      return false
+    } catch {
+      return false
+    }
+
+    guard self.authenticatedSession == authenticatedSession else {
+      return false
+    }
+
+    if renews, accountRefreshRevision == keepRevision, var account {
+      account.account.subscription?.cancelAt = nil
+      state = .signedIn(account)
+    }
+
+    subscriptionChanged?()
+    await reloadAccount(for: authenticatedSession)
+    return true
+  }
+
+  /// A refresh that started before the change must not bring back the account it replaced.
+  private func reloadAccount(for session: AuthenticatedSession) async {
+    accountRefreshRevision = UUID()
+    let revision = accountRefreshRevision
+
+    guard let account = try? await api.getCurrentAccount(token: session.bearerToken),
+      isCurrentAccountSession(session), accountRefreshRevision == revision
+    else {
+      return
+    }
+
+    state = .signedIn(account)
+  }
+
   func updateProfile(name: String, username: String) async -> Bool {
     guard let authenticatedSession else {
       state = .signedOut
@@ -242,9 +433,10 @@ final class SessionStore {
 
     markInteractiveOperationStarted()
     let profileRevision = interactiveOperationRevision
-    isWorking = true
+    let profileRefreshRevision = accountRefreshRevision
+    let workingRevision = startWorkingOperation()
     failure = nil
-    defer { isWorking = false }
+    defer { finishWorkingOperation(workingRevision) }
 
     do {
       let updatedAccount = try await api.updateProfile(
@@ -254,7 +446,8 @@ final class SessionStore {
 
       guard
         self.authenticatedSession == authenticatedSession,
-        interactiveOperationRevision == profileRevision
+        interactiveOperationRevision == profileRevision,
+        accountRefreshRevision == profileRefreshRevision
       else {
         return false
       }
@@ -277,7 +470,7 @@ final class SessionStore {
     }
   }
 
-  /// Keeps App Store access available on every Zoonk client by recording Apple's signed transaction on the authenticated server account before StoreKit finishes it.
+  /// Records Apple's signed transaction on the server before StoreKit finishes it.
   func synchronizeAppleSubscription(
     signedTransaction: String,
     expectedAccountID: String?
@@ -295,18 +488,21 @@ final class SessionStore {
       return .accountMismatch
     }
 
-    markInteractiveOperationStarted()
-    let synchronizationRevision = interactiveOperationRevision
+    let authenticatedSession = AuthenticatedSession(bearerToken: token)
+    accountRefreshRevision = UUID()
+    let synchronizationRevision = accountRefreshRevision
 
     do {
       let synchronization = try await api.synchronizeAppleSubscription(
         token: token,
         signedTransaction: signedTransaction)
 
-      if self.token == token, interactiveOperationRevision == synchronizationRevision {
+      if isCurrentAccountSession(authenticatedSession),
+        accountRefreshRevision == synchronizationRevision
+      {
         // A same-session refresh may have started while the server recorded this purchase. Its
         // older account snapshot must not replace the subscription state returned here.
-        markInteractiveOperationStarted()
+        accountRefreshRevision = UUID()
         failure = nil
         state = .signedIn(synchronization.account)
       }
@@ -328,7 +524,8 @@ final class SessionStore {
     }
   }
 
-  /// Revokes the shared bearer session before clearing local state so a failed request can be retried and another running Apple device never keeps an unrevoked credential.
+  /// Revokes the bearer session before clearing local state, so a failed request can be retried and
+  /// no other device keeps an unrevoked credential.
   func signOut() async {
     guard let token else {
       _ = clearLocalSession()
@@ -336,9 +533,9 @@ final class SessionStore {
     }
 
     markInteractiveOperationStarted()
-    isWorking = true
+    let workingRevision = startWorkingOperation()
     failure = nil
-    defer { isWorking = false }
+    defer { finishWorkingOperation(workingRevision) }
 
     do {
       try await api.signOut(token: token)
@@ -353,26 +550,45 @@ final class SessionStore {
     _ = clearLocalSession()
   }
 
-  /// Attempts immediate deletion for non-Apple accounts and reports when Better Auth requires a newer proof of identity instead of weakening its freshness check.
   func deleteAccount() async -> AccountDeletionResult {
-    guard let token else {
+    guard let authenticatedSession else {
       return .failed
     }
 
+    let token = authenticatedSession.bearerToken
     markInteractiveOperationStarted()
-    isWorking = true
+    let revision = interactiveOperationRevision
+    let workingRevision = startWorkingOperation()
     failure = nil
-    defer { isWorking = false }
+    defer { finishWorkingOperation(workingRevision) }
 
     do {
       let response = try await api.deleteAccount(token: token)
+      guard isCurrentAccountSession(authenticatedSession) else {
+        return .failed
+      }
       return completeAccountDeletion(response)
     } catch AccountAPIError.reauthenticationRequired {
+      guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
+        return .failed
+      }
       return .emailReauthenticationRequired
     } catch AccountAPIError.unauthorized {
+      guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
+        return .failed
+      }
       return clearLocalSession() ? .signedOut : .failed
     } catch {
-      let reconciliation = await reconcileAmbiguousDeletion(after: error, token: token)
+      guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
+        return .failed
+      }
+      let reconciliation = await reconcileAmbiguousDeletion(
+        after: error, session: authenticatedSession, revision: revision)
+
+      guard
+        isCurrentAccountOperation(authenticatedSession, revision: revision)
+          || reconciliation == .signedOut
+      else { return .failed }
 
       if reconciliation == .signedOut {
         return .signedOut
@@ -383,30 +599,52 @@ final class SessionStore {
     }
   }
 
-  /// Supplies a fresh credential from the official Apple authorization sheet to the server's atomic deletion operation, then reports any manual provider cleanup that remains.
   func deleteAccount(reauthorizedWith credentials: AppleSignInCredentials) async
     -> AccountDeletionResult
   {
-    guard let token else {
+    guard let authenticatedSession else {
       return .failed
     }
 
+    let token = authenticatedSession.bearerToken
     markInteractiveOperationStarted()
-    isWorking = true
+    let revision = interactiveOperationRevision
+    let workingRevision = startWorkingOperation()
     failure = nil
-    defer { isWorking = false }
+    defer { finishWorkingOperation(workingRevision) }
 
     do {
       let response = try await api.deleteAccount(token: token, appleCredentials: credentials)
+      guard isCurrentAccountSession(authenticatedSession) else {
+        return .failed
+      }
       return completeAccountDeletion(response)
     } catch AccountAPIError.appleCredentialMismatch {
+      guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
+        return .failed
+      }
       return .emailReauthenticationRequired
     } catch AccountAPIError.reauthenticationRequired {
+      guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
+        return .failed
+      }
       return .emailReauthenticationRequired
     } catch AccountAPIError.unauthorized {
+      guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
+        return .failed
+      }
       return clearLocalSession() ? .signedOut : .failed
     } catch {
-      let reconciliation = await reconcileAmbiguousDeletion(after: error, token: token)
+      guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
+        return .failed
+      }
+      let reconciliation = await reconcileAmbiguousDeletion(
+        after: error, session: authenticatedSession, revision: revision)
+
+      guard
+        isCurrentAccountOperation(authenticatedSession, revision: revision)
+          || reconciliation == .signedOut
+      else { return .failed }
 
       switch reconciliation {
       case .accountExists:
@@ -422,32 +660,53 @@ final class SessionStore {
     }
   }
 
-  /// Sends the fixed account email and OTP with the original session so the server can verify and consume the code without invoking the signup-capable login endpoint.
+  /// Uses the original session, so the server consumes the code without the signup-capable login
+  /// endpoint.
   func deleteAccount(
     reauthorizedEmail email: String,
     code: String
   ) async -> AccountDeletionResult {
-    guard let token else {
+    guard let authenticatedSession else {
       return .failed
     }
 
+    let token = authenticatedSession.bearerToken
     markInteractiveOperationStarted()
-    isWorking = true
+    let revision = interactiveOperationRevision
+    let workingRevision = startWorkingOperation()
     failure = nil
-    defer { isWorking = false }
+    defer { finishWorkingOperation(workingRevision) }
 
     do {
       let response = try await api.deleteAccount(
         token: token,
         emailCredentials: EmailReauthenticationCredentials(email: email, otp: code))
+      guard isCurrentAccountSession(authenticatedSession) else {
+        return .failed
+      }
       return completeAccountDeletion(response)
     } catch AccountAPIError.accountMismatch {
+      guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
+        return .failed
+      }
       failure = .accountMismatch
       return .failed
     } catch AccountAPIError.unauthorized {
+      guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
+        return .failed
+      }
       return clearLocalSession() ? .signedOut : .failed
     } catch {
-      let reconciliation = await reconcileAmbiguousDeletion(after: error, token: token)
+      guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
+        return .failed
+      }
+      let reconciliation = await reconcileAmbiguousDeletion(
+        after: error, session: authenticatedSession, revision: revision)
+
+      guard
+        isCurrentAccountOperation(authenticatedSession, revision: revision)
+          || reconciliation == .signedOut
+      else { return .failed }
 
       if reconciliation == .signedOut {
         return .signedOut
@@ -458,18 +717,16 @@ final class SessionStore {
     }
   }
 
-  /// Lets native authorization adapters report a recoverable failure without exposing provider-specific error details in UI state.
   func reportSignInFailure() {
     markInteractiveOperationStarted()
     failure = .signIn
   }
 
-  /// Clears an inline error when the user changes inputs or begins another recovery attempt.
   func clearFailure() {
     failure = nil
   }
 
-  /// Validates a new session before persisting it so the app never restores a bearer token that cannot load its account.
+  /// Validates before persisting, so the app never restores a token that can't load its account.
   private func completeSignIn(token: String) async throws {
     let account = try await api.getCurrentAccount(token: token)
     try credentialStore.save(token)
@@ -477,7 +734,8 @@ final class SessionStore {
     state = .signedIn(account)
   }
 
-  /// Refuses to report a signed-out state until the synchronizable bearer token is gone, preventing a failed Keychain write from restoring a stale session later.
+  /// False while the Keychain still holds the token, so a failed delete never restores a stale
+  /// session later.
   private func clearLocalSession() -> Bool {
     googleAuthentication.signOut()
 
@@ -489,12 +747,12 @@ final class SessionStore {
       return false
     }
 
+    markInteractiveOperationStarted()
     token = nil
     state = .signedOut
     return true
   }
 
-  /// Clears local credentials after server deletion and preserves Apple's manual fallback when the API cannot confirm that Sign in with Apple authorization was revoked.
   private func completeAccountDeletion(_ response: AccountDeletionResponse)
     -> AccountDeletionResult
   {
@@ -502,15 +760,18 @@ final class SessionStore {
       return .failed
     }
 
+    failure = nil
     return response.appleAuthorizationRevoked == false
       ? .deletedWithManualAppleRevocation
       : .deleted
   }
 
-  /// Rechecks an indeterminate DELETE without claiming success from an invalid bearer token. An active account remains signed in; an unauthorized response clears unusable local credentials and returns to signed-out UI because it cannot prove whether deletion committed.
+  /// Never claims success from an invalid bearer: an unauthorized response signs out, since it can't
+  /// prove the deletion committed.
   private func reconcileAmbiguousDeletion(
     after error: Error,
-    token: String
+    session: AuthenticatedSession,
+    revision: UUID
   ) async -> AccountDeletionReconciliation {
     guard let apiError = error as? AccountAPIError,
       apiError == .network || apiError == .invalidResponse
@@ -518,17 +779,25 @@ final class SessionStore {
       return .notNeeded
     }
 
+    let reconciliationRevision = accountRefreshRevision
     do {
-      state = .signedIn(try await api.getCurrentAccount(token: token))
+      let account = try await api.getCurrentAccount(token: session.bearerToken)
+      guard isCurrentAccountOperation(session, revision: revision),
+        accountRefreshRevision == reconciliationRevision
+      else { return .unavailable }
+      state = .signedIn(account)
       return .accountExists
     } catch AccountAPIError.unauthorized {
+      guard isCurrentAccountOperation(session, revision: revision),
+        accountRefreshRevision == reconciliationRevision
+      else { return .unavailable }
       return clearLocalSession() ? .signedOut : .unavailable
     } catch {
       return .unavailable
     }
   }
 
-  /// Reads and validates one Keychain snapshot, then starts again if iCloud synchronized a newer credential while the request was in flight.
+  /// Starts again if iCloud synchronized a newer credential while the request was in flight.
   private func loadLatestCredential() async -> Bool {
     do {
       guard let storedToken = try credentialStore.read() else {
@@ -539,7 +808,11 @@ final class SessionStore {
         return true
       }
 
-      let validationRevision = interactiveOperationRevision
+      if state == .restoring {
+        restoringToken = storedToken
+      }
+
+      let validationRevision = accountRefreshRevision
       let validation = await validateStoredCredential(storedToken)
 
       if case .cancelled = validation {
@@ -550,7 +823,7 @@ final class SessionStore {
         return await loadLatestCredential()
       }
 
-      if validationRevision != interactiveOperationRevision, self.token == storedToken {
+      if validationRevision != accountRefreshRevision, self.token == storedToken {
         return true
       }
 
@@ -567,7 +840,6 @@ final class SessionStore {
     }
   }
 
-  /// Converts server validation into a value so Keychain freshness can be checked before any account state or credential is changed.
   private func validateStoredCredential(_ token: String) async -> StoredCredentialValidation {
     do {
       return .active(try await api.getCurrentAccount(token: token))
@@ -580,7 +852,6 @@ final class SessionStore {
     }
   }
 
-  /// Applies only a validation result that still belongs to the latest synchronized Keychain token.
   private func applyStoredCredentialValidation(
     _ validation: StoredCredentialValidation,
     token: String
@@ -605,12 +876,35 @@ final class SessionStore {
     }
   }
 
-  /// Invalidates any background credential result that started before the user's latest account mutation.
-  private func markInteractiveOperationStarted() {
-    interactiveOperationRevision = UUID()
+  /// Busy ownership is independent of result freshness: background mutations can invalidate a response without starting a new user-facing operation.
+  private func startWorkingOperation() -> UUID {
+    let revision = UUID()
+    workingOperationRevision = revision
+    isWorking = true
+    return revision
   }
 
-  /// Reduces transport and provider failures to concise actions the account UI can explain and recover from.
+  private func finishWorkingOperation(_ revision: UUID) {
+    guard workingOperationRevision == revision else { return }
+    workingOperationRevision = nil
+    isWorking = false
+  }
+
+  /// A synchronized credential replacement invalidates results even before foreground reconciliation runs.
+  private func isCurrentAccountOperation(_ session: AuthenticatedSession, revision: UUID) -> Bool {
+    isCurrentAccountSession(session) && interactiveOperationRevision == revision
+  }
+
+  /// Successful delivery or deletion still belongs to this account after a same-session update, while newer credentials remain protected.
+  private func isCurrentAccountSession(_ session: AuthenticatedSession) -> Bool {
+    authenticatedSession == session && (try? credentialStore.read()) == session.bearerToken
+  }
+
+  private func markInteractiveOperationStarted() {
+    interactiveOperationRevision = UUID()
+    accountRefreshRevision = UUID()
+  }
+
   private func getFailure(_ error: Error) -> AccountFailure {
     guard let apiError = error as? AccountAPIError else {
       return .signIn
@@ -619,11 +913,13 @@ final class SessionStore {
     switch apiError {
     case .accountDisabled, .accountMismatch, .appleCredentialMismatch:
       return .signIn
+    case .botDetected:
+      return .botDetected
     case .disposableEmail:
       return .disposableEmail
     case .invalidCode:
       return .invalidCode
-    case .invalidAppStorePurchase:
+    case .cancellationChoiceClosed, .invalidAppStorePurchase, .noWebSubscription:
       return .signIn
     case .invalidEmail:
       return .invalidEmail
@@ -642,20 +938,21 @@ final class SessionStore {
     }
   }
 
-  /// Preserves actionable OTP and connectivity errors while giving every other sensitive-operation failure deletion-specific copy.
   private func getAccountDeletionFailure(_ error: Error) -> AccountFailure {
     guard let apiError = error as? AccountAPIError else {
       return .accountDeletion
     }
 
     switch apiError {
+    case .botDetected:
+      return .botDetected
     case .accountMismatch:
       return .accountMismatch
     case .accountDisabled, .appleCredentialMismatch, .disposableEmail:
       return .accountDeletion
     case .invalidCode:
       return .invalidCode
-    case .invalidAppStorePurchase:
+    case .cancellationChoiceClosed, .invalidAppStorePurchase, .noWebSubscription:
       return .accountDeletion
     case .invalidEmail:
       return .invalidEmail

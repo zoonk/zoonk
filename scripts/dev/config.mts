@@ -1,10 +1,13 @@
 import { execFileSync } from "node:child_process";
+import { homedir } from "node:os";
 import { basename, dirname, join } from "node:path";
+import { getPnpmCommand } from "./process.mts";
 
 const DNS_LABEL_PATTERN = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/u;
 
 /**
- * Uses the primary checkout directory as the stable namespace for every service in a clone. Linked Git worktrees share that directory and receive Portless's branch prefix, while separate clones remain isolated even when they use the same branch name.
+ * Linked worktrees share the primary checkout's directory and get Portless's branch prefix, while
+ * separate clones stay isolated even on the same branch name.
  */
 function getProjectNameFromCommonDirectory({
   gitCommonDirectory,
@@ -24,7 +27,6 @@ function getProjectNameFromCommonDirectory({
   return projectName;
 }
 
-/** Resolves the shared Git directory so linked worktrees agree on one clone namespace. */
 export function getProjectName({
   currentDirectory,
   environment = process.env,
@@ -44,7 +46,6 @@ export function getProjectName({
   });
 }
 
-/** Gives each app a readable route while keeping every clone in its own namespace. */
 export function getServiceName({
   projectName,
   serviceName,
@@ -55,8 +56,33 @@ export function getServiceName({
   return `${serviceName}.${projectName}`;
 }
 
+export function getServiceUrl({
+  currentDirectory,
+  environment = {
+    ...process.env,
+    ...getPortlessEnvironment({ homeDirectory: homedir(), lanMode: false }),
+  },
+  projectName = getProjectName({ currentDirectory, environment }),
+  serviceName,
+}: {
+  currentDirectory: string;
+  environment?: NodeJS.ProcessEnv;
+  projectName?: string;
+  serviceName: string;
+}): string {
+  const pnpmCommand = getPnpmCommand(environment);
+  const name = getServiceName({ projectName, serviceName });
+
+  return execFileSync(pnpmCommand.command, [...pnpmCommand.args, "exec", "portless", "get", name], {
+    cwd: currentDirectory,
+    encoding: "utf8",
+    env: environment,
+  }).trim();
+}
+
 /**
- * Keeps Zoonk's local proxy independent from other Portless projects and avoids privileged ports or certificate installation. LAN mode uses separate state so device testing never reconfigures another agent's localhost proxy.
+ * LAN mode keeps separate state, so device testing never reconfigures another agent's localhost
+ * proxy.
  */
 export function getPortlessEnvironment({
   homeDirectory,
@@ -74,7 +100,6 @@ export function getPortlessEnvironment({
   };
 }
 
-/** Targets the mailbox's HTTP capture endpoint without coupling mail delivery to its internal process port. */
 export function getMailboxCaptureUrl(mailboxServiceUrl: string): string {
   return new URL("/api/emails", mailboxServiceUrl).toString();
 }

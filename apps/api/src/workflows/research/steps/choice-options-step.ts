@@ -1,0 +1,36 @@
+import { findChoiceOptions } from "@zoonk/ai/tasks/research/find-choice-options";
+import {
+  findChoiceOptionsLookup,
+  recordChoiceOptions,
+} from "@zoonk/core/library/exams/record-choice-options";
+import { type ResearchAnalytics } from "../_utils/research-analytics";
+
+export async function lookUpChoiceOptionsStep({
+  analytics,
+  examBlueprintId,
+}: {
+  analytics: ResearchAnalytics;
+  examBlueprintId: string;
+}): Promise<void> {
+  "use step";
+
+  const lookup = await findChoiceOptionsLookup({ examBlueprintId });
+
+  if (!lookup) {
+    return;
+  }
+
+  const { data } = await findChoiceOptions({
+    ...lookup,
+    analytics,
+    today: new Date().toISOString().slice(0, "YYYY-MM-DD".length),
+  });
+
+  await recordChoiceOptions({
+    board: data.board,
+    edition: data.edition,
+    examBlueprintId,
+    options: data.options,
+    source: data.source,
+  });
+}

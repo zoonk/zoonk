@@ -11,16 +11,12 @@ import Link from "next/link";
 
 function AppBreadcrumb({ children, className, ...props }: React.ComponentProps<"nav">) {
   return (
-    <Breadcrumb className={cn("px-4 pt-4", className)} {...props}>
+    <Breadcrumb className={cn("px-4 pt-4 sm:px-8 lg:px-10", className)} {...props}>
       <BreadcrumbList>{children}</BreadcrumbList>
     </Breadcrumb>
   );
 }
 
-/**
- * Preserves the breadcrumb's height and hierarchy while a URL-dependent
- * breadcrumb item resolves inside its own Suspense boundary.
- */
 function AppBreadcrumbItemSkeleton({ className }: { className?: string }) {
   return (
     <BreadcrumbItem aria-hidden="true">

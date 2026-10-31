@@ -22,9 +22,11 @@ final class CourseCatalogAPITests: XCTestCase {
             "data": [
               {
                 "description": "Understand the night sky.",
+                "estimatedMinutes": 45,
                 "id": "00000000-0000-7000-8000-000000000002",
                 "imageUrl": "https://cdn.zoonk.test/course.png",
                 "language": "en",
+                "lessonCount": 3,
                 "organization": {
                   "id": "00000000-0000-7000-8000-000000000001",
                   "logo": "https://cdn.zoonk.test/organization.png",
@@ -32,6 +34,9 @@ final class CourseCatalogAPITests: XCTestCase {
                   "slug": "zoonk"
                 },
                 "slug": "astronomy",
+                "subject": "science",
+                "targetLanguage": null,
+                "languageFlag": null,
                 "title": "Astronomy"
               }
             ],
@@ -52,6 +57,29 @@ final class CourseCatalogAPITests: XCTestCase {
     XCTAssertEqual(page.nextCursor, "next-page")
   }
 
+  func testCountCoursesMapsEachCategory() async throws {
+    let api = makeCourseCatalogAPI(
+      transport: CourseCatalogResponseTransport(
+        expectedOperationID: "listCourseCategoryCounts",
+        expectedPath: "/catalog/categories",
+        expectedQuery: ["language": "en"],
+        responseBody:
+          #"""
+          {
+            "categories": [
+              { "category": "science", "courseCount": 2 },
+              { "category": "math", "courseCount": 0 }
+            ],
+            "total": 2
+          }
+          """#,
+        status: .ok))
+
+    let counts = try await api.countCourses(language: "en")
+
+    XCTAssertEqual(counts, CourseCategoryCounts(counts: [.science: 2, .math: 0], total: 2))
+  }
+
   func testGetCourseMapsPublicCourseMetadata() async throws {
     let api = makeCourseCatalogAPI(
       transport: CourseCatalogResponseTransport(
@@ -62,20 +90,75 @@ final class CourseCatalogAPITests: XCTestCase {
           #"""
           {
             "categories": ["science"],
-            "coursePromptId": null,
             "description": "Understand the night sky.",
+            "editions": [
+              {
+                "id": "00000000-0000-7000-8000-000000000002",
+                "language": "en",
+                "title": "Astronomy"
+              },
+              {
+                "id": "00000000-0000-7000-8000-000000000009",
+                "language": "pt",
+                "title": "Astronomia"
+              }
+            ],
+            "exam": null,
+            "examplePlan": {
+              "exam": null,
+              "pace": {
+                "estimate": {
+                  "chapters": [
+                    {
+                      "chapterId": "00000000-0000-7000-8000-000000000004",
+                      "endWeek": 2,
+                      "week": 1,
+                      "workKinds": ["original"]
+                    }
+                  ],
+                  "endDate": "2027-02-01",
+                  "firstDay": [
+                    {
+                      "chapterId": "00000000-0000-7000-8000-000000000004",
+                      "dayMinutes": 12.5,
+                      "estimatedMinutes": 6,
+                      "lessonId": "00000000-0000-7000-8000-000000000005",
+                      "title": "The Sun"
+                    }
+                  ],
+                  "numbers": \#(planNumbersJSON),
+                  "publishedContent": { "lessons": 3, "minutes": 45 },
+                  "weeks": 14,
+                  "workload": {
+                    "checkpointMinutes": 20,
+                    "lessonMinutes": 45,
+                    "practiceMinutes": 30,
+                    "unwrittenLessonMinutes": 0
+                  }
+                },
+                "minutes": 15
+              }
+            },
             "format": "core",
             "generationId": null,
             "generationStatus": "completed",
             "id": "00000000-0000-7000-8000-000000000002",
             "imageUrl": "https://cdn.zoonk.test/course.png",
+            "landingPage": {
+              "audience": ["Anyone who looks up at night"],
+              "outcomes": ["Find the planets"],
+              "valueProposition": "Find your way around the night sky."
+            },
             "language": "en",
+            "languageFlag": null,
+            "levels": [{ "level": "beginner", "written": true }],
             "organization": {
               "id": "00000000-0000-7000-8000-000000000001",
               "logo": "https://cdn.zoonk.test/organization.png",
               "name": "Zoonk",
               "slug": "zoonk"
             },
+            "quickTestMinutes": 2,
             "slug": "astronomy",
             "targetLanguage": null,
             "title": "Astronomy"
@@ -88,12 +171,104 @@ final class CourseCatalogAPITests: XCTestCase {
     XCTAssertEqual(course, .testFixture)
   }
 
+  func testGetCourseMapsAnExamCoursesPlanByItsAreas() async throws {
+    let api = makeCourseCatalogAPI(
+      transport: CourseCatalogResponseTransport(
+        expectedOperationID: "getCourse",
+        expectedPath: "/courses/00000000-0000-7000-8000-000000000002",
+        expectedQuery: [:],
+        responseBody:
+          #"""
+          {
+            "categories": ["exams"],
+            "description": null,
+            "editions": [],
+            "exam": null,
+            "examplePlan": {
+              "exam": {
+                "days": ["2026-11-08", "2026-11-15"],
+                "daysLeft": 11,
+                "estimated": true,
+                "timeZone": "America/Sao_Paulo"
+              },
+              "pace": {
+                "estimate": {
+                  "areas": [
+                    {
+                      "area": "Math",
+                      "fitting": 2,
+                      "plannedMinutes": 40,
+                      "quickLessons": 1,
+                      "total": 3,
+                      "unwrittenMinutes": 0
+                    }
+                  ],
+                  "chapters": [
+                    {
+                      "area": "Math",
+                      "chapterId": "00000000-0000-7000-8000-000000000004",
+                      "endWeek": null,
+                      "lessonsInPlan": 2,
+                      "studyOrder": 1,
+                      "week": 1,
+                      "workKinds": ["original", "quick"]
+                    }
+                  ],
+                  "fittingLessons": 2,
+                  "numbers": \#(planNumbersJSON),
+                  "publishedContent": { "lessons": 3, "minutes": 45 },
+                  "workload": {
+                    "checkpointMinutes": 20,
+                    "lessonMinutes": 45,
+                    "practiceMinutes": 30,
+                    "unwrittenLessonMinutes": 0
+                  }
+                },
+                "minutes": 30
+              }
+            },
+            "format": "exam",
+            "generationId": null,
+            "generationStatus": "completed",
+            "id": "00000000-0000-7000-8000-000000000002",
+            "imageUrl": null,
+            "landingPage": null,
+            "language": "pt",
+            "languageFlag": null,
+            "levels": [],
+            "organization": null,
+            "quickTestMinutes": 2,
+            "slug": "enem",
+            "targetLanguage": null,
+            "title": "ENEM"
+          }
+          """#,
+        status: .ok))
+
+    let example = try await api.getCourse(id: Course.testFixture.id).examplePlan
+
+    XCTAssertEqual(
+      example?.exam,
+      CoursePlanExample.Exam(days: ["2026-11-08", "2026-11-15"], daysLeft: 11, estimated: true))
+    XCTAssertEqual(example?.pace?.minutes, 30)
+    XCTAssertEqual(
+      example?.pace?.estimate.reach,
+      .byDate(
+        fittingLessons: 2, publishedLessons: 3,
+        areas: [
+          CoursePlanEstimate.Area(
+            fitting: 2, name: "Math", plannedMinutes: 40, quickLessons: 1, total: 3,
+            unwrittenMinutes: 0)
+        ]))
+    XCTAssertEqual(example?.pace?.estimate.chapters.first?.workKinds, [.original, .quick])
+  }
+
   func testGetChapterMapsCanonicalChapterMetadata() async throws {
     let api = makeCourseCatalogAPI(
       transport: CourseCatalogResponseTransport(
         expectedOperationID: "getChapter",
         expectedPath: "/chapters/00000000-0000-7000-8000-000000000004",
-        expectedQuery: [:],
+        expectedQuery: ["courseId": "00000000-0000-7000-8000-000000000002"],
         responseBody:
           #"""
           {
@@ -102,8 +277,9 @@ final class CourseCatalogAPITests: XCTestCase {
             "generationId": null,
             "generationStatus": "completed",
             "id": "00000000-0000-7000-8000-000000000004",
-            "imageUrl": null,
             "language": "en",
+            "level": "beginner",
+            "objectives": ["Name the planets"],
             "position": 0,
             "slug": "solar-system",
             "title": "The Solar System"
@@ -111,7 +287,7 @@ final class CourseCatalogAPITests: XCTestCase {
           """#,
         status: .ok))
 
-    let chapter = try await api.getChapter(id: CourseChapter.testFixture.id)
+    let chapter = try await api.getChapter(.testFixture)
 
     XCTAssertEqual(chapter, .resourceTestFixture)
   }
@@ -132,9 +308,18 @@ final class CourseCatalogAPITests: XCTestCase {
                 "generationId": null,
                 "generationStatus": "completed",
                 "id": "00000000-0000-7000-8000-000000000004",
-                "imageUrl": null,
                 "language": "en",
                 "lessonCount": 2,
+                "lessons": [
+                  {
+                    "estimatedMinutes": 6,
+                    "id": "00000000-0000-7000-8000-000000000005",
+                    "slug": "the-sun",
+                    "title": "The Sun"
+                  }
+                ],
+                "level": "beginner",
+                "objectives": ["Name the planets"],
                 "position": 0,
                 "slug": "solar-system",
                 "title": "The Solar System"
@@ -149,12 +334,74 @@ final class CourseCatalogAPITests: XCTestCase {
     XCTAssertEqual(chapters, [.testFixture])
   }
 
-  func testListChapterLessonsMapsLessonKind() async throws {
+  func testCourseAndChapterKeepTheirWritingState() async throws {
+    let courseAPI = makeCourseCatalogAPI(
+      transport: CourseCatalogResponseTransport(
+        expectedOperationID: "getCourse",
+        expectedPath: "/courses/00000000-0000-7000-8000-000000000002",
+        expectedQuery: [:],
+        responseBody:
+          #"""
+          {
+            "categories": [],
+            "description": null,
+            "editions": [],
+            "format": "core",
+            "generationId": "run-1",
+            "generationStatus": "running",
+            "id": "00000000-0000-7000-8000-000000000002",
+            "imageUrl": null,
+            "language": "en",
+            "levels": [],
+            "organization": {
+              "id": "00000000-0000-7000-8000-000000000001",
+              "logo": null,
+              "name": "Zoonk",
+              "slug": "zoonk"
+            },
+            "quickTestMinutes": 2,
+            "slug": "astronomy",
+            "targetLanguage": null,
+            "title": "Astronomy"
+          }
+          """#,
+        status: .ok))
+    let chapterAPI = makeCourseCatalogAPI(
+      transport: CourseCatalogResponseTransport(
+        expectedOperationID: "getChapter",
+        expectedPath: "/chapters/00000000-0000-7000-8000-000000000004",
+        expectedQuery: ["courseId": "00000000-0000-7000-8000-000000000002"],
+        responseBody:
+          #"""
+          {
+            "courseId": "00000000-0000-7000-8000-000000000002",
+            "description": "Meet our cosmic neighborhood.",
+            "generationId": null,
+            "generationStatus": "pending",
+            "id": "00000000-0000-7000-8000-000000000004",
+            "language": "en",
+            "level": "beginner",
+            "objectives": ["Name the planets"],
+            "position": 0,
+            "slug": "solar-system",
+            "title": "The Solar System"
+          }
+          """#,
+        status: .ok))
+
+    let course = try await courseAPI.getCourse(id: Course.testFixture.id)
+    let chapter = try await chapterAPI.getChapter(.testFixture)
+
+    XCTAssertEqual(course.generationStatus, .running)
+    XCTAssertEqual(chapter.generationStatus, .pending)
+  }
+
+  func testListChapterLessonsReadsTheChapterInItsCourse() async throws {
     let api = makeCourseCatalogAPI(
       transport: CourseCatalogResponseTransport(
         expectedOperationID: "listChapterLessons",
         expectedPath: "/chapters/00000000-0000-7000-8000-000000000004/lessons",
-        expectedQuery: [:],
+        expectedQuery: ["courseId": "00000000-0000-7000-8000-000000000002"],
         responseBody:
           #"""
           {
@@ -163,11 +410,10 @@ final class CourseCatalogAPITests: XCTestCase {
                 "chapterId": "00000000-0000-7000-8000-000000000004",
                 "courseId": "00000000-0000-7000-8000-000000000002",
                 "description": "A first look at our star.",
+                "estimatedMinutes": 6,
                 "generationId": null,
                 "generationStatus": "completed",
                 "id": "00000000-0000-7000-8000-000000000005",
-                "imageUrl": null,
-                "kind": "explanation",
                 "language": "en",
                 "position": 0,
                 "slug": "the-sun",
@@ -178,153 +424,9 @@ final class CourseCatalogAPITests: XCTestCase {
           """#,
         status: .ok))
 
-    let lessons = try await api.listChapterLessons(chapterID: CourseChapter.testFixture.id)
+    let lessons = try await api.listChapterLessons(.testFixture)
 
     XCTAssertEqual(lessons, [.testFixture])
-  }
-
-  func testGetCourseNextLessonMapsConcreteLessonTarget() async throws {
-    let api = makeCourseCatalogAPI(
-      transport: CourseCatalogResponseTransport(
-        expectedOperationID: "getCourseNextLesson",
-        expectedPath:
-          "/courses/00000000-0000-7000-8000-000000000002/next-lesson",
-        expectedQuery: [:],
-        expectedToken: "session-token",
-        responseBody:
-          #"""
-          {
-            "canPrefetch": true,
-            "chapterId": "00000000-0000-7000-8000-000000000004",
-            "chapterSlug": "solar-system",
-            "completed": false,
-            "courseId": "00000000-0000-7000-8000-000000000002",
-            "courseSlug": "astronomy",
-            "hasStarted": true,
-            "lessonId": "00000000-0000-7000-8000-000000000005",
-            "lessonPosition": 0,
-            "lessonSlug": "the-sun",
-            "organizationSlug": "zoonk",
-            "type": "lesson"
-          }
-          """#,
-        status: .ok))
-
-    let target = try await api.getCourseNextLesson(
-      courseID: Course.testFixture.id,
-      token: "session-token")
-
-    XCTAssertEqual(target, .testLessonFixture)
-  }
-
-  func testGetChapterNextLessonMapsEmptyTarget() async throws {
-    let api = makeCourseCatalogAPI(
-      transport: CourseCatalogResponseTransport(
-        expectedOperationID: "getChapterNextLesson",
-        expectedPath:
-          "/chapters/00000000-0000-7000-8000-000000000004/next-lesson",
-        expectedQuery: [:],
-        expectedToken: "session-token",
-        responseBody:
-          #"""
-          { "completed": false, "hasStarted": false, "type": "empty" }
-          """#,
-        status: .ok))
-
-    let target = try await api.getChapterNextLesson(
-      chapterID: CourseChapter.testFixture.id,
-      token: "session-token")
-
-    XCTAssertEqual(
-      target,
-      .empty(CatalogEmptyContinuation(completed: false, hasStarted: false)))
-  }
-
-  func testGetCourseNextLessonMapsPendingChapterTargetWithoutAuthorization() async throws {
-    let api = makeCourseCatalogAPI(
-      transport: CourseCatalogResponseTransport(
-        expectedOperationID: "getCourseNextLesson",
-        expectedPath:
-          "/courses/00000000-0000-7000-8000-000000000002/next-lesson",
-        expectedQuery: [:],
-        responseBody:
-          #"""
-          {
-            "canPrefetch": false,
-            "chapterId": "00000000-0000-7000-8000-000000000004",
-            "chapterSlug": "solar-system",
-            "completed": false,
-            "courseId": "00000000-0000-7000-8000-000000000002",
-            "courseSlug": "astronomy",
-            "hasStarted": false,
-            "organizationSlug": "zoonk",
-            "type": "chapter"
-          }
-          """#,
-        status: .ok))
-
-    let target = try await api.getCourseNextLesson(
-      courseID: Course.testFixture.id,
-      token: nil)
-
-    XCTAssertEqual(target, .testChapterFixture)
-  }
-
-  func testGetCourseProgressMapsChapterAndAggregateProgress() async throws {
-    let api = makeCourseCatalogAPI(
-      transport: CourseCatalogResponseTransport(
-        expectedOperationID: "getCourseProgress",
-        expectedPath: "/courses/00000000-0000-7000-8000-000000000002/progress",
-        expectedQuery: [:],
-        expectedToken: "session-token",
-        responseBody:
-          #"""
-          {
-            "chapters": [
-              {
-                "chapterId": "00000000-0000-7000-8000-000000000004",
-                "completedLessons": 1,
-                "totalLessons": 2
-              }
-            ],
-            "percentComplete": 50
-          }
-          """#,
-        status: .ok))
-
-    let progress = try await api.getCourseProgress(
-      courseID: Course.testFixture.id,
-      token: "session-token")
-
-    XCTAssertEqual(progress, .testFixture)
-  }
-
-  func testGetChapterProgressMapsLessonAndAggregateProgress() async throws {
-    let api = makeCourseCatalogAPI(
-      transport: CourseCatalogResponseTransport(
-        expectedOperationID: "getChapterProgress",
-        expectedPath: "/chapters/00000000-0000-7000-8000-000000000004/progress",
-        expectedQuery: [:],
-        expectedToken: "session-token",
-        responseBody:
-          #"""
-          {
-            "lessons": [
-              {
-                "isCompleted": true,
-                "lessonId": "00000000-0000-7000-8000-000000000005"
-              }
-            ],
-            "percentComplete": 50
-          }
-          """#,
-        status: .ok))
-
-    let progress = try await api.getChapterProgress(
-      chapterID: CourseChapter.testFixture.id,
-      token: "session-token")
-
-    XCTAssertEqual(progress, .testFixture)
   }
 
   func testSearchCatalogMapsCourseAndChapterResults() async throws {
@@ -343,7 +445,6 @@ final class CourseCatalogAPITests: XCTestCase {
                 "courseTitle": "Astronomy",
                 "description": "Meet our cosmic neighborhood.",
                 "id": "00000000-0000-7000-8000-000000000004",
-                "imageUrl": "https://cdn.zoonk.test/chapter.png",
                 "language": "en",
                 "organizationSlug": "zoonk",
                 "slug": "solar-system",
@@ -383,7 +484,7 @@ final class CourseCatalogAPITests: XCTestCase {
     do {
       _ = try await api.getCourse(id: Course.testFixture.id)
       XCTFail("Expected not found")
-    } catch let error as CourseCatalogFailure {
+    } catch let error as APIError {
       XCTAssertEqual(error, .notFound)
     } catch {
       XCTFail("Unexpected error: \(error)")
@@ -402,7 +503,7 @@ final class CourseCatalogAPITests: XCTestCase {
     do {
       _ = try await api.listCourses(query: CourseCatalogQuery(language: "en"))
       XCTFail("Expected unavailable")
-    } catch let error as CourseCatalogFailure {
+    } catch let error as APIError {
       XCTAssertEqual(error, .unavailable)
     } catch {
       XCTFail("Unexpected error: \(error)")
@@ -416,7 +517,7 @@ final class CourseCatalogAPITests: XCTestCase {
     do {
       _ = try await api.listCourses(query: CourseCatalogQuery(language: "en"))
       XCTFail("Expected network failure")
-    } catch let error as CourseCatalogFailure {
+    } catch let error as APIError {
       XCTAssertEqual(error, .network)
     } catch {
       XCTFail("Unexpected error: \(error)")
@@ -448,7 +549,6 @@ private func makeCourseCatalogAPI(transport: any ClientTransport) -> CourseCatal
       transport: transport))
 }
 
-/// Exercises the generated public catalog operations without depending on an external server.
 private struct CourseCatalogResponseTransport: ClientTransport {
   let expectedOperationID: String
   let expectedPath: String
@@ -529,3 +629,30 @@ private struct CourseCatalogFailureTransport: ClientTransport {
     }
   }
 }
+
+private let planNumbersJSON = #"""
+  {
+    "afterDeadlineMinutes": null,
+    "availableBeforeDeadlineMinutes": null,
+    "beforeDeadlineMinutes": null,
+    "context": {
+      "dailyMinutes": 15,
+      "fromDate": "2026-11-09",
+      "fullCourse": true,
+      "ownLevel": null,
+      "paceFactor": 1,
+      "targetDate": null,
+      "weekdayMinutes": [0, 15, 15, 15, 15, 15, 0]
+    },
+    "coverage": null,
+    "milestoneExtraMinutesBeforeDeadline": null,
+    "scheduledMinutes": 95,
+    "studyDaysBeforeDeadline": null,
+    "workload": {
+      "checkpointMinutes": 20,
+      "lessonMinutes": 45,
+      "practiceMinutes": 30,
+      "unwrittenLessonMinutes": 0
+    }
+  }
+  """#

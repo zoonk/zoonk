@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "buddy_picker_label": "ec4afc3cbd0357135bd6d9ff0b4270c1654fb13516cc68c5b5a99759a0eeb72b",
+  "buddy_picker_name": "b77c1a1abcfa5cd122624c2097fb9e5279988e10b05a49c7415a0202ac0f5f92",
+  "buddy_tagline_beep": "9e5bc728ffc6a1ee38ed510582e0ea92c4a79f755318806c6c3cd96e33222213",
+  "buddy_tagline_noodle": "5a2fc042f5f55b85322ef538f6e3a9895f4efb2d569999611f20e90f9fb82e78",
+  "buddy_tagline_otto": "6a7c081c9226ec307bbe1c005e36a4717ba5e6453840dbf625b75059ccaa2493",
+  "buddy_tagline_zu": "af28594d0519edb688bbb6ff8b9b68163a6506ec9356fe8ef878dc268f2b94e6"
+}
+-->
+<resources>
+    <!-- Screen reader name of the group of buddies to pick from. -->
+    <string name="buddy_picker_label">相棒</string>
+    <!-- Label of the field for a custom buddy name. -->
+    <string name="buddy_picker_name">名前</string>
+    <!-- Under the buddy Zu, an alien, in the buddy picker. -->
+    <string name="buddy_tagline_zu">好奇心いっぱいの宇宙人</string>
+    <!-- Under the buddy Noodle, a brain, in the buddy picker. -->
+    <string name="buddy_tagline_noodle">足の生えた脳</string>
+    <!-- Under the buddy Beep, a robot, in the buddy picker. -->
+    <string name="buddy_tagline_beep">几帳面なロボット</string>
+    <!-- Under the buddy Otto, an octopus, in the buddy picker. -->
+    <string name="buddy_tagline_otto">物知りなタコ</string>
+</resources>

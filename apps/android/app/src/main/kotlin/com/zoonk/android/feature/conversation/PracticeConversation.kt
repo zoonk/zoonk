@@ -1,0 +1,336 @@
+package com.zoonk.android.feature.conversation
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.zoonk.android.R
+import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.ContentWritingWait
+import com.zoonk.android.data.GenerationKind
+import com.zoonk.android.feature.subscription.PlusMark
+import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.KindDotLeading
+import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.WritingWait
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.api.models.LanguagePracticeCall
+import kotlinx.coroutines.launch
+import java.util.UUID
+
+/** Main's `useCallStart`: a call that isn't written yet waits on the run writing it, then starts again. */
+class CallStartModel(
+    private val starter: CallStarter,
+    kind: GenerationKind,
+) : ViewModel() {
+    enum class State { Idle, Starting, Failed, Paused }
+
+    var state by mutableStateOf(State.Idle)
+        private set
+
+    /** The plan's call time a refused start ran into. */
+    var limit by mutableStateOf<Limit.Reached?>(null)
+        private set
+
+    /** The call a start opened, until a screen showing then opens it with [OpenStartedCall]. */
+    var started by mutableStateOf<UUID?>(null)
+        private set
+
+    val writing = starter.writingWaits.create(kind, viewModelScope)
+
+    fun start(request: CallRequest) {
+        state = State.Starting
+        limit = null
+        viewModelScope.launch {
+            val started = starter.start(request)
+            val answer = writing.answered((started as? CallStart.Writing)?.generationId) { start(request) }
+            limit = (started as? CallStart.Limited)?.limit
+            state =
+                when {
+                    answer == ContentWritingWait.Answer.Waiting -> {
+                        State.Idle
+                    }
+
+                    started is CallStart.Started && answer == ContentWritingWait.Answer.Proceed -> {
+                        this@CallStartModel.started = started.conversationId
+                        State.Idle
+                    }
+
+                    started == CallStart.Paused -> {
+                        State.Paused
+                    }
+
+                    else -> {
+                        State.Failed
+                    }
+                }
+        }
+    }
+
+    fun opened() {
+        started = null
+    }
+}
+
+/**
+ * Opens the call [model] started from the screen showing when it does, so a start that answers
+ * after the device turns still opens it; the sheet is ready for a fresh start when the learner is back.
+ */
+@Composable
+fun OpenStartedCall(
+    model: CallStartModel,
+    open: (UUID) -> Unit,
+) {
+    val id = model.started ?: return
+    LaunchedEffect(id) {
+        model.opened()
+        open(id)
+    }
+}
+
+/** Hoist it above a layout that moves the row, as between a page and its aside, so the open sheet and its length stay. */
+@Stable
+class PracticeCallState internal constructor(
+    sheetOpen: Boolean,
+    minutes: Long,
+) {
+    var sheetOpen by mutableStateOf(sheetOpen)
+    var minutes by mutableLongStateOf(minutes)
+}
+
+@Composable
+fun rememberPracticeCallState(defaultMinutes: Long): PracticeCallState =
+    rememberSaveable(
+        saver = listSaver(save = { listOf(it.sheetOpen, it.minutes) }, restore = { PracticeCallState(it[0] as Boolean, it[1] as Long) }),
+    ) { PracticeCallState(sheetOpen = false, minutes = defaultMinutes) }
+
+@Composable
+fun PracticeConversation(
+    call: LanguagePracticeCall,
+    chapterId: UUID,
+    goalId: UUID?,
+    app: AppContainer,
+    navigator: AppNavigator,
+    modifier: Modifier = Modifier,
+    state: PracticeCallState = rememberPracticeCallState(call.defaultMinutes),
+) = PracticeConversation(call, chapterId, goalId, app.conversations, navigator::open, modifier, state)
+
+@Composable
+internal fun PracticeConversation(
+    call: LanguagePracticeCall,
+    chapterId: UUID,
+    goalId: UUID?,
+    start: CallStarter,
+    open: (AppRoute) -> Unit,
+    modifier: Modifier = Modifier,
+    state: PracticeCallState = rememberPracticeCallState(call.defaultMinutes),
+) {
+    val with = call.character?.let { stringResource(R.string.conversation_practice_with, it.name, it.role) }
+
+    ListItem(
+        headlineContent = { Text(stringResource(R.string.conversation_practice)) },
+        supportingContent =
+            (if (call.paused) stringResource(R.string.conversation_paused_title) else with)?.let { text -> { Text(text) } },
+        leadingContent = { KindDotLeading(LearnKind.Conversation) },
+        modifier = modifier.clickable(role = Role.Button) { state.sheetOpen = true },
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+    )
+
+    PracticeCallSheet(call, chapterId, goalId, start, open, state)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun PracticeCallSheet(
+    call: LanguagePracticeCall,
+    chapterId: UUID,
+    goalId: UUID?,
+    start: CallStarter,
+    open: (AppRoute) -> Unit,
+    state: PracticeCallState,
+) {
+    if (!state.sheetOpen) return
+    val with = call.character?.let { stringResource(R.string.conversation_practice_with, it.name, it.role) }
+
+    ModalBottomSheet(onDismissRequest = { state.sheetOpen = false }) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 24.dp)
+                .navigationBarsPadding(),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    stringResource(R.string.conversation_practice),
+                    Modifier.semantics { heading() },
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                with?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
+            }
+            CallSetup(call, chapterId, goalId, start, open, state)
+        }
+    }
+}
+
+@Composable
+private fun CallSetup(
+    call: LanguagePracticeCall,
+    chapterId: UUID,
+    goalId: UUID?,
+    start: CallStarter,
+    open: (AppRoute) -> Unit,
+    state: PracticeCallState,
+) {
+    val model = viewModel(key = "practice-call:$chapterId") { CallStartModel(start, GenerationKind.ConversationCall) }
+    val writing by model.writing.generationId.collectAsStateWithLifecycle()
+    val minutes = state.minutes
+    val startCall = { model.start(CallRequest.Practice(chapterId, goalId, minutes)) }
+    OpenStartedCall(model) { id ->
+        state.sheetOpen = false
+        open(AppRoute.Conversation(id.toString()))
+    }
+
+    when {
+        call.paused -> {
+            CallsPausedMessage()
+        }
+
+        writing != null -> {
+            WritingWait(model.writing, hint = stringResource(R.string.conversation_opens_when_ready))
+        }
+
+        call.limit != null -> {
+            val limit = requireNotNull(call.limit)
+            CallLimitMessage(
+                Limit.Reached(
+                    LimitTier.entries.first { it.name.equals(limit.tier.value, ignoreCase = true) },
+                    LimitPeriod.entries.first { it.name.equals(limit.period.value, ignoreCase = true) },
+                ),
+                onCreateAccount = { open(AppRoute.Login) },
+                onSeePlus = { open(AppRoute.Subscription) },
+            )
+        }
+
+        else -> {
+            LengthChoices(call, minutes, onChange = { state.minutes = it })
+            if (minutes in call.plusMinutes) {
+                PlusNotice(
+                    onSeePlus = { open(AppRoute.Subscription) },
+                    description = stringResource(R.string.conversation_longer_calls_plus),
+                )
+            } else {
+                StartCallButton(
+                    starting = model.state == CallStartModel.State.Starting,
+                    onClick = startCall,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+            if (model.state == CallStartModel.State.Paused) CallsPausedMessage()
+            if (model.state == CallStartModel.State.Failed) {
+                Text(
+                    stringResource(R.string.conversation_start_failed),
+                    Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun CallsPausedMessage() {
+    CallOffMessage(stringResource(R.string.conversation_paused_title)) {
+        Text(
+            stringResource(R.string.conversation_paused),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+}
+
+@Composable
+private fun LengthChoices(
+    call: LanguagePracticeCall,
+    selected: Long,
+    onChange: (Long) -> Unit,
+) {
+    val locale = currentLocale()
+    val choices = (call.minutes.map { it to false } + call.plusMinutes.map { it to true }).sortedBy { it.first }
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(stringResource(R.string.conversation_call_length), style = MaterialTheme.typography.titleSmall)
+        FlowRow(
+            Modifier.selectableGroup(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            choices.forEach { (minutes, locked) ->
+                FilterChip(
+                    selected = minutes == selected,
+                    onClick = { onChange(minutes) },
+                    label = { Text(formatMinutes(minutes.toInt(), locale)) },
+                    leadingIcon =
+                        if (minutes == selected) {
+                            {
+                                Icon(
+                                    painterResource(R.drawable.ic_check),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(FilterChipDefaults.IconSize),
+                                )
+                            }
+                        } else {
+                            null
+                        },
+                    modifier = Modifier.semantics { role = Role.RadioButton },
+                    trailingIcon = if (locked) ({ PlusMark() }) else null,
+                )
+            }
+        }
+    }
+}

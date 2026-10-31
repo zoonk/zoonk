@@ -2,6 +2,7 @@
 <resources>
     <style name="Theme.Zoonk" parent="android:style/Theme.Material.NoActionBar">
         <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">@color/window_background</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 </resources>

@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { type MeDeletionInput, meDeletionSchema, meUpdateSchema } from "@/lib/openapi/schemas/me";
+import { readBody } from "@/lib/request-input";
 import { getActiveSubscription } from "@zoonk/core/auth/subscription";
 import { updateCurrentUser } from "@zoonk/core/users/current";
 import { deleteCurrentUser } from "@zoonk/core/users/delete-current";
@@ -13,25 +13,14 @@ import { getAccountDeletionErrorResponse } from "./_utils/me-account-deletion";
 import { getProfileUpdateErrorResponse } from "./_utils/me-profile-update";
 import { createMeResponse } from "./_utils/me-response";
 
-/**
- * Exposes the signed-in user's profile and account state to native clients.
- */
 async function getCurrentUserAccount() {
   return getMeResponse();
 }
 
-/**
- * Updates the signed-in user's public profile using the same Better Auth path
- * as the main app, including username validation and uniqueness checks.
- */
 async function updateCurrentUserAccount(request: NextRequest) {
-  const parsed = await parseBody(request, meUpdateSchema);
+  const parsed = await readBody(request, meUpdateSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const { data: result, error } = await safeAsync(() => updateCurrentUser({ input: parsed.data }));
+  const { data: result, error } = await safeAsync(() => updateCurrentUser({ input: parsed }));
 
   if (error) {
     const response = getProfileUpdateErrorResponse(error);
@@ -59,10 +48,7 @@ async function updateCurrentUserAccount(request: NextRequest) {
   return NextResponse.json(createMeResponse({ hasAppleAccount, subscription, user: result }));
 }
 
-/**
- * Converts the validated mutually exclusive request variant into the matching
- * core capability input without weakening its compile-time credential guard.
- */
+/** Narrows each variant so core's compile-time credential guard still holds. */
 function deleteValidatedCurrentUser(credentials: MeDeletionInput) {
   if ("appleCredentials" in credentials) {
     return deleteCurrentUser({ appleCredentials: credentials.appleCredentials });
@@ -75,18 +61,10 @@ function deleteValidatedCurrentUser(credentials: MeDeletionInput) {
   return deleteCurrentUser({});
 }
 
-/**
- * Permanently removes the signed-in user's account after Better Auth verifies
- * that the bearer or cookie session is authoritative and recent enough.
- */
 async function deleteCurrentUserAccount(request: NextRequest) {
-  const parsed = await parseBody(request, meDeletionSchema);
+  const parsed = await readBody(request, meDeletionSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const { data: result, error } = await safeAsync(() => deleteValidatedCurrentUser(parsed.data));
+  const { data: result, error } = await safeAsync(() => deleteValidatedCurrentUser(parsed));
 
   if (error) {
     const response = getAccountDeletionErrorResponse(error);

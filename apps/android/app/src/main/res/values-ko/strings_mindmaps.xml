@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mindmaps_alt": "3600de1f1280d3e9fb172b32e70f58a1027276783906a90c7f850e883546c16e",
+  "mindmaps_alt_chapter": "73ed29db0209177a40fe7af37cf0111cd93220f3ee22390c912b3d8ca055d98f",
+  "mindmaps_alt_sentence": "b3c0115c00ba8e9f7c6e2f687dd38e34292418ec4c9ba936ec06da4408f6325c",
+  "mindmaps_as_text": "fc1e15be5324450aa1950fca7c46b44d191e7d9e4c4908f4f943a8d17211a73f",
+  "mindmaps_as_text_note": "08cbf4a2e2967d9ce339ae3a00e05e2892c81137cc432f034b5c12c42a3ab476",
+  "mindmaps_card_create": "0e7a808e324769732f1c131e14b2900d92779e8f55288cf68e21bb6fa1f04038",
+  "mindmaps_card_description": "52efa180d3c3a238fba4720f134dd032c9d74ecf4ce4cb7f2368105b43ed4dcd",
+  "mindmaps_card_failed": "b922d859003682383eda2af160bc3d1bdaec2d979750cdd78a1e47c6708afcfa",
+  "mindmaps_card_generating": "68eed6c74793d20e6656fd99d908b9c1cf66e44fad66d8f0f6c230353d9ab6a8",
+  "mindmaps_card_generating_title": "96c280164a50dc498b719b036ee6f508f6645990672ce6946b968b93154417e5",
+  "mindmaps_card_title": "2007160d4593e534b7c954cfa4d9c85fba7a110b39edd57c33952b03aee8a31e",
+  "mindmaps_card_unreachable": "feafca8fa7ba6e38519553707c1d09c30bbd70bb24e93a2650c2050d25fc4c97",
+  "mindmaps_chapter_count": "42a759dd7f7ef2fc96aef5067a23edc4162a39a2ea35b35bc8b1cd48421813b8",
+  "mindmaps_chapter_number": "2c1f1d51fb44844abd6c1929f9d3de3d0c4adc686b4e8d6c1bbd3a8b4ae1cf8d",
+  "mindmaps_chapters_finished": "98a83f01ebf835d47ba06726323705033d6c5870169b123c29885d3e4fcdda7b",
+  "mindmaps_continue": "9f3c98867241719ecca189bc3e2662e30aceb7ab8b335969c48af349aee4a5c2",
+  "mindmaps_count": "0894af459dde362e124f37c01342c2241c6f61df5d636565d8ac1e4a46b194b8",
+  "mindmaps_create": "6baf318ab485765ffcc73d97ae957b469f353903a0b83e3b544631c789cf82d8",
+  "mindmaps_create_spoken": "c642b459c7b94fcc16a1c8ff69bb388cc5a6cb9874db97e0d0a342aaafd5695d",
+  "mindmaps_download": "c6c4ef3c31ed4cc05847e161eda22e7421162f0bdc5d635e75cfbbd76dd90b75",
+  "mindmaps_drawing": "7a078219b39c1975a3dcfeb6fc6de267ba7270fe9790ac4096ff72b895bd39db",
+  "mindmaps_empty_description": "cdf93849fbe4bb7c19ac6bd2b4fb0eefe3b94f4cffbde4ddd83f781a99dcb392",
+  "mindmaps_empty_title": "33736cf3b379e2df0d40e837b8574e6480000bc44e8c97714067469d3109c25d",
+  "mindmaps_failed_short": "554bb2877d59becd3a75223c507aee3ed83eb57076a3585baf7af813883dcce3",
+  "mindmaps_first_after": "6872a4259981ac2684a5939cdd39c1e83d4b899e2bb03845c9f2ced414d9e672",
+  "mindmaps_fit": "5b0cbb0433980cf81aa01c5f3a46bab5e334ed604db7154eaf6eab0e17518ad6",
+  "mindmaps_full_screen": "4c7917966101745d3ddf22a197b3f2ce9256d0c76d4bfa862744ae5327c1f77d",
+  "mindmaps_in_short": "f4ec32fee0f215d1d091d939873ba11c4d5c343440cfdcb6ed6fbee8fe7ee184",
+  "mindmaps_keep_studying": "70ffcca5db70373084f4c2a3d5c1ce330a9b7a9217ff95ec4f24914005f373aa",
+  "mindmaps_save_failed": "17c4703fd5a84f9d07a6f3228e65f79a5f28fbd7f3b19349b0a95076df0c989a",
+  "mindmaps_saved": "7fd83126608cef0876e4c35f610c15265b3e411e424a16685d09a923a4cff0dd",
+  "mindmaps_try_again": "3fc5f500977d86f201aea97265926ad9734c744db3133d4e6441900105cc9165",
+  "mindmaps_try_again_spoken": "cacc114ffb8d259fda645f14cf33d23e76fcd357be982cd41bd4c6ca74c58842",
+  "mindmaps_unreachable_short": "75d39218507e0982938816a02a40ed41e4346030e016d2485f72a4320bce6b4c",
+  "mindmaps_viewer_hint": "3fc58f812606360e18f40b5c58d8d54180bf3ed7c28e6bcfbc13c8f6bb0f6d75",
+  "mindmaps_zoom_in": "c4c9d7f160537bc2f68d505e978f810954c7eeb5d2e5885b76db2225961acd42",
+  "mindmaps_zoom_out": "1438a347326823f3c10d04590d3a2048986d8e74703d88680ba75e104ebadbad"
+}
+-->
+<resources>
+    <!-- How many of the goal's mind maps are drawn: "3 maps". -->
+    <plurals name="mindmaps_count">
+        <item quantity="other">마인드맵 %1$s개</item>
+    </plurals>
+    <!-- The group of mind maps when the goal's chapters have no subjects. -->
+    <string name="mindmaps_chapters_finished">완료한 챕터</string>
+    <plurals name="mindmaps_chapter_count">
+        <item quantity="other">챕터 %d개</item>
+    </plurals>
+    <!-- A mind map tile's caption over the chapter's title. -->
+    <string name="mindmaps_chapter_number">챕터 %1$s</string>
+    <string name="mindmaps_empty_title">아직 마인드맵이 없어요</string>
+    <string name="mindmaps_empty_description">챕터를 마치면 핵심 내용을 그림 한 장에 담은 마인드맵을 만들 수 있어요.</string>
+    <!-- %1$s is the chapter the learner is in, %2$d the lessons left in it. -->
+    <plurals name="mindmaps_first_after">
+        <item quantity="other">첫 마인드맵은 %1$s 완료 후 볼 수 있어요. 레슨이 %2$d개 남았어요.</item>
+    </plurals>
+    <!-- Opens the chapter whose map comes next. -->
+    <string name="mindmaps_continue">계속하기</string>
+    <string name="mindmaps_keep_studying">계속 공부하기</string>
+    <!-- A mind map's description for screen readers when it has no words yet. -->
+    <string name="mindmaps_alt_chapter">%1$s의 마인드맵</string>
+    <!-- A mind map's description for screen readers: its title, then its central idea. -->
+    <string name="mindmaps_alt">마인드맵: %1$s. %2$s</string>
+    <!-- The same, for a title that already ends a sentence. -->
+    <string name="mindmaps_alt_sentence">마인드맵: %1$s %2$s</string>
+    <!-- A tile for a map whose picture had mistakes, shown in words instead. -->
+    <string name="mindmaps_as_text">글로 보기</string>
+    <string name="mindmaps_drawing">그리고 있어요…</string>
+    <!-- Makes a chapter's mind map. -->
+    <string name="mindmaps_create">만들기</string>
+    <string name="mindmaps_try_again">다시 시도</string>
+    <!-- What screen readers say for a tile's Create, naming its chapter. -->
+    <string name="mindmaps_create_spoken">%1$s의 마인드맵 만들기</string>
+    <!-- What screen readers say for a tile's Try again, naming its chapter. -->
+    <string name="mindmaps_try_again_spoken">%1$s의 마인드맵 다시 만들기</string>
+    <string name="mindmaps_failed_short">이번에는 만들지 못했어요.</string>
+    <string name="mindmaps_unreachable_short">서버에 연결하지 못했어요.</string>
+    <string name="mindmaps_card_title">마인드맵</string>
+    <string name="mindmaps_card_description">챕터의 핵심 내용을 그림 한 장으로 한눈에 복습할 수 있어요.</string>
+    <string name="mindmaps_card_create">마인드맵 만들기</string>
+    <string name="mindmaps_card_generating_title">마인드맵을 그리고 있어요…</string>
+    <string name="mindmaps_card_generating">약 30초 걸려요. 페이지를 나가도 나중에 여기서 볼 수 있어요.</string>
+    <string name="mindmaps_card_failed">이번에는 마인드맵을 만들지 못했어요.</string>
+    <string name="mindmaps_card_unreachable">서버에 연결하지 못했어요. 인터넷 연결을 확인해 보세요.</string>
+    <string name="mindmaps_as_text_note">그림에 잘못된 부분이 있어 마인드맵을 글로 보여 드려요.</string>
+    <string name="mindmaps_full_screen">전체 화면</string>
+    <!-- Saves the mind map's picture. -->
+    <string name="mindmaps_download">다운로드</string>
+    <string name="mindmaps_saved">마인드맵을 저장했어요</string>
+    <string name="mindmaps_save_failed">마인드맵을 저장하지 못했어요. 다시 시도해 보세요.</string>
+    <!-- Starts the one-line gist at the end of a mind map in words. -->
+    <string name="mindmaps_in_short">요약:</string>
+    <string name="mindmaps_zoom_in">확대</string>
+    <string name="mindmaps_zoom_out">축소</string>
+    <string name="mindmaps_fit">화면에 맞추기</string>
+    <string name="mindmaps_viewer_hint">두 손가락을 오므리거나 벌리거나, 스크롤하거나, +와 -를 눌러 확대·축소하세요. 드래그하거나 방향키로 이동하세요.</string>
+</resources>

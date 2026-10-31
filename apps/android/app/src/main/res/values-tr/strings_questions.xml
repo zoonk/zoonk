@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "questions_correct": "e39c9bb83c9986afaddb5371323d2db858bd39d6fa039ee700eabf61ec3d5337",
+  "questions_dont_know_yet": "6f1850eccdb7e49f6bf24cc441ed161ddc8ba688aaa10f38f0e7aa42193bf3d9",
+  "questions_drill_last_answer": "f45a03c3a065258b31cf956c08cafb4a94e51fe041561b7112b25d974ef58504",
+  "questions_drill_no_guessing": "2e04c0020080db749a73a0283132419512058f8ea7facf048ba80c5885257fb7",
+  "questions_drill_not_sure": "941f729f6be17382c7da16fc180cb6365abf714de2a808b988aad5e9a13ff356",
+  "questions_drill_not_sure_praise": "cf5515ad003cb8962830b64675caef57a292b5c157221b1c421d0908b799510a",
+  "questions_drill_open_lesson": "819a3e71e6a6f34d36c06b775c283eab7a5fbf7b2d1806842f3c5d4bd8fa1bea",
+  "questions_drill_read_carefully": "6d2a692aac43c430c25f45f3d6698ceaa21b3f6f275c4a2c09028e03b4d970c0",
+  "questions_drill_reteach": "8d9e590cfb5a6c177e481ee8690731852ca864c37fa97e524e71169400e77a62",
+  "questions_drill_reteach_ideas": "24c54b5fa5d657284bf6ce6a365b60e5e70d50922eea2146c335aec6562205e2",
+  "questions_drill_retry": "9f4fc7575843c994bfd607f98baecdafffd905aa1ba6b8cdb4b46ccc1d0c3abf",
+  "questions_drill_seconds_left": "910fca07ccfb73ff358ab54c19fec5a6a65d2bc1bef9df26d779df0ce6136406",
+  "questions_drill_show_answers": "c18645a1bc47c12043591f8a159297dac93c4e325edef8d4fc9f414a4ecfbdfc",
+  "questions_drill_spot_the_trap": "fb83bb3dc739516254165106a632c1cf45bfd21bfd6a8f1924f3e3a41c1d34bb",
+  "questions_drill_start": "bbe316ef29a81cefa29a5168a576ef8b91f4d122916b6dac9339b3a5569c549a",
+  "questions_drill_time_left": "7e48984a4bd9a77b78297df4ed2b169e2bcbbee6e5b59ed0c01ef11bc082258c",
+  "questions_drill_time_up": "cef0f4a696c2daa392d0c609538e18908716de9415720adcd42937cf17bb9368",
+  "questions_drill_timed": "a469347123c96676296898b4fab2a60ab76771bcbc6cfe0481c555a578318384",
+  "questions_drill_timed_out": "21bfb0b2f1d781cefb9e455bd6f0fbc9e9e7e0d23c1983b2d8c0a65aa407ffd0",
+  "questions_drill_trap": "171c3390581acc2327b4296ae9f505c37275c388f9076d41603a25be3e953a40",
+  "questions_entry_decimals": "a584d730b7922685526ef9dae2ece32bb4888d323fa3d3295c96736b4fd9ef81",
+  "questions_entry_fraction": "73fa47cb2488a472a5981ff519b505fd4d1a94d4297700f42a3e8853ba06a183",
+  "questions_entry_integer": "6d906c3462f1e5e134c7a4bb2a4046e4de1265808707017fc506aa00cf12a0ca",
+  "questions_false": "0f42e0117cb2cf0eee51952fd5d10607b6776a15465af7c81a9b170a9a40311a",
+  "questions_feedback_label": "ac6f368ec892fae7e0bc0542f215c89d0930db1188c297583736b670fe9ae745",
+  "questions_invalid_fraction": "03a9482ee857250ccb8239adbd9e1ee0f837a0dca30553e0463ac353277ca4ea",
+  "questions_invalid_integer": "0ecfbd9bdb84237ca339c57cc7783678fbb8a7c5b996a70794963f2d7bb889f2",
+  "questions_invalid_number": "15fade3da8c42f092727d7010bd4f6535fc6421ceedb2d2c9f5bf954a50a9812",
+  "questions_leave_blank": "68eb248a0a1964c60b0d80b199966cb40869fe9e28e714045b1feee7acf7ca47",
+  "questions_left_blank": "41b602439d91c4e888d7b8ea603ad7704543ca7b61e9944aa273cbb5ba567e82",
+  "questions_mark_correct": "2f2f8579b8e6987b9825df0893db81043acf8e2976156ea1e58bb74cc4899f03",
+  "questions_mark_wrong": "d32e1d6ad7e5c61cbcb36d1f51530033f2380aedf77a1fd7dece7955738315ad",
+  "questions_matched_with": "8250423926cbc872aeea77e2f38b93c7db59886fe04686360d266ac6622a53de",
+  "questions_mistake_fixed": "56d8658e12db4f902bf4effac8604f086d49eeab70d8c3c99970fe46bda77914",
+  "questions_mistakes_fixed": "a215ad447ac56c5a3b44536b82c747c9c747a58907a14c86057d3776d57fb70f",
+  "questions_not_quite": "73554ed2b99b75ac002c57ec525c0ce71ae0361f3975c0f8126257d46d05a004",
+  "questions_open_source": "0ffb53293ef423e25d758e49c65b26d2ad12bb2a69641fbb309bb15ca2ff70b5",
+  "questions_order_hint": "a95f4f7da50f224884130b25ea88648f33be907cb40815512bd93c75bdbd3c5f",
+  "questions_pick_all": "b00b8afaacce418cbbe2ccbb3253b9918c984e4471f38b5106327ba082b803a5",
+  "questions_pick_count": "19c7e25d95bc10f24bda080bac04176be841890abbbe27f253c72db96f743c88",
+  "questions_place": "1facdce352ad59053d01c7d343e4099ce3be821d58152983f9ab223887d8d1ea",
+  "questions_place_right": "ea40b8c702c32cb2469b90ecd499f9e770a6e98e0c4d488ef830e4499c0c4fdd",
+  "questions_place_wrong": "544cc054f4f75010fe608f6c3828ef0343c09aea0ea91f91397b68d037cef6e4",
+  "questions_placement_note": "3d8c5e093d312ff61346a3a53357a63205d52724d171fd603a3feec1f43bfbd1",
+  "questions_quoted_source": "c9e9ac5578ccb4b6e260def08dea1c8b5e64fc321f03ed80d20b0732213eca84",
+  "questions_read_again": "8a13de5c38a297d1aec818a781d0aaac2d277034f8026c71886de59b6a329c2f",
+  "questions_result": "f2a4506856cfcddec6ad7c8b8ebb3e032568f3e5aa73fea9ad659136d443e582",
+  "questions_right": "1e3c407b6ace6503bf082bbfb70206b014fb72077ce04d5c9cdc1f02dc1714b0",
+  "questions_right_answer": "55435b8a3886ea9caed7c09d88879bda07a6bba22c3a52e7d1b70528b5da08c9",
+  "questions_saved": "464d9fc72b75f9fcb6fa942d2fce644496f6fcb644bc4520685fcf50901056d2",
+  "questions_saved_tomorrow": "0b39460525e15deab4276c89e0bd1bd7d4c077abf78d205be0d4a5b0fd317520",
+  "questions_set_place_audio": "2c1a7442f1e1aafda92ec96c87062eaea317d2de70f6149adb5bc7d981165dfb",
+  "questions_set_place_case": "5d8e66fcbfc06d670417cf53db81e40472020c20ccb7ec10a610c7cf50c190b8",
+  "questions_set_place_chart": "e4d04c0f8083e9ceacc071d2ee85eaf00888410c688b366bfe590db999691415",
+  "questions_set_place_text": "435bdfb9da7a7a3154d787423e00588c7eba1529ed6a86ba067ed96c2d2525f1",
+  "questions_show_less": "9eb9c828cce4b683b85ef27369121caab6a014fdddca73cbb226a4226d25a1dd",
+  "questions_source_checked": "6ea4df40eaeeddb6a1b54a4f0fa3c7f9be242c724eaa69327d06098aebeae16b",
+  "questions_source_checked_by": "4afca9360a8105f945cd9319aff757a3b162098072545be94715e4375473d42c",
+  "questions_sources_chip": "836c3de64bc26fd331a83c33ed9c75d9bd2794b4009300002490f2c5e6d81bfa",
+  "questions_streak": "68e98de84609efb586ecd3f196493f0ab4aae5ab0d86ccd23f96d8d79e36d2bc",
+  "questions_true": "5dc23f411a4689da2c5cf3678a1c56ccc988fbc5831d80a51fc402dbded4b14d",
+  "questions_wrong": "5b032c9bc2b6537e8ac54ad45da37c34073f4c6d1440bbcf54481a5c835036db",
+  "questions_your_answer": "c7cf5eeac60d4d18b23962ac605674db320639e0c8da3cc0d9a3ab7e3f625280"
+}
+-->
+<resources>
+    <string name="questions_pick_all">Uygun olanların tümünü seç.</string>
+    <plurals name="questions_pick_count">
+        <item quantity="one">%d seçenek seç.</item>
+        <item quantity="other">%d seçenek seç.</item>
+    </plurals>
+    <string name="questions_true">Doğru</string>
+    <string name="questions_false">Yanlış</string>
+    <!-- An answer option judging a statement right, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
+    <string name="questions_right">Doğru</string>
+    <!-- An answer option judging a statement wrong, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
+    <string name="questions_wrong">Yanlış</string>
+    <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
+    <string name="questions_leave_blank">Boş bırak</string>
+    <string name="questions_order_hint">Adımlara sırayla dokun.</string>
+    <!-- The place a step was put in, read aloud. -->
+    <string name="questions_place">%1$d. sıra</string>
+    <string name="questions_place_right">%1$d. sıra, doğru yerde</string>
+    <string name="questions_place_wrong">%1$d. sıra, yanlış yerde</string>
+    <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
+    <string name="questions_matched_with">%1$s, %2$s ile eşleştirildi</string>
+    <string name="questions_your_answer">Cevabın</string>
+    <string name="questions_mark_correct">Doğru</string>
+    <string name="questions_mark_wrong">Yanlış</string>
+    <plurals name="questions_entry_decimals">
+        <item quantity="one">%d ondalık basamağa yuvarla.</item>
+        <item quantity="other">%d ondalık basamağa yuvarla.</item>
+    </plurals>
+    <string name="questions_entry_fraction">2/3 gibi bir kesir ya da ondalık sayı.</string>
+    <string name="questions_entry_integer">Bir tam sayı.</string>
+    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
+    <string name="questions_invalid_number">%1$s gibi bir sayı yaz.</string>
+    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
+    <string name="questions_invalid_fraction">2/3 gibi bir kesir veya %1$s gibi bir sayı yaz.</string>
+    <string name="questions_invalid_integer">12 gibi bir tam sayı yaz.</string>
+    <string name="questions_feedback_label">Cevap değerlendirmesi</string>
+    <string name="questions_correct">Doğru!</string>
+    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
+    <string name="questions_not_quite">Doğru değil</string>
+    <string name="questions_left_blank">Boş bırakıldı</string>
+    <string name="questions_dont_know_yet">Henüz bilmiyorum</string>
+    <plurals name="questions_streak">
+        <item quantity="one">Üst üste %d doğru</item>
+        <item quantity="other">Üst üste %d doğru</item>
+    </plurals>
+    <string name="questions_right_answer">Doğru cevap: %1$s</string>
+    <!-- Names the last line of a worked solution for TalkBack, read before it as in "Result: x = 4". -->
+    <string name="questions_result">Sonuç</string>
+    <string name="questions_mistake_fixed">Yanlış düzeltildi. Yanlış defterinden çıkarıldı.</string>
+    <!-- Always several: one fixed mistake reads questions_mistake_fixed. -->
+    <plurals name="questions_mistakes_fixed">
+        <item quantity="one">%d yanlış düzeltildi. Artık defterinde değiller.</item>
+        <item quantity="other">%d yanlış düzeltildi. Artık defterinde değiller.</item>
+    </plurals>
+    <string name="questions_saved">Yanlış defterine kaydedildi</string>
+    <string name="questions_saved_tomorrow">Yanlış defterine kaydedildi · yarın tekrar gelecek</string>
+    <string name="questions_show_less">Daha az göster</string>
+    <string name="questions_read_again">Tamamını tekrar oku</string>
+    <string name="questions_set_place_audio">Bu ses kaydındaki %1$d. soru (toplam %2$d)</string>
+    <string name="questions_set_place_case">Bu vakadaki %1$d. soru (toplam %2$d)</string>
+    <string name="questions_set_place_chart">Bu grafikteki %1$d. soru (toplam %2$d)</string>
+    <string name="questions_set_place_text">Bu metindeki %1$d. soru (toplam %2$d)</string>
+    <string name="questions_placement_note">Planını sana göre ayarlıyoruz. Buradaki yanlışlar yanlış defterine kaydedilmez.</string>
+    <!-- %1$s names the exam and year the question was printed in. -->
+    <string name="questions_quoted_source">Çıkmış sınav sorusu · %1$s</string>
+    <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
+    <string name="questions_sources_chip">Kaynaklar · Son kontrol: %1$s</string>
+    <string name="questions_source_checked_by">%1$s · Son kontrol: %2$s</string>
+    <string name="questions_source_checked">Son kontrol: %1$s</string>
+    <string name="questions_open_source">Kaynağı aç</string>
+    <string name="questions_drill_reteach_ideas">Önce konu anlatımı, sonra konuyla ilgili birkaç soru.</string>
+    <string name="questions_drill_reteach">Takıldığın bir konuyla ilgili birkaç soru.</string>
+    <string name="questions_drill_read_carefully">Cevaplamadan önce her kelimeyi oku.</string>
+    <string name="questions_drill_spot_the_trap">Burada bir tuzak var. Cevaplamadan önce onu bul.</string>
+    <plurals name="questions_drill_timed">
+        <item quantity="one">Sınavda olduğu gibi, soru başına %d saniye.</item>
+        <item quantity="other">Sınavda olduğu gibi, soru başına %d saniye.</item>
+    </plurals>
+    <string name="questions_drill_no_guessing">Sadece eminsen cevapla. Emin olmadığını söylemen de sorun değil.</string>
+    <string name="questions_drill_retry">Tekrar dene.</string>
+    <string name="questions_drill_start">Sorulara başla</string>
+    <!-- %1$s is the learner's earlier answer, in their words or an option's. -->
+    <string name="questions_drill_last_answer">Geçen seferki cevabın: %1$s</string>
+    <string name="questions_drill_timed_out">Süre doldu. Bu soru yanlış sayıldığı için daha sonra tekrar karşına çıkacak.</string>
+    <string name="questions_drill_not_sure_praise">İyi yaptın. Emin olmadığını söylemek tahmin etmekten daha iyi.</string>
+    <string name="questions_drill_trap">Tuzak:</string>
+    <string name="questions_drill_time_up">Süre doldu</string>
+    <string name="questions_drill_time_left">Kalan süre</string>
+    <plurals name="questions_drill_seconds_left">
+        <item quantity="one">%d saniye kaldı</item>
+        <item quantity="other">%d saniye kaldı</item>
+    </plurals>
+    <string name="questions_drill_show_answers">Okudum. Cevapları göster</string>
+    <string name="questions_drill_not_sure">Emin değilim</string>
+    <string name="questions_drill_open_lesson">Dersi gözden geçir</string>
+</resources>

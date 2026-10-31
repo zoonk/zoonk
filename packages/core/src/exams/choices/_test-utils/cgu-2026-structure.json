@@ -1,0 +1,542 @@
+{
+  "formats": [
+    {
+      "citation": {
+        "passage": "Cada prova objetiva será constituída de itens para julgamento, agrupados por comandos que deverão ser respeitados. O julgamento de cada item será CERTO ou ERRADO, de acordo com o(s) comando(s) a que se refere o item.",
+        "sourceId": "document-1"
+      },
+      "description": "",
+      "kind": "trueFalse",
+      "options": null,
+      "sections": ["Conhecimentos básicos (P1)"],
+      "share": 0.23529411764705882
+    },
+    {
+      "citation": {
+        "passage": "Cada prova objetiva será constituída de itens para julgamento, agrupados por comandos que deverão ser respeitados. O julgamento de cada item será CERTO ou ERRADO, de acordo com o(s) comando(s) a que se refere o item.",
+        "sourceId": "document-1"
+      },
+      "description": "",
+      "kind": "trueFalse",
+      "options": null,
+      "sections": ["Conhecimentos complementares (P2)"],
+      "share": 0.23529411764705882
+    },
+    {
+      "citation": {
+        "passage": "Cada prova objetiva será constituída de itens para julgamento, agrupados por comandos que deverão ser respeitados. O julgamento de cada item será CERTO ou ERRADO, de acordo com o(s) comando(s) a que se refere o item.",
+        "sourceId": "document-1"
+      },
+      "description": "",
+      "kind": "trueFalse",
+      "options": null,
+      "sections": ["Conhecimentos específicos (P3)"],
+      "share": 0.5294117647058824
+    },
+    {
+      "citation": {
+        "passage": "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
+        "sourceId": "document-1"
+      },
+      "description": "",
+      "kind": "essay",
+      "options": null,
+      "sections": ["Prova discursiva (P4)", "Prova discursiva"]
+    },
+    {
+      "citation": {
+        "passage": "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos.",
+        "sourceId": "document-1"
+      },
+      "description": "Questão discursiva envolvendo situação-problema relacionada a conhecimentos específicos do cargo/especialidade, respondida em até 60 linhas.",
+      "kind": "essay",
+      "options": null,
+      "sections": ["Prova discursiva (P4)", "Prova discursiva"]
+    }
+  ],
+  "mock": {
+    "adaptive": false,
+    "citations": [
+      {
+        "passage": "As provas objetivas terão a duração de 5 horas e serão aplicadas na data provável estabelecida no cronograma constante do Anexo I deste edital, no turno da manhã.",
+        "sourceId": "document-1"
+      },
+      {
+        "passage": "A prova discursiva terá a duração de 3 horas e 30 minutos e será aplicada na data provável estabelecida no cronograma constante do Anexo I deste edital, no turno da tarde.",
+        "sourceId": "document-1"
+      },
+      {
+        "passage": "As provas objetivas, de caráter eliminatório e classificatório, valerão 260,00 pontos e abrangerão os objetos de avaliação constantes do item 15 deste edital.",
+        "sourceId": "document-1"
+      },
+      {
+        "passage": "A prova discursiva valerá um total de 100,00 pontos e consistirá de: a) uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos; e b) uma questão envolvendo situação-problema, relacionada a conhecimentos específicos",
+        "sourceId": "document-1"
+      },
+      {
+        "passage": "a) para a prova de conhecimentos básicos P1, 1,00 ponto, caso a resposta do candidato esteja em concordância com o gabarito oficial definitivo da prova; 1,00 ponto negativo, caso a resposta do candidato esteja em discordância com o gabarito oficial definitivo da prova",
+        "sourceId": "document-1"
+      },
+      {
+        "passage": "b) para a prova de conhecimentos complementares P2, 1,00 ponto, caso a resposta do candidato esteja em concordância com o gabarito oficial definitivo da prova; 1,00 ponto negativo, caso a resposta do candidato esteja em discordância com o gabarito oficial definitivo da prova",
+        "sourceId": "document-1"
+      },
+      {
+        "passage": "c) para a prova de conhecimentos específicos P3, 2,00 pontos, caso a resposta do candidato esteja em concordância com o gabarito oficial definitivo da prova; 2,00 pontos negativos, caso a resposta do candidato esteja em discordância com o gabarito oficial definitivo da prova",
+        "sourceId": "document-1"
+      }
+    ],
+    "order": "Provas objetivas no turno da manhã e prova discursiva no turno da tarde.",
+    "scoring": {
+      "description": "",
+      "method": "wrongCancelsRight",
+      "wrongPenalty": 1,
+      "marking": [
+        {
+          "citation": {
+            "passage": "a) para a prova de conhecimentos básicos P1, 1,00 ponto, caso a resposta do candidato esteja em concordância com o gabarito oficial definitivo da prova; 1,00 ponto negativo, caso a resposta do candidato esteja em discordância com o gabarito oficial definitivo da prova",
+            "sourceId": "document-1"
+          },
+          "format": "trueFalse",
+          "part": "Conhecimentos básicos (P1)",
+          "points": 1,
+          "questions": 40,
+          "select": null,
+          "wrongPoints": 1
+        },
+        {
+          "citation": {
+            "passage": "b) para a prova de conhecimentos complementares P2, 1,00 ponto, caso a resposta do candidato esteja em concordância com o gabarito oficial definitivo da prova; 1,00 ponto negativo, caso a resposta do candidato esteja em discordância com o gabarito oficial definitivo da prova",
+            "sourceId": "document-1"
+          },
+          "format": "trueFalse",
+          "part": "Conhecimentos complementares (P2)",
+          "points": 1,
+          "questions": 40,
+          "select": null,
+          "wrongPoints": 1
+        },
+        {
+          "citation": {
+            "passage": "c) para a prova de conhecimentos específicos P3, 2,00 pontos, caso a resposta do candidato esteja em concordância com o gabarito oficial definitivo da prova; 2,00 pontos negativos, caso a resposta do candidato esteja em discordância com o gabarito oficial definitivo da prova",
+            "sourceId": "document-1"
+          },
+          "format": "trueFalse",
+          "part": "Conhecimentos específicos (P3)",
+          "points": 2,
+          "questions": 90,
+          "select": null,
+          "wrongPoints": 2
+        }
+      ],
+      "parts": [
+        {
+          "citation": {
+            "passage": "| Prova objetiva (P1) | Conhecimentos básicos | 40 | Eliminatório e classificatório |",
+            "sourceId": "document-1"
+          },
+          "maxPoints": 40,
+          "minimum": { "unit": "points", "value": 8 },
+          "name": "Conhecimentos básicos (P1)",
+          "qualifying": false,
+          "questions": 40
+        },
+        {
+          "citation": {
+            "passage": "| Prova objetiva (P2) | Conhecimentos complementares | 40 | Eliminatório e classificatório |",
+            "sourceId": "document-1"
+          },
+          "maxPoints": 40,
+          "minimum": { "unit": "points", "value": 12 },
+          "name": "Conhecimentos complementares (P2)",
+          "qualifying": false,
+          "questions": 40
+        },
+        {
+          "citation": {
+            "passage": "| Prova objetiva (P3) | Conhecimentos específicos | 90 | Eliminatório e classificatório |",
+            "sourceId": "document-1"
+          },
+          "maxPoints": 180,
+          "minimum": { "unit": "points", "value": 54 },
+          "name": "Conhecimentos específicos (P3)",
+          "qualifying": false,
+          "questions": 90
+        },
+        {
+          "citation": {
+            "passage": "A prova discursiva valerá um total de 100,00 pontos",
+            "sourceId": "document-1"
+          },
+          "maxPoints": 100,
+          "minimum": { "unit": "points", "value": 50 },
+          "name": "Prova discursiva (P4)",
+          "qualifying": false,
+          "questions": null
+        }
+      ],
+      "totalMinimum": {
+        "citation": {
+          "passage": "Será reprovado nas provas objetivas e eliminado do concurso público o candidato que se enquadrar em pelo menos um dos itens a seguir: … d) obtiver NP1 + NP2 + NP3 < 78,00, em que NFPO = NP1 + NP2 + NP3 é a nota final do candidato no conjunto das provas objetivas.",
+          "sourceId": "document-1"
+        },
+        "unit": "points",
+        "value": 78
+      },
+      "finalShares": [
+        {
+          "citation": {
+            "passage": "11.1 A nota final no concurso (NFC) será calculada por meio da seguinte fórmula: NFC = NFPO/26 + NFPD/10,",
+            "sourceId": "document-1"
+          },
+          "parts": [
+            "Conhecimentos básicos (P1)",
+            "Conhecimentos complementares (P2)",
+            "Conhecimentos específicos (P3)"
+          ],
+          "share": 0.5
+        },
+        {
+          "citation": {
+            "passage": "11.1 A nota final no concurso (NFC) será calculada por meio da seguinte fórmula: NFC = NFPO/26 + NFPD/10,",
+            "sourceId": "document-1"
+          },
+          "parts": ["Prova discursiva (P4)"],
+          "share": 0.5
+        }
+      ]
+    },
+    "sections": [
+      {
+        "day": null,
+        "kind": "objective",
+        "minutes": 300,
+        "name": "Provas objetivas (P1, P2 e P3)",
+        "questions": 170,
+        "tasks": []
+      },
+      {
+        "day": null,
+        "kind": "written",
+        "minutes": 210,
+        "name": "Prova discursiva (P4)",
+        "questions": null,
+        "tasks": [
+          {
+            "count": 1,
+            "description": "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos"
+          },
+          {
+            "count": 1,
+            "description": "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos"
+          }
+        ]
+      }
+    ],
+    "timeLimitMinutes": null,
+    "totalQuestions": null
+  },
+  "rules": [
+    {
+      "citation": {
+        "passage": "Será reprovado nas provas objetivas e eliminado do concurso público o candidato que se enquadrar em pelo menos um dos itens a seguir: a) obtiver NP1 < 8,00, em que NP1 é a nota do candidato na prova objetiva de conhecimentos básicos P1",
+        "sourceId": "document-1"
+      },
+      "kind": "passMark",
+      "text": "Eliminado se obtiver nota inferior a 8,00 pontos na prova objetiva P1."
+    },
+    {
+      "citation": {
+        "passage": "Será reprovado nas provas objetivas e eliminado do concurso público o candidato que se enquadrar em pelo menos um dos itens a seguir: … b) obtiver NP2 < 12,00, em que NP2 é a nota do candidato na prova objetiva de conhecimentos complementares P2",
+        "sourceId": "document-1"
+      },
+      "kind": "passMark",
+      "text": "Eliminado se obtiver nota inferior a 12,00 pontos na prova objetiva P2."
+    },
+    {
+      "citation": {
+        "passage": "Será reprovado nas provas objetivas e eliminado do concurso público o candidato que se enquadrar em pelo menos um dos itens a seguir: … c) obtiver NP3 < 54,00, em que NP3 é a nota do candidato na prova objetiva de conhecimentos específicos P3",
+        "sourceId": "document-1"
+      },
+      "kind": "passMark",
+      "text": "Eliminado se obtiver nota inferior a 54,00 pontos na prova objetiva P3."
+    },
+    {
+      "citation": {
+        "passage": "Será reprovado nas provas objetivas e eliminado do concurso público o candidato que se enquadrar em pelo menos um dos itens a seguir: … d) obtiver NP1 + NP2 + NP3 < 78,00, em que NFPO = NP1 + NP2 + NP3 é a nota final do candidato no conjunto das provas objetivas.",
+        "sourceId": "document-1"
+      },
+      "kind": "passMark",
+      "text": "Eliminado se obtiver nota final no conjunto das provas objetivas inferior a 78,00 pontos."
+    },
+    {
+      "citation": {
+        "passage": "Para a realização das provas, o candidato deverá estar munido somente de caneta esferográfica de tinta preta fabricada em material transparente, do comprovante de inscrição ou do comprovante de pagamento da taxa de inscrição e do documento de identidade original.",
+        "sourceId": "document-1"
+      },
+      "kind": "other",
+      "text": "Obrigatório o uso de caneta esferográfica de tinta preta fabricada em material transparente."
+    },
+    {
+      "citation": {
+        "passage": "O candidato deverá permanecer obrigatoriamente no local de realização das provas por, no mínimo, uma hora após o início das provas.",
+        "sourceId": "document-1"
+      },
+      "kind": "other",
+      "text": "Permanência mínima obrigatória de uma hora após o início das provas."
+    },
+    {
+      "citation": {
+        "passage": "O candidato somente poderá retirar-se da sala de provas levando o caderno de provas no decurso dos últimos 15 minutos anteriores ao horário determinado para o término das provas.",
+        "sourceId": "document-1"
+      },
+      "kind": "other",
+      "text": "Permitido sair com o caderno de provas apenas nos últimos 15 minutos de prova."
+    }
+  ],
+  "subjects": [
+    {
+      "citation": {
+        "passage": "15.2.2 CONHECIMENTOS BÁSICOS … ESTADO, DEMOCRACIA, DIREITOS E CIÊNCIA POLÍTICA: 1 Estado e legitimidade.",
+        "sourceId": "document-1"
+      },
+      "group": "Conhecimentos básicos (P1)",
+      "name": "Estado, Democracia, Direitos e Ciência Política",
+      "questions": null,
+      "shortName": "Ciência Política",
+      "topics": [
+        "1 Estado e legitimidade",
+        "1.1 Estado, governo e administração; autoridade, legitimidade e poder; interesse público, pluralismo e conflitos distributivos"
+      ],
+      "weight": null
+    },
+    {
+      "citation": {
+        "passage": "15.2.2 CONHECIMENTOS BÁSICOS … SOCIEDADE BRASILEIRA, DESIGUALDADES, DIVERSIDADE E DESENVOLVIMENTO: 1 Fundamentos sociológicos.",
+        "sourceId": "document-1"
+      },
+      "group": "Conhecimentos básicos (P1)",
+      "name": "Sociedade Brasileira, Desigualdades, Diversidade e Desenvolvimento",
+      "questions": null,
+      "shortName": "Sociedade Brasileira",
+      "topics": [
+        "1 Fundamentos sociológicos",
+        "1.1 Instituições, socialização e ação coletiva; estratificação e mobilidade social; redes, poder, discriminação e reprodução das desigualdades"
+      ],
+      "weight": null
+    },
+    {
+      "citation": {
+        "passage": "15.2.2 CONHECIMENTOS BÁSICOS … ÉTICA PÚBLICA E RESPONSABILIDADE PROFISSIONAL: 1 Fundamentos da ética pública.",
+        "sourceId": "document-1"
+      },
+      "group": "Conhecimentos básicos (P1)",
+      "name": "Ética Pública e Responsabilidade Profissional",
+      "questions": null,
+      "shortName": "Ética Pública",
+      "topics": [
+        "1 Fundamentos da ética pública",
+        "1.1 Interesse público, dignidade, justiça e responsabilidade; relações entre deveres, consequências e virtudes profissionais; conflitos entre valores em decisões públicas"
+      ],
+      "weight": null
+    },
+    {
+      "citation": {
+        "passage": "15.2.2 CONHECIMENTOS BÁSICOS … ADMINISTRAÇÃO PÚBLICA E FUNDAMENTOS DE POLÍTICAS PÚBLICAS: 1 Organização administrativa.",
+        "sourceId": "document-1"
+      },
+      "group": "Conhecimentos básicos (P1)",
+      "name": "Administração Pública e Fundamentos de Políticas Públicas",
+      "questions": null,
+      "shortName": "Administração Pública",
+      "topics": [
+        "1 Organização administrativa",
+        "1.1 Administração direta e indireta; descentralização e desconcentração; agentes públicos; funções da administração pública: formulação, execução, regulação e controle de políticas e ações públicas; arranjos de cooperação com entes federativos e entidades não estatais"
+      ],
+      "weight": null
+    },
+    {
+      "citation": {
+        "passage": "15.2.3 CONHECIMENTOS COMPLEMENTARES … FUNDAMENTOS DE GOVERNANÇA, RISCOS E INTEGRIDADE PÚBLICA E PRIVADA: 1 Governança e responsabilidades.",
+        "sourceId": "document-1"
+      },
+      "group": "Conhecimentos complementares (P2)",
+      "name": "Fundamentos de Governança, Riscos e Integridade Pública e Privada",
+      "questions": null,
+      "shortName": "Governança e Riscos",
+      "topics": [
+        "1 Governança e responsabilidades",
+        "1.1 Distinção entre direção, gestão, controle e prestação de contas; papéis, supervisão, transparência e responsabilização"
+      ],
+      "weight": null
+    },
+    {
+      "citation": {
+        "passage": "15.2.3 CONHECIMENTOS COMPLEMENTARES … FUNDAMENTOS DE TRANSPARÊNCIA, OUVIDORIA E PARTICIPAÇÃO SOCIAL: 1 Acesso à informação.",
+        "sourceId": "document-1"
+      },
+      "group": "Conhecimentos complementares (P2)",
+      "name": "Fundamentos de Transparência, Ouvidoria e Participação Social",
+      "questions": null,
+      "shortName": "Transparência e Ouvidoria",
+      "topics": [
+        "1 Acesso à informação",
+        "1.1 Transparência ativa e passiva; finalidade de pedidos e recursos; publicidade como regra e motivação das restrições"
+      ],
+      "weight": null
+    },
+    {
+      "citation": {
+        "passage": "15.2.3 CONHECIMENTOS COMPLEMENTARES … FUNDAMENTOS DE DIREITO PÚBLICO APLICADO, CONTROLE E RESPONSABILIZAÇÃO: 1 Decisão administrativa.",
+        "sourceId": "document-1"
+      },
+      "group": "Conhecimentos complementares (P2)",
+      "name": "Fundamentos de Direito Público Aplicado, Controle e Responsabilização",
+      "questions": null,
+      "shortName": "Direito Público",
+      "topics": [
+        "1 Decisão administrativa",
+        "1.1 Competência, finalidade, motivação, proporcionalidade e segurança jurídica; consideração das consequências e das condições de atuação"
+      ],
+      "weight": null
+    },
+    {
+      "citation": {
+        "passage": "15.2.3 CONHECIMENTOS COMPLEMENTARES … FUNDAMENTOS DE EVIDÊNCIAS, DADOS E INTELIGÊNCIA ARTIFICIAL: 1 Perguntas e fontes.",
+        "sourceId": "document-1"
+      },
+      "group": "Conhecimentos complementares (P2)",
+      "name": "Fundamentos de Evidências, Dados e Inteligência Artificial",
+      "questions": null,
+      "shortName": "Evidências e IA",
+      "topics": [
+        "1 Perguntas e fontes",
+        "1.1 Relação entre problema, pergunta e informação necessária; fontes documentais, administrativas, estatísticas e de participação social"
+      ],
+      "weight": null
+    },
+    {
+      "citation": {
+        "passage": "15.2.3 CONHECIMENTOS COMPLEMENTARES … FUNDAMENTOS DE AUDITORIA GOVERNAMENTAL E ATUAÇÃO INTEGRADA DA CGU: 1 Propósito, serviços e papéis.",
+        "sourceId": "document-1"
+      },
+      "group": "Conhecimentos complementares (P2)",
+      "name": "Fundamentos de Auditoria Governamental e Atuação Integrada da CGU",
+      "questions": null,
+      "shortName": "Auditoria Governamental",
+      "topics": [
+        "1 Propósito, serviços e papéis",
+        "1.1 Contribuição da auditoria para a governança, os riscos, os controles e os resultados"
+      ],
+      "weight": null
+    },
+    {
+      "citation": {
+        "passage": "No sistema de inscrição, o candidato deverá optar pelo cargo/especialidade a que deseja concorrer, pela lotação e pela localidade de realização das provas.",
+        "sourceId": "document-1"
+      },
+      "group": "Conhecimentos específicos (P3)",
+      "name": "Auditoria",
+      "questions": 90,
+      "shortName": null,
+      "topics": [
+        "1 Avaliação, consultoria e apuração",
+        "1.1 Seleção da forma de atuação conforme o problema, objetivos e riscos"
+      ],
+      "topicGroups": [
+        {
+          "name": "Auditoria Governamental: Avaliação, Consultoria e Apuração",
+          "topics": ["1 Avaliação, consultoria e apuração"]
+        },
+        {
+          "name": "Finanças Públicas, Orçamento e Contabilidade Pública",
+          "topics": ["1 Economia e finanças do setor público"]
+        }
+      ],
+      "weight": null,
+      "choiceGroup": "Especialidade"
+    },
+    {
+      "citation": {
+        "passage": "No sistema de inscrição, o candidato deverá optar pelo cargo/especialidade a que deseja concorrer, pela lotação e pela localidade de realização das provas.",
+        "sourceId": "document-1"
+      },
+      "group": "Conhecimentos específicos (P3)",
+      "name": "Tecnologia da Informação – Ciência de Dados",
+      "questions": 90,
+      "shortName": "Ciência de Dados",
+      "topics": [
+        "1 Exploração e descrição",
+        "1.1 Tipos de dados e variáveis; distribuições de frequências, medidas de posição e dispersão; exploração e visualização; comparação de grupos e períodos; identificação de padrões, anomalias e limites das fontes"
+      ],
+      "topicGroups": [
+        {
+          "name": "Estatística, Programação e Análise de Dados",
+          "topics": ["1 Exploração e descrição"]
+        },
+        {
+          "name": "Engenharia, Arquitetura e Governança de Dados",
+          "topics": ["1 Modelagem e arquiteturas"]
+        }
+      ],
+      "weight": null,
+      "choiceGroup": "Especialidade"
+    },
+    {
+      "citation": {
+        "passage": "No sistema de inscrição, o candidato deverá optar pelo cargo/especialidade a que deseja concorrer, pela lotação e pela localidade de realização das provas.",
+        "sourceId": "document-1"
+      },
+      "group": "Conhecimentos específicos (P3)",
+      "name": "Tecnologia da Informação – Infraestrutura de TI",
+      "questions": 90,
+      "shortName": "Infraestrutura de TI",
+      "topics": [
+        "1 Redes e comunicação",
+        "1.1 Modelos TCP/IP e OSI; IPv4 e IPv6, DNS, DHCP, roteamento, segmentação, balanceamento e qualidade de serviço"
+      ],
+      "topicGroups": [
+        { "name": "Redes, Sistemas e Plataformas de Dados", "topics": ["1 Redes e comunicação"] },
+        {
+          "name": "Computação em Nuvem, Virtualização e Automação",
+          "topics": ["1 Modelos e arquitetura de nuvem"]
+        }
+      ],
+      "weight": null,
+      "choiceGroup": "Especialidade"
+    },
+    {
+      "citation": {
+        "passage": "No sistema de inscrição, o candidato deverá optar pelo cargo/especialidade a que deseja concorrer, pela lotação e pela localidade de realização das provas.",
+        "sourceId": "document-1"
+      },
+      "group": "Conhecimentos específicos (P3)",
+      "name": "Tecnologia da Informação – Desenvolvimento de Sistemas",
+      "questions": 90,
+      "shortName": "Desenvolvimento de Sistemas",
+      "topics": ["1 Problemas e requisitos", "1.1 Necessidades de usuários"],
+      "topicGroups": [
+        { "name": "Engenharia de Software e Programação", "topics": ["1 Problemas e requisitos"] },
+        {
+          "name": "Arquitetura e Integração de Sistemas",
+          "topics": ["1 Arquiteturas de aplicações"]
+        }
+      ],
+      "weight": null,
+      "choiceGroup": "Especialidade"
+    },
+    {
+      "citation": {
+        "passage": "9.1 A prova discursiva valerá um total de 100,00 pontos e consistirá de: a) uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos; e b) uma questão envolvendo situação-problema, relacionada a conhecimentos específicos",
+        "sourceId": "document-1"
+      },
+      "group": "Prova discursiva (P4)",
+      "name": "Prova discursiva",
+      "questions": null,
+      "shortName": "Discursiva",
+      "topics": [],
+      "weight": null
+    }
+  ],
+  "testedLanguage": null
+}

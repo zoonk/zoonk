@@ -5,17 +5,17 @@ import {
   type TranslationOption,
 } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useExtracted } from "next-intl";
-import { type SelectedAnswer } from "../player-reducer";
+import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { useWordAudio } from "../use-word-audio";
 import {
   PlayerChoiceScene,
-  PlayerChoiceSceneEyebrow,
   PlayerChoiceSceneOptionText,
   PlayerChoiceSceneOptions,
   PlayerChoiceScenePrompt,
   PlayerChoiceSceneQuestion,
 } from "./player-choice-scene";
 import { RomanizationText } from "./romanization-text";
+import { ScreenChip } from "./screen-chip";
 
 function getSelectedOptionId(selectedAnswer?: SelectedAnswer): string | null {
   if (selectedAnswer?.kind !== "translation") {
@@ -25,32 +25,25 @@ function getSelectedOptionId(selectedAnswer?: SelectedAnswer): string | null {
   return selectedAnswer.selectedOptionId;
 }
 
-function TranslationOptionContent({
-  isSelected,
-  word,
-}: {
-  isSelected: boolean;
-  word: TranslationOption;
-}) {
+function TranslationOptionContent({ word }: { word: TranslationOption }) {
   return (
     <>
       <PlayerChoiceSceneOptionText>{word.word}</PlayerChoiceSceneOptionText>
-
       <RomanizationText>{word.romanization}</RomanizationText>
-
-      {isSelected && word.pronunciation && (
-        <span className="text-muted-foreground text-sm">{word.pronunciation}</span>
-      )}
     </>
   );
 }
 
 export function TranslationStep({
+  definesWords = false,
   onSelectAnswer,
+  result,
   selectedAnswer,
   step,
 }: {
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
+  definesWords?: boolean;
+  onSelectAnswer: (answer: SelectedAnswer) => void;
+  result?: StepResult;
   selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
@@ -58,18 +51,13 @@ export function TranslationStep({
   const correctWord = step.word;
   const selectedOptionId = getSelectedOptionId(selectedAnswer);
   const options = step.translationOptions;
+  const isChecked = result !== undefined;
 
   const { play } = useWordAudio({ preloadUrls: options.map((word) => word.audioUrl) });
 
-  const handleSelect = (index: number) => {
-    const word = options[index];
-
-    if (!word) {
-      return;
-    }
-
-    void play(word.audioUrl);
-    onSelectAnswer(step.id, { kind: "translation", selectedOptionId: word.id });
+  const handleSelect = (id: string) => {
+    void play(options.find((word) => word.id === id)?.audioUrl ?? null);
+    onSelectAnswer({ kind: "translation", selectedOptionId: id });
   };
 
   if (!correctWord) {
@@ -79,20 +67,19 @@ export function TranslationStep({
   return (
     <PlayerChoiceScene>
       <PlayerChoiceScenePrompt>
-        <PlayerChoiceSceneEyebrow>{t("Translate this word:")}</PlayerChoiceSceneEyebrow>
+        <ScreenChip>{definesWords ? t("Which one means this?") : t("Translate")}</ScreenChip>
         <PlayerChoiceSceneQuestion>{correctWord.translation}</PlayerChoiceSceneQuestion>
       </PlayerChoiceScenePrompt>
 
       <PlayerChoiceSceneOptions
-        keyboardEnabled={!selectedAnswer || selectedAnswer.kind === "translation"}
+        isChecked={isChecked}
         onSelect={handleSelect}
         options={options.map((word) => ({
-          content: (
-            <TranslationOptionContent isSelected={selectedOptionId === word.id} word={word} />
-          ),
-          isSelected: selectedOptionId === word.id,
+          content: <TranslationOptionContent word={word} />,
+          isCorrect: word.id === correctWord.id,
           key: word.id,
         }))}
+        selectedKey={selectedOptionId}
       />
     </PlayerChoiceScene>
   );

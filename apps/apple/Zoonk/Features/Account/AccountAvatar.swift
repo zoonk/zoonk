@@ -7,13 +7,15 @@ struct AccountToolbarButton: View {
 
   var body: some View {
     Button(action: action) {
-      AccountAvatar(user: session.account?.user, size: 32)
-        .frame(width: 44, height: 44)
-        .contentShape(Circle())
+      Label {
+        Text("Account", tableName: "Account", comment: "Accessibility label for the account button")
+      } icon: {
+        AccountAvatar(user: session.account?.user, size: 32)
+          .frame(width: 44, height: 44)
+          .contentShape(Circle())
+      }
     }
     .buttonStyle(.plain)
-    .accessibilityLabel(
-      Text("Account", tableName: "Account", comment: "Accessibility label for the account button"))
   }
 }
 
@@ -52,7 +54,7 @@ struct AccountAvatar: View {
   private var fallback: some View {
     if let user {
       Text(getInitial(user: user))
-        .font(.system(size: size * 0.42, weight: .semibold, design: .rounded))
+        .font(.system(size: size * 0.42, weight: .semibold))
         .foregroundStyle(.secondary)
     } else {
       Image(systemName: "person.crop.circle.fill")
@@ -62,7 +64,6 @@ struct AccountAvatar: View {
     }
   }
 
-  /// Uses the first visible character of the preferred display name while preserving email as a reliable fallback.
   private func getInitial(user: AccountUser) -> String {
     String(user.preferredName.prefix(1)).uppercased()
   }

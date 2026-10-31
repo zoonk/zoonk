@@ -1,43 +1,11 @@
 "use client";
 
 import { Label } from "@zoonk/ui/components/label";
-import { Separator } from "@zoonk/ui/components/separator";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
 import { useEffect, useMemo, useState } from "react";
 
 const SUCCESS_DISPLAY_TIME = 3000;
-
-function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
-  return (
-    <fieldset
-      className={cn(
-        "flex flex-col gap-6 has-[>[data-slot=checkbox-group]]:gap-3 has-[>[data-slot=radio-group]]:gap-3",
-        className,
-      )}
-      data-slot="field-set"
-      {...props}
-    />
-  );
-}
-
-function FieldLegend({
-  className,
-  variant = "legend",
-  ...props
-}: React.ComponentProps<"legend"> & { variant?: "legend" | "label" }) {
-  return (
-    <legend
-      className={cn(
-        "mb-3 font-medium data-[variant=label]:text-sm data-[variant=legend]:text-base",
-        className,
-      )}
-      data-slot="field-legend"
-      data-variant={variant}
-      {...props}
-    />
-  );
-}
 
 function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -52,18 +20,21 @@ function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-const fieldVariants = cva("group/field data-[invalid=true]:text-destructive flex w-full gap-3", {
-  defaultVariants: { orientation: "vertical" },
-  variants: {
-    orientation: {
-      horizontal:
-        "flex-row items-center has-[>[data-slot=field-content]]:items-start *:data-[slot=field-label]:flex-auto has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
-      responsive:
-        "flex-col *:w-full @md/field-group:flex-row @md/field-group:items-center @md/field-group:*:w-auto @md/field-group:has-[>[data-slot=field-content]]:items-start @md/field-group:*:data-[slot=field-label]:flex-auto [&>.sr-only]:w-auto @md/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
-      vertical: "flex-col *:w-full [&>.sr-only]:w-auto",
+const fieldVariants = cva(
+  "group/field data-[invalid=true]:text-destructive-text flex w-full gap-3",
+  {
+    defaultVariants: { orientation: "vertical" },
+    variants: {
+      orientation: {
+        horizontal:
+          "flex-row items-center has-[>[data-slot=field-content]]:items-start *:data-[slot=field-label]:flex-auto has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
+        responsive:
+          "flex-col *:w-full @md/field-group:flex-row @md/field-group:items-center @md/field-group:*:w-auto @md/field-group:has-[>[data-slot=field-content]]:items-start @md/field-group:*:data-[slot=field-label]:flex-auto [&>.sr-only]:w-auto @md/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
+        vertical: "flex-col *:w-full [&>.sr-only]:w-auto",
+      },
     },
   },
-});
+);
 
 function Field({
   className,
@@ -105,19 +76,6 @@ function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>)
   );
 }
 
-function FieldTitle({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn(
-        "flex w-fit items-center gap-2 text-sm leading-snug font-medium group-data-[disabled=true]/field:opacity-50",
-        className,
-      )}
-      data-slot="field-label"
-      {...props}
-    />
-  );
-}
-
 function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
@@ -130,34 +88,6 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
       data-slot="field-description"
       {...props}
     />
-  );
-}
-
-function FieldSeparator({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"div"> & { children?: React.ReactNode }) {
-  return (
-    <div
-      className={cn(
-        "relative -my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2",
-        className,
-      )}
-      data-content={Boolean(children)}
-      data-slot="field-separator"
-      {...props}
-    >
-      <Separator className="absolute inset-0 top-1/2" />
-      {children && (
-        <span
-          className="bg-background text-muted-foreground relative mx-auto block w-fit px-2"
-          data-slot="field-separator-content"
-        >
-          {children}
-        </span>
-      )}
-    </div>
   );
 }
 
@@ -197,7 +127,7 @@ function FieldError({
 
   return (
     <div
-      className={cn("text-destructive text-sm font-normal", className)}
+      className={cn("text-destructive-text text-sm font-normal", className)}
       data-slot="field-error"
       role="alert"
       {...props}
@@ -243,7 +173,7 @@ function FieldDynamicDescription({
       <div
         aria-hidden={showSuccess}
         className={cn(
-          "col-start-1 row-start-1 transition-all duration-300 ease-in-out",
+          "duration-base col-start-1 row-start-1 transition-[opacity,translate]",
           showSuccess ? "translate-y-2 opacity-0" : "translate-y-0 opacity-100",
         )}
       >
@@ -254,11 +184,11 @@ function FieldDynamicDescription({
         aria-hidden={!showSuccess}
         aria-live="polite"
         className={cn(
-          "col-start-1 row-start-1 transition-all duration-300 ease-in-out",
+          "duration-base col-start-1 row-start-1 transition-[opacity,translate]",
           showSuccess ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0",
         )}
       >
-        <p className="text-success text-sm font-medium">{successMessage}</p>
+        <p className="text-success-text text-sm font-medium">{successMessage}</p>
       </div>
     </div>
   );
@@ -272,8 +202,4 @@ export {
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
-  FieldSeparator,
-  FieldSet,
-  FieldTitle,
 };

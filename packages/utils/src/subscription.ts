@@ -1,3 +1,6 @@
+import { MS_PER_DAY } from "./date";
+import { getDateInTimeZone } from "./time-zone";
+
 const SUBSCRIPTION_PROVIDERS = ["stripe", "google", "apple", "zoonk"] as const;
 export type SubscriptionProvider = (typeof SUBSCRIPTION_PROVIDERS)[number];
 
@@ -13,30 +16,29 @@ export const PAID_PLANS = [PLUS_PLAN] as const;
 export const SUBSCRIPTION_PLANS = [FREE_PLAN, ...PAID_PLANS] as const;
 export type SubscriptionPlanName = (typeof SUBSCRIPTION_PLANS)[number]["name"];
 
-/**
- * Admin plan changes use the same Free and Plus source of truth as checkout so
- * a crafted form submission cannot create an unsupported subscription plan.
- */
 export function isSubscriptionPlanName(plan: string): plan is SubscriptionPlanName {
   return SUBSCRIPTION_PLANS.some((subscriptionPlan) => subscriptionPlan.name === plan);
 }
 
-/**
- * The web billing page should only expose direct plan controls when Stripe owns
- * the subscription. Every other provider needs a different handoff.
- */
 export function isWebManagedSubscriptionProvider(
   provider?: SubscriptionProvider | null,
 ): provider is "stripe" {
   return provider === "stripe";
 }
 
+const REFUND_DAYS = 14;
+
 /**
- * Apple and Google purchases must be managed in the original store instead of
- * pretending the web app can cancel or change them.
+ * The day of purchase doesn't count toward the 14 refund days (EU Regulation 1182/71), so the
+ * last one is the 14th day after it where the learner subscribed, as a UTC-midnight calendar date.
  */
-export function isStoreSubscriptionProvider(
-  provider?: SubscriptionProvider | null,
-): provider is "apple" | "google" {
-  return provider === "apple" || provider === "google";
+export function getRefundLastDay({
+  subscribedAt,
+  timeZone,
+}: {
+  subscribedAt: Date;
+  timeZone: string;
+}): Date {
+  const purchaseDay = getDateInTimeZone({ date: subscribedAt, timeZone });
+  return new Date(purchaseDay.getTime() + REFUND_DAYS * MS_PER_DAY);
 }

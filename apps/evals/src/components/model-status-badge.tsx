@@ -22,10 +22,6 @@ export async function ModelStatusBadge({ taskId, modelId }: { taskId: string; mo
   return <Badge variant={variantMap[status]}>{labelMap[status]}</Badge>;
 }
 
-/**
- * Preserves the badge's exact height while its filesystem-backed model status
- * is still being resolved.
- */
 export function ModelStatusBadgeSkeleton() {
   return <Skeleton className="h-5 w-20 rounded-full" />;
 }

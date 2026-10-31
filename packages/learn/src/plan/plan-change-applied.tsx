@@ -1,0 +1,79 @@
+"use client";
+
+import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
+import { Button } from "@zoonk/ui/components/button";
+import { DrawerContent } from "@zoonk/ui/components/drawer";
+import { type LucideIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
+import { ChangeSaveError } from "../_components/save-error";
+import { PhaseEndMoves } from "./phase-end-moves";
+import { usePlanScreen } from "./plan-context";
+import { useAppliedLine, useChangeSentence } from "./use-change-sentence";
+import { useAppliedEffectText } from "./use-effect-text";
+import { useUndoChange } from "./use-undo-change";
+
+export function PlanChangeSummary({
+  change,
+  icon: Icon,
+}: {
+  change: PlanChangeView;
+  icon: LucideIcon;
+}) {
+  const t = useExtracted();
+  const sentence = useChangeSentence();
+  const appliedLine = useAppliedLine();
+  const effectText = useAppliedEffectText();
+  const { plan } = usePlanScreen();
+  // A choice that sets back what the latest change set is its Undo (see `changeGoalPlan`).
+  const undone = change.status === "undone";
+  const effect = undone ? null : effectText(change, plan.schedule);
+
+  return (
+    <div className="flex items-start gap-3" role="status">
+      <span aria-hidden="true" className="flex h-6 shrink-0 items-center">
+        <Icon className="text-muted-foreground size-4" />
+      </span>
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <p className="font-medium text-balance">
+          {undone ? t("Undone. Your plan is back as it was.") : sentence(change)}
+        </p>
+        {effect && <p className="text-muted-foreground text-sm">{effect}</p>}
+        {!undone && (
+          <p className="text-muted-foreground text-sm">{appliedLine(change.todaySession)}</p>
+        )}
+        {!undone && <PhaseEndMoves effect={change.effect} />}
+      </div>
+    </div>
+  );
+}
+
+export function PlanChangeApplied({
+  change,
+  icon,
+  onDone,
+}: {
+  change: PlanChangeView;
+  icon: LucideIcon;
+  onDone: () => void;
+}) {
+  const t = useExtracted();
+  const { failed, isPending, undo } = useUndoChange({ change, onUndone: onDone });
+
+  return (
+    <>
+      <DrawerContent className="flex flex-col gap-3 pt-2">
+        <PlanChangeSummary change={change} icon={icon} />
+      </DrawerContent>
+
+      <div className="flex flex-col gap-2 border-t px-6 pt-4 pb-6">
+        <Button onClick={onDone}>{t("Done")}</Button>
+        {change.canUndo && (
+          <Button disabled={isPending} focusableWhenDisabled onClick={undo} variant="outline">
+            {t("Undo")}
+          </Button>
+        )}
+        {failed && <ChangeSaveError />}
+      </div>
+    </>
+  );
+}

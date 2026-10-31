@@ -1,98 +1,56 @@
-import { createGoogle } from "@ai-sdk/google";
-import { openai } from "@ai-sdk/openai";
-import { type TTSVoice } from "@zoonk/utils/languages";
-import { type SpeechModel, generateSpeech } from "ai";
+import { type TTSVoice, getBaseLanguage, getMaiVoiceLocale } from "@zoonk/utils/languages";
+import { generateSpeech } from "ai";
+import { NO_PROMPT_TRAINING } from "../../data-protection";
+import { zoonkGateway } from "../../gateway";
+import { type ServiceTier } from "../../provider-options";
 import { type SpeechModelName, speechModels } from "./speech-models";
 
-type SpeechProvider = { model: SpeechModel; voice: string };
+/** MAI-Voice's Harper speaks every one of its languages, so every clip sounds like the same speaker. */
+const MAI_VOICE_SPEAKER = "Harper";
 
-const google = createGoogle({ apiKey: process.env.GEMINI_API_KEY });
-const GEMINI_DEFAULT_INSTRUCTIONS = "Read the supplied transcript aloud. Return audio only.";
+function getMaiVoice(language: string): string {
+  const locale = getMaiVoiceLocale(getBaseLanguage(language));
 
-/**
- * Removes the provider prefix after the typed registry has established which
- * provider owns the model. Provider SDKs expect bare identifiers while task
- * callers use provider-qualified names consistently across the AI package.
- */
-function getSpeechModelId(model: SpeechModelName): string {
-  const separatorIndex = model.indexOf("/");
-  return model.slice(separatorIndex + 1);
+  if (!locale) {
+    throw new Error(`MAI-Voice doesn't speak ${language}`);
+  }
+
+  return `${locale}-${MAI_VOICE_SPEAKER}`;
 }
 
 /**
- * Adds minimal read-aloud guidance only when Gemini has no richer task prompt.
- * Gemini otherwise treats some short transcripts, such as `Hello`, as a text
- * request and rejects them before producing audio. OpenAI does not need this.
- */
-function getSpeechInstructions({
-  instructions,
-  model,
-}: {
-  instructions?: string;
-  model: SpeechModelName;
-}): string | undefined {
-  if (instructions) {
-    return instructions;
-  }
-
-  if (model === speechModels.google) {
-    return GEMINI_DEFAULT_INSTRUCTIONS;
-  }
-
-  return undefined;
-}
-
-/**
- * Resolves a provider-qualified name into the corresponding AI SDK model and
- * voice. Both providers return WAV so the task can apply one validation and
- * encoding pipeline without codec-specific branches.
- */
-function getSpeechProvider({
-  model,
-  voice,
-}: {
-  model: SpeechModelName;
-  voice: TTSVoice;
-}): SpeechProvider {
-  const modelId = getSpeechModelId(model);
-
-  if (model === speechModels.google) {
-    return { model: google.speech(modelId), voice };
-  }
-
-  if (model === speechModels.openai) {
-    return { model: openai.speech(modelId), voice: "marin" };
-  }
-
-  throw new Error("Unsupported speech model");
-}
-
-/**
- * Generates WAV through either AI SDK provider. WAV adds only a small header to
- * the PCM samples while keeping the intermediate self-describing and avoiding
- * provider-specific parsing in the task layer.
+ * MAI-Voice takes no instructions (only SSML styles, which the gateway drops), so its voice names
+ * the language. No provider reads the AI SDK's `language` option (8 Oct 2026), so it isn't sent.
+ * MAI-Voice has no service tier.
  */
 export async function generateSpeechWithProvider({
   instructions,
+  language,
   model,
+  serviceTier,
   text,
   voice,
 }: {
-  instructions?: string;
+  instructions: string;
+  /** MAI-Voice picks its voice by it. */
+  language: string;
   model: SpeechModelName;
+  serviceTier?: ServiceTier;
   text: string;
   voice: TTSVoice;
-}): Promise<Uint8Array> {
-  const provider = getSpeechProvider({ model, voice });
-  const speechInstructions = getSpeechInstructions({ instructions, model });
+}): Promise<{ audio: Uint8Array; providerMetadata: Record<string, unknown> }> {
+  const isMaiVoice = model === speechModels.maiVoiceFlash;
 
-  const { audio } = await generateSpeech({
-    ...(speechInstructions ? { instructions: speechInstructions } : {}),
-    model: provider.model,
+  const { audio, providerMetadata } = await generateSpeech({
+    ...(isMaiVoice ? {} : { instructions }),
+    model: zoonkGateway.speechModel(model),
     outputFormat: "wav",
+    providerOptions: {
+      gateway: { ...NO_PROMPT_TRAINING, ...(serviceTier && !isMaiVoice ? { serviceTier } : {}) },
+    },
     text,
-    voice: provider.voice,
+    voice: isMaiVoice ? getMaiVoice(language) : voice,
   });
 
-  return audio.uint8Array;
+  return { audio: audio.uint8Array, providerMetadata };
 }

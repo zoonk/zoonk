@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_music_answer_on_guitar": "85416b20f63059305f61c76938c9fd48c200236eae7ed2982b374f2d217b6375",
+  "activities_music_badge_ear_training": "e77f71d698e1676faf46e3f68e2a02b29df3edd1f308e27473c56be23923eaa2",
+  "activities_music_badge_play_it": "c7d2a5150d45efa948420a6601a1360e73089a2756b5aeeac551b1c06585d3b6",
+  "activities_music_badge_read_listen": "d035489ba96080c6a95aa1a15918f91c51216fc80208fbbf56d73830e29f6651",
+  "activities_music_badge_tap_along": "3232e981e434525b4002551190227bf8bac62e623ecc9a0416a7956399ab9373",
+  "activities_music_bar_notes": "d3a2fe8a86729ccf3bc53448c3ac697758b1c8ec51853b83ff989df29d7cf675",
+  "activities_music_bar_of": "99a7cf9ec1908d1ca85ac3c8811e9b6e5de3aea1133bd1809d12beac3ebb4cd2",
+  "activities_music_bars": "613b8036916e5e21bf222c9579b167b1df2c76ba8aa32babc88950499c96f784",
+  "activities_music_bpm": "c2663de65070f76ef8d1f20e2c1a2fe2f700c9569e3135ca57feb22283663271",
+  "activities_music_by_ear": "3cdc1d288df07900f62e7b5752ca4067f1780d6ec230a79942359cad35f19443",
+  "activities_music_can_listen_now": "166f91d6e3a636937e0937f358e12d4e653964673e64456481e093f8dc79d0a0",
+  "activities_music_cant_listen_now": "9a9cfa95b4a949c2bf7da654f58d904b923892a9bdce8fadb5eb2acb0cc6c38d",
+  "activities_music_check_sound_again": "0bc3cf3946e2eaf1f8bd988fad3ea384dc5a020b85b48f40956fb50d335ce922",
+  "activities_music_chord_augmented": "a11350d5e4fe964f64b7b69f43c34f7586af416f5fab7f6a8ba13e1eed6097e9",
+  "activities_music_chord_diminished": "67356c44d7a6126e5b50ec9c482d4fa44822e0b21b478c7b8c18568d83d30649",
+  "activities_music_chord_dominant7": "cd5ca8dc25a9b8b23ec5a3bd4adfe2e2d3c9dfa8a4aba03d78c9892e21267d66",
+  "activities_music_chord_major": "457d799388ea7b8073f9b26877cdc663876ebb614ffa33a40de830831455779f",
+  "activities_music_chord_major7": "b65b95d97f35acab94198839b2b4bede4d6a63439793aa1d9ed8a45907b2511a",
+  "activities_music_chord_minor": "2e849b5e5b57d683ca336616efbe6f7468055c3e47d3a09f69adc7e2815a82bb",
+  "activities_music_chord_minor7": "42c687bf67440c32c42b894a6195c4b703945747f15b22d91425253081ef814e",
+  "activities_music_continue": "0a9a203e1253c40638e4518b6b57a199fab1465cf374ef4cdc80122478ee0a66",
+  "activities_music_early_or_late": "eb8f37a82a89e4076cb16050112db590f0e78c0ec637468d925d190aa59b98f4",
+  "activities_music_extra_taps": "53e81d388459b3a458c28108cf2d734620a500dbff5c29243ee98a4fe3de8989",
+  "activities_music_fret": "4e108cd2a0c0fc8f90a04973cff49ade408edcc1488b7b69c31867c36f607396",
+  "activities_music_frets": "3a8a425db78ae2e4aee25b93110b175d85da0f9baebc4e2781d31da86f08ce7d",
+  "activities_music_get_ready": "42050f053fd42e58a8fd171d329f6d7e64d43759d0fba404c90324460aa878d9",
+  "activities_music_guitar_strings": "d26d764b33f5846791f043d0b9b6a436035b2259c7b39bed521346ccd5fedd6b",
+  "activities_music_hear_it": "14cad8093d297399f54bd7c1715cb6609b0cbe8e4da33a57830d04a7aeeeba8d",
+  "activities_music_higher_frets": "d5a714b1a7b2989868ae73367307ccc069c29cd15a550b9a7506678df95db0d6",
+  "activities_music_listen_first": "8b8a00523f0fdd163cb1f758c095828584ebef289855930c0217d1b89a98626f",
+  "activities_music_lower_frets": "d5d4f2d29c4748011ab7b7cd1294509f3156aaaabf6575844a9553926cd541bb",
+  "activities_music_melody": "b0bbb8a5376ad7ea2820d145b9e9ce8c943ec375e1659600b7cf3d7ff4df5202",
+  "activities_music_no_hand_shape": "1d963ea18490d0beae4e123d44971ddc92a0e96ad6e8f28ca4c8aa6d636388df",
+  "activities_music_no_notes": "7f76dfe1e03bbfb97b73faf254f40bd341c1c31299323abeb9f5fe1bd46b49e0",
+  "activities_music_not_played": "05b3cc66e1918fb182ca35864f124012d97fa501f3d18e4ad222f4a348ac32d5",
+  "activities_music_note_count": "509f6bc4c0832af98be62fdae1efc5919fcde1b8a1389783dc169eef96b927e4",
+  "activities_music_note_flat": "64c5dff143914f49bdf6e7f736d3422b0279458cefc006fc15a14a34fdca9b2d",
+  "activities_music_note_sharp": "99a781c35c759f50e111503d41fea0a8ad531a2869fbc52429a29adc642e67bb",
+  "activities_music_on_the_keys": "fd39c4c2884b54542457b10c568e7749133aab72c433cbed180b87b593fd3031",
+  "activities_music_on_time": "68bc4343c92cddca28a4f385a383c0cffeca0a2aac1c0b2a56e9cc95cb40224f",
+  "activities_music_open_string": "8b12a1243a91efcab0ff5f6891856f332495cbcb051968308745fbe7229b140a",
+  "activities_music_or_space": "90ea051fb8a8872967b9a01033e8ad978fdc514e6210455aff1268eafbe26b09",
+  "activities_music_piano_keys": "169797bbb2efc0fd67cd1d9e1b4d9a842e8c562da4b0688878fd2599c9dcace8",
+  "activities_music_piano_nothing_pressed": "dce4d29bec999598b441db56ba5bf219a747b71daae4fa11b21f271b1b287729",
+  "activities_music_piano_pressed": "932e6677b547eaa683bee36a8502fa8f316350e6fadd420e07b38af97a73d40c",
+  "activities_music_play_melody": "a45cf274d34931fc42c616db6cffa2ca4564e9856b6e70d56c87941f1650c551",
+  "activities_music_play_sound": "84adb732717de9d43daa56429b78c636e3aac66b740479dd368514495f3b6782",
+  "activities_music_rhythm_description": "976150c9893e414d8b81942baff5fe5aabba74dcc911fb1cc99a69e0edd48d91",
+  "activities_music_rhythm_hits": "c2e347b14d8074bc40b74c2f86e95c2152b92760a618c92fab80bd4e6ced1154",
+  "activities_music_rhythm_round": "628dc9ce994ad2e4be7fa7545b1ba754bac6d15817e781aa77c46bdea49a2c36",
+  "activities_music_rhythm_rounds": "b98a92cdd7ce452f8d9cc014d6a3f52e00a125ae549fc11974a7e283b6e87ac4",
+  "activities_music_same_chord_guitar": "f6d7fbda5d3f6ac70f672454baefde0ebfb2e146021319f51d84dbad0d980dd3",
+  "activities_music_same_notes_guitar": "c4d9a02140b3577a78947f413f63b7aa0e7bdccde054db9764b30fc8ae8ec8ef",
+  "activities_music_show_as": "38428f4e2ebb39066a29cba0f50a0caf400cc64f1465a40c37e0efe37b1bdc66",
+  "activities_music_skip_for_now": "161df6f527e3f33e83f72d471602c88bb730ac178141e514931aef19935c30e9",
+  "activities_music_sound_check_failed": "cd5ba8340d862f67b2f52dc04efa95cc7e144fe01bcfe2f03f14f275f6f3bd6d",
+  "activities_music_sound_check_intro": "da34f2a5a59a608f91ffdaa81f6fa9b3444b3dd92345dc4041c68a707c4efff8",
+  "activities_music_sound_check_late": "3095197873f1e2b16ac76ba6428d026e747a24c23e6b48b9c40ac0a76a4238d5",
+  "activities_music_sound_check_listen": "b5500949df7c74425c92e375cfec78e848d01fd13850919285d48331553d83bb",
+  "activities_music_sound_check_on_time": "bfa954e8966c23d9d1dfd08d60ef1d2a50c57248e609d9a52a2206d50676537a",
+  "activities_music_sound_check_start": "26774d8892a4ef0a074355b3c8924b5eb72226ea7a6f589250344b19dc1b56ae",
+  "activities_music_sound_check_tap": "17149a4400ac6a357691d5583fa33905eebe2a2e30a923f4f9b68f7f533385ec",
+  "activities_music_sound_check_title": "042801cf7fb4f80f186864f0c0b6eb76cfb6b248c418c18663464bed5d72e1aa",
+  "activities_music_sound_notes": "a02b80a7952bda0bf3969fe305d94cbf14daf3ea76fc3537896c817bce9fec23",
+  "activities_music_sound_unavailable": "b2bc42a948a282051235230facdaa947a9c6b076fdcab2708b47c2012ef674c3",
+  "activities_music_staff": "d7680707015496d86d8b3b9ae02e4f453c8904f98852317c905881b31e7994a0",
+  "activities_music_start_tapping": "1d477930a7c44da0ed5558a0835509ba23da98b7b037ec98d6be4886b9d16d5b",
+  "activities_music_stop": "863eaac231c7fb07be718075ced1d343e4ecdea2453cd5d285d8e62ab272926e",
+  "activities_music_string": "c6e96b914a1205a743f944d0d32d0486fbb12d8c291ca69c74bbb9ba6d817ba7",
+  "activities_music_string_high_e": "db38fdd90232a17562dc47abc62062c963999ed3338e68b9b724019e5d63900b",
+  "activities_music_string_low_e": "59bc9c0ea9092ef57e203d490f0be1283dc8032fb897bbe6a5302bd31feb47a9",
+  "activities_music_string_position": "18ff4a3fb8340656af7095ab5ad9cc717f6584f5bae2c074c54a53cff106871c",
+  "activities_music_tab": "1850ffb5bdb2178d4525fcca482765e92233d73cba8a0186853dac838b883295",
+  "activities_music_tap_early": "f0d3c2b7631279a80e1f34dc7bb2df53af95a7c4f87bd79f1256026e3fce5d63",
+  "activities_music_tap_here": "82562679b0df2b45a144d8dd91e487144c647258fd71f5277b2dedf315c4b185",
+  "activities_music_tap_late": "3ffa85f572be3b720dbf236d2312b0b8647738766c97a462c63b00a0b99d1015",
+  "activities_music_tap_missed": "099344f21a34323a2730dc94666698ac95edf0b54c1207084322e5acff429d93",
+  "activities_music_taps_on_time": "cbafe446e7fbd22fa626f290b37d8bdd2b2be9f5dfaebdd3eb8894a53cff1f42",
+  "activities_music_tempo": "9c5fe2626db8a399d2ed214cee4c76dd7c4837e7963471f5bd153ccd61324bed",
+  "activities_music_try_again": "133b29b178942717d49ac0d83672e287f2cec1fa36f3bdfe0065ccc9fe098a8b"
+}
+-->
+<resources>
+    <string name="activities_music_badge_play_it">Suona</string>
+    <!-- Training the ear to recognize notes and chords by their sound. -->
+    <string name="activities_music_badge_ear_training">Allenamento dell’orecchio</string>
+    <!-- Reading music while it plays. -->
+    <string name="activities_music_badge_read_listen">Leggi e ascolta</string>
+    <!-- Tapping a rhythm in time with the beat. -->
+    <string name="activities_music_badge_tap_along">Tocca a ritmo</string>
+    <!-- A note name read aloud, like "F sharp". -->
+    <string name="activities_music_note_sharp">%1$s diesis</string>
+    <!-- A note name read aloud, like "E flat". -->
+    <string name="activities_music_note_flat">%1$s bemolle</string>
+    <!-- A chord's name: its root note, then the chord's kind, like "C major". -->
+    <string name="activities_music_chord_major">%1$s maggiore</string>
+    <string name="activities_music_chord_minor">%1$s minore</string>
+    <string name="activities_music_chord_augmented">%1$s aumentato</string>
+    <string name="activities_music_chord_diminished">%1$s diminuito</string>
+    <string name="activities_music_chord_dominant7">%1$s settima di dominante</string>
+    <string name="activities_music_chord_major7">%1$s settima maggiore</string>
+    <string name="activities_music_chord_minor7">%1$s minore settima</string>
+    <!-- The title while the notes to find are only heard, not named. -->
+    <string name="activities_music_by_ear">A orecchio</string>
+    <!-- How many notes the target has, like "2 notes". -->
+    <plurals name="activities_music_note_count">
+        <item quantity="one">%d nota</item>
+        <item quantity="many">%d note</item>
+        <item quantity="other">%d note</item>
+    </plurals>
+    <!-- Nothing is pressed on the instrument. -->
+    <string name="activities_music_no_notes">Ancora nessuna nota</string>
+    <!-- For TalkBack: the notes the instrument plays now, like "On the keys: C, E flat, G". -->
+    <string name="activities_music_on_the_keys">Sui tasti: %1$s</string>
+    <!-- Plays the chord or notes to find by ear. -->
+    <string name="activities_music_play_sound">Riproduci il suono</string>
+    <!-- Plays the notes on the keys. -->
+    <string name="activities_music_hear_it">Ascolta</string>
+    <!-- On a screen to find a sound by ear: shows the sound's notes as text instead, for the rest of the day. -->
+    <string name="activities_music_cant_listen_now">Continua con le note scritte</string>
+    <!-- After "I can't listen now": goes back to finding sounds by ear. -->
+    <string name="activities_music_can_listen_now">Torna ad ascoltare</string>
+    <!-- The notes the sound plays, as text, like "The sound plays: C, G". -->
+    <string name="activities_music_sound_notes">Note del suono: %1$s</string>
+    <!-- Under an instrument when the device couldn't play sound. -->
+    <string name="activities_music_sound_unavailable">Non è stato possibile riprodurre il suono. Puoi comunque vedere tutte le note.</string>
+    <!-- For TalkBack: the piano keyboard's name. -->
+    <string name="activities_music_piano_keys">Tasti del pianoforte</string>
+    <!-- For TalkBack: the checked piano keyboard, its lowest and highest notes, then the notes the learner pressed, like "A piano keyboard from C to B. Pressed: C, E flat, G." -->
+    <string name="activities_music_piano_pressed">Tastiera del pianoforte da %1$s a %2$s. Tasti premuti: %3$s.</string>
+    <!-- For TalkBack: the checked piano keyboard, its lowest and highest notes, when the learner pressed no key, like "A piano keyboard from C to B. Nothing pressed." -->
+    <string name="activities_music_piano_nothing_pressed">Tastiera del pianoforte da %1$s a %2$s. Nessun tasto premuto.</string>
+    <!-- For TalkBack: the guitar neck's name. -->
+    <string name="activities_music_guitar_strings">Corde della chitarra</string>
+    <!-- Above a guitar shape that plays the chord on the keys. -->
+    <string name="activities_music_same_chord_guitar">Stesso accordo sulla chitarra</string>
+    <!-- Above a guitar shape that plays the notes on the keys. -->
+    <string name="activities_music_same_notes_guitar">Stesse note sulla chitarra</string>
+    <!-- Above a guitar shape that plays the right notes, after the check. -->
+    <string name="activities_music_answer_on_guitar">Un modo per suonare le note giuste</string>
+    <!-- Under the piano when the pressed notes can't be played as one guitar shape. -->
+    <string name="activities_music_no_hand_shape">Queste note non si possono suonare con un’unica posizione della mano sulla chitarra.</string>
+    <!-- Moves the guitar neck's window toward the nut. -->
+    <string name="activities_music_lower_frets">Mostra i tasti più bassi</string>
+    <!-- Moves the guitar neck's window up the neck. -->
+    <string name="activities_music_higher_frets">Mostra i tasti più alti</string>
+    <!-- Which frets of the guitar neck show, like "Frets 1 to 4". -->
+    <string name="activities_music_frets">Tasti da %1$d a %2$d</string>
+    <!-- The thickest guitar string, read aloud. -->
+    <string name="activities_music_string_low_e">Corda del mi grave</string>
+    <!-- The thinnest guitar string, read aloud. -->
+    <string name="activities_music_string_high_e">Corda del mi acuto</string>
+    <!-- A guitar string named by its open note, like "A string". -->
+    <string name="activities_music_string">Corda di %1$s</string>
+    <!-- A guitar string left silent (muted). -->
+    <string name="activities_music_not_played">Non suonata</string>
+    <!-- A guitar string played open, with the note it sounds, like "Open, D". -->
+    <string name="activities_music_open_string">A vuoto, %1$s</string>
+    <!-- A fret on a guitar string, with the note it sounds, like "Fret 3, G". -->
+    <string name="activities_music_fret">Tasto %1$d, %2$s</string>
+    <!-- For TalkBack: one string of a guitar shape, like "A string: Fret 3, C". -->
+    <string name="activities_music_string_position">%1$s: %2$s</string>
+    <!-- The title of a melody that has none. -->
+    <string name="activities_music_melody">Melodia</string>
+    <!-- For TalkBack: the choice between showing the music as a staff or as guitar tab. -->
+    <string name="activities_music_show_as">Scegli come mostrare la musica</string>
+    <!-- Music written on the five-line staff. -->
+    <string name="activities_music_staff">Pentagramma</string>
+    <!-- Guitar tablature: music written as fret numbers on the guitar's strings. -->
+    <string name="activities_music_tab">Tablatura</string>
+    <string name="activities_music_play_melody">Riproduci la melodia</string>
+    <!-- Stops the melody playing. -->
+    <string name="activities_music_stop">Ferma</string>
+    <!-- Which bar of the melody is playing, like "Bar 2 of 4". -->
+    <string name="activities_music_bar_of">Battuta %1$d di %2$d</string>
+    <!-- How many bars the melody has, like "4 bars". -->
+    <plurals name="activities_music_bars">
+        <item quantity="one">%d battuta</item>
+        <item quantity="many">%d battute</item>
+        <item quantity="other">%d battute</item>
+    </plurals>
+    <!-- For TalkBack: the tempo menu with its choice, like "Tempo: 80 bpm". -->
+    <string name="activities_music_tempo">Tempo: %1$s</string>
+    <!-- Beats per minute, like "80 bpm". -->
+    <string name="activities_music_bpm">%1$d bpm</string>
+    <!-- For TalkBack: one bar of the melody and its notes, like "Bar 1: E, E, F, G." -->
+    <string name="activities_music_bar_notes">Battuta %1$d: %2$s.</string>
+    <!-- The rhythm's tempo while one round plays, like "90 bpm · Round 1 of 2". -->
+    <string name="activities_music_rhythm_round">%1$d bpm · Ripetizione %2$d di %3$d</string>
+    <!-- The rhythm's tempo and how many times it repeats, like "90 bpm · 2 rounds". -->
+    <plurals name="activities_music_rhythm_rounds">
+        <item quantity="one">%1$d bpm · %2$d ripetizione</item>
+        <item quantity="many">%1$d bpm · %2$d ripetizioni</item>
+        <item quantity="other">%1$d bpm · %2$d ripetizioni</item>
+    </plurals>
+    <!-- For TalkBack: the rhythm in words, like "A rhythm of 16 steps with a beat every 4. Tap on steps 1, 4, 7, 11, 13, over a click on every beat." -->
+    <plurals name="activities_music_rhythm_description">
+        <item quantity="one">Un ritmo di %1$d passo con un battito ogni %2$d. Tocca al passo %3$s, mentre un clic scandisce ogni battito.</item>
+        <item quantity="many">Un ritmo di %1$d passi con un battito ogni %2$d. Tocca ai passi %3$s, mentre un clic scandisce ogni battito.</item>
+        <item quantity="other">Un ritmo di %1$d passi con un battito ogni %2$d. Tocca ai passi %3$s, mentre un clic scandisce ogni battito.</item>
+    </plurals>
+    <!-- The legend for the rhythm's steps to tap. -->
+    <string name="activities_music_rhythm_hits">Colpi del ritmo</string>
+    <!-- The legend for a tap that came on time. -->
+    <string name="activities_music_on_time">A tempo</string>
+    <!-- The legend for a tap that came too early or too late. -->
+    <string name="activities_music_early_or_late">In anticipo o in ritardo</string>
+    <!-- On the tap pad while the count-in clicks play. -->
+    <string name="activities_music_get_ready">Preparati…</string>
+    <!-- The tap pad's label. -->
+    <string name="activities_music_tap_here">Tocca qui</string>
+    <!-- Under the tap pad when a keyboard is attached. -->
+    <string name="activities_music_or_space">o premi la barra spaziatrice</string>
+    <!-- Plays one round of the rhythm with its clicks before the learner taps. -->
+    <string name="activities_music_listen_first">Ascolta prima</string>
+    <string name="activities_music_try_again">Riprova</string>
+    <string name="activities_music_start_tapping">Inizia a battere il ritmo</string>
+    <!-- Measures again how late this device plays sound. -->
+    <string name="activities_music_check_sound_again">Controlla di nuovo il ritardo audio</string>
+    <!-- How many of the rhythm's taps came on time, like "8 of 10 taps on time." The count is the total. -->
+    <plurals name="activities_music_taps_on_time">
+        <item quantity="one">I colpi a tempo sono %1$d su %2$d.</item>
+        <item quantity="many">I colpi a tempo sono %1$d su %2$d.</item>
+        <item quantity="other">I colpi a tempo sono %1$d su %2$d.</item>
+    </plurals>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms early". The first value is which tap, counted from 1. -->
+    <string name="activities_music_tap_early">Il colpo %1$s è arrivato con %2$d ms di anticipo.</string>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms late". The first value is which tap, counted from 1. -->
+    <string name="activities_music_tap_late">Il colpo %1$s è arrivato con %2$d ms di ritardo.</string>
+    <!-- Which tap was missed, counted from 1, like "Tap 3 was missed." -->
+    <string name="activities_music_tap_missed">Colpo %1$s mancato.</string>
+    <!-- Taps that matched none of the rhythm's steps. -->
+    <plurals name="activities_music_extra_taps">
+        <item quantity="one">%d colpo in più.</item>
+        <item quantity="many">%d colpi in più.</item>
+        <item quantity="other">%d colpi in più.</item>
+    </plurals>
+    <!-- The title of the one-time check of how late this device plays sound. -->
+    <string name="activities_music_sound_check_title">Configura l’audio</string>
+    <plurals name="activities_music_sound_check_intro">
+        <item quantity="one">Le cuffie possono riprodurre il suono con un leggero ritardo. Segui %1$d clic toccando a tempo: basta farlo una volta per valutare correttamente i ritmi su questo dispositivo.</item>
+        <item quantity="many">Le cuffie possono riprodurre il suono con un leggero ritardo. Segui %1$d clic toccando a tempo: basta farlo una volta per valutare correttamente i ritmi su questo dispositivo.</item>
+        <item quantity="other">Le cuffie possono riprodurre il suono con un leggero ritardo. Segui %1$d clic toccando a tempo: basta farlo una volta per valutare correttamente i ritmi su questo dispositivo.</item>
+    </plurals>
+    <string name="activities_music_sound_check_listen">Ascolta i clic…</string>
+    <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
+    <string name="activities_music_sound_check_tap">Tocca a ogni clic · %1$d di %2$d</string>
+    <string name="activities_music_sound_check_failed">Non siamo riusciti ad abbinare abbastanza colpi ai clic. Riprova, toccando a ogni clic.</string>
+    <string name="activities_music_sound_check_on_time">Su questo dispositivo l’audio arriva senza ritardo.</string>
+    <!-- How late this device plays sound, like "about 120 ms late". -->
+    <string name="activities_music_sound_check_late">Su questo dispositivo il suono arriva con circa %1$d ms di ritardo. Nelle attività di ritmo lo compensiamo.</string>
+    <string name="activities_music_sound_check_start">Avvia il controllo audio</string>
+    <string name="activities_music_skip_for_now">Salta per ora</string>
+    <string name="activities_music_continue">Continua</string>
+</resources>

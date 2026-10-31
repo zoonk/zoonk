@@ -1,0 +1,185 @@
+package com.zoonk.android.feature.account
+
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.zoonk.android.R
+import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.LocalNavigationSuiteType
+import com.zoonk.android.data.SessionState
+import com.zoonk.android.data.SignOutResult
+import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
+import com.zoonk.android.feature.feedback.rememberSendFeedback
+import com.zoonk.android.feature.subscription.PlusMark
+import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.navigation.AppRoute
+import com.zoonk.api.models.LearnerSummary
+import com.zoonk.api.models.MeUser
+import kotlinx.coroutines.launch
+
+/**
+ * The tab roots' avatar, opening main's user menu. A guest is offered an account instead of
+ * logging out, which would lose their plan.
+ */
+@Composable
+fun AccountMenu(
+    app: AppContainer,
+    navigator: AppNavigator,
+) {
+    val session by app.sessions.state.collectAsStateWithLifecycle()
+    val summary by app.learnerSummary.summary.collectShown()
+    val signedIn = session as? SessionState.SignedIn
+    val user = signedIn?.takeUnless { it.isGuest }?.account?.user
+    val isPlus = summary.value?.tier == LearnerSummary.Tier.PLUS
+    var isOpen by rememberSaveable { mutableStateOf(false) }
+    val sendFeedback = rememberSendFeedback(app, "account-menu")
+    val drawerHasFeedback = LocalNavigationSuiteType.current == NavigationSuiteType.NavigationDrawer
+
+    fun go(route: AppRoute) {
+        isOpen = false
+        navigator.open(route)
+    }
+
+    // Main's frame offers a visitor Log in beside the menu.
+    if (signedIn == null) {
+        TextButton(onClick = { navigator.open(AppRoute.Login) }) { Text(stringResource(R.string.gate_log_in)) }
+    }
+
+    Box {
+        IconButton(onClick = { isOpen = true }) {
+            if (user == null) {
+                Icon(painterResource(R.drawable.ic_account_circle), contentDescription = stringResource(R.string.navigation_user_menu))
+            } else {
+                val label = stringResource(R.string.navigation_user_menu)
+                AccountAvatar(user, size = 32.dp, modifier = Modifier.semantics { contentDescription = label })
+            }
+        }
+
+        DropdownMenu(expanded = isOpen, onDismissRequest = { isOpen = false }, modifier = Modifier.widthIn(min = 256.dp)) {
+            if (user != null) {
+                Identity(user)
+                HorizontalDivider()
+            }
+
+            MenuItem(stringResource(R.string.account_menu_settings), R.drawable.ic_settings) { go(AppRoute.Settings) }
+
+            if (user != null) {
+                MenuItem(
+                    text = stringResource(R.string.account_menu_subscription),
+                    icon = R.drawable.ic_diamond,
+                    trailing = if (isPlus) ({ PlusMark(label = stringResource(R.string.subscription_plus)) }) else null,
+                ) { go(AppRoute.Subscription) }
+            } else {
+                MenuItem(stringResource(R.string.account_menu_pricing), R.drawable.ic_sell) { go(AppRoute.Subscription) }
+            }
+
+            MenuItem(stringResource(R.string.account_menu_help), R.drawable.ic_support) { go(AppRoute.Help) }
+            if (!drawerHasFeedback) {
+                MenuItem(stringResource(R.string.feedback_send_feedback), R.drawable.ic_feedback) {
+                    isOpen = false
+                    sendFeedback.open()
+                }
+            }
+            HorizontalDivider()
+
+            when {
+                user != null -> {
+                    MenuItem(stringResource(R.string.account_menu_log_out), R.drawable.ic_logout) {
+                        isOpen = false
+                        // The app's scope: closing the menu or turning the screen mustn't cancel it halfway.
+                        app.scope.launch {
+                            if (app.sessions.signOut() is SignOutResult.Failed) app.snackbars.show(R.string.account_sign_out_failed)
+                        }
+                    }
+                }
+
+                signedIn != null -> {
+                    MenuItem(stringResource(R.string.account_menu_create_account), R.drawable.ic_person_add) { go(AppRoute.Login) }
+                    MenuItem(stringResource(R.string.gate_log_in), R.drawable.ic_login) { go(AppRoute.Login) }
+                }
+
+                else -> {
+                    MenuItem(stringResource(R.string.gate_log_in), R.drawable.ic_login) { go(AppRoute.Login) }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun Identity(user: MeUser) {
+    Row(
+        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        AccountAvatar(user, size = 32.dp)
+        Column(Modifier.widthIn(max = 280.dp)) {
+            Text(
+                text = user.name.ifBlank { user.email },
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = user.email,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+@Composable
+private fun MenuItem(
+    text: String,
+    @DrawableRes icon: Int,
+    trailing: (@Composable () -> Unit)? = null,
+    onClick: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            // The mark goes under the words when a large font leaves no room beside them.
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                itemVerticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(text)
+                trailing?.invoke()
+            }
+        },
+        onClick = onClick,
+        leadingIcon = { Icon(painterResource(icon), contentDescription = null) },
+    )
+}

@@ -1,0 +1,226 @@
+import assert from "node:assert/strict";
+import { describe, it } from "vitest";
+import { type ChangedFile, auditDiff, parseDiff, renderAudit } from "./diff-audit.mts";
+
+/** Built at runtime, so this file never holds a credential or a focused test the audit would flag. */
+const LIVE_KEY = ["sk", "live", "4eC39HqLyjWDarjtT1zdp7dc"].join("_");
+const FOCUSED = ["it", "only"].join(".");
+const FOCUSED_EACH = ["it", "only", "each"].join(".");
+
+function file(path: string, lines: string[], created = false): ChangedFile {
+  return { added: lines.map((text, index) => ({ line: index + 1, text })), created, path };
+}
+
+function names(files: ChangedFile[], client: string[] = []) {
+  return auditDiff(files, (path) => client.includes(path)).map(
+    (flag) => `${flag.rule.name} ${flag.lines.join(",")}`,
+  );
+}
+
+describe("reading a diff", () => {
+  it("numbers each added line and marks new files", () => {
+    const diff = [
+      "diff --git a/apps/main/src/a.tsx b/apps/main/src/a.tsx",
+      "--- a/apps/main/src/a.tsx",
+      "+++ b/apps/main/src/a.tsx",
+      "@@ -10,0 +11,2 @@ export function A() {",
+      "+  useEffect(() => {",
+      "+++ an added line that starts with two plus signs",
+      "diff --git a/apps/main/src/b/route.ts b/apps/main/src/b/route.ts",
+      "new file mode 100644",
+      "--- /dev/null",
+      "+++ b/apps/main/src/b/route.ts",
+      "@@ -0,0 +1 @@",
+      "+export async function GET() {}",
+    ].join("\n");
+
+    assert.deepEqual(parseDiff(diff), [
+      {
+        added: [
+          { line: 11, text: "  useEffect(() => {" },
+          { line: 12, text: "++ an added line that starts with two plus signs" },
+        ],
+        created: false,
+        path: "apps/main/src/a.tsx",
+      },
+      {
+        added: [{ line: 1, text: "export async function GET() {}" }],
+        created: true,
+        path: "apps/main/src/b/route.ts",
+      },
+    ]);
+  });
+});
+
+describe("questioning a diff", () => {
+  it("asks about effects, and about browser fetches only in client files", () => {
+    const lines = ['"use client";', "useEffect(() => {", "  fetch(`/api/goals`).then(setGoals);"];
+
+    assert.deepEqual(names([file("apps/main/src/goals.tsx", lines)], ["apps/main/src/goals.tsx"]), [
+      "Client component 1",
+      "Effect 2",
+      "Data fetched in the browser 3",
+    ]);
+
+    assert.ok(
+      !names([file("apps/main/src/goals.tsx", lines)]).includes("Data fetched in the browser 3"),
+    );
+  });
+
+  it("blocks credentials and focused tests, and asks about new entry points", () => {
+    const flags = auditDiff(
+      [
+        file("apps/main/src/config.ts", [`const key = "${LIVE_KEY}";`]),
+        file("apps/main/src/x.test.ts", [`${FOCUSED}("works", () => {});`]),
+        file("apps/main/src/y.test.ts", [`${FOCUSED_EACH}([1, 2])("works with %i", () => {});`]),
+        file("apps/main/src/app/api/x/route.ts", ["export async function POST() {}"], true),
+      ],
+      () => false,
+    );
+
+    assert.deepEqual(
+      flags.map((flag) => `${flag.rule.name}${flag.rule.blocks ? " (blocks)" : ""}`),
+      ["Secret (blocks)", "Focused test (blocks)", "Focused test (blocks)", "Route handler"],
+    );
+
+    assert.match(
+      renderAudit(flags).join("\n"),
+      /\*\*must fix\*\* \*\*Secret\*\*: apps\/main\/src\/config\.ts:1/u,
+    );
+  });
+
+  it("asks about work per item on the server and actions not pinned to a commit", () => {
+    const loop = file("packages/core/src/goals/x.ts", [
+      "await Promise.all(ids.map(async (id) => {",
+    ]);
+
+    const sha = "3d3c42e5aac5ba805825da76410c181273ba90b1";
+
+    const workflow = file(".github/workflows/ci.yml", [
+      `      - uses: actions/checkout@${sha} # v7`,
+      "      - uses: actions/setup-node@v6",
+    ]);
+
+    assert.deepEqual(names([loop, workflow]), ["Work per item 1", "Unpinned action 2"]);
+  });
+
+  it("asks what a custom retry covers that the defaults miss", () => {
+    const step = file("apps/api/src/workflows/v2/lessons/steps/write.ts", [
+      "writeLessonStep.maxRetries = 1;",
+      "const written = await withAiRetry(() => write(input));",
+      'throw new RetryableError("Busy", { retryAfter: "1m" });',
+      "const options = { maxRetries: 5, model };",
+      "const MAX_ATTEMPTS = 3;",
+      "for(let attempt = 0; attempt < 3; attempt += 1) {",
+      "while (attempts < limit) {",
+      'response.headers.set("Retry-After", "5");',
+      "const wait = decision.retryAfterSeconds;",
+      "function getRetryAfter(headers: Headers) {",
+      "if (isRetryableTransferError(error)) {",
+      "for (const attempt of answers) {",
+    ]);
+
+    assert.deepEqual(names([step]), ["Custom retry 1,2,3,4,5,6,7"]);
+  });
+
+  it("asks whether work after the response should be a follow-up, but not about analytics", () => {
+    const core = file("packages/core/src/mistakes/record-mistake.ts", [
+      "after(() => resolveMistakeCause(request));",
+      "  after(async () => {",
+      "after(() => trackLearnerEvents({ events, userId }));",
+      "after(async () => trackSignUp(user));",
+      "after(() => resolveMistakeCause({ ...request, trackChanges: true }));",
+      "after(() => { trackLearnerEvents({ events, userId }); void classify(); });",
+      "const after = await readAfter();",
+      "list.after(node);",
+      "afterEach(() => {});",
+    ]);
+
+    assert.deepEqual(names([core]), ["Work after the response 1,2,5,6"]);
+    assert.deepEqual(names([file("apps/admin/src/x.ts", ["after(() => write());"])]), []);
+  });
+
+  it("asks which request reaches a model task imported in core or an API route", () => {
+    const lines = [
+      'import { generateConversationScenario } from "@zoonk/ai/tasks/language/conversation-scenario";',
+      'import { type ExamCard, writeExamCard } from "@zoonk/ai/tasks/language/exam-speaking-card";',
+      '} from "@zoonk/ai/tasks/language/live-call-session";',
+      'import { type ExamCard } from "@zoonk/ai/tasks/language/exam-speaking-card";',
+      'import type { ExamCard } from "@zoonk/ai/tasks/language/exam-speaking-card";',
+      'import { lessonVisualSchema, type LessonVisual } from "@zoonk/ai/tasks/visuals/schema";',
+      'import { SPEAKING_EXAMS } from "@zoonk/ai/tasks/language/exam-speaking-exams";',
+      'export type { LessonVisual } from "@zoonk/ai/tasks/visuals/schema";',
+      'import { type ExamCard as Card, SPEAKING_EXAMS as EXAMS } from "@zoonk/ai/tasks/x";',
+      'import { lessonVisualSchema as visualSchema } from "@zoonk/ai/tasks/visuals/schema";',
+    ];
+
+    assert.deepEqual(
+      names([
+        file("packages/core/src/language/conversations/start.ts", lines),
+        file("apps/api/src/app/v1/calls/route.ts", lines.slice(0, 1)),
+        file("apps/api/src/workflows/calls/steps/write.ts", lines.slice(0, 1)),
+        file("packages/core/src/language/conversations/start.test.ts", lines.slice(0, 1)),
+        file("packages/core/src/library/items/_test-utils/items.ts", lines.slice(0, 1)),
+      ]),
+      ["Model task in reach of a request 1,2,3", "Model task in reach of a request 1"],
+    );
+  });
+
+  it("asks whether Main forwards a whole operation to the API", () => {
+    const action = file("apps/main/src/app/[lang]/goals/goal-actions.ts", [
+      'const response = await postAsLearner({ path: "/v1/goals" });',
+    ]);
+
+    const client = file("apps/main/src/lib/api/learner-api.ts", [
+      "export async function postAsLearner({",
+    ]);
+
+    const helper = file("apps/main/src/lib/learner/_test-utils/goals.ts", [
+      'await postAsLearner({ path: "/v1/goals" });',
+    ]);
+
+    assert.deepEqual(names([action, client, helper]), ["API work started by Main 1"]);
+  });
+
+  it("reads a long malformed import without backtracking for seconds", () => {
+    const repeatedSpecifiers = 40;
+    const started = performance.now();
+    const line = `import { ${"TYPE ".repeat(repeatedSpecifiers)}write } from "@zoonk/ai/tasks/lesson-writer";`;
+
+    assert.deepEqual(names([file("packages/core/src/x.ts", [line])]), [
+      "Model task in reach of a request 1",
+    ]);
+
+    assert.ok(performance.now() - started < 100);
+  });
+
+  it("asks whether a migration is safe on production data", () => {
+    const migration = file("packages/db/src/prisma/migrations/1_x/migration.sql", [
+      'ALTER TABLE "goal" ADD COLUMN "focus" TEXT NOT NULL;',
+      'CREATE INDEX "goal_focus_idx" ON "goal"("focus");',
+      'ALTER TABLE "goal" ADD COLUMN "note" TEXT;',
+    ]);
+
+    assert.deepEqual(names([migration]), ["Migration 1,2"]);
+  });
+
+  it("asks about every added comment but leaves tool directives to their own rule", () => {
+    const lines = [
+      "/** Loads the goal. */",
+      "const goal = await getGoal(); // the learner's goal",
+      "{/* Header */}",
+      "/* oxlint-disable no-console -- This CLI prints. */",
+      "// @ts-expect-error -- The library's types miss this overload.",
+      'const url = "https://zoonk.com";',
+    ];
+
+    assert.deepEqual(names([file("apps/main/src/goal.tsx", lines)]), [
+      "Rule or test turned off 5",
+      "Comment 1,2,3",
+    ]);
+
+    assert.deepEqual(names([file("apps/apple/Zoonk/Goal.swift", ["// MARK: - Goal"])]), [
+      "Comment 1",
+    ]);
+  });
+});

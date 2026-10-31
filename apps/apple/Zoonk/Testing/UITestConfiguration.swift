@@ -3,69 +3,86 @@
 
   @MainActor
   struct UITestConfiguration {
-    let courseCatalog: CourseCatalogStore
+    let dependencies: AppDependencies
     let initiallyPresentsAccount: Bool
-    let myCourses: MyCoursesStore
-    let progress: ProgressStore
-    let session: SessionStore
+    var fixtureFailure: String?
 
     static var current: UITestConfiguration? {
       let arguments = Set(ProcessInfo.processInfo.arguments)
+      let environment = ProcessInfo.processInfo.environment
 
       guard arguments.contains("--ui-testing") else {
-        return nil
+        // Lets a Debug run against the live API check mind maps without paying to generate one.
+        return UITestMindMapsAPI(environment: environment).map { mindMaps in
+          UITestConfiguration(
+            dependencies: .live(mindMapsAPI: mindMaps), initiallyPresentsAccount: false)
+        }
       }
 
-      let environment = ProcessInfo.processInfo.environment
-      let catalogSnapshot = courseCatalogSnapshot(from: environment)
-      let session = SessionStore.preview(
-        account: account(from: environment))
-
-      return UITestConfiguration(
-        courseCatalog: CourseCatalogStore(
-          api: courseCatalogAPI(snapshot: catalogSnapshot),
-          language: currentCourseCatalogLanguage(),
-          session: session),
-        initiallyPresentsAccount: arguments.contains("--ui-testing-account-sheet"),
-        myCourses: MyCoursesStore(
-          api: myCoursesAPI(snapshot: catalogSnapshot),
-          session: session),
-        progress: ProgressStore(
-          api: progressAPI(from: environment),
-          session: session),
-        session: session)
-    }
-
-    /// Decodes fixture data supplied by the UI-test target so the Debug app can compose isolated state without owning concrete test users.
-    private static func account(from environment: [String: String]) -> CurrentAccount? {
-      guard let accountJSON = environment["ZOONK_UI_TEST_ACCOUNT"] else {
-        return nil
-      }
+      let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
 
       do {
-        return try JSONDecoder().decode(CurrentAccount.self, from: Data(accountJSON.utf8))
+        return try fixtures(clients: clients, arguments: arguments, environment: environment)
       } catch {
-        preconditionFailure("ZOONK_UI_TEST_ACCOUNT must contain a valid CurrentAccount payload")
+        return UITestConfiguration(
+          dependencies: AppDependencies(
+            clients: clients, session: .preview(), imageLoader: .live(),
+            subscriptionStore: .live()),
+          initiallyPresentsAccount: false, fixtureFailure: String(describing: error))
       }
     }
 
-    private static func progressAPI(from environment: [String: String]) -> any ProgressAPIClient {
-      guard let progressJSON = environment["ZOONK_UI_TEST_PROGRESS"] else {
+    private static func fixtures(
+      clients: APIClientFactory, arguments: Set<String>, environment: [String: String]
+    ) throws -> UITestConfiguration {
+      let fixtures = UITestFixtures(environment: environment)
+      let catalogSnapshot = try fixtures.decode(
+        UITestCourseCatalogSnapshot.self, "ZOONK_UI_TEST_CATALOG")
+      let summary = try fixtures.decode(
+        Components.Schemas.LearnerSummary.self, "ZOONK_UI_TEST_SUMMARY")
+      let buddyStatus = try fixtures.decode(BuddyStatus.self, "ZOONK_UI_TEST_BUDDY")
+
+      return UITestConfiguration(
+        dependencies: AppDependencies(
+          clients: clients,
+          session: SessionStore.preview(
+            account: try fixtures.decode(CurrentAccount.self, "ZOONK_UI_TEST_ACCOUNT")),
+          imageLoader: .live(),
+          subscriptionStore: .live(),
+          buddyAPI: buddyStatus.map(UITestBuddyAPI.init),
+          courseCatalogAPI: courseCatalogAPI(snapshot: catalogSnapshot),
+          learnerSummaryAPI: UITestLearnerSummaryAPI(summary: summary.map(makeLearnerSummary)),
+          mindMapsAPI: UITestMindMapsAPI(environment: environment),
+          progressAPI: try progressAPI(from: fixtures),
+          studyAPI: try studyAPI(from: fixtures),
+          tutorAPI: buddyStatus.map { _ in
+            UITestTutorAPI(turns: Int(environment["ZOONK_UI_TEST_TUTOR_TURNS"] ?? "") ?? 0)
+          }),
+        initiallyPresentsAccount: arguments.contains("--ui-testing-account-sheet"))
+    }
+
+    private static func progressAPI(from fixtures: UITestFixtures) throws -> any ProgressAPIClient {
+      guard
+        let snapshot = try fixtures.decode(UITestProgressSnapshot.self, "ZOONK_UI_TEST_PROGRESS")
+      else {
         let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
         return ProgressAPI(clients: clients)
       }
 
-      do {
-        let snapshot = try JSONDecoder().decode(
-          UITestProgressSnapshot.self,
-          from: Data(progressJSON.utf8))
-        return UITestProgressAPI(
-          failure: environment["ZOONK_UI_TEST_PROGRESS_FAILURE"]
-            .flatMap(UITestProgressFailure.init(rawValue:)),
-          snapshot: snapshot)
-      } catch {
-        preconditionFailure("ZOONK_UI_TEST_PROGRESS must contain a valid progress snapshot")
+      return UITestProgressAPI(
+        failure: fixtures.environment["ZOONK_UI_TEST_PROGRESS_FAILURE"]
+          .flatMap(UITestProgressFailure.init(rawValue:)),
+        snapshot: snapshot)
+    }
+
+    private static func studyAPI(from fixtures: UITestFixtures) throws -> (any StudyAPIClient)? {
+      guard let today = try fixtures.decode(TodayView.self, "ZOONK_UI_TEST_TODAY") else {
+        return nil
       }
+
+      return UITestStudyAPI(
+        summary: try fixtures.decode(SessionSummary.self, "ZOONK_UI_TEST_SESSION_SUMMARY"),
+        today: today)
     }
 
     private static func courseCatalogAPI(
@@ -78,112 +95,35 @@
 
       return UITestCourseCatalogAPI(snapshot: snapshot)
     }
+  }
 
-    private static func myCoursesAPI(
-      snapshot: UITestCourseCatalogSnapshot?
-    ) -> any MyCoursesAPIClient {
-      guard let snapshot else {
-        return MyCoursesAPI(
-          clients: APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL))
-      }
+  private struct UITestFixtures {
+    struct Failure: Error, CustomStringConvertible {
+      let key: String
+      let error: Error
 
-      return UITestMyCoursesAPI(snapshot: snapshot)
+      var description: String { "\(key) couldn't be decoded: \(error)" }
     }
 
-    private static func courseCatalogSnapshot(
-      from environment: [String: String]
-    ) -> UITestCourseCatalogSnapshot? {
-      guard let catalogJSON = environment["ZOONK_UI_TEST_CATALOG"] else {
+    let environment: [String: String]
+
+    func decode<Value: Decodable>(_ type: Value.Type, _ key: String) throws -> Value? {
+      guard let json = environment[key] else {
         return nil
       }
 
       do {
-        return try JSONDecoder().decode(
-          UITestCourseCatalogSnapshot.self,
-          from: Data(catalogJSON.utf8))
+        return try JSONDecoder().decode(type, from: Data(json.utf8))
       } catch {
-        preconditionFailure("ZOONK_UI_TEST_CATALOG must contain a valid catalog snapshot")
+        throw Failure(key: key, error: error)
       }
     }
   }
 
   private struct UITestCourseCatalogSnapshot: Decodable, Sendable {
     let chapters: [CourseChapter]
-    let completedLessonIDs: Set<String>
     let courses: [Course]
-    let enrolledCourseIDs: Set<String>
-    let holdsFirstMyCoursesPagination: Bool?
     let lessons: [CourseLesson]
-    let myCoursesPageSize: Int?
-    let personalCourses: [UserCourseSummary]
-  }
-
-  private actor UITestMyCoursesAPI: MyCoursesAPIClient {
-    let snapshot: UITestCourseCatalogSnapshot
-    private var didHoldPagination = false
-    private var paginationContinuation: CheckedContinuation<Void, Never>?
-
-    init(snapshot: UITestCourseCatalogSnapshot) {
-      self.snapshot = snapshot
-    }
-
-    /// Uses one-item pages by default so My Courses UI scenarios exercise automatic pagination.
-    func listCourses(request: MyCoursesRequest) async throws -> MyCoursesPage {
-      guard !request.token.isEmpty else {
-        throw MyCoursesAPIError.unauthorized
-      }
-
-      // Holds a network page until refresh replaces it, making request ordering deterministic.
-      if request.query.cursor != nil, snapshot.holdsFirstMyCoursesPagination == true,
-        !didHoldPagination
-      {
-        didHoldPagination = true
-        await withCheckedContinuation { continuation in
-          paginationContinuation = continuation
-        }
-      } else if request.query.cursor == nil {
-        paginationContinuation?.resume()
-        paginationContinuation = nil
-      }
-
-      let enrolledCourses =
-        snapshot.courses
-        .filter { course in
-          snapshot.enrolledCourseIDs.contains(course.id)
-        }
-        .map(makeUserCourseSummary) + snapshot.personalCourses
-      let matchingCourses = enrolledCourses.filter {
-        matchesQuery((course: $0, query: request.query.query))
-      }
-      let requestedStartIndex = request.query.cursor.flatMap(Int.init) ?? 0
-      let startIndex = min(max(requestedStartIndex, 0), matchingCourses.count)
-      let pageSize = max(request.query.limit ?? snapshot.myCoursesPageSize ?? 1, 0)
-      let endIndex = min(startIndex + pageSize, matchingCourses.count)
-      let courses = Array(matchingCourses[startIndex..<endIndex])
-      let hasMore = endIndex < matchingCourses.count
-
-      return MyCoursesPage(
-        courses: courses,
-        hasMore: hasMore,
-        nextCursor: hasMore ? String(endIndex) : nil)
-    }
-
-    private func matchesQuery(_ source: (course: UserCourseSummary, query: String?)) -> Bool {
-      guard let query = catalogText(source.query) else { return true }
-      return source.course.title.localizedCaseInsensitiveContains(query)
-        || source.course.description?.localizedCaseInsensitiveContains(query) == true
-    }
-
-    private func makeUserCourseSummary(_ course: Course) -> UserCourseSummary {
-      UserCourseSummary(
-        description: course.description,
-        id: course.id,
-        imageURL: course.imageURL,
-        language: course.language,
-        organization: course.organization,
-        slug: course.slug,
-        title: course.title)
-    }
   }
 
   private actor UITestCourseCatalogAPI: CourseCatalogAPIClient {
@@ -193,8 +133,17 @@
       self.snapshot = snapshot
     }
 
+    func countCourses(language: String) async throws -> CourseCategoryCounts {
+      let courses = publicCourses.filter { $0.language == language }
+
+      return CourseCategoryCounts(
+        counts: Dictionary(
+          courses.flatMap(\.categories).map { ($0, 1) }, uniquingKeysWith: +),
+        total: courses.count)
+    }
+
     func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage {
-      let matchingCourses = snapshot.courses.filter { course in
+      let matchingCourses = publicCourses.filter { course in
         course.language == query.language
           && query.category.map(course.categories.contains) != false
       }
@@ -202,7 +151,7 @@
       let startIndex = min(max(requestedStartIndex, 0), matchingCourses.count)
       let pageSize = max(query.limit ?? 20, 0)
       let endIndex = min(startIndex + pageSize, matchingCourses.count)
-      let courses = matchingCourses[startIndex..<endIndex].map(makeCourseSummary)
+      let courses = matchingCourses[startIndex..<endIndex].compactMap(makeCourseSummary)
       let hasMore = endIndex < matchingCourses.count
 
       return CourseCatalogPage(
@@ -212,108 +161,27 @@
     }
 
     func getCourse(id: String) async throws -> Course {
-      guard let course = snapshot.courses.first(where: { $0.id == id }) else {
-        throw CourseCatalogFailure.notFound
-      }
-
-      return course
+      try readableCourse(id: id)
     }
 
-    func getChapter(id: String) async throws -> CourseChapter {
-      guard let chapter = snapshot.chapters.first(where: { $0.id == id }) else {
-        throw CourseCatalogFailure.notFound
-      }
-
-      return chapter
+    func getChapter(_ key: CatalogChapterKey) async throws -> CourseChapter {
+      _ = try readableCourse(id: key.courseID)
+      return try placedChapter(key)
     }
 
     func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
-      snapshot.chapters.filter { $0.courseID == courseID }
+      _ = try readableCourse(id: courseID)
+      return snapshot.chapters.filter { $0.courseID == courseID }
     }
 
-    func listChapterLessons(chapterID: String) async throws -> [CourseLesson] {
-      snapshot.lessons.filter { $0.chapterID == chapterID }
+    func getLesson(_ key: CatalogLessonKey) async throws -> CatalogLesson {
+      throw APIError.notFound
     }
 
-    func getCourseNextLesson(courseID: String, token: String?) async throws
-      -> CatalogContinuationTarget
-    {
-      guard
-        let course = snapshot.courses.first(where: { $0.id == courseID }),
-        let target = continuationTarget(
-          (lessons: lessons(inCourse: courseID), token: token)),
-        let chapter = snapshot.chapters.first(where: { $0.id == target.lesson.chapterID })
-      else {
-        return .empty(CatalogEmptyContinuation(completed: false, hasStarted: false))
-      }
-
-      return makeLessonContinuation(
-        (
-          completed: target.completed,
-          course: course,
-          chapter: chapter,
-          hasStarted: target.hasStarted,
-          lesson: target.lesson
-        ))
-    }
-
-    func getChapterNextLesson(chapterID: String, token: String?) async throws
-      -> CatalogContinuationTarget
-    {
-      guard
-        let chapter = snapshot.chapters.first(where: { $0.id == chapterID }),
-        let course = snapshot.courses.first(where: { $0.id == chapter.courseID }),
-        let target = continuationTarget(
-          (lessons: lessons(inChapter: chapterID), token: token))
-      else {
-        return .empty(CatalogEmptyContinuation(completed: false, hasStarted: false))
-      }
-
-      return makeLessonContinuation(
-        (
-          completed: target.completed,
-          course: course,
-          chapter: chapter,
-          hasStarted: target.hasStarted,
-          lesson: target.lesson
-        ))
-    }
-
-    func getCourseProgress(courseID: String, token: String?) async throws -> CourseProgress {
-      let completedLessonIDs = completedLessonIDs(token: token)
-      let courseLessons = lessons(inCourse: courseID)
-
-      return CourseProgress(
-        chapters: snapshot.chapters
-          .filter { $0.courseID == courseID }
-          .map {
-            makeCourseChapterProgress(
-              (chapter: $0, completedLessonIDs: completedLessonIDs))
-          },
-        percentComplete: completionPercent(
-          (
-            completed: courseLessons.count(where: { completedLessonIDs.contains($0.id) }),
-            total: courseLessons.count,
-            token: token
-          )))
-    }
-
-    func getChapterProgress(chapterID: String, token: String?) async throws -> ChapterProgress {
-      let completedLessonIDs = completedLessonIDs(token: token)
-      let chapterLessons = lessons(inChapter: chapterID)
-
-      return ChapterProgress(
-        lessons: chapterLessons.map {
-          ChapterLessonProgress(
-            isCompleted: completedLessonIDs.contains($0.id),
-            lessonID: $0.id)
-        },
-        percentComplete: completionPercent(
-          (
-            completed: chapterLessons.count(where: { completedLessonIDs.contains($0.id) }),
-            total: chapterLessons.count,
-            token: token
-          )))
+    func listChapterLessons(_ key: CatalogChapterKey) async throws -> [CourseLesson] {
+      _ = try readableCourse(id: key.courseID)
+      _ = try placedChapter(key)
+      return snapshot.lessons.filter { $0.chapterID == key.chapterID }
     }
 
     func searchCatalog(query: CatalogSearchQuery) async throws -> CatalogSearchResults {
@@ -324,120 +192,57 @@
               (query: query.query, title: $0.title, description: $0.description))
           }
           .compactMap(makeChapterSearchResult),
-        courses: snapshot.courses
+        courses:
+          publicCourses
           .filter {
             matchesSearch(
               (query: query.query, title: $0.title, description: $0.description))
           }
-          .map(makeCourseSearchResult))
+          .compactMap(makeCourseSearchResult))
     }
 
-    private func makeCourseSummary(_ course: Course) -> CourseSummary {
-      CourseSummary(
-        description: course.description,
-        id: course.id,
-        imageURL: course.imageURL,
-        language: course.language,
-        organization: course.organization,
-        slug: course.slug,
-        title: course.title)
+    private func makeCourseSummary(_ course: Course) -> CourseSummary? {
+      let lessons = snapshot.chapters.filter { $0.courseID == course.id }.flatMap(\.lessons)
+
+      return course.organization.map { organization in
+        CourseSummary(
+          description: course.description,
+          estimatedMinutes: lessons.reduce(0) { $0 + $1.estimatedMinutes },
+          id: course.id,
+          imageURL: course.imageURL,
+          language: course.language,
+          languageFlag: course.languageFlag,
+          lessonCount: lessons.count,
+          organization: organization,
+          slug: course.slug,
+          subject: course.subject,
+          targetLanguage: course.targetLanguage,
+          title: course.title)
+      }
     }
 
-    private func completedLessonIDs(token: String?) -> Set<String> {
-      token == nil ? [] : snapshot.completedLessonIDs
+    private var publicCourses: [Course] {
+      snapshot.courses.filter { $0.organization != nil }
     }
 
-    private func lessons(inChapter chapterID: String) -> [CourseLesson] {
-      snapshot.lessons
-        .filter { $0.chapterID == chapterID }
-        .sorted(using: KeyPathComparator(\.position))
-    }
-
-    private func lessons(inCourse courseID: String) -> [CourseLesson] {
-      let chapterPositions = Dictionary(
-        uniqueKeysWithValues: snapshot.chapters.map { ($0.id, $0.position) })
-
-      return snapshot.lessons
-        .filter { $0.courseID == courseID }
-        .sorted { left, right in
-          courseLessonOrder((lesson: left, chapterPositions: chapterPositions))
-            < courseLessonOrder((lesson: right, chapterPositions: chapterPositions))
-        }
-    }
-
-    private func courseLessonOrder(
-      _ source: (lesson: CourseLesson, chapterPositions: [String: Int])
-    ) -> (Int, Int, String) {
-      (
-        source.chapterPositions[source.lesson.chapterID] ?? 0,
-        source.lesson.position,
-        source.lesson.id
-      )
-    }
-
-    private func continuationTarget(
-      _ source: (lessons: [CourseLesson], token: String?)
-    ) -> (completed: Bool, hasStarted: Bool, lesson: CourseLesson)? {
-      guard let firstLesson = source.lessons.first else {
-        return nil
+    private func readableCourse(id: String) throws -> Course {
+      guard let course = publicCourses.first(where: { $0.id == id }) else {
+        throw APIError.notFound
       }
 
-      let completedLessonIDs = completedLessonIDs(token: source.token)
-      let hasStarted = source.lessons.contains(where: { completedLessonIDs.contains($0.id) })
+      return course
+    }
 
+    private func placedChapter(_ key: CatalogChapterKey) throws -> CourseChapter {
       guard
-        let nextLesson = source.lessons.first(where: { !completedLessonIDs.contains($0.id) })
+        let chapter = snapshot.chapters.first(where: {
+          $0.id == key.chapterID && $0.courseID == key.courseID
+        })
       else {
-        return (completed: true, hasStarted: hasStarted, lesson: firstLesson)
+        throw APIError.notFound
       }
 
-      return (completed: false, hasStarted: hasStarted, lesson: nextLesson)
-    }
-
-    private func completionPercent(
-      _ source: (completed: Int, total: Int, token: String?)
-    ) -> Int? {
-      guard source.token != nil, source.total > 0 else {
-        return nil
-      }
-
-      return source.completed * 100 / source.total
-    }
-
-    private func makeCourseChapterProgress(
-      _ source: (chapter: CourseChapter, completedLessonIDs: Set<String>)
-    ) -> CourseChapterProgress {
-      let chapterLessons = lessons(inChapter: source.chapter.id)
-      return CourseChapterProgress(
-        chapterID: source.chapter.id,
-        completedLessons: chapterLessons.count(where: {
-          source.completedLessonIDs.contains($0.id)
-        }),
-        totalLessons: chapterLessons.count)
-    }
-
-    private func makeLessonContinuation(
-      _ source: (
-        completed: Bool,
-        course: Course,
-        chapter: CourseChapter,
-        hasStarted: Bool,
-        lesson: CourseLesson
-      )
-    ) -> CatalogContinuationTarget {
-      .lesson(
-        CatalogLessonContinuation(
-          canPrefetch: true,
-          chapterID: source.chapter.id,
-          chapterSlug: source.chapter.slug,
-          completed: source.completed,
-          courseID: source.course.id,
-          courseSlug: source.course.slug,
-          hasStarted: source.hasStarted,
-          lessonID: source.lesson.id,
-          lessonPosition: source.lesson.position,
-          lessonSlug: source.lesson.slug,
-          organizationSlug: source.course.organization.slug))
+      return chapter
     }
 
     private func matchesSearch(
@@ -447,13 +252,17 @@
         || source.description?.localizedCaseInsensitiveContains(source.query) == true
     }
 
-    private func makeCourseSearchResult(_ course: Course) -> CatalogCourseSearchResult {
-      CatalogCourseSearchResult(
+    private func makeCourseSearchResult(_ course: Course) -> CatalogCourseSearchResult? {
+      guard let organization = course.organization else {
+        return nil
+      }
+
+      return CatalogCourseSearchResult(
         description: course.description,
         id: course.id,
         imageURL: course.imageURL,
         language: course.language,
-        organizationSlug: course.organization.slug,
+        organizationSlug: organization.slug,
         slug: course.slug,
         title: course.title)
     }
@@ -461,7 +270,10 @@
     private func makeChapterSearchResult(
       _ chapter: CourseChapter
     ) -> CatalogChapterSearchResult? {
-      guard let course = snapshot.courses.first(where: { $0.id == chapter.courseID }) else {
+      guard
+        let course = publicCourses.first(where: { $0.id == chapter.courseID }),
+        let organization = course.organization
+      else {
         return nil
       }
 
@@ -471,9 +283,8 @@
         courseTitle: course.title,
         description: chapter.description,
         id: chapter.id,
-        imageURL: chapter.imageURL,
         language: chapter.language,
-        organizationSlug: course.organization.slug,
+        organizationSlug: organization.slug,
         slug: chapter.slug,
         title: chapter.title)
     }
@@ -483,14 +294,192 @@
     let activity: ActivityProgress
     let energy: EnergyProgress?
     let level: LevelProgress?
-    let overview: ProgressOverview
     let patterns: ScorePatterns?
     let score: ScoreProgress?
   }
 
+  private struct UITestLearnerSummaryAPI: LearnerSummaryAPIClient {
+    let summary: LearnerSummary?
+
+    func getSummary(token: String) async throws -> LearnerSummary {
+      summary
+        ?? LearnerSummary(
+          activeGoalID: nil,
+          buddy: BuddyLook(),
+          buddyName: nil,
+          goals: [],
+          identity: LearnerIdentity(isAnonymous: false, signedInAt: .now, userID: token),
+          level: nil,
+          nextChangeAt: .distantFuture,
+          places: LearnerPlaces(exam: false, mindMaps: false, readyMistakes: 0, speaking: false),
+          readAt: .now,
+          tier: .free,
+          timeZone: nil,
+          todayBlocksLeft: nil)
+    }
+
+    func switchGoal(token: String, goalID: String) async throws {}
+  }
+
+  private struct UITestBuddyAPI: BuddyAPIClient {
+    let status: BuddyStatus
+
+    func status(timeZone: String, token: String) async throws -> BuddyStatus {
+      status
+    }
+
+    func save(_ buddy: BuddyChoice, token: String) async throws {}
+
+    func earlierQuestions(cursor: String?, token: String) async throws -> EarlierQuestionsPage {
+      EarlierQuestionsPage(questions: [], nextCursor: nil)
+    }
+
+    func answer(insightId: String, accepted: Bool, token: String) async throws {}
+  }
+
+  private struct UITestTutorAPI: TutorAPIClient {
+    let turns: Int
+
+    func thread(_ scope: TutorScope, cursor: String?, token: String) async throws
+      -> TutorThreadPage
+    {
+      let start = Date(timeIntervalSince1970: 1_767_225_600)
+      let answer = String(
+        repeating: "An orbit is the **curved path** an object takes around a star or planet. ",
+        count: 6)
+
+      return TutorThreadPage(
+        turns: (0..<turns).map { index in
+          TutorTurn(
+            id: "turn-\(index)", question: "Question \(index + 1): what is an orbit?",
+            answer: answer, status: .completed,
+            createdAt: start.addingTimeInterval(Double(index) * 3600), about: .plan,
+            planChange: nil, toolOffer: nil)
+        },
+        hasMore: false, nextCursor: nil)
+    }
+
+    func ask(
+      _ scope: TutorScope, question: String, suggestion: String?, requestId: String, token: String
+    ) async throws -> TutorAskedQuestion {
+      throw TutorFailure.failed
+    }
+
+    func answer(questionId: String, token: String) -> AsyncThrowingStream<TutorAnswerEvent, Error> {
+      AsyncThrowingStream { $0.finish(throwing: TutorFailure.failed) }
+    }
+
+    func question(id: String, token: String) async throws -> TutorTurn {
+      throw APIError.notFound
+    }
+
+    func decidePlanChange(
+      goalId: String, changeId: String, decision: PlanChangeDecision, token: String
+    ) async throws -> Components.Schemas.PlanChange {
+      throw APIError.unavailable
+    }
+
+    func undoMemoryChanges(_ changes: [TutorMemoryChange], token: String) async throws {
+      throw APIError.unavailable
+    }
+  }
+
+  private struct UITestStudyAPI: StudyAPIClient {
+    let summary: SessionSummary?
+    let today: TodayView
+
+    func getToday(token: String, timeZone: String) async throws -> TodayContent {
+      .day(today)
+    }
+
+    func getSession(token: String, sessionID: String) async throws -> StudyDay {
+      today.session
+    }
+
+    func getSummary(token: String, sessionID: String) async throws -> SessionSummary {
+      guard let summary else {
+        throw APIError.notFound
+      }
+
+      return summary
+    }
+
+    func markMilestoneShown(token: String, milestoneID: String) async throws {}
+
+    func openDay(
+      token: String, goalID: String, shownDate: String, timeZone: String, target: DayTarget?
+    ) async throws -> OpenedStudyDay {
+      throw APIError.network
+    }
+
+    func openBlock(token: String, target: StudyBlockOpeningTarget, timeZone: String) async throws
+      -> StudyBlockOpening
+    {
+      throw APIError.network
+    }
+
+    func addExtraBlock(token: String, sessionID: String) async throws -> StudyBlock {
+      throw APIError.network
+    }
+
+    func catchUp(token: String, sessionID: String, timeZone: String) async throws {
+      throw APIError.network
+    }
+
+    func stop(token: String, sessionID: String, timeZone: String) async throws {
+      throw APIError.network
+    }
+
+    func lessonReadiness(token: String, lessonID: String) async throws
+      -> Components.Schemas.LessonReadiness
+    {
+      throw APIError.network
+    }
+
+    func followWriting(token: String, lessonID: String, run: String?) async throws
+      -> Components.Schemas.LessonReadiness
+    {
+      throw APIError.network
+    }
+
+    func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome {
+      throw APIError.network
+    }
+
+    func prepareLessons(token: String, goalID: String) async throws {
+      throw APIError.network
+    }
+
+    func answerUploadRequest(token: String, goalID: String, sourceIDs: [String]) async throws {
+      throw APIError.network
+    }
+
+    func dismissUploadRequest(token: String, goalID: String) async throws {
+      throw APIError.network
+    }
+
+    func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws {
+      throw APIError.network
+    }
+
+    func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap {
+      throw APIError.network
+    }
+
+    func getLanguageToday(token: String, goalID: String) async throws -> LanguageTodayView {
+      throw APIError.network
+    }
+
+    func decidePlanChange(
+      token: String, goalID: String, changeID: String, decision: PlanChangeDecision
+    ) async throws -> TodayView.PlanChange? {
+      throw APIError.network
+    }
+  }
+
   private enum UITestProgressFailure: String, Sendable {
+    case activityNetwork = "activity-network"
     case activityUnauthorized = "activity-unauthorized"
-    case overviewNetwork = "overview-network"
   }
 
   private actor UITestProgressAPI: ProgressAPIClient {
@@ -502,17 +491,14 @@
       self.snapshot = snapshot
     }
 
-    func getOverview(token: String) async throws -> ProgressOverview {
-      if failure == .overviewNetwork {
-        throw ProgressAPIError.network
-      }
-
-      return snapshot.overview
-    }
-
     func getActivity(token: String) async throws -> ActivityProgress {
-      if failure == .activityUnauthorized {
-        throw ProgressAPIError.unauthorized
+      switch failure {
+      case .activityNetwork:
+        throw APIError.network
+      case .activityUnauthorized:
+        throw APIError.unauthorized
+      case nil:
+        break
       }
 
       return snapshot.activity

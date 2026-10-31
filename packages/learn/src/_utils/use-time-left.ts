@@ -1,0 +1,41 @@
+"use client";
+
+import { useEffect, useEffectEvent, useRef, useState } from "react";
+
+const MS_PER_SECOND = 1000;
+
+/** Never below 0 (`Infinity` without a deadline); `onTimeUp` runs once per deadline. */
+export function useTimeLeft({
+  deadline,
+  onTimeUp,
+  tickMs = MS_PER_SECOND,
+}: {
+  deadline?: number | string | null;
+  onTimeUp?: () => void;
+  tickMs?: number;
+}): number {
+  const end = deadline ? new Date(deadline).getTime() : null;
+  const [now, setNow] = useState(() => Date.now());
+  const left = end === null ? Infinity : Math.max(0, end - now);
+  const over = left === 0;
+  const timeUp = useEffectEvent(() => onTimeUp?.());
+  const timedUp = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (end === null || over) {
+      return;
+    }
+
+    const timer = setInterval(() => setNow(Date.now()), tickMs);
+    return () => clearInterval(timer);
+  }, [end, over, tickMs]);
+
+  useEffect(() => {
+    if (over && timedUp.current !== end) {
+      timedUp.current = end;
+      timeUp();
+    }
+  }, [end, over]);
+
+  return left;
+}

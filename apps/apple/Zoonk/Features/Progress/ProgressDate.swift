@@ -1,6 +1,6 @@
 import Foundation
 
-/// Preserves the API's learner-local calendar day without treating it as a timezone-shifting instant.
+/// A learner-local calendar day, never a time-zone-shifting instant.
 struct ProgressDate: Codable, Comparable, Hashable, Identifiable, Sendable {
   let day: Int
   let month: Int

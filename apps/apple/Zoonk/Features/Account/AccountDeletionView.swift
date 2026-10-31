@@ -17,6 +17,7 @@ private enum PendingAccountDeletion {
 struct AccountDeletionView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(SessionStore.self) private var session
+  @Environment(SettingsStore.self) private var settings
   @State private var code = ""
   @State private var hasSentCode = false
   @State private var isAppStoreSubscriptionManagementPresented = false
@@ -27,7 +28,7 @@ struct AccountDeletionView: View {
 
   let email: String
   let hasAppleAccount: Bool
-  let storeSubscriptionProvider: StoreSubscriptionProvider?
+  let subscription: AccountSubscription?
 
   var body: some View {
     content
@@ -64,10 +65,18 @@ struct AccountDeletionView: View {
         }
       } message: {
         Text(
-          "This permanently deletes your profile, progress, and personalized courses. This can't be undone.",
-          tableName: "Account",
-          comment: "Explains the consequences of confirming permanent account deletion")
+          verbatim: [
+            String(
+              localized:
+                "This permanently deletes your profile, goals, plans, progress, memory and uploads. This can't be undone.",
+              table: "Account",
+              comment: "Explains the consequences of confirming permanent account deletion"),
+            webPlusNotice,
+          ]
+          .compactMap(\.self)
+          .joined(separator: "\n\n"))
       }
+      .modifier(WebPlusLoading(choices: webPlus))
       .onAppear {
         session.clearFailure()
       }
@@ -103,20 +112,22 @@ struct AccountDeletionView: View {
 
         Label {
           Text(
-            "Course progress",
+            "Goals, plans and progress",
             tableName: "Account",
-            comment: "Learning data removed during account deletion")
+            comment: "Learning goals, study plans and progress removed during account deletion")
         } icon: {
           Image(systemName: "chart.line.uptrend.xyaxis")
         }
 
         Label {
           Text(
-            "Personalized courses",
+            "Memory and uploads",
             tableName: "Account",
-            comment: "Personalized learning data removed during account deletion")
+            comment:
+              "What the app remembers about the learner and their uploaded files, removed during account deletion"
+          )
         } icon: {
-          Image(systemName: "square.grid.2x2")
+          Image(systemName: "tray.full")
         }
       } header: {
         Text(
@@ -307,11 +318,10 @@ struct AccountDeletionView: View {
       Button(action: dismiss.callAsFunction) {
         Text("Done", tableName: "Account", comment: "Closes successful account deletion")
       }
-      .buttonStyle(.borderedProminent)
+      .buttonStyle(.mainAction)
     }
   }
 
-  /// Keeps the completed deletion explicit while offering Apple's official account controls when the server could not confirm authorization revocation.
   private var manualAppleRevocationContent: some View {
     ContentUnavailableView {
       Label {
@@ -336,7 +346,7 @@ struct AccountDeletionView: View {
             tableName: "Account",
             comment: "Opens Apple account authorization management after deletion")
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.mainAction)
 
         Button(action: dismiss.callAsFunction) {
           Text(
@@ -348,6 +358,38 @@ struct AccountDeletionView: View {
     }
   }
 
+  private var storeSubscriptionProvider: StoreSubscriptionProvider? {
+    subscription.flatMap { StoreSubscriptionProvider(rawValue: $0.provider) }
+  }
+
+  private var webPlus: Resource<WebPlusCancellation>? {
+    settings.webPlus(for: subscription)
+  }
+
+  /// Main's `DeletionPlusNotice`. A read that failed says nothing and never stops the deletion.
+  private var webPlusNotice: String? {
+    guard let choices = webPlus?.value else {
+      return nil
+    }
+
+    guard let refund = choices.accountDeletionRefund else {
+      return String(
+        localized: "Your Plus ends right away, without a refund. You won't be charged again.",
+        table: "Account",
+        comment:
+          "Before deleting the account, what happens to Plus bought on the web when nothing is refunded"
+      )
+    }
+
+    return String(
+      localized:
+        "Your Plus ends right away, and we refund \(refund.formatted) to the payment method you used.",
+      table: "Account",
+      comment:
+        "Before deleting the account, what happens to Plus bought on the web; the argument is the refunded amount"
+    )
+  }
+
   private var normalizedCode: String {
     code.filter(\.isNumber)
   }
@@ -356,7 +398,7 @@ struct AccountDeletionView: View {
     email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
   }
 
-  /// Closes a deletion flow whose account was removed through synchronized credentials, without hiding the result of the deletion currently running on this device.
+  /// Never hides the result of the deletion running on this device.
   private func dismissStaleDeletion(accountId: String?) {
     guard accountId == nil, !session.isWorking, !isPerformingDeletion else {
       return
@@ -397,7 +439,6 @@ struct AccountDeletionView: View {
     }
   }
 
-  /// Explains that deleting product data cannot cancel billing owned by either mobile store.
   private func subscriptionDeletionMessage(for provider: StoreSubscriptionProvider) -> Text {
     switch provider {
     case .apple:
@@ -415,7 +456,6 @@ struct AccountDeletionView: View {
     }
   }
 
-  /// Keeps progress feedback inside the active deletion row so the form does not jump while a sensitive request is running.
   private func workingLabel(title: Text) -> some View {
     HStack {
       title
@@ -429,20 +469,17 @@ struct AccountDeletionView: View {
     }
   }
 
-  /// Retains the single-use Apple assertion only until the user confirms permanent deletion in the native destructive dialog.
   private func prepareAppleDeletion(_ credentials: AppleSignInCredentials) {
     pendingDeletion = .apple(credentials)
     isConfirmingDeletion = true
   }
 
-  /// Falls back to the account's fixed email whenever native Apple authorization is unavailable, while cancellation remains a no-op inside the system-button adapter.
   private func showEmailReauthentication() {
     session.clearFailure()
     pendingDeletion = nil
     phase = .emailReauthentication
   }
 
-  /// Selects the correct freshness proof, preserves local authentication on failure, and moves to a recovery or completion state from the typed result.
   private func performConfirmedDeletion() async {
     guard let pendingDeletion else {
       return
@@ -468,9 +505,13 @@ struct AccountDeletionView: View {
     self.pendingDeletion = nil
   }
 
-  /// Requests the initial or replacement proof without discarding a still-usable code when the mail request itself fails.
   private func sendEmailCode() async {
-    let didSendCode = await session.sendEmailCode(email: normalizedEmail)
+    guard
+      session.account?.user.email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        == normalizedEmail
+    else { return }
+
+    let didSendCode = await session.sendAccountDeletionEmailCode()
 
     guard didSendCode else {
       return
@@ -480,7 +521,6 @@ struct AccountDeletionView: View {
     hasSentCode = true
   }
 
-  /// Reduces service outcomes to the UI states that change what the user can do next.
   private func apply(_ result: AccountDeletionResult) {
     switch result {
     case .deleted:

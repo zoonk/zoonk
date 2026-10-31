@@ -1,0 +1,35 @@
+"use server";
+
+import { focusTestInputSchema } from "@zoonk/core/plans/focus-test/contract";
+import { submitFocusTest } from "@zoonk/core/plans/focus-test/submit";
+import { type FocusTestOutcome } from "@zoonk/learn/focus-test";
+
+export async function submitFocusTestAction(
+  goalId: string,
+  answers: unknown,
+): Promise<FocusTestOutcome | null> {
+  const input = focusTestInputSchema.safeParse({ answers });
+
+  if (!input.success) {
+    return null;
+  }
+
+  const result = await submitFocusTest({ goalId, input: input.data });
+
+  if (result.status !== "ready") {
+    return null;
+  }
+
+  const { outcome } = result;
+
+  return {
+    areas: outcome.areas.map((area) => ({
+      answers: area.answers,
+      chosen: area.chosen,
+      label: area.label,
+    })),
+    ceremony: outcome.ceremony,
+    changeId: outcome.changeId,
+    reached: outcome.reached,
+  };
+}

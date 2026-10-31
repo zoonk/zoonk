@@ -1,4 +1,6 @@
-const COUNTRY_CURRENCY: Record<string, string> = {
+import { getFormattingLocale } from "./locale";
+
+const COUNTRY_CURRENCY: Readonly<Record<string, string>> = {
   AD: "eur",
   AT: "eur",
   AU: "aud",
@@ -53,8 +55,14 @@ const COUNTRY_CURRENCY: Record<string, string> = {
 
 export type PriceInfo = { amount: number; currency: string };
 
+export const DEFAULT_CURRENCY = "usd";
+
+export const BILLING_CURRENCIES: readonly string[] = [
+  ...new Set([DEFAULT_CURRENCY, ...Object.values(COUNTRY_CURRENCY)]),
+];
+
 export function countryToCurrency(countryCode: string): string {
-  return COUNTRY_CURRENCY[countryCode.toUpperCase()] ?? "usd";
+  return COUNTRY_CURRENCY[countryCode.toUpperCase()] ?? DEFAULT_CURRENCY;
 }
 
 const ZERO_DECIMAL_CURRENCIES = new Set([
@@ -76,12 +84,16 @@ const ZERO_DECIMAL_CURRENCIES = new Set([
   "xpf",
 ]);
 
+/** Stripe counts most currencies in cents; a zero-decimal currency, such as yen, in whole units. */
+export function toMajorUnits(amount: number, currency: string): number {
+  return ZERO_DECIMAL_CURRENCIES.has(currency.toLowerCase()) ? amount : amount / 100;
+}
+
 export function formatPrice(amount: number, currency: string, locale = "en-US"): string {
-  const normalizedCurrency = currency.toLowerCase();
-  const value = ZERO_DECIMAL_CURRENCIES.has(normalizedCurrency) ? amount : amount / 100;
+  const value = toMajorUnits(amount, currency);
   const fractionDigits = Number.isInteger(value) ? 0 : 2;
 
-  return new Intl.NumberFormat(locale, {
+  return new Intl.NumberFormat(getFormattingLocale(locale), {
     currency: currency.toUpperCase(),
     maximumFractionDigits: fractionDigits,
     minimumFractionDigits: fractionDigits,

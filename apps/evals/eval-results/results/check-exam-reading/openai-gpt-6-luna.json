@@ -1,0 +1,215 @@
+{
+  "modelId": "openai/gpt-6-luna",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None (kept 1 of 1 findings)", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None (kept 1 of 1 findings)", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None (kept 1 of 1 findings)",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "counts": [], "missing": [["etica", "estatuto da advocacia"]] },
+        "id": "pt-oab-48-without-ethics-1",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital de abertura do 48º Exame de Ordem Unificado",
+              "url": "https://s.oab.org.br/arquivos/2026/09/fb43fb37-838e-4d33-a863-99fa1f98b921.pdf"
+            }
+          ],
+          "exam": "OAB Exame de Ordem Unificado, 1ª fase",
+          "subjects": [
+            { "name": "Direito Administrativo", "questions": null },
+            { "name": "Direito Civil", "questions": null },
+            { "name": "Direito Processual Civil", "questions": null },
+            { "name": "Direito Constitucional", "questions": null },
+            { "name": "Direito do Trabalho", "questions": null },
+            { "name": "Direito Processual do Trabalho", "questions": null },
+            { "name": "Direito Empresarial", "questions": null },
+            { "name": "Direito Penal", "questions": null },
+            { "name": "Direito Processual Penal", "questions": null },
+            { "name": "Direito Tributário e Processual Tributário", "questions": null },
+            { "name": "Direitos Humanos", "questions": null },
+            { "name": "Direito do Consumidor", "questions": null },
+            { "name": "Direito da Criança e do Adolescente", "questions": null },
+            { "name": "Direito Ambiental", "questions": null },
+            { "name": "Direito Internacional", "questions": null },
+            { "name": "Filosofia do Direito", "questions": null },
+            { "name": "Direito Financeiro", "questions": null },
+            { "name": "Direito Previdenciário", "questions": null },
+            { "name": "Direito Eleitoral", "questions": null }
+          ],
+          "total": 80
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None (kept 0 of 0 findings)", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None (kept 0 of 0 findings)", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None (kept 0 of 0 findings)",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "counts": [], "missing": [] },
+        "id": "pt-oab-48-complete-1",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital de abertura do 48º Exame de Ordem Unificado",
+              "url": "https://s.oab.org.br/arquivos/2026/09/fb43fb37-838e-4d33-a863-99fa1f98b921.pdf"
+            }
+          ],
+          "exam": "OAB Exame de Ordem Unificado, 1ª fase",
+          "subjects": [
+            { "name": "Direito Administrativo", "questions": null },
+            { "name": "Direito Civil", "questions": null },
+            { "name": "Direito Processual Civil", "questions": null },
+            { "name": "Direito Constitucional", "questions": null },
+            { "name": "Direito do Trabalho", "questions": null },
+            { "name": "Direito Processual do Trabalho", "questions": null },
+            { "name": "Direito Empresarial", "questions": null },
+            { "name": "Direito Penal", "questions": null },
+            { "name": "Direito Processual Penal", "questions": null },
+            { "name": "Direito Tributário e Processual Tributário", "questions": null },
+            { "name": "Direitos Humanos", "questions": null },
+            { "name": "Direito do Consumidor", "questions": null },
+            { "name": "Direito da Criança e do Adolescente", "questions": null },
+            { "name": "Direito Ambiental", "questions": null },
+            { "name": "Direito Internacional", "questions": null },
+            { "name": "Filosofia do Direito", "questions": null },
+            { "name": "Direito Financeiro", "questions": null },
+            { "name": "Direito Previdenciário", "questions": null },
+            { "name": "Direito Eleitoral", "questions": null },
+            {
+              "name": "Estatuto da Advocacia e da OAB, Regulamento Geral e Código de Ética e Disciplina da OAB",
+              "questions": null
+            }
+          ],
+          "total": 80
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None (kept 1 of 1 findings)", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None (kept 1 of 1 findings)", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None (kept 1 of 1 findings)",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": [{ "questions": 45, "subject": "Matemática e suas Tecnologias" }],
+          "missing": []
+        },
+        "id": "pt-enem-2026-count-left-out-1",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
+              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
+            }
+          ],
+          "exam": "ENEM",
+          "subjects": [
+            { "name": "Linguagens, Códigos e suas Tecnologias", "questions": 45 },
+            { "name": "Ciências Humanas e suas Tecnologias", "questions": 45 },
+            { "name": "Ciências da Natureza e suas Tecnologias", "questions": 45 },
+            { "name": "Matemática e suas Tecnologias", "questions": null },
+            { "name": "Redação", "questions": null }
+          ],
+          "total": 180
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None (kept 0 of 0 findings)", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None (kept 0 of 0 findings)", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None (kept 0 of 0 findings)",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "counts": [], "missing": [] },
+        "id": "pt-camara-2026-complete-1",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital nº 1 – Câmara dos Deputados, de 2 de outubro de 2026",
+              "url": "https://cdn.cebraspe.org.br/concursos/CD_26_ANALISTA/arquivos/BBE30D016054F40651E36AC7B302C3425BD148A39675CA840A5A0CCBFBB5F0F1.pdf"
+            }
+          ],
+          "exam": "Câmara dos Deputados, Analista Legislativo – Registro e Redação",
+          "subjects": [
+            { "name": "Língua Portuguesa", "questions": null },
+            { "name": "Língua Inglesa", "questions": null },
+            {
+              "name": "Noções de Direito Administrativo e Administração Pública",
+              "questions": null
+            },
+            {
+              "name": "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
+              "questions": null
+            },
+            { "name": "Tecnologia da Informação e Dados", "questions": null },
+            { "name": "Linguística", "questions": null },
+            {
+              "name": "Reconhecimento de Fala, Transcrição e Inteligência Artificial",
+              "questions": null
+            },
+            {
+              "name": "Processo Legislativo e Regimento Interno da Câmara dos Deputados, Regimento Comum do Congresso Nacional",
+              "questions": null
+            },
+            { "name": "Ciência Política", "questions": null },
+            { "name": "Prova discursiva", "questions": null }
+          ],
+          "total": 180
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None (kept 0 of 0 findings)", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None (kept 0 of 0 findings)", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None (kept 0 of 0 findings)",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "counts": [], "missing": [] },
+        "id": "en-sat-complete-1",
+        "userInput": {
+          "documents": [
+            {
+              "title": "SAT Test Structure",
+              "url": "https://satsuite.collegeboard.org/sat/whats-on-the-test/structure"
+            }
+          ],
+          "exam": "SAT",
+          "subjects": [
+            { "name": "Reading and Writing", "questions": 54 },
+            { "name": "Math", "questions": 44 }
+          ],
+          "total": 98
+        }
+      }
+    }
+  ],
+  "taskId": "check-exam-reading"
+}

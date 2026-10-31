@@ -1,0 +1,36 @@
+"use client";
+
+import { type ActivityContentFor } from "@zoonk/core/library/activities/templates";
+import { useFormatNumber } from "@zoonk/learn/format-number";
+import { useExtracted } from "next-intl";
+
+type Fields = Extract<ActivityContentFor<"randomSimulation">["fields"], { mode: "sampling" }>;
+
+const PERCENT = 100;
+const SHARE_DIGITS = 1;
+const SHARE_SCALE = 10 ** SHARE_DIGITS;
+
+export function useSamplingFormat(fields: Fields) {
+  const t = useExtracted();
+  const format = useFormatNumber();
+  const isShare = fields.population.kind === "proportion";
+
+  function formatValue(value: number, digits?: number): string {
+    return isShare
+      ? format(value * PERCENT, { maximumFractionDigits: digits ?? SHARE_DIGITS, unit: "%" })
+      : format(value, { maximumFractionDigits: digits, unit: fields.unit });
+  }
+
+  function formatMargin(margin: number): string {
+    const points = Math.round(margin * PERCENT * SHARE_SCALE) / SHARE_SCALE;
+
+    return isShare
+      ? t("±{value} {count, plural, =0 {points} one {point} other {points}}", {
+          count: points,
+          value: format(points, { maximumFractionDigits: SHARE_DIGITS }),
+        })
+      : t("±{value}", { value: format(margin, { unit: fields.unit }) });
+  }
+
+  return { format, formatMargin, formatSize: (size: number) => format(size), formatValue };
+}

@@ -4,148 +4,73 @@ struct AppView: View {
   @Environment(\.scenePhase) private var scenePhase
   @Environment(SessionStore.self) private var session
   @Environment(AppStoreSubscriptionStore.self) private var subscriptions
-  @State private var coursesScope = CoursesScope.all
-  @State private var isAccountPresented: Bool
-  @State private var navigationPaths: [AppSection: NavigationPath] = [:]
-  @State private var selectedSection = AppSection.home
-
-  init(initiallyPresentsAccount: Bool = false) {
-    _isAccountPresented = State(initialValue: initiallyPresentsAccount)
-  }
+  @State private var wasInBackground = false
 
   var body: some View {
-    TabView(selection: $selectedSection) {
-      ForEach(AppSection.allCases) { section in
-        Tab(value: section) {
-          NavigationStack(path: navigationPath(for: section)) {
-            section.tabContent(
-              actions: AppSectionActions(
-                coursesScope: $coursesScope,
-                presentAccount: { isAccountPresented = true },
-                selectSection: { selectedSection = $0 })
-            )
-            .navigationTitle(Text(section.title))
-            .toolbarTitleDisplayMode(.inlineLarge)
-            .modifier(AdaptiveNavigationTitle())
-            .toolbar {
-              accountToolbarItem
-            }
-          }
-        } label: {
-          Label {
-            Text(section.tabTitle)
-          } icon: {
-            Image(systemName: section.systemImage)
-          }
-        }
+    AppTabView()
+      .task {
+        await session.restore()
       }
-    }
-    .tabViewStyle(.sidebarAdaptable)
-    .sheet(isPresented: $isAccountPresented) {
-      AccountSheet(openMyCourses: showMyCourses)
-    }
-    .task {
-      await session.restore()
-    }
-    .task {
-      await subscriptions.observeTransactionUpdates(
-        synchronizationScope: { session.account?.user.id },
-        synchronize: { signedTransaction, expectedAccountID in
+      .task {
+        await subscriptions.observeTransactionUpdates(
+          synchronizationScope: { session.account?.user.id },
+          synchronize: { signedTransaction, expectedAccountID in
+            await session.synchronizeAppleSubscription(
+              signedTransaction: signedTransaction,
+              expectedAccountID: expectedAccountID)
+          })
+      }
+      .task(id: session.account?.user.id) {
+        guard session.account != nil else {
+          return
+        }
+
+        await subscriptions.reconcileCurrentEntitlements(
+          synchronizationScope: session.account?.user.id
+        ) { signedTransaction, expectedAccountID in
           await session.synchronizeAppleSubscription(
             signedTransaction: signedTransaction,
             expectedAccountID: expectedAccountID)
-        })
-    }
-    .task(id: session.account?.user.id) {
-      guard session.account != nil else {
-        return
+        }
       }
-
-      await subscriptions.reconcileCurrentEntitlements(
-        synchronizationScope: session.account?.user.id
-      ) { signedTransaction, expectedAccountID in
-        await session.synchronizeAppleSubscription(
-          signedTransaction: signedTransaction,
-          expectedAccountID: expectedAccountID)
+      .onChange(of: scenePhase) { _, scenePhase in
+        reconcileSessionOnReturn(scenePhase)
       }
-    }
-    .onChange(of: scenePhase) { _, scenePhase in
-      reconcileSessionWhenActive(scenePhase)
-    }
-    .onChange(of: session.authenticatedSession) { previousSession, currentSession in
-      guard previousSession != nil, currentSession == nil else {
-        return
+  }
+
+  /// iCloud Keychain brings sign-ins and sign-outs from the learner's other Apple devices. Launch's
+  /// first activation skips this: `restore()` just read the Keychain.
+  private func reconcileSessionOnReturn(_ scenePhase: ScenePhase) {
+    switch scenePhase {
+    case .background:
+      wasInBackground = true
+    case .active where wasInBackground:
+      wasInBackground = false
+
+      Task {
+        await session.reconcileSynchronizedCredential()
       }
-
-      navigationPaths[.progress] = NavigationPath()
+    default:
+      break
     }
-  }
-
-  @ToolbarContentBuilder
-  private var accountToolbarItem: some ToolbarContent {
-    if #available(iOS 26.0, *) {
-      ToolbarItem(placement: .topBarTrailing) {
-        accountButton
-      }
-      .sharedBackgroundVisibility(.hidden)
-    } else {
-      ToolbarItem(placement: .topBarTrailing) {
-        accountButton
-      }
-    }
-  }
-
-  private var accountButton: some View {
-    AccountToolbarButton {
-      isAccountPresented = true
-    }
-  }
-
-  private func navigationPath(for section: AppSection) -> Binding<NavigationPath> {
-    Binding(
-      get: { navigationPaths[section] ?? NavigationPath() },
-      set: { navigationPaths[section] = $0 })
-  }
-
-  private func showMyCourses() {
-    navigationPaths[.courses] = NavigationPath()
-    coursesScope = .mine
-    selectedSection = .courses
-  }
-
-  /// Rechecks iCloud Keychain whenever the app returns to the foreground so a login or logout from another Apple device updates this UI without a process restart.
-  private func reconcileSessionWhenActive(_ scenePhase: ScenePhase) {
-    guard scenePhase == .active else {
-      return
-    }
-
-    Task {
-      await session.reconcileSynchronizedCredential()
-    }
-  }
-}
-
-private struct AdaptiveNavigationTitle: ViewModifier {
-  @Environment(\.tabBarPlacement) private var tabBarPlacement
-
-  func body(content: Content) -> some View {
-    content.toolbar(removing: tabBarPlacement == .topBar ? .title : nil)
   }
 }
 
 #Preview {
-  let session = SessionStore.preview()
-  let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
+  let dependencies = AppDependencies(
+    clients: .live(baseURL: AppConfiguration.current.apiBaseURL),
+    session: .preview(),
+    imageLoader: .live(),
+    subscriptionStore: .live())
 
   AppView()
-    .environment(
-      CourseCatalogStore(
-        api: CourseCatalogAPI(clients: clients),
-        language: currentCourseCatalogLanguage(),
-        session: session)
-    )
-    .environment(MyCoursesStore(api: MyCoursesAPI(clients: clients), session: session))
-    .environment(ProgressStore(api: ProgressAPI(clients: clients), session: session))
-    .environment(session)
-    .environment(AppStoreSubscriptionStore.live())
+    .environment(dependencies.courseCatalogStore)
+    .environment(dependencies.learnerSummaryStore)
+    .environment(dependencies.progressStore)
+    .environment(dependencies.sessionStore)
+    .environment(dependencies.settingsStore)
+    .environment(dependencies.studySessionStore)
+    .environment(dependencies.subscriptionStore)
+    .environment(dependencies.todayStore)
+    .environment(AppRouter())
 }

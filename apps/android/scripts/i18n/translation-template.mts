@@ -24,16 +24,36 @@ function isTranslatable(element: unknown) {
   return !isElement(attributes) || attributes.translatable !== "false";
 }
 
+function isCommentOrSpace(node: unknown) {
+  return (
+    isElement(node) &&
+    ("#comment" in node || (typeof node["#text"] === "string" && node["#text"].trim() === ""))
+  );
+}
+
+/** A comment right before a resource describes it, so it leaves with a non-translatable one. */
+function leadsNonTranslatable(resources: readonly unknown[], index: number) {
+  const next = resources.slice(index).find((node) => !isCommentOrSpace(node));
+  return next !== undefined && !isTranslatable(next);
+}
+
 function omitNonTranslatable(element: unknown) {
   if (!isElement(element) || !Array.isArray(element.resources)) {
     return element;
   }
 
   const resources: unknown[] = element.resources;
-  return { ...element, resources: resources.filter((resource) => isTranslatable(resource)) };
+
+  return {
+    ...element,
+    resources: resources.filter((resource, index) =>
+      isCommentOrSpace(resource)
+        ? !leadsNonTranslatable(resources, index)
+        : isTranslatable(resource),
+    ),
+  };
 }
 
-/** Preserve source attributes for the codec without duplicating Android's fallback-only resources. */
 export function translationTemplate(source: string) {
   const document: unknown = new XMLParser(OPTIONS).parse(source);
 

@@ -1,8 +1,8 @@
 "use client";
 
+import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { parseStepContent } from "@zoonk/core/steps/contract/content";
-import { type SelectedAnswer } from "../player-reducer";
+import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { ChoiceStepLayout } from "./choice-step-layout";
 
 function getSelectedOptionId(selectedAnswer?: SelectedAnswer): string | null {
@@ -15,10 +15,12 @@ function getSelectedOptionId(selectedAnswer?: SelectedAnswer): string | null {
 
 export function MultipleChoiceStep({
   onSelectAnswer,
+  result,
   selectedAnswer,
   step,
 }: {
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  onSelectAnswer: (answer: SelectedAnswer | null) => void;
+  result?: StepResult;
   selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
@@ -27,19 +29,24 @@ export function MultipleChoiceStep({
 
   const handleSelect = (optionId: string) => {
     if (selectedOptionId === optionId) {
-      onSelectAnswer(step.id, null);
+      onSelectAnswer(null);
       return;
     }
 
-    onSelectAnswer(step.id, { kind: "multipleChoice", selectedOptionId: optionId });
+    onSelectAnswer({ kind: "multipleChoice", selectedOptionId: optionId });
   };
 
   return (
     <ChoiceStepLayout
       context={content.context}
       image={content.image}
+      isChecked={result !== undefined}
       onSelect={handleSelect}
-      options={content.options.map((option) => ({ key: option.id, text: option.text }))}
+      options={content.options.map((option) => ({
+        isCorrect: option.isCorrect,
+        key: option.id,
+        text: option.text,
+      }))}
       question={content.question}
       selectedKey={selectedOptionId}
     />

@@ -6,7 +6,6 @@ function isSafeRelativeUrl(url: string): boolean {
   return SAFE_RELATIVE_PREFIXES.some((prefix) => url.startsWith(prefix));
 }
 
-/** AI output is untrusted, so generated links are limited to browser-safe web destinations. */
 export function getSafeLessonQuestionUrl(url: string): string | null {
   if (url === STREAMDOWN_INCOMPLETE_LINK || isSafeRelativeUrl(url)) {
     return url;

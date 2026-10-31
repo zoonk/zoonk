@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "moment_brain_power": "8accc238a3cee5c9e33967d8e4c4542dd67c498ea4b82698fe11d6bb67f78ac8",
+  "moment_score": "8b382dfc0a20d20035dc98c82251e49982213182b70a1ef886a31c3afc8c416a",
+  "moment_score_spoken": "86828cb21584069bc3bc788997e6deedf498e22599db5fba01952f18782adf87"
+}
+-->
+<resources>
+    <!-- %1$s is the number of right answers, drawn large; %2$s is how many were answered. -->
+    <plurals name="moment_score">
+        <item quantity="one">%1$s risposta corretta su %2$s</item>
+        <item quantity="many">%1$s risposte corrette su %2$s</item>
+        <item quantity="other">%1$s risposte corrette su %2$s</item>
+    </plurals>
+    <!-- Words said out loud. %1$s is the number that sounded right, drawn large; %2$s is how many were said. -->
+    <plurals name="moment_score_spoken">
+        <item quantity="one">%1$s parola pronunciata bene su %2$s</item>
+        <item quantity="many">%1$s parole pronunciate bene su %2$s</item>
+        <item quantity="other">%1$s parole pronunciate bene su %2$s</item>
+    </plurals>
+    <!-- %1$s is the points earned, drawn large with their plus sign. -->
+    <string name="moment_brain_power">+%1$s Potenza Mentale</string>
+</resources>

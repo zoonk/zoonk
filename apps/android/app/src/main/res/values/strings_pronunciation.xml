@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pronunciation_title">Say it again</string>
+    <!-- %1$s is the word in view, %2$s how many words the round has. -->
+    <string name="pronunciation_position">Word %1$s of %2$s</string>
+    <string name="pronunciation_listen">Listen</string>
+    <string name="pronunciation_listen_slowly">Listen slowly</string>
+    <!-- %1$s is the word spelled the way it sounds in the learner's language, shown in a fixed-width font. -->
+    <string name="pronunciation_say_it_like">Say it like %1$s</string>
+    <string name="pronunciation_options">Screen options</string>
+    <string name="pronunciation_skip">Skip this word</string>
+    <string name="pronunciation_press_record">Press Record and say the word out loud</string>
+    <string name="pronunciation_recording">Recording… Press Stop when you\'re done.</string>
+    <string name="pronunciation_grading">Listening to how it sounded…</string>
+    <string name="pronunciation_no_speech">We couldn\'t hear the word. Try again a little closer.</string>
+    <string name="pronunciation_failed">That didn\'t go through. Try again.</string>
+    <string name="pronunciation_microphone_off">Turn on the microphone for Zoonk in Settings to say the word. You can skip it for now.</string>
+    <string name="pronunciation_sounded_right">That sounded right</string>
+    <!-- %1$s is what the grader heard when the word didn't sound right. -->
+    <string name="pronunciation_heard">We heard “%1$s”</string>
+    <!-- %1$s is the day the word comes back to say again, such as "May 4". -->
+    <string name="pronunciation_comes_back">It comes back %1$s.</string>
+    <string name="pronunciation_learned">You\'ve got this one. It won\'t come back.</string>
+    <!-- Says the same word again. -->
+    <string name="pronunciation_try_again">Try again</string>
+    <!-- Goes on to the next word. -->
+    <string name="pronunciation_continue">Continue</string>
+    <!-- Ends the round after its last word. -->
+    <string name="pronunciation_see_how">See how it went</string>
+    <string name="pronunciation_save_failed">That didn\'t go through. Your answers are kept.</string>
+    <!-- Retries saving the round. -->
+    <string name="pronunciation_save_retry">Try again</string>
+    <string name="pronunciation_no_words">No words to say again today.</string>
+    <string name="pronunciation_practice_done">Practice done</string>
+    <string name="pronunciation_nothing_said">Nothing said this time</string>
+    <string name="pronunciation_accent">An accent never blocks you. Words that still sound different come back tomorrow.</string>
+    <!-- Closes the finished round. -->
+    <string name="pronunciation_done">Done</string>
+</resources>

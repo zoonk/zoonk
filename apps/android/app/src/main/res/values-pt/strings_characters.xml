@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "buddy_name_beep": "95f8ec1813be129ae0f86abd308e1d9d0bb2a2b47661747328edac7065dc9f72",
+  "buddy_name_noodle": "7d71ec0dd520bfc07dd34ebe99019221b2766baae1b670151c589074d479f331",
+  "buddy_name_otto": "6240366748387d1f2a720edc4c8bb3b4393646cc145d26b11453349cd7099fce",
+  "buddy_name_zu": "a00e30863bc31c4882c113eeb7db8fadb0b7d2aaa694f10efbe92ea1a421e7e1"
+}
+-->
+<resources>
+    <!-- A buddy's own name, used until the learner names it. -->
+    <string name="buddy_name_zu">Zu</string>
+    <string name="buddy_name_noodle">Cuca</string>
+    <string name="buddy_name_beep">Bip</string>
+    <string name="buddy_name_otto">Oto</string>
+</resources>

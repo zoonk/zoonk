@@ -1,0 +1,171 @@
+import { type ExamOutline, isTopicId } from "../exam-outline";
+import { type RawSkillGraph } from "./normalize-skill-graph";
+
+const MIN_SECTIONED_SUBJECTS = 4;
+
+/**
+ * Enough that the largest call takes a fraction of the graph's time, few enough that the notice
+ * each one reads again stays a small part of the cost.
+ */
+const MAX_SECTION_CALLS = 6;
+
+/** A notice subject (`S3`), or `""` for an area beyond them. */
+export type GraphFrameSection = {
+  area: string;
+  course: string;
+  estimatedLessons: number;
+  phases: number[];
+  skills: number;
+  subject: string;
+};
+
+/** A test sized to a lesson budget is written whole, so its sizes add up to the budget. */
+export function shouldWriteInSections(params: {
+  examBlueprint?: ExamOutline;
+  lessonBudget?: number | null;
+}): boolean {
+  return (
+    !params.lessonBudget && (params.examBlueprint?.subjects.length ?? 0) >= MIN_SECTIONED_SUBJECTS
+  );
+}
+
+type SectionCall = { sections: GraphFrameSection[]; skills: number };
+
+function findLightest(calls: readonly SectionCall[]): number {
+  return calls.reduce(
+    (lightest, call, index) => (call.skills < (calls[lightest]?.skills ?? 0) ? index : lightest),
+    0,
+  );
+}
+
+/**
+ * A call takes as long as the skills it writes, so the biggest sections go first to the lightest.
+ */
+export function toSectionCalls(sections: readonly GraphFrameSection[]): GraphFrameSection[][] {
+  const count = Math.min(MAX_SECTION_CALLS, sections.length);
+  const order = new Map(sections.map((section, index) => [section, index]));
+  const empty: SectionCall[] = Array.from({ length: count }, () => ({ sections: [], skills: 0 }));
+
+  const calls = sections
+    .toSorted((a, b) => b.skills - a.skills)
+    .reduce((filled, section) => {
+      const index = findLightest(filled);
+
+      return filled.map((call, position) =>
+        position === index
+          ? {
+              sections: [...call.sections, section],
+              skills: call.skills + Math.max(1, section.skills),
+            }
+          : call,
+      );
+    }, empty);
+
+  return calls
+    .map((call) => call.sections.toSorted((a, b) => (order.get(a) ?? 0) - (order.get(b) ?? 0)))
+    .filter((call) => call.length > 0);
+}
+
+type RawSkill = RawSkillGraph["skills"][number];
+
+function findTopicTeachers(skills: readonly RawSkill[]): Map<string, string[]> {
+  const taught = skills.flatMap((skill) =>
+    skill.topics.map((topic) => ({ key: skill.key, topic: topic.trim() })),
+  );
+
+  return new Map(
+    [...Map.groupBy(taught, (entry) => entry.topic)].map(([topic, entries]) => [
+      topic,
+      entries.map((entry) => entry.key),
+    ]),
+  );
+}
+
+export function getSectionCall(key: string): number | null {
+  const call = /^s(?<call>\d+)-/u.exec(key)?.groups?.call;
+  return call ? Number(call) - 1 : null;
+}
+
+type Prerequisites = ReadonlyMap<string, readonly string[]>;
+
+function dependsOn({
+  key,
+  on,
+  prerequisites,
+}: {
+  key: string;
+  on: string;
+  prerequisites: Prerequisites;
+}): boolean {
+  const seen = new Set<string>();
+
+  const visit = (current: string): boolean => {
+    if (current === on) {
+      return true;
+    }
+
+    if (seen.has(current)) {
+      return false;
+    }
+
+    seen.add(current);
+    return (prerequisites.get(current) ?? []).some((next) => visit(next));
+  };
+
+  return visit(key);
+}
+
+function resolvePrerequisites({
+  prerequisites,
+  skill,
+  teachers,
+}: {
+  prerequisites: Prerequisites;
+  skill: RawSkill;
+  teachers: ReadonlyMap<string, readonly string[]>;
+}): string[] {
+  const resolved = skill.prerequisites.flatMap((key) =>
+    isTopicId(key)
+      ? (teachers.get(key) ?? []).filter(
+          (teacher) => !dependsOn({ key: teacher, on: skill.key, prerequisites }),
+        )
+      : [key],
+  );
+
+  return [...new Set(resolved)];
+}
+
+/**
+ * Calls write at once and may name the same key, so keys are made unique. A prerequisite naming
+ * another call's topic id (`S2.4`) becomes every skill that teaches that topic, since the skill
+ * applies what the whole topic teaches, except a teacher that already depends on the skill, which
+ * would close a cycle.
+ */
+export function joinSections(calls: readonly (readonly RawSkill[])[]): RawSkill[] {
+  const keyed = calls.flatMap((skills, index) =>
+    skills.map((skill) => ({
+      ...skill,
+      key: `s${index + 1}-${skill.key}`,
+      prerequisites: skill.prerequisites.map((key) =>
+        isTopicId(key) ? key.trim() : `s${index + 1}-${key}`,
+      ),
+    })),
+  );
+
+  const teachers = findTopicTeachers(keyed);
+
+  const explicitPrerequisites = new Map(
+    keyed.map((skill) => [skill.key, skill.prerequisites.filter((key) => !isTopicId(key))]),
+  );
+
+  const prerequisites = keyed.reduce(
+    (resolved, skill) =>
+      resolved.set(skill.key, resolvePrerequisites({ prerequisites: resolved, skill, teachers })),
+    new Map<string, readonly string[]>(explicitPrerequisites),
+  );
+
+  return keyed.map((skill) => ({
+    ...skill,
+    prerequisites: [...(prerequisites.get(skill.key) ?? [])],
+  }));
+}

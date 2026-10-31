@@ -5,9 +5,7 @@ import { getRequestProgressDateContext } from "./get-request-date-context";
 import { getUserProgress } from "./get-user-progress";
 import { hasUserLearningProgress } from "./user-progress";
 
-/**
- * Returns current Energy for the authenticated learner without loading daily history.
- */
+/** Reads current Energy without daily history; null without a session or learning progress. */
 export async function getEnergyLevel(): Promise<EnergyLevelData | null> {
   "use cache: private";
 

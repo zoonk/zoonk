@@ -1,5 +1,7 @@
 name: E2E Tests (Main App)
 
+# Main's Playwright suite (`pnpm e2e:main`): on every PR, and again on `main` before staging, where
+# `ci.yml` calls this workflow.
 on:
   workflow_call:
     inputs:
@@ -7,73 +9,139 @@ on:
         type: string
         required: false
         default: ""
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
 
+concurrency:
+  group: e2e-main-${{ github.event.pull_request.number || github.ref }}
+  # A newer push waits for the running suite instead of cancelling it, so a busy PR's suite still
+  # finishes. GitHub keeps one run pending, the newest.
+  cancel-in-progress: false
+
 jobs:
-  e2e:
+  suites:
+    name: e2e (${{ matrix.suite }})
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     strategy:
       fail-fast: false
+      # Playwright runs a sharded project's dependencies whole in each shard, so the dependent
+      # live-call-states project runs in its own job. That job is the shortest, so it also checks
+      # that Main's navigation pages are prerendered whole and saves the build caches.
       matrix:
-        shard: [1, 2, 3]
+        include:
+          - { suite: chromium 1/3, args: --project=chromium --shard=1/3 }
+          - { suite: chromium 2/3, args: --project=chromium --shard=2/3 }
+          - { suite: chromium 3/3, args: --project=chromium --shard=3/3 }
+          - { suite: live-call-states, args: --project=live-call-states --no-deps, gates: true }
     env:
       BETTER_AUTH_SECRET: test-secret-for-ci
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_e2e
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_e2e
       E2E_TESTING: "true"
+      MAIN_PERF_GATES: ${{ matrix.gates && 'true' || 'false' }}
       NEXT_PUBLIC_APP_DOMAIN: localhost:3000
       NEXT_PUBLIC_API_URL: http://localhost:4000
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
-    services:
-      db:
-        image: postgres:18-alpine
-        ports: ["5432:5432"]
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: zoonk_e2e
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 1s
-          --health-timeout 5s
-          --health-retries 10
-
     steps:
+      # Postgres pulls and starts while the code checks out and installs (see `vitest.yml`).
+      - name: Start Postgres
+        run: >-
+          docker run --detach --name db --publish 5432:5432 --tmpfs /var/lib/postgresql
+          --env POSTGRES_PASSWORD=postgres --env POSTGRES_DB=zoonk_e2e
+          --env POSTGRES_INITDB_ARGS=--no-sync
+          postgres:18-alpine -c max_connections=200 > "$RUNNER_TEMP/db.log" 2>&1 &
+
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ inputs.ref || github.sha }}
 
-      - name: Cache turbo build setup
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-
-            ${{ runner.os }}-turbo-
+      # Hashed once, before dependencies are installed: a cache's post step evaluates its inputs
+      # again, and `hashFiles` would then walk every node_modules.
+      - name: Compute cache keys
+        id: cache-keys
+        run: |
+          echo "lockfile=${{ hashFiles('pnpm-lock.yaml') }}" >> "$GITHUB_OUTPUT"
+          echo "sources=${{ hashFiles('apps/main/**/*.ts', 'apps/main/**/*.tsx', 'apps/api/**/*.ts', 'packages/**/*.ts', 'packages/**/*.tsx') }}" >> "$GITHUB_OUTPUT"
 
-      - name: Cache Next.js build
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      # Turbopack's build caches: a warm build compiles only what changed since the cache's run.
+      # The API's is its own entry, which the API's E2E job restores too (`e2e-api.yml`).
+      - name: Restore Main's build cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/main/.next-e2e/cache
-          key: ${{ runner.os }}-nextjs-main-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('apps/main/**/*.ts', 'apps/main/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-main-${{ hashFiles('**/pnpm-lock.yaml') }}-
-            ${{ runner.os }}-nextjs-main-
+          key: nextjs-e2e-main-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
+          restore-keys: nextjs-e2e-main-${{ steps.cache-keys.outputs.lockfile }}-
 
-      - name: Setup pnpm and Node.js
-        uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3
+      - name: Restore the API's build cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
-          runtime: node@24
+          path: apps/api/.next-e2e/cache
+          key: nextjs-e2e-api-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
+          restore-keys: nextjs-e2e-api-${{ steps.cache-keys.outputs.lockfile }}-
+
+      # Node comes from the runner's tool cache: pnpm/setup would download it from nodejs.org,
+      # whose slow downloads time jobs out.
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: package.json
+
+      - name: Setup pnpm
+        uses: pnpm/setup@fa36a5ef7dcdefc3a7cb25655c122e00cf6e636e # v3.1.2
+        with:
+          node-version-file: false
           cache: true
+          save-cache: ${{ github.ref == 'refs/heads/main' }}
 
-      - name: Setup database
-        run: pnpm --filter @zoonk/db db:setup:e2e
+      # Over TCP: while the image sets up its database, Postgres only listens on its socket.
+      - name: Wait for Postgres
+        run: |
+          for _ in $(seq 120); do
+            docker exec db pg_isready --host 127.0.0.1 --quiet 2> /dev/null && exit 0
+            sleep 0.5
+          done
 
+          cat "$RUNNER_TEMP/db.log"
+          docker logs db
+          exit 1
+
+      - name: Test performance gates
+        if: matrix.gates
+        run: pnpm test:deploy scripts/perf
+
+      # Through turbo's cache: a shard whose inputs passed before replays that run.
       - name: Run E2E tests
-        run: pnpm e2e --filter main -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+        run: pnpm turbo run e2e:suite --filter main --env-mode=loose -- ${{ matrix.args }} --workers=2
+
+      # Saved once the build finished (`pnpm e2e:main` marks it), whether the tests then passed or a
+      # newer push cancelled the run, so the next run's builds start warm.
+      - name: Save Main's build cache
+        if: always() && matrix.gates && hashFiles('apps/main/.next-e2e/e2e-build-complete') != ''
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: apps/main/.next-e2e/cache
+          key: nextjs-e2e-main-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
+
+      - name: Save the API's build cache
+        if: always() && matrix.gates && hashFiles('apps/api/.next-e2e/e2e-build-complete') != ''
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: apps/api/.next-e2e/cache
+          key: nextjs-e2e-api-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
+
+  # The one check branch protection requires: it passes only when every part passed.
+  e2e-main:
+    if: always()
+    needs: suites
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every part passed
+        run: test "${{ needs.suites.result }}" = success

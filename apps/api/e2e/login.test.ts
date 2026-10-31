@@ -1,45 +1,32 @@
-import { expect, test } from "@zoonk/e2e/fixtures";
+import { test } from "@zoonk/e2e/fixtures";
+import { cleanupVerifications, getOTPForEmail } from "./helpers/db";
+
+/** The E2E server's `MAIN_APP_URL`. */
+const MAIN_APP_URL = "http://localhost:49153";
 
 test.describe("Login Page", () => {
-  test("uses the locale passed by the originating app throughout auth", async ({ page }) => {
-    await page.goto("/auth/login?locale=pt");
+  test("signing in directly on the API ends in the main app", async ({ page }) => {
+    const email = `e2e-direct-login-${Date.now()}@zoonk.test`;
 
-    await expect(page.getByRole("heading", { name: "Entre ou crie uma conta" })).toBeVisible();
-
-    await page.goto("/auth/otp?email=learner@zoonk.test");
-
-    await expect(page.getByRole("heading", { name: "Confira seu email" })).toBeVisible();
-  });
-
-  test("displays login form with email input and social buttons", async ({ page }) => {
     await page.goto("/auth/login");
-
-    // Verify heading
-    await expect(
-      page.getByRole("heading", { name: /sign in or create an account/iu }),
-    ).toBeVisible();
-
-    // Verify email form elements
-    await expect(page.getByLabel(/email/iu)).toBeVisible();
-
-    await expect(page.getByRole("button", { name: /^continue$/iu })).toBeVisible();
-
-    // Verify social login buttons
-    await expect(page.getByRole("button", { name: /continue with google/iu })).toBeVisible();
-
-    await expect(page.getByRole("button", { name: /continue with apple/iu })).toBeVisible();
-  });
-
-  test("shows a validation error when Better Auth rejects the email", async ({ page }) => {
-    await page.goto("/auth/login");
-
-    const emailInput = page.getByLabel(/email/iu);
-
-    await emailInput.fill("not-an-email");
-    await emailInput.evaluate((input) => input.closest("form")?.setAttribute("novalidate", ""));
+    await page.getByLabel(/email/iu).fill(email);
     await page.getByRole("button", { name: /^continue$/iu }).click();
+    await page.waitForURL(/\/auth\/otp\?email=[^&]+$/u);
 
-    await expect(page).toHaveURL(/\/auth\/login/u);
-    await expect(page.getByText(/enter a valid email address/iu)).toBeVisible();
+    const otp = await getOTPForEmail(email);
+    await page.getByRole("textbox", { name: "Code from the email" }).fill(otp ?? "");
+
+    await page.waitForURL(/\/auth\/setup$/u);
+    await page.getByRole("textbox", { exact: true, name: "Name" }).fill("Direct Learner");
+
+    const mainLogin = page.waitForRequest((request) => request.url() === `${MAIN_APP_URL}/login`);
+    await page.getByRole("button", { name: /^continue$/iu }).click();
+    await mainLogin;
+
+    const again = page.waitForRequest((request) => request.url() === `${MAIN_APP_URL}/login`);
+    await page.goto("/auth/login").catch(() => null);
+    await again;
+
+    await cleanupVerifications(email);
   });
 });

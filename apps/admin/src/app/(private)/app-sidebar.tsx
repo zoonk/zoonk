@@ -1,39 +1,20 @@
 "use client";
 
+import { Sheet, SheetContent, SheetTitle } from "@zoonk/ui/components/sheet";
 import {
+  SIDEBAR_ITEM_CLASS,
   Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
+  SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarTrigger,
+  SidebarHeaderRow,
+  SidebarSection,
 } from "@zoonk/ui/components/sidebar";
-import {
-  BarChart3Icon,
-  BookOpen,
-  CreditCardIcon,
-  HomeIcon,
-  LayersIcon,
-  MessageSquareTextIcon,
-  MessagesSquareIcon,
-  TrophyIcon,
-  Users,
-} from "lucide-react";
+import { SidebarSearch, SidebarToggle, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
+import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AppSidebarMenuItem } from "./app-sidebar-menu-item";
-
-const menuItems = [
-  { icon: HomeIcon, label: "Home", url: "/" },
-  { icon: BarChart3Icon, label: "Stats", url: "/stats" },
-  { icon: Users, label: "Users", url: "/users" },
-  { icon: TrophyIcon, label: "Leaderboard", url: "/leaderboard" },
-  { icon: CreditCardIcon, label: "Subscriptions", url: "/subscriptions" },
-  { icon: BookOpen, label: "Courses", url: "/courses" },
-  { icon: MessageSquareTextIcon, label: "Course Prompts", url: "/course-prompts" },
-  { icon: LayersIcon, label: "Lessons", url: "/lessons" },
-  { icon: MessagesSquareIcon, label: "Questions", url: "/questions" },
-] as const;
+import { type AdminAccount, AdminAccountMenu } from "./admin-account-menu";
+import { adminNavigation } from "./admin-navigation";
 
 function isActive(pathname: string, url: string) {
   if (url === "/") {
@@ -43,32 +24,88 @@ function isActive(pathname: string, url: string) {
   return pathname.startsWith(url);
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
+  return adminNavigation.map((group) => (
+    <SidebarSection aria-label={group.label} key={group.label} label={group.label}>
+      {group.items.map(({ icon: Icon, label, url }) => (
+        <SidebarTooltip key={label} label={label}>
+          <Link
+            aria-current={isActive(pathname, url) ? "page" : undefined}
+            className={SIDEBAR_ITEM_CLASS}
+            href={url}
+            onNavigate={onNavigate}
+            prefetch
+          >
+            <Icon aria-hidden="true" />
+            <span className="min-w-0 flex-1 truncate">{label}</span>
+          </Link>
+        </SidebarTooltip>
+      ))}
+    </SidebarSection>
+  ));
+}
+
+function AdminSidebarContent({
+  account,
+  onNavigate,
+  search,
+  toggle,
+}: {
+  account: AdminAccount;
+  onNavigate?: () => void;
+  search?: React.ReactNode;
+  toggle?: React.ReactNode;
+}) {
   return (
-    <Sidebar {...props}>
-      <SidebarHeader>
-        <SidebarTrigger />
+    <>
+      <SidebarHeader className="gap-4">
+        <SidebarHeaderRow>
+          <span className="sidebar-collapsed:hidden flex h-8 items-center px-2 text-sm font-semibold">
+            Zoonk Admin
+          </span>
+          {toggle}
+        </SidebarHeaderRow>
+        {search}
       </SidebarHeader>
 
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <AppSidebarMenuItem
-                  icon={item.icon}
-                  isActive={isActive(pathname, item.url)}
-                  key={item.label}
-                  label={item.label}
-                  url={item.url}
-                />
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
+      <AdminNav onNavigate={onNavigate} />
+
+      <SidebarFooter>
+        <AdminAccountMenu account={account} />
+      </SidebarFooter>
+    </>
+  );
+}
+
+export function AppSidebar({ account }: { account: AdminAccount }) {
+  return (
+    <Sidebar aria-label="Sidebar" className="gap-4">
+      <AdminSidebarContent
+        account={account}
+        search={<SidebarSearch label="Search…" onClick={openCommandPalette} />}
+        toggle={<SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar" />}
+      />
     </Sidebar>
+  );
+}
+
+export function AdminMenuSheet({
+  account,
+  onOpenChange,
+  open,
+}: {
+  account: AdminAccount;
+  onOpenChange: (open: boolean) => void;
+  open: boolean;
+}) {
+  return (
+    <Sheet onOpenChange={onOpenChange} open={open}>
+      <SheetContent className="gap-4 overflow-y-auto p-3 data-[side=left]:w-60" side="left">
+        <SheetTitle className="sr-only">Menu</SheetTitle>
+        <AdminSidebarContent account={account} onNavigate={() => onOpenChange(false)} />
+      </SheetContent>
+    </Sheet>
   );
 }

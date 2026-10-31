@@ -1,4 +1,4 @@
-import { AdminTableSkeleton, AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
+import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { AdminPagination } from "@/components/pagination";
 import { listCourses } from "@/data/courses/list-courses";
 import { parseSearchParams } from "@/lib/parse-search-params";
@@ -13,10 +13,6 @@ import {
 } from "@zoonk/ui/components/table";
 import { CourseRow } from "./course-row";
 
-/**
- * Course URL state, protected loading, and pagination resolve together so a
- * refreshed or shared admin URL always describes the rows on screen.
- */
 export async function CourseList({
   searchParams,
 }: {
@@ -27,10 +23,7 @@ export async function CourseList({
   return <CachedCourseList limit={limit} offset={offset} page={page} search={search} />;
 }
 
-/**
- * Primitive URL values make each list state a deterministic browser-private
- * cache entry that runtime prefetching can prepare before navigation.
- */
+/** Primitive props make each list state its own cache entry. */
 async function CachedCourseList({
   limit,
   offset,
@@ -49,17 +42,15 @@ async function CachedCourseList({
 
   return (
     <>
-      <div className="overflow-x-auto rounded-lg border">
-        <Table>
-          <CourseTableHeader />
+      <Table>
+        <CourseTableHeader />
 
-          <TableBody>
-            {courses.map((course) => (
-              <CourseRow course={course} key={course.id} />
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+        <TableBody>
+          {courses.map((course) => (
+            <CourseRow course={course} key={course.id} />
+          ))}
+        </TableBody>
+      </Table>
 
       <AdminPagination
         basePath="/courses"
@@ -72,28 +63,18 @@ async function CachedCourseList({
   );
 }
 
-/**
- * The fallback uses the real course columns so admins see the table structure
- * immediately while private course data streams in.
- */
 export function CourseListSkeleton() {
   return (
-    <AdminTableSkeleton className="overflow-x-auto">
-      <Table>
-        <CourseTableHeader />
+    <Table>
+      <CourseTableHeader />
 
-        <AdminTableSkeletonRows>
-          <CourseSkeletonRow />
-        </AdminTableSkeletonRows>
-      </Table>
-    </AdminTableSkeleton>
+      <AdminTableSkeletonRows>
+        <CourseSkeletonRow />
+      </AdminTableSkeletonRows>
+    </Table>
   );
 }
 
-/**
- * Loaded and loading course tables share one header so their columns cannot
- * drift as the admin catalog grows.
- */
 function CourseTableHeader() {
   return (
     <TableHeader>
@@ -101,18 +82,15 @@ function CourseTableHeader() {
         <TableHead>Title</TableHead>
         <TableHead>Organization</TableHead>
         <TableHead>Language</TableHead>
-        <TableHead className="text-right">Completed Lessons</TableHead>
+        <TableHead className="text-right">Chapters</TableHead>
+        <TableHead className="text-right">Written lessons</TableHead>
         <TableHead>Published</TableHead>
-        <TableHead>Created At</TableHead>
+        <TableHead>Created</TableHead>
       </TableRow>
     </TableHeader>
   );
 }
 
-/**
- * Course row placeholders preserve the relative width of identity, ownership,
- * status, and date fields during streaming.
- */
 function CourseSkeletonRow() {
   return (
     <TableRow>
@@ -124,6 +102,9 @@ function CourseSkeletonRow() {
       </TableCell>
       <TableCell>
         <Skeleton className="h-4 w-10" />
+      </TableCell>
+      <TableCell>
+        <Skeleton className="ml-auto h-4 w-10" />
       </TableCell>
       <TableCell>
         <Skeleton className="ml-auto h-4 w-10" />

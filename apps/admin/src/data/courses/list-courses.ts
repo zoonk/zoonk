@@ -1,26 +1,22 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { type CourseGetPayload, prisma } from "@zoonk/db";
+import { normalizeString } from "@zoonk/utils/string";
 
 const courseListInclude = {
-  chapters: {
-    select: {
-      _count: { select: { lessons: { where: { generationStatus: "completed" as const } } } },
-    },
-    where: { generationStatus: "completed" as const },
-  },
+  courseChapters: { select: { chapterId: true } },
   organization: true,
 } as const;
 
-type CourseWithCompletedLessonChapters = CourseGetPayload<{ include: typeof courseListInclude }>;
-export type ListedCourse = Omit<CourseWithCompletedLessonChapters, "chapters"> & {
-  completedLessonCount: number;
+type CourseWithOutline = CourseGetPayload<{ include: typeof courseListInclude }>;
+
+export type ListedCourse = Omit<CourseWithOutline, "courseChapters"> & {
+  chapterCount: number;
+  writtenLessonCount: number;
 };
 
 const cachedListCourses = cacheAdminData(async (limit: number, offset: number, search?: string) => {
-  const where = search
-    ? { normalizedTitle: { contains: search, mode: "insensitive" as const } }
-    : undefined;
+  const where = search ? { normalizedTitle: { contains: normalizeString(search) } } : undefined;
 
   const [courses, total] = await Promise.all([
     prisma.course.findMany({
@@ -33,25 +29,39 @@ const cachedListCourses = cacheAdminData(async (limit: number, offset: number, s
     prisma.course.count({ where }),
   ]);
 
-  return { courses: courses.map((course) => addCompletedLessonCount(course)), total };
+  const writtenLessons = await countWrittenLessons(
+    courses.flatMap((course) => course.courseChapters.map((placement) => placement.chapterId)),
+  );
+
+  return { courses: courses.map((course) => addOutlineCounts(course, writtenLessons)), total };
 });
+
+/** A relation `_count` would count every chapter's lessons, not only the page's. */
+async function countWrittenLessons(chapterIds: string[]): Promise<Map<string, number>> {
+  const counts = await prisma.chapterLesson.groupBy({
+    _count: { lessonId: true },
+    by: ["chapterId"],
+    where: { chapterId: { in: [...new Set(chapterIds)] }, lesson: { contentStatus: "completed" } },
+  });
+
+  return new Map(counts.map((row) => [row.chapterId, row._count.lessonId]));
+}
 
 export async function listCourses(params: { limit: number; offset: number; search?: string }) {
   return cachedListCourses(params.limit, params.offset, params.search);
 }
 
-/**
- * The course table needs one number per course, while Prisma returns one
- * filtered lesson count per chapter. Summing here keeps the rendering code from
- * knowing how lessons are nested under courses.
- */
-function addCompletedLessonCount(course: CourseWithCompletedLessonChapters): ListedCourse {
-  const { chapters, ...courseFields } = course;
+/** A lesson shared by two chapters of the same course counts twice, as learners see it in the outline. */
+function addOutlineCounts(
+  course: CourseWithOutline,
+  writtenLessons: Map<string, number>,
+): ListedCourse {
+  const { courseChapters, ...courseFields } = course;
 
-  const completedLessonCount = chapters.reduce(
-    (total, chapter) => total + chapter._count.lessons,
+  const writtenLessonCount = courseChapters.reduce(
+    (total, placement) => total + (writtenLessons.get(placement.chapterId) ?? 0),
     0,
   );
 
-  return { ...courseFields, completedLessonCount };
+  return { ...courseFields, chapterCount: courseChapters.length, writtenLessonCount };
 }

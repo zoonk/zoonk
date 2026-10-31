@@ -4,25 +4,41 @@
   "global": {
     "env": [
       "AI_GATEWAY_API_KEY",
+      "ANDROID_DEBUG_CERT_FINGERPRINTS",
+      "ANDROID_RELEASE_CERT_FINGERPRINTS",
       "APPLE_*",
       "AUTH_COOKIE_CACHE_ENABLED",
       "BETTER_AUTH_SECRET",
-      "BLOB_READ_WRITE_TOKEN",
-      "DATABASE_*",
+      "BLOB_*",
+      "CRON_SECRET",
+      "E2E_API_URL",
       "E2E_TESTING",
-      "GEMINI_API_KEY",
       "GOOGLE_*",
       "MAILER_API_KEY",
       "MAILBOX_URL",
+      "MAIN_APP_URL",
       "NEXT_PUBLIC_API_URL",
       "OPENAI_API_KEY",
       "SENTRY_AUTH_TOKEN",
       "STRIPE_*",
       "VERCEL_*",
+      "!VERCEL_PLUGIN_*",
       "PORTLESS_*",
+      "PRIVATE_BLOB_*",
       "ZOONK_DEV_PROJECT"
     ],
     "ui": "tui",
+    "passThroughEnv": [
+      "ANDROID_*",
+      "APP_CACHE_SECRET",
+      "APP_FOLLOW_UP_SECRET",
+      "CODEX_SANDBOX",
+      "DATABASE_*",
+      "MAIN_CACHE_BYPASS_SECRET",
+      "ZOONK_DEV_LAUNCHER_PID",
+      "ZOONK_QUEUE_*",
+      "ZOONK_QUERY_LOG"
+    ],
     "cacheMaxAge": "7d",
     "cacheMaxSize": "10GB"
   },
@@ -35,6 +51,7 @@
     "//#quality:fix": { "dependsOn": ["//#lint:fix", "//#format:fix"] },
     "build": {
       "dependsOn": ["db:generate", "^build"],
+      "env": ["DATABASE_*"],
       "outputs": [
         ".next/**",
         "!.next/cache/**",
@@ -46,6 +63,7 @@
     },
     "build:e2e": {
       "dependsOn": ["db:generate", "^build:e2e"],
+      "env": ["DATABASE_*"],
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.e2e.local"],
       "outputs": [
         ".next-e2e/**",
@@ -56,7 +74,6 @@
         "src/app/.well-known/workflow/**"
       ]
     },
-    "db:deploy": { "cache": false },
     "db:generate": {
       "cache": false,
       "dependsOn": ["^db:generate"],
@@ -71,15 +88,28 @@
     },
     "e2e": {
       "dependsOn": ["build:e2e"],
+      "env": ["CI"],
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.e2e.local"],
-      "passThroughEnv": ["PLAYWRIGHT_*", "E2E_BASE_URL"]
+      "passThroughEnv": ["PLAYWRIGHT_*"]
     },
-    "i18n:lint": {},
+    "e2e:suite": {
+      "dependsOn": ["^transit", "api#transit"],
+      "env": ["CI", "MAIN_PERF_GATES"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/packages/db/.env.e2e.local",
+        "$TURBO_ROOT$/scripts/dev/process.mts",
+        "$TURBO_ROOT$/scripts/e2e/**",
+        "$TURBO_ROOT$/scripts/run-test-env.mts"
+      ],
+      "passThroughEnv": ["PLAYWRIGHT_*"]
+    },
+    "i18n:lint": { "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/i18n/src/**"] },
     "i18n": { "cache": false },
-    "start": { "cache": false, "dependsOn": ["^start"], "persistent": true },
+    "start": { "cache": false, "dependsOn": ["build", "^start"], "persistent": true },
     "test": {
-      "dependsOn": ["db:generate", "^db:setup:test", "^test"],
-      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.test.local"]
+      "dependsOn": ["db:generate", "^db:setup:test", "transit"],
+      "inputs": ["$TURBO_DEFAULT$"]
     },
     "test:watch": {
       "cache": false,
@@ -87,6 +117,7 @@
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.test.local"],
       "persistent": true
     },
+    "transit": { "dependsOn": ["^transit"] },
     "typecheck": {
       "dependsOn": ["db:generate", "^typecheck"],
       "outputs": [".next/types/**", "next-env.d.ts"]

@@ -8,13 +8,15 @@
     "dev": "node ../../scripts/dev/run-service.mts admin",
     "dev:app": "next dev",
     "dev:direct": "next dev -p 3200",
-    "start": "next start -p 3200",
+    "start": "node ../../scripts/dev/run-service.mts admin start:app",
+    "start:app": "next start",
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@zoonk/auth": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",
+    "@zoonk/player": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "lucide-react": "catalog:",

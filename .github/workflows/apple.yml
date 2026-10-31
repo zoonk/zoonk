@@ -3,25 +3,31 @@ name: Apple App
 on:
   push:
     branches: [main]
-    paths: [apps/apple/**]
+    paths: [apps/apple/**, .github/workflows/apple.yml, .github/workflows/native-changes.yml]
   pull_request:
     branches: [main]
-    paths: [apps/apple/**]
+    paths: [apps/apple/**, .github/workflows/apple.yml, .github/workflows/native-changes.yml]
     types: [opened, synchronize, reopened]
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 permissions:
   contents: read
 
 env:
-  DEVELOPER_DIR: /Applications/Xcode_27.0.app/Contents/Developer
+  DEVELOPER_DIR: /Applications/Xcode_27.2.app/Contents/Developer
 
 jobs:
+  changes:
+    uses: ./.github/workflows/native-changes.yml
+    with:
+      app: apple
+
   format:
+    needs: changes
+    if: needs.changes.outputs.changed == 'true'
     runs-on: xcode-27
+    concurrency:
+      group: ${{ github.workflow }}-format-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: false
     steps:
       - name: Check out code
         uses: actions/checkout@v7
@@ -30,8 +36,14 @@ jobs:
         run: make -C apps/apple format-check
 
   build:
+    needs: changes
+    if: needs.changes.outputs.changed == 'true'
     runs-on: xcode-27
     timeout-minutes: 30
+    concurrency:
+      group: ${{ github.workflow }}-build-${{ github.event.pull_request.number || github.ref }}
+      # Let the running build finish and save its compilation cache.
+      cancel-in-progress: false
     steps:
       - name: Check out code
         uses: actions/checkout@v7
@@ -52,17 +64,21 @@ jobs:
       - name: Cache Xcode compilations
         uses: actions/cache@v6
         with:
-          path: ~/Library/Developer/Xcode/DerivedData/CompilationCache.noindex
-          key: ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/**/Package.resolved', 'apps/apple/**/*.xcproj', 'apps/apple/Makefile') }}
+          path: apps/apple/DerivedData/Make/CompilationCache.noindex
+          # Any app edit recompiles the whole app module, so the key follows the packages, the API
+          # client and the project; Xcode or build flag changes start from an empty cache.
+          key: ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-${{ hashFiles('apps/apple/**/Package.resolved', 'apps/apple/**/*.xcproj', 'apps/apple/ZoonkAPI/**') }}
           restore-keys: |
-            ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-
+            ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-
 
       - name: Build iPhone and iPad app
         env:
+          # CI only checks that the app compiles, so it skips debug info.
           XCODEBUILD_ARGUMENTS: >-
             -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
             -onlyUsePackageVersionsFromResolvedFile
             -skipPackageUpdates
             COMPILATION_CACHE_ENABLE_CACHING=YES
             COMPILER_INDEX_STORE_ENABLE=NO
+            GCC_GENERATE_DEBUGGING_SYMBOLS=NO
         run: make -C apps/apple build

@@ -8,19 +8,20 @@ struct LoginView: View {
       VStack(spacing: 24) {
         VStack(spacing: 8) {
           Image(systemName: "person.crop.circle.badge.checkmark")
-            .font(.system(size: 48))
+            .font(.largeTitle)
+            .imageScale(.large)
             .symbolRenderingMode(.hierarchical)
             .foregroundStyle(.tint)
+            .accessibilityHidden(true)
+
+          Text(title)
+            .font(.title2.bold())
+            .multilineTextAlignment(.center)
+            .accessibilityAddTraits(.isHeader)
+            .heroTitle()
 
           Text(
-            "Sign in to Zoonk",
-            tableName: "Account",
-            comment: "Title above the native sign-in methods"
-          )
-          .font(.title2.bold())
-
-          Text(
-            "Keep your courses and progress available on all your devices.",
+            "Keep your plan and progress on all your devices.",
             tableName: "Account",
             comment: "Explains the benefit of signing in"
           )
@@ -86,46 +87,50 @@ struct LoginView: View {
 
         AccountFailureMessage(failure: session.failure)
 
-        VStack(spacing: 8) {
-          Text(
-            "By continuing, you agree to the Zoonk Terms of Service and Privacy Policy.",
-            tableName: "Account",
-            comment: "Legal agreement shown below sign-in methods"
-          )
-          .font(.footnote)
-          .foregroundStyle(.secondary)
-          .multilineTextAlignment(.center)
-
-          HStack(spacing: 16) {
-            Link(
-              destination: AccountLinks.terms,
-              label: {
-                Text(
-                  "Terms of Service",
-                  tableName: "Account",
-                  comment: "Link to the terms of service")
-              }
-            )
-            .frame(minHeight: 44)
-
-            Link(
-              destination: AccountLinks.privacy,
-              label: {
-                Text(
-                  "Privacy Policy",
-                  tableName: "Account",
-                  comment: "Link to the privacy policy")
-              }
-            )
-            .frame(minHeight: 44)
-          }
-          .font(.footnote)
-        }
+        Text(
+          "By continuing, you agree to the Zoonk \(termsLink) and \(privacyLink).",
+          tableName: "Account",
+          comment:
+            "Legal agreement below the sign-in methods; the arguments are the links to the terms of service and the privacy policy"
+        )
+        .font(.footnote)
+        .foregroundStyle(.secondary)
+        .multilineTextAlignment(.center)
       }
       .frame(maxWidth: 480)
       .padding(24)
       .frame(maxWidth: .infinity)
     }
+    .navigationTitle(title)
+    .barTitleAfterHero(title)
+  }
+
+  private var title: String {
+    String(
+      localized: "Sign in or create an account", table: "Account",
+      comment: "Title above the native sign-in methods; new learners create an account here too")
+  }
+
+  private var termsLink: AttributedString {
+    linked(
+      AttributedString(
+        localized: "Terms of Service", table: "Account", comment: "Link to the terms of service"),
+      to: AccountLinks.terms)
+  }
+
+  private var privacyLink: AttributedString {
+    linked(
+      AttributedString(
+        localized: "Privacy Policy", table: "Account", comment: "Link to the privacy policy"),
+      to: AccountLinks.privacy)
+  }
+
+  /// The tint is ink, so a link inside a sentence is told apart by its underline.
+  private func linked(_ title: AttributedString, to url: URL) -> AttributedString {
+    var link = title
+    link.link = url
+    link.underlineStyle = .single
+    return link
   }
 }
 
@@ -141,16 +146,27 @@ struct AccountFailureMessage: View {
         Image(systemName: "exclamationmark.circle")
       }
       .font(.footnote)
-      .foregroundStyle(.red)
+      .foregroundStyle(.destructive)
       .multilineTextAlignment(.center)
       .accessibilityElement(children: .combine)
     }
   }
 
-  /// Gives each recoverable state concise native copy while keeping raw provider and server errors out of the interface.
   @ViewBuilder
   private func message(for failure: AccountFailure) -> some View {
     switch failure {
+    case .botDetected:
+      Text(
+        "A security check blocked this request. Try again or contact hello@zoonk.com.",
+        tableName: "Account",
+        comment:
+          "Recovery when the security check blocks a sign-in or a verification code; avoids the verb on the Verify and delete button"
+      )
+    case .emailCodeDelivery:
+      Text(
+        "Zoonk couldn't send the verification code. Try again or contact hello@zoonk.com.",
+        tableName: "Account",
+        comment: "Generic email verification code delivery failure")
     case .accountDeletion:
       Text(
         "Zoonk couldn't delete your account. Try again or contact hello@zoonk.com.",

@@ -2,7 +2,11 @@ import StoreKit
 import SwiftUI
 
 private enum AccountDestination: Hashable {
+  case createAccount
   case deleteAccount(AccountDeletionDestination)
+  case memory
+  case preferences
+  case plus(AccountSubscription)
   case profile
   case subscription(UUID)
 }
@@ -10,47 +14,64 @@ private enum AccountDestination: Hashable {
 private struct AccountDeletionDestination: Hashable {
   let email: String
   let hasAppleAccount: Bool
-  let storeSubscriptionProvider: StoreSubscriptionProvider?
+  let subscription: AccountSubscription?
 }
 
 struct AccountSheet: View {
+  /// A guest gets sign-in instead of the hub. Any sign-in made in the sheet closes it once the
+  /// profile is set up.
+  var signsIn = false
+
   @Environment(\.dismiss) private var dismiss
+  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
   @State private var isAppStoreSubscriptionManagementPresented = false
   @State private var isGooglePlayManagementPresented = false
+  @State private var isFeedbackPresented = false
   @State private var path = [AccountDestination]()
-
-  let openMyCourses: () -> Void
+  @State private var isBeside = false
 
   var body: some View {
-    NavigationStack(path: $path) {
-      accountContent
+    PaneBeside(isAvailable: isShowingHub) {
+      NavigationStack {
+        accountContent(sectionOpen: AccountSectionOpen(shown: path.first, open: show))
+      }
+    } content: { isBeside in
+      // Beside the list a section is always open over this root.
+      NavigationStack(path: $path) {
+        Group {
+          if isBeside {
+            Color.clear
+          } else {
+            accountContent(sectionOpen: nil)
+          }
+        }
         .toolbar {
-          if !requiresProfileSetup {
+          if !isBeside, !requiresProfileSetup {
             ToolbarItem(placement: .topBarTrailing) {
               closeButton
             }
           }
         }
         .navigationDestination(for: AccountDestination.self) { destination in
-          switch destination {
-          case .deleteAccount(let deletion):
-            AccountDeletionView(
-              email: deletion.email,
-              hasAppleAccount: deletion.hasAppleAccount,
-              storeSubscriptionProvider: deletion.storeSubscriptionProvider)
-          case .profile:
-            if let account = session.account {
-              ProfileEditorView(account: account, isRequiredSetup: false)
-                .id(account.user.id)
-            }
-          case .subscription(let appAccountToken):
-            SubscriptionView(appAccountToken: appAccountToken)
-          }
+          page(destination, isBeside: isBeside)
         }
-        .onChange(of: session.state) { _, state in
-          reconcileNavigation(state)
-        }
+      }
+      .onChange(of: isBeside, initial: true) {
+        self.isBeside = isBeside
+        openDefaultSectionBeside()
+      }
+    }
+    .onChange(of: session.state) { previous, state in
+      reconcileNavigation(from: previous, to: state)
+    }
+    .onChange(of: path) {
+      // Closing a deletion's result leaves nothing of the deleted account to show.
+      if session.account == nil, !isShowingDeletion {
+        path.removeAll()
+      }
+
+      openDefaultSectionBeside()
     }
     .interactiveDismissDisabled(requiresProfileSetup)
     .presentationDetents([.large])
@@ -76,21 +97,104 @@ struct AccountSheet: View {
           "Explains how to manage a Google-owned subscription without linking to external purchasing"
       )
     }
+    .sheet(isPresented: $isFeedbackPresented) {
+      FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: "account-menu"))
+    }
     .task {
       await session.reconcileSynchronizedCredential()
     }
+    .onChange(of: isSignedInForGood) { wasSignedIn, isSignedIn in
+      if !wasSignedIn, isSignedIn {
+        dismiss()
+      }
+    }
+  }
+
+  private var isShowingDeletion: Bool {
+    path.contains { if case .deleteAccount = $0 { true } else { false } }
+  }
+
+  private var isShowingHub: Bool {
+    guard case .signedIn(let account) = session.state else {
+      return false
+    }
+
+    return isGuest ? !signsIn : !account.needsProfileSetup
+  }
+
+  private func show(_ section: AccountDestination) {
+    withTransaction(\.disablesAnimations, true) {
+      path = [section]
+    }
+  }
+
+  /// As main: the profile, or preferences for a guest, who has none.
+  private func openDefaultSectionBeside() {
+    if isBeside, path.isEmpty {
+      show(isGuest ? .preferences : .profile)
+    }
+  }
+
+  private func page(_ destination: AccountDestination, isBeside: Bool) -> some View {
+    let isSection = if case .deleteAccount = destination { false } else { true }
+
+    return self.destination(destination)
+      .navigationBarBackButtonHidden(isBeside && isSection)
+      .toolbar {
+        if isBeside, isSection {
+          ToolbarItem(placement: .topBarTrailing) {
+            closeButton
+          }
+        }
+      }
+  }
+
+  @ViewBuilder
+  private func destination(_ destination: AccountDestination) -> some View {
+    switch destination {
+    case .createAccount:
+      LoginView()
+    case .deleteAccount(let deletion):
+      AccountDeletionView(
+        email: deletion.email,
+        hasAppleAccount: deletion.hasAppleAccount,
+        subscription: deletion.subscription)
+    case .memory:
+      MemoryView()
+    case .preferences:
+      PreferencesView()
+    case .profile:
+      if let account = session.account {
+        ProfileEditorView(account: account, isRequiredSetup: false) {
+          path.append(.deleteAccount(makeDeletionDestination(account)))
+        }
+        .id(account.user.id)
+      }
+    case .plus(let subscription):
+      PlusStatusView(subscription: subscription)
+    case .subscription(let appAccountToken):
+      SubscriptionView(appAccountToken: appAccountToken)
+    }
+  }
+
+  private var isSignedInForGood: Bool {
+    guard case .signedIn(let account) = session.state else {
+      return false
+    }
+
+    return !isGuest && !account.needsProfileSetup
   }
 
   private var closeButton: some View {
-    Button(action: dismiss.callAsFunction) {
-      Image(systemName: "xmark")
-    }
-    .accessibilityLabel(
-      Text("Close", tableName: "Account", comment: "Closes the account sheet"))
+    Button(role: .close, action: dismiss.callAsFunction)
+  }
+
+  private var isGuest: Bool {
+    learner.summary.value?.identity.isAnonymous == true
   }
 
   private var requiresProfileSetup: Bool {
-    guard case .signedIn(let account) = session.state else {
+    guard case .signedIn(let account) = session.state, !isGuest else {
       return false
     }
 
@@ -98,29 +202,32 @@ struct AccountSheet: View {
   }
 
   @ViewBuilder
-  private var accountContent: some View {
+  private func accountContent(sectionOpen: AccountSectionOpen?) -> some View {
     switch session.state {
     case .restoring:
       ProgressView()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .navigationTitle(accountTitle)
+        .toolbarTitleDisplayMode(.inline)
     case .signedOut:
       LoginView()
+    case .signedIn where signsIn && isGuest:
+      LoginView()
     case .signedIn(let account):
-      if account.needsProfileSetup {
+      // A guest's anonymous account has no name to set up: the hub offers "Create an account".
+      if account.needsProfileSetup, !isGuest {
         ProfileEditorView(account: account, isRequiredSetup: true)
           .id(account.user.id)
       } else {
-        SignedInAccountView(
+        SettingsHubView(
           account: account,
-          deleteAccount: { path.append(.deleteAccount(makeDeletionDestination(account))) },
-          editProfile: { path.append(.profile) },
+          sectionOpen: sectionOpen,
+          sendFeedback: { isFeedbackPresented = true },
           manageAppStoreSubscription: { isAppStoreSubscriptionManagementPresented = true },
-          openMyCourses: showMyCourses,
-          openSubscription: { showSubscription(for: account) },
           showGooglePlayManagement: { isGooglePlayManagementPresented = true }
         )
         .navigationTitle(
-          Text("Account", tableName: "Account", comment: "Account sheet navigation title")
+          Text("Settings", tableName: "Account", comment: "Title of the settings hub")
         )
         .toolbarTitleDisplayMode(.inline)
       }
@@ -147,24 +254,31 @@ struct AccountSheet: View {
         } label: {
           Text("Try again", tableName: "Account", comment: "Retries loading the saved account")
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.mainAction)
         .disabled(session.isWorking)
       }
-      .navigationTitle(
-        Text("Account", tableName: "Account", comment: "Account sheet navigation title")
-      )
+      .navigationTitle(accountTitle)
       .toolbarTitleDisplayMode(.inline)
     }
   }
 
-  /// Returns to the current account overview after authentication or synchronized account changes, while leaving a local deletion result visible until the user dismisses it.
-  private func reconcileNavigation(_ state: AccountSessionState) {
+  private var accountTitle: Text {
+    Text("Account", tableName: "Account", comment: "Account sheet navigation title")
+  }
+
+  /// Leaves a local deletion result visible until the user dismisses it, and the open pages to
+  /// the same learner's updated account.
+  private func reconcileNavigation(
+    from previous: AccountSessionState, to state: AccountSessionState
+  ) {
     switch state {
+    case .signedIn(let account) where previous.account?.user.id == account.user.id:
+      break
     case .signedIn:
       path.removeAll()
     case .signedOut, .unavailable:
       switch path.last {
-      case .profile, .subscription:
+      case .createAccount, .memory, .plus, .preferences, .profile, .subscription:
         path.removeAll()
       case .deleteAccount, nil:
         break
@@ -174,119 +288,115 @@ struct AccountSheet: View {
     }
   }
 
-  /// Closes the modal before returning to the root of the learner's course library.
-  private func showMyCourses() {
-    dismiss()
-    openMyCourses()
-  }
-
-  private func showSubscription(for account: CurrentAccount) {
-    guard let appAccountToken = UUID(uuidString: account.user.id) else {
-      return
-    }
-
-    path.append(.subscription(appAccountToken))
-  }
-
 }
 
-private struct SignedInAccountView: View {
+/// A guest gets "Create an account" instead of logging out, which would lose their plan.
+private struct SettingsHubView: View {
+  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
+  @Environment(SettingsStore.self) private var settings
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @ScaledMetric(relativeTo: .body) private var avatarSize = 40.0
 
   let account: CurrentAccount
-  let deleteAccount: () -> Void
-  let editProfile: () -> Void
+  let sectionOpen: AccountSectionOpen?
+  let sendFeedback: () -> Void
   let manageAppStoreSubscription: () -> Void
-  let openMyCourses: () -> Void
-  let openSubscription: () -> Void
   let showGooglePlayManagement: () -> Void
 
   var body: some View {
     List {
-      Section {
-        HStack(spacing: 12) {
-          AccountAvatar(user: account.user, size: 56)
-            .accessibilityHidden(true)
+      if !isGuest {
+        Section {
+          AccountSectionLink(destination: .profile, sectionOpen: sectionOpen) {
+            let layout =
+              dynamicTypeSize.isAccessibilitySize
+              ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+              : AnyLayout(HStackLayout(spacing: 12))
 
-          VStack(alignment: .leading, spacing: 2) {
-            Text(account.user.preferredName)
-              .font(.headline)
+            layout {
+              AccountAvatar(user: account.user, size: avatarSize)
+                .accessibilityHidden(true)
 
-            Text(account.user.email)
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
+              VStack(alignment: .leading) {
+                Text(account.user.preferredName)
+
+                Text(account.user.email)
+                  .font(.subheadline)
+                  .foregroundStyle(.secondary)
+              }
+            }
           }
         }
-        .padding(.vertical, 4)
       }
 
       Section {
-        Button(action: openMyCourses) {
-          AccountRowLabel(
-            title: Text(
-              "My courses",
-              tableName: "Account",
-              comment: "Account option that opens the learner's enrolled courses"),
-            systemImage: "books.vertical")
+        AccountSectionLink(destination: .preferences, sectionOpen: sectionOpen) {
+          LabeledContent {
+            Group {
+              if let buddy = settings.preferences.value?.buddy {
+                Text(verbatim: "\(buddy.displayName) · \(appLanguageName)")
+              } else {
+                Text(appLanguageName)
+              }
+            }
+            .foregroundStyle(.secondary)
+          } label: {
+            Text("Preferences", tableName: "Account", comment: "Settings row for Preferences")
+          }
+        }
+
+        AccountSectionLink(destination: .memory, sectionOpen: sectionOpen) {
+          LabeledContent {
+            if let count = settings.memory.value?.facts.count {
+              Text(count, format: .number)
+                .monospacedDigit()
+                .foregroundStyle(.secondary)
+            }
+          } label: {
+            Text("Memory", tableName: "Account", comment: "Settings row for what Zoonk remembers")
+          }
         }
       }
 
       Section {
-        Button(action: editProfile) {
-          AccountRowLabel(
-            title: Text("Profile", tableName: "Account", comment: "Account option for profile"),
-            systemImage: "person")
-        }
-
         AccountSubscriptionRow(
           access: account.account,
+          appAccountToken: UUID(uuidString: account.user.id),
+          sectionOpen: sectionOpen,
           manageAppStoreSubscription: manageAppStoreSubscription,
-          openSubscription: openSubscription,
           showGooglePlayManagement: showGooglePlayManagement)
-      }
-
-      Section {
-        Link(destination: AccountLinks.blog) {
-          AccountRowLabel(
-            title: Text("Blog", tableName: "Account", comment: "Account option for the blog"),
-            systemImage: "newspaper")
-        }
 
         Link(destination: AccountLinks.support) {
-          AccountRowLabel(
-            title: Text(
-              "Feedback & Support",
-              tableName: "Account",
-              comment: "Account option for feedback and support"),
-            systemImage: "questionmark.circle")
+          Text("Help", tableName: "Account", comment: "Settings row that opens Zoonk's help pages")
         }
+        .foregroundStyle(.primary)
+
+        Button(action: sendFeedback) {
+          Text(
+            "Send feedback", tableName: "Account",
+            comment: "Settings row that opens the form to write to Zoonk")
+        }
+        .foregroundStyle(.primary)
       }
 
       Section {
-        Button {
-          Task {
-            await session.signOut()
+        if isGuest {
+          AccountSectionLink(destination: .createAccount, sectionOpen: sectionOpen) {
+            Text(
+              "Create an account", tableName: "Account",
+              comment: "Settings row where a guest creates the account that keeps their plan")
           }
-        } label: {
-          AccountRowLabel(
-            title: Text("Sign out", tableName: "Account", comment: "Account sign-out action"),
-            systemImage: "rectangle.portrait.and.arrow.right")
+        } else {
+          Button(role: .destructive) {
+            Task {
+              await session.signOut()
+            }
+          } label: {
+            Text("Log out", tableName: "Account", comment: "Account log-out action")
+          }
+          .disabled(session.isWorking)
         }
-        .disabled(session.isWorking)
-      }
-
-      Section {
-        Button(role: .destructive, action: deleteAccount) {
-          AccountRowLabel(
-            title: Text(
-              "Delete account",
-              tableName: "Account",
-              comment: "Account option that opens permanent account deletion"),
-            systemImage: "trash"
-          )
-          .foregroundStyle(.red)
-        }
-        .disabled(session.isWorking)
       }
 
       if session.failure != nil {
@@ -295,31 +405,67 @@ private struct SignedInAccountView: View {
         }
       }
     }
-    .tint(.primary)
+    .loads(settings.preferences, settings.memory, refreshable: false)
+  }
+
+  private var isGuest: Bool {
+    learner.summary.value?.identity.isAnonymous == true
   }
 }
 
-/// Captures the signed-in identity and billing state in the navigation value so the deletion result can remain visible after the session is removed.
+private struct AccountSectionOpen {
+  let shown: AccountDestination?
+  let open: (AccountDestination) -> Void
+}
+
+/// Beside the sections a row shows its section there instead of pushing it.
+private struct AccountSectionLink<Label: View>: View {
+  let destination: AccountDestination?
+  let sectionOpen: AccountSectionOpen?
+  @ViewBuilder let label: Label
+
+  var body: some View {
+    if let sectionOpen, let destination {
+      let isShown = sectionOpen.shown == destination
+
+      Button {
+        sectionOpen.open(destination)
+      } label: {
+        label
+      }
+      .foregroundStyle(.primary)
+      .listRowBackground(isShown ? Color(.tertiarySystemFill) : nil)
+      .accessibilityAddTraits(isShown ? .isSelected : [])
+    } else {
+      NavigationLink(value: destination) {
+        label
+      }
+    }
+  }
+}
+
+/// Captured in the navigation value so the deletion result stays visible after the session is removed.
 private func makeDeletionDestination(_ account: CurrentAccount) -> AccountDeletionDestination {
   AccountDeletionDestination(
     email: account.user.email,
     hasAppleAccount: account.account.deletion.hasAppleAccount,
-    storeSubscriptionProvider: account.account.subscription.flatMap {
-      StoreSubscriptionProvider(rawValue: $0.provider)
-    })
+    subscription: account.account.subscription)
 }
 
 private struct AccountSubscriptionRow: View {
   let access: AccountAccess
+  let appAccountToken: UUID?
+  let sectionOpen: AccountSectionOpen?
   let manageAppStoreSubscription: () -> Void
-  let openSubscription: () -> Void
   let showGooglePlayManagement: () -> Void
 
   @ViewBuilder
   var body: some View {
     switch access.subscriptionAction {
     case .subscribe:
-      Button(action: openSubscription) {
+      AccountSectionLink(
+        destination: appAccountToken.map(AccountDestination.subscription), sectionOpen: sectionOpen
+      ) {
         rowLabel(status: freeStatus)
       }
       .accessibilityLabel(subscriptionLabel)
@@ -337,7 +483,9 @@ private struct AccountSubscriptionRow: View {
       .accessibilityLabel(subscriptionLabel)
       .accessibilityValue(googlePlayStatus)
     case .contactSupport:
-      Link(destination: AccountLinks.support) {
+      AccountSectionLink(
+        destination: access.subscription.map(AccountDestination.plus), sectionOpen: sectionOpen
+      ) {
         rowLabel(status: activeStatus)
       }
       .accessibilityLabel(subscriptionLabel)
@@ -381,35 +529,21 @@ private struct AccountSubscriptionRow: View {
   }
 
   private func rowLabel(status: Text) -> some View {
-    HStack {
-      AccountRowLabel(
-        title: subscriptionLabel,
-        systemImage: "sparkles")
-
-      Spacer()
-
-      status
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+    LabeledContent {
+      if access.subscriptionAction != .subscribe {
+        PlusMark(
+          accessibilityLabel: Text(
+            "Plus", tableName: "Account", comment: "Zoonk Plus, the plan's name"))
+      }
+    } label: {
+      subscriptionLabel
     }
-  }
-}
-
-private struct AccountRowLabel: View {
-  let title: Text
-  let systemImage: String
-
-  var body: some View {
-    Label {
-      title
-    } icon: {
-      Image(systemName: systemImage)
-    }
+    .foregroundStyle(.primary)
   }
 }
 
 #Preview {
-  AccountSheet {}
+  AccountSheet()
     .environment(SessionStore.preview())
     .environment(AppStoreSubscriptionStore.live())
 }

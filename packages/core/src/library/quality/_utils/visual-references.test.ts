@@ -1,0 +1,247 @@
+import { describe, expect, it } from "vitest";
+import { getVisualProblems, pointsAtFigure } from "./visual-references";
+
+const CHART = {
+  axisStart: null,
+  categories: ["Maio", "Junho"],
+  categoryLabel: "Mês",
+  chart: "bar" as const,
+  kind: "chart" as const,
+  series: [{ name: "Ofícios recebidos", values: [40, 30] }],
+  source: null,
+  title: "Ofícios por mês",
+  unit: null,
+  valueLabel: "Ofícios",
+};
+
+const MISSING_PHRASES = [
+  ["chart", "of kind chart"],
+  ["image", "point at a picture"],
+  ["panels", "numbered drawings"],
+  ["table", "Markdown"],
+  ["timeline", "of kind timeline"],
+] as const;
+
+function pointedAt(language: string, text: string): string[] {
+  const problems = getVisualProblems({
+    language,
+    shown: { hasImage: false, texts: [text], visual: null },
+  });
+
+  return MISSING_PHRASES.filter(([, phrase]) =>
+    problems.some((problem) => problem.includes(phrase)),
+  ).map(([kind]) => kind);
+}
+
+describe("what a screen's words point at", () => {
+  it("finds the pictures, tables, charts and timelines a text points the learner at", () => {
+    expect(
+      pointedAt("pt", "Na imagem, Otávio está parado ao lado de uma bicicleta azul."),
+    ).toStrictEqual(["image"]);
+
+    expect(pointedAt("pt", "Na placa da imagem, o Centro fica em frente.")).toStrictEqual([
+      "image",
+    ]);
+
+    expect(
+      pointedAt("pt-BR", "Uma tabela mostra bicicletas disponíveis. No gráfico, a linha sobe."),
+    ).toStrictEqual(["chart", "table"]);
+
+    expect(
+      pointedAt("en", "Look at the picture. The timeline below shows when each law passed."),
+    ).toStrictEqual(["image", "timeline"]);
+  });
+
+  it.each([
+    [
+      "it",
+      "Nell'immagine, Giulia è accanto a una bicicletta. Nella tabella ci sono i prezzi.",
+      ["image", "table"],
+    ],
+    [
+      "ja",
+      "下の図を見てください。表には値段が、年表には出来事が並んでいます。",
+      ["image", "timeline"],
+    ],
+    ["ja", "下のグラフでは、この表の数字が増えています。", ["chart", "table"]],
+    ["ko", "아래 그림을 보세요. 표에서 가격을 확인해요.", ["image", "table"]],
+    ["tr", "Aşağıdaki grafik fiyatları, tabloda ise tarihleri görüyorsun.", ["chart", "table"]],
+    ["pl", "Na rysunku widać rower, a na wykresie ceny.", ["chart", "image"]],
+  ])("finds what a %s text points at", (language, text, kinds) => {
+    expect(pointedAt(language, text)).toStrictEqual(kinds);
+  });
+
+  it.each([
+    ["it", "Nel disegno di legge, la figura del sindaco cambia. Le due figure chiave sono qui."],
+    ["ja", "地図記号の意図を発表で説明します。次の表現を使って、2つの図形を比べましょう。"],
+    ["ja", "結衣は地図を見ながら歩き、証明写真1枚を撮りました。毎年表彰があります。"],
+    ["ko", "발표에서 지도자의 의도를 설명해요. 다음 표현을 사용해서 표를 보여 주세요."],
+    ["ko", "민준은 사진을 보며 웃었어요. 프로젝트 타임라인을 정해요."],
+    ["tr", "Bu şekilde düşünürsen sorun kolaylaşır. Aşağıdaki şekilde ilerle."],
+    ["tr", "Projenin zaman çizelgesini hazırla."],
+  ])("ignores %s words that only contain a picture's name", (language, text) => {
+    expect(pointedAt(language, text)).toStrictEqual([]);
+  });
+
+  it("reads numbered drawings or charts as panels, which only one picture side by side shows", () => {
+    expect(pointedAt("pt", "Observe os dois desenhos. Desenho 1: barras deitadas.")).toStrictEqual([
+      "panels",
+    ]);
+
+    expect(
+      pointedAt(
+        "pt",
+        "Qual gráfico mantém cada contagem? Gráfico 2: visita 6, telefonema 3, mensagem 8.",
+      ),
+    ).toStrictEqual(["panels"]);
+
+    expect(
+      pointedAt(
+        "pt",
+        "Os dois gráficos mais usados são o de barras e o de linhas. Nos desenhos animados, tudo exagera.",
+      ),
+    ).toStrictEqual([]);
+
+    expect(pointsAtFigure({ language: "pt", text: "Desenho 2: barras em pé." })).toBe(true);
+  });
+
+  it("reads diagrams, maps, schemes and infographics as pictures, since only a picture shows them", () => {
+    expect(pointedAt("pt", "No diagrama, a seta vai do coração ao pulmão.")).toStrictEqual([
+      "image",
+    ]);
+
+    expect(pointedAt("pt", "Observe o mapa: o rio corta a cidade.")).toStrictEqual(["image"]);
+
+    expect(pointedAt("pt", "O esquema abaixo mostra as camadas da Terra.")).toStrictEqual([
+      "image",
+    ]);
+
+    expect(pointedAt("pt", "No infográfico, cada ícone vale mil pessoas.")).toStrictEqual([
+      "image",
+    ]);
+
+    expect(
+      pointedAt("en", "In the diagram, the arrow points from the heart to the lungs."),
+    ).toStrictEqual(["image"]);
+
+    expect(pointedAt("en", "The map below shows the river.")).toStrictEqual(["image"]);
+    expect(pointedAt("es", "En el mapa, el río cruza la ciudad.")).toStrictEqual(["image"]);
+
+    expect(
+      pointedAt("pt", "O esquema vacinal tem três doses, e o bairro sumiu do mapa."),
+    ).toStrictEqual([]);
+
+    expect(pointedAt("en", "The festival put the town on the map.")).toStrictEqual([]);
+  });
+
+  it("ignores pictures that are part of a story, figures of speech and the periodic table", () => {
+    expect(
+      pointedAt(
+        "pt",
+        "O cartaz traz a foto do prefeito para promover sua imagem. Na figura de linguagem chamada metáfora, na tabela periódica e no quadro da sala…",
+      ),
+    ).toStrictEqual([]);
+
+    expect(pointsAtFigure({ language: "en", text: "The mayor put his photo on the poster." })).toBe(
+      false,
+    );
+  });
+});
+
+describe(getVisualProblems, () => {
+  it("asks for the visual a screen points at but doesn't show", () => {
+    const problems = getVisualProblems({
+      language: "pt",
+      shown: {
+        hasImage: false,
+        texts: [
+          "Na imagem 1, Wesley segura um guarda-chuva.",
+          "A tabela abaixo mostra os horários.",
+        ],
+        visual: null,
+      },
+    });
+
+    expect(problems).toHaveLength(2);
+    expect(problems[0]).toContain("`image`");
+    expect(problems[1]).toContain("Markdown");
+  });
+
+  it("passes a screen that shows what it points at", () => {
+    expect(
+      getVisualProblems({
+        language: "pt",
+        shown: {
+          hasImage: false,
+          texts: [
+            "A tabela abaixo mostra os horários.\n\n| Hora | Ônibus |\n|---|---:|\n| 7h | 3 |",
+            "No gráfico, junho tem menos.",
+          ],
+          visual: CHART,
+        },
+      }),
+    ).toStrictEqual([]);
+  });
+
+  it("refuses pictures where none can be drawn, uneven charts and ragged tables", () => {
+    const problems = getVisualProblems({
+      canShowImage: false,
+      language: "en",
+      shown: {
+        hasImage: false,
+        texts: ["Look at the photo of the street.\n\n| Hour | Buses |\n|---|---|\n| 7 | 3 | 9 |"],
+        visual: { ...CHART, series: [{ name: "Received", values: [40] }] },
+      },
+    });
+
+    expect(problems).toStrictEqual([
+      expect.stringContaining("can't show one"),
+      expect.stringContaining("| 7 | 3 | 9 |"),
+      expect.stringContaining("has 1 values for 2 categories"),
+    ]);
+  });
+
+  it("asks for at most two numbered drawings in one picture, or one chart to ask about", () => {
+    const shown = {
+      hasImage: false,
+      texts: ["Qual desenho mostra 3, 6 e 4?", "Desenho 1: 3–4–6", "Desenho 3: 6–3–4"],
+      visual: CHART,
+    };
+
+    expect(getVisualProblems({ language: "pt", shown })).toStrictEqual([
+      expect.stringContaining("never more than two"),
+    ]);
+
+    expect(
+      getVisualProblems({ language: "pt", shown: { ...shown, hasImage: true, visual: null } }),
+    ).toStrictEqual([]);
+  });
+
+  it("counts a template explored on the screen as the map, diagram or timeline its words point at", () => {
+    const shown = {
+      explores: true,
+      hasImage: false,
+      texts: ["No mapa abaixo, veja até onde o império chegou. A linha do tempo mostra quando."],
+      visual: null,
+    };
+
+    expect(getVisualProblems({ language: "pt", shown })).toStrictEqual([]);
+
+    expect(
+      getVisualProblems({ language: "pt", shown: { ...shown, hasImage: true } }),
+    ).toStrictEqual([expect.stringContaining("show one of them")]);
+  });
+
+  it("refuses a chart drawn with characters", () => {
+    const problems = getVisualProblems({
+      language: "pt",
+      shown: {
+        hasImage: false,
+        texts: ["Exemplo: barras de Marília.\n```\n216 | █\n212 | █\n208 | █ █\n200 +-------\n```"],
+        visual: null,
+      },
+    });
+
+    expect(problems).toStrictEqual([expect.stringContaining("with characters")]);
+  });
+});

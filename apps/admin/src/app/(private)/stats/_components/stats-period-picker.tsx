@@ -10,10 +10,11 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { CalendarIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type SyntheticEvent, useState } from "react";
-import { type StatsAnalysisPath } from "../_utils/stats-analysis";
+import { type StatsAnalysisPath } from "../_utils/stats-analysis-groups";
 import { type AdminStatsPeriod, type StatsPeriod } from "../_utils/stats-period";
 
 const PERIODS = [
@@ -24,10 +25,6 @@ const PERIODS = [
 
 const CUSTOM_RANGE_ERROR_ID = "stats-custom-range-error";
 
-/**
- * Replaces the period inside a complete query while preserving the selected
- * analysis view. Custom-only dates are removed when a calendar preset wins.
- */
 function getPresetSearchParams({
   currentQuery,
   period,
@@ -43,11 +40,6 @@ function getPresetSearchParams({
   return searchParams;
 }
 
-/**
- * The date picker keeps advanced controls behind one quiet button: common
- * presets are immediate, month/year paging is secondary, and custom dates are
- * available without adding permanent page chrome.
- */
 export function StatsPeriodPicker({
   currentQuery,
   path,
@@ -61,22 +53,14 @@ export function StatsPeriodPicker({
   const [customRangeError, setCustomRangeError] = useState<string>();
   const startValue = statsPeriod.current.start.toISOString().slice(0, 10);
   const endValue = statsPeriod.chartEnd.toISOString().slice(0, 10);
-  const latestCustomDate = new Date().toISOString().slice(0, 10);
+  const latestCustomDate = useMountTime().toISOString().slice(0, 10);
   const canPage = statsPeriod.period === "month" || statsPeriod.period === "year";
 
-  /**
-   * Presets intentionally reset navigation so choosing Month or Year always
-   * answers the expected current-period question first.
-   */
   function selectPreset(period: AdminStatsPeriod) {
     setCustomRangeError(undefined);
     router.push(`${path}?${getPresetSearchParams({ currentQuery, period }).toString()}`);
   }
 
-  /**
-   * Calendar paging changes only the offset, preserving the current view and
-   * preset so adjacent periods are easy to compare.
-   */
   function movePeriod(offset: number) {
     setCustomRangeError(undefined);
     const searchParams = new URLSearchParams(currentQuery);
@@ -85,10 +69,6 @@ export function StatsPeriodPicker({
     router.push(`${path}?${searchParams.toString()}`);
   }
 
-  /**
-   * A client-side GET-style navigation keeps custom ranges bookmarkable while
-   * allowing the popover to remain a compact progressive-disclosure control.
-   */
   function submitCustomPeriod(event: SyntheticEvent<HTMLFormElement, SubmitEvent>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -203,7 +183,7 @@ export function StatsPeriodPicker({
             </div>
           </div>
           {customRangeError ? (
-            <p className="text-destructive text-sm" id={CUSTOM_RANGE_ERROR_ID} role="alert">
+            <p className="text-destructive-text text-sm" id={CUSTOM_RANGE_ERROR_ID} role="alert">
               {customRangeError}
             </p>
           ) : null}
@@ -216,11 +196,7 @@ export function StatsPeriodPicker({
   );
 }
 
-/**
- * Date inputs submit strings, but FormData also permits File values. Rejecting
- * non-strings keeps the URL serializer explicit and prevents object fallback
- * text from becoming a date query.
- */
+/** FormData also permits File values, so only strings become a date query. */
 function getFormFieldValue(value: FormDataEntryValue | null): string | undefined {
   return typeof value === "string" ? value : undefined;
 }

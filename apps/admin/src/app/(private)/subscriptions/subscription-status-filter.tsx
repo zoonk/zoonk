@@ -6,10 +6,6 @@ import {
 import { Button } from "@zoonk/ui/components/button";
 import Link from "next/link";
 
-/**
- * Route links keep subscription filters shareable and preserve server rendering
- * without adding client state to an operational admin table.
- */
 export function SubscriptionStatusFilter({ status }: { status: SubscriptionFilter }) {
   return (
     <nav aria-label="Subscription status filter" className="flex flex-wrap gap-1">
@@ -34,7 +30,6 @@ export function SubscriptionStatusFilter({ status }: { status: SubscriptionFilte
   );
 }
 
-/** Filtering resets pagination so switching to a smaller result set cannot open an empty page. */
 function getSubscriptionFilterHref(
   filter: SubscriptionFilter,
 ): "/subscriptions" | `/subscriptions?${string}` {

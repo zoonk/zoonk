@@ -1,27 +1,39 @@
 import { randomUUID } from "node:crypto";
 import { auth } from "@zoonk/auth";
-import { prisma } from "@zoonk/db";
+import { type User, prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { mockSession } from "../_test-utils/mock-session";
 import { getUserSessionCacheTag } from "../cache/tags";
-import { getCurrentUser, updateCurrentUser } from "./current-user";
+import { getCurrentUser, suggestCurrentUsername, updateCurrentUser } from "./current-user";
 
-const authMocks = vi.hoisted(() => ({
-  updateUser: vi.fn<(input: { body: { name?: string; username?: string } }) => Promise<void>>(),
-}));
+/** Only Next's request scope is replaced; Better Auth's session, endpoint and database hooks run. */
+vi.unmock("./get-session");
+vi.mock("@zoonk/auth", () => import("../../../auth/src/testing"));
 
-vi.mock("@zoonk/auth", () => ({ auth: { api: { updateUser: authMocks.updateUser } } }));
+async function signIn(user: User & { password: string }) {
+  const signedIn = await auth.api.signInEmail({
+    body: { email: user.email, password: user.password },
+    returnHeaders: true,
+  });
 
-vi.mock("next/headers", () => ({ headers: vi.fn() }));
-vi.mock("./get-session", () => ({ getSession: vi.fn() }));
+  const cookie = signedIn.headers
+    .getSetCookie()
+    .map((value) => value.split(";")[0])
+    .join("; ");
+
+  const requestHeaders = new Headers({ cookie });
+  vi.mocked(headers).mockResolvedValue(requestHeaders);
+
+  return { headers: requestHeaders, token: signedIn.response.token };
+}
 
 describe("current user", () => {
   beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(auth.api, "updateUser");
     vi.mocked(headers).mockResolvedValue(new Headers());
-    mockSession(null);
   });
 
   describe(getCurrentUser, () => {
@@ -31,7 +43,7 @@ describe("current user", () => {
 
     it("returns the authenticated user's public account fields", async () => {
       const [user, otherUser] = await Promise.all([userFixture(), userFixture()]);
-      mockSession(user.id);
+      await signIn(user);
 
       const currentUser = await getCurrentUser();
 
@@ -52,13 +64,11 @@ describe("current user", () => {
     it("updates the authenticated user and expires its cached resource", async () => {
       const user = await userFixture({ name: "Before" });
       const username = `after_${randomUUID().slice(0, 8)}`;
-      mockSession(user.id);
+      await signIn(user);
 
-      authMocks.updateUser.mockImplementation(async ({ body }) => {
-        await prisma.user.update({ data: body, where: { id: user.id } });
+      const result = await updateCurrentUser({
+        input: { name: "After", username: username.toUpperCase() },
       });
-
-      const result = await updateCurrentUser({ input: { name: "After", username } });
 
       expect(auth.api.updateUser).toHaveBeenCalledExactlyOnceWith({
         body: { name: "After", username },
@@ -72,15 +82,55 @@ describe("current user", () => {
       });
     });
 
+    it("marks a bearer-only update through the production auth plugins", async () => {
+      const user = await userFixture({ name: "Before" });
+      const { token } = await signIn(user);
+      const production = await vi.importActual<{ auth: typeof auth }>("@zoonk/auth");
+
+      /** Run real production endpoints, including bearer conversion; only Next lacks a request. */
+      vi.spyOn(auth.api, "getSession").mockImplementation(production.auth.api.getSession);
+      vi.mocked(auth.api.updateUser).mockImplementation(production.auth.api.updateUser);
+      vi.mocked(headers).mockResolvedValue(new Headers({ authorization: `Bearer ${token}` }));
+
+      await expect(
+        updateCurrentUser({ input: { name: "Bearer identity" } }),
+      ).resolves.toMatchObject({ id: user.id, name: "Bearer identity" });
+
+      await expect(
+        prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
+      ).resolves.toMatchObject({ name: "Bearer identity" });
+    });
+
+    it("keeps the core actor and production auth writer on bearer B when cookie A is present", async () => {
+      const [cookieUser, bearerUser] = await Promise.all([userFixture(), userFixture()]);
+      const cookieSession = await signIn(cookieUser);
+      const bearerSession = await signIn(bearerUser);
+      const production = await vi.importActual<{ auth: typeof auth }>("@zoonk/auth");
+      const requestHeaders = new Headers(cookieSession.headers);
+      requestHeaders.set("authorization", `Bearer ${bearerSession.token}`);
+      vi.spyOn(auth.api, "getSession").mockImplementation(production.auth.api.getSession);
+      vi.mocked(auth.api.updateUser).mockImplementation(production.auth.api.updateUser);
+      vi.mocked(headers).mockResolvedValue(requestHeaders);
+
+      await expect(updateCurrentUser({ input: { name: "Bearer B" } })).resolves.toMatchObject({
+        id: bearerUser.id,
+        name: "Bearer B",
+      });
+
+      await expect(
+        prisma.user.findUniqueOrThrow({ where: { id: cookieUser.id } }),
+      ).resolves.toMatchObject({ name: cookieUser.name });
+
+      await expect(
+        prisma.user.findUniqueOrThrow({ where: { id: bearerUser.id } }),
+      ).resolves.toMatchObject({ name: "Bearer B" });
+    });
+
     it("does not write a username that has not changed", async () => {
       const fixtureUser = await userFixture({ name: "Before" });
       const username = `same_${randomUUID().slice(0, 8)}`;
-      const user = await prisma.user.update({ data: { username }, where: { id: fixtureUser.id } });
-      mockSession(user.id);
-
-      authMocks.updateUser.mockImplementation(async ({ body }) => {
-        await prisma.user.update({ data: body, where: { id: user.id } });
-      });
+      await prisma.user.update({ data: { username }, where: { id: fixtureUser.id } });
+      await signIn(fixtureUser);
 
       await updateCurrentUser({ input: { name: "After", username } });
 
@@ -90,9 +140,70 @@ describe("current user", () => {
       });
     });
 
+    it("does not write or mark a canonically unchanged username", async () => {
+      const fixtureUser = await userFixture({ name: "Kept" });
+      const username = `kept_${randomUUID().slice(0, 8)}`;
+      const user = await prisma.user.update({ data: { username }, where: { id: fixtureUser.id } });
+      await signIn(fixtureUser);
+
+      await updateCurrentUser({ input: { name: "Kept", username: ` ${username.toUpperCase()} ` } });
+
+      expect(auth.api.updateUser).not.toHaveBeenCalled();
+
+      await expect(
+        prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
+      ).resolves.toMatchObject({ name: "Kept", username });
+    });
+
     it("does not mutate a user for a guest", async () => {
       await expect(updateCurrentUser({ input: { name: "No actor" } })).resolves.toBeNull();
       expect(auth.api.updateUser).not.toHaveBeenCalled();
+    });
+
+    it("does not write unchanged input or a failed Better Auth write", async () => {
+      const user = await userFixture({ name: "Kept" });
+      await signIn(user);
+      await updateCurrentUser({ input: { name: "Kept" } });
+      expect(auth.api.updateUser).not.toHaveBeenCalled();
+
+      await expect(
+        updateCurrentUser({ input: { name: "Refused", username: "!" } }),
+      ).rejects.toMatchObject({ statusCode: 400 });
+
+      await expect(
+        prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
+      ).resolves.toMatchObject({ name: "Kept" });
+    });
+  });
+
+  describe(suggestCurrentUsername, () => {
+    it("suggests a free username from the email to an account without one", async () => {
+      const prefix = `setup${randomUUID().slice(0, 8)}`;
+
+      const [user, other] = await Promise.all([
+        userFixture({ email: `${prefix}@zoonk.test`, name: "" }),
+        userFixture({ email: `${prefix}@other.test` }),
+      ]);
+
+      await prisma.user.update({ data: { username: prefix }, where: { id: other.id } });
+      await signIn(user);
+
+      await expect(suggestCurrentUsername()).resolves.toMatch(new RegExp(`^${prefix}_\\d+$`, "u"));
+
+      expect(auth.api.updateUser).not.toHaveBeenCalled();
+    });
+
+    it("suggests the username the account already has", async () => {
+      const user = await userFixture({ name: "" });
+      const username = `kept_${randomUUID().slice(0, 8)}`;
+      await prisma.user.update({ data: { username }, where: { id: user.id } });
+      await signIn(user);
+
+      await expect(suggestCurrentUsername()).resolves.toBe(username);
+    });
+
+    it("suggests nothing without a session", async () => {
+      await expect(suggestCurrentUsername()).resolves.toBeNull();
     });
   });
 });

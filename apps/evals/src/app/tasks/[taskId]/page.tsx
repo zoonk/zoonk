@@ -4,12 +4,15 @@ import {
   HomeLinkBreadcrumb,
   TaskPageBreadcrumb,
 } from "@/components/breadcrumb";
-import { getBattleLeaderboard } from "@/lib/battle-loader";
+import { getBattleJudgeCost, getBattleLeaderboard } from "@/lib/battle-loader";
+import { formatLatencyBudget } from "@/lib/format";
+import { getLeaderboardEntries } from "@/lib/leaderboard";
 import { EVAL_MODELS } from "@/lib/models";
 import { getModelsWithCompleteOutputs } from "@/lib/output-loader";
 import { supportsJudgeMode } from "@/lib/types";
 import { getModelsWithResults, getSortedModels } from "@/lib/utils";
 import { RUNS_PER_TEST_CASE } from "@/tasks";
+import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import { ButtonSkeleton, buttonVariants } from "@zoonk/ui/components/button";
 import {
@@ -31,20 +34,12 @@ import { ModelCard, ModelCardSkeleton } from "./model-card";
 
 type TaskRouteProps = { params: TaskRouteParams };
 
-/**
- * Replaces only the task-dependent breadcrumb item while the shared Home link
- * remains part of the prefetched App Shell.
- */
 async function TaskBreadcrumb({ params }: TaskRouteProps) {
   const { task } = await getTaskRouteFromParams(params);
 
   return <TaskPageBreadcrumb taskName={task.name} />;
 }
 
-/**
- * Keeps both task actions in place while output files are checked to decide
- * whether Battle Mode is ready to run.
- */
 function TaskHeaderActionsSkeleton() {
   return (
     <div aria-hidden="true" className="flex items-center gap-2">
@@ -60,10 +55,6 @@ function TaskHeaderActionsSkeleton() {
   );
 }
 
-/**
- * Loads Battle Mode readiness separately from the task title so filesystem
- * work cannot delay the rest of the header.
- */
 async function TaskHeaderActions({ params }: TaskRouteProps) {
   const { task, taskId } = await getTaskRouteFromParams(params);
   const modelsReadyForBattle = await getModelsWithCompleteOutputs({ runsPerTestCase: 1, task });
@@ -86,10 +77,6 @@ async function TaskHeaderActions({ params }: TaskRouteProps) {
   );
 }
 
-/**
- * Resolves URL-dependent task metadata first, then lets optional action state
- * stream through its own boundary instead of holding back the title.
- */
 async function TaskHeader({ params }: TaskRouteProps) {
   const { task } = await getTaskRouteFromParams(params);
 
@@ -102,6 +89,7 @@ async function TaskHeader({ params }: TaskRouteProps) {
         <ContainerDescription>
           Choose a model to run evaluations on {task.testCases.length} test cases (
           {RUNS_PER_TEST_CASE} runs each)
+          {task.latencyBudget && `. Latency budget: ${formatLatencyBudget(task.latencyBudget)}`}
         </ContainerDescription>
       </ContainerHeaderGroup>
 
@@ -114,55 +102,45 @@ async function TaskHeader({ params }: TaskRouteProps) {
   );
 }
 
-/**
- * Reads regular and Battle Mode result files in parallel while the task header
- * and model grid remain independently interactive.
- */
 async function TaskLeaderboard({ params }: TaskRouteProps) {
   const { task, taskId } = await getTaskRouteFromParams(params);
   const judgeModeSupported = supportsJudgeMode(task);
 
-  const battleEntriesPromise = judgeModeSupported
-    ? getBattleLeaderboard(taskId)
-    : Promise.resolve([]);
-
-  const [modelsWithResults, battleEntries] = await Promise.all([
+  const [modelsWithResults, battleEntries, battleJudgeCost] = await Promise.all([
     getModelsWithResults(taskId),
-    battleEntriesPromise,
+    judgeModeSupported ? getBattleLeaderboard(taskId) : [],
+    judgeModeSupported ? getBattleJudgeCost(taskId) : 0,
   ]);
 
   return (
     <LeaderboardTabs
       battleEntries={battleEntries}
-      results={modelsWithResults}
+      battleJudgeCost={battleJudgeCost}
+      entries={getLeaderboardEntries({ prices: GATEWAY_PRICES, results: modelsWithResults, task })}
       supportsJudgeMode={judgeModeSupported}
       taskId={taskId}
     />
   );
 }
 
-/**
- * Loads model ordering and status separately because those values come from
- * mutable eval files and should not be frozen into the shared App Shell.
- */
 async function TaskModelGrid({ params }: TaskRouteProps) {
-  const { taskId } = await getTaskRouteFromParams(params);
-  const sortedModels = await getSortedModels(taskId);
+  const { task, taskId } = await getTaskRouteFromParams(params);
+  const sortedModels = await getSortedModels(task);
 
   return (
     <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {sortedModels.map((model) => (
-        <ModelCard key={model.id} model={model} taskId={taskId} />
+        <ModelCard
+          key={model.id}
+          model={model}
+          pricing={GATEWAY_PRICES.models[model.gatewayModelId]}
+          taskId={taskId}
+        />
       ))}
     </section>
   );
 }
 
-/**
- * Uses one exact-size placeholder per configured model. Completed models are
- * the only cards the resolved grid can remove, so this preserves the grid's
- * normal row count without maintaining a second model-count constant.
- */
 function TaskModelGridSkeleton() {
   return (
     <section aria-hidden="true" className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -173,10 +151,6 @@ function TaskModelGridSkeleton() {
   );
 }
 
-/**
- * Keeps stable page structure in the shared App Shell and scopes each runtime
- * read to the smallest region with a useful loading state.
- */
 export default function TaskPage({ params }: TaskRouteProps) {
   return (
     <main className="flex flex-col gap-4">

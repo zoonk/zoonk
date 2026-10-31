@@ -6,11 +6,6 @@ import { SEARCH_QUERY_THROTTLE_MS } from "@zoonk/utils/search";
 import { Search } from "lucide-react";
 import { throttle, useQueryState } from "nuqs";
 
-/**
- * Admin list pages share the same query-param backed search behavior. Keeping
- * it centralized prevents each list from drifting on throttle, shallow routing,
- * or icon/input spacing.
- */
 export function AdminSearch({ placeholder }: { placeholder: string }) {
   const [search, setSearch] = useQueryState("search", {
     defaultValue: "",
@@ -19,8 +14,11 @@ export function AdminSearch({ placeholder }: { placeholder: string }) {
   });
 
   return (
-    <div className="relative">
-      <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+    <div className="relative w-full sm:max-w-md">
+      <Search
+        aria-hidden="true"
+        className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2"
+      />
       <Input
         className="pl-9"
         onChange={(event) => setSearch(event.target.value)}
@@ -32,10 +30,6 @@ export function AdminSearch({ placeholder }: { placeholder: string }) {
   );
 }
 
-/**
- * Search state comes from the request URL during prerendering, so list pages
- * reserve the input's exact height until the client control can render.
- */
 export function AdminSearchSkeleton() {
-  return <Skeleton className="h-10 w-full" />;
+  return <Skeleton className="h-11 w-full rounded-lg sm:max-w-md" />;
 }

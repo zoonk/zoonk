@@ -1,0 +1,46 @@
+"use client";
+
+import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
+import { getLocalTimeZone } from "@zoonk/utils/time-zone";
+import { useExtracted } from "next-intl";
+import { useAppLocale } from "../../_utils/locale";
+import { type OnboardingActions } from "../onboarding-actions";
+import { getExplanationGoalInput } from "./understanding-start";
+
+const MUSICIANSHIP_MINUTES = 15;
+
+export function useDraftGoals(actions: OnboardingActions) {
+  const t = useExtracted();
+  const locale = useAppLocale();
+
+  const createExplanation = ({
+    draft,
+    question,
+  }: {
+    draft: OnboardingDraftView;
+    question: string;
+  }) => actions.createGoals(getExplanationGoalInput({ draft, language: locale, question }));
+
+  const createMusicianship = ({
+    draft,
+    instrument,
+  }: {
+    draft: OnboardingDraftView;
+    instrument: string;
+  }) =>
+    actions.createGoals({
+      dailyMinutes: MUSICIANSHIP_MINUTES,
+      goals: [
+        {
+          details: { instrument, onboardingId: draft.id, subject: t("musicianship") },
+          kind: "learn",
+          language: locale,
+          prompt: draft.prompt,
+          title: t("Musicianship for {instrument}", { instrument }),
+        },
+      ],
+      timeZone: getLocalTimeZone(),
+    });
+
+  return { createExplanation, createMusicianship };
+}

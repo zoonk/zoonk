@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_sorting_about_years": "891845ce7a5a5c8003d7211432cde5663952b93ee0cafb8671454be0a56ff8b8",
+  "activities_sorting_all_sorted": "68b4b682d53c70ac2b131be64c56ab3a5e955249917f6a047bd1f08e602dc53a",
+  "activities_sorting_badge_label_it": "7284e418707ee1131c5e3948ce55b64ab90aec5c0d1634518821a98cf406bf5a",
+  "activities_sorting_badge_link_causes": "4ac1cc75603f71e90d4f4396d65f0c3789f4c95f8e0e1707d64349267a85ecab",
+  "activities_sorting_badge_match_pairs": "7ece404ad928beba3ccf02e5c96d220e7ebaa91a0f9ed3e245c5a571a85ff9e2",
+  "activities_sorting_badge_place_in_time": "76da7c02e82aa5e8c784078f18c48517c55285ae434ae8ea444be97c6e64ad67",
+  "activities_sorting_badge_put_in_order": "d778df71a8bd601baf8c2d175e71e5417cf6d537ac87706923326974c0ada97c",
+  "activities_sorting_badge_sort_groups": "9609fa8f3749a3358d880434f4177c6f66767ee0f9d8fda72094285d4122aa7e",
+  "activities_sorting_belongs_in": "7401e320d50834789943264075fcebe1d4a527e4262c91b00e0c23660e19adf5",
+  "activities_sorting_card_matched": "ae68fd4dbb4722f8d1c39bc6a8befa1fa33ffc5333c65cf43c5dc9b0a7ce1fc6",
+  "activities_sorting_card_no_match": "1f63cec9feef6f0429f955215adac6b0fb126c48e8998a8b9f86498b9b308050",
+  "activities_sorting_cards_to_match": "e92f76b51379a607a7b37b56e52b66965f7b51b5d38376382110a89a1a2d0a5c",
+  "activities_sorting_cards_without_match": "46e9ae61fb8d3005c0260eb31797c4f05c46f1f3fe917790979ba450ffb601dc",
+  "activities_sorting_cause": "21aa005724dbcf20369a9c66738bebe38d601d1ab180b7b4aa13b74a4e923b8e",
+  "activities_sorting_cause_picked": "4519f895d6a94e18ea04e88b756b7469d76e7fb13d6ace24591ca63a3e36ab7b",
+  "activities_sorting_causes_and_effects": "08559f8efee0eee61365530cd6299880433026446cfa52c72b6cf8923db096cc",
+  "activities_sorting_correct_answer": "8e05ca0f82db4611358d1dbc47eee5bc866ddf7e19cddac9434fbe28428c84f3",
+  "activities_sorting_dont_go_together": "c2dab068c3c23c71247334edf635a9167eb87eced813d3806067723a934910ad",
+  "activities_sorting_dont_go_together_short": "56498441cd747a0f2cbeffbd9bfaa6fc7f4c66ee9149b874eed9801ff01986ce",
+  "activities_sorting_drag_onto_timeline": "df283dd09a6f7c0dd3a0d0896151ccc210bcbe656d9f6a91d1fa0349d599439b",
+  "activities_sorting_drag_steps": "24f45b9e75c4ce83c5b940ab3d77ccd6db5c5409118b37c4160bdd64100fe8d1",
+  "activities_sorting_events_to_place": "b0b445d4b32f840d317822c03883bd07e077ef343342861ceedf6c97b1042fec",
+  "activities_sorting_every_spot_named": "6b569476f51b8646a7351baeeeecdf56ca28cadc18c42f63464982a13b6af4ea",
+  "activities_sorting_gap_between": "4806db0506b278c385b922af2c410cde33a08d9ef10eb30372e8980f4ddb27db",
+  "activities_sorting_goes_with": "8cfbc9697971aeef0d64ce8a6cae880ec22ce637f536fcfc2c3f654f710a350d",
+  "activities_sorting_led_to": "9c2397942de6b4dd2e7b63988a5f9c32db89b9691fbecb4d1d9754443eb3a2ca",
+  "activities_sorting_linked": "a155b319a22253861848ae422bfe7a02c77459f71ac72c106401f86ea07b82e5",
+  "activities_sorting_links_count": "1bcc545cb0e1037d0d3fe8e90cad52b0403343f2885ce6467a66a9401011936a",
+  "activities_sorting_look_alikes": "f8627ed2479027c76b0baf2682e64b84a6ba2bbfa8b2843bc0d83bb0a250e783",
+  "activities_sorting_matched": "496c6dd2dfdbd971569c8b8a01d939a2482a39ee53421f70a204c8ed5ef24e2a",
+  "activities_sorting_missed_first_try": "8b7f43c750e4fec41af547257196b746e2a20ab7dd5cae29250fd5df34c350bf",
+  "activities_sorting_missed_link": "131b41ff7df4e636f35b87cbb21006bbd699258a1975a1d87228c97ee1ab989b",
+  "activities_sorting_name_on_spot": "7769fc13b1ee2dcf3e0307510b43c7e5ed94f203c76284aa93697ed55bce4631",
+  "activities_sorting_name_taken_off": "1b933710e08fe3ce1d8cf6fc3e1f932afd33fff2220664a70ea71c4aef6ec8ce",
+  "activities_sorting_names": "f9fe4e3564b20798232270869341f4601161b638302440bfbf5bd822602ebded",
+  "activities_sorting_no_match_note": "b13515c2a43418c2f9c2644312a6bb03605a9d792e7cf99b48c2b9b323953a79",
+  "activities_sorting_not_a_link": "2e66888400e233c8b24ffb7bca4cfcefc667231b6aaa5448737170cfc55dd4c8",
+  "activities_sorting_not_quite": "79c813067d6d09daac67de517dd41cf7da5550bc3461018121d4937ef6c03f1c",
+  "activities_sorting_not_straight": "169468194c57486c358d396a574dd288a18e884ad869ff04fde10aee8c7d4da0",
+  "activities_sorting_nothing_here": "072f3b242c8caf4794af6702838fd009006f6a00ebc5ec7dc6906b7eb4334288",
+  "activities_sorting_now_pick": "5477d5fa2eb5461c722a234d0a52091dfd1ce6fcbdf056ccaa5534c63c90522e",
+  "activities_sorting_pairs_matched": "ec1241470032d4c034c80eb90b74610c41a215a3ac98c732dc1bbf85afd8c288",
+  "activities_sorting_pick_a_name": "acbe14d5e62769fe2f62aa4ebb95c843062bc03e01cefef92fc26f006b10466f",
+  "activities_sorting_pick_cause": "02449ab9f652bdbb2d4477b99097eabaa877f106d6cf05b323a840c2c9c73b14",
+  "activities_sorting_place_on_timeline": "6a6939de908b4b427326ef05531c63502c1694569a98d590becb9fa1b3b75480",
+  "activities_sorting_placed": "3eba9057fc49b6cf864e7dae4142ac51e86fb04297c568e582119b1d3c321a61",
+  "activities_sorting_put_in": "40c7e57b208a988169f7e662d8f48d05097ab7c354ab7ac83602ebfb7e3f9ad1",
+  "activities_sorting_put_it_here": "5352460e50ddd677538904ae4fe200a6235fb66835499f0ef918d8017e7792da",
+  "activities_sorting_put_on_spot": "a8402a1a467727b5a2d5f4cb982dba037ac74040d9a254750181a7a2cd580edc",
+  "activities_sorting_remove_link": "2da528ec2fa3a8f8c6956685a0732b2d342434b6f859f2505ce28f132c0cbfdd",
+  "activities_sorting_removed": "d33d7de45a8222d3b08fc6bb24d304087ae39ab461f438631c516850b5708780",
+  "activities_sorting_right_count": "da5e4e049a2a0b0e3644220a3a236461bea9d9fb49bcaeec963835bb5ad1fe8d",
+  "activities_sorting_right_group": "70b043561c53845a60ee9d7c71cefd1f42eececf50a9497c65c9e7312449ede9",
+  "activities_sorting_right_order": "523d0882550609bf5c2247e1bf548574108ecfa9bf28e13fe9f111db39488a94",
+  "activities_sorting_show_real_dates": "98e71885853284faf6f52615f4357a2f568aa90f7958d09aff5a42cc6c0fea10",
+  "activities_sorting_sorted_count": "7e2774855bda1c19961243d97f038c881fdf5cf2a092271595e051ea0a836f60",
+  "activities_sorting_spot_empty": "1ab159e7c2f67945c722f6b745c9fc061e79a1e1e0164cf3b89b742693b5a38c",
+  "activities_sorting_spot_named": "2757f095b267f3157a645c69cf23d97f0476d6afd087e25c89e2166d1fb2fa7a",
+  "activities_sorting_spots_to_label": "c2f68187efbd62cccdc6bdad45b3d801f8ec490085a07cfffc6d55030fd7e958",
+  "activities_sorting_steps_in_your_order": "634166a46399c308eca04c40b0f8afea79031318f6b856360521a36a47ed4dd1",
+  "activities_sorting_tap_a_name": "71ce382e3e66696d85af6fb48f4c960600b562e6cfcf55c374876d6346edcdae",
+  "activities_sorting_time_between": "387852c754bbe9e2a96f155965096392f7aa7b339b20e604f07e66ee0f8b73f5",
+  "activities_sorting_timeline_from": "cfcbea564900f7ca34e84975d99f64647b495e2d777b08ef04d48ad17f9da0fb",
+  "activities_sorting_to_sort": "51d2cd960411259211154901391a80f8853e259b5493554e67ba81be7561e216",
+  "activities_sorting_what_each_number_shows": "1a1bdebf29bf8d2aac977a64479214c72a3a7aa8848de73dfe08c82bdd81e7c0",
+  "activities_sorting_wrong_group": "7c6fce80eec0d0baf96cbe13948fe0797828530f20146b59a6c5ef53779f04e5",
+  "activities_sorting_year_and_guess": "3997c471b00ad8c6dd8c07e7878b2d02b01ecfa885b83247a3bcf8a4f32231b6",
+  "activities_sorting_year_bce": "52686e10bdad4f2da1898b75ab52eebec5adf963c43121dc6d09878e9a49756d",
+  "activities_sorting_year_ce": "b82cd12d97a13462b701a616b69c198c0040767b84cc92de548707fe1356907d",
+  "activities_sorting_years": "d1c0a27b6d06cc24d51009e1518e571e6274f02f8dbb3adb9d07cb977648fe8d",
+  "activities_sorting_you_had_it_at": "fdb30e428bd10709d2617b30abcc4a9923662b1bf1a509af4ea459c44c1c67a4",
+  "activities_sorting_your_guess": "e10615282fca7361ac3deaf5f7212ac591018b245557d6d3603cfed132222881",
+  "activities_sorting_your_links": "881db3039c590c155e208cee63f98027795e566f8c21c4cadd0ef7b210f814d3"
+}
+-->
+<resources>
+    <string name="activities_sorting_badge_sort_groups">グループに分ける</string>
+    <!-- Above the items still to sort into groups. -->
+    <string name="activities_sorting_to_sort">未分類</string>
+    <string name="activities_sorting_all_sorted">すべて分類できました。準備ができたら答え合わせをしましょう。</string>
+    <!-- How many items are in a group so far, like "1 of 3 sorted". -->
+    <plurals name="activities_sorting_sorted_count">
+        <item quantity="other">%1$d個を分類済み（全%2$d個）</item>
+    </plurals>
+    <!-- Places the picked item in a group, like "Put Melting ice in Same substance". Also a TalkBack action on each item. -->
+    <string name="activities_sorting_put_in">%1$sを%2$sに入れる</string>
+    <!-- In an empty group while an item is picked. -->
+    <string name="activities_sorting_put_it_here">ここに入れる</string>
+    <!-- In an empty group. -->
+    <string name="activities_sorting_nothing_here">まだ何もありません</string>
+    <!-- Read by TalkBack when an item is placed, like "Melting ice is in Same substance. 2 of 3 sorted." -->
+    <plurals name="activities_sorting_placed">
+        <item quantity="other">%1$sを%2$sに入れました。%3$d個を分類済みです（全%4$d個）。</item>
+    </plurals>
+    <!-- An item once checked, for TalkBack, like "Melting ice, right group". -->
+    <string name="activities_sorting_right_group">%1$s、正しいグループ</string>
+    <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
+    <string name="activities_sorting_wrong_group">%1$s、間違ったグループ</string>
+    <!-- How many items were sorted right, like "2 of 3 in the right group". -->
+    <string name="activities_sorting_right_count">%1$d個を正しく分類（全%2$d個）</string>
+    <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
+    <string name="activities_sorting_belongs_in">%1$sの正しいグループは%2$sです。</string>
+    <string name="activities_sorting_badge_put_in_order">順番に並べる</string>
+    <!-- The name of the list of a process's steps the learner orders, for TalkBack. -->
+    <string name="activities_sorting_steps_in_your_order">並べ替えた手順</string>
+    <string name="activities_sorting_drag_steps">手順を長押しし、ドラッグして順番に並べてください。</string>
+    <!-- Above a process's steps in their true order, once checked. -->
+    <string name="activities_sorting_right_order">正しい順番</string>
+    <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
+    <string name="activities_sorting_you_had_it_at">並べた位置：%1$d番目</string>
+    <string name="activities_sorting_badge_match_pairs">ペアを作る</string>
+    <!-- Pairs matched so far, like "Pairs matched: 1 of 3". -->
+    <string name="activities_sorting_pairs_matched">ペアが%1$d組できました（全%2$d組）</string>
+    <!-- Cards that look like they match one on the other side but don't. -->
+    <plurals name="activities_sorting_cards_without_match">
+        <item quantity="other">ペアのないカードが%d枚あります</item>
+    </plurals>
+    <!-- The name of the two columns of cards, for TalkBack. -->
+    <string name="activities_sorting_cards_to_match">ペアにするカード</string>
+    <!-- A matched card, for TalkBack, like "pregnant, matched". -->
+    <string name="activities_sorting_card_matched">%1$s、ペア完成</string>
+    <!-- A card with no match, for TalkBack, like "embarrassed, no match". -->
+    <string name="activities_sorting_card_no_match">%1$s、ペアなし</string>
+    <!-- Read by TalkBack after a match, like "Matched éxito with success. Pairs matched: 2 of 3." -->
+    <string name="activities_sorting_matched">%1$sと%2$sをペアにしました。ペアが%3$d組できました（全%4$d組）。</string>
+    <!-- Starts the reason a picked card has no match, like "“embarrassed” has no match." -->
+    <string name="activities_sorting_no_match_note">「%1$s」にはペアがありません。</string>
+    <!-- Read by TalkBack after a wrong pair, like "éxito and pregnant don't go together." -->
+    <string name="activities_sorting_dont_go_together">%1$sと%2$sはペアになりません。</string>
+    <string name="activities_sorting_dont_go_together_short">この2枚はペアではありません。</string>
+    <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
+    <string name="activities_sorting_not_quite">組み合わせが違います：</string>
+    <!-- Above the pairs the learner got wrong on the first try. -->
+    <string name="activities_sorting_missed_first_try">1回目に間違えたペア</string>
+    <!-- A pair missed on the first try, like "embarazada goes with pregnant, not embarrassed." -->
+    <string name="activities_sorting_goes_with">%1$sのペアは%2$sで、%3$sではありません。</string>
+    <!-- Above the cards that look like a match but have none. -->
+    <string name="activities_sorting_look_alikes">似ていてもペアにならないカード</string>
+    <string name="activities_sorting_badge_link_causes">原因を結びつける</string>
+    <string name="activities_sorting_pick_cause">原因を選び、次にその結果を選んでください。</string>
+    <!-- After a cause is picked, like "Now pick what Years of drought led to." -->
+    <string name="activities_sorting_now_pick">次に、%1$sが何につながったか選んでください。</string>
+    <!-- Links made so far out of all, like "1 of 2 links". -->
+    <plurals name="activities_sorting_links_count">
+        <item quantity="other">つながりを%1$d個作りました（全%2$d個）</item>
+    </plurals>
+    <!-- On the picked card: what it caused comes next. -->
+    <string name="activities_sorting_cause">原因</string>
+    <!-- A link that isn't in the story, like "Dust storms didn't lead straight to Prairie plowed for wheat here. Try another link." -->
+    <string name="activities_sorting_not_straight">この話では、%1$sは%2$sの直接の原因ではありません。別のつながりを試してください。</string>
+    <!-- After a link is taken away, like "Removed: Years of drought led to Dust storms." -->
+    <string name="activities_sorting_removed">%1$sから%2$sへのつながりを削除しました。</string>
+    <!-- After a link is made, like "Linked: Years of drought led to Dust storms." -->
+    <string name="activities_sorting_linked">%1$sから%2$sへのつながりを作りました。</string>
+    <!-- After a cause is picked, like "Years of drought picked. Now pick what it led to." -->
+    <string name="activities_sorting_cause_picked">%1$sを選びました。次に、その結果を選んでください。</string>
+    <!-- The name of the list of causes and effects, for TalkBack. -->
+    <string name="activities_sorting_causes_and_effects">原因と結果</string>
+    <!-- The name of the list of links made, for TalkBack. -->
+    <string name="activities_sorting_your_links">作ったつながり</string>
+    <!-- Read by TalkBack in place of the arrow between a cause and its effect. -->
+    <string name="activities_sorting_led_to">その結果</string>
+    <!-- Under a link the learner made that the story doesn't have. -->
+    <string name="activities_sorting_not_a_link">この話にはないつながり</string>
+    <!-- Under a link the story has that the learner didn't make. -->
+    <string name="activities_sorting_missed_link">見落としたつながり</string>
+    <!-- A button that takes a link away, like "Remove the link from Years of drought to Dust storms". -->
+    <string name="activities_sorting_remove_link">%1$sから%2$sへのつながりを削除する</string>
+    <string name="activities_sorting_badge_place_in_time">時間軸に置く</string>
+    <!-- A year before the common era, like "51 BCE". Keep the no-break space (U+00A0) between the year and its era, so they stay on one line. -->
+    <string name="activities_sorting_year_bce">紀元前 %1$s年</string>
+    <!-- A year of the common era, on a timeline that also has BCE years, like "1969 CE". Keep the no-break space (U+00A0) between the year and its era, so they stay on one line. -->
+    <string name="activities_sorting_year_ce">西暦 %1$s年</string>
+    <!-- What TalkBack reads for an event once the real dates show: its real year, then the learner's guess, like "51 BCE. Your guess: 2000 CE". -->
+    <string name="activities_sorting_year_and_guess">%1$s。予想：%2$s</string>
+    <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
+    <string name="activities_sorting_your_guess">予想：%1$s</string>
+    <plurals name="activities_sorting_events_to_place">
+        <item quantity="other">配置する出来事は%d件です</item>
+    </plurals>
+    <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
+    <string name="activities_sorting_place_on_timeline">%1$sを年表に置く</string>
+    <string name="activities_sorting_drag_onto_timeline">タップするか、長押ししてドラッグし、年表に置いてください。</string>
+    <string name="activities_sorting_show_real_dates">実際の年代を表示する</string>
+    <!-- The name of the list of gaps between dates, for TalkBack. -->
+    <string name="activities_sorting_time_between">出来事の間の年数</string>
+    <!-- An exact gap in years, like "66 years". -->
+    <plurals name="activities_sorting_years">
+        <item quantity="other">%1$s年</item>
+    </plurals>
+    <!-- A rounded gap in years, like "about 2,000 years". -->
+    <plurals name="activities_sorting_about_years">
+        <item quantity="other">約%1$s年</item>
+    </plurals>
+    <!-- After a gap in years: the two events and their years, like "from Cleopatra rules Egypt (51 BCE) to Moon landing (1969 CE)". -->
+    <string name="activities_sorting_gap_between">%1$s（%2$s）から%3$s（%4$s）まで</string>
+    <!-- What the timeline's drawing covers, for TalkBack, like "A timeline from 3000 BCE to 2000 CE." -->
+    <string name="activities_sorting_timeline_from">%1$sから%2$sまでの年表です。</string>
+    <string name="activities_sorting_badge_label_it">ラベルを付ける</string>
+    <!-- Read by TalkBack when a name goes on a numbered spot of the picture, like "Aorta on spot 5." -->
+    <string name="activities_sorting_name_on_spot">%1$sを%2$s番に置きました。</string>
+    <!-- Read by TalkBack when a name is taken off its spot, like "Aorta taken off." -->
+    <string name="activities_sorting_name_taken_off">%1$sを外しました。</string>
+    <!-- Above the names while a spot waits for one, like "Tap a name for spot 2, or hold and drag it onto any spot." -->
+    <string name="activities_sorting_tap_a_name">%1$d番に置く名前をタップするか、長押しして好きな場所にドラッグしてください。</string>
+    <string name="activities_sorting_every_spot_named">すべての場所に名前が付いています。場所をタップすると名前を変更できます。</string>
+    <!-- The name of the list of names to place, for TalkBack. -->
+    <string name="activities_sorting_names">名前</string>
+    <!-- Puts a name on a numbered spot, like "Put Aorta on spot 5". Also a TalkBack action on each name. -->
+    <string name="activities_sorting_put_on_spot">%1$sを%2$d番に置く</string>
+    <!-- The name of the list of numbered spots, for TalkBack. -->
+    <string name="activities_sorting_spots_to_label">名前を付ける場所</string>
+    <!-- The name of the list that says what each number on an explored picture shows, for TalkBack. -->
+    <string name="activities_sorting_what_each_number_shows">各番号が示すもの</string>
+    <!-- A numbered spot with no name yet, for TalkBack, like "Spot 3: empty". -->
+    <string name="activities_sorting_spot_empty">%1$d番：名前なし</string>
+    <!-- A numbered spot and its name, for TalkBack, like "Spot 3: Right ventricle". -->
+    <string name="activities_sorting_spot_named">%1$d番：%2$s</string>
+    <!-- On the spot waiting for a name. -->
+    <string name="activities_sorting_pick_a_name">名前を選ぶ</string>
+    <!-- For TalkBack, after a spot's wrong name once checked, like "Correct answer: Right atrium". -->
+    <string name="activities_sorting_correct_answer">正解：%1$s</string>
+</resources>

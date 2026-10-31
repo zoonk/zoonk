@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "pronunciation_accent": "f9cc7974a0e5a875027ca51891168023e873fd6c94535446e56974d7c7b3b74d",
+  "pronunciation_comes_back": "9e274afc29cde6fc2b789630ab6cb529f5b2b48ee31255c14fac452e0713c8f3",
+  "pronunciation_continue": "7e051510faf0bf48f0dec4ff82a40a92fb8df56b32a0b9b2e5b62dce8c51910d",
+  "pronunciation_done": "50eaa4b0dc3fad50c09e56b44407fb995ef11e76d32226f5b726777dd4973e5f",
+  "pronunciation_failed": "6dd05364a9db1e7d9b53bf6f52560960480612f405c68b79dad4039f91899dad",
+  "pronunciation_grading": "ad62b74f06c80fdaa4ca52096f75d83d16b85ca0eff4f7b9e2a097a12401abed",
+  "pronunciation_heard": "14c3be5773f27efb90c3a90a7d02dc2e74f80c75c4fe5c9982a86207bdcd6e46",
+  "pronunciation_learned": "4348106810b7d9e50c2f74fe14ec42cdb84f0a6603c20dfc2738c13b5459acb6",
+  "pronunciation_listen": "dc1412771df8fb35e0dda947f3e29d7c49a74fb84edede5352bdce4c0e5703f1",
+  "pronunciation_listen_slowly": "8494b3eb33ef650a7649537d5d4a46c860c5857b448cf27411670f345005974f",
+  "pronunciation_microphone_off": "776f3b473a3f2705a6e1fc438152c002aa12e460d449233a03ad3c87dd5be427",
+  "pronunciation_no_speech": "169bbf6aa3fc03c102a1107a04b9f56294034f978f4ac376c856e19d1c204ef9",
+  "pronunciation_no_words": "11db19f1675f23e9558a05ef57da1b03874dd5589fa9d6fb63e5760f4fda513c",
+  "pronunciation_nothing_said": "4e110f0aac66b905b172c1b225a28347fc32f929d2c8683b5555b523e5cbb0ac",
+  "pronunciation_options": "66d5c500588232dc1bd367664e17a51d20d47f80d32bb6874aeb56b9ac3d2a57",
+  "pronunciation_position": "b5f57eea3df1aa3c590d15d8f8fa3b883261578b457d95aeacfd0c89474fd853",
+  "pronunciation_practice_done": "106b3df1be8df7be94f072f0489e7baa21d322eb3b88defa44aaf287adfc67dd",
+  "pronunciation_press_record": "c7106403a13cf7e956cb3f8ae2c7c1b8488d870f205fe176d2badb4e11ba9ac0",
+  "pronunciation_recording": "0f46d2442347b9fb82fd7550a0eef8cbce78c047e049e76dec8cf4ebba880549",
+  "pronunciation_save_failed": "62ab2164cd00ca23cd7e70720bd6807366906df16dcd1e128dceeb9bfc94d4aa",
+  "pronunciation_save_retry": "36901e2dcd4dc8619a2653de58a25422545e6b38a4fe9feb741b7b7a9761d5ba",
+  "pronunciation_say_it_like": "e5777cfbebc09f2c3c32e6b2954d928aaf6c6488162a193d6d28659e61155e86",
+  "pronunciation_see_how": "10a5646e993a7c0f5c1324d4fe6853e5ad974acb6a8ea6cb70ef979f07dc9b33",
+  "pronunciation_skip": "267f83936af0af2da25e1b2556f4c73755fbf58ca803c03d08eccf58c548bb72",
+  "pronunciation_sounded_right": "ffc355c69c2aadd7a93b845f86a20309d9363e08a9f6fcd2bc137bc912271571",
+  "pronunciation_title": "fcfb76fd0088bad39834665b068cf289f34c6a69e2f9a5fbb8e6d553a310d82b",
+  "pronunciation_try_again": "04bc3f5377d6c614562ecb64a11739c03568e19eb9b938507e60ea049f4fbf96"
+}
+-->
+<resources>
+    <string name="pronunciation_title">Powiedz to jeszcze raz</string>
+    <!-- %1$s is the word in view, %2$s how many words the round has. -->
+    <string name="pronunciation_position">Słowo %1$s z %2$s</string>
+    <string name="pronunciation_listen">Posłuchaj</string>
+    <string name="pronunciation_listen_slowly">Posłuchaj wolniej</string>
+    <!-- %1$s is the word spelled the way it sounds in the learner's language, shown in a fixed-width font. -->
+    <string name="pronunciation_say_it_like">Powiedz to tak: %1$s</string>
+    <string name="pronunciation_options">Opcje ekranu</string>
+    <string name="pronunciation_skip">Pomiń to słowo</string>
+    <string name="pronunciation_press_record">Naciśnij „Nagraj” i powiedz słowo na głos</string>
+    <string name="pronunciation_recording">Nagrywamy… Naciśnij „Zatrzymaj”, gdy skończysz.</string>
+    <string name="pronunciation_grading">Słuchamy, jak to zabrzmiało…</string>
+    <string name="pronunciation_no_speech">Nie usłyszeliśmy słowa. Spróbuj jeszcze raz, trochę bliżej mikrofonu.</string>
+    <string name="pronunciation_failed">Nie udało się. Spróbuj ponownie.</string>
+    <string name="pronunciation_microphone_off">Włącz dostęp do mikrofonu dla Zoonka w ustawieniach, żeby powiedzieć to słowo. Na razie możesz je pominąć.</string>
+    <string name="pronunciation_sounded_right">To brzmiało dobrze</string>
+    <!-- %1$s is what the grader heard when the word didn't sound right. -->
+    <string name="pronunciation_heard">Usłyszeliśmy „%1$s”</string>
+    <!-- %1$s is the day the word comes back to say again, such as "May 4". -->
+    <string name="pronunciation_comes_back">Wróci %1$s.</string>
+    <string name="pronunciation_learned">To słowo masz już opanowane. Nie wróci do powtórek.</string>
+    <!-- Says the same word again. -->
+    <string name="pronunciation_try_again">Spróbuj ponownie</string>
+    <!-- Goes on to the next word. -->
+    <string name="pronunciation_continue">Kontynuuj</string>
+    <!-- Ends the round after its last word. -->
+    <string name="pronunciation_see_how">Sprawdź, jak poszło</string>
+    <string name="pronunciation_save_failed">Nie udało się przesłać odpowiedzi. Nic nie przepadło.</string>
+    <!-- Retries saving the round. -->
+    <string name="pronunciation_save_retry">Spróbuj ponownie</string>
+    <string name="pronunciation_no_words">Dziś nie ma słów do powtórzenia na głos.</string>
+    <string name="pronunciation_practice_done">Ćwiczenia ukończone</string>
+    <string name="pronunciation_nothing_said">Tym razem bez słów</string>
+    <string name="pronunciation_accent">Akcent nigdy nie jest przeszkodą. Słowa, które wciąż brzmią inaczej, wrócą jutro.</string>
+    <!-- Closes the finished round. -->
+    <string name="pronunciation_done">Zakończ</string>
+</resources>

@@ -25,7 +25,7 @@ export default function UsersPage({ searchParams }: PageProps<"/users">) {
 
       <ContainerBody>
         <Suspense fallback={<AdminSearchSkeleton />}>
-          <AdminSearch placeholder="Search by name, username, or email..." />
+          <AdminSearch placeholder="Search by name, username, or email…" />
         </Suspense>
 
         <Suspense fallback={<UserListSkeleton />}>

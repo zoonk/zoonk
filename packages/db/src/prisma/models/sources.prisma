@@ -1,0 +1,270 @@
+enum SourceKind {
+  official
+  secondary
+  upload
+}
+
+/// When `validUntil` passes, the source is fetched again and a model runs only if `contentHash`
+/// changed. Private uploads are deleted with their owner.
+model Source {
+  id             String               @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  language       String               @db.VarChar(10)
+  identityKey    String               @map("identity_key")
+  kind           SourceKind
+  visibility     LibraryVisibility    @default(public)
+  ownerId        String?              @map("owner_id") @db.Uuid
+  owner          User?                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  url            String?
+  title          String
+  publisher      String?
+  mimeType       String?              @map("mime_type")
+  blobUrl        String?              @map("blob_url")
+  contentHash    String               @map("content_hash")
+  fetchedAt      DateTime             @map("fetched_at")
+  validUntil     DateTime?            @map("valid_until")
+  nextCheckAt    DateTime?            @map("next_check_at")
+  extractedText  String?              @map("extracted_text")
+  structure      Json?
+  /// Whether past questions may be quoted, with the terms that say so.
+  reusePolicy    Json?                @map("reuse_policy")
+  createdAt      DateTime             @default(now()) @map("created_at")
+  updatedAt      DateTime             @default(now()) @updatedAt @map("updated_at")
+  examBlueprints ExamBlueprint[]
+  items          Item[]
+  learnerSources LearnerSource[]
+  changeNotices  SourceChangeNotice[]
+  steps          Step[]
+
+  @@unique([language, identityKey], name: "languageIdentity")
+  @@index([contentHash])
+  @@index([nextCheckAt])
+  @@index([ownerId])
+  @@map("sources")
+}
+
+/// The current edition is metadata, so lessons and items carry over between editions. A blueprint
+/// read from a learner's private uploads is private to that learner and deleted with them.
+model ExamBlueprint {
+  id                   String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  language             String                @db.VarChar(10)
+  identityKey          String                @map("identity_key")
+  name                 String
+  country              String                @db.VarChar(2)
+  board                String?
+  role                 String?
+  visibility           LibraryVisibility     @default(public)
+  ownerId              String?               @map("owner_id") @db.Uuid
+  owner                User?                 @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  structure            Json
+  edition              Json?
+  topicFrequency       Json?                 @map("topic_frequency")
+  sourceId             String?               @map("source_id") @db.Uuid
+  source               Source?               @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  validUntil           DateTime?             @map("valid_until")
+  nextCheckAt          DateTime?             @map("next_check_at")
+  registrationEndsAt   DateTime?             @map("registration_ends_at")
+  examDate             DateTime?             @map("exam_date")
+  model                String
+  promptVersion        String                @map("prompt_version")
+  runId                String                @map("run_id")
+  generatedAt          DateTime              @default(now()) @map("generated_at")
+  createdAt            DateTime              @default(now()) @map("created_at")
+  updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at")
+  items                Item[]
+  itemSets             ItemSet[]
+  goals                Goal[]
+  changeNotices        SourceChangeNotice[]
+  mockExams            MockExam[]
+  examResults          ExamResult[]
+  targetCutoffs        TargetCutoff[]
+  courseWeights        ExamCourseWeights[]
+  anonymousMockAnswers AnonymousMockAnswer[]
+  anonymousExamResults AnonymousExamResult[]
+  skillGraph           ExamSkillGraph?
+
+  @@unique([language, identityKey], name: "languageIdentity")
+  @@index([nextCheckAt])
+  @@index([ownerId])
+  @@index([sourceId])
+  @@map("exam_blueprints")
+}
+
+enum TargetCutoffStatus {
+  found
+  unknown
+}
+
+/// `unknown` means the lookup found none, so nothing is shown and nothing is guessed. `targetKey`
+/// is the normalized course and institution, or position.
+model TargetCutoff {
+  id              String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  examBlueprintId String             @map("exam_blueprint_id") @db.Uuid
+  examBlueprint   ExamBlueprint      @relation(fields: [examBlueprintId], references: [id], onDelete: Cascade)
+  targetKey       String             @map("target_key")
+  /// The next year looks it up again.
+  year            Int                @db.SmallInt
+  status          TargetCutoffStatus
+  /// On the exam's own scale, as the source gives it.
+  score           Float?
+  maxScore        Float?             @map("max_score")
+  edition         String?
+  quota           String?
+  sourceUrl       String?            @map("source_url")
+  sourceTitle     String?            @map("source_title")
+  model           String
+  promptVersion   String             @map("prompt_version")
+  runId           String             @map("run_id")
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([examBlueprintId, targetKey, year], name: "blueprintTargetYear")
+  @@map("target_cutoffs")
+}
+
+enum CourseWeightsStatus {
+  found
+  unknown
+}
+
+/// `unknown` means the lookup found none, so nothing is weighed and nothing is guessed. It holds no
+/// learner link, so it stays when the learner whose research looked it up goes.
+model ExamCourseWeights {
+  id              String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  examBlueprintId String              @map("exam_blueprint_id") @db.Uuid
+  examBlueprint   ExamBlueprint       @relation(fields: [examBlueprintId], references: [id], onDelete: Cascade)
+  targetKey       String              @map("target_key")
+  /// The next year looks it up again.
+  year            Int                 @db.SmallInt
+  status          CourseWeightsStatus
+  /// In the notice's order; empty when unknown.
+  subjects        Json                @default("[]")
+  edition         String?
+  sourceUrl       String?             @map("source_url")
+  sourceTitle     String?             @map("source_title")
+  model           String
+  promptVersion   String              @map("prompt_version")
+  runId           String              @map("run_id")
+  createdAt       DateTime            @default(now()) @map("created_at")
+  updatedAt       DateTime            @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([examBlueprintId, targetKey, year], name: "blueprintTargetYear")
+  @@map("exam_course_weights")
+}
+
+/// Every later learner of the notice plans from it, whatever prompt version wrote it, with no AI
+/// call. It belongs to the exam, so only an admin resets it.
+model ExamSkillGraph {
+  id              String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  examBlueprintId String        @unique @map("exam_blueprint_id") @db.Uuid
+  examBlueprint   ExamBlueprint @relation(fields: [examBlueprintId], references: [id], onDelete: Cascade)
+  /// The graph as plans store it (`PlanGraph`).
+  graph           Json
+  primaryCourseId String?       @map("primary_course_id") @db.Uuid
+  primaryCourse   Course?       @relation(fields: [primaryCourseId], references: [id], onDelete: SetNull)
+  model           String
+  promptVersion   String        @map("prompt_version")
+  runId           String        @map("run_id")
+  generatedAt     DateTime      @map("generated_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @default(now()) @updatedAt @map("updated_at")
+
+  @@index([primaryCourseId])
+  @@map("exam_skill_graphs")
+}
+
+/// The first graph kept for a shared language goal's typed words and shared answers: every later
+/// goal with the same ones plans from it, so the same answers give the same plan.
+model LanguageSkillGraph {
+  id              String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  promptKey       String   @unique @map("prompt_key")
+  /// The graph as plans store it (`PlanGraph`).
+  graph           Json
+  primaryCourseId String?  @map("primary_course_id") @db.Uuid
+  primaryCourse   Course?  @relation(fields: [primaryCourseId], references: [id], onDelete: SetNull)
+  model           String
+  promptVersion   String   @map("prompt_version")
+  runId           String   @map("run_id")
+  generatedAt     DateTime @map("generated_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@index([primaryCourseId])
+  @@map("language_skill_graphs")
+}
+
+enum LearnerSourceOrigin {
+  upload
+  research
+}
+
+/// Public uploads are stored once and shared, so this row is how a learner keeps their own material
+/// and how uploads are counted per day.
+model LearnerSource {
+  id        String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId    String              @map("user_id") @db.Uuid
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceId  String              @map("source_id") @db.Uuid
+  source    Source              @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  goalId    String?             @map("goal_id") @db.Uuid
+  goal      Goal?               @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  origin    LearnerSourceOrigin
+  createdAt DateTime            @default(now()) @map("created_at")
+
+  @@unique([userId, sourceId], name: "learnerSource")
+  @@index([userId, createdAt])
+  @@index([sourceId])
+  @@index([goalId])
+  @@map("learner_sources")
+}
+
+/// Stored once per change, not per learner: Today reads the notices of the learner's goal. `fields`
+/// lists the blueprint paths that changed.
+model SourceChangeNotice {
+  id              String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  sourceId        String              @map("source_id") @db.Uuid
+  source          Source              @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  examBlueprintId String?             @map("exam_blueprint_id") @db.Uuid
+  examBlueprint   ExamBlueprint?      @relation(fields: [examBlueprintId], references: [id], onDelete: Cascade)
+  language        String              @db.VarChar(10)
+  message         String
+  fields          String[]
+  previousHash    String              @map("previous_hash")
+  contentHash     String              @map("content_hash")
+  model           String
+  promptVersion   String              @map("prompt_version")
+  runId           String              @map("run_id")
+  generatedAt     DateTime            @default(now()) @map("generated_at")
+  createdAt       DateTime            @default(now()) @map("created_at")
+  reviewFlags     ContentReviewFlag[]
+
+  @@index([examBlueprintId, createdAt])
+  @@index([sourceId, createdAt])
+  @@map("source_change_notices")
+}
+
+enum ContentReviewStatus {
+  open
+  rewritten
+  dismissed
+}
+
+/// Exactly one of `lessonId` and `itemId` is set.
+model ContentReviewFlag {
+  id         String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  noticeId   String              @map("notice_id") @db.Uuid
+  notice     SourceChangeNotice  @relation(fields: [noticeId], references: [id], onDelete: Cascade)
+  lessonId   String?             @map("lesson_id") @db.Uuid
+  lesson     Lesson?             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  itemId     String?             @map("item_id") @db.Uuid
+  item       Item?               @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  status     ContentReviewStatus @default(open)
+  resolvedAt DateTime?           @map("resolved_at")
+  createdAt  DateTime            @default(now()) @map("created_at")
+  updatedAt  DateTime            @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([noticeId, lessonId], name: "noticeLesson")
+  @@unique([noticeId, itemId], name: "noticeItem")
+  @@index([status, createdAt])
+  @@index([lessonId, status])
+  @@index([itemId, status])
+  @@map("content_review_flags")
+}

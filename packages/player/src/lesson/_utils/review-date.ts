@@ -1,0 +1,52 @@
+import { MS_PER_DAY } from "@zoonk/utils/date";
+import { getFormattingLocale } from "@zoonk/utils/locale";
+
+const DAYS_IN_A_WEEK = 7;
+
+export type ReviewDate =
+  | { kind: "date"; label: string }
+  | { kind: "today" }
+  | { kind: "tomorrow" }
+  | { kind: "weekday"; label: string };
+
+function startOfDay(date: Date): number {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+}
+
+export function describeReviewDate({
+  locale,
+  now = new Date(),
+  reviewAt,
+}: {
+  locale: string;
+  now?: Date;
+  reviewAt: string;
+}): ReviewDate {
+  const review = new Date(reviewAt);
+  const days = Math.round((startOfDay(review) - startOfDay(now)) / MS_PER_DAY);
+
+  if (days <= 0) {
+    return { kind: "today" };
+  }
+
+  if (days === 1) {
+    return { kind: "tomorrow" };
+  }
+
+  if (days < DAYS_IN_A_WEEK) {
+    return {
+      kind: "weekday",
+      label: new Intl.DateTimeFormat(getFormattingLocale(locale), { weekday: "long" }).format(
+        review,
+      ),
+    };
+  }
+
+  return {
+    kind: "date",
+    label: new Intl.DateTimeFormat(getFormattingLocale(locale), {
+      day: "numeric",
+      month: "short",
+    }).format(review),
+  };
+}

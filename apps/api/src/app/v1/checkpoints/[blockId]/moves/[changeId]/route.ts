@@ -1,0 +1,35 @@
+import { errors } from "@/lib/api-errors";
+import { withApiErrorBoundary } from "@/lib/api-handler";
+import { checkpointMovePathParamsSchema } from "@/lib/openapi/schemas/paths";
+import { planChangeConflict } from "@/lib/plan-errors";
+import { readPathParams, readQueryParams } from "@/lib/request-input";
+import { undoWeeklyChallengeMove } from "@zoonk/core/checkpoints/move";
+import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
+import { NextResponse } from "next/server";
+
+async function undoMove(
+  request: Request,
+  context: RouteContext<"/v1/checkpoints/[blockId]/moves/[changeId]">,
+) {
+  const path = await readPathParams(context, checkpointMovePathParamsSchema);
+
+  const query = readQueryParams(request, studySessionTimeZoneInputSchema);
+
+  const result = await undoWeeklyChallengeMove({ ...path, input: query });
+
+  if (result.status === "unauthorized") {
+    return errors.unauthorized();
+  }
+
+  if (result.status === "notFound") {
+    return errors.notFound();
+  }
+
+  if (result.status === "conflict") {
+    return planChangeConflict();
+  }
+
+  return new NextResponse(null, { status: 204 });
+}
+
+export const DELETE = withApiErrorBoundary(undoMove);

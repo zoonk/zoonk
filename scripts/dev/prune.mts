@@ -6,7 +6,6 @@ import { getPnpmCommand } from "./process.mts";
 const currentDirectory = process.cwd();
 const pnpmCommand = getPnpmCommand(process.env);
 
-/** Removes orphaned servers from both Zoonk proxy modes while leaving active development stacks untouched. */
 function prunePortlessMode(lanMode: boolean): void {
   execFileSync(pnpmCommand.command, [...pnpmCommand.args, "exec", "portless", "prune"], {
     cwd: currentDirectory,

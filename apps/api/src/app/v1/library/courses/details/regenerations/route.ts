@@ -1,0 +1,53 @@
+import { errors } from "@/lib/api-errors";
+import { withApiErrorBoundary } from "@/lib/api-handler";
+import { courseDetailsRegenerationRequestSchema } from "@/lib/openapi/schemas/course-details-regenerations";
+import { readBody } from "@/lib/request-input";
+import { deliverCourseContent } from "@/workflows/_shared/course-content-notification";
+import { listInFlightCourseDetails } from "@/workflows/courses/course-details-runs";
+import { startCourseDetailsRun } from "@/workflows/courses/start-course-details-run";
+import { collectCourseContentTags } from "@zoonk/core/cache/course-content";
+import {
+  getCourseDetailsRegenerationPreview,
+  regenerateCourseDetails,
+} from "@zoonk/core/library/courses/regenerate-details";
+import { type NextRequest, NextResponse } from "next/server";
+
+async function createCourseDetailsRegeneration(request: NextRequest) {
+  const parsed = await readBody(request, courseDetailsRegenerationRequestSchema);
+
+  const result = await deliverCourseContent(
+    collectCourseContentTags(() =>
+      regenerateCourseDetails({
+        getInFlightCourseIds: listInFlightCourseDetails,
+        promptVersion: parsed.promptVersion,
+        startCourseDetails: (courseId) => startCourseDetailsRun({ copyOnly: true, courseId }),
+      }),
+    ),
+  );
+
+  if (result.status !== "started") {
+    return result.status === "unauthorized" ? errors.unauthorized() : errors.forbidden();
+  }
+
+  return NextResponse.json({ courseIds: result.courseIds, failed: result.failed }, { status: 202 });
+}
+
+export const POST = withApiErrorBoundary(createCourseDetailsRegeneration);
+
+async function previewCourseDetailsRegeneration() {
+  const result = await getCourseDetailsRegenerationPreview({
+    getInFlightCourseIds: listInFlightCourseDetails,
+  });
+
+  if (result.status !== "ready") {
+    return result.status === "unauthorized" ? errors.unauthorized() : errors.forbidden();
+  }
+
+  return NextResponse.json({
+    batchSize: result.batchSize,
+    estimatedCost: result.estimatedCost,
+    matching: result.matching,
+  });
+}
+
+export const GET = withApiErrorBoundary(previewCourseDetailsRegeneration);

@@ -2,30 +2,19 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { toCourseChapter } from "@/lib/catalog-responses";
 import { coursePathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
-import { listCourseChapters } from "@zoonk/core/chapters/list-by-course";
-import { getCourseById } from "@zoonk/core/courses/get-by-id";
+import { readPathParams } from "@/lib/request-input";
+import { listCatalogCourseChapters } from "@zoonk/core/catalog/course-chapters";
 import { NextResponse } from "next/server";
 
-/**
- * Lists one published course's chapter resources in authored order.
- */
 async function listCourseChapterResources(
   _request: Request,
   context: RouteContext<"/v1/courses/[courseId]/chapters">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: coursePathParamsSchema });
+  const path = await readPathParams(context, coursePathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
+  const chapters = await listCatalogCourseChapters({ courseId: path.courseId });
 
-  const [course, chapters] = await Promise.all([
-    getCourseById({ courseId: path.data.courseId }),
-    listCourseChapters({ courseId: path.data.courseId }),
-  ]);
-
-  if (!course) {
+  if (!chapters) {
     return errors.notFound("Course not found");
   }
 

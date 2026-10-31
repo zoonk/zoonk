@@ -2,6 +2,9 @@ import { execFile, spawn } from "node:child_process";
 
 const MAX_OUTPUT_BYTES = 10 * 1024 * 1024;
 
+/** A machine busy with parallel agents can take seconds to open a local connection. */
+export const CONNECT_TIMEOUT_SECONDS = 30;
+
 /** Finish sibling subprocesses before releasing the setup lock, including on failure. */
 export async function together<Values extends readonly unknown[] | []>(
   promises: Values,
@@ -60,7 +63,7 @@ export async function run({
 export function postgresEnvironment(source: URL): NodeJS.ProcessEnv {
   return {
     ...process.env,
-    PGCONNECT_TIMEOUT: "2",
+    PGCONNECT_TIMEOUT: String(CONNECT_TIMEOUT_SECONDS),
     PGDATABASE: "postgres",
     PGHOST: source.hostname.replaceAll(/^\[|\]$/gu, ""),
     PGOPTIONS: "-c lock_timeout=2000",

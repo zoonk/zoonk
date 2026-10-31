@@ -1,0 +1,2 @@
+- Respect what `LEARNER_LANGUAGE` can read:
+  - For US English readers: write vowels with English spellings ("ah" for an open "a", "eh", "ee", "oh", "oo"); Portuguese nasal "ão" is "owng"; "nh" is "ny"; "lh" is "ly"; a Portuguese "rr" or initial "r" is "h"; Spanish "j" is "h", "ll" is "y", "ñ" is "ny"; a Spanish "rr" or initial "r" (as in "renta") is trilled, written "rr" with a `tip` about rolling it, never called a tap.

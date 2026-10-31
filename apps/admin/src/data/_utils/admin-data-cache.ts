@@ -3,9 +3,8 @@ import { requireAdminRouteAccess } from "@/lib/admin-guard";
 import { cache } from "react";
 
 /**
- * Admin data helpers read private database rows from independently streamed
- * route segments, so the permission check belongs beside the query instead of
- * only in the shared layout.
+ * Streamed route segments render without the layout's guard, so the admin check runs beside each
+ * query.
  */
 export function cacheAdminData<Args extends unknown[], Result>(
   loadData: (...args: Args) => Result | Promise<Result>,

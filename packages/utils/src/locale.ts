@@ -1,11 +1,18 @@
-import { match } from "@formatjs/intl-localematcher";
-import Negotiator from "negotiator";
-
-export const SUPPORTED_LOCALES = ["en", "es", "pt", "fr", "de"] as const;
+export const SUPPORTED_LOCALES = [
+  "en",
+  "es",
+  "pt",
+  "fr",
+  "de",
+  "it",
+  "ja",
+  "ko",
+  "tr",
+  "pl",
+] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 export const DEFAULT_LOCALE: SupportedLocale = "en";
-const DEFAULT_COUNTRY = "US";
 
 export const LOCALE_COOKIE = "ZOONK_LOCALE";
 
@@ -13,8 +20,7 @@ export function isValidLocale(value: string): value is SupportedLocale {
   return SUPPORTED_LOCALES.some((locale) => locale === value);
 }
 
-/** Canonical language identity must also support languages outside the UI catalog. */
-export function getLanguageSubtag(language: string): string | null {
+function getLanguageSubtag(language: string): string | null {
   try {
     return new Intl.Locale(language).language ?? null;
   } catch {
@@ -22,109 +28,33 @@ export function getLanguageSubtag(language: string): string | null {
   }
 }
 
-/**
- * Content matching and indexing need a real supported language. A navigation
- * fallback would incorrectly identify unsupported content as English.
- */
+/** Null for an unsupported language: a fallback would mark that content as English. */
 export function getContentLocale(language: string): SupportedLocale | null {
   const locale = getLanguageSubtag(language);
   return locale && isValidLocale(locale) ? locale : null;
 }
 
-/**
- * Stored content languages can include regional tags such as `pt-BR`, while
- * app routes only support base locales such as `pt`. Falling back to English
- * keeps unsupported content languages on a real route instead of inventing an
- * invalid locale prefix.
- */
+/** Plain `es` writes numbers and dates Spain's way (1.234,56), but the app's Spanish and its courses are Mexico's. */
+const FORMATTING_LOCALES: ReadonlyMap<string, string> = new Map([["es", "es-MX"]]);
+
+export function getFormattingLocale(language: string): string {
+  return FORMATTING_LOCALES.get(language) ?? language;
+}
+
 export function getSupportedLocaleFromLanguage(language: string): SupportedLocale {
   return getContentLocale(language) ?? DEFAULT_LOCALE;
 }
 
-/**
- * Locale labels in their native language.
- * These should NOT be translated since they represent
- * the language name as it appears to native speakers.
- */
+/** Native names, never translated. */
 export const LOCALE_LABELS: Record<SupportedLocale, string> = {
   de: "Deutsch",
   en: "English",
   es: "Español",
   fr: "Français",
+  it: "Italiano",
+  ja: "日本語",
+  ko: "한국어",
+  pl: "Polski",
   pt: "Português",
+  tr: "Türkçe",
 } as const;
-
-function parseRegion(tag: string): string | null {
-  try {
-    return new Intl.Locale(tag.split(";")[0]?.trim() ?? "").region ?? null;
-  } catch {
-    return null;
-  }
-}
-
-export function getCountryFromAcceptLanguage(acceptLanguage: string | null): string {
-  if (!acceptLanguage) {
-    return DEFAULT_COUNTRY;
-  }
-
-  const region = acceptLanguage
-    .split(",")
-    .map((tag) => parseRegion(tag))
-    .find(Boolean);
-
-  return region ?? DEFAULT_COUNTRY;
-}
-
-/**
- * Treat persisted locale values as manual choices only when they are still
- * supported by the app. Bad or legacy cookie values should not block browser
- * language detection, especially after we add support for another language.
- */
-function getManualLocale(value?: string | null): SupportedLocale | null {
-  if (!value) {
-    return null;
-  }
-
-  return isValidLocale(value) ? value : null;
-}
-
-/**
- * Detect the best locale from an Accept-Language header.
- */
-function getLocaleFromHeaders(acceptLanguage: string | null): SupportedLocale {
-  if (!acceptLanguage) {
-    return DEFAULT_LOCALE;
-  }
-
-  const negotiator = new Negotiator({ headers: { "accept-language": acceptLanguage } });
-  const languages = negotiator.languages();
-
-  try {
-    const locale = match(languages, SUPPORTED_LOCALES, DEFAULT_LOCALE);
-    return isValidLocale(locale) ? locale : DEFAULT_LOCALE;
-  } catch {
-    return DEFAULT_LOCALE;
-  }
-}
-
-/**
- * Resolve the app locale from an explicit user choice before browser detection.
- * The locale cookie is only written when the user manually changes language, so
- * adding a new supported language later can immediately help users whose
- * browser already prefers that language.
- */
-export function getLocaleFromRequest({
-  acceptLanguage,
-  cookieLocale,
-  overrideLocale,
-}: {
-  acceptLanguage: string | null;
-  cookieLocale?: string | null;
-  overrideLocale?: string | null;
-}): SupportedLocale {
-  return (
-    getManualLocale(overrideLocale) ??
-    getManualLocale(cookieLocale) ??
-    getLocaleFromHeaders(acceptLanguage)
-  );
-}

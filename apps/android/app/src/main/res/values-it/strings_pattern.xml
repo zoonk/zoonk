@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "pattern_also_came_up": "95fe9692bb9c33e045000b1910486fc45fe5859e4bf1d481e3b1e412d76ac886",
+  "pattern_correct_version": "79fec12bec2e59ca17d93d1479012b2f48a59656df3d3f65ac341737d935b843",
+  "pattern_done": "eb3f94a8e543cc33fe6f9e323c6d71bc8ee00243f5336aabeed4168570c57ebc",
+  "pattern_got_it": "936f1c0d4cf011ae50107842269c1ff0293885382dbe808a1d0c805b37515cf3",
+  "pattern_just_typos": "39658803bcc17d22acd4b7a22ab45572f47b057b1801059696af2633bb6ad990",
+  "pattern_keep_going": "874796f705543b3c88da9b1e3b0cfbe0d2a62bd4eab3ddedbca62ae3ab46f59f",
+  "pattern_noticed": "fccf145031a9346a5d310b4cd7c61ef447b2cdf3eef2a5f0cedd8a6ccff9a55d",
+  "pattern_practice": "13ee2d35929e25e68fda19d1b5abba24f50a2311101b088f2017daa8a9d853a7",
+  "pattern_quoted": "a7a61163c3e5edae31e49789205f95d57a9fad4b5f3d79f4c2288430973609a2",
+  "pattern_rule": "be84e0ebdc0b7ebecf268e694c6027ecc8f9c3b1fda633d341e0a06d07fe4a25",
+  "pattern_see_how_you_did": "fcba8371616cb4a512b18d2c529392dbcc3b672ba267d34a1d1860dc15734f0f",
+  "pattern_see_rule": "f14fc0b88ec069328aee54f944521015d646a39d89c3765d4f00dece7129e825",
+  "pattern_seen": "3e236ea08cf327b46469d55ef9b218fcb3cb4354f4093c4e009d40373ec8c185",
+  "pattern_seen_times": "a2bf17b6b165f787a08137dbd981c6ec147b76bcde4d81caaf7ada933da583a8",
+  "pattern_title": "587103eff6b2df332f90d76a5051a4cb51739ea75c35caf6fe487249a4e9debf",
+  "pattern_typos_detail": "f2b00e42319f3736b20633db3efb90abb6526b687661fc4019eb4bccd537c371",
+  "pattern_where_you_slipped": "23ec29276fa7a2b71f2fee8860e6a164f837645130548f086fa4cf79b0c8076e",
+  "pattern_you_said": "62750bc0457f4cacb08c0033382b841ac6f59634e5aa273256f7d3d419d4911f"
+}
+-->
+<resources>
+    <!-- A rule the learner keeps getting wrong, found in their recent answers. -->
+    <string name="pattern_title">Errore ricorrente</string>
+    <string name="pattern_noticed">Abbiamo notato un errore ricorrente</string>
+    <string name="pattern_seen">È emerso nelle tue risposte recenti.</string>
+    <!-- %d is how many times the mistake came up. Every form shows the number as %d; English says “once” only because it reads better. -->
+    <plurals name="pattern_seen_times">
+        <item quantity="one">È emerso %d volta nelle tue risposte recenti.</item>
+        <item quantity="many">È emerso %d volte nelle tue risposte recenti.</item>
+        <item quantity="other">È emerso %d volte nelle tue risposte recenti.</item>
+    </plurals>
+    <!-- Starts a short practice of the rule on this page; "this" is the rule. %1$s is how long it takes, like "3 min". -->
+    <string name="pattern_practice">Esercitati su questa regola · %1$s</string>
+    <!-- Heads the learner's other sentences that show the same mistake. -->
+    <string name="pattern_also_came_up">È emerso anche in</string>
+    <!-- A sentence the learner said or wrote, in quotation marks. -->
+    <string name="pattern_quoted">“%1$s”</string>
+    <string name="pattern_rule">La regola</string>
+    <!-- Read aloud before the learner's own wrong sentence. -->
+    <string name="pattern_you_said">Hai detto</string>
+    <!-- Read aloud before the corrected sentence. -->
+    <string name="pattern_correct_version">Versione corretta</string>
+    <!-- Heads the learner's own wrong sentence beside its corrected version. -->
+    <string name="pattern_where_you_slipped">Dove hai sbagliato</string>
+    <string name="pattern_see_rule">Vedi la regola</string>
+    <!-- After the practice's last question, opens its result. -->
+    <string name="pattern_see_how_you_did">Guarda com’è andata</string>
+    <string name="pattern_got_it">Hai capito questa regola.</string>
+    <string name="pattern_keep_going">Conoscere la regola è il primo passo. Più la usi, più è facile applicarla.</string>
+    <!-- The button that closes the practice result or the typos note and leaves the screen. -->
+    <string name="pattern_done">Chiudi</string>
+    <string name="pattern_just_typos">Solo errori di battitura</string>
+    <string name="pattern_typos_detail">I tuoi ultimi errori erano dovuti a sviste di battitura, non a regole che non conosci. Non c’è nulla su cui esercitarti.</string>
+</resources>

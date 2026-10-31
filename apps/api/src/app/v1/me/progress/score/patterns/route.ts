@@ -4,10 +4,6 @@ import { serializeScorePatterns } from "@/lib/progress-serializers";
 import { getCurrentUserScorePatterns } from "@zoonk/core/progress/get-score-patterns";
 import { NextResponse } from "next/server";
 
-/**
- * Returns complete weekday and daypart Score patterns so every client receives
- * the same stable seven-row and four-row resource.
- */
 async function getCurrentUserScorePatternsRoute() {
   const resource = await getCurrentUserScorePatterns();
 

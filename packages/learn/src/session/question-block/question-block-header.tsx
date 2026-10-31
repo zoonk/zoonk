@@ -1,0 +1,77 @@
+"use client";
+
+import { buttonVariants } from "@zoonk/ui/components/button";
+import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
+import { cn } from "@zoonk/ui/lib/utils";
+import { XIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
+import {
+  TASK_HEADER_ICON_CLASS,
+  TaskHeader,
+  TaskHeaderBar,
+  TaskHeaderSegments,
+  TaskHeaderSide,
+  TaskHeaderTitle,
+  type TaskSegment,
+} from "../../_components/task-header";
+import { LearnLink } from "../../learn-link";
+
+const PERCENT = 100;
+
+export function QuestionBlockClose({ href }: { href: string }) {
+  const t = useExtracted();
+  const closeRef = useEscapeClick<HTMLAnchorElement>();
+
+  return (
+    <LearnLink
+      aria-keyshortcuts="Escape"
+      aria-label={t("Close. Your answers are saved.")}
+      className={cn(
+        buttonVariants({ size: "icon", variant: "ghost" }),
+        TASK_HEADER_ICON_CLASS.start,
+      )}
+      href={href}
+      prefetch={false}
+      ref={closeRef}
+    >
+      <XIcon aria-hidden="true" />
+    </LearnLink>
+  );
+}
+
+export function QuestionBlockHeader({
+  close,
+  index,
+  menu,
+  segments,
+  title,
+  total,
+}: {
+  close: React.ReactNode;
+  index: number;
+  menu?: React.ReactNode;
+  segments: readonly TaskSegment[];
+  title: string;
+  total: number;
+}) {
+  const t = useExtracted();
+  const current = Math.min(index + 1, total);
+
+  return (
+    <TaskHeader className="bg-background sticky top-0">
+      <TaskHeaderBar>
+        <TaskHeaderSide align="start">{close}</TaskHeaderSide>
+        <TaskHeaderTitle title={title} />
+        <TaskHeaderSide align="end">{menu}</TaskHeaderSide>
+      </TaskHeaderBar>
+
+      {total > 0 && (
+        <TaskHeaderSegments
+          label={t("Question {current, number} of {total, number}", { current, total })}
+          segments={segments}
+          value={(index / total) * PERCENT}
+        />
+      )}
+    </TaskHeader>
+  );
+}

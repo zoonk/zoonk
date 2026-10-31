@@ -1,3 +1,5 @@
+import { readQueryParam } from "@/lib/query-param";
+
 export const DEFAULT_COMPLETED_LESSONS_THRESHOLD = 10;
 export const DEFAULT_LEARNING_DAYS_THRESHOLD = 3;
 
@@ -8,22 +10,13 @@ type SearchParamValue = string | string[] | undefined;
 
 export type LearnerMilestoneKind = "completedLessons" | "learningDays";
 
-/**
- * Milestone drill-down links need stable query values instead of page copy.
- * Keeping the URL vocabulary here prevents the summary cards and user list
- * page from drifting when labels change.
- */
 export function parseLearnerMilestoneKind(value: SearchParamValue): LearnerMilestoneKind {
-  const firstValue = getFirstSearchParam(value);
+  const firstValue = readQueryParam(value);
 
   return isLearnerMilestoneKind(firstValue) ? firstValue : "completedLessons";
 }
 
-/**
- * Admin thresholds are typed into URL-backed number inputs. Clamping here keeps
- * every milestone query finite and avoids accidental unbounded grouping from a
- * hand-edited query string.
- */
+/** Clamped, so a hand-edited query string never asks for an unbounded grouping. */
 export function parseLearnerMilestoneThreshold({
   defaultValue,
   value,
@@ -31,7 +24,7 @@ export function parseLearnerMilestoneThreshold({
   defaultValue: number;
   value: SearchParamValue;
 }) {
-  const firstValue = getFirstSearchParam(value);
+  const firstValue = readQueryParam(value);
   const trimmedValue = firstValue?.trim();
 
   if (!trimmedValue) {
@@ -47,10 +40,6 @@ export function parseLearnerMilestoneThreshold({
   return Math.min(Math.max(Math.trunc(parsedValue), MIN_THRESHOLD), MAX_THRESHOLD);
 }
 
-/**
- * Direct visits to the learner list only provide the milestone kind. The
- * default threshold needs to match the summary card that links to that list.
- */
 export function getDefaultLearnerMilestoneThreshold({ kind }: { kind: LearnerMilestoneKind }) {
   if (kind === "learningDays") {
     return DEFAULT_LEARNING_DAYS_THRESHOLD;
@@ -59,10 +48,6 @@ export function getDefaultLearnerMilestoneThreshold({ kind }: { kind: LearnerMil
   return DEFAULT_COMPLETED_LESSONS_THRESHOLD;
 }
 
-/**
- * Summary cards and drill-down pages describe the same milestone. Centralizing
- * the copy keeps the count, page title, and empty state aligned.
- */
 export function getLearnerMilestoneCopy({
   kind,
   threshold,
@@ -89,11 +74,6 @@ export function getLearnerMilestoneCopy({
   };
 }
 
-/**
- * The milestone cards link to the same list route with different query values.
- * URLSearchParams handles encoding while this helper keeps the route shape in
- * one place.
- */
 export function buildLearnerMilestoneUsersHref({
   kind,
   threshold,
@@ -106,18 +86,6 @@ export function buildLearnerMilestoneUsersHref({
   return `/stats/engagement/learners?${params.toString()}`;
 }
 
-/**
- * Runtime URL values are plain strings. This guard narrows them to the finite
- * milestone modes that the SQL loaders know how to query.
- */
 function isLearnerMilestoneKind(value: string | undefined): value is LearnerMilestoneKind {
   return value === "completedLessons" || value === "learningDays";
-}
-
-/**
- * Next.js returns repeated query params as arrays. Milestone filters only use
- * one value per key, so the first entry is the canonical value.
- */
-function getFirstSearchParam(value: SearchParamValue): string | undefined {
-  return Array.isArray(value) ? value[0] : value;
 }

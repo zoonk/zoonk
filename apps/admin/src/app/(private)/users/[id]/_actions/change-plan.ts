@@ -36,10 +36,8 @@ export async function changePlanAction(formData: FormData) {
 }
 
 /**
- * Admin-managed paid plans are stored as Zoonk-owned active subscriptions. A
- * move to Free ends the paid interval instead of deleting it, preserving the
- * history needed by conversion analytics while still leaving no active
- * support-managed subscription to block self-serve Stripe upgrades.
+ * A move to Free ends the paid interval instead of deleting it: conversion analytics need the
+ * history, and no active support-managed row is left to block a self-serve Stripe upgrade.
  */
 async function saveManualPlanChange({
   existing,

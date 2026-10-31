@@ -1,10 +1,17 @@
+import { assertTargetDates } from "@zoonk/core/plans/target-date-range";
 import { logError } from "@zoonk/utils/logger";
 import { unstable_rethrow } from "next/navigation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { z } from "zod";
 import { withApiErrorBoundary } from "./api-handler";
+import { readBody, readPathParams } from "./request-input";
 
 vi.mock("@zoonk/utils/logger", () => ({ logError: vi.fn() }));
 vi.mock("next/navigation", () => ({ unstable_rethrow: vi.fn() }));
+
+function post(body: string) {
+  return new Request("http://localhost/v1/goals/1", { body, method: "POST" });
+}
 
 describe(withApiErrorBoundary, () => {
   beforeEach(() => {
@@ -53,5 +60,75 @@ describe(withApiErrorBoundary, () => {
 
     await expect(wrappedHandler()).rejects.toBe(interruption);
     expect(logError).not.toHaveBeenCalled();
+  });
+
+  it("answers a target date past what a plan reaches as the request's: 422 for a change, 400 for a query", async () => {
+    const wrappedHandler = withApiErrorBoundary(async (_request: Request) => {
+      assertTargetDates({
+        targets: [{ path: ["targetDate"], targetDate: "2036-10-12" }],
+        today: "2026-10-14",
+      });
+
+      return Response.json({});
+    });
+
+    const [change, query] = await Promise.all([
+      wrappedHandler(new Request("http://localhost/v1/goals/1", { method: "PATCH" })),
+      wrappedHandler(new Request("http://localhost/v1/courses/1/estimate?targetDate=2036-10-12")),
+    ]);
+
+    expect([change.status, query.status]).toStrictEqual([422, 400]);
+
+    await expect(change.json()).resolves.toMatchObject({
+      error: {
+        code: "TARGET_DATE_OUT_OF_RANGE",
+        details: [{ bound: "latest", limit: "2036-10-11", path: ["targetDate"] }],
+      },
+    });
+
+    await expect(query.json()).resolves.toMatchObject({
+      error: { code: "VALIDATION_ERROR", details: [{ path: ["targetDate"] }] },
+    });
+  });
+
+  it("answers a path or body its schema refuses as the request's validation error", async () => {
+    const wrappedHandler = withApiErrorBoundary(
+      async (request: Request, context: { params: Promise<unknown> }) => {
+        await readPathParams(context, z.object({ goalId: z.uuid() }));
+        await readBody(request, z.object({ minutes: z.number() }));
+        return Response.json({});
+      },
+    );
+
+    const [path, json, body] = await Promise.all([
+      wrappedHandler(post("{}"), { params: Promise.resolve({ goalId: "1" }) }),
+      wrappedHandler(post("{"), { params: Promise.resolve({ goalId: crypto.randomUUID() }) }),
+      wrappedHandler(post("{}"), { params: Promise.resolve({ goalId: crypto.randomUUID() }) }),
+    ]);
+
+    await expect(path.json()).resolves.toMatchObject({
+      error: { code: "VALIDATION_ERROR", details: [{ path: ["goalId"] }] },
+    });
+
+    await expect(json.json()).resolves.toMatchObject({
+      error: { code: "VALIDATION_ERROR", details: [{ message: "Invalid JSON body" }] },
+    });
+
+    await expect(body.json()).resolves.toMatchObject({
+      error: { code: "VALIDATION_ERROR", details: [{ path: ["minutes"] }] },
+    });
+
+    expect(logError).not.toHaveBeenCalled();
+  });
+
+  it("keeps any other ZodError a server error", async () => {
+    const wrappedHandler = withApiErrorBoundary(async () => {
+      z.object({ phases: z.array(z.string()) }).parse({ phases: "stored wrong" });
+      return Response.json({});
+    });
+
+    const response = await wrappedHandler();
+
+    expect(response.status).toBe(500);
   });
 });

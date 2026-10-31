@@ -8,9 +8,11 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
     <div
       className="relative w-full overflow-x-auto overscroll-x-contain"
       data-slot="table-container"
+      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Overflowing tables need a keyboard scroll target.
+      tabIndex={0}
     >
       <table
-        className={cn("w-full caption-bottom text-sm", className)}
+        className={cn("w-full caption-bottom text-sm tabular-nums", className)}
         data-slot="table"
         {...props}
       />
@@ -32,23 +34,10 @@ function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
   );
 }
 
-function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
-  return (
-    <tfoot
-      className={cn("bg-muted/50 border-t font-medium [&>tr]:last:border-b-0", className)}
-      data-slot="table-footer"
-      {...props}
-    />
-  );
-}
-
 function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
   return (
     <tr
-      className={cn(
-        "hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
-        className,
-      )}
+      className={cn("data-[state=selected]:bg-muted border-b transition-colors", className)}
       data-slot="table-row"
       {...props}
     />
@@ -59,7 +48,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       className={cn(
-        "text-foreground h-12 px-3 text-left align-middle font-medium whitespace-nowrap has-[[role=checkbox]]:pr-0",
+        "text-muted-foreground h-9 px-3 text-left align-middle text-xs font-medium whitespace-nowrap first:pl-0 last:pr-0 has-[[role=checkbox]]:pr-0",
         className,
       )}
       data-slot="table-head"
@@ -71,7 +60,10 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
 function TableCell({ className, ...props }: React.ComponentProps<"td">) {
   return (
     <td
-      className={cn("p-3 align-middle whitespace-nowrap has-[[role=checkbox]]:pr-0", className)}
+      className={cn(
+        "px-3 py-2 align-middle whitespace-nowrap first:pl-0 last:pr-0 has-[[role=checkbox]]:pr-0",
+        className,
+      )}
       data-slot="table-cell"
       {...props}
     />
@@ -88,4 +80,4 @@ function TableCaption({ className, ...props }: React.ComponentProps<"caption">) 
   );
 }
 
-export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption };
+export { Table, TableHeader, TableBody, TableHead, TableRow, TableCell, TableCaption };

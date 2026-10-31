@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "goal_switcher_current_goal": "bbda5d5d1a0c7e5c3caee1fb292dd184f06afeed5d93ca32ee54796d6f9d09b5",
+  "goal_switcher_daily": "ee199d830d2e62de181acfb4aa01e989ce10a4b68357476ca26e6c493f62eace",
+  "goal_switcher_explore_courses": "1219dc46c7c20752d424729183f95fe0eb72563e3d19c9a9d85fa196241d7f7c",
+  "goal_switcher_failed": "e1adb3bb77dbd83ba18fbfba84b4c461e640c95fda35d3630ad9b0265ba0ae68",
+  "goal_switcher_finished": "493961d047d1a4475a47110195b3c772a9d8b1ccaf50afcaadb6c7b688a32463",
+  "goal_switcher_new_goal": "53c3672917c02acf3b98e7fea7240d658b7496034d7dc6a78a7dd8cf4fb874d4",
+  "goal_switcher_paused": "d137feba8857b00848de86c01340a6f12322cd05c0e55feaa84c50ae2968b4ad",
+  "goal_switcher_quick_explanations": "08ca2150eb8e5a7da63a6b90869df89e3b432f12ca12750c31797815380289cb",
+  "goal_switcher_start_goal": "8c40d01eff300507504f2d7197ec80186c5ecbd16b8111bef95a339849fb88ac",
+  "goal_switcher_your_goals": "8937b4edd5afed09bd1182c968c48e5847bac6385faab4b694d620f555653977"
+}
+-->
+<resources>
+    <string name="goal_switcher_start_goal">目標を始める</string>
+    <!-- Read by TalkBack on the top bar's goal button; %1$s is the goal's title. -->
+    <string name="goal_switcher_current_goal">%1$s、現在の目標です。目標を切り替える</string>
+    <string name="goal_switcher_your_goals">目標</string>
+    <string name="goal_switcher_quick_explanations">クイック解説</string>
+    <string name="goal_switcher_new_goal">新しい目標を始める</string>
+    <string name="goal_switcher_explore_courses">コースを探す</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="goal_switcher_daily">1日あたり%1$s</string>
+    <string name="goal_switcher_finished">完了</string>
+    <string name="goal_switcher_paused">一時停止中</string>
+    <string name="goal_switcher_failed">目標を切り替えられませんでした。もう一度試してください。</string>
+</resources>

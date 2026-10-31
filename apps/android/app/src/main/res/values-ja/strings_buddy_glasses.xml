@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "buddy_glasses": "b10105d3dcd1a36de58330a6af31ddfee3c68a0370ff4f0822d19602b97612ab",
+  "buddy_glasses_aviator": "52052c72f66c67445ff06b1feb9d0301f48b5dc8d04018c84ecef66b763ddc45",
+  "buddy_glasses_cat_eye": "dabf969ce803c34b6943413bf787dd70c0c6a2e025f5b50f52082e554bb241f3",
+  "buddy_glasses_earn_aviator": "36ddf2b3271155a78e95d18abdfd71cb64773106af43ba6290ab9f303c472aa4",
+  "buddy_glasses_earn_cat_eye": "1e66817f420b60f940c9e97681aae74c0090b16754ccda2fcdf581729d36f05d",
+  "buddy_glasses_earn_monocle": "3be195f6897413977bacd7909f8f14c0ae62b9ab186b241c8f002858d4a9c06b",
+  "buddy_glasses_earn_retro": "9a01a061c649da7a1e26a457335714ef4a9163694d1c58537ddb113b590e2d9d",
+  "buddy_glasses_earn_round": "f3b53b29f8bc7416a04c12ada276e45f616f2e801e33f8f35722864ca7bf0f02",
+  "buddy_glasses_earn_star": "9ac7c973c96c401eaa4eec514c8f751d4ed3df9984d3a5abc06c71429898101b",
+  "buddy_glasses_monocle": "90e78b5606a55308d60db9f7f0a663f829b4c3ce1823e3a0abc8482789001385",
+  "buddy_glasses_retro": "d306b2335d9dbaaf54eee16e4affffef91e2627f9812d07acae122444df109e8",
+  "buddy_glasses_round": "da6186cf3e89607d2610172d7aa02262fddc0a33bc47b95eab6d14fbe0a1ff11",
+  "buddy_glasses_star": "f680ad9215be1b898718b947be1ae51d45fda0c1a70a06f79c79b3081c17e509",
+  "buddy_glasses_worn_aviator": "5ce4f09bc3a8f47d79e14c6f61f2918f0fa9ad6e4ba4bf731d61d8ac63935bc3",
+  "buddy_glasses_worn_cat_eye": "7f2ab8de82c14bb3264405e9cb20fbe8b9cf9c92e4ad14fda7aa9d185bf10f82",
+  "buddy_glasses_worn_monocle": "8d6a36a5c55a67bc217f74667d153479e14de3909cd842ab40030f86fe694322",
+  "buddy_glasses_worn_retro": "912d3687afe35fe02859765635606b2488675b0b46958e695f477eff435b7a71",
+  "buddy_glasses_worn_round": "bbf07758cdd831609ef71ac40a9666d7186931c205e037a817dbf3b583acd4ed",
+  "buddy_glasses_worn_star": "3c565ac06eeeb2d4ed4f6420e847414ec45f921a9ec4404c49ff8a5a83491fcd",
+  "buddy_stage_adult": "a5e940533e63026520315ce064f6c1089e8b0561cf4f3c65ee077d0abdfddb12",
+  "buddy_stage_baby": "61d1731576632b163dce371e2d6d3b768c4be1402f1f6f0567cf6f8ca3f326ee",
+  "buddy_stage_young": "1a4ac74537a6bfba1fa9f409e70377ca5941ea2646b79f14ea95cea1b0efad59"
+}
+-->
+<resources>
+    <string name="buddy_glasses">メガネ</string>
+    <string name="buddy_glasses_round">丸形</string>
+    <string name="buddy_glasses_star">星</string>
+    <string name="buddy_glasses_aviator">アビエーター</string>
+    <string name="buddy_glasses_cat_eye">キャットアイ</string>
+    <string name="buddy_glasses_retro">レトロ</string>
+    <string name="buddy_glasses_monocle">片眼鏡</string>
+    <string name="buddy_glasses_worn_round">丸メガネ</string>
+    <string name="buddy_glasses_worn_star">星形のメガネ</string>
+    <string name="buddy_glasses_worn_aviator">アビエーター型メガネ</string>
+    <string name="buddy_glasses_worn_cat_eye">キャットアイのメガネ</string>
+    <string name="buddy_glasses_worn_retro">レトロなメガネ</string>
+    <string name="buddy_glasses_worn_monocle">片眼鏡</string>
+    <string name="buddy_glasses_earn_round">相棒が最初から持っています</string>
+    <string name="buddy_glasses_earn_star">フェーズチャレンジで初めて勝つ</string>
+    <string name="buddy_glasses_earn_aviator">週間チャレンジを初めて終える</string>
+    <string name="buddy_glasses_earn_cat_eye">1日のミッションをすべて終える日を合計7日つくる</string>
+    <string name="buddy_glasses_earn_retro">復習を50回終える</string>
+    <string name="buddy_glasses_earn_monocle">最後のチャレンジに勝つ</string>
+    <string name="buddy_stage_baby">赤ちゃん</string>
+    <string name="buddy_stage_young">こども</string>
+    <string name="buddy_stage_adult">おとな</string>
+</resources>

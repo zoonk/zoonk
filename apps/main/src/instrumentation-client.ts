@@ -1,10 +1,10 @@
+import { noteAppWritesSent } from "@/lib/http/app-write-ledger";
+import { noteRouterTransition } from "@/lib/http/refresh-stale-pages";
 import { captureRouterTransitionStart, init } from "@sentry/nextjs";
-import { getPostHogConfig } from "@zoonk/utils/posthog";
+import { waitForSharedProperties } from "@zoonk/core/analytics/posthog-browser";
 import { getSentryDataCollection } from "@zoonk/utils/sentry";
 import { initBotId } from "botid/client/core";
-import posthog from "posthog-js";
-
-const postHogConfig = getPostHogConfig();
+import { type RouterTransitionType } from "next";
 
 if (process.env.NODE_ENV === "production") {
   init({
@@ -13,23 +13,24 @@ if (process.env.NODE_ENV === "production") {
     tracesSampleRate: 0.1,
   });
 
+  // Guests, sign-in codes and social sign-in: `botCheckPlugin` checks the same requests on the server.
+  // The cancel page's form posts its Server Action to the page, with or without a locale prefix.
   initBotId({
     protect: [
       { method: "POST", path: "/api/auth/*" },
-      { method: "GET", path: "/start/learn/*" },
-      // BotID sees localized browser paths before the proxy rewrites them.
-      { method: "GET", path: "/*/start/learn/*" },
-      { method: "GET", path: "/generate/*" },
-      { method: "GET", path: "/*/generate/*" },
+      { method: "POST", path: "/subscription/cancel" },
+      { method: "POST", path: "/*/subscription/cancel" },
     ],
   });
 }
 
-if (postHogConfig) {
-  posthog.init(postHogConfig.projectToken, {
-    api_host: postHogConfig.host,
-    defaults: postHogConfig.defaults,
-  });
-}
+/** PostHog starts from `AppAnalytics` once the visitor's choice and country allow it. */
+waitForSharedProperties();
 
-export const onRouterTransitionStart = captureRouterTransitionStart;
+/** Before any page's first write. */
+noteAppWritesSent();
+
+export function onRouterTransitionStart(url: string, navigationType: RouterTransitionType) {
+  noteRouterTransition(navigationType);
+  captureRouterTransitionStart(url, navigationType);
+}

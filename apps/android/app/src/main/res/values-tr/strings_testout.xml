@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "testout_already_skipped": "6df0bb86a5e2b2c6b702c32ef57a81bf1cb63559752816e9b2e785682cfc8ad2",
+  "testout_aside_title": "679ffc0424849f722bfd988aca814e7b94c004f8577986a38c9c2903660ad173",
+  "testout_continue": "442e7f0243316ee148c7945767569e1e4c456911d8fc623f699aa94d8f29a1f9",
+  "testout_intro_detail": "c9d1687aae67ea831b28fd5e76d4cbd6c2c97abb47acebe011e3cc334f5ed83e",
+  "testout_intro_title": "70ad76e57738e45ae67b9be85ff890bb5cef1c7cd516927859d519c3b2a41cf7",
+  "testout_lessons_back": "9477a3ef9b0984de2e7dc69f00c08a24fed4c8916c7cb9bc3b4a46a88a638251",
+  "testout_lessons_left": "153a3e035fd830fea9e767036d77aa004cb7adb19afe2657ab70e113ab744aa2",
+  "testout_lessons_off": "5a3c0bcb5619d0fe7ff060f72bc44799904973a2121cdf30143e984e17995fa8",
+  "testout_not_passed": "b67016e380c803a3fc11faea2120edcb0568996c51d868f195ef918269d604ca",
+  "testout_not_passed_detail": "df79ac6bf48b03ada3f93a7d741cb70653bbf57b432acd9bd67394c0d6ba82d9",
+  "testout_passed": "536e0d7878e37559917d764662c952692c9ea225022bb278b4d419b28c7fddb0",
+  "testout_rule": "e222da2a1da5f1be656525709b3f8cc0b0c2799bc3deb686eed686532fb66ded",
+  "testout_see_plus": "3140010c5931d53996e5a8ed7f5d2bc49cdfbab1d13b4895221639bec1edba9d",
+  "testout_start": "606ad6dcc30a02dbb61cdd7ae77246f573a745d05337936f7c912f500a8ef976",
+  "testout_starting": "534aca4c189ba0e14f33464865c02963de66329cb9fdd3722c626f2aeb915bfb",
+  "testout_this_chapter": "4994ba88545f9969761dab04674fc2ce3096806c12e6503944b2caec2d6302ba",
+  "testout_title": "4177c6eb1c8adc75792c6ec39e3790d1a21de1a947b6f266cc8c592f4e50a60a",
+  "testout_writing": "17e1d9c3c89cbaa887313d91f71d89a6dda951f171f50486b225c233033aac9e",
+  "testout_writing_detail": "93074cad75decdcdc023c22a79d023424466dded5a594b038c3807288e921ad5",
+  "testout_writing_line": "9d8d92d156b7de056e63d88a08641ecdf5b47dcc7ee8e3a4137f3fec837d5fc4",
+  "testout_writing_questions": "3f1f5eea3df5be2312197a2ccb3991c6da3812d6c1e72cd6f7c309c098aa5367",
+  "testout_writing_title": "c0fba7436295404af98e9e3094b49466a634713d01beacf0827321ad2dc804b1"
+}
+-->
+<resources>
+    <!-- A chapter test-out's title. %1$s is the chapter's name. -->
+    <string name="testout_title">Testle atla: %1$s</string>
+    <!-- Stands in for a chapter's name while it isn't known. -->
+    <string name="testout_this_chapter">Bu ünite</string>
+    <string name="testout_intro_title">Bunu zaten biliyor musun?</string>
+    <string name="testout_intro_detail">Bu üniteyle ilgili birkaç soru. İyi bir sonuç alırsan planın zaten bildiklerini atlar.</string>
+    <string name="testout_start">Testi başlat</string>
+    <string name="testout_starting">Başlıyoruz…</string>
+    <string name="testout_see_plus">Plus’ı incele</string>
+    <string name="testout_writing">Sorularını hazırlıyoruz</string>
+    <string name="testout_writing_questions">Bu üniteyle ilgili sorular hazırlıyoruz</string>
+    <string name="testout_writing_line">Sorularla ölçeceğimiz becerileri seçiyoruz…</string>
+    <string name="testout_writing_title">Testini hazırlıyoruz</string>
+    <string name="testout_writing_detail">Bu üniteyle ilgili birkaç soru hazırlıyoruz. Sorular hazır olduğunda test burada açılacak.</string>
+    <!-- A chapter test-out's rule above each question. %1$d is the share of right answers that passes, such as 80. -->
+    <string name="testout_rule">%%%1$d doğru cevapla üniteyi atlarsın. Test bitene kadar geri bildirim yok.</string>
+    <string name="testout_aside_title">Testi geçince atlanacaklar</string>
+    <plurals name="testout_lessons_left">
+        <item quantity="one">%d ders kaldı</item>
+        <item quantity="other">%d ders kaldı</item>
+    </plurals>
+    <string name="testout_passed">Bunu zaten biliyorsun</string>
+    <string name="testout_not_passed">Henüz değil, sorun yok</string>
+    <string name="testout_not_passed_detail">Ünite planında kalıyor ve cevapların doğru seviyeden başlamasına yardımcı oluyor.</string>
+    <!-- The learner passed this chapter\'s test. "It" is the chapter. -->
+    <string name="testout_already_skipped">Bu ünite planında zaten atlandı.</string>
+    <!-- The learner passed this chapter\'s test, so these lessons left the plan. -->
+    <plurals name="testout_lessons_off">
+        <item quantity="one">%d ders planından çıkarıldı.</item>
+        <item quantity="other">%d ders planından çıkarıldı.</item>
+    </plurals>
+    <string name="testout_lessons_back">Dersler yeniden planında.</string>
+    <string name="testout_continue">Devam et</string>
+</resources>

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mock_chooser_about": "6ead66916b5b7b79caba03cff89f9936061c6169012eb59767f433e276d16c23",
+  "mock_chooser_about_recommended": "4b6a05b89db75267a8f11b2b76d89bc2e114671db39d2ff71703b235ef14ed33",
+  "mock_chooser_failed": "37ea8e8a19d6b844737bfae1699597b50cdc083f696a495e6efa59ab34b1b860",
+  "mock_chooser_full_day_number_without": "134bbf9d254449ab8ed4dec0d4573495c6705f1c42849edca16d352873d0240b",
+  "mock_chooser_full_day_without": "0162d917df0a7b080068218a94548e0d6450778adc7b48875cd13f90b7831d45",
+  "mock_chooser_getting_ready": "fc8814f648495b5e82f677fe3ee3abbd7f618470c00a16ae20a3ee1a2c62f136",
+  "mock_chooser_last_mock": "b00b3257758801749577f292c949b1f32a9a032cc19715b3dd2b5110606aae59",
+  "mock_chooser_left_out_choice": "9374327e5d1699d74e531adfec6aa756dba69b01fdb8f924b9ff6bf8f8f0b718",
+  "mock_chooser_left_out_listening": "5d588b15f1c3e44cb10651f494df1b1395b4ed27d103167730e031a3d01d6a84",
+  "mock_chooser_left_out_named": "fbc0809d1583d4cc40700142c8b625b0ead10ef9ee68216b1a017db07a614238",
+  "mock_chooser_left_out_numeric": "55388694341538f138ec25991d822ce019f8718d7b6cb5e45a4b90f926378c0e",
+  "mock_chooser_left_out_practical": "0e38edccd09cb29200e982a597974970f05a2ae9379d9a8027eec41b5f8388b5",
+  "mock_chooser_left_out_practical_named": "b320eb8b70590dc6c53632d93f5cf460b43dab3fbab2b87f926040b08f5dbfc7",
+  "mock_chooser_left_out_short_answer": "ddc88520a1551ae592a75b827d923dd477066449b5530708efba3075979c2739",
+  "mock_chooser_left_out_speaking": "a9a049795a93e2ae8b32144860a4d3e729a7c8888f6290bec71c67578c201c1f",
+  "mock_chooser_left_out_written": "90de7d8dba9a484aee3c611295907b74ec3939540d04a09d7c1cf5ba60ee993d",
+  "mock_chooser_not_enough": "fcf70b9a4d821f7029cb8b1bb1207d6628ca838848c6548578f320eb571e58a7",
+  "mock_chooser_objective_only": "2c912278d9990a3009ddcbedfe4a7e600c67a1a584304035eef30a830fde2e0a",
+  "mock_chooser_one_subject": "cc2b25c2807f2df45acb99125f39e169339203ec220978b0426dc62a6396e8bb",
+  "mock_chooser_option_size": "ea8d76c59a42a6b6c8a7301ea86c762854e65af8488c8714f190e0d0bf09c214",
+  "mock_chooser_option_size_spoken": "7ce6e28cf687a3b45d062537ce34bb1c462f9ef9abc19fb7322ee5dff79f58e9",
+  "mock_chooser_parts": "0d63399a6dfe81c0d31ad6ce383fa758383872c0ebb2cd67906ec330b59fe4d5",
+  "mock_chooser_pick_free": "6b9c1b7d751705208821843801b75a8cad1922b48c85676abf8d8fcd57bda5e9",
+  "mock_chooser_picked": "79607e86e90f84e607f5d4ef9b1103de9dfdae19eb03dc1a116e26867c95f54f",
+  "mock_chooser_placement_detail": "4f246b4b38e42484fccbb53500fbaf8f524fd1f9905c46439d7293e190422574",
+  "mock_chooser_placement_long": "1c35da55327cfd961c671ed2e7db6cb289be7f3b5e17b70664ee9fb88ac56165",
+  "mock_chooser_placement_medium": "4e8f446ebdb6dc21e69ea661199c3c88425161bb89eba3e7426443f3a99d81e1",
+  "mock_chooser_placement_note": "c246b1c3e8df284c8bb9b2ddcdcfebe988549f6433df6913d85bcea1b50c507f",
+  "mock_chooser_placement_plus": "689970ce00b5bf47578fbd47d541709da946fae8c803d2bb42b2bf7fe32975d6",
+  "mock_chooser_placement_short": "b6e02f554f17aecf643447b7d4c493479baec7f56189fa9f663032cb8dac8749",
+  "mock_chooser_placement_size": "8aec127d69d96d63c9324595a0e7d4a58fb452b11b9fd936d781cbb773945752",
+  "mock_chooser_placement_size_spoken": "8d0927894751b0c8f2aaebfde349a37d72da3c3d93d277f39b7890fa8665bc9f",
+  "mock_chooser_placement_start": "c97eeaaafe5326446049ac6cfdc661f6cd4589d4b1907e298a1e1dda2aaa0d53",
+  "mock_chooser_placement_title": "a84a358c3e4d965775d42cb88569f9be74eb1cde75dc9727e3e97fc19f31a9c8",
+  "mock_chooser_placement_top_subject": "ace7f0b176abb426926960b4e4784f0c86834ee5e81f1a108dc60dc1285ebfde",
+  "mock_chooser_placement_top_subjects": "22730b2258f96006c448cb1805729c6caf58baa26fccb7ec3ac99e20e2feece3",
+  "mock_chooser_plus": "58b9107d868f72b15ae6a3e6bf1b6b6421f6e76f512b9bba97e87db88a9813c8",
+  "mock_chooser_preparing": "b5c3e09bb2aa2e82aaf1a789b058e887e1c7a5076604db98e2d0ccff34fa3dd4",
+  "mock_chooser_preparing_detail": "a97e16099c20a0ac810f5bd7cc52159c009663dde2e3c355144f4417428b43b3",
+  "mock_chooser_questions": "87696f8bd86e57854e61e9689ce68471acd9b649c92cb2d28e9ee10d712e749a",
+  "mock_chooser_rule": "24b1c600257a700c5d731f940761abef122ed9e52a83c1c176c6d01e2a61685c",
+  "mock_chooser_see_plus": "3ab712200c13fb3c9cb6d11f518d733909b1fd847c2c109d5294d37c0b4c6077",
+  "mock_chooser_short": "ad52838bb61270676f790a5d532c5dd6268525138c0c42238429efc2ec75b6a0",
+  "mock_chooser_short_day": "c8a36824803738dbb45295b862c576f15dc8fb1c0da1747dab84ed458bd053d9",
+  "mock_chooser_short_month": "74aabce302dee33af46412712310088d390ea0fd1004aefe2a931c22dd8ff97a",
+  "mock_chooser_short_none": "1093d7d408062c231b477d1e5febbc7bc679dcf1b53fa35292cbcf846d9f3d01",
+  "mock_chooser_size_guide_formats": "63f6b47d89ac7cd6d8568f829120104d43a106baa6437d294f4ce72ec03ef5e4",
+  "mock_chooser_size_guide_past_edition": "3181362cf185e358d6bcc497727bb10b9ed21af0f25e5b5ac26ccf5f4206fb29",
+  "mock_chooser_size_guide_questions": "6444bf955197bc0f8fb50c44564000d1e2619b64b200d209d50828bc353f5aec",
+  "mock_chooser_size_guide_subjects": "6f5625661bb2c78ad3bf84b209f6ccca5d1f0903cd532fc0c5220770471515b6",
+  "mock_chooser_size_guide_time": "2b308673c681eb53742d5e88cdc2f36b0215c2da4af017d5dcec26fe18b08c29",
+  "mock_chooser_size_latest_exam": "3054e57a1ad963d922d12280ae290c09ae9c11310d5183ae56b3a80a3c36b347",
+  "mock_chooser_size_material_formats": "17180910884c5792b5089b3fe022e0bbdc55363a1c4f744d83dc82aef384b658",
+  "mock_chooser_size_material_length": "1991fe5eafe448d02fbdceebc12fc1e5f6b4e1cd72bcf8d950b8ffc9cb06678b",
+  "mock_chooser_size_notice_formats": "e1a28f80f154e5cb167aec6f2a9a943a143300670b1e688b1159b6fb0fdfa411",
+  "mock_chooser_size_notice_past_edition": "26e1e7734c76b433bcef9ee7072c58aacaaff8b6f50d8987b4448465ed017d8b",
+  "mock_chooser_size_notice_questions": "77ae23fab0a9e5927571011c41ba842ccce41c95bda6ad63d4b4e492fe308804",
+  "mock_chooser_size_notice_subjects": "9e597a12896d6c41921ff862c07a8a6c79643591199ca615aac36e6146109120",
+  "mock_chooser_size_notice_time": "1d06eb75da621450156b635ac8e8fe6e0470675a9d1b68b156dde5b6e7735d8c",
+  "mock_chooser_size_past_edition": "a7c88dd5c8e159f6aa73b54393dbe2b6abd761942aa94890306b3357aadfd57d",
+  "mock_chooser_start": "3be2e8fcd8004e3c2989fa2571c2c30b23fe5807ab55b303f025b43b460e8beb",
+  "mock_chooser_start_with": "d21aef7828611572f365206ec34ca497e2ffdc7bf2e7c1c1d1bdf85190677623",
+  "mock_chooser_subjects": "8c81a9641be7b561d2efab482653e76d8294efef53e05a633e523c764a3b98fb",
+  "mock_chooser_time_limit": "2149e10575145755e2f37cd6ec4175a7e93418fd6128717bf9f8cca7ae5f0b26",
+  "mock_chooser_title": "2d2ae11539adeaac9512256e3993a3271af5fa8c4773c2c8969197cb4b97701d",
+  "mock_chooser_usually_takes": "aa8e58d6b866cd12fac994ac77f9335f2282274da3f9eca619f187f5adf8ed93",
+  "mock_chooser_writing": "37f27aa30ca55987a6bfe1e0c8b21c019a1c1a9edf2192fcc7ffb9dd6ecd3d47",
+  "mock_chooser_writing_questions": "4b3be9d8f8314fbbc870e49a5af68c5333a6fc18100319115fae31fcb4ee4486",
+  "mock_chooser_writing_questions_line": "196f54dd2cd53af75b30a3c06bd75fa8e320d8c4a8492b30c3d9409376c25b72",
+  "mock_chooser_written": "fc86952c34dcbe0b14b5fa2ba03b88094d20b26d9cc1d7d8cce6ee1fd4ddb5f0",
+  "mock_chooser_written_part": "ab2bb9df5e72c6ca2e41165fa6e9d5c9b03408ebb2fda8d907f0c33af04a7444"
+}
+-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="mock_chooser_title">Deneme sınavına gir</string>
+    <string name="mock_chooser_rule">Sınav gününde olduğu gibi, sonucunu yalnızca en sonda görürsün.</string>
+    <string name="mock_chooser_pick_free">Sınavın ne kadarını şimdi çözeceğini seç.</string>
+    <string name="mock_chooser_start">Başla</string>
+    <string name="mock_chooser_getting_ready">Hazırlıyoruz…</string>
+    <plurals name="mock_chooser_start_with">
+        <item quantity="one">%d soruyla başla</item>
+        <item quantity="other">%d soruyla başla</item>
+    </plurals>
+    <string name="mock_chooser_see_plus">Plus’ı incele</string>
+    <string name="mock_chooser_plus">Deneme sınavları Plus’a dahil: istediğin zaman ve her hafta planında.</string>
+    <string name="mock_chooser_one_subject">Tek branş</string>
+    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$s lists them, such as "Specialty knowledge (P3)". -->
+    <string name="mock_chooser_full_day_without">Sınav günü, %1$s hariç</string>
+    <!-- PluralsCandidate: %1$d names which exam day it is, not a count. -->
+    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$d is the exam day's number; %2$s lists the tests, such as "Foreign language". -->
+    <string name="mock_chooser_full_day_number_without" tools:ignore="PluralsCandidate">%1$d. sınav günü, %2$s hariç</string>
+    <!-- After a mock's parts or subjects: the mock covers only the exam's objective part, questions with set answers, and leaves the exam day's written part out. -->
+    <string name="mock_chooser_objective_only">yalnızca test kısmı</string>
+    <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
+    <string name="mock_chooser_written">+ %1$s</string>
+    <!-- A mock's size in a row: %1$d questions ("q" is short for questions) and about %2$s, a duration such as "5 hr". -->
+    <string name="mock_chooser_option_size">%1$d soru · ~%2$s</string>
+    <!-- What screen readers say for a mock's size: %2$s is a duration such as "5 hr". -->
+    <plurals name="mock_chooser_option_size_spoken">
+        <item quantity="one">%1$d soru, yaklaşık %2$s</item>
+        <item quantity="other">%1$d soru, yaklaşık %2$s</item>
+    </plurals>
+    <!-- A placement mock's questions in a row; "q" is short for questions. -->
+    <string name="mock_chooser_placement_size">%1$d soru</string>
+    <plurals name="mock_chooser_placement_size_spoken">
+        <item quantity="one">%d soru</item>
+        <item quantity="other">%d soru</item>
+    </plurals>
+    <!-- How many of the picked mock's questions the bank has now (%1$d) of the real exam's (%2$s), and about how long it takes (%3$s, a duration). -->
+    <plurals name="mock_chooser_short">
+        <item quantity="one">Şimdilik %1$d soru hazır; gerçek sınavda ise %2$s soru var. Bu yüzden bu deneme sınavı yaklaşık %3$s sürer.</item>
+        <item quantity="other">Şimdilik %1$d soru hazır; gerçek sınavda ise %2$s soru var. Bu yüzden bu deneme sınavı yaklaşık %3$s sürer.</item>
+    </plurals>
+    <string name="mock_chooser_short_day">Yarın deneme sınavların için daha fazla soru hazırlayabiliriz.</string>
+    <string name="mock_chooser_short_month">Gelecek ay deneme sınavların için daha fazla soru hazırlayabiliriz.</string>
+    <string name="mock_chooser_short_none">Soru bankasında bu deneme sınavı için henüz başka yeni soru yok.</string>
+    <string name="mock_chooser_not_enough">Bu deneme sınavı için henüz yeterli soru yok. Sınavın tamamını veya başka bir branşı dene.</string>
+    <string name="mock_chooser_failed">Deneme sınavını başlatamadık. Tekrar dene.</string>
+    <string name="mock_chooser_preparing">Deneme sınavını hazırlıyoruz</string>
+    <string name="mock_chooser_preparing_detail">Senin için sınavdakilere benzer sorular hazırlıyoruz. Sorular hazır olur olmaz deneme sınavı burada başlayacak.</string>
+    <string name="mock_chooser_writing">Deneme sınavını hazırlıyoruz</string>
+    <string name="mock_chooser_writing_questions">Sınavdakilere benzer sorular hazırlıyoruz</string>
+    <string name="mock_chooser_writing_questions_line">Her branşta ne soracağımızı seçiyoruz…</string>
+    <!-- The panel beside the options, about the one picked. -->
+    <string name="mock_chooser_picked">Seçilen deneme sınavı</string>
+    <string name="mock_chooser_questions">Sorular</string>
+    <string name="mock_chooser_time_limit">Süre sınırı</string>
+    <string name="mock_chooser_usually_takes">Genelde gereken süre</string>
+    <!-- %1$s is a duration, such as "1 hr 20 min". -->
+    <string name="mock_chooser_about">Yaklaşık %1$s</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="mock_chooser_about_recommended">Yaklaşık %1$s (önerilen)</string>
+    <string name="mock_chooser_subjects">Branşlar</string>
+    <!-- The exam's sections a mock sits, such as Listening and Reading. -->
+    <string name="mock_chooser_parts">Oturumlar</string>
+    <!-- Under a part such as "Essay", which the learner writes rather than answers. -->
+    <string name="mock_chooser_written_part">Yazılı kısım</string>
+    <string name="mock_chooser_last_mock">Son deneme sınavın</string>
+    <string name="mock_chooser_placement_title">Seviyeni belirlemek için bir deneme sınavı</string>
+    <string name="mock_chooser_placement_detail">Sınav formatında. Planının başlangıcını cevapların belirler.</string>
+    <string name="mock_chooser_placement_start">Deneme sınavına başla</string>
+    <string name="mock_chooser_placement_note">İstediğin zaman durabilirsin: planın cevapladığın sorulara göre şekillenir. Sonucun en sonda görünür.</string>
+    <string name="mock_chooser_placement_plus">Deneme sınavları Plus’a dahildir. Plus olmadan başlangıç seviyeni kısa sorularla belirleriz.</string>
+    <string name="mock_chooser_placement_top_subject">Puan ağırlığı en yüksek branş. İlk günlerde diğer branşlardan da sorular gelir.</string>
+    <!-- %d is how many subjects a short placement mock asks, two or more, as in "The 3 subjects worth most": the three with the most weight in the exam's score. -->
+    <plurals name="mock_chooser_placement_top_subjects">
+        <item quantity="one">Puan ağırlığı en yüksek %d branş. İlk günlerde diğer branşlardan da sorular gelir.</item>
+        <item quantity="other">Puan ağırlığı en yüksek %d branş. İlk günlerde diğer branşlardan da sorular gelir.</item>
+    </plurals>
+    <string name="mock_chooser_placement_short">Hızlı bir kontrol. İlk günlerde seviyeni daha net belirleriz.</string>
+    <string name="mock_chooser_placement_medium">Tüm branşlar. İyi bir başlangıç noktası.</string>
+    <string name="mock_chooser_placement_long">En doğru başlangıç noktası.</string>
+    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
+    <string name="mock_chooser_size_past_edition">%1$s için branş başına soru sayıları %2$s sayımına dayanıyor.</string>
+    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
+    <string name="mock_chooser_size_latest_exam">Son sınavdaki branş başına soru sayıları %1$s sayımına dayanıyor.</string>
+    <!-- %2$s is a duration, such as "1 hr 20 min". -->
+    <plurals name="mock_chooser_size_material_length">
+        <item quantity="one">Materyalinde sınavın süresi belirtilmiyor. Bu deneme sınavında %1$d soru için %2$s süren var.</item>
+        <item quantity="other">Materyalinde sınavın süresi belirtilmiyor. Bu deneme sınavında %1$d soru için %2$s süren var.</item>
+    </plurals>
+    <string name="mock_chooser_size_material_formats">Materyalinde her türden kaç soru olduğu belirtilmediği için sorular eşit dağıtıldı.</string>
+    <plurals name="mock_chooser_size_notice_questions">
+        <item quantity="one">İlanda sınavda kaç soru olduğu belirtilmiyor. Bu deneme sınavında %d soru var.</item>
+        <item quantity="other">İlanda sınavda kaç soru olduğu belirtilmiyor. Bu deneme sınavında %d soru var.</item>
+    </plurals>
+    <plurals name="mock_chooser_size_guide_questions">
+        <item quantity="one">Resmî kılavuzda sınavda kaç soru olduğu belirtilmiyor. Bu deneme sınavında %d soru var.</item>
+        <item quantity="other">Resmî kılavuzda sınavda kaç soru olduğu belirtilmiyor. Bu deneme sınavında %d soru var.</item>
+    </plurals>
+    <plurals name="mock_chooser_size_notice_past_edition">
+        <item quantity="one">İlanda sınavda kaç soru olduğu belirtilmiyor. Bu deneme sınavı, geçmiş bir sınavda olduğu gibi %d sorudan oluşuyor.</item>
+        <item quantity="other">İlanda sınavda kaç soru olduğu belirtilmiyor. Bu deneme sınavı, geçmiş bir sınavda olduğu gibi %d sorudan oluşuyor.</item>
+    </plurals>
+    <plurals name="mock_chooser_size_guide_past_edition">
+        <item quantity="one">Resmî kılavuzda sınavda kaç soru olduğu belirtilmiyor. Bu deneme sınavı, geçmiş bir sınavda olduğu gibi %d sorudan oluşuyor.</item>
+        <item quantity="other">Resmî kılavuzda sınavda kaç soru olduğu belirtilmiyor. Bu deneme sınavı, geçmiş bir sınavda olduğu gibi %d sorudan oluşuyor.</item>
+    </plurals>
+    <string name="mock_chooser_size_notice_subjects">İlanda her branşta kaç soru olduğu belirtilmiyor, bu yüzden sorular eşit dağıtılıyor.</string>
+    <string name="mock_chooser_size_guide_subjects">Resmî kılavuzda her oturumda kaç soru olduğu belirtilmiyor, bu yüzden sorular eşit dağıtılıyor.</string>
+    <string name="mock_chooser_size_notice_formats">İlanda her soru türünden kaç tane olduğu belirtilmiyor, bu yüzden türlere eşit sayıda soru ayrılıyor.</string>
+    <string name="mock_chooser_size_guide_formats">Resmî kılavuzda her soru türünden kaç tane olduğu belirtilmiyor, bu yüzden türlere eşit sayıda soru ayrılıyor.</string>
+    <!-- %1$s is a duration, such as "4 hr". -->
+    <string name="mock_chooser_size_notice_time">İlanda sınavın süresi belirtilmiyor. Bu deneme sınavında %1$s süren var.</string>
+    <!-- %1$s is a duration, such as "4 hr". -->
+    <string name="mock_chooser_size_guide_time">Resmî kılavuzda sınavın süresi belirtilmiyor. Bu deneme sınavında %1$s süren var.</string>
+    <!-- %1$s is the exam's name for a section, such as "Listening". -->
+    <string name="mock_chooser_left_out_named">%1$s henüz deneme sınavlarında yok.</string>
+    <string name="mock_chooser_left_out_listening">Dinleme henüz deneme sınavlarında yok.</string>
+    <string name="mock_chooser_left_out_speaking">Konuşma bölümü henüz deneme sınavlarında yok.</string>
+    <!-- %1$s is the exam's name for a practical test, such as "Driving test". -->
+    <string name="mock_chooser_left_out_practical_named">%1$s uygulamalı bir sınav olduğu için deneme sınavına dahil edilemiyor.</string>
+    <string name="mock_chooser_left_out_practical">Sınavın uygulamalı bölümü deneme sınavına eklenemez.</string>
+    <string name="mock_chooser_left_out_numeric">Sayıyla cevaplanan sorular çoktan seçmeli olarak sorulur.</string>
+    <string name="mock_chooser_left_out_short_answer">Birkaç kelimeyle cevaplanan sorular çoktan seçmeli olarak sorulur.</string>
+    <!-- %1$s is the exam's name for a written part, such as "Essay". -->
+    <string name="mock_chooser_left_out_written">%1$s için henüz kompozisyon yok. Bu kısmın alıştırmalarını kompozisyon çalışmalarında yaparsın.</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test, that the learner hasn't picked an option for yet. -->
+    <string name="mock_chooser_left_out_choice">%1$s, planında seçimini yapana kadar dışarıda kalır.</string>
+</resources>

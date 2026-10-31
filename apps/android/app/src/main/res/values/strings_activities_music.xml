@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="activities_music_badge_play_it">Play it</string>
+    <!-- Training the ear to recognize notes and chords by their sound. -->
+    <string name="activities_music_badge_ear_training">Ear training</string>
+    <!-- Reading music while it plays. -->
+    <string name="activities_music_badge_read_listen">Read and listen</string>
+    <!-- Tapping a rhythm in time with the beat. -->
+    <string name="activities_music_badge_tap_along">Tap along</string>
+
+    <!-- A note name read aloud, like "F sharp". -->
+    <string name="activities_music_note_sharp">%1$s sharp</string>
+    <!-- A note name read aloud, like "E flat". -->
+    <string name="activities_music_note_flat">%1$s flat</string>
+    <!-- A chord's name: its root note, then the chord's kind, like "C major". -->
+    <string name="activities_music_chord_major">%1$s major</string>
+    <string name="activities_music_chord_minor">%1$s minor</string>
+    <string name="activities_music_chord_augmented">%1$s augmented</string>
+    <string name="activities_music_chord_diminished">%1$s diminished</string>
+    <string name="activities_music_chord_dominant7">%1$s dominant seventh</string>
+    <string name="activities_music_chord_major7">%1$s major seventh</string>
+    <string name="activities_music_chord_minor7">%1$s minor seventh</string>
+
+    <!-- The title while the notes to find are only heard, not named. -->
+    <string name="activities_music_by_ear">By ear</string>
+    <!-- How many notes the target has, like "2 notes". -->
+    <plurals name="activities_music_note_count">
+        <item quantity="one">%d note</item>
+        <item quantity="other">%d notes</item>
+    </plurals>
+    <!-- Nothing is pressed on the instrument. -->
+    <string name="activities_music_no_notes">No notes yet</string>
+    <!-- For TalkBack: the notes the instrument plays now, like "On the keys: C, E flat, G". -->
+    <string name="activities_music_on_the_keys">On the keys: %1$s</string>
+    <!-- Plays the chord or notes to find by ear. -->
+    <string name="activities_music_play_sound">Play the sound</string>
+    <!-- Plays the notes on the keys. -->
+    <string name="activities_music_hear_it">Hear it</string>
+    <!-- On a screen to find a sound by ear: shows the sound's notes as text instead, for the rest of the day. -->
+    <string name="activities_music_cant_listen_now">I can\'t listen now</string>
+    <!-- After "I can't listen now": goes back to finding sounds by ear. -->
+    <string name="activities_music_can_listen_now">I can listen now</string>
+    <!-- The notes the sound plays, as text, like "The sound plays: C, G". -->
+    <string name="activities_music_sound_notes">The sound plays: %1$s</string>
+    <!-- Under an instrument when the device couldn't play sound. -->
+    <string name="activities_music_sound_unavailable">The sound couldn\'t play. You can still see every note.</string>
+
+    <!-- For TalkBack: the piano keyboard's name. -->
+    <string name="activities_music_piano_keys">Piano keys</string>
+    <!-- For TalkBack: the checked piano keyboard, its lowest and highest notes, then the notes the learner pressed, like "A piano keyboard from C to B. Pressed: C, E flat, G." -->
+    <string name="activities_music_piano_pressed">A piano keyboard from %1$s to %2$s. Pressed: %3$s.</string>
+    <!-- For TalkBack: the checked piano keyboard, its lowest and highest notes, when the learner pressed no key, like "A piano keyboard from C to B. Nothing pressed." -->
+    <string name="activities_music_piano_nothing_pressed">A piano keyboard from %1$s to %2$s. Nothing pressed.</string>
+    <!-- For TalkBack: the guitar neck's name. -->
+    <string name="activities_music_guitar_strings">Guitar strings</string>
+    <!-- Above a guitar shape that plays the chord on the keys. -->
+    <string name="activities_music_same_chord_guitar">Same chord on guitar</string>
+    <!-- Above a guitar shape that plays the notes on the keys. -->
+    <string name="activities_music_same_notes_guitar">Same notes on guitar</string>
+    <!-- Above a guitar shape that plays the right notes, after the check. -->
+    <string name="activities_music_answer_on_guitar">One way to play the answer</string>
+    <!-- Under the piano when the pressed notes can't be played as one guitar shape. -->
+    <string name="activities_music_no_hand_shape">These notes don\'t fit in one hand shape on the guitar.</string>
+    <!-- Moves the guitar neck's window toward the nut. -->
+    <string name="activities_music_lower_frets">Lower frets</string>
+    <!-- Moves the guitar neck's window up the neck. -->
+    <string name="activities_music_higher_frets">Higher frets</string>
+    <!-- Which frets of the guitar neck show, like "Frets 1 to 4". -->
+    <string name="activities_music_frets">Frets %1$d to %2$d</string>
+    <!-- The thickest guitar string, read aloud. -->
+    <string name="activities_music_string_low_e">Low E string</string>
+    <!-- The thinnest guitar string, read aloud. -->
+    <string name="activities_music_string_high_e">High E string</string>
+    <!-- A guitar string named by its open note, like "A string". -->
+    <string name="activities_music_string">%1$s string</string>
+    <!-- A guitar string left silent (muted). -->
+    <string name="activities_music_not_played">Not played</string>
+    <!-- A guitar string played open, with the note it sounds, like "Open, D". -->
+    <string name="activities_music_open_string">Open, %1$s</string>
+    <!-- A fret on a guitar string, with the note it sounds, like "Fret 3, G". -->
+    <string name="activities_music_fret">Fret %1$d, %2$s</string>
+    <!-- For TalkBack: one string of a guitar shape, like "A string: Fret 3, C". -->
+    <string name="activities_music_string_position">%1$s: %2$s</string>
+
+    <!-- The title of a melody that has none. -->
+    <string name="activities_music_melody">Melody</string>
+    <!-- For TalkBack: the choice between showing the music as a staff or as guitar tab. -->
+    <string name="activities_music_show_as">Show the music as</string>
+    <!-- Music written on the five-line staff. -->
+    <string name="activities_music_staff">Staff</string>
+    <!-- Guitar tablature: music written as fret numbers on the guitar's strings. -->
+    <string name="activities_music_tab">Tab</string>
+    <string name="activities_music_play_melody">Play the melody</string>
+    <!-- Stops the melody playing. -->
+    <string name="activities_music_stop">Stop</string>
+    <!-- Which bar of the melody is playing, like "Bar 2 of 4". -->
+    <string name="activities_music_bar_of">Bar %1$d of %2$d</string>
+    <!-- How many bars the melody has, like "4 bars". -->
+    <plurals name="activities_music_bars">
+        <item quantity="one">%d bar</item>
+        <item quantity="other">%d bars</item>
+    </plurals>
+    <!-- For TalkBack: the tempo menu with its choice, like "Tempo: 80 bpm". -->
+    <string name="activities_music_tempo">Tempo: %1$s</string>
+    <!-- Beats per minute, like "80 bpm". -->
+    <string name="activities_music_bpm">%1$d bpm</string>
+    <!-- For TalkBack: one bar of the melody and its notes, like "Bar 1: E, E, F, G." -->
+    <string name="activities_music_bar_notes">Bar %1$d: %2$s.</string>
+
+    <!-- The rhythm's tempo while one round plays, like "90 bpm · Round 1 of 2". -->
+    <string name="activities_music_rhythm_round">%1$d bpm · Round %2$d of %3$d</string>
+    <!-- The rhythm's tempo and how many times it repeats, like "90 bpm · 2 rounds". -->
+    <plurals name="activities_music_rhythm_rounds">
+        <item quantity="one">%1$d bpm · %2$d round</item>
+        <item quantity="other">%1$d bpm · %2$d rounds</item>
+    </plurals>
+    <!-- For TalkBack: the rhythm in words, like "A rhythm of 16 steps with a beat every 4. Tap on steps 1, 4, 7, 11, 13, over a click on every beat." -->
+    <plurals name="activities_music_rhythm_description">
+        <item quantity="one">A rhythm of %1$d step with a beat every %2$d. Tap on steps %3$s, over a click on every beat.</item>
+        <item quantity="other">A rhythm of %1$d steps with a beat every %2$d. Tap on steps %3$s, over a click on every beat.</item>
+    </plurals>
+    <!-- The legend for the rhythm's steps to tap. -->
+    <string name="activities_music_rhythm_hits">Rhythm hits</string>
+    <!-- The legend for a tap that came on time. -->
+    <string name="activities_music_on_time">On time</string>
+    <!-- The legend for a tap that came too early or too late. -->
+    <string name="activities_music_early_or_late">Early or late</string>
+    <!-- On the tap pad while the count-in clicks play. -->
+    <string name="activities_music_get_ready">Get ready…</string>
+    <!-- The tap pad's label. -->
+    <string name="activities_music_tap_here">Tap here</string>
+    <!-- Under the tap pad when a keyboard is attached. -->
+    <string name="activities_music_or_space">or press Space</string>
+    <!-- Plays one round of the rhythm with its clicks before the learner taps. -->
+    <string name="activities_music_listen_first">Listen first</string>
+    <string name="activities_music_try_again">Try again</string>
+    <string name="activities_music_start_tapping">Start tapping</string>
+    <!-- Measures again how late this device plays sound. -->
+    <string name="activities_music_check_sound_again">Check the sound delay again</string>
+    <!-- How many of the rhythm's taps came on time, like "8 of 10 taps on time." The count is the total. -->
+    <plurals name="activities_music_taps_on_time">
+        <item quantity="one">%1$d of %2$d tap on time.</item>
+        <item quantity="other">%1$d of %2$d taps on time.</item>
+    </plurals>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms early". The first value is which tap, counted from 1. -->
+    <string name="activities_music_tap_early">Tap %1$s came %2$d ms early.</string>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms late". The first value is which tap, counted from 1. -->
+    <string name="activities_music_tap_late">Tap %1$s came %2$d ms late.</string>
+    <!-- Which tap was missed, counted from 1, like "Tap 3 was missed." -->
+    <string name="activities_music_tap_missed">Tap %1$s was missed.</string>
+    <!-- Taps that matched none of the rhythm's steps. -->
+    <plurals name="activities_music_extra_taps">
+        <item quantity="one">%d extra tap.</item>
+        <item quantity="other">%d extra taps.</item>
+    </plurals>
+    <!-- The title of the one-time check of how late this device plays sound. -->
+    <string name="activities_music_sound_check_title">Set up your sound</string>
+    <plurals name="activities_music_sound_check_intro">
+        <item quantity="one">Headphones can play sound a little late. Tap along with %1$d click once, and rhythms on this device are timed fairly.</item>
+        <item quantity="other">Headphones can play sound a little late. Tap along with %1$d clicks once, and rhythms on this device are timed fairly.</item>
+    </plurals>
+    <string name="activities_music_sound_check_listen">Listen to the clicks…</string>
+    <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
+    <string name="activities_music_sound_check_tap">Tap with each click · %1$d of %2$d</string>
+    <string name="activities_music_sound_check_failed">We couldn\'t match enough taps to the clicks. Try again, tapping with each one.</string>
+    <string name="activities_music_sound_check_on_time">Sound on this device arrives on time.</string>
+    <!-- How late this device plays sound, like "about 120 ms late". -->
+    <string name="activities_music_sound_check_late">Sound on this device arrives about %1$d ms late. Rhythms here take that out.</string>
+    <string name="activities_music_sound_check_start">Start the sound check</string>
+    <string name="activities_music_skip_for_now">Skip for now</string>
+    <string name="activities_music_continue">Continue</string>
+</resources>

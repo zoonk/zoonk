@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "ceremony_belt": "0a5242c9619474e8081cb7dbc552d494b8c4b39efc6f80f6631a4b34e6709d74",
+  "ceremony_belt_detail": "42f380760be92e8789f7b14a68191782397e9cb67c4188d11563e991d7700b5e",
+  "ceremony_belt_reached": "d60bcdf78701a7d5022d922de85f3f7a85c8586ab4ad3d0b5da4282614eb4d4f",
+  "ceremony_continue": "ceedae73bcda830b31657f29b3ca645f4848dbccc86454efe4f43c852783a7e9",
+  "ceremony_glasses_aviator": "59f36cca3faa3b1026fdd2c22b161c8edf061f3fbde9a8b43842ac455b0369b5",
+  "ceremony_glasses_aviator_detail": "f1a6f4ddf7b6cdfafd7833f83c0bb2c771ecc06ea8b1557485951d7bc16516ae",
+  "ceremony_glasses_cat_eye": "a57462e9756c979f060089ca317e1409bee3706f963cc9396f946b07a821387d",
+  "ceremony_glasses_cat_eye_detail": "6879cc5a607013e15f4f4fe29d49663313c3367ee6ff27ed21e6025b20098423",
+  "ceremony_glasses_monocle": "d0b91285c41a8d91f2a25f3f69880ed61b016e2b33e255bb7790b1af9dceeb5e",
+  "ceremony_glasses_monocle_detail": "39f317d61c0aa67fd552e7059e955d10db93e6012a58fd5b958acde16b7a40a5",
+  "ceremony_glasses_new": "070ce783e35bfb683fe932cfe6ddc6ddb26b8fb29692a048e4e0dbaeb099e1cc",
+  "ceremony_glasses_new_detail": "c6b032c0759509244cbd2bf28ce6123eb330d3a563520ca945d92e4bc0a54fc6",
+  "ceremony_glasses_retro": "c086ad3588a26eeb965f0786f17a41cb82fa284ae398aabeaeb9a7c6fb8e02a6",
+  "ceremony_glasses_retro_detail": "e95aa45923945b8059a5c1140b9e04330469f949ca1e8a653eaef437a5c294f3",
+  "ceremony_glasses_star": "18080be6aaf4ad3309368cad9e322edab76b9f2025b965482bbd1205239f4f3c",
+  "ceremony_glasses_star_detail": "d62d9d78b4fc2d2abad9b463377e5ca1ad64fbad27a350537f88bf9d4d14abfa",
+  "ceremony_grew_up": "1ed8dd67d638787dabae4daa6cde20673076b26ee7b27457c3d734dcd238cffe",
+  "ceremony_new_belt": "5f2a7894a2546967734101d2f13cc310db811be603d0d9ae32123950ad8c96eb",
+  "ceremony_not_now": "d4c1eb6257b4a0781cc5a4ba84124d36aebb202001e56f74f68c16a6c5c2d3c6",
+  "ceremony_stage_adult": "3a710720a4569544767e55aae748accbcf73f85e901a9abe4578393b6c0bd6bf",
+  "ceremony_stage_young": "66ae76daec1a03168b0eadb0da9e79af711dbc4939476eebeea72296a51738b1",
+  "ceremony_wear": "b74e80d2fa5c4b4b3963debfad610a59ab9dbb0ae977d260d2a154301b30825e"
+}
+-->
+<resources>
+    <!-- %1$s is the belt's name, such as Yellow belt. -->
+    <string name="ceremony_belt">%1$s!</string>
+    <string name="ceremony_new_belt">Yeni bir kuşak!</string>
+    <!-- %1$s is a formatted amount of Brain Power, such as 1,000. -->
+    <string name="ceremony_belt_reached">Öğrenerek %1$s Beyin Gücüne ulaştın.</string>
+    <string name="ceremony_belt_detail">Bunu Beyin Gücünle kazandın.</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="ceremony_grew_up">%1$s büyüdü!</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="ceremony_stage_young">%1$s artık Genç ve Beyin Gücünle büyümeye devam ediyor.</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="ceremony_stage_adult">%1$s artık Yetişkin ve Beyin Gücün sayesinde büyümesini tamamladı.</string>
+    <string name="ceremony_glasses_star">Yıldız şeklinde gözlük!</string>
+    <string name="ceremony_glasses_star_detail">İlk aşama meydan okumanı kazandığın için.</string>
+    <string name="ceremony_glasses_aviator">Pilot gözlüğü!</string>
+    <string name="ceremony_glasses_aviator_detail">İlk haftalık meydan okumanı tamamladığın için.</string>
+    <string name="ceremony_glasses_cat_eye">Kedi gözü gözlük!</string>
+    <string name="ceremony_glasses_cat_eye_detail">7 farklı günde tüm görevlerini tamamladığın için.</string>
+    <string name="ceremony_glasses_retro">Retro gözlük!</string>
+    <string name="ceremony_glasses_retro_detail">50 tekrar tamamladığın için.</string>
+    <string name="ceremony_glasses_monocle">Tek gözlük!</string>
+    <string name="ceremony_glasses_monocle_detail">Son meydan okumayı kazandığın için.</string>
+    <string name="ceremony_glasses_new">Yeni gözlük!</string>
+    <string name="ceremony_glasses_new_detail">Arkadaşınla birlikte gelir.</string>
+    <string name="ceremony_continue">Devam et</string>
+    <!-- Button after earning glasses: puts them on the learner's buddy. -->
+    <string name="ceremony_wear">Tak</string>
+    <string name="ceremony_not_now">Sonraya bırak</string>
+</resources>

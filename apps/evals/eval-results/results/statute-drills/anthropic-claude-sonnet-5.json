@@ -1,0 +1,202 @@
+{
+  "modelId": "anthropic/claude-sonnet-5",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "Drills 1, 2, 3, 5 and 6 have keys supported by the supplied text. Drill 1's omissions do not invalidate its true key. Drill 4's false key is unjustified because a lexical difference alone does not contradict the provision, triggering the maximum score of 7 for one wrong key. The additional overbroad claim in drill 5's explanation—that daytime entry without consent requires judicial authorization—further reduces accuracy, despite the subsequent correct list of exceptions. The quoted fragments themselves are accurate, so the two-misquotation cap is not triggered.",
+          "score": 6,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "The residence-condition trap in drill 2 is valid and specifically identified. Drill 4 uses a near-synonym rather than a clear change in legal scope, making its trap ambiguous. Drill 5 changes multiple features of the original wording and introduces an investigation scenario, while its misconception identifies only an authority change. These nonconforming traps warrant the maximum-7 limitation for multiple vague or multi-element traps.",
+          "score": 7,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "All six drills are Portuguese right/wrong statements, with exactly three labeled false, matching the requested Cebraspe format and balance. The explanations are understandable and in the learner's language. However, the false caput statement and especially the item XI statement depart from the requested close preservation of statutory wording. The set remains recognizable as Cebraspe-style practice, so the out-of-place-format cap is not triggered.",
+          "score": 8,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "All five supplied provisions are covered in six drills, with two drills each labeled easy, medium and hard. The additional caput drill isolates the residence condition rather than duplicating the first statement's overall affirmation. No provision dominates the set, and no trap is repeatedly tested in the same way.",
+          "score": 10,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2745,
+          "inputTokens": 2748,
+          "outputTokens": 1138,
+          "reasoningTokens": 360
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Drill 4 incorrectly treats substituting 'cruel' for 'desumano' as sufficient to make the statement false. This does not establish a contradiction: prohibiting cruel treatment is consistent with the supplied prohibition of inhuman or degrading treatment, and faithful paraphrases are permitted. Drill 5 also violates the single-element trap requirement by rewriting the entry rule around police authority, absence of judicial authorization, and an ongoing investigation. Its explanation initially suggests that all nonconsensual daytime entry requires judicial authorization, although the supplied text provides other exceptions; listing those exceptions afterward does not make that opening claim accurate.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The false caput statement substantially recasts the provision instead of preserving its wording around the changed residence condition. Drill 5's misconception describes only an authority substitution and does not account for the added investigation condition, making the feedback less precise.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use minimal textual substitutions for the false statements. For example, preserve the full wording of item XI and replace only 'judicial' with 'policial'. For item III, change a prohibition rather than substitute a near-synonym. Keep misconception labels brief and explain precisely the single changed element.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Cebraspe-style right/wrong statements in Brazilian Portuguese on article 5 of the Brazilian Constitution (caput and items II, III, XI and XLII). True statements repeat or faithfully paraphrase the given text; false ones change exactly one element, as Cebraspe does (for example \"todos\" to \"quase todos\", \"durante o dia\" to \"a qualquer hora\", \"determinação judicial\" to \"determinação policial\", \"inafiançável\" to \"afiançável\"), and their misconception names that trap. Check every statement against the given text, not memory, and that roughly half are false.",
+        "id": "pt-cebraspe-cf88-art5-direitos-fundamentais-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Art. 5º, caput",
+              "text": "Art. 5º Todos são iguais perante a lei, sem distinção de qualquer natureza, garantindo-se aos brasileiros e aos estrangeiros residentes no País a inviolabilidade do direito à vida, à liberdade, à igualdade, à segurança e à propriedade, nos termos seguintes:"
+            },
+            {
+              "reference": "Art. 5º, II",
+              "text": "II - ninguém será obrigado a fazer ou deixar de fazer alguma coisa senão em virtude de lei;"
+            },
+            {
+              "reference": "Art. 5º, III",
+              "text": "III - ninguém será submetido a tortura nem a tratamento desumano ou degradante;"
+            },
+            {
+              "reference": "Art. 5º, XI",
+              "text": "XI - a casa é asilo inviolável do indivíduo, ninguém nela podendo penetrar sem consentimento do morador, salvo em caso de flagrante delito ou desastre, ou para prestar socorro, ou, durante o dia, por determinação judicial;"
+            },
+            {
+              "reference": "Art. 5º, XLII",
+              "text": "XLII - a prática do racismo constitui crime inafiançável e imprescritível, sujeito à pena de reclusão, nos termos da lei;"
+            }
+          ],
+          "count": 6,
+          "language": "pt",
+          "law": {
+            "shortName": "CF/88",
+            "title": "Constituição da República Federativa do Brasil de 1988",
+            "url": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm"
+          },
+          "style": "cebraspe"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "All supplied answer keys are defensible against the input, each multiple-choice question has exactly one matching option, and both gap passages are verbatim excerpts with correct answers. No wrong-key or misquotation cap is triggered. However, several reasons lack the required quotation and explicit reference, deadline explanations omit the feasibility qualification, and the high-risk aside goes beyond the provided texts.",
+          "score": 8,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "The high-risk distractor and the authority substitutions are clear single-element traps, and both gaps remove substantive information. However, two exception distractors abandon the statutory wording for conspicuous invented conditions, while the 48-hour statement also removes qualifications. These multiple departures trigger the cap of 7 for several nonminimal or implausible traps. The misconceptions themselves generally identify the intended changes clearly.",
+          "score": 7,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "The result supplies the requested generic mix: two true/false statements, two gap passages, and two four-option multiple-choice questions, all in English. Most wording tracks the input, but the first statement is substantially compressed and two exception options do not preserve the law's language. Explanations are readable but sometimes discuss the rule generally rather than showing the precise textual substitution.",
+          "score": 8,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "All three supplied paragraphs are represented, with three drills on paragraph 1, one on paragraph 2, and two on paragraph 5. No majority-on-one-paragraph or repeated-trap cap is triggered, and the deadline is tested through different formats. Nevertheless, the requested scope of documenting every breach is not directly tested, delayed-notification reasons are unused, and the assigned difficulty levels are not strongly differentiated.",
+          "score": 8,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3024,
+          "inputTokens": 3027,
+          "outputTokens": 945,
+          "reasoningTokens": 232
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several distractors fail the required minimal-change trap design. In the Article 33(1) multiple-choice drill, reporting within 72 hours and having fewer than 72 hours of exposure replace the statutory exception with unrelated conditions rather than subtly changing its wording. The 48-hour false statement also omits statutory qualifications instead of preserving the text around the changed deadline.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Several option explanations neither quote the controlling text nor explicitly cite the paragraph, despite the requirement that every reason do both. Some explanations describe 72 hours as an unqualified deadline without preserving 'where feasible.' The reference to a different high-risk notification duty introduces material outside the supplied texts.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use one drill to test the load-bearing word 'any' in the documentation duty, which is a specifically requested trap but is not directly tested. Replace an overlapping deadline exercise with the requirement to provide reasons for delayed notification. The 'hard' labels could also better distinguish difficulty: recalling remedial action from a single sentence is not clearly harder than the medium exercises.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A generic mix of drills in US English on GDPR Article 33 (paragraphs 1, 2 and 5): true/false statements, fill-in-the-blank passages copied word for word with one load-bearing gap (such as \"72 hours\", \"controller\", \"processor\", \"without undue delay\") and 4-option multiple choice on the literal text. False statements and wrong options change exactly one element (the 72-hour deadline, who notifies whom, the \"unlikely to result in a risk\" exception, the duty to document every breach). Check every drill against the given text.",
+        "id": "en-generic-gdpr-art33-breach-notification-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Article 33(1)",
+              "text": "1. In the case of a personal data breach, the controller shall without undue delay and, where feasible, not later than 72 hours after having become aware of it, notify the personal data breach to the supervisory authority competent in accordance with Article 55, unless the personal data breach is unlikely to result in a risk to the rights and freedoms of natural persons. Where the notification to the supervisory authority is not made within 72 hours, it shall be accompanied by reasons for the delay."
+            },
+            {
+              "reference": "Article 33(2)",
+              "text": "2. The processor shall notify the controller without undue delay after becoming aware of a personal data breach."
+            },
+            {
+              "reference": "Article 33(5)",
+              "text": "5. The controller shall document any personal data breaches, comprising the facts relating to the personal data breach, its effects and the remedial action taken. That documentation shall enable the supervisory authority to verify compliance with this Article."
+            }
+          ],
+          "count": 6,
+          "language": "en",
+          "law": {
+            "shortName": "GDPR",
+            "title": "Regulation (EU) 2016/679 (General Data Protection Regulation)",
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016R0679"
+          },
+          "style": "generic"
+        }
+      }
+    }
+  ],
+  "taskId": "statute-drills"
+}

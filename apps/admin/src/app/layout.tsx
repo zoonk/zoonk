@@ -1,5 +1,6 @@
+import { SidebarStateScript } from "@zoonk/ui/components/sidebar";
 import { type Metadata } from "next";
-import "@zoonk/ui/globals.css";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: { default: "Zoonk Admin", template: "%s | Zoonk Admin" },
@@ -7,7 +8,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en">
+    // The sidebar script marks `<html>` before React hydrates it.
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <SidebarStateScript />
+      </head>
       <body className="font-sans antialiased">{children}</body>
     </html>
   );

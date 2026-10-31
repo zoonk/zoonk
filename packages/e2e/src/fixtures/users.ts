@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { getString } from "@zoonk/utils/json";
 import { getAiOrganization } from "./orgs";
-import { createE2EProgressData } from "./progress";
 
 const SHORT_UUID_LENGTH = 8;
 
@@ -16,17 +16,10 @@ export type E2EUser = {
 
 type CreateE2EUserOptions = {
   orgRole?: "admin" | "member" | "owner";
-  orgSlug?: string;
   withProgress?: boolean;
   withSubscription?: boolean;
 };
 
-/**
- * Create a browser-ready user by going through the real auth API.
- * E2E tests need cookies, sessions, and Better Auth side effects to match the
- * production path, so this helper signs up, optionally attaches org access or
- * a subscription, and then returns storage state for immediate reuse.
- */
 export async function createE2EUser(
   baseURL: string,
   options?: CreateE2EUserOptions,
@@ -51,9 +44,7 @@ export async function createE2EUser(
   const user = await prisma.user.findUniqueOrThrow({ where: { email } });
 
   if (options?.orgRole) {
-    const org = options.orgSlug
-      ? await prisma.organization.findUniqueOrThrow({ where: { slug: options.orgSlug } })
-      : await getAiOrganization();
+    const org = await getAiOrganization();
 
     await prisma.member.create({
       data: { id: randomUUID(), organizationId: org.id, role: options.orgRole, userId: user.id },
@@ -74,7 +65,7 @@ export async function createE2EUser(
   }
 
   if (options?.withProgress) {
-    await createE2EProgressData(user.id);
+    await userProgressFixture({ currentEnergy: 75, totalBrainPower: 15_000n, userId: user.id });
   }
 
   const storageState = await signupContext.storageState();
@@ -83,11 +74,6 @@ export async function createE2EUser(
   return { email, id: user.id, password, storageState };
 }
 
-/**
- * Mint a one-time auth token for an existing browser user.
- * Tests use this to validate callback and cross-app auth flows without having
- * to reach into internal session tables directly.
- */
 export async function generateOneTimeToken(baseURL: string, user: E2EUser): Promise<string> {
   const ctx = await request.newContext({ baseURL, storageState: user.storageState });
 

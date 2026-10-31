@@ -13,10 +13,6 @@ import { LearnerMilestoneUsers, LearnerMilestoneUsersSkeleton } from "./learner-
 
 export const metadata: Metadata = { title: "Learner Milestones" };
 
-/**
- * The route keeps a useful analytics shell while its milestone definition is
- * derived from request-time query parameters.
- */
 export default function LearnerMilestoneUsersPage({
   searchParams,
 }: PageProps<"/stats/engagement/learners">) {
@@ -26,7 +22,7 @@ export default function LearnerMilestoneUsersPage({
         <StatsPageLayout
           breadcrumbItems={[
             { href: "/stats/engagement", label: "Engagement & Learning" },
-            { label: "Learner Milestones" },
+            { label: "Learner milestones" },
           ]}
           title="Learner Milestones"
         >
@@ -39,10 +35,6 @@ export default function LearnerMilestoneUsersPage({
   );
 }
 
-/**
- * Parsing and validation remain together inside Suspense so every downstream
- * component receives one consistent milestone definition.
- */
 async function LearnerMilestoneUsersPageContent({
   searchParams,
 }: Pick<PageProps<"/stats/engagement/learners">, "searchParams">) {
@@ -60,7 +52,7 @@ async function LearnerMilestoneUsersPageContent({
     <StatsPageLayout
       breadcrumbItems={[
         { href: "/stats/engagement", label: "Engagement & Learning" },
-        { label: "Learner Milestones" },
+        { label: "Learner milestones" },
       ]}
       title={copy.pageTitle}
     >
@@ -88,10 +80,6 @@ async function LearnerMilestoneUsersPageContent({
   );
 }
 
-/**
- * The page-level fallback covers the query-derived heading and threshold form
- * as well as the independently streamed user table.
- */
 function LearnerMilestoneUsersPageSkeleton() {
   return (
     <div className="flex flex-col gap-6">

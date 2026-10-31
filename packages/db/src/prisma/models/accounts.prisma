@@ -1,40 +1,73 @@
 // Better Auth models for Prisma
 
 model User {
-  id                 String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  name               String
-  email              String
-  emailVerified      Boolean                @default(false) @map("email_verified")
-  image              String?
-  createdAt          DateTime               @default(now()) @map("created_at")
-  updatedAt          DateTime               @updatedAt @map("updated_at")
-  role               String?
-  banned             Boolean?               @default(false)
-  banReason          String?                @map("ban_reason")
-  banExpires         DateTime?              @map("ban_expires")
-  analyticsDisabled  Boolean                @default(false) @map("analytics_disabled")
-  stripeCustomerId   String?                @map("stripe_customer_id")
-  username           String?
-  displayUsername    String?                @map("display_username")
-  sessions           Session[]
-  accounts           Account[]
-  members            Member[]
-  invitations        Invitation[]
-  courses            CourseUser[]
-  ownedCourses       Course[]
-  learningProfile    UserLearningProfile?
-  lessonProgress     LessonProgress[]
-  chapterCompletions ChapterCompletion[]
-  courseCompletions  CourseCompletion[]
-  stepAttempts       StepAttempt[]
-  progress           UserProgress?
-  dailyProgress      DailyProgress[]
-  subscriptions      Subscription[]
-  questionThreads    LessonQuestionThread[]
+  id                    String                    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  name                  String
+  email                 String
+  emailVerified         Boolean                   @default(false) @map("email_verified")
+  image                 String?
+  createdAt             DateTime                  @default(now()) @map("created_at")
+  updatedAt             DateTime                  @updatedAt @map("updated_at")
+  role                  String?
+  banned                Boolean?                  @default(false)
+  banReason             String?                   @map("ban_reason")
+  banExpires            DateTime?                 @map("ban_expires")
+  analyticsDisabled     Boolean                   @default(false) @map("analytics_disabled")
+  stripeCustomerId      String?                   @map("stripe_customer_id")
+  /// Inactive for 30 days, a guest is deleted; signing up moves their progress to the account.
+  isAnonymous           Boolean                   @default(false) @map("is_anonymous")
+  username              String?
+  displayUsername       String?                   @map("display_username")
+  liveCallConnections   LiveCallConnection[]
+  sessions              Session[]
+  accounts              Account[]
+  members               Member[]
+  invitations           Invitation[]
+  ownedCourses          Course[]
+  learningProfile       UserLearningProfile?
+  progress              UserProgress?
+  dailyProgress         DailyProgress[]
+  subscriptions         Subscription[]
+  questionThreads       LessonQuestionThread[]
+  ownedChapters         Chapter[]
+  ownedLessons          Lesson[]
+  ownedSources          Source[]
+  ownedSkills           Skill[]
+  ownedMediaAssets      MediaAsset[]
+  ownedExamBlueprints   ExamBlueprint[]
+  learnerSources        LearnerSource[]
+  goals                 Goal[]
+  learnerSkills         LearnerSkill[]
+  attempts              Attempt[]
+  mistakes              Mistake[]
+  studySessions         StudySession[]
+  memoryFacts           MemoryFact[]
+  memoryInsights        MemoryInsight[]
+  evaluationRuns        EvaluationRun[]
+  aiCalls               AiCall[]
+  pronunciationReviews  PronunciationReview[]
+  milestones            Milestone[]
+  stepExampleLines      StepExampleLine[]
+  feedback              Feedback[]
+  learningEvents        LearningEvent[]
+  usageRecords          UsageRecord[]
+  instrumentWaitlist    InstrumentWaitlistEntry[]
+  mockExams             MockExam[]
+  examResults           ExamResult[]
+  essayGradeClaims      EssayGradeClaim[]
+  languageSkillLevels   LanguageSkillLevel[]
+  learnerWords          LearnerWord[]
+  languageConversations LanguageConversation[]
+  mistakePatterns       MistakePattern[]
+  suggestedGoals        SuggestedGoal[]
+  onboardingDrafts      OnboardingDraft[]
+  goalUnderstandings    GoalUnderstanding[]
+  followUps             FollowUp[]
 
   @@unique([email])
   @@unique([username])
   @@unique([displayUsername])
+  @@index([isAnonymous, createdAt])
   @@map("users")
 }
 
@@ -89,6 +122,18 @@ model Verification {
   @@map("verifications")
 }
 
+/// Each assertion's counter must be higher than the stored one, so none is accepted twice.
+model AppAttestKey {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  keyId     String   @unique @map("key_id")
+  publicKey String   @map("public_key")
+  signCount Int      @default(0) @map("sign_count")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("app_attest_keys")
+}
+
 model Organization {
   id               String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
   name             String
@@ -100,8 +145,6 @@ model Organization {
   members          Member[]
   invitations      Invitation[]
   courses          Course[]
-  chapters         Chapter[]
-  lessons          Lesson[]
   stripeCustomerId String?      @map("stripe_customer_id")
   words            Word[]
   sentences        Sentence[]
@@ -160,19 +203,19 @@ model Subscription {
   seats                  Int?
   billingInterval        String?              @map("billing_interval")
   stripeScheduleId       String?              @map("stripe_schedule_id")
-  /// Stable provider chain ID. For Apple this is required by a database check and stores originalTransactionId, which enforces one Zoonk owner per renewable subscription.
+  /// Apple's originalTransactionId or Google Play's purchase token, required by a database check:
+  /// one Zoonk owner per subscription.
   providerSubscriptionId String?              @map("provider_subscription_id")
-  /// Latest provider transaction ID retained to correlate App Store support cases without storing the signed JWS.
   providerTransactionId  String?              @map("provider_transaction_id")
-  /// Exact external SKU retained because plan and billingInterval are projections that can change as Plus and Pro catalogs evolve.
   providerProductId      String?              @map("provider_product_id")
-  /// Issuing environment retained to distinguish production purchases from TestFlight sandbox and local Xcode transactions.
   providerEnvironment    String?              @map("provider_environment")
-  /// Provider-signed event time used to reject delayed notifications and concurrent stale updates.
+  /// Rejects delayed notifications and concurrent stale updates.
   providerSignedAt       DateTime?            @map("provider_signed_at")
-  /// Provider event ID retained for notification traceability and exact replay recognition without storing the signed payload.
   providerEventId        String?              @map("provider_event_id")
-  /// User FK for store subscriptions. referenceId stays polymorphic for Better Auth user and future organization billing, while database checks keep both IDs equal for Apple and the cascade closes notification races during account deletion.
+  /// Google Play refunds a purchase left unacknowledged for three days, so a pending one is checked again within hours. Null for other stores.
+  providerAcknowledged   Boolean?             @map("provider_acknowledged")
+  /// Database checks keep it equal to `referenceId` for Apple and Google; its cascade closes
+  /// notification races during account deletion.
   userId                 String?              @map("user_id") @db.Uuid
   user                   User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -190,4 +233,27 @@ model RateLimit {
   lastRequest BigInt @map("last_request")
 
   @@map("rate_limits")
+}
+
+/// Kept so an admin can remove a deleted account's analytics from PostHog by hand. `userId` is its
+/// PostHog distinct id, and nothing else about the person is kept.
+model AccountDeletion {
+  id                 String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId             String    @map("user_id") @db.Uuid
+  deletedAt          DateTime  @default(now()) @map("deleted_at")
+  analyticsRemovedAt DateTime? @map("analytics_removed_at")
+
+  @@index([analyticsRemovedAt, deletedAt])
+  @@map("account_deletions")
+}
+
+// Marco Civil art. 15 requires six months of access records, including after account deletion.
+model AccessRecord {
+  id        String   @id @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  ipAddress String?  @map("ip_address")
+  createdAt DateTime @map("created_at")
+
+  @@index([createdAt])
+  @@map("access_records")
 }

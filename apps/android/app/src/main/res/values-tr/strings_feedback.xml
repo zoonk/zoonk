@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "feedback_email": "7fe000456f56c0d3894829c7e599455154ab2ad2c39bc5f1dc14680b47db99a2",
+  "feedback_failed": "a6f78eaf4a989709afa310887e908b23775997f819ad24ec079fd703aa6d8e3d",
+  "feedback_follow_us": "4dd47fd635004e19395f019e7760e86d4c1bc4bdd4047db2d5d8749ceb6ed751",
+  "feedback_help_description": "f0c370a0060274d054d6eeb615289bbe2038692a0751f2e8b278ac5138b04658",
+  "feedback_message": "31413100e3c2673fe5f6cec9aca8e72751fd69e0a7d2c3d5f1f8cb1ac5e736f4",
+  "feedback_message_placeholder": "88e028376e413ebdeededc67dec18f7a16e5c1de3f8652ffb55af18e249af4aa",
+  "feedback_more": "66af5bb1e84e22b2c405f76409d7cc87f7fabe5066a3362a544aad8d6a2215f3",
+  "feedback_report_problem": "bf28adc7c7823d658e88c283d1494979d1f294881d03a37f4c26f59300af2d9a",
+  "feedback_screen_attached": "27ab41ea2c1d39f880b634b3762087679012b3740e16f63d7cec107d4046f4e7",
+  "feedback_send": "ce81350d190f07c05b03ca3d57f26b2d7c85ffadc4284ee76150ce79895c520f",
+  "feedback_send_feedback": "ea27e2a387a0ac43b2ca85a571265ac5073dae5600074bc99ac901b1636010d0",
+  "feedback_send_feedback_description": "9d6b8d75c205e233b8f7e43a5ed676032019da201f9eef82009040e8a2fcd13f",
+  "feedback_sent": "ea00a35abe55ed43ccaa81d578395d8d2f89c4fe95cd0e1f8365db9472eed6f6",
+  "feedback_thanks": "7f6b5b721076a93967098597eb80bffa3713c6fafb9a1442ea2de92af50b6192"
+}
+-->
+<resources>
+    <string name="feedback_help_description">Bir soru sor, sorun bildir veya fikrini paylaş. E-postayla cevap veriyoruz.</string>
+    <string name="feedback_message">Mesaj</string>
+    <string name="feedback_message_placeholder">Sana nasıl yardımcı olabiliriz?</string>
+    <string name="feedback_screen_attached">Bu ekran mesaja eklendi</string>
+    <string name="feedback_email">Yanıt verebilmemiz için e-posta adresin</string>
+    <string name="feedback_send">Mesaj gönder</string>
+    <string name="feedback_sent">Mesajın gönderildi! Yakında sana yanıt vereceğiz.</string>
+    <string name="feedback_failed">Mesajını gönderemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder.</string>
+    <string name="feedback_follow_us">Bizi takip et</string>
+    <string name="feedback_report_problem">Sorun bildir</string>
+    <string name="feedback_send_feedback">Geri bildirim gönder</string>
+    <string name="feedback_send_feedback_description">Bir sorunla mı karşılaştın ya da bir fikrin mi var? Aşağıya yaz veya hello@zoonk.com adresine e-posta gönder.</string>
+    <string name="feedback_thanks">Teşekkürler! Mesajını aldık.</string>
+    <string name="feedback_more">Diğer seçenekler</string>
+</resources>

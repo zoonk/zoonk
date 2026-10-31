@@ -2,11 +2,6 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 const otpBody = "<h2>123456</h2>";
 
-/**
- * Imports the mailer after each test sets env vars because the production code
- * used to read MAILER_API_KEY at module load time. Keeping the import isolated
- * makes the regression test prove the missing-key behavior in each environment.
- */
 async function getSendEmail() {
   vi.resetModules();
 

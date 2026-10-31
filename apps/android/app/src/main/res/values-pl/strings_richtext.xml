@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "richtext_math_cubed": "027189a757a7f2f5c082b839e10084678501d4ad4765be8fed8bae1714cb88d4",
+  "richtext_math_fraction": "2814355f67a15a24dacbb6f4ff0c437dbe57935a6242f5cc1aea4169b3211974",
+  "richtext_math_power": "c542b80786d36c4873935944820acb92a26ceb7e896b3f42d2094d53ab81a42e",
+  "richtext_math_root": "3e9d82528e3f3c9fe19f4bf33145209b06c43e8169b268524e9ffaed95e7bf56",
+  "richtext_math_squared": "7453bf9c89762ecdb714da98efb611feb7165d34c0969c42f73e5ac365ed1712",
+  "richtext_math_subscript": "8491c90ddf6abcd2b10516b9b521bde9c971d6b9c5789f5ead9e177b31898d99"
+}
+-->
+<resources>
+    <!-- Screen reader words for a formula, said after its base: "x squared". -->
+    <string name="richtext_math_squared">do kwadratu</string>
+    <!-- Screen reader words for a formula, said after its base: "x cubed". -->
+    <string name="richtext_math_cubed">do sześcianu</string>
+    <!-- Screen reader words for an exponent, said after its base: "2 to the power of 10". -->
+    <string name="richtext_math_power">do potęgi %1$s</string>
+    <!-- Screen reader words for an index, said after its base: "x sub 1". -->
+    <string name="richtext_math_subscript">indeks dolny %1$s</string>
+    <!-- Screen reader words for a fraction: "1 over 4". -->
+    <string name="richtext_math_fraction">%1$s przez %2$s</string>
+    <!-- Screen reader words for a square root: "square root of 2". -->
+    <string name="richtext_math_root">pierwiastek kwadratowy z %1$s</string>
+</resources>

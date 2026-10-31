@@ -1,110 +1,95 @@
 "use client";
 
-import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { TooltipContent } from "@zoonk/ui/components/tooltip";
+import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type ComponentProps, type ReactNode, createContext, use, useState } from "react";
+import { type ComponentProps, createContext, use, useId, useMemo, useState } from "react";
 import { getContributionCalendarTargetIndex } from "./_utils/contribution-calendar-keyboard";
 
-type ContributionCalendarDayContextValue = { actions: { toggleOpen: () => void } };
+const DAY_SELECTOR = '[data-slot="contribution-calendar-day"]';
 
-const DAY_TRIGGER_SELECTOR = '[data-slot="contribution-calendar-day-trigger"]';
+const NO_LABELS: readonly string[] = [];
 
-const ContributionCalendarDayContext = createContext<ContributionCalendarDayContextValue | null>(
-  null,
-);
+type ContributionCalendarContextValue = {
+  activeIndex: number;
+  inspecting: boolean;
+  labels: readonly string[];
+  readoutId: string;
+  setActiveIndex: (index: number) => void;
+};
 
-/**
- * Finds the interactive day represented by a keyboard event, including events
- * that originate from a visual child inside the button.
- */
-function getContributionCalendarDayTrigger(target: EventTarget | null): HTMLButtonElement | null {
+const ContributionCalendarContext = createContext<ContributionCalendarContextValue | null>(null);
+
+function useContributionCalendar(): ContributionCalendarContextValue {
+  const context = use(ContributionCalendarContext);
+
+  if (!context) {
+    throw new Error("Contribution calendar parts must be used inside ContributionCalendar");
+  }
+
+  return context;
+}
+
+function getEventDayIndex(target: EventTarget | null): number | null {
   if (!(target instanceof Element)) {
     return null;
   }
 
-  const trigger = target.closest(DAY_TRIGGER_SELECTOR);
+  const day = target.closest<HTMLElement>(DAY_SELECTOR);
+  const index = day ? Number(day.dataset.index) : Number.NaN;
 
-  return trigger instanceof HTMLButtonElement ? trigger : null;
+  return Number.isInteger(index) ? index : null;
 }
 
-/**
- * Moves focus between dates without adding hundreds of calendar cells to the
- * tab sequence. Updating the two tab indexes preserves the most recently
- * inspected date as the calendar's single tab stop.
- */
-function moveContributionCalendarFocus(event: React.KeyboardEvent<HTMLElement>): void {
-  const currentTrigger = getContributionCalendarDayTrigger(event.target);
+const CALENDAR_SIZE_CLASS = cn(
+  "@container/calendar [--calendar-gap:0.125rem]",
+  "[--calendar-cell:clamp(0.625rem,round(down,calc((100cqw-(var(--calendar-weeks,53)-1)*var(--calendar-gap))/var(--calendar-weeks,53)),1px),1rem)]",
+  "pointer-coarse:[--calendar-cell:1.25rem]",
+);
 
-  if (!currentTrigger) {
-    return;
-  }
-
-  const triggers = [
-    ...event.currentTarget.querySelectorAll<HTMLButtonElement>(DAY_TRIGGER_SELECTOR),
-  ];
-
-  const currentIndex = triggers.indexOf(currentTrigger);
-
-  const targetIndex = getContributionCalendarTargetIndex({
-    currentIndex,
-    key: event.key,
-    totalDays: triggers.length,
-  });
-
-  if (targetIndex === null) {
-    return;
-  }
-
-  event.preventDefault();
-
-  const targetTrigger = triggers.at(targetIndex);
-
-  if (!targetTrigger) {
-    return;
-  }
-
-  currentTrigger.tabIndex = -1;
-  targetTrigger.tabIndex = 0;
-  targetTrigger.focus();
-}
-
-/**
- * Groups the calendar layout and shares one tooltip delay policy across every
- * day, avoiding hundreds of independent providers in dense contribution grids.
- */
 export function ContributionCalendar({
   children,
   className,
-  onKeyDown,
+  defaultIndex = 0,
+  labels = NO_LABELS,
+  style,
+  weeks,
   ...props
-}: ComponentProps<"figure">) {
-  return (
-    <TooltipPrimitive.Provider delay={0}>
-      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- arrow-key handling is delegated from the interactive day buttons */}
-      <figure
-        className={cn("flex min-w-0 flex-col gap-4", className)}
-        data-slot="contribution-calendar"
-        onKeyDown={(event) => {
-          onKeyDown?.(event);
+}: ComponentProps<"figure"> & {
+  defaultIndex?: number;
+  labels?: readonly string[];
+  weeks?: number;
+}) {
+  const readoutId = useId();
+  const [picked, setPicked] = useState<number | null>(null);
 
-          if (!event.defaultPrevented) {
-            moveContributionCalendarFocus(event);
-          }
-        }}
+  const weeksStyle: CSSPropertiesWithVariables = weeks ? { "--calendar-weeks": weeks } : {};
+
+  const value = useMemo<ContributionCalendarContextValue>(
+    () => ({
+      activeIndex: picked ?? defaultIndex,
+      inspecting: picked !== null,
+      labels,
+      readoutId,
+      setActiveIndex: setPicked,
+    }),
+    [defaultIndex, labels, picked, readoutId],
+  );
+
+  return (
+    <ContributionCalendarContext value={value}>
+      <figure
+        className={cn("flex min-w-0 flex-col gap-3", CALENDAR_SIZE_CLASS, className)}
+        data-slot="contribution-calendar"
+        style={{ ...weeksStyle, ...style }}
         {...props}
       >
         {children}
       </figure>
-    </TooltipPrimitive.Provider>
+    </ContributionCalendarContext>
   );
 }
 
-/**
- * Groups the chart title and supporting description in the semantic caption
- * shared by every contribution-calendar consumer.
- */
 export function ContributionCalendarCaption({
   children,
   className,
@@ -112,7 +97,7 @@ export function ContributionCalendarCaption({
 }: ComponentProps<"figcaption">) {
   return (
     <figcaption
-      className={cn("flex flex-col gap-1", className)}
+      className={cn("flex flex-wrap items-center justify-between gap-x-4 gap-y-1", className)}
       data-slot="contribution-calendar-caption"
       {...props}
     >
@@ -121,14 +106,10 @@ export function ContributionCalendarCaption({
   );
 }
 
-/**
- * Gives each contribution calendar a visible heading while keeping its
- * typography consistent across metrics and applications.
- */
 export function ContributionCalendarTitle({ children, className, ...props }: ComponentProps<"h2">) {
   return (
     <h2
-      className={cn("font-semibold tracking-tight", className)}
+      className={cn("text-sm leading-5 font-semibold tracking-[-0.01em]", className)}
       data-slot="contribution-calendar-title"
       {...props}
     >
@@ -137,32 +118,7 @@ export function ContributionCalendarTitle({ children, className, ...props }: Com
   );
 }
 
-/**
- * Presents caller-owned context such as the visible date range without making
- * the shared calendar depend on one product's vocabulary.
- */
-export function ContributionCalendarDescription({
-  children,
-  className,
-  ...props
-}: ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("text-muted-foreground text-sm", className)}
-      data-slot="contribution-calendar-description"
-      {...props}
-    >
-      {children}
-    </p>
-  );
-}
-
-/**
- * Starts overflowing calendars at their newest edge while remaining a normal
- * left-aligned viewport when the complete grid fits. Coarse-pointer viewports
- * round down to a whole number of default week columns, preventing clipped
- * squares and period labels without covering interactive content.
- */
+/** RTL so an overflowing calendar opens at its newest edge. */
 export function ContributionCalendarViewport({
   children,
   className,
@@ -171,7 +127,7 @@ export function ContributionCalendarViewport({
   return (
     <div
       className={cn(
-        "ml-auto w-full min-w-0 overflow-x-auto pb-1 pointer-coarse:w-[calc(round(down,100%+0.125rem,1.625rem)-0.125rem)]",
+        "ml-auto w-full min-w-0 overflow-x-auto pb-1 pointer-coarse:w-[calc(round(down,100%+var(--calendar-gap),var(--calendar-cell)+var(--calendar-gap))-var(--calendar-gap))]",
         className,
       )}
       data-slot="contribution-calendar-viewport"
@@ -183,11 +139,7 @@ export function ContributionCalendarViewport({
   );
 }
 
-/**
- * Keeps the grid and its supporting content on one intrinsic-width canvas.
- * The physical auto margin left-aligns calendars that fit while the surrounding
- * RTL viewport still opens overflowing calendars at their newest edge.
- */
+/** A physical auto margin left-aligns it inside the RTL viewport. */
 export function ContributionCalendarContent({
   children,
   className,
@@ -195,7 +147,7 @@ export function ContributionCalendarContent({
 }: ComponentProps<"div">) {
   return (
     <div
-      className={cn("mr-auto flex w-max flex-col gap-4", className)}
+      className={cn("mr-auto flex w-max min-w-full flex-col gap-4", className)}
       data-slot="contribution-calendar-content"
       dir="ltr"
       {...props}
@@ -205,19 +157,54 @@ export function ContributionCalendarContent({
   );
 }
 
-/**
- * Keeps week columns at their natural width so legends and other content can
- * align with the final plotted week instead of the viewport boundary.
- */
+/** Name it with `aria-label`. */
 export function ContributionCalendarGrid({ children, className, ...props }: ComponentProps<"div">) {
+  const { activeIndex, labels, readoutId, setActiveIndex } = useContributionCalendar();
+
+  const pick = (target: EventTarget | null) => {
+    const index = getEventDayIndex(target);
+
+    if (index !== null) {
+      setActiveIndex(index);
+    }
+  };
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const index = getContributionCalendarTargetIndex({
+      currentIndex: activeIndex,
+      key: event.key,
+      totalDays: labels.length,
+    });
+
+    if (index === null) {
+      return;
+    }
+
+    event.preventDefault();
+    setActiveIndex(index);
+
+    event.currentTarget
+      .querySelector(`${DAY_SELECTOR}[data-index="${index}"]`)
+      ?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  };
+
   return (
+    // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The grid is one control: arrows and the pointer pick a day for the readout.
     <div
+      aria-describedby={readoutId}
       className={cn(
-        "flex w-max gap-0.5 [&>:last-child_[data-slot=contribution-calendar-period]]:right-0 [&>:last-child_[data-slot=contribution-calendar-period]]:left-auto",
+        "focus-visible:ring-ring/50 flex w-max min-w-full cursor-pointer justify-between gap-(--calendar-gap) rounded-sm outline-none focus-visible:ring-[3px] [&>:last-child_[data-slot=contribution-calendar-period]]:right-0 [&>:last-child_[data-slot=contribution-calendar-period]]:left-auto [&>:nth-child(-n+2)_[data-slot=contribution-calendar-period]]:hidden",
         className,
       )}
       data-slot="contribution-calendar-grid"
       dir="ltr"
+      onClick={(event) => pick(event.target)}
+      onFocus={() => setActiveIndex(activeIndex)}
+      onKeyDown={onKeyDown}
+      onPointerMove={(event) => pick(event.target)}
+      role="group"
+      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- One tab stop for the whole calendar, instead of a tiny target per day.
+      tabIndex={0}
       {...props}
     >
       {children}
@@ -225,15 +212,11 @@ export function ContributionCalendarGrid({ children, className, ...props }: Comp
   );
 }
 
-/**
- * Aligns seven contribution days vertically and reserves a compact header row
- * for an optional month or period label.
- */
 export function ContributionCalendarWeek({ children, className, ...props }: ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "relative grid w-2.5 shrink-0 grid-rows-7 gap-0.5 pt-5 pointer-coarse:w-6",
+        "relative grid w-(--calendar-cell) shrink-0 grid-rows-7 gap-(--calendar-gap) pt-5",
         className,
       )}
       data-slot="contribution-calendar-week"
@@ -244,10 +227,6 @@ export function ContributionCalendarWeek({ children, className, ...props }: Comp
   );
 }
 
-/**
- * Positions a period label above the first week that represents it without
- * affecting the seven-row day grid.
- */
 export function ContributionCalendarPeriod({
   children,
   className,
@@ -256,7 +235,7 @@ export function ContributionCalendarPeriod({
   return (
     <span
       className={cn(
-        "text-muted-foreground absolute top-0 left-0 text-[10px] whitespace-nowrap",
+        "text-faint absolute top-0 left-0 font-mono text-[10px] whitespace-nowrap tabular-nums",
         className,
       )}
       data-slot="contribution-calendar-period"
@@ -267,110 +246,49 @@ export function ContributionCalendarPeriod({
   );
 }
 
-/**
- * Owns one day's transient detail state so its trigger and tooltip remain
- * composable while hover, focus, escape, outside press, and tap stay aligned.
- */
-export function ContributionCalendarDay({ children }: { children: ReactNode }) {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <ContributionCalendarDayContext
-      value={{ actions: { toggleOpen: () => setOpen((current) => !current) } }}
-    >
-      <TooltipPrimitive.Root onOpenChange={setOpen} open={open}>
-        {children}
-      </TooltipPrimitive.Root>
-    </ContributionCalendarDayContext>
-  );
-}
-
-/**
- * Gives day triggers access to the nearest day's tap action and fails loudly
- * when a trigger is accidentally rendered outside its required compound root.
- */
-function useContributionCalendarDay(): ContributionCalendarDayContextValue {
-  const context = use(ContributionCalendarDayContext);
-
-  if (!context) {
-    throw new Error("ContributionCalendarDayTrigger must be used inside ContributionCalendarDay");
-  }
-
-  return context;
-}
-
-/**
- * Renders an interactive contribution square. Base UI owns hover, focus,
- * outside-press, and escape behavior; the merged click toggles the same detail
- * for touch and pointer users without coupling the component to domain data.
- */
-export function ContributionCalendarDayTrigger({
+export function ContributionCalendarDay({
   className,
-  onClick,
-  type = "button",
+  index,
   ...props
-}: Omit<TooltipPrimitive.Trigger.Props, "closeOnClick">) {
-  const {
-    actions: { toggleOpen },
-  } = useContributionCalendarDay();
+}: ComponentProps<"span"> & { index: number }) {
+  const { activeIndex, inspecting } = useContributionCalendar();
+  const isActive = inspecting && index === activeIndex;
 
-  return (
-    <TooltipPrimitive.Trigger
-      className={cn(
-        "focus-visible:ring-ring/50 flex size-2.5 cursor-pointer appearance-none items-center justify-center rounded-[2px] border-0 bg-transparent p-0 outline-none focus-visible:ring-[3px] focus-visible:ring-inset pointer-coarse:size-6",
-        className,
-      )}
-      closeOnClick={false}
-      data-slot="contribution-calendar-day-trigger"
-      onClick={(event) => {
-        onClick?.(event);
-
-        if (!(event.defaultPrevented || event.baseUIHandlerPrevented)) {
-          toggleOpen();
-        }
-      }}
-      type={type}
-      {...props}
-    />
-  );
-}
-
-/**
- * Draws the metric square inside its interactive day trigger, allowing
- * coarse-pointer layouts to enlarge the hit target while keeping the mark inset.
- */
-export function ContributionCalendarDayIndicator({ className, ...props }: ComponentProps<"span">) {
   return (
     <span
       aria-hidden="true"
-      className={cn("size-2.5 shrink-0 rounded-[2px] pointer-coarse:size-5", className)}
-      data-slot="contribution-calendar-day-indicator"
+      className={cn(
+        "size-(--calendar-cell) shrink-0 rounded-[2px]",
+        isActive && "ring-foreground ring-2 ring-offset-1",
+        className,
+      )}
+      data-active={isActive || undefined}
+      data-index={index}
+      data-slot="contribution-calendar-day"
       {...props}
     />
   );
 }
 
-/**
- * Presents caller-owned detail content in the shared tooltip surface so every
- * contribution calendar can describe its own metric and date vocabulary.
- */
-export function ContributionCalendarDayContent({
-  className,
-  ...props
-}: ComponentProps<typeof TooltipContent>) {
+export function ContributionCalendarReadout({ className, ...props }: ComponentProps<"p">) {
+  const { activeIndex, labels, readoutId } = useContributionCalendar();
+
   return (
-    <TooltipContent
-      className={cn("whitespace-nowrap", className)}
-      data-slot="contribution-calendar-day-content"
+    <p
+      aria-live="polite"
+      className={cn(
+        "text-muted-foreground min-h-5 font-mono text-xs leading-5 tabular-nums",
+        className,
+      )}
+      data-slot="contribution-calendar-readout"
+      id={readoutId}
       {...props}
-    />
+    >
+      {labels.at(activeIndex)}
+    </p>
   );
 }
 
-/**
- * Aligns a compact intensity key with the end of the contribution grid while
- * leaving its labels and swatches fully caller-composable.
- */
 export function ContributionCalendarLegend({
   children,
   className,
@@ -380,7 +298,7 @@ export function ContributionCalendarLegend({
   return (
     <div
       className={cn(
-        "text-muted-foreground flex items-center justify-end gap-1.5 text-xs",
+        "text-muted-foreground flex items-center justify-end gap-1 text-[0.6875rem]",
         className,
       )}
       data-slot="contribution-calendar-legend"
@@ -392,10 +310,6 @@ export function ContributionCalendarLegend({
   );
 }
 
-/**
- * Gives legend copy a stable semantic element without prescribing what the
- * scale means in any particular product context.
- */
 export function ContributionCalendarLegendLabel({
   children,
   className,
@@ -408,49 +322,40 @@ export function ContributionCalendarLegendLabel({
   );
 }
 
-/**
- * Matches the default day-square geometry while allowing each consumer to
- * supply its own semantic color or intensity class.
- */
 export function ContributionCalendarLegendSwatch({ className, ...props }: ComponentProps<"span">) {
   return (
     <span
       aria-hidden="true"
-      className={cn("size-2.5 rounded-[2px] pointer-coarse:size-5", className)}
+      className={cn("size-2.5 rounded-[2px]", className)}
       data-slot="contribution-calendar-legend-swatch"
       {...props}
     />
   );
 }
 
-/**
- * Reserves the shared calendar-grid geometry while a consumer's private data
- * streams, without requiring each application to duplicate its dimensions.
- */
 export function ContributionCalendarGridSkeleton({
   className,
   ...props
 }: ComponentProps<typeof Skeleton>) {
   return (
     <Skeleton
-      className={cn("h-25.5 w-full rounded-lg pointer-coarse:h-50", className)}
+      className={cn(
+        "h-[calc(1.25rem+7*var(--calendar-cell)+6*var(--calendar-gap)+0.25rem)] w-full rounded-lg",
+        className,
+      )}
       data-slot="contribution-calendar-grid-skeleton"
       {...props}
     />
   );
 }
 
-/**
- * Reserves the compact, end-aligned legend geometry used below contribution
- * grids while the final labels and swatches are unavailable.
- */
 export function ContributionCalendarLegendSkeleton({
   className,
   ...props
 }: ComponentProps<typeof Skeleton>) {
   return (
     <Skeleton
-      className={cn("ml-auto h-3 w-24", className)}
+      className={cn("h-3 w-24", className)}
       data-slot="contribution-calendar-legend-skeleton"
       {...props}
     />
