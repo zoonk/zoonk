@@ -10,7 +10,7 @@ XCODEBUILD_ARGUMENTS ?=
 XCODEBUILD := $(if $(CI),,node ../../scripts/dev/queue.mts) xcodebuild -quiet -skipPackagePluginValidation -packageAuthorizationProvider netrc -derivedDataPath DerivedData/Make $(XCODEBUILD_ARGUMENTS) -project "$(PROJECT)"
 BUILD_FLAGS := -configuration "$(CONFIGURATION)" CODE_SIGNING_ALLOWED=NO
 
-.PHONY: build build-ios test ui-test format format-check check
+.PHONY: build build-ios test ui-test format format-check strings-check check
 
 build: build-ios
 
@@ -28,4 +28,7 @@ format:
 format-check:
 	xcrun swift-format lint --recursive --parallel --strict $(SWIFT_SOURCES)
 
-check: format-check test
+strings-check:
+	node scripts/check-strings.mts
+
+check: format-check strings-check test

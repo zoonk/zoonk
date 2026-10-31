@@ -21,15 +21,16 @@ Build and run the Debug app from the repository root:
 
 Run commands from this directory:
 
-| Command             | Purpose                                               |
-| ------------------- | ----------------------------------------------------- |
-| `make build`        | Build the iPhone and iPad app in Debug configuration. |
-| `make build-ios`    | Build the iPhone and iPad app in Debug configuration. |
-| `make test`         | Run the unit tests on the default iPhone simulator.   |
-| `make ui-test`      | Run the UI tests on the default iPhone simulator.     |
-| `make format`       | Format Swift source files in place.                   |
-| `make format-check` | Check Swift formatting without changing files.        |
-| `make check`        | Check formatting and run the unit tests.              |
+| Command              | Purpose                                               |
+| -------------------- | ----------------------------------------------------- |
+| `make build`         | Build the iPhone and iPad app in Debug configuration. |
+| `make build-ios`     | Build the iPhone and iPad app in Debug configuration. |
+| `make test`          | Run the unit tests on the default iPhone simulator.   |
+| `make ui-test`       | Run the UI tests on the default iPhone simulator.     |
+| `make format`        | Format Swift source files in place.                   |
+| `make format-check`  | Check Swift formatting without changing files.        |
+| `make strings-check` | Check that source strings are in their catalogs.      |
+| `make check`         | Check formatting and strings, and run the unit tests. |
 
 From the repository root, add `-C apps/apple`, for example `make -C apps/apple check`. Before committing, run `pnpm apple:check` from the repository root: it also validates the translations.
 
@@ -88,7 +89,7 @@ LocalizedStringResource(
   comment: "Navigation title for the app's primary home section.")
 ```
 
-Build the app after adding or changing copy so Xcode extracts the source strings into the matching `.xcstrings` catalog. Then run `pnpm --filter apple i18n` from the repository root to translate missing Apple strings and `pnpm --filter apple i18n:lint` to validate every catalog. The root `pnpm i18n` and `pnpm i18n:lint` commands include the Apple app when running the same workflows for the full repository.
+Build the app after adding or changing copy so Xcode extracts the source strings into the matching `.xcstrings` catalog. Then run `pnpm --filter apple i18n` from the repository root to add the strings a command-line build found and translate missing Apple strings, and `pnpm --filter apple i18n:lint` to validate every catalog. The root `pnpm i18n` and `pnpm i18n:lint` commands include the Apple app when running the same workflows for the full repository.
 
 Keep catalogs together in `Zoonk/Resources/Localization`, named by feature or app surface, and use the generic `pt` locale. Xcode resolves each catalog from its table basename, while Eloqnt automatically discovers every catalog in this directory. Fix translations through the [translation rules](../../.agents/guides/translations.md), and don't add manual extraction state for ordinary source-driven strings.
 
@@ -100,4 +101,4 @@ Archiving uploads the app's debug symbols, so crash reports show our code instea
 
 ## Continuous Integration
 
-GitHub Actions checks Swift formatting and builds the iPhone and iPad app. UI tests remain local because clean hosted macOS runners currently spend several minutes preparing the simulator before executing the tests.
+GitHub Actions checks Swift formatting and String Catalogs and builds the iPhone and iPad app. UI tests remain local because clean hosted macOS runners currently spend several minutes preparing the simulator before executing the tests.
