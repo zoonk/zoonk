@@ -175,7 +175,6 @@ export async function computePlan({
   );
 
   const targetDate = getStateTargetDate(state);
-  const userId = context.goal.userId;
 
   const [{ areaShares, examSubjects, topicLevels, ...loaded }, carryOver, todayShown, quick] =
     await Promise.all([
@@ -186,7 +185,7 @@ export async function computePlan({
         goal: context.goal,
         graph: resolved,
         targetDate,
-        userId,
+        userId: context.goal.userId,
       }),
       loadPlanCarryOver({ context, mode, snapshot: carrySnapshot }).then(
         (loadedCarry) =>
@@ -263,9 +262,7 @@ export async function computePlan({
     return null;
   }
 
-  const landing = readLanding({ input, savedKey: context.plan.inputsKey });
-
-  const builtInput = { ...input, ...landing };
+  const builtInput = { ...input, ...readLanding({ input, savedKey: context.plan.inputsKey }) };
 
   const built = buildPlan(builtInput);
   const laidOut = await layOutUnmetPhaseDates({ built, graph, kept: input.phaseEnds, request });
