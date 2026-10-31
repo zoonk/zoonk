@@ -228,7 +228,7 @@ public struct LessonStepImage: Codable, Hashable, Sendable {
 
 public enum LessonCitation: Codable, Hashable, Sendable {
   case material(title: String, unit: String, page: Int?)
-  case source(title: String, publisher: String?, url: String?, checkedAt: String)
+  case source(title: String, publisher: String?, url: String?, checkedAt: Date)
   case notInMaterial
 
   private enum CodingKeys: String, CodingKey {
@@ -249,7 +249,7 @@ public enum LessonCitation: Codable, Hashable, Sendable {
         title: try container.decode(String.self, forKey: .title),
         publisher: try container.decodeIfPresent(String.self, forKey: .publisher),
         url: try container.decodeIfPresent(String.self, forKey: .url),
-        checkedAt: try container.decode(String.self, forKey: .checkedAt))
+        checkedAt: try container.decode(Date.self, forKey: .checkedAt))
     default:
       self = .notInMaterial
     }

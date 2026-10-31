@@ -520,17 +520,7 @@ struct MaterialQuestionsView: View {
         localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
       : citation.title
 
-    guard let page = citation.page else {
-      return title
-    }
-
-    return citation.unit == "slide"
-      ? String(
-        localized: "\(title), slide \(String(page))", table: "Onboarding",
-        comment: "Where an answer came from: a deck's slide")
-      : String(
-        localized: "\(title), page \(String(page))", table: "Onboarding",
-        comment: "Where an answer came from: a document's page")
+    return CitationLabel.material(title: title, page: citation.page, unit: citation.unit)
   }
 
   private static func message(for error: Error) -> LocalizedStringResource {

@@ -373,34 +373,25 @@ struct LessonCitationView: View {
 
   var body: some View {
     switch citation {
-    case .material(let title, _, _):
-      Label {
-        Text(
-          "From your material: \(title)", tableName: "Player",
-          comment: "A screen comes from the learner's own material")
-      } icon: {
-        Image(systemName: "doc.text")
-      }
-      .font(.footnote)
-      .foregroundStyle(.secondary)
-    case .source(let title, let publisher, let url, _):
-      if let url = url.flatMap(URL.init(string:)) {
-        Link(destination: url) {
-          Label(publisher.map { "\(title) · \($0)" } ?? title, systemImage: "link")
-        }
+    case .material(let title, let unit, let page):
+      let source = CitationLabel.material(title: title, page: page, unit: unit)
+
+      Label(source, systemImage: "doc.text")
         .font(.footnote)
-      } else {
-        Label(publisher.map { "\(title) · \($0)" } ?? title, systemImage: "book.closed")
-          .font(.footnote)
-          .foregroundStyle(.secondary)
-      }
+        .foregroundStyle(.secondary)
+        .accessibilityLabel(
+          Text(
+            "From your material: \(source)", tableName: "Player",
+            comment: "A screen comes from the learner's own material"))
+    case .source(let title, let publisher, let url, let checkedAt):
+      SourcesChip(title: title, publisher: publisher, url: url, checkedAt: checkedAt)
     case .notInMaterial:
       Label {
         Text(
           "Not in your material", tableName: "Player",
           comment: "A screen that doesn't come from the learner's material")
       } icon: {
-        Image(systemName: "doc.badge.ellipsis")
+        Image(systemName: "doc.questionmark")
       }
       .font(.footnote)
       .foregroundStyle(.secondary)

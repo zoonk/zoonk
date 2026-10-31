@@ -21,6 +21,7 @@
 - “goal” (the learner's goal): “meta”; goal of a call, lesson, or activity: “objetivo”
 - “start a goal”: “começar uma meta”
 - “check” (an answer): “conferir”; “grade” (an essay) and “fix” (a mistake): “corrigir”
+- “checked” (when a source was last checked, with a date): “verificado”, agreeing with what was checked (“Fontes · Verificadas em …”)
 - “say” (aloud, in pronunciation or speaking practice): “falar”; words left to say again: “repetir”
 - “write” (Zoonk generating content): “criar”; learner writing: “escrever”
 - “share” (personal facts): “contar”
