@@ -138,11 +138,11 @@ struct PlanPaceSheet: View {
       Section {
         PlanWeekRings(plan: plan)
       } header: {
-        HStack(alignment: .firstTextBaseline) {
-          Text("This week", tableName: "Plan", comment: "Section of the plan's week")
-
+        SectionHeaderRow(
+          alignment: .firstTextBaseline,
+          title: Text("This week", tableName: "Plan", comment: "Section of the plan's week")
+        ) {
           if plan.weekTime.targetMinutes > 0 {
-            Spacer()
             Text(
               "\(planDurationText(minutes: Double(plan.weekTime.studiedMinutes))) of \(planDurationText(minutes: plan.weekTime.targetMinutes))",
               tableName: "Plan", comment: "Time studied this week of the week's planned time"

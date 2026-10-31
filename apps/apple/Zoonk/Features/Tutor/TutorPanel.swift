@@ -28,6 +28,7 @@ struct TutorPanel: View {
             }
           }
       }
+      .roundedButtonsAtAccessibilitySizes()
       .presentationDetents([.medium, .large])
       .presentationBackgroundInteraction(.enabled(upThrough: .medium))
     }
@@ -82,6 +83,19 @@ struct TutorPanel: View {
     return String(
       localized: "About “\(question)”", table: "Tutor",
       comment: "The practice question the panel is about")
+  }
+}
+
+/// A toolbar shows its face alone at the bar's own text size, so it never wraps and keeps the
+/// bar's shape.
+struct TutorAskToolbarItem: ToolbarContent {
+  let scope: TutorScope
+
+  var body: some ToolbarContent {
+    ToolbarItem(placement: .primaryAction) {
+      TutorAskButton(scope: scope)
+        .buttonBorderShape(.automatic)
+    }
   }
 }
 

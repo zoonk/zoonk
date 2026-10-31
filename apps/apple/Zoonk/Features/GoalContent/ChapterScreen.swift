@@ -41,9 +41,7 @@ struct ChapterScreen: View {
       .navigationTitle(chapter.value.map { Text($0.chapter.title) } ?? untitledChapter)
       .barTitleAfterHero(chapter.value?.chapter.title ?? "")
       .toolbar {
-        ToolbarItem(placement: .primaryAction) {
-          TutorAskButton(scope: .chapter(chapterId: chapterId))
-        }
+        TutorAskToolbarItem(scope: .chapter(chapterId: chapterId))
 
         ToolbarItem(placement: .primaryAction) {
           Menu {
@@ -190,9 +188,9 @@ private struct ChapterContent: View {
           }
         }
       } header: {
-        HStack {
-          Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons")
-          Spacer()
+        SectionHeaderRow(
+          title: Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons")
+        ) {
           Text(
             "\(done) of \(lessons.count)", tableName: "Plan",
             comment: "Lessons done of the chapter's lessons"

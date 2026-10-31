@@ -101,7 +101,7 @@ struct LessonAskBuddyOffer: View {
         message
           .font(.subheadline)
 
-        HStack {
+        ButtonRow {
           Button {
             store.ask(suggestionId: "simpler")
           } label: {

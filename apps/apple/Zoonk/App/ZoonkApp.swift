@@ -105,6 +105,7 @@ struct ZoonkApp: App {
         .environment(\.lessonAudio, .voice(voice))
         .environment(\.spokenAnswerRecording, .voice)
         .environment(\.activityRenderers, .app)
+        .roundedButtonsAtAccessibilitySizes()
     }
   }
 }

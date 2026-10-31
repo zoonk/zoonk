@@ -594,9 +594,9 @@ private struct ExamMocksSection: View {
             isInset: true)
         }
       } header: {
-        HStack {
-          Text("Mock exams", tableName: "Exam", comment: "The exam's mocks")
-          Spacer()
+        SectionHeaderRow(
+          title: Text("Mock exams", tableName: "Exam", comment: "The exam's mocks")
+        ) {
           if !exam.mocks.isEmpty {
             Text("\(exam.mocks.count) taken", tableName: "Exam", comment: "Mocks taken")
               .monospacedDigit()
@@ -710,10 +710,10 @@ private struct ExamProgressSection: View {
           }
         }
       } header: {
-        HStack {
-          Text("How your mocks went", tableName: "Exam", comment: "Mock progress section")
+        SectionHeaderRow(
+          title: Text("How your mocks went", tableName: "Exam", comment: "Mock progress section")
+        ) {
           if exam.mocksRequirePlus {
-            Spacer()
             PlusMark()
           }
         }

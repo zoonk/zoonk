@@ -42,9 +42,7 @@ struct MockResultView: View {
     .milestoneCeremony(view.day.ceremony)
     .toolbar {
       if view.purpose != .placement {
-        ToolbarItem(placement: .primaryAction) {
-          TutorAskButton(scope: .mock(blockId: view.blockId))
-        }
+        TutorAskToolbarItem(scope: .mock(blockId: view.blockId))
       }
     }
     .sheet(item: $choices.speakingTask) { task in
@@ -934,7 +932,7 @@ private struct MockPlanSection: View {
           .foregroundStyle(.destructive)
         }
 
-        HStack {
+        ButtonRow {
           Button {
             Task { await apply() }
           } label: {

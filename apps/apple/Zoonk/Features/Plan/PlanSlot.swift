@@ -266,7 +266,7 @@ struct PlanSuggestionSection: View {
 
       options()
 
-      HStack {
+      ButtonRow {
         actions()
       }
       .buttonStyle(.bordered)

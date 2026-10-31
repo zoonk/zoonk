@@ -283,7 +283,7 @@ private struct RewritableWords: View {
           isFocused = true
         }
 
-        HStack {
+        ButtonRow {
           Button {
             let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
 
@@ -343,7 +343,7 @@ private struct UnderstoodRowView: View {
 
   private var dateChoices: some View {
     VStack(alignment: .leading, spacing: 6) {
-      HStack {
+      ButtonRow {
         if let suggested = row.suggestedDate {
           Button {
             use(suggested)
@@ -515,7 +515,7 @@ private struct RowEditor: View {
         .foregroundStyle(.destructive)
       }
 
-      HStack {
+      ButtonRow {
         Button(action: save) {
           if isSaving {
             Text("Saving…", tableName: "Onboarding", comment: "While a fix is saved")

@@ -52,9 +52,7 @@ struct SubjectScreen: View {
       .navigationTitle(subject.map { Text($0.name) } ?? Text(AppTab.plan.title))
       .barTitleAfterHero(subject?.name ?? "")
       .toolbar {
-        ToolbarItem(placement: .primaryAction) {
-          TutorAskButton(scope: .subject(goalId: goal.id, subjectKey: subjectKey))
-        }
+        TutorAskToolbarItem(scope: .subject(goalId: goal.id, subjectKey: subjectKey))
 
         ToolbarItem(placement: .primaryAction) {
           Menu {
@@ -253,9 +251,9 @@ private struct SubjectContent: View {
           SubjectChapterRow(goal: goal, chapter: chapter)
         }
       } header: {
-        HStack {
-          Text("Chapters", tableName: "Plan", comment: "Section of a subject's chapters")
-          Spacer()
+        SectionHeaderRow(
+          title: Text("Chapters", tableName: "Plan", comment: "Section of a subject's chapters")
+        ) {
           Text(
             "\(done) of \(chapters.count)", tableName: "Plan",
             comment: "Chapters done of the subject's chapters"

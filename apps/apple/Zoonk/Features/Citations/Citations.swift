@@ -53,6 +53,8 @@ struct CitationNote: View {
 
 /// Main's `SourcesChip`.
 struct SourcesChip: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
   let title: String
   let publisher: String?
   let url: String?
@@ -71,7 +73,9 @@ struct SourcesChip: View {
           comment:
             "Opens a source. \"Checked\" agrees with plural \"Sources\". Date like \"May 2026\".")
       } icon: {
-        Image(systemName: "book")
+        if !dynamicTypeSize.isAccessibilitySize {
+          Image(systemName: "book")
+        }
       }
       // Measured without a width, the automatic style drops the title, so `CitationNote`'s
       // `ViewThatFits` would squeeze the chip beside the citation instead of below it.
@@ -81,6 +85,7 @@ struct SourcesChip: View {
     }
     .buttonStyle(.bordered)
     .controlSize(.small)
+    .buttonSizing(dynamicTypeSize.isAccessibilitySize ? .flexible : .automatic)
     .popover(isPresented: $showsSource) {
       SourceDetails(title: title, publisher: publisher, url: url, checkedAt: checkedAt)
         // By default a popover becomes a full-screen cover in landscape, with no way to close it.

@@ -348,7 +348,7 @@ struct TodayPlanChangeSection: View {
         .foregroundStyle(.secondary)
     }
 
-    HStack {
+    ButtonRow {
       if change.canApply {
         Button {
           answer(.applied)

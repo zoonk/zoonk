@@ -162,17 +162,20 @@ struct AppSheetView: View {
   let sheet: AppSheet
 
   var body: some View {
-    switch sheet {
-    case .account:
-      AccountSheet()
-    case .feedback(let screen):
-      FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: screen))
-    case .preferences:
-      PreferencesSheet()
-    case .signIn:
-      AccountSheet(signsIn: true)
-    case .subscription:
-      SubscriptionScreen()
+    Group {
+      switch sheet {
+      case .account:
+        AccountSheet()
+      case .feedback(let screen):
+        FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: screen))
+      case .preferences:
+        PreferencesSheet()
+      case .signIn:
+        AccountSheet(signsIn: true)
+      case .subscription:
+        SubscriptionScreen()
+      }
     }
+    .roundedButtonsAtAccessibilitySizes()
   }
 }

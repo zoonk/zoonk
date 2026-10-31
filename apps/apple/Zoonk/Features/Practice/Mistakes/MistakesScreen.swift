@@ -87,9 +87,7 @@ struct MistakesScreen: View {
               )
             }
           } header: {
-            HStack {
-              Text(group.name)
-              Spacer()
+            SectionHeaderRow(title: Text(group.name)) {
               Text(group.mistakes.count, format: .number).monospacedDigit()
             }
           }
@@ -273,13 +271,14 @@ private struct MistakeEntryView: View {
     let fixed = mistake.status == .fixed
 
     VStack(alignment: .leading, spacing: 12) {
-      HStack {
+      AccessibilityStack {
         Label {
           Text(causeLabel(fixed: fixed))
         } icon: {
           Image(systemName: causeIcon)
         }
-        Spacer()
+        .frame(maxWidth: .infinity, alignment: .leading)
+
         Text(entryDate)
           .monospacedDigit()
       }
@@ -320,7 +319,7 @@ private struct MistakeEntryView: View {
     let skillId = mistake.practiceAvailable ? mistake.skill?.id : nil
 
     if mistake.practiceAvailableTomorrow || skillId != nil || mistake.lesson != nil {
-      HStack(spacing: 12) {
+      ButtonRow(spacing: 12) {
         if mistake.practiceAvailableTomorrow {
           Text(
             "Practice tomorrow", tableName: "Practice",
@@ -412,7 +411,7 @@ struct MistakeAnswerRow: View {
   let isRight: Bool
 
   var body: some View {
-    HStack(alignment: .firstTextBaseline, spacing: 12) {
+    AccessibilityStack(alignment: .firstTextBaseline, spacing: 12) {
       Text(ItemTextBlock.inline(text)).frame(maxWidth: .infinity, alignment: .leading)
       Text(
         isRight

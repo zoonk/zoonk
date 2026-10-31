@@ -25,18 +25,20 @@ struct AnswerOption<Label: View>: View {
             .accessibilityHidden(true)
         }
 
-        label()
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .multilineTextAlignment(.leading)
+        AccessibilityStack(alignment: .firstTextBaseline, spacing: 12) {
+          label()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .multilineTextAlignment(.leading)
 
-        if let tag {
-          tag
-        }
+          if let tag {
+            tag
+          }
 
-        if let result {
-          Text(resultLabel(result))
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(result == .right ? Color.success : Color.destructive)
+          if let result {
+            Text(resultLabel(result))
+              .font(.caption.weight(.semibold))
+              .foregroundStyle(result == .right ? Color.success : Color.destructive)
+          }
         }
       }
     }

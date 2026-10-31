@@ -58,7 +58,7 @@ struct TutorPlanChangeCard: View {
   private var actions: some View {
     switch change.status {
     case .proposed:
-      HStack {
+      ButtonRow {
         if change.canApply {
           Button {
             decide(.applied)

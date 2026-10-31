@@ -31,11 +31,12 @@ struct PlanPathSection: View {
         }
       }
     } header: {
-      HStack(alignment: .firstTextBaseline) {
-        Text("Your path", tableName: "Plan", comment: "Section of the plan's phases and chapters")
-
+      SectionHeaderRow(
+        alignment: .firstTextBaseline,
+        title: Text(
+          "Your path", tableName: "Plan", comment: "Section of the plan's phases and chapters")
+      ) {
         if phases.count > 1 {
-          Spacer()
           Text(
             "\(done) of \(phases.count) phases done", tableName: "Plan",
             comment: "Phases done of the plan's phases"
@@ -506,15 +507,12 @@ struct PlanSyllabusSection: View {
         }
       }
     } header: {
-      HStack(alignment: .firstTextBaseline) {
-        if isExam {
-          Text("Subjects", tableName: "Plan", comment: "Section of an exam's subjects")
-        } else {
-          Text("Modules", tableName: "Plan", comment: "Section of a plan's modules")
-        }
-
-        Spacer()
-
+      SectionHeaderRow(
+        alignment: .firstTextBaseline,
+        title: isExam
+          ? Text("Subjects", tableName: "Plan", comment: "Section of an exam's subjects")
+          : Text("Modules", tableName: "Plan", comment: "Section of a plan's modules")
+      ) {
         Group {
           if isExam {
             Text("Preparation", tableName: "Plan", comment: "What the subjects' bars measure")
@@ -606,8 +604,6 @@ func planChapterWindow(states: [PlanChapter.State]) -> Range<Int> {
 
 /// Says what a challenge is under its row, since a learner meets one before they've ever taken one.
 struct PlanChallengeLabel: View {
-  @Environment(\.dynamicTypeSize) private var typeSize
-
   let when: Text?
   let explains: Bool
   let isLanguage: Bool
@@ -615,18 +611,10 @@ struct PlanChallengeLabel: View {
   var body: some View {
     Label {
       VStack(alignment: .leading, spacing: 2) {
-        let layout =
-          typeSize.isAccessibilitySize
-          ? AnyLayout(VStackLayout(alignment: .leading, spacing: 2))
-          : AnyLayout(HStackLayout(alignment: .firstTextBaseline))
-
-        layout {
+        AccessibilityStack(alignment: .firstTextBaseline) {
           Text("Phase challenge", tableName: "Plan", comment: "The challenge that closes a phase")
             .foregroundStyle(.primary)
-
-          if !typeSize.isAccessibilitySize {
-            Spacer(minLength: 8)
-          }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
           when?
             .foregroundStyle(.secondary)
@@ -648,6 +636,8 @@ struct PlanChallengeLabel: View {
           .foregroundStyle(.secondary)
         }
       }
+      // In a list row's button it otherwise gets one line's height and truncates its title.
+      .fixedSize(horizontal: false, vertical: true)
     } icon: {
       KindMark(kind: .challenge)
     }

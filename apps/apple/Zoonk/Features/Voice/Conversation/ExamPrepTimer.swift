@@ -20,7 +20,7 @@ struct ExamPrepTimer: View {
 
   var body: some View {
     Section {
-      HStack(alignment: .center, spacing: 16) {
+      AccessibilityStack(spacing: 16) {
         VStack(alignment: .leading, spacing: 4) {
           Text("Preparation", tableName: "Voice", comment: "An exam task's preparation time")
             .font(.headline)

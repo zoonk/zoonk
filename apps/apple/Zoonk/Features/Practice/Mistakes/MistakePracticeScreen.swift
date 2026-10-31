@@ -164,7 +164,7 @@ struct MistakePracticeScreen: View {
           comment: "Shows a misread drill's answers once the question was read.")
       ) { state.reveal() }
     case .feedback(_, let grade, _):
-      HStack(spacing: 12) {
+      PracticeActionRow {
         PracticeMainButton(
           title: LocalizedStringResource(
             "Continue", table: "Practice", comment: "Moves on after a grade.")

@@ -82,6 +82,14 @@ The only tokens are where main's structure needs something the system lacks:
 - `StatusMark`: one scaled width, so a list's words start in one column.
 - `.chip()` padding.
 
+## Accessibility text sizes
+
+From the first accessibility size (`dynamicTypeSize.isAccessibilitySize`) text grows past what a row can hold side by side, so layouts change there, as Apple's apps do. `DesignSystem/AccessibilityLayout.swift` holds the shared rules:
+
+- Things side by side stack, text above what sat beside it: `AccessibilityStack`. A section header with a value at its end is `SectionHeaderRow`.
+- Text buttons side by side go in a `ButtonRow`: stacked, each is a regular-size rounded rectangle as wide as the row, like an alert's buttons.
+- Buttons are rounded rectangles, not capsules: a wrapped capsule's round ends take the width its words need. A button's shape doesn't reach into a presentation, so the app's root, the router's presented screens and any other presented screen with text buttons each set it (`roundedButtonsAtAccessibilitySizes()`), and bordered, main-action and glass buttons follow it. A bordered button in a toolbar keeps `.buttonBorderShape(.automatic)` (`TutorAskToolbarItem`): toolbars keep their own text size, so it never wraps.
+
 ## Components
 
 | Main                                                        | SwiftUI                                                                                                                           |

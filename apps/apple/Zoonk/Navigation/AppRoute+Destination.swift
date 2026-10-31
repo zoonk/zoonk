@@ -192,6 +192,7 @@ struct PresentedTask: View {
     let isHidden = router.isHidden(taskAt: depth)
 
     route.destination
+      .roundedButtonsAtAccessibilitySizes()
       .landsActsOnInput()
       .opacity(isHidden ? 0 : 1)
       .accessibilityHidden(isHidden)

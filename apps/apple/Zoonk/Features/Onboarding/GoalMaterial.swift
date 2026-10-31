@@ -339,7 +339,7 @@ private struct PasteMaterialRow: View {
       }
       .focused($isFocused)
 
-      HStack {
+      ButtonRow {
         Button(action: add) {
           isLink
             ? Text("Add link", tableName: "Onboarding", comment: "Adds the pasted link")

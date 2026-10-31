@@ -294,7 +294,7 @@ struct QuestionBlockView: View {
     case .finishing, .finished:
       EmptyView()
     case .feedback(_, let feedback):
-      HStack(spacing: 12) {
+      PracticeActionRow {
         PracticeMainButton(title: continueTitle) { Task { await run.next() } }
         ask(answered: true, missed: !feedback.isCorrect)
       }

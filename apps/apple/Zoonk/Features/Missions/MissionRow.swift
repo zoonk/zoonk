@@ -197,6 +197,7 @@ extension StudyMission {
 
 struct MissionRow: View {
   @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
   let mission: StudyMission
   let buddyName: String
@@ -212,38 +213,27 @@ struct MissionRow: View {
   }
 
   var body: some View {
-    let row = HStack(alignment: .firstTextBaseline, spacing: 12) {
-      mark
-        .frame(minWidth: 20)
+    let row = Group {
+      if dynamicTypeSize.isAccessibilitySize {
+        VStack(alignment: .leading, spacing: 4) {
+          HStack(spacing: 12) {
+            mark
+            Spacer(minLength: 8)
+            trailing
+          }
 
-      VStack(alignment: .leading, spacing: 2) {
-        Text(mission.name(buddy: buddyName))
-          .foregroundStyle((mission.isDone && justDone == nil) || waits ? .secondary : .primary)
-
-        if !mission.isDone, !detail.isEmpty {
-          Text(verbatim: detail.joined(separator: " · "))
-            .font(.footnote)
-            .monospacedDigit()
-            .foregroundStyle(.secondary)
+          text
         }
-      }
+      } else {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+          mark
+            .frame(minWidth: 20)
 
-      Spacer(minLength: 8)
+          text
 
-      if justDone != nil {
-        Text("Just done", tableName: "Today", comment: "A mission the result just completed")
-          .font(.caption.weight(.medium))
-          .foregroundStyle(.success)
-      }
-
-      if !mission.isDone, !waits, mission.opens?.kind == "block" {
-        Image(systemName: "target")
-          .foregroundStyle(.brain)
-          .accessibilityHidden(true)
-      }
-
-      if opensSomewhere {
-        DisclosureChevron()
+          Spacer(minLength: 8)
+          trailing
+        }
       }
     }
     .accessibilityElement(children: .combine)
@@ -258,6 +248,39 @@ struct MissionRow: View {
       .tint(.primary)
     } else {
       row
+    }
+  }
+
+  private var text: some View {
+    VStack(alignment: .leading, spacing: 2) {
+      Text(mission.name(buddy: buddyName))
+        .foregroundStyle((mission.isDone && justDone == nil) || waits ? .secondary : .primary)
+
+      if !mission.isDone, !detail.isEmpty {
+        Text(verbatim: detail.joined(separator: " · "))
+          .font(.footnote)
+          .monospacedDigit()
+          .foregroundStyle(.secondary)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var trailing: some View {
+    if justDone != nil {
+      Text("Just done", tableName: "Today", comment: "A mission the result just completed")
+        .font(.caption.weight(.medium))
+        .foregroundStyle(.success)
+    }
+
+    if !mission.isDone, !waits, mission.opens?.kind == "block" {
+      Image(systemName: "target")
+        .foregroundStyle(.brain)
+        .accessibilityHidden(true)
+    }
+
+    if opensSomewhere {
+      DisclosureChevron()
     }
   }
 

@@ -57,7 +57,7 @@ struct MemoryInsightCard: View {
       insight.kind != .planChange || insight.planChange?.status == .applied
       || insight.planChange?.canApply == true
 
-    HStack {
+    ButtonRow {
       if showsAccept {
         if let dismiss = dismissLabel {
           Button {

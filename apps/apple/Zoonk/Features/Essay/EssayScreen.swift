@@ -190,7 +190,7 @@ private struct EssayContent: View {
   @ViewBuilder
   private var writeActions: some View {
     statusLine
-    HStack(spacing: 12) {
+    ButtonRow(spacing: 12) {
       if !essay.drafts.isEmpty {
         Button {
           Task { await finish() }
