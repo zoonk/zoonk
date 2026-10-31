@@ -1,4 +1,3 @@
-import { availableParallelism } from "node:os";
 import { withSentryConfig } from "@sentry/nextjs/config";
 import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
 import { withBotId } from "botid/next/config";
@@ -23,7 +22,6 @@ const nextConfig: NextConfig = {
   env: { ZOONK_APP: "api" },
   experimental: {
     authInterrupts: true,
-    cpus: availableParallelism(),
     // The API enables Cache Components for request deduplication, not to require every auth page to navigate instantly.
     instantInsights: { validationLevel: "manual-warning" },
     turbopackRustReactCompiler: true,

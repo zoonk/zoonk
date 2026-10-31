@@ -52,7 +52,7 @@ Main's browser API calls use its same-origin `/v1` proxy when Vercel's built-in 
 
 Production and local development retain direct API requests and omit these OIDC headers.
 
-Previews and staging build on Vercel's Standard machine (4 cores, 8 GB); production selects Turbo per deployment. A build without a restored Turbopack cache keeps Turbopack's memory while it writes the cache, so main's cold build peaks near 8 GB; main keeps Next's default build worker count (one fewer than the cores) to stay under it. On-demand concurrency is a Vercel project setting and applies across its environments. Production deployment requests are submitted concurrently; their actual build start times depend on available build capacity.
+Previews and staging build on Vercel's Standard machine (4 cores, 8 GB); production selects Turbo per deployment. A build without a restored Turbopack cache keeps Turbopack's memory while it writes the cache, so main's cold build peaks near 8 GB. Every app keeps Next's default build worker count (one fewer than the cores) to stay under it. On-demand concurrency is a Vercel project setting and applies across its environments. Production deployment requests are submitted concurrently; their actual build start times depend on available build capacity.
 
 Vitest and both E2E suites run on PRs and again on `main` before staging. See [the workflows](workflows/) for check names, matrices, and deployment gates.
 
