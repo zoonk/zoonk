@@ -31,7 +31,7 @@ const LEVEL_PHASE_NAMES: Readonly<Record<SupportedLocale, Record<CourseLevel, st
     advanced: "Avancé",
     beginner: "Débutant",
     intermediate: "Intermédiaire",
-    overview: "Aperçu",
+    overview: "Vue d’ensemble",
   },
   it: {
     advanced: "Avanzato",
@@ -39,8 +39,8 @@ const LEVEL_PHASE_NAMES: Readonly<Record<SupportedLocale, Record<CourseLevel, st
     intermediate: "Intermedio",
     overview: "Panoramica",
   },
-  ja: { advanced: "上級", beginner: "初級", intermediate: "中級", overview: "入門" },
-  ko: { advanced: "고급", beginner: "초급", intermediate: "중급", overview: "입문" },
+  ja: { advanced: "上級", beginner: "初級", intermediate: "中級", overview: "概要" },
+  ko: { advanced: "고급", beginner: "초급", intermediate: "중급", overview: "개요" },
   pl: {
     advanced: "Zaawansowany",
     beginner: "Początkujący",
