@@ -90,6 +90,17 @@ class UnitCircleLabelTest {
         assertTrue("label $label", label.left >= 0f && label.right <= 311f)
     }
 
+    @Test
+    fun keepsTheAngleClearOfTheCosValueInLargeText() {
+        val point = onCircle(345.0)
+        val cosSize = Size(150f, 36f)
+        val cos = Rect(Offset((center.x + point.x) / 2 - cosSize.width / 2, center.y - 16f - cosSize.height / 2), cosSize)
+        val angle = Size(56f, 32f)
+        val at = angleLabelAt(center, 172.5, angle, cos, unit = 1f)
+
+        assertTrue("angle at $at, cos $cos", !Rect(at - Offset(angle.width / 2, angle.height / 2), angle).overlaps(cos))
+    }
+
     private companion object {
         const val FOCUS_RING = 17f
     }

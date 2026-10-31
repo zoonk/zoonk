@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -229,7 +230,19 @@ private fun UnitCircleDial(
                 drawLine(colors.ink, center, point, 2.dp.toPx())
 
                 val target = mark?.let { onCircle(center, radius, it.degrees) }
-                trigLegs(center, point, target, show, values, names, formatTrig, tones, colors.halo) { label(it, valueStyle) }
+                val angleText = label(angle, angleStyle)
+                trigLegsAndAngle(
+                    center,
+                    point,
+                    target,
+                    show,
+                    values,
+                    names,
+                    formatTrig,
+                    tones,
+                    colors,
+                    Pair(angleText, angleLabelDirection(degrees)),
+                ) { label(it, valueStyle) }
                 if (Trig.TAN in show) {
                     tangent(
                         center,
@@ -244,13 +257,6 @@ private fun UnitCircleDial(
                         label(it, valueStyle)
                     }
                 }
-
-                drawLabel(
-                    label(angle, angleStyle),
-                    onCircle(center, (ARC_RADIUS + ANGLE_LABEL_GAP).toPx(), angleLabelDirection(degrees)),
-                    colors.circle,
-                    colors.halo,
-                )
             }
 
             PointHandle(
@@ -307,7 +313,7 @@ private class TrigTones(
 private fun trigTones() =
     TrigTones(sin = MaterialTheme.zoonk.vizHighlight, cos = MaterialTheme.zoonk.vizSecondary, tan = MaterialTheme.zoonk.vizAccent)
 
-private fun DrawScope.trigLegs(
+private fun DrawScope.trigLegsAndAngle(
     center: Offset,
     point: Offset,
     target: Offset?,
@@ -316,9 +322,12 @@ private fun DrawScope.trigLegs(
     names: Map<Trig, String>,
     formatTrig: (Double?) -> String,
     tones: TrigTones,
-    halo: Color,
+    colors: DialColors,
+    angle: Pair<TextLayoutResult, Double>,
     measure: (String) -> TextLayoutResult,
 ) {
+    val halo = colors.halo
+    var cosBox: Rect? = null
     val foot = Offset(point.x, center.y)
     val isAbove = point.y <= center.y
     val segment = SEGMENT_WIDTH.toPx()
@@ -326,12 +335,10 @@ private fun DrawScope.trigLegs(
     if (Trig.COS in show) {
         drawLine(tones.cos, center, foot, segment, StrokeCap.Round)
         val below = (if (isAbove) 1 else -1) * LABEL_GAP.toPx() * 2
-        drawLabel(
-            measure("${names.getValue(Trig.COS)} = ${formatTrig(values[Trig.COS])}"),
-            Offset((center.x + foot.x) / 2, center.y + below),
-            tones.cos,
-            halo,
-        )
+        val cosText = measure("${names.getValue(Trig.COS)} = ${formatTrig(values[Trig.COS])}")
+        val cosAt = Offset((center.x + foot.x) / 2, center.y + below)
+        cosBox = Rect(cosAt - Offset(cosText.size.width / 2f, cosText.size.height / 2f), cosText.size.toSize())
+        drawLabel(cosText, cosAt, tones.cos, halo)
     }
 
     if (Trig.SIN in show) {
@@ -340,6 +347,26 @@ private fun DrawScope.trigLegs(
         val (at, anchor) = sinLabelPlacement(point, center, target, text.size.toSize(), size.width, density)
         drawLabel(text, at, tones.sin, halo, anchor)
     }
+
+    val (angleText, direction) = angle
+    val angleAt = angleLabelAt(center, direction, angleText.size.toSize(), cosBox, density)
+    drawLabel(angleText, angleAt, colors.circle, halo)
+}
+
+/** Main's `angleLabelPoint`: on its arc's bisector, pushed out along it until it clears the cos value. */
+internal fun angleLabelAt(
+    center: Offset,
+    direction: Double,
+    size: Size,
+    cos: Rect?,
+    unit: Float,
+): Offset {
+    val distance = (ARC_RADIUS + ANGLE_LABEL_GAP).value * unit
+    val gap = LABEL_GAP.value * unit / 2
+    return (0..ANGLE_LABEL_STEPS)
+        .map { onCircle(center, distance + it * ANGLE_LABEL_STEP.value * unit, direction) }
+        .firstOrNull { at -> cos == null || !Rect(at - Offset(size.width / 2, size.height / 2), size).inflate(gap).overlaps(cos) }
+        ?: onCircle(center, distance, direction)
 }
 
 private fun DrawScope.tangent(
@@ -509,6 +536,8 @@ private val TARGET_RADIUS = 7.dp
 private val TARGET_LABEL_GAP = 14.dp
 private val ARC_RADIUS = 22.dp
 private val ANGLE_LABEL_GAP = 16.dp
+private val ANGLE_LABEL_STEP = 2.dp
+private const val ANGLE_LABEL_STEPS = 30
 private val LABEL_GAP = 8.dp
 private val SIN_LABEL_GAP = 26.dp
 private val SIN_LABEL_PAST_POINT = 25.dp
