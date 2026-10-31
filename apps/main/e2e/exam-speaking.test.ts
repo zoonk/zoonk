@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { createAnytimeMockLearner } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
+import { expectHydrated } from "./hydration";
 import { CHARACTER_REPLY, answerLiveCalls } from "./live-peer";
 import { openAs } from "./study-day";
 
@@ -73,7 +74,9 @@ test.describe("Exam speaking tasks", () => {
     await answerLiveCalls(page, "answers");
     await page.goto("/exam");
     const speaking = page.getByRole("region", { name: "Speaking" });
-    await speaking.getByRole("button", { name: new RegExp(TASK_ONE, "u") }).click();
+    const task = speaking.getByRole("button", { name: new RegExp(TASK_ONE, "u") });
+    await expectHydrated(task);
+    await task.click();
     await speaking.getByRole("button", { name: "Start this task" }).click();
     await expect(page).toHaveURL(new RegExp(`/conversation/${waiting.id}\\?from=exam$`, "u"));
 
