@@ -39,9 +39,11 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.setup.selectedCheck
@@ -95,6 +97,7 @@ internal fun PlanLinkScreen(
         when (val shown = state) {
             is LoadState.Loaded -> {
                 if (shown.value.owner != null) return@PageScaffold
+                TrackShown(AnalyticsEvent.PlanLinkOpened(route.planId))
                 PageWithSupportingPane(
                     supportingPane = { Phases(shown.value.outline, Modifier.verticalScroll(rememberScrollState()).padding(24.dp)) },
                     modifier = Modifier.padding(padding),

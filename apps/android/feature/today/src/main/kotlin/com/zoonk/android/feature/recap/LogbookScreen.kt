@@ -43,7 +43,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
@@ -109,6 +111,7 @@ fun LogbookScreen(
 
     when (val shown = state) {
         is LoadState.Loaded -> {
+            TrackShown(AnalyticsEvent.LogbookViewed)
             Logbook(shown.value, name, onClose = close, onStart = { navigator.showRoot(AppTab.Today) })
         }
 

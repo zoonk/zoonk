@@ -32,6 +32,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.ceremonies.momentBuddy
 import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
@@ -113,6 +115,7 @@ fun LessonAccessScreen(
         }
 
         LessonRefusal.PlusRequired -> {
+            TrackShown(AnalyticsEvent.SubscriptionGateShown)
             AccessLayout(
                 R.drawable.ic_auto_awesome,
                 stringResource(R.string.subscription_free_week_over_title),
@@ -186,6 +189,7 @@ private fun Limited(
         }
 
         LimitTier.Free -> {
+            TrackShown(AnalyticsEvent.SubscriptionGateShown)
             val month = (limit as? Limit.Reached)?.period == LimitPeriod.Month
             AccessLayout(
                 R.drawable.ic_auto_awesome,

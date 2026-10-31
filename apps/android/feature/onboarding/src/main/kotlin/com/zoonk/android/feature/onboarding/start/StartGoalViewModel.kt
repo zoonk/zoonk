@@ -7,6 +7,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.serialization.saved
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.EventTracker
 import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationFollower
 import com.zoonk.android.data.GenerationKind
@@ -70,6 +72,7 @@ class StartGoalViewModel(
     goal: String?,
     draftId: String?,
     private val planId: String?,
+    private val analytics: EventTracker = EventTracker {},
 ) : ViewModel() {
     private var saved by handle.saved {
         StartFlowState(
@@ -243,6 +246,7 @@ class StartGoalViewModel(
     ) {
         if (isSending) return
         isSending = true
+        analytics.track(AnalyticsEvent.GoalTyped(hasAttachment = flow.attached.isNotEmpty()))
         draftId?.let(store::forgetSent)
         entryError = null
         update { it.copy(screen = StartScreen.Sending(goal), waitStartedAt = System.currentTimeMillis()) }

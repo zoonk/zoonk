@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.player
 
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.focusable
@@ -72,6 +73,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.feature.audio.VoiceRecording
@@ -165,6 +167,8 @@ fun LessonPlayer(
         }
     val language = rememberLessonLanguage(lesson.language, lesson.targetLanguage)
     language.prompt?.let { PromptAudioEffect(screen?.step, it) }
+    val activity = LocalActivity.current
+    LifecycleStartEffect(viewModel) { onStopOrDispose { if (activity?.isChangingConfigurations != true) viewModel.leave() } }
     val actions =
         remember(viewModel) {
             object : StepActions {

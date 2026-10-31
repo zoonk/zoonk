@@ -23,10 +23,14 @@ android {
             versionNameSuffix = "-debug"
             isPseudoLocalesEnabled = true
             buildConfigField("String", "SENTRY_DSN", "\"\"")
+            buildConfigField("String", "POSTHOG_PROJECT_TOKEN", "\"\"")
+            buildConfigField("String", "POSTHOG_HOST", "\"\"")
         }
 
         release {
             buildConfigField("String", "SENTRY_DSN", "\"${providers.gradleProperty("sentryDsn").getOrElse("")}\"")
+            buildConfigField("String", "POSTHOG_PROJECT_TOKEN", "\"${providers.gradleProperty("posthogProjectToken").getOrElse("")}\"")
+            buildConfigField("String", "POSTHOG_HOST", "\"${providers.gradleProperty("posthogHost").getOrElse("")}\"")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -148,6 +152,9 @@ dependencies {
     // Crash and error reports.
     implementation(libs.sentry.android)
     implementation(libs.sentry.okhttp)
+
+    // Product analytics.
+    implementation(libs.posthog.android)
 
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)

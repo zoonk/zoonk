@@ -2,6 +2,7 @@ package com.zoonk.android.feature.today
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,10 +24,13 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.EventTracker
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.goalcontent.examSyllabus
 import com.zoonk.android.feature.goalcontent.modulesSyllabus
@@ -48,6 +52,7 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.LanguageTodayPronunciation
+import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
@@ -101,6 +106,7 @@ class TodayFlowTest {
     private val goal = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00"
 
     private var language by mutableStateOf<LoadState<LanguageToday>?>(null)
+    private val tracked = mutableListOf<AnalyticsEvent>()
 
     private fun show(
         vararg sessionFields: Pair<String, Any?>,
@@ -163,22 +169,24 @@ class TodayFlowTest {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
                 LaunchedEffect(viewModel) { viewModel.routes.collect { navigator.open(it.route) } }
-                TodayDay(
-                    read,
-                    store.today,
-                    false,
-                    viewModel,
-                    navigator,
-                    PaddingValues(),
-                    buddy =
-                        com.zoonk.android.ui.characters
-                            .BuddyLook(),
-                    buddyName = "Zu",
-                    language = language,
-                    onboarding = onboarding,
-                    plans = PlanStore(plans, cache),
-                    refreshIfChanged = store::refreshIfChanged,
-                )
+                CompositionLocalProvider(LocalEventTracker provides EventTracker(tracked::add)) {
+                    TodayDay(
+                        read,
+                        store.today,
+                        false,
+                        viewModel,
+                        navigator,
+                        PaddingValues(),
+                        buddy =
+                            com.zoonk.android.ui.characters
+                                .BuddyLook(),
+                        buddyName = "Zu",
+                        language = language,
+                        onboarding = onboarding,
+                        plans = PlanStore(plans, cache),
+                        refreshIfChanged = store::refreshIfChanged,
+                    )
+                }
             }
         }
     }
@@ -221,6 +229,29 @@ class TodayFlowTest {
 
         rule.onNodeWithText("We couldn't find the official notice").assertExists()
         rule.onNodeWithText("Continue Chemistry?").assertDoesNotExist()
+    }
+
+    @Test
+    fun todayAndItsInsightCountOncePerVisit() {
+        show(todayFields = listOf("notice" to "insight", "insight" to fixture("memory-insight")))
+        rule.waitForIdle()
+
+        assertEquals(
+            listOf(AnalyticsEvent.TodayViewed, AnalyticsEvent.InsightShown(UUID.fromString(INSIGHT_ID), MemoryInsight.Kind.TIP)),
+            tracked,
+        )
+    }
+
+    @Test
+    fun aFreeExamPlansEndedFirstWeekCountsAsAPlusGate() {
+        show(
+            "examAccess" to
+                fixture("study-session")["examAccess"]?.jsonObject?.let { JsonObject(it + ("trialEnded" to JsonPrimitive(true))) },
+            todayFields = listOf("notice" to "examAccess"),
+        )
+        rule.waitForIdle()
+
+        assertEquals(listOf(AnalyticsEvent.TodayViewed, AnalyticsEvent.SubscriptionGateShown), tracked)
     }
 
     @Test
@@ -731,3 +762,5 @@ class TodayFlowTest {
         ): SuggestedGoal = error("Not used")
     }
 }
+
+private const val INSIGHT_ID = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00"

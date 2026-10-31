@@ -33,9 +33,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
@@ -67,6 +69,9 @@ fun LessonScreen(
     val missing = (state is LoadState.Loaded && outlineLesson == null) || (lessonState as? LoadState.Failed)?.error == ApiError.NotFound
     val shown = if (missing) LoadState.Failed(ApiError.NotFound) else state
 
+    if (shown is LoadState.Loaded && lessonState is LoadState.Loaded) {
+        TrackShown(AnalyticsEvent.PublicPageViewed(route.lessonId, AnalyticsEvent.PublicPage.Lesson))
+    }
     CatalogPage(app, navigator, detail, shown, outlineLesson?.title, alsoShown = listOf(lesson)) { value, layout ->
         val found = placeOf(value, route.chapterId) ?: return@CatalogPage
         lessonContent(app, navigator, value, found, route.lessonId, lesson, lessonState, started, layout)

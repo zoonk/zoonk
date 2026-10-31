@@ -17,7 +17,7 @@ class ZoonkApplication :
     override fun onCreate() {
         super.onCreate()
         startErrorReporting(this)
-        container = AppContainer(this)
+        container = AppContainer(this, productAnalytics(this))
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader = container.images.loader

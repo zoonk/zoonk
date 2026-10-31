@@ -43,6 +43,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -418,13 +420,17 @@ internal fun FirstQuestion(
         RichText(screen.question, style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.size(20.dp))
 
+        val analytics = LocalEventTracker.current
         AnswerOptionGroup {
             screen.options.forEachIndexed { index, option ->
                 AnswerOption(
                     marker = index + 1,
                     picked = false,
                     result = null,
-                    onClick = { navigator.open(AppRoute.Lesson(lessonId, firstAnswer = option.id)) },
+                    onClick = {
+                        analytics.track(AnalyticsEvent.HookAnswered(lessonId))
+                        navigator.open(AppRoute.Lesson(lessonId, firstAnswer = option.id))
+                    },
                 ) {
                     RichInlineText(option.text, style = MaterialTheme.typography.bodyLarge)
                 }

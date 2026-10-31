@@ -81,6 +81,10 @@ Release builds send crashes and errors to the `zoonk-android` project in Sentry.
 
 `pnpm android:release` uploads the bundle's R8 mapping, so crash reports show our code instead of obfuscated names. Before your first release, run `brew install getsentry/tools/sentry-cli`, then `sentry-cli login` once; the upload uses that saved login and fails without it. Other builds, `pnpm android:build` included, upload nothing.
 
+## Usage analytics
+
+Release builds send usage analytics to the Zoonk project in PostHog, named by `posthogProjectToken` and `posthogHost` in [gradle.properties](gradle.properties), and only while the learner shares usage data. Debug builds and tests never start PostHog. To see what a release build sends, build it with `-PposthogHost=<your listener's URL>` so nothing reaches the real project.
+
 ## Verification
 
 The [Android workflow](../../.github/workflows/android.yml) checks formatting and runs the tests, and runs Android Lint and the Release build when started by hand; [shared code quality](../../.github/workflows/code-quality.yml) checks translations and TypeScript tooling.

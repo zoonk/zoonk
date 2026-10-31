@@ -2,10 +2,12 @@ package com.zoonk.android.data
 
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LearningProfile
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -31,13 +33,20 @@ private class FakeLearningProfileApi : LearningProfileApi {
     val changes = mutableListOf<JsonObject>()
     var failure: ApiException? = null
     var current: LearningProfile = ApiJson.decodeFromString(PROFILE)
+    var reads: CompletableDeferred<Unit>? = null
+    val writes = ArrayDeque<CompletableDeferred<Unit>>()
 
-    override suspend fun profile(session: AuthenticatedSession) = current
+    override suspend fun profile(session: AuthenticatedSession): LearningProfile {
+        val read = current
+        reads?.await()
+        return read
+    }
 
     override suspend fun update(
         session: AuthenticatedSession,
         change: JsonObject,
     ): LearningProfile {
+        writes.removeFirstOrNull()?.await()
         failure?.let { throw it }
         changes += change
         return current
@@ -159,6 +168,90 @@ class LearningProfileStoreTest {
 
             assertTrue(saved.await())
             assertEquals("""{"shareUsageData":false}""", api.changes.single().toString())
+        }
+
+    @Test
+    fun anOlderReadCantUndoAChangeShownAtOnce() =
+        runTest {
+            val store = loaded()
+            api.reads = CompletableDeferred()
+            val write = CompletableDeferred<Unit>().also(api.writes::add)
+            val read = async { store.profile.refresh() }
+            runCurrent()
+
+            api.current = api.current.copy(shareUsageData = false)
+            val saved = async { store.setShareUsageData(false) }
+            runCurrent()
+            api.reads?.complete(Unit)
+            read.await()
+
+            assertEquals(
+                false,
+                store.profile.state.value.value!!
+                    .shareUsageData,
+            )
+            write.complete(Unit)
+            assertTrue(saved.await())
+        }
+
+    @Test
+    fun anEarlierWriteSavedCantUndoALaterChangeStillOnItsWay() =
+        runTest {
+            val store = loaded()
+            api.current = api.current.copy(shareUsageData = true)
+            store.profile.refresh()
+            backgroundScope.launch { store.profile.shown.collect {} }
+            runCurrent()
+            val sounds = CompletableDeferred<Unit>().also(api.writes::add)
+            val sharing = CompletableDeferred<Unit>().also(api.writes::add)
+            val soundsSaved = async { store.setSoundsEnabled(false) }
+            runCurrent()
+            val sharingSaved = async { store.setShareUsageData(false) }
+            runCurrent()
+
+            sounds.complete(Unit)
+            soundsSaved.await()
+            runCurrent()
+
+            assertEquals(
+                false,
+                store.profile.state.value.value!!
+                    .shareUsageData,
+            )
+            api.current = api.current.copy(shareUsageData = false, soundsEnabled = false)
+            sharing.complete(Unit)
+            assertTrue(sharingSaved.await())
+        }
+
+    @Test
+    fun anEarlierWriteRefusedCantUndoALaterChangeStillOnItsWay() =
+        runTest {
+            val store = loaded()
+            api.current = api.current.copy(shareUsageData = true)
+            store.profile.refresh()
+            backgroundScope.launch { store.profile.shown.collect {} }
+            runCurrent()
+            val sounds = CompletableDeferred<Unit>().also(api.writes::add)
+            val sharing = CompletableDeferred<Unit>().also(api.writes::add)
+            val soundsSaved = async { store.setSoundsEnabled(false) }
+            runCurrent()
+            val sharingSaved = async { store.setShareUsageData(false) }
+            runCurrent()
+
+            api.failure = ApiException(ApiError.Unavailable, "INTERNAL_ERROR", 500)
+            sounds.complete(Unit)
+            assertFalse(soundsSaved.await())
+            runCurrent()
+
+            assertEquals(
+                false,
+                store.profile.state.value.value!!
+                    .shareUsageData,
+            )
+            api.failure = null
+            api.current = api.current.copy(shareUsageData = false)
+            sharing.complete(Unit)
+            assertTrue(sharingSaved.await())
         }
 
     @Test

@@ -77,31 +77,39 @@ class LearningProfileStore(
     private var pending = 0
 
     /**
-     * Shows [optimistic] at once. Writes go out one at a time, in the order they were made. The
-     * last one's answer has every earlier change, so it's shown as saved; a refused or abandoned
-     * last write reads the profile again rather than restoring an older copy over later changes.
+     * Shows [optimistic] at once, and no read can bring back what it replaced while writes are on their
+     * way. Writes go out one at a time, in the order they were made. The last one's answer has every
+     * earlier change, so it's shown as saved, and an earlier one's answer leaves the profile as shown; a
+     * refused or abandoned last write reads the profile again rather than restoring an older copy over
+     * later changes.
      */
     private suspend fun update(
         optimistic: (LearningProfile) -> LearningProfile,
         change: JsonObject,
     ): Boolean {
-        if (profile.state.value.value != null) profile.update(optimistic)
+        profile.state.value.value
+            ?.let { profile.replace(optimistic(it)) }
         pending++
         val result =
             try {
                 writing.withLock {
                     cache.mutate(
                         invalidating = setOf(DataDomain.LearningProfile),
-                        replacing = { saved: LearningProfile -> if (pending == 1) listOf(profile.replacing(saved)) else emptyList() },
+                        replacing = { saved: LearningProfile ->
+                            listOf(if (pending == 1) profile.replacing(saved) else Replacement(profile) {})
+                        },
                     ) { session -> api.update(session, change) }
                 }
             } catch (e: CancellationException) {
-                profile.invalidate()
+                settle(saved = false)
                 throw e
-            } finally {
-                pending--
             }
-        if (result is MutationResult.Failed) profile.invalidate()
+        settle(saved = result !is MutationResult.Failed)
         return result is MutationResult.Done
+    }
+
+    private fun settle(saved: Boolean) {
+        pending--
+        if (!saved && pending == 0) profile.invalidate()
     }
 }

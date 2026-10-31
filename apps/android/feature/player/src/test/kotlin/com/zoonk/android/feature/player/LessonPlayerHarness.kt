@@ -14,10 +14,12 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.ANA
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
+import com.zoonk.android.data.EventTracker
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.activities.code.CodeSandbox
 import com.zoonk.android.feature.activities.code.LocalCodeSandbox
@@ -54,6 +56,7 @@ internal class LessonPlayerHarness(
     val replaced = mutableListOf<AppRoute>()
     var closed = 0
     var tutorAsked = false
+    val tracked = mutableListOf<AnalyticsEvent>()
     lateinit var api: FakeLessonPlayerApi
     val catalogApi = FakeCatalogApi()
     lateinit var catalog: CatalogStore
@@ -118,6 +121,7 @@ internal class LessonPlayerHarness(
                 activeGoalId = { GOAL_ID },
                 lessonStarted = catalog.lessonStarted[LESSON_ID],
                 chapters = chapters,
+                analytics = EventTracker(tracked::add),
             )
         }
         viewModel = newViewModel()

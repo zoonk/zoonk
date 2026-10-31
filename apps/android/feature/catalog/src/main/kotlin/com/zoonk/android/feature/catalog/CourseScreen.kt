@@ -49,10 +49,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionState
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
@@ -93,6 +95,7 @@ fun CourseScreen(
 
     val report = FeedbackTarget("course", FeedbackSubmissionContext.ContentKind.COURSE, route.courseId.toUuidOrNull())
 
+    if (state is LoadState.Loaded) TrackShown(AnalyticsEvent.PublicPageViewed(route.courseId, AnalyticsEvent.PublicPage.Course))
     CatalogPage(app, navigator, detail, state, title, report) { value, layout ->
         courseContent(app, navigator, value, started, layout)
     }

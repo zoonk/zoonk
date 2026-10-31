@@ -38,8 +38,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.language.LanguageLevelCard
@@ -111,6 +113,9 @@ fun TodayDay(
     val model = remember(read, poll.stalled) { TodayDayModel(read, poll.stalled) }
     val activity = LocalActivity.current
     DisposableEffect(viewModel) { onDispose { if (activity?.isChangingConfigurations != true) viewModel.endVisit() } }
+    TrackShown(AnalyticsEvent.TodayViewed)
+    // Here rather than in the notice, which a lazy list or a layout change can compose again within one visit.
+    viewModel.noticeEvent(read)?.let { TrackShown(it) }
     val scope = rememberCoroutineScope()
     var pulled by remember { mutableStateOf(false) }
     var doneOpen by rememberSaveable { mutableStateOf(false) }

@@ -6,11 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.DraftStore
+import com.zoonk.android.data.EventTracker
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionSource
@@ -30,6 +32,7 @@ import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.engine.LessonSupport
 import com.zoonk.android.feature.player.engine.RunAnswer
+import com.zoonk.android.feature.player.engine.abandonEvent
 import com.zoonk.android.feature.player.engine.gradeOnDevice
 import com.zoonk.android.feature.player.engine.hasExampleLineSlot
 import com.zoonk.android.feature.player.engine.isServerGradedAnswer
@@ -167,6 +170,7 @@ class LessonPlayerViewModel(
     private val activeGoalId: () -> String? = { null },
     private val lessonStarted: Resource<Boolean>? = null,
     private val chapters: GoalContentStore? = null,
+    private val analytics: EventTracker = EventTracker {},
     private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<LessonPlayerState?>(null)
@@ -199,6 +203,7 @@ class LessonPlayerViewModel(
     private val screenLocks = mutableMapOf<String, Mutex>()
     private var exampleLinesWrite: Job? = null
     private var writingExampleLines by mutableStateOf(false)
+    private var abandonSent = false
 
     /**
      * Starts the lesson's run when it opens, as main does after its player mounts (never on a
@@ -221,6 +226,14 @@ class LessonPlayerViewModel(
         mutableExplanations.value = emptyMap()
         mutableState.value = null
         startRun()
+    }
+
+    /** The app went to the background or the player closed: an unfinished run counts as abandoned, once. */
+    fun leave() {
+        if (abandonSent) return
+        val event = mutableState.value?.abandonEvent() ?: return
+        abandonSent = true
+        analytics.track(event)
     }
 
     fun continueSession() {
@@ -340,6 +353,7 @@ class LessonPlayerViewModel(
         writeExampleLines()
 
         if (answer is LessonAnswer.Hook) {
+            analytics.track(AnalyticsEvent.HookAnswered(state.lessonId))
             revealGuess(step, answer.optionId)?.let { dispatch(LessonAction.CheckResolved(step.id, it, counts = false)) }
             return
         }
@@ -362,6 +376,7 @@ class LessonPlayerViewModel(
             return
         }
 
+        countActivity(step)
         dispatch(LessonAction.CheckResolved(step.id, local.copy(attemptId = pending.attemptId), counts = true))
         unsaved.getOrPut(step.id) { mutableListOf() } += pending
         work.launch {
@@ -539,6 +554,7 @@ class LessonPlayerViewModel(
             when (val outcome = withTimeoutOrNull(timeout) { send(pending) }) {
                 is CheckOutcome.Checked -> {
                     val result = outcome.result.toStepResult(answerText)
+                    countActivity(step)
                     dispatch(LessonAction.CheckResolved(step.id, result, counts = outcome.result.checked))
                 }
 
@@ -547,6 +563,12 @@ class LessonPlayerViewModel(
                 }
             }
         }
+    }
+
+    /** A graded check of an activity, as main counts the ones it grades on the device. */
+    private fun countActivity(step: LessonStep) {
+        val activity = step.content as? StepContent.Activity ?: return
+        analytics.track(AnalyticsEvent.ActivityUsed(lessonId, activity.frame.template))
     }
 
     /** Sends a screen's unsaved answers oldest first; false while one of them can't get through. */

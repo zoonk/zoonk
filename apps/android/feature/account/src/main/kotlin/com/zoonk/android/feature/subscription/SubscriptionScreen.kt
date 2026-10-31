@@ -54,7 +54,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.openWebPage
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
@@ -248,6 +250,7 @@ private fun Offer(
     val purchase by app.subscriptions.purchase.collectAsStateWithLifecycle()
     var period by rememberSaveable { mutableStateOf(BillingPeriod.Monthly) }
     val activity = LocalActivity.current
+    val analytics = LocalEventTracker.current
     val scope = rememberCoroutineScope()
     val plans = offers.value
     // Play can sell one base plan and not the other in a region: show the one it sells.
@@ -308,7 +311,12 @@ private fun Offer(
 
                 else -> {
                     Button(
-                        onClick = { activity?.let { scope.launch { offer?.let { chosen -> app.subscriptions.buy(it, chosen.period) } } } },
+                        onClick = {
+                            if (activity != null && offer != null) {
+                                analytics.track(AnalyticsEvent.SubscriptionCheckoutStarted(offer.period))
+                                scope.launch { app.subscriptions.buy(activity, offer.period) }
+                            }
+                        },
                         enabled = offer != null && !isWorking && activity != null,
                         modifier = Modifier.fillMaxWidth(),
                     ) {

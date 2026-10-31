@@ -82,6 +82,7 @@ import androidx.navigation3.ui.defaultTransitionSpec
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.shell.GoalSwitcher
+import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -164,6 +165,7 @@ fun ZoonkApp(
         LocalPrivatePictures provides pictures,
         LocalUriHandler provides links,
         LocalTabRootBar provides rememberTabRootBar(app, navigator),
+        LocalEventTracker provides app.analytics,
     ) {
         val sendFeedback = rememberSendFeedback(app, "sidebar")
 

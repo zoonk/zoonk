@@ -197,7 +197,7 @@ fun PreferencesScreen(
                         val look = summary.value?.buddy?.look() ?: BuddyLook()
                         BuddySection(state.value, look, preferences)
                         LessonsSection(state.value, preferences)
-                        UsageDataSection(state.value, preferences)
+                        UsageDataSection(state.value, summary.value?.analytics?.usageDataSharing, preferences)
                     }
 
                     is LoadState.Failed -> {
@@ -329,10 +329,14 @@ internal fun LessonsSection(
     }
 }
 
-/** The server records usage unless the learner turned it off. */
+/**
+ * The learner's own choice, which shows at once when they change it; with none yet, what the summary
+ * resolved for where they are, which is off where the law asks first.
+ */
 @Composable
-private fun UsageDataSection(
+internal fun UsageDataSection(
     profile: LearningProfile,
+    usageDataSharing: Boolean?,
     preferences: PreferencesViewModel,
 ) {
     Section(stringResource(R.string.settings_your_data)) {
@@ -340,7 +344,7 @@ private fun UsageDataSection(
             SwitchRow(
                 title = stringResource(R.string.settings_preferences_share_usage_data),
                 description = stringResource(R.string.settings_preferences_share_usage_data_description),
-                checked = profile.shareUsageData != false,
+                checked = profile.shareUsageData ?: (usageDataSharing == true),
                 onCheckedChange = preferences::setShareUsageData,
             )
         }

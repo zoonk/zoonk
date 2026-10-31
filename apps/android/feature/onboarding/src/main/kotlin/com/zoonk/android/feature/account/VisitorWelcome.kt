@@ -51,7 +51,7 @@ fun VisitorWelcome(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
-    val sender = viewModel { GoalSenderViewModel(app.onboarding) }
+    val sender = viewModel { GoalSenderViewModel(app.onboarding, app.analytics) }
     val language = appLanguage()
 
     VisitorWelcome(

@@ -37,7 +37,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.VisitorWelcome
@@ -86,6 +88,7 @@ fun TodayScreen(
     TabRootScaffold { padding ->
         when (access) {
             LearnerAccess.Visitor -> {
+                TrackShown(AnalyticsEvent.HomeViewed)
                 VisitorWelcome(app, navigator, padding)
             }
 

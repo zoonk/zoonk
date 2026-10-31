@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.exam.ExamMomentCard
@@ -69,7 +70,7 @@ internal fun TodayNotice(
     val viewModel = state.viewModel
     val picked = read.today.notice
     LaunchedEffect(read.today.goal.id, read.day.localDate, picked, read.today.insight?.id) { viewModel.holdNotice(read, picked) }
-    val hold = viewModel.noticeHold?.takeIf { it.goalId == read.today.goal.id && it.date == read.day.localDate }
+    val hold = viewModel.heldNotice(read)
 
     when (hold?.kind ?: picked) {
         Today.Notice.EXAM -> {
@@ -238,6 +239,19 @@ private fun ExamChoiceNotice(
             }
         }
         if (viewModel.examChoiceFailedOn == state.read.noticeVisit()) SuggestionSaveError()
+    }
+}
+
+private fun TodayViewModel.heldNotice(read: TodayRead.Day) =
+    noticeHold?.takeIf { it.goalId == read.today.goal.id && it.date == read.day.localDate }
+
+/** The notice Today shows, as main counts it: an insight, or Plus's gate on a free exam plan's ended first week. */
+internal fun TodayViewModel.noticeEvent(read: TodayRead.Day): AnalyticsEvent? {
+    val hold = heldNotice(read)
+    return when (hold?.kind ?: read.today.notice) {
+        Today.Notice.INSIGHT -> (read.today.insight ?: hold?.insight)?.let { AnalyticsEvent.InsightShown(it.id, it.kind) }
+        Today.Notice.EXAM_ACCESS -> AnalyticsEvent.SubscriptionGateShown.takeIf { read.day.examAccess.trialEnded }
+        else -> null
     }
 }
 

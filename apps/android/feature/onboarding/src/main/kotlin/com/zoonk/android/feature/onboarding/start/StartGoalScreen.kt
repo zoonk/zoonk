@@ -59,6 +59,7 @@ import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
@@ -110,7 +111,8 @@ fun StartGoalScreen(
     canAttach: Boolean,
     navigator: AppNavigator,
 ) {
-    val vm = viewModel { StartGoalViewModel(store, createSavedStateHandle(), route.goal, route.draftId, route.planId) }
+    val analytics = LocalEventTracker.current
+    val vm = viewModel { StartGoalViewModel(store, createSavedStateHandle(), route.goal, route.draftId, route.planId, analytics) }
     val hasSession = sessionKey != null
     LaunchedEffect(sessionKey) { vm.followSession(sessionKey) }
     val caps by allowance.collectShown()

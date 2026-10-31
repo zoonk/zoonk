@@ -166,6 +166,7 @@ internal fun PlayingLesson(
                 },
                 lessonStarted = app.catalog.lessonStarted[route.lessonId],
                 chapters = app.goalContent,
+                analytics = app.analytics,
             )
         }
     val session by app.sessions.state.collectAsStateWithLifecycle()

@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.onboarding.start
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -21,10 +22,13 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.EventTracker
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationEvent
+import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.onboarding.DRAFT_ID
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
@@ -62,6 +66,7 @@ class StartGoalFlowTest {
     private lateinit var navigator: AppNavigator
     private lateinit var store: OnboardingStore
     private var sessionKey by mutableStateOf<String?>("local-a")
+    private val tracked = mutableListOf<AnalyticsEvent>()
 
     private fun show(
         route: AppRoute.StartGoal = AppRoute.StartGoal(),
@@ -76,7 +81,9 @@ class StartGoalFlowTest {
         setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
-                StartGoalScreen(route, store, cache.noAllowance(), sessionKey = sessionKey, canAttach = sessionKey != null, navigator)
+                CompositionLocalProvider(LocalEventTracker provides EventTracker(tracked::add)) {
+                    StartGoalScreen(route, store, cache.noAllowance(), sessionKey = sessionKey, canAttach = sessionKey != null, navigator)
+                }
             }
         }
     }
@@ -84,6 +91,15 @@ class StartGoalFlowTest {
     private fun sendGoal(words: String) {
         rule.onNode(hasSetTextAction()).performTextInput(words)
         rule.onNodeWithText("Build my plan").performClick()
+    }
+
+    @Test
+    fun eachGoalSentCountsAsTyped() {
+        show()
+        sendGoal("pass the bar exam")
+        rule.onNodeWithText("Here's what I understood").assertIsDisplayed()
+
+        assertEquals(listOf(AnalyticsEvent.GoalTyped(hasAttachment = false)), tracked)
     }
 
     @Test

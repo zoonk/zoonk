@@ -60,6 +60,9 @@ androidxWebkit = "1.18.0"
 sentry = "8.62.0"
 sentryGradlePlugin = "6.25.0"
 
+# Product analytics.
+posthog = "3.75.0"
+
 [libraries]
 # Build logic.
 android-gradle-api = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
@@ -144,6 +147,9 @@ androidx-webkit = { module = "androidx.webkit:webkit", version.ref = "androidxWe
 # Crash and error reports.
 sentry-android = { module = "io.sentry:sentry-android", version.ref = "sentry" }
 sentry-okhttp = { module = "io.sentry:sentry-okhttp", version.ref = "sentry" }
+
+# Product analytics.
+posthog-android = { module = "com.posthog:posthog-android", version.ref = "posthog" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

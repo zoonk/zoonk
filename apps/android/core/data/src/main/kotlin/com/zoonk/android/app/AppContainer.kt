@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.zoonk.android.app.shell.GoalSwitch
+import com.zoonk.android.data.Analytics
+import com.zoonk.android.data.AnalyticsSdk
 import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.BuildConfig
@@ -26,6 +28,7 @@ import com.zoonk.android.data.apiHttpClient
 import com.zoonk.android.data.clearCredentialState
 import com.zoonk.android.data.imageLoader
 import com.zoonk.android.data.perform
+import com.zoonk.android.data.shownLanguage
 import com.zoonk.android.feature.account.AccountStore
 import com.zoonk.android.feature.account.LiveAccountApi
 import com.zoonk.android.feature.account.PlayIntegrity
@@ -135,9 +138,15 @@ class AppContainer private constructor(
     context: Context,
     credentials: SessionCredentials,
     previewAccess: LearnerAccess?,
+    analyticsSdk: AnalyticsSdk?,
     val timeSource: TimeSource = TimeSource.Monotonic,
 ) {
-    constructor(context: Context) : this(context, EncryptedSessionCredentials(context), previewAccess = null)
+    constructor(context: Context, analyticsSdk: AnalyticsSdk?) : this(
+        context,
+        EncryptedSessionCredentials(context),
+        previewAccess = null,
+        analyticsSdk = analyticsSdk,
+    )
 
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     val snackbars = AppSnackbars()
@@ -170,6 +179,15 @@ class AppContainer private constructor(
             scope = scope,
         )
     val learningProfile = LearningProfileStore(LiveLearningProfileApi(api), cache)
+    val analytics =
+        Analytics(
+            sdk = analyticsSdk,
+            session = sessions.state,
+            summary = learnerSummary.summary.state,
+            profile = learningProfile.profile.state,
+            language = context.shownLanguage(),
+            scope = scope,
+        )
 
     val plans = PlanStore(LivePlanApi(api), cache)
     val goalContent = GoalContentStore(LiveGoalContentApi(api), cache)
@@ -313,7 +331,7 @@ class AppContainer private constructor(
             context: Context,
             access: LearnerAccess = LearnerAccess.Learner,
             timeSource: TimeSource = TimeSource.Monotonic,
-        ) = AppContainer(context, NoStoredSession, access, timeSource)
+        ) = AppContainer(context, NoStoredSession, access, analyticsSdk = null, timeSource)
     }
 }
 

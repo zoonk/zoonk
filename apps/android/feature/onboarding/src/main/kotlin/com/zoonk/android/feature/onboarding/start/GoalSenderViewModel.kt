@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.EventTracker
 import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
@@ -17,6 +19,7 @@ import kotlinx.coroutines.launch
  */
 class GoalSenderViewModel(
     private val store: OnboardingStore,
+    private val analytics: EventTracker = EventTracker {},
 ) : ViewModel() {
     var isSending by mutableStateOf(false)
         private set
@@ -31,6 +34,7 @@ class GoalSenderViewModel(
     ) {
         if (isSending) return
         isSending = true
+        analytics.track(AnalyticsEvent.GoalTyped(hasAttachment = false))
         error = null
         viewModelScope.launch {
             when (val outcome = store.sendGoal(goal, language)) {
