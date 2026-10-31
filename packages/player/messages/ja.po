@@ -2255,6 +2255,7 @@ msgctxt "8WlDyp"
 msgid "Repeat a number of times"
 msgstr "指定した回数だけ繰り返す"
 
+#. A noun on a palette of pattern parts: a group of characters.
 #: src/activities/pattern-tester/pattern-tester-activity.tsx
 msgctxt "HpoDwk"
 msgid "Group"
@@ -3439,6 +3440,7 @@ msgctxt "ZpQ6us"
 msgid "Result"
 msgstr "結果"
 
+#. Heading of the panel that recaps the lesson, not a button.
 #: src/lesson/lesson-aside.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "C9sbYe"
@@ -4071,6 +4073,7 @@ msgctxt "C1eFF3"
 msgid "No answer available."
 msgstr "回答がありません。"
 
+#. The study buddy is writing its answer; it speaks as "I".
 #: src/questions/lesson-question-turn.tsx
 msgctxt "P1QHV0"
 msgid "Thinking…"
@@ -4096,6 +4099,7 @@ msgctxt "nCFX1M"
 msgid "Load earlier questions"
 msgstr "以前の質問を読み込む"
 
+#. Label of the field where the learner types a question.
 #: src/questions/lesson-question-turn.tsx
 msgctxt "LIVM_k"
 msgid "Your question"

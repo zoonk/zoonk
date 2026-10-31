@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "essay_back_to_today": "e82b0b0ad01eb1a1cefcb74a9b41dec5ad428016b2b06b46ae141b937affbebf",
   "essay_comments": "d3eb1a202931265d7c92b4282f6476b1b0c9353a2e70d161061a57284721ba38",
   "essay_criterion_addressing": "715178a160a183f31dbe242ef4828c4b5efc4baaa74ddafe00e22e6a83224610",
   "essay_criterion_argument": "08005253d96bde999e21befe867b2cf0507de253a03a1e2b4fdd3f5b39d269d3",
@@ -100,6 +101,7 @@
     <plurals name="essay_words">
         <item quantity="other">%d語</item>
     </plurals>
+    <string name="essay_back_to_today">「今日」に戻る</string>
     <string name="essay_send_failed">うまくいきませんでした。文章はここに残っています。少し待ってからもう一度試してください。</string>
     <string name="essay_limit_reached">今日の小論文の採点回数を使い切りました。文章はここに残るので、明日送信してください。</string>
     <string name="essay_grading">各評価基準に沿って小論文を読んでいます。最大で30 秒かかることがあります。</string>
@@ -135,4 +137,6 @@
     <string name="essay_element_present">記載あり</string>
     <!-- Whether an element of the proposal is in the essay. -->
     <string name="essay_element_missing">記載なし</string>
+    <!-- On an essay the learner skipped, opened again from a link. -->
+    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
 </resources>

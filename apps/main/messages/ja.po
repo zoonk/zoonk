@@ -918,6 +918,7 @@ msgid "Answer them and we'll plan every day until you reach your goal."
 msgstr "質問への回答をもとに、目標達成までの毎日の学習計画を立てます。"
 
 #: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
+#: src/app/[lang]/birth-year-gate.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "続ける"
@@ -1151,9 +1152,9 @@ msgid "Delete your account?"
 msgstr "アカウントを削除しますか？"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "hL_UdI"
-msgid "Your goals, plans, progress, memory, feedback and uploads are deleted for good. This can't be undone."
-msgstr "目標、学習計画、進捗、メモリ、フィードバック、アップロードしたファイルはすべて完全に削除されます。この操作は取り消せません。"
+msgctxt "yF2UF2"
+msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
+msgstr ""
 
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -1210,15 +1211,17 @@ msgstr "Zoonkや相棒が呼びかけるときの名前"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "名前"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "vLl7z0"
-msgid "3-30 characters. Letters, numbers, and underscores only."
-msgstr "3〜30文字。英数字とアンダースコアのみ使えます。"
+msgctxt "wubfpa"
+msgid "3-30 characters. Letters a–z, numbers, and underscores only."
+msgstr ""
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
@@ -1262,6 +1265,12 @@ msgid "Choose your buddy, sounds, a daily time limit and the app's language."
 msgstr "相棒、サウンド、1日の学習時間の上限、アプリの言語を設定できます。"
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "cXBJ7U"
+msgid "Privacy"
+msgstr "プライバシーポリシー"
+
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "BbrYZc"
 msgid "Your buddy, lessons and language, the way you like them."
 msgstr "相棒やレッスン、言語を好みに合わせて設定できます。"
@@ -1276,20 +1285,234 @@ msgctxt "KTQxC5"
 msgid "What Zoonk remembers to give you examples and plans that fit your life."
 msgstr "生活に合った例や学習計画を用意するために、Zoonkが覚えている情報です。"
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "UWVETE"
-msgid "Cancel subscription"
-msgstr "サブスクリプションを解約する"
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "Jgc-3V"
+msgid "Choose how to cancel"
+msgstr ""
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "kjXmSN"
-msgid "Unable to manage your subscription. Contact us at hello@zoonk.com"
-msgstr "サブスクリプションを管理できません。hello@zoonk.comまでお問い合わせください"
+#. Label for why the subscription ends now, in a legal cancellation form
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "AkCxS_"
+msgid "Reason"
+msgstr ""
 
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "C_0PBN"
+msgid "Briefly, why you can't keep Plus until the end of the period."
+msgstr ""
+
+#. Confirms withdrawing from the contract with a full refund. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Widerruf bestätigen”, in French “Confirmer la rétractation”, in Spanish “Confirmar desistimiento”, in Portuguese “Confirmar retratação”, in Italian “Conferma recesso”, in Polish “Potwierdź odstąpienie od umowy”.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "JdkOCO"
+msgid "Confirm withdrawal"
+msgstr ""
+
+#. Confirms canceling the subscription, at the end of the period or now for an important reason. In German it must read exactly “Jetzt kündigen” (BGB § 312k).
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "AmzBg2"
+msgid "Cancel now"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "KEqLnF"
+msgid "We'll email you the confirmation."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "sy-pv5"
+msgid "Email"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "p1P-hQ"
+msgid "Request"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "z_wUXE"
+msgid "Received"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "L3xzht"
+msgid "We've refunded the full {amount} to the payment method you used. Your bank usually shows it within 5 to 10 business days."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "4sPQbT"
+msgid "We've refunded {amount} for the days left to the payment method you used. Your bank usually shows it within 5 to 10 business days."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "RBJRQ0"
+msgid "We've refunded {amount} for the months that haven't started to the payment method you used. Your bank usually shows it within 5 to 10 business days."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "zG9LME"
+msgid "Plus has ended."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "-g6ZnF"
+msgid "You keep Plus until {date}, then it ends."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "a6637b"
+msgid "We've emailed the confirmation to {email}."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "qO091u"
 msgid "Your subscription will end on <mono>{date}</mono>."
 msgstr "サブスクリプションは<mono>{date}</mono>に終了します。"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "SBWnEw"
+msgid "We couldn't cancel your subscription. Try again or email hello@zoonk.com."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "0sJrli"
+msgid "That option isn't available anymore. Check your choice above and try again."
+msgstr ""
+
+#. The 14-day withdrawal from the contract with its full refund. Use the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "dTs6Jp"
+msgid "We received your withdrawal."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "aeHrbi"
+msgid "We received your cancellation."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "S8L_pb"
+msgid "If {email} has Plus from our website, the confirmation will arrive there within a few minutes. No email? Check it's the address you subscribed with, or write to hello@zoonk.com."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "RKaCAK"
+msgid "Subscribed in the App Store or Google Play? This doesn't cancel it. Cancel it there."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "_kuMS2"
+msgid "You keep Plus until the period you paid for ends. After a yearly renewal, it ends with the current month, and we refund the rest."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "aMFeUo"
+msgid "Cancel at the end of the period"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "eCYQKH"
+msgid "Within 14 days of subscribing. Plus ends right away, and we refund everything."
+msgstr ""
+
+#. The 14-day withdrawal from the contract with its full refund. In brackets, the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "67jMfM"
+msgid "Full refund (withdrawal)"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "M1J5Bi"
+msgid "Plus ends right away, and we refund the days left."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "5Avfh5"
+msgid "End now for an important reason"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "D8gqFG"
+msgid "The one you use for Zoonk"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "c2I4F9"
+msgid "We couldn't send your request. Try again or email hello@zoonk.com."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "JmEP0L"
+msgid "Check your name and email, then try again."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "cEOHN2"
+msgid "Cancel Plus"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "qsB1Um"
+msgid "For Plus bought on our website. No login needed."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "ObvuQ4"
+msgid "Your last payment didn't go through. Canceling stops us from trying again."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "tXpyKb"
+msgid "Stop the unpaid renewal"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "FLm13g"
+msgid "For the {count, plural, one {# month} other {# months}} that haven't started, we refund {amount}."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "St4jDv"
+msgid "You won't be charged again."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "HJBzay"
+msgid "Keep Plus until {date}"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "rM1iWC"
+msgid "Plus ends right away, and we refund {amount}. You can do this until {date}."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "Je1aal"
+msgid "Plus ends right away, and we refund {amount} for the days left."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "8PqZ9h"
+msgid "Plus ends right away."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "t5tErU"
+msgid "There's no subscription to cancel on {email}."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "ta4t1h"
+msgid "Plus, yearly"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "7VS06t"
+msgid "Plus, monthly"
+msgstr ""
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "AucmVG"
@@ -1300,6 +1523,11 @@ msgstr "<mono>{date}</mono>に更新されます。"
 msgctxt "xWINkR"
 msgid "Current billing period ends on <mono>{date}</mono>."
 msgstr "現在の請求期間は<mono>{date}</mono>に終了します。"
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "UWVETE"
+msgid "Cancel subscription"
+msgstr "サブスクリプションを解約する"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "CrGYez"
@@ -1357,6 +1585,16 @@ msgstr "このサブスクリプションはZoonkが管理しています。変�
 msgctxt "5CI3KH"
 msgid "Contact support"
 msgstr "サポートに問い合わせる"
+
+#: src/app/[lang]/(app)/(settings)/subscription/refund-offer.tsx
+msgctxt "6vciLq"
+msgid "Until {date}, you can still end Plus now and get a full refund."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/refund-offer.tsx
+msgctxt "nXq8w6"
+msgid "Get a full refund"
+msgstr ""
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 msgctxt "bF03Os"
@@ -1463,6 +1701,7 @@ msgctxt "QbGIBZ"
 msgid "Your stats"
 msgstr "学習データ"
 
+#. Legend of a heatmap, from the lightest to the darkest squares.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 msgctxt "Xsvev8"
 msgid "Activity from less to more"
@@ -1642,6 +1881,7 @@ msgctxt "cmc2-s"
 msgid "{color, select, yellow {To Yellow belt} orange {To Orange belt} green {To Green belt} blue {To Blue belt} purple {To Purple belt} brown {To Brown belt} red {To Red belt} gray {To Gray belt} black {To Black belt} other {To the next belt}}"
 msgstr "{color, select, yellow {黄帯まで} orange {オレンジ帯まで} green {緑帯まで} blue {青帯まで} purple {紫帯まで} brown {茶帯まで} red {赤帯まで} gray {グレー帯まで} black {黒帯まで} other {次の帯まで}}"
 
+#. Label above the points still needed to reach that level.
 #: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
 msgctxt "57EFxN"
 msgid "To level {level}"
@@ -2113,11 +2353,13 @@ msgctxt "CsR4zq"
 msgid "SAT in {month}"
 msgstr "{month}のSAT"
 
+#. An example goal's name. Use your language's name for Mexico City.
 #: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "7iOCQZ"
-msgid "Spanish for Madrid"
-msgstr "Madridで使うスペイン語"
+msgctxt "3parBE"
+msgid "Spanish for Mexico City"
+msgstr ""
 
+#. Use your language's name for London.
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "PnbhyK"
 msgid "English for London"
@@ -2349,6 +2591,7 @@ msgctxt "UDq71K"
 msgid "get ready for the ENEM in {month}"
 msgstr "{month}のENEMに向けて準備する"
 
+#. The page below shows a plan for the SAT, so keep the SAT.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "voOKaq"
 msgid "get ready for the SAT in {month}"
@@ -2359,10 +2602,11 @@ msgctxt "XmrixE"
 msgid "get promoted to data analyst by {month}"
 msgstr "{month}までにデータアナリストに昇進する"
 
+#. An example goal a learner might type; {month} is a month name. Use your language's name for Mexico City.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "Kiy_DO"
-msgid "speak Spanish for my move to Madrid in {month}"
-msgstr "{month}にMadridへ引っ越すので、スペイン語を話せるようになる"
+msgctxt "vF1uwi"
+msgid "speak Spanish for my move to Mexico City in {month}"
+msgstr ""
 
 #. An example goal a learner might type; {month} is a month name. Use your language's name for London.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
@@ -2842,22 +3086,23 @@ msgctxt "TCZIsQ"
 msgid "Real problem · Sales by region"
 msgstr "実践課題 · 地域別の売上"
 
+#. The buddy answers a learner of Spanish. Keep only “departamento” and “apartamento” in Spanish, the words being taught; translate the rest, Mexico and Mexico City included.
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "3Yv6Eb"
-msgid "Both work. In Spain people usually say “piso” for a flat in a building. “Apartamento” often means a small one, like a holiday rental, so “piso” sounds more natural when you're renting in Madrid."
-msgstr "どちらも使えます。スペインでは、集合住宅の部屋をふつう「piso」と呼びます。「apartamento」は、休暇用の貸し部屋のような小さめの部屋を指すことが多いので、マドリードで部屋を借りるときは「piso」のほうが自然です。"
+msgctxt "720M2K"
+msgid "Both work. In Mexico people usually say “departamento” for a flat in a building, so it sounds more natural when you're renting in Mexico City."
+msgstr ""
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "iyPucV"
-msgid "Why “piso” and not “apartamento”?"
-msgstr "「apartamento」ではなく「piso」を使うのはなぜですか？"
+msgctxt "L7mfuM"
+msgid "Why “departamento” and not “apartamento”?"
+msgstr ""
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "00sc5X"
 msgid "Lesson · Calling about an apartment"
 msgstr "レッスン · 部屋の問い合わせ"
 
-#. The buddy answers a learner of English. Keep only “flat” and “apartment” in English, the words being taught; translate the rest, London and the US included.
+#. The buddy answers a learner of English. Keep only “flat” and “apartment” in English, the words being taught; translate the rest, London and the US included. “there” is London.
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "4teyr4"
 msgid "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there."
@@ -2914,6 +3159,7 @@ msgctxt "uzFoxW"
 msgid "I know a few things"
 msgstr "少し知っています"
 
+#. An answer to how much the learner already knows about the topic.
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "wouTdw"
 msgid "The basics"
@@ -3175,6 +3421,56 @@ msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "アカウントを削除しました。"
 
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "VqYaaL"
+msgid "Check the year and try again."
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "TCf3Ld"
+msgid "We couldn't save it. Check your connection and try again."
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "wqPXuM"
+msgid "What year were you born?"
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "u7SgKI"
+msgid "We ask everyone once."
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "Wr357G"
+msgid "Birth year"
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "dUCA4K"
+msgid "Not now"
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "WCgBMi"
+msgid "Not just yet"
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "7dMiHf"
+msgid "You need to be {minimumAge, number} or older to use Zoonk, so we'll log you out. We'll be here when you are."
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "GuXkQM"
+msgid "You need to be {minimumAge, number} or older to use Zoonk. We'll be here when you are."
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "kAEQyV"
+msgid "OK"
+msgstr ""
+
 #: src/app/[lang]/challenge/[planItemId]/page.tsx
 #: src/app/[lang]/checkpoint/[blockId]/page.tsx
 msgctxt "9MidH4"
@@ -3217,6 +3513,11 @@ msgstr "{topic}を深く理解したいです"
 msgctxt "-3M8u-"
 msgid "Focus test"
 msgstr "重点診断"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+msgctxt "eBoUdl"
+msgid "Start lesson"
+msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx
@@ -3383,6 +3684,26 @@ msgstr "テストで章をスキップする"
 msgctxt "KGN7UU"
 msgid "This chapter"
 msgstr "この章"
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "zNLs8L"
+msgid "Usage data"
+msgstr ""
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "9LGL8u"
+msgid "Can we use cookies to see how you use Zoonk, so we can improve it? <link>Privacy</link>"
+msgstr ""
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "pvtgR2"
+msgid "Decline"
+msgstr ""
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "sjzLbX"
+msgid "Accept"
+msgstr ""
 
 #: src/app/auth/apple/route.ts
 msgctxt "5JUHBB"
@@ -3792,6 +4113,7 @@ msgctxt "EMZyX7"
 msgid "save {amount}"
 msgstr "{amount}お得"
 
+#. Reassurance next to the subscribe button: the learner can cancel whenever they want.
 #: src/components/pricing/plus-plan.tsx
 msgctxt "dyhF_4"
 msgid "Cancel anytime."
@@ -3900,9 +4222,15 @@ msgid "Can I get a refund?"
 msgstr "返金は受けられますか？"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "LHV1sa"
-msgid "Just <link>contact us</link> and tell us what happened. We'll do our best to get you a refund."
-msgstr "まずは<link>お問い合わせ</link>で状況をお知らせください。返金できるよう、できる限り対応します。"
+msgctxt "ilifrv"
+msgid "If you subscribed on our website, <link>cancel</link> within 14 days for a full refund. After a yearly renewal, canceling refunds the months that haven't started. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
+msgstr ""
+
+#: src/components/pricing/plus-questions.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "xkr-zo"
+msgid "Terms"
+msgstr "利用規約"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "4YTeTA"
@@ -4049,15 +4377,17 @@ msgctxt "Vge-RX"
 msgid "Footer"
 msgstr "フッター"
 
+#. Footer link to cancel a subscription, which German law requires (BGB § 312k). In German it must read exactly “Verträge hier kündigen”.
 #: src/components/public/public-footer.tsx
-msgctxt "cXBJ7U"
-msgid "Privacy"
-msgstr "プライバシーポリシー"
+msgctxt "gdJ1Ic"
+msgid "Cancel your subscription here"
+msgstr ""
 
+#. Footer link to withdraw within 14 days, which EU law requires. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Vertrag widerrufen”, in French “Renoncer au contrat ici”, in Spanish “Desistir del contrato aquí”, in Portuguese “Retrate-se do contrato aqui”, in Italian “Recedere dal contratto qui”, in Polish “Odstąp od umowy tutaj”.
 #: src/components/public/public-footer.tsx
-msgctxt "xkr-zo"
-msgid "Terms"
-msgstr "利用規約"
+msgctxt "OxFgc6"
+msgid "Withdraw from contract here"
+msgstr ""
 
 #: src/components/public/public-footer.tsx
 msgctxt "k7JNE3"

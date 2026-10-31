@@ -1079,13 +1079,6 @@ msgctxt "O7-3Od"
 msgid "Pick a pair you've earned to wear it."
 msgstr "Pick a pair you've earned to wear it."
 
-#. Each branch names its own exam: keep that exam in it, never another country's.
-#: src/buddies/buddy-goal-start.tsx
-#: src/onboarding/entry/goal-examples.tsx
-msgctxt "DJ_Smv"
-msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} other {Pass the SAT}}"
-msgstr "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} other {Pass the SAT}}"
-
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "MhhJ4B"
@@ -2198,6 +2191,7 @@ msgctxt "4XhCbt"
 msgid "What's in my plan for today?"
 msgstr "What's in my plan for today?"
 
+#. A suggestion the learner sends to the buddy as their own message.
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "6BPV1l"
 msgid "Explain my last mistake"
@@ -2208,6 +2202,7 @@ msgctxt "U1SYIe"
 msgid "What should I focus on first?"
 msgstr "What should I focus on first?"
 
+#. A suggestion the learner sends to the buddy as their own message.
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "31_FZO"
 msgid "I want to study less this week"
@@ -4762,6 +4757,7 @@ msgctxt "ZXosfu"
 msgid "This call has ended"
 msgstr "This call has ended"
 
+#. Under the title "Calls are paused": the pause applies to every learner, not only this one.
 #: src/language/conversation/call-problem.tsx
 #: src/language/exam-speaking/speaking-paper-section.tsx
 #: src/language/progress/speaking-mock-card.tsx
@@ -7053,16 +7049,19 @@ msgctxt "RyFXHc"
 msgid "Misread"
 msgstr "Misread"
 
+#. Why the learner got a question wrong, as a short tag on a mistake card: they fell for a trap in the question.
 #: src/mistakes/use-cause-label.ts
 msgctxt "g0vfFx"
 msgid "Fell for a trap"
 msgstr "Fell for a trap"
 
+#. Why the learner got a question wrong, as a short tag on a mistake card: they ran out of time.
 #: src/mistakes/use-cause-label.ts
 msgctxt "OVroZO"
 msgid "Ran out of time"
 msgstr "Ran out of time"
 
+#. Why the learner got a question wrong, as a short tag on a mistake card: they guessed.
 #: src/mistakes/use-cause-label.ts
 msgctxt "Wgnnu5"
 msgid "Guessed"
@@ -8364,11 +8363,11 @@ msgctxt "lnZvgd"
 msgid "I want to"
 msgstr "I want to"
 
-#. Each branch names its own exam: keep that exam in it, never another country's.
+#. Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.
 #: src/onboarding/entry/goal-entry.tsx
-msgctxt "F_vbFS"
-msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} other {pass the SAT, speak {language}…}}"
-msgstr "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} other {pass the SAT, speak {language}…}}"
+msgctxt "MBg8CD"
+msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
+msgstr "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "rsoIT2"
@@ -8612,6 +8611,7 @@ msgctxt "Se8ZuD"
 msgid "Reading your material…"
 msgstr "Reading your material…"
 
+#. Label of the field where the learner types a question.
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "LIVM_k"
 msgid "Your question"
@@ -8656,6 +8656,12 @@ msgstr "Next, you check what we understood."
 msgctxt "BtsGFn"
 msgid "We couldn't save your goal. Try again in a moment."
 msgstr "We couldn't save your goal. Try again in a moment."
+
+#. Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.
+#: src/onboarding/entry/use-local-goal-example.ts
+msgctxt "l5pR0E"
+msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} kyotsu {Do well on the Common Test} matura {Pass the matura} maturita {Pass the maturità} suneung {Do well on the CSAT} yks {Do well on the YKS} other {Pass the SAT}}"
+msgstr "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} kyotsu {Do well on the Common Test} matura {Pass the matura} maturita {Pass the maturità} suneung {Do well on the CSAT} yks {Do well on the YKS} other {Pass the SAT}}"
 
 #. Shown when automated bot protection refuses to let this browser continue without an account.
 #: src/onboarding/goal-errors.ts
@@ -8880,14 +8886,14 @@ msgid "Your buddy grows as you learn."
 msgstr "Your buddy grows as you learn."
 
 #: src/onboarding/steps/date-step.tsx
-msgctxt "_2I8Hl"
-msgid "Your plan gets you ready by then."
-msgstr "Your plan gets you ready by then."
+msgctxt "5ib3Bu"
+msgid "Your plan paces your lessons to end by then."
+msgstr "Your plan paces your lessons to end by then."
 
 #: src/onboarding/steps/date-step.tsx
-msgctxt "9xzQGH"
-msgid "Your plan gets you ready by the first day."
-msgstr "Your plan gets you ready by the first day."
+msgctxt "nUTsrg"
+msgid "Your plan paces your lessons to end by the first day."
+msgstr "Your plan paces your lessons to end by the first day."
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xM69fy"
@@ -8962,6 +8968,7 @@ msgctxt "BY-vT3"
 msgid "I know it well"
 msgstr "I know it well"
 
+#. An answer to how much the learner already knows about the topic.
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "wouTdw"
 msgid "The basics"
@@ -9390,6 +9397,7 @@ msgctxt "j4_o5O"
 msgid "Why are you learning it?"
 msgstr "Why are you learning it?"
 
+#. An example score: a band is an IELTS-style score.
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "t2MBS1"
 msgid "E.g., band 7, 100 points"
@@ -10465,6 +10473,7 @@ msgctxt "F5wXZe"
 msgid "How is it going?"
 msgstr "How is it going?"
 
+#. An arrow button that goes back to the previous plan suggestion.
 #: src/plan/plan-suggestion-context.tsx
 msgctxt "JJNc3c"
 msgid "Previous"
@@ -10582,6 +10591,7 @@ msgctxt "Z6SQB3"
 msgid "You won't practice on your own computer. Lessons use examples and simulations instead."
 msgstr "You won't practice on your own computer. Lessons use examples and simulations instead."
 
+#. A link that switches the plan to learning from examples, without installing tools.
 #: src/plan/plan-tools.tsx
 msgctxt "xMezs8"
 msgid "No tools? You can do it all with examples."
@@ -10788,9 +10798,9 @@ msgid "{document, select, notice {Your plan follows the exam notice.} other {You
 msgstr "{document, select, notice {Your plan follows the exam notice.} other {Your plan follows the exam's official guide.}}"
 
 #: src/plan/use-change-sentence.ts
-msgctxt "n-S3-o"
-msgid "Daily time changed to {time}."
-msgstr "Daily time changed to {time}."
+msgctxt "B5ATMk"
+msgid "Daily time becomes {time}."
+msgstr "Daily time becomes {time}."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "bkqP1O"
@@ -10798,9 +10808,9 @@ msgid "A light week from {date}, at half the time."
 msgstr "A light week from {date}, at half the time."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "QB_qg5"
-msgid "The weekly challenge moved to {date}."
-msgstr "The weekly challenge moved to {date}."
+msgctxt "ouCzFr"
+msgid "The weekly challenge moves to {date}."
+msgstr "The weekly challenge moves to {date}."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "VzP2ac"
@@ -10827,17 +10837,17 @@ msgctxt "ZIyDwb"
 msgid "{count, plural, one {{skills} comes into your plan.} other {{skills} come into your plan.}}"
 msgstr "{count, plural, one {{skills} comes into your plan.} other {{skills} come into your plan.}}"
 
-#. The goal's date moved, earlier or later. {date} is a day, like "May 5".
+#. The goal's date moves, earlier or later. {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
 #: src/plan/use-choice-sentence.ts
-msgctxt "FunQxr"
-msgid "Date moved to {date}."
-msgstr "Date moved to {date}."
+msgctxt "k1CuqL"
+msgid "The date moves to {date}."
+msgstr "The date moves to {date}."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "TXiOHF"
-msgid "Your phase dates moved, so more lessons fit before your goal's date."
-msgstr "Your phase dates moved, so more lessons fit before your goal's date."
+msgctxt "1feYRq"
+msgid "Your phase dates move, so more lessons fit before your goal's date."
+msgstr "Your phase dates move, so more lessons fit before your goal's date."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "2rqIF8"
@@ -10850,10 +10860,9 @@ msgid "Your plan studies {subject} for {group}."
 msgstr "Your plan studies {subject} for {group}."
 
 #: src/plan/use-change-sentence.ts
-#: src/plan/use-coverage-sentence.ts
-msgctxt "5m7gA2"
-msgid "Your plan changed."
-msgstr "Your plan changed."
+msgctxt "e5pmPD"
+msgid "Your plan changes."
+msgstr "Your plan changes."
 
 #. "With the exam around {date}" means "and the exam is around {date}". {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
@@ -10966,6 +10975,11 @@ msgstr "Out of your plan: {topics}."
 msgctxt "iNSgWW"
 msgid "Your placement answers changed what fits by your date."
 msgstr "Your placement answers changed what fits by your date."
+
+#: src/plan/use-coverage-sentence.ts
+msgctxt "5m7gA2"
+msgid "Your plan changed."
+msgstr "Your plan changed."
 
 #: src/plan/use-effect-counts.ts
 msgctxt "_K4MVL"
@@ -12661,6 +12675,7 @@ msgctxt "AFqHlU"
 msgid "Practice for {minutes} minutes"
 msgstr "Practice for {minutes} minutes"
 
+#. Button that has Zoonk write today's lessons.
 #: src/today/today-action.tsx
 #: src/today/today-coming-lessons.tsx
 msgctxt "Nb8Jg7"
@@ -13099,9 +13114,9 @@ msgid "every topic, your weakest first"
 msgstr "every topic, your weakest first"
 
 #: src/today/today-week.tsx
-msgctxt "IHuvU5"
-msgid "goal reached"
-msgstr "goal reached"
+msgctxt "VlCnpE"
+msgid "daily time met"
+msgstr "daily time met"
 
 #: src/today/today-week.tsx
 msgctxt "F8phHs"
@@ -13205,20 +13220,22 @@ msgctxt "oo_iQE"
 msgid "A topic's lessons are planned two weeks before you get to it. You can see this one's now."
 msgstr "A topic's lessons are planned two weeks before you get to it. You can see this one's now."
 
+#. {start} is a day, like "Nov 5", or a month, like "December".
 #: src/topic-outline/use-far-topic-line.ts
-msgctxt "KDfjmp"
-msgid "From {start}"
-msgstr "From {start}"
+msgctxt "2bgkMA"
+msgid "{dateKind, select, month {From {start}} other {From {start}}}"
+msgstr "{dateKind, select, month {From {start}} other {From {start}}}"
 
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "l2bP9u"
 msgid "{count, plural, =1 {# lesson} other {About # lessons}}"
 msgstr "{count, plural, =1 {# lesson} other {About # lessons}}"
 
+#. {start} is a day, like "Nov 5", or a month, like "December".
 #: src/topic-outline/use-far-topic-line.ts
-msgctxt "8zyIe8"
-msgid "{count} · from {start}"
-msgstr "{count} · from {start}"
+msgctxt "96EsHJ"
+msgid "{dateKind, select, month {{count} · from {start}} other {{count} · from {start}}}"
+msgstr "{dateKind, select, month {{count} · from {start}} other {{count} · from {start}}}"
 
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "c1J3nF"

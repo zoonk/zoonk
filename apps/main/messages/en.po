@@ -1230,9 +1230,9 @@ msgstr "Name"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "vLl7z0"
-msgid "3-30 characters. Letters, numbers, and underscores only."
-msgstr "3-30 characters. Letters, numbers, and underscores only."
+msgctxt "wubfpa"
+msgid "3-30 characters. Letters a–z, numbers, and underscores only."
+msgstr "3-30 characters. Letters a–z, numbers, and underscores only."
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
@@ -1740,6 +1740,7 @@ msgctxt "QbGIBZ"
 msgid "Your stats"
 msgstr "Your stats"
 
+#. Legend of a heatmap, from the lightest to the darkest squares.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 msgctxt "Xsvev8"
 msgid "Activity from less to more"
@@ -1919,6 +1920,7 @@ msgctxt "cmc2-s"
 msgid "{color, select, yellow {To Yellow belt} orange {To Orange belt} green {To Green belt} blue {To Blue belt} purple {To Purple belt} brown {To Brown belt} red {To Red belt} gray {To Gray belt} black {To Black belt} other {To the next belt}}"
 msgstr "{color, select, yellow {To Yellow belt} orange {To Orange belt} green {To Green belt} blue {To Blue belt} purple {To Purple belt} brown {To Brown belt} red {To Red belt} gray {To Gray belt} black {To Black belt} other {To the next belt}}"
 
+#. Label above the points still needed to reach that level.
 #: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
 msgctxt "57EFxN"
 msgid "To level {level}"
@@ -2396,6 +2398,7 @@ msgctxt "3parBE"
 msgid "Spanish for Mexico City"
 msgstr "Spanish for Mexico City"
 
+#. Use your language's name for London.
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "PnbhyK"
 msgid "English for London"
@@ -2627,6 +2630,7 @@ msgctxt "UDq71K"
 msgid "get ready for the ENEM in {month}"
 msgstr "get ready for the ENEM in {month}"
 
+#. The page below shows a plan for the SAT, so keep the SAT.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "voOKaq"
 msgid "get ready for the SAT in {month}"
@@ -3194,6 +3198,7 @@ msgctxt "uzFoxW"
 msgid "I know a few things"
 msgstr "I know a few things"
 
+#. An answer to how much the learner already knows about the topic.
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "wouTdw"
 msgid "The basics"
@@ -4092,6 +4097,7 @@ msgctxt "EMZyX7"
 msgid "save {amount}"
 msgstr "save {amount}"
 
+#. Reassurance next to the subscribe button: the learner can cancel whenever they want.
 #: src/components/pricing/plus-plan.tsx
 msgctxt "dyhF_4"
 msgid "Cancel anytime."

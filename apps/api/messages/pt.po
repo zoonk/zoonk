@@ -183,9 +183,9 @@ msgid "{username} is already taken"
 msgstr "{username} já está em uso"
 
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "vLl7z0"
-msgid "3-30 characters. Letters, numbers, and underscores only."
-msgstr "De 3 a 30 caracteres. Use apenas letras, números e sublinhados."
+msgctxt "wubfpa"
+msgid "3-30 characters. Letters a–z, numbers, and underscores only."
+msgstr ""
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "9j8lDu"

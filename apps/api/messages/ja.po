@@ -183,9 +183,9 @@ msgid "{username} is already taken"
 msgstr "{username}はすでに使われています"
 
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "vLl7z0"
-msgid "3-30 characters. Letters, numbers, and underscores only."
-msgstr "3〜30文字。英字、数字、アンダースコアのみ使えます。"
+msgctxt "wubfpa"
+msgid "3-30 characters. Letters a–z, numbers, and underscores only."
+msgstr ""
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "9j8lDu"
