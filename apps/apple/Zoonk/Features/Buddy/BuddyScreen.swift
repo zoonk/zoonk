@@ -217,7 +217,7 @@ private struct BuddyContent: View {
 
   private func thread(opensDay: Bool) -> some View {
     conversation
-      .safeAreaBar(edge: .top) {
+      .screenBar(edge: .top) {
         dayLine(opensDay: opensDay)
           .scenePadding(.horizontal)
           .padding(.vertical, 8)

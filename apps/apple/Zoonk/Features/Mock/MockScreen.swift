@@ -251,7 +251,7 @@ private struct MockTimeUpView: View {
           comment: "Under time's up, once every answer is stored") : nil
     )
     .navigationTitle(MockLabels.title(number: view.number))
-    .safeAreaBar(edge: .bottom) {
+    .screenBar(edge: .bottom) {
       MockActionBar(run: run) {
         Button {
           Task { await run.submitSection() }
@@ -282,7 +282,7 @@ private struct MockGradingView: View {
       systemImage: "tray.and.arrow.down",
       title: Text("Mock exam handed in", tableName: "Mock", comment: "A mock waiting to be graded")
     )
-    .safeAreaBar(edge: .bottom) {
+    .screenBar(edge: .bottom) {
       MockActionBar(run: run) {
         Button {
           Task { await run.finish() }
@@ -317,7 +317,7 @@ private struct MockExpiredView: View {
         "With most of it unanswered, it isn't scored and doesn't change your preparation.",
         tableName: "Mock", comment: "Why an abandoned mock has no result")
     )
-    .safeAreaBar(edge: .bottom) {
+    .screenBar(edge: .bottom) {
       Button {
         if let planItemId = view.planItemId {
           router.dismissTask()
@@ -386,7 +386,7 @@ private struct MockBreakView: View {
       guard !Task.isCancelled else { return }
       await run.endBreak()
     }
-    .safeAreaBar(edge: .bottom) {
+    .screenBar(edge: .bottom) {
       MockActionBar(run: run) {
         Button {
           Task { await run.endBreak() }
@@ -460,7 +460,7 @@ private struct MockSpeakingView: View {
       }
       .onDisappear { Task { await run.reload() } }
     }
-    .safeAreaBar(edge: .bottom) {
+    .screenBar(edge: .bottom) {
       MockActionBar(run: run) {
         if view.speaking == nil {
           if !run.isWritingPaper {

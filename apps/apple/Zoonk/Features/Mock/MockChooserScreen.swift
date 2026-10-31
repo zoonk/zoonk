@@ -279,7 +279,7 @@ private struct MockChooser: View {
         }
       }
     }
-    .safeAreaBar(edge: .bottom) {
+    .screenBar(edge: .bottom) {
       Group {
         if isOpen {
           Button {

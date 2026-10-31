@@ -23,7 +23,7 @@ struct SubscriptionScreen: View {
             .scenePadding()
           }
           .loads(settings.freePlan, refreshable: false)
-          .safeAreaBar(edge: .bottom) {
+          .screenBar(edge: .bottom) {
             Button {
               router.present(.signIn)
             } label: {

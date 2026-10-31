@@ -134,7 +134,7 @@ struct LessonStageView: View {
               }
             }
           }
-          .safeAreaBar(edge: .bottom) {
+          .screenBar(edge: .bottom) {
             // On the trailing page the bar is already past the fold; one column moves it there.
             LessonActionBar(store: store, state: state, step: step)
               .keepsOffFold()

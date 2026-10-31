@@ -70,7 +70,7 @@ private struct TutorConversationView<Header: View>: View {
     .scrollPosition($position)
     .defaultScrollAnchor(.bottom, for: .initialOffset)
     .scrollDismissesKeyboard(.interactively)
-    .safeAreaBar(edge: .bottom) {
+    .screenBar(edge: .bottom) {
       TutorComposerBar(
         conversation: conversation, canTalk: canTalk, buddyName: buddyName,
         suggestions: suggestions, placeholder: placeholder)

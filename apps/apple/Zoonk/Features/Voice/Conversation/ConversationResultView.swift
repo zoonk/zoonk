@@ -49,7 +49,7 @@ struct ConversationResultView: View {
     }
     .milestoneCeremony(day?.ceremony)
     .onDisappear { again?.cancel() }
-    .safeAreaBar(edge: .bottom) {
+    .screenBar(edge: .bottom) {
       VStack(spacing: 8) {
         if let startFailure {
           startFailureText(startFailure)

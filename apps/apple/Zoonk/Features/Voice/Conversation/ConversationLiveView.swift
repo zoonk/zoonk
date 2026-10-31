@@ -2,6 +2,7 @@ import SwiftUI
 
 /// Nothing is graded while talking.
 struct ConversationLiveView: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @State private var reply = ""
   @FocusState private var isTyping: Bool
 
@@ -66,7 +67,7 @@ struct ConversationLiveView: View {
     .scrollDismissesKeyboard(.interactively)
     // The controls belong to the call's column, so they stay beside the aside rather than under
     // it, and one column moves them off iPhone Duo's fold.
-    .safeAreaBar(edge: .bottom) {
+    .screenBar(edge: .bottom) {
       VStack(spacing: 12) {
         typedReply
         controls
@@ -190,6 +191,7 @@ struct ConversationLiveView: View {
         text: $reply
       )
       .textFieldStyle(.roundedBorder)
+      .keepsFullTextSize()
       .focused($isTyping)
       .submitLabel(.send)
       .onSubmit(send)
@@ -208,7 +210,8 @@ struct ConversationLiveView: View {
     }
   }
 
-  /// Hanging up is the one red control.
+  /// Hanging up is the one red control. At accessibility sizes three titles don't fit side by
+  /// side, so they show on a long press, as a tab bar's do.
   private var controls: some View {
     HStack(spacing: 8) {
       Button {
@@ -221,6 +224,7 @@ struct ConversationLiveView: View {
         }
         .frame(maxWidth: .infinity)
       }
+      .accessibilityShowsLargeContentViewer()
 
       Button {
         call.toggleMute()
@@ -234,6 +238,7 @@ struct ConversationLiveView: View {
       }
       .disabled(call.phase != .live || call.micBlocked)
       .accessibilityAddTraits(call.muted ? .isSelected : [])
+      .accessibilityShowsLargeContentViewer()
 
       Button(role: .destructive, action: onEnd) {
         Label {
@@ -243,10 +248,14 @@ struct ConversationLiveView: View {
         }
         .frame(maxWidth: .infinity)
       }
+      .accessibilityShowsLargeContentViewer()
     }
     .buttonStyle(.bordered)
     .controlSize(.large)
-    .labelStyle(.titleAndIcon)
+    .labelStyle(
+      dynamicTypeSize.isAccessibilitySize
+        ? AnyLabelStyle(.iconOnly) : AnyLabelStyle(.titleAndIcon)
+    )
   }
 
   private func send() {

@@ -37,7 +37,7 @@ struct BuddyGoalStart: View {
     }
     .defaultScrollAnchor(.bottom, for: .initialOffset)
     .scrollDismissesKeyboard(.interactively)
-    .safeAreaBar(edge: .bottom) {
+    .screenBar(edge: .bottom) {
       VStack(alignment: .leading, spacing: 10) {
         ScrollView(.horizontal) {
           HStack(spacing: 8) {
@@ -63,6 +63,7 @@ struct BuddyGoalStart: View {
             label: Text("Your goal", tableName: "Buddy", comment: "The goal field for VoiceOver")
           )
           .lineLimit(1...4)
+          .keepsFullTextSize()
           .onSubmit(start)
           .padding(.leading, 16)
           .padding(.vertical, 12)

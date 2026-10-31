@@ -29,14 +29,14 @@ struct MockResultView: View {
       // Without a plan change it's empty, and an empty list draws the plain background.
       .scrollContentBackground(.hidden)
       .background(Color(.systemGroupedBackground))
-      .safeAreaBar(edge: .bottom) { actionBar }
+      .screenBar(edge: .bottom) { actionBar }
     } single: {
       List {
         resultSections
         planSections
         reviewSections
       }
-      .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
+      .screenBar(edge: .bottom) { actionBar.keepsOffFold() }
     }
     .navigationTitle(MockLabels.title(number: view.number))
     .milestoneCeremony(view.day.ceremony)

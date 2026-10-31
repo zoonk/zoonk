@@ -19,14 +19,14 @@ struct LessonCompletionView: View {
         dayMoment
         guestEndingView
       }
-      .safeAreaBar(edge: .bottom) { actionBar }
+      .screenBar(edge: .bottom) { actionBar }
     } single: {
       page {
         moment
         dayMoment
         guestEndingView
       }
-      .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
+      .screenBar(edge: .bottom) { actionBar.keepsOffFold() }
     }
     .milestoneCeremony(day?.ceremony)
     .sensoryFeedback(.success, trigger: completion.status == .saved)

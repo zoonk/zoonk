@@ -89,6 +89,7 @@ From the first accessibility size (`dynamicTypeSize.isAccessibilitySize`) text g
 - Things side by side stack, text above what sat beside it: `AccessibilityStack`. A section header with a value at its end is `SectionHeaderRow`.
 - Text buttons side by side go in a `ButtonRow`: stacked, each is a regular-size rounded rectangle as wide as the row, like an alert's buttons.
 - Buttons are rounded rectangles, not capsules: a wrapped capsule's round ends take the width its words need. A button's shape doesn't reach into a presentation, so the app's root, the router's presented screens and any other presented screen with text buttons each set it (`roundedButtonsAtAccessibilitySizes()`), and bordered, main-action and glass buttons follow it. A bordered button in a toolbar keeps `.buttonBorderShape(.automatic)` (`TutorAskToolbarItem`): toolbars keep their own text size, so it never wraps.
+- A bar over the content is a `screenBar(edge:)` (`DesignSystem/ScreenBar.swift`), never a bare `safeAreaBar`: like the system's bars, its controls' text stops growing at the second accessibility size, so the content keeps the screen. A field in the bar takes `.keepsFullTextSize()`: learners read what they type. Controls that can't show their titles there show them in the Large Content Viewer (`accessibilityShowsLargeContentViewer()`), as a tab bar does.
 
 ## Components
 
@@ -113,7 +114,7 @@ From the first accessibility size (`dynamicTypeSize.isAccessibilitySize`) text g
 | Empty, error, signed-out states                             | `ContentUnavailableView`                                                                                                          |
 | Switch                                                      | `Toggle`, with `.tint(.success)` on its `Form`. The system default is green, and an ink switch hides its white knob in dark mode. |
 | Segmented choices, menus, dialogs, sheets                   | `Picker` with `.pickerStyle(.segmented)`, `Menu`, `.confirmationDialog`, `.alert`, `.sheet` with detents                          |
-| The task's action bar                                       | `.safeAreaBar(edge: .bottom)` holding a `.mainAction` button, so it gets the scroll edge effect                                   |
+| The task's action bar                                       | `.screenBar(edge: .bottom)` holding a `.mainAction` button, so it gets the scroll edge effect                                     |
 | `ShortcutKbd` (⏎ on the main action)                        | `.keyboardShortcut(.defaultAction)`; Esc is `.keyboardShortcut(.cancelAction)`                                                    |
 | The buddy and the Trickster                                 | `BuddyCharacter`, `TricksterCharacter`, `BuddyFace` beside words (see Characters)                                                 |
 
@@ -122,7 +123,7 @@ From the first accessibility size (`dynamicTypeSize.isAccessibilitySize`) text g
 - Glass belongs to the navigation and control layer, never to content: `TabView`, `NavigationStack` bars, toolbars, sheets, menus and floating controls. They adopt it on their own.
 - Don't paint backgrounds on bars, tab bars or toolbars. Custom backgrounds there break glass and the scroll edge effect.
 - Content (rows, panels, readouts, answer options) stays opaque on system backgrounds.
-- `.glassProminent` is not the main action. With the ink tint its white label vanishes on dark mode's white glass, and recoloring it doesn't help because glass draws labels vibrantly (they turn gray). Use `.mainAction`, in a `safeAreaBar` when it floats.
+- `.glassProminent` is not the main action. With the ink tint its white label vanishes on dark mode's white glass, and recoloring it doesn't help because glass draws labels vibrantly (they turn gray). Use `.mainAction`, in a `screenBar` when it floats.
 - Several custom glass controls together go in one `GlassEffectContainer`.
 - Group toolbar items by job, separate groups with `ToolbarSpacer(.fixed)`, and give every icon-only item an accessibility label.
 - Reduce Transparency and Increase Contrast restyle glass on their own. Don't fight them with custom materials.

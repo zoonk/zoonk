@@ -581,7 +581,7 @@ private struct MockAnswerSheet: View {
         }
       }
     }
-    .safeAreaBar(edge: .bottom) {
+    .screenBar(edge: .bottom) {
       Button(action: onHandIn) {
         Text("Hand in", tableName: "Mock", comment: "Hands in from the answer sheet")
           .frame(maxWidth: .infinity)
@@ -632,17 +632,5 @@ private struct MockAnswerSheet: View {
     }
     .disabled(!run.moves.canOpen(index) || run.timeUp)
     .listRowBackground(isCurrent ? Color(.tertiarySystemFill) : nil)
-  }
-}
-
-private struct AnyLabelStyle: LabelStyle {
-  private let make: (Configuration) -> AnyView
-
-  init(_ style: some LabelStyle) {
-    make = { AnyView(style.makeBody(configuration: $0)) }
-  }
-
-  func makeBody(configuration: Configuration) -> some View {
-    make(configuration)
   }
 }

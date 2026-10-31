@@ -130,7 +130,7 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
         .pageHeader(header)
     } secondary: {
       ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: response)
-        .safeAreaBar(edge: .bottom, content: actions)
+        .screenBar(edge: .bottom, content: actions)
     } single: {
       QuestionColumn(readableWidth: readableWidth, spacing: spacing, header: header) {
         stimulus()
@@ -154,7 +154,7 @@ struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
   var body: some View {
     ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: content)
       .pageHeader(header)
-      .safeAreaBar(edge: .bottom) {
+      .screenBar(edge: .bottom) {
         actions().keepsOffFold()
       }
   }
@@ -168,7 +168,7 @@ extension View {
     if Header.self == EmptyView.self {
       self
     } else {
-      safeAreaBar(edge: .top, content: header)
+      screenBar(edge: .top, content: header)
     }
   }
 }
