@@ -8,9 +8,9 @@ import { type EssayActions, EssayScreen } from "@zoonk/learn/essay";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useRef } from "react";
 
-const HREFS = { exit: "/today" };
+const HREFS = { dailyLimit: "/settings/appearance", exit: "/today" };
 
-type Submission = Promise<EssayDraft | "limitReached" | null>;
+type Submission = Promise<EssayDraft | "dailyLimitReached" | "limitReached" | null>;
 
 /**
  * Every draft still being graded is recorded before the block is finished, so the block counts it.

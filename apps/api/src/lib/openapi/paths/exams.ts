@@ -2,6 +2,7 @@ import { examChoiceInputSchema } from "@zoonk/core/exams/choices/contract";
 import { essayGradeSchema, essaySubmissionInputSchema } from "@zoonk/core/exams/essays/contract";
 import { examResultInputSchema } from "@zoonk/core/exams/results/contract";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
+import { studySessionErrorCodes } from "../../study-session-errors";
 import { essayViewResponseSchema } from "../schemas/essays";
 import { examResultResponseSchema, examViewResponseSchema } from "../schemas/exams";
 import { replacementGoalResponseSchema } from "../schemas/goals";
@@ -10,6 +11,7 @@ import { planChangeInvalidResponse } from "../schemas/plan-errors";
 import { planChangeResultSchema } from "../schemas/plans";
 import {
   conflictResponse,
+  forbiddenResponse,
   notFoundResponse,
   tooManyRequestsResponse,
   unauthorizedResponse,
@@ -61,7 +63,14 @@ export const examPaths = {
           description: "The grade",
         },
         ...commonErrors,
-        "409": { ...conflictResponse, description: "Start the block first" },
+        "403": {
+          ...forbiddenResponse,
+          description: `Today's time limit is reached. Error code: ${studySessionErrorCodes.dailyLimitReached}.`,
+        },
+        "409": {
+          ...conflictResponse,
+          description: `The block is finished or can't start. Error code: ${studySessionErrorCodes.blockNotActive}.`,
+        },
         "429": { ...tooManyRequestsResponse, description: "Today's essay grades are used up" },
       },
       security: AUTHENTICATED_SECURITY,

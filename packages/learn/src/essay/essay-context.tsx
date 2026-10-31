@@ -14,10 +14,10 @@ export type EssayActions = {
     attemptId: string;
     durationMs: number;
     text: string;
-  }) => Promise<EssayDraft | "limitReached" | null>;
+  }) => Promise<EssayDraft | "dailyLimitReached" | "limitReached" | null>;
 };
 
-export type EssayHrefs = { exit: string };
+export type EssayHrefs = { dailyLimit: string; exit: string };
 
 type EssayScreenValue = {
   actions: EssayActions;

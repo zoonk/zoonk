@@ -3399,6 +3399,16 @@
               }
             }
           },
+          "403": {
+            "description": "Today's time limit is reached. Error code: DAILY_LIMIT_REACHED.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Resource not found",
             "content": {
@@ -3410,7 +3420,7 @@
             }
           },
           "409": {
-            "description": "Start the block first",
+            "description": "The block is finished or can't start. Error code: BLOCK_NOT_ACTIVE.",
             "content": {
               "application/json": {
                 "schema": {

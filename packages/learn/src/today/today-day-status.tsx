@@ -4,6 +4,7 @@ import { Spinner } from "@zoonk/ui/components/spinner";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { CalendarClockIcon, ClockIcon, HourglassIcon, MoonIcon, SparklesIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { ChangeLimitLink, STATUS_LINK_CLASS } from "../_components/change-limit-link";
 import { DoneMark } from "../_components/status-mark";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
@@ -12,9 +13,6 @@ import { useTodayScreen } from "./today-context";
 import { useStudiedToday } from "./today-day-progress";
 import { TodayStatusClause, TodayStatusLine, TodayStatusSentence } from "./today-status-line";
 import { useDayState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
-
-const STATUS_LINK_CLASS =
-  "text-muted-foreground hover:text-foreground font-medium underline underline-offset-2";
 
 function DoneStatus({ className }: { className?: string }) {
   const t = useExtracted();
@@ -156,10 +154,7 @@ function LimitStatus({ className, reached }: { className?: string; reached: bool
               values: { time: limitTime },
             })}
       </TodayStatusSentence>
-      {reached && <SeeYouClause />}{" "}
-      <LearnLink className={STATUS_LINK_CLASS} href={actions.dailyLimitHref} prefetch={false}>
-        {t("Change limit")}
-      </LearnLink>
+      {reached && <SeeYouClause />} <ChangeLimitLink href={actions.dailyLimitHref} />
     </TodayStatusLine>
   );
 }

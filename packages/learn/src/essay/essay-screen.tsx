@@ -9,6 +9,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
+import { ChangeLimitLink } from "../_components/change-limit-link";
 import { AnswersSaveError } from "../_components/save-error";
 import { focusStepTitle } from "../_components/steps";
 import { TaskHeaderTitle } from "../_components/task-header";
@@ -31,7 +32,7 @@ import { useFinishEssay } from "./use-finish-essay";
 
 export type { EssayActions } from "./essay-context";
 
-type Status = "error" | "idle" | "limitReached" | "pending";
+type Status = "dailyLimitReached" | "error" | "idle" | "limitReached" | "pending";
 
 const WORD_PATTERN = /\S+/gu;
 
@@ -44,12 +45,25 @@ const GRADING_BOUNDS = { slowMs: 20_000, timeoutMs: 90_000 } as const;
 
 function StatusLine({ gradesLeft, status }: { gradesLeft: number; status: Status }) {
   const t = useExtracted();
+  const { hrefs } = useEssayScreen();
   const isSlow = useTakingLong({ active: status === "pending", afterMs: GRADING_BOUNDS.slowMs });
 
   if (status === "error") {
     return (
       <p className="text-destructive-text text-sm" role="alert">
         {t("That didn't go through. Your text is still here. Try again in a moment.")}
+      </p>
+    );
+  }
+
+  if (status === "dailyLimitReached") {
+    return (
+      <p className="text-muted-foreground text-sm" role="status">
+        {t({
+          description: "The daily time limit is a setting that stops study for the day.",
+          message: "You've reached your daily time limit. Your text stays here.",
+        })}{" "}
+        <ChangeLimitLink href={hrefs.dailyLimit} />
       </p>
     );
   }
@@ -121,8 +135,8 @@ function useEssayWriter(onGraded: (draft: EssayDraft, sent: { editedSince: boole
 
     const result = settled?.status === "settled" ? settled.value : null;
 
-    if (result === "limitReached" || result === null) {
-      setStatus(result === null ? "error" : "limitReached");
+    if (result === null || result === "dailyLimitReached" || result === "limitReached") {
+      setStatus(result ?? "error");
       return;
     }
 

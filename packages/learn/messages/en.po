@@ -35,6 +35,11 @@ msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "Correct"
 
+#: src/_components/change-limit-link.tsx
+msgctxt "oeCtXD"
+msgid "Change limit"
+msgstr "Change limit"
+
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/session/next-stop.tsx
@@ -2455,6 +2460,12 @@ msgstr "See the grade"
 msgctxt "8injUu"
 msgid "That didn't go through. Your text is still here. Try again in a moment."
 msgstr "That didn't go through. Your text is still here. Try again in a moment."
+
+#. The daily time limit is a setting that stops study for the day.
+#: src/essay/essay-screen.tsx
+msgctxt "yDPN7m"
+msgid "You've reached your daily time limit. Your text stays here."
+msgstr "You've reached your daily time limit. Your text stays here."
 
 #: src/essay/essay-screen.tsx
 msgctxt "Vl53xq"
@@ -12779,11 +12790,6 @@ msgstr "You've reached your daily time limit of {time}."
 msgctxt "Ta4Ml6"
 msgid "Today stops at your daily time limit of {time}."
 msgstr "Today stops at your daily time limit of {time}."
-
-#: src/today/today-day-status.tsx
-msgctxt "oeCtXD"
-msgid "Change limit"
-msgstr "Change limit"
 
 #: src/today/today-day-status.tsx
 msgctxt "FyQP44"

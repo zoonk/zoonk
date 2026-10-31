@@ -5,7 +5,10 @@ import { submitEssay } from "@zoonk/core/exams/essays/submit";
 /** A route, not a Server Action: grading takes seconds, and an action would hold up the screen's other requests. */
 export const POST = appPostRoute<{ blockId: string }>(
   "essaySubmissionRoute",
-  async (request, { blockId }): Promise<EssayDraft | "limitReached" | null> => {
+  async (
+    request,
+    { blockId },
+  ): Promise<EssayDraft | "dailyLimitReached" | "limitReached" | null> => {
     const body = essaySubmissionInputSchema.safeParse(await readJsonBody(request));
 
     if (!body.success) {
@@ -14,8 +17,8 @@ export const POST = appPostRoute<{ blockId: string }>(
 
     const result = await submitEssay({ blockId, input: body.data });
 
-    if (result.status === "limitReached") {
-      return "limitReached";
+    if (result.status === "dailyLimitReached" || result.status === "limitReached") {
+      return result.status;
     }
 
     return result.status === "graded"
