@@ -133,7 +133,7 @@ private fun MapExplorerActivity(props: ActivityProps) {
                 style = MaterialTheme.typography.labelMedium.withTabularFigures(),
             )
         }
-        MapView(map, places, name, selectedId, visited, ::select)
+        MapView(map, places, name, selectedId, visited, enabled = !props.isLocked, onSelect = ::select)
         if (map.drawing.legend.isNotEmpty() || note != null) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 map.drawing.legend.forEach { LegendItem(it) }
@@ -182,6 +182,7 @@ private fun MapView(
     name: String,
     selectedId: String?,
     visited: List<String>,
+    enabled: Boolean,
     onSelect: (String) -> Unit,
 ) {
     val description = pluralStringResource(R.plurals.activities_reasoning_map_description, places.size, name, places.size)
@@ -202,7 +203,9 @@ private fun MapView(
             Layout(
                 content = {
                     layout.pins.forEach { pin ->
-                        Pin(pin, isSelected = pin.place.id == selectedId, isVisited = pin.place.id in visited) { onSelect(pin.place.id) }
+                        Pin(pin, isSelected = pin.place.id == selectedId, isVisited = pin.place.id in visited, enabled = enabled) {
+                            onSelect(pin.place.id)
+                        }
                     }
                 },
                 modifier = Modifier.matchParentSize(),
@@ -323,6 +326,7 @@ private fun Pin(
     pin: PinSpot,
     isSelected: Boolean,
     isVisited: Boolean,
+    enabled: Boolean,
     onClick: () -> Unit,
 ) {
     val description = stringResource(R.string.activities_reasoning_map_place, pin.number, pin.place.label)
@@ -330,7 +334,7 @@ private fun Pin(
         Modifier
             .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
             .clip(CircleShape)
-            .selectable(selected = isSelected, role = Role.Button, onClick = onClick)
+            .selectable(selected = isSelected, enabled = enabled, role = Role.Button, onClick = onClick)
             .clearAndSetSemantics {
                 contentDescription = description
                 traversalIndex = pin.number.toFloat()

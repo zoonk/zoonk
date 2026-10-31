@@ -8,6 +8,7 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.click
 import androidx.compose.ui.test.hasAnyAncestor
@@ -238,6 +239,16 @@ class ReasoningFlowTest {
         shows("2 of 3 explored")
         tap("Their water didn't come from the Broad Street pump")
         harness.tap("Check")
+    }
+
+    @Test
+    fun mapExplorerPlacesLockOnceChecked() {
+        play("mapExplorer", isCorrect = true)
+
+        tap("Their water didn't come from the Broad Street pump")
+        harness.tap("Check")
+
+        rule.onNode(hasContentDescription("2. Brewery on Broad Street")).assertIsNotEnabled()
     }
 
     @Test
