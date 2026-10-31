@@ -138,7 +138,7 @@ export function useFullCourseText() {
   };
 }
 
-export const FULL_COURSE_SWITCH_ID = "plan-editor-full-course";
+const FULL_COURSE_SWITCH_ID = "plan-editor-full-course";
 
 export function FullCourseSwitch() {
   const t = useExtracted();

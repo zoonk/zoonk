@@ -55,7 +55,10 @@
       "ignore": ["src/prisma/seed/**"],
       "prisma": false
     },
-    "packages/learn": { "entry": [".eloqnt/config.ts"], "project": ["src/**/*.{ts,tsx}!"] },
+    "packages/learn": {
+      "entry": [".eloqnt/config.ts"],
+      "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"]
+    },
     "packages/player": {
       "entry": [".eloqnt/config.ts", "scripts/base-maps/build-base-maps.ts!"],
       "project": ["src/**/*.{ts,tsx}!", "scripts/**/*.ts!", "!**/_test-utils/**!"]
