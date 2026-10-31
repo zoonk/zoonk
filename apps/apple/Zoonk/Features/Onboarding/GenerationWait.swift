@@ -208,6 +208,9 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
   var restart: (() async throws -> String?)?
   /// False while the result isn't there, which shows as lost updates.
   let readResult: () async -> Bool
+  /// For a caller that waits for the whole run too: the wait follows the run past `readResult` and
+  /// calls this once it ends.
+  var onRunEnd: (() -> Void)?
   @ViewBuilder let leading: () -> Leading
   @ViewBuilder let trailing: () -> Trailing
 
@@ -268,7 +271,14 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
       failure = nil
 
       if let runID {
-        await finish(await follow(runID))
+        let ending = await follow(runID)
+
+        // A cancelled iteration ends like a finished stream: the wait went away or follows again.
+        guard !Task.isCancelled else {
+          return
+        }
+
+        await finish(ending)
       } else {
         await readMissingID()
       }
@@ -288,6 +298,8 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
 
   private enum Ending {
     case ready
+    /// Followed to its end, its result read on the way.
+    case ended
     case stopped
     /// The stream broke and gave up reconnecting: the run may still be working.
     case lost
@@ -299,15 +311,20 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
 
     do {
       for try await event in onboarding.events(generationID: id) {
+        let wasDone = current.isDone
         current.apply(event)
         wait = current
 
-        if current.isDone {
-          break
+        if current.isDone, !wasDone {
+          guard onRunEnd != nil else {
+            return .ready
+          }
+
+          await read()
         }
       }
 
-      return .ready
+      return onRunEnd == nil ? .ready : .ended
     } catch is GenerationStopped {
       return .stopped
     } catch {
@@ -319,6 +336,8 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
     switch ending {
     case .ready:
       await read()
+    case .ended:
+      onRunEnd?()
     case .stopped where restart != nil:
       failure = .generation
     case .stopped:

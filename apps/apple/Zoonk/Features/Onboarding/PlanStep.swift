@@ -1,22 +1,10 @@
 import SwiftUI
 
+/// The reveal waits for the plan it reads, as main's does. An exam's plan first waits for research to
+/// read its official documents, so the learner sees the plan they follow.
 struct PlanStep: View {
   let view: GoalOnboarding
 
-  var body: some View {
-    PlanWait(view: view, offersLibraryCourse: true) { PlanReveal(view: view, plan: $0) }
-  }
-}
-
-/// The plan reveal and the time question both wait for the plan. An exam's plan first waits for
-/// research to read its official documents, so the learner sees the plan they follow.
-struct PlanWait<Content: View>: View {
-  let view: GoalOnboarding
-  /// The reveal offers a Library course that fits the goal while its plan is built.
-  var offersLibraryCourse = false
-  @ViewBuilder let content: (GoalPlan) -> Content
-
-  @Environment(OnboardingStore.self) private var onboarding
   @Environment(PlanStore.self) private var plans
   /// Once the wait shows, reading the plan again never swaps it for a spinner.
   @State private var isWaiting = false
@@ -29,56 +17,35 @@ struct PlanWait<Content: View>: View {
     Group {
       switch plan.value?.plan {
       case let ready? where ready.ready && ready.notice != .reading:
-        content(ready)
+        PlanReveal(view: view, plan: ready)
       case let reading? where reading.ready:
-        NoticeReadingView(plan: reading)
-          .onboardingColumn()
-          .task {
-            while !Task.isCancelled {
-              try? await Task.sleep(for: Self.noticeCheck)
-              await plan.refresh()
-            }
+        NoticeReadingView(
+          document: reading.examDocument, lastEdition: reading.schedule.targetDateEstimated
+        )
+        .onboardingColumn()
+        .task {
+          while !Task.isCancelled {
+            try? await Task.sleep(for: Self.noticeCheck)
+            await plan.refresh()
           }
+        }
       default:
         switch (plan.state, isWaiting) {
         case (.idle, false), (.loading, false):
           StepLoading()
         default:
-          building(plan)
-            .onboardingColumn()
-            .onAppear { isWaiting = true }
+          PlanBuilding(view: view, readResult: { await readUntilReady(plan) }) {
+            if let course = view.libraryCourse {
+              LibraryCourseOffer(
+                courseID: course.courseId, title: course.title, chapters: course.chapterCount)
+            }
+          }
+          .onboardingColumn()
+          .onAppear { isWaiting = true }
         }
       }
     }
     .loads(plan, refreshable: false)
-  }
-
-  private func building(_ plan: Resource<PlanRead>) -> some View {
-    GenerationWaitView(
-      title: LocalizedStringResource(
-        "Building your plan", table: "Onboarding", comment: "Title while a goal's plan is built"),
-      description: LocalizedStringResource(
-        "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
-        table: "Onboarding", comment: "Shown while a goal's plan is built"),
-      stoppedDescription: LocalizedStringResource(
-        "Your answers are saved.", table: "Onboarding",
-        comment: "Shown when a goal's plan stopped building, over the way to try again"),
-      generationID: view.generationId,
-      kind: .curriculum,
-      readGenerationID: {
-        let goal = onboarding.onboarding(goalID: view.goal.id)
-        await goal.refresh()
-        return goal.value?.generationId
-      },
-      restart: { try await onboarding.writeGoal(goalID: view.goal.id) },
-      readResult: { await readUntilReady(plan) },
-      leading: { EmptyView() },
-      trailing: {
-        if offersLibraryCourse, let course = view.libraryCourse {
-          LibraryCourseOffer(
-            courseID: course.courseId, title: course.title, chapters: course.chapterCount)
-        }
-      })
   }
 
   private func readUntilReady(_ plan: Resource<PlanRead>) async -> Bool {
@@ -97,6 +64,41 @@ struct PlanWait<Content: View>: View {
     }
 
     return false
+  }
+}
+
+/// Main's `PlanBuilding`: the goal's run while its plan is built, which both the reveal and the time
+/// question wait for.
+struct PlanBuilding<Trailing: View>: View {
+  let view: GoalOnboarding
+  let readResult: () async -> Bool
+  var onRunEnd: (() -> Void)?
+  @ViewBuilder let trailing: () -> Trailing
+
+  @Environment(OnboardingStore.self) private var onboarding
+
+  var body: some View {
+    GenerationWaitView(
+      title: LocalizedStringResource(
+        "Building your plan", table: "Onboarding", comment: "Title while a goal's plan is built"),
+      description: LocalizedStringResource(
+        "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
+        table: "Onboarding", comment: "Shown while a goal's plan is built"),
+      stoppedDescription: LocalizedStringResource(
+        "Your answers are saved.", table: "Onboarding",
+        comment: "Shown when a goal's plan stopped building, over the way to try again"),
+      generationID: view.generationId,
+      kind: .curriculum,
+      readGenerationID: {
+        let goal = onboarding.onboarding(goalID: view.goal.id)
+        await goal.refresh()
+        return goal.value?.generationId
+      },
+      restart: { try await onboarding.writeGoal(goalID: view.goal.id) },
+      readResult: readResult,
+      onRunEnd: onRunEnd,
+      leading: { EmptyView() },
+      trailing: trailing)
   }
 }
 
@@ -248,8 +250,13 @@ private struct RevealExamChoices: View {
   }
 }
 
-private struct NoticeReadingView: View {
-  let plan: GoalPlan
+/// Main's `NoticeReading`; `lastEdition` while the next edition's documents aren't out, so the plan
+/// follows the last one's.
+struct NoticeReadingView: View {
+  let document: ExamDocument
+  let lastEdition: Bool
+  /// Set once asking the plan failed: shows that, with the way to ask again.
+  var reconnect: (() -> Void)?
 
   var body: some View {
     List {
@@ -276,12 +283,15 @@ private struct NoticeReadingView: View {
             comment: "The step going while an exam's official documents are read")
         }
       }
+
+      if let reconnect {
+        GenerationFailureSection(failure: .connection, act: reconnect)
+      }
     }
   }
 
-  /// While the next edition's documents aren't out, the plan follows the last edition's.
   private var title: Text {
-    plan.schedule.targetDateEstimated
+    lastEdition
       ? Text(
         "Reading the last edition's official documents", tableName: "Onboarding",
         comment: "Title while the last edition of an exam's official documents is read")
@@ -291,13 +301,13 @@ private struct NoticeReadingView: View {
   }
 
   private var description: Text {
-    if plan.schedule.targetDateEstimated {
+    if lastEdition {
       return Text(
         "The next edition's documents aren't out yet, so your plan follows the last one's subjects and topics. We'll tell you when the new ones are out. This usually takes a few minutes.",
         tableName: "Onboarding", comment: "While the last edition of an exam's documents is read")
     }
 
-    switch plan.examDocument {
+    switch document {
     case .notice:
       return Text(
         "Your plan will follow the notice's subjects, topics and dates. This usually takes a few minutes.",

@@ -348,12 +348,10 @@ private struct StepScreen: View {
     case .plan:
       PlanStep(view: view)
     case .schedule:
-      PlanWait(view: view) { _ in
-        ScheduleQuestion(
-          view: view, isSaving: isSaving, failed: failed, refusal: refusal, onAnswer: onAnswer
-        )
-        .onboardingColumn()
-      }
+      ScheduleQuestion(
+        view: view, isSaving: isSaving, failed: failed, refusal: refusal, onAnswer: onAnswer
+      )
+      .onboardingColumn()
     default:
       QuestionStep(
         step: step, view: view, subject: subject, isSaving: isSaving, failed: failed,

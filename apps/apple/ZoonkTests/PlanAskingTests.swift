@@ -8,6 +8,7 @@ final class PlanAskingTests: XCTestCase {
   private struct Answer: PlanAnswer {
     let id: Int
     let ready: Bool
+    var readingNotice = false
   }
 
   private struct Unavailable: Error {}
@@ -148,6 +149,26 @@ final class PlanAskingTests: XCTestCase {
     XCTAssertNil(asking.last(for: "b"))
     XCTAssertNil(asking.last(for: "c"))
     XCTAssertEqual(asking.last(for: "a")?.id, 1)
+  }
+
+  func testTellsThePlansReadinessFromTheLastAnswerReadyOrNot() async {
+    let asking = makeAsking()
+
+    XCTAssertNil(asking.readiness(for: "a"))
+
+    await asking.ask("a", when: true) { Answer(id: 1, ready: true) }
+
+    let unready = Task {
+      await asking.ask("b", when: true) { Answer(id: 2, ready: false, readingNotice: true) }
+    }
+    while asking.answers["b"] == nil {
+      await Task.yield()
+    }
+    unready.cancel()
+    await unready.value
+
+    XCTAssertEqual(asking.readiness(for: "a"), PlanReadiness(ready: true, readingNotice: false))
+    XCTAssertEqual(asking.readiness(for: "c"), PlanReadiness(ready: false, readingNotice: true))
   }
 
   func testGivesUpAfterThreeFailuresInARowUntilRestarted() async {

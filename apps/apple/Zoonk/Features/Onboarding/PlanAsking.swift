@@ -50,6 +50,11 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer, C: Clock<Du
     (answers[key] ?? latest).flatMap { $0.ready ? $0 : nil }
   }
 
+  /// What the answer for `key`, else the last one that came, says of the plan, ready or not.
+  func readiness(for key: Key) -> PlanReadiness? {
+    (answers[key] ?? latest)?.readiness
+  }
+
   func restart() {
     round += 1
   }

@@ -58,6 +58,24 @@ enum ScheduleTime {
     let line: Line
   }
 
+  enum Wait: Equatable {
+    case building
+    case readingNotice
+  }
+
+  /// Main's `getPlanWait`, nil for the question. Until the plan's first answer, the onboarding view's
+  /// readiness decides, so a run replayed on opening never switches screens; after it, a run that
+  /// ended leaves the question to say the plan is still working the time out.
+  static func wait(opened: PlanReadiness, last: PlanReadiness?, runEnded: Bool) -> Wait? {
+    let readiness = last ?? opened
+
+    if readiness.ready || (last != nil && !readiness.readingNotice && runEnded) {
+      return nil
+    }
+
+    return readiness.readingNotice ? .readingNotice : .building
+  }
+
   static let everyDay = Array(0..<7)
 
   private static let weekdays = [1, 2, 3, 4, 5]

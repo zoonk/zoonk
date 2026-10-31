@@ -21,7 +21,7 @@ final class ScheduleTimeTests: XCTestCase {
     pastDate: Bool = false
   ) -> TimeToCover {
     TimeToCover(
-      fittingDate: nil, most: most, pastDate: pastDate, ready: true,
+      fittingDate: nil, most: most, pastDate: pastDate, readingNotice: false, ready: true,
       recommendedMinutes: recommendedMinutes, suggested: suggested, targetDate: "2028-10-29",
       targetDateNamedMonth: false)
   }
@@ -47,7 +47,8 @@ final class ScheduleTimeTests: XCTestCase {
 
   private func advice(_ share: Double? = 0.48, endDate: String? = nil) -> TimeAdvice {
     TimeAdvice(
-      coveredShare: share, endDate: endDate, fullCourseEndDate: nil, ready: true)
+      coveredShare: share, endDate: endDate, fullCourseEndDate: nil, readingNotice: false,
+      ready: true)
   }
 
   private func line(
@@ -340,6 +341,38 @@ final class ScheduleTimeTests: XCTestCase {
 
   func testOffersCoresTimesWithTheTimesShown() {
     XCTAssertEqual(ScheduleTime.dailyTimes([15, 30, 45], with: 35, 30, nil), [15, 30, 35, 45])
+  }
+
+  private let ready = PlanReadiness(ready: true, readingNotice: false)
+  private let building = PlanReadiness(ready: false, readingNotice: false)
+  private let reading = PlanReadiness(ready: false, readingNotice: true)
+
+  private func wait(
+    opened: PlanReadiness, last: PlanReadiness? = nil, runEnded: Bool = false
+  ) -> ScheduleTime.Wait? {
+    ScheduleTime.wait(opened: opened, last: last, runEnded: runEnded)
+  }
+
+  func testOpensOnTheScreenTheOnboardingViewSays() {
+    XCTAssertNil(wait(opened: ready))
+    XCTAssertEqual(wait(opened: building), .building)
+    XCTAssertEqual(wait(opened: reading), .readingNotice)
+  }
+
+  /// A run that ended long ago replays at once, while the plan may still owe placement.
+  func testARunThatEndedWaitsForThePlansFirstAnswer() {
+    XCTAssertEqual(wait(opened: building, runEnded: true), .building)
+  }
+
+  func testFollowsThePlansAnswersOnceOneCame() {
+    XCTAssertNil(wait(opened: building, last: ready))
+    XCTAssertEqual(wait(opened: ready, last: reading), .readingNotice)
+    XCTAssertEqual(wait(opened: reading, last: building), .building)
+  }
+
+  func testAsksOnceTheRunEndedWhileThePlanStillWorksTheTimeOut() {
+    XCTAssertNil(wait(opened: building, last: building, runEnded: true))
+    XCTAssertEqual(wait(opened: building, last: reading, runEnded: true), .readingNotice)
   }
 
   func testOpensOnMondayToFridayUnlessTheGoalHasFewerDays() {

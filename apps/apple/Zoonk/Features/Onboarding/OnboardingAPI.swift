@@ -151,9 +151,27 @@ private struct ScheduleWeekInput: Encodable {
   }
 }
 
-/// An answer about the plan, which isn't `ready` while the plan is still being built.
+/// Whether the plan can answer the time question yet: not while it's built, while it owes placement
+/// or while it waits for its exam's official documents to be read (`readingNotice`).
+struct PlanReadiness: Equatable, Sendable {
+  let ready: Bool
+  let readingNotice: Bool
+}
+
+extension PlanReadiness {
+  init(_ readiness: Components.Schemas.Onboarding.PlanReadinessPayload) {
+    self.init(ready: readiness.ready, readingNotice: readiness.readingNotice)
+  }
+}
+
+/// An answer about the plan, which isn't `ready` while the plan can't answer yet.
 protocol PlanAnswer: Equatable, Sendable {
   var ready: Bool { get }
+  var readingNotice: Bool { get }
+}
+
+extension PlanAnswer {
+  var readiness: PlanReadiness { PlanReadiness(ready: ready, readingNotice: readingNotice) }
 }
 
 /// The day the goals typed together share, split as saving the schedule splits it: this goal's
@@ -185,6 +203,7 @@ struct TimeAdvice: PlanAnswer, Decodable {
   let endDate: String?
   /// For an exam studying everything: when everything ends at this time, once the plan holds it.
   let fullCourseEndDate: String?
+  let readingNotice: Bool
   let ready: Bool
 }
 
@@ -214,6 +233,7 @@ struct TimeToCover: PlanAnswer, Decodable {
   let fittingDate: String?
   let most: MostCoverage?
   let pastDate: Bool
+  let readingNotice: Bool
   let ready: Bool
   let recommendedMinutes: Int?
   /// The time the question starts on: what covers everything, else what's worth most first.

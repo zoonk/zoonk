@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// Asked once the plan is ready: a goal with a date opens on the time the plan works out it needs,
-/// which follows the days until the learner picks their own time.
+/// Asked once the plan can answer it, the plan's wait shown until then: a goal with a date opens on
+/// the time the plan works out it needs, which follows the days until the learner picks their own
+/// time.
 struct ScheduleQuestion: View {
   let view: GoalOnboarding
   let isSaving: Bool
@@ -18,6 +19,9 @@ struct ScheduleQuestion: View {
   @State private var weekendOn = false
   /// The weekend has a time of its own only once one is picked: switched on, it starts as the weekdays'.
   @State private var weekendPicked: Int?
+  /// What the plan's wait heard from the run: its plan made, then the run ended.
+  @State private var planMade = false
+  @State private var runEnded = false
 
   private struct AdviceKey: Hashable, Sendable {
     let week: ScheduleWeek
@@ -62,11 +66,64 @@ struct ScheduleQuestion: View {
     _days = State(initialValue: ScheduleTime.startingDays(view.goal.studyDays))
   }
 
+  /// What the plan's answers say of it, as main's gate reads them: when the goal has no date, the
+  /// advice asks next, so the time found says it until the advice comes.
+  private struct Gate {
+    let last: PlanReadiness?
+    let failed: Bool
+    let restart: () -> Void
+  }
+
   var body: some View {
     let shown = self.shown
     let findKey = self.findKey
-    let findsTime = datedGuess && !days.isEmpty
+    let gate = gate(shown)
+    let wait = ScheduleTime.wait(
+      opened: PlanReadiness(view.planReadiness), last: gate.last, runEnded: runEnded)
+    // While the wait follows the plan's run, its events say when to ask, not a timer.
+    let asks = wait != .building || planMade || runEnded
+    let findsTime = asks && datedGuess && !days.isEmpty
+    let asksAdvice = asks && shown.asksAdvice
 
+    // A Group would give each screen its own asking tasks, which would start over as screens switch.
+    ZStack {
+      switch wait {
+      case .building?:
+        PlanBuilding(
+          view: view,
+          readResult: {
+            planMade = true
+            return true
+          },
+          onRunEnd: { runEnded = true }
+        ) {
+          if gate.failed {
+            GenerationFailureSection(failure: .connection, act: gate.restart)
+          }
+        }
+      case .readingNotice?:
+        NoticeReadingView(
+          document: examDocument, lastEdition: false, reconnect: gate.failed ? gate.restart : nil)
+      case nil:
+        question(shown)
+      }
+    }
+    .task(id: Asked(key: findKey, enabled: findsTime, round: found.round)) {
+      await found.ask(findKey, when: findsTime) {
+        try await onboarding.timeToCover(goalID: view.goal.id, week: findKey)
+      }
+    }
+    .task(id: Asked(key: shown.adviceKey, enabled: asksAdvice, round: advised.round)) {
+      let key = shown.adviceKey
+
+      await advised.ask(key, when: asksAdvice) {
+        try await onboarding.timeAdvice(
+          goalID: view.goal.id, week: key.week, dailyMinutes: key.minutes)
+      }
+    }
+  }
+
+  private func question(_ shown: Shown) -> some View {
     QuestionForm(isSaving: isSaving, failed: failed, failure: refusalWords) {
       StepHeader(
         title: Text(
@@ -106,22 +163,25 @@ struct ScheduleQuestion: View {
         \.isSavingAnswer,
         isSaving || ScheduleTime.waitsToSave(line: shown.line, picked: picked))
     }
-    .task(id: Asked(key: findKey, enabled: findsTime, round: found.round)) {
-      await found.ask(findKey, when: findsTime) {
-        try await onboarding.timeToCover(goalID: view.goal.id, week: findKey)
-      }
-    }
-    .task(id: Asked(key: shown.adviceKey, enabled: shown.asksAdvice, round: advised.round)) {
-      let key = shown.adviceKey
+  }
 
-      await advised.ask(key, when: shown.asksAdvice) {
-        try await onboarding.timeAdvice(
-          goalID: view.goal.id, week: key.week, dailyMinutes: key.minutes)
-      }
+  private func gate(_ shown: Shown) -> Gate {
+    guard shown.dated else {
+      return Gate(
+        last: advised.readiness(for: shown.adviceKey) ?? found.readiness(for: findKey),
+        failed: advised.status == .failed, restart: advised.restart)
     }
+
+    return Gate(
+      last: found.readiness(for: findKey), failed: found.status == .failed, restart: found.restart)
   }
 
   private var isExam: Bool { view.goal.kind == .exam }
+
+  /// Main's `getExamDocument`.
+  private var examDocument: ExamDocument {
+    isExam && view.goal.targetLanguage != nil ? .guide : .notice
+  }
 
   /// An exam takes its notice's day when the learner gave none.
   private var datedGuess: Bool { view.goal.targetDate != nil || isExam }
