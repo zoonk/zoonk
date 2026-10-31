@@ -2270,7 +2270,7 @@ msgstr "Meksiko için İspanyolca"
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "PnbhyK"
 msgid "English for London"
-msgstr "London için İngilizce"
+msgstr "Londra için İngilizce"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "AeiByK"
