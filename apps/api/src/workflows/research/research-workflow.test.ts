@@ -1098,6 +1098,7 @@ describe(researchWorkflow, () => {
     vi.mocked(findOfficialSources).mockImplementation(async ({ unreadable = [] }) => ({
       ...TASK_RESULT,
       data: {
+        board: "Cebraspe",
         documents: unreadable.length > 0 ? [] : [...official, secondary],
         officialFound: true,
         searchCalls: 1,
