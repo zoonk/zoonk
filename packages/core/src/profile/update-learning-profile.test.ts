@@ -8,6 +8,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { getLearningProfileCacheTag } from "../cache/tags";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
+import { DAILY_TIME_CHOICES } from "../plans/daily-minutes";
 import { getLearningProfile } from "./get-learning-profile";
 import { updateLearningProfile } from "./update-learning-profile";
 
@@ -277,6 +278,7 @@ describe(updateLearningProfile, () => {
       availableGlasses: ["round"],
       buddy: { glasses: "round", kind: "zu", name: null, picked: false },
       dailyLimitMinutes: null,
+      dailyTimes: DAILY_TIME_CHOICES,
       soundsEnabled: true,
     });
 
@@ -337,6 +339,7 @@ describe(updateLearningProfile, () => {
         availableGlasses: ["round"],
         buddy: { glasses: "round", kind: "noodle", name: "Nodo", picked: true },
         dailyLimitMinutes: null,
+        dailyTimes: DAILY_TIME_CHOICES,
         soundsEnabled: true,
       },
       status: "updated",

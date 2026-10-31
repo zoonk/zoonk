@@ -71,6 +71,8 @@ export type LearningProfileView = {
   availableGlasses: BuddyGlasses[];
   /** The learner's own daily study limit in minutes, or null for none. */
   dailyLimitMinutes: number | null;
+  /** The limits offered, in minutes: the same times a plan's day offers. */
+  dailyTimes: number[];
   buddy: ResolvedBuddy;
   soundsEnabled: boolean;
 };

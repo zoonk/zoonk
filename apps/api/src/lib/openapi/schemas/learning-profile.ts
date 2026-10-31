@@ -13,6 +13,12 @@ export const learningProfileSchema = z
       .int()
       .nullable()
       .meta({ description: "The learner's own daily study limit in minutes, or null" }),
+    dailyTimes: z
+      .array(z.int())
+      .meta({
+        description:
+          "The daily limits to offer, in minutes: the same times a plan's day offers. Show a saved limit that isn't one of them too",
+      }),
     soundsEnabled: z
       .boolean()
       .meta({ description: "Sounds for a right answer and for finishing; on by default" }),

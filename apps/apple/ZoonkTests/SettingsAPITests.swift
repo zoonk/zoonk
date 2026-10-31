@@ -58,6 +58,7 @@ private struct ProfileUpdateTransport: ClientTransport {
             "availableGlasses": ["round"],
             "buddy": { "glasses": "round", "kind": "zu", "name": null, "picked": false },
             "dailyLimitMinutes": null,
+            "dailyTimes": [5, 10, 15],
             "soundsEnabled": true
           }
         }

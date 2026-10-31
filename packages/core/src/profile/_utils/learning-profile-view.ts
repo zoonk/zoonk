@@ -1,4 +1,5 @@
 import { BuddyGlasses, type UserLearningProfile, prisma } from "@zoonk/db";
+import { DAILY_TIME_CHOICES } from "../../plans/daily-minutes";
 import { DEFAULT_BUDDY, resolveProfileBuddy } from "../default-buddy";
 import { type LearningProfileView } from "../learning-profile-contract";
 
@@ -30,6 +31,7 @@ function toLearningProfileView({
     availableGlasses,
     buddy: resolveProfileBuddy(profile),
     dailyLimitMinutes: profile?.dailyLimitMinutes ?? null,
+    dailyTimes: DAILY_TIME_CHOICES,
     soundsEnabled: profile?.soundsEnabled ?? true,
   };
 }

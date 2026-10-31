@@ -25,7 +25,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 private const val PROFILE =
-    """{"activeGoalId":null,"availableGlasses":["round"],"buddy":{"glasses":"round","kind":"zu","name":null,"picked":false},"dailyLimitMinutes":45,"soundsEnabled":true}"""
+    """{"activeGoalId":null,"availableGlasses":["round"],"buddy":{"glasses":"round","kind":"zu","name":null,"picked":false},"dailyLimitMinutes":45,"dailyTimes":[5,10,15],"soundsEnabled":true}"""
 
 private class FakeLearningProfileApi : LearningProfileApi {
     val changes = mutableListOf<JsonObject>()
