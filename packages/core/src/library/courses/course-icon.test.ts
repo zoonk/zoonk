@@ -101,11 +101,12 @@ describe(drawCourseIcon, () => {
     expect(put).not.toHaveBeenCalled();
   });
 
-  it("keeps an existing icon and never draws one for private or language courses", async () => {
-    const [withIcon, privateCourse, languageCourse] = await Promise.all([
+  it("keeps an existing icon and never draws one for private or language courses, or before a course from before learning v2 gets its new details", async () => {
+    const [withIcon, privateCourse, languageCourse, legacyCourse] = await Promise.all([
       courseFixture({ imageUrl: "https://blob.test/old.webp" }),
       courseFixture({ visibility: "private" }),
       courseFixture({ targetLanguage: "es", title: "Espanhol" }),
+      courseFixture({ legacyDetails: true }),
     ]);
 
     await expect(createCourseIcon({ courseId: withIcon.id })).resolves.toBe(
@@ -114,6 +115,7 @@ describe(drawCourseIcon, () => {
 
     await expect(createCourseIcon({ courseId: privateCourse.id })).resolves.toBeNull();
     await expect(createCourseIcon({ courseId: languageCourse.id })).resolves.toBeNull();
+    await expect(createCourseIcon({ courseId: legacyCourse.id })).resolves.toBeNull();
     expect(generateCourseIcon).not.toHaveBeenCalled();
   });
 });

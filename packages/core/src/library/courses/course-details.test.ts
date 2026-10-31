@@ -117,6 +117,48 @@ describe(writeCourseDetails, () => {
     expect(stored.categories.map((item) => item.category)).toStrictEqual(["health", "science"]);
   });
 
+  it("replaces the description, landing copy, categories and picture a course kept from before learning v2", async () => {
+    const course = await outlinedCourse({
+      description: "The old description",
+      imageUrl: "https://example.com/old-icon.webp",
+      landingPage: storedLandingPage,
+      legacyDetails: true,
+    });
+
+    await courseCategoryFixture({ category: "law", courseId: course.id });
+
+    await expect(writeCourseDetails({ courseId: course.id })).resolves.toBe("written");
+
+    const stored = await readCourse(course.id);
+
+    expect(stored).toMatchObject({
+      description: details.description,
+      detailsRunId: provenance.runId,
+      imageUrl: null,
+      landingPage: details.landingPage,
+      legacyDetails: false,
+    });
+
+    expect(stored.categories.map((item) => item.category)).toStrictEqual(["health", "science"]);
+  });
+
+  it("keeps a course from before learning v2 marked for replacement when only its landing copy is rewritten", async () => {
+    const course = await outlinedCourse({
+      description: "The old description",
+      imageUrl: "https://example.com/old-icon.webp",
+      legacyDetails: true,
+    });
+
+    await writeCourseDetails({ copyOnly: true, courseId: course.id });
+
+    await expect(readCourse(course.id)).resolves.toMatchObject({
+      description: "The old description",
+      imageUrl: "https://example.com/old-icon.webp",
+      landingPage: details.landingPage,
+      legacyDetails: true,
+    });
+  });
+
   it("lists a language course under languages whatever the model says", async () => {
     const course = await outlinedCourse({ targetLanguage: "es", title: "Espanhol" });
 

@@ -88,7 +88,14 @@ export async function drawCourseIcon({
 }): Promise<DrawnIcon | null> {
   const course = await prisma.course.findUnique({ where: { id: courseId } });
 
-  if (!course || course.imageUrl || course.visibility !== "public" || course.targetLanguage) {
+  // A course from before learning v2 is drawn from the details that replace its old ones.
+  if (
+    !course ||
+    course.imageUrl ||
+    course.legacyDetails ||
+    course.visibility !== "public" ||
+    course.targetLanguage
+  ) {
     return null;
   }
 
