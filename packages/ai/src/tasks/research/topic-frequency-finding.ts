@@ -1,4 +1,4 @@
-import { isSameBoard } from "./same-board";
+import { compareBoards } from "@zoonk/utils/exam-boards";
 
 const MAX_TITLE_LENGTH = 200;
 const MAX_BASIS_LENGTH = 120;
@@ -105,7 +105,8 @@ export function toTopicFrequencyFinding({
       !url ||
       !URL.canParse(url) ||
       !isSearched(url) ||
-      !isSameBoard(entry.board, board)
+      !entry.board ||
+      compareBoards(entry.board, board) !== "same"
     ) {
       return [];
     }

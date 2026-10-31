@@ -355,14 +355,17 @@ describe(saveExamBlueprint, () => {
     });
 
     const sameBoard = await saveExamBlueprint({
-      board: "FGV Conhecimento",
+      board: "Fundação Getúlio Vargas",
       content: first,
       identity: examIdentity,
       provenance: PROVENANCE,
       sourceId: source.id,
     });
 
-    expect(sameBoard.blueprint).toMatchObject({ board: "FGV Conhecimento", structure: past });
+    expect(sameBoard.blueprint).toMatchObject({
+      board: "Fundação Getúlio Vargas",
+      structure: past,
+    });
 
     const newBoard = await saveExamBlueprint({
       board: "Cebraspe",

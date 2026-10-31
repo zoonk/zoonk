@@ -1,4 +1,4 @@
-import { normalizeString } from "@zoonk/utils/string";
+import { BRAZILIAN_EXAM_BOARDS, mentionsName } from "@zoonk/utils/exam-boards";
 import { type ReusePolicy } from "./source-contract";
 
 type KnownPublisher = { domains: readonly string[]; names: readonly string[]; policy: ReusePolicy };
@@ -30,35 +30,8 @@ const COLLEGE_BOARD_POLICY: ReusePolicy = {
 const KNOWN_PUBLISHERS: readonly KnownPublisher[] = [
   { domains: ["inep.gov.br", "enem.inep.gov.br"], names: ["inep", "enem"], policy: INEP_POLICY },
   {
-    domains: [
-      "cebraspe.org.br",
-      "fgv.br",
-      "vunesp.com.br",
-      "concursosfcc.com.br",
-      "cesgranrio.org.br",
-      "ibfc.org.br",
-      "institutoaocp.org.br",
-      "idecan.org.br",
-      "quadrix.org.br",
-      "consulplan.net",
-      "fundatec.org.br",
-    ],
-    names: [
-      "cebraspe",
-      "cespe",
-      "fgv",
-      "fundacao getulio vargas",
-      "vunesp",
-      "fcc",
-      "fundacao carlos chagas",
-      "cesgranrio",
-      "ibfc",
-      "aocp",
-      "idecan",
-      "quadrix",
-      "consulplan",
-      "fundatec",
-    ],
+    domains: BRAZILIAN_EXAM_BOARDS.flatMap((board) => board.domains),
+    names: BRAZILIAN_EXAM_BOARDS.flatMap((board) => board.names),
     policy: BRAZILIAN_BOARD_POLICY,
   },
   {
@@ -80,10 +53,6 @@ function matchesDomain({ domains, hostname }: { domains: readonly string[]; host
   return domains.some((domain) => hostname === domain || hostname.endsWith(`.${domain}`));
 }
 
-function matchesName({ name, publisher }: { name: string; publisher: string }): boolean {
-  return ` ${publisher} `.includes(` ${name} `);
-}
-
 function findKnownPublisher({
   publisher,
   url,
@@ -93,15 +62,10 @@ function findKnownPublisher({
 }): KnownPublisher | undefined {
   const hostname = getHostname(url);
 
-  const normalizedPublisher = publisher
-    ? normalizeString(publisher).replaceAll(/[^\w ]/gu, " ")
-    : "";
-
   return KNOWN_PUBLISHERS.find(
     (known) =>
       (hostname !== null && matchesDomain({ domains: known.domains, hostname })) ||
-      (normalizedPublisher.length > 0 &&
-        known.names.some((name) => matchesName({ name, publisher: normalizedPublisher }))),
+      known.names.some((name) => mentionsName({ name, text: publisher ?? "" })),
   );
 }
 

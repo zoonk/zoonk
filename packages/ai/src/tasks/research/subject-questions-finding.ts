@@ -1,4 +1,4 @@
-import { isSameBoard } from "./same-board";
+import { compareBoards } from "@zoonk/utils/exam-boards";
 
 const MAX_TITLE_LENGTH = 200;
 const MAX_EDITION_LENGTH = 80;
@@ -79,7 +79,7 @@ export function toSubjectQuestionsFinding({
   subjectCount: number;
   total: number | null;
 }): SubjectQuestionsFinding {
-  if (raw.status !== "found" || !isSameBoard(raw.board, board)) {
+  if (raw.status !== "found" || !raw.board || compareBoards(raw.board, board) !== "same") {
     return UNKNOWN;
   }
 

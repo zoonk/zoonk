@@ -1,7 +1,7 @@
 import "server-only";
-import { isSameBoard } from "@zoonk/ai/tasks/research/same-board";
 import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { compareBoards } from "@zoonk/utils/exam-boards";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getExamBlueprintCacheTag } from "../../cache/tags";
 import { resolvePlanInputDependents } from "../../plans/_utils/plan-input-dependencies";
@@ -155,7 +155,7 @@ function forgetOtherBoardsPapers({
   current: ExamBlueprint;
   stored: BlueprintContent;
 }): BlueprintContent {
-  if (board === null || isSameBoard(current.board, board)) {
+  if (!board || !current.board || compareBoards(current.board, board) !== "different") {
     return stored;
   }
 
