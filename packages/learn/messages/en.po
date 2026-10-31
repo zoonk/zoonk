@@ -11377,6 +11377,7 @@ msgctxt "g7wBHi"
 msgid "We couldn't work out the time needed."
 msgstr "We couldn't work out the time needed."
 
+#. A button that works out the daily time that covers the whole goal. Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything".
 #: src/plan/use-time-to-cover.ts
 msgctxt "Yxy0ov"
 msgid "Find the time that covers everything"

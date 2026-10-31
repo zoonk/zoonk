@@ -66,7 +66,11 @@ export function useTimeToCoverTexts() {
   return {
     building: t("Your plan is still being built. Try again in a moment."),
     failed: t("We couldn't work out the time needed."),
-    find: t("Find the time that covers everything"),
+    find: t({
+      description:
+        'A button that works out the daily time that covers the whole goal. Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything".',
+      message: "Find the time that covers everything",
+    }),
     finding: t("Finding the time…"),
     fittingDate: ({ dailyMinutes, fittingDate }: { dailyMinutes: number; fittingDate: string }) =>
       t({
