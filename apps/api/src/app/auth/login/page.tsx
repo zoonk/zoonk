@@ -9,11 +9,9 @@ import {
 } from "@/components/login";
 import { auth } from "@zoonk/auth";
 import { getSessionCookieName } from "@zoonk/auth/cookies";
-import { RegisterSharedEventProperties } from "@zoonk/core/analytics/register-shared-properties";
-import { buildSharedEventProperties } from "@zoonk/core/analytics/shared-properties";
 import { AUTH_LOGIN_EXPIRED_ERROR } from "@zoonk/utils/origin";
 import { PRIVACY_URL, TERMS_URL } from "@zoonk/utils/url";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { type ReactNode } from "react";
@@ -62,14 +60,9 @@ export default async function LoginPage({ searchParams }: PageProps<"/auth/login
   await redirectWhenSignedIn({ error: params.error, redirectTo });
 
   const t = await getExtracted();
-  const locale = await getLocale();
 
   return (
     <AuthFrame appUrl={getReturnAppUrl(redirectTo)}>
-      <RegisterSharedEventProperties
-        properties={buildSharedEventProperties({ isGuest: true, locale, platform: "web" })}
-      />
-
       <Login>
         <LoginHeader>
           <LoginTitle>{t("Sign in or create an account")}</LoginTitle>

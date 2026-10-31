@@ -1,5 +1,4 @@
 import { captureRouterTransitionStart, init } from "@sentry/nextjs";
-import { loadPostHog } from "@zoonk/core/analytics/posthog-browser";
 import { getSentryDataCollection } from "@zoonk/utils/sentry";
 import { initBotId } from "botid/client/core";
 
@@ -19,8 +18,5 @@ if (process.env.NODE_ENV === "production") {
     ],
   });
 }
-
-/** Sign-in pages don't know the visitor's age, so they never record sessions. */
-void loadPostHog();
 
 export const onRouterTransitionStart = captureRouterTransitionStart;

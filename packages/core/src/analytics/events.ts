@@ -141,7 +141,6 @@ type SettingsEvents = { "Memory Turned Off": NoProperties; "Plan Edited": { chan
 
 type AccountEvents = {
   "Sign In Completed": NoProperties;
-  "Sign In Method Chosen": { method: "apple" | "google" | "otp" };
   "Sign Up Completed": { from_guest: boolean };
   "Subscription Canceled": { plan: string };
   "Subscription Checkout Started": { billingPeriod: "monthly" | "yearly"; plan: string };
