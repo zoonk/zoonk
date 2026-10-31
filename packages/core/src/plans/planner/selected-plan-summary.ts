@@ -3,7 +3,7 @@ import { type SelectedCoverage, type SelectedSummary } from "../_utils/selected-
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { getKeptBaseChoices } from "./chosen-bases";
 import { estimateDailyNeed, estimateFinish, readFixedDays } from "./daily-need";
-import { mayCostToKeepPhaseDates } from "./phase-dates-move";
+import { mayMovePhaseDates } from "./phase-dates-move";
 import { getBaseChoices, getDefaultBaseChoice } from "./plan-bases";
 import { daysBetween, toIsoDate } from "./plan-calendar";
 import { PHASE_WORK_KINDS } from "./plan-item-rules";
@@ -130,9 +130,7 @@ function readPhaseDates({
   built: BuiltPlan;
   input: BuildPlanInput;
 }): SelectedSummary["phaseDates"] {
-  const kept = input.phaseEnds !== undefined && input.phaseEnds.size > 0;
-
-  if (!kept || !mayCostToKeepPhaseDates(built)) {
+  if (!mayMovePhaseDates({ built, kept: input.phaseEnds })) {
     return { structureKey: null, trigger: false };
   }
 

@@ -52,6 +52,7 @@ export type ComputedPlan = {
   feasibility: PlanFeasibility;
   inputsKey: string;
   itemFacts: ReadonlyMap<string, SelectedItemFacts>;
+  keptPhaseEnds: ReadonlyMap<number, Date> | undefined;
   pace: Pace;
   standInLessons: Map<string, number>;
   state: PlanState;
@@ -306,6 +307,7 @@ export async function computePlan({
       items: built.items,
     }),
     itemFacts: listSelectedItemFacts({ built, input: builtInput }),
+    keptPhaseEnds: input.phaseEnds,
     pace: settings.pace,
     get selected() {
       return selected();

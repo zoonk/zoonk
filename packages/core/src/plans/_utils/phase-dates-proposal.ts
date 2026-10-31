@@ -8,6 +8,7 @@ import {
   isKeptOver,
   isPhaseDatesMoveWorth,
   mayCostToKeepPhaseDates,
+  mayMovePhaseDates,
   showsPhaseDatesMove,
 } from "../planner/phase-dates-move";
 import { type PlanEffect } from "../planner/plan-effect";
@@ -39,7 +40,7 @@ async function findMovedPhaseDates({
   pace: "sampled" | "saved";
   planning?: ChangePlanning;
 }): Promise<ComputedPlan | null> {
-  if (!mayCostToKeepPhaseDates(computed.built)) {
+  if (!mayMovePhaseDates({ built: computed.built, kept: computed.keptPhaseEnds })) {
     return null;
   }
 

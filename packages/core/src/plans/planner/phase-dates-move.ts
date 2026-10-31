@@ -30,6 +30,16 @@ export function mayCostToKeepPhaseDates(
   );
 }
 
+export function mayMovePhaseDates({
+  built,
+  kept,
+}: {
+  built: Pick<BuiltPlan, "droppedSkillIds" | "endsBeforeLessons" | "strainedEnds">;
+  kept: ReadonlyMap<number, Date> | undefined;
+}): boolean {
+  return kept !== undefined && kept.size > 0 && mayCostToKeepPhaseDates(built);
+}
+
 function listFittedOutcomes({
   graph,
   kept,
