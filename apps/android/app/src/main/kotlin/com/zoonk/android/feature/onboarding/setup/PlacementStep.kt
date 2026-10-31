@@ -78,6 +78,7 @@ import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.SuccessEyebrow
@@ -138,6 +139,7 @@ internal fun ColumnScope.PlacementStep(
                 areaCount = areaCount,
                 mock = phase.mock,
                 pending = vm.isSaving,
+                starting = vm.isStarting,
                 failed = vm.finishFailed,
                 onMock = { navigator.open(AppRoute.PlacementMock(goalId)) },
                 onStart = vm::start,
@@ -209,6 +211,7 @@ private fun ColumnScope.PlacementIntro(
     areaCount: Int,
     mock: MockOffer?,
     pending: Boolean,
+    starting: Boolean,
     failed: Boolean,
     onMock: () -> Unit,
     onStart: () -> Unit,
@@ -226,10 +229,10 @@ private fun ColumnScope.PlacementIntro(
     mock?.let { MockOfferRow(it, onMock) }
     OnboardingActions {
         FinishFailed(failed)
-        Button(onClick = onStart, enabled = !pending, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.onboarding_placement_start))
+        Button(onClick = onStart, enabled = !pending && !starting, modifier = Modifier.fillMaxWidth()) {
+            PendingLabel(starting, stringResource(R.string.onboarding_placement_start))
         }
-        TextButton(onClick = onScratch, enabled = !pending, modifier = Modifier.fillMaxWidth()) {
+        TextButton(onClick = onScratch, enabled = !pending && !starting, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_placement_skip_basics))
         }
     }

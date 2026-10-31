@@ -72,6 +72,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LevelBar
 import com.zoonk.android.ui.components.MediaPending
+import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formattingLocale
@@ -128,6 +129,7 @@ internal fun ColumnScope.LanguageLevelTestStep(
                 testMinutes,
                 showAlphabetNote = (test as? LoadState.Loaded)?.value?.showAlphabetNote == true,
                 pending = vm.isSaving,
+                starting = vm.isStarting,
                 failed = vm.finishFailed,
                 onStart = vm::begin,
                 onSkip = finish,
@@ -175,6 +177,7 @@ private fun ColumnScope.LevelTestIntro(
     testMinutes: Int,
     showAlphabetNote: Boolean,
     pending: Boolean,
+    starting: Boolean,
     failed: Boolean,
     onStart: () -> Unit,
     onSkip: () -> Unit,
@@ -192,10 +195,10 @@ private fun ColumnScope.LevelTestIntro(
     }
     OnboardingActions {
         FinishFailed(failed)
-        Button(onClick = onStart, enabled = !pending, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.onboarding_placement_start))
+        Button(onClick = onStart, enabled = !pending && !starting, modifier = Modifier.fillMaxWidth()) {
+            PendingLabel(starting, stringResource(R.string.onboarding_placement_start))
         }
-        TextButton(onClick = onSkip, enabled = !pending, modifier = Modifier.fillMaxWidth()) {
+        TextButton(onClick = onSkip, enabled = !pending && !starting, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_language_test_skip))
         }
         InterfaceOffer(language)

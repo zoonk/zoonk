@@ -402,11 +402,15 @@ internal class FakeOnboardingApi : OnboardingApi {
     val finishedPlacements = mutableListOf<Boolean>()
     val finishedMocks = mutableListOf<String>()
 
+    /** Holds the placement's reads until it completes. */
+    var placementGate: CompletableDeferred<Unit>? = null
+
     override suspend fun placement(
         session: AuthenticatedSession,
         goalId: String,
     ): Placement {
         placementReads++
+        placementGate?.await()
         return placement
     }
 
@@ -448,11 +452,15 @@ internal class FakeOnboardingApi : OnboardingApi {
     val spokenTakes = mutableListOf<VoiceRecording>()
     var finishedLevelTests = 0
 
+    /** Holds the level test's reads until it completes, or fails them when it completes exceptionally. */
+    var levelTestGate: CompletableDeferred<Unit>? = null
+
     override suspend fun levelTest(
         session: AuthenticatedSession,
         goalId: String,
     ): LanguageLevelTest {
         levelTestReads++
+        levelTestGate?.await()
         return levelTest
     }
 

@@ -15,7 +15,6 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestGeneration
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 private class SentTestAnswer(
@@ -46,6 +45,9 @@ internal class LevelTestViewModel(
     var bank by mutableStateOf(BankWait())
         private set
 
+    var isStarting by mutableStateOf(false)
+        private set
+
     var isSaving by mutableStateOf(false)
         private set
 
@@ -56,29 +58,43 @@ internal class LevelTestViewModel(
         private set
 
     private val test get() = store.levelTests[goalId]
-    private var beginning: Job? = null
     private var sent: SentTestAnswer? = null
 
     fun phase(state: LoadState<LanguageLevelTest>) = levelTestPhase(state, started, begun, stopped, bank)
 
+    /** Reads first, so ready questions open at once instead of flashing the wait for questions still to write. */
     fun begin() {
-        if (beginning?.isActive == true) return
-        started = true
-        savedStarted = true
-        begun = true
+        if (isStarting) return
+        isStarting = true
         bank = BankWait()
-        beginning =
-            viewModelScope.launch {
-                test.refresh()
-                val preparing = test.preparing() ?: return@launch
-                if (preparing.startedAt != null) {
-                    bank = bank.seen(preparing, now())
-                    return@launch
-                }
-                val prepared = store.prepareLevelTest(goalId)
-                bank = BankWait.asked(preparing, started = prepared is WriteOutcome.Done, now())
-                if ((prepared as? WriteOutcome.Done)?.value?.status == LanguageLevelTestGeneration.Status.READY) test.refresh()
+        viewModelScope.launch {
+            val read = test.refreshed()
+            begun = true
+            // Left unstarted, a test whose read failed says so even over questions read before.
+            if (read) {
+                started = true
+                savedStarted = true
             }
+            val preparing = test.preparing()
+            when {
+                !read -> {
+                    bank = BankWait(startFailed = true)
+                }
+
+                preparing == null -> {}
+
+                preparing.startedAt != null -> {
+                    bank = bank.seen(preparing, now())
+                }
+
+                else -> {
+                    val prepared = store.prepareLevelTest(goalId)
+                    bank = BankWait.asked(preparing, started = prepared is WriteOutcome.Done, now())
+                    if ((prepared as? WriteOutcome.Done)?.value?.status == LanguageLevelTestGeneration.Status.READY) test.refresh()
+                }
+            }
+            isStarting = false
+        }
     }
 
     /** One of the wait's reads: true when it came back. */

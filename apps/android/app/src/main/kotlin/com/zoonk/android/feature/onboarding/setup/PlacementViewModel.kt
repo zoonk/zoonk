@@ -42,6 +42,9 @@ internal class PlacementViewModel(
     var finishFailed by mutableStateOf(false)
         private set
 
+    var isStarting by mutableStateOf(false)
+        private set
+
     private var sent: SentAnswer? = null
     private var shown = Shown()
 
@@ -53,7 +56,18 @@ internal class PlacementViewModel(
             if (it is PlacementPhase.Question) shown = Shown(answered = it.number - 1, spent = it.spent)
         }
 
+    /** Reads first, so ready questions open at once instead of flashing their wait. */
     fun start() {
+        if (isStarting) return
+        isStarting = true
+        viewModelScope.launch {
+            store.placements[goalId].refresh()
+            markStarted()
+            isStarting = false
+        }
+    }
+
+    private fun markStarted() {
         started = true
         savedStarted = true
     }
@@ -101,7 +115,7 @@ internal class PlacementViewModel(
 
     private fun send() {
         val answer = sent ?: return
-        start()
+        markStarted()
         isSaving = true
         answerFailed = false
         viewModelScope.launch {

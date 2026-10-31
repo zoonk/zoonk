@@ -8,8 +8,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -41,6 +43,7 @@ import com.zoonk.android.feature.onboarding.preparingTestOf
 import com.zoonk.android.feature.onboarding.skillLevelOf
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -208,6 +211,58 @@ class LevelTestStepFlowTest {
 
         rule.onNodeWithText("When does Marco go to the market?").assertIsDisplayed()
         assertEquals(1, api.prepared)
+    }
+
+    @Test
+    fun startReadsTheTestFirstSoQuestionsWrittenMeanwhileOpenWithoutTheWait() {
+        api.levelTest = preparingTestOf()
+        show()
+        api.levelTest = levelTestOf()
+        val read = CompletableDeferred<Unit>()
+        api.levelTestGate = read
+        tap("Start")
+
+        rule.onNodeWithText("Preparing your level test").assertDoesNotExist()
+        rule.onNodeWithText("Let's see your level in Italian").assertIsDisplayed()
+        rule.onNodeWithText("Start").assertIsNotEnabled()
+        rule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true).assertExists()
+
+        read.complete(Unit)
+
+        rule.onNodeWithText("When does Marco go to the market?").assertIsDisplayed()
+        assertEquals(0, api.prepared)
+    }
+
+    @Test
+    fun aStartWhoseReadFailedSaysItDidNotStartAndTriesAgain() {
+        api.levelTest = preparingTestOf()
+        show()
+        api.levelTestGate = CompletableDeferred<Unit>().apply { completeExceptionally(ApiException(ApiError.Network)) }
+        tap("Start")
+
+        rule.onNodeWithText("This didn't start").assertIsDisplayed()
+        assertEquals(0, api.prepared)
+
+        api.levelTestGate = null
+        tap("Try again")
+
+        assertEquals(1, api.prepared)
+        rule.onNodeWithText("Preparing your level test").assertIsDisplayed()
+    }
+
+    @Test
+    fun aStartWhoseReadFailedSaysItDidNotStartEvenOverQuestionsReadBefore() {
+        show()
+        api.levelTestGate = CompletableDeferred<Unit>().apply { completeExceptionally(ApiException(ApiError.Network)) }
+        tap("Start")
+
+        rule.onNodeWithText("This didn't start").assertIsDisplayed()
+        rule.onNodeWithText("When does Marco go to the market?").assertDoesNotExist()
+
+        api.levelTestGate = null
+        tap("Try again")
+
+        rule.onNodeWithText("When does Marco go to the market?").assertIsDisplayed()
     }
 
     @Test

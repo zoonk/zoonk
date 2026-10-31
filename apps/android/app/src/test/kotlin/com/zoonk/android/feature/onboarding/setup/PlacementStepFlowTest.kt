@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -39,6 +41,7 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PlacementAnswer
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -200,6 +203,25 @@ class PlacementStepFlowTest {
 
         rule.onNodeWithText("Getting your questions ready").assertIsDisplayed()
         rule.onNodeWithText("They come from the skills your goal needs. It usually takes a minute or two.").assertIsDisplayed()
+    }
+
+    @Test
+    fun startReadsThePlacementFirstSoQuestionsWrittenMeanwhileOpenWithoutTheWait() {
+        api.placement = placementOf(status = "preparing", next = null)
+        show()
+        api.placement = placementOf()
+        val read = CompletableDeferred<Unit>()
+        api.placementGate = read
+        tap("Start")
+
+        rule.onNodeWithText("Getting your questions ready").assertDoesNotExist()
+        rule.onNodeWithText("Let's see what you already know").assertIsDisplayed()
+        rule.onNodeWithText("Start").assertIsNotEnabled()
+        rule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true).assertExists()
+
+        read.complete(Unit)
+
+        rule.onNodeWithText("Bar exam\u00A0· Question 1").assertIsDisplayed()
     }
 
     @Test
