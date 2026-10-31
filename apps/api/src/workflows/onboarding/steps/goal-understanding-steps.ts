@@ -1,24 +1,30 @@
 import { createStepStream, progressStep } from "@/workflows/_shared/stream-status";
 import { type GoalUnderstanding } from "@zoonk/ai/tasks/goals/understand-goal";
+import { type ExamDescription } from "@zoonk/ai/tasks/research/exam-identity-decision";
 import { type GoalUnderstandingStepName } from "@zoonk/core/library/generation/steps";
 import { type OnboardingExamDate } from "@zoonk/core/view-models/onboarding/contract";
 import {
+  type ExamCandidate,
   type ExamLookup,
+  type ExamMatch,
   type FoundExam,
   type GoalReading,
   type StoredExam,
+  type StoredExamSearch,
   type UnderstandingRunDraft,
   type UnderstoodLanguagePair,
   type UnderstoodWords,
   completeUnderstandingDraft,
+  decideStoredExam,
   failUnderstandingDraft,
   findKeptReading,
-  findStoredExam,
   isUnsafeGoal,
   loadUnderstandingDraft,
+  readMatchedExam,
   recordUnderstandingRun,
   saveGoalReading,
   searchExamDates,
+  searchStoredExam,
   understandGoalWords,
 } from "@zoonk/core/view-models/onboarding/understanding-run";
 import { type WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
@@ -70,13 +76,31 @@ export async function saveGoalReadingStep(input: {
   return saveGoalReading(input);
 }
 
-export async function findStoredExamStep(input: {
+export async function searchStoredExamStep(input: {
   language: string;
   lookup: ExamLookup;
+}): Promise<StoredExamSearch> {
+  "use step";
+
+  return searchStoredExam(input);
+}
+
+export async function decideStoredExamStep(input: {
+  candidate: ExamCandidate;
+  request: ExamDescription;
+}): Promise<ExamMatch | null> {
+  "use step";
+
+  return decideStoredExam(input);
+}
+
+export async function readMatchedExamStep(input: {
+  lookup: ExamLookup;
+  matches: (ExamMatch | null)[];
 }): Promise<StoredExam | null> {
   "use step";
 
-  return findStoredExam(input);
+  return readMatchedExam(input);
 }
 
 export async function searchExamDatesStep(input: {

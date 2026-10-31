@@ -1,11 +1,15 @@
 import "server-only";
 import { findExamDate } from "@zoonk/ai/tasks/goals/find-exam-date";
 import { type GoalUnderstanding, type UnderstoodGoal } from "@zoonk/ai/tasks/goals/understand-goal";
-import { prisma } from "@zoonk/db";
+import {
+  type ExamDescription,
+  decideExamIdentity,
+} from "@zoonk/ai/tasks/research/exam-identity-decision";
+import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { type EditionExamDay, getExamEditionDays } from "../../../exams/_utils/exam-edition-days";
 import { getKeptMonthStart } from "../../../exams/kept-month";
 import { examEditionSchema } from "../../../library/exams/blueprint-contract";
-import { findSameExam } from "../../../library/exams/find-same-exam";
+import { searchSameExam } from "../../../library/exams/find-same-exam";
 import { type OnboardingExamDate } from "../onboarding-contract";
 
 export type ExamFacts = {
@@ -37,6 +41,14 @@ export type ExamLookup = {
 };
 
 export type StoredExam = { blueprintId: string; dates: OnboardingExamDate[] };
+
+export type ExamCandidate = ExamDescription & { id: string };
+
+export type ExamMatch = { id: string; probability: number };
+
+export type StoredExamSearch =
+  | { stored: StoredExam | null; status: "settled" }
+  | { candidates: ExamCandidate[]; request: ExamDescription; status: "undecided" };
 
 export type FoundExam = {
   lookup: ExamLookup;
@@ -152,17 +164,34 @@ async function findStoredDates({
     : withSources(ahead);
 }
 
-/** One identity decision in one language; throws when it fails. */
-export async function findStoredExam({
+async function readStoredExam({
+  blueprint,
+  lookup: { exam, today },
+}: {
+  blueprint: Pick<ExamBlueprint, "edition" | "id">;
+  lookup: ExamLookup;
+}): Promise<StoredExam> {
+  const dates = await findStoredDates({
+    edition: blueprint.edition,
+    examMonth: exam.examMonth ?? null,
+    examYear: exam.examYear ?? null,
+    today,
+  });
+
+  return { blueprintId: blueprint.id, dates };
+}
+
+/** The stored notice in one language when no model call is needed, or the candidates to decide on. */
+export async function searchStoredExam({
   language,
   lookup,
 }: {
   language: string;
   lookup: ExamLookup;
-}): Promise<StoredExam | null> {
-  const { exam, today } = lookup;
+}): Promise<StoredExamSearch> {
+  const { exam } = lookup;
 
-  const blueprint = await findSameExam({
+  const search = await searchSameExam({
     request: {
       board: null,
       country: null,
@@ -174,18 +203,56 @@ export async function findStoredExam({
     searchTerms: [exam.institution, exam.role].filter((term) => typeof term === "string"),
   });
 
-  if (!blueprint) {
-    return null;
+  if (search.status === "undecided") {
+    return {
+      candidates: search.candidates.map(({ board, country, id, name, role }) => ({
+        board,
+        country,
+        id,
+        name,
+        role,
+      })),
+      request: search.request,
+      status: "undecided",
+    };
   }
 
-  const dates = await findStoredDates({
-    edition: blueprint.edition,
-    examMonth: exam.examMonth ?? null,
-    examYear: exam.examYear ?? null,
-    today,
-  });
+  const stored =
+    search.blueprint && (await readStoredExam({ blueprint: search.blueprint, lookup }));
 
-  return { blueprintId: blueprint.id, dates };
+  return { status: "settled", stored };
+}
+
+/** One identity decision on one candidate; throws when it fails. */
+export function decideStoredExam({
+  candidate,
+  request,
+}: {
+  candidate: ExamCandidate;
+  request: ExamDescription;
+}): Promise<ExamMatch | null> {
+  return decideExamIdentity({ candidates: [candidate], request });
+}
+
+export async function readMatchedExam({
+  lookup,
+  matches,
+}: {
+  lookup: ExamLookup;
+  matches: (ExamMatch | null)[];
+}): Promise<StoredExam | null> {
+  const [best] = matches
+    .filter((match) => match !== null)
+    .toSorted((first, second) => second.probability - first.probability);
+
+  const blueprint =
+    best &&
+    (await prisma.examBlueprint.findUnique({
+      select: { edition: true, id: true },
+      where: { id: best.id },
+    }));
+
+  return blueprint ? readStoredExam({ blueprint, lookup }) : null;
 }
 
 /** Searches the web only when no stored official day answers it; throws when the search fails. */

@@ -8,9 +8,11 @@ import { buildExamIdentityKey } from "../../../library/exams/exam-identity";
 import {
   type ExamLookup,
   type StoredExam,
-  findStoredExam,
+  decideStoredExam,
   listExamLookups,
+  readMatchedExam,
   searchExamDates,
+  searchStoredExam,
   toExamFacts,
 } from "./exam-facts";
 
@@ -49,6 +51,16 @@ function lookupFor(
   }
 
   return lookup;
+}
+
+async function findSettledExam(input: { language: string; lookup: ExamLookup }) {
+  const search = await searchStoredExam(input);
+
+  if (search.status !== "settled") {
+    throw new Error("Expected the stored exam without an identity decision");
+  }
+
+  return search.stored;
 }
 
 function searchFor(lookup: ExamLookup, stored: StoredExam | null) {
@@ -152,11 +164,7 @@ describe(listExamLookups, () => {
   });
 });
 
-describe(findStoredExam, () => {
-  beforeEach(() => {
-    vi.mocked(decideExamIdentity).mockResolvedValue(null);
-  });
-
+describe(searchStoredExam, () => {
   it("gives the notice's days still ahead, with their source, for the year it's for", async () => {
     const { blueprint, examName, source } = await storedExam({
       days: ["2026-03-01", "2026-11-08", "2026-11-15"],
@@ -186,8 +194,8 @@ describe(findStoredExam, () => {
     };
 
     const [named, unnamed] = await Promise.all([
-      findStoredExam({ language: "en", lookup: lookupFor({ examName, examYear: 2026 }) }),
-      findStoredExam({ language: "en", lookup: lookupFor({ examName }) }),
+      findSettledExam({ language: "en", lookup: lookupFor({ examName, examYear: 2026 }) }),
+      findSettledExam({ language: "en", lookup: lookupFor({ examName }) }),
     ]);
 
     expect(named).toStrictEqual(expected);
@@ -204,72 +212,12 @@ describe(findStoredExam, () => {
     const lookup = lookupFor({ examName, targetLanguage: "es" }, "pt");
 
     const [inPortuguese, inSpanish] = await Promise.all(
-      lookup.noticeLanguages.map((language) => findStoredExam({ language, lookup })),
+      lookup.noticeLanguages.map((language) => findSettledExam({ language, lookup })),
     );
 
     expect(inPortuguese).toBeNull();
     expect(inSpanish?.blueprintId).toBe(blueprint.id);
     expect(inSpanish?.dates.map((day) => day.date)).toStrictEqual(["2026-11-14", "2027-04-02"]);
-  });
-
-  it("finds the stored notice when the learner words the exam and its role another way", async () => {
-    // Keep a unique municipality within the search's five-word term limit to isolate stored notices.
-    const town = randomUUID().slice(0, 8);
-
-    const { blueprint } = await storedExam({
-      days: ["2027-01-17"],
-      language: "pt",
-      name: `Concurso Câmara Municipal ${town}`,
-      role: "Analista Legislativo - Registro e Redação",
-      year: 2027,
-    });
-
-    vi.mocked(decideExamIdentity).mockImplementation(async ({ candidates }) => {
-      const match = candidates.find((candidate) => candidate.id === blueprint.id);
-      return match ? { id: match.id, probability: 0.9 } : null;
-    });
-
-    const stored = await findStoredExam({
-      language: "pt",
-      lookup: lookupFor(
-        {
-          examName: `Concurso da Câmara Municipal ${town}`,
-          examYear: 2027,
-          institution: `Câmara Municipal ${town}`,
-          targetPosition: "registro/redação",
-        },
-        "pt",
-      ),
-    });
-
-    expect(stored?.blueprintId).toBe(blueprint.id);
-    expect(stored?.dates.map((day) => day.date)).toStrictEqual(["2027-01-17"]);
-
-    expect(decideExamIdentity).toHaveBeenCalledWith(
-      expect.objectContaining({
-        request: expect.objectContaining({ country: "BR", role: "registro/redação" }),
-      }),
-    );
-  });
-
-  it("fails when the identity decision fails, so its step can try again", async () => {
-    const town = randomUUID().slice(0, 8);
-
-    await storedExam({
-      days: ["2027-01-17"],
-      language: "pt",
-      name: `Concurso Câmara Municipal ${town}`,
-      year: 2027,
-    });
-
-    vi.mocked(decideExamIdentity).mockRejectedValue(new Error("The model is down"));
-
-    await expect(
-      findStoredExam({
-        language: "pt",
-        lookup: lookupFor({ examName: `Concurso da Câmara Municipal ${town}` }, "pt"),
-      }),
-    ).rejects.toThrow("The model is down");
   });
 
   it("estimates the next edition when every stored day has passed", async () => {
@@ -279,7 +227,7 @@ describe(findStoredExam, () => {
     });
 
     await expect(
-      findStoredExam({ language: "en", lookup: lookupFor({ examName }) }),
+      findSettledExam({ language: "en", lookup: lookupFor({ examName }) }),
     ).resolves.toStrictEqual({
       blueprintId: blueprint.id,
       dates: [
@@ -304,7 +252,7 @@ describe(findStoredExam, () => {
   it("estimates the days in the month the learner named, over the notice's usual month", async () => {
     const { examName } = await storedExam({ days: ["2025-07-27"], year: 2025 });
 
-    const stored = await findStoredExam({
+    const stored = await findSettledExam({
       language: "en",
       lookup: lookupFor({ examMonth: 3, examName, examYear: 2027 }),
     });
@@ -324,8 +272,95 @@ describe(findStoredExam, () => {
     const { blueprint, examName } = await storedExam({ days: ["2026-11-08"], year: 2026 });
 
     await expect(
-      findStoredExam({ language: "en", lookup: lookupFor({ examName, examYear: 2025 }) }),
+      findSettledExam({ language: "en", lookup: lookupFor({ examName, examYear: 2025 }) }),
     ).resolves.toStrictEqual({ blueprintId: blueprint.id, dates: [] });
+  });
+});
+
+async function storedTownExam() {
+  // Keep a unique municipality within the search's five-word term limit to isolate stored notices.
+  const town = randomUUID().slice(0, 8);
+
+  const { blueprint } = await storedExam({
+    days: ["2027-01-17"],
+    language: "pt",
+    name: `Concurso Câmara Municipal ${town}`,
+    role: "Analista Legislativo - Registro e Redação",
+    year: 2027,
+  });
+
+  const lookup = lookupFor(
+    {
+      examName: `Concurso da Câmara Municipal ${town}`,
+      examYear: 2027,
+      institution: `Câmara Municipal ${town}`,
+      targetPosition: "registro/redação",
+    },
+    "pt",
+  );
+
+  return { blueprint, lookup };
+}
+
+describe("deciding which stored exam the learner means", () => {
+  it("decides each candidate on its own, then reads the notice of the likeliest match", async () => {
+    const { blueprint, lookup } = await storedTownExam();
+    const search = await searchStoredExam({ language: "pt", lookup });
+
+    if (search.status !== "undecided") {
+      throw new Error("Expected candidates to decide on");
+    }
+
+    expect(search.candidates).toContainEqual(expect.objectContaining({ id: blueprint.id }));
+    expect(search.request).toMatchObject({ country: "BR", role: "registro/redação" });
+
+    vi.mocked(decideExamIdentity).mockImplementation(async ({ candidates }) => {
+      const [candidate] = candidates;
+      return candidate?.id === blueprint.id ? { id: candidate.id, probability: 0.9 } : null;
+    });
+
+    const matches = await Promise.all(
+      search.candidates.map((candidate) =>
+        decideStoredExam({ candidate, request: search.request }),
+      ),
+    );
+
+    expect(decideExamIdentity).toHaveBeenCalledTimes(search.candidates.length);
+
+    expect(decideExamIdentity).toHaveBeenCalledWith({
+      candidates: [expect.objectContaining({ id: blueprint.id })],
+      request: search.request,
+    });
+
+    const stored = await readMatchedExam({
+      lookup,
+      matches: [...matches, { id: randomUUID(), probability: 0.7 }],
+    });
+
+    expect(stored?.blueprintId).toBe(blueprint.id);
+    expect(stored?.dates.map((day) => day.date)).toStrictEqual(["2027-01-17"]);
+  });
+
+  it("reads no notice when no candidate is the same exam", async () => {
+    const { lookup } = await storedTownExam();
+
+    await expect(readMatchedExam({ lookup, matches: [null, null] })).resolves.toBeNull();
+  });
+
+  it("fails when the identity decision fails, so its step can try again", async () => {
+    const { lookup } = await storedTownExam();
+    const search = await searchStoredExam({ language: "pt", lookup });
+
+    if (search.status !== "undecided") {
+      throw new Error("Expected candidates to decide on");
+    }
+
+    const [candidate] = search.candidates;
+    vi.mocked(decideExamIdentity).mockRejectedValue(new Error("The model is down"));
+
+    await expect(
+      decideStoredExam({ candidate: candidate!, request: search.request }),
+    ).rejects.toThrow("The model is down");
   });
 });
 

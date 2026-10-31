@@ -14,12 +14,14 @@ import { claimRunToken } from "../_shared/run-token";
 import {
   classifyGoalIntentStep,
   completeUnderstandingStep,
+  decideStoredExamStep,
   failUnderstandingStep,
   findKeptReadingStep,
-  findStoredExamStep,
+  readMatchedExamStep,
   recordUnderstandingRunStep,
   saveGoalReadingStep,
   searchExamDatesStep,
+  searchStoredExamStep,
   understandGoalStep,
   understandingProgressStep,
 } from "./steps/goal-understanding-steps";
@@ -51,6 +53,28 @@ async function readGoal(draft: UnderstandingRunDraft): Promise<GoalReading> {
   return saveGoalReadingStep({ draft, unsafe, words });
 }
 
+async function findStoredExamInLanguage({
+  language,
+  lookup,
+}: {
+  language: string;
+  lookup: ExamLookup;
+}): Promise<StoredExam | null> {
+  const search = await searchStoredExamStep({ language, lookup });
+
+  if (search.status === "settled") {
+    return search.stored;
+  }
+
+  const matches = await Promise.all(
+    search.candidates.map((candidate) =>
+      decideStoredExamStep({ candidate, request: search.request }),
+    ),
+  );
+
+  return readMatchedExamStep({ lookup, matches });
+}
+
 async function findStoredExamIn({
   languages: [language, ...others],
   lookup,
@@ -62,7 +86,7 @@ async function findStoredExamIn({
     return null;
   }
 
-  const stored = await findStoredExamStep({ language, lookup }).catch(() => null);
+  const stored = await findStoredExamInLanguage({ language, lookup }).catch(() => null);
   return stored ?? findStoredExamIn({ languages: others, lookup });
 }
 

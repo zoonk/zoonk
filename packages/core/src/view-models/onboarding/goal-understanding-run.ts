@@ -12,11 +12,16 @@ import { findCachedUnderstanding, saveUnderstanding } from "./_utils/understandi
 import { getLearnerToday } from "./_utils/understanding-view";
 
 export {
+  type ExamCandidate,
   type ExamLookup,
+  type ExamMatch,
   type FoundExam,
   type StoredExam,
-  findStoredExam,
+  type StoredExamSearch,
+  decideStoredExam,
+  readMatchedExam,
   searchExamDates,
+  searchStoredExam,
 } from "./_utils/exam-facts";
 
 /** System-workflow input only, after prepareGoalUnderstandingRun authorized the learner; does not read a session. */
