@@ -6,8 +6,8 @@ import { PostHog } from "posthog-node";
 import { loadLearnerAnalyticsPolicy } from "./learner-analytics-policy";
 
 /**
- * A generation's cost is still counted for a learner who turned usage data off, as system work that
- * names neither them nor their goal; a minor's stays theirs without a person profile.
+ * Only an adult who shares usage data is named. Anyone else's generation still counts its cost, as
+ * system work that names neither them nor their goal.
  */
 async function toLearnerAiGenerationEvent(generation: AiGeneration) {
   const userId = generation.context?.distinctId;
@@ -18,16 +18,12 @@ async function toLearnerAiGenerationEvent(generation: AiGeneration) {
 
   const policy = await loadLearnerAnalyticsPolicy({ country: null, userId });
 
-  if (policy === "off") {
-    const { contentScope, traceId } = generation.context ?? {};
-    return toAiGenerationEvent({ ...generation, context: { contentScope, traceId } });
+  if (policy === "identified") {
+    return toAiGenerationEvent(generation);
   }
 
-  const event = toAiGenerationEvent(generation);
-
-  return policy === "identified"
-    ? event
-    : { ...event, properties: { ...event.properties, $process_person_profile: false } };
+  const { contentScope, traceId } = generation.context ?? {};
+  return toAiGenerationEvent({ ...generation, context: { contentScope, traceId } });
 }
 
 export function registerAiGenerationAnalytics() {

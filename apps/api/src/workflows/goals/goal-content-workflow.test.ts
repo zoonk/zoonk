@@ -467,7 +467,6 @@ describe(goalContentWorkflow, () => {
 
       expect(trackServerEvent).toHaveBeenCalledWith(
         expect.objectContaining({
-          distinctId: goal.userId,
           name: "Plan Created",
           shared: expect.objectContaining({ platform: "web" }),
         }),
@@ -570,7 +569,6 @@ describe(goalContentWorkflow, () => {
 
       expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({
-          distinctId: goal.userId,
           name: "Generation Failed",
           properties: { content_kind: "curriculum", model: null, task: "goal-content" },
           shared: expect.objectContaining({ platform: "ios" }),
@@ -608,7 +606,6 @@ describe(goalContentWorkflow, () => {
 
       expect(trackServerEvent).toHaveBeenCalledWith(
         expect.objectContaining({
-          distinctId: goal.userId,
           name: "Generation Failed",
           shared: expect.objectContaining({ platform: "ios" }),
         }),

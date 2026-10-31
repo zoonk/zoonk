@@ -4,6 +4,7 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { milestoneFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
+import { headers } from "next/headers";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { getLearningProfileCacheTag } from "../cache/tags";
@@ -338,6 +339,23 @@ describe(updateLearningProfile, () => {
 
     await updateLearningProfile({ shareUsageData: true });
     await expect(getLearningProfile()).resolves.toMatchObject({ shareUsageData: true });
+  });
+
+  it("keeps a minor's yes as no choice where the law needs one they can't give", async () => {
+    const user = await useLearner();
+    const year = new Date().getUTCFullYear();
+    await learningProfileFixture({ birthYear: year - 15, userId: user.id });
+    vi.mocked(headers).mockResolvedValue(new Headers({ "x-vercel-ip-country": "DE" }));
+
+    await expect(updateLearningProfile({ shareUsageData: true })).resolves.toMatchObject({
+      profile: { shareUsageData: null },
+    });
+
+    vi.mocked(headers).mockResolvedValue(new Headers({ "x-vercel-ip-country": "BR" }));
+
+    await expect(updateLearningProfile({ shareUsageData: true })).resolves.toMatchObject({
+      profile: { shareUsageData: true },
+    });
   });
 
   it("saves the buddy and the active goal the tabs show", async () => {

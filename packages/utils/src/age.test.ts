@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getMinimumAge, isAdult, isBelowMinimumAge, isValidBirthYear } from "./age";
+import { getMinimumAge, isAdult, isBelowMinimumAge, isKnownMinor, isValidBirthYear } from "./age";
 
 const NOW = new Date("2026-10-31T12:00:00Z");
 
@@ -67,5 +67,13 @@ describe(isValidBirthYear, () => {
     expect(isValidBirthYear({ birthYear: 2027, now: NOW })).toBe(false);
     expect(isValidBirthYear({ birthYear: 1905, now: NOW })).toBe(false);
     expect(isValidBirthYear({ birthYear: 1990.5, now: NOW })).toBe(false);
+  });
+});
+
+describe(isKnownMinor, () => {
+  it("knows a minor only from a birth year", () => {
+    expect(isKnownMinor({ birthYear: 2010, country: "DE", now: NOW })).toBe(true);
+    expect(isKnownMinor({ birthYear: 1990, country: "DE", now: NOW })).toBe(false);
+    expect(isKnownMinor({ birthYear: null, country: "DE", now: NOW })).toBe(false);
   });
 });

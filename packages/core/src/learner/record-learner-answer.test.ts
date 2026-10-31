@@ -250,7 +250,6 @@ describe(recordLearnerAnswer, () => {
 
     expect(sent).toStrictEqual([
       expect.objectContaining({
-        distinctId: user.id,
         name: "Skill Level Changed",
         properties: { from_state: "new", skill_id: skill.id, to_state: "learning" },
       }),

@@ -392,7 +392,7 @@ describe(startLibraryLesson, () => {
     await flush();
 
     expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith({
-      distinctId: user.id,
+      distinctId: expect.any(String),
       identified: false,
       name: "Lesson Started",
       properties: {

@@ -252,7 +252,6 @@ describe(submitChapterTestOut, () => {
 
     expect(trackServerEvent).toHaveBeenCalledWith(
       expect.objectContaining({
-        distinctId: user.id,
         name: "Test-out Taken",
         properties: { chapter_id: chapterId, passed: false, score: 75 },
         shared: expect.objectContaining({ goal_kind: goal.kind }),

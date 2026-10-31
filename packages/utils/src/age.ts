@@ -44,6 +44,19 @@ export function isBelowMinimumAge({
   return getYoungestAge({ birthYear, now }) < getMinimumAge(country);
 }
 
+/** A birth year that may be a minor's where they are; an unknown one isn't known to be. */
+export function isKnownMinor({
+  birthYear,
+  country,
+  now,
+}: {
+  birthYear: number | null;
+  country: string | null;
+  now: Date;
+}): boolean {
+  return birthYear !== null && !isAdult({ birthYear, country, now });
+}
+
 /** An unknown birth year is never an adult's. */
 export function isAdult({
   birthYear,

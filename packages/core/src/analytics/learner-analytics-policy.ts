@@ -1,12 +1,14 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { isAdult } from "@zoonk/utils/age";
+import { isAdult, isKnownMinor } from "@zoonk/utils/age";
+import { isUsageDataLockedOff } from "@zoonk/utils/usage-data";
 
 export type LearnerAnalyticsPolicy = "anonymous" | "identified" | "off";
 
 /**
- * Nothing about the learner is sent once they turn usage data off, and only adults get a person
- * profile. Without a country (a workflow step), the oldest adult age anywhere applies.
+ * Nothing about the learner is sent once they turn usage data off, or about a known minor where the
+ * law needs a yes they can't give; only adults get a person profile. Without a country (a workflow
+ * step), the oldest adult age anywhere applies, and a minor counts as being where the law needs one.
  */
 export function getLearnerAnalyticsPolicy({
   birthYear,
@@ -17,11 +19,18 @@ export function getLearnerAnalyticsPolicy({
   country: string | null;
   shareUsageData: boolean | null;
 }): LearnerAnalyticsPolicy {
+  const now = new Date();
+
   if (shareUsageData === false) {
     return "off";
   }
 
-  return isAdult({ birthYear, country, now: new Date() }) ? "identified" : "anonymous";
+  if (isAdult({ birthYear, country, now })) {
+    return "identified";
+  }
+
+  const minor = isKnownMinor({ birthYear, country, now });
+  return isUsageDataLockedOff({ country, minor }) ? "off" : "anonymous";
 }
 
 export async function loadLearnerAnalyticsPolicy({

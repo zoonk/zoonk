@@ -911,6 +911,11 @@ msgid "Privacy"
 msgstr "Privacy"
 
 #: src/appearance/appearance-screen.tsx
+msgctxt "72SFRq"
+msgid "Off for learners under 18 in your country"
+msgstr "Off for learners under 18 in your country"
+
+#: src/appearance/appearance-screen.tsx
 msgctxt "8uEFmZ"
 msgid "Shows us how you use Zoonk, so we can improve it"
 msgstr "Shows us how you use Zoonk, so we can improve it"

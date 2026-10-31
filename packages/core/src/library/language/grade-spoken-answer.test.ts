@@ -326,14 +326,7 @@ describe(gradeSpokenAnswer, () => {
 
     const tip = { skill_id: step.skillId, target_language: "en" };
 
-    expect(sentTips()).toHaveLength(2);
-
-    expect(sentTips()).toStrictEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ distinctId: learner.id, properties: tip }),
-        expect.objectContaining({ distinctId: nextLearner.id, properties: tip }),
-      ]),
-    );
+    expect(sentTips().map((event) => event.properties)).toStrictEqual([tip, tip]);
 
     const mistake = await prisma.mistake.findFirstOrThrow({
       where: { stepId: step.id, userId: nextLearner.id },

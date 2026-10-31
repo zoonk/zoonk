@@ -43,6 +43,12 @@ describe("the usage notice script", () => {
     );
   });
 
+  it("never asks a known minor's browser where they can't say yes", () => {
+    expect(asksFirst({ cookie: "ZOONK_COUNTRY=DE; ZOONK_USAGE_DATA=minor", timeZone: "" })).toBe(
+      false,
+    );
+  });
+
   it("ignores a cookie whose name only ends like the country's", () => {
     expect(asksFirst({ cookie: "MY_ZOONK_COUNTRY=DE", timeZone: "America/Sao_Paulo" })).toBe(false);
   });

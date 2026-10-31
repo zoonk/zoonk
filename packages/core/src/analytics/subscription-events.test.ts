@@ -1,13 +1,20 @@
 import { randomUUID } from "node:crypto";
 import { reportSubscriptionChange } from "@zoonk/auth/subscription-events";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { trackServerEvent } from "./server";
 import { registerSubscriptionAnalytics } from "./subscription-events";
 
+async function adultLearner() {
+  const user = await userFixture();
+  await learningProfileFixture({ birthYear: 1990, userId: user.id });
+  return user;
+}
+
 describe(registerSubscriptionAnalytics, () => {
   it('sends "Subscription Conversion" with the learner\'s shared properties when Stripe confirms a checkout', async () => {
-    const user = await userFixture();
+    const user = await adultLearner();
     registerSubscriptionAnalytics();
 
     await reportSubscriptionChange({ change: "started", plan: "plus", referenceId: user.id });
@@ -23,7 +30,7 @@ describe(registerSubscriptionAnalytics, () => {
   });
 
   it('sends "Subscription Canceled" for the learner the Stripe webhook names', async () => {
-    const user = await userFixture();
+    const user = await adultLearner();
     registerSubscriptionAnalytics();
 
     await reportSubscriptionChange({ change: "canceled", plan: "plus", referenceId: user.id });

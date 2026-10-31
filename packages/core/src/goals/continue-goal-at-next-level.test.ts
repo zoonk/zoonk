@@ -61,7 +61,6 @@ describe(continueGoalAtNextLevel, () => {
 
     expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
-        distinctId: user.id,
         name: "Goal Reached",
         properties: { days: 0, goal_id: goal.id },
         shared: expect.objectContaining({ goal_kind: "learn" }),

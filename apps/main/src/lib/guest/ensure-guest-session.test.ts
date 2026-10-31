@@ -184,6 +184,23 @@ describe("ensureGuestSession", () => {
     });
   });
 
+  it("leaves a visitor's yes off the new guest, who may be a minor who can't give it", async () => {
+    vi.stubGlobal("document", { cookie: "ZOONK_USAGE_DATA=on" });
+    auth.getSession.mockResolvedValue(NO_SESSION);
+    auth.signInAnonymously.mockResolvedValue(GUEST);
+    api.sendFromBrowser.mockResolvedValue(new Response(null, { status: 200 }));
+    const helpers = await loadHelpers();
+
+    const guest = helpers.ensureGuestSession();
+    await answer(helpers, 2011);
+
+    await expect(guest).resolves.toBe("ready");
+
+    expect(api.sendFromBrowser).not.toHaveBeenCalledWith(
+      expect.objectContaining({ body: { shareUsageData: true } }),
+    );
+  });
+
   it("can't be skipped once the guest exists and its year didn't save", async () => {
     auth.getSession.mockResolvedValue(NO_SESSION);
     auth.signInAnonymously.mockResolvedValue(GUEST);

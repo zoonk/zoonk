@@ -25,6 +25,7 @@ export type AppearanceView = {
   buddy: ResolvedBuddy;
   shareUsageData: boolean;
   soundsEnabled: boolean;
+  usageDataLockedOff: boolean;
 };
 
 /** How Preferences saves. Each resolves to whether it was saved. */
@@ -136,7 +137,12 @@ export function AppearanceScreen({
         <ListGroup>
           <SwitchSettingRow
             checked={appearance.shareUsageData}
-            description={t("Shows us how you use Zoonk, so we can improve it")}
+            description={
+              view.usageDataLockedOff
+                ? t("Off for learners under 18 in your country")
+                : t("Shows us how you use Zoonk, so we can improve it")
+            }
+            disabled={view.usageDataLockedOff}
             label={t("Share usage data")}
             onCheckedChange={appearance.setShareUsageData}
           />

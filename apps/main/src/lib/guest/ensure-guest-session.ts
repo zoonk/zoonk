@@ -58,7 +58,8 @@ async function startGuestWithBirthYear({
     return { ...saved, guestStarted: true };
   }
 
-  return (await carryUsageDataChoiceToAccount()) ? saved : { guestStarted: true, status: "failed" };
+  const carried = await carryUsageDataChoiceToAccount({ withYes: false });
+  return carried ? saved : { guestStarted: true, status: "failed" };
 }
 
 /**

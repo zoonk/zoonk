@@ -4,6 +4,11 @@ import { type SharedEventProperties } from "./shared-properties";
 
 const IDLE_TIMEOUT_MS = 2000;
 
+/** null: the learner hasn't told us their age yet. */
+export type AnalyticsAge = "adult" | "minor" | null;
+
+type Persistence = "localStorage+cookie" | "sessionStorage";
+
 let postHog: Promise<PostHog | null> | null = null;
 let sharing = false;
 const decided = Promise.withResolvers<null>();
@@ -29,7 +34,13 @@ function afterPageLoad(): Promise<void> {
 }
 
 /** Loaded once, after the page has, so its size never delays the first paint; a "no" before then cancels it. */
-function loadClient(config: NonNullable<ReturnType<typeof getPostHogConfig>>) {
+function loadClient({
+  config,
+  persistence,
+}: {
+  config: NonNullable<ReturnType<typeof getPostHogConfig>>;
+  persistence: Persistence;
+}) {
   postHog ??= afterPageLoad()
     .then(() => (sharing ? import("posthog-js") : null))
     .then((module) => {
@@ -42,6 +53,7 @@ function loadClient(config: NonNullable<ReturnType<typeof getPostHogConfig>>) {
         api_host: config.host,
         defaults: config.defaults,
         disable_session_recording: true,
+        persistence,
       });
 
       return module.default;
@@ -53,25 +65,31 @@ function loadClient(config: NonNullable<ReturnType<typeof getPostHogConfig>>) {
 /**
  * Nothing loads or is stored on the device before this, so a page where the visitor hasn't said yes
  * never starts PostHog. Only an adult is recorded or keeps the identity this browser holds; anyone
- * else's events stay anonymous, an earlier learner's identity on this browser included.
+ * else's events stay anonymous, an earlier learner's identity on this browser included. A minor's
+ * events go under random distinct and device IDs this tab alone keeps, so no later sign-in as an
+ * adult can tie them to their account.
  */
-export async function startPostHog({ adult }: { adult: boolean }): Promise<void> {
+export async function startPostHog({ age }: { age: AnalyticsAge }): Promise<void> {
+  sharing = true;
+  decided.resolve(null);
+
   const config = getPostHogConfig();
 
   if (!config || typeof document === "undefined") {
     return;
   }
 
-  sharing = true;
-  decided.resolve(null);
-
-  const client = await loadClient(config);
+  const persistence = age === "minor" ? "sessionStorage" : "localStorage+cookie";
+  const client = await loadClient({ config, persistence });
 
   if (!client || !sharing) {
     return;
   }
 
-  if (!adult && client.get_property("$user_state") === "identified") {
+  if (client.config.persistence !== persistence) {
+    client.set_config({ persistence });
+    client.reset({ resetDeviceID: true });
+  } else if (age !== "adult" && client.get_property("$user_state") === "identified") {
     client.reset();
   }
 
@@ -79,7 +97,7 @@ export async function startPostHog({ adult }: { adult: boolean }): Promise<void>
     client.opt_in_capturing({ captureEventName: false });
   }
 
-  if (adult) {
+  if (age === "adult") {
     client.startSessionRecording();
   } else {
     client.stopSessionRecording();
@@ -93,6 +111,11 @@ export async function stopPostHog(): Promise<void> {
   const client = await postHog;
   client?.stopSessionRecording();
   client?.opt_out_capturing();
+}
+
+/** The page's decision now, for analytics that can't wait for it. */
+export function isSharingUsageData(): boolean {
+  return sharing;
 }
 
 /** Waits for the page to decide, so events sent while it hasn't are dropped unless it says yes. */

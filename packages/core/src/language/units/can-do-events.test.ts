@@ -59,7 +59,6 @@ describe("Can-do Reached", () => {
 
     expect(sentCanDos()).toStrictEqual([
       expect.objectContaining({
-        distinctId: setup.user.id,
         properties: { can_dos: 1, chapter_id: setup.arriving.id },
         shared: expect.objectContaining({ goal_kind: "language" }),
       }),
@@ -93,10 +92,7 @@ describe("Can-do Reached", () => {
     await trackCallCanDos({ ...call, conversationId: wonAgain.id });
 
     expect(sentCanDos()).toStrictEqual([
-      expect.objectContaining({
-        distinctId: setup.user.id,
-        properties: { can_dos: 1, chapter_id: setup.renting.id },
-      }),
+      expect.objectContaining({ properties: { can_dos: 1, chapter_id: setup.renting.id } }),
     ]);
   });
 });

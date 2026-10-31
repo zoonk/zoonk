@@ -1,5 +1,6 @@
 import { trackServerEvent, trackSystemEvent } from "@zoonk/core/analytics/server";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { trackGenerationFailedStep } from "./generation-failed-step";
@@ -7,7 +8,11 @@ import { trackGenerationFailedStep } from "./generation-failed-step";
 describe(trackGenerationFailedStep, () => {
   it("counts the failure for the learner who started the run, with their goal and client", async () => {
     const user = await userFixture();
-    const goal = await goalFixture({ kind: "exam", userId: user.id });
+
+    const [goal] = await Promise.all([
+      goalFixture({ kind: "exam", userId: user.id }),
+      learningProfileFixture({ birthYear: 1990, userId: user.id }),
+    ]);
 
     await trackGenerationFailedStep({
       analytics: { distinctId: user.id, goalId: goal.id, platform: "ios" },

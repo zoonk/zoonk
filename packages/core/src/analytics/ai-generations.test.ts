@@ -86,15 +86,17 @@ describe(registerAiGenerationAnalytics, () => {
     expect(posthogClient.capture).toHaveBeenCalledExactlyOnceWith(toAiGenerationEvent(sent));
   });
 
-  it("keeps a minor's generation without a person profile", async () => {
+  it("counts a minor's generation as system work, without their account or goal", async () => {
     const sent = await learnerGeneration({ birthYear: new Date().getUTCFullYear() - 15 });
 
     await sendThroughRegisteredSink(sent);
 
     expect(sentEvent()).toMatchObject({
-      distinctId: sent.context.distinctId,
-      properties: { $process_person_profile: false },
+      distinctId: POSTHOG_SYSTEM_DISTINCT_ID,
+      properties: { $ai_trace_id: "trace-1", $process_person_profile: false },
     });
+
+    expect(sentEvent()?.properties).not.toHaveProperty("goal_id");
   });
 
   it("counts a generation for a learner who turned usage data off as system work", async () => {

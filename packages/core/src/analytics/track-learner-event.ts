@@ -1,4 +1,5 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { findActiveGoalId, loadCurrentPhases } from "../goals/_utils/goal-view";
@@ -84,7 +85,11 @@ function toSharedProperties({
   });
 }
 
-/** Follows the learner's analytics policy. Lookup and analytics failures never fail the caller. */
+/**
+ * Follows the learner's analytics policy: only an adult's events carry their account ID, and anyone
+ * else's a new random one, so nothing ties them back to the account. Lookup and analytics failures
+ * never fail the caller.
+ */
 export async function trackLearnerEvents({
   events,
   goalId,
@@ -113,9 +118,10 @@ export async function trackLearnerEvents({
 
     const shared = toSharedProperties({ learner, locale, platform: eventPlatform });
     const identified = policy === "identified";
+    const distinctId = identified ? userId : randomUUID();
 
     await Promise.all(
-      events.map((event) => trackServerEvent({ ...event, distinctId: userId, identified, shared })),
+      events.map((event) => trackServerEvent({ ...event, distinctId, identified, shared })),
     );
   });
 }

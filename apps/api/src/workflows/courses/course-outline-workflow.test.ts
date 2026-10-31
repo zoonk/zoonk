@@ -1189,7 +1189,6 @@ describe(courseOutlineWorkflow, () => {
 
       expect(trackServerEvent).toHaveBeenCalledWith(
         expect.objectContaining({
-          distinctId: busy.goal.userId,
           name: "Generation Failed",
           properties: { content_kind: "course", model: null, task: "waiting-goals-replan" },
         }),
@@ -1498,7 +1497,6 @@ describe(courseOutlineWorkflow, () => {
 
       expect(trackServerEvent).toHaveBeenLastCalledWith(
         expect.objectContaining({
-          distinctId: goal.userId,
           name: "Generation Failed",
           properties: { content_kind: "course", model: null, task: "course-outline" },
           shared: expect.objectContaining({ platform: "web" }),
