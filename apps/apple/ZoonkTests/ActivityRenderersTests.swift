@@ -288,10 +288,47 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertEqual(fields.legend(marked: ["p1", "p3"]), [.whatToMark, .missed, .wrongMark])
   }
 
+  func testSourceComparisonShowsWhatToMarkWhereTheAnswerKeepsNoMarks() throws {
+    let marks = SourceComparisonFields.learnerMarks
+    let checked = ActivityPhase.checked(isCorrect: true)
+
+    XCTAssertEqual(marks(.selection(["p1"]), checked), ["p1"], "checked in place or reopened")
+    XCTAssertNil(marks(.choice(optionId: "a"), checked), "a choice check keeps no marks")
+    XCTAssertNil(marks(nil, checked), "from an earlier sitting")
+    XCTAssertEqual(marks(nil, .answering), [])
+    XCTAssertEqual(marks(.choice(optionId: "a"), .answering), [])
+  }
+
+  func testCauseEffectShowsTheLessonsChainWhereTheAnswerKeepsNoLinks() throws {
+    let fields = try content(causeEffectJSON).fields(as: CauseEffectFields.self)
+    let link = ActivityExpectedAnswer.Link.init(from:to:)
+    let links = CauseEffectFields.learnerLinks
+    let checked = ActivityPhase.checked(isCorrect: true)
+
+    XCTAssertEqual(links(.links([link("plow", "dust")]), checked), [link("plow", "dust")])
+    XCTAssertNil(links(.choice(optionId: "a"), checked), "a choice check keeps no links")
+    XCTAssertNil(links(nil, checked), "from an earlier sitting")
+    XCTAssertNil(links(nil, .explore))
+    XCTAssertEqual(links(.choice(optionId: "a"), .answering), [])
+
+    let lessonChain = fields.shownLinks(learnerLinks: nil, isChecked: true, isGuided: true)
+    XCTAssertEqual(lessonChain.map(\.link), fields.expected)
+    XCTAssertEqual(lessonChain.map(\.state), [.made, .made], "neutral, nothing missed")
+    XCTAssertEqual(
+      fields.shownLinks(learnerLinks: nil, isChecked: true, isGuided: false).map(\.state),
+      [.made, .made])
+
+    let guided = fields.shownLinks(
+      learnerLinks: [link("plow", "dust")], isChecked: true, isGuided: true)
+    XCTAssertEqual(guided.map(\.state), [.correct], "checked in place")
+
+    let graded = fields.shownLinks(
+      learnerLinks: [link("plow", "dust"), link("dust", "plow")], isChecked: true, isGuided: false)
+    XCTAssertEqual(graded.map(\.state), [.correct, .incorrect, .missed])
+  }
+
   func testCauseEffectLinksAreASet() throws {
-    let content = try content(
-      #"{"template":"causeEffectChain","prompt":"Link them.","check":{"kind":"interaction","explanation":"x"},"fields":{"links":[{"from":"plow","to":"dust","why":"Bare soil."},{"from":"drought","to":"dust","why":"Dry soil."}],"nodes":[{"id":"dust","label":"Dust storms","year":1934},{"id":"plow","label":"Prairie plowed","year":1920},{"id":"drought","label":"Drought","year":1931}]}}"#
-    )
+    let content = try content(causeEffectJSON)
     let fields = try content.fields(as: CauseEffectFields.self)
     let link = ActivityExpectedAnswer.Link.init(from:to:)
 
@@ -313,6 +350,12 @@ final class ActivityRenderersTests: XCTestCase {
         "passages":[{"id":"p1","isTarget":true,"text":"The regulars fired on us"},{"id":"p3","isTarget":false,"text":"without any provocation"}]},
        {"author":"An officer","citation":{"title":"Report","year":1775},"date":"April 1775","excerpt":"Some of the rebels fired first from behind a wall.","id":"pitcairn",
         "passages":[{"id":"p2","isTarget":true,"text":"the rebels fired first"}]}]}}
+    """#
+
+  private let causeEffectJSON = #"""
+    {"template":"causeEffectChain","prompt":"Link them.","check":{"kind":"interaction","explanation":"x"},
+     "fields":{"links":[{"from":"plow","to":"dust","why":"Bare soil."},{"from":"drought","to":"dust","why":"Dry soil."}],
+       "nodes":[{"id":"dust","label":"Dust storms","year":1934},{"id":"plow","label":"Prairie plowed","year":1920},{"id":"drought","label":"Drought","year":1931}]}}
     """#
 
   private let decisionTreeJSON = #"""

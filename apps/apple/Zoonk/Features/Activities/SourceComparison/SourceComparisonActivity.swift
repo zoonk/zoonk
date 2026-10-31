@@ -41,8 +41,26 @@ struct SourceComparisonFields: Decodable, Hashable, Sendable {
   let markPrompt: String
   let sources: [Source]
 
+  var targets: [String] {
+    sources.flatMap { $0.passages.filter(\.isTarget).map(\.id) }
+  }
+
   var expected: ActivityExpectedAnswer {
-    .selection(sources.flatMap { $0.passages.filter(\.isTarget).map(\.id) })
+    .selection(targets)
+  }
+
+  /// Nil on a checked screen whose answer doesn't hold the learner's marks (a choice check, or one
+  /// from an earlier sitting), which shows what to mark instead.
+  static func learnerMarks(answer: ActivityAnswer?, phase: ActivityPhase) -> [String]? {
+    if let ids = answer?.ids {
+      return ids
+    }
+
+    if case .checked = phase {
+      return nil
+    }
+
+    return []
   }
 
   func legend(marked: [String]) -> [LegendEntry] {
@@ -111,12 +129,18 @@ private struct SourceComparisonCanvas: View {
   let fields: SourceComparisonFields
   let context: ActivityCanvasContext
 
-  @State private var marked: [String]
+  @State private var learnerMarks: [String]?
 
   init(fields: SourceComparisonFields, context: ActivityCanvasContext) {
     self.fields = fields
     self.context = context
-    _marked = State(initialValue: context.answer?.ids ?? [])
+    _learnerMarks = State(
+      initialValue: SourceComparisonFields.learnerMarks(
+        answer: context.answer, phase: context.phase))
+  }
+
+  private var marked: [String] {
+    learnerMarks ?? fields.targets
   }
 
   private var isChecked: Bool {
@@ -298,6 +322,16 @@ private struct SourceComparisonCanvas: View {
   private func markedValue(_ source: SourceComparisonFields.Source) -> Text {
     let texts = source.passages.filter { marked.contains($0.id) }.map(\.text)
 
+    if learnerMarks == nil {
+      return texts.isEmpty
+        ? Text(verbatim: "")
+        : Text(
+          "What to mark: \(texts.joined(separator: "; ")).", tableName: "Activities",
+          comment:
+            "VoiceOver: the passages of a source the question was about, shown in place of the learner's marks"
+        )
+    }
+
     return texts.isEmpty
       ? Text(
         "Nothing marked yet.", tableName: "Activities",
@@ -313,14 +347,11 @@ private struct SourceComparisonCanvas: View {
       return
     }
 
-    if marked.contains(id) {
-      marked.removeAll { $0 == id }
-    } else {
-      marked.append(id)
-    }
+    let next = marked.contains(id) ? marked.filter { $0 != id } : marked + [id]
+    learnerMarks = next
 
     if case .interaction = context.check {
-      context.setAnswer(marked.isEmpty ? nil : .selection(marked))
+      context.setAnswer(next.isEmpty ? nil : .selection(next))
     }
   }
 }

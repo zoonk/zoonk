@@ -3,9 +3,7 @@ import SwiftUI
 extension ActivityRenderer {
   static let causeEffectChain = ActivityRenderer(
     template: "causeEffectChain", badge: .always(.linkCauses),
-    grade: ActivityExpectedAnswer.grader(CauseEffectFields.self) {
-      .links($0.links.map { ActivityExpectedAnswer.Link(from: $0.from, to: $0.to) })
-    }
+    grade: ActivityExpectedAnswer.grader(CauseEffectFields.self) { .links($0.expected) }
   ) { context in
     if let fields = try? context.fields(as: CauseEffectFields.self) {
       CauseEffectCanvas(fields: fields, context: context)
@@ -18,6 +16,15 @@ struct CauseEffectFields: Decodable, Hashable, Sendable {
     let from: String
     let to: String
     let why: String
+  }
+
+  enum LinkState {
+    case made, correct, incorrect, missed
+  }
+
+  struct ShownLink: Hashable {
+    let link: ActivityExpectedAnswer.Link
+    let state: LinkState
   }
 
   struct Node: Decodable, Hashable, Sendable, Identifiable {
@@ -35,22 +42,51 @@ struct CauseEffectFields: Decodable, Hashable, Sendable {
     nodes.allSatisfy { $0.year != nil } ? nodes.sorted { ($0.year ?? 0) < ($1.year ?? 0) } : nodes
   }
 
+  var expected: [ActivityExpectedAnswer.Link] {
+    links.map { ActivityExpectedAnswer.Link(from: $0.from, to: $0.to) }
+  }
+
   func label(_ id: String) -> String {
     nodes.first { $0.id == id }?.label ?? id
+  }
+
+  /// Nil shows the lesson's chain: while exploring, and on a checked screen whose answer doesn't
+  /// hold the learner's links (a choice check, or one from an earlier sitting).
+  static func learnerLinks(answer: ActivityAnswer?, phase: ActivityPhase)
+    -> [ActivityExpectedAnswer.Link]?
+  {
+    if let links = answer?.links {
+      return links
+    }
+
+    return phase == .answering ? [] : nil
+  }
+
+  /// The lesson's chain shows ungraded. A guided chain keeps only real links, so they show as right.
+  func shownLinks(learnerLinks: [ActivityExpectedAnswer.Link]?, isChecked: Bool, isGuided: Bool)
+    -> [ShownLink]
+  {
+    guard let learnerLinks else {
+      return expected.map { ShownLink(link: $0, state: .made) }
+    }
+
+    if isChecked, !isGuided {
+      return learnerLinks.map {
+        ShownLink(link: $0, state: expected.contains($0) ? .correct : .incorrect)
+      } + expected.filter { !learnerLinks.contains($0) }.map { ShownLink(link: $0, state: .missed) }
+    }
+
+    return learnerLinks.map { ShownLink(link: $0, state: isGuided ? .correct : .made) }
   }
 }
 
 private struct CauseEffectCanvas: View {
   private typealias Link = ActivityExpectedAnswer.Link
 
-  private enum LinkState {
-    case made, correct, incorrect, missed
-  }
-
   let fields: CauseEffectFields
   let context: ActivityCanvasContext
 
-  @State private var links: [Link]
+  @State private var learnerLinks: [Link]?
   @State private var causeId: String?
   @State private var notice: String?
   @State private var targetedId: String?
@@ -58,12 +94,11 @@ private struct CauseEffectCanvas: View {
   init(fields: CauseEffectFields, context: ActivityCanvasContext) {
     self.fields = fields
     self.context = context
-
-    let isExploring = context.phase == .explore
-    _links = State(
-      initialValue: isExploring
-        ? fields.links.map { Link(from: $0.from, to: $0.to) } : context.answer?.links ?? [])
+    _learnerLinks = State(
+      initialValue: CauseEffectFields.learnerLinks(answer: context.answer, phase: context.phase))
   }
+
+  private var links: [Link] { learnerLinks ?? [] }
 
   private var isExploring: Bool { context.phase == .explore }
   private var isChecked: Bool {
@@ -76,7 +111,6 @@ private struct CauseEffectCanvas: View {
   }
 
   private var isLocked: Bool { isChecked || isExploring }
-  private var expected: [Link] { fields.links.map { Link(from: $0.from, to: $0.to) } }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
@@ -209,7 +243,7 @@ private struct CauseEffectCanvas: View {
     let cause = LessonRichText.plain(fields.label(from))
     let effect = LessonRichText.plain(fields.label(to))
 
-    if isGuided, !expected.contains(link) {
+    if isGuided, !fields.expected.contains(link) {
       notice = String(
         localized: "\(cause) didn't lead straight to \(effect) here. Try another link.",
         table: "Activities",
@@ -221,15 +255,18 @@ private struct CauseEffectCanvas: View {
     }
 
     let isRemoving = links.contains(link) && !isGuided
+    var next = links
 
     if isRemoving {
-      links.removeAll { $0 == link }
-    } else if !links.contains(link) {
-      links.append(link)
+      next.removeAll { $0 == link }
+    } else if !next.contains(link) {
+      next.append(link)
     }
 
+    learnerLinks = next
+
     if case .interaction = context.check {
-      context.setAnswer(links.isEmpty ? nil : .links(links))
+      context.setAnswer(next.isEmpty ? nil : .links(next))
     }
 
     notice =
@@ -243,18 +280,10 @@ private struct CauseEffectCanvas: View {
     announceActivityChange(notice ?? "")
   }
 
-  private var shownLinks: [(link: Link, state: LinkState)] {
-    if isChecked, !isGuided {
-      return links.map { ($0, expected.contains($0) ? .correct : .incorrect) }
-        + expected.filter { !links.contains($0) }.map { ($0, .missed) }
-    }
-
-    return links.map { ($0, isGuided ? .correct : .made) }
-  }
-
   @ViewBuilder
   private var linkList: some View {
-    let shown = shownLinks
+    let shown = fields.shownLinks(
+      learnerLinks: learnerLinks, isChecked: isChecked, isGuided: isGuided)
 
     if !shown.isEmpty {
       VStack(alignment: .leading, spacing: 8) {
@@ -262,10 +291,19 @@ private struct CauseEffectCanvas: View {
           linkRow(item.link, state: item.state)
         }
       }
+      .accessibilityElement(children: .contain)
+      .accessibilityLabel(
+        learnerLinks == nil
+          ? Text(
+            "How they connect", tableName: "Activities",
+            comment: "Names the list of a cause-and-effect chain's links that the lesson drew")
+          : Text(
+            "Your links", tableName: "Activities",
+            comment: "Names the list of the cause-and-effect links the learner made"))
     }
   }
 
-  private func linkRow(_ link: Link, state: LinkState) -> some View {
+  private func linkRow(_ link: Link, state: CauseEffectFields.LinkState) -> some View {
     let why = fields.links.first { $0.from == link.from && $0.to == link.to }?.why
     let showsWhy = (isGuided || isLocked) && state != .incorrect
 
