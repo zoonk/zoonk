@@ -302,6 +302,7 @@ struct DistributionExplorerCanvas: View {
     Text(verbatim: percentText(share))
       .font(.caption2.monospacedDigit())
       .foregroundStyle(.secondary)
+      .accessibilityHidden(true)
   }
 
   /// A handle with its range: the lower one stops a step before the upper one, and back.

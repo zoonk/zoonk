@@ -473,6 +473,7 @@ private struct SamplingSimulationView: View {
           Text(verbatim: ActivityNumberFormat.format(Double(size))).font(
             .subheadline.weight(.medium).monospacedDigit())
         }
+        .accessibilityHidden(true)
 
         Slider(
           value: Binding(
@@ -482,10 +483,13 @@ private struct SamplingSimulationView: View {
         ) {
           Text(verbatim: sizeLabel)
         } minimumValueLabel: {
-          Text(verbatim: ActivityNumberFormat.format(Double(smallest))).font(.caption)
+          Text(verbatim: ActivityNumberFormat.format(Double(smallest)))
+            .font(.caption)
+            .accessibilityHidden(true)
         } maximumValueLabel: {
           Text(verbatim: ActivityNumberFormat.format(Double(fields.sampleSizes.last ?? smallest)))
             .font(.caption)
+            .accessibilityHidden(true)
         }
         .disabled(isChecked)
         .accessibilityValue(

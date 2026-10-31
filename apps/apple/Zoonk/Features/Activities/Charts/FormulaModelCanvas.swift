@@ -90,6 +90,7 @@ struct FormulaModelCanvas: View {
         )
         .font(.footnote.monospacedDigit())
         .foregroundStyle(.orange)
+        .accessibilityHidden(true)
       }
 
       chart(view)
@@ -291,6 +292,7 @@ struct FormulaModelCanvas: View {
         Text(verbatim: ActivityNumberFormat.format(value, unit: variable.unit))
           .font(.subheadline.weight(.medium).monospacedDigit())
       }
+      .accessibilityHidden(true)
 
       Slider(
         value: Binding(
@@ -306,15 +308,15 @@ struct FormulaModelCanvas: View {
       ) {
         Text(verbatim: variable.label)
       } minimumValueLabel: {
-        Text(verbatim: ActivityNumberFormat.format(variable.min, unit: variable.unit)).font(
-          .caption
-        ).foregroundStyle(
-          .secondary)
+        Text(verbatim: ActivityNumberFormat.format(variable.min, unit: variable.unit))
+          .font(.caption)
+          .foregroundStyle(.secondary)
+          .accessibilityHidden(true)
       } maximumValueLabel: {
-        Text(verbatim: ActivityNumberFormat.format(variable.max, unit: variable.unit)).font(
-          .caption
-        ).foregroundStyle(
-          .secondary)
+        Text(verbatim: ActivityNumberFormat.format(variable.max, unit: variable.unit))
+          .font(.caption)
+          .foregroundStyle(.secondary)
+          .accessibilityHidden(true)
       }
       .disabled(isChecked)
       .accessibilityValue(
