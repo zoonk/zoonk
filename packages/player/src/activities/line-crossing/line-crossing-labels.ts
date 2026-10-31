@@ -9,17 +9,28 @@ type LineLabel = { isUpper: boolean; segment: LabelSegment; size: LabelSize };
 
 const LABEL_GAP = 8;
 const CLEARANCE = 3;
-const SEARCH_STEP = 2;
+const STEPS_PER_LABEL_HEIGHT = 6;
 const SEARCH_STEPS = 30;
-const CLEAR_OF_ALL_REACH = 24;
+const CLEAR_OF_ALL_STEPS = 12;
 
 const NEAREST_SHIFTS = Array.from({ length: (SEARCH_STEPS * 2 + 1) ** 2 }, (_, index) => ({
-  x: ((index % (SEARCH_STEPS * 2 + 1)) - SEARCH_STEPS) * SEARCH_STEP,
-  y: (Math.floor(index / (SEARCH_STEPS * 2 + 1)) - SEARCH_STEPS) * SEARCH_STEP,
+  x: (index % (SEARCH_STEPS * 2 + 1)) - SEARCH_STEPS,
+  y: Math.floor(index / (SEARCH_STEPS * 2 + 1)) - SEARCH_STEPS,
 })).toSorted((first, second) => Math.hypot(first.x, first.y) - Math.hypot(second.x, second.y));
 
-function shifted(box: LabelBox, { x, y }: Point): LabelBox {
-  return { bottom: box.bottom + y, left: box.left + x, right: box.right + x, top: box.top + y };
+function shifted(box: LabelBox, { x, y }: Point, step: number): LabelBox {
+  return {
+    bottom: box.bottom + y * step,
+    left: box.left + x * step,
+    right: box.right + x * step,
+    top: box.top + y * step,
+  };
+}
+
+function clampedInto(box: LabelBox, area: LabelBox): LabelBox {
+  const left = clamp(box.left, area.left, area.right - (box.right - box.left));
+  const top = clamp(box.top, area.top, area.bottom - (box.bottom - box.top));
+  return { bottom: top + box.bottom - box.top, left, right: left + box.right - box.left, top };
 }
 
 function isInside(box: LabelBox, area: LabelBox): boolean {
@@ -93,30 +104,43 @@ function placeLineLabel({
   placed: readonly LabelBox[];
 }): LabelBox {
   const start = besideEnd(label, area);
+  const step = label.size.height / STEPS_PER_LABEL_HEIGHT;
 
-  const isFree = (box: LabelBox, lines: readonly LabelSegment[]) =>
-    isInside(box, area) &&
-    [label.segment, ...lines, ...marks.segments].every(
-      (segment) => !touchesSegment(box, segment),
-    ) &&
+  const clearsMarks = (box: LabelBox) =>
+    marks.segments.every((segment) => !touchesSegment(box, segment)) &&
     marks.circles.every((circle) => !touchesCircle(box, circle)) &&
     placed.every((other) => !touchesBox(box, other));
 
-  const shift =
-    NEAREST_SHIFTS.find(
-      (candidate) =>
-        Math.hypot(candidate.x, candidate.y) <= CLEAR_OF_ALL_REACH &&
-        isFree(shifted(start, candidate), marks.lines),
-    ) ?? NEAREST_SHIFTS.find((candidate) => isFree(shifted(start, candidate), []));
+  const fits = (box: LabelBox, lines: readonly LabelSegment[]) =>
+    isInside(box, area) &&
+    [label.segment, ...lines].every((segment) => !touchesSegment(box, segment));
 
-  return shift ? shifted(start, shift) : start;
+  const passes = [
+    (box: LabelBox, shift: Point) =>
+      Math.hypot(shift.x, shift.y) <= CLEAR_OF_ALL_STEPS &&
+      fits(box, marks.lines) &&
+      clearsMarks(box),
+    (box: LabelBox) => fits(box, []) && clearsMarks(box),
+    (box: LabelBox) => fits(box, []),
+  ];
+
+  const shift = passes.reduce<Point | null>(
+    (found, pass) =>
+      found ??
+      NEAREST_SHIFTS.find((candidate) => pass(shifted(start, candidate, step), candidate)) ??
+      null,
+    null,
+  );
+
+  return shift ? shifted(start, shift, step) : clampedInto(start, area);
 }
 
 /**
  * Where each line's name sits, in order: by its end of the line on the open side, or at the
  * nearest spot that clears the lines, the marks (drag handles, crossings, arrows) and the names
- * placed before it. When no spot close by clears every line, it keeps off just its own line, so its
- * halo never cuts the line it names.
+ * placed before it. When no spot close by clears every line, it keeps off its own line and the
+ * marks, and when large text leaves no room for that, off its own line, so its halo never cuts the
+ * line it names.
  */
 export function placeLineLabels({
   area,

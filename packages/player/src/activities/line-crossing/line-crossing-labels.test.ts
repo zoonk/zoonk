@@ -90,4 +90,18 @@ describe(placeLineLabels, () => {
 
     expect(overlaps).toBe(false);
   });
+
+  it("keeps a name inside the chart and off its line when no spot nearby is free", () => {
+    const segment = { from: { x: 22, y: 222 }, to: { x: 293, y: 26 } };
+    const everywhere = { cx: 166, cy: 124, radius: 400 };
+
+    const [box] = placeLineLabels({
+      area,
+      labels: [{ isUpper: true, segment, size }],
+      marks: { ...noMarks, circles: [everywhere] },
+    });
+
+    expect(box?.top).toBeGreaterThanOrEqual(area.top);
+    expect(box && gapToSegment(box, segment)).toBeGreaterThanOrEqual(3);
+  });
 });
