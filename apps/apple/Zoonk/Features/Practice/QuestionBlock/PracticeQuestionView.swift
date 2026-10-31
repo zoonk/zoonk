@@ -365,40 +365,6 @@ struct WorkedStepsView: View {
   }
 }
 
-/// Main's `ItemCitationNote`.
-struct CitationNote: View {
-  let citation: PracticeCitation
-
-  var body: some View {
-    ViewThatFits(in: .horizontal) {
-      HStack(spacing: 12) {
-        source
-        Spacer(minLength: 0)
-        chip
-      }
-
-      VStack(alignment: .leading, spacing: 8) {
-        source
-        chip
-      }
-    }
-  }
-
-  private var source: some View {
-    Text(citation.text)
-      .font(.caption.weight(.medium))
-      .foregroundStyle(.secondary)
-  }
-
-  @ViewBuilder private var chip: some View {
-    if let checkedAt = citation.checkedAt {
-      SourcesChip(
-        title: citation.title ?? citation.text, publisher: citation.publisher, url: citation.url,
-        checkedAt: checkedAt)
-    }
-  }
-}
-
 /// Choice and true-or-false questions mark the right option instead, so they need no line.
 enum PracticeAnswerText {
   static func correctLine(

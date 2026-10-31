@@ -1062,6 +1062,9 @@ private struct MockReviewSection: View {
             if let explanation = item.explanation {
               ItemText(explanation).font(.callout).foregroundStyle(.secondary)
             }
+            if let citation = item.citation {
+              CitationNote(citation: citation)
+            }
           }
         } label: {
           VStack(alignment: .leading, spacing: 2) {

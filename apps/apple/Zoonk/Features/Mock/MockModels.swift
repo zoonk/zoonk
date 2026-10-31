@@ -310,6 +310,7 @@ struct MockReviewItem: Hashable, Decodable, Sendable, Identifiable {
   }
 
   var area: String?
+  var citation: PracticeCitation?
   var context: String?
   var correctAnswer: String?
   var explanation: String?

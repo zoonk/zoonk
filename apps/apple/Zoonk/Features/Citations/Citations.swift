@@ -17,6 +17,40 @@ enum CitationLabel {
   }
 }
 
+/// Main's `ItemCitationNote`.
+struct CitationNote: View {
+  let citation: PracticeCitation
+
+  var body: some View {
+    ViewThatFits(in: .horizontal) {
+      HStack(spacing: 12) {
+        source
+        Spacer(minLength: 0)
+        chip
+      }
+
+      VStack(alignment: .leading, spacing: 8) {
+        source
+        chip
+      }
+    }
+  }
+
+  private var source: some View {
+    Text(citation.text)
+      .font(.caption.weight(.medium))
+      .foregroundStyle(.secondary)
+  }
+
+  @ViewBuilder private var chip: some View {
+    if let checkedAt = citation.checkedAt {
+      SourcesChip(
+        title: citation.title ?? citation.text, publisher: citation.publisher, url: citation.url,
+        checkedAt: checkedAt)
+    }
+  }
+}
+
 /// Main's `SourcesChip`.
 struct SourcesChip: View {
   let title: String
@@ -39,6 +73,9 @@ struct SourcesChip: View {
       } icon: {
         Image(systemName: "book")
       }
+      // Measured without a width, the automatic style drops the title, so `CitationNote`'s
+      // `ViewThatFits` would squeeze the chip beside the citation instead of below it.
+      .labelStyle(.titleAndIcon)
       .font(.footnote)
       .foregroundStyle(.secondary)
     }
