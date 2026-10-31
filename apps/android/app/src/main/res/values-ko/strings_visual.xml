@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "visual_chart_point": "c3902376d2f7ff1e13ef6d08395165be6dc0ca9790435a497c617db52ac928bd",
+  "visual_chart_series_value": "75a74231ef712715a61375dbd1f9905d0ee445aa94ffb7a7dbdf9c13fa65e0f3",
+  "visual_chart_summary": "a31f1c8eee7abcbe41933c69748a4893be3074b88ae67e3dbbf31f71e1ef22fd",
+  "visual_source": "9869ec29cb3112ff52ef03951197ffc0f77067f5c9d618528b90ef9a36ec024c"
+}
+-->
+<resources>
+    <string name="visual_source">출처: %1$s</string>
+    <!-- A chart read aloud: what it measures (%1$s) by what (%2$s), then each category with its values (%3$s). -->
+    <string name="visual_chart_summary">%1$s의 %2$s별 값. %3$s</string>
+    <!-- One category of a chart read aloud: the category (%1$s) and its value or values (%2$s). -->
+    <string name="visual_chart_point">%1$s: %2$s</string>
+    <!-- One series' value in a category of a chart read aloud: the series' name (%1$s) and its value (%2$s). -->
+    <string name="visual_chart_series_value">%1$s %2$s</string>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "moment_brain_power": "9ee61000ebc65e541998fd3e3c4db98409d663fa021fe86a967bab31ba20e6e0",
+  "moment_score": "19a2f14f5099f2b3602567aa12ef7614f1eaa7ebc4c12dcac28ea995b6b83777",
+  "moment_score_spoken": "8959c2f3968607c36df47df353174cd8766042ca4f8e85b39f73a8678f58cd90"
+}
+-->
+<resources>
+    <!-- %1$s is the number of right answers, drawn large; %2$s is how many were answered. -->
+    <plurals name="moment_score">
+        <item quantity="other">%1$s문제 정답(총 %2$s문제)</item>
+    </plurals>
+    <!-- Words said out loud. %1$s is the number that sounded right, drawn large; %2$s is how many were said. -->
+    <plurals name="moment_score_spoken">
+        <item quantity="other">%1$s개를 잘 발음했어요(총 %2$s개)</item>
+    </plurals>
+    <!-- %1$s is the points earned, drawn large with their plus sign. -->
+    <string name="moment_brain_power">두뇌력 +%1$s</string>
+</resources>

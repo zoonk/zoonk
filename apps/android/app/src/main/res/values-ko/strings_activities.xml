@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_badge_before_after": "277f387b07f32ba78b2d2f35f7adcf70f4eb93dff98b3c108f392e61f932b499",
+  "activities_badge_estimate_first": "96428613179db39539390caaed205b8e78f465ed278286bd7587c7559a8f321e",
+  "activities_badge_find_error": "f3358b0149ff4c750ea1646b2eb418e18d0d8d705d36aa636e31f8881e604f59",
+  "activities_badge_follow_questions": "92ba5b63ae7509959531be2849b7a1ff9547bb56a2f8e999a563a84842ff21e2",
+  "activities_badge_read_chart": "0a2e4bcb5cec9819352d898dffc79a9157622d52a3b597889c86ea167d7e0c33",
+  "activities_badge_reply": "56bff0481244c980555d9118ea22a85aaf02a738d164ad384a991f94332ce4cd",
+  "activities_badge_spot_pattern": "5f65e4434742838cd79f0426638d873cdb96c2bf4fc81bb68208dc03bdf6ada0",
+  "activities_badge_step_by_step": "88b740ca0a5ee5d02e822e0090187b42965458516a76260b1c8cc6cd389765ac",
+  "activities_before_after_less": "47c167f818bb6606b1eab798ec2d98192d4cbffd1335259fafa738a06f188257",
+  "activities_before_after_more": "4f69698e16819a81e5854cd81b07957351751d70c956e25430cc02d17ad71e20",
+  "activities_before_after_no_change": "e7fe901889389c7ff47c2881db3c3c34d2ad37b58eeefe99bcb49f403b96521c",
+  "activities_before_after_show": "61fd5fd5122984b221ff183a5ec756435b4f0ea0e5d14894ca753012d51b638d",
+  "activities_chart_description": "a885a2e7b100b9a2859ec4894d04cd87ddd87d5dc116b4cc025a88f454d9851b",
+  "activities_chart_rate": "99d09fcb01cfd6468f359ae381616c58dde6edd9ba2fd84f5949f14ac229d8f2",
+  "activities_chart_span": "aa95b0e70935e69e896fd06557b7b7647c3a0ccd39264a70e1ed3bc1317222d5",
+  "activities_chart_spans": "59df77ca605bc2a67afd450cca2a4f1953ed97eb02639b19f7f881d2ac6eb6b4",
+  "activities_chart_tap_span": "e853300ad39254fe44f93daa7974beead26c5eefbd91c7fe31125f02470b164a",
+  "activities_dialogue_conversation": "2e150e32e097ea8cbf361d35deb043a7d3b770b377e87c5afc048f9d95df3465",
+  "activities_dialogue_hear_best": "964c054fa3eeaceb686b9c2382e624f6fa274b5f96a6aac5d9f02c96331bf27d",
+  "activities_dialogue_hear_line": "0fbf385d9b2c04a923cb8e2595739aa1d5286cad528ab0471fc675c8b3cfa22b",
+  "activities_dialogue_they_say": "a62920e792036c6dc65af5b9e657f0a6a12fa95bca7d03f4043bfdcb4f95e1f6",
+  "activities_dialogue_you_said": "6a3987cc1253c8b40bcacc70d1c60fd4234ebe7a0455bfcbe37f37111c838256",
+  "activities_find_error_ai_answer": "e2b3b2fb53b7f30b0ff289641e891d503bb3912af41223907754b45b8118d77b",
+  "activities_find_error_ai_asked": "491251f69acb4d2eaeae34c35d396e793c0e23bc457d990552f5504492b67279",
+  "activities_find_error_ai_note": "1b52a53082023271eac322d6bbd0a41a3a9aa9df8d6b8a6227ae8d043a2b152c",
+  "activities_find_error_problem": "36a27c2a8ceea606da9ee3bf94b4916b3f7dcd468fa83c8d554dd51c7349b533",
+  "activities_find_error_step": "07a818c78a91d9e4744db18d85011a82cf8265ee06ad2a9234ffde980703a3ff",
+  "activities_find_error_the_wrong_step": "17a0ec84c28ad05917a26eee8fbd29e5be20be77b3e650c0c4df46af9ca2258a",
+  "activities_find_error_worked": "103439056bed9f142f344dcad237dfd42705c326fd4f42daf7b63495008929b0",
+  "activities_find_error_wrong_step": "f871213643e6a5087dedfe6bc1500f7d5344c47a0d00169974500733030ebd19",
+  "activities_find_error_your_pick": "f97bde8dd29344a6d3eebf9d0f505a6bab25426a3a1131dfec38165360d94b29",
+  "activities_guess_close": "1f209879d754f9e2f30510c4a72f5a69c967795870140017708d6d846934aafa",
+  "activities_guess_drag": "55f90956aad6aceb248338584f28113d76dcee68760a69706e24255a817d519d",
+  "activities_guess_none": "9971d11f31f9e842e32b17e9556bf0bb027bea76312aa91de82c5447b8df84d6",
+  "activities_guess_off_by": "b0c75d2a5a9312a9185fee5b8a96cb1db18752a551042dc795c69b7420bed40d",
+  "activities_guess_real_value": "358f6bb98356af62bc1f0ff9c7006eb61bf2ea3c4e3b58999ccda66e5a85bcd6",
+  "activities_guess_scale": "05f0b321b79379afda29914f1f4925e4db6ed4dc8859c839d16dec9311271d3a",
+  "activities_guess_scale_revealed": "aa51ee0f17bf9e2f1eb7e3a0f90782acf0ea21fd57931236d5bdb28978ad9c28",
+  "activities_guess_slider": "d07c0520d192bbc2e7373bb296fe08627262bd05ff9f3b6957753bb47739c024",
+  "activities_guess_too_big": "6da5cf56e5315b2bfb23f9769a424cb5634bdf932917cdfc15397d3714485a5c",
+  "activities_guess_too_small": "615bdfd081534ad6d4f985a033924aa4418550a1b6e5f76c38900d43f18be153",
+  "activities_guess_yours": "82f52589ab5348a24f87df9ea729bb4e132f825de99c7881994dcfbea074ede0",
+  "activities_pattern_blank": "8c415a5105a15e9e34537ad328861cb49beb00f2873779d04b0f839e39fcdfdc",
+  "activities_pattern_correct": "15533804bedbf3d1f88a1d5fecaf83ddbed9a2ab6899b73974faa785116892d9",
+  "activities_pattern_endings": "3f0a56ac4d3b63cbe1f1cc75db5b688ac057411ce1fec312181f99eb0d8c1599",
+  "activities_pattern_which_ending": "2ad62a7c5f7351aa43ff2f478a60b9e5bbf4749d181b6c8a07f906d2cf23216c",
+  "activities_solver_first_pick": "56b98eec853292f85560cca8f1789184a02ceebe54521f6691d65a809cca6083",
+  "activities_solver_not_quite": "11d3c9940a75ac722513a3515634e822021ddbd1e67f4af4f0a38e4dc8d1c79f",
+  "activities_solver_right": "fecade59cf6539dd8562c710eacad232a5623fe6f753d0e7a4e6b0d4f01d3dde",
+  "activities_solver_steps": "9ef4698377d72eb898472fa4d9f3a8922048f2e09dcfae61aefce88336434e49",
+  "activities_sortable_dropped": "edbfa3e96d303ec580357c92d2b599f44031fc4faece52e021bc4ddb262fbe4d",
+  "activities_sortable_move_down": "8e3608e1701fd7f53b89ab15d626f05ca368d59b946a64298f94cd0ac12f61a0",
+  "activities_sortable_move_up": "20f5ddead4a5ec3a05f3f338cdde50408985fc464d060d3507eb761e750134de",
+  "activities_sortable_over": "0b6c993768c955ed389e04c6a688d41fe516dd7c60d82475d33fa70026ffa010",
+  "activities_sortable_picked_up": "fee24134070b8cd8c8bc3725ba7fd569dbf54dd641dd10df70f06e8a53d840b2",
+  "activities_sortable_stopped": "5257ff3dbd35cedddf6ce3087c35821e54b7fd5571f7e961f0565116a1fd2ec3",
+  "activities_tree_case": "21c2afc5319d4bec5266c3c9efb87f1f7926c04751fbe1457cbf0b331088c96d",
+  "activities_tree_it_leads_to": "b69eecfeb2e42350367cc16d9a2f70d8bf906de5559c81121b3ebf0b427e5c92",
+  "activities_tree_leads_to": "8ea70011eae28227645d27adb012d8f9c81e27914b0684371b333173bd98e792",
+  "activities_tree_still_possible": "cf0cba74810dd165473c5ddab9f0cc658fa6ba1e172307a876e4e17f4aa1a450",
+  "activities_tree_undo": "fff4c090a659e98784d051a49ceaea2af352dff7e746d946b277a08d67c0a8aa",
+  "activities_tree_walk": "25417d17e58cd509088c5046217b155b03b968f76eac76ae6762dc9a0e644f5f",
+  "activities_tree_you_chose": "4cc3b80bb3e19c66d9ace34e0c408fd476ae9fd2151dd9726b913cda85de19ad",
+  "activities_tree_your_answers": "20ea0b619233e19b2248e27b2a5cb6888dc48bc761550247f273a39826efb3a0"
+}
+-->
+<resources>
+    <string name="activities_badge_estimate_first">먼저 예상하기</string>
+    <string name="activities_badge_read_chart">차트 읽기</string>
+    <string name="activities_badge_before_after">전후 비교</string>
+    <!-- A key here is an identification key: questions that branch until they name something, like a key to trees. -->
+    <string name="activities_badge_follow_questions">문제 따라가기</string>
+    <string name="activities_badge_find_error">오류 찾기</string>
+    <string name="activities_badge_step_by_step">단계별로 풀기</string>
+    <string name="activities_badge_spot_pattern">규칙 찾기</string>
+    <string name="activities_badge_reply">대답하기</string>
+    <!-- The guess scale's ends, written with their unit, like "1 day" and "3,650 days". -->
+    <string name="activities_guess_scale">범위는 %1$s부터 %2$s까지예요.</string>
+    <!-- The guess scale once checked; the last value is the real one. -->
+    <string name="activities_guess_scale_revealed">범위는 %1$s부터 %2$s까지예요. 실제 값: %3$s.</string>
+    <string name="activities_guess_real_value">실제 값: %1$s</string>
+    <string name="activities_guess_drag">끌어서 예상하기</string>
+    <string name="activities_guess_yours">내 예상: %1$s</string>
+    <!-- The guess slider's name, for TalkBack. -->
+    <string name="activities_guess_slider">내 예상</string>
+    <string name="activities_guess_none">아직 예상하지 않았어요</string>
+    <string name="activities_guess_close">예상한 값이 실제 값에 가까워요.</string>
+    <!-- How far a guess was, written with its unit, like "3 days". -->
+    <string name="activities_guess_off_by">예상한 값과 실제 값은 %1$s 차이가 나요.</string>
+    <!-- How many times bigger the guess was than the real value, like "3.5". -->
+    <string name="activities_guess_too_big">예상한 값은 실제 값의 약 %1$s배예요.</string>
+    <!-- How many times smaller the guess was than the real value, like "3.5". -->
+    <string name="activities_guess_too_small">예상한 값은 실제 값의 약 %1$s분의 1이에요.</string>
+    <!-- Button that shows the "after" state of a before-and-after comparison; %1$s names it, like "With the assembly line". -->
+    <string name="activities_before_after_show">변화 후 보기: %1$s</string>
+    <string name="activities_before_after_no_change">변화 없음</string>
+    <!-- How a fact shrank, like "3 times less". -->
+    <string name="activities_before_after_less">%1$s분의 1로 감소</string>
+    <!-- How a fact grew, like "8 times more". -->
+    <string name="activities_before_after_more">%1$s배로 증가</string>
+    <!-- What a line chart shows, for TalkBack: its value name, its axis name, then its first and last values with where they sit, like "A line chart of CO₂ by Year, from 316 ppm at 1960 to 421 ppm at 2023." -->
+    <string name="activities_chart_description">%1$s의 %2$s별 변화를 보여 주는 선 그래프예요. %3$s을(를) 기록한 %4$s에서 %5$s을(를) 기록한 %6$s까지 이어져요.</string>
+    <!-- A measured span and its change, like "1960 to 1990: +38 ppm." -->
+    <string name="activities_chart_span">%1$s: %2$s.</string>
+    <string name="activities_chart_tap_span">구간을 눌러 측정해 보세요</string>
+    <!-- The name of the group of spans the learner can measure, for TalkBack. -->
+    <string name="activities_chart_spans">측정할 구간</string>
+    <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
+    <string name="activities_chart_rate">%1$s(%2$s당)</string>
+    <!-- The panel with the case the learner follows through the questions. -->
+    <string name="activities_tree_case">사례</string>
+    <!-- The outcomes the learner's answers can still reach from here. -->
+    <string name="activities_tree_still_possible">남은 가능성</string>
+    <string name="activities_tree_your_answers">내 답변</string>
+    <string name="activities_tree_leads_to">답변에 따른 결과</string>
+    <string name="activities_tree_undo">되돌리기</string>
+    <string name="activities_tree_walk">이 사례의 판단 과정</string>
+    <!-- The branch the learner took where the key went another way, like "You chose Single". -->
+    <string name="activities_tree_you_chose">선택한 항목: %1$s</string>
+    <!-- The outcome the right walk reaches, like "It leads to Pine." -->
+    <string name="activities_tree_it_leads_to">%1$s에 도달해요.</string>
+    <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->
+    <string name="activities_find_error_ai_asked">누군가 AI 도우미에게 물었어요</string>
+    <string name="activities_find_error_problem">문제</string>
+    <string name="activities_find_error_ai_note">AI의 답변이에요. 풀이 과정 중 하나가 틀렸어요. AI의 실수를 찾아보세요.</string>
+    <!-- The name of the list of the AI's steps, for TalkBack. -->
+    <string name="activities_find_error_ai_answer">AI 도우미의 답변</string>
+    <!-- The name of the list of a worked answer's steps, for TalkBack. -->
+    <string name="activities_find_error_worked">풀이 과정</string>
+    <!-- Read before a step of the answer, for TalkBack, like "Step 2". -->
+    <string name="activities_find_error_step">풀이 과정 %1$d</string>
+    <!-- For TalkBack, on the step that has the error once checked. -->
+    <string name="activities_find_error_the_wrong_step">잘못된 풀이 과정</string>
+    <!-- For TalkBack, on the learner's pick once checked, when it wasn't the wrong step. -->
+    <string name="activities_find_error_your_pick">내 선택</string>
+    <string name="activities_find_error_wrong_step">틀린 풀이 과정은 %1$d번째예요.</string>
+    <!-- The name of the list of a problem's steps, for TalkBack. -->
+    <string name="activities_solver_steps">풀이 과정</string>
+    <!-- Lead-in to why a pick is wrong, like "Not quite: that adds the tax first." It means "that isn't right", not "better luck next time". -->
+    <string name="activities_solver_not_quite">정확하지 않아요:</string>
+    <!-- Before why the right pick is right. -->
+    <string name="activities_solver_right">정답:</string>
+    <!-- The learner's first, wrong pick at a step, like "Your first pick: Add 8% first". -->
+    <string name="activities_solver_first_pick">처음 고른 답: %1$s</string>
+    <!-- Asks which ending a row's person takes, like "Which ending does nosotros take?" -->
+    <string name="activities_pattern_which_ending">%1$s에는 어떤 어미가 붙나요?</string>
+    <!-- The name of the group of endings to pick, for TalkBack, like "Endings for nosotros". -->
+    <string name="activities_pattern_endings">%1$s에 붙는 어미</string>
+    <!-- An open cell, for TalkBack: the row's person and the word so far, like "nosotros: habl…, choose the ending". -->
+    <string name="activities_pattern_blank">%1$s: %2$s, 어미를 고르세요</string>
+    <!-- Read after a wrong form, for TalkBack, like "Correct answer: hablamos". -->
+    <string name="activities_pattern_correct">정답: %1$s</string>
+    <!-- The name of the list of lines spoken so far, for TalkBack. -->
+    <string name="activities_dialogue_conversation">지금까지의 대화</string>
+    <!-- Read before the other person's line, for TalkBack. -->
+    <string name="activities_dialogue_they_say">상대방의 말:</string>
+    <!-- Read before the learner's own earlier line, for TalkBack. -->
+    <string name="activities_dialogue_you_said">내가 한 말:</string>
+    <string name="activities_dialogue_hear_line">이 대사 듣기</string>
+    <string name="activities_dialogue_hear_best">가장 알맞은 대답 듣기</string>
+    <!-- Read by TalkBack when a row is lifted with the keyboard, like "Picked up Water is split at position 2." -->
+    <string name="activities_sortable_picked_up">%1$s 항목을 %2$d번째 위치에서 집어 들었어요.</string>
+    <!-- Read by TalkBack as a lifted row moves, like "Water is split is over position 3." -->
+    <string name="activities_sortable_over">%1$s 항목이 %2$d번째 위치 위에 있어요.</string>
+    <!-- Read by TalkBack when a row is put down, like "Water is split dropped at position 3." -->
+    <string name="activities_sortable_dropped">%1$s 항목을 %2$d번째 위치에 놓았어요.</string>
+    <!-- Read by TalkBack when moving a row is cancelled. -->
+    <string name="activities_sortable_stopped">%1$s 항목의 이동을 취소했어요. 원래 위치에 그대로 있어요.</string>
+    <!-- TalkBack actions that move a row of a list one place. -->
+    <string name="activities_sortable_move_up">위로 이동</string>
+    <string name="activities_sortable_move_down">아래로 이동</string>
+</resources>

@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mock_result_about_points": "dc02f24c94442232a846464e34eaa7c53f128b201144701e7819b226ba83324d",
+  "mock_result_about_range": "e72dc721a2624162ae1ae347cb38fe67d753eb8c4e8d4e702df5a24d841642ee",
+  "mock_result_after": "61cf7400b307ce243fcd535aba42e466c8e4e1256d927f1095a3059f1b3c09bd",
+  "mock_result_already_changed": "ada1aad28d73d3ee7a33f024dbc98132329653c7f2bf731613f9b6505aa17dfd",
+  "mock_result_already_in": "6a4644eceed4cc99ffdea137f3ba28e7c40b79626d57fefe001f059aabfa315f",
+  "mock_result_apply": "b7d1ce4dfdfb6a82ac749dba117cf61bca6b53436b6a4fe084a9d8d1246dbd77",
+  "mock_result_blank": "0f4e631f55d736c1fba1d7fbed33db4ef7e4d7139ffd7e164bc25f615a101d90",
+  "mock_result_blank_exam_day": "6f946d694584b5b7a105761b222732b9c1b39772aca5ba78b332576870bf71dd",
+  "mock_result_blank_gain": "2a53067bb00263668b586603f451a64c309167e18cfeacc4ca3ee0590926bbcf",
+  "mock_result_blank_this_score": "c7256cbfcde72013739c81f85c37fe8e83378d95cc7ded05f417b00ae66eeb0c",
+  "mock_result_by_area": "e4a7951dec9ab7a9e46061b82868590cc16ec6993a91e53b7eaec0c1e958e93f",
+  "mock_result_by_topic": "240b4ee396151acdbea15aba86298a02f8aaa7710b5377da414d8e67b7c53a93",
+  "mock_result_calibration": "0a317de034a97129334112d0098c529da6b62c8ef75290286f0c7e70768a5926",
+  "mock_result_calibration_detail": "615727d963429886db343baea29911da201bb2035e76b0b751a9bbf4444cbde5",
+  "mock_result_cant_move": "74ac70b3c790c7f75bd7bcde2901d0fcf08bf1d1188f5956850ae81129621e07",
+  "mock_result_consistency": "4e7a212970d5ec16aeeea651714543f6fe8f131025ced505ab3c650ccc10d1d8",
+  "mock_result_consistency_detail": "397fa167c6622e5de22f7f64bc7df30d636b5f01d153a7c029ab627e16434a2f",
+  "mock_result_continue": "924ebf5cb09f20ac97e2a45a7d06c330257da26e28882f1212b2f6d32daf3f50",
+  "mock_result_continue_session": "aaccb5041fc3a04742b8098584697dda7d084395ddf1b11246f55bd4cf548f63",
+  "mock_result_done": "09cdb48ab0651847b2853a672c0b2ef178f36a9a60d75562297209f120d4407d",
+  "mock_result_down": "8424dd3d2ddc30a4bcedb363e42a724d43972a30b4aa6c7275291ddf0c9243d5",
+  "mock_result_easy_wrong": "41088bdb6525ea1ec0aa39435ff8c1cf3499d0c88ecd4ed932a69abccebce756",
+  "mock_result_estimate_detail": "753c1727a7a8eff66042706f48d7a96b2d5532b2a51818bf6f391582aa3aa808",
+  "mock_result_estimated_score": "250b9dc3603fe5d2bfcbed1f2e2e93fda8f160e3068c21cc70619c229d7206b5",
+  "mock_result_focus_done": "ff2c5a6282c0695f8b90cc7ec3cec2a86d1f3bb1b74b261934b6403c5b56fada",
+  "mock_result_focus_title": "634756f14d0723c27fc75e978f06ae83e4ec7904cc229321a7173ce1c34ba632",
+  "mock_result_grade_it": "adf9ea0b8b41a222bb16459f4c84d07184ca8035cb3cec1e3f43b33550bead0e",
+  "mock_result_grading": "7c008e5f78230a42551f147a3a01c3557fb76615d9ce8cb6bb87399fe0ee23ff",
+  "mock_result_grading_failed": "0d1269f1f24f7d8f317cc7863db46cfef9a01dd752bc0b52815dd9c46e4c5d68",
+  "mock_result_grading_limit": "655e8be301433de24cd8016b74eecfcc4eeec31eed75337da28aef8c6c68ea84",
+  "mock_result_grading_slow": "16f9559d3add72cc5e5deac81f510aeac27250fadf21d267d88c33e70eed74c7",
+  "mock_result_hard_right": "e98a17c819d7f02b7f0ab3e74f75c4fe0481d19a1c37d701bd409a622357740f",
+  "mock_result_insights": "55a0cc2ac6a1f0e2ccf5ebec80e767072c2bf760a5ee32583774d4cfaefb5655",
+  "mock_result_keep_answering": "d9386b1286b1e1f8945156141360da4a0bd1dd52d78b5076770ce47a8d373de8",
+  "mock_result_keep_plan": "22931020506b586957fb76c9673dab077708748ce771d4b89c98e22fb4ba564a",
+  "mock_result_left_at_timeout": "b9300c37fc1b74579170285dd1dde6701a58447e5365859309ba62cc3b91901b",
+  "mock_result_left_blank": "69b5f0fea7cb7805f4102ce053b798a09de0b4d60bc78a2dc5cf83fbb6f5fcd1",
+  "mock_result_left_out_written_in_full": "82e1fc66fc4c0a77bf9fd806aa1dc1c618a9011f2b112f1d7616c78ee8c1dc53",
+  "mock_result_lessons_less": "027550c5f93289706219863d64a60ba5efeaa71b5b81be0f03f3bbdc5e3d4e28",
+  "mock_result_mistakes_to_review": "1eba46b4ee881becbd761ab625f6f32d656ff5895a94ee4e439defd187538a34",
+  "mock_result_more_time": "d162286ce8bfbacbda89d374787ccc500d6c4b23bdda3c884d2a908909e023b6",
+  "mock_result_more_topics": "f33391b9f63f2effa6f7b45302f7ff771035c29ee8b82f0018a72fcbde5a03d3",
+  "mock_result_net_score": "ef4341fabaa9287c5c18214d08ac2978ec0c5dce4c452b61af8928b223c76a88",
+  "mock_result_new": "8454930126cf7660a76191de4f6bf1941da7379245221fa2253998e32a81c06d",
+  "mock_result_no_estimate": "010113184b5d1426cac74a471494966e72bd645582743ea9b44458bfb5a34db9",
+  "mock_result_not_done": "c84557043c3a112cb255022d40e523acf38464b940ab20d8acc193ac4dbdd3e7",
+  "mock_result_not_every_task": "940e275946c377c21e900bf4fbc64d16457b1268f24a3e3735339c000c02a3fa",
+  "mock_result_not_graded": "b18a4f941671d947c923c0e4a5f982439fc95c99d4abb9cab232e6e40a316d89",
+  "mock_result_not_now": "26e0d1c08eb16b50616d04ff7d96b1546b7751529e263c688e0fbe8f7a5c386a",
+  "mock_result_notice_scoring": "d29c2866659d5095e09a1beeecc26a02e73c13d5839005ce757f8523d3f6925b",
+  "mock_result_now": "3072c930f050ec69b8e1ee5ff19df0fea03f926335382c2f1b907da543d81070",
+  "mock_result_of": "cf967bca4c6ae4f6e85dc152e280395d26f96412d52e88033e2065eeb371d3d5",
+  "mock_result_off_plan": "dcb6c165e9496fea413727c6d8333c36aaceec74be8d8f101051fb9aa251ef6e",
+  "mock_result_partly_right": "49480cb4851f4b132ad35afd2af17eaf6788cdadc830dffbe99a2ea565896df4",
+  "mock_result_partly_right_note": "83cee34a70241f9a96d9012a688339587159187fca242b895f1858348360f8ac",
+  "mock_result_pass_floor": "792c7fe351da47397f6b7ef6f9dba3cee8d10ab4e578c269874f31d35e85801f",
+  "mock_result_pass_group": "704ce0577d267dcc6c921b151fd5a92de634d46aec59e7921e2308a1391c7ac2",
+  "mock_result_pass_marks_language": "9504ed553828fcb2bff70f9e60d42b848e50bc8a70bf79ae06f0ea8b170d0aa6",
+  "mock_result_pass_paper": "baf6a0dfedfbdd29c400f462c2a38e5b3f4da121a9f9e6d4c6900eb08a84829a",
+  "mock_result_pass_score": "ab6f17bba8667cd9017c2db3586a9bbdc0f0484af4f0b158232d87dc6b099cb5",
+  "mock_result_plan_not_saved": "7873a68edae7b1d718e96131332d03817ad05c8956601bb35898f9b088a6d614",
+  "mock_result_plan_stays": "920dc617096f33f19d290db91693e925e2a12b2cf005e3cc122c49d9e669811e",
+  "mock_result_preparation_counts": "3c992628d801a251c3981912dd546444e300ed275dec972847bc2034f0416d26",
+  "mock_result_preparation_fell": "359096c3a49714920337467bbfc4a400bdbe1fb424ebf07459a0bc2cef4fac14",
+  "mock_result_question": "612373a2f9b3afcb26d48885579cee2c87f527e4150f9c0a7845ed5b44602c5d",
+  "mock_result_question_area": "61df2aae7ffcc22c3f1402335324fd968a03b452c708464678446fe6b16ac7c9",
+  "mock_result_range": "0c50739762ddd0ea0ceef662d990212eebd03a9c271d9f36bf9c721364378493",
+  "mock_result_relative": "247850f8ce18093167482d78d30797e55b724f921facdd9c91a7b45bfd2c5f37",
+  "mock_result_review": "7fb301d6c559a69ba2c9e2051a5ce76547317d0fd8667e902a7939df388d79e6",
+  "mock_result_review_mistake": "9b14a34b0a92a63a355db68445882b88f0de6b7eed90a0e1ad16b18d86cb9fba",
+  "mock_result_review_mistakes": "ccb8cf6cdbb230f5dbe7ea2ca27bebecd11b06f3b48b488056333065a5360bb9",
+  "mock_result_right": "aab7bf01049d725653590411a5fc107a85a6d812568b2ebb71a6111abd022f50",
+  "mock_result_right_answers": "654177f9f7462bf80189ba8eb2197c52a07acb99c70d28e673b71c4d2e291619",
+  "mock_result_right_of": "b5ee3df01e9c193f70be756a04c21585a9d7649a398abb4651e8d797ce0e48f8",
+  "mock_result_scale": "efd7c9f4028788b8f687b11e30a059821754c862f4b68d7a416c871dabac5e76",
+  "mock_result_scale_named": "b5126620fd7e57f2a5877878d79ce829b1c74931a4b0814dd71713560b72d949",
+  "mock_result_scale_score": "49d1b77722a7a7668049f36089358e01a41ffa2792aee96175ed4595fb89cd4d",
+  "mock_result_scale_score_named": "2e9147f570ab220674c95ce1902fa0be19cac17582a75bf55ab7c009f61663b7",
+  "mock_result_see_feedback": "8d2f0ee4e40b1e56f888e7f35d153296efb65acd8006b14813171420622241e5",
+  "mock_result_see_plan": "196aaaee8af2748ac8f726d9dd8c28a19bbcc58399a80d7f5b5d8bed5eca0df9",
+  "mock_result_see_question": "372bea119b8c1a98189936aa2a137236f3415aef908c68ac288edcdbe66a018b",
+  "mock_result_see_questions": "381c72086f798b5ca2996c5def383a7d842080cc89d820bc836235cd096ac83c",
+  "mock_result_shows_right": "b1da783b3efcc8089270c341ad0e01e1738c1c6fe850d6ad93df90844496fec1",
+  "mock_result_skip_done": "18720c3662aaa224e9ca62840e7424b2931f32b6dcb8422bad2af86bf961abf5",
+  "mock_result_skip_title": "ce6e3c82c22e029c53c0a30d0b732f497fe574c558f3d216de39d28783c4a091",
+  "mock_result_subjects": "db765b906f77488a243870456d9aa2b4a461e7d17bf8bb431ab91367dde4903f",
+  "mock_result_task_not_graded": "331af5b3da95e2ddbc7c8b574827dfd0af0ecbb117c8280417d7177cd94c41db",
+  "mock_result_timing": "44bbb8b7b685ae18337955a14636cf2bed2ae21af29403dc7d07ed2e50614ea1",
+  "mock_result_timing_area": "f3ab10a2cb822e639476e8aad0e08d3cb79185ea229ce45b25f4e0747f976c21",
+  "mock_result_to_pass_guide": "52a7e7c775f9e136582e85f9d40ccd510f405930abad2e9f60656ea47c8f8586",
+  "mock_result_to_pass_notice": "d562d489be638490648d14e7362b58a96d3a25870982bf1a1ecad328321d8fb8",
+  "mock_result_too_short": "d4e73aef9569a128d2f5c34a71e2119ee9187427c5057a6317083a2c65eb30aa",
+  "mock_result_typed_estimate": "ddd63b8cefe36e1eaa9508629888280e162d1d26400531de3f33ce86d279465b",
+  "mock_result_typed_no_estimate": "8adada02d41ef401b43892b7b9344fdff55f59dc712e6f1b318ce1f2c567fb5f",
+  "mock_result_up": "0ad3c8cbbcf6be5b187ddfb317889e6efddcf13122a28d45e40e96d627e6199d",
+  "mock_result_written_part": "4ae25f7bc4ec1362be12f1f80f31fcdcdf473f41ddf4819540d8f011eea28e7f",
+  "mock_result_wrong": "1bd7a6cbaf4af81b3f1dd94e955dbd89dfa29d10495d21a7b8f769cc5df10d88",
+  "mock_result_your_plan": "bde7ec63472d415fcc146d077bd104df1b50866c9e14bbe0486a7aa0bd05f278",
+  "mock_result_your_preparation": "da4302c70cb95512d75a5a32f9bb67d0e70dc117865cb7e8c6bb534fd0e42b2b"
+}
+-->
+<resources>
+    <!-- %1$s is the mock's title, such as "Mock exam 3". -->
+    <string name="mock_result_done">%1$s 완료</string>
+    <string name="mock_result_estimated_score">예상 점수</string>
+    <string name="mock_result_net_score">순점수 (만점: %1$d)</string>
+    <string name="mock_result_right_answers">정답</string>
+    <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60". -->
+    <string name="mock_result_of">%1$s / %2$d</string>
+    <!-- A score's range, such as "610–680". -->
+    <string name="mock_result_range">%1$s~%2$s</string>
+    <plurals name="mock_result_subjects">
+        <item quantity="other">%d개 과목</item>
+    </plurals>
+    <string name="mock_result_up">지난 모의고사 대비 +%1$s</string>
+    <!-- %1$s is the drop with its minus sign, such as "−12". -->
+    <string name="mock_result_down">지난 모의고사 대비 %1$s</string>
+    <string name="mock_result_right">정답</string>
+    <string name="mock_result_wrong">오답</string>
+    <string name="mock_result_partly_right">부분 정답</string>
+    <string name="mock_result_blank">미응답</string>
+    <string name="mock_result_blank_exam_day">실제 시험처럼 답하지 않은 문제도 오답으로 처리해요.</string>
+    <string name="mock_result_blank_this_score">이 점수에서는 답하지 않은 문제도 오답으로 처리해요.</string>
+    <string name="mock_result_to_pass_notice">공고에 나온 합격 기준</string>
+    <string name="mock_result_to_pass_guide">공식 안내서에 나온 합격 기준</string>
+    <!-- %1$s is a language's name, such as "Portuguese". -->
+    <string name="mock_result_pass_marks_language">시험 문서에 나온 %1$s 원문이에요.</string>
+    <!-- %1$s is the scale's name, such as "ENEM"; %2$s and %3$s are its lowest and highest scores. -->
+    <string name="mock_result_scale_named">실제 시험은 %1$s 점수 체계를 쓰고, 점수는 %2$s~%3$s 범위로 나와요.</string>
+    <string name="mock_result_scale">실제 시험은 %1$s부터 %2$s까지 점수를 매겨요.</string>
+    <!-- %1$s is the mock's score on the exam's scale; %2$s is the scale's name; %3$s and %4$s are its lowest and highest scores. -->
+    <string name="mock_result_scale_score_named">%1$s 정도예요(%2$s 기준, 점수 범위 %3$s~%4$s).</string>
+    <string name="mock_result_scale_score">실제 시험 점수로는 약 %1$s에 해당해요(범위: %2$s~%3$s).</string>
+    <string name="mock_result_pass_score">합격하려면 %1$s 이상이어야 해요.</string>
+    <!-- %1$s is the rule in the notice's own words. -->
+    <string name="mock_result_notice_scoring">실제 시험의 채점 방식: %1$s</string>
+    <string name="mock_result_relative">실제 시험 결과는 같은 회차 응시자들의 성적에 따라 달라져요.</string>
+    <string name="mock_result_shows_right">이 모의고사는 맞힌 문제 수를 보여 줘요.</string>
+    <string name="mock_result_left_out_written_in_full">%1$s은(는) 전체 모의고사에만 나와요.</string>
+    <string name="mock_result_by_topic">주제별</string>
+    <string name="mock_result_by_area">영역별</string>
+    <plurals name="mock_result_more_topics">
+        <item quantity="other">주제 %d개 더</item>
+    </plurals>
+    <string name="mock_result_insights">모의고사에서 알게 된 점</string>
+    <string name="mock_result_timing">풀이 시간</string>
+    <!-- %1$d is the seconds the learner took per question in one subject; %2$s is that subject's name, such as "Mathematics"; %3$s is the seconds to aim for. -->
+    <plurals name="mock_result_timing_area">
+        <item quantity="other">문제당 %1$d초가 걸렸어요(%2$s). %3$s 이내를 목표로 해 보세요.</item>
+    </plurals>
+    <plurals name="mock_result_left_at_timeout">
+        <item quantity="other">시간이 끝났을 때 %d문제가 남아 있었어요.</item>
+    </plurals>
+    <string name="mock_result_consistency">일관성</string>
+    <!-- Read with mock_result_consistency_detail: "3 easy ones wrong, 2 hard ones right." -->
+    <plurals name="mock_result_easy_wrong">
+        <item quantity="other">쉬운 문제 %d개 오답</item>
+    </plurals>
+    <plurals name="mock_result_hard_right">
+        <item quantity="other">어려운 문제 %d개 정답</item>
+    </plurals>
+    <!-- %1$s is mock_result_easy_wrong, %2$s is mock_result_hard_right. -->
+    <string name="mock_result_consistency_detail">%1$s, %2$s. 이런 결과는 점수에 불리하게 반영되니 쉬운 문제부터 복습하세요.</string>
+    <string name="mock_result_calibration">답을 비워 둘 때</string>
+    <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
+    <plurals name="mock_result_right_of">
+        <item quantity="other">%1$d문제 정답(총 %2$d문제)</item>
+    </plurals>
+    <!-- %1$s is how the sure answers went, %2$s how those flagged as unsure went, each a mock_result_right_of. -->
+    <string name="mock_result_calibration_detail">확신이 있던 답: %1$s. 확신이 없다고 표시한 답: %2$s.</string>
+    <!-- %1$s can be a decimal, such as "1.5". -->
+    <plurals name="mock_result_blank_gain">
+        <item quantity="other">확신이 없는 문제에 답하지 않았다면 %1$s점을 더 받을 수 있었어요.</item>
+    </plurals>
+    <string name="mock_result_keep_answering">확신이 없던 답으로도 점수를 얻었으니 계속 답해 보세요.</string>
+    <string name="mock_result_review">다시 볼 문제</string>
+    <string name="mock_result_see_question">문제 보기</string>
+    <plurals name="mock_result_see_questions">
+        <item quantity="other">문제 %d개 보기</item>
+    </plurals>
+    <!-- %2$s is the question's subject, such as "Mathematics". -->
+    <string name="mock_result_question_area">%1$d번 문제 · %2$s</string>
+    <string name="mock_result_question">%1$d번 문제</string>
+    <string name="mock_result_left_blank">답하지 않았어요.</string>
+    <string name="mock_result_partly_right_note">일부가 맞아 부분 점수를 받았어요.</string>
+    <string name="mock_result_written_part">필기 파트 · %1$d / %2$d</string>
+    <string name="mock_result_too_short">채점하기에는 너무 짧아요</string>
+    <string name="mock_result_grading">시험의 평가 기준에 따라 채점하고 있어요. 최대 30초가 걸릴 수 있어요.</string>
+    <string name="mock_result_grading_slow">아직 채점하고 있어요. 평소보다 시간이 더 걸리고 있어요.</string>
+    <string name="mock_result_grading_failed">처리하지 못했어요. 잠시 후에 다시 시도해 보세요.</string>
+    <string name="mock_result_not_graded">아직 채점 전이에요.</string>
+    <string name="mock_result_grading_limit">오늘 에세이 채점 횟수를 다 썼어요. 내일 다시 시도해 보세요.</string>
+    <string name="mock_result_grade_it">채점하기</string>
+    <string name="mock_result_no_estimate">예상 점수 없음</string>
+    <!-- %1$s is the estimated points, %2$s the paper's total. -->
+    <string name="mock_result_about_points">약 %1$s / %2$s</string>
+    <string name="mock_result_about_range">약 %1$s~%2$s / %3$s</string>
+    <string name="mock_result_estimate_detail">공식 점수가 아닌 예상 점수예요.</string>
+    <string name="mock_result_not_every_task">끝내지 않은 과제가 있어서 이 파트의 예상 점수가 없어요.</string>
+    <string name="mock_result_typed_no_estimate">글로 답한 과제가 있어서 말하는 소리를 확인할 수 없어 말하기 예상 점수를 낼 수 없어요. 다음에는 모든 과제에 말로 답해 예상 점수를 받아 보세요.</string>
+    <string name="mock_result_task_not_graded">채점하지 못한 과제가 있어서 말하기 예상 점수가 없어요.</string>
+    <string name="mock_result_typed_estimate">글로 답한 과제가 있어서 그 과제에서 실제로 어떻게 말하는지는 예상 점수에 반영되지 않아요.</string>
+    <!-- %1$s is the points the exam asks for, %2$s the points of this paper and listening together. -->
+    <string name="mock_result_pass_group">이 파트와 듣기를 합쳐 %1$s 이상을 받아야 해요(총점 %2$s).</string>
+    <string name="mock_result_pass_paper">이 파트에서 %1$s 이상을 받아야 해요.</string>
+    <string name="mock_result_pass_floor">이 파트의 점수가 %1$s 미만이면 전체 시험에 합격할 수 없어요.</string>
+    <string name="mock_result_see_feedback">피드백 보기</string>
+    <string name="mock_result_not_done">미완료</string>
+    <string name="mock_result_your_preparation">내 준비도</string>
+    <string name="mock_result_your_plan">내 계획</string>
+    <string name="mock_result_preparation_fell">모의고사에서 아직 부족한 부분을 확인했어요.</string>
+    <string name="mock_result_preparation_counts">이번 모의고사에서 보여 준 실력이 준비도에 반영돼요.</string>
+    <plurals name="mock_result_skip_title">
+        <item quantity="other">%d개 주제의 문제를 모두 맞혔어요</item>
+    </plurals>
+    <!-- %1$s is a subject, such as "Mathematics". -->
+    <string name="mock_result_focus_title">%1$s에 더 집중할까요?</string>
+    <plurals name="mock_result_lessons_less">
+        <item quantity="other">레슨 %d개 감소</item>
+    </plurals>
+    <!-- %1$s is a subject, %2$s how it went, such as "4 of 10 right". -->
+    <string name="mock_result_more_time">%1$s 학습 시간 늘리기(%2$s)</string>
+    <string name="mock_result_new">신규</string>
+    <string name="mock_result_off_plan">계획에서 빠짐</string>
+    <string name="mock_result_apply">적용</string>
+    <string name="mock_result_keep_plan">내 계획 유지하기</string>
+    <string name="mock_result_plan_stays">계획은 그대로 유지돼요.</string>
+    <string name="mock_result_plan_not_saved">저장하지 못했어요. 다시 시도해 보세요.</string>
+    <plurals name="mock_result_skip_done">
+        <item quantity="other">완료: 계획에서 레슨 %d개를 뺐어요.</item>
+    </plurals>
+    <string name="mock_result_focus_done">완료: 앞으로 이 영역에 더 많은 시간을 쓰도록 계획을 바꿨어요.</string>
+    <string name="mock_result_already_in">이 영역의 레슨이 이미 모두 계획에 있어서 바꿀 필요가 없었어요.</string>
+    <string name="mock_result_cant_move">사전 지식을 먼저 배워야 해서 시작 시점을 더 앞당길 수 없어요.</string>
+    <string name="mock_result_already_changed">계획이 이미 바뀌어서 여기서 더 할 일은 없어요.</string>
+    <string name="mock_result_after">이번 모의고사 이후</string>
+    <string name="mock_result_now">지금</string>
+    <plurals name="mock_result_mistakes_to_review">
+        <item quantity="other">복습할 오답 %d개</item>
+    </plurals>
+    <string name="mock_result_see_plan">내 계획 보기</string>
+    <string name="mock_result_continue">계속하기</string>
+    <string name="mock_result_review_mistake">오답 복습하기</string>
+    <plurals name="mock_result_review_mistakes">
+        <item quantity="other">오답 %d개 복습하기</item>
+    </plurals>
+    <string name="mock_result_continue_session">오늘의 학습 이어가기</string>
+    <string name="mock_result_not_now">나중에</string>
+    <!-- The label under a mock's score when it's counted in the exam's own points. -->
+    <!-- Points earned of the points possible, such as "182 of 260"; either can be a decimal. -->
+    <!-- A section of a mock's result: one row for each test of the exam, with its points and the least it must reach. -->
+    <!-- A row for the exam's objective tests counted together, against the least they must reach together. -->
+    <!-- A qualifying test: it only has to reach its minimum, and its points aren't added to the exam's total. -->
+    <!-- Under a test that missed its minimum. %1$s is its score as a percent of its points, such as "38%"; %2$s is the percent it needs, such as "40%". -->
+    <!-- Under a test that missed its minimum. %1$s is how many points it's short, possibly a decimal; %2$s is the points it needs. -->
+    <!-- Under a test that reached its minimum. %1$s is the percent of its points it needs, such as "40%". -->
+    <!-- Under a test that reached its minimum. %1$s is the points it needs, possibly a decimal. -->
+    <!-- Under a test whose minimum this mock can't judge. %1$s is the percent of its points it needs, such as "40%". -->
+    <!-- Under a test whose minimum this mock can't judge. %1$s is the points it needs, possibly a decimal. -->
+    <!-- A full mock's verdict when the objective tests together missed their minimum. %1$s is their score as a percent of their points; %2$s is the percent they need. -->
+    <!-- A full mock's verdict when the objective tests together missed their minimum. %1$s is how many points they're short, possibly a decimal; %2$s is the points they need. -->
+    <!-- A full mock's verdict when one test missed its minimum. %1$s is the test, such as "P1"; %2$s is its score as a percent of its points; %3$s is the percent it needs. -->
+    <!-- A full mock's verdict when one test missed its minimum. %1$s is the test, such as "P1"; %2$s is how many points it's short, possibly a decimal; %3$s is the points it needs. -->
+    <!-- A part of the exam's mock, projected onto the whole exam. %1$s is the projected points; %2$s the exam's most points. -->
+    <!-- A minimum this mock couldn't check. %1$s is the percent of their points the objective tests need together, such as "50%". -->
+    <!-- A minimum this mock couldn't check. %1$s is the points the objective tests need together, possibly a decimal. -->
+    <!-- A minimum this mock couldn't check. %1$s is the test, such as "Essay"; %2$s is the percent of its points it needs, such as "50%". -->
+    <!-- A minimum this mock couldn't check. %1$s is the test, such as "Essay"; %2$s is the points it needs, possibly a decimal. -->
+</resources>

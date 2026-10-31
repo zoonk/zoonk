@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "goal_switcher_current_goal": "35b2fd9700809f5d494460189836e9605939104e26ce7fe9d3a239b4847285c6",
+  "goal_switcher_daily": "25ef2d0e3d7b448464dd695a6ad40934039773a9b4254315afd2b8705e979cd9",
+  "goal_switcher_explore_courses": "e8e7eb866134c1764f0239481cd1d9a870505de8431454cba13e7263a65f9b5d",
+  "goal_switcher_failed": "35b8b7b5eb0403df6631f4557848ebeb3f8eebbe5c88356702076d9fb89ed610",
+  "goal_switcher_finished": "a4975bfd831f6ec0cfff927cf2daf13b807e013ecf61ac8ce1e2d3cceed1511c",
+  "goal_switcher_new_goal": "a5209bf492acdaf56c077a03bec5522ccaa32846ad87d15e0c22354c43b413bb",
+  "goal_switcher_paused": "d652798bbcb1b22361ad8a10187f49a4172ba096129303b441bbde06483b6488",
+  "goal_switcher_quick_explanations": "d8615c6ab8afd1d26588b16125c4fde0e14514097b848701a48f7cbefa69cc6b",
+  "goal_switcher_start_goal": "2a5f781661e4778f80d1dd606a394fb3c603ca1d973d8c36a4356508a922e68a",
+  "goal_switcher_your_goals": "0d4c9016961deb7230e39a413edb2a277b4249992d38986804681fdb1d277b5a"
+}
+-->
+<resources>
+    <string name="goal_switcher_start_goal">목표 시작하기</string>
+    <!-- Read by TalkBack on the top bar's goal button; %1$s is the goal's title. -->
+    <string name="goal_switcher_current_goal">%1$s, 현재 목표. 목표 바꾸기</string>
+    <string name="goal_switcher_your_goals">내 목표</string>
+    <string name="goal_switcher_quick_explanations">간단한 설명</string>
+    <string name="goal_switcher_new_goal">새 목표 시작하기</string>
+    <string name="goal_switcher_explore_courses">코스 둘러보기</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="goal_switcher_daily">하루 %1$s</string>
+    <string name="goal_switcher_finished">완료</string>
+    <string name="goal_switcher_paused">일시 중지됨</string>
+    <string name="goal_switcher_failed">목표를 바꾸지 못했어요. 다시 시도해 보세요.</string>
+</resources>

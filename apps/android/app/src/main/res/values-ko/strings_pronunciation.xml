@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "pronunciation_accent": "44ca10c777552b2081529f6a8911f1f202daa210e85deaf2a35c77bcd1d4869d",
+  "pronunciation_comes_back": "80d59a179e20bcc47f550a8275669a2313ec62b89e7fe9d313702937fa569846",
+  "pronunciation_continue": "675a5075e56bcc471f5b282815d4f8798888424c46eea0ec5b1b356ac0f834f9",
+  "pronunciation_done": "2ef3402a4d866f88bad16206619edfaaaa207ab3b06f8a3018b88f2609aab9e5",
+  "pronunciation_failed": "ac1ef3bee8a84efa3dc6714e2995bac7345a926ca2a086cb2fbed350b6cd2b00",
+  "pronunciation_grading": "7b20ed44bd9a6b4ec35748ea2ecff4134091ca227e6fac475617f767873eba91",
+  "pronunciation_heard": "d651ef11e1300bd85031742329ed2429a87508ba64a78f9812d1b64602849f76",
+  "pronunciation_learned": "68c2be72ecdb1d5208c3101059e7e27ee63bddd0f21c213a86837df092a85c69",
+  "pronunciation_listen": "b92162f2d5e2ff9435ca627e1e4e72862ba80afa3dfb321dfb1b9876b7d1cdab",
+  "pronunciation_listen_slowly": "905e07e7752d2569f01beeef3abc59404390f6d8aaac311a0449ad920fa43fec",
+  "pronunciation_microphone_off": "c60b3bbfa95574ab8cea34a2d7e819abe731722aea9d10328d06b9b8ab1377b9",
+  "pronunciation_no_speech": "ad0eb85eb457fc770aba18057d4d24958aa8b498259da122126899e6bfbc7ac9",
+  "pronunciation_no_words": "d730ec4aa9237aaca2c05e279cb1b889a1cc044a15badc51c5258d4539531a9a",
+  "pronunciation_nothing_said": "5437b96fa7f12d0cbeb759bb6424d321b64fde744852e0179297e0266f7addb1",
+  "pronunciation_options": "ba81112a7962e0ad6c0c2c595dee2b9719609614013d51cb4539339eef4b722d",
+  "pronunciation_position": "f8c5669bfaa68b9958f4acc743ab13e5d63f672e70292b683db8c5c95b45dcec",
+  "pronunciation_practice_done": "81f341a579acc02f4ae1b5a433e31552d8e595293f8e2dd3f09d50f2188ce05d",
+  "pronunciation_press_record": "4400556f89b4ade178da01d4f1f337071a825d596c4e567db7727578f0f6100e",
+  "pronunciation_recording": "58971f3d8df8298490180e6ca6969ec0d9079e1ff20fa9c38676580a3f4b537b",
+  "pronunciation_save_failed": "9cae2f3d361e7863663cf9a2d8216a9ef5ae03870de49f0cc10cd80760fcd40f",
+  "pronunciation_save_retry": "d8d786bc57387c2cbdbc5267119fe1abf4c7e318a776f7e81914a05457eb34a0",
+  "pronunciation_say_it_like": "11e08d8b8c6ea78b3dbc81f800110ae5b268d59d0ca128aea0d24d9a3a6cbd24",
+  "pronunciation_see_how": "ea10e994044b93815359db68e6101df7eef845ba24680e5a9e4a6a4524fb5876",
+  "pronunciation_skip": "f3d288ae9c2e6ee34273979a7e8d76cbfc05c4c06bacf5b03ad917734b90a564",
+  "pronunciation_sounded_right": "e98f841950a5836d4e81b16e637bf17ad2a5589e05d7c0daac813a252019fae8",
+  "pronunciation_title": "492b7df47bdd106d39bed3bdf9f0e919c39e63ae9662ebfbdc2190dc51b16334",
+  "pronunciation_try_again": "a677c404ededc2de1934cbadbe17c8df14e16540f3d8a2994cae20220522e86f"
+}
+-->
+<resources>
+    <string name="pronunciation_title">다시 소리 내어 말하기</string>
+    <!-- %1$s is the word in view, %2$s how many words the round has. -->
+    <string name="pronunciation_position">%1$s번째 단어, 총 %2$s개</string>
+    <string name="pronunciation_listen">듣기</string>
+    <string name="pronunciation_listen_slowly">천천히 듣기</string>
+    <!-- %1$s is the word spelled the way it sounds in the learner's language, shown in a fixed-width font. -->
+    <string name="pronunciation_say_it_like">%1$s처럼 소리 내어 말해 보세요</string>
+    <string name="pronunciation_options">화면 옵션</string>
+    <string name="pronunciation_skip">이 단어 건너뛰기</string>
+    <string name="pronunciation_press_record">녹음 버튼을 누르고 단어를 소리 내어 말해 보세요</string>
+    <string name="pronunciation_recording">녹음하고 있어요… 다 말했으면 중지 버튼을 누르세요.</string>
+    <string name="pronunciation_grading">발음을 듣고 있어요…</string>
+    <string name="pronunciation_no_speech">단어가 잘 들리지 않았어요. 조금 더 가까이에서 다시 말해 보세요.</string>
+    <string name="pronunciation_failed">처리하지 못했어요. 다시 시도해 보세요.</string>
+    <string name="pronunciation_microphone_off">단어를 소리 내어 말하려면 설정에서 Zoonk의 마이크 사용을 허용하세요. 지금은 건너뛰어도 돼요.</string>
+    <string name="pronunciation_sounded_right">발음이 정확했어요</string>
+    <!-- %1$s is what the grader heard when the word didn't sound right. -->
+    <string name="pronunciation_heard">이렇게 들렸어요: “%1$s”</string>
+    <!-- %1$s is the day the word comes back to say again, such as "May 4". -->
+    <string name="pronunciation_comes_back">%1$s에 다시 나와요.</string>
+    <string name="pronunciation_learned">이 단어는 잘 익혔어요. 다시 나오지 않아요.</string>
+    <!-- Says the same word again. -->
+    <string name="pronunciation_try_again">다시 말하기</string>
+    <!-- Goes on to the next word. -->
+    <string name="pronunciation_continue">계속하기</string>
+    <!-- Ends the round after its last word. -->
+    <string name="pronunciation_see_how">결과 보기</string>
+    <string name="pronunciation_save_failed">전송하지 못했어요. 답은 그대로 남아 있어요.</string>
+    <!-- Retries saving the round. -->
+    <string name="pronunciation_save_retry">다시 시도</string>
+    <string name="pronunciation_no_words">오늘은 다시 소리 내어 말할 단어가 없어요.</string>
+    <string name="pronunciation_practice_done">연습 완료</string>
+    <string name="pronunciation_nothing_said">이번에는 말한 단어가 없어요</string>
+    <string name="pronunciation_accent">억양이 달라도 계속할 수 있어요. 발음이 아직 다른 단어는 내일 다시 나와요.</string>
+    <!-- Closes the finished round. -->
+    <string name="pronunciation_done">완료</string>
+</resources>

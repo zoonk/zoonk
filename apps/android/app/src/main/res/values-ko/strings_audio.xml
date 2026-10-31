@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "audio_check_failed": "81d3989a239d90878db53b0cddc786977c2e81f8de1afd4128e144fbc322ef35",
+  "audio_checking": "1c68061c44294a3e7880deed6fb83c7fbd0aae1e6ced989930298b7c82c383ad",
+  "audio_checking_slow": "fed9bc56ed22dc0f405c5f32df4f7d50510c867836ff0e7c7a18e9f41473e03e",
+  "audio_did_not_play": "b212106f729e6f53f96f467be8f436d73019227340af37fdd495d40ee8c0d9b8",
+  "audio_getting_ready": "6a3cb635bc2c931d425df52230fac0f642a557532182b3fa61a3dc8c6556ccc6",
+  "audio_here_is_what_it_says": "28b64a90050a314345a8c6bfeb9c3549ffb801cba0f54a4da588418d3e9f4363",
+  "audio_listening": "f624e50f1754294f8fdf909a84df0ddc628ab24af96d8ba7b9c3d355a012c4c6",
+  "audio_microphone_off_answer": "aca61891ea9565d1b6d98888f6e836985a2c6f2c6b622f79bdd32b4c68ff07b4",
+  "audio_microphone_off_title": "8bbbfa02fa1e291c64c1536ad2b82d940365a279e298e90354db96aaab291f39",
+  "audio_no_speech": "0bd0f847da0e1aaca98415ed733588e8598fe58fd1c5da2c4b34acbfdf0555dc",
+  "audio_open_settings": "eea75fb9dbe49ddac9b9946d4e166e152c92eba47c6cccb7f2af796986284eb4",
+  "audio_record": "214eb82843e16b3b63e71183c9bff02c1f74065e254ded9bf87eed3f187df17f",
+  "audio_record_stop": "efc0ddcbb14e1301f15acf5957f1510ca00513920407c79480dcf9df84e1c89e",
+  "audio_say_it": "ea0700d3c86686e280f31be392f5db78192268bf369a46a69e2bbbaa1c6089ce",
+  "audio_stop": "d67e514aa54485349fb0493c4e742ce3b00cca0802bb2348ff6214e790233ae5",
+  "audio_try_again": "0b419a9817a96e139104926a23074817aed1c19ff485be6c0f7d1cebb28b2b60",
+  "audio_try_again_label": "8d421aa98cc257bb75f3fb0372f0611ab50e7f455423338bdaa50a185f8f18d7"
+}
+-->
+<resources>
+    <string name="audio_getting_ready">음성을 준비하고 있어요…</string>
+    <string name="audio_stop">음성 재생 중지</string>
+    <string name="audio_try_again_label">음성 다시 재생하기</string>
+    <string name="audio_did_not_play">음성이 재생되지 않았어요.</string>
+    <!-- %1$s is why the audio didn't play; the text it says follows on its own line. -->
+    <string name="audio_here_is_what_it_says">%1$s 음성 내용은 다음과 같아요:</string>
+    <string name="audio_try_again">다시 시도</string>
+    <string name="audio_record">녹음</string>
+    <!-- Button that stops recording the learner, a short label like a media player's Stop. A hint names it: "Tap Stop to check." -->
+    <string name="audio_record_stop">중지</string>
+    <!-- Shown while recording the learner. "Stop" is the label of the button that stops recording, so use the same word as that button. -->
+    <string name="audio_listening">듣고 있어요… 확인하려면 중지를 누르세요.</string>
+    <string name="audio_checking">확인하고 있어요…</string>
+    <string name="audio_checking_slow">아직 확인하고 있어요. 평소보다 시간이 더 걸리고 있어요.</string>
+    <string name="audio_no_speech">말소리가 들리지 않았어요. 다시 시도해 보세요.</string>
+    <string name="audio_check_failed">이번에는 답을 확인하지 못했어요. 다시 시도해 보세요.</string>
+    <string name="audio_say_it">누르고 소리 내어 말하세요</string>
+    <string name="audio_microphone_off_title">마이크가 꺼져 있어요</string>
+    <string name="audio_microphone_off_answer">소리 내어 답하려면 설정에서 Zoonk의 마이크 사용을 허용하세요.</string>
+    <string name="audio_open_settings">설정 열기</string>
+</resources>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "search_appearance": "66529e9ffcccaeeb2438cddeacc8b7fbd2f0e84c0515c9ba38f4580d0d8bd8e4",
+  "search_ask_buddy": "efd92861f95777ebc9a53ce357083a4695b136a48e7b2f870b10e98218574a14",
+  "search_ask_detail": "12dadee68db96434ebf15b1f94e0d454273110eb5f283e3618166edfaceee14d",
+  "search_ask_question": "3ab96a7b5c16f639ae66928d167449b3af198ef8cdc95355c47746951cde5aec",
+  "search_blog": "764772e6a49df6232a58e00701c530f401543f1c06d8f61d1345ecfbc83e9892",
+  "search_buddy_keyword": "a1aedc0d51b97744794cabc2afe6fadaff3b9aa152ec7a78a40b30980c70bd0f",
+  "search_clear": "17588a4f854f7c8407524c98eda7cbb0831757b4551c76984e2d908781690315",
+  "search_close": "e08c920606e81ba11c358d4817623c68e752e84c3cc104db1cfc767c9b15d938",
+  "search_continue": "025d3b25b9c841c9a680e672ac5fe598057dd30b88668085d384c535295b82ba",
+  "search_continue_failed": "1c338b05168b861e61257ce1ccdcbe78fafc41287f23a01517e46dd9ad0b684c",
+  "search_group_account": "efeb3ec04bce136c4ced94d0926173208f055f10f2b01e69266deb1dba880d8c",
+  "search_group_actions": "67382377c894073bf3b3ecda8f3fd7ccfa8fa53ac3c600ead1f14ab1a4b708a3",
+  "search_group_ask": "b62ccc9df2e391c7d1273ae4ba7edc2f8fe0e7f9126bc79947a5d9a54338ae1c",
+  "search_group_catalog": "51d96ead4c6507407ff0f1e7bc221c7086981cfc462259b5664b0a18a450a987",
+  "search_group_explanations": "60a347f967a0984c05f1d174903cc99491e25bff46d5a6d7a4570689252063ee",
+  "search_group_go_to": "ac0039c92a8159fe9ee6fa89ceaf7582524b3afb98fb72b0bf60a4c7b30ab63a",
+  "search_group_goals": "99e08e61a0d0bc7f83b8129f036f2cb1d470f25545ba383705fef7dd97a74ca8",
+  "search_group_help": "23c0a3f71cfffb730fbc5a67ade140242e87805766dc23990dbee48a6b48fa23",
+  "search_group_mocks": "e86f8026f5e720fc4d803eef0f0dbfbc779da950fa4b5c10155ac8d24cc3ae2b",
+  "search_group_new_goal": "913f9636ffbe0be8c1ecc3285da66a0e0eecccc0d9f4c9604da9f797a5c51b7c",
+  "search_group_plan": "2a56e71381d35ae62ed63346c4d0e898722d0d816aad430c5bea93b668b92f21",
+  "search_help": "e3dabf1ad85703c52e2fb58f32d43ab60c8e00db5c5c2fea2561e01640558380",
+  "search_home": "55399e43f18e43cb89826a640b04f8e46d09fffec3710cc1a7b918cc88d748c9",
+  "search_language": "5c410d61cca1bafbb650f51bc5415d3856b1aaa6a555f33910f8af667749f805",
+  "search_log_in": "5c95c0355b3187f66e47c87fad815fced6c79120830b1d67ad1fd82c72b4d718",
+  "search_log_out": "4d6253604bca79745a0ed7b8b0192716db44f1037f2f826b475657aa1c7030ab",
+  "search_logbook": "babb2db9466fb0ecd3affd1bfb9b2247e299b68662ae8779155be693df2891df",
+  "search_memory": "eb17045bd8fe49153fa663eb86a435ebdf678ce72d6550398b9bacb53826ce9f",
+  "search_mistakes_notebook": "be5822f43ac7293403013be718998b013928f731ae2a0eb48ce4ae3d7a2abd16",
+  "search_mock_exam": "2cb5dc77ec390c6853ce00dc4b297cafe5e033f4b73fd428fffa85434fed75f2",
+  "search_open": "c6a32ce535c9b936222777fc91045975b6c80917f266063566c285179e58c6ac",
+  "search_placeholder": "359d7fdc0f395a2d85da820c518285b39ffab6c2be0034a178a3e3298460c28a",
+  "search_practice_mistakes": "787b54dd85a638a5dd51ddfc2c28241ed29e51e96b6be33a5bd9de426ec355fa",
+  "search_preferences": "76359cc13852ad482a5a78fee3f6c448a54301f304e2e29d365c70db3fca45b1",
+  "search_pricing": "fc8e396ee2df39663d8a39d63e4e030eab7a511909ff84c65394cb8062ba25b3",
+  "search_profile": "14be49ecaeafeb47173980c76fb49b2c043ded9fe6d7e33edef6815b0f6830d1",
+  "search_send_feedback_keywords": "7b487c643c87c8202ce81b3f7331ce1b51257bf971907b402fd72382f50900a5",
+  "search_settings": "607288ec4603a5ba3fb9d30773b64585de1e38fd7ceece8c110be64d6a207e46",
+  "search_start_goal": "96b8758b792925ef910aaa376ddba0c99ecf66d9ed77aec4f0d99cc711d0d884",
+  "search_start_goal_named": "d7d8aba8c99291501707537e5e4dcf7e6ad156792c858e1788cdc80833db08d2",
+  "search_start_new_goal": "a6272235a17d37d4879dffbf08534862d12a28c213f0ffd09fbb32bbeadad2f2",
+  "search_start_new_goal_named": "aaa7cbf98d59d23273cc3be0b327c3b24463a9b2f5369d4ef86e65a491ec01da",
+  "search_subscription": "1a925ab2b2ffa6ecccd8b70a5006d3382025cd8c3037d777d8aedc273f776df5",
+  "search_switch_goal": "21499b25af70cb3d7035716a6deda180a4056070b21ede772e63a79a84d6ba44",
+  "search_take_mock": "f4c8565cf19cca3ead0a5bb9809e5bba2caeec54e074c20829d4887f8b681e1b",
+  "search_take_mock_detail": "d6377b415f0322af115deb8f61724d6a92f5ee30551acef4a2cc01ec713854b9"
+}
+-->
+<resources>
+    <string name="search_placeholder">검색 또는 질문…</string>
+    <string name="search_open">검색 또는 질문</string>
+    <string name="search_close">검색 닫기</string>
+    <string name="search_clear">검색어 지우기</string>
+    <string name="search_continue_failed">다음 단계를 열지 못했어요. 다시 시도해 보세요.</string>
+    <string name="search_group_actions">작업</string>
+    <string name="search_group_go_to">바로가기</string>
+    <string name="search_group_goals">내 목표</string>
+    <string name="search_group_explanations">간단한 설명</string>
+    <string name="search_group_plan">내 계획</string>
+    <string name="search_group_mocks">모의고사</string>
+    <string name="search_group_catalog">카탈로그에서</string>
+    <string name="search_group_account">내 계정</string>
+    <string name="search_group_help">도움말</string>
+    <string name="search_group_ask">질문하기</string>
+    <string name="search_group_new_goal">새 목표</string>
+    <string name="search_continue">오늘의 학습 이어가기</string>
+    <string name="search_take_mock">모의고사 보기</string>
+    <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->
+    <string name="search_take_mock_detail">하루치, 반나절치 또는 한 과목</string>
+    <string name="search_practice_mistakes">틀린 문제 다시 풀기</string>
+    <string name="search_ask_buddy">%1$s에게 물어보기…</string>
+    <string name="search_start_new_goal">새 목표 시작하기</string>
+    <string name="search_buddy_keyword">짝꿍</string>
+    <string name="search_mistakes_notebook">오답 노트</string>
+    <string name="search_logbook">학습 일지</string>
+    <string name="search_switch_goal">%1$s(으)로 전환하기</string>
+    <string name="search_mock_exam">모의고사 %1$s</string>
+    <string name="search_home">홈</string>
+    <string name="search_start_goal">목표 시작하기</string>
+    <string name="search_pricing">요금제</string>
+    <string name="search_log_in">로그인</string>
+    <string name="search_log_out">로그아웃</string>
+    <string name="search_blog">블로그</string>
+    <!-- Words people type to find Send feedback in the search, never shown. Keep “bug” and add the words people use in this language. -->
+    <string name="search_send_feedback_keywords">bug, 버그, 오류, 문제, 신고, 제보, 아이디어, 제안, 기능 요청, 문의</string>
+    <string name="search_help">도움말</string>
+    <string name="search_settings">설정</string>
+    <string name="search_profile">프로필</string>
+    <string name="search_memory">메모리</string>
+    <string name="search_subscription">구독</string>
+    <string name="search_preferences">환경 설정</string>
+    <string name="search_appearance">화면 설정</string>
+    <string name="search_language">언어</string>
+    <string name="search_ask_question">%1$s에게 물어보기: “%2$s”</string>
+    <string name="search_ask_detail">채팅이 열려요</string>
+    <string name="search_start_new_goal_named">새 목표 시작하기: “%1$s”</string>
+    <string name="search_start_goal_named">목표 시작하기: “%1$s”</string>
+</resources>

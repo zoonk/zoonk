@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "earlier_questions_description": "e2a337da1b1334e83df8e65114bec45be0e4eb3327257c29daec3391d1384801",
+  "earlier_questions_empty": "cd54bd11e5d146070342a8eaf25f2a4db6036b99ddf9fac85e29f750c049b57f",
+  "earlier_questions_from": "87c36a4bdff0b6ecdcaa3bc7bd4183c2f5bc14d66dfd62d30eae5ce8ad1355a3",
+  "earlier_questions_from_course": "fbb995a01946fcb7d1a6199550ff0463200374f237419dbe6d01d450af2c4dce",
+  "earlier_questions_from_course_lesson": "7588ee08b8dac100bdf274d2f6b2d109aa3efca2b33bb2a3522c9ec8b23f2cc2",
+  "earlier_questions_from_lesson": "2c7ec659308395df257dde15180f3c560236562fa4f516e819d566b6c76da04f",
+  "earlier_questions_no_answer": "6b3cbfeb3b240f39fd9817bab6ef81a6e6740dcbd412d5cb8727eff4092c9b8e",
+  "earlier_questions_older": "15e61112308b1e2d6314983c582b052b021e9901e907b5426ae6a79b09c2b98c",
+  "earlier_questions_older_failed": "47531468d335f4b2869b965387e625d9b8fc03d9fd1db8f2160a376df1607302",
+  "earlier_questions_title": "faf87ee067b4e27c32495a39811ee6fc96f9b42ef13599b9cbe24cc657dd11e6"
+}
+-->
+<resources>
+    <!-- Title of the page that keeps the questions the learner asked about lessons before every course was rewritten. -->
+    <string name="earlier_questions_title">예전 질문</string>
+    <!-- Keep "before we rewrote them": every course was rewritten, which is why these questions moved here. -->
+    <string name="earlier_questions_description">모든 코스를 새로 만들기 전에 했던 질문이에요. 레슨이 바뀌어서 다시 읽을 수 있도록 질문을 여기에 모아 두었어요.</string>
+    <string name="earlier_questions_empty">이전 질문이 없어요.</string>
+    <!-- Above a question about a lesson that no longer exists. %1$s is the course's title as the learner saw it, %2$s the lesson's. -->
+    <string name="earlier_questions_from_course_lesson">%1$s의 이전 버전 · %2$s에서</string>
+    <!-- Above a question about a lesson that no longer exists. %1$s is the course's title as the learner saw it. -->
+    <string name="earlier_questions_from_course">%1$s의 이전 버전에서</string>
+    <!-- Above a question about a lesson that no longer exists, when the course's title wasn't saved. %1$s is the lesson's title. -->
+    <string name="earlier_questions_from_lesson">이 코스의 이전 버전 · %1$s에서</string>
+    <!-- Above a question about a lesson that no longer exists, when neither title was saved. -->
+    <string name="earlier_questions_from">이 코스의 이전 버전에서</string>
+    <string name="earlier_questions_no_answer">저장된 답변이 없어요.</string>
+    <!-- Loads the next page of the learner's earlier questions. -->
+    <string name="earlier_questions_older">더 오래된 질문</string>
+    <string name="earlier_questions_older_failed">더 오래된 질문을 불러오지 못했어요. 다시 시도해 보세요.</string>
+</resources>

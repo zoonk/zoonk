@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "focustest_about": "d392ec851a22d2ba73c2e53d51053f83c929c00aa0a532eaa6ae22c8d3fc0dca",
+  "focustest_area_right": "cf671043c7847ac7fabdf1bf2d9bd013fa0d5c34047da45d5d418e75693851fd",
+  "focustest_ended_detail": "0844ff612b7cdf0e4468b03482366bf42924948ed9a4a13ab5a616a3439a9c6f",
+  "focustest_ended_title": "24b77c9d0d451536b5b00d662b7a4fa62dcf16a33a9c436c4703550e47de18aa",
+  "focustest_focus_detail_one": "c52ab183520136a925f41ade49a7592e97e9b14b9fc6ef65c0fb357fccb775ff",
+  "focustest_focus_detail_several": "3f97c48d4dd28bf8ac4283939b0859955db4d3d7e29fcacdab90d34d5d11bfd2",
+  "focustest_how_you_did": "3b607323b0c1b755c0d01ba90da0ee139fe3f789e32071ea427f4ac577d0675c",
+  "focustest_intro_detail": "66631b888fa0434a72048d46967f2edf35c6a3dcbb7c91dea9edf5b97295945b",
+  "focustest_intro_title": "0fd9760db78ba21fc96606d09873127f3b76652a1f0dc8dc8e44c40ebc206844",
+  "focustest_new_focus": "c4a3810c21e94b9a9addf1f880725bb57c8c9a6fff3ddb421f5629a2aa87701b",
+  "focustest_questions": "7e1762c9e44652a6dcca7f70e8e69e2329327046427df945c3bb2029ce05be33",
+  "focustest_see_plan": "3efaae3db58592c1dff1fb07aa2282583546fc52e35817cbc8fef42bd3fb161a",
+  "focustest_start": "0308074ec88cd75391ee099fe3ebffb26aab0a219c9e6aeaef32d6b8e439dc7e",
+  "focustest_starting": "5aa1a042c8271886a0da7810db0b0718cbef1ef3ab9ae0e95e8b0a6a5bd1a9bd",
+  "focustest_subjects": "d228693a9b8b8ad2b2cc7af7820b7c2f9fbd93339aea543a2f08d47eaa2ca04e",
+  "focustest_title": "d03784d9d4895f1ec12f7d101d08737ee23e551473ae55c6c2f6bc937d3ff68a",
+  "focustest_undone": "b8591cbeb7069c86b08030e8959dea52ffd4a806f161f60b1ee2d365c6ba18d8",
+  "focustest_waiting_detail": "d9d73031099021be0a63e607ba542e73ff4bfc99f3cc4217a8e9299efab0e16d",
+  "focustest_waiting_title": "1cd45ad4557f287a12055dc152a33f6350ab3fdcfe0cba67ce0f63d3fe57e426",
+  "focustest_writing": "7e7b1cb96eeb53bfc9178592a798fa78a29838f3d7242f32abec3576a286308b",
+  "focustest_writing_detail": "8e57899be3af43887a3f0c03eb1a2cb7ef5fe32c6406bb084e1060f728779389",
+  "focustest_writing_line": "a9c30140fa76aa5e69eb7b17ff2125c0b06d29eed196c0e5cbf90af3ffe4c836",
+  "focustest_writing_questions": "5b191f87fee67f065bcabc2ab4b229a74e2c1f138e29143c15376416af42d269",
+  "focustest_writing_title": "aa2802174718f336c9d53e3003a0172b0f95627d0c537af4f5fcbdee54cc0d64"
+}
+-->
+<resources>
+    <!-- A test that sets which subjects of an exam the plan studies in more depth. -->
+    <string name="focustest_title">집중 진단</string>
+    <string name="focustest_intro_title">어떤 과목에 집중하면 좋을까요?</string>
+    <string name="focustest_intro_detail">과목마다 몇 문제씩 풀어 보세요. 더 공부해야 할 과목을 계획에서 먼저, 더 깊이 다뤄요.</string>
+    <plurals name="focustest_subjects">
+        <item quantity="other">%d과목</item>
+    </plurals>
+    <plurals name="focustest_questions">
+        <item quantity="other">%d문제</item>
+    </plurals>
+    <!-- How long the test takes. %1$s is a duration, such as "5 min". -->
+    <string name="focustest_about">약 %1$s</string>
+    <string name="focustest_start">테스트 시작하기</string>
+    <string name="focustest_starting">시작하고 있어요…</string>
+    <string name="focustest_writing">문제를 만들고 있어요</string>
+    <string name="focustest_writing_questions">과목별 문제를 만들고 있어요</string>
+    <string name="focustest_writing_line">과목마다 무엇을 물어볼지 고르고 있어요…</string>
+    <string name="focustest_writing_title">테스트를 준비하고 있어요</string>
+    <string name="focustest_writing_detail">과목마다 몇 문제씩 만들고 있어요. 준비가 끝나면 여기에서 테스트가 열려요.</string>
+    <string name="focustest_waiting_title">다음 문제를 만들고 있어요</string>
+    <string name="focustest_waiting_detail">나머지 문제를 만들고 있어요. 준비가 끝나면 여기에서 테스트가 이어져요.</string>
+    <string name="focustest_ended_title">일부 문제를 만들지 못했어요</string>
+    <string name="focustest_ended_detail">지금까지 답한 내용으로 테스트를 마무리하세요. 이 답변만으로도 계획에서 더 깊이 공부할 과목을 정할 수 있어요.</string>
+    <string name="focustest_how_you_did">진단 결과</string>
+    <!-- A subject's score, such as "2 of 3 right". %1$d is how many were right, %2$d how many were asked. -->
+    <plurals name="focustest_area_right">
+        <item quantity="other">%1$d/%2$d문제 정답</item>
+    </plurals>
+    <!-- Over the subjects the test chose to study in more depth. -->
+    <string name="focustest_new_focus">새로 집중할 과목</string>
+    <!-- Under the subjects the test chose. -->
+    <string name="focustest_focus_detail_one">이 과목은 비중이 크고, 틀린 문제가 가장 많아요. 이 과목을 더 깊이 공부하도록 계획을 조정했고, 다른 주제도 모두 그대로 유지했어요.</string>
+    <string name="focustest_focus_detail_several">이 과목들은 비중이 크고, 틀린 문제가 가장 많아요. 이 과목들을 더 깊이 공부하도록 계획을 조정했고, 다른 주제도 모두 그대로 유지했어요.</string>
+    <string name="focustest_undone">계획이 원래대로 돌아왔어요</string>
+    <string name="focustest_see_plan">내 계획 보기</string>
+</resources>

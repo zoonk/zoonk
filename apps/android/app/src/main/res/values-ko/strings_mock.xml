@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mock_answer_sheet": "37e2694f593345c72eb32c34ba5b221063588c7c74ceeb2f577a669dc4ce907a",
+  "mock_answered_count": "8bed0e33b7e4d438b70c3ca9083821969c47de2bd2b32d4b7aca4b5b5eb069db",
+  "mock_answers_saved": "1819a38de41408b4d365db9b92d76758b51c9acfe6d30b22c9145de0fd0b683b",
+  "mock_break": "47bc96003b8843e137d7bf7e234ca807593c15873fa550986c2f9d97245bfda1",
+  "mock_break_detail": "fa66b05003c70d083de4b61ac45f07679aa330c6f62df6bdd99de3e3774c1ef5",
+  "mock_break_time_left": "43c60fd16bdf26e5295ff23a226c2ee92eb42722f964b57eea78442bc11620a9",
+  "mock_cell_answered": "9fd1742c2543efa225945d6c78f6cfedb8b8b82e45cc0ea51c18df2edbc6adb6",
+  "mock_cell_flagged": "baf06ee8c507c03e25ab973570ba1714a3ffa520f40658602fd512aa75e911f4",
+  "mock_continue": "898a1a5f9e4467c4a564855b4677047e55c83afc11dcfbee5fe37def116e3482",
+  "mock_continue_section": "d7518f7a6c75b5991efb4df8505e92e801635257e828e414c4a45e5b694fa5f6",
+  "mock_essay_blank": "2cf7deeb67c834fb51a4b843bb6e152595d5644497d805b033a23be4c3619f6f",
+  "mock_essays_blank": "c777c518171c4be3313a2d10c4eaeb6363277c9a185c9ef9ec7740199a8efc6b",
+  "mock_every_answered": "6db1c3f830e94e0f68512203d23d84cab1ae0e2eb50bda4699c21ecd988123df",
+  "mock_expired_detail": "3eeb5329f3ed7d42e3b3755a15badb28cc6e246a18f1636cf312394d411af718",
+  "mock_expired_title": "fe96d54a878245903edf5242fbcb9bf20536f9fc3ac3c5956a8528c1e831d3b8",
+  "mock_flag": "20cdefc022c95a34eb7aa008f468dfa257707cec0e31525514b000337782e7a6",
+  "mock_flagged_count": "7e5537a26542320e4f6368011f85ca9848251a0904ae5e3ae9f557df9871109c",
+  "mock_full_day": "1c019fcaa951bfa71fb224f686dfec49768988b8277f1386fa1b7f8836bd6b53",
+  "mock_full_day_number": "839dc6831c9b9e05a53def869790c456a86f3713ffecae1ccfdb0b4dc9286b3d",
+  "mock_go_to_today": "d115e50dd4286956177b85458f0c600d30a2164ae7a5708de9d296838d834841",
+  "mock_grading": "1c097fbb04d1d106105e0e4b08438d975714741a728b9b4d43069f1ea61c8b44",
+  "mock_half_day": "7ccbef4e00c6a0c8fd44b45e17f7ad64d0a17ce3941bfd6e8dd02a850042d1d8",
+  "mock_half_day_number": "75c7d6bb63eea052c95ec6b16d20c647dd11f2ee5db379e059b3fd84f31e124f",
+  "mock_hand_in": "d575d9bcc15433fa77420f48975d339edb88907eb4639147a720d18adfe9b340",
+  "mock_hand_in_final": "3c0b92b4635e337993f3a6c3d44e73cc2995ad3ca03d09ccae7d1f440527d1b2",
+  "mock_hand_in_mock": "1dd54a6a505cd80ec428e3ec0d4c033b0edb2e0e7d8dadbbe79664fc1b20e322",
+  "mock_hand_in_mock_title": "234c8553f6382e20682115284e83efbedc8e85a9c6d5aa1895210fb37d361ee4",
+  "mock_hand_in_section": "4475ca7884e6e39740cc95147444836259a8b4ce6d377529a2f000637e6601de",
+  "mock_hand_in_section_title": "ad29edeb5833f71f6fa496b5cc74cb194ccb8c7108b255819118911d3693dc3a",
+  "mock_handed_in": "a2227d859f0b537f5428a3feb0ac021bae1e2f0090319cfa8bebc54427809b58",
+  "mock_handed_in_title": "259256d1b24a9193e5d181bccf7240a90e890c86551eb951f13e05ca1e8f613c",
+  "mock_handing_in": "dd0ad19eaeac716013eb01d81914d9ca52bf74209323e42bcda54c55647014cd",
+  "mock_keep_answering": "decb14996fdb3b1da0638c54e81e9bb85f91f502894db1be1de414edf114ed8d",
+  "mock_keep_going": "86acc8ebe29a45bc9263485cc9c11dd3b7e947f55f0bc3ae4b8a37fbc0867bfe",
+  "mock_label": "3066dc588bc3f8268b7830f124b64b4c0181cac79a9e7bcf866d2a68c509759e",
+  "mock_label_shape": "b7e72d245210fc6353a484f7edb86f7517dedbe101f60c5b0e9df6821e23b218",
+  "mock_last_not_saved": "ece6097c7849c12434904da7158f58b45509d001077b2d9080044af1ed5f39f3",
+  "mock_left_blank": "e7dc8b1ae9c9d3a0b526e1a2adf22d1ea14fcf2254d115b80006a27a79542f67",
+  "mock_left_blank_and_flagged": "bbd2b295859cc3c8265b84aadf36bf08c5dbb7c42957589ce9f71d633d1cc1a0",
+  "mock_left_blank_only": "10c2792f3c1ae4a4cec30f78d7c72ab9847aedb2721a7114d3b75a1853f44464",
+  "mock_left_flagged": "496c80f1fd75aaf5b2da4deee471a8397abe0d9e808868b74a1a459d903ce983",
+  "mock_left_flagged_only": "9fc0b153b96fd9417219c47e66e2df436d2ba2cbe4c0124dcff748110bf02fbc",
+  "mock_legend": "17daa8d3c2cad699212f02605c738aec5c4cf26ec4216d9a67cc9a6bf297ee5c",
+  "mock_moves_forward": "8dcdc9bddc870333d656d8ab2aa8def3e1009e7a49d7471e6e9ee0d1f5bbc424",
+  "mock_moves_forward_must": "a1c9af05b1e09fe98ff2aa86a845464b79c6bd494e1068a19a317085e2c84384",
+  "mock_moves_must": "ef5964c28d37c31d36d27a4f03ed47ffd4577111d87e3fb98cefb90960ac90a1",
+  "mock_moves_review_any": "0a5398f3b60435acb9b36d5799e5dc9f45b0db0d867e576a22eb5b01eeceda8a",
+  "mock_moves_review_changes": "638a4e45f5c394d24881788b9bd0a45d0fd61b246d36c39ad931fcbcf67d6e0f",
+  "mock_moves_review_none": "557b8ce9a46bd97f9899dd16fb5a92aaad1159ae8d920a2bc6dbb170f9f67a3c",
+  "mock_net_score": "b5ef84b4a57a568a1dee6f30b20bfca76c1e3b1841842a581cdeeee9f445ea33",
+  "mock_next": "196d2edd8803ac72db314e8a20d5c9b06090d74e64aab784ed96f751e708a1b0",
+  "mock_next_named": "c802127b08bf5e9b79484c7a5e35c9b608bc0c85fe6d55462b17ee55cb3da664",
+  "mock_next_section": "8d0ee175d3c18aaa18fc664741aa013a3f619deca2ac859aa064aaabc61d7770",
+  "mock_not_found_description": "16a3d212b556e1ae804e78fce31182b43354cebc7b2f1ab9a8b131d288c6684d",
+  "mock_not_found_title": "f1f014af9594e74835b557277290f57c39ca547fbb46098d5f08416ca05fac73",
+  "mock_not_saved_retrying": "16335e8d43882ac27ace6d79045baf63c4cb20c9460260087e431e0a50860159",
+  "mock_place": "e9eb53d1a8f80f75c0aff53b6fff21a0aa6b92046162912249e65e7c46c24be9",
+  "mock_progress_label": "20e066bfe67d7fe655e19a34d7e7e62286a6a323a07662fc095e5c239844d21b",
+  "mock_question_number": "aeff24fec0851bc72170a5231efab68d55e3004c76b9249fb72b219294fd1bfa",
+  "mock_question_place": "1ea39b4f97f0536e4dd86281e952799c14a2ac6f8382309ca68cd9bfa0afc733",
+  "mock_question_place_area": "a67e3bee29adb958817cb2e7dd1c23a439f1d4cb691f906df6ef4ebbacc82e2c",
+  "mock_questions": "58152ae334dac014a72731286080db935f8ee90172674d7f76996941adbda551",
+  "mock_retry": "b8dedac88e4647770cf8aa8adba6dcfcc93867f1baccc17aa350c0f22e5e5727",
+  "mock_reused": "608188564632dd5850e10eb19cf923ff1b92268575ed401b9b5b21f973c2a65b",
+  "mock_right_answers": "ee9dee4f9cface0386987ad565686aac076b98d3ec40d27f619f6e68e928ddef",
+  "mock_row_detail": "c0eccaca29d298486bc25432fc077bbf66348862f4ff30b2118c0232bc415229",
+  "mock_section_answered": "bae4eb5df6c0cdaee598393216e95ddde975a96194a8b50fce69cf6984071716",
+  "mock_section_number": "7816e14665d493211074bb22b95b27ecf837a02476b8c12d362151c5b8377b71",
+  "mock_sections": "868877f99217fe164c757f37460e9675f65a3dd97212d7529726e599a136eccc",
+  "mock_see_how": "041d270f16f640cc339555163d421eaa177611271e69669cc2464269cd0412d8",
+  "mock_shape_of_questions": "34b422303ea86ff62a544a6d91141b9c15991cee9313734fd50269098c2836e3",
+  "mock_sheet": "eab2fbdaf070eb80a0039625f122967ff12c4ff09fba4c9d3e4e280a4900c2c9",
+  "mock_short": "de38e0c55c23e9ffe3063d153d602e52f91443886b258a9b74428cb742e30b5c",
+  "mock_speaking": "8c1738c8c97b9972f7815533ef89a0846097bdb77110f10fa437265e0b022996",
+  "mock_speaking_all_done": "b3251461ba015bbfc80987eb0dffa65e375f95df9e2d99cfb9591b54ce924364",
+  "mock_speaking_done": "901c9f622454d5febe8fcbd7a438ae301e19cf086e8be03441dbbd8820192670",
+  "mock_speaking_hand_in_done": "91ffa84f0b8d4d08f7aa61cabc6541f27179915fc29494651c5bcb1313abec90",
+  "mock_speaking_hand_in_left": "fa6154dfcdeaeca77d97180d68df4f000c3e7d3964c7cae8be8ab156a5c75e28",
+  "mock_speaking_intro": "9452b83984019745da25b47869df8843348cd555adffc26d3f78b4843fdd6091",
+  "mock_speaking_left": "da0482783c26eea74ae8a872064a33b93b40e69393b59cd122fd3868a0df2417",
+  "mock_speaking_start": "ea5c4f682cb5dbf7fdc7f9c52a1c5f9ffaf53356a7e0e3a3770852bea17a996f",
+  "mock_speaking_start_task": "49c13bafc670b6638bbe53769ef9c05b41dbd0078d3e3436564d7dcbfabda82e",
+  "mock_speaking_start_task_number": "ac86fe9504a2c0ee36d1f0e711ea00bd73373c227c4c7fa67477dd07266a3572",
+  "mock_speaking_task": "220e6d3965b5e1676f75e4fd85e2532030a43891c22670a0351cbbeea1702130",
+  "mock_speaking_writing": "408e54622ef3a7d4752dc3db0045dc0f7830e8e649ffe8f6237d5706e074abe9",
+  "mock_start_next": "aab882948ea02349cc32cddfe50c7971aa6346640e3a1861b22cb1a60eca6408",
+  "mock_starting_point": "64fe5449fc851a0fcafe5b3c5a2c835d6cb4a3c5dc3e650b2a6a0df3cb774402",
+  "mock_step_failed": "3dbba610a1878387bed694571803ce0aa5efe268b4b9b657074b34daef02a0a5",
+  "mock_step_failed_saved": "053cb1bded37cc0a3684e5eaf5dd2827f39b61c7134f3452d4699ea50a7f5728",
+  "mock_step_slow": "900ace26a3cad048d43188a3d91398ff15e61b7089c19218c10c01297774070b",
+  "mock_take": "3ee2c74fed0163aeae21a77fbbef1cf63022fe7b5cb6db557f0079483795e0ca",
+  "mock_take_new": "ae24572b1ba7532c3ca2955588a7b1d421ddb07374f78a775d84956532bdc9f1",
+  "mock_time_left_caption": "b493eaabd85dc13d9fe1dd01320a7c9d147ef9825650cb926d89428dc6762811",
+  "mock_time_left_label": "ec3512e5be433a79317e639b1b62cac9d7a80b3afe68228c6a54d26a226e6656",
+  "mock_time_left_question": "95303d9bda308ddc2f36c055ffc08b9e217eee2e924442c3f1e1a882c7ffa6ba",
+  "mock_time_up": "33dfcc946087707fb0c1fc363d8a343d4b30ec6150caaf91cf742c5452ebea77",
+  "mock_title": "aeafa0d58a77b0113cb0599a4741f3227bd99bdbbe8f911094da1b751e4260e4",
+  "mock_words": "2789057cce340b7601e0721915cac98f9f3ffc79bdd8b30a5c5d841f36a4029c",
+  "mock_written_part": "dd88d03af827d99b9d67544619aacbb005cc7678405f18e596ac81b2bfb662dd",
+  "mock_written_part_area": "2657b965d01d5054a56c9b7857125c85e73df9d7f5e05c9950a47fb55fb33793",
+  "mock_your_essay": "dc9653cdc99a1f89ad2aa31911f41329ca900c4e7af8f22734ba98dc85b8041f"
+}
+-->
+<resources>
+    <string name="mock_title">모의고사 %1$d</string>
+    <string name="mock_full_day">하루치 시험 전체</string>
+    <string name="mock_half_day">하루치 시험 절반</string>
+    <string name="mock_full_day_number">%1$d일 차 시험 전체</string>
+    <string name="mock_half_day_number">%1$d일 차 시험 절반</string>
+    <!-- A placement mock, the one that finds where the learner starts. -->
+    <string name="mock_starting_point">시작점</string>
+    <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
+    <string name="mock_net_score">감점 반영 %1$s/%2$d점</string>
+    <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60 right". -->
+    <plurals name="mock_right_answers">
+        <item quantity="other">%1$s/%2$d개 정답</item>
+    </plurals>
+    <!-- %1$s is what the mock covered, such as "Mathematics"; it asked %2$d of the exam's %3$d questions. -->
+    <plurals name="mock_shape_of_questions">
+        <item quantity="other">%1$s, %2$d/%3$d문제</item>
+    </plurals>
+    <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
+    <string name="mock_row_detail">%1$s · %2$s</string>
+    <string name="mock_take">모의고사 보기</string>
+    <string name="mock_continue">모의고사 이어서 풀기</string>
+    <string name="mock_label">모의고사</string>
+    <!-- %1$s is what the mock covers, such as "Mathematics" or "A full exam day". -->
+    <string name="mock_label_shape">모의고사 · %1$s</string>
+    <string name="mock_not_found_title">페이지를 찾을 수 없어요</string>
+    <string name="mock_not_found_description">오래된 링크이거나 주소가 잘못 입력되었을 수 있어요.</string>
+    <string name="mock_go_to_today">오늘의 학습으로 이동하기</string>
+    <!-- What screen readers call the section's countdown. -->
+    <string name="mock_time_left_label">남은 시간</string>
+    <!-- Under the section's countdown, such as "1:24:09". -->
+    <string name="mock_time_left_caption">남은 시간</string>
+    <string name="mock_time_left_question">이 문제의 남은 시간</string>
+    <string name="mock_progress_label">이 파트에서 푼 문제</string>
+    <!-- Where the learner is among a section's questions: "12 of 45". -->
+    <string name="mock_place">%1$d / %2$d</string>
+    <string name="mock_written_part">서술형</string>
+    <!-- %1$s is the essay's area, such as Portuguese. -->
+    <string name="mock_written_part_area">쓰기 파트 · %1$s</string>
+    <string name="mock_question_place">%1$d번 문제 (총 %2$d문제)</string>
+    <!-- %3$s is the question's area, such as Mathematics. -->
+    <string name="mock_question_place_area">문제 %1$d/%2$d · %3$s</string>
+    <string name="mock_flag">표시하기</string>
+    <string name="mock_next">다음</string>
+    <string name="mock_hand_in_mock">모의고사 제출하기</string>
+    <string name="mock_hand_in_section">이 파트 제출하기</string>
+    <string name="mock_handing_in">제출하고 있어요…</string>
+    <string name="mock_moves_review_any">답안 검토: 어느 문제로든 돌아갈 수 있어요.</string>
+    <string name="mock_moves_review_none">검토: 더 이상 답을 바꿀 수 없어요.</string>
+    <plurals name="mock_moves_review_changes">
+        <item quantity="other">검토: 답을 %d개 더 바꿀 수 있어요.</item>
+    </plurals>
+    <string name="mock_moves_forward_must">다음으로 넘어가려면 각 문제에 답하세요. 이전 문제로 돌아갈 수 없어요.</string>
+    <string name="mock_moves_forward">다음으로 넘어가면 이전 문제로 돌아갈 수 없어요.</string>
+    <string name="mock_moves_must">다음으로 넘어가려면 각 문제에 답하세요.</string>
+    <string name="mock_hand_in_mock_title">모의고사를 제출할까요?</string>
+    <string name="mock_hand_in_section_title">이 파트를 제출할까요?</string>
+    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
+    <plurals name="mock_left_blank">
+        <item quantity="other">답하지 않은 문제가 %d개</item>
+    </plurals>
+    <plurals name="mock_left_flagged">
+        <item quantity="other">표시한 문제가 %d개예요</item>
+    </plurals>
+    <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
+    <string name="mock_left_blank_and_flagged">%1$s이고 %2$s.</string>
+    <plurals name="mock_left_blank_only">
+        <item quantity="other">답하지 않은 문제가 %d개예요.</item>
+    </plurals>
+    <plurals name="mock_left_flagged_only">
+        <item quantity="other">표시한 문제가 %d개예요.</item>
+    </plurals>
+    <string name="mock_every_answered">모든 문제에 답했어요.</string>
+    <string name="mock_essay_blank">에세이 내용이 없어요.</string>
+    <plurals name="mock_essays_blank">
+        <item quantity="other">내용이 없는 에세이가 %d개예요.</item>
+    </plurals>
+    <string name="mock_hand_in_final">제출하면 답안을 수정할 수 없어요.</string>
+    <string name="mock_keep_answering">계속 풀기</string>
+    <string name="mock_hand_in">제출하기</string>
+    <string name="mock_sheet">답안지</string>
+    <string name="mock_answer_sheet">답안지</string>
+    <!-- Read with mock_flagged_count: "12 answered · 2 flagged". -->
+    <plurals name="mock_answered_count">
+        <item quantity="other">%d개 풀었어요</item>
+    </plurals>
+    <plurals name="mock_flagged_count">
+        <item quantity="other">%d문제 표시됨</item>
+    </plurals>
+    <string name="mock_questions">문제</string>
+    <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
+    <string name="mock_question_number">%1$d번 문제</string>
+    <string name="mock_cell_answered">답안 작성 완료</string>
+    <string name="mock_cell_flagged">표시됨</string>
+    <string name="mock_legend">표시됨 · 실제 시험처럼 끝날 때까지 피드백이 없어요</string>
+    <plurals name="mock_reused">
+        <item quantity="other">%d문제가 다시 나와요. 틀린 문제부터 나와요.</item>
+    </plurals>
+    <!-- %1$d is how many questions this mock asks, %2$d how many the real exam asks. -->
+    <plurals name="mock_short">
+        <item quantity="other">이번 모의고사에는 %1$d문제만 나와요. 실제 시험은 %2$d문제지만, 아직 새 문제가 충분하지 않아요.</item>
+    </plurals>
+    <string name="mock_sections">파트</string>
+    <string name="mock_section_number">파트 %1$d</string>
+    <!-- A section's status in the list of the mock's sections. -->
+    <string name="mock_handed_in">제출 완료</string>
+    <!-- A section's answered questions of all of them: "12/45". -->
+    <string name="mock_section_answered">%1$d/%2$d</string>
+    <string name="mock_not_saved_retrying">아직 저장되지 않았어요 · 다시 시도하고 있어요</string>
+    <string name="mock_retry">다시 시도</string>
+    <string name="mock_last_not_saved">마지막 답이 저장되지 않았어요.</string>
+    <string name="mock_step_failed_saved">처리하지 못했어요. 답안은 저장되어 있어요. 잠시 후에 다시 시도해 보세요.</string>
+    <string name="mock_step_failed">처리하지 못했어요. 잠시 후에 다시 시도해 보세요.</string>
+    <string name="mock_step_slow">아직 제출하고 있어요. 평소보다 오래 걸리고 있어요.</string>
+    <string name="mock_handed_in_title">모의고사를 제출했어요</string>
+    <string name="mock_see_how">결과 보기</string>
+    <string name="mock_grading">채점 중…</string>
+    <string name="mock_continue_section">계속하기</string>
+    <string name="mock_time_up">시간이 다 됐어요</string>
+    <string name="mock_answers_saved">지금까지 답한 내용은 저장됐어요.</string>
+    <string name="mock_break">쉬는 시간</string>
+    <string name="mock_break_time_left">남은 쉬는 시간</string>
+    <string name="mock_break_detail">쉬는 시간이 끝나면 다음 파트가 자동으로 시작돼요.</string>
+    <!-- %1$s is the next section's name, such as Mathematics. -->
+    <string name="mock_next_named">다음: %1$s</string>
+    <string name="mock_next_section">다음 파트</string>
+    <string name="mock_start_next">다음 파트 시작하기</string>
+    <string name="mock_expired_title">자리를 비운 사이에 시험 시간이 끝났어요</string>
+    <string name="mock_expired_detail">답하지 않은 문제가 대부분이라 채점하지 않고 준비도에도 반영하지 않아요.</string>
+    <string name="mock_take_new">새 모의고사 풀기</string>
+    <string name="mock_your_essay">내 에세이</string>
+    <plurals name="mock_words">
+        <item quantity="other">%d단어</item>
+    </plurals>
+    <string name="mock_speaking">말하기</string>
+    <string name="mock_speaking_intro">각 과제에서는 실제 시험처럼 면접관과 실시간으로 대화해요. 인공지능이 면접관 역할을 맡아요. 시작할 때 과제 카드를 만드는 데 약 30초가 걸려요.</string>
+    <string name="mock_speaking_start">말하기 파트 시작하기</string>
+    <string name="mock_speaking_writing">과제 카드를 만들고 있어요…</string>
+    <plurals name="mock_speaking_left">
+        <item quantity="other">과제를 순서대로 진행하세요. 각 과제는 대화로 진행되고, 끝나면 이 화면으로 돌아와요. 과제가 %d개 남았어요.</item>
+    </plurals>
+    <string name="mock_speaking_all_done">모든 과제를 마쳤어요. 계속하려면 이 파트를 제출하세요.</string>
+    <!-- %2$s is how long the task lasts, such as "4–5 min". -->
+    <string name="mock_speaking_task">과제 %1$d · %2$s</string>
+    <!-- Status beside a speaking task the learner has finished. -->
+    <string name="mock_speaking_done">완료</string>
+    <string name="mock_speaking_start_task">시작하기</string>
+    <string name="mock_speaking_start_task_number">%1$d번 과제 시작하기</string>
+    <plurals name="mock_speaking_hand_in_left">
+        <item quantity="other">아직 끝내지 않은 과제가 %d개 있어 이 파트의 예상 점수는 나오지 않아요. 제출 후에는 이번 모의고사에서 남은 과제를 할 수 없어요.</item>
+    </plurals>
+    <string name="mock_speaking_hand_in_done">모든 과제를 마쳤어요. 제출 후에는 이 모의고사에서 과제를 다시 할 수 없어요.</string>
+    <string name="mock_keep_going">계속하기</string>
+</resources>

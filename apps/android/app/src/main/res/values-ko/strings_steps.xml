@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "steps_continue": "3a777568647294a9e1716720de0732997e7c478b59051d40d029564115da6e27",
+  "steps_progress": "6cd24f763abaa9da35f3e09059fb3bfc34f0642d1cf93f44645cbedf27f61404"
+}
+-->
+<resources>
+    <string name="steps_continue">계속하기</string>
+    <!-- Read by TalkBack for the step dots: "Step 2 of 4". -->
+    <string name="steps_progress">현재 %1$d단계, 전체 %2$d단계</string>
+</resources>

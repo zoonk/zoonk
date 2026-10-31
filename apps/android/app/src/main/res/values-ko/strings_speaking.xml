@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "speaking_eyebrow": "f4ac085cb57be38e3ec3af4d77adf397a0d8374f39bfa548f702d2c2b51aa430",
+  "speaking_facts": "04ba2a228bd08b3fdd9c0d760b373be862d253e0a8e31dc591c820dbe879f625",
+  "speaking_footer": "9a1ac92270e72eabbe5b1eb26dfd4779ee16c1bfd5057862f042b5189e4fa08f",
+  "speaking_footer_partner": "76c37c889bda2dbb1f2f73e186b6732af8c6539b3210da05c9a7e57208593642",
+  "speaking_last_at": "c6c27cf7cbc48476824a28192eabd3e0ebee24f7359a5427d2ef858ce57e6c51",
+  "speaking_last_below": "74f9c4d7437d85d5a88712740a904b0d2bd2749cc3a69d726634092e13a713d8",
+  "speaking_last_near": "38f480c8aa2cb19719dee5aeefe20524d7d4c59c90285bc0936400563d066249",
+  "speaking_last_none": "69958aeab278e1d3b9117a23bcaa7deaaf33ef5d45ef768203fdb6f66c792b09",
+  "speaking_last_result": "fdc27f9b7cb4f4293bb80fac4326589d28fe82428f917910c7b41cb879bb1038",
+  "speaking_mock_failed": "cce342ebcae41820db7cc884171e482b41cccbf488f3792ed8a30f35b96a5920",
+  "speaking_mock_ielts": "d7da98b225f68a6c7a49970b2b154339a44f136160feb64080e1f1348a403c0e",
+  "speaking_mock_opens": "3b39b9d561e2a047b431a9b142aef3b5bed1e8efc18203c34a3d808c5a6fa5e8",
+  "speaking_mock_start": "39213b9d93e7fc2bb9ac44c40ab2fbac42278a89a85e88f74a0bf7bb5db17089",
+  "speaking_mock_toefl": "b1b272409c7ccf0f9f5d0c6b4cf8e01c007e8cba6a6ddf2fbcf3a04acc9828db",
+  "speaking_no_time_day": "3d2829d2979194d3e05268f239d97c2bd693d3b7924b0cda7bcbfb8cf0cd354d",
+  "speaking_no_time_month": "2e5c3c91c70ad7ceb2ad85a4d9293b4b70d6ea00e7f36f0d5079f411e0950eda",
+  "speaking_official": "a724a18fd7b161fa199ac6c6aa6d8c0fed05a81c6bdff79b97d8f1c3eb9b39dc",
+  "speaking_official_format": "79314a370b8128897db096863c92c6a76455d707df0f266d2cb4d4f8acf21e3d",
+  "speaking_opens_when_ready": "0a5887c0cfb338065f4eb12d797fa2edad77281de4c64c375cfac201d97427d9",
+  "speaking_plus": "e5ecb893ad512a64b875f10e56afaebb14986a4bf19782d763fa9ad3a1c0f959",
+  "speaking_prep": "5cc1050dbe9c14bb62a62f1212ea2d68e920c1033f519b56775ad46361f1701a",
+  "speaking_prep_shared": "909d25a3c9bf89c393ded8a63363a42c0303d2a4fe1b4cfa2f76b32a69e76167",
+  "speaking_rated_on": "3c70d8df18b780c9b1f56d62ecf06eceea71015da6d6bfa96da3faf056e7c12c",
+  "speaking_row": "063f79c428274dba0efa3a3233377c6627964a31bfd983574413f1489fc6ef62",
+  "speaking_section": "36cfd0cff6683a7b6ff6e1bd3714af925cae12c07d6d8c760b1620ffcdfc568d",
+  "speaking_start_failed": "082aa6df1830b407c90c00b05452e141eceb6d3a292a155d9c727fead21d892e",
+  "speaking_start_task": "def55084f342c5030fd8a6fea85b76b92ed121028f07376e71c734b37ea07563",
+  "speaking_tasks": "916926f8f50f18d6edb67022832753de00ec6e88c979ea517ccecb912544dc00",
+  "speaking_title": "b390ebca85e5a162265a1cb1f9178066db38bbacc8cf5e1b6779fc27c8915a45",
+  "speaking_writing_mock": "2f9ae09e89784ef1af2d66b8fdf1ed633db5d1062d5196291c2584f0b3e36c41",
+  "speaking_writing_mock_line_1": "a11e5263a2bf6f8401d05e37796de6ffe65df6ac0f68797f0ef8d016c282f6e6",
+  "speaking_writing_mock_line_2": "f9fce58be1cd6947f720a9d859d44a8c2db8e56e1b6d0f08da8030a1c3ba4503",
+  "speaking_writing_mock_line_3": "97a0157a7480401a2312aa787d7fbfb47dc1e333b1c2149a10b67967dce0e9a9",
+  "speaking_writing_mock_line_4": "c9c05f6168e75fa726fd2d36e3688b1445c6f001b75370553116c239c3fc4b38",
+  "speaking_writing_mock_phase": "8ff5c8274def40eef32bd582be949bd16d1d3e4fd4db5c26e1439e39abbf2b02"
+}
+-->
+<resources>
+    <!-- Practicing an official language exam's speaking paper (DELE, DELF, Goethe, Cambridge) on calls with an AI in the examiner's place. -->
+    <string name="speaking_title">말하기 연습</string>
+    <string name="speaking_eyebrow">시험 형식의 말하기</string>
+    <!-- The paper's task count and how long its speaking part lasts in the exam, such as "4 tasks · 15 min in the exam". -->
+    <plurals name="speaking_facts">
+        <item quantity="other">과제 %1$d개 · 시험 시간 %2$s</item>
+    </plurals>
+    <string name="speaking_official">%1$s은(는) 공인 시험이에요. 응시할 계획이 없어도 말하기 과제를 연습해 보세요.</string>
+    <string name="speaking_tasks">과제</string>
+    <!-- The exam page's speaking section, with the paper's title beside it. -->
+    <string name="speaking_section">말하기</string>
+    <string name="speaking_plus">Plus에는 말하기 연습이 포함돼요. 말하기 시험의 모든 과제를 대화로 연습하고, 과제를 마칠 때마다 공식 평가 기준에 따른 예상 결과를 받아요.</string>
+    <string name="speaking_opens_when_ready">카드가 준비되는 대로 과제가 열려요.</string>
+    <string name="speaking_no_time_month">이 과제를 진행하기에는 이번 달 남은 대화 시간이 부족해요</string>
+    <string name="speaking_no_time_day">이 과제를 진행하기에는 오늘 남은 대화 시간이 부족해요</string>
+    <string name="speaking_start_failed">과제가 시작되지 않았어요. 잠시 후 다시 시도해 보세요.</string>
+    <string name="speaking_footer_partner">AI가 실제 면접관이나 다른 응시자를 대신해요. 연습할 때마다 새 카드가 나오고, 마친 후에는 시험의 공식 평가 기준에 따른 예상 결과를 받아요. 공식 점수는 아니에요.</string>
+    <string name="speaking_footer">AI가 실제 면접관을 대신해요. 연습할 때마다 새 카드가 나오고, 마친 후에는 시험의 공식 평가 기준에 따른 예상 결과를 받아요. 공식 점수는 아니에요.</string>
+    <string name="speaking_official_format">공식 시험 형식</string>
+    <string name="speaking_start_task">이 과제 시작하기</string>
+    <string name="speaking_last_result">지난 결과 보기</string>
+    <string name="speaking_last_none">지난 시도: 예상 점수 없음</string>
+    <!-- How many criteria were at the exam's level on the last try, such as "Last try: 3 of 4 at B2". -->
+    <string name="speaking_last_at">지난 연습: 평가 항목 %1$s/%2$s개가 %3$s 수준</string>
+    <string name="speaking_last_near">지난 시도: %1$s/%2$s개 항목에서 %3$s에 가까움</string>
+    <string name="speaking_last_below">지난 시도: %1$s 미만</string>
+    <!-- Preparation time shared by several tasks, such as "20 min to prepare tasks 1 and 2". -->
+    <string name="speaking_prep_shared">%1$s 동안 과제 %2$s 준비</string>
+    <string name="speaking_prep">%1$s 동안 준비</string>
+    <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
+    <string name="speaking_rated_on">%1$s 항목을 평가해요.</string>
+    <!-- A row into the speaking paper's practice: the exam and level, such as "DELE B2 tasks on a call". -->
+    <string name="speaking_row">대화로 %1$s 과제 연습하기</string>
+    <!-- A band is the exam's score for each criterion. -->
+    <string name="speaking_mock_ielts">면접관과 짧은 말하기 시험을 봐요. 시험 후에는 평가 항목별 예상 밴드를 확인할 수 있어요.</string>
+    <!-- A band is the exam's score for each criterion. -->
+    <string name="speaking_mock_toefl">문장을 따라 말한 뒤 면접관과 짧은 면접을 봐요. 시험 후에는 평가 항목별 예상 밴드(1~6)를 확인할 수 있어요.</string>
+    <string name="speaking_mock_start">모의고사 시작하기</string>
+    <string name="speaking_mock_opens">모의고사가 준비되면 바로 열려요.</string>
+    <string name="speaking_mock_failed">모의고사가 시작되지 않았어요. 잠시 후에 다시 시도해 보세요.</string>
+    <string name="speaking_writing_mock">모의고사를 만들고 있어요</string>
+    <string name="speaking_writing_mock_phase">면접관의 대본을 만들고 있어요</string>
+    <string name="speaking_writing_mock_line_1">면접관을 고르고 있어요…</string>
+    <string name="speaking_writing_mock_line_2">면접관이 할 질문을 만들고 있어요…</string>
+    <string name="speaking_writing_mock_line_3">전체 파트를 약 5분 분량으로 맞추고 있어요…</string>
+    <string name="speaking_writing_mock_line_4">도움이 될 표현을 더하고 있어요…</string>
+</resources>
