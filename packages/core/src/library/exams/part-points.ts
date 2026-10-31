@@ -1,4 +1,5 @@
-import { type MarkingRow, type ScoredPart } from "./blueprint-contract";
+import { type ExamStructure, type MarkingRow, type ScoredPart } from "./blueprint-contract";
+import { getPartQuestions } from "./subject-questions";
 
 type Row = Pick<MarkingRow, "part" | "points" | "questions">;
 
@@ -56,4 +57,18 @@ export function getPartMaxPoints({
 
   const points = getPointsPerQuestion(pickPartRows({ marking, names: [part.name] }));
   return part.questions !== null && points !== null ? part.questions * points : null;
+}
+
+export function getPartPointsPerQuestion({
+  name,
+  structure,
+}: {
+  name: string;
+  structure: ExamStructure;
+}): number | null {
+  const scoring = structure.mock?.scoring;
+  const part = scoring?.parts?.find((item) => item.name === name);
+  const questions = getPartQuestions({ name, structure });
+  const max = part ? getPartMaxPoints({ marking: scoring?.marking ?? [], part }) : null;
+  return max !== null && questions ? max / questions : null;
 }

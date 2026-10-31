@@ -628,7 +628,7 @@ describe("selection marking", () => {
 });
 
 describe("conflicting whole-paper evidence", () => {
-  it("does not let a question count override a known point maximum", () => {
+  it("derives each item's points from a paper maximum and count", () => {
     const structure = examStructure({
       scoring: {
         parts: [
@@ -650,7 +650,7 @@ describe("conflicting whole-paper evidence", () => {
       scope: "full",
     });
 
-    expect(result.parts[0]).toMatchObject({ met: null, projected: 20 });
+    expect(result.parts[0]).toMatchObject({ asked: 20, earned: 20, met: true, projected: null });
   });
 
   it("leaves the total unjudged when an unlisted paper has no bank questions", () => {

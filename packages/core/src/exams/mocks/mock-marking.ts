@@ -1,7 +1,11 @@
 import { type ItemFormat } from "@zoonk/db";
 import { apportion } from "@zoonk/utils/apportion";
 import { type ExamStructure, type MarkingRow } from "../../library/exams/blueprint-contract";
-import { getPartMaxPoints, getPointsPerQuestion } from "../../library/exams/part-points";
+import {
+  getPartMaxPoints,
+  getPartPointsPerQuestion,
+  getPointsPerQuestion,
+} from "../../library/exams/part-points";
 import { getMarkingPenalty } from "../../library/exams/marking-penalty";
 import { getWrongPenalty } from "../scoring/mock-scoring";
 import { getChoiceFormatKey } from "./mock-format-mix";
@@ -158,7 +162,10 @@ function markItems({
         item.item.itemId,
         {
           part: item.part,
-          points: row?.points ?? 1,
+          points:
+            row?.points ??
+            (item.part ? getPartPointsPerQuestion({ name: item.part, structure }) : null) ??
+            1,
           wrongPenalty: (row ? getMarkingPenalty(row) : null) ?? wrongPenalty,
         },
       ]),

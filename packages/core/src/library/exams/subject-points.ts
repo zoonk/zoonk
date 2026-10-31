@@ -1,27 +1,17 @@
 import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { type ExamStructure } from "./blueprint-contract";
-import { getPartMaxPoints, getPointsPerQuestion, pickPartRows } from "./part-points";
-import { getPartQuestions, getPlannedSubjectQuestions } from "./subject-questions";
+import {
+  getPartMaxPoints,
+  getPartPointsPerQuestion,
+  getPointsPerQuestion,
+  pickPartRows,
+} from "./part-points";
+import { getPlannedSubjectQuestions } from "./subject-questions";
 
 type Subject = ExamStructure["subjects"][number];
 
 function getAveragePoints(rows: readonly { points: number }[]): number {
   return rows.reduce((sum, row) => sum + row.points, 0) / Math.max(1, rows.length);
-}
-
-function getGroupPointsPerQuestion({
-  group,
-  structure,
-}: {
-  group: string;
-  structure: ExamStructure;
-}): number | null {
-  const scoring = structure.mock?.scoring;
-  const part = scoring?.parts?.find((item) => item.name === group);
-  const questions = getPartQuestions({ name: group, structure });
-  const max = part ? getPartMaxPoints({ marking: scoring?.marking ?? [], part }) : null;
-
-  return max !== null && questions ? max / questions : null;
 }
 
 function getSubjectPointsPerQuestion({
@@ -36,7 +26,7 @@ function getSubjectPointsPerQuestion({
   const group = subject.group ?? null;
 
   const fromGroup =
-    own.length === 0 && group ? getGroupPointsPerQuestion({ group, structure }) : null;
+    own.length === 0 && group ? getPartPointsPerQuestion({ name: group, structure }) : null;
 
   if (fromGroup !== null) {
     return fromGroup;
