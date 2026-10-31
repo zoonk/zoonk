@@ -2438,7 +2438,7 @@ msgstr "{hit} en el {share} de las repeticiones. La probabilidad exacta es {exac
 #: src/activities/random-simulation/chance-simulation.tsx
 msgctxt "0xVUIe"
 msgid "{runs}: {hit} came up in {share} of them."
-msgstr "{runs}: {hit} en el {share} de ellas."
+msgstr "{runs}: salió {hit} en el {share} de los casos."
 
 #: src/activities/random-simulation/sampling-expected-spread.tsx
 msgctxt "FwKyO_"
@@ -2784,12 +2784,12 @@ msgstr "Tu primera elección: {choice}"
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "QexIf7"
 msgid "{year} BCE"
-msgstr "{year} AEC"
+msgstr "{year} a. C."
 
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "1UJq-y"
 msgid "{year} CE"
-msgstr "{year} EC"
+msgstr "{year} d. C."
 
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "sCg6O3"
@@ -3273,7 +3273,7 @@ msgstr "Resumen de la lección"
 #: src/lesson/controls/summary-sheet.tsx
 msgctxt "NYTGIb"
 msgid "Got it"
-msgstr "Aceptar"
+msgstr "Entendido"
 
 #: src/lesson/feedback/explain-answer.tsx
 msgctxt "OON40X"
@@ -3518,7 +3518,7 @@ msgstr "Hecho con IA. Puede contener errores."
 #: src/lesson/lesson-screen-menu.tsx
 msgctxt "JfMPi0"
 msgid "I already know this"
-msgstr "Indicar que ya lo sé"
+msgstr "Ya lo sé"
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "qzpeai"
