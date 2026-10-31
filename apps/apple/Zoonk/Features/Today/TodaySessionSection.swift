@@ -606,7 +606,7 @@ private struct FoldRow: View {
 
         Spacer()
 
-        if let minutes, !isOpen {
+        if let minutes, minutes > 0, !isOpen {
           Text(studyDuration(minutes: minutes))
             .font(.footnote.monospacedDigit())
         }
