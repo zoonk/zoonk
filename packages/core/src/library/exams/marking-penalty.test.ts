@@ -16,8 +16,19 @@ describe(normalizePenalty, () => {
     [2.45, 2.45],
     [0.249, 0.249],
     [0.49, 0.49],
+    [1.33, 1 + 1 / 3],
+    [1.67, 1 + 2 / 3],
+    [2.67, 2 + 2 / 3],
+    [0.6667, 2 / 3],
+    [0.09, 0.09],
+    [0.12, 0.12],
+    [0.23, 0.23],
+    [0.45, 0.45],
+    [0.59, 0.59],
+    [0.3301, 0.3301],
+    [0.6701, 0.6701],
   ])(
-    "normalizes %s without changing deductions beyond the fraction tolerance",
+    "normalizes %s only when its stated digits match a unique rounded or truncated fraction",
     (input, expected) => {
       expect(normalizePenalty(input)).toBe(expected);
     },

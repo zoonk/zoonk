@@ -7,15 +7,31 @@ const REPEATING_FRACTIONS = Object.values(REPEATING_DENOMINATORS).flatMap((denom
   ),
 );
 
-const FRACTION_TOLERANCE = 0.01;
-
 export function normalizePenalty(value: number): number {
-  const nearest =
-    REPEATING_FRACTIONS.toSorted(
-      (first, second) => Math.abs(first - value) - Math.abs(second - value),
-    )[0] ?? value;
+  const digits = value.toString().split(".")[1];
 
-  return Math.abs(nearest - value) <= FRACTION_TOLERANCE ? nearest : value;
+  if (!digits) {
+    return value;
+  }
+
+  const precision = 10 ** digits.length;
+  const stated = Number(digits);
+
+  const matches = [
+    ...new Set(
+      REPEATING_FRACTIONS.filter(
+        (fraction) =>
+          Math.round(fraction * precision) === stated ||
+          Math.trunc(fraction * precision) === stated,
+      ),
+    ),
+  ];
+
+  const [fraction, ...others] = matches;
+
+  return fraction !== undefined && others.length === 0
+    ? Math.trunc(value) + Math.sign(value) * fraction
+    : value;
 }
 
 export function getMarkingPenalty({

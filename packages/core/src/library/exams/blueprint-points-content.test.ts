@@ -330,6 +330,7 @@ describe("fractional deductions at the minimum", () => {
     { lost: 0.6667, minimum: 40, points: 2, right: 25, wrong: 15 },
     { lost: 0.67, minimum: 40, points: 2, right: 25, wrong: 15 },
     { lost: 0.666667, minimum: 80, points: 2, right: 45, wrong: 15 },
+    { lost: 2.67, minimum: 140, points: 4, right: 45, wrong: 15 },
   ])(
     "keeps the exact boundary with $points points and a $lost deduction",
     ({ points, right, wrong, lost, minimum }) => {
@@ -387,4 +388,13 @@ describe("stated decimal deductions", () => {
     const scoring = readScoring({ scoring: { marking: [{ ...ROW_P1, ...row }] } });
     expect(scoring?.marking?.[0]?.wrongPoints).toBe(row.wrongPoints);
   });
+});
+
+describe("exact exam-wide deduction digits", () => {
+  it.each([0.09, 0.12, 0.23, 0.45, 0.59, 0.4, 0.21])(
+    "keeps the stated %s exam-wide share without a matching fraction",
+    (wrongPenalty) => {
+      expect(readScoring({ scoring: { wrongPenalty } })?.wrongPenalty).toBe(wrongPenalty);
+    },
+  );
 });
