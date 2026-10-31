@@ -11,20 +11,23 @@ export type LineOffsets = Readonly<Record<string, number>>;
 
 export type LineSlide = { at: (offset: number) => Point; offsets: number[]; range: SnapRange };
 
+export type ChartDomain = { max: Point; min: Point };
+
+type NamedLine = Line & { id: string };
+
 type Direction = "down" | "left" | "right" | "up";
 
 const HEADROOM = 1.25;
-const MIN_SPAN = 1;
 const STEPS_PER_SHIFT = 4;
 const RELATIVE_SLACK = 1e-9;
 const HANDLE_SHARE = 0.82;
 const HANDLE_SHARE_STEPS = 100;
-const ORIGIN: Point = { x: 0, y: 0 };
 
 // Shares of the chart that fit a whole handle, and its gap from a crossing dot, on the smallest
 // plot (192px), so a slide never depends on the window's size.
 const HANDLE_MARGIN = 0.08;
 const CROSSING_GAP = 0.135;
+const KEPT_MARGIN = HANDLE_MARGIN * 2;
 
 const HANDLE_SHARES = Array.from(
   { length: HANDLE_SHARE_STEPS + 1 },
@@ -74,33 +77,56 @@ function shiftRange(amount: number): SnapRange {
   return { max: amount * 2, min: -amount * 2, step: amount / STEPS_PER_SHIFT };
 }
 
-export function chartDomain({
+function lowerBound(lowest: number, upper: number): number {
+  return Math.min(0, (lowest - KEPT_MARGIN * upper) / (1 - KEPT_MARGIN));
+}
+
+/**
+ * The chart's span: from the origin to past every crossing the learner can reach, reaching below
+ * zero only as far as it takes for the resting and the right crossings to sit inside the handles'
+ * margin, with room to spare.
+ */
+function chartDomain({
   amount,
   axis,
   lines,
+  real,
 }: {
   amount: number;
   axis: ShiftAxis;
-  lines: readonly [Line, Line];
-}): Point {
+  lines: readonly [NamedLine, NamedLine];
+  real: LineOffsets;
+}): ChartDomain {
   const { max } = shiftRange(amount);
-  const offsets = [-max, 0, max];
   const [first, second] = lines;
 
-  const points = offsets.flatMap((offset) => [
+  const reachable = [-max, 0, max].flatMap((offset) => [
     crossingPoint(movedLine(first, offset, axis), second),
     crossingPoint(first, movedLine(second, offset, axis)),
   ]);
 
-  const x = Math.max(...points.map((point) => point.x), MIN_SPAN);
+  const kept = [
+    crossingPoint(first, second),
+    crossingPoint(
+      movedLine(first, real[first.id] ?? 0, axis),
+      movedLine(second, real[second.id] ?? 0, axis),
+    ),
+  ];
 
-  const y = Math.max(
-    ...points.map((point) => point.y),
-    ...lines.map((line) => line.intercept),
-    MIN_SPAN,
-  );
+  const upper = {
+    x: Math.max(...reachable.map((point) => point.x)) * HEADROOM,
+    y:
+      Math.max(...reachable.map((point) => point.y), ...lines.map((line) => line.intercept)) *
+      HEADROOM,
+  };
 
-  return { x: x * HEADROOM, y: y * HEADROOM };
+  return {
+    max: upper,
+    min: {
+      x: lowerBound(Math.min(...kept.map((point) => point.x)), upper.x),
+      y: lowerBound(Math.min(...kept.map((point) => point.y)), upper.y),
+    },
+  };
 }
 
 function spanInside(line: Line, low: Point, high: Point): { from: number; to: number } | null {
@@ -118,9 +144,29 @@ function spanInside(line: Line, low: Point, high: Point): { from: number; to: nu
   return from <= to ? { from, to } : null;
 }
 
-export function visibleSegment(line: Line, domain: Point): { from: Point; to: Point } {
-  const { from, to } = spanInside(line, ORIGIN, domain) ?? { from: 0, to: 0 };
+export function visibleSegment(line: Line, domain: ChartDomain): { from: Point; to: Point } {
+  const { from, to } = spanInside(line, domain.min, domain.max) ?? { from: 0, to: 0 };
   return { from: { x: from, y: yAt(line, from) }, to: { x: to, y: yAt(line, to) } };
+}
+
+/**
+ * Where a saved answer puts its line again, since it keeps only the direction: as far as the real
+ * move, or the furthest allowed stop that way.
+ */
+export function restoredOffset({
+  amount,
+  direction,
+  range,
+}: {
+  amount: number;
+  direction: Direction;
+  range: SnapRange;
+}): number {
+  return clamp(
+    direction === "right" || direction === "up" ? amount : -amount,
+    range.min,
+    range.max,
+  );
 }
 
 export function changeDirection(before: number, after: number): "down" | "same" | "up" {
@@ -139,7 +185,7 @@ export function changeDirection(before: number, after: number): "down" | "same" 
  * at the point nearest its resting spot inside that inset. It rests 82% along the line, or at
  * the nearest point to that clear of the resting crossing, kept inside the inset.
  */
-export function lineSlide({
+function lineSlide({
   amount,
   axis,
   crossing: restingCrossing,
@@ -149,11 +195,13 @@ export function lineSlide({
   amount: number;
   axis: ShiftAxis;
   crossing: Point;
-  domain: Point;
+  domain: ChartDomain;
   line: Line;
 }): LineSlide {
-  const low = { x: domain.x * HANDLE_MARGIN, y: domain.y * HANDLE_MARGIN };
-  const high = { x: domain.x - low.x, y: domain.y - low.y };
+  const size = { x: domain.max.x - domain.min.x, y: domain.max.y - domain.min.y };
+  const margin = { x: size.x * HANDLE_MARGIN, y: size.y * HANDLE_MARGIN };
+  const low = { x: domain.min.x + margin.x, y: domain.min.y + margin.y };
+  const high = { x: domain.max.x - margin.x, y: domain.max.y - margin.y };
   const full = shiftRange(amount);
   const count = Math.round((full.max - full.min) / full.step) + 1;
 
@@ -161,14 +209,14 @@ export function lineSlide({
     snapToStep(full.min + index * full.step, full),
   ).filter((offset) => spanInside(movedLine(line, offset, axis), low, high));
 
-  const visible = spanInside(line, ORIGIN, domain) ?? { from: 0, to: 0 };
+  const visible = spanInside(line, domain.min, domain.max) ?? { from: 0, to: 0 };
   const resting = spanInside(line, low, high) ?? visible;
 
   const along = (share: number) =>
     clamp(visible.from + (visible.to - visible.from) * share, resting.from, resting.to);
 
   const isClear = (x: number) =>
-    Math.hypot((x - restingCrossing.x) / domain.x, (yAt(line, x) - restingCrossing.y) / domain.y) >=
+    Math.hypot((x - restingCrossing.x) / size.x, (yAt(line, x) - restingCrossing.y) / size.y) >=
     CROSSING_GAP;
 
   const homeX = along(HANDLE_SHARES.find((share) => isClear(along(share))) ?? HANDLE_SHARE);
@@ -185,5 +233,28 @@ export function lineSlide({
     at,
     offsets,
     range: { max: Math.max(...offsets), min: Math.min(...offsets), step: full.step },
+  };
+}
+
+export function chartSlides<TLine extends NamedLine>({
+  amount,
+  axis,
+  lines,
+  real,
+}: {
+  amount: number;
+  axis: ShiftAxis;
+  lines: readonly [TLine, TLine];
+  real: LineOffsets;
+}): { domain: ChartDomain; slides: { line: TLine; slide: LineSlide }[] } {
+  const domain = chartDomain({ amount, axis, lines, real });
+  const rest = crossingPoint(lines[0], lines[1]);
+
+  return {
+    domain,
+    slides: lines.map((line) => ({
+      line,
+      slide: lineSlide({ amount, axis, crossing: rest, domain, line }),
+    })),
   };
 }

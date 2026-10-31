@@ -6,7 +6,7 @@ import { useEffectEvent, useId, useLayoutEffect, useRef } from "react";
 import { usePlotScales } from "../_components/activity-plot";
 import { DRAWING_LABEL_HALO } from "../_utils/drawing-label";
 import { type LabelBox, type LabelSize } from "./line-crossing-labels";
-import { type Line, type Point, visibleSegment } from "./line-crossing-model";
+import { type ChartDomain, type Line, type Point, visibleSegment } from "./line-crossing-model";
 
 const DOT_RADIUS = 6;
 const ARROW_OFFSET = 10;
@@ -22,7 +22,7 @@ export function LineMark({
   line,
 }: {
   className: string;
-  domain: Point;
+  domain: ChartDomain;
   isDashed?: boolean;
   line: Line;
 }) {

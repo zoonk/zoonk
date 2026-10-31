@@ -5,12 +5,12 @@ import {
 } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import {
+  type ChartDomain,
   type Point,
   changeDirection,
-  chartDomain,
+  chartSlides,
   crossingPoint,
   lineShiftAnswer,
-  lineSlide,
   moveLine,
   movedLine,
   shiftAxis,
@@ -28,7 +28,20 @@ const CROSSING_REACH = 7;
 const { breakEven } = engineModeFixtures.lineCrossing;
 const supplyDemand = activityContentFixtures.lineCrossing.fields;
 
-const CHARTS = [
+type Fields = ReturnType<typeof lineCrossingTemplate.fields.parse>;
+
+const DIRECTIONS = ["left", "right", "up", "down"] as const;
+const SCALES = [1e-4, 1, 1e6];
+const SHIFT_SHARES = [0.001, 0.5, 0.9, 3];
+
+const SHAPES = [
+  { lines: [supply, demand], name: "supply and demand" },
+  { lines: [cost, revenue], name: "break-even" },
+  { lines: [{ intercept: 1000, slope: 0 }, revenue], name: "flat cost" },
+  { lines: [supply, { intercept: 2, slope: 0.4999 }], name: "near-parallel" },
+];
+
+const NAMED = [
   { fields: supplyDemand, name: "supply and demand" },
   { fields: breakEven.fields, name: "break-even" },
   {
@@ -49,20 +62,115 @@ const CHARTS = [
     fields: { ...supplyDemand, shift: { amount: 2, direction: "down", line: "demand" } },
     name: "demand moved down",
   },
-].map(({ fields, name }) => ({ fields: lineCrossingTemplate.fields.parse(fields), name }));
+  {
+    fields: {
+      ...breakEven.fields,
+      lines: [
+        { id: "cost", intercept: 0.01, label: "Cost", slope: 0 },
+        { id: "revenue", intercept: 0, label: "Revenue", slope: 1 },
+      ],
+      shift: { amount: 0.001, direction: "up", line: "cost" },
+    },
+    name: "a tiny cost moved up a little",
+  },
+  {
+    fields: {
+      ...breakEven.fields,
+      lines: [
+        { id: "cost", intercept: 1000, label: "Cost", slope: 0 },
+        { id: "revenue", intercept: 0, label: "Revenue", slope: 15 },
+      ],
+      shift: { amount: 900, direction: "down", line: "cost" },
+    },
+    name: "a flat cost moved down near zero",
+  },
+];
 
-function onTheSmallestPlot(point: Point, domain: Point): Point {
-  return { x: (point.x / domain.x) * SMALLEST_PLOT, y: (point.y / domain.y) * SMALLEST_PLOT };
+const GENERATED = SHAPES.flatMap(({ lines, name }) =>
+  SCALES.flatMap((scale) => {
+    const scaled = lines.map((line, index) => ({
+      id: `line${index + 1}`,
+      intercept: line.intercept * scale,
+      label: `Line ${index + 1}`,
+      slope: line.slope,
+    }));
+
+    const [first, second] = scaled;
+    const rest = first && second ? crossingPoint(first, second) : { x: 1, y: 1 };
+
+    return scaled.flatMap((line) =>
+      DIRECTIONS.flatMap((direction) =>
+        SHIFT_SHARES.map((share) => ({
+          fields: {
+            ...supplyDemand,
+            lines: scaled,
+            shift: {
+              amount: share * (shiftAxis(direction) === "horizontal" ? rest.x : rest.y),
+              direction,
+              line: line.id,
+            },
+          },
+          name: `${name} at ${scale}×, ${line.id} ${direction} ${share}×`,
+        })),
+      ),
+    );
+  }),
+);
+
+const CHARTS: { fields: Fields; name: string }[] = [...NAMED, ...GENERATED]
+  .filter(({ fields }) => lineCrossingTemplate.verifyFields(fields).length === 0)
+  .map(({ fields, name }) => ({ fields: lineCrossingTemplate.fields.parse(fields), name }));
+
+function onTheSmallestPlot(point: Point, { max, min }: ChartDomain): Point {
+  return {
+    x: ((point.x - min.x) / (max.x - min.x)) * SMALLEST_PLOT,
+    y: ((point.y - min.y) / (max.y - min.y)) * SMALLEST_PLOT,
+  };
 }
 
-function isOnTheSmallestPlot(point: Point, domain: Point): boolean {
+function isOnTheSmallestPlot(point: Point, domain: ChartDomain): boolean {
   const { x, y } = onTheSmallestPlot(point, domain);
   return [x, y].every((side) => side >= HANDLE_REACH && side <= SMALLEST_PLOT - HANDLE_REACH);
 }
 
-function gapOnTheSmallestPlot(point: Point, other: Point, domain: Point): number {
+function gapOnTheSmallestPlot(point: Point, other: Point, domain: ChartDomain): number {
   const [first, second] = [onTheSmallestPlot(point, domain), onTheSmallestPlot(other, domain)];
   return Math.hypot(first.x - second.x, first.y - second.y);
+}
+
+function problemsIn({ fields, name }: { fields: Fields; name: string }): string[] {
+  const { amount, direction } = fields.shift;
+  const axis = shiftAxis(direction);
+  const [first, second] = fields.lines;
+
+  if (!first || !second) {
+    return [`${name} has no two lines`];
+  }
+
+  const real = moveLine(
+    fields.shift.line,
+    direction === "right" || direction === "up" ? amount : -amount,
+  );
+
+  const { domain, slides } = chartSlides({ amount, axis, lines: [first, second], real });
+  const crossing = crossingPoint(first, second);
+
+  return slides.flatMap(({ line, slide: { at, offsets } }) => {
+    const realOffset = real[line.id] ?? 0;
+    const where = (offset: number) => `${name}: ${line.label} at ${offset}`;
+
+    return [
+      ...offsets
+        .filter((offset) => !isOnTheSmallestPlot(at(offset), domain))
+        .map((offset) => `${where(offset)} leaves the chart at ${JSON.stringify(at(offset))}`),
+      ...(gapOnTheSmallestPlot(at(0), crossing, domain) < HANDLE_REACH + CROSSING_REACH
+        ? [`${where(0)} covers the crossing`]
+        : []),
+      ...(offsets.some((offset) => Math.abs(offset - realOffset) <= amount * 1e-9)
+        ? []
+        : [`${where(realOffset)} is out of reach`]),
+    ];
+  });
 }
 
 describe(movedLine, () => {
@@ -116,72 +224,59 @@ describe(lineShiftAnswer, () => {
   });
 });
 
-describe(chartDomain, () => {
+describe("chart domain", () => {
   it("fits every crossing the learner can reach", () => {
-    const domain = chartDomain({ amount: 2, axis: "horizontal", lines: [supply, demand] });
+    const { domain } = chartSlides({
+      amount: 2,
+      axis: "horizontal",
+      lines: [
+        { ...supply, id: "supply" },
+        { ...demand, id: "demand" },
+      ],
+      real: moveLine("supply", -2),
+    });
+
     const farthest = crossingPoint(supply, movedLine(demand, 4, "horizontal"));
 
-    expect(domain.x).toBeGreaterThan(farthest.x);
-    expect(domain.y).toBeGreaterThan(farthest.y);
+    expect(domain.max.x).toBeGreaterThan(farthest.x);
+    expect(domain.max.y).toBeGreaterThan(farthest.y);
   });
 
   it("fits a line moved up as far as it goes", () => {
-    const domain = chartDomain({ amount: 500, axis: "vertical", lines: [cost, revenue] });
+    const { domain } = chartSlides({
+      amount: 500,
+      axis: "vertical",
+      lines: [
+        { ...cost, id: "cost" },
+        { ...revenue, id: "revenue" },
+      ],
+      real: moveLine("cost", 500),
+    });
+
     const farthest = crossingPoint(movedLine(cost, 1000, "vertical"), revenue);
 
-    expect(domain.x).toBeGreaterThan(farthest.x);
-    expect(domain.y).toBeGreaterThan(farthest.y);
+    expect(domain.max.x).toBeGreaterThan(farthest.x);
+    expect(domain.max.y).toBeGreaterThan(farthest.y);
   });
 });
 
-describe(lineSlide, () => {
+describe(chartSlides, () => {
   it("keeps every handle on the chart, off the crossing at rest, and the right move in reach", () => {
-    const problems = CHARTS.flatMap(({ fields, name }) => {
-      const { amount, direction } = fields.shift;
-      const axis = shiftAxis(direction);
-      const [first, second] = fields.lines;
-
-      if (!first || !second) {
-        return [`${name} has no two lines`];
-      }
-
-      const domain = chartDomain({ amount, axis, lines: [first, second] });
-      const crossing = crossingPoint(first, second);
-      const real = direction === "right" || direction === "up" ? amount : -amount;
-
-      return fields.lines.flatMap((line) => {
-        const { at, offsets } = lineSlide({ amount, axis, crossing, domain, line });
-        const where = (offset: number) => `${name}: ${line.label} at ${offset}`;
-
-        return [
-          ...offsets
-            .filter((offset) => !isOnTheSmallestPlot(at(offset), domain))
-            .map((offset) => `${where(offset)} leaves the chart at ${JSON.stringify(at(offset))}`),
-          ...(gapOnTheSmallestPlot(at(0), crossing, domain) < HANDLE_REACH + CROSSING_REACH
-            ? [`${where(0)} covers the crossing`]
-            : []),
-          ...(line.id === fields.shift.line && !offsets.includes(real)
-            ? [`${where(real)} is out of reach`]
-            : []),
-        ];
-      });
-    });
-
-    expect(problems).toStrictEqual([]);
+    expect(CHARTS.length).toBeGreaterThan(NAMED.length);
+    expect(CHARTS.flatMap((chart) => problemsIn(chart))).toStrictEqual([]);
   });
 });
 
 describe(visibleSegment, () => {
   it("keeps a line inside the chart, and draws a flat line across it", () => {
-    expect(visibleSegment(demand, { x: 20, y: 20 })).toStrictEqual({
+    expect(visibleSegment(demand, { max: { x: 20, y: 20 }, min: { x: 0, y: 0 } })).toStrictEqual({
       from: { x: 0, y: 10 },
       to: { x: 10, y: 0 },
     });
 
-    expect(visibleSegment({ intercept: 3, slope: 0 }, { x: 8, y: 5 })).toStrictEqual({
-      from: { x: 0, y: 3 },
-      to: { x: 8, y: 3 },
-    });
+    expect(
+      visibleSegment({ intercept: 3, slope: 0 }, { max: { x: 8, y: 5 }, min: { x: 0, y: 0 } }),
+    ).toStrictEqual({ from: { x: 0, y: 3 }, to: { x: 8, y: 3 } });
   });
 });
 

@@ -16,14 +16,14 @@ import {
   changeArrowBoxes,
 } from "./line-crossing-marks";
 import {
+  type ChartDomain,
   type Line,
   type LineOffsets,
   type LineSlide,
   type Point,
   type ShiftAxis,
-  chartDomain,
+  chartSlides,
   crossingPoint,
-  lineSlide,
   movedLine,
   visibleSegment,
 } from "./line-crossing-model";
@@ -51,7 +51,7 @@ function LineLabels({
   answerLine: Line | null;
   axis: ShiftAxis;
   crossings: { after: Point; before: Point | null };
-  domain: Point;
+  domain: ChartDomain;
   lines: readonly [ChartLine, ChartLine];
   offsets: LineOffsets;
   slides: readonly LineAndSlide[];
@@ -155,6 +155,7 @@ export function LineCrossingChart({
   lines,
   offsets,
   onMove,
+  real,
   xLabel,
   yLabel,
 }: {
@@ -166,11 +167,12 @@ export function LineCrossingChart({
   lines: readonly [ChartLine, ChartLine];
   offsets: LineOffsets;
   onMove: (id: string, offset: number) => void;
+  real: LineOffsets;
   xLabel: string;
   yLabel: string;
 }) {
   const clipId = useId();
-  const domain = chartDomain({ amount, axis, lines });
+  const { domain, slides } = chartSlides({ amount, axis, lines, real });
   const offsetOf = (line: ChartLine) => offsets[line.id] ?? 0;
   const shown = lines.map((line) => movedLine(line, offsetOf(line), axis));
   const moved = lines.filter((line) => offsetOf(line) !== 0);
@@ -178,17 +180,12 @@ export function LineCrossingChart({
   const [first, second] = shown;
   const after = first && second ? crossingPoint(first, second) : before;
 
-  const slides = lines.map((line) => ({
-    line,
-    slide: lineSlide({ amount, axis, crossing: before, domain, line }),
-  }));
-
   return (
     <ActivityPlot
       height={PLOT_HEIGHT}
       padding={PADDING}
-      xDomain={[0, domain.x]}
-      yDomain={[0, domain.y]}
+      xDomain={[domain.min.x, domain.max.x]}
+      yDomain={[domain.min.y, domain.max.y]}
     >
       <ClipArea id={clipId} />
       <Axes xLabel={xLabel} yLabel={yLabel} />

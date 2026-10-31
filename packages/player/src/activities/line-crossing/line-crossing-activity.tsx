@@ -10,10 +10,12 @@ import {
   type LineOffsets,
   type ShiftAxis,
   changeDirection,
+  chartSlides,
   crossingPoint,
   lineShiftAnswer,
   moveLine,
   movedLine,
+  restoredOffset,
   shiftAxis,
 } from "./line-crossing-model";
 import {
@@ -35,6 +37,34 @@ function realOffset(fields: Fields): number {
   return direction === "right" || direction === "up" ? amount : -amount;
 }
 
+function realMove(fields: Fields): LineOffsets {
+  return moveLine(fields.shift.line, realOffset(fields));
+}
+
+function restoredOffsets(fields: Fields, answer: LineCrossingProps["answer"]): LineOffsets {
+  const [first, second] = fields.lines;
+
+  if (answer?.kind !== "curveShift" || !first || !second) {
+    return NOT_MOVED;
+  }
+
+  const { amount, direction } = fields.shift;
+  const lines = [first, second] as const;
+
+  const { slides } = chartSlides({
+    amount,
+    axis: shiftAxis(direction),
+    lines,
+    real: realMove(fields),
+  });
+
+  const range = slides.find(({ line }) => line.id === answer.curve)?.slide.range;
+
+  return range
+    ? moveLine(answer.curve, restoredOffset({ amount, direction: answer.direction, range }))
+    : NOT_MOVED;
+}
+
 function sameOffsets(first: LineOffsets, second: LineOffsets): boolean {
   const ids = new Set([...Object.keys(first), ...Object.keys(second)]);
   return [...ids].every((id) => (first[id] ?? 0) === (second[id] ?? 0));
@@ -46,6 +76,7 @@ function crossingAfter(fields: Fields, offsets: LineOffsets, axis: ShiftAxis) {
 }
 
 export function LineCrossingActivity({
+  answer,
   content,
   labelId,
   onAnswerChange,
@@ -54,7 +85,7 @@ export function LineCrossingActivity({
   const changeWords = useChangeWords();
   const lineWords = useLineWords();
   const { check, fields } = content;
-  const [offsets, setOffsets] = useState<LineOffsets>(NOT_MOVED);
+  const [offsets, setOffsets] = useState(() => restoredOffsets(fields, answer));
   const isChecked = phase === "checked";
   const axis = shiftAxis(fields.shift.direction);
   const [first, second] = fields.lines;
@@ -68,7 +99,7 @@ export function LineCrossingActivity({
   const moved = !sameOffsets(offsets, NOT_MOVED);
   const yChange = changeDirection(before.y, after.y);
   const xChange = changeDirection(before.x, after.x);
-  const real = moveLine(fields.shift.line, realOffset(fields));
+  const real = realMove(fields);
   const readsX = check.kind === "numeric" && check.output === "x";
   const showsAnswer = isChecked && !sameOffsets(offsets, real);
   const shifted = fields.lines.find((line) => line.id === fields.shift.line);
@@ -108,6 +139,7 @@ export function LineCrossingActivity({
         lines={[first, second]}
         offsets={offsets}
         onMove={handleMove}
+        real={real}
         xLabel={fields.xLabel}
         yLabel={fields.yLabel}
       />

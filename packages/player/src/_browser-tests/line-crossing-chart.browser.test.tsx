@@ -15,6 +15,7 @@ import { atViewport } from "../_test-utils/browser-viewport";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { previewEntries } from "../preview/preview-catalog";
 import { buildLesson } from "../preview/preview-lesson";
+import { activityStep, explanationStep } from "../preview/preview-steps";
 
 const PHONE = { height: 812, width: 375 };
 const WIDE = { height: 812, width: 480 };
@@ -33,6 +34,8 @@ const flatCost = {
     ],
   },
 };
+
+const flatCostToMove = { ...flatCost, check: supplyDemand.check };
 
 const supplyDemandUpAndDown = {
   ...supplyDemand,
@@ -127,8 +130,18 @@ function plotBounds(): Bounds {
   };
 }
 
-function handlesOutsideTheChart(names: readonly string[]): string[] {
-  const plot = plotBounds();
+function chartBounds(): Bounds {
+  const chart = document.querySelector("figure svg")?.getBoundingClientRect();
+
+  if (!chart) {
+    throw new Error("No chart drawn");
+  }
+
+  return chart;
+}
+
+function handlesOutsideTheChart(names: readonly string[], bounds: () => Bounds): string[] {
+  const plot = bounds();
 
   return names.filter((name) => {
     const ring = page
@@ -147,7 +160,10 @@ function handlesOutsideTheChart(names: readonly string[]): string[] {
   });
 }
 
-async function handlesOutsideAtEachEnd(names: readonly string[]): Promise<string[]> {
+async function handlesOutsideAtEachEnd(
+  names: readonly string[],
+  bounds: () => Bounds = plotBounds,
+): Promise<string[]> {
   const outside: string[] = [];
 
   for (const name of names) {
@@ -156,7 +172,9 @@ async function handlesOutsideAtEachEnd(names: readonly string[]): Promise<string
       await pressOnSlider(`Move the line ${name}`, key, 1);
 
       outside.push(
-        ...handlesOutsideTheChart(names).map((handle) => `${handle} with ${name} at ${key}`),
+        ...handlesOutsideTheChart(names, bounds).map(
+          (handle) => `${handle} with ${name} at ${key}`,
+        ),
       );
     }
   }
@@ -334,7 +352,7 @@ describe("line crossing chart", () => {
         Number(supply.getAttribute("aria-valuemax")),
       );
 
-      expect(handlesOutsideTheChart(["Supply", "Demand"])).toStrictEqual([]);
+      expect(handlesOutsideTheChart(["Supply", "Demand"], plotBounds)).toStrictEqual([]);
     });
   });
 
@@ -348,5 +366,69 @@ describe("line crossing chart", () => {
         HALO,
       );
     });
+  });
+
+  it("keeps every handle inside the chart at both ends on a narrow phone in large text", async () => {
+    document.documentElement.style.fontSize = "200%";
+
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport(NARROW, async () => {
+      openActivity({ template: "lineCrossing" });
+
+      await expect
+        .poll(() => {
+          const plot = document.querySelector('[data-slot="activity-plot"]');
+          const { left, right } = chartBounds();
+          return plot && plot.clientWidth - (right - left);
+        })
+        .toBe(0);
+
+      await expect(
+        handlesOutsideAtEachEnd(["Supply", "Demand"], chartBounds),
+      ).resolves.toStrictEqual([]);
+    });
+  });
+
+  it("brings a checked move back the way it was answered when the learner returns", async () => {
+    renderLessonPlayer({
+      lesson: buildLesson([
+        activityStep({ content: supplyDemand }),
+        explanationStep({ text: "Next.", title: "Next" }),
+      ]),
+    });
+
+    await pressOnSlider("Move the line Supply", "ArrowLeft", 1);
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expect
+      .element(page.getByRole("slider", { name: "Move the line Supply" }))
+      .toHaveAttribute("aria-valuenow", "-2");
+
+    await expect.element(page.getByText("People didn't want more eggs.")).not.toBeInTheDocument();
+  });
+
+  it("brings a move back no further than its line can go", async () => {
+    renderLessonPlayer({
+      lesson: buildLesson([
+        activityStep({ content: flatCostToMove }),
+        explanationStep({ text: "Next.", title: "Next" }),
+      ]),
+    });
+
+    await pressOnSlider("Move the line Cost", "ArrowDown", 1);
+    await checkActivity();
+    await expectVerdict("Not quite");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await page.getByRole("button", { name: "Previous screen" }).click();
+    const cost = page.getByRole("slider", { name: "Move the line Cost" });
+
+    await expect.element(cost).toHaveAttribute("aria-valuenow", "-250");
+    await expect.element(cost).toHaveAttribute("aria-valuemin", "-250");
   });
 });
