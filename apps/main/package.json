@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "analyze": "next experimental-analyze",
-    "build": "next build",
+    "build": "next build --experimental-build-mode=compile && next build --experimental-build-mode=generate",
     "build:e2e": "node ../../scripts/run-test-env.mts e2e tsx e2e/prepare-data.ts && node ../../scripts/run-test-env.mts e2e next build",
     "dev": "node ../../scripts/dev/run-service.mts main",
     "dev:app": "next dev",
