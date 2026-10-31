@@ -4287,15 +4287,17 @@ msgctxt "oPz0RK"
 msgid "until {date}"
 msgstr "fino al {date}"
 
+#. {date} is a month, like "Jan" or "Jan 2028", never a day.
 #: src/journey/path-phase-row.tsx
 msgctxt "0r6xAZ"
 msgid "until ~{date}"
-msgstr "fino al ~{date}"
+msgstr "fino a ~{date}"
 
+#. {date} is a month, like "Jan" or "Jan 2028", never a day.
 #: src/journey/path-phase-row.tsx
 msgctxt "JzTTux"
 msgid "until about {date}"
-msgstr "fino al {date} circa"
+msgstr "fino a {date} circa"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "M6MlNv"
@@ -4398,11 +4400,12 @@ msgctxt "yPg8s6"
 msgid "Until"
 msgstr "Fino al"
 
+#. A menu or section of other options and links, like an app's “More” menu.
 #: src/journey/plan-sections.tsx
 #: src/onboarding/start-over-menu.tsx
 msgctxt "I5NMJ8"
 msgid "More"
-msgstr "Più"
+msgstr "Altro"
 
 #: src/journey/plan-sections.tsx
 #: src/mind-maps/mind-maps-screen.tsx

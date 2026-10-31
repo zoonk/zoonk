@@ -533,7 +533,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld 分"
+            "value" : "%lld分"
           }
         },
         "ko" : {
@@ -895,7 +895,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld〜%2$lld 分"
+            "value" : "%1$lld〜%2$lld分"
           }
         },
         "ko" : {

@@ -4287,11 +4287,13 @@ msgctxt "oPz0RK"
 msgid "until {date}"
 msgstr "{date}까지"
 
+#. {date} is a month, like "Jan" or "Jan 2028", never a day.
 #: src/journey/path-phase-row.tsx
 msgctxt "0r6xAZ"
 msgid "until ~{date}"
 msgstr "{date}쯤까지"
 
+#. {date} is a month, like "Jan" or "Jan 2028", never a day.
 #: src/journey/path-phase-row.tsx
 msgctxt "JzTTux"
 msgid "until about {date}"
@@ -4398,11 +4400,12 @@ msgctxt "yPg8s6"
 msgid "Until"
 msgstr "종료일"
 
+#. A menu or section of other options and links, like an app's “More” menu.
 #: src/journey/plan-sections.tsx
 #: src/onboarding/start-over-menu.tsx
 msgctxt "I5NMJ8"
 msgid "More"
-msgstr "많음"
+msgstr "더보기"
 
 #: src/journey/plan-sections.tsx
 #: src/mind-maps/mind-maps-screen.tsx

@@ -73,7 +73,7 @@
   "conversation_longer_calls_plus": "da7b4bc3887287439dde0b105a2e9a1bf29a3987e114812eaa4e0d880cf0e89e",
   "conversation_mic_note": "b494fec739a626cab67f23c30021291c16f0349a9d2e55fcf7aa72f7b49355ca",
   "conversation_microphone_off": "cdb109b08da101d9fdbe4b1cdb10c8b0e995ce5177e41d2f843d969271216511",
-  "conversation_minutes_range": "6d61e24417f64a07bce3f363d67a2e853bfd8012a7f9b2f09e12559943790865",
+  "conversation_minutes_range": "75ce8408bc9dcd8cdbe5ca6abf8925ca91525f6b9922f9b4241749716a1dda0f",
   "conversation_mock_band_ielts": "626f48eaf9e06c8ea4b62ec6dac78e35e23417d025531cca8773f95537d45b25",
   "conversation_mock_band_toefl": "99d3defcd3b6fedaf3a297868b73cbd9dc95e043e8ee272301ea56f09f98d293",
   "conversation_mock_delivery": "1a11b6e62339dfaa0e0ac01c65d78fb80f6296a95a2cadd406eb50306d0a7373",
@@ -301,7 +301,7 @@
     <string name="conversation_prep_over">準備時間が終わりました。準備ができたら会話を始めてください。</string>
     <string name="conversation_prep_again">やり直す</string>
     <!-- A task's length when the exam gives a range, such as "3–4 min". -->
-    <string name="conversation_minutes_range">%1$s～%2$s 分</string>
+    <string name="conversation_minutes_range">%1$s〜%2$s分</string>
     <string name="conversation_role_partner_label">ほかの受験者（AI）との会話</string>
     <string name="conversation_role_examiner_label">試験官（AI）との会話</string>
     <!-- Who the AI plays in a task, after its name: "Ana · other candidate". -->

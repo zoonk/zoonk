@@ -30,7 +30,7 @@
   "activities_code_predict_first": "91a25293e3e755340e1e6eb5cb39fdf912eb9c03a39561d55affefe71b19f7a9",
   "activities_code_query": "b434b306f327b85418a0e0ea5c0a6d7ebaccba1118e51691b973ab6b32f2256a",
   "activities_code_query_that_works": "cb03179f54c8ef1d3b4dd56b2ae8951be7aa4aa6f73b2ff1a37327d079d987fc",
-  "activities_code_query_timeout": "284788546395cca43ea4dd1ba46d63057d2efac3c1d9a440da9d132ac6617e2c",
+  "activities_code_query_timeout": "df2981c932dfe9e29e1a60a6b272c84376df9434c030d69eead2d29f5aa5d08a",
   "activities_code_query_too_many_rows": "7f99af91099c0b5a9f4bddf5e3730296c0b038783d9e794791915fff80ebd69b",
   "activities_code_result_no_rows": "195786a284beb5148ba3eacdf3650d938503cbf3b131eda4f2ad1918d7d983ad",
   "activities_code_row_extra": "e492b7c3bdb7bb7d94877b5736efe5e6ecd5216c58fb7421e73f6d89e63d2f5d",
@@ -76,7 +76,7 @@
   "activities_code_step_next_line": "92322a0abbff40c2f290f0a305cc4328801a81454a097658ef685eaf54ecc021",
   "activities_code_step_of": "634a39f1f1b047896f6046670a86036e0dae3711598ec850c9eac51d655989c1",
   "activities_code_step_to_see": "262deb79f1431b47ab6607135aff9ad77151888f9c96702cb808d9162e0b9026",
-  "activities_code_stopped_after": "d0078a068172ab60fc4f580764b35c0c9119475fe0193090f1e4d7c582fe9e7f",
+  "activities_code_stopped_after": "a6ec8acd0e48380c586670caa030f9c297d9763e0e1cb71b26f19d1b38cf6e2f",
   "activities_code_symbols": "08c29c7f67ec6cb3890878e6679377b8c0ef24ebd388ee0a294a0315eede1218",
   "activities_code_table_named": "3b61ed04c5777f413ce4f82cb89df8869452fea0405dbd1e31ea229241e52db7",
   "activities_code_table_rows": "e340277c5dd7bc6ea0815ec3bdd35b42438f99fe1d5f298be914295d44510f57",
@@ -125,7 +125,7 @@
     <!-- A program's error and the line it happened on, like "Line 2: NameError: name 'x' is not defined". -->
     <string name="activities_code_error_line">%1$d行目：%2$s</string>
     <plurals name="activities_code_stopped_after">
-        <item quantity="other">%d 秒で停止しました。終わらないループになっていませんか？</item>
+        <item quantity="other">%d秒で停止しました。終わらないループはありませんか？</item>
     </plurals>
     <string name="activities_code_too_much_output">出力が多すぎたため、実行を停止しました。終わらないループはありませんか？</string>
     <!-- Before the feedback for a likely mistake the program's output shows. -->
@@ -214,7 +214,7 @@
     <!-- The row of buttons that type SQL words and the tables' names, for TalkBack. -->
     <string name="activities_code_sql_words">SQLのキーワード、テーブル名、列名</string>
     <plurals name="activities_code_query_timeout">
-        <item quantity="other">クエリの実行が%d 秒を超えたため、停止しました。</item>
+        <item quantity="other">%d秒を超えたため、クエリを停止しました。</item>
     </plurals>
     <!-- A query that returned more rows than a lesson's small tables could need, most often by joining tables without saying how they match. -->
     <string name="activities_code_query_too_many_rows">クエリの結果の行数が多すぎます。結合条件が抜けていませんか？</string>

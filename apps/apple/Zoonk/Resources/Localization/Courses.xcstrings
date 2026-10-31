@@ -2033,7 +2033,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld 分"
+                  "value" : "%lld分"
                 }
               }
             }

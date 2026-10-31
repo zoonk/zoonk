@@ -4287,11 +4287,13 @@ msgctxt "oPz0RK"
 msgid "until {date}"
 msgstr "{date}まで"
 
+#. {date} is a month, like "Jan" or "Jan 2028", never a day.
 #: src/journey/path-phase-row.tsx
 msgctxt "0r6xAZ"
 msgid "until ~{date}"
 msgstr "{date}ごろまで"
 
+#. {date} is a month, like "Jan" or "Jan 2028", never a day.
 #: src/journey/path-phase-row.tsx
 msgctxt "JzTTux"
 msgid "until about {date}"
@@ -4398,6 +4400,7 @@ msgctxt "yPg8s6"
 msgid "Until"
 msgstr "終了日"
 
+#. A menu or section of other options and links, like an app's “More” menu.
 #: src/journey/plan-sections.tsx
 #: src/onboarding/start-over-menu.tsx
 msgctxt "I5NMJ8"
@@ -6806,7 +6809,7 @@ msgstr "自信がない"
 #: src/mistakes/drill/drill-countdown.tsx
 msgctxt "XYckgX"
 msgid "{seconds, plural, one {# second left} other {# seconds left}}"
-msgstr "{seconds, plural, other {残り# 秒}}"
+msgstr "{seconds, plural, other {残り#秒}}"
 
 #: src/mistakes/drill/drill-countdown.tsx
 #: src/mock/mock-clock.tsx
@@ -6857,7 +6860,7 @@ msgstr "ひっかけがあります。見つけてから答えましょう。"
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "jlJrQ9"
 msgid "{seconds, number} seconds a question, like on the day."
-msgstr "本番と同じく、1問あたり{seconds, number} 秒です。"
+msgstr "本番と同じく、1問{seconds, number}秒で答えます。"
 
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "rs59fn"
@@ -7738,7 +7741,7 @@ msgstr "時間配分"
 #: src/mock/mock-result-insights.tsx
 msgctxt "jSIlJG"
 msgid "{seconds, plural, =0 {# seconds} one {# second} other {# seconds}} per {area} question. Aim for {target} or less."
-msgstr "1問あたり{seconds, plural, =0 {# 秒です} other {# 秒かかっています}}（{area}）。{target}以内を目指しましょう。"
+msgstr "1問あたり{seconds, plural, =0 {#秒} other {#秒}}かかっている{area}は、{target}以下を目指しましょう。"
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "bll9Ms"
@@ -8824,7 +8827,7 @@ msgstr "日付"
 #: src/onboarding/plan-receipt.tsx
 msgctxt "qHAnd4"
 msgid "{days, plural, =0 {# days} one {# day} other {# days}}"
-msgstr "{days, plural, =0 {# 日} other {# 日}}"
+msgstr "{days, plural, =0 {#日} other {#日}}"
 
 #: src/onboarding/plan-receipt.tsx
 #: src/plan/plan-properties.tsx
@@ -9111,7 +9114,7 @@ msgstr "すでに知っていることを確かめましょう"
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "FaKYJe"
 msgid "A few quick questions about the {count, plural, one {# area} other {# areas}}, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer."
-msgstr "すでに知っている内容を学習計画でスキップするため、{count, plural, other {#つの分野}}について短い問題をいくつか出します。スコアはつきません。「まだわからない」でも大丈夫です。"
+msgstr "すでに知っている内容を学習計画でスキップするため、{count, plural, other {#分野}}について短い問題をいくつか出します。スコアはつきません。「まだわからない」でも大丈夫です。"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "BzVgDK"
@@ -9430,12 +9433,12 @@ msgstr "平日は1日{weekdays}、週末は1日{weekend}"
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "4OjqDe"
 msgid "{days, plural, one {About # day} other {About # days}}"
-msgstr "{days, plural, other {約# 日}}"
+msgstr "{days, plural, other {約#日}}"
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "UA5qaX"
 msgid "{days, plural, one {# day} other {# days}}"
-msgstr "{days, plural, other {# 日}}"
+msgstr "{days, plural, other {#日}}"
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "1-tKgx"
@@ -10330,7 +10333,7 @@ msgstr "{lessons, plural, other {前日までに終わらなかった#レッス�
 #: src/plan/plan-notice.tsx
 msgctxt "jeTB73"
 msgid "{minutes, number} more minutes a day for {days, plural, one {# day} other {# days}} and you're keeping pace again."
-msgstr "1日の学習時間を{minutes, number} 分増やして{days, plural, other {# 日間}}続けると、また順調なペースに戻ります。"
+msgstr "1日の学習時間を{minutes, number}分増やして{days, plural, other {#日}}続けると、また順調に進められます。"
 
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-offer-suggestion.tsx
@@ -12392,7 +12395,7 @@ msgstr "{done, plural, other {#章を完了}}、{known, plural, other {もとも
 #: src/syllabus/subject-matrix.tsx
 msgctxt "wivscR"
 msgid "{count, plural, one {# skill} other {# skills}}"
-msgstr "{count, plural, other {#つのスキル}}"
+msgstr "{count, plural, other {#スキル}}"
 
 #: src/syllabus/subject-matrix.tsx
 msgctxt "f1GnB3"

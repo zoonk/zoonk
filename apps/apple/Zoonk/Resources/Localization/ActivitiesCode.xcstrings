@@ -2303,7 +2303,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld 秒後に停止しました。終わらないループがありませんか？"
+                  "value" : "%lld秒後に停止しました。終わらないループがありませんか？"
                 }
               }
             }
@@ -2830,7 +2830,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "クエリの実行時間が%lld 秒を超えたため、停止しました。"
+                  "value" : "クエリの実行時間が%lld秒を超えたため、停止しました。"
                 }
               }
             }

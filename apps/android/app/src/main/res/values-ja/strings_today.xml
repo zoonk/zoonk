@@ -109,7 +109,7 @@
   "today_plan_suggestion": "af1caccc406e79cda5ca5c7636f1d97ca07869c8c5a16a9e4f19d001456c501b",
   "today_plan_use_my_date": "dd5e8fca13ae45e1eaa6fb7c2d342f7d0432d309836158d24c0b67b366bcd8b3",
   "today_practice_anytime": "29d5a170294f939e7ae596eb625f018a9abdc0b57c4d5a8dca4c24c61af201ca",
-  "today_practice_minutes": "c9495a154ffee9f52fdd9751490b0a8828324649c8ac5aa411d81bb92917ee42",
+  "today_practice_minutes": "6afcaf74156959b1c542fe98e4d3c2776cf3734a6aaad31a017d69934637e263",
   "today_practice_with_buddy": "8bc908431603bb89958b41c781daf5ca6aa0ac7d4bb727afca86a47711b16897",
   "today_preparation": "58f7d35ba97a8dde0e802254bf6afa91aa9bac7511957b85c162ce087304bd18",
   "today_progress": "c09f3f024cf6b6c24b3967ed5cb139035833bdcef7e5a70660ed82c67fd80125",
@@ -157,8 +157,8 @@
   "today_step_skipped": "fbfd1aa78263311f89a86ae3706664a1bda6790c5f2d0e726a5458cc3d31255c",
   "today_steps_done": "44eed3b4e1c49b1387911e2186be2ea09de0ad1a4f4b60eb44e70d5152785c21",
   "today_study_everything": "ad01ce0f97c54a269dcbe75cb978e380a7ffa3a110a255c85856954c767fe78a",
-  "today_study_minutes": "5fbdf77dd076150327002a1f6db1af37b2401bdfe54995c8f74774e76fac5dc3",
-  "today_study_more_minutes": "e130c362d2e4b8141ff6f406ed6efbf953127bb6e18b7a319e9e6a513311a96e",
+  "today_study_minutes": "7c65122130185c4b6cb9b1bb9fd0e7e4d6de907d99b90930fbaa73ca88631999",
+  "today_study_more_minutes": "26989084ebfc6092b4aa932d2af11dc95783bd6fe31946fab3c005134b20f14b",
   "today_suggested_goal_accept": "f11183eba60b421751daf70381450357156519aef2cdc0aa52e2ea6250064580",
   "today_suggested_goal_detail": "5fa7977613a2e285678a8d8c741f038bac1e360edd3941e4ec2bf06b9784429e",
   "today_suggested_goal_question": "84847b32238e8e673f985fec6edf1a04749de6bfa5ac8c758d060ec3db7a6a1e",
@@ -300,7 +300,7 @@
     <string name="today_start_session">学習を始める</string>
     <string name="today_continue_session">学習を続ける</string>
     <string name="today_keep_learning">学習を続ける</string>
-    <string name="today_practice_minutes">%1$s 分練習する</string>
+    <string name="today_practice_minutes">%1$s分練習する</string>
     <string name="today_see_plan">学習計画を見る</string>
     <string name="today_lessons_not_written">今日のレッスンはまだ作成されていません。</string>
     <string name="today_get_lessons">今日のレッスンを準備する</string>
@@ -363,8 +363,8 @@
     <string name="today_week_challenge_name">週間チャレンジ</string>
     <string name="today_week_full_review_detail">全トピックを苦手な順に</string>
     <!-- %1$s is a formatted number of minutes. -->
-    <string name="today_study_minutes">%1$s 分学習する</string>
-    <string name="today_study_more_minutes">あと %1$s 分学習する</string>
+    <string name="today_study_minutes">%1$s分学習する</string>
+    <string name="today_study_more_minutes">あと%1$s分学習する</string>
     <plurals name="today_catch_up_next_days">
         <item quantity="other">次の学習日からは、やり残した%dレッスンを先に学習します。</item>
     </plurals>

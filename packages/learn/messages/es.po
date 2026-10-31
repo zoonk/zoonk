@@ -4287,15 +4287,17 @@ msgctxt "oPz0RK"
 msgid "until {date}"
 msgstr "hasta el {date}"
 
+#. {date} is a month, like "Jan" or "Jan 2028", never a day.
 #: src/journey/path-phase-row.tsx
 msgctxt "0r6xAZ"
 msgid "until ~{date}"
-msgstr "hasta el ~{date}"
+msgstr "hasta ~{date}"
 
+#. {date} is a month, like "Jan" or "Jan 2028", never a day.
 #: src/journey/path-phase-row.tsx
 msgctxt "JzTTux"
 msgid "until about {date}"
-msgstr "hasta aproximadamente el {date}"
+msgstr "hasta aproximadamente {date}"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "M6MlNv"
@@ -4398,6 +4400,7 @@ msgctxt "yPg8s6"
 msgid "Until"
 msgstr "Hasta"
 
+#. A menu or section of other options and links, like an app's “More” menu.
 #: src/journey/plan-sections.tsx
 #: src/onboarding/start-over-menu.tsx
 msgctxt "I5NMJ8"

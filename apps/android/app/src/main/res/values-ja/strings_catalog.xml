@@ -16,7 +16,7 @@
   "catalog_chapter_writes_lessons": "92f7d7749ceab8f1acf15e2f405f3061774a3f909765a433e989a0dcac954897",
   "catalog_chapters": "734d34119b1c7242b20d1605e5e4c62169b0a3f36705c7453c7abf0158991898",
   "catalog_chapters_left_out": "7f64d1210b0d042025dedd42879c9a073e5701416547ccdc7b9f2c14a017777e",
-  "catalog_check_note": "e71252d9da6663383946c8babc365d3df3014efcb6d701cddca2ce7fb2ce985a",
+  "catalog_check_note": "d0f70ed5765973cd288367227cc7f77648ab174a46065d1579cea95f6a3cbb7b",
   "catalog_closing_follows": "571afeadc212d19a55a757903ab6fa80e90bb215850bae72920f77c6f2cadd7e",
   "catalog_closing_start": "e82bfedabac0621feb673ad26f6d14085dcb14934cda9966f8105df9374f8806",
   "catalog_closing_steps": "27050ee398126c8414d92deea43f769645fe656538c71be35cc12ee3f9cb6604",
@@ -36,10 +36,10 @@
   "catalog_go_to_chapter": "5ad2d7d0e852cfb10f6a7af268e09a901aef4bbfcfa3c715cc1bc09cf8d57ce8",
   "catalog_goal_example": "5fa41f2b4ce7e7c0bd3e7f0611035e65f5f9638013f11631313650c4d675b150",
   "catalog_guess_first": "804bad78f13b8e6935ad4ec2274c6db009f238c09d4479eec189b2218e28d462",
-  "catalog_guess_note": "a162047ee85486668e86d85f9cf320f02cdbd9b12a58105cfdd0e713388acb37",
+  "catalog_guess_note": "3d45d281bbe96e7c2bd40d1ad3922a505dd9c6aea4906c9c254214fe49878960",
   "catalog_ideas": "6d80f34d2db3e3b5f3a6a79835f951e31a1882524796f161ec6efd01ac9b9a76",
   "catalog_left_out": "70aeaa8f7da8ec68a203d57459a4e6bbabdc8c074cb27c21a4400e5a76b58e6e",
-  "catalog_lesson_minutes": "80b49b710cd2c51f2b1737391ec2e61605d8767df6554f3ddcc69131dbc9a613",
+  "catalog_lesson_minutes": "319635709756648b610cba4ba72f42d5f6f96a7e8c7e342a4ca491b177e676e9",
   "catalog_lesson_part_of": "704fd8d84670f75fc4049376a22644ee3b511a7c4eccb50abcd2066d212e0b9b",
   "catalog_lesson_started": "c18a8c5164f9343f729b353de9b28da9ac70b1f75a8d1e82989f955f9f3d60ea",
   "catalog_lessons": "2b0b6f5ead922a31e7a4e30126992af477c6df69ae697f05408fae7df468d9dc",
@@ -62,7 +62,7 @@
   "catalog_outcomes": "fe4bd796741243615fe432bcdf00c1d5170de3fb5d3c5908077656a2cd5ec607",
   "catalog_outline": "6e87665a9ff24b696456c0494893f6c251c3b482ca64646c6cd168a1bc833cdb",
   "catalog_outline_plan_dated": "5ca5d1e3859989114424dba71878a9839538181192b238de33539e4af94743c6",
-  "catalog_outline_plan_undated": "e1af377e835d6592532b81d48490f62c764721a05e8b7c2758fb7381e73bd362",
+  "catalog_outline_plan_undated": "092e48f1ef29965a0af8094cd64c9ccffad3fa1d9fe86510205767f5d8ee8e60",
   "catalog_outline_unwritten": "51d4b338000d28304131181e005e79eaf94f8e4ff7a0f938025056d821a6b92c",
   "catalog_plan_caption": "0197e3887bde55774d05bff1e8ec17842b8e8faa7ca9952ad06eaa6976573b0d",
   "catalog_plan_dated_fitting": "bd3be6b9e5e5073db67cdd2e01c38d909da00f40d217bb389281959ddce0f9c6",
@@ -183,8 +183,8 @@
     <string name="catalog_try_place">%1$s · レッスン%2$s</string>
     <string name="catalog_guess_first">まずは予想してみてください。スコアには影響しません。</string>
     <string name="catalog_quick_question">まずは1問</string>
-    <string name="catalog_guess_note">答えると、%1$s 分のレッスンが始まります。</string>
-    <string name="catalog_check_note">答えを選ぶと、%1$s 分のレッスンが開きます。そこで答え合わせができます。</string>
+    <string name="catalog_guess_note">答えると、%1$s分のレッスンが始まります。</string>
+    <string name="catalog_check_note">選ぶと、%1$s分のレッスンに進みます。そこで答え合わせをしましょう。</string>
     <string name="catalog_no_sign_up">登録は不要です。</string>
     <string name="catalog_example_plan">学習計画の例</string>
     <plurals name="catalog_plan_weeks">
@@ -246,7 +246,7 @@
     <string name="catalog_you_are_here">現在地</string>
     <string name="catalog_outline_plan_dated">%1$sまで、1日%2$sの学習計画</string>
     <plurals name="catalog_outline_plan_undated">
-        <item quantity="other">1日%1$d 分、ゼロから始める学習計画</item>
+        <item quantity="other">1日%1$d分でゼロから始める学習計画</item>
     </plurals>
     <string name="catalog_outline_unwritten">学習計画を立てると、Zoonkが今のレベルに合わせて、このコースの章とレッスンを作成します。</string>
     <string name="catalog_level_overview">概要</string>
@@ -295,7 +295,7 @@
     <string name="catalog_start_this_lesson">このレッスンを始める</string>
     <string name="catalog_open_course">コースを開く</string>
     <plurals name="catalog_lesson_minutes">
-        <item quantity="other">%1$d 分。</item>
+        <item quantity="other">%1$d分。</item>
     </plurals>
     <plurals name="catalog_ideas">
         <item quantity="other">学ぶポイント%1$d個</item>

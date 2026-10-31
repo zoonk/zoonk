@@ -76,8 +76,20 @@ export function PhaseUntil({ isLast, phase }: { isLast: boolean; phase: PlanPhas
 
   return (
     <span className={TRAILING_CLASS}>
-      <span aria-hidden="true">{t("until ~{date}", { date })}</span>
-      <span className="sr-only">{t("until about {date}", { date })}</span>
+      <span aria-hidden="true">
+        {t({
+          description: '{date} is a month, like "Jan" or "Jan 2028", never a day.',
+          message: "until ~{date}",
+          values: { date },
+        })}
+      </span>
+      <span className="sr-only">
+        {t({
+          description: '{date} is a month, like "Jan" or "Jan 2028", never a day.',
+          message: "until about {date}",
+          values: { date },
+        })}
+      </span>
     </span>
   );
 }

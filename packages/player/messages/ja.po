@@ -3194,7 +3194,7 @@ msgstr "ログインする"
 #: src/lesson/access/lesson-slow-down.tsx
 msgctxt "fKzrQy"
 msgid "You started a lot of lessons in a short time. This one opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
-msgstr "短い間にたくさんのレッスンを始めました。このレッスンは{seconds, plural, =0 {# 秒で} other {# 秒後に}}開けます。"
+msgstr "短時間にたくさんのレッスンを始めました。このレッスンは{seconds, plural, =0 {#秒後に} other {#秒後に}}始められます。"
 
 #: src/lesson/access/lesson-slow-down.tsx
 msgctxt "bKi-gy"

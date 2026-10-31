@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "activities_sorting_about_years": "5d2e096e3fa56204824186583187ad55836cd95efd14b6eab625c9fac75a67a0",
+  "activities_sorting_about_years": "891845ce7a5a5c8003d7211432cde5663952b93ee0cafb8671454be0a56ff8b8",
   "activities_sorting_all_sorted": "68b4b682d53c70ac2b131be64c56ab3a5e955249917f6a047bd1f08e602dc53a",
   "activities_sorting_badge_label_it": "7284e418707ee1131c5e3948ce55b64ab90aec5c0d1634518821a98cf406bf5a",
   "activities_sorting_badge_link_causes": "4ac1cc75603f71e90d4f4396d65f0c3789f4c95f8e0e1707d64349267a85ecab",
@@ -70,7 +70,7 @@
   "activities_sorting_year_and_guess": "3997c471b00ad8c6dd8c07e7878b2d02b01ecfa885b83247a3bcf8a4f32231b6",
   "activities_sorting_year_bce": "52686e10bdad4f2da1898b75ab52eebec5adf963c43121dc6d09878e9a49756d",
   "activities_sorting_year_ce": "b82cd12d97a13462b701a616b69c198c0040767b84cc92de548707fe1356907d",
-  "activities_sorting_years": "d08414a7564d676286745ec940d51afe9235b521321e739c638ec8c41e73aa35",
+  "activities_sorting_years": "d1c0a27b6d06cc24d51009e1518e571e6274f02f8dbb3adb9d07cb977648fe8d",
   "activities_sorting_you_had_it_at": "fdb30e428bd10709d2617b30abcc4a9923662b1bf1a509af4ea459c44c1c67a4",
   "activities_sorting_your_guess": "e10615282fca7361ac3deaf5f7212ac591018b245557d6d3603cfed132222881",
   "activities_sorting_your_links": "881db3039c590c155e208cee63f98027795e566f8c21c4cadd0ef7b210f814d3"
@@ -189,11 +189,11 @@
     <string name="activities_sorting_time_between">出来事の間の年数</string>
     <!-- An exact gap in years, like "66 years". -->
     <plurals name="activities_sorting_years">
-        <item quantity="other">%1$s 年</item>
+        <item quantity="other">%1$s年</item>
     </plurals>
     <!-- A rounded gap in years, like "about 2,000 years". -->
     <plurals name="activities_sorting_about_years">
-        <item quantity="other">約%1$s 年</item>
+        <item quantity="other">約%1$s年</item>
     </plurals>
     <!-- After a gap in years: the two events and their years, like "from Cleopatra rules Egypt (51 BCE) to Moon landing (1969 CE)". -->
     <string name="activities_sorting_gap_between">%1$s（%2$s）から%3$s（%4$s）まで</string>

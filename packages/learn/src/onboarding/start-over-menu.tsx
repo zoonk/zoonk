@@ -44,7 +44,12 @@ function OnboardingBarMenu({
         render={<Button className={MENU_TRIGGER_CLASS} size="icon-bar" variant="ghost" />}
       >
         <EllipsisIcon aria-hidden="true" />
-        <span className="sr-only">{t("More")}</span>
+        <span className="sr-only">
+          {t({
+            description: "A menu or section of other options and links, like an app's “More” menu.",
+            message: "More",
+          })}
+        </span>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-64" keepMounted>

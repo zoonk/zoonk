@@ -26,7 +26,7 @@
   "onboarding_course_build": "f7b03256c7c4602e8fe74fe6d4e3f9534066f319ae779d05862411b1250ccef2",
   "onboarding_course_chapter_description": "cd4460cd5446d9414d3ce127184497896505234dda02f5085736fbf1f1073ee6",
   "onboarding_course_chapters": "3006bcdb0bd65e90138b3fcddf249938dd571b0f3127298aff391f87684341cd",
-  "onboarding_course_daily_minutes": "9f83fc6303288b8b324cd52ef5ec608b096bfe85519204c5e8791a77bd588501",
+  "onboarding_course_daily_minutes": "89992466dca546d7327f28186f0aec956b00b78d7d305e190c0e1f7bc5ed6ba1",
   "onboarding_course_failed": "164136925b002dd70d61a2a78aebf8bbbb68d7d7ebfc626e150dff60eb6cac8c",
   "onboarding_course_follows": "516d2e1202a1e02842c0caa81f1b19b0788fdf93f9cc5ef2a86a709d83119ab5",
   "onboarding_course_lessons": "ee2fb9b639c0dca1f992571a29ad91c6584d88fde538c3a7af0440ffb7bd398c",
@@ -240,7 +240,7 @@
   "onboarding_reason_placeholder": "ebf094f1d899f9a7b73c58e10a6f7fd0ec2505360476629e296cc94a70ca80ca",
   "onboarding_reason_title": "0644df4bfd0648e072061903f5ef5041132bb68cdd2569added81b05d9d25b0a",
   "onboarding_remove_material": "e9f51b2ad2f11020596ae2299c587cd2b690c36ab16cb966aace53377879f696",
-  "onboarding_reveal_about_days": "55a18eeea177109a0074a121db595a75fc30c9c8cfe4320bf6db21989bf3f9bc",
+  "onboarding_reveal_about_days": "56374b0101e753a5403115c1fd79c100d98053b8dd7c0ac854c2ec1531cb1ba1",
   "onboarding_reveal_adjust": "2792f0aec650ed8116e491e29155285a99da56418d256ddb0b00e6a9e5f0f79c",
   "onboarding_reveal_building_description": "1dae5fa705c2819b079c9e9295f798bea140aafbf527f5d1eaed0bfbd21c3d21",
   "onboarding_reveal_building_title": "1ae3d8130e3de1fb9816c0409879ac3060ab37384571aaeab5ddc6077f70c71b",
@@ -255,7 +255,7 @@
   "onboarding_reveal_created": "12d6145f05c786ab6e2d93ce0e2ae99218faf66df120e58e9056a0e7309b4525",
   "onboarding_reveal_daily": "140030d07876cabf3ea7fdc461a09b113e69ee09fd5c86fe5adf1a35a7640692",
   "onboarding_reveal_daily_weekends": "b4b44f109109a39235545ed5df93ced70766972c3e6c06d15836cb248aa6f7f3",
-  "onboarding_reveal_days": "3f44afd5c3146d2e82f00ea8123a16f5ca8066753bfd847d26191e5b6df463f4",
+  "onboarding_reveal_days": "6418e9bb612d477786ffce32598c9903e74c646ce5f499a46218db1e5b43a417",
   "onboarding_reveal_estimated_guide_area": "b2cbafc6ae405eda7cd3a03acca9b54d1a25566c2f61fb21a57be2a0bb1ea34c",
   "onboarding_reveal_estimated_guide_areas": "764d6f6aaf11e497e414de04847104192e3a31a1eecd0b00928a7f31de8fa235",
   "onboarding_reveal_estimated_material_area": "2549c387217f16970097205d5597e03466d38ecb9efd77900e1bf4c48fb70408",
@@ -715,10 +715,10 @@
     <string name="onboarding_reveal_reading_step">公式資料を読み込んでいます</string>
     <string name="onboarding_reveal_created">学習計画を作成しました</string>
     <plurals name="onboarding_reveal_days">
-        <item quantity="other">%d 日</item>
+        <item quantity="other">%d日</item>
     </plurals>
     <plurals name="onboarding_reveal_about_days">
-        <item quantity="other">約%d 日</item>
+        <item quantity="other">約%d日</item>
     </plurals>
     <!-- When a plan without a date ends at the learner's pace. %1$s is a day, such as "Nov 8". -->
     <string name="onboarding_reveal_until_about">%1$sごろまで</string>
@@ -863,7 +863,7 @@
         <item quantity="other">ほかに%d章</item>
     </plurals>
     <plurals name="onboarding_course_daily_minutes">
-        <item quantity="other">学習時間はひとまず1日%d 分です。次のステップで変更できます。</item>
+        <item quantity="other">まずは1日%d分です。この後のステップで変更できます。</item>
     </plurals>
     <string name="onboarding_course_build">学習計画を作成する</string>
     <!-- Read out while Build my plan starts the course. -->

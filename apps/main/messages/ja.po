@@ -430,7 +430,7 @@ msgstr "{count, plural, other {#レッスン}}"
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
 msgctxt "QNnsRX"
 msgid "{minutes, plural, one {# minute} other {# minutes}}."
-msgstr "{minutes, plural, other {# 分}}。"
+msgstr "{minutes, plural, other {#分}}。"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
 #: src/components/catalog/first-question.tsx
@@ -564,7 +564,7 @@ msgstr "{date}まで、1日{time}の学習計画"
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "ZSMfHW"
 msgid "Your plan at {minutes, plural, one {# minute} other {# minutes}} a day, from scratch"
-msgstr "1日{minutes, plural, other {# 分}}で、ゼロから学ぶ学習計画"
+msgstr "1日{minutes, plural, other {#分}}でゼロから学ぶ学習計画"
 
 #. Heading over the list of the course's chapters and lessons. Not the learner's study plan, so use a different word than “plan”.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
@@ -1068,7 +1068,7 @@ msgstr "毎日使える時間に合わせて、このコースを進める学習
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "6CVLNb"
 msgid "{minutes, plural, one {# minute} other {# minutes}} a day for now. You can change it in the next steps."
-msgstr "学習時間はひとまず1日{minutes, plural, other {# 分}}です。次のステップで変更できます。"
+msgstr "まずは1日{minutes, plural, other {#分}}です。この後のステップで変更できます。"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
@@ -3466,7 +3466,7 @@ msgstr "{weeks, plural, other {<big>約#</big>週間}}"
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "BzWLOy"
 msgid "to finish the whole course at {minutes, plural, one {# minute} other {# minutes}} a day, Monday to Friday, from scratch."
-msgstr "月曜から金曜まで1日{minutes, plural, other {# 分}}ずつ、ゼロからコース全体を学び終えるまでの目安です。"
+msgstr "月曜から金曜まで1日{minutes, plural, other {#分}}ずつ、ゼロから学んでコース全体を終えるまでの目安です。"
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "JR79VT"

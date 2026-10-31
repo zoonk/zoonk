@@ -110,7 +110,12 @@ export function MoreSection({ links }: { links: MoreLinks }) {
   return (
     <PageSection aria-labelledby="plan-more-title" className="lg:hidden">
       <PageSectionHeader>
-        <PageSectionTitle id="plan-more-title">{t("More")}</PageSectionTitle>
+        <PageSectionTitle id="plan-more-title">
+          {t({
+            description: "A menu or section of other options and links, like an app's “More” menu.",
+            message: "More",
+          })}
+        </PageSectionTitle>
       </PageSectionHeader>
 
       <ListGroup>
