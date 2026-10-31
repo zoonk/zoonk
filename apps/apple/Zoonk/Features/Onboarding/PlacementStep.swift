@@ -5,7 +5,7 @@ import SwiftUI
 struct PlacementStep: View {
   let view: GoalOnboarding
   let subject: String
-  let onDone: () -> Void
+  let onDone: () async throws -> Void
 
   @Environment(AppRouter.self) private var router
   @Environment(ExamStore.self) private var exam
@@ -151,15 +151,7 @@ struct PlacementStep: View {
           "Go on where you left it, or stop now: your plan starts from the questions you answered.",
           tableName: "Onboarding", comment: "Under a placement mock left running"))
 
-      if failed {
-        Section {
-          Text(
-            "That didn't save. Try again.", tableName: "Onboarding",
-            comment: "A change couldn't be saved"
-          )
-          .foregroundStyle(.destructive)
-        }
-      }
+      saveFailure
 
       StepButtons(
         canSkip: !isSaving,
@@ -172,6 +164,18 @@ struct PlacementStep: View {
         onSkip: { stopMock(mockID) })
     }
     .onboardingColumn()
+  }
+
+  @ViewBuilder private var saveFailure: some View {
+    if failed {
+      Section {
+        Text(
+          "That didn't save. Try again.", tableName: "Onboarding",
+          comment: "A change couldn't be saved"
+        )
+        .foregroundStyle(.destructive)
+      }
+    }
   }
 
   private var isMockOpen: Bool {
@@ -201,6 +205,8 @@ struct PlacementStep: View {
       if view.goal.kind == .exam {
         PlacementMockOffer(goalId: view.goal.id)
       }
+
+      saveFailure
 
       StepButtons(
         continueLabel: Text(
@@ -241,6 +247,8 @@ struct PlacementStep: View {
         }
       }
 
+      saveFailure
+
       Section {
         Button {
           finish(fromScratch: false)
@@ -269,6 +277,8 @@ struct PlacementStep: View {
   private func outcome(title: Text, description: Text) -> some View {
     Form {
       StepHeader(title: title, description: description)
+
+      saveFailure
 
       StepButtons(
         continueLabel: Text(
@@ -436,7 +446,7 @@ struct PlacementStep: View {
         switch stopped {
         case .done:
           try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: false)
-          onDone()
+          try await onDone()
         case .failed:
           failed = true
         case .obsolete:
@@ -462,7 +472,7 @@ struct PlacementStep: View {
 
       do {
         try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: fromScratch)
-        onDone()
+        try await onDone()
       } catch is CancellationError {
       } catch {
         failed = true

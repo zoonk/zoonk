@@ -168,7 +168,7 @@ private struct GoalSteps: View {
     StepScreen(
       step: step, view: view, isSaving: isSaving, failed: failed, refusal: refusal,
       onAnswer: answer,
-      onPlacementDone: { answer(["question": "placement"]) }
+      onPlacementDone: finishPlacement
     )
     .id(step)
     .navigationBarBackButtonHidden()
@@ -242,7 +242,6 @@ private struct GoalSteps: View {
       return
     }
 
-    let answered = step
     isSaving = true
     failed = false
 
@@ -250,20 +249,32 @@ private struct GoalSteps: View {
       defer { isSaving = false }
 
       do {
-        let answer = try JSONDecoder().decode(
-          OnboardingAnswer.self, from: JSONSerialization.data(withJSONObject: input))
-        let updated = try await onboarding.answer(answer, goalID: view.goal.id)
-        history.append(answered)
-        revisiting = nil
-
-        if updated.goal.id != view.goal.id {
-          onGoalMoved(updated.goal.id)
-        }
+        try await save(input)
       } catch is CancellationError {
       } catch {
         failed = true
         refusal = error as? OnboardingError
       }
+    }
+  }
+
+  private func finishPlacement() async throws {
+    isSaving = true
+    defer { isSaving = false }
+
+    try await save(["question": "placement"])
+  }
+
+  private func save(_ input: [String: Any]) async throws {
+    let answered = step
+    let answer = try JSONDecoder().decode(
+      OnboardingAnswer.self, from: JSONSerialization.data(withJSONObject: input))
+    let updated = try await onboarding.answer(answer, goalID: view.goal.id)
+    history.append(answered)
+    revisiting = nil
+
+    if updated.goal.id != view.goal.id {
+      onGoalMoved(updated.goal.id)
     }
   }
 
@@ -322,7 +333,7 @@ private struct StepScreen: View {
   let failed: Bool
   let refusal: OnboardingError?
   let onAnswer: ([String: Any]) -> Void
-  let onPlacementDone: () -> Void
+  let onPlacementDone: () async throws -> Void
 
   var body: some View {
     switch step {

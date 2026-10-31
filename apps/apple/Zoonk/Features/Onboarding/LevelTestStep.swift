@@ -7,7 +7,7 @@ struct LevelTestStep: View {
   let language: String
   let targetLanguage: String
   let testMinutes: Int
-  let onDone: () -> Void
+  let onDone: () async throws -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
   @Environment(VoiceServices.self) private var voice
@@ -83,7 +83,17 @@ struct LevelTestStep: View {
       })
   }
 
-  private var skipSection: some View {
+  @ViewBuilder private var skipSection: some View {
+    if failed {
+      Section {
+        Text(
+          "That didn't work. Try again in a moment.", tableName: "Onboarding",
+          comment: "Starting or skipping the level test failed"
+        )
+        .foregroundStyle(.destructive)
+      }
+    }
+
     Section {
       Button(action: finish) {
         Text(
@@ -262,7 +272,7 @@ struct LevelTestStep: View {
 
       do {
         try await onboarding.finishLevelTest(goalID: goalID)
-        onDone()
+        try await onDone()
       } catch is CancellationError {
       } catch {
         failed = true
