@@ -4,7 +4,7 @@ import { isTestEnvironment } from "./_utils/is-test-environment";
 
 const isTest = isTestEnvironment();
 
-/** For models AI Gateway doesn't list, such as gpt-transcribe. */
+/** Only for what AI Gateway can't serve, such as the GPT-Live call the server hangs up. */
 export const directOpenAI = createOpenAI({
   apiKey: isTest ? "test-disabled" : undefined,
   fetch: isTest ? blockTestProviderFetch : undefined,

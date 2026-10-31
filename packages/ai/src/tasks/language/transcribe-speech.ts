@@ -1,17 +1,16 @@
 import "server-only";
-import { randomUUID } from "node:crypto";
 import { type OpenAITranscriptionModelOptions } from "@ai-sdk/openai";
-import { getPromptVersion } from "@zoonk/utils/prompt-version";
-import { transcribe } from "ai";
+import { getBaseLanguage } from "@zoonk/utils/languages";
+import { type TranscriptionResult, transcribe } from "ai";
+import { getModelFamily } from "../../_utils/model-family";
 import { NO_PROMPT_TRAINING } from "../../data-protection";
-import { directOpenAI } from "../../direct-providers";
 import { zoonkGateway } from "../../gateway";
 import { computeCallCostUsd } from "../../pricing/call-cost";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
-import { captureAiGeneration } from "../../provenance/ai-generation-sink";
+import { readGatewayMetadata } from "../../provenance/gateway-metadata";
+import { type TaskRunDetails, startTaskRun } from "../../provenance/run-task-generation";
 import { type TaskProvenance } from "../../provenance/task-provenance";
 
-/** gpt-transcribe goes to OpenAI directly because AI Gateway doesn't list it. */
 export const TRANSCRIPTION_MODELS = [
   "openai/gpt-transcribe",
   "google/gemini-3.5-transcribe",
@@ -27,95 +26,77 @@ export type TranscriptionModelId = (typeof TRANSCRIPTION_MODELS)[number];
  */
 const defaultModel: TranscriptionModelId = "openai/gpt-transcribe";
 
-const DIRECT_MODEL = "openai/gpt-transcribe";
+/**
+ * Served by Azure, not OpenAI. Given the language, it scored 10 to gpt-transcribe's 9.47 on
+ * transcribe-speech and 9.38 to 9.33 on assess-pronunciation (31 Oct 2026); Gemini 3.5 Transcribe
+ * scored 8.42 and 9.33.
+ */
+const FALLBACK_MODELS: readonly TranscriptionModelId[] = ["microsoft/mai-transcribe-2"];
 
 /** Never includes the expected answer, which would bias the model toward "hearing" it. */
 const TRANSCRIPTION_PROMPT =
   "A language learner is practicing. Write exactly the words you hear, including mispronounced words, wrong grammar and wrong words. Never correct them.";
 
 /** Changes to how models are called that the prompt text doesn't show. */
-const TRANSCRIPTION_VERSION = "2";
+const TRANSCRIPTION_VERSION = "3";
 
 export type TranscribeSpeechParams = {
   audio: Uint8Array;
   language: string;
   model?: TranscriptionModelId;
+  useFallback?: boolean;
   analytics?: AiGenerationContext;
 };
 
 export type SpeechTranscript = { text: string };
 
-function getTranscriptionModel(model: TranscriptionModelId) {
-  if (model === DIRECT_MODEL) {
-    return directOpenAI.transcription("gpt-transcribe");
-  }
-
-  return zoonkGateway.transcriptionModel(model);
-}
-
 /**
- * The AI SDK (4.0.78) can't send gpt-transcribe's `languages` list, but it honors `language` (28
- * Sep 2026). The SDK asks unknown models for `verbose_json`, which gpt-transcribe rejects.
+ * Each provider reads only its own options. Without the language, MAI-Transcribe writes speech in
+ * a language it doesn't support, such as Irish, as another language's words; with it, it rejects
+ * the call, as gpt-transcribe does.
  */
-function getOpenAIOptions(language: string): OpenAITranscriptionModelOptions {
+function getProviderOptions({ language, useFallback }: { language: string; useFallback: boolean }) {
+  const code = getBaseLanguage(language);
+
   return {
-    language: language.split("-")[0] ?? language,
-    prompt: TRANSCRIPTION_PROMPT,
-    responseFormat: "json",
+    azure: { locales: [code] },
+    gateway: { ...NO_PROMPT_TRAINING, models: useFallback ? [...FALLBACK_MODELS] : [] },
+    openai: {
+      language: code,
+      prompt: TRANSCRIPTION_PROMPT,
+    } satisfies OpenAITranscriptionModelOptions,
   };
-}
-
-async function transcribeWithModel({
-  audio,
-  language,
-  model,
-}: {
-  audio: Uint8Array;
-  language: string;
-  model: TranscriptionModelId;
-}): Promise<{ audioSeconds?: number; text: string }> {
-  const result = await transcribe({
-    audio,
-    model: getTranscriptionModel(model),
-    providerOptions: model.startsWith("openai/")
-      ? { openai: getOpenAIOptions(language) }
-      : { gateway: NO_PROMPT_TRAINING },
-  });
-
-  return { audioSeconds: result.durationInSeconds, text: result.text.trim() };
 }
 
 /** Billed by audio length: a model that doesn't report a duration leaves the cost unknown. */
 function buildTranscriptionProvenance({
-  audioSeconds,
-  latencyMs,
-  model,
+  details,
+  requestedModel,
+  result,
 }: {
-  audioSeconds?: number;
-  latencyMs: number;
-  model: TranscriptionModelId;
+  details: TaskRunDetails;
+  requestedModel: TranscriptionModelId;
+  result: Pick<TranscriptionResult, "durationInSeconds" | "providerMetadata">;
 }): TaskProvenance {
-  const usage = { audioSeconds };
+  const gateway = readGatewayMetadata(result.providerMetadata);
+  const model = gateway.servedModel ?? requestedModel;
+  const usage = { audioSeconds: result.durationInSeconds };
 
   return {
-    costUsd: audioSeconds === undefined ? undefined : computeCallCostUsd({ model, usage }),
-    generatedAt: new Date().toISOString(),
-    latencyMs,
+    ...details,
+    costUsd: usage.audioSeconds === undefined ? undefined : computeCallCostUsd({ model, usage }),
+    credential: gateway.credential,
+    gatewayCostUsd: gateway.costUsd,
     model,
-    promptVersion: getPromptVersion({
-      systemPrompt: TRANSCRIPTION_PROMPT,
-      version: TRANSCRIPTION_VERSION,
-    }),
-    provider: model.split("/")[0] ?? model,
-    requestedModel: model,
-    runId: randomUUID(),
+    provider: gateway.servedProvider ?? getModelFamily(model),
+    requestedModel,
     usage,
   };
 }
 
 /**
- * The audio is only sent to the model; nothing here stores it. The default model, gpt-transcribe,
- * rejects a language it doesn't support, such as Irish or Malagasy; other models may return wrong
+ * The audio is only sent to the model; nothing here stores it. gpt-transcribe and its fallback
+ * reject a language they don't support, such as Irish or Malagasy; other models may return wrong
  * text instead.
  */
 export async function transcribeSpeech({
@@ -123,17 +104,24 @@ export async function transcribeSpeech({
   audio,
   language,
   model = defaultModel,
+  useFallback = true,
 }: TranscribeSpeechParams) {
-  const startedAt = performance.now();
-  const result = await transcribeWithModel({ audio, language, model });
-
-  const provenance = buildTranscriptionProvenance({
-    audioSeconds: result.audioSeconds,
-    latencyMs: Math.round(performance.now() - startedAt),
-    model,
+  const run = startTaskRun({
+    analytics,
+    promptVersion: TRANSCRIPTION_VERSION,
+    systemPrompt: TRANSCRIPTION_PROMPT,
+    task: "transcribe-speech",
   });
 
-  await captureAiGeneration({ context: analytics, provenance, task: "transcribe-speech" });
+  const result = await transcribe({
+    audio,
+    model: zoonkGateway.transcriptionModel(model),
+    providerOptions: getProviderOptions({ language, useFallback }),
+  });
 
-  return { data: { text: result.text } satisfies SpeechTranscript, provenance };
+  const provenance = await run.finish((details) =>
+    buildTranscriptionProvenance({ details, requestedModel: model, result }),
+  );
+
+  return { data: { text: result.text.trim() } satisfies SpeechTranscript, provenance };
 }

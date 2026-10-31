@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-10-31T01:21:19.852Z",
+  "generatedAt": "2026-10-31T12:19:46.892Z",
   "modelId": "microsoft/mai-transcribe-2",
   "outputs": [
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 1076.739041,
+      "duration": 614.2501670000001,
       "output": "{\n  \"text\": \"How much is the rent?\"\n}",
       "systemPrompt": "",
       "testCaseId": "en-rent-correct-1",
@@ -14,7 +14,7 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 4563.336833,
+      "duration": 407.7221249999984,
       "output": "{\n  \"text\": \"How much is the hint?\"\n}",
       "systemPrompt": "",
       "testCaseId": "en-rent-hent-1",
@@ -23,7 +23,7 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 11251.846333,
+      "duration": 442.54762499999924,
       "output": "{\n  \"text\": \"I live here since 2020.\"\n}",
       "systemPrompt": "",
       "testCaseId": "en-lived-live-1",
@@ -32,7 +32,7 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 10199.721916999999,
+      "duration": 579.3171670000011,
       "output": "{\n  \"text\": \"Is the apartment still available?\"\n}",
       "systemPrompt": "",
       "testCaseId": "en-available-correct-1",
@@ -41,7 +41,7 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 529.1527920000001,
+      "duration": 5173.5117500000015,
       "output": "{\n  \"text\": \"Can I see apartment on Saturday?\"\n}",
       "systemPrompt": "",
       "testCaseId": "en-missing-the-1",
@@ -50,7 +50,7 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 1792.7347919999997,
+      "duration": 629.5187919999989,
       "output": "{\n  \"text\": \"The sheep is very big.\"\n}",
       "systemPrompt": "",
       "testCaseId": "en-ship-sheep-1",
@@ -59,7 +59,7 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 3644.9321670000004,
+      "duration": 511.94124999999985,
       "output": "{\n  \"text\": \"I think it's cheap.\"\n}",
       "systemPrompt": "",
       "testCaseId": "en-think-sink-1",
@@ -68,7 +68,7 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 1051.1180829999994,
+      "duration": 682.8152919999993,
       "output": "{\n  \"text\": \"O apartamento ainda está disponível?\"\n}",
       "systemPrompt": "",
       "testCaseId": "pt-disponivel-correct-1",
@@ -77,7 +77,7 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 6394.935749999999,
+      "duration": 566.5016660000001,
       "output": "{\n  \"text\": \"o apartamento ainda estar disponível?\"\n}",
       "systemPrompt": "",
       "testCaseId": "pt-estar-1",
@@ -86,7 +86,7 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 13093.626666,
+      "duration": 519.2790419999983,
       "output": "{\n  \"text\": \"Eu quero mais café.\"\n}",
       "systemPrompt": "",
       "testCaseId": "pt-mais-mas-1",
@@ -95,7 +95,7 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 20648.104333,
+      "duration": 544.8199170000007,
       "output": "{\n  \"text\": \"¿Cuánto cuesta el alquiler?\"\n}",
       "systemPrompt": "",
       "testCaseId": "es-alquiler-correct-1",
@@ -104,7 +104,7 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 917.8013329999994,
+      "duration": 639.3003329999992,
       "output": "{\n  \"text\": \"Tengo un pero.\"\n}",
       "systemPrompt": "",
       "testCaseId": "es-perro-pero-1",
@@ -113,7 +113,7 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 6806.159042000001,
+      "duration": 364.3780000000006,
       "output": "{\n  \"text\": \"Quiero ver piso mañana.\"\n}",
       "systemPrompt": "",
       "testCaseId": "es-missing-el-1",
@@ -122,38 +122,20 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 485.3224170000003,
-      "output": "{\n  \"text\": \"Cowellen stóð sjón trávnak.\"\n}",
+      "duration": 1193.6570829999982,
+      "output": "{\n  \"text\": \"请问图书馆在哪里？\"\n}",
       "systemPrompt": "",
-      "testCaseId": "ga-station-correct-1",
-      "userPrompt": "Clip of \"Cá bhfuil an stáisiún traenach?\" (expected \"Cá bhfuil an stáisiún traenach?\")"
+      "testCaseId": "zh-library-correct-1",
+      "userPrompt": "Clip of \"请问，图书馆在哪里？\" (expected \"请问，图书馆在哪里？\")"
     },
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 463.6437500000002,
-      "output": "{\n  \"text\": \"Wat wil een shopper trainen?\"\n}",
+      "duration": 484.1541670000006,
+      "output": "{\n  \"text\": \"请问地铁站在哪里？\"\n}",
       "systemPrompt": "",
-      "testCaseId": "ga-station-shop-1",
-      "userPrompt": "Clip of \"Cá bhfuil an siopa traenach?\" (expected \"Cá bhfuil an stáisiún traenach?\")"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 603.0451669999993,
-      "output": "{\n  \"text\": \"Ais a negara a za fadi.\"\n}",
-      "systemPrompt": "",
-      "testCaseId": "mg-station-correct-1",
-      "userPrompt": "Clip of \"Aiza ny gara, azafady?\" (expected \"Aiza ny gara, azafady?\")"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 603.1320839999998,
-      "output": "{\n  \"text\": \"Ai za ni cijena, a za fadi?\"\n}",
-      "systemPrompt": "",
-      "testCaseId": "mg-station-market-1",
-      "userPrompt": "Clip of \"Aiza ny tsena, azafady?\" (expected \"Aiza ny gara, azafady?\")"
+      "testCaseId": "zh-library-station-1",
+      "userPrompt": "Clip of \"请问，地铁站在哪里？\" (expected \"请问，图书馆在哪里？\")"
     }
   ],
   "taskId": "transcribe-speech"

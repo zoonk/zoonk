@@ -1,11 +1,13 @@
+import { BLOCKED_TEST_CALL } from "@zoonk/utils/blocked-test-call";
 import { transcribe } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { computeCallCostUsd } from "../../pricing/call-cost";
 import { transcribeSpeech } from "./transcribe-speech";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
 
-// Transcription models are paid external services; the real `transcribe` only runs in the test that checks direct OpenAI calls stay blocked.
+// Transcription models are paid external services; the real `transcribe` only runs in the test that checks gateway calls stay blocked.
 vi.mock("ai", async (importOriginal) => {
   const actual = await importOriginal<typeof Ai>();
 
@@ -14,8 +16,11 @@ vi.mock("ai", async (importOriginal) => {
 
 const AUDIO = new Uint8Array([1, 2, 3]);
 
-function heard(text: string) {
-  return { text } as Awaited<ReturnType<typeof transcribe>>;
+function heard(
+  text: string,
+  result: { durationInSeconds?: number; providerMetadata?: Record<string, unknown> } = {},
+) {
+  return { providerMetadata: {}, text, ...result } as Awaited<ReturnType<typeof transcribe>>;
 }
 
 function triedModels(): string[] {
@@ -31,20 +36,18 @@ describe(transcribeSpeech, () => {
     vi.mocked(transcribe).mockReset();
   });
 
-  it("sends the recording straight to OpenAI's gpt-transcribe with the language hint and verbatim context", async () => {
+  it("asks gpt-transcribe, then MAI-Transcribe 2, for verbatim words in the learner's language, away from providers that train on them", async () => {
     vi.mocked(transcribe).mockResolvedValueOnce(heard(" Eu quero mas café. "));
 
     const result = await transcribeSpeech({ audio: AUDIO, language: "pt-BR" });
 
     expect(result.data).toStrictEqual({ text: "Eu quero mas café." });
-    expect(triedModels()).toStrictEqual(["openai.transcription:gpt-transcribe"]);
+    expect(triedModels()).toStrictEqual(["gateway:openai/gpt-transcribe"]);
 
     expect(vi.mocked(transcribe).mock.calls[0]?.[0].providerOptions).toStrictEqual({
-      openai: {
-        language: "pt",
-        prompt: expect.stringContaining("Never correct them"),
-        responseFormat: "json",
-      },
+      azure: { locales: ["pt"] },
+      gateway: { disallowPromptTraining: true, models: ["microsoft/mai-transcribe-2"] },
+      openai: { language: "pt", prompt: expect.stringContaining("Never correct them") },
     });
 
     expect(result.provenance).toMatchObject({
@@ -54,30 +57,68 @@ describe(transcribeSpeech, () => {
     });
   });
 
-  it("sends a requested gateway model away from providers that train on it", async () => {
+  it("records and prices the fallback that heard the audio", async () => {
+    vi.mocked(transcribe).mockResolvedValueOnce(
+      heard("How much is the hint?", {
+        durationInSeconds: 60,
+        providerMetadata: {
+          gateway: {
+            routing: {
+              finalProvider: "azure",
+              modelAttempts: [
+                { canonicalSlug: "openai/gpt-transcribe", success: false },
+                {
+                  canonicalSlug: "microsoft/mai-transcribe-2",
+                  providerAttempts: [{ credentialType: "system", success: true }],
+                  success: true,
+                },
+              ],
+            },
+          },
+        },
+      }),
+    );
+
+    const { provenance } = await transcribeSpeech({ audio: AUDIO, language: "en" });
+
+    expect(provenance).toMatchObject({
+      costUsd: computeCallCostUsd({
+        model: "microsoft/mai-transcribe-2",
+        usage: { audioSeconds: 60 },
+      }),
+      credential: "system",
+      model: "microsoft/mai-transcribe-2",
+      provider: "azure",
+      requestedModel: "openai/gpt-transcribe",
+      usage: { audioSeconds: 60 },
+    });
+  });
+
+  it("tries only the requested model when fallbacks are off", async () => {
     vi.mocked(transcribe).mockResolvedValueOnce(heard("Tengo un pero"));
 
     const result = await transcribeSpeech({
       audio: AUDIO,
       language: "es",
       model: "google/gemini-3.5-transcribe",
+      useFallback: false,
     });
 
     expect(triedModels()).toStrictEqual(["gateway:google/gemini-3.5-transcribe"]);
 
-    expect(vi.mocked(transcribe).mock.calls[0]?.[0].providerOptions).toStrictEqual({
-      gateway: { disallowPromptTraining: true },
+    expect(vi.mocked(transcribe).mock.calls[0]?.[0].providerOptions).toMatchObject({
+      gateway: { disallowPromptTraining: true, models: [] },
     });
 
     expect(result.provenance).toMatchObject({ model: "google/gemini-3.5-transcribe" });
   });
 
-  it("never lets a direct OpenAI call leave the process during tests", async () => {
+  it("never lets a gateway call leave the process during tests", async () => {
     const actual = await vi.importActual<typeof Ai>("ai");
     vi.mocked(transcribe).mockImplementationOnce(actual.transcribe);
 
     await expect(transcribeSpeech({ audio: AUDIO, language: "en" })).rejects.toThrow(
-      "Direct provider calls are disabled during tests.",
+      BLOCKED_TEST_CALL,
     );
   });
 });

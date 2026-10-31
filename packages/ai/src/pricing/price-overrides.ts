@@ -1,6 +1,5 @@
 import { type ModelPricing } from "./gateway-prices";
 
-const SECONDS_PER_MINUTE = 60;
 const TOKENS_PER_MILLION = 1_000_000;
 
 /**
@@ -20,12 +19,6 @@ function geminiSpeech({ audio, text }: GeminiSpeechPrice): ModelPricing {
   };
 }
 
-const OPENAI_TRANSCRIPTION_USD_PER_MINUTE = 0.0045;
-
-function perMinute(usd: number): ModelPricing {
-  return { input: 0, output: 0, perSecond: usd / SECONDS_PER_MINUTE };
-}
-
 /** AI Gateway's price on 11 Oct 2026. */
 const MAI_VOICE_FLASH_USD_PER_MILLION_CHARACTERS = 15;
 
@@ -39,7 +32,6 @@ export const PRICE_OVERRIDES: Readonly<Record<string, ModelPricing>> = {
   "google/gemini-3.8-flash-lite-tts": geminiSpeech({ audio: 6, text: 0.5 }),
   "google/gemini-3.8-flash-tts": geminiSpeech({ audio: 9, text: 0.5 }),
   "microsoft/mai-voice-2.1-flash": perMillionCharacters(MAI_VOICE_FLASH_USD_PER_MILLION_CHARACTERS),
-  "openai/gpt-transcribe": perMinute(OPENAI_TRANSCRIPTION_USD_PER_MINUTE),
 };
 
 function perMillionTokens({

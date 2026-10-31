@@ -395,6 +395,66 @@
       "classification": { "expected": "said right", "predicted": "said right" },
       "steps": [
         {
+          "conclusion": "The clip says \"请问，图书馆在哪里？\" (expected \"请问，图书馆在哪里？\") and we heard \"请问图书馆在哪里？\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"请问，图书馆在哪里？\" (expected \"请问，图书馆在哪里？\") and we heard \"请问图书馆在哪里？\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"请问，图书馆在哪里？\" (expected \"请问，图书馆在哪里？\") and we heard \"请问图书馆在哪里？\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [], "stressWords": [] },
+        "id": "zh-library-correct-1",
+        "userInput": {
+          "language": "zh",
+          "spokenText": "请问，图书馆在哪里？",
+          "targetText": "请问，图书馆在哪里？",
+          "learnerLanguage": "en"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"请问，地铁站在哪里？\" (expected \"请问，图书馆在哪里？\") and we heard \"请问地铁站在哪里？\". Expected flagged words [\"请问，图书馆在哪里？\"]; flagged [\"请问，图书馆在哪里？\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"请问，地铁站在哪里？\" (expected \"请问，图书馆在哪里？\") and we heard \"请问地铁站在哪里？\". Expected flagged words [\"请问，图书馆在哪里？\"]; flagged [\"请问，图书馆在哪里？\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"请问，地铁站在哪里？\" (expected \"请问，图书馆在哪里？\") and we heard \"请问地铁站在哪里？\". Expected flagged words [\"请问，图书馆在哪里？\"]; flagged [\"请问，图书馆在哪里？\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["请问，图书馆在哪里？"], "stressWords": [] },
+        "id": "zh-library-station-1",
+        "userInput": {
+          "language": "zh",
+          "spokenText": "请问，地铁站在哪里？",
+          "targetText": "请问，图书馆在哪里？",
+          "learnerLanguage": "en"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
           "conclusion": "The clip says \"Can we order desert?\" (expected \"Can we order dessert?\") and we heard \"Can we order dessert?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
           "kind": "majorErrors",
           "score": 10
@@ -542,22 +602,22 @@
       }
     },
     {
-      "classification": { "expected": "said right", "predicted": "said right" },
+      "classification": { "expected": "said right", "predicted": "mistake" },
       "steps": [
         {
-          "conclusion": "The clip says \"O medíco chegou cedo.\" (expected \"O médico chegou cedo.\") and we heard \"O médico chegou cedo.\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "conclusion": "The clip says \"O medíco chegou cedo.\" (expected \"O médico chegou cedo.\") and we heard \"O midico chegou cedo.\". Expected flagged words []; flagged [\"médico\"]. Stress errors []; named as stress [].",
           "kind": "majorErrors",
-          "score": 10
+          "score": 2
         },
         {
-          "conclusion": "The clip says \"O medíco chegou cedo.\" (expected \"O médico chegou cedo.\") and we heard \"O médico chegou cedo.\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "conclusion": "The clip says \"O medíco chegou cedo.\" (expected \"O médico chegou cedo.\") and we heard \"O midico chegou cedo.\". Expected flagged words []; flagged [\"médico\"]. Stress errors []; named as stress [].",
           "kind": "minorErrors",
-          "score": 10
+          "score": 2
         },
         {
-          "conclusion": "The clip says \"O medíco chegou cedo.\" (expected \"O médico chegou cedo.\") and we heard \"O médico chegou cedo.\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "conclusion": "The clip says \"O medíco chegou cedo.\" (expected \"O médico chegou cedo.\") and we heard \"O midico chegou cedo.\". Expected flagged words []; flagged [\"médico\"]. Stress errors []; named as stress [].",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 2
         }
       ],
       "testCase": {

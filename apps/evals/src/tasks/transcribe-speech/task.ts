@@ -12,7 +12,7 @@ import { type SpeechClipExpected, type SpeechClipInput, TEST_CASES } from "./tes
 
 export const SPEECH_CLIPS_DIR = path.join(process.cwd(), "data", "speech");
 
-type SpeechClipRun = SpeechClipInput & { id?: string; model: string };
+type SpeechClipRun = SpeechClipInput & { id?: string; model: string; useFallback?: boolean };
 
 function toTranscriptionModel(model: string): TranscriptionModelId {
   const found = TRANSCRIPTION_MODELS.find((candidate) => candidate === model);
@@ -51,6 +51,7 @@ async function transcribeClip(input: SpeechClipRun) {
     audio,
     language: input.language,
     model: toTranscriptionModel(input.model),
+    useFallback: input.useFallback,
   });
 
   return {
