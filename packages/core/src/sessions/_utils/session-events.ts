@@ -116,7 +116,7 @@ export function trackSessionCompleted(session: StudySessionRow): void {
   );
 }
 
-export function trackCheckpointCompleted({
+function trackCheckpointCompleted({
   checkpoint,
   session,
 }: {
