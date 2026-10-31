@@ -73,6 +73,7 @@
   "player_free_limit_day_title": "e6271954fd75541d517ca872ad2da26b3f838b8a463720f1a59311f635a9af42",
   "player_free_limit_month_description": "7e5dfc4f6faac89dd16aef1deecd09d8b191d4f0b50fc509f2899cdf663e4d65",
   "player_free_limit_month_title": "7da7e48870a1a191ebc298e5418f8be36d768977d070b2e3a469643aa79aa24d",
+  "player_from_the_lesson": "13c852bc05492103a82f786d6980a79a7cd57a8eb28cc7335c9f3acad1de3830",
   "player_guess_first": "fbacb628e97e7c161dd1e9e82a223d4556e6302465d09b077e3abf4eabc6c664",
   "player_guess_hint": "aa247d38ae68865db0b240a4c976cff53d480a6f7ba3df923907c8d8cd0c6c3f",
   "player_guest_limit_description": "fe2390a3f8b41da401154ad038af1618ef2355ed9066671a2d45e5b1a91c9284",
@@ -218,6 +219,8 @@
     <string name="player_explaining_answer">Wyjaśniamy twoją odpowiedź</string>
     <string name="player_explain_answer_failed">Nie udało się teraz tego wyjaśnić. Spróbuj ponownie za chwilę.</string>
     <string name="player_explain_answer_title">Dlaczego ta odpowiedź jest nietrafna</string>
+    <!-- Heading of the panel that recaps the lesson, not a button. -->
+    <string name="player_from_the_lesson">Z lekcji</string>
     <string name="player_unchecked_compare">Każde pytanie sprawdzamy kilka razy dziennie. Porównaj swoją odpowiedź z tą:</string>
     <plurals name="player_key_points">
         <item quantity="one">%1$s z %2$s kluczowego punktu</item>

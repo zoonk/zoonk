@@ -440,6 +440,7 @@ private fun Content(
                         // A screen's own picks (placed words, filled blanks) start over on the next screen and on a retry.
                         key(step.id, state.position) { StepView(step, state, screen, actions, navigator, language) }
                         Result(state, screen, scroll, reveal, viewModel, exits)
+                        LessonRecap(state, screen)
                     }
                 }
             }

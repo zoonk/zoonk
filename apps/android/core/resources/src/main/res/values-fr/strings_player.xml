@@ -73,6 +73,7 @@
   "player_free_limit_day_title": "7cedb80ea2cd458312493047637eb9829d95d5ebf9da97d81559abec9e8a2324",
   "player_free_limit_month_description": "aad59fe4821aac3acd7986ea5bafd51f41beb1dc19d48729fb423dd55da4038c",
   "player_free_limit_month_title": "bf4b783e5621ca35bd17a55463af2c50dc12799ec004bd133c82c25748a2627d",
+  "player_from_the_lesson": "b84df2842d05bb01df59274e35ba9eb047df1b618d4d29255a6c76b45c9fd000",
   "player_guess_first": "f796654bb7ecdc1336441de92f3e12401f955571b2260c3ca2f99061231fbf82",
   "player_guess_hint": "112e59f8549c809bf7c92928f5b5c944f4a20e7b3881f2b84c0b28c34da9c0c8",
   "player_guest_limit_description": "0145905226b4580a226c33354fd3be55a82fa3dd0bc61f43574f17d5973ec4dc",
@@ -218,6 +219,8 @@
     <string name="player_explaining_answer">Explication de ta réponse en cours</string>
     <string name="player_explain_answer_failed">Nous n’avons pas pu expliquer ta réponse pour le moment. Réessaie dans un instant.</string>
     <string name="player_explain_answer_title">Pourquoi cette réponse ne convient pas</string>
+    <!-- Heading of the panel that recaps the lesson, not a button. -->
+    <string name="player_from_the_lesson">Dans la leçon</string>
     <string name="player_unchecked_compare">Chaque question est vérifiée quelques fois par jour. Compare ta réponse avec celle-ci :</string>
     <plurals name="player_key_points">
         <item quantity="one">%1$s sur %2$s point clé</item>

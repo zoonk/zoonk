@@ -73,6 +73,7 @@
   "player_free_limit_day_title": "7ad8502fb59c63f752f65578bd85200c4247b43decb722f289101b0a26f5ddc0",
   "player_free_limit_month_description": "3d1652c3bf61c4d8dd670e660094440d480f99a9c8592c8670d61e595f3f0bd2",
   "player_free_limit_month_title": "55af5d69da8b8988cfca712e0c427098966979deb38d5504d15b90672f70129f",
+  "player_from_the_lesson": "17d73ce0224daa289bc763099f2d2e6c1e671ed3564435a49d08dc3d3c5f6bb6",
   "player_guess_first": "3373d79273854683438333463cbaf4a891a7bd44b1c8f7aaf9a7e34de199b9b9",
   "player_guess_hint": "8f95d299fe8670fc483ab350eb98ad6fa243aec887682643682d89babb392251",
   "player_guest_limit_description": "0cd4ae12163dc7e2a782a9e20b66cb4acf1347eb9120e5056f4a84aa83b09baf",
@@ -218,6 +219,8 @@
     <string name="player_explaining_answer">Cevabını açıklıyoruz</string>
     <string name="player_explain_answer_failed">Şu anda açıklayamadık. Biraz sonra tekrar dene.</string>
     <string name="player_explain_answer_title">Bu cevap neden doğru değil</string>
+    <!-- Heading of the panel that recaps the lesson, not a button. -->
+    <string name="player_from_the_lesson">Dersten</string>
     <string name="player_unchecked_compare">Her soruyu günde birkaç kez kontrol ediyoruz. Cevabını bununla karşılaştır:</string>
     <plurals name="player_key_points">
         <item quantity="one">%1$s / %2$s temel nokta</item>

@@ -185,6 +185,7 @@ sealed interface StepContent {
 /**
  * [imagePending] while the screen's picture is still being drawn; its wait started at
  * [pictureWaitStartedAt] (epoch milliseconds), so reopening the lesson doesn't restart it.
+ * [position] is its place in the lesson as written, which a question's `basis` names.
  */
 @Immutable
 data class LessonStep(
@@ -197,6 +198,7 @@ data class LessonStep(
     val optionPictures: Map<String, StepImage> = emptyMap(),
     val citation: StepCitation? = null,
     val picture: ScreenPicture? = null,
+    val position: Int = 0,
 ) {
     val kind: StepKind get() = content.kind
 }

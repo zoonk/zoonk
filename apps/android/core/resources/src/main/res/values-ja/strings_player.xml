@@ -73,6 +73,7 @@
   "player_free_limit_day_title": "631638b4252caaa2628dad5093d61fad40098ff435bc13b9274a65fc320065ec",
   "player_free_limit_month_description": "2183035bc22981b8b3276d819b51caac1ca3b29392a66fed54325a33348fbe65",
   "player_free_limit_month_title": "d048c67b8eccb4584a9eb9a915dbea78273449c4b30883aeb821223153641832",
+  "player_from_the_lesson": "0e11ee36bf56bbdeae293ebdfca7aa1392d21cc8e0df34ae94db9db98ade7ba0",
   "player_guess_first": "2af3f918af746031649c68d611d70e41713779b1fe082602c67058d42dbf9cf0",
   "player_guess_hint": "dc7aeb6bfcadeda85acfbe8f10fe96ddf2f482a00f252138d409c3a31fc267f2",
   "player_guest_limit_description": "15f7748154e18f56bfcf45986b2a6b6cff443f428dc40f001bb6b0a79a1ba0cb",
@@ -218,6 +219,8 @@
     <string name="player_explaining_answer">答えを解説しています</string>
     <string name="player_explain_answer_failed">今は解説できません。少し待ってからもう一度試してください。</string>
     <string name="player_explain_answer_title">この答えが正解ではない理由</string>
+    <!-- Heading of the panel that recaps the lesson, not a button. -->
+    <string name="player_from_the_lesson">レッスンの内容</string>
     <string name="player_unchecked_compare">各問題で答え合わせができるのは1日に数回です。次の解答例と自分の答えを比べてみてください：</string>
     <plurals name="player_key_points">
         <item quantity="other">要点%1$s個 / 全%2$s個</item>

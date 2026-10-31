@@ -15,6 +15,7 @@ fun DisclosureRow(
     leading: (@Composable () -> Unit)?,
     modifier: Modifier = Modifier,
     count: Int? = null,
+    supporting: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     Column(modifier) {
@@ -23,6 +24,7 @@ fun DisclosureRow(
             onClick = { onExpandedChange(!expanded) },
             expanded = expanded,
             leading = leading,
+            supporting = supporting,
             meta = count?.let { { Text(it.toString()) } },
         )
         if (expanded) Column(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) { content() }

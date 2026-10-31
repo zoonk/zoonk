@@ -126,6 +126,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     optionPictures = optionPictures,
                     citation = citation,
                     picture = picture,
+                    position = position.toInt(),
                 )
             }
         }
@@ -142,6 +143,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     optionPictures,
                     citation,
                     picture,
+                    position.toInt(),
                 )
             }
         }
@@ -158,6 +160,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     optionPictures,
                     citation,
                     picture,
+                    position.toInt(),
                 )
             }
         }
@@ -174,6 +177,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     optionPictures,
                     citation,
                     picture,
+                    position.toInt(),
                 )
             }
         }
@@ -195,6 +199,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     optionPictures,
                     citation,
                     picture,
+                    position.toInt(),
                 )
             }
         }
@@ -211,6 +216,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     optionPictures,
                     citation,
                     picture,
+                    position.toInt(),
                 )
             }
         }
@@ -227,6 +233,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     optionPictures,
                     citation,
                     picture,
+                    position.toInt(),
                 )
             }
         }
@@ -243,6 +250,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     optionPictures,
                     citation,
                     picture,
+                    position.toInt(),
                 )
             }
         }
@@ -259,6 +267,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     optionPictures,
                     citation,
                     picture,
+                    position.toInt(),
                 )
             }
         }
@@ -269,6 +278,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     id = id.toString(),
                     skillId = skillId?.toString(),
                     content = StepContent.Language(kind.toStepKind(), exercise, wordHints),
+                    position = position.toInt(),
                 )
             }
         }
@@ -285,6 +295,7 @@ private fun teaching(
     optionPictures: Map<String, PlayableLibraryStepAnyOfOptionPicturesValue>?,
     citation: StepCitation?,
     picture: ScreenPicture?,
+    position: Int,
 ) = LessonStep(
     id = id,
     skillId = skillId,
@@ -298,6 +309,7 @@ private fun teaching(
         },
     citation = citation,
     picture = picture,
+    position = position,
 )
 
 /** Main's `toCanvasContent`: the explore's template, fields and data, drawn as an activity with nothing to ask. */
