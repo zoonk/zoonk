@@ -12,6 +12,7 @@ import {
   toPickedMinutes,
   toStudyWeek,
   waitsForSuggestion,
+  waitsToSave,
 } from "./schedule-time";
 
 const PAST_DATE = { pastDate: true, recommendedMinutes: null, suggested: null };
@@ -330,5 +331,21 @@ describe(toFindWeek, () => {
     });
 
     expect(toFindWeek({ days: [1, 2], weekend: null })).toStrictEqual({ studyDays: [1, 2] });
+  });
+});
+
+describe(waitsToSave, () => {
+  it("waits while the screen works out what a time the learner didn't pick covers", () => {
+    expect(waitsToSave({ line: { kind: "asking" }, picked: null })).toBe(true);
+    expect(waitsToSave({ line: { kind: "working" }, picked: null })).toBe(true);
+  });
+
+  it("saves a time the learner picked, even while it's being worked out", () => {
+    expect(waitsToSave({ line: { kind: "asking" }, picked: 830 })).toBe(false);
+  });
+
+  it("saves the time shown once the screen says what it means, or that it couldn't", () => {
+    expect(waitsToSave({ line: { kind: "share", share: 0.4 }, picked: null })).toBe(false);
+    expect(waitsToSave({ line: { kind: "findFailed" }, picked: null })).toBe(false);
   });
 });

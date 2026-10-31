@@ -7,7 +7,7 @@ import { useExtracted } from "next-intl";
 import { useFormatIsoDate, useGoalDateValues } from "../../_utils/iso-date";
 import { useFormatShare } from "../../_utils/percent";
 import { useFormatDuration } from "../../_utils/time-format";
-import { type TimeLine, type TooClose } from "./schedule-time";
+import { type TimeLine, type TooClose, isBusyLine } from "./schedule-time";
 
 export type GoalDate = { isoDate: string; namedMonth: boolean };
 
@@ -17,7 +17,6 @@ type FinishLine = Extract<TimeLine, { kind: "finish" | "noFinish" }>;
 
 const DATED_KINDS = new Set<TimeLine["kind"]>(["everyTopic", "everything", "pastDate", "share"]);
 const FINISH_KINDS = new Set<TimeLine["kind"]>(["finish", "noFinish"]);
-const BUSY_KINDS = new Set<TimeLine["kind"]>(["asking", "working"]);
 const FAILED_KINDS = new Set<TimeLine["kind"]>(["askFailed", "findFailed"]);
 
 function isDatedLine(line: TimeLine): line is DatedLine {
@@ -250,7 +249,7 @@ export function ScheduleLine({
 
   return (
     <p
-      aria-busy={BUSY_KINDS.has(line.kind)}
+      aria-busy={isBusyLine(line)}
       aria-live="polite"
       className="text-muted-foreground min-h-12 text-sm leading-6 text-pretty sm:min-h-0"
     >

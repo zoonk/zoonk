@@ -20,6 +20,12 @@ export type TimeLine =
   | { kind: "share"; share: number }
   | { kind: "working" };
 
+const BUSY_LINES = new Set<TimeLine["kind"]>(["asking", "working"]);
+
+export function isBusyLine(line: TimeLine): boolean {
+  return BUSY_LINES.has(line.kind);
+}
+
 /** The goals typed together share the day's time; `place` is the shown goal's among them, the main one 0. */
 export type GoalsTogether = { count: number; place: number };
 
@@ -105,6 +111,11 @@ export function waitsForSuggestion({
   picked: number | null;
 }): boolean {
   return picked === null && found === null && !failed && getSuggestedMinutes(first) !== null;
+}
+
+/** Continue saves only a time the learner picked, or one the screen has said what it covers. */
+export function waitsToSave({ line, picked }: { line: TimeLine; picked: number | null }): boolean {
+  return picked === null && isBusyLine(line);
 }
 
 /** Picking the suggested time again follows the suggestion as the days change, where it's followed. */

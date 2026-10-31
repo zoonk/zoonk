@@ -19,6 +19,7 @@ import {
   getTooClose,
   keepsFullCourse,
   toPickedMinutes,
+  waitsToSave,
 } from "./schedule-time";
 import { StepForm } from "./step-form";
 import { EVERY_DAY, WeekdayToggles, WeekendMinutes } from "./study-week";
@@ -227,7 +228,7 @@ export function ScheduleStep({
           onAnswer(answer);
         }
       }}
-      pending={pending || schedule.stale}
+      pending={pending || waitsToSave({ line: schedule.line, picked: schedule.picked })}
       rail={<PlanReceipt goal={goal} />}
       title={t("How much time can you study each day?")}
     >
