@@ -765,6 +765,7 @@ private struct TodayDayStatus: View {
             router.present(.preferences)
           } label: {
             Text("Change limit", tableName: "Today", comment: "Opens the daily time limit setting")
+              .fontWeight(.semibold)
           }
           .buttonStyle(.borderless)
         }

@@ -145,6 +145,22 @@ struct PreferencesView: View {
   }
 }
 
+/// Preferences on their own, for a link from elsewhere such as Today's "Change limit".
+struct PreferencesSheet: View {
+  @Environment(\.dismiss) private var dismiss
+
+  var body: some View {
+    NavigationStack {
+      PreferencesView()
+        .toolbar {
+          ToolbarItem(placement: .topBarTrailing) {
+            Button(role: .close, action: dismiss.callAsFunction)
+          }
+        }
+    }
+  }
+}
+
 struct SettingsSaveError: View {
   var body: some View {
     Section {

@@ -20,7 +20,7 @@ private struct AccountDeletionDestination: Hashable {
 struct AccountSheet: View {
   /// A guest gets sign-in instead of the hub. Any sign-in made in the sheet closes it once the
   /// profile is set up.
-  let signsIn: Bool
+  var signsIn = false
 
   @Environment(\.dismiss) private var dismiss
   @Environment(LearnerSummaryStore.self) private var learner
@@ -28,13 +28,8 @@ struct AccountSheet: View {
   @State private var isAppStoreSubscriptionManagementPresented = false
   @State private var isGooglePlayManagementPresented = false
   @State private var isFeedbackPresented = false
-  @State private var path: [AccountDestination]
+  @State private var path = [AccountDestination]()
   @State private var isBeside = false
-
-  init(signsIn: Bool = false, opensPreferences: Bool = false) {
-    self.signsIn = signsIn
-    _path = State(initialValue: opensPreferences ? [.preferences] : [])
-  }
 
   var body: some View {
     PaneBeside(isAvailable: isShowingHub) {
