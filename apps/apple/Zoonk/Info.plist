@@ -71,5 +71,7 @@
 	</array>
 	<key>ZoonkAPIBaseURL</key>
 	<string>$(ZOONK_API_BASE_URL)</string>
+	<key>ZoonkSentryDSN</key>
+	<string>https://f60c0962ecea93d5db1613f10c6cbc2c@o4509253667454976.ingest.us.sentry.io/4512352508968960</string>
 </dict>
 </plist>
