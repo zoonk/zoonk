@@ -1064,17 +1064,17 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 7/7 (read 7). passages found 76/76. problems left 0",
+          "conclusion": "Facts kept 7/7 (read 7). passages found 83/83. problems left 1",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 7/7 (read 7). passages found 76/76. problems left 0",
+          "conclusion": "Facts kept 7/7 (read 7). passages found 83/83. problems left 1",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 7/7 (read 7). passages found 76/76. problems left 0",
+          "conclusion": "Facts kept 7/7 (read 7). passages found 83/83. problems left 1",
           "kind": "potentialImprovements",
           "score": 10
         }

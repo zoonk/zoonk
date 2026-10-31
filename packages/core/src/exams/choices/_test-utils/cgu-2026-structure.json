@@ -5,33 +5,72 @@
         "passage": "Cada prova objetiva será constituída de itens para julgamento, agrupados por comandos que deverão ser respeitados. O julgamento de cada item será CERTO ou ERRADO, de acordo com o(s) comando(s) a que se refere o item.",
         "sourceId": "document-1"
       },
-      "description": "Itens para julgamento em CERTO ou ERRADO.",
+      "description": "",
       "kind": "trueFalse",
-      "options": null
+      "options": null,
+      "sections": ["Conhecimentos básicos (P1)"],
+      "share": 0.23529411764705882
     },
     {
       "citation": {
-        "passage": "A prova discursiva valerá um total de 100,00 pontos e consistirá de: a) uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos; e b) uma questão envolvendo situação-problema, relacionada a conhecimentos específicos",
+        "passage": "Cada prova objetiva será constituída de itens para julgamento, agrupados por comandos que deverão ser respeitados. O julgamento de cada item será CERTO ou ERRADO, de acordo com o(s) comando(s) a que se refere o item.",
+        "sourceId": "document-1"
+      },
+      "description": "",
+      "kind": "trueFalse",
+      "options": null,
+      "sections": ["Conhecimentos complementares (P2)"],
+      "share": 0.23529411764705882
+    },
+    {
+      "citation": {
+        "passage": "Cada prova objetiva será constituída de itens para julgamento, agrupados por comandos que deverão ser respeitados. O julgamento de cada item será CERTO ou ERRADO, de acordo com o(s) comando(s) a que se refere o item.",
+        "sourceId": "document-1"
+      },
+      "description": "",
+      "kind": "trueFalse",
+      "options": null,
+      "sections": ["Conhecimentos específicos (P3)"],
+      "share": 0.5294117647058824
+    },
+    {
+      "citation": {
+        "passage": "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
         "sourceId": "document-1"
       },
       "description": "",
       "kind": "essay",
-      "options": null
+      "options": null,
+      "sections": ["Prova discursiva (P4)", "Prova discursiva"]
+    },
+    {
+      "citation": {
+        "passage": "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos.",
+        "sourceId": "document-1"
+      },
+      "description": "Questão discursiva envolvendo situação-problema relacionada a conhecimentos específicos do cargo/especialidade, respondida em até 60 linhas.",
+      "kind": "essay",
+      "options": null,
+      "sections": ["Prova discursiva (P4)", "Prova discursiva"]
     }
   ],
   "mock": {
     "adaptive": false,
     "citations": [
       {
-        "passage": "7.2 As provas objetivas terão a duração de 5 horas e serão aplicadas na data provável estabelecida no cronograma constante do Anexo I deste edital, no turno da manhã.",
+        "passage": "As provas objetivas terão a duração de 5 horas e serão aplicadas na data provável estabelecida no cronograma constante do Anexo I deste edital, no turno da manhã.",
         "sourceId": "document-1"
       },
       {
-        "passage": "7.3 A prova discursiva terá a duração de 3 horas e 30 minutos e será aplicada na data provável estabelecida no cronograma constante do Anexo I deste edital, no turno da tarde.",
+        "passage": "A prova discursiva terá a duração de 3 horas e 30 minutos e será aplicada na data provável estabelecida no cronograma constante do Anexo I deste edital, no turno da tarde.",
         "sourceId": "document-1"
       },
       {
-        "passage": "11.1 A nota final no concurso (NFC) será calculada por meio da seguinte fórmula: NFC = NFPO/26 + NFPD/10",
+        "passage": "As provas objetivas, de caráter eliminatório e classificatório, valerão 260,00 pontos e abrangerão os objetos de avaliação constantes do item 15 deste edital.",
+        "sourceId": "document-1"
+      },
+      {
+        "passage": "A prova discursiva valerá um total de 100,00 pontos e consistirá de: a) uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos; e b) uma questão envolvendo situação-problema, relacionada a conhecimentos específicos",
         "sourceId": "document-1"
       },
       {
@@ -126,7 +165,7 @@
         },
         {
           "citation": {
-            "passage": "9.1 A prova discursiva valerá um total de 100,00 pontos e consistirá de: a) uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos; e b) uma questão envolvendo situação-problema, relacionada a conhecimentos específicos",
+            "passage": "A prova discursiva valerá um total de 100,00 pontos",
             "sourceId": "document-1"
           },
           "maxPoints": 100,
@@ -145,66 +184,92 @@
         "value": 78
       }
     },
-    "sections": [],
+    "sections": [
+      {
+        "day": null,
+        "kind": "objective",
+        "minutes": 300,
+        "name": "Provas objetivas (P1, P2 e P3)",
+        "questions": 170,
+        "tasks": []
+      },
+      {
+        "day": null,
+        "kind": "written",
+        "minutes": 210,
+        "name": "Prova discursiva (P4)",
+        "questions": null,
+        "tasks": [
+          {
+            "count": 1,
+            "description": "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos"
+          },
+          {
+            "count": 1,
+            "description": "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos"
+          }
+        ]
+      }
+    ],
     "timeLimitMinutes": null,
     "totalQuestions": null
   },
   "rules": [
     {
       "citation": {
-        "passage": "8.11.4 Será reprovado nas provas objetivas e eliminado do concurso público o candidato que se enquadrar em pelo menos um dos itens a seguir: a) obtiver NP1 < 8,00, em que NP1 é a nota do candidato na prova objetiva de conhecimentos básicos P1",
+        "passage": "Será reprovado nas provas objetivas e eliminado do concurso público o candidato que se enquadrar em pelo menos um dos itens a seguir: a) obtiver NP1 < 8,00, em que NP1 é a nota do candidato na prova objetiva de conhecimentos básicos P1",
         "sourceId": "document-1"
       },
       "kind": "passMark",
-      "text": "Reprovado na prova objetiva P1 quem obtiver nota inferior a 8,00 pontos."
+      "text": "Eliminado se obtiver nota inferior a 8,00 pontos na prova objetiva P1."
     },
     {
       "citation": {
-        "passage": "8.11.4 Será reprovado nas provas objetivas e eliminado do concurso público o candidato que se enquadrar em pelo menos um dos itens a seguir: … b) obtiver NP2 < 12,00, em que NP2 é a nota do candidato na prova objetiva de conhecimentos complementares P2",
+        "passage": "Será reprovado nas provas objetivas e eliminado do concurso público o candidato que se enquadrar em pelo menos um dos itens a seguir: … b) obtiver NP2 < 12,00, em que NP2 é a nota do candidato na prova objetiva de conhecimentos complementares P2",
         "sourceId": "document-1"
       },
       "kind": "passMark",
-      "text": "Reprovado na prova objetiva P2 quem obtiver nota inferior a 12,00 pontos."
+      "text": "Eliminado se obtiver nota inferior a 12,00 pontos na prova objetiva P2."
     },
     {
       "citation": {
-        "passage": "8.11.4 Será reprovado nas provas objetivas e eliminado do concurso público o candidato que se enquadrar em pelo menos um dos itens a seguir: … c) obtiver NP3 < 54,00, em que NP3 é a nota do candidato na prova objetiva de conhecimentos específicos P3",
+        "passage": "Será reprovado nas provas objetivas e eliminado do concurso público o candidato que se enquadrar em pelo menos um dos itens a seguir: … c) obtiver NP3 < 54,00, em que NP3 é a nota do candidato na prova objetiva de conhecimentos específicos P3",
         "sourceId": "document-1"
       },
       "kind": "passMark",
-      "text": "Reprovado na prova objetiva P3 quem obtiver nota inferior a 54,00 pontos."
+      "text": "Eliminado se obtiver nota inferior a 54,00 pontos na prova objetiva P3."
     },
     {
       "citation": {
-        "passage": "8.11.4 Será reprovado nas provas objetivas e eliminado do concurso público o candidato que se enquadrar em pelo menos um dos itens a seguir: … d) obtiver NP1 + NP2 + NP3 < 78,00, em que NFPO = NP1 + NP2 + NP3 é a nota final do candidato no conjunto das provas objetivas.",
+        "passage": "Será reprovado nas provas objetivas e eliminado do concurso público o candidato que se enquadrar em pelo menos um dos itens a seguir: … d) obtiver NP1 + NP2 + NP3 < 78,00, em que NFPO = NP1 + NP2 + NP3 é a nota final do candidato no conjunto das provas objetivas.",
         "sourceId": "document-1"
       },
       "kind": "passMark",
-      "text": "Reprovado no conjunto das provas objetivas quem obtiver nota final (NFPO) inferior a 78,00 pontos."
+      "text": "Eliminado se obtiver nota final no conjunto das provas objetivas inferior a 78,00 pontos."
     },
     {
       "citation": {
-        "passage": "9.7.8 Será aprovado nas provas discursivas o candidato que obtiver NFPD ≥ 50,00 pontos.",
-        "sourceId": "document-1"
-      },
-      "kind": "passMark",
-      "text": "Aprovado na prova discursiva o candidato que obtiver nota final (NFPD) igual ou superior a 50,00 pontos."
-    },
-    {
-      "citation": {
-        "passage": "14.15 O candidato deverá permanecer obrigatoriamente no local de realização das provas por, no mínimo, uma hora após o início das provas.",
+        "passage": "Para a realização das provas, o candidato deverá estar munido somente de caneta esferográfica de tinta preta fabricada em material transparente, do comprovante de inscrição ou do comprovante de pagamento da taxa de inscrição e do documento de identidade original.",
         "sourceId": "document-1"
       },
       "kind": "other",
-      "text": "Permanência obrigatória no local de realização das provas por, no mínimo, uma hora após o início."
+      "text": "Obrigatório o uso de caneta esferográfica de tinta preta fabricada em material transparente."
     },
     {
       "citation": {
-        "passage": "14.18 O candidato somente poderá retirar-se da sala de provas levando o caderno de provas no decurso dos últimos 15 minutos anteriores ao horário determinado para o término das provas.",
+        "passage": "O candidato deverá permanecer obrigatoriamente no local de realização das provas por, no mínimo, uma hora após o início das provas.",
         "sourceId": "document-1"
       },
       "kind": "other",
-      "text": "O candidato somente poderá retirar-se da sala levando o caderno de provas nos últimos 15 minutos de prova."
+      "text": "Permanência mínima obrigatória de uma hora após o início das provas."
+    },
+    {
+      "citation": {
+        "passage": "O candidato somente poderá retirar-se da sala de provas levando o caderno de provas no decurso dos últimos 15 minutos anteriores ao horário determinado para o término das provas.",
+        "sourceId": "document-1"
+      },
+      "kind": "other",
+      "text": "Permitido sair com o caderno de provas apenas nos últimos 15 minutos de prova."
     }
   ],
   "subjects": [
@@ -276,7 +341,7 @@
       "group": "Conhecimentos complementares (P2)",
       "name": "Fundamentos de Governança, Riscos e Integridade Pública e Privada",
       "questions": null,
-      "shortName": "Governança e Integridade",
+      "shortName": "Governança e Riscos",
       "topics": [
         "1 Governança e responsabilidades",
         "1.1 Distinção entre direção, gestão, controle e prestação de contas; papéis, supervisão, transparência e responsabilização"
@@ -306,7 +371,7 @@
       "group": "Conhecimentos complementares (P2)",
       "name": "Fundamentos de Direito Público Aplicado, Controle e Responsabilização",
       "questions": null,
-      "shortName": "Direito Público Aplicado",
+      "shortName": "Direito Público",
       "topics": [
         "1 Decisão administrativa",
         "1.1 Competência, finalidade, motivação, proporcionalidade e segurança jurídica; consideração das consequências e das condições de atuação"
@@ -345,13 +410,13 @@
     },
     {
       "citation": {
-        "passage": "2.1.1 CARGO 1: AUDITOR FEDERAL DE FINANÇAS E CONTROLE (AFFC) – ESPECIALIDADE: AUDITORIA",
+        "passage": "No sistema de inscrição, o candidato deverá optar pelo cargo/especialidade a que deseja concorrer, pela lotação e pela localidade de realização das provas.",
         "sourceId": "document-1"
       },
       "group": "Conhecimentos específicos (P3)",
-      "name": "Cargo 1: Auditor Federal de Finanças e Controle (AFFC) – Especialidade: Auditoria",
+      "name": "Auditoria",
       "questions": 90,
-      "shortName": "Auditoria",
+      "shortName": null,
       "topics": [
         "1 Avaliação, consultoria e apuração",
         "1.1 Seleção da forma de atuação conforme o problema, objetivos e riscos"
@@ -371,11 +436,11 @@
     },
     {
       "citation": {
-        "passage": "2.1.2 CARGO 2: AUDITOR FEDERAL DE FINANÇAS E CONTROLE (AFFC) – ESPECIALIDADE: TECNOLOGIA DA INFORMAÇÃO – CIÊNCIA DE DADOS",
+        "passage": "No sistema de inscrição, o candidato deverá optar pelo cargo/especialidade a que deseja concorrer, pela lotação e pela localidade de realização das provas.",
         "sourceId": "document-1"
       },
       "group": "Conhecimentos específicos (P3)",
-      "name": "Cargo 2: Auditor Federal de Finanças e Controle (AFFC) – Especialidade: Tecnologia da Informação – Ciência de Dados",
+      "name": "Tecnologia da Informação – Ciência de Dados",
       "questions": 90,
       "shortName": "Ciência de Dados",
       "topics": [
@@ -397,11 +462,11 @@
     },
     {
       "citation": {
-        "passage": "2.1.3 CARGO 3: AUDITOR FEDERAL DE FINANÇAS E CONTROLE (AFFC) – ESPECIALIDADE: TECNOLOGIA DA INFORMAÇÃO – INFRAESTRUTURA DE TI",
+        "passage": "No sistema de inscrição, o candidato deverá optar pelo cargo/especialidade a que deseja concorrer, pela lotação e pela localidade de realização das provas.",
         "sourceId": "document-1"
       },
       "group": "Conhecimentos específicos (P3)",
-      "name": "Cargo 3: Auditor Federal de Finanças e Controle (AFFC) – Especialidade: Tecnologia da Informação – Infraestrutura de TI",
+      "name": "Tecnologia da Informação – Infraestrutura de TI",
       "questions": 90,
       "shortName": "Infraestrutura de TI",
       "topics": [
@@ -420,11 +485,11 @@
     },
     {
       "citation": {
-        "passage": "2.1.4 CARGO 4: AUDITOR FEDERAL DE FINANÇAS E CONTROLE (AFFC) – ESPECIALIDADE: TECNOLOGIA DA INFORMAÇÃO – DESENVOLVIMENTO DE SISTEMAS",
+        "passage": "No sistema de inscrição, o candidato deverá optar pelo cargo/especialidade a que deseja concorrer, pela lotação e pela localidade de realização das provas.",
         "sourceId": "document-1"
       },
       "group": "Conhecimentos específicos (P3)",
-      "name": "Cargo 4: Auditor Federal de Finanças e Controle (AFFC) – Especialidade: Tecnologia da Informação – Desenvolvimento de Sistemas",
+      "name": "Tecnologia da Informação – Desenvolvimento de Sistemas",
       "questions": 90,
       "shortName": "Desenvolvimento de Sistemas",
       "topics": ["1 Problemas e requisitos", "1.1 Necessidades de usuários"],
@@ -440,17 +505,14 @@
     },
     {
       "citation": {
-        "passage": "| Prova discursiva (P4) | Conhecimentos complementares e específicos | 2 questões discursivas | Eliminatório e classificatório |",
+        "passage": "9.1 A prova discursiva valerá um total de 100,00 pontos e consistirá de: a) uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos; e b) uma questão envolvendo situação-problema, relacionada a conhecimentos específicos",
         "sourceId": "document-1"
       },
       "group": "Prova discursiva (P4)",
       "name": "Prova discursiva",
       "questions": null,
-      "shortName": null,
-      "topics": [
-        "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
-        "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos"
-      ],
+      "shortName": "Discursiva",
+      "topics": [],
       "weight": null
     }
   ],
