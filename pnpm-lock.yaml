@@ -1125,6 +1125,9 @@ importers:
       sql.js:
         specifier: 1.14.2
         version: 1.14.2
+      stripe:
+        specifier: 22.6.2
+        version: 22.6.2(@types/node@24.19.1)
       ts-fsrs:
         specifier: 5.4.2
         version: 5.4.2

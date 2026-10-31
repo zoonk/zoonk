@@ -16,6 +16,8 @@ import {
 import {
   freePlanResponseSchema,
   storeSubscriptionResponseSchema,
+  stripeSubscriptionCancellationReceiptSchema,
+  stripeSubscriptionCancellationRequestSchema,
   stripeSubscriptionCancellationSchema,
 } from "../schemas/subscriptions";
 import { AUTHENTICATED_SECURITY, PUBLIC_SECURITY } from "../security";
@@ -81,21 +83,46 @@ export const subscriptionPaths = {
     },
   },
   "/me/subscriptions/stripe/cancellation": {
-    post: {
+    get: {
       description:
-        "For Plus bought on the web: the page where the learner confirms canceling it. Store subscriptions are canceled in their store.",
-      operationId: "createStripeSubscriptionCancellation",
+        "For Plus bought on the web: what canceling would do. Store subscriptions are canceled in their store.",
+      operationId: "getStripeSubscriptionCancellation",
       responses: {
         "200": {
           content: { "application/json": { schema: stripeSubscriptionCancellationSchema } },
-          description: "Stripe's cancellation page",
+          description: "The choices, at least one of them not null",
         },
         "401": unauthorizedResponse,
-        "404": { ...notFoundResponse, description: "No active web subscription to cancel" },
+        "404": { ...notFoundResponse, description: "No web subscription left to cancel" },
         "500": internalErrorResponse,
       },
       security: AUTHENTICATED_SECURITY,
-      summary: "Start canceling a web subscription",
+      summary: "Preview canceling a web subscription",
+      tags: ["Subscriptions"],
+    },
+    post: {
+      description:
+        "Refunds through Stripe right away, and emails the receipt in the request's language.",
+      operationId: "cancelStripeSubscription",
+      requestBody: {
+        content: { "application/json": { schema: stripeSubscriptionCancellationRequestSchema } },
+        required: true,
+      },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: stripeSubscriptionCancellationReceiptSchema } },
+          description: "Canceled",
+        },
+        "400": badRequestResponse,
+        "401": unauthorizedResponse,
+        "409": {
+          ...conflictResponse,
+          description: "That choice isn't open anymore; read the preview again",
+        },
+        "500": internalErrorResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Cancel a web subscription",
       tags: ["Subscriptions"],
     },
   },

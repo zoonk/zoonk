@@ -10,6 +10,7 @@ msgstr ""
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/auth-gate.tsx
 #: src/components/login-bar-link.tsx
@@ -1276,20 +1277,134 @@ msgctxt "KTQxC5"
 msgid "What Zoonk remembers to give you examples and plans that fit your life."
 msgstr "O que o Zoonk lembra para te dar exemplos e planos que combinam com a sua vida."
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "UWVETE"
-msgid "Cancel subscription"
-msgstr "Cancelar assinatura"
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "zG9LME"
+msgid "Plus has ended."
+msgstr "Seu acesso ao Plus terminou."
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "kjXmSN"
-msgid "Unable to manage your subscription. Contact us at hello@zoonk.com"
-msgstr "Não foi possível gerenciar sua assinatura. Entre em contato pelo e-mail contato@zoonk.com"
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "-g6ZnF"
+msgid "You keep Plus until {date}, then it ends."
+msgstr "Você continua com o Plus até {date}, quando seu acesso termina."
 
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "L3xzht"
+msgid "We've refunded the full {amount} to the payment method you used. Your bank usually shows it within 5 to 10 business days."
+msgstr "A gente devolveu o valor total de {amount} pela mesma forma de pagamento que você usou. O valor costuma aparecer no seu banco em 5 a 10 dias úteis."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "RBJRQ0"
+msgid "We've refunded {amount} for the months that haven't started to the payment method you used. Your bank usually shows it within 5 to 10 business days."
+msgstr "A gente devolveu {amount} pelos meses que ainda não começaram, pela mesma forma de pagamento que você usou. O valor costuma aparecer no seu banco em 5 a 10 dias úteis."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "j6FKgP"
+msgid "Changed your mind? Until {date}, you can still get a full refund."
+msgstr "Mudou de ideia? Até {date}, você ainda pode receber um reembolso total."
+
+#. The 14-day withdrawal from the contract (EU right of withdrawal), with its full refund.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "mSN7ug"
+msgid "We received your withdrawal on {dateTime} and emailed the confirmation to {email}."
+msgstr "A gente recebeu seu pedido de desistência em {dateTime} e enviou a confirmação por e-mail para {email}."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "Ckm8Lq"
+msgid "We received your cancellation on {dateTime} and emailed the confirmation to {email}."
+msgstr "A gente recebeu seu cancelamento em {dateTime} e enviou a confirmação para {email}."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "SBWnEw"
+msgid "We couldn't cancel your subscription. Try again or email hello@zoonk.com."
+msgstr "A gente não conseguiu cancelar sua assinatura. Tente de novo ou envie um e-mail para contato@zoonk.com."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "GUQ7xu"
+msgid "That option isn't available anymore."
+msgstr "Essa opção não está mais disponível."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "cEOHN2"
+msgid "Cancel Plus"
+msgstr "Cancelar o Plus"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "Z2Gl7R"
+msgid "Log in with the account you subscribed with to cancel or get a refund."
+msgstr "Para cancelar ou receber um reembolso, entre na conta que você usou para assinar."
+
+#. Confirms canceling the subscription; Plus stays until the date beside it. In German it must read exactly “Jetzt kündigen” (BGB § 312k).
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "AmzBg2"
+msgid "Cancel now"
+msgstr "Cancelar agora"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "ObvuQ4"
+msgid "Your last payment didn't go through. Canceling stops us from trying again."
+msgstr "Seu último pagamento não foi concluído. Se você cancelar, a gente para de tentar cobrar."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "a5g7yu"
+msgid "Unpaid renewal"
+msgstr "Renovação pendente de pagamento"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "FLm13g"
+msgid "For the {count, plural, one {# month} other {# months}} that haven't started, we refund {amount}."
+msgstr "{count, plural, one {Pelo # mês que ainda não começou} other {Pelos # meses que ainda não começaram}}, a gente reembolsa {amount}."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "St4jDv"
+msgid "You won't be charged again."
+msgstr "Você não vai receber novas cobranças."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "HJBzay"
+msgid "Keep Plus until {date}"
+msgstr "Manter o Plus até {date}"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "t5tErU"
+msgid "There's no subscription to cancel on {email}."
+msgstr "Não há assinatura para cancelar no e-mail {email}."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "qO091u"
 msgid "Your subscription will end on <mono>{date}</mono>."
 msgstr "Sua assinatura termina em <mono>{date}</mono>."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "ta4t1h"
+msgid "Plus, yearly"
+msgstr "Plus, anual"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "7VS06t"
+msgid "Plus, monthly"
+msgstr "Plus, mensal"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "rM1iWC"
+msgid "Plus ends right away, and we refund {amount}. You can do this until {date}."
+msgstr "O Plus termina na hora e a gente devolve {amount}. Você pode fazer isso até {date}."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "88OqBo"
+msgid "Full refund"
+msgstr "Reembolso total"
+
+#. Confirms withdrawing from the contract with a full refund (EU Consumer Rights Directive art. 11a). In German it must read exactly “Widerruf bestätigen” (BGB § 356a).
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "x4y7DX"
+msgid "Cancel and get a refund"
+msgstr "Cancelar e receber um reembolso"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "KEqLnF"
+msgid "We'll email you the confirmation."
+msgstr "A gente vai te enviar a confirmação por e-mail."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "AucmVG"
@@ -1315,6 +1430,11 @@ msgstr "Ativa"
 msgctxt "oESc06"
 msgid "What's included"
 msgstr "O que está incluído"
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "UWVETE"
+msgid "Cancel subscription"
+msgstr "Cancelar assinatura"
 
 #: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
 #: src/components/pricing/free-plan.tsx
@@ -3900,9 +4020,9 @@ msgid "Can I get a refund?"
 msgstr "Posso receber um reembolso?"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "qwugiM"
-msgid "If you subscribed on our website, you can cancel within 14 days for a full refund. Just <link>contact us</link>. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
-msgstr "Se você assinou pelo nosso site, pode cancelar em até 14 dias e receber todo o dinheiro de volta. É só <link>falar com a gente</link>. Compras na App Store ou via Google Play seguem as regras de reembolso de cada plataforma."
+msgctxt "ilifrv"
+msgid "If you subscribed on our website, <link>cancel</link> within 14 days for a full refund. After a yearly renewal, canceling refunds the months that haven't started. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
+msgstr "Se você assinou pelo nosso site, <link>cancele</link> em até 14 dias para receber um reembolso total. Depois de uma renovação anual, se você cancelar, a gente devolve o valor dos meses que ainda não começaram. Compras na App Store ou via Google Play seguem as regras de reembolso definidas por Apple ou Google."
 
 #: src/components/pricing/plus-questions.tsx
 #: src/components/public/public-footer.tsx
@@ -4059,6 +4179,18 @@ msgstr "Rodapé"
 msgctxt "cXBJ7U"
 msgid "Privacy"
 msgstr "Privacidade"
+
+#. Footer link to cancel a subscription, which German law requires (BGB § 312k). In German it must read exactly “Verträge hier kündigen”.
+#: src/components/public/public-footer.tsx
+msgctxt "gdJ1Ic"
+msgid "Cancel your subscription here"
+msgstr "Cancele sua assinatura aqui"
+
+#. Footer link to withdraw within 14 days, which EU law requires (Consumer Rights Directive art. 11a): use the directive's official wording in this language. In German it must read exactly “Vertrag widerrufen” (BGB § 356a).
+#: src/components/public/public-footer.tsx
+msgctxt "OxFgc6"
+msgid "Withdraw from contract here"
+msgstr "Retrate-se do contrato aqui"
 
 #: src/components/public/public-footer.tsx
 msgctxt "k7JNE3"

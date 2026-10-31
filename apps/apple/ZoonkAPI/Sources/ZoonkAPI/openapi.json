@@ -12464,9 +12464,9 @@
       }
     },
     "/me/subscriptions/stripe/cancellation": {
-      "post": {
-        "description": "For Plus bought on the web: the page where the learner confirms canceling it. Store subscriptions are canceled in their store.",
-        "operationId": "createStripeSubscriptionCancellation",
+      "get": {
+        "description": "For Plus bought on the web: what canceling would do. Store subscriptions are canceled in their store.",
+        "operationId": "getStripeSubscriptionCancellation",
         "security": [
           {
             "bearerAuth": []
@@ -12475,13 +12475,13 @@
             "cookieAuth": []
           }
         ],
-        "summary": "Start canceling a web subscription",
+        "summary": "Preview canceling a web subscription",
         "tags": [
           "Subscriptions"
         ],
         "responses": {
           "200": {
-            "description": "Stripe's cancellation page",
+            "description": "The choices, at least one of them not null",
             "content": {
               "application/json": {
                 "schema": {
@@ -12501,7 +12501,85 @@
             }
           },
           "404": {
-            "description": "No active web subscription to cancel",
+            "description": "No web subscription left to cancel",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Refunds through Stripe right away, and emails the receipt in the request's language.",
+        "operationId": "cancelStripeSubscription",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Cancel a web subscription",
+        "tags": [
+          "Subscriptions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StripeSubscriptionCancellationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Canceled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StripeSubscriptionCancellationReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "That choice isn't open anymore; read the preview again",
             "content": {
               "application/json": {
                 "schema": {
@@ -25735,6 +25813,18 @@
           "purchaseToken"
         ],
         "additionalProperties": false
+      },
+      "StripeSubscriptionCancellationRequest": {
+        "type": "object",
+        "properties": {
+          "withdraw": {
+            "type": "boolean",
+            "description": "True ends Plus now with the 14-day refund; false stops the renewal"
+          }
+        },
+        "required": [
+          "withdraw"
+        ]
       },
       "AppleSubscriptionNotification": {
         "type": "object",
@@ -73094,16 +73184,107 @@
       "StripeSubscriptionCancellation": {
         "type": "object",
         "properties": {
-          "url": {
-            "type": "string",
-            "format": "uri",
-            "description": "Stripe's page that cancels the subscription; open it in a browser. Plus stays until the paid period ends, and Stripe returns to main's subscription page"
+          "cancellation": {
+            "nullable": true,
+            "description": "Stopping the renewal, so Plus ends at endsAt. Null when the renewal is already stopped",
+            "type": "object",
+            "properties": {
+              "endsAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+              },
+              "refund": {
+                "nullable": true,
+                "description": "After a yearly renewal, the months that haven't started",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Money"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "endsAt",
+              "refund"
+            ],
+            "additionalProperties": false
+          },
+          "withdrawal": {
+            "nullable": true,
+            "description": "Within 14 days of subscribing: Plus ends now and the whole payment is refunded",
+            "type": "object",
+            "properties": {
+              "refund": {
+                "$ref": "#/components/schemas/Money"
+              },
+              "until": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                "description": "The last day of the 14-day refund"
+              }
+            },
+            "required": [
+              "refund",
+              "until"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [
-          "url"
+          "cancellation",
+          "withdrawal"
         ],
         "additionalProperties": false
+      },
+      "Money": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "In the currency's major unit: 29.9 is R$ 29,90"
+          },
+          "currency": {
+            "type": "string",
+            "description": "ISO 4217 code, such as BRL"
+          }
+        },
+        "required": [
+          "amount",
+          "currency"
+        ],
+        "additionalProperties": false
+      },
+      "StripeSubscriptionCancellationReceipt": {
+        "type": "object",
+        "properties": {
+          "endsAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "receivedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "refund": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              }
+            ]
+          }
+        },
+        "required": [
+          "endsAt",
+          "receivedAt",
+          "refund"
+        ],
+        "additionalProperties": false,
+        "description": "The learner also gets this receipt by email"
       },
       "GoalPreparation": {
         "type": "object",

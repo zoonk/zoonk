@@ -82,9 +82,13 @@ const ZERO_DECIMAL_CURRENCIES = new Set([
   "xpf",
 ]);
 
+/** Stripe counts most currencies in cents; a zero-decimal currency, such as yen, in whole units. */
+export function toMajorUnits(amount: number, currency: string): number {
+  return ZERO_DECIMAL_CURRENCIES.has(currency.toLowerCase()) ? amount : amount / 100;
+}
+
 export function formatPrice(amount: number, currency: string, locale = "en-US"): string {
-  const normalizedCurrency = currency.toLowerCase();
-  const value = ZERO_DECIMAL_CURRENCIES.has(normalizedCurrency) ? amount : amount / 100;
+  const value = toMajorUnits(amount, currency);
   const fractionDigits = Number.isInteger(value) ? 0 : 2;
 
   return new Intl.NumberFormat(locale, {

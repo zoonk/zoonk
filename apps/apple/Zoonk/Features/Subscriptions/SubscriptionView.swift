@@ -1,4 +1,3 @@
-import SafariServices
 import StoreKit
 import SwiftUI
 
@@ -407,10 +406,12 @@ struct PlusBenefits: View {
 /// Main's current plan for a subscription Zoonk manages: the stores' own are managed in the
 /// stores.
 struct PlusStatusView: View {
+  @Environment(\.dismiss) private var dismiss
   @Environment(SessionStore.self) private var session
-  @State private var cancellationURL: URL?
+  @State private var choices: WebPlusCancellation?
+  @State private var outcome: CancellationOutcome?
   @State private var cancellationFailed = false
-  @State private var opening: Task<Void, Never>?
+  @State private var working: Task<Void, Never>?
 
   /// As it was when the screen opened, until the account says otherwise.
   let opened: AccountSubscription
@@ -460,19 +461,12 @@ struct PlusStatusView: View {
       if subscription.provider == "stripe" {
         if subscription.cancelAt == nil {
           Section {
-            Button {
-              opening = Task { await openCancellation() }
-            } label: {
-              Text(
-                "Cancel subscription", tableName: "Account",
-                comment: "Opens the page that cancels Plus bought on the web")
-            }
-            .disabled(opening != nil)
+            cancelButton
           } footer: {
             if cancellationFailed {
               Text(
                 "Unable to manage your subscription. Contact us at hello@zoonk.com",
-                tableName: "Account", comment: "Opening the web subscription's cancellation failed"
+                tableName: "Account", comment: "Canceling the web subscription failed"
               )
               .foregroundStyle(.destructive)
             }
@@ -491,19 +485,33 @@ struct PlusStatusView: View {
       }
     }
     .onDisappear {
-      opening?.cancel()
-      opening = nil
+      working?.cancel()
+      working = nil
     }
-    .sheet(
-      isPresented: Binding(
-        get: { cancellationURL != nil }, set: { if !$0 { cancellationURL = nil } }),
-      onDismiss: {
-        Task { await session.reconcileSynchronizedCredential() }
+    .alert(
+      outcomeTitle,
+      isPresented: Binding(get: { outcome != nil }, set: { if !$0 { outcome = nil } }),
+      presenting: outcome
+    ) { outcome in
+      Button {
+        if case .canceled(_, endedPlus: true) = outcome {
+          dismiss()
+        }
+      } label: {
+        Text("OK", tableName: "Account", comment: "Dismisses a subscription status message")
       }
-    ) {
-      if let cancellationURL {
-        SafariView(url: cancellationURL)
-          .ignoresSafeArea()
+    } message: { outcome in
+      if case .canceled(let refund, _) = outcome {
+        if let refund {
+          Text(
+            "We've refunded \(amount(refund)) to the payment method you used. We emailed you the confirmation.",
+            tableName: "Account",
+            comment: "After canceling Plus bought on the web; the argument is the refunded amount")
+        } else {
+          Text(
+            "We emailed you the confirmation.", tableName: "Account",
+            comment: "After canceling Plus bought on the web without a refund")
+        }
       }
     }
     .navigationTitle(
@@ -512,25 +520,171 @@ struct PlusStatusView: View {
     .toolbarTitleDisplayMode(.inline)
   }
 
-  private func openCancellation() async {
+  private var cancelButton: some View {
+    Button {
+      run(loadChoices)
+    } label: {
+      HStack {
+        Text(
+          "Cancel subscription", tableName: "Account",
+          comment: "Asks to cancel Plus bought on the web")
+
+        Spacer()
+
+        if working != nil {
+          ProgressView()
+        }
+      }
+    }
+    .disabled(working != nil)
+    .confirmationDialog(
+      Text("Cancel Plus?", tableName: "Account", comment: "Title of the dialog that cancels Plus"),
+      isPresented: Binding(get: { choices != nil }, set: { if !$0 { choices = nil } }),
+      titleVisibility: .visible,
+      presenting: choices
+    ) { choices in
+      if choices.withdrawal != nil {
+        Button(role: .destructive) {
+          run { await cancel(withdraw: true) }
+        } label: {
+          Text(
+            "Cancel and get a refund", tableName: "Account",
+            comment:
+              "Confirms withdrawing from the contract with a full refund (EU Consumer Rights Directive art. 11a). In German it must read exactly “Widerruf bestätigen” (BGB § 356a)."
+          )
+        }
+      }
+
+      if choices.periodEnd != nil {
+        Button(role: choices.withdrawal == nil ? .destructive : nil) {
+          run { await cancel(withdraw: false) }
+        } label: {
+          Text(
+            "Cancel now", tableName: "Account",
+            comment:
+              "Confirms canceling the subscription; Plus stays until the date in the dialog's message. In German it must read exactly “Jetzt kündigen” (BGB § 312k)."
+          )
+        }
+      }
+
+      Button(role: .cancel) {
+      } label: {
+        Text("Keep Plus", tableName: "Account", comment: "Closes the dialog that cancels Plus")
+      }
+    } message: { choices in
+      Text(verbatim: message(for: choices))
+    }
+  }
+
+  private var outcomeTitle: Text {
+    switch outcome {
+    case .canceled:
+      Text("Plus is canceled", tableName: "Account", comment: "After canceling Plus")
+    case .choiceClosed:
+      Text(
+        "That option isn't available anymore.", tableName: "Account",
+        comment: "The cancellation choice the learner picked closed, such as the 14-day refund")
+    case nil:
+      Text(verbatim: "")
+    }
+  }
+
+  private func message(for choices: WebPlusCancellation) -> String {
+    var lines = [String]()
+
+    if let withdrawal = choices.withdrawal {
+      lines.append(
+        String(
+          localized:
+            "Until \(day(withdrawal.until)), you can get a full refund of \(amount(withdrawal.refund)). Plus ends right away.",
+          table: "Account",
+          comment:
+            "In the dialog that cancels Plus: the 14-day full refund; the arguments are its last day and the amount"
+        ))
+    }
+
+    if let periodEnd = choices.periodEnd {
+      if let refund = periodEnd.refund {
+        lines.append(
+          String(
+            localized:
+              "You keep Plus until \(day(periodEnd.endsAt)). We refund \(amount(refund)) for the months that haven't started.",
+            table: "Account",
+            comment:
+              "In the dialog that cancels Plus after a yearly renewal; the arguments are Plus's last day and the refunded amount"
+          ))
+      } else {
+        lines.append(
+          String(
+            localized:
+              "You keep Plus until \(day(periodEnd.endsAt)), then it ends. You won't be charged again.",
+            table: "Account",
+            comment: "In the dialog that cancels Plus; the argument is Plus's last day"))
+      }
+    }
+
+    lines.append(
+      String(
+        localized: "We'll email you the confirmation.", table: "Account",
+        comment: "Ends the dialog that cancels Plus"))
+
+    return lines.joined(separator: "\n\n")
+  }
+
+  private func run(_ work: @escaping () async -> Void) {
     cancellationFailed = false
-    let url = await session.webPlusCancellationURL()
-    opening = nil
+    working = Task {
+      await work()
+      working = nil
+    }
+  }
+
+  private func loadChoices() async {
+    let preview = await session.webPlusCancellation()
 
     guard !Task.isCancelled else {
       return
     }
 
-    cancellationURL = url
-    cancellationFailed = url == nil
+    switch preview {
+    case .choices(let choices):
+      self.choices = choices
+    case .nothingToCancel:
+      break
+    case .failed:
+      cancellationFailed = true
+    }
+  }
+
+  private func cancel(withdraw: Bool) async {
+    let result = await session.cancelWebPlus(withdraw: withdraw)
+
+    guard !Task.isCancelled else {
+      return
+    }
+
+    switch result {
+    case .canceled(let refund):
+      outcome = .canceled(refund: refund, endedPlus: withdraw)
+    case .choiceClosed:
+      outcome = .choiceClosed
+    case .failed:
+      cancellationFailed = true
+    }
+  }
+
+  private func day(_ date: Date) -> String {
+    date.formatted(date: .abbreviated, time: .omitted)
+  }
+
+  private func amount(_ money: Money) -> String {
+    money.amount.formatted(.currency(code: money.currency))
   }
 
   private var dateLine: Text? {
-    let date: (Date) -> String = { $0.formatted(date: .abbreviated, time: .omitted) }
-
     if let cancelAt = subscription.cancelAt {
       return Text(
-        "Your subscription will end on \(date(cancelAt)).", tableName: "Account",
+        "Your subscription will end on \(day(cancelAt)).", tableName: "Account",
         comment: "When a subscription set to end ends")
     }
 
@@ -540,12 +694,17 @@ struct PlusStatusView: View {
 
     return subscription.provider == "stripe"
       ? Text(
-        "Renews on \(date(periodEnd)).", tableName: "Account",
+        "Renews on \(day(periodEnd)).", tableName: "Account",
         comment: "When a web subscription renews")
       : Text(
-        "Current billing period ends on \(date(periodEnd)).", tableName: "Account",
+        "Current billing period ends on \(day(periodEnd)).", tableName: "Account",
         comment: "When the subscription's paid period ends")
   }
+}
+
+private enum CancellationOutcome {
+  case canceled(refund: Money?, endedPlus: Bool)
+  case choiceClosed
 }
 
 /// Main's Free card: what the free plan includes, against Plus above it.
@@ -792,15 +951,4 @@ private struct PlusQuestions: View {
     }
     .foregroundStyle(.secondary)
   }
-}
-
-/// Stripe's pages open in Safari's in-app browser, which the learner closes when done.
-private struct SafariView: UIViewControllerRepresentable {
-  let url: URL
-
-  func makeUIViewController(context: Context) -> SFSafariViewController {
-    SFSafariViewController(url: url)
-  }
-
-  func updateUIViewController(_ controller: SFSafariViewController, context: Context) {}
 }

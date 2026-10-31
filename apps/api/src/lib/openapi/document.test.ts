@@ -67,8 +67,13 @@ const CANONICAL_OPERATIONS = [
   { method: "post", operationId: "createAppleSubscription", path: "/me/subscriptions/apple" },
   { method: "post", operationId: "createGooglePlaySubscription", path: "/me/subscriptions/google" },
   {
+    method: "get",
+    operationId: "getStripeSubscriptionCancellation",
+    path: "/me/subscriptions/stripe/cancellation",
+  },
+  {
     method: "post",
-    operationId: "createStripeSubscriptionCancellation",
+    operationId: "cancelStripeSubscription",
     path: "/me/subscriptions/stripe/cancellation",
   },
   {

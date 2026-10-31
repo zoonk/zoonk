@@ -18,10 +18,33 @@
     <string name="subscription_managed_zoonk">This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.</string>
     <string name="subscription_manage_google">Manage in Google Play</string>
     <string name="subscription_contact_support">Contact support</string>
-    <!-- Opens the page that cancels a Plus bought on the web. -->
+    <!-- Opens the choices for canceling a Plus bought on the web. -->
     <string name="subscription_cancel">Cancel subscription</string>
-    <!-- Opening the page that cancels a Plus bought on the web failed. -->
+    <!-- Loading or sending the cancellation of a Plus bought on the web failed. -->
     <string name="subscription_cancel_failed">Unable to manage your subscription. Contact us at hello@zoonk.com</string>
+    <!-- The title of the dialog that cancels a Plus bought on the web. -->
+    <string name="subscription_cancel_title">Cancel Plus?</string>
+    <!-- Within 14 days of subscribing. %1$s is the last day of the refund, like "Nov 14, 2026"; %2$s the amount, like "R$ 29,90". -->
+    <string name="subscription_cancel_withdrawal">Until %1$s, you can get a full refund of %2$s. Plus ends right away.</string>
+    <!-- Ends Plus now and refunds all of it. German law (BGB § 356a) requires this button to read exactly "Widerruf bestätigen" in German. -->
+    <string name="subscription_cancel_withdraw">Cancel and get a refund</string>
+    <!-- Stopping the renewal. %1$s is the day Plus ends, like "Nov 14, 2026". -->
+    <string name="subscription_cancel_at_period_end">You keep Plus until %1$s, then it ends. You won\'t be charged again.</string>
+    <!-- Stopping the renewal after a yearly renewal. %1$s is the day Plus ends, like "Nov 14, 2026"; %2$s the amount refunded for the months that haven't started, like "R$ 99,90". -->
+    <string name="subscription_cancel_at_period_end_refund">You keep Plus until %1$s. We refund %2$s for the months that haven\'t started.</string>
+    <!-- Stops the renewal, so Plus ends at the end of what's paid. German law (BGB § 312k) requires this button to read exactly "Jetzt kündigen" in German. -->
+    <string name="subscription_cancel_confirm">Cancel now</string>
+    <!-- Closes the cancel dialog without canceling. -->
+    <string name="subscription_keep_plus">Keep Plus</string>
+    <!-- The last line of the cancel dialog. -->
+    <string name="subscription_cancel_email">We\'ll email you the confirmation.</string>
+    <string name="subscription_canceled">Plus is canceled. We emailed you the confirmation.</string>
+    <!-- %1$s is the amount refunded, like "R$ 29,90". -->
+    <string name="subscription_canceled_refund">We\'ve refunded %1$s to the payment method you used. Plus is canceled. We emailed you the confirmation.</string>
+    <!-- The cancel option the learner chose closed meanwhile, such as the 14-day refund. -->
+    <string name="subscription_cancel_unavailable">That option isn\'t available anymore.</string>
+    <!-- Closes a message after canceling. -->
+    <string name="subscription_ok">OK</string>
     <string name="subscription_offer_title">Subscribe to Zoonk Plus</string>
     <string name="subscription_your_plan">Your plan</string>
     <string name="subscription_free">Free</string>

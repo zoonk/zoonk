@@ -9,7 +9,7 @@ import androidx.core.net.toUri
 import com.zoonk.android.R
 
 /** Opens a web page in a Custom Tab and any other link in its own app; false when nothing on the phone opens it. */
-fun launchWebPage(
+private fun launchWebPage(
     context: Context,
     url: String,
 ): Boolean {

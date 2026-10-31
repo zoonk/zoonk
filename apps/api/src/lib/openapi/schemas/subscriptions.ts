@@ -41,13 +41,55 @@ export const freePlanResponseSchema = z
     id: "FreePlan",
   });
 
+const moneySchema = z
+  .object({
+    amount: z.number().meta({ description: "In the currency's major unit: 29.9 is R$ 29,90" }),
+    currency: z.string().meta({ description: "ISO 4217 code, such as BRL" }),
+  })
+  .meta({ id: "Money" });
+
 export const stripeSubscriptionCancellationSchema = z
   .object({
-    url: z
-      .url()
+    cancellation: z
+      .object({
+        endsAt: z.iso.datetime(),
+        refund: moneySchema
+          .nullable()
+          .meta({ description: "After a yearly renewal, the months that haven't started" }),
+      })
+      .nullable()
       .meta({
         description:
-          "Stripe's page that cancels the subscription; open it in a browser. Plus stays until the paid period ends, and Stripe returns to main's subscription page",
+          "Stopping the renewal, so Plus ends at endsAt. Null when the renewal is already stopped",
+      }),
+    withdrawal: z
+      .object({
+        refund: moneySchema,
+        until: z.iso.datetime().meta({ description: "The last day of the 14-day refund" }),
+      })
+      .nullable()
+      .meta({
+        description:
+          "Within 14 days of subscribing: Plus ends now and the whole payment is refunded",
       }),
   })
   .meta({ id: "StripeSubscriptionCancellation" });
+
+export const stripeSubscriptionCancellationRequestSchema = z
+  .object({
+    withdraw: z
+      .boolean()
+      .meta({ description: "True ends Plus now with the 14-day refund; false stops the renewal" }),
+  })
+  .meta({ id: "StripeSubscriptionCancellationRequest" });
+
+export const stripeSubscriptionCancellationReceiptSchema = z
+  .object({
+    endsAt: z.iso.datetime(),
+    receivedAt: z.iso.datetime(),
+    refund: moneySchema.nullable(),
+  })
+  .meta({
+    description: "The learner also gets this receipt by email",
+    id: "StripeSubscriptionCancellationReceipt",
+  });

@@ -6,12 +6,14 @@ enum AccountAPIError: Error, Equatable {
   case accountMismatch
   case appleCredentialMismatch
   case botDetected
+  case cancellationChoiceClosed
   case disposableEmail
   case invalidCode
   case invalidEmail
   case invalidAppStorePurchase
   case invalidResponse
   case network
+  case noWebSubscription
   case rateLimited
   case reauthenticationRequired
   case unauthorized
@@ -43,8 +45,12 @@ protocol AccountAPIClient {
   func getUsernameSuggestion(token: String) async throws -> String?
   /// Advisory: saving the profile can still find it taken.
   func isUsernameAvailable(_ username: String) async throws -> Bool
-  /// Stripe's page that cancels Plus bought on the web.
-  func webPlusCancellationURL(token: String) async throws -> URL
+  /// What canceling Plus bought on the web would do. Throws `noWebSubscription` when nothing is
+  /// left to cancel.
+  func webPlusCancellation(token: String) async throws -> WebPlusCancellation
+  /// Ends Plus now with the 14-day refund, or stops the renewal, and returns what it refunded.
+  /// Throws `cancellationChoiceClosed` when that choice isn't open anymore.
+  func cancelWebPlus(token: String, withdraw: Bool) async throws -> Money?
 }
 
 extension AccountAPIClient {
@@ -276,21 +282,43 @@ struct AccountAPI {
     }
   }
 
-  func webPlusCancellationURL(token: String) async throws -> URL {
+  func webPlusCancellation(token: String) async throws -> WebPlusCancellation {
     let output = try await perform(token: token) { client in
-      try await client.createStripeSubscriptionCancellation()
+      try await client.getStripeSubscriptionCancellation()
     }
 
     switch output {
     case .ok(let response):
-      guard let url = URL(string: try response.body.json.url) else {
-        throw AccountAPIError.invalidResponse
-      }
-
-      return url
+      let cancellation = try response.body.json
+      return WebPlusCancellation(
+        withdrawal: cancellation.withdrawal.map {
+          .init(refund: Money($0.refund), until: $0.until)
+        },
+        periodEnd: cancellation.cancellation.map {
+          .init(endsAt: $0.endsAt, refund: $0.refund.map { Money($0.value1) })
+        })
     case .unauthorized:
       throw AccountAPIError.unauthorized
-    default:
+    case .notFound:
+      throw AccountAPIError.noWebSubscription
+    case .internalServerError, .undocumented:
+      throw AccountAPIError.invalidResponse
+    }
+  }
+
+  func cancelWebPlus(token: String, withdraw: Bool) async throws -> Money? {
+    let output = try await perform(token: token) { client in
+      try await client.cancelStripeSubscription(.init(body: .json(.init(withdraw: withdraw))))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try response.body.json.refund.map { Money($0.value1) }
+    case .unauthorized:
+      throw AccountAPIError.unauthorized
+    case .conflict:
+      throw AccountAPIError.cancellationChoiceClosed
+    case .badRequest, .internalServerError, .undocumented:
       throw AccountAPIError.invalidResponse
     }
   }
@@ -542,3 +570,9 @@ struct AccountAPI {
 }
 
 extension AccountAPI: AccountAPIClient {}
+
+extension Money {
+  fileprivate init(_ money: Components.Schemas.Money) {
+    self.init(amount: money.amount, currency: money.currency)
+  }
+}

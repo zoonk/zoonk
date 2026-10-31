@@ -10,6 +10,7 @@ msgstr ""
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/auth-gate.tsx
 #: src/components/login-bar-link.tsx
@@ -1276,20 +1277,134 @@ msgctxt "KTQxC5"
 msgid "What Zoonk remembers to give you examples and plans that fit your life."
 msgstr "What Zoonk remembers to give you examples and plans that fit your life."
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "UWVETE"
-msgid "Cancel subscription"
-msgstr "Cancel subscription"
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "zG9LME"
+msgid "Plus has ended."
+msgstr "Plus has ended."
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "kjXmSN"
-msgid "Unable to manage your subscription. Contact us at hello@zoonk.com"
-msgstr "Unable to manage your subscription. Contact us at hello@zoonk.com"
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "-g6ZnF"
+msgid "You keep Plus until {date}, then it ends."
+msgstr "You keep Plus until {date}, then it ends."
 
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "L3xzht"
+msgid "We've refunded the full {amount} to the payment method you used. Your bank usually shows it within 5 to 10 business days."
+msgstr "We've refunded the full {amount} to the payment method you used. Your bank usually shows it within 5 to 10 business days."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "RBJRQ0"
+msgid "We've refunded {amount} for the months that haven't started to the payment method you used. Your bank usually shows it within 5 to 10 business days."
+msgstr "We've refunded {amount} for the months that haven't started to the payment method you used. Your bank usually shows it within 5 to 10 business days."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "j6FKgP"
+msgid "Changed your mind? Until {date}, you can still get a full refund."
+msgstr "Changed your mind? Until {date}, you can still get a full refund."
+
+#. The 14-day withdrawal from the contract (EU right of withdrawal), with its full refund.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "mSN7ug"
+msgid "We received your withdrawal on {dateTime} and emailed the confirmation to {email}."
+msgstr "We received your withdrawal on {dateTime} and emailed the confirmation to {email}."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "Ckm8Lq"
+msgid "We received your cancellation on {dateTime} and emailed the confirmation to {email}."
+msgstr "We received your cancellation on {dateTime} and emailed the confirmation to {email}."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "SBWnEw"
+msgid "We couldn't cancel your subscription. Try again or email hello@zoonk.com."
+msgstr "We couldn't cancel your subscription. Try again or email hello@zoonk.com."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "GUQ7xu"
+msgid "That option isn't available anymore."
+msgstr "That option isn't available anymore."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "cEOHN2"
+msgid "Cancel Plus"
+msgstr "Cancel Plus"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "Z2Gl7R"
+msgid "Log in with the account you subscribed with to cancel or get a refund."
+msgstr "Log in with the account you subscribed with to cancel or get a refund."
+
+#. Confirms canceling the subscription; Plus stays until the date beside it. In German it must read exactly “Jetzt kündigen” (BGB § 312k).
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "AmzBg2"
+msgid "Cancel now"
+msgstr "Cancel now"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "ObvuQ4"
+msgid "Your last payment didn't go through. Canceling stops us from trying again."
+msgstr "Your last payment didn't go through. Canceling stops us from trying again."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "a5g7yu"
+msgid "Unpaid renewal"
+msgstr "Unpaid renewal"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "FLm13g"
+msgid "For the {count, plural, one {# month} other {# months}} that haven't started, we refund {amount}."
+msgstr "For the {count, plural, one {# month} other {# months}} that haven't started, we refund {amount}."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "St4jDv"
+msgid "You won't be charged again."
+msgstr "You won't be charged again."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "HJBzay"
+msgid "Keep Plus until {date}"
+msgstr "Keep Plus until {date}"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "t5tErU"
+msgid "There's no subscription to cancel on {email}."
+msgstr "There's no subscription to cancel on {email}."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "qO091u"
 msgid "Your subscription will end on <mono>{date}</mono>."
 msgstr "Your subscription will end on <mono>{date}</mono>."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "ta4t1h"
+msgid "Plus, yearly"
+msgstr "Plus, yearly"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "7VS06t"
+msgid "Plus, monthly"
+msgstr "Plus, monthly"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "rM1iWC"
+msgid "Plus ends right away, and we refund {amount}. You can do this until {date}."
+msgstr "Plus ends right away, and we refund {amount}. You can do this until {date}."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "88OqBo"
+msgid "Full refund"
+msgstr "Full refund"
+
+#. Confirms withdrawing from the contract with a full refund (EU Consumer Rights Directive art. 11a). In German it must read exactly “Widerruf bestätigen” (BGB § 356a).
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "x4y7DX"
+msgid "Cancel and get a refund"
+msgstr "Cancel and get a refund"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "KEqLnF"
+msgid "We'll email you the confirmation."
+msgstr "We'll email you the confirmation."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "AucmVG"
@@ -1315,6 +1430,11 @@ msgstr "Active"
 msgctxt "oESc06"
 msgid "What's included"
 msgstr "What's included"
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "UWVETE"
+msgid "Cancel subscription"
+msgstr "Cancel subscription"
 
 #: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
 #: src/components/pricing/free-plan.tsx
@@ -3900,9 +4020,9 @@ msgid "Can I get a refund?"
 msgstr "Can I get a refund?"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "qwugiM"
-msgid "If you subscribed on our website, you can cancel within 14 days for a full refund. Just <link>contact us</link>. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
-msgstr "If you subscribed on our website, you can cancel within 14 days for a full refund. Just <link>contact us</link>. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
+msgctxt "ilifrv"
+msgid "If you subscribed on our website, <link>cancel</link> within 14 days for a full refund. After a yearly renewal, canceling refunds the months that haven't started. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
+msgstr "If you subscribed on our website, <link>cancel</link> within 14 days for a full refund. After a yearly renewal, canceling refunds the months that haven't started. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
 
 #: src/components/pricing/plus-questions.tsx
 #: src/components/public/public-footer.tsx
@@ -4059,6 +4179,18 @@ msgstr "Footer"
 msgctxt "cXBJ7U"
 msgid "Privacy"
 msgstr "Privacy"
+
+#. Footer link to cancel a subscription, which German law requires (BGB § 312k). In German it must read exactly “Verträge hier kündigen”.
+#: src/components/public/public-footer.tsx
+msgctxt "gdJ1Ic"
+msgid "Cancel your subscription here"
+msgstr "Cancel your subscription here"
+
+#. Footer link to withdraw within 14 days, which EU law requires (Consumer Rights Directive art. 11a): use the directive's official wording in this language. In German it must read exactly “Vertrag widerrufen” (BGB § 356a).
+#: src/components/public/public-footer.tsx
+msgctxt "OxFgc6"
+msgid "Withdraw from contract here"
+msgstr "Withdraw from contract here"
 
 #: src/components/public/public-footer.tsx
 msgctxt "k7JNE3"

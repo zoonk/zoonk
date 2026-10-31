@@ -28,9 +28,9 @@ function renderFairUseLink(chunks: ReactNode) {
   );
 }
 
-function renderSupportLink(chunks: ReactNode) {
+function renderCancelLink(chunks: ReactNode) {
   return (
-    <Link className={ANSWER_LINK_CLASS} href="/support">
+    <Link className={ANSWER_LINK_CLASS} href="/subscription/cancel">
       {chunks}
     </Link>
   );
@@ -149,8 +149,8 @@ export async function PlusQuestions({
         <PublicDisclosure summary={t("Can I get a refund?")}>
           <p className={ANSWER_CLASS}>
             {t.rich(
-              "If you subscribed on our website, you can cancel within 14 days for a full refund. Just <link>contact us</link>. Purchases in the App Store or Google Play follow Apple's or Google's refund rules.",
-              { link: renderSupportLink },
+              "If you subscribed on our website, <link>cancel</link> within 14 days for a full refund. After a yearly renewal, canceling refunds the months that haven't started. Purchases in the App Store or Google Play follow Apple's or Google's refund rules.",
+              { link: renderCancelLink },
             )}
           </p>
         </PublicDisclosure>

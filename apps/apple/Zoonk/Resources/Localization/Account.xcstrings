@@ -1169,8 +1169,95 @@
         }
       }
     },
+    "Cancel and get a refund" : {
+      "comment" : "Confirms withdrawing from the contract with a full refund (EU Consumer Rights Directive art. 11a). In German it must read exactly “Widerruf bestätigen” (BGB § 356a).",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widerruf bestätigen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar y recibir un reembolso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuler et se faire rembourser"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar e receber reembolso"
+          }
+        }
+      }
+    },
+    "Cancel now" : {
+      "comment" : "Confirms canceling the subscription; Plus stays until the date in the dialog's message. In German it must read exactly “Jetzt kündigen” (BGB § 312k).",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt kündigen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar ahora"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Résilier maintenant"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar agora"
+          }
+        }
+      }
+    },
+    "Cancel Plus?" : {
+      "comment" : "Title of the dialog that cancels Plus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus kündigen?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Cancelar Plus?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Résilier Plus ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar o Plus?"
+          }
+        }
+      }
+    },
     "Cancel subscription" : {
-      "comment" : "Opens the page that cancels Plus bought on the web",
+      "comment" : "Asks to cancel Plus bought on the web",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2460,6 +2547,35 @@
         }
       }
     },
+    "Keep Plus" : {
+      "comment" : "Closes the dialog that cancels Plus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus behalten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantener Plus"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Garder Plus"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manter o Plus"
+          }
+        }
+      }
+    },
     "Keep your plan and progress on all your devices." : {
       "comment" : "Explains the benefit of signing in",
       "localizations" : {
@@ -2926,6 +3042,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plus"
+          }
+        }
+      }
+    },
+    "Plus is canceled" : {
+      "comment" : "After canceling Plus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus ist gekündigt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has cancelado Plus"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus est résilié"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Plus foi cancelado"
           }
         }
       }
@@ -3971,6 +4116,35 @@
         }
       }
     },
+    "That option isn't available anymore." : {
+      "comment" : "The cancellation choice the learner picked closed, such as the 14-day refund",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Option ist nicht mehr verfügbar."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esa opción ya no está disponible."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette option n’est plus disponible."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essa opção não está mais disponível."
+          }
+        }
+      }
+    },
     "That username is already taken." : {
       "comment" : "Error shown when a chosen username is unavailable",
       "localizations" : {
@@ -4276,7 +4450,7 @@
       }
     },
     "Unable to manage your subscription. Contact us at hello@zoonk.com" : {
-      "comment" : "Opening the web subscription's cancellation failed",
+      "comment" : "Canceling the web subscription failed",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4300,6 +4474,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível gerenciar sua assinatura. Entre em contato pelo e-mail contato@zoonk.com"
+          }
+        }
+      }
+    },
+    "Until %@, you can get a full refund of %@. Plus ends right away." : {
+      "comment" : "In the dialog that cancels Plus: the 14-day full refund; the arguments are its last day and the amount",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bis zum %1$@ kannst du dir %2$@ vollständig erstatten lassen. Plus endet sofort."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Until %1$@, you can get a full refund of %2$@. Plus ends right away."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta el %1$@, puedes recibir un reembolso completo de %2$@. Plus termina de inmediato."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jusqu’au %1$@, tu peux obtenir un remboursement intégral de %2$@. Plus prend fin immédiatement."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Até %1$@, você pode receber o reembolso integral de %2$@. O Plus termina na hora."
           }
         }
       }
@@ -4631,6 +4840,35 @@
         }
       }
     },
+    "We emailed you the confirmation." : {
+      "comment" : "After canceling Plus bought on the web without a refund",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir haben dir die Bestätigung per E-Mail geschickt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te hemos enviado la confirmación por correo electrónico."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous t’avons envoyé la confirmation par e-mail."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente te enviou a confirmação por e-mail."
+          }
+        }
+      }
+    },
     "We sent a sign-in code to your email. It expires in 5 minutes." : {
       "comment" : "Explains where the email code was sent and when it expires",
       "localizations" : {
@@ -4656,6 +4894,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enviamos um código de acesso para seu e-mail. Ele expira em 5 minutos."
+          }
+        }
+      }
+    },
+    "We'll email you the confirmation." : {
+      "comment" : "Ends the dialog that cancels Plus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir schicken dir die Bestätigung per E-Mail."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te enviaremos la confirmación por correo electrónico."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous t’enverrons la confirmation par e-mail."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente vai te enviar a confirmação por e-mail."
+          }
+        }
+      }
+    },
+    "We've refunded %@ to the payment method you used. We emailed you the confirmation." : {
+      "comment" : "After canceling Plus bought on the web; the argument is the refunded amount",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir haben dir %@ über die verwendete Zahlungsmethode zurückerstattet. Die Bestätigung haben wir dir per E-Mail geschickt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hemos reembolsado %@ al método de pago que usaste. Te hemos enviado la confirmación por correo electrónico."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous avons remboursé %@ sur le moyen de paiement que tu as utilisé. Nous t’avons envoyé la confirmation par e-mail."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente devolveu %@ pelo meio de pagamento que você usou e te enviou a confirmação por e-mail."
           }
         }
       }
@@ -4813,6 +5109,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você pode mudar isso depois no seu perfil."
+          }
+        }
+      }
+    },
+    "You keep Plus until %@, then it ends. You won't be charged again." : {
+      "comment" : "In the dialog that cancels Plus; the argument is Plus's last day",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du behältst Plus bis zum %@, dann endet es. Dir wird nichts mehr berechnet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conservas Plus hasta el %@ y después termina. No volveremos a cobrarte."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu gardes Plus jusqu’au %@, puis l’abonnement prend fin. Il n’y aura plus de prélèvement."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você continua com o Plus até %@. Depois disso, ele termina e você não recebe mais cobranças."
+          }
+        }
+      }
+    },
+    "You keep Plus until %@. We refund %@ for the months that haven't started." : {
+      "comment" : "In the dialog that cancels Plus after a yearly renewal; the arguments are Plus's last day and the refunded amount",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du behältst Plus bis zum %1$@. Für die noch nicht begonnenen Monate erstatten wir dir %2$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "You keep Plus until %1$@. We refund %2$@ for the months that haven't started."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conservas Plus hasta el %1$@. Te reembolsamos %2$@ por los meses que aún no han empezado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu gardes Plus jusqu’au %1$@. Nous te remboursons %2$@ pour les mois qui n’ont pas encore commencé."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você continua com o Plus até %1$@. A gente reembolsa %2$@ pelos meses que ainda não começaram."
           }
         }
       }

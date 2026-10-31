@@ -27,7 +27,17 @@
   "subscription_billing_period": "8f999c920e3b3c40cfb833bc9a3d8dde18808f8fe8c9e39f04a9e7dbd1338b58",
   "subscription_cancel": "7c7682bb01f6ce24efe6282384e9b2582a949cbbabffe65b74a87dddf595e212",
   "subscription_cancel_anytime": "38a57590680dc7ee2b46e07132642bb75fd3003b0b639d6f9dabc382f4dd282a",
+  "subscription_cancel_at_period_end": "f69705174e6552cacda0a62aed1310f949f849b7e836fb2747b9c7cae9d7f084",
+  "subscription_cancel_at_period_end_refund": "e28b746c5d48d09cecbd0a8019fc2b673df9e3bcd2b8b3860f99d4e7d6758991",
+  "subscription_cancel_confirm": "497c8eccf453e83753c72f38369553a0b5e6c9f0512122c2b0332c243f8245ed",
+  "subscription_cancel_email": "70fb9104b8b8d2f435ec944c5e478bcee07efe76473e37a1c4645c02ed0e373e",
   "subscription_cancel_failed": "f2a3e681bd1c0629a13552b8cec58b830cddb055ef82baaf80e10e64fb29ca7c",
+  "subscription_cancel_title": "3e634f3f9ebadd5d121eb8ff68b1f764ff0bc98e00b197775a9ac195a0ed57ca",
+  "subscription_cancel_unavailable": "ed28fcbe9f2637b22160467ee561cbd7915e471ce69a406936385a7639608d96",
+  "subscription_cancel_withdraw": "6ba1996baf1c890164e8ddcb0b5ea7a9d89fbd2c6423cb5841d3ffa0af516bc3",
+  "subscription_cancel_withdrawal": "48b76769dc49334f130cd5cea1d3bd5edb40824af49747aaacbfb7defb2c4716",
+  "subscription_canceled": "965e7451634719039df2345f5a4d1dd78df5922318139bf011bc0aee3730419d",
+  "subscription_canceled_refund": "02cc2666748bd3bd915a446d1d270a9fe1eac3c8fb8f74decbb6e0d7ba3f52ff",
   "subscription_contact_support": "69e05460752cfe62a4bf79735dbb13695ab1aba09797d7f94137501a74f1cc17",
   "subscription_ending": "7e50fbe98c0c8995102211f8580a36a60ac6be478dc235d8f400940a44e22647",
   "subscription_ends_on": "a2a9f420f44fb12a9ccd52b9b734b0b0891507184fe305585584c3e6ea8b4cb8",
@@ -45,6 +55,7 @@
   "subscription_free_week_over_title": "eef3a469529d5455ff24464832b463bac8d4b5ea2d613932cb660dc3a58b8a76",
   "subscription_get_plus": "31fb2e1fbff7aca1ed13869a548ab00cf80260a42f104312ffc6878a11ef04ef",
   "subscription_hide_answer": "1e64955d0dbad610321106f3cc25af23733472837439ee7017dd96a62e44d306",
+  "subscription_keep_plus": "ddfacd6e9dbede46c670f66bf1f4d9e7f5dc3a48e6cdd2f37c5d3909565e0411",
   "subscription_manage_google": "ef40137d6b2dba5b32e47efffd7cff90e754d2498f63ee7fe7c91fc460776f98",
   "subscription_managed_apple": "12b4a8c9e71d42ef0b691e200d07d0b5c4791041d676d96dfa4bb8e6721faaab",
   "subscription_managed_google": "08e95e122e10911f38519ec08d9f424bd9706108ae543570a696fbb77c0db11c",
@@ -53,6 +64,7 @@
   "subscription_monthly": "f1e53edbf4cb4cab6bdf361ea17a2e36dc8f9d4979bd46cafe3fa3d76465dc58",
   "subscription_no_card_needed": "63f85ab3a6eeceed470b2f2a1a5d367abd0e8b08b11e8847631f2c94c4d64f6b",
   "subscription_offer_title": "98ab86104a1ccbc79e64b4c81c8a6f2506e898080b31502968dbad2c7fc9b80b",
+  "subscription_ok": "1075c4ff4f79646d239c8d6bf8e8f9e179b91854aa37f0b6c3f7eaa5f2f5233f",
   "subscription_per_month": "9121b7b96834497b2e30cc0f566870617e71c249ef5ee9944148de54059dce69",
   "subscription_per_year": "232a325e4d9c0fa9dff0f4ee0c4150152c8d1a040c618c2ba10e668272269903",
   "subscription_period_ends_on": "83fa3c0db48d6322cd850c24201113739b0d57465c03b391cef52208bcefece3",
@@ -100,10 +112,33 @@
     <string name="subscription_managed_zoonk">Dieses Abo wird von Zoonk verwaltet. Kontaktiere den Support, wenn du Hilfe beim Ändern oder Kündigen brauchst.</string>
     <string name="subscription_manage_google">In Google Play verwalten</string>
     <string name="subscription_contact_support">Support kontaktieren</string>
-    <!-- Opens the page that cancels a Plus bought on the web. -->
+    <!-- Opens the choices for canceling a Plus bought on the web. -->
     <string name="subscription_cancel">Abo kündigen</string>
-    <!-- Opening the page that cancels a Plus bought on the web failed. -->
+    <!-- Loading or sending the cancellation of a Plus bought on the web failed. -->
     <string name="subscription_cancel_failed">Dein Abo lässt sich nicht verwalten. Schreib uns an hello@zoonk.com</string>
+    <!-- The title of the dialog that cancels a Plus bought on the web. -->
+    <string name="subscription_cancel_title">Plus kündigen?</string>
+    <!-- Within 14 days of subscribing. %1$s is the last day of the refund, like "Nov 14, 2026"; %2$s the amount, like "R$ 29,90". -->
+    <string name="subscription_cancel_withdrawal">Bis zum %1$s kannst du dir %2$s vollständig erstatten lassen. Plus endet sofort.</string>
+    <!-- Ends Plus now and refunds all of it. German law (BGB § 356a) requires this button to read exactly "Widerruf bestätigen" in German. -->
+    <string name="subscription_cancel_withdraw">Widerruf bestätigen</string>
+    <!-- Stopping the renewal. %1$s is the day Plus ends, like "Nov 14, 2026". -->
+    <string name="subscription_cancel_at_period_end">Du behältst Plus bis zum %1$s, dann endet es. Es wird dir nichts mehr berechnet.</string>
+    <!-- Stopping the renewal after a yearly renewal. %1$s is the day Plus ends, like "Nov 14, 2026"; %2$s the amount refunded for the months that haven't started, like "R$ 99,90". -->
+    <string name="subscription_cancel_at_period_end_refund">Du behältst Plus bis zum %1$s. Wir erstatten dir %2$s für die noch nicht begonnenen Monate.</string>
+    <!-- Stops the renewal, so Plus ends at the end of what's paid. German law (BGB § 312k) requires this button to read exactly "Jetzt kündigen" in German. -->
+    <string name="subscription_cancel_confirm">Jetzt kündigen</string>
+    <!-- Closes the cancel dialog without canceling. -->
+    <string name="subscription_keep_plus">Plus behalten</string>
+    <!-- The last line of the cancel dialog. -->
+    <string name="subscription_cancel_email">Wir schicken dir die Bestätigung per E-Mail.</string>
+    <string name="subscription_canceled">Plus ist gekündigt. Wir haben dir die Bestätigung per E-Mail geschickt.</string>
+    <!-- %1$s is the amount refunded, like "R$ 29,90". -->
+    <string name="subscription_canceled_refund">Wir haben dir %1$s über die verwendete Zahlungsmethode erstattet. Plus ist gekündigt. Wir haben dir die Bestätigung per E-Mail geschickt.</string>
+    <!-- The cancel option the learner chose closed meanwhile, such as the 14-day refund. -->
+    <string name="subscription_cancel_unavailable">Diese Option ist nicht mehr verfügbar.</string>
+    <!-- Closes a message after canceling. -->
+    <string name="subscription_ok">OK</string>
     <string name="subscription_offer_title">Zoonk Plus abonnieren</string>
     <string name="subscription_your_plan">Dein Tarif</string>
     <string name="subscription_free">Free</string>

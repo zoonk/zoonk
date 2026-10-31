@@ -30,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -50,15 +49,12 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.launchWebPage
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.LoadState
-import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -68,12 +64,12 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.MeSubscription
+import com.zoonk.api.models.Money
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.time.ZoneId
@@ -81,6 +77,8 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Currency
 import java.util.Locale
+import kotlin.math.roundToLong
+import kotlin.time.Instant
 
 /**
  * Main's subscription page: a subscriber sees their plan and where to manage it; anyone else sees
@@ -114,7 +112,7 @@ fun SubscriptionScreen(
                 if (signedIn == null) {
                     Offer(app, navigator, hasAccount = false, isVisitor = session is SessionState.SignedOut)
                 } else {
-                    Account(app, navigator)
+                    Account(app, navigator, signedIn.session.localId)
                 }
             }
         }
@@ -125,20 +123,22 @@ fun SubscriptionScreen(
 private fun Account(
     app: AppContainer,
     navigator: AppNavigator,
+    sessionKey: String,
 ) {
     val account by app.subscriptions.account.collectShown()
     val scope = rememberCoroutineScope()
+    val cancellation =
+        viewModel(key = "web-plus-cancellation:$sessionKey") {
+            WebPlusCancellationViewModel(app.subscriptions::webPlusCancellation, app.subscriptions::cancelWebPlus)
+        }
+
+    WebPlusCancellationDialog(cancellation)
 
     when (val state = account) {
         is LoadState.Loaded -> {
             val subscription = state.value.account.subscription
             if (subscription != null) {
-                CurrentPlan(
-                    subscription,
-                    navigator,
-                    openWebPlusCancellation = app.subscriptions::webPlusCancellation,
-                    readPlanAgain = app.subscriptions::readPlanAgain,
-                )
+                CurrentPlan(subscription, navigator, cancellation)
             } else {
                 Offer(app, navigator, hasAccount = true, isVisitor = false)
             }
@@ -158,8 +158,7 @@ private fun Account(
 internal fun CurrentPlan(
     subscription: MeSubscription,
     navigator: AppNavigator,
-    openWebPlusCancellation: suspend () -> MutationResult<String>,
-    readPlanAgain: () -> Unit,
+    cancellation: WebPlusCancellationViewModel,
 ) {
     val context = LocalContext.current
     val isEnding = subscription.cancelAt != null
@@ -182,7 +181,7 @@ internal fun CurrentPlan(
     PlusBenefits()
 
     if (provider == STRIPE) {
-        if (!isEnding) WebPlusCancellation(openWebPlusCancellation, readPlanAgain)
+        if (!isEnding) WebPlusCancelButton(cancellation)
         return
     }
 
@@ -217,77 +216,16 @@ internal fun CurrentPlan(
     }
 }
 
-/** Main's `CancelPlusButton`: Stripe's page opens over the app, and the plan is read again on the way back. */
-@Composable
-private fun WebPlusCancellation(
-    open: suspend () -> MutationResult<String>,
-    readPlanAgain: () -> Unit,
-) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    var opening by remember { mutableStateOf(false) }
-    var failed by rememberSaveable { mutableStateOf(false) }
-    var awaitingReturn by rememberSaveable { mutableStateOf(false) }
-
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        if (awaitingReturn) {
-            awaitingReturn = false
-            readPlanAgain()
-        }
-    }
-
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        OutlinedButton(
-            onClick = {
-                opening = true
-                failed = false
-                scope.launch {
-                    when (val result = open()) {
-                        is MutationResult.Done -> {
-                            if (launchWebPage(context, result.value)) awaitingReturn = true else failed = true
-                        }
-
-                        is MutationResult.Failed -> {
-                            failed = true
-                        }
-
-                        MutationResult.Obsolete -> {}
-                    }
-                    opening = false
-                }
-            },
-            enabled = !opening,
-        ) { PendingLabel(opening, stringResource(R.string.subscription_cancel)) }
-        if (failed) {
-            Text(
-                stringResource(R.string.subscription_cancel_failed),
-                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
-}
-
 @Composable
 private fun dateLine(subscription: MeSubscription): String? {
     val locale = currentLocale()
-    val format = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)
-
-    fun date(instant: kotlin.time.Instant) =
-        format.format(
-            java.time.Instant
-                .ofEpochMilli(instant.toEpochMilliseconds())
-                .atZone(ZoneId.systemDefault()),
-        )
-
     val cancelAt = subscription.cancelAt
     val periodEnd = subscription.periodEnd
     return when {
-        cancelAt != null -> stringResource(R.string.subscription_ends_on, date(cancelAt))
+        cancelAt != null -> stringResource(R.string.subscription_ends_on, planDate(cancelAt, locale))
         periodEnd == null -> null
-        subscription.provider == STRIPE -> stringResource(R.string.subscription_renews_on, date(periodEnd))
-        else -> stringResource(R.string.subscription_period_ends_on, date(periodEnd))
+        subscription.provider == STRIPE -> stringResource(R.string.subscription_renews_on, planDate(periodEnd, locale))
+        else -> stringResource(R.string.subscription_period_ends_on, planDate(periodEnd, locale))
     }
 }
 
@@ -557,6 +495,24 @@ internal fun Note(
 ) {
     Text(text, modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
 }
+
+internal fun planDate(
+    instant: Instant,
+    locale: Locale,
+): String =
+    DateTimeFormatter
+        .ofLocalizedDate(FormatStyle.MEDIUM)
+        .withLocale(locale)
+        .format(
+            java.time.Instant
+                .ofEpochMilli(instant.toEpochMilliseconds())
+                .atZone(ZoneId.systemDefault()),
+        )
+
+internal fun money(
+    amount: Money,
+    locale: Locale,
+): String = money((amount.amount * 1_000_000).roundToLong(), amount.currency, locale)
 
 internal fun money(
     micros: Long,

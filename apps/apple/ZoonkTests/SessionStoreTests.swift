@@ -982,9 +982,9 @@ final class SessionStoreTests: XCTestCase {
     let session = makeSession(api: api, credentialStore: credentialStore)
     await session.restore()
 
-    let url = await session.webPlusCancellationURL()
+    let preview = await session.webPlusCancellation()
 
-    XCTAssertNil(url)
+    XCTAssertEqual(preview, .failed)
     XCTAssertEqual(session.state, .signedOut)
     XCTAssertNil(credentialStore.token)
   }
@@ -995,20 +995,91 @@ final class SessionStoreTests: XCTestCase {
     let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
     api.webPlusCancellationHandler = { _ in
       _ = await request.load()
-      return URL(string: "https://billing.stripe.com/p/session/cancel")!
+      return WebPlusCancellation(
+        withdrawal: nil, periodEnd: .init(endsAt: Date(timeIntervalSince1970: 0), refund: nil))
     }
     let session = makeSession(
       api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
     await session.restore()
     let endedSession = try XCTUnwrap(session.authenticatedSession)
 
-    let cancellation = Task { await session.webPlusCancellationURL() }
+    let cancellation = Task { await session.webPlusCancellation() }
     await request.waitUntilStarted()
     await session.expire(endedSession)
     request.resume(returning: makeAccount())
 
-    let url = await cancellation.value
-    XCTAssertNil(url)
+    let preview = await cancellation.value
+    XCTAssertEqual(preview, .failed)
+  }
+
+  @MainActor
+  func testNothingLeftToCancelRefreshesTheAccount() async {
+    let ending = makeAccount(
+      subscription: makeWebSubscription(cancelAt: Date(timeIntervalSince1970: 0)))
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(makeAccount(subscription: makeWebSubscription())))
+    api.webPlusCancellationHandler = { _ in throw AccountAPIError.noWebSubscription }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    api.currentAccountResult = .success(ending)
+
+    let preview = await session.webPlusCancellation()
+
+    XCTAssertEqual(preview, .nothingToCancel)
+    XCTAssertEqual(session.account, ending)
+  }
+
+  @MainActor
+  func testCancelingWebPlusReturnsTheRefundAndRefreshesTheAccount() async {
+    let refund = Money(amount: 29.9, currency: "BRL")
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(makeAccount(subscription: makeWebSubscription())))
+    api.cancelWebPlusHandler = { _, _ in refund }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    api.currentAccountResult = .success(makeAccount())
+
+    let result = await session.cancelWebPlus(withdraw: true)
+
+    XCTAssertEqual(result, .canceled(refund: refund))
+    XCTAssertEqual(api.cancelWebPlusRequests.map(\.withdraw), [true])
+    XCTAssertEqual(api.cancelWebPlusRequests.map(\.token), ["stored-session"])
+    XCTAssertNil(session.account?.account.subscription)
+  }
+
+  @MainActor
+  func testAClosedCancellationChoiceRefreshesTheAccount() async {
+    let ending = makeAccount(
+      subscription: makeWebSubscription(cancelAt: Date(timeIntervalSince1970: 0)))
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(makeAccount(subscription: makeWebSubscription())))
+    api.cancelWebPlusHandler = { _, _ in throw AccountAPIError.cancellationChoiceClosed }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    api.currentAccountResult = .success(ending)
+
+    let result = await session.cancelWebPlus(withdraw: true)
+
+    XCTAssertEqual(result, .choiceClosed)
+    XCTAssertEqual(session.account, ending)
+  }
+
+  @MainActor
+  func testAFailedWebPlusCancellationKeepsTheAccount() async {
+    let account = makeAccount(subscription: makeWebSubscription())
+    let api = SessionStoreAPIStub(currentAccountResult: .success(account))
+    api.cancelWebPlusHandler = { _, _ in throw AccountAPIError.network }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let result = await session.cancelWebPlus(withdraw: false)
+
+    XCTAssertEqual(result, .failed)
+    XCTAssertEqual(session.account, account)
   }
 
   @MainActor
@@ -1140,6 +1211,10 @@ final class SessionStoreTests: XCTestCase {
       googleAuthentication: googleAuthentication)
   }
 
+  private func makeWebSubscription(cancelAt: Date? = nil) -> AccountSubscription {
+    AccountSubscription(plan: "plus", provider: "stripe", status: "active", cancelAt: cancelAt)
+  }
+
   @MainActor
   private func makeAccount(
     name: String = "Learner",
@@ -1187,7 +1262,9 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
   var signOutResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
   var updateProfileHandler: (@MainActor (String, String, String) async throws -> CurrentAccount)?
   var updateProfileResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse)
-  var webPlusCancellationHandler: (@MainActor (String) async throws -> URL)?
+  var webPlusCancellationHandler: (@MainActor (String) async throws -> WebPlusCancellation)?
+  var cancelWebPlusHandler: (@MainActor (String, Bool) async throws -> Money?)?
+  private(set) var cancelWebPlusRequests = [(token: String, withdraw: Bool)]()
 
   init(
     appleSubscriptionResult: Result<AppleSubscriptionSynchronization, AccountAPIError> = .failure(
@@ -1204,12 +1281,22 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
     self.updateProfileResult = updateProfileResult
   }
 
-  func webPlusCancellationURL(token: String) async throws -> URL {
+  func webPlusCancellation(token: String) async throws -> WebPlusCancellation {
     guard let webPlusCancellationHandler else {
       throw AccountAPIError.invalidResponse
     }
 
     return try await webPlusCancellationHandler(token)
+  }
+
+  func cancelWebPlus(token: String, withdraw: Bool) async throws -> Money? {
+    cancelWebPlusRequests.append((token, withdraw))
+
+    guard let cancelWebPlusHandler else {
+      throw AccountAPIError.invalidResponse
+    }
+
+    return try await cancelWebPlusHandler(token, withdraw)
   }
 
   func synchronizeAppleSubscription(
@@ -1371,7 +1458,11 @@ extension AccountAPIClient {
     throw AccountAPIError.invalidResponse
   }
 
-  func webPlusCancellationURL(token: String) async throws -> URL {
+  func webPlusCancellation(token: String) async throws -> WebPlusCancellation {
+    throw AccountAPIError.invalidResponse
+  }
+
+  func cancelWebPlus(token: String, withdraw: Bool) async throws -> Money? {
     throw AccountAPIError.invalidResponse
   }
 }

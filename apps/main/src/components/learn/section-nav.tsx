@@ -32,7 +32,9 @@ export function SectionNav<Href extends string>({
         {items.map((item) => (
           <li key={item.url}>
             <Link
-              aria-current={current === item.url ? "page" : undefined}
+              aria-current={
+                current === item.url || current.startsWith(`${item.url}/`) ? "page" : undefined
+              }
               className={SECTION_NAV_LINK_CLASS}
               href={item.url}
               prefetch

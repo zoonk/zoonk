@@ -2,6 +2,7 @@ package com.zoonk.android.feature.subscription
 
 import android.app.Activity
 import com.zoonk.android.data.ApiClients
+import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
@@ -16,6 +17,9 @@ import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.GooglePlaySubscriptionRequest
 import com.zoonk.api.models.MeResponse
 import com.zoonk.api.models.StoreSubscriptionResponse
+import com.zoonk.api.models.StripeSubscriptionCancellation
+import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
+import com.zoonk.api.models.StripeSubscriptionCancellationRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +43,12 @@ interface SubscriptionApi {
         purchaseToken: String,
     ): StoreSubscriptionResponse
 
-    suspend fun webPlusCancellation(session: AuthenticatedSession): String
+    suspend fun webPlusCancellation(session: AuthenticatedSession): StripeSubscriptionCancellation
+
+    suspend fun cancelWebPlus(
+        session: AuthenticatedSession,
+        withdraw: Boolean,
+    ): StripeSubscriptionCancellationReceipt
 }
 
 class LiveSubscriptionApi(
@@ -60,8 +69,14 @@ class LiveSubscriptionApi(
     ): StoreSubscriptionResponse =
         perform { api.clients(session).subscriptions.createGooglePlaySubscription(GooglePlaySubscriptionRequest(purchaseToken)) }
 
-    override suspend fun webPlusCancellation(session: AuthenticatedSession): String =
-        perform { api.clients(session).subscriptions.createStripeSubscriptionCancellation() }.url.toString()
+    override suspend fun webPlusCancellation(session: AuthenticatedSession): StripeSubscriptionCancellation =
+        perform { api.clients(session).subscriptions.getStripeSubscriptionCancellation() }
+
+    override suspend fun cancelWebPlus(
+        session: AuthenticatedSession,
+        withdraw: Boolean,
+    ): StripeSubscriptionCancellationReceipt =
+        perform { api.clients(session).subscriptions.cancelStripeSubscription(StripeSubscriptionCancellationRequest(withdraw)) }
 }
 
 sealed interface PurchaseState {
@@ -147,11 +162,22 @@ class SubscriptionStore(
 
     private var reconciledFor: AuthenticatedSession? = null
 
-    /** Stripe's page where a Plus bought on the web is canceled. An expired session signs out, as any write's. */
-    suspend fun webPlusCancellation(): MutationResult<String> = cache.mutate { api.webPlusCancellation(it) }
+    /**
+     * What canceling a Plus bought on the web would do, read only from the learner's tap. `NotFound`
+     * means it changed elsewhere and nothing is left to cancel, so the plan is read again.
+     */
+    suspend fun webPlusCancellation(): MutationResult<StripeSubscriptionCancellation> =
+        cache
+            .mutate { api.webPlusCancellation(it) }
+            .also { if (it is MutationResult.Failed && it.error == ApiError.NotFound) readPlanAgain() }
 
-    /** After a change made outside the app: a read that started before it can't land. */
-    fun readPlanAgain() = account.invalidate()
+    /** A 409 means the chosen option closed meanwhile, so the plan is read again. */
+    suspend fun cancelWebPlus(withdraw: Boolean): MutationResult<StripeSubscriptionCancellationReceipt> =
+        cache
+            .mutate(invalidating = SUBSCRIPTION_DOMAINS) { api.cancelWebPlus(it, withdraw) }
+            .also { if (it is MutationResult.Failed && it.status == HTTP_CONFLICT) readPlanAgain() }
+
+    private fun readPlanAgain() = cache.invalidate(SUBSCRIPTION_DOMAINS)
 
     /** Only an account can buy: a guest creates one first, as main asks. */
     suspend fun buy(
@@ -190,7 +216,7 @@ class SubscriptionStore(
         try {
             val result =
                 cache.mutate(
-                    invalidating = setOf(DataDomain.UserSubscription, DataDomain.Allowance, DataDomain.UserSession),
+                    invalidating = SUBSCRIPTION_DOMAINS,
                     replacing = { listOf(account.replacing(it.currentAccount)) },
                 ) { current -> api.linkGooglePlay(current, purchaseToken) }
             // Linked or not, a state for a session that ended belongs to nobody on screen.
@@ -217,7 +243,11 @@ class SubscriptionStore(
 
     private companion object {
         val OTHER_ACCOUNT_CODES = setOf("GOOGLE_PLAY_ACCOUNT_MISMATCH", "GOOGLE_PLAY_SUBSCRIPTION_CONFLICT")
+        val SUBSCRIPTION_DOMAINS = setOf(DataDomain.UserSubscription, DataDomain.Allowance, DataDomain.UserSession)
     }
 }
 
 fun PlusOffers.offerFor(period: BillingPeriod): PlusOffer? = if (period == BillingPeriod.Yearly) yearly else monthly
+
+/** The web cancellation's answer when the chosen option closed meanwhile. */
+internal const val HTTP_CONFLICT = 409

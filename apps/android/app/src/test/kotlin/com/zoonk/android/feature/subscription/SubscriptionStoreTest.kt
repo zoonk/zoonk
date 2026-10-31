@@ -11,6 +11,7 @@ import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.FakeSessionApi
 import com.zoonk.android.data.GUEST
 import com.zoonk.android.data.MemoryCredentials
+import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SessionStore
 import com.zoonk.android.data.StoredSession
@@ -20,7 +21,10 @@ import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeResponse
 import com.zoonk.api.models.MeSubscription
+import com.zoonk.api.models.Money
 import com.zoonk.api.models.StoreSubscriptionResponse
+import com.zoonk.api.models.StripeSubscriptionCancellation
+import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,6 +38,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -111,8 +116,28 @@ private class FakeSubscriptionApi : SubscriptionApi {
         return StoreSubscriptionResponse(subscribed(session.accountId), isActive = true)
     }
 
-    override suspend fun webPlusCancellation(session: AuthenticatedSession): String = throw UnsupportedOperationException()
+    var cancellationRead: suspend () -> StripeSubscriptionCancellation = { throw UnsupportedOperationException() }
+    val canceled = mutableListOf<Pair<String, Boolean>>()
+    var cancelFailure: ApiException? = null
+
+    override suspend fun webPlusCancellation(session: AuthenticatedSession): StripeSubscriptionCancellation = cancellationRead()
+
+    override suspend fun cancelWebPlus(
+        session: AuthenticatedSession,
+        withdraw: Boolean,
+    ): StripeSubscriptionCancellationReceipt {
+        cancelFailure?.let { throw it }
+        canceled += session.bearerToken to withdraw
+        return RECEIPT
+    }
 }
+
+private val RECEIPT =
+    StripeSubscriptionCancellationReceipt(
+        endsAt = Instant.parse("2026-10-31T12:00:00Z"),
+        receivedAt = Instant.parse("2026-10-31T12:00:00Z"),
+        refund = Money(29.9, "BRL"),
+    )
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -253,7 +278,29 @@ class SubscriptionStoreTest {
         }
 
     @Test
-    fun comingBackFromStripeReadsThePlanAgainEvenWhileAnOlderReadIsOnItsWay() =
+    fun aWithdrawalIsSentWithTheSessionsTokenAndShowsThePlanWithoutPlus() =
+        runTest {
+            val (_, store) = store(ana)
+            api.accountRead = { subscribed(it.accountId, provider = "stripe") }
+            val shown = launch { store.account.shown.collect {} }
+            advanceUntilIdle()
+
+            api.accountRead = { account(it.accountId) }
+            val result = store.cancelWebPlus(withdraw = true)
+            advanceUntilIdle()
+
+            assertEquals(MutationResult.Done(RECEIPT), result)
+            assertEquals(listOf("token-a" to true), api.canceled)
+            assertNull(
+                store.account.state.value.value
+                    ?.account
+                    ?.subscription,
+            )
+            shown.cancel()
+        }
+
+    @Test
+    fun nothingLeftToCancelReadsThePlanAgainEvenWhileAnOlderReadIsOnItsWay() =
         runTest {
             val (_, store) = store(ana)
             val olderRead = CompletableDeferred<MeResponse>()
@@ -261,12 +308,39 @@ class SubscriptionStoreTest {
             val shown = launch { store.account.shown.collect {} }
             advanceUntilIdle()
 
+            api.cancellationRead = { throw ApiException(ApiError.NotFound, status = 404) }
             api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
-            launch { store.readPlanAgain() }
+            val result = store.webPlusCancellation()
             advanceUntilIdle()
             olderRead.complete(subscribed(ANA, provider = "stripe"))
             advanceUntilIdle()
 
+            assertEquals(ApiError.NotFound, (result as MutationResult.Failed).error)
+            assertEquals(
+                ENDS,
+                store.account.state.value.value
+                    ?.account
+                    ?.subscription
+                    ?.cancelAt,
+            )
+            shown.cancel()
+        }
+
+    @Test
+    fun aChoiceThatClosedMeanwhileReadsThePlanAgain() =
+        runTest {
+            val (_, store) = store(ana)
+            api.accountRead = { subscribed(it.accountId, provider = "stripe") }
+            val shown = launch { store.account.shown.collect {} }
+            advanceUntilIdle()
+
+            api.cancelFailure = ApiException(ApiError.Unavailable, "CONFLICT", 409)
+            api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
+            val result = store.cancelWebPlus(withdraw = true)
+            advanceUntilIdle()
+
+            assertEquals(409, (result as MutationResult.Failed).status)
+            assertTrue(api.canceled.isEmpty())
             assertEquals(
                 ENDS,
                 store.account.state.value.value

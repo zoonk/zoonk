@@ -1,4 +1,5 @@
 import { PlusBenefits } from "@/components/pricing/plus-benefits";
+import { Link } from "@/i18n/navigation";
 import { type Subscription } from "@zoonk/db";
 import { CHIP_CLASS } from "@zoonk/learn/chip";
 import {
@@ -9,9 +10,10 @@ import {
   PageSubtitle,
   PageTitle,
 } from "@zoonk/learn/page";
+import { buttonVariants } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { isWebManagedSubscriptionProvider } from "@zoonk/utils/subscription";
 import { getExtracted, getFormatter } from "next-intl/server";
-import { CancelPlusButton } from "./cancel-plus-button";
 import { ManagedSubscription } from "./managed-subscription";
 
 function renderDate(chunks: React.ReactNode) {
@@ -78,7 +80,14 @@ export async function CurrentPlan({ subscription }: { subscription: Subscription
 
       <div className="empty:hidden">
         {isWebManagedSubscriptionProvider(subscription.provider) ? (
-          !isEnding && <CancelPlusButton />
+          !isEnding && (
+            <Link
+              className={cn(buttonVariants({ size: "sm", variant: "outline" }), "w-max")}
+              href="/subscription/cancel"
+            >
+              {t("Cancel subscription")}
+            </Link>
+          )
         ) : (
           <ManagedSubscription provider={subscription.provider} />
         )}

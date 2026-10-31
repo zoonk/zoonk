@@ -304,22 +304,72 @@ final class SessionStore {
     try? await api.isUsernameAvailable(username)
   }
 
-  /// Nil when it didn't load, there's no web subscription to cancel, or the session ended
-  /// meanwhile; an unauthorized answer signs that session out.
-  func webPlusCancellationURL() async -> URL? {
+  /// Nothing left to cancel refreshes the account. A session that ended meanwhile fails; an
+  /// unauthorized answer signs that session out.
+  func webPlusCancellation() async -> WebPlusCancellationPreview {
     guard let authenticatedSession else {
-      return nil
+      return .failed
     }
 
     do {
-      let url = try await api.webPlusCancellationURL(token: authenticatedSession.bearerToken)
-      return self.authenticatedSession == authenticatedSession ? url : nil
+      let cancellation = try await api.webPlusCancellation(token: authenticatedSession.bearerToken)
+      return self.authenticatedSession == authenticatedSession ? .choices(cancellation) : .failed
+    } catch AccountAPIError.noWebSubscription {
+      guard self.authenticatedSession == authenticatedSession else {
+        return .failed
+      }
+
+      await reloadAccount(for: authenticatedSession)
+      return .nothingToCancel
     } catch AccountAPIError.unauthorized {
       await expire(authenticatedSession)
-      return nil
+      return .failed
     } catch {
-      return nil
+      return .failed
     }
+  }
+
+  /// Refreshes the account once Plus is canceled or the choice closed. A session that ended
+  /// meanwhile fails; an unauthorized answer signs that session out.
+  func cancelWebPlus(withdraw: Bool) async -> WebPlusCancellationResult {
+    guard let authenticatedSession else {
+      return .failed
+    }
+
+    let result: WebPlusCancellationResult
+    do {
+      let refund = try await api.cancelWebPlus(
+        token: authenticatedSession.bearerToken, withdraw: withdraw)
+      result = .canceled(refund: refund)
+    } catch AccountAPIError.cancellationChoiceClosed {
+      result = .choiceClosed
+    } catch AccountAPIError.unauthorized {
+      await expire(authenticatedSession)
+      return .failed
+    } catch {
+      return .failed
+    }
+
+    guard self.authenticatedSession == authenticatedSession else {
+      return .failed
+    }
+
+    await reloadAccount(for: authenticatedSession)
+    return result
+  }
+
+  /// A refresh that started before the change must not bring back the account it replaced.
+  private func reloadAccount(for session: AuthenticatedSession) async {
+    accountRefreshRevision = UUID()
+    let revision = accountRefreshRevision
+
+    guard let account = try? await api.getCurrentAccount(token: session.bearerToken),
+      isCurrentAccountSession(session), accountRefreshRevision == revision
+    else {
+      return
+    }
+
+    state = .signedIn(account)
   }
 
   func updateProfile(name: String, username: String) async -> Bool {
@@ -816,7 +866,7 @@ final class SessionStore {
       return .disposableEmail
     case .invalidCode:
       return .invalidCode
-    case .invalidAppStorePurchase:
+    case .cancellationChoiceClosed, .invalidAppStorePurchase, .noWebSubscription:
       return .signIn
     case .invalidEmail:
       return .invalidEmail
@@ -849,7 +899,7 @@ final class SessionStore {
       return .accountDeletion
     case .invalidCode:
       return .invalidCode
-    case .invalidAppStorePurchase:
+    case .cancellationChoiceClosed, .invalidAppStorePurchase, .noWebSubscription:
       return .accountDeletion
     case .invalidEmail:
       return .invalidEmail

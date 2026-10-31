@@ -48,6 +48,42 @@ struct AccountSubscription: Decodable, Equatable, Hashable {
   var periodEnd: Date? = nil
 }
 
+struct Money: Equatable {
+  /// In the currency's major unit: 29.9 is R$ 29,90.
+  let amount: Double
+  let currency: String
+}
+
+/// At least one choice is set.
+struct WebPlusCancellation: Equatable {
+  struct Withdrawal: Equatable {
+    let refund: Money
+    let until: Date
+  }
+
+  struct PeriodEnd: Equatable {
+    let endsAt: Date
+    let refund: Money?
+  }
+
+  /// Within 14 days of subscribing: Plus ends now and the whole payment is refunded.
+  let withdrawal: Withdrawal?
+  /// Stopping the renewal; after a yearly renewal it refunds the months that haven't started.
+  let periodEnd: PeriodEnd?
+}
+
+enum WebPlusCancellationPreview: Equatable {
+  case choices(WebPlusCancellation)
+  case nothingToCancel
+  case failed
+}
+
+enum WebPlusCancellationResult: Equatable {
+  case canceled(refund: Money?)
+  case choiceClosed
+  case failed
+}
+
 struct AppleSubscriptionSynchronization: Equatable {
   let account: CurrentAccount
   let isActive: Bool

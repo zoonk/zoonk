@@ -20,6 +20,7 @@ filter:
     - answerPronunciationReview
     - answerSuggestedGoal
     - askMaterialQuestion
+    - cancelStripeSubscription
     - checkLanguageConversationObjectives
     - completeGoalPlacement
     - completeLanguageConversation
@@ -72,7 +73,6 @@ filter:
     - createSpokenAnswer
     - createStepAnswerExplanation
     - createStepCheck
-    - createStripeSubscriptionCancellation
     - createStudyAnswer
     - createStudyBlockCompletion
     - createStudyBlockStart
@@ -167,6 +167,7 @@ filter:
     - getPlanTimeAdvice
     - getSkillOutline
     - getSpeakingPaper
+    - getStripeSubscriptionCancellation
     - getStudyBlock
     - getStudySession
     - getStudySessionSummary

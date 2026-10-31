@@ -40,6 +40,20 @@ export async function PublicFooter({ pathname }: { pathname?: string }) {
             <Link className={FOOTER_LINK_CLASS} href="/terms">
               {t("Terms")}
             </Link>
+            <Link className={FOOTER_LINK_CLASS} href="/subscription/cancel">
+              {t({
+                description:
+                  "Footer link to cancel a subscription, which German law requires (BGB § 312k). In German it must read exactly “Verträge hier kündigen”.",
+                message: "Cancel your subscription here",
+              })}
+            </Link>
+            <Link className={FOOTER_LINK_CLASS} href="/subscription/cancel">
+              {t({
+                description:
+                  "Footer link to withdraw within 14 days, which EU law requires (Consumer Rights Directive art. 11a): use the directive's official wording in this language. In German it must read exactly “Vertrag widerrufen” (BGB § 356a).",
+                message: "Withdraw from contract here",
+              })}
+            </Link>
             <CommercialDisclosureLink className={FOOTER_LINK_CLASS} />
           </nav>
 
