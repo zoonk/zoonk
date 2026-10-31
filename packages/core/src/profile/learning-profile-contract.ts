@@ -90,4 +90,5 @@ export type LearningProfileView = {
   /** Null until the learner chooses. */
   shareUsageData: boolean | null;
   soundsEnabled: boolean;
+  usageDataLockedOff: boolean;
 };

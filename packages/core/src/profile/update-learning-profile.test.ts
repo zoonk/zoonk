@@ -283,6 +283,7 @@ describe(updateLearningProfile, () => {
       dailyTimes: DAILY_TIME_CHOICES,
       shareUsageData: null,
       soundsEnabled: true,
+      usageDataLockedOff: false,
     });
 
     await expect(
@@ -348,14 +349,22 @@ describe(updateLearningProfile, () => {
     vi.mocked(headers).mockResolvedValue(new Headers({ "x-vercel-ip-country": "DE" }));
 
     await expect(updateLearningProfile({ shareUsageData: true })).resolves.toMatchObject({
-      profile: { shareUsageData: null },
+      profile: { shareUsageData: null, usageDataLockedOff: true },
     });
 
     vi.mocked(headers).mockResolvedValue(new Headers({ "x-vercel-ip-country": "BR" }));
 
     await expect(updateLearningProfile({ shareUsageData: true })).resolves.toMatchObject({
-      profile: { shareUsageData: true },
+      profile: { shareUsageData: true, usageDataLockedOff: false },
     });
+  });
+
+  it("locks usage data off for a minor where the law needs a yes they can't give", async () => {
+    const user = await useLearner();
+    await learningProfileFixture({ birthYear: new Date().getUTCFullYear() - 15, userId: user.id });
+    vi.mocked(headers).mockResolvedValue(new Headers({ "x-vercel-ip-country": "DE" }));
+
+    await expect(getLearningProfile()).resolves.toMatchObject({ usageDataLockedOff: true });
   });
 
   it("saves the buddy and the active goal the tabs show", async () => {
@@ -377,6 +386,7 @@ describe(updateLearningProfile, () => {
         dailyTimes: DAILY_TIME_CHOICES,
         shareUsageData: null,
         soundsEnabled: true,
+        usageDataLockedOff: false,
       },
       status: "updated",
     });

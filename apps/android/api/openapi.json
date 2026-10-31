@@ -29392,12 +29392,16 @@
           },
           "shareUsageData": {
             "nullable": true,
-            "description": "Whether Zoonk may record how the learner uses it, or null before they choose. Their events are recorded unless it's false",
+            "description": "Whether Zoonk may record how the learner uses it, or null before they choose. Their events are recorded unless it's false or `usageDataLockedOff`",
             "type": "boolean"
           },
           "soundsEnabled": {
             "type": "boolean",
             "description": "Sounds for a right answer and for finishing; on by default"
+          },
+          "usageDataLockedOff": {
+            "type": "boolean",
+            "description": "A known minor where the law needs a yes they can't give: nothing is recorded whatever `shareUsageData` says, and the setting can't be turned on"
           }
         },
         "required": [
@@ -29408,7 +29412,8 @@
           "dailyLimitMinutes",
           "dailyTimes",
           "shareUsageData",
-          "soundsEnabled"
+          "soundsEnabled",
+          "usageDataLockedOff"
         ],
         "additionalProperties": false
       },

@@ -31,11 +31,17 @@ export const learningProfileSchema = z
       .nullable()
       .meta({
         description:
-          "Whether Zoonk may record how the learner uses it, or null before they choose. Their events are recorded unless it's false",
+          "Whether Zoonk may record how the learner uses it, or null before they choose. Their events are recorded unless it's false or `usageDataLockedOff`",
       }),
     soundsEnabled: z
       .boolean()
       .meta({ description: "Sounds for a right answer and for finishing; on by default" }),
+    usageDataLockedOff: z
+      .boolean()
+      .meta({
+        description:
+          "A known minor where the law needs a yes they can't give: nothing is recorded whatever `shareUsageData` says, and the setting can't be turned on",
+      }),
   })
   .meta({ id: "LearningProfile" });
 
