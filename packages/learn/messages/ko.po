@@ -3485,6 +3485,26 @@ msgctxt "tGWu02"
 msgid "Preparing what the examiner says…"
 msgstr "면접관이 할 말을 준비하고 있어요…"
 
+#: src/generation/call-generation-copy.ts
+msgctxt "stcnR5"
+msgid "Writing your speaking paper"
+msgstr "말하기 시험지를 만들고 있어요"
+
+#: src/generation/call-generation-copy.ts
+msgctxt "KlQNf-"
+msgid "Writing a card for each task"
+msgstr "과제별 카드를 만들고 있어요"
+
+#: src/generation/call-generation-copy.ts
+msgctxt "62x7Ze"
+msgid "Picking a topic for each task…"
+msgstr "과제별 주제를 고르고 있어요…"
+
+#: src/generation/call-generation-copy.ts
+msgctxt "vNw6Rg"
+msgid "Writing each card's instructions…"
+msgstr "각 카드의 안내문을 만들고 있어요…"
+
 #: src/generation/generation-wait.tsx
 msgctxt "NhDwgx"
 msgid "in progress"
@@ -3851,6 +3871,31 @@ msgstr "주제를 가장 잘 설명할 방법을 고르고 있어요…"
 msgctxt "Dwuk2D"
 msgid "Writing the lesson"
 msgstr "레슨을 만들고 있어요"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "_49owu"
+msgid "Adding a setup lesson"
+msgstr "초기 설정 레슨을 추가하고 있어요"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "8Lpa5Z"
+msgid "Writing the setup for your device"
+msgstr "기기에 맞는 초기 설정 안내를 만들고 있어요"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "C4MPTB"
+msgid "Checking what the tool needs…"
+msgstr "도구 사용에 필요한 것을 확인하고 있어요…"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "E4RZNN"
+msgid "Writing the steps to install it…"
+msgstr "설치 단계별 안내를 만들고 있어요…"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "7wkXtE"
+msgid "Adding a quick check that it works…"
+msgstr "잘 작동하는지 간단히 확인하는 단계를 추가하고 있어요…"
 
 #: src/journey/goal-actions.tsx
 msgctxt "vr-vFm"
@@ -4886,6 +4931,16 @@ msgid "A star for finishing, one for getting everything across and one without H
 msgstr "대화를 마치면 별 1개, 할 말을 모두 전하면 1개, 도움 없이 해내면 1개를 받아요."
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
+msgctxt "rMZfgB"
+msgid "Getting your call ready"
+msgstr "대화를 준비하고 있어요"
+
+#: src/language/conversation/checkpoint-call-preparing.tsx
+msgctxt "dKxF7Y"
+msgid "It opens here as soon as it's ready."
+msgstr "준비가 끝나면 여기서 바로 열려요."
+
+#: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "3qV6d_"
 msgid "Get the call ready"
 msgstr "대화 준비하기"
@@ -4896,26 +4951,18 @@ msgid "This challenge is a short call about the unit. It's written for your spea
 msgstr "이 챌린지는 단원 내용을 바탕으로 짧게 대화하는 활동이에요. 먼저 말하기 수준에 맞춰 내용을 만드는 데 최대 30초가 걸려요."
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
-msgctxt "rMZfgB"
-msgid "Getting your call ready"
-msgstr "대화를 준비하고 있어요"
-
-#: src/language/conversation/checkpoint-call-preparing.tsx
-msgctxt "dKxF7Y"
-msgid "It opens here as soon as it's ready."
-msgstr "준비가 끝나면 여기서 바로 열려요."
+#: src/language/conversation/conversation-intro.tsx
+#: src/language/conversation/try-call-again.tsx
+#: src/language/unit/practice-conversation.tsx
+msgctxt "l3VAtp"
+msgid "The call didn't start. Try again in a moment."
+msgstr "대화를 시작하지 못했어요. 잠시 후에 다시 시도해 보세요."
 
 #. The daily time limit is a setting that stops study for the day.
 #: src/language/conversation/conversation-intro.tsx
 msgctxt "HYCGBs"
 msgid "You've reached your daily time limit. You can make this call in your next session."
 msgstr "하루 학습 시간 제한에 도달했어요. 다음 학습 때 이 대화를 할 수 있어요."
-
-#: src/language/conversation/conversation-intro.tsx
-#: src/language/unit/practice-conversation.tsx
-msgctxt "l3VAtp"
-msgid "The call didn't start. Try again in a moment."
-msgstr "대화를 시작하지 못했어요. 잠시 후에 다시 시도해 보세요."
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/unit/practice-conversation.tsx
@@ -5151,6 +5198,12 @@ msgid "Try another one when you're ready."
 msgstr "준비되면 다른 모의고사에 도전해 보세요."
 
 #: src/language/conversation/speaking-mock-result.tsx
+#: src/language/progress/speaking-mock-card.tsx
+msgctxt "8uq58m"
+msgid "Your mock opens as soon as it's ready."
+msgstr "모의고사가 준비되면 바로 열려요."
+
+#: src/language/conversation/speaking-mock-result.tsx
 msgctxt "Vyzuj3"
 msgid "Try another mock"
 msgstr "다른 모의고사에 도전하기"
@@ -5296,14 +5349,20 @@ msgid "Try the task again when you're ready."
 msgstr "준비되면 과제에 다시 도전해 보세요."
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
-msgctxt "FjJT2V"
-msgid "Try this task with a new card"
-msgstr "새 카드로 이 과제 다시 하기"
-
-#: src/language/exam-speaking/exam-speaking-result.tsx
 msgctxt "rNoi5I"
 msgid "Go to task {number}"
 msgstr "{number}번 과제로 이동"
+
+#: src/language/exam-speaking/exam-speaking-result.tsx
+#: src/language/exam-speaking/speaking-paper-section.tsx
+msgctxt "uBvT9W"
+msgid "Your task opens as soon as its card is ready."
+msgstr "카드가 준비되는 대로 과제가 열려요."
+
+#: src/language/exam-speaking/exam-speaking-result.tsx
+msgctxt "FjJT2V"
+msgid "Try this task with a new card"
+msgstr "새 카드로 이 과제 다시 하기"
 
 #: src/language/exam-speaking/exam-task-intro.tsx
 msgctxt "X_5MNN"
@@ -5376,11 +5435,6 @@ msgstr "다시 시작하기"
 msgctxt "l3c7Yz"
 msgid "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one."
 msgstr "Plus에는 말하기 연습이 포함돼요. 말하기 시험의 모든 과제를 대화로 연습하고, 과제를 마칠 때마다 공식 평가 기준에 따른 예상 결과를 받아요."
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "uBvT9W"
-msgid "Your task opens as soon as its card is ready."
-msgstr "카드가 준비되는 대로 과제가 열려요."
 
 #: src/language/exam-speaking/speaking-paper-section.tsx
 msgctxt "TSrXx4"
@@ -5774,11 +5828,6 @@ msgstr "면접관과 짧은 말하기 시험을 봐요. 끝나면 평가 항목�
 msgctxt "pAwPcF"
 msgid "Repeat sentences, then a short interview with an examiner. After it, an estimated band from 1 to 6 for each criterion."
 msgstr "문장을 따라 말한 뒤 면접관과 짧은 면접을 봐요. 끝나면 평가 항목별 예상 밴드를 1~6으로 알려 드려요."
-
-#: src/language/progress/speaking-mock-card.tsx
-msgctxt "8uq58m"
-msgid "Your mock opens as soon as it's ready."
-msgstr "모의고사가 준비되면 바로 열려요."
 
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "LS2n2L"
@@ -8197,19 +8246,19 @@ msgid "Keep going"
 msgstr "계속하기"
 
 #: src/mock/mock-speaking.tsx
-msgctxt "8xoYFh"
-msgid "Writing your task cards…"
-msgstr "과제 카드를 만들고 있어요…"
-
-#: src/mock/mock-speaking.tsx
 msgctxt "6lEa3w"
 msgid "Start the speaking part"
 msgstr "말하기 파트 시작하기"
 
 #: src/mock/mock-speaking.tsx
-msgctxt "ZX1_UR"
-msgid "Each task is a live call with an examiner, as in the exam: an AI stands in for the person. Your task cards are written when you start, which takes about half a minute."
-msgstr "각 과제에서는 실제 시험처럼 면접관과 실시간으로 대화해요. 인공지능이 면접관 역할을 맡아요. 시작할 때 과제 카드를 만드는 데 약 30초가 걸려요."
+msgctxt "i9hrw7"
+msgid "Your speaking paper opens as soon as it's ready."
+msgstr "말하기 시험지가 준비되면 바로 열려요."
+
+#: src/mock/mock-speaking.tsx
+msgctxt "VBXPHn"
+msgid "Each task is a live call with an examiner, as in the exam: an AI stands in for the person."
+msgstr "과제마다 실제 시험처럼 면접관과 실시간으로 대화해요. AI가 면접관 역할을 맡아요."
 
 #: src/mock/mock-summary-row.tsx
 msgctxt "TyZybQ"
@@ -10558,6 +10607,11 @@ msgstr "설치하지 않을래요"
 msgctxt "o7eSa4"
 msgid "Your device"
 msgstr "내 기기"
+
+#: src/plan/plan-tool-sheet.tsx
+msgctxt "FwBrsg"
+msgid "Your plan updates as soon as it's ready."
+msgstr "준비되면 계획이 바로 업데이트돼요."
 
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "nrLaaR"

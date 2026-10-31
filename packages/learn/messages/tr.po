@@ -3485,6 +3485,26 @@ msgctxt "tGWu02"
 msgid "Preparing what the examiner says…"
 msgstr "Değerlendiricinin söyleyeceklerini hazırlıyoruz…"
 
+#: src/generation/call-generation-copy.ts
+msgctxt "stcnR5"
+msgid "Writing your speaking paper"
+msgstr "Konuşma sınavı kâğıdını hazırlıyoruz"
+
+#: src/generation/call-generation-copy.ts
+msgctxt "KlQNf-"
+msgid "Writing a card for each task"
+msgstr "Her bölüm için bir kart hazırlanıyor"
+
+#: src/generation/call-generation-copy.ts
+msgctxt "62x7Ze"
+msgid "Picking a topic for each task…"
+msgstr "Her bölüm için bir konu seçiyoruz…"
+
+#: src/generation/call-generation-copy.ts
+msgctxt "vNw6Rg"
+msgid "Writing each card's instructions…"
+msgstr "Her kartın yönergelerini hazırlıyoruz…"
+
 #: src/generation/generation-wait.tsx
 msgctxt "NhDwgx"
 msgid "in progress"
@@ -3851,6 +3871,31 @@ msgstr "Konuyu anlatmanın en iyi yolunu seçiyoruz…"
 msgctxt "Dwuk2D"
 msgid "Writing the lesson"
 msgstr "Dersi hazırlıyoruz"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "_49owu"
+msgid "Adding a setup lesson"
+msgstr "Kurulum dersi ekliyoruz"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "8Lpa5Z"
+msgid "Writing the setup for your device"
+msgstr "Cihazın için kurulum adımları hazırlanıyor"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "C4MPTB"
+msgid "Checking what the tool needs…"
+msgstr "Araç için neler gerektiğini kontrol ediyoruz…"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "E4RZNN"
+msgid "Writing the steps to install it…"
+msgstr "Kurulum adımlarını hazırlıyoruz…"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "7wkXtE"
+msgid "Adding a quick check that it works…"
+msgstr "Çalıştığını doğrulamak için kısa bir kontrol ekliyoruz…"
 
 #: src/journey/goal-actions.tsx
 msgctxt "vr-vFm"
@@ -4886,6 +4931,16 @@ msgid "A star for finishing, one for getting everything across and one without H
 msgstr "Bitirmek, her şeyi anlatmak ve Yardım kullanmamak birer yıldız kazandırır."
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
+msgctxt "rMZfgB"
+msgid "Getting your call ready"
+msgstr "Sohbetini hazırlıyoruz"
+
+#: src/language/conversation/checkpoint-call-preparing.tsx
+msgctxt "dKxF7Y"
+msgid "It opens here as soon as it's ready."
+msgstr "Hazır olur olmaz burada açılacak."
+
+#: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "3qV6d_"
 msgid "Get the call ready"
 msgstr "Sohbeti hazırla"
@@ -4896,26 +4951,18 @@ msgid "This challenge is a short call about the unit. It's written for your spea
 msgstr "Bu meydan okuma, üniteyle ilgili kısa bir sohbet. Önce konuşma seviyene göre hazırlıyoruz; bu da yarım dakikaya kadar sürebilir."
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
-msgctxt "rMZfgB"
-msgid "Getting your call ready"
-msgstr "Sohbetini hazırlıyoruz"
-
-#: src/language/conversation/checkpoint-call-preparing.tsx
-msgctxt "dKxF7Y"
-msgid "It opens here as soon as it's ready."
-msgstr "Hazır olur olmaz burada açılacak."
+#: src/language/conversation/conversation-intro.tsx
+#: src/language/conversation/try-call-again.tsx
+#: src/language/unit/practice-conversation.tsx
+msgctxt "l3VAtp"
+msgid "The call didn't start. Try again in a moment."
+msgstr "Sohbet başlamadı. Biraz sonra tekrar dene."
 
 #. The daily time limit is a setting that stops study for the day.
 #: src/language/conversation/conversation-intro.tsx
 msgctxt "HYCGBs"
 msgid "You've reached your daily time limit. You can make this call in your next session."
 msgstr "Günlük süre sınırına ulaştın. Bu sohbeti bir sonraki çalışmanda yapabilirsin."
-
-#: src/language/conversation/conversation-intro.tsx
-#: src/language/unit/practice-conversation.tsx
-msgctxt "l3VAtp"
-msgid "The call didn't start. Try again in a moment."
-msgstr "Sohbet başlamadı. Biraz sonra tekrar dene."
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/unit/practice-conversation.tsx
@@ -5151,6 +5198,12 @@ msgid "Try another one when you're ready."
 msgstr "Hazır olduğunda başka bir deneme sınavına gir."
 
 #: src/language/conversation/speaking-mock-result.tsx
+#: src/language/progress/speaking-mock-card.tsx
+msgctxt "8uq58m"
+msgid "Your mock opens as soon as it's ready."
+msgstr "Deneme sınavın hazır olur olmaz açılacak."
+
+#: src/language/conversation/speaking-mock-result.tsx
 msgctxt "Vyzuj3"
 msgid "Try another mock"
 msgstr "Başka bir deneme sınavına gir"
@@ -5296,14 +5349,20 @@ msgid "Try the task again when you're ready."
 msgstr "Hazır olduğunda bölümü tekrar dene."
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
-msgctxt "FjJT2V"
-msgid "Try this task with a new card"
-msgstr "Bu bölümü yeni bir kartla dene"
-
-#: src/language/exam-speaking/exam-speaking-result.tsx
 msgctxt "rNoi5I"
 msgid "Go to task {number}"
 msgstr "{number}. bölüme geç"
+
+#: src/language/exam-speaking/exam-speaking-result.tsx
+#: src/language/exam-speaking/speaking-paper-section.tsx
+msgctxt "uBvT9W"
+msgid "Your task opens as soon as its card is ready."
+msgstr "Kart hazır olur olmaz bölümün açılır."
+
+#: src/language/exam-speaking/exam-speaking-result.tsx
+msgctxt "FjJT2V"
+msgid "Try this task with a new card"
+msgstr "Bu bölümü yeni bir kartla dene"
 
 #: src/language/exam-speaking/exam-task-intro.tsx
 msgctxt "X_5MNN"
@@ -5376,11 +5435,6 @@ msgstr "Yeniden başla"
 msgctxt "l3c7Yz"
 msgid "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one."
 msgstr "Konuşma pratiği Plus’a dahildir: sınavın her bölümünü bir sohbette yapar, her birinin ardından resmî ölçütlere göre tahmini bir değerlendirme alırsın."
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "uBvT9W"
-msgid "Your task opens as soon as its card is ready."
-msgstr "Kart hazır olur olmaz bölümün açılır."
 
 #: src/language/exam-speaking/speaking-paper-section.tsx
 msgctxt "TSrXx4"
@@ -5774,11 +5828,6 @@ msgstr "Bir değerlendiriciyle kısa bir konuşma sınavı. Sonunda her ölçüt
 msgctxt "pAwPcF"
 msgid "Repeat sentences, then a short interview with an examiner. After it, an estimated band from 1 to 6 for each criterion."
 msgstr "Cümleleri tekrar et, ardından bir değerlendiriciyle kısa bir görüşme yap. Sonunda her ölçüt için 1 ile 6 arasında tahmini bir puan alırsın."
-
-#: src/language/progress/speaking-mock-card.tsx
-msgctxt "8uq58m"
-msgid "Your mock opens as soon as it's ready."
-msgstr "Deneme sınavın hazır olur olmaz açılacak."
 
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "LS2n2L"
@@ -8197,19 +8246,19 @@ msgid "Keep going"
 msgstr "Devam et"
 
 #: src/mock/mock-speaking.tsx
-msgctxt "8xoYFh"
-msgid "Writing your task cards…"
-msgstr "Kartlarını hazırlıyoruz…"
-
-#: src/mock/mock-speaking.tsx
 msgctxt "6lEa3w"
 msgid "Start the speaking part"
 msgstr "Konuşma oturumuna başla"
 
 #: src/mock/mock-speaking.tsx
-msgctxt "ZX1_UR"
-msgid "Each task is a live call with an examiner, as in the exam: an AI stands in for the person. Your task cards are written when you start, which takes about half a minute."
-msgstr "Her bölümde, sınavda olduğu gibi bir değerlendiriciyle canlı sohbet edersin; burada değerlendirici rolünü yapay zekâ üstlenir. Kartlarını başladığında hazırlıyoruz. Bu yaklaşık yarım dakika sürer."
+msgctxt "i9hrw7"
+msgid "Your speaking paper opens as soon as it's ready."
+msgstr "Konuşma sınavı kâğıdın hazır olur olmaz açılır."
+
+#: src/mock/mock-speaking.tsx
+msgctxt "VBXPHn"
+msgid "Each task is a live call with an examiner, as in the exam: an AI stands in for the person."
+msgstr "Her bölümde, sınavdaki gibi bir değerlendiriciyle canlı sohbet edersin: bu rolü yapay zekâ üstlenir."
 
 #: src/mock/mock-summary-row.tsx
 msgctxt "TyZybQ"
@@ -10558,6 +10607,11 @@ msgstr "Kurulum yapmadan"
 msgctxt "o7eSa4"
 msgid "Your device"
 msgstr "Cihazın"
+
+#: src/plan/plan-tool-sheet.tsx
+msgctxt "FwBrsg"
+msgid "Your plan updates as soon as it's ready."
+msgstr "Planın hazır olur olmaz güncellenir."
 
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "nrLaaR"

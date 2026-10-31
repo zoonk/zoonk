@@ -3485,6 +3485,26 @@ msgctxt "tGWu02"
 msgid "Preparing what the examiner says…"
 msgstr "Przygotowujemy wypowiedzi egzaminatora…"
 
+#: src/generation/call-generation-copy.ts
+msgctxt "stcnR5"
+msgid "Writing your speaking paper"
+msgstr "Przygotowujemy twój arkusz do części ustnej"
+
+#: src/generation/call-generation-copy.ts
+msgctxt "KlQNf-"
+msgid "Writing a card for each task"
+msgstr "Przygotowujemy kartę do każdego zadania"
+
+#: src/generation/call-generation-copy.ts
+msgctxt "62x7Ze"
+msgid "Picking a topic for each task…"
+msgstr "Wybieramy temat do każdego zadania…"
+
+#: src/generation/call-generation-copy.ts
+msgctxt "vNw6Rg"
+msgid "Writing each card's instructions…"
+msgstr "Przygotowujemy polecenia do każdej karty…"
+
 #: src/generation/generation-wait.tsx
 msgctxt "NhDwgx"
 msgid "in progress"
@@ -3851,6 +3871,31 @@ msgstr "Wybieramy, jak najlepiej wyjaśnić temat…"
 msgctxt "Dwuk2D"
 msgid "Writing the lesson"
 msgstr "Przygotowujemy lekcję"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "_49owu"
+msgid "Adding a setup lesson"
+msgstr "Dodajemy lekcję o konfiguracji"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "8Lpa5Z"
+msgid "Writing the setup for your device"
+msgstr "Przygotowujemy instrukcję konfiguracji dla twojego urządzenia"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "C4MPTB"
+msgid "Checking what the tool needs…"
+msgstr "Sprawdzamy, czego wymaga narzędzie…"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "E4RZNN"
+msgid "Writing the steps to install it…"
+msgstr "Przygotowujemy instrukcję instalacji…"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "7wkXtE"
+msgid "Adding a quick check that it works…"
+msgstr "Dodajemy szybki test działania narzędzia…"
 
 #: src/journey/goal-actions.tsx
 msgctxt "vr-vFm"
@@ -4886,6 +4931,16 @@ msgid "A star for finishing, one for getting everything across and one without H
 msgstr "Gwiazdka za ukończenie rozmowy, druga za przekazanie wszystkiego, co trzeba, a trzecia za rozmowę bez Pomocy."
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
+msgctxt "rMZfgB"
+msgid "Getting your call ready"
+msgstr "Przygotowujemy twoją rozmowę"
+
+#: src/language/conversation/checkpoint-call-preparing.tsx
+msgctxt "dKxF7Y"
+msgid "It opens here as soon as it's ready."
+msgstr "Otworzy się tutaj, gdy tylko będzie gotowa."
+
+#: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "3qV6d_"
 msgid "Get the call ready"
 msgstr "Przygotuj rozmowę"
@@ -4896,26 +4951,18 @@ msgid "This challenge is a short call about the unit. It's written for your spea
 msgstr "To wyzwanie to krótka rozmowa o tym dziale. Najpierw przygotowujemy ją tak, by pasowała do twojego poziomu mówienia. Zajmuje to do pół minuty."
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
-msgctxt "rMZfgB"
-msgid "Getting your call ready"
-msgstr "Przygotowujemy twoją rozmowę"
-
-#: src/language/conversation/checkpoint-call-preparing.tsx
-msgctxt "dKxF7Y"
-msgid "It opens here as soon as it's ready."
-msgstr "Otworzy się tutaj, gdy tylko będzie gotowa."
+#: src/language/conversation/conversation-intro.tsx
+#: src/language/conversation/try-call-again.tsx
+#: src/language/unit/practice-conversation.tsx
+msgctxt "l3VAtp"
+msgid "The call didn't start. Try again in a moment."
+msgstr "Nie udało się rozpocząć rozmowy. Spróbuj ponownie za chwilę."
 
 #. The daily time limit is a setting that stops study for the day.
 #: src/language/conversation/conversation-intro.tsx
 msgctxt "HYCGBs"
 msgid "You've reached your daily time limit. You can make this call in your next session."
 msgstr "Twój czas nauki na dziś się skończył. Możesz odbyć tę rozmowę, gdy następnym razem zaczniesz naukę."
-
-#: src/language/conversation/conversation-intro.tsx
-#: src/language/unit/practice-conversation.tsx
-msgctxt "l3VAtp"
-msgid "The call didn't start. Try again in a moment."
-msgstr "Nie udało się rozpocząć rozmowy. Spróbuj ponownie za chwilę."
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/unit/practice-conversation.tsx
@@ -5151,6 +5198,12 @@ msgid "Try another one when you're ready."
 msgstr "Spróbuj kolejnego, gdy zechcesz."
 
 #: src/language/conversation/speaking-mock-result.tsx
+#: src/language/progress/speaking-mock-card.tsx
+msgctxt "8uq58m"
+msgid "Your mock opens as soon as it's ready."
+msgstr "Twój egzamin próbny otworzy się, gdy tylko będzie gotowy."
+
+#: src/language/conversation/speaking-mock-result.tsx
 msgctxt "Vyzuj3"
 msgid "Try another mock"
 msgstr "Spróbuj kolejnego egzaminu próbnego"
@@ -5296,14 +5349,20 @@ msgid "Try the task again when you're ready."
 msgstr "Spróbuj ponownie, gdy uznasz, że to dobry moment."
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
-msgctxt "FjJT2V"
-msgid "Try this task with a new card"
-msgstr "Spróbuj wykonać to zadanie z nową kartą"
-
-#: src/language/exam-speaking/exam-speaking-result.tsx
 msgctxt "rNoi5I"
 msgid "Go to task {number}"
 msgstr "Przejdź do zadania {number}"
+
+#: src/language/exam-speaking/exam-speaking-result.tsx
+#: src/language/exam-speaking/speaking-paper-section.tsx
+msgctxt "uBvT9W"
+msgid "Your task opens as soon as its card is ready."
+msgstr "Zadanie otworzy się, gdy tylko karta będzie gotowa."
+
+#: src/language/exam-speaking/exam-speaking-result.tsx
+msgctxt "FjJT2V"
+msgid "Try this task with a new card"
+msgstr "Spróbuj wykonać to zadanie z nową kartą"
 
 #: src/language/exam-speaking/exam-task-intro.tsx
 msgctxt "X_5MNN"
@@ -5376,11 +5435,6 @@ msgstr "Zacznij od nowa"
 msgctxt "l3c7Yz"
 msgid "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one."
 msgstr "Pakiet Plus obejmuje ćwiczenie mówienia: każde zadanie z arkusza wykonujesz podczas rozmowy, a po każdym dostajesz orientacyjny wynik według oficjalnych kryteriów."
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "uBvT9W"
-msgid "Your task opens as soon as its card is ready."
-msgstr "Zadanie otworzy się, gdy tylko karta będzie gotowa."
 
 #: src/language/exam-speaking/speaking-paper-section.tsx
 msgctxt "TSrXx4"
@@ -5774,11 +5828,6 @@ msgstr "Krótki egzamin ustny z egzaminatorem. Po nim zobaczysz szacunkowy wynik
 msgctxt "pAwPcF"
 msgid "Repeat sentences, then a short interview with an examiner. After it, an estimated band from 1 to 6 for each criterion."
 msgstr "Powtórz zdania, a potem porozmawiaj krótko z egzaminatorem. Na koniec zobaczysz szacunkowy wynik od 1 do 6 za każde kryterium."
-
-#: src/language/progress/speaking-mock-card.tsx
-msgctxt "8uq58m"
-msgid "Your mock opens as soon as it's ready."
-msgstr "Twój egzamin próbny otworzy się, gdy tylko będzie gotowy."
 
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "LS2n2L"
@@ -8197,19 +8246,19 @@ msgid "Keep going"
 msgstr "Kontynuuj"
 
 #: src/mock/mock-speaking.tsx
-msgctxt "8xoYFh"
-msgid "Writing your task cards…"
-msgstr "Przygotowujemy karty z zadaniami…"
-
-#: src/mock/mock-speaking.tsx
 msgctxt "6lEa3w"
 msgid "Start the speaking part"
 msgstr "Rozpocznij część ustną"
 
 #: src/mock/mock-speaking.tsx
-msgctxt "ZX1_UR"
-msgid "Each task is a live call with an examiner, as in the exam: an AI stands in for the person. Your task cards are written when you start, which takes about half a minute."
-msgstr "Każde zadanie to rozmowa na żywo z egzaminatorem, tak jak na egzaminie: jego rolę odgrywa sztuczna inteligencja. Karty z zadaniami przygotujemy, gdy zaczniesz. Zajmie to około pół minuty."
+msgctxt "i9hrw7"
+msgid "Your speaking paper opens as soon as it's ready."
+msgstr "Twój arkusz do części ustnej otworzy się, gdy tylko będzie gotowy."
+
+#: src/mock/mock-speaking.tsx
+msgctxt "VBXPHn"
+msgid "Each task is a live call with an examiner, as in the exam: an AI stands in for the person."
+msgstr "Każde zadanie to rozmowa na żywo z egzaminatorem, tak jak na egzaminie: zastępuje go AI."
 
 #: src/mock/mock-summary-row.tsx
 msgctxt "TyZybQ"
@@ -10558,6 +10607,11 @@ msgstr "Bez instalacji"
 msgctxt "o7eSa4"
 msgid "Your device"
 msgstr "Twoje urządzenie"
+
+#: src/plan/plan-tool-sheet.tsx
+msgctxt "FwBrsg"
+msgid "Your plan updates as soon as it's ready."
+msgstr "Twój plan zaktualizuje się, gdy tylko będzie gotowy."
 
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "nrLaaR"

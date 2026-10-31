@@ -3485,6 +3485,26 @@ msgctxt "tGWu02"
 msgid "Preparing what the examiner says…"
 msgstr "試験官が話す内容を準備しています…"
 
+#: src/generation/call-generation-copy.ts
+msgctxt "stcnR5"
+msgid "Writing your speaking paper"
+msgstr "スピーキングの問題を作成しています"
+
+#: src/generation/call-generation-copy.ts
+msgctxt "KlQNf-"
+msgid "Writing a card for each task"
+msgstr "タスクごとのカードを作成しています"
+
+#: src/generation/call-generation-copy.ts
+msgctxt "62x7Ze"
+msgid "Picking a topic for each task…"
+msgstr "タスクごとのトピックを選んでいます…"
+
+#: src/generation/call-generation-copy.ts
+msgctxt "vNw6Rg"
+msgid "Writing each card's instructions…"
+msgstr "各カードの指示文を作成しています…"
+
 #: src/generation/generation-wait.tsx
 msgctxt "NhDwgx"
 msgid "in progress"
@@ -3851,6 +3871,31 @@ msgstr "いちばんわかりやすい説明のしかたを選んでいます…
 msgctxt "Dwuk2D"
 msgid "Writing the lesson"
 msgstr "レッスンを作成しています"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "_49owu"
+msgid "Adding a setup lesson"
+msgstr "初期設定のレッスンを追加しています"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "8Lpa5Z"
+msgid "Writing the setup for your device"
+msgstr "端末に合った設定手順を作成しています"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "C4MPTB"
+msgid "Checking what the tool needs…"
+msgstr "ツールの利用に必要なものを確認しています…"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "E4RZNN"
+msgid "Writing the steps to install it…"
+msgstr "インストールの手順を作成しています…"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "7wkXtE"
+msgid "Adding a quick check that it works…"
+msgstr "簡単な動作確認の手順を追加しています…"
 
 #: src/journey/goal-actions.tsx
 msgctxt "vr-vFm"
@@ -4886,6 +4931,16 @@ msgid "A star for finishing, one for getting everything across and one without H
 msgstr "会話を終えると星を1つ、伝えたいことをすべて伝えると1つ、ヘルプを使わなければ1つ獲得できます。"
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
+msgctxt "rMZfgB"
+msgid "Getting your call ready"
+msgstr "会話を準備しています"
+
+#: src/language/conversation/checkpoint-call-preparing.tsx
+msgctxt "dKxF7Y"
+msgid "It opens here as soon as it's ready."
+msgstr "準備ができ次第、ここに表示されます。"
+
+#: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "3qV6d_"
 msgid "Get the call ready"
 msgstr "会話を準備する"
@@ -4896,26 +4951,18 @@ msgid "This challenge is a short call about the unit. It's written for your spea
 msgstr "このチャレンジは、ユニットの内容についての短い会話です。まずスピーキングのレベルに合わせて内容を作成するため、最大30 秒かかります。"
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
-msgctxt "rMZfgB"
-msgid "Getting your call ready"
-msgstr "会話を準備しています"
-
-#: src/language/conversation/checkpoint-call-preparing.tsx
-msgctxt "dKxF7Y"
-msgid "It opens here as soon as it's ready."
-msgstr "準備ができ次第、ここに表示されます。"
+#: src/language/conversation/conversation-intro.tsx
+#: src/language/conversation/try-call-again.tsx
+#: src/language/unit/practice-conversation.tsx
+msgctxt "l3VAtp"
+msgid "The call didn't start. Try again in a moment."
+msgstr "会話を開始できませんでした。少し待ってから、もう一度試してください。"
 
 #. The daily time limit is a setting that stops study for the day.
 #: src/language/conversation/conversation-intro.tsx
 msgctxt "HYCGBs"
 msgid "You've reached your daily time limit. You can make this call in your next session."
 msgstr "1日の学習時間の上限に達しました。この会話は次回の学習でできます。"
-
-#: src/language/conversation/conversation-intro.tsx
-#: src/language/unit/practice-conversation.tsx
-msgctxt "l3VAtp"
-msgid "The call didn't start. Try again in a moment."
-msgstr "会話を開始できませんでした。少し待ってから、もう一度試してください。"
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/unit/practice-conversation.tsx
@@ -5151,6 +5198,12 @@ msgid "Try another one when you're ready."
 msgstr "準備ができたら、もう一度挑戦してみてください。"
 
 #: src/language/conversation/speaking-mock-result.tsx
+#: src/language/progress/speaking-mock-card.tsx
+msgctxt "8uq58m"
+msgid "Your mock opens as soon as it's ready."
+msgstr "準備ができ次第、模試の画面が開きます。"
+
+#: src/language/conversation/speaking-mock-result.tsx
 msgctxt "Vyzuj3"
 msgid "Try another mock"
 msgstr "もう一度模試を受ける"
@@ -5296,14 +5349,20 @@ msgid "Try the task again when you're ready."
 msgstr "準備ができたら、もう一度このタスクに挑戦してみてください。"
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
-msgctxt "FjJT2V"
-msgid "Try this task with a new card"
-msgstr "新しいカードでこのタスクに挑戦する"
-
-#: src/language/exam-speaking/exam-speaking-result.tsx
 msgctxt "rNoi5I"
 msgid "Go to task {number}"
 msgstr "タスク{number}に進む"
+
+#: src/language/exam-speaking/exam-speaking-result.tsx
+#: src/language/exam-speaking/speaking-paper-section.tsx
+msgctxt "uBvT9W"
+msgid "Your task opens as soon as its card is ready."
+msgstr "カードの準備ができ次第、タスクが開きます。"
+
+#: src/language/exam-speaking/exam-speaking-result.tsx
+msgctxt "FjJT2V"
+msgid "Try this task with a new card"
+msgstr "新しいカードでこのタスクに挑戦する"
 
 #: src/language/exam-speaking/exam-task-intro.tsx
 msgctxt "X_5MNN"
@@ -5376,11 +5435,6 @@ msgstr "やり直す"
 msgctxt "l3c7Yz"
 msgid "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one."
 msgstr "Plusでは、試験のすべてのタスクを会話で練習できます。各タスクの終了後に、公式の評価基準に基づく推定スコアが表示されます。"
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "uBvT9W"
-msgid "Your task opens as soon as its card is ready."
-msgstr "カードの準備ができ次第、タスクが開きます。"
 
 #: src/language/exam-speaking/speaking-paper-section.tsx
 msgctxt "TSrXx4"
@@ -5774,11 +5828,6 @@ msgstr "試験官との短いスピーキングテストです。終了後、評
 msgctxt "pAwPcF"
 msgid "Repeat sentences, then a short interview with an examiner. After it, an estimated band from 1 to 6 for each criterion."
 msgstr "文を復唱した後、試験官と短い面接を行います。終了後、評価項目ごとに1〜6の推定バンドスコアを確認できます。"
-
-#: src/language/progress/speaking-mock-card.tsx
-msgctxt "8uq58m"
-msgid "Your mock opens as soon as it's ready."
-msgstr "準備ができ次第、模試の画面が開きます。"
 
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "LS2n2L"
@@ -8197,19 +8246,19 @@ msgid "Keep going"
 msgstr "続ける"
 
 #: src/mock/mock-speaking.tsx
-msgctxt "8xoYFh"
-msgid "Writing your task cards…"
-msgstr "タスクカードを作成しています…"
-
-#: src/mock/mock-speaking.tsx
 msgctxt "6lEa3w"
 msgid "Start the speaking part"
 msgstr "スピーキングを始める"
 
 #: src/mock/mock-speaking.tsx
-msgctxt "ZX1_UR"
-msgid "Each task is a live call with an examiner, as in the exam: an AI stands in for the person. Your task cards are written when you start, which takes about half a minute."
-msgstr "各タスクでは、本番の試験と同じように試験官とリアルタイムで会話します。試験官役はAIが務めます。タスクカードは開始時に作成します。作成には30秒ほどかかります。"
+msgctxt "i9hrw7"
+msgid "Your speaking paper opens as soon as it's ready."
+msgstr "準備ができ次第、スピーキングの問題が表示されます。"
+
+#: src/mock/mock-speaking.tsx
+msgctxt "VBXPHn"
+msgid "Each task is a live call with an examiner, as in the exam: an AI stands in for the person."
+msgstr "各タスクでは、本番と同じように、試験官役のAIとリアルタイムで会話します。"
 
 #: src/mock/mock-summary-row.tsx
 msgctxt "TyZybQ"
@@ -10558,6 +10607,11 @@ msgstr "インストールしない"
 msgctxt "o7eSa4"
 msgid "Your device"
 msgstr "使う端末"
+
+#: src/plan/plan-tool-sheet.tsx
+msgctxt "FwBrsg"
+msgid "Your plan updates as soon as it's ready."
+msgstr "準備ができ次第、学習計画が更新されます。"
 
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "nrLaaR"
