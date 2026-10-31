@@ -42,7 +42,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido cargar %@. Comprueba tu conexión y vuelve a intentarlo."
+            "value" : "%@ no se cargó. Revisa tu conexión e inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -311,7 +311,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salida esperada"
+            "value" : "Esperado"
           }
         },
         "fr" : {
@@ -578,7 +578,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No del todo"
+            "value" : "Casi"
           }
         },
         "fr" : {
@@ -636,7 +636,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha mostrado nada"
+            "value" : "No se imprimió nada"
           }
         },
         "fr" : {
@@ -694,7 +694,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Primero predice qué pasará. Después avanza para comprobarlo."
+            "value" : "Primero haz tu predicción. Luego avanza un paso para ver qué pasa."
           }
         },
         "fr" : {
@@ -781,7 +781,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ejecutar de nuevo"
+            "value" : "Volver a ejecutar"
           }
         },
         "fr" : {
@@ -839,7 +839,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ejecutando"
+            "value" : "En ejecución"
           }
         },
         "fr" : {
@@ -868,7 +868,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Palabras de SQL, tablas y columnas"
+            "value" : "Palabras clave de SQL, tablas y columnas"
           }
         },
         "fr" : {
@@ -897,7 +897,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a empezar con el código original"
+            "value" : "Restaurar el código original"
           }
         },
         "fr" : {
@@ -967,7 +967,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Paso %1$lld de %2$lld. Se ha ejecutado la línea %3$lld."
+            "value" : "Paso %1$lld de %2$lld. Se ejecutó la línea %3$lld."
           }
         },
         "fr" : {
@@ -996,7 +996,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retroceder"
+            "value" : "Retroceder un paso"
           }
         },
         "fr" : {
@@ -1025,7 +1025,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avanzar"
+            "value" : "Avanzar un paso"
           }
         },
         "fr" : {
@@ -1054,7 +1054,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avanza para ejecutar la siguiente línea."
+            "value" : "Avanza un paso para ejecutar la siguiente línea."
           }
         },
         "fr" : {
@@ -1083,7 +1083,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avanza para comprobar si has acertado."
+            "value" : "Avanza un paso para ver si acertaste."
           }
         },
         "fr" : {
@@ -1145,13 +1145,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Se ha detenido después de %lld segundo. ¿Hay algún bucle que no termina nunca?"
+                  "value" : "Se detuvo después de %lld segundo. ¿Hay un ciclo que nunca termina?"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Se ha detenido después de %lld segundos. ¿Hay algún bucle que no termina nunca?"
+                  "value" : "Se detuvo después de %lld segundos. ¿Hay un ciclo que nunca termina?"
                 }
               }
             }
@@ -1207,7 +1207,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se ha detenido porque ha mostrado demasiado contenido. ¿Hay algún bucle que no termina nunca?"
+            "value" : "Se detuvo porque imprimió demasiado. ¿Hay un ciclo que nunca termina?"
           }
         },
         "fr" : {
@@ -1265,7 +1265,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La ejecución ha terminado."
+            "value" : "La ejecución terminó."
           }
         },
         "fr" : {
@@ -1294,7 +1294,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La ejecución ha terminado. Comprueba tus predicciones cuando quieras."
+            "value" : "La ejecución terminó. Comprueba tus predicciones cuando quieras."
           }
         },
         "fr" : {
@@ -1323,7 +1323,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La consulta se ha ejecutado, pero no ha devuelto una tabla. Usa SELECT para obtener filas."
+            "value" : "La consulta se ejecutó, pero no devolvió una tabla. Usa SELECT para obtener filas."
           }
         },
         "fr" : {
@@ -1352,7 +1352,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La consulta ha devuelto demasiadas filas. ¿Falta indicar cómo se relacionan las tablas?"
+            "value" : "La consulta devolvió demasiadas filas. ¿Falta una condición para unir las tablas?"
           }
         },
         "fr" : {
@@ -1414,13 +1414,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La consulta ha tardado más de %lld segundo y se ha detenido."
+                  "value" : "La consulta tardó más de %lld segundo y se detuvo."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La consulta ha tardado más de %lld segundos y se ha detenido."
+                  "value" : "La consulta tardó más de %lld segundos y se detuvo."
                 }
               }
             }
@@ -1476,7 +1476,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a intentarlo"
+            "value" : "Reintentar"
           }
         },
         "fr" : {
@@ -1534,7 +1534,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has cambiado el código. Ejecútalo de nuevo para ver la nueva salida."
+            "value" : "Cambiaste el código. Ejecútalo de nuevo para ver la nueva salida."
           }
         },
         "fr" : {
@@ -1563,7 +1563,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has cambiado la consulta. Ejecútala de nuevo para ver el nuevo resultado."
+            "value" : "Cambiaste la consulta. Ejecútala de nuevo para ver el nuevo resultado."
           }
         },
         "fr" : {
@@ -1592,7 +1592,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dijiste %@ y acertaste."
+            "value" : "Dijiste %@ y así fue."
           }
         },
         "fr" : {
@@ -1627,7 +1627,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dijiste %1$@; era %2$@."
+            "value" : "Dijiste %1$@; el valor era %2$@."
           }
         },
         "fr" : {

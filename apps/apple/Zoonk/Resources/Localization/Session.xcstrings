@@ -48,7 +48,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ completado"
+            "value" : "%@: completado"
           }
         },
         "fr" : {
@@ -77,7 +77,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡%@ ha crecido!"
+            "value" : "¡%@ creció!"
           }
         },
         "fr" : {
@@ -106,7 +106,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ha llegado a la edad adulta gracias a tu Poder Mental."
+            "value" : "%@ alcanzó la etapa Adulta gracias a tu Poder Mental."
           }
         },
         "fr" : {
@@ -164,7 +164,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ brilla ahora."
+            "value" : "%@ ya brilla."
           }
         },
         "fr" : {
@@ -226,13 +226,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$@ ya está en Dominado: lo recordaste en %2$lld día."
+                  "value" : "%1$@ alcanzó el nivel Dominado: lo recordaste en %2$lld día distinto."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$@ ya está en Dominado: lo recordaste en %2$lld días diferentes."
+                  "value" : "%1$@ alcanzó el nivel Dominado: lo recordaste en %2$lld días distintos."
                 }
               }
             }
@@ -288,7 +288,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ya está en Firme: seguiste acertando en días posteriores."
+            "value" : "%@ alcanzó el nivel Firme: seguiste acertando en los días siguientes."
           }
         },
         "fr" : {
@@ -317,7 +317,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ya es joven y sigue creciendo con tu Poder Mental."
+            "value" : "%@ ya está en la etapa Joven y sigue creciendo con tu Poder Mental."
           }
         },
         "fr" : {
@@ -507,7 +507,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "¡Misión completada!"
+                  "value" : "¡%lld misión completada!"
                 }
               },
               "other" : {
@@ -613,7 +613,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@left@ para conseguir +%2$lld Poder Mental"
+            "value" : "%#@left@ para ganar +%2$lld de Poder Mental"
           },
           "substitutions" : {
             "left" : {
@@ -621,16 +621,10 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "Queda %arg misión"
-                    }
-                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "Quedan %arg misiones"
+                      "value" : "%arg más"
                     }
                   }
                 }
@@ -809,7 +803,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %2$lld completados"
+            "value" : "Completaste %1$lld de %2$lld"
           }
         },
         "fr" : {
@@ -844,7 +838,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %2$lld correctas"
+            "value" : "Acertaste %1$lld de %2$lld"
           }
         },
         "fr" : {
@@ -873,7 +867,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld aciertos seguidos"
+            "value" : "Aciertos seguidos: %lld"
           }
         },
         "fr" : {
@@ -902,7 +896,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+%lld Poder Mental"
+            "value" : "+%lld de Poder Mental"
           }
         },
         "fr" : {
@@ -1175,13 +1169,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Completada"
+                  "value" : "Completaste %lld misión"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Las %lld completadas"
+                  "value" : "Completaste las %lld misiones"
                 }
               }
             }
@@ -1237,7 +1231,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Gafas de aviador!"
+            "value" : "¡Lentes de aviador!"
           }
         },
         "fr" : {
@@ -1272,7 +1266,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De vuelta: %@"
+            "value" : "De vuelta el %@"
           }
         },
         "fr" : {
@@ -1417,7 +1411,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cinturón marrón"
+            "value" : "Cinturón café"
           }
         },
         "fr" : {
@@ -1446,7 +1440,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Gafas de ojo de gato!"
+            "value" : "¡Lentes de ojo de gato!"
           }
         },
         "fr" : {
@@ -1568,7 +1562,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por hoy, ya está"
+            "value" : "Eso es todo por ahora"
           }
         },
         "fr" : {
@@ -1655,7 +1649,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conseguido hoy"
+            "value" : "Lo que ganaste hoy"
           }
         },
         "fr" : {
@@ -1742,7 +1736,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terminar"
+            "value" : "Finalizar"
           }
         },
         "fr" : {
@@ -1829,7 +1823,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por completar tu primer Desafío semanal."
+            "value" : "Por completar tu primer desafío semanal."
           }
         },
         "fr" : {
@@ -1887,7 +1881,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por ganar tu primer Desafío de la fase."
+            "value" : "Por ganar tu primer desafío de la fase."
           }
         },
         "fr" : {
@@ -2003,7 +1997,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No ha superado nuestros controles de calidad, así que tu plan sigue adelante sin ella."
+            "value" : "No pasó nuestros controles de calidad, así que tu plan sigue sin ella."
           }
         },
         "fr" : {
@@ -2032,7 +2026,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Muestra tu semana en cifras y la habilidad en la que más has progresado."
+            "value" : "Muestra tu semana en números y la habilidad que más mejoró."
           }
         },
         "fr" : {
@@ -2096,7 +2090,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sigue aprendiendo"
+            "value" : "Seguir aprendiendo"
           }
         },
         "fr" : {
@@ -2125,7 +2119,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vamos"
+            "value" : "Comenzar"
           }
         },
         "fr" : {
@@ -2154,7 +2148,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Has subido de nivel!"
+            "value" : "¡Subiste de nivel!"
           }
         },
         "fr" : {
@@ -2183,7 +2177,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuaderno de bitácora"
+            "value" : "Bitácora"
           }
         },
         "fr" : {
@@ -2276,7 +2270,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Saldo neto: %lld"
+            "value" : "neto %lld"
           }
         },
         "fr" : {
@@ -2305,7 +2299,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Gafas nuevas!"
+            "value" : "¡Lentes nuevos!"
           }
         },
         "fr" : {
@@ -2392,7 +2386,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no hay ninguna sesión abierta"
+            "value" : "Aún no hay una sesión abierta"
           }
         },
         "fr" : {
@@ -2514,7 +2508,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fase %1$lld · Completado: %2$@"
+            "value" : "Fase %1$lld · %2$@ completada"
           }
         },
         "fr" : {
@@ -2700,7 +2694,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Gafas retro!"
+            "value" : "¡Lentes retro!"
           }
         },
         "fr" : {
@@ -2729,7 +2723,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repaso: %@"
+            "value" : "Repaso el %@"
           }
         },
         "fr" : {
@@ -2787,7 +2781,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acertadas"
+            "value" : "Correctas"
           }
         },
         "fr" : {
@@ -2950,7 +2944,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Habilidades que han mejorado"
+            "value" : "Habilidades que mejoraron"
           }
         },
         "fr" : {
@@ -2979,7 +2973,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Gafas de estrellas!"
+            "value" : "¡Lentes de estrella!"
           }
         },
         "fr" : {
@@ -3043,7 +3037,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empieza la sesión de hoy desde Hoy."
+            "value" : "Inicia la sesión de hoy desde Hoy."
           }
         },
         "fr" : {
@@ -3163,13 +3157,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Estudia %lld minuto más"
+                  "value" : "Estudiar %lld minuto más"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Estudia %lld minutos más"
+                  "value" : "Estudiar %lld minutos más"
                 }
               }
             }
@@ -3254,7 +3248,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido cargar la sesión"
+            "value" : "No se pudo cargar la sesión"
           }
         },
         "fr" : {
@@ -3283,7 +3277,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido cargar el resumen"
+            "value" : "No se pudo cargar el resumen"
           }
         },
         "fr" : {
@@ -3341,7 +3335,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estamos preparando esta lección para ti. Suele estar lista en unos dos minutos."
+            "value" : "Estamos preparando esta lección para ti. Suele estar lista en aproximadamente dos minutos."
           }
         },
         "fr" : {
@@ -3463,7 +3457,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya has conseguido los +%lld de Poder Mental de hoy."
+            "value" : "Ya ganaste los +%lld de Poder Mental de hoy."
           }
         },
         "fr" : {
@@ -3608,7 +3602,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Insignias de cazador de trampas"
+            "value" : "Insignias de cazatrampas"
           }
         },
         "fr" : {
@@ -3637,7 +3631,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a intentar"
+            "value" : "Intentar de nuevo"
           }
         },
         "fr" : {
@@ -3695,7 +3689,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido abrir el siguiente paso. Vuelve a intentarlo."
+            "value" : "No pudimos abrir el siguiente paso. Inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -3724,7 +3718,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido preparar esta lección."
+            "value" : "No pudimos preparar esta lección."
           }
         },
         "fr" : {
@@ -3753,7 +3747,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pónselas"
+            "value" : "Ponérselos"
           }
         },
         "fr" : {
@@ -3811,7 +3805,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Menuda semana, %@!"
+            "value" : "¡Qué semana, %@!"
           }
         },
         "fr" : {
@@ -3840,7 +3834,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Menuda semana!"
+            "value" : "¡Qué semana!"
           }
         },
         "fr" : {
@@ -3869,7 +3863,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que has aprendido"
+            "value" : "Lo que aprendiste"
           }
         },
         "fr" : {
@@ -3985,7 +3979,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has conseguido +%lld de Poder Mental."
+            "value" : "Ganaste +%lld de Poder Mental."
           }
         },
         "fr" : {
@@ -4014,7 +4008,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo has conseguido gracias a tu Poder Mental."
+            "value" : "Lo ganaste con tu Poder Mental."
           }
         },
         "fr" : {
@@ -4043,7 +4037,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu primer resumen llegará el domingo"
+            "value" : "Tu primer resumen llega el domingo"
           }
         },
         "fr" : {

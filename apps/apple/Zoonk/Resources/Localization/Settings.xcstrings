@@ -199,7 +199,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gafas de aviador"
+            "value" : "Lentes de aviador"
           }
         },
         "fr" : {
@@ -344,7 +344,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gafas de ojo de gato"
+            "value" : "Lentes de ojo de gato"
           }
         },
         "fr" : {
@@ -460,7 +460,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprueba tu conexión y vuelve a intentarlo."
+            "value" : "Revisa tu conexión e inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -489,7 +489,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige tu compañero"
+            "value" : "Elegir tu compañero"
           }
         },
         "fr" : {
@@ -576,7 +576,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido cargar esta página"
+            "value" : "No pudimos cargar esta página"
           }
         },
         "fr" : {
@@ -605,7 +605,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido deshacer. Ha cambiado desde entonces."
+            "value" : "No pudimos deshacerlo. El dato cambió desde entonces."
           }
         },
         "fr" : {
@@ -779,7 +779,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Editar recuerdo"
+            "value" : "Editar memoria"
           }
         },
         "fr" : {
@@ -1156,7 +1156,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La memoria está desactivada. No se aprende nada nuevo y no se usan estos datos."
+            "value" : "La memoria está desactivada. No se guarda información nueva ni se usan estos datos."
           }
         },
         "fr" : {
@@ -1330,7 +1330,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no hay nada. A medida que estudies y converses, aparecerán aquí notas breves que ayudan a Zoonk a enseñarte."
+            "value" : "Aún no hay nada. A medida que estudies y converses, aquí aparecerán notas breves que ayudan a Zoonk a enseñarte."
           }
         },
         "fr" : {
@@ -1359,7 +1359,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Observado en tu actividad"
+            "value" : "A partir de tu actividad"
           }
         },
         "fr" : {
@@ -1388,7 +1388,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opciones de «%@»"
+            "value" : "Opciones para “%@”"
           }
         },
         "fr" : {
@@ -1562,7 +1562,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gafas retro"
+            "value" : "Lentes retro"
           }
         },
         "fr" : {
@@ -1591,7 +1591,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redondas"
+            "value" : "Redondos"
           }
         },
         "fr" : {
@@ -1620,7 +1620,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gafas redondas"
+            "value" : "Lentes redondos"
           }
         },
         "fr" : {
@@ -1678,7 +1678,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exprésalo con tus propias palabras para que refleje tu realidad."
+            "value" : "Corrige el dato con tus palabras."
           }
         },
         "fr" : {
@@ -1823,7 +1823,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gafas de estrella"
+            "value" : "Lentes con forma de estrella"
           }
         },
         "fr" : {
@@ -1852,7 +1852,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termina el estudio del día al alcanzar este tiempo."
+            "value" : "Termina por hoy al completar este tiempo de estudio."
           }
         },
         "fr" : {
@@ -1881,7 +1881,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha guardado. Inténtalo de nuevo."
+            "value" : "No se guardó el cambio. Inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -1910,7 +1910,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Intentar de nuevo"
+            "value" : "Reintentar"
           }
         },
         "fr" : {
@@ -1997,7 +1997,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido preparar la descarga. Inténtalo de nuevo."
+            "value" : "No pudimos preparar la descarga. Inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -2026,7 +2026,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que recuerda Zoonk"
+            "value" : "Lo que Zoonk recuerda"
           }
         },
         "fr" : {
@@ -2055,7 +2055,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que Zoonk recuerda para ofrecerte ejemplos y planes que se adapten a tu vida."
+            "value" : "Lo que Zoonk recuerda para darte ejemplos y planes que se adapten a tu vida."
           }
         },
         "fr" : {
@@ -2171,7 +2171,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nos lo contaste"
+            "value" : "Nos lo dijiste"
           }
         },
         "fr" : {
@@ -2258,7 +2258,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk no guarda datos de salud, religión ni otros datos sensibles, salvo que se lo pidas."
+            "value" : "Zoonk no guarda información sobre tu salud o religión ni otros datos sensibles a menos que se lo pidas."
           }
         },
         "fr" : {
@@ -2287,7 +2287,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk usa el idioma de tu dispositivo. Puedes cambiarlo solo para Zoonk en Ajustes."
+            "value" : "Zoonk usa el idioma de tu dispositivo. Cámbialo solo para Zoonk en Configuración."
           }
         },
         "fr" : {

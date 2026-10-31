@@ -42,7 +42,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prepara un plan para %@"
+            "value" : "Crear un plan para %@"
           }
         },
         "fr" : {
@@ -71,7 +71,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crea un plan para toda la asignatura"
+            "value" : "Crear un plan para toda la materia"
           }
         },
         "fr" : {
@@ -100,7 +100,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hecho"
+            "value" : "Listo"
           }
         },
         "fr" : {
@@ -129,7 +129,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quiero aprender esto a fondo"
+            "value" : "Aprender esto a fondo"
           }
         },
         "fr" : {
@@ -187,7 +187,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sin tener que preparar un plan."
+            "value" : "No necesitas crear un plan."
           }
         },
         "fr" : {
@@ -396,7 +396,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a intentarlo"
+            "value" : "Volver a intentar"
           }
         },
         "fr" : {
@@ -425,7 +425,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Quieres profundizar más?"
+            "value" : "¿Quieres ir más allá?"
           }
         },
         "fr" : {
@@ -454,7 +454,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido iniciar esto."
+            "value" : "No pudimos iniciar la explicación."
           }
         },
         "fr" : {
@@ -483,7 +483,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido cargar esta explicación"
+            "value" : "No pudimos cargar esta explicación"
           }
         },
         "fr" : {
@@ -512,7 +512,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qué vas a ver"
+            "value" : "Lo que viene"
           }
         },
         "fr" : {

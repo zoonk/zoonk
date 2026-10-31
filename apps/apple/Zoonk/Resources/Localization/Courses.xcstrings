@@ -237,7 +237,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Caben %1$@ de %#@total@"
+            "value" : "Hay tiempo para %1$@ de %#@total@"
           },
           "substitutions" : {
             "total" : {
@@ -1088,10 +1088,16 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld minuto"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld min"
+                  "value" : "%lld minutos"
                 }
               }
             }
@@ -1666,7 +1672,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unas preguntas rápidas y después tendrás tu plan y tu primera lección."
+            "value" : "Unas preguntas rápidas y después, tu plan y tu primera lección."
           }
         },
         "fr" : {
@@ -1728,13 +1734,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "queda aproximadamente %lld día"
+                  "value" : "falta aproximadamente %lld día"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "quedan aproximadamente %lld días"
+                  "value" : "faltan aproximadamente %lld días"
                 }
               }
             }
@@ -1819,7 +1825,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todos"
+            "value" : "Todas"
           }
         },
         "fr" : {
@@ -1848,7 +1854,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un ejemplo. Tu plan se adapta a tus respuestas, así que puede empezar más tarde y terminar antes."
+            "value" : "Un ejemplo. Tu plan se adapta a tus respuestas, así que puede empezar más adelante y terminar antes."
           }
         },
         "fr" : {
@@ -1877,7 +1883,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arte"
+            "value" : "Artes"
           }
         },
         "fr" : {
@@ -1935,7 +1941,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparar mi plan"
+            "value" : "Crear mi plan"
           }
         },
         "fr" : {
@@ -1964,7 +1970,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prepara tu plan y Zoonk preparará los capítulos y las lecciones de este curso para ti, partiendo de tu nivel."
+            "value" : "Crea tu plan y Zoonk preparará los capítulos y las lecciones de este curso para ti, a partir de tu nivel."
           }
         },
         "fr" : {
@@ -2028,7 +2034,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "hasta %1$@, con %2$@ al día de lunes a viernes, en lecciones rápidas sobre lo que aparece con más frecuencia. Las lecciones completas llegarán cuando haya más tiempo."
+            "value" : "para el %1$@, con %2$@ al día, de lunes a viernes, en lecciones rápidas sobre lo que más aparece en el examen. Las lecciones completas se incluyen cuando hay más tiempo."
           }
         },
         "fr" : {
@@ -2107,7 +2113,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "hasta %1$@, con %2$@ al día de lunes a viernes, empezando por lo que aparece con más frecuencia: %3$@ de %#@total@."
+            "value" : "para el %1$@, con %2$@ al día, de lunes a viernes, empezando por lo que más aparece en el examen: %3$@ de un total de %#@total@ del curso."
           },
           "substitutions" : {
             "total" : {
@@ -2118,13 +2124,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg lección del curso"
+                      "value" : "%arg lección"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg lecciones del curso"
+                      "value" : "%arg lecciones"
                     }
                   }
                 }
@@ -2252,7 +2258,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "para el %1$@, con %2$@ al día, de lunes a viernes y empezando por lo que más sale en el examen: el curso ya tiene %#@lessons@ y se preparan más a medida que avanzas."
+            "value" : "para el %1$@, con %2$@ al día, de lunes a viernes, empezando por lo que más aparece en el examen: ya hay %#@lessons@ en el curso y se preparan más a medida que avanzas."
           },
           "substitutions" : {
             "lessons" : {
@@ -2353,7 +2359,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "para el %1$@, con %2$@ al día, de lunes a viernes y empezando por lo que más sale en el examen: las lecciones se preparan a medida que avanzas."
+            "value" : "para el %1$@, con %2$@ al día, de lunes a viernes, empezando por lo que más aparece en el examen: lecciones que se preparan a medida que avanzas."
           }
         },
         "fr" : {
@@ -2632,7 +2638,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprueba tu conexión y vuelve a intentarlo."
+            "value" : "Revisa tu conexión e inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -2690,7 +2696,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continúa tu plan"
+            "value" : "Seguir con tu plan"
           }
         },
         "fr" : {
@@ -2719,7 +2725,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se han podido cargar más cursos."
+            "value" : "No pudimos cargar más cursos."
           }
         },
         "fr" : {
@@ -2748,7 +2754,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se han podido cargar más cursos sin conexión."
+            "value" : "No pudimos cargar más cursos sin conexión."
           }
         },
         "fr" : {
@@ -2864,7 +2870,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Contenido del curso"
+            "value" : "Temario del curso"
           }
         },
         "fr" : {
@@ -2922,7 +2928,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los cursos no están disponibles"
+            "value" : "Cursos no disponibles"
           }
         },
         "fr" : {
@@ -3073,7 +3079,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Examen alrededor de %1$@ · %2$@"
+            "value" : "Examen aproximadamente el %1$@ · %2$@"
           }
         },
         "fr" : {
@@ -3137,7 +3143,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plan de ejemplo"
+            "value" : "Ejemplo de plan"
           }
         },
         "fr" : {
@@ -3195,7 +3201,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Explora cursos"
+            "value" : "Explorar cursos"
           }
         },
         "fr" : {
@@ -3427,7 +3433,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El plan sigue el curso desde aquí, a tu ritmo y con repasos antes de que se te olvide lo aprendido."
+            "value" : "El plan sigue el curso desde aquí, a tu ritmo, con repasos antes de que olvides lo aprendido."
           }
         },
         "fr" : {
@@ -3694,7 +3700,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lecciones aún por preparar"
+            "value" : "Lecciones aún sin preparar"
           }
         },
         "fr" : {
@@ -3723,7 +3729,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las lecciones pendientes se preparan a medida que llegas a ellas."
+            "value" : "Las lecciones pendientes se preparan a medida que avanzas."
           }
         },
         "fr" : {
@@ -3752,7 +3758,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "lecciones que se prepararán a medida que avances"
+            "value" : "lecciones que se preparan a medida que avanzas"
           }
         },
         "fr" : {
@@ -3984,7 +3990,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hace falta registrarse."
+            "value" : "No necesitas registrarte."
           }
         },
         "fr" : {
@@ -4013,7 +4019,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No da tiempo a verlo todo antes de esa fecha. Antes de empezar, verás cuánto puedes estudiar según tu nivel y tu tiempo disponible."
+            "value" : "No alcanza el tiempo para cubrirlo todo antes de esa fecha. Antes de empezar, ves cuánto puedes cubrir según tu nivel y el tiempo que tienes."
           }
         },
         "fr" : {
@@ -4042,7 +4048,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún sin preparar. Zoonk prepara sus capítulos a medida que los estudiantes llegan a este nivel."
+            "value" : "Aún no está preparado. Zoonk prepara sus capítulos cuando los estudiantes llegan a este nivel."
           }
         },
         "fr" : {
@@ -4071,7 +4077,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ese total incluye %@ después del examen."
+            "value" : "Ese tiempo incluye %@ después del examen."
           }
         },
         "fr" : {
@@ -4100,7 +4106,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Visión general"
+            "value" : "Panorama general"
           }
         },
         "fr" : {
@@ -4129,7 +4135,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vuelve al catálogo y elige otro curso."
+            "value" : "Por favor, vuelve al catálogo y elige otro curso."
           }
         },
         "fr" : {
@@ -4158,7 +4164,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vuelve a intentarlo dentro de un momento."
+            "value" : "Por favor, vuelve a intentarlo en un momento."
           }
         },
         "fr" : {
@@ -4216,7 +4222,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "lecciones rápidas y lecciones que se preparan a medida que llegas a ellas"
+            "value" : "lecciones rápidas y lecciones que se preparan a medida que avanzas"
           }
         },
         "fr" : {
@@ -4303,7 +4309,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ciencia"
+            "value" : "Ciencias"
           }
         },
         "fr" : {
@@ -4514,7 +4520,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar un objetivo"
+            "value" : "Crear un objetivo"
           }
         },
         "fr" : {
@@ -4543,7 +4549,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empieza gratis, sin necesidad de crear una cuenta."
+            "value" : "Empieza gratis, sin necesidad de una cuenta."
           }
         },
         "fr" : {
@@ -4572,7 +4578,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empieza con un curso o cuéntale a Zoonk para qué te estás preparando."
+            "value" : "Empieza con un curso o dile a Zoonk para qué te estás preparando."
           }
         },
         "fr" : {
@@ -4601,7 +4607,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empieza aquí y Zoonk preparará las lecciones para tu nivel."
+            "value" : "Empieza aquí y Zoonk prepara las lecciones para tu nivel."
           }
         },
         "fr" : {
@@ -4717,7 +4723,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si empiezas hoy, terminarías hacia %@."
+            "value" : "Si empiezas hoy, terminarías aproximadamente en %@."
           }
         },
         "fr" : {
@@ -4775,7 +4781,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Así estudiarás en profundidad todos los temas del examen que incluye el curso."
+            "value" : "Así cubres a fondo todos los temas del examen incluidos en el curso."
           }
         },
         "fr" : {
@@ -4804,7 +4810,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Así estudiarás en profundidad todos los temas del curso."
+            "value" : "Así cubres a fondo todos los temas del curso."
           }
         },
         "fr" : {
@@ -4862,7 +4868,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puede que este contenido se haya trasladado o ya no esté disponible."
+            "value" : "Es posible que este contenido haya cambiado de ubicación o ya no esté disponible."
           }
         },
         "fr" : {
@@ -4953,13 +4959,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "para completar todo el curso desde cero, dedicando %lld minuto al día de lunes a viernes."
+                  "value" : "para completar todo el curso desde cero, con %lld minuto al día, de lunes a viernes."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "para completar todo el curso desde cero, dedicando %lld minutos al día de lunes a viernes."
+                  "value" : "para completar todo el curso desde cero, con %lld minutos al día, de lunes a viernes."
                 }
               }
             }
@@ -5073,7 +5079,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prueba una lección"
+            "value" : "Probar una lección"
           }
         },
         "fr" : {
@@ -5102,7 +5108,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a intentarlo"
+            "value" : "Intentar de nuevo"
           }
         },
         "fr" : {
@@ -5224,7 +5230,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A qué dedicarás el tiempo"
+            "value" : "Cómo se distribuye el tiempo"
           }
         },
         "fr" : {
@@ -5253,7 +5259,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repasarás lo que has estudiado justo antes de que lo olvides."
+            "value" : "Repasas lo que estudiaste justo antes de que lo olvides."
           }
         },
         "fr" : {
@@ -5282,7 +5288,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qué podrás hacer"
+            "value" : "Lo que podrás hacer"
           }
         },
         "fr" : {
@@ -5311,7 +5317,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qué aprenderás"
+            "value" : "Lo que aprenderás"
           }
         },
         "fr" : {
@@ -5340,7 +5346,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dónde encaja este capítulo en el curso"
+            "value" : "Dónde se ubica este capítulo en el curso"
           }
         },
         "fr" : {
@@ -5427,7 +5433,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con Zoonk, tu plan parte de tu nivel y se adapta a tu horario."
+            "value" : "Con Zoonk, tu plan empieza en tu nivel y se adapta a tu horario."
           }
         },
         "fr" : {
@@ -5514,7 +5520,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No tienes conexión"
+            "value" : "Sin conexión"
           }
         },
         "fr" : {
@@ -5576,13 +5582,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Tu plan desde cero, con %lld minuto al día"
+                  "value" : "Tu plan con %lld minuto al día, desde cero"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Tu plan desde cero, con %lld minutos al día"
+                  "value" : "Tu plan con %lld minutos al día, desde cero"
                 }
               }
             }
@@ -5702,7 +5708,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan hasta %1$@, con %2$@ al día"
+            "value" : "Tu plan hasta el %1$@, con %2$@ al día"
           }
         },
         "fr" : {

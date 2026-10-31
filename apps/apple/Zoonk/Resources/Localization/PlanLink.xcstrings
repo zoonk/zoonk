@@ -322,7 +322,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un plan de estudio que alguien ha compartido contigo"
+            "value" : "Un plan de estudio que alguien compartió contigo"
           }
         },
         "fr" : {
@@ -409,7 +409,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Algo ha fallado. Vuelve a intentarlo dentro de un momento."
+            "value" : "No funcionó. Inténtalo de nuevo en un momento."
           }
         },
         "fr" : {
@@ -467,7 +467,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a intentar"
+            "value" : "Reintentar"
           }
         },
         "fr" : {
@@ -496,7 +496,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido cargar este plan"
+            "value" : "No pudimos cargar este plan"
           }
         },
         "fr" : {
@@ -525,7 +525,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ahora mismo no puedes empezar otro objetivo. Primero termina o pausa uno."
+            "value" : "No puedes crear otro objetivo ahora. Primero completa o pausa uno."
           }
         },
         "fr" : {
@@ -554,7 +554,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tendrás tu propio plan para la misma asignatura, a tu ritmo. Después, unas preguntas te permitirán saltarte lo que ya sabes."
+            "value" : "Tendrás tu propio plan para la misma materia, a tu ritmo. Luego responderás unas preguntas para saltarte lo que ya sabes."
           }
         },
         "fr" : {

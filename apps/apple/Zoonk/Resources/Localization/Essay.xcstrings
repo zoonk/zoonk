@@ -259,7 +259,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redacción · criterios de ENEM"
+            "value" : "Redacción · Rúbrica de ENEM"
           }
         },
         "fr" : {
@@ -288,7 +288,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puntuación estimada, de 0 a %@"
+            "value" : "Puntaje estimado, de 0 a %@"
           }
         },
         "fr" : {
@@ -317,7 +317,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta estimación da la máxima puntuación en todos los criterios."
+            "value" : "Todos los criterios tienen el puntaje máximo en esta estimación."
           }
         },
         "fr" : {
@@ -375,7 +375,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Respuesta libre · criterios de evaluación de AP"
+            "value" : "Respuesta libre · Criterios de calificación de AP"
           }
         },
         "fr" : {
@@ -404,7 +404,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Evaluar la nueva versión"
+            "value" : "Calificar la nueva versión"
           }
         },
         "fr" : {
@@ -433,7 +433,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Evaluando…"
+            "value" : "Calificando…"
           }
         },
         "fr" : {
@@ -723,7 +723,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estamos revisando tu redacción según cada criterio. Puede tardar hasta 30 segundos."
+            "value" : "Revisando tu redacción según cada criterio. Puede tardar hasta 30 segundos."
           }
         },
         "fr" : {
@@ -810,7 +810,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puntuación por criterio"
+            "value" : "Puntaje por criterio"
           }
         },
         "fr" : {
@@ -868,7 +868,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar para evaluar"
+            "value" : "Enviar a calificar"
           }
         },
         "fr" : {
@@ -897,7 +897,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Omitir la reescritura"
+            "value" : "Saltar la reescritura"
           }
         },
         "fr" : {
@@ -926,7 +926,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún estamos corrigiendo. Está tardando más de lo habitual."
+            "value" : "Aún estamos calificando. Está tardando más de lo habitual."
           }
         },
         "fr" : {
@@ -984,7 +984,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido completar. Inténtalo de nuevo dentro de un momento."
+            "value" : "No se pudo completar. Inténtalo de nuevo en un momento."
           }
         },
         "fr" : {
@@ -1013,7 +1013,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido completar. Tu texto sigue aquí. Vuelve a intentarlo dentro de un momento."
+            "value" : "No se pudo completar. Tu texto sigue aquí. Inténtalo de nuevo en un momento."
           }
         },
         "fr" : {
@@ -1071,7 +1071,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido cargar la redacción"
+            "value" : "No se pudo cargar la redacción"
           }
         },
         "fr" : {
@@ -1129,7 +1129,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta redacción no está aquí"
+            "value" : "No encontramos esta redacción"
           }
         },
         "fr" : {
@@ -1187,7 +1187,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Demasiado breve para evaluar"
+            "value" : "Demasiado breve para calificar"
           }
         },
         "fr" : {
@@ -1332,7 +1332,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Práctica de escritura"
+            "value" : "Práctica de redacción"
           }
         },
         "fr" : {
@@ -1419,7 +1419,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya has usado las evaluaciones de redacciones de hoy. Tu texto se queda aquí; envíalo mañana."
+            "value" : "Llegaste al límite de redacciones que puedes enviar a calificar hoy. Tu texto se queda aquí; envíalo mañana."
           }
         },
         "fr" : {
@@ -1535,7 +1535,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu texto se guarda en este dispositivo y estará aquí cuando vuelvas."
+            "value" : "Tu texto se guarda en este dispositivo para cuando vuelvas."
           }
         },
         "fr" : {

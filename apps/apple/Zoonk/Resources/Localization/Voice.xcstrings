@@ -118,7 +118,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ es un examen oficial. Practica sus tareas de expresión oral tanto si piensas presentarte como si no."
+            "value" : "%@ es un examen oficial. Practica sus tareas de expresión oral, tengas o no pensado presentarlo."
           }
         },
         "fr" : {
@@ -498,7 +498,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una estrella por terminar, otra por expresar todo lo que querías decir y otra por hacerlo sin ayuda."
+            "value" : "Una estrella por terminar, otra por transmitir todo el mensaje y otra por no usar Ayuda."
           }
         },
         "fr" : {
@@ -527,7 +527,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Corrección"
+            "value" : "Precisión"
           }
         },
         "fr" : {
@@ -556,7 +556,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tener acento nunca te impide avanzar. Las palabras que aún suenen diferentes volverán mañana."
+            "value" : "Tu acento nunca te impide avanzar. Las palabras que aún suenan diferentes vuelven mañana."
           }
         },
         "fr" : {
@@ -585,7 +585,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una IA hace de examinador o del otro candidato. En cada intento tienes una tarjeta nueva y, al terminar, recibes una estimación basada en los criterios oficiales del examen, no una puntuación oficial."
+            "value" : "Una IA hace el papel del examinador humano o del otro candidato. En cada intento tienes una tarjeta nueva y, al terminar, recibes una estimación basada en los criterios oficiales del examen, no un puntaje oficial."
           }
         },
         "fr" : {
@@ -614,7 +614,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una IA hace de examinador. En cada intento tienes una tarjeta nueva y, al terminar, recibes una estimación basada en los criterios oficiales del examen, no una puntuación oficial."
+            "value" : "Una IA hace el papel del examinador humano. En cada intento tienes una tarjeta nueva y, al terminar, recibes una estimación basada en los criterios oficiales del examen, no un puntaje oficial."
           }
         },
         "fr" : {
@@ -643,7 +643,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una estimación basada en una tarea de práctica, no una puntuación oficial."
+            "value" : "Una estimación basada en una sola tarea de práctica, no un puntaje oficial."
           }
         },
         "fr" : {
@@ -672,7 +672,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una estimación basada en una tarea de práctica, no una puntuación oficial. Se valora lo fácil que resulta entenderte, nunca tu acento."
+            "value" : "Una estimación basada en una sola tarea de práctica, no un puntaje oficial. Tu forma de hablar se evalúa por lo fácil que es entenderte, nunca por tu acento."
           }
         },
         "fr" : {
@@ -701,7 +701,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una estimación basada en un simulacro breve, no una puntuación oficial."
+            "value" : "Una estimación basada en un solo simulacro breve, no un puntaje oficial."
           }
         },
         "fr" : {
@@ -730,7 +730,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En el nivel %@"
+            "value" : "En %@"
           }
         },
         "fr" : {
@@ -962,7 +962,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vuelve a llamar o termina la llamada para recibir comentarios sobre lo que has dicho."
+            "value" : "Vuelve a llamar o termina la llamada para recibir comentarios sobre lo que dijiste."
           }
         },
         "fr" : {
@@ -991,7 +991,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tiempo de llamada"
+            "value" : "Duración de la llamada"
           }
         },
         "fr" : {
@@ -1078,7 +1078,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Llamadas en el idioma que aprendes, adaptadas a tu nivel."
+            "value" : "Llamadas en el idioma que estás aprendiendo, a tu nivel."
           }
         },
         "fr" : {
@@ -1107,7 +1107,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Necesitas una cuenta gratuita para llamar"
+            "value" : "Necesitas una cuenta gratis para llamar"
           }
         },
         "fr" : {
@@ -1136,7 +1136,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las llamadas de desafío están incluidas en Plus. Tu plan continúa sin ellas."
+            "value" : "Las llamadas de desafío están incluidas en Plus. Tu plan sigue adelante sin ellas."
           }
         },
         "fr" : {
@@ -1223,7 +1223,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Respuestas claras y desarrolladas"
+            "value" : "Respuestas claras y bien desarrolladas"
           }
         },
         "fr" : {
@@ -1374,7 +1374,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crea tu cuenta gratuita para continuar."
+            "value" : "Crea tu cuenta gratis para continuar."
           }
         },
         "fr" : {
@@ -1403,7 +1403,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Realización de la tarea"
+            "value" : "Cumplimiento de la tarea"
           }
         },
         "fr" : {
@@ -1432,7 +1432,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completado"
+            "value" : "Listo"
           }
         },
         "fr" : {
@@ -1461,7 +1461,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terminar"
+            "value" : "Finalizar"
           }
         },
         "fr" : {
@@ -1490,7 +1490,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terminar esa llamada y empezar esta"
+            "value" : "Finalizar esa llamada e iniciar esta"
           }
         },
         "fr" : {
@@ -1519,7 +1519,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terminar la llamada"
+            "value" : "Finalizar la llamada"
           }
         },
         "fr" : {
@@ -1925,7 +1925,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simulacro de expresión oral del IELTS"
+            "value" : "Simulacro de expresión oral de IELTS"
           }
         },
         "fr" : {
@@ -2012,7 +2012,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La llamada terminó cuando empezaste otra."
+            "value" : "Terminó cuando iniciaste otra llamada."
           }
         },
         "fr" : {
@@ -2041,7 +2041,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La llamada está abierta en otra pestaña o en otro dispositivo. Si la terminas desde aquí, no recibirás comentarios sobre ella."
+            "value" : "Está abierta en otra pestaña o en otro dispositivo. Si la terminas desde aquí, no recibirás comentarios."
           }
         },
         "fr" : {
@@ -2070,7 +2070,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ahora mismo las llamadas están pausadas para todo el mundo. Vuelve a intentarlo más tarde."
+            "value" : "A todos les pasa lo mismo en este momento. Vuelve a intentarlo más tarde."
           }
         },
         "fr" : {
@@ -2198,7 +2198,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Último intento: por debajo de %@"
+            "value" : "Último intento: por debajo del nivel %@"
           }
         },
         "fr" : {
@@ -2314,7 +2314,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escuchando cómo ha sonado…"
+            "value" : "Escuchando cómo lo dijiste…"
           }
         },
         "fr" : {
@@ -2372,7 +2372,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escuchando… Pulsa Detener para comprobar."
+            "value" : "Escuchando… Toca Detener para comprobar."
           }
         },
         "fr" : {
@@ -2459,7 +2459,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Silenciado"
+            "value" : "Micrófono silenciado"
           }
         },
         "fr" : {
@@ -2546,7 +2546,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No quedan llamadas hoy"
+            "value" : "No quedan llamadas por hoy"
           }
         },
         "fr" : {
@@ -2604,7 +2604,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoy no hay palabras que repetir."
+            "value" : "No tienes palabras que repetir hoy."
           }
         },
         "fr" : {
@@ -2633,7 +2633,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No queda suficiente tiempo de llamada este mes para este simulacro"
+            "value" : "No queda suficiente tiempo de llamadas este mes para este simulacro"
           }
         },
         "fr" : {
@@ -2662,7 +2662,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No te queda suficiente tiempo de llamada este mes para esta tarea"
+            "value" : "No queda suficiente tiempo de llamadas este mes para esta tarea"
           }
         },
         "fr" : {
@@ -2691,7 +2691,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No queda suficiente tiempo de llamada hoy para este simulacro"
+            "value" : "No queda suficiente tiempo de llamadas hoy para este simulacro"
           }
         },
         "fr" : {
@@ -2720,7 +2720,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No te queda suficiente tiempo de llamada hoy para esta tarea"
+            "value" : "No queda suficiente tiempo de llamadas hoy para esta tarea"
           }
         },
         "fr" : {
@@ -2778,7 +2778,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta vez no ha sido posible"
+            "value" : "Esta vez no"
           }
         },
         "fr" : {
@@ -2807,7 +2807,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No pasa nada: la llamada volverá a aparecer para que puedas intentarlo de nuevo."
+            "value" : "No perdiste nada: la llamada volverá para que puedas intentarlo de nuevo."
           }
         },
         "fr" : {
@@ -2836,7 +2836,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No has dicho nada esta vez"
+            "value" : "No hubo respuestas esta vez"
           }
         },
         "fr" : {
@@ -2958,7 +2958,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir Ajustes"
+            "value" : "Abrir Configuración"
           }
         },
         "fr" : {
@@ -3016,7 +3016,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Organización de lo que dices"
+            "value" : "Cómo organizas lo que dices"
           }
         },
         "fr" : {
@@ -3219,7 +3219,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se ha acabado el tiempo de preparación. Inicia la llamada cuando quieras."
+            "value" : "El tiempo de preparación terminó. Inicia la llamada cuando tengas todo listo."
           }
         },
         "fr" : {
@@ -3248,7 +3248,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pulsa Grabar y di la palabra en voz alta"
+            "value" : "Toca Grabar y di la palabra en voz alta"
           }
         },
         "fr" : {
@@ -3335,7 +3335,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Variedad de recursos lingüísticos"
+            "value" : "Variedad del lenguaje"
           }
         },
         "fr" : {
@@ -3364,7 +3364,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Evaluado según %@"
+            "value" : "Se evalúa según %@"
           }
         },
         "fr" : {
@@ -3393,7 +3393,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estamos evaluando tu expresión oral según los criterios del examen. Suele tardar medio minuto."
+            "value" : "Evaluando tu expresión oral según los criterios del examen. Suele tardar aproximadamente medio minuto."
           }
         },
         "fr" : {
@@ -3480,7 +3480,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Grabando… Pulsa Detener cuando termines."
+            "value" : "Grabando… Toca Detener cuando termines."
           }
         },
         "fr" : {
@@ -3567,7 +3567,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se pronuncia así: %@"
+            "value" : "Pronúncialo así: %@"
           }
         },
         "fr" : {
@@ -3596,7 +3596,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opciones de la pantalla"
+            "value" : "Opciones de pantalla"
           }
         },
         "fr" : {
@@ -3625,7 +3625,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver qué tal ha ido"
+            "value" : "Ver cómo te fue"
           }
         },
         "fr" : {
@@ -3741,7 +3741,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Han sonado bien"
+            "value" : "Bien pronunciadas"
           }
         },
         "fr" : {
@@ -3799,7 +3799,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las llamadas para practicar la expresión oral están incluidas con una cuenta gratuita. Crea una para practicar en voz alta."
+            "value" : "Las llamadas de práctica oral están incluidas con una cuenta gratis. Crea una para practicar en voz alta."
           }
         },
         "fr" : {
@@ -3857,7 +3857,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La práctica de expresión oral está incluida con Plus: haz cada tarea del examen en una llamada y recibe una estimación basada en los criterios oficiales después de cada una."
+            "value" : "Plus incluye práctica de expresión oral: cada tarea del examen en una llamada y una evaluación orientativa según los criterios oficiales al terminar cada una."
           }
         },
         "fr" : {
@@ -3886,7 +3886,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido cargar la práctica de expresión oral"
+            "value" : "No se pudo cargar la práctica de expresión oral"
           }
         },
         "fr" : {
@@ -3973,7 +3973,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar la preparación"
+            "value" : "Iniciar la preparación"
           }
         },
         "fr" : {
@@ -4031,7 +4031,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar esta tarea"
+            "value" : "Iniciar esta tarea"
           }
         },
         "fr" : {
@@ -4118,7 +4118,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún estamos preparando tus comentarios. Está tardando más de lo habitual."
+            "value" : "Aún estamos preparando los comentarios sobre tu práctica. Está tardando más de lo habitual."
           }
         },
         "fr" : {
@@ -4176,7 +4176,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descansa un momento y vuelve a intentarlo."
+            "value" : "Tómate un breve descanso y vuelve a intentarlo."
           }
         },
         "fr" : {
@@ -4205,7 +4205,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pulsa y dilo en voz alta"
+            "value" : "Toca y dilo en voz alta"
           }
         },
         "fr" : {
@@ -4298,7 +4298,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido evaluar. Vuelve a intentarlo."
+            "value" : "No se pudo procesar. Inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -4327,7 +4327,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ha sonado bien"
+            "value" : "Sonó bien"
           }
         },
         "fr" : {
@@ -4356,7 +4356,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido conectar la llamada"
+            "value" : "No se pudo establecer la llamada"
           }
         },
         "fr" : {
@@ -4385,7 +4385,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido cargar la llamada"
+            "value" : "No se pudo cargar la llamada"
           }
         },
         "fr" : {
@@ -4414,7 +4414,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido iniciar la llamada. Vuelve a intentarlo en un momento."
+            "value" : "La llamada no se inició. Inténtalo de nuevo en un momento."
           }
         },
         "fr" : {
@@ -4443,7 +4443,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se ha interrumpido la llamada"
+            "value" : "Se cortó la llamada"
           }
         },
         "fr" : {
@@ -4472,7 +4472,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La llamada aún se está cerrando. Vuelve a intentarlo dentro de un momento."
+            "value" : "La llamada aún se está cerrando. Inténtalo de nuevo en un momento."
           }
         },
         "fr" : {
@@ -4507,7 +4507,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En el examen tienes %1$@ en total para preparar las tareas %2$@, aproximadamente %3$@ para esta."
+            "value" : "El examen te da %1$@ para preparar las tareas %2$@ en conjunto, aproximadamente %3$@ para esta."
           }
         },
         "fr" : {
@@ -4536,7 +4536,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En el examen tienes %@ para prepararte con la tarjeta."
+            "value" : "El examen te da %@ para prepararte con la tarjeta."
           }
         },
         "fr" : {
@@ -4565,7 +4565,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Valoración general del examinador"
+            "value" : "Evaluación general del examinador"
           }
         },
         "fr" : {
@@ -4623,7 +4623,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El simulacro no se ha iniciado. Vuelve a intentarlo en un momento."
+            "value" : "El simulacro no se inició. Vuelve a intentarlo en un momento."
           }
         },
         "fr" : {
@@ -4652,7 +4652,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido reproducir el sonido. Vuelve a intentarlo."
+            "value" : "No se reprodujo el sonido. Vuelve a intentarlo."
           }
         },
         "fr" : {
@@ -4681,7 +4681,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido iniciar la tarea. Vuelve a intentarlo en un momento."
+            "value" : "La tarea no se inició. Vuelve a intentarlo en un momento."
           }
         },
         "fr" : {
@@ -4710,7 +4710,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se han podido cargar las palabras"
+            "value" : "No se cargaron las palabras"
           }
         },
         "fr" : {
@@ -4739,7 +4739,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta llamada ha terminado"
+            "value" : "Esta llamada terminó"
           }
         },
         "fr" : {
@@ -4797,7 +4797,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este desafío es una llamada breve sobre la unidad. Primero la preparamos para tu nivel de expresión oral, lo que puede tardar hasta medio minuto."
+            "value" : "Este desafío es una llamada breve sobre la unidad. Primero se prepara según tu nivel de expresión oral, lo que puede tardar hasta medio minuto."
           }
         },
         "fr" : {
@@ -4826,7 +4826,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esto ocurre a veces. Vuelve a intentarlo en un momento."
+            "value" : "Esto pasa a veces. Vuelve a intentarlo en un momento."
           }
         },
         "fr" : {
@@ -4855,7 +4855,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este simulacro no tiene puntuación"
+            "value" : "Este simulacro no tiene puntaje"
           }
         },
         "fr" : {
@@ -4884,7 +4884,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta tarea no tiene estimación"
+            "value" : "Esta tarea no tiene un puntaje estimado"
           }
         },
         "fr" : {
@@ -4971,7 +4971,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simulacro de expresión oral del TOEFL"
+            "value" : "Simulacro de expresión oral de TOEFL"
           }
         },
         "fr" : {
@@ -5000,7 +5000,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inténtalo de nuevo"
+            "value" : "Volver a intentar"
           }
         },
         "fr" : {
@@ -5058,7 +5058,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prueba otro cuando quieras."
+            "value" : "Haz otro cuando quieras."
           }
         },
         "fr" : {
@@ -5087,7 +5087,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vuelve a hacer la tarea cuando quieras."
+            "value" : "Vuelve a intentar la tarea cuando quieras."
           }
         },
         "fr" : {
@@ -5116,7 +5116,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repetir esta tarea con una tarjeta nueva"
+            "value" : "Intentar esta tarea con una tarjeta nueva"
           }
         },
         "fr" : {
@@ -5145,7 +5145,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activa el micrófono para Zoonk en Ajustes para responder en voz alta."
+            "value" : "Activa el micrófono para Zoonk en Configuración para responder en voz alta."
           }
         },
         "fr" : {
@@ -5174,7 +5174,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activa el micrófono para Zoonk en Ajustes para decir la palabra. Puedes omitirla por ahora."
+            "value" : "Activa el micrófono para Zoonk en Configuración para decir la palabra. Puedes saltarla por ahora."
           }
         },
         "fr" : {
@@ -5319,7 +5319,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido comprobar tu respuesta esta vez. Inténtalo de nuevo."
+            "value" : "No pudimos comprobar tu respuesta esta vez. Vuelve a intentarlo."
           }
         },
         "fr" : {
@@ -5348,7 +5348,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos oído ninguna palabra. Inténtalo de nuevo."
+            "value" : "No pudimos oír ninguna palabra. Vuelve a intentarlo."
           }
         },
         "fr" : {
@@ -5377,7 +5377,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos oído la palabra. Inténtalo de nuevo un poco más cerca del micrófono."
+            "value" : "No pudimos oír la palabra. Vuelve a intentarlo un poco más cerca."
           }
         },
         "fr" : {
@@ -5406,7 +5406,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido guardar la llamada."
+            "value" : "No pudimos guardar la llamada."
           }
         },
         "fr" : {
@@ -5435,7 +5435,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido guardar tus respuestas."
+            "value" : "No pudimos guardar tus respuestas."
           }
         },
         "fr" : {
@@ -5464,7 +5464,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hemos oído «%@»"
+            "value" : "Escuchamos “%@”"
           }
         },
         "fr" : {
@@ -5493,7 +5493,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qué quieres comunicar"
+            "value" : "Qué comunicar"
           }
         },
         "fr" : {
@@ -5522,7 +5522,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qué ha ido bien"
+            "value" : "Lo que salió bien"
           }
         },
         "fr" : {
@@ -5644,7 +5644,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trabaja primero en esto"
+            "value" : "Empieza por esto"
           }
         },
         "fr" : {
@@ -5673,7 +5673,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparando tus comentarios…"
+            "value" : "Preparando los comentarios…"
           }
         },
         "fr" : {
@@ -5702,7 +5702,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has dicho"
+            "value" : "Dijiste"
           }
         },
         "fr" : {
@@ -5731,7 +5731,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has hablado poco en esta tarea, así que no ha habido mucho que evaluar. Una respuesta más larga permite una estimación más precisa."
+            "value" : "Hablaste poco en esta tarea, así que hubo poco que evaluar. Una respuesta más larga permite una estimación más precisa."
           }
         },
         "fr" : {
@@ -5760,7 +5760,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has respondido por escrito, así que esta estimación no valora cómo suenas."
+            "value" : "Escribiste tus respuestas, así que esta estimación no tiene en cuenta cómo suenas."
           }
         },
         "fr" : {
@@ -5818,7 +5818,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya tienes una llamada en curso"
+            "value" : "Ya estás en una llamada"
           }
         },
         "fr" : {
@@ -5847,7 +5847,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya sabes esta palabra. No volverá a aparecer."
+            "value" : "Ya aprendiste esta palabra. No volverá a aparecer."
           }
         },
         "fr" : {
@@ -5876,7 +5876,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has alcanzado tu límite de tiempo diario. Podrás hacer esta llamada en tu próxima sesión."
+            "value" : "Alcanzaste tu límite de tiempo diario. Podrás hacer esta llamada en tu próxima sesión."
           }
         },
         "fr" : {
@@ -5905,7 +5905,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado toda la ayuda gratuita disponible sin cuenta. Crea una cuenta gratis para seguir."
+            "value" : "Ya usaste toda la ayuda gratuita disponible sin una cuenta. Crea una cuenta gratis para seguir."
           }
         },
         "fr" : {
@@ -5934,7 +5934,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado toda la ayuda de este mes. Volverá el mes que viene, o puedes conseguir Plus para seguir ahora."
+            "value" : "Ya usaste toda la ayuda de este mes. Tendrás más el próximo mes o puedes obtener Plus para seguir ahora."
           }
         },
         "fr" : {
@@ -5963,7 +5963,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado toda la ayuda gratuita de hoy. Crea una cuenta gratis para seguir."
+            "value" : "Ya usaste toda la ayuda gratuita de hoy. Crea una cuenta gratis para seguir."
           }
         },
         "fr" : {
@@ -5992,7 +5992,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado toda la ayuda de hoy. Volverá mañana, o puedes conseguir Plus para seguir ahora."
+            "value" : "Ya usaste toda la ayuda de hoy. Tendrás más mañana o puedes obtener Plus para seguir ahora."
           }
         },
         "fr" : {
@@ -6021,7 +6021,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado la ayuda de hoy. Volverá mañana."
+            "value" : "Ya usaste toda la ayuda de hoy. Tendrás más mañana."
           }
         },
         "fr" : {
@@ -6050,7 +6050,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu tiempo de llamadas de este mes está a punto de agotarse."
+            "value" : "Ya casi se agota tu tiempo de llamadas de este mes."
           }
         },
         "fr" : {
@@ -6079,7 +6079,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu tiempo de llamadas de hoy está a punto de agotarse."
+            "value" : "Ya casi se agota tu tiempo de llamadas de hoy."
           }
         },
         "fr" : {
@@ -6108,7 +6108,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Podrás volver a llamar el mes que viene, o conseguir Plus para tener límites de llamadas más altos."
+            "value" : "Podrás volver a llamar el próximo mes, o puedes obtener Plus para tener más tiempo de llamada."
           }
         },
         "fr" : {
@@ -6137,7 +6137,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Podrás volver a llamar el mes que viene."
+            "value" : "Podrás volver a llamar el próximo mes."
           }
         },
         "fr" : {
@@ -6166,7 +6166,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Podrás volver a llamar mañana, o conseguir Plus para tener límites de llamadas más altos."
+            "value" : "Podrás volver a llamar mañana, o puedes obtener Plus para tener más tiempo de llamada."
           }
         },
         "fr" : {
@@ -6224,7 +6224,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compañero"
+            "value" : "Tu interlocutor"
           }
         },
         "fr" : {

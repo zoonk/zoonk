@@ -77,7 +77,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@/%2$@ mensajes usados hoy con tu compañero"
+            "value" : "%1$@/%2$@ mensajes enviados hoy a tu compañero"
           }
         },
         "fr" : {
@@ -519,13 +519,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld subida al día"
+                  "value" : "Subir %lld archivo al día"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld subidas al día"
+                  "value" : "Subir %lld archivos al día"
                 }
               }
             }
@@ -645,7 +645,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un plan adaptado a tu objetivo y a tu fecha"
+            "value" : "Un plan para alcanzar tu objetivo en la fecha que elijas"
           }
         },
         "fr" : {
@@ -674,7 +674,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una comprobación de seguridad ha bloqueado esta solicitud. Inténtalo de nuevo o escribe a contacto@zoonk.com."
+            "value" : "Una comprobación de seguridad bloqueó esta solicitud. Inténtalo de nuevo o escribe a contacto@zoonk.com."
           }
         },
         "fr" : {
@@ -790,7 +790,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Correo de la cuenta"
+            "value" : "Correo electrónico de la cuenta"
           }
         },
         "fr" : {
@@ -877,7 +877,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Casi. Las lecciones, los objetivos y tu compañero solo tienen límites para frenar a los bots y las herramientas automatizadas, no a quienes aprenden. Las llamadas de práctica oral tienen límites diarios y mensuales más altos que los del plan gratuito."
+            "value" : "Casi. Las lecciones, los objetivos y tu compañero solo tienen límites para frenar a los bots y las herramientas automatizadas, no a quienes aprenden. Las llamadas para practicar la expresión oral tienen límites diarios y mensuales más altos que los del plan gratis."
           }
         },
         "fr" : {
@@ -906,7 +906,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un compañero de estudio con IA para cuando te atasques"
+            "value" : "Un compañero de estudio con IA cuando necesites ayuda"
           }
         },
         "fr" : {
@@ -1059,7 +1059,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apple gestiona los reembolsos de Plus si lo has comprado en el App Store: solicita el tuyo desde tu cuenta de Apple. Si te has suscrito en nuestra web, puedes cancelar en un plazo de 14 días y recibir un reembolso completo. Solo tienes que contactar con nosotros."
+            "value" : "Apple tramita los reembolsos de las compras de Plus en el App Store: solicita uno desde tu cuenta de Apple. Si te suscribiste en nuestro sitio web, puedes cancelar en un plazo de 14 días para recibir un reembolso completo. Solo tienes que contactarnos."
           }
         },
         "fr" : {
@@ -1367,7 +1367,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprueba los datos e inténtalo de nuevo."
+            "value" : "Revisa la información e inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -1396,7 +1396,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Consulta tu historial de compras en App Store y ponte en contacto con soporte para recibir ayuda."
+            "value" : "Revisa tu historial de compras de App Store y luego contacta a soporte para recibir ayuda."
           }
         },
         "fr" : {
@@ -1425,7 +1425,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Consulta tu historial de compras en App Store y ponte en contacto con soporte si necesitas ayuda."
+            "value" : "Revisa tu historial de compras de App Store y luego contacta a soporte si necesitas ayuda."
           }
         },
         "fr" : {
@@ -1454,7 +1454,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprueba tu conexión e intenta restaurar las compras de nuevo."
+            "value" : "Revisa tu conexión e intenta restaurar las compras de nuevo."
           }
         },
         "fr" : {
@@ -1547,7 +1547,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Contactar con soporte"
+            "value" : "Contactar a soporte"
           }
         },
         "fr" : {
@@ -1663,7 +1663,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se han podido restaurar las compras"
+            "value" : "No pudimos restaurar las compras"
           }
         },
         "fr" : {
@@ -1692,7 +1692,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido actualizar tu cuenta"
+            "value" : "No pudimos actualizar tu cuenta"
           }
         },
         "fr" : {
@@ -1872,7 +1872,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elimina tu cuenta y todo su contenido de forma permanente. Si compraste Plus en la web, se cancela; las compras de App Store se gestionan en App Store."
+            "value" : "Elimina tu cuenta y todo su contenido para siempre. Si compraste Plus en la web, se cancela la suscripción; las compras de App Store se administran en el App Store."
           }
         },
         "fr" : {
@@ -1901,7 +1901,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eliminar tu cuenta de Zoonk no cancela la facturación de App Store. Cancela primero la suscripción si no quieres que se renueve."
+            "value" : "Eliminar tu cuenta de Zoonk no detiene los cobros de App Store. Cancela primero la suscripción si no quieres que se renueve."
           }
         },
         "fr" : {
@@ -1930,7 +1930,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eliminar tu cuenta de Zoonk no cancela la facturación de Google Play. Si no quieres que se renueve, cancela primero la suscripción en Google Play desde un dispositivo Android."
+            "value" : "Eliminar tu cuenta de Zoonk no detiene los cobros de Google Play. Usa Google Play en un dispositivo Android para cancelar primero la suscripción si no quieres que se renueve."
           }
         },
         "fr" : {
@@ -1959,7 +1959,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hecho"
+            "value" : "Finalizar"
           }
         },
         "fr" : {
@@ -2046,7 +2046,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inicio de sesión con correo electrónico"
+            "value" : "Iniciar sesión con correo electrónico"
           }
         },
         "fr" : {
@@ -2075,7 +2075,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Introduce una dirección de correo válida."
+            "value" : "Ingresa una dirección de correo electrónico válida."
           }
         },
         "fr" : {
@@ -2133,7 +2133,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toda la información que Zoonk guarda sobre ti, en un solo archivo"
+            "value" : "Todo lo que Zoonk guarda sobre ti, en un solo archivo"
           }
         },
         "fr" : {
@@ -2195,13 +2195,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Para un examen: la prueba de diagnóstico, tu plan y %lld día de preparación para empezar"
+                  "value" : "Para un examen: el diagnóstico, tu plan y %lld día para empezar"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Para un examen: la prueba de diagnóstico, tu plan y sus primeros %lld días"
+                  "value" : "Para un examen: el diagnóstico, tu plan y %lld días para empezar"
                 }
               }
             }
@@ -2257,7 +2257,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para un examen: la prueba de diagnóstico, tu plan y su primera semana"
+            "value" : "Para un examen: el diagnóstico, tu plan y su primera semana"
           }
         },
         "fr" : {
@@ -2286,7 +2286,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por tu seguridad, introduce un código nuevo enviado al correo de esta cuenta."
+            "value" : "Por tu seguridad, ingresa el nuevo código que enviamos al correo electrónico de esta cuenta."
           }
         },
         "fr" : {
@@ -2466,7 +2466,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Más tiempo en las llamadas de expresión oral"
+            "value" : "Más tiempo en las llamadas de práctica oral"
           }
         },
         "fr" : {
@@ -2675,7 +2675,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Asegúrate de haber iniciado sesión con la cuenta de Apple usada para la compra y vuelve a intentarlo."
+            "value" : "Asegúrate de iniciar sesión con la cuenta de Apple que usaste para la compra y vuelve a intentarlo."
           }
         },
         "fr" : {
@@ -2704,7 +2704,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gestionar suscripción de App Store"
+            "value" : "Administrar la suscripción en App Store"
           }
         },
         "fr" : {
@@ -2733,7 +2733,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gestionar el inicio de sesión con Apple"
+            "value" : "Administrar el inicio de sesión con Apple"
           }
         },
         "fr" : {
@@ -2762,7 +2762,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gestionada en Google Play"
+            "value" : "Se administra en Google Play"
           }
         },
         "fr" : {
@@ -2907,7 +2907,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha encontrado ninguna suscripción activa"
+            "value" : "No se encontró una suscripción activa"
           }
         },
         "fr" : {
@@ -2936,7 +2936,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se han encontrado compras"
+            "value" : "No se encontraron compras"
           }
         },
         "fr" : {
@@ -2994,7 +2994,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se elimina permanentemente"
+            "value" : "Eliminado de forma permanente"
           }
         },
         "fr" : {
@@ -3087,7 +3087,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Llamadas de práctica, con límites inferiores a los de Plus (las tareas de expresión oral de los exámenes se incluyen en Plus)"
+            "value" : "Llamadas de práctica, con límites más bajos que en Plus (Plus incluye las tareas de expresión oral de los exámenes)"
           }
         },
         "fr" : {
@@ -3203,7 +3203,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perfil e información de la cuenta"
+            "value" : "Información del perfil y de la cuenta"
           }
         },
         "fr" : {
@@ -3232,7 +3232,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido vincular la compra"
+            "value" : "No se pudo vincular la compra"
           }
         },
         "fr" : {
@@ -3261,7 +3261,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido verificar la compra"
+            "value" : "No se pudo verificar la compra"
           }
         },
         "fr" : {
@@ -3377,7 +3377,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lee nuestra política de uso razonable"
+            "value" : "Leer nuestra política de uso justo"
           }
         },
         "fr" : {
@@ -3615,7 +3615,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajustes"
+            "value" : "Configuración"
           }
         },
         "fr" : {
@@ -3731,7 +3731,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inicia sesión en la cuenta de Zoonk a la que pertenece esta compra de App Store o contacta con soporte para obtener ayuda."
+            "value" : "Inicia sesión en la cuenta de Zoonk a la que pertenece esta compra de App Store o contacta a soporte para obtener ayuda."
           }
         },
         "fr" : {
@@ -3760,7 +3760,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Llamadas para practicar la expresión oral, con límites inferiores a los de Plus"
+            "value" : "Llamadas para practicar la expresión oral, con límites más bajos que en Plus"
           }
         },
         "fr" : {
@@ -3822,13 +3822,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Empieza gratis con %lld lección, sin necesidad de una cuenta. Con una cuenta gratuita, tienes:"
+                  "value" : "Empieza gratis con %lld lección, sin necesidad de una cuenta. Con una cuenta gratis, obtienes:"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Empieza gratis con %lld lecciones, sin necesidad de una cuenta. Con una cuenta gratuita, tienes:"
+                  "value" : "Empieza gratis con %lld lecciones, sin necesidad de una cuenta. Con una cuenta gratis, obtienes:"
                 }
               }
             }
@@ -3983,7 +3983,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La suscripción está a punto de finalizar"
+            "value" : "Suscripción por terminar"
           }
         },
         "fr" : {
@@ -4012,7 +4012,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se admiten direcciones de correo temporales. Usa otra dirección o un alias de privacidad."
+            "value" : "No aceptamos direcciones de correo temporales. Usa otra dirección o un alias de privacidad."
           }
         },
         "fr" : {
@@ -4041,7 +4041,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Condiciones del servicio"
+            "value" : "Términos de servicio"
           }
         },
         "fr" : {
@@ -4070,7 +4070,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ese código pertenece a otra cuenta. Solicita un nuevo código para esta cuenta."
+            "value" : "Ese código pertenece a otra cuenta. Solicita un código nuevo para esta cuenta."
           }
         },
         "fr" : {
@@ -4099,7 +4099,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ese código no es válido o ha caducado. Solicita uno nuevo y vuelve a intentarlo."
+            "value" : "Ese código no es válido o expiró. Solicita un código nuevo y vuelve a intentarlo."
           }
         },
         "fr" : {
@@ -4186,7 +4186,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App Store no ha podido completar esta compra. Comprueba tu conexión y vuelve a intentarlo."
+            "value" : "El App Store no pudo completar esta compra. Revisa tu conexión e inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -4248,13 +4248,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Para empezar, %lld día de preparación para el examen"
+                  "value" : "%lld día de preparación inicial para el examen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Los primeros %lld días de preparación para el examen"
+                  "value" : "%lld días de preparación inicial para el examen"
                 }
               }
             }
@@ -4374,7 +4374,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk gestiona esta suscripción. Contacta con soporte si necesitas ayuda para cambiarla o cancelarla."
+            "value" : "Zoonk administra esta suscripción. Contacta a soporte si necesitas ayuda para cambiarla o cancelarla."
           }
         },
         "fr" : {
@@ -4403,7 +4403,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Demasiados intentos. Espera un momento y vuelve a intentarlo."
+            "value" : "Demasiados intentos. Espera un momento e inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -4432,7 +4432,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a intentar"
+            "value" : "Intentar de nuevo"
           }
         },
         "fr" : {
@@ -4461,7 +4461,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido gestionar tu suscripción. Escríbenos a contacto@zoonk.com"
+            "value" : "No pudimos administrar tu suscripción. Contáctanos en contacto@zoonk.com"
           }
         },
         "fr" : {
@@ -4649,7 +4649,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usar el correo en su lugar"
+            "value" : "Usar correo electrónico"
           }
         },
         "fr" : {
@@ -4823,7 +4823,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido cargar lo que incluye el plan gratuito."
+            "value" : "No pudimos cargar lo que incluye el plan gratis."
           }
         },
         "fr" : {
@@ -4881,7 +4881,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Te hemos enviado un código de acceso por correo electrónico. Caduca en 5 minutos."
+            "value" : "Te enviamos un código de acceso a tu correo electrónico. Expira en 5 minutos."
           }
         },
         "fr" : {
@@ -5032,7 +5032,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Qué incluye el plan gratuito?"
+            "value" : "¿Qué incluye el plan gratis?"
           }
         },
         "fr" : {
@@ -5061,7 +5061,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con el plan gratuito, tienes:"
+            "value" : "Con el plan gratis, obtienes:"
           }
         },
         "fr" : {
@@ -5096,7 +5096,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Podrás cambiarlo más adelante en tu perfil."
+            "value" : "Puedes cambiarlo más adelante en tu perfil."
           }
         },
         "fr" : {
@@ -5189,7 +5189,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seguirás teniendo Plus hasta que termine el periodo que ya has pagado. Después volverás al plan gratuito y conservarás tus objetivos y tu progreso."
+            "value" : "Conservas Plus hasta que termine el periodo que ya pagaste. Después vuelves al plan gratis y conservas tus objetivos y tu progreso."
           }
         },
         "fr" : {
@@ -5363,7 +5363,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compra está segura y aún no se ha completado. Restaura las compras cuando vuelvas a tener conexión."
+            "value" : "Tu compra está guardada y aún no se completó. Restaura las compras cuando vuelvas a tener conexión."
           }
         },
         "fr" : {
@@ -5392,7 +5392,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compra está a salvo. Inicia sesión y restaura las compras para añadir Plus a tu cuenta de Zoonk."
+            "value" : "Tu compra está guardada. Inicia sesión y luego restaura las compras para agregar Plus a tu cuenta de Zoonk."
           }
         },
         "fr" : {
@@ -5427,7 +5427,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu suscripción finalizará el %@."
+            "value" : "Tu suscripción terminará el %@."
           }
         },
         "fr" : {
@@ -5491,7 +5491,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan completo de preparación, para cada día hasta el examen"
+            "value" : "Todo tu plan de estudio, día a día hasta el examen"
           }
         },
         "fr" : {
@@ -5520,7 +5520,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu cuenta de Zoonk y tus datos personalizados se han eliminado definitivamente."
+            "value" : "Tu cuenta de Zoonk y tus datos personalizados se eliminaron de forma permanente."
           }
         },
         "fr" : {
@@ -5549,7 +5549,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus datos de Zoonk se han eliminado, pero Apple no ha podido confirmar que se haya retirado la autorización. Para terminar, elimina Zoonk de Iniciar sesión con Apple."
+            "value" : "Tus datos de Zoonk se eliminaron, pero Apple no pudo confirmar que se revocara la autorización de acceso. Elimina Zoonk de Iniciar sesión con Apple para terminar."
           }
         },
         "fr" : {
@@ -5578,7 +5578,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk ha comprobado tus compras de App Store, pero ninguna incluye Plus actualmente."
+            "value" : "Zoonk revisó tus compras en el App Store, pero ninguna te da acceso a Plus en este momento."
           }
         },
         "fr" : {
@@ -5607,7 +5607,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk no ha podido conectarse. Comprueba tu conexión y vuelve a intentarlo."
+            "value" : "Zoonk no pudo conectarse. Revisa tu conexión e inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -5636,7 +5636,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk no ha podido eliminar tu cuenta. Vuelve a intentarlo o escribe a contacto@zoonk.com."
+            "value" : "Zoonk no pudo eliminar tu cuenta. Inténtalo de nuevo o escribe a contacto@zoonk.com."
           }
         },
         "fr" : {
@@ -5665,7 +5665,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk no ha podido cargar tu cuenta. Tu sesión sigue guardada de forma segura."
+            "value" : "Zoonk no pudo cargar tu cuenta. Tu sesión sigue guardada de forma segura."
           }
         },
         "fr" : {
@@ -5694,7 +5694,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk no ha podido enviar el código de verificación. Vuelve a intentarlo o escribe a contacto@zoonk.com."
+            "value" : "Zoonk no pudo enviar el código de verificación. Inténtalo de nuevo o escribe a contacto@zoonk.com."
           }
         },
         "fr" : {
@@ -5723,7 +5723,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk no ha podido iniciar tu sesión. Vuelve a intentarlo o escribe a contacto@zoonk.com."
+            "value" : "Zoonk no pudo iniciar tu sesión. Inténtalo de nuevo o escribe a contacto@zoonk.com."
           }
         },
         "fr" : {

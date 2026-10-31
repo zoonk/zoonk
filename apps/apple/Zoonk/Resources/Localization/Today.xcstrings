@@ -193,7 +193,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · una llamada en directo"
+            "value" : "%@ · una llamada en vivo"
           }
         },
         "fr" : {
@@ -280,7 +280,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · todos los temas, empezando por los que más te cuestan"
+            "value" : "%@ · todos los temas, primero los que más te cuestan"
           }
         },
         "fr" : {
@@ -309,7 +309,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · aparece mucho en el examen"
+            "value" : "%@ · frecuente en el examen"
           }
         },
         "fr" : {
@@ -547,7 +547,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quedan %@"
+            "value" : "Tiempo restante: %@"
           }
         },
         "fr" : {
@@ -582,7 +582,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has estudiado %1$@ de %2$@ esta semana"
+            "value" : "Estudiaste %1$@ de %2$@ esta semana"
           }
         },
         "fr" : {
@@ -617,7 +617,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@: tareas en una llamada"
+            "value" : "Tareas de %@ en una llamada"
           }
         },
         "fr" : {
@@ -768,7 +768,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld de Poder Mental conseguido por las misiones de hoy"
+            "value" : "Ganaste %lld de Poder Mental por las misiones de hoy"
           }
         },
         "fr" : {
@@ -859,13 +859,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Queda %lld desafío"
+                  "value" : "Falta %lld desafío"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Quedan %lld desafíos"
+                  "value" : "Faltan %lld desafíos"
                 }
               }
             }
@@ -954,7 +954,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Un día de adelanto"
+                  "value" : "%lld día de adelanto"
                 }
               },
               "other" : {
@@ -1049,7 +1049,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Un día de retraso"
+                  "value" : "%lld día de retraso"
                 }
               },
               "other" : {
@@ -1262,13 +1262,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pendiente"
+                  "value" : "Falta %lld"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pendientes"
+                  "value" : "Faltan %lld"
                 }
               }
             }
@@ -1754,7 +1754,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %2$lld completados"
+            "value" : "Completaste %1$lld de %2$lld"
           }
         },
         "fr" : {
@@ -2201,13 +2201,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pregunta sobre cada tema, empezando por los que peor se te dan"
+                  "value" : "%lld pregunta sobre todos los temas, primero los que más te cuestan"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld preguntas sobre cada tema, empezando por los que peor se te dan"
+                  "value" : "%lld preguntas sobre todos los temas, primero los que más te cuestan"
                 }
               }
             }
@@ -2569,7 +2569,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una nueva semana. Hoy empezamos con un calentamiento sencillo."
+            "value" : "Una nueva semana. Hoy empiezas con un calentamiento sencillo."
           }
         },
         "fr" : {
@@ -2598,7 +2598,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una llamada en directo"
+            "value" : "Una llamada en vivo"
           }
         },
         "fr" : {
@@ -2627,7 +2627,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoy empieza una nueva fase, con un calentamiento sencillo para empezar."
+            "value" : "Hoy empieza una nueva fase con un calentamiento sencillo."
           }
         },
         "fr" : {
@@ -2656,7 +2656,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una llamada rápida"
+            "value" : "Haz una llamada rápida"
           }
         },
         "fr" : {
@@ -2685,7 +2685,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añade el material de clase"
+            "value" : "Agregar tu material de clase"
           }
         },
         "fr" : {
@@ -2714,7 +2714,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añade tu resultado"
+            "value" : "Agregar tu resultado"
           }
         },
         "fr" : {
@@ -2743,7 +2743,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajusta tu plan para seguir adelante."
+            "value" : "Ajusta tu plan para seguir."
           }
         },
         "fr" : {
@@ -2830,7 +2830,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "después de la fecha de tu objetivo"
+            "value" : "después de tu fecha"
           }
         },
         "fr" : {
@@ -2859,7 +2859,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Ya sabes esto? **Haz la prueba**"
+            "value" : "¿Ya conoces este tema? **Hacer la prueba**"
           }
         },
         "fr" : {
@@ -2952,7 +2952,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pregúntale algo a %@"
+            "value" : "Haz una pregunta a %@"
           }
         },
         "fr" : {
@@ -2987,7 +2987,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con %1$@ al día, tu plan cubre ahora %2$@ del examen, frente a %3$@ antes."
+            "value" : "Con %1$@ al día, tu plan ahora cubre el %2$@ del examen; antes cubría el %3$@."
           }
         },
         "fr" : {
@@ -3022,7 +3022,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con %1$@ al día, tu plan cubre ahora %2$@ de tu objetivo, frente a %3$@ antes."
+            "value" : "Con %1$@ al día, tu plan ahora cubre el %2$@ de tu objetivo; antes cubría el %3$@."
           }
         },
         "fr" : {
@@ -3138,7 +3138,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparando contenido para ti…"
+            "value" : "En preparación para ti…"
           }
         },
         "fr" : {
@@ -3254,7 +3254,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparar mi plan"
+            "value" : "Crear mi plan"
           }
         },
         "fr" : {
@@ -3341,7 +3341,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ponte al día hoy · +%@"
+            "value" : "Ponerse al día hoy · +%@"
           }
         },
         "fr" : {
@@ -3457,7 +3457,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprueba tu conexión y vuelve a intentarlo."
+            "value" : "Revisa tu conexión e inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -3486,7 +3486,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige en qué centrarte"
+            "value" : "Elegir en qué enfocarse"
           }
         },
         "fr" : {
@@ -3515,7 +3515,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vuelve dentro de unos minutos."
+            "value" : "Vuelve en unos minutos."
           }
         },
         "fr" : {
@@ -3544,7 +3544,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seguir"
+            "value" : "Continuar"
           }
         },
         "fr" : {
@@ -3573,7 +3573,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Continuar con %@?"
+            "value" : "¿Seguir con %@?"
           }
         },
         "fr" : {
@@ -3602,7 +3602,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuar explicación"
+            "value" : "Continuar la explicación"
           }
         },
         "fr" : {
@@ -3631,7 +3631,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuar sesión"
+            "value" : "Continuar la sesión"
           }
         },
         "fr" : {
@@ -3660,7 +3660,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuar configuración"
+            "value" : "Continuar la configuración"
           }
         },
         "fr" : {
@@ -3695,7 +3695,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continúa tu simulacro"
+            "value" : "Continuar tu simulacro"
           }
         },
         "fr" : {
@@ -3724,7 +3724,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido guardar. Comprueba tu conexión y vuelve a intentarlo."
+            "value" : "No pudimos guardar. Revisa tu conexión e inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -3782,7 +3782,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Haz una nueva lección"
+            "value" : "Haz una lección nueva"
           }
         },
         "fr" : {
@@ -3869,7 +3869,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pendiente de días anteriores · %@"
+            "value" : "Pendientes de días anteriores · %@"
           }
         },
         "fr" : {
@@ -3898,7 +3898,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Disfruta de tu día de descanso!"
+            "value" : "¡Disfruta tu día de descanso!"
           }
         },
         "fr" : {
@@ -4020,7 +4020,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termina «%@»"
+            "value" : "Completa “%@”"
           }
         },
         "fr" : {
@@ -4049,7 +4049,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termina el capítulo"
+            "value" : "Completa el capítulo"
           }
         },
         "fr" : {
@@ -4084,7 +4084,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termina la nueva lección de hoy"
+            "value" : "Completa la nueva lección de hoy"
           }
         },
         "fr" : {
@@ -4146,7 +4146,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Corrige un error"
+                  "value" : "Corrige %lld error"
                 }
               },
               "other" : {
@@ -4208,7 +4208,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De tu Cuaderno de errores"
+            "value" : "De tu cuaderno de errores"
           }
         },
         "fr" : {
@@ -4411,7 +4411,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan se basa en lo que nos cuentas."
+            "value" : "Se basa en lo que nos cuentas."
           }
         },
         "fr" : {
@@ -4446,7 +4446,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya está en tu plan a partir de tu próximo día de estudio. La sesión de hoy no cambia."
+            "value" : "Tu plan ya incluye el cambio a partir de tu próximo día de estudio. La sesión de hoy se mantiene igual."
           }
         },
         "fr" : {
@@ -4481,7 +4481,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya está en tu plan y la sesión de hoy lo sigue."
+            "value" : "El cambio ya está en tu plan y se aplica a la sesión de hoy."
           }
         },
         "fr" : {
@@ -4516,7 +4516,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Está donde lo dejaste"
+            "value" : "Sigue donde lo dejaste"
           }
         },
         "fr" : {
@@ -4580,7 +4580,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Solo erratas"
+            "value" : "Solo errores de escritura"
           }
         },
         "fr" : {
@@ -4609,7 +4609,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sigue aprendiendo"
+            "value" : "Seguir aprendiendo"
           }
         },
         "fr" : {
@@ -4644,7 +4644,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantener la mía"
+            "value" : "Mantener mi elección"
           }
         },
         "fr" : {
@@ -4673,7 +4673,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantener mi tiempo diario"
+            "value" : "Mantener mi tiempo"
           }
         },
         "fr" : {
@@ -4946,7 +4946,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simulacro"
+            "value" : "Simulacro de examen"
           }
         },
         "fr" : {
@@ -5126,7 +5126,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nuevo objetivo"
+            "value" : "Crear un objetivo"
           }
         },
         "fr" : {
@@ -5184,7 +5184,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A continuación"
+            "value" : "Siguiente"
           }
         },
         "fr" : {
@@ -5242,7 +5242,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no has estudiado ninguna lección"
+            "value" : "Aún no estudiaste ninguna lección"
           }
         },
         "fr" : {
@@ -5304,13 +5304,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "No tienes repasos pendientes hoy · %lld pregunta sobre los temas que más te cuestan"
+                  "value" : "Hoy no hay repasos pendientes · %lld pregunta sobre los temas que más te cuestan"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "No tienes repasos pendientes hoy · %lld preguntas sobre los temas que más te cuestan"
+                  "value" : "Hoy no hay repasos pendientes · %lld preguntas sobre los temas que más te cuestan"
                 }
               }
             }
@@ -5366,7 +5366,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoy no tienes estudio previsto."
+            "value" : "No hay estudio programado para hoy."
           }
         },
         "fr" : {
@@ -5453,7 +5453,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no están preparadas. **Obtener las lecciones de hoy**"
+            "value" : "Aún no están preparadas. **Preparar las lecciones de hoy**"
           }
         },
         "fr" : {
@@ -5482,7 +5482,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De acuerdo. Mantienes tu tiempo diario y estudiarás con menos profundidad lo menos importante."
+            "value" : "Anotado. Mantienes tu tiempo diario y profundizas menos en los temas menos importantes."
           }
         },
         "fr" : {
@@ -5511,7 +5511,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hay nada previsto hasta que reanudes el objetivo."
+            "value" : "No hay nada programado hasta que lo reanudes."
           }
         },
         "fr" : {
@@ -5598,7 +5598,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suele aparecer en el examen"
+            "value" : "Frecuente en el examen"
           }
         },
         "fr" : {
@@ -5662,7 +5662,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fecha pasada"
+            "value" : "Tu fecha ya pasó"
           }
         },
         "fr" : {
@@ -5749,7 +5749,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "previsto"
+            "value" : "programado"
           }
         },
         "fr" : {
@@ -5956,13 +5956,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Practica durante %lld minuto"
+                  "value" : "Practicar %lld minuto"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Practica durante %lld minutos"
+                  "value" : "Practicar %lld minutos"
                 }
               }
             }
@@ -6024,7 +6024,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Practicar"
+            "value" : "Practicarlo"
           }
         },
         "fr" : {
@@ -6053,7 +6053,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Practicar errores"
+            "value" : "Corregir errores"
           }
         },
         "fr" : {
@@ -6198,7 +6198,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pronunciación"
+            "value" : "Practica la pronunciación"
           }
         },
         "fr" : {
@@ -6227,7 +6227,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Llamada rápida · %@"
+            "value" : "Llamada breve · %@"
           }
         },
         "fr" : {
@@ -6256,7 +6256,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Explicación rápida"
+            "value" : "Explicación breve"
           }
         },
         "fr" : {
@@ -6314,7 +6314,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repite lo que fallaste"
+            "value" : "Vuelve a intentar lo que te salió mal"
           }
         },
         "fr" : {
@@ -6401,7 +6401,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retomar %@"
+            "value" : "Reanudar %@"
           }
         },
         "fr" : {
@@ -6618,7 +6618,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dilas"
+            "value" : "Decirlas"
           }
         },
         "fr" : {
@@ -6647,7 +6647,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver el desafío de %@"
+            "value" : "Ver el desafío del %@"
           }
         },
         "fr" : {
@@ -6676,7 +6676,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver el simulacro de %@"
+            "value" : "Ver el simulacro del %@"
           }
         },
         "fr" : {
@@ -6734,7 +6734,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Nos vemos %@!"
+            "value" : "¡Nos vemos el %@!"
           }
         },
         "fr" : {
@@ -6792,7 +6792,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Hasta mañana!"
+            "value" : "¡Nos vemos mañana!"
           }
         },
         "fr" : {
@@ -6966,7 +6966,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empieza un objetivo nuevo o elige otro de los de arriba."
+            "value" : "Crea un nuevo objetivo o elige otro arriba."
           }
         },
         "fr" : {
@@ -7024,7 +7024,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empieza por estas. Al empezar la sesión, el plan se ajusta al tiempo de hoy."
+            "value" : "Empieza por aquí. Al empezar tu sesión, el plan se ajusta al tiempo que tienes hoy."
           }
         },
         "fr" : {
@@ -7053,7 +7053,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "estudiado"
+            "value" : "estudiaste"
           }
         },
         "fr" : {
@@ -7115,13 +7115,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Estudia %lld minuto más"
+                  "value" : "Estudiar %lld minuto más"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Estudia %lld minutos más"
+                  "value" : "Estudiar %lld minutos más"
                 }
               }
             }
@@ -7239,13 +7239,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Estudia durante %lld minuto"
+                  "value" : "Estudiar %lld minuto"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Estudia durante %lld minutos"
+                  "value" : "Estudiar %lld minutos"
                 }
               }
             }
@@ -7446,7 +7446,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gracias. Estamos leyendo el documento y tu plan se actualizará en unos minutos."
+            "value" : "Gracias. Ya lo estamos leyendo y tu plan se actualizará en unos minutos."
           }
         },
         "fr" : {
@@ -7475,7 +7475,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha guardado. Inténtalo de nuevo."
+            "value" : "No se guardó. Inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -7504,7 +7504,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ha llegado el día"
+            "value" : "Llegó el día"
           }
         },
         "fr" : {
@@ -7539,7 +7539,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La convocatoria fija el examen para el %@."
+            "value" : "Según la convocatoria, el examen será el %@."
           }
         },
         "fr" : {
@@ -7574,7 +7574,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El calendario oficial fija el examen para el %@."
+            "value" : "Según el calendario oficial, el examen será el %@."
           }
         },
         "fr" : {
@@ -7603,7 +7603,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El plan gratuito permite seguir un objetivo a la vez. Pon en pausa tu otro objetivo para retomar este o consigue Plus para seguir más."
+            "value" : "El plan gratis permite seguir un objetivo a la vez. Pausa tu otro objetivo para reanudar este u obtén Plus para seguir más de uno."
           }
         },
         "fr" : {
@@ -7665,13 +7665,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La última lección está en el plan de hoy"
+                  "value" : "Te queda %lld lección y está en el plan de hoy"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Las últimas %lld lecciones están en el plan de hoy"
+                  "value" : "Te quedan %lld lecciones y están en el plan de hoy"
                 }
               }
             }
@@ -7872,7 +7872,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido cargar Hoy"
+            "value" : "No pudimos cargar Hoy"
           }
         },
         "fr" : {
@@ -7901,7 +7901,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoy el estudio termina al alcanzar tu límite de tiempo diario de %@."
+            "value" : "El estudio de hoy termina al llegar a tu límite diario de %@."
           }
         },
         "fr" : {
@@ -7930,7 +7930,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya has conseguido los +%lld de Poder Mental de hoy."
+            "value" : "Ya ganaste los +%lld puntos de Poder Mental de hoy."
           }
         },
         "fr" : {
@@ -7959,7 +7959,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las lecciones de hoy están tardando más de lo habitual."
+            "value" : "Preparar las lecciones de hoy está tardando más de lo normal."
           }
         },
         "fr" : {
@@ -8046,7 +8046,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has completado la sesión de hoy."
+            "value" : "Completaste la sesión de hoy."
           }
         },
         "fr" : {
@@ -8075,7 +8075,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a intentar"
+            "value" : "Intentar de nuevo"
           }
         },
         "fr" : {
@@ -8145,7 +8145,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambio deshecho. Tu plan vuelve a estar como antes."
+            "value" : "Se deshizo el cambio. Tu plan está como antes."
           }
         },
         "fr" : {
@@ -8174,7 +8174,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Próximas lecciones de tu plan"
+            "value" : "Lo que sigue en tu plan"
           }
         },
         "fr" : {
@@ -8348,7 +8348,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sube el texto o la guía oficial con la que estudias para que tus lecciones se ajusten a ella."
+            "value" : "Sube el texto o la guía oficial que usas para estudiar para que tus lecciones se basen en ese material."
           }
         },
         "fr" : {
@@ -8441,7 +8441,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido confirmar los detalles del examen"
+            "value" : "No pudimos confirmar los detalles del examen"
           }
         },
         "fr" : {
@@ -8470,7 +8470,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos encontrado la guía oficial"
+            "value" : "No pudimos encontrar la guía oficial"
           }
         },
         "fr" : {
@@ -8499,7 +8499,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos encontrado la convocatoria oficial"
+            "value" : "No pudimos encontrar la convocatoria oficial"
           }
         },
         "fr" : {
@@ -8528,7 +8528,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos encontrado la fuente oficial"
+            "value" : "No pudimos encontrar la fuente oficial"
           }
         },
         "fr" : {
@@ -8557,7 +8557,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido abrir el siguiente paso. Vuelve a intentarlo."
+            "value" : "No pudimos abrir el siguiente paso. Inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -8586,7 +8586,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido guardar tu respuesta. Vuelve a intentarlo."
+            "value" : "No pudimos guardar tu respuesta. Inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -8621,7 +8621,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hemos detectado un patrón"
+            "value" : "Notamos un patrón"
           }
         },
         "fr" : {
@@ -8708,7 +8708,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Te damos la bienvenida de nuevo"
+            "value" : "Qué gusto verte de nuevo"
           }
         },
         "fr" : {
@@ -8737,7 +8737,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Qué bien tenerte de vuelta! Hoy es un día de descanso en tu plan, así que disfrútalo."
+            "value" : "¡Qué gusto verte de nuevo! Hoy es un día de descanso en tu plan, así que disfrútalo."
           }
         },
         "fr" : {
@@ -8766,7 +8766,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Qué bien tenerte de vuelta! Hoy tienes una sesión más ligera, de unos %@, para que te resulte fácil retomar el estudio."
+            "value" : "¡Qué gusto verte de nuevo! La sesión de hoy es más ligera y dura aproximadamente %@, así que es fácil retomar."
           }
         },
         "fr" : {
@@ -8795,7 +8795,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Qué bien tenerte de vuelta! Hoy tienes una sesión de unos %@, para que te resulte fácil retomar el estudio."
+            "value" : "¡Qué gusto verte de nuevo! La sesión de hoy dura aproximadamente %@, así que es fácil retomar."
           }
         },
         "fr" : {
@@ -8824,7 +8824,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Qué bien tenerte de vuelta! Si te apetece estudiar, aquí tienes tus próximas lecciones."
+            "value" : "¡Qué gusto verte de nuevo! Aquí están tus próximas lecciones por si quieres estudiar."
           }
         },
         "fr" : {
@@ -8853,7 +8853,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qué ha cambiado"
+            "value" : "Qué cambió"
           }
         },
         "fr" : {
@@ -8882,7 +8882,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que hemos encontrado no coincide con los detalles del examen. Sube la guía oficial para que tu plan se ajuste al examen real."
+            "value" : "Lo que encontramos no coincidió con los detalles del examen. Sube la guía oficial para que tu plan se ajuste al examen real."
           }
         },
         "fr" : {
@@ -8911,7 +8911,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que hemos encontrado no coincide con los detalles del examen. Sube la convocatoria oficial para que tu plan se ajuste al examen real."
+            "value" : "Lo que encontramos no coincidió con los detalles del examen. Sube la convocatoria oficial para que tu plan se ajuste al examen real."
           }
         },
         "fr" : {
@@ -8969,7 +8969,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que has aprendido, en puntos: te ayuda a subir de cinturón y a hacer crecer a tu compañero. Las respuestas, las lecciones y los desafíos suman puntos, y completar las misiones de hoy suma +%lld."
+            "value" : "Lo que aprendiste, en puntos: te permite subir de cinturón y hace crecer a tu compañero. Las respuestas, las lecciones y los desafíos suman puntos, y completar las misiones de hoy añade +%lld."
           }
         },
         "fr" : {
@@ -9039,7 +9039,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuando quieras: un día entero de examen, medio día o una asignatura"
+            "value" : "Cuando quieras: una jornada completa de examen, media jornada o una materia"
           }
         },
         "fr" : {
@@ -9068,7 +9068,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Práctica de escritura"
+            "value" : "Práctica de redacción"
           }
         },
         "fr" : {
@@ -9097,7 +9097,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has completado %@."
+            "value" : "Completaste %@."
           }
         },
         "fr" : {
@@ -9126,7 +9126,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has estudiado en tu día de descanso."
+            "value" : "Estudiaste en tu día de descanso."
           }
         },
         "fr" : {
@@ -9155,7 +9155,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya has completado todas las lecciones de tu plan o ya sabías su contenido."
+            "value" : "Completaste todas las lecciones de tu plan o ya conocías su contenido."
           }
         },
         "fr" : {
@@ -9184,7 +9184,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has alcanzado tu límite de tiempo diario de %@."
+            "value" : "Alcanzaste tu límite diario de %@."
           }
         },
         "fr" : {
@@ -9242,7 +9242,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La fecha de tu objetivo ha pasado y te quedan lecciones pendientes."
+            "value" : "La fecha de tu objetivo ya pasó y aún quedan lecciones."
           }
         },
         "fr" : {
@@ -9300,7 +9300,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si te apetece estudiar, aquí tienes tus próximas lecciones."
+            "value" : "Tus próximas lecciones están aquí si quieres estudiar."
           }
         },
         "fr" : {
@@ -9335,7 +9335,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan seguirá este cambio a partir de ahora."
+            "value" : "Tu plan se ajusta a este cambio a partir de ahora."
           }
         },
         "fr" : {
@@ -9364,7 +9364,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faltan algunas respuestas para preparar tu plan para %@."
+            "value" : "Tu plan para %@ necesita algunas respuestas más."
           }
         },
         "fr" : {
@@ -9393,7 +9393,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hay una propuesta de cambio en tu plan para que la revises."
+            "value" : "Hay un cambio propuesto para tu plan que puedes revisar."
           }
         },
         "fr" : {
@@ -9422,7 +9422,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan se retoma a partir de hoy, empezando por las lecciones previstas para los días en los que hiciste una pausa."
+            "value" : "Tu plan se retoma a partir de hoy, empezando por las lecciones previstas para los días en que estuvo en pausa."
           }
         },
         "fr" : {
@@ -9521,7 +9521,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus errores recientes fueron despistes, no una regla que tengas que aprender."
+            "value" : "Tus errores recientes fueron descuidos, no una señal de que necesites aprender una regla."
           }
         },
         "fr" : {
@@ -9550,7 +9550,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El examen de tu profesor no está publicado en ninguna parte. Sube las diapositivas, los apuntes o la lista de temas para que tu plan se ajuste a tus clases."
+            "value" : "El examen de tu profesor no está publicado en ningún sitio. Sube las diapositivas, los apuntes o la lista de temas para que tu plan siga lo que ves en clase."
           }
         },
         "fr" : {

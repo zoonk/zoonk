@@ -1150,13 +1150,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Un día o una franja horaria necesita %lld respuesta para contar, así una respuesta acertada por suerte no crea un patrón."
+                  "value" : "Un día o un momento del día debe tener %lld respuesta para contar, así que un acierto por suerte nunca basta para definir un patrón."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Un día o una franja horaria necesita %lld respuestas para contar, así una respuesta acertada por suerte no crea un patrón."
+                  "value" : "Un día o un momento del día debe tener %lld respuestas para contar, así que un acierto por suerte nunca basta para definir un patrón."
                 }
               }
             }
@@ -1415,7 +1415,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cualquier día que hayas estudiado"
+            "value" : "Cada día que estudiaste"
           }
         },
         "fr" : {
@@ -1444,7 +1444,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cualquier hora"
+            "value" : "Cualquier momento"
           }
         },
         "fr" : {
@@ -1473,7 +1473,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al 100 %"
+            "value" : "Al 100%"
           }
         },
         "fr" : {
@@ -1502,7 +1502,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Media"
+            "value" : "Promedio"
           }
         },
         "fr" : {
@@ -1531,7 +1531,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Media: %@"
+            "value" : "Promedio %@"
           }
         },
         "fr" : {
@@ -1589,7 +1589,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Progreso de cinturones"
+            "value" : "Progresión de cinturones"
           }
         },
         "fr" : {
@@ -1647,7 +1647,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mejor hora"
+            "value" : "Mejor momento"
           }
         },
         "fr" : {
@@ -1821,7 +1821,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Marrón"
+            "value" : "Café"
           }
         },
         "fr" : {
@@ -1850,7 +1850,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cinturón marrón"
+            "value" : "Cinturón café"
           }
         },
         "fr" : {
@@ -1995,7 +1995,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Intensidad de la Energía de menor a mayor"
+            "value" : "Intensidad de Energía de baja a alta"
           }
         },
         "fr" : {
@@ -2053,7 +2053,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todas las respuestas cuentan igual, así que las lecciones más difíciles pueden hacer que tu puntuación baje durante un tiempo."
+            "value" : "Todas las respuestas cuentan igual, así que las lecciones más difíciles pueden bajar tu puntaje por un tiempo."
           }
         },
         "fr" : {
@@ -2082,7 +2082,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has conseguido todos los cinturones"
+            "value" : "Todos los cinturones ganados"
           }
         },
         "fr" : {
@@ -2111,7 +2111,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada lección suma %lld de Poder Mental y nunca baja."
+            "value" : "Cada lección suma %lld de Poder Mental, que nunca baja."
           }
         },
         "fr" : {
@@ -2140,7 +2140,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada lección que completas aumenta tu Energía. Los días de descanso baja un poco y conservas tu cinturón y tu progreso."
+            "value" : "Cada lección que completas aumenta tu Energía. En los días de descanso baja un poco, y tu cinturón y tu progreso se mantienen."
           }
         },
         "fr" : {
@@ -2697,7 +2697,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Próximo cinturón"
+            "value" : "Siguiente cinturón"
           }
         },
         "fr" : {
@@ -2726,7 +2726,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Próximo nivel"
+            "value" : "Siguiente nivel"
           }
         },
         "fr" : {
@@ -2842,7 +2842,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sin estudiar"
+            "value" : "Sin estudio"
           }
         },
         "fr" : {
@@ -2871,7 +2871,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sin estudiar en los últimos 12 meses"
+            "value" : "Sin estudio en los últimos 12 meses"
           }
         },
         "fr" : {
@@ -2958,7 +2958,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De todas tus respuestas"
+            "value" : "Del total de tus respuestas"
           }
         },
         "fr" : {
@@ -3393,7 +3393,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puntuación"
+            "value" : "Puntaje"
           }
         },
         "fr" : {
@@ -3422,7 +3422,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puntuación · 90 días"
+            "value" : "Puntaje · 90 días"
           }
         },
         "fr" : {
@@ -3451,7 +3451,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver todo"
+            "value" : "Ver todos"
           }
         },
         "fr" : {
@@ -3509,7 +3509,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rango semanal"
+            "value" : "Rango de la semana"
           }
         },
         "fr" : {
@@ -3538,7 +3538,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empieza a estudiar para seguir tu progreso"
+            "value" : "Empieza a aprender para ver tu progreso"
           }
         },
         "fr" : {
@@ -3567,7 +3567,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se han podido cargar las estadísticas"
+            "value" : "No se cargaron las estadísticas"
           }
         },
         "fr" : {
@@ -3625,7 +3625,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tiempo total de estudio"
+            "value" : "De estudio en total"
           }
         },
         "fr" : {
@@ -3799,7 +3799,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para el cinturón marrón"
+            "value" : "Para el cinturón café"
           }
         },
         "fr" : {
@@ -4089,7 +4089,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Intentar de nuevo"
+            "value" : "Reintentar"
           }
         },
         "fr" : {
@@ -4147,7 +4147,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Evolución semanal de la puntuación"
+            "value" : "Tendencia del puntaje semanal"
           }
         },
         "fr" : {
@@ -4296,13 +4296,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Diferencia máxima de %lld punto"
+                  "value" : "Hasta %lld punto de diferencia"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Diferencia máxima de %lld puntos"
+                  "value" : "Hasta %lld puntos de diferencia"
                 }
               }
             }
@@ -4358,7 +4358,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diferencia de 0 puntos"
+            "value" : "0 puntos de diferencia"
           }
         },
         "fr" : {
@@ -4445,7 +4445,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No tienes conexión"
+            "value" : "Sin conexión"
           }
         },
         "fr" : {
@@ -4507,13 +4507,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La diferencia entre tus días es de %lld punto como máximo, así que cualquier día te viene bien."
+                  "value" : "Entre tus días hay hasta %lld punto de diferencia, así que cualquier día funciona."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La diferencia entre tus días es de %lld puntos como máximo, así que cualquier día te viene bien."
+                  "value" : "Entre tus días hay hasta %lld puntos de diferencia, así que cualquier día funciona."
                 }
               }
             }
@@ -4569,7 +4569,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La diferencia entre tus días es de 0 puntos, así que cualquier día te viene bien."
+            "value" : "Entre tus días hay 0 puntos de diferencia, así que cualquier día funciona."
           }
         },
         "fr" : {
@@ -4598,7 +4598,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu progreso está a salvo. Vuelve a intentarlo en un momento."
+            "value" : "Tu progreso está guardado. Vuelve a intentarlo en un momento."
           }
         },
         "fr" : {
@@ -4627,7 +4627,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu puntuación aparecerá después de tus primeras respuestas."
+            "value" : "Tu puntaje aparecerá después de tus primeras respuestas."
           }
         },
         "fr" : {
@@ -4689,13 +4689,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La diferencia entre los momentos del día es de %lld punto como máximo, así que cualquier momento te viene bien."
+                  "value" : "Entre los momentos del día hay hasta %lld punto de diferencia, así que cualquier hora funciona."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La diferencia entre los momentos del día es de %lld puntos como máximo, así que cualquier momento te viene bien."
+                  "value" : "Entre los momentos del día hay hasta %lld puntos de diferencia, así que cualquier hora funciona."
                 }
               }
             }
@@ -4751,7 +4751,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La diferencia entre los momentos del día es de 0 puntos, así que cualquier momento te viene bien."
+            "value" : "Entre los momentos del día hay 0 puntos de diferencia, así que cualquier hora funciona."
           }
         },
         "fr" : {

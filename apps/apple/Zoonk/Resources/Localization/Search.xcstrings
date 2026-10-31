@@ -77,7 +77,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preguntar a %1$@: «%2$@»"
+            "value" : "Preguntar a %1$@: “%2$@”"
           }
         },
         "fr" : {
@@ -164,7 +164,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "bug, error, fallo, problema, informar, idea, sugerencia, solicitar una función, contacto"
+            "value" : "bug, error, problema, reporte, idea, sugerencia, solicitud de nueva función, contacto"
           }
         },
         "fr" : {
@@ -193,7 +193,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuar la sesión de hoy"
+            "value" : "Seguir con la sesión de hoy"
           }
         },
         "fr" : {
@@ -367,7 +367,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuaderno de bitácora"
+            "value" : "Bitácora"
           }
         },
         "fr" : {
@@ -541,7 +541,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Practicar tus errores"
+            "value" : "Practicar con tus errores"
           }
         },
         "fr" : {
@@ -657,7 +657,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Busca o pregunta…"
+            "value" : "Buscar o preguntar…"
           }
         },
         "fr" : {
@@ -715,7 +715,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajustes"
+            "value" : "Configuración"
           }
         },
         "fr" : {
@@ -744,7 +744,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar un objetivo"
+            "value" : "Crear un objetivo"
           }
         },
         "fr" : {
@@ -773,7 +773,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar un objetivo: «%@»"
+            "value" : "Crear un objetivo: “%@”"
           }
         },
         "fr" : {
@@ -802,7 +802,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar un nuevo objetivo: «%@»"
+            "value" : "Crear un nuevo objetivo: “%@”"
           }
         },
         "fr" : {
@@ -860,7 +860,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambiar al objetivo %@"
+            "value" : "Cambiar a %@"
           }
         },
         "fr" : {

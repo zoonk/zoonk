@@ -172,7 +172,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un capítulo de tu plan, con sus lecciones y tu progreso."
+            "value" : "Un capítulo de tu plan, con sus lecciones y tu avance."
           }
         },
         "fr" : {
@@ -201,7 +201,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una unidad de tu plan de idiomas, con sus lecciones y tu progreso."
+            "value" : "Una unidad de tu plan de idiomas, con sus lecciones y tu avance."
           }
         },
         "fr" : {
@@ -491,7 +491,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inicia sesión para continuar donde lo dejaste o empieza gratis."
+            "value" : "Inicia sesión para seguir donde te quedaste o empieza gratis."
           }
         },
         "fr" : {
@@ -752,7 +752,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar un objetivo"
+            "value" : "Crear un objetivo"
           }
         },
         "fr" : {
@@ -781,7 +781,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar un nuevo objetivo"
+            "value" : "Crear un nuevo objetivo"
           }
         },
         "fr" : {
@@ -926,7 +926,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuéntanos qué quieres aprender y planificaremos cada día para ayudarte a conseguirlo."
+            "value" : "Dinos qué quieres aprender y organizaremos tu estudio de cada día hasta que lo logres."
           }
         },
         "fr" : {
@@ -955,7 +955,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ha llegado el día"
+            "value" : "Llegó el día"
           }
         },
         "fr" : {
@@ -984,7 +984,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las preguntas que fallaste, por qué las fallaste y ejercicios para practicarlas hasta acertar."
+            "value" : "Las preguntas que respondiste mal, por qué te equivocaste y práctica hasta acertar."
           }
         },
         "fr" : {
@@ -1042,7 +1042,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inténtalo de nuevo"
+            "value" : "Volver a intentar"
           }
         },
         "fr" : {
@@ -1100,7 +1100,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qué estudiarás cada día para alcanzar tu objetivo y qué incluye el plan."
+            "value" : "Lo que estudiarás cada día hasta alcanzar tu objetivo y los temas que incluye el plan."
           }
         },
         "fr" : {
@@ -1129,7 +1129,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compañero responde a tus preguntas y ajusta tu plan."
+            "value" : "Tu compañero responde tus preguntas y ajusta tu plan."
           }
         },
         "fr" : {
@@ -1187,7 +1187,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus objetivos no se han cargado. Inténtalo de nuevo"
+            "value" : "No se cargaron tus objetivos. Volver a intentar"
           }
         },
         "fr" : {

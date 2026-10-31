@@ -158,7 +158,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ séptima mayor"
+            "value" : "%@ con séptima mayor"
           }
         },
         "fr" : {
@@ -216,7 +216,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ séptima menor"
+            "value" : "%@ menor con séptima"
           }
         },
         "fr" : {
@@ -460,13 +460,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld toque de más."
+                  "value" : "%lld toque adicional."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld toques de más."
+                  "value" : "%lld toques adicionales."
                 }
               }
             }
@@ -623,7 +623,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %2$lld pulsaciones a tiempo."
+            "value" : "%1$lld de %2$lld toques a tiempo."
           }
         },
         "fr" : {
@@ -685,13 +685,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld vuelta"
+                  "value" : "%lld ronda"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld vueltas"
+                  "value" : "%lld rondas"
                 }
               }
             }
@@ -753,7 +753,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un ritmo de %1$lld pasos con un pulso cada %2$lld. Pulsa en los pasos %3$@; oirás un clic en cada pulso."
+            "value" : "Un ritmo de %1$lld pasos con un pulso cada %2$lld. Toca en los pasos %3$@ mientras suena un clic en cada pulso."
           }
         },
         "fr" : {
@@ -881,7 +881,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprobar de nuevo el retardo del sonido"
+            "value" : "Volver a comprobar el retraso del sonido"
           }
         },
         "fr" : {
@@ -939,7 +939,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Antes o después"
+            "value" : "Antes o después del pulso"
           }
         },
         "fr" : {
@@ -1067,7 +1067,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuerdas de la guitarra"
+            "value" : "Cuerdas de guitarra"
           }
         },
         "fr" : {
@@ -1096,7 +1096,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los auriculares pueden reproducir el sonido con un poco de retraso. Pulsa al ritmo de %lld clics una vez para que se mida bien tu ritmo en este dispositivo."
+            "value" : "El sonido de los audífonos puede tener un pequeño retraso. Haz esta prueba una vez tocando al ritmo de %lld clics para que ese retraso no afecte tus resultados en este dispositivo."
           }
         },
         "fr" : {
@@ -1212,7 +1212,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya puedo escuchar"
+            "value" : "Volver a usar el audio"
           }
         },
         "fr" : {
@@ -1241,7 +1241,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ahora no puedo escuchar"
+            "value" : "Usar sin audio por ahora"
           }
         },
         "fr" : {
@@ -1270,7 +1270,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escucha primero"
+            "value" : "Escuchar primero"
           }
         },
         "fr" : {
@@ -1618,7 +1618,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "o pulsa la barra espaciadora"
+            "value" : "o presiona la barra espaciadora"
           }
         },
         "fr" : {
@@ -1647,7 +1647,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Teclas del piano"
+            "value" : "Teclas de piano"
           }
         },
         "fr" : {
@@ -1734,7 +1734,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pulsaciones del ritmo"
+            "value" : "Toques del ritmo"
           }
         },
         "fr" : {
@@ -1856,7 +1856,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajusta el sonido"
+            "value" : "Configurar el sonido"
           }
         },
         "fr" : {
@@ -1943,7 +1943,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El sonido llega con unos %lld ms de retraso en este dispositivo. Los ejercicios de ritmo compensan ese retraso."
+            "value" : "El sonido de este dispositivo tiene un retraso de aproximadamente %lld ms. Los ritmos compensan ese retraso."
           }
         },
         "fr" : {
@@ -1972,7 +1972,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El sonido llega a tiempo en este dispositivo."
+            "value" : "El sonido de este dispositivo no tiene retraso."
           }
         },
         "fr" : {
@@ -2030,7 +2030,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar a pulsar"
+            "value" : "Empezar a tocar"
           }
         },
         "fr" : {
@@ -2152,7 +2152,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La pulsación %1$lld llegó %2$lld ms antes."
+            "value" : "El toque %1$lld se adelantó %2$lld ms."
           }
         },
         "fr" : {
@@ -2187,7 +2187,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La pulsación %1$lld llegó %2$lld ms tarde."
+            "value" : "El toque %1$lld se retrasó %2$lld ms."
           }
         },
         "fr" : {
@@ -2216,7 +2216,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faltó la pulsación %lld."
+            "value" : "Faltó el toque %lld."
           }
         },
         "fr" : {
@@ -2245,7 +2245,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pulsa aquí"
+            "value" : "Tocar aquí"
           }
         },
         "fr" : {
@@ -2280,7 +2280,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pulsa con cada clic · %1$lld de %2$lld"
+            "value" : "Toca con cada clic · %1$lld de %2$lld"
           }
         },
         "fr" : {
@@ -2338,7 +2338,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido reproducir el sonido. Aún puedes ver todas las notas."
+            "value" : "No se pudo reproducir el sonido. Aún puedes ver todas las notas."
           }
         },
         "fr" : {
@@ -2425,7 +2425,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido mostrar esta partitura."
+            "value" : "No se pudo mostrar esta partitura."
           }
         },
         "fr" : {
@@ -2483,7 +2483,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido asociar suficientes pulsaciones a los clics. Inténtalo de nuevo y pulsa con cada clic."
+            "value" : "No detectamos suficientes toques que coincidieran con los clics. Inténtalo de nuevo y toca con cada clic."
           }
         },
         "fr" : {

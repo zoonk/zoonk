@@ -129,7 +129,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ desde el primer simulacro"
+            "value" : "%@ desde el primero"
           }
         },
         "fr" : {
@@ -441,7 +441,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un bolígrafo negro de cuerpo transparente"
+            "value" : "Un bolígrafo de tinta negra y cuerpo transparente"
           }
         },
         "fr" : {
@@ -470,7 +470,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dormir bien la noche anterior"
+            "value" : "Una buena noche de descanso"
           }
         },
         "fr" : {
@@ -499,7 +499,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una prueba breve de expresión oral con un examinador. Al terminar, recibirás una banda estimada para cada criterio."
+            "value" : "Una prueba breve de expresión oral con un examinador. Al terminar, una banda estimada por criterio."
           }
         },
         "fr" : {
@@ -557,7 +557,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una respuesta incorrecta resta %@ de una correcta"
+            "value" : "Una respuesta incorrecta resta %@ del valor de una correcta"
           }
         },
         "fr" : {
@@ -586,7 +586,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añade tu resultado oficial cuando se publique. Podrás cambiarlo más adelante."
+            "value" : "Agrega tu resultado oficial cuando se publique. Puedes cambiarlo después."
           }
         },
         "fr" : {
@@ -644,7 +644,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Responde a todas las preguntas."
+            "value" : "Responde todas las preguntas."
           }
         },
         "fr" : {
@@ -673,7 +673,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Responde solo si tienes más de %@ de seguridad."
+            "value" : "Responde solo si tienes más del %@ de certeza."
           }
         },
         "fr" : {
@@ -731,7 +731,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mejora en %@."
+            "value" : "Mejor en %@."
           }
         },
         "fr" : {
@@ -766,7 +766,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has mejorado en %1$@. Aún necesitas trabajar en: %2$@."
+            "value" : "Mejor en %1$@. Aún falta mejorar en %2$@."
           }
         },
         "fr" : {
@@ -795,7 +795,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las llamadas están pausadas"
+            "value" : "Las llamadas están en pausa"
           }
         },
         "fr" : {
@@ -824,7 +824,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continúa tu simulacro"
+            "value" : "Continuar tu simulacro"
           }
         },
         "fr" : {
@@ -882,7 +882,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Has aprobado?"
+            "value" : "¿Aprobaste?"
           }
         },
         "fr" : {
@@ -911,7 +911,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada respuesta correcta suma un punto"
+            "value" : "Cada respuesta correcta vale un punto"
           }
         },
         "fr" : {
@@ -940,7 +940,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "estimado a partir de ediciones anteriores"
+            "value" : "estimación basada en ediciones anteriores"
           }
         },
         "fr" : {
@@ -969,7 +969,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estimado a partir de ediciones anteriores. Te avisaremos cuando se publiquen las fechas oficiales."
+            "value" : "Estimación basada en ediciones anteriores. Te avisaremos cuando se publiquen las fechas oficiales."
           }
         },
         "fr" : {
@@ -998,7 +998,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estimado a partir de ediciones anteriores. Te avisaremos cuando se publique la convocatoria oficial."
+            "value" : "Estimación basada en ediciones anteriores. Te avisaremos cuando se publique la convocatoria oficial."
           }
         },
         "fr" : {
@@ -1089,13 +1089,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Examen · Queda %lld día"
+                  "value" : "Examen · Falta %lld día"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Examen · Quedan %lld días"
+                  "value" : "Examen · Faltan %lld días"
                 }
               }
             }
@@ -1184,13 +1184,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Examen · Queda aproximadamente %lld día"
+                  "value" : "Examen · Falta aproximadamente %lld día"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Examen · Quedan aproximadamente %lld días"
+                  "value" : "Examen · Faltan aproximadamente %lld días"
                 }
               }
             }
@@ -1374,7 +1374,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acertar las preguntas fáciles cuenta más"
+            "value" : "Acertar las preguntas fáciles vale más"
           }
         },
         "fr" : {
@@ -1403,7 +1403,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Qué tal te ha ido?"
+            "value" : "¿Cómo te fue?"
           }
         },
         "fr" : {
@@ -1432,7 +1432,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cómo funciona la puntuación"
+            "value" : "Cómo funciona el puntaje"
           }
         },
         "fr" : {
@@ -1461,7 +1461,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cómo te han ido los simulacros"
+            "value" : "Cómo te fue en los simulacros"
           }
         },
         "fr" : {
@@ -1525,7 +1525,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En tus simulacros: con seguridad, %1$lld de %2$lld correctas. Con dudas, %3$lld de %4$lld correctas."
+            "value" : "En tus simulacros: al responder con seguridad, acertaste %1$lld de %2$lld. Al responder con dudas, acertaste %3$lld de %4$lld."
           }
         },
         "fr" : {
@@ -1554,7 +1554,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ahora mismo les pasa a todos. Inténtalo de nuevo más tarde."
+            "value" : "Esto afecta a todos en este momento. Inténtalo más tarde."
           }
         },
         "fr" : {
@@ -1612,7 +1612,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fallar una pregunta fácil penaliza más que fallar una difícil, así que responde primero a las fáciles."
+            "value" : "Equivocarte en una pregunta fácil cuesta más que en una difícil, así que resuelve primero las fáciles."
           }
         },
         "fr" : {
@@ -1699,7 +1699,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con Plus tienes simulacros cuando quieras y cada semana en tu plan, y puedes ver tu progreso a lo largo del tiempo."
+            "value" : "Con Plus puedes hacer simulacros cuando quieras, tenerlos cada semana en tu plan y ver tu progreso con el tiempo."
           }
         },
         "fr" : {
@@ -1728,7 +1728,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puntuación neta en %@"
+            "value" : "Puntaje neto en %@"
           }
         },
         "fr" : {
@@ -1815,7 +1815,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hay convocatoria en %@"
+            "value" : "No hay examen en %@"
           }
         },
         "fr" : {
@@ -1844,7 +1844,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no hay grandes cambios en ninguna asignatura."
+            "value" : "Aún no hay grandes cambios en ninguna materia."
           }
         },
         "fr" : {
@@ -1989,7 +1989,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Documento de identidad con foto y resguardo de inscripción"
+            "value" : "Identificación con foto y tu ficha de registro"
           }
         },
         "fr" : {
@@ -2018,7 +2018,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repite frases y después haz una breve entrevista con un examinador. Al terminar, recibirás una puntuación estimada del 1 al 6 para cada criterio."
+            "value" : "Repite frases y luego participa en una breve entrevista con un examinador. Al terminar, recibirás una banda estimada de 1 a 6 en cada criterio."
           }
         },
         "fr" : {
@@ -2053,7 +2053,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Informar de un problema"
+            "value" : "Reportar un problema"
           }
         },
         "fr" : {
@@ -2198,7 +2198,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puntuación"
+            "value" : "Puntaje"
           }
         },
         "fr" : {
@@ -2227,7 +2227,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se puntúa con su propia escala"
+            "value" : "Puntaje en su propia escala"
           }
         },
         "fr" : {
@@ -2256,7 +2256,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se puntúa con la escala %@"
+            "value" : "Puntaje en la escala %@"
           }
         },
         "fr" : {
@@ -2343,7 +2343,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar el simulacro"
+            "value" : "Iniciar el simulacro"
           }
         },
         "fr" : {
@@ -2372,7 +2372,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezando…"
+            "value" : "Iniciando…"
           }
         },
         "fr" : {
@@ -2401,7 +2401,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún necesitas trabajar en: %@."
+            "value" : "Aún por mejorar: %@."
           }
         },
         "fr" : {
@@ -2459,7 +2459,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Haz otro simulacro para ver cómo cambia tu puntuación."
+            "value" : "Haz otro simulacro para ver cómo cambia tu puntaje."
           }
         },
         "fr" : {
@@ -2488,7 +2488,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido guardar. Vuelve a intentarlo dentro de un momento."
+            "value" : "No se pudo guardar. Inténtalo de nuevo en un momento."
           }
         },
         "fr" : {
@@ -2575,7 +2575,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Según la convocatoria, el examen es el %@."
+            "value" : "Según la convocatoria, el examen será el %@."
           }
         },
         "fr" : {
@@ -2604,7 +2604,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ahora, la fecha probable del examen es el %@."
+            "value" : "La fecha probable del examen es ahora el %@."
           }
         },
         "fr" : {
@@ -2633,7 +2633,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Según el calendario oficial, el examen es el %@."
+            "value" : "Según el calendario oficial, el examen será el %@."
           }
         },
         "fr" : {
@@ -2691,7 +2691,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los últimos días antes del examen se dedican a repasar distintos temas y hacer simulacros. Los temas nuevos esperan, salvo que tengan mucho peso y sean rápidos de estudiar."
+            "value" : "Los últimos días antes del examen son para repasar distintos temas y hacer simulacros. Los temas nuevos quedan para después, salvo los que tienen mucho peso y se aprenden rápido."
           }
         },
         "fr" : {
@@ -2720,7 +2720,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido iniciar el simulacro. Vuelve a intentarlo dentro de un momento."
+            "value" : "El simulacro no se inició. Inténtalo de nuevo en un momento."
           }
         },
         "fr" : {
@@ -2749,7 +2749,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El mes que nos dijiste. Te diremos el día cuando se indique en la convocatoria."
+            "value" : "El mes que nos dijiste. Te diremos el día cuando lo indique la convocatoria."
           }
         },
         "fr" : {
@@ -2778,7 +2778,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El mes que nos dijiste. Te diremos el día cuando se indique en el calendario oficial."
+            "value" : "El mes que nos dijiste. Te diremos el día cuando lo indique el calendario oficial."
           }
         },
         "fr" : {
@@ -2836,7 +2836,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se ha acabado el tiempo"
+            "value" : "Se acabó el tiempo"
           }
         },
         "fr" : {
@@ -2923,7 +2923,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoy toca estudiar los temas que más suelen aparecer y hacer un simulacro corto. Después, descansa."
+            "value" : "Hoy toca estudiar los temas más frecuentes y luego hacer un simulacro corto. Después, descansa."
           }
         },
         "fr" : {
@@ -2952,7 +2952,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoy toca estudiar los temas que más suelen aparecer. Después, descansa."
+            "value" : "Hoy toca estudiar los temas más frecuentes. Después, descansa."
           }
         },
         "fr" : {
@@ -3010,7 +3010,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoy toca un repaso corto y ligero. Después, descansa. %@"
+            "value" : "Hoy toca un repaso breve y ligero. Después, descansa. %@"
           }
         },
         "fr" : {
@@ -3039,7 +3039,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoy toca un simulacro corto y revisar lo que muestre. Después, descansa. %@"
+            "value" : "Hoy toca hacer tu simulacro corto y luego revisar los resultados. Después, descansa. %@"
           }
         },
         "fr" : {
@@ -3068,7 +3068,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simulacro de expresión oral del TOEFL"
+            "value" : "Simulacro de expresión oral de TOEFL"
           }
         },
         "fr" : {
@@ -3097,7 +3097,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las tendencias por asignatura aparecerán cuando tus simulacros incluyan suficientes preguntas nuevas de cada una."
+            "value" : "Las tendencias por materia aparecerán cuando tus simulacros incluyan suficientes preguntas nuevas de cada una."
           }
         },
         "fr" : {
@@ -3155,7 +3155,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usar el %@"
+            "value" : "Usar %@"
           }
         },
         "fr" : {
@@ -3213,7 +3213,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qué puedes usar: %@"
+            "value" : "Lo que puedes usar: %@"
           }
         },
         "fr" : {
@@ -3242,7 +3242,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que tu profesor te permita llevar, como un bolígrafo o una calculadora"
+            "value" : "Lo que tu profesor te permite llevar, como un bolígrafo o una calculadora"
           }
         },
         "fr" : {
@@ -3271,7 +3271,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qué entra en el examen"
+            "value" : "Qué incluye el examen"
           }
         },
         "fr" : {
@@ -3300,7 +3300,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuándo cierran las puertas y empieza el examen"
+            "value" : "A qué hora cierran las puertas y empieza el examen"
           }
         },
         "fr" : {
@@ -3329,7 +3329,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuando salga tu resultado oficial, añádelo aquí. Así las estimaciones serán más precisas para todos."
+            "value" : "Cuando salga tu resultado oficial, agrégalo aquí. Así ayudas a que las estimaciones sean más precisas para todos."
           }
         },
         "fr" : {
@@ -3477,7 +3477,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completaste %#@sessions@ y %#@mocks@."
+            "value" : "Hiciste %#@sessions@ y %#@mocks@."
           },
           "substitutions" : {
             "mocks" : {
@@ -3665,13 +3665,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Has completado %lld sesión."
+                  "value" : "Hiciste %lld sesión."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Has completado %lld sesiones."
+                  "value" : "Hiciste %lld sesiones."
                 }
               }
             }
@@ -3727,7 +3727,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Te has preparado para esto."
+            "value" : "Te preparaste para esto."
           }
         },
         "fr" : {
@@ -3756,7 +3756,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu puntuación de AP (de 1 a 5)"
+            "value" : "Tu puntaje de AP (de 1 a 5)"
           }
         },
         "fr" : {
@@ -3814,7 +3814,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido cargar tu examen"
+            "value" : "No se pudo cargar tu examen"
           }
         },
         "fr" : {
@@ -3843,7 +3843,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las áreas de tu examen, tu preparación en cada una y los simulacros."
+            "value" : "Las áreas de tu examen, tu preparación en cada una y sus simulacros."
           }
         },
         "fr" : {
@@ -3878,7 +3878,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus puntuaciones en los simulacros, del %1$lld%% al %2$lld%%"
+            "value" : "Tus puntajes en los simulacros, del %1$lld%% al %2$lld%%"
           }
         },
         "fr" : {
@@ -3907,7 +3907,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan mantiene tu fecha salvo que elijas una de las convocatorias más cercanas."
+            "value" : "Tu plan mantiene tu fecha a menos que elijas una de las más cercanas."
           }
         },
         "fr" : {
@@ -3936,7 +3936,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan mantiene tu fecha salvo que elijas la convocatoria más cercana."
+            "value" : "Tu plan mantiene tu fecha a menos que elijas la más cercana."
           }
         },
         "fr" : {
@@ -3965,7 +3965,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu camino hasta allí, con tiempo de sobra"
+            "value" : "Tu ruta para llegar con tiempo de sobra"
           }
         },
         "fr" : {
@@ -3994,7 +3994,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu puntuación"
+            "value" : "Tu puntaje"
           }
         },
         "fr" : {
@@ -4023,7 +4023,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu puntuación (la media, si hay varias)"
+            "value" : "Tu puntaje (el promedio, si hay varios)"
           }
         },
         "fr" : {
@@ -4081,7 +4081,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu puntuación total (de 400 a 1.600)"
+            "value" : "Tu puntaje total (de 400 a 1,600)"
           }
         },
         "fr" : {
@@ -4110,7 +4110,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las respuestas de las que dudas restan más de lo que suman: déjalas en blanco."
+            "value" : "Las respuestas de las que dudas te quitan más puntos de los que te dan: déjalas en blanco."
           }
         },
         "fr" : {
@@ -4139,7 +4139,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las respuestas de las que no estás seguro también pueden darte puntos: sigue respondiéndolas."
+            "value" : "Las respuestas de las que dudas aún te dan puntos: sigue respondiendo."
           }
         },
         "fr" : {

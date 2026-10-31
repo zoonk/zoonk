@@ -42,7 +42,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprueba tu correo y tu mensaje y vuelve a intentarlo."
+            "value" : "Revisa tu correo electrónico y tu mensaje e inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -71,7 +71,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hecho"
+            "value" : "Cerrar"
           }
         },
         "fr" : {
@@ -129,7 +129,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se han podido enviar tus comentarios. Vuelve a intentarlo más tarde."
+            "value" : "No se pudieron enviar tus comentarios. Inténtalo más tarde."
           }
         },
         "fr" : {
@@ -158,7 +158,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Has encontrado un problema o tienes alguna idea? Cuéntanoslo aquí o escríbenos a contacto@zoonk.com."
+            "value" : "¿Encontraste un problema o tienes una idea? Cuéntanos abajo o escríbenos a contacto@zoonk.com."
           }
         },
         "fr" : {
@@ -251,7 +251,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Informar de un problema"
+            "value" : "Reportar un problema"
           }
         },
         "fr" : {
@@ -367,7 +367,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Gracias! Hemos recibido tu mensaje."
+            "value" : "¡Gracias! Recibimos tu mensaje."
           }
         },
         "fr" : {
@@ -396,7 +396,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta pantalla se adjuntará al mensaje"
+            "value" : "Se adjunta esta pantalla"
           }
         },
         "fr" : {
@@ -425,7 +425,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usaremos este correo para contactar contigo."
+            "value" : "Usaremos este correo para contactarte."
           }
         },
         "fr" : {
@@ -454,7 +454,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No tienes conexión. Comprueba tu conexión y vuelve a intentarlo."
+            "value" : "Estás sin conexión. Revisa tu conexión e inténtalo de nuevo."
           }
         },
         "fr" : {

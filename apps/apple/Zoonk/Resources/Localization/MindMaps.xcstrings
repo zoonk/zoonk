@@ -102,7 +102,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Como texto"
+            "value" : "En texto"
           }
         },
         "fr" : {
@@ -160,7 +160,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Capítulos completados"
+            "value" : "Capítulos que completaste"
           }
         },
         "fr" : {
@@ -334,7 +334,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido crear esta vez."
+            "value" : "Esta vez no se pudo crear."
           }
         },
         "fr" : {
@@ -485,7 +485,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido crear el mapa mental esta vez."
+            "value" : "Esta vez no se pudo crear el mapa mental."
           }
         },
         "fr" : {
@@ -514,7 +514,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a intentarlo"
+            "value" : "Volver a intentar"
           }
         },
         "fr" : {
@@ -543,7 +543,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido conectar con el servidor."
+            "value" : "No pudimos conectarnos al servidor."
           }
         },
         "fr" : {
@@ -572,7 +572,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan ya ha creado todos los mapas mentales que permite por ahora."
+            "value" : "Ya alcanzaste el límite de mapas mentales de tu plan por ahora."
           }
         },
         "fr" : {

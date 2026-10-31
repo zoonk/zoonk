@@ -327,7 +327,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ no se ha movido"
+            "value" : "%@ no se movió"
           }
         },
         "fr" : {
@@ -397,7 +397,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ en %2$@ de las simulaciones. La probabilidad exacta es %3$@."
+            "value" : "%1$@ en el %2$@ de las simulaciones. La probabilidad exacta es %3$@."
           }
         },
         "fr" : {
@@ -426,7 +426,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ está seleccionado. Toca otro átomo para enlazarlos o un elemento para añadir un átomo enlazado a este."
+            "value" : "Seleccionaste %@. Toca otro átomo para enlazarlos o un elemento para agregar uno enlazado al que seleccionaste."
           }
         },
         "fr" : {
@@ -455,7 +455,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se ha desplazado hacia abajo"
+            "value" : "%@ se movió hacia abajo"
           }
         },
         "fr" : {
@@ -484,7 +484,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se ha desplazado hacia la izquierda"
+            "value" : "%@ se movió a la izquierda"
           }
         },
         "fr" : {
@@ -513,7 +513,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se ha desplazado hacia la derecha"
+            "value" : "%@ se movió a la derecha"
           }
         },
         "fr" : {
@@ -542,7 +542,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se ha desplazado hacia arriba"
+            "value" : "%@ se movió hacia arriba"
           }
         },
         "fr" : {
@@ -577,7 +577,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ de los valores están entre %2$@ y %3$@, %4$@ por debajo y %5$@ por encima."
+            "value" : "El %1$@ de los valores está entre %2$@ y %3$@, el %4$@ por debajo y el %5$@ por encima."
           }
         },
         "fr" : {
@@ -676,7 +676,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ simulaciones de %2$@"
+            "value" : "%1$@ repeticiones de %2$@"
           }
         },
         "fr" : {
@@ -746,7 +746,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ muestras de %2$@ de %3$@. El valor real es %4$@; el 95%% de las muestras quedó entre %5$@ y %6$@."
+            "value" : "%1$@ muestras de %2$@ tomadas de %3$@. El valor real es %4$@; el 95%% de las muestras quedó entre %5$@ y %6$@."
           }
         },
         "fr" : {
@@ -775,7 +775,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ seleccionado."
+            "value" : "Se seleccionó %@."
           }
         },
         "fr" : {
@@ -874,7 +874,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$@ apareció en %3$@ de ellas."
+            "value" : "%1$@: se obtuvo %2$@ en %3$@ de las repeticiones."
           }
         },
         "fr" : {
@@ -944,7 +944,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$@, elige cómo termina"
+            "value" : "%1$@: %2$@, elegir el final"
           }
         },
         "fr" : {
@@ -1159,7 +1159,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@. %2$@ entre los controles."
+            "value" : "%1$@. El %2$@ está entre los controles."
           }
         },
         "fr" : {
@@ -1291,13 +1291,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld átomo tiene enlaces libres, representados con puntos."
+                  "value" : "%lld átomo tiene enlaces libres, indicados con puntos."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld átomos tienen enlaces libres, representados con puntos."
+                  "value" : "%lld átomos tienen enlaces libres, indicados con puntos."
                 }
               }
             }
@@ -1481,13 +1481,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld enlace en total, contando cada enlace doble como dos."
+                  "value" : "%lld enlace en total, contando un enlace doble como dos."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld enlaces en total, contando cada enlace doble como dos."
+                  "value" : "%lld enlaces en total, contando un enlace doble como dos."
                 }
               }
             }
@@ -1604,13 +1604,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg de %2$lld ejemplos es correcto."
+                      "value" : "%arg de %2$lld ejemplos pasa la prueba."
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg de %2$lld ejemplos son correctos."
+                      "value" : "%arg de %2$lld ejemplos pasan la prueba."
                     }
                   }
                 }
@@ -1841,7 +1841,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El 95 % de las muestras queda dentro de"
+            "value" : "El 95% de las muestras está dentro de"
           }
         },
         "fr" : {
@@ -1911,7 +1911,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una curva de campana de %1$@, con una media de %2$@ y una desviación típica de %3$@."
+            "value" : "Una curva de campana de %1$@, con un promedio de %2$@ y una desviación estándar de %3$@."
           }
         },
         "fr" : {
@@ -1946,7 +1946,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un gráfico de dos líneas, %1$@ y %2$@, con %3$@ frente a %4$@."
+            "value" : "Una gráfica de dos líneas, %1$@ y %2$@, con %3$@ en función de %4$@."
           }
         },
         "fr" : {
@@ -1981,7 +1981,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una circunferencia de radio 1 con un punto en %1$@. Su altura es el seno y su distancia horizontal al centro es el coseno: %2$@."
+            "value" : "Un círculo de radio 1 con un punto en %1$@. Su altura es el seno y su distancia horizontal al centro es el coseno: %2$@."
           }
         },
         "fr" : {
@@ -2016,7 +2016,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una distribución uniforme de %1$@, desde %2$@ hasta %3$@."
+            "value" : "Una distribución uniforme de %1$@, de %2$@ a %3$@."
           }
         },
         "fr" : {
@@ -2109,7 +2109,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un gráfico de líneas de %1$@ según %2$@, desde %3$@ en %4$@ hasta %5$@ en %6$@."
+            "value" : "Una gráfica de líneas de %1$@ por %2$@, de %3$@ en %4$@ a %5$@ en %6$@."
           }
         },
         "fr" : {
@@ -2144,7 +2144,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una recta numérica para %1$@, desde %2$@ hasta %3$@. Empieza en %4$@ y tu punto está en %5$@."
+            "value" : "Una recta numérica para %1$@, de %2$@ a %3$@. Empieza en %4$@ y tu punto está en %5$@."
           }
         },
         "fr" : {
@@ -2263,13 +2263,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "Se puede mover %arg vértice."
+                      "value" : "%arg vértice se mueve."
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "Se pueden mover %arg vértices."
+                      "value" : "%arg vértices se mueven."
                     }
                   }
                 }
@@ -2376,7 +2376,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir %@"
+            "value" : "Agregar %@"
           }
         },
         "fr" : {
@@ -2411,7 +2411,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir %1$@ con un enlace a %2$@"
+            "value" : "Agregar %1$@ con un enlace a %2$@"
           }
         },
         "fr" : {
@@ -2446,7 +2446,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se ha añadido %1$@ con un enlace a %2$@."
+            "value" : "Se agregó %1$@ con un enlace a %2$@."
           }
         },
         "fr" : {
@@ -2475,7 +2475,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se ha añadido %@."
+            "value" : "Se agregó %@."
           }
         },
         "fr" : {
@@ -2742,7 +2742,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al girar el punto"
+            "value" : "A medida que gira el punto"
           }
         },
         "fr" : {
@@ -2806,7 +2806,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al principio"
+            "value" : "Al inicio"
           }
         },
         "fr" : {
@@ -2951,7 +2951,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Construido: %@"
+            "value" : "Construiste: %@"
           }
         },
         "fr" : {
@@ -3212,7 +3212,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrastra un vértice para moverlo de casilla en casilla."
+            "value" : "Arrastra un vértice para moverlo una unidad a la vez en la cuadrícula."
           }
         },
         "fr" : {
@@ -3241,7 +3241,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrastra una línea desde su control."
+            "value" : "Arrastra una línea usando su punto de control."
           }
         },
         "fr" : {
@@ -3270,7 +3270,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fin del texto"
+            "value" : "Final del texto"
           }
         },
         "fr" : {
@@ -3299,7 +3299,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terminaciones de %@"
+            "value" : "Terminaciones para %@"
           }
         },
         "fr" : {
@@ -3328,7 +3328,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todos los átomos tienen todos sus enlaces."
+            "value" : "Cada átomo tiene todos sus enlaces."
           }
         },
         "fr" : {
@@ -3421,7 +3421,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para comparar, en %1$@ es %2$@."
+            "value" : "Para comparar, en %1$@ el valor es %2$@."
           }
         },
         "fr" : {
@@ -3514,7 +3514,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Más pesado"
+            "value" : "Pesa más"
           }
         },
         "fr" : {
@@ -3630,7 +3630,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Control inferior"
+            "value" : "Control del límite inferior"
           }
         },
         "fr" : {
@@ -3659,7 +3659,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ha coincidido"
+            "value" : "coincidió"
           }
         },
         "fr" : {
@@ -3746,7 +3746,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mover abajo"
+            "value" : "Mover hacia abajo"
           }
         },
         "fr" : {
@@ -3775,7 +3775,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mover a la izquierda"
+            "value" : "Mover hacia la izquierda"
           }
         },
         "fr" : {
@@ -3804,7 +3804,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mover a la derecha"
+            "value" : "Mover hacia la derecha"
           }
         },
         "fr" : {
@@ -3862,7 +3862,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mover arriba"
+            "value" : "Mover hacia arriba"
           }
         },
         "fr" : {
@@ -3891,7 +3891,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ninguna de las dos líneas se ha movido aún."
+            "value" : "Aún no se movió ninguna de las dos líneas."
           }
         },
         "fr" : {
@@ -4036,7 +4036,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hay hipótesis activadas."
+            "value" : "No hay escenarios hipotéticos activados."
           }
         },
         "fr" : {
@@ -4355,7 +4355,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige el siguiente movimiento"
+            "value" : "Elige el siguiente paso"
           }
         },
         "fr" : {
@@ -4384,7 +4384,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige tu suposición y compruébala para ejecutar la simulación."
+            "value" : "Elige una suposición y luego compruébala para ejecutar la simulación."
           }
         },
         "fr" : {
@@ -4558,7 +4558,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se ha eliminado %@."
+            "value" : "Se eliminó %@."
           }
         },
         "fr" : {
@@ -4587,7 +4587,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repetir un número de veces"
+            "value" : "Repetir un número determinado de veces"
           }
         },
         "fr" : {
@@ -4645,7 +4645,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ejecutar de nuevo"
+            "value" : "Volver a ejecutar"
           }
         },
         "fr" : {
@@ -4738,7 +4738,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Debería dar"
+            "value" : "Debe dar"
           }
         },
         "fr" : {
@@ -4889,7 +4889,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lados: %1$@, que suman un perímetro de %2$@."
+            "value" : "Lados: %1$@, con un perímetro total de %2$@."
           }
         },
         "fr" : {
@@ -5040,7 +5040,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Controles deslizantes y un gráfico de %1$@ en función de %2$@."
+            "value" : "Controles deslizantes y una gráfica de %1$@ en función de %2$@."
           }
         },
         "fr" : {
@@ -5098,7 +5098,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "División a lo largo de la altura"
+            "value" : "División a lo alto"
           }
         },
         "fr" : {
@@ -5127,7 +5127,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "División a lo largo de la anchura"
+            "value" : "División a lo ancho"
           }
         },
         "fr" : {
@@ -5156,7 +5156,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Divide ambos lados en %lld grupos iguales"
+            "value" : "Dividir ambos lados en %lld grupos iguales"
           }
         },
         "fr" : {
@@ -5235,7 +5235,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dividido en %#@parts@: %2$@."
+            "value" : "División en %#@parts@: %2$@."
           },
           "substitutions" : {
             "parts" : {
@@ -5626,7 +5626,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca un elemento para añadir su primer átomo."
+            "value" : "Toca un elemento para agregar su primer átomo."
           }
         },
         "fr" : {
@@ -5684,7 +5684,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Separa las esquinas y colócalas una junto a otra"
+            "value" : "Desprende las esquinas y colócalas una junto a otra"
           }
         },
         "fr" : {
@@ -5812,7 +5812,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La pregunta trata sobre %1$@, donde %2$@ = %3$@."
+            "value" : "La pregunta es sobre %1$@, donde %2$@ = %3$@."
           }
         },
         "fr" : {
@@ -5870,7 +5870,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este patrón no se puede ejecutar. Comprueba que los paréntesis y corchetes estén cerrados y no repitas un grupo que ya tenga repeticiones dentro."
+            "value" : "Este patrón no se puede ejecutar. Comprueba que los paréntesis y corchetes estén cerrados y no repitas un grupo que ya contenga repeticiones."
           }
         },
         "fr" : {
@@ -6102,7 +6102,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deshecho."
+            "value" : "Acción deshecha."
           }
         },
         "fr" : {
@@ -6131,7 +6131,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Control superior"
+            "value" : "Control del límite superior"
           }
         },
         "fr" : {
@@ -6160,7 +6160,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hipótesis activadas: %@."
+            "value" : "Eventos hipotéticos activados: %@."
           }
         },
         "fr" : {
@@ -6218,7 +6218,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sucesos hipotéticos"
+            "value" : "Eventos hipotéticos"
           }
         },
         "fr" : {
@@ -6247,7 +6247,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Qué terminación lleva %@?"
+            "value" : "¿Qué terminación corresponde a %@?"
           }
         },
         "fr" : {
@@ -6276,7 +6276,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con las hipótesis"
+            "value" : "Con los eventos hipotéticos"
           }
         },
         "fr" : {
