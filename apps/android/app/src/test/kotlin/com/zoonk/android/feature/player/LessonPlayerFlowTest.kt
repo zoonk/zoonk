@@ -67,6 +67,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 @RunWith(AndroidJUnit4::class)
 class LessonPlayerFlowTest {
@@ -499,6 +501,34 @@ class LessonPlayerFlowTest {
 
         rule.onNodeWithText("Question quiz?").assertIsDisplayed()
         rule.onNodeWithText("Check").assertIsNotEnabled()
+    }
+
+    @Test
+    @Config(qualifiers = "w320dp-h480dp")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun aWorkedExamplesNextStepScrollsIntoView() {
+        val worked = workedExampleStep("worked")
+        val content = (worked.content as StepContent.WorkedExample).content
+        val long =
+            worked.copy(
+                content = StepContent.WorkedExample(content.copy(problem = List(80) { "A long problem line." }.joinToString(" "))),
+            )
+        play(listOf(long, summaryStep("end")))
+
+        tap("Show the next step")
+
+        rule.onNodeWithText("Each part is 20").assertIsDisplayed()
+    }
+
+    @Test
+    fun aWorkedExampleReadsOutTheStepItReveals() {
+        play(listOf(workedExampleStep("worked"), summaryStep("end")))
+
+        tap("Show the next step")
+
+        val live = SemanticsMatcher.keyIsDefined(SemanticsProperties.LiveRegion)
+        rule.onNode(live and hasContentDescription("Each part is 20", substring = true)).assertExists()
+        rule.onNode(live and hasContentDescription("Steps")).assertDoesNotExist()
     }
 
     @Test

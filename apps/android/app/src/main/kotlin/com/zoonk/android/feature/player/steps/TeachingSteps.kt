@@ -2,6 +2,7 @@ package com.zoonk.android.feature.player.steps
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -28,6 +31,7 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -58,6 +62,7 @@ import com.zoonk.android.R
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.audio.VoiceAnswerRecorder
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
@@ -86,6 +91,9 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.richtext.MathText
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.richtext.plainText
+import com.zoonk.android.ui.richtext.rememberMathWords
+import com.zoonk.android.ui.richtext.typesetMath
 import com.zoonk.android.ui.theme.withTabularFigures
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
@@ -220,6 +228,14 @@ internal fun WorkedExampleView(
 ) {
     val worked = content.content
     val steps = worked.steps.take(revealed)
+    val isDone = revealed >= worked.steps.size
+    val newest = remember { BringIntoViewRequester() }
+    var shown by rememberSaveable(step.id) { mutableIntStateOf(revealed) }
+
+    LaunchedEffect(revealed) {
+        if (revealed > shown) newest.bringIntoView()
+        shown = revealed
+    }
 
     ReadScene {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -231,27 +247,42 @@ internal fun WorkedExampleView(
         LessonStepVisual(worked.visual)
 
         val stepsLabel = stringResource(R.string.player_worked_example_steps)
-        Column(
-            modifier = Modifier.semantics { contentDescription = stepsLabel }.semantics { liveRegion = LiveRegionMode.Polite },
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            steps.forEachIndexed { index, line ->
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(
-                        text = count(index + 1),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyLarge.withTabularFigures(),
-                    )
-                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        RichText(text = line.text, style = MaterialTheme.typography.bodyLarge)
-                        line.math?.let { MathText(it) }
+        val words = rememberMathWords()
+        val arrived = steps.lastOrNull()?.takeIf { revealed > 1 }
+        Box {
+            // Main's polite list reads out each line as it's revealed; a live region on the list would reread every line.
+            ActivityAnnouncement(
+                arrived
+                    ?.let { line -> listOfNotNull(plainText(line.text), line.math?.let { typesetMath(it, words).spoken }) }
+                    .orEmpty()
+                    .joinToString(" "),
+            )
+            Column(modifier = Modifier.semantics { contentDescription = stepsLabel }, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                steps.forEachIndexed { index, line ->
+                    Row(
+                        Modifier.then(if (index == steps.lastIndex && !isDone) Modifier.bringIntoViewRequester(newest) else Modifier),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        Text(
+                            text = count(index + 1),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge.withTabularFigures(),
+                        )
+                        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            RichText(text = line.text, style = MaterialTheme.typography.bodyLarge)
+                            line.math?.let { MathText(it) }
+                        }
                     }
                 }
             }
         }
 
-        if (revealed >= worked.steps.size) {
-            Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = MaterialTheme.shapes.medium) {
+        if (isDone) {
+            Surface(
+                modifier = Modifier.bringIntoViewRequester(newest),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                shape = MaterialTheme.shapes.medium,
+            ) {
                 Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
                         text = stringResource(R.string.player_worked_example_result),
