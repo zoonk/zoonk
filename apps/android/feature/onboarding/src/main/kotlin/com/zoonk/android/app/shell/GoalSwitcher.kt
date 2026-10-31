@@ -326,7 +326,7 @@ private fun GoalLine(goal: LearnerSummaryGoal) {
 
 /** The goal's first letter on a quiet tile (main's `GoalMark`). */
 @Composable
-internal fun GoalMark(title: String) {
+fun GoalMark(title: String) {
     Surface(
         shape = MaterialTheme.shapes.extraSmall,
         color = MaterialTheme.colorScheme.surfaceContainerHighest,

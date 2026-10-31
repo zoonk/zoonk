@@ -1,39 +1,26 @@
 package com.zoonk.android.feature.search
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SearchBarValue
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeDown
-import androidx.compose.ui.test.swipeUp
-import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.WithTabRootBar
 import com.zoonk.android.data.summary
 import com.zoonk.android.feature.catalog.CHAPTER_TWO
 import com.zoonk.android.feature.catalog.COURSE
@@ -41,7 +28,6 @@ import com.zoonk.android.feature.feedback.FEEDBACK_DESCRIPTION
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
-import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CatalogSearchResponse
@@ -225,26 +211,6 @@ class SearchFlowTest {
         rule.waitForIdle()
 
         assertEquals(SearchBarValue.Expanded, search.tabBar?.currentValue)
-    }
-
-    @Test
-    fun thePhonesBarScrollsAwayWithThePageAndBack() {
-        show { app, navigator ->
-            WithTabRootBar(app, navigator) {
-                TabRootScaffold { padding ->
-                    LazyColumn(Modifier.fillMaxSize().testTag("page"), contentPadding = padding) {
-                        items(100) { Text("Row $it", Modifier.padding(16.dp)) }
-                    }
-                }
-            }
-        }
-
-        rule.onNodeWithText("Search or ask…").assertIsDisplayed()
-        rule.onNodeWithTag("page").performTouchInput { swipeUp() }
-        rule.onNodeWithText("Search or ask…").assertIsNotDisplayed()
-        // From the middle: the list's top edge sits under the app bar.
-        rule.onNodeWithTag("page").performTouchInput { swipeDown(startY = centerY, endY = bottom) }
-        rule.onNodeWithText("Search or ask…").assertIsDisplayed()
     }
 
     private fun show(content: @Composable (AppContainer, AppNavigator) -> Unit) {

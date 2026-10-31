@@ -85,6 +85,7 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":feature:account"))
     implementation(project(":feature:activities"))
+    implementation(project(":feature:catalog"))
     implementation(project(":feature:conversation"))
     implementation(project(":feature:exam"))
     implementation(project(":feature:onboarding"))
