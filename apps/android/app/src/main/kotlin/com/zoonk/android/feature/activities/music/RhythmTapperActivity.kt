@@ -69,6 +69,7 @@ import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -267,8 +268,8 @@ private fun RhythmGrid(
                 LegendItem(stringResource(R.string.activities_music_rhythm_hits)) {
                     Box(Modifier.width(12.dp).height(8.dp).background(MaterialTheme.zoonk.vizAccent, RoundedCornerShape(2.dp)))
                 }
-                LegendItem(stringResource(R.string.activities_music_on_time)) { ResultMark(TapStatus.OnTime) }
-                LegendItem(stringResource(R.string.activities_music_early_or_late)) { ResultMark(TapStatus.Early) }
+                LegendItem(stringResource(R.string.activities_music_on_time)) { ResultMark(TapStatus.OnTime, LEGEND_DOT) }
+                LegendItem(stringResource(R.string.activities_music_early_or_late)) { ResultMark(TapStatus.Early, LEGEND_DOT) }
             }
         }
     }
@@ -288,7 +289,7 @@ private fun RowScope.StepCell(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Box(Modifier.height(8.dp), contentAlignment = Alignment.Center) { result?.let { ResultMark(it) } }
+        Box(Modifier.height(RESULT_DOT), contentAlignment = Alignment.Center) { result?.let { ResultMark(it) } }
         Box(
             Modifier
                 .fillMaxWidth()
@@ -301,12 +302,16 @@ private fun RowScope.StepCell(
 }
 
 @Composable
-private fun ResultMark(status: TapStatus) {
+private fun ResultMark(
+    status: TapStatus,
+    size: Dp = RESULT_DOT,
+) {
     val colors = MaterialTheme.colorScheme
+    val dot = Modifier.size(size)
     when (status) {
-        TapStatus.OnTime -> Box(Modifier.size(8.dp).background(colors.tertiary, CircleShape))
-        TapStatus.Early, TapStatus.Late -> Box(Modifier.size(8.dp).background(MaterialTheme.zoonk.warning, CircleShape))
-        TapStatus.Missed -> Box(Modifier.size(8.dp).border(2.dp, colors.error, CircleShape))
+        TapStatus.OnTime -> Box(dot.background(colors.tertiary, CircleShape))
+        TapStatus.Early, TapStatus.Late -> Box(dot.background(MaterialTheme.zoonk.warning, CircleShape))
+        TapStatus.Missed -> Box(dot.border(2.dp, colors.error, CircleShape))
     }
 }
 
@@ -530,3 +535,5 @@ private const val INACTIVE_ALPHA = 0.6f
 private const val ON_TIME_MS = 20
 private val STEP_GAP = 2.dp
 private val BEAT_GAP = 6.dp
+private val RESULT_DOT = 8.dp
+private val LEGEND_DOT = 10.dp
