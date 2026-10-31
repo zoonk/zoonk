@@ -16,6 +16,7 @@ import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.WithTabRootBar
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.feature.session.toDayView
@@ -121,22 +122,24 @@ class TodayScreenshots {
         val navigator = rememberAppNavigator()
         val viewModel = viewModel { TodayViewModel(app.studyOpener, app.today, app.plans) }
 
-        TabRootScaffold(app, navigator) { padding ->
-            TodayDay(
-                read,
-                app.today.today,
-                false,
-                viewModel,
-                navigator,
-                padding,
-                buddy =
-                    com.zoonk.android.ui.characters
-                        .BuddyLook(),
-                buddyName = "Zu",
-                refreshIfChanged = app.today::refreshIfChanged,
-                brainPower = 1240,
-                practice = { TodayPracticeRows(MistakeListAvailability(ready = 3, tomorrow = 1), MOCKS, SPEAKING, navigate = {}) },
-            )
+        WithTabRootBar(app, navigator) {
+            TabRootScaffold { padding ->
+                TodayDay(
+                    read,
+                    app.today.today,
+                    false,
+                    viewModel,
+                    navigator,
+                    padding,
+                    buddy =
+                        com.zoonk.android.ui.characters
+                            .BuddyLook(),
+                    buddyName = "Zu",
+                    refreshIfChanged = app.today::refreshIfChanged,
+                    brainPower = 1240,
+                    practice = { TodayPracticeRows(MistakeListAvailability(ready = 3, tomorrow = 1), MOCKS, SPEAKING, navigate = {}) },
+                )
+            }
         }
     }
 

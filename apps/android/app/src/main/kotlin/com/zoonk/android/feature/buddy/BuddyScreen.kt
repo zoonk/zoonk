@@ -98,7 +98,7 @@ fun BuddyScreen(
     val summary by app.learnerSummary.summary.collectShown()
     val coroutines = rememberCoroutineScope()
 
-    TabRootScaffold(app, navigator) { padding ->
+    TabRootScaffold { padding ->
         // The keyboard covers the navigation bar, which imePadding() would leave as a gap above it.
         Box(Modifier.fillMaxSize().padding(padding).fitInside(WindowInsetsRulers.Ime.current)) {
             val read = status

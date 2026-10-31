@@ -21,6 +21,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DrawerDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -80,13 +81,18 @@ import androidx.navigation3.ui.defaultPopTransitionSpec
 import androidx.navigation3.ui.defaultTransitionSpec
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
+import com.zoonk.android.app.shell.GoalSwitcher
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.account.AccountMenu
 import com.zoonk.android.feature.buddy.BuddyTabIcon
 import com.zoonk.android.feature.buddy.buddyTabMissions
 import com.zoonk.android.feature.feedback.rememberSendFeedback
 import com.zoonk.android.feature.search.SearchHost
+import com.zoonk.android.feature.search.TabSearchBar
+import com.zoonk.android.feature.search.rememberTabSearchScroll
+import com.zoonk.android.feature.stats.LevelButton
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppSection
@@ -105,6 +111,8 @@ import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.LocalTabRootBar
+import com.zoonk.android.ui.scaffold.TabRootBar
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryPlaces
 
@@ -155,6 +163,7 @@ fun ZoonkApp(
         LocalSnackbarHostState provides snackbars,
         LocalPrivatePictures provides pictures,
         LocalUriHandler provides links,
+        LocalTabRootBar provides rememberTabRootBar(app, navigator),
     ) {
         val sendFeedback = rememberSendFeedback(app, "sidebar")
 
@@ -169,6 +178,25 @@ fun ZoonkApp(
         }
     }
 }
+
+/** The tab roots' app bar: the goal switcher, level, account menu and search, which live above the tabs. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun rememberTabRootBar(
+    app: AppContainer,
+    navigator: AppNavigator,
+): TabRootBar =
+    remember(app, navigator) {
+        TabRootBar(
+            title = { GoalSwitcher(app, navigator) },
+            actions = {
+                LevelButton(app, navigator)
+                AccountMenu(app, navigator)
+            },
+            search = { modifier -> TabSearchBar(app, navigator, modifier) },
+            searchScroll = { rememberTabSearchScroll() },
+        )
+    }
 
 /** The learner the window last showed, saved with it. */
 internal data class ShownLearner(

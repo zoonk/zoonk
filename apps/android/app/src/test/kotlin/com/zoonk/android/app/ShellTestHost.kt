@@ -70,7 +70,7 @@ fun ShellTestHost(summary: LearnerSummary = everyPlace) {
     val navigator = rememberAppNavigator()
     val context = LocalContext.current
     val app = remember { AppContainer.preview(context) }
-    val entries = remember(navigator) { testEntries(app, navigator) }
+    val entries = remember(navigator) { testEntries(navigator) }
 
     ShellTest.navigator = navigator
     AppShell(navigator, entries, rememberSendFeedback(app, "sidebar")::open, summary = summary)
@@ -83,18 +83,15 @@ class ShellTestActivity : ComponentActivity() {
     }
 }
 
-private fun testEntries(
-    app: AppContainer,
-    navigator: AppNavigator,
-): (NavKey) -> NavEntry<NavKey> =
-    entryProvider(fallback = { key -> NavEntry(key) { RoutePlaceholder(key as AppRoute, app, navigator) } }) {
+private fun testEntries(navigator: AppNavigator): (NavKey) -> NavEntry<NavKey> =
+    entryProvider(fallback = { key -> NavEntry(key) { RoutePlaceholder(key as AppRoute, navigator) } }) {
         entry<AppRoute.Today> { CountedList("today") }
         entry<AppRoute.Plan> { CountedList("plan") }
         entry<AppRoute.Buddy> { CountedList("buddy") }
         entry<AppRoute.Memory> { DockedActionPage() }
         entry<AppRoute.Chapter> { route ->
             viewModel { CountingViewModel("chapter:${route.chapterId}") }
-            RoutePlaceholder(route, app, navigator)
+            RoutePlaceholder(route, navigator)
         }
     }
 

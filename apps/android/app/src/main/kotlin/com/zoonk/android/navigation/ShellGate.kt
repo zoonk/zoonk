@@ -70,7 +70,7 @@ fun ShellGate(
         return
     }
 
-    RouteFrame(route, app, navigator) { padding ->
+    RouteFrame(route, navigator) { padding ->
         when (access) {
             LearnerAccess.Visitor, LearnerAccess.SessionEnded -> {
                 SignInGate(ended = access == LearnerAccess.SessionEnded, navigator, padding)
@@ -102,13 +102,12 @@ fun ShellGate(
 @Composable
 internal fun RouteFrame(
     route: AppRoute,
-    app: AppContainer,
     navigator: AppNavigator,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     when (route.presentation) {
         is Presentation.Tab -> {
-            TabRootScaffold(app, navigator, content = content)
+            TabRootScaffold(content = content)
         }
 
         Presentation.Task -> {

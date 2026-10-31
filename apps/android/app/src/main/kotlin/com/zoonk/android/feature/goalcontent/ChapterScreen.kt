@@ -112,7 +112,7 @@ fun ChapterScreen(
 
             // A language's chapters are its units: drawn here too, as main does, so a link never redirects.
             goal.kind == LearnerSummaryGoal.Kind.LANGUAGE -> {
-                RoutePlaceholder(AppRoute.LanguageUnit(route.chapterId), app, navigator)
+                RoutePlaceholder(AppRoute.LanguageUnit(route.chapterId), navigator)
             }
 
             else -> {

@@ -14,6 +14,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.WithTabRootBar
 import com.zoonk.android.feature.plan.learnerSummary
 import com.zoonk.android.feature.tutor.TutorAccess
 import com.zoonk.android.feature.tutor.TutorThread
@@ -96,8 +97,10 @@ class BuddyScreenshots {
             val navigator = rememberAppNavigator()
             ZoonkTheme(darkTheme = dark) {
                 Surface {
-                    TabRootScaffold(app, navigator) { padding ->
-                        Box(Modifier.padding(padding)) { BuddyPage(status, GOAL, ask = null, app, navigator, access = TutorAccess.Ask) }
+                    WithTabRootBar(app, navigator) {
+                        TabRootScaffold { padding ->
+                            Box(Modifier.padding(padding)) { BuddyPage(status, GOAL, ask = null, app, navigator, access = TutorAccess.Ask) }
+                        }
                     }
                 }
             }

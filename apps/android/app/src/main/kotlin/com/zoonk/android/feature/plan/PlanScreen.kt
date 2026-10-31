@@ -70,7 +70,7 @@ fun PlanScreen(
     val summary by app.learnerSummary.summary.collectShown()
     val scope = rememberCoroutineScope()
 
-    TabRootScaffold(app, navigator) { padding ->
+    TabRootScaffold { padding ->
         val loaded = summary.value
         val goal = loaded?.planGoal
 

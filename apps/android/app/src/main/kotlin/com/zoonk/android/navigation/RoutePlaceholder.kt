@@ -10,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.zoonk.android.app.AppContainer
 
 /**
  * Stands in for a screen its feature lane hasn't built yet, in the route's own frame, so every
@@ -19,10 +18,9 @@ import com.zoonk.android.app.AppContainer
 @Composable
 fun RoutePlaceholder(
     route: AppRoute,
-    app: AppContainer,
     navigator: AppNavigator,
 ) {
-    RouteFrame(route, app, navigator) { padding ->
+    RouteFrame(route, navigator) { padding ->
         Box(
             modifier =
                 Modifier

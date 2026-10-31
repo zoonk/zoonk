@@ -33,6 +33,7 @@ import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.WithTabRootBar
 import com.zoonk.android.data.summary
 import com.zoonk.android.feature.catalog.CHAPTER_TWO
 import com.zoonk.android.feature.catalog.COURSE
@@ -229,9 +230,11 @@ class SearchFlowTest {
     @Test
     fun thePhonesBarScrollsAwayWithThePageAndBack() {
         show { app, navigator ->
-            TabRootScaffold(app, navigator) { padding ->
-                LazyColumn(Modifier.fillMaxSize().testTag("page"), contentPadding = padding) {
-                    items(100) { Text("Row $it", Modifier.padding(16.dp)) }
+            WithTabRootBar(app, navigator) {
+                TabRootScaffold { padding ->
+                    LazyColumn(Modifier.fillMaxSize().testTag("page"), contentPadding = padding) {
+                        items(100) { Text("Row $it", Modifier.padding(16.dp)) }
+                    }
                 }
             }
         }
