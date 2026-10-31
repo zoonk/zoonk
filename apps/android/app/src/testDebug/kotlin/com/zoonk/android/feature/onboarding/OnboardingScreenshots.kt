@@ -349,6 +349,14 @@ class OnboardingScreenshots {
                         },
                     )
                 },
+                "reveal-exam-choice" to {
+                    Reveal(
+                        setupPlanApi().apply {
+                            shownPlan = planOf(examChoices = specialtyChoice("Tecnologia da Informação – Desenvolvimento de Sistemas"))
+                        },
+                    )
+                },
+                "reveal-exam-choice-later" to { Reveal(setupPlanApi().apply { shownPlan = planOf(examChoices = specialtyChoice()) }) },
                 "reveal-chapters" to {
                     Reveal(
                         setupPlanApi().apply {
