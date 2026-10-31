@@ -2,13 +2,14 @@
 
 import { DetailMenu } from "@zoonk/ui/components/detail";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
-import { BanIcon, LogOutIcon, UserCheckIcon } from "lucide-react";
+import { BanIcon, CakeIcon, LogOutIcon, UserCheckIcon } from "lucide-react";
 import { useState } from "react";
 import { BanUserDialog } from "./ban-user-dialog";
+import { CorrectBirthYearDialog } from "./correct-birth-year-dialog";
 import { RevokeSessionsDialog } from "./revoke-sessions-dialog";
 import { UnbanUserDialog } from "./unban-user-dialog";
 
-type UserDialog = "ban" | "revoke" | "unban";
+type UserDialog = "ban" | "birthYear" | "revoke" | "unban";
 
 export function UserActionsMenu({
   banned,
@@ -36,6 +37,11 @@ export function UserActionsMenu({
           Revoke sessions
         </DropdownMenuItem>
 
+        <DropdownMenuItem onClick={() => setDialog("birthYear")}>
+          <CakeIcon aria-hidden="true" />
+          Correct birth year
+        </DropdownMenuItem>
+
         {banned ? (
           <DropdownMenuItem onClick={() => setDialog("unban")}>
             <UserCheckIcon aria-hidden="true" />
@@ -50,6 +56,7 @@ export function UserActionsMenu({
       </DetailMenu>
 
       <RevokeSessionsDialog {...dialogProps("revoke")} />
+      <CorrectBirthYearDialog {...dialogProps("birthYear")} />
       <BanUserDialog {...dialogProps("ban")} />
       <UnbanUserDialog {...dialogProps("unban")} />
     </>
