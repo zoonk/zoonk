@@ -1783,7 +1783,7 @@ msgstr "Mapa de Soho, Londres, en 1854"
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "iHLnJo"
 msgid "Map of the Roman Empire in 117 CE"
-msgstr "Mapa del Imperio romano en el año 117 de nuestra era"
+msgstr "Mapa del Imperio romano en 117 d. C."
 
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "ccq12s"
