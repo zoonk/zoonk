@@ -208,6 +208,7 @@ struct FormulaModelCanvas: View {
             Text(verbatim: expected.label)
               .font(.caption.weight(.semibold).monospacedDigit())
               .foregroundStyle(.success)
+              .chartsLabelHalo()
           }
       }
     }

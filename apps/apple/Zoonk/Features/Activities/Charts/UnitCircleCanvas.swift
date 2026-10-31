@@ -322,10 +322,9 @@ struct UnitCircleCanvas: View {
       canvas.stroke(
         Path(ellipseIn: CGRect(x: mark.x - 12, y: mark.y - 12, width: 24, height: 24)),
         with: .style(Color.success), lineWidth: 3)
-      let label = canvas.resolve(
+      canvas.drawChartsLabel(
         Text(verbatim: angleText(target.degrees)).font(.caption.weight(.semibold)).foregroundStyle(
-          Color.success))
-      canvas.draw(label, at: CGPoint(x: mark.x, y: mark.y - 22))
+          Color.success), at: CGPoint(x: mark.x, y: mark.y - 22))
     }
   }
 

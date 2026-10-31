@@ -255,9 +255,8 @@ struct GeometryBoardCanvas: View {
         if let value {
           let text =
             index == reading.totalIndex && hidesTotal ? "?" : ActivityNumberFormat.format(value)
-          canvas.draw(
-            canvas.resolve(
-              Text(verbatim: text).font(.caption.weight(.semibold)).foregroundStyle(color)),
+          canvas.drawChartsLabel(
+            Text(verbatim: text).font(.caption.weight(.semibold)).foregroundStyle(color),
             at: transform.point(center.0, center.1))
         }
       }
@@ -290,10 +289,9 @@ struct GeometryBoardCanvas: View {
       let length = max(hypot(outward.0, outward.1), 1e-9)
       let unitOut = (outward.0 / length, outward.1 / length)
       let name = CGPoint(x: at.x + unitOut.0 * 22, y: at.y - unitOut.1 * 22)
-      canvas.draw(
-        canvas.resolve(
-          Text(verbatim: cornerName(index)).font(.caption.weight(.semibold)).foregroundStyle(
-            .secondary)), at: name)
+      canvas.drawChartsLabel(
+        Text(verbatim: cornerName(index)).font(.caption.weight(.semibold)).foregroundStyle(
+          .secondary), at: name)
 
       if fields.measure == .angleSum, index < reading.parts.count {
         let previous = transform.point(
@@ -316,21 +314,19 @@ struct GeometryBoardCanvas: View {
         }
         canvas.fill(path, with: .style(color.opacity(0.18)))
         canvas.stroke(path, with: .style(color), lineWidth: 1.5)
-        canvas.draw(
-          canvas.resolve(
-            Text(verbatim: ActivityNumberFormat.format(reading.parts[index], unit: "°"))
-              .font(.caption2.weight(.semibold).monospacedDigit()).foregroundStyle(color)),
+        canvas.drawChartsLabel(
+          Text(verbatim: ActivityNumberFormat.format(reading.parts[index], unit: "°"))
+            .font(.caption2.weight(.semibold).monospacedDigit()).foregroundStyle(color),
           at: wedge.label)
       }
 
       if fields.measure == .perimeter, index < reading.parts.count {
         let next = points[(index + 1) % points.count]
         let middle = transform.point((point.x + next.x) / 2, (point.y + next.y) / 2)
-        canvas.draw(
-          canvas.resolve(
-            Text(verbatim: ActivityNumberFormat.format(reading.parts[index])).font(
-              .caption2.weight(.semibold).monospacedDigit()
-            ).foregroundStyle(.purple)), at: middle)
+        canvas.drawChartsLabel(
+          Text(verbatim: ActivityNumberFormat.format(reading.parts[index]))
+            .font(.caption2.weight(.semibold).monospacedDigit()).foregroundStyle(.purple),
+          at: middle)
       }
     }
   }

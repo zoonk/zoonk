@@ -121,6 +121,7 @@ struct LineCrossingCanvas: View {
             Text(verbatim: field.label)
               .font(.caption.weight(.semibold))
               .foregroundStyle(index == 0 ? Color.mint : Color.purple)
+              .chartsLabelHalo()
           }
       }
 

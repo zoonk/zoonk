@@ -176,3 +176,52 @@ extension View {
     accessibilityHidden(true)
   }
 }
+
+extension View {
+  /// Outlines a chart label in the background color, as main does, so a line crossing it never
+  /// cuts through its letters.
+  func chartsLabelHalo() -> some View {
+    textRenderer(ChartsLabelHalo())
+  }
+}
+
+extension GraphicsContext {
+  /// Draws a label on a Canvas with the halo `chartsLabelHalo()` gives text views.
+  func drawChartsLabel(_ text: Text, at point: CGPoint) {
+    let label = resolve(text)
+    ChartsLabelHalo.draw(in: self) { $0.draw(label, at: point) }
+  }
+}
+
+private struct ChartsLabelHalo: TextRenderer {
+  private static let width: CGFloat = 2
+
+  var displayPadding: EdgeInsets {
+    EdgeInsets(top: Self.width, leading: Self.width, bottom: Self.width, trailing: Self.width)
+  }
+
+  func draw(layout: Text.Layout, in context: inout GraphicsContext) {
+    Self.draw(in: context) { context in
+      for line in layout {
+        context.draw(line)
+      }
+    }
+  }
+
+  /// GraphicsContext can't stroke text, so the halo is the label drawn in the background color at
+  /// twelve points around it, under the label itself.
+  static func draw(in context: GraphicsContext, _ label: (inout GraphicsContext) -> Void) {
+    for step in 0..<12 {
+      let angle = Double(step) * .pi / 6
+      var halo = context
+      halo.addFilter(
+        .shadow(
+          color: Color(.systemBackground), radius: 0, x: cos(angle) * width,
+          y: sin(angle) * width, options: .shadowOnly))
+      label(&halo)
+    }
+
+    var text = context
+    label(&text)
+  }
+}

@@ -302,6 +302,7 @@ struct DistributionExplorerCanvas: View {
     Text(verbatim: percentText(share))
       .font(.caption2.monospacedDigit())
       .foregroundStyle(.secondary)
+      .chartsLabelHalo()
       .accessibilityHidden(true)
   }
 
