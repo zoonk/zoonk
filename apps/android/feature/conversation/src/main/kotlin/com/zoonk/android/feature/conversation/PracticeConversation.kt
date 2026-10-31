@@ -160,7 +160,7 @@ fun PracticeConversation(
 ) = PracticeConversation(call, chapterId, goalId, app.conversations, navigator::open, modifier, state)
 
 @Composable
-internal fun PracticeConversation(
+fun PracticeConversation(
     call: LanguagePracticeCall,
     chapterId: UUID,
     goalId: UUID?,
@@ -185,7 +185,7 @@ internal fun PracticeConversation(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun PracticeCallSheet(
+fun PracticeCallSheet(
     call: LanguagePracticeCall,
     chapterId: UUID,
     goalId: UUID?,

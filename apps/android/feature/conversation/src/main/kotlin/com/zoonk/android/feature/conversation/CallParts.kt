@@ -223,7 +223,7 @@ internal fun Checklist(
 }
 
 @Composable
-internal fun ChecklistRow(
+fun ChecklistRow(
     label: AnnotatedString,
     done: Boolean,
     modifier: Modifier = Modifier,

@@ -7,9 +7,9 @@ import kotlinx.coroutines.CompletableDeferred
 import java.util.UUID
 import kotlin.time.Instant
 
-internal val CONNECTION: UUID = UUID.fromString("00000000-0000-4000-8000-000000000001")
+val CONNECTION: UUID = UUID.fromString("00000000-0000-4000-8000-000000000001")
 
-internal fun setup(
+fun setup(
     seconds: Long = 300,
     endsAtLimit: LanguageConversationSetup.EndsAtLimit? = null,
     connectionId: UUID = CONNECTION,
@@ -22,19 +22,19 @@ internal fun setup(
     voice = "marin",
 )
 
-internal fun learnerSays(
+fun learnerSays(
     text: String,
     startMs: Double,
     endMs: Double,
 ) = LiveServerEvent.Transcript(Speaker.LEARNER, text, startMs, endMs)
 
-internal fun characterSays(
+fun characterSays(
     text: String,
     startMs: Double = 0.0,
     endMs: Double = 0.0,
 ) = LiveServerEvent.Transcript(Speaker.CHARACTER, text, startMs, endMs)
 
-internal class FakeTransport(
+class FakeTransport(
     val microphone: Boolean,
     val onEvent: (LiveServerEvent) -> Unit,
     val onLost: () -> Unit,
@@ -72,7 +72,7 @@ internal class FakeTransport(
     val thinking get() = sent.filterIsInstance<LiveClientCommand.Thinking>()
 }
 
-internal class FakeCallClient : LiveCallClient {
+class FakeCallClient : LiveCallClient {
     var reservations = ArrayDeque<CallReservation>(listOf(CallReservation.Ready(setup())))
     val connects = mutableListOf<Boolean>()
     val redeemed = mutableListOf<Pair<UUID, String>>()

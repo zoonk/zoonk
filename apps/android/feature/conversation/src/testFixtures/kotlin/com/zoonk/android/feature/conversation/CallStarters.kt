@@ -4,7 +4,7 @@ import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.WritingRuns
 import com.zoonk.android.data.writingWaits
 
-internal fun callStarter(
+fun callStarter(
     runs: GenerationSource = WritingRuns(),
     answer: suspend (CallRequest) -> CallStart,
 ): CallStarter =

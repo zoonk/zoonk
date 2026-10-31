@@ -3,7 +3,7 @@ package com.zoonk.android.feature.speaking
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.SpeakingPaper
 
-internal fun speakingPaper(
+fun speakingPaper(
     access: String = "open",
     lastTry: String = "null",
 ): SpeakingPaper =
@@ -22,7 +22,7 @@ internal fun speakingPaper(
     )
 
 /** An exam task's `examTask` for a conversation. */
-internal val EXAM_TASK =
+val EXAM_TASK =
     """
     {"exam":"dele","language":"es","level":"B2","paper":"Prueba 4","source":"https://examenes.cervantes.es/dele-b2","title":"DELE B2",
     "card":{"instructions":["Lee las propuestas."],"photos":[],"prompts":["¿Cuál prefieres?"],"summary":"Choose one of four proposals.",
