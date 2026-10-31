@@ -51,7 +51,7 @@ function expectedPoint({
     return null;
   }
 
-  const input = check.inputs?.find((item) => item.name === axis.name);
+  const input = check.inputs?.findLast((item) => item.name === axis.name);
 
   return {
     label: format(
