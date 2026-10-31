@@ -42,6 +42,8 @@
   "settings_preferences_no_limit": "9413daff7a1ba9b157c27480e5a21bc4ea058720038da29369dcb56ef0e0dc8d",
   "settings_preferences_on_this_device": "907a2fc4741e9e24c506a5a3eb6f7f20ed8fbc66487abe36d3a5dceba14a8325",
   "settings_preferences_save_failed": "3517153ccc3af705f02f406a131a3c8ad259429b1d637ab64ad2ba321b782cb2",
+  "settings_preferences_share_usage_data": "e3f45e7c5ab2836fe9fb29e8088315858cf9dcc6d08e9bec37f4524d4eac5826",
+  "settings_preferences_share_usage_data_description": "8611a8ff8b37434a97ed24729ffb01b9053568ca118213321897fdf1f6d20f05",
   "settings_preferences_sounds": "8e2c87a4e0a9871e5fa832c94492c901923112c8d4a40d0f844c3a3ffb198012",
   "settings_preferences_sounds_description": "d771feb92a8ef380699bc87b7400aeac6a15a51b19bc3fa1d58acddf68304303",
   "settings_preferences_summary": "3f76401bf457e3678198b02b62e36472d7d62cbbcefc3e3172eda15121288c6b",
@@ -108,4 +110,7 @@
     <string name="settings_licenses_read">Leer la licencia</string>
     <string name="settings_profile_description">Tu nombre, nombre de usuario y cuenta.</string>
     <string name="settings_preferences_description">Tu compañero, tus lecciones y tu idioma, a tu gusto.</string>
+    <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
+    <string name="settings_preferences_share_usage_data">Compartir datos de uso</string>
+    <string name="settings_preferences_share_usage_data_description">Nos muestra cómo usas Zoonk para que podamos mejorarlo</string>
 </resources>

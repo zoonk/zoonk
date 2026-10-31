@@ -25,7 +25,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 private const val PROFILE =
-    """{"activeGoalId":null,"availableGlasses":["round"],"buddy":{"glasses":"round","kind":"zu","name":null,"picked":false},"dailyLimitMinutes":45,"dailyTimes":[5,10,15],"soundsEnabled":true}"""
+    """{"activeGoalId":null,"availableGlasses":["round"],"birthYear":1990,"buddy":{"glasses":"round","kind":"zu","name":null,"picked":false},"dailyLimitMinutes":45,"dailyTimes":[5,10,15],"shareUsageData":null,"soundsEnabled":true}"""
 
 private class FakeLearningProfileApi : LearningProfileApi {
     val changes = mutableListOf<JsonObject>()
@@ -40,6 +40,15 @@ private class FakeLearningProfileApi : LearningProfileApi {
     ): LearningProfile {
         failure?.let { throw it }
         changes += change
+        return current
+    }
+
+    override suspend fun saveBirthYear(
+        session: AuthenticatedSession,
+        birthYear: Long,
+    ): LearningProfile {
+        failure?.let { throw it }
+        current = current.copy(birthYear = current.birthYear ?: birthYear)
         return current
     }
 }
@@ -141,6 +150,63 @@ class LearningProfileStoreTest {
                 store.profile.state.value.value!!
                     .soundsEnabled,
             )
+        }
+
+    @Test
+    fun usageDataSharingShowsAtOnceAndIsSentAlone() =
+        runTest {
+            val store = loaded()
+            api.current = api.current.copy(shareUsageData = false)
+
+            val saved = async { store.setShareUsageData(false) }
+            runCurrent()
+            assertEquals(
+                false,
+                store.profile.state.value.value!!
+                    .shareUsageData,
+            )
+
+            assertTrue(saved.await())
+            assertEquals("""{"shareUsageData":false}""", api.changes.single().toString())
+        }
+
+    @Test
+    fun aSavedBirthYearShowsInTheProfileWithoutAnotherRead() =
+        runTest {
+            api.current = api.current.copy(birthYear = null)
+            val store = loaded()
+
+            assertTrue(store.saveBirthYear(1990) is MutationResult.Done)
+
+            assertEquals(
+                1990L,
+                store.profile.state.value.value!!
+                    .birthYear,
+            )
+        }
+
+    @Test
+    fun theLiveApiPutsTheBirthYear() =
+        runTest {
+            MockWebServer().use { server ->
+                server.startOnLoopback()
+                server.enqueue(
+                    MockResponse
+                        .Builder()
+                        .code(200)
+                        .addHeader("Content-Type", "application/json")
+                        .body("""{"profile":$PROFILE}""")
+                        .build(),
+                )
+                val api = LiveLearningProfileApi(ApiClients(server.url("/v1/"), apiHttpClient()))
+
+                api.saveBirthYear(AuthenticatedSession(ANA, "token-a", "local-a"), 1990)
+
+                val sent = server.takeRequest()
+                assertEquals("PUT", sent.method)
+                assertEquals("/v1/me/birth-year", sent.url.encodedPath)
+                assertEquals("""{"birthYear":1990}""", sent.body!!.utf8())
+            }
         }
 
     @Test

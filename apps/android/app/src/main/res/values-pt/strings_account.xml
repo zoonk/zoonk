@@ -2,6 +2,16 @@
 <!-- eloqnt-fingerprints-v1
 {
   "account_agreement": "5482483a22056e4d65a2c4f9d21091323bdb4f80a02039c1f90a25c15cc26bc5",
+  "account_below_minimum_age_description": "bd18d68f83c6c0243fdbd0cf529df8a4dc99c466c089329fb084d3b3657d4ca4",
+  "account_below_minimum_age_log_out_description": "3e8892a79ec0e7d389c4ab41189f05fdb91f852e99a1b6bb9a29600557bbfb32",
+  "account_below_minimum_age_ok": "b1c6a56802b07a0bbb7b754f37f723130a41818255b6f8373c352dfc2c0c4f05",
+  "account_below_minimum_age_title": "0ca588bbb79142d9b821ed4f95ea421275330ce8bd62d4f023c0c1da05439abc",
+  "account_birth_year_description": "113106e27dc90fad1c3c9fff8188831bb68a8441135ea0b86c6622c7d2d0db9a",
+  "account_birth_year_invalid": "be54385fd15827ea9105d30ffb4c5d66fb27011ce6bd6f5a2733adf9ed759c17",
+  "account_birth_year_label": "1aa48e5129b1778020dda79ed2f69cc5152c32d96b811ea78e4b0eb8763b8f48",
+  "account_birth_year_not_now": "0539c2dfdd9880d48203f6762a070a98f29b1ba64ef06fa09acec183d0aeac38",
+  "account_birth_year_save_failed": "59b9808e9cd348772af56ed34cb1ad75b1c8192ec0bf29a890eeebca217ca11d",
+  "account_birth_year_title": "65055e53ff98a8854b1b566cfefba783b8435fd7eaabd6b55113207a58cf8727",
   "account_change": "f7e9bbd16ed668b3f807a98baa558f92d526b686b25c67e22860f3fb69a4306c",
   "account_change_email": "cd107de16bfa185a52b00abe929faf84ed9b0ea7b45f75e022c6259baddb9fe5",
   "account_change_username": "5f629f67997b13ea243da6bc09bb04b139c42be1e57d2a84ac937b9db0aa09b1",
@@ -120,4 +130,20 @@
     <string name="account_sign_out_failed">O Zoonk não conseguiu sair da sua conta. Confira sua conexão e tente de novo.</string>
     <string name="account_unavailable_title">Não foi possível verificar sua conta</string>
     <string name="account_unavailable_description">Você ainda está na sua conta. Pode ser sua conexão, então tente de novo em instantes.</string>
+    <!-- Asked once, before a new or existing account goes on learning. -->
+    <string name="account_birth_year_title">Em que ano você nasceu?</string>
+    <string name="account_birth_year_description">A gente só pergunta isso uma vez para cada pessoa.</string>
+    <!-- Closes the birth year question without answering; nothing starts. -->
+    <string name="account_birth_year_not_now">Agora não</string>
+    <!-- The label of the field where the learner types the four-digit year they were born, like 1998. -->
+    <string name="account_birth_year_label">Ano de nascimento</string>
+    <string name="account_birth_year_invalid">Confira o ano e tente de novo.</string>
+    <string name="account_birth_year_save_failed">Não foi possível salvar. Tente de novo.</string>
+    <!-- Title of a kind message to someone too young to use Zoonk where they live. -->
+    <string name="account_below_minimum_age_title">Ainda não</string>
+    <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Kind and encouraging, never scolding. -->
+    <string name="account_below_minimum_age_description">Você precisa ter pelo menos %1$d anos para usar o Zoonk. A gente vai estar aqui quando você tiver essa idade.</string>
+    <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Shown to someone signed in: "log you out" means Zoonk ends their session in the app when they tap OK, the same action as the menu's "Log out". Kind and encouraging, never scolding. -->
+    <string name="account_below_minimum_age_log_out_description">Você precisa ter pelo menos %1$d anos para usar o Zoonk, então vamos encerrar sua sessão. A gente vai estar aqui quando você tiver essa idade.</string>
+    <string name="account_below_minimum_age_ok">OK</string>
 </resources>

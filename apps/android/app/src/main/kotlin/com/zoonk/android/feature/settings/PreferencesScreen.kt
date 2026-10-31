@@ -116,6 +116,8 @@ class PreferencesViewModel(
 
     fun setSoundsEnabled(enabled: Boolean) = save { profile.setSoundsEnabled(enabled) }
 
+    fun setShareUsageData(share: Boolean) = save { profile.setShareUsageData(share) }
+
     fun setDailyLimit(minutes: Long?) = save { profile.setDailyLimit(minutes) }
 
     fun setBuddy(
@@ -145,8 +147,8 @@ class PreferencesViewModel(
 }
 
 /**
- * Main's preferences: the buddy, lesson sounds and a daily limit, then the app's language, which
- * Android's own per-app language setting changes. Visitors only get the language.
+ * Main's preferences: the buddy, lesson sounds, a daily limit and sharing usage data, then the app's
+ * language, which Android's own per-app language setting changes. Visitors only get the language.
  */
 @Composable
 fun PreferencesScreen(
@@ -195,6 +197,7 @@ fun PreferencesScreen(
                         val look = summary.value?.buddy?.look() ?: BuddyLook()
                         BuddySection(state.value, look, preferences)
                         LessonsSection(state.value, preferences)
+                        UsageDataSection(state.value, preferences)
                     }
 
                     is LoadState.Failed -> {
@@ -272,16 +275,11 @@ internal fun LessonsSection(
 
     Section(stringResource(R.string.settings_preferences_lessons)) {
         OutlinedCard(Modifier.fillMaxWidth()) {
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.settings_preferences_sounds)) },
-                supportingContent = { Text(stringResource(R.string.settings_preferences_sounds_description)) },
-                trailingContent = { Switch(checked = profile.soundsEnabled, onCheckedChange = null) },
-                modifier =
-                    Modifier.toggleable(
-                        value = profile.soundsEnabled,
-                        role = Role.Switch,
-                        onValueChange = preferences::setSoundsEnabled,
-                    ),
+            SwitchRow(
+                title = stringResource(R.string.settings_preferences_sounds),
+                description = stringResource(R.string.settings_preferences_sounds_description),
+                checked = profile.soundsEnabled,
+                onCheckedChange = preferences::setSoundsEnabled,
             )
             HorizontalDivider()
             Box {
@@ -329,6 +327,39 @@ internal fun LessonsSection(
             }
         }
     }
+}
+
+/** The server records usage unless the learner turned it off. */
+@Composable
+private fun UsageDataSection(
+    profile: LearningProfile,
+    preferences: PreferencesViewModel,
+) {
+    Section(stringResource(R.string.settings_your_data)) {
+        OutlinedCard(Modifier.fillMaxWidth()) {
+            SwitchRow(
+                title = stringResource(R.string.settings_preferences_share_usage_data),
+                description = stringResource(R.string.settings_preferences_share_usage_data_description),
+                checked = profile.shareUsageData ?: true,
+                onCheckedChange = preferences::setShareUsageData,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SwitchRow(
+    title: String,
+    description: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    ListItem(
+        headlineContent = { Text(title) },
+        supportingContent = { Text(description) },
+        trailingContent = { Switch(checked = checked, onCheckedChange = null) },
+        modifier = Modifier.toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange),
+    )
 }
 
 /** Android keeps each app's language itself from API 33; below it the app follows the system's. */

@@ -118,7 +118,7 @@ val Onboarding.questionsLeft: Boolean get() = steps.any { it != OnboardingStep.P
 val Onboarding.courseSetupLeft: Boolean
     get() = "courseStart" in goal.details && steps.any { it != OnboardingStep.PLAN && it != OnboardingStep.BUDDY }
 
-/** A visitor's first write starts a guest session, as an anonymous sign-in does. */
+/** A visitor's first write starts a guest session, as an anonymous sign-in does, once [startGuest] has their birth year. */
 class OnboardingStore(
     private val api: OnboardingApi,
     private val cache: AppCache,
@@ -228,7 +228,7 @@ class OnboardingStore(
         }
     }
 
-    /** A visitor's write starts a guest first; what it returns instead when none could start. */
+    /** A visitor's write starts a guest first; what it returns instead when none started. */
     private suspend fun startAsGuest(): WriteOutcome<Nothing>? {
         if (sessions.current != null) return null
         return when (val started = startGuest()) {
@@ -242,7 +242,7 @@ class OnboardingStore(
             }
 
             SignInResult.Obsolete -> {
-                WriteOutcome.Failed
+                WriteOutcome.Obsolete
             }
         }
     }

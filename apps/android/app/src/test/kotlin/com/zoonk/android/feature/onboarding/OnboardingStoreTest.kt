@@ -96,6 +96,24 @@ class OnboardingStoreTest {
         }
 
     @Test
+    fun aVisitorWhoDidntStartAsAGuestSendsNothingAndSeesNoError() =
+        runTest {
+            val session = FakeSession(null)
+            val api = FakeOnboardingApi()
+            val store =
+                OnboardingStore(
+                    api,
+                    AppCache(session, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))),
+                    session,
+                ) { SignInResult.Obsolete }
+
+            assertEquals(WriteOutcome.Obsolete, store.sendGoal("pass the bar exam", "en"))
+            assertEquals(WriteOutcome.Obsolete, store.startCourse("course-1", chapterId = null, dailyMinutes = null, level = null))
+            assertTrue(api.understandCalls.isEmpty())
+            assertTrue(api.courseStarts.isEmpty())
+        }
+
+    @Test
     fun aVisitorTheSecurityCheckWontLetInAsAGuestIsAskedForAnAccount() =
         runTest {
             val session = FakeSession(null)

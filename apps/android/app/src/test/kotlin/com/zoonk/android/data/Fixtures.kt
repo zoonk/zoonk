@@ -25,11 +25,11 @@ internal fun summary(
     ApiJson.decodeFromString(
         """
         {"account":{"email":"ana@zoonk.test","image":null,"name":"Ana"},"activeGoalId":null,
-         "analytics":{"disabled":false,"goal":null,"plan":"free","username":null},
+         "analytics":{"adult":true,"disabled":false,"goal":null,"plan":"free","shareUsageData":null,"username":null},
          "buddy":{"beltColor":"white","energy":null,"glasses":"round","kind":"zu","name":null,"studiedToday":false},
          "day":null,"goals":[],
          "identity":{"expiresAt":1793186000000,"isAnonymous":false,"signedInAt":1761650000000,"userId":"$ANA"},
-         "level":null,"missions":null,"nextChangeAt":$nextChangeAt,
+         "level":null,"missions":null,"needsBirthYear":false,"nextChangeAt":$nextChangeAt,
          "places":{"exam":false,"mindMaps":false,"readyMistakes":0,"speaking":false},
          "readAt":$readAt,"tier":"free","timeZone":null,"today":null}
         """.trimIndent(),

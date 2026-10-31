@@ -61,4 +61,20 @@
     <string name="account_sign_out_failed">Zoonk couldn\'t log you out. Check your connection and try again.</string>
     <string name="account_unavailable_title">We couldn\'t check your account</string>
     <string name="account_unavailable_description">You\'re still signed in. It might be your connection, so try again in a moment.</string>
+    <!-- Asked once, before a new or existing account goes on learning. -->
+    <string name="account_birth_year_title">What year were you born?</string>
+    <string name="account_birth_year_description">We ask everyone once.</string>
+    <!-- Closes the birth year question without answering; nothing starts. -->
+    <string name="account_birth_year_not_now">Not now</string>
+    <!-- The label of the field where the learner types the four-digit year they were born, like 1998. -->
+    <string name="account_birth_year_label">Birth year</string>
+    <string name="account_birth_year_invalid">Check the year and try again.</string>
+    <string name="account_birth_year_save_failed">That didn\'t save. Try again.</string>
+    <!-- Title of a kind message to someone too young to use Zoonk where they live. -->
+    <string name="account_below_minimum_age_title">Not just yet</string>
+    <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Kind and encouraging, never scolding. -->
+    <string name="account_below_minimum_age_description">You need to be %1$d or older to use Zoonk. We\'ll be here when you are.</string>
+    <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Shown to someone signed in: "log you out" means Zoonk ends their session in the app when they tap OK, the same action as the menu's "Log out". Kind and encouraging, never scolding. -->
+    <string name="account_below_minimum_age_log_out_description">You need to be %1$d or older to use Zoonk, so we\'ll log you out. We\'ll be here when you are.</string>
+    <string name="account_below_minimum_age_ok">OK</string>
 </resources>
