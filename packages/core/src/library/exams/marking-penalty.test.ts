@@ -3,6 +3,8 @@ import { getMarkingPenalty, normalizePenalty } from "./marking-penalty";
 
 describe(normalizePenalty, () => {
   it.each([
+    [0.3, 0.3],
+    [1.3, 1.3],
     [0.333, 1 / 3],
     [0.1667, 1 / 6],
     [0.666667, 2 / 3],

@@ -10,7 +10,7 @@ const REPEATING_FRACTIONS = Object.values(REPEATING_DENOMINATORS).flatMap((denom
 export function normalizePenalty(value: number): number {
   const digits = value.toString().split(".")[1];
 
-  if (!digits) {
+  if (!digits || digits.length < 2) {
     return value;
   }
 
