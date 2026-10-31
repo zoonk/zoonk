@@ -183,7 +183,7 @@ function isSamePassage(first: QuestionFormat, second: QuestionFormat): boolean {
  * passage is the same only when it's answered alike.
  */
 function covers({ format, other }: { format: QuestionFormat; other: QuestionFormat }): boolean {
-  if (other.kind === format.kind && isSamePassage(other, format)) {
+  if (isSameAnswer(other, format) && isSamePassage(other, format)) {
     return true;
   }
 

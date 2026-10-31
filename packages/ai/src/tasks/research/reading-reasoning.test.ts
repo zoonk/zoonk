@@ -56,6 +56,13 @@ describe(getReadingReasoning, () => {
 });
 
 describe(mergeQuestionFormats, () => {
+  it("keeps one-pick and two-pick formats quoting the same sentence", () => {
+    const passage = "Questions ask you to select one answer or select two answers.";
+    const one = { ...format("multipleChoice", 5), passage, select: 1 as const };
+    const two = { ...one, select: 2 as const };
+    expect(mergeQuestionFormats({ found: [one], read: [one, two] })).toStrictEqual([one, two]);
+  });
+
   it("keeps different formats quoted in the same sentence", () => {
     const passage = "Questions are multiple choice or numeric entry.";
     const choice = { ...format("multipleChoice", 5), passage };
@@ -112,7 +119,7 @@ describe(mergeQuestionFormats, () => {
     ).toStrictEqual([scoped, comparison]);
   });
 
-  it("keeps the narrow read's entry for a format both quote, and the reading's alone when it found none", () => {
+  it("keeps different pick counts even when both readings quote the same passage", () => {
     const passage = "This question type presents the answer choices in columns.";
 
     const columns = {
@@ -131,6 +138,7 @@ describe(mergeQuestionFormats, () => {
 
     expect(mergeQuestionFormats({ found: [columns], read: [severalPicks] })).toStrictEqual([
       columns,
+      severalPicks,
     ]);
 
     expect(mergeQuestionFormats({ found: [], read: [severalPicks] })).toStrictEqual([severalPicks]);
