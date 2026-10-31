@@ -2645,6 +2645,21 @@ msgid "A rhythm of {length} steps with a beat every {perBeat}. Tap on steps {hit
 msgstr "{length} adımlık ritimde her {perBeat} adımda bir vuruş var. Her vuruşta duyulan tık sesi eşliğinde şu adımlarda dokun: {hits}."
 
 #: src/activities/source-comparison/source-comparison-activity.tsx
+msgctxt "Kl2YjL"
+msgid "What to mark: {passages}."
+msgstr "İşaretlenmesi gereken yerler: {passages}."
+
+#: src/activities/source-comparison/source-comparison-activity.tsx
+msgctxt "C9xd2P"
+msgid "You marked: {passages}."
+msgstr "İşaretlediklerin: {passages}."
+
+#: src/activities/source-comparison/source-comparison-activity.tsx
+msgctxt "MqYaoW"
+msgid "Nothing marked yet."
+msgstr "Henüz bir yer işaretlemedin."
+
+#: src/activities/source-comparison/source-comparison-activity.tsx
 msgctxt "8bxX7Z"
 msgid "What to mark"
 msgstr "İşaretlenecekler"
@@ -2664,16 +2679,6 @@ msgstr "Yanlış işaretleme"
 msgctxt "4O8gKs"
 msgid "Two sources to compare: {first} and {second}."
 msgstr "Karşılaştırılacak iki kaynak: {first} ve {second}."
-
-#: src/activities/source-comparison/source-comparison-activity.tsx
-msgctxt "C9xd2P"
-msgid "You marked: {passages}."
-msgstr "İşaretlediklerin: {passages}."
-
-#: src/activities/source-comparison/source-comparison-activity.tsx
-msgctxt "MqYaoW"
-msgid "Nothing marked yet."
-msgstr "Henüz bir yer işaretlemedin."
 
 #: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "1YOoLk"

@@ -2645,6 +2645,21 @@ msgid "A rhythm of {length} steps with a beat every {perBeat}. Tap on steps {hit
 msgstr "Un ritmo de {length} pasos con un pulso cada {perBeat} pasos. Toca en los pasos {hits} mientras suena un clic en cada pulso."
 
 #: src/activities/source-comparison/source-comparison-activity.tsx
+msgctxt "Kl2YjL"
+msgid "What to mark: {passages}."
+msgstr "Qué marcar: {passages}."
+
+#: src/activities/source-comparison/source-comparison-activity.tsx
+msgctxt "C9xd2P"
+msgid "You marked: {passages}."
+msgstr "Marcaste: {passages}."
+
+#: src/activities/source-comparison/source-comparison-activity.tsx
+msgctxt "MqYaoW"
+msgid "Nothing marked yet."
+msgstr "Aún no hay nada marcado."
+
+#: src/activities/source-comparison/source-comparison-activity.tsx
 msgctxt "8bxX7Z"
 msgid "What to mark"
 msgstr "Qué marcar"
@@ -2664,16 +2679,6 @@ msgstr "Marcado por error"
 msgctxt "4O8gKs"
 msgid "Two sources to compare: {first} and {second}."
 msgstr "Dos fuentes para comparar: {first} y {second}."
-
-#: src/activities/source-comparison/source-comparison-activity.tsx
-msgctxt "C9xd2P"
-msgid "You marked: {passages}."
-msgstr "Marcaste: {passages}."
-
-#: src/activities/source-comparison/source-comparison-activity.tsx
-msgctxt "MqYaoW"
-msgid "Nothing marked yet."
-msgstr "Aún no hay nada marcado."
 
 #: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "1YOoLk"

@@ -2645,6 +2645,21 @@ msgid "A rhythm of {length} steps with a beat every {perBeat}. Tap on steps {hit
 msgstr "全{length}ステップのリズムで、{perBeat}ステップが1拍です。拍ごとのクリック音を聞きながら、ステップ{hits}でタップしてください。"
 
 #: src/activities/source-comparison/source-comparison-activity.tsx
+msgctxt "Kl2YjL"
+msgid "What to mark: {passages}."
+msgstr "印を付ける箇所：{passages}。"
+
+#: src/activities/source-comparison/source-comparison-activity.tsx
+msgctxt "C9xd2P"
+msgid "You marked: {passages}."
+msgstr "印を付けた箇所：{passages}。"
+
+#: src/activities/source-comparison/source-comparison-activity.tsx
+msgctxt "MqYaoW"
+msgid "Nothing marked yet."
+msgstr "まだ印を付けていません。"
+
+#: src/activities/source-comparison/source-comparison-activity.tsx
 msgctxt "8bxX7Z"
 msgid "What to mark"
 msgstr "印を付ける箇所"
@@ -2664,16 +2679,6 @@ msgstr "誤って印を付けた箇所"
 msgctxt "4O8gKs"
 msgid "Two sources to compare: {first} and {second}."
 msgstr "{first}と{second}の2つの資料を比べます。"
-
-#: src/activities/source-comparison/source-comparison-activity.tsx
-msgctxt "C9xd2P"
-msgid "You marked: {passages}."
-msgstr "印を付けた箇所：{passages}。"
-
-#: src/activities/source-comparison/source-comparison-activity.tsx
-msgctxt "MqYaoW"
-msgid "Nothing marked yet."
-msgstr "まだ印を付けていません。"
 
 #: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "1YOoLk"

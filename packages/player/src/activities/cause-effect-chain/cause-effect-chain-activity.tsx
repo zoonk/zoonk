@@ -70,18 +70,16 @@ function NodeCard({
   );
 }
 
+/** `null` shows the lesson's chain: when exploring, or when a checked screen's answer doesn't hold the learner's links (a choice check). */
 function startingLinks({
   answer,
-  fields,
   phase,
-}: Pick<CauseEffectProps, "answer" | "phase"> & {
-  fields: CauseEffectProps["content"]["fields"];
-}): Link[] {
-  if (phase === "explore") {
-    return fields.links;
+}: Pick<CauseEffectProps, "answer" | "phase">): Link[] | null {
+  if (answer?.kind === "links") {
+    return answer.links;
   }
 
-  return answer?.kind === "links" ? answer.links : [];
+  return phase === "answering" ? [] : null;
 }
 
 export function CauseEffectChainActivity({
@@ -97,7 +95,9 @@ export function CauseEffectChainActivity({
   const nodes = orderNodes(fields.nodes);
   const order = nodes.map((node) => node.id);
   const isExploring = phase === "explore";
-  const [links, setLinks] = useState(() => startingLinks({ answer, fields, phase }));
+  const [learnerLinks, setLearnerLinks] = useState(() => startingLinks({ answer, phase }));
+  const isLessonChain = learnerLinks === null;
+  const links = learnerLinks ?? fields.links;
   const [causeId, setCauseId] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const { centers, containerRef, register } = useCardCenters();
@@ -107,7 +107,7 @@ export function CauseEffectChainActivity({
   const labelOf = (id: string) => fields.nodes.find((node) => node.id === id)?.label ?? id;
 
   function update(next: Link[]) {
-    setLinks(next);
+    setLearnerLinks(next);
 
     if (check.kind === "interaction") {
       onAnswerChange(next.length > 0 ? { kind: "links", links: next } : null);
@@ -150,15 +150,19 @@ export function CauseEffectChainActivity({
     linkTo(id, causeId);
   }
 
-  const results = isChecked && !isGuided ? compareLinks(links, fields.links) : null;
+  const results =
+    isChecked && !isGuided && !isLessonChain ? compareLinks(links, fields.links) : null;
 
   const arcs =
     results ??
-    links.map((link) => ({ ...link, state: isGuided ? ("correct" as const) : ("made" as const) }));
+    links.map((link) => ({
+      ...link,
+      state: isGuided && !isLessonChain ? ("correct" as const) : ("made" as const),
+    }));
 
   return (
     <ActivityCanvas labelId={labelId}>
-      {!isExploring && (
+      {!isLessonChain && (
         <div className="flex items-baseline justify-between gap-3">
           <ActivityCanvasLabel className="text-sm">
             {t("Pick a cause, then pick what it led to.")}
@@ -205,7 +209,7 @@ export function CauseEffectChainActivity({
       </p>
 
       <CauseEffectLinkList
-        isExploring={isExploring}
+        isLessonChain={isLessonChain}
         canRemove={!isLocked && !isGuided}
         explanations={fields.links}
         labelOf={labelOf}

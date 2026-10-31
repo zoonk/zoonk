@@ -40,7 +40,7 @@ function useStateLabel() {
 export function CauseEffectLinkList({
   canRemove,
   explanations,
-  isExploring,
+  isLessonChain,
   labelOf,
   links,
   onRemove,
@@ -48,7 +48,7 @@ export function CauseEffectLinkList({
 }: {
   canRemove: boolean;
   explanations: readonly (Link & { why: string })[];
-  isExploring: boolean;
+  isLessonChain: boolean;
   labelOf: (id: string) => string;
   links: readonly ListedLink[];
   onRemove: (link: Link) => void;
@@ -64,7 +64,7 @@ export function CauseEffectLinkList({
   return (
     <ul
       aria-label={
-        isExploring
+        isLessonChain
           ? t({
               description:
                 "Names the list of an explained cause-and-effect chain's links, which the lesson drew.",

@@ -158,6 +158,18 @@ function SourceCard({
   );
 }
 
+/** `null` when a checked screen's answer doesn't hold the learner's marks (a choice check): it shows what to mark. */
+function startingMarks({
+  answer,
+  phase,
+}: Pick<SourceComparisonProps, "answer" | "phase">): string[] | null {
+  if (answer?.kind === "selection") {
+    return answer.ids;
+  }
+
+  return phase === "checked" ? null : [];
+}
+
 export function SourceComparisonActivity({
   answer,
   content,
@@ -169,22 +181,21 @@ export function SourceComparisonActivity({
   const space = useSentenceSpace();
   const { check, fields } = content;
 
-  const [marked, setMarked] = useState<string[]>(() =>
-    answer?.kind === "selection" ? answer.ids : [],
-  );
-
+  const [learnerMarks, setLearnerMarks] = useState(() => startingMarks({ answer, phase }));
   const isChecked = phase === "checked";
+  const passages = fields.sources.flatMap((source) => source.passages);
+
+  const marked =
+    learnerMarks ?? passages.filter((passage) => passage.isTarget).map((passage) => passage.id);
 
   function toggle(id: string) {
     const next = marked.includes(id) ? marked.filter((item) => item !== id) : [...marked, id];
-    setMarked(next);
+    setLearnerMarks(next);
 
     if (check.kind === "interaction") {
       onAnswerChange(next.length > 0 ? { ids: next, kind: "selection" } : null);
     }
   }
-
-  const passages = fields.sources.flatMap((source) => source.passages);
 
   const markedTexts = passages
     .filter((passage) => marked.includes(passage.id))
@@ -193,6 +204,16 @@ export function SourceComparisonActivity({
   const found = passages.some((passage) => passage.isTarget && marked.includes(passage.id));
   const missed = passages.some((passage) => passage.isTarget && !marked.includes(passage.id));
   const wrong = passages.some((passage) => !passage.isTarget && marked.includes(passage.id));
+
+  function describeMarks() {
+    if (learnerMarks === null) {
+      return t("What to mark: {passages}.", { passages: markedTexts.join("; ") });
+    }
+
+    return markedTexts.length > 0
+      ? t("You marked: {passages}.", { passages: markedTexts.join("; ") })
+      : t("Nothing marked yet.");
+  }
 
   return (
     <ActivityCanvas labelId={labelId}>
@@ -248,9 +269,7 @@ export function SourceComparisonActivity({
           second: `${fields.sources[1]?.author ?? ""}, ${fields.sources[1]?.date ?? ""}`,
         })}
         {space}
-        {markedTexts.length > 0
-          ? t("You marked: {passages}.", { passages: markedTexts.join("; ") })
-          : t("Nothing marked yet.")}
+        {describeMarks()}
       </ActivityTextAlternative>
     </ActivityCanvas>
   );

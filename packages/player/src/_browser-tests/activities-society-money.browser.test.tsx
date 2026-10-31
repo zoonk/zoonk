@@ -451,6 +451,52 @@ describe("money and society activities with a keyboard only", () => {
 });
 
 describe("money and society activities on a return to the checked screen", () => {
+  it("source comparison with a question: the passages to mark show, and nothing is called missed", async () => {
+    openBeforeAnotherScreen({
+      ...fixtures.sourceComparison,
+      check: choiceCheck("Why do they disagree?", [
+        ["Each writer blames the other side", true],
+        ["One of them wasn't there", false],
+      ]),
+    });
+
+    await page.getByRole("checkbox", { name: "The regulars fired on us" }).click();
+    await page.getByRole("radio", { name: /Each writer blames the other side/u }).click();
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await leaveAndComeBack();
+
+    await expect
+      .element(page.getByRole("checkbox", { name: "The regulars fired on us" }))
+      .toBeChecked();
+
+    await expect
+      .element(page.getByRole("checkbox", { name: "the rebels fired first" }))
+      .toBeChecked();
+
+    await expect.element(page.getByText("What to mark", { exact: true })).toBeInTheDocument();
+    await expect.element(page.getByText("Missed", { exact: true })).not.toBeInTheDocument();
+
+    await expect
+      .element(page.getByText(/What to mark: The regulars fired on us; the rebels fired first\./u))
+      .toBeInTheDocument();
+  });
+
+  it("cause and effect with a question: the whole chain shows as how they connect", async () => {
+    openBeforeAnotherScreen(chainQuestion);
+    await chainNode("1920 Prairie plowed for wheat").click();
+    await chainNode("1934 Dust storms").click();
+    await page.getByRole("radio", { name: /Plowing and drought together/u }).click();
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await leaveAndComeBack();
+
+    const chain = page.getByRole("list", { name: "How they connect" });
+    await expect.element(chain).toBeVisible();
+    await expectCount(chain.getByRole("listitem"), 2);
+    await expect.element(page.getByText("Missed link")).not.toBeInTheDocument();
+  });
+
   it("source comparison: the marked passages are still marked", async () => {
     openBeforeAnotherScreen(fixtures.sourceComparison);
     await page.getByRole("checkbox", { name: "The regulars fired on us" }).click();
