@@ -158,6 +158,7 @@ function SourceCard({
 }
 
 export function SourceComparisonActivity({
+  answer,
   content,
   labelId,
   onAnswerChange,
@@ -165,7 +166,11 @@ export function SourceComparisonActivity({
 }: SourceComparisonProps) {
   const t = useExtracted();
   const { check, fields } = content;
-  const [marked, setMarked] = useState<string[]>([]);
+
+  const [marked, setMarked] = useState<string[]>(() =>
+    answer?.kind === "selection" ? answer.ids : [],
+  );
+
   const isChecked = phase === "checked";
 
   function toggle(id: string) {

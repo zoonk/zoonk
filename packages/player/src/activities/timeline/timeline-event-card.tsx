@@ -17,6 +17,11 @@ export type TrackEvent = {
   year: number;
 };
 
+/** An event the learner never placed (or placed on its year) has no guess to compare. */
+export function hasShownGuess(event: TrackEvent): boolean {
+  return event.isRevealed && event.guess !== event.year;
+}
+
 const KEY_STEPS: Readonly<Record<string, number>> = {
   ArrowDown: 1,
   ArrowLeft: -1,
@@ -110,12 +115,12 @@ export function EventCard({
       aria-valuemin={axis.start}
       aria-valuenow={event.isRevealed ? event.year : event.guess}
       aria-valuetext={
-        event.isRevealed
+        hasShownGuess(event)
           ? t("{year}. Your guess: {guess}", {
               guess: formatYear(event.guess),
               year: formatYear(event.year),
             })
-          : formatYear(event.guess)
+          : formatYear(event.isRevealed ? event.year : event.guess)
       }
       className={cn(
         "bg-background focus-visible:ring-ring/50 absolute right-0 flex min-h-11 -translate-y-1/2 items-center gap-2 rounded-xl border px-3 py-1.5 outline-none select-none focus-visible:ring-[3px] motion-safe:transition-[top] motion-safe:duration-300",
@@ -151,7 +156,7 @@ export function EventCard({
           {formatYear(event.isRevealed ? event.year : event.guess)}
         </p>
         <p className="text-sm leading-snug font-medium">{event.label}</p>
-        {event.isRevealed && (
+        {hasShownGuess(event) && (
           <p className="text-muted-foreground text-xs tabular-nums">
             {t("Your guess: {guess}", { guess: formatYear(event.guess) })}
           </p>

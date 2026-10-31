@@ -70,7 +70,22 @@ function NodeCard({
   );
 }
 
+function startingLinks({
+  answer,
+  fields,
+  phase,
+}: Pick<CauseEffectProps, "answer" | "phase"> & {
+  fields: CauseEffectProps["content"]["fields"];
+}): Link[] {
+  if (phase === "explore") {
+    return fields.links;
+  }
+
+  return answer?.kind === "links" ? answer.links : [];
+}
+
 export function CauseEffectChainActivity({
+  answer,
   content,
   labelId,
   onAnswerChange,
@@ -82,7 +97,7 @@ export function CauseEffectChainActivity({
   const nodes = orderNodes(fields.nodes);
   const order = nodes.map((node) => node.id);
   const isExploring = phase === "explore";
-  const [links, setLinks] = useState<Link[]>(() => (isExploring ? fields.links : []));
+  const [links, setLinks] = useState(() => startingLinks({ answer, fields, phase }));
   const [causeId, setCauseId] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const { centers, containerRef, register } = useCardCenters();

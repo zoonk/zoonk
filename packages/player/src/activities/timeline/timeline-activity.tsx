@@ -7,7 +7,7 @@ import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { type ActivityRendererProps } from "../activity-renderer";
-import { type TrackEvent } from "./timeline-event-card";
+import { type TrackEvent, hasShownGuess } from "./timeline-event-card";
 import { TimelineGaps } from "./timeline-gaps";
 import { placedOrder, snapYear, yearLabel, yearStep } from "./timeline-scale";
 import { TimelineTrack } from "./timeline-track";
@@ -47,19 +47,19 @@ function cardGap(labels: readonly string[], width: number): number {
 }
 
 function resultOf({
+  answer,
   expected,
   id,
-  order,
-}: {
-  expected: TimelineProps["expected"];
-  id: string;
-  order: readonly string[];
-}): TrackEvent["result"] {
-  if (expected?.kind !== "interaction" || expected.answer.kind !== "order") {
+}: Pick<TimelineProps, "answer" | "expected"> & { id: string }): TrackEvent["result"] {
+  if (
+    answer?.kind !== "order" ||
+    expected?.kind !== "interaction" ||
+    expected.answer.kind !== "order"
+  ) {
     return null;
   }
 
-  return expected.answer.ids.indexOf(id) === order.indexOf(id) ? "correct" : "incorrect";
+  return expected.answer.ids.indexOf(id) === answer.ids.indexOf(id) ? "correct" : "incorrect";
 }
 
 function ExploredTimeline({ content, labelId }: Pick<TimelineProps, "content" | "labelId">) {
@@ -115,7 +115,14 @@ function ExploredTimeline({ content, labelId }: Pick<TimelineProps, "content" | 
   );
 }
 
-function TimelineQuestion({ content, expected, labelId, onAnswerChange, phase }: TimelineProps) {
+function TimelineQuestion({
+  answer,
+  content,
+  expected,
+  labelId,
+  onAnswerChange,
+  phase,
+}: TimelineProps) {
   const t = useExtracted();
   const { check, fields } = content;
   const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
@@ -137,7 +144,6 @@ function TimelineQuestion({ content, expected, labelId, onAnswerChange, phase }:
 
   const { trackRef, yearAt } = useTimelineAxis(axis);
   const showTruth = isRevealed || isChecked;
-  const order = placedOrder(placements);
 
   const unplaced = fields.events.filter(
     (event) => !placements.some((placement) => placement.id === event.id),
@@ -176,6 +182,20 @@ function TimelineQuestion({ content, expected, labelId, onAnswerChange, phase }:
     );
   }
 
+  function describeEvent(event: TrackEvent) {
+    if (!event.isRevealed) {
+      return t("{label}: placed at {year}.", { label: event.label, year: formatYear(event.guess) });
+    }
+
+    return hasShownGuess(event)
+      ? t("{label}: {year}, your guess was {guess}.", {
+          guess: formatYear(event.guess),
+          label: event.label,
+          year: formatYear(event.year),
+        })
+      : t("{label}: {year}.", { label: event.label, year: formatYear(event.year) });
+  }
+
   const trackEvents: TrackEvent[] = fields.events.flatMap((event) => {
     const guess = placements.find((placement) => placement.id === event.id)?.year;
 
@@ -189,7 +209,7 @@ function TimelineQuestion({ content, expected, labelId, onAnswerChange, phase }:
         id: event.id,
         isRevealed: showTruth,
         label: event.label,
-        result: isChecked ? resultOf({ expected, id: event.id, order }) : null,
+        result: isChecked ? resultOf({ answer, expected, id: event.id }) : null,
         year: event.year,
       },
     ];
@@ -258,20 +278,7 @@ function TimelineQuestion({ content, expected, labelId, onAnswerChange, phase }:
             t("{label}: {year}.", { label: anchor.label, year: formatYear(anchor.year) }),
           )
           .join(" ")}{" "}
-        {trackEvents
-          .map((event) =>
-            event.isRevealed
-              ? t("{label}: {year}, your guess was {guess}.", {
-                  guess: formatYear(event.guess),
-                  label: event.label,
-                  year: formatYear(event.year),
-                })
-              : t("{label}: placed at {year}.", {
-                  label: event.label,
-                  year: formatYear(event.guess),
-                }),
-          )
-          .join(" ")}
+        {trackEvents.map((event) => describeEvent(event)).join(" ")}
       </ActivityTextAlternative>
     </ActivityCanvas>
   );

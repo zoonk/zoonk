@@ -17,6 +17,9 @@ import {
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
+import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { buildLesson } from "../preview/preview-lesson";
+import { type ActivityContent, activityStep, explanationStep } from "../preview/preview-steps";
 
 const fixtures = activityContentFixtures;
 
@@ -42,6 +45,24 @@ const chainQuestion = {
 
 const { calculator, scenario } = engineModeFixtures.formulaModel;
 const { breakEven } = engineModeFixtures.lineCrossing;
+
+function openBeforeAnotherScreen(content: ActivityContent) {
+  renderLessonPlayer({
+    lesson: buildLesson([
+      activityStep({ content }),
+      explanationStep({ text: "Next.", title: "Next" }),
+    ]),
+  });
+}
+
+async function leaveAndComeBack() {
+  await page.getByRole("button", { name: /^Continue/u }).click();
+  await page.getByRole("button", { name: "Previous screen" }).click();
+}
+
+function timelineMarks(result: "check" | "x") {
+  return document.querySelectorAll(`[data-slot="timeline-event"] .lucide-${result}`);
+}
 
 function openWithWrongPassage() {
   const fixture = activityContentFixtures.sourceComparison;
@@ -426,5 +447,57 @@ describe("money and society activities with a keyboard only", () => {
     await focusOn(page.getByRole("button", { name: "Check" }));
     await press("Enter");
     await expectVerdict("Correct!");
+  });
+});
+
+describe("money and society activities on a return to the checked screen", () => {
+  it("source comparison: the marked passages are still marked", async () => {
+    openBeforeAnotherScreen(fixtures.sourceComparison);
+    await page.getByRole("checkbox", { name: "The regulars fired on us" }).click();
+    await page.getByRole("checkbox", { name: "the rebels fired first" }).click();
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await leaveAndComeBack();
+
+    await expect
+      .element(page.getByRole("checkbox", { name: "The regulars fired on us" }))
+      .toBeChecked();
+
+    await expect
+      .element(page.getByRole("checkbox", { name: "the rebels fired first" }))
+      .toBeChecked();
+
+    await expect.element(page.getByText("Missed", { exact: true })).not.toBeInTheDocument();
+  });
+
+  it("cause and effect: the links made are still there", async () => {
+    openBeforeAnotherScreen(fixtures.causeEffectChain);
+    await chainNode("1920 Prairie plowed for wheat").click();
+    await chainNode("1934 Dust storms").click();
+    await chainNode("1931 Years of drought").click();
+    await chainNode("1934 Dust storms").click();
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await leaveAndComeBack();
+
+    await expect.element(page.getByText("2 of 2 links")).toBeVisible();
+    await expect.element(page.getByText("Missed link")).not.toBeInTheDocument();
+  });
+
+  it("timeline: events placed in order are still right, with no made-up guesses", async () => {
+    openBeforeAnotherScreen(fixtures.timeline);
+    await page.getByRole("button", { name: "Place Moon landing on the timeline" }).click();
+    await press("End");
+    await page.getByRole("button", { name: "Place Cleopatra rules Egypt on the timeline" }).click();
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await leaveAndComeBack();
+
+    await expect
+      .element(page.getByRole("slider", { name: "Moon landing" }))
+      .toHaveAttribute("aria-valuetext", "1969 CE");
+
+    await expect.poll(() => timelineMarks("check")).toHaveLength(2);
+    expect(timelineMarks("x")).toHaveLength(0);
   });
 });
