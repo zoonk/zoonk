@@ -62,7 +62,7 @@ Previews are on request: `pnpm preview` previews the current branch's PR, and `p
 
 All three database-connected apps build at once. Each points at the others through the branch URL Vercel gives every project (`<project>-git-<branch>-<team>.vercel.app`), which always serves the branch's latest deployment: main/admin receive the API's as `NEXT_PUBLIC_API_URL`, and the API receives main's as `MAIN_APP_URL` for links back to the app. Sign-in pages link back to the trusted app that started the sign-in. When a branch name is long enough for Vercel to shorten its URL, the API deploys first and main/admin receive its actual deployment URL instead. All three receive the same PR database URLs. The API preview uses its own Vercel hostname for self-references. Preview URLs appear in the Actions job summary.
 
-A new request cancels the previous run for the same PR and its queued/building Vercel deployments. Cancellation cleanup is scoped to that run, so it cannot cancel a newer run. Every preview submission and readiness poll verifies that its PR is still open and its commit is still current. Fork PRs can't be previewed: the workflow refuses a PR whose branch isn't in this repository.
+A new request cancels the previous run for the same PR and its queued/building Vercel deployments. Cancellation cleanup is scoped to that run, so it cannot cancel a newer run. Every preview submission and readiness poll verifies that its PR is still open. Pushing to the PR doesn't stop a running preview: it finishes deploying the commit it started with. Fork PRs can't be previewed: the workflow refuses a PR whose branch isn't in this repository.
 
 ## Releases and hotfixes
 

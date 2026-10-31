@@ -1,11 +1,11 @@
 import { requiredEnv } from "./config.mts";
-import { assertCurrentPreview, cancelPreviews, deploy } from "./deployment.mts";
+import { assertPullRequestOpen, cancelPreviews, deploy } from "./deployment.mts";
 
 const command = process.argv[2] ?? "";
 
 switch (command) {
   case "check-preview":
-    await assertCurrentPreview();
+    await assertPullRequestOpen();
     break;
   case "cancel-previews":
     await cancelPreviews();

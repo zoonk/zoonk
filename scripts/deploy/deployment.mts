@@ -132,13 +132,13 @@ const deploymentPageSchema = z.object({
   pagination: z.object({ next: z.number().nullable().optional() }),
 });
 
-export async function assertCurrentPreview(): Promise<void> {
+export async function assertPullRequestOpen(): Promise<void> {
   const pr = z
-    .object({ head: z.object({ sha: z.string() }), state: z.string() })
+    .object({ state: z.string() })
     .parse(await github(`pulls/${requiredEnv("PR_NUMBER")}`));
 
-  if (pr.state !== "open" || pr.head.sha !== requiredEnv("DEPLOY_SHA")) {
-    throw new Error("This preview was superseded or its PR was closed");
+  if (pr.state !== "open") {
+    throw new Error("This preview's PR was closed");
   }
 }
 
@@ -201,7 +201,7 @@ async function deployApp({
   mainAppUrl: string | null;
 }): Promise<string> {
   if (target === "preview") {
-    await assertCurrentPreview();
+    await assertPullRequestOpen();
   }
 
   const domain = target === "production" ? project.productionDomain : project.stagingDomain;
@@ -246,7 +246,7 @@ async function deployApp({
 
   async function checkDeployment(): Promise<string | undefined> {
     if (target === "preview") {
-      await assertCurrentPreview();
+      await assertPullRequestOpen();
     }
 
     const current = deploymentSchema.parse(

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import { PROJECTS } from "./config.mts";
-import { assertCurrentPreview, cancelPreviews, deploy, getAppUrl } from "./deployment.mts";
+import { assertPullRequestOpen, cancelPreviews, deploy, getAppUrl } from "./deployment.mts";
 
 type Call = { url: URL; body: Record<string, unknown>; method: string };
 
@@ -89,7 +89,7 @@ describe(deploy, () => {
 
     intercept(async (call) => {
       if (call.url.hostname === "api.github.com") {
-        return { head: { sha: "tested-sha" }, state: "open" };
+        return { state: "open" };
       }
 
       if (call.url.pathname === "/v2/teams/test-team") {
@@ -150,7 +150,7 @@ describe(deploy, () => {
 
     intercept((call) => {
       if (call.url.hostname === "api.github.com") {
-        return { head: { sha: "tested-sha" }, state: "open" };
+        return { state: "open" };
       }
 
       if (call.url.pathname === "/v2/teams/test-team") {
@@ -241,7 +241,7 @@ describe("preview course cache access", () => {
 
     intercept((call) => {
       if (call.url.hostname === "api.github.com") {
-        return { head: { sha: "tested-sha" }, state: "open" };
+        return { state: "open" };
       }
 
       if (call.url.pathname === "/v2/teams/test-team") {
@@ -336,13 +336,13 @@ describe(cancelPreviews, () => {
   });
 });
 
-describe(assertCurrentPreview, () => {
-  it.each([
-    { head: { sha: "tested-sha" }, state: "closed" },
-    { head: { sha: "newer-sha" }, state: "open" },
-  ])("rejects an obsolete preview: $state / $head.sha", async (pr) => {
-    intercept(() => pr);
-    await expect(assertCurrentPreview()).rejects.toThrow("superseded");
+describe(assertPullRequestOpen, () => {
+  it("rejects a closed PR but not one with newer commits", async () => {
+    intercept(() => ({ head: { sha: "newer-sha" }, state: "open" }));
+    await expect(assertPullRequestOpen()).resolves.toBeUndefined();
+
+    intercept(() => ({ state: "closed" }));
+    await expect(assertPullRequestOpen()).rejects.toThrow("closed");
   });
 });
 

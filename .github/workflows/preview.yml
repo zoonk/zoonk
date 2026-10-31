@@ -73,7 +73,7 @@ jobs:
           save-cache: ${{ github.ref == 'refs/heads/main' }}
       - name: Cancel superseded remote preview builds
         run: pnpm deploy cancel-previews
-      - name: Confirm this is still the current PR commit
+      - name: Confirm the PR is still open
         run: pnpm deploy check-preview
       - name: Validate the preview database parent
         run: pnpm deploy:database
