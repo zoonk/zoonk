@@ -25,7 +25,7 @@ const LEVEL_PHASE_NAMES: Readonly<Record<SupportedLocale, Record<CourseLevel, st
     advanced: "Avanzado",
     beginner: "Principiante",
     intermediate: "Intermedio",
-    overview: "Resumen",
+    overview: "Panorama general",
   },
   fr: {
     advanced: "Avancé",
