@@ -74,6 +74,6 @@ App builds generate Prisma but never migrate a database. Each deployment workflo
 
 ## Local verification
 
-Run `mise x -- pnpm test:deploy` for deployment orchestration tests and `mise x -- pnpm --filter @zoonk/utils test src/url.test.ts src/origin.test.ts` for API URL/origin behavior. Tests intercept the provider HTTP calls and Neon CLI execution; they never deploy or migrate a live database.
+Run `pnpm test:deploy` for deployment orchestration tests and `pnpm --filter @zoonk/utils test src/url.test.ts src/origin.test.ts` for API URL/origin behavior. Tests intercept the provider HTTP calls and Neon CLI execution; they never deploy or migrate a live database.
 
 Local tests exercise orchestration at the provider boundaries. They do not verify live credentials, remote builds, migration permissions, or Vercel-protected cross-project requests.

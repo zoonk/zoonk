@@ -11,4 +11,4 @@ Exercise the real capability against the configured test database. Use the works
 - A stored derived fact gets a test per input: change each input through its real writer and assert the stored value follows.
 - Keep pure normalization and transformation rules in their owning utility modules and test their public behavior directly. Do not add exports solely for tests.
 
-Use `mise x -- pnpm --filter <workspace> test <test-file>` for focused runs. Existing setup/configuration is the source of truth for database selection; do not print credentials or repoint tests at another environment to get them running.
+Use `pnpm --filter <workspace> test <test-file>` for focused runs. Existing setup/configuration is the source of truth for database selection; do not print credentials or repoint tests at another environment to get them running.

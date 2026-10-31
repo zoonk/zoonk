@@ -194,7 +194,7 @@ export const ENGINEERING_RULES: Rule[] = [
     line: /^\s*(?:\/\/|\/\*|\{\/\*)(?!\s*(?:oxlint-|eslint-|@ts-|oxfmt-|prettier-|swiftlint:))|\S\s+\/\/\s/u,
     name: "Comment",
     question:
-      "Does it say what the code can't: a constraint from something we can't change, a product rule the code would look wrong without, or a contract callers rely on? Otherwise delete it, or rename, extract or simplify until the code says it (root `AGENTS.md`, Comments).",
+      "Does it say what the code can't: a constraint from something we can't change, a product rule the code would look wrong without, or a contract callers rely on? Otherwise delete it, or rename, extract or simplify until the code says it (`.agents/guides/comments.md`).",
     role: "engineering",
   },
 ];

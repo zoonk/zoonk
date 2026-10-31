@@ -17,7 +17,7 @@ The [repository guidance](../../AGENTS.md) applies. This file adds Android-speci
 - Scope every asynchronous result and credential change to the session that started it. Before publishing or deleting state, confirm that session is still current, and test meaningful request-order races.
 - No client analytics SDK; the server records events from API requests.
 - Crashes and errors go to Sentry from release builds only: `ZoonkApplication` starts it when the release build names a DSN (the `sentryDsn` Gradle property); debug builds and tests never do. Reports name no learner: no `setUser` (the SDK's random installation id stays), `sendDefaultPii`, bodies, screenshots, view hierarchy, session replay, profiling or logcat breadcrumbs. The plugin instruments only OkHttp, failed-request events are dropped (the API reports its own), `ErrorReporting.kt` strips queries and fragments from network breadcrumbs and spans, and trace headers go only to the API.
-- Only `pnpm android:release` uploads the R8 mapping to Sentry, through sentry-cli's saved login (`sentry-cli login` once), so stack traces name our code. Every other release build, agents' checks included, embeds the mapping's id and uploads nothing, even on a signed-in Mac.
+- Only `pnpm android:release` uploads the R8 mapping to Sentry, through sentry-cli's saved login (`sentry-cli login` once), so stack traces name our code. Every other release build, agents' checks included, embeds the mapping's id and uploads nothing, even on a machine signed in to sentry-cli.
 
 ## Native UI
 
@@ -67,7 +67,7 @@ Every read the app shows goes through one pattern in `data/`, so screens are ins
 - Author app-owned UI copy in `core/resources/src/main/res/values/`, the complete English fallback: one `strings_<feature>.xml` per feature, with every name prefixed by its feature (`today_blocks_left`) because Android merges all files into one namespace, and shared words in `strings.xml`. Use `stringResource` or `pluralStringResource`, positional placeholders, and locale-aware formatting; avoid inline UI text and concatenated sentences. Use `translatable="false"` for intentional fixed product names.
 - Join a line of facts with `factsLine()`, never by hand with `" · "`: it puts a no-break space before each `·`, so a wrapped line never starts with one.
 - `@zoonk/utils/locale` owns the supported locale list; `@zoonk/i18n` owns shared translation configuration and style guides. Preserve generated Android locale configuration and system language selection rather than adding a parallel locale store or picker.
-- After adding, changing, or deleting English resources, run `pnpm --filter android i18n` from the repository root. It refreshes missing/stale translations, prunes removed entries, and finishes with strict validation. Eloqnt owns target XML and fingerprint comments, following the [translation rules](../../AGENTS.md#translations); do not bypass freshness checks. See [localization details](README.md#localization) for the codec and targeted retranslation workflow.
+- After adding, changing, or deleting English resources, run `pnpm --filter android i18n` from the repository root. It refreshes missing/stale translations, prunes removed entries, and finishes with strict validation. Eloqnt owns target XML and fingerprint comments, following the [translation rules](../../.agents/guides/translations.md); do not bypass freshness checks. See [localization details](README.md#localization) for the codec and targeted retranslation workflow.
 - Keep translatable resources within the configured catalogs: each `res/values/strings*.xml` is one catalog with `values-<code>/` targets. Extend the catalog configuration and codec together before adding feature-module resources or qualified overrides. Retain completeness, freshness, extra-key, placeholder/plural, unused-resource, and hardcoded Compose text checks. Suppressions need a narrow non-user-facing or preview-only reason; they must not conceal missing translations.
 - `HardcodedComposeText` cannot prove that arbitrary text flowing through API responses or application state is localized. Review those paths and translation quality when they change.
 
@@ -90,9 +90,9 @@ Follow the root completion and verification policy. The [README command referenc
 
 ## Emulators and builds
 
-Agents share one Mac with the owner and other agents. When the Mac is overloaded, the emulator's hang detector kills it, and an emulator with a window then opens a "quit unexpectedly" alert on the owner's screen.
+Several agents may run emulators and builds on one machine. When it's overloaded, the emulator's hang detector kills the emulator, and on macOS one with a window then opens a "quit unexpectedly" alert on screen.
 
-- Use the AVDs that exist (`emulator -list-avds`); don't create AVDs per task. Boot one headless with `-no-window -no-snapshot-save`, keep it running while you work, and shut it down when your task ends. A headless emulator's crash opens no alert, and no window covers the owner's screen. Look at it with `adb -s <serial> exec-out screencap -p > screen.png`.
-- Boot with a window only for TalkBack checks, which need its gestures, and run `pnpm dev:close-device-crash-alerts` before ending that task.
-- When your emulator exits on its own, the Mac was overloaded: run `pnpm dev:queue` before booting it again, so it waits for heavy jobs to make room.
+- Use the AVDs that exist (`emulator -list-avds`); don't create AVDs per task. Run `pnpm dev:queue` before booting one, so the boot waits while every slot is busy, then boot it headless with `-no-window -no-snapshot-save`, keep it running while you work, and shut it down when your task ends. A headless emulator opens no window, and its crash opens no alert. Look at it with `adb -s <serial> exec-out screencap -p > screen.png`.
+- Boot with a window only for TalkBack checks, which need its gestures; on macOS, run `pnpm dev:close-device-crash-alerts` before ending that task.
+- When your emulator exits on its own, the machine was overloaded: run `pnpm dev:queue` before booting it again, so it waits for heavy jobs to make room.
 - Run at most two emulators and two Gradle builds at once. Never run `./gradlew --stop`: it stops every Gradle daemon of that version on the machine, including other agents' builds. Idle daemons exit on their own.

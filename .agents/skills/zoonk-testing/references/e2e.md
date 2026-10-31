@@ -40,8 +40,8 @@ Use semantic drag handles and a deterministic target. If the pointer sensor requ
 Run from the repository root with an existing test path; the [development guide](../../../guides/development.md) owns build, database, and sandbox setup.
 
 ```bash
-mise x -- pnpm e2e:main e2e/path/to/test.test.ts
-mise x -- pnpm e2e:api e2e/path/to/test.test.ts
+pnpm e2e:main e2e/path/to/test.test.ts
+pnpm e2e:api e2e/path/to/test.test.ts
 ```
 
 For a demonstrated timing or isolation concern, use `--repeat-each=2` or another repetition count justified by the failure; a pass after an unexplained failure is insufficient.

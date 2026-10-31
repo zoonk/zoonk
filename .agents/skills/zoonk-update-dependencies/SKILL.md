@@ -9,7 +9,7 @@ metadata:
 
 # Update Zoonk dependencies
 
-1. Create and switch to a new `cw/` branch before updating dependencies.
+1. Create and switch to a new branch before updating dependencies.
 2. Remove overrides added to fix `pnpm audit` from `pnpm-workspace.yaml`, such as a temporary `nanoid` override. Add a comment explaining the reason for every retained or newly added override, including audit remediations. Preserve intentional overrides, including `"ai-sdk-provider-codex-cli>@openai/codex": "-"` and `katex: "catalog:"`.
 3. Update pnpm to the latest stable version in `package.json` and any explicit CI pins. Use that version locally; CI that reads `packageManager` needs no duplicate pin.
 4. Run `pnpm -r up --latest`. Ensure the root package and shared catalogs are updated too.

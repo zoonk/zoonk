@@ -14,8 +14,8 @@ Read the PNGs. Images aren't committed and CI doesn't compare pixels. A render s
 
 ## Set up the emulator
 
-- Start only main and the API from your checkout, with the mailbox that comes along for sign-in codes: `pnpm dev main api` to iterate, `pnpm start main api` for timings. Debug builds call the URL it writes to `apps/android/local-development.properties`; on the emulator, `localhost` names resolve to the Mac at `10.0.2.2`. A request that fails after 30 seconds with `SocketTimeoutException` means the app lacks `ACCESS_LOCAL_NETWORK` (see the README's "Local API").
-- Boot your AVD once and keep it: `emulator -avd Medium_Phone -no-window -no-snapshot-save &`, then `adb wait-for-device`. Install and launch: `pnpm android:phone -- Medium_Phone`.
+- Start only main and the API from your checkout, with the mailbox that comes along for sign-in codes: `pnpm dev main api` to iterate, `pnpm start main api` for timings. Debug builds call the URL it writes to `apps/android/local-development.properties`; on the emulator, `localhost` names resolve to the host machine at `10.0.2.2`. A request that fails after 30 seconds with `SocketTimeoutException` means the app lacks `ACCESS_LOCAL_NETWORK` (see the README's "Local API").
+- Boot your AVD once and keep it: `emulator -avd <avd> -no-window -no-snapshot-save &` with a name from `emulator -list-avds`, then `adb wait-for-device`. Install and launch: `pnpm android:phone -- <avd>`.
 - Sign in as a persona copy (`pnpm dev:persona <name>`) with the token recipe in `apps/android/README.md`'s "Local API".
 - Other agents may run Zoonk on another emulator: pass `-s <serial>` to every `adb` command (`adb devices`), and take your app's process: `PID=$(adb -s $SERIAL shell pidof com.zoonk.debug)`.
 
@@ -45,7 +45,7 @@ LeakCanary runs in debug builds and reports a retained object after the screen h
 adb logcat -d | grep -E 'LeakCanary.*(Retained|leak)'
 ```
 
-Each reported leak has a trace in the LeakCanary app on the device. For a heap to read on the Mac: `adb shell am dumpheap com.zoonk.debug /data/local/tmp/zoonk.hprof && adb pull /data/local/tmp/zoonk.hprof`, then open it in Android Studio's profiler.
+Each reported leak has a trace in the LeakCanary app on the device. For a heap to read on your computer: `adb shell am dumpheap com.zoonk.debug /data/local/tmp/zoonk.hprof && adb pull /data/local/tmp/zoonk.hprof`, then open it in Android Studio's profiler.
 
 ## CPU and jank
 

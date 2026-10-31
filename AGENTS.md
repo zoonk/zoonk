@@ -6,6 +6,7 @@
 - **Simplify instead of patching:** A bug, failing test, review finding, or roadblock invites a patch: a guard, retry, setting, fallback, second code path, or test harness. Each one feels necessary in the moment, and they pile up. Before adding one, find the root cause, check what the code and its dependencies already do, and ask what the simplest version of this part would be if you built it today; often the fix is to delete or reshape code, not to add to it. Add compatibility code only for data and clients that exist in production. When an approach changes, remove what the earlier attempt added. Before finishing, reread your diff and cut whatever you can't justify by a concrete failure it prevents.
 - **DRY:** Keep a single source of truth for behavior that must stay consistent, including repeated UI patterns and runtime schemas used by documentation. Extract for real shared rules or known extensions; a small number of callers is not a reason to leave competing implementations.
 - **SOLID:** Keep functions and modules focused, composable, and responsible for one concern. Use clear boundaries and dependencies; apply these principles without adding unnecessary class hierarchies, interfaces, or abstraction layers. Prefer functional composition and immutable transformations.
+- **Comments:** The default is none. Keep a comment only when it says what the code can't: a constraint from something we can't change, a product rule the code would look wrong without, a contract callers rely on, or a tool directive. Otherwise change the code until it says it. The [comments guide](.agents/guides/comments.md) has the full bar.
 - Think from first principles. Preserve intended behavior, question assumptions and existing patterns, and choose maintainable designs without expanding the requested scope.
 - When progress stalls (repeated review rounds, small optimizations that don't converge, growing machinery), stop and reframe; otherwise you keep optimizing the wrong thing. Question the problem itself: what does the user actually need, and what is the minimal work if you built it from scratch? Approach it from different angles like a polymath, borrowing proven principles from other fields and products: keep a running balance instead of re-summing the ledger, compute derived facts when their inputs change and only read them on views, load each fact once per request. Prefer removing work and machinery over optimizing it.
 - Before declaring a capability unavailable, adding infrastructure, or implementing behavior a dependency might own, check installed versions and current official documentation. Research relevant newer models, products, and libraries when they could materially simplify the solution; prefer supported capabilities and composition over rebuilding them. Use [capability research](.agents/skills/zoonk-capability-research/SKILL.md) for these decisions.
@@ -13,19 +14,6 @@
 - Write engineering work in US English: code, identifiers, comments, docs, commit messages, and examples in them. Use other languages only where the content is about that language or its learners: translation catalogs, language guides, test inputs and fixtures, eval cases, and AI prompt variants written for a language.
 - Preserve unrelated formatting; `oxfmt` owns formatting. Do not hard-wrap Markdown prose.
 - Make the best decision that will elevate all three: the user experience (UX), developer experience (DX), and agent experience (AX) always, without breaking anything.
-
-## Comments
-
-Code says what it does; a comment earns its place only by saying what the code can't. Every comment is one more thing to keep true, and agents add them to match the code around them, so the bar is high and the default is none.
-
-- Keep a comment only for:
-  - behavior forced by something we can't change (a library, framework, platform, browser, vendor API, protocol, or law), with the issue or doc link when one exists;
-  - a product rule the code can't express, where the code would look wrong, or get "fixed", without it;
-  - a contract an exported API's callers rely on that its name and types don't give, such as what it throws, authorizes, or guarantees;
-  - tool directives: license headers, lint suppressions with `-- reason`, `@ts-expect-error` with a reason, `@public`, formatter ignores, and translator comments.
-- Delete everything else: what the next lines do, a name or type restated in words, doc comments on every function, constant, prop, or field, section banners and `// MARK:`, history ("now", "previously", "no longer"), commented-out code, and test steps the test's name already says.
-- When our own code needs a comment to be understood, change the code instead: rename, extract a named function or constant, use a type, or simplify. A comment justifying a workaround in our own code is a sign to fix the workaround.
-- A kept comment is one or two short sentences about why, not what.
 
 ## Scope and completion
 
@@ -35,15 +23,11 @@ Code says what it does; a comment earns its place only by saying what the code c
 - Act as a product peer: when a requested approach or repository rule creates observed UX friction or unnecessary complexity, explain the conflict and propose a simpler way to achieve the user's goal. Make improvements within the authorized scope; surface decisions that would change explicit requirements.
 - Read task-relevant files and documentation. Skills provide conditional guidance; an explicit user request takes precedence. If an instruction blocks authorized work, identify the file and rule and explain the concrete conflict.
 - Report the outcome and verification in plain language, distinguishing observed behavior, static review, and passed checks. Base progress and completion claims on observed results, accounting for failures across the relevant run. Identify running, blocked, or unrun checks and material verification limits.
-- Don't patch dependencies unless explicitly requested. When you find a bug in an upstream dependency, report it without waiting to be asked: build a minimal public reproduction and open the issue on the owner's behalf with [zoonk-upstream-issue](.agents/skills/zoonk-upstream-issue/SKILL.md) and [zoonk-post-on-behalf](.agents/skills/zoonk-post-on-behalf/SKILL.md). Meanwhile, figure out a workaround we can use.
+- Don't patch dependencies unless explicitly requested. When you find a bug in a dependency, work around it and report it upstream with a minimal public reproduction ([zoonk-upstream-issue](.agents/skills/zoonk-upstream-issue/SKILL.md)) once the user approves posting from their account; a standing approval in their own instructions counts.
 
 ## Agent orchestration
 
-If this is a big task or it requires checking multiple areas (eg code, design, ux, accessibility, etc), delegate tasks to sub-agents especialized in those fields. For instructions, read _[Agent orchestration](.agents/guides/orchestration.md)_.
-
-Agents share the owner's Mac, often many at once, so heavy jobs take turns: `pnpm dev:queue` runs one per 20 GB of memory, first come first served. `pnpm start`, `pnpm build`, `pnpm test`, the E2E commands, `pnpm iphone` and the other device launchers, and the Apple and Android Makefiles already go through it; put any other build or test run behind it (`pnpm dev:queue ./gradlew …`), and run `pnpm dev:queue` alone before booting a simulator or emulator, so the boot waits while every slot is busy. Start only the apps a task needs (`pnpm start api` for a native walk; the mailbox always comes along) and stop them when you're done.
-
-Agents also share one disk, and every worktree fills it: its own dependencies, builds (a production build is about 6 GB) and database copies. An agent working in a worktree made for its task removes that worktree when the task ends, before it hands back: commit the work (its branch keeps the commits), stop the servers it started there, then, as its last command, run `git worktree remove <path>`, which refuses while uncommitted work is left. The next `pnpm worktree:setup` drops its database copies. A lead lands a lane's commits from its branch and doesn't need the lane's checkout; it removes the worktree of a lane that failed, was cancelled or handed back uncommitted work once its commits are landed or dropped. Reviews and other read-only tasks run in the lead's checkout, without a worktree.
+Delegate a big task, or one that spans several areas (code, design, UX, accessibility), to subagents specialized in each, following the [orchestration guide](.agents/guides/orchestration.md). It also covers several agents sharing one machine. If you work in a worktree made for your task, commit, stop its servers and remove it before you hand back ([details](.agents/guides/orchestration.md#sharing-one-machine)).
 
 ## Architecture shared by all workspaces
 
@@ -59,14 +43,13 @@ Agents also share one disk, and every worktree fills it: its own dependencies, b
 
 ## Verification
 
-- When you finish work, before each commit, and before handing off, run the [verify skill](.agents/skills/verify/SKILL.md): it sizes the checks to the change, audits the diff (`pnpm verify:diff`), uses the change in the running app, measures its pages (`pnpm verify:pages` on the production build `pnpm start` serves), has it reviewed as a principal engineer, a security researcher and a designer would, and reports the evidence. The rules below decide what it must cover.
-- Derive verification scope from the behavior and contracts being changed, including affected consumers and tests in unchanged files. Use focused checks when that scope is demonstrably bounded. When the impact is broad or uncertain, run the relevant containing suites. For behavior changes, prefer a failing regression test before implementation when practical, at the cheapest layer that reproduces the bug; an E2E test only when the bug clears zoonk-testing's E2E bar. For documentation, copy, styling, or other low-impact edits, use relevant validation without adding tests that mirror the edit.
-- Use [zoonk-testing](.agents/skills/zoonk-testing/SKILL.md) when writing or changing tests: E2E only for the high-risk journeys and seams its E2E bar allows, Vitest browser tests in `packages/player` for lesson player behavior, real-database integration tests for persistence and business logic, and unit tests for non-trivial pure helpers. Do not write React component unit tests. Do not add tests for `admin`, `evals`, or `blog`.
-- For user-facing changes, use [zoonk-persona-walkthrough](.agents/skills/zoonk-persona-walkthrough/SKILL.md) to use the running product as contrasting learner personas, from entry to outcome and return visits, including their bad days, with eyes that haven't seen the implementation where possible. Judge clarity, effort, honesty, recovery, and unnecessary UI; passing automated happy paths is insufficient. Fix observed issues, add regression coverage for reproducible problems where zoonk-testing's bar says a test is worth it, and report the evidence.
+- When you finish work, before each commit, and before handing off, run the [verify skill](.agents/skills/verify/SKILL.md): it sizes the checks to the change, uses the change in the running app, measures its pages, has it reviewed, and says what evidence to report. The rules below decide what it must cover.
+- Derive verification scope from the behavior and contracts being changed, including affected consumers and tests in unchanged files. Use focused checks when that scope is demonstrably bounded. When the impact is broad or uncertain, run the relevant containing suites. For behavior changes, prefer a failing regression test before implementation when practical, at the cheapest layer that reproduces the bug. For documentation, copy, styling, or other low-impact edits, use relevant validation without adding tests that mirror the edit.
+- Write and change tests with [zoonk-testing](.agents/skills/zoonk-testing/SKILL.md): it picks the cheapest layer and sets the bar an E2E test must clear. Do not write React component unit tests. Do not add tests for `admin`, `evals`, or `blog`.
+- For user-facing changes, use the running product as contrasting learner personas, bad days included, with [zoonk-persona-walkthrough](.agents/skills/zoonk-persona-walkthrough/SKILL.md). Passing automated happy paths is insufficient.
 - Run relevant local checks and fix failures caused by the requested change without pausing for review after each step. Investigate failures, including intermittent ones; do not rerun until green and dismiss them. Fix failures in the affected scope, and report unrelated failures with evidence instead of silently expanding the task.
 - During implementation, once the affected scope has been verified, broaden or repeat checks only for new changes, failures, unresolved risks, or an explicit request. For timing, concurrency, or fixture-isolation changes, repeat the focused affected coverage to establish stability.
-- Before each commit, run the change's relevant checks: typecheck, lint and format of the touched files, and affected tests, where applicable. Report the checks and results. Commits do not require the full PR verification gate.
-- Caches make repeated checks cheap: Turbo replays typecheck, lint and test results that CI or another checkout already produced for unchanged packages. The Android workflow runs release lint and the R8 build only when started by hand, since they take over 5 minutes on CI: run `make -C apps/android lint build` locally before committing any Android change beyond docs, and in the PR verification gate.
+- Before each commit, run the change's relevant checks ([development guide](.agents/guides/development.md#commands)): typecheck, lint and format of the touched files, and affected tests, where applicable. Report the checks and results. Commits do not require the full PR verification gate.
 
 ### Cross-model review
 
@@ -75,20 +58,13 @@ Before committing or pushing any code change beyond a typo or a small, obvious f
 1. Ask yourself: "Am I over-engineering this? Is there a simpler way to do it?"
 2. Have a subagent from the other model family review it adversarially at xhigh reasoning: GPT Sol reviews Opus's work, and Opus reviews GPT Sol's. Give it the request and the diff, not your reasoning, and fix what holds up.
 
-Some models over-engineer, and a reviewer from another family catches the bugs, clutter and simpler approaches the author misses. This applies to every agent that commits, subagents included: one that can't delegate hands back before committing so its lead gets the review.
+Some models over-engineer, and a reviewer from another family catches the bugs, clutter and simpler approaches the author misses. This applies to every agent that commits, subagents included: one that can't delegate hands back before committing so its lead gets the review. When only one model family is available, use a fresh agent of that family, given only the request and the diff, and say so in the handoff.
 
 ### PR verification gate
 
-- Before opening a PR (including a draft), marking a PR ready for review, or merging a PR, run locally the full set of quality checks from both the PR and `main` CI pipelines, including checks that only run after merge. It applies to every change type; focused checks during implementation do not replace it.
-- Read the current [.github/workflows](.github/workflows), including reusable workflows, as the source of truth for commands, setup, matrices, and platform-specific path conditions. Cover formatting, lint, type checks, both Knip modes, translations, generated API contracts, deployment orchestration tests, all Vitest suites (unit, database integration, and player browser tests), and the full Main and API E2E suites (`pnpm e2e`, which builds and migrates what it tests). Cover every configured test project and shard; an unsharded run is sufficient when it exercises the same full suite. Include applicable native CI checks, including those CI runs only on demand. Use the [development guide](.agents/guides/development.md) for local environment and browser execution requirements.
-- Verify the final tree before opening a PR, marking it ready for review, or merging it. If it changes after verification, rerun the full gate. Fix failures in the affected scope and report unrelated failures or missing prerequisites with evidence; do not open a PR, mark it ready, or merge it while required checks are failing, blocked, or unrun. Report the checks and results with the handoff.
-
-## Translations
-
-- Translations come from Eloqnt: after changing English copy, run `pnpm --filter <app> i18n`, which first fills missing translations with existing translations of the same English from any catalog, then its `i18n:lint`.
-- When a translation is wrong or inconsistent, fix it through Eloqnt first: a clearer English source, a translator comment, or a style-guide entry for a recurring term or expression. Then re-translate just that string (`--id <message id>`; on Apple, mark it `needs_review` and run `i18n`).
-- Edit a translation by hand only when that re-run still gets it wrong.
-- Eloqnt sends the shared [style guide](packages/i18n/.eloqnt/styleguide.md) and the target locale's `styleguide.<locale>.md` with every request and supplies translation best practices itself, so add only recurring cross-app terms and expressions (`goal → meta`, “Brain Power”, the verb for “say” in pronunciation practice), Zoonk's voice, and locale conventions a translator couldn't guess; never individual strings, ordinary UI words like “Save”, generic i18n rules, or grammar a good translator applies anyway. Rules for writing English copy go in `styleguide.en.md`, which translations never receive.
+- Before opening a PR (including a draft), marking a PR ready for review, or merging a PR, run locally, on the final tree, the full set of quality checks from both the PR and `main` CI pipelines, including checks that only run after merge or on demand. It applies to every change type; focused checks during implementation do not replace it.
+- The current [.github/workflows](.github/workflows), reusable workflows included, are the source of truth for commands, setup, matrices, and path conditions. Cover formatting, lint, type checks, both Knip modes, translations, generated API contracts, deployment orchestration tests, all Vitest suites (unit, database integration, and player browser tests), the full Main and API E2E suites (`pnpm e2e`), and the applicable native checks, across every configured test project and shard; an unsharded run counts when it exercises the same full suite. The [development guide](.agents/guides/development.md) covers local setup.
+- If the tree changes after verification, rerun the full gate. Do not open a PR, mark it ready, or merge it while required checks are failing, blocked, or unrun: fix failures in the affected scope, report unrelated failures or missing prerequisites with evidence, and report the checks and results with the handoff.
 
 ## Task-specific guidance
 
@@ -97,7 +73,9 @@ Read the scoped `AGENTS.md` files governing paths you change, including when wor
 | Task                                                            | Guidance                                                                           |
 | --------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | TypeScript or JavaScript                                        | [Code conventions](.agents/guides/typescript.md)                                   |
+| Code comments in any language                                   | [Comments](.agents/guides/comments.md)                                             |
 | React/Next.js UI or web translations, including shared packages | [Web UI and localization](.agents/guides/web.md)                                   |
+| User-facing copy or translations in any app                     | [Translations](.agents/guides/translations.md)                                     |
 | Prisma queries in any workspace                                 | [Prisma query conventions](.agents/guides/prisma.md)                               |
 | Prisma schema, migrations, or generated client                  | [Database package](packages/db/AGENTS.md)                                          |
 | Core authorization, reads, caching, or mutations                | [Core package](packages/core/AGENTS.md)                                            |
@@ -108,21 +86,16 @@ Read the scoped `AGENTS.md` files governing paths you change, including when wor
 | Android UI                                                      | [Android Material guidelines](.agents/skills/android-material-guidelines/SKILL.md) |
 | AI task prompts                                                 | [AI package](packages/ai/AGENTS.md)                                                |
 | Adding a supported language                                     | [Adding a language](.agents/guides/adding-a-language.md)                           |
+| Delegating to subagents or running agents in parallel           | [Agent orchestration](.agents/guides/orchestration.md)                             |
 | Local services, sign-in, or validation commands                 | [Development guide](.agents/guides/development.md)                                 |
+| Turborepo configuration or commands                             | The installed `turbo` package's `docs/README.md`, then its relevant pages          |
 
 ## Maintaining these instructions
 
-Keep repository rules focused on project constraints and non-obvious decisions. Put task-specific procedures in the relevant skill and load supporting references only as needed.
+Keep repository rules focused on project constraints and non-obvious decisions. Put task-specific procedures in the relevant guide or skill and load supporting references only as needed.
+
+Write them for any contributor, on any OS and agent harness: no one person's name, personal paths (where someone keeps their checkouts or repositories), computer, personal memory or soon-stale branch names. Call the person an agent works for "the user", and state a step that needs one OS or tool as a condition ("On macOS, …"). Personal preferences belong in your own user-level instructions, not here.
+
+When you move or rename a section, update everything that points at it, scripts included (`git grep -n -e AGENTS.md -e .agents/`).
 
 Keep `.agents/skills` as the source of truth. When adding, renaming, or removing a skill, update its relative symlink in `.claude/skills` and verify every canonical skill resolves there to the same directory.
-
-<!-- BEGIN:turborepo-agent-rules -->
-
-# This is NOT the Turborepo you know
-
-Turborepo configuration, task behavior, and CLI commands can vary between installed versions and may differ from your training data. Resolve the `turbo` package from this file's directory or relevant workspace; in monorepos, it may not be visible from the repository root. For example, run `node -p "require.resolve('turbo/package.json')"` from a workspace that depends on `turbo`.
-
-Read `docs/README.md` inside that installed package first, then read the relevant pages from its `docs/` directory before changing Turborepo configuration or commands. Heed deprecation notices. These bundled docs match the installed package version and are available without network access.
-
-This block is written and re-added by `turbo` before repository-scoped commands when an AI agent is detected. In the Turborepo source repository, its template is defined in `crates/turborepo-cli/src/cli/agent_guidance.rs`. Removing the managed block while updates are enabled means a later qualifying invocation will add it again. Set `"agentGuidance": false` in the root `turbo.json` or `turbo.jsonc` to opt out; this does not remove an existing block. Keep the block committed with your work to avoid an uncommitted change on the next agent invocation.
-<!-- END:turborepo-agent-rules -->
