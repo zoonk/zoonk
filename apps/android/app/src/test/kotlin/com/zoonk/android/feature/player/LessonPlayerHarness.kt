@@ -32,6 +32,8 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -90,6 +92,7 @@ internal class LessonPlayerHarness(
         sessionSteps: SessionSteps? = null,
         restoration: StateRestorationTester? = null,
         withTutor: Boolean = false,
+        pictures: PrivatePictures? = null,
         configure: FakeLessonPlayerApi.() -> Unit = {},
     ) {
         val lesson = playable(steps)
@@ -123,7 +126,11 @@ internal class LessonPlayerHarness(
 
         val content: @Composable () -> Unit = {
             ZoonkTheme {
-                CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState(), LocalCodeSandbox provides sandbox) {
+                CompositionLocalProvider(
+                    LocalSnackbarHostState provides SnackbarHostState(),
+                    LocalCodeSandbox provides sandbox,
+                    LocalPrivatePictures provides pictures,
+                ) {
                     val state by viewModel.state.collectAsState()
                     val ending by viewModel.ending.collectAsState()
                     LaunchedEffect(Unit) { viewModel.open(lesson) }

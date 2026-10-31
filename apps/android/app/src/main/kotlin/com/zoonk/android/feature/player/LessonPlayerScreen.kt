@@ -514,7 +514,8 @@ private fun PrefetchPictures(state: LessonPlayerState) {
         state.queue
             .drop(state.position + 1)
             .take(PICTURES_AHEAD)
-            .mapNotNull { state.steps[it]?.image?.url }
+            .mapNotNull { state.steps[it] }
+            .flatMap { step -> listOfNotNull(step.image?.url) + step.optionPictures.values.map { it.url } }
 
     LaunchedEffect(ahead, pictures.session) {
         ahead.forEach { url -> pictures.images.loader.enqueue(pictures.images.request(context, url, pictures.session)) }
