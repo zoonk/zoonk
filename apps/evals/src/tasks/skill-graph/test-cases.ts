@@ -4,6 +4,7 @@ import { type SkillGraphParams } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { CAMARA_BLUEPRINT } from "./camara-blueprint";
 import { CGU_BLUEPRINT } from "./cgu-blueprint";
 import { ENEM_SCIENCE_BLUEPRINT } from "./enem-science-blueprint";
+import { PIRACEMA_BLUEPRINT } from "./piracema-blueprint";
 
 const SHARED_EXPECTATIONS = `
   - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)
@@ -458,6 +459,27 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
     userInput: {
       examBlueprint: CGU_BLUEPRINT,
       goal: "Passar no concurso da CGU",
+      goalKind: "exam",
+      language: "pt",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Small public-service exam: 35 four-option questions for a mid-level municipal role, 10 on Língua Portuguesa and 5 on each of the other five subjects. Every subject is an area named as the notice names it, and every one of its 76 topics is taught by some skill: a subject with five questions still keeps every topic of its syllabus
+      - Each topic is taught once, at the depth this exam asks it: a few direct multiple-choice questions per subject. Most topics take a few lessons, and the topics a subject's questions keep returning to (reading and grammar in context) take more; a skill of 20 to 40 lessons on one line of a five-question subject pads the path
+      - No overlap: no two skills teach the same idea, such as ratios and proportions in one skill and the rule of three in another, interpreting texts in one skill and inferring what they imply in another, or several skills that each re-teach part of one topic line. Content the notice lists in two subjects (Lei 14.133 in Legislação and in Conhecimentos Específicos, the Constitution's articles on public administration) is taught once, and the other subject's skill builds on it instead of teaching it again
+      - Nothing the notice doesn't test: no interest (juros) under Porcentagem, no reading tables and charts under Raciocínio Lógico, no public budget (PPA, LDO, LOA, the budget cycle) under public administration, and no area beyond the six subjects except a small exam strategy
+      - Honest size: a few hundred lessons in all, roughly 400 to 1,000. A map of well over 1,200 lessons pads the path (this notice once got 1,974, as many as an exam with five times its questions)
+      - Exam strategy, if present, is one or two short skills: a wrong answer costs nothing, so no skill on when to leave a question blank
+      - Weights follow the notice: Língua Portuguesa, with twice the questions of any other subject, weighs the most
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-piracema-assistente-administrativo",
+    userInput: {
+      examBlueprint: PIRACEMA_BLUEPRINT,
+      goal: "Concurso Prefeitura de Piracema/MG, Assistente Administrativo",
       goalKind: "exam",
       language: "pt",
     },

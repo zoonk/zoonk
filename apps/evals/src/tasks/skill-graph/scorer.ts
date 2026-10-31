@@ -1,5 +1,6 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskScorer } from "@/lib/types";
+import { findUncoveredTopics } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import {
   type SkillGraphParams,
   type generateSkillGraph,
@@ -17,6 +18,7 @@ export type SkillGraphOutput = SkillGraphResult["data"] &
 
 type GraphCheck =
   | Exclude<SkillGraphProblem["code"], "emDash" | "markdown" | "placeholder">
+  | "uncoveredTopic"
   | "writing";
 
 const CHECKS: readonly GraphCheck[] = [
@@ -26,6 +28,7 @@ const CHECKS: readonly GraphCheck[] = [
   "offNoticeFirst",
   "nearDuplicate",
   "repeatedPhaseName",
+  "uncoveredTopic",
   "writing",
 ];
 
@@ -45,12 +48,21 @@ function checkGraph(output: string, input: SkillGraphParams): CodeCheckResult {
     ...(graph.repaired ?? []),
   ];
 
-  const failing = new Set(problems.map((problem) => toCheck(problem.code)));
+  const uncovered = input.examBlueprint
+    ? findUncoveredTopics({ outline: input.examBlueprint, skills: graph.skills }).map(
+        ({ subject, topic }) => `No skill teaches "${topic}" of ${subject}.`,
+      )
+    : [];
+
+  const failing = new Set([
+    ...problems.map((problem) => toCheck(problem.code)),
+    ...(uncovered.length > 0 ? ["uncoveredTopic" as const] : []),
+  ]);
 
   return {
     judgedOutput: output,
     passed: CHECKS.length - failing.size,
-    problems: problems.map((problem) => problem.problem),
+    problems: [...problems.map((problem) => problem.problem), ...uncovered],
     total: CHECKS.length,
   };
 }
