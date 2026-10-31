@@ -8,7 +8,7 @@
   "goal_switcher_finished": "493961d047d1a4475a47110195b3c772a9d8b1ccaf50afcaadb6c7b688a32463",
   "goal_switcher_new_goal": "53c3672917c02acf3b98e7fea7240d658b7496034d7dc6a78a7dd8cf4fb874d4",
   "goal_switcher_paused": "d137feba8857b00848de86c01340a6f12322cd05c0e55feaa84c50ae2968b4ad",
-  "goal_switcher_quick_explanations": "b78429be6aa1432acb6d0ca9fdf3991e7e9ff80746b8766301a5b2b0a3fa420d",
+  "goal_switcher_quick_explanations": "08ca2150eb8e5a7da63a6b90869df89e3b432f12ca12750c31797815380289cb",
   "goal_switcher_start_goal": "8c40d01eff300507504f2d7197ec80186c5ecbd16b8111bef95a339849fb88ac",
   "goal_switcher_your_goals": "8937b4edd5afed09bd1182c968c48e5847bac6385faab4b694d620f555653977"
 }
@@ -18,7 +18,7 @@
     <!-- Read by TalkBack on the top bar's goal button; %1$s is the goal's title. -->
     <string name="goal_switcher_current_goal">%1$s、現在の目標です。目標を切り替える</string>
     <string name="goal_switcher_your_goals">目標</string>
-    <string name="goal_switcher_quick_explanations">簡単な解説</string>
+    <string name="goal_switcher_quick_explanations">クイック解説</string>
     <string name="goal_switcher_new_goal">新しい目標を始める</string>
     <string name="goal_switcher_explore_courses">コースを探す</string>
     <!-- %1$s is a duration, such as "30 min". -->

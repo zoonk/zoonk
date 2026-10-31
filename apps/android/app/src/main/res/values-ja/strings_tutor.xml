@@ -49,7 +49,7 @@
   "tutor_no_answer": "96045470ab03c397614fb6d13d3b06ca95f8e5d513ed2102e1b2ba8dbc8ebdfd",
   "tutor_not_answered": "0f12d6b050ad8f807d045c64ae65d4ce9d029a0eefe63af2ec92a755f8f66814",
   "tutor_offer_call": "f9bc74521a54fa481fbbdb663d3b0461d9931f61f7bce097d75184a512de0a49",
-  "tutor_offer_call_paused": "39d5d38441cebdf8fe59735a6a55b68ba4cbd04d1ba94ddecc55a11c2c3f8214",
+  "tutor_offer_call_paused": "088075843c5a24fc369d626d950c5c5d77457c2eac6d90722c92f33569dc978c",
   "tutor_offer_call_with": "cd8c2df107fc2432a97dfa06ce8f61ab871838ca967a90fc5547904b63733c25",
   "tutor_offer_catalog_course": "f9daec36b9e355464fb6321298ca176b5d6a00b4f6cb7facdb86c5f72c3684a5",
   "tutor_offer_chapter_test": "65994d271ba54489de2b1cbdc44de33fc522f7651f42a7a110c0f46530aa2a9d",
@@ -78,7 +78,7 @@
   "tutor_offer_plus": "545f83ac3aedf980ec2b8cc7b9bb34dc0dafd7d44b3d400738176b4d770180fd",
   "tutor_offer_plus_description": "fbb0d3b44a88b92725125cf8834d3afa4752047523e7f165860316575327e18a",
   "tutor_offer_plus_subscribed": "7e5ce2753919d0abfccc141d7688dce4c8ad097c8fe2572d99e582ae0627e138",
-  "tutor_offer_practice": "3f37bb2113608f25754e7680fdd493a81a7059c0654a2a1b3ef1a3cbd1d38b1c",
+  "tutor_offer_practice": "020bec564dee05d33d9556994cec8a6caa0ed75d3ae852ad9fef79b2a53c7ae9",
   "tutor_offer_pronunciation": "3ec5e6b5c93e390b125aa6e2e56bfaaf1889353a5adaddfc6c766b77f8b1bb7f",
   "tutor_offer_see_plus": "a99de65bd1f7b5a1e9d0f61c1ef2a9a2eacecdd6ad9cbb4414d0e2b7c4154c0e",
   "tutor_offer_start": "afb5b98d7e1da5c8798f1d3d2e6d624d113b554dae4bbf3007fae4eb2ee647ab",
@@ -202,8 +202,8 @@
     <string name="tutor_offer_open">開く</string>
     <string name="tutor_offer_choose">選ぶ</string>
     <string name="tutor_offer_start">始める</string>
-    <string name="tutor_offer_practice">練習</string>
-    <string name="tutor_offer_call_paused">現在、会話機能はどなたも利用できません。しばらくしてからもう一度お試しください。</string>
+    <string name="tutor_offer_practice">演習</string>
+    <string name="tutor_offer_call_paused">現在、会話練習はどなたも利用できません。しばらくしてからもう一度お試しください。</string>
     <string name="tutor_offer_start_goal">新しい目標を始める</string>
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">「%1$s」</string>

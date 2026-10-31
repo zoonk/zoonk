@@ -68,7 +68,7 @@
   "exam_passed_no": "56674f316a3506879c808195055ca3a39c80744c9b0b7108f6959b0d4628d5b8",
   "exam_passed_unknown": "aee19768e58d3996e6e197007540d5da88dbcd63fc82bf24174ed8fbcf295cd8",
   "exam_passed_yes": "a0bff7e6b9ee62af70cbc32434f8228481e279fc7ee0070087e0db51e454070c",
-  "exam_prepared": "099342ab33b0086acdaca0c7fc416257463e749ccff64e26037bebd78de764b5",
+  "exam_prepared": "2637b8e6618e4f02f125cabd078dd51f1e0124aba8dd7d3c30148549ab2f4192",
   "exam_progress_better": "940d51281eb0eb6522e39a001911a3809e2af1b3db7ce31790225057e023c181",
   "exam_progress_better_and_needs_work": "56000d6b8973df9ca2281edf4ec1e1004bcf09a898688ace102e85ca51012514",
   "exam_progress_chart_label": "97898f5e81995631b12565ae6a52b44ae8447e9b08a64caaa5b04f69d92c4b7a",
@@ -145,7 +145,7 @@
     <plurals name="exam_mocks">
         <item quantity="other">%d回の模試</item>
     </plurals>
-    <string name="exam_prepared">この試験に向けて準備してきました。</string>
+    <string name="exam_prepared">この日のために準備してきました。</string>
     <!-- %1$s is the exam's date, %2$s the time it starts. -->
     <string name="exam_day_time">%1$s · %2$s</string>
     <string name="exam_checklist_title">試験当日の準備</string>

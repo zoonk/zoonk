@@ -5,7 +5,7 @@
   "ceremony_belt_detail": "d991c97086aeaa6bd1878667293f311cd8f0f51b26afd2df3299c34f5661d703",
   "ceremony_belt_reached": "eeaaa4b42ef1444085a7aa8c3ed942174bbe72f938b64ad8a49d700ad011c27c",
   "ceremony_continue": "f8965171cabf635fe92b8b6dff50486117b4327253c6648809e96b7c153b3afd",
-  "ceremony_glasses_aviator": "d013355ac62ec8522018fac238267eabc7dfe6460f285947d6ddb8383804d9d7",
+  "ceremony_glasses_aviator": "fdf9fcaf1687541da48813629bb0766e2202d9101079381f39034e3ff579c339",
   "ceremony_glasses_aviator_detail": "0088798612df4ae76a9b206f5a7d2a0ecf72aaf7297da394001f5340c69644af",
   "ceremony_glasses_cat_eye": "b2b37b24fc12639c848c0b18139de5050d59c86c17d38224e335006392cbe4d5",
   "ceremony_glasses_cat_eye_detail": "dadf02fbbed03a4e60c0957757ada7ec26338065b40ea645bc440400c5d9bf7f",
@@ -40,7 +40,7 @@
     <string name="ceremony_stage_adult">%1$sは脳力ですっかり成長し、おとなになりました。</string>
     <string name="ceremony_glasses_star">星形のメガネ！</string>
     <string name="ceremony_glasses_star_detail">初めてフェーズチャレンジに勝ったごほうびです。</string>
-    <string name="ceremony_glasses_aviator">アビエーターメガネ！</string>
+    <string name="ceremony_glasses_aviator">アビエーター型のメガネ！</string>
     <string name="ceremony_glasses_aviator_detail">初めて週間チャレンジを終えたごほうびです。</string>
     <string name="ceremony_glasses_cat_eye">キャットアイメガネ！</string>
     <string name="ceremony_glasses_cat_eye_detail">すべてのミッションを達成した日が合計7日になったごほうびです。</string>

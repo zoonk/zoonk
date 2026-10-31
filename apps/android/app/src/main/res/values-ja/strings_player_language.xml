@@ -26,7 +26,7 @@
   "player_language_translate": "45f858723b695f4bb25b862bd35e723fd2ae511231355594367f650a07cef812",
   "player_language_usage": "bedaddf0b6561946b11938cc7ae4367bbe03835bca1251628accb0196a0fc2ab",
   "player_language_vocabulary": "8f07ac1c4ead35a8b88c3f03a9976fcb1d87c5b02e099d7343d31413d55009fd",
-  "player_language_what_do_you_hear": "b9c5ee95c551988f327ce366c2c9fd61748d9b1fdb7ea5a7edd7ed5225011024",
+  "player_language_what_do_you_hear": "e7ef8ef41afb9e1374a5e4ffc49d70e72b0b230e56297bdc3a55accde65a402c",
   "player_language_which_means_this": "edc273518aff589ae07eb807fd5259b8b435e6bd3954b864a564aef458f044b8",
   "player_language_word_bank": "1e53f8df62978da617673608188267b0d1bed9e8db37ad626d658927e840b0c3",
   "player_language_your_answer": "913d14ae2051aaf0529606c6e79a985166ee26f086135130a388d29cc6e4bff2"
@@ -36,7 +36,7 @@
     <string name="player_language_translate">訳してください</string>
     <!-- Shown over a word to pick its match when the lesson is in the learner's own language. -->
     <string name="player_language_which_means_this">同じ意味のものはどれですか？</string>
-    <string name="player_language_what_do_you_hear">何と聞こえますか?</string>
+    <string name="player_language_what_do_you_hear">何と聞こえますか？</string>
     <string name="player_language_play">再生する</string>
     <!-- Button that stops the sentence playing, a short label like a media player's Stop. -->
     <string name="player_language_stop">停止</string>

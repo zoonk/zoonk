@@ -23,7 +23,7 @@
   "plan_base_quick_description": "1bf4a22115c78691862f6fd5548831c175d8de69044760bb5467bfe0aa17753a",
   "plan_base_skip": "552585a162a0afc20ef80759f2bf29b5c39b875905d90964b5179d77c88872a1",
   "plan_base_skip_description": "04437fa6fde63d4dfc7ee37cc78a9d4969e4f8281d9796e8672ae88c1bcbebdc",
-  "plan_base_studied": "b50a85e23200966ffdedc608b34a05138d966ad1aebdc5d50fdb145445699580",
+  "plan_base_studied": "92d0e832b3103418510345ee88f16bd11989449e45624d9304a9e70d7315cb0b",
   "plan_base_studied_name": "a454169a9af8b7b86cc8242a28fb083c898a6d1fe63d6fea7cc087ecd362f128",
   "plan_bases_deep": "1dd7ee5ad4f3b3c7c61f9031ecd9c6246e91f21725b6e06315d35fde4bb907df",
   "plan_bases_differ": "2a2254e360ede637b63b9b18361dafe6e51c81fba39770a60e88e84607797b9f",
@@ -365,7 +365,7 @@
   "plan_no_longer_fits": "62a34bf8d94bc3b8cfecddd2234cd03a47a4a9b583a590889fab900d0b277e1c",
   "plan_not_in_your_plan": "929f5270df12ab90f2d9a1c85709227d55e93ecf698847e26ebb8eda3f7e53d4",
   "plan_not_now": "84e64a8b8509f1e06626138f66c2a1a354a243d6edf360dc5ccb2a5463a1909f",
-  "plan_not_yet": "974272ece218d67f0f3aab23e2f845c3f843805861fd61832cf9e5c160d56f8a",
+  "plan_not_yet": "ff5d5c1da4878899e7fbc38e98f94e062f3fcc1336b355fa2eaaae9c425afb62",
   "plan_nothing_planned": "93ce8ca306fc1173bfaff92e14ef52f540ea29d096a3bbf1fb96057d086f8258",
   "plan_nothing_planned_until_resume": "2ba7dd68eae752c9acf2a82400bef1c39e7fdd754b4983ce35eac819e4ac1282",
   "plan_options": "adb6f1c7e8160b647a1c0163c2b3d05224011ee6fbb752eab272eff5ee2c8e36",
@@ -407,10 +407,10 @@
   "plan_phase_gaps": "ce9325929c40e8b3a78f90b84a856119f7da4e0536e959b25fb180546b0962b8",
   "plan_phase_lessons_being_written": "e1bc70783330470212c004cba9a24ff1d021acfae11c928696326c204090fbff",
   "plan_phase_number": "0900769955b5198a53bbac946d69049c2cbccb6721d767d41438121a38f8f554",
-  "plan_phase_practice": "852fdcb5386cf541065747ca001fbde23e0da49f454e96c5ff5e004c9a7e9c9e",
+  "plan_phase_practice": "9bfe32aaac5c83dc23018336f0a19d82f1e56442d6797731117a2ecfb0fcaf40",
   "plan_phases_done": "8eda0763bfc6d6a45b9f793ba643e4113509e5cff4c007ab400f4fbf19ae3a4b",
   "plan_pick_date": "ae80050327dc4a1f5fe65a1a5881ba5361ea8c1ad6560d88b1ee33538d21fda3",
-  "plan_practice": "34690231753ff0202bddf5da311255c1ef79c611ead96606d85578060b87ad92",
+  "plan_practice": "10ac56204ed09363b985e26d1b4736537a4918b80f43ff633f1f43c8bd72750c",
   "plan_preparation": "58b5867a560395164470e542cd43503a8616a7ee5f3e20274719feaef0a40359",
   "plan_prerequisites": "725402d0590dcfb0f16f87af604c4b8426849c36c4bb6fb19947d6d2cad13280",
   "plan_prerequisites_exam": "16e9ae36e1b503a470764bdb6bf889b228438504602467b819c6c54ecafe7d3e",
@@ -527,7 +527,7 @@
   "plan_tool_setup_first": "5571f662c1f58b17569fe8f199674ea7f40ffb34e16547a72a5cc1f26d22a0e3",
   "plan_tool_setup_for": "e76fc28f3eb78f24e07ac678854ef7f1c5e69b46373c9d528b2d5567299f5ca6",
   "plan_tools_later": "5277610b9c422e646bd6e44b44bba671b9ee794ab852fa173d46ea61da11f3ef",
-  "plan_tools_none": "5738cb7849ca2317ada8bae13545959d4dc9e11f08514d0ee0553d52d59c31dc",
+  "plan_tools_none": "36873cea883a1d960b0921da0da26b0af96a9f9da516e380b9381985f32a106b",
   "plan_tools_title": "bf4c97e75869c1b72a7214f309d4ee583e2825bc03db09a3bc730db02e87dd49",
   "plan_tools_without": "ec289ab22c8198174f83da0015e272fe65d87a5501865b63e278ae5ea3deac8d",
   "plan_try_again": "b46975ecf35559a2aca2e1b0a6c7a852adbdb31040c92accd5813807ec7775ba",
@@ -630,7 +630,7 @@
     <string name="plan_phase_number">フェーズ%1$d</string>
     <string name="plan_phase_foundations">基礎</string>
     <string name="plan_phase_gaps">知識の穴を埋める</string>
-    <string name="plan_phase_practice">練習</string>
+    <string name="plan_phase_practice">演習</string>
     <string name="plan_phase_final_stretch">仕上げ</string>
     <string name="plan_phase_after_exam">試験後</string>
     <string name="plan_short_map_and_gaps">試験の全体像と苦手分野</string>
@@ -732,7 +732,7 @@
     <string name="plan_study_days">学習日数</string>
     <string name="plan_mock_exams">模試</string>
     <string name="plan_choose">選ぶ</string>
-    <string name="plan_practice">練習</string>
+    <string name="plan_practice">演習</string>
     <string name="plan_everything">すべて</string>
     <string name="plan_to_be_confirmed">未確定</string>
     <string name="plan_no_date">日付なし</string>
@@ -863,7 +863,7 @@
     </plurals>
     <string name="plan_long_term_memory">長期記憶</string>
     <string name="plan_retention_caption">学習した内容のうち</string>
-    <string name="plan_not_yet">まだです</string>
+    <string name="plan_not_yet">まだ</string>
     <string name="plan_full_reviews">総復習</string>
     <string name="plan_weekly_challenges">週間チャレンジ</string>
     <plurals name="plan_full_reviews_done">
@@ -1179,7 +1179,7 @@
     <string name="plan_base_studied_name">%1$s（学習済み）</string>
     <string name="plan_base_names_time">%1$s · %2$s</string>
     <string name="plan_different_choices">選択内容が異なる</string>
-    <string name="plan_base_studied">学習した</string>
+    <string name="plan_base_studied">学習済み</string>
     <string name="plan_get_recommendation">おすすめを確認する</string>
     <string name="plan_getting_recommendation">おすすめを確認しています…</string>
     <string name="plan_recommendation_failed">おすすめを確認できませんでした。</string>
@@ -1219,7 +1219,7 @@
     <string name="plan_tool_change">変更する</string>
     <string name="plan_tool_change_how">%1$sの利用方法を変更する</string>
     <string name="plan_tool_choose_how">%1$sの利用方法を選ぶ</string>
-    <string name="plan_tools_none">ツールを使わず、すべて例で学ぶ。</string>
+    <string name="plan_tools_none">ツールがなくても、例題だけですべて学ぶ。</string>
     <string name="plan_tools_without">自分のパソコンで練習する代わりに、レッスンでは例やシミュレーションを使います。</string>
     <string name="plan_tools_later">後で使うツール：%1$s</string>
     <string name="plan_tool_how">どのように使いますか？</string>

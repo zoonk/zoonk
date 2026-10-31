@@ -3,10 +3,10 @@
 {
   "mistakes_cause_fixed": "a1b39b277543b6e2dcda60a49d5a8ba4d9ea0c0c02287714b08d9cb37e882bc3",
   "mistakes_cause_gap": "d91eeef968647d8074db34779c21140391e6c94072a09cc0060b88d0fff73a56",
-  "mistakes_cause_guess": "2b353f2ef02f36baf2e8f0b20af4868e39a1f28ee35f45d94011ec9420d16cd7",
+  "mistakes_cause_guess": "eb6399b9a613fe483179a22d9b139e5c69d7d5835b4e2c4184fc4e9a6afacda2",
   "mistakes_cause_misread": "4a0f68018c1cc0cf6a67d1a91f9cd5af0e3bc4aee8ec53c0f1f0de2a593dc66f",
   "mistakes_cause_time": "8ca20548261679cd6d3e7984032e7b32b74e56eede19f3fa3b4fc7797799bd06",
-  "mistakes_cause_trap": "487d033aaaf02c1b1354c886a74f7a166c508a0ad18618e04804751408d72368",
+  "mistakes_cause_trap": "8cf48e3f14efa9fefc79f6f4d354328d69f94d157a48e99cdeb0554dd76b30ec",
   "mistakes_cause_unsorted": "87992a9905af04233c2bed705efee85a9a41cd548fdeaa1607a069d4765be6ae",
   "mistakes_come_back_tomorrow": "80866ff245ff52cb0dce81fb31fa3d757f7ff88e61386a465dc7297f08a7f396",
   "mistakes_empty_fixed": "20f6c98b73e1510b421eb239ff180a9e8f2c54b1d330aa0103d86bee21193036",
@@ -70,9 +70,9 @@
     <string name="mistakes_cause_gap">まだ知らない内容</string>
     <!-- Why the learner got a question wrong: they misread the question. -->
     <string name="mistakes_cause_misread">問題の読み違い</string>
-    <string name="mistakes_cause_trap">ひっかけにかかりました</string>
+    <string name="mistakes_cause_trap">ひっかけに引っかかりました</string>
     <string name="mistakes_cause_time">時間が足りませんでした</string>
-    <string name="mistakes_cause_guess">勘で答えました</string>
+    <string name="mistakes_cause_guess">予想で答えました</string>
     <string name="mistakes_cause_unsorted">未分類</string>
     <!-- %1$s is why the learner got the question wrong, such as "Misread". -->
     <string name="mistakes_cause_fixed">%1$s · 克服済み</string>

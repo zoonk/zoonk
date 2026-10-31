@@ -74,7 +74,7 @@
   "subscription_see_plus": "717e9b010019ea016341f8d31f3b5aa85f460c7304c90e74bc293b4c90c32ace",
   "subscription_show_answer": "8071113b2b2c8e15621c1ce0f6738d226ebf288a9df42a376301d44f8a938db1",
   "subscription_start_free": "e464253357d1b0d217140bcf872c6ac65785ce0df8292eb210270f13c972dcb3",
-  "subscription_subscribe": "29bc79f46f5a06927f6e1bc7539a0540819dc8edd34bc613392fd454bc57b581",
+  "subscription_subscribe": "7a28b6c07f996c2259c167433907ac04f39fecc4a4944366cb15def15e47677a",
   "subscription_unavailable": "8c999a3ba8217eb9c0c8777fe459b081cdb0d52e081c079c770257ac0158bb45",
   "subscription_yearly": "d3890f92a1536f9e7de590075a988ef1c9130acc594f1d7bd85cf1e58d9a33f2",
   "subscription_yearly_per_month": "ea75f3890722c31b3c6e922d55e17f8e59db256ca2142b68cfbae75b4874e5a3",
@@ -124,7 +124,7 @@
     <string name="subscription_yearly_per_month">1か月あたり%1$sです。</string>
     <string name="subscription_unavailable">今はこのデバイスでPlusを購入できません。Google Playのインストールとログインが済んでいるか確認してください。</string>
     <string name="subscription_get_plus">Plusに登録する</string>
-    <string name="subscription_subscribe">申し込む</string>
+    <string name="subscription_subscribe">登録する</string>
     <string name="subscription_cancel_anytime">いつでも解約できます。</string>
     <string name="subscription_purchase_pending">お支払いは保留中です。Google Playで確認されると、Plusを利用できるようになります。</string>
     <string name="subscription_purchase_confirming">購入内容を確認しています…</string>

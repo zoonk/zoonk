@@ -9,7 +9,7 @@
   "missions_brain_power": "593ef6bdccfb1af5d62dff51c7f18b8dea97c64c02b1828250829f8264a6061d",
   "missions_brain_power_about": "b564a338c80b926da08a413e03852ec69dbce2041a9610b8d8115ef7d5b32d5c",
   "missions_brain_power_total": "5c91f0c46ddca162377f6774096288ac4bd473b33a40a289d3aa89f64fce0a33",
-  "missions_call": "57d262ed3dada31bf0b2e1ff5e11da916c05a0f43577207ae9bd987e4177b94d",
+  "missions_call": "4015918a4cfd6b27782cdb71595d772c6db192841f064e8c6476b27a94febe0a",
   "missions_challenge": "fd2d76fa5c652bb91b2be5c11c1c4249fa1136920d8a37da0eb2c39bb214f749",
   "missions_count": "a9ac67c08b3ec802d6d6e6775565059f355759e0f46e4fa4118718fcd87bb9bb",
   "missions_done": "f71125cf59d4a696d2b3ac4c200c16cd6bd53449d22345bb33aa410d61457aa9",
@@ -110,7 +110,7 @@
     <!-- A mission: practice a kind of mistake the learner keeps making. -->
     <string name="missions_pattern">ミスの傾向に合わせて練習する</string>
     <string name="missions_pronunciation">発音</string>
-    <string name="missions_call">会話する</string>
+    <string name="missions_call">会話練習をする</string>
     <!-- %1$s is the learner's buddy's name. -->
     <string name="missions_ask_buddy">%1$sに質問する</string>
     <!-- %1$s is a skill area's title. -->

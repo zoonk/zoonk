@@ -14,7 +14,7 @@
   "conversation_by_criterion": "328b92b3be1c8a9e3f398b2b7352f839e5dc961677cd255ad09ab9e7b6be52fa",
   "conversation_call_again": "99bf9ede86fc31e4b591a80228065a0f1b36d6cd0152c5e29e8bc656c62296e7",
   "conversation_call_length": "01cc503d12fae16da72dd86587849269f2038336d272c93a13f749a7aa400592",
-  "conversation_calling": "4b7c3b35b80dcf9f0d779f34100fa40d55f84ac94e4b539f9f10d9e8efc0e3c2",
+  "conversation_calling": "e17c2028faff1195a27f93e3afb838961ba3150dfa7bb28a55ad091b0175416f",
   "conversation_calls_need_account": "0e7de2a2250a143ad05fa13a30c5b78889b7fd843b3c9a132d4e03f63cf2db3c",
   "conversation_challenge_passed": "83ba98fc26de1805c2c9e11fce46abc979a69a3009c034cf6808bb97faf6a0cb",
   "conversation_challenge_plus": "71d3117ab919720554d15b8283d232bd0450b75efc49e63cf30f4abfe8302519",
@@ -74,8 +74,8 @@
   "conversation_mic_note": "b494fec739a626cab67f23c30021291c16f0349a9d2e55fcf7aa72f7b49355ca",
   "conversation_microphone_off": "cdb109b08da101d9fdbe4b1cdb10c8b0e995ce5177e41d2f843d969271216511",
   "conversation_minutes_range": "6d61e24417f64a07bce3f363d67a2e853bfd8012a7f9b2f09e12559943790865",
-  "conversation_mock_band_ielts": "95114d1df8f243386b2802b6373bf9bfe13b0081be2fe36981a6d72a36851e8d",
-  "conversation_mock_band_toefl": "ea9e1e7fe882582fa6971bdd6f902f20e3e175ff7777d6aded39a2cec8b619c9",
+  "conversation_mock_band_ielts": "626f48eaf9e06c8ea4b62ec6dac78e35e23417d025531cca8773f95537d45b25",
+  "conversation_mock_band_toefl": "99d3defcd3b6fedaf3a297868b73cbd9dc95e043e8ee272301ea56f09f98d293",
   "conversation_mock_delivery": "1a11b6e62339dfaa0e0ac01c65d78fb80f6296a95a2cadd406eb50306d0a7373",
   "conversation_mock_elaboration": "a997c5803f7728e2d73e7e5851b0b4a186c0a795270613db986b71b73a1e4ed4",
   "conversation_mock_estimate": "be625272eb74c93529dfd4ccd47d3ab47591c19d40931dd9eb300f6c22b4a341",
@@ -99,7 +99,7 @@
   "conversation_opens_and_card": "9f1eefe04729e7e99fdf8cfd38463dbdee58726f788e6e52c7a1be6dd7bb3f3a",
   "conversation_opens_here": "0d96e53dce7475a26650beff68ad25c73a94ed9fd310c61cca36551de9925447",
   "conversation_opens_when_ready": "9141a040f1533c6daac76c168184e8b84424c1cb2d908e1620fa9d1d868409b1",
-  "conversation_paused": "53c76a508d501cd82e020e3dc1e3af71ffc772bd063d76b2dde040a5d9cb37eb",
+  "conversation_paused": "c4f7725ed70ded922fa0937ec2c0c17f28587cc2173b284bbd6bc2e677db3dd7",
   "conversation_paused_title": "7d47f6dec00ca1bf7d62519e3e16ac2bef9c65a119b26b8070205b5733b3731c",
   "conversation_phrases": "26d9b276a709f5fdfbbdf3afb86c20fffec299eaa44d3c0ef493336821b30faf",
   "conversation_practice": "cf3311265248df55f379f9bac740ed3880ffb38d10218f805a735bac63ecc8ad",
@@ -208,7 +208,7 @@
     <string name="conversation_goal_done">達成</string>
     <string name="conversation_goal_not_yet">まだ</string>
     <string name="conversation_reconnecting">再接続しています…</string>
-    <string name="conversation_calling">呼び出しています…</string>
+    <string name="conversation_calling">接続しています…</string>
     <string name="conversation_microphone_off">マイクがオフ</string>
     <string name="conversation_muted">ミュート中</string>
     <string name="conversation_talking">%1$sさんが話しています…</string>
@@ -227,7 +227,7 @@
     <string name="conversation_taken_over">別の会話を始めたため、この会話は終了しました。</string>
     <string name="conversation_ended">練習を続けるには、新しい会話を始めてください。</string>
     <string name="conversation_paused_title">会話機能を一時停止しています</string>
-    <string name="conversation_paused">現在はどなたも会話を利用できません。しばらくしてからもう一度お試しください。</string>
+    <string name="conversation_paused">現在、どなたも利用できません。しばらくしてからもう一度お試しください。</string>
     <string name="conversation_in_progress_title">すでに別の会話が進行中です</string>
     <string name="conversation_in_progress">別の端末かブラウザで会話が開かれています。ここから終了すると、フィードバックは受け取れません。</string>
     <string name="conversation_take_over">進行中の会話を終了して、この会話を始める</string>
@@ -348,8 +348,8 @@
     <string name="conversation_by_criterion">評価項目別</string>
     <!-- A criterion, its estimate and how it stands, such as "Fluency · 3–4 of 5 · At B2". -->
     <string name="conversation_criterion_line">%1$s · %2$s · %3$s</string>
-    <string name="conversation_mock_band_ielts">推定バンドスコア、0から9</string>
-    <string name="conversation_mock_band_toefl">推定バンドスコア、1から6</string>
+    <string name="conversation_mock_band_ielts">推定バンドスコア（0〜9）</string>
+    <string name="conversation_mock_band_toefl">推定バンドスコア（1〜6）</string>
     <string name="conversation_mock_estimate">短い模試1回の結果から推定したもので、公式のスコアではありません。</string>
     <string name="conversation_no_score_title">この模試にはスコアがありません</string>
     <string name="conversation_no_score">準備ができたら、もう一度挑戦してみてください。</string>

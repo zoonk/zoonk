@@ -12,7 +12,7 @@
   "buddy_page_energy_study": "50cf1076205771f1b09ec074905005aff30e5318315938c5b662154d3ac2fbf0",
   "buddy_page_first_anytime": "59c142d89a822bab4458198a0296d4349f9524fd01feb2869ab6276db5be4376",
   "buddy_page_first_ask": "0bc4da62266b416ff9ad9bb41ae9857f251f54646f5564fb7ef00a6521f07c58",
-  "buddy_page_first_call": "c0e1ee67c173d3454bd20f14f4225c2b06e1fa47ccb28d90deca478abacb815a",
+  "buddy_page_first_call": "8b67f5a235feb27c65243fca857ef2caf8a554ecafbc940f79e7cfef35081e4c",
   "buddy_page_first_challenge": "0af32ec6bcd9d5b69f66f90a3b7787c8c0c4986b8791f2416ad58494fb880b4c",
   "buddy_page_first_essay": "9fb7f363308ab8e4b7370b93aaf682fb962312aa934feac8af3d08193ce8b1a9",
   "buddy_page_first_lesson": "aa8d5b6a87079c25b5e404cb7b4cf1022d330f80595b29e7f65929624036333e",
@@ -39,8 +39,8 @@
   "buddy_page_remembers": "9ed368023fa7d2ae9afc289cb90b462afeca767ce23e95d616618ad10fa8ca03",
   "buddy_page_save_failed": "8f30e08077eb54582b6db1ff9a7c8ba53a028fa19b8a1257b03c8f189c1d8bb9",
   "buddy_page_suggest_focus": "3b43cd7a162f7e34957dce8505736d50a8fdf10f7f59c21ba3f70fbc2868854a",
-  "buddy_page_suggest_lighter": "5ae9b18e8bdbb59f4d278d88b48027e1c8972ce1c0c7ef254d2a7e97bc7324e9",
-  "buddy_page_suggest_mistake": "f588a5d7530ca24478aae19460de91cf21a98b6590238d5413700650f6cd1553",
+  "buddy_page_suggest_lighter": "b80b217c11cd18203cc50b5dae4dcfc7c9f18c5888dd8154537543638fb159d8",
+  "buddy_page_suggest_mistake": "bc24fe38824e5e08dfe4ad1ed6be12c334961ddde7390f341e6ab8763b6c46a6",
   "buddy_page_suggest_plan_today": "7d9537572762a4ffad2bf28816457595c4dea0a8d562b5286d77f85d750dec27",
   "buddy_page_today": "c5a3a07220530a27a2cc56f2fbe970c2301ac343d4edef37706bba646c6250bf",
   "buddy_page_weekly_summary": "04b4c99226f3160d4ac894b1498c9e197d829909a32017db2514044bf25c073e",
@@ -73,8 +73,8 @@
     <string name="buddy_page_goal_greeting">こんにちは！わたしは、学習の相棒になるAIの%1$sです。何をいつまでに学びたいですか？その日までの毎日の学習計画を立てます。</string>
     <string name="buddy_page_placeholder">質問や変更したいことを入力</string>
     <string name="buddy_page_suggest_plan_today">今日の学習計画は？</string>
-    <string name="buddy_page_suggest_lighter">今週の学習量を減らす</string>
-    <string name="buddy_page_suggest_mistake">直近の間違いを解説する</string>
+    <string name="buddy_page_suggest_lighter">今週は学習量を減らしたい</string>
+    <string name="buddy_page_suggest_mistake">直前の間違いを説明してほしい</string>
     <string name="buddy_page_suggest_focus">まず取り組むことは？</string>
     <string name="buddy_page_today">今日の%1$s</string>
     <string name="buddy_page_energy">エネルギー</string>
@@ -103,7 +103,7 @@
     <!-- A first-steps mission. %1$s is the learner's buddy's name. -->
     <string name="buddy_page_first_ask">%1$sに質問する</string>
     <string name="buddy_page_first_essay">初めての小論文を書く</string>
-    <string name="buddy_page_first_call">初めて会話する</string>
+    <string name="buddy_page_first_call">初めて会話練習をする</string>
     <string name="buddy_page_first_mock">初めての模試を受ける</string>
     <!-- The Trickster is the character the learner beats in a challenge. -->
     <string name="buddy_page_first_challenge">トリックスターに挑む</string>

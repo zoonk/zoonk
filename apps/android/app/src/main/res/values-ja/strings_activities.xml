@@ -62,7 +62,7 @@
   "activities_tree_leads_to": "8f86d42f25919ea06ff6d04555ccf03c44b6ef458bf409df1b91dca7ffd8165f",
   "activities_tree_still_possible": "a1c52609470f8b9ef52546ab31f1fb49200e1ed9ce109181741a8267d2b40d73",
   "activities_tree_undo": "413d0966ace7d7f184ab20391966242afa59a0f374da83e0968ce6e2a408a609",
-  "activities_tree_walk": "44cd710173d1cc990a537ff5a8cdf10de0a2badd120c5b7435fb0c1a88a250bd",
+  "activities_tree_walk": "7bf2072cc09df83b3ecac4860a2a875c8c5035fbe1125d7d501123b8fa431f95",
   "activities_tree_you_chose": "91007e8fcbdfc3d47cbe70303b9e1afb4e2322e2c6cd1bab31e414ad64557783",
   "activities_tree_your_answers": "2b699efe3108af92d4a1a5dd0fae8dcbd3a92eed3f2d074867a6544fa024d51e"
 }
@@ -117,7 +117,7 @@
     <string name="activities_tree_your_answers">これまでの答え</string>
     <string name="activities_tree_leads_to">答えから導かれる結果</string>
     <string name="activities_tree_undo">元に戻す</string>
-    <string name="activities_tree_walk">このケースの判定の流れ</string>
+    <string name="activities_tree_walk">この事例での判断の流れ</string>
     <!-- The branch the learner took where the key went another way, like "You chose Single". -->
     <string name="activities_tree_you_chose">%1$sを選びました</string>
     <!-- The outcome the right walk reaches, like "It leads to Pine." -->

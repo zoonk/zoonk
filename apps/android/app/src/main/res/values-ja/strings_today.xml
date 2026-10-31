@@ -50,7 +50,7 @@
   "today_fresh_start_welcome_back_trial_ended": "99b28a6e38957c14f7f89f6ee8e9bc3de947197c0ee42a2202bf113a5a9ba85b",
   "today_get_lessons": "f86092e3033b873ace6b31a234db91b74dd1f8f12dd3b5b20faf8f4c3f18dd83",
   "today_insight_add_it": "e3e84900bd9af746c7fa6dcaa1f509f5f2b586c90330c8753e9b254ea7d7aeaf",
-  "today_insight_got_it": "908312d2e49028a303666e10fce86344ae4cf02e7ef7828a6a01054828b859e6",
+  "today_insight_got_it": "d4ee0c5c3ae78f299fec30b41a90f4890a489cddd7c597c420c2b600f9468ca1",
   "today_insight_keep_it": "ca47e2723eb741023afb449ea3da78e28ee6c8dda33f84d6e59600eecbeb8d18",
   "today_insight_label": "1308838b71558b39bd9c87ffe237b82d97f29c89e2f53f9a0fb166cb90527d04",
   "today_insight_move_time": "51576e04d63997c7ec5cad7c68069ea0bfbec3dd97c0f2a2c187553549b0b238",
@@ -118,7 +118,7 @@
   "today_progress_lessons_today": "d0388f82677d79dcbedfd80b84218a5ff7f0a3dfa588c8b2e000a9f5a7cbee60",
   "today_progress_studied": "3329853d158deae0d48ebf53ef97daa5b13b21dbac7abdedd210762c96cb1b18",
   "today_progress_today": "84f23cf059ba7324ca1aee73063e9e5b44807351808c68ff9613a194b1868c01",
-  "today_quick_explanation": "c278926359d5fe61415dda23afaf3e4f2144dc52364c06b2b4a74d892e9690c1",
+  "today_quick_explanation": "164be5838c0753246c16d1119f067f9944ce54ff65a35e16942ab7727e48d0d2",
   "today_reconnect": "2faa9210d2756f19bbe0d51f1d07b5509ccae1813c8c186b52b0289c34d6b7c7",
   "today_rest": "0cb9183422b9d2c5ba3afc08b71bd762fca8581d5db0a72a89b24efd3eb40411",
   "today_rest_enjoy": "f518dc2677121d1d6a6c09a5010cd9d8b3908c8b12f561b0bb48f35525ab2765",
@@ -335,7 +335,7 @@
     <string name="today_building_plan">学習計画を作成しています</string>
     <string name="today_building_plan_goal">%1$sに向けた学習計画を作成しています</string>
     <string name="today_building_plan_detail">通常は1〜2 分ほどかかります。準備ができ次第、初日の学習がここに表示されます。</string>
-    <string name="today_quick_explanation">かんたん解説</string>
+    <string name="today_quick_explanation">クイック解説</string>
     <string name="today_continue_explanation">解説を続ける</string>
     <string name="today_session_ended_description">目標に向けて、毎日レッスンや復習、練習に取り組めます。</string>
     <string name="today_week_title">今週</string>
@@ -419,7 +419,7 @@
     <string name="today_insight_keep_it">そのままにする</string>
     <!-- %1$s is a time of day, such as "19:00". Moves the time of day the learner studies, not how long they study. -->
     <string name="today_insight_move_time">学習する時刻を%1$sに変更する</string>
-    <string name="today_insight_got_it">了解</string>
+    <string name="today_insight_got_it">OK</string>
     <!-- Confirms that the time of day the learner studies moved, not how long they study. -->
     <string name="today_insight_time_moved">学習する時刻を変更しました。</string>
     <!-- After declining to move it: the time of day the learner studies stays the same. -->

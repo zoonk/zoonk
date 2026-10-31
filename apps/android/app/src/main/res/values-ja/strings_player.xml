@@ -14,7 +14,7 @@
   "player_activity_example_data": "45cbbfc72222a02fa6cc59e0f2f8c0ff7865ff7b303bd9d2b6789fd53cd27ffa",
   "player_activity_source": "c8c37cef0f2841eda6a34b9e745285f1e356e1e3332b91a017680af8de1f52f2",
   "player_activity_your_answer": "18fe7582508bc0af69f9b42742db633b98eaf0b5fbd8af202330ae4937f98fd0",
-  "player_ai_note": "1e2bf34b97cb44bb5b4ed2b23c0084792e970814030f0c615f67ecd0019ee9f7",
+  "player_ai_note": "1b427d9de684bf3b3ee6b31f980af6da1c0e072bc973f305dfe32e001822e4d2",
   "player_already_knew": "9e0ebc0f29ee9d507ac776c046adbdd8cccd21e9d32a8f742c428a7763b271bd",
   "player_answer_feedback": "925c255004620fd92be8487a1e5add20891ba0c1d2a1f3947db4eb77a1a4e474",
   "player_answer_options": "60c900f851047ce70d7af0b0e4fa1de4d1a9c02efeef9084dea1e4a14ba5fd69",
@@ -112,7 +112,7 @@
   "player_plus_limit_description": "4270fc21dd9969d4c0ce72e978032b6d6ae0d9b93643241f5da1d0b453ea0846",
   "player_plus_limit_title": "515ea51d0f8ac009330c59679f84e64a623ef0ca7d7e3cdc7d569a6b3eae7c65",
   "player_previous_screen": "917fb457b767ddc2fc655973a4d2d8a395f0b00b11d14a952544df042411b86d",
-  "player_progress": "7d5c725d26ac803710f2f69248e3efc8be1e31269b9d087a97d464889b30b4b0",
+  "player_progress": "511c47278132c9379a2ed68b135b8ad5b8b95b3a711b60ec0802f98b852c1e6a",
   "player_quick_check": "cd32fb9195f5587d2dec978eb78f340714d8bbc000f79794a036d37ff513f83a",
   "player_ready_instead": "8e823aa7539b87c50acdb08608f8e6097ff8d1e9fa75f6b010b6e3c70f154068",
   "player_ready_while_waiting": "0ea0689decf9fd479aa4ca868d2846b5e3eee857987b872bb7bb1fda22159e07",
@@ -162,7 +162,7 @@
   "player_worked_example": "7897eb665990df87124caba92e31630030574a3499f14b334fc9b47209d006c9",
   "player_worked_example_result": "43af72607b04329561399251dcd527b45a7658a7b767999be7daf96e04e45432",
   "player_worked_example_steps": "d9c7c02325c39d0acfb5f9da66d0c8db82e4bda0cf8ce72699b301ceb20a4a33",
-  "player_write_again": "6dea98772c823b9e15ba65575d8b3e04d074f79dc910a286815b6f939a319ca7",
+  "player_write_again": "45224b719d9478a671a9556218533787839ef89f951d3c4b2d27f7e440e8f443",
   "player_write_your_answer": "f53d264f3d7b71f794b1f327cebb49195974befd19a765f870f0ac742bb07b2e",
   "player_writing_lesson": "c921bb17f2aa38d5ce18f8d4b884b2297a1a0482db305ead7c9290cc8fefea38",
   "player_writing_note": "4c399b93b6cc5e04fcff668139bd09fd1627364b7c541c9fee8c633d9690e578",
@@ -171,10 +171,10 @@
 -->
 <resources>
     <string name="player_screen_options">画面のオプション</string>
-    <string name="player_ai_note">AIで作成しています。間違いが含まれることがあります。</string>
+    <string name="player_ai_note">AIで作成しました。間違いが含まれることがあります。</string>
     <string name="player_know_this">これはもう知っている</string>
     <string name="player_lesson_summary">レッスンのまとめ</string>
-    <string name="player_progress">レッスンの進み具合</string>
+    <string name="player_progress">レッスンの進行状況</string>
     <string name="player_leave_title">いったん中断しますか？</string>
     <string name="player_leave_description">まだ答え合わせをしていないため、回答は保存されません。</string>
     <string name="player_keep_writing">書き続ける</string>
@@ -194,7 +194,7 @@
     <string name="player_notice_answer_not_saved">この問題の回答が保存されませんでした。レッスンを完了するには、もう一度答えてください。</string>
     <string name="player_notice_picture_ready">画像の準備ができました。この問題に答えてレッスンを完了してください。</string>
     <string name="player_notice_writing_skipped">今日の記述問題はこれで終わりです。</string>
-    <string name="player_write_again">もう一度書く</string>
+    <string name="player_write_again">もう一度作成する</string>
     <string name="player_verdict_almost">あと少し</string>
     <string name="player_verdict_correct">正解です！</string>
     <string name="player_verdict_guess">答えはこちらです</string>

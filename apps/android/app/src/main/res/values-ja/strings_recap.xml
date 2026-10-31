@@ -28,7 +28,7 @@
   "recap_turnaround_chart": "6162b3b9a282ec984837153a591999c52b7cf8bcc4165c27a07a65806f217c72",
   "recap_turnaround_detail": "d8a6c33cfc1f9efb4d65715e46a3b3a7a5f0d29ed5b3b0dee42b5ad39c5213d2",
   "recap_weekly_summary": "8848bd99ccc053530a255cf41a9fdd335f7c88cf28cf3c72bfde2af8f6c09367",
-  "recap_what_a_week": "f3194aab32c4637d1eb7a6d3aed6db293c2e017512bc9f8e31757740c8243636",
+  "recap_what_a_week": "67acad84e0e7f2a898936e510aa16f5d99295e66420a1f2de9ebbfbcca472f24",
   "recap_what_a_week_name": "61a8fccb43a41a3af20572648d46d41c2e19fee0915d0177c613e88b213b3334"
 }
 -->
@@ -47,7 +47,7 @@
     <string name="recap_weekly_summary">週間まとめ · %1$s</string>
     <!-- %1$s is the learner's first name. -->
     <string name="recap_what_a_week_name">充実した1週間でしたね、%1$sさん！</string>
-    <string name="recap_what_a_week">充実した1週間でしたね!</string>
+    <string name="recap_what_a_week">充実した1週間でしたね！</string>
     <string name="recap_time">時間</string>
     <string name="recap_questions">問題</string>
     <string name="recap_quiet_week">静かな1週間</string>

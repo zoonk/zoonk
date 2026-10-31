@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "session_block_bonus_practice": "aa29d6d41dbab7676a70f1db4d799e28f0e372dcf91e959e6ad78ddae75c91ac",
+  "session_block_bonus_practice": "7acb70ec455d62ddaec46c1d6d4c244e607873441e1b0081b4c228de0c053c39",
   "session_block_challenge_questions": "b1842dc3cfcdf7d140d7eb37a9337ca22eb671bae6ae936d63f5f12d34962833",
   "session_block_challenge_rematch": "d798fb6ae4a41d40d700fd53d7671fe581cdf115f48000cd8cc3b1787a960eea",
   "session_block_final_challenge": "1eab071edc1dd0d6fa7b29555759019d623d15cb3193af70e676894e12ee29e2",
@@ -86,7 +86,7 @@
     <string name="session_block_writing_practice">ライティング練習</string>
     <string name="session_block_full_review">総復習</string>
     <string name="session_block_practice_mistakes">間違えたところの練習</string>
-    <string name="session_block_bonus_practice">追加練習</string>
+    <string name="session_block_bonus_practice">追加の練習</string>
     <string name="session_block_mixed_practice">総合練習</string>
     <string name="session_block_rematch_lesson">再挑戦前の短いレッスン</string>
     <plurals name="session_block_questions">

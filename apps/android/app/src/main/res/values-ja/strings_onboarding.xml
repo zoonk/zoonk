@@ -298,7 +298,7 @@
   "onboarding_reveal_phase_number": "b19bc7a8884c1be1fb228583090eaccaa8e97b671e38f50129907c7f95eeedca",
   "onboarding_reveal_phase_place": "8df0b40607b1bdac809f100807b59a473ef84c2a15f0d81a74d46e419ba74349",
   "onboarding_reveal_phase_position": "e795c877030c6353c8770fb7adbab99c16c517bb343a8262678f0447d6c37727",
-  "onboarding_reveal_phase_practice": "f8abc2555db24d667b4c59f38d709e74cfa7a75206b76dc2727ea49280e23cab",
+  "onboarding_reveal_phase_practice": "c77b735980e71272d8412e1ef11a4530d2a72de7598f4accf1317a1a00ebafdb",
   "onboarding_reveal_phase_short_mock": "3f22a343df5a3a34efed64bd5d4a6cdf6e7e0586bd44ab8151074d49c2d780dc",
   "onboarding_reveal_phases": "b374427a7abad062fedca9933688f806feccb6d9f772cdcb402f37970ad269fa",
   "onboarding_reveal_reading_done_step": "3cd81a396ef3d635dcfc411fbbd0d8ce6c247b8d3901a45a70dd1ba6f794c039",
@@ -783,7 +783,7 @@
     <!-- Phases of an exam plan, named by what the learner does in them. -->
     <string name="onboarding_reveal_phase_foundations">基礎固め</string>
     <string name="onboarding_reveal_phase_gaps">知識の穴を埋める</string>
-    <string name="onboarding_reveal_phase_practice">練習</string>
+    <string name="onboarding_reveal_phase_practice">演習</string>
     <string name="onboarding_reveal_phase_final_stretch">仕上げ</string>
     <!-- %1$d is the phase\'s place in the plan. -->
     <string name="onboarding_reveal_phase_number">フェーズ%1$d</string>

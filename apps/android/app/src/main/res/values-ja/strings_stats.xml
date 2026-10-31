@@ -69,7 +69,7 @@
   "stats_patterns_intro": "f46d52a8619ef2295a2349bc8e21c3ff9d2a2c51a689dc6dd76dab84195d9694",
   "stats_period": "b7fe9ab1ad97b705bd9f705129804a70e069e08858edda3264c9d71d8fa4d969",
   "stats_range": "a7e7fd431a98cba115cba26085b754e4b618b83c837700875b9dd42e9316b738",
-  "stats_right": "69f61430d48c520d616a2082627a0128ae26901b8cbf3d3ffec194f64ccf352d",
+  "stats_right": "4d69ebff22bb8158fa3a6ee236211051daa3ecf048f1cad095b7e9b7fd17256b",
   "stats_right_answers": "771ea6139829fdda39dc96270711faa770609624d3b0fcddceba95e89c6f464f",
   "stats_right_count": "ce338e13bf1bfcb5e9d136c7885dc7c7b74eaf90831b3fbe853161f45ffa3ee1",
   "stats_right_last_90": "1a6bc94b59f95babc82492011b97d48427b55ab11bd50f43941483c74bf35a89",
@@ -175,7 +175,7 @@
     <string name="stats_day_energy">%1$s · エネルギー%2$s</string>
     <string name="stats_calendar_energy_summary">過去12か月のエネルギー：今日は%1$s、開始以来の平均は%2$s</string>
     <string name="stats_right_answers">正解率</string>
-    <string name="stats_right">正解数</string>
+    <string name="stats_right">正解</string>
     <string name="stats_of_all_answers">すべての回答のうち</string>
     <string name="stats_correct_of_total">%1$s / %2$s</string>
     <string name="stats_period">期間</string>

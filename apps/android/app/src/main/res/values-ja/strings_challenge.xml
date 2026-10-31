@@ -25,7 +25,7 @@
   "challenge_moved_title": "8c93773a29da77aef155d647e1dc0fe58c6ade0fc03d968839acb5c7c802607c",
   "challenge_next_session": "e9b479a5c8fc17bbd445dab368778c26a0c6d7b3e38346b5f075b8787d72899c",
   "challenge_not_ready": "c75224890b26be242a1f79df67b67eb86ed45d9c9291c8737bc2f05aa40868fa",
-  "challenge_objective_only": "0535e6cbc6b57e07cfebf454d7b468fe815bfbcb4d19dda3ee7ab977b0c288b5",
+  "challenge_objective_only": "2acb3e87317459ba1362e036add3311281691036a397dc8146e4ab6a1f8a672d",
   "challenge_opens_after_lessons": "ba2c5a0ec029e199e28f57d96dba1fd27658cd345773f99a09da6f11bd7e83af",
   "challenge_opens_in": "ee589d143b19e4d702e7e5e8109a12593a25672ad77db26bf77a85787f84763e",
   "challenge_opens_tomorrow": "6249feff807237b4bbc7f2623b9d01df1e3c2dcfeea3d58dfd9a28323d4cb7b2",
@@ -107,7 +107,7 @@
     <!-- %1$s is the day; %2$s is the time it starts, like 9:00 AM. -->
     <string name="challenge_day_time">%1$s · %2$s</string>
     <string name="challenge_mock_start">模試を始める</string>
-    <string name="challenge_objective_only">客観式問題のみ</string>
+    <string name="challenge_objective_only">選択式の問題のみ</string>
     <string name="challenge_section_questions">問題</string>
     <!-- A section's questions (%1$d) and its time (%2$s), like "45 questions · 1 h 30 min". -->
     <plurals name="challenge_section_size">

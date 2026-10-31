@@ -15,7 +15,7 @@
   "search_group_actions": "06254e5b0b8281d96e4bbc88c2a7c1b949d0b0dce6efcb9d70a62782e0180f7f",
   "search_group_ask": "3b41af5b72c4bb90f803b74f1f810d3d627e44895aa0c9fc721e0d6398baecb9",
   "search_group_catalog": "91d482bc1c7d276dd18c396c079995aab473ef3f2524b7e05ed609a27dcfcbeb",
-  "search_group_explanations": "0464658fc2830f338b906e51336ac9674732e17e2985eb06d2eca8f78e2641b4",
+  "search_group_explanations": "36b74f3984bd785d84e30406b3b10ed2ad8a3a7cd420034f5d18384310e60834",
   "search_group_go_to": "d851324784fc36a9a8e908434533f7e2cea263b3aa02dccbf9371df73ed38d0b",
   "search_group_goals": "8bafaa328de3dbc2121608c39940870301bf08a5aa4e697179d6b298726a8bd8",
   "search_group_help": "d455491aadcd236490f9f24d1c452445c3aaeed6129367d509f19e8929ef4bd0",
@@ -58,7 +58,7 @@
     <string name="search_group_actions">操作</string>
     <string name="search_group_go_to">移動先</string>
     <string name="search_group_goals">目標</string>
-    <string name="search_group_explanations">簡単な解説</string>
+    <string name="search_group_explanations">クイック解説</string>
     <string name="search_group_plan">学習計画</string>
     <string name="search_group_mocks">模試</string>
     <string name="search_group_catalog">カタログ内</string>

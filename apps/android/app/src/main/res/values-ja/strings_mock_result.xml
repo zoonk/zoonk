@@ -7,7 +7,7 @@
   "mock_result_already_changed": "f335dad6884ceeb51f38a75b13e8a5350c3dd5c8999a410bb3daa8be19c05ea2",
   "mock_result_already_in": "57321389f8fd7a185789501d75a25bf5d82a77a692366dd29c53f333a079559a",
   "mock_result_apply": "b1fbc4c8a0e2c2012361eb733a14d9fe81fda67ad71c7a5ac39616ef772d3927",
-  "mock_result_blank": "6350b96a106f04f296579721ae7f71fab49df99b9e02c965fa6a277001b4363f",
+  "mock_result_blank": "c697e23d0c1843460cc34b9277ecb2165f4232a822fdd9a378f00b3a13b56233",
   "mock_result_blank_exam_day": "31e2b5e441f94ae26fa00f67e2dcea27deec862faca445f62638eef47186f16e",
   "mock_result_blank_gain": "61438dd64eb9739cb0c15fb5317d2379a395a322eba26a7cd136a4640c03a471",
   "mock_result_blank_this_score": "c8644a6029745ce35cf59065e8e2a13a3bed61613d8dc73af13ef327dd05df9d",
@@ -121,7 +121,7 @@
     <string name="mock_result_right">正解</string>
     <string name="mock_result_wrong">不正解</string>
     <string name="mock_result_partly_right">一部正解</string>
-    <string name="mock_result_blank">未回答</string>
+    <string name="mock_result_blank">未解答</string>
     <string name="mock_result_blank_exam_day">本番の試験と同じく、未回答は不正解として扱われます。</string>
     <string name="mock_result_blank_this_score">このスコアの計算では、未回答は不正解として扱われます。</string>
     <string name="mock_result_to_pass_notice">要項に記載された合格基準</string>

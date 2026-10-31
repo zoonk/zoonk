@@ -49,7 +49,7 @@
   "checkpoint_trickster": "e6dc46416bbc6fe0fbb5e2f40a53d4519525d73c336f7570d1fe81a7554bb3dc",
   "checkpoint_weekly": "7d9b451f2ea62a545fa1c30251e0fb52d71341d83bf0b1d9e61eb2d5d10d1391",
   "checkpoint_weekly_done": "66ba0bcfe9e52a59719d97f864f72517a67e7ab9478ce1c4e5d47cec542b0af1",
-  "checkpoint_whats_next": "2cf83f50de8276cc2d6ad2b085b370c7aae1a75b6c9b4793f4221f123dce129d",
+  "checkpoint_whats_next": "1a635f4eabe619c523aff238c731b1f911aa5135090b22bd50f25957e4244b52",
   "checkpoint_why_later": "7b94f55762aa62b662b9bec62f951d78657d8cd2d95a31cce3f6da249785a4cd",
   "checkpoint_winning": "0d1b3e8ac051232df72429d0e19ff49eb958f288660d7cac5f6e93a12148f12d",
   "checkpoint_won_line": "a24a3161911b96a067e35e1dd9eb69c99b5ceec58e7e163d2f133fdcc7d314db"
@@ -121,7 +121,7 @@
     <string name="checkpoint_next_phase">次のフェーズ</string>
     <!-- A phase without a name, by its number. -->
     <string name="checkpoint_phase_name">フェーズ%1$d</string>
-    <string name="checkpoint_whats_next">次のステップ</string>
+    <string name="checkpoint_whats_next">次にすること</string>
     <string name="checkpoint_passed_later">再挑戦でクリア</string>
     <string name="checkpoint_phase_done">このフェーズは完了しました。</string>
     <string name="checkpoint_new_try_tomorrow">明日また挑戦できます</string>

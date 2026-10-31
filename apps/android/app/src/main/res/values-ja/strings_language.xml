@@ -43,7 +43,7 @@
   "language_unit_lessons": "b73c4df0a7356f45d63bc8851cf19a55b2419841a94558fcfc8cc95e2acb0523",
   "language_unit_mistakes": "0dcec0c922bde0e4eed30ef9b40edd47c2dd067fb40f386765a54daebfbfdc05",
   "language_unit_objectives": "4e609c725ba38df3b1545e7b68f43b153a25e75e16a6a08627315002df0abaf3",
-  "language_unit_practice": "fec83e7ad59206c82995b2eea923aba81b2c957fc3de46580dfe748b4a71df08",
+  "language_unit_practice": "16a3fe729db239047b50ccd85630893a02a355df7f590d102f36ae26c05aaa8f",
   "language_unit_progress": "3f5884929c45238926c306abd6e9e2dcdec6b52d4ea56811721a87ebbf792d90",
   "language_unit_reference": "41a86a6da3866f0115fbb9fe82e75ab40da130e999384951b737a6c4651cfdcc",
   "language_unit_start": "52f334ce8da1ad6e8efa3b3a535486a66e92510d5743afbd1c923b28f12e31ff",
@@ -64,7 +64,7 @@
     <string name="language_unit_continue">続ける</string>
     <string name="language_unit_objectives">このユニットで身につくこと</string>
     <string name="language_unit_progress">進み具合</string>
-    <string name="language_unit_practice">練習</string>
+    <string name="language_unit_practice">演習</string>
     <string name="language_unit_mistakes">間違い</string>
     <!-- Heading over material to look things up in, such as grammar tips and words, rather than lessons to do. -->
     <string name="language_unit_reference">参考資料</string>
