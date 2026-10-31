@@ -85,7 +85,7 @@ function toSharedProperties({
 }
 
 /** A web request carries the browser's choice, which may not have reached the account yet. */
-async function readBrowserUsageData(): Promise<boolean | null> {
+async function readRequestUsageDataCookie(): Promise<boolean | null> {
   const { data: cookieStore } = await safeAsync(() => cookies());
   return parseUsageDataCookie(cookieStore?.get(USAGE_DATA_COOKIE)?.value);
 }
@@ -111,7 +111,7 @@ export async function trackLearnerEvents({
     const [learner, eventPlatform, browser] = await Promise.all([
       loadLearner({ goalId, userId }),
       fromRequest ? getRequestPlatform() : platform,
-      fromRequest ? readBrowserUsageData() : null,
+      fromRequest ? readRequestUsageDataCookie() : null,
     ]);
 
     if (!learner || getUsageDataChoice({ account: learner.shareUsageData, browser }) === false) {
