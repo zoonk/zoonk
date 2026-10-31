@@ -5,6 +5,7 @@ import { type MockView } from "@zoonk/core/exams/mocks/contract";
 import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
 import { createContext, use } from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { type ContentWriting } from "../generation/writing-wait";
 import { type MomentCeremony } from "../session/moment-ceremony";
 import { type DraftSaveStatus } from "./draft-save-queue";
 import { type SectionMoves } from "./section-moves";
@@ -27,7 +28,8 @@ export type MockActions = {
   play: (setId: string) => Promise<MockPlayOutcome | null>;
   /** A GET, for when the deadline may now be abandoned; never scores the mock. */
   refresh?: () => void;
-  startSpeaking: () => Promise<MockView | null>;
+  /** The run writing the paper when it isn't written yet. */
+  startSpeaking: () => Promise<MockView | { generationId: string } | null>;
   submit: (section: number) => Promise<MockView | null>;
 };
 
@@ -67,6 +69,7 @@ export type MockRunner = {
   saveStatus: DraftSaveStatus;
   savesInFlight: () => Promise<unknown> | null;
   slow: boolean;
+  speakingWriting: ContentWriting | null;
   startSpeaking: () => Promise<void>;
   submitSection: () => Promise<void>;
   timeOutQuestion: () => void;

@@ -39,11 +39,12 @@ export type PlanActions = {
     group: string;
     subject: string;
   }) => Promise<{ change: PlanChangeView | null } | null>;
+  /** The run writing the setup lessons it needs, when they aren't written yet. */
   chooseTools: (input: {
     choice: ToolChoice;
     system: ToolSystem | null;
     tools: string[];
-  }) => Promise<boolean>;
+  }) => Promise<boolean | { generationId: string }>;
 };
 
 /** A null `buddy` uses the default buddy. */

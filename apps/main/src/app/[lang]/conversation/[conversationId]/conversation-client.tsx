@@ -82,17 +82,12 @@ export function ConversationClient({
       connect: (input) => connectConversationAction({ conversationId: id, input, locale }),
       end: (connectionId) => endConversationConnectionAction(id, connectionId),
       ...(kind === "speakingMock" && goalId
-        ? {
-            startAgain: async () => {
-              await startConversation({ goalId, kind: "speakingMock" });
-            },
-          }
+        ? { startAgain: () => startConversation({ goalId, kind: "speakingMock" }) }
         : {}),
       ...(examTaskKey && goalId
         ? {
-            startAgain: async () => {
-              await startConversation({ goalId, kind: "examSpeaking", task: examTaskKey });
-            },
+            startAgain: () =>
+              startConversation({ goalId, kind: "examSpeaking", task: examTaskKey }),
           }
         : {}),
     }),

@@ -1,5 +1,6 @@
 "use server";
 
+import { postAsLearner } from "@/lib/api/learner-api";
 import { adaptPlanFromMock } from "@zoonk/core/exams/mocks/adapt-plan";
 import { saveMockAnswer } from "@zoonk/core/exams/mocks/answer";
 import { mockAnswerInputSchema } from "@zoonk/core/exams/mocks/answer-contract";
@@ -13,7 +14,6 @@ import { finishMock } from "@zoonk/core/exams/mocks/finish";
 import { getMock } from "@zoonk/core/exams/mocks/get";
 import { gradeMockEssays } from "@zoonk/core/exams/mocks/grade-essays";
 import { recordMockPlay } from "@zoonk/core/exams/mocks/record-play";
-import { startMockSpeaking } from "@zoonk/core/exams/mocks/start-speaking";
 import { submitMockSection } from "@zoonk/core/exams/mocks/submit-section";
 import {
   type MockEssayGrading,
@@ -23,6 +23,7 @@ import {
 import { z } from "zod";
 
 const blockIdSchema = z.uuid();
+const writingSchema = z.object({ generationId: z.string() });
 const sectionSchema = z.int().min(0);
 
 async function readMock(blockId: string): Promise<MockView | null> {
@@ -98,15 +99,25 @@ export async function recordMockPlayAction(
     : null;
 }
 
-export async function startMockSpeakingAction(blockId: unknown) {
+/** The API starts the run writing a paper that isn't written yet, so the start goes through it. */
+export async function startMockSpeakingAction(
+  blockId: unknown,
+): Promise<MockView | { generationId: string } | null> {
   const id = blockIdSchema.safeParse(blockId);
 
   if (!id.success) {
     return null;
   }
 
-  const result = await startMockSpeaking({ blockId: id.data });
-  return result.status === "ready" ? readMock(id.data) : null;
+  const response = await postAsLearner({
+    path: `/v1/mocks/${encodeURIComponent(id.data)}/speaking`,
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  return writingSchema.safeParse(response.json).data ?? readMock(id.data);
 }
 
 export async function finishMockAction(blockId: unknown, timeZone: unknown) {

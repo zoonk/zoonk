@@ -22,9 +22,7 @@ import { finishStudyBlockAction } from "@/lib/session/study-session-actions";
 import { useDayEntry, useDayTap } from "@/lib/session/use-day-entry";
 import { useDayTaps } from "@/lib/session/use-day-taps";
 import { useGoToStudyDestination, useStudyNavigation } from "@/lib/session/use-study-navigation";
-import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
-import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
 import { type LessonNotWritten } from "@zoonk/learn/lesson-not-written";
 import { useAppLocale } from "@zoonk/learn/locale";
 import { QuestionBlock } from "@zoonk/learn/session/block";
@@ -187,28 +185,26 @@ export function SessionNextStopClient({
       : taps.open(toTapStep(target));
 
   return (
-    <GenerationFollowerProvider follower={WorkflowRunFollower}>
-      <NextStop
-        actions={{
-          readLesson: readWaitedLesson,
-          recordWait: (milliseconds) =>
-            void recordGenerationWaitAction({ contentKind: "lesson", locale, milliseconds }),
-          refresh,
-          start,
-          stop: navigation.stop,
-        }}
-        alternative={tapped ? null : alternative}
-        block={drawn}
-        blocks={day.blocks}
-        exitHref={EXIT_HREF}
-        generationId={tapped ? null : generationId}
-        lesson={tapped ? "ready" : lesson}
-        lessonsComing={day.lessonsComing}
-        notWritten={tapped ? null : notWritten}
-        sessionBar={day.sessionBar}
-        tap={tap}
-      />
-    </GenerationFollowerProvider>
+    <NextStop
+      actions={{
+        readLesson: readWaitedLesson,
+        recordWait: (milliseconds) =>
+          void recordGenerationWaitAction({ contentKind: "lesson", locale, milliseconds }),
+        refresh,
+        start,
+        stop: navigation.stop,
+      }}
+      alternative={tapped ? null : alternative}
+      block={drawn}
+      blocks={day.blocks}
+      exitHref={EXIT_HREF}
+      generationId={tapped ? null : generationId}
+      lesson={tapped ? "ready" : lesson}
+      lessonsComing={day.lessonsComing}
+      notWritten={tapped ? null : notWritten}
+      sessionBar={day.sessionBar}
+      tap={tap}
+    />
   );
 }
 

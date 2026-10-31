@@ -10,20 +10,20 @@ import {
 
 type CallLimit = Extract<ConversationConnection, { status: "limit" }>["limit"];
 
+type OpenedCall = boolean | "paused" | { generationId: string };
+
 export function useOpenLanguageConversation({ from }: { from?: "exam" } = {}) {
   const router = useRouter();
 
   return useCallback(
-    async (
-      request: LanguageConversationRequest,
-    ): Promise<boolean | "paused" | { limit: CallLimit }> => {
+    async (request: LanguageConversationRequest): Promise<OpenedCall | { limit: CallLimit }> => {
       const started = await startLanguageConversationAction(request);
 
       if (!started) {
         return false;
       }
 
-      if (started === "paused" || "limit" in started) {
+      if (started === "paused" || "limit" in started || "generationId" in started) {
         return started;
       }
 
@@ -38,9 +38,9 @@ export function useStartLanguageConversation(options: { from?: "exam" } = {}) {
   const open = useOpenLanguageConversation(options);
 
   return useCallback(
-    async (request: LanguageConversationRequest): Promise<boolean | "paused"> => {
+    async (request: LanguageConversationRequest): Promise<OpenedCall> => {
       const opened = await open(request);
-      return opened === "paused" ? opened : opened === true;
+      return typeof opened === "object" && "limit" in opened ? false : opened;
     },
     [open],
   );

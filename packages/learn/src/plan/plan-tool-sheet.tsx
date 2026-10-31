@@ -16,6 +16,7 @@ import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ChangeSaveError } from "../_components/save-error";
+import { WritingWait } from "../generation/writing-wait";
 import { type Choice, ChoiceList } from "../onboarding/choice-list";
 import { useSystemName } from "./use-system-name";
 import { useToolChoice } from "./use-tool-choice";
@@ -74,7 +75,7 @@ function ToolChoiceForm({ onClose, tool }: { onClose: () => void; tool: PlanTool
   const choices = useToolChoices();
   const [choice, setChoice] = useState<ToolChoice | null>(tool.choice);
   const [system, setSystem] = useState<ToolSystem | null>(tool.system);
-  const { choose, failed, isPending } = useToolChoice();
+  const { choose, failed, isPending, writing } = useToolChoice();
   const needsSystem = choice === "setup" && system === null;
   const canSave = Boolean(choice) && !needsSystem && !isPending;
   const saveRef = useEnterClick<HTMLButtonElement>({ enabled: canSave });
@@ -84,6 +85,18 @@ function ToolChoiceForm({ onClose, tool }: { onClose: () => void; tool: PlanTool
       choose({ choice, system: choice === "setup" ? system : null, tools: [tool.name] }, onClose);
     }
   };
+
+  if (writing) {
+    return (
+      <DrawerContent>
+        <WritingWait
+          hint={t("Your plan updates as soon as it's ready.")}
+          kind="setupLesson"
+          writing={writing}
+        />
+      </DrawerContent>
+    );
+  }
 
   return (
     <DrawerContent>

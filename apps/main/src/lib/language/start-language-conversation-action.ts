@@ -1,10 +1,8 @@
 "use server";
 
+import { postAsLearner } from "@/lib/api/learner-api";
 import { languageConversationStartInputSchema } from "@zoonk/core/language/conversations/contract";
-import { startLanguageConversation } from "@zoonk/core/language/conversations/start";
-import { type ConversationConnection } from "@zoonk/learn/language/conversation";
-import { safeAsync } from "@zoonk/utils/error";
-import { logError } from "@zoonk/utils/logger";
+import { z } from "zod";
 
 export type LanguageConversationRequest =
   | { blockId: string; kind: "checkpoint" }
@@ -12,14 +10,30 @@ export type LanguageConversationRequest =
   | { goalId: string; kind: "speakingMock" }
   | { goalId: string; kind: "examSpeaking"; task: string };
 
-type CallLimit = Extract<ConversationConnection, { status: "limit" }>["limit"];
+const startedSchema = z.object({ conversationId: z.string() });
+
+const writingSchema = z.object({ generationId: z.string() });
+
+const limitSchema = z.object({
+  error: z.object({
+    code: z.literal("CONVERSATION_LIMIT_REACHED"),
+    details: z.object({
+      period: z.enum(["day", "month", "total"]),
+      tier: z.enum(["free", "guest", "plus"]),
+    }),
+  }),
+});
+
+const pausedSchema = z.object({ error: z.object({ code: z.literal("CALLS_PAUSED") }) });
 
 type StartedLanguageConversation =
-  | { conversationId: string }
-  | { limit: CallLimit }
+  | z.infer<typeof startedSchema>
+  | z.infer<typeof writingSchema>
+  | { limit: z.infer<typeof limitSchema>["error"]["details"] }
   | "paused"
   | null;
 
+/** The API starts the run writing a call that isn't written yet, so the start goes through it. */
 export async function startLanguageConversationAction(
   request: LanguageConversationRequest,
 ): Promise<StartedLanguageConversation> {
@@ -29,24 +43,21 @@ export async function startLanguageConversationAction(
     return null;
   }
 
-  const { data, error } = await safeAsync(() => startLanguageConversation(input.data));
+  const response = await postAsLearner({ body: input.data, path: "/v1/language-conversations" });
 
-  if (error) {
-    logError("[startLanguageConversationAction] Failed to start a conversation:", error);
-    return null;
+  if (response.ok) {
+    return (
+      startedSchema.safeParse(response.json).data ??
+      writingSchema.safeParse(response.json).data ??
+      null
+    );
   }
 
-  if (data.status === "limitReached") {
-    return { limit: { period: data.limit.period, tier: data.limit.tier } };
+  const limit = limitSchema.safeParse(response.json).data?.error.details;
+
+  if (limit) {
+    return { limit };
   }
 
-  if (data.status === "callsPaused") {
-    return "paused";
-  }
-
-  if (data.status !== "ready") {
-    return null;
-  }
-
-  return { conversationId: data.conversationId };
+  return pausedSchema.safeParse(response.json).success ? "paused" : null;
 }

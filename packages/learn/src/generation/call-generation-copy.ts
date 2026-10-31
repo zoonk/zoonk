@@ -59,3 +59,22 @@ export function useExamSpeakingCopy(): KindCopy<"examSpeaking"> {
     },
   };
 }
+
+export function useSpeakingPaperCopy(): KindCopy<"speakingPaper"> {
+  const t = useExtracted();
+
+  return {
+    name: t("Writing your speaking paper"),
+    phases: {
+      write: {
+        label: t("Writing a card for each task"),
+        lines: [
+          t("Picking a topic for each task…"),
+          t("Writing each card's instructions…"),
+          t("Preparing what the examiner says…"),
+          t("Adding phrases you can lean on…"),
+        ],
+      },
+    },
+  };
+}

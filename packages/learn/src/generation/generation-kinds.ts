@@ -1,4 +1,5 @@
 import {
+  type CallWritingStepName,
   type ChallengeQuestionsStepName,
   type ExplanationStepName,
   type FocusTestQuestionsStepName,
@@ -7,6 +8,7 @@ import {
   type LessonContentStepName,
   type LevelTestBankStepName,
   type MockQuestionsStepName,
+  type SetupLessonStepName,
   type TestOutQuestionsStepName,
 } from "@zoonk/core/library/generation/steps";
 
@@ -189,20 +191,32 @@ const lesson = {
   },
 } as const satisfies GenerationKindDefinition<LessonContentStepName, "plan" | "write">;
 
+const CALL_STEPS = { callReady: "done", joinRunningCall: "join", writeCall: "write" } as const;
+
 const conversationCall = {
   phases: [{ id: "write", seconds: 20 }],
-  steps: { writeCall: "write" },
-} as const satisfies GenerationKindDefinition<"writeCall", "write">;
+  steps: CALL_STEPS,
+} as const satisfies GenerationKindDefinition<CallWritingStepName, "write">;
 
 const speakingMock = {
   phases: [{ id: "write", seconds: 22 }],
-  steps: { writeMock: "write" },
-} as const satisfies GenerationKindDefinition<"writeMock", "write">;
+  steps: CALL_STEPS,
+} as const satisfies GenerationKindDefinition<CallWritingStepName, "write">;
 
 const examSpeaking = {
   phases: [{ id: "write", seconds: 30 }],
-  steps: { writeTask: "write" },
-} as const satisfies GenerationKindDefinition<"writeTask", "write">;
+  steps: CALL_STEPS,
+} as const satisfies GenerationKindDefinition<CallWritingStepName, "write">;
+
+const speakingPaper = {
+  phases: [{ id: "write", seconds: 50 }],
+  steps: CALL_STEPS,
+} as const satisfies GenerationKindDefinition<CallWritingStepName, "write">;
+
+const setupLesson = {
+  phases: [{ id: "write", seconds: 15 }],
+  steps: { joinSetupLessons: "join", setupLessonsReady: "done", writeSetupLessons: "write" },
+} as const satisfies GenerationKindDefinition<SetupLessonStepName, "write">;
 
 const GENERATION_KINDS = {
   challengeQuestions,
@@ -217,7 +231,9 @@ const GENERATION_KINDS = {
   levelTestBank,
   mockQuestions,
   placement,
+  setupLesson,
   speakingMock,
+  speakingPaper,
   testOutQuestions,
   understanding,
 };

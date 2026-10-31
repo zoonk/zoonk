@@ -13,10 +13,14 @@ const CHANGED = new Set<StartLanguageConversationResult["status"]>([
   "earlierFirst",
   "notFound",
   "notLanguage",
+  "preparing",
   "unauthorized",
 ]);
 
-/** Only `failed` is worth another try. */
+/**
+ * Only `failed` is worth another try. The intro shows only once the call is written, so one that
+ * isn't any more reads the page again, which then offers to write it.
+ */
 export async function startCheckpointCallAction(blockId: string) {
   const input = languageConversationStartInputSchema.safeParse({ blockId, kind: "checkpoint" });
 

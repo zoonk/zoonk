@@ -4,7 +4,6 @@ import { postAsLearner } from "@/lib/api/learner-api";
 import { chooseExamOption } from "@zoonk/core/exams/choices/choose";
 import { examChoiceInputSchema } from "@zoonk/core/exams/choices/contract";
 import { changeGoalPlan } from "@zoonk/core/plans/change";
-import { choosePlanTools } from "@zoonk/core/plans/choose-tools";
 import {
   planChangeDecisionInputSchema,
   planChangeInputSchema,
@@ -15,7 +14,7 @@ import { previewPlanChange } from "@zoonk/core/plans/preview";
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type PlanChangeOutcome } from "@zoonk/learn/journey";
-import { safeAsync } from "@zoonk/utils/error";
+import { z } from "zod";
 
 export async function changePlanAction(
   goalId: string,
@@ -81,19 +80,25 @@ export async function decidePlanChangeAction(
   return (await answerPlanChangeAction(goalId, answer)) !== null;
 }
 
-/** A tool's setup can call a model first, so a failed call comes back as "didn't work", not an error screen. */
-export async function choosePlanToolsAction(goalId: string, input: unknown): Promise<boolean> {
+const toolChoiceWritingSchema = z.object({ generationId: z.string() });
+
+/** The API starts the run writing a setup lesson nobody has needed yet, so the choice goes through it. */
+export async function choosePlanToolsAction(
+  goalId: string,
+  input: unknown,
+): Promise<boolean | { generationId: string }> {
   const parsed = planToolChoiceInputSchema.safeParse(input);
 
   if (!parsed.success) {
     return false;
   }
 
-  const { data: result, error } = await safeAsync(() =>
-    choosePlanTools({ goalId, input: parsed.data }),
-  );
+  const response = await postAsLearner({
+    body: parsed.data,
+    path: `/v1/goals/${encodeURIComponent(goalId)}/plan/tool-choices`,
+  });
 
-  return !error && result.status === "applied";
+  return response.ok && (toolChoiceWritingSchema.safeParse(response.json).data ?? true);
 }
 
 export async function chooseExamOptionAction(

@@ -6,10 +6,8 @@ import {
   type SpeakingMockFeedback,
 } from "@zoonk/core/language/conversations/contract";
 import { SPEAKING_MOCK_CRITERIA } from "@zoonk/core/language/conversations/speaking-mock";
-import { Button } from "@zoonk/ui/components/button";
 import { LightbulbIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
-import { useTransition } from "react";
 import { CHIP_CLASS } from "../../_components/chip";
 import { DetailsDrawer } from "../../_components/details-drawer";
 import {
@@ -22,12 +20,13 @@ import {
   StepTitleNumber,
 } from "../../_components/step-card";
 import { Steps, type StepsItem } from "../../_components/steps";
-import { TASK_OPTION_CLASS } from "../../_components/task-layout";
 import { StepWithDayMoment } from "../../session/day-moment";
 import { TaskMainLink } from "../../shell/task-frame";
 import { CallNote } from "./call-note";
 import { useConversationTitle, useCriterionName } from "./conversation-labels";
 import { EstimateNote, ResultRow, ResultRows } from "./result-rows";
+import { TryCallAgain } from "./try-call-again";
+import { type CallStartOutcome } from "./use-call-start";
 
 const BAND_DIGITS = 1;
 
@@ -181,23 +180,6 @@ function NoScoreStep() {
   );
 }
 
-function TryAgainButton({ onTryAgain }: { onTryAgain: () => Promise<void> }) {
-  const t = useExtracted();
-  const [isPending, startTransition] = useTransition();
-
-  return (
-    <Button
-      className={TASK_OPTION_CLASS}
-      disabled={isPending}
-      onClick={() => startTransition(onTryAgain)}
-      size="xl"
-      variant="ghost"
-    >
-      {t("Try another mock")}
-    </Button>
-  );
-}
-
 export function SpeakingMockResult({
   ceremony,
   conversation,
@@ -213,7 +195,7 @@ export function SpeakingMockResult({
   exitHref: string;
   feedback: SpeakingMockFeedback | null;
   nextHref: string;
-  onTryAgain: (() => Promise<void>) | null;
+  onTryAgain: (() => Promise<CallStartOutcome>) | null;
 }) {
   const t = useExtracted();
   const focus = feedback?.criteria.find((criterion) => criterion.criterion === feedback.focus);
@@ -253,7 +235,15 @@ export function SpeakingMockResult({
       finalAction={<TaskMainLink href={nextHref}>{t("Continue")}</TaskMainLink>}
       finalOptions={
         <>
-          {onTryAgain && <TryAgainButton onTryAgain={onTryAgain} />}
+          {onTryAgain && (
+            <TryCallAgain
+              hint={t("Your mock opens as soon as it's ready.")}
+              kind="speakingMock"
+              onTryAgain={onTryAgain}
+            >
+              {t("Try another mock")}
+            </TryCallAgain>
+          )}
           {feedback && feedback.criteria.length > 0 && <CriteriaDetails feedback={feedback} />}
         </>
       }

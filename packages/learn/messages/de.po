@@ -3485,6 +3485,26 @@ msgctxt "tGWu02"
 msgid "Preparing what the examiner says…"
 msgstr "Wir bereiten vor, was die prüfende Person sagt…"
 
+#: src/generation/call-generation-copy.ts
+msgctxt "stcnR5"
+msgid "Writing your speaking paper"
+msgstr "Wir erstellen dein Aufgabenblatt für die mündliche Prüfung"
+
+#: src/generation/call-generation-copy.ts
+msgctxt "KlQNf-"
+msgid "Writing a card for each task"
+msgstr "Wir erstellen eine Karte für jede Aufgabe"
+
+#: src/generation/call-generation-copy.ts
+msgctxt "62x7Ze"
+msgid "Picking a topic for each task…"
+msgstr "Wir wählen ein Thema für jede Aufgabe aus…"
+
+#: src/generation/call-generation-copy.ts
+msgctxt "vNw6Rg"
+msgid "Writing each card's instructions…"
+msgstr "Wir erstellen die Anweisungen für jede Karte…"
+
 #: src/generation/generation-wait.tsx
 msgctxt "NhDwgx"
 msgid "in progress"
@@ -3851,6 +3871,31 @@ msgstr "Wir überlegen, wie wir das am besten erklären…"
 msgctxt "Dwuk2D"
 msgid "Writing the lesson"
 msgstr "Wir erstellen die Lektion"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "_49owu"
+msgid "Adding a setup lesson"
+msgstr "Wir fügen eine Lektion zur Einrichtung hinzu"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "8Lpa5Z"
+msgid "Writing the setup for your device"
+msgstr "Wir erstellen die Einrichtungsanleitung für dein Gerät"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "C4MPTB"
+msgid "Checking what the tool needs…"
+msgstr "Wir prüfen die Voraussetzungen für die Einrichtung…"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "E4RZNN"
+msgid "Writing the steps to install it…"
+msgstr "Wir erstellen die Anleitung zur Installation…"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "7wkXtE"
+msgid "Adding a quick check that it works…"
+msgstr "Wir ergänzen einen kurzen Test, ob alles funktioniert…"
 
 #: src/journey/goal-actions.tsx
 msgctxt "vr-vFm"
@@ -4886,6 +4931,16 @@ msgid "A star for finishing, one for getting everything across and one without H
 msgstr "Ein Stern fürs Abschließen, einer dafür, alles verständlich zu vermitteln, und einer fürs Gespräch ohne Hilfe."
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
+msgctxt "rMZfgB"
+msgid "Getting your call ready"
+msgstr "Wir bereiten dein Gespräch vor"
+
+#: src/language/conversation/checkpoint-call-preparing.tsx
+msgctxt "dKxF7Y"
+msgid "It opens here as soon as it's ready."
+msgstr "Es öffnet sich hier, sobald es bereit ist."
+
+#: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "3qV6d_"
 msgid "Get the call ready"
 msgstr "Gespräch vorbereiten"
@@ -4896,26 +4951,18 @@ msgid "This challenge is a short call about the unit. It's written for your spea
 msgstr "Diese Herausforderung ist ein kurzes Gespräch über die Einheit. Wir bereiten es zuerst passend zu deinem Sprechniveau vor. Das dauert bis zu einer halben Minute."
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
-msgctxt "rMZfgB"
-msgid "Getting your call ready"
-msgstr "Wir bereiten dein Gespräch vor"
-
-#: src/language/conversation/checkpoint-call-preparing.tsx
-msgctxt "dKxF7Y"
-msgid "It opens here as soon as it's ready."
-msgstr "Es öffnet sich hier, sobald es bereit ist."
+#: src/language/conversation/conversation-intro.tsx
+#: src/language/conversation/try-call-again.tsx
+#: src/language/unit/practice-conversation.tsx
+msgctxt "l3VAtp"
+msgid "The call didn't start. Try again in a moment."
+msgstr "Das Gespräch konnte nicht gestartet werden. Versuch es gleich noch einmal."
 
 #. The daily time limit is a setting that stops study for the day.
 #: src/language/conversation/conversation-intro.tsx
 msgctxt "HYCGBs"
 msgid "You've reached your daily time limit. You can make this call in your next session."
 msgstr "Du hast dein tägliches Zeitlimit erreicht. Du kannst dieses Gespräch in deiner nächsten Lerneinheit führen."
-
-#: src/language/conversation/conversation-intro.tsx
-#: src/language/unit/practice-conversation.tsx
-msgctxt "l3VAtp"
-msgid "The call didn't start. Try again in a moment."
-msgstr "Das Gespräch konnte nicht gestartet werden. Versuch es gleich noch einmal."
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/unit/practice-conversation.tsx
@@ -5151,6 +5198,12 @@ msgid "Try another one when you're ready."
 msgstr "Versuch eine weitere Probeprüfung, wenn du bereit bist."
 
 #: src/language/conversation/speaking-mock-result.tsx
+#: src/language/progress/speaking-mock-card.tsx
+msgctxt "8uq58m"
+msgid "Your mock opens as soon as it's ready."
+msgstr "Deine Probeprüfung öffnet sich, sobald sie bereit ist."
+
+#: src/language/conversation/speaking-mock-result.tsx
 msgctxt "Vyzuj3"
 msgid "Try another mock"
 msgstr "Weitere Probeprüfung versuchen"
@@ -5296,14 +5349,20 @@ msgid "Try the task again when you're ready."
 msgstr "Versuch die Aufgabe noch einmal, wenn du bereit bist."
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
-msgctxt "FjJT2V"
-msgid "Try this task with a new card"
-msgstr "Diese Aufgabe mit einer neuen Karte versuchen"
-
-#: src/language/exam-speaking/exam-speaking-result.tsx
 msgctxt "rNoi5I"
 msgid "Go to task {number}"
 msgstr "Zu Aufgabe {number}"
+
+#: src/language/exam-speaking/exam-speaking-result.tsx
+#: src/language/exam-speaking/speaking-paper-section.tsx
+msgctxt "uBvT9W"
+msgid "Your task opens as soon as its card is ready."
+msgstr "Deine Aufgabe öffnet sich, sobald die Aufgabenkarte bereit ist."
+
+#: src/language/exam-speaking/exam-speaking-result.tsx
+msgctxt "FjJT2V"
+msgid "Try this task with a new card"
+msgstr "Diese Aufgabe mit einer neuen Karte versuchen"
 
 #: src/language/exam-speaking/exam-task-intro.tsx
 msgctxt "X_5MNN"
@@ -5376,11 +5435,6 @@ msgstr "Von vorn beginnen"
 msgctxt "l3c7Yz"
 msgid "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one."
 msgstr "Sprechübungen sind in Plus enthalten: Übe jede Aufgabe des Prüfungsteils in einem Gespräch und erhalte danach eine Einschätzung anhand der offiziellen Kriterien."
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "uBvT9W"
-msgid "Your task opens as soon as its card is ready."
-msgstr "Deine Aufgabe öffnet sich, sobald die Aufgabenkarte bereit ist."
 
 #: src/language/exam-speaking/speaking-paper-section.tsx
 msgctxt "TSrXx4"
@@ -5774,11 +5828,6 @@ msgstr "Ein kurzer mündlicher Test mit einem Prüfer oder einer Prüferin. Dana
 msgctxt "pAwPcF"
 msgid "Repeat sentences, then a short interview with an examiner. After it, an estimated band from 1 to 6 for each criterion."
 msgstr "Wiederhole Sätze und führe danach ein kurzes Gespräch mit einem Prüfer oder einer Prüferin. Anschließend erhältst du für jedes Kriterium eine geschätzte Punktzahl von 1 bis 6."
-
-#: src/language/progress/speaking-mock-card.tsx
-msgctxt "8uq58m"
-msgid "Your mock opens as soon as it's ready."
-msgstr "Deine Probeprüfung öffnet sich, sobald sie bereit ist."
 
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "LS2n2L"
@@ -8197,19 +8246,19 @@ msgid "Keep going"
 msgstr "Weitermachen"
 
 #: src/mock/mock-speaking.tsx
-msgctxt "8xoYFh"
-msgid "Writing your task cards…"
-msgstr "Wir erstellen deine Aufgabenkarten…"
-
-#: src/mock/mock-speaking.tsx
 msgctxt "6lEa3w"
 msgid "Start the speaking part"
 msgstr "Mündlichen Teil starten"
 
 #: src/mock/mock-speaking.tsx
-msgctxt "ZX1_UR"
-msgid "Each task is a live call with an examiner, as in the exam: an AI stands in for the person. Your task cards are written when you start, which takes about half a minute."
-msgstr "Jede Aufgabe ist ein Live-Gespräch mit einer prüfenden Person, wie in der Prüfung. Eine KI übernimmt dabei deren Rolle. Deine Aufgabenkarten werden erstellt, sobald du beginnst. Das dauert etwa eine halbe Minute."
+msgctxt "i9hrw7"
+msgid "Your speaking paper opens as soon as it's ready."
+msgstr "Dein Aufgabenblatt für die mündliche Prüfung öffnet sich, sobald es fertig ist."
+
+#: src/mock/mock-speaking.tsx
+msgctxt "VBXPHn"
+msgid "Each task is a live call with an examiner, as in the exam: an AI stands in for the person."
+msgstr "Jede Aufgabe ist ein Live-Gespräch mit einer prüfenden Person, wie in der Prüfung: Eine KI übernimmt diese Rolle."
 
 #: src/mock/mock-summary-row.tsx
 msgctxt "TyZybQ"
@@ -10558,6 +10607,11 @@ msgstr "Ohne Installation"
 msgctxt "o7eSa4"
 msgid "Your device"
 msgstr "Dein Gerät"
+
+#: src/plan/plan-tool-sheet.tsx
+msgctxt "FwBrsg"
+msgid "Your plan updates as soon as it's ready."
+msgstr "Dein Plan wird aktualisiert, sobald alles fertig ist."
 
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "nrLaaR"

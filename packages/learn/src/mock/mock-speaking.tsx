@@ -18,6 +18,7 @@ import { useState } from "react";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
 import { DoneMark } from "../_components/status-mark";
 import { TaskActions } from "../_components/task-layout";
+import { WritingWait } from "../generation/writing-wait";
 import { useTaskMinutes } from "../language/exam-speaking/speaking-task-row";
 import { LearnLink } from "../learn-link";
 import { QUESTION_TEXT_CLASS } from "../questions/item-text";
@@ -141,7 +142,7 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
   const { sections, speaking } = runner.view;
   const section = sections[index];
   const isLast = index === sections.length - 1;
-  const starting = runner.busy === "startSpeaking";
+  const writing = runner.speakingWriting;
 
   const footer = speaking ? (
     <SpeakingHandIn
@@ -151,15 +152,17 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
   ) : (
     <>
       <MockStepStatus />
-      <TaskActions>
-        <TaskMainButton
-          busy={starting}
-          disabled={runner.pending}
-          onClick={() => void runner.startSpeaking()}
-        >
-          {starting ? t("Writing your task cards…") : t("Start the speaking part")}
-        </TaskMainButton>
-      </TaskActions>
+      {!writing && (
+        <TaskActions>
+          <TaskMainButton
+            busy={runner.busy === "startSpeaking"}
+            disabled={runner.pending}
+            onClick={() => void runner.startSpeaking()}
+          >
+            {t("Start the speaking part")}
+          </TaskMainButton>
+        </TaskActions>
+      )}
     </>
   );
 
@@ -168,12 +171,20 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
       <div className="flex flex-col gap-4">
         <h2 className={QUESTION_TEXT_CLASS}>{section?.name ?? speaking?.paper ?? t("Speaking")}</h2>
 
-        {speaking ? (
-          <SpeakingPaper paper={speaking} />
-        ) : (
+        {speaking && <SpeakingPaper paper={speaking} />}
+
+        {!speaking && writing && (
+          <WritingWait
+            hint={t("Your speaking paper opens as soon as it's ready.")}
+            kind="speakingPaper"
+            writing={writing}
+          />
+        )}
+
+        {!speaking && !writing && (
           <p className="text-muted-foreground text-pretty">
             {t(
-              "Each task is a live call with an examiner, as in the exam: an AI stands in for the person. Your task cards are written when you start, which takes about half a minute.",
+              "Each task is a live call with an examiner, as in the exam: an AI stands in for the person.",
             )}
           </p>
         )}
@@ -182,10 +193,6 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
   );
 }
 
-/**
- * Its cards are written when the learner starts the section, so a mock handed in before it never
- * pays for them.
- */
 export function MockSpeakingView() {
   const { runner } = useMockScreen();
   const { current } = runner.view;

@@ -5,8 +5,6 @@ import { type DayEntry } from "@/lib/session/day-entry";
 import { useDayEntry, useDayTap } from "@/lib/session/use-day-entry";
 import { useDayTaps } from "@/lib/session/use-day-taps";
 import { useStudyNavigation } from "@/lib/session/use-study-navigation";
-import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
-import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
 import { NextStop } from "@zoonk/learn/session/next-stop";
 import { SessionShell } from "@zoonk/learn/session/shell";
 import { useCallback } from "react";
@@ -32,25 +30,23 @@ function HeldStep({ entry }: { entry: DayEntry }) {
   }
 
   return (
-    <GenerationFollowerProvider follower={WorkflowRunFollower}>
-      <NextStop
-        actions={{
-          refresh,
-          start: () => (entry.next ? taps.next(entry.step) : taps.open(entry.step)),
-          stop: navigation.stop,
-        }}
-        alternative={null}
-        block={held.step}
-        blocks={shown.day.blocks}
-        exitHref={EXIT_HREF}
-        generationId={null}
-        lesson="ready"
-        lessonsComing={shown.day.lessonsComing}
-        notWritten={null}
-        sessionBar={shown.day.sessionBar}
-        tap={held.tap}
-      />
-    </GenerationFollowerProvider>
+    <NextStop
+      actions={{
+        refresh,
+        start: () => (entry.next ? taps.next(entry.step) : taps.open(entry.step)),
+        stop: navigation.stop,
+      }}
+      alternative={null}
+      block={held.step}
+      blocks={shown.day.blocks}
+      exitHref={EXIT_HREF}
+      generationId={null}
+      lesson="ready"
+      lessonsComing={shown.day.lessonsComing}
+      notWritten={null}
+      sessionBar={shown.day.sessionBar}
+      tap={held.tap}
+    />
   );
 }
 

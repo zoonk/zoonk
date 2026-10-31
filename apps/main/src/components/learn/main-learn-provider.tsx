@@ -1,6 +1,8 @@
 "use client";
 
+import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
 import { trackEvent } from "@zoonk/core/analytics/client";
+import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
 import { type LearnAdapters, LearnProvider } from "@zoonk/learn/provider";
 import { useMemo } from "react";
 import { LearningLink } from "./learning-link";
@@ -26,5 +28,11 @@ export function MainLearnProvider({ children }: { children: React.ReactNode }) {
     [signUp],
   );
 
-  return <LearnProvider adapters={adapters}>{children}</LearnProvider>;
+  return (
+    <LearnProvider adapters={adapters}>
+      <GenerationFollowerProvider follower={WorkflowRunFollower}>
+        {children}
+      </GenerationFollowerProvider>
+    </LearnProvider>
+  );
 }

@@ -182,6 +182,15 @@ export function JourneyClient({
         actions={{
           ...actions,
           adviseOnBases: () => getGoalBasesAdvice(goalId),
+          chooseTools: async (input) => {
+            const chosen = await actions.chooseTools(input);
+
+            if (chosen === true) {
+              router.refresh();
+            }
+
+            return chosen;
+          },
           findTimeToCover: () => findGoalTimeToCover({ goalId }),
         }}
         goalStatus={status}

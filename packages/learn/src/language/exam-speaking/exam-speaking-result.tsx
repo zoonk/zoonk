@@ -6,11 +6,9 @@ import {
   type ExamTaskView,
   type SpeakingCriterionView,
 } from "@zoonk/core/language/exam-speaking/contract";
-import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { LightbulbIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useTransition } from "react";
 import { CHIP_CLASS } from "../../_components/chip";
 import {
   StepCard,
@@ -20,11 +18,12 @@ import {
   StepTitle,
 } from "../../_components/step-card";
 import { Steps, type StepsItem } from "../../_components/steps";
-import { TASK_OPTION_CLASS } from "../../_components/task-layout";
 import { StepWithDayMoment } from "../../session/day-moment";
 import { TaskMainLink } from "../../shell/task-frame";
 import { CallNote } from "../conversation/call-note";
 import { EstimateNote, ResultRow, ResultRows } from "../conversation/result-rows";
+import { TryCallAgain } from "../conversation/try-call-again";
+import { type CallStartOutcome } from "../conversation/use-call-start";
 import { CriteriaDetails } from "./exam-speaking-criteria";
 import { useCriterionGloss, useEstimateText, useStandingText } from "./exam-speaking-labels";
 import { useExamTaskTitle } from "./exam-task-intro";
@@ -214,23 +213,6 @@ function NoGradeStep() {
   );
 }
 
-function TryAgainButton({ onTryAgain }: { onTryAgain: () => Promise<void> }) {
-  const t = useExtracted();
-  const [isPending, startTransition] = useTransition();
-
-  return (
-    <Button
-      className={TASK_OPTION_CLASS}
-      disabled={isPending}
-      onClick={() => startTransition(onTryAgain)}
-      size="xl"
-      variant="ghost"
-    >
-      {t("Try this task with a new card")}
-    </Button>
-  );
-}
-
 export function ExamSpeakingResult({
   ceremony,
   conversation,
@@ -250,7 +232,7 @@ export function ExamSpeakingResult({
   feedback: ExamSpeakingFeedbackView | null;
   nextHref: string;
   nextTaskHref: string | null;
-  onTryAgain: (() => Promise<void>) | null;
+  onTryAgain: (() => Promise<CallStartOutcome>) | null;
 }) {
   const t = useExtracted();
   const language = conversation.targetLanguage;
@@ -298,7 +280,15 @@ export function ExamSpeakingResult({
       }
       finalOptions={
         <>
-          {onTryAgain && <TryAgainButton onTryAgain={onTryAgain} />}
+          {onTryAgain && (
+            <TryCallAgain
+              hint={t("Your task opens as soon as its card is ready.")}
+              kind="examSpeaking"
+              onTryAgain={onTryAgain}
+            >
+              {t("Try this task with a new card")}
+            </TryCallAgain>
+          )}
           {graded.length > 0 && (
             <CriteriaDetails graded={graded} language={language} level={examTask.level} />
           )}

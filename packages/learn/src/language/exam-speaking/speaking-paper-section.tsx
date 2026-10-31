@@ -20,7 +20,7 @@ import {
   PageSectionTitle,
 } from "../../_components/page";
 import { PlusNotice } from "../../_components/plus-lock";
-import { GenerationWait } from "../../generation/generation-wait";
+import { WritingWait } from "../../generation/writing-wait";
 import { CallLimitMessage } from "../conversation/call-limit-message";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
 import { TaskRow, getTaskRowId } from "./speaking-task-row";
@@ -63,18 +63,17 @@ export function SpeakingPaperSection({
     onStart: async () => {
       const started = selected.current ? await onStart(selected.current) : false;
 
-      if (typeof started === "boolean" || started === "paused") {
+      if (typeof started === "boolean" || started === "paused" || "generationId" in started) {
         return started;
       }
 
       setLimit(started.limit);
       return false;
     },
-    step: "writeTask",
   });
 
   const paused = paper.access === "callsPaused";
-  const busy = call.isStarting || call.run !== null;
+  const busy = call.isStarting || call.writing !== null;
   useOpenTask(openTask);
 
   return (
@@ -137,14 +136,12 @@ export function SpeakingPaperSection({
         </ol>
       </ListGroup>
 
-      {call.run && (
-        <GenerationWait kind="examSpeaking" run={call.run}>
-          {call.run.status !== "failed" && (
-            <p className="text-muted-foreground text-sm">
-              {t("Your task opens as soon as its card is ready.")}
-            </p>
-          )}
-        </GenerationWait>
+      {call.writing && (
+        <WritingWait
+          hint={t("Your task opens as soon as its card is ready.")}
+          kind="examSpeaking"
+          writing={call.writing}
+        />
       )}
 
       {call.failed && limit && (

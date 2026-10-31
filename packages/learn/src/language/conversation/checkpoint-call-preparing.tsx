@@ -6,24 +6,11 @@ import {
 } from "@zoonk/ui/components/generation-timeline";
 import { PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
 import { TaskActions } from "../../_components/task-layout";
-import { type GenerationRun } from "../../generation/generation-run";
-import { GenerationWait } from "../../generation/generation-wait";
+import { WritingWait } from "../../generation/writing-wait";
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
 import { useConversationTitle } from "./conversation-labels";
-
-type WriteState = "failed" | "idle" | "ready" | "writing";
-
-function toRun({ retry, state }: { retry: () => void; state: WriteState }): GenerationRun {
-  if (state === "failed") {
-    return { failure: "notStarted", retry, status: "failed", steps: {} };
-  }
-
-  return state === "ready"
-    ? { failure: null, status: "ready", steps: { writeCall: "completed" } }
-    : { failure: null, status: "following", steps: { writeCall: "started" } };
-}
+import { type CallStartOutcome, useCallStart } from "./use-call-start";
 
 export function CheckpointCallPreparing({
   exitHref,
@@ -31,57 +18,52 @@ export function CheckpointCallPreparing({
   unitTitle,
 }: {
   exitHref: string;
-  onStart: () => Promise<boolean>;
+  onStart: () => Promise<CallStartOutcome>;
   unitTitle: string;
 }) {
   const t = useExtracted();
   const title = useConversationTitle({ exam: null, examTask: null, kind: "checkpoint" });
-  const [state, setState] = useState<WriteState>("idle");
+  const call = useCallStart({ onStart });
 
-  const start = async () => {
-    setState("writing");
-    const started = await onStart().catch(() => false);
-    setState(started ? "ready" : "failed");
-  };
-
-  if (state === "idle") {
+  if (call.writing) {
     return (
-      <TaskFrame
-        exitHref={exitHref}
-        footer={
-          <TaskActions>
-            <TaskMainButton onClick={() => void start()}>
-              <PhoneIcon aria-hidden="true" />
-              {t("Get the call ready")}
-            </TaskMainButton>
-          </TaskActions>
-        }
-        headerTitle={title}
-      >
-        <header className="flex flex-col gap-2">
-          <h1 className="text-title text-balance">{unitTitle}</h1>
-          <p className="text-muted-foreground text-pretty">
-            {t(
-              "This challenge is a short call about the unit. It's written for your speaking level first, which takes up to half a minute.",
-            )}
-          </p>
-        </header>
+      <TaskFrame exitHref={exitHref} headerTitle={title}>
+        <WritingWait className="pt-4" kind="conversationCall" writing={call.writing}>
+          <GenerationTimelineTitle>{t("Getting your call ready")}</GenerationTimelineTitle>
+          <GenerationTimelineDescription>
+            {t("It opens here as soon as it's ready.")}
+          </GenerationTimelineDescription>
+        </WritingWait>
       </TaskFrame>
     );
   }
 
   return (
-    <TaskFrame exitHref={exitHref} headerTitle={title}>
-      <GenerationWait
-        className="pt-4"
-        kind="conversationCall"
-        run={toRun({ retry: () => void start(), state })}
-      >
-        <GenerationTimelineTitle>{t("Getting your call ready")}</GenerationTimelineTitle>
-        <GenerationTimelineDescription>
-          {t("It opens here as soon as it's ready.")}
-        </GenerationTimelineDescription>
-      </GenerationWait>
+    <TaskFrame
+      exitHref={exitHref}
+      footer={
+        <TaskActions>
+          <TaskMainButton busy={call.isStarting} onClick={call.start}>
+            <PhoneIcon aria-hidden="true" />
+            {t("Get the call ready")}
+          </TaskMainButton>
+        </TaskActions>
+      }
+      headerTitle={title}
+    >
+      <header className="flex flex-col gap-2">
+        <h1 className="text-title text-balance">{unitTitle}</h1>
+        <p className="text-muted-foreground text-pretty">
+          {t(
+            "This challenge is a short call about the unit. It's written for your speaking level first, which takes up to half a minute.",
+          )}
+        </p>
+        {call.failed && (
+          <p className="text-destructive-text text-sm" role="alert">
+            {t("The call didn't start. Try again in a moment.")}
+          </p>
+        )}
+      </header>
     </TaskFrame>
   );
 }

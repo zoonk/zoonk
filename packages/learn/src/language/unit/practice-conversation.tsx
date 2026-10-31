@@ -25,7 +25,7 @@ import {
 } from "../../_components/list-group";
 import { PlusMark, PlusNotice } from "../../_components/plus-lock";
 import { useFormatDuration } from "../../_utils/time-format";
-import { GenerationWait } from "../../generation/generation-wait";
+import { WritingWait } from "../../generation/writing-wait";
 import { CallLimitMessage } from "../conversation/call-limit-message";
 import { CallOffMessage } from "../conversation/conversation-parts";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
@@ -106,21 +106,19 @@ function CallSetup({
 }) {
   const t = useExtracted();
   const [minutes, setMinutes] = useState(conversation.defaultMinutes);
-  const call = useCallStart({ onStart: () => onStart(minutes), step: "writeCall" });
+  const call = useCallStart({ onStart: () => onStart(minutes) });
 
   if (conversation.paused) {
     return <CallsPausedMessage className="py-4" />;
   }
 
-  if (call.run) {
+  if (call.writing) {
     return (
-      <GenerationWait kind="conversationCall" run={call.run}>
-        {call.run.status !== "failed" && (
-          <p className="text-muted-foreground text-sm">
-            {t("Your call opens as soon as it's ready.")}
-          </p>
-        )}
-      </GenerationWait>
+      <WritingWait
+        hint={t("Your call opens as soon as it's ready.")}
+        kind="conversationCall"
+        writing={call.writing}
+      />
     );
   }
 

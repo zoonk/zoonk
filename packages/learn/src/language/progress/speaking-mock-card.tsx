@@ -11,7 +11,7 @@ import {
   NoticeCardDescription,
   NoticeCardTitle,
 } from "../../_components/notice-card";
-import { GenerationWait } from "../../generation/generation-wait";
+import { WritingWait } from "../../generation/writing-wait";
 import { useSpeakingMockTitle } from "../conversation/conversation-labels";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
 
@@ -42,7 +42,7 @@ export function SpeakingMockCard({
   const t = useExtracted();
   const title = useSpeakingMockTitle();
   const description = useSpeakingMockDescription();
-  const call = useCallStart({ onStart, step: "writeMock" });
+  const call = useCallStart({ onStart });
 
   return (
     <section aria-labelledby="language-speaking-mock" className="flex flex-col gap-3">
@@ -73,14 +73,13 @@ export function SpeakingMockCard({
       )}
 
       {!paused &&
-        (call.run ? (
-          <GenerationWait className="pt-2" kind="speakingMock" run={call.run}>
-            {call.run.status !== "failed" && (
-              <p className="text-muted-foreground text-sm">
-                {t("Your mock opens as soon as it's ready.")}
-              </p>
-            )}
-          </GenerationWait>
+        (call.writing ? (
+          <WritingWait
+            className="pt-2"
+            hint={t("Your mock opens as soon as it's ready.")}
+            kind="speakingMock"
+            writing={call.writing}
+          />
         ) : (
           <>
             <Button

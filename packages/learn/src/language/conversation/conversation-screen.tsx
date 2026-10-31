@@ -19,6 +19,7 @@ import { ConversationLive } from "./conversation-live";
 import { ConversationResult } from "./conversation-result";
 import { SpeakingMockResult } from "./speaking-mock-result";
 import { type TappedCallAudio } from "./use-call-microphone";
+import { type CallStartOutcome } from "./use-call-start";
 import { type LiveCallActions, useLiveCall } from "./use-live-call";
 
 export type { ConversationConnection } from "./use-call-connection";
@@ -32,7 +33,7 @@ export type ConversationActions = LiveCallActions & {
   complete: (
     input: Omit<LanguageConversationCompletionInput, "timeZone">,
   ) => Promise<ConversationCompletion>;
-  startAgain?: () => Promise<void>;
+  startAgain?: () => Promise<CallStartOutcome>;
 };
 
 export type ConversationHrefs = { exit: string; next: string; nextTask?: (task: string) => string };

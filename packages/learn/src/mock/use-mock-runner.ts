@@ -17,6 +17,7 @@ import {
 import { isSavedQuestionExpired } from "./mock-deadline";
 import { getSectionMoves } from "./section-moves";
 import { isDraftAnswered, useMockDrafts } from "./use-mock-drafts";
+import { useSpeakingStart } from "./use-speaking-start";
 
 /** A retry after the timeout is safe: a handed-in section stays handed in. */
 const STEP_BOUNDS = { slowMs: 10_000, timeoutMs: 45_000 } as const;
@@ -183,6 +184,7 @@ export function useMockRunner({
   const [busy, setBusy] = useState<MockStep | null>(null);
   const [error, setError] = useState(false);
   const { essayGrading, gradeEssays } = useEssayGrading({ actions, setView });
+  const speaking = useSpeakingStart({ start: actions.startSpeaking, step });
   const slow = useTakingLong({ active: busy !== null, afterMs: STEP_BOUNDS.slowMs });
   const drafts = useMockDrafts({ save: actions.answer, view: initial });
   const questions = view.current?.questions ?? [];
@@ -207,7 +209,7 @@ export function useMockRunner({
     shownItemId,
   });
 
-  async function step(kind: MockStep, request: () => Promise<MockView | null>) {
+  async function step(kind: MockStep, request: () => Promise<MockView | "writing" | null>) {
     setPending(true);
     setBusy(kind);
     setError(false);
@@ -228,8 +230,8 @@ export function useMockRunner({
     setPending(false);
     setBusy(null);
 
-    if (!next) {
-      setError(true);
+    if (next === null || next === "writing") {
+      setError(next === null);
       return;
     }
 
@@ -318,7 +320,8 @@ export function useMockRunner({
     saveStatus: drafts.saveStatus,
     savesInFlight: drafts.inFlight,
     slow,
-    startSpeaking: () => step("startSpeaking", actions.startSpeaking),
+    speakingWriting: speaking.speakingWriting,
+    startSpeaking: speaking.startSpeaking,
     submitSection: () => step("submit", () => actions.submit(view.current?.section ?? 0)),
     timeOutQuestion: () => move(position + 1, true),
     timeUp,

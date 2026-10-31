@@ -6,6 +6,7 @@ import {
   useConversationCallCopy,
   useExamSpeakingCopy,
   useSpeakingMockCopy,
+  useSpeakingPaperCopy,
 } from "./call-generation-copy";
 import { type KindCopy, type PhaseCopy } from "./generation-copy-types";
 import { type GenerationKind } from "./generation-kinds";
@@ -281,6 +282,24 @@ function useLessonCopy(): KindCopy<"lesson"> {
   };
 }
 
+function useSetupLessonCopy(): KindCopy<"setupLesson"> {
+  const t = useExtracted();
+
+  return {
+    name: t("Adding a setup lesson"),
+    phases: {
+      write: {
+        label: t("Writing the setup for your device"),
+        lines: [
+          t("Checking what the tool needs…"),
+          t("Writing the steps to install it…"),
+          t("Adding a quick check that it works…"),
+        ],
+      },
+    },
+  };
+}
+
 /** Hooks can't be skipped, so every kind's copy is built and the wait reads its own. */
 export function useGenerationCopy(kind: GenerationKind): {
   name: string;
@@ -299,7 +318,9 @@ export function useGenerationCopy(kind: GenerationKind): {
     levelTestBank: useLevelTestBankCopy(),
     mockQuestions: useMockQuestionsCopy(),
     placement: usePlacementCopy(),
+    setupLesson: useSetupLessonCopy(),
     speakingMock: useSpeakingMockCopy(),
+    speakingPaper: useSpeakingPaperCopy(),
     testOutQuestions: useTestOutQuestionsCopy(),
     understanding: useUnderstandingCopy(),
   } satisfies { [Kind in GenerationKind]: KindCopy<Kind> };

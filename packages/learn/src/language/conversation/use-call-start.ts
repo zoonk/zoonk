@@ -1,103 +1,73 @@
 "use client";
 
 import { useLayoutEffect, useState } from "react";
-import { type GenerationRun } from "../../generation/generation-run";
+import { type ContentWriting } from "../../generation/writing-wait";
 
-/** A call written ahead starts well within this, so a slower start is a model writing it. */
-const WRITING_AFTER_MS = 1000;
-
-/** True once the call opens, false when it didn't start, `"paused"` when calls are paused for everyone. */
-export type CallStartOutcome = boolean | "paused";
+/**
+ * True once the call opens, false when it didn't start, `"paused"` when calls are paused for
+ * everyone, or the run writing the call when it isn't written yet.
+ */
+export type CallStartOutcome = boolean | "paused" | { generationId: string };
 
 type CallStartState =
-  | "failed"
-  | "idle"
-  | "opened"
-  | "paused"
-  | "ready"
-  | "starting"
-  | "writeFailed"
-  | "writing";
+  | { generationId: string; status: "writing" }
+  | { status: "failed" | "idle" | "opened" | "paused" | "starting" };
 
+const IDLE: CallStartState = { status: "idle" };
+
+/** A run that ended with the call still unwritten would loop, so a second ask after it fails. */
 function settle({
-  current,
+  afterWrite,
   started,
 }: {
-  current: CallStartState;
+  afterWrite: boolean;
   started: CallStartOutcome;
 }): CallStartState {
   if (started === "paused") {
-    return "paused";
+    return { status: "paused" };
   }
 
-  const wasWriting = current === "writing";
-
-  if (started) {
-    return wasWriting ? "ready" : "opened";
+  if (started === true) {
+    return { status: "opened" };
   }
 
-  return wasWriting ? "writeFailed" : "failed";
+  if (started && !afterWrite) {
+    return { generationId: started.generationId, status: "writing" };
+  }
+
+  return { status: "failed" };
 }
 
-function toRun({
-  retry,
-  state,
-  step,
-}: {
-  retry: () => void;
-  state: CallStartState;
-  step: string;
-}): GenerationRun | null {
-  if (state === "writing") {
-    return { failure: null, status: "following", steps: { [step]: "started" } };
-  }
-
-  if (state === "ready") {
-    return { failure: null, status: "ready", steps: { [step]: "completed" } };
-  }
-
-  if (state === "writeFailed") {
-    return { failure: "notStarted", retry, status: "failed", steps: {} };
-  }
-
-  return null;
-}
-
-export function useCallStart({
-  onStart,
-  step,
-}: {
-  onStart: () => Promise<CallStartOutcome>;
-  step: string;
-}) {
-  const [state, setState] = useState<CallStartState>("idle");
+export function useCallStart({ onStart }: { onStart: () => Promise<CallStartOutcome> }) {
+  const [state, setState] = useState<CallStartState>(IDLE);
 
   // The router keeps the card's page while its call runs, so back on it that start is over; one
-  // still waiting keeps its wait.
+  // still being written keeps its wait.
   useLayoutEffect(
-    () => () =>
-      setState((current) => (current === "opened" || current === "ready" ? "idle" : current)),
+    () => () => setState((current) => (current.status === "opened" ? IDLE : current)),
     [],
   );
 
-  const start = async () => {
-    setState((current) => (current === "writeFailed" ? "writing" : "starting"));
-
-    const writing = setTimeout(() => {
-      setState((current) => (current === "starting" ? "writing" : current));
-    }, WRITING_AFTER_MS);
-
+  const start = async (afterWrite: boolean) => {
+    setState((current) => (current.status === "writing" ? current : { status: "starting" }));
     const started = await onStart().catch(() => false);
-
-    clearTimeout(writing);
-    setState((current) => settle({ current, started }));
+    setState(settle({ afterWrite, started }));
   };
 
+  const writing: ContentWriting | null =
+    state.status === "writing"
+      ? {
+          generationId: state.generationId,
+          onReady: () => void start(true),
+          restart: () => start(false),
+        }
+      : null;
+
   return {
-    failed: state === "failed",
-    isStarting: state === "starting" || state === "opened",
-    paused: state === "paused",
-    run: toRun({ retry: () => void start(), state, step }),
-    start: () => void start(),
+    failed: state.status === "failed",
+    isStarting: state.status === "starting" || state.status === "opened",
+    paused: state.status === "paused",
+    start: () => void start(false),
+    writing,
   };
 }
