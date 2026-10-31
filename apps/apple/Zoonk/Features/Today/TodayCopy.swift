@@ -9,8 +9,7 @@ extension StudyBlock {
     kind == .review && !capsules.isEmpty
   }
 
-  /// A full review and a mistakes drill say what they are instead.
-  private var hasTopics: Bool {
+  private var practisesTopics: Bool {
     kind == .practice && !topics.isEmpty && !fullReview && !mistakesOnly
   }
 
@@ -164,7 +163,7 @@ extension StudyBlock {
         comment: "A full review's questions")
     }
 
-    if hasTopics {
+    if practisesTopics {
       return String(
         localized: "\(questions) questions · \(shortList(topics, named: 2))", table: "Today",
         comment: "A review's questions and its topics")
@@ -200,7 +199,7 @@ extension StudyBlock {
 
     let part: String?
 
-    if hasTopics {
+    if practisesTopics {
       part = shortList(topics, named: 1)
     } else if isCatchingUp {
       part =

@@ -54,8 +54,7 @@ val DayStep.challengePhase: String?
 private val DayStep.hasCapsules: Boolean
     get() = kind == StudyBlock.Kind.REVIEW && capsules.isNotEmpty()
 
-/** A full review and a mistakes drill say what they are instead. */
-internal val DayStep.hasTopics: Boolean
+internal val DayStep.practisesTopics: Boolean
     get() = kind == StudyBlock.Kind.PRACTICE && topics.isNotEmpty() && !fullReview && !mistakesOnly
 
 @Composable
@@ -173,7 +172,7 @@ fun blockDetail(step: DayStep): String? {
             pluralStringResource(R.plurals.session_block_full_review_questions, count, count)
         }
 
-        step.hasTopics -> {
+        step.practisesTopics -> {
             pluralStringResource(R.plurals.session_block_review_topics, count, count, shortTopicList(step.topics, named = 2))
         }
 

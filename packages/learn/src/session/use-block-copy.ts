@@ -54,8 +54,7 @@ function hasCapsules(block: Pick<StudyBlock, "capsules" | "kind">): boolean {
   return block.kind === "review" && block.capsules.length > 0;
 }
 
-/** A full review and a mistakes drill say what they are instead. */
-export function hasTopics(
+export function practisesTopics(
   block: Pick<BlockCopyInput, "fullReview" | "kind" | "mistakesOnly" | "topics">,
 ): boolean {
   return (
@@ -188,7 +187,7 @@ export function useBlockDetail() {
       );
     }
 
-    if (hasTopics(block)) {
+    if (practisesTopics(block)) {
       return t("{count, plural, one {# question} other {# questions}} · {titles}", {
         count: block.questions,
         titles: shortList(block.topics, "topics", { named: 2 }),

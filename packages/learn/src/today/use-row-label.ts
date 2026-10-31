@@ -3,7 +3,7 @@
 import { useExtracted } from "next-intl";
 import { useShortList } from "../plan/use-short-list";
 import { type DayStep } from "../session/session-types";
-import { hasTopics, useBlockDetail } from "../session/use-block-copy";
+import { practisesTopics, useBlockDetail } from "../session/use-block-copy";
 import { useIsCatchingUp } from "./today-catch-up";
 
 /** A challenge says what it is, since a learner meets one before they've ever taken one. */
@@ -14,7 +14,7 @@ export function useRowLabel() {
   const shortList = useShortList();
 
   const part = (block: DayStep): string | null => {
-    if (hasTopics(block)) {
+    if (practisesTopics(block)) {
       return shortList(block.topics, "topics", { named: 1 });
     }
 
