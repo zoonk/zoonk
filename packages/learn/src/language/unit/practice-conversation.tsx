@@ -87,7 +87,11 @@ function CallsPausedMessage({ className }: { className: string }) {
   return (
     <CallOffMessage className={className} title={t("Calls are paused")}>
       <p className="text-muted-foreground text-sm text-pretty">
-        {t("It's the same for everyone right now. Try again later.")}
+        {t({
+          description:
+            'Under the title "Calls are paused": the pause applies to every learner, not only this one.',
+          message: "It's the same for everyone right now. Try again later.",
+        })}
       </p>
     </CallOffMessage>
   );

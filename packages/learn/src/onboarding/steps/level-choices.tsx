@@ -29,7 +29,10 @@ export function useOwnLevelLabels(): Record<OnboardingOwnLevel, string> {
 
   return {
     advanced: t("I know it well"),
-    basic: t("The basics"),
+    basic: t({
+      description: "An answer to how much the learner already knows about the topic.",
+      message: "The basics",
+    }),
     intermediate: t("I studied it before"),
     none: t("Nothing, I'm just starting"),
   };

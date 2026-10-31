@@ -195,7 +195,10 @@ function PrepareLessons() {
         size="lg"
       >
         {isPending && <Spinner aria-hidden="true" />}
-        {t("Get today's lessons")}
+        {t({
+          description: "Button that has Zoonk write today's lessons.",
+          message: "Get today's lessons",
+        })}
       </Button>
 
       {failed && <ChangeSaveError />}

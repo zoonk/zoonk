@@ -182,7 +182,12 @@ function QuestionAnswer({
   return (
     <div className="flex flex-col items-start gap-3">
       <Marker role="status">
-        <MarkerContent className="shimmer">{t("Thinking…")}</MarkerContent>
+        <MarkerContent className="shimmer">
+          {t({
+            description: 'The study buddy is writing its answer; it speaks as "I".',
+            message: "Thinking…",
+          })}
+        </MarkerContent>
       </Marker>
       {status === "running" && !isLocallyStreaming && (
         <Button
@@ -261,7 +266,10 @@ export function QuestionTurn({
 
   return (
     <article
-      aria-label={t("Your question")}
+      aria-label={t({
+        description: "Label of the field where the learner types a question.",
+        message: "Your question",
+      })}
       className={cn("flex flex-col", page ? "gap-5" : "gap-3")}
     >
       <Message align="end">

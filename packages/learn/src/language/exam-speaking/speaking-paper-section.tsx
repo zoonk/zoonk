@@ -98,7 +98,11 @@ export function SpeakingPaperSection({
           <NoticeCardContent>
             <NoticeCardTitle>{t("Calls are paused")}</NoticeCardTitle>
             <NoticeCardDescription>
-              {t("It's the same for everyone right now. Try again later.")}
+              {t({
+                description:
+                  'Under the title "Calls are paused": the pause applies to every learner, not only this one.',
+                message: "It's the same for everyone right now. Try again later.",
+              })}
             </NoticeCardDescription>
           </NoticeCardContent>
         </NoticeCard>

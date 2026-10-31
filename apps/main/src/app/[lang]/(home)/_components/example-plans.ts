@@ -164,7 +164,7 @@ export async function getExamplePlans(): Promise<Record<ExampleGoal, ExamplePlan
           description: "An example goal's name. Use your language's name for Mexico City.",
           message: "Spanish for Mexico City",
         })
-      : t("English for London");
+      : t({ description: "Use your language's name for London.", message: "English for London" });
 
   const jobName = t("Data analyst by {month}", { month: month(dates.job) });
 

@@ -175,7 +175,10 @@ export function MaterialQuestions({
         }}
       >
         <label className="sr-only" htmlFor={inputId}>
-          {t("Your question")}
+          {t({
+            description: "Label of the field where the learner types a question.",
+            message: "Your question",
+          })}
         </label>
         <Textarea
           autoFocus

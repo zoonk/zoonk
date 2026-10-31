@@ -35,7 +35,15 @@ function useRegexSnippets(): NamedSnippet[] {
     { before: ".", label: ".", name: t("Any character") },
     { after: "]", before: "[", label: "[ ]", name: t("One of these characters") },
     { after: "}", before: "{", label: "{ }", name: t("Repeat a number of times") },
-    { after: ")", before: "(", label: "( )", name: t("Group") },
+    {
+      after: ")",
+      before: "(",
+      label: "( )",
+      name: t({
+        description: "A noun on a palette of pattern parts: a group of characters.",
+        message: "Group",
+      }),
+    },
     { before: "?", label: "?", name: t("Optional") },
     { before: "+", label: "+", name: t("One or more") },
     { before: "*", label: "*", name: t("Zero or more") },

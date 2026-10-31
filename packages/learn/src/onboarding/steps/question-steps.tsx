@@ -161,7 +161,10 @@ function useTextQuestionCopy(question: TextQuestion) {
     score: {
       description: t("It helps your plan focus on what counts most."),
       label: t("Your target"),
-      placeholder: t("E.g., band 7, 100 points"),
+      placeholder: t({
+        description: "An example score: a band is an IELTS-style score.",
+        message: "E.g., band 7, 100 points",
+      }),
       title: t("What score do you need?"),
     },
   };

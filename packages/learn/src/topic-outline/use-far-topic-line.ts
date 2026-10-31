@@ -13,14 +13,20 @@ function useStartWords() {
     const isThisMonth = isThisYear && date.getUTCMonth() === now.getMonth();
 
     if (isThisMonth) {
-      return format.dateTime(date, { day: "numeric", month: "short", timeZone: "UTC" });
+      return {
+        dateKind: "day",
+        start: format.dateTime(date, { day: "numeric", month: "short", timeZone: "UTC" }),
+      };
     }
 
-    return format.dateTime(date, {
-      month: "long",
-      timeZone: "UTC",
-      ...(isThisYear ? {} : { year: "numeric" }),
-    });
+    return {
+      dateKind: "month",
+      start: format.dateTime(date, {
+        month: "long",
+        timeZone: "UTC",
+        ...(isThisYear ? {} : { year: "numeric" }),
+      }),
+    };
   };
 }
 
@@ -36,12 +42,25 @@ export function useFarTopicLine() {
     nextDate?: string | null;
   }): string | null {
     if (lessons === null) {
-      return nextDate ? t("From {start}", { start: startWords(nextDate) }) : null;
+      return nextDate
+        ? t({
+            description: '{start} is a day, like "Nov 5", or a month, like "December".',
+            message: "{dateKind, select, month {From {start}} other {From {start}}}",
+            values: startWords(nextDate),
+          })
+        : null;
     }
 
     const count = t("{count, plural, =1 {# lesson} other {About # lessons}}", { count: lessons });
 
-    return nextDate ? t("{count} · from {start}", { count, start: startWords(nextDate) }) : count;
+    return nextDate
+      ? t({
+          description: '{start} is a day, like "Nov 5", or a month, like "December".',
+          message:
+            "{dateKind, select, month {{count} · from {start}} other {{count} · from {start}}}",
+          values: { count, ...startWords(nextDate) },
+        })
+      : count;
   };
 }
 

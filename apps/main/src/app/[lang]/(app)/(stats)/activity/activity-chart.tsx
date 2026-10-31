@@ -113,7 +113,12 @@ async function ActivityLegend() {
   const t = await getExtracted();
 
   return (
-    <ContributionCalendarLegend aria-label={t("Activity from less to more")}>
+    <ContributionCalendarLegend
+      aria-label={t({
+        description: "Legend of a heatmap, from the lightest to the darkest squares.",
+        message: "Activity from less to more",
+      })}
+    >
       <ContributionCalendarLegendLabel>{t("Less")}</ContributionCalendarLegendLabel>
       {INTENSITY_CLASSES.map((className) => (
         <ContributionCalendarLegendSwatch className={className} key={className} />

@@ -145,7 +145,10 @@ export function LessonRecapRow() {
             <TextQuoteIcon />
           </ListRowIcon>
         }
-        title={t("From the lesson")}
+        title={t({
+          description: "Heading of the panel that recaps the lesson, not a button.",
+          message: "From the lesson",
+        })}
       >
         <div className="flex flex-col gap-3">
           <RecapBody mark={mark} step={recap.step} />
@@ -222,7 +225,15 @@ function ScreenAside({ step }: { step: PlayableLibraryStep }) {
     <TaskAside
       label={t("Help with this screen")}
       meta={<TutorConversationLink fallback={screenNumber} />}
-      title={(recap && t("From the lesson")) || (showsOutline && t("Outline")) || undefined}
+      title={
+        (recap &&
+          t({
+            description: "Heading of the panel that recaps the lesson, not a button.",
+            message: "From the lesson",
+          })) ||
+        (showsOutline && t("Outline")) ||
+        undefined
+      }
     >
       {recap && <LessonRecap mark={mark} step={recap.step} />}
       {showsOutline && <LessonOutline />}

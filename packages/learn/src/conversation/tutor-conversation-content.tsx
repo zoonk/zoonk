@@ -26,12 +26,24 @@ function useSuggestions(situation: TutorSituation): TutorConversationContent["su
     : t("What's in my plan for today?");
 
   const doubt = situation.hasMistake
-    ? { id: "mistake", label: t("Explain my last mistake") }
+    ? {
+        id: "mistake",
+        label: t({
+          description: "A suggestion the learner sends to the buddy as their own message.",
+          message: "Explain my last mistake",
+        }),
+      }
     : { id: "focus", label: t("What should I focus on first?") };
 
   return [
     { id: "today", label: why },
-    { id: "lighter", label: t("I want to study less this week") },
+    {
+      id: "lighter",
+      label: t({
+        description: "A suggestion the learner sends to the buddy as their own message.",
+        message: "I want to study less this week",
+      }),
+    },
     doubt,
   ];
 }

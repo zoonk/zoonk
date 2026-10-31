@@ -40,7 +40,14 @@ async function LevelChoices() {
       id: "none",
       label: t("Nothing, I'm just starting"),
     },
-    { description: t("I know a few things"), id: "basic", label: t("The basics") },
+    {
+      description: t("I know a few things"),
+      id: "basic",
+      label: t({
+        description: "An answer to how much the learner already knows about the topic.",
+        message: "The basics",
+      }),
+    },
     {
       description: t("We'll skip what you already know"),
       id: "intermediate",

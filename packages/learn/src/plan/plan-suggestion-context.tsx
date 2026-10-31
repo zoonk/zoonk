@@ -92,7 +92,12 @@ export function SlotPager({ className }: { className?: string }) {
     >
       <Button onClick={() => move(-1)} size="icon-sm" variant="ghost">
         <ChevronLeftIcon aria-hidden="true" />
-        <span className="sr-only">{t("Previous")}</span>
+        <span className="sr-only">
+          {t({
+            description: "An arrow button that goes back to the previous plan suggestion.",
+            message: "Previous",
+          })}
+        </span>
       </Button>
       <span className="text-muted-foreground font-mono text-[0.6875rem] tabular-nums">
         {t("{number, number} of {total, number}", { number: index + 1, total: count })}

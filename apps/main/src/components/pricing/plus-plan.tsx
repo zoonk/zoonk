@@ -238,7 +238,13 @@ export async function PlusPlan({
         render={(reader) => (
           <>
             <PlusAction billingSwitch={billingSwitch} hasChoice={hasChoice} viewerState={reader} />
-            <p className={PLAN_ACTION_NOTE_CLASS}>{t("Cancel anytime.")}</p>
+            <p className={PLAN_ACTION_NOTE_CLASS}>
+              {t({
+                description:
+                  "Reassurance next to the subscribe button: the learner can cancel whenever they want.",
+                message: "Cancel anytime.",
+              })}
+            </p>
           </>
         )}
         viewerState={viewerState}

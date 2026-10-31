@@ -51,7 +51,11 @@ async function NextLevelTile({ level }: { level: BeltLevelDetails }) {
           "{color, select, yellow {To Yellow belt} orange {To Orange belt} green {To Green belt} blue {To Blue belt} purple {To Purple belt} brown {To Brown belt} red {To Red belt} gray {To Gray belt} black {To Black belt} other {To the next belt}}",
           { color: level.nextBelt.color },
         )
-      : t("To level {level}", { level: String(level.level + 1) });
+      : t({
+          description: "Label above the points still needed to reach that level.",
+          message: "To level {level}",
+          values: { level: String(level.level + 1) },
+        });
 
   return (
     <StatTile

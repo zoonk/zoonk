@@ -138,7 +138,11 @@ function NoToolsPath({ tools }: { tools: PlanToolView[] }) {
             ref={buttonRef}
             variant="link"
           >
-            {t("No tools? You can do it all with examples.")}
+            {t({
+              description:
+                "A link that switches the plan to learning from examples, without installing tools.",
+              message: "No tools? You can do it all with examples.",
+            })}
           </Button>
           {failed && <ChangeSaveError />}
         </>

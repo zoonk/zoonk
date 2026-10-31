@@ -159,7 +159,12 @@ function DockedConversation({ buddy }: { buddy: TutorBuddy }) {
           variant="ghost"
         >
           <ChevronLeftIcon aria-hidden="true" />
-          {buddy.context.kind === "item" ? t("Back") : t("From the lesson")}
+          {buddy.context.kind === "item"
+            ? t("Back")
+            : t({
+                description: "Heading of the panel that recaps the lesson, not a button.",
+                message: "From the lesson",
+              })}
         </Button>
 
         <p className="text-muted-foreground flex min-w-0 items-center gap-2 text-xs font-medium">

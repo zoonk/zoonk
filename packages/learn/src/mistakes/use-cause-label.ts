@@ -21,11 +21,23 @@ export function useCauseLabel() {
           message: "Misread",
         });
       case "trap":
-        return t("Fell for a trap");
+        return t({
+          description:
+            "Why the learner got a question wrong, as a short tag on a mistake card: they fell for a trap in the question.",
+          message: "Fell for a trap",
+        });
       case "time":
-        return t("Ran out of time");
+        return t({
+          description:
+            "Why the learner got a question wrong, as a short tag on a mistake card: they ran out of time.",
+          message: "Ran out of time",
+        });
       case "guess":
-        return t("Guessed");
+        return t({
+          description:
+            "Why the learner got a question wrong, as a short tag on a mistake card: they guessed.",
+          message: "Guessed",
+        });
       case "unsorted":
         return t("Not sorted yet");
       default:

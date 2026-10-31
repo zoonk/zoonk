@@ -94,7 +94,11 @@ export function CallProblem({
     return (
       <ProblemWithBack exitHref={exitHref} title={title}>
         <ProblemMessage
-          text={t("It's the same for everyone right now. Try again later.")}
+          text={t({
+            description:
+              'Under the title "Calls are paused": the pause applies to every learner, not only this one.',
+            message: "It's the same for everyone right now. Try again later.",
+          })}
           title={t("Calls are paused")}
         />
       </ProblemWithBack>
