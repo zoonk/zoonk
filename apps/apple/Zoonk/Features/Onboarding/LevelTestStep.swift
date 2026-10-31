@@ -308,6 +308,14 @@ private func baseLanguage(_ code: String) -> String {
   String(code.lowercased().prefix { $0 != "-" && $0 != "_" })
 }
 
+extension Locale.Language {
+  /// Core's `usesNonLatinScript`: the script the tag names, else the one the language is usually
+  /// written in; an unknown language counts as Latin.
+  var usesNonLatinScript: Bool {
+    script.map { $0 != .latin } ?? false
+  }
+}
+
 private func languageName(_ code: String) -> String {
   Locale.current.localizedString(forLanguageCode: code) ?? code
 }
@@ -334,7 +342,7 @@ private struct LevelTestIntro: View {
           tableName: "Onboarding",
           comment: "What the level test is; %@ is about how long it takes, such as \"3 minutes\""))
 
-      if usesNonLatinScript {
+      if Locale.Language(identifier: targetLanguage).usesNonLatinScript {
         Section {
           Text(
             "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it.",
@@ -377,17 +385,6 @@ private struct LevelTestIntro: View {
     }
     .onboardingColumn()
   }
-
-  /// Mirrors main's list.
-  private var usesNonLatinScript: Bool {
-    Self.nonLatinLanguages.contains(baseLanguage(targetLanguage))
-  }
-
-  private static let nonLatinLanguages: Set = [
-    "am", "ar", "be", "bg", "bn", "bo", "dv", "el", "fa", "gu", "he", "hi", "hy", "ja", "ka", "km",
-    "kn", "ko", "lo", "mk", "ml", "mn", "mr", "my", "ne", "pa", "ps", "ru", "sd", "si", "sr", "ta",
-    "te", "th", "ti", "uk", "ur", "yi", "zh",
-  ]
 
   private var offersOwnLanguage: Bool {
     let base = baseLanguage(language)
