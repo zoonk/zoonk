@@ -14,7 +14,7 @@
     <string name="account_email_placeholder">me@gmail.com</string>
     <string name="account_continue">Continue</string>
     <!-- %1$s is "Terms of Service" and %2$s is "Privacy Policy", each a link. -->
-    <string name="account_agreement">By clicking on Continue, you agree to our %1$s and %2$s.</string>
+    <string name="account_agreement">By continuing, you agree to the Zoonk %1$s and %2$s.</string>
     <string name="account_check_email_title">Check your email</string>
     <!-- %1$s is an email address. -->
     <string name="account_check_email_description">Enter the code we sent to %1$s.</string>

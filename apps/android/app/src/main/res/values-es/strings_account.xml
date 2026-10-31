@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "account_agreement": "e334ba4e609ea3305b7c734b6c15ae0a871e13be312f5525bb98da5805808ca1",
+  "account_agreement": "ad89688da82e9c47c6442181407d23ef6c689baf4e6daa9479c71937d70ce23a",
   "account_below_minimum_age_description": "37a69e02f64e41744b81dab9022f08bf7e6e39c48a9e359c944a77e30101dde6",
   "account_below_minimum_age_log_out_description": "2b570951f443b7177fe59ae20b23a99c9a3301fe085c7f32bd42ea4e60616500",
   "account_below_minimum_age_ok": "99255f81dd0ed9c45ffb2ad19c46eb0df7d2564de8ebee21449a8e8107f2108e",
@@ -83,7 +83,7 @@
     <string name="account_email_placeholder">me@gmail.com</string>
     <string name="account_continue">Continuar</string>
     <!-- %1$s is "Terms of Service" and %2$s is "Privacy Policy", each a link. -->
-    <string name="account_agreement">Al hacer clic en Continuar, aceptas nuestros %1$s y nuestra %2$s.</string>
+    <string name="account_agreement">Al continuar, aceptas los %1$s y la %2$s de Zoonk.</string>
     <string name="account_check_email_title">Revisa tu correo</string>
     <!-- %1$s is an email address. -->
     <string name="account_check_email_description">Ingresa el código que enviamos a %1$s.</string>
