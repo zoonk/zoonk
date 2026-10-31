@@ -151,7 +151,7 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
     exams:
       "egzamin ósmoklasisty (Polish, math and a foreign language; its scores decide high school places), the matura (Polish, math and a foreign language at the poziom podstawowy, 30% to pass each, plus at least one subject at the poziom rozszerzony), egzamin zawodowy, entrance exams for the aplikacja adwokacka, radcowska and notarialna, LEK and LDEK for doctors and dentists, the egzamin na prawo jazdy at WORD (theory: 32 questions, 68 of 74 points to pass), the państwowy egzamin certyfikatowy z języka polskiego jako obcego",
     register:
-      'address the reader as "ty", warm and direct, capitalizing Ty, Twój, Ci and Cię as Polish apps do, never "Pan" or "Pani"; prefer present and future forms over past forms and conditionals that reveal gender ("zrobiłeś", "zrobiłaś", "zrobiłbyś"): ask "Co zrobisz?"',
+      'address the reader as "ty", warm and direct, lowercase mid-sentence ("twój plan"), never "Pan" or "Pani"; prefer present and future forms over past forms and conditionals that reveal gender ("zrobiłeś", "zrobiłaś", "zrobiłbyś"): ask "Co zrobisz?"',
   },
   pt: {
     place: "Brazil",
