@@ -2,6 +2,7 @@
 
 import { Progress as ProgressPrimitive } from "@base-ui/react/progress";
 import { cn } from "@zoonk/ui/lib/utils";
+import { getFormattingLocale } from "@zoonk/utils/locale";
 
 /**
  * Base UI formats `aria-valuetext` with the runtime's locale, so the server ("0%") and a German
@@ -42,11 +43,12 @@ function ProgressValue({ className, ...props }: ProgressPrimitive.Value.Props) {
   );
 }
 
-function ProgressRoot({ className, ...props }: ProgressRootProps) {
+function ProgressRoot({ className, locale, ...props }: ProgressRootProps) {
   return (
     <ProgressPrimitive.Root
       className={cn("flex flex-wrap gap-3", className)}
       data-slot="progress-root"
+      locale={getFormattingLocale(locale)}
       {...props}
     />
   );
