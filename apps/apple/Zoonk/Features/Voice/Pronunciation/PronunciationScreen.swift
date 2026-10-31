@@ -251,7 +251,7 @@ private struct PronunciationRoundView: View {
   {
     switch state {
     case .graded(let grade):
-      HStack(spacing: 12) {
+      ButtonRow(spacing: 12) {
         if !grade.isCorrect {
           Button {
             round.tryAgain()

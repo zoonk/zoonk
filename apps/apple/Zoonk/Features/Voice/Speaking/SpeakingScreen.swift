@@ -248,7 +248,7 @@ private struct SpeakingPaperView: View {
             comment: "An exam task opens by itself once its card is written"))
       }
 
-      HStack(spacing: 12) {
+      ButtonRow(spacing: 12) {
         if !locked && writingTask != task.key {
           Button {
             start = Task { await startTask(task.key) }
