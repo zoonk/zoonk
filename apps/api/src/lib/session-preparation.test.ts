@@ -28,6 +28,7 @@ import { isDayAwaitingOutlines } from "../../../../packages/core/src/sessions/_u
 import { getTodayView } from "../../../../packages/core/src/view-models/today/get-today-view";
 import { mockHookConflict } from "../../mocks/workflow";
 import { getStartMock } from "../workflows/_test-utils/start-mock";
+import { callContentWorkflow } from "../workflows/calls/call-content-workflow";
 import { courseOutlineWorkflow } from "../workflows/courses/course-outline-workflow";
 import { sessionPreparationWorkflow } from "../workflows/sessions/session-preparation-workflow";
 import { startGoalPreparation, startSessionPreparation } from "./session-preparation";
@@ -52,7 +53,11 @@ function runStartedWorkflowsInline(fails: StartFailure = () => false) {
       throw new Error("Could not start the workflow");
     }
 
-    if (typeof workflow === "function" && workflow !== courseOutlineWorkflow) {
+    if (
+      typeof workflow === "function" &&
+      workflow !== courseOutlineWorkflow &&
+      workflow !== callContentWorkflow
+    ) {
       pending.push(async () => workflow(...args));
     }
 
