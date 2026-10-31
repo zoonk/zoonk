@@ -2,10 +2,15 @@ import { describe, expect, it } from "vitest";
 import { nameOverlap, namesMatch } from "./name-match";
 
 describe(namesMatch, () => {
-  it("distinguishes labeled exam sections", () => {
-    expect(namesMatch("Section A", "Section B")).toBe(false);
-    expect(namesMatch("Paper 1", "Paper 2")).toBe(false);
-  });
+  it.each(["Section", "Paper", "Part", "Parte", "Seção", "Sección"])(
+    "distinguishes final labels after %s",
+    (prefix) => {
+      expect(namesMatch(`${prefix} A`, `${prefix} B`)).toBe(false);
+      expect(namesMatch(`${prefix} A`, `${prefix} E`)).toBe(false);
+      expect(namesMatch(`${prefix} 1`, `${prefix} 2`)).toBe(false);
+      expect(namesMatch(`${prefix} A`, `${prefix} A`)).toBe(true);
+    },
+  );
 
   it("matches official area names with their short forms", () => {
     expect(namesMatch("Math", "Mathematics and its Technologies")).toBe(true);

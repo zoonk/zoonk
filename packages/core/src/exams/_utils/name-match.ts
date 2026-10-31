@@ -2,8 +2,8 @@ import { isSameNameWord, toNameWords } from "@zoonk/utils/name-words";
 import { normalizeString } from "@zoonk/utils/string";
 
 function partLabel(name: string): string | undefined {
-  return /\b(?:section|paper|part)\s+(?<label>[a-z]|[0-9]+)\b/u.exec(normalizeString(name))?.groups
-    ?.label;
+  return /(?:^|[^\p{L}\p{N}])(?<label>\p{L}|\p{N}+)[^\p{L}\p{N}]*$/u.exec(normalizeString(name))
+    ?.groups?.label;
 }
 
 function hasEveryWord({
