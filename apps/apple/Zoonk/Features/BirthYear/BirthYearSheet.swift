@@ -5,25 +5,42 @@ extension View {
   func asksBirthYear(here isTopmost: Bool) -> some View {
     modifier(BirthYearPresentation(isTopmost: isTopmost))
   }
+
+  /// A screen's own full-screen cover is a layer the router doesn't know: while it's open, the cover
+  /// asks (`asksBirthYear(here: true)`) instead of the layer it covers.
+  func coversBirthYearLayer(_ isCovering: Bool) -> some View {
+    preference(key: CoveredLayer.self, value: isCovering)
+  }
+}
+
+private struct CoveredLayer: PreferenceKey {
+  static let defaultValue = false
+
+  static func reduce(value: inout Bool, nextValue: () -> Bool) {
+    value = value || nextValue()
+  }
 }
 
 private struct BirthYearPresentation: ViewModifier {
   @Environment(BirthYearGate.self) private var gate
+  @State private var isCovered = false
 
   let isTopmost: Bool
 
   func body(content: Content) -> some View {
-    content.sheet(
-      isPresented: Binding(
-        get: { isTopmost && gate.prompt != nil },
-        set: { isPresented in
-          if !isPresented {
-            gate.close()
-          }
-        })
-    ) {
-      BirthYearSheet(prompt: gate.prompt ?? .question(canCancel: false))
-    }
+    content
+      .onPreferenceChange(CoveredLayer.self) { isCovered = $0 }
+      .sheet(
+        isPresented: Binding(
+          get: { isTopmost && !isCovered && gate.prompt != nil },
+          set: { isPresented in
+            if !isPresented {
+              gate.close()
+            }
+          })
+      ) {
+        BirthYearSheet(prompt: gate.prompt ?? .question(canCancel: false))
+      }
   }
 }
 
