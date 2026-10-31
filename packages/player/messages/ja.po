@@ -838,7 +838,7 @@ msgstr "{span}：{change}。"
 #: src/activities/code-runner/code-runner-activity.tsx
 msgctxt "ydcluT"
 msgid "{count, plural, one {Line {lines} is yours} other {Lines {lines} are yours}}"
-msgstr "{count, plural, other {{lines}行目を編集できます}}"
+msgstr "{count, plural, other {編集できるのは{lines}行目です}}"
 
 #: src/activities/code-runner/code-runner-activity.tsx
 #: src/activities/code-tracer/tracer-parts.tsx
@@ -1858,7 +1858,7 @@ msgstr "この2枚はペアではありません。"
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Dzn88L"
 msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {count, plural, =0 {} one {# card has no match.} other {# cards have no match.}} {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
-msgstr "カードが2列に並んでいます。左と右から1枚ずつ選んで、ペアにしてください。{count, plural, =0 {} other {#枚のカードにはペアがありません。}} {matched, plural, other {#組のペアができました（全{total}組）。}}"
+msgstr "カードが2列に並んでいます。左右の列から1枚ずつ選んで、ペアにします。{count, plural, =0 {} other {ペアにならないカードが#枚あります。}} {matched, plural, other {#組のペアができました（全{total}組）。}}"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "kzygtu"
@@ -2494,7 +2494,7 @@ msgstr "実行しています（{count}/{runs}）…"
 #: src/activities/random-simulation/use-sampling-format.ts
 msgctxt "vUQRu0"
 msgid "±{value} {count, plural, =0 {points} one {point} other {points}}"
-msgstr "±{value} {count, plural, =0 {ポイント} other {ポイント}}"
+msgstr "±{value}{count, plural, =0 {ポイント} other {ポイント}}"
 
 #: src/activities/random-simulation/use-sampling-format.ts
 msgctxt "_dayPZ"
@@ -2717,7 +2717,7 @@ msgstr "クエリは実行されましたが、表は返されませんでした
 #: src/activities/sql-playground/sql-result.tsx
 msgctxt "XjrTx5"
 msgid "{count, plural, =0 {Your result has no rows} one {Your result: # row} other {Your result: # rows}}"
-msgstr "{count, plural, =0 {実行結果は空です（#行）} other {実行結果は#行です}}"
+msgstr "{count, plural, =0 {結果にデータがありません} other {結果：#行}}"
 
 #: src/activities/sql-playground/sql-result.tsx
 msgctxt "BgDPcv"
