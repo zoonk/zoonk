@@ -14774,6 +14774,12 @@
             "value" : "Until you pick, your plan and mocks leave out %1$@: %2$lld of the exam's %3$lld points."
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta que elijas, tu plan y tus simulacros omiten %1$@: %2$lld de los %3$lld puntos del examen."
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14801,6 +14807,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Until you pick, your plan and mocks leave out %1$@: %2$lld of the exam's %3$lld questions."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta que elijas, tu plan y tus simulacros omiten %1$@: %2$lld de las %3$lld preguntas del examen."
           }
         },
         "fr" : {
@@ -14856,6 +14868,24 @@
             }
           }
         },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Hasta que elijas, tu plan y tus simulacros omiten %1$@: %2$lld pregunta."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Hasta que elijas, tu plan y tus simulacros omiten %1$@: %2$lld preguntas."
+                }
+              }
+            }
+          }
+        },
         "fr" : {
           "variations" : {
             "plural" : {
@@ -14901,6 +14931,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bis du dich entschieden hast, lassen dein Plan und deine Probeprüfungen %@ aus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta que elijas, tu plan y tus simulacros omiten %@."
           }
         },
         "fr" : {

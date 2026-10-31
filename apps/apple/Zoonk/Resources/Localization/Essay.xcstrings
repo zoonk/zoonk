@@ -1390,7 +1390,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has alcanzado tu límite de tiempo diario. Tu texto seguirá aquí."
+            "value" : "Alcanzaste tu límite de tiempo diario. Tu texto se queda aquí."
           }
         },
         "fr" : {

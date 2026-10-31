@@ -3058,7 +3058,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has cancelado Plus"
+            "value" : "Se canceló Plus"
           }
         },
         "fr" : {
@@ -4852,7 +4852,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Te hemos enviado la confirmación por correo electrónico."
+            "value" : "Te enviamos la confirmación por correo electrónico."
           }
         },
         "fr" : {
@@ -4939,7 +4939,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hemos reembolsado %@ al método de pago que usaste. Te hemos enviado la confirmación por correo electrónico."
+            "value" : "Reembolsamos %@ al método de pago que usaste. Te enviamos la confirmación por correo electrónico."
           }
         },
         "fr" : {
@@ -5125,7 +5125,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conservas Plus hasta el %@ y después termina. No volveremos a cobrarte."
+            "value" : "Conservas Plus hasta el %@; después termina. No volveremos a cobrarte."
           }
         },
         "fr" : {
@@ -5160,7 +5160,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conservas Plus hasta el %1$@. Te reembolsamos %2$@ por los meses que aún no han empezado."
+            "value" : "Conservas Plus hasta el %1$@. Te reembolsamos %2$@ por los meses que aún no empiezan."
           }
         },
         "fr" : {

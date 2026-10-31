@@ -71,7 +71,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se omite %@ hasta que elijas una opción en tu plan."
+            "value" : "%@ se omite hasta que elijas en tu plan qué opción vas a presentar."
           }
         },
         "fr" : {
@@ -164,7 +164,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ necesita %2$@ y no se incluye en este simulacro."
+            "value" : "%1$@ requiere %2$@ y no está en este simulacro."
           }
         },
         "fr" : {
@@ -199,7 +199,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ necesita el %2$@ de sus puntos y no se incluye en este simulacro."
+            "value" : "%1$@ requiere el %2$@ de sus puntos y no está en este simulacro."
           }
         },
         "fr" : {
@@ -368,7 +368,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A %1$@ del mínimo de %2$@"
+            "value" : "%1$@ por debajo del mínimo de %2$@"
           }
         },
         "fr" : {
@@ -3532,7 +3532,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los puntos de cada prueba se usan para estimar cuántos obtendrías en la prueba completa. Solo un simulacro completo permite saber si alcanzarías los mínimos."
+            "value" : "Se estima cuántos puntos obtendrías en cada prueba completa. Solo un simulacro completo permite saber si alcanzarías los mínimos."
           }
         },
         "fr" : {
@@ -4654,7 +4654,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cumple los mínimos objetivos comprobados aquí."
+            "value" : "Cumple los mínimos de las pruebas objetivas evaluados aquí."
           }
         },
         "fr" : {
@@ -4985,7 +4985,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Necesita %@"
+            "value" : "Requiere %@"
           }
         },
         "fr" : {
@@ -5014,7 +5014,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Necesita el %@ de sus puntos"
+            "value" : "Requiere el %@ de sus puntos"
           }
         },
         "fr" : {
@@ -5972,7 +5972,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ha alcanzado el mínimo de %@"
+            "value" : "Alcanzó el mínimo de %@"
           }
         },
         "fr" : {
@@ -7313,7 +7313,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las pruebas objetivas necesitan en conjunto el %@ de sus puntos y este simulacro no las incluye todas."
+            "value" : "Las pruebas objetivas requieren en conjunto el %@ de sus puntos y este simulacro no las incluye todas."
           }
         },
         "fr" : {
@@ -7342,7 +7342,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las pruebas objetivas necesitan en conjunto %@ y este simulacro no las incluye todas."
+            "value" : "Las pruebas objetivas requieren en conjunto %@ y este simulacro no las incluye todas."
           }
         },
         "fr" : {
@@ -8817,7 +8817,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quedarías fuera: %1$@ se queda a %2$@ del mínimo de %3$@."
+            "value" : "Quedarías fuera: %1$@ está %2$@ por debajo del mínimo de %3$@."
           }
         },
         "fr" : {
@@ -8852,7 +8852,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quedarías fuera: %1$@ alcanza %2$@, por debajo del mínimo de %3$@."
+            "value" : "Quedarías fuera: %1$@ alcanzó el %2$@, por debajo del mínimo de %3$@."
           }
         },
         "fr" : {
@@ -8887,7 +8887,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quedarías fuera: en conjunto, las pruebas objetivas se quedan a %1$@ del mínimo de %2$@."
+            "value" : "Quedarías fuera: las pruebas objetivas en conjunto están %1$@ por debajo del mínimo de %2$@."
           }
         },
         "fr" : {
@@ -8922,7 +8922,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quedarías fuera: las pruebas objetivas suman %1$@, por debajo del mínimo de %2$@."
+            "value" : "Quedarías fuera: las pruebas objetivas en conjunto alcanzan el %1$@, por debajo del mínimo de %2$@."
           }
         },
         "fr" : {

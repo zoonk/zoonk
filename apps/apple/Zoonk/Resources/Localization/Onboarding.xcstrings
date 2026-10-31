@@ -11805,6 +11805,12 @@
             "value" : "Den Termin für diesen Test wählst du bei der Buchung. Schon gebucht? Trag ihn hier ein."
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliges la fecha de esta prueba al agendarla. ¿Ya la agendaste? Indica la fecha aquí."
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
