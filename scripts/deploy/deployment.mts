@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { appendFile } from "node:fs/promises";
 import { z } from "zod";
 import { github, vercel, waitFor } from "./api.mts";
@@ -8,8 +9,20 @@ type Project = (typeof PROJECTS)[number];
 
 /** RFC 1035: Vercel shortens a longer generated label in a way its docs don't spell out. */
 const MAX_DNS_LABEL = 63;
+const CACHE_SECRET_BYTES = 32;
 
 type AppUrls = { api: string | null; main: string | null };
+type CourseCacheAccess = { bypass: string | null; secret: string };
+
+function getProject(app: Project["app"]): Project {
+  const project = PROJECTS.find((candidate) => candidate.app === app);
+
+  if (!project) {
+    throw new Error(`Missing the ${app} project`);
+  }
+
+  return project;
+}
 
 /**
  * Previews use the branch URL Vercel gives every project, `<project>-git-<branch>-<team>.vercel.app`,
@@ -26,11 +39,7 @@ export function getAppUrl({
   target: Target;
   teamSlug: string;
 }): string | null {
-  const project = PROJECTS.find((candidate) => candidate.app === app);
-
-  if (!project) {
-    throw new Error(`Missing the ${app} project`);
-  }
+  const project = getProject(app);
 
   if (target !== "preview") {
     return `https://${target === "production" ? project.productionDomain : project.stagingDomain}`;
@@ -78,6 +87,27 @@ async function resolveAppUrls(target: Target): Promise<AppUrls> {
   }
 
   return urls;
+}
+
+const protectionBypassSchema = z.object({
+  protectionBypass: z.record(z.string(), z.object({ scope: z.string() })).optional(),
+});
+
+/**
+ * A preview of any branch gets its own secret for the API's course-page refreshes and Main's
+ * automation bypass to get them past its Deployment Protection. Production and staging keep the
+ * projects' own values, which outlast an app redeployed or rolled back alone.
+ */
+async function getPreviewCacheAccess(): Promise<CourseCacheAccess> {
+  const { protectionBypass = {} } = protectionBypassSchema.parse(
+    await vercel({ path: `/v9/projects/${getProject("main").id}` }),
+  );
+
+  const bypass = Object.entries(protectionBypass).find(
+    ([, value]) => value.scope === "automation-bypass",
+  );
+
+  return { bypass: bypass?.[0] ?? null, secret: randomBytes(CACHE_SECRET_BYTES).toString("hex") };
 }
 
 const deploymentSchema = z.object({
@@ -159,11 +189,13 @@ async function deployApp({
   project,
   target,
   apiUrl,
+  cache,
   mainAppUrl,
 }: {
   project: Project;
   target: Target;
   apiUrl: string;
+  cache: CourseCacheAccess | null;
   mainAppUrl: string | null;
 }): Promise<string> {
   if (target === "preview") {
@@ -179,6 +211,8 @@ async function deployApp({
     NEXT_PUBLIC_APP_DOMAIN: target === "preview" ? "" : domain,
     ...(project.app === "api" ? { NEXT_PUBLIC_AUTH_BASE_PATH: "/v1/auth" } : {}),
     ...(project.app === "api" && mainAppUrl ? { MAIN_APP_URL: mainAppUrl } : {}),
+    ...(cache && project.app !== "admin" ? { APP_CACHE_SECRET: cache.secret } : {}),
+    ...(cache?.bypass && project.app === "api" ? { MAIN_CACHE_BYPASS_SECRET: cache.bypass } : {}),
   };
 
   const response = await vercel({
@@ -244,16 +278,19 @@ async function deployApp({
 }
 
 export async function deploy(target: Target): Promise<void> {
-  const urls = await resolveAppUrls(target);
+  const [urls, cache] = await Promise.all([
+    resolveAppUrls(target),
+    target === "preview" ? getPreviewCacheAccess() : null,
+  ]);
+
+  const shared = { cache, mainAppUrl: urls.main, target };
 
   // Without the API's predictable address, the consumers wait for its actual deployment URL.
   if (!urls.api) {
     const [api, ...clients] = PROJECTS;
-    const apiUrl = await deployApp({ apiUrl: "", mainAppUrl: urls.main, project: api, target });
+    const apiUrl = await deployApp({ ...shared, apiUrl: "", project: api });
 
-    await Promise.all(
-      clients.map((project) => deployApp({ apiUrl, mainAppUrl: urls.main, project, target })),
-    );
+    await Promise.all(clients.map((project) => deployApp({ ...shared, apiUrl, project })));
 
     return;
   }
@@ -261,7 +298,7 @@ export async function deploy(target: Target): Promise<void> {
   const apiUrl = urls.api;
 
   const results = await Promise.allSettled(
-    PROJECTS.map((project) => deployApp({ apiUrl, mainAppUrl: urls.main, project, target })),
+    PROJECTS.map((project) => deployApp({ ...shared, apiUrl, project })),
   );
 
   const failures = results.filter((result) => result.status === "rejected");
