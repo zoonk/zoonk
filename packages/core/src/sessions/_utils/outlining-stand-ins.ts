@@ -1,49 +1,17 @@
 import { type GenerationStatus, type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import "server-only";
 import { getOutlineStaleBefore } from "../../lookahead/outline-ahead";
-import { loadNextStandIn } from "../../lookahead/outline-window";
+import { listDayStandIns } from "../../lookahead/outline-window";
 import { readSkillCourses } from "../../lookahead/plan-outline-needs";
 
 const OUTLINING: GenerationStatus[] = ["pending", "running"];
 
 export type DayOutlines = "awaiting" | "idle" | null;
 
-const STAND_IN = {
-  chapterId: null,
-  kind: "lesson",
-  lessonId: null,
-  skillId: { not: null },
-} as const;
-
-async function loadDayStandInSkills({
-  client,
-  goal,
-  localDate,
-}: {
-  client: TransactionClient;
-  goal: Pick<Goal, "id" | "kind" | "targetDate">;
-  localDate: Date;
-}): Promise<string[]> {
-  const [due, next] = await Promise.all([
-    client.planItem.findMany({
-      select: { skillId: true },
-      where: {
-        ...STAND_IN,
-        plan: { goalId: goal.id },
-        scheduledFor: { lte: localDate },
-        status: "todo",
-      },
-    }),
-    loadNextStandIn({ client, goal, localDate }),
-  ]);
-
-  return [...due, ...next].flatMap((item) => (item.skillId ? [item.skillId] : []));
-}
-
 type DayOutlinesInput = {
   client?: TransactionClient;
   graph?: unknown;
-  goal: Pick<Goal, "id" | "kind" | "primaryCourseId" | "targetDate">;
+  goal: Pick<Goal, "id" | "primaryCourseId">;
   /** The learner-local date of the day, as a UTC-midnight label. */
   localDate: Date;
   now?: Date;
@@ -55,21 +23,25 @@ export async function loadDayStandInCourseIds({
   graph,
   localDate,
 }: DayOutlinesInput): Promise<string[]> {
-  const [skillIds, plan] = await Promise.all([
-    loadDayStandInSkills({ client, goal, localDate }),
+  const [standIns, plan] = await Promise.all([
+    listDayStandIns({ client, goalId: goal.id, localDate }),
     graph === undefined
       ? client.plan.findUnique({ select: { graph: true }, where: { goalId: goal.id } })
       : { graph },
   ]);
 
-  if (!plan || skillIds.length === 0) {
+  if (!plan || standIns.length === 0) {
     return [];
   }
 
   const courseOf = readSkillCourses({ graph: plan.graph, primaryCourseId: goal.primaryCourseId });
 
   return [
-    ...new Set(skillIds.flatMap((skillId) => courseOf.get(skillId) ?? goal.primaryCourseId ?? [])),
+    ...new Set(
+      standIns.flatMap(({ skillId }) =>
+        skillId ? (courseOf.get(skillId) ?? goal.primaryCourseId ?? []) : [],
+      ),
+    ),
   ];
 }
 

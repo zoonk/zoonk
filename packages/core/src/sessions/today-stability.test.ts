@@ -324,6 +324,38 @@ describe("today's session the learner was shown", () => {
     expect(after.today.session).toMatchObject({ lessonsComing: true, lessonsToPrepare: false });
   });
 
+  it("asks for the lessons of a long stand-in the day starts though a checkpoint falls due before it ends", async () => {
+    const { goal } = await setupDayWithStandIn({
+      laterLessons: 0,
+      outlineStatus: "completed",
+      standInSize: 120,
+    });
+
+    const [standIn, checkpoint] = await Promise.all([
+      prisma.planItem.findFirstOrThrow({
+        where: { kind: "lesson", lessonId: null, plan: { goalId: goal.id } },
+      }),
+      prisma.planItem.findFirstOrThrow({
+        where: { kind: "checkpoint", plan: { goalId: goal.id } },
+      }),
+    ]);
+
+    expect(readSelectedItemFacts(standIn.facts)?.days?.[0]?.[0]).toBe("2026-09-30");
+    expect(checkpoint.scheduledFor?.getTime()).toBeLessThan(standIn.scheduledFor?.getTime() ?? 0);
+
+    const before = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    expect(before.status === "ready" && before.today.session).toMatchObject({
+      lessonsComing: false,
+      lessonsToPrepare: true,
+      status: "unstarted",
+    });
+
+    const opened = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    expect(opened.today.session).toMatchObject({ lessonsComing: false, lessonsToPrepare: true });
+  });
+
   it.each(["completed", "running"] as const)(
     "adds the lessons written since the plan was saved to a short day opened while its outline was %s, once the learner asks",
     async (outlineStatus) => {

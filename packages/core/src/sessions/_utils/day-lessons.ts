@@ -14,12 +14,14 @@ export function getLessonLookahead(dayMinutes: number): number {
 type DayItem = Pick<PlanItem, "chapterId" | "lessonId" | "scheduledFor" | "skillId"> &
   Partial<Pick<PlanItem, "facts" | "lessons">>;
 
-function isDue({ item, today }: { item: DayItem; today: Date }): boolean {
+type AllocatedItem = Pick<PlanItem, "scheduledFor"> & Partial<Pick<PlanItem, "facts">>;
+
+function isDue({ item, today }: { item: AllocatedItem; today: Date }): boolean {
   return item.scheduledFor !== null && item.scheduledFor <= today;
 }
 
 /** Include every day of a producer's consumed interval, not only its first scheduled date. */
-function isAllocatedOn({ item, today }: { item: DayItem; today: Date }): boolean {
+export function isAllocatedOn({ item, today }: { item: AllocatedItem; today: Date }): boolean {
   if (item.scheduledFor === null || isDue({ item, today })) {
     return true;
   }

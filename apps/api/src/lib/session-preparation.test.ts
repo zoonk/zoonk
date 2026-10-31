@@ -186,6 +186,18 @@ async function placedGuestFixture({
 
 type PlacedGuest = Awaited<ReturnType<typeof placedGuestFixture>>;
 
+function spanningFacts({ days, skillId, today }: { days: number; skillId: string; today: Date }) {
+  const spanned = [today, new Date(today.getTime() + days * 86_400_000)];
+
+  return {
+    days: spanned.map((day) => [day.toISOString().slice(0, 10), 30, 15]),
+    minutes: 60,
+    parts: { checkpoint: 0, practice: 30, unwritten: 30, written: 0 },
+    schemaVersion: 1,
+    skillIds: [skillId],
+  };
+}
+
 /** The course wrote one lesson of the plan's topic and the learner studied it, so today holds only stand-ins of it. */
 async function partlyWrittenTopicFixture({
   guest = true,
@@ -253,6 +265,9 @@ async function partlyWrittenTopicFixture({
       status: "done",
     }),
     planItemFixture({
+      ...(standInDays > 0 && {
+        facts: spanningFacts({ days: standInDays, skillId: topic.id, today }),
+      }),
       planId: plan.id,
       position: 1,
       scheduledFor: new Date(today.getTime() + standInDays * 86_400_000),

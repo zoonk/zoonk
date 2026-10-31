@@ -60,7 +60,7 @@ type RankedSkill = PlanGraphSkill & {
   rank: number;
 };
 
-export function isExamSchedule(goal: QueueInput["goal"]): boolean {
+function isExamSchedule(goal: QueueInput["goal"]): boolean {
   return goal.kind === "exam" && goal.targetDate !== null;
 }
 

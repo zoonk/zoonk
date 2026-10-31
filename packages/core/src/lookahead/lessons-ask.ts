@@ -62,14 +62,7 @@ export async function endLessonsAsk({
   startedCourseIds: readonly string[];
 }): Promise<void> {
   const goal = await prisma.goal.findUnique({
-    select: {
-      id: true,
-      kind: true,
-      primaryCourseId: true,
-      targetDate: true,
-      timezone: true,
-      userId: true,
-    },
+    select: { id: true, primaryCourseId: true, timezone: true, userId: true },
     where: { id: goalId },
   });
 

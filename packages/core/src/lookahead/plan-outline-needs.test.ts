@@ -15,7 +15,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it } from "vitest";
-import { addDays } from "../plans/planner/plan-calendar";
+import { addDays, toIsoDate } from "../plans/planner/plan-calendar";
 import {
   listPlanOutlineNeeds,
   listPlanSkillIdsWithin,
@@ -23,7 +23,16 @@ import {
   listTaughtStandInSkills,
 } from "./plan-outline-needs";
 
-/** The plan's next item is a long stand-in due in 20 days, and another course's stand-in is due the same day. */
+function standInDays({ days, skillId }: { days: Date[]; skillId: string }) {
+  return {
+    days: days.map((day) => [toIsoDate(day), 30, 15]),
+    minutes: days.length * 30,
+    parts: { checkpoint: 0, practice: days.length * 15, unwritten: days.length * 15, written: 0 },
+    schemaVersion: 1,
+    skillIds: [skillId],
+  };
+}
+
 async function longStandInFixture({ weekdayMinutes }: { weekdayMinutes: number[] | null }) {
   const user = await userFixture();
 
@@ -55,13 +64,26 @@ async function longStandInFixture({ weekdayMinutes }: { weekdayMinutes: number[]
     settings: { weekdayMinutes },
   });
 
-  const due = addDays(getDateInTimeZone({ date: new Date(), timeZone: "UTC" }), 20);
+  const today = getDateInTimeZone({ date: new Date(), timeZone: "UTC" });
+  const due = addDays(today, 20);
+  const start = weekdayMinutes?.[today.getUTCDay()] === 0 ? addDays(today, 1) : today;
 
-  await Promise.all(
-    [onIt, sameDay].map((skill, position) =>
-      planItemFixture({ planId: plan.id, position, scheduledFor: due, skillId: skill.id }),
-    ),
-  );
+  await Promise.all([
+    planItemFixture({
+      facts: standInDays({ days: [start, due], skillId: onIt.id }),
+      planId: plan.id,
+      position: 0,
+      scheduledFor: due,
+      skillId: onIt.id,
+    }),
+    planItemFixture({
+      facts: standInDays({ days: [addDays(due, -1), due], skillId: sameDay.id }),
+      planId: plan.id,
+      position: 1,
+      scheduledFor: due,
+      skillId: sameDay.id,
+    }),
+  ]);
 
   return { course, goal, onIt };
 }
