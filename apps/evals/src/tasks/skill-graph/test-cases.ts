@@ -2,6 +2,7 @@ import { type TestCase } from "@/lib/types";
 import { type ExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { type SkillGraphParams } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { CAMARA_BLUEPRINT } from "./camara-blueprint";
+import { CGU_BLUEPRINT } from "./cgu-blueprint";
 import { ENEM_SCIENCE_BLUEPRINT } from "./enem-science-blueprint";
 
 const SHARED_EXPECTATIONS = `
@@ -439,6 +440,24 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
         ),
       },
       goal: "Concurso Câmara dos Deputados, Analista Legislativo - Registro e Redação",
+      goalKind: "exam",
+      language: "pt",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Every one of the notice's 14 subjects is an area, named exactly as the notice names it, and every topic id is taught by some skill
+      - No area for a subject this notice doesn't list, even one earlier CGU editions tested (Língua Portuguesa, Língua Inglesa, Tecnologia da Informação, Direito Administrativo): those lessons take the learner's time from what this exam asks
+      - Beyond the subjects, only what this exam scores: the discursive test (two questions, graded on content and on written Portuguese), whose skills practice that writing and are its outcome skills, and exam strategy for certo/errado items where a wrong item cancels a right one
+      - A base a topic needs goes in the subject that needs it, never in an area of its own
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-cgu-2026-notice-subjects-only",
+    userInput: {
+      examBlueprint: CGU_BLUEPRINT,
+      goal: "Passar no concurso da CGU",
       goalKind: "exam",
       language: "pt",
     },
