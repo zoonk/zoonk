@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
@@ -38,7 +39,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationPhase
@@ -94,6 +97,27 @@ fun GenerationWait(
                     following = following,
                     elapsedMillis = elapsed(phase, following, now, run.clockOffsetMillis),
                 )
+            }
+        }
+    }
+}
+
+/** Main's `WritingWait`: [hint] says what happens once it's written, so a failed run leaves it out. */
+@Composable
+fun WritingWait(
+    wait: ContentWritingWait,
+    hint: String?,
+    modifier: Modifier = Modifier,
+    header: @Composable ColumnScope.() -> Unit = {},
+) {
+    val run by wait.run.collectAsStateWithLifecycle()
+    val generationId by wait.generationId.collectAsStateWithLifecycle()
+    // GenerationWait remembers its bar's drift, which belongs to one run (main keys it by generationId too).
+    key(generationId) {
+        GenerationWait(wait.kind, run, onRetry = wait::retry, modifier = modifier) {
+            header()
+            if (hint != null && run.status != GenerationRun.Status.Failed) {
+                Text(hint, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

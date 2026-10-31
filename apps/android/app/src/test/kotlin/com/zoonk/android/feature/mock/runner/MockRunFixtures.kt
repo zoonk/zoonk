@@ -150,10 +150,20 @@ internal class FakeMockRunApi(
         setId: String,
     ): PlayOutcome = PlayOutcome.Counted(++plays)
 
+    /** Runs the next speaking starts answer with, one each, before the paper is written. */
+    val paperWritings = ArrayDeque<String>()
+    var speakingStarts = 0
+    var speakingFailure: ApiException? = null
+
     override suspend fun startSpeaking(
         session: AuthenticatedSession,
         blockId: String,
-    ) = Unit
+    ): String? {
+        speakingStarts++
+        paperWritings.removeFirstOrNull()?.let { return it }
+        speakingFailure?.let { throw it }
+        return null
+    }
 
     override suspend fun finish(
         session: AuthenticatedSession,

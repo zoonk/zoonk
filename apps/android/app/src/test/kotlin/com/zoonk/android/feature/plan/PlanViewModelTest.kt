@@ -5,6 +5,9 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.HeldRuns
+import com.zoonk.android.data.WritingRuns
+import com.zoonk.android.data.writingWaits
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBasesAdvice
@@ -37,6 +40,7 @@ import kotlin.time.Instant
 class PlanViewModelTest {
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private val api = FakePlanApi()
+    private val runs = WritingRuns(write = "writeSetupLessons", ready = "setupLessonsReady")
     private val goalId = UUID.fromString(GOAL)
     private lateinit var store: PlanStore
     private lateinit var viewModel: PlanViewModel
@@ -46,7 +50,7 @@ class PlanViewModelTest {
         val dispatcher = UnconfinedTestDispatcher()
         Dispatchers.setMain(dispatcher)
         store = PlanStore(api, AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + dispatcher)))
-        viewModel = PlanViewModel(store, goalId)
+        viewModel = PlanViewModel(store, goalId, writingWaits(runs))
     }
 
     @After
@@ -424,6 +428,57 @@ class PlanViewModelTest {
                     ?.id
                     .toString(),
             )
+        }
+
+    @Test
+    fun aSetupLessonBeingWrittenIsWaitedOnThenTheSameChoiceIsSentAgain() =
+        runTest {
+            val held = HeldRuns(first = "writeSetupLessons", ready = "setupLessonsReady")
+            viewModel = PlanViewModel(store, goalId, writingWaits(held))
+            api.setupWritings += "run-1"
+            val answers = mutableListOf<PlanChangeResult?>()
+            val answer = ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS)
+
+            viewModel.chooseTools(answer) { answers += it }
+            assertEquals("run-1", viewModel.setupLessons.generationId.value)
+            assertEquals(emptySet<PlanPart>(), viewModel.pending.value)
+            assertEquals(emptyList<PlanChangeResult?>(), answers)
+
+            held.write()
+            assertEquals(listOf(answer, answer), api.toolAnswers)
+            assertEquals(PlanChangeResult.Status.APPLIED, answers.single()?.status)
+            assertNull(viewModel.setupLessons.generationId.value)
+        }
+
+    @Test
+    fun aSetupLessonStillUnwrittenAfterItsRunFailsTheTools() =
+        runTest {
+            api.setupWritings += listOf("run-1", "run-2")
+            val answers = mutableListOf<PlanChangeResult?>()
+
+            viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS)) { answers += it }
+
+            assertEquals(2, api.toolAnswers.size)
+            assertEquals(listOf<PlanChangeResult?>(null), answers)
+            assertEquals(setOf(PlanPart.Tools), viewModel.failed.value)
+            assertNull(viewModel.setupLessons.generationId.value)
+        }
+
+    @Test
+    fun aChoiceThatFailsWhenSentAgainAfterItsRunClosesTheWaitAndFailsTheTools() =
+        runTest {
+            val held = HeldRuns(first = "writeSetupLessons", ready = "setupLessonsReady")
+            viewModel = PlanViewModel(store, goalId, writingWaits(held))
+            api.setupWritings += "run-1"
+            val answers = mutableListOf<PlanChangeResult?>()
+
+            viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS)) { answers += it }
+            api.toolFailure = ApiException(ApiError.Unavailable, status = 502)
+            held.write()
+
+            assertNull(viewModel.setupLessons.generationId.value)
+            assertEquals(listOf<PlanChangeResult?>(null), answers)
+            assertEquals(setOf(PlanPart.Tools), viewModel.failed.value)
         }
 
     @Test

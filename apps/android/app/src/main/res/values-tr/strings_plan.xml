@@ -557,6 +557,12 @@
   "plan_tool_setup_description": "d07dee6981f6b8ddc3c26f8c6248a45447c0babd71082d3f95417125f3243224",
   "plan_tool_setup_first": "9818a328675b7802712a09126e04a921bb5f09b400a99c61c8694615852eadbe",
   "plan_tool_setup_for": "81782c114f50cb23f68b52c64ae6d71d200c5a2dbe208be404f258ae1939fc7a",
+  "plan_tool_updates_when_ready": "da6629afc78acecb30613d81866373c8978481d1a3f2cadd91802b663eeaf7b9",
+  "plan_tool_writing_setup": "a3e0395c5790120ccb78ef13e9f52aa0c267ca5a6377377e0000a4e9abba3d56",
+  "plan_tool_writing_setup_line_1": "939e1a57b2b504419ac1c0a0ac0a521a0e0039aceede7dced5b835fb9277d66c",
+  "plan_tool_writing_setup_line_2": "d58c6557d6acd6b235b2cfd1f906454516760fa21c822dccea8944af4b525f8c",
+  "plan_tool_writing_setup_line_3": "7f2dbb6d9e8c2790e10d00fc4778f3441fb3aa445cdd3dd4d95281511b35c13a",
+  "plan_tool_writing_setup_phase": "3512ea16cb2a82d1b9c3c7a5806a9ee2f5c2f24c869f5473e87f16cc24714122",
   "plan_tools_later": "91e37c2c70ec8015f9e397279e1622084ba3e8f6f73f51507c8fe3ba569b8af0",
   "plan_tools_none": "67a69cf1f31ba9c854ecd399557a38abab27734d24e1090dc96badf250dca757",
   "plan_tools_title": "d2bf63f9fd6ba66dae899de4c40ae35a8a66e7cb35a0b49752ee27e1f7f419b3",
@@ -1354,6 +1360,12 @@
     <string name="plan_tool_setup_description">İhtiyaç duymadan hemen önce kısa bir dersle nasıl kuracağını öğrenirsin.</string>
     <string name="plan_tool_none">Kurulum yapmadan</string>
     <string name="plan_tool_none_description">Örneklerle öğren. Kendi bilgisayarında pratik yapmayacaksın.</string>
+    <string name="plan_tool_updates_when_ready">Planın hazır olur olmaz güncellenir.</string>
+    <string name="plan_tool_writing_setup">Kurulum dersi ekliyoruz</string>
+    <string name="plan_tool_writing_setup_phase">Cihazın için kurulum adımları hazırlanıyor</string>
+    <string name="plan_tool_writing_setup_line_1">Araç için neler gerektiğini kontrol ediyoruz…</string>
+    <string name="plan_tool_writing_setup_line_2">Kurulum adımlarını hazırlıyoruz…</string>
+    <string name="plan_tool_writing_setup_line_3">Çalıştığını doğrulamak için kısa bir kontrol ekliyoruz…</string>
     <string name="plan_tool_device">Cihazın</string>
     <string name="plan_what_you_practice">Neler çalışacaksın</string>
     <string name="plan_when_to_practice">%1$s için çalışma sıklığı</string>

@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.conversation.CallRequest
 import com.zoonk.android.feature.conversation.CallStart
+import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
@@ -45,10 +46,11 @@ class LanguageUnitTest {
         val actions =
             UnitActions(
                 open = { opened += it },
-                start = {
-                    requests += it
-                    CallStart.Started(STARTED)
-                },
+                start =
+                    callStarter {
+                        requests += it
+                        CallStart.Started(STARTED)
+                    },
             )
         compose.setContent { ZoonkTheme { UnitPage(unit, upNext, actions) } }
     }
@@ -158,7 +160,7 @@ class LanguageUnitTest {
     @Config(qualifiers = "w1280dp-h800dp-land")
     fun whatsOpenStaysOpenWhenTheAsideMovesBelow() {
         var wide by mutableStateOf(true)
-        val actions = UnitActions(open = {}, start = { CallStart.Started(STARTED) })
+        val actions = UnitActions(open = {}, start = callStarter { CallStart.Started(STARTED) })
         compose.setContent {
             ZoonkTheme { Box(Modifier.width(if (wide) 1280.dp else 480.dp)) { UnitPage(languageUnit(), upNext = true, actions = actions) } }
         }

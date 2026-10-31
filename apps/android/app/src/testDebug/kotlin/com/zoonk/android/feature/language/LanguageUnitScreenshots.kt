@@ -15,6 +15,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.conversation.CallStart
+import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -66,7 +67,7 @@ class LanguageUnitScreenshots {
         name: String,
         dark: Boolean = false,
     ) {
-        val actions = UnitActions(open = {}, start = { CallStart.Started(UUID.randomUUID()) })
+        val actions = UnitActions(open = {}, start = callStarter { CallStart.Started(UUID.randomUUID()) })
         compose.setContent { ZoonkTheme(darkTheme = dark) { Surface { UnitPage(languageUnit(), upNext = true, actions = actions) } } }
         shot("unit-top-$name")
         listOf("Your mistakes", "Words in this unit", "Grammar tips", "Unit summary").forEach { row ->

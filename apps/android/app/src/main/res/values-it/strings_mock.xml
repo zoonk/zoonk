@@ -79,13 +79,19 @@
   "mock_speaking_done": "0392b8c2c54ca1a8160d26fecdfc699d2d6bd507c429942bbb4aec62d8de7426",
   "mock_speaking_hand_in_done": "440e4090823624cccf59ba80ddc6ee3d6cbef28506faf6a55cada6dfa7d663ca",
   "mock_speaking_hand_in_left": "9e145b0ad021071230034a56dd7f2f1628d998575976d938ad4dcc780b0b5a17",
-  "mock_speaking_intro": "73f36dae42dfd8193f9f5b620bfab0955902246e61f854b095478ed9fa196dbc",
+  "mock_speaking_intro": "f9974822e17be27684f412f16d79772611fad2794eccdcf25d19a87154cec93f",
   "mock_speaking_left": "9951cc4166080c931a89f1b35c6099ec097638b5b0aaca279ef3c39b07e17000",
+  "mock_speaking_paper_opens": "f907f3ce566a8578cd8dfe5f328a56aeafdee14180ca88bcd05ccbd7eff6d68c",
   "mock_speaking_start": "c3fa4e9cca4a1323d2dd0002b51db8c381aafc3e84c84adadec0d314be50c905",
   "mock_speaking_start_task": "cd7a95eecd980ae3dcb1bbb1574a53556d93ef82fef1980817bd7a73b95ca697",
   "mock_speaking_start_task_number": "8a1db3753db44572d9da7a2aacab7cdfe09af6e3e544d57560149ed400d61579",
   "mock_speaking_task": "baa4f3f90f75f1d827536f8fa1ce63b9f0b16478bff2e352fa048cd300bdbb9b",
-  "mock_speaking_writing": "7e6a7862f28bfd6af322d9487c539951bc0723f71eeb3f1b766c20f9dec1483a",
+  "mock_speaking_writing_paper": "08aa1b3a0f374b501807b42a57ec59d3c139ca1cc50678d1cc841e72a2d417f2",
+  "mock_speaking_writing_paper_line_1": "d86e62cd3d1e6fadee81ce324525e66f73740916d70b702e1959a9b16dcd5da8",
+  "mock_speaking_writing_paper_line_2": "916c04ee33f0195610ee028f82c6b0c2f4b1fd4f0b91bce589ab07c93cc900e8",
+  "mock_speaking_writing_paper_line_3": "5c47e67bcdde529dc7762008bcd996352f866bc3435c455b87b2dd1096394067",
+  "mock_speaking_writing_paper_line_4": "9ffca6dafb618945c7bb485595074e2f1039e9ce64a5a3d732d09785b00c9d7a",
+  "mock_speaking_writing_paper_phase": "4308d6d399ac809ab2c788012d4b97b7b8b38184e2fa9eaf5c81b68a69062a73",
   "mock_start_next": "ab61f33c828840b55cef39402ed4c7f11544469b9bad3501eaac531225f67951",
   "mock_starting_point": "925db2da8fd6de4102fb70f307c4eb5d57d5e7f3a47cf5ad595acd3656d7cc24",
   "mock_step_failed": "acee38dda99ba6d247627e7e8b799431147d9381c938c8b92212e8617ec04b1c",
@@ -265,9 +271,15 @@
         <item quantity="other">%d parole</item>
     </plurals>
     <string name="mock_speaking">Parlato</string>
-    <string name="mock_speaking_intro">Ogni compito è una conversazione in tempo reale con un esaminatore, come all’esame: al suo posto c’è un’IA. Prepariamo le schede dei compiti quando inizi: ci vuole circa mezzo minuto.</string>
+    <string name="mock_speaking_intro">Ogni compito è una conversazione in tempo reale con un esaminatore, come all’esame: un’IA svolge il ruolo dell’esaminatore.</string>
     <string name="mock_speaking_start">Inizia la parte orale</string>
-    <string name="mock_speaking_writing">Stiamo preparando le schede dei compiti…</string>
+    <string name="mock_speaking_paper_opens">La tua prova orale si aprirà appena sarà pronta.</string>
+    <string name="mock_speaking_writing_paper">Stiamo preparando la tua prova orale</string>
+    <string name="mock_speaking_writing_paper_phase">Stiamo preparando una scheda per ogni compito</string>
+    <string name="mock_speaking_writing_paper_line_1">Stiamo scegliendo un argomento per ogni compito…</string>
+    <string name="mock_speaking_writing_paper_line_2">Stiamo preparando le istruzioni per ogni scheda…</string>
+    <string name="mock_speaking_writing_paper_line_3">Stiamo preparando le battute dell’esaminatore…</string>
+    <string name="mock_speaking_writing_paper_line_4">Stiamo aggiungendo frasi per aiutarti…</string>
     <plurals name="mock_speaking_left">
         <item quantity="one">Svolgi i compiti in ordine. Ognuno è una conversazione e alla fine torni qui. Resta %d compito.</item>
         <item quantity="many">Svolgi i compiti in ordine. Ognuno è una conversazione e alla fine torni qui. Restano %d compiti.</item>

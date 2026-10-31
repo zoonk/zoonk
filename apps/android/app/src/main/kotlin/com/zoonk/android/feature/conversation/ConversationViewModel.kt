@@ -5,7 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.DraftStore
+import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.SessionSource
 import com.zoonk.android.feature.livecall.LiveCall
 import com.zoonk.android.feature.livecall.LiveCallPhase
@@ -45,8 +47,15 @@ class ConversationViewModel(
     /** When the learner started preparing this task's card, on this device; null before. */
     val prepStartedAt: Flow<Long?> = prep.startedAt(conversationId)
 
-    /** A new card or mock being written for another try; the screen opens it once started. */
+    /** Another try being started; the screen opens it once started. */
     var startingAgain by mutableStateOf(false)
+        private set
+
+    var startAgainFailed by mutableStateOf(false)
+        private set
+
+    /** The run writing another try's card or mock, made with that try's kind. */
+    var againWriting by mutableStateOf<ContentWritingWait?>(null)
         private set
 
     /** Null on the intro, before a start. */
@@ -114,17 +123,37 @@ class ConversationViewModel(
         viewModelScope.launch { prep.start(conversationId, System.currentTimeMillis()) }
     }
 
-    /** Another try at a speaking mock or an exam task: a new conversation, written on the learner's tap. */
+    /** Another try at a speaking mock or an exam task: a new conversation, from the learner's tap. */
     fun startAgain(
         request: CallRequest,
         onStarted: (UUID) -> Unit,
     ) {
         if (startingAgain) return
         startingAgain = true
+        startAgainFailed = false
+        val kind = if (request is CallRequest.SpeakingMock) GenerationKind.SpeakingMock else GenerationKind.ExamSpeaking
+        val writing = againWriting ?: store.writingWaits.create(kind, viewModelScope).also { againWriting = it }
         viewModelScope.launch {
             val started = store.start(request)
             startingAgain = false
-            if (started is CallStart.Started) onStarted(started.conversationId)
+            when (writing.answered((started as? CallStart.Writing)?.generationId) { startAgain(request, onStarted) }) {
+                ContentWritingWait.Answer.Waiting -> {
+                    return@launch
+                }
+
+                ContentWritingWait.Answer.Failed -> {
+                    startAgainFailed = true
+                }
+
+                ContentWritingWait.Answer.Proceed -> {
+                    if (started is CallStart.Started) {
+                        onStarted(started.conversationId)
+                    } else {
+                        startAgainFailed =
+                            true
+                    }
+                }
+            }
         }
     }
 

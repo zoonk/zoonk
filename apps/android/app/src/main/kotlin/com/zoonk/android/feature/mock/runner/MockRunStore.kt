@@ -11,7 +11,9 @@ import com.zoonk.android.data.DraftHandle
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.Written
 import com.zoonk.android.data.perform
+import com.zoonk.android.data.performWritten
 import com.zoonk.android.data.recode
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.questions.Answer
@@ -78,10 +80,11 @@ interface MockRunApi {
         setId: String,
     ): PlayOutcome
 
+    /** The run writing the speaking paper when it isn't written yet; null once the part started. */
     suspend fun startSpeaking(
         session: AuthenticatedSession,
         blockId: String,
-    )
+    ): String?
 
     suspend fun finish(
         session: AuthenticatedSession,
@@ -172,9 +175,8 @@ class LiveMockRunApi(
     override suspend fun startSpeaking(
         session: AuthenticatedSession,
         blockId: String,
-    ) {
-        perform { api.clients(session).exams.startMockSpeaking(UUID.fromString(blockId)) }
-    }
+    ): String? =
+        (performWritten { api.clients(session).exams.startMockSpeaking(UUID.fromString(blockId)) } as? Written.Writing)?.generationId
 
     override suspend fun finish(
         session: AuthenticatedSession,
@@ -265,7 +267,12 @@ class MockRunStore(
 
     suspend fun endBreak(blockId: String): MutationResult<MockExam?> = step(blockId) { api.endBreak(it, blockId) }
 
-    suspend fun startSpeaking(blockId: String): MutationResult<MockExam?> = step(blockId) { api.startSpeaking(it, blockId) }
+    /** The mock read again once the part started, or the run writing its paper first. */
+    suspend fun startSpeaking(blockId: String): MutationResult<Written<MockExam?>> =
+        cache.mutate { session ->
+            api.startSpeaking(session, blockId)?.let { Written.Writing(it) }
+                ?: Written.Ready(api.mock(session, blockId))
+        }
 
     suspend fun finish(blockId: String): MutationResult<MockExam?> = step(blockId, FINISHING) { api.finish(it, blockId, timeZone()) }
 

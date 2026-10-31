@@ -2,9 +2,14 @@ package com.zoonk.android.feature.mock.runner
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.ContentWritingWait
+import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionSource
+import com.zoonk.android.data.WritingWaits
+import com.zoonk.android.data.Written
 import com.zoonk.android.data.recode
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Question
@@ -17,6 +22,7 @@ import com.zoonk.api.models.MockExamCurrent
 import com.zoonk.api.models.MockExamCurrentPlaysInner
 import com.zoonk.api.models.MockExamCurrentQuestionsInner
 import com.zoonk.api.models.MockExamSectionsInner
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -104,6 +110,7 @@ class MockRunnerViewModel(
     private val blockId: String,
     opened: OpenedMock,
     private val reread: suspend () -> Unit,
+    writingWaits: WritingWaits,
     private val clock: Clock = Clock.System,
     private val time: TimeSource = TimeSource.Monotonic,
 ) : ViewModel() {
@@ -130,6 +137,9 @@ class MockRunnerViewModel(
     val openedFinished: Boolean = opened.view.status == MockExam.Status.FINISHED
     val saveStatus: StateFlow<DraftSaveStatus> = queue.status
     val essayGrading: StateFlow<EssayGrading> = grading.asStateFlow()
+
+    /** Main's `useSpeakingStart`: a paper that isn't written yet is waited on, then the part starts again. */
+    val speakingPaper = writingWaits.create(GenerationKind.SpeakingPaper, viewModelScope)
 
     init {
         enter(opened.view, opened.keptHere)
@@ -239,7 +249,37 @@ class MockRunnerViewModel(
 
     fun endBreak() = step(MockStep.EndBreak) { store.endBreak(blockId) }
 
-    fun startSpeaking() = step(MockStep.StartSpeaking) { store.startSpeaking(blockId) }
+    fun startSpeaking() {
+        step(MockStep.StartSpeaking) {
+            val started =
+                try {
+                    store.startSpeaking(blockId)
+                } catch (e: CancellationException) {
+                    speakingPaper.clear()
+                    throw e
+                }
+            when (started) {
+                is MutationResult.Done -> {
+                    val written = started.value
+                    when (speakingPaper.answered((written as? Written.Writing)?.generationId, ::startSpeaking)) {
+                        ContentWritingWait.Answer.Proceed -> MutationResult.Done((written as Written.Ready).value)
+                        ContentWritingWait.Answer.Waiting -> null
+                        ContentWritingWait.Answer.Failed -> MutationResult.Failed(ApiError.Unavailable)
+                    }
+                }
+
+                is MutationResult.Failed -> {
+                    speakingPaper.clear()
+                    started
+                }
+
+                MutationResult.Obsolete -> {
+                    speakingPaper.clear()
+                    MutationResult.Obsolete
+                }
+            }
+        }
+    }
 
     fun finish() = step(MockStep.Finish) { store.finish(blockId) }
 
@@ -308,9 +348,10 @@ class MockRunnerViewModel(
         return read != view && (run.value.questions.isEmpty() || place(read) != place(view))
     }
 
+    /** [request] answers null while it waits on a run writing what it needs. */
     private fun step(
         kind: MockStep,
-        request: suspend () -> MutationResult<MockExam?>,
+        request: suspend () -> MutationResult<MockExam?>?,
     ) {
         if (run.value.pending) return
         val wasFinished = run.value.view.status == MockExam.Status.FINISHED
@@ -318,13 +359,15 @@ class MockRunnerViewModel(
         run.update { it.copy(busy = kind, error = false) }
         viewModelScope.launch {
             val slow = launch { delay(SLOW_AFTER).also { run.update { it.copy(slow = true) } } }
-            val result =
+            val answered =
                 withTimeoutOrNull(STEP_TIMEOUT) {
                     saveText()
                     queue.idle()
-                    request()
+                    Answered(request())
                 }
             slow.cancel()
+            if (answered != null && answered.result == null) return@launch run.update { it.copy(busy = null, slow = false) }
+            val result = answered?.result
             val next = (result as? MutationResult.Done)?.value
             run.update { it.copy(busy = null, slow = false, error = next == null && result !is MutationResult.Obsolete) }
             if (next == null) return@launch afterFailedStep()
@@ -581,3 +624,7 @@ private fun MockExam.withPlayed(
 }
 
 private fun MockAnswer.toAnswer(): Answer = recode()
+
+private class Answered(
+    val result: MutationResult<MockExam?>?,
+)

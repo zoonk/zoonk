@@ -16,7 +16,10 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.WritingRuns
+import com.zoonk.android.data.Written
 import com.zoonk.android.data.apiHttpClient
+import com.zoonk.android.data.writingWaits
 import com.zoonk.android.feature.audio.AudioOutput
 import com.zoonk.android.feature.audio.PlaybackEnd
 import com.zoonk.android.feature.audio.SpeechPlayer
@@ -55,7 +58,8 @@ internal class ConversationHarness(
     val context: Application = ApplicationProvider.getApplicationContext()
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
-    val store = ConversationStore(api, AppCache(session, scope))
+    val runs = WritingRuns()
+    val store = ConversationStore(api, AppCache(session, scope), writingWaits(runs, session))
     val exits =
         object : ConversationExits {
             override fun close() {
@@ -160,6 +164,9 @@ internal class FakeConversationApi(
 
     /** The API's refusal of the next start, as `ApiException`. */
     var startRefusal: ApiException? = null
+
+    /** Runs the next starts answer with, one each, before the call is written. */
+    val writings = ArrayDeque<String>()
     var completion: ((LanguageConversationCompletionInput) -> CallCompletion)? = null
 
     /** The completion's `ceremony` JSON: a milestone the call earned, or `null`. */
@@ -181,10 +188,10 @@ internal class FakeConversationApi(
     override suspend fun start(
         session: AuthenticatedSession,
         request: CallRequest,
-    ): UUID {
+    ): Written<UUID> {
         starts += request
         startRefusal?.let { throw it }
-        return stored.id
+        return writings.removeFirstOrNull()?.let { Written.Writing(it) } ?: Written.Ready(stored.id)
     }
 
     override suspend fun complete(

@@ -217,14 +217,19 @@ private fun Conversation(
         ResultActions(
             onContinue = exits::close,
             onClose = exits::close,
-            onTryAgain =
+            tryAgain =
                 again?.let { request ->
-                    {
-                        model.startAgain(request) { id ->
-                            exits.close()
-                            exits.open(AppRoute.Conversation(id.toString(), from = if (fromExam) FROM_EXAM else null))
-                        }
-                    }
+                    TryAgain(
+                        onStart = {
+                            model.startAgain(request) { id ->
+                                exits.close()
+                                exits.open(AppRoute.Conversation(id.toString(), from = if (fromExam) FROM_EXAM else null))
+                            }
+                        },
+                        starting = model.startingAgain,
+                        failed = model.startAgainFailed,
+                        writing = model.againWriting,
+                    )
                 },
             nextTask =
                 examTask?.nextTask?.takeIf { !fromExam }?.let { next ->

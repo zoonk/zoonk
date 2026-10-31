@@ -15,6 +15,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.conversation.CallRequest
 import com.zoonk.android.feature.conversation.CallStart
+import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.feature.language.languageProgress
 import com.zoonk.android.feature.language.languageProgressNotYet
 import com.zoonk.android.feature.speaking.speakingPaper
@@ -44,10 +45,13 @@ class PlanLanguageStandingTest {
         val summary = learnerSummary(kind = "language", title = "Spanish")
         val page = PlanPageState(summary.goals.first(), learnPlan(), summary)
         val standing =
-            Standing.Language(progress) {
-                requests += it
-                CallStart.Started(started)
-            }
+            Standing.Language(
+                progress,
+                callStarter {
+                    requests += it
+                    CallStart.Started(started)
+                },
+            )
         compose.setContent {
             navigator = rememberAppNavigator()
             val pages = rememberSaveableStateHolder()

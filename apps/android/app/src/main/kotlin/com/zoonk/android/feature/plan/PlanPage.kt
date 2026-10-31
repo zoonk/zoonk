@@ -35,8 +35,7 @@ import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
-import com.zoonk.android.feature.conversation.CallRequest
-import com.zoonk.android.feature.conversation.CallStart
+import com.zoonk.android.feature.conversation.CallStarter
 import com.zoonk.android.feature.feedback.FeedbackSheet
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.rememberReportProblem
@@ -147,7 +146,7 @@ internal fun PlanPage(
             app.languageProgress.progress[page.goal.id]
                 .collectShown()
                 .value.value
-                ?.let { Standing.Language(it, app.conversations::start) }
+                ?.let { Standing.Language(it, app.conversations) }
         } else {
             standingOf(
                 page,
@@ -213,6 +212,7 @@ internal fun PlanPage(
             studyEverything = { studyingEverything = true },
             chooseExamOption = viewModel::chooseExamOption,
             chooseTools = viewModel::chooseTools,
+            setupLessons = viewModel.setupLessons,
             preview = viewModel::preview,
             adviseOnBases = viewModel::basesAdvice,
             sheetAnswers = sheetAnswers,
@@ -516,7 +516,7 @@ internal sealed interface Standing {
 
     data class Language(
         val progress: LanguageProgress,
-        val startCall: suspend (CallRequest) -> CallStart,
+        val startCall: CallStarter,
     ) : Standing
 }
 

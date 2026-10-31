@@ -774,6 +774,12 @@
     <string name="plan_tool_setup_description">A short lesson shows how, right before you need it.</string>
     <string name="plan_tool_none">No install</string>
     <string name="plan_tool_none_description">Learn with examples. You won\'t practice on your own computer.</string>
+    <string name="plan_tool_updates_when_ready">Your plan updates as soon as it\'s ready.</string>
+    <string name="plan_tool_writing_setup">Adding a setup lesson</string>
+    <string name="plan_tool_writing_setup_phase">Writing the setup for your device</string>
+    <string name="plan_tool_writing_setup_line_1">Checking what the tool needs…</string>
+    <string name="plan_tool_writing_setup_line_2">Writing the steps to install it…</string>
+    <string name="plan_tool_writing_setup_line_3">Adding a quick check that it works…</string>
     <string name="plan_tool_device">Your device</string>
     <string name="plan_what_you_practice">What you practice</string>
     <string name="plan_when_to_practice">When to practice %1$s</string>

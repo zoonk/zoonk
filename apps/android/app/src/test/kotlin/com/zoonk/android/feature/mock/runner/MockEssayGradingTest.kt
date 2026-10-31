@@ -8,7 +8,9 @@ import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.WritingRuns
 import com.zoonk.android.data.value
+import com.zoonk.android.data.writingWaits
 import com.zoonk.android.feature.mock.result.ESSAY_TWO
 import com.zoonk.android.feature.mock.result.finishedMock
 import com.zoonk.android.feature.mock.result.gradedEssay
@@ -64,7 +66,8 @@ class MockEssayGradingTest {
         drafts.follow { DraftsChange(next = ana.accountId) }
         cache = AppCache(session, scope)
         store = MockRunStore(api, cache, drafts) { "UTC" }
-        return MockRunnerViewModel(store, session, RUN_BLOCK, OpenedMock(initial, emptyList()), reread = {}, clock = clock)
+        return MockRunnerViewModel(store, session, RUN_BLOCK, OpenedMock(initial, emptyList()), reread = {
+        }, writingWaits = writingWaits(WritingRuns()), clock = clock)
     }
 
     private fun essays(vararg essays: String) = finishedMock(extra = """"essayRubric":"enem","essays":[${essays.joinToString(",")}]""")

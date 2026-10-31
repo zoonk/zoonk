@@ -147,9 +147,15 @@
         <item quantity="other">%d words</item>
     </plurals>
     <string name="mock_speaking">Speaking</string>
-    <string name="mock_speaking_intro">Each task is a live call with an examiner, as in the exam: an AI stands in for the person. Your task cards are written when you start, which takes about half a minute.</string>
+    <string name="mock_speaking_intro">Each task is a live call with an examiner, as in the exam: an AI stands in for the person.</string>
     <string name="mock_speaking_start">Start the speaking part</string>
-    <string name="mock_speaking_writing">Writing your task cards…</string>
+    <string name="mock_speaking_paper_opens">Your speaking paper opens as soon as it\'s ready.</string>
+    <string name="mock_speaking_writing_paper">Writing your speaking paper</string>
+    <string name="mock_speaking_writing_paper_phase">Writing a card for each task</string>
+    <string name="mock_speaking_writing_paper_line_1">Picking a topic for each task…</string>
+    <string name="mock_speaking_writing_paper_line_2">Writing each card\'s instructions…</string>
+    <string name="mock_speaking_writing_paper_line_3">Preparing what the examiner says…</string>
+    <string name="mock_speaking_writing_paper_line_4">Adding phrases you can lean on…</string>
     <plurals name="mock_speaking_left">
         <item quantity="one">Do the tasks in order. Each one is a call, and you come back here after it. %d task left.</item>
         <item quantity="other">Do the tasks in order. Each one is a call, and you come back here after it. %d tasks left.</item>

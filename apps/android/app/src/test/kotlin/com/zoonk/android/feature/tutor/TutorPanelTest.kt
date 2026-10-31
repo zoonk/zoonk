@@ -22,6 +22,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.conversation.CallRequest
 import com.zoonk.android.feature.conversation.CallStart
+import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.feature.plan.planChange
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
@@ -66,10 +67,11 @@ class TutorPanelTest {
             signIn = { openedLogin++ },
             seePlus = { openedPlus++ },
             open = { opened += it },
-            startCall = {
-                calls += it
-                CallStart.Started(CALL)
-            },
+            startCall =
+                callStarter {
+                    calls += it
+                    CallStart.Started(CALL)
+                },
         )
 
     private fun show(

@@ -557,6 +557,12 @@
   "plan_tool_setup_description": "a36454e2b359c21da4e8d0b6c095b8ba7f193630d6d642a987167cb452bd5dad",
   "plan_tool_setup_first": "5571f662c1f58b17569fe8f199674ea7f40ffb34e16547a72a5cc1f26d22a0e3",
   "plan_tool_setup_for": "e76fc28f3eb78f24e07ac678854ef7f1c5e69b46373c9d528b2d5567299f5ca6",
+  "plan_tool_updates_when_ready": "438fff409b273dc2d4bba19f14a369c855bb38e9653f4008b4aa20bd95181cdf",
+  "plan_tool_writing_setup": "cb15a219900ec64abcab174fb3622ee4dc97eec0fc9955771c13d4799db458da",
+  "plan_tool_writing_setup_line_1": "99788600121e9e80a942aa9cb4fee9d71043cad5afe2252970d65e30dd62e369",
+  "plan_tool_writing_setup_line_2": "abdcd33147c7a2a4bf3ea49d18ccef6d61251d8d253d63394420bc0625f0e45e",
+  "plan_tool_writing_setup_line_3": "2ba52f9f13e1239877525e7492d100080f0da23c90aae13e2f21040cd67efeca",
+  "plan_tool_writing_setup_phase": "ee7f623890c48c02f350678617b5a4c8499838572299c308ea8fbca01f157e1e",
   "plan_tools_later": "5277610b9c422e646bd6e44b44bba671b9ee794ab852fa173d46ea61da11f3ef",
   "plan_tools_none": "36873cea883a1d960b0921da0da26b0af96a9f9da516e380b9381985f32a106b",
   "plan_tools_title": "bf4c97e75869c1b72a7214f309d4ee583e2825bc03db09a3bc730db02e87dd49",
@@ -1272,6 +1278,12 @@
     <string name="plan_tool_setup_description">必要になる直前に、短いレッスンで準備の手順を学べます。</string>
     <string name="plan_tool_none">インストールしない</string>
     <string name="plan_tool_none_description">例を見て学びます。自分のパソコンでは練習しません。</string>
+    <string name="plan_tool_updates_when_ready">準備ができ次第、学習計画が更新されます。</string>
+    <string name="plan_tool_writing_setup">初期設定のレッスンを追加しています</string>
+    <string name="plan_tool_writing_setup_phase">端末に合った設定手順を作成しています</string>
+    <string name="plan_tool_writing_setup_line_1">ツールの利用に必要なものを確認しています…</string>
+    <string name="plan_tool_writing_setup_line_2">インストールの手順を作成しています…</string>
+    <string name="plan_tool_writing_setup_line_3">簡単な動作確認の手順を追加しています…</string>
     <string name="plan_tool_device">使う端末</string>
     <string name="plan_what_you_practice">練習内容</string>
     <string name="plan_when_to_practice">%1$sを練習する時期</string>

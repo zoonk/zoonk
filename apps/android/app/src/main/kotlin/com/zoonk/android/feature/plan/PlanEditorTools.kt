@@ -41,8 +41,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.PendingLabel
+import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.api.models.PlanTool
 import java.util.UUID
 
@@ -281,6 +283,15 @@ internal fun ColumnScope.ToolChoiceForm(
     onDraft: (ToolDraft) -> Unit,
     onDone: () -> Unit,
 ) {
+    val setupLessons = edits.setupLessons
+    if (setupLessons != null && setupLessons.generationId.collectAsStateWithLifecycle().value != null) {
+        WritingWait(
+            setupLessons,
+            hint = stringResource(R.string.plan_tool_updates_when_ready),
+            modifier = Modifier.padding(horizontal = SHEET_MARGIN, vertical = 16.dp),
+        )
+        return
+    }
     val pending = edits.isPending(PlanPart.Tools)
     val saved = edits.sheetAnswer(draft.opening)
     val chosen = draft.choice

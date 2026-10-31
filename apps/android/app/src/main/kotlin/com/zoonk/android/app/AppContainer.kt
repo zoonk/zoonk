@@ -7,10 +7,12 @@ import com.zoonk.android.BuildConfig
 import com.zoonk.android.app.shell.GoalSwitch
 import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.EncryptedSessionCredentials
 import com.zoonk.android.data.LearnerSummaryStore
 import com.zoonk.android.data.LearningProfileStore
+import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LiveLearningProfileApi
 import com.zoonk.android.data.LiveSessionApi
 import com.zoonk.android.data.LoadState
@@ -19,6 +21,7 @@ import com.zoonk.android.data.SessionCredentials
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SessionStore
 import com.zoonk.android.data.StoredSession
+import com.zoonk.android.data.WritingWaits
 import com.zoonk.android.data.apiHttpClient
 import com.zoonk.android.data.clearCredentialState
 import com.zoonk.android.data.imageLoader
@@ -158,6 +161,8 @@ class AppContainer private constructor(
             clearCredentialState = { clearCredentialState(context) },
         )
     val cache = AppCache(sessions, scope, timeSource)
+
+    val writingWaits = WritingWaits { kind, scope -> ContentWritingWait(kind, scope, sessions) { LiveGenerationSource(api, it) } }
     val learnerSummary =
         LearnerSummaryStore(
             api = { session -> perform { api.clients(session).account.getCurrentUserSummary() }.summary },
@@ -252,7 +257,7 @@ class AppContainer private constructor(
     val pronunciation = PronunciationStore(LivePronunciationApi(api), cache, timeZone)
 
     // Live calls and speaking (L9).
-    val conversations = ConversationStore(LiveConversationApi(api), cache)
+    val conversations = ConversationStore(LiveConversationApi(api), cache, writingWaits)
     val speaking = SpeakingStore(LiveSpeakingApi(api), cache)
     val languageUnits = LanguageUnitStore(LiveLanguageUnitApi(api), cache)
     val languageProgress = LanguageProgressStore(LiveLanguageProgressApi(api), cache)

@@ -229,7 +229,7 @@ private fun LazyListScope.examSections(
                 paper = paper,
                 goalId = exam.goalId,
                 openTask = null,
-                start = app.conversations::start,
+                start = app.conversations,
                 open = navigator::open,
                 openWeb = { openWebPage(context, it) },
                 from = FROM_EXAM,
@@ -241,7 +241,7 @@ private fun LazyListScope.examSections(
                 speakingMock,
                 exam.goalId,
                 exam.speakingMockPaused,
-                start = app.conversations::start,
+                start = app.conversations,
                 open = navigator::open,
                 from = FROM_EXAM,
             )

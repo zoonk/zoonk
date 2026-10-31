@@ -70,6 +70,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
+import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -107,6 +108,7 @@ internal data class PlanEdits(
     val studyEverything: () -> Unit = {},
     val chooseExamOption: (group: String, subject: String, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
     val chooseTools: (ToolAnswer, (PlanChangeResult?) -> Unit) -> Unit = { _, _ -> },
+    val setupLessons: ContentWritingWait? = null,
     val preview: suspend (List<PlanOp>) -> PlanChangePreview? = { null },
     val adviseOnBases: suspend () -> PlanBasesAdvice? = { null },
     val sheetAnswers: Map<UUID, PlanChangeResult?> = emptyMap(),

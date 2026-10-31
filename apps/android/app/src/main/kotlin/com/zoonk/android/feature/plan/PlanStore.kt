@@ -11,7 +11,9 @@ import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.Written
 import com.zoonk.android.data.perform
+import com.zoonk.android.data.performWritten
 import com.zoonk.android.data.value
 import com.zoonk.api.models.ExamChoiceInput
 import com.zoonk.api.models.GoalProgress
@@ -131,12 +133,12 @@ interface PlanApi {
         subject: String,
     ): PlanChangeResult
 
-    /** Setting a tool up can write its setup lesson with a model first. */
+    /** A setup lesson nobody has needed yet answers with the run writing it; nothing is applied then. */
     suspend fun chooseTools(
         session: AuthenticatedSession,
         goalId: UUID,
         answer: ToolAnswer,
-    ): PlanChangeResult
+    ): Written<PlanChangeResult>
 
     /** Plans the goal with every prerequisite in depth, so only when the learner asks. Saves nothing. */
     suspend fun basesAdvice(
@@ -255,8 +257,8 @@ class LivePlanApi(
         session: AuthenticatedSession,
         goalId: UUID,
         answer: ToolAnswer,
-    ) = perform {
-        api.streamingClients(session).plans.createPlanToolChoice(
+    ) = performWritten {
+        api.clients(session).plans.createPlanToolChoice(
             goalId,
             PlanToolChoiceInput(
                 choice = PlanToolChoiceInput.Choice.valueOf(answer.choice.name),
@@ -371,7 +373,7 @@ class PlanStore(
     suspend fun chooseTools(
         goalId: UUID,
         answer: ToolAnswer,
-    ): MutationResult<PlanChangeResult> = write(goalId) { api.chooseTools(it, goalId, answer) }
+    ): MutationResult<Written<PlanChangeResult>> = write(goalId) { api.chooseTools(it, goalId, answer) }
 
     suspend fun basesAdvice(goalId: UUID): MutationResult<PlanBasesAdvice> = cache.mutate { api.basesAdvice(it, goalId) }
 

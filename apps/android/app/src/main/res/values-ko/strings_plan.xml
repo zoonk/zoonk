@@ -557,6 +557,12 @@
   "plan_tool_setup_description": "26754961b49368f8dfd35ff855b25c172e272d6dbe762664a508953342ed3c91",
   "plan_tool_setup_first": "4c03ed8b201833ff98c5b0887f99526d54dd3ae4faa04a0cf6a23d80cfbd136f",
   "plan_tool_setup_for": "bd3376b587c41aacd16081e31d5156088564f44d65aff30d56926bc0b161b8f2",
+  "plan_tool_updates_when_ready": "de13e768c625f8e8db0989e030f6578aa20256c22bb18fb036bee4a619808661",
+  "plan_tool_writing_setup": "91945d8962d286e6695d169a404ea4660995588727c212350ec898bd7cec297f",
+  "plan_tool_writing_setup_line_1": "5d9e528634a2cd02e7a4ea758c530b16ae86df3d65db40a394385bbdee3bc33f",
+  "plan_tool_writing_setup_line_2": "a9ab7e12364cd3687c4fa06d2d817db1132dc47f17ddae1831fc7c90b8a5e0f7",
+  "plan_tool_writing_setup_line_3": "9f607e10738db2881b6f4d4380c8fc8b87cb3de2ab22d2a07833beeada26e91c",
+  "plan_tool_writing_setup_phase": "cba49cb9c47ccc9fedd34ce6b6ff94d47fc09953f9851b36d4e89e8f4d457ade",
   "plan_tools_later": "00fec963305ed2dd54fef46c41b364744070bcebda04d2b448a75a3f477513da",
   "plan_tools_none": "0764b3f85f4ca1bcfb6b947e1009667f3e43ae0e43771193537bafd39de5bd38",
   "plan_tools_title": "e149a232d321ecac67fcd4ca00dad29d31f78e65670e641fed42fe95f38669ec",
@@ -1272,6 +1278,12 @@
     <string name="plan_tool_setup_description">사용할 때가 되면 짧은 레슨으로 설치 방법을 알려 드려요.</string>
     <string name="plan_tool_none">설치하지 않을래요</string>
     <string name="plan_tool_none_description">예시로 배워요. 컴퓨터에서 직접 연습하지는 않아요.</string>
+    <string name="plan_tool_updates_when_ready">준비되면 계획이 바로 업데이트돼요.</string>
+    <string name="plan_tool_writing_setup">초기 설정 레슨을 추가하고 있어요</string>
+    <string name="plan_tool_writing_setup_phase">기기에 맞는 초기 설정 안내를 만들고 있어요</string>
+    <string name="plan_tool_writing_setup_line_1">도구 사용에 필요한 것을 확인하고 있어요…</string>
+    <string name="plan_tool_writing_setup_line_2">설치 단계별 안내를 만들고 있어요…</string>
+    <string name="plan_tool_writing_setup_line_3">잘 작동하는지 간단히 확인하는 단계를 추가하고 있어요…</string>
     <string name="plan_tool_device">내 기기</string>
     <string name="plan_what_you_practice">연습 내용</string>
     <string name="plan_when_to_practice">%1$s 연습 시기</string>

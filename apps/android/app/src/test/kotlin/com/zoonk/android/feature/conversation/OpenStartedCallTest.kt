@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.GenerationKind
 import kotlinx.coroutines.CompletableDeferred
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -24,7 +25,7 @@ class OpenStartedCallTest {
     @Test
     fun aCallThatStartsWhileItsScreenIsGoneOpensFromTheNextOneOnce() {
         val answer = CompletableDeferred<CallStart>()
-        val model = CallStartModel { answer.await() }
+        val model = CallStartModel(callStarter { answer.await() }, GenerationKind.ConversationCall)
         val opened = mutableListOf<UUID>()
         var shown by mutableStateOf(true)
         compose.setContent { if (shown) OpenStartedCall(model) { opened += it } }

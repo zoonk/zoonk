@@ -8,7 +8,10 @@ import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.WritingWaits
+import com.zoonk.android.data.Written
 import com.zoonk.android.data.perform
+import com.zoonk.android.data.performWritten
 import com.zoonk.android.data.recode
 import com.zoonk.android.feature.livecall.CallReservation
 import com.zoonk.android.ui.components.Limit
@@ -81,6 +84,11 @@ sealed interface CallStart {
         val conversationId: UUID,
     ) : CallStart
 
+    /** The call isn't written yet: follow this run, then start it again. */
+    data class Writing(
+        val generationId: String,
+    ) : CallStart
+
     data class Limited(
         val limit: Limit.Reached,
     ) : CallStart
@@ -95,6 +103,10 @@ sealed interface CallStart {
 sealed interface CheckpointStart {
     data class Started(
         val conversationId: UUID,
+    ) : CheckpointStart
+
+    data class Writing(
+        val generationId: String,
     ) : CheckpointStart
 
     data object PlusRequired : CheckpointStart
@@ -131,11 +143,11 @@ interface ConversationApi {
         blockId: UUID,
     ): LanguageCheckpointCall
 
-    /** Writes the call when it isn't written yet: it runs AI, so only on the learner's tap. */
+    /** Only on the learner's tap: a call that isn't written yet starts the run writing it. */
     suspend fun start(
         session: AuthenticatedSession,
         request: CallRequest,
-    ): UUID
+    ): Written<UUID>
 
     suspend fun complete(
         session: AuthenticatedSession,
@@ -166,7 +178,11 @@ class LiveConversationApi(
     override suspend fun start(
         session: AuthenticatedSession,
         request: CallRequest,
-    ) = perform { api.streamingClients(session).language.startLanguageConversation(request.input) }.conversationId
+    ): Written<UUID> =
+        when (val started = performWritten { api.clients(session).language.startLanguageConversation(request.input) }) {
+            is Written.Ready -> Written.Ready(started.value.conversationId)
+            is Written.Writing -> started
+        }
 
     override suspend fun complete(
         session: AuthenticatedSession,
@@ -181,10 +197,18 @@ class LiveConversationApi(
 
 private val CHANGED = setOf("BLOCK_FINISHED", "DAILY_LIMIT_REACHED", "EARLIER_FIRST", "NOT_LANGUAGE")
 
+/** Starts a call from the learner's tap, and reads the run a start can answer with. */
+interface CallStarter {
+    val writingWaits: WritingWaits
+
+    suspend fun start(request: CallRequest): CallStart
+}
+
 class ConversationStore(
     private val api: ConversationApi,
     private val cache: AppCache,
-) {
+    override val writingWaits: WritingWaits,
+) : CallStarter {
     private val conversations =
         cache.keyed<UUID, LanguageConversation>(Audience.SignedIn, setOf(DataDomain.UserProgress)) { session, id ->
             api.conversation(session, id)
@@ -201,16 +225,33 @@ class ConversationStore(
 
     suspend fun startCheckpoint(blockId: UUID): CheckpointStart =
         when (val started = cache.mutate { session -> api.start(session, CallRequest.Checkpoint(blockId)) }) {
-            is MutationResult.Done -> CheckpointStart.Started(started.value)
-            is MutationResult.Failed if started.code == "PLUS_REQUIRED" -> CheckpointStart.PlusRequired
-            is MutationResult.Failed if started.code in CHANGED || started.error == ApiError.NotFound -> CheckpointStart.Changed
-            else -> CheckpointStart.Failed
+            is MutationResult.Done -> {
+                when (val written = started.value) {
+                    is Written.Ready -> CheckpointStart.Started(written.value)
+                    is Written.Writing -> CheckpointStart.Writing(written.generationId)
+                }
+            }
+
+            is MutationResult.Failed if started.code == "PLUS_REQUIRED" -> {
+                CheckpointStart.PlusRequired
+            }
+
+            is MutationResult.Failed if started.code in CHANGED || started.error == ApiError.NotFound -> {
+                CheckpointStart.Changed
+            }
+
+            else -> {
+                CheckpointStart.Failed
+            }
         }
 
-    suspend fun start(request: CallRequest): CallStart =
+    override suspend fun start(request: CallRequest): CallStart =
         when (val started = cache.mutate { session -> api.start(session, request) }) {
             is MutationResult.Done -> {
-                CallStart.Started(started.value)
+                when (val written = started.value) {
+                    is Written.Ready -> CallStart.Started(written.value)
+                    is Written.Writing -> CallStart.Writing(written.generationId)
+                }
             }
 
             is MutationResult.Failed -> {

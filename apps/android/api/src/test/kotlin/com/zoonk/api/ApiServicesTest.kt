@@ -1,6 +1,8 @@
 package com.zoonk.api
 
 import com.zoonk.api.models.GetChapterTestOut200Response
+import com.zoonk.api.models.LanguageConversationStartInput
+import com.zoonk.api.models.LanguageConversationStartInputOneOf2
 import com.zoonk.api.models.MeUpdate
 import com.zoonk.api.models.Milestone
 import kotlinx.coroutines.test.runTest
@@ -87,10 +89,39 @@ class ApiServicesTest {
             assertTrue(body.contains("\r\n\r\nAmerica/Sao_Paulo\r\n"))
         }
 
-    private fun json(body: String) =
-        MockResponse
-            .Builder()
-            .addHeader("Content-Type", "application/json")
-            .body(body)
-            .build()
+    @Test
+    fun aRunWritingWhatTheRequestNeedsArrivesAsItsAnswer() =
+        runTest {
+            server.enqueue(json("""{"generationId":"wrun_1","status":"generating"}""", code = 202))
+            val answer = runCatching { services.language.startLanguageConversation(speakingMock()) }.exceptionOrNull()
+            assertEquals("wrun_1", (answer as ContentWritingAnswer).generationId)
+        }
+
+    @Test
+    fun aFinishedAnswerIsReadAsTheOperationsOwn() =
+        runTest {
+            server.enqueue(json("""{"conversationId":"$goalId"}""", code = 201))
+            assertEquals(
+                goalId,
+                services.language
+                    .startLanguageConversation(speakingMock())
+                    .body()!!
+                    .conversationId,
+            )
+        }
+
+    private fun speakingMock() =
+        LanguageConversationStartInput.LanguageConversationStartInputOneOf2Value(
+            LanguageConversationStartInputOneOf2(goalId, LanguageConversationStartInputOneOf2.Kind.SPEAKING_MOCK),
+        )
+
+    private fun json(
+        body: String,
+        code: Int = 200,
+    ) = MockResponse
+        .Builder()
+        .code(code)
+        .addHeader("Content-Type", "application/json")
+        .body(body)
+        .build()
 }

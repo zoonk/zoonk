@@ -236,7 +236,7 @@ enum class GenerationKind(
             listOf(
                 GenerationPhase(
                     "write",
-                    20,
+                    40,
                     R.string.conversation_writing_call_phase,
                     listOf(
                         R.string.conversation_writing_call_line_1,
@@ -246,7 +246,7 @@ enum class GenerationKind(
                     ),
                 ),
             ),
-        steps = mapOf("writeCall" to StepPlace.Phase("write")),
+        steps = CALL_STEPS,
     ),
     ExamSpeaking(
         label = R.string.conversation_writing_task,
@@ -264,7 +264,7 @@ enum class GenerationKind(
                     ),
                 ),
             ),
-        steps = mapOf("writeTask" to StepPlace.Phase("write")),
+        steps = CALL_STEPS,
     ),
     ChallengeQuestions(
         label = R.string.challenge_writing,
@@ -339,7 +339,47 @@ enum class GenerationKind(
                     ),
                 ),
             ),
-        steps = mapOf("writeMock" to StepPlace.Phase("write")),
+        steps = CALL_STEPS,
+    ),
+    SpeakingPaper(
+        label = R.string.mock_speaking_writing_paper,
+        phases =
+            listOf(
+                GenerationPhase(
+                    "write",
+                    50,
+                    R.string.mock_speaking_writing_paper_phase,
+                    listOf(
+                        R.string.mock_speaking_writing_paper_line_1,
+                        R.string.mock_speaking_writing_paper_line_2,
+                        R.string.mock_speaking_writing_paper_line_3,
+                        R.string.mock_speaking_writing_paper_line_4,
+                    ),
+                ),
+            ),
+        steps = CALL_STEPS,
+    ),
+    SetupLesson(
+        label = R.string.plan_tool_writing_setup,
+        phases =
+            listOf(
+                GenerationPhase(
+                    "write",
+                    15,
+                    R.string.plan_tool_writing_setup_phase,
+                    listOf(
+                        R.string.plan_tool_writing_setup_line_1,
+                        R.string.plan_tool_writing_setup_line_2,
+                        R.string.plan_tool_writing_setup_line_3,
+                    ),
+                ),
+            ),
+        steps =
+            mapOf(
+                "joinSetupLessons" to StepPlace.Join,
+                "setupLessonsReady" to StepPlace.Done,
+                "writeSetupLessons" to StepPlace.Phase("write"),
+            ),
     ),
     MockQuestions(
         label = R.string.mock_chooser_writing,
@@ -511,6 +551,8 @@ private fun share(
     value: Float,
     total: Float,
 ) = if (total == 0f) 0f else value / total
+
+private val CALL_STEPS = mapOf("callReady" to StepPlace.Done, "joinRunningCall" to StepPlace.Join, "writeCall" to StepPlace.Phase("write"))
 
 /** Main weighs the built plan as 40% of the wait and the reading, about four minutes, as the rest. */
 private fun readingPhases(

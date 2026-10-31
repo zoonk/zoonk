@@ -79,13 +79,19 @@
   "mock_speaking_done": "8fcd1f5a78ee8fee46ed4baf8c43d0bd3e36321871579f348ba7001d76eac6f0",
   "mock_speaking_hand_in_done": "f3c1940223bb4ca5bc99e8d31b33c3692a8fb6d2ef0ec3d72e138ed13fecf055",
   "mock_speaking_hand_in_left": "54bd597728d018feae641a20fdf048cb6eae4a54aa75953faaa8fdc24f02b149",
-  "mock_speaking_intro": "f67e0c8132f8e68cbe8034ebf70636bb141050703e74cc73fe2114905cb98b8f",
+  "mock_speaking_intro": "f7154c47a2c74ed693c63ebad4fd8f181b69f6231f620abdb9dbf597f5d40a0a",
   "mock_speaking_left": "92490b2f9d6627eef713768c0cc92793cc70e6d53c476d8b49ce15431bfea473",
+  "mock_speaking_paper_opens": "8f3a1c6a124aad7468bc653384c67adc15aaa34a561acae4ed1e2fec27ed9bee",
   "mock_speaking_start": "066c78254404540739d338626040e11a9c4f9d5f0944be8866a63d9a3b094129",
   "mock_speaking_start_task": "ac528f9b96bd1808ac43e742180b5a7af96c1d058b2cdff0337b3294c31aaf66",
   "mock_speaking_start_task_number": "face7ffeccb4dafc3e6544b4c4813b72de69c63e761763d7fa4dd3584ca710d7",
   "mock_speaking_task": "9a4c5906d038430ccbdd4a669056659cbbb55176e89cc5d33871fe3c1771b0c3",
-  "mock_speaking_writing": "d6f9a335a8f3d267c5a2f8d1bbbdc44850c310ca992fded0ec4f33ad005d8e1c",
+  "mock_speaking_writing_paper": "c5ce0c1ec2e9852876f854cf47bf68e21014ad9d4d612c545ac2f4ff29ac6cca",
+  "mock_speaking_writing_paper_line_1": "424c70052ae5a5a40bba9c8447c93047cdb5a4d55bbf67fbc0b15b38cda1a48a",
+  "mock_speaking_writing_paper_line_2": "e3285a8bb0376570cd3d9f8a13e23212ec95b357da1f7252272a17b56c395278",
+  "mock_speaking_writing_paper_line_3": "7fa6f4653eef3f063a320f8637efbb28676e1b89041259872dbc8765bc5fa03f",
+  "mock_speaking_writing_paper_line_4": "081253abbb8baba0303eab232cd3fae90382468be76fe70fd43f14976ec98b65",
+  "mock_speaking_writing_paper_phase": "4f98f8ddaf747441318bcf5dc53a1b5eaac8d195ba40c8aabc7568eb48c0fb48",
   "mock_start_next": "207e328521faed54805513fddee86736eb577a853339c81b8a3dc93d749f686e",
   "mock_starting_point": "a37911df9d8b44982602b2fefefa436f2978849f663d3c703c612aaa7c038b4b",
   "mock_step_failed": "cbbcdcd886a9c081d46f4cfe15081c2c63dd85bbc26394fedf4ddda1d034dc54",
@@ -265,9 +271,15 @@
         <item quantity="other">%d mots</item>
     </plurals>
     <string name="mock_speaking">Expression orale</string>
-    <string name="mock_speaking_intro">Chaque tâche se déroule lors d’un appel en direct avec un examinateur, comme à l’examen : une IA joue son rôle. Tes fiches sont préparées quand tu commences, ce qui prend environ une demi-minute.</string>
+    <string name="mock_speaking_intro">Chaque tâche se déroule lors d’un appel en direct avec un examinateur, comme à l’examen : une IA joue ce rôle.</string>
     <string name="mock_speaking_start">Commencer la partie orale</string>
-    <string name="mock_speaking_writing">Préparation de tes fiches…</string>
+    <string name="mock_speaking_paper_opens">Ton épreuve d’expression orale s’ouvrira dès qu’elle sera prête.</string>
+    <string name="mock_speaking_writing_paper">Préparation de ton épreuve d’expression orale</string>
+    <string name="mock_speaking_writing_paper_phase">Préparation d’une fiche pour chaque tâche</string>
+    <string name="mock_speaking_writing_paper_line_1">Choix d’un sujet pour chaque tâche…</string>
+    <string name="mock_speaking_writing_paper_line_2">Préparation des consignes de chaque fiche…</string>
+    <string name="mock_speaking_writing_paper_line_3">Préparation des paroles de l’examinateur…</string>
+    <string name="mock_speaking_writing_paper_line_4">Ajout de phrases pour t’aider…</string>
     <plurals name="mock_speaking_left">
         <item quantity="one">Fais les tâches dans l’ordre. Chacune se déroule lors d’un appel, puis tu reviens ici. Il reste %d tâche.</item>
         <item quantity="many">Fais les tâches dans l’ordre. Chacune se déroule lors d’un appel, puis tu reviens ici. Il reste %d tâches.</item>

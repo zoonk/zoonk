@@ -17,6 +17,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.conversation.CallStart
+import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.feature.plan.effect
 import com.zoonk.android.feature.plan.planChange
 import com.zoonk.android.ui.characters.BuddyLook
@@ -123,7 +124,7 @@ class TutorScreenshots {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main))
         val vm = TutorViewModel(TutorScope.Plan("goal"), TutorStore(api, cache, session, { true }) { _, _, _ -> MutationResult.Obsolete })
-        val routes = TutorRoutes(createAccount = {}, signIn = {}, seePlus = {}, open = {}, startCall = { CallStart.Failed })
+        val routes = TutorRoutes(createAccount = {}, signIn = {}, seePlus = {}, open = {}, startCall = callStarter { CallStart.Failed })
 
         compose.setContent {
             ZoonkTheme(darkTheme = dark) { Surface { TutorPanel(vm, TutorAccess.Ask, TutorIdentity("Zu", BuddyLook()), routes) } }

@@ -18,6 +18,7 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.conversation.CallStart
+import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.feature.language.languageProgress
 import com.zoonk.android.feature.language.languageProgressNotYet
 import com.zoonk.android.feature.speaking.speakingPaper
@@ -98,7 +99,7 @@ class PlanLanguageScreenshots {
                     Surface {
                         PlanContent(
                             page = page,
-                            standing = Standing.Language(pages.getValue(shown)) { CallStart.Failed },
+                            standing = Standing.Language(pages.getValue(shown), callStarter { CallStart.Failed }),
                             structure = null,
                             links = links,
                             resume = Resume.Plain,
@@ -110,7 +111,7 @@ class PlanLanguageScreenshots {
                 } else {
                     Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
                         Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(28.dp)) {
-                            LanguageDetails(Standing.Language(sheet) { CallStart.Failed }, links)
+                            LanguageDetails(Standing.Language(sheet, callStarter { CallStart.Failed }), links)
                         }
                     }
                 }

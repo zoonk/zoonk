@@ -79,13 +79,19 @@
   "mock_speaking_done": "901c9f622454d5febe8fcbd7a438ae301e19cf086e8be03441dbbd8820192670",
   "mock_speaking_hand_in_done": "91ffa84f0b8d4d08f7aa61cabc6541f27179915fc29494651c5bcb1313abec90",
   "mock_speaking_hand_in_left": "fa6154dfcdeaeca77d97180d68df4f000c3e7d3964c7cae8be8ab156a5c75e28",
-  "mock_speaking_intro": "9452b83984019745da25b47869df8843348cd555adffc26d3f78b4843fdd6091",
+  "mock_speaking_intro": "c3e84232f7ece83cb93d63ba8bedc38dd5c1f9a8e2c6c025c8cd607c320354e8",
   "mock_speaking_left": "da0482783c26eea74ae8a872064a33b93b40e69393b59cd122fd3868a0df2417",
+  "mock_speaking_paper_opens": "e648d73e311a0c6502985e0fff70a9c1cd3866cb7468150ce953fd583f5ec8c8",
   "mock_speaking_start": "ea5c4f682cb5dbf7fdc7f9c52a1c5f9ffaf53356a7e0e3a3770852bea17a996f",
   "mock_speaking_start_task": "49c13bafc670b6638bbe53769ef9c05b41dbd0078d3e3436564d7dcbfabda82e",
   "mock_speaking_start_task_number": "ac86fe9504a2c0ee36d1f0e711ea00bd73373c227c4c7fa67477dd07266a3572",
   "mock_speaking_task": "220e6d3965b5e1676f75e4fd85e2532030a43891c22670a0351cbbeea1702130",
-  "mock_speaking_writing": "408e54622ef3a7d4752dc3db0045dc0f7830e8e649ffe8f6237d5706e074abe9",
+  "mock_speaking_writing_paper": "a43ec29644b9234f8b3d8b16aae8c56e09589a19d73aa8b3df9c4f89fbd76d27",
+  "mock_speaking_writing_paper_line_1": "7c5b3c228c694dd0e88eb1f18bd42696db866727b4054b783104def35035762f",
+  "mock_speaking_writing_paper_line_2": "15cfe5b129e0274d080aa5a8682bf2264863de39c6e1bed6ce7c6b83ef441b48",
+  "mock_speaking_writing_paper_line_3": "939d663b686941d1bf43d41bd5bfe6359af88e4c62177e3f930de8e4ff7a6654",
+  "mock_speaking_writing_paper_line_4": "f4adcf30f5459478269f6d8e199969da30098fe834d45f1a20d39ca62615b902",
+  "mock_speaking_writing_paper_phase": "691ccaa749af717874e59a1f899f981d3d1370f0511e45fd856b6eabacd1bedb",
   "mock_start_next": "aab882948ea02349cc32cddfe50c7971aa6346640e3a1861b22cb1a60eca6408",
   "mock_starting_point": "64fe5449fc851a0fcafe5b3c5a2c835d6cb4a3c5dc3e650b2a6a0df3cb774402",
   "mock_step_failed": "3dbba610a1878387bed694571803ce0aa5efe268b4b9b657074b34daef02a0a5",
@@ -239,9 +245,15 @@
         <item quantity="other">%d단어</item>
     </plurals>
     <string name="mock_speaking">말하기</string>
-    <string name="mock_speaking_intro">각 과제에서는 실제 시험처럼 면접관과 실시간으로 대화해요. 인공지능이 면접관 역할을 맡아요. 시작할 때 과제 카드를 만드는 데 약 30초가 걸려요.</string>
+    <string name="mock_speaking_intro">과제마다 실제 시험처럼 면접관과 실시간으로 대화해요. AI가 면접관 역할을 맡아요.</string>
     <string name="mock_speaking_start">말하기 파트 시작하기</string>
-    <string name="mock_speaking_writing">과제 카드를 만들고 있어요…</string>
+    <string name="mock_speaking_paper_opens">말하기 시험지가 준비되면 바로 열려요.</string>
+    <string name="mock_speaking_writing_paper">말하기 시험지를 만들고 있어요</string>
+    <string name="mock_speaking_writing_paper_phase">과제별 카드를 만들고 있어요</string>
+    <string name="mock_speaking_writing_paper_line_1">과제별 주제를 고르고 있어요…</string>
+    <string name="mock_speaking_writing_paper_line_2">각 카드의 안내문을 만들고 있어요…</string>
+    <string name="mock_speaking_writing_paper_line_3">면접관이 할 말을 준비하고 있어요…</string>
+    <string name="mock_speaking_writing_paper_line_4">도움이 될 표현을 더하고 있어요…</string>
     <plurals name="mock_speaking_left">
         <item quantity="other">과제를 순서대로 진행하세요. 각 과제는 대화로 진행되고, 끝나면 이 화면으로 돌아와요. 과제가 %d개 남았어요.</item>
     </plurals>

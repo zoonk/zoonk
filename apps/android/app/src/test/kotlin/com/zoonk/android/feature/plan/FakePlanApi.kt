@@ -2,6 +2,7 @@ package com.zoonk.android.feature.plan
 
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.Written
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBasesAdvice
@@ -182,11 +183,15 @@ internal class FakePlanApi : PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
         answer: ToolAnswer,
-    ): PlanChangeResult {
+    ): Written<PlanChangeResult> {
         toolFailure?.let { throw it }
         toolAnswers += answer
-        return PlanChangeResult(change = planChange(), status = PlanChangeResult.Status.APPLIED)
+        setupWritings.removeFirstOrNull()?.let { return Written.Writing(it) }
+        return Written.Ready(PlanChangeResult(change = planChange(), status = PlanChangeResult.Status.APPLIED))
     }
+
+    /** Runs the next tool choices answer with, one each, before the setup lesson is written. */
+    val setupWritings = ArrayDeque<String>()
 
     override suspend fun basesAdvice(
         session: AuthenticatedSession,

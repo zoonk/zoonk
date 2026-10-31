@@ -3,7 +3,6 @@ package com.zoonk.android.feature.conversation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,26 +16,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.data.GenerationFailure
+import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.GenerationKind
-import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
-import com.zoonk.android.data.StepState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.api.models.LanguageCheckpointCall
 import com.zoonk.api.models.LanguageCheckpointCallIntro
 import kotlinx.coroutines.launch
@@ -63,28 +63,41 @@ class CheckpointCallModel(
     var opened by mutableStateOf<OpenedCall?>(null)
         private set
 
-    /** [microphone] is the learner's answer on the intro's Start; a call being prepared opens on its own intro. */
+    val writing = store.writingWaits.create(GenerationKind.ConversationCall, viewModelScope)
+
+    /**
+     * [microphone] is the learner's answer on the intro's Start; a call being prepared opens on its
+     * own intro. The intro shows only once the call is written, so a run answering its Start means
+     * it isn't any more: the checkpoint is read again, which then offers to get it ready.
+     */
     fun start(microphone: Boolean?) {
         start = Start.Starting
         viewModelScope.launch {
+            val started = store.startCheckpoint(blockId)
+            val generationId = (started as? CheckpointStart.Writing)?.generationId?.takeIf { microphone == null }
+            val answer = writing.answered(generationId) { start(microphone) }
             start =
-                when (val started = store.startCheckpoint(blockId)) {
-                    is CheckpointStart.Started -> {
+                when {
+                    answer == ContentWritingWait.Answer.Waiting -> {
+                        Start.Idle
+                    }
+
+                    answer == ContentWritingWait.Answer.Failed || started == CheckpointStart.Failed -> {
+                        Start.Failed
+                    }
+
+                    started is CheckpointStart.Started -> {
                         opened = OpenedCall(started.conversationId, microphone)
                         Start.Idle
                     }
 
-                    CheckpointStart.PlusRequired -> {
+                    started == CheckpointStart.PlusRequired -> {
                         Start.PlusRequired
                     }
 
-                    CheckpointStart.Changed -> {
+                    else -> {
                         call.refresh()
                         Start.Idle
-                    }
-
-                    CheckpointStart.Failed -> {
-                        Start.Failed
                     }
                 }
         }
@@ -244,32 +257,22 @@ private fun CheckpointPreparing(
     model: CheckpointCallModel,
     exits: ConversationExits,
 ) {
-    var asked by remember { mutableStateOf(false) }
     val title = stringResource(R.string.conversation_unit_challenge)
+    val writing by model.writing.generationId.collectAsStateWithLifecycle()
 
-    if (!asked) {
-        CallFrame(
-            title = { CallTitle(title) },
-            onClose = exits::close,
-            bottomBar = {
-                StartCallButton(
-                    starting = false,
-                    onClick = {
-                        asked = true
-                        model.start(microphone = null)
-                    },
-                    modifier = Modifier.barAction(),
-                    label = stringResource(R.string.conversation_get_ready),
-                )
-            },
-        ) {
-            item(key = "header") {
-                Column(Modifier.callItem(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(unitTitle, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
+    if (writing != null) {
+        CallFrame(title = { CallTitle(title) }, onClose = exits::close) {
+            item(key = "wait") {
+                WritingWait(model.writing, hint = null, modifier = Modifier.callItem()) {
                     Text(
-                        stringResource(R.string.conversation_get_ready_description),
+                        stringResource(R.string.conversation_getting_ready),
+                        Modifier.semantics { heading() },
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                    Text(
+                        stringResource(R.string.conversation_opens_here),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.bodyMedium,
                     )
                 }
             }
@@ -277,30 +280,34 @@ private fun CheckpointPreparing(
         return
     }
 
-    val failed = model.start == CheckpointCallModel.Start.Failed || model.start == CheckpointCallModel.Start.PlusRequired
-    CallFrame(title = { CallTitle(title) }, onClose = exits::close) {
-        item(key = "wait") {
-            GenerationWait(
-                kind = GenerationKind.ConversationCall,
-                run =
-                    if (failed) {
-                        GenerationRun(GenerationRun.Status.Failed, GenerationFailure.NotStarted)
-                    } else {
-                        GenerationRun(GenerationRun.Status.Following, steps = mapOf("writeCall" to StepState.Started))
-                    },
-                onRetry = { model.start(microphone = null) },
-                modifier = Modifier.callItem(),
-            ) {
+    CallFrame(
+        title = { CallTitle(title) },
+        onClose = exits::close,
+        bottomBar = {
+            StartCallButton(
+                starting = model.start == CheckpointCallModel.Start.Starting,
+                onClick = { model.start(microphone = null) },
+                modifier = Modifier.barAction(),
+                label = stringResource(R.string.conversation_get_ready),
+            )
+        },
+    ) {
+        item(key = "header") {
+            Column(Modifier.callItem(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(unitTitle, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
                 Text(
-                    stringResource(R.string.conversation_getting_ready),
-                    Modifier.semantics { heading() },
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                Text(
-                    stringResource(R.string.conversation_opens_here),
+                    stringResource(R.string.conversation_get_ready_description),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                 )
+                if (model.start == CheckpointCallModel.Start.Failed || model.start == CheckpointCallModel.Start.PlusRequired) {
+                    Text(
+                        stringResource(R.string.conversation_start_failed),
+                        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
             }
         }
     }

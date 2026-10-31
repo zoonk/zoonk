@@ -557,6 +557,12 @@
   "plan_tool_setup_description": "881d6cb71f2e45f51756b8444ac8852e3ccfed8abfa926a5256889bfe8944a3b",
   "plan_tool_setup_first": "e839d538222cec913143b0156f0a3f7423b2e47a8858c745482ae14d1eab3c06",
   "plan_tool_setup_for": "1abb78bafd5b2d73341f89c0e2bcbace33fb048c234c3cd23e47fcd614c71a29",
+  "plan_tool_updates_when_ready": "1874aaca92c030a79ef454951fba5b1b7754114f8e7f3c9f936344c84c48ae87",
+  "plan_tool_writing_setup": "9bf3c2735a8077e512198403b148c9956fc83de0c6f3cda590ba0768bde62b66",
+  "plan_tool_writing_setup_line_1": "41928cb435a792d16334e30fe3fc8f20dc714fc5252947b2113b8278b36bf309",
+  "plan_tool_writing_setup_line_2": "689eac95f85dcebdab5a8de98ed7642a4e4778dfa3858bbfb4a77b3bd0030286",
+  "plan_tool_writing_setup_line_3": "e7a5dc81b9fa9ecab472bd8a699914f8314eef98b840ebeacd752ff3a3c02261",
+  "plan_tool_writing_setup_phase": "45755427e662a397443bf9e8ceafb91bc10f5a3d0a7e88abfc71cc6891e2122c",
   "plan_tools_later": "39f2c0ee63fe1d1cf117c7a4b53c4b265d39c778cffd17c137d39b7263a43e1a",
   "plan_tools_none": "d768f1d2133ce8fa6234cf07d28863f31678299380600a5444ea1e08ad9511ae",
   "plan_tools_title": "bdfe3f7d387732f6c21bf3ea72e7b1135a4f98a7a0190ebb3d1e90fabddadf06",
@@ -1436,6 +1442,12 @@
     <string name="plan_tool_setup_description">Uma aula rápida mostra como fazer isso, pouco antes de você precisar.</string>
     <string name="plan_tool_none">Sem instalação</string>
     <string name="plan_tool_none_description">Aprenda com exemplos. Você não vai praticar no seu próprio computador.</string>
+    <string name="plan_tool_updates_when_ready">Seu plano será atualizado assim que tudo estiver pronto.</string>
+    <string name="plan_tool_writing_setup">Adicionando uma aula de configuração</string>
+    <string name="plan_tool_writing_setup_phase">Criando as instruções de configuração para seu dispositivo</string>
+    <string name="plan_tool_writing_setup_line_1">Verificando o que a ferramenta precisa…</string>
+    <string name="plan_tool_writing_setup_line_2">Criando o passo a passo para instalar a ferramenta…</string>
+    <string name="plan_tool_writing_setup_line_3">Adicionando um teste rápido para ver se funciona…</string>
     <string name="plan_tool_device">Seu dispositivo</string>
     <string name="plan_what_you_practice">O que você pratica</string>
     <string name="plan_when_to_practice">Quando praticar %1$s</string>

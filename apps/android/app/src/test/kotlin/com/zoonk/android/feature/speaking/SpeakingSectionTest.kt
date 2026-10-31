@@ -7,6 +7,8 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.conversation.CallRequest
 import com.zoonk.android.feature.conversation.CallStart
+import com.zoonk.android.feature.conversation.CallStarter
+import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.SpeakingMockExam
@@ -28,10 +30,11 @@ class SpeakingSectionTest {
     private val requests = mutableListOf<CallRequest>()
     private val opened = mutableListOf<AppRoute>()
 
-    private val start: suspend (CallRequest) -> CallStart = {
-        requests += it
-        CallStart.Started(started)
-    }
+    private val start: CallStarter =
+        callStarter {
+            requests += it
+            CallStart.Started(started)
+        }
 
     @Test
     fun theExamPagesSectionNamesThePaperAndOpensItsCallsFromTheExam() {
@@ -90,7 +93,7 @@ class SpeakingSectionTest {
                     SpeakingMockExam.TOEFL,
                     goal,
                     paused = false,
-                    start = { CallStart.Paused },
+                    start = callStarter { CallStart.Paused },
                     open = { opened += it },
                 )
             }

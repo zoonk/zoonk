@@ -2,7 +2,12 @@ package com.zoonk.android.feature.plan
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ContentWritingWait
+import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.WritingWaits
+import com.zoonk.android.data.Written
 import com.zoonk.android.data.value
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.Plan
@@ -49,6 +54,7 @@ data class EditorChange(
 class PlanViewModel(
     private val store: PlanStore,
     private val goalId: UUID,
+    writingWaits: WritingWaits,
 ) : ViewModel() {
     private val saving = MutableStateFlow(false)
     private val notices = Channel<PlanEvent>(Channel.BUFFERED)
@@ -142,10 +148,35 @@ class PlanViewModel(
         answered: (PlanChangeResult?) -> Unit = {},
     ) = save(PlanPart.ExamChoices, listOf(PlanOp.ExamChoice(group, subject)), answered) { store.chooseExamOption(goalId, group, subject) }
 
+    /** Main's `useToolChoice`: a setup lesson nobody has needed yet is written first, then the same choice is sent again. */
+    val setupLessons = writingWaits.create(GenerationKind.SetupLesson, viewModelScope)
+
     fun chooseTools(
         answer: ToolAnswer,
         answered: (PlanChangeResult?) -> Unit = {},
-    ) = save(PlanPart.Tools, listOf(answer.operation), answered) { store.chooseTools(goalId, answer) }
+    ): Unit =
+        save(PlanPart.Tools, listOf(answer.operation), answered) {
+            when (val result = store.chooseTools(goalId, answer)) {
+                is MutationResult.Done -> {
+                    val written = result.value
+                    when (setupLessons.answered((written as? Written.Writing)?.generationId) { chooseTools(answer, answered) }) {
+                        ContentWritingWait.Answer.Proceed -> MutationResult.Done((written as Written.Ready).value)
+                        ContentWritingWait.Answer.Waiting -> null
+                        ContentWritingWait.Answer.Failed -> MutationResult.Failed(ApiError.Unavailable)
+                    }
+                }
+
+                is MutationResult.Failed -> {
+                    setupLessons.clear()
+                    result
+                }
+
+                MutationResult.Obsolete -> {
+                    setupLessons.clear()
+                    MutationResult.Obsolete
+                }
+            }
+        }
 
     /** Null when it couldn't be asked. */
     suspend fun basesAdvice(): PlanBasesAdvice? = (store.basesAdvice(goalId) as? MutationResult.Done)?.value
@@ -153,12 +184,12 @@ class PlanViewModel(
     /** Null when it couldn't be asked. */
     suspend fun preview(operations: List<PlanOp>): PlanChangePreview? = (store.preview(goalId, operations) as? MutationResult.Done)?.value
 
-    /** [write] saves [operations], which show as asked for until the plan shown has them. */
+    /** [write] saves [operations], which show as asked for until the plan shown has them; it answers null while it waits on a run. */
     private fun save(
         part: PlanPart,
         operations: List<PlanOp>,
         answered: (PlanChangeResult?) -> Unit,
-        write: suspend () -> MutationResult<PlanChangeResult>,
+        write: suspend () -> MutationResult<PlanChangeResult>?,
     ) {
         if (part in savingParts.value) return
         val opening = openings
@@ -167,6 +198,11 @@ class PlanViewModel(
         askedOperations.update { it + (part to operations) }
         viewModelScope.launch {
             val result = write()
+            if (result == null) {
+                askedOperations.update { it - part }
+                savingParts.update { it - part }
+                return@launch
+            }
             val saved = (result as? MutationResult.Done)?.value
             val shown = if (saved != null) store.awaitWritesShown(goalId) else null
             val sameOpening = opening == openings

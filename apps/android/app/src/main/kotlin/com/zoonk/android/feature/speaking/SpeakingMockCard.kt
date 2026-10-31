@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -12,22 +13,20 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
-import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
-import com.zoonk.android.data.GenerationRun
-import com.zoonk.android.data.StepState
 import com.zoonk.android.feature.conversation.CallRequest
-import com.zoonk.android.feature.conversation.CallStart
 import com.zoonk.android.feature.conversation.CallStartModel
+import com.zoonk.android.feature.conversation.CallStarter
 import com.zoonk.android.feature.conversation.OpenStartedCall
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.MarkedLine
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.api.models.SpeakingMockExam
 import java.util.UUID
 
@@ -40,15 +39,15 @@ fun SpeakingMockCard(
     exam: SpeakingMockExam,
     goalId: UUID,
     paused: Boolean,
-    start: suspend (CallRequest) -> CallStart,
+    start: CallStarter,
     open: (AppRoute) -> Unit,
     modifier: Modifier = Modifier,
     from: String? = null,
 ) {
-    val model = viewModel(key = "speaking-mock:$goalId") { CallStartModel(start) }
+    val model = viewModel(key = "speaking-mock:$goalId") { CallStartModel(start, GenerationKind.SpeakingMock) }
     val startMock = { model.start(CallRequest.SpeakingMock(goalId)) }
     OpenStartedCall(model) { id -> open(AppRoute.Conversation(id.toString(), from = from)) }
-    val writing = model.state == CallStartModel.State.Writing || model.state == CallStartModel.State.WriteFailed
+    val writing by model.writing.generationId.collectAsStateWithLifecycle()
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         MarkedLine(MaterialTheme.typography.titleSmall, mark = { KindDot(LearnKind.Conversation) }) {
@@ -78,26 +77,8 @@ fun SpeakingMockCard(
                 CallsPaused()
             }
 
-            writing -> {
-                val failed = model.state == CallStartModel.State.WriteFailed
-                GenerationWait(
-                    kind = GenerationKind.SpeakingMock,
-                    run =
-                        if (failed) {
-                            GenerationRun(GenerationRun.Status.Failed, GenerationFailure.NotStarted)
-                        } else {
-                            GenerationRun(GenerationRun.Status.Following, steps = mapOf("writeMock" to StepState.Started))
-                        },
-                    onRetry = startMock,
-                ) {
-                    if (!failed) {
-                        Text(
-                            stringResource(R.string.speaking_mock_opens),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
+            writing != null -> {
+                WritingWait(model.writing, hint = stringResource(R.string.speaking_mock_opens))
             }
 
             else -> {

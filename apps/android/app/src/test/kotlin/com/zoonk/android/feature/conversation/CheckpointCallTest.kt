@@ -74,6 +74,53 @@ class CheckpointCallTest {
     }
 
     @Test
+    fun gettingTheCallReadyWaitsOnTheRunWritingItThenOpensOnItsIntro() {
+        harness.api.checkpoint = checkpointStatus("""{"status":"preparing","unitTitle":"At the café"}""")
+        harness.api.writings += "run-1"
+        show()
+
+        compose.onNodeWithText("Get the call ready").performClick()
+        compose.waitForIdle()
+
+        assertEquals(listOf(CallRequest.Checkpoint(block), CallRequest.Checkpoint(block)), harness.api.starts)
+        assertEquals(listOf("run-1"), harness.runs.followed)
+        compose.onNodeWithText("Start the call").assertExists()
+        assertTrue("A prepared call waits for its own Start", harness.client.connects.isEmpty())
+    }
+
+    @Test
+    fun aRunThatFailedWhileGettingTheCallReadyIsTriedAgain() {
+        harness.api.checkpoint = checkpointStatus("""{"status":"preparing","unitTitle":"At the café"}""")
+        harness.api.writings += "run-1"
+        harness.runs.finishes = false
+        show()
+
+        compose.onNodeWithText("Get the call ready").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText("Getting your call ready").assertExists()
+        compose.onNodeWithText("This didn't finish").assertExists()
+
+        compose.onNodeWithText("Try again").performClick()
+        compose.waitForIdle()
+        assertEquals(2, harness.api.starts.size)
+        compose.onNodeWithText("Start the call").assertExists()
+    }
+
+    @Test
+    fun anIntroStartAnsweredWithARunReadsTheCheckpointAgain() {
+        harness.api.writings += "run-1"
+        show()
+        compose.waitForIdle()
+        val reads = harness.api.checkpointReads
+
+        compose.onNodeWithText("Start the call").performClick()
+        compose.waitForIdle()
+
+        assertEquals(reads + 1, harness.api.checkpointReads)
+        assertTrue(harness.runs.followed.isEmpty())
+    }
+
+    @Test
     fun aReadyCallOpensItsConversation() {
         harness.api.checkpoint = checkpointStatus("""{"status":"ready","conversationId":"${harness.id}"}""")
         show()

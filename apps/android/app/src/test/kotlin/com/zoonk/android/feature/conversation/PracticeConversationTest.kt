@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.conversation
 
-import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
@@ -10,6 +9,9 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
+import com.zoonk.android.data.GenerationSource
+import com.zoonk.android.data.HeldRuns
+import com.zoonk.android.data.WritingRuns
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
@@ -20,8 +22,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.Shadows.shadowOf
-import java.time.Duration
 import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
@@ -37,10 +37,11 @@ class PracticeConversationTest {
 
     private fun show(
         call: LanguagePracticeCall = practiceCall(),
-        start: suspend (CallRequest) -> CallStart = { request ->
-            requests += request
-            answer?.await() ?: CallStart.Started(started)
-        },
+        start: CallStarter =
+            callStarter { request ->
+                requests += request
+                answer?.await() ?: CallStart.Started(started)
+            },
     ) {
         compose.setContent {
             ZoonkTheme {
@@ -82,17 +83,54 @@ class PracticeConversationTest {
     }
 
     @Test
-    fun aCallBeingWrittenShowsItsWaitThenOpens() {
-        val pending = CompletableDeferred<CallStart>().also { answer = it }
-        show()
+    fun aCallBeingWrittenShowsItsWaitThenStartsAgainAndOpensOnceWritten() {
+        val runs = HeldRuns()
+        val answers = ArrayDeque(listOf<CallStart>(CallStart.Writing("run-1"), CallStart.Started(started)))
+        show(start = starting(answers, runs))
         compose.onNodeWithText("Start the call").performClick()
-        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1_100))
+        compose.waitForIdle()
 
         compose.onNodeWithText("Your call opens as soon as it's ready.").assertExists()
+        assertEquals(1, requests.size)
 
-        pending.complete(CallStart.Started(started))
+        runs.write()
         compose.waitForIdle()
+        assertEquals(2, requests.size)
         assertEquals(listOf<AppRoute>(AppRoute.Conversation(started.toString())), opened)
+    }
+
+    @Test
+    fun aCallStillUnwrittenAfterItsRunSaysItDidntStartRatherThanWaitingAgain() {
+        val answers = ArrayDeque(listOf<CallStart>(CallStart.Writing("run-1"), CallStart.Writing("run-2")))
+        show(start = starting(answers))
+        compose.onNodeWithText("Start the call").performClick()
+        compose.waitForIdle()
+
+        compose.onNodeWithText("The call didn't start. Try again in a moment.").assertExists()
+        assertEquals(2, requests.size)
+        assertTrue(opened.isEmpty())
+    }
+
+    @Test
+    fun aRunThatFailedIsTriedAgainBySendingTheStartAgain() {
+        val answers = ArrayDeque(listOf<CallStart>(CallStart.Writing("run-1"), CallStart.Started(started)))
+        show(start = starting(answers, runs = WritingRuns(finishes = false)))
+        compose.onNodeWithText("Start the call").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText("This didn't finish").assertExists()
+
+        compose.onNodeWithText("Try again").performClick()
+        compose.waitForIdle()
+        assertEquals(2, requests.size)
+        assertEquals(listOf<AppRoute>(AppRoute.Conversation(started.toString())), opened)
+    }
+
+    private fun starting(
+        answers: ArrayDeque<CallStart>,
+        runs: GenerationSource = WritingRuns(),
+    ) = callStarter(runs) { request ->
+        requests += request
+        answers.removeFirst()
     }
 
     @Test
@@ -110,7 +148,7 @@ class PracticeConversationTest {
     fun aStartRefusedBecauseCallsArePausedSaysSoAndStartsOnceTheyreBack() {
         val harness = ConversationHarness()
         harness.api.startRefusal = ApiException(ApiError.Unavailable, "CALLS_PAUSED", 503)
-        show(start = harness.store::start)
+        show(start = harness.store)
         compose.onNodeWithText("Start the call").performClick()
         compose.waitForIdle()
 

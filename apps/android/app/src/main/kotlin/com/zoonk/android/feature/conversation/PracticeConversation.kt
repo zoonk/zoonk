@@ -39,36 +39,35 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.data.GenerationFailure
+import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.GenerationKind
-import com.zoonk.android.data.GenerationRun
-import com.zoonk.android.data.StepState
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.KindDotLeading
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.LanguagePracticeCall
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-/** Main's `useCallStart`: a start that takes longer than a call written ahead is a model writing it. */
+/** Main's `useCallStart`: a call that isn't written yet waits on the run writing it, then starts again. */
 class CallStartModel(
-    private val startCall: suspend (CallRequest) -> CallStart,
+    private val starter: CallStarter,
+    kind: GenerationKind,
 ) : ViewModel() {
-    enum class State { Idle, Starting, Writing, Failed, WriteFailed, Paused }
+    enum class State { Idle, Starting, Failed, Paused }
 
     var state by mutableStateOf(State.Idle)
         private set
@@ -81,40 +80,39 @@ class CallStartModel(
     var started by mutableStateOf<UUID?>(null)
         private set
 
+    val writing = starter.writingWaits.create(kind, viewModelScope)
+
     fun start(request: CallRequest) {
-        val wasWriting = state == State.WriteFailed
-        state = if (wasWriting) State.Writing else State.Starting
+        state = State.Starting
         limit = null
         viewModelScope.launch {
-            val writing =
-                launch {
-                    delay(WRITING_AFTER_MS)
-                    if (state == State.Starting) state = State.Writing
-                }
-            val started = startCall(request)
-            writing.cancel()
-            val wrote = state == State.Writing
+            val started = starter.start(request)
+            val answer = writing.answered((started as? CallStart.Writing)?.generationId) { start(request) }
             limit = (started as? CallStart.Limited)?.limit
             state =
-                if (started is CallStart.Started) {
-                    this@CallStartModel.started = started.conversationId
-                    State.Idle
-                } else if (started == CallStart.Paused) {
-                    State.Paused
-                } else if (wrote) {
-                    State.WriteFailed
-                } else {
-                    State.Failed
+                when {
+                    answer == ContentWritingWait.Answer.Waiting -> {
+                        State.Idle
+                    }
+
+                    started is CallStart.Started && answer == ContentWritingWait.Answer.Proceed -> {
+                        this@CallStartModel.started = started.conversationId
+                        State.Idle
+                    }
+
+                    started == CallStart.Paused -> {
+                        State.Paused
+                    }
+
+                    else -> {
+                        State.Failed
+                    }
                 }
         }
     }
 
     fun opened() {
         started = null
-    }
-
-    private companion object {
-        const val WRITING_AFTER_MS = 1000L
     }
 }
 
@@ -159,14 +157,14 @@ fun PracticeConversation(
     navigator: AppNavigator,
     modifier: Modifier = Modifier,
     state: PracticeCallState = rememberPracticeCallState(call.defaultMinutes),
-) = PracticeConversation(call, chapterId, goalId, app.conversations::start, navigator::open, modifier, state)
+) = PracticeConversation(call, chapterId, goalId, app.conversations, navigator::open, modifier, state)
 
 @Composable
 internal fun PracticeConversation(
     call: LanguagePracticeCall,
     chapterId: UUID,
     goalId: UUID?,
-    start: suspend (CallRequest) -> CallStart,
+    start: CallStarter,
     open: (AppRoute) -> Unit,
     modifier: Modifier = Modifier,
     state: PracticeCallState = rememberPracticeCallState(call.defaultMinutes),
@@ -191,7 +189,7 @@ internal fun PracticeCallSheet(
     call: LanguagePracticeCall,
     chapterId: UUID,
     goalId: UUID?,
-    start: suspend (CallRequest) -> CallStart,
+    start: CallStarter,
     open: (AppRoute) -> Unit,
     state: PracticeCallState,
 ) {
@@ -225,11 +223,12 @@ private fun CallSetup(
     call: LanguagePracticeCall,
     chapterId: UUID,
     goalId: UUID?,
-    start: suspend (CallRequest) -> CallStart,
+    start: CallStarter,
     open: (AppRoute) -> Unit,
     state: PracticeCallState,
 ) {
-    val model = viewModel(key = "practice-call:$chapterId") { CallStartModel(start) }
+    val model = viewModel(key = "practice-call:$chapterId") { CallStartModel(start, GenerationKind.ConversationCall) }
+    val writing by model.writing.generationId.collectAsStateWithLifecycle()
     val minutes = state.minutes
     val startCall = { model.start(CallRequest.Practice(chapterId, goalId, minutes)) }
     OpenStartedCall(model) { id ->
@@ -242,26 +241,8 @@ private fun CallSetup(
             CallsPausedMessage()
         }
 
-        model.state == CallStartModel.State.Writing || model.state == CallStartModel.State.WriteFailed -> {
-            val failed = model.state == CallStartModel.State.WriteFailed
-            GenerationWait(
-                kind = GenerationKind.ConversationCall,
-                run =
-                    if (failed) {
-                        GenerationRun(GenerationRun.Status.Failed, GenerationFailure.NotStarted)
-                    } else {
-                        GenerationRun(GenerationRun.Status.Following, steps = mapOf("writeCall" to StepState.Started))
-                    },
-                onRetry = startCall,
-            ) {
-                if (!failed) {
-                    Text(
-                        stringResource(R.string.conversation_opens_when_ready),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-            }
+        writing != null -> {
+            WritingWait(model.writing, hint = stringResource(R.string.conversation_opens_when_ready))
         }
 
         call.limit != null -> {

@@ -79,13 +79,19 @@
   "mock_speaking_done": "3330f8b9de791e5b3eaf285b6d14a7e297a6b1a7cc3204b518de7fa36aa56bd7",
   "mock_speaking_hand_in_done": "e6c8c1b34fd878b58cfdb6947aa8cfc0194936ee6443917d4db2f205c8679042",
   "mock_speaking_hand_in_left": "d48efb9566039a71be3eeedf1e7f8521c3238e661f92d358f469c308a27a654a",
-  "mock_speaking_intro": "0b875f8d9cc85971974783d9bfc729010268bf2022c68382109d46204d8acf36",
+  "mock_speaking_intro": "716984746be5a82af0314c2adb7c51a2acaa0350f7773b3bc01fcaff1733bec2",
   "mock_speaking_left": "b25c565d4f727378a424641a447d3d776c901df6a6351af63909dcbc4823a9f1",
+  "mock_speaking_paper_opens": "94d5a2bd35009995fd1735f1a4f2d4c9435bcac02c4ce9f8ace2cbb4786a9176",
   "mock_speaking_start": "461133bf6799e1f4c6ae1744749cf2813a541edb2084685f31ea4d89112bc9f9",
   "mock_speaking_start_task": "bd49a60e2540c0627481de667ee285d983e4fb3173b7cd443ad7bc5505b94174",
   "mock_speaking_start_task_number": "4bba4f76b70f15041badc3a5873f135cb0dcced70b19b3bd0ada77339088b3ff",
   "mock_speaking_task": "71408bebc14368363ead932a6282bc9a62968d8edf9c8c163f5c9fc5609f9a0d",
-  "mock_speaking_writing": "802f5bfb1e8d7dc31b529015955cd17603ec84d1ef4ecb12f15c87e5a595fa66",
+  "mock_speaking_writing_paper": "f44aff471fe00405a7a423fa014953cccfc002a979d4bacd89bd860632cecf29",
+  "mock_speaking_writing_paper_line_1": "fe4ec9e5b2727c7c8668b7e2bc95f3ecb50fed9866ee3e5dcfd3ddda7a0129ad",
+  "mock_speaking_writing_paper_line_2": "f55e6674f1fddc2582af1a9c0684add02ed255b76cc4855a99dff7301a8d9b74",
+  "mock_speaking_writing_paper_line_3": "b852573701369ad10bcf8c61c6c14f56ad7913e2098bbfe171bd6113f99241a2",
+  "mock_speaking_writing_paper_line_4": "3508210081c711c86b5506547201fd48171eb2f8831ec457003fa8553e99cf75",
+  "mock_speaking_writing_paper_phase": "01677f72c50699bf7776a2a27087d24b7dae69fb98912430f24e790e1a8b5f65",
   "mock_start_next": "a2a4e7e949c7d58a5b704f595ab519c085b8d453b7927f4d11c0814831e36594",
   "mock_starting_point": "305406dd18e72d68b07e6369f91a486f481eab9b4a8efa7dda321d3cb34a5b5a",
   "mock_step_failed": "2662505ea4fe63031f234d1323bbccfe6a216b56083813a696ca6b8c5494decf",
@@ -252,9 +258,15 @@
         <item quantity="other">%d kelime</item>
     </plurals>
     <string name="mock_speaking">Konuşma</string>
-    <string name="mock_speaking_intro">Her bölümde, sınavda olduğu gibi bir değerlendiriciyle canlı sohbet edersin; burada değerlendirici rolünü yapay zekâ üstlenir. Kartlarını başladığında hazırlıyoruz. Bu yaklaşık yarım dakika sürer.</string>
+    <string name="mock_speaking_intro">Her bölümde, sınavdaki gibi bir değerlendiriciyle canlı sohbet edersin: bu rolü yapay zekâ üstlenir.</string>
     <string name="mock_speaking_start">Konuşma oturumuna başla</string>
-    <string name="mock_speaking_writing">Kartlarını hazırlıyoruz…</string>
+    <string name="mock_speaking_paper_opens">Konuşma sınavı kâğıdın hazır olur olmaz açılır.</string>
+    <string name="mock_speaking_writing_paper">Konuşma sınavı kâğıdını hazırlıyoruz</string>
+    <string name="mock_speaking_writing_paper_phase">Her bölüm için bir kart hazırlanıyor</string>
+    <string name="mock_speaking_writing_paper_line_1">Her bölüm için bir konu seçiyoruz…</string>
+    <string name="mock_speaking_writing_paper_line_2">Her kartın yönergelerini hazırlıyoruz…</string>
+    <string name="mock_speaking_writing_paper_line_3">Değerlendiricinin söyleyeceklerini hazırlıyoruz…</string>
+    <string name="mock_speaking_writing_paper_line_4">Yardımcı olacak ifadeler ekliyoruz…</string>
     <plurals name="mock_speaking_left">
         <item quantity="one">Bölümleri sırayla tamamla. Her birinde bir sohbet yapıp buraya dönersin. %d bölüm kaldı.</item>
         <item quantity="other">Bölümleri sırayla tamamla. Her birinde bir sohbet yapıp buraya dönersin. %d bölüm kaldı.</item>

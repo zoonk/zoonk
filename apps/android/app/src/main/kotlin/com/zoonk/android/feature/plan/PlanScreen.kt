@@ -152,7 +152,7 @@ private fun ReadyPlan(
     var pulled by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val farTopics = viewModel(key = "far-topics-${goal.id}") { FarTopicViewModel(app.plans, goal.id) }
-    val viewModel = viewModel(key = "plan-${goal.id}") { PlanViewModel(app.plans, goal.id) }
+    val viewModel = viewModel(key = "plan-${goal.id}") { PlanViewModel(app.plans, goal.id, app.writingWaits) }
 
     WhileShown(plan.isPhaseBeingWritten) {
         while (true) {

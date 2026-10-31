@@ -26,6 +26,8 @@ import com.zoonk.api.apis.StudySessionsApi
 import com.zoonk.api.apis.SubscriptionsApi
 import com.zoonk.api.apis.UsersApi
 import com.zoonk.api.apis.WorkflowsApi
+import com.zoonk.api.models.ContentWriting
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.serializer
 import okhttp3.HttpUrl
@@ -33,6 +35,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -52,6 +55,7 @@ class ApiServices(
             .addConverterFactory(NullBody)
             .addConverterFactory(SerialNames)
             .addConverterFactory(FormFields)
+            .addConverterFactory(ContentWritingBodies)
             .addConverterFactory(JsonBodies)
             .build()
 
@@ -126,6 +130,43 @@ private object NullBody : Converter.Factory() {
     }
 
     private const val NULL = "null"
+}
+
+/** The request was answered `202` with the run writing what it needs: follow that run, then send the same request again. */
+class ContentWritingAnswer(
+    val generationId: String,
+) : RuntimeException("The request waits on run $generationId")
+
+/**
+ * An operation that can answer `202` with [ContentWriting] declares only its finished answer, which
+ * that body can't be read as, so it arrives as [ContentWritingAnswer] instead.
+ */
+private object ContentWritingBodies : Converter.Factory() {
+    override fun responseBodyConverter(
+        type: Type,
+        annotations: Array<out Annotation>,
+        retrofit: Retrofit,
+    ): Converter<ResponseBody, *> {
+        val next = retrofit.nextResponseBodyConverter<Any>(this, type, annotations)
+        return Converter<ResponseBody, Any?> { body ->
+            val source = body.source()
+            if (source.request(MAX_WRITING_BYTES + 1)) return@Converter next.convert(body)
+            val text = source.readUtf8()
+            try {
+                next.convert(text.toResponseBody(body.contentType()))
+            } catch (e: SerializationException) {
+                val writing =
+                    try {
+                        ApiJson.decodeFromString<ContentWriting>(text)
+                    } catch (_: SerializationException) {
+                        throw e
+                    }
+                throw ContentWritingAnswer(writing.generationId)
+            }
+        }
+    }
+
+    private const val MAX_WRITING_BYTES = 512L
 }
 
 /** The generated enums don't override `toString`, which Retrofit sends for a query or path; their `@SerialName` is the contract's name. */

@@ -55,8 +55,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
-import com.zoonk.android.feature.conversation.CallRequest
-import com.zoonk.android.feature.conversation.CallStart
+import com.zoonk.android.feature.conversation.CallStarter
 import com.zoonk.android.feature.conversation.PracticeCallState
 import com.zoonk.android.feature.conversation.PracticeConversation
 import com.zoonk.android.feature.conversation.rememberPracticeCallState
@@ -104,7 +103,7 @@ import java.util.UUID
 
 internal class UnitActions(
     val open: (AppRoute) -> Unit,
-    val start: suspend (CallRequest) -> CallStart,
+    val start: CallStarter,
 )
 
 @Composable
@@ -135,7 +134,7 @@ private fun UnitEntry(
     val listState = rememberLazyListState()
     val heroScrolledAway by remember(listState) { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     val unit = load.value
-    val actions = remember(navigator) { UnitActions(open = navigator::open, start = app.conversations::start) }
+    val actions = remember(navigator) { UnitActions(open = navigator::open, start = app.conversations) }
     // Main reads the selected goal's plan, so a unit of another goal opened from a link marks nothing.
     val summary by app.learnerSummary.summary.collectShown()
     val planGoalId = summary.value?.planGoal?.id

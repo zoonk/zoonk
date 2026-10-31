@@ -8,6 +8,8 @@ import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.WritingRuns
+import com.zoonk.android.data.writingWaits
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.api.models.MockExam
 import kotlinx.coroutines.CompletableDeferred
@@ -25,6 +27,8 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -41,6 +45,7 @@ class MockRunnerViewModelTest {
     private val session = FakeSession(ana)
     private val api = FakeMockRunApi()
     private var rereads = 0
+    private val runs = WritingRuns()
 
     @Before
     fun main() = Dispatchers.setMain(dispatcher)
@@ -61,7 +66,10 @@ class MockRunnerViewModelTest {
         return (read.state.value as LoadState.Loaded).value
     }
 
-    private suspend fun MockRunStore.runner() = MockRunnerViewModel(this, session, RUN_BLOCK, opened(), reread = { rereads++ })
+    private suspend fun MockRunStore.runner() =
+        MockRunnerViewModel(this, session, RUN_BLOCK, opened(), reread = {
+            rereads++
+        }, writingWaits = writingWaits(runs, session))
 
     private suspend fun MockRunStore.kept() = unsent(ana, RUN_BLOCK).value.first().orEmpty()
 
@@ -198,6 +206,53 @@ class MockRunnerViewModelTest {
 
             assertTrue(viewModel.state.value.error)
             assertEquals(1, viewModel.state.value.position)
+        }
+
+    @Test
+    fun aSpeakingPaperBeingWrittenIsWaitedOnThenTheSpeakingPartStartsAgain() =
+        runTest(dispatcher) {
+            api.mock = runningMock(current = currentSection(questions = "", kind = "\"speaking\""))
+            api.paperWritings += "run-1"
+            val viewModel = store().runner()
+
+            viewModel.startSpeaking()
+            runCurrent()
+
+            assertEquals(2, api.speakingStarts)
+            assertEquals(listOf("run-1"), runs.followed)
+            assertNull(viewModel.speakingPaper.generationId.value)
+            assertFalse(viewModel.state.value.error)
+        }
+
+    @Test
+    fun aSpeakingPaperStillUnwrittenAfterItsRunFailsTheStepRatherThanWaitingAgain() =
+        runTest(dispatcher) {
+            api.mock = runningMock(current = currentSection(questions = "", kind = "\"speaking\""))
+            api.paperWritings += listOf("run-1", "run-2")
+            val viewModel = store().runner()
+
+            viewModel.startSpeaking()
+            runCurrent()
+
+            assertEquals(2, api.speakingStarts)
+            assertNull(viewModel.speakingPaper.generationId.value)
+            assertTrue(viewModel.state.value.error)
+        }
+
+    @Test
+    fun aSpeakingStartThatFailsAfterItsPaperWasWrittenClosesTheWaitAndSaysSo() =
+        runTest(dispatcher) {
+            api.mock = runningMock(current = currentSection(questions = "", kind = "\"speaking\""))
+            api.paperWritings += "run-1"
+            api.speakingFailure = UNREACHABLE
+            val viewModel = store().runner()
+
+            viewModel.startSpeaking()
+            runCurrent()
+
+            assertEquals(2, api.speakingStarts)
+            assertNull(viewModel.speakingPaper.generationId.value)
+            assertTrue(viewModel.state.value.error)
         }
 
     @Test

@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material3.Button
@@ -53,22 +51,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.openWebPage
-import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
-import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
-import com.zoonk.android.data.StepState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.conversation.CallLimitMessage
 import com.zoonk.android.feature.conversation.CallRequest
-import com.zoonk.android.feature.conversation.CallStart
 import com.zoonk.android.feature.conversation.CallStartModel
+import com.zoonk.android.feature.conversation.CallStarter
 import com.zoonk.android.feature.conversation.OpenStartedCall
 import com.zoonk.android.feature.conversation.criterionGloss
 import com.zoonk.android.feature.conversation.inLanguage
@@ -80,13 +76,13 @@ import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Eyebrow
-import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
@@ -100,7 +96,7 @@ import kotlin.math.roundToLong
 
 /** Where a paper's screens lead. */
 internal class SpeakingActions(
-    val start: suspend (CallRequest) -> CallStart,
+    val start: CallStarter,
     val open: (AppRoute) -> Unit,
     val openWeb: (String) -> Unit,
 )
@@ -118,7 +114,7 @@ fun SpeakingScreen(
     val actions =
         remember(navigator) {
             SpeakingActions(
-                start = app.conversations::start,
+                start = app.conversations,
                 open = navigator::open,
                 openWeb = { openWebPage(context, it) },
             )
@@ -243,7 +239,7 @@ fun SpeakingPaperSection(
     paper: SpeakingPaper,
     goalId: UUID,
     openTask: String?,
-    start: suspend (CallRequest) -> CallStart,
+    start: CallStarter,
     open: (AppRoute) -> Unit,
     openWeb: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -251,10 +247,11 @@ fun SpeakingPaperSection(
     from: String? = null,
 ) {
     val locked = paper.access == SpeakingPaper.Access.PLUS_REQUIRED
-    val model = viewModel(key = "speaking-start:$goalId") { CallStartModel(start) }
+    val model = viewModel(key = "speaking-start:$goalId") { CallStartModel(start, GenerationKind.ExamSpeaking) }
     val paused = paper.access == SpeakingPaper.Access.CALLS_PAUSED
     var started by rememberSaveable { mutableStateOf<String?>(null) }
-    val busy = model.state == CallStartModel.State.Starting || model.state == CallStartModel.State.Writing
+    val writing by model.writing.generationId.collectAsStateWithLifecycle()
+    val busy = model.state == CallStartModel.State.Starting || writing != null
     val openCall = { id: UUID -> open(AppRoute.Conversation(id.toString(), from = from)) }
     val startTask = { key: String ->
         started = key
@@ -296,7 +293,7 @@ fun SpeakingPaperSection(
                 onLastResult = openCall,
             )
         }
-        StartState(model, retry = { started?.let(startTask) }, actions = actions)
+        StartState(model, writing != null, actions)
         val partner = paper.tasks.any { it.role == SpeakingPaperTask.Role.PARTNER }
         val footer = stringResource(if (partner) R.string.speaking_footer_partner else R.string.speaking_footer)
         val official = stringResource(R.string.speaking_official_format)
@@ -339,32 +336,13 @@ internal fun CallsPaused(modifier: Modifier = Modifier) {
 @Composable
 private fun StartState(
     model: CallStartModel,
-    retry: () -> Unit,
+    writing: Boolean,
     actions: SpeakingActions,
 ) {
     val limit = model.limit
     when {
-        model.state == CallStartModel.State.Writing || model.state == CallStartModel.State.WriteFailed -> {
-            val failed = model.state == CallStartModel.State.WriteFailed
-            GenerationWait(
-                kind = GenerationKind.ExamSpeaking,
-                run =
-                    if (failed) {
-                        GenerationRun(GenerationRun.Status.Failed, GenerationFailure.NotStarted)
-                    } else {
-                        GenerationRun(GenerationRun.Status.Following, steps = mapOf("writeTask" to StepState.Started))
-                    },
-                onRetry = retry,
-                modifier = Modifier.padding(top = 16.dp),
-            ) {
-                if (!failed) {
-                    Text(
-                        stringResource(R.string.speaking_opens_when_ready),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-            }
+        writing -> {
+            WritingWait(model.writing, hint = stringResource(R.string.speaking_opens_when_ready), modifier = Modifier.padding(top = 16.dp))
         }
 
         model.state == CallStartModel.State.Failed && limit != null -> {

@@ -25,20 +25,19 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.feature.conversation.taskMinutes
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.MockExamCurrent
 import com.zoonk.api.models.SpeakingSectionTasksInner
 
-/**
- * Main's `MockSpeakingView`. Its cards are written when the learner starts the section, so a mock
- * handed in before it never pays for them; each task is a call that comes back here.
- */
+/** Main's `MockSpeakingView`: each task is a call that comes back here. */
 @Composable
 internal fun MockSpeaking(
     viewModel: MockRunnerViewModel,
@@ -52,6 +51,7 @@ internal fun MockSpeaking(
     val isLast = current.section.toInt() == run.view.sections.lastIndex
     val left = speaking?.tasks?.count { it.status != SpeakingSectionTasksInner.Status.COMPLETED } ?: 0
     var confirming by rememberSaveable { mutableStateOf(false) }
+    val writing by viewModel.speakingPaper.generationId.collectAsStateWithLifecycle()
 
     MockStepFrame(
         viewModel,
@@ -59,37 +59,45 @@ internal fun MockSpeaking(
         onClose,
         title = { SectionClock(current.deadline) },
         actions = {
-            TaskActions { main ->
-                if (speaking == null) {
-                    val starting = run.busy == MockStep.StartSpeaking
-                    MockMainButton(
-                        stringResource(if (starting) R.string.mock_speaking_writing else R.string.mock_speaking_start),
-                        busy = starting,
-                        enabled = !run.pending,
-                        onClick = viewModel::startSpeaking,
-                        modifier = main,
-                    )
-                } else {
-                    MockMainButton(
-                        stringResource(if (isLast) R.string.mock_hand_in_mock else R.string.mock_hand_in_section),
-                        busy = run.busy == MockStep.Submit,
-                        enabled = !run.pending,
-                        onClick = { confirming = true },
-                        modifier = main,
-                    )
+            if (speaking != null || writing == null) {
+                TaskActions { main ->
+                    if (speaking == null) {
+                        MockMainButton(
+                            stringResource(R.string.mock_speaking_start),
+                            busy = run.busy == MockStep.StartSpeaking,
+                            enabled = !run.pending,
+                            onClick = viewModel::startSpeaking,
+                            modifier = main,
+                        )
+                    } else {
+                        MockMainButton(
+                            stringResource(if (isLast) R.string.mock_hand_in_mock else R.string.mock_hand_in_section),
+                            busy = run.busy == MockStep.Submit,
+                            enabled = !run.pending,
+                            onClick = { confirming = true },
+                            modifier = main,
+                        )
+                    }
                 }
             }
         },
     ) {
         StepHeader {
             StepTitle(section?.name ?: speaking?.paper ?: stringResource(R.string.mock_speaking))
-            StepDetail(
-                when {
-                    speaking == null -> stringResource(R.string.mock_speaking_intro)
-                    left > 0 -> pluralStringResource(R.plurals.mock_speaking_left, left, left)
-                    else -> stringResource(R.string.mock_speaking_all_done)
-                },
-            )
+            if (speaking != null || writing == null) {
+                StepDetail(
+                    when {
+                        speaking == null -> stringResource(R.string.mock_speaking_intro)
+                        left > 0 -> pluralStringResource(R.plurals.mock_speaking_left, left, left)
+                        else -> stringResource(R.string.mock_speaking_all_done)
+                    },
+                )
+            }
+        }
+        if (speaking == null &&
+            writing != null
+        ) {
+            WritingWait(viewModel.speakingPaper, hint = stringResource(R.string.mock_speaking_paper_opens))
         }
         if (speaking != null) {
             Column {

@@ -123,7 +123,14 @@ fun MockScreen(
             else -> {
                 val viewModel =
                     viewModel(key = "mock-${route.blockId}-$account") {
-                        MockRunnerViewModel(store, app.sessions, route.blockId, loaded, reread = opening.mock::refresh)
+                        MockRunnerViewModel(
+                            store,
+                            app.sessions,
+                            route.blockId,
+                            loaded,
+                            reread = opening.mock::refresh,
+                            writingWaits = app.writingWaits,
+                        )
                     }
                 LaunchedEffect(loaded) { viewModel.show(loaded.view) }
                 LifecycleStartEffect(viewModel) {

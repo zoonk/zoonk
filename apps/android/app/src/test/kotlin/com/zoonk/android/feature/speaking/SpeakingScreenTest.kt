@@ -11,6 +11,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.conversation.CallRequest
 import com.zoonk.android.feature.conversation.CallStart
+import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
@@ -50,10 +51,11 @@ class SpeakingScreenTest {
         val store = SpeakingStore({ _, _ -> read }, cache)
         val actions =
             SpeakingActions(
-                start = {
-                    requests += it
-                    answer
-                },
+                start =
+                    callStarter {
+                        requests += it
+                        answer
+                    },
                 open = { opened += it },
                 openWeb = { webs += it },
             )

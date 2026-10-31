@@ -55,8 +55,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
-import com.zoonk.android.feature.conversation.CallRequest
-import com.zoonk.android.feature.conversation.CallStart
+import com.zoonk.android.feature.conversation.CallStarter
 import com.zoonk.android.feature.memory.MemoryUndo
 import com.zoonk.android.feature.memory.MemoryUpdated
 import com.zoonk.android.feature.missions.MissionMoment
@@ -80,7 +79,7 @@ internal class TutorRoutes(
     val signIn: () -> Unit,
     val seePlus: () -> Unit,
     val open: (AppRoute) -> Unit,
-    val startCall: suspend (CallRequest) -> CallStart,
+    val startCall: CallStarter,
 )
 
 @Composable

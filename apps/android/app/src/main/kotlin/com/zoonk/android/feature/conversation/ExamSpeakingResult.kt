@@ -25,17 +25,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.recode
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
+import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.api.models.ExamSpeakingFeedback
 import com.zoonk.api.models.ExamSpeakingFeedbackCriteriaInner
@@ -51,9 +56,40 @@ internal class ResultActions(
     val onContinue: () -> Unit,
     val onClose: () -> Unit,
     /** Null where there's no other try to start (a mock's own task). */
-    val onTryAgain: (() -> Unit)?,
+    val tryAgain: TryAgain?,
     val nextTask: (() -> Unit)?,
 )
+
+internal class TryAgain(
+    val onStart: () -> Unit,
+    val starting: Boolean,
+    val failed: Boolean,
+    val writing: ContentWritingWait?,
+)
+
+/** Main's `TryCallAgain`: the next try is written when a call ends, so it usually opens at once. */
+@Composable
+private fun TryCallAgain(
+    again: TryAgain,
+    label: String,
+    hint: String,
+) {
+    val writing = again.writing
+    val running = writing?.generationId?.collectAsStateWithLifecycle()?.value
+    if (writing != null && running != null) {
+        WritingWait(writing, hint)
+        return
+    }
+    TextButton(onClick = again.onStart, enabled = !again.starting) { Text(label) }
+    if (again.failed) {
+        Text(
+            stringResource(R.string.conversation_start_failed),
+            Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+}
 
 /** A result's steps one at a time, with what the last one offers under it. */
 @Composable
@@ -133,7 +169,9 @@ internal fun ExamSpeakingResult(
             },
         dayMoment = dayMoment,
     ) {
-        actions.onTryAgain?.let { TextButton(onClick = it) { Text(stringResource(R.string.conversation_try_new_card)) } }
+        actions.tryAgain?.let {
+            TryCallAgain(it, stringResource(R.string.conversation_try_new_card), stringResource(R.string.speaking_opens_when_ready))
+        }
         if (graded.isNotEmpty()) {
             EveryCriterion(
                 graded.map { (criterion, grade) ->
@@ -468,7 +506,9 @@ internal fun SpeakingMockResult(
             focus?.let { add { FocusStep(mockCriterionName(it.criterion), null, it.evidence, it.tip, conversation.targetLanguage) } }
         }
     ResultSteps(steps = steps, actions = actions, nextLabel = null, dayMoment = dayMoment) {
-        actions.onTryAgain?.let { TextButton(onClick = it) { Text(stringResource(R.string.conversation_try_another_mock)) } }
+        actions.tryAgain?.let {
+            TryCallAgain(it, stringResource(R.string.conversation_try_another_mock), stringResource(R.string.speaking_mock_opens))
+        }
         if (feedback != null && feedback.criteria.isNotEmpty()) {
             EveryCriterion(
                 feedback.criteria.map { CriterionDetail(mockCriterionName(it.criterion), null, it.evidence, it.tip) },

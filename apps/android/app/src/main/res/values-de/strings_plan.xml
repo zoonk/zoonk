@@ -557,6 +557,12 @@
   "plan_tool_setup_description": "9ffa00e0b801394062c4fcdaaf67a1b3bf9d5195030fd9a31a7b19def8652a4d",
   "plan_tool_setup_first": "0e59739dcd96fefc3377aa0b8381478328c339125e9469e22d12e1f0c03387c6",
   "plan_tool_setup_for": "662a4c93f96d75b57673888a26a8ca93b892003a075c36da9543c0b6eb915f26",
+  "plan_tool_updates_when_ready": "72cbc2efe523c4b1da95cf04395ade41462c40cf61620ae77cee2e9c44358bc4",
+  "plan_tool_writing_setup": "c91ff241f67fa903827106bb134453b8ef7f0e69c99eea12f669ae9c18690fe1",
+  "plan_tool_writing_setup_line_1": "86615be109a8afe4cc230ff961e2bb84cfe0975585d2ba58dca6228c12da4173",
+  "plan_tool_writing_setup_line_2": "b638c19fa25f9f56e565d62f7811079416e019b22f0a76d3eb22f787d7e2692f",
+  "plan_tool_writing_setup_line_3": "fcd991055a2903c31eba4c6e54e5c34380c171bd1a63c8694ee280e4417d9271",
+  "plan_tool_writing_setup_phase": "153f44b958470cfbb9c443dfff2b5f71088fb78e2854496bcbc32e31d52dfe94",
   "plan_tools_later": "4e44a56dc87436df4e70755489f5e08dc5d49b8888202071ebd0b0441b767c4f",
   "plan_tools_none": "28178bea0e00c29a2ae8d7e452b2c727214d2445fe0adc8ceb83aa76f96a423b",
   "plan_tools_title": "8d24fd600c7915ed2c844b3ae2d92ddfe025856ec493c75c96d1d0d2e9d079c3",
@@ -1354,6 +1360,12 @@
     <string name="plan_tool_setup_description">Eine kurze Lektion zeigt dir, wie es geht, direkt bevor du es brauchst.</string>
     <string name="plan_tool_none">Ohne Installation</string>
     <string name="plan_tool_none_description">Lerne anhand von Beispielen. Du übst nicht auf deinem eigenen Computer.</string>
+    <string name="plan_tool_updates_when_ready">Dein Plan wird aktualisiert, sobald alles fertig ist.</string>
+    <string name="plan_tool_writing_setup">Wir fügen eine Lektion zur Einrichtung hinzu</string>
+    <string name="plan_tool_writing_setup_phase">Wir erstellen die Einrichtungsanleitung für dein Gerät</string>
+    <string name="plan_tool_writing_setup_line_1">Wir prüfen die Voraussetzungen für die Einrichtung…</string>
+    <string name="plan_tool_writing_setup_line_2">Wir erstellen die Anleitung zur Installation…</string>
+    <string name="plan_tool_writing_setup_line_3">Wir ergänzen einen kurzen Test, ob alles funktioniert…</string>
     <string name="plan_tool_device">Dein Gerät</string>
     <string name="plan_what_you_practice">Was du übst</string>
     <string name="plan_when_to_practice">Wann du %1$s übst</string>
