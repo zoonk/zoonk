@@ -12,7 +12,14 @@ const HIRAGANA = [
 ] as const;
 
 function letter([symbol = "", readingAid = ""]: readonly string[]) {
-  return { audioText: symbol, forms: [], pronunciation: `Like ${readingAid}.`, readingAid, symbol };
+  return {
+    audioText: symbol,
+    forms: [],
+    ipa: `/${readingAid}/`,
+    pronunciation: `Like ${readingAid}.`,
+    readingAid,
+    symbol,
+  };
 }
 
 const content = {
@@ -36,7 +43,7 @@ describe(buildAlphabetLessonSteps, () => {
         ...content,
         letters: [
           ...content.letters,
-          { audioText: "", forms: [], pronunciation: "", readingAid: "", symbol: " " },
+          { audioText: "", forms: [], ipa: "", pronunciation: "", readingAid: "", symbol: " " },
         ],
       },
     });

@@ -26,14 +26,16 @@ You write the first alphabet lesson of a language course for learners whose own 
 
 - `symbol`: the character exactly as the learner will see it.
 - `readingAid`: romanization in the standard system (Hepburn, Revised Romanization, the usual transliteration).
-- `pronunciation`: one short sound cue in `LEARNER_LANGUAGE`, compared with a sound the learner's own language has when there is a close one, and warning when there isn't ("like the a in 'pai', short and pure").
-- `audioText`: the exact `TARGET_LANGUAGE` text a voice should say for this card: the symbol itself when it can be said alone (a vowel, a syllable), or the simplest syllable with it for a consonant that can't. When it's a syllable, `pronunciation` says so ("you'll hear it as 'va'").
+- `ipa`: the letter's main sound in IPA, between slashes. The learner never sees it: write it first so the cue matches the real sound.
+- `audioText`: the exact `TARGET_LANGUAGE` text a voice should say for this card: the symbol itself when it can be said alone (a vowel, a syllable), or the simplest syllable with it for a consonant that can't.
+- `pronunciation`: one short sound cue in `LEARNER_LANGUAGE` for the sound in `ipa`, compared with a word of the learner's language that has that same sound when there is one, and warning when there isn't ("like the a in 'pai', short and pure"). When `audioText` is a syllable, the cue shows it with its romanization ("you'll hear it as βα (va)").
 - `forms`: only real positional forms (Arabic initial, medial, final and isolated), with labels in `LEARNER_LANGUAGE`. Empty for scripts without them. Never invent forms.
 
 # Accuracy
 
-- Japanese kana vowels are short and pure: never compare them with diphthongs without saying so.
-- Korean plain stops are neither English nor Portuguese voiced stops: say they are softer, unaspirated.
+- Compare sounds, not spellings: a comparison word must have the sound in `ipa` in the learner's standard accent, not just the same letter. When no word has that exact sound, use the closest one and say what differs, such as length, a glide, aspiration, voicing or where the tongue sits.
+- When a letter's sound changes with stress or position, give its main sound and say in a few words when it changes. Never claim a letter always keeps one sound.
+- When the language tells short and long vowels apart, say whether each vowel sound taught is short or long.
 - Arabic: keep a letter's sound apart from its name, and use only its real joining forms.
 - Every symbol is unique, belongs to the script and matches its romanization and sound.
 
@@ -46,5 +48,5 @@ You write the first alphabet lesson of a language course for learners whose own 
 
 - `script`, `title`, `description`, `canDo`
 - `intro`: each with `title` and `text`
-- `letters`: each with `symbol`, `readingAid`, `pronunciation`, `audioText` and `forms` (each with `label` and `symbol`)
+- `letters`: each with `symbol`, `readingAid`, `ipa`, `audioText`, `pronunciation` and `forms` (each with `label` and `symbol`)
 - `summary`

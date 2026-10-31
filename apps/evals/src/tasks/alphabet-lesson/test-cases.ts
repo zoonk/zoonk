@@ -16,7 +16,7 @@ export const TEST_CASES: TestCase<AlphabetLessonExpected, AlphabetLessonInput>[]
     userInput: { learnerLanguage: "en", targetLanguage: "ja" },
   },
   {
-    expectations: `The first Cyrillic for a Brazilian Portuguese speaker learning Russian: letters that look Latin but sound different (such as В, Н, Р, С, У) and a few new shapes, with sound cues compared to Portuguese sounds and false friends named. No forms. In Brazilian Portuguese.`,
+    expectations: `The first Cyrillic for a Brazilian Portuguese speaker learning Russian: letters that look Latin but sound different (such as В, Н, Р, С, У) and a few new shapes, with sound cues compared to Portuguese sounds and false friends named. О is among them: stressed О is compared with the closed ô of "avô", never an open ó like "pó", and unstressed О is said to sound closer to a. No forms. In Brazilian Portuguese.`,
     expected: { joined: false },
     id: "pt-ru-cyrillic",
     userInput: { learnerLanguage: "pt", targetLanguage: "ru" },

@@ -21,12 +21,13 @@ const MAX_LETTERS = 10;
 const MIN_SUMMARY = 2;
 const MAX_SUMMARY = 3;
 
-/* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the script and what the lesson covers come before its screens. */
+/* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the script and what the lesson covers come before its screens, and a letter's sound and audio before the cue that describes them. */
 const letterSchema = z.object({
   symbol: z.string(),
   readingAid: z.string(),
-  pronunciation: z.string(),
+  ipa: z.string(),
   audioText: z.string(),
+  pronunciation: z.string(),
   forms: z.array(z.object({ label: z.string(), symbol: z.string() })),
 });
 

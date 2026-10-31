@@ -19,6 +19,7 @@ const HANGUL: Content = {
   ].map(([symbol = "", readingAid = "", audioText = ""]) => ({
     audioText,
     forms: [],
+    ipa: `/${readingAid}/`,
     pronunciation: `Like ${readingAid}.`,
     readingAid,
     symbol,

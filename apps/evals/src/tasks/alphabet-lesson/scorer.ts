@@ -7,6 +7,10 @@ import { type AlphabetLessonExpected } from "./test-cases";
 const LATIN_LETTER = /\p{Script=Latin}/u;
 const MAX_FORMS = 4;
 
+function comparable(text: string): string {
+  return text.trim().normalize("NFC").toLowerCase();
+}
+
 function checkAlphabetLesson({
   expected,
   output,
@@ -31,6 +35,14 @@ function checkAlphabetLesson({
         (letter) => LATIN_LETTER.test(letter.readingAid) && letter.audioText.trim().length > 0,
       ),
       problem: "A letter lacks a Latin romanization or the text its audio says.",
+    },
+    {
+      passed: lesson.letters.every(
+        (letter) =>
+          comparable(letter.audioText) === comparable(letter.symbol) ||
+          comparable(letter.pronunciation).includes(comparable(letter.audioText)),
+      ),
+      problem: "A card plays a syllable its sound cue never shows.",
     },
     {
       passed: lesson.letters.every((letter) => letter.forms.length <= MAX_FORMS),
