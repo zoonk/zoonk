@@ -30,6 +30,7 @@ import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepVisual
 import com.zoonk.android.feature.player.model.toStepResult
+import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.Limit
@@ -156,6 +157,26 @@ class LessonPlayerScreenshots {
                     LessonAction.CheckResolved("why", graded, counts = true),
                 )
             },
+            "typed-wrong" to {
+                at(
+                    *toQuiz(),
+                    LessonAction.SkipSteps(listOf("quiz")),
+                    LessonAction.SelectAnswer("why", LessonAnswer.Typed("Rain")),
+                    LessonAction.CheckStarted("why"),
+                    LessonAction.CheckResolved("why", checkResult(false).toStepResult("Rain"), counts = true),
+                )
+            },
+            "missed-twice" to {
+                at(
+                    *toQuiz(),
+                    LessonAction.SelectAnswer("quiz", LessonAnswer.Check("wrong")),
+                    LessonAction.CheckResolved("quiz", checkResult(false).toStepResult("Wrong"), counts = true),
+                    LessonAction.Continue,
+                    LessonAction.SelectAnswer("why", LessonAnswer.Typed("Rain")),
+                    LessonAction.CheckStarted("why"),
+                    LessonAction.CheckResolved("why", checkResult(false).toStepResult("Rain"), counts = true),
+                )
+            },
             "spoken-heard" to {
                 val heard =
                     ApiJson
@@ -251,6 +272,7 @@ class LessonPlayerScreenshots {
             )
         val lesson = playable(steps)
         var index by mutableIntStateOf(0)
+        val tutor = LessonTutor(TutorIdentity("Sam", look = null)) { _, _, _, _ -> }
         val exits =
             object : LessonPlayerExits {
                 override fun close() = Unit
@@ -263,7 +285,17 @@ class LessonPlayerScreenshots {
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
                 CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState()) {
-                    key(index) { LessonPlayer(lesson, states[index].second(), LessonEnding(), viewModel, exits, rememberAppNavigator()) }
+                    key(index) {
+                        LessonPlayer(
+                            lesson,
+                            states[index].second(),
+                            LessonEnding(),
+                            viewModel,
+                            exits,
+                            rememberAppNavigator(),
+                            tutor = tutor,
+                        )
+                    }
                 }
             }
         }
