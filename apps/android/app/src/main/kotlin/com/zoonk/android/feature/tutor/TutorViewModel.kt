@@ -336,6 +336,8 @@ class TutorViewModel internal constructor(
             if (!saved && sessions.current == session) reconcile(id, e.toTutorFailure(), session)
         } finally {
             mutableState.update { if (it.answeringId == id) it.copy(answeringId = null) else it }
+            // Core claims the tutor message when the answer starts, not when the question is asked.
+            if (sessions.current == session) cache.invalidate(setOf(DataDomain.Allowance))
         }
     }
 

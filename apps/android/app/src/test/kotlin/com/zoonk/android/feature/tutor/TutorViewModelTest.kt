@@ -4,7 +4,9 @@ import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
@@ -14,6 +16,7 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -55,13 +58,14 @@ class TutorViewModelTest {
     @After
     fun reset() = Dispatchers.resetMain()
 
-    private suspend fun conversation(scope: TutorScope = this.scope): TutorViewModel {
-        val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-        return TutorViewModel(
+    private suspend fun conversation(
+        scope: TutorScope = this.scope,
+        cache: AppCache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher)),
+    ): TutorViewModel =
+        TutorViewModel(
             scope,
             TutorStore(api, cache, session, { true }) { _, _, status -> decision(status) },
         ).also { it.thread.load() }
-    }
 
     private val TutorViewModel.turns get() =
         thread.state.value.value!!
@@ -83,6 +87,54 @@ class TutorViewModelTest {
             assertEquals("An orbit is a path.", turn.answer)
             assertEquals("", vm.draft.text.toString())
             assertTrue(vm.state.value.canAsk(vm.turns))
+        }
+
+    @Test
+    fun anAnswerMarksTheAllowanceItSpentStaleOnceItEnds() =
+        runTest(dispatcher) {
+            val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
+            val vm = conversation(cache = cache)
+            var reads = 0
+            val allowance = cache.resource(Audience.SignedIn, setOf(DataDomain.Allowance)) { ++reads }
+            allowance.load()
+            val ended = CompletableDeferred<Unit>()
+            api.answers = {
+                flow {
+                    emit(TutorAnswerEvent.Text("A path."))
+                    ended.await()
+                    emit(TutorAnswerEvent.Finish)
+                }
+            }
+
+            vm.draft.setTextAndPlaceCursorAtEnd("Why?")
+            vm.send()
+            advanceUntilIdle()
+            allowance.load()
+            assertEquals(1, reads)
+
+            ended.complete(Unit)
+            advanceUntilIdle()
+            allowance.load()
+            assertEquals(2, reads)
+        }
+
+    @Test
+    fun aDroppedAnswerStillMarksTheAllowanceStale() =
+        runTest(dispatcher) {
+            val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
+            val vm = conversation(cache = cache)
+            var reads = 0
+            val allowance = cache.resource(Audience.SignedIn, setOf(DataDomain.Allowance)) { ++reads }
+            allowance.load()
+            api.answers = { flow { throw ApiException(ApiError.Network) } }
+            api.question = { id -> turn(id, TutorTurn.Status.Pending, null) }
+
+            vm.draft.setTextAndPlaceCursorAtEnd("Why?")
+            vm.send()
+            advanceUntilIdle()
+            allowance.load()
+
+            assertEquals(2, reads)
         }
 
     @Test
