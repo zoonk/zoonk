@@ -43,7 +43,7 @@ describe("the onboarding view's plan readiness", () => {
 
     await expect(readReadiness(goal.id)).resolves.toStrictEqual({ time: BUILDING, view: BUILDING });
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" });
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     await expect(readReadiness(goal.id)).resolves.toStrictEqual({ time: BUILDING, view: BUILDING });
 
