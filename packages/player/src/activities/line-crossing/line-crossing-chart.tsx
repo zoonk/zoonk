@@ -1,11 +1,20 @@
 "use client";
 
-import { createLinearScale } from "@zoonk/utils/plot-scale";
 import { useExtracted } from "next-intl";
-import { useId } from "react";
-import { ActivityPlaceHandle } from "../_components/activity-place-handle";
+import { useId, useState } from "react";
 import { ActivityPlot, usePlotScales } from "../_components/activity-plot";
-import { Axes, ChangeArrows, ClipArea, Crossing, LineLabel, LineMark } from "./line-crossing-marks";
+import { HANDLE_RADIUS, HANDLE_STROKE, LineHandle, handlePlace } from "./line-crossing-handle";
+import { type LabelSize, placeLineLabels } from "./line-crossing-labels";
+import {
+  Axes,
+  CROSSING_RADIUS,
+  ChangeArrows,
+  ClipArea,
+  Crossing,
+  LineLabel,
+  LineMark,
+  changeArrows,
+} from "./line-crossing-marks";
 import {
   type Line,
   type LineOffsets,
@@ -14,97 +23,123 @@ import {
   chartDomain,
   crossingPoint,
   movedLine,
-  pointAlong,
-  shiftRange,
+  visibleSegment,
 } from "./line-crossing-model";
 
 type ChartLine = Line & { id: string; label: string };
 
 const PLOT_HEIGHT = 248;
 const PADDING = { bottom: 30, left: 22, right: 18, top: 26 };
-const HANDLE_RADIUS = 14;
-const CHEVRON = 4;
-
-const HANDLE_SHARE = 0.82;
-
 const LINE_CLASSES = ["stroke-viz-highlight", "stroke-viz-secondary"] as const;
 const LINE_TEXT_CLASSES = ["text-viz-highlight", "text-viz-secondary"] as const;
 
-function chevrons({ axis, cx, cy }: { axis: ShiftAxis; cx: number; cy: number }): string {
-  return axis === "horizontal"
-    ? `M${cx - 2} ${cy - CHEVRON} l-${CHEVRON} ${CHEVRON} l${CHEVRON} ${CHEVRON} M${cx + 2} ${cy - CHEVRON} l${CHEVRON} ${CHEVRON} l-${CHEVRON} ${CHEVRON}`
-    : `M${cx - CHEVRON} ${cy - 2} l${CHEVRON} -${CHEVRON} l${CHEVRON} ${CHEVRON} M${cx - CHEVRON} ${cy + 2} l${CHEVRON} ${CHEVRON} l${CHEVRON} -${CHEVRON}`;
-}
+type ChartLabel = { className: string; id: string; isUpper: boolean; label: string; line: Line };
 
-function LineHandle({
+function LineLabels({
   amount,
+  answerLine,
   axis,
-  className,
-  disabled,
+  crossings,
   domain,
-  label,
-  line,
-  offset,
-  onChange,
-  valueText,
+  lines,
+  offsets,
 }: {
   amount: number;
+  answerLine: Line | null;
   axis: ShiftAxis;
-  className: string;
-  disabled: boolean;
+  crossings: { after: Point; before: Point | null };
   domain: Point;
-  label: string;
-  line: Line;
-  offset: number;
-  onChange: (offset: number) => void;
-  valueText: string;
+  lines: readonly [ChartLine, ChartLine];
+  offsets: LineOffsets;
 }) {
+  const t = useExtracted();
   const scales = usePlotScales();
-  const range = shiftRange(amount);
-  const home = pointAlong(line, domain, HANDLE_SHARE);
-  const isSideways = axis === "horizontal";
-  const along = isSideways ? scales.x : scales.y;
-  const start = isSideways ? home.x : home.y;
+  const [sizes, setSizes] = useState<Readonly<Record<string, LabelSize>>>({});
+  const offsetOf = (line: ChartLine) => offsets[line.id] ?? 0;
+  const pixel = (point: Point) => ({ x: scales.x.toPixel(point.x), y: scales.y.toPixel(point.y) });
 
-  const scale = createLinearScale({
-    domain: [range.min, range.max],
-    range: [along.toPixel(start + range.min), along.toPixel(start + range.max)],
+  const area = {
+    bottom: scales.y.range[0],
+    left: scales.x.range[0],
+    right: scales.width,
+    top: scales.y.range[1],
+  };
+
+  const handles = lines.map((line) => {
+    const { cx, cy } = handlePlace({ amount, axis, domain, line, offset: offsetOf(line), scales });
+    return { cx, cy, radius: HANDLE_RADIUS + HANDLE_STROKE / 2 };
   });
 
-  const [cx, cy] = isSideways
-    ? [scale.toPixel(offset), scales.y.toPixel(home.y)]
-    : [scales.x.toPixel(home.x), scale.toPixel(offset)];
-
-  return (
-    <ActivityPlaceHandle
-      className={className}
-      cx={cx}
-      cy={cy}
-      disabled={disabled}
-      label={label}
-      onChange={onChange}
-      orientation={axis}
-      range={range}
-      scale={scale}
-      value={offset}
-      valueText={valueText}
-    >
-      <circle
-        className="fill-background stroke-current"
-        cx={cx}
-        cy={cy}
-        r={HANDLE_RADIUS}
-        strokeWidth={2.5}
-      />
-      <path
-        className="fill-none stroke-current"
-        d={chevrons({ axis, cx, cy })}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-      />
-    </ActivityPlaceHandle>
+  const dots = [crossings.after, crossings.before].flatMap((point) =>
+    point
+      ? [{ cx: scales.x.toPixel(point.x), cy: scales.y.toPixel(point.y), radius: CROSSING_RADIUS }]
+      : [],
   );
+
+  const marks = {
+    circles: [...handles, ...dots],
+    segments: crossings.before
+      ? changeArrows({ after: crossings.after, before: crossings.before, ...scales })
+      : [],
+  };
+
+  const labels: ChartLabel[] = [
+    ...lines.map((line, index) => ({
+      className: LINE_TEXT_CLASSES[index] ?? "",
+      id: line.id,
+      isUpper: true,
+      label: line.label,
+      line: movedLine(line, offsetOf(line), axis),
+    })),
+    ...(answerLine
+      ? [
+          {
+            className: "text-success-text",
+            id: "answer",
+            isUpper: false,
+            label: t("What happened"),
+            line: answerLine,
+          },
+        ]
+      : []),
+    ...lines
+      .filter((line) => offsetOf(line) !== 0)
+      .map((line) => ({
+        className: "text-muted-foreground",
+        id: `${line.id}-before`,
+        isUpper: false,
+        label: t("Before"),
+        line,
+      })),
+  ];
+
+  const measured = labels.flatMap((label) => {
+    const size = sizes[label.id];
+    const { from, to } = visibleSegment(label.line, domain);
+
+    return size
+      ? [{ isUpper: label.isUpper, segment: { from: pixel(from), to: pixel(to) }, size }]
+      : [];
+  });
+
+  const boxes =
+    measured.length === labels.length
+      ? placeLineLabels({
+          area,
+          labels: measured,
+          marks: { ...marks, lines: measured.map((label) => label.segment) },
+        })
+      : [];
+
+  return labels.map((label, index) => (
+    <LineLabel
+      box={boxes[index] ?? null}
+      className={label.className}
+      key={label.id}
+      label={label.label}
+      onMeasure={(size) => setSizes((known) => ({ ...known, [label.id]: size }))}
+    />
+  ));
 }
 
 export function LineCrossingChart({
@@ -130,7 +165,6 @@ export function LineCrossingChart({
   xLabel: string;
   yLabel: string;
 }) {
-  const t = useExtracted();
   const clipId = useId();
   const domain = chartDomain({ amount, axis, lines });
   const offsetOf = (line: ChartLine) => offsets[line.id] ?? 0;
@@ -175,37 +209,15 @@ export function LineCrossingChart({
         ))}
       </g>
 
-      {moved.map((line) => (
-        <LineLabel
-          className="text-muted-foreground"
-          domain={domain}
-          end="lower"
-          key={`${line.id}-before`}
-          label={t("Before")}
-          line={line}
-        />
-      ))}
-
-      {answerLine && (
-        <LineLabel
-          className="text-success-text"
-          domain={domain}
-          end="lower"
-          label={t("What happened")}
-          line={answerLine}
-        />
-      )}
-
-      {shown.map((line, index) => (
-        <LineLabel
-          className={LINE_TEXT_CLASSES[index] ?? ""}
-          domain={domain}
-          end="upper"
-          key={lines[index]?.id}
-          label={lines[index]?.label ?? ""}
-          line={line}
-        />
-      ))}
+      <LineLabels
+        amount={amount}
+        answerLine={answerLine}
+        axis={axis}
+        crossings={{ after, before: moved.length > 0 ? before : null }}
+        domain={domain}
+        lines={lines}
+        offsets={offsets}
+      />
 
       {moved.length > 0 && (
         <>

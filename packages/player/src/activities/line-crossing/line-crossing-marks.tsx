@@ -1,12 +1,14 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { useId } from "react";
+import { type LinearScale } from "@zoonk/utils/plot-scale";
+import { useEffectEvent, useId, useLayoutEffect, useRef } from "react";
 import { usePlotScales } from "../_components/activity-plot";
+import { DRAWING_LABEL_HALO } from "../_utils/drawing-label";
+import { type LabelBox, type LabelSize } from "./line-crossing-labels";
 import { type Line, type Point, visibleSegment } from "./line-crossing-model";
 
 const DOT_RADIUS = 6;
-const LABEL_GAP = 8;
 const ARROW_OFFSET = 10;
 const Y_LABEL_RISE = 12;
 const X_LABEL_DROP = 20;
@@ -38,32 +40,39 @@ export function LineMark({
 }
 
 export function LineLabel({
+  box,
   className,
-  domain,
-  end,
   label,
-  line,
+  onMeasure,
 }: {
+  box: LabelBox | null;
   className: string;
-  domain: Point;
-  end: "lower" | "upper";
   label: string;
-  line: Line;
+  onMeasure: (size: LabelSize) => void;
 }) {
-  const { width, x, y } = usePlotScales();
-  const { from, to } = visibleSegment(line, domain);
-  const [lower, upper] = from.y < to.y ? [from, to] : [to, from];
-  const point = end === "upper" ? upper : lower;
-  const px = x.toPixel(point.x);
-  const inLeftHalf = px < width / 2;
+  const ref = useRef<SVGTextElement>(null);
+  const measured = useEffectEvent(onMeasure);
+
+  useLayoutEffect(() => {
+    const node = ref.current;
+
+    if (node) {
+      measured({
+        height: Number(getComputedStyle(node).fontSize.replace("px", "")),
+        width: node.getBBox().width,
+      });
+    }
+  }, []);
 
   return (
     <text
       aria-hidden="true"
-      className={cn("fill-current text-xs font-semibold", className)}
-      textAnchor={inLeftHalf ? "start" : "end"}
-      x={inLeftHalf ? px + LABEL_GAP : px - LABEL_GAP}
-      y={Math.max(y.toPixel(point.y) - LABEL_GAP, y.range[1] + LABEL_GAP)}
+      className={cn("fill-current text-xs font-semibold", DRAWING_LABEL_HALO, className)}
+      dominantBaseline="central"
+      ref={ref}
+      visibility={box ? undefined : "hidden"}
+      x={box?.left ?? 0}
+      y={box ? (box.top + box.bottom) / 2 : 0}
     >
       {label}
     </text>
@@ -98,12 +107,38 @@ export function Crossing({ isBefore, point }: { isBefore: boolean; point: Point 
   );
 }
 
+export const CROSSING_RADIUS = DOT_RADIUS + 1;
+
+export function changeArrows({
+  after,
+  before,
+  x,
+  y,
+}: {
+  after: Point;
+  before: Point;
+  x: LinearScale;
+  y: LinearScale;
+}): { from: Point; to: Point }[] {
+  const [left, bottom] = [x.range[0], y.range[0]];
+
+  const arrows = [
+    {
+      from: { x: left + ARROW_OFFSET, y: y.toPixel(before.y) },
+      to: { x: left + ARROW_OFFSET, y: y.toPixel(after.y) },
+    },
+    {
+      from: { x: x.toPixel(before.x), y: bottom - ARROW_OFFSET },
+      to: { x: x.toPixel(after.x), y: bottom - ARROW_OFFSET },
+    },
+  ];
+
+  return arrows.filter(({ from, to }) => Math.hypot(to.x - from.x, to.y - from.y) > DOT_RADIUS);
+}
+
 export function ChangeArrows({ after, before }: { after: Point; before: Point }) {
   const { x, y } = usePlotScales();
   const markerId = useId();
-  const [left, bottom] = [x.range[0], y.range[0]];
-  const yMoves = Math.abs(y.toPixel(after.y) - y.toPixel(before.y)) > DOT_RADIUS;
-  const xMoves = Math.abs(x.toPixel(after.x) - x.toPixel(before.x)) > DOT_RADIUS;
 
   return (
     <g aria-hidden="true" className="text-foreground">
@@ -125,22 +160,15 @@ export function ChangeArrows({ after, before }: { after: Point; before: Point })
           />
         </marker>
       </defs>
-      {yMoves && (
+      {changeArrows({ after, before, x, y }).map(({ from, to }) => (
         <path
           className="fill-none stroke-current"
-          d={`M${left + ARROW_OFFSET} ${y.toPixel(before.y)} V${y.toPixel(after.y)}`}
+          d={`M${from.x} ${from.y} L${to.x} ${to.y}`}
+          key={from.x === to.x ? "y" : "x"}
           markerEnd={`url(#${markerId})`}
           strokeWidth={2}
         />
-      )}
-      {xMoves && (
-        <path
-          className="fill-none stroke-current"
-          d={`M${x.toPixel(before.x)} ${bottom - ARROW_OFFSET} H${x.toPixel(after.x)}`}
-          markerEnd={`url(#${markerId})`}
-          strokeWidth={2}
-        />
-      )}
+      ))}
     </g>
   );
 }
