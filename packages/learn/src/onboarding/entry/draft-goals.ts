@@ -2,7 +2,8 @@
 
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useAppLocale } from "../../_utils/locale";
 import { type OnboardingActions } from "../onboarding-actions";
 import { getExplanationGoalInput } from "./understanding-start";
 
@@ -10,7 +11,7 @@ const MUSICIANSHIP_MINUTES = 15;
 
 export function useDraftGoals(actions: OnboardingActions) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
 
   const createExplanation = ({
     draft,

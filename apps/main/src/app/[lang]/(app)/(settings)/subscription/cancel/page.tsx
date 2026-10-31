@@ -1,4 +1,4 @@
-import { getFormatter } from "@/i18n/formatter";
+import { getAppLocale } from "@/i18n/locale";
 import {
   type WebPlusCancellation,
   getWebPlusCancellation,
@@ -14,7 +14,7 @@ import {
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { formatPrice } from "@zoonk/utils/currency";
 import { type Metadata } from "next";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted, getFormatter } from "next-intl/server";
 import { Suspense } from "react";
 import { ManagedSubscription } from "../managed-subscription";
 import { type CancelChoice } from "./cancel-choices";
@@ -68,7 +68,7 @@ async function CancelWithoutLogin() {
 async function getOrdinaryChoice(cancellation: ReadyCancellation): Promise<CancelChoice | null> {
   const t = await getExtracted();
   const format = await getFormatter();
-  const locale = await getLocale();
+  const locale = await getAppLocale();
   const ordinary = cancellation.cancellation;
 
   if (!ordinary) {
@@ -104,7 +104,7 @@ async function getOrdinaryChoice(cancellation: ReadyCancellation): Promise<Cance
 async function getChoices(cancellation: ReadyCancellation): Promise<CancelChoice[]> {
   const t = await getExtracted();
   const format = await getFormatter();
-  const locale = await getLocale();
+  const locale = await getAppLocale();
   const { currency, extraordinary, withdrawal } = cancellation;
   const money = (amount: number) => formatPrice(amount, currency, locale);
   const ordinary = await getOrdinaryChoice(cancellation);

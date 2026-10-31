@@ -3,7 +3,7 @@
 import { type SpeakingSectionView } from "@zoonk/core/language/exam-speaking/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import {
   StepCard,
   StepDetail,
@@ -14,7 +14,6 @@ import {
   StepTitle,
 } from "../_components/step-card";
 import { type StepsItem } from "../_components/steps";
-import { useFormatter } from "../_utils/formatter";
 import { LearnLink } from "../learn-link";
 import { useMockScreen } from "./mock-context";
 

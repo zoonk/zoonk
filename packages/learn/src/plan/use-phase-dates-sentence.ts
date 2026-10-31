@@ -1,8 +1,7 @@
 "use client";
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { useExtracted } from "next-intl";
-import { useFormatter } from "../_utils/formatter";
+import { useExtracted, useFormatter } from "next-intl";
 import { daysBetween, useFormatIsoDate } from "../_utils/iso-date";
 
 export function usePhaseDatesSentence() {

@@ -1,5 +1,4 @@
 import { PlusBenefits } from "@/components/pricing/plus-benefits";
-import { getFormatter } from "@/i18n/formatter";
 import { Link } from "@/i18n/navigation";
 import { getWebPlusCancellation } from "@zoonk/core/subscriptions/web-plus-cancellation";
 import { type Subscription } from "@zoonk/db";
@@ -16,7 +15,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { isWebManagedSubscriptionProvider } from "@zoonk/utils/subscription";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, getFormatter } from "next-intl/server";
 import { Suspense } from "react";
 import { ManagedSubscription } from "./managed-subscription";
 import { RefundOffer } from "./refund-offer";

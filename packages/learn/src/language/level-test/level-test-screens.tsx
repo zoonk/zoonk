@@ -6,7 +6,8 @@ import {
 } from "@zoonk/core/language/level-test/contract";
 import { isValidLocale } from "@zoonk/utils/locale";
 import { CircleCheckIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration } from "../../_utils/time-format";
 import {
   OnboardingColumn,
@@ -30,7 +31,7 @@ function InterfaceOffer({
   onSwitch: (language: string) => void;
 }) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const name = new Intl.DisplayNames([language], { type: "language" }).of(language) ?? language;
 
   if (language === locale || !isValidLocale(language)) {
@@ -60,7 +61,7 @@ export function TestIntro({
   showAlphabetNote: boolean;
 }) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const formatDuration = useFormatDuration();
   const target = new Intl.DisplayNames([locale], { type: "language" }).of(goal.targetLanguage);
 

@@ -2,10 +2,11 @@
 
 import { getPathname, usePathname } from "@/i18n/navigation";
 import { rememberLocale } from "@/i18n/remember-locale";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { cn } from "@zoonk/ui/lib/utils";
 import { LOCALE_LABELS, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { GlobeIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 
 const MIDDLE_BUTTON = 1;
@@ -19,7 +20,7 @@ const LANGUAGE_LINK_CLASS =
  */
 function LanguageLinks({ pathname }: { pathname: string }) {
   const t = useExtracted();
-  const current = useLocale();
+  const current = useAppLocale();
 
   return (
     <nav aria-label={t("Language")} className="flex flex-wrap items-center gap-x-5">

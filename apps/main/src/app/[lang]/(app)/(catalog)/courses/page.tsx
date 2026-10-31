@@ -1,8 +1,9 @@
+import { getAppLocale } from "@/i18n/locale";
 import { getCategoryNames } from "@/lib/categories/category";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { LIST_COURSES_LIMIT, listCourses } from "@zoonk/core/courses/list";
 import { type Metadata } from "next";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
 import { CourseListClient } from "./course-list-client";
 
@@ -21,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Courses() {
-  const locale = await getLocale();
+  const locale = await getAppLocale();
   const subjectNames = await getCategoryNames();
   const courses = await listCourses({ language: locale });
 

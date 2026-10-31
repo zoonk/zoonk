@@ -1,6 +1,7 @@
 import { sendEmail } from "@zoonk/mailer";
 import { formatPrice } from "@zoonk/utils/currency";
 import { escapeHtml } from "@zoonk/utils/escape-html";
+import { getFormattingLocale } from "@zoonk/utils/locale";
 import { logError } from "@zoonk/utils/logger";
 import { getRefundDeadline } from "@zoonk/utils/subscription";
 import { CANCEL_SUBSCRIPTION_URL, PRIVACY_URL, TERMS_URL } from "@zoonk/utils/url";
@@ -53,9 +54,10 @@ function renderEmail(blocks: string[]): string {
 }
 
 function formatters(locale: string) {
-  const date = new Intl.DateTimeFormat(locale, { dateStyle: "long", timeZone: "UTC" });
+  const formattingLocale = getFormattingLocale(locale);
+  const date = new Intl.DateTimeFormat(formattingLocale, { dateStyle: "long", timeZone: "UTC" });
 
-  const dateTime = new Intl.DateTimeFormat(locale, {
+  const dateTime = new Intl.DateTimeFormat(formattingLocale, {
     dateStyle: "long",
     timeStyle: "long",
     timeZone: "UTC",

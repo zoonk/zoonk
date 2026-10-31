@@ -1,8 +1,8 @@
+import { getAppLocale } from "@/i18n/locale";
 import { trackSignInCompleted } from "@/lib/server-track-events";
 import { getRouterPayloadFallback } from "@zoonk/core/navigation/document-route";
 import { getSession } from "@zoonk/core/users/session";
 import { MAIN_URL } from "@zoonk/utils/url";
-import { getLocale } from "next-intl/server";
 import { type NextRequest } from "next/server";
 import { getLoginHref, getSetupHref, readRedirectTo } from "../_utils/auth-redirect";
 import { createOneTimeTokenUrl, isTrustedRedirect } from "./handoff";
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
     return redirectTo(UNTRUSTED_ORIGIN_PATH);
   }
 
-  await trackSignInCompleted({ locale: await getLocale(), userId: session.user.id });
+  await trackSignInCompleted({ locale: await getAppLocale(), userId: session.user.id });
 
   return redirectTo(handoff.url);
 }

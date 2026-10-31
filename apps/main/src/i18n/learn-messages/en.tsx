@@ -8,13 +8,15 @@ const messages = mergeMessages(player, learn, app);
 
 export function LearnMessagesEn({
   children,
+  locale,
   timeZone,
 }: {
   children: React.ReactNode;
+  locale: string;
   timeZone: string;
 }) {
   return (
-    <NextIntlClientProvider locale="en" messages={messages} timeZone={timeZone}>
+    <NextIntlClientProvider locale={locale} messages={messages} timeZone={timeZone}>
       {children}
     </NextIntlClientProvider>
   );

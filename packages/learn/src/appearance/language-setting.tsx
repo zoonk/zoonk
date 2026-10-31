@@ -7,14 +7,15 @@ import {
   type SupportedLocale,
   isValidLocale,
 } from "@zoonk/utils/locale";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { SelectSettingRow } from "../_components/setting-rows";
+import { useAppLocale } from "../_utils/locale";
 
 /** Each language is named in itself, so anyone can find theirs. */
 export function LanguageSetting({ onChange }: { onChange: (locale: SupportedLocale) => void }) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const selectId = useId();
   const descriptionId = useId();
 

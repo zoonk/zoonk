@@ -2,8 +2,8 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { trackEvent } from "@zoonk/core/analytics/client";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { handOffGoal, sendGoal } from "@zoonk/learn/onboarding/understanding-start";
-import { useLocale } from "next-intl";
 
 /** Loaded on the first tap, so the page doesn't ship the account and actions code to visitors who only read. */
 async function sendHomeGoal({ goal, language }: { goal: string; language: string }) {
@@ -15,7 +15,7 @@ async function sendHomeGoal({ goal, language }: { goal: string; language: string
 
 /** `/start` opens at once and shows the goal on its way, then what was understood or what went wrong. */
 export function useSendGoal() {
-  const locale = useLocale();
+  const locale = useAppLocale();
   const router = useRouter();
 
   return (goal: string) => {

@@ -1,9 +1,8 @@
 "use client";
 
-import { useFormatter } from "@zoonk/learn/formatter";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { useLessonQuestionController } from "./lesson-question-provider";
 
 export type TutorSuggestion = { id: string; label: string };

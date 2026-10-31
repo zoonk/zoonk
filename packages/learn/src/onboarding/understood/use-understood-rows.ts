@@ -7,7 +7,8 @@ import {
   type UnderstoodSchedule,
 } from "@zoonk/core/view-models/onboarding/contract";
 import { getLanguageName } from "@zoonk/utils/languages";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration, useFormatTimeOfDay } from "../../_utils/time-format";
 import { useCutoffWords } from "../../exam/target-cutoff";
 import { isSaidInTitle } from "./said-in-title";
@@ -48,7 +49,7 @@ function readText(details: GoalFacts["details"], key: string): string | null {
 
 export function useLanguageRows() {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
 
   return (draft: GoalFacts): UnderstoodRow[] => {
     if (draft.kind !== "language" || !draft.targetLanguage) {

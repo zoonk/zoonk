@@ -16,7 +16,7 @@ import {
 import { useAnimatedProgress } from "@zoonk/ui/hooks/animated-progress";
 import { useTickCount } from "@zoonk/ui/hooks/tick-count";
 import { CircleAlertIcon, WifiOffIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import {
   NoticeCard,
@@ -27,6 +27,7 @@ import {
   NoticeCardTitle,
 } from "../_components/notice-card";
 import { formatClock } from "../_utils/clock";
+import { useAppLocale } from "../_utils/locale";
 import { getDetailLine } from "./_utils/detail-line";
 import { type PhaseProgress, type PhaseStatus, getPhaseProgress } from "./_utils/phase-progress";
 import { type PhaseTime, getPhaseTimes } from "./_utils/phase-times";
@@ -49,7 +50,7 @@ function WaitProgress({
   progress: PhaseProgress<string>;
   run: GenerationRun;
 }) {
-  const locale = useLocale();
+  const locale = useAppLocale();
 
   const value = useAnimatedProgress({
     active: isFollowing(run),

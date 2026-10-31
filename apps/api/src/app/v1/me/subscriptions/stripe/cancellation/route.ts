@@ -1,3 +1,4 @@
+import { getAppLocale } from "@/i18n/locale";
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { readBody } from "@/lib/request-input";
@@ -7,7 +8,6 @@ import {
 } from "@zoonk/core/subscriptions/web-plus-cancellation";
 import { webPlusCancellationRequestSchema } from "@zoonk/core/subscriptions/web-plus-cancellation-contract";
 import { type PriceInfo, toMajorUnits } from "@zoonk/utils/currency";
-import { getLocale } from "next-intl/server";
 import { type NextRequest, NextResponse } from "next/server";
 
 function toMoney({ amount, currency }: PriceInfo) {
@@ -46,7 +46,7 @@ async function getStripeSubscriptionCancellation() {
 
 async function cancelStripeSubscription(request: NextRequest) {
   const body = await readBody(request, webPlusCancellationRequestSchema);
-  const locale = await getLocale();
+  const locale = await getAppLocale();
   const outcome = await cancelWebPlus({ locale, request: body });
 
   if (!outcome) {

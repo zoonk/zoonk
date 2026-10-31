@@ -5,9 +5,8 @@ import {
   type PlacementMockLength,
   type PlacementMockOptionView,
 } from "@zoonk/core/exams/mocks/contract";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { type RowChoice } from "../_components/choice-rows";
-import { useFormatter } from "../_utils/formatter";
 import { useFormatDuration } from "../_utils/time-format";
 import { useMockDaySizeLabel } from "./mock-labels";
 

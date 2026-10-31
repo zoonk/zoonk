@@ -1,8 +1,7 @@
 "use client";
 
 import { type MemoryFactView } from "@zoonk/core/memory/contract";
-import { useExtracted } from "next-intl";
-import { useFormatter } from "../_utils/formatter";
+import { useExtracted, useFormatter } from "next-intl";
 
 export type MemoryCategory = MemoryFactView["category"];
 

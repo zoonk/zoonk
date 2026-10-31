@@ -6,7 +6,8 @@ import {
   parseLocalizedNumber,
 } from "@zoonk/utils/localized-number";
 import { currencyFor, formatMoney, withUnit } from "@zoonk/utils/math-answer";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useAppLocale } from "./locale";
 
 type FormatOptions = {
   compact?: boolean;
@@ -30,7 +31,7 @@ function splitMoneyUnit(unit?: string): { currency: string; rest: string } | nul
 }
 
 export function useFormatNumber() {
-  const locale = useLocale();
+  const locale = useAppLocale();
   const t = useExtracted();
 
   const seconds = (count: number) =>

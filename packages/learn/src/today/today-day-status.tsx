@@ -3,10 +3,9 @@
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { CalendarClockIcon, ClockIcon, HourglassIcon, MoonIcon, SparklesIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { ChangeLimitLink, STATUS_LINK_CLASS } from "../_components/change-limit-link";
 import { DoneMark } from "../_components/status-mark";
-import { useFormatter } from "../_utils/formatter";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
 import { usePastDateText } from "../plan/plan-status-label";

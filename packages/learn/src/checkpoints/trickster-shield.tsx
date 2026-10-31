@@ -3,8 +3,10 @@
 import { ProgressRoot } from "@zoonk/ui/components/progress";
 import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted, useLocale } from "next-intl";
+import { getFormattingLocale } from "@zoonk/utils/locale";
+import { useExtracted } from "next-intl";
 import { TASK_COLUMN_CLASS } from "../_components/task-layout";
+import { useAppLocale } from "../_utils/locale";
 
 function ShieldMeter({
   broken,
@@ -64,7 +66,7 @@ export function TricksterShield({
   value: number;
 }) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const toGo = segments - Math.min(broken, segments);
 
   return (
@@ -75,7 +77,7 @@ export function TricksterShield({
       <ProgressRoot
         aria-label={label}
         className="sr-only"
-        locale={locale}
+        locale={getFormattingLocale(locale)}
         value={Math.min(100, Math.max(0, value))}
       />
       <Trickster className="size-4 shrink-0" />

@@ -8,10 +8,9 @@ import {
   DetailHeroText,
   DetailTitle,
 } from "@zoonk/ui/components/detail";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
 import { PageEyebrow } from "../_components/page";
-import { useFormatter } from "../_utils/formatter";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatTimeOfDay } from "../_utils/time-format";

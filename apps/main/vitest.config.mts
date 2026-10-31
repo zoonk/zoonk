@@ -1,3 +1,4 @@
+import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { defineConfig } from "vitest/config";
 import { getTestRunEnvironment } from "../../packages/db/src/test-environment.ts";
@@ -6,6 +7,13 @@ export default defineConfig({
   assetsInclude: ["**/*.md"],
   resolve: {
     alias: [
+      {
+        // Match next-intl's production alias for precompiled PO messages.
+        find: /^use-intl\/format-message$/u,
+        replacement: createRequire(import.meta.resolve("next-intl")).resolve(
+          "use-intl/format-message/format-only",
+        ),
+      },
       {
         // nextCookies() needs a Next.js request context.
         find: /^@zoonk\/auth$/u,
@@ -23,7 +31,7 @@ export default defineConfig({
     server: {
       deps: {
         // https://github.com/vercel/next.js/issues/77200
-        inline: ["next-intl"],
+        inline: ["next-intl", "use-intl"],
       },
     },
     setupFiles: "./setup-tests.ts",

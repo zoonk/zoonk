@@ -1,10 +1,9 @@
 "use client";
 
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { type DateTimeFormatOptions } from "next-intl";
+import { type DateTimeFormatOptions, useFormatter } from "next-intl";
 import { use } from "react";
 import { PlanScreenContext } from "../plan/plan-context";
-import { useFormatter } from "./formatter";
 
 /** UTC midnight, formatted in UTC, so the day never shifts in the viewer's timezone. */
 export function isoDateToUtc(isoDate: string): Date {

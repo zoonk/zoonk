@@ -1,10 +1,11 @@
 "use client";
 
 import { Link, getPathname } from "@/i18n/navigation";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { useGoalLimitMessage } from "@zoonk/learn/onboarding/goal-errors";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { getCourseStartRemedy } from "./course-start-remedy";
 import { START_FAILURE_SLOT } from "./public-start";
 import { type CourseStartFailure } from "./use-course-start";
@@ -21,7 +22,7 @@ function FailureAction({
   secondaryClassName: string;
 }) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const remedy = getCourseStartRemedy(failure);
 
   if (remedy === "signUp") {

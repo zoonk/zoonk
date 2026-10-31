@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocale } from "next-intl";
+import { useAppLocale } from "../../_utils/locale";
 
 /**
  * Messages name it in a `select`, so each language writes it with its own article ("o ENEM", "le
@@ -18,7 +18,7 @@ const LOCAL_EXAMS: Record<string, LocalExam> = {
 
 /** The language suggested is never the page's own. */
 export function useLocalGoalExample(): { exam: LocalExam; language: string } {
-  const locale = useLocale();
+  const locale = useAppLocale();
   const spoken = locale === "en" ? "es" : "en";
 
   return {

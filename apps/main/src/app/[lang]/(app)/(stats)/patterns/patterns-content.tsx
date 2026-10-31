@@ -1,5 +1,4 @@
 import { loadOptionalData } from "@/data/_utils/load-optional-data";
-import { getFormatter } from "@/i18n/formatter";
 import { getMenu } from "@/lib/menu";
 import {
   type ScorePatternsData,
@@ -10,7 +9,7 @@ import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { formatWholeNumber } from "@zoonk/utils/number";
 import { CalendarDaysIcon, ClockIcon, ListChecksIcon } from "lucide-react";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, getFormatter } from "next-intl/server";
 import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { STAT_PAGE_TILES_CLASS, StatTilesSkeleton } from "../_components/stats-tiles";

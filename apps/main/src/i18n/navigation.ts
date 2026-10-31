@@ -1,4 +1,4 @@
-import { type SupportedLocale } from "@zoonk/utils/locale";
+import { type SupportedLocale, getFormattingLocale } from "@zoonk/utils/locale";
 import { type Route } from "next";
 import { createNavigation } from "next-intl/navigation";
 import { type ComponentProps, type ReactNode } from "react";
@@ -17,7 +17,20 @@ type UnrootedRoute<Href extends string> = Href extends `/${SupportedLocale}${inf
 /** Checks next-intl's unprefixed pathnames against Next.js's generated routes, which start with `[lang]`. */
 export type AppRoute<Href extends string> = Href & UnrootedRoute<Route<RootedRoute<Href>>>;
 
-const navigation = createNavigation(routing);
+// next-intl reads the formatting locale; URLs and language picks use the public locale.
+// Only rememberLocale saves language choices, so navigation must not save es-MX in the cookie.
+const navigation = createNavigation({
+  ...routing,
+  defaultLocale: getFormattingLocale(routing.defaultLocale),
+  localeCookie: false,
+  localePrefix: {
+    mode: "as-needed",
+    prefixes: Object.fromEntries(
+      routing.locales.map((locale) => [getFormattingLocale(locale), `/${locale}` as const]),
+    ),
+  },
+  locales: routing.locales.map(getFormattingLocale),
+});
 
 type LinkProps<Href extends string> = Omit<ComponentProps<typeof navigation.Link>, "href"> & {
   href: AppRoute<Href>;

@@ -1,6 +1,5 @@
 import { DayList, type DayListStep } from "@/components/public/day-list";
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
-import { getFormatter } from "@/i18n/formatter";
 import { getMinutesFormatter, getTotalDurationFormatter } from "@/lib/public/public-labels";
 import {
   type CoursePlanExample,
@@ -14,7 +13,7 @@ import { RouteTitle } from "@zoonk/learn/route-line";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, getFormatter } from "next-intl/server";
 import { type ReactNode } from "react";
 import { PlanWorkload } from "./plan-workload";
 

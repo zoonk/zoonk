@@ -1,10 +1,9 @@
 "use client";
 
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { Meter, MeterFill } from "../../_components/meter";
 import { PageSectionTitle } from "../../_components/page";
-import { useFormatter } from "../../_utils/formatter";
 import { getChapterKey, isWritingAhead, useChapterTitle } from "../../journey/journey-chapters";
 import { PlanRoadmap } from "../../journey/plan-roadmap";
 import { usePlanScreen } from "../../plan/plan-context";

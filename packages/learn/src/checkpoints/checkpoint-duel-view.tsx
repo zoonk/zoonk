@@ -2,12 +2,11 @@
 
 import { type CheckpointQuestion } from "@zoonk/core/checkpoints/contract";
 import { BrainIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { StepRow, StepRows } from "../_components/step-card";
 import { TaskHeaderSegments, TaskHeaderTitle, type TaskSegment } from "../_components/task-header";
 import { TaskActions } from "../_components/task-layout";
 import { TaskMeta } from "../_components/task-meta";
-import { useFormatter } from "../_utils/formatter";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemStem, ItemSupport, QUESTION_TEXT_CLASS } from "../questions/item-text";
 import { NumericAnswerField } from "../questions/numeric-answer-field";

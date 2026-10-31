@@ -44,6 +44,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@eloqnt/format-po": "0.1.1",
     "@mdx-js/loader": "catalog:",
     "@mdx-js/react": "catalog:",
     "@next/mdx": "catalog:",
@@ -56,6 +57,7 @@
     "@zoonk/i18n": "workspace:*",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
+    "icu-minify": "catalog:",
     "raw-loader": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",

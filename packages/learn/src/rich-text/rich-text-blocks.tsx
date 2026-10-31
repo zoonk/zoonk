@@ -1,6 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
-import { useLocale } from "next-intl";
 import { RichTable } from "../_components/rich-table";
+import { useAppLocale } from "../_utils/locale";
 import { type RichInlineSegment, RichInlineSegments } from "./rich-inline-segments";
 import { type RichBlock, markRichBlocks, parseRichBlocks } from "./rich-text-parser";
 import { typesetNumbers } from "./rich-text-typography";
@@ -113,7 +113,7 @@ export function RichTextBlocks({
   paragraphTag?: "p" | "h1" | "h2" | "h3" | "label";
   text: string;
 }) {
-  const locale = useLocale();
+  const locale = useAppLocale();
   const blocks = parseRichBlocks(text);
 
   return (

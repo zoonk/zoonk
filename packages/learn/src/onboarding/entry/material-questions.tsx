@@ -6,8 +6,9 @@ import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, FileTextIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { useAppLocale } from "../../_utils/locale";
 import { useCitationLabel } from "../../_utils/use-citation-label";
 import {
   type LearnBuddy,
@@ -112,7 +113,7 @@ export function MaterialQuestions({
   sources: AttachedSource[];
 }) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const inputId = useId();
   const [question, setQuestion] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);

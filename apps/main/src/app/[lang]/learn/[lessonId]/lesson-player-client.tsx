@@ -22,6 +22,7 @@ import { trackEvent } from "@zoonk/core/analytics/client";
 import { type LessonSupport } from "@zoonk/core/lesson-player/contract";
 import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { type ChallengeTeam } from "@zoonk/core/library/challenges/team";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { LessonPlayerProvider, type LessonPlayerProviderProps } from "@zoonk/player/lesson";
 import { LessonPlayerShell } from "@zoonk/player/lesson/shell";
 import {
@@ -31,7 +32,6 @@ import {
   type PlayableLibraryLesson,
 } from "@zoonk/player/lesson/types";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { useLocale } from "next-intl";
 import { useMemo, useState } from "react";
 import { completeLibraryLessonAction, getLessonPicturesAction } from "./lesson-player-actions";
 import { startLibraryLesson } from "./start-library-lesson";
@@ -107,7 +107,7 @@ export function LessonPlayerClient({
   tutorSuggestions?: readonly LessonTutorSuggestion[];
 }) {
   const router = useRouter();
-  const locale = useLocale();
+  const locale = useAppLocale();
 
   /** A completion action refreshes props in place; only a newly opened finished lesson redirects. */
   const [reopenedBlockId, setReopenedBlockId] = useState(

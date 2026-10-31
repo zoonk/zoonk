@@ -1,9 +1,9 @@
+import { getAppLocale } from "@/i18n/locale";
 import { getCategoryMeta, getCategoryNames } from "@/lib/categories/category";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { LIST_COURSES_LIMIT, listCourses } from "@zoonk/core/courses/list";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { type Metadata } from "next";
-import { getLocale } from "next-intl/server";
 import { lang } from "next/root-params";
 import { CourseListClient } from "./course-list-client";
 
@@ -19,7 +19,7 @@ export async function getCategoryPageMetadata(category: CourseCategory): Promise
 
 /** Each category is its own static route handing its name here (`static-value-routes.test.ts`). */
 export async function CategoryCoursesPage({ category }: { category: CourseCategory }) {
-  const language = await getLocale();
+  const language = await getAppLocale();
   const subjectNames = await getCategoryNames();
   const courses = await listCourses({ category, language });
 

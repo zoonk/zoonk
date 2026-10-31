@@ -1,9 +1,8 @@
 "use client";
 
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { PageEyebrow } from "../_components/page";
 import { StepDetail, StepEyebrow, StepHeader, StepTitle } from "../_components/step-card";
-import { useFormatter } from "../_utils/formatter";
 import { toLabelCase } from "../_utils/label-case";
 import { useCheckpointEyebrow } from "../checkpoints/checkpoint-labels";
 import { useChallengeScreen } from "./challenge-context";

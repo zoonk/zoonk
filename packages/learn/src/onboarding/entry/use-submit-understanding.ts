@@ -1,8 +1,8 @@
 "use client";
 
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
-import { useLocale } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { useAppLocale } from "../../_utils/locale";
 import { useLearnAnalytics } from "../../learn-context";
 import { type GoalError, useStartError } from "../goal-errors";
 import { type StartUnderstandingOutcome, type UnderstandingActions } from "../onboarding-actions";
@@ -32,7 +32,7 @@ export function useSubmitUnderstanding({
   onSending: (goal: string) => void;
   understanding: UnderstandingActions;
 }) {
-  const locale = useLocale();
+  const locale = useAppLocale();
   const analytics = useLearnAnalytics();
   const toError = useStartError();
   const submitted = useRef<AbortController | null>(null);

@@ -2,6 +2,7 @@
 
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
 import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { Input } from "@zoonk/ui/components/input";
 import {
   exactFractionDigitsFor,
@@ -9,7 +10,6 @@ import {
   parseLocalizedNumber,
 } from "@zoonk/utils/localized-number";
 import { getUnitPosition } from "@zoonk/utils/math-answer";
-import { useLocale } from "next-intl";
 import { useId, useState } from "react";
 import { type ActivityPhase } from "../activity-renderer";
 import { ActivityCheckQuestion } from "./activity-check-question";
@@ -31,7 +31,7 @@ export function ActivityNumericCheck({
   onAnswerChange: (answer: ActivityAnswer | null) => void;
   phase: ActivityPhase;
 }) {
-  const locale = useLocale();
+  const locale = useAppLocale();
   const [inputId, unitId] = [useId(), useId()];
   const value = answerValue(answer);
   const unitPosition = check.unit ? getUnitPosition({ language: locale, unit: check.unit }) : null;

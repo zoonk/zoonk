@@ -1,11 +1,12 @@
 import { CATALOG_TOP_TARGET_ID } from "@/components/catalog/catalog-top-target";
 import { getGoalExample } from "@/components/public/goal-example";
 import { GoalForm } from "@/components/public/goal-form";
+import { getAppLocale } from "@/i18n/locale";
 import { getPathname } from "@/i18n/navigation";
 import { getCategories, getCategoryTitles } from "@/lib/categories/category";
 import { countCatalogCourses } from "@zoonk/core/courses/count-catalog";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
 import { CatalogBar } from "../_components/catalog-bar";
 import { CatalogHeader } from "../_components/catalog-title";
@@ -15,7 +16,7 @@ export const ensureStatic = "navigation";
 
 async function CategoryNavWithData() {
   const categories = await getCategories();
-  const locale = await getLocale();
+  const locale = await getAppLocale();
   const counts = await countCatalogCourses({ language: locale });
   const courseCounts = new Map(counts.categories.map((item) => [item.category, item.courseCount]));
 

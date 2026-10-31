@@ -1,9 +1,9 @@
 import { loadOptionalData } from "@/data/_utils/load-optional-data";
+import { getAppLocale } from "@/i18n/locale";
 import { getMenu } from "@/lib/menu";
 import { getScoreHistory } from "@zoonk/core/progress/get-score-history";
 import { getSession } from "@zoonk/core/users/session";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { getLocale } from "next-intl/server";
 import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { StatTilesSkeleton } from "../_components/stats-tiles";
@@ -11,7 +11,7 @@ import { ScoreChart, ScoreChartSkeleton } from "./score-chart";
 import { ScoreLine, ScoreTiles } from "./score-stats";
 
 export async function ScoreContent() {
-  const locale = await getLocale();
+  const locale = await getAppLocale();
 
   const [history, session] = await Promise.all([
     loadOptionalData(() => getScoreHistory({ locale })),

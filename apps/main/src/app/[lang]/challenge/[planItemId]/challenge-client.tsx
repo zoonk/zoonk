@@ -10,8 +10,8 @@ import {
 } from "@zoonk/core/checkpoints/challenge-contract";
 import { type ChallengeActions, ChallengeScreen } from "@zoonk/learn/challenge";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { useLocale } from "next-intl";
 import {
   type ComponentProps,
   useEffect,
@@ -84,7 +84,7 @@ export function ChallengeClient({
   sessionId: string | null;
 }) {
   const router = useRouter();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const { planItemId } = challenge;
   const search = sessionId ? `?${STUDY_SESSION_PARAM}=${sessionId}` : "";
   const page = useMemo(() => ({ locale, sessionId }), [locale, sessionId]);

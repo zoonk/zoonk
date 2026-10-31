@@ -2,7 +2,7 @@
 
 import { type MockResult } from "@zoonk/core/exams/mocks/contract";
 import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import {
   StepCard,
   StepDetail,
@@ -13,7 +13,6 @@ import {
 } from "../_components/step-card";
 import { Steps, type StepsItem } from "../_components/steps";
 import { TaskAsideSection } from "../_components/task-layout";
-import { useFormatter } from "../_utils/formatter";
 import { hasShareMoved } from "../_utils/share-moved";
 import { usePassMarksNote } from "../_utils/use-pass-marks-note";
 import { DayMoment } from "../session/day-moment";

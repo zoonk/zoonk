@@ -3,7 +3,7 @@
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { formatMathAnswer } from "@zoonk/utils/math-answer";
 import { ChevronsUpIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { type DiffLine, DiffLines } from "../../_components/diff-lines";
 import {
   FeedbackExplanation,
@@ -12,6 +12,7 @@ import {
   FeedbackVerdict,
 } from "../../_components/feedback-panel";
 import { ItemCitationNote } from "../../_components/item-citation";
+import { useAppLocale } from "../../_utils/locale";
 import { toPlainItemLine } from "../../questions/_utils/item-text";
 import { ItemText } from "../../questions/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
@@ -22,7 +23,7 @@ import {
 } from "../session-types";
 
 export function useAnswerText(trueFalseLabels: TrueFalseLabels) {
-  const locale = useLocale();
+  const locale = useAppLocale();
   const { answerLabel } = useTrueFalseLabels(trueFalseLabels);
 
   return function answerText({

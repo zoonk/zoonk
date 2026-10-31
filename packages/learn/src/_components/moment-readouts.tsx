@@ -2,8 +2,7 @@
 
 import { CountUp } from "@zoonk/ui/components/count-up";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted } from "next-intl";
-import { useFormatter } from "../_utils/formatter";
+import { useExtracted, useFormatter } from "next-intl";
 import { TaskMeta } from "./task-meta";
 
 function ReadoutNumber({ className, ...props }: React.ComponentProps<"span">) {

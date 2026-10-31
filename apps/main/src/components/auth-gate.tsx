@@ -1,4 +1,5 @@
 import { PublicTopBar } from "@/components/public/public-top-bar";
+import { getAppLocale } from "@/i18n/locale";
 import { Link, getPathname } from "@/i18n/navigation";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
 import { getSession } from "@zoonk/core/users/session";
@@ -13,7 +14,7 @@ import {
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
 import { LockIcon } from "lucide-react";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { cookies } from "next/headers";
 
 /** A browser whose session ended is told so on every page, since its plan is still there. */
@@ -30,7 +31,7 @@ export async function AuthGate({
 }) {
   const t = await getExtracted();
   const session = await getSession();
-  const locale = await getLocale();
+  const locale = await getAppLocale();
   const ended = knownEnded ?? (!session && hasSessionCookie(await cookies()));
   const loginHref = `${getPathname({ href: "/login", locale })}?next=${encodeURIComponent(getPathname({ href: next, locale }))}`;
 

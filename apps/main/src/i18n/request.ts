@@ -1,3 +1,4 @@
+import { getFormattingLocale } from "@zoonk/utils/locale";
 import { hasLocale } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -12,5 +13,5 @@ export default getRequestConfig(async ({ locale: overrideLocale }) => {
     notFound();
   }
 
-  return { locale, messages: await getAllMessages(locale) };
+  return { locale: getFormattingLocale(locale), messages: await getAllMessages(locale) };
 });

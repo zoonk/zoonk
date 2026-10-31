@@ -3,7 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { ClockIcon, ListChecksIcon, SearchCheckIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { GoalRing } from "../_components/goal-ring";
 import { KindMark, type LearnKind } from "../_components/kind-tile";
 import { StatTile, StatTiles } from "../_components/stat-tile";
@@ -17,7 +17,6 @@ import {
   StepRows,
   StepTitle,
 } from "../_components/step-card";
-import { useFormatter } from "../_utils/formatter";
 import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
 import { useLogbook } from "./logbook-context";

@@ -3,10 +3,12 @@
 import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
 import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
+import { getFormattingLocale } from "@zoonk/utils/locale";
 import { ChevronLeftIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { PAGE_COLUMN_CLASS } from "../_components/page";
+import { useAppLocale } from "../_utils/locale";
 import { CRUMB_LINK_CLASS, LearnBackLink, PageBarSurface } from "../shell/learn-bar";
 import { type OnboardingBar } from "./onboarding-host";
 import { testProgressPercent } from "./test-progress";
@@ -15,13 +17,13 @@ export const BAR_MIDDLE_CLASS = "w-24 sm:w-32";
 
 export function TestProgress({ value }: { value: number }) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
 
   return (
     <ProgressRoot
       aria-label={t("Questions answered")}
       className={cn(BAR_MIDDLE_CLASS, "gap-0")}
-      locale={locale}
+      locale={getFormattingLocale(locale)}
       value={testProgressPercent(value)}
     >
       <ProgressTrack className="bg-surface-3 h-1 rounded-xs">

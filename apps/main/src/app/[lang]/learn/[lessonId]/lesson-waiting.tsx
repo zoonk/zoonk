@@ -10,10 +10,11 @@ import { GenerationWait } from "@zoonk/learn/generation";
 import { type GenerationRun } from "@zoonk/learn/generation/run";
 import { KindMark } from "@zoonk/learn/kind-tile";
 import { LessonNotWrittenNotice } from "@zoonk/learn/lesson-not-written";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { TaskMainButton } from "@zoonk/learn/task-frame";
 import { TaskActionBar, TaskActions } from "@zoonk/learn/task-layout";
 import { ChevronRightIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { LessonRouteFrame } from "./lesson-route-frame";
 
@@ -84,7 +85,7 @@ function useIsLate() {
 
 function useOpenWhenReady(isReady: boolean) {
   const router = useRouter();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const startedAt = useRef<number | null>(null);
 
   const open = useEffectEvent(() => {

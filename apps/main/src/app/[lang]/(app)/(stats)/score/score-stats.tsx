@@ -1,10 +1,9 @@
 import { getProgressDayCountLabel } from "@/components/progress/progress-day-count-label";
-import { getFormatter } from "@/i18n/formatter";
 import { type ScorePerformance } from "@zoonk/core/progress/score-performance";
 import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
 import { formatMetricPercent, formatWholeNumber } from "@zoonk/utils/number";
 import { CalendarRangeIcon, CheckIcon, TargetIcon } from "lucide-react";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, getFormatter } from "next-intl/server";
 import { STAT_PAGE_TILES_CLASS, StatsLine } from "../_components/stats-tiles";
 
 const SCORE_WINDOW_DAYS = 90;

@@ -8,7 +8,7 @@ import {
 import { SPEAKING_MOCK_CRITERIA } from "@zoonk/core/language/conversations/speaking-mock";
 import { Button } from "@zoonk/ui/components/button";
 import { LightbulbIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { useTransition } from "react";
 import { CHIP_CLASS } from "../../_components/chip";
 import { DetailsDrawer } from "../../_components/details-drawer";
@@ -23,7 +23,6 @@ import {
 } from "../../_components/step-card";
 import { Steps, type StepsItem } from "../../_components/steps";
 import { TASK_OPTION_CLASS } from "../../_components/task-layout";
-import { useFormatter } from "../../_utils/formatter";
 import { StepWithDayMoment } from "../../session/day-moment";
 import { TaskMainLink } from "../../shell/task-frame";
 import { CallNote } from "./call-note";

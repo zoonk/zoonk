@@ -142,7 +142,7 @@
     "./test-out": "./src/questions/test-out-run.tsx",
     "./test-out/preparing": "./src/questions/test-out-preparing.tsx",
     "./time-format": "./src/_utils/time-format.ts",
-    "./formatter": "./src/_utils/formatter.ts",
+    "./locale": "./src/_utils/locale.ts",
     "./today": "./src/today/today-screen.tsx",
     "./today/at-rest": "./src/today/today-at-rest.tsx",
     "./today/change-notice": "./src/today/today-change-notice.tsx",

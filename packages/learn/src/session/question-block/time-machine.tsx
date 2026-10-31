@@ -2,10 +2,9 @@
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { HistoryIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { Callout } from "../../_components/callout";
 import { FeedbackNote } from "../../_components/feedback-panel";
-import { useFormatter } from "../../_utils/formatter";
 import { toPlainItemLine } from "../../questions/_utils/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { type StudyQuestion } from "../session-types";

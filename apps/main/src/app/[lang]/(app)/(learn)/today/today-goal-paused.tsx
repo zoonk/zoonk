@@ -1,3 +1,4 @@
+import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { getGoalResumePreview } from "@zoonk/core/plans/resume-preview";
@@ -5,7 +6,7 @@ import { ResumeEffect } from "@zoonk/learn/journey/resume-effect";
 import { TodayAtRest } from "@zoonk/learn/today/at-rest";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { FlagIcon, PauseIcon } from "lucide-react";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { ResumeGoalButton } from "./resume-goal-button";
 import { getLocalDay } from "./today-local-day";
 
@@ -20,7 +21,7 @@ async function loadResumePreview(goal: { id: string; status: string } | undefine
 
 export async function TodayGoalPaused() {
   const t = await getExtracted();
-  const locale = await getLocale();
+  const locale = await getAppLocale();
   const list = await listCurrentUserGoals();
   const goal = list?.goals.find((item) => item.id === list.activeGoalId);
 

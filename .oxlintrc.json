@@ -38,15 +38,15 @@
         "paths": [
           {
             "name": "next-intl",
-            "importNames": ["useFormatter"],
+            "importNames": ["useLocale"],
             "allowTypeImports": true,
-            "message": "Use useFormatter from @zoonk/learn/formatter, which formats Spanish the Mexican way."
+            "message": "Use useAppLocale from @zoonk/learn/locale for routing and content. next-intl's locale is for formatting."
           },
           {
             "name": "next-intl/server",
-            "importNames": ["getFormatter"],
+            "importNames": ["getLocale"],
             "allowTypeImports": true,
-            "message": "Use getFormatter from @/i18n/formatter, which formats Spanish the Mexican way."
+            "message": "Use getAppLocale from @/i18n/locale for routing and content. next-intl's locale is for formatting."
           }
         ]
       }
@@ -170,6 +170,10 @@
     "zoonk/tailwind-canonical-classes": "error"
   },
   "overrides": [
+    {
+      "files": ["apps/*/src/i18n/locale.ts", "packages/learn/src/_utils/locale.ts"],
+      "rules": { "eslint/no-restricted-imports": "off" }
+    },
     {
       "files": ["apps/evals/**/*.ts", "apps/evals/**/*.tsx"],
       "rules": {

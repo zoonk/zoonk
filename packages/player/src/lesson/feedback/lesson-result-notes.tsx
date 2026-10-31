@@ -1,7 +1,8 @@
 "use client";
 
 import { FeedbackNote } from "@zoonk/learn/feedback-panel";
-import { useExtracted, useLocale } from "next-intl";
+import { useAppLocale } from "@zoonk/learn/locale";
+import { useExtracted } from "next-intl";
 import { type ReviewDate, describeReviewDate } from "../_utils/review-date";
 
 export type LessonResultNext = {
@@ -15,7 +16,7 @@ function getDayLabel(review: ReviewDate): string {
 }
 
 function useReview(nextReviewAt: string | null): ReviewDate | null {
-  const locale = useLocale();
+  const locale = useAppLocale();
   return nextReviewAt ? describeReviewDate({ locale, reviewAt: nextReviewAt }) : null;
 }
 

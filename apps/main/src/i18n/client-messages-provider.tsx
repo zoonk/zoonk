@@ -1,6 +1,6 @@
-import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
+import { getAppLocale } from "@/i18n/locale";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getTimeZone } from "next-intl/server";
+import { getTimeZone } from "next-intl/server";
 import { LearnMessages } from "./learn-messages/learn-messages";
 import { getSiteMessages } from "./messages";
 
@@ -15,14 +15,14 @@ export async function ClientMessagesProvider({
   children: React.ReactNode;
   scope: "learn" | "site";
 }) {
-  const locale = await getLocale();
+  const locale = await getAppLocale();
 
   if (scope === "learn") {
     // So dates format alike on the server and in the browser.
     const timeZone = await getTimeZone();
 
     return (
-      <LearnMessages locale={getSupportedLocaleFromLanguage(locale)} timeZone={timeZone}>
+      <LearnMessages locale={locale} timeZone={timeZone}>
         {children}
       </LearnMessages>
     );

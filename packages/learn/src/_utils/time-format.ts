@@ -1,13 +1,13 @@
 "use client";
 
 import { formatDuration } from "@zoonk/utils/duration";
-import { useLocale } from "next-intl";
-import { useFormatter } from "./formatter";
+import { useFormatter } from "next-intl";
+import { useAppLocale } from "./locale";
 
 const SECONDS_PER_MINUTE = 60;
 
 export function useFormatDuration() {
-  const locale = useLocale();
+  const locale = useAppLocale();
 
   return (totalMinutes: number): string =>
     formatDuration({ locale, totalSeconds: totalMinutes * SECONDS_PER_MINUTE });

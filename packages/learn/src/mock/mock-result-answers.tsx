@@ -2,9 +2,8 @@
 
 import { type MockResult } from "@zoonk/core/exams/mocks/contract";
 import { CheckIcon, CircleDashedIcon, MinusIcon, XIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { StatTile, StatTiles } from "../_components/stat-tile";
-import { useFormatter } from "../_utils/formatter";
 
 type AnswerCounts = { blank: number; partial: number; right: number; wrong: number };
 

@@ -1,7 +1,7 @@
+import { useAppLocale } from "@zoonk/learn/locale";
 import { type RichInlineSegment, RichInlineSegments } from "@zoonk/learn/rich-text/inline";
 import { markRichInline, parseRichInline, toOneLine } from "@zoonk/learn/rich-text/parser";
 import { typesetNumbers } from "@zoonk/learn/rich-text/typography";
-import { useLocale } from "next-intl";
 
 function typeset({
   locale,
@@ -18,7 +18,7 @@ function typeset({
 }
 
 export function LessonRichText({ mark, text }: { mark?: string | null; text: string }) {
-  const locale = useLocale();
+  const locale = useAppLocale();
   const parsed = parseRichInline(toOneLine(text));
   const segments = mark ? markRichInline(parsed, mark) : parsed;
 

@@ -8,8 +8,9 @@ import {
 } from "@zoonk/ui/components/input-group";
 import { formatLocalizedNumber } from "@zoonk/utils/localized-number";
 import { CheckIcon, XIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { useAppLocale } from "../_utils/locale";
 import { type NumericEntry, parseEntryAnswer } from "./_utils/numeric-entry";
 
 type NumericUnit = { position: "prefix" | "suffix"; symbol: string };
@@ -38,7 +39,7 @@ function EntryRule({ entry, id }: { entry: NumericEntry; id: string }) {
 
 function InvalidHint({ entry, id }: { entry: NumericEntry | null; id: string }) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
 
   const example = formatLocalizedNumber({ locale, value: DECIMAL_EXAMPLE });
 
@@ -88,7 +89,7 @@ export function NumericAnswerField({
   unit: NumericUnit | null;
 }) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const [inputId, unitId, hintId, ruleId] = [useId(), useId(), useId(), useId()];
   const [text, setText] = useState(defaultText);
   const [invalid, setInvalid] = useState(false);

@@ -3,6 +3,7 @@ import { loadStartView } from "@/app/[lang]/(app)/(onboarding)/start/start-view"
 import { LessonPlayerPreload } from "@/app/[lang]/explain/[goalId]/lazy-lesson-player";
 import { AuthGatePage } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
+import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
@@ -15,7 +16,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PlayIcon } from "lucide-react";
 import { type Metadata } from "next";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { cookies } from "next/headers";
 import { Suspense } from "react";
 import { LearnNotFound } from "../_components/learn-not-found";
@@ -103,7 +104,7 @@ async function loadFirstGoalView(locale: string) {
 
 async function TodayFirstGoal() {
   const t = await getExtracted();
-  const locale = await getLocale();
+  const locale = await getAppLocale();
   const { start, context } = await loadFirstGoalView(locale);
   const { canAttach, draft, goalLimit, needsAccount } = start;
 

@@ -1,10 +1,11 @@
 import { CurrentPageLoginLink } from "@/components/current-page-login-link";
+import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { PlanNextStep } from "./for-viewer";
 import {
   PLAN_CARD_CLASS,
@@ -62,7 +63,7 @@ export async function FreePlan({
   viewerState?: PlusViewerState;
 }) {
   const t = await getExtracted();
-  const locale = await getLocale();
+  const locale = await getAppLocale();
   const limits = getFreePlanLimits();
 
   return (

@@ -1,6 +1,7 @@
+import { getAppLocale } from "@/i18n/locale";
 import { type ScorePatternsData } from "@zoonk/core/progress/get-score-patterns";
 import { MIN_PATTERN_ANSWERS } from "@zoonk/core/progress/score-performance";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { getScoreWeekdayLabel } from "./_utils/weekday";
 import { getTimePeriodNames } from "./pattern-names";
 
@@ -8,7 +9,7 @@ export async function getBestDayName(
   verdict: ScorePatternsData["dayVerdict"],
 ): Promise<string | null> {
   const t = await getExtracted();
-  const locale = await getLocale();
+  const locale = await getAppLocale();
 
   if (verdict.kind === "even") {
     return t("Any day");

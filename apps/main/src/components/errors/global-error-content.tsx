@@ -7,6 +7,7 @@ import {
   DEFAULT_LOCALE,
   LOCALE_COOKIE,
   type SupportedLocale,
+  getFormattingLocale,
   isValidLocale,
 } from "@zoonk/utils/locale";
 import { NextIntlClientProvider, useExtracted } from "next-intl";
@@ -79,7 +80,10 @@ export default function GlobalErrorContent({ onRetry }: { onRetry: () => void })
   }
 
   return (
-    <NextIntlClientProvider locale={catalog.locale} messages={catalog.messages}>
+    <NextIntlClientProvider
+      locale={getFormattingLocale(catalog.locale)}
+      messages={catalog.messages}
+    >
       <PageErrorMessage homeLink={<HomeLink />} onRetry={onRetry} />
     </NextIntlClientProvider>
   );

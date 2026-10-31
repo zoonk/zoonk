@@ -1,8 +1,7 @@
 "use client";
 
 import { type ExamView } from "@zoonk/core/exams/view/contract";
-import { useExtracted } from "next-intl";
-import { useFormatter } from "./formatter";
+import { useExtracted, useFormatter } from "next-intl";
 
 type ScoreRange = Pick<NonNullable<ExamView["estimate"]>, "high" | "low" | "scale">;
 

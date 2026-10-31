@@ -2,9 +2,8 @@
 
 import { type WrittenPractice } from "@zoonk/core/plans/written-practice-contract";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { ChangeSaveError } from "../_components/save-error";
-import { useFormatter } from "../_utils/formatter";
 import { usePlanScreen } from "./plan-context";
 import { PLAN_OPTION_CLASS } from "./plan-option-styles";
 import { usePlanChange } from "./use-plan-change";

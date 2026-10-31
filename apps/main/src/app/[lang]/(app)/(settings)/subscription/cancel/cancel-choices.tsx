@@ -6,12 +6,11 @@ import {
   webPlusCancellationRequestSchema,
 } from "@zoonk/core/subscriptions/web-plus-cancellation-contract";
 import { ChoiceRows, type RowChoice } from "@zoonk/learn/choice-rows";
-import { useFormatter } from "@zoonk/learn/formatter";
 import { PageSectionFooter } from "@zoonk/learn/page";
 import { Button } from "@zoonk/ui/components/button";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { Loader2Icon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useId } from "react";
 

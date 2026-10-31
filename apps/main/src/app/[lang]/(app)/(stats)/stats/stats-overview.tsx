@@ -1,6 +1,6 @@
 import { getProgressLearningTimeLabel } from "@/components/progress/progress-learning-time-label";
 import { loadOptionalData } from "@/data/_utils/load-optional-data";
-import { getFormatter } from "@/i18n/formatter";
+import { getAppLocale } from "@/i18n/locale";
 import { type AppRoute, Link } from "@/i18n/navigation";
 import { getBeltLabel } from "@/lib/belt-colors";
 import { getMenu } from "@/lib/menu";
@@ -21,7 +21,7 @@ import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { formatMetricPercent, formatWholeNumber } from "@zoonk/utils/number";
 import { ChartNoAxesColumnIncreasingIcon, TargetIcon, ZapIcon } from "lucide-react";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted, getFormatter } from "next-intl/server";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { StatTilesSkeleton } from "../_components/stats-tiles";
 import { ActivityChart, ActivityChartSkeleton } from "../activity/activity-chart";
@@ -170,7 +170,7 @@ async function ScoreTile({ progress }: { progress: CurrentUserProgress }) {
 }
 
 export async function StatsOverview() {
-  const locale = await getLocale();
+  const locale = await getAppLocale();
 
   const [progress, session, energy, activity, patterns, history] = await Promise.all([
     getCurrentUserProgress({ history: "lifetime" }),

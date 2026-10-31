@@ -6,12 +6,13 @@ import {
   VariantSwitch,
   VariantSwitchOption,
 } from "@/components/public/variant-switch";
+import { getAppLocale } from "@/i18n/locale";
 import { Link, getPathname } from "@/i18n/navigation";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type PriceInfo } from "@zoonk/utils/currency";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { getMonthlyEquivalent, getYearlyPriceComparison } from "./billing-prices";
 import { PlanNextStep } from "./for-viewer";
 import { PLAN_CARD_CLASS, PLAN_NAME_ROW_CLASS, PLAN_PRICE_CLASS, PlanPrice } from "./plan-includes";
@@ -48,7 +49,7 @@ export async function PlusLoginLink({
   hasChoice: boolean;
 }) {
   const t = await getExtracted();
-  const locale = await getLocale();
+  const locale = await getAppLocale();
   const login = getPathname({ href: "/login", locale });
   const subscription = getPathname({ href: "/subscription", locale });
 
@@ -123,7 +124,7 @@ async function PlusPrices({
   yearlyPrice: PriceInfo | null;
 }) {
   const t = await getExtracted();
-  const locale = await getLocale();
+  const locale = await getAppLocale();
   const monthlyEquivalent = getMonthlyEquivalent({ yearlyPrice });
 
   if (!monthlyPrice) {
@@ -175,7 +176,7 @@ export async function PlusPlan({
   yearlyPrice: PriceInfo | null;
 }) {
   const t = await getExtracted();
-  const locale = await getLocale();
+  const locale = await getAppLocale();
   const comparison = getYearlyPriceComparison({ monthlyPrice, yearlyPrice });
   const hasChoice = Boolean(monthlyPrice && yearlyPrice);
 

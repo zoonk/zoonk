@@ -9,8 +9,9 @@ import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contrac
 import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
 import { ExplainEnding } from "@zoonk/learn/explain/ending";
 import { ExplainDeeperLink, ExplainWaiting } from "@zoonk/learn/explain/waiting";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { type ComponentProps, startTransition, useEffect, useMemo, useRef, useState } from "react";
 import { retryExplanationAction } from "./explain-actions";
 import { LazyLessonPlayer } from "./lazy-lesson-player";
@@ -97,7 +98,7 @@ function createExplainEnding({
 }
 
 function useExplanationWait(isWritten: boolean) {
-  const locale = useLocale();
+  const locale = useAppLocale();
   const startedAt = useRef<number | null>(null);
 
   useEffect(() => {

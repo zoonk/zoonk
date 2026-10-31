@@ -26,6 +26,7 @@ import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
 import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
 import { type LessonNotWritten } from "@zoonk/learn/lesson-not-written";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { QuestionBlock } from "@zoonk/learn/session/block";
 import { NextStop, type NextStopLesson, type NextStopTap } from "@zoonk/learn/session/next-stop";
 import { SessionSummary, type SummaryGoalKind } from "@zoonk/learn/session/summary";
@@ -38,7 +39,6 @@ import {
   type StudySessionSummary,
 } from "@zoonk/learn/session/types";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { useLocale } from "next-intl";
 import { useCallback, useEffect, useEffectEvent, useTransition } from "react";
 
 const EXIT_HREF = "/today";
@@ -155,7 +155,7 @@ export function SessionNextStopClient({
   userId: string;
 }) {
   const router = useRouter();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const sessionId = day.status === "unstarted" ? null : day.id;
   const navigation = useStudyNavigation(sessionId ?? "");
   const refresh = useCallback(() => router.refresh(), [router]);

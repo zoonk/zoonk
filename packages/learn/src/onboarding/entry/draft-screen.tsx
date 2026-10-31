@@ -5,8 +5,8 @@ import {
   type OnboardingDraftView,
 } from "@zoonk/core/view-models/onboarding/contract";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { useLocale } from "next-intl";
 import { useState, useTransition } from "react";
+import { useAppLocale } from "../../_utils/locale";
 import { type GoalError } from "../goal-errors";
 import {
   type AttachedSource,
@@ -47,7 +47,7 @@ function InstrumentDraft({
   instrument: string;
   routes: OnboardingRoutes;
 }) {
-  const locale = useLocale();
+  const locale = useAppLocale();
   const { createMusicianship } = useDraftGoals(actions);
   const [waitlist, setWaitlist] = useState<WaitlistOutcome | null>(null);
   const [isJoining, startJoining] = useTransition();

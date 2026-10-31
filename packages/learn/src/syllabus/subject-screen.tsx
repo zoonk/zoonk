@@ -8,7 +8,7 @@ import {
   DetailHeroText,
   DetailTitle,
 } from "@zoonk/ui/components/detail";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import {
   DetailAside,
   DetailContent,
@@ -23,7 +23,6 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
-import { useFormatter } from "../_utils/formatter";
 import { ReportProblemMenu } from "../feedback/content-feedback-menu";
 import { LearnPageBar } from "../shell/learn-bar";
 import { SubjectAside, SubjectCoverage } from "./subject-aside";

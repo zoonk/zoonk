@@ -1,6 +1,7 @@
+import { getAppLocale } from "@/i18n/locale";
 import { type Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import "@zoonk/ui/globals.css";
 
@@ -16,7 +17,7 @@ function AuthBackground() {
 }
 
 async function AuthDocument({ children }: LayoutProps<"/auth">) {
-  const locale = await getLocale();
+  const locale = await getAppLocale();
 
   return (
     <html lang={locale}>

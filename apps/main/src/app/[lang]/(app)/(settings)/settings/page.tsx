@@ -1,4 +1,5 @@
 import { UserAvatar } from "@/app/[lang]/(app)/(catalog)/_components/user-avatar";
+import { getAppLocale } from "@/i18n/locale";
 import { getMenu } from "@/lib/menu";
 import { getCurrentUserMemory } from "@zoonk/core/memory/get";
 import { getLearningProfile } from "@zoonk/core/profile/get";
@@ -15,7 +16,7 @@ import { Page, PageHeader, PageHeaderContent, PageTitle } from "@zoonk/learn/pag
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { LOCALE_LABELS, isValidLocale } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { SettingsHubLists } from "../_components/settings-links";
 import { getSettingsPagesShown } from "../_components/settings-pages-shown";
@@ -50,7 +51,7 @@ async function AccountRow() {
 }
 
 async function SettingsHubContent() {
-  const locale = await getLocale();
+  const locale = await getAppLocale();
 
   const [shown, profile, memory] = await Promise.all([
     getSettingsPagesShown(),

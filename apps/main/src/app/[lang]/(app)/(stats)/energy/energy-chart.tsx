@@ -1,4 +1,4 @@
-import { getFormatter } from "@/i18n/formatter";
+import { getAppLocale } from "@/i18n/locale";
 import { type EnergyDay } from "@zoonk/core/progress/energy";
 import {
   ContributionCalendar,
@@ -26,7 +26,7 @@ import {
 } from "@zoonk/utils/contribution-calendar";
 import { getFormattingLocale } from "@zoonk/utils/locale";
 import { formatMetricPercent } from "@zoonk/utils/number";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted, getFormatter } from "next-intl/server";
 import { getProgressDayFormatter } from "../_components/progress-insight-date-label";
 import { getEnergyCalendarIntensity } from "./_utils/energy-calendar-intensity";
 
@@ -117,7 +117,7 @@ async function EnergyLegend() {
 export async function EnergyChart({ days }: { days: EnergyDay[] }) {
   const t = await getExtracted();
   const format = await getFormatter();
-  const locale = await getLocale();
+  const locale = await getAppLocale();
 
   const keyboardStartDate = getContributionCalendarKeyboardStartDate({
     days,

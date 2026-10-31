@@ -1,6 +1,5 @@
 "use client";
 
-import { useFormatter } from "@zoonk/learn/formatter";
 import { MomentReadouts } from "@zoonk/learn/moment-readouts";
 import { DayMoment } from "@zoonk/learn/session/day-moment";
 import { FailedMoment } from "@zoonk/learn/session/failed-moment";
@@ -16,7 +15,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { type LessonCompletionSlotProps, useLessonPlayerConfig } from "../lesson-player-context";
 
 function CompletionReadouts({

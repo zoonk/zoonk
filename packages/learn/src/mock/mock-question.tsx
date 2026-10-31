@@ -5,8 +5,9 @@ import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { InputGroup, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { formatLocalizedNumber } from "@zoonk/utils/localized-number";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useId } from "react";
+import { useAppLocale } from "../_utils/locale";
 import { useWritingName } from "../essay/essay-labels";
 import { EssayWordCount } from "../essay/essay-word-count";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
@@ -21,7 +22,7 @@ const MAX_TYPED_ANSWER = 500;
 const NUMBER_DIGITS = 4;
 
 function MockNumberAnswer({ question }: { question: MockQuestion }) {
-  const locale = useLocale();
+  const locale = useAppLocale();
   const { runner } = useMockScreen();
   const locked = useLocked();
   const answer = runner.drafts[question.itemId]?.answer ?? null;

@@ -1,6 +1,6 @@
 "use client";
 
-import { type SupportedLocale } from "@zoonk/utils/locale";
+import { type SupportedLocale, getFormattingLocale } from "@zoonk/utils/locale";
 import dynamic from "next/dynamic";
 
 /** Imported statically, every locale's catalogs would load on every page. */
@@ -22,5 +22,10 @@ export function LearnMessages({
   timeZone: string;
 }) {
   const Provider = PROVIDERS[locale];
-  return <Provider timeZone={timeZone}>{children}</Provider>;
+
+  return (
+    <Provider locale={getFormattingLocale(locale)} timeZone={timeZone}>
+      {children}
+    </Provider>
+  );
 }

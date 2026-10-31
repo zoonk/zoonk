@@ -1,10 +1,9 @@
 import { getProgressDayCountLabel } from "@/components/progress/progress-day-count-label";
-import { getFormatter } from "@/i18n/formatter";
 import { type EnergyData } from "@zoonk/core/progress/energy";
 import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
 import { formatMetricPercent } from "@zoonk/utils/number";
 import { BatteryFullIcon, GaugeIcon, ZapIcon } from "lucide-react";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, getFormatter } from "next-intl/server";
 import { STAT_PAGE_TILES_CLASS, StatsLine } from "../_components/stats-tiles";
 
 const PERCENT = 100;

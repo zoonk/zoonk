@@ -6,6 +6,7 @@ import { openNextStudyBlockAction } from "@/lib/session/study-session-actions";
 import { useGoToStudyDestination } from "@/lib/session/use-study-navigation";
 import { useContentFeedback } from "@zoonk/learn/feedback";
 import { useGoalSwitchTransition } from "@zoonk/learn/goal-switcher";
+import { useAppLocale } from "@zoonk/learn/locale";
 import {
   Command,
   CommandDialog,
@@ -21,7 +22,7 @@ import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search"
 import { listenForCommandPaletteOpen } from "@zoonk/ui/lib/command-palette-event";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { usePaletteGroups } from "./command-palette-groups";
@@ -110,7 +111,7 @@ export function CommandPalette(props: CommandPaletteProps) {
 
 function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const contentFeedback = useContentFeedback();
   const [, startGoalSwitch] = useGoalSwitchTransition();
   const continueSession = useContinueFromPalette();

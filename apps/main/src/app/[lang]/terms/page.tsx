@@ -1,6 +1,7 @@
 import { LegalDocument } from "@/components/public/legal-document";
+import { getAppLocale } from "@/i18n/locale";
 import { type Metadata } from "next";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 
 export const ensureStatic = "navigation";
 
@@ -16,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Terms() {
-  const locale = await getLocale();
+  const locale = await getAppLocale();
   // oxlint-disable-next-line typescript/no-unsafe-assignment -- dynamic import returns any
   const { default: TermsOfService } = await import(`./${locale}.mdx`);
 

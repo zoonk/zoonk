@@ -1,9 +1,8 @@
 "use client";
 
 import { type ScorePerformance } from "@zoonk/core/progress/score-performance";
-import { useFormatter } from "@zoonk/learn/formatter";
 import { formatMetricPercent } from "@zoonk/utils/number";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { ProgressChartFigure } from "../_components/progress-chart-figure";
 import { type SerializedScoreDataPoint } from "./score-chart";
 

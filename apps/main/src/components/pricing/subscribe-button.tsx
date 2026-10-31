@@ -1,11 +1,12 @@
 "use client";
 
 import { trackEvent } from "@zoonk/core/analytics/client";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { Loader2Icon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { PLUS_CTA_CLASS } from "./plus-cta";
 
@@ -35,7 +36,7 @@ function readBillingPeriod(billingSwitch: string): "monthly" | "yearly" {
 /** The auth client loads on the tap, so the pricing page doesn't ship it up front. */
 export function SubscribeButton({ billingSwitch }: { billingSwitch: string }) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const [requestState, setRequestState] = useState<RequestState>("idle");
   const isLoading = requestState === "loading";
 

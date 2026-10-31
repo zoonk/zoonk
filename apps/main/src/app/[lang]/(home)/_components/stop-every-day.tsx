@@ -21,14 +21,13 @@ import {
   VariantSwitch,
   VariantSwitchOption,
 } from "@/components/public/variant-switch";
-import { getFormatter } from "@/i18n/formatter";
 import { getMinutesFormatter } from "@/lib/public/public-labels";
 import { DiffLines } from "@zoonk/learn/diff-lines";
 import { KindDot } from "@zoonk/learn/kind-tile";
 import { DoneMark } from "@zoonk/learn/status-mark";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CalendarClockIcon } from "lucide-react";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, getFormatter } from "next-intl/server";
 import { getExamplePlans } from "./example-plans";
 import { GoalMeasure } from "./goal-measure";
 import { getTomorrows } from "./goal-tomorrows";

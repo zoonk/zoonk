@@ -3,9 +3,10 @@
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { type WebPlusCancellationRequest } from "@zoonk/core/subscriptions/web-plus-cancellation-contract";
 import { ListGroup } from "@zoonk/learn/list";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { SettingRow } from "@zoonk/learn/setting-rows";
 import { Input } from "@zoonk/ui/components/input";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import {
   type CancelChoice,
@@ -64,7 +65,7 @@ function DeclarationReceipt({ receipt }: { receipt: Receipt }) {
 
 export function CancelWithoutLoginForm() {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const emailHintId = useId();
   const linked = useLinkedChoice();
   const [pending, startTransition] = useTransition();

@@ -2,8 +2,9 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { FileTextIcon, XIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { useAppLocale } from "../../_utils/locale";
 import { type GoalError } from "../goal-errors";
 import {
   type AttachedSource,
@@ -123,7 +124,7 @@ export function AttachableGoalEntry({
   onSubmit: (goal: string) => void;
   routes: OnboardingRoutes;
 }) {
-  const locale = useLocale();
+  const locale = useAppLocale();
   const [open, setOpen] = useState(false);
 
   return (

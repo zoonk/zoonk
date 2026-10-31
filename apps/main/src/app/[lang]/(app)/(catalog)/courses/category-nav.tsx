@@ -1,12 +1,13 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { SubjectGlyph } from "@zoonk/learn/subject-label";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type CourseCategory } from "@zoonk/utils/categories";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useSelectedLayoutSegment } from "next/navigation";
 
 type CategoryLink = { courseCount: number; key: CourseCategory; label: string };
@@ -34,7 +35,7 @@ type CategoryNavProps = { categories: CategoryLink[]; openCategory: string | nul
  */
 function useCategoryLinks({ categories, openCategory, total }: CategoryNavProps) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
 
   return [
     {

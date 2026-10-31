@@ -1,12 +1,13 @@
 "use client";
 
 import { type ChordQuality } from "@zoonk/core/library/activities/music";
-import { useExtracted, useLocale } from "next-intl";
+import { useAppLocale } from "@zoonk/learn/locale";
+import { useExtracted } from "next-intl";
 import { displayNoteName } from "./music-notes";
 
 export function useNoteNames() {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
 
   function display(name: string): string {
     return displayNoteName(name.replace(/\d$/u, ""), locale);

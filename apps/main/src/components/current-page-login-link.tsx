@@ -1,14 +1,14 @@
 "use client";
 
 import { getPathname, usePathname } from "@/i18n/navigation";
-import { useLocale } from "next-intl";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { useSearchParams } from "next/navigation";
 import { type ComponentProps, Suspense } from "react";
 
 type LoginLinkProps = Omit<ComponentProps<"a">, "href">;
 
 function CurrentPageLink(props: LoginLinkProps) {
-  const locale = useLocale();
+  const locale = useAppLocale();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const loginPath = getPathname({ href: "/login", locale });
@@ -25,7 +25,7 @@ function CurrentPageLink(props: LoginLinkProps) {
 }
 
 export function CurrentPageLoginLink(props: LoginLinkProps) {
-  const locale = useLocale();
+  const locale = useAppLocale();
 
   return (
     <Suspense

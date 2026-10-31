@@ -1,7 +1,8 @@
 "use client";
 
+import { useAppLocale } from "@zoonk/learn/locale";
 import { Pencil } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import {
@@ -38,7 +39,7 @@ export function CodeRunnerActivity({
   phase,
 }: CodeRunnerProps) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const { fields } = content;
   const isChecked = phase === "checked";
   const isExploring = phase === "explore";

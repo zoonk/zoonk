@@ -3,9 +3,9 @@
 import { useRouter } from "@/i18n/navigation";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { type WebPlusCancellationChoice } from "@zoonk/core/subscriptions/web-plus-cancellation-contract";
-import { useFormatter } from "@zoonk/learn/formatter";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { formatPrice } from "@zoonk/utils/currency";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { useState, useTransition } from "react";
 import { RefundOffer } from "../refund-offer";
 import {
@@ -31,7 +31,7 @@ function renderDate(chunks: React.ReactNode) {
 
 function RefundSentence({ receipt }: { receipt: Receipt }) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
 
   if (!receipt.refund) {
     return null;
@@ -115,7 +115,7 @@ export function CancelPlusForm({
 }) {
   const t = useExtracted();
   const format = useFormatter();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const router = useRouter();
   const linked = useLinkedChoice();
   const [pending, startTransition] = useTransition();

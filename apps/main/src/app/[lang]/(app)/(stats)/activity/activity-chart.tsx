@@ -1,3 +1,4 @@
+import { getAppLocale } from "@/i18n/locale";
 import { type LearningActivityDay } from "@zoonk/core/progress/get-learning-activity";
 import {
   ContributionCalendar,
@@ -24,7 +25,7 @@ import {
   groupContributionCalendarDaysByWeek,
 } from "@zoonk/utils/contribution-calendar";
 import { getFormattingLocale } from "@zoonk/utils/locale";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { getProgressDayFormatter } from "../_components/progress-insight-date-label";
 import { getActivityCalendarIntensity } from "./_utils/activity-calendar-intensity";
 
@@ -125,7 +126,7 @@ async function ActivityLegend() {
 /** Dates use DailyProgress's date-only UTC convention, so a stored local date never shifts as it's formatted. */
 export async function ActivityChart({ days }: { days: LearningActivityDay[] }) {
   const t = await getExtracted();
-  const locale = await getLocale();
+  const locale = await getAppLocale();
 
   const monthFormatter = new Intl.DateTimeFormat(getFormattingLocale(locale), {
     month: "short",

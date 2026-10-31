@@ -11,8 +11,8 @@ import {
   ConversationScreen,
   type TappedCallAudio,
 } from "@zoonk/learn/language/conversation";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { useLocale } from "next-intl";
 import { useMemo } from "react";
 import {
   checkObjectivesAction,
@@ -69,7 +69,7 @@ export function ConversationClient({
   fromMock: string | null;
 }) {
   const router = useRouter();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const startConversation = useStartLanguageConversation(fromExam ? { from: "exam" } : {});
   const { examTask, goalId, id, kind } = conversation;
   const examTaskKey = examTask && examTask.sectionId === null ? examTask.task.key : null;

@@ -1,4 +1,3 @@
-import { getFormatter } from "@/i18n/formatter";
 import { type BeltColorOption, getBeltColors } from "@/lib/belt-colors";
 import { type BeltLevelDetails } from "@zoonk/core/progress/get-belt-level";
 import { PageSectionTitle } from "@zoonk/learn/page";
@@ -8,7 +7,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BELT_COLORS_ORDER, type BeltColor, LEVELS_PER_COLOR } from "@zoonk/utils/belt-level";
 import { formatWholeNumber } from "@zoonk/utils/number";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, getFormatter } from "next-intl/server";
 import { BeltRack } from "./belt-rack";
 
 const BELT_PROGRESSION_TITLE_ID = "belt-progression-title";

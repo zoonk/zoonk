@@ -1,7 +1,7 @@
 "use client";
 
 import { type TodayView } from "@zoonk/core/view-models/today/get";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
 import {
   ListRow,
@@ -11,7 +11,6 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "../_components/list-group";
-import { useFormatter } from "../_utils/formatter";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatDuration } from "../_utils/time-format";
 import { useTodayScreen } from "./today-context";

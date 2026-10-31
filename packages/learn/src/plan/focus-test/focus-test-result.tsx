@@ -2,7 +2,7 @@
 
 import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { useState, useTransition } from "react";
 import {
   StepCard,
@@ -14,7 +14,6 @@ import {
   StepTitle,
 } from "../../_components/step-card";
 import { Steps } from "../../_components/steps";
-import { useFormatter } from "../../_utils/formatter";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { UndoButton } from "../../questions/undo-button";
 import { DayMoment, StepWithDayMoment } from "../../session/day-moment";

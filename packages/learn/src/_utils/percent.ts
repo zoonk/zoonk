@@ -1,7 +1,7 @@
 "use client";
 
 import { formatGoalProgress } from "@zoonk/utils/number";
-import { useFormatter } from "./formatter";
+import { useFormatter } from "next-intl";
 import { formatProgressShare } from "./progress-share";
 
 /** Takes a share from 0 to 1. */

@@ -2,11 +2,12 @@
 
 import { type PassMarks } from "@zoonk/core/library/exams/pass-marks";
 import { getBaseLanguage } from "@zoonk/utils/languages";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useAppLocale } from "./locale";
 
 export function usePassMarksNote(passMarks: PassMarks | null): string | null {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
 
   if (!passMarks || passMarks.language === getBaseLanguage(locale)) {
     return null;

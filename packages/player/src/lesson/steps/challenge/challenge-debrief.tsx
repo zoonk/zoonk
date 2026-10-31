@@ -3,11 +3,12 @@
 import { type ChallengeStep } from "@zoonk/core/library/challenges/graph";
 import { getChallengeDebrief } from "@zoonk/core/library/challenges/run";
 import { CHIP_CLASS } from "@zoonk/learn/chip";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { PageSectionLabel } from "@zoonk/learn/page";
 import { cn } from "@zoonk/ui/lib/utils";
 import { formatDuration } from "@zoonk/utils/duration";
 import { CheckIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { PlayerReadScene } from "../../../components/player-read-scene";
 import { LessonRichText } from "../../_components/lesson-rich-text";
 import { type StepOf } from "../lesson-step-view-props";
@@ -97,7 +98,7 @@ export function ChallengeDebriefView({
   steps: ChallengeStep[];
 }) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
   const { fill } = names;
   const debrief = getChallengeDebrief(content, steps);
   const ending = steps.at(-1)?.choice.next;

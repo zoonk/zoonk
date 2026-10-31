@@ -1,11 +1,10 @@
-import { getFormatter } from "@/i18n/formatter";
 import { BigQuantity } from "@zoonk/learn/big-quantity";
 import { LevelLadder } from "@zoonk/learn/level-ladder";
 import { Meter, MeterFill } from "@zoonk/learn/meter";
 import { PAGE_SECTION_TITLE_CLASS } from "@zoonk/learn/page";
 import { LessonCells } from "@zoonk/learn/progress-cells";
 import { formatGoalProgress } from "@zoonk/utils/number";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, getFormatter } from "next-intl/server";
 import { type ExampleGoal, getExampleSet } from "./landing-examples";
 import { type DayState } from "./tomorrow-steps";
 

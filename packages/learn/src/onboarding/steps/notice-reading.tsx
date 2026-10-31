@@ -13,7 +13,8 @@ import {
 } from "@zoonk/ui/components/generation-timeline";
 import { useAnimatedProgress } from "@zoonk/ui/hooks/animated-progress";
 import { useTickCount } from "@zoonk/ui/hooks/tick-count";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useAppLocale } from "../../_utils/locale";
 import { getDetailLine } from "../../generation/_utils/detail-line";
 import {
   OnboardingColumn,
@@ -58,7 +59,7 @@ export function NoticeReading({
   lastNotice: boolean;
 }) {
   const t = useExtracted();
-  const locale = useLocale();
+  const locale = useAppLocale();
 
   const title = lastNotice
     ? t("Reading the last edition's official documents")

@@ -2,7 +2,7 @@
 
 import { getBreakEven } from "@zoonk/core/exams/net-score";
 import { FlagIcon, GaugeIcon, ScaleIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import {
   ListGroup,
   ListRow,
@@ -13,7 +13,6 @@ import {
   ListRowTitle,
 } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
-import { useFormatter } from "../_utils/formatter";
 import { useFormatShare } from "../_utils/percent";
 import { usePassMarksNote } from "../_utils/use-pass-marks-note";
 import { useExamScreen } from "./exam-context";

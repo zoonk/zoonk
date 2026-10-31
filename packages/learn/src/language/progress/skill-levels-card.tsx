@@ -4,9 +4,8 @@ import { type LanguageProgressView } from "@zoonk/core/view-models/language/cont
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { ArrowDownIcon, ArrowUpIcon, TrendingUpIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { SectionLabel } from "../../_components/section-label";
-import { useFormatter } from "../../_utils/formatter";
 import { useFormatIsoDate } from "../../_utils/iso-date";
 import { getLevelShare, listRises } from "../_utils/level-scale";
 import { useSkillName } from "../_utils/use-skill-name";

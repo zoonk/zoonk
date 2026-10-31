@@ -1,5 +1,5 @@
 import { playerMessages } from "@zoonk/player/messages";
-import { LOCALE_COOKIE } from "@zoonk/utils/locale";
+import { LOCALE_COOKIE, getFormattingLocale } from "@zoonk/utils/locale";
 import { getLocaleFromRequest } from "@zoonk/utils/locale-request";
 import { getRequestConfig } from "next-intl/server";
 import { cookies, headers } from "next/headers";
@@ -24,7 +24,7 @@ export default getRequestConfig(async ({ locale: overrideLocale }) => {
 
   // The tutor's suggestions are worded once, in the player's catalog, for every app.
   return {
-    locale,
+    locale: getFormattingLocale(locale),
     messages: { ...translations.default, tutorSuggestions: player.tutorSuggestions },
   };
 });

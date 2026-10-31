@@ -2,11 +2,10 @@
 
 import { type SpeakingTaskView } from "@zoonk/core/language/exam-speaking/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { useRef, useState, useSyncExternalStore } from "react";
 import { formatClock } from "../../_utils/clock";
 import { deviceStorage } from "../../_utils/device-storage";
-import { useFormatter } from "../../_utils/formatter";
 import { useFormatDuration } from "../../_utils/time-format";
 import { useTimeLeft } from "../../_utils/use-time-left";
 

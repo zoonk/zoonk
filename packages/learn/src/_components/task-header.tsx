@@ -3,8 +3,9 @@
 import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
 import { useScrolled } from "@zoonk/ui/hooks/scrolled";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useLocale } from "next-intl";
+import { getFormattingLocale } from "@zoonk/utils/locale";
 import { useSyncExternalStore } from "react";
+import { useAppLocale } from "../_utils/locale";
 import { TASK_COLUMN_CLASS, TASK_HEADER_BAR_CLASS, TASK_HEADER_SIDE_CLASS } from "./task-layout";
 
 export function TaskHeader({ className, ...props }: React.ComponentProps<"div">) {
@@ -64,14 +65,14 @@ export function TaskHeaderTitle({
 }
 
 export function TaskHeaderProgress({ label, value }: { label: string; value: number }) {
-  const locale = useLocale();
+  const locale = useAppLocale();
 
   return (
     <ProgressRoot
       aria-label={label}
       className={cn(TASK_COLUMN_CLASS, "gap-0 pb-1")}
       data-slot="task-header-progress"
-      locale={locale}
+      locale={getFormattingLocale(locale)}
       value={Math.min(100, Math.max(0, value))}
     >
       <ProgressTrack className="bg-surface-3 h-1 rounded-xs">
@@ -105,14 +106,14 @@ export function TaskHeaderSegments({
   value: number;
   weights?: readonly number[];
 }) {
-  const locale = useLocale();
+  const locale = useAppLocale();
 
   return (
     <ProgressRoot
       aria-label={label}
       className={cn(TASK_COLUMN_CLASS, "pb-1")}
       data-slot="task-header-segments"
-      locale={locale}
+      locale={getFormattingLocale(locale)}
       value={Math.min(100, Math.max(0, value))}
     >
       <span

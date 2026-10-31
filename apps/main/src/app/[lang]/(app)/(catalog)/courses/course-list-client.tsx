@@ -5,6 +5,7 @@ import { CourseMark } from "@/components/catalog/course-mark";
 import { Link } from "@/i18n/navigation";
 import { getTotalDuration } from "@/lib/public/total-duration";
 import { type CourseWithOrg } from "@zoonk/core/courses/list";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { SubjectLabel, getSubject } from "@zoonk/learn/subject-label";
 import { useFormatDuration } from "@zoonk/learn/time-format";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
@@ -20,7 +21,7 @@ import { useInfiniteList } from "@zoonk/ui/hooks/infinite-list";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { getFirstSentence } from "@zoonk/utils/string";
 import { Loader2Icon, NotebookPenIcon, PlusIcon, RefreshCwIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { loadMoreCourses } from "./actions";
 import {
   COURSE_CELL_CLASS,
@@ -72,7 +73,7 @@ function CourseItem({
   course: CourseWithOrg;
   subjectNames: Readonly<Record<string, string>>;
 }) {
-  const locale = useLocale();
+  const locale = useAppLocale();
   const subject = getSubject(course.categories);
   const subjectName = subject === category ? null : subjectNames[subject];
 

@@ -1,5 +1,6 @@
 "use server";
 
+import { getAppLocale } from "@/i18n/locale";
 import { redirect } from "@/i18n/navigation";
 import { startGoalWork } from "@/lib/goals/start-goal-work";
 import {
@@ -14,7 +15,6 @@ import { startCourseGoal } from "@zoonk/core/goals/start-course";
 import { type OnboardingOwnLevel } from "@zoonk/core/view-models/onboarding/contract";
 import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
 import { isUuid } from "@zoonk/utils/uuid";
-import { getLocale } from "next-intl/server";
 import { COURSE_START_ERROR_PARAM } from "./course/course-start-params";
 import { getGoalLimitReason } from "./goal-limit-reason";
 
@@ -104,7 +104,7 @@ export async function startCourseFormAction(formData: FormData): Promise<void> {
   const chapterId = readField(formData, CHAPTER_PARAM);
   const minutes = readDailyMinutes(readField(formData, MINUTES_PARAM) ?? undefined);
 
-  const locale = await getLocale();
+  const locale = await getAppLocale();
   const outcome = await startCourseAction({ chapterId, courseId, dailyMinutes: minutes });
 
   redirect({

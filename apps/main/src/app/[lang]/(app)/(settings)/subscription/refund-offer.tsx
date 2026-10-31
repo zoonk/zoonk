@@ -1,10 +1,9 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
-import { useFormatter } from "@zoonk/learn/formatter";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 
 /** Stopping the renewal keeps the 14-day refund open, so it stays one tap away. */
 export function RefundOffer({ until }: { until: Date }) {
