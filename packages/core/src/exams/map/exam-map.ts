@@ -7,7 +7,9 @@ import {
   orderByQuestions,
 } from "../../library/exams/subject-questions";
 import { namesMatch } from "../_utils/name-match";
+import { getSubjectShareFallback } from "../_utils/subject-share-fallback";
 import { listCountedSubjects } from "../choices/exam-choices";
+import { isWrittenSubject } from "../mocks/written-subject";
 
 type FrequencyLevel = TopicFrequency[number]["level"];
 
@@ -60,6 +62,26 @@ export function getSubjectShare({
   );
 
   return points !== null && total > 0 ? points / total : null;
+}
+
+function getMapShares(structure: ExamStructure): (number | null)[] {
+  const shares = structure.subjects.map((subject) => getSubjectShare({ structure, subject }));
+
+  const hasUnknownWritten = structure.subjects.some(
+    (subject, index) => shares[index] === null && isWrittenSubject({ structure, subject }),
+  );
+
+  if (!hasUnknownWritten) {
+    return shares;
+  }
+
+  const counted = listCountedSubjects(structure.subjects).map(
+    (subject) => shares[structure.subjects.indexOf(subject)] ?? null,
+  );
+
+  const fallback = getSubjectShareFallback(counted);
+  const total = counted.reduce<number>((sum, share) => sum + (share ?? fallback), 0);
+  return shares.map((share) => (total > 0 ? (share ?? fallback) / total : null));
 }
 
 function toTopics({
@@ -124,8 +146,10 @@ export function buildExamMap({
   skills: readonly ExamMapSkill[];
   structure: ExamStructure;
 }): ExamMap {
+  const shares = getMapShares(structure);
+
   const subjects = orderByQuestions(
-    structure.subjects.map((subject) => {
+    structure.subjects.map((subject, index) => {
       const topics = toTopics({ frequency, subject });
       const top = topics.find((topic) => topic.frequency !== null)?.frequency ?? null;
 
@@ -135,7 +159,7 @@ export function buildExamMap({
         level: toLevel({ skills, subject: subject.name }),
         name: subject.name,
         questions: getSubjectQuestions({ structure, subject }),
-        share: getSubjectShare({ structure, subject }),
+        share: shares[index] ?? null,
         topics,
       };
     }),

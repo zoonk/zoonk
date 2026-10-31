@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getSubjectPoints } from "../../library/exams/subject-points";
-import { getSubjectShare } from "./exam-map";
+import { buildExamMap, getSubjectShare } from "./exam-map";
 
 const citation = { passage: "…", sourceId: "notice" };
 const LANGUAGES = "Linguagens, Códigos e suas Tecnologias";
@@ -152,5 +152,39 @@ describe("mixed paper weights", () => {
 
     const essay = structure.subjects.find((item) => item.name === "Essay");
     expect(essay && getSubjectPoints({ structure, subject: essay })).toBeNull();
+  });
+});
+
+describe("mixed paper map shares", () => {
+  it("keeps a visible share for an essay whose point value is unknown", () => {
+    const structure = scored({
+      scoring: { parts: [{ ...part("Paper", 50), maxPoints: 100 }] },
+      subjects: [{ ...subject("Objective", 50), group: "Paper" }, ...grouped("Paper", ["Essay"])],
+    });
+
+    const map = buildExamMap({ frequency: [], skills: [], structure });
+    expect(map.subjects.map((item) => item.share)).toStrictEqual([0.5, 0.5]);
+  });
+
+  it("uses the average known share for the essay while retaining relative objective weights", () => {
+    const structure = scored({
+      scoring: {},
+      subjects: [subject("A", 80), subject("B", 20), ...grouped("Paper", ["Essay"])],
+    });
+
+    const map = buildExamMap({ frequency: [], skills: [], structure });
+    expect(map.subjects.map((item) => item.share)).toStrictEqual([0.8 / 1.5, 0.2 / 1.5, 1 / 3]);
+  });
+
+  it("counts a choice and its nested options once when assuming an essay share", () => {
+    const structure = { ...enem, subjects: [...enem.subjects, ...grouped("Written", ["Essay"])] };
+    const map = buildExamMap({ frequency: [], skills: [], structure });
+    expect(map.subjects.map((item) => item.share)).toStrictEqual([
+      1 / 3,
+      5 / 90 / 1.5,
+      5 / 90 / 1.5,
+      1 / 3,
+      1 / 3,
+    ]);
   });
 });
