@@ -15237,6 +15237,35 @@
         }
       }
     },
+    "Working out what your time covers…" : {
+      "comment" : "While a change to the plan saves, in place of what the time a day covers",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir berechnen, wofür deine Lernzeit reicht…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calculando cuánto puedes cubrir con ese tiempo…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calcul de ce que ton temps d’étude permet de couvrir…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calculando o que dá tempo de estudar…"
+          }
+        }
+      }
+    },
     "Working out when you'd finish…" : {
       "comment" : "While a change to the time saves, in place of when the plan finishes",
       "localizations" : {
@@ -16639,35 +16668,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seu tempo é suficiente para estudar tudo, então recomendamos estudar cada base a fundo."
-          }
-        }
-      }
-    },
-    "Working out what your time covers…" : {
-      "comment" : "While a change to the plan saves, in place of what the time a day covers",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir berechnen, wofür deine Lernzeit reicht…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calculando cuánto puedes estudiar en ese tiempo…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calcul de ce que ton temps d’étude permet de couvrir…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calculando o que dá tempo de estudar…"
           }
         }
       }
