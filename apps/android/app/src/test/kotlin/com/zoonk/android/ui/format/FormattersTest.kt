@@ -67,6 +67,12 @@ class FormattersTest {
     }
 
     @Test
+    fun spanishWritesNumbersTheMexicanWay() {
+        assertEquals("1,234.5", formatNumber(1_234.5, formattingLocale("es")))
+        assertEquals(pt, formattingLocale("pt"))
+    }
+
+    @Test
     fun numbersFollowTheLanguageAndRoundHalfAwayFromZero() {
         assertEquals("1,234.5", formatNumber(1_234.5, en))
         assertEquals("1.234,5", formatNumber(1_234.5, de))

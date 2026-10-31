@@ -74,6 +74,7 @@ import com.zoonk.android.ui.components.LevelBar
 import com.zoonk.android.ui.components.MediaPending
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.formattingLocale
 import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ChoiceAnswer
@@ -206,7 +207,7 @@ private fun ColumnScope.LevelTestIntro(
 private fun InterfaceOffer(language: String) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
     val context = LocalContext.current
-    val own = Locale.forLanguageTag(language)
+    val own = formattingLocale(language)
     val supported = remember(context) { LocaleConfig(context).supportedLocales }
     val translated = supported != null && (0 until supported.size()).any { supported[it].language == own.language }
     if (!translated || own.language == currentLocale().language) return

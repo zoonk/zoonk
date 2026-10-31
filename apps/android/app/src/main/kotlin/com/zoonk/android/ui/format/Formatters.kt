@@ -41,6 +41,9 @@ fun languageName(
         .getInstance(ULocale.forLocale(locale), LocaleDisplayNames.DialectHandling.DIALECT_NAMES)
         .localeDisplayName(ULocale.forLanguageTag(tag))
 
+/** Zoonk writes Spanish the Mexican way (1,234.56), as main does. */
+fun formattingLocale(language: String): Locale = Locale.forLanguageTag(if (language == "es") "es-MX" else language)
+
 /** "a, b and c", as main's `format.list` writes a conjunction. */
 fun formatList(
     items: List<String>,
