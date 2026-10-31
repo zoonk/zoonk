@@ -99,9 +99,6 @@ export function twoChoiceBlueprintFixture() {
 }
 
 export const SPECIALTY = "Especialidade";
-export const AUDIT = "Auditoria";
-export const DATA_SCIENCE = "Tecnologia da Informação – Ciência de Dados";
-export const INFRASTRUCTURE = "Tecnologia da Informação – Infraestrutura de TI";
 export const SOFTWARE = "Tecnologia da Informação – Desenvolvimento de Sistemas";
 
 const SHARED_QUESTIONS = 40;
@@ -142,9 +139,15 @@ export function specialtyBlueprintFixture() {
         subject("Fundamentos de Auditoria Governamental", SHARED_QUESTIONS, {
           group: "Conhecimentos complementares (P2)",
         }),
-        specialty(AUDIT, "Auditoria", ["Auditoria Governamental", "Finanças Públicas"]),
-        specialty(DATA_SCIENCE, "Ciência de Dados", ["Estatística", "Aprendizado de Máquina"]),
-        specialty(INFRASTRUCTURE, "Infraestrutura de TI", ["Redes", "Computação em Nuvem"]),
+        specialty("Auditoria", "Auditoria", ["Auditoria Governamental", "Finanças Públicas"]),
+        specialty("Tecnologia da Informação – Ciência de Dados", "Ciência de Dados", [
+          "Estatística",
+          "Aprendizado de Máquina",
+        ]),
+        specialty("Tecnologia da Informação – Infraestrutura de TI", "Infraestrutura de TI", [
+          "Redes",
+          "Computação em Nuvem",
+        ]),
         specialty(SOFTWARE, "Desenvolvimento de Sistemas", [
           "Engenharia de Software",
           "Arquitetura de Sistemas",
