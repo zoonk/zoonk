@@ -15,11 +15,11 @@ export const DEFAULT_EXAMPLE_GOAL: ExampleGoal = "exam";
 
 export const GOAL_SWITCH = "landing-goal";
 
-/** A page never suggests learning the language it's written in, so English pages move to Madrid to speak Spanish. */
+/** A page never suggests learning the language it's written in, so English pages move to Mexico City to speak Spanish. */
 export type ExampleSet = {
   exam: "enem" | "sat";
   market: "brazil" | "global";
-  move: "london" | "madrid";
+  move: "london" | "mexico-city";
 };
 
 export async function getExampleSet(): Promise<ExampleSet> {
@@ -28,7 +28,7 @@ export async function getExampleSet(): Promise<ExampleSet> {
   return {
     exam: language === "pt" ? "enem" : "sat",
     market: language === "pt" ? "brazil" : "global",
-    move: language === "en" ? "madrid" : "london",
+    move: language === "en" ? "mexico-city" : "london",
   };
 }
 

@@ -2240,10 +2240,11 @@ msgctxt "CsR4zq"
 msgid "SAT in {month}"
 msgstr "SAT em {month}"
 
+#. An example goal's name. Use your language's name for Mexico City.
 #: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "7iOCQZ"
-msgid "Spanish for Madrid"
-msgstr "Espanhol para Madri"
+msgctxt "3parBE"
+msgid "Spanish for Mexico City"
+msgstr "Espanhol para a Cidade do México"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "PnbhyK"
@@ -2486,10 +2487,11 @@ msgctxt "XmrixE"
 msgid "get promoted to data analyst by {month}"
 msgstr "ser promovido a analista de dados até {month}"
 
+#. An example goal a learner might type; {month} is a month name. Use your language's name for Mexico City.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "Kiy_DO"
-msgid "speak Spanish for my move to Madrid in {month}"
-msgstr "falar espanhol para me mudar para Madrid em {month}"
+msgctxt "vF1uwi"
+msgid "speak Spanish for my move to Mexico City in {month}"
+msgstr "falar espanhol para quando eu me mudar para a Cidade do México em {month}"
 
 #. An example goal a learner might type; {month} is a month name. Use your language's name for London.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
@@ -2969,15 +2971,16 @@ msgctxt "TCZIsQ"
 msgid "Real problem · Sales by region"
 msgstr "Problema real · Vendas por região"
 
+#. The buddy answers a learner of Spanish. Keep only “departamento” and “apartamento” in Spanish, the words being taught; translate the rest, Mexico and Mexico City included.
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "3Yv6Eb"
-msgid "Both work. In Spain people usually say “piso” for a flat in a building. “Apartamento” often means a small one, like a holiday rental, so “piso” sounds more natural when you're renting in Madrid."
-msgstr "Os dois funcionam. Na Espanha, as pessoas costumam dizer “piso” para um apartamento em um prédio. “Apartamento” muitas vezes significa um imóvel pequeno, como um aluguel de temporada, então “piso” soa mais natural quando você procura um imóvel para alugar em Madri."
+msgctxt "720M2K"
+msgid "Both work. In Mexico people usually say “departamento” for a flat in a building, so it sounds more natural when you're renting in Mexico City."
+msgstr "As duas formas funcionam. No México, as pessoas costumam dizer “departamento” para um apartamento em um prédio, então soa mais natural quando você vai alugar um imóvel na Cidade do México."
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "iyPucV"
-msgid "Why “piso” and not “apartamento”?"
-msgstr "Por que “piso” e não “apartamento”?"
+msgctxt "L7mfuM"
+msgid "Why “departamento” and not “apartamento”?"
+msgstr "Por que “departamento” e não “apartamento”?"
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "00sc5X"

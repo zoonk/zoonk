@@ -28,7 +28,7 @@ function useGoalExamples(): GoalExample[] {
         description:
           "Each branch names its own exam: keep that exam in it, never another country's.",
         message:
-          "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} pau {Pass the PAU} other {Pass the SAT}}",
+          "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} other {Pass the SAT}}",
         values: { exam },
       }),
     },

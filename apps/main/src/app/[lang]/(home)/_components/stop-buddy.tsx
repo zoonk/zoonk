@@ -77,15 +77,18 @@ async function getExchanges(): Promise<Record<ExampleGoal, Exchange>> {
       quote: `SELECT ${sql.region}, SUM(${sql.sales}) AS total FROM ${sql.orders}…`,
     },
     move:
-      set.move === "madrid"
+      set.move === "mexico-city"
         ? {
-            answer: t(
-              "Both work. In Spain people usually say “piso” for a flat in a building. “Apartamento” often means a small one, like a holiday rental, so “piso” sounds more natural when you're renting in Madrid.",
-            ),
-            ask: t("Why “piso” and not “apartamento”?"),
+            answer: t({
+              description:
+                "The buddy answers a learner of Spanish. Keep only “departamento” and “apartamento” in Spanish, the words being taught; translate the rest, Mexico and Mexico City included.",
+              message:
+                "Both work. In Mexico people usually say “departamento” for a flat in a building, so it sounds more natural when you're renting in Mexico City.",
+            }),
+            ask: t("Why “departamento” and not “apartamento”?"),
             context: t("Lesson · Calling about an apartment"),
             lang: "es",
-            quote: "¿Puedo ver el piso el sábado?",
+            quote: "¿Puedo ver el departamento el sábado?",
           }
         : {
             answer: t({

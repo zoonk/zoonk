@@ -21,8 +21,13 @@ async function getGoalExamples(): Promise<Record<ExampleGoal, string>> {
         : t("get ready for the SAT in {month}", { month: month("exam") }),
     job: t("get promoted to data analyst by {month}", { month: month("job") }),
     move:
-      set.move === "madrid"
-        ? t("speak Spanish for my move to Madrid in {month}", { month: month("move") })
+      set.move === "mexico-city"
+        ? t({
+            description:
+              "An example goal a learner might type; {month} is a month name. Use your language's name for Mexico City.",
+            message: "speak Spanish for my move to Mexico City in {month}",
+            values: { month: month("move") },
+          })
         : t({
             description:
               "An example goal a learner might type; {month} is a month name. Use your language's name for London.",

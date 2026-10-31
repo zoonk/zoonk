@@ -45,10 +45,10 @@ const TARGET_SENTENCES = {
     next: "What do the bills include?",
     text: "Can I see the flat on Saturday?",
   },
-  madrid: {
+  "mexico-city": {
     language: "es",
-    next: "¿Qué incluyen los gastos?",
-    text: "¿Puedo ver el piso el sábado?",
+    next: "¿Qué servicios incluye la renta?",
+    text: "¿Puedo ver el departamento el sábado?",
   },
 } as const;
 

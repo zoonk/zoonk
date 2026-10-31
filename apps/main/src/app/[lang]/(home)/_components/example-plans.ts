@@ -159,7 +159,14 @@ export async function getExamplePlans(): Promise<Record<ExampleGoal, ExamplePlan
       ? t("ENEM in {month}", { month: month(dates.exam) })
       : t("SAT in {month}", { month: month(dates.exam) });
 
-  const moveName = set.move === "madrid" ? t("Spanish for Madrid") : t("English for London");
+  const moveName =
+    set.move === "mexico-city"
+      ? t({
+          description: "An example goal's name. Use your language's name for Mexico City.",
+          message: "Spanish for Mexico City",
+        })
+      : t("English for London");
+
   const jobName = t("Data analyst by {month}", { month: month(dates.job) });
 
   return {
@@ -182,12 +189,12 @@ export async function getExamplePlans(): Promise<Record<ExampleGoal, ExamplePlan
     move: {
       dailyMinutes: 30,
       date: dates.move,
-      // Spanish shows Spain's flag. English would show the US's, not London's, so the London
+      // Spanish shows Mexico's flag. English would show the US's, not London's, so the London
       // goal keeps its letter.
       mark: {
         id: "example-move",
-        kind: set.move === "madrid" ? "language" : "learn",
-        targetLanguage: set.move === "madrid" ? "es" : null,
+        kind: set.move === "mexico-city" ? "language" : "learn",
+        targetLanguage: set.move === "mexico-city" ? "es" : null,
         title: moveName,
       },
       name: moveName,

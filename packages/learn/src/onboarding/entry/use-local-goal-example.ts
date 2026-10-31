@@ -6,12 +6,12 @@ import { useLocale } from "next-intl";
  * Messages name it in a `select`, so each language writes it with its own article ("o ENEM", "le
  * bac").
  */
-type LocalExam = "abitur" | "bac" | "enem" | "pau" | "sat";
+type LocalExam = "abitur" | "bac" | "enem" | "exani" | "sat";
 
 const LOCAL_EXAMS: Record<string, LocalExam> = {
   de: "abitur",
   en: "sat",
-  es: "pau",
+  es: "exani",
   fr: "bac",
   pt: "enem",
 };

@@ -93,7 +93,7 @@ export function GoalEntry({
               description:
                 "Each branch names its own exam: keep that exam in it, never another country's.",
               message:
-                "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} pau {pass the PAU, speak {language}…} other {pass the SAT, speak {language}…}}",
+                "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} other {pass the SAT, speak {language}…}}",
               values: example,
             })}
             {...goal.field}

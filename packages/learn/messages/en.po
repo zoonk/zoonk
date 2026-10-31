@@ -840,24 +840,24 @@ msgid "In {language}, as the exam's documents say it."
 msgstr "In {language}, as the exam's documents say it."
 
 #: src/_utils/use-score-range.ts
-msgctxt "yXgJdG"
-msgid "{score, number}%"
-msgstr "{score, number}%"
+msgctxt "4Z0cf0"
+msgid "{score}%"
+msgstr "{score}%"
 
 #: src/_utils/use-score-range.ts
-msgctxt "LTojA2"
-msgid "{low, number}% to {high, number}%"
-msgstr "{low, number}% to {high, number}%"
+msgctxt "V3-s4p"
+msgid "{low}% to {high}%"
+msgstr "{low}% to {high}%"
 
 #: src/_utils/use-score-range.ts
-msgctxt "cSSLt2"
-msgid "Band {score, number}"
-msgstr "Band {score, number}"
+msgctxt "FxEDDu"
+msgid "Band {score}"
+msgstr "Band {score}"
 
 #: src/_utils/use-score-range.ts
-msgctxt "-omynr"
-msgid "Band {low, number} to {high, number}"
-msgstr "Band {low, number} to {high, number}"
+msgctxt "G_2OC9"
+msgid "Band {low} to {high}"
+msgstr "Band {low} to {high}"
 
 #: src/_utils/use-score-range.ts
 msgctxt "zi1f8F"
@@ -1082,9 +1082,9 @@ msgstr "Pick a pair you've earned to wear it."
 #. Each branch names its own exam: keep that exam in it, never another country's.
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "hKFuSO"
-msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} pau {Pass the PAU} other {Pass the SAT}}"
-msgstr "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} pau {Pass the PAU} other {Pass the SAT}}"
+msgctxt "DJ_Smv"
+msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} other {Pass the SAT}}"
+msgstr "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} other {Pass the SAT}}"
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-examples.tsx
@@ -8365,9 +8365,9 @@ msgstr "I want to"
 
 #. Each branch names its own exam: keep that exam in it, never another country's.
 #: src/onboarding/entry/goal-entry.tsx
-msgctxt "bHMLQT"
-msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} pau {pass the PAU, speak {language}…} other {pass the SAT, speak {language}…}}"
-msgstr "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} pau {pass the PAU, speak {language}…} other {pass the SAT, speak {language}…}}"
+msgctxt "F_vbFS"
+msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} other {pass the SAT, speak {language}…}}"
+msgstr "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} other {pass the SAT, speak {language}…}}"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "rsoIT2"

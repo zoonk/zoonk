@@ -35,7 +35,7 @@ async function getPlacementQuestions(): Promise<Record<ExampleGoal, PlacementQue
       question: t("Which formula adds up the values in B2 through B9?"),
     },
     move:
-      set.move === "madrid"
+      set.move === "mexico-city"
         ? {
             label: t("Question {number, number} · {subject}", { number: 3, subject: t("Spanish") }),
             lang: "es",
