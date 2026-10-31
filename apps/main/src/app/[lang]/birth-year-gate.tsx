@@ -9,6 +9,7 @@ import {
   submitBirthYear,
   subscribeToBirthYearRequest,
 } from "@/lib/age/birth-year-request";
+import { forgetDeletedSession } from "@/lib/forget-deleted-session";
 import { readLearnerSummary } from "@/lib/learner/learner-summary-core";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { logout } from "@/lib/logout";
@@ -124,8 +125,55 @@ function BirthYearForm({
   );
 }
 
-/** A visitor stays where they were; an account is logged out, since it can't go on. */
-function AgeStop({ minimumAge, signedIn }: { minimumAge: number; signedIn: boolean }) {
+function AgeStopMessage({
+  accountClosed,
+  minimumAge,
+  signedIn,
+}: {
+  accountClosed: boolean;
+  minimumAge: number;
+  signedIn: boolean;
+}) {
+  const t = useExtracted();
+
+  if (accountClosed) {
+    return t(
+      "You need to be {minimumAge, number} or older to use Zoonk, so we've closed your account and deleted its data. We'll be here when you are.",
+      { minimumAge },
+    );
+  }
+
+  return signedIn
+    ? t(
+        "You need to be {minimumAge, number} or older to use Zoonk, so we'll log you out. We'll be here when you are.",
+        { minimumAge },
+      )
+    : t("You need to be {minimumAge, number} or older to use Zoonk. We'll be here when you are.", {
+        minimumAge,
+      });
+}
+
+/** A closed account's cookies go too: its session no longer exists. */
+function leaveAgeStop({ accountClosed, signedIn }: { accountClosed: boolean; signedIn: boolean }) {
+  if (accountClosed) {
+    void forgetDeletedSession().then(() => globalThis.location.assign("/"));
+  } else if (signedIn) {
+    void logout();
+  } else {
+    cancelBirthYear();
+  }
+}
+
+/** A visitor stays where they were; an account is logged out, or closed, since it can't go on. */
+function AgeStop({
+  accountClosed,
+  minimumAge,
+  signedIn,
+}: {
+  accountClosed: boolean;
+  minimumAge: number;
+  signedIn: boolean;
+}) {
   const t = useExtracted();
 
   return (
@@ -133,19 +181,15 @@ function AgeStop({ minimumAge, signedIn }: { minimumAge: number; signedIn: boole
       <DialogHeader>
         <DialogTitle>{t("Not just yet")}</DialogTitle>
         <DialogDescription className="text-pretty">
-          {signedIn
-            ? t(
-                "You need to be {minimumAge, number} or older to use Zoonk, so we'll log you out. We'll be here when you are.",
-                { minimumAge },
-              )
-            : t(
-                "You need to be {minimumAge, number} or older to use Zoonk. We'll be here when you are.",
-                { minimumAge },
-              )}
+          <AgeStopMessage
+            accountClosed={accountClosed}
+            minimumAge={minimumAge}
+            signedIn={signedIn}
+          />
         </DialogDescription>
       </DialogHeader>
 
-      <Button autoFocus onClick={() => (signedIn ? void logout() : cancelBirthYear())} size="lg">
+      <Button autoFocus onClick={() => leaveAgeStop({ accountClosed, signedIn })} size="lg">
         {t("OK")}
       </Button>
     </>
@@ -187,7 +231,11 @@ export function BirthYearGate() {
           <BirthYearForm signedIn={request.signedIn} submit={request.submit} />
         )}
         {request.status === "stopped" && (
-          <AgeStop minimumAge={request.minimumAge} signedIn={request.signedIn} />
+          <AgeStop
+            accountClosed={request.accountClosed}
+            minimumAge={request.minimumAge}
+            signedIn={request.signedIn}
+          />
         )}
       </DialogContent>
     </Dialog>

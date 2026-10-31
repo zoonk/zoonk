@@ -62,7 +62,14 @@ function DeleteAccountOutcome({ result }: { result: DeleteAccountResult | null }
   return null;
 }
 
-export function DeleteAccountSection({ userId }: { userId: string }) {
+/** `plusNotice` says what happens to Plus bought on the website, which the server reads. */
+export function DeleteAccountSection({
+  plusNotice,
+  userId,
+}: {
+  plusNotice: React.ReactNode;
+  userId: string;
+}) {
   const t = useExtracted();
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<DeleteAccountResult | null>(null);
@@ -96,7 +103,7 @@ export function DeleteAccountSection({ userId }: { userId: string }) {
         <ListGroup>
           <SettingRow
             description={t(
-              "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store.",
+              "Deletes your account and everything in it for good. Plus from the App Store or Google Play has to be canceled there.",
             )}
             label={t("Delete my account")}
           >
@@ -109,10 +116,13 @@ export function DeleteAccountSection({ userId }: { userId: string }) {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("Delete your account?")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t(
-                "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone.",
-              )}
+            <AlertDialogDescription className="flex flex-col gap-2" render={<div />}>
+              <p>
+                {t(
+                  "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone.",
+                )}
+              </p>
+              {plusNotice}
             </AlertDialogDescription>
           </AlertDialogHeader>
 

@@ -17,6 +17,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { isWebManagedSubscriptionProvider } from "@zoonk/utils/subscription";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { Suspense } from "react";
+import { KeepPlusButton } from "./keep-plus-button";
 import { ManagedSubscription } from "./managed-subscription";
 import { RefundOffer } from "./refund-offer";
 
@@ -54,10 +55,22 @@ async function getDateLine(subscription: Subscription): Promise<React.ReactNode>
       });
 }
 
-async function RefundStillOpen() {
+/** An ending Plus can be kept while only its renewal stopped, and refunded while the 14 days last. */
+async function EndingPlanActions() {
   const { data: cancellation } = await safeAsync(() => getWebPlusCancellation());
-  const withdrawal = cancellation?.status === "ready" ? cancellation.withdrawal : null;
-  return withdrawal && <RefundOffer until={withdrawal.until} />;
+
+  if (cancellation?.status !== "ready") {
+    return null;
+  }
+
+  const { canResumeRenewal, timeZone, withdrawal } = cancellation;
+
+  return (
+    <div className="flex flex-col gap-6 empty:hidden">
+      {canResumeRenewal && <KeepPlusButton />}
+      {withdrawal && <RefundOffer timeZone={timeZone} until={withdrawal.until} />}
+    </div>
+  );
 }
 
 async function WebPlanAction({ isEnding }: { isEnding: boolean }) {
@@ -66,7 +79,7 @@ async function WebPlanAction({ isEnding }: { isEnding: boolean }) {
   if (isEnding) {
     return (
       <Suspense>
-        <RefundStillOpen />
+        <EndingPlanActions />
       </Suspense>
     );
   }

@@ -50,7 +50,7 @@ async function startGuestWithBirthYear({
 
   const saved = await saveBirthYear(birthYear);
 
-  if (saved.status === "belowMinimumAge") {
+  if (saved.status === "belowMinimumAge" || saved.status === "accountClosed") {
     return saved;
   }
 

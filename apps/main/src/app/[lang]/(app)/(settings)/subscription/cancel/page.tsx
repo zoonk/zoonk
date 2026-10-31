@@ -13,8 +13,10 @@ import {
 } from "@zoonk/learn/page";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { formatPrice } from "@zoonk/utils/currency";
+import { getRequestCountry } from "@zoonk/utils/locale-request";
 import { type Metadata } from "next";
 import { getExtracted, getFormatter } from "next-intl/server";
+import { headers } from "next/headers";
 import { Suspense } from "react";
 import { ManagedSubscription } from "../managed-subscription";
 import { type CancelChoice } from "./cancel-choices";
@@ -42,6 +44,11 @@ async function CancelPlusTitle() {
   return <PageTitle className="md:text-xl md:leading-tight">{t("Cancel Plus")}</PageTitle>;
 }
 
+/** France asks for a summary of the request before it's sent (Code de la consommation D215-3). */
+async function reviewsFirst(): Promise<boolean> {
+  return getRequestCountry(await headers()) === "FR";
+}
+
 /**
  * No login needed (BGB § 312k; EU Consumer Rights Directive art. 11a), and nothing else on the page
  * but the cancellation (BGH I ZR 200/25).
@@ -59,7 +66,7 @@ async function CancelWithoutLogin() {
       </CancelPlusHeader>
 
       <PageSection aria-label={t("Cancel Plus")}>
-        <CancelWithoutLoginForm />
+        <CancelWithoutLoginForm reviewFirst={await reviewsFirst()} />
       </PageSection>
     </>
   );
@@ -83,20 +90,24 @@ async function getOrdinaryChoice(cancellation: ReadyCancellation): Promise<Cance
     };
   }
 
+  const date = format.dateTime(ordinary.endsAt, {
+    dateStyle: "long",
+    timeZone: cancellation.timeZone,
+  });
+
   return {
     description:
       ordinary.unstartedMonths > 0
         ? t(
-            "For the {count, plural, one {# month} other {# months}} that haven't started, we refund {amount}.",
+            "You keep Plus until {date}. For the {count, plural, one {# month} other {# months}} that haven't started, we refund {amount}.",
             {
               amount: formatPrice(ordinary.refundAmount, cancellation.currency, locale),
               count: ordinary.unstartedMonths,
+              date,
             },
           )
-        : t("You won't be charged again."),
-    label: t("Keep Plus until {date}", {
-      date: format.dateTime(ordinary.endsAt, { dateStyle: "long" }),
-    }),
+        : t("You keep Plus until {date}, and you won't be charged again.", { date }),
+    label: t("Cancel at the end of the period"),
     value: "ordinary",
   };
 }
@@ -105,7 +116,7 @@ async function getChoices(cancellation: ReadyCancellation): Promise<CancelChoice
   const t = await getExtracted();
   const format = await getFormatter();
   const locale = await getAppLocale();
-  const { currency, extraordinary, withdrawal } = cancellation;
+  const { currency, extraordinary, timeZone, withdrawal } = cancellation;
   const money = (amount: number) => formatPrice(amount, currency, locale);
   const ordinary = await getOrdinaryChoice(cancellation);
 
@@ -118,7 +129,7 @@ async function getChoices(cancellation: ReadyCancellation): Promise<CancelChoice
               "Plus ends right away, and we refund {amount}. You can do this until {date}.",
               {
                 amount: money(withdrawal.refundAmount),
-                date: format.dateTime(withdrawal.until, { dateStyle: "long" }),
+                date: format.dateTime(withdrawal.until, { dateStyle: "long", timeZone }),
               },
             ),
             label: t({
@@ -179,7 +190,7 @@ async function CancelPlusContent() {
     );
   }
 
-  const { email, endingAt, name } = cancellation;
+  const { email, endingAt, name, timeZone } = cancellation;
   const plan = cancellation.interval === "year" ? t("Plus, yearly") : t("Plus, monthly");
   const choices = await getChoices(cancellation);
 
@@ -200,6 +211,10 @@ async function CancelPlusContent() {
           email={email}
           endingAt={endingAt}
           key={choices.map(({ value }) => value).join(" ")}
+          name={name}
+          plan={plan}
+          reviewFirst={await reviewsFirst()}
+          timeZone={timeZone}
         />
       </PageSection>
     </>

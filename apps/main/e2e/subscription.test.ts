@@ -107,6 +107,17 @@ test.describe("Subscription Page - With Plus Subscription", () => {
       .poll(async () => prisma.subscription.findFirst({ where: { referenceId: user.id } }))
       .toMatchObject({ cancelAtPeriodEnd: true, status: "active" });
 
+    await page.goto("/subscription");
+    await page.getByRole("button", { exact: true, name: "Keep Plus" }).click();
+
+    await expect(
+      page.getByRole("link", { exact: true, name: "Cancel subscription" }),
+    ).toBeVisible();
+
+    await expect
+      .poll(async () => prisma.subscription.findFirst({ where: { referenceId: user.id } }))
+      .toMatchObject({ cancelAt: null, cancelAtPeriodEnd: false, status: "active" });
+
     await browserContext.close();
   });
 });
@@ -128,6 +139,40 @@ test.describe("Subscription Page - Cancel Without Logging In", () => {
     await page.getByLabel("Email", { exact: true }).fill(user.email);
     await cancel.click();
 
+    await expect(page.getByRole("status")).toContainText("We received your cancellation.");
+
+    await expect
+      .poll(async () => prisma.subscription.findFirst({ where: { referenceId: user.id } }))
+      .toMatchObject({ cancelAtPeriodEnd: true, status: "active" });
+
+    await visitor.close();
+  });
+});
+
+test.describe("Subscription Page - Cancel From France", () => {
+  test("shows the request to check and change before it's sent", async ({ browser }) => {
+    const user = await createWebSubscriber();
+
+    const visitor = await browser.newContext({ extraHTTPHeaders: { "x-vercel-ip-country": "FR" } });
+
+    const page = await visitor.newPage();
+    await page.goto("/subscription/cancel");
+
+    const next = page.getByRole("button", { exact: true, name: "Continue" });
+    await expectHydrated(next);
+
+    await page.getByLabel("Name").fill("Camille Martin");
+    await page.getByLabel("Email", { exact: true }).fill(user.email);
+    await next.click();
+
+    const review = page.getByRole("region", { name: "Check your request" });
+    await expect(review).toContainText("Camille Martin");
+
+    await review.getByRole("button", { exact: true, name: "Edit" }).click();
+    await expect(page.getByLabel("Name")).toHaveValue("Camille Martin");
+    await next.click();
+
+    await review.getByRole("button", { exact: true, name: "Notify cancellation" }).click();
     await expect(page.getByRole("status")).toContainText("We received your cancellation.");
 
     await expect

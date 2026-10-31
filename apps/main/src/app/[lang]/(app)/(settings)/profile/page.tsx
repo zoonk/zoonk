@@ -9,6 +9,7 @@ import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { ProtectedSection } from "../_components/protected-section";
 import { DeleteAccountSection } from "./delete-account-section";
+import { DeletionPlusNotice } from "./deletion-plus-notice";
 import { ExportDataButton } from "./export-data-button";
 import { ProfileForm } from "./profile-form";
 
@@ -44,7 +45,14 @@ async function ProfileContent() {
         <ExportDataButton />
       </PageSection>
 
-      <DeleteAccountSection userId={session?.user.id ?? ""} />
+      <DeleteAccountSection
+        plusNotice={
+          <Suspense>
+            <DeletionPlusNotice />
+          </Suspense>
+        }
+        userId={session?.user.id ?? ""}
+      />
     </ProtectedSection>
   );
 }
@@ -100,7 +108,7 @@ async function ProfileSkeleton() {
         <ListGroup>
           <SettingRow
             description={t(
-              "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store.",
+              "Deletes your account and everything in it for good. Plus from the App Store or Google Play has to be canceled there.",
             )}
             label={t("Delete my account")}
           >

@@ -9,7 +9,9 @@ const api = vi.hoisted(() => ({ sendFromBrowser: vi.fn<() => Promise<Response | 
 
 const age = vi.hoisted(() => ({
   checkBirthYearAction: vi.fn<
-    () => Promise<{ minimumAge: number; status: "belowMinimumAge" } | { status: "allowed" }>
+    () => Promise<
+      { certain: boolean; minimumAge: number; status: "belowMinimumAge" } | { status: "allowed" }
+    >
   >(async () => ({ status: "allowed" })),
 }));
 
@@ -120,13 +122,20 @@ describe("ensureGuestSession", () => {
 
   it("stops below the minimum age before any account exists, and for a day after", async () => {
     auth.getSession.mockResolvedValue(NO_SESSION);
-    age.checkBirthYearAction.mockResolvedValueOnce({ minimumAge: 14, status: "belowMinimumAge" });
+
+    age.checkBirthYearAction.mockResolvedValueOnce({
+      certain: false,
+      minimumAge: 14,
+      status: "belowMinimumAge",
+    });
+
     const helpers = await loadHelpers();
 
     const guest = helpers.ensureGuestSession();
     await answer(helpers, 2015);
 
     expect(helpers.getBirthYearRequest()).toStrictEqual({
+      accountClosed: false,
       minimumAge: 14,
       signedIn: false,
       status: "stopped",

@@ -2,7 +2,10 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
-import { type WebPlusCancellationChoice } from "@zoonk/core/subscriptions/web-plus-cancellation-contract";
+import {
+  type WebPlusCancellationChoice,
+  type WebPlusCancellationRequest,
+} from "@zoonk/core/subscriptions/web-plus-cancellation-contract";
 import { useAppLocale } from "@zoonk/learn/locale";
 import { formatPrice } from "@zoonk/utils/currency";
 import { useExtracted, useFormatter } from "next-intl";
@@ -12,8 +15,11 @@ import {
   type CancelChoice,
   CancelChoiceFields,
   CancelFormFooter,
-  ReceiptDetails,
+  CancelReview,
+  ChoiceSummary,
+  RequestDetails,
   readCancellationRequest,
+  useCancelReview,
   useLinkedChoice,
 } from "./cancel-choices";
 import { type CancelPlusResult, cancelPlusAction } from "./cancel-plus-action";
@@ -71,11 +77,19 @@ function RefundSentence({ receipt }: { receipt: Receipt }) {
   );
 }
 
-function CancelPlusReceipt({ email, receipt }: { email: string; receipt: Receipt }) {
+function CancelPlusReceipt({
+  email,
+  receipt,
+  timeZone,
+}: {
+  email: string;
+  receipt: Receipt;
+  timeZone: string;
+}) {
   const t = useExtracted();
   const format = useFormatter();
   const endsNow = receipt.endsAt <= receipt.receivedAt;
-  const date = format.dateTime(receipt.endsAt, { dateStyle: "long" });
+  const date = format.dateTime(receipt.endsAt, { dateStyle: "long", timeZone });
 
   return (
     <div className="flex flex-col gap-4 text-sm">
@@ -88,10 +102,10 @@ function CancelPlusReceipt({ email, receipt }: { email: string; receipt: Receipt
 
         <RefundSentence receipt={receipt} />
 
-        <ReceiptDetails
-          choiceLabel={receipt.choice.label}
+        <RequestDetails
           reason={receipt.reason}
           receivedAt={receipt.receivedAt}
+          request={receipt.choice.label}
         />
 
         <p className="text-muted-foreground">
@@ -99,19 +113,52 @@ function CancelPlusReceipt({ email, receipt }: { email: string; receipt: Receipt
         </p>
       </div>
 
-      {receipt.refundableUntil && <RefundOffer until={receipt.refundableUntil} />}
+      {receipt.refundableUntil && (
+        <RefundOffer timeZone={timeZone} until={receipt.refundableUntil} />
+      )}
     </div>
   );
 }
 
+function CancelPlusAlerts({ result }: { result: Outcome | null }) {
+  const t = useExtracted();
+
+  if (result?.status === "failed") {
+    return (
+      <p className="text-destructive-text text-sm" role="alert">
+        {t("We couldn't cancel your subscription. Try again or email hello@zoonk.com.")}
+      </p>
+    );
+  }
+
+  if (result?.status === "unavailable") {
+    return (
+      <p className="text-sm" role="alert">
+        {t("That option isn't available anymore. Check your choice above and try again.")}
+      </p>
+    );
+  }
+
+  return null;
+}
+
+/** `reviewFirst` shows France's summary before anything is sent; the form keeps its values. */
 export function CancelPlusForm({
   choices,
   email,
   endingAt,
+  name,
+  plan,
+  reviewFirst,
+  timeZone,
 }: {
   choices: readonly CancelChoice[];
   email: string;
   endingAt: Date | null;
+  name: string;
+  plan: string;
+  reviewFirst: boolean;
+  timeZone: string;
 }) {
   const t = useExtracted();
   const format = useFormatter();
@@ -121,6 +168,7 @@ export function CancelPlusForm({
   const [pending, startTransition] = useTransition();
   const [picked, setPicked] = useState<WebPlusCancellationChoice | null>(linked);
   const [result, setResult] = useState<Outcome | null>(null);
+  const { edit, formRef, review, setReview } = useCancelReview<WebPlusCancellationRequest>();
   const choice = choices.find(({ value }) => value === picked) ?? choices[0];
 
   if (!choice) {
@@ -128,12 +176,10 @@ export function CancelPlusForm({
   }
 
   if (result?.status === "canceled") {
-    return <CancelPlusReceipt email={email} receipt={result} />;
+    return <CancelPlusReceipt email={email} receipt={result} timeZone={timeZone} />;
   }
 
-  const submit = (event: React.SubmitEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const request = readCancellationRequest(choice.value, event.currentTarget);
+  const send = (request: WebPlusCancellationRequest) => {
     const reason = request.choice === "extraordinary" ? (request.reason ?? null) : null;
 
     startTransition(async () => {
@@ -144,37 +190,68 @@ export function CancelPlusForm({
       setResult(outcome.status === "canceled" ? { ...outcome, choice, reason } : outcome);
 
       if (outcome.status === "unavailable") {
+        edit();
         router.refresh();
       }
     });
   };
 
+  const submit = (event: React.SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const request = readCancellationRequest(choice.value, event.currentTarget);
+
+    if (reviewFirst) {
+      setResult(null);
+      setReview(request);
+      return;
+    }
+
+    send(request);
+  };
+
   return (
-    <form className="flex flex-col gap-4" onSubmit={submit}>
-      {endingAt && (
-        <p className="text-sm">
-          {t.rich("Your subscription will end on <mono>{date}</mono>.", {
-            date: format.dateTime(endingAt, { dateStyle: "long" }),
-            mono: renderDate,
-          })}
-        </p>
+    <>
+      <form
+        className="flex flex-col gap-4"
+        hidden={review !== null}
+        onSubmit={submit}
+        ref={formRef}
+      >
+        {endingAt && (
+          <p className="text-sm">
+            {t.rich("Your subscription will end on <mono>{date}</mono>.", {
+              date: format.dateTime(endingAt, { dateStyle: "long", timeZone }),
+              mono: renderDate,
+            })}
+          </p>
+        )}
+
+        <CancelChoiceFields choice={choice.value} choices={choices} onChoiceChange={setPicked} />
+
+        <CancelFormFooter choice={choice.value} pending={pending} reviewFirst={reviewFirst}>
+          <CancelPlusAlerts result={result} />
+        </CancelFormFooter>
+      </form>
+
+      {review && (
+        <CancelReview
+          choice={review.choice}
+          details={
+            <RequestDetails
+              email={email}
+              name={name}
+              plan={plan}
+              reason={review.choice === "extraordinary" ? (review.reason ?? null) : null}
+              request={<ChoiceSummary choice={choice} />}
+            />
+          }
+          onConfirm={() => send(review)}
+          onEdit={edit}
+          pending={pending}
+        >
+          <CancelPlusAlerts result={result} />
+        </CancelReview>
       )}
-
-      <CancelChoiceFields choice={choice.value} choices={choices} onChoiceChange={setPicked} />
-
-      <CancelFormFooter choice={choice.value} pending={pending}>
-        {result?.status === "failed" && (
-          <p className="text-destructive-text text-sm" role="alert">
-            {t("We couldn't cancel your subscription. Try again or email hello@zoonk.com.")}
-          </p>
-        )}
-
-        {result?.status === "unavailable" && (
-          <p className="text-sm" role="alert">
-            {t("That option isn't available anymore. Check your choice above and try again.")}
-          </p>
-        )}
-      </CancelFormFooter>
-    </form>
+    </>
   );
 }

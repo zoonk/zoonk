@@ -12,9 +12,12 @@ import {
   type CancelChoice,
   CancelChoiceFields,
   CancelFormFooter,
-  ReceiptDetails,
+  CancelReview,
+  ChoiceSummary,
+  RequestDetails,
   readCancellationRequest,
   readFormField,
+  useCancelReview,
   useLinkedChoice,
 } from "./cancel-choices";
 import {
@@ -24,6 +27,32 @@ import {
 
 type Declaration = { email: string; name: string; request: WebPlusCancellationRequest };
 type Receipt = Declaration & { choiceLabel: string; receivedAt: Date };
+
+function readReason(request: WebPlusCancellationRequest): string | null {
+  return request.choice === "extraordinary" ? (request.reason ?? null) : null;
+}
+
+function DeclarationAlerts({ result }: { result: RequestCancellationResult | null }) {
+  const t = useExtracted();
+
+  if (result?.status === "failed") {
+    return (
+      <p className="text-destructive-text text-sm" role="alert">
+        {t("We couldn't send your request. Try again or email hello@zoonk.com.")}
+      </p>
+    );
+  }
+
+  if (result?.status === "invalid") {
+    return (
+      <p className="text-destructive-text text-sm" role="alert">
+        {t("Check your name and email, then try again.")}
+      </p>
+    );
+  }
+
+  return null;
+}
 
 function DeclarationReceipt({ receipt }: { receipt: Receipt }) {
   const t = useExtracted();
@@ -41,12 +70,12 @@ function DeclarationReceipt({ receipt }: { receipt: Receipt }) {
           : t("We received your cancellation.")}
       </p>
 
-      <ReceiptDetails
-        choiceLabel={receipt.choiceLabel}
+      <RequestDetails
         email={email}
         name={name}
-        reason={request.choice === "extraordinary" ? (request.reason ?? null) : null}
+        reason={readReason(request)}
         receivedAt={receipt.receivedAt}
+        request={receipt.choiceLabel}
       />
 
       <p>
@@ -63,7 +92,8 @@ function DeclarationReceipt({ receipt }: { receipt: Receipt }) {
   );
 }
 
-export function CancelWithoutLoginForm() {
+/** `reviewFirst` shows France's summary before anything is sent; the form keeps its values. */
+export function CancelWithoutLoginForm({ reviewFirst }: { reviewFirst: boolean }) {
   const t = useExtracted();
   const locale = useAppLocale();
   const emailHintId = useId();
@@ -72,6 +102,7 @@ export function CancelWithoutLoginForm() {
   const [picked, setPicked] = useState(linked ?? "ordinary");
   const [result, setResult] = useState<RequestCancellationResult | null>(null);
   const [receipt, setReceipt] = useState<Receipt | null>(null);
+  const { edit, formRef, review, setReview } = useCancelReview<Declaration>();
 
   const choices: CancelChoice[] = [
     {
@@ -109,16 +140,7 @@ export function CancelWithoutLoginForm() {
     return null;
   }
 
-  const submit = (event: React.SubmitEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-
-    const declaration: Declaration = {
-      email: readFormField(form, "email"),
-      name: readFormField(form, "name"),
-      request: readCancellationRequest(choice.value, form),
-    };
-
+  const send = (declaration: Declaration) => {
     startTransition(async () => {
       const outcome = await noteAppWrite(
         requestCancellationAction({ ...declaration, locale }),
@@ -129,50 +151,89 @@ export function CancelWithoutLoginForm() {
       if (outcome.status === "received") {
         setReceipt({ ...declaration, choiceLabel: choice.label, receivedAt: outcome.receivedAt });
       }
+
+      if (outcome.status === "invalid") {
+        edit();
+      }
     });
   };
 
+  const submit = (event: React.SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+
+    const declaration: Declaration = {
+      email: readFormField(form, "email"),
+      name: readFormField(form, "name"),
+      request: readCancellationRequest(choice.value, form),
+    };
+
+    if (reviewFirst) {
+      setResult(null);
+      setReview(declaration);
+      return;
+    }
+
+    send(declaration);
+  };
+
   return (
-    <form className="flex flex-col gap-6" onSubmit={submit}>
-      <ListGroup>
-        <SettingRow label={<label htmlFor="cancel-name">{t("Name")}</label>} wide>
-          <Input autoComplete="name" id="cancel-name" maxLength={100} name="name" required />
-        </SettingRow>
+    <>
+      <form
+        className="flex flex-col gap-6"
+        hidden={review !== null}
+        onSubmit={submit}
+        ref={formRef}
+      >
+        <ListGroup>
+          <SettingRow label={<label htmlFor="cancel-name">{t("Name")}</label>} wide>
+            <Input autoComplete="name" id="cancel-name" maxLength={100} name="name" required />
+          </SettingRow>
 
-        <SettingRow
-          description={t("The one you use for Zoonk")}
-          descriptionId={emailHintId}
-          label={<label htmlFor="cancel-email">{t("Email")}</label>}
-          wide
+          <SettingRow
+            description={t("The one you use for Zoonk")}
+            descriptionId={emailHintId}
+            label={<label htmlFor="cancel-email">{t("Email")}</label>}
+            wide
+          >
+            <Input
+              aria-describedby={emailHintId}
+              autoComplete="email"
+              id="cancel-email"
+              name="email"
+              required
+              type="email"
+            />
+          </SettingRow>
+        </ListGroup>
+
+        <div className="flex flex-col gap-4">
+          <CancelChoiceFields choice={choice.value} choices={choices} onChoiceChange={setPicked} />
+
+          <CancelFormFooter choice={choice.value} pending={pending} reviewFirst={reviewFirst}>
+            <DeclarationAlerts result={result} />
+          </CancelFormFooter>
+        </div>
+      </form>
+
+      {review && (
+        <CancelReview
+          choice={review.request.choice}
+          details={
+            <RequestDetails
+              email={review.email}
+              name={review.name}
+              reason={readReason(review.request)}
+              request={<ChoiceSummary choice={choice} />}
+            />
+          }
+          onConfirm={() => send(review)}
+          onEdit={edit}
+          pending={pending}
         >
-          <Input
-            aria-describedby={emailHintId}
-            autoComplete="email"
-            id="cancel-email"
-            name="email"
-            required
-            type="email"
-          />
-        </SettingRow>
-      </ListGroup>
-
-      <div className="flex flex-col gap-4">
-        <CancelChoiceFields choice={choice.value} choices={choices} onChoiceChange={setPicked} />
-
-        <CancelFormFooter choice={choice.value} pending={pending}>
-          {result?.status === "failed" && (
-            <p className="text-destructive-text text-sm" role="alert">
-              {t("We couldn't send your request. Try again or email hello@zoonk.com.")}
-            </p>
-          )}
-
-          {result?.status === "invalid" && (
-            <p className="text-destructive-text text-sm" role="alert">
-              {t("Check your name and email, then try again.")}
-            </p>
-          )}
-        </CancelFormFooter>
-      </div>
-    </form>
+          <DeclarationAlerts result={result} />
+        </CancelReview>
+      )}
+    </>
   );
 }

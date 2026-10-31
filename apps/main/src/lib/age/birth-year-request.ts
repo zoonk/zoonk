@@ -8,9 +8,13 @@ const AGE_STOP_COOKIE = "ZOONK_AGE_STOP";
 /** A day, so a child can't take another year right away, as a neutral age screen needs. */
 const AGE_STOP_SECONDS = 24 * 60 * 60;
 
-/** `guestStarted`: the account exists now, so the question can no longer be skipped. */
+/**
+ * `guestStarted`: the account exists now, so the question can no longer be skipped.
+ * `accountClosed`: certainly below the minimum age, so the account was deleted.
+ */
 export type BirthYearOutcome =
   | { status: "saved" }
+  | { minimumAge: number; status: "accountClosed" }
   | { minimumAge: number; status: "belowMinimumAge" }
   | { guestStarted?: boolean; status: "blocked" | "failed" | "invalid" };
 
@@ -20,7 +24,7 @@ type Submit = (birthYear: number) => Promise<BirthYearOutcome>;
 export type BirthYearRequest =
   | { status: "closed" }
   | { signedIn: boolean; status: "asking"; submit: Submit }
-  | { minimumAge: number; signedIn: boolean; status: "stopped" };
+  | { accountClosed: boolean; minimumAge: number; signedIn: boolean; status: "stopped" };
 
 export type BirthYearAnswer = "blocked" | "cancelled" | "saved";
 
@@ -89,9 +93,15 @@ export async function submitBirthYear({
     show({ ...current, signedIn: true });
   }
 
-  if (outcome.status === "belowMinimumAge") {
+  if (outcome.status === "belowMinimumAge" || outcome.status === "accountClosed") {
     void setCookie(AGE_STOP_COOKIE, String(outcome.minimumAge), { maxAge: AGE_STOP_SECONDS });
-    show({ minimumAge: outcome.minimumAge, signedIn, status: "stopped" });
+
+    show({
+      accountClosed: outcome.status === "accountClosed",
+      minimumAge: outcome.minimumAge,
+      signedIn,
+      status: "stopped",
+    });
   } else if (outcome.status === "saved" || outcome.status === "blocked") {
     close(outcome.status);
   }
@@ -113,7 +123,7 @@ export function askBirthYear({
   const minimumAge = readAgeStop();
 
   const request: BirthYearRequest = minimumAge
-    ? { minimumAge, signedIn, status: "stopped" }
+    ? { accountClosed: false, minimumAge, signedIn, status: "stopped" }
     : { signedIn, status: "asking", submit };
 
   return new Promise((resolve) => {
@@ -148,15 +158,21 @@ export async function saveBirthYear(birthYear: number): Promise<BirthYearOutcome
 }
 
 const refusalSchema = z.object({
-  error: z.object({ code: z.string(), details: z.object({ minimumAge: z.int() }).nullish() }),
+  error: z.object({
+    code: z.string(),
+    details: z.object({ accountClosed: z.boolean().optional(), minimumAge: z.int() }).nullish(),
+  }),
 });
 
 async function readRefusal(response: Response): Promise<BirthYearOutcome> {
   const { data } = refusalSchema.safeParse(await response.json().catch(() => null));
-  const minimumAge = data?.error.details?.minimumAge;
+  const details = data?.error.details;
 
-  if (data?.error.code === "BELOW_MINIMUM_AGE" && minimumAge) {
-    return { minimumAge, status: "belowMinimumAge" };
+  if (data?.error.code === "BELOW_MINIMUM_AGE" && details?.minimumAge) {
+    return {
+      minimumAge: details.minimumAge,
+      status: details.accountClosed ? "accountClosed" : "belowMinimumAge",
+    };
   }
 
   return { status: data?.error.code === "INVALID_BIRTH_YEAR" ? "invalid" : "failed" };
