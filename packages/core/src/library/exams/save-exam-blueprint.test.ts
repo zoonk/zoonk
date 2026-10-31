@@ -118,7 +118,7 @@ function withSyllabus({
   year,
 }: {
   base: BlueprintContent;
-  examDate: string;
+  examDate: string | null;
   names: string[];
   year: number;
 }): BlueprintContent {
@@ -132,9 +132,13 @@ function withSyllabus({
     ...base,
     edition: {
       ...base.edition,
-      dates: base.edition.dates.map((date) =>
-        date.kind === "exam" ? { ...date, date: examDate } : date,
-      ),
+      dates: base.edition.dates.flatMap((date) => {
+        if (date.kind !== "exam") {
+          return [date];
+        }
+
+        return examDate ? [{ ...date, date: examDate }] : [];
+      }),
       year,
     },
     structure: {
@@ -238,7 +242,11 @@ describe(saveExamBlueprint, () => {
       sourceId: corrected.id,
     });
 
-    const preview = await previewExamBlueprintChanges({ content: next, identity: examIdentity });
+    const preview = await previewExamBlueprintChanges({
+      content: next,
+      identity: examIdentity,
+      sourceId: corrected.id,
+    });
 
     expect(preview?.map((change) => change.field)).toStrictEqual([
       "subjects",
@@ -437,6 +445,69 @@ describe(saveExamBlueprint, () => {
     expect(nextEdition.blueprint.board).toBeNull();
   });
 
+  it("keeps a re-read of the same notice in its edition, though it moves the exam past its old day", async () => {
+    const notice = await sourceFixture({ language: "pt" });
+    const examIdentity = identity();
+    const syllabus = ["Língua Portuguesa", "Tecnologia da Informação", "Auditoria"];
+
+    const read = (edition: Omit<Parameters<typeof withSyllabus>[0], "base">, board?: string) =>
+      saveExamBlueprint({
+        board,
+        content: withSyllabus({
+          base: content({
+            questions: 80,
+            sourceHash: `${notice.contentHash}-${edition.examDate}`,
+            sourceId: notice.id,
+          }),
+          ...edition,
+        }),
+        identity: examIdentity,
+        provenance: PROVENANCE,
+        sourceId: notice.id,
+      });
+
+    await read({ examDate: "2022-05-15", names: syllabus, year: 2022 }, "FGV");
+
+    const postponed = await read({
+      examDate: "2022-06-19",
+      names: ["Língua Portuguesa", "Auditoria"],
+      year: 2022,
+    });
+
+    expect(postponed.blueprint.board).toBe("FGV");
+    expect(subjectNames(postponed.blueprint)).toStrictEqual(syllabus);
+  });
+
+  it("tells two undated editions of one year apart by their notices", async () => {
+    const [first, second] = await Promise.all([
+      sourceFixture({ language: "pt" }),
+      sourceFixture({ language: "pt" }),
+    ]);
+
+    const examIdentity = identity();
+
+    const read = (source: typeof first, names: string[]) =>
+      saveExamBlueprint({
+        content: withSyllabus({
+          base: content({ questions: 50, sourceHash: source.contentHash, sourceId: source.id }),
+          examDate: null,
+          names,
+          year: 2026,
+        }),
+        identity: examIdentity,
+        provenance: PROVENANCE,
+        sourceId: source.id,
+      });
+
+    await read(first, ["Contabilidade Geral", "Perícia Contábil"]);
+    const next = await read(second, ["Contabilidade Geral", "Ética Profissional"]);
+
+    expect(subjectNames(next.blueprint)).toStrictEqual([
+      "Contabilidade Geral",
+      "Ética Profissional",
+    ]);
+  });
+
   it("tells learners nothing when the same document is read again", async () => {
     const source = await sourceFixture({ language: "pt" });
     const examIdentity = identity();
@@ -452,7 +523,7 @@ describe(saveExamBlueprint, () => {
     const reread = content({ questions: 90, sourceHash: source.contentHash, sourceId: source.id });
 
     await expect(
-      previewExamBlueprintChanges({ content: reread, identity: examIdentity }),
+      previewExamBlueprintChanges({ content: reread, identity: examIdentity, sourceId: source.id }),
     ).resolves.toBeNull();
   });
 

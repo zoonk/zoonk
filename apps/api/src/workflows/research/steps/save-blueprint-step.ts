@@ -19,16 +19,22 @@ async function writeNotice({
   analytics,
   identity,
   reading,
+  sourceId,
 }: {
   analytics: ResearchAnalytics;
   identity: ExamIdentity;
   reading: BlueprintReading;
+  sourceId: string;
 }): Promise<BlueprintNotice | null> {
   if (isPastEdition({ content: reading.content })) {
     return null;
   }
 
-  const changes = await previewExamBlueprintChanges({ content: reading.content, identity });
+  const changes = await previewExamBlueprintChanges({
+    content: reading.content,
+    identity,
+    sourceId,
+  });
 
   if (!changes || changes.length === 0) {
     return null;
@@ -88,7 +94,7 @@ export async function saveBlueprintStep({
   "use step";
 
   const reading = withCheck({ check, reading: unchecked });
-  const notice = await writeNotice({ analytics, identity, reading });
+  const notice = await writeNotice({ analytics, identity, reading, sourceId });
 
   const saved = await saveExamBlueprint({
     board,
