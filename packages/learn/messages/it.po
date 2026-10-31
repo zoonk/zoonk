@@ -211,6 +211,7 @@ msgctxt "ra8gpz"
 msgid "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams."
 msgstr "I ripassi e la correzione dei tuoi errori restano gratuiti. Plus sblocca nuove lezioni, il resto del tuo piano e le simulazioni."
 
+#. Also a compact row beside a button that shows two lines on a phone: keep it short.
 #: src/_components/free-week-over.tsx
 msgctxt "WCwsVK"
 msgid "Your free week of exam prep is over"
@@ -6915,7 +6916,7 @@ msgstr "Termina l’esercitazione. Le risposte che hai dato contano."
 #: src/session/use-block-copy.ts
 msgctxt "HGnX5e"
 msgid "Practice mistakes"
-msgstr "Esercitati sui tuoi errori"
+msgstr "Esercitati sugli errori"
 
 #: src/mistakes/mistake-practice-run.tsx
 msgctxt "SMv32M"

@@ -11,7 +11,10 @@ export function useFreeWeekOverCopy(): { body: string; title: string } {
     body: t(
       "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.",
     ),
-    title: t("Your free week of exam prep is over"),
+    title: t({
+      description: "Also a compact row beside a button that shows two lines on a phone: keep it short.",
+      message: "Your free week of exam prep is over",
+    }),
   };
 }
 

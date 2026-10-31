@@ -3584,7 +3584,7 @@ msgstr "Stiamo iniziando…"
 #: src/app/[lang]/mistakes/practice/page.tsx
 msgctxt "HGnX5e"
 msgid "Practice mistakes"
-msgstr "Esercitati sui tuoi errori"
+msgstr "Esercizi sugli errori"
 
 #: src/app/[lang]/mock/[blockId]/page.tsx
 #: src/components/pricing/pricing-covers.tsx

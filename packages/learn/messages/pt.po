@@ -211,6 +211,7 @@ msgctxt "ra8gpz"
 msgid "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams."
 msgstr "As revisões e a correção dos seus erros continuam grátis. O Plus libera novas aulas, o restante do seu plano e simulados."
 
+#. Also a compact row beside a button that shows two lines on a phone: keep it short.
 #: src/_components/free-week-over.tsx
 msgctxt "WCwsVK"
 msgid "Your free week of exam prep is over"

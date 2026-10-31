@@ -211,6 +211,7 @@ msgctxt "ra8gpz"
 msgid "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams."
 msgstr "복습과 틀린 문제 고치기는 계속 무료예요. Plus를 구독하면 새 레슨과 모의고사를 이용하고 남은 계획도 이어 갈 수 있어요."
 
+#. Also a compact row beside a button that shows two lines on a phone: keep it short.
 #: src/_components/free-week-over.tsx
 msgctxt "WCwsVK"
 msgid "Your free week of exam prep is over"
