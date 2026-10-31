@@ -7,17 +7,6 @@ import { getAiOrganization } from "./orgs";
 
 const SHORT_UUID_LENGTH = 8;
 
-/** Accounts made outside the app skip its birth-year question as adults, as most specs need. */
-export const E2E_BIRTH_YEAR = 1990;
-
-export async function saveBirthYear({ birthYear, userId }: { birthYear: number; userId: string }) {
-  await prisma.userLearningProfile.upsert({
-    create: { birthYear, userId },
-    update: { birthYear },
-    where: { userId },
-  });
-}
-
 export type E2EUser = {
   email: string;
   id: string;
@@ -26,8 +15,6 @@ export type E2EUser = {
 };
 
 type CreateE2EUserOptions = {
-  /** An adult's unless given; null leaves the app's question unanswered. */
-  birthYear?: number | null;
   orgRole?: "admin" | "member" | "owner";
   withProgress?: boolean;
   withSubscription?: boolean;
@@ -55,11 +42,6 @@ export async function createE2EUser(
   }
 
   const user = await prisma.user.findUniqueOrThrow({ where: { email } });
-  const birthYear = options?.birthYear === undefined ? E2E_BIRTH_YEAR : options.birthYear;
-
-  if (birthYear !== null) {
-    await saveBirthYear({ birthYear, userId: user.id });
-  }
 
   if (options?.orgRole) {
     const org = await getAiOrganization();

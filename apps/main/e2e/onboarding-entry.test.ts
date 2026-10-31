@@ -2,7 +2,6 @@ import { randomUUID } from "node:crypto";
 import { DbNull, prisma } from "@zoonk/db";
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
-import { answerBirthYear } from "./birth-year";
 import { type Page, expect, test } from "./fixtures";
 import { stopRuns } from "./generation-run";
 import { expectHydrated } from "./hydration";
@@ -21,7 +20,6 @@ async function sendGoal(page: Page, goal: string) {
   await page.goto("/start");
   await page.getByRole("textbox", { name: "I want to" }).fill(goal);
   await page.getByRole("button", { name: "Build my plan" }).click();
-  await answerBirthYear(page);
 }
 
 async function findDraft(prompt: string) {

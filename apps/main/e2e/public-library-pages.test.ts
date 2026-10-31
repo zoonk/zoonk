@@ -12,7 +12,6 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
-import { answerBirthYear } from "./birth-year";
 import { type Page, expect, test } from "./fixtures";
 
 async function createLibraryCourse() {
@@ -191,7 +190,6 @@ test.describe("public Library lesson page", () => {
 
     const followed = page.waitForRequest(`**/v1/generations/${runId}/events**`);
     await start.click();
-    await answerBirthYear(page);
 
     await expect(page).toHaveURL(
       new RegExp(
