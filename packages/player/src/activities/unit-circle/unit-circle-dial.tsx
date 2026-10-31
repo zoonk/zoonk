@@ -4,7 +4,7 @@ import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { svgPoint } from "../_components/activity-place-handle";
 import { FULL_TURN, angleAfterKey, pointerAngle, snapAngle } from "./unit-circle-angle";
-import { DialLabel, TangentMark, TrigLegs, arcPath, onCircle } from "./unit-circle-marks";
+import { DialLabel, TangentMark, TrigLegsAndAngle, arcPath, onCircle } from "./unit-circle-marks";
 import { type TrigName, useTrigNames } from "./use-unit-circle-format";
 
 type Vector = { x: number; y: number };
@@ -220,7 +220,12 @@ export function UnitCircleDial({
           strokeWidth={2}
         />
 
-        <TrigLegs
+        <TrigLegsAndAngle
+          angle={{
+            direction: angleLabelDirection(degrees),
+            distance: ARC_RADIUS + ANGLE_LABEL_GAP,
+            label: angleLabel,
+          }}
           canvas={{ width }}
           center={center}
           formatValue={formatValue}
@@ -241,14 +246,6 @@ export function UnitCircleDial({
             value={values.tan ?? null}
           />
         )}
-
-        <DialLabel
-          anchor="middle"
-          className="fill-muted-foreground text-xs"
-          point={onCircle(center, ARC_RADIUS + ANGLE_LABEL_GAP, angleLabelDirection(degrees))}
-        >
-          {angleLabel}
-        </DialLabel>
 
         <DialHandle
           disabled={disabled}

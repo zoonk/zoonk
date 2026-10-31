@@ -20,6 +20,12 @@ import { atViewport } from "../_test-utils/browser-viewport";
 const polls = engineModeFixtures.randomSimulation.sampling;
 const FOCUS_RING = 17;
 
+function dialText(matches: (text: string) => boolean): DOMRect | undefined {
+  return [...(document.querySelector("figure svg")?.querySelectorAll("text") ?? [])]
+    .find((text) => matches(text.textContent ?? ""))
+    ?.getBoundingClientRect();
+}
+
 describe("geometry and data activities", () => {
   it("geometry board: the angles are worked out from the parts", async () => {
     openActivity({ template: "geometryBoard" });
@@ -169,6 +175,37 @@ describe("geometry and data activities", () => {
 
       expect(box?.left).toBeGreaterThanOrEqual(edges?.left ?? Number.POSITIVE_INFINITY);
       expect(box?.right).toBeLessThanOrEqual(edges?.right ?? Number.NEGATIVE_INFINITY);
+    });
+  });
+
+  it("unit circle: in large text the cos value and the angle stay apart at 345°", async () => {
+    document.documentElement.style.fontSize = "200%";
+
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport({ height: 812, width: 375 }, async () => {
+      openActivity({ template: "unitCircle" });
+      await pressOnSlider("Point on the circle", "End", 1);
+      await press("ArrowLeft", 3);
+
+      await expect.poll(() => dialText((text) => text === "345°")).toBeDefined();
+
+      const angle = dialText((text) => text === "345°");
+      const cos = dialText((text) => text.startsWith("cos = "));
+
+      const apart =
+        angle && cos
+          ? Math.max(
+              cos.left - angle.right,
+              angle.left - cos.right,
+              cos.top - angle.bottom,
+              angle.top - cos.bottom,
+            )
+          : Number.NEGATIVE_INFINITY;
+
+      expect(apart).toBeGreaterThan(0);
     });
   });
 

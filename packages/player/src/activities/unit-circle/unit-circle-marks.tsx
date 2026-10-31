@@ -6,12 +6,18 @@ import { DRAWING_LABEL_HALO } from "../_utils/drawing-label";
 import { type TrigName } from "./use-unit-circle-format";
 
 type Vector = { x: number; y: number };
+type Size = { height: number; width: number };
+type DrawnSizes = Record<"angle" | "cos" | "sin", Size>;
 
 const HALF_TURN = 180;
 const LABEL_GAP = 8;
 const SEGMENT_WIDTH = 4;
 const SIN_LABEL_GAP = 26;
 const SIN_LABEL_PAST_POINT = 25;
+const ANGLE_LABEL_STEP = 2;
+const ANGLE_LABEL_STEPS = 30;
+const NOTHING: Size = { height: 0, width: 0 };
+const NOTHING_DRAWN: DrawnSizes = { angle: NOTHING, cos: NOTHING, sin: NOTHING };
 
 const TRIG_TONES: Record<TrigName, { stroke: string; text: string }> = {
   cos: { stroke: "stroke-viz-secondary", text: "fill-viz-secondary" },
@@ -155,7 +161,43 @@ function sinLabelPlacement({
   };
 }
 
-export function TrigLegs({
+function sizeOf(node: SVGTextElement | null): Size {
+  const box = node?.getBBox();
+  return box ? { height: box.height, width: box.width } : NOTHING;
+}
+
+function isApart(first: Vector, firstSize: Size, second: Vector, secondSize: Size): boolean {
+  return (
+    Math.abs(first.x - second.x) >= (firstSize.width + secondSize.width) / 2 + LABEL_GAP / 2 ||
+    Math.abs(first.y - second.y) >= (firstSize.height + secondSize.height) / 2 + LABEL_GAP / 2
+  );
+}
+
+/** The angle sits on its arc's bisector, pushed out along it until it clears the cos value. */
+function angleLabelPoint({
+  angle,
+  center,
+  cos,
+  size,
+}: {
+  angle: { direction: number; distance: number };
+  center: Vector;
+  cos: { point: Vector; size: Size } | null;
+  size: Size;
+}): Vector {
+  const reach = Array.from(
+    { length: ANGLE_LABEL_STEPS + 1 },
+    (_, step) => angle.distance + step * ANGLE_LABEL_STEP,
+  ).find(
+    (distance) =>
+      !cos || isApart(onCircle(center, distance, angle.direction), size, cos.point, cos.size),
+  );
+
+  return onCircle(center, reach ?? angle.distance, angle.direction);
+}
+
+export function TrigLegsAndAngle({
+  angle,
   canvas,
   center,
   formatValue,
@@ -165,6 +207,7 @@ export function TrigLegs({
   target,
   values,
 }: {
+  angle: { direction: number; distance: number; label: string };
   canvas: { width: number };
   center: Vector;
   formatValue: (value: number | null) => string;
@@ -178,21 +221,46 @@ export function TrigLegs({
   const isLeft = point.x < center.x;
   const isAbove = point.y <= center.y;
   const sinLabel = `${names.sin} = ${formatValue(values.sin ?? null)}`;
+  const cosLabel = `${names.cos} = ${formatValue(values.cos ?? null)}`;
+  const angleRef = useRef<SVGTextElement>(null);
+  const cosRef = useRef<SVGTextElement>(null);
   const sinRef = useRef<SVGTextElement>(null);
-  const [drawnSin, setDrawnSin] = useState({ label: "", width: 0 });
+  const labels = [angle.label, cosLabel, sinLabel].join("\n");
+  const [drawn, setDrawn] = useState({ labels: "", sizes: NOTHING_DRAWN });
 
   useLayoutEffect(() => {
-    setDrawnSin({ label: sinLabel, width: sinRef.current?.getBBox().width ?? 0 });
-  }, [sinLabel]);
+    setDrawn({
+      labels,
+      sizes: {
+        angle: sizeOf(angleRef.current),
+        cos: sizeOf(cosRef.current),
+        sin: sizeOf(sinRef.current),
+      },
+    });
+  }, [labels]);
+
+  const sizes = drawn.labels === labels ? drawn.sizes : NOTHING_DRAWN;
 
   const sinPlacement = sinLabelPlacement({
     canvas,
     foot,
     isAbove,
     isLeft,
-    labelWidth: drawnSin.label === sinLabel ? drawnSin.width : 0,
+    labelWidth: sizes.sin.width,
     point,
     target,
+  });
+
+  const cosPoint = {
+    x: (center.x + foot.x) / 2,
+    y: center.y + (isAbove ? 1 : -1) * (LABEL_GAP * 2),
+  };
+
+  const anglePoint = angleLabelPoint({
+    angle,
+    center,
+    cos: show.includes("cos") ? { point: cosPoint, size: sizes.cos } : null,
+    size: sizes.angle,
   });
 
   return (
@@ -205,15 +273,8 @@ export function TrigLegs({
             strokeLinecap="round"
             strokeWidth={SEGMENT_WIDTH}
           />
-          <DialLabel
-            anchor="middle"
-            className={TRIG_TONES.cos.text}
-            point={{
-              x: (center.x + foot.x) / 2,
-              y: center.y + (isAbove ? 1 : -1) * (LABEL_GAP * 2),
-            }}
-          >
-            {`${names.cos} = ${formatValue(values.cos ?? null)}`}
+          <DialLabel anchor="middle" className={TRIG_TONES.cos.text} point={cosPoint} ref={cosRef}>
+            {cosLabel}
           </DialLabel>
         </>
       )}
@@ -237,6 +298,15 @@ export function TrigLegs({
           </DialLabel>
         </>
       )}
+
+      <DialLabel
+        anchor="middle"
+        className="fill-muted-foreground text-xs"
+        point={anglePoint}
+        ref={angleRef}
+      >
+        {angle.label}
+      </DialLabel>
     </g>
   );
 }
