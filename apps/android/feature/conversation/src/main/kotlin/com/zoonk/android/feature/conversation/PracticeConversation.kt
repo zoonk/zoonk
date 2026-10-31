@@ -149,7 +149,7 @@ fun rememberPracticeCallState(defaultMinutes: Long): PracticeCallState =
     ) { PracticeCallState(sheetOpen = false, minutes = defaultMinutes) }
 
 @Composable
-fun PracticeConversation(
+internal fun PracticeConversation(
     call: LanguagePracticeCall,
     chapterId: UUID,
     goalId: UUID?,

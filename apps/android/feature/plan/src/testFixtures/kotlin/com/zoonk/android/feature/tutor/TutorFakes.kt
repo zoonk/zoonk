@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlin.time.Instant
 
-class FakeTutorApi : TutorApi {
+internal class FakeTutorApi : TutorApi {
     class Ask(
         val question: String,
         val requestId: String,

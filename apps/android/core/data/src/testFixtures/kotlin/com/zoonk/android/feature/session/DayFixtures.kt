@@ -14,7 +14,7 @@ import java.util.UUID
 
 val GOAL: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d01")
 val SESSION: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d02")
-val DAY: LocalDate = LocalDate(2026, 10, 28)
+internal val DAY: LocalDate = LocalDate(2026, 10, 28)
 
 fun blockId(position: Int): UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2e%02d".format(position))
 

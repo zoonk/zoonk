@@ -15,9 +15,9 @@ const val SESSION = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a03"
 const val BLOCK = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a04"
 
 /** A chapter id per position, so a fixture's links say which chapter they open. */
-fun chapterId(position: Int) = "c0000000-0000-4000-8000-%012d".format(position)
+internal fun chapterId(position: Int) = "c0000000-0000-4000-8000-%012d".format(position)
 
-fun lessonId(position: Int) = "10000000-0000-4000-8000-%012d".format(position)
+internal fun lessonId(position: Int) = "10000000-0000-4000-8000-%012d".format(position)
 
 fun chapter(
     position: Int,
@@ -147,7 +147,7 @@ fun modulesSyllabus(): Syllabus =
         """.trimIndent(),
     )
 
-fun lesson(
+internal fun lesson(
     position: Int,
     title: String,
     state: String,
@@ -182,7 +182,7 @@ fun goalChapter(
         """.trimIndent(),
     )
 
-fun practiceBlock(
+internal fun practiceBlock(
     kind: String,
     lessonId: String? = null,
 ): AreaPractice =
@@ -197,7 +197,7 @@ fun practiceBlock(
         """.trimIndent(),
     )
 
-class FakeGoalContentApi : GoalContentApi {
+internal class FakeGoalContentApi : GoalContentApi {
     var chapters = 0
     var practice: () -> AreaPractice = { practiceBlock("practice") }
     val practiced = mutableListOf<AreaPracticeInput>()
@@ -221,7 +221,7 @@ class FakeGoalContentApi : GoalContentApi {
 }
 
 /** The Plan's fake, reading the exam's syllabus and counting its reads. */
-class SyllabusPlanApi(
+internal class SyllabusPlanApi(
     private val base: PlanApi = FakePlanApi(),
 ) : PlanApi by base {
     var syllabi = 0

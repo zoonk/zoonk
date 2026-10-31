@@ -86,7 +86,7 @@ fun goalsUnderstanding(
 } ?: ""}}}]}
     """.trimIndent()
 
-fun goalCreated(): GoalCreateResponse =
+internal fun goalCreated(): GoalCreateResponse =
     ApiJson.decodeFromString(
         """
         {"generations":[],"refused":[],"research":[],"goals":[{"createdAt":"2026-10-28T12:00:00Z","dailyMinutes":15,"details":{},

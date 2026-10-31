@@ -22,7 +22,7 @@ fun speakingPaper(
     )
 
 /** An exam task's `examTask` for a conversation. */
-val EXAM_TASK =
+internal val EXAM_TASK =
     """
     {"exam":"dele","language":"es","level":"B2","paper":"Prueba 4","source":"https://examenes.cervantes.es/dele-b2","title":"DELE B2",
     "card":{"instructions":["Lee las propuestas."],"photos":[],"prompts":["¿Cuál prefieres?"],"summary":"Choose one of four proposals.",

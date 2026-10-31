@@ -13,7 +13,7 @@ import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
 
 const val GOAL = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a01"
-const val PLAN_ID = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a02"
+internal const val PLAN_ID = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a02"
 
 /** The fewest fields a plan reads with; [extra]'s top-level fields replace or add to them. */
 fun plan(extra: String = ""): Plan {
@@ -35,7 +35,7 @@ fun plan(extra: String = ""): Plan {
     return ApiJson.decodeFromJsonElement<Plan>(JsonObject(base + fields))
 }
 
-fun progress(
+internal fun progress(
     value: Double = 0.42,
     goalId: String = GOAL,
 ): GoalProgress =
@@ -52,7 +52,7 @@ fun progress(
         """.trimIndent(),
     )
 
-fun syllabus(): Syllabus =
+internal fun syllabus(): Syllabus =
     ApiJson.decodeFromString(
         """
         {"examDocument":"guide","fromMaterial":false,"goal":{"id":"$GOAL","kind":"learn","title":"Learn Python"},
@@ -61,11 +61,11 @@ fun syllabus(): Syllabus =
         """.trimIndent(),
     )
 
-const val CHAPTER_DONE = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b01"
-const val CHAPTER_NEXT = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b02"
-const val CHAPTER_LATER = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b03"
-const val CHECKPOINT_ITEM = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1c01"
-const val FAR_SKILL = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1e01"
+internal const val CHAPTER_DONE = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b01"
+internal const val CHAPTER_NEXT = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b02"
+internal const val CHAPTER_LATER = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b03"
+internal const val CHECKPOINT_ITEM = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1c01"
+internal const val FAR_SKILL = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1e01"
 
 fun chapter(
     id: String?,
@@ -98,7 +98,7 @@ fun phase(
     "name":"$name","state":"$state"}"""
 
 /** A learn goal three weeks into four phases: the second one open, its next chapter half done, a day behind. */
-fun learnPlan(): Plan =
+internal fun learnPlan(): Plan =
     plan(
         """
         "phases":[
@@ -176,10 +176,10 @@ fun learnerSummary(
         """.trimIndent(),
     )
 
-const val CHANGE_ID = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1d01"
+internal const val CHANGE_ID = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1d01"
 
 /** A saved change; [effect] and [extra] are raw JSON fields. */
-fun planChange(
+internal fun planChange(
     operations: String = "[]",
     kind: String = "edited",
     status: String = "applied",
@@ -197,10 +197,10 @@ fun planChange(
         """.trimIndent(),
     )
 
-fun effect(fields: String = ""): String = """{"lessonsAdded":0,"lessonsRemoved":0${if (fields.isEmpty()) "" else ",$fields"}}"""
+internal fun effect(fields: String = ""): String = """{"lessonsAdded":0,"lessonsRemoved":0${if (fields.isEmpty()) "" else ",$fields"}}"""
 
 /** A plan whose time a day doesn't cover everything by its date; [extra]'s top-level fields add to it. */
-fun coveragePlan(
+internal fun coveragePlan(
     kind: String = "goal",
     coreFits: Boolean = true,
     timeCovers: Boolean = false,
@@ -220,7 +220,7 @@ fun coveragePlan(
         """.trimIndent(),
     )
 
-fun area(
+internal fun area(
     name: String,
     focused: Boolean = false,
     partOf: String? = null,
@@ -228,7 +228,7 @@ fun area(
 ) = """{"focusPart":null,"focused":$focused,"name":"$name","partOf":${partOf?.let { "\"$it\"" }},"pastBasics":false,
     "reduced":false,"skillCount":4,"skipped":$skipped}"""
 
-fun timeToCover(
+internal fun timeToCover(
     recommended: Long? = 45,
     focus: Long? = null,
     fittingDate: String? = null,

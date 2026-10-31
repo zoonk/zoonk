@@ -16,16 +16,16 @@ import kotlinx.coroutines.CompletableDeferred
 const val COURSE = "11111111-1111-4111-8111-111111111111"
 const val CHAPTER_ONE = "22222222-2222-4222-8222-222222222221"
 const val CHAPTER_TWO = "22222222-2222-4222-8222-222222222222"
-const val LESSON_ONE = "33333333-3333-4333-8333-333333333331"
+internal const val LESSON_ONE = "33333333-3333-4333-8333-333333333331"
 const val LESSON_TWO = "33333333-3333-4333-8333-333333333332"
-const val LESSON_THREE = "33333333-3333-4333-8333-333333333333"
+internal const val LESSON_THREE = "33333333-3333-4333-8333-333333333333"
 private const val ORG = "44444444-4444-4444-8444-444444444444"
 
 private const val QUESTION =
     """{"context":null,"guess":true,"kind":"choice","question":"Does the electron circle the nucleus?",
         "options":[{"id":"planet","text":"Yes, like a tiny planet"},{"id":"cloud","text":"No, it's more like a cloud"}]}"""
 
-fun courseResult(
+internal fun courseResult(
     id: String,
     title: String,
     subject: String? = "science",
@@ -36,7 +36,7 @@ fun courseResult(
             "title":"$title"}""",
     )
 
-fun counts(): CourseCategoryCounts =
+internal fun counts(): CourseCategoryCounts =
     ApiJson.decodeFromString(
         """{"categories":[{"category":"science","courseCount":2},{"category":"math","courseCount":1},{"category":"law","courseCount":0}],"total":3}""",
     )
@@ -80,14 +80,14 @@ fun chapter(
         ) { (lessonId, lessonTitle) -> """{"estimatedMinutes":7,"id":"$lessonId","slug":"l","title":"$lessonTitle"}""" }}]}""",
     )
 
-fun chapterResource(id: String): ChapterResource =
+internal fun chapterResource(id: String): ChapterResource =
     ApiJson.decodeFromString(
         """{"courseId":"$COURSE","description":"d","generationStatus":"completed","id":"$id","language":"en","level":"beginner",
             "objectives":[],"position":1,"slug":"c","title":"Bonds",
             "tryLesson":{"chapterTitle":"Bonds","lessonId":"$LESSON_THREE","minutes":7,"number":1,"screen":$QUESTION}}""",
     )
 
-fun catalogLesson(
+internal fun catalogLesson(
     id: String,
     firstScreen: String = QUESTION,
 ): CatalogLesson =

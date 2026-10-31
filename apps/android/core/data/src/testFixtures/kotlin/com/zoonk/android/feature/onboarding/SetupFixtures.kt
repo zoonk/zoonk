@@ -15,7 +15,7 @@ const val MOCK_ID = "4d5e6f70-8192-4ca3-9d4e-5f6071829304"
 private const val SKILL_ID = "5e6f7081-92a3-4db4-8e5f-607182930415"
 private const val PLAN_ID = "6f708192-a3b4-4ec5-9f60-718293041526"
 
-fun choiceQuestion(
+internal fun choiceQuestion(
     itemId: String = ITEM_ID,
     question: String = "Which court hears appeals from state courts?",
     options: List<String> = listOf("The Supreme Court", "A district court", "A county court"),
@@ -97,7 +97,7 @@ fun chapterOf(
      "testedOut":false,"title":"$title","writing":$writing}
     """.trimIndent()
 
-fun examPhases(today: LocalDate = LocalDate.now()) =
+internal fun examPhases(today: LocalDate = LocalDate.now()) =
     listOf(
         phaseOf(0, "foundations", "current", today, today.plusDays(20)),
         phaseOf(1, "practice", "upcoming", today.plusDays(21), today.plusDays(40)),
@@ -197,7 +197,7 @@ fun syllabusOf(
 
 fun examGoal(): Goal = goalCreated().goals.single()
 
-fun readingQuestion(
+internal fun readingQuestion(
     id: String = "reading-1",
     passage: String = "Marco va al mercato ogni sabato.",
 ) = """
