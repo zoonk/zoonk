@@ -34,7 +34,7 @@ import {
   useSetGoalStatus,
 } from "./goal-actions";
 import { type JourneyStanding, PlanNumbers } from "./journey-hero";
-import { type JourneyPathLinks, getPartialCourse } from "./journey-links";
+import { type JourneyPathLinks, getPlanLibraryCourse } from "./journey-links";
 import { AdjustPlanButton, JourneyMenu } from "./journey-menu";
 import { NextOnPath } from "./next-on-path";
 import { PlanHeader } from "./plan-header";
@@ -170,7 +170,8 @@ function JourneyBody({
   const editor = usePlanEditor(openAdjust);
   const [phasesOpen, setPhasesOpen] = useState(false);
   const goalMenu = useGoalMenu(goalStatus);
-  const partialCourse = getPartialCourse(plan);
+  const course = getPlanLibraryCourse(plan);
+  const courseHref = course && links.course(course);
   const structure = hasSyllabusSection(syllabus) ? syllabus : null;
   const paused = goalStatus?.status === "paused";
 
@@ -214,11 +215,7 @@ function JourneyBody({
         <Page data-slot="journey">
           <PlanHeader>
             <AdjustPlanButton onAdjust={() => editor.open()} />
-            <JourneyMenu
-              courseHref={partialCourse && links.course(partialCourse)}
-              examHref={links.exam}
-              goal={goalMenu.goal}
-            />
+            <JourneyMenu courseHref={courseHref} examHref={links.exam} goal={goalMenu.goal} />
           </PlanHeader>
 
           <PlanRoadmap
@@ -234,7 +231,7 @@ function JourneyBody({
           {structure ? (
             <SyllabusSection subjectHref={links.subject} syllabus={structure} />
           ) : (
-            <PathSection alphabet={alphabet} links={links} />
+            <PathSection alphabet={alphabet} courseHref={courseHref} links={links} />
           )}
         </Page>
 

@@ -4060,6 +4060,7 @@ msgid "Plan options"
 msgstr "Opções do plano"
 
 #: src/journey/journey-menu.tsx
+#: src/journey/plan-sections.tsx
 msgctxt "AGWryT"
 msgid "See the full course"
 msgstr "Ver o curso completo"

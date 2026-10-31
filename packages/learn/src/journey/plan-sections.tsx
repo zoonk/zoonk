@@ -7,7 +7,8 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import { GraduationCapIcon, NetworkIcon } from "lucide-react";
+import { cn } from "@zoonk/ui/lib/utils";
+import { ChevronRightIcon, GraduationCapIcon, LibraryIcon, NetworkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DrawerCloseButton } from "../_components/details-drawer";
 import {
@@ -25,9 +26,11 @@ import {
   PageSectionTitle,
 } from "../_components/page";
 import { type AlphabetLink, AlphabetRow } from "../language/units/alphabet-row";
+import { LearnLink } from "../learn-link";
 import { type JourneyPathLinks } from "./journey-links";
 import { JourneyPath } from "./journey-path";
 import { JourneyPathList } from "./journey-path-list";
+import { PATH_ROW_CLASS, PATH_ROW_LEADING_CLASS } from "./journey-phase-events";
 import { useRoadmapPhases } from "./use-roadmap";
 
 type MoreLinks = Pick<JourneyPathLinks, "exam"> & { mindMaps: string | null };
@@ -51,11 +54,33 @@ function PathDetail() {
   );
 }
 
+function FullCourseRow({ href }: { href: string }) {
+  const t = useExtracted();
+
+  return (
+    <LearnLink
+      className={cn(
+        PATH_ROW_CLASS,
+        "text-muted-foreground hover:bg-muted/70 hover:text-foreground",
+      )}
+      href={href}
+    >
+      <span aria-hidden="true" className={PATH_ROW_LEADING_CLASS}>
+        <LibraryIcon className="size-4" />
+      </span>
+      <span className="min-w-0 flex-1">{t("See the full course")}</span>
+      <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
+    </LearnLink>
+  );
+}
+
 export function PathSection({
   alphabet,
+  courseHref,
   links,
 }: {
   alphabet: { link: AlphabetLink; onSkip: () => Promise<boolean> } | null;
+  courseHref: string | null;
   links: JourneyPathLinks;
 }) {
   const t = useExtracted();
@@ -70,6 +95,7 @@ export function PathSection({
       {alphabet && <AlphabetRow alphabet={alphabet.link} onSkip={alphabet.onSkip} />}
 
       <JourneyPathList links={links} />
+      {courseHref && <FullCourseRow href={courseHref} />}
     </PageSection>
   );
 }

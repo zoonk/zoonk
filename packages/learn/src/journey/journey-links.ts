@@ -6,14 +6,12 @@ export type JourneyPathLinks = {
   exam: string | null;
 };
 
-export function getPartialCourse(plan: PlanView): { brandSlug: string; courseSlug: string } | null {
+export function getPlanLibraryCourse(
+  plan: PlanView,
+): { brandSlug: string; courseSlug: string } | null {
   const { course } = plan;
 
-  if (!course?.brandSlug || course.planChapterCount === 0) {
-    return null;
-  }
-
-  return course.planChapterCount < course.chapterCount
+  return course?.brandSlug && course.planChapterCount > 0
     ? { brandSlug: course.brandSlug, courseSlug: course.courseSlug }
     : null;
 }
