@@ -64,11 +64,14 @@ import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.isExploredPictureLost
 import com.zoonk.android.feature.player.engine.isNumberAnswer
+import com.zoonk.android.feature.player.language.LanguageStepView
+import com.zoonk.android.feature.player.language.LessonLanguage
 import com.zoonk.android.feature.player.model.CheckOption
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.SpokenAnswerStepContent
 import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.AnswerOption
@@ -385,8 +388,9 @@ internal fun TypedAnswerView(
 }
 
 /**
- * Main's spoken screen: said into L8's recorder, or typed when the learner can't talk today or the
- * microphone is blocked. Both are graded by the server.
+ * Main's spoken screen: said into L8's recorder; when the learner can't talk today, built from the
+ * heard sentence if the step has its listening exercise, else typed, as when the microphone is
+ * blocked. All are graded by the server.
  */
 @Composable
 internal fun SpokenAnswerView(
@@ -396,11 +400,27 @@ internal fun SpokenAnswerView(
     state: LessonPlayerState,
     actions: StepActions,
     navigator: AppNavigator,
+    language: LessonLanguage,
 ) {
     val spoken = content.content
     val locked = state.phase != LessonPhase.Playing
     var micBlocked by rememberSaveable(step.id) { mutableStateOf(false) }
     val types = actions.cantTalk || micBlocked
+    val switchTo = { cantTalk: Boolean ->
+        actions.select(null)
+        micBlocked = false
+        actions.setCantTalk(cantTalk)
+    }
+    val listening = content.listening?.takeIf { actions.cantTalk }
+
+    if (listening != null) {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            val exercise = StepContent.Language(StepKind.Listening, listening, wordHints = null)
+            LanguageStepView(exercise, answer, state.results[step.id], locked, language, actions)
+            if (!locked) GhostAction(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) }
+        }
+        return
+    }
 
     QuestionScene {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -438,18 +458,14 @@ internal fun SpokenAnswerView(
         }
 
         if (!locked) {
-            val switchTo = { cantTalk: Boolean ->
-                actions.select(null)
-                micBlocked = false
-                actions.setCantTalk(cantTalk)
-            }
             if (types) {
                 GhostAction(
                     R.drawable.ic_mic,
                     stringResource(if (actions.cantTalk) R.string.player_can_talk_now else R.string.player_say_it_instead),
                 ) { switchTo(false) }
             } else {
-                GhostAction(R.drawable.ic_keyboard, stringResource(R.string.player_cant_talk_now)) { switchTo(true) }
+                val icon = if (content.listening != null) R.drawable.ic_headphones else R.drawable.ic_keyboard
+                GhostAction(icon, stringResource(R.string.player_cant_talk_now)) { switchTo(true) }
             }
         }
     }

@@ -81,7 +81,7 @@ fun StepView(
         is StepContent.Check -> CheckView(content, answer, result, locked, screen, actions)
         is StepContent.Summary -> SummaryView(content)
         is StepContent.TypedAnswer -> TypedAnswerView(step, content, answer, state, screen, actions)
-        is StepContent.SpokenAnswer -> SpokenAnswerView(step, content, answer, state, actions, navigator)
+        is StepContent.SpokenAnswer -> SpokenAnswerView(step, content, answer, state, actions, navigator, language)
         is StepContent.Activity -> ActivityView(step, content, answer, result, state, actions)
         is StepContent.Challenge -> ChallengeView(step, content, answer, result, state, actions)
         is StepContent.Language -> LanguageStepView(content, answer, result, locked, language, actions)

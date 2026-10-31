@@ -38,8 +38,10 @@ import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.LessonRun
+import com.zoonk.android.feature.player.language.listening
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -242,6 +244,25 @@ class LessonPlayerFlowTest {
         rule.onNodeWithText("Correct!").assertIsDisplayed()
         assertEquals(
             LessonStepAnswer.LessonStepAnswerOneOf2Value::class,
+            api.checks
+                .single()
+                .second.answer::class,
+        )
+    }
+
+    @Test
+    fun aLearnerWhoCantTalkBuildsTheHeardSentenceWhenTheScreenHasItsListening() {
+        val heard = (listening("heard", audioUrl = null).content as StepContent.Language).exercise
+        val say = spokenStep("say").let { it.copy(content = (it.content as StepContent.SpokenAnswer).copy(listening = heard)) }
+        play(listOf(say, summaryStep("end")))
+
+        tap("I can't talk now")
+        rule.onNode(hasSetTextAction()).assertDoesNotExist()
+        listOf("I", "see", "a", "cat.").forEach { rule.onNodeWithText(it).performScrollTo().performClick() }
+        tap("Check")
+
+        assertEquals(
+            LessonStepAnswer.LessonStepAnswerOneOf6Value::class,
             api.checks
                 .single()
                 .second.answer::class,
