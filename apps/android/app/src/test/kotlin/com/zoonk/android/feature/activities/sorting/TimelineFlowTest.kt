@@ -10,6 +10,7 @@ import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -103,6 +104,26 @@ class TimelineFlowTest : SortingFlow() {
         harness.tap("Check")
 
         shows("about 2,000 years")
+    }
+
+    @Test
+    fun timelineAnnouncesTheTimeBetweenTheDatesWhenTheyShow() {
+        play(
+            "timeline",
+            isCorrect = true,
+            check = choiceCheck("Cleopatra lived closer in time to...", "The Moon landing", "The pyramid builders"),
+        )
+
+        rule.onNodeWithContentDescription("Place Moon landing on the timeline").performScrollTo().performClick()
+        rule.onNodeWithContentDescription("Place Cleopatra rules Egypt on the timeline").performScrollTo().performClick()
+        tap("Show the real dates")
+
+        rule
+            .onNode(
+                hasText("about 2,000 years", substring = true) and
+                    hasAnyAncestor(SemanticsMatcher.keyIsDefined(SemanticsProperties.LiveRegion)) and
+                    !hasAnyAncestor(hasContentDescription("Time between the dates")),
+            ).assertExists()
     }
 
     @Test

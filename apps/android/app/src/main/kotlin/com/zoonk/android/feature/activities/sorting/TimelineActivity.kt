@@ -59,11 +59,13 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.setProgress
@@ -241,11 +243,13 @@ private fun TimelineQuestion(props: ActivityProps) {
             }
         }
 
-        if (showTruth) {
-            TimelineGaps(
-                (fields.anchors.map { Dated(it.label, it.year) } + fields.events.map { Dated(it.label, it.year) }),
-                formatYear,
-            )
+        Box(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
+            if (showTruth) {
+                TimelineGaps(
+                    (fields.anchors.map { Dated(it.label, it.year) } + fields.events.map { Dated(it.label, it.year) }),
+                    formatYear,
+                )
+            }
         }
     }
 }
@@ -728,7 +732,9 @@ private fun TimelineGaps(
     val highlight = MaterialTheme.zoonk.vizHighlight
     val secondary = MaterialTheme.zoonk.vizSecondary
 
-    Column(Modifier.semantics { contentDescription = label }, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        // A description on the column would be all TalkBack announces of it, so the list's name is its own node.
+        Box(Modifier.size(1.dp).semantics { contentDescription = label })
         sorted.zipWithNext().forEachIndexed { index, (earlier, later) ->
             val years = yearsBetween(earlier.year, later.year)
             val rounded = roundedGap(years)
