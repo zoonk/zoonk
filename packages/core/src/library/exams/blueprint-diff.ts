@@ -204,27 +204,35 @@ export function movesExamDays({
   return listExamDays(current.edition) !== listExamDays(merged.edition);
 }
 
+/**
+ * A re-read of the same edition only fills in what it missed; a later edition's notice replaces the
+ * last one's subjects and formats (`nextEdition`).
+ */
 export function mergeBlueprintContent({
   current,
   next: reading,
+  nextEdition = false,
 }: {
   current: BlueprintContent;
   next: BlueprintContent;
+  nextEdition?: boolean;
 }): BlueprintMerge {
-  const next: BlueprintContent = {
-    ...reading,
-    structure: {
-      ...reading.structure,
-      formats: keepKnownOptions({
-        current: current.structure.formats,
-        next: reading.structure.formats,
-      }),
-      subjects: keepKnownSubjectFacts({
-        current: current.structure.subjects,
-        next: reading.structure.subjects,
-      }),
-    },
-  };
+  const next: BlueprintContent = nextEdition
+    ? reading
+    : {
+        ...reading,
+        structure: {
+          ...reading.structure,
+          formats: keepKnownOptions({
+            current: current.structure.formats,
+            next: reading.structure.formats,
+          }),
+          subjects: keepKnownSubjectFacts({
+            current: current.structure.subjects,
+            next: reading.structure.subjects,
+          }),
+        },
+      };
 
   const changes = getSections({ current, next })
     .filter((section) => isChanged(section))

@@ -100,6 +100,19 @@ export function isPastEdition({ content }: { content: BlueprintContent }): boole
   return examDate !== null && examDate.getTime() + MS_PER_DAY <= Date.now();
 }
 
+/** A later notice's reading, once the stored edition passed, rather than a re-read of that edition. */
+function isNextEdition({ current, next }: { current: BlueprintContent; next: BlueprintContent }) {
+  const before = findLastDate(current.edition.dates, "exam");
+  const after = findLastDate(next.edition.dates, "exam");
+
+  if (before && after) {
+    return after.getTime() > before.getTime() && isPastEdition({ content: current });
+  }
+
+  const { year } = current.edition;
+  return year !== null && next.edition.year !== null && next.edition.year > year;
+}
+
 export async function previewExamBlueprintChanges({
   content,
   identity,
@@ -123,7 +136,11 @@ export async function previewExamBlueprintChanges({
     return null;
   }
 
-  return mergeBlueprintContent({ current: stored, next: content }).changes;
+  return mergeBlueprintContent({
+    current: stored,
+    next: content,
+    nextEdition: isNextEdition({ current: stored, next: content }),
+  }).changes;
 }
 
 /** What past papers showed (counts, topics, options) belongs to the board that wrote them. */
@@ -159,7 +176,12 @@ async function updateBlueprint({
   input: SaveExamBlueprintInput;
 }): Promise<SavedExamBlueprint> {
   const stored = forgetOtherBoardsPapers({ board: input.identity.board, current });
-  const { changes, content } = mergeBlueprintContent({ current: stored, next: input.content });
+
+  const { changes, content } = mergeBlueprintContent({
+    current: stored,
+    next: input.content,
+    nextEdition: isNextEdition({ current: stored, next: input.content }),
+  });
 
   const notice = changes.length > 0 ? input.notice : null;
 

@@ -11,7 +11,7 @@ import { describe, expect, it, vi } from "vitest";
 import { getExamBlueprintCacheTag } from "../../cache/tags";
 import { uniqueWord } from "../identity/_test-utils/identity-mocks";
 import { MAX_MATCHES_PER_TERM } from "../identity/_utils/text-search-sql";
-import { type BlueprintContent } from "./blueprint-contract";
+import { type BlueprintContent, examStructureSchema } from "./blueprint-contract";
 import { type ExamIdentity, buildExamIdentityKey } from "./exam-identity";
 import { type ExamRequest, findSameExam } from "./find-same-exam";
 import {
@@ -109,6 +109,43 @@ function content({
     },
     topicFrequency: [],
   };
+}
+
+function withSyllabus({
+  base,
+  examDate,
+  names,
+  year,
+}: {
+  base: BlueprintContent;
+  examDate: string;
+  names: string[];
+  year: number;
+}): BlueprintContent {
+  const [first] = base.structure.subjects;
+
+  if (!first) {
+    throw new Error("The base content has a subject to copy.");
+  }
+
+  return {
+    ...base,
+    edition: {
+      ...base.edition,
+      dates: base.edition.dates.map((date) =>
+        date.kind === "exam" ? { ...date, date: examDate } : date,
+      ),
+      year,
+    },
+    structure: {
+      ...base.structure,
+      subjects: names.map((name) => ({ ...first, name, questions: null, topics: [`${name} 1`] })),
+    },
+  };
+}
+
+function subjectNames(blueprint: { structure: unknown }): string[] {
+  return examStructureSchema.parse(blueprint.structure).subjects.map((subject) => subject.name);
 }
 
 describe(saveExamBlueprint, () => {
@@ -336,6 +373,47 @@ describe(saveExamBlueprint, () => {
     expect(newBoard.blueprint.structure).not.toHaveProperty("pastOptions");
     expect(newBoard.blueprint.structure).not.toHaveProperty("pastQuestions");
     expect(newBoard.blueprint.structure).not.toHaveProperty("pastTopicFrequency");
+  });
+
+  it("lets a later edition's notice replace the last one's subjects, and keeps what a re-read missed", async () => {
+    const [last, reread, next] = await Promise.all([
+      sourceFixture({ language: "pt" }),
+      sourceFixture({ language: "pt" }),
+      sourceFixture({ language: "pt" }),
+    ]);
+
+    const examIdentity = identity();
+
+    const read = (source: typeof last, edition: Omit<Parameters<typeof withSyllabus>[0], "base">) =>
+      saveExamBlueprint({
+        content: withSyllabus({
+          base: content({ questions: 80, sourceHash: source.contentHash, sourceId: source.id }),
+          ...edition,
+        }),
+        identity: examIdentity,
+        provenance: PROVENANCE,
+        sourceId: source.id,
+      });
+
+    const lastSyllabus = ["Língua Portuguesa", "Tecnologia da Informação", "Auditoria"];
+
+    await read(last, { examDate: "2022-05-15", names: lastSyllabus, year: 2022 });
+
+    const missed = await read(reread, {
+      examDate: "2022-05-15",
+      names: ["Língua Portuguesa", "Auditoria"],
+      year: 2022,
+    });
+
+    expect(subjectNames(missed.blueprint)).toStrictEqual(lastSyllabus);
+
+    const nextEdition = await read(next, {
+      examDate: "2026-12-13",
+      names: ["Auditoria", "Finanças Públicas"],
+      year: 2026,
+    });
+
+    expect(subjectNames(nextEdition.blueprint)).toStrictEqual(["Auditoria", "Finanças Públicas"]);
   });
 
   it("tells learners nothing when the same document is read again", async () => {
