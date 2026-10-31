@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { optimizeImage } from "@zoonk/core/images/optimize";
 import { safeAsync } from "@zoonk/utils/error";
 import { ImageResponse } from "next/og";
+import { getOpenGraphWordBreak } from "./open-graph-word-break";
 
 const ROOT_OPEN_GRAPH_IMAGE_PATH = "src/app/icon.svg";
 const DESCRIPTION_LINE_HEIGHT = 1.35;
@@ -24,6 +25,7 @@ type CatalogOpenGraphImageParams = {
   description?: string | null;
   fallbackImagePath: string;
   imageUrl?: string | null;
+  language: string;
   title: string;
 };
 
@@ -162,6 +164,7 @@ async function readLocalImage(path: string): Promise<Buffer | null> {
 function CatalogOpenGraphImage({
   description,
   imageSrc,
+  language,
   title,
 }: CatalogOpenGraphImageParams & { imageSrc: string }) {
   const safeTitle = truncateText({ maxLength: MAX_TITLE_LENGTH, text: title });
@@ -183,6 +186,7 @@ function CatalogOpenGraphImage({
         justifyContent: "center",
         padding: "72px 96px",
         width: "100%",
+        wordBreak: getOpenGraphWordBreak(language),
       }}
     >
       <div

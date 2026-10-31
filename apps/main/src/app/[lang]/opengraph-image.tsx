@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { routing } from "@/i18n/routing";
+import { getOpenGraphWordBreak } from "@/lib/metadata/open-graph-word-break";
 import { DEFAULT_LOCALE, isValidLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { ImageResponse } from "next/og";
@@ -47,6 +48,7 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
         justifyContent: "center",
         padding: "64px 80px",
         width: "100%",
+        wordBreak: getOpenGraphWordBreak(locale),
       }}
     >
       {/* oxlint-disable-next-line next/no-img-element -- ImageResponse renders plain img elements, not next/image. */}

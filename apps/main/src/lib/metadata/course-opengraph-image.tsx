@@ -16,6 +16,7 @@ async function getCourseCard(route: CourseRoute) {
     description: course?.description,
     fallbackImagePath: getDefaultChapterImage({ categories: course?.categories ?? [] }),
     imageUrl: course?.imageUrl,
+    language: course?.language ?? "en",
     title: course?.title ?? "Zoonk",
   });
 

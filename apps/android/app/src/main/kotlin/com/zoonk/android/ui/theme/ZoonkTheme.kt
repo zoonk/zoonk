@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -15,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 
 /**
@@ -35,11 +37,14 @@ fun ZoonkTheme(
             else -> Light
         }
 
+    val language = LocalConfiguration.current.locales[0].language
+    val typography = remember(language) { Typography().wrappedFor(language) }
+
     CompositionLocalProvider(
         LocalZoonkColors provides scheme.zoonk,
         LocalMoreContrast provides moreContrast,
     ) {
-        MaterialTheme(colorScheme = scheme.material, content = content)
+        MaterialTheme(colorScheme = scheme.material, typography = typography, content = content)
     }
 }
 

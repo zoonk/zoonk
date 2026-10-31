@@ -538,6 +538,12 @@
     @apply bg-background text-foreground;
     letter-spacing: -0.006em;
   }
+
+  /* Browsers break Korean inside words by default; Korean wraps between them, at the spaces. */
+  :lang(ko) {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
 }
 
 @keyframes breathe {
