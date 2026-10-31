@@ -69,11 +69,15 @@ struct CourseMark: View {
       return ""
     }
 
-    let base =
-      Locale.Language(identifier: targetLanguage).languageCode?.identifier ?? targetLanguage
-    let identifier = languageFlag.count == 2 ? "\(base)-\(languageFlag.uppercased())" : base
-    return Locale.current.localizedString(forIdentifier: identifier) ?? base
+    return languageFlagLabel(language: targetLanguage, flag: languageFlag)
   }
+}
+
+/// main's `getLanguageFlagLabel`: the language in the flag's country ("Chinese (Taiwan)").
+func languageFlagLabel(language: String, flag: String, locale: Locale = .current) -> String {
+  let base = Locale.Language(identifier: language).languageCode?.identifier ?? language
+  let identifier = flag.count == 2 ? "\(base)-\(flag.uppercased())" : base
+  return locale.languageTitle(identifier)
 }
 
 extension CourseMark {

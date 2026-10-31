@@ -21,6 +21,17 @@ final class CourseCatalogPresentationTests: XCTestCase {
     XCTAssertNil(flagEmoji("arab"))
   }
 
+  func testAFlagIsReadAsTheLanguageInItsCountry() {
+    let marks = [("zh-TW", "tw"), ("yue", "hk"), ("ar", "arab")]
+
+    XCTAssertEqual(
+      marks.map { languageFlagLabel(language: $0, flag: $1, locale: Locale(identifier: "en")) },
+      ["Chinese (Taiwan)", "Cantonese (Hong Kong)", "Arabic"])
+    XCTAssertEqual(
+      marks.map { languageFlagLabel(language: $0, flag: $1, locale: Locale(identifier: "pt-BR")) },
+      ["Chinês (Taiwan)", "Cantonês (Hong Kong)", "Árabe"])
+  }
+
   func testOnlyACourseInAnotherLanguagePointsToTheReadersEdition() {
     XCTAssertEqual(Course.testFixture.edition(in: "pt")?.title, "Astronomia")
     XCTAssertNil(Course.testFixture.edition(in: "en"))
