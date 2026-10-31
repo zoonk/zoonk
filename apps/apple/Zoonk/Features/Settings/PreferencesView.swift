@@ -53,7 +53,7 @@ struct PreferencesView: View {
             Text("No limit", tableName: "Settings", comment: "Daily time limit option: none")
               .tag(Int?.none)
 
-            ForEach(dailyLimitChoices, id: \.self) { minutes in
+            ForEach(preferences.dailyLimitChoices, id: \.self) { minutes in
               Text(
                 "\(Duration.seconds(minutes * 60).formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))) a day",
                 tableName: "Settings",
@@ -136,7 +136,7 @@ struct PreferencesView: View {
 
   private func dailyLimitBinding(_ preferences: LearningPreferences) -> Binding<Int?> {
     Binding(
-      get: { preferences.dailyLimitMinutes.flatMap { dailyLimitChoices.contains($0) ? $0 : nil } },
+      get: { preferences.dailyLimitMinutes },
       set: { minutes in
         Task {
           await settings.updatePreferences(.dailyLimitMinutes(minutes))

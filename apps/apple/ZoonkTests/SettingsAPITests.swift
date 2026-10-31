@@ -29,9 +29,22 @@ final class SettingsAPITests: XCTestCase {
     XCTAssertEqual(
       transport.sentBodies.value, [["dailyLimitMinutes": 30], ["soundsEnabled": false]])
   }
+
+  func testTheLimitOffersCoresTimesWithASavedOneTheyLack() async throws {
+    let transport = ProfileUpdateTransport(limit: 370)
+    let api = SettingsAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!, transport: transport))
+
+    let preferences = try await api.updatePreferences(token: "token", .dailyLimitMinutes(370))
+
+    XCTAssertEqual(preferences.dailyLimitMinutes, 370)
+    XCTAssertEqual(preferences.dailyLimitChoices, [5, 360, 370, 390])
+  }
 }
 
 private struct ProfileUpdateTransport: ClientTransport {
+  var limit: Int?
   let sentBodies = SentBodies()
 
   func send(
@@ -51,18 +64,18 @@ private struct ProfileUpdateTransport: ClientTransport {
     return (
       HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
       HTTPBody(
-        #"""
+        """
         {
           "profile": {
             "activeGoalId": null,
             "availableGlasses": ["round"],
             "buddy": { "glasses": "round", "kind": "zu", "name": null, "picked": false },
-            "dailyLimitMinutes": null,
-            "dailyTimes": [5, 10, 15],
+            "dailyLimitMinutes": \(limit.map(String.init) ?? "null"),
+            "dailyTimes": [5, 360, 390],
             "soundsEnabled": true
           }
         }
-        """#)
+        """)
     )
   }
 }

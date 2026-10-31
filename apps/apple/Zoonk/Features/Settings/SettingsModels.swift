@@ -5,7 +5,14 @@ struct LearningPreferences: Equatable, Sendable {
   var buddyPicked: Bool
   var availableGlasses: [BuddyGlasses]
   var dailyLimitMinutes: Int?
+  /// Core's daily times for the limit's picker.
+  let dailyTimes: [Int]
   var soundsEnabled: Bool
+
+  /// A saved limit the list lacks, such as one set on the web, shows as itself.
+  var dailyLimitChoices: [Int] {
+    ScheduleTime.dailyTimes(dailyTimes, with: dailyLimitMinutes)
+  }
 }
 
 enum PreferencesUpdate: Equatable, Sendable {
@@ -69,9 +76,6 @@ enum PreferencesUpdate: Equatable, Sendable {
     }
   }
 }
-
-/// Core's `DAILY_LIMIT_CHOICES`, in minutes.
-let dailyLimitChoices = [15, 30, 45, 60, 90, 120, 180]
 
 struct LearnerMemory: Equatable, Sendable {
   var enabled: Bool
@@ -137,6 +141,7 @@ extension LearningPreferences {
       buddyPicked: profile.buddy.picked,
       availableGlasses: profile.availableGlasses.compactMap { BuddyGlasses(rawValue: $0.rawValue) },
       dailyLimitMinutes: profile.dailyLimitMinutes,
+      dailyTimes: profile.dailyTimes,
       soundsEnabled: profile.soundsEnabled)
   }
 }

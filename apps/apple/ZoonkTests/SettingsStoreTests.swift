@@ -446,6 +446,7 @@ extension LearningPreferences {
     buddyPicked: true,
     availableGlasses: [.round],
     dailyLimitMinutes: nil,
+    dailyTimes: [15, 30, 45],
     soundsEnabled: true)
 }
 
