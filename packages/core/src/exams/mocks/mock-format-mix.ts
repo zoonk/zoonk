@@ -13,7 +13,7 @@ import { isAskedIn } from "../../library/exams/format-sections";
 import { isFormatShare } from "../../library/exams/format-shares";
 import { describeFormat } from "../../library/exams/format-style";
 import { ANY_NUMBER } from "../../library/items/_utils/numeric-entry";
-import { listAreaParts } from "./exam-parts";
+import { listAreaParts, listAreaSections, listSectionParts } from "./exam-parts";
 
 export type ExamAnswerFormat =
   | { entry: null; format: "multipleChoice"; options: number | null; select: OptionSelect }
@@ -237,7 +237,19 @@ export function getFormatQuotas({
   return new Map(mix.map((format, index) => [format.key, counts[index] ?? 0]));
 }
 
-/** The format as a skill of `area` writes it: null when no part of that area asks it. */
+/** A section the notice ties no format to asks every format, so it never ends up empty. */
+export function getSectionMix({
+  parts,
+  structure,
+}: {
+  parts: readonly string[] | undefined;
+  structure: ExamStructure | null;
+}): MockFormat[] {
+  const scoped = getMockFormatMix(structure, parts);
+  return scoped.length > 0 ? scoped : getMockFormatMix(structure);
+}
+
+/** The format as a skill of `area` writes it, as the sections it sits in ask it; null when none does. */
 export function getAreaFormat({
   area,
   format,
@@ -247,6 +259,17 @@ export function getAreaFormat({
   format: MockFormat;
   structure: ExamStructure | null;
 }): MockFormat | null {
-  const parts = area ? listAreaParts({ area, structure }) : undefined;
-  return getMockFormatMix(structure, parts).find((scoped) => scoped.key === format.key) ?? null;
+  const own = area
+    ? getMockFormatMix(structure, listAreaParts({ area, structure }))
+    : getMockFormatMix(structure);
+
+  const asksAll =
+    area !== null &&
+    listAreaSections({ area, structure }).some(
+      (section) =>
+        getMockFormatMix(structure, listSectionParts({ section, structure })).length === 0,
+    );
+
+  const mix = asksAll ? getMockFormatMix(structure) : own;
+  return mix.find((scoped) => scoped.key === format.key) ?? null;
 }

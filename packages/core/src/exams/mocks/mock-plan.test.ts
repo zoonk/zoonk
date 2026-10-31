@@ -152,6 +152,36 @@ describe(planMock, () => {
     expect(plan.formatsWanted).toStrictEqual({ "choice:4": 9, "numeric:number:": 3 });
   });
 
+  it("keeps a section the notice ties no format to, asking the exam's formats there", () => {
+    const exam = {
+      ...structure({ sections: [sectioned("Verbal", 6), sectioned("Quantitative", 6)] }),
+      formats: [
+        format({ sections: ["Verbal"] }),
+        format({ options: 6, sections: ["Verbal"], select: 2 }),
+      ],
+      subjects: ["Verbal", "Quantitative"].map((name) => ({
+        citation,
+        name,
+        questions: 6,
+        topics: [],
+        weight: null,
+      })),
+    };
+
+    const plan = planMock({
+      adaptive: false,
+      candidates: [...formatted("Verbal", "choice:5"), ...formatted("Quantitative", "choice:5")],
+      fullLength: true,
+      mockNumber: 0,
+      structure: exam,
+    });
+
+    expect(plan.sections.map(({ name, questions }) => ({ name, questions }))).toStrictEqual([
+      { name: "Verbal", questions: 6 },
+      { name: "Quantitative", questions: 6 },
+    ]);
+  });
+
   it("never plans objective questions in a written section", () => {
     const exam = {
       ...structure({

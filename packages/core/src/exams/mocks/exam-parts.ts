@@ -130,8 +130,8 @@ export function listSectionParts({
   return [section, ...asked.flatMap((subject) => toSubjectParts(subject))];
 }
 
-/** A plan area's subject and the sections that ask it, so its skills write the formats asked there. */
-export function listAreaParts({
+/** The sections a plan area's questions sit in, as its subject's when one has it. */
+export function listAreaSections({
   area,
   structure,
 }: {
@@ -141,13 +141,22 @@ export function listAreaParts({
   const subject = findSubject({ area, structure });
 
   if (!subject) {
-    const sections = getObjectiveSectionNames(structure);
-    return [area, ...findAreaSections({ area, sections, structure })];
+    return findAreaSections({ area, sections: getObjectiveSectionNames(structure), structure });
   }
 
-  return [
-    area,
-    ...toSubjectParts(subject),
-    ...(mapSubjectsToSections(structure).get(subject.name) ?? []),
-  ];
+  return mapSubjectsToSections(structure).get(subject.name) ?? [];
+}
+
+/** A plan area's subject and the sections that ask it, so its skills write the formats asked there. */
+export function listAreaParts({
+  area,
+  structure,
+}: {
+  area: string;
+  structure: ExamStructure | null;
+}): string[] {
+  const subject = findSubject({ area, structure });
+  const sections = listAreaSections({ area, structure });
+
+  return [area, ...(subject ? toSubjectParts(subject) : []), ...sections];
 }

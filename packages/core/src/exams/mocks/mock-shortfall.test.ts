@@ -131,6 +131,65 @@ describe(getMockQuestionsShortfall, () => {
     ]);
   });
 
+  it("writes the exam's formats for the skills of a section the notice ties none to", () => {
+    const citation = { passage: "", sourceId: "notice" };
+    const subjects = ["Verbal", "Quantitative"];
+
+    const structure: ExamStructure = {
+      formats: [
+        {
+          citation,
+          description: "Choose one",
+          kind: "multipleChoice",
+          options: 5,
+          sections: ["Verbal"],
+        },
+      ],
+      mock: {
+        adaptive: false,
+        citations: [],
+        order: null,
+        scoring: { description: "", method: "raw" },
+        sections: subjects.map((name) => ({
+          day: null,
+          kind: "objective" as const,
+          minutes: 6,
+          name,
+          questions: 6,
+        })),
+        timeLimitMinutes: null,
+        totalQuestions: null,
+      },
+      rules: [],
+      subjects: subjects.map((name) => ({
+        citation,
+        name,
+        questions: 6,
+        topics: [],
+        weight: null,
+      })),
+    };
+
+    const writes = getMockQuestionsShortfall({
+      candidates: [],
+      mix: getMockFormatMix(structure),
+      option: { questions: 12 },
+      plan: {
+        day: null,
+        formatsWanted: { "choice:5": 12 },
+        fullLength: true,
+        minutes: 12,
+        reused: 0,
+        sections: [],
+        written: [],
+      },
+      skills: subjects.map((area) => ({ area, id: area })),
+      structure,
+    });
+
+    expect(writes.flatMap((write) => write.skillIds)).toStrictEqual(["Verbal", "Quantitative"]);
+  });
+
   it("requests enough fresh items for both routes", () => {
     const candidates: MockCandidate[] = Array.from({ length: 4 }, (_, index) => ({
       answered: false,

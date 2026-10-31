@@ -9,7 +9,7 @@ import {
   sectionMinutes,
   toSectionRules,
 } from "./mock-day-sections";
-import { addFormatsWanted, getFormatQuotas, getMockFormatMix } from "./mock-format-mix";
+import { addFormatsWanted, getFormatQuotas, getSectionMix } from "./mock-format-mix";
 import { planListeningSection, planSpeakingSection } from "./mock-oral-sections";
 import { countReused } from "./mock-reuse";
 import { type MockRouting, isNextModule, toRouting } from "./mock-routing";
@@ -152,7 +152,7 @@ export function planMock({
       const previous = sections[index - 1]?.name ?? null;
       const routed = adaptive && isNextModule({ current: section.name, previous });
       const sectionParts = areaParts ?? listSectionParts({ section: section.name, structure });
-      const sectionMix = getMockFormatMix(structure, sectionParts);
+      const sectionMix = getSectionMix({ parts: sectionParts, structure });
       const asked = new Set(sectionMix.map((format) => format.key));
 
       const pool = orderBySubjectShares({
