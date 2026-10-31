@@ -51,16 +51,20 @@ function gradedDraft(text: string): EssayDraft {
   };
 }
 
-function renderEssay(submit: EssayActions["submit"]) {
-  render(
+function essayScreen(submit: EssayActions["submit"], essay: EssayView = ESSAY) {
+  return (
     <LearnProvider adapters={LEARN_ADAPTERS}>
       <EssayScreen
         actions={{ finish: vi.fn(async () => true), submit }}
-        essay={ESSAY}
+        essay={essay}
         hrefs={{ dailyLimit: "/settings/appearance", exit: "/today" }}
       />
-    </LearnProvider>,
+    </LearnProvider>
   );
+}
+
+function renderEssay(submit: EssayActions["submit"], essay: EssayView = ESSAY) {
+  return render(essayScreen(submit, essay));
 }
 
 const answer = () => page.getByRole("textbox", { name: "Your answer" });
@@ -78,6 +82,91 @@ async function openRewrite(): Promise<void> {
   await page.getByRole("button", { name: "Continue" }).click();
   await openRewrite();
 }
+
+async function goThroughSteps(): Promise<void> {
+  const next = page.getByRole("button", { name: "Continue" });
+
+  if (next.query()) {
+    await next.click();
+    await goThroughSteps();
+  }
+}
+
+describe("a closed essay reopened from a link", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it.each(["completed", "skipped"] as const)(
+    "shows a %s essay's last grade read-only, with the way back to Today",
+    async (status) => {
+      renderEssay(vi.fn(), {
+        ...ESSAY,
+        drafts: [gradedDraft("Charging cars clears the air.")],
+        status,
+      });
+
+      await expect.element(page.getByRole("list", { name: "Score by criterion" })).toBeVisible();
+      await goThroughSteps();
+
+      await expect
+        .element(page.getByRole("link", { name: "Back to Today" }))
+        .toHaveAttribute("href", "/today");
+
+      expect(page.getByRole("button", { exact: true, name: "Rewrite" }).query()).toBeNull();
+      expect(page.getByRole("button", { name: "Skip the rewrite" }).query()).toBeNull();
+      expect(page.getByRole("textbox").query()).toBeNull();
+    },
+  );
+
+  it("shows the grade read-only once a fresh read says the essay was finished meanwhile", async () => {
+    const { rerender } = renderEssay(vi.fn());
+    await expect.element(answer()).toBeVisible();
+
+    rerender(
+      essayScreen(vi.fn(), {
+        ...ESSAY,
+        drafts: [gradedDraft("Charging cars clears the air.")],
+        status: "completed",
+      }),
+    );
+
+    await expect.element(page.getByRole("list", { name: "Score by criterion" })).toBeVisible();
+    await goThroughSteps();
+
+    await expect
+      .element(page.getByRole("link", { name: "Back to Today" }))
+      .toHaveAttribute("href", "/today");
+
+    expect(page.getByRole("textbox").query()).toBeNull();
+  });
+
+  it("doesn't ask to send a closed essay that was too short again", async () => {
+    const draft = gradedDraft("Too short.");
+
+    renderEssay(vi.fn(), {
+      ...ESSAY,
+      drafts: [{ ...draft, grade: { ...draft.grade, zeroReason: "tooShort" } }],
+      status: "completed",
+    });
+
+    await expect.element(page.getByText("Too short to grade")).toBeVisible();
+    expect(page.getByText("Write the whole essay, then send it again.").query()).toBeNull();
+  });
+
+  it("says a skipped essay with no draft was skipped, with the way back to Today", async () => {
+    renderEssay(vi.fn(), { ...ESSAY, status: "skipped" });
+
+    await expect.element(page.getByText("You skipped this essay.")).toBeVisible();
+
+    await expect
+      .element(page.getByRole("link", { name: "Back to Today" }))
+      .toHaveAttribute("href", "/today");
+
+    expect(answer().query()).toBeNull();
+    expect(page.getByRole("button", { name: "Send for grading" }).query()).toBeNull();
+  });
+});
 
 describe("an essay sent for grading", () => {
   afterEach(() => {

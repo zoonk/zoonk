@@ -16,6 +16,7 @@ import { TaskHeaderTitle } from "../_components/task-header";
 import { TASK_MAIN_ACTION_CLASS, TaskActions } from "../_components/task-layout";
 import { isLongText } from "../questions/long-text";
 import { TaskFrame } from "../shell/task-frame";
+import { ClosedEssay } from "./essay-closed";
 import {
   type EssayActions,
   type EssayHrefs,
@@ -321,7 +322,11 @@ export function EssayScreen({
 
   return (
     <EssayScreenProvider value={{ actions, drafts, essay, hrefs }}>
-      <EssayModes onGraded={(draft) => setDrafts((current) => [draft, ...current])} />
+      {essay.status === "completed" || essay.status === "skipped" ? (
+        <ClosedEssay />
+      ) : (
+        <EssayModes onGraded={(draft) => setDrafts((current) => [draft, ...current])} />
+      )}
     </EssayScreenProvider>
   );
 }

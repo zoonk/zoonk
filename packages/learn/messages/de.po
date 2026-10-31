@@ -505,6 +505,8 @@ msgstr "Zurück"
 
 #: src/_components/study-time-used-up.tsx
 #: src/challenge/challenge-moved-screen.tsx
+#: src/essay/essay-closed.tsx
+#: src/essay/essay-feedback.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
@@ -2254,6 +2256,11 @@ msgstr "Mittelstufe"
 msgctxt "3Rx6Qo"
 msgid "Advanced"
 msgstr "Fortgeschritten"
+
+#: src/essay/essay-closed.tsx
+msgctxt "af7HsK"
+msgid "You skipped this essay."
+msgstr "Du hast diesen Aufsatz übersprungen."
 
 #: src/essay/essay-feedback.tsx
 msgctxt "H9233U"

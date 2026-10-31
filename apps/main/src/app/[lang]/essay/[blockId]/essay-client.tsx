@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "@/i18n/navigation";
 import { postToApp } from "@/lib/http/post-to-app";
 import { finishStudyBlockAction } from "@/lib/session/study-session-actions";
 import { useStudyNavigation } from "@/lib/session/use-study-navigation";
@@ -18,6 +19,7 @@ type Submission = Promise<EssayDraft | "dailyLimitReached" | "limitReached" | nu
  */
 export function EssayClient({ essay }: { essay: EssayView }) {
   const navigation = useStudyNavigation(essay.sessionId);
+  const router = useRouter();
   const grading = useRef<Promise<unknown>>(Promise.resolve());
   const sending = useRef(new Map<string, Submission>());
   const ids = { blockId: essay.blockId, sessionId: essay.sessionId };
@@ -35,9 +37,19 @@ export function EssayClient({ essay }: { essay: EssayView }) {
         return sent;
       }
 
-      const request: Submission = postToApp({
+      const request: Submission = postToApp<
+        EssayDraft | "blockNotActive" | "dailyLimitReached" | "limitReached"
+      >({
         body: { ...input, timeZone: getLocalTimeZone() },
         path: `/api/essays/${encodeURIComponent(essay.blockId)}/submissions`,
+      }).then((result) => {
+        if (result !== "blockNotActive") {
+          return result;
+        }
+
+        // The block was finished or skipped elsewhere; reading it again shows it closed.
+        router.refresh();
+        return null;
       });
 
       sending.current.set(input.attemptId, request);

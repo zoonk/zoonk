@@ -20,7 +20,7 @@ import {
   StepTitleNumber,
 } from "../_components/step-card";
 import { Steps, type StepsItem } from "../_components/steps";
-import { TaskMainButton } from "../shell/task-frame";
+import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useEssayScreen } from "./essay-context";
 import {
   useCriterionName,
@@ -98,7 +98,15 @@ export function CriteriaRows({ grade, rubric }: { grade: Grade; rubric: string }
   );
 }
 
-export function EssayGradeCard({ grade, rubric }: { grade: Grade; rubric: string }) {
+export function EssayGradeCard({
+  closed,
+  grade,
+  rubric,
+}: {
+  closed?: boolean;
+  grade: Grade;
+  rubric: string;
+}) {
   const t = useExtracted();
   const formatScore = useFormatScore();
   const writingName = useWritingName();
@@ -108,7 +116,7 @@ export function EssayGradeCard({ grade, rubric }: { grade: Grade; rubric: string
       <StepCard>
         <StepHeader>
           <StepTitle>{t("Too short to grade")}</StepTitle>
-          <StepDetail>{t("Write the whole essay, then send it again.")}</StepDetail>
+          {!closed && <StepDetail>{t("Write the whole essay, then send it again.")}</StepDetail>}
         </StepHeader>
       </StepCard>
     );
@@ -138,9 +146,9 @@ export function EssayGradeCard({ grade, rubric }: { grade: Grade; rubric: string
   );
 }
 
-function GradeStep({ grade }: { grade: Grade }) {
+function GradeStep({ closed, grade }: { closed: boolean; grade: Grade }) {
   const { rubric } = useEssayScreen().essay;
-  return <EssayGradeCard grade={grade} rubric={rubric} />;
+  return <EssayGradeCard closed={closed} grade={grade} rubric={rubric} />;
 }
 
 function NothingLeftComment() {
@@ -248,13 +256,15 @@ function CriterionComments({ grade }: { grade: Grade }) {
   );
 }
 
-export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite: () => void }) {
+/** Without `onRewrite` the essay is closed: its grade shows read-only, with only the way back. */
+export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite?: () => void }) {
   const t = useExtracted();
   const { hrefs } = useEssayScreen();
   const finishing = useFinishEssay();
   const tooShort = grade.zeroReason === "tooShort";
+  const closed = !onRewrite;
 
-  const skip = (
+  const skip = onRewrite && (
     <Button
       className="shrink-0"
       disabled={finishing.pending}
@@ -267,9 +277,9 @@ export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite:
   );
 
   const items: StepsItem[] = tooShort
-    ? [{ action: skip, content: <GradeStep grade={grade} />, id: "grade" }]
+    ? [{ action: skip, content: <GradeStep closed={closed} grade={grade} />, id: "grade" }]
     : [
-        { content: <GradeStep grade={grade} />, id: "grade" },
+        { content: <GradeStep closed={closed} grade={grade} />, id: "grade" },
         { action: skip, content: <NextStep grade={grade} />, id: "nextStep" },
       ];
 
@@ -285,7 +295,13 @@ export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite:
             }
       }
       exitHref={hrefs.exit}
-      finalAction={<TaskMainButton onClick={onRewrite}>{t("Rewrite")}</TaskMainButton>}
+      finalAction={
+        onRewrite ? (
+          <TaskMainButton onClick={onRewrite}>{t("Rewrite")}</TaskMainButton>
+        ) : (
+          <TaskMainLink href={hrefs.exit}>{t("Back to Today")}</TaskMainLink>
+        )
+      }
       finalOptions={
         <>
           {finishing.failed && (
