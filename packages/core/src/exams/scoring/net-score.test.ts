@@ -6,7 +6,7 @@ function answers(
   wrongPenalty = 1,
 ): NetAnswer[] {
   return entries.flatMap(([outcome, flagged, times]) =>
-    Array.from({ length: times }, () => ({ flagged, outcome, wrongPenalty })),
+    Array.from({ length: times }, () => ({ flagged, outcome, points: 1, wrongPenalty })),
   );
 }
 
@@ -52,10 +52,10 @@ describe(getNetScore, () => {
     expect(
       getNetScore({
         answers: [
-          { flagged: false, outcome: "right", wrongPenalty: 0.5 },
-          { credit: 0.5, flagged: false, outcome: "partial", wrongPenalty: 0.5 },
-          { flagged: false, outcome: "wrong", wrongPenalty: 0.5 },
-          { flagged: false, outcome: "blank", wrongPenalty: 0.5 },
+          { flagged: false, outcome: "right", points: 1, wrongPenalty: 0.5 },
+          { credit: 0.5, flagged: false, outcome: "partial", points: 1, wrongPenalty: 0.5 },
+          { flagged: false, outcome: "wrong", points: 1, wrongPenalty: 0.5 },
+          { flagged: false, outcome: "blank", points: 1, wrongPenalty: 0.5 },
         ],
         penalty: 0.5,
       }),
@@ -109,9 +109,9 @@ describe(getNetCalibration, () => {
 describe("per-question penalties", () => {
   it("costs each wrong answer its own question's penalty, as numeric answers that cost nothing beside choices that cost a quarter", () => {
     const mixed: NetAnswer[] = [
-      { flagged: true, outcome: "right", wrongPenalty: 0.25 },
-      { flagged: true, outcome: "wrong", wrongPenalty: 0.25 },
-      { flagged: true, outcome: "wrong", wrongPenalty: 0 },
+      { flagged: true, outcome: "right", points: 1, wrongPenalty: 0.25 },
+      { flagged: true, outcome: "wrong", points: 1, wrongPenalty: 0.25 },
+      { flagged: true, outcome: "wrong", points: 1, wrongPenalty: 0 },
     ];
 
     expect(getNetScore({ answers: mixed, penalty: 0.25 }).net).toBe(0.75);
@@ -130,10 +130,11 @@ describe(getCalibrationAdvice, () => {
 describe("calibration by actual earnings", () => {
   it("uses the flagged answers' own deductions for advice", () => {
     const flagged: NetAnswer[] = [
-      { flagged: true, outcome: "right", wrongPenalty: 0 },
+      { flagged: true, outcome: "right", points: 1, wrongPenalty: 0 },
       ...Array.from({ length: 3 }, (): NetAnswer => ({
         flagged: true,
         outcome: "wrong",
+        points: 1,
         wrongPenalty: 0,
       })),
     ];
@@ -163,6 +164,7 @@ describe("calibration by actual earnings", () => {
       credit: 0.5,
       flagged: true,
       outcome: "partial",
+      points: 1,
       wrongPenalty: 1,
     }));
 

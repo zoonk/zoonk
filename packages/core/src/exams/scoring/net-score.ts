@@ -6,7 +6,7 @@ export type NetAnswer = {
   credit?: number;
   flagged: boolean;
   outcome: NetOutcome;
-  points?: number;
+  points: number;
   wrongPenalty: number;
 };
 
@@ -98,7 +98,7 @@ export function getNetCalibration({ answers }: { answers: readonly NetAnswer[] }
       sum -
       getAnswerPoints({
         credit: answer.outcome === "right" ? 1 : (answer.credit ?? 0),
-        marking: { part: null, points: answer.points ?? 1, wrongPenalty: answer.wrongPenalty },
+        marking: { part: null, points: answer.points, wrongPenalty: answer.wrongPenalty },
         outcome: answer.outcome,
       }),
     0,
