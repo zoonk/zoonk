@@ -13,10 +13,26 @@ describe(getCheckoutSessionParams, () => {
     });
   });
 
-  it("keeps the language on the subscription for its emails", async () => {
-    const params = await getCheckoutSessionParams({ annual: false, locale: "pt-BR" });
+  it("keeps the language and time zone on the subscription for its emails", async () => {
+    const params = await getCheckoutSessionParams({
+      annual: false,
+      locale: "pt-BR",
+      timeZone: "America/Sao_Paulo",
+    });
 
-    expect(params.subscription_data).toStrictEqual({ metadata: { locale: "pt" } });
+    expect(params.subscription_data).toStrictEqual({
+      metadata: { locale: "pt", timeZone: "America/Sao_Paulo" },
+    });
+  });
+
+  it("keeps no time zone that doesn't exist", async () => {
+    const params = await getCheckoutSessionParams({
+      annual: false,
+      locale: "en",
+      timeZone: "Mars/Olympus",
+    });
+
+    expect(params.subscription_data).toStrictEqual({ metadata: { locale: "en" } });
   });
 
   it("writes it in a translated language the site doesn't offer yet", async () => {

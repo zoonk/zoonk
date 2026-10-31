@@ -213,6 +213,8 @@ model Subscription {
   providerEventId        String?              @map("provider_event_id")
   /// Google Play refunds a purchase left unacknowledged for three days, so a pending one is checked again within hours. Null for other stores.
   providerAcknowledged   Boolean?             @map("provider_acknowledged")
+  /// The renewal a yearly website subscription's reminder email announced, so it goes once a year.
+  renewalReminderSentFor DateTime?            @map("renewal_reminder_sent_for")
   /// Database checks keep it equal to `referenceId` for Apple and Google; its cascade closes
   /// notification races during account deletion.
   userId                 String?              @map("user_id") @db.Uuid

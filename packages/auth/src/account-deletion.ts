@@ -5,21 +5,37 @@ import { revokeStoredAppleAuthorization } from "./providers/apple-revocation";
 import { stripeClient } from "./stripe/client";
 import { deleteUserBlobs } from "./user-blobs";
 
-type AccountDeletionCleanupReporter = {
+type DeletedUser = { email: string; id: string; name: string };
+type EndWebPlus = (user: DeletedUser) => Promise<void>;
+
+type AccountDeletionCleanup = {
+  endWebPlus: EndWebPlus;
   reportAppleAuthorizationRevocation: (revoked: boolean | null) => void;
 };
 
-const accountDeletionCleanupReporter = new AsyncLocalStorage<AccountDeletionCleanupReporter>();
+const accountDeletionCleanup = new AsyncLocalStorage<AccountDeletionCleanup>();
+
+/** Stripe can't cancel these again. */
+const ENDED_STATUSES = ["canceled", "incomplete_expired"];
 
 /** Keeping a long-time learner's anonymous records copies all their answers, past the default. */
 const ANONYMIZE_TIMEOUT_MS = 60_000;
 
-/** Better Auth ignores `beforeDelete`'s return value, so cleanup results travel through a request-local channel. */
-export async function captureAccountDeletionCleanup<Result>(operation: () => Promise<Result>) {
+/**
+ * Better Auth ignores `beforeDelete`'s return value and core's Plus refunds can't live here, so
+ * both travel through a request-local channel. Without it, website Plus is canceled unrefunded.
+ */
+export async function captureAccountDeletionCleanup<Result>({
+  endWebPlus,
+  operation,
+}: {
+  endWebPlus: EndWebPlus;
+  operation: () => Promise<Result>;
+}) {
   const appleRevocation = Promise.withResolvers<boolean | null>();
 
-  const result = await accountDeletionCleanupReporter.run(
-    { reportAppleAuthorizationRevocation: appleRevocation.resolve },
+  const result = await accountDeletionCleanup.run(
+    { endWebPlus, reportAppleAuthorizationRevocation: appleRevocation.resolve },
     operation,
   );
 
@@ -71,10 +87,22 @@ async function deleteLocalUserDependencies({ email, userId }: { email: string; u
   ]);
 }
 
-/** App Store and Google Play don't let a server cancel a user's purchase, so only Stripe is canceled here. */
+export function isAccountDeletionCleanupReady(): boolean {
+  return accountDeletionCleanup.getStore() !== undefined;
+}
+
+/**
+ * App Store and Google Play don't let a server cancel a user's purchase, so only Stripe is canceled
+ * here, once `endWebPlus` has ended the live one.
+ */
 async function cancelStripeSubscriptions(userId: string) {
   const subscriptions = await prisma.subscription.findMany({
-    where: { provider: "stripe", referenceId: userId, stripeSubscriptionId: { not: null } },
+    where: {
+      provider: "stripe",
+      referenceId: userId,
+      status: { notIn: ENDED_STATUSES },
+      stripeSubscriptionId: { not: null },
+    },
   });
 
   const subscriptionIds = subscriptions
@@ -86,16 +114,16 @@ async function cancelStripeSubscriptions(userId: string) {
   );
 }
 
-export async function deleteUserDependenciesBeforeAuthDelete(user: { email: string; id: string }) {
+export async function deleteUserDependenciesBeforeAuthDelete(user: DeletedUser) {
+  const cleanup = accountDeletionCleanup.getStore();
+
   // First, before anything that can't be undone, so a failure stops the deletion and a retry finishes it.
   await deleteUserBlobs(user.id);
 
   const appleAuthorizationRevoked = await revokeAppleAuthorizations(user.id);
+  cleanup?.reportAppleAuthorizationRevocation(appleAuthorizationRevoked);
 
-  accountDeletionCleanupReporter
-    .getStore()
-    ?.reportAppleAuthorizationRevocation(appleAuthorizationRevoked);
-
+  await cleanup?.endWebPlus(user);
   await cancelStripeSubscriptions(user.id);
   await deleteLocalUserDependencies({ email: user.email, userId: user.id });
 }

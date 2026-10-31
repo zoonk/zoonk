@@ -2,6 +2,7 @@ import "server-only";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getLearningProfileCacheTag } from "../cache/tags";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
+import { closeUnderageAccount } from "../users/_utils/close-underage-account";
 import { getSession } from "../users/get-session";
 import { findLearningProfileView } from "./_utils/learning-profile-view";
 import { type BirthYearCheck, checkBirthYear } from "./check-birth-year";
@@ -9,13 +10,30 @@ import { type BirthYearInput, type LearningProfileView } from "./learning-profil
 
 export type SaveBirthYearResult =
   | Exclude<BirthYearCheck, { status: "allowed" }>
+  | { minimumAge: number; status: "accountClosed" }
   | { profile: LearningProfileView; status: "saved" }
   | { status: "unauthorized" };
 
 /**
  * Asked once: the first saved year stays. Below the minimum age for the request's country nothing
- * is saved, and the caller ends the session so the learner can't go on.
+ * is saved, and the caller ends the session so the learner can't go on. Certainly below it, the
+ * account is closed and deleted, and its website Plus refunded in full (Terms § 2).
  */
+async function closeIfCertainlyUnderage({
+  check,
+  user,
+}: {
+  check: Extract<BirthYearCheck, { status: "belowMinimumAge" }>;
+  user: { email: string; id: string; name: string };
+}): Promise<SaveBirthYearResult> {
+  if (!check.certain) {
+    return check;
+  }
+
+  await closeUnderageAccount(user);
+  return { minimumAge: check.minimumAge, status: "accountClosed" };
+}
+
 export async function saveBirthYear({ birthYear }: BirthYearInput): Promise<SaveBirthYearResult> {
   const [session, check] = await Promise.all([getSession(), checkBirthYear({ birthYear })]);
 
@@ -53,7 +71,7 @@ export async function saveBirthYear({ birthYear }: BirthYearInput): Promise<Save
   });
 
   if (outcome === "belowMinimumAge" && check.status === "belowMinimumAge") {
-    return check;
+    return closeIfCertainlyUnderage({ check, user: session.user });
   }
 
   if (outcome === "saved") {

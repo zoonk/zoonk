@@ -14,9 +14,12 @@ export async function stripeE2EFetch(
   const method = init?.method ?? "GET";
   const body = new URLSearchParams(typeof init?.body === "string" ? init.body : "");
 
+  const stops = body.get("cancel_at_period_end") === "true";
+  const resumes = body.get("cancel_at") === "" || body.get("cancel_at_period_end") === "false";
+
   if (
     !url.pathname.startsWith("/v1/subscriptions/sub_test_e2e_") ||
-    (method !== "GET" && (method !== "POST" || body.get("cancel_at_period_end") !== "true"))
+    (method !== "GET" && (method !== "POST" || !(stops || resumes)))
   ) {
     throw new Error(`Unsupported E2E Stripe request: ${method} ${url.pathname}`);
   }
@@ -29,12 +32,15 @@ export async function stripeE2EFetch(
     throw new Error("E2E Stripe subscriptions need a billing period");
   }
 
-  const cancelAt = method === "POST" ? subscription.periodEnd : subscription.cancelAt;
+  const updated = method === "POST";
+  const stopped = updated ? stops : subscription.cancelAtPeriodEnd;
+  const cancelAt = updated ? stops && subscription.periodEnd : subscription.cancelAt;
 
   return Response.json({
     cancel_at: cancelAt ? seconds(cancelAt) : null,
-    cancel_at_period_end: method === "POST" || subscription.cancelAtPeriodEnd,
-    canceled_at: method === "POST" ? Math.floor(Date.now() / 1000) : null,
+    cancel_at_period_end: stopped,
+    canceled_at: stops ? Math.floor(Date.now() / 1000) : null,
+    customer: `cus_${id}`,
     ended_at: null,
     id,
     items: {
@@ -66,6 +72,7 @@ export async function stripeE2EFetch(
       },
       status: "paid",
     },
+    metadata: {},
     start_date: seconds(subscription.periodStart),
     status: subscription.status,
   });

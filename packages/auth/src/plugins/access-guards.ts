@@ -2,6 +2,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { type BetterAuthPlugin } from "better-auth";
 import { APIError, createAuthMiddleware, getSessionFromCtx } from "better-auth/api";
 import { ACCESS_ERROR_CODES } from "../access-contract";
+import { isAccountDeletionCleanupReady } from "../account-deletion";
 import { findRequestGuest } from "../guests/guest-request";
 import { linkGuestAccount } from "../guests/link-guest-account";
 
@@ -29,6 +30,19 @@ const guardBrandAddress = createAuthMiddleware(async (context) => {
     throw new APIError("FORBIDDEN", {
       code: ACCESS_ERROR_CODES.brandAddressLocked,
       message: "Brand addresses can't change here.",
+    });
+  }
+});
+
+/**
+ * Better Auth's own deletion endpoint would skip the website Plus refunds the Terms give, which
+ * core adds around it, so only core's deletion may reach it.
+ */
+const guardAccountDeletion = createAuthMiddleware(async () => {
+  if (!isAccountDeletionCleanupReady()) {
+    throw new APIError("FORBIDDEN", {
+      code: ACCESS_ERROR_CODES.accountDeletionElsewhere,
+      message: "Delete your account in Zoonk's settings.",
     });
   }
 });
@@ -63,6 +77,10 @@ export function accessGuardsPlugin() {
         {
           handler: guardPlusPurchase,
           matcher: (context) => context.path === "/subscription/upgrade",
+        },
+        {
+          handler: guardAccountDeletion,
+          matcher: (context) => context.path?.startsWith("/delete-user") === true,
         },
         {
           handler: guardBrandAddress,

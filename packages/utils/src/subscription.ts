@@ -1,4 +1,5 @@
 import { MS_PER_DAY } from "./date";
+import { getDateInTimeZone } from "./time-zone";
 
 const SUBSCRIPTION_PROVIDERS = ["stripe", "google", "apple", "zoonk"] as const;
 export type SubscriptionProvider = (typeof SUBSCRIPTION_PROVIDERS)[number];
@@ -29,14 +30,15 @@ const REFUND_DAYS = 14;
 
 /**
  * The day of purchase doesn't count toward the 14 refund days (EU Regulation 1182/71), so the
- * window runs a day past the date the learner is told, which covers the end of that day anywhere.
+ * last one is the 14th day after it where the learner subscribed, as a UTC-midnight calendar date.
  */
-const REFUND_WINDOW_MS = (REFUND_DAYS + 1) * MS_PER_DAY;
-
-export function getRefundDeadline(subscribedAt: Date): Date {
-  return new Date(subscribedAt.getTime() + REFUND_DAYS * MS_PER_DAY);
-}
-
-export function isWithinRefundWindow({ now, subscribedAt }: { now: Date; subscribedAt: Date }) {
-  return now.getTime() < subscribedAt.getTime() + REFUND_WINDOW_MS;
+export function getRefundLastDay({
+  subscribedAt,
+  timeZone,
+}: {
+  subscribedAt: Date;
+  timeZone: string;
+}): Date {
+  const purchaseDay = getDateInTimeZone({ date: subscribedAt, timeZone });
+  return new Date(purchaseDay.getTime() + REFUND_DAYS * MS_PER_DAY);
 }

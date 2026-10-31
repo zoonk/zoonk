@@ -5,15 +5,18 @@ import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getSession } from "../users/get-session";
+import { endWebPlusForDeletedAccount } from "./web-plus-account-deletion";
 import {
   cancelWebPlus,
   getWebPlusCancellation,
+  keepWebPlus,
   requestWebPlusCancellation,
 } from "./web-plus-cancellation";
 import type Stripe from "stripe";
 
 const stripe = vi.hoisted(() => ({
   cancel: vi.fn(),
+  listInvoices: vi.fn(),
   paymentIntent: vi.fn(),
   refund: vi.fn(),
   retrieve: vi.fn(),
@@ -24,7 +27,7 @@ const stripe = vi.hoisted(() => ({
 // Stripe and the mailer are external services; the learner's subscription row is real.
 vi.mock("@zoonk/auth/stripe-client", () => ({
   stripeClient: {
-    invoices: { voidInvoice: stripe.voidInvoice },
+    invoices: { list: stripe.listInvoices, voidInvoice: stripe.voidInvoice },
     paymentIntents: { retrieve: stripe.paymentIntent },
     refunds: { create: stripe.refund },
     subscriptions: { cancel: stripe.cancel, retrieve: stripe.retrieve, update: stripe.update },
@@ -63,6 +66,7 @@ function stripeSubscription({
   return {
     cancel_at: cancelAt,
     cancel_at_period_end: cancelAtPeriodEnd,
+    customer: "cus_learner",
     id: `sub_${randomUUID()}`,
     items: {
       data: [
@@ -99,9 +103,19 @@ function stripeSubscription({
       payments: { data: [{ payment: { payment_intent: "pi_paid" }, status: "paid" }] },
       status: status === "active" ? "paid" : "open",
     },
+    metadata: { locale: "pt", timeZone: "America/Sao_Paulo" },
     start_date: now - subscribedDaysAgo * DAY,
     status,
   } as unknown as Stripe.Subscription;
+}
+
+function paidInvoices() {
+  return ["in_first", "in_second"].map((id) => ({
+    amount_paid: 999,
+    currency: "eur",
+    id,
+    payments: { data: [{ payment: { payment_intent: `pi_${id}` }, status: "paid" }] },
+  }));
 }
 
 async function subscribedLearner({
@@ -137,9 +151,9 @@ async function subscribedLearner({
   stripe.cancel.mockResolvedValue({ ...subscription, status: "canceled" });
 
   stripe.update.mockImplementation(
-    async (_id: string, params: { cancel_at?: number; cancel_at_period_end?: boolean }) => ({
+    async (_id: string, params: { cancel_at?: number | ""; cancel_at_period_end?: boolean }) => ({
       ...subscription,
-      cancel_at: params.cancel_at ?? null,
+      cancel_at: params.cancel_at || null,
       cancel_at_period_end: params.cancel_at_period_end ?? false,
     }),
   );
@@ -463,7 +477,7 @@ describe("web Plus cancellation", () => {
   });
 
   describe("without logging in", () => {
-    it("withdraws by email alone and confirms to the account's own address", async () => {
+    it("withdraws by email alone and confirms to the account's own address, in its language", async () => {
       const subscription = stripeSubscription({
         amountPaid: 999,
         interval: "month",
@@ -495,9 +509,36 @@ describe("web Plus cancellation", () => {
           choice: "withdrawal",
           email: user.email,
           lateWithdrawal: false,
-          locale: "de",
+          locale: "pt",
           name: "Erika Mustermann",
           receivedAt: answer?.receivedAt,
+        }),
+      );
+    });
+
+    it("tells the account's owner the form was used, and that Keep Plus undoes a stopped renewal", async () => {
+      const subscription = stripeSubscription({
+        amountPaid: 999,
+        interval: "month",
+        periodStartDaysAgo: 20,
+        subscribedDaysAgo: 50,
+      });
+
+      const user = await subscribedLearner({ subscription });
+
+      await requestWebPlusCancellation({
+        email: user.email,
+        locale: "en",
+        name: "Someone Else",
+        request: { choice: "ordinary" },
+      });
+
+      expect(sendPlusCancellationEmail).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          canKeepPlus: true,
+          email: user.email,
+          source: "form",
+          timeZone: "America/Sao_Paulo",
         }),
       );
     });
@@ -566,9 +607,11 @@ describe("web Plus cancellation", () => {
 
       expect(sendPlusCancellationEmail).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({
+          canKeepPlus: true,
           choice: "ordinary",
           endsAt: new Date(subscription.items.data[0]!.current_period_end * 1000),
           refund: null,
+          source: "form",
         }),
       );
     });
@@ -615,6 +658,223 @@ describe("web Plus cancellation", () => {
         }),
       ).resolves.toBeNull();
 
+      expect(sendPlusCancellationEmail).not.toHaveBeenCalled();
+    });
+  });
+
+  describe(keepWebPlus, () => {
+    it("turns a stopped renewal back on, so Plus renews as before", async () => {
+      const subscription = stripeSubscription({
+        amountPaid: 999,
+        cancelAtPeriodEnd: true,
+        interval: "month",
+        periodStartDaysAgo: 20,
+        subscribedDaysAgo: 50,
+      });
+
+      const user = await subscribedLearner({ subscription });
+
+      await prisma.subscription.updateMany({
+        data: { cancelAtPeriodEnd: true },
+        where: { referenceId: user.id },
+      });
+
+      await expect(getWebPlusCancellation()).resolves.toMatchObject({ canResumeRenewal: true });
+      await expect(keepWebPlus()).resolves.toStrictEqual({ status: "kept" });
+
+      expect(stripe.update).toHaveBeenCalledExactlyOnceWith(subscription.id, {
+        cancel_at_period_end: false,
+      });
+
+      await expect(
+        prisma.subscription.findFirst({ where: { referenceId: user.id } }),
+      ).resolves.toMatchObject({ cancelAt: null, cancelAtPeriodEnd: false, status: "active" });
+    });
+
+    it("can't keep Plus once it ends sooner than its period, after a refund", async () => {
+      const subscription = stripeSubscription({
+        amountPaid: 12_000,
+        cancelAtDaysFromNow: 10,
+        interval: "year",
+        periodStartDaysAgo: 100,
+        subscribedDaysAgo: 465,
+      });
+
+      await subscribedLearner({ subscription });
+
+      await expect(getWebPlusCancellation()).resolves.toMatchObject({ canResumeRenewal: false });
+      await expect(keepWebPlus()).resolves.toStrictEqual({ status: "unavailable" });
+      expect(stripe.update).not.toHaveBeenCalled();
+    });
+
+    it("has nothing to keep while Plus renews", async () => {
+      await subscribedLearner({
+        subscription: stripeSubscription({
+          amountPaid: 999,
+          interval: "month",
+          periodStartDaysAgo: 3,
+          subscribedDaysAgo: 3,
+        }),
+      });
+
+      await expect(keepWebPlus()).resolves.toStrictEqual({ status: "unavailable" });
+    });
+  });
+
+  describe(endWebPlusForDeletedAccount, () => {
+    it("refunds everything within the 14 days and ends Plus with the account", async () => {
+      const subscription = stripeSubscription({
+        amountPaid: 999,
+        interval: "month",
+        periodStartDaysAgo: 5,
+        subscribedDaysAgo: 5,
+      });
+
+      const user = await subscribedLearner({ subscription });
+      await endWebPlusForDeletedAccount({ learner: user, refund: "terms" });
+
+      expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ amount: 999 }),
+        expect.anything(),
+      );
+
+      expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscription.id, { prorate: false });
+
+      await expect(
+        prisma.subscription.findFirst({ where: { referenceId: user.id } }),
+      ).resolves.toMatchObject({ status: "canceled" });
+
+      expect(sendPlusCancellationEmail).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          canKeepPlus: false,
+          choice: "withdrawal",
+          email: user.email,
+          locale: "pt",
+          refund: { amount: 999, currency: "eur" },
+          source: "accountDeletion",
+        }),
+      );
+    });
+
+    it("refunds a renewed year's months that haven't started", async () => {
+      const subscription = stripeSubscription({
+        amountPaid: 12_000,
+        interval: "year",
+        periodStartDaysAgo: 100,
+        subscribedDaysAgo: 465,
+      });
+
+      const user = await subscribedLearner({ subscription });
+      await endWebPlusForDeletedAccount({ learner: user, refund: "terms" });
+
+      expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ amount: 8000 }),
+        expect.anything(),
+      );
+
+      expect(sendPlusCancellationEmail).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ choice: "ordinary", refund: { amount: 8000, currency: "eur" } }),
+      );
+    });
+
+    it("ends a month after its 14 days without a refund", async () => {
+      const subscription = stripeSubscription({
+        amountPaid: 999,
+        interval: "month",
+        periodStartDaysAgo: 20,
+        subscribedDaysAgo: 50,
+      });
+
+      const user = await subscribedLearner({ subscription });
+      await endWebPlusForDeletedAccount({ learner: user, refund: "terms" });
+
+      expect(stripe.refund).not.toHaveBeenCalled();
+      expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscription.id, { prorate: false });
+
+      expect(sendPlusCancellationEmail).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ refund: null, source: "accountDeletion" }),
+      );
+    });
+
+    it("refunds a renewed year's unstarted months even after its renewal was stopped without a refund", async () => {
+      const subscription = stripeSubscription({
+        amountPaid: 12_000,
+        cancelAtPeriodEnd: true,
+        interval: "year",
+        periodStartDaysAgo: 100,
+        subscribedDaysAgo: 465,
+      });
+
+      const user = await subscribedLearner({ subscription });
+      await endWebPlusForDeletedAccount({ learner: user, refund: "terms" });
+
+      expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ amount: 8000 }),
+        expect.anything(),
+      );
+    });
+
+    it("refunds every payment in full for an account below the minimum age", async () => {
+      const subscription = stripeSubscription({
+        amountPaid: 999,
+        interval: "month",
+        periodStartDaysAgo: 20,
+        subscribedDaysAgo: 50,
+      });
+
+      const user = await subscribedLearner({ subscription });
+
+      await prisma.user.update({
+        data: { stripeCustomerId: "cus_learner" },
+        where: { id: user.id },
+      });
+
+      stripe.listInvoices.mockReturnValue({ autoPagingToArray: async () => paidInvoices() });
+      await endWebPlusForDeletedAccount({ learner: user, refund: "everything" });
+
+      expect(stripe.listInvoices).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ customer: "cus_learner", status: "paid" }),
+      );
+
+      expect(stripe.refund).toHaveBeenCalledTimes(2);
+
+      expect(stripe.refund).toHaveBeenCalledWith(
+        { amount: 999, payment_intent: "pi_in_first", reason: "requested_by_customer" },
+        expect.anything(),
+      );
+
+      expect(stripe.refund).toHaveBeenCalledWith(
+        { amount: 999, payment_intent: "pi_in_second", reason: "requested_by_customer" },
+        expect.anything(),
+      );
+
+      expect(sendPlusCancellationEmail).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          choice: "withdrawal",
+          refund: { amount: 1998, currency: "eur" },
+        }),
+      );
+    });
+
+    it("refunds what an account below the minimum age paid even after its Plus ended", async () => {
+      const user = await userFixture();
+
+      await prisma.subscription.create({
+        data: {
+          plan: "plus",
+          provider: "stripe",
+          referenceId: user.id,
+          status: "canceled",
+          stripeCustomerId: "cus_learner",
+          stripeSubscriptionId: `sub_${randomUUID()}`,
+        },
+      });
+
+      stripe.listInvoices.mockReturnValue({ autoPagingToArray: async () => paidInvoices() });
+      await endWebPlusForDeletedAccount({ learner: user, refund: "everything" });
+
+      expect(stripe.refund).toHaveBeenCalledTimes(2);
+      expect(stripe.cancel).not.toHaveBeenCalled();
       expect(sendPlusCancellationEmail).not.toHaveBeenCalled();
     });
   });

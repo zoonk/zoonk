@@ -1,12 +1,18 @@
 import "server-only";
-import { getMinimumAge, isBelowMinimumAge, isValidBirthYear } from "@zoonk/utils/age";
+import {
+  getMinimumAge,
+  isBelowMinimumAge,
+  isCertainlyBelowMinimumAge,
+  isValidBirthYear,
+} from "@zoonk/utils/age";
 import { getRequestCountry } from "@zoonk/utils/locale-request";
 import { headers } from "next/headers";
 import { type BirthYearInput } from "./learning-profile-contract";
 
+/** `certain`: younger than the minimum even if this year's birthday has passed. */
 export type BirthYearCheck =
   | { status: "allowed" }
-  | { minimumAge: number; status: "belowMinimumAge" }
+  | { certain: boolean; minimumAge: number; status: "belowMinimumAge" }
   | { status: "invalidBirthYear" };
 
 /**
@@ -22,7 +28,11 @@ export async function checkBirthYear({ birthYear }: BirthYearInput): Promise<Bir
   }
 
   if (isBelowMinimumAge({ birthYear, country, now })) {
-    return { minimumAge: getMinimumAge(country), status: "belowMinimumAge" };
+    return {
+      certain: isCertainlyBelowMinimumAge({ birthYear, country, now }),
+      minimumAge: getMinimumAge(country),
+      status: "belowMinimumAge",
+    };
   }
 
   return { status: "allowed" };

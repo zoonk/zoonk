@@ -50,6 +50,7 @@
 - “study time”, the daily amount: “çalışma süresi”; the time of day the learner studies: “çalışma saati”
 - “You've reached today's study time”: “Bugünkü çalışma süreni doldurdun”, in every line that starts with it
 - Ending a subscription “for an important reason”: “haklı bir nedenle”
+- “Keep Plus” (turns a stopped renewal back on): “Plus’ı koru”
 
 ## Feature names and states
 

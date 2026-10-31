@@ -48,6 +48,7 @@
 - “study time”, the daily amount: “学習時間”; the time of day the learner studies: “学習する時刻”
 - “You've reached today's study time”: “今日の学習時間に達しました”, in every line that starts with it
 - Ending a subscription “for an important reason”: “やむを得ない理由で”
+- “Keep Plus” (turns a stopped renewal back on): “Plusを継続する”
 
 ## Feature names and states
 

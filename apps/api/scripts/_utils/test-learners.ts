@@ -45,7 +45,7 @@ export function countOnboardedLearners() {
 }
 
 /** Core's `deleteCurrentUser` can't be called here: it needs the learner's own fresh session. */
-export async function removeTestLearner(learner: { email: string; id: string }) {
+export async function removeTestLearner(learner: { email: string; id: string; name: string }) {
   await deleteUserDependenciesBeforeAuthDelete(learner);
   await prisma.user.delete({ where: { id: learner.id } });
 }

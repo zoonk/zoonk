@@ -8,12 +8,14 @@ import {
   deleteInactiveGuestsStep,
   deleteRetiredStepsStep,
   listDueFreshnessTargetsStep,
+  listDueRenewalRemindersStep,
   listLessonsForLaterReviewStep,
   purgeEvaluationRunsStep,
   purgeExpiredAuthRecordsStep,
   purgeExpiredVerificationsStep,
   purgeMemoryFactsStep,
   recalibrateItemDifficultiesStep,
+  sendRenewalReminderStep,
 } from "./steps/sweep-steps";
 
 const MAX_GUEST_BATCHES = 20;
@@ -28,6 +30,7 @@ export type DailySweepsResult = {
   itemsRecalibrated: number;
   laterReviews: number;
   memoryFactsPurged: number;
+  renewalRemindersSent: number;
   retiredStepsDeleted: number;
   verificationsPurged: number;
 };
@@ -77,22 +80,41 @@ async function startLaterReviews(): Promise<number> {
   return lessonIds.length;
 }
 
+async function remindYearlyRenewals(): Promise<number> {
+  const subscriptionIds = await listDueRenewalRemindersStep();
+  const sent = await Promise.allSettled(subscriptionIds.map((id) => sendRenewalReminderStep(id)));
+
+  return sent.filter((result) => result.status === "fulfilled" && result.value).length;
+}
+
 export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
   "use workflow";
 
-  const [checks, guests, facts, runs, items, reviews, flagged, retired, verifications, access] =
-    await Promise.allSettled([
-      checkFreshness(),
-      deleteGuests(),
-      purgeMemoryFactsStep(),
-      purgeEvaluationRunsStep(),
-      recalibrateItemDifficultiesStep(),
-      startLaterReviews(),
-      rewriteFlaggedContent(),
-      deleteRetiredStepsStep(),
-      purgeExpiredVerificationsStep(),
-      purgeExpiredAuthRecordsStep(),
-    ]);
+  const [
+    checks,
+    guests,
+    facts,
+    runs,
+    items,
+    reviews,
+    flagged,
+    retired,
+    verifications,
+    access,
+    reminders,
+  ] = await Promise.allSettled([
+    checkFreshness(),
+    deleteGuests(),
+    purgeMemoryFactsStep(),
+    purgeEvaluationRunsStep(),
+    recalibrateItemDifficultiesStep(),
+    startLaterReviews(),
+    rewriteFlaggedContent(),
+    deleteRetiredStepsStep(),
+    purgeExpiredVerificationsStep(),
+    purgeExpiredAuthRecordsStep(),
+    remindYearlyRenewals(),
+  ]);
 
   return {
     accessRecordsPurged: access.status === "fulfilled" ? access.value.recordsPurged : 0,
@@ -103,6 +125,7 @@ export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
     itemsRecalibrated: countOf(items),
     laterReviews: countOf(reviews),
     memoryFactsPurged: countOf(facts),
+    renewalRemindersSent: countOf(reminders),
     retiredStepsDeleted: countOf(retired),
     sessionsPurged: access.status === "fulfilled" ? access.value.sessionsPurged : 0,
     verificationsPurged: countOf(verifications),

@@ -83,6 +83,23 @@ export const subscriptionPaths = {
     },
   },
   "/me/subscriptions/stripe/cancellation": {
+    delete: {
+      description:
+        "Keep Plus: turns a stopped renewal back on, so Plus renews as before. Only while the preview's `canResumeRenewal` is true.",
+      operationId: "resumeStripeSubscription",
+      responses: {
+        "204": { description: "Plus renews again" },
+        "401": unauthorizedResponse,
+        "409": {
+          ...conflictResponse,
+          description: "Plus isn't set to end with its paid period; read the preview again",
+        },
+        "500": internalErrorResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Keep a web subscription",
+      tags: ["Subscriptions"],
+    },
     get: {
       description:
         "For Plus bought on the web: what canceling would do. Store subscriptions are canceled in their store.",
@@ -90,7 +107,7 @@ export const subscriptionPaths = {
       responses: {
         "200": {
           content: { "application/json": { schema: stripeSubscriptionCancellationSchema } },
-          description: "The choices, at least one of them not null",
+          description: "What canceling, keeping Plus or deleting the account would do",
         },
         "401": unauthorizedResponse,
         "404": { ...notFoundResponse, description: "No web subscription left to cancel" },

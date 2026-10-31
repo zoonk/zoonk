@@ -4,10 +4,8 @@ import {
   getTranslation,
   isTranslatedLocale,
 } from "../translations/get-translations";
+import { writeSubscriptionMetadata } from "./subscription-metadata";
 import type Stripe from "stripe";
-
-/** The language of the emails about this subscription, which Stripe's webhooks can't tell. */
-export const SUBSCRIPTION_LOCALE_KEY = "locale";
 
 /** Stripe's `auto` and any language we don't translate fall back to the request's language. */
 async function getCheckoutLocale(stripeLocale?: string): Promise<string> {
@@ -24,9 +22,11 @@ async function getCheckoutLocale(stripeLocale?: string): Promise<string> {
 export async function getCheckoutSessionParams({
   annual,
   locale,
+  timeZone,
 }: {
   annual: boolean;
   locale?: string;
+  timeZone?: string;
 }): Promise<Stripe.Checkout.SessionCreateParams> {
   const language = await getCheckoutLocale(locale);
   const t = await getTranslation(language);
@@ -40,6 +40,6 @@ export async function getCheckoutSessionParams({
         message: t.checkoutTermsConsent.replace("{termsUrl}", TERMS_URL),
       },
     },
-    subscription_data: { metadata: { [SUBSCRIPTION_LOCALE_KEY]: language } },
+    subscription_data: { metadata: writeSubscriptionMetadata({ locale: language, timeZone }) },
   };
 }

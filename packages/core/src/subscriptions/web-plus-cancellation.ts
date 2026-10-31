@@ -1,11 +1,14 @@
 import "server-only";
 import { isHumanRequest } from "@zoonk/auth/human-check";
 import { sendPlusCancellationEmail } from "@zoonk/auth/plus-emails";
+import { readSubscriptionMetadata } from "@zoonk/auth/stripe-subscription-metadata";
 import { prisma } from "@zoonk/db";
 import { type PriceInfo } from "@zoonk/utils/currency";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { io } from "next/cache";
+import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
+import { getUserSubscriptionCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
 import {
   type Learner,
@@ -14,7 +17,9 @@ import {
 } from "./_utils/load-web-plus-cancellation";
 import {
   refundLatestPayment,
+  resumeSubscription,
   saveStoppedSubscription,
+  saveSubscription,
   stopSubscription,
 } from "./_utils/stop-web-plus";
 import {
@@ -38,6 +43,7 @@ export type WebPlusCancellationOutcome = CanceledOutcome | { status: "unavailabl
 
 type ReadyCancellation = Extract<WebPlusCancellation, { status: "ready" }>;
 type ChosenOption = { endsAt: Date; owed: number; refundAmount: number };
+type CancellationSource = Parameters<typeof sendPlusCancellationEmail>[0]["source"];
 
 async function getLearner(): Promise<Learner | null> {
   const session = await getSession();
@@ -99,6 +105,7 @@ async function applyCancellation({
   option,
   receivedAt,
   request,
+  source,
   stripeSubscription,
 }: {
   cancellation: ReadyCancellation;
@@ -108,6 +115,7 @@ async function applyCancellation({
   option: ChosenOption | null;
   receivedAt: Date;
   request: WebPlusCancellationRequest;
+  source: CancellationSource;
   stripeSubscription: Stripe.Subscription;
 }): Promise<CanceledOutcome> {
   const endsAt = option?.endsAt ?? cancellation.endingAt ?? receivedAt;
@@ -129,6 +137,7 @@ async function applyCancellation({
     (await stopSubscription({ endsAt, endsNow, reason, subscription: stripeSubscription }));
 
   await sendPlusCancellationEmail({
+    canKeepPlus: option ? !endsNow && !refund : cancellation.canResumeRenewal,
     choice: request.choice,
     email: learner.email,
     endsAt,
@@ -140,6 +149,8 @@ async function applyCancellation({
     receivedAt,
     refund,
     refundableUntil,
+    source,
+    timeZone: cancellation.timeZone,
   });
 
   if (stopped) {
@@ -190,6 +201,7 @@ export async function cancelWebPlus({
     option,
     receivedAt,
     request,
+    source: "settings",
     stripeSubscription,
   });
 }
@@ -226,15 +238,17 @@ async function cancelForDeclaration({
   const options = getOptions(cancellation, receivedAt);
 
   // A visitor can't see which choices are open, so a withdrawal after its 14 days, or any choice
-  // on an unpaid renewal, becomes the ordinary cancellation it can still be (BGB § 140).
+  // on an unpaid renewal, becomes the ordinary cancellation it can still be (BGB § 140). The
+  // receipt is for the account's owner, so it's in the language they subscribed in.
   await applyCancellation({
     cancellation,
     lateWithdrawal: request.choice === "withdrawal" && !options.withdrawal,
     learner,
-    locale,
+    locale: readSubscriptionMetadata(stripeSubscription.metadata, locale).locale,
     option: options[request.choice] ?? options.ordinary,
     receivedAt,
     request,
+    source: "form",
     stripeSubscription,
   });
 }
@@ -259,4 +273,28 @@ export async function requestWebPlusCancellation(declaration: {
   const receivedAt = new Date();
   await cancelForDeclaration({ ...declaration, receivedAt });
   return { receivedAt };
+}
+
+/**
+ * "Keep Plus" after only the renewal was stopped: it renews as before. Null without an account;
+ * unavailable once Plus ends sooner, such as after a refund.
+ */
+export async function keepWebPlus(): Promise<{ status: "kept" | "unavailable" } | null> {
+  const learner = await getLearner();
+
+  if (!learner) {
+    return null;
+  }
+
+  const { cancellation, stripeSubscription } = await loadCancellation({ learner, now: new Date() });
+
+  if (cancellation.status !== "ready" || !cancellation.canResumeRenewal || !stripeSubscription) {
+    return { status: "unavailable" };
+  }
+
+  const resumed = await resumeSubscription(stripeSubscription);
+  await saveSubscription({ subscription: resumed, userId: learner.id });
+  revalidateCacheTags([getUserSubscriptionCacheTag(learner.id)]);
+
+  return { status: "kept" };
 }

@@ -335,7 +335,7 @@ describe("persona command", () => {
 
       expect(learners.map((learner) => learner.email)).toContain(email);
 
-      await removeTestLearner({ email, id: userId });
+      await removeTestLearner({ email, id: userId, name: "Maya" });
 
       const [users, goals, attempts, events, sessions, skills, seeded] = await Promise.all([
         prisma.user.count({ where: { id: userId } }),
@@ -495,7 +495,7 @@ describe("persona command", () => {
       const clone = await clonePersona({ from: source.email });
       const before = await loadPlan(source.userId);
 
-      await removeTestLearner({ email: clone.email, id: clone.userId });
+      await removeTestLearner({ email: clone.email, id: clone.userId, name: "Clone" });
 
       const [after, sourceLesson, cloneRows] = await Promise.all([
         loadPlan(source.userId),

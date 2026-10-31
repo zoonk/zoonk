@@ -114,6 +114,41 @@ describe(deleteUserDependenciesBeforeAuthDelete, () => {
     ).resolves.toBeNull();
   });
 
+  it("lets core end website Plus with its refunds first, then cancels only what's still live", async () => {
+    const user = await createTestUser();
+
+    const [live, ended] = await Promise.all(
+      ["active", "canceled"].map((status) =>
+        prisma.subscription.create({
+          data: {
+            plan: "plus",
+            provider: "stripe",
+            referenceId: user.id,
+            status,
+            stripeSubscriptionId: `sub_${randomUUID()}`,
+          },
+        }),
+      ),
+    );
+
+    const endWebPlus = vi.fn(async () => {
+      expect(mocks.cancelStripeSubscription).not.toHaveBeenCalled();
+    });
+
+    await captureAccountDeletionCleanup({
+      endWebPlus,
+      operation: () => deleteUserDependenciesBeforeAuthDelete(user),
+    });
+
+    expect(endWebPlus).toHaveBeenCalledExactlyOnceWith(user);
+
+    expect(mocks.cancelStripeSubscription).toHaveBeenCalledExactlyOnceWith(
+      live?.stripeSubscriptionId,
+    );
+
+    expect(mocks.cancelStripeSubscription).not.toHaveBeenCalledWith(ended?.stripeSubscriptionId);
+  });
+
   it("attempts stored Apple revocation before removing local account state", async () => {
     const user = await createTestUser();
     const normalizedEmail = user.email.toLowerCase();
@@ -151,9 +186,12 @@ describe(deleteUserDependenciesBeforeAuthDelete, () => {
       return false;
     });
 
-    const cleanup = await captureAccountDeletionCleanup(async () => {
-      await deleteUserDependenciesBeforeAuthDelete(user);
-      return "deleted" as const;
+    const cleanup = await captureAccountDeletionCleanup({
+      endWebPlus: vi.fn(),
+      operation: async () => {
+        await deleteUserDependenciesBeforeAuthDelete(user);
+        return "deleted" as const;
+      },
     });
 
     expect(cleanup).toStrictEqual({ appleAuthorizationRevoked: false, result: "deleted" });

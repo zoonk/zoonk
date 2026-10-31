@@ -1,5 +1,6 @@
 import "server-only";
 import { stripeClient } from "@zoonk/auth/stripe-client";
+import { readSubscriptionMetadata } from "@zoonk/auth/stripe-subscription-metadata";
 import { prisma } from "@zoonk/db";
 import { findActiveSubscriptionForUser } from "../../auth/subscription";
 import { getWebPlusCancellationTerms } from "../web-plus-cancellation-terms";
@@ -15,6 +16,8 @@ export type WebPlusCancellation =
   | { status: "store"; provider: "apple" | "google" | "zoonk" }
   | {
       status: "ready";
+      accountDeletionRefund: number;
+      canResumeRenewal: boolean;
       /** Null once the renewal is already stopped. */
       cancellation: Terms["cancellation"] | null;
       currency: string;
@@ -25,6 +28,8 @@ export type WebPlusCancellation =
       extraordinary: Terms["extraordinary"] | null;
       interval: BillingInterval;
       name: string;
+      /** Where the learner subscribed, or UTC when unknown: dates are shown in it. */
+      timeZone: string;
       /** The last renewal wasn't paid: canceling ends it now and stops the charge attempts. */
       unpaid: boolean;
       withdrawal: Terms["withdrawal"];
@@ -66,11 +71,21 @@ function describeCancellation({
   }
 
   const interval: BillingInterval = item.price.recurring?.interval === "year" ? "year" : "month";
-  const ready = { currency: invoice.currency, email: learner.email, interval, name: learner.name };
+  const { timeZone } = readSubscriptionMetadata(subscription.metadata);
+
+  const ready = {
+    currency: invoice.currency,
+    email: learner.email,
+    interval,
+    name: learner.name,
+    timeZone: timeZone ?? "UTC",
+  };
 
   if (isUnpaid(subscription)) {
     return {
       ...ready,
+      accountDeletionRefund: 0,
+      canResumeRenewal: false,
       cancellation: { endsAt: now, refundAmount: 0, unstartedMonths: 0 },
       endingAt: null,
       extraordinary: null,
@@ -84,18 +99,24 @@ function describeCancellation({
     ? toDate(subscription.cancel_at ?? item.current_period_end)
     : null;
 
-  const { cancellation, extraordinary, withdrawal } = getWebPlusCancellationTerms({
-    amountPaid: invoice.amount_paid,
-    endingAt,
-    interval,
-    now,
-    periodEnd: toDate(paidPeriod.end),
-    periodStart: toDate(paidPeriod.start),
-    subscribedAt: toDate(subscription.start_date),
-  });
+  const periodEnd = toDate(paidPeriod.end);
+
+  const { accountDeletionRefund, cancellation, extraordinary, withdrawal } =
+    getWebPlusCancellationTerms({
+      amountPaid: invoice.amount_paid,
+      endingAt,
+      interval,
+      now,
+      periodEnd,
+      periodStart: toDate(paidPeriod.start),
+      subscribedAt: toDate(subscription.start_date),
+      timeZone,
+    });
 
   return {
     ...ready,
+    accountDeletionRefund,
+    canResumeRenewal: endingAt !== null && endingAt >= periodEnd,
     cancellation: endingAt ? null : cancellation,
     endingAt,
     extraordinary,

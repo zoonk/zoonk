@@ -32,6 +32,7 @@ function appleSubscription({
     providerSubscriptionId: "original-transaction",
     providerTransactionId: null,
     referenceId: "learner",
+    renewalReminderSentFor: null,
     seats: null,
     status: "active",
     stripeCustomerId: null,

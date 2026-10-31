@@ -29,7 +29,8 @@
     "./stripe-prices": "./src/stripe/prices.ts",
     "./subscription-events": "./src/stripe/subscription-events.ts",
     "./plus-emails": "./src/stripe/plus-emails.ts",
-    "./stripe-client": "./src/stripe/client.ts"
+    "./stripe-client": "./src/stripe/client.ts",
+    "./stripe-subscription-metadata": "./src/stripe/subscription-metadata.ts"
   },
   "scripts": {
     "test": "vitest run",

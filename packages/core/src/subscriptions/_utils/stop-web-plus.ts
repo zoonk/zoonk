@@ -2,10 +2,14 @@ import "server-only";
 import { stripeClient } from "@zoonk/auth/stripe-client";
 import { reportSubscriptionChange } from "@zoonk/auth/subscription-events";
 import { prisma } from "@zoonk/db";
+import { type PriceInfo } from "@zoonk/utils/currency";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { PLUS_PLAN } from "@zoonk/utils/subscription";
 import type Stripe from "stripe";
+
+/** More than a decade of monthly payments; an account below the minimum age can't have more. */
+const MAX_REFUNDED_INVOICES = 200;
 
 /** A renewal Stripe couldn't charge has no Plus left, but Stripe keeps trying to collect it. */
 export const UNPAID_STATUSES = ["past_due", "unpaid"];
@@ -27,23 +31,16 @@ export function getLatestInvoice(subscription: Stripe.Subscription): Stripe.Invo
  * Refunds what's still owed of `owed`, so a payment refunded by hand or a request retried after a
  * failure never refunds twice; concurrent requests share Stripe's idempotency key.
  */
-export async function refundLatestPayment({
-  owed,
-  subscription,
-}: {
-  owed: number;
-  subscription: Stripe.Subscription;
-}): Promise<void> {
-  const invoice = getLatestInvoice(subscription);
-  const payment = invoice?.payments?.data.find((entry) => entry.status === "paid")?.payment;
+async function refundInvoice({ invoice, owed }: { invoice: Stripe.Invoice; owed: number }) {
+  const payment = invoice.payments?.data.find((entry) => entry.status === "paid")?.payment;
 
   const paymentIntentId =
     typeof payment?.payment_intent === "string"
       ? payment.payment_intent
       : payment?.payment_intent?.id;
 
-  if (!invoice || !paymentIntentId) {
-    throw new Error(`Subscription ${subscription.id} has no paid invoice to refund`);
+  if (!paymentIntentId) {
+    throw new Error(`Invoice ${invoice.id} has no paid payment to refund`);
   }
 
   const paymentIntent = await stripeClient.paymentIntents.retrieve(paymentIntentId, {
@@ -64,8 +61,48 @@ export async function refundLatestPayment({
   );
 
   if (refund.status === "failed" || refund.status === "canceled") {
-    throw new Error(`Refund ${refund.id} for subscription ${subscription.id} ${refund.status}`);
+    throw new Error(`Refund ${refund.id} for invoice ${invoice.id} ${refund.status}`);
   }
+}
+
+export async function refundLatestPayment({
+  owed,
+  subscription,
+}: {
+  owed: number;
+  subscription: Stripe.Subscription;
+}): Promise<void> {
+  const invoice = getLatestInvoice(subscription);
+
+  if (!invoice) {
+    throw new Error(`Subscription ${subscription.id} has no paid invoice to refund`);
+  }
+
+  await refundInvoice({ invoice, owed });
+}
+
+/** Returns what the customers paid in all. */
+export async function refundEveryPayment(customerIds: string[]): Promise<PriceInfo | null> {
+  const listed = await Promise.all(
+    customerIds.map((customer) =>
+      stripeClient.invoices
+        .list({ customer, expand: ["data.payments"], status: "paid" })
+        .autoPagingToArray({ limit: MAX_REFUNDED_INVOICES }),
+    ),
+  );
+
+  const paid = listed.flat().filter((invoice) => invoice.amount_paid > 0);
+
+  await Promise.all(paid.map((invoice) => refundInvoice({ invoice, owed: invoice.amount_paid })));
+
+  const [first] = paid;
+
+  return first
+    ? {
+        amount: paid.reduce((sum, invoice) => sum + invoice.amount_paid, 0),
+        currency: first.currency,
+      }
+    : null;
 }
 
 /** A failure here leaves the invoice open but no longer collected, so it doesn't undo the cancel. */
@@ -123,10 +160,48 @@ export async function stopSubscription({
   return stripeClient.subscriptions.update(subscription.id, { cancel_at_period_end: true });
 }
 
+/** Turns a stopped renewal back on, clearing whichever field Stripe keeps the end in. */
+export function resumeSubscription(
+  subscription: Stripe.Subscription,
+): Promise<Stripe.Subscription> {
+  return stripeClient.subscriptions.update(
+    subscription.id,
+    subscription.cancel_at ? { cancel_at: "" } : { cancel_at_period_end: false },
+  );
+}
+
 /**
  * Stripe's webhook later writes the same fields; writing them now keeps the app and the API from
- * showing the old plan meanwhile. The webhook then sees the cancel as already recorded, so a
- * stopped renewal reports its analytics here.
+ * showing the old plan meanwhile.
+ */
+export async function saveSubscription({
+  subscription,
+  userId,
+}: {
+  subscription: Stripe.Subscription;
+  userId: string;
+}): Promise<void> {
+  const item = subscription.items.data[0];
+
+  await prisma.subscription.updateMany({
+    data: {
+      cancelAt: subscription.cancel_at ? toDate(subscription.cancel_at) : null,
+      cancelAtPeriodEnd: subscription.cancel_at_period_end,
+      canceledAt: subscription.canceled_at ? toDate(subscription.canceled_at) : null,
+      endedAt: subscription.ended_at ? toDate(subscription.ended_at) : null,
+      ...(item && {
+        periodEnd: toDate(item.current_period_end),
+        periodStart: toDate(item.current_period_start),
+      }),
+      status: subscription.status,
+    },
+    where: { provider: "stripe", referenceId: userId, stripeSubscriptionId: subscription.id },
+  });
+}
+
+/**
+ * The webhook then sees the cancel as already recorded, so a stopped renewal reports its analytics
+ * here.
  */
 export async function saveStoppedSubscription({
   stopped,
@@ -135,22 +210,7 @@ export async function saveStoppedSubscription({
   stopped: Stripe.Subscription;
   userId: string;
 }): Promise<void> {
-  const item = stopped.items.data[0];
-
-  await prisma.subscription.updateMany({
-    data: {
-      cancelAt: stopped.cancel_at ? toDate(stopped.cancel_at) : null,
-      cancelAtPeriodEnd: stopped.cancel_at_period_end,
-      canceledAt: stopped.canceled_at ? toDate(stopped.canceled_at) : null,
-      endedAt: stopped.ended_at ? toDate(stopped.ended_at) : null,
-      ...(item && {
-        periodEnd: toDate(item.current_period_end),
-        periodStart: toDate(item.current_period_start),
-      }),
-      status: stopped.status,
-    },
-    where: { provider: "stripe", referenceId: userId, stripeSubscriptionId: stopped.id },
-  });
+  await saveSubscription({ subscription: stopped, userId });
 
   if (stopped.status === "active") {
     await reportSubscriptionChange({

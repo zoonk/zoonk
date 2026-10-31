@@ -49,10 +49,12 @@ describe(deleteCurrentUser, () => {
     currentUserId = currentUser.id;
     mocks.deleteUser.mockResolvedValue({ success: true });
 
-    mocks.captureDeletionCleanup.mockImplementation(async (operation: () => Promise<unknown>) => ({
-      appleAuthorizationRevoked: null,
-      result: await operation(),
-    }));
+    mocks.captureDeletionCleanup.mockImplementation(
+      async ({ operation }: { operation: () => Promise<unknown> }) => ({
+        appleAuthorizationRevoked: null,
+        result: await operation(),
+      }),
+    );
 
     mocks.getRequestHeaders.mockResolvedValue(
       new Headers({ authorization: "Bearer current-token", cookie: "session=stale-cookie" }),
@@ -79,6 +81,15 @@ describe(deleteCurrentUser, () => {
     expect(mocks.reauthorizeApple).not.toHaveBeenCalled();
   });
 
+  it("hands Better Auth's cleanup the ending of website Plus with its refunds", async () => {
+    await deleteCurrentUser({});
+
+    expect(mocks.captureDeletionCleanup).toHaveBeenCalledExactlyOnceWith({
+      endWebPlus: expect.any(Function),
+      operation: expect.any(Function),
+    });
+  });
+
   it("logs the deleted account's id and nothing else, so its analytics can be removed", async () => {
     await deleteCurrentUser({});
 
@@ -97,10 +108,12 @@ describe(deleteCurrentUser, () => {
   it("keeps deletion available without fresh Apple credentials", async () => {
     await appleAccountFixture({ userId: currentUserId });
 
-    mocks.captureDeletionCleanup.mockImplementation(async (operation: () => Promise<unknown>) => ({
-      appleAuthorizationRevoked: true,
-      result: await operation(),
-    }));
+    mocks.captureDeletionCleanup.mockImplementation(
+      async ({ operation }: { operation: () => Promise<unknown> }) => ({
+        appleAuthorizationRevoked: true,
+        result: await operation(),
+      }),
+    );
 
     await expect(deleteCurrentUser({})).resolves.toStrictEqual({ appleAuthorizationRevoked: true });
 
@@ -111,10 +124,12 @@ describe(deleteCurrentUser, () => {
   it("deletes with the fresh session returned after native Apple revocation", async () => {
     await appleAccountFixture({ userId: currentUserId });
 
-    mocks.captureDeletionCleanup.mockImplementation(async (operation: () => Promise<unknown>) => ({
-      appleAuthorizationRevoked: true,
-      result: await operation(),
-    }));
+    mocks.captureDeletionCleanup.mockImplementation(
+      async ({ operation }: { operation: () => Promise<unknown> }) => ({
+        appleAuthorizationRevoked: true,
+        result: await operation(),
+      }),
+    );
 
     await expect(deleteCurrentUser({ appleCredentials })).resolves.toStrictEqual({
       appleAuthorizationRevoked: true,
@@ -148,10 +163,12 @@ describe(deleteCurrentUser, () => {
   it("reports stored Apple revocation failure after email reauthentication", async () => {
     await appleAccountFixture({ userId: currentUserId });
 
-    mocks.captureDeletionCleanup.mockImplementation(async (operation: () => Promise<unknown>) => ({
-      appleAuthorizationRevoked: false,
-      result: await operation(),
-    }));
+    mocks.captureDeletionCleanup.mockImplementation(
+      async ({ operation }: { operation: () => Promise<unknown> }) => ({
+        appleAuthorizationRevoked: false,
+        result: await operation(),
+      }),
+    );
 
     await expect(deleteCurrentUser({ emailCredentials })).resolves.toStrictEqual({
       appleAuthorizationRevoked: false,
@@ -161,10 +178,12 @@ describe(deleteCurrentUser, () => {
   it("reports failure when either fresh or stored Apple revocation is unavailable", async () => {
     await appleAccountFixture({ userId: currentUserId });
 
-    mocks.captureDeletionCleanup.mockImplementation(async (operation: () => Promise<unknown>) => ({
-      appleAuthorizationRevoked: false,
-      result: await operation(),
-    }));
+    mocks.captureDeletionCleanup.mockImplementation(
+      async ({ operation }: { operation: () => Promise<unknown> }) => ({
+        appleAuthorizationRevoked: false,
+        result: await operation(),
+      }),
+    );
 
     await expect(deleteCurrentUser({ appleCredentials })).resolves.toStrictEqual({
       appleAuthorizationRevoked: false,

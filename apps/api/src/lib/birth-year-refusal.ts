@@ -1,12 +1,14 @@
 import { accessErrorCodes } from "@/lib/access-error-codes";
 import { createErrorResponse, httpStatus } from "@/lib/api-errors";
-import { type BirthYearCheck } from "@zoonk/core/profile/check-birth-year";
+import { type SaveBirthYearResult } from "@zoonk/core/profile/save-birth-year";
 
-export function birthYearRefusal(result: Exclude<BirthYearCheck, { status: "allowed" }>) {
-  if (result.status === "belowMinimumAge") {
+type BirthYearRefusal = Exclude<SaveBirthYearResult, { status: "saved" | "unauthorized" }>;
+
+export function birthYearRefusal(result: BirthYearRefusal) {
+  if (result.status === "belowMinimumAge" || result.status === "accountClosed") {
     return createErrorResponse({
       code: accessErrorCodes.belowMinimumAge,
-      details: { minimumAge: result.minimumAge },
+      details: { accountClosed: result.status === "accountClosed", minimumAge: result.minimumAge },
       message: `Zoonk is for people ${result.minimumAge} and older here`,
       status: httpStatus.unprocessableEntity,
     });

@@ -16,14 +16,30 @@ function send(body: unknown) {
 
 describe("PUT /v1/me/birth-year", () => {
   it("says the minimum age when the learner is below it, so the app can say it too", async () => {
-    vi.mocked(saveBirthYear).mockResolvedValue({ minimumAge: 14, status: "belowMinimumAge" });
+    vi.mocked(saveBirthYear).mockResolvedValue({
+      certain: false,
+      minimumAge: 14,
+      status: "belowMinimumAge",
+    });
+
+    const response = await send({ birthYear: 2012 });
+
+    expect(response.status).toBe(422);
+
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "BELOW_MINIMUM_AGE", details: { accountClosed: false, minimumAge: 14 } },
+    });
+  });
+
+  it("says when the account was closed for being certainly below it", async () => {
+    vi.mocked(saveBirthYear).mockResolvedValue({ minimumAge: 13, status: "accountClosed" });
 
     const response = await send({ birthYear: 2015 });
 
     expect(response.status).toBe(422);
 
     await expect(response.json()).resolves.toMatchObject({
-      error: { code: "BELOW_MINIMUM_AGE", details: { minimumAge: 14 } },
+      error: { code: "BELOW_MINIMUM_AGE", details: { accountClosed: true, minimumAge: 13 } },
     });
   });
 

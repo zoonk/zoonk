@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
-import { SUBSCRIPTION_LOCALE_KEY } from "./checkout-session-params";
 import { stripeClient } from "./client";
 import { sendPlusPurchaseEmail } from "./plus-emails";
+import { readSubscriptionMetadata } from "./subscription-metadata";
 import type Stripe from "stripe";
 
 function getInvoiceId(subscription: Stripe.Subscription): string | null {
@@ -35,9 +35,9 @@ export async function sendPlusPurchaseConfirmation({
   }
 
   await sendPlusPurchaseEmail({
+    ...readSubscriptionMetadata(stripeSubscription.metadata),
     email: user.email,
     interval: item.price.recurring?.interval === "year" ? "year" : "month",
-    locale: stripeSubscription.metadata[SUBSCRIPTION_LOCALE_KEY] ?? "en",
     paid: { amount: invoice.amount_paid, currency: invoice.currency },
     renewal: {
       amount: renewal.amount_due,

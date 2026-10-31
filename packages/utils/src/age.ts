@@ -57,6 +57,23 @@ export function isKnownMinor({
   return birthYear !== null && !isAdult({ birthYear, country, now });
 }
 
+/**
+ * Even if this year's birthday has passed, they're younger than the minimum age; with no country,
+ * younger than it anywhere.
+ */
+export function isCertainlyBelowMinimumAge({
+  birthYear,
+  country,
+  now,
+}: {
+  birthYear: number;
+  country: string | null;
+  now: Date;
+}): boolean {
+  const minimumAge = country === null ? MINIMUM_AGE : getMinimumAge(country);
+  return now.getUTCFullYear() - birthYear < minimumAge;
+}
+
 /** An unknown birth year is never an adult's. */
 export function isAdult({
   birthYear,

@@ -3,7 +3,7 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { headers } from "next/headers";
 import { describe, expect, it, vi } from "vitest";
-import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
+import { mockAccountSession, mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { checkBirthYear } from "./check-birth-year";
 import { saveBirthYear } from "./save-birth-year";
 
@@ -43,11 +43,30 @@ describe(saveBirthYear, () => {
     fromCountry("KR");
 
     await expect(saveBirthYear({ birthYear: THIS_YEAR - 14 })).resolves.toStrictEqual({
+      certain: false,
       minimumAge: 14,
       status: "belowMinimumAge",
     });
 
     await expect(savedBirthYear(user.id)).resolves.toBeNull();
+    await expect(prisma.user.findUnique({ where: { id: user.id } })).resolves.not.toBeNull();
+  });
+
+  it("closes and deletes an account certainly below the minimum age", async () => {
+    const user = await userFixture();
+    mockAccountSession({ user });
+    fromCountry("BR");
+
+    await expect(saveBirthYear({ birthYear: THIS_YEAR - 12 })).resolves.toStrictEqual({
+      minimumAge: 13,
+      status: "accountClosed",
+    });
+
+    await expect(prisma.user.findUnique({ where: { id: user.id } })).resolves.toBeNull();
+
+    await expect(
+      prisma.accountDeletion.findFirst({ where: { userId: user.id } }),
+    ).resolves.not.toBeNull();
   });
 
   it("keeps the first year a learner gave", async () => {
@@ -88,6 +107,7 @@ describe(checkBirthYear, () => {
     fromCountry("IT");
 
     await expect(checkBirthYear({ birthYear: THIS_YEAR - 14 })).resolves.toStrictEqual({
+      certain: false,
       minimumAge: 14,
       status: "belowMinimumAge",
     });

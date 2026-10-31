@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { getMinimumAge, isAdult, isBelowMinimumAge, isKnownMinor, isValidBirthYear } from "./age";
+import {
+  getMinimumAge,
+  isAdult,
+  isBelowMinimumAge,
+  isCertainlyBelowMinimumAge,
+  isKnownMinor,
+  isValidBirthYear,
+} from "./age";
 
 const NOW = new Date("2026-10-31T12:00:00Z");
 
@@ -33,6 +40,19 @@ describe(isBelowMinimumAge, () => {
 
     expect(isBelowMinimumAge({ birthYear: 2013, country: "BR", now: newYearsEve })).toBe(true);
     expect(isBelowMinimumAge({ birthYear: 2013, country: "BR", now: newYearsDay })).toBe(false);
+  });
+});
+
+describe(isCertainlyBelowMinimumAge, () => {
+  it("is sure only when even a birthday already passed this year leaves them too young", () => {
+    expect(isCertainlyBelowMinimumAge({ birthYear: 2013, country: "BR", now: NOW })).toBe(false);
+    expect(isCertainlyBelowMinimumAge({ birthYear: 2014, country: "BR", now: NOW })).toBe(true);
+    expect(isCertainlyBelowMinimumAge({ birthYear: 2013, country: "KR", now: NOW })).toBe(true);
+  });
+
+  it("is sure for no country only below the minimum age everywhere", () => {
+    expect(isCertainlyBelowMinimumAge({ birthYear: 2013, country: null, now: NOW })).toBe(false);
+    expect(isCertainlyBelowMinimumAge({ birthYear: 2014, country: null, now: NOW })).toBe(true);
   });
 });
 

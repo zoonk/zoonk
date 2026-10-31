@@ -1,9 +1,12 @@
 import { sendEmail } from "@zoonk/mailer";
 import { formatPrice } from "@zoonk/utils/currency";
+import { MS_PER_DAY } from "@zoonk/utils/date";
+import { safeAsync } from "@zoonk/utils/error";
 import { escapeHtml } from "@zoonk/utils/escape-html";
 import { getFormattingLocale } from "@zoonk/utils/locale";
 import { logError } from "@zoonk/utils/logger";
-import { getRefundDeadline } from "@zoonk/utils/subscription";
+import { getRefundLastDay } from "@zoonk/utils/subscription";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { CANCEL_SUBSCRIPTION_URL, PRIVACY_URL, TERMS_URL } from "@zoonk/utils/url";
 import { getTranslation } from "../translations/get-translations";
 
@@ -11,6 +14,9 @@ type Money = { amount: number; currency: string };
 type Translation = Awaited<ReturnType<typeof getTranslation>>;
 type BillingInterval = "month" | "year";
 type CancellationChoice = "extraordinary" | "ordinary" | "withdrawal";
+
+/** Who asked: the learner in Settings, anyone with the account's email on the cancel form, or deleting the account. */
+type CancellationSource = "accountDeletion" | "form" | "settings";
 
 const SELLER =
   "Zoonk Tecnologia e Educação Ltda · CNPJ 42.262.784/0001-76 · Setor SGAN 601, Módulo H, Sala 55, SS1, Parte 14, Edif Ion, Asa Norte, Brasília (DF), 70830-018, Brazil · hello@zoonk.com";
@@ -53,20 +59,28 @@ function renderEmail(blocks: string[]): string {
   return `<div style="font-family:system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.5;color:#18181b;max-width:560px">${blocks.join("")}<p style="margin:24px 0 0;font-size:12px;color:#71717a">${escapeHtml(SELLER)}</p></div>`;
 }
 
-function formatters(locale: string) {
+/**
+ * Dates read in the learner's own zone, or UTC when it isn't known; `day` formats a calendar date
+ * kept as UTC midnight.
+ */
+function formatters({ locale, timeZone }: { locale: string; timeZone: string | null }) {
   const formattingLocale = getFormattingLocale(locale);
-  const date = new Intl.DateTimeFormat(formattingLocale, { dateStyle: "long", timeZone: "UTC" });
+  const zone = timeZone ?? "UTC";
+  const date = new Intl.DateTimeFormat(formattingLocale, { dateStyle: "long", timeZone: zone });
+  const day = new Intl.DateTimeFormat(formattingLocale, { dateStyle: "long", timeZone: "UTC" });
 
   const dateTime = new Intl.DateTimeFormat(formattingLocale, {
     dateStyle: "long",
     timeStyle: "long",
-    timeZone: "UTC",
+    timeZone: zone,
   });
 
   return {
     date: (value: Date) => date.format(value),
     dateTime: (value: Date) => dateTime.format(value),
+    day: (value: Date) => day.format(value),
     money: ({ amount, currency }: Money) => formatPrice(amount, currency, locale),
+    zone,
   };
 }
 
@@ -99,7 +113,16 @@ async function send({ body, subject, to }: { body: string; subject: string; to: 
   const { error } = await sendEmail({ htmlBody: body, subject, to });
 
   if (error) {
-    logError("Plus email failed", { error, subject });
+    throw error;
+  }
+}
+
+/** Sent from the request that bought or canceled Plus, which a failed email mustn't undo. */
+async function sendOnce(email: { body: string; subject: string; to: string }) {
+  const { error } = await safeAsync(() => send(email));
+
+  if (error) {
+    logError("Plus email failed", { error, subject: email.subject });
   }
 }
 
@@ -111,6 +134,7 @@ export async function sendPlusPurchaseEmail({
   paid,
   renewal,
   subscribedAt,
+  timeZone,
 }: {
   email: string;
   interval: BillingInterval;
@@ -118,9 +142,10 @@ export async function sendPlusPurchaseEmail({
   paid: Money;
   renewal: Money & { date: Date };
   subscribedAt: Date;
+  timeZone: string | null;
 }): Promise<void> {
   const t = await getTranslation(locale);
-  const format = formatters(locale);
+  const format = formatters({ locale, timeZone });
   const cancelLink = link(CANCEL_SUBSCRIPTION_URL);
 
   const body = renderEmail([
@@ -142,7 +167,7 @@ export async function sendPlusPurchaseEmail({
     paragraph(
       html(
         t.plusPurchaseRefund,
-        { date: format.date(getRefundDeadline(subscribedAt)) },
+        { date: format.day(getRefundLastDay({ subscribedAt, timeZone: format.zone })) },
         { cancelLink },
       ),
     ),
@@ -151,7 +176,7 @@ export async function sendPlusPurchaseEmail({
     withdrawalForm(t),
   ]);
 
-  await send({ body, subject: t.plusPurchaseSubject, to: email });
+  await sendOnce({ body, subject: t.plusPurchaseSubject, to: email });
 }
 
 function refundTemplate({
@@ -170,8 +195,49 @@ function refundTemplate({
   return choice === "extraordinary" ? t.plusRefundDaysLeft : t.plusRefundUnstarted;
 }
 
-/** The receipt of a cancellation or withdrawal, with its date and time (BGB §§ 312k and 356a). */
+function receivedTemplate({
+  choice,
+  source,
+  t,
+}: {
+  choice: CancellationChoice;
+  source: CancellationSource;
+  t: Translation;
+}): string {
+  if (source === "accountDeletion") {
+    return t.plusAccountDeletedReceived;
+  }
+
+  return {
+    extraordinary: t.plusExtraordinaryReceived,
+    ordinary: t.plusCancellationReceived,
+    withdrawal: t.plusWithdrawalReceived,
+  }[choice];
+}
+
+/** Someone else may have used the form with the email: undoing it comes first, else a reply. */
+function formNoticeTemplate({
+  canKeepPlus,
+  source,
+  t,
+}: {
+  canKeepPlus: boolean;
+  source: CancellationSource;
+  t: Translation;
+}): string {
+  if (source === "form") {
+    return canKeepPlus ? t.plusCancelFormKeepPlus : t.plusCancelFormNotice;
+  }
+
+  return canKeepPlus ? t.plusKeepPlusHint : "";
+}
+
+/**
+ * The receipt of a cancellation or withdrawal, with its date and time (BGB §§ 312k and 356a). One
+ * sent because someone used the cancel form, which needs no login, tells the account's owner so.
+ */
 export async function sendPlusCancellationEmail({
+  canKeepPlus,
   choice,
   email,
   endsAt,
@@ -183,7 +249,11 @@ export async function sendPlusCancellationEmail({
   receivedAt,
   refund,
   refundableUntil,
+  source,
+  timeZone,
 }: {
+  /** Only the renewal stopped, so Keep Plus can turn it back on. */
+  canKeepPlus: boolean;
   choice: CancellationChoice;
   email: string;
   endsAt: Date;
@@ -196,17 +266,15 @@ export async function sendPlusCancellationEmail({
   receivedAt: Date;
   refund: Money | null;
   refundableUntil: Date | null;
+  source: CancellationSource;
+  timeZone: string | null;
 }): Promise<void> {
   const t = await getTranslation(locale);
-  const format = formatters(locale);
+  const format = formatters({ locale, timeZone });
   const endsNow = endsAt <= receivedAt;
   const withdrawn = choice === "withdrawal" && !lateWithdrawal;
-
-  const received = {
-    extraordinary: t.plusExtraordinaryReceived,
-    ordinary: t.plusCancellationReceived,
-    withdrawal: t.plusWithdrawalReceived,
-  }[choice];
+  const received = receivedTemplate({ choice, source, t });
+  const formNotice = formNoticeTemplate({ canKeepPlus, source, t });
 
   const refundSentence = refund
     ? `${html(refundTemplate({ choice, t, withdrawn }), { amount: format.money(refund) })} ${html(t.plusRefundTiming)}`
@@ -226,6 +294,7 @@ export async function sendPlusCancellationEmail({
       ...(refund ? [[t.plusRefundLabel, format.money(refund)] as [string, string]] : []),
     ]),
     paragraph(`${ending} ${refundSentence}`),
+    formNotice ? paragraph(html(formNotice)) : "",
     refundableUntil
       ? paragraph(
           html(
@@ -239,9 +308,50 @@ export async function sendPlusCancellationEmail({
     legalLinks(t),
   ]);
 
-  await send({
+  await sendOnce({
     body,
     subject: withdrawn ? t.plusWithdrawalSubject : t.plusCancellationSubject,
     to: email,
   });
+}
+
+function deadlineBox({ label, value }: { label: string; value: string }): string {
+  return `<div style="margin:0 0 16px;padding:12px 16px;border:2px solid #18181b;border-radius:8px"><p style="margin:0;color:#71717a">${escapeHtml(label)}</p><p style="margin:4px 0 0;font-size:17px;font-weight:600">${escapeHtml(value)}</p></div>`;
+}
+
+/**
+ * France wants the last day to cancel in a visible box (Code de la consommation L215-1): the day
+ * before the renewal's, where the learner is. Throws when the mailer fails, so a retry sends it.
+ */
+export async function sendPlusRenewalReminderEmail({
+  email,
+  locale,
+  renewal,
+  timeZone,
+}: {
+  email: string;
+  locale: string;
+  renewal: Money & { date: Date };
+  timeZone: string | null;
+}): Promise<void> {
+  const t = await getTranslation(locale);
+  const format = formatters({ locale, timeZone });
+  const renewalDay = getDateInTimeZone({ date: renewal.date, timeZone: format.zone });
+  const lastDayToCancel = new Date(renewalDay.getTime() - MS_PER_DAY);
+  const values = { amount: format.money(renewal), date: format.date(renewal.date) };
+
+  const body = renderEmail([
+    paragraph(html(t.plusRenewalIntro, values)),
+    deadlineBox({ label: t.plusRenewalDeadlineLabel, value: format.day(lastDayToCancel) }),
+    details([
+      [t.plusAccountLabel, email],
+      [t.plusPlanLabel, planName(t, "year")],
+    ]),
+    paragraph(html(t.plusPurchaseCancel, {}, { cancelLink: link(CANCEL_SUBSCRIPTION_URL) })),
+    paragraph(html(t.plusPurchaseYearlyRefund)),
+    paragraph(html(t.plusEmailQuestions)),
+    legalLinks(t),
+  ]);
+
+  await send({ body, subject: fill(t.plusRenewalSubject, values), to: email });
 }

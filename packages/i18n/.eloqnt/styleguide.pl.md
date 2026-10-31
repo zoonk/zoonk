@@ -48,6 +48,7 @@
 - “study time”, the daily amount: “czas nauki”; the time of day the learner studies: “godzina nauki”
 - “You've reached today's study time”: “Twój czas nauki na dziś się skończył”, in every line that starts with it
 - Ending a subscription “for an important reason”: “z ważnego powodu”
+- “Keep Plus” (turns a stopped renewal back on): “Zachowaj Plus”
 
 ## Feature names and states
 

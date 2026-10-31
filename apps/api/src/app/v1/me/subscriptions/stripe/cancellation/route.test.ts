@@ -5,14 +5,16 @@ import {
 import {
   cancelWebPlus,
   getWebPlusCancellation,
+  keepWebPlus,
 } from "@zoonk/core/subscriptions/web-plus-cancellation";
 import { NextRequest } from "next/server";
 import { describe, expect, it, vi } from "vitest";
-import { POST as cancel, GET as preview } from "./route";
+import { POST as cancel, DELETE as keep, GET as preview } from "./route";
 
 vi.mock("@zoonk/core/subscriptions/web-plus-cancellation", () => ({
   cancelWebPlus: vi.fn(),
   getWebPlusCancellation: vi.fn(),
+  keepWebPlus: vi.fn(),
 }));
 
 // next-intl reads the request's language from Next's request scope, which a route test lacks.
@@ -28,6 +30,8 @@ function cancelRequest(body: unknown) {
 describe("GET /v1/me/subscriptions/stripe/cancellation", () => {
   it("answers the choices in the documented shape, in major units", async () => {
     vi.mocked(getWebPlusCancellation).mockResolvedValue({
+      accountDeletionRefund: 2990,
+      canResumeRenewal: false,
       cancellation: {
         endsAt: new Date("2026-12-01T00:00:00Z"),
         refundAmount: 0,
@@ -40,6 +44,7 @@ describe("GET /v1/me/subscriptions/stripe/cancellation", () => {
       interval: "month",
       name: "Ana",
       status: "ready",
+      timeZone: "America/Sao_Paulo",
       unpaid: false,
       withdrawal: { refundAmount: 2990, until: new Date("2026-11-14T00:00:00Z") },
     });
@@ -50,6 +55,8 @@ describe("GET /v1/me/subscriptions/stripe/cancellation", () => {
     expect(response.status).toBe(200);
 
     expect(stripeSubscriptionCancellationSchema.strict().parse(body)).toStrictEqual({
+      accountDeletion: { refund: { amount: 29.9, currency: "BRL" } },
+      canResumeRenewal: false,
       cancellation: { endsAt: "2026-12-01T00:00:00.000Z", refund: null },
       extraordinary: { refund: { amount: 20.93, currency: "BRL" } },
       withdrawal: { refund: { amount: 29.9, currency: "BRL" }, until: "2026-11-14T00:00:00.000Z" },
@@ -126,5 +133,19 @@ describe("POST /v1/me/subscriptions/stripe/cancellation", () => {
       locale: "de",
       request: { choice: "extraordinary", reason: "I'm moving abroad" },
     });
+  });
+});
+
+describe("DELETE /v1/me/subscriptions/stripe/cancellation", () => {
+  it("keeps Plus, or says it can't once Plus ends sooner than its period", async () => {
+    vi.mocked(keepWebPlus).mockResolvedValueOnce({ status: "kept" });
+    vi.mocked(keepWebPlus).mockResolvedValueOnce({ status: "unavailable" });
+    vi.mocked(keepWebPlus).mockResolvedValueOnce(null);
+
+    const kept = await keep();
+    const unavailable = await keep();
+    const signedOut = await keep();
+
+    expect([kept.status, unavailable.status, signedOut.status]).toStrictEqual([204, 409, 401]);
   });
 });

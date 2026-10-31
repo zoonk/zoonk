@@ -13,7 +13,7 @@ import { AUTHENTICATED_SECURITY, PUBLIC_SECURITY } from "../security";
 
 const birthYearRefusalResponse = {
   ...unprocessableEntityResponse,
-  description: `Below the minimum age (\`${accessErrorCodes.belowMinimumAge}\` with \`details.minimumAge\`), or a year in the future or older than anyone alive (\`${accessErrorCodes.invalidBirthYear}\`).`,
+  description: `Below the minimum age (\`${accessErrorCodes.belowMinimumAge}\` with \`details.minimumAge\`, and \`details.accountClosed\` when the account was deleted), or a year in the future or older than anyone alive (\`${accessErrorCodes.invalidBirthYear}\`).`,
 };
 
 export const learnerProfilePaths = {
@@ -56,7 +56,7 @@ export const learnerProfilePaths = {
   "/me/birth-year": {
     put: {
       description:
-        "Asked once, before a guest or learner keeps learning; a saved year stays. Below the minimum age where the request comes from, nothing is saved and the client ends the session. A visitor's year goes through `POST /v1/age-checks` first.",
+        "Asked once, before a guest or learner keeps learning; a saved year stays. Below the minimum age where the request comes from, nothing is saved and the client ends the session. A year certainly below it closes the account: it's deleted, with its website Plus refunded in full (`details.accountClosed`). A visitor's year goes through `POST /v1/age-checks` first.",
       operationId: "saveCurrentUserBirthYear",
       requestBody: {
         content: { "application/json": { schema: birthYearInputSchema } },

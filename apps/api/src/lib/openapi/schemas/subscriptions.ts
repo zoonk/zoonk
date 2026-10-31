@@ -50,6 +50,22 @@ const moneySchema = z
 
 export const stripeSubscriptionCancellationSchema = z
   .object({
+    accountDeletion: z
+      .object({
+        refund: moneySchema
+          .nullable()
+          .meta({
+            description:
+              "Everything within the 14 days, or after a yearly renewal the months that haven't started",
+          }),
+      })
+      .meta({ description: "Deleting the account ends Plus right away and refunds this" }),
+    canResumeRenewal: z
+      .boolean()
+      .meta({
+        description:
+          "Only the renewal is stopped, at the end of the paid period, so DELETE turns it back on (Keep Plus)",
+      }),
     cancellation: z
       .object({
         endsAt: z.iso.datetime(),

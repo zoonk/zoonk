@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { betterAuth } from "better-auth/minimal";
 import { describe, expect, it, vi } from "vitest";
+import { captureAccountDeletionCleanup } from "../account-deletion";
 import { guestAuth, signInAsGuest } from "../guests/_test-utils/guest-auth";
 import { baseAuthConfig, baseAuthPlugins } from "../server";
 import { accessGuardsPlugin } from "./access-guards";
@@ -14,6 +15,11 @@ vi.mock("../stripe/client", () => ({
     customers: { create: stripeMocks.create, search: stripeMocks.search },
     prices: { list: stripeMocks.search },
   },
+}));
+
+vi.mock("@vercel/blob", () => ({
+  del: vi.fn(),
+  list: vi.fn().mockResolvedValue({ blobs: [], hasMore: false }),
 }));
 
 const UPGRADE_BODY = { cancelUrl: "/", plan: "plus", successUrl: "/" };
@@ -119,5 +125,24 @@ describe("access guards", () => {
       name: "Renamed brand",
       slug: organization.slug,
     });
+  });
+
+  it("lets only core's deletion, which refunds website Plus first, delete an account", async () => {
+    const { headers } = await signInAsBrandOwner();
+    const session = await organizationAuth.api.getSession({ headers });
+    const endWebPlus = vi.fn();
+
+    await expect(organizationAuth.api.deleteUser({ body: {}, headers })).rejects.toMatchObject({
+      body: { code: "ACCOUNT_DELETION_ELSEWHERE" },
+      statusCode: 403,
+    });
+
+    await captureAccountDeletionCleanup({
+      endWebPlus,
+      operation: () => organizationAuth.api.deleteUser({ body: {}, headers }),
+    });
+
+    expect(endWebPlus).toHaveBeenCalledOnce();
+    await expect(prisma.user.findUnique({ where: { id: session?.user.id } })).resolves.toBeNull();
   });
 });

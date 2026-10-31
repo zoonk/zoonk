@@ -7673,7 +7673,7 @@
             }
           },
           "422": {
-            "description": "Below the minimum age (`BELOW_MINIMUM_AGE` with `details.minimumAge`), or a year in the future or older than anyone alive (`INVALID_BIRTH_YEAR`).",
+            "description": "Below the minimum age (`BELOW_MINIMUM_AGE` with `details.minimumAge`, and `details.accountClosed` when the account was deleted), or a year in the future or older than anyone alive (`INVALID_BIRTH_YEAR`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7747,7 +7747,7 @@
     },
     "/me/birth-year": {
       "put": {
-        "description": "Asked once, before a guest or learner keeps learning; a saved year stays. Below the minimum age where the request comes from, nothing is saved and the client ends the session. A visitor's year goes through `POST /v1/age-checks` first.",
+        "description": "Asked once, before a guest or learner keeps learning; a saved year stays. Below the minimum age where the request comes from, nothing is saved and the client ends the session. A year certainly below it closes the account: it's deleted, with its website Plus refunded in full (`details.accountClosed`). A visitor's year goes through `POST /v1/age-checks` first.",
         "operationId": "saveCurrentUserBirthYear",
         "security": [
           {
@@ -7803,7 +7803,7 @@
             }
           },
           "422": {
-            "description": "Below the minimum age (`BELOW_MINIMUM_AGE` with `details.minimumAge`), or a year in the future or older than anyone alive (`INVALID_BIRTH_YEAR`).",
+            "description": "Below the minimum age (`BELOW_MINIMUM_AGE` with `details.minimumAge`, and `details.accountClosed` when the account was deleted), or a year in the future or older than anyone alive (`INVALID_BIRTH_YEAR`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12600,6 +12600,57 @@
       }
     },
     "/me/subscriptions/stripe/cancellation": {
+      "delete": {
+        "description": "Keep Plus: turns a stopped renewal back on, so Plus renews as before. Only while the preview's `canResumeRenewal` is true.",
+        "operationId": "resumeStripeSubscription",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Keep a web subscription",
+        "tags": [
+          "Subscriptions"
+        ],
+        "responses": {
+          "204": {
+            "description": "Plus renews again"
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Plus isn't set to end with its paid period; read the preview again",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
       "get": {
         "description": "For Plus bought on the web: what canceling would do. Store subscriptions are canceled in their store.",
         "operationId": "getStripeSubscriptionCancellation",
@@ -12617,7 +12668,7 @@
         ],
         "responses": {
           "200": {
-            "description": "The choices, at least one of them not null",
+            "description": "What canceling, keeping Plus or deleting the account would do",
             "content": {
               "application/json": {
                 "schema": {
@@ -73386,6 +73437,29 @@
       "StripeSubscriptionCancellation": {
         "type": "object",
         "properties": {
+          "accountDeletion": {
+            "type": "object",
+            "properties": {
+              "refund": {
+                "nullable": true,
+                "description": "Everything within the 14 days, or after a yearly renewal the months that haven't started",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Money"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "refund"
+            ],
+            "additionalProperties": false,
+            "description": "Deleting the account ends Plus right away and refunds this"
+          },
+          "canResumeRenewal": {
+            "type": "boolean",
+            "description": "Only the renewal is stopped, at the end of the paid period, so DELETE turns it back on (Keep Plus)"
+          },
           "cancellation": {
             "nullable": true,
             "description": "Stopping the renewal, so Plus ends at endsAt. Null when the renewal is already stopped",
@@ -73455,6 +73529,8 @@
           }
         },
         "required": [
+          "accountDeletion",
+          "canResumeRenewal",
           "cancellation",
           "extraordinary",
           "withdrawal"
