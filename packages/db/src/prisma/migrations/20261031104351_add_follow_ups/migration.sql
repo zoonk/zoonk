@@ -8,6 +8,7 @@ CREATE TABLE "follow_ups" (
     "kind" "FollowUpKind" NOT NULL,
     "key" TEXT NOT NULL,
     "input" JSONB NOT NULL,
+    "revision" INTEGER NOT NULL DEFAULT 0,
     "requested_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "follow_ups_pkey" PRIMARY KEY ("id")
