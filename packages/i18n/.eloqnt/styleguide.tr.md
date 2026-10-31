@@ -9,13 +9,20 @@
 
 ## Placeholders
 
+- Options the learner picks to answer a question or name a goal speak in the learner's voice or as a noun phrase: “Sıfırdan başlıyorum”, “İşimde kullanmak”. Legends, statuses, phase names and palette labels are nouns or passive: “Çalışıldı”, “Eksikleri tamamlama”, “Grup”.
+- Compact “X of Y” counters read “# / {total}”, the same in every plural form.
+- Use the typographic apostrophe: “Zoonk’a”.
 - Never attach a suffix to a name, title or date placeholder, since its vowel harmony is unknown. Rephrase so a noun or postposition carries it: “{buddy} ile”, “{date} tarihinde”.
 - Compact durations end with a period (“30 dk.”), so a sentence ending with a duration placeholder takes no second one.
 
 ## Glossary
 
 - “lesson”: “ders”
-- “chapter”: “ünite”, not “bölüm” (a speaking task)
+- “chapter”: “ünite”, not “bölüm” (a speaking task); a language plan's “unit”: “ünite”
+- “answer”: “cevap”; to answer: “cevaplamak”; never “yanıt”
+- “at your own pace”: “kendi temponda”
+- “Mastery”: “Öğrenme düzeyi”
+- “sitting” (one date an exam is held): “sınav”, not “oturum”
 - “goal” (the learner's goal): “hedef”
 - “plan” (study plan): “plan”; subscription plan: “paket”
 - “Free” (subscription name): “Ücretsiz”
@@ -54,7 +61,7 @@
 
 ## Feature names and states
 
-- “Buddy”: “Arkadaş”; “study buddy”: “ders arkadaşı”
+- “Buddy”: “Arkadaş”; “study buddy”, and the buddy in compounds (“ders arkadaşı mesajı”): “ders arkadaşı”; “Ask {buddy}”: “{buddy} ile konuş”
 - Buddy stages “Baby” / “Young” / “Adult”: “Bebek” / “Genç” / “Yetişkin”
 - “Brain Power”: “Beyin Gücü”
 - “mission”: “görev”
