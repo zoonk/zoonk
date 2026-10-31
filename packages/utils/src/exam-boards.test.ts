@@ -17,10 +17,17 @@ describe(compareBoards, () => {
     expect(compareBoards("IDEPI", "Idepi")).toBe("same");
   });
 
-  it("tells boards apart only when they can't be one board", () => {
+  it("tells boards apart only when it knows both, and can't tell a name it doesn't know", () => {
     expect(compareBoards("FGV", "Cebraspe")).toBe("different");
     expect(compareBoards("Cespe", "Fundação Carlos Chagas")).toBe("different");
-    expect(compareBoards("IDEPI", "Instituto Consulplan")).toBe("different");
+    expect(compareBoards("IDEPI", "Instituto Consulplan")).toBe("unknown");
+
+    expect(
+      compareBoards(
+        "IDECAN",
+        "Instituto de Desenvolvimento Educacional, Cultural e Assistencial Nacional",
+      ),
+    ).toBe("unknown");
 
     expect(
       compareBoards("IDEPI", "Instituto para o Desenvolvimento do Ensino, Pesquisa e Inovação"),

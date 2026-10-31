@@ -44,9 +44,9 @@ function findBoard(name: string): ExamBoard | undefined {
 }
 
 /**
- * `different` only when the names can't be one board: two known boards, or a known board and a
- * name that isn't one of its names. Two unknown names that don't match are `unknown`, since one may
- * be the other's acronym.
+ * `different` only for two boards the list knows apart. A name it doesn't know may be a known board's
+ * full or new name ("IDECAN" is the Instituto de Desenvolvimento Educacional...), so it's `unknown`
+ * unless its words match the other name.
  */
 export function compareBoards(first: string, second: string): "different" | "same" | "unknown" {
   const firstBoard = findBoard(first);
@@ -56,11 +56,7 @@ export function compareBoards(first: string, second: string): "different" | "sam
     return firstBoard === secondBoard ? "same" : "different";
   }
 
-  if (namesMatchAcrossSpellings(first, second)) {
-    return "same";
-  }
-
-  return firstBoard || secondBoard ? "different" : "unknown";
+  return namesMatchAcrossSpellings(first, second) ? "same" : "unknown";
 }
 
 /** Past papers count only from the current board's editions, or any edition's while it's unknown. */
