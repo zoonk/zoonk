@@ -271,7 +271,10 @@ private fun pluralPoints(
 ): String = pluralStringResource(id, quantity(value), points(value), *rest)
 
 @Composable
-private fun quantity(value: Double): Int = pluralQuantity((value * HUNDREDTHS).roundToLong() / HUNDREDTHS, currentLocale())
+private fun quantity(value: Double): Int {
+    val rounded = (value * HUNDREDTHS).roundToLong() / HUNDREDTHS
+    return pluralQuantity(rounded, currentLocale()) ?: rounded.toInt()
+}
 
 @Composable
 private fun points(value: Double): String = formatNumber(value, currentLocale())
