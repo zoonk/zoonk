@@ -17,6 +17,7 @@ struct LevelTestStep: View {
   @State private var levels: [LevelTest.Level] = []
   @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
+  @State private var isStarting = false
   @State private var failed = false
 
   private enum Phase {
@@ -37,7 +38,7 @@ struct LevelTestStep: View {
         LevelTestIntro(
           language: language, targetLanguage: targetLanguage, minutes: testMinutes,
           showAlphabetNote: showAlphabetNote,
-          isSaving: isSaving, failed: failed,
+          isSaving: isSaving, isStarting: isStarting, failed: failed,
           onStart: { Task { await begin() } }, onSkip: finish)
       case .preparing(let generationID):
         preparing(generationID)
@@ -173,13 +174,13 @@ struct LevelTestStep: View {
   }
 
   private func begin() async {
-    guard !isSaving else {
+    guard !isSaving, !isStarting else {
       return
     }
 
-    isSaving = true
+    isStarting = true
     failed = false
-    defer { isSaving = false }
+    defer { isStarting = false }
 
     do {
       if let generationID = try await onboarding.prepareLevelTest(goalID: goalID) {
@@ -317,6 +318,7 @@ private struct LevelTestIntro: View {
   let minutes: Int
   let showAlphabetNote: Bool
   let isSaving: Bool
+  let isStarting: Bool
   let failed: Bool
   let onStart: () -> Void
   let onSkip: () -> Void
@@ -357,7 +359,7 @@ private struct LevelTestIntro: View {
       }
 
       StepButtons(
-        canContinue: !isSaving, canSkip: !isSaving,
+        canContinue: !isSaving && !isStarting, canSkip: !isSaving && !isStarting,
         continueLabel: Text("Start", tableName: "Onboarding", comment: "Starts the level test"),
         skipLabel: Text(
           "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test"),
@@ -377,6 +379,7 @@ private struct LevelTestIntro: View {
       }
     }
     .onboardingColumn()
+    .environment(\.isSavingAnswer, isStarting)
   }
 
   private var offersOwnLanguage: Bool {
