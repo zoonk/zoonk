@@ -30,6 +30,23 @@ internal fun result(
 internal const val NET =
     """"net":{"blank":10,"max":120,"net":41.5,"partial":0,"penalty":1,"right":58,"wrong":52},"previous":35"""
 
+/** A full mock in the notice's points: P1 missed its minimum, the rest reached theirs and the discursive test is still ahead. */
+internal const val FULL_POINTS =
+    """"points":{"asked":260,"earned":182,"max":260,"met":true,"minimum":{"unit":"points","value":130},"projected":null,"short":null,
+    "parts":[{"asked":60,"earned":6,"max":60,"met":false,"minimum":{"unit":"points","value":8},"projected":null,"short":2,"name":"P1","qualifying":false},
+    {"asked":200,"earned":176,"max":200,"met":true,"minimum":{"unit":"percent","value":40},"projected":null,"short":null,"name":"P2","qualifying":false},
+    {"asked":10,"earned":8,"max":10,"met":true,"minimum":{"unit":"percent","value":50},"projected":null,"short":null,"name":"Libras","qualifying":true}],
+    "unjudged":[{"minimum":{"unit":"points","value":20},"name":"Discursive test"}]}"""
+
+/** Half of the same exam: each test projected onto its whole length, nothing judged. */
+internal const val HALF_POINTS =
+    """"points":{"asked":130,"earned":91,"max":260,"met":null,"minimum":{"unit":"points","value":130},"projected":182,"short":null,
+    "parts":[{"asked":30,"earned":9,"max":60,"met":null,"minimum":{"unit":"points","value":8},"projected":18,"short":null,"name":"P1","qualifying":false},
+    {"asked":100,"earned":82,"max":200,"met":null,"minimum":{"unit":"percent","value":40},"projected":164,"short":null,"name":"P2","qualifying":false}],
+    "unjudged":[]}"""
+
+internal const val HALF_SHAPE = """"fullLength":false,"shape":{"area":null,"day":1,"kind":"half"}"""
+
 internal const val IRT = """"irt":{"high":680,"low":610,"score":645,"se":18,"theta":0.4},"previous":612"""
 
 internal const val MISSED =

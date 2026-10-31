@@ -2,10 +2,12 @@ package com.zoonk.android.feature.mock.result
 
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -30,6 +32,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -127,6 +130,47 @@ class MockResultFlowTest {
         rule.onNodeWithText("610–680").assertIsDisplayed()
         rule.onNode(hasText("Estimated score", substring = true)).assertIsDisplayed()
         rule.onNodeWithText("+33 since the last one").assertIsDisplayed()
+    }
+
+    @Test
+    fun aMockInTheExamsPointsLeadsWithThemAndPutsAMissFirst() {
+        show(finishedMock(result = result(scoring = "net", extra = "$NET,$FULL_POINTS")))
+
+        rule.onNodeWithText("Points\u00A0· ENEM\u00A0· Mathematics, Languages").assertIsDisplayed()
+        rule.onAllNodesWithText("182 of 260").assertCountEquals(2)
+        rule.onNode(hasText("since the last one", substring = true)).assertDoesNotExist()
+        rule.onNodeWithText("You'd be eliminated: P1 is 2 points short of 8.").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Reached the 50% it needs\u00A0· Doesn't count toward the total").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Reached the 130 points it needs").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Discursive test needs 20 points and isn't in this mock.").performScrollTo().assertIsDisplayed()
+
+        val miss =
+            rule
+                .onNodeWithText("2 points short of the 8 it needs")
+                .fetchSemanticsNode()
+                .boundsInRoot.top
+        val reached =
+            rule
+                .onNodeWithText("Reached the 40% it needs")
+                .fetchSemanticsNode()
+                .boundsInRoot.top
+        assertTrue(miss < reached)
+    }
+
+    @Test
+    fun partOfTheExamProjectsItsPointsWithoutAVerdict() {
+        show(finishedMock(result = result(extra = HALF_POINTS), extra = HALF_SHAPE))
+
+        rule.onNodeWithText("91 of 130").assertIsDisplayed()
+        rule
+            .onNodeWithText(
+                "About 182 of 260 points on the whole exam, projected from this mock. Only a full mock says whether you'd reach the minimums.",
+            ).performScrollTo()
+            .assertIsDisplayed()
+        rule.onNodeWithText("Needs 8 points").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Needs 40% of its points").assertExists()
+        rule.onNode(hasText("eliminated", substring = true)).assertDoesNotExist()
+        rule.onNodeWithText("Meets the objective minimums checked here.").assertDoesNotExist()
     }
 
     @Test

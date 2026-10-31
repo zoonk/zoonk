@@ -97,6 +97,27 @@ class MockResultScreenshots {
     }
 
     @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun phonePoints() {
+        show(finishedMock(result = result(scoring = "net", extra = "$NET,$FULL_POINTS")))
+        capture("result-phone-points")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-night-xxhdpi")
+    fun phonePointsDark() {
+        show(finishedMock(result = result(scoring = "net", extra = "$NET,$FULL_POINTS")), dark = true)
+        capture("result-phone-points-dark")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun phoneHalfPoints() {
+        show(finishedMock(result = result(extra = HALF_POINTS), extra = HALF_SHAPE))
+        capture("result-phone-points-half")
+    }
+
+    @Test
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
     fun phoneDarkMoreContrast() {
         show(enem(), dark = true, moreContrast = true)

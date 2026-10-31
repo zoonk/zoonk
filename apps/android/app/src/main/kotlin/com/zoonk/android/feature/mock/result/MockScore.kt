@@ -54,6 +54,7 @@ internal fun ScoreStep(
 ) {
     ScoreHeader(view, result)
     AnswerTiles(result)
+    result.points?.let { PointsByTest(it) }
     PassMarks(view)
     NoteLines(scoreNoteLines(view.scoreNotes))
     dayMoment()
@@ -82,10 +83,20 @@ private data class Score(
 @Composable
 private fun score(result: MockResult): Score {
     val locale = currentLocale()
+    val points = result.points
     val irt = result.irt
     val net = result.net
 
     return when {
+        points != null -> {
+            val earned = formatNumber(points.earned, locale)
+            Score(
+                stringResource(R.string.mock_result_points),
+                stringResource(R.string.mock_result_points_of, earned, formatNumber(points.asked, locale)),
+                lead = earned,
+            )
+        }
+
         irt != null -> {
             Score(stringResource(R.string.mock_result_estimated_score), scoreRange(irt.low, irt.high), range = true)
         }
@@ -195,9 +206,13 @@ private fun RightOfReadout(
     )
 }
 
-/** The change since the last mock, for scores on the exam's scale or net of penalties: the header's quietest line. */
+/**
+ * The change since the last mock, for scores on the exam's scale or net of penalties: the header's
+ * quietest line. `previous` measures net answers, never points, so a points headline has none.
+ */
 @Composable
 private fun Delta(result: MockResult) {
+    if (result.points != null) return
     val current = result.irt?.score ?: result.net?.net ?: return
     val previous = result.previous ?: return
     val change = (current - previous).roundToInt()
