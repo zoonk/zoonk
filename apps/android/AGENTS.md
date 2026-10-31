@@ -14,7 +14,7 @@ The [repository guidance](../../AGENTS.md) applies. This file adds Android-speci
 - Scope every asynchronous result and credential change to the session that started it. Before publishing or deleting state, confirm that session is still current, and test meaningful request-order races.
 - No client analytics SDK; the server records events from API requests.
 - Crashes and errors go to Sentry from release builds only: `ZoonkApplication` starts it when the release build names a DSN (the `sentryDsn` Gradle property); debug builds and tests never do. Reports name no learner: no `setUser` (the SDK's random installation id stays), `sendDefaultPii`, bodies, screenshots, view hierarchy, session replay, profiling or logcat breadcrumbs. The plugin instruments only OkHttp, failed-request events are dropped (the API reports its own), `ErrorReporting.kt` strips queries and fragments from network breadcrumbs and spans, and trace headers go only to the API.
-- A release build uploads its R8 mapping to Sentry only when `SENTRY_AUTH_TOKEN` is set, so stack traces name our code; without it (CI, other Macs) the build succeeds and uploads nothing.
+- Only `pnpm android:release` uploads the R8 mapping to Sentry, through sentry-cli's saved login (`sentry-cli login` once), so stack traces name our code. Every other release build, agents' checks included, embeds the mapping's id and uploads nothing, even on a signed-in Mac.
 
 ## Native UI
 

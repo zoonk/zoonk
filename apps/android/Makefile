@@ -9,10 +9,13 @@ LINT_TASKS := spotlessCheck :app:lintRelease :lint-checks:test
 TEST_TASKS := testDebugUnitTest :api:test
 BUILD_TASKS := :app:assembleRelease
 
-.PHONY: build test ui-test lint format check
+.PHONY: build release test ui-test lint format check
 
 build:
 	$(GRADLEW) $(GRADLE_ARGUMENTS) $(BUILD_TASKS)
+
+release:
+	$(GRADLEW) $(GRADLE_ARGUMENTS) -PsentryUploadMapping=true :app:bundleRelease
 
 test:
 	$(GRADLEW) $(GRADLE_ARGUMENTS) $(TEST_TASKS)

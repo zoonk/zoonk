@@ -20,6 +20,7 @@ Run from the repository root:
 | `pnpm android:phone`           | Build, install, and launch on a phone emulator.                   |
 | `pnpm android:tablet`          | Build, install, and launch on a tablet emulator.                  |
 | `pnpm android:build`           | Build the Release APK.                                            |
+| `pnpm android:release`         | Build the Release bundle and upload its R8 mapping to Sentry.     |
 | `pnpm android:check`           | Run translation checks, tests, and formatting.                    |
 | `make -C apps/android lint`    | Check formatting, Android Lint, and the custom lint rules' tests. |
 | `make -C apps/android test`    | Run JVM unit tests.                                               |
@@ -73,6 +74,12 @@ pnpm --filter android i18n:lint  # Check completeness and freshness without tran
 Root `pnpm i18n` includes Android. For targeted retranslation, add `--id navigation_today`. Translation uses the shared Codex CLI configuration; CI validates committed translations without model credentials.
 
 `i18n` first fills missing translations with existing translations of the same English from any catalog; Eloqnt translates the rest and owns target XML and fingerprint comments. Hand-edit a translation only as the reported last resort the [translation rules](../../AGENTS.md#translations) allow. After checking it against the current English, run `pnpm --filter android i18n:accept --locale pt --id navigation_today` to re-fingerprint just those ids in those locales, then `pnpm --filter android i18n:lint`, which still fails every other stale translation. Supported locales live in [locale.ts](../../packages/utils/src/locale.ts). The [codec](scripts/i18n/tracked-android-xml.mts) and [Compose lint rule](lint-checks/src/main/kotlin/com/zoonk/lint/HardcodedComposeTextDetector.kt) define freshness and hardcoded-text checks. Custom composables should use the text parameter names recognized by that rule; dynamic/API text still needs human review.
+
+## Crash reports
+
+Release builds send crashes and errors to the `zoonk-android` project in Sentry. Debug builds and tests don't report.
+
+`pnpm android:release` uploads the bundle's R8 mapping, so crash reports show our code instead of obfuscated names. Before your first release, run `brew install getsentry/tools/sentry-cli`, then `sentry-cli login` once; the upload uses that saved login and fails without it. Other builds, `pnpm android:build` included, upload nothing.
 
 ## Verification
 

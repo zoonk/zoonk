@@ -57,9 +57,9 @@ sentry {
     ignoredBuildTypes = setOf("debug")
     org = "zoonk"
     projectName = "zoonk-android"
-    // Without the token (CI, other Macs) the build still embeds the mapping's id and skips the upload.
-    authToken = providers.environmentVariable("SENTRY_AUTH_TOKEN")
-    autoUploadProguardMapping = authToken.map { it.isNotBlank() }.orElse(false)
+    // sentry-cli's saved login signs in every shell on the owner's Mac, so only `make release` uploads the
+    // mapping; other release builds (every agent's check) embed its id and upload nothing.
+    autoUploadProguardMapping = providers.gradleProperty("sentryUploadMapping").map { it.toBoolean() }.orElse(false)
     telemetry = false
     autoInstallation.enabled = false
     tracingInstrumentation {
