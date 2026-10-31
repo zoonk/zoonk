@@ -284,7 +284,7 @@ private fun NumericCheckField(
                 },
                 modifier = Modifier.widthIn(min = 160.dp, max = 240.dp),
                 readOnly = locked,
-                placeholder = { Text(stringResource(R.string.player_your_answer)) },
+                label = { Text(stringResource(R.string.player_your_answer)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 textStyle = MaterialTheme.typography.bodyLarge.withTabularFigures(),

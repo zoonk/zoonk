@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -58,5 +59,14 @@ class BeforeAfterFlowTest {
         harness.tap("Check")
 
         rule.onNode(after).performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun aTypedNumberKeepsItsFieldNamed() {
+        play(isCorrect = true)
+
+        rule.onNode(hasSetTextAction()).performTextInput("0.12")
+
+        rule.onNode(hasSetTextAction() and hasText("Your answer")).assertExists()
     }
 }
