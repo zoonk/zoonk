@@ -145,11 +145,12 @@ function getDayAreas({
   const named = objective.map((section) => section.name).filter((name) => name.trim().length > 0);
   const sections = getObjectiveSectionNames(structure);
 
+  const isOnDay = (subject: Subject) =>
+    findSubjectSections({ sections, structure, subject }).some((name) => named.includes(name));
+
   const asked =
     getMockDays(structure).length > 1 && named.length > 0
-      ? subjects.filter((subject) =>
-          findSubjectSections({ sections, subject }).some((section) => named.includes(section)),
-        )
+      ? subjects.filter((subject) => isOnDay(subject))
       : subjects;
 
   return asked

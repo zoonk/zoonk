@@ -16,7 +16,11 @@ export function getSubjectPace({
     (section) => isObjectiveSection(section) && section.minutes && section.questions,
   );
 
-  const [ownName] = findSubjectSections({ sections: getObjectiveSectionNames(structure), subject });
+  const [ownName] = findSubjectSections({
+    sections: getObjectiveSectionNames(structure),
+    structure,
+    subject,
+  });
 
   const own = objective.find((section) => section.name === ownName);
   const paced = own ? [own] : objective;

@@ -16,7 +16,7 @@ import { type MockRouting, isNextModule, toRouting } from "./mock-routing";
 import { mapAreasToSections } from "./mock-section-areas";
 import { getSectionName, orderBySubjectShares, sectionPool } from "./mock-section-pool";
 import { takeQuestions } from "./mock-sets";
-import { type SubjectShare, getPartOfAreas, splitPartShares } from "./mock-subject-shares";
+import { type SubjectShare, splitPartShares } from "./mock-subject-shares";
 import {
   type MockDayWrittenPart,
   type MockEssayCandidate,
@@ -121,11 +121,7 @@ export function planMock({
   const allSections = objective.length > 0 ? objective : sections;
   const shares = splitPartShares({ candidates, shares: subjectShares });
 
-  const areaSections = mapAreasToSections({
-    allSections,
-    candidates,
-    partOf: getPartOfAreas(subjectShares),
-  });
+  const areaSections = mapAreasToSections({ allSections, candidates, structure });
 
   const byArea = areaSections !== null;
 

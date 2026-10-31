@@ -60,11 +60,3 @@ export function splitPartShares({
     return [{ ...share, questions: share.questions - carved }];
   });
 }
-
-export function getPartOfAreas(shares: readonly SubjectShare[]): ReadonlyMap<string, string> {
-  return new Map(
-    shares.flatMap((share): [string, string][] =>
-      share.partOf ? [[share.name, share.partOf]] : [],
-    ),
-  );
-}

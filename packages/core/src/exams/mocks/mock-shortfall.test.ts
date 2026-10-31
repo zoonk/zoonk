@@ -72,6 +72,65 @@ describe(getMockQuestionsShortfall, () => {
     ]);
   });
 
+  it("writes a paper's format only for the subjects grouped under that paper", () => {
+    const citation = { passage: "", sourceId: "notice" };
+
+    const structure: ExamStructure = {
+      formats: [
+        { citation, description: "Choose one", kind: "multipleChoice", options: 4 },
+        {
+          citation,
+          description: "Type a number",
+          kind: "numeric",
+          options: null,
+          sections: ["Paper 2"],
+        },
+      ],
+      mock: {
+        adaptive: false,
+        citations: [],
+        order: null,
+        scoring: { description: "", method: "raw" },
+        sections: ["Paper 1", "Paper 2"].map((name) => ({
+          day: null,
+          kind: "objective" as const,
+          minutes: 60,
+          name,
+          questions: 6,
+        })),
+        timeLimitMinutes: null,
+        totalQuestions: null,
+      },
+      rules: [],
+      subjects: [
+        { citation, group: "Paper 1", name: "History", questions: 6, topics: [], weight: null },
+        { citation, group: "Paper 2", name: "Mathematics", questions: 6, topics: [], weight: null },
+      ],
+    };
+
+    const writes = getMockQuestionsShortfall({
+      candidates: [],
+      mix: getMockFormatMix(structure),
+      option: { questions: 12 },
+      plan: {
+        day: null,
+        formatsWanted: { "choice:4": 9, "numeric:number:": 3 },
+        fullLength: true,
+        minutes: 120,
+        reused: 0,
+        sections: [],
+        written: [],
+      },
+      skills: ["History", "Mathematics"].map((area) => ({ area, id: area })),
+      structure,
+    });
+
+    expect(writes.map(({ format, skillIds }) => ({ key: format.key, skillIds }))).toStrictEqual([
+      { key: "choice:4", skillIds: ["History", "Mathematics"] },
+      { key: "numeric:number:", skillIds: ["Mathematics"] },
+    ]);
+  });
+
   it("requests enough fresh items for both routes", () => {
     const candidates: MockCandidate[] = Array.from({ length: 4 }, (_, index) => ({
       answered: false,

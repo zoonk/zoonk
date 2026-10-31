@@ -118,6 +118,40 @@ describe(planMock, () => {
     ).toStrictEqual([0, 0, 3]);
   });
 
+  it("keeps each paper's questions to the subjects grouped under it", () => {
+    const exam = {
+      ...structure({ sections: [sectioned("Paper 1", 6), sectioned("Paper 2", 6)] }),
+      formats: [
+        format({ options: 4 }),
+        format({ kind: "numeric", options: null, sections: ["Paper 2"] }),
+      ],
+      subjects: [
+        { citation, group: "Paper 1", name: "History", questions: 6, topics: [], weight: null },
+        { citation, group: "Paper 2", name: "Mathematics", questions: 6, topics: [], weight: null },
+      ],
+    };
+
+    const plan = planMock({
+      adaptive: false,
+      candidates: ["History", "Mathematics"].flatMap((area) => [
+        ...formatted(area, "choice:4"),
+        ...formatted(area, "numeric:number:"),
+      ]),
+      fullLength: true,
+      mockNumber: 0,
+      structure: exam,
+    });
+
+    expect(
+      plan.sections.map((section) => section.itemIds.map((id) => id.split("-")[0])),
+    ).toStrictEqual([
+      Array.from({ length: 6 }, () => "History"),
+      Array.from({ length: 6 }, () => "Mathematics"),
+    ]);
+
+    expect(plan.formatsWanted).toStrictEqual({ "choice:4": 9, "numeric:number:": 3 });
+  });
+
   it("never plans objective questions in a written section", () => {
     const exam = {
       ...structure({
