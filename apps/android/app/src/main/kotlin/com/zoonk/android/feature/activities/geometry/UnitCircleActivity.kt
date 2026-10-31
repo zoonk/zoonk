@@ -40,6 +40,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
@@ -336,7 +337,7 @@ private fun DrawScope.trigLegs(
     if (Trig.SIN in show) {
         drawLine(tones.sin, foot, point, segment, StrokeCap.Round)
         val text = measure("${names.getValue(Trig.SIN)} = ${formatTrig(values[Trig.SIN])}")
-        val (at, anchor) = sinLabelPlacement(point, center, target, text.size.width.toFloat(), size.width, density)
+        val (at, anchor) = sinLabelPlacement(point, center, target, text.size.toSize(), size.width, density)
         drawLabel(text, at, tones.sin, halo, anchor)
     }
 }
@@ -480,10 +481,11 @@ internal fun sinLabelPlacement(
     point: Offset,
     center: Offset,
     target: Offset?,
-    labelWidth: Float,
+    label: Size,
     canvasWidth: Float,
     unit: Float,
 ): Pair<Offset, LabelAnchor> {
+    val labelWidth = label.width
     val foot = Offset(point.x, center.y)
     val isLeft = point.x < center.x
     val isAbove = point.y <= center.y
@@ -497,7 +499,8 @@ internal fun sinLabelPlacement(
             ?.takeIf { abs(it.x - point.x) < labelWidth && (if (isAbove) it.y < point.y else it.y > point.y) }
             ?.y ?: point.y
     val x = foot.x.coerceIn(labelWidth / 2, (canvasWidth - labelWidth / 2).coerceAtLeast(labelWidth / 2))
-    return Offset(x, outermost + (if (isAbove) -1 else 1) * SIN_LABEL_PAST_POINT.value * unit) to LabelAnchor.Middle
+    val past = SIN_LABEL_PAST_POINT.value * unit + label.height / 2
+    return Offset(x, outermost + (if (isAbove) -1 else 1) * past) to LabelAnchor.Middle
 }
 
 private val MAX_SIZE = 300.dp
@@ -508,7 +511,7 @@ private val ARC_RADIUS = 22.dp
 private val ANGLE_LABEL_GAP = 16.dp
 private val LABEL_GAP = 8.dp
 private val SIN_LABEL_GAP = 26.dp
-private val SIN_LABEL_PAST_POINT = 28.dp
+private val SIN_LABEL_PAST_POINT = 25.dp
 private val SEGMENT_WIDTH = 4.dp
 private val SWATCH_WIDTH = 12.dp
 private val SWATCH_HEIGHT = 4.dp
