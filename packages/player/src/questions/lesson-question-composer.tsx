@@ -10,6 +10,7 @@ import {
   InputGroupTextarea,
 } from "@zoonk/ui/components/input-group";
 import { Spinner } from "@zoonk/ui/components/spinner";
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -191,6 +192,7 @@ export function QuestionComposer({
 }) {
   const t = useExtracted();
   const inputId = useId();
+  const mounted = useIsMounted();
   const { state } = controller;
   const isResolvingPreviousQuestion = controller.unresolvedQuestion !== null;
 
@@ -244,6 +246,7 @@ export function QuestionComposer({
           onChange={(event) => controller.changeDraft(event.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
+          readOnly={!mounted}
           ref={inputRef}
           value={state.draft}
         />
