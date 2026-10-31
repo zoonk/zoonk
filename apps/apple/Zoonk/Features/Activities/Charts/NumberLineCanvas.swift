@@ -93,44 +93,42 @@ struct NumberLineCanvas: View {
 
   private var chart: some View {
     Chart {
-      ChartsHiddenMarks {
-        RuleMark(y: .value(verbatim: "line", 0))
-          .foregroundStyle(.secondary)
+      RuleMark(y: .value(verbatim: "line", 0))
+        .foregroundStyle(.secondary)
 
-        ForEach(Array(jumps.enumerated()), id: \.offset) { index, jump in
-          ForEach(arc(from: jump.from, to: jump.to), id: \.x) { point in
-            LineMark(
-              x: .value(verbatim: "x", point.x), y: .value(verbatim: "y", point.y),
-              series: .value(verbatim: "jump", index)
-            )
-            .foregroundStyle(isChecked ? Color.orange : Color.mint)
-            .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
-            .interpolationMethod(.catmullRom)
-          }
-
-          PointMark(
-            x: .value(verbatim: "x", (jump.from + jump.to) / 2),
-            y: .value(verbatim: "y", arcHeight(jump))
+      ForEach(Array(jumps.enumerated()), id: \.offset) { index, jump in
+        ForEach(arc(from: jump.from, to: jump.to), id: \.x) { point in
+          LineMark(
+            x: .value(verbatim: "x", point.x), y: .value(verbatim: "y", point.y),
+            series: .value(verbatim: "jump", index)
           )
-          .opacity(0)
-          .annotation(position: .top, spacing: 2) {
-            Text(verbatim: jump.label)
-              .font(.caption.weight(.semibold).monospacedDigit())
-              .foregroundStyle(isChecked ? Color.orange : Color.mint)
-          }
+          .foregroundStyle(isChecked ? Color.orange : Color.mint)
+          .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
+          .interpolationMethod(.catmullRom)
         }
 
-        PointMark(x: .value(verbatim: "start", fields.start), y: .value(verbatim: "y", 0))
-          .symbol(.circle)
-          .symbolSize(90)
-          .foregroundStyle(.secondary)
-
-        if isChecked {
-          PointMark(x: .value(verbatim: "landing", fields.landing), y: .value(verbatim: "y", 0))
-            .symbol(Circle().strokeBorder(lineWidth: 3))
-            .symbolSize(400)
-            .foregroundStyle(.success)
+        PointMark(
+          x: .value(verbatim: "x", (jump.from + jump.to) / 2),
+          y: .value(verbatim: "y", arcHeight(jump))
+        )
+        .opacity(0)
+        .annotation(position: .top, spacing: 2) {
+          Text(verbatim: jump.label)
+            .font(.caption.weight(.semibold).monospacedDigit())
+            .foregroundStyle(isChecked ? Color.orange : Color.mint)
         }
+      }
+
+      PointMark(x: .value(verbatim: "start", fields.start), y: .value(verbatim: "y", 0))
+        .symbol(.circle)
+        .symbolSize(90)
+        .foregroundStyle(.secondary)
+
+      if isChecked {
+        PointMark(x: .value(verbatim: "landing", fields.landing), y: .value(verbatim: "y", 0))
+          .symbol(Circle().strokeBorder(lineWidth: 3))
+          .symbolSize(400)
+          .foregroundStyle(.success)
       }
     }
     .chartXScale(domain: fields.min...fields.max)
@@ -151,6 +149,7 @@ struct NumberLineCanvas: View {
         }
       }
     }
+    .chartsMarksHidden()
     .chartOverlay { proxy in
       GeometryReader { geometry in
         if let plot = proxy.plotFrame.map({ geometry[$0] }) {

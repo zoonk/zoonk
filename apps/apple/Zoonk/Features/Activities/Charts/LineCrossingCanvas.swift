@@ -92,56 +92,54 @@ struct LineCrossingCanvas: View {
     let shifted = fields.lines.first { $0.id == fields.shift.line }
 
     return Chart {
-      ChartsHiddenMarks {
-        if isMoved {
-          ForEach(fields.lines) { field in
-            segmentMarks(line(field, [:]), domain: domain, series: "before-\(field.id)")
-              .foregroundStyle(Color.secondary.opacity(0.5))
-              .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
-          }
+      if isMoved {
+        ForEach(fields.lines) { field in
+          segmentMarks(line(field, [:]), domain: domain, series: "before-\(field.id)")
+            .foregroundStyle(Color.secondary.opacity(0.5))
+            .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
         }
-
-        if showsAnswer, let shifted {
-          segmentMarks(
-            line(shifted, [shifted.id: realOffset]), domain: domain, series: "answer"
-          )
-          .foregroundStyle(.orange)
-          .lineStyle(StrokeStyle(lineWidth: 2, dash: [6, 4]))
-        }
-
-        ForEach(Array(fields.lines.enumerated()), id: \.element.id) { index, field in
-          let segment = LineCrossingModel.segment(line(field, offsets), domain: domain)
-
-          segmentMarks(line(field, offsets), domain: domain, series: field.id)
-            .foregroundStyle(index == 0 ? Color.mint : Color.purple)
-            .lineStyle(StrokeStyle(lineWidth: 2.5))
-
-          PointMark(x: .value(verbatim: "x", segment.to.x), y: .value(verbatim: "y", segment.to.y))
-            .opacity(0)
-            .annotation(position: .topLeading, spacing: 2) {
-              Text(verbatim: field.label)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(index == 0 ? Color.mint : Color.purple)
-            }
-        }
-
-        PointMark(x: .value(verbatim: "x", after.x), y: .value(verbatim: "y", after.y))
-          .foregroundStyle(.primary)
-          .symbolSize(70)
-
-        RuleMark(
-          x: .value(verbatim: "x", after.x), yStart: .value(verbatim: "y", 0),
-          yEnd: .value(verbatim: "y", after.y)
-        )
-        .foregroundStyle(.secondary)
-        .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 3]))
-        RuleMark(
-          xStart: .value(verbatim: "x", 0), xEnd: .value(verbatim: "x", after.x),
-          y: .value(verbatim: "y", after.y)
-        )
-        .foregroundStyle(.secondary)
-        .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 3]))
       }
+
+      if showsAnswer, let shifted {
+        segmentMarks(
+          line(shifted, [shifted.id: realOffset]), domain: domain, series: "answer"
+        )
+        .foregroundStyle(.orange)
+        .lineStyle(StrokeStyle(lineWidth: 2, dash: [6, 4]))
+      }
+
+      ForEach(Array(fields.lines.enumerated()), id: \.element.id) { index, field in
+        let segment = LineCrossingModel.segment(line(field, offsets), domain: domain)
+
+        segmentMarks(line(field, offsets), domain: domain, series: field.id)
+          .foregroundStyle(index == 0 ? Color.mint : Color.purple)
+          .lineStyle(StrokeStyle(lineWidth: 2.5))
+
+        PointMark(x: .value(verbatim: "x", segment.to.x), y: .value(verbatim: "y", segment.to.y))
+          .opacity(0)
+          .annotation(position: .topLeading, spacing: 2) {
+            Text(verbatim: field.label)
+              .font(.caption.weight(.semibold))
+              .foregroundStyle(index == 0 ? Color.mint : Color.purple)
+          }
+      }
+
+      PointMark(x: .value(verbatim: "x", after.x), y: .value(verbatim: "y", after.y))
+        .foregroundStyle(.primary)
+        .symbolSize(70)
+
+      RuleMark(
+        x: .value(verbatim: "x", after.x), yStart: .value(verbatim: "y", 0),
+        yEnd: .value(verbatim: "y", after.y)
+      )
+      .foregroundStyle(.secondary)
+      .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 3]))
+      RuleMark(
+        xStart: .value(verbatim: "x", 0), xEnd: .value(verbatim: "x", after.x),
+        y: .value(verbatim: "y", after.y)
+      )
+      .foregroundStyle(.secondary)
+      .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 3]))
     }
     .chartXScale(domain: 0...domain.x)
     .chartYScale(domain: 0...domain.y)
@@ -149,6 +147,7 @@ struct LineCrossingCanvas: View {
     .chartYAxisLabel(fields.yLabel, position: .top, alignment: .leading)
     .chartXAxis { AxisMarks(values: .automatic(desiredCount: 4)) { _ in AxisGridLine() } }
     .chartYAxis { AxisMarks(values: .automatic(desiredCount: 4)) { _ in AxisGridLine() } }
+    .chartsMarksHidden()
     .chartOverlay { proxy in
       GeometryReader { geometry in
         if let plot = proxy.plotFrame.map({ geometry[$0] }) {

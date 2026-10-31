@@ -202,45 +202,43 @@ struct DistributionExplorerCanvas: View {
       }
 
       Chart {
-        ChartsHiddenMarks {
-          ForEach(curve.filter { $0.x >= handles.from && $0.x <= handles.to }, id: \.x) { point in
-            AreaMark(x: .value(verbatim: "x", point.x), y: .value(verbatim: "density", point.y))
-              .foregroundStyle(Color.mint.opacity(0.25))
-          }
-
-          ForEach(curve, id: \.x) { point in
-            LineMark(x: .value(verbatim: "x", point.x), y: .value(verbatim: "density", point.y))
-              .foregroundStyle(.primary)
-          }
-
-          if case .normal(let mean, _) = fields.distribution {
-            RuleMark(x: .value(verbatim: "mean", mean))
-              .foregroundStyle(.secondary)
-              .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
-          }
-
-          if isChecked {
-            ForEach([fields.target.from, fields.target.to], id: \.self) { edge in
-              RuleMark(x: .value(verbatim: "target", edge))
-                .foregroundStyle(.orange)
-                .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 3]))
-            }
-
-            RuleMark(x: .value(verbatim: "target", (fields.target.from + fields.target.to) / 2))
-              .opacity(0)
-              .annotation(position: .top, alignment: .center) {
-                Text(
-                  verbatim:
-                    "\(ActivityNumberFormat.format(fields.target.from)) – \(ActivityNumberFormat.format(fields.target.to)): \(percentText(DistributionModel.percent(fields.distribution, fields.target)))"
-                )
-                .font(.caption.weight(.semibold).monospacedDigit())
-                .foregroundStyle(.orange)
-              }
-          }
-
-          RuleMark(x: .value(verbatim: "lower", handles.from)).foregroundStyle(.mint)
-          RuleMark(x: .value(verbatim: "upper", handles.to)).foregroundStyle(.mint)
+        ForEach(curve.filter { $0.x >= handles.from && $0.x <= handles.to }, id: \.x) { point in
+          AreaMark(x: .value(verbatim: "x", point.x), y: .value(verbatim: "density", point.y))
+            .foregroundStyle(Color.mint.opacity(0.25))
         }
+
+        ForEach(curve, id: \.x) { point in
+          LineMark(x: .value(verbatim: "x", point.x), y: .value(verbatim: "density", point.y))
+            .foregroundStyle(.primary)
+        }
+
+        if case .normal(let mean, _) = fields.distribution {
+          RuleMark(x: .value(verbatim: "mean", mean))
+            .foregroundStyle(.secondary)
+            .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+        }
+
+        if isChecked {
+          ForEach([fields.target.from, fields.target.to], id: \.self) { edge in
+            RuleMark(x: .value(verbatim: "target", edge))
+              .foregroundStyle(.orange)
+              .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 3]))
+          }
+
+          RuleMark(x: .value(verbatim: "target", (fields.target.from + fields.target.to) / 2))
+            .opacity(0)
+            .annotation(position: .top, alignment: .center) {
+              Text(
+                verbatim:
+                  "\(ActivityNumberFormat.format(fields.target.from)) – \(ActivityNumberFormat.format(fields.target.to)): \(percentText(DistributionModel.percent(fields.distribution, fields.target)))"
+              )
+              .font(.caption.weight(.semibold).monospacedDigit())
+              .foregroundStyle(.orange)
+            }
+        }
+
+        RuleMark(x: .value(verbatim: "lower", handles.from)).foregroundStyle(.mint)
+        RuleMark(x: .value(verbatim: "upper", handles.to)).foregroundStyle(.mint)
       }
       .chartXScale(domain: domain)
       .chartYAxis(.hidden)
@@ -255,6 +253,7 @@ struct DistributionExplorerCanvas: View {
           }
         }
       }
+      .chartsMarksHidden()
       .chartOverlay { proxy in
         GeometryReader { geometry in
           if let plot = proxy.plotFrame.map({ geometry[$0] }) {

@@ -376,7 +376,7 @@ struct UnitCircleCanvas: View {
       }
     }
     .frame(minHeight: 140)
-    .accessibilityHidden(true)
+    .chartsMarksHidden()
   }
 
   private var summary: String {

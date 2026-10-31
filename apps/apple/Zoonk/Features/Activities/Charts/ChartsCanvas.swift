@@ -1,4 +1,3 @@
-import Charts
 import SwiftUI
 
 struct ChartsCanvas<Content: View>: View {
@@ -170,11 +169,10 @@ struct ChartsCaption: View {
   }
 }
 
-/// VoiceOver reads the chart's summary and the handles, not each mark.
-struct ChartsHiddenMarks<Content: ChartContent>: ChartContent {
-  @ChartContentBuilder let content: Content
-
-  var body: some ChartContent {
-    content.accessibilityHidden(true)
+extension View {
+  /// VoiceOver reads the chart's summary and its handles, not each mark. Hides the whole chart:
+  /// Swift Charts also hides a mark's annotation from sight when the mark itself is hidden.
+  func chartsMarksHidden() -> some View {
+    accessibilityHidden(true)
   }
 }

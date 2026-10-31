@@ -132,37 +132,35 @@ struct FormulaModelCanvas: View {
     let now = view.chartedNow
 
     return Chart {
-      ChartsHiddenMarks {
-        if let baseline = view.baseline {
-          ForEach(view.curve(baseline.values), id: \.x) { point in
-            LineMark(
-              x: .value(verbatim: "x", point.x), y: .value(verbatim: "y", point.y),
-              series: .value(verbatim: "curve", "before")
-            )
-            .foregroundStyle(.secondary)
-            .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
-          }
-        }
-
-        ForEach(current, id: \.x) { point in
+      if let baseline = view.baseline {
+        ForEach(view.curve(baseline.values), id: \.x) { point in
           LineMark(
             x: .value(verbatim: "x", point.x), y: .value(verbatim: "y", point.y),
-            series: .value(verbatim: "curve", "now")
+            series: .value(verbatim: "curve", "before")
           )
-          .foregroundStyle(.mint)
-          .lineStyle(StrokeStyle(lineWidth: 2.5))
+          .foregroundStyle(.secondary)
+          .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
         }
+      }
 
-        if let compared = view.compared {
-          PointMark(x: .value(verbatim: "x", compared.x), y: .value(verbatim: "y", compared.y))
-            .foregroundStyle(.orange)
-            .symbolSize(60)
-        }
+      ForEach(current, id: \.x) { point in
+        LineMark(
+          x: .value(verbatim: "x", point.x), y: .value(verbatim: "y", point.y),
+          series: .value(verbatim: "curve", "now")
+        )
+        .foregroundStyle(.mint)
+        .lineStyle(StrokeStyle(lineWidth: 2.5))
+      }
 
-        if now != nil {
-          RuleMark(x: .value(verbatim: "x", view.x))
-            .foregroundStyle(.secondary.opacity(0.5))
-        }
+      if let compared = view.compared {
+        PointMark(x: .value(verbatim: "x", compared.x), y: .value(verbatim: "y", compared.y))
+          .foregroundStyle(.orange)
+          .symbolSize(60)
+      }
+
+      if now != nil {
+        RuleMark(x: .value(verbatim: "x", view.x))
+          .foregroundStyle(.secondary.opacity(0.5))
       }
 
       if let change {
@@ -172,8 +170,6 @@ struct FormulaModelCanvas: View {
         )
         .foregroundStyle(.orange)
         .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [3, 3]))
-        // Hidden before the annotation: hiding a mark after it hides the label from sight too.
-        .accessibilityHidden(true)
         .annotation(
           position: view.x >= (view.axis.min + view.axis.max) / 2 ? .leading : .trailing,
           spacing: 8
@@ -186,22 +182,20 @@ struct FormulaModelCanvas: View {
         }
       }
 
-      ChartsHiddenMarks {
-        if let before = view.chartedBefore {
-          PointMark(x: .value(verbatim: "x", view.x), y: .value(verbatim: "y", before))
-            .symbol {
-              Circle()
-                .strokeBorder(.secondary, lineWidth: 2)
-                .background(.background, in: .circle)
-                .frame(width: 9, height: 9)
-            }
-        }
+      if let before = view.chartedBefore {
+        PointMark(x: .value(verbatim: "x", view.x), y: .value(verbatim: "y", before))
+          .symbol {
+            Circle()
+              .strokeBorder(.secondary, lineWidth: 2)
+              .background(.background, in: .circle)
+              .frame(width: 9, height: 9)
+          }
+      }
 
-        if let now {
-          PointMark(x: .value(verbatim: "x", view.x), y: .value(verbatim: "y", now))
-            .foregroundStyle(.mint)
-            .symbolSize(90)
-        }
+      if let now {
+        PointMark(x: .value(verbatim: "x", view.x), y: .value(verbatim: "y", now))
+          .foregroundStyle(.mint)
+          .symbolSize(90)
       }
 
       if let expected {
@@ -209,7 +203,6 @@ struct FormulaModelCanvas: View {
           .symbol(Circle().strokeBorder(lineWidth: 2.5))
           .symbolSize(260)
           .foregroundStyle(.success)
-          .accessibilityHidden(true)
           .annotation(position: .top, spacing: 4) {
             Text(verbatim: expected.label)
               .font(.caption.weight(.semibold).monospacedDigit())
@@ -240,7 +233,7 @@ struct FormulaModelCanvas: View {
       }
     }
     .frame(minHeight: 200)
-    .accessibilityHidden(true)
+    .chartsMarksHidden()
   }
 
   /// Its label is written as the feedback writes it, with the digits the learner's answer needs.
