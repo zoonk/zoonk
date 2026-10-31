@@ -3,5 +3,8 @@
     <!-- Lint's German typo list takes "seit dem" (since the) for "seitdem" (since then); "seit dem Einstufungstest" is correct. -->
     <issue id="Typos">
         <ignore regexp="&quot;seit dem&quot; is a common misspelling" />
+        <!-- These are correct: Portuguese "de a a z" (from a to z), and the step-by-step idioms "passo passo" (it), "gün gün" and "adım adım" (tr). -->
+        <ignore regexp="&quot;a a&quot; is a common misspelling" />
+        <ignore regexp="Repeated word &quot;(passo|gün|adım)&quot;" />
     </issue>
 </lint>

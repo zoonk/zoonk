@@ -36,7 +36,7 @@
   "stats_evening": "ecd669b7efc50db88f620f8eb20fbdadfbc69211906b751d58f7ad07c2d42595",
   "stats_every_belt": "bf9405fdafcfb7f2702ea6c3840297f995a581f0263d7ddddd33df4ca2917a02",
   "stats_finished": "51d4032f3c2fc4ddf1e918a3ef6d1e4e6e33ad5e558760d5734563c3c6f8ee53",
-  "stats_full_energy": "38e8d6cbff896736d8f8d0a0615d8464b8ec229a09f0796e6cb2710d3e22d139",
+  "stats_full_energy": "553441295e9218a5de65ea1bf5667d8f53f7a8a895c75a3f5a5eade9bcc68476",
   "stats_full_energy_days": "004119ad50c29d91ddb3d83343ced0d9105650aaaf31b3e709a10c4a4d5cb793",
   "stats_go_to_today": "3b3a5a7bcd0faf9361bbb63f7b82ded3cddaed4bdc16ca09e6a81619649996b0",
   "stats_high": "850e60784ac3f63bf9f88df06cd949567628fde5d9cfa93be16918c47f7ddb3b",
@@ -150,7 +150,7 @@
     <string name="stats_today">Dziś</string>
     <string name="stats_average">Średnia</string>
     <string name="stats_since_start">Od początku nauki</string>
-    <string name="stats_full_energy">100% Energii</string>
+    <string name="stats_full_energy">Na poziomie 100%</string>
     <string name="stats_full_energy_days">Dni z pełną Energią</string>
     <string name="stats_energy_line">Każda ukończona lekcja zwiększa twoją Energię. W dni odpoczynku trochę spada, a twój pas i postępy pozostają bez zmian.</string>
     <string name="stats_low">Niski</string>
