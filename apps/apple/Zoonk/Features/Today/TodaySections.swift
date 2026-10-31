@@ -811,7 +811,9 @@ private struct WeekDayMark: View {
 
   private var status: String {
     if day.hitGoal {
-      return String(localized: "daily time met", table: "Today", comment: "A day's status: the day's study time was met")
+      return String(
+        localized: "daily time met", table: "Today",
+        comment: "A day's status: the day's study time was met")
     }
 
     if day.studied {

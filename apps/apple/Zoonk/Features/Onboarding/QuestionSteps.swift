@@ -639,7 +639,8 @@ private struct DateQuestion: View {
       second == nil
       ? String(
         localized: LocalizedStringResource(
-          "Your plan paces your lessons to end by then.", table: "Onboarding", comment: "Under the exam's date"
+          "Your plan paces your lessons to end by then.", table: "Onboarding",
+          comment: "Under the exam's date"
         ))
       : String(
         localized: LocalizedStringResource(
