@@ -12,8 +12,8 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer> {
   enum Status: Equatable, Sendable {
     case idle
     case asking
-    /// An ask that went unanswered too long (it keeps asking), three failures in a row, or a plan
-    /// that stayed unready too long: `restart` asks again.
+    /// An ask that went unanswered too long (it keeps asking) or three failures in a row: `restart`
+    /// asks again. A plan that stays unready while its research runs keeps being asked.
     case failed
   }
 
@@ -27,7 +27,6 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer> {
   @ObservationIgnored private var out: (key: Key, id: UUID, answer: Task<Answer, Error>)?
   @ObservationIgnored private let interval: Duration
   @ObservationIgnored private let settle: Duration
-  @ObservationIgnored private let patience: Duration
   @ObservationIgnored private let timeout: Duration
 
   /// After the first answer, `settle` lets days tapped in a row or a menu passing times ask once.
@@ -35,12 +34,10 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer> {
   init(
     interval: Duration = .seconds(3),
     settle: Duration = .milliseconds(300),
-    patience: Duration = .seconds(600),
     timeout: Duration = .seconds(45)
   ) {
     self.interval = interval
     self.settle = settle
-    self.patience = patience
     self.timeout = timeout
   }
 
@@ -79,7 +76,6 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer> {
       }
     }
 
-    let start = ContinuousClock.now
     var failures = 0
 
     while true {
@@ -111,7 +107,7 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer> {
         failures += 1
       }
 
-      if failures == 3 || ContinuousClock.now - start >= patience {
+      if failures == 3 {
         status = .failed
         return
       }

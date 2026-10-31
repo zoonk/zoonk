@@ -55,11 +55,8 @@ final class PlanAskingTests: XCTestCase {
     }
   }
 
-  private func makeAsking(
-    patience: Duration = .seconds(60), timeout: Duration = .seconds(60)
-  ) -> PlanAsking<String, Answer> {
-    PlanAsking(
-      interval: .milliseconds(1), settle: .milliseconds(1), patience: patience, timeout: timeout)
+  private func makeAsking(timeout: Duration = .seconds(60)) -> PlanAsking<String, Answer> {
+    PlanAsking(interval: .milliseconds(1), settle: .milliseconds(1), timeout: timeout)
   }
 
   func testAsksAgainWhileThePlanIsntReady() async {
@@ -101,10 +98,16 @@ final class PlanAskingTests: XCTestCase {
   }
 
   func testShowsNoAnswerWhileTheChoiceShownIsAnsweredUnready() async {
-    let asking = makeAsking(patience: .zero)
+    let asking = makeAsking()
 
     await asking.ask("a", when: true) { Answer(id: 1, ready: true) }
-    await asking.ask("b", when: true) { Answer(id: 2, ready: false) }
+
+    let unready = Task { await asking.ask("b", when: true) { Answer(id: 2, ready: false) } }
+    while asking.answers["b"] == nil {
+      await Task.yield()
+    }
+    unready.cancel()
+    await unready.value
 
     XCTAssertNil(asking.last(for: "b"))
     XCTAssertNil(asking.last(for: "c"))
@@ -138,13 +141,18 @@ final class PlanAskingTests: XCTestCase {
     XCTAssertEqual(asking.answer(for: "week")?.id, 2)
   }
 
-  func testGivesUpOnAPlanThatStaysUnready() async {
-    let asking = makeAsking(patience: .milliseconds(20))
+  func testKeepsAskingWhileThePlanStaysUnreadyForLong() async {
+    let asking = makeAsking()
+    let replies = Replies(
+      Array(repeating: .success(Answer(id: 1, ready: false)), count: 50) + [
+        .success(Answer(id: 2, ready: true))
+      ])
 
-    await asking.ask("week", when: true) { Answer(id: 1, ready: false) }
+    await asking.ask("week", when: true) { try replies.next() }
 
-    XCTAssertEqual(asking.status, .failed)
-    XCTAssertNil(asking.answer(for: "week"))
+    XCTAssertEqual(replies.calls, 51)
+    XCTAssertEqual(asking.answer(for: "week")?.id, 2)
+    XCTAssertEqual(asking.status, .idle)
   }
 
   func testAsksNothingWhenThereIsNothingToAsk() async {
