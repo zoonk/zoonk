@@ -19,6 +19,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.plan.PlanEffectDiff
 import com.zoonk.android.feature.plan.PlanEnd
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.plan.examChoiceLeftOut
 import com.zoonk.android.feature.plan.planChangeAppliedLine
 import com.zoonk.android.feature.plan.planChangeProposalEffect
 import com.zoonk.android.feature.plan.planChangeSentence
@@ -209,7 +210,7 @@ private fun ExamChoiceNotice(
         lineAction = { SuggestionOpen(stringResource(R.string.today_exam_choice_choose)) },
     ) {
         SuggestionHeader(question)
-        SuggestionDescription(stringResource(R.string.today_exam_choice_detail, choice.group))
+        SuggestionDescription(examChoiceLeftOut(choice))
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             choice.options.forEach { option ->
                 SuggestionAction(

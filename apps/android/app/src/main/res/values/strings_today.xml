@@ -252,8 +252,6 @@
     <string name="today_notice_exam_choice">Exam choice</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="today_exam_choice_question">%1$s: which one will you take?</string>
-    <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
-    <string name="today_exam_choice_detail">Until you pick, your plan leaves %1$s out.</string>
     <string name="today_exam_choice_choose">Choose</string>
     <string name="today_notice_plan_change">Suggested change</string>
     <string name="today_plan_suggestion">Plan suggestion</string>

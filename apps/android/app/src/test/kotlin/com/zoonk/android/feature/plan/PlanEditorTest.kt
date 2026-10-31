@@ -274,7 +274,9 @@ class PlanEditorTest {
     fun anExamOptionSavesAtOnceAndShowsAsPicked() {
         show(EXAM_CHOICES)
 
-        compose.onNodeWithText("Pick the one you'll take. Until you do, your plan leaves Foreign language out.").assertIsDisplayed()
+        compose
+            .onNodeWithText("Until you pick, your plan and mocks leave out Foreign language: 5 of the exam's 180 questions.")
+            .assertIsDisplayed()
         compose.onNodeWithText("Spanish").performScrollTo().performClick()
 
         assertEquals(listOf("Foreign language" to "Spanish"), examChoices)
@@ -387,7 +389,7 @@ class PlanEditorTest {
 
         const val EXAM_CHOICES =
             """"examChoices":[{"group":"Foreign language",""" +
-                """"leftOut":{"examPoints":null,"examQuestions":null,"name":"Foreign language","points":null,"questions":null},""" +
+                """"leftOut":{"examPoints":null,"examQuestions":180,"name":"Foreign language","points":null,"questions":5},""" +
                 """"options":[{"name":"English","shortName":null},""" +
                 """{"name":"Spanish","shortName":null}],"subject":null}]"""
 

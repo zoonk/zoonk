@@ -230,6 +230,12 @@ class OnboardingScreenshots {
     }
 
     private companion object {
+        val SPECIALTY =
+            """
+            [{"group":"Specialty","leftOut":{"examPoints":360,"examQuestions":null,"name":"Specialty knowledge (P3)","points":180,"questions":null},
+              "options":[{"name":"Auditing and control","shortName":null},{"name":"Information technology","shortName":null}],"subject":null}]
+            """.trimIndent()
+
         val SCREENS: List<Pair<String, @Composable () -> Unit>> =
             listOf(
                 "start" to { Start(FakeOnboardingApi(), AppRoute.StartGoal()) },
@@ -384,6 +390,20 @@ class OnboardingScreenshots {
                         FakeOnboardingApi().apply {
                             setup = { setupView(listOf("schedule", "plan")) }
                             advice = { adviceOf(null, endDate = kotlinx.datetime.LocalDate(2027, 3, 15), targetDate = null) }
+                        },
+                    )
+                },
+                "setup-exam-choice" to {
+                    Setup(
+                        FakeOnboardingApi().apply {
+                            setup = {
+                                setupView(
+                                    listOf("examChoice", "schedule", "plan"),
+                                    kind = "exam",
+                                    details = ENEM_DETAILS,
+                                    examChoices = SPECIALTY,
+                                )
+                            }
                         },
                     )
                 },

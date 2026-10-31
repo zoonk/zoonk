@@ -663,7 +663,7 @@ class PlanScreenshots {
     private companion object {
         val EDITOR_CHOICES =
             """
-            "examChoices":[{"group":"Língua estrangeira","leftOut":{"examPoints":null,"examQuestions":null,"name":"Língua estrangeira","points":null,"questions":null},"options":[{"name":"Inglês","shortName":null},
+            "examChoices":[{"group":"Língua estrangeira","leftOut":{"examPoints":null,"examQuestions":180,"name":"Língua estrangeira","points":null,"questions":5},"options":[{"name":"Inglês","shortName":null},
              {"name":"Espanhol","shortName":null}],"subject":null}],
             "bases":{"daysLeft":12,"knownCount":1,"items":[
              {"area":"Matemática","choice":"essential","choices":["deep","essential","quick","skip"],

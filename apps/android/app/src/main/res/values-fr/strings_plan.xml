@@ -252,9 +252,11 @@
   "plan_even_across_skills": "7c985f27693eb58e9e08c3bc3285a12abe975031afe598764b1d0cabeae67ed3",
   "plan_every_day": "67e5455f0a80959a38845bd03a9c49b00c1a86fe73787b398593a67c43b3f2b8",
   "plan_everything": "3ca6dd60fab787a0abc5aaf547e44c57772c2558c435b254bd993b9bb72a723b",
-  "plan_exam_choice_left_out": "15ad346acea8221171317439b75f2e05a6d3f27cb63f74baed0ca76ff113f626",
+  "plan_exam_choice_left_out": "9b55780dab527eb225c99df71020fde9270269ed98b412d1ac32ce9c021a4f9e",
+  "plan_exam_choice_left_out_points": "b1f6843571541f58c6099214476ee34d5fda5fc0210480d9f9d2fc9bf52d8ded",
+  "plan_exam_choice_left_out_questions": "47c3d82a289c5d9ce403f0d73f44113e5bc9119abf82be2914e8e067906bdd1c",
+  "plan_exam_choice_left_out_questions_of": "f06554191e36d125592c09f908bb5fd534e6c4fd52e8e7c9d6973af0d5a3a1f7",
   "plan_exam_choice_question": "934bae8e3a63dfc24f26175f9ab561c1b9152bf97c13c4eb8b0b9ea183dc8822",
-  "plan_exam_choice_until_you_pick": "6b2b5d9d61d8ee4b4df8a8c4162b64f5d862b4bf2a1af22c25661e41b658d14e",
   "plan_exam_date": "02f49ad62a38af75b0a8718890f91fdd1143aeacfdc9d2e64851f18ed27d168b",
   "plan_exam_date_label": "f0ba48ca41908fad19a1ab00e680e71e8d407f927c859363a8fbe0b0ad1e41c0",
   "plan_exam_day": "1fdffcf8860479fba0728177493c2be4678ef0478b33634178089611c225644a",
@@ -1275,10 +1277,20 @@
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="plan_weekend_time_differs">Durée différente le week-end</string>
     <string name="plan_time_on_weekends">Durée le week-end</string>
-    <string name="plan_exam_choice_left_out">Choisis celui que tu passeras. En attendant, ton plan laisse %1$s de côté.</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="plan_exam_choice_question">%1$s : quelle matière choisis-tu ?</string>
-    <string name="plan_exam_choice_until_you_pick">En attendant ton choix, ton plan laisse %1$s de côté.</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s and %3$s are points of the exam's score. -->
+    <string name="plan_exam_choice_left_out_points">Tant que tu n’as pas fait ton choix, ton plan et tes examens blancs laissent %1$s de côté : %2$s sur les %3$s points de l’examen.</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions; %3$s is the exam's. -->
+    <string name="plan_exam_choice_left_out_questions_of">Tant que tu n’as pas fait ton choix, ton plan et tes examens blancs laissent %1$s de côté : %2$s sur les %3$s questions de l’examen.</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions. -->
+    <plurals name="plan_exam_choice_left_out_questions">
+        <item quantity="one">Tant que tu n’as pas fait ton choix, ton plan et tes examens blancs laissent %1$s de côté : %2$s question.</item>
+        <item quantity="many">Tant que tu n’as pas fait ton choix, ton plan et tes examens blancs laissent %1$s de côté : %2$s questions.</item>
+        <item quantity="other">Tant que tu n’as pas fait ton choix, ton plan et tes examens blancs laissent %1$s de côté : %2$s questions.</item>
+    </plurals>
+    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. -->
+    <string name="plan_exam_choice_left_out">Tant que tu n’as pas fait ton choix, ton plan et tes examens blancs laissent %1$s de côté.</string>
     <string name="plan_prerequisites">Prérequis</string>
     <string name="plan_choose_prerequisites">Choisir les prérequis</string>
     <string name="plan_prerequisites_exam">Les sujets qui reviennent souvent s’appuient sur ces bases.</string>

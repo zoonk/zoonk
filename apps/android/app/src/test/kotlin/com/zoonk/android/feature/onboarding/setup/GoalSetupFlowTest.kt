@@ -143,6 +143,23 @@ class GoalSetupFlowTest {
     }
 
     @Test
+    fun anExamChoiceSaysWhatStaysOutUntilItsPicked() {
+        val specialty =
+            """
+            [{"group":"Specialty","leftOut":{"examPoints":360,"examQuestions":null,"name":"Specialty knowledge (P3)","points":180,"questions":null},
+              "options":[{"name":"Auditing","shortName":null},{"name":"Technology","shortName":null}],"subject":null}]
+            """.trimIndent()
+        api.setup = { setupView(listOf("examChoice", "plan"), kind = "exam", examChoices = specialty) }
+        show()
+
+        rule.onNodeWithText("Which one will you take?").assertIsDisplayed()
+        rule
+            .onNodeWithText("Until you pick, your plan and mocks leave out Specialty knowledge (P3): 180 of the exam's 360 points.")
+            .performScrollTo()
+            .assertIsDisplayed()
+    }
+
+    @Test
     fun aReasonThatNamesAnExamMovesTheSetupToTheExamGoalAndItsRun() {
         api.setup = { setupView(listOf("reason", "plan"), kind = "language") }
         api.reply = { _, _ -> setupView(listOf("targetDate", "plan"), goalId = EXAM_GOAL_ID, kind = "exam") }

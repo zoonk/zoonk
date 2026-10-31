@@ -147,6 +147,10 @@ class PlanSuggestionSlotTest {
     fun anExamOptionChosenFromTheSlotShowsWhatItDidWithUndo() {
         show(EXAM_CHOICES)
 
+        compose
+            .onNodeWithText(
+                "Until you pick, your plan and mocks leave out Foreign language: 50 of the exam's 1,000 points.",
+            ).assertIsDisplayed()
         compose.onNodeWithText("Spanish").performClick()
         compose.onNodeWithText("Undo").performClick()
 
@@ -423,7 +427,7 @@ class PlanSuggestionSlotTest {
         const val RESULT_WAIT = 20_000L
         const val EXAM_CHOICES =
             """"examChoices":[{"group":"Foreign language",""" +
-                """"leftOut":{"examPoints":null,"examQuestions":null,"name":"Foreign language","points":null,"questions":null},""" +
+                """"leftOut":{"examPoints":1000,"examQuestions":180,"name":"Foreign language","points":50,"questions":5},""" +
                 """"options":[{"name":"English","shortName":null},""" +
                 """{"name":"Spanish","shortName":null}],"subject":null}]"""
         const val BEHIND = """"status":{"kind":"behind","days":2,"extraMinutesPerDay":10,"lessons":null}"""

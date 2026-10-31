@@ -655,10 +655,19 @@
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="plan_weekend_time_differs">Different time on weekends</string>
     <string name="plan_time_on_weekends">Time on weekends</string>
-    <string name="plan_exam_choice_left_out">Pick the one you\'ll take. Until you do, your plan leaves %1$s out.</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="plan_exam_choice_question">%1$s: which one will you take?</string>
-    <string name="plan_exam_choice_until_you_pick">Until you pick, your plan leaves %1$s out.</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s and %3$s are points of the exam's score. -->
+    <string name="plan_exam_choice_left_out_points">Until you pick, your plan and mocks leave out %1$s: %2$s of the exam\'s %3$s points.</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions; %3$s is the exam's. -->
+    <string name="plan_exam_choice_left_out_questions_of">Until you pick, your plan and mocks leave out %1$s: %2$s of the exam\'s %3$s questions.</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions. -->
+    <plurals name="plan_exam_choice_left_out_questions">
+        <item quantity="one">Until you pick, your plan and mocks leave out %1$s: %2$s question.</item>
+        <item quantity="other">Until you pick, your plan and mocks leave out %1$s: %2$s questions.</item>
+    </plurals>
+    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. -->
+    <string name="plan_exam_choice_left_out">Until you pick, your plan and mocks leave out %1$s.</string>
     <string name="plan_prerequisites">Prerequisites</string>
     <string name="plan_choose_prerequisites">Choose prerequisites</string>
     <string name="plan_prerequisites_exam">Topics that come up a lot build on these.</string>

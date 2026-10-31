@@ -35,7 +35,6 @@
   "today_earlier_work": "129e0062e5d272d3c0302b3f2e3b4b4ab0380161dc7308a359719261abc7d000",
   "today_earlier_work_detail": "84220237310963068c9279ee1eae19b53a32723eb0dca77114672a85a0405d63",
   "today_exam_choice_choose": "5741bdb58ec55beeb8202775641ce754044445d599e16c9ec6df8634436ecda8",
-  "today_exam_choice_detail": "66fa09561ed00920e60979ddaef373a45ab5def8d73eff70ca66a1d9867546d5",
   "today_exam_choice_question": "708d6c1efce171ce73046aeca3c1f837e7aaa461cb24ccf0305f28c28013f218",
   "today_exam_speaking": "c3b817ca5b04739e8cf9cd64f3d5d2f7c572ea8e2948628af55a67cf399d64e0",
   "today_exam_speaking_detail": "b2cfc4cef3e99451d347de89e78218ee288fa8683e6dd98ef184f1db1aea8e32",
@@ -462,8 +461,6 @@
     <string name="today_notice_exam_choice">Choix de l’examen</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="today_exam_choice_question">%1$s : lequel vas-tu passer ?</string>
-    <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
-    <string name="today_exam_choice_detail">Tant que tu n’as pas choisi, ton plan laisse %1$s de côté.</string>
     <string name="today_exam_choice_choose">Choisir</string>
     <string name="today_notice_plan_change">Changement suggéré</string>
     <string name="today_plan_suggestion">Suggestion pour ton plan</string>

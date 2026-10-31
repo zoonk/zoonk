@@ -35,7 +35,6 @@
   "today_earlier_work": "f85f6598b5dbd728c51a861e9103980ee5fe2adf0505a96964f21134a326918d",
   "today_earlier_work_detail": "d92d62ed678eaa34ff3e532845c8f081c56a7bb9856e5f6715bad998b5780f17",
   "today_exam_choice_choose": "98da2ef8581db6b02454aff3c21c6bbb1429944d70b52d55c155f4dff8c51b0b",
-  "today_exam_choice_detail": "822eb5194a184cf63c2033f8bd7419104b7cf86c9fb99b159f14e51d10263040",
   "today_exam_choice_question": "b882276d965cf7a79f6131a2309b17100e1b73a17ee9f0e7e9b8bac01458c23b",
   "today_exam_speaking": "a795ad38a57785abfaf3e03fe6d4f4cc01dceed931dd718a6384ec842457e3fe",
   "today_exam_speaking_detail": "60a933e03b4f74a9b76f2bbe5c8dcf2c71ccb954a65b4ae074a0091112fb1d29",
@@ -462,8 +461,6 @@
     <string name="today_notice_exam_choice">Elección de examen</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="today_exam_choice_question">%1$s: ¿cuál vas a hacer?</string>
-    <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
-    <string name="today_exam_choice_detail">Hasta que elijas, tu plan omite %1$s.</string>
     <string name="today_exam_choice_choose">Elegir</string>
     <string name="today_notice_plan_change">Cambio sugerido</string>
     <string name="today_plan_suggestion">Sugerencia para el plan</string>

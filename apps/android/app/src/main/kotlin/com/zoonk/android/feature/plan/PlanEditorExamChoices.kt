@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
@@ -22,9 +23,11 @@ import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionSaveError
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.ExamChoice
 
-/** Main's `PlanExamChoices`: until the learner picks an option of a choice, the plan leaves it out. */
+/** Main's `PlanExamChoices`: until the learner picks an option of a choice, the plan and mocks leave it out. */
 @Composable
 internal fun PlanExamChoices(
     page: PlanPageState,
@@ -66,10 +69,40 @@ private fun ExamChoiceOptions(
         }
         if (choice.subject == null) {
             Text(
-                text = stringResource(R.string.plan_exam_choice_left_out, choice.group),
+                text = examChoiceLeftOut(choice),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+        }
+    }
+}
+
+/** Main's `useChoiceLeftOutLine`: what the plan and mocks leave out until the learner picks an option. */
+@Composable
+internal fun examChoiceLeftOut(choice: ExamChoice): String {
+    val leftOut = choice.leftOut
+    val locale = currentLocale()
+    val number = { value: Long -> formatNumber(value.toDouble(), locale) }
+    val points = leftOut.points
+    val examPoints = leftOut.examPoints
+    val questions = leftOut.questions
+    val examQuestions = leftOut.examQuestions
+
+    return when {
+        points != null && examPoints != null -> {
+            stringResource(R.string.plan_exam_choice_left_out_points, leftOut.name, number(points), number(examPoints))
+        }
+
+        questions != null && examQuestions != null -> {
+            stringResource(R.string.plan_exam_choice_left_out_questions_of, leftOut.name, number(questions), number(examQuestions))
+        }
+
+        questions != null -> {
+            pluralStringResource(R.plurals.plan_exam_choice_left_out_questions, questions.toInt(), leftOut.name, number(questions))
+        }
+
+        else -> {
+            stringResource(R.string.plan_exam_choice_left_out, leftOut.name)
         }
     }
 }
@@ -104,7 +137,7 @@ internal fun ExamChoiceSuggestion(
             answer.Result()
             return@Suggestion
         }
-        SuggestionDescription(stringResource(R.string.plan_exam_choice_until_you_pick, choice.group))
+        SuggestionDescription(examChoiceLeftOut(choice))
         SuggestionActions {
             choice.options.forEach { option ->
                 SuggestionAction(option.shortName ?: option.name, onClick = { onChoose(option.name) }, enabled = !pending, secondary = true)
