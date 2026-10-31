@@ -300,13 +300,12 @@ private fun RowScope.StepCell(
     }
 }
 
-/** On time is a dot; early or late is a dash, since an amber dot means review; a miss is a ring. */
 @Composable
 private fun ResultMark(status: TapStatus) {
     val colors = MaterialTheme.colorScheme
     when (status) {
         TapStatus.OnTime -> Box(Modifier.size(8.dp).background(colors.tertiary, CircleShape))
-        TapStatus.Early, TapStatus.Late -> Box(Modifier.width(10.dp).height(4.dp).background(MaterialTheme.zoonk.warning, CircleShape))
+        TapStatus.Early, TapStatus.Late -> Box(Modifier.size(8.dp).background(MaterialTheme.zoonk.warning, CircleShape))
         TapStatus.Missed -> Box(Modifier.size(8.dp).border(2.dp, colors.error, CircleShape))
     }
 }

@@ -18,6 +18,8 @@ import androidx.core.content.edit
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
+import com.zoonk.android.feature.activities.ActivityPhase
+import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.summaryStep
@@ -136,6 +138,45 @@ class MusicScreenshots {
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun marksExpandedDark() = marks("marks-expanded-dark", dark = true)
 
+    private fun rhythmResults(
+        name: String,
+        dark: Boolean = false,
+        moreContrast: Boolean = false,
+    ) {
+        val fields = RhythmFields("x..x..x...x.x...", rounds = 2, stepsPerBeat = 4, tempo = 90, toleranceMs = 100)
+        val taps = fields.tapTimes.zip(TAP_OFFSETS).mapNotNull { (time, offset) -> offset?.let { time + it } }
+        rule.setContent {
+            ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
+                Surface {
+                    rhythmTapperRenderer.canvas(
+                        ActivityProps(
+                            content = ActivityFixtures.content("rhythmTapper"),
+                            answer = rhythmAnswer(taps, deviceDelayMs = null),
+                            expected = null,
+                            isCorrect = false,
+                            phase = ActivityPhase.Checked,
+                            isLocked = false,
+                            onAnswerChange = {},
+                        ),
+                    )
+                }
+            }
+        }
+        save(name)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun rhythmResultsPhone() = rhythmResults("rhythm-results-phone")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun rhythmResultsPhoneDark() = rhythmResults("rhythm-results-phone-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun rhythmResultsPhoneDarkMoreContrast() = rhythmResults("rhythm-results-phone-dark-more-contrast", dark = true, moreContrast = true)
+
     @Test
     @Config(qualifiers = "w360dp-h800dp-xxhdpi")
     fun chordPhone() = play("chord-phone", ActivityFixtures.exploreStep("keyboardFretboard.byEarChoice"))
@@ -192,6 +233,9 @@ class MusicScreenshots {
         play("notation-phone-dark-more-contrast", ActivityFixtures.step("notationPlayer"))
     }
 }
+
+/** Each tap's distance from its hit, past the 100 ms tolerance for early and late; null is a miss. */
+private val TAP_OFFSETS = listOf(0.0, -150.0, 0.0, 150.0, null, 0.0, 0.0, 150.0, 0.0, -150.0)
 
 private val NAMES = listOf("C", "C♯", "D", "E♭", "E", "F", "F♯", "G", "A♭", "A", "B♭", "B")
 
