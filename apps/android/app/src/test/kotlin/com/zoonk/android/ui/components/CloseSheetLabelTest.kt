@@ -31,4 +31,24 @@ class CloseSheetLabelTest {
     @Test
     @Config(qualifiers = "fr-rCA")
     fun canadianFrenchReadsAsAPanel() = assertEquals("Fermer le panneau", label())
+
+    @Test
+    @Config(qualifiers = "it")
+    fun italianReadsAsAPanel() = assertEquals("Chiudi il pannello", label())
+
+    @Test
+    @Config(qualifiers = "ja")
+    fun japaneseReadsAsAPanel() = assertEquals("パネルを閉じる", label())
+
+    @Test
+    @Config(qualifiers = "ko")
+    fun koreanReadsAsAPanel() = assertEquals("하단 패널 닫기", label())
+
+    @Test
+    @Config(qualifiers = "tr")
+    fun turkishReadsAsAPanel() = assertEquals("Paneli kapat", label())
+
+    @Test
+    @Config(qualifiers = "pl")
+    fun polishReadsAsAPanel() = assertEquals("Zamknij panel", label())
 }

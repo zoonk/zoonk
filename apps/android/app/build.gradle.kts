@@ -69,7 +69,9 @@ android {
         generateLocaleConfig = true
         // Keeps libraries' translations to the app's languages, so our strings that replace theirs (close_sheet)
         // aren't outranked by a library's regional copy, such as Compose's pt-rBR "Fechar planilha".
-        localeFilters += listOf("en", "de", "es", "fr", "pt")
+        localeFilters +=
+            listOf("en") +
+            file("src/main/res").list().orEmpty().mapNotNull { Regex("values-([a-z]{2,3})").matchEntire(it)?.groupValues?.get(1) }
     }
 
     compileOptions {
