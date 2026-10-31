@@ -12,23 +12,24 @@ Zoonk Tecnologia e Educação Ltda decides how your data is used. In data protec
 
 ## 1. What we collect
 
-- **Account:** your email, name, username, profile picture, language, and time zone. If you sign in with Google or Apple, we get your name and email from them, and your picture from Google.
+- **Account:** your email, name, username, profile picture, birth year, language, and time zone. If you sign in with Google or Apple, we get your name and email from them, and your picture from Google.
 - **Learning:** your goals, plans, lessons, answers (typed, or spoken and turned into text), progress, mistakes, time spent, feedback, and preferences such as your buddy.
 - **Memory:** short facts about how you learn that Zoonk remembers to help you (see section 4).
-- **What you send us:** goals you describe, chats and calls with your buddy (the AI tutor), uploaded files, pasted text, and support messages.
-- **Payments:** your plan and subscription status. Card details stay with the payment provider.
-- **Technical and usage data:** IP address and the country it points to (to show prices in your currency), device, browser, cookies, access logs, security events, and how you use Zoonk (screens, clicks or taps, and session replays). To block bots and fake apps, we run security checks on your browser, and in our apps we ask Apple or Google to confirm the app is genuine.
+- **What you send us:** goals you describe, chats and calls with your buddy (the AI tutor), uploaded files, pasted text, support messages, and cancellation requests.
+- **Payments:** your plan and subscription status. Card details stay with the payment provider. If you end Plus for an important reason, the reason you give is kept with the payment provider.
+- **Technical and usage data:** IP address, the country your connection comes from, device, browser, cookies, sign-in records, security events, and, when usage data is on (section 7), how you use Zoonk (screens, clicks or taps, and session replays). To block bots and fake apps, we run security checks on your browser, and in our apps we ask Apple or Google to confirm the app is genuine.
 
-We collect this data electronically, from what you enter and from how you use Zoonk on the web and in our apps. You need an email address to create an account. Everything else you give us is up to you, though some features can't work without it.
+We collect this data electronically, from what you enter and from how you use Zoonk on the web and in our apps. You need an email address to create an account, and we ask everyone their birth year once (section 14). Everything else you give us is up to you, though some features can't work without it.
 
 ---
 
 ## 2. Why we use it
 
 - **To run Zoonk for you:** your account, goals, plans, lessons, progress, buddy, memory, voice features, and account emails. We need this to provide the service you signed up for (our contract with you).
-- **To take payments and keep records:** to provide Plus (our contract with you) and to keep the tax and accounting records the law requires (legal obligation).
-- **To keep Zoonk safe:** to prevent fraud, bots, and abuse, and to enforce fair-use limits. This is our legitimate interest in protecting Zoonk and the people who use it.
-- **To fix and improve Zoonk:** analytics, session replays, error reports, and quality checks of AI content. This is our legitimate interest in finding bugs and making Zoonk better. You can object to it (see section 12).
+- **To check your age:** we use your birth year to apply the minimum age and to protect minors' data (section 14). This is required by law in some countries (legal obligation) and our legitimate interest in protecting young learners.
+- **To take payments and keep records:** to provide Plus, handle cancellations, and send refunds (our contract with you), and to keep the tax and accounting records the law requires (legal obligation).
+- **To keep Zoonk safe:** to prevent fraud, bots, and abuse, and to enforce fair-use limits. This is our legitimate interest in protecting Zoonk and the people who use it. We keep records of each sign-in because Brazilian law requires it (legal obligation, section 10).
+- **To fix and improve Zoonk:** analytics, session replays, error reports, and quality checks of AI content. This is our legitimate interest in finding bugs and making Zoonk better. In the EU, EEA, UK, Switzerland, and Turkey, the analytics in your browser start only if you accept them (your consent). You can turn analytics off at any time (section 7) and object to the rest (section 12).
 - **If you ask Zoonk to remember something sensitive,** such as a health condition: we keep it because you asked (your explicit consent). You can delete it at any time in Settings, under Memory.
 - **To build the shared Library:** we use public documents, such as official exam notices, to write lessons for many learners. This is our legitimate interest in teaching everyone well.
 - **To meet legal obligations:** for example, to answer authorities when the law requires it, and to establish or defend legal claims.
@@ -76,15 +77,29 @@ We don't show ads, and we never sell your data or share it for advertising.
 
 ## 7. Analytics and cookies
 
-- We use PostHog and Vercel Analytics to understand how Zoonk is used, fix problems, and improve it. This includes session replays, which show how screens were displayed and used.
-- What you type or upload may appear in a replay if it's on the screen. Only people who need it to run Zoonk can see analytics.
-- Cookies and similar storage on your device keep you signed in, keep a guest session, remember your language, and let PostHog recognize your visits.
-- You can block or delete cookies in your browser settings. If you block all of them, you can't stay signed in.
+- We use PostHog (analytics and session replays) and Vercel Web Analytics to understand how Zoonk is used, fix problems, and improve it. A session replay shows how screens were displayed and used. What you type or upload may appear in a replay if it's on the screen. Only people who need it to run Zoonk can see analytics.
+- **When they start:** In the EU, EEA, UK, Switzerland, and Turkey, they wait until you choose "Accept" in our notice about usage data. Elsewhere, they're on unless you turn them off. Our sign-in pages don't load them.
+- **Turning them off:** Use "Share usage data" in Settings › Preferences, on the web or in our apps. Turning it off stops the analytics in your browser and the events our servers record about your account. If you turn it off on any of your devices, it's off for your account everywhere.
+- **Minors:** We record session replays and keep a PostHog profile only for learners we know are 18 or older, or 19 or older in Korea. For anyone younger, or whose age we don't know, there are no replays and no profile.
+- **Events from our servers:** Our servers also record some events, such as finishing a lesson or how you signed in, to understand how Zoonk is used. They don't use cookies and rely on our legitimate interest. Turning off "Share usage data" stops them too. Our apps don't include analytics tools, so only these events apply there.
+- **Your country:** On each visit, we work out your country from your IP address, or from your browser's language when that's not available, to show prices and apply your country's rules. We don't save it to your account.
+
+Cookies and similar storage on your device:
+
+- **Sign-in:** keep you signed in or keep your guest session, until you sign out or after 30 days without use. Strictly necessary.
+- **`ZOONK_LOCALE`:** remembers your language, for 12 months. Strictly necessary.
+- **`ZOONK_COUNTRY`:** remembers your country, to know whether to ask about usage data, for 1 hour. Strictly necessary.
+- **`ZOONK_USAGE_DATA`:** remembers your choice about usage data, for 12 months. Strictly necessary.
+- **`ZOONK_AGE_STOP`:** after a birth year under the minimum age, keeps this device from trying again, for 24 hours. Strictly necessary.
+- **PostHog (`ph_*`):** recognizes your visits for analytics. Only after you accept, where that's required.
+
+You can block or delete cookies in your browser settings. If you block all of them, you can't stay signed in.
 
 Your browser or app sends information directly to these services:
 
-- **PostHog:** the screens you see, clicks and taps, a visitor ID, device, browser, IP address, and session replays, to understand use and fix problems.
-- **Vercel Analytics and BotID:** the page address, the page you came from, device, browser, and security checks, to count visits and block bots.
+- **PostHog:** when usage data is on, the screens you see, clicks and taps, a visitor ID, device, browser, IP address, and session replays, to understand use and fix problems.
+- **Vercel Web Analytics:** when usage data is on, the page address, the page you came from, device, and browser, to count visits.
+- **Vercel BotID:** security checks when you sign in, start as a guest, or cancel a subscription, to block bots.
 - **Sentry:** error details, device, and browser, to fix errors.
 - **jsDelivr:** your IP address and browser, in coding activities, to load the coding tools.
 - **GitHub Pages:** your IP address and browser, in music activities, to load instrument sounds.
@@ -98,8 +113,8 @@ We share data only as needed to run Zoonk. Most of these providers are based in 
 - **Hosting, files, and security:** Vercel, United States (including Vercel Blob, BotID, and the AI Gateway).
 - **Database:** Neon, United States.
 - **AI:** OpenAI, Anthropic, and Google, United States, for most tasks; TypeSafe, for quick text classification; Black Forest Labs, Germany, and Recraft, for shared Library pictures only. Other providers, such as Microsoft, may step in as backups through the Vercel AI Gateway. Web searches for exam information and for your buddy go to Parallel, United States. They hold only search words Zoonk writes, never your account data.
-- **Analytics and errors:** PostHog, Vercel Analytics, and Sentry, United States.
-- **Email:** ZeptoMail (Zoho), United States, for sign-in codes and other account emails, and Google Workspace, United States, for the messages you send us.
+- **Analytics and errors:** PostHog, Vercel Web Analytics, and Sentry, United States.
+- **Email:** ZeptoMail (Zoho), United States, for sign-in codes, purchase confirmations, cancellation receipts, and other account emails, and Google Workspace, United States, for the messages you send us.
 - **Sign-in and app checks:** Google and Apple, United States, when you sign in with them or use our apps.
 - **Payments:** Stripe on our website, and Apple or Google in the App Store or Google Play, United States.
 - **Coding tools and music sounds:** coding activities load tools from jsDelivr, a public content network, and music activities load instrument sounds from public libraries on GitHub Pages, United States. Both see your IP address.
@@ -117,18 +132,20 @@ We share data only as needed to run Zoonk. Most of these providers are based in 
 
 ## 10. How long we keep data
 
-- **Account and learning data:** while your account exists. We delete it when you delete your account (see section 13).
+- **Account and learning data,** including your birth year: while your account exists. We delete it when you delete your account (see section 13).
 - **Guest data:** until 30 days without activity, or until it moves to your account.
 - **Memory facts you delete:** erased about 30 days after you delete them.
 - **AI quality checks of what you write,** such as questions to your buddy: 30 days.
 - **Requests to AI providers:** some providers keep them for a limited time, as their terms allow, to detect abuse, then delete them.
 - **Sign-in codes:** they expire after 5 minutes and are deleted within 2 days.
-- **IP address and device of each sign-in:** until you sign out of that session or delete your account.
+- **Sessions:** the IP address and device of each session, until you sign out, the session expires after 30 days without use, or you delete your account. Expired sessions are deleted every day.
+- **Sign-in records:** the account ID, IP address, and time of each sign-in, including guest sessions, for 6 calendar months, also after you delete your account, as Brazilian law requires (Marco Civil da Internet, art. 15). They're then deleted in our daily cleanup.
 - **Error reports:** deleted automatically by Sentry within 90 days.
-- **Analytics and session replays:** until we remove them after you delete your account, or until PostHog's retention period ends, whichever is sooner.
-- **Cost records of AI requests and calls:** kept for our accounts. They never hold what you said or wrote.
+- **Analytics and session replays:** until we remove them after you delete your account (section 13), or until PostHog's retention period ends, whichever is sooner.
+- **Your choice about usage data:** on your account while it exists, and in a cookie on your device for 12 months.
+- **Cost records of AI requests and calls:** kept for our accounts. They never hold what you said or wrote. When you delete your account, we keep them without your account ID.
 - **Feedback you send:** kept to improve Zoonk, without your email once you delete your account. Copies of feedback and support emails stay in our mailbox as long as we need them to answer you and handle any claim.
-- **Payment records:** kept by Stripe, Apple, or Google as payment and tax law requires.
+- **Payment records:** kept by Stripe, Apple, or Google as payment and tax law requires, including the reason you give for ending Plus for an important reason.
 - **Backups:** deleted data stays in our database provider's recovery history for up to 30 days, then it's gone.
 
 When data reaches the end of its period, we delete it from our database and file storage. It can't be recovered after that.
@@ -144,7 +161,7 @@ You can try Zoonk without an account. A cookie keeps your guest session on your 
 ## 12. Your rights
 
 - You can ask to access, correct, download, or delete your data, learn who we share it with, object to or limit how we use it, withdraw any consent you gave, and ask for a review of automated decisions.
-- You can download your data with "Download my data" on your profile page and your memory in Settings, and delete your account with "Delete account" on your profile page.
+- You can download your data with "Download my data" on your profile page and your memory in Settings, turn off analytics with "Share usage data" in Settings › Preferences, and delete your account with "Delete account" on your profile page.
 - For anything else, write to [hello@zoonk.com](mailto:hello@zoonk.com) from your account's email. We may ask you to confirm it's you. We answer within 10 days, for free.
 - A parent, guardian, or someone you authorize can make these requests for you.
 - You can also complain to the data protection authority where you live. Section 16 lists it for some countries.
@@ -154,17 +171,23 @@ You can try Zoonk without an account. A cookie keeps your guest session on your 
 ## 13. Deleting your account
 
 - You can delete your account at any time with "Delete account" on your profile page.
-- We then delete your account, learning data, memory, uploads, and anything made from your private files, and cancel your subscription on our website. A subscription bought in the App Store or Google Play stays with Apple or Google: cancel it in your account there.
+- We then delete your account, learning data, memory, uploads, and anything made from your private files, and end your subscription on our website right away, without a refund. To get a refund you're owed, such as the 14-day refund, cancel before you delete your account (see the [Terms](/terms)). A subscription bought in the App Store or Google Play stays with Apple or Google: cancel it in your account there.
 - Some study statistics, such as whether a question was answered correctly the first time and how long a lesson took, are kept without anything that links them to you, to improve lessons for everyone.
-- Within 30 days, we also remove your data from our analytics, including events and session replays.
+- Within 30 days, we also delete your PostHog profile, with its events and session replays. Events without a profile, such as those of learners under 18, hold no name or email and are deleted when PostHog's retention period ends.
+- Sign-in records stay for 6 months (section 10).
 - Public documents you uploaded that became shared sources stay, since they're no longer linked to you.
 - Payment records stay with Stripe, Apple, or Google, as payment and tax law requires.
 
 ---
 
-## 14. Children
+## 14. Age and children
 
-Zoonk is for people 13 and older, or 14 and older in Italy and Korea. Teenagers under 18, or under 19 in Korea, need a parent's or guardian's permission. If you believe a child under the minimum age gave us data, write to [hello@zoonk.com](mailto:hello@zoonk.com) and we'll delete it.
+- Zoonk is for people 13 and older, or 14 and older in Italy and Korea. Teenagers under 18, or under 19 in Korea, need a parent's or guardian's permission.
+- We ask everyone the year they were born, once, before they can go on: a visitor before their guest session starts, and anyone with an account who hasn't told us yet. We keep the year, never the full date, while your account exists. You can't change it yourself; if it's wrong, write to us.
+- The minimum age is the one where you are when you answer, and we count the youngest age your birth year allows.
+- If you might be under the minimum age, we don't save the year: a visitor's guest session doesn't start, and an account is logged out. This device can't try again for 24 hours.
+- We record no session replays and keep no analytics profile for learners under 18, or under 19 in Korea (section 7).
+- If you believe a child under the minimum age gave us data, write to [hello@zoonk.com](mailto:hello@zoonk.com) and we'll delete it.
 
 ---
 
@@ -184,11 +207,12 @@ These sections add to the rules above for people who live in these places.
 
 ### Brazil
 
-You have the rights in the LGPD (Brazil's data protection law), including those in section 12. You can complain to the National Data Protection Authority (ANPD).
+You have the rights in the LGPD (Brazil's data protection law), including those in section 12. We keep sign-in records for 6 months because the Marco Civil da Internet requires it (section 10). You can complain to the National Data Protection Authority (ANPD).
 
 ### EU, EEA, UK, and Switzerland
 
 - Section 2 lists the legal basis for each use of your data, section 9 how we protect data sent outside your country, and section 10 how long we keep it.
+- Analytics in your browser rely on your consent. You can withdraw it at any time with "Share usage data" in Settings › Preferences.
 - When we rely on our legitimate interests, you can object, and we'll stop unless we have compelling reasons that override your interests.
 - You can complain to the data protection authority of the country where you live or work, such as the UK's Information Commissioner's Office (ICO) or Switzerland's Federal Data Protection and Information Commissioner (FDPIC).
 
@@ -204,13 +228,13 @@ You have the rights in the LGPD (Brazil's data protection law), including those 
 - **What we keep and for how long:** Section 1 lists the data, section 2 its purposes, and section 10 how long we keep each kind.
 - **Processors and transfers abroad:** We entrust processing to the providers in section 8, which handle your data in the countries listed there. Your data goes to them over encrypted connections whenever you use a feature that needs them, and they keep it as section 10 describes. You can refuse these transfers by not using Zoonk or deleting your account, but Zoonk can't work without them.
 - **How we destroy data:** We delete electronic records so they can't be recovered. We don't keep data on paper.
-- **Cookies:** Section 7 explains them and how to refuse them in your browser.
+- **Cookies:** Section 7 explains them, how to turn off analytics with "Share usage data", and how to refuse cookies in your browser.
 - **Privacy officer (개인정보 보호책임자):** Zoonk's managing director, at [hello@zoonk.com](mailto:hello@zoonk.com).
 - **Help with violations:** You can contact the Personal Information Dispute Mediation Committee (1833-6972), the Personal Information Infringement Report Center (118), the Supreme Prosecutors' Office (1301), or the Korean National Police Agency (182).
 
 ### Turkey
 
-- **How and why we collect data:** We collect it electronically through our website and apps (section 1) for the purposes in section 2. Our legal reasons under Articles 5 and 6 of the KVKK (Turkey's data protection law) are that it's needed for our contract with you, for our legal obligations, to establish or defend a right, and for our legitimate interests, and, for sensitive details you ask Zoonk to remember, your explicit consent.
+- **How and why we collect data:** We collect it electronically through our website and apps (section 1) for the purposes in section 2. Our legal reasons under Articles 5 and 6 of the KVKK (Turkey's data protection law) are that it's needed for our contract with you, for our legal obligations, to establish or defend a right, and for our legitimate interests, and, for analytics cookies and sensitive details you ask Zoonk to remember, your explicit consent.
 - **Who receives it:** The providers and authorities in section 8, including abroad (section 9), for the purposes in section 2.
 - **Your rights:** Under Article 11 of the KVKK, you can learn whether we process your data and how, ask for it to be corrected or deleted and for those who received it to be told, learn who receives it in Turkey or abroad, object to a result against you that comes only from automated analysis, and claim compensation for unlawful processing. Write to [hello@zoonk.com](mailto:hello@zoonk.com). We answer within 10 days, for free. If you're not satisfied, you can complain to the Personal Data Protection Board (Kişisel Verileri Koruma Kurulu).
 
