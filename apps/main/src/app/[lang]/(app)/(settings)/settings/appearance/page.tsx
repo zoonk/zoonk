@@ -32,6 +32,11 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+async function isMinor({ birthYear, country }: { birthYear: number | null; country: string }) {
+  "use cache: private";
+  return isKnownMinor({ birthYear, country, now: new Date() });
+}
+
 /** Off until the visitor says yes where the law needs one, as `AppAnalytics` decides. */
 async function readUsageData({
   account,
@@ -43,7 +48,7 @@ async function readUsageData({
   const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
   const browser = parseUsageDataCookie(cookieStore.get(USAGE_DATA_COOKIE)?.value);
   const country = getRequestCountry(requestHeaders);
-  const minor = isKnownMinor({ birthYear, country, now: new Date() });
+  const minor = await isMinor({ birthYear, country });
 
   const share = resolveUsageDataSharing({
     choice: getUsageDataChoice({ account, browser }),
