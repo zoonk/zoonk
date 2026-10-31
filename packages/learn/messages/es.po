@@ -38,7 +38,7 @@ msgstr "Correcta"
 #: src/_components/change-limit-link.tsx
 msgctxt "oeCtXD"
 msgid "Change limit"
-msgstr "Cambiar el límite"
+msgstr "Cambiar límite"
 
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
@@ -1805,31 +1805,31 @@ msgstr "{count, plural, one {# tema} other {# temas}}"
 #: src/challenge/challenge-used-up.tsx
 msgctxt "n_NkaB"
 msgid "You've reached your daily time limit. The challenge will be in your next session."
-msgstr "Has alcanzado tu límite de tiempo diario. El desafío estará en tu próxima sesión."
+msgstr "Alcanzaste tu límite de tiempo diario. El desafío estará disponible en tu próxima sesión."
 
 #. The daily time limit is a setting that stops study for the day.
 #: src/challenge/challenge-used-up.tsx
 msgctxt "7KZiEr"
 msgid "You've reached your daily time limit. The challenge will be here tomorrow."
-msgstr "Has alcanzado tu límite de tiempo diario. El desafío estará aquí mañana."
+msgstr "Alcanzaste tu límite de tiempo diario. El desafío estará disponible mañana."
 
 #. The daily time limit is a setting that stops study for the day. {day} is a weekday, like "Monday".
 #: src/challenge/challenge-used-up.tsx
 msgctxt "n9OwoN"
 msgid "You've reached your daily time limit. The challenge will be here on {day}."
-msgstr "Has alcanzado tu límite de tiempo diario. El desafío estará aquí el {day}."
+msgstr "Alcanzaste tu límite de tiempo diario. El desafío estará disponible el {day}."
 
 #. The daily time limit is a setting that stops study for the day.
 #: src/challenge/challenge-used-up.tsx
 msgctxt "Cc_lvA"
 msgid "You've reached your daily time limit. Move the challenge to Monday to keep it."
-msgstr "Has alcanzado tu límite de tiempo diario. Pasa el desafío al lunes para conservarlo."
+msgstr "Alcanzaste tu límite de tiempo diario. Mueve el desafío al lunes para no perderlo."
 
 #. The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week.
 #: src/challenge/challenge-used-up.tsx
 msgctxt "1WWfWS"
 msgid "You've reached your daily time limit. You'll miss this week's challenge."
-msgstr "Has alcanzado tu límite de tiempo diario. Te perderás el desafío de esta semana."
+msgstr "Alcanzaste tu límite de tiempo diario. Te perderás el desafío de esta semana."
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
@@ -4906,7 +4906,7 @@ msgstr "Se abrirá aquí en cuanto esté lista."
 #: src/language/conversation/conversation-intro.tsx
 msgctxt "HYCGBs"
 msgid "You've reached your daily time limit. You can make this call in your next session."
-msgstr "Has alcanzado tu límite de tiempo diario. Podrás hacer esta llamada en tu próxima sesión."
+msgstr "Alcanzaste tu límite de tiempo diario. Podrás hacer esta llamada en tu próxima sesión."
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/unit/practice-conversation.tsx
@@ -12826,13 +12826,13 @@ msgstr "¡Nos vemos el {day}!"
 #: src/today/today-day-status.tsx
 msgctxt "wuaEUY"
 msgid "You've reached your daily time limit of {time}."
-msgstr "Has alcanzado tu límite diario de {time}."
+msgstr "Alcanzaste tu límite diario de {time}."
 
 #. The daily time limit is a setting that stops study for the day. It's shorter than the plan's time for today.
 #: src/today/today-day-status.tsx
 msgctxt "Ta4Ml6"
 msgid "Today stops at your daily time limit of {time}."
-msgstr "El estudio de hoy termina al alcanzar tu límite diario de {time}."
+msgstr "Hoy el estudio termina al alcanzar tu límite diario de {time}."
 
 #: src/today/today-day-status.tsx
 msgctxt "FyQP44"
