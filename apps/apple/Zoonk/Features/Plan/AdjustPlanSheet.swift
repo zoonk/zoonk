@@ -4,6 +4,8 @@ import SwiftUI
 /// away, this week included.
 struct AdjustPlanSheet: View {
   enum Section: Hashable, Identifiable {
+    /// One of the exam's choices, by its group.
+    case choice(String)
     case date
     case days
     /// Studying everything, which asks as soon as the sheet opens.

@@ -11,6 +11,7 @@ struct AdjustPlanSections: View {
   var body: some View {
     ForEach(plan.examChoices) { choice in
       PlanExamChoiceSection(editor: editor, goal: goal, choice: choice)
+        .id(AdjustPlanSheet.Section.choice(choice.group))
     }
 
     PlanFocusSection(editor: editor, goal: goal, plan: plan)
@@ -94,7 +95,7 @@ private struct PlanExamChoiceSection: View {
         }
 
         ForEach(choice.options, id: \.self) { option in
-          Text(option.name).tag(option.name)
+          Text(option.shortName ?? option.name).tag(option.name)
         }
       } label: {
         Text(choice.group)

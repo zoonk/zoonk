@@ -225,7 +225,7 @@ private struct RevealNoticeDay: View {
 /// is the plan suggestion's to ask.
 private struct RevealExamChoices: View {
   let plan: GoalPlan
-  let change: () -> Void
+  let change: (_ group: String) -> Void
 
   var body: some View {
     ForEach(plan.examChoices) { choice in
@@ -234,7 +234,9 @@ private struct RevealExamChoices: View {
           Text(line)
             .foregroundStyle(.secondary)
 
-          Button(action: change) {
+          Button {
+            change(choice.group)
+          } label: {
             Text(
               "Change", tableName: "Plan",
               comment:
@@ -394,7 +396,7 @@ private struct PlanReveal: View {
     RevealNoticeDay(
       isSaving: $isChangingDate, failed: $dateChangeFailed, goalID: goal.id, plan: plan)
 
-    RevealExamChoices(plan: plan) { adjusting = .top }
+    RevealExamChoices(plan: plan) { adjusting = .choice($0) }
 
     Section {
       VStack(spacing: 12) {

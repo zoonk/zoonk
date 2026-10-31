@@ -678,9 +678,9 @@ struct PlanSettingsSection: View {
           "Study days", tableName: "Plan", comment: "Setting: the days of the week to study"),
         value: Text(studyDaysText(schedule.weekdayMinutes)), section: .days)
 
-      // The exam's choices open first in Adjust plan.
       ForEach(context.plan.examChoices) { choice in
-        setting(label: Text(choice.group), value: choiceValue(choice), section: .top)
+        setting(
+          label: Text(choice.group), value: choiceValue(choice), section: .choice(choice.group))
       }
     } header: {
       Text("Your plan", tableName: "Plan", comment: "Section of the plan's settings")
@@ -715,6 +715,7 @@ struct PlanSettingsSection: View {
       } label: {
         label.foregroundStyle(.primary)
       }
+      .frame(maxWidth: .infinity, alignment: .leading)
       .disclosureChevron()
     }
   }
