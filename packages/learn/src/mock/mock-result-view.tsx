@@ -41,6 +41,7 @@ import {
   hasPlanChange,
   usePlanChange,
 } from "./mock-result-plan";
+import { MockResultPoints, hasTestRows } from "./mock-result-points";
 import { useSpeakingItems } from "./mock-result-speaking";
 import { type MockResultPart, getResultAsideParts, getResultSteps } from "./mock-result-steps";
 import { MockReviewDrawer, MockReviewSection } from "./mock-review";
@@ -50,6 +51,16 @@ function useScore(result: MockResult): { label: string; value: string } {
   const t = useExtracted();
   const format = useFormatter();
   const range = useMockRange();
+
+  if (result.points) {
+    return {
+      label: t("Points"),
+      value: t("{correct} of {total}", {
+        correct: format.number(result.points.earned, { maximumFractionDigits: 2 }),
+        total: format.number(result.points.asked, { maximumFractionDigits: 2 }),
+      }),
+    };
+  }
 
   if (result.irt) {
     return { label: t("Estimated score"), value: range(result.irt) };
@@ -75,7 +86,8 @@ function DeltaLine({ result }: { result: MockResult }) {
   const t = useExtracted();
   const current = result.irt?.score ?? result.net?.net ?? null;
 
-  if (current === null || result.previous === null) {
+  // `previous` measures net answers, never points, so a points headline can't take its delta.
+  if (current === null || result.previous === null || result.points) {
     return null;
   }
 
@@ -162,6 +174,7 @@ function ScoreStep({ result }: { result: MockResult }) {
         </StepHeader>
 
         <MockResultAnswers result={result} />
+        {hasTestRows(result.points) && <MockResultPoints points={result.points} />}
         <PassMarks />
         <MockScoreNote notes={runner.view.scoreNotes} />
         <MockDayMoment />

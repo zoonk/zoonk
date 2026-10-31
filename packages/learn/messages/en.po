@@ -7416,6 +7416,7 @@ msgid "Blank answers count as wrong in this score."
 msgstr "Blank answers count as wrong in this score."
 
 #: src/mock/mock-result-breakdown.tsx
+#: src/mock/mock-result-points.tsx
 #: src/mock/mock-result-view.tsx
 msgctxt "3YnSzO"
 msgid "{correct} of {total}"
@@ -7597,6 +7598,71 @@ msgctxt "ChuNUI"
 msgid "Your plan"
 msgstr "Your plan"
 
+#: src/mock/mock-result-points.tsx
+msgctxt "cT7Wf1"
+msgid "{unit, select, percent {At {score}, below the {minimum} it needs} other {{short, plural, one {# point} other {# points}} short of the {minimum} it needs}}"
+msgstr "{unit, select, percent {At {score}, below the {minimum} it needs} other {{short, plural, one {# point} other {# points}} short of the {minimum} it needs}}"
+
+#: src/mock/mock-result-points.tsx
+msgctxt "I-wYX9"
+msgid "{unit, select, percent {Reached the {minimum} it needs} other {Reached the {value, plural, one {# point} other {# points}} it needs}}"
+msgstr "{unit, select, percent {Reached the {minimum} it needs} other {Reached the {value, plural, one {# point} other {# points}} it needs}}"
+
+#: src/mock/mock-result-points.tsx
+msgctxt "G7GP7-"
+msgid "Needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}}"
+msgstr "Needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}}"
+
+#: src/mock/mock-result-points.tsx
+msgctxt "8Qf9bm"
+msgid "Doesn't count toward the total"
+msgstr "Doesn't count toward the total"
+
+#: src/mock/mock-result-points.tsx
+msgctxt "GcvagU"
+msgid "Objective tests together"
+msgstr "Objective tests together"
+
+#: src/mock/mock-result-points.tsx
+msgctxt "5JW5j4"
+msgid "You'd be eliminated: the objective tests together {unit, select, percent {reach {score}, below the {minimum} they need} other {are {short, plural, one {# point} other {# points}} short of {minimum}}}."
+msgstr "You'd be eliminated: the objective tests together {unit, select, percent {reach {score}, below the {minimum} they need} other {are {short, plural, one {# point} other {# points}} short of {minimum}}}."
+
+#: src/mock/mock-result-points.tsx
+msgctxt "f6NtkC"
+msgid "You'd be eliminated: {name} {unit, select, percent {is at {score}, below the {minimum} it needs} other {is {short, plural, one {# point} other {# points}} short of {minimum}}}."
+msgstr "You'd be eliminated: {name} {unit, select, percent {is at {score}, below the {minimum} it needs} other {is {short, plural, one {# point} other {# points}} short of {minimum}}}."
+
+#: src/mock/mock-result-points.tsx
+msgctxt "IiVFOl"
+msgid "Meets the objective minimums checked here."
+msgstr "Meets the objective minimums checked here."
+
+#: src/mock/mock-result-points.tsx
+msgctxt "iUqCgB"
+msgid "About {projected} of {max} points on the whole exam, projected from this mock. Only a full mock says whether you'd reach the minimums."
+msgstr "About {projected} of {max} points on the whole exam, projected from this mock. Only a full mock says whether you'd reach the minimums."
+
+#: src/mock/mock-result-points.tsx
+msgctxt "0FUIoF"
+msgid "Each test's points are projected onto its whole length. Only a full mock says whether you'd reach the minimums."
+msgstr "Each test's points are projected onto its whole length. Only a full mock says whether you'd reach the minimums."
+
+#: src/mock/mock-result-points.tsx
+msgctxt "JcMiUs"
+msgid "The objective tests together need {unit, select, percent {{minimum} of their points} other {{value, plural, one {# point} other {# points}}}}, and this mock doesn't have them all."
+msgstr "The objective tests together need {unit, select, percent {{minimum} of their points} other {{value, plural, one {# point} other {# points}}}}, and this mock doesn't have them all."
+
+#: src/mock/mock-result-points.tsx
+msgctxt "VIKtKQ"
+msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}} and isn't in this mock."
+msgstr "{name} needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}} and isn't in this mock."
+
+#: src/mock/mock-result-points.tsx
+msgctxt "JOdrmN"
+msgid "By test"
+msgstr "By test"
+
 #: src/mock/mock-result-speaking.tsx
 msgctxt "VFOaix"
 msgid "The exam asks for at least {min, number} of {of, number} on this paper and listening together."
@@ -7661,6 +7727,11 @@ msgstr "Not done"
 msgctxt "xQAJsr"
 msgid "You typed in at least one task, so the estimate leaves out how you sounded there."
 msgstr "You typed in at least one task, so the estimate leaves out how you sounded there."
+
+#: src/mock/mock-result-view.tsx
+msgctxt "P0PLlQ"
+msgid "Points"
+msgstr "Points"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "OVBe_v"
