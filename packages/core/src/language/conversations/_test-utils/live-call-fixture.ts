@@ -1,21 +1,14 @@
 import { type LanguageConversation, type LiveCallConnection, prisma } from "@zoonk/db";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { onTestFinished, vi } from "vitest";
-import { getSession } from "../../../users/get-session";
+import { onTestFinished } from "vitest";
 
 export async function liveCallFixture({
   kind = "practice",
   minutes = 2,
   plus = false,
-  role = "user",
-}: {
-  kind?: LanguageConversation["kind"];
-  minutes?: number;
-  plus?: boolean;
-  role?: "user" | "admin";
-} = {}) {
-  const user = await userFixture({ role });
+}: { kind?: LanguageConversation["kind"]; minutes?: number; plus?: boolean } = {}) {
+  const user = await userFixture();
   const conversation = await anotherLiveConversation({ kind, minutes, userId: user.id });
 
   if (plus) {
@@ -90,11 +83,4 @@ export function liveCallHistoryFixture({
       ...attrs,
     },
   });
-}
-
-export function mockLiveCallAdminSession(user: { id: string; role: string | null }): void {
-  vi.mocked(getSession).mockResolvedValue(
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The existing core auth boundary reads identity and role; the fixture avoids duplicating Better Auth's session internals.
-    { user: { id: user.id, role: user.role } } as Awaited<ReturnType<typeof getSession>>,
-  );
 }

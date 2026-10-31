@@ -13,7 +13,6 @@ import {
   cleanupTestCalls,
   connectTestCall,
   reserveTestCall,
-  setupTestCalls,
   testCallCompletionInput,
 } from "../../_test-utils/connect-test-call";
 import { freezeClock } from "../../_test-utils/frozen-clock";
@@ -82,7 +81,6 @@ async function reachedChallenge() {
 
 describe("Plus challenge call quota", () => {
   beforeEach(async () => {
-    await setupTestCalls();
     freezeClock();
     vi.setSystemTime(new Date("2026-10-13T12:00:00Z"));
 

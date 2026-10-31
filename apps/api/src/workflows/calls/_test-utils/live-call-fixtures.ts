@@ -14,8 +14,8 @@ function cleanupConnections(userId: string) {
   });
 }
 
-export async function authenticatedCallFixture(role: "user" | "admin" = "user") {
-  const user = await userFixture({ role });
+export async function authenticatedCallFixture() {
+  const user = await userFixture();
 
   const [chapter, goal] = await Promise.all([
     libraryChapterFixture({ language: "pt", targetLanguage: "en" }),

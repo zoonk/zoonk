@@ -1,11 +1,11 @@
 import "server-only";
 import { SPEAKING_EXAM_LANGUAGES } from "@zoonk/ai/tasks/language/exam-speaking-exams";
+import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { type Goal, prisma } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import { type AllowanceLimit } from "../../../entitlements/contract";
 import { getAllowance } from "../../../entitlements/get-allowance";
 import { getSpeakingLevel, toSpeakingLevel } from "../../conversations/_utils/conversation-goal";
-import { readLiveCallAdmission } from "../../conversations/_utils/live-call-policy";
 import { type SpeakingPaperView } from "../speaking-contract";
 import { type SpeakingFormat } from "../speaking-format";
 import { getSpeakingFormat } from "../speaking-formats";
@@ -65,13 +65,10 @@ export async function loadSpeakingPaper({
     return null;
   }
 
-  const [lastTries, admission] = await Promise.all([
-    loadLastTries({ format, goal }),
-    readLiveCallAdmission({ transaction: prisma, userId: goal.userId }),
-  ]);
+  const lastTries = await loadLastTries({ format, goal });
 
   return toSpeakingPaperView({
-    access: admission === null ? "callsPaused" : access,
+    access: isLiveCallAvailable() ? access : "callsPaused",
     format,
     lastTries,
   });

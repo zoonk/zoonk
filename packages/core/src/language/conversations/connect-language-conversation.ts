@@ -1,4 +1,5 @@
 import "server-only";
+import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { getLiveConversationVoice } from "@zoonk/ai/tasks/language/live-conversation-models";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
@@ -9,7 +10,6 @@ import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-view
 import { type StartStudyBlockResult, startStudyBlock } from "../../sessions/start-study-block";
 import { endPreviousLiveCall } from "./_utils/end-previous-live-call";
 import { isPlusOnlyLiveCall } from "./_utils/live-call-plus";
-import { readLiveCallAdmission } from "./_utils/live-call-policy";
 import {
   type LanguageConversationConnectInput,
   type LanguageConversationSetup,
@@ -77,7 +77,7 @@ export async function connectLanguageConversation({
     return { status: "plusRequired" };
   }
 
-  if ((await readLiveCallAdmission({ transaction: prisma, userId: viewer.userId })) === null) {
+  if (!isLiveCallAvailable()) {
     return { status: "callsPaused" };
   }
 

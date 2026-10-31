@@ -9,16 +9,14 @@ import {
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
-import { waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getLiveCallCostMicros, getLiveCallReservationMicros } from "../../entitlements/limits";
 import {
   anotherLiveConversation,
   liveCallFixture,
   liveCallHistoryFixture,
-  mockLiveCallAdminSession,
 } from "./_test-utils/live-call-fixture";
 import { getCallExposureMicros } from "./_utils/live-call-money";
 import { checkLanguageConversationObjectives } from "./check-language-conversation-objectives";
@@ -26,43 +24,15 @@ import { connectLanguageConversation } from "./connect-language-conversation";
 import { type LanguageConversationSetup } from "./conversation-contract";
 import { endLanguageConversationConnection } from "./end-language-conversation-connection";
 import { endLiveCall } from "./end-live-call";
-import { getLiveCallAdmission } from "./live-call-admission";
 import { redeemLiveCallSdp } from "./redeem-live-call-sdp";
 import { startLanguageConversation } from "./start-language-conversation";
 
-const DAY_MS = 86_400_000;
 const SECOND_MS = 1000;
-const BIG_BUDGET = 150_000_000;
 const TWO_MINUTES = 120;
 const LONGEST_SESSION_SECONDS = 2 * 60 * 60 + 60;
 
-/** Each test runs on a day of its own, so the free day's shared bucket is the test's alone. */
-const FIRST_DAY = Date.parse("2031-01-01T12:00:00Z");
-const testDay = { index: 0 };
-
-function startOwnDay(time = "12:00:00") {
-  testDay.index += 1;
-  const day = new Date(FIRST_DAY + testDay.index * DAY_MS).toISOString().slice(0, 10);
-  vi.setSystemTime(new Date(`${day}T${time}Z`));
-}
-
 function advance(seconds: number) {
   vi.setSystemTime(new Date(Date.now() + seconds * SECOND_MS));
-}
-
-function utcDay(date: Date) {
-  return new Date(`${date.toISOString().slice(0, 10)}T00:00:00Z`);
-}
-
-async function setAdmission(
-  admission: "off" | "staff" | "all",
-  freeDailyBudgetMicros = BIG_BUDGET,
-) {
-  await prisma.liveCallSetting.upsert({
-    create: { admission, freeDailyBudgetMicros, id: "live" },
-    update: { admission, freeDailyBudgetMicros },
-    where: { id: "live" },
-  });
 }
 
 async function learner(options: Parameters<typeof liveCallFixture>[0] = {}) {
@@ -105,11 +75,6 @@ function usage({ connectionId, userId }: { connectionId: string; userId: string 
   });
 }
 
-async function freeDaySpent(day: Date) {
-  const bucket = await prisma.freeCallSpendDay.findUnique({ where: { day: utcDay(day) } });
-  return bucket?.spentMicros ?? 0;
-}
-
 function noObjectivesMet() {
   vi.mocked(checkConversationObjectives).mockResolvedValueOnce({
     data: { met: [] },
@@ -138,8 +103,7 @@ function pendingCreation() {
 describe("live calls", () => {
   beforeEach(async () => {
     freezeClock();
-    startOwnDay();
-    await setAdmission("all");
+    vi.setSystemTime(new Date("2031-01-02T12:00:00Z"));
     vi.mocked(isLiveCallAvailable).mockReturnValue(true);
     vi.mocked(hangUpLiveCallSession).mockReset();
 
@@ -149,11 +113,6 @@ describe("live calls", () => {
         sdp: "test-answer",
         sessionId: `session-${crypto.randomUUID()}`,
       }));
-  });
-
-  afterEach(async () => {
-    vi.mocked(isLiveCallAvailable).mockReturnValue(true);
-    await setAdmission("all");
   });
 
   it("[1] holds what's left of the day with no grace, and refuses less than a minute without a session", async () => {
@@ -280,7 +239,6 @@ describe("live calls", () => {
 
   it("[2] gives two tabs reserving at once one open connection and one hold", async () => {
     const { conversation, user } = await learner();
-    const started = new Date();
 
     const answers = await Promise.all([reserve(conversation.id), reserve(conversation.id)]);
 
@@ -300,8 +258,6 @@ describe("live calls", () => {
       costMicros: getLiveCallReservationMicros(TWO_MINUTES),
       seconds: TWO_MINUTES,
     });
-
-    await expect(freeDaySpent(started)).resolves.toBe(getLiveCallReservationMicros(TWO_MINUTES));
   });
 
   it("[2] creates one provider session for two offers on one reservation", async () => {
@@ -323,7 +279,6 @@ describe("live calls", () => {
 
   it("[2] settles once when the learner's End and the deadline race", async () => {
     const { conversation, user } = await learner();
-    const started = new Date();
     const setup = await live(conversation.id);
 
     advance(60);
@@ -339,8 +294,6 @@ describe("live calls", () => {
     await expect(
       usage({ connectionId: setup.connectionId, userId: user.id }),
     ).resolves.toMatchObject({ costMicros: getLiveCallCostMicros(60), seconds: 60 });
-
-    await expect(freeDaySpent(started)).resolves.toBe(getLiveCallCostMicros(60));
   });
 
   it("[2] makes a start wait while a creation is in flight, then hangs that session up once it exists", async () => {
@@ -438,9 +391,7 @@ describe("live calls", () => {
     });
   });
 
-  it("[2] settles refused and unanswered creations on the reservation's own free day, across midnight", async () => {
-    startOwnDay("23:59:00");
-    const reservedOn = new Date();
+  it("[2] settles refused and unanswered creations", async () => {
     const { conversation, user } = await learner();
 
     const refused = await reserved(conversation.id);
@@ -477,12 +428,6 @@ describe("live calls", () => {
       endReason: "failed",
       state: "ended",
     });
-
-    await expect(freeDaySpent(reservedOn)).resolves.toBe(
-      getLiveCallCostMicros(0) + Math.max(held, getLiveCallCostMicros(90)),
-    );
-
-    await expect(freeDaySpent(new Date())).resolves.toBe(0);
   });
 
   it("[2] keeps the day's connection cap", async () => {
@@ -500,53 +445,8 @@ describe("live calls", () => {
     });
   });
 
-  it("[F3] counts the clock of a call whose hangup keeps failing, until a free call that fit is refused", async () => {
-    const held = getLiveCallReservationMicros(TWO_MINUTES);
-    await setAdmission("all", 2 * held + 10_000);
-
-    const stuck = await learner();
-    const setup = await live(stuck.conversation.id);
-
-    vi.mocked(hangUpLiveCallSession).mockRejectedValue(new Error("OpenAI is unavailable"));
-    advance(TWO_MINUTES);
-
-    await expect(
-      endLiveCall({ connectionId: setup.connectionId, reason: "deadline" }),
-    ).resolves.toStrictEqual({ status: "closing" });
-
-    await expect(connection(setup.connectionId)).resolves.toMatchObject({ state: "live" });
-
-    const other = await learner();
-    const fits = await reserved(other.conversation.id);
-
-    await endLanguageConversationConnection({
-      connectionId: fits.connectionId,
-      conversationId: other.conversation.id,
-    });
-
-    advance(60);
-
-    await expect(reserve(other.conversation.id)).resolves.toMatchObject({
-      limit: { period: "day", resource: "aiSpend" },
-      status: "limitReached",
-    });
-
-    mockLiveCallAdminSession({ id: other.user.id, role: "admin" });
-    await prisma.user.update({ data: { role: "admin" }, where: { id: other.user.id } });
-
-    await expect(getLiveCallAdmission()).resolves.toMatchObject({
-      connections: expect.arrayContaining([
-        expect.objectContaining({
-          exposureMicros: getLiveCallCostMicros(TWO_MINUTES + 60),
-          id: setup.connectionId,
-          overdue: false,
-        }),
-      ]),
-    });
-  });
-
   it("[F3] counts a creation that never named its session at the larger of its reservation and the clock", async () => {
-    const { conversation, user } = await learner();
+    const { conversation } = await learner();
     const setup = await reserved(conversation.id);
     const creation = pendingCreation();
     const offered = offer(setup, conversation.id);
@@ -559,19 +459,10 @@ describe("live calls", () => {
 
     expect(clock).toBeGreaterThan(getLiveCallReservationMicros(TWO_MINUTES));
 
-    await prisma.user.update({ data: { role: "admin" }, where: { id: user.id } });
-    mockLiveCallAdminSession({ id: user.id, role: "admin" });
+    const starting = await connection(setup.connectionId);
 
-    await expect(getLiveCallAdmission()).resolves.toMatchObject({
-      connections: expect.arrayContaining([
-        expect.objectContaining({
-          exposureMicros: clock,
-          id: setup.connectionId,
-          overdue: true,
-          state: "starting",
-        }),
-      ]),
-    });
+    expect(starting.state).toBe("starting");
+    expect(getCallExposureMicros({ connection: starting, now: new Date() })).toBe(clock);
 
     creation.reject(new Error("The creation request timed out"));
     await expect(offered).resolves.toStrictEqual({ status: "retryable" });
@@ -582,71 +473,11 @@ describe("live calls", () => {
     });
   });
 
-  it("[F6] never gives the free day's room twice to a reservation whose offer was accepted at the window's edge", async () => {
-    const held = getLiveCallReservationMicros(TWO_MINUTES);
-    await setAdmission("all", held);
-    const reservedAt = Date.now();
-    const first = await learner();
-    const setup = await reserved(first.conversation.id);
-
-    const holder = Promise.withResolvers<number>();
-    const release = Promise.withResolvers<null>();
-
-    const holding = prisma.$transaction(async (transaction) => {
-      await transaction.$queryRaw`SELECT id FROM live_call_connections WHERE id = ${setup.connectionId}::uuid FOR UPDATE`;
-      const [row] = await transaction.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
-      holder.resolve(row?.pid ?? 0);
-      await release.promise;
-    });
-
-    const pid = await holder.promise;
-    vi.setSystemTime(reservedAt + 59_900);
-    const offered = offer(setup, first.conversation.id);
-
-    await waitForBlockedStatement(pid, /UPDATE.*live_call_connections/u);
-
-    vi.setSystemTime(reservedAt + 60_100);
-    const second = await learner();
-    const other = reserve(second.conversation.id);
-
-    const waiting = waitForBlockedStatement(pid, /free_call_spend_days/u);
-    waiting.catch(() => null);
-    await Promise.race([other, waiting]);
-
-    release.resolve(null);
-    await holding;
-    await Promise.all([offered, other]);
-
-    const open = await prisma.liveCallConnection.findMany({
-      where: { state: { not: "ended" }, userId: { in: [first.user.id, second.user.id] } },
-    });
-
-    const exposure = open.reduce(
-      (total, row) => total + getCallExposureMicros({ connection: row, now: new Date() }),
-      0,
-    );
-
-    expect(exposure).toBeLessThanOrEqual(held);
-  });
-
-  it("[F6] counts a reservation past its connect window as nothing, refuses its offer and ends it on the next start", async () => {
-    const held = getLiveCallReservationMicros(TWO_MINUTES);
-    await setAdmission("all", held + 50_000);
-
+  it("[F6] refuses an offer past its reservation's connect window and ends that reservation at no cost on the next start", async () => {
     const { conversation, user } = await learner();
     const stale = await reserved(conversation.id);
 
     advance(61);
-
-    const other = await learner();
-    const fits = await reserved(other.conversation.id);
-
-    await endLanguageConversationConnection({
-      connectionId: fits.connectionId,
-      conversationId: other.conversation.id,
-    });
-
-    mockSession(user.id);
 
     await expect(offer(stale, conversation.id)).resolves.toStrictEqual({
       status: "connectionExpired",
@@ -685,8 +516,7 @@ describe("live calls", () => {
     await expect(reserve(conversation.id)).resolves.toMatchObject({ status: "ready" });
   });
 
-  it("[F7] settles a deleted learner's call at its deadline, keeping its cost on the connection and the free day", async () => {
-    const started = new Date();
+  it("[F7] settles a deleted learner's call at its deadline, keeping its cost on the connection", async () => {
     const { conversation, user } = await learner();
     const setup = await live(conversation.id);
 
@@ -702,8 +532,6 @@ describe("live calls", () => {
       state: "ended",
       userId: null,
     });
-
-    await expect(freeDaySpent(started)).resolves.toBe(getLiveCallCostMicros(TWO_MINUTES));
   });
 
   it("[1][2] settles a creation the server never finished, by estimate, at its deadline", async () => {
@@ -731,7 +559,7 @@ describe("live calls", () => {
   it("refuses a practice call's start while calls are paused, before writing it", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    await setAdmission("off");
+    vi.mocked(isLiveCallAvailable).mockReturnValue(false);
 
     await expect(
       startLanguageConversation({ chapterId: renting.id, kind: "practice", minutes: 2 }),
@@ -742,32 +570,12 @@ describe("live calls", () => {
     );
   });
 
-  it("[4] reads admission fresh at Connect and at the SDP step", async () => {
+  it("[4] pauses calls at Connect and at the SDP step without an OpenAI key", async () => {
     const { conversation } = await learner();
-
-    await setAdmission("off");
-    await expect(reserve(conversation.id)).resolves.toStrictEqual({ status: "callsPaused" });
-
-    await setAdmission("staff");
-    await expect(reserve(conversation.id)).resolves.toStrictEqual({ status: "callsPaused" });
-
-    const staff = await learner({ role: "admin" });
-    await expect(reserve(staff.conversation.id)).resolves.toMatchObject({ status: "ready" });
-
-    mockSession(conversation.userId);
-    await setAdmission("all");
     const setup = await reserved(conversation.id);
 
-    await setAdmission("off");
-    await expect(offer(setup, conversation.id)).resolves.toStrictEqual({ status: "callsPaused" });
-
-    await setAdmission("all");
     vi.mocked(isLiveCallAvailable).mockReturnValue(false);
     await expect(offer(setup, conversation.id)).resolves.toStrictEqual({ status: "callsPaused" });
-    await expect(reserve(conversation.id)).resolves.toStrictEqual({ status: "callsPaused" });
-
-    vi.mocked(isLiveCallAvailable).mockReturnValue(true);
-    await prisma.liveCallSetting.delete({ where: { id: "live" } });
     await expect(reserve(conversation.id)).resolves.toStrictEqual({ status: "callsPaused" });
 
     expect(createLiveCallSession).not.toHaveBeenCalled();

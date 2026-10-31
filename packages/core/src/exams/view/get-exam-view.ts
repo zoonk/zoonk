@@ -1,10 +1,10 @@
 import "server-only";
+import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getBaseLanguage } from "@zoonk/utils/languages";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAllowance } from "../../entitlements/get-allowance";
-import { readLiveCallAdmission } from "../../language/conversations/_utils/live-call-policy";
 import { loadSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speaking-setup";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
@@ -251,7 +251,6 @@ export async function getExamView({
     cutoff,
     noticeDates,
     speaking,
-    admission,
   ] = await Promise.all([
     loadMap({ blueprint, goalId, plan, structure, userId }),
     loadExamHistory({ goalId, today }),
@@ -271,7 +270,6 @@ export async function getExamView({
       access: includesMockExams ? "open" : "plusRequired",
       goal: { ...goal, examBlueprint: blueprint },
     }),
-    readLiveCallAdmission({ transaction: prisma, userId }),
   ]);
 
   const finalStretchStart = getFinalStretchStart(parsePlanPhases(plan?.phases));
@@ -313,7 +311,7 @@ export async function getExamView({
       sessionsDone: history.sessionsDone,
       speaking,
       speakingMock: getSpeakingMockExam(goal),
-      speakingMockPaused: getSpeakingMockExam(goal) !== null && admission === null,
+      speakingMockPaused: getSpeakingMockExam(goal) !== null && !isLiveCallAvailable(),
       stage: getExamStage({ examDays: toExamDates(calendar), finalStretchStart, today }),
       targetScore: readTargetScore(goal.details),
       timeZone: calendar.timeZone,

@@ -1,9 +1,8 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { getAllowance } from "../../entitlements/get-allowance";
 import { getSpeakingMockExam } from "../../exams/language-exam";
 import { readGoalDetails } from "../../language/_utils/language-goal";
-import { readLiveCallAdmission } from "../../language/conversations/_utils/live-call-policy";
 import { loadSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speaking-setup";
 import {
   getTargetLevel,
@@ -52,11 +51,10 @@ export async function getLanguageProgressView(
   const { goal, units, userId } = loaded.context;
   const details = readGoalDetails(goal);
 
-  const [levels, doneIds, allowance, admission] = await Promise.all([
+  const [levels, doneIds, allowance] = await Promise.all([
     loadLanguageSkillLevels({ details, language: goal.targetLanguage, userId }),
     loadDoneUnitIds({ units, userId }),
     getAllowance(),
-    readLiveCallAdmission({ transaction: prisma, userId }),
   ]);
 
   // An exam's speaking tasks come with Plus, like its mocks: free learners see them locked.
@@ -78,7 +76,7 @@ export async function getLanguageProgressView(
       levels,
       speaking,
       speakingMock: getSpeakingMockExam(goal),
-      speakingMockPaused: getSpeakingMockExam(goal) !== null && admission === null,
+      speakingMockPaused: getSpeakingMockExam(goal) !== null && !isLiveCallAvailable(),
       target: getTargetLevel(details),
     },
     status: "ready",

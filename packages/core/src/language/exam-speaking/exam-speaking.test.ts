@@ -14,7 +14,6 @@ import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import {
   cleanupTestCalls,
   connectTestCall,
-  setupTestCalls,
   testCallCompletionInput,
 } from "../../_test-utils/connect-test-call";
 import { freezeClock } from "../../_test-utils/frozen-clock";
@@ -201,7 +200,6 @@ describe("exam speaking tasks", () => {
   beforeEach(async () => {
     freezeClock();
     vi.setSystemTime(new Date("2026-10-13T12:00:00Z"));
-    await setupTestCalls();
 
     const photo = await sharp({
       create: { background: "#88aacc", channels: 3, height: 4, width: 6 },

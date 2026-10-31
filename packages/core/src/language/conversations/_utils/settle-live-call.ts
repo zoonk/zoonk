@@ -34,21 +34,12 @@ export async function settleLiveCall({
     return false;
   }
 
-  const delta = costMicros - connection.costMicros;
-
-  await Promise.all([
-    connection.freeSpendDay &&
-      delta !== 0 &&
-      transaction.freeCallSpendDay.update({
-        data: { spentMicros: { increment: delta } },
-        where: { day: connection.freeSpendDay },
-      }),
-    connection.userId &&
-      transaction.usageRecord.updateMany({
-        data: { costMicros, seconds: learnerSeconds },
-        where: { kind: "conversation", targetId: connection.id, userId: connection.userId },
-      }),
-  ]);
+  if (connection.userId) {
+    await transaction.usageRecord.updateMany({
+      data: { costMicros, seconds: learnerSeconds },
+      where: { kind: "conversation", targetId: connection.id, userId: connection.userId },
+    });
+  }
 
   return true;
 }

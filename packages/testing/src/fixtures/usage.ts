@@ -22,8 +22,8 @@ export async function resetGuestSpend() {
 }
 
 /**
- * E2E servers never resume a past server's runs, so a call one left open never ends and keeps
- * spending the day's shared free bucket (`claimFreeCallSpend` in core).
+ * E2E servers never resume a past server's runs, so a call one left open never ends: its learner's
+ * next call waits on it, and its clock keeps counting toward their monthly budget.
  */
 export async function clearLeftOpenLiveCalls() {
   await prisma.liveCallConnection.deleteMany({ where: { state: { not: "ended" } } });

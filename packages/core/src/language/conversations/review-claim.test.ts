@@ -9,7 +9,6 @@ import {
   cleanupTestCalls,
   connectTestCall,
   reserveTestCall,
-  setupTestCalls,
 } from "../../_test-utils/connect-test-call";
 import { mockSession } from "../../_test-utils/mock-session";
 import { reviewRunsInline } from "../../_test-utils/review-runs";
@@ -119,8 +118,6 @@ async function failSettling({ failures, userId }: { failures: number; userId: st
 
 describe("a completed call's review", () => {
   beforeEach(async () => {
-    await setupTestCalls();
-
     vi.mocked(checkConversationObjectives)
       .mockClear()
       .mockResolvedValue(

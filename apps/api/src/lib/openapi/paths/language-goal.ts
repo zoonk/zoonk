@@ -119,7 +119,7 @@ export const languageGoalPaths = {
     get: {
       ...common,
       description:
-        "A language goal's speaking practice: the speaking paper of the exam that certifies its target level (DELE, DELF, Goethe or Cambridge), its tasks with the criteria each is rated on, and the learner's last try at each. Each task is practiced as a call (POST /v1/language-conversations with `examSpeaking`), which needs Plus and live-call admission (`access`). `NOT_LANGUAGE` for other goals, whose exam page has their speaking paper; 404 when no exam's format fits the goal.",
+        "A language goal's speaking practice: the speaking paper of the exam that certifies its target level (DELE, DELF, Goethe or Cambridge), its tasks with the criteria each is rated on, and the learner's last try at each. Each task is practiced as a call (POST /v1/language-conversations with `examSpeaking`), which needs Plus while calls aren't paused (`access`). `NOT_LANGUAGE` for other goals, whose exam page has their speaking paper; 404 when no exam's format fits the goal.",
       operationId: "getSpeakingPaper",
       requestParams: { path: goalPathParamsSchema },
       responses: {

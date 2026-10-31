@@ -6,7 +6,7 @@ const config = createBaseConfig({
   webServerPort: process.env.MAIN_APP_URL ? Number(new URL(process.env.MAIN_APP_URL).port) : 0,
 });
 
-/** These cases change call admission, so they run after every other learner call. */
+/** A project of its own so CI runs it as its own job (`.github/workflows/e2e-main.yml`). */
 const playwrightConfig = {
   ...config,
   projects: [
@@ -15,7 +15,6 @@ const playwrightConfig = {
       testIgnore: "**/live-call-states.test.ts",
     })),
     {
-      dependencies: ["chromium"],
       name: "live-call-states",
       testMatch: "**/live-call-states.test.ts",
       use: config.projects?.[0]?.use,

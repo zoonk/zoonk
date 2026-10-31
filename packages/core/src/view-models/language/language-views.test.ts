@@ -6,8 +6,7 @@ import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { beforeAll, describe, expect, it } from "vitest";
-import { setupTestCalls } from "../../_test-utils/connect-test-call";
+import { describe, expect, it } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { getLanguageProgressView } from "./get-language-progress-view";
@@ -29,8 +28,6 @@ async function finishArriving({ items }: { items: { id: string }[] }) {
 }
 
 describe("language view models", () => {
-  beforeAll(setupTestCalls);
-
   it("shows levels since the level test and can-dos", async () => {
     const setup = await languageGoalFixture();
     const { goal, user } = setup;

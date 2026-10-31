@@ -7,10 +7,6 @@ import {
   isLiveCallAvailable,
 } from "@zoonk/ai/tasks/language/live-call-session";
 import {
-  liveCallAdmissionInputSchema,
-  liveCallAdmissionResponseSchema,
-} from "@zoonk/core/language/conversations/admission-contract";
-import {
   languageConversationSetupSchema,
   liveCallSdpResponseSchema,
 } from "@zoonk/core/language/conversations/contract";
@@ -20,7 +16,6 @@ import { headers } from "next/headers";
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
-import { GET as readAdmission, POST as updateAdmission } from "../../../live-calls/admission/route";
 import { POST as end } from "./[connectionId]/end/route";
 import { POST as redeem } from "./[connectionId]/sdp/route";
 import { POST as reserve } from "./route";
@@ -73,7 +68,7 @@ async function setupOf(responsePromise: Promise<Response>) {
 }
 
 describe("Live-call API adapters with real core and PostgreSQL", () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.mocked(isLiveCallAvailable).mockReturnValue(true);
 
     vi.mocked(createLiveCallSession).mockImplementation(async () => ({
@@ -82,12 +77,6 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     }));
 
     vi.mocked(hangUpLiveCallSession).mockReset();
-
-    await prisma.liveCallSetting.upsert({
-      create: { admission: "all", freeDailyBudgetMicros: 100_000_000, id: "live" },
-      update: { admission: "all", freeDailyBudgetMicros: 100_000_000 },
-      where: { id: "live" },
-    });
   });
 
   it("reserves without spend, starts the deadline run, then redeems and ends once", async () => {
@@ -228,45 +217,5 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     ).resolves.toBe(401);
 
     expect(createLiveCallSession).not.toHaveBeenCalled();
-  });
-
-  it("authorizes every admin operation and lists open connections with their exposure, without spend", async () => {
-    vi.mocked(headers).mockResolvedValue(new Headers());
-    const input = { admission: "all", freeDailyBudgetMicros: 100_000_000 };
-    await expect(statusOf(readAdmission())).resolves.toBe(401);
-
-    await expect(
-      statusOf(updateAdmission(request("/v1/live-calls/admission", input))),
-    ).resolves.toBe(401);
-
-    await authenticatedCallFixture();
-    await expect(statusOf(readAdmission())).resolves.toBe(403);
-
-    await expect(
-      statusOf(updateAdmission(request("/v1/live-calls/admission", input))),
-    ).resolves.toBe(403);
-
-    const { conversationId } = await authenticatedCallFixture("admin");
-    const saved = await updateAdmission(request("/v1/live-calls/admission", input));
-    expect(saved.status).toBe(200);
-    expect(liveCallAdmissionInputSchema.parse(await saved.json())).toStrictEqual(input);
-
-    const setup = await setupOf(reserveCall(conversationId));
-    await expect(statusOf(redeemCall(conversationId, setup.connectionId))).resolves.toBe(201);
-    vi.mocked(createLiveCallSession).mockClear();
-
-    const read = await readAdmission();
-    expect(read.headers.get("Cache-Control")).toBe("no-store");
-
-    expect(liveCallAdmissionResponseSchema.parse(await read.json())).toMatchObject({
-      connections: expect.arrayContaining([
-        expect.objectContaining({ id: setup.connectionId, overdue: false, state: "live" }),
-      ]),
-      providerAvailable: true,
-      setting: input,
-    });
-
-    expect(createLiveCallSession).not.toHaveBeenCalled();
-    expect(hangUpLiveCallSession).not.toHaveBeenCalled();
   });
 });

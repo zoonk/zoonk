@@ -4992,7 +4992,7 @@
         "tags": [
           "Language"
         ],
-        "description": "A language goal's speaking practice: the speaking paper of the exam that certifies its target level (DELE, DELF, Goethe or Cambridge), its tasks with the criteria each is rated on, and the learner's last try at each. Each task is practiced as a call (POST /v1/language-conversations with `examSpeaking`), which needs Plus and live-call admission (`access`). `NOT_LANGUAGE` for other goals, whose exam page has their speaking paper; 404 when no exam's format fits the goal.",
+        "description": "A language goal's speaking practice: the speaking paper of the exam that certifies its target level (DELE, DELF, Goethe or Cambridge), its tasks with the criteria each is rated on, and the learner's last try at each. Each task is practiced as a call (POST /v1/language-conversations with `examSpeaking`), which needs Plus while calls aren't paused (`access`). `NOT_LANGUAGE` for other goals, whose exam page has their speaking paper; 404 when no exam's format fits the goal.",
         "operationId": "getSpeakingPaper",
         "summary": "Get a language goal's speaking practice",
         "parameters": [
@@ -6414,7 +6414,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Reserves one live-call connection after fresh authorization, admission and Plus checks. Holds the learner's call time and its cost, and starts the run that hangs the call up at deadlineAt (the reservation plus the time held, with no grace) before returning. No provider session or credential is created here. POST the browser's SDP offer to sessionUrl within a minute; its server owns the model, instructions, voice and event permissions. `seconds` is the time left when the server answered: end the call that long after the answer arrives. The learner's open connection ends first: a reservation always, a live connection of the same call as a reconnect (charged up to that moment), and another call's only with takeover. A session still being created or a hangup OpenAI didn't confirm answers PREVIOUS_CONNECTION_CLOSING. Practice can start over; checkpoint reconnects share the original deadline. Calls may be shortened by the day/month allowance. Dollar budgets and a daily connection cap also apply.",
+        "description": "Reserves one live-call connection after fresh authorization and Plus checks. Holds the learner's call time and its cost, and starts the run that hangs the call up at deadlineAt (the reservation plus the time held, with no grace) before returning. No provider session or credential is created here. POST the browser's SDP offer to sessionUrl within a minute; its server owns the model, instructions, voice and event permissions. `seconds` is the time left when the server answered: end the call that long after the answer arrives. The learner's open connection ends first: a reservation always, a live connection of the same call as a reconnect (charged up to that moment), and another call's only with takeover. A session still being created or a hangup OpenAI didn't confirm answers PREVIOUS_CONNECTION_CLOSING. Practice can start over; checkpoint reconnects share the original deadline. Calls may be shortened by the day/month allowance. The learner's monthly dollar budget and daily connection cap also apply.",
         "operationId": "connectLanguageConversation",
         "summary": "Reserve a live conversation connection",
         "parameters": [
@@ -6684,7 +6684,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Redeems the owned reservation once, within a minute of reserving it, for a server-created GPT-Live WebRTC session. Rechecks admission and Plus. A reservation past its minute, or one a newer start ended, returns CONNECTION_EXPIRED. Browser sessionConfig is ignored. An offer without the lines of a WebRTC audio offer is refused (400) before any provider work. When creation fails (CALL_RETRYABLE), the reservation ends: reserve again. A session that's no longer wanted when it exists (the call was ended, replaced or completed meanwhile) is hung up at once. Apply the returned SDP answer to the peer; do not send session.start. Audio uses WebRTC media tracks; the call's end shows as the data channel closing. No provider key or token is returned.",
+        "description": "Redeems the owned reservation once, within a minute of reserving it, for a server-created GPT-Live WebRTC session. Rechecks Plus and that calls aren't paused. A reservation past its minute, or one a newer start ended, returns CONNECTION_EXPIRED. Browser sessionConfig is ignored. An offer without the lines of a WebRTC audio offer is refused (400) before any provider work. When creation fails (CALL_RETRYABLE), the reservation ends: reserve again. A session that's no longer wanted when it exists (the call was ended, replaced or completed meanwhile) is hung up at once. Apply the returned SDP answer to the peer; do not send session.start. Audio uses WebRTC media tracks; the call's end shows as the data channel closing. No provider key or token is returned.",
         "operationId": "redeemLanguageConversationSdp",
         "summary": "Exchange a live conversation SDP offer",
         "parameters": [
@@ -6900,154 +6900,6 @@
           },
           "409": {
             "description": "Conflict",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "The request is valid but cannot be applied to the resource",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/live-calls/admission": {
-      "get": {
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "tags": [
-          "Language"
-        ],
-        "description": "Admins only. Reads admission mode, the free-day dollar cap in micros, and up to 100 connections still open, oldest deadline first, each with its exposure (what it may have cost so far: its reservation or its clock, whichever is more) and overdue (open more than a minute past its deadline, which shows a hangup failing). providerAvailable checks only the API deployment's OpenAI key presence; this GET starts no model, provider session or Workflow. All dates are ISO strings. Missing settings default to off.",
-        "operationId": "getLiveCallAdmission",
-        "summary": "Read live-call admission (admins)",
-        "responses": {
-          "200": {
-            "description": "Admission and unresolved connections",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LiveCallAdmissionResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Request forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "tags": [
-          "Language"
-        ],
-        "description": "Admins only. Sets fresh live-call admission (off/staff/all) and the free accounts' shared UTC-day dollar cap in integer micros. Changing the mode affects the next reserve and SDP redemption without a redeploy; with off, calls already live end by their deadline. Staff admits admins only. This request starts no provider work.",
-        "operationId": "updateLiveCallAdmission",
-        "summary": "Update live-call admission (admins)",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LiveCallAdmissionInput"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "The saved admission setting",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LiveCallAdmissionInput"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Request forbidden",
             "content": {
               "application/json": {
                 "schema": {
@@ -24590,29 +24442,6 @@
         ],
         "additionalProperties": false
       },
-      "LiveCallAdmissionInput": {
-        "type": "object",
-        "properties": {
-          "admission": {
-            "type": "string",
-            "enum": [
-              "off",
-              "staff",
-              "all"
-            ]
-          },
-          "freeDailyBudgetMicros": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 2000000000
-          }
-        },
-        "required": [
-          "admission",
-          "freeDailyBudgetMicros"
-        ],
-        "additionalProperties": false
-      },
       "PronunciationAnswerRequest": {
         "type": "object",
         "properties": {
@@ -35857,7 +35686,7 @@
               "plusRequired",
               "callsPaused"
             ],
-            "description": "Speaking tasks require Plus and live-call admission"
+            "description": "Speaking tasks require Plus; calls are paused while the server can't make them"
           },
           "minutes": {
             "type": "object",
@@ -39599,128 +39428,6 @@
         },
         "required": [
           "objectivesMet"
-        ],
-        "additionalProperties": false
-      },
-      "LiveCallAdmissionResponse": {
-        "type": "object",
-        "properties": {
-          "connections": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LiveCallAdminConnection"
-            }
-          },
-          "providerAvailable": {
-            "type": "boolean"
-          },
-          "setting": {
-            "$ref": "#/components/schemas/LiveCallAdmissionInput"
-          }
-        },
-        "required": [
-          "connections",
-          "providerAvailable",
-          "setting"
-        ],
-        "additionalProperties": false
-      },
-      "LiveCallAdminConnection": {
-        "type": "object",
-        "properties": {
-          "conversationId": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "costMicros": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "What the connection reserved"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
-          "deadlineAt": {
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
-          "endReason": {
-            "nullable": true,
-            "type": "string",
-            "enum": [
-              "learner",
-              "deadline",
-              "reconnect",
-              "takeover",
-              "completion",
-              "refused",
-              "failed"
-            ]
-          },
-          "exposureMicros": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "What it may have cost so far: its reservation or its clock, whichever is more"
-          },
-          "heldSeconds": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "overdue": {
-            "type": "boolean",
-            "description": "Open more than a minute past its deadline"
-          },
-          "providerSessionId": {
-            "nullable": true,
-            "type": "string"
-          },
-          "startedAt": {
-            "nullable": true,
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
-          "state": {
-            "type": "string",
-            "enum": [
-              "reserved",
-              "starting",
-              "live",
-              "ended"
-            ]
-          },
-          "userId": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          }
-        },
-        "required": [
-          "conversationId",
-          "costMicros",
-          "createdAt",
-          "deadlineAt",
-          "endReason",
-          "exposureMicros",
-          "heldSeconds",
-          "id",
-          "overdue",
-          "providerSessionId",
-          "startedAt",
-          "state",
-          "userId"
         ],
         "additionalProperties": false
       },

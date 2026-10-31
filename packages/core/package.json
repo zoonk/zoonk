@@ -154,8 +154,6 @@
     "./language/activities": "./src/language/activities/language-activities.ts",
     "./language/activities/skipped": "./src/language/activities/skipped-activities.ts",
     "./language/alphabet/skip": "./src/language/alphabet/skip-alphabet-intro.ts",
-    "./language/conversations/admission": "./src/language/conversations/live-call-admission.ts",
-    "./language/conversations/admission-contract": "./src/language/conversations/live-call-admission-contract.ts",
     "./language/conversations/call-writing": "./src/language/conversations/call-writing-contract.ts",
     "./language/conversations/claim-review": "./src/language/conversations/claim-conversation-review.ts",
     "./language/conversations/check-objectives": "./src/language/conversations/check-language-conversation-objectives.ts",

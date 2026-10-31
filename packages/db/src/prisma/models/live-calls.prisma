@@ -1,9 +1,3 @@
-enum LiveCallAdmission {
-  off
-  staff
-  all
-}
-
 enum LiveCallState {
   reserved
   starting
@@ -21,24 +15,6 @@ enum LiveCallEndReason {
   failed
 }
 
-model LiveCallSetting {
-  id                    String            @id
-  admission             LiveCallAdmission @default(off)
-  freeDailyBudgetMicros Int               @default(0) @map("free_daily_budget_micros")
-  createdAt             DateTime          @default(now()) @map("created_at")
-  updatedAt             DateTime          @default(now()) @updatedAt @map("updated_at")
-
-  @@map("live_call_settings")
-}
-
-/// Reservations and settlements stay on the original day, even when a call ends after midnight.
-model FreeCallSpendDay {
-  day         DateTime @id @db.Date
-  spentMicros Int      @default(0) @map("spent_micros")
-
-  @@map("free_call_spend_days")
-}
-
 /// `costMicros` is the reservation while open and the settled cost once ended. It lives here, not on
 /// the learner's usage record, which cascades with their account; the provider's bill doesn't.
 model LiveCallConnection {
@@ -49,8 +25,6 @@ model LiveCallConnection {
   state             LiveCallState      @default(reserved)
   heldSeconds       Int                @map("held_seconds")
   costMicros        Int                @map("cost_micros")
-  /// Null when the call wasn't on the free plan.
-  freeSpendDay      DateTime?          @map("free_spend_day") @db.Date
   deadlineAt        DateTime           @map("deadline_at")
   providerSessionId String?            @unique @map("provider_session_id")
   /// When the creation request left, since the provider's clock starts there.
@@ -65,7 +39,6 @@ model LiveCallConnection {
   @@index([userId, createdAt])
   @@index([userId, state])
   @@index([conversationId, createdAt])
-  @@index([freeSpendDay, state])
   @@index([state, deadlineAt])
   @@map("live_call_connections")
 }

@@ -1,6 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
-import { readLiveCallAdmission } from "../../language/conversations/_utils/live-call-policy";
+import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { type PreparingCall } from "../../language/conversations/call-writing-contract";
 import {
   findExamSpeakingSetup,
@@ -47,7 +46,7 @@ export async function startMockSpeaking({
     return { status: "plusRequired" };
   }
 
-  if ((await readLiveCallAdmission({ transaction: prisma, userId })) === null) {
+  if (!isLiveCallAvailable()) {
     return { status: "callsPaused" };
   }
 

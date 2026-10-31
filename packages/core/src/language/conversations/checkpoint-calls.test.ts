@@ -17,7 +17,6 @@ import {
   cleanupTestCalls,
   connectTestCall,
   reserveTestCall,
-  setupTestCalls,
 } from "../../_test-utils/connect-test-call";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
@@ -124,7 +123,6 @@ describe("language checkpoint calls", () => {
   beforeEach(async () => {
     freezeClock();
     vi.setSystemTime(new Date("2026-10-13T12:00:00Z"));
-    await setupTestCalls();
 
     vi.mocked(generateConversationScenario).mockResolvedValue({
       data: B1_SCENARIO,

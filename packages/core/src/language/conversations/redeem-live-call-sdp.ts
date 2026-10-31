@@ -3,6 +3,7 @@ import { LiveCallCreationRefusedError } from "@zoonk/ai/tasks/language/live-call
 import {
   createLiveCallSession,
   hangUpLiveCallSession,
+  isLiveCallAvailable,
 } from "@zoonk/ai/tasks/language/live-call-session";
 import { getLiveConversationVoice } from "@zoonk/ai/tasks/language/live-conversation-models";
 import { type LiveCallConnection, prisma } from "@zoonk/db";
@@ -10,7 +11,6 @@ import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getAllowanceCacheTag } from "../../cache/tags";
 import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
-import { lockFreeCallDay } from "../../entitlements/_utils/free-call-spend";
 import { refreshLiveCallViewer } from "../../entitlements/_utils/live-call-viewer";
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { getLiveCallCostMicros } from "../../entitlements/limits";
@@ -18,7 +18,6 @@ import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learne
 import { buildConversationInstructions } from "./_utils/conversation-view";
 import { getEndingCharge, isWithinConnectWindow } from "./_utils/live-call-money";
 import { isPlusOnlyLiveCall } from "./_utils/live-call-plus";
-import { readLiveCallAdmission } from "./_utils/live-call-policy";
 import { settleLiveCall } from "./_utils/settle-live-call";
 import { type LiveCallSdpInput } from "./conversation-contract";
 import { endLiveCall } from "./end-live-call";
@@ -110,12 +109,8 @@ async function prepareCreation({
       return unchanged({ status: "plusRequired" as const });
     }
 
-    if ((await readLiveCallAdmission({ transaction, userId })) === null) {
+    if (!isLiveCallAvailable()) {
       return unchanged({ status: "callsPaused" as const });
-    }
-
-    if (connection.freeSpendDay && connection.state === "reserved") {
-      await lockFreeCallDay({ day: connection.freeSpendDay, transaction });
     }
 
     const lockedAt = new Date();

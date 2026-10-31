@@ -5,14 +5,6 @@ import { redeemLiveCallSdp } from "../language/conversations/redeem-live-call-sd
 const ownedConversationIds = new Set<string>();
 const originatingConnectionIds = new Map<string, string>();
 
-export async function setupTestCalls() {
-  await prisma.liveCallSetting.upsert({
-    create: { admission: "all", freeDailyBudgetMicros: 150_000_000, id: "live" },
-    update: { admission: "all", freeDailyBudgetMicros: 150_000_000 },
-    where: { id: "live" },
-  });
-}
-
 export async function reserveTestCall(conversationId: string) {
   ownedConversationIds.add(conversationId);
 

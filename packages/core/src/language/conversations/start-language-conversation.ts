@@ -1,4 +1,5 @@
 import "server-only";
+import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { prisma } from "@zoonk/db";
 import { type AllowanceLimit } from "../../entitlements/contract";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
@@ -18,7 +19,6 @@ import {
 import { getSpeakingLevel } from "./_utils/conversation-goal";
 import { findUnitScenario, toScenarioUnit } from "./_utils/conversation-scenario";
 import { createConversation } from "./_utils/create-conversation";
-import { readLiveCallAdmission } from "./_utils/live-call-policy";
 import { findSpeakingMockSetup, findWaitingSpeakingMock } from "./_utils/speaking-mock";
 import { type PreparingCall } from "./call-writing-contract";
 import {
@@ -64,7 +64,7 @@ async function startPractice({
     return { status: "notLanguage" };
   }
 
-  if ((await readLiveCallAdmission({ transaction: prisma, userId })) === null) {
+  if (!isLiveCallAvailable()) {
     return { status: "callsPaused" };
   }
 
@@ -180,7 +180,7 @@ async function startSpeakingMock({
     return { status: "notLanguage" };
   }
 
-  if ((await readLiveCallAdmission({ transaction: prisma, userId })) === null) {
+  if (!isLiveCallAvailable()) {
     return { status: "callsPaused" };
   }
 

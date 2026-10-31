@@ -4,7 +4,6 @@ import {
   getEndingCharge,
 } from "../../language/conversations/_utils/live-call-money";
 import { isPlusOnlyLiveCall } from "../../language/conversations/_utils/live-call-plus";
-import { readLiveCallAdmission } from "../../language/conversations/_utils/live-call-policy";
 import { settleLiveCall } from "../../language/conversations/_utils/settle-live-call";
 import {
   type LiveCallRefusal,
@@ -17,12 +16,11 @@ import {
 } from "../limits";
 import { claimUsageInTransaction } from "./claim-usage-in-transaction";
 import { type EntitlementViewer } from "./entitlement-viewer";
-import { claimFreeCallSpend } from "./free-call-spend";
 import { getUsagePeriodStarts } from "./usage-periods";
 
 const MS_PER_SECOND = 1000;
 
-/** Must escape the transaction so a refused reservation rolls back its minute and free-day claims. */
+/** Must escape the transaction so a refused reservation rolls back its claimed call time. */
 export class LiveCallReservationRefusedError extends Error {
   readonly result: LiveCallRefusal;
   constructor(result: LiveCallRefusal) {
@@ -161,12 +159,6 @@ export async function reserveLiveCall({
     return { status: "plusRequired" };
   }
 
-  const budget = await readLiveCallAdmission({ transaction, userId: viewer.userId });
-
-  if (budget === null) {
-    return { status: "callsPaused" };
-  }
-
   const open = await clearOpenConnection({
     conversationId,
     now,
@@ -192,18 +184,16 @@ export async function reserveLiveCall({
     return { status: "conversationEnded" };
   }
 
-  return holdCallTime({ budget, conversation, now, seconds, transaction, viewer });
+  return holdCallTime({ conversation, now, seconds, transaction, viewer });
 }
 
 async function holdCallTime({
-  budget,
   conversation,
   now,
   seconds,
   transaction,
   viewer,
 }: {
-  budget: number;
   conversation: LanguageConversation;
   now: Date;
   seconds: number;
@@ -246,24 +236,6 @@ async function holdCallTime({
     });
   }
 
-  const freeSpendDay = viewer.tier === "free" ? getUsagePeriodStarts(now).day : null;
-
-  if (
-    freeSpendDay &&
-    !(await claimFreeCallSpend({
-      budgetMicros: budget,
-      costMicros,
-      day: freeSpendDay,
-      now,
-      transaction,
-    }))
-  ) {
-    throw new LiveCallReservationRefusedError({
-      limit: { limit: budget, period: "day", resource: "aiSpend", tier: viewer.tier },
-      status: "limitReached",
-    });
-  }
-
   const [connection] = await Promise.all([
     transaction.liveCallConnection.create({
       data: {
@@ -271,7 +243,6 @@ async function holdCallTime({
         costMicros,
         createdAt: now,
         deadlineAt: new Date(now.getTime() + heldSeconds * MS_PER_SECOND),
-        freeSpendDay,
         heldSeconds,
         id,
         userId: viewer.userId,

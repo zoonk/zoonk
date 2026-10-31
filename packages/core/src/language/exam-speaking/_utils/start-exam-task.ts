@@ -1,9 +1,9 @@
 import "server-only";
+import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type AllowanceLimit } from "../../../entitlements/contract";
 import { saveDayBeforeActivity } from "../../../sessions/ensure-study-session";
-import { readLiveCallAdmission } from "../../conversations/_utils/live-call-policy";
 import { type PreparingCall } from "../../conversations/call-writing-contract";
 import { type SpeakingFormat, type SpeakingTaskFormat } from "../speaking-format";
 import { getSpeakingTask } from "../speaking-formats";
@@ -87,7 +87,7 @@ export async function startExamTask({
     return { status: "plusRequired" };
   }
 
-  if ((await readLiveCallAdmission({ transaction: prisma, userId })) === null) {
+  if (!isLiveCallAvailable()) {
     return { status: "callsPaused" };
   }
 

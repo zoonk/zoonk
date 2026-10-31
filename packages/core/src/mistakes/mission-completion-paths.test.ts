@@ -18,7 +18,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   cleanupTestCalls,
   connectTestCall,
-  setupTestCalls,
   testCallCompletionInput,
 } from "../_test-utils/connect-test-call";
 import { reviewRunsInline } from "../_test-utils/review-runs";
@@ -134,7 +133,6 @@ async function interruptMissionPayout({
 
 describe("missions completed outside a study block", () => {
   beforeEach(async () => {
-    await setupTestCalls();
     vi.useFakeTimers({ now: NOW, toFake: ["Date"] });
     vi.mocked(headers).mockResolvedValue(new Headers());
   });

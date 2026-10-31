@@ -4,15 +4,12 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { setupTestCalls } from "../../_test-utils/connect-test-call";
+import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getLanguageProgressView } from "../../view-models/language/get-language-progress-view";
 import { getSpeakingPaper } from "./get-speaking-paper";
 
 describe("the speaking paper read", () => {
-  beforeEach(setupTestCalls);
-
   it("requires a session and hides another learner's goal", async () => {
     mockSession(null);
 

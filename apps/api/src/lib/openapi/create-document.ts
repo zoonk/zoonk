@@ -35,7 +35,6 @@ import { learnerSummaryPaths } from "./paths/learner-summary";
 import { lessonQuestionPaths } from "./paths/lesson-questions";
 import { lessonRegenerationPaths } from "./paths/lesson-regenerations";
 import { libraryLessonPaths } from "./paths/library-lessons";
-import { liveCallAdminPaths } from "./paths/live-calls";
 import { memoryPaths } from "./paths/memory";
 import { milestonePaths } from "./paths/milestones";
 import { mindMapPaths } from "./paths/mind-maps";
@@ -110,7 +109,6 @@ const paths = withInternalErrorResponses({
   ...languagePaths,
   ...languageGoalPaths,
   ...languageConversationPaths,
-  ...liveCallAdminPaths,
   ...pronunciationPaths,
   ...speechClipPaths,
   ...learnerProfilePaths,

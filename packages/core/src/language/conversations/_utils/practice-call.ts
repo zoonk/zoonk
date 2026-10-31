@@ -1,4 +1,5 @@
 import "server-only";
+import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { prisma } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import { getEntitlementViewer } from "../../../entitlements/_utils/entitlement-viewer";
@@ -6,7 +7,6 @@ import { getCallTimeLeft } from "../../../entitlements/_utils/evaluate-usage";
 import { sumCallSeconds } from "../../../entitlements/_utils/usage-counts";
 import { type PracticeCallLengths, toPracticeCallLengths } from "./call-lengths";
 import { findUnitScenario } from "./conversation-scenario";
-import { readLiveCallAdmission } from "./live-call-policy";
 
 async function findCharacter(where: { chapterId: string; level: CefrLevel }) {
   const scenario = await findUnitScenario(where);
@@ -21,10 +21,7 @@ async function loadCallLengths(): Promise<PracticeCallLengths & { paused: boolea
     return { ...toPracticeCallLengths({ left: null, tier }), paused: false };
   }
 
-  const [used, admission] = await Promise.all([
-    sumCallSeconds({ client: prisma, now: new Date(), userId: viewer.userId }),
-    readLiveCallAdmission({ transaction: prisma, userId: viewer.userId }),
-  ]);
+  const used = await sumCallSeconds({ client: prisma, now: new Date(), userId: viewer.userId });
 
   const left = getCallTimeLeft({
     kind: "conversation",
@@ -33,7 +30,7 @@ async function loadCallLengths(): Promise<PracticeCallLengths & { paused: boolea
     usedToday: used.today,
   });
 
-  return { ...toPracticeCallLengths({ left, tier }), paused: admission === null };
+  return { ...toPracticeCallLengths({ left, tier }), paused: !isLiveCallAvailable() };
 }
 
 export async function loadPracticeCall({
