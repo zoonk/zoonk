@@ -64,6 +64,8 @@ fun GenerationWait(
     run: GenerationRun,
     onRetry: (() -> Unit)?,
     modifier: Modifier = Modifier,
+    /** When the wait began ([System.currentTimeMillis]), so a screen that takes over another's wait goes on from its bar. */
+    since: Long? = null,
     header: @Composable ColumnScope.() -> Unit = {},
 ) {
     val progress = kind.progress(run)
@@ -80,7 +82,7 @@ fun GenerationWait(
             } else {
                 WaitProgress(
                     name = stringResource(kind.label),
-                    share = driftedShare(progress.share, progress.target, progress.activeMillis, following, now),
+                    share = driftedShare(progress.share, progress.target, progress.activeMillis, following, now, since),
                 )
             }
         }
@@ -326,8 +328,9 @@ private fun driftedShare(
     activeMillis: Long?,
     following: Boolean,
     now: Long,
+    since: Long?,
 ): Float {
-    val drift = remember { Drift(shown = share, base = share, startedAt = now, share = share, target = target) }
+    val drift = remember { Drift(shown = share, base = share, startedAt = since ?: now, share = share, target = target) }
     if (share != drift.share || target != drift.target) {
         drift.base = if (share < drift.share) share else maxOf(drift.shown, share)
         drift.startedAt = now

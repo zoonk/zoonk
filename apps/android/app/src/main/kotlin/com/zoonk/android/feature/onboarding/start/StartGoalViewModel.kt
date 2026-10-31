@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.serialization.saved
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationFollower
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
@@ -56,6 +57,8 @@ data class StartFlowState(
     val words: String = "",
     val attached: List<AttachedSource> = emptyList(),
     val intent: MaterialIntent? = null,
+    /** When the wait for the draft's read began on this device: its send, a Try again that starts it over or the screen opening on it. */
+    val waitStartedAt: Long? = null,
 )
 
 enum class WaitlistOutcome { Joined, SignInRequired, Failed }
@@ -72,6 +75,7 @@ class StartGoalViewModel(
         StartFlowState(
             screen = draftId?.let(StartScreen::Draft) ?: StartScreen.Entry,
             words = goal.orEmpty(),
+            waitStartedAt = draftId?.let { System.currentTimeMillis() },
         )
     }
 
@@ -241,7 +245,7 @@ class StartGoalViewModel(
         isSending = true
         draftId?.let(store::forgetSent)
         entryError = null
-        update { it.copy(screen = StartScreen.Sending(goal)) }
+        update { it.copy(screen = StartScreen.Sending(goal), waitStartedAt = System.currentTimeMillis()) }
         viewModelScope.launch {
             val outcome = store.sendGoal(goal, language)
             isSending = false
@@ -283,6 +287,7 @@ class StartGoalViewModel(
     fun retryRead() {
         val id = draftId ?: return
         if (isRetrying) return
+        startWaitAgain()
         isRetrying = true
         viewModelScope.launch {
             when (val outcome = store.readAgain(id)) {
@@ -298,6 +303,12 @@ class StartGoalViewModel(
             }
             isRetrying = false
         }
+    }
+
+    /** A run started again is a new wait; one whose connection dropped goes on from its bar. */
+    fun retryRun() {
+        if (follower.run.value.failure != GenerationFailure.Connection) startWaitAgain()
+        follower.retry()
     }
 
     fun reloadRead() {
@@ -476,6 +487,8 @@ class StartGoalViewModel(
     override fun onCleared() {
         draftId?.let(store::forgetSent)
     }
+
+    private fun startWaitAgain() = update { it.copy(waitStartedAt = System.currentTimeMillis()) }
 
     private fun update(transform: (StartFlowState) -> StartFlowState) {
         flow = transform(flow)

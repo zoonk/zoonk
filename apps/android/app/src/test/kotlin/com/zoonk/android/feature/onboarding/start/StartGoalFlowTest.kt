@@ -1,12 +1,17 @@
 package com.zoonk.android.feature.onboarding.start
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -35,6 +40,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -58,12 +64,14 @@ class StartGoalFlowTest {
     private fun show(
         route: AppRoute.StartGoal = AppRoute.StartGoal(),
         hasSession: Boolean = true,
+        restoration: StateRestorationTester? = null,
     ) {
         sessionKey = if (hasSession) "local-a" else null
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a").takeIf { hasSession })
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
-        rule.setContent {
+        val setContent: (@Composable () -> Unit) -> Unit = restoration?.let { it::setContent } ?: rule::setContent
+        setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
                 StartGoalScreen(route, store, cache.noAllowance(), sessionKey = sessionKey, canAttach = sessionKey != null, navigator)
@@ -125,6 +133,88 @@ class StartGoalFlowTest {
         rule.onNodeWithText("What do you want to achieve?").assertIsDisplayed()
         rule.onNode(hasSetTextAction() and hasText("stuff")).assertIsDisplayed()
     }
+
+    @Test
+    fun theReadingsBarGoesOnFromWhereTheSendLeftItWhenTheDraftArrives() {
+        val sent = CompletableDeferred<Unit>()
+        api.understandGate = sent
+        api.understood = { readingDraft(prompt = it) }
+        show()
+        sendGoal("pass the bar exam")
+
+        assertTheBarGoesOnOnceTheRunIsFollowed(released = sent)
+    }
+
+    @Test
+    fun theReadingsBarGoesOnFromWhereTryAgainLeftItWhenTheReadStarts() {
+        val readAgain = CompletableDeferred<Unit>()
+        api.draft = failedDraft()
+        api.readAgainGate = readAgain
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        api.draft = readingDraft()
+        rule.onNodeWithText("Try again").performClick()
+
+        assertTheBarGoesOnOnceTheRunIsFollowed(released = readAgain)
+    }
+
+    @Test
+    fun aDraftOpenedOnItsReadKeepsItsBarThroughRecreation() {
+        api.draft = readingDraft()
+        val restoration = StateRestorationTester(rule)
+        show(AppRoute.StartGoal(draftId = DRAFT_ID), restoration = restoration)
+        val before = barAfterHalfASecond()
+
+        restoration.emulateSavedInstanceStateRestore()
+
+        val after = shownProgress()
+        assertTrue("The bar went back from $before to $after", after >= before)
+    }
+
+    @Test
+    fun aReadStartedAgainAfterItStoppedIsANewWait() {
+        val events = MutableSharedFlow<GenerationEvent>(replay = 1)
+        api.events = events
+        api.understood = { readingDraft(prompt = it) }
+        show()
+        sendGoal("pass the bar exam")
+        barAfterHalfASecond()
+        events.tryEmit(GenerationEvent(status = "error", step = "workflowError"))
+        rule.onNodeWithText("This didn't finish").assertIsDisplayed()
+
+        api.events = flowOf()
+        api.draft = readingDraft(generationId = "run-2")
+        rule.onNodeWithText("Try again").performClick()
+
+        val restarted = shownProgress()
+        assertTrue("A new wait should start its bar, not $restarted", restarted < 0.05f)
+    }
+
+    /** The wait shown before [released] completes gives way to the run's own, whose bar never goes back. */
+    private fun assertTheBarGoesOnOnceTheRunIsFollowed(released: CompletableDeferred<Unit>) {
+        val before = barAfterHalfASecond()
+
+        released.complete(Unit)
+        rule.waitForIdle()
+
+        assertTrue(api.generationSessions.isNotEmpty())
+        val after = shownProgress()
+        assertTrue("The bar went back from $before to $after", after >= before)
+    }
+
+    private fun barAfterHalfASecond(): Float {
+        rule.waitForIdle()
+        // The bar drifts on the device's clock, which the test clock doesn't move.
+        Thread.sleep(500)
+        rule.mainClock.advanceTimeBy(1_000)
+        return shownProgress().also { assertTrue("Half a second of the read should move the bar, not $it", it > 0.05f) }
+    }
+
+    private fun shownProgress() =
+        rule
+            .onNode(hasContentDescription("Reading your goal") and SemanticsMatcher.keyIsDefined(SemanticsProperties.ProgressBarRangeInfo))
+            .fetchSemanticsNode()
+            .config[SemanticsProperties.ProgressBarRangeInfo]
+            .current
 
     @Test
     fun aDraftFromALinkIsOnlyReadNeverSent() {

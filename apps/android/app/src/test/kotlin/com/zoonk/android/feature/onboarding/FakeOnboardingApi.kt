@@ -171,6 +171,9 @@ internal class FakeOnboardingApi : OnboardingApi {
     val revisions = mutableListOf<OnboardingDraftEdit>()
     val sessions = mutableListOf<AuthenticatedSession>()
 
+    /** Holds a goal's send until it completes. */
+    var understandGate: CompletableDeferred<Unit>? = null
+
     override suspend fun understand(
         session: AuthenticatedSession,
         goal: String,
@@ -178,6 +181,7 @@ internal class FakeOnboardingApi : OnboardingApi {
     ): OnboardingDraft {
         sessions += session
         understandCalls += goal to language
+        understandGate?.await()
         refusal?.let { throw it }
         return understood(goal)
     }

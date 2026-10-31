@@ -180,7 +180,7 @@ fun StartGoalScreen(
                     }
 
                     screen is StartScreen.Sending -> {
-                        UnderstandingWait(screen.goal, GenerationRun(), onRetry = null)
+                        UnderstandingWait(screen.goal, GenerationRun(), onRetry = null, since = vm.flow.waitStartedAt)
                     }
 
                     screen is StartScreen.Draft -> {
@@ -285,9 +285,10 @@ private fun ColumnScope.UnderstandingWait(
     goal: String?,
     run: GenerationRun,
     onRetry: (() -> Unit)?,
+    since: Long? = null,
 ) {
     goal?.let { TypedGoal(it) }
-    GenerationWait(kind = GenerationKind.Understanding, run = run, onRetry = onRetry) {
+    GenerationWait(kind = GenerationKind.Understanding, run = run, onRetry = onRetry, since = since) {
         OnboardingHeading(
             stringResource(R.string.onboarding_understanding_title),
             stringResource(R.string.onboarding_understanding_description),
@@ -328,7 +329,7 @@ private fun ColumnScope.Draft(
         LoadState.Idle, LoadState.Loading -> {
             // Only a signed-in learner's own draft can be read; anyone else starts from their words.
             if (!hasSession) LaunchedEffect(id) { vm.backToEntry("") }
-            UnderstandingWait(goal = null, run = GenerationRun(), onRetry = null)
+            UnderstandingWait(goal = null, run = GenerationRun(), onRetry = null, since = vm.flow.waitStartedAt)
         }
     }
 }
@@ -371,7 +372,7 @@ private fun ColumnScope.DraftContent(
                 draft.status == OnboardingDraft.Status.UNDERSTANDING && draft.generationId != null -> {
                     val run by vm.follower.run.collectAsStateWithLifecycle()
                     val canRetry = run.failure == GenerationFailure.Connection || vm.follower.canRestart
-                    UnderstandingWait(draft.prompt, run, onRetry = vm.follower::retry.takeIf { canRetry })
+                    UnderstandingWait(draft.prompt, run, onRetry = vm::retryRun.takeIf { canRetry }, since = vm.flow.waitStartedAt)
                 }
 
                 else -> {
@@ -384,7 +385,7 @@ private fun ColumnScope.DraftContent(
                             GenerationFailure.NotStarted
                         }
                     if (vm.isRetrying) {
-                        UnderstandingWait(draft.prompt, GenerationRun(), onRetry = null)
+                        UnderstandingWait(draft.prompt, GenerationRun(), onRetry = null, since = vm.flow.waitStartedAt)
                     } else {
                         UnderstandingWait(draft.prompt, failedRun(failure), onRetry = vm::retryRead)
                     }
