@@ -2,11 +2,9 @@ import { randomUUID } from "node:crypto";
 import { readFileSync, readdirSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { voiceListeningScript } from "@zoonk/ai/tasks/audio/listening";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { type PastQuestion } from "@zoonk/ai/tasks/items/past-questions";
-import { generateAlphabetLesson } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { type Plan, type TransactionClient, prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
@@ -63,7 +61,7 @@ import { generatedMultipleChoice, generatedProvenance } from "./items/_test-util
 import { createItems } from "./items/create-items";
 import { savePastQuestions } from "./items/past-questions";
 import { getAlphabetIdentityKey } from "./language/alphabet/alphabet-identity";
-import { writeAlphabetLesson } from "./language/alphabet/write-alphabet-lesson";
+import { publishAlphabetLesson } from "./language/alphabet/write-alphabet-lesson";
 import {
   type LessonScreenToSave,
   saveLessonContent,
@@ -317,17 +315,12 @@ const REGISTRY: Record<string, Registration[]> = {
       writes: ["lesson.updateMany"],
     },
   ],
-  "library/language/alphabet/review-alphabet-lesson.ts": [
-    {
-      fields: ["summary"],
-      readElsewhere: { "plans/_utils/replan.ts": "a plan's posted summary" },
-      verdict: "excluded",
-      why: "a fixed version keeps the lesson's title and letters",
-      writes: ["lesson.update"],
-    },
-  ],
   "library/language/alphabet/write-alphabet-lesson.ts": [
-    { verdict: "marks", why: "publication renames the lesson", writes: ["lesson.updateMany"] },
+    {
+      verdict: "marks",
+      why: "a published or fixed version can rename the lesson",
+      writes: ["lesson.update", "lesson.updateMany"],
+    },
   ],
   "library/lessons/_utils/save-lesson-content.ts": [
     {
@@ -1504,12 +1497,10 @@ const HANGUL = {
   ].map(([symbol = "", readingAid = "", audioText = ""]) => ({
     audioText,
     forms: [],
-    ipa: `/${readingAid}/`,
     pronunciation: `Like ${readingAid}.`,
     readingAid,
     symbol,
   })),
-  script: "Hangul",
   summary: ["Each block is one syllable."],
   title: "Your first Hangul",
 };
@@ -1517,37 +1508,18 @@ const HANGUL = {
 async function alphabetCase(): Promise<WriterCase> {
   const workflowRunId = randomUUID();
 
-  const lesson = await libraryLessonFixture({
-    contentRunId: workflowRunId,
-    contentStatus: "running",
-    identityKey: getAlphabetIdentityKey("ko-KR"),
-    language: `x${randomUUID().slice(0, 8)}`,
-    targetLanguage: "ko-KR",
-  });
+  const [lesson, user] = await Promise.all([
+    libraryLessonFixture({
+      contentRunId: workflowRunId,
+      contentStatus: "running",
+      identityKey: getAlphabetIdentityKey("ko-KR"),
+      language: `x${randomUUID().slice(0, 8)}`,
+      targetLanguage: "ko-KR",
+    }),
+    userFixture(),
+  ]);
 
   const plan = await planOnLesson(lesson.id);
-
-  vi.mocked(generateAlphabetLesson).mockResolvedValue({
-    data: HANGUL,
-    provenance: {
-      generatedAt: new Date().toISOString(),
-      latencyMs: 1,
-      model: "openai/gpt-6-luna",
-      promptVersion: "test-prompt",
-      provider: "openai",
-      requestedModel: "openai/gpt-6-luna",
-      runId: randomUUID(),
-      usage: {},
-    },
-    systemPrompt: "",
-    usage: {} as never,
-    userPrompt: "",
-  });
-
-  vi.mocked(generateLanguageAudio).mockResolvedValue({
-    data: null,
-    error: new Error("TTS failed"),
-  });
 
   return {
     expectWritten: () =>
@@ -1558,9 +1530,12 @@ async function alphabetCase(): Promise<WriterCase> {
     plan,
     root: lessonRoot(lesson.id),
     write: () =>
-      writeAlphabetLesson({
-        learnerLanguage: lesson.language,
-        targetLanguage: "ko-KR",
+      publishAlphabetLesson({
+        audioUrls: {},
+        lesson: HANGUL,
+        lessonId: lesson.id,
+        provenance: DATED_PROVENANCE,
+        userId: user.id,
         workflowRunId,
       }),
   };
@@ -1581,7 +1556,7 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "library/generation/hold-back-lesson.ts": { holdBackLessonDraft: holdBackCase },
   "library/items/create-items.ts": { createItems: itemsCase },
   "library/items/past-questions.ts": { savePastQuestions: pastQuestionsCase },
-  "library/language/alphabet/write-alphabet-lesson.ts": { writeAlphabetLesson: alphabetCase },
+  "library/language/alphabet/write-alphabet-lesson.ts": { publishAlphabetLesson: alphabetCase },
   "library/lessons/_utils/save-lesson-content.ts": {
     "saveLessonContent (a math item's skill)": mathItemCase,
     "saveLessonContent (the lesson)": publishLessonCase,
@@ -1787,7 +1762,7 @@ describe("a publisher that loses its claim while it waits for a plan", () => {
       await Promise.all([holder.done, writing]);
     }
 
-    await expect(writing).resolves.toStrictEqual({ lessonId: root.id, status: "running" });
+    await expect(writing).resolves.toBe(false);
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion,

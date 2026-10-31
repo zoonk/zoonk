@@ -7,27 +7,44 @@ import {
 } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { checkLessonQuality } from "@zoonk/ai/tasks/quality/lesson-check";
 import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../../cache/tags";
 import { type LibraryProvenance } from "../../_utils/library-rows";
-import { getFixReach } from "../../lessons/_utils/fix-reach";
+import { lockPlanSourceWrite, writePlanInputs } from "../../_utils/plan-input-write";
 import { CURRENT_STEPS, lockCurrentLessonVersion } from "../../lessons/lesson-versions";
 import { BACKGROUND_TIER } from "../../quality/_utils/published-versions";
 import { toLaterReviewProblems } from "../../quality/later-reviews";
 import { parseStepContent } from "../../steps/contract/step-contract";
 import { toAlphabetLessonCheck } from "./alphabet-lesson-check";
 import { buildAlphabetLessonSteps } from "./alphabet-lesson-steps";
-import { insertAlphabetVersion, voiceLetters } from "./write-alphabet-lesson";
+import { checkAlphabetFix } from "./alphabet-lesson-validator";
+import { listAlphabetClips, saveAlphabetVersion } from "./write-alphabet-lesson";
 
 type Analytics = Parameters<typeof checkLessonQuality>[0]["analytics"];
 
-type ReviewContext = { analytics?: Analytics; lessonId: string; workflowRunId: string };
+type ReviewContext = {
+  analytics?: Analytics;
+  lessonId: string;
+  version: number;
+  workflowRunId: string;
+};
 
-export type AlphabetReview = { problems: FixAlphabetLessonParams["problems"]; version: number };
+type Problems = FixAlphabetLessonParams["problems"];
 
 export type AlphabetFix =
   | { status: "replaced" | "unfixed" }
-  | { lesson: PublishedAlphabetLesson; provenance: LibraryProvenance; status: "fixed" };
+  | {
+      clips: string[];
+      lesson: PublishedAlphabetLesson;
+      provenance: LibraryProvenance;
+      status: "fixed";
+      targetLanguage: string;
+    };
+
+class AlphabetFixLostError extends Error {
+  override name = "AlphabetFixLostError";
+}
 
 async function loadPublishedAlphabetLesson(lessonId: string) {
   const lesson = await prisma.lesson.findFirst({
@@ -94,50 +111,48 @@ async function loadPublishedAlphabetLesson(lessonId: string) {
   };
 }
 
-type PublishedAlphabet = NonNullable<Awaited<ReturnType<typeof loadPublishedAlphabetLesson>>>;
-
-function toCheck(published: PublishedAlphabet, lesson = published.content) {
-  return toAlphabetLessonCheck({
-    learnerLanguage: published.learnerLanguage,
-    lesson,
-    targetLanguage: published.targetLanguage,
-  });
-}
-
 function toTaskAnalytics({ analytics, workflowRunId }: ReviewContext): Analytics {
   return { ...analytics, contentScope: "shared", traceId: workflowRunId };
 }
 
-/** Internal workflow bridge: null when the lesson is no longer published. */
-export async function reviewAlphabetLesson(context: ReviewContext): Promise<AlphabetReview | null> {
+/** Internal workflow bridge: null when `version` is no longer the published version. */
+export async function reviewAlphabetLesson(context: ReviewContext): Promise<Problems | null> {
   const published = await loadPublishedAlphabetLesson(context.lessonId);
 
-  if (!published) {
+  if (published?.version !== context.version) {
     return null;
   }
 
   const { data } = await checkLessonQuality({
-    ...toCheck(published),
+    ...toAlphabetLessonCheck({
+      learnerLanguage: published.learnerLanguage,
+      lesson: published.content,
+      targetLanguage: published.targetLanguage,
+    }),
     analytics: toTaskAnalytics(context),
     reuse: "bounded",
     serviceTier: BACKGROUND_TIER,
     writerModel: published.writerModel,
   });
 
-  return { problems: toLaterReviewProblems(data.issues), version: published.version };
+  return toLaterReviewProblems(data.issues);
 }
 
-/** Internal workflow bridge: rewrites only the screens `problems` name in `version`. */
+/**
+ * Internal workflow bridge: rewrites only the parts `problems` name in `version`. A fix that leaves
+ * one of them as it was or fails the lesson's checks is `unfixed`.
+ */
 export async function writeAlphabetFix({
   problems,
-  version,
   ...context
-}: ReviewContext & AlphabetReview): Promise<AlphabetFix> {
+}: ReviewContext & { problems: Problems }): Promise<AlphabetFix> {
   const published = await loadPublishedAlphabetLesson(context.lessonId);
 
-  if (published?.version !== version) {
+  if (published?.version !== context.version) {
     return { status: "replaced" };
   }
+
+  const { targetLanguage } = published;
 
   const { data, provenance } = await fixAlphabetLesson({
     analytics: toTaskAnalytics(context),
@@ -145,26 +160,42 @@ export async function writeAlphabetFix({
     lesson: published.content,
     problems,
     serviceTier: BACKGROUND_TIER,
-    targetLanguage: published.targetLanguage,
+    targetLanguage,
   });
 
-  const { unfixed } = getFixReach({
-    draft: toCheck(published).lesson,
-    fixed: toCheck(published, data).lesson,
-    incorrect: problems,
+  const checks = checkAlphabetFix({
+    fixed: data,
+    lesson: published.content,
     problems,
+    targetLanguage,
   });
 
-  return unfixed.length > 0 ? { status: "unfixed" } : { lesson: data, provenance, status: "fixed" };
+  if (checks.some((check) => !check.passed)) {
+    return { status: "unfixed" };
+  }
+
+  return {
+    clips: listAlphabetClips({
+      letters: data.letters,
+      targetLanguage,
+      voiced: published.audioUrls,
+    }),
+    lesson: data,
+    provenance,
+    status: "fixed",
+    targetLanguage,
+  };
 }
 
 /** Internal workflow bridge: null when `replaces` is no longer the published version. */
 export async function publishAlphabetFix({
+  audioUrls: voiced,
   lesson,
   lessonId,
   provenance,
   replaces,
 }: {
+  audioUrls: Readonly<Record<string, string>>;
   lesson: PublishedAlphabetLesson;
   lessonId: string;
   provenance: LibraryProvenance;
@@ -176,14 +207,9 @@ export async function publishAlphabetFix({
     return null;
   }
 
-  const voiced = await voiceLetters({
-    letters: lesson.letters.filter((letter) => !published.audioUrls.has(letter.audioText.trim())),
-    targetLanguage: published.targetLanguage,
-  });
-
   const audioUrls = new Map([
     ...[...published.audioUrls].flatMap(([text, url]) => (url ? [[text, url] as const] : [])),
-    ...voiced,
+    ...Object.entries(voiced),
   ]);
 
   const steps = buildAlphabetLessonSteps({ audioUrls, content: lesson }).map((step, position) => {
@@ -192,22 +218,26 @@ export async function publishAlphabetFix({
     return { ...step, provenance: kept ? previous : provenance };
   });
 
-  const version = await prisma.$transaction(async (tx) => {
-    if ((await lockCurrentLessonVersion(tx, lessonId)) !== replaces) {
-      return null;
-    }
+  const { data: version, error } = await safeAsync(() =>
+    writePlanInputs(async (tx) => {
+      await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
 
-    await tx.lesson.update({
-      data: { summary: { ideas: lesson.summary.map((text) => ({ text })) } },
-      where: { id: lessonId },
-    });
+      if ((await lockCurrentLessonVersion(tx, lessonId)) !== replaces) {
+        throw new AlphabetFixLostError();
+      }
 
-    return insertAlphabetVersion(tx, { lessonId, steps });
-  });
+      return saveAlphabetVersion(tx, { lesson, lessonId, steps });
+    }),
+  );
 
-  if (version !== null) {
-    revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
+  if (error instanceof AlphabetFixLostError) {
+    return null;
   }
 
+  if (error) {
+    throw error;
+  }
+
+  revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
   return version;
 }

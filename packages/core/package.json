@@ -349,6 +349,7 @@
     "./library/items/store-set": "./src/library/items/store-item-set.ts",
     "./library/language/alphabet-identity": "./src/library/language/alphabet/alphabet-identity.ts",
     "./library/language/alphabet-lesson-check": "./src/library/language/alphabet/alphabet-lesson-check.ts",
+    "./library/language/alphabet-lesson-validator": "./src/library/language/alphabet/alphabet-lesson-validator.ts",
     "./library/language/grade-spoken-answer": "./src/library/language/grade-spoken-answer.ts",
     "./library/language/review-alphabet-lesson": "./src/library/language/alphabet/review-alphabet-lesson.ts",
     "./library/language/spoken-answer-contract": "./src/library/language/spoken-answer-contract.ts",

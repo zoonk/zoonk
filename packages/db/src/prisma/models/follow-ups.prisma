@@ -10,6 +10,7 @@ enum FollowUpKind {
   checkFactSensitivity @map("check_fact_sensitivity")
   voiceWord            @map("voice_word")
   writeSpeakingPaper   @map("write_speaking_paper")
+  reviewAlphabetLesson @map("review_alphabet_lesson")
 }
 
 /// Work owed after a learner's write; ended by the run that started it unless asked again since,

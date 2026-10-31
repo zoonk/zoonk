@@ -1,5 +1,6 @@
 import { getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
+import { voiceAlphabetClips } from "../language/alphabet-lesson";
 import {
   publishAlphabetFixStep,
   reviewAlphabetLessonStep,
@@ -16,40 +17,49 @@ type AlphabetReviewStatus = "passed" | "replaced" | "republished" | "setAside";
 export async function alphabetReviewWorkflow({
   analytics,
   lessonId,
+  version,
 }: {
   analytics?: ContentAnalytics;
   lessonId: string;
+  version: number;
 }): Promise<AlphabetReviewStatus> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
-  const review = await reviewAlphabetLessonStep({ analytics, lessonId, workflowRunId });
+  const context = { analytics, lessonId, version, workflowRunId };
+  const problems = await reviewAlphabetLessonStep(context);
 
-  if (!review) {
+  if (!problems) {
     return "replaced";
   }
 
-  if (review.problems.length === 0) {
+  if (problems.length === 0) {
     return "passed";
   }
 
-  const fix = await writeAlphabetFixStep({ ...review, analytics, lessonId, workflowRunId });
-
-  if (fix.status === "fixed") {
-    const version = await publishAlphabetFixStep({
-      lesson: fix.lesson,
-      lessonId,
-      provenance: fix.provenance,
-      replaces: review.version,
-    });
-
-    return version === null ? "replaced" : "republished";
-  }
+  const fix = await writeAlphabetFixStep({ ...context, problems });
 
   if (fix.status === "unfixed") {
-    const setAside = await setAsidePublishedLessonStep({ lessonId, version: review.version });
+    const setAside = await setAsidePublishedLessonStep({ lessonId, version });
     return setAside ? "setAside" : "replaced";
   }
 
-  return "replaced";
+  if (fix.status !== "fixed") {
+    return "replaced";
+  }
+
+  const audioUrls = await voiceAlphabetClips({
+    clips: fix.clips,
+    targetLanguage: fix.targetLanguage,
+  });
+
+  const published = await publishAlphabetFixStep({
+    audioUrls,
+    lesson: fix.lesson,
+    lessonId,
+    provenance: fix.provenance,
+    replaces: version,
+  });
+
+  return published === null ? "replaced" : "republished";
 }

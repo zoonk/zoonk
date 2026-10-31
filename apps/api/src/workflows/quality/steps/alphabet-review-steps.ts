@@ -1,24 +1,21 @@
+import { type FixAlphabetLessonParams } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import {
   type AlphabetFix,
-  type AlphabetReview,
   publishAlphabetFix,
   reviewAlphabetLesson,
   writeAlphabetFix,
 } from "@zoonk/core/library/language/review-alphabet-lesson";
-import { type ContentAnalytics } from "../../_shared/content-analytics";
-
-type ReviewStepInput = { analytics?: ContentAnalytics; lessonId: string; workflowRunId: string };
 
 export async function reviewAlphabetLessonStep(
-  input: ReviewStepInput,
-): Promise<AlphabetReview | null> {
+  input: Parameters<typeof reviewAlphabetLesson>[0],
+): Promise<FixAlphabetLessonParams["problems"] | null> {
   "use step";
 
   return reviewAlphabetLesson(input);
 }
 
 export async function writeAlphabetFixStep(
-  input: ReviewStepInput & AlphabetReview,
+  input: Parameters<typeof writeAlphabetFix>[0],
 ): Promise<AlphabetFix> {
   "use step";
 

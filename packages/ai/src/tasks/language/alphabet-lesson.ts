@@ -163,7 +163,17 @@ function toPublishedLetter({
   return { audioText, forms, pronunciation, readingAid, symbol };
 }
 
-/** Only the screens a problem names change, so unflagged letters keep their words and audio. */
+/** What a problem on the whole lesson (`screen: null`) can be about. */
+export function pickWholeLesson({
+  canDo,
+  description,
+  summary,
+  title,
+}: Pick<PublishedAlphabetLesson, "canDo" | "description" | "summary" | "title">) {
+  return { canDo, description, summary, title };
+}
+
+/** Only the parts a problem names change, so unflagged letters keep their words and audio. */
 function applyAlphabetFixes({
   fixed,
   lesson,
@@ -175,9 +185,10 @@ function applyAlphabetFixes({
 }): PublishedAlphabetLesson {
   const flagged = new Set(problems.flatMap((problem) => problem.screen ?? []));
   const introCount = lesson.intro.length;
+  const wholeLesson = problems.some((problem) => problem.screen === null) ? fixed : lesson;
 
   return {
-    ...lesson,
+    ...pickWholeLesson(wholeLesson),
     intro: lesson.intro.map((screen, index) =>
       flagged.has(index) ? (fixed.intro[index] ?? screen) : screen,
     ),
@@ -185,13 +196,12 @@ function applyAlphabetFixes({
       const fix = fixed.letters[index];
       return flagged.has(introCount + index) && fix ? toPublishedLetter(fix) : letter;
     }),
-    summary: problems.some((problem) => problem.screen === null) ? fixed.summary : lesson.summary,
   };
 }
 
 export type FixAlphabetLessonParams = GenerateAlphabetLessonParams & {
   lesson: PublishedAlphabetLesson;
-  /** `screen` indexes `listAlphabetScreens(lesson)`, or is null for the summary. */
+  /** `screen` indexes `listAlphabetScreens(lesson)`, or is null for the whole lesson. */
   problems: LessonProblem[];
 };
 

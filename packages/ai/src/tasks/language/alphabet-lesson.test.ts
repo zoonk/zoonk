@@ -83,13 +83,22 @@ describe(fixAlphabetLesson, () => {
     });
   });
 
-  it("takes a new summary only for a problem on the whole lesson", async () => {
+  it("takes the title, description, can-do line and summary only for a problem on the whole lesson", async () => {
+    const wholeLesson = {
+      canDo: "Read and say в, х, о and к.",
+      description: "Four Russian letters.",
+      summary: ["A new summary."],
+      title: "New title",
+    };
+
     vi.mocked(generateText).mockResolvedValueOnce(
-      createGenerateTextResult(rewrite({ summary: ["A new summary."] })),
+      createGenerateTextResult(
+        rewrite({ ...wholeLesson, intro: [{ text: "Read up to down.", title: "Direction" }] }),
+      ),
     );
 
-    const { data } = await fix([{ problem: "The summary is wrong.", screen: null }]);
+    const { data } = await fix([{ problem: "The can-do line names no letters.", screen: null }]);
 
-    expect(data).toStrictEqual({ ...published, summary: ["A new summary."] });
+    expect(data).toStrictEqual({ ...published, ...wholeLesson });
   });
 });

@@ -14,6 +14,12 @@ vi.mock("next/cache", () => ({
   updateTag: vi.fn(),
 }));
 
+// Tests run outside a request, where Next.js' `after` throws.
+vi.mock("next/server", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  after: vi.fn(),
+}));
+
 Object.entries(boundaries).forEach(([path, mocks]) => {
   vi.doMock(path, async (importOriginal) => ({ ...(await importOriginal<object>()), ...mocks }));
 });

@@ -1,12 +1,10 @@
 import { startLevelTestBank } from "@/lib/level-test-bank";
 import { startListeningSets } from "@/lib/listening-sets";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
-import { start } from "workflow/api";
-import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
+import { writeAlphabetLesson } from "../language/alphabet-lesson";
 import { startLikelyLessons } from "./goal-lookahead";
 import { type GoalRunContext } from "./goal-run-context";
 import { writeMockQuestions } from "./mock-question-writes";
-import { prepareAlphabetLessonStep } from "./steps/alphabet-lesson-step";
 import {
   pickExamFormatSkillsStep,
   prepareExamFormatItemsStep,
@@ -111,14 +109,19 @@ async function prepareAlphabetLesson({
   context: GoalRunContext;
   goal: GoalCurriculumInputs["goal"];
 }) {
+  const { targetLanguage } = goal;
+
+  if (goal.kind !== "language" || !targetLanguage) {
+    return;
+  }
+
   await Promise.allSettled([
-    prepareAlphabetLessonStep({ ...context, goal }).then((written) =>
-      written?.status === "published"
-        ? start(alphabetReviewWorkflow, [
-            { analytics: context.analytics, lessonId: written.lessonId },
-          ])
-        : null,
-    ),
+    writeAlphabetLesson({
+      ...context,
+      learnerLanguage: goal.language,
+      targetLanguage,
+      userId: goal.userId,
+    }),
   ]);
 }
 

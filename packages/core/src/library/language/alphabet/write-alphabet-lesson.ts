@@ -1,12 +1,17 @@
 import "server-only";
-import { generateAlphabetLesson } from "@zoonk/ai/tasks/language/alphabet-lesson";
+import { chooseServiceTier } from "@zoonk/ai/provider-options";
+import {
+  type PublishedAlphabetLesson,
+  generateAlphabetLesson,
+} from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { type TransactionClient } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { usesNonLatinScript } from "@zoonk/utils/languages";
+import { isTTSSupportedLanguage, usesNonLatinScript } from "@zoonk/utils/languages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { generateLanguageAudio } from "../../../audio/generate-language-audio";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../../cache/tags";
+import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-rows";
 import { lockPlanSourceWrite, writePlanInputs } from "../../_utils/plan-input-write";
 import { claimLibraryGeneration, finishLibraryGeneration } from "../../claims/generation-claim";
@@ -20,47 +25,82 @@ import { type AlphabetStepToSave, buildAlphabetLessonSteps } from "./alphabet-le
 
 type Analytics = Parameters<typeof generateAlphabetLesson>[0]["analytics"];
 
+const WRITE_TIER = chooseServiceTier({ reuse: "bounded", wait: "learner" });
+
 export type WriteAlphabetLessonResult =
   | { status: "notNeeded" }
-  | { lessonId: string; status: "heldBack" | "published" | "ready" | "running" };
+  | { lessonId: string; status: "heldBack" | "ready" | "running" }
+  | {
+      clips: string[];
+      lesson: PublishedAlphabetLesson;
+      lessonId: string;
+      provenance: LibraryProvenance;
+      status: "written";
+    };
 
-type LessonUpdate = Awaited<ReturnType<typeof generateAlphabetLesson>>["data"];
-
-export async function voiceLetters({
+/** The audio texts still to voice, or none when no voice speaks the language. */
+export function listAlphabetClips({
   letters,
   targetLanguage,
+  voiced = new Set(),
 }: {
   letters: readonly { audioText: string }[];
   targetLanguage: string;
-}): Promise<Map<string, string>> {
-  const texts = [...new Set(letters.map((letter) => letter.audioText.trim()))].filter(Boolean);
+  voiced?: Pick<ReadonlySet<string>, "has">;
+}): string[] {
+  if (!isTTSSupportedLanguage(targetLanguage)) {
+    return [];
+  }
 
-  const clips = await Promise.all(
-    texts.map(async (text) => {
-      const { data } = await generateLanguageAudio({
-        language: targetLanguage,
-        orgSlug: AI_ORG_SLUG,
-        text,
-        usage: "alphabetSymbol",
-      });
-
-      return data ? ([text, data.url] as const) : null;
-    }),
-  );
-
-  return new Map(clips.filter((clip) => clip !== null));
+  const texts = new Set(letters.map((letter) => letter.audioText.trim()));
+  return [...texts].filter((text) => text && !voiced.has(text));
 }
 
-export async function insertAlphabetVersion(
+/** Internal, for a workflow step: throws when the clip couldn't be made, so its step retries it. */
+export async function voiceAlphabetClip({
+  targetLanguage,
+  text,
+}: {
+  targetLanguage: string;
+  text: string;
+}): Promise<string> {
+  const { data, error } = await generateLanguageAudio({
+    language: targetLanguage,
+    orgSlug: AI_ORG_SLUG,
+    text,
+    usage: "alphabetSymbol",
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data.url;
+}
+
+/** Plans read a lesson's title, so callers lock its plan sources first. */
+export async function saveAlphabetVersion(
   tx: TransactionClient,
   {
+    lesson,
     lessonId,
     steps,
   }: {
+    lesson: PublishedAlphabetLesson;
     lessonId: string;
     steps: readonly (AlphabetStepToSave & { provenance: LibraryProvenance })[];
   },
 ): Promise<number> {
+  await tx.lesson.update({
+    data: {
+      canDo: lesson.canDo,
+      description: lesson.description,
+      summary: { ideas: lesson.summary.map((text) => ({ text })) },
+      title: lesson.title,
+    },
+    where: { id: lessonId },
+  });
+
   const version = await startLessonVersion(tx, lessonId);
 
   await tx.step.createMany({
@@ -85,22 +125,33 @@ class AlphabetClaimLostError extends Error {
   override name = "AlphabetClaimLostError";
 }
 
-async function saveAlphabetLesson({
-  content,
+/**
+ * Internal, for a workflow step: saves the written lesson, and owes its review in the same
+ * transaction. False when the run no longer holds the lesson's claim.
+ */
+export async function publishAlphabetLesson({
+  audioUrls,
+  lesson,
   lessonId,
   provenance,
-  steps,
+  userId,
   workflowRunId,
 }: {
-  content: LessonUpdate;
+  audioUrls: Readonly<Record<string, string>>;
+  lesson: PublishedAlphabetLesson;
   lessonId: string;
   provenance: LibraryProvenance;
-  steps: readonly AlphabetStepToSave[];
+  userId: string;
   workflowRunId: string;
 }): Promise<boolean> {
   const claim = { contentRunId: workflowRunId, contentStatus: "running" as const, id: lessonId };
 
-  const { data: saved, error } = await safeAsync(() =>
+  const steps = buildAlphabetLessonSteps({
+    audioUrls: new Map(Object.entries(audioUrls)),
+    content: lesson,
+  });
+
+  const { error } = await safeAsync(() =>
     writePlanInputs(async (tx) => {
       if (!(await tx.lesson.findFirst({ select: { id: true }, where: claim }))) {
         throw new AlphabetClaimLostError();
@@ -109,15 +160,7 @@ async function saveAlphabetLesson({
       await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
 
       const claimed = await tx.lesson.updateMany({
-        data: {
-          canDo: content.canDo,
-          contentStatus: "completed",
-          description: content.description,
-          setAsideAt: null,
-          summary: { ideas: content.summary.map((text) => ({ text })) },
-          title: content.title,
-          ...toProvenanceData(provenance),
-        },
+        data: { contentStatus: "completed", setAsideAt: null, ...toProvenanceData(provenance) },
         where: claim,
       });
 
@@ -125,12 +168,17 @@ async function saveAlphabetLesson({
         throw new AlphabetClaimLostError();
       }
 
-      await insertAlphabetVersion(tx, {
+      const version = await saveAlphabetVersion(tx, {
+        lesson,
         lessonId,
         steps: steps.map((step) => ({ ...step, provenance })),
       });
 
-      return true;
+      await oweFollowUps({
+        db: tx,
+        followUps: [{ input: { lessonId, version }, kind: "reviewAlphabetLesson" }],
+        userId,
+      });
     }),
   );
 
@@ -143,7 +191,23 @@ async function saveAlphabetLesson({
   }
 
   revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
-  return saved;
+  return true;
+}
+
+/** Internal, for a workflow step: frees the run's claim so the pair's next learner writes it. */
+export async function failAlphabetLesson({
+  lessonId,
+  workflowRunId,
+}: {
+  lessonId: string;
+  workflowRunId: string;
+}): Promise<void> {
+  await finishLibraryGeneration({
+    id: lessonId,
+    status: "failed",
+    target: "lessonContent",
+    workflowRunId,
+  });
 }
 
 async function findOrCreateAlphabetLesson({
@@ -193,35 +257,30 @@ async function writeClaimedLesson({
   const { data, provenance } = await generateAlphabetLesson({
     analytics: { contentScope: "shared", traceId: workflowRunId, ...analytics },
     learnerLanguage,
+    serviceTier: WRITE_TIER,
     targetLanguage,
   });
 
-  const audioUrls = await voiceLetters({ letters: data.letters, targetLanguage });
-  const steps = buildAlphabetLessonSteps({ audioUrls, content: data });
+  const steps = buildAlphabetLessonSteps({ audioUrls: new Map(), content: data });
 
   if (!steps.some((step) => step.kind === "alphabet")) {
-    await finishLibraryGeneration({
-      id: lessonId,
-      status: "failed",
-      target: "lessonContent",
-      workflowRunId,
-    });
-
+    await failAlphabetLesson({ lessonId, workflowRunId });
     return { lessonId, status: "heldBack" };
   }
 
-  const saved = await saveAlphabetLesson({
-    content: data,
+  return {
+    clips: listAlphabetClips({ letters: data.letters, targetLanguage }),
+    lesson: data,
     lessonId,
     provenance,
-    steps,
-    workflowRunId,
-  });
-
-  return { lessonId, status: saved ? "published" : "running" };
+    status: "written",
+  };
 }
 
-/** Internal workflow bridge; callers must authorize the language pair before starting generation. */
+/**
+ * Internal workflow bridge; callers must authorize the language pair before starting generation.
+ * A `written` lesson's run holds its claim until it publishes the lesson or fails it.
+ */
 export async function writeAlphabetLesson({
   analytics,
   learnerLanguage,
@@ -262,13 +321,7 @@ export async function writeAlphabetLesson({
       workflowRunId,
     });
   } catch (error) {
-    await finishLibraryGeneration({
-      id: lesson.id,
-      status: "failed",
-      target: "lessonContent",
-      workflowRunId,
-    });
-
+    await failAlphabetLesson({ lessonId: lesson.id, workflowRunId });
     throw error;
   }
 }

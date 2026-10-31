@@ -4,6 +4,7 @@ import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken } from "../_shared/run-token";
 import { callContentWorkflow } from "../calls/call-content-workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
+import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
 import { sessionPreparationWorkflow } from "../sessions/session-preparation-workflow";
 import { backgroundTaskWorkflow } from "./background-task-workflow";
 import {
@@ -51,6 +52,11 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
     case "writeSpeakingPaper": {
       const { mockId } = followUp.input;
       await start(callContentWorkflow, [{ kind: "speakingPaper", mockId, userId }]);
+      return;
+    }
+    case "reviewAlphabetLesson": {
+      const analytics = { distinctId: userId };
+      await start(alphabetReviewWorkflow, [{ ...followUp.input, analytics }]);
       return;
     }
     default:

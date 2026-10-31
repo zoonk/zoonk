@@ -30,6 +30,8 @@ function getFollowUpKey(followUp: FollowUp): string {
       return followUp.input.wordId;
     case "writeSpeakingPaper":
       return followUp.input.mockId;
+    case "reviewAlphabetLesson":
+      return `${followUp.input.lessonId}:${followUp.input.version}`;
     default:
       return followUp satisfies never;
   }

@@ -6,13 +6,9 @@ import {
 } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { ALPHABET_LESSON_SCORE_CATEGORIES } from "./score-categories";
 import { scoreAlphabetLesson } from "./scorer";
-import { type AlphabetLessonExpected, TEST_CASES } from "./test-cases";
+import { TEST_CASES } from "./test-cases";
 
-export const alphabetLessonTask: Task<
-  GenerateAlphabetLessonParams,
-  AlphabetLessonContent,
-  AlphabetLessonExpected
-> = {
+export const alphabetLessonTask: Task<GenerateAlphabetLessonParams, AlphabetLessonContent> = {
   description:
     "Write the first alphabet lesson for a non-Latin script: the letters, their sounds for the learner's language, real forms and a short intro: code checks, then a judge",
   generate: generateAlphabetLesson,

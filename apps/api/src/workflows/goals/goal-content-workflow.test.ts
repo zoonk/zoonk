@@ -1,4 +1,5 @@
 import { setTimeout } from "node:timers/promises";
+import { put } from "@vercel/blob";
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import {
   generateCourseOutline,
@@ -59,7 +60,6 @@ import { courseDetailsWorkflow } from "../courses/course-details-workflow";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { levelTestBankWorkflow } from "../language/level-test-bank-workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
-import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
 import { goalContentWorkflow } from "./goal-content-workflow";
 import * as goalPlacement from "./goal-placement-items";
 import { placementItemsWorkflow } from "./placement-items-workflow";
@@ -1439,7 +1439,7 @@ describe(goalContentWorkflow, () => {
   );
 
   it(
-    "publishes a language's alphabet lesson without waiting for its review, then starts the review",
+    "publishes a language's alphabet lesson with a clip per letter, and owes its review instead of waiting for it",
     { timeout: TIMEOUT },
     async () => {
       const { goal, user } = await newGoal({
@@ -1449,9 +1449,23 @@ describe(goalContentWorkflow, () => {
       });
 
       vi.mocked(generateLanguageAudio).mockResolvedValue({
-        data: null,
-        error: new Error("No voice"),
+        data: {
+          audio: new Uint8Array([1, 2, 3]),
+          durationMs: 900,
+          format: "mp3",
+          provenance: taskResult(null, "google/gemini-3.8-flash-tts").provenance,
+        },
+        error: null,
       });
+
+      vi.mocked(put).mockImplementation(async (pathname) => ({
+        contentDisposition: "inline",
+        contentType: "audio/mpeg",
+        downloadUrl: `https://blob.test/${pathname}`,
+        etag: "",
+        pathname,
+        url: `https://blob.test/${pathname}`,
+      }));
 
       vi.mocked(generateAlphabetLesson).mockResolvedValue(
         taskResult(
@@ -1466,7 +1480,7 @@ describe(goalContentWorkflow, () => {
               audioText,
               forms: [],
               ipa: `/${readingAid}/`,
-              pronunciation: `Como ${readingAid}.`,
+              pronunciation: `Como ${readingAid}; ouça ${audioText}.`,
               readingAid,
               symbol,
             })),
@@ -1483,18 +1497,30 @@ describe(goalContentWorkflow, () => {
       });
 
       const lesson = await prisma.lesson.findUniqueOrThrow({
+        include: { steps: { orderBy: { position: "asc" }, where: { kind: "alphabet" } } },
         where: { languageIdentity: { identityKey: "alphabet:ru-Cyrl", language: "pt" } },
       });
 
       expect(lesson.contentStatus).toBe("completed");
+
+      expect(generateAlphabetLesson).toHaveBeenCalledWith(
+        expect.objectContaining({ serviceTier: "priority" }),
+      );
+
+      expect(
+        vi.mocked(generateLanguageAudio).mock.calls.map(([input]) => input.text),
+      ).toStrictEqual(["ва", "ха"]);
+
+      expect(lesson.steps.map((step) => step.content)).toMatchObject([
+        { audioUrl: expect.stringContaining("https://blob.test/"), symbol: "в" },
+        { audioUrl: expect.stringContaining("https://blob.test/"), symbol: "х" },
+      ]);
+
       expect(checkLessonQuality).not.toHaveBeenCalled();
 
-      expect(start).toHaveBeenCalledWith(alphabetReviewWorkflow, [
-        {
-          analytics: { distinctId: user.id, goalId: goal.id, platform: undefined },
-          lessonId: lesson.id,
-        },
-      ]);
+      await expect(prisma.followUp.findMany({ where: { userId: user.id } })).resolves.toMatchObject(
+        [{ key: `${lesson.id}:1`, kind: "reviewAlphabetLesson" }],
+      );
     },
   );
 

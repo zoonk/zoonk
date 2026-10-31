@@ -9,7 +9,7 @@ import { type AlphabetLessonFixInput, TEST_CASES } from "./test-cases";
 
 export const alphabetLessonFixTask: Task<AlphabetLessonFixInput, PublishedAlphabetLesson> = {
   description:
-    "Fix only the alphabet lesson letters a reviewer flagged, with a right sound cue for the learner's language, and keep every other card as it was",
+    "Fix only the parts of an alphabet lesson a reviewer flagged (letter cards, intro screens or the lesson's words), right for the learner's language, and keep everything else as it was",
   generate: fixAlphabetLesson,
   id: "alphabet-lesson-fix",
   name: "Alphabet Lesson Fix",

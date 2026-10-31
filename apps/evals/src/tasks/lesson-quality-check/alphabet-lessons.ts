@@ -36,7 +36,6 @@ function plantCue(
   };
 }
 
-/** GPT-6 Luna's Russian lesson for Brazilian Portuguese (31 Oct 2026), with its slips and jargon corrected. */
 const cyrillic: AlphabetCheckInput = {
   alphabet: {
     canDo:
@@ -89,7 +88,6 @@ const cyrillic: AlphabetCheckInput = {
   targetLanguage: "ru",
 };
 
-/** GPT-6 Luna's Korean lesson for US English (31 Oct 2026), with semicolons for its dashes. */
 const hangul: AlphabetCheckInput = {
   alphabet: {
     canDo: "Read and say ㅏ, ㅓ, ㅗ, ㅜ, ㅡ, ㅣ, ㄱ, ㄴ, ㅁ, and ㅅ.",
@@ -153,7 +151,6 @@ const hangul: AlphabetCheckInput = {
 
 export const ALPHABET_LESSONS = { cyrillic, hangul };
 
-/** Slips GPT-6 Luna made at random on alphabet-lesson eval runs (31 Oct 2026). */
 export const ALPHABET_SLIPS = {
   /** Korean ㅡ is a high back unrounded vowel; the vowel of "book" is lower and lax. */
   bookVowel: plantCue(
