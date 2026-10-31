@@ -4,13 +4,11 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadTargetCutoff } from "../../../exams/cutoffs/load-target-cutoff";
 import { findMeantExamDay, getKeptMonthStart } from "../../../exams/kept-month";
 import { type GoalDraft } from "../../../goals/goal-contract";
+import { DEFAULT_DAILY_MINUTES } from "../../../plans/daily-minutes";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { getTargetDateBounds } from "../../../plans/target-date-range";
 import { type GoalUnderstandingView, type UnderstoodGoalView } from "../onboarding-contract";
 import { type FoundExam, toExamFacts } from "./exam-facts";
-
-/** Start with a sustainable short habit when the learner gave no daily time. */
-const DEFAULT_DAILY_MINUTES = 15;
 
 export type UnderstandingContext = {
   goal: string;
