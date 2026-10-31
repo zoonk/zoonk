@@ -252,6 +252,7 @@ describe("a mock in the exam's own mix of formats", () => {
               sections: [sections[1]],
             }),
             statedFormat({ description: "One answer", sections }),
+            statedFormat({ description: "Text Completion", sections: [sections[0]] }),
             statedFormat({
               description: "Two alike",
               options: 6,
@@ -323,24 +324,32 @@ describe("a mock in the exam's own mix of formats", () => {
     const { writes } = await listMockPrepWrites({ goalId: goal.id });
 
     expect(
-      writes.map(({ format: written, skillIds }) => ({
-        key: written.key,
-        skillIds,
-        style: written.style,
-      })),
-    ).toStrictEqual([
-      {
-        key: "choice:4",
-        skillIds: [ratios.id],
-        style: "multipleChoice (4 options): Compare two quantities",
-      },
-      {
-        key: "choice:5",
-        skillIds: [words.id, ratios.id],
-        style: "multipleChoice (5 options): One answer",
-      },
-      { key: "picks:2", skillIds: [words.id], style: "multipleChoice (6 options): Two alike" },
-      { key: "numeric:fraction:", skillIds: [ratios.id], style: "numeric: Type a number" },
-    ]);
+      writes
+        .map(({ format: written, skillIds }) => ({
+          key: written.key,
+          skillIds,
+          style: written.style,
+        }))
+        .toSorted(
+          (a, b) => a.key.localeCompare(b.key) || (a.style ?? "").localeCompare(b.style ?? ""),
+        ),
+    ).toStrictEqual(
+      [
+        {
+          key: "choice:4",
+          skillIds: [ratios.id],
+          style: "multipleChoice (4 options): Compare two quantities",
+        },
+        {
+          key: "choice:5",
+          skillIds: [words.id],
+          style:
+            "multipleChoice (5 options): One answer multipleChoice (5 options): Text Completion",
+        },
+        { key: "choice:5", skillIds: [ratios.id], style: "multipleChoice (5 options): One answer" },
+        { key: "picks:2", skillIds: [words.id], style: "multipleChoice (6 options): Two alike" },
+        { key: "numeric:fraction:", skillIds: [ratios.id], style: "numeric: Type a number" },
+      ].toSorted((a, b) => a.key.localeCompare(b.key) || a.style.localeCompare(b.style)),
+    );
   });
 });

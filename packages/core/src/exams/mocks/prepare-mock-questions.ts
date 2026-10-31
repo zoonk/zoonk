@@ -26,7 +26,8 @@ function mergeWrites(writes: readonly MockFormatShortfall[]): MockFormatShortfal
 
   const groups = Map.groupBy(
     bySkill.values(),
-    ({ write }) => `${write.format.key}:${write.questionsPerSkill}:${write.target}`,
+    ({ write }) =>
+      `${write.format.key}:${write.format.style}:${write.questionsPerSkill}:${write.target}`,
   );
 
   return [...groups.values()].flatMap((entries) => {

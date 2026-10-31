@@ -3,7 +3,11 @@ import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { toListeningExam } from "../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../exams/listening/listening-skills";
-import { type ExamAnswerFormat, getMockFormatMix } from "../exams/mocks/mock-format-mix";
+import {
+  type ExamAnswerFormat,
+  getMockFormatMix,
+  getMockWritingFormat,
+} from "../exams/mocks/mock-format-mix";
 import { listAskedSkills } from "../library/exams/format-sections";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { ANY_NUMBER } from "../library/items/_utils/numeric-entry";
@@ -152,16 +156,26 @@ export async function pickExamFormatSkills({
 
   const exam = toItemExam(blueprint);
 
-  const picks = formats.flatMap(({ answerFormat, sections, style }) =>
-    listAskedSkills({ format: { sections }, skills })
-      .filter((skill) => needsAnswerFormat({ answerFormat, blueprintId: blueprint.id, skill }))
+
+  const picks = formats.flatMap((format) =>
+    listAskedSkills({ format, skills })
+      .filter((skill) =>
+        needsAnswerFormat({ answerFormat: format.answerFormat, blueprintId: blueprint.id, skill }),
+      )
       .toSorted(
         (a, b) =>
-          Number(isKnownInFormat({ answerFormat, skill: b })) -
-          Number(isKnownInFormat({ answerFormat, skill: a })),
+          Number(isKnownInFormat({ answerFormat: format.answerFormat, skill: b })) -
+          Number(isKnownInFormat({ answerFormat: format.answerFormat, skill: a })),
       )
       .slice(0, EXAM_FORMAT_SKILLS)
-      .map(({ area: _area, items: _items, ...skill }) => ({ answerFormat, skill, style })),
+      .flatMap(({ area, items: _items, ...skill }) => {
+        const own = getMockWritingFormat({
+          format,
+          names: area ? [area] : [],
+        });
+
+        return own ? [{ answerFormat: format.answerFormat, skill, style: own.style }] : [];
+      }),
   );
 
   return Promise.all(

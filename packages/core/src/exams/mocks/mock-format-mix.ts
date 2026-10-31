@@ -29,6 +29,7 @@ type MockFormatWriter =
 /** `style` describes the exam's formats behind the key, so new questions take their shape. */
 export type MockFormat = {
   key: string;
+  formats?: ExamFormat[];
   sections: string[];
   share: number;
   style: string | null;
@@ -128,6 +129,7 @@ function toMockFormat({
   const everywhere = members.some((member) => member.sections.length === 0);
 
   return {
+    formats: members.map((member) => member.format),
     key,
     sections: everywhere ? [] : [...new Set(members.flatMap((member) => member.sections))],
     share,
@@ -235,4 +237,22 @@ export function getFormatQuotas({
 }): Map<string, number> {
   const counts = apportion({ total: wanted, weights: mix.map((format) => format.share) });
   return new Map(mix.map((format, index) => [format.key, counts[index] ?? 0]));
+}
+
+export function getMockWritingFormat({
+  format,
+  names,
+}: {
+  format: MockFormat;
+  names: readonly string[];
+}): MockFormat | null {
+  if (!format.formats) {
+    return format;
+  }
+
+  return (
+    getMockFormatMix({ formats: format.formats, pastOptions: null }, names).find(
+      (scoped) => scoped.key === format.key,
+    ) ?? null
+  );
 }

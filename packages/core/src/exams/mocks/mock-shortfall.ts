@@ -1,7 +1,7 @@
 import { apportion } from "@zoonk/utils/apportion";
 import { interleave } from "@zoonk/utils/interleave";
 import { listAskedSkills } from "../../library/exams/format-sections";
-import { type MockFormat } from "./mock-format-mix";
+import { type MockFormat, getMockWritingFormat } from "./mock-format-mix";
 import {
   type MockCandidate,
   type MockPlan,
@@ -173,13 +173,30 @@ export function getMockQuestionsShortfall({
 
     const written = interleave([...byArea.values()]).slice(0, Math.max(0, room));
 
-    const byLack = Map.groupBy(written, (skill) => target - holds(skill));
+    const scoped = written.flatMap((skill) => {
+      const own = getMockWritingFormat({
+        format,
+        names: skill.area ? [skill.area] : [],
+      });
 
-    return [...byLack].map(([questionsPerSkill, lacking]) => ({
-      format,
-      questionsPerSkill,
-      skillIds: lacking.map((skill) => skill.id),
-      target,
-    }));
+      return own ? [{ format: own, questionsPerSkill: target - holds(skill), skill }] : [];
+    });
+
+    const byLack = Map.groupBy(scoped, (entry) =>
+      JSON.stringify([entry.questionsPerSkill, entry.format.style]),
+    );
+
+    return [...byLack.values()].flatMap((lacking) =>
+      lacking[0]
+        ? [
+            {
+              format: lacking[0].format,
+              questionsPerSkill: lacking[0].questionsPerSkill,
+              skillIds: lacking.map(({ skill }) => skill.id),
+              target,
+            },
+          ]
+        : [],
+    );
   });
 }
