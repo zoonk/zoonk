@@ -9,6 +9,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatList
+import com.zoonk.api.models.MockLeftOut
 import com.zoonk.api.models.MockOption
 import com.zoonk.api.models.MockShape
 import com.zoonk.api.models.PlacementMockOption
@@ -30,12 +31,21 @@ internal fun minutesText(minutes: Long): String = formatDuration(minutes * SECON
 internal fun mockOptionName(
     option: MockOption,
     severalDays: Boolean,
-): String =
+): String {
     if (option.kind == MockOption.Kind.AREA) {
-        option.areas.firstOrNull() ?: option.area ?: stringResource(R.string.mock_chooser_one_subject)
-    } else {
-        mockDaySize(fullLength = option.kind == MockOption.Kind.FULL, day = if (severalDays) option.day ?: 1 else null)
+        return option.areas.firstOrNull() ?: option.area ?: stringResource(R.string.mock_chooser_one_subject)
     }
+
+    val day = if (severalDays) option.day ?: 1 else null
+    val unpicked = option.leftOut.filter { it.part == MockLeftOut.Part.CHOICE }.mapNotNull { it.name }
+    if (option.kind == MockOption.Kind.FULL && unpicked.isNotEmpty()) {
+        val names = formatList(unpicked, currentLocale())
+        return day?.let { stringResource(R.string.mock_chooser_full_day_number_without, it, names) }
+            ?: stringResource(R.string.mock_chooser_full_day_without, names)
+    }
+
+    return mockDaySize(fullLength = option.kind == MockOption.Kind.FULL, day = day)
+}
 
 /** What an option asks beyond its name: the parts it sits, its day's subjects, its written parts. */
 @Composable

@@ -12,6 +12,10 @@
     <string name="mock_chooser_see_plus">See Plus</string>
     <string name="mock_chooser_plus">Mock exams come with Plus: whenever you want, and every week in your plan.</string>
     <string name="mock_chooser_one_subject">One subject</string>
+    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$s lists them, such as "Specialty knowledge (P3)". -->
+    <string name="mock_chooser_full_day_without">An exam day without %1$s</string>
+    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$d is the exam day's number; %2$s lists the tests, such as "Foreign language". -->
+    <string name="mock_chooser_full_day_number_without">Exam day %1$d without %2$s</string>
     <!-- After a mock's parts or subjects: the mock covers only the exam's objective part, questions with set answers, and leaves the exam day's written part out. -->
     <string name="mock_chooser_objective_only">objective part only</string>
     <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
@@ -118,4 +122,6 @@
     <string name="mock_chooser_left_out_short_answer">Questions answered in a few words are asked as multiple choice.</string>
     <!-- %1$s is the exam's name for a written part, such as "Essay". -->
     <string name="mock_chooser_left_out_written">There\'s no essay for %1$s yet, so you practice it in your essay sessions.</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test, that the learner hasn't picked an option for yet. -->
+    <string name="mock_chooser_left_out_choice">%1$s is left out until you pick which one you take, in your plan.</string>
 </resources>

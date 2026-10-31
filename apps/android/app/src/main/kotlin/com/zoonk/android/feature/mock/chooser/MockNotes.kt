@@ -161,7 +161,7 @@ private fun leftOutLine(
         }
 
         MockLeftOut.Part.CHOICE -> {
-            name?.let { stringResource(R.string.mock_chooser_left_out_named, it) }
+            stringResource(R.string.mock_chooser_left_out_choice, name.orEmpty())
         }
 
         MockLeftOut.Part.PRACTICAL -> {

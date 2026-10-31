@@ -91,6 +91,16 @@ class MockChooserFlowTest {
     }
 
     @Test
+    fun aTestNotPickedYetIsNamedAsLeftOut() {
+        mocks.options = mockOptions(UNPICKED)
+        show()
+
+        rule.onNodeWithText("An exam day without Specialty knowledge (P3)").assertIsSelected()
+        scrollTo("Specialty knowledge (P3) is left out until you pick which one you take, in your plan.")
+        rule.onNodeWithText("Specialty knowledge (P3) is left out until you pick which one you take, in your plan.").assertIsDisplayed()
+    }
+
+    @Test
     fun aShortBankAsksBeforeStartingWithFewerQuestions() {
         starts.starts = listOf({ short() }, { started() })
         show()
@@ -171,6 +181,14 @@ class MockChooserFlowTest {
               "minutes":165,"objectiveOnly":true,"questions":45,"written":[]},
              {"area":"Mathematics","day":null,"kind":"area","areas":["Mathematics"],"covers":null,"estimatedMinutes":120,"leftOut":[],
               "minutes":135,"objectiveOnly":false,"questions":45,"written":[]}]
+            """.trimIndent()
+
+        val UNPICKED =
+            """
+            "options":[{"area":null,"day":null,"kind":"full","areas":["Basic knowledge"],"covers":null,"estimatedMinutes":180,
+              "leftOut":[{"name":"Specialty knowledge (P3)","part":"choice"}],"minutes":210,"objectiveOnly":false,"questions":80,"written":[]},
+             {"area":null,"day":null,"kind":"half","areas":["Basic knowledge"],"covers":null,"estimatedMinutes":90,
+              "leftOut":[{"name":"Specialty knowledge (P3)","part":"choice"}],"minutes":105,"objectiveOnly":false,"questions":40,"written":[]}]
             """.trimIndent()
 
         val PLACEMENT =

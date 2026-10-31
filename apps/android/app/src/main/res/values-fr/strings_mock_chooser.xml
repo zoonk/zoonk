@@ -4,8 +4,11 @@
   "mock_chooser_about": "cc939d2309a6f20c0ea776ab93e523814c893c552dba5eb7a8c76cf3ed567909",
   "mock_chooser_about_recommended": "c342c6318a0e8c41b17dd1f22c99ae5b0d13b9739d3087c985f50dda6c62741b",
   "mock_chooser_failed": "a884cc9279ea16956b98411a67d253d8e920d43b9123e6acf5b379d3a4c25de5",
+  "mock_chooser_full_day_number_without": "f639b9d758b99a75225640db4b3045ca487042678960e77b6764448961cf4468",
+  "mock_chooser_full_day_without": "a6418d28857556447e24fac466393fbcd14b37b3ad3027deb995f8d80c29ddbb",
   "mock_chooser_getting_ready": "eb278157314714226eb5b8bb8e2b325eadc01e0d4ebb1634382e351f1eb84ea1",
   "mock_chooser_last_mock": "b2e972243280a3559ab4134d39bca3b8bd0623035af9359da85ee0a784402e29",
+  "mock_chooser_left_out_choice": "1244735291fd286b87554067f3d9454168621811a6bc83f6c880bfdff7302562",
   "mock_chooser_left_out_listening": "d2a820baca84e1c69df799e5f33b459942e809708257b20c15de7fb419d553d3",
   "mock_chooser_left_out_named": "67a2d5843904a8e94404a9b4f6c210158d77bba75242701675321c9e7adfd139",
   "mock_chooser_left_out_numeric": "b386a3ba9d6e2c7d27968c2214cb79a38e113b0daf3b1d783ed418805fb90430",
@@ -85,6 +88,10 @@
     <string name="mock_chooser_see_plus">Découvrir Plus</string>
     <string name="mock_chooser_plus">Avec Plus, passe des examens blancs quand tu veux et chaque semaine dans ton plan.</string>
     <string name="mock_chooser_one_subject">Une matière</string>
+    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$s lists them, such as "Specialty knowledge (P3)". -->
+    <string name="mock_chooser_full_day_without">Une journée d’examen sans %1$s</string>
+    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$d is the exam day's number; %2$s lists the tests, such as "Foreign language". -->
+    <string name="mock_chooser_full_day_number_without">Journée d’examen %1$d sans %2$s</string>
     <!-- After a mock's parts or subjects: the mock covers only the exam's objective part, questions with set answers, and leaves the exam day's written part out. -->
     <string name="mock_chooser_objective_only">questions à réponses prédéfinies uniquement</string>
     <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
@@ -200,4 +207,6 @@
     <string name="mock_chooser_left_out_short_answer">Les questions auxquelles on répond en quelques mots sont proposées sous forme de QCM.</string>
     <!-- %1$s is the exam's name for a written part, such as "Essay". -->
     <string name="mock_chooser_left_out_written">Il n’y a pas encore de rédaction pour %1$s. Tu peux t’y entraîner pendant tes séances de rédaction.</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test, that the learner hasn't picked an option for yet. -->
+    <string name="mock_chooser_left_out_choice">%1$s reste de côté tant que tu n’as pas choisi ton option dans ton plan.</string>
 </resources>
