@@ -26,6 +26,7 @@
   "activities_sorting_every_spot_named": "85ace62f4a7bc07e44252ae2330a31e4e39a4f0122e0bd3898b416a966ee8d1e",
   "activities_sorting_gap_between": "fccd6394a93af7b2245f6a9d351e7b0e5491f942fc779905061980c9eda0bfd9",
   "activities_sorting_goes_with": "d62e5dc0166bbc0ab80938a23ff17e18217fc340d38c64601fb0a21058ce7b8e",
+  "activities_sorting_how_they_connect": "e7b38512af1308b9496a0eefbee40c1d4d93c4cbf717feb65e3f9e3e016205c5",
   "activities_sorting_led_to": "abdbd1606c5408ff6386f9219426996ae1d7f85317119f64a4eed3ebff541b2f",
   "activities_sorting_linked": "be6d5e2718a585b6ec06901614802be75133f461aa820d3ef816b20ea54bbbb2",
   "activities_sorting_links_count": "ba89b7be2e98938166cb67ff700748d0279c64aaffcfe6d79b83acfb99edb667",
@@ -161,6 +162,8 @@
     <string name="activities_sorting_causes_and_effects">원인과 결과</string>
     <!-- The name of the list of links made, for TalkBack. -->
     <string name="activities_sorting_your_links">내 연결 고리</string>
+    <!-- The name of the list of an explained cause-and-effect chain's links, which the lesson drew, for TalkBack. -->
+    <string name="activities_sorting_how_they_connect">어떻게 연결되는지</string>
     <!-- Read by TalkBack in place of the arrow between a cause and its effect. -->
     <string name="activities_sorting_led_to">그 결과</string>
     <!-- Under a link the learner made that the story doesn't have. -->

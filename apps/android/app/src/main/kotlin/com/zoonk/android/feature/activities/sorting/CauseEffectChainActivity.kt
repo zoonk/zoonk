@@ -217,6 +217,7 @@ private fun CauseEffectChainActivity(props: ActivityProps) {
                 showWhy = isGuided || locked,
                 canRemove = !locked && !isGuided,
                 onRemove = { update(links.toggle(it)) },
+                isExploring = props.isExploring,
             )
         }
         ActivityAnnouncement(if (locked) "" else announcement)
@@ -286,10 +287,11 @@ private fun LinkList(
     showWhy: Boolean,
     canRemove: Boolean,
     onRemove: (CauseLink) -> Unit,
+    isExploring: Boolean,
 ) {
     if (results.isEmpty()) return
     val colors = MaterialTheme.colorScheme
-    val label = stringResource(R.string.activities_sorting_your_links)
+    val label = stringResource(if (isExploring) R.string.activities_sorting_how_they_connect else R.string.activities_sorting_your_links)
     val ledTo = stringResource(R.string.activities_sorting_led_to)
 
     Column(Modifier.semantics { contentDescription = label }, verticalArrangement = Arrangement.spacedBy(8.dp)) {

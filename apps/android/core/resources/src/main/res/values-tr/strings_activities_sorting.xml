@@ -26,6 +26,7 @@
   "activities_sorting_every_spot_named": "22683f75117be1b5b5d5899d0ce4459c4b2175d266cdf4e4fac6466235c81c4b",
   "activities_sorting_gap_between": "24752f2160cbc46466634de06c757f1d8dafff7f4d362fa73bd2d02efe957501",
   "activities_sorting_goes_with": "4e9474df023579d14530bc1a38d2cded04afe62b7633c4a0b515513845e79610",
+  "activities_sorting_how_they_connect": "7bfc4fb896b14fbc19dbf19728560561de267dd1237fe95ce6c8c399f95d22d7",
   "activities_sorting_led_to": "aa196169303041db547ec25114e31a1b878e0945e996686eb2d21816d92efc2e",
   "activities_sorting_linked": "99d19c77c5322db8b220e7a1656c0b3057b4b95bea6c87eefe6000f2f985d7eb",
   "activities_sorting_links_count": "4072fb0849d794739add44e253a0a120bb457c3fbdd1fad6b8f02939e30d190e",
@@ -165,6 +166,8 @@
     <string name="activities_sorting_causes_and_effects">Nedenler ve sonuçlar</string>
     <!-- The name of the list of links made, for TalkBack. -->
     <string name="activities_sorting_your_links">Kurduğun ilişkiler</string>
+    <!-- The name of the list of an explained cause-and-effect chain's links, which the lesson drew, for TalkBack. -->
+    <string name="activities_sorting_how_they_connect">Aralarındaki ilişkiler</string>
     <!-- Read by TalkBack in place of the arrow between a cause and its effect. -->
     <string name="activities_sorting_led_to">sonucunda</string>
     <!-- Under a link the learner made that the story doesn't have. -->

@@ -26,6 +26,7 @@
   "activities_sorting_every_spot_named": "5e758d28e18d3b2259368d6e1b32b95bde8f598f85474752b9cc664530969ac6",
   "activities_sorting_gap_between": "241145fafac7d1dea3def6a9389ad9f8e643ac4aed784ee77ca450bcf1f97ee0",
   "activities_sorting_goes_with": "46c736a79a876bc37c0b2f36d0722c693f8f8e8e942a97195a3228ac76021103",
+  "activities_sorting_how_they_connect": "d83c3c6eb5d80122472934bfe643907f96f710358d82536b13c6c3507c2af1ba",
   "activities_sorting_led_to": "5fb8ded2d7cd5f915d13450d8b451e0e76cd07e69989ade65bced1a1feaab2be",
   "activities_sorting_linked": "d31b700e3e09e1eecf6b3a6669b415f9a2f2f93d4c60e4a76afc22e493020f74",
   "activities_sorting_links_count": "8dcdb59e730052cfede1cb3e90a01dbab0d87af3f32f4129aa3d42263ea6e88d",
@@ -169,6 +170,8 @@
     <string name="activities_sorting_causes_and_effects">Causas y efectos</string>
     <!-- The name of the list of links made, for TalkBack. -->
     <string name="activities_sorting_your_links">Tus relaciones</string>
+    <!-- The name of the list of an explained cause-and-effect chain's links, which the lesson drew, for TalkBack. -->
+    <string name="activities_sorting_how_they_connect">Cómo se relacionan</string>
     <!-- Read by TalkBack in place of the arrow between a cause and its effect. -->
     <string name="activities_sorting_led_to">causa de</string>
     <!-- Under a link the learner made that the story doesn't have. -->

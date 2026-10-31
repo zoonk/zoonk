@@ -26,6 +26,7 @@
   "activities_sorting_every_spot_named": "7c01ade0cc982cca43040b96dc5fbc4ded6708af769a6f4f56ac34f3950a7693",
   "activities_sorting_gap_between": "e9e9c913bf08d8d30e31645ebfc7e08786ce53f3b951e078c2dd7026a672746f",
   "activities_sorting_goes_with": "3f8c221192d031dc67fb92441b1a0b7bfe8ce70c97d2ef99c0e3ec5db9794766",
+  "activities_sorting_how_they_connect": "a8e2fb5facc4d92d0e9637910deb86fcb4325cb437c6d28d4c5fbe43281fb0be",
   "activities_sorting_led_to": "ffb0523fb63dc03ec6b750b52ab7641832f59d43ed3bbc095980fc5b1d142568",
   "activities_sorting_linked": "f6a13120ebbbb55f8a83ef74cbfbaa3f2eb293c931c76675dcb3813b7f5d542a",
   "activities_sorting_links_count": "ab27d2e8612e4f2b601e10e443ae5525fb32f4d6e44a581f3f4d5e5e2f6d3acc",
@@ -169,6 +170,8 @@
     <string name="activities_sorting_causes_and_effects">Cause ed effetti</string>
     <!-- The name of the list of links made, for TalkBack. -->
     <string name="activities_sorting_your_links">I tuoi nessi</string>
+    <!-- The name of the list of an explained cause-and-effect chain's links, which the lesson drew, for TalkBack. -->
+    <string name="activities_sorting_how_they_connect">Come si collegano</string>
     <!-- Read by TalkBack in place of the arrow between a cause and its effect. -->
     <string name="activities_sorting_led_to">all’origine di</string>
     <!-- Under a link the learner made that the story doesn't have. -->

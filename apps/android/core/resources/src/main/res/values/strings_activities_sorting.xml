@@ -92,6 +92,8 @@
     <string name="activities_sorting_causes_and_effects">Causes and effects</string>
     <!-- The name of the list of links made, for TalkBack. -->
     <string name="activities_sorting_your_links">Your links</string>
+    <!-- The name of the list of an explained cause-and-effect chain's links, which the lesson drew, for TalkBack. -->
+    <string name="activities_sorting_how_they_connect">How they connect</string>
     <!-- Read by TalkBack in place of the arrow between a cause and its effect. -->
     <string name="activities_sorting_led_to">led to</string>
     <!-- Under a link the learner made that the story doesn't have. -->

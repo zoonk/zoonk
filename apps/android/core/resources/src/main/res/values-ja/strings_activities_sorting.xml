@@ -26,6 +26,7 @@
   "activities_sorting_every_spot_named": "6b569476f51b8646a7351baeeeecdf56ca28cadc18c42f63464982a13b6af4ea",
   "activities_sorting_gap_between": "4806db0506b278c385b922af2c410cde33a08d9ef10eb30372e8980f4ddb27db",
   "activities_sorting_goes_with": "8cfbc9697971aeef0d64ce8a6cae880ec22ce637f536fcfc2c3f654f710a350d",
+  "activities_sorting_how_they_connect": "a5012060160db06d92512d4d559b0a308501e88a03ddcd040966801f6bc29a61",
   "activities_sorting_led_to": "9c2397942de6b4dd2e7b63988a5f9c32db89b9691fbecb4d1d9754443eb3a2ca",
   "activities_sorting_linked": "a155b319a22253861848ae422bfe7a02c77459f71ac72c106401f86ea07b82e5",
   "activities_sorting_links_count": "1bcc545cb0e1037d0d3fe8e90cad52b0403343f2885ce6467a66a9401011936a",
@@ -161,6 +162,8 @@
     <string name="activities_sorting_causes_and_effects">原因と結果</string>
     <!-- The name of the list of links made, for TalkBack. -->
     <string name="activities_sorting_your_links">作ったつながり</string>
+    <!-- The name of the list of an explained cause-and-effect chain's links, which the lesson drew, for TalkBack. -->
+    <string name="activities_sorting_how_they_connect">つながり方</string>
     <!-- Read by TalkBack in place of the arrow between a cause and its effect. -->
     <string name="activities_sorting_led_to">その結果</string>
     <!-- Under a link the learner made that the story doesn't have. -->

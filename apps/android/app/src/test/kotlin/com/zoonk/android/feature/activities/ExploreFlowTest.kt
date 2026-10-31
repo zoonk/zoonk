@@ -55,4 +55,12 @@ class ExploreFlowTest {
         rule.onNode(hasContentDescription("your dot", substring = true)).assertDoesNotExist()
         rule.onNode(hasContentDescription("Your answer on the number line")).assertDoesNotExist()
     }
+
+    @Test
+    fun anExplainedChainNamesItsLinksAsTheLessonsNotTheLearners() {
+        harness.play(listOf(ActivityFixtures.exploreStep("causeEffectChain"), summaryStep("end")))
+
+        rule.onNode(hasContentDescription("How they connect")).assertExists()
+        rule.onNode(hasContentDescription("Your links")).assertDoesNotExist()
+    }
 }

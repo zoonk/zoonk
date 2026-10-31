@@ -26,6 +26,7 @@
   "activities_sorting_every_spot_named": "901ba929b8e81e732c05df1d29803870a9aca83a1a36c1eb8507d1d7a621ee14",
   "activities_sorting_gap_between": "d0bd6d189cc8302b7f00c4963405d6fce649493e8621bbb7190177b2027791ec",
   "activities_sorting_goes_with": "611ede0caa4460b9099f4a4af678fbab7285c4363374698c288afff34014ae41",
+  "activities_sorting_how_they_connect": "3c4b0b155693e5005ce4ad89453399f4203c0d96de7f8376af1aa0f52d7d68bf",
   "activities_sorting_led_to": "c92915ce0e5cbb2e38b8a495930031f32027b2724d8695ddca5869aabb6e78be",
   "activities_sorting_linked": "3d20ca6ad6edee721f7f7b2cadc4b2b9a5b0c12447b79dc71fff756b977a8a68",
   "activities_sorting_links_count": "25136868103c2318116261a22ffe7584fad262896ecf3ea23235fd097d3d8cd8",
@@ -169,6 +170,8 @@
     <string name="activities_sorting_causes_and_effects">Causas e efeitos</string>
     <!-- The name of the list of links made, for TalkBack. -->
     <string name="activities_sorting_your_links">Suas ligações</string>
+    <!-- The name of the list of an explained cause-and-effect chain's links, which the lesson drew, for TalkBack. -->
+    <string name="activities_sorting_how_they_connect">Como se conectam</string>
     <!-- Read by TalkBack in place of the arrow between a cause and its effect. -->
     <string name="activities_sorting_led_to">levou a</string>
     <!-- Under a link the learner made that the story doesn't have. -->
