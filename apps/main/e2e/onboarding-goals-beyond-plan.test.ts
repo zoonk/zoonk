@@ -28,8 +28,8 @@ async function createLearnerWithWaitingGoal() {
     data: { language: "en", prompt, status: "understood", timeZone: "UTC", userId: user.id },
   });
 
-  const toCardGoal = (goal: typeof ENGLISH | typeof STATISTICS) => ({
-    draft: { details: { onboardingId: draft.id }, language: "en", prompt, ...goal },
+  const toCardGoal = ({ subject, ...goal }: typeof ENGLISH | typeof STATISTICS) => ({
+    draft: { details: { onboardingId: draft.id, subject }, language: "en", prompt, ...goal },
     examDates: [],
   });
 
