@@ -1,7 +1,9 @@
 package com.zoonk.android.feature.activities.sorting
 
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -37,6 +39,20 @@ class MatchPairsFlowTest : SortingFlow() {
         harness.tap("Check")
 
         shows("Look-alikes with no match")
+    }
+
+    @Test
+    fun matchPairsResultSectionsAreHeadings() {
+        play("matchPairs", isCorrect = false)
+
+        matchCards("embarazada", "embarrassed")
+        matchCards("embarazada", "pregnant")
+        matchCards("éxito", "success")
+        matchCards("librería", "bookstore")
+        harness.tap("Check")
+
+        rule.onNodeWithText("Missed on the first try").performScrollTo().assert(isHeading())
+        rule.onNodeWithText("Look-alikes with no match").performScrollTo().assert(isHeading())
     }
 
     @Test
