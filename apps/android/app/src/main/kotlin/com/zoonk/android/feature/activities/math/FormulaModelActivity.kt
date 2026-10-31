@@ -360,7 +360,8 @@ private fun FormulaChart(
         line(view.current, accent)
         if (before != null && now != null && delta != null && abs(at(view.x, before).y - at(view.x, now).y) >= minDelta) {
             line(listOf(view.x to before, view.x to now), highlight, width = 1.5.dp, dash = 3.dp)
-            sideLabel(delta, view.x, (before + now) / 2, highlight)
+            // Once checked, the right answer's label takes the change label's place; the readouts still say it.
+            if (expected == null) sideLabel(delta, view.x, (before + now) / 2, highlight)
         }
         before?.let { dot(view.x, it, ring, muted, radius = MARK_INNER) }
         view.compared?.let { (x, y) -> dot(x, y, accent.copy(alpha = SOFT).compositeOver(ring), accent, radius = MARK_INNER) }
