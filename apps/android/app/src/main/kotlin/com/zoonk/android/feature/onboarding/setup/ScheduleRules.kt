@@ -109,6 +109,12 @@ internal fun pickedMinutes(
     minutes: Int,
 ): Int? = minutes.takeUnless { suggestedMinutes(first) != null && suggestedMinutes(found) == minutes }
 
+/** Continue saves only a time the learner picked, or one the screen has said what it covers. */
+internal fun waitsToSave(
+    line: TimeLine,
+    picked: Int?,
+): Boolean = picked == null && line.isBusy
+
 /** The plan's answer for the days shown and what it says about the time shown. */
 internal data class TimeAnswerState(
     val found: PlanTimeToCover?,

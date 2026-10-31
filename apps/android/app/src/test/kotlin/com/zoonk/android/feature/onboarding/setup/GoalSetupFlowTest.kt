@@ -7,6 +7,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -567,6 +568,20 @@ class GoalSetupFlowTest {
         rule.waitForIdle()
 
         rule.onNodeWithText("Choose at least 10\u00A0min a day for your 2 goals.").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun continueWaitsWhileTheTimeKeptForNewDaysIsWorkedOut() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { input -> coverOf(recommended = if (input.studyDays.orEmpty().size == 5) 45 else null) }
+        show()
+
+        rule.onNodeWithText("Continue").performScrollTo().assertIsEnabled()
+        rule.onNodeWithContentDescription("Friday").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(1_000)
+
+        rule.onNodeWithContentDescription("Time a day, 45\u00A0min").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Continue").performScrollTo().assertIsNotEnabled()
     }
 
     @Test

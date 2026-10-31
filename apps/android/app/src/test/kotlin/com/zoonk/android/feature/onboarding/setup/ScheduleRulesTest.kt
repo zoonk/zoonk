@@ -128,6 +128,15 @@ class ScheduleRulesTest {
     }
 
     @Test
+    fun continueSavesOnlyATimeTheLearnerPickedOrTheScreenExplained() {
+        assertTrue(waitsToSave(TimeLine.Asking, picked = null))
+        assertTrue(waitsToSave(TimeLine.Working, picked = null))
+        assertFalse(waitsToSave(TimeLine.Asking, picked = 30))
+        assertFalse(waitsToSave(TimeLine.Share(0.4), picked = null))
+        assertFalse(waitsToSave(TimeLine.AskFailed, picked = null))
+    }
+
+    @Test
     fun theLastAnswerStaysInPlaceMarkedAsUpdatingWhileTheNewOneIsWorkedOut() {
         val last = TimeAnswerState(found(), TimeLine.Share(0.4))
         val asking = TimeAnswerState(null, TimeLine.Asking)

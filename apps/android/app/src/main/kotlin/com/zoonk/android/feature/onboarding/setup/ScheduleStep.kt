@@ -166,7 +166,7 @@ internal fun ColumnScope.ScheduleStep(
     StepForm(
         title = stringResource(R.string.onboarding_schedule_title),
         canContinue = hasDays && minutes != null,
-        pending = pending || stale,
+        pending = pending || waitsToSave(line, picked),
         onContinue = {
             val time = minutes ?: return@StepForm
             vm.answer(
