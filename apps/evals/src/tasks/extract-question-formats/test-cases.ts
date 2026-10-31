@@ -9,7 +9,7 @@ export const TEST_CASES: FormatsCase[] = [
     expected: {
       absent: [],
       present: [
-        { kind: "multipleChoice", section: "Paper 1" },
+        { kind: "multipleChoice", section: /^Paper 1$/u },
         { kind: "essay", section: null },
       ],
     },
@@ -22,15 +22,15 @@ export const TEST_CASES: FormatsCase[] = [
         },
       ],
       exam: "School exam",
+      parts: ["Paper 1", "Paper 2"],
     },
   },
   {
     expected: {
-      absent: [{ kind: "numeric", section: "Section A" }],
+      absent: [{ kind: "numeric", section: /^Section A$/u }],
       present: [
-        { kind: "multipleChoice", options: 4, section: "Section A", select: null },
-        { kind: "multipleChoice", options: 4, section: "Section B", select: null },
-        { kind: "numeric", section: "Section B" },
+        { kind: "multipleChoice", options: 4, section: null, select: null },
+        { kind: "numeric", section: /^Section B$/u },
       ],
     },
     id: "en-jee-choice-everywhere-numeric-section-b",
@@ -42,6 +42,7 @@ export const TEST_CASES: FormatsCase[] = [
         },
       ],
       exam: "JEE-style practice test",
+      parts: ["Section A", "Section B"],
     },
   },
   {
@@ -49,15 +50,17 @@ export const TEST_CASES: FormatsCase[] = [
       absent: [
         { kind: "multipleChoice", passage: /column/iu, select: "all" },
         { description: /grid|circle/iu, kind: "numeric" },
+        { kind: "multipleChoice", passage: /column|blank/iu, section: /^Quantitative/u },
+        { kind: "multipleChoice", options: 4, section: /^Verbal/u },
       ],
       present: [
         { kind: "essay" },
-        { kind: "multipleChoice", options: 4, section: "quantitative", select: null },
+        { kind: "multipleChoice", options: 4, section: /^Quantitative/u, select: null },
         { kind: "multipleChoice", options: 5, select: null },
-        { kind: "multipleChoice", passage: /column|blank/iu, section: "verbal", select: null },
-        { kind: "multipleChoice", options: 6, section: "verbal", select: 2 },
+        { kind: "multipleChoice", passage: /column|blank/iu, section: /^Verbal/u, select: null },
+        { kind: "multipleChoice", options: 6, section: /^Verbal/u, select: 2 },
         { kind: "multipleChoice", select: "all" },
-        { kind: "numeric", section: "quantitative" },
+        { kind: "numeric", section: /^Quantitative/u },
       ],
     },
     id: "en-gre-general-test",
@@ -73,6 +76,15 @@ export const TEST_CASES: FormatsCase[] = [
         },
       ],
       exam: "GRE General Test",
+      parts: [
+        "Analytical Writing",
+        "Verbal Reasoning (Section 1)",
+        "Verbal Reasoning (Section 2)",
+        "Quantitative Reasoning (Section 1)",
+        "Quantitative Reasoning (Section 2)",
+        "Verbal Reasoning",
+        "Quantitative Reasoning",
+      ],
     },
   },
   {

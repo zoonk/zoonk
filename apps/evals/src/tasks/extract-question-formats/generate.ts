@@ -6,7 +6,8 @@ import {
 import { isPassageInDocument } from "@zoonk/core/library/exams/passage-check";
 import { type EvalDocument, loadDocument } from "../extract-exam-blueprint/generate";
 
-export type FormatsEvalInput = { documents: EvalDocument[]; exam: string };
+/** `parts`: the exam's parts as its blueprint reading named them; none for class notes. */
+export type FormatsEvalInput = { documents: EvalDocument[]; exam: string; parts?: string[] };
 
 export type FormatsEvalOutput = {
   formats: QuestionFormat[];
@@ -22,6 +23,7 @@ export async function generateQuestionFormats(
     documents,
     exam: input.exam,
     model: input.model,
+    parts: input.parts,
     reasoning: input.reasoning,
     useFallback: false,
   });

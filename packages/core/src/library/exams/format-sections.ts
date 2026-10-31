@@ -1,48 +1,27 @@
-import { namesMatch } from "../../exams/_utils/name-match";
-import { type ExamStructure } from "./blueprint-contract";
+import { normalizeString } from "@zoonk/utils/string";
 
-type SectionedFormat = { sections?: readonly string[] };
+/** Drops a name the exam's list doesn't have and takes the list's spelling. */
+export function keepExamParts({
+  parts,
+  sections,
+}: {
+  parts: readonly string[];
+  sections: readonly string[];
+}): string[] {
+  const kept = sections.flatMap(
+    (name) => parts.find((part) => normalizeString(part) === normalizeString(name)) ?? [],
+  );
 
-function isAskedIn({
+  return [...new Set(kept)];
+}
+
+/** A format tied to no part is asked in every part. */
+export function isAskedIn({
   format,
-  names,
+  parts,
 }: {
-  format: SectionedFormat;
-  names: readonly string[];
+  format: { sections?: readonly string[] };
+  parts: readonly string[];
 }): boolean {
-  return format.sections?.some((part) => names.some((name) => namesMatch(part, name))) ?? false;
-}
-
-export function listExamPartNames(structure: ExamStructure | null): string[] {
-  const sections = (structure?.mock?.sections ?? []).map((section) => section.name);
-
-  const subjects = (structure?.subjects ?? []).flatMap((subject) =>
-    [subject.name, subject.group, subject.partOf, subject.shortName].filter(
-      (name) => typeof name === "string",
-    ),
-  );
-
-  return [...new Set([...sections, ...subjects])];
-}
-
-export function listAskedIn<Format extends SectionedFormat>({
-  allNames,
-  formats,
-  names,
-}: {
-  allNames: readonly string[];
-  formats: readonly Format[];
-  names: readonly string[];
-}): Format[] {
-  if (names.length === 0) {
-    return [...formats];
-  }
-
-  const scoped = formats.filter((format) => format.sections?.length);
-
-  const asked = scoped.filter(
-    (format) => isAskedIn({ format, names }) || !isAskedIn({ format, names: allNames }),
-  );
-
-  return asked.length > 0 ? asked : formats.filter((format) => !format.sections?.length);
+  return !format.sections?.length || keepExamParts({ parts, sections: format.sections }).length > 0;
 }

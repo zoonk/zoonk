@@ -1,7 +1,7 @@
 import { apportion } from "@zoonk/utils/apportion";
 import { interleave } from "@zoonk/utils/interleave";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { type MockFormat, getMockWritingFormat } from "./mock-format-mix";
+import { type MockFormat, getAreaFormat } from "./mock-format-mix";
 import {
   type MockCandidate,
   type MockPlan,
@@ -145,11 +145,7 @@ export function getMockQuestionsShortfall({
 
   return countFormats({ candidates, mix, option, plan }).flatMap(({ format, needed, wanted }) => {
     const eligible = skills.flatMap((skill) => {
-      const own = getMockWritingFormat({
-        format,
-        names: skill.area ? [skill.area] : [],
-        structure,
-      });
+      const own = getAreaFormat({ area: skill.area, format, structure });
 
       return own !== null && canWrite({ candidates, format: own, skill })
         ? [{ format: own, skill }]

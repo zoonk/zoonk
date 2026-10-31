@@ -1,4 +1,5 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { listAreaParts } from "./exam-parts";
 import { type MockOption, findAreaSubject, getSubjectShares, isOptionArea } from "./mock-options";
 import {
   type MockCandidate,
@@ -131,6 +132,10 @@ export function planOptionMock({
     const section = getSubjectSectionName(option);
     const parts = option.areas.filter((name) => name !== section);
 
+    const areaParts = [option.area, ...option.areas].flatMap((area) =>
+      area ? listAreaParts({ area, structure }) : [],
+    );
+
     const own = candidates.flatMap((candidate) => {
       if (candidate.area === null || !isOptionArea({ area: candidate.area, option, structure })) {
         return [];
@@ -142,6 +147,7 @@ export function planOptionMock({
 
     return planMock({
       adaptive: false,
+      areaParts,
       candidates: own,
       fullLength: true,
       mockNumber: 0,

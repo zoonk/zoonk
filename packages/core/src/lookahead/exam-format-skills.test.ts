@@ -120,7 +120,6 @@ describe(pickExamFormatSkills, () => {
         data: {
           structure: {
             formats: [
-              { ...JEE_FORMATS[1], sections: [] },
               { ...JEE_FORMATS[1], sections: ["Verbal"] },
               { ...JEE_FORMATS[2], sections: ["Quantitative"] },
             ],

@@ -1,10 +1,4 @@
 import { isSameNameWord, toNameWords } from "@zoonk/utils/name-words";
-import { normalizeString } from "@zoonk/utils/string";
-
-function partLabel(name: string): string | undefined {
-  return /(?:^|[^\p{L}\p{N}])(?<label>\p{L}|\p{N}+)[^\p{L}\p{N}]*$/u.exec(normalizeString(name))
-    ?.groups?.label;
-}
 
 function hasEveryWord({
   first,
@@ -15,13 +9,6 @@ function hasEveryWord({
   same: (word: string, other: string) => boolean;
   second: string;
 }): boolean {
-  const firstLabel = partLabel(first);
-  const secondLabel = partLabel(second);
-
-  if (firstLabel && secondLabel && firstLabel !== secondLabel) {
-    return false;
-  }
-
   const firstWords = toNameWords(first);
   const secondWords = toNameWords(second);
 

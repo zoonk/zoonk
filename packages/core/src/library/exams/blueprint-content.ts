@@ -1,3 +1,4 @@
+import { listExamParts } from "@zoonk/ai/tasks/research/exam-parts";
 import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { listChoiceGroups } from "../../exams/choices/exam-choices";
@@ -9,6 +10,7 @@ import { toTestedLanguage } from "./blueprint-language";
 import { toMock } from "./blueprint-mock-content";
 import { type ExtractionDocument } from "./blueprint-passages";
 import { toSubjectTopics } from "./blueprint-subject-topics";
+import { keepExamParts } from "./format-sections";
 import { getFormatShares, isFormatShare, isObjectiveFormat, toFormatDetails } from "./format-shares";
 import { isObjectiveTestUnread } from "./objective-test";
 
@@ -148,6 +150,14 @@ function toStructure({
     ),
   );
 
+  const mock = toMock({
+    extraction,
+    kept,
+    partNames: [...groups, ...subjects.map((subject) => subject.name)],
+  });
+
+  const parts = listExamParts({ mock, subjects });
+
   return {
     formats: keepItems({
       items: withFormatShares({ extraction, kept }),
@@ -161,17 +171,13 @@ function toStructure({
           : keptOr({ gap: "", id: `${id}.description`, kept, value: item.description }),
       kind: item.kind,
       options: item.options,
-      ...toFormatDetails(item),
+      ...toFormatDetails({ ...item, sections: keepExamParts({ parts, sections: item.sections }) }),
       ...(item.partialCredit && kept.has(`${id}.partialCredit`)
         ? { partialCredit: item.partialCredit }
         : {}),
       ...(isFormatShare(item.share) ? { share: item.share } : {}),
     })),
-    mock: toMock({
-      extraction,
-      kept,
-      partNames: [...groups, ...subjects.map((subject) => subject.name)],
-    }),
+    mock,
     rules: keepItems({ items: extraction.rules, kept, prefix: "rules" }).map(({ found, item }) => ({
       citation: found,
       kind: item.kind,

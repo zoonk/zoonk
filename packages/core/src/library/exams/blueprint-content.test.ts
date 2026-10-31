@@ -180,6 +180,27 @@ describe(toBlueprintContent, () => {
     expect(content.structure.formats[2]).not.toHaveProperty("select");
   });
 
+  it("ties a format only to the exam's own parts, in their spelling, and to every part otherwise", () => {
+    const extraction = blueprintExtraction();
+    const [choice] = extraction.formats;
+
+    const content = readWith({
+      extraction: {
+        ...extraction,
+        formats: [
+          { ...choice!, sections: ["matemática", "Section B"] },
+          { ...choice!, kind: "trueFalse", sections: ["Parte B"] },
+        ],
+      },
+      keep: () => true,
+    });
+
+    expect(content.structure.formats.map((format) => format.sections)).toStrictEqual([
+      ["Matemática"],
+      undefined,
+    ]);
+  });
+
   it("keeps a subject, format and mock whose details the check rejected, leaving gaps", () => {
     const content = readWith({ keep: (id) => !DETAILS.test(id) });
 

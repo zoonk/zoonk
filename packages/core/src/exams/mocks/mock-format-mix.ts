@@ -9,11 +9,11 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { sumOf } from "@zoonk/utils/number";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { countOptions, getExamFormats } from "../../library/exams/exam-choice-format";
-import { listAskedIn, listExamPartNames } from "../../library/exams/format-sections";
+import { isAskedIn } from "../../library/exams/format-sections";
 import { isFormatShare } from "../../library/exams/format-shares";
 import { describeFormat } from "../../library/exams/format-style";
-import { listSubjectNames } from "../../library/exams/subject-names";
 import { ANY_NUMBER } from "../../library/items/_utils/numeric-entry";
+import { listAreaParts } from "./exam-parts";
 
 export type ExamAnswerFormat =
   | { entry: null; format: "multipleChoice"; options: number | null; select: OptionSelect }
@@ -138,28 +138,22 @@ function toMockFormat({
 }
 
 /**
- * Formats that answer the same way share a key and its questions. With `names`, only the formats
- * the documents ask in that part of the exam (its section's name and its subjects').
+ * Formats that answer the same way share a key and its questions. With `parts`, only the formats
+ * asked in those parts of the exam; without, the whole exam's.
  */
 export function getMockFormatMix(
   structure: ExamStructure | null,
-  names?: readonly string[],
+  parts?: readonly string[],
 ): MockFormat[] {
   const stated = (structure ? getExamFormats(structure) : []).flatMap(
     (format) => toStatedFormat(format) ?? [],
   );
 
-  const asked = names
-    ? listAskedIn({
-        allNames: listExamPartNames(structure),
-        formats: stated,
-        names: names.flatMap((area) => listSubjectNames({ area, structure })),
-      })
-    : stated;
-
-  if (asked.length === 0) {
-    return stated.length === 0 ? [...ONE_PICK_MIX] : [];
+  if (stated.length === 0) {
+    return [...ONE_PICK_MIX];
   }
+
+  const asked = parts ? stated.filter((format) => isAskedIn({ format, parts })) : stated;
 
   const weights = toWeights(asked);
   const total = sumOf(weights);
@@ -171,17 +165,6 @@ export function getMockFormatMix(
 
     return toMockFormat({ key, members, share: total > 0 ? weight / total : 1 / keys.length });
   });
-}
-
-export function listUnaskedKeys({
-  mix,
-  sectionMix,
-}: {
-  mix: readonly MockFormat[];
-  sectionMix: readonly MockFormat[];
-}): Set<string> {
-  const asked = new Set(sectionMix.map((format) => format.key));
-  return new Set(mix.map((format) => format.key).filter((key) => !asked.has(key)));
 }
 
 export function getFormatMixSource(structure: ExamStructure | null): "even" | "notice" | null {
@@ -231,6 +214,18 @@ export function getItemFormatKey({
   return keys.includes(CHOICE_KEY) ? CHOICE_KEY : null;
 }
 
+/** Every section's quotas so far, so a format only some sections ask keeps its count. */
+export function addFormatsWanted({
+  quotas,
+  wanted,
+}: {
+  quotas: ReadonlyMap<string, number>;
+  wanted: Readonly<Record<string, number>>;
+}): Record<string, number> {
+  const added = [...quotas].map(([key, count]) => [key, (wanted[key] ?? 0) + count] as const);
+  return { ...wanted, ...Object.fromEntries(added) };
+}
+
 export function getFormatQuotas({
   mix,
   wanted,
@@ -242,14 +237,16 @@ export function getFormatQuotas({
   return new Map(mix.map((format, index) => [format.key, counts[index] ?? 0]));
 }
 
-export function getMockWritingFormat({
+/** The format as a skill of `area` writes it: null when no part of that area asks it. */
+export function getAreaFormat({
+  area,
   format,
-  names,
   structure,
 }: {
+  area: string | null;
   format: MockFormat;
-  names: readonly string[];
   structure: ExamStructure | null;
 }): MockFormat | null {
-  return getMockFormatMix(structure, names).find((scoped) => scoped.key === format.key) ?? null;
+  const parts = area ? listAreaParts({ area, structure }) : undefined;
+  return getMockFormatMix(structure, parts).find((scoped) => scoped.key === format.key) ?? null;
 }

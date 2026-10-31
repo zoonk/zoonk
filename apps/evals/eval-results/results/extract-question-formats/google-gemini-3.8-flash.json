@@ -3,36 +3,69 @@
   "results": [
     {
       "steps": [
+        { "conclusion": "Facts 3/3. passages found 2/2", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Facts 3/3. passages found 2/2", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Facts 8/9. passages found 7/7. missing: {\"kind\":\"multipleChoice\",\"passage\":\"column|blank\",\"section\":\"verbal\",\"select\":null}",
-          "kind": "majorErrors",
-          "score": 9.28888888888889
-        },
-        {
-          "conclusion": "Facts 8/9. passages found 7/7. missing: {\"kind\":\"multipleChoice\",\"passage\":\"column|blank\",\"section\":\"verbal\",\"select\":null}",
-          "kind": "minorErrors",
-          "score": 9.28888888888889
-        },
-        {
-          "conclusion": "Facts 8/9. passages found 7/7. missing: {\"kind\":\"multipleChoice\",\"passage\":\"column|blank\",\"section\":\"verbal\",\"select\":null}",
+          "conclusion": "Facts 3/3. passages found 2/2",
           "kind": "potentialImprovements",
-          "score": 9.28888888888889
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "absent": [{ "kind": "numeric", "section": {} }],
+          "present": [
+            { "kind": "multipleChoice", "options": 4, "section": null, "select": null },
+            { "kind": "numeric", "section": {} }
+          ]
+        },
+        "id": "en-jee-choice-everywhere-numeric-section-b-1",
+        "userInput": {
+          "documents": [
+            {
+              "text": "The JEE-style practice test has Section A and Section B. In both Section A and Section B, multiple-choice questions offer four options; select one answer. Section B also contains numerical-value questions: type an integer answer.",
+              "title": "Practice test directions"
+            }
+          ],
+          "exam": "JEE-style practice test",
+          "parts": ["Section A", "Section B"]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts 8/11. passages found 6/6. missing: {\"kind\":\"multipleChoice\",\"options\":4,\"section\":\"^Quantitative\",\"select\":null}; {\"kind\":\"multipleChoice\",\"options\":5,\"select\":null}; {\"kind\":\"multipleChoice\",\"passage\":\"column|blank\",\"section\":\"^Verbal\",\"select\":null}",
+          "kind": "majorErrors",
+          "score": 8.254545454545456
+        },
+        {
+          "conclusion": "Facts 8/11. passages found 6/6. missing: {\"kind\":\"multipleChoice\",\"options\":4,\"section\":\"^Quantitative\",\"select\":null}; {\"kind\":\"multipleChoice\",\"options\":5,\"select\":null}; {\"kind\":\"multipleChoice\",\"passage\":\"column|blank\",\"section\":\"^Verbal\",\"select\":null}",
+          "kind": "minorErrors",
+          "score": 8.254545454545456
+        },
+        {
+          "conclusion": "Facts 8/11. passages found 6/6. missing: {\"kind\":\"multipleChoice\",\"options\":4,\"section\":\"^Quantitative\",\"select\":null}; {\"kind\":\"multipleChoice\",\"options\":5,\"select\":null}; {\"kind\":\"multipleChoice\",\"passage\":\"column|blank\",\"section\":\"^Verbal\",\"select\":null}",
+          "kind": "potentialImprovements",
+          "score": 8.254545454545456
         }
       ],
       "testCase": {
         "expected": {
           "absent": [
             { "kind": "multipleChoice", "passage": {}, "select": "all" },
-            { "description": {}, "kind": "numeric" }
+            { "description": {}, "kind": "numeric" },
+            { "kind": "multipleChoice", "passage": {}, "section": {} },
+            { "kind": "multipleChoice", "options": 4, "section": {} }
           ],
           "present": [
             { "kind": "essay" },
-            { "kind": "multipleChoice", "options": 4, "section": "quantitative", "select": null },
+            { "kind": "multipleChoice", "options": 4, "section": {}, "select": null },
             { "kind": "multipleChoice", "options": 5, "select": null },
-            { "kind": "multipleChoice", "passage": {}, "section": "verbal", "select": null },
-            { "kind": "multipleChoice", "options": 6, "section": "verbal", "select": 2 },
+            { "kind": "multipleChoice", "passage": {}, "section": {}, "select": null },
+            { "kind": "multipleChoice", "options": 6, "section": {}, "select": 2 },
             { "kind": "multipleChoice", "select": "all" },
-            { "kind": "numeric", "section": "quantitative" }
+            { "kind": "numeric", "section": {} }
           ]
         },
         "id": "en-gre-general-test-1",
@@ -47,38 +80,16 @@
               "url": "https://www.ets.org/content/dam/ets-india/pdfs/gre/paper-delivered-test-practice-book.pdf"
             }
           ],
-          "exam": "GRE General Test"
-        }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "Facts 4/4. passages found 2/2", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Facts 4/4. passages found 2/2", "kind": "minorErrors", "score": 10 },
-        {
-          "conclusion": "Facts 4/4. passages found 2/2",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "absent": [{ "kind": "numeric", "section": "Section A" }],
-          "present": [
-            { "kind": "multipleChoice", "options": 4, "section": "Section A", "select": null },
-            { "kind": "multipleChoice", "options": 4, "section": "Section B", "select": null },
-            { "kind": "numeric", "section": "Section B" }
+          "exam": "GRE General Test",
+          "parts": [
+            "Analytical Writing",
+            "Verbal Reasoning (Section 1)",
+            "Verbal Reasoning (Section 2)",
+            "Quantitative Reasoning (Section 1)",
+            "Quantitative Reasoning (Section 2)",
+            "Verbal Reasoning",
+            "Quantitative Reasoning"
           ]
-        },
-        "id": "en-jee-choice-everywhere-numeric-section-b-1",
-        "userInput": {
-          "documents": [
-            {
-              "text": "The JEE-style practice test has Section A and Section B. In both Section A and Section B, multiple-choice questions offer four options; select one answer. Section B also contains numerical-value questions: type an integer answer.",
-              "title": "Practice test directions"
-            }
-          ],
-          "exam": "JEE-style practice test"
         }
       }
     }

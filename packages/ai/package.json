@@ -135,6 +135,7 @@
     "./tasks/research/documents": "./src/tasks/research/research-documents.ts",
     "./tasks/research/exam-identity-decision": "./src/tasks/research/exam-identity-decision.ts",
     "./tasks/research/extract-exam-blueprint": "./src/tasks/research/extract-exam-blueprint.ts",
+    "./tasks/research/exam-parts": "./src/tasks/research/exam-parts.ts",
     "./tasks/research/extract-question-formats": "./src/tasks/research/extract-question-formats.ts",
     "./tasks/research/format-words": "./src/tasks/research/format-words.ts",
     "./tasks/research/partial-credit": "./src/tasks/research/partial-credit.ts",

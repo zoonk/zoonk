@@ -1,31 +1,9 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { findNamingSections } from "../_utils/name-match";
+import { findSubjectSections, getObjectiveSectionNames } from "./exam-parts";
 import { getPace } from "./mock-plan";
 import { isObjectiveSection } from "./written-subject";
 
 type Subject = ExamStructure["subjects"][number];
-
-export function findSubjectSections({
-  sections,
-  subject,
-}: {
-  sections: readonly string[];
-  subject: Subject;
-}): string[] {
-  const byShortName = subject.shortName
-    ? findNamingSections({ name: subject.shortName, sections })
-    : [];
-
-  return byShortName.length > 0
-    ? byShortName
-    : findNamingSections({ name: subject.name, sections });
-}
-
-export function getObjectiveSectionNames(structure: ExamStructure | null): string[] {
-  return (structure?.mock?.sections ?? [])
-    .filter((section) => isObjectiveSection(section) && section.name.trim())
-    .map((section) => section.name);
-}
 
 export function getSubjectPace({
   subject,

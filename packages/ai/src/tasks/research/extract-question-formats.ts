@@ -5,13 +5,14 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
+import { selectPromptVariants } from "../_utils/prompt-variants";
 import { numericEntrySchema, optionSelectSchema } from "../items/item-schemas";
-import systemPrompt from "./extract-question-formats.prompt.md";
+import taskPrompt from "./extract-question-formats.prompt.md";
 import { isSameFormat } from "./format-words";
 import { partialCreditSchema } from "./partial-credit";
 import { type ResearchDocument, toDocumentParts } from "./research-documents";
 
-/** Low reasoning: a narrow read beside the blueprint reading, so it never adds to the wait. */
+/** Low reasoning: it reads after the blueprint reading, whose parts it ties formats to, so it adds to the wait. */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["openai/gpt-6-sol"] as const;
 const defaultReasoning: Reasoning = "low";
@@ -63,11 +64,30 @@ export const questionFormatSchema = z.object({
 
 export type QuestionFormat = z.infer<typeof questionFormatSchema>;
 
-const schema = z.object({ formats: z.array(questionFormatSchema) });
+const unscopedFormatSchema = questionFormatSchema.omit({ sections: true });
+
+/** Ties formats only to the exam's own parts, so code compares names that are equal by construction. */
+function toSchema(parts: readonly string[]) {
+  const [first, ...others] = parts;
+
+  return first === undefined
+    ? z.object({ formats: z.array(unscopedFormatSchema) })
+    : z.object({
+        formats: z.array(
+          unscopedFormatSchema.extend({ sections: z.array(z.enum([first, ...others])) }),
+        ),
+      });
+}
+
+function formatParts(parts: readonly string[]): string {
+  return parts.length > 0 ? `\nPARTS:\n${parts.map((part) => `- ${part}`).join("\n")}` : "";
+}
 
 export type ExtractQuestionFormatsParams = {
   documents: ResearchDocument[];
   exam: string;
+  /** The exam's parts from its reading (`listExamParts`); none before it, when no format is tied to a part. */
+  parts?: readonly string[];
   model?: string;
   reasoning?: Reasoning;
   serviceTier?: ServiceTier;
@@ -76,20 +96,27 @@ export type ExtractQuestionFormatsParams = {
 };
 
 /**
- * Runs beside the blueprint reading and takes the lead on formats: the whole reading drops formats
- * a class's notes announce in passing and runs a practice paper's formats together.
+ * Takes the lead on formats over the blueprint reading, which drops formats a class's notes announce
+ * in passing and runs a practice paper's formats together.
  */
 export async function extractQuestionFormats({
   analytics,
   documents,
   exam,
   model = defaultModel,
+  parts = [],
   reasoning = defaultReasoning,
   serviceTier,
   useFallback = true,
 }: ExtractQuestionFormatsParams) {
-  const intro = `EXAM: ${exam}\nDOCUMENTS: ${documents.length}`;
+  const intro = `EXAM: ${exam}${formatParts(parts)}\nDOCUMENTS: ${documents.length}`;
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
+  const schema = toSchema(parts);
+
+  const systemPrompt = selectPromptVariants({
+    template: taskPrompt,
+    variants: { parts: parts.length > 0 },
+  });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,
@@ -111,7 +138,7 @@ export async function extractQuestionFormats({
   });
 
   return {
-    data: result.output.formats,
+    data: result.output.formats.map((format): QuestionFormat => ({ sections: [], ...format })),
     provenance,
     systemPrompt,
     usage: result.usage,
@@ -154,19 +181,13 @@ function fillFromReading({
   const [reading, ...others] = read.filter((other) => isSameAnswer(other, format));
   const isOnly = found.filter((other) => isSameAnswer(other, format)).length === 1;
 
-  const scoped = read.filter((other) => other.sections.length > 0 && covers({ format, other }));
-
-  const recovered = scoped.length === 1 ? (scoped[0]?.sections ?? []) : [];
-  const sections = format.sections.length > 0 ? format.sections : recovered;
-
   return reading && others.length === 0 && isOnly
     ? {
         ...format,
         entry: format.entry ?? reading.entry,
         options: format.options ?? reading.options,
-        sections,
       }
-    : { ...format, sections };
+    : format;
 }
 
 function isSamePassage(first: QuestionFormat, second: QuestionFormat): boolean {

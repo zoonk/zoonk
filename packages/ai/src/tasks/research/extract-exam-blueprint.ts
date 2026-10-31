@@ -9,6 +9,7 @@ import { startTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { pointsScoringShape } from "./blueprint-points-schema";
 import { cited, citedMany } from "./cited-passages";
+import { listExamParts } from "./exam-parts";
 import readingAgainPrompt from "./extract-exam-blueprint-reading-again.prompt.md";
 import systemPrompt from "./extract-exam-blueprint.prompt.md";
 import {
@@ -194,8 +195,9 @@ export type ExtractExamBlueprintParams = {
 };
 
 /**
- * Never fills a gap from the model's own knowledge. The question formats are read on their own at
- * the same time and fill what the reading missed; that read failing leaves the reading as it is.
+ * Never fills a gap from the model's own knowledge. The question formats are read on their own after
+ * the reading, tied to the parts it found, and lead the reading's; that read failing leaves the
+ * reading as it is.
  */
 export async function extractExamBlueprint(
   params: ExtractExamBlueprintParams,
@@ -204,19 +206,19 @@ export async function extractExamBlueprint(
     formatsProvenance: Awaited<ReturnType<typeof extractQuestionFormats>>["provenance"] | null;
   }
 > {
-  const [reading, formats] = await Promise.all([
-    readWithFallback(params),
-    safeAsync(() =>
-      extractQuestionFormats({
-        analytics: params.analytics,
-        documents: params.documents,
-        exam: params.exam,
-        model: params.model,
-        serviceTier: params.serviceTier,
-        useFallback: params.useFallback,
-      }),
-    ),
-  ]);
+  const reading = await readWithFallback(params);
+
+  const formats = await safeAsync(() =>
+    extractQuestionFormats({
+      analytics: params.analytics,
+      documents: params.documents,
+      exam: params.exam,
+      model: params.model,
+      parts: listExamParts(reading.data),
+      serviceTier: params.serviceTier,
+      useFallback: params.useFallback,
+    }),
+  );
 
   const found = formats.data?.data ?? [];
 

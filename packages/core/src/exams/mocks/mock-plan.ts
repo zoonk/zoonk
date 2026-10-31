@@ -1,5 +1,6 @@
 import { type ItemFormat } from "@zoonk/db";
 import { type ExamStructure, type SectionNavigation } from "../../library/exams/blueprint-contract";
+import { listSectionParts } from "./exam-parts";
 import { fitToClock } from "./mock-clock-fit";
 import {
   DEFAULT_SECTION_QUESTIONS,
@@ -8,11 +9,11 @@ import {
   sectionMinutes,
   toSectionRules,
 } from "./mock-day-sections";
-import { getFormatQuotas, getMockFormatMix, listUnaskedKeys } from "./mock-format-mix";
+import { addFormatsWanted, getFormatQuotas, getMockFormatMix } from "./mock-format-mix";
 import { planListeningSection, planSpeakingSection } from "./mock-oral-sections";
 import { countReused } from "./mock-reuse";
 import { type MockRouting, isNextModule, toRouting } from "./mock-routing";
-import { listSectionNames, mapAreasToSections } from "./mock-section-areas";
+import { mapAreasToSections } from "./mock-section-areas";
 import { getSectionName, orderBySubjectShares, sectionPool } from "./mock-section-pool";
 import { takeQuestions } from "./mock-sets";
 import { type SubjectShare, getPartOfAreas, splitPartShares } from "./mock-subject-shares";
@@ -86,6 +87,7 @@ export function planMock({
   essays = [],
   fullLength,
   listening = new Map(),
+  areaParts,
   mockNumber,
   speaking = false,
   structure,
@@ -98,6 +100,7 @@ export function planMock({
   fullLength: boolean;
   listening?: ReadonlyMap<string, readonly MockCandidate[]>;
   mockNumber: number;
+  areaParts?: readonly string[];
   speaking?: boolean;
   structure: ExamStructure | null;
   subjectShares?: readonly SubjectShare[];
@@ -117,13 +120,11 @@ export function planMock({
   const objective = getObjectiveSections(structure);
   const allSections = objective.length > 0 ? objective : sections;
   const shares = splitPartShares({ candidates, shares: subjectShares });
-  const mix = getMockFormatMix(structure);
 
   const areaSections = mapAreasToSections({
     allSections,
     candidates,
     partOf: getPartOfAreas(subjectShares),
-    structure,
   });
 
   const byArea = areaSections !== null;
@@ -154,12 +155,14 @@ export function planMock({
 
       const previous = sections[index - 1]?.name ?? null;
       const routed = adaptive && isNextModule({ current: section.name, previous });
-      const sectionMix = getMockFormatMix(structure, listSectionNames({ areaSections, section }));
-      const unasked = listUnaskedKeys({ mix, sectionMix });
+      const sectionParts = areaParts ?? listSectionParts({ section: section.name, structure });
+      const sectionMix = getMockFormatMix(structure, sectionParts);
+      const asked = new Set(sectionMix.map((format) => format.key));
 
       const pool = orderBySubjectShares({
         pool: sectionPool({ areaSections, candidates, section }).filter(
-          (candidate) => !state.used.has(candidate.itemId) && !unasked.has(candidate.format ?? ""),
+          (candidate) =>
+            !state.used.has(candidate.itemId) && (!candidate.format || asked.has(candidate.format)),
         ),
         portion: routed ? share * 2 : share,
         subjectShares: shares,
@@ -189,12 +192,7 @@ export function planMock({
         routing,
       };
 
-      const formatsWanted = {
-        ...state.formatsWanted,
-        ...Object.fromEntries(
-          [...quotas].map(([key, count]) => [key, (state.formatsWanted[key] ?? 0) + count]),
-        ),
-      };
+      const formatsWanted = addFormatsWanted({ quotas, wanted: state.formatsWanted });
 
       return {
         formatsWanted,

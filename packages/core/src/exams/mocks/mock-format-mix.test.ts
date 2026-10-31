@@ -1,19 +1,24 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { listSectionParts } from "./exam-parts";
 import {
   ONE_PICK_MIX,
+  getAreaFormat,
   getFormatMixSource,
   getFormatQuotas,
   getItemFormatKey,
   getMockFormatMix,
-  getMockWritingFormat,
 } from "./mock-format-mix";
 
 const citation = { passage: "From the notice.", sourceId: "notice" };
 
 type Format = ExamStructure["formats"][number];
+type Section = NonNullable<ExamStructure["mock"]>["sections"][number];
 
-function structureOf(formats: Partial<Format>[], names: string[] = []): ExamStructure {
+function structureOf(
+  formats: Partial<Format>[],
+  { sections = [], subjects = [] }: { sections?: Partial<Section>[]; subjects?: string[] } = {},
+): ExamStructure {
   return {
     formats: formats.map((format) => ({
       citation,
@@ -22,11 +27,32 @@ function structureOf(formats: Partial<Format>[], names: string[] = []): ExamStru
       options: 4,
       ...format,
     })),
-    mock: null,
+    mock: {
+      adaptive: false,
+      citations: [],
+      order: null,
+      scoring: { description: "", method: "raw" },
+      sections: sections.map((section) => ({
+        day: null,
+        kind: "objective",
+        minutes: 30,
+        name: "",
+        questions: 10,
+        ...section,
+      })),
+      timeLimitMinutes: null,
+      totalQuestions: null,
+    },
     pastOptions: null,
     rules: [],
-    subjects: names.map((name) => ({ citation, name, questions: 6, topics: [], weight: null })),
+    subjects: subjects.map((name) => ({ citation, name, questions: 10, topics: [], weight: null })),
   };
+}
+
+function keysIn({ section, structure }: { section: string; structure: ExamStructure }) {
+  return getMockFormatMix(structure, listSectionParts({ section, structure })).map(
+    (format) => format.key,
+  );
 }
 
 const JEE_ADVANCED = structureOf([
@@ -35,89 +61,42 @@ const JEE_ADVANCED = structureOf([
   { entry: { kind: "integer", places: null }, kind: "numeric", options: null },
 ]);
 
-const GRE_LIKE = structureOf(
+const VERBAL = "Verbal Reasoning";
+const QUANT = "Quantitative Reasoning";
+
+const GRE = structureOf(
   [
-    { description: "Compare two quantities", sections: ["Quantitative Reasoning"] },
-    { description: "One answer", options: 5, sections: ["Verbal Reasoning", "Quantitative"] },
-    { description: "Fill each blank from its column", options: 5, sections: ["Verbal"] },
-    { description: "Two equivalent answers", options: 6, sections: ["Verbal"], select: 2 },
+    { description: "Compare two quantities", sections: [QUANT] },
+    { description: "One answer", options: 5 },
+    { description: "Fill each blank from its column", options: 5, sections: [VERBAL] },
+    { description: "Two equivalent answers", options: 6, sections: [VERBAL], select: 2 },
+    { description: "All that apply", options: null, select: "all" },
     {
       description: "Type a number",
       entry: { kind: "fraction", places: null },
       kind: "numeric",
       options: null,
-      sections: ["Quantitative Reasoning"],
+      sections: [QUANT],
     },
     { description: "Essay", kind: "essay", options: null, sections: ["Analytical Writing"] },
   ],
-  ["Verbal Reasoning", "Quantitative Reasoning", "Analytical Writing"],
+  {
+    sections: [
+      { kind: "written", name: "Analytical Writing" },
+      { name: `${VERBAL} (Section 1)` },
+      { name: `${VERBAL} (Section 2)` },
+      { name: `${QUANT} (Section 1)` },
+      { name: `${QUANT} (Section 2)` },
+    ],
+    subjects: ["Analytical Writing", VERBAL, QUANT],
+  },
 );
 
-function keysOf(mix: { key: string; share: number }[]) {
-  return mix.map(({ key, share }) => ({ key, share }));
-}
-
 describe(getMockFormatMix, () => {
-  it("resolves a subject's format through its declared group", () => {
-    const base = structureOf(
-      [
-        { options: 4, sections: ["Physics", "Chemistry"] },
-        { kind: "numeric", options: null, sections: ["Paper 1"] },
-      ],
-      ["Physics", "Chemistry"],
-    );
-
-    const structure = {
-      ...base,
-      subjects: base.subjects.map((subject) => ({
-        ...subject,
-        group: subject.name === "Physics" ? "Paper 1" : "Paper 2",
-      })),
-    };
-
-    expect(getMockFormatMix(structure, ["Physics"]).map(({ key }) => key)).toStrictEqual([
-      "choice:4",
-      "numeric:number:",
-    ]);
-
-    expect(getMockFormatMix(structure, ["Chemistry"]).map(({ key }) => key)).toStrictEqual([
-      "choice:4",
-    ]);
-  });
-
-  it("keeps a globally unmatched numeric label when the choice scope matches a subject", () => {
-    const structure = structureOf(
-      [
-        { options: 4, sections: ["Physics", "Chemistry", "Mathematics"] },
-        { kind: "numeric", options: null, sections: ["Section B"] },
-      ],
-      ["Physics", "Chemistry", "Mathematics"],
-    );
-
-    expect(keysOf(getMockFormatMix(structure, ["Physics"]))).toStrictEqual([
-      { key: "choice:4", share: 0.5 },
-      { key: "numeric:number:", share: 0.5 },
-    ]);
-  });
-
-  it("excludes unknown-scope Text Completion when Quant formats are known", () => {
-    const structure = structureOf(
-      [
-        { description: "Text Completion", options: 3, sections: [] },
-        { description: "Compare quantities", sections: ["Quantitative"] },
-      ],
-      ["Quantitative"],
-    );
-
-    expect(getMockFormatMix(structure, ["Quantitative"]).map(({ key }) => key)).toStrictEqual([
-      "choice:4",
-    ]);
-  });
-
   it("asks each format the notice lists in equal parts when it gives no counts", () => {
     const mix = getMockFormatMix(JEE_ADVANCED);
 
-    expect(keysOf(mix)).toStrictEqual([
+    expect(mix.map(({ key, share }) => ({ key, share }))).toStrictEqual([
       { key: "choice:4", share: 1 / 3 },
       { key: "picks:all", share: 1 / 3 },
       { key: "numeric:integer:", share: 1 / 3 },
@@ -150,19 +129,12 @@ describe(getMockFormatMix, () => {
       { kind: "essay", options: null },
     ]);
 
-    expect(keysOf(getMockFormatMix(jeeMain))).toStrictEqual([
+    expect(getMockFormatMix(jeeMain).map(({ key, share }) => ({ key, share }))).toStrictEqual([
       { key: "choice:4", share: 0.8 },
       { key: "numeric:number:", share: 0.2 },
     ]);
 
     expect(getFormatMixSource(jeeMain)).toBe("notice");
-
-    const sat = structureOf([{ share: 0.75 }, { kind: "shortAnswer", options: null }]);
-
-    expect(keysOf(getMockFormatMix(sat))).toStrictEqual([
-      { key: "choice:4", share: 0.75 },
-      { key: "typed", share: 0.25 },
-    ]);
   });
 
   it("asks one pick only for an exam that lists only one, and without a blueprint", () => {
@@ -181,42 +153,118 @@ describe(getMockFormatMix, () => {
     expect(getMockFormatMix(null)).toStrictEqual(ONE_PICK_MIX);
   });
 
-  it("keeps one-pick formats with their own options apart, each asked only where the notice asks it", () => {
-    expect(keysOf(getMockFormatMix(GRE_LIKE, ["Verbal Reasoning (Section 1)"]))).toStrictEqual([
-      { key: "choice:5", share: 2 / 3 },
-      { key: "picks:2", share: 1 / 3 },
+  it("asks the GRE's Verbal formats in Verbal sections and its Quant formats in Quant ones", () => {
+    expect(keysIn({ section: `${VERBAL} (Section 1)`, structure: GRE })).toStrictEqual([
+      "choice:5",
+      "picks:2",
+      "picks:all",
     ]);
 
-    const quantitative = getMockFormatMix(GRE_LIKE, ["Quantitative Reasoning (Section 2)"]);
-
-    expect(keysOf(quantitative)).toStrictEqual([
-      { key: "choice:4", share: 1 / 3 },
-      { key: "choice:5", share: 1 / 3 },
-      { key: "numeric:fraction:", share: 1 / 3 },
-    ]);
-
-    expect(quantitative.map(({ sections, style }) => ({ sections, style }))).toStrictEqual([
-      {
-        sections: ["Quantitative Reasoning"],
-        style: "multipleChoice (4 options): Compare two quantities",
-      },
-      {
-        sections: ["Verbal Reasoning", "Quantitative"],
-        style: "multipleChoice (5 options): One answer",
-      },
-      { sections: ["Quantitative Reasoning"], style: "numeric: Type a number" },
+    expect(keysIn({ section: `${QUANT} (Section 2)`, structure: GRE })).toStrictEqual([
+      "choice:4",
+      "choice:5",
+      "picks:all",
+      "numeric:fraction:",
     ]);
   });
 
-  it("includes all objective formats only when planning the whole exam", () => {
-    expect(getMockFormatMix(GRE_LIKE, ["Analytical Writing"])).toStrictEqual([]);
-    expect(getMockFormatMix(GRE_LIKE, [])).toHaveLength(4);
+  it("asks a JEE's choices in every subject and its numbers only where the notice ties them", () => {
+    const formats = [{}, { kind: "numeric" as const, options: null, sections: ["Mathematics"] }];
+    const subjects = ["Physics", "Chemistry", "Mathematics"];
 
-    expect(getMockFormatMix(GRE_LIKE).find((format) => format.key === "choice:5")).toMatchObject({
-      sections: ["Verbal Reasoning", "Quantitative", "Verbal"],
+    const bySubject = structureOf(formats, {
+      sections: subjects.map((name) => ({ name })),
+      subjects,
+    });
+
+    expect(keysIn({ section: "Physics", structure: bySubject })).toStrictEqual(["choice:4"]);
+
+    expect(keysIn({ section: "Mathematics", structure: bySubject })).toStrictEqual([
+      "choice:4",
+      "numeric:number:",
+    ]);
+
+    const byPaper = structureOf(formats, {
+      sections: [{ name: "Paper 1" }, { name: "Paper 2" }],
+      subjects,
+    });
+
+    expect(keysIn({ section: "Paper 1", structure: byPaper })).toStrictEqual([
+      "choice:4",
+      "numeric:number:",
+    ]);
+  });
+
+  it("asks an exam's one format in every section when the notice ties it to none", () => {
+    const oab = structureOf([{ options: 4 }], {
+      sections: [
+        { name: "Prova objetiva" },
+        { kind: "written", name: "Prova prático-profissional" },
+      ],
+      subjects: ["Ética profissional", "Direito constitucional"],
+    });
+
+    const cebraspe = structureOf([{ kind: "trueFalse", options: null }], {
+      sections: [{ name: "Conhecimentos básicos" }, { name: "Conhecimentos específicos" }],
+      subjects: ["Língua portuguesa", "Auditoria"],
+    });
+
+    expect(keysIn({ section: "Prova objetiva", structure: oab })).toStrictEqual(["choice:4"]);
+
+    expect(keysIn({ section: "Conhecimentos específicos", structure: cebraspe })).toStrictEqual([
+      "choice:tf",
+    ]);
+  });
+
+  it("tells parts apart by their whole name, whatever language names them", () => {
+    const notice = structureOf(
+      [
+        { options: 5, sections: ["Parte A"] },
+        { kind: "trueFalse", options: null, sections: ["Parte B"] },
+      ],
+      { sections: [{ name: "Parte A" }, { name: "Parte B" }], subjects: ["Matemática"] },
+    );
+
+    expect(keysIn({ section: "Parte A", structure: notice })).toStrictEqual(["choice:5"]);
+    expect(keysIn({ section: "Parte B", structure: notice })).toStrictEqual(["choice:tf"]);
+  });
+});
+
+function greFormat(key: string) {
+  const found = getMockFormatMix(GRE).find((candidate) => candidate.key === key);
+
+  if (!found) {
+    throw new Error(`No ${key} format`);
+  }
+
+  return found;
+}
+
+describe(getAreaFormat, () => {
+  it("gives a skill the formats its subject's sections ask, in their own style", () => {
+    expect(
+      getAreaFormat({ area: VERBAL, format: greFormat("choice:5"), structure: GRE }),
+    ).toMatchObject({
+      sections: [],
       style:
         "multipleChoice (5 options): One answer multipleChoice (5 options): Fill each blank from its column",
     });
+
+    expect(
+      getAreaFormat({ area: QUANT, format: greFormat("choice:5"), structure: GRE }),
+    ).toMatchObject({ style: "multipleChoice (5 options): One answer" });
+
+    expect(getAreaFormat({ area: QUANT, format: greFormat("picks:2"), structure: GRE })).toBeNull();
+
+    expect(
+      getAreaFormat({ area: QUANT, format: greFormat("numeric:fraction:"), structure: GRE }),
+    ).toMatchObject({ sections: [QUANT] });
+  });
+
+  it("gives a skill of no known area every format", () => {
+    expect(
+      getAreaFormat({ area: null, format: greFormat("picks:2"), structure: GRE }),
+    ).toMatchObject({ key: "picks:2" });
   });
 });
 
@@ -240,9 +288,9 @@ describe(getItemFormatKey, () => {
   });
 
   it("tells one-pick formats apart by their options", () => {
-    expect(keyOf("multipleChoice", { options: options(4) }, GRE_LIKE)).toBe("choice:4");
-    expect(keyOf("multipleChoice", { options: options(5) }, GRE_LIKE)).toBe("choice:5");
-    expect(keyOf("multipleChoice", { options: options(3) }, GRE_LIKE)).toBeNull();
+    expect(keyOf("multipleChoice", { options: options(4) }, GRE)).toBe("choice:4");
+    expect(keyOf("multipleChoice", { options: options(5) }, GRE)).toBe("choice:5");
+    expect(keyOf("multipleChoice", { options: options(3) }, GRE)).toBeNull();
 
     expect(keyOf("trueFalse", {}, structureOf([{ kind: "trueFalse", options: null }]))).toBe(
       "choice:tf",
@@ -259,47 +307,5 @@ describe(getFormatQuotas, () => {
         ["numeric:integer:", 5],
       ]),
     );
-  });
-});
-
-describe(getMockWritingFormat, () => {
-  it("resolves Paper 1 through subjects' group and partOf without selecting Law", () => {
-    const structure = {
-      formats: [
-        {
-          citation: { passage: "", sourceId: "notice" },
-          description: "",
-          kind: "multipleChoice",
-          options: 5,
-          sections: ["Paper 1"],
-        },
-        {
-          citation: { passage: "", sourceId: "notice" },
-          description: "",
-          kind: "numeric",
-          options: null,
-          sections: ["Paper 2"],
-        },
-      ],
-      subjects: [
-        { group: "Paper 1", name: "Mathematics" },
-        { name: "Algebra", partOf: "Mathematics" },
-        { group: "Paper 2", name: "Law" },
-      ],
-    } as ExamStructure;
-
-    const format = getMockFormatMix(structure)[0];
-
-    if (!format) {
-      throw new Error("Expected a choice format");
-    }
-
-    const skills = [{ area: "Mathematics" }, { area: "Algebra" }, { area: "Law" }];
-
-    expect(
-      skills.filter(
-        (skill) => getMockWritingFormat({ format, names: [skill.area], structure }) !== null,
-      ),
-    ).toStrictEqual(skills.slice(0, 2));
   });
 });

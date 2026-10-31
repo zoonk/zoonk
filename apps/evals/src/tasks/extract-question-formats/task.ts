@@ -2,17 +2,16 @@ import { createFixedScore } from "@/lib/score";
 import { type Task, type TaskScorer } from "@/lib/types";
 import { type OptionSelect } from "@zoonk/ai/tasks/items/schemas";
 import { type QuestionFormat } from "@zoonk/ai/tasks/research/extract-question-formats";
-import { normalizeString } from "@zoonk/utils/string";
 import { type FormatsEvalInput, type FormatsEvalOutput, generateQuestionFormats } from "./generate";
 import { TEST_CASES } from "./test-cases";
 
-/** `section` is a word one of the format's `sections` holds. */
+/** `section` matches one of the format's `sections`; null for a format asked in every part. */
 type FormatFact = {
   description?: RegExp;
   kind: QuestionFormat["kind"];
   options?: number;
   passage?: RegExp;
-  section?: string | null;
+  section?: RegExp | null;
   select?: OptionSelect | null;
 };
 
@@ -23,11 +22,23 @@ const SCORE_RANGE = 8;
 const FACT_WEIGHT = 0.8;
 const PASSAGE_WEIGHT = 0.2;
 
-function namesSection({ format, section }: { format: QuestionFormat; section: string }): boolean {
-  return format.sections.some((name) => normalizeString(name).includes(normalizeString(section)));
+/** Every part can be said with no part or with all of them. */
+function isEverywhere({ format, parts }: { format: QuestionFormat; parts: readonly unknown[] }) {
+  return (
+    format.sections.length === 0 ||
+    parts.every((part) => format.sections.some((name) => name === part))
+  );
 }
 
-function matches({ fact, format }: { fact: FormatFact; format: QuestionFormat }): boolean {
+function matches({
+  fact,
+  format,
+  parts,
+}: {
+  fact: FormatFact;
+  format: QuestionFormat;
+  parts: readonly unknown[];
+}): boolean {
   return (
     format.kind === fact.kind &&
     (fact.options === undefined || format.options === fact.options) &&
@@ -36,8 +47,8 @@ function matches({ fact, format }: { fact: FormatFact; format: QuestionFormat })
     (!fact.description || fact.description.test(format.description)) &&
     (fact.section === undefined ||
       (fact.section === null
-        ? format.sections.length === 0
-        : namesSection({ format, section: fact.section })))
+        ? isEverywhere({ format, parts })
+        : format.sections.some((name) => fact.section?.test(name))))
   );
 }
 
@@ -63,7 +74,12 @@ const scoreFormats: TaskScorer<FormatsExpected> = ({ output, testCase }) => {
     return createFixedScore({ conclusion: "Invalid output", score: MIN_SCORE });
   }
 
-  const has = (fact: FormatFact) => parsed.formats.some((format) => matches({ fact, format }));
+  const { parts } = testCase.userInput;
+  const everyPart = Array.isArray(parts) ? parts : [];
+
+  const has = (fact: FormatFact) =>
+    parsed.formats.some((format) => matches({ fact, format, parts: everyPart }));
+
   const missing = expected.present.filter((fact) => !has(fact));
   const wrong = expected.absent.filter((fact) => has(fact));
   const facts = expected.present.length + expected.absent.length;

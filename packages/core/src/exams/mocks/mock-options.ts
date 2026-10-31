@@ -5,11 +5,12 @@ import {
 } from "../../library/exams/subject-questions";
 import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import { namesMatch } from "../_utils/name-match";
+import { findSubjectSections, getObjectiveSectionNames } from "./exam-parts";
 import { type MockOptionView, type MockShape } from "./mock-contract";
 import { type MockTypedPart, listCoveredSections, listMockLeftOut } from "./mock-left-out";
 import { getMockDays, outlineMock } from "./mock-plan";
 import { type SubjectShare } from "./mock-subject-shares";
-import { findSubjectSections, getObjectiveSectionNames, getSubjectPace } from "./subject-sections";
+import { getSubjectPace } from "./subject-sections";
 import { type MockEssayCandidate, getDayWrittenParts } from "./written-parts";
 import { isObjectiveSection, isQuestionSubject } from "./written-subject";
 

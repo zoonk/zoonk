@@ -78,14 +78,14 @@ function formatted(area: string, key: string): MockCandidate[] {
 }
 
 describe(planMock, () => {
-  it("keeps numeric questions whose label names no exam part alongside subject-scoped choices", () => {
+  it("asks a JEE's numbers only in the subject the notice ties them to, and its choices in all", () => {
     const subjects = ["Physics", "Chemistry", "Mathematics"];
 
     const exam = {
       ...structure({ sections: subjects.map((name) => sectioned(name, 6)) }),
       formats: [
-        format({ options: 4, sections: subjects }),
-        format({ kind: "numeric", options: null, sections: ["Section B"] }),
+        format({ options: 4 }),
+        format({ kind: "numeric", options: null, sections: ["Mathematics"] }),
       ],
       subjects: subjects.map((name) => ({
         citation,
@@ -109,13 +109,13 @@ describe(planMock, () => {
       structure: exam,
     });
 
-    expect(plan.formatsWanted).toStrictEqual({ "choice:4": 9, "numeric:number:": 9 });
+    expect(plan.formatsWanted).toStrictEqual({ "choice:4": 15, "numeric:number:": 3 });
 
     expect(
       plan.sections.map(
         (section) => section.itemIds.filter((id) => id.includes("numeric:number:")).length,
       ),
-    ).toStrictEqual([3, 3, 3]);
+    ).toStrictEqual([0, 0, 3]);
   });
 
   it("never plans objective questions in a written section", () => {
@@ -153,33 +153,6 @@ describe(planMock, () => {
 
     expect(plan.sections.map((section) => section.name)).toStrictEqual(["Verbal"]);
     expect(plan.formatsWanted).toStrictEqual({ "choice:5": 6 });
-  });
-
-  it("keeps a complete mock when format scopes and section names use different labels", () => {
-    const exam = {
-      ...structure({ sections: [sectioned("Physics", 10), sectioned("Chemistry", 10)] }),
-      formats: [
-        format({ sections: ["Section 1"] }),
-        format({ kind: "numeric", options: null, sections: ["Section 2"] }),
-      ],
-      subjects: [],
-    };
-
-    const bank = ["Physics", "Chemistry"].flatMap((area) => [
-      ...formatted(area, "choice:5"),
-      ...formatted(area, "numeric:number:"),
-    ]);
-
-    const plan = planMock({
-      adaptive: false,
-      candidates: bank,
-      fullLength: true,
-      mockNumber: 0,
-      structure: exam,
-    });
-
-    expect(plan.sections.map((section) => section.itemIds.length)).toStrictEqual([10, 10]);
-    expect(plan.formatsWanted).toStrictEqual({ "choice:5": 10, "numeric:number:": 10 });
   });
 
   it("keeps choice everywhere alongside numeric questions in Section B", () => {
@@ -246,6 +219,13 @@ describe(planMock, () => {
         format({ options: 6, sections: ["Verbal Reasoning"], select: 2 }),
         format({ kind: "numeric", options: null, sections: ["Quantitative Reasoning"] }),
       ],
+      subjects: ["Verbal Reasoning", "Quantitative Reasoning"].map((name) => ({
+        citation,
+        name,
+        questions: 6,
+        topics: [],
+        weight: null,
+      })),
     };
 
     const plan = planMock({

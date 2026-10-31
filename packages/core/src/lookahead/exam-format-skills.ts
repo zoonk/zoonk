@@ -5,8 +5,8 @@ import { toListeningExam } from "../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../exams/listening/listening-skills";
 import {
   type ExamAnswerFormat,
+  getAreaFormat,
   getMockFormatMix,
-  getMockWritingFormat,
 } from "../exams/mocks/mock-format-mix";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { ANY_NUMBER } from "../library/items/_utils/numeric-entry";
@@ -160,11 +160,7 @@ export async function pickExamFormatSkills({
   const picks = formats.flatMap((format) =>
     skills
       .flatMap((skill) => {
-        const own = getMockWritingFormat({
-          format,
-          names: skill.area ? [skill.area] : [],
-          structure,
-        });
+        const own = getAreaFormat({ area: skill.area, format, structure });
 
         return own !== null &&
           needsAnswerFormat({ answerFormat: format.answerFormat, blueprintId: blueprint.id, skill })

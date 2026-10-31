@@ -74,13 +74,6 @@ describe(mergeQuestionFormats, () => {
     ]);
   });
 
-  it("keeps known sections from the matching blueprint reading", () => {
-    const choice = format("multipleChoice", 5);
-    const scoped = { ...choice, sections: ["Verbal"] };
-    expect(mergeQuestionFormats({ found: [choice], read: [scoped] })).toStrictEqual([scoped]);
-    expect(mergeQuestionFormats({ found: [scoped], read: [choice] })).toStrictEqual([scoped]);
-  });
-
   it("adds every format the reading missed, two of the same kind included", () => {
     const table = { ...format("shortAnswer"), description: "Completar a tabela das organelas" };
     const essay = { ...format("essay"), description: "Dissertativa sobre osmose" };
@@ -96,27 +89,6 @@ describe(mergeQuestionFormats, () => {
     expect(
       mergeQuestionFormats({ found: [table, otherShort], read: [format("essay")] }),
     ).toStrictEqual([table, otherShort, format("essay")]);
-  });
-
-  it("recovers scope when another choice format is present", () => {
-    const completion = {
-      ...format("multipleChoice", 3),
-      description: "Complete a sentence",
-      passage: "Fill the blank",
-    };
-
-    const comparison = {
-      ...format("multipleChoice", 4),
-      description: "Compare quantities",
-      passage: "Compare quantities",
-      sections: ["Quantitative"],
-    };
-
-    const scoped = { ...completion, sections: ["Verbal"] };
-
-    expect(
-      mergeQuestionFormats({ found: [completion, comparison], read: [scoped, comparison] }),
-    ).toStrictEqual([scoped, comparison]);
   });
 
   it("keeps different pick counts even when both readings quote the same passage", () => {

@@ -23,34 +23,31 @@ function numbers(sections: string[]): MockFormat {
 }
 
 describe(getMockQuestionsShortfall, () => {
-  it("writes numeric questions when only their internal section label is unmatched", () => {
-    const structure = {
+  it("writes a format only for the skills of the subjects that ask it", () => {
+    const citation = { passage: "", sourceId: "notice" };
+    const subjects = ["Physics", "Mathematics"];
+
+    const structure: ExamStructure = {
       formats: [
+        { citation, description: "Choose one", kind: "multipleChoice", options: 4 },
         {
-          citation: { passage: "", sourceId: "notice" },
-          description: "Choice",
-          kind: "multipleChoice",
-          options: 4,
-          sections: ["Physics", "Chemistry", "Mathematics"],
-        },
-        {
-          citation: { passage: "", sourceId: "notice" },
-          description: "Number",
+          citation,
+          description: "Type a number",
           kind: "numeric",
           options: null,
-          sections: ["Section B"],
+          sections: ["Mathematics"],
         },
       ],
       mock: null,
       rules: [],
-      subjects: ["Physics", "Chemistry", "Mathematics"].map((name) => ({
-        citation: { passage: "", sourceId: "notice" },
+      subjects: subjects.map((name) => ({
+        citation,
         name,
         questions: 6,
         topics: [],
         weight: null,
       })),
-    } as ExamStructure;
+    };
 
     const writes = getMockQuestionsShortfall({
       candidates: [],
@@ -65,119 +62,13 @@ describe(getMockQuestionsShortfall, () => {
         sections: [],
         written: [],
       },
-      skills: [{ area: "Physics", id: "physics" }],
+      skills: subjects.map((area) => ({ area, id: area })),
       structure,
     });
 
-    expect(writes.map((write) => write.format.key)).toStrictEqual(["choice:4", "numeric:number:"]);
-  });
-
-  it("falls back to all skills only when none resolve for that format", () => {
-    const structure = {
-      formats: [
-        {
-          citation: { passage: "", sourceId: "notice" },
-          description: "Choose",
-          kind: "multipleChoice",
-          options: 5,
-          sections: ["Verbal"],
-        },
-        {
-          citation: { passage: "", sourceId: "notice" },
-          description: "Number",
-          kind: "numeric",
-          options: null,
-          sections: ["Quantitative"],
-        },
-      ],
-      mock: null,
-      rules: [],
-      subjects: ["Verbal", "Quantitative"].map((name) => ({
-        citation: { passage: "", sourceId: "notice" },
-        name,
-        questions: 6,
-        topics: [],
-        weight: null,
-      })),
-    } as ExamStructure;
-
-    const writes = getMockQuestionsShortfall({
-      candidates: [],
-      mix: getMockFormatMix(structure),
-      option: { questions: 8 },
-      plan: {
-        day: null,
-        formatsWanted: { "choice:5": 4, "numeric:number:": 4 },
-        fullLength: true,
-        minutes: 8,
-        reused: 0,
-        sections: [],
-        written: [],
-      },
-      skills: [
-        { area: "Quantitative", id: "quant" },
-        { area: "Algebra", id: "unresolved" },
-        { area: "Verbal", id: "verbal" },
-      ],
-      structure,
-    });
-
-    expect(
-      writes.map((write) => ({ key: write.format.key, skills: write.skillIds })),
-    ).toStrictEqual([
-      { key: "choice:5", skills: ["verbal"] },
-      { key: "numeric:number:", skills: ["quant"] },
-    ]);
-  });
-
-  it("writes a fresh mock when no skill area resolves to a format scope", () => {
-    const structure = {
-      formats: [
-        {
-          citation: { passage: "", sourceId: "notice" },
-          description: "Choose",
-          kind: "multipleChoice",
-          options: 5,
-          sections: ["Verbal"],
-        },
-        {
-          citation: { passage: "", sourceId: "notice" },
-          description: "Number",
-          kind: "numeric",
-          options: null,
-          sections: ["Quantitative"],
-        },
-      ],
-      mock: null,
-      rules: [],
-      subjects: [],
-    } as ExamStructure;
-
-    const writes = getMockQuestionsShortfall({
-      candidates: [],
-      mix: getMockFormatMix(structure),
-      option: { questions: 8 },
-      plan: {
-        day: null,
-        formatsWanted: { "choice:5": 4, "numeric:number:": 4 },
-        fullLength: true,
-        minutes: 8,
-        reused: 0,
-        sections: [],
-        written: [],
-      },
-      skills: [
-        { area: "Algebra", id: "algebra" },
-        { area: "Reading", id: "reading" },
-      ],
-      structure,
-    });
-
-    expect(
-      writes.map((write) => ({ key: write.format.key, skills: write.skillIds })),
-    ).toStrictEqual([
-      { key: "choice:5", skills: ["algebra", "reading"] },
-      { key: "numeric:number:", skills: ["algebra", "reading"] },
+    expect(writes.map(({ format, skillIds }) => ({ key: format.key, skillIds }))).toStrictEqual([
+      { key: "choice:4", skillIds: ["Physics", "Mathematics"] },
+      { key: "numeric:number:", skillIds: ["Mathematics"] },
     ]);
   });
 
