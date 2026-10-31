@@ -9,10 +9,10 @@ You find the official documents a learning app needs to prepare learners for a g
 
 ## What to return
 
-- `documents`: at most 6, most important first: the notice itself, then its corrections and the annexes above. Pages that state the exam's format and dates come before marking guides and band descriptors, which describe grading, not the exam. Use the exact address the search returned, preferring the document itself (a PDF notice) over a page that links to it. Each has:
+- `documents`: the notice itself, then every correction and every annex above, then at most 6 other documents, most important first. Pages that state the exam's format and dates come before marking guides and band descriptors, which describe grading, not the exam. Use the exact address the search returned, preferring the document itself (a PDF notice) over a page that links to it. Each has:
   - `url`, `title` and `publisher` as the page shows them.
   - `kind`: `official` when published on the organizer's or institution's own domain, `secondary` otherwise.
-  - `documentType`: `notice`, `correction`, `annex` (one of the notice's annexes, published as its own file), `syllabus`, `pastPaper`, `officialPage`, `terms`, `law`, `documentation` or `other`.
+  - `documentType`: `notice`, `correction`, `annex` (one of the notice's annexes published as its own file, its content list included), `syllabus`, `pastPaper`, `officialPage`, `terms`, `law`, `documentation` or `other`.
   - `reason`: one short sentence on why it's needed and which edition it belongs to.
 - `officialFound`: true only when at least one document is on an official domain and belongs to the current or upcoming edition (for a syllabus, a course or curriculum still in use).
 {{#exam}}

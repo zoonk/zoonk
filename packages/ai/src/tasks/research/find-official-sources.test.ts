@@ -22,6 +22,17 @@ vi.mock("ai", async (importOriginal) => {
   return { ...actual, generateText: vi.fn() };
 });
 
+function boardDocument(documentType: string, index: number) {
+  return {
+    documentType,
+    kind: "official",
+    publisher: "Board",
+    reason: "Current edition",
+    title: `${documentType} ${index}`,
+    url: `https://board.example.org/${documentType}-${index}.pdf`,
+  };
+}
+
 function readPlan(userPrompt: string): unknown {
   return JSON.parse(userPrompt.slice(userPrompt.indexOf("PLAN:\n") + "PLAN:\n".length));
 }
@@ -103,5 +114,35 @@ describe(findOfficialSources, () => {
     expect(copies.userPrompt).toContain(
       "UNREADABLE:\n- https://documento.vunesp.com.br/edital.pdf",
     );
+  });
+
+  it("keeps every part of a notice, past the limit on other documents", async () => {
+    const parts = [
+      boardDocument("notice", 1),
+      ...[1, 2, 3, 4].map((index) => boardDocument("correction", index)),
+      boardDocument("annex", 1),
+      boardDocument("annex", 2),
+    ];
+
+    const pages = [1, 2, 3, 4, 5, 6, 7].map((index) => boardDocument("officialPage", index));
+
+    vi.mocked(generateText).mockResolvedValue({
+      ...createGenerateTextResult({
+        board: "Board",
+        documents: [...parts, ...pages],
+        officialFound: true,
+      }),
+      sources: [{ url: "https://board.example.org/" }],
+    } as never);
+
+    const { data } = await findOfficialSources({
+      plan: { country: "BR", name: "Exam", officialDomains: [], queries: ["edital"] },
+      topic: "exam",
+    });
+
+    expect(data.documents.map((item) => item.title)).toStrictEqual([
+      ...parts.map((item) => item.title),
+      ...pages.slice(0, 6).map((item) => item.title),
+    ]);
   });
 });

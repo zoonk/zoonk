@@ -17,7 +17,7 @@ const defaultModel = "google/gemini-3.8-flash";
 const defaultSearchTool: ResearchSearchTool = "parallel";
 
 const MAX_STEPS = 8;
-const MAX_DOCUMENTS = 6;
+const MAX_OTHER_DOCUMENTS = 6;
 
 const DOCUMENT_TYPES = [
   "notice",
@@ -48,6 +48,26 @@ const schema = z.object({
 });
 
 export type FoundSourceDocument = z.infer<typeof documentSchema>;
+
+/** The reading needs all of a notice: a correction or annex left out loses its counts or dates. */
+const NOTICE_PARTS: ReadonlySet<FoundSourceDocument["documentType"]> = new Set([
+  "notice",
+  "correction",
+  "annex",
+  "syllabus",
+]);
+
+function keepNoticeParts(documents: FoundSourceDocument[]): FoundSourceDocument[] {
+  const others = new Set(
+    documents
+      .filter((document) => !NOTICE_PARTS.has(document.documentType))
+      .slice(0, MAX_OTHER_DOCUMENTS),
+  );
+
+  return documents.filter(
+    (document) => NOTICE_PARTS.has(document.documentType) || others.has(document),
+  );
+}
 
 type SearchedPlan = Pick<ResearchSearchPlan, "country" | "name" | "officialDomains" | "queries"> &
   Partial<Pick<ExamResearchPlan, "board" | "edition" | "role">>;
@@ -125,9 +145,9 @@ export async function findOfficialSources({
     userPrompt,
   });
 
-  const documents = output.documents
-    .filter((document) => isSearched(document.url))
-    .slice(0, MAX_DOCUMENTS);
+  const documents = keepNoticeParts(
+    output.documents.filter((document) => isSearched(document.url)),
+  );
 
   return {
     data: {
