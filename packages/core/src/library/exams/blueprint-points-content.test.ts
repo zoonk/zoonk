@@ -10,6 +10,8 @@ const P2 = "Conhecimentos específicos (P2)";
 const P3 = "Prova discursiva (P3)";
 
 const LINES = {
+  formula:
+    "8.6 A nota final será NF = NPO/13 + NPD/4, em que NPO é a soma das notas nas provas objetivas P1 e P2 e NPD é a nota na prova discursiva P3.",
   minimums:
     "8.2 Será eliminado o candidato que obtiver nota inferior a 10,00 pontos na P1 ou inferior a 30,00 pontos na P2.",
   p1: "8.1 A prova objetiva P1 terá 40 itens, valendo 1,00 ponto cada.",
@@ -140,6 +142,16 @@ const PART_P3: Part = {
 const PARTS = [PART_P1, PART_P2, PART_P3];
 
 const TOTAL = { passages: cite(LINES.total), unit: "points" as const, value: 50 };
+
+type Share = Scoring["finalShares"][number];
+
+const SHARE_OBJECTIVE: Share = {
+  parts: [P1, "conhecimentos específicos (p2)"],
+  passages: cite(LINES.formula, LINES.p1, LINES.p2),
+  share: 0.5,
+};
+
+const SHARE_WRITTEN: Share = { parts: [P3], passages: cite(LINES.formula, LINES.p3), share: 0.5 };
 
 describe("the points a notice gives", () => {
   it("keeps each row, test and minimum its passages state, by the subjects' own names", () => {
@@ -273,6 +285,46 @@ describe("the points a notice gives", () => {
     });
 
     expect(scoring?.parts).toMatchObject([{ name: P3, qualifying: true }]);
+  });
+});
+
+describe("the final score's formula", () => {
+  it("keeps each term's tests by the subjects' own names", () => {
+    const scoring = readScoring({ scoring: { finalShares: [SHARE_OBJECTIVE, SHARE_WRITTEN] } });
+
+    expect(scoring?.finalShares).toMatchObject([
+      { parts: [P1, P2], share: 0.5 },
+      { parts: [P3], share: 0.5 },
+    ]);
+  });
+
+  it("checks each term's share against every term's passages, since it depends on all their maximums", () => {
+    const extraction = extractionWith({ finalShares: [SHARE_OBJECTIVE, SHARE_WRITTEN] });
+    const facts = listBlueprintFacts({ documents: DOCUMENTS, extraction });
+    const written = facts.find((fact) => fact.id === "mock.scoring.finalShares.1");
+
+    expect(written?.citations.map((citation) => citation.passage)).toStrictEqual(
+      expect.arrayContaining([LINES.formula, LINES.p1, LINES.p2, LINES.p3]),
+    );
+  });
+
+  it("drops a term its passages don't support or that names no kept group or subject", () => {
+    const titles = { ...SHARE_WRITTEN, parts: ["Avaliação de títulos"], share: 0.1 };
+
+    const scoring = readScoring({
+      keep: (id) => id !== "mock.scoring.finalShares.1",
+      scoring: { finalShares: [SHARE_OBJECTIVE, SHARE_WRITTEN, titles] },
+    });
+
+    expect(scoring?.finalShares).toMatchObject([{ parts: [P1, P2], share: 0.5 }]);
+    expect(scoring?.finalShares).toHaveLength(1);
+  });
+
+  it.each([
+    { name: "add up past the whole", shares: [SHARE_OBJECTIVE, { ...SHARE_WRITTEN, share: 0.6 }] },
+    { name: "name a test twice", shares: [SHARE_OBJECTIVE, { ...SHARE_WRITTEN, parts: [P1] }] },
+  ])("keeps no term when they $name", ({ shares }) => {
+    expect(readScoring({ scoring: { finalShares: shares } })?.finalShares).toBeUndefined();
   });
 });
 

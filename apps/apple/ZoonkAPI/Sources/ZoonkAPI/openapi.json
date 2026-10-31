@@ -85424,6 +85424,52 @@
                   "description": {
                     "type": "string"
                   },
+                  "finalShares": {
+                    "description": "Each term of the notice's final-score formula, or each test's stated weight, in the notice's order; absent when the notice doesn't say how tests combine",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "citation": {
+                          "type": "object",
+                          "properties": {
+                            "passage": {
+                              "type": "string"
+                            },
+                            "sourceId": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "passage",
+                            "sourceId"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "parts": {
+                          "minItems": 1,
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "The tests or blocks it adds, as a subject's `group` or `name` writes them"
+                        },
+                        "share": {
+                          "type": "number",
+                          "minimum": 0,
+                          "exclusiveMinimum": true,
+                          "maximum": 1,
+                          "description": "The most it adds over the most the final score can reach"
+                        }
+                      },
+                      "required": [
+                        "citation",
+                        "parts",
+                        "share"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
                   "marking": {
                     "description": "How a right and a wrong answer score where it differs by test or format, in the notice's order; a question no row covers earns 1 point",
                     "type": "array",

@@ -163,8 +163,24 @@ const scoredPartSchema = z.object({
     .meta({ description: "How many questions it has; null when the notice doesn't say" }),
 });
 
+const finalShareSchema = z.object({
+  citation: citationSchema,
+  parts: z
+    .array(z.string())
+    .min(1)
+    .meta({
+      description: "The tests or blocks it adds, as a subject's `group` or `name` writes them",
+    }),
+  share: z
+    .number()
+    .positive()
+    .max(1)
+    .meta({ description: "The most it adds over the most the final score can reach" }),
+});
+
 export type MarkingRow = z.infer<typeof markingRowSchema>;
 export type ScoredPart = z.infer<typeof scoredPartSchema>;
+export type FinalShare = z.infer<typeof finalShareSchema>;
 
 const mockConditionsSchema = z.object({
   adaptive: z.boolean(),
@@ -172,6 +188,13 @@ const mockConditionsSchema = z.object({
   order: z.string().nullable(),
   scoring: z.object({
     description: z.string(),
+    finalShares: z
+      .array(finalShareSchema)
+      .optional()
+      .meta({
+        description:
+          "Each term of the notice's final-score formula, or each test's stated weight, in the notice's order; absent when the notice doesn't say how tests combine",
+      }),
     marking: z
       .array(markingRowSchema)
       .optional()

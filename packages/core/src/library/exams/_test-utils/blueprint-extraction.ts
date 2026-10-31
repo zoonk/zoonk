@@ -66,6 +66,7 @@ export function blueprintExtraction(
       ],
       scoring: {
         description: "Proficiência pela TRI",
+        finalShares: [],
         marking: [],
         method: "itemResponseTheory",
         parts: [],

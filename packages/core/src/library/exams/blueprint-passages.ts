@@ -71,6 +71,7 @@ function listScoringPassages(
     ...scoring.marking.flatMap((row) => row.passages),
     ...scoring.parts.flatMap((part) => part.passages),
     ...(scoring.totalMinimum?.passages ?? []),
+    ...scoring.finalShares.flatMap((share) => share.passages),
   ];
 }
 

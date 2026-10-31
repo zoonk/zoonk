@@ -55,6 +55,7 @@ function reading({
       passages: [],
       scoring: {
         description: "",
+        finalShares: [],
         marking: [],
         method: "raw",
         parts: [],

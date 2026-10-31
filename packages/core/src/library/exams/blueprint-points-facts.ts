@@ -1,10 +1,18 @@
 import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { FORMAT_WORDS, type FactEntry, toFacts } from "./blueprint-fact-claims";
-import { type ExtractionDocument, type Passage, toPartPassages } from "./blueprint-passages";
+import {
+  type ExtractionDocument,
+  type Passage,
+  toPartPassages,
+  uniquePassages,
+} from "./blueprint-passages";
 
 type Scoring = NonNullable<BlueprintExtraction["mock"]>["scoring"];
 type MarkingRow = Scoring["marking"][number];
+type FinalShare = Scoring["finalShares"][number];
 type Minimum = { unit: "percent" | "points"; value: number };
+
+const PERCENT_TENTHS = 1000;
 
 function describePoints(points: number): string {
   return `${points} ${points === 1 ? "point" : "points"}`;
@@ -97,12 +105,44 @@ function partFacts({ documents, found, scoring }: PointsSource): FactEntry[] {
   });
 }
 
+function listNames(names: readonly string[]): string {
+  const quoted = names.map((name) => `"${name}"`);
+  const last = quoted.at(-1) ?? "";
+  return quoted.length > 1 ? `${quoted.slice(0, -1).join(", ")} and ${last}` : last;
+}
+
+function describeShare({ parts, share }: FinalShare): string {
+  const percent = Math.round(share * PERCENT_TENTHS) / 10;
+
+  return parts.length > 1
+    ? `${listNames(parts)}, added together, count for ${percent}% of the final score`
+    : `${listNames(parts)} counts for ${percent}% of the final score`;
+}
+
+/** A term's share depends on every term's maximum, so each cites the whole formula's passages. */
+function finalShareFacts({ documents, found, scoring }: PointsSource): FactEntry[] {
+  const formula = scoring.finalShares.flatMap((share) => share.passages);
+
+  return scoring.finalShares.flatMap((share, index) =>
+    toFacts({
+      claims: [{ id: `mock.scoring.finalShares.${index}`, statement: describeShare(share) }],
+      documents,
+      passages: uniquePassages(
+        share.parts.flatMap((name) =>
+          toPartPassages({ found, name, own: [...share.passages, ...formula] }),
+        ),
+      ),
+    }),
+  );
+}
+
 export function pointsFacts({ documents, found, scoring }: PointsSource): FactEntry[] {
   const { totalMinimum } = scoring;
 
   return [
     ...markingFacts({ documents, found, scoring }),
     ...partFacts({ documents, found, scoring }),
+    ...finalShareFacts({ documents, found, scoring }),
     ...(totalMinimum
       ? toFacts({
           claims: [

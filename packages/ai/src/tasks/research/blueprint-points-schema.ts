@@ -23,7 +23,10 @@ const scoredPartSchema = z.object({
   questions: z.number().int().nullable(),
 });
 
+const finalShareSchema = z.object({ ...citedMany, parts: z.array(z.string()), share: z.number() });
+
 export const pointsScoringShape = {
+  finalShares: z.array(finalShareSchema),
   marking: z.array(markingRowSchema),
   parts: z.array(scoredPartSchema),
   totalMinimum: z.object({ ...citedMany, ...pointsMinimumSchema.shape }).nullable(),

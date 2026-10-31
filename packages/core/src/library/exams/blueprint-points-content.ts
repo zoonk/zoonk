@@ -1,6 +1,11 @@
 import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { normalizeString } from "@zoonk/utils/string";
-import { type MarkingRow, type PointsMinimum, type ScoredPart } from "./blueprint-contract";
+import {
+  type FinalShare,
+  type MarkingRow,
+  type PointsMinimum,
+  type ScoredPart,
+} from "./blueprint-contract";
 import { type KeptFacts, keptOr } from "./blueprint-kept";
 import { getMarkingPenalty } from "./marking-penalty";
 import { getPartMaxPoints } from "./part-points";
@@ -8,6 +13,9 @@ import { getPartMaxPoints } from "./part-points";
 type Scoring = NonNullable<BlueprintExtraction["mock"]>["scoring"];
 
 const MAX_PERCENT = 100;
+
+/** Shares a reading rounds, such as 0.67 and 0.34, can add up to a little over the whole. */
+const MAX_SHARES_TOTAL = 1.01;
 
 function findPartName({ name, partNames }: { name: string; partNames: readonly string[] }) {
   return partNames.find((known) => normalizeString(known) === normalizeString(name)) ?? null;
@@ -134,6 +142,32 @@ function toTotalMinimum({ kept, scoring }: { kept: KeptFacts; scoring: Scoring }
   return { citation, unit: totalMinimum.unit, value: totalMinimum.value };
 }
 
+function toFinalShares({
+  kept,
+  partNames,
+  scoring,
+}: {
+  kept: KeptFacts;
+  partNames: readonly string[];
+  scoring: Scoring;
+}): FinalShare[] {
+  const shares = scoring.finalShares.flatMap((share, index) => {
+    const citation = kept.get(`mock.scoring.finalShares.${index}`)?.[0];
+    const names = share.parts.map((name) => findPartName({ name, partNames }));
+    const parts = [...new Set(names.filter((name) => name !== null))];
+    const isKnown = parts.length > 0 && names.every((name) => name !== null);
+
+    return citation && isKnown && share.share > 0 && share.share <= 1
+      ? [{ citation, parts, share: share.share }]
+      : [];
+  });
+
+  const parts = shares.flatMap((share) => share.parts);
+  const total = shares.reduce((sum, share) => sum + share.share, 0);
+
+  return new Set(parts).size === parts.length && total <= MAX_SHARES_TOTAL ? shares : [];
+}
+
 /** A part is a test or block as a kept subject's `group` or `name` writes it. */
 export function toPointsScoring({
   kept,
@@ -147,8 +181,10 @@ export function toPointsScoring({
   const marking = toMarking({ kept, partNames, scoring });
   const parts = toParts({ kept, marking, partNames, scoring });
   const totalMinimum = toTotalMinimum({ kept, scoring });
+  const finalShares = toFinalShares({ kept, partNames, scoring });
 
   return {
+    ...(finalShares.length > 0 ? { finalShares } : {}),
     ...(marking.length > 0 ? { marking } : {}),
     ...(parts.length > 0 ? { parts } : {}),
     ...(totalMinimum ? { totalMinimum } : {}),
