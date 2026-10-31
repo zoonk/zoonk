@@ -3686,9 +3686,9 @@ msgid "Usage data"
 msgstr "Données d’utilisation"
 
 #: src/app/[lang]/usage-data-notice.tsx
-msgctxt "9LGL8u"
-msgid "Can we use cookies to see how you use Zoonk, so we can improve it? <link>Privacy</link>"
-msgstr "Peut-on utiliser des cookies pour comprendre comment tu utilises Zoonk et l’améliorer ? <link>Confidentialité</link>"
+msgctxt "pu2Edv"
+msgid "Can we use cookies and session replays to see how you use Zoonk, so we can improve it? <link>Privacy</link>"
+msgstr "Peut-on utiliser des cookies et des enregistrements de session pour comprendre comment tu utilises Zoonk et l’améliorer ? <link>Confidentialité</link>"
 
 #: src/app/[lang]/usage-data-notice.tsx
 msgctxt "pvtgR2"
