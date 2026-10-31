@@ -42,11 +42,11 @@ Nie wyświetlamy reklam i nigdy nie sprzedajemy twoich danych ani nie udostępni
 
 - Zoonk używa AI do tworzenia planów, lekcji, obrazów, nagrań audio, wyjaśnień, odpowiedzi tutora i informacji zwrotnych. AI może się mylić. Lekcje stworzone przez AI i tutor AI są oznaczone jako AI.
 - AI kształtuje twoje lekcje i plan, ale nie podejmuje wobec ciebie decyzji wywołujących skutki prawne ani podobnie istotne skutki.
-- Twoje własne dane nigdy nie są używane do trenowania modeli AI, ani naszych, ani niczyich. Dotyczy to twoich czatów i rozmów z kumplem, twojej pamięci, przesłanych plików, lekcji stworzonych tylko dla ciebie i twoich odpowiedzi. Wysyłamy je tylko do dostawców AI, których warunki wykluczają trenowanie na nich.
+- Twoje własne dane nigdy nie są używane do trenowania modeli AI, ani naszych, ani niczyich. Dotyczy to twoich czatów i rozmów z kumplem, twojej pamięci, przesłanych plików, lekcji stworzonych tylko dla ciebie i twoich odpowiedzi. Wysyłamy je tylko do dostawców AI, których warunki wykluczają trenowanie modeli na tych danych.
 - Lekcje i obrazy we wspólnej Bibliotece powstają dla wielu uczących się i nie zawierają danych osobowych. Niektóre z nich mogą być tworzone z pomocą dostawców, którzy mogą uczyć się na tych zapytaniach.
 - Jeśli zadasz pytanie, na które odpowiedź jest taka sama dla każdego, możemy udostępnić wyjaśnienie innym uczącym się, bez twoich słów.
 - Przy każdym zapytaniu do AI zapisujemy model, koszt i czas odpowiedzi wraz z identyfikatorem twojego konta, ale nie tekst. Wyjątkiem są niektóre kontrole jakości tego, co piszesz, na przykład pytań do twojego kumpla, które przechowują tekst przez 30 dni.
-- Nie udostępniaj wrażliwych danych osobowych, swoich ani innych osób, chyba że wymaga tego twoja nauka.
+- Nie podawaj wrażliwych danych osobowych, swoich ani innych osób, chyba że wymaga tego twoja nauka.
 
 ---
 
@@ -63,8 +63,8 @@ Nie wyświetlamy reklam i nigdy nie sprzedajemy twoich danych ani nie udostępni
 ## 5. Głos
 
 - Gdy odpowiadasz na głos, twoja przeglądarka lub aplikacja prosi o dostęp do mikrofonu. Nagranie trafia do modelu mowy OpenAI lub Google, który zamienia je na tekst i sprawdza. Przechowujemy tekst, a nie dźwięk.
-- Podczas rozmów głosowych na żywo twoja przeglądarka lub aplikacja łączy się bezpośrednio z modelem głosowym OpenAI. Dźwięk nie przechodzi przez nasze serwery i go nie przechowujemy. Przechowujemy informację zwrotną napisaną na podstawie rozmowy, która może cytować kilka twoich zdań, oraz jej wynik, a nie całą rozmowę.
-- Dźwięk, który słyszysz w lekcjach, powstaje wyłącznie z tekstu lekcji, za pomocą modeli syntezy mowy Google, a zapasowo Microsoft.
+- Podczas rozmów głosowych na żywo twoja przeglądarka lub aplikacja łączy się bezpośrednio z modelem głosowym OpenAI. Dźwięk nie przechodzi przez nasze serwery i go nie przechowujemy. Przechowujemy wynik rozmowy i napisaną na jej podstawie informację zwrotną, która może cytować kilka twoich zdań, ale nie całą rozmowę.
+- Dźwięk, który słyszysz w lekcjach, powstaje wyłącznie z tekstu lekcji, za pomocą modeli syntezy mowy Google, a zapasowo Microsoftu.
 
 ---
 
@@ -173,9 +173,9 @@ Możesz wypróbować Zoonka bez konta. Plik cookie przechowuje twoją sesję go�
 ## 13. Usunięcie konta
 
 - Możesz w każdej chwili usunąć swoje konto przyciskiem „Usuń konto” na stronie profilu.
-- Usuwamy wtedy twoje konto, dane z nauki, pamięć, przesłane pliki i wszystko, co powstało z twoich prywatnych plików, oraz od razu kończymy subskrypcję kupioną na naszej stronie, bez zwrotu pieniędzy. Aby otrzymać należny ci zwrot, na przykład zwrot w ciągu 14 dni, anuluj subskrypcję przed usunięciem konta albo napisz do nas później z tego samego adresu e-mail (zob. [Regulamin](/terms)). Subskrypcja kupiona w App Store lub Google Play pozostaje w Apple lub Google: anuluj ją na swoim koncie u nich.
+- Usuwamy wtedy twoje konto, dane z nauki, pamięć, przesłane pliki i wszystko, co powstało z twoich prywatnych plików, oraz od razu kończymy subskrypcję kupioną na naszej stronie, bez zwrotu pieniędzy. Aby otrzymać należny ci zwrot, na przykład zwrot w ciągu 14 dni, anuluj subskrypcję przed usunięciem konta albo napisz do nas później z tego samego adresu e-mail (zob. [Regulamin](/terms)). Subskrypcją kupioną w App Store lub Google Play zarządza Apple lub Google: anuluj ją na swoim koncie u nich.
 - Niektóre statystyki nauki, na przykład czy na pytanie odpowiedziano poprawnie za pierwszym razem i ile trwała lekcja, przechowujemy bez niczego, co łączyłoby je z tobą, aby ulepszać lekcje dla wszystkich.
-- W ciągu 30 dni usuwamy też twój profil w PostHog wraz z jego zdarzeniami i nagraniami sesji. Zdarzenia bez profilu, na przykład osób uczących się poniżej 18 lat, zachowują identyfikator twojego konta, ale nie zawierają imienia ani adresu e-mail i są usuwane z końcem okresu przechowywania w PostHog.
+- W ciągu 30 dni usuwamy też twój profil w PostHog wraz z jego zdarzeniami i nagraniami sesji. Zdarzenia bez profilu, na przykład osób uczących się poniżej 18 lat, zachowują identyfikator twojego konta, ale nie zawierają imienia i nazwiska ani adresu e-mail i są usuwane z końcem okresu przechowywania w PostHog.
 - Zapisy logowań pozostają przez 6 miesięcy (punkt 10).
 - Przesłane przez ciebie dokumenty publiczne, które stały się wspólnymi źródłami, pozostają, bo nie są już z tobą powiązane.
 - Dokumentacja płatności pozostaje w Stripe, Apple lub Google zgodnie z przepisami o płatnościach i przepisami podatkowymi.
@@ -231,7 +231,7 @@ Przysługują ci prawa wynikające z LGPD (brazylijskiej ustawy o ochronie danyc
 - **Podmioty przetwarzające i przekazywanie za granicę:** Powierzamy przetwarzanie dostawcom z punktu 8, którzy przetwarzają twoje dane w wymienionych tam krajach. Twoje dane trafiają do nich przez szyfrowane połączenia za każdym razem, gdy korzystasz z funkcji, która ich potrzebuje, a oni przechowują je zgodnie z punktem 10. Możesz odmówić tego przekazywania, nie korzystając z Zoonka lub usuwając konto, ale Zoonk bez niego nie działa.
 - **Jak niszczymy dane:** Usuwamy zapisy elektroniczne tak, aby nie dało się ich odzyskać. Nie przechowujemy danych na papierze.
 - **Pliki cookie:** Punkt 7 wyjaśnia, czym są, jak wyłączyć analitykę opcją „Udostępniaj dane o korzystaniu” i jak odrzucić pliki cookie w przeglądarce.
-- **Inspektor ds. prywatności (개인정보 보호책임자):** dyrektor zarządzający Zoonka, pod adresem [hello@zoonk.com](mailto:hello@zoonk.com).
+- **Osoba odpowiedzialna za ochronę danych osobowych (개인정보 보호책임자):** dyrektor zarządzający Zoonka, pod adresem [hello@zoonk.com](mailto:hello@zoonk.com).
 - **Pomoc w razie naruszeń:** Możesz zwrócić się do Komisji Mediacyjnej ds. Sporów o Dane Osobowe (1833-6972), Centrum Zgłaszania Naruszeń Danych Osobowych (118), Najwyższej Prokuratury (1301) lub Koreańskiej Policji Krajowej (182).
 
 ### Turcja
