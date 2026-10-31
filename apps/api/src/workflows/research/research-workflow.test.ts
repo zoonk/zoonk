@@ -743,6 +743,35 @@ describe(researchWorkflow, () => {
     expect(examStructureSchema.parse(blueprint.structure).subjects.length).toBeGreaterThan(0);
   });
 
+  it("reads none of a notice's corrections or pages when neither the notice nor a copy downloads", async () => {
+    const { goal } = await examGoal();
+    await replayTcdfResearch();
+
+    const { data: recorded } = await findOfficialSources({} as never);
+
+    vi.mocked(findOfficialSources).mockImplementation(async ({ unreadable = [] }) => ({
+      ...TASK_RESULT,
+      data: { ...recorded, documents: unreadable.length > 0 ? [] : recorded.documents },
+    }));
+
+    vi.mocked(fetch).mockImplementation(async (input) =>
+      requestedUrl(input).includes("132841120D")
+        ? new PageResponse("Access Denied", { status: 403 })
+        : new PageResponse(
+            `<main>${"<p>Retificação do edital do concurso.</p>".repeat(10)}</main>`,
+            { headers: { "content-type": "text/html" } },
+          ),
+    );
+
+    await expect(researchWorkflow({ goalId: goal.id })).resolves.toStrictEqual({
+      reason: "noOfficialSource",
+      status: "needsUpload",
+    });
+
+    expect(vi.mocked(findOfficialSources).mock.calls.at(-1)?.[0].unreadable).toHaveLength(1);
+    expect(extractExamBlueprint).not.toHaveBeenCalled();
+  });
+
   it("fails the step storing a document whose download timed out, so the runtime retries it alone", async () => {
     await replayTcdfResearch();
     const { data } = await findOfficialSources({} as never);

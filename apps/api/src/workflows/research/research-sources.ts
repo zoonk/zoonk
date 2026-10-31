@@ -53,6 +53,10 @@ async function storeDocuments({
   return { stored, unreadable };
 }
 
+function isNotice(source: Pick<StoredSource, "documentType">): boolean {
+  return source.documentType === "notice";
+}
+
 /** Some boards' sites refuse every download (Vunesp's answer 403), so copies are read from other sites. */
 async function storeCopies({
   analytics,
@@ -71,8 +75,8 @@ async function storeCopies({
 }): Promise<StoredSource[]> {
   const isNoticeUnread =
     topic === "exam" &&
-    unreadable.some((document) => document.documentType === "notice") &&
-    !stored.some((source) => source.documentType === "notice");
+    unreadable.some((document) => isNotice(document)) &&
+    !stored.some((source) => isNotice(source));
 
   if (!isNoticeUnread) {
     return [];
@@ -133,6 +137,14 @@ export async function findAndStoreSources({
 
   const copies = await storeCopies({ analytics, plan, searchAnalytics, stored, topic, unreadable });
 
+  // A notice's corrections and annexes read without it would stand in for the whole notice.
+  if (
+    found.documents.some((document) => isNotice(document)) &&
+    ![...stored, ...copies].some((source) => isNotice(source))
+  ) {
+    return { board: found.board, sourceIds: [] };
+  }
+
   const readable =
     requireOfficial && !stored.some((source) => source.kind === "official")
       ? copies
@@ -140,10 +152,7 @@ export async function findAndStoreSources({
 
   // The reading takes the first document as the notice whose hash the blueprint keeps.
   const sourceIds = readable
-    .toSorted(
-      (first, second) =>
-        Number(second.documentType === "notice") - Number(first.documentType === "notice"),
-    )
+    .toSorted((first, second) => Number(isNotice(second)) - Number(isNotice(first)))
     .map((source) => source.sourceId);
 
   return { board: found.board, sourceIds: [...new Set(sourceIds)] };
