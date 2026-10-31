@@ -12,7 +12,7 @@ type FormatFact = {
   kind: QuestionFormat["kind"];
   options?: number;
   passage?: RegExp;
-  section?: string;
+  section?: string | null;
   select?: OptionSelect | null;
 };
 
@@ -34,7 +34,10 @@ function matches({ fact, format }: { fact: FormatFact; format: QuestionFormat })
     (fact.select === undefined || format.select === fact.select) &&
     (!fact.passage || fact.passage.test(format.passage)) &&
     (!fact.description || fact.description.test(format.description)) &&
-    (fact.section === undefined || namesSection({ format, section: fact.section }))
+    (fact.section === undefined ||
+      (fact.section === null
+        ? format.sections.length === 0
+        : namesSection({ format, section: fact.section })))
   );
 }
 

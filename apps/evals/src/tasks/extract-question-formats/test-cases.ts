@@ -7,6 +7,25 @@ type FormatsCase = TestCase<FormatsExpected, FormatsEvalInput>;
 export const TEST_CASES: FormatsCase[] = [
   {
     expected: {
+      absent: [],
+      present: [
+        { kind: "multipleChoice", section: "Paper 1" },
+        { kind: "essay", section: null },
+      ],
+    },
+    id: "en-valid-mixed-known-and-unknown-scope",
+    userInput: {
+      documents: [
+        {
+          text: "Paper 1 has multiple-choice questions with four options. There will also be an essay; this announcement does not state which paper contains the essay.",
+          title: "Exam announcement",
+        },
+      ],
+      exam: "School exam",
+    },
+  },
+  {
+    expected: {
       absent: [{ kind: "numeric", section: "Section A" }],
       present: [
         { kind: "multipleChoice", options: 4, section: "Section A", select: null },
