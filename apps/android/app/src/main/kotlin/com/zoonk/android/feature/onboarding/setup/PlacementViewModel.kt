@@ -45,6 +45,10 @@ internal class PlacementViewModel(
     var isStarting by mutableStateOf(false)
         private set
 
+    // A question read before Start may have been answered in another tab or on another device, and the server rejects
+    // answering it again, so only a read after Start opens one.
+    private var awaitingRead by mutableStateOf(false)
+
     private var sent: SentAnswer? = null
     private var shown = Shown()
 
@@ -52,8 +56,12 @@ internal class PlacementViewModel(
         placement: LoadState<Placement>,
         mocks: LoadState<MockOptions>,
     ): PlacementPhase =
-        placementPhase(placement, mocks, started, shown).also {
-            if (it is PlacementPhase.Question) shown = Shown(answered = it.number - 1, spent = it.spent)
+        if (awaitingRead) {
+            PlacementPhase.Waiting
+        } else {
+            placementPhase(placement, mocks, started, shown).also {
+                if (it is PlacementPhase.Question) shown = Shown(answered = it.number - 1, spent = it.spent)
+            }
         }
 
     /** Reads first, so ready questions open at once instead of flashing their wait. */
@@ -61,11 +69,14 @@ internal class PlacementViewModel(
         if (isStarting) return
         isStarting = true
         viewModelScope.launch {
-            store.placements[goalId].refresh()
+            awaitingRead = !check()
             markStarted()
             isStarting = false
         }
     }
+
+    /** One of the wait's reads: true when it came back. */
+    suspend fun check(): Boolean = store.placements[goalId].refreshed().also { if (it) awaitingRead = false }
 
     private fun markStarted() {
         started = true

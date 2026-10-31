@@ -225,6 +225,22 @@ class PlacementStepFlowTest {
     }
 
     @Test
+    fun aStartWhoseReadFailedWaitsAndReadsAgainInsteadOfOpeningQuestionsReadBefore() {
+        show()
+        api.placementGate = CompletableDeferred<Unit>().apply { completeExceptionally(ApiException(ApiError.Network)) }
+        tap("Start")
+
+        rule.onNodeWithText("Getting your questions ready").assertIsDisplayed()
+        rule.onNodeWithText("Which court hears appeals from state courts?").assertDoesNotExist()
+
+        api.placementGate = null
+        api.placement = placementOf(next = typedQuestion())
+        rule.mainClock.advanceTimeBy(POLL_MS)
+
+        rule.onNodeWithText("In your own words, what is hearsay?").assertIsDisplayed()
+    }
+
+    @Test
     fun aMockExamOfferOpensTheMockChooser() {
         mockApi.options = mockOptionsOf()
         show()
@@ -245,5 +261,9 @@ class PlacementStepFlowTest {
         assertEquals(listOf(MOCK_ID), api.finishedMocks)
         assertEquals(listOf(false), api.finishedPlacements)
         assertEquals(1, done)
+    }
+
+    private companion object {
+        const val POLL_MS = 3_500L
     }
 }

@@ -122,7 +122,7 @@ internal fun ColumnScope.PlacementStep(
     val placement by resource.collectShown()
     val options by mocks.options[UUID.fromString(goalId)].collectShown()
     val phase = vm.phase(placement, options)
-    val poll = rememberPoll(active = phase == PlacementPhase.Waiting && !run.isStopped) { resource.refreshed() }
+    val poll = rememberPoll(active = phase == PlacementPhase.Waiting && !run.isStopped) { vm.check() }
     val finish = { fromScratch: Boolean -> vm.finish(fromScratch, onDone = onDone) }
     val progress = (phase as? PlacementPhase.Question)?.spent?.toFloat()
     LaunchedEffect(progress) { onProgress(progress) }
