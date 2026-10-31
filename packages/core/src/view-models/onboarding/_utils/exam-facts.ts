@@ -2,7 +2,6 @@ import "server-only";
 import { findExamDate } from "@zoonk/ai/tasks/goals/find-exam-date";
 import { type GoalUnderstanding, type UnderstoodGoal } from "@zoonk/ai/tasks/goals/understand-goal";
 import { prisma } from "@zoonk/db";
-import { settleWithin } from "@zoonk/utils/timeout";
 import { type EditionExamDay, getExamEditionDays } from "../../../exams/_utils/exam-edition-days";
 import { getKeptMonthStart } from "../../../exams/kept-month";
 import { examEditionSchema } from "../../../library/exams/blueprint-contract";
@@ -45,7 +44,7 @@ export type FoundExam = {
   stored: StoredExam | null;
 };
 
-/** The learner waits for the card while this runs: past it, the date reads as not known yet. */
+/** The learner waits for the card while this runs: past it, the search stops and the date reads as not known yet. */
 const SEARCH_TIMEOUT_MS = 30_000;
 
 export function isNamedExam(goal: UnderstoodGoal): goal is UnderstoodGoal & { examName: string } {
@@ -205,26 +204,31 @@ export async function searchExamDates({
     return [];
   }
 
-  const search = await settleWithin({
-    ms: SEARCH_TIMEOUT_MS,
-    request: () =>
-      findExamDate({
-        analytics: { contentScope: "personal", distinctId: userId },
-        exam: exam.examName,
-        institution: exam.institution ?? null,
-        language,
-        role: exam.role ?? null,
-        today,
-        words: exam.words ?? null,
-        year: exam.examYear ?? null,
-      }),
+  const deadline = AbortSignal.timeout(SEARCH_TIMEOUT_MS);
+
+  const search = await findExamDate({
+    abortSignal: deadline,
+    analytics: { contentScope: "personal", distinctId: userId },
+    exam: exam.examName,
+    institution: exam.institution ?? null,
+    language,
+    role: exam.role ?? null,
+    today,
+    words: exam.words ?? null,
+    year: exam.examYear ?? null,
+  }).catch((error: unknown) => {
+    if (deadline.aborted) {
+      return null;
+    }
+
+    throw error;
   });
 
-  if (search.status !== "settled" || search.value.data.status !== "official") {
+  if (search?.data.status !== "official") {
     return [];
   }
 
-  const { dates, source } = search.value.data;
+  const { dates, source } = search.data;
   return dates.map((day) => ({ ...day, estimated: false, registrationClosed: false, source }));
 }
 

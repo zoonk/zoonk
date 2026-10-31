@@ -370,7 +370,12 @@ describe(searchExamDates, () => {
     ]);
 
     expect(findExamDate).toHaveBeenCalledWith(
-      expect.objectContaining({ role: "Analyst", today: TODAY, year: 2027 }),
+      expect.objectContaining({
+        abortSignal: expect.any(AbortSignal),
+        role: "Analyst",
+        today: TODAY,
+        year: 2027,
+      }),
     );
   });
 

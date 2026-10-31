@@ -41,6 +41,7 @@ type FindExamDateInput = {
 };
 
 export type FindExamDateParams = FindExamDateInput & {
+  abortSignal?: AbortSignal;
   analytics?: AiGenerationContext;
   model?: string;
   reasoning?: Reasoning;
@@ -64,6 +65,7 @@ ${formatUntrustedInput({
 }
 
 export async function findExamDate({
+  abortSignal,
   analytics,
   model = defaultModel,
   reasoning = defaultReasoning,
@@ -74,6 +76,7 @@ export async function findExamDate({
   const userPrompt = buildUserPrompt(input);
 
   const { isSearched, output, provenance, usage } = await runSearchTask({
+    abortSignal,
     analytics,
     maxSteps: MAX_STEPS,
     model,

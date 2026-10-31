@@ -17,6 +17,7 @@ const fallbackModels = ["openai/gpt-6.1-terra"] as const;
  * A page on a site no search returned was invented, so a task keeps only what `isSearched` passes.
  */
 export async function runSearchTask<T>({
+  abortSignal,
   analytics,
   libraryInput,
   maxSteps,
@@ -29,6 +30,7 @@ export async function runSearchTask<T>({
   useFallback = true,
   userPrompt,
 }: {
+  abortSignal?: AbortSignal;
   analytics?: AiGenerationContext;
   /** The prompt holds public documents alone (see `runTaskGeneration`). */
   libraryInput?: boolean;
@@ -46,6 +48,7 @@ export async function runSearchTask<T>({
     analytics,
     generate: () =>
       generateText({
+        abortSignal,
         instructions: systemPrompt,
         model,
         output: Output.object({ schema }),
