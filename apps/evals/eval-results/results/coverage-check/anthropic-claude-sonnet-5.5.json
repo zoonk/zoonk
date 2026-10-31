@@ -3,21 +3,9 @@
   "results": [
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
@@ -90,21 +78,9 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
@@ -177,26 +153,12 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "gaps": []
-        },
+        "expected": { "gaps": [] },
         "id": "es-python-no-gaps-1",
         "userInput": {
           "goal": "Aprender a programar en Python",
@@ -255,40 +217,15 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
-          "examWeights": [
-            {
-              "key": "linear-equations",
-              "max": 5,
-              "min": 4
-            }
-          ],
-          "gapWeights": [
-            {
-              "max": 4,
-              "min": 2
-            }
-          ],
-          "gaps": [
-            "Expression of ideas"
-          ]
+          "examWeights": [{ "key": "linear-equations", "max": 5, "min": 4 }],
+          "gapWeights": [{ "max": 4, "min": 2 }],
+          "gaps": ["Expression of ideas"]
         },
         "id": "en-sat-blueprint-weights-1",
         "userInput": {
@@ -350,49 +287,23 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
-          "gaps": [
-            "5 Sistemas eleitorais"
-          ],
+          "gaps": ["5 Sistemas eleitorais"],
           "placements": [
-            {
-              "key": "crase",
-              "topics": [
-                "5.7 Emprego do sinal indicativo de crase"
-              ]
-            },
-            {
-              "key": "concordancia",
-              "topics": [
-                "5.5 Concordância verbal e nominal"
-              ]
-            }
+            { "key": "crase", "topics": ["5.7 Emprego do sinal indicativo de crase"] },
+            { "key": "concordancia", "topics": ["5.5 Concordância verbal e nominal"] }
           ]
         },
         "id": "pt-camara-notice-topics-1",
         "userInput": {
           "examOutline": {
             "name": "Concurso da Câmara dos Deputados, Analista Legislativo",
-            "notes": [
-              "Scoring: cada item errado anula um item certo"
-            ],
+            "notes": ["Scoring: cada item errado anula um item certo"],
             "subjects": [
               {
                 "group": "Conhecimentos básicos (P1)",
@@ -432,9 +343,7 @@
               "name": "Interpretar textos de gêneros variados",
               "examWeight": 4,
               "area": "Língua Portuguesa",
-              "topics": [
-                "1 Compreensão e interpretação de textos de gêneros variados"
-              ]
+              "topics": ["1 Compreensão e interpretação de textos de gêneros variados"]
             },
             {
               "description": "Aplicar as regras de ortografia.",
@@ -442,9 +351,7 @@
               "name": "Aplicar as regras de ortografia",
               "examWeight": 3,
               "area": "Língua Portuguesa",
-              "topics": [
-                "3 Domínio da ortografia"
-              ]
+              "topics": ["3 Domínio da ortografia"]
             },
             {
               "description": "Empregar o acento grave indicativo de crase.",
@@ -468,9 +375,7 @@
               "name": "Comparar regimes políticos",
               "examWeight": 3,
               "area": "Ciência Política",
-              "topics": [
-                "1 Regimes políticos"
-              ]
+              "topics": ["1 Regimes políticos"]
             },
             {
               "description": "Distinguir sistemas e formas de governo.",
@@ -478,9 +383,7 @@
               "name": "Distinguir sistemas e formas de governo",
               "examWeight": 3,
               "area": "Ciência Política",
-              "topics": [
-                "2 Sistemas e formas de governo"
-              ]
+              "topics": ["2 Sistemas e formas de governo"]
             }
           ]
         }
@@ -488,21 +391,9 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
@@ -569,29 +460,12 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "gaps": [
-            "第6回：標本分布と中心極限定理",
-            "第9回：カイ二乗検定"
-          ]
-        },
+        "expected": { "gaps": ["第6回：標本分布と中心極限定理", "第9回：カイ二乗検定"] },
         "id": "ja-intro-stats-syllabus-1",
         "userInput": {
           "goal": "大学の統計学入門の単位を取る",
@@ -645,29 +519,12 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "gaps": [
-            "7주차: 딕셔너리와 집합",
-            "10주차: 예외 처리"
-          ]
-        },
+        "expected": { "gaps": ["7주차: 딕셔너리와 집합", "10주차: 예외 처리"] },
         "id": "ko-python-syllabus-1",
         "userInput": {
           "goal": "교양 파이썬 수업에서 좋은 학점 받기",
@@ -721,29 +578,12 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "gaps": [
-            "5. Hafta: Kâr ve zarar hesapları",
-            "8. Hafta: Bileşik faiz"
-          ]
-        },
+        "expected": { "gaps": ["5. Hafta: Kâr ve zarar hesapları", "8. Hafta: Bileşik faiz"] },
         "id": "tr-business-math-syllabus-1",
         "userInput": {
           "goal": "Ticari matematik dersini geçmek",
@@ -761,11 +601,7 @@
               "key": "ratios",
               "name": "Oran ve orantı problemlerini çözmek"
             },
-            {
-              "description": "Yüzde hesaplamak.",
-              "key": "percent",
-              "name": "Yüzde hesaplamak"
-            },
+            { "description": "Yüzde hesaplamak.", "key": "percent", "name": "Yüzde hesaplamak" },
             {
               "description": "KDV dahil ve hariç fiyatı bulmak.",
               "key": "vat",

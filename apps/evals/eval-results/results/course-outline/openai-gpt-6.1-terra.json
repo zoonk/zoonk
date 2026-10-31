@@ -64,11 +64,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "A few descriptions are less accessible than the requested plain-language overview: 'relative phase' and particles as 'excitations of fields' appear without everyday explanations.",
           "kind": "minorErrors",
@@ -199,11 +195,7 @@
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Overview: 3 to 6 chapters of big ideas in plain words, no formulas or equations\n      - Big ideas, judged by category rather than by any one example: scarcity and choices; markets and prices; the financial system (money, banks and credit); core ideas of macroeconomics such as output, growth, inflation, unemployment and public finances; trade with other countries; and how people actually decide. Brazilian examples are welcome\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "pt-economia-overview-1",
-        "userInput": {
-          "courseTitle": "Economia",
-          "language": "pt",
-          "level": "overview"
-        }
+        "userInput": { "courseTitle": "Economia", "language": "pt", "level": "overview" }
       }
     },
     {
@@ -287,15 +279,9 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Beginner band of statistics, judged by category rather than by any one example: describing data (types of variables, tables and charts, center, spread and position), probability and distributions at a beginner level, sampling and bias, relationships between variables (correlation is not causation), and a first look at inference (estimation and hypothesis testing)\n      - Level fit: inference stays at a beginner's first look; several separate test procedures (t tests for different designs, ANOVA, chi-square) go past the band and are a level-fit error\n      - Practical work with spreadsheets and real data should appear, and a field AI is changing should include checking analyses and charts made with AI tools\n      - Formulas may appear where the idea needs them, explained in everyday words\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": {
-          "tool": "planilha|excel|sheets|calc"
-        },
+        "expected": { "tool": "planilha|excel|sheets|calc" },
         "id": "pt-estatistica-beginner-1",
-        "userInput": {
-          "courseTitle": "Estatística",
-          "language": "pt",
-          "level": "beginner"
-        }
+        "userInput": { "courseTitle": "Estatística", "language": "pt", "level": "beginner" }
       }
     },
     {
@@ -361,11 +347,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Research ethics is taught after recruitment, interviewing, and contextual observation. Consent and data-handling safeguards should precede lessons that teach learners to collect participant information, especially in a beginner course that may be followed sequentially.",
           "kind": "minorErrors",
@@ -379,15 +361,9 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Beginner band of UX design for career changers: research, problem framing, information architecture, interaction, visual design, prototyping, testing and the work with a product team\n      - No two lessons of a chapter teach the same distinction: \"a need is not a product goal\", \"a goal is not a solution\" and \"a solution is not a result\" belong in one lesson; \"a symptom is not a problem\" and \"a symptom is not its cause\" too. Each lesson has its own move: a new idea, a procedure, a harder case or applying earlier ideas together\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": {
-          "tool": "figma|figjam|penpot"
-        },
+        "expected": { "tool": "figma|figjam|penpot" },
         "id": "pt-ux-beginner-distinct-lessons-1",
-        "userInput": {
-          "courseTitle": "Design de UX",
-          "language": "pt",
-          "level": "beginner"
-        }
+        "userInput": { "courseTitle": "Design de UX", "language": "pt", "level": "beginner" }
       }
     },
     {
@@ -471,9 +447,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Spain Spanish (not Latin American Spanish), for example \"ordenador\" and \"fichero\" or \"archivo\" in their European use\n      - Beginner band of Python programming: running Python and the tools to write it, variables and types, strings, conditionals, loops, functions, lists, dictionaries and other collections, reading and writing files, errors and exceptions, modules and packages, virtual environments, basic testing, and a small real program\n      - Programming is a field AI is changing: lessons must include working with AI assistants (describing a task, reading and reviewing generated code, finding the bug in AI code) and favor concepts and debugging over memorizing syntax\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": {
-          "tool": "python"
-        },
+        "expected": { "tool": "python" },
         "id": "es-python-beginner-1",
         "userInput": {
           "courseTitle": "Programación en Python",
@@ -550,11 +524,7 @@
           "kind": "majorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Extend the useful emphasis on assessing quantum-computing claims to other topics: ask learners to distinguish an orbital from a planetary orbit, evaluate an instant-communication claim, or connect a familiar device to its quantum mechanism. These would make more outcomes concrete without adding topics or length.",
           "kind": "potentialImprovements",
@@ -564,11 +534,7 @@
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - Overview for a curious adult: 3 to 6 chapters, plain words, no formulas, equations or notation\n      - Big ideas, judged by category rather than by any one example: the quantum foundations (quantization, wave-particle duality, uncertainty, superposition and measurement), what quantum physics says about atoms and matter, entanglement, and at least one modern application of quantum effects (a technology people use, or quantum computing)\n      - Lessons are short stories about one idea each, not a textbook sequence\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "en-quantum-physics-overview-1",
-        "userInput": {
-          "courseTitle": "Quantum physics",
-          "language": "en",
-          "level": "overview"
-        }
+        "userInput": { "courseTitle": "Quantum physics", "language": "en", "level": "overview" }
       }
     },
     {
@@ -634,11 +600,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Two lesson-level clarity issues remain. 'Collisions with sticking' should use the canonical title 'Perfectly inelastic collisions.' In 'Gravitational potential energy,' the can-do line concerns interpreting a bound orbit's energy, while the description and skill concern calculating potential energy; interpreting whether an orbit is bound also requires considering total energy.",
           "kind": "minorErrors",
@@ -755,11 +717,7 @@
           "kind": "majorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Use a small set of recurring workplace datasets across the existing lessons: a 売上表 with 円 amounts for formulas and charts, 経費精算 for rounding and conditional checks, and 勤怠表 for dates and filtering. For AI-formula verification, explicitly include testing blank cells, unmatched lookup values, and values exactly at a condition's threshold.",
           "kind": "potentialImprovements",
@@ -768,15 +726,9 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in natural Japanese: descriptions use です・ます without stiff keigo and never address the learner as あなた\n      - Beginner band of Excel for office work in Japan: entering and formatting data, formulas and cell references, SUM, AVERAGE, IF and XLOOKUP or VLOOKUP, sorting and filtering, tables, charts, pivot tables, printing and sharing a workbook, with Japanese office examples (売上表, 経費精算, 勤怠表, amounts in 円)\n      - Objectives, can-do lines and skills end in the plain potential form (計算できる, 作れる, ～できる), never as an order (～しよう, ～してください) or a bare noun\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": {
-          "tool": "excel"
-        },
+        "expected": { "tool": "excel" },
         "id": "ja-excel-beginner-1",
-        "userInput": {
-          "courseTitle": "Excel",
-          "language": "ja",
-          "level": "beginner"
-        }
+        "userInput": { "courseTitle": "Excel", "language": "ja", "level": "beginner" }
       }
     },
     {
@@ -860,15 +812,9 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in natural Korean in 해요체, never 합니다체 or 반말\n      - Beginner band of statistics: types of data, tables and charts, center and spread, probability, the normal distribution, sampling and bias, correlation, and a first look at estimation and hypothesis tests, with Korean examples (amounts in 원, 통계청 data, 수능 scores)\n      - Objectives, can-do lines and skills end in ~ㄹ 수 있어요 (계산할 수 있어요, 읽을 수 있어요), never as an order (~하세요, ~해 보세요) or a bare noun\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": {
-          "tool": "엑셀|excel|스프레드시트|sheets|계산기"
-        },
+        "expected": { "tool": "엑셀|excel|스프레드시트|sheets|계산기" },
         "id": "ko-statistics-beginner-1",
-        "userInput": {
-          "courseTitle": "통계학",
-          "language": "ko",
-          "level": "beginner"
-        }
+        "userInput": { "courseTitle": "통계학", "language": "ko", "level": "beginner" }
       }
     },
     {
@@ -934,11 +880,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The outline contains no concrete TL amounts, despite the explicit expectation to use them. Budgeting, emergency-fund targets, installment comparisons, and real returns remain abstract rather than being anchored in simple Turkish-lira examples.",
           "kind": "minorErrors",
@@ -952,15 +894,9 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in natural Turkish, addressing the learner as \"sen\"\n      - Beginner band of personal finance in Turkey: a monthly budget, saving, an emergency fund, inflation and real returns, credit cards, installments (taksit) and loan interest, deposit accounts, BES, funds and the basics of investing, taxes on a salary, with amounts in TL\n      - Objectives, can-do lines and skills end in the -mak/-mek infinitive with the verb last (\"bütçe hazırlamak\"), never as an order (\"hazırlayın\", \"hazırla\") or a bare noun\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": {
-          "tool": "excel|tablo|sheets|hesap"
-        },
+        "expected": { "tool": "excel|tablo|sheets|hesap" },
         "id": "tr-personal-finance-beginner-1",
-        "userInput": {
-          "courseTitle": "Kişisel finans",
-          "language": "tr",
-          "level": "beginner"
-        }
+        "userInput": { "courseTitle": "Kişisel finans", "language": "tr", "level": "beginner" }
       }
     }
   ],

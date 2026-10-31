@@ -3,27 +3,12 @@
   "results": [
     {
       "steps": [
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "Every rule passed.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Every rule passed.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Every rule passed.", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "device": "mac",
-          "tool": "planilha|sheets|excel"
-        },
+        "expected": { "device": "mac", "tool": "planilha|sheets|excel" },
         "id": "pt-planilha-macos-1",
         "userInput": {
           "language": "pt",
@@ -34,89 +19,36 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "Every rule passed.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Every rule passed.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Every rule passed.", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "device": "linux|ubuntu",
-          "tool": "terminal"
-        },
+        "expected": { "device": "linux|ubuntu", "tool": "terminal" },
         "id": "es-terminal-linux-1",
-        "userInput": {
-          "language": "es",
-          "system": "linux",
-          "tool": "Una terminal"
-        }
+        "userInput": { "language": "es", "system": "linux", "tool": "Una terminal" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "Every rule passed.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Every rule passed.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Every rule passed.", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "device": "phone|móvil|movil|celular|smartphone",
-          "tool": "python"
-        },
+        "expected": { "device": "phone|móvil|movil|celular|smartphone", "tool": "python" },
         "id": "en-python-phone-1",
-        "userInput": {
-          "language": "en",
-          "system": "phone",
-          "tool": "Python"
-        }
+        "userInput": { "language": "en", "system": "phone", "tool": "Python" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "Every rule passed.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Every rule passed.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Every rule passed.", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "device": "chromebook",
-          "tool": "desmos|geogebra|calculadora"
-        },
+        "expected": { "device": "chromebook", "tool": "desmos|geogebra|calculadora" },
         "id": "pt-calculadora-chromebook-1",
         "userInput": {
           "language": "pt",
@@ -127,89 +59,36 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "Every rule passed.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Every rule passed.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Every rule passed.", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "device": "windows",
-          "tool": "python"
-        },
+        "expected": { "device": "windows", "tool": "python" },
         "id": "en-python-windows-1",
-        "userInput": {
-          "language": "en",
-          "system": "windows",
-          "tool": "Python"
-        }
+        "userInput": { "language": "en", "system": "windows", "tool": "Python" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "Every rule passed.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Every rule passed.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Every rule passed.", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "device": "windows",
-          "tool": "python"
-        },
+        "expected": { "device": "windows", "tool": "python" },
         "id": "ja-python-windows-1",
-        "userInput": {
-          "language": "ja",
-          "system": "windows",
-          "tool": "Python"
-        }
+        "userInput": { "language": "ja", "system": "windows", "tool": "Python" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "Every rule passed.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Every rule passed.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Every rule passed.", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "device": "mac|맥",
-          "tool": "엑셀|excel|스프레드시트|sheets"
-        },
+        "expected": { "device": "mac|맥", "tool": "엑셀|excel|스프레드시트|sheets" },
         "id": "ko-spreadsheet-macos-1",
         "userInput": {
           "language": "ko",
@@ -220,33 +99,14 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Every rule passed.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "Every rule passed.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Every rule passed.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Every rule passed.", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "device": "linux|ubuntu",
-          "tool": "terminal|uçbirim"
-        },
+        "expected": { "device": "linux|ubuntu", "tool": "terminal|uçbirim" },
         "id": "tr-terminal-linux-1",
-        "userInput": {
-          "language": "tr",
-          "system": "linux",
-          "tool": "Terminal"
-        }
+        "userInput": { "language": "tr", "system": "linux", "tool": "Terminal" }
       }
     }
   ],
