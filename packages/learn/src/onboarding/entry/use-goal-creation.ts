@@ -10,7 +10,7 @@ function useCreateError() {
   const t = useExtracted();
   const limitMessage = useGoalLimitMessage();
 
-  return (outcome: Exclude<CreateGoalsOutcome, { status: "created" }>) =>
+  return (outcome: Exclude<CreateGoalsOutcome, { status: "cancelled" | "created" }>) =>
     outcome.status === "limitReached"
       ? limitMessage(outcome.reason)
       : t("We couldn't save your goal. Try again in a moment.");
@@ -56,6 +56,10 @@ export function useGoalCreation() {
           madeWhileHidden.current = open;
         }
 
+        return;
+      }
+
+      if (outcome.status === "cancelled") {
         return;
       }
 

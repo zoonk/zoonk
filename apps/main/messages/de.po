@@ -919,6 +919,7 @@ msgid "Answer them and we'll plan every day until you reach your goal."
 msgstr "Beantworte sie und wir planen jeden Tag, bis du dein Ziel erreichst."
 
 #: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
+#: src/app/[lang]/birth-year-gate.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Weiter"
@@ -1261,6 +1262,12 @@ msgstr "Gespeichert."
 msgctxt "VnpW_P"
 msgid "Choose your buddy, sounds, a daily time limit and the app's language."
 msgstr "Wähle deinen Kumpel, Töne, ein tägliches Zeitlimit und die Sprache der App."
+
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "cXBJ7U"
+msgid "Privacy"
+msgstr "Datenschutz"
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "BbrYZc"
@@ -3295,6 +3302,56 @@ msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "Dein Konto wurde gelöscht."
 
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "VqYaaL"
+msgid "Check the year and try again."
+msgstr "Prüf die Jahreszahl und versuch es noch einmal."
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "TCf3Ld"
+msgid "We couldn't save it. Check your connection and try again."
+msgstr "Wir konnten dein Geburtsjahr nicht speichern. Prüf deine Verbindung und versuch es noch einmal."
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "wqPXuM"
+msgid "What year were you born?"
+msgstr "In welchem Jahr wurdest du geboren?"
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "u7SgKI"
+msgid "We ask everyone once."
+msgstr "Diese Frage stellen wir allen einmal."
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "Wr357G"
+msgid "Birth year"
+msgstr "Geburtsjahr"
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "dUCA4K"
+msgid "Not now"
+msgstr "Jetzt nicht"
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "WCgBMi"
+msgid "Not just yet"
+msgstr "Noch nicht"
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "7dMiHf"
+msgid "You need to be {minimumAge, number} or older to use Zoonk, so we'll log you out. We'll be here when you are."
+msgstr "Du musst mindestens {minimumAge, number} Jahre alt sein, um Zoonk zu nutzen. Deshalb melden wir dich ab. Wir sind für dich da, wenn es so weit ist."
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "GuXkQM"
+msgid "You need to be {minimumAge, number} or older to use Zoonk. We'll be here when you are."
+msgstr "Du musst mindestens {minimumAge, number} Jahre alt sein, um Zoonk zu nutzen. Wir sind für dich da, wenn es so weit ist."
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "kAEQyV"
+msgid "OK"
+msgstr "OK"
+
 #: src/app/[lang]/challenge/[planItemId]/page.tsx
 #: src/app/[lang]/checkpoint/[blockId]/page.tsx
 msgctxt "9MidH4"
@@ -3337,6 +3394,11 @@ msgstr "Ich möchte {topic} gründlich verstehen"
 msgctxt "-3M8u-"
 msgid "Focus test"
 msgstr "Fokustest"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+msgctxt "eBoUdl"
+msgid "Start lesson"
+msgstr "Lektion starten"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx
@@ -3503,6 +3565,26 @@ msgstr "Kapitel durch einen Test überspringen"
 msgctxt "KGN7UU"
 msgid "This chapter"
 msgstr "Dieses Kapitel"
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "zNLs8L"
+msgid "Usage data"
+msgstr "Nutzungsdaten"
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "9LGL8u"
+msgid "Can we use cookies to see how you use Zoonk, so we can improve it? <link>Privacy</link>"
+msgstr "Dürfen wir Cookies verwenden, um zu sehen, wie du Zoonk nutzt, damit wir es verbessern können? <link>Datenschutz</link>"
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "pvtgR2"
+msgid "Decline"
+msgstr "Ablehnen"
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "sjzLbX"
+msgid "Accept"
+msgstr "Akzeptieren"
 
 #: src/app/auth/apple/route.ts
 msgctxt "5JUHBB"
@@ -4174,11 +4256,6 @@ msgstr "Wir konnten diese Seite nicht finden"
 msgctxt "Vge-RX"
 msgid "Footer"
 msgstr "Fußzeile"
-
-#: src/components/public/public-footer.tsx
-msgctxt "cXBJ7U"
-msgid "Privacy"
-msgstr "Datenschutz"
 
 #. Footer link to cancel a subscription, which German law requires (BGB § 312k). In German it must read exactly “Verträge hier kündigen”.
 #: src/components/public/public-footer.tsx

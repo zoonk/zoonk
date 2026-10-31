@@ -1,4 +1,6 @@
+import { UsageDataNotice } from "@/app/[lang]/usage-data-notice";
 import { JsonLd } from "@/components/public/json-ld";
+import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
 import { PublicFooter } from "@/components/public/public-footer";
 import { PUBLIC_FOOTER_ID } from "@/components/public/public-ids";
 import { PublicViewTracker } from "@/components/public/public-view-tracker";
@@ -51,6 +53,7 @@ export default async function HomePage() {
     <div className="flex min-h-dvh flex-col">
       <JsonLd items={HOME_JSON_LD} />
       <PublicViewTracker page="home" />
+      <UsageDataNotice className={PUBLIC_CONTAINER_CLASS} />
       <HomeHeader />
 
       <main className="flex-1">

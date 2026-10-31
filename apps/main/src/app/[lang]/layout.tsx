@@ -15,10 +15,12 @@ import { AccountDeletedToast } from "./account-deleted-toast";
 import { AppAnalytics } from "./app-analytics";
 import { AppCommandPalette } from "./app-command-palette";
 import { AuthChangeReload } from "./auth-change-reload";
+import { BirthYearGate } from "./birth-year-gate";
 import { KeepTypingScript } from "./keep-typing-script";
 import { LearnerSummarySync } from "./learner-summary-sync";
 import { PaletteRequestReset } from "./palette-request-reset";
 import { SignedInHintScript } from "./signed-in-hint-script";
+import { UsageNoticeScript } from "./usage-notice-script";
 import "../globals.css";
 
 export const ensureStatic = "shell";
@@ -44,7 +46,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
   const locale = await lang();
 
   return (
-    // The hint and sidebar scripts mark `<html>` before React hydrates it.
+    // The hint, usage notice and sidebar scripts mark `<html>` before React hydrates it.
     <html
       className={`${geistSans.variable} ${geistMono.variable}`}
       lang={locale}
@@ -52,6 +54,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
     >
       <head>
         <SignedInHintScript />
+        <UsageNoticeScript />
         <SidebarStateScript />
         <KeepTypingScript />
       </head>
@@ -66,6 +69,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
               <AppCommandPaletteSlot />
               <AccountDeletedToast />
             </MainFeedbackProvider>
+            <BirthYearGate />
           </ClientMessagesProvider>
         </NuqsAdapter>
         <AuthChangeReload />

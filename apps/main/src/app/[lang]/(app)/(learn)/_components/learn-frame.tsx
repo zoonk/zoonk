@@ -1,9 +1,11 @@
 import { CommandPaletteScope } from "@/app/[lang]/app-command-palette";
+import { UsageDataNotice } from "@/app/[lang]/usage-data-notice";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { LearnerSeedChannel } from "@/components/learner/learner-seed-provider";
 import { VisitorBarLinks } from "@/components/login-bar-link";
 import { TabMissionsProvider } from "@/lib/learn/tab-missions-provider";
 import {
+  BAR_ROW_CLASS,
   LearnShell,
   LearnShellContent,
   LearnShellHeader,
@@ -58,6 +60,7 @@ export function LearnFrame({ children }: { children: React.ReactNode }) {
             <LearnAppSidebar tabs={<LearnSideTabs />} />
 
             <LearnShellContent>
+              <UsageDataNotice className={BAR_ROW_CLASS} />
               <LearnTopBar />
               <LearnFrameMain>{children}</LearnFrameMain>
               <LearnBottomTabs />

@@ -55,6 +55,10 @@ function useLessonStart({ lessonId, origin }: { lessonId: string; origin: string
         return;
       }
 
+      if (answer.status === "cancelled") {
+        return;
+      }
+
       startTransition(() =>
         router.push(withCatalogOrigin(getLessonWritingHref({ answer, lessonId }), origin)),
       );

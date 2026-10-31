@@ -42,9 +42,13 @@ export function useCourseStart({
         return;
       }
 
-      const { data } = await safeAsync(async () => {
-        const guest = await ensureGuestSession();
+      const guest = await ensureGuestSession();
 
+      if (guest === "cancelled") {
+        return;
+      }
+
+      const { data } = await safeAsync(async () => {
         if (guest === "blocked") {
           return { reason: "browserBlocked", status: "limitReached" } as const;
         }

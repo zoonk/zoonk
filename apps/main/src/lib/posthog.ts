@@ -1,4 +1,4 @@
-import { loadPostHog } from "@zoonk/core/analytics/posthog-browser";
+import { getStartedPostHog, loadPostHog } from "@zoonk/core/analytics/posthog-browser";
 
 export async function identifyPostHogUser({
   analyticsDisabled,
@@ -21,6 +21,6 @@ export async function identifyPostHogUser({
 
 /** Callers wait for it before leaving the page, because PostHog loads after the page does. */
 export async function resetPostHogUser() {
-  const posthog = await loadPostHog();
+  const posthog = await getStartedPostHog();
   posthog?.reset();
 }

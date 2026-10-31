@@ -23,6 +23,7 @@ export type AppearanceView = {
   dailyLimitMinutes: number | null;
   look: BuddyLook;
   buddy: ResolvedBuddy;
+  shareUsageData: boolean;
   soundsEnabled: boolean;
 };
 
@@ -30,6 +31,7 @@ export type AppearanceView = {
 export type AppearanceActions = {
   saveBuddy: (buddy: AppearanceBuddy) => Promise<boolean>;
   setDailyLimit: (minutes: number | null) => Promise<boolean>;
+  setShareUsageData: (share: boolean) => Promise<boolean>;
   setSoundsEnabled: (enabled: boolean) => Promise<boolean>;
 };
 
@@ -45,6 +47,7 @@ function useAppearance({ actions, view }: { actions: AppearanceActions; view: Ap
   const [buddy, setOptimisticBuddy] = useOptimistic(view.buddy);
   const [soundsEnabled, setOptimisticSounds] = useOptimistic(view.soundsEnabled);
   const [dailyLimitMinutes, setOptimisticLimit] = useOptimistic(view.dailyLimitMinutes);
+  const [shareUsageData, setOptimisticShare] = useOptimistic(view.shareUsageData);
 
   const { failed, run } = useOptimisticSave();
 
@@ -62,11 +65,17 @@ function useAppearance({ actions, view }: { actions: AppearanceActions; view: Ap
         () => setOptimisticLimit(next),
         () => actions.setDailyLimit(next),
       ),
+    setShareUsageData: (next: boolean) =>
+      run(
+        () => setOptimisticShare(next),
+        () => actions.setShareUsageData(next),
+      ),
     setSoundsEnabled: (next: boolean) =>
       run(
         () => setOptimisticSounds(next),
         () => actions.setSoundsEnabled(next),
       ),
+    shareUsageData,
     soundsEnabled,
   };
 }
@@ -119,6 +128,18 @@ export function AppearanceScreen({
         <SectionTitle>{t("Language")}</SectionTitle>
         <ListGroup>
           <LanguageSetting onChange={onLanguageChange} />
+        </ListGroup>
+      </PageSection>
+
+      <PageSection>
+        <SectionTitle>{t("Privacy")}</SectionTitle>
+        <ListGroup>
+          <SwitchSettingRow
+            checked={appearance.shareUsageData}
+            description={t("Shows us how you use Zoonk, so we can improve it")}
+            label={t("Share usage data")}
+            onCheckedChange={appearance.setShareUsageData}
+          />
         </ListGroup>
       </PageSection>
 

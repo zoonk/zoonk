@@ -919,6 +919,7 @@ msgid "Answer them and we'll plan every day until you reach your goal."
 msgstr "Responda às perguntas e a gente vai planejar cada dia até você alcançar sua meta."
 
 #: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
+#: src/app/[lang]/birth-year-gate.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuar"
@@ -1261,6 +1262,12 @@ msgstr "Salvo."
 msgctxt "VnpW_P"
 msgid "Choose your buddy, sounds, a daily time limit and the app's language."
 msgstr "Escolha seu parceiro, os sons, um limite de tempo diário e o idioma do app."
+
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "cXBJ7U"
+msgid "Privacy"
+msgstr "Privacidade"
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "BbrYZc"
@@ -3295,6 +3302,56 @@ msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "Sua conta foi excluída."
 
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "VqYaaL"
+msgid "Check the year and try again."
+msgstr "Confira o ano e tente de novo."
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "TCf3Ld"
+msgid "We couldn't save it. Check your connection and try again."
+msgstr "Não deu para salvar. Confira sua conexão e tente de novo."
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "wqPXuM"
+msgid "What year were you born?"
+msgstr "Em que ano você nasceu?"
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "u7SgKI"
+msgid "We ask everyone once."
+msgstr "A gente pergunta isso a todo mundo uma vez só."
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "Wr357G"
+msgid "Birth year"
+msgstr "Ano de nascimento"
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "dUCA4K"
+msgid "Not now"
+msgstr "Agora não"
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "WCgBMi"
+msgid "Not just yet"
+msgstr "Ainda não"
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "7dMiHf"
+msgid "You need to be {minimumAge, number} or older to use Zoonk, so we'll log you out. We'll be here when you are."
+msgstr "Você precisa ter pelo menos {minimumAge, number} anos para usar o Zoonk, então vamos encerrar sua sessão. A gente vai estar aqui quando você tiver essa idade."
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "GuXkQM"
+msgid "You need to be {minimumAge, number} or older to use Zoonk. We'll be here when you are."
+msgstr "Você precisa ter pelo menos {minimumAge, number} anos para usar o Zoonk. A gente vai estar aqui quando você tiver essa idade."
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "kAEQyV"
+msgid "OK"
+msgstr "OK"
+
 #: src/app/[lang]/challenge/[planItemId]/page.tsx
 #: src/app/[lang]/checkpoint/[blockId]/page.tsx
 msgctxt "9MidH4"
@@ -3337,6 +3394,11 @@ msgstr "Quero entender {topic} a fundo"
 msgctxt "-3M8u-"
 msgid "Focus test"
 msgstr "Teste de foco"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+msgctxt "eBoUdl"
+msgid "Start lesson"
+msgstr "Começar aula"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx
@@ -3503,6 +3565,26 @@ msgstr "Teste para pular um capítulo"
 msgctxt "KGN7UU"
 msgid "This chapter"
 msgstr "Este capítulo"
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "zNLs8L"
+msgid "Usage data"
+msgstr "Dados de uso"
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "9LGL8u"
+msgid "Can we use cookies to see how you use Zoonk, so we can improve it? <link>Privacy</link>"
+msgstr "A gente pode usar cookies para ver como você usa o Zoonk e melhorar ele? <link>Privacidade</link>"
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "pvtgR2"
+msgid "Decline"
+msgstr "Recusar"
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "sjzLbX"
+msgid "Accept"
+msgstr "Aceitar"
 
 #: src/app/auth/apple/route.ts
 msgctxt "5JUHBB"
@@ -4174,11 +4256,6 @@ msgstr "A gente não encontrou esta página"
 msgctxt "Vge-RX"
 msgid "Footer"
 msgstr "Rodapé"
-
-#: src/components/public/public-footer.tsx
-msgctxt "cXBJ7U"
-msgid "Privacy"
-msgstr "Privacidade"
 
 #. Footer link to cancel a subscription, which German law requires (BGB § 312k). In German it must read exactly “Verträge hier kündigen”.
 #: src/components/public/public-footer.tsx

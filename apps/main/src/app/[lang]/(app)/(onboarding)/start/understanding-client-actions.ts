@@ -20,6 +20,10 @@ export const WEB_UNDERSTANDING_ACTIONS: UnderstandingActions = {
       return startUnderstandingAction({ ...input, timeZone: getLocalTimeZone() });
     }
 
+    if (guest === "cancelled") {
+      return { status: "cancelled" };
+    }
+
     return { status: guest === "blocked" ? "browserBlocked" : "failed" };
   },
 };

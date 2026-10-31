@@ -28,6 +28,7 @@ export type StartUnderstandingOutcome =
   | { status: "needsAccount" }
   | { status: "signUpRequired" }
   | { status: "browserBlocked" }
+  | { status: "cancelled" }
   | { status: "failed" };
 
 export type UnderstandingActions = {
@@ -60,6 +61,7 @@ export type CreateGoalsOutcome =
       goalId: string;
       status: "created";
     }
+  | { status: "cancelled" }
   | { status: "failed" }
   | { reason: GoalLimitReason; status: "limitReached" };
 

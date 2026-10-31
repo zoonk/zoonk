@@ -720,6 +720,21 @@ msgctxt "y1Z3or"
 msgid "Language"
 msgstr "Language"
 
+#: src/appearance/appearance-screen.tsx
+msgctxt "cXBJ7U"
+msgid "Privacy"
+msgstr "Privacy"
+
+#: src/appearance/appearance-screen.tsx
+msgctxt "8uEFmZ"
+msgid "Shows us how you use Zoonk, so we can improve it"
+msgstr "Shows us how you use Zoonk, so we can improve it"
+
+#: src/appearance/appearance-screen.tsx
+msgctxt "JPXk5m"
+msgid "Share usage data"
+msgstr "Share usage data"
+
 #: src/appearance/buddy-settings.tsx
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-glasses-picker.tsx

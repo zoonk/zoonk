@@ -2,17 +2,28 @@
 
 import { getPathname, usePathname } from "@/i18n/navigation";
 import { rememberLocale } from "@/i18n/remember-locale";
+import { notifyUsageDataChoice } from "@/lib/usage-data/usage-data-choice";
 import {
   type AppearanceActions,
   AppearanceScreen,
   type AppearanceView,
 } from "@zoonk/learn/appearance";
 import { type SupportedLocale } from "@zoonk/utils/locale";
-import { saveBuddyAction, setDailyLimitAction, setSoundsEnabledAction } from "./actions";
+import {
+  saveBuddyAction,
+  setDailyLimitAction,
+  setShareUsageDataAction,
+  setSoundsEnabledAction,
+} from "./actions";
 
 const APPEARANCE_ACTIONS: AppearanceActions = {
   saveBuddy: saveBuddyAction,
   setDailyLimit: setDailyLimitAction,
+  setShareUsageData: async (share) => {
+    const saved = await setShareUsageDataAction(share);
+    notifyUsageDataChoice();
+    return saved;
+  },
   setSoundsEnabled: setSoundsEnabledAction,
 };
 

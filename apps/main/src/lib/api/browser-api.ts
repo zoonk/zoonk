@@ -25,27 +25,32 @@ function toRequestBody({
   };
 }
 
+type BrowserWrite = { body?: unknown; path: `/v1/${string}` };
+
+/**
+ * For writes any page can make, a lesson's included: a Server Action that expires tags would render
+ * the page again under the learner. Null when the API couldn't be reached.
+ */
+export async function sendFromBrowser({
+  body,
+  method,
+  path,
+}: BrowserWrite & { method: "PATCH" | "POST" | "PUT" }): Promise<Response | null> {
+  const { data: response } = await safeAsync(async () => {
+    const headers = await getWorkflowAuthHeaders();
+
+    return fetch(`${getBrowserApiUrl()}${path}`, { ...toRequestBody({ body, headers }), method });
+  });
+
+  return response;
+}
+
 /**
  * For calls that take seconds: Next.js sends a page's Server Actions one at a time, so a slow one
  * would hold up the lesson's checks. Null when the API couldn't be reached.
  */
-export async function postFromBrowser({
-  body,
-  path,
-}: {
-  body?: unknown;
-  path: `/v1/${string}`;
-}): Promise<Response | null> {
-  const { data: response } = await safeAsync(async () => {
-    const headers = await getWorkflowAuthHeaders();
-
-    return fetch(`${getBrowserApiUrl()}${path}`, {
-      ...toRequestBody({ body, headers }),
-      method: "POST",
-    });
-  });
-
-  return response;
+export function postFromBrowser(write: BrowserWrite): Promise<Response | null> {
+  return sendFromBrowser({ ...write, method: "POST" });
 }
 
 /**

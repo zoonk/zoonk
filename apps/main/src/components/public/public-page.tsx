@@ -1,7 +1,8 @@
+import { UsageDataNotice } from "@/app/[lang]/usage-data-notice";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode } from "react";
-import { HERO_CLASS } from "./landing-styles";
+import { HERO_CLASS, PUBLIC_CONTAINER_CLASS } from "./landing-styles";
 import { PublicFooter } from "./public-footer";
 import { PublicHeader } from "./public-header";
 
@@ -18,6 +19,7 @@ export function PublicPage({
 }) {
   return (
     <div className="flex min-h-dvh flex-col">
+      <UsageDataNotice className={PUBLIC_CONTAINER_CLASS} />
       <PublicHeader />
       <main className={cn("flex-1", className)}>{children}</main>
       <PublicFooter pathname={pathname} />
@@ -28,6 +30,7 @@ export function PublicPage({
 export function PublicPageSkeleton() {
   return (
     <div aria-hidden="true" className="flex min-h-dvh flex-col">
+      <UsageDataNotice className={PUBLIC_CONTAINER_CLASS} />
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4 sm:h-[72px] sm:px-8">
         <Skeleton className="h-7 w-24 rounded-lg" />
         <Skeleton className="h-11 w-20 rounded-lg lg:h-10" />

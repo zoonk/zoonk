@@ -10,3 +10,4 @@
 
 /* Lets a static page show a learner their account's place, not a visitor's way in, before their summary arrives. */
 @custom-variant signed-in (&:where([data-signed-in] *));
+@custom-variant usage-notice (&:where([data-usage-notice] *));

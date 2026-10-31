@@ -26,7 +26,8 @@ export function useSubmitUnderstanding({
   draftId: string | null;
   hasAttachment: boolean;
   onDraft: (draft: OnboardingDraftView) => void;
-  onError: (input: { error: GoalError; words: string }) => void;
+  /** Without an error, the learner went back on their own. */
+  onError: (input: { error: GoalError | null; words: string }) => void;
   onExplanation: (input: { draft: OnboardingDraftView; question: string }) => void;
   onSending: (goal: string) => void;
   understanding: UnderstandingActions;
@@ -98,6 +99,11 @@ export function useSubmitUnderstanding({
     }
 
     setIsSubmitting(false);
+
+    if (result.status === "cancelled") {
+      onError({ error: null, words: goal });
+      return;
+    }
 
     if (result.status !== "started" && result.status !== "startFailed") {
       onError({ error: toError(result), words: goal });

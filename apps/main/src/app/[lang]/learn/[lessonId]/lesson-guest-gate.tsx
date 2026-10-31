@@ -12,7 +12,7 @@ import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useReducer, useTransition } from "react";
 import { LessonRouteFrame } from "./lesson-route-frame";
 
-type GatePhase = "blocked" | "failed" | "opening" | "refreshing";
+type GatePhase = "blocked" | "cancelled" | "failed" | "opening" | "refreshing";
 
 type GateAction =
   | { guest: Awaited<ReturnType<typeof ensureGuestSession>>; type: "opened" }
@@ -23,8 +23,8 @@ function gateReducer(_phase: GatePhase, action: GateAction): GatePhase {
     return "opening";
   }
 
-  if (action.guest === "blocked") {
-    return "blocked";
+  if (action.guest === "blocked" || action.guest === "cancelled") {
+    return action.guest;
   }
 
   return action.guest === "ready" ? "refreshing" : "failed";
@@ -52,7 +52,12 @@ function useOpenAsGuest() {
 
   const failed = phase === "failed" || (phase === "refreshing" && !isRefreshing);
 
-  return { blocked: phase === "blocked", failed, retry: () => dispatch({ type: "retry" }) };
+  return {
+    blocked: phase === "blocked",
+    cancelled: phase === "cancelled",
+    failed,
+    retry: () => dispatch({ type: "retry" }),
+  };
 }
 
 /** A lesson's screens load only with a session, so they can't be scraped from the page. */
@@ -65,13 +70,14 @@ export function LessonGuestGate({
 }) {
   const t = useExtracted();
   const limitMessage = useGoalLimitMessage();
-  const { blocked, failed, retry } = useOpenAsGuest();
+  const { blocked, cancelled, failed, retry } = useOpenAsGuest();
+  const canRetry = failed || cancelled;
 
   return (
     <LessonRouteFrame
       exitHref={exitHref}
       footer={
-        (blocked || failed) && (
+        (blocked || canRetry) && (
           <TaskActionBar>
             <TaskActions>
               <CurrentPageLoginLink
@@ -82,9 +88,9 @@ export function LessonGuestGate({
               >
                 {t("Log in")}
               </CurrentPageLoginLink>
-              {failed && (
+              {canRetry && (
                 <Button className="flex-1" onClick={retry} size="xl">
-                  {t("Try again")}
+                  {failed ? t("Try again") : t("Start lesson")}
                 </Button>
               )}
             </TaskActions>
@@ -103,7 +109,7 @@ export function LessonGuestGate({
           {t("We couldn't open the lesson. Try again, or log in to keep going.")}
         </p>
       )}
-      {!blocked && !failed && (
+      {!blocked && !canRetry && (
         <p
           aria-live="polite"
           className="text-muted-foreground flex items-center gap-2 text-sm"
