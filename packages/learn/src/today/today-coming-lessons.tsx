@@ -4,6 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
 import { ChangeSaveError } from "../_components/save-error";
+import { useSentenceSpace } from "../_utils/locale";
 import { useSessionAction } from "../session/use-session-action";
 import { NO_FOLD, type RowFold, getRowClass } from "./today-block-row";
 import { useTodayScreen } from "./today-context";
@@ -12,11 +13,13 @@ function PrepareLessonsLine() {
   const t = useExtracted();
   const { actions } = useTodayScreen();
   const { failed, isPending, run } = useSessionAction({ action: actions.prepareLessons });
+  const space = useSentenceSpace();
 
   return (
     <>
       <p className="text-muted-foreground text-xs leading-4">
-        {t("Not written yet.")}{" "}
+        {t("Not written yet.")}
+        {space}
         <Button disabled={isPending} onClick={run} variant="link">
           {t({
             description: "Button that has Zoonk write today's lessons.",

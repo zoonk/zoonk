@@ -11,6 +11,7 @@ import {
   AlertDialogTitle,
 } from "@zoonk/ui/components/alert-dialog";
 import { useExtracted } from "next-intl";
+import { useSentenceSpace } from "../_utils/locale";
 import { useMockScreen } from "./mock-context";
 import { useSectionCounts } from "./mock-section-counts";
 
@@ -44,6 +45,7 @@ function useLeftOpen(): string {
   const t = useExtracted();
   const { blankEssays } = useSectionCounts();
   const questions = useQuestionsLeftOpen();
+  const space = useSentenceSpace();
 
   const essays =
     blankEssays > 0
@@ -52,7 +54,7 @@ function useLeftOpen(): string {
         })
       : "";
 
-  return [questions, essays].filter(Boolean).join(" ");
+  return [questions, essays].filter(Boolean).join(space);
 }
 
 export function MockHandInDialog({
@@ -66,6 +68,7 @@ export function MockHandInDialog({
   const { runner } = useMockScreen();
   const isLast = runner.view.sections.at(-1)?.status === "current";
   const leftOpen = useLeftOpen();
+  const space = useSentenceSpace();
 
   return (
     <AlertDialog onOpenChange={onOpenChange} open={open}>
@@ -75,7 +78,9 @@ export function MockHandInDialog({
             {isLast ? t("Hand in the mock exam?") : t("Hand in this section?")}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            {leftOpen} {t("After this, your answers can't change.")}
+            {leftOpen}
+            {space}
+            {t("After this, your answers can't change.")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

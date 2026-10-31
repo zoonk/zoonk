@@ -3,6 +3,7 @@
 import { type PlanOperation } from "@zoonk/core/plans/contract";
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
+import { useSentenceSpace } from "../_utils/locale";
 
 type ChoiceOperation = Extract<
   PlanOperation,
@@ -13,6 +14,7 @@ type BaseChoices = Extract<PlanOperation, { kind: "setBaseChoices" }>["choices"]
 
 function useBaseChoicesSentence() {
   const t = useExtracted();
+  const space = useSentenceSpace();
 
   return (choices: BaseChoices): string => {
     const count = (choice: BaseChoices[number]["choice"]) =>
@@ -48,7 +50,7 @@ function useBaseChoicesSentence() {
         ),
     ]
       .filter(Boolean)
-      .join(" ");
+      .join(space);
   };
 }
 

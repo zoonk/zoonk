@@ -43,6 +43,7 @@ import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.ui.components.LinearScale
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf1Fields
@@ -109,7 +110,7 @@ private fun NumberLineActivity(props: ActivityProps) {
             } else {
                 null
             },
-        ).joinToString(" ")
+        ).joinSentences()
 
     ActivityCanvas(description = description) {
         Text(

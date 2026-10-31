@@ -5,6 +5,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { FreeWeekOverNotice } from "../../_components/free-week-over";
+import { useSentenceSpace } from "../../_utils/locale";
 import { usePlanScreen } from "../../plan/plan-context";
 import {
   MoveDateFailure,
@@ -40,6 +41,7 @@ export function RevealCoverage({ syllabus }: { syllabus: SyllabusView | null }) 
   const { plan } = usePlanScreen();
   const coverage = usePlanCoverage();
   const canMoveDate = useCanMoveDate();
+  const space = useSentenceSpace();
   const [moved, setMoved] = useState(false);
   const move = useMoveDate({ onMoved: () => setMoved(true) });
   const done = useRef<HTMLParagraphElement>(null);
@@ -78,7 +80,7 @@ export function RevealCoverage({ syllabus }: { syllabus: SyllabusView | null }) 
         <span>{words}</span>
         {canMoveDate && (
           <>
-            {" "}
+            {space}
             {/* Focusable while disabled: the action keeps focus through a search of seconds. */}
             <Button
               aria-busy={move.pending || undefined}

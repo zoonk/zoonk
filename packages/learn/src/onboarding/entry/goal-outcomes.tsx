@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../../_components/save-error";
+import { useSentenceSpace } from "../../_utils/locale";
 import { type GoalError } from "../goal-errors";
 import { type WaitlistOutcome } from "../onboarding-actions";
 import {
@@ -204,6 +205,7 @@ function WaitlistNote({
   signUpHref: string;
 }) {
   const t = useExtracted();
+  const space = useSentenceSpace();
 
   if (outcome === "joined") {
     return (
@@ -216,7 +218,8 @@ function WaitlistNote({
   if (outcome === "signInRequired") {
     return (
       <p className="text-muted-foreground text-sm" role="status">
-        {t("Create an account so we can let you know.")}{" "}
+        {t("Create an account so we can let you know.")}
+        {space}
         <a className="text-foreground font-medium underline underline-offset-4" href={signUpHref}>
           {t("Create an account")}
         </a>

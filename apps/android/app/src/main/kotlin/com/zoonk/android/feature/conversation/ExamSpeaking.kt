@@ -38,6 +38,7 @@ import com.zoonk.android.ui.components.formatClock
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.richtext.RichTable
 import com.zoonk.android.ui.richtext.SpokenText
 import com.zoonk.android.ui.richtext.TableAlign
@@ -255,8 +256,10 @@ internal fun ExamTaskIntro(
                 )
                 Text(task.card.summary, style = MaterialTheme.typography.bodyLarge)
                 Text(
-                    stringResource(R.string.conversation_opens_and_card, name) + " " +
+                    joinSentences(
+                        stringResource(R.string.conversation_opens_and_card, name),
                         stringResource(R.string.conversation_rated_on, criteria),
+                    ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -266,7 +269,11 @@ internal fun ExamTaskIntro(
         item(key = "stand-in") {
             val standIn =
                 stringResource(if (partner) R.string.conversation_stand_in_partner else R.string.conversation_stand_in_examiner, name)
-            CallNote(standIn + " " + stringResource(R.string.conversation_practice_estimate), R.drawable.ic_help, Modifier.callItem())
+            CallNote(
+                joinSentences(standIn, stringResource(R.string.conversation_practice_estimate)),
+                R.drawable.ic_help,
+                Modifier.callItem(),
+            )
         }
         if (task.task.prepMinutes > 0) {
             item(key = "prep") { PrepClock(task, prepStartedAt, onStartPrep, Modifier.callItem()) }

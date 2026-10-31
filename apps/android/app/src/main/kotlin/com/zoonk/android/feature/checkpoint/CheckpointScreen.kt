@@ -109,6 +109,7 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.taskAsideBeside
@@ -356,7 +357,7 @@ private fun decisionLine(
                 } else {
                     pluralStringResource(R.plurals.checkpoint_retry_after_lessons, lessons, lessons)
                 }
-            stringResource(R.string.checkpoint_lost_line) + " " + retry
+            joinSentences(stringResource(R.string.checkpoint_lost_line), retry)
         }
     }
 

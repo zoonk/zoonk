@@ -2,6 +2,7 @@
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useExtracted, useFormatter } from "next-intl";
+import { useSentenceSpace } from "../_utils/locale";
 import { useExamples, useShortList } from "./use-short-list";
 
 type ChangeEffect = PlanChangeView["effect"];
@@ -106,6 +107,7 @@ export function useLessonsEffectText() {
   const shortList = useShortList();
   const examples = useExamples();
   const fewer = useFewerLessonsText();
+  const space = useSentenceSpace();
 
   /** By topic: a stand-in that only shrinks has no title of its own. */
   const unwrittenText = (effect: ChangeEffect): string | null => {
@@ -228,7 +230,7 @@ export function useLessonsEffectText() {
     const unwritten = unwrittenText(effect);
 
     if (named) {
-      return [leftOutNamesText(counted, leftOut), unwritten].filter(Boolean).join(" ") || null;
+      return [leftOutNamesText(counted, leftOut), unwritten].filter(Boolean).join(space) || null;
     }
 
     const counts = sayLessons(byDate ? { addedText, bothText, removedText } : fewer, {
@@ -247,7 +249,7 @@ export function useLessonsEffectText() {
           })
         : null;
 
-    return [counts, netted, unwritten].filter(Boolean).join(" ") || null;
+    return [counts, netted, unwritten].filter(Boolean).join(space) || null;
   };
 }
 

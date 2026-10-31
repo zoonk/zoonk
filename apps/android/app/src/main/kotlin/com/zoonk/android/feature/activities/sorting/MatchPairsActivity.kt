@@ -54,6 +54,7 @@ import com.zoonk.android.feature.activities.assignmentPairs
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.format.factsLine
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf27Value as MatchPairsContent
@@ -112,12 +113,12 @@ private fun MatchPairsActivity(props: ActivityProps) {
         val (reason, trap) = explainMismatch(leftCard, rightCard)
         val explanation =
             listOfNotNull(trap?.let { resources.getString(R.string.activities_sorting_no_match_note, it.text) }, reason)
-                .joinToString(" ")
+                .joinSentences()
                 .ifEmpty { null }
         miss = Miss(leftCard.id, rightCard.id, explanation)
         announcement =
             listOfNotNull(resources.getString(R.string.activities_sorting_dont_go_together, leftCard.text, rightCard.text), explanation)
-                .joinToString(" ")
+                .joinSentences()
     }
 
     fun pick(

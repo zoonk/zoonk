@@ -336,6 +336,6 @@ struct FormulaModelCanvas: View {
           comment: "A marked comparison on a model's chart, for VoiceOver"))
     }
 
-    return parts.joined(separator: " ")
+    return parts.joinedSentences()
   }
 }

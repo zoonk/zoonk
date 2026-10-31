@@ -6,8 +6,10 @@ import {
 import { NoSessionNote } from "@/components/public/no-account-note";
 import { StartBlock, StartLink } from "@/components/public/public-start";
 import { StartLessonButton } from "@/components/public/start-lesson-button";
+import { getAppLocale } from "@/i18n/locale";
 import { withCatalogOrigin } from "@/lib/public/public-hrefs";
 import { type PublicLibraryLesson } from "@zoonk/core/library/lessons/public";
+import { getSentenceSpace } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 
@@ -56,11 +58,13 @@ export async function LessonFirstScreen({
   screen: PublicLibraryLesson["firstScreen"];
 }) {
   const t = await getExtracted();
+  const space = getSentenceSpace(await getAppLocale());
   const startHref = withCatalogOrigin(playerPath, origin);
 
   const note = (
     <>
-      {t("{minutes, plural, one {# minute} other {# minutes}}.", { minutes })}{" "}
+      {t("{minutes, plural, one {# minute} other {# minutes}}.", { minutes })}
+      {space}
       <NoSessionNote>{t("No sign-up needed.")}</NoSessionNote>
     </>
   );

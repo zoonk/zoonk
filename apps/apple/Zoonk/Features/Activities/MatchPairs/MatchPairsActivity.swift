@@ -216,7 +216,7 @@ private struct MatchPairsCanvas: View {
         localized: "“\(LessonRichText.plain($0.text))” has no match.", table: "Activities",
         comment: "Says that the trap card the learner picked has no match")
     }
-    let explanation = [trapNote, reason].compactMap(\.self).joined(separator: " ")
+    let explanation = [trapNote, reason].compactMap(\.self).joinedSentences()
     miss = Miss(
       left: left.id, right: right.id, explanation: explanation.isEmpty ? nil : explanation)
 
@@ -226,7 +226,7 @@ private struct MatchPairsCanvas: View {
           localized: "\(leftText) and \(rightText) don't go together.", table: "Activities",
           comment: "VoiceOver, after two cards that don't match are picked"),
         explanation.isEmpty ? nil : LessonRichText.plain(explanation),
-      ].compactMap(\.self).joined(separator: " "))
+      ].compactMap(\.self).joinedSentences())
   }
 
   @ViewBuilder

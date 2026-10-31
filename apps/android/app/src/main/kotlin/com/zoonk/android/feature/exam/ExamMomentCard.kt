@@ -40,6 +40,7 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatTimeOfDay
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamDay
 import com.zoonk.api.models.ExamMoment
@@ -158,7 +159,7 @@ private fun workLine(moment: ExamMoment): String {
         } else {
             pluralStringResource(R.plurals.exam_work_sessions, sessions, sessions)
         }
-    return if (moment.prepared) "$done ${stringResource(R.string.exam_prepared)}" else done
+    return if (moment.prepared) joinSentences(done, stringResource(R.string.exam_prepared)) else done
 }
 
 /** Nothing is saved: it's a calm reminder, never a test. */

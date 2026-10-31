@@ -41,6 +41,14 @@ export function getFormattingLocale(language: string): string {
   return FORMATTING_LOCALES.get(language) ?? language;
 }
 
+/** Japanese and Chinese write sentences back to back: their full-width stops carry the space. */
+const NO_SENTENCE_SPACE_SCRIPTS = new Set(["Hans", "Hant", "Jpan"]);
+
+export function getSentenceSpace(locale: string): string {
+  const { script } = new Intl.Locale(locale).maximize();
+  return script && NO_SENTENCE_SPACE_SCRIPTS.has(script) ? "" : " ";
+}
+
 export function getSupportedLocaleFromLanguage(language: string): SupportedLocale {
   return getContentLocale(language) ?? DEFAULT_LOCALE;
 }

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   getContentLocale,
   getFormattingLocale,
+  getSentenceSpace,
   getSupportedLocaleFromLanguage,
   isValidLocale,
 } from "./locale";
@@ -67,5 +68,15 @@ describe(getFormattingLocale, () => {
   it("keeps every other language and an explicit region as they are", () => {
     expect(getFormattingLocale("pt")).toBe("pt");
     expect(getFormattingLocale("es-AR")).toBe("es-AR");
+  });
+});
+
+describe(getSentenceSpace, () => {
+  it.each(["ja", "ja-JP", "zh", "zh-TW", "yue"])("joins %s sentences with no space", (locale) => {
+    expect(getSentenceSpace(locale)).toBe("");
+  });
+
+  it.each(["en", "ko", "tr", "es-MX", "pt", "fr"])("joins %s sentences with a space", (locale) => {
+    expect(getSentenceSpace(locale)).toBe(" ");
   });
 });

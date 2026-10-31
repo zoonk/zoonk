@@ -70,6 +70,7 @@ import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatHourRange
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.CurrentUserActivityResponseActivity
@@ -999,7 +1000,7 @@ private fun PatternsNote(
             (summary.times as? Verdict.Even)?.let { pluralStringResource(R.plurals.stats_times_even, it.points, it.points) },
             pluralStringResource(R.plurals.stats_min_answers, minimumAnswers.toInt(), minimumAnswers.toInt()),
         )
-    StatsLine(sentences.joinToString(" "))
+    StatsLine(sentences.joinSentences())
 }
 
 private sealed interface Verdict {

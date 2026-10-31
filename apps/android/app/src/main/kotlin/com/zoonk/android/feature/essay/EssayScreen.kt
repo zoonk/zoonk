@@ -98,6 +98,7 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.components.stepHeading
+import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
@@ -414,7 +415,8 @@ private fun StatusLine(
             }
 
             send == EssaySend.DailyLimitReached -> {
-                AnnotatedString(stringResource(R.string.essay_daily_limit_reached) + " ") +
+                val reached = stringResource(R.string.essay_daily_limit_reached)
+                AnnotatedString(reached + spaceAfterSentence(reached)) +
                     statusLink(stringResource(R.string.today_change_limit), onChangeLimit)
             }
 

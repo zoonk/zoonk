@@ -10,6 +10,7 @@ import { useId, useRef, useState, useTransition } from "react";
 import { CHIP_CLASS } from "../_components/chip";
 import { ChangeSaveError } from "../_components/save-error";
 import { SURFACE_CLASS } from "../_components/surface";
+import { useSentenceSpace } from "../_utils/locale";
 import { useLearnAnalytics } from "../learn-context";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import {
@@ -44,6 +45,7 @@ function useChangeFootnote() {
   const areaEndTexts = useAreaEndTexts();
   const addedTopicsStartText = useAddedTopicsStartText();
   const reviewFirstText = useReviewFirstText();
+  const space = useSentenceSpace();
 
   return function changeFootnote(effect: PlanChangeView["effect"]): string | null {
     if (!effect) {
@@ -68,7 +70,7 @@ function useChangeFootnote() {
       topicsText(effect),
     ].filter(Boolean);
 
-    return sentences.length > 0 ? sentences.join(" ") : null;
+    return sentences.length > 0 ? sentences.join(space) : null;
   };
 }
 

@@ -751,7 +751,7 @@ struct ChallengeScreen: View {
       leftOut,
     ]
     .compactMap(\.self)
-    .joined(separator: " ")
+    .joinedSentences()
   }
 
   private static let notDone = LocalizedStringResource(

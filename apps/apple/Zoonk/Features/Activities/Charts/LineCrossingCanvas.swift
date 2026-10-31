@@ -335,6 +335,6 @@ struct LineCrossingCanvas: View {
         localized: "Neither line has moved yet.", table: "ActivitiesCharts",
         comment: "A two-line chart before a move, for VoiceOver")
 
-    return "\(lines) \(state)"
+    return [lines, state].joinedSentences()
   }
 }

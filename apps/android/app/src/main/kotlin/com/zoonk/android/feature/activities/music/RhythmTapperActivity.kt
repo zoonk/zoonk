@@ -82,6 +82,7 @@ import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.ActivityExpected
@@ -453,7 +454,7 @@ private fun RhythmFeedback(results: RhythmResults) {
             pluralStringResource(R.plurals.activities_music_taps_on_time, results.hits.size, onTime, results.hits.size),
             detail,
             extra,
-        ).joinToString(" "),
+        ).joinSentences(),
         Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         style = MaterialTheme.typography.bodyMedium,
     )

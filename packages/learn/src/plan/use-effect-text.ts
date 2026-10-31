@@ -4,6 +4,7 @@ import { type PlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
+import { useSentenceSpace } from "../_utils/locale";
 import { getShownEndMove } from "../plan-diff/end-move";
 import { useFormatPlanDate } from "./plan-date-text";
 import {
@@ -172,6 +173,7 @@ function useEffectSentences() {
   const weeklyEventsText = useWeeklyEventsText();
   const nextMockText = useNextMockText();
   const phaseEndsText = usePhaseEndsText();
+  const space = useSentenceSpace();
 
   return function effectSentences(
     change: Pick<PlanChangeView, "effect">,
@@ -200,6 +202,6 @@ function useEffectSentences() {
       endText,
     ].filter(Boolean);
 
-    return sentences.length > 0 ? sentences.join(" ") : null;
+    return sentences.length > 0 ? sentences.join(space) : null;
   };
 }

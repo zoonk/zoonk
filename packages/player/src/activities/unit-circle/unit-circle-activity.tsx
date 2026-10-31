@@ -1,5 +1,6 @@
 "use client";
 
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
@@ -53,6 +54,7 @@ export function UnitCircleActivity({
   const t = useExtracted();
   const names = useTrigNames();
   const formatTrig = useFormatTrig();
+  const space = useSentenceSpace();
   const { fields } = content;
   const formatAngle = useFormatAngle(fields.angleUnit);
   const target = checkTarget(content);
@@ -115,7 +117,8 @@ export function UnitCircleActivity({
         {t(
           "A circle of radius 1 with a point at {angle}. Its height is the sine and its sideways distance from the center is the cosine: {values}.",
           { angle: formatAngle(degrees), values: valueList },
-        )}{" "}
+        )}
+        {space}
         {expectedMark &&
           target &&
           t("The question asks about {angle}, where {name} = {value}.", {

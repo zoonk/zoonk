@@ -71,6 +71,7 @@ import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf3Fields
@@ -149,7 +150,7 @@ private fun BlockBalance(
                     else -> R.string.activities_math_balance_left_heavier
                 },
             ),
-        ).joinToString(" ")
+        ).joinSentences()
 
     BalanceScale(
         start,

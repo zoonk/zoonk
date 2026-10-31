@@ -264,7 +264,7 @@ struct PlanSuggestionSection: View {
             comment: "Topics a change brings into what the goal's date covers, listed"),
     ].compactMap(\.self)
 
-    return sentences.isEmpty ? nil : sentences.joined(separator: " ")
+    return sentences.isEmpty ? nil : sentences.joinedSentences()
   }
 
   private func notNow(_ item: PlanSlotItem) -> some View {

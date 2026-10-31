@@ -53,6 +53,7 @@ import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.ui.components.LinearScale
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf2
@@ -159,7 +160,7 @@ private fun LineCrossingActivity(props: ActivityProps) {
             props.expected.numericValue?.takeIf { props.isChecked && numeric != null }?.let {
                 stringResource(R.string.activities_geometry_line_new_crossing, formatAmount(it, locale))
             },
-        ).joinToString(" ")
+        ).joinSentences()
 
     ActivityCanvas(description = description) {
         RichText(fields.change, style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))

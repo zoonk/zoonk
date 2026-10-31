@@ -9,6 +9,7 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanEffect
@@ -56,7 +57,7 @@ fun planChangeSentence(
     return ops
         .map { op ->
             (if (neverApplied) proposedOperationSentence(op) else null) ?: operationSentence(op, change.examDocument)
-        }.joinToString(" ")
+        }.joinSentences()
 }
 
 /** Main's `useAppliedLine`: whether today's session took the change. */
@@ -116,7 +117,7 @@ fun planChangeFootnote(effect: PlanEffect?): String? {
             addedTopicsStartText(effect),
             topicsLeaveText(effect),
         )
-    return sentences.takeIf { it.isNotEmpty() }?.joinToString(" ")
+    return sentences.takeIf { it.isNotEmpty() }?.joinSentences()
 }
 
 /** For a waiting change that would set the exam's official date: what the notice or calendar says. */
@@ -497,7 +498,7 @@ private fun baseChoicesSentence(choices: List<BaseChoice>): String {
         if (essential > 0) pluralStringResource(R.plurals.plan_change_bases_essential, essential, essential) else null,
         if (quick > 0) pluralStringResource(R.plurals.plan_change_bases_quick, quick, quick) else null,
         if (skip > 0) pluralStringResource(R.plurals.plan_change_bases_skip, skip, skip) else null,
-    ).joinToString(" ")
+    ).joinSentences()
 }
 
 @Composable
@@ -529,7 +530,7 @@ private fun systemChangeSentence(
     effect: PlanEffect?,
     targetDate: LocalDate?,
 ): String? {
-    fun join(vararg parts: String?) = parts.filterNotNull().joinToString(" ")
+    fun join(vararg parts: String?) = parts.filterNotNull().joinSentences()
     return when (change.kind) {
         "missedDays" -> {
             join(stringResource(R.string.plan_change_missed_days), phaseEndsText(effect), topicsMoved(effect))
@@ -597,7 +598,7 @@ private fun estimateSentence(
                 else -> pluralStringResource(R.plurals.plan_change_more_fit, more, more)
             }
         }
-    return "$count ${stringResource(R.string.plan_change_time_lessons_need)}"
+    return joinSentences(count, stringResource(R.string.plan_change_time_lessons_need))
 }
 
 /**
@@ -633,7 +634,7 @@ internal fun topicsMoved(
                 null
             },
         )
-    return sentences.takeIf { it.isNotEmpty() }?.joinToString(" ")
+    return sentences.takeIf { it.isNotEmpty() }?.joinSentences()
 }
 
 @Composable
@@ -647,7 +648,7 @@ private fun coverageSentence(effect: PlanEffect?): String {
                     if (back.isNotEmpty()) stringResource(R.string.plan_change_now_in_plan, shortList(back, ListKind.Topics)) else null,
                     if (out.isNotEmpty()) stringResource(R.string.plan_change_out_of_plan, shortList(out, ListKind.Topics)) else null,
                 )
-            if (lines.isEmpty()) null else (listOf(stringResource(R.string.plan_change_placement_changed)) + lines).joinToString(" ")
+            if (lines.isEmpty()) null else (listOf(stringResource(R.string.plan_change_placement_changed)) + lines).joinSentences()
         } else {
             topicsMoved(effect)
         }
@@ -792,7 +793,7 @@ private fun effectSentences(
             topicsLeaveText(effect),
             endText,
         )
-    return sentences.takeIf { it.isNotEmpty() }?.joinToString(" ")
+    return sentences.takeIf { it.isNotEmpty() }?.joinSentences()
 }
 
 /** The learner is the subject, so an area's name never needs a verb to agree with it. */
@@ -955,7 +956,7 @@ internal fun lessonsText(
                     it,
                 )
             }
-        return listOfNotNull(left, unwritten).joinToString(" ").ifEmpty { null }
+        return listOfNotNull(left, unwritten).joinSentences().ifEmpty { null }
     }
 
     val counts = lessonCounts(added, about, removed, names, someOf, byDate)
@@ -966,7 +967,7 @@ internal fun lessonsText(
         } else {
             null
         }
-    return listOfNotNull(counts, netted, unwritten).joinToString(" ").ifEmpty { null }
+    return listOfNotNull(counts, netted, unwritten).joinSentences().ifEmpty { null }
 }
 
 @Composable

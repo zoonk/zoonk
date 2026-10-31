@@ -428,7 +428,7 @@ private struct MockScoreSections: View {
           comment: "What a mock of a relative exam shows"))
     }
 
-    return lines.isEmpty ? nil : lines.joined(separator: " ")
+    return lines.isEmpty ? nil : lines.joinedSentences()
   }
 }
 

@@ -586,7 +586,7 @@ enum CheckpointCopy {
           localized: "His shield held this time.", table: "Practice",
           comment: "Under the verdict that loses a phase challenge, before when it comes back."),
         String(localized: newTry(lessons: lessons)),
-      ].joined(separator: " ")
+      ].joinedSentences()
     }
   }
 

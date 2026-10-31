@@ -1,5 +1,6 @@
 "use client";
 
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -72,6 +73,7 @@ export function CodeTracerActivity({
   const { fields } = content;
   const isChecked = phase === "checked";
   const isExploring = phase === "explore";
+  const space = useSentenceSpace();
   const asksNothing = isChecked || isExploring;
   const start = firstStep(fields.pauses);
   const [step, setStep] = useState(start);
@@ -179,8 +181,8 @@ export function CodeTracerActivity({
       <TracerPredictionLog results={revealed} />
 
       <ActivityTextAlternative>
+        {position}{" "}
         {[
-          position,
           step >= 0 && t("Line {line} ran.", { line: String(fields.trace[step]?.line ?? "") }),
           values
             .map((item) =>
@@ -192,7 +194,7 @@ export function CodeTracerActivity({
             .join(", "),
         ]
           .filter(Boolean)
-          .join(" ")}
+          .join(space)}
       </ActivityTextAlternative>
     </ActivityCanvas>
   );

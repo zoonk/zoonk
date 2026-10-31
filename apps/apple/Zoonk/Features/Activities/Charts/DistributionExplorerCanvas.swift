@@ -379,6 +379,6 @@ struct DistributionExplorerCanvas: View {
       table: "ActivitiesCharts",
       comment: "The shares around a distribution's handles, for VoiceOver")
 
-    return "\(shape) \(shares)"
+    return [shape, shares].joinedSentences()
   }
 }

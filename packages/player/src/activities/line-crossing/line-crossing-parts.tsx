@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Minus } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
@@ -149,6 +150,7 @@ export function LineCrossingDescription({
   const t = useExtracted();
   const format = useFormatNumber();
   const [first, second] = fields.lines;
+  const space = useSentenceSpace();
 
   return (
     <ActivityTextAlternative>
@@ -157,7 +159,8 @@ export function LineCrossingDescription({
         second: second?.label ?? "",
         x: fields.xLabel,
         y: fields.yLabel,
-      })}{" "}
+      })}
+      {space}
       {movedText ? `${movedText} ${changes}` : t("Neither line has moved yet.")}{" "}
       {computed !== null && t("The new crossing is at {value}.", { value: format(computed) })}
     </ActivityTextAlternative>

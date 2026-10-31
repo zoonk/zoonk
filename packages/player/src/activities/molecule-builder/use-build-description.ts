@@ -1,5 +1,6 @@
 "use client";
 
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { useExtracted } from "next-intl";
 import { type Build } from "./molecule-model";
 import { useAtomName } from "./use-atom-name";
@@ -7,6 +8,7 @@ import { useAtomName } from "./use-atom-name";
 export function useBuildDescription(): (build: Build) => string {
   const t = useExtracted();
   const nameOf = useAtomName();
+  const space = useSentenceSpace();
 
   return (build) => {
     const named = (id: string) => {
@@ -25,6 +27,6 @@ export function useBuildDescription(): (build: Build) => string {
       .filter((atom) => !build.bonds.some((bond) => bond.from === atom.id || bond.to === atom.id))
       .map((atom) => t("{atom} has no bonds.", { atom: nameOf(atom) }));
 
-    return [...bonds, ...loose].join(" ");
+    return [...bonds, ...loose].join(space);
   };
 }

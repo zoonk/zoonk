@@ -36,7 +36,7 @@
   "plan_bases_known": "c095c7b1fba9d3a48cf8aa8a74ca7445818d91d2fcf5fb3093bd8884a3d1a67f",
   "plan_bases_mixed": "7979d3f4c5e83ebe536dcc4fb4f3b30a540ca97ab8e693d13d0ac5f35023f64d",
   "plan_bases_quick": "0ae224cece1c2f93e487a845e854aba12f115edd543d7b3da9495b4085887680",
-  "plan_bases_show_known": "4b37fd6fc0bda6d032d2ab71c2be0569a448f2b629353141cb7aa9d402a0db9d",
+  "plan_bases_show_known": "c5475a03f0cb1e7bb089a97c5c15f4bb8caf06b37324865dc2ab932e0d3cdb32",
   "plan_bases_skip": "419665552d472e548fd27b254625da84e158e89b64356742c28cc1ec8014fd8c",
   "plan_bases_studied_stay": "8cef4e605f14a22a06e7566eca0ec340b78bf88a0d7093071643272f2b4bf31c",
   "plan_bases_topics_come_in": "5a89d60e85bc1526560b9605c5880fe47c9a899e63323df769b977607372fbbd",
@@ -1211,7 +1211,7 @@
     <plurals name="plan_bases_known">
         <item quantity="other">もともと知っていたと確認できた前提知識%d項目は、すでに学習計画から除いています。</item>
     </plurals>
-    <string name="plan_bases_show_known">すでに知っているものはありますか？ テストで確認できれば、学習計画から自動で除かれます。</string>
+    <string name="plan_bases_show_known">すでに知っている内容はありますか？テストで確認できた内容は、学習計画から自動で外れます。</string>
     <string name="plan_base_deep">じっくり学ぶ</string>
     <string name="plan_base_essential">要点を学ぶ</string>
     <string name="plan_base_quick">クイックレッスン</string>

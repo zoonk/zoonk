@@ -234,7 +234,7 @@ private struct BlockBalance: View {
           localized: "The left pan is heavier.", table: "ActivitiesCharts", comment: "For VoiceOver"
         )
 
-    return "\(pans) \(state)"
+    return [pans, state].joinedSentences()
   }
 }
 

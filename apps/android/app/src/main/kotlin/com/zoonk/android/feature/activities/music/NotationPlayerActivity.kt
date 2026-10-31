@@ -49,6 +49,7 @@ import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf32Fields
@@ -82,7 +83,7 @@ private fun NotationPlayerActivity(props: ActivityProps) {
                     index + 1,
                     notes.joinToString(", ") { labels.spoken(MusicNotes.pitchClassName(it)) },
                 )
-            }.joinToString(" ")
+            }.joinSentences()
 
     ActivityCanvas(gap = 16.dp) {
         FlowRow(

@@ -10823,7 +10823,7 @@ msgstr "{count, plural, other {テストで知っていることが確認でき�
 #: src/plan/use-bases-texts.ts
 msgctxt "Go6YMb"
 msgid "Already know some? Show it in a test and they leave your plan on their own."
-msgstr "すでに知っているものはありますか？ テストで確認できれば、学習計画から自動で除かれます。"
+msgstr "すでに知っている内容はありますか？テストで理解が確認できた内容は、学習計画から自動で外れます。"
 
 #: src/plan/use-bases-texts.ts
 msgctxt "WVfKOh"

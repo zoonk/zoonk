@@ -3,6 +3,7 @@
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef, useState } from "react";
+import { useSentenceSpace } from "../_utils/locale";
 import { usePlanScreen } from "./plan-context";
 import { PendingLabel } from "./plan-coverage";
 import { type RecommendedBases, useAdviceText } from "./use-bases-texts";
@@ -49,6 +50,7 @@ export function BasesAdvice({
 }) {
   const t = useExtracted();
   const adviceText = useAdviceText();
+  const space = useSentenceSpace();
   const answer = useRef<HTMLParagraphElement>(null);
   const pending = state.status === "pending";
   const retry = state.status === "failed" || state.status === "building";
@@ -76,7 +78,9 @@ export function BasesAdvice({
 
       {state.status === "answered" && (
         <p className="text-pretty focus-visible:outline-none" ref={answer} tabIndex={-1}>
-          {adviceText(state.advice)} {followed && t("Your plan already follows it.")}
+          {adviceText(state.advice)}
+          {space}
+          {followed && t("Your plan already follows it.")}
         </p>
       )}
 

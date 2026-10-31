@@ -59,6 +59,7 @@ import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.selectionAnswer
 import com.zoonk.android.feature.activities.selectionIds
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf25FieldsSourcesInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf25Value as SourceComparisonContent
@@ -213,7 +214,7 @@ private fun Excerpt(
                     it.joinToString("; "),
                 )
             },
-        ).joinToString(" ")
+        ).joinSentences()
     val markLabels = source.passages.map { stringResource(R.string.activities_reasoning_source_mark, it.text) }
     val unmarkLabels = source.passages.map { stringResource(R.string.activities_reasoning_source_unmark, it.text) }
     val colors = passageColors()

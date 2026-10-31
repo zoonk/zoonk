@@ -56,6 +56,7 @@ import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -127,7 +128,7 @@ private fun UnitCircleActivity(props: ActivityProps) {
             } else {
                 null
             },
-        ).joinToString(" ")
+        ).joinSentences()
 
     fun turn(next: Double) {
         degrees = next

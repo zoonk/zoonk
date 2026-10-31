@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
@@ -76,6 +77,7 @@ export function DistributionExplorerActivity({
     format(value, { maximumFractionDigits: PERCENT_DIGITS, unit: "%" });
 
   const formatValue = (value: number) => format(value, { unit: fields.unit });
+  const space = useSentenceSpace();
 
   function handleChange(next: Interval) {
     setHandles(next);
@@ -178,7 +180,8 @@ export function DistributionExplorerActivity({
               label: fields.valueLabel,
               max: formatValue(distribution.max),
               min: formatValue(distribution.min),
-            })}{" "}
+            })}
+        {space}
         {t("{between} of values fall between {from} and {to}, {below} below and {above} above.", {
           above: percent(above),
           below: percent(below),

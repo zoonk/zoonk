@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { NoticeCard } from "../_components/notice-card";
 import { ChangeSaveError } from "../_components/save-error";
+import { useSentenceSpace } from "../_utils/locale";
 import { LearnLink } from "../learn-link";
 
 /** Each resolves to whether it was saved. */
@@ -57,6 +58,7 @@ export function NotPlannedCallout({
 }) {
   const t = useExtracted();
   const reason = subject.notPlannedReason;
+  const space = useSentenceSpace();
 
   if (!reason) {
     return null;
@@ -72,7 +74,8 @@ export function NotPlannedCallout({
             {t({
               description: '"It" is the subject this page shows.',
               message: "It doesn't fit in the time you have.",
-            })}{" "}
+            })}
+            {space}
             <LearnLink className="font-medium underline underline-offset-4" href={adjustHref}>
               {t("Adjust plan")}
             </LearnLink>

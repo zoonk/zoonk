@@ -59,6 +59,7 @@ import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.languageName
+import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -440,7 +441,7 @@ internal fun FirstQuestion(
         Spacer(Modifier.size(20.dp))
 
         val note = stringResource(if (screen.guess) R.string.catalog_guess_note else R.string.catalog_check_note, minutesText)
-        val visitor = if (isVisitor(app)) " " + stringResource(R.string.catalog_no_sign_up) else ""
+        val visitor = if (isVisitor(app)) spaceAfterSentence(note) + stringResource(R.string.catalog_no_sign_up) else ""
         LineWithIcon(R.drawable.ic_play_circle, note + visitor, style = MaterialTheme.typography.bodySmall)
     }
 }

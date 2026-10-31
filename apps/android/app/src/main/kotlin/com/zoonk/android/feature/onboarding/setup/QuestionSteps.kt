@@ -72,6 +72,7 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.BuddyInput
 import com.zoonk.api.models.ExamChoice
@@ -641,7 +642,7 @@ internal fun ColumnScope.DateStep(
                 },
             description =
                 listOfNotNull(passedNote, ready, exam.estimated.takeIf { it }?.let { stringResource(R.string.onboarding_exam_expected) })
-                    .joinToString(" "),
+                    .joinSentences(),
             subject = subject,
             skipLabel = stringResource(R.string.onboarding_another_date),
             pending = pending,
@@ -662,7 +663,7 @@ internal fun ColumnScope.DateStep(
 
     StepForm(
         title = stringResource(R.string.onboarding_date_title),
-        description = listOfNotNull(passedNote, stringResource(R.string.onboarding_date_description)).joinToString(" "),
+        description = listOfNotNull(passedNote, stringResource(R.string.onboarding_date_description)).joinSentences(),
         subject = subject,
         canContinue = picked != null && picked > today,
         skipLabel = stringResource(R.string.onboarding_date_none),

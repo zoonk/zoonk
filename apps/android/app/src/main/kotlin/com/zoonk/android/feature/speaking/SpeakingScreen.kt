@@ -86,6 +86,7 @@ import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.api.models.SpeakingPaper
@@ -300,7 +301,7 @@ fun SpeakingPaperSection(
         Text(
             buildAnnotatedString {
                 append(footer)
-                append(" ")
+                append(spaceAfterSentence(footer))
                 withLink(
                     LinkAnnotation.Clickable(
                         tag = "official-format",

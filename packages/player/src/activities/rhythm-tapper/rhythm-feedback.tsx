@@ -1,5 +1,6 @@
 "use client";
 
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { useExtracted } from "next-intl";
 import { type HitResult, worstHit } from "./rhythm-results";
 
@@ -11,6 +12,7 @@ export function RhythmFeedback({
   hits: readonly HitResult[];
 }) {
   const t = useExtracted();
+  const space = useSentenceSpace();
   const onTime = hits.filter((hit) => hit.status === "onTime").length;
   const worst = worstHit(hits);
   const tapNumber = String((worst?.index ?? 0) + 1);
@@ -41,8 +43,10 @@ export function RhythmFeedback({
         description: "A tap is one beat the learner taps in a rhythm activity.",
         message: "{onTime} of {total, plural, =0 {# taps} one {# tap} other {# taps}} on time.",
         values: { onTime: String(onTime), total: hits.length },
-      })}{" "}
-      {worst && detail[worst.hit.status]}{" "}
+      })}
+      {space}
+      {worst && detail[worst.hit.status]}
+      {space}
       {extraTaps > 0 &&
         t({
           description: "A tap is one beat the learner taps in a rhythm activity.",

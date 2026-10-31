@@ -7782,7 +7782,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "まだ気になることがありますか？ %@"
+            "value" : "まだ気になることがありますか？%@"
           }
         },
         "ko" : {

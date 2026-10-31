@@ -319,7 +319,7 @@ func planLessonsEffectText(_ effect: PlanEffect?) -> String? {
       table: "Plan", comment: "Topics a change leaves out before their lessons are written")
   let sentences = [counts, netted, unwrittenText].compactMap(\.self)
 
-  return sentences.isEmpty ? nil : sentences.joined(separator: " ")
+  return sentences.isEmpty ? nil : sentences.joinedSentences()
 }
 
 private func lessonCountsText(added: Int, about: Bool, removed: Int, names: String?, someOf: Bool)

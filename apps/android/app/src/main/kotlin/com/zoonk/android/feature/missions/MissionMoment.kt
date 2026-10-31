@@ -46,6 +46,7 @@ import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.StudyMission
@@ -135,7 +136,7 @@ fun MissionMoment(
                         modifier =
                             Modifier.semantics(mergeDescendants = true) {
                                 liveRegion = LiveRegionMode.Polite
-                                if (payoff) contentDescription = "$title $status"
+                                if (payoff) contentDescription = joinSentences(title, status)
                             },
                         verticalArrangement = Arrangement.spacedBy(2.dp),
                     ) {

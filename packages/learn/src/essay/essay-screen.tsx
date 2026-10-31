@@ -15,6 +15,7 @@ import { AnswersSaveError } from "../_components/save-error";
 import { focusStepTitle } from "../_components/steps";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TASK_MAIN_ACTION_CLASS, TaskActions } from "../_components/task-layout";
+import { useSentenceSpace } from "../_utils/locale";
 import { isLongText } from "../questions/long-text";
 import { TaskFrame } from "../shell/task-frame";
 import { ClosedEssay } from "./essay-closed";
@@ -43,6 +44,7 @@ function StatusLine({ gradesLeft, status }: { gradesLeft: number; status: Status
   const t = useExtracted();
   const { hrefs } = useEssayScreen();
   const isSlow = useTakingLong({ active: status === "pending", afterMs: GRADING_BOUNDS.slowMs });
+  const space = useSentenceSpace();
 
   if (status === "error") {
     return (
@@ -58,7 +60,8 @@ function StatusLine({ gradesLeft, status }: { gradesLeft: number; status: Status
         {t({
           description: "The daily time limit is a setting that stops study for the day.",
           message: "You've reached your daily time limit. Your text stays here.",
-        })}{" "}
+        })}
+        {space}
         <ChangeLimitLink href={hrefs.dailyLimit} />
       </p>
     );

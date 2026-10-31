@@ -18,6 +18,7 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
+import { useSentenceSpace } from "../_utils/locale";
 import { useTodayScreen } from "./today-context";
 
 type SuggestedGoalAnswer = "accepted" | "dismissed";
@@ -87,6 +88,7 @@ export function SuggestedGoalOffer({
 }) {
   const t = useExtracted();
   const { answer, failed, isPending } = useSuggestedGoalAnswer(onAnswer);
+  const space = useSentenceSpace();
 
   return (
     <section aria-label={t("Suggested goal")} className="flex flex-col gap-4">
@@ -95,7 +97,8 @@ export function SuggestedGoalOffer({
         <p className="text-sm leading-5 text-pretty">
           <span className="font-medium">
             {t("Continue {course}?", { course: suggestion.title })}
-          </span>{" "}
+          </span>
+          {space}
           <span className="text-muted-foreground">{t("Build a plan in 1 minute.")}</span>
         </p>
       </div>

@@ -299,7 +299,7 @@ private struct NotationPlayerCanvas: View {
         localized: "Bar \(bar + 1): \(notes).", table: "ActivitiesMusic",
         comment: "VoiceOver: the notes of one bar of the melody")
     }
-    .joined(separator: " ")
+    .joinedSentences()
   }
 }
 

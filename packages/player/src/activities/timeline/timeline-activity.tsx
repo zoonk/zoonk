@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { Button } from "@zoonk/ui/components/button";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { useExtracted } from "next-intl";
@@ -64,6 +65,7 @@ function resultOf({
 
 function ExploredTimeline({ content, labelId }: Pick<TimelineProps, "content" | "labelId">) {
   const t = useExtracted();
+  const space = useSentenceSpace();
   const { fields } = content;
   const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
   const formatYear = useFormatYear(fields.start);
@@ -106,10 +108,11 @@ function ExploredTimeline({ content, labelId }: Pick<TimelineProps, "content" | 
         {t("A timeline from {start} to {end}.", {
           end: formatYear(fields.end),
           start: formatYear(fields.start),
-        })}{" "}
+        })}
+        {space}
         {dated
           .map((item) => t("{label}: {year}.", { label: item.label, year: formatYear(item.year) }))
-          .join(" ")}
+          .join(space)}
       </ActivityTextAlternative>
     </ActivityCanvas>
   );
@@ -124,6 +127,7 @@ function TimelineQuestion({
   phase,
 }: TimelineProps) {
   const t = useExtracted();
+  const space = useSentenceSpace();
   const { check, fields } = content;
   const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
   const [placements, setPlacements] = useState<Placement[]>([]);
@@ -272,13 +276,15 @@ function TimelineQuestion({
         {t("A timeline from {start} to {end}.", {
           end: formatYear(fields.end),
           start: formatYear(fields.start),
-        })}{" "}
+        })}
+        {space}
         {fields.anchors
           .map((anchor) =>
             t("{label}: {year}.", { label: anchor.label, year: formatYear(anchor.year) }),
           )
-          .join(" ")}{" "}
-        {trackEvents.map((event) => describeEvent(event)).join(" ")}
+          .join(space)}
+        {space}
+        {trackEvents.map((event) => describeEvent(event)).join(space)}
       </ActivityTextAlternative>
     </ActivityCanvas>
   );

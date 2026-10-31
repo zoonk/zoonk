@@ -1,5 +1,6 @@
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
+import { useSentenceSpace } from "../_utils/locale";
 
 type ChangeEffect = PlanChangeView["effect"];
 
@@ -10,6 +11,7 @@ export function countsByDate(effect: ChangeEffect, targetDate: string | null): b
 
 export function useEstimateSentence({ targetDate = null }: { targetDate?: string | null } = {}) {
   const t = useExtracted();
+  const space = useSentenceSpace();
 
   const countSentence = (effect: ChangeEffect, more: number): string => {
     if (!countsByDate(effect, targetDate)) {
@@ -54,6 +56,6 @@ export function useEstimateSentence({ targetDate = null }: { targetDate?: string
 
     return more === 0
       ? null
-      : `${countSentence(effect, more)} ${t("We now plan for the time your lessons need.")}`;
+      : `${countSentence(effect, more)}${space}${t("We now plan for the time your lessons need.")}`;
   };
 }

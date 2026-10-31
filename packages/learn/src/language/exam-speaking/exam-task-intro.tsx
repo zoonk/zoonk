@@ -8,6 +8,7 @@ import { type ReactNode, useEffect, useRef } from "react";
 import { Callout } from "../../_components/callout";
 import { PageEyebrow } from "../../_components/page";
 import { TaskAsideContent } from "../../_components/task-layout";
+import { useSentenceSpace } from "../../_utils/locale";
 import { TaskFrame } from "../../shell/task-frame";
 import { CharacterRow, MicNote } from "../conversation/conversation-parts";
 import { useCriterionGloss, useTaskRoleNoun } from "./exam-speaking-labels";
@@ -28,6 +29,7 @@ export function useExamTaskTitle() {
 
 function StandInNote({ examTask, name }: { examTask: ExamTaskView; name: string }) {
   const t = useExtracted();
+  const space = useSentenceSpace();
 
   return (
     <Callout>
@@ -35,7 +37,8 @@ function StandInNote({ examTask, name }: { examTask: ExamTaskView; name: string 
       <p>
         {examTask.task.role === "partner"
           ? t("{name} is an AI playing the other candidate, in place of a real one.", { name })
-          : t("{name} is an AI standing in for a human examiner.", { name })}{" "}
+          : t("{name} is an AI standing in for a human examiner.", { name })}
+        {space}
         {t("It's practice: the estimate after it isn't an official score.")}
       </p>
     </Callout>
@@ -58,6 +61,7 @@ export function ExamTaskIntro({
   const minutes = useTaskMinutes();
   const roleNoun = useTaskRoleNoun();
   const gloss = useCriterionGloss();
+  const space = useSentenceSpace();
   const format = useFormatter();
   const heading = useRef<HTMLHeadingElement>(null);
   const { character } = conversation;
@@ -86,7 +90,8 @@ export function ExamTaskIntro({
         </h1>
         <p className="text-pretty">{examTask.card.summary}</p>
         <p className="text-muted-foreground text-sm text-pretty">
-          {t("{name} opens the call, and your card stays on screen.", { name: character.name })}{" "}
+          {t("{name} opens the call, and your card stays on screen.", { name: character.name })}
+          {space}
           {t("Rated on {criteria}.", {
             criteria: format.list(
               examTask.criteria.map((criterion) => gloss(criterion)),

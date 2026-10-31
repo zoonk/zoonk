@@ -227,6 +227,6 @@ struct ChartReaderCanvas: View {
       }
     }
 
-    return ([line] + spans).joined(separator: " ")
+    return ([line] + spans).joinedSentences()
   }
 }

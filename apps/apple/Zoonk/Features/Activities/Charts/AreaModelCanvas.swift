@@ -150,7 +150,7 @@ struct AreaModelCanvas: View {
       table: "ActivitiesCharts",
       comment: "An area or bar model's total, for VoiceOver")
 
-    return "\(parts) \(together)"
+    return [parts, together].joinedSentences()
   }
 }
 

@@ -6,6 +6,7 @@ import {
   parseMolecularFormula,
   valenceOf,
 } from "@zoonk/core/library/activities/chemistry";
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
@@ -89,6 +90,7 @@ function MoleculeQuestion({ answer, content, labelId, onAnswerChange, phase }: M
   const reducedMotion = useReducedMotion();
   const nameOf = useAtomName();
   const describe = useBuildDescription();
+  const space = useSentenceSpace();
   const [announcement, setAnnouncement] = useState("");
   const { elements, formula } = content.fields;
   const target = parseMolecularFormula(formula) ?? {};
@@ -177,7 +179,9 @@ function MoleculeQuestion({ answer, content, labelId, onAnswerChange, phase }: M
       </p>
 
       <ActivityTextAlternative>
-        {t("Build {formula}.", { formula: formulaText(target, order) })} {describe(build)}
+        {t("Build {formula}.", { formula: formulaText(target, order) })}
+        {space}
+        {describe(build)}
       </ActivityTextAlternative>
     </ActivityCanvas>
   );

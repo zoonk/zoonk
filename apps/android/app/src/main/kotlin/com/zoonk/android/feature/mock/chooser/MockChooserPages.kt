@@ -74,6 +74,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.DetailPage
 import com.zoonk.android.ui.scaffold.detailPagePadding
@@ -367,7 +368,7 @@ private fun shortText(short: MockStartOutcome.Short): String {
                 AnytimeMock.Limit.TOTAL, null -> R.string.mock_chooser_short_none
             },
         )
-    return "$ready $more"
+    return joinSentences(ready, more)
 }
 
 @Composable

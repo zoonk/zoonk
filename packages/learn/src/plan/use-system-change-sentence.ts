@@ -1,5 +1,6 @@
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
+import { useSentenceSpace } from "../_utils/locale";
 import { useCoverageSentence, useTopicsMovedSentence } from "./use-coverage-sentence";
 import { useEstimateSentence } from "./use-estimate-sentence";
 import { usePhaseEndsText } from "./use-phase-ends-text";
@@ -17,9 +18,10 @@ export function useSystemChangeSentence({
   const topicsMoved = useTopicsMovedSentence();
   const phaseEndsText = usePhaseEndsText();
   const estimateSentence = useEstimateSentence({ targetDate });
+  const space = useSentenceSpace();
 
   const withTopics = (sentence: string, change: PlanChangeContent, added = true): string =>
-    [sentence, topicsMoved(change, { added })].filter(Boolean).join(" ");
+    [sentence, topicsMoved(change, { added })].filter(Boolean).join(space);
 
   return function systemChangeSentence(change: PlanChangeContent): string | null {
     switch (change.kind) {
@@ -30,14 +32,14 @@ export function useSystemChangeSentence({
             phaseEndsText(change.effect),
           ]
             .filter(Boolean)
-            .join(" "),
+            .join(space),
           change,
         );
       case "estimateUpdated":
         return (
           [estimateSentence(change.effect), phaseEndsText(change.effect)]
             .filter(Boolean)
-            .join(" ") || null
+            .join(space) || null
         );
       case "testedOut":
         return withTopics(

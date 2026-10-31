@@ -6,6 +6,7 @@ import { useExtracted } from "next-intl";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { TaskActions } from "../_components/task-layout";
 import { useFormatIsoDate } from "../_utils/iso-date";
+import { useSentenceSpace } from "../_utils/locale";
 import { useLessonsEffectText } from "../plan/use-effect-counts";
 import { TaskFrame, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
@@ -23,6 +24,7 @@ export function ChallengeMovedScreen({
   const lessonsText = useLessonsEffectText();
   const leftOut = effect && effect.lessonsRemoved > 0 ? lessonsText(effect) : null;
   const { challenge, hrefs, move } = useChallengeScreen();
+  const space = useSentenceSpace();
   const date = challenge.date ?? challenge.today;
 
   return (
@@ -53,7 +55,7 @@ export function ChallengeMovedScreen({
           <StepDetail>
             {[t("Your plan moved later lessons to make room for it."), leftOut]
               .filter(Boolean)
-              .join(" ")}
+              .join(space)}
           </StepDetail>
         </StepHeader>
       </StepCard>

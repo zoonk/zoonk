@@ -45,6 +45,7 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatPercent
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanBaseMinutes
 import com.zoonk.api.models.PlanBases
@@ -304,7 +305,7 @@ private fun BasesAdvice(
             is Advice.Answered -> {
                 val text = adviceText(advice, isExam)
                 Note(
-                    text = if (followed) "$text ${stringResource(R.string.plan_recommendation_followed)}" else text,
+                    text = if (followed) joinSentences(text, stringResource(R.string.plan_recommendation_followed)) else text,
                     modifier = Modifier.focusRequester(answer).focusable(),
                 )
             }
@@ -482,7 +483,7 @@ private fun basesFootnote(
             )
         },
         preview.feasibility?.let { coverageLine(page, it) },
-    ).joinToString(" ")
+    ).joinSentences()
 }
 
 @Composable

@@ -44,6 +44,7 @@ import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.ui.components.LinearScale
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import kotlin.math.abs
@@ -128,7 +129,7 @@ private fun DistributionExplorerActivity(props: ActivityProps) {
             percent(percentBetween(distribution, fields.target)),
         )
 
-    ActivityCanvas(description = listOfNotNull(shape, shares, targetLabel.takeIf { props.isChecked }).joinToString(" ")) {
+    ActivityCanvas(description = listOfNotNull(shape, shares, targetLabel.takeIf { props.isChecked }).joinSentences()) {
         ActivityCanvasHeader(readout = {
             ActivityReadout(percent(between), Modifier.clearAndSetSemantics {}, color = MaterialTheme.zoonk.vizAccent)
         }) {

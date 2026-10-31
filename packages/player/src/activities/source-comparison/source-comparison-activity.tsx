@@ -1,6 +1,7 @@
 "use client";
 
 import { splitExcerpt } from "@zoonk/core/library/activities/excerpt-passages";
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BookOpenText, ScrollText } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -170,6 +171,7 @@ export function SourceComparisonActivity({
   const [marked, setMarked] = useState<string[]>(() =>
     answer?.kind === "selection" ? answer.ids : [],
   );
+  const space = useSentenceSpace();
 
   const isChecked = phase === "checked";
 
@@ -244,7 +246,8 @@ export function SourceComparisonActivity({
         {t("Two sources to compare: {first} and {second}.", {
           first: `${fields.sources[0]?.author ?? ""}, ${fields.sources[0]?.date ?? ""}`,
           second: `${fields.sources[1]?.author ?? ""}, ${fields.sources[1]?.date ?? ""}`,
-        })}{" "}
+        })}
+        {space}
         {markedTexts.length > 0
           ? t("You marked: {passages}.", { passages: markedTexts.join("; ") })
           : t("Nothing marked yet.")}

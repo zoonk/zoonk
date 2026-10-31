@@ -315,7 +315,7 @@ struct PlanBasesView: View {
       preview.feasibility.map(coverageLine),
     ].compactMap(\.self)
 
-    return lines.isEmpty ? nil : lines.joined(separator: " ")
+    return lines.isEmpty ? nil : lines.joinedSentences()
   }
 
   private func coverageLine(_ feasibility: PlanChangePreview.Feasibility) -> String {

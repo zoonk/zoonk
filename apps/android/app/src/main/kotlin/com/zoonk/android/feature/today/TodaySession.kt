@@ -85,6 +85,7 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.StudyBlock
@@ -532,8 +533,9 @@ private fun TestOutLink(
     val take = stringResource(R.string.today_take_the_test)
     val text =
         buildAnnotatedString {
-            append(stringResource(R.string.today_already_know_this))
-            append(" ")
+            val already = stringResource(R.string.today_already_know_this)
+            append(already)
+            append(spaceAfterSentence(already))
             withLink(
                 LinkAnnotation.Clickable(
                     tag = "test-out",

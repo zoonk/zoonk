@@ -1,5 +1,6 @@
 "use client";
 
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -77,6 +78,7 @@ export function MatchPairsActivity({
   const [progress, setProgress] = useState<MatchProgress>(() => progressFromAnswer(answer));
   const [selection, setSelection] = useState<Selection>(NO_SELECTION);
   const [miss, setMiss] = useState<Miss | null>(null);
+  const space = useSentenceSpace();
   const [announcement, setAnnouncement] = useState("");
   const pairs = expectedInteraction(expected, "assignment")?.pairs ?? null;
   const isComplete = progress.matched.length === pairIds.length;
@@ -107,7 +109,7 @@ export function MatchPairsActivity({
 
     const { reason, trap } = explainMismatch({ left: leftCard, right: rightCard });
     const trapNote = trap ? t("“{card}” has no match.", { card: trap.text }) : null;
-    const explanation = [trapNote, reason].filter(Boolean).join(" ") || null;
+    const explanation = [trapNote, reason].filter(Boolean).join(space) || null;
 
     setMiss({ explanation, left: leftCard.id, right: rightCard.id });
 
@@ -117,7 +119,7 @@ export function MatchPairsActivity({
         explanation,
       ]
         .filter(Boolean)
-        .join(" "),
+        .join(space),
     );
   }
 

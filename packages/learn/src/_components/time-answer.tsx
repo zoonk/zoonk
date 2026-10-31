@@ -4,6 +4,7 @@ import { type DaySplit } from "@zoonk/core/goals/daily-budget";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { useSentenceSpace } from "../_utils/locale";
 import {
   type FullTimeNote,
   type TimeLine,
@@ -86,12 +87,18 @@ function NoteWords({
 }) {
   const t = useExtracted();
   const texts = useTimeAnswerTexts();
+  const space = useSentenceSpace();
 
   if (date && note?.kind === "takes") {
     return (
       <p>
         {texts.everythingTakes({ date, full: note.full })}
-        {note.moreDays && <> {texts.moreDays}</>}
+        {note.moreDays && (
+          <>
+            {space}
+            {texts.moreDays}
+          </>
+        )}
       </p>
     );
   }
@@ -134,6 +141,7 @@ export function TimeAnswer({
 }) {
   const t = useExtracted();
   const texts = useTimeAnswerTexts();
+  const space = useSentenceSpace();
   const failed = FAILED_KINDS.has(line.kind) || noteStatus === "failed";
   const offered = offer && !failed ? offer : null;
 
@@ -151,18 +159,23 @@ export function TimeAnswer({
       <p>
         <LineWords date={date} exam={exam} line={line} minutes={minutes} />
 
-        {note?.kind === "tooLong" && <> {texts.tooLong}</>}
+        {note?.kind === "tooLong" && (
+          <>
+            {space}
+            {texts.tooLong}
+          </>
+        )}
 
         {split && (
           <>
-            {" "}
+            {space}
             <DaySplitWords split={split} />
           </>
         )}
 
         {failed && (
           <>
-            {" "}
+            {space}
             <Button onClick={onRetry} variant="link">
               {t("Try again")}
             </Button>
@@ -171,7 +184,7 @@ export function TimeAnswer({
 
         {offered && offerAs === "link" && (
           <>
-            {" "}
+            {space}
             <OfferAction offer={offered} offerAs={offerAs} onUseOffer={onUseOffer} />
           </>
         )}

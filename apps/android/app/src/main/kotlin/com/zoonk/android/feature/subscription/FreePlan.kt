@@ -40,6 +40,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.api.models.FreePlan
 
 /** Main's FreePlan card, which only a visitor sees beside Plus: a guest or an account already has it. */
@@ -113,8 +114,9 @@ internal fun CommonQuestions(
             )
             Text(
                 buildAnnotatedString {
-                    append(stringResource(R.string.subscription_questions_unsure))
-                    append(" ")
+                    val unsure = stringResource(R.string.subscription_questions_unsure)
+                    append(unsure)
+                    append(spaceAfterSentence(unsure))
                     withLink(LinkAnnotation.Url("mailto:$email", linkStyle)) { append(email) }
                 },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

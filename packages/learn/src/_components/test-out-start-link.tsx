@@ -4,6 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
+import { useSentenceSpace } from "../_utils/locale";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { FreeWeekOverNotice } from "./free-week-over";
@@ -74,11 +75,13 @@ export function TestOutStartLink({
 }) {
   const t = useExtracted();
   const { isPending, opening, result, start } = useTestOutStart(onStart);
+  const space = useSentenceSpace();
 
   return (
     <div className="flex flex-col items-start gap-2">
       <p className={cn("text-muted-foreground text-sm", className)}>
-        {t("Already know this?")}{" "}
+        {t("Already know this?")}
+        {space}
         <Button disabled={opening} onClick={start} variant="link">
           {opening ? t("Opening the test…") : t("Take the test")}
         </Button>

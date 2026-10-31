@@ -1,5 +1,6 @@
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate, useGoalDateValues } from "../_utils/iso-date";
+import { useSentenceSpace } from "../_utils/locale";
 import { type TimeLine } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
 import { type GoalDate, useTimeAnswerTexts } from "./time-answer-texts";
@@ -36,6 +37,7 @@ function DatedWords({
 }) {
   const t = useExtracted();
   const texts = useTimeAnswerTexts();
+  const space = useSentenceSpace();
   const goalDate = useGoalDateValues();
   const shown = goalDate({ ...date, style: "long" });
 
@@ -77,7 +79,8 @@ function DatedWords({
     case "focus":
       return (
         <>
-          {texts.suggest(minutes)}{" "}
+          {texts.suggest(minutes)}
+          {space}
           {texts.focus({ coveredShare: line.coveredShare, everyTopic: line.everyTopic, exam })}
         </>
       );

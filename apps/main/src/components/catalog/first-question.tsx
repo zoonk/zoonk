@@ -1,10 +1,12 @@
 import { NoSessionNote } from "@/components/public/no-account-note";
 import { StartLink, getSecondaryStartControlClassName } from "@/components/public/public-start";
+import { getAppLocale } from "@/i18n/locale";
 import { withCatalogOrigin } from "@/lib/public/public-hrefs";
 import { type PublicLibraryLesson } from "@zoonk/core/library/lessons/public";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
+import { getSentenceSpace } from "@zoonk/utils/locale";
 import { ArrowRightIcon, CirclePlayIcon, SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
@@ -51,6 +53,7 @@ async function QuestionScreen({
   screen,
 }: FirstQuestionProps) {
   const t = await getExtracted();
+  const space = getSentenceSpace(await getAppLocale());
 
   return (
     <>
@@ -86,7 +89,8 @@ async function QuestionScreen({
           ? t("Your answer starts the {minutes}-minute lesson.", { minutes: String(minutes) })
           : t("Your choice opens the {minutes}-minute lesson. Check your answer there.", {
               minutes: String(minutes),
-            })}{" "}
+            })}
+        {space}
         <NoSessionNote>{t("No sign-up needed.")}</NoSessionNote>
       </StartNote>
     </>

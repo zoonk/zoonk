@@ -18,6 +18,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.fractionDigitsFor
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf10Fields
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf10Fields.Statistic
@@ -65,7 +66,7 @@ private fun ChartReaderActivity(props: ActivityProps) {
             ),
         ) + measures.map { (span, measure) -> stringResource(R.string.activities_chart_span, span.label, measure) }
 
-    ActivityCanvas(description = description.joinToString(" ")) {
+    ActivityCanvas(description = description.joinSentences()) {
         Text(fields.yLabel, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
         val ink = MaterialTheme.colorScheme.onSurface
         val ring = MaterialTheme.colorScheme.surface

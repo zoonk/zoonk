@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -68,6 +69,7 @@ function BlockBalance({
   const format = useFormatNumber();
   const objects = balanceObjects(fields);
   const toText = useEquationText(objects.unknown.symbol);
+  const space = useSentenceSpace();
   const [history, setHistory] = useState<BalanceState[]>([]);
   const [current, setCurrent] = useState(start);
   const [wrongMoves, setWrongMoves] = useState(0);
@@ -156,7 +158,8 @@ function BlockBalance({
       />
 
       <ActivityTextAlternative>
-        {t("A balance. Left pan: {left}. Right pan: {right}.", sides)}{" "}
+        {t("A balance. Left pan: {left}. Right pan: {right}.", sides)}
+        {space}
         {tilt === 0 ? t("The pans are level.") : null}
         {tilt > 0 ? t("The right pan is heavier.") : null}
         {tilt < 0 ? t("The left pan is heavier.") : null}

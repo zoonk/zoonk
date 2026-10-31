@@ -1,5 +1,6 @@
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
+import { useSentenceSpace } from "../_utils/locale";
 import { useShortList } from "./use-short-list";
 
 /**
@@ -9,6 +10,7 @@ import { useShortList } from "./use-short-list";
 export function useTopicsMovedSentence() {
   const t = useExtracted();
   const shortList = useShortList();
+  const space = useSentenceSpace();
 
   return function topicsMovedSentence(
     change: Pick<PlanChangeView, "effect">,
@@ -30,7 +32,7 @@ export function useTopicsMovedSentence() {
         ),
     ].filter((sentence) => typeof sentence === "string");
 
-    return sentences.length > 0 ? sentences.join(" ") : null;
+    return sentences.length > 0 ? sentences.join(space) : null;
   };
 }
 
@@ -52,12 +54,13 @@ function useTopicsMovedLines() {
 function usePlacementCoverageSentence() {
   const t = useExtracted();
   const topicsMovedLines = useTopicsMovedLines();
+  const space = useSentenceSpace();
 
   return function placementCoverageSentence(change: Pick<PlanChangeView, "effect">): string | null {
     const lines = topicsMovedLines(change);
 
     return lines.length > 0
-      ? [t("Your placement answers changed what fits by your date."), ...lines].join(" ")
+      ? [t("Your placement answers changed what fits by your date."), ...lines].join(space)
       : null;
   };
 }

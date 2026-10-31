@@ -54,8 +54,8 @@ struct PreviewedPlanChange<Control: View>: View {
       }
     } message: { preview in
       Text(
-        verbatim: [what, planEffectText(preview.effect, plan: plan)].compactMap(\.self).joined(
-          separator: " "))
+        verbatim: [what, planEffectText(preview.effect, plan: plan)].compactMap(\.self)
+          .joinedSentences())
     }
   }
 

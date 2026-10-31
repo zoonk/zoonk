@@ -9,6 +9,7 @@ import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contr
 import { REBALANCE_SOURCE } from "@zoonk/core/preparation/rebalance";
 import { useExtracted, useFormatter } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
+import { useSentenceSpace } from "../_utils/locale";
 import { useFormatDuration } from "../_utils/time-format";
 import { useNoticeDayText } from "./notice-day";
 import { useActivityName } from "./plan-activities";
@@ -219,6 +220,7 @@ export function useChangeSentence({ targetDate = null }: { targetDate?: string |
   const coverageSentence = useCoverageSentence();
   const systemSentence = useSystemChangeSentence({ targetDate });
   const phaseDatesSentence = usePhaseDatesSentence();
+  const space = useSentenceSpace();
 
   return (change: PlanChangeContent): string => {
     const neverApplied = ["proposed", "declined", "replaced"].includes(change.status);
@@ -261,7 +263,7 @@ export function useChangeSentence({ targetDate = null }: { targetDate?: string |
                 (neverApplied && proposedSentence(operation)) ||
                 operationSentence(operation, change.examDocument),
             )
-            .join(" ")
+            .join(space)
         : coverageSentence(change))
     );
   };

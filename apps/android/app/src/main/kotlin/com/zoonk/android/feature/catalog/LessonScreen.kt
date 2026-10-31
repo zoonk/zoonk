@@ -44,6 +44,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.CatalogLesson
 import com.zoonk.api.models.CatalogLessonFirstScreen
 import kotlinx.coroutines.launch
@@ -140,8 +141,10 @@ private fun LessonFirstScreen(
     val lessonId = lesson.id.toString()
     val minutes = lesson.estimatedMinutes.toInt()
     val note =
-        pluralStringResource(R.plurals.catalog_lesson_minutes, minutes, minutes) +
-            if (isVisitor(app)) " " + stringResource(R.string.catalog_no_sign_up) else ""
+        listOfNotNull(
+            pluralStringResource(R.plurals.catalog_lesson_minutes, minutes, minutes),
+            if (isVisitor(app)) stringResource(R.string.catalog_no_sign_up) else null,
+        ).joinSentences()
     val start = @Composable {
         // A lesson not written yet says it starts writing; one with a first screen, that it opens.
         val label = if (lesson.firstScreen == null) R.string.catalog_start_this_lesson else R.string.catalog_start_lesson

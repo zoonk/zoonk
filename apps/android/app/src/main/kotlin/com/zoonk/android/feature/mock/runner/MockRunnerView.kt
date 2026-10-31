@@ -72,6 +72,7 @@ import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.factsLine
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
@@ -502,7 +503,7 @@ private fun HandInDialog(
         title = { Text(stringResource(if (run.isLastSection) R.string.mock_hand_in_mock_title else R.string.mock_hand_in_section_title)) },
         text = {
             Text(
-                listOf(questions, essays, stringResource(R.string.mock_hand_in_final)).filter(String::isNotEmpty).joinToString(" "),
+                listOf(questions, essays, stringResource(R.string.mock_hand_in_final)).filter(String::isNotEmpty).joinSentences(),
             )
         },
         confirmButton = {

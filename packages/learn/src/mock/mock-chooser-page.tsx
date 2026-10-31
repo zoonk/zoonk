@@ -21,6 +21,7 @@ import { type ReactNode } from "react";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { Page, PageEyebrow } from "../_components/page";
+import { useSentenceSpace } from "../_utils/locale";
 import { useFormatDuration } from "../_utils/time-format";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
@@ -69,6 +70,7 @@ function useFailureText() {
 
 function ShortText({ status }: { status: MockShortStatus }) {
   const t = useExtracted();
+  const space = useSentenceSpace();
   const duration = useFormatDuration();
 
   const size = {
@@ -82,7 +84,8 @@ function ShortText({ status }: { status: MockShortStatus }) {
       {t(
         "{questions, plural, one {# of the {total, number} questions is ready now} other {# of the {total, number} questions are ready now}}, so this mock takes about {time}.",
         size,
-      )}{" "}
+      )}
+      {space}
       {status.limit === "day" && t("More can be written for your mocks tomorrow.")}
       {status.limit === "month" && t("More can be written for your mocks next month.")}
       {status.limit !== "day" &&

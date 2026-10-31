@@ -13,6 +13,7 @@ import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { useFormatIsoDate } from "../../_utils/iso-date";
+import { useSentenceSpace } from "../../_utils/locale";
 import { NoSittingWords } from "../../plan/notice-day";
 import { useKeptTyping } from "../../use-kept-typing";
 import { StepForm } from "./step-form";
@@ -36,6 +37,7 @@ function ExamDateStep({
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
   const [first = "", second] = exam.days;
+  const space = useSentenceSpace();
   const date = formatDate(first);
 
   const ready =
@@ -51,7 +53,7 @@ function ExamDateStep({
         exam.estimated && t("This is the expected date until the notice confirms it."),
       ]
         .filter(Boolean)
-        .join(" ")}
+        .join(space)}
       onContinue={() => onAnswer({ question: "targetDate", targetDate: first })}
       onSkip={onOtherDate}
       pending={pending}
@@ -143,6 +145,7 @@ function DateFieldStep({
   const noteId = useId();
   const [date, setDate] = useState(initialDate ?? "");
   const kept = useKeptTyping(setDate);
+  const space = useSentenceSpace();
 
   // The browser explains a day past the bounds on Continue.
   const bounds = getTargetDateBounds(today);
@@ -162,7 +165,7 @@ function DateFieldStep({
   return (
     <StepForm
       canContinue={date > today}
-      description={[passedNote, withoutDate].filter(Boolean).join(" ")}
+      description={[passedNote, withoutDate].filter(Boolean).join(space)}
       onContinue={() => onAnswer({ question: "targetDate", targetDate: date })}
       onSkip={() => onAnswer({ question: "targetDate", targetDate: null })}
       pending={pending}

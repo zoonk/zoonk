@@ -47,6 +47,7 @@ import com.zoonk.android.feature.activities.hidesAskedTotal
 import com.zoonk.android.ui.components.LinearScale
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf2Value as AreaModelContent
@@ -82,7 +83,7 @@ private fun AreaModelActivity(props: ActivityProps) {
         listOfNotNull(
             pluralStringResource(R.plurals.activities_math_area_parts, values.size, values.size, values.joinToString(", ") { format(it) }),
             if (hidesTotal) null else stringResource(R.string.activities_math_area_total, totalText),
-        ).joinToString(" ")
+        ).joinSentences()
     val onCut = { index: Int, next: List<Double> -> cuts = cuts.toMutableList().also { it[index] = next } }
 
     ActivityCanvas(description = description) {

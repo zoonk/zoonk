@@ -1,5 +1,6 @@
 "use client";
 
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Play, Square } from "lucide-react";
@@ -23,6 +24,7 @@ const PERCENT = 100;
 export function NotationPlayerActivity({ content, labelId }: NotationPlayerProps) {
   const t = useExtracted();
   const { spoken } = useNoteNames();
+  const space = useSentenceSpace();
   const { fields } = content;
   const header = notationHeader(fields.notation);
   const [view, setView] = useState<NotationView>(fields.view);
@@ -119,7 +121,7 @@ export function NotationPlayerActivity({ content, labelId }: NotationPlayerProps
               notes: notes.map((midi) => spoken(pitchClassName(midi))).join(", "),
             }),
           )
-          .join(" ")}
+          .join(space)}
       </ActivityTextAlternative>
     </ActivityCanvas>
   );

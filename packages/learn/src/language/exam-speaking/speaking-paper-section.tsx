@@ -20,6 +20,7 @@ import {
   PageSectionTitle,
 } from "../../_components/page";
 import { PlusNotice } from "../../_components/plus-lock";
+import { useSentenceSpace } from "../../_utils/locale";
 import { WritingWait } from "../../generation/writing-wait";
 import { CallLimitMessage } from "../conversation/call-limit-message";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
@@ -54,6 +55,7 @@ export function SpeakingPaperSection({
 }) {
   const t = useExtracted();
   const titleId = useId();
+  const space = useSentenceSpace();
   const selected = useRef<string | null>(null);
   const [startedTask, setStartedTask] = useState<string | null>(null);
   const [limit, setLimit] = useState<CallLimit | null>(null);
@@ -169,7 +171,8 @@ export function SpeakingPaperSection({
             )
           : t(
               "An AI stands in for the human examiner. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
-            )}{" "}
+            )}
+        {space}
         <a href={paper.source} rel="noreferrer" target="_blank">
           {t("Official format")}
         </a>

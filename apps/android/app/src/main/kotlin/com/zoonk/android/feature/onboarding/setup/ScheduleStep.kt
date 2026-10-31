@@ -51,6 +51,7 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.OnboardingAnswerInput
@@ -265,12 +266,15 @@ private fun FullCourseToggle(
             }
 
             end != null -> {
-                stringResource(
-                    if (end.exam.namedMonth) R.string.onboarding_full_course_finish_month else R.string.onboarding_full_course_finish,
-                    formatMinutes(end.minutes, locale),
-                    formatDate(end.end.toJavaLocalDate(), locale, DateStyle.Month),
-                    goalDate(end.exam.date, end.exam.namedMonth, DateStyle.LongYear),
-                ) + " " + stringResource(R.string.onboarding_full_course_until_exam)
+                joinSentences(
+                    stringResource(
+                        if (end.exam.namedMonth) R.string.onboarding_full_course_finish_month else R.string.onboarding_full_course_finish,
+                        formatMinutes(end.minutes, locale),
+                        formatDate(end.end.toJavaLocalDate(), locale, DateStyle.Month),
+                        goalDate(end.exam.date, end.exam.namedMonth, DateStyle.LongYear),
+                    ),
+                    stringResource(R.string.onboarding_full_course_until_exam),
+                )
             }
 
             else -> {

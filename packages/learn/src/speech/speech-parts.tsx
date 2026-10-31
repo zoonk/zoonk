@@ -12,6 +12,7 @@ import {
   needsAccount,
   useHelpLimitMessage,
 } from "../_components/help-limit-notice";
+import { useSentenceSpace } from "../_utils/locale";
 import { type SpokenAudioState } from "./use-spoken-audio";
 
 export function SpeechStatusIcon({
@@ -75,11 +76,13 @@ export function SpeechFailedNote({
 }) {
   const t = useExtracted();
   const canRetry = !limit || limit.status === "slowDown";
+  const space = useSentenceSpace();
 
   return (
     <div className={cn("flex flex-col items-start gap-2 text-sm", className)} role="status">
       <p className="text-muted-foreground text-pretty">
-        {limit ? <LimitMessage limit={limit} /> : t("The audio didn't play.")}{" "}
+        {limit ? <LimitMessage limit={limit} /> : t("The audio didn't play.")}
+        {space}
         {text && t("Here's what it says:")}
       </p>
 

@@ -74,6 +74,7 @@ import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.ui.components.OutlinedIconButton
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import kotlin.math.PI
@@ -230,7 +231,7 @@ private fun MoleculeBuilderActivity(props: ActivityProps) {
         listOf(
             stringResource(R.string.activities_geometry_molecule_build, formula),
             describeBuild(build, atomName, resources),
-        ).joinToString(" ")
+        ).joinSentences()
 
     ActivityCanvas(description = description) {
         FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -517,7 +518,7 @@ private fun MoleculeStatus(
     Column(
         modifier.semantics(mergeDescendants = true) {
             liveRegion = LiveRegionMode.Polite
-            contentDescription = listOfNotNull(announcement.ifEmpty { null }, status, hint).joinToString(" ")
+            contentDescription = listOfNotNull(announcement.ifEmpty { null }, status, hint).joinSentences()
         },
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
@@ -679,7 +680,7 @@ private fun describeBuild(
         build.atoms
             .filter { atom -> build.bonds.none { it.from == atom.id || it.to == atom.id } }
             .map { resources.getString(R.string.activities_geometry_molecule_loose, atomName(it)) }
-    return (bonds + loose).joinToString(" ")
+    return (bonds + loose).joinSentences()
 }
 
 private fun atomNamer(

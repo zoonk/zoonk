@@ -417,7 +417,7 @@ struct MoleculeBuilderCanvas: View {
         comment: "An atom with no bonds, for VoiceOver")
     }
 
-    return (bonds + loose).joined(separator: " ")
+    return (bonds + loose).joinedSentences()
   }
 }
 

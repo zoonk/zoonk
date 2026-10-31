@@ -3334,7 +3334,7 @@ msgstr "利用状況データ"
 #: src/app/[lang]/usage-data-notice.tsx
 msgctxt "pu2Edv"
 msgid "Can we use cookies and session replays to see how you use Zoonk, so we can improve it? <link>Privacy</link>"
-msgstr "Zoonkの改善のため、クッキーと操作の記録・再生を使って利用状況を確認してもよいですか？ <link>プライバシー</link>"
+msgstr "Zoonkの改善のため、クッキーと操作の記録・再生を使って利用状況を確認してもよいですか？<link>プライバシー</link>"
 
 #: src/app/[lang]/usage-data-notice.tsx
 msgctxt "pvtgR2"

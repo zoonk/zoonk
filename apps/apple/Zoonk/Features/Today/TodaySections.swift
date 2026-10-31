@@ -339,7 +339,7 @@ struct TodayPlanChangeSection: View {
     ].compactMap(\.self)
 
     if !effect.isEmpty {
-      Text(effect.joined(separator: " "))
+      Text(effect.joinedSentences())
         .foregroundStyle(.secondary)
     }
 

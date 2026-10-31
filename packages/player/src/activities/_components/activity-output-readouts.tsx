@@ -1,5 +1,6 @@
 "use client";
 
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { ActivityCanvasLabel, ActivityReadout } from "./activity-canvas";
@@ -41,6 +42,7 @@ export function ActivityOutputReadouts({ items }: { items: readonly Readout[] })
 
 export function useReadoutSentences(): (items: readonly Readout[]) => string {
   const t = useExtracted();
+  const space = useSentenceSpace();
 
   return function readoutSentences(items) {
     return items
@@ -53,6 +55,6 @@ export function useReadoutSentences(): (items: readonly Readout[]) => string {
             })
           : t("{output}: {value}.", { output: item.label, value: item.value }),
       )
-      .join(" ");
+      .join(space);
   };
 }

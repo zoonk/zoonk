@@ -1,9 +1,11 @@
 import { CommercialDisclosureLink } from "@/components/public/commercial-disclosure-link";
 import { PublicDisclosure } from "@/components/public/public-disclosure";
+import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
+import { getSentenceSpace } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 import { ForViewer } from "./for-viewer";
@@ -104,6 +106,7 @@ export async function PlusQuestions({
   viewerState?: PlusViewerState;
 }) {
   const t = await getExtracted();
+  const space = getSentenceSpace(await getAppLocale());
   // The address is a message of its own: each language writes to its own inbox (pt: contato@).
   const email = t("hello@zoonk.com");
 
@@ -114,7 +117,8 @@ export async function PlusQuestions({
           {t("Common questions")}
         </h2>
         <p className="text-muted-foreground text-sm">
-          {t("Still unsure?")}{" "}
+          {t("Still unsure?")}
+          {space}
           <a
             className="text-foreground underline-offset-4 hover:underline"
             href={`mailto:${email}`}

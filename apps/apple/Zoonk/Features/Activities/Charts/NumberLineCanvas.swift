@@ -253,6 +253,6 @@ struct NumberLineCanvas: View {
         "The jumps go \(jumps) and land at \(ActivityNumberFormat.format(fields.landing, unit: fields.unit)).",
       table: "ActivitiesCharts", comment: "A number line's jumps after the check, for VoiceOver")
 
-    return "\(line) \(landing)"
+    return [line, landing].joinedSentences()
   }
 }

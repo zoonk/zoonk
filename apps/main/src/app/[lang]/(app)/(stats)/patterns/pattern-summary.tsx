@@ -1,6 +1,7 @@
 import { getAppLocale } from "@/i18n/locale";
 import { type ScorePatternsData } from "@zoonk/core/progress/get-score-patterns";
 import { MIN_PATTERN_ANSWERS } from "@zoonk/core/progress/score-performance";
+import { getSentenceSpace } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { getScoreWeekdayLabel } from "./_utils/weekday";
 import { getTimePeriodNames } from "./pattern-names";
@@ -35,6 +36,7 @@ export async function getBestTimeName(
 
 export async function PatternsNote({ patterns }: { patterns: ScorePatternsData }) {
   const t = await getExtracted();
+  const space = getSentenceSpace(await getAppLocale());
   const { dayVerdict: days, timeVerdict: times } = patterns;
 
   const sentences = [
@@ -54,5 +56,5 @@ export async function PatternsNote({ patterns }: { patterns: ScorePatternsData }
     ),
   ].filter(Boolean);
 
-  return <p className="text-muted-foreground text-sm text-pretty">{sentences.join(" ")}</p>;
+  return <p className="text-muted-foreground text-sm text-pretty">{sentences.join(space)}</p>;
 }

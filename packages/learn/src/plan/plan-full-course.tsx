@@ -6,6 +6,7 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { ChangeSaveError } from "../_components/save-error";
 import { useFormatIsoDate, useGoalDateValues } from "../_utils/iso-date";
+import { useSentenceSpace } from "../_utils/locale";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
 import { usePlanChange } from "./use-plan-change";
@@ -98,12 +99,13 @@ export type ExamFinish = Omit<Finish, "isExam">;
 export function useExamFullCourseText() {
   const t = useExtracted();
   const finishText = useFinishText();
+  const space = useSentenceSpace();
 
   return (finish: ExamFinish | null): string => {
     const end = finish && finishText({ ...finish, isExam: true });
 
     return end
-      ? `${end} ${t("Until the exam, what comes up most comes first.")}`
+      ? `${end}${space}${t("Until the exam, what comes up most comes first.")}`
       : t("Until the exam, what comes up most comes first. What doesn't fit comes after it.");
   };
 }

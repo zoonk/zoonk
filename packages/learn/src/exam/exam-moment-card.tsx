@@ -5,6 +5,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CalendarHeartIcon, FlagIcon, MessageCircleQuestionIcon, MoonIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useSentenceSpace } from "../_utils/locale";
 import { LearnLink } from "../learn-link";
 import { ExamChecklist } from "./exam-checklist";
 import { useExamDayText } from "./exam-labels";
@@ -56,6 +57,7 @@ function useDayBeforeBody({ dayBefore, work }: { dayBefore: DayBeforePlan; work:
 
 function useWorkLine(moment: Moment): string {
   const t = useExtracted();
+  const space = useSentenceSpace();
 
   const done =
     moment.mocksTaken > 0
@@ -67,7 +69,7 @@ function useWorkLine(moment: Moment): string {
           sessions: moment.sessionsDone,
         });
 
-  return moment.prepared ? `${done} ${t("You've prepared for this.")}` : done;
+  return moment.prepared ? `${done}${space}${t("You've prepared for this.")}` : done;
 }
 
 function useMomentCopy(moment: Moment): { body: string; title: string } | null {

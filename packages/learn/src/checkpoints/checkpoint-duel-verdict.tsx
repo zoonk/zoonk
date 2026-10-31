@@ -3,12 +3,14 @@
 import { type DuelDecision } from "@zoonk/core/checkpoints/contract";
 import { useExtracted } from "next-intl";
 import { FeedbackExplanation, FeedbackPanel, FeedbackVerdict } from "../_components/feedback-panel";
+import { useSentenceSpace } from "../_utils/locale";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { getDuelScore } from "./checkpoint-duel-state";
 
 function DecisionLine({ decision }: { decision: DuelDecision }) {
   const t = useExtracted();
   const { duel } = useCheckpointScreen();
+  const space = useSentenceSpace();
 
   if (decision === "won") {
     return t("His shield is broken. You won!");
@@ -16,7 +18,8 @@ function DecisionLine({ decision }: { decision: DuelDecision }) {
 
   return (
     <>
-      {t("His shield held this time.")}{" "}
+      {t("His shield held this time.")}
+      {space}
       {t(
         "{lessons, plural, =0 {New try tomorrow. Nothing is lost.} one {New try tomorrow, after # short lesson. Nothing is lost.} other {New try tomorrow, after # short lessons. Nothing is lost.}}",
         { lessons: duel.state.reinforcementLessons },

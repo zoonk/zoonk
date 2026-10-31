@@ -386,7 +386,7 @@ struct ScheduleQuestion: View {
       localized: "Until the exam, what comes up most comes first.", table: "Onboarding",
       comment: "What an exam plan that studies everything does before the exam")
 
-    return "\(finish) \(until)"
+    return [finish, until].joinedSentences()
   }
 
   private func weekSection(_ shown: Shown) -> some View {

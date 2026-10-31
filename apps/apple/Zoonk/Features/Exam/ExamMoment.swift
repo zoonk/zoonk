@@ -155,7 +155,8 @@ struct ExamMomentSection<Action: View>: View {
         table: "Exam", comment: "Sessions and mocks done before the exam")
 
     return moment.prepared
-      ? "\(done) \(String(localized: "You've prepared for this.", table: "Exam", comment: "Prepared"))"
+      ? [done, String(localized: "You've prepared for this.", table: "Exam", comment: "Prepared")]
+        .joinedSentences()
       : done
   }
 

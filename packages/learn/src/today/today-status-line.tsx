@@ -1,4 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
+import { useSentenceSpace } from "../_utils/locale";
 
 /** A status, so a day that changes while the learner is here (lessons that arrive) is announced. */
 export function TodayStatusLine({
@@ -28,7 +29,14 @@ export function TodayStatusLine({
 }
 
 export function TodayStatusSentence({ children }: { children: React.ReactNode }) {
-  return <span className="font-medium">{children} </span>;
+  const space = useSentenceSpace();
+
+  return (
+    <span className="font-medium">
+      {children}
+      {space}
+    </span>
+  );
 }
 
 export function TodayStatusClause({

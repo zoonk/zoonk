@@ -6,6 +6,7 @@ import { CalendarClockIcon, ClockIcon, HourglassIcon, MoonIcon, SparklesIcon } f
 import { useExtracted, useFormatter } from "next-intl";
 import { ChangeLimitLink, STATUS_LINK_CLASS } from "../_components/change-limit-link";
 import { DoneMark } from "../_components/status-mark";
+import { useSentenceSpace } from "../_utils/locale";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
 import { usePastDateText } from "../plan/plan-status-label";
@@ -21,6 +22,7 @@ function DoneStatus({ className }: { className?: string }) {
   const { actions, today } = useTodayScreen();
   const keepLearning = useUpNextLessons().length > 0;
   const restDay = today.session.minutes.dailyGoal === 0;
+  const space = useSentenceSpace();
 
   return (
     <TodayStatusLine className={className} icon={<DoneMark />}>
@@ -30,7 +32,7 @@ function DoneStatus({ className }: { className?: string }) {
       {studied > 0 && <TodayStatusClause mono>{formatDuration(studied)}</TodayStatusClause>}
       {keepLearning && (
         <>
-          {" "}
+          {studied > 0 ? " " : space}
           <LearnLink className={STATUS_LINK_CLASS} href={actions.summaryHref} prefetch={false}>
             {t("See today's summary")}
           </LearnLink>
@@ -137,6 +139,7 @@ function LimitStatus({ className, reached }: { className?: string; reached: bool
   const formatDuration = useFormatDuration();
   const { actions, today } = useTodayScreen();
   const limitTime = formatDuration(today.session.dailyLimit?.limitMinutes ?? 0);
+  const space = useSentenceSpace();
 
   return (
     <TodayStatusLine className={className} icon={<HourglassIcon />}>
@@ -154,7 +157,9 @@ function LimitStatus({ className, reached }: { className?: string; reached: bool
               values: { time: limitTime },
             })}
       </TodayStatusSentence>
-      {reached && <SeeYouClause />} <ChangeLimitLink href={actions.dailyLimitHref} />
+      {reached && <SeeYouClause />}
+      {space}
+      <ChangeLimitLink href={actions.dailyLimitHref} />
     </TodayStatusLine>
   );
 }

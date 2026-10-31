@@ -1,5 +1,6 @@
 "use client";
 
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { useExtracted } from "next-intl";
 import { ActivityTextAlternative } from "../_components/activity-canvas";
 import { useReadoutSentences } from "../_components/activity-output-readouts";
@@ -19,6 +20,7 @@ export function FormulaModelDescription({
 }) {
   const t = useExtracted();
   const readoutSentences = useReadoutSentences();
+  const space = useSentenceSpace();
 
   function eventsText() {
     if (events === null) {
@@ -32,8 +34,12 @@ export function FormulaModelDescription({
 
   return (
     <ActivityTextAlternative>
-      {t("Sliders and a chart of {output} across {variable}.", { output, variable: axis })}{" "}
-      {eventsText()} {readoutSentences(readouts)}{" "}
+      {t("Sliders and a chart of {output} across {variable}.", { output, variable: axis })}
+      {space}
+      {eventsText()}
+      {space}
+      {readoutSentences(readouts)}
+      {space}
       {compared &&
         t("For comparison, at {input} it's {value}.", { input: compared.x, value: compared.y })}
     </ActivityTextAlternative>

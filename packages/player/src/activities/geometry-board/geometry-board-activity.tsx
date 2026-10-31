@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { Button } from "@zoonk/ui/components/button";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { Lightbulb, RotateCcw } from "lucide-react";
@@ -35,6 +36,7 @@ const FIRST_LETTER = 65;
 export function GeometryBoardActivity({ content, labelId, phase }: GeometryBoardProps) {
   const t = useExtracted();
   const describe = useDescribeBoard();
+  const space = useSentenceSpace();
   const format = useFormatNumber();
   const descriptionId = useId();
   const { check, fields } = content;
@@ -135,7 +137,8 @@ export function GeometryBoardActivity({ content, labelId, phase }: GeometryBoard
         {t(
           "A shape with {count} corners on a grid. {movable, plural, one {# corner moves} other {# corners move}}.",
           { count: format(points.length), movable: points.filter((point) => point.movable).length },
-        )}{" "}
+        )}
+        {space}
         {summary}
       </ActivityTextAlternative>
     </ActivityCanvas>

@@ -49,6 +49,7 @@ import com.zoonk.android.ui.components.niceTicks
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.exactFractionDigitsFor
 import com.zoonk.android.ui.format.formatAmount
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf
@@ -242,7 +243,7 @@ private fun description(
                 }
             }.toTypedArray(),
         compared?.let { (x, y) -> stringResource(R.string.activities_math_formula_comparison, x, y) },
-    ).joinToString(" ")
+    ).joinSentences()
 
 @Composable
 private fun ModelEvents(

@@ -42,6 +42,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamMoment
 import com.zoonk.api.models.PlanStatus
@@ -337,11 +338,11 @@ internal fun TodayStatusLine(
                     buildAnnotatedString {
                         withStyle(SpanStyle(fontWeight = FontWeight.Medium)) { append(sentence) }
                         if (clause != null) {
-                            append(" ")
+                            append(spaceAfterSentence(sentence))
                             withStyle(SpanStyle(color = muted)) { append(clause) }
                         }
                         if (link != null) {
-                            append(" ")
+                            append(spaceAfterSentence(clause ?: sentence))
                             append(link)
                         }
                     },

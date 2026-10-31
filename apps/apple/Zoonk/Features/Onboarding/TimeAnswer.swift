@@ -68,7 +68,7 @@ struct TimeAnswer: View {
   }
 
   private var announcement: String {
-    [noteWords, lineWords].compactMap { $0 }.joined(separator: " ")
+    [noteWords, lineWords].compactMap { $0 }.joinedSentences()
   }
 
   static func choiceLabel(_ minutes: Int, full: Int?, suggested: Int?) -> String {
@@ -150,7 +150,7 @@ struct TimeAnswer: View {
       localized: "More study days would help.", table: "Onboarding",
       comment: "After what covering a goal takes, while the learner doesn't study every day")
 
-    return "\(takes) \(more)"
+    return [takes, more].joinedSentences()
   }
 
   private var lineWords: String? {
@@ -167,7 +167,7 @@ struct TimeAnswer: View {
       words.append(Self.splitWords(split))
     }
 
-    let joined = words.compactMap { $0 }.joined(separator: " ")
+    let joined = words.compactMap { $0 }.joinedSentences()
     return joined.isEmpty ? nil : joined
   }
 
@@ -259,8 +259,8 @@ struct TimeAnswer: View {
         localized: "We suggest \(time) a day.", table: "Onboarding",
         comment: "Before what the suggested time a day covers; the argument is a time like '4 h'")
 
-      return
-        "\(suggest) \(Self.focusWords(share: coveredShare, everyTopic: everyTopic, exam: exam))"
+      return [suggest, Self.focusWords(share: coveredShare, everyTopic: everyTopic, exam: exam)]
+        .joinedSentences()
     case .share(let share):
       return shown.map { Self.shareWords(share, exam: exam, month: month, date: $0) }
     case .pastDate:

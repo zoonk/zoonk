@@ -77,8 +77,12 @@ struct MockRunnerView: View {
       }
     } message: {
       Text(
-        verbatim:
-          "\(MockSectionCounts(run: run).leftOpen) \(String(localized: "After this, your answers can't change.", table: "Mock", comment: "Handing in is final"))"
+        verbatim: [
+          MockSectionCounts(run: run).leftOpen,
+          String(
+            localized: "After this, your answers can't change.", table: "Mock",
+            comment: "Handing in is final"),
+        ].joinedSentences()
       )
     }
   }
@@ -509,7 +513,7 @@ struct MockSectionCounts {
           comment: "Blank essays when handing in"))
     }
 
-    return parts.joined(separator: " ")
+    return parts.joinedSentences()
   }
 }
 

@@ -27,6 +27,8 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatPercent
+import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.format.spaceAfterSentence
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 
@@ -92,8 +94,8 @@ internal fun TimeAnswer(
         Text(
             buildAnnotatedString {
                 append(lineWords)
-                tooLong?.let { append(" $it") }
-                shared?.let { append(" $it") }
+                tooLong?.let { append(spaceAfterSentence(lineWords.text) + it) }
+                shared?.let { append(spaceAfterSentence(tooLong ?: lineWords.text) + it) }
             },
             color = muted,
             style = style,
@@ -124,7 +126,7 @@ private fun noteWords(
     when {
         date != null && note is FullTimeNote.Takes -> {
             val takes = everythingTakesText(date, note.full, today)
-            if (note.moreDays) "$takes ${stringResource(R.string.plan_time_more_days)}" else takes
+            if (note.moreDays) joinSentences(takes, stringResource(R.string.plan_time_more_days)) else takes
         }
 
         status == NoteStatus.Finding -> {
@@ -263,7 +265,7 @@ private fun lineWords(
             }
 
             is TimeLine.Focus -> {
-                stringResource(R.string.plan_time_suggest, time) + " " + focusText(line.coveredShare, line.everyTopic, exam)
+                joinSentences(stringResource(R.string.plan_time_suggest, time), focusText(line.coveredShare, line.everyTopic, exam))
             }
 
             is TimeLine.Share -> {

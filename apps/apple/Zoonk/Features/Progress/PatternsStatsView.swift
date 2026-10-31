@@ -281,7 +281,7 @@ struct PatternsNote: View {
   let patterns: ScorePatterns
 
   var body: some View {
-    Text(sentences.joined(separator: " "))
+    Text(sentences.joinedSentences())
       .font(.footnote)
       .foregroundStyle(.secondary)
       .frame(maxWidth: .infinity, alignment: .leading)

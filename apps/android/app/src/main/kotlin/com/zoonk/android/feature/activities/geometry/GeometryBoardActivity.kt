@@ -58,6 +58,7 @@ import com.zoonk.android.feature.activities.hidesAskedTotal
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf6Fields.Measure
@@ -108,7 +109,7 @@ private fun GeometryBoardActivity(props: ActivityProps) {
             pluralStringResource(R.plurals.activities_geometry_board_shape, points.size, points.size),
             pluralStringResource(R.plurals.activities_geometry_board_moving, corners.count { it.movable }, corners.count { it.movable }),
             summary,
-        ).filter { it.isNotEmpty() }.joinToString(" ")
+        ).filter { it.isNotEmpty() }.joinSentences()
 
     ActivityCanvas(description = description) {
         BoardDrawing(

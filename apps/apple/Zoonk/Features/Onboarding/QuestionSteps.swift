@@ -536,7 +536,7 @@ private struct DateQuestion: View {
         title: Text(
           "Is there a date you're aiming for?", tableName: "Onboarding",
           comment: "Onboarding question"),
-        description: Text([passedNote, withoutDate].compactMap { $0 }.joined(separator: " ")))
+        description: Text([passedNote, withoutDate].compactMap { $0 }.joinedSentences()))
 
       Section {
         if let date {
@@ -662,7 +662,7 @@ private struct DateQuestion: View {
           tableName: "Onboarding",
           comment: "An exam held over two days")
       } ?? Text("Your exam is on \(date)", tableName: "Onboarding", comment: "An exam's date"),
-      description: Text([passedNote, ready, estimated].compactMap { $0 }.joined(separator: " ")))
+      description: Text([passedNote, ready, estimated].compactMap { $0 }.joinedSentences()))
 
     StepButtons(
       skipLabel: Text(

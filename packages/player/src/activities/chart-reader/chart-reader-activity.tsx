@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { niceDomain, niceTicks } from "@zoonk/utils/plot-scale";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -65,6 +66,7 @@ export function ChartReaderActivity({
   const t = useExtracted();
   const format = useFormatNumber();
   const formatMeasure = useFormatMeasure(content.fields);
+  const space = useSentenceSpace();
   const { check, fields } = content;
   const [selected, setSelected] = useState<string[]>([]);
   const isChecked = phase === "checked";
@@ -181,7 +183,8 @@ export function ChartReaderActivity({
           start: format(pointAt(fields, xDomain[0]), { unit: fields.yUnit }),
           x: fields.xLabel,
           y: fields.yLabel,
-        })}{" "}
+        })}
+        {space}
         {shownSpans
           .map((span) => {
             const value = measure(span.id);
@@ -190,7 +193,7 @@ export function ChartReaderActivity({
               ? ""
               : t("{span}: {change}.", { change: formatMeasure(value), span: span.label });
           })
-          .join(" ")}
+          .join(space)}
       </ActivityTextAlternative>
     </ActivityCanvas>
   );

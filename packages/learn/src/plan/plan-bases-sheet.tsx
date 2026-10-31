@@ -16,6 +16,7 @@ import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
 import { ChangeSaveError } from "../_components/save-error";
+import { useSentenceSpace } from "../_utils/locale";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { BasesAdvice, useBasesAdvice } from "./plan-bases-advice";
 import {
@@ -97,6 +98,7 @@ function BasesFooter({
 }) {
   const t = useExtracted();
   const footnote = useBasesFootnote();
+  const space = useSentenceSpace();
   const saveButton = useRef<HTMLButtonElement>(null);
   const loading = preview.status === "idle" || preview.status === "loading";
 
@@ -131,7 +133,7 @@ function BasesFooter({
             <p>{t("Your plan stays as it is.")}</p>
           )}
           {changes && <PlanEffectDiff effect={changes.effect} />}
-          {notes.length > 0 && <p className="text-xs leading-snug">{notes.join(" ")}</p>}
+          {notes.length > 0 && <p className="text-xs leading-snug">{notes.join(space)}</p>}
         </div>
       )}
 

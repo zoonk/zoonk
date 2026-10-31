@@ -86,6 +86,7 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.formatTimeOfDay
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.taskAsideBeside
@@ -290,7 +291,7 @@ internal fun ChallengeMoved(
                 )
                 val leftOut = moved.effect?.takeIf { it.lessonsRemoved > 0 }?.let { lessonsText(it) }
                 Text(
-                    listOfNotNull(stringResource(R.string.challenge_moved_detail), leftOut).joinToString(" "),
+                    listOfNotNull(stringResource(R.string.challenge_moved_detail), leftOut).joinSentences(),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyLarge,
                 )
