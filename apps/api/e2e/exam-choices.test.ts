@@ -79,6 +79,7 @@ test.describe("Exam choices API", () => {
     expect(before.examChoices).toStrictEqual([
       {
         group: FOREIGN,
+        leftOut: { examPoints: null, examQuestions: 5, name: FOREIGN, points: null, questions: 5 },
         options: [
           { name: "Língua Inglesa", shortName: "Inglês" },
           { name: SPANISH, shortName: "Espanhol" },
