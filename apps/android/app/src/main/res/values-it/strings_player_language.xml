@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "player_language_all_matched": "c33149c04de442341496f693e685c8988b0f7d498fa53ecd176919392e57f35b",
+  "player_language_alphabet": "a792a7c363e196b0b84b6f597dbf224c1a89d6ef62ca51118ed26d5e9810eaf4",
+  "player_language_blank": "98baff9fb1efd56dfab1d15af7192b329acfeec7a079185d06ea312e3e25929a",
+  "player_language_blank_checked": "25987f557858166da73838033fb96f4f766df7e9076e8324248ef272da922f46",
+  "player_language_blank_filled": "548c4193108f8cec91a5fd49de900b6cccafb9681d782f1bb2c4c99331740846",
+  "player_language_checked_word": "220af346d63434b792ccb8a869d328b8a0359598c1c0a217fa54cd4bfc7b1d7b",
+  "player_language_correct": "ae0828c9af7e78a57b84f0047610ccf1169dd958724bf290b65366c759b4a72f",
+  "player_language_incorrect": "079fa537fc5a6a8a24d025aa56677f43bd76cb6343be1395437215e2c2c7a6ad",
+  "player_language_match_the_pairs": "81f613d8f193876e2910042782e4a6cf272add73488ff00a364fde781e34da01",
+  "player_language_matched": "9d08ef6bb4d724a2a2481ddf18cc25d80460ea05d848d4986d38bd9c7e6f3174",
+  "player_language_move_earlier": "7bf828184ed2254b7a5079d431ddfa38a215ef836716ed3e8b97b4aa013515c6",
+  "player_language_move_later": "eed37151e17ce82c167821a81d35959897cabc1731e91d59209cacd0541097aa",
+  "player_language_not_a_pair": "488ea61c4865002106f7c4577ca082031d0b40e41cf2b0d8ac95111bf58dbaf6",
+  "player_language_pick_words": "2a26c739c71ed697f9df86a7d10aa9a43992d7562265bef321193e757e03386d",
+  "player_language_play": "5817ff193944438f2928f2dfe012cbcbcbde50987a9db6441532ce8d73f24419",
+  "player_language_play_pronunciation": "33987a7189616287d0d61aa147c6f1c951304b03e5ce1b060b46312407ae2cc6",
+  "player_language_position": "017b74201d3515e0280c18cfcc18f187919e5ed8dc39e7d0bcf18ed1fac69df7",
+  "player_language_pronunciation_tip": "193068a0551f686b6e4c1a2fa1ec07b50b3cdfba44d4e11a6839ab1d1bd15ef2",
+  "player_language_remove": "77a2f49959e44123e666859dc17722ef7885fc30b647ef137993dbe66f921bf3",
+  "player_language_selected": "e3ba94f5b64e93c61e731e0b0f13402ec7b632773be5c45f903c724fd7206f62",
+  "player_language_show_translation": "64645a0d78cbeffca74a4edee91850e06740ff5c0983ef63c04900895e9dc529",
+  "player_language_stop": "3fbf37aa6a890051173ab52a22d1fd18b27cea9ce7350d1c4aa600f0064a70db",
+  "player_language_translate": "2d49da0762273ef0168bb5e9ae6fec48a362820c082d27120250bcb3bf430095",
+  "player_language_usage": "6697946811b88532d302b59e5711136ad5067f21389b98e420be7ee044fc9ddd",
+  "player_language_vocabulary": "ffbcb9bfcd18c3471c1ae6d23a2ef7b79c0f7e4494f4e3883431be5700ef715a",
+  "player_language_what_do_you_hear": "9d8541e219056d999385d3ecbb701329c105ff3a75f693643152c12dfbd67fc4",
+  "player_language_which_means_this": "3a9640569e67dcdc22a18c0fd158f00c0735b8185663b1e65976ffcb14fd0714",
+  "player_language_word_bank": "68218a4dcd52cc953c579db12cd4c762dab253d0ddac93b37c049d6c95fa1e67",
+  "player_language_your_answer": "f6d9f49bf23941bd783ecb7b5f3b6a73d9dbc92f9071eb65d93d0071dfdb0009"
+}
+-->
+<resources>
+    <string name="player_language_translate">Traduci</string>
+    <!-- Shown over a word to pick its match when the lesson is in the learner's own language. -->
+    <string name="player_language_which_means_this">Quale ha questo significato?</string>
+    <string name="player_language_what_do_you_hear">Cosa senti?</string>
+    <string name="player_language_play">Riproduci</string>
+    <!-- Button that stops the sentence playing, a short label like a media player's Stop. -->
+    <string name="player_language_stop">Interrompi</string>
+    <string name="player_language_play_pronunciation">Riproduci la pronuncia</string>
+    <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->
+    <string name="player_language_vocabulary">Lessico: %1$s</string>
+    <!-- Screen reader name of an alphabet screen; %1$s is the letter. -->
+    <string name="player_language_alphabet">Alfabeto: %1$s</string>
+    <!-- Read before a note on how a word is used. -->
+    <string name="player_language_usage">Uso:</string>
+    <!-- Read before a tip on how to say a word. -->
+    <string name="player_language_pronunciation_tip">Consiglio per la pronuncia:</string>
+    <string name="player_language_word_bank">Parole disponibili</string>
+    <string name="player_language_your_answer">La tua risposta</string>
+    <string name="player_language_pick_words">Scegli le parole per comporre la risposta</string>
+    <!-- Screen reader name of a placed word; %1$d is its place in the answer, %2$s the word. -->
+    <string name="player_language_position">Posizione %1$d: %2$s</string>
+    <!-- Screen reader name of a checked word; %1$s is the word, %2$s says whether it's correct. -->
+    <string name="player_language_checked_word">%1$s. %2$s.</string>
+    <string name="player_language_correct">Corretto</string>
+    <string name="player_language_incorrect">Errato</string>
+    <!-- Screen reader action that moves a placed word one place earlier in the answer. -->
+    <string name="player_language_move_earlier">Sposta prima</string>
+    <!-- Screen reader action that moves a placed word one place later in the answer. -->
+    <string name="player_language_move_later">Sposta dopo</string>
+    <!-- Screen reader action that shows a word's translation. -->
+    <string name="player_language_show_translation">Mostra la traduzione</string>
+    <!-- Screen reader name of an empty blank; %1$d is its place in the sentence. -->
+    <string name="player_language_blank">Spazio vuoto %1$d</string>
+    <string name="player_language_blank_filled">Spazio %1$d: %2$s</string>
+    <!-- Screen reader action that takes a placed word back to the word bank. -->
+    <string name="player_language_remove">Rimuovi</string>
+    <!-- %1$d is the blank's place, %2$s the word, %3$s says whether it's correct. -->
+    <string name="player_language_blank_checked">Spazio %1$d: %2$s. %3$s.</string>
+    <string name="player_language_match_the_pairs">Abbina le coppie.</string>
+    <string name="player_language_all_matched">Hai abbinato tutte le coppie. Premi Controlla per continuare.</string>
+    <!-- Screen reader state of a word already paired with its match. -->
+    <string name="player_language_matched">Abbinata</string>
+    <!-- Screen reader state of the word picked to pair next. -->
+    <string name="player_language_selected">Selezionata</string>
+    <!-- Said by the screen reader when two picked words don't go together. -->
+    <string name="player_language_not_a_pair">Non formano una coppia</string>
+</resources>

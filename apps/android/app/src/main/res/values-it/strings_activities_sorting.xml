@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_sorting_about_years": "0b694d2fecd2dca7601609da3912a4906cb283d909d3a65cfe98127254cb8786",
+  "activities_sorting_all_sorted": "976c45ac7e026d993192de7e78b9dd1bc2ded9a0ff1b3a7a75e479757c7354b8",
+  "activities_sorting_badge_label_it": "82be7295021118062deca65595c75372a1e68ff14fdc6065945a490b6ff9ada8",
+  "activities_sorting_badge_link_causes": "5b6ce477acba62b689f7cf1be8509ad9ed6e98f7bf9a2f1fc02e6243e44b40ba",
+  "activities_sorting_badge_match_pairs": "83175b7c1f9f234a2cad5a3b3a2b84af486478f2dfc28e6eb79ec62dbff1337e",
+  "activities_sorting_badge_place_in_time": "0805011c56bb4edf4a6f465c4eefc4dccc9dd88a02844ce4af92c101011c0c74",
+  "activities_sorting_badge_put_in_order": "0e08c948f36a98aa59918fab227b47ac0a8c6b4d9f41cf3ae737c1b52ca2b230",
+  "activities_sorting_badge_sort_groups": "a243e0f5a359abf874830fd2ec6edc80170fcfda2fdb6fcc0af63b6028649182",
+  "activities_sorting_belongs_in": "0673d252ee2c1ac9f3ef031dddade30bc09c3525e9c70b83bcd20593fb6a948b",
+  "activities_sorting_card_matched": "03831e4cc128ff07d7c670beaea67758c69a421771db870770baa4365fa0dc23",
+  "activities_sorting_card_no_match": "9c706c36c554437de812ee1f9da61246b8fee37823b5803a4e37de2966cb2c13",
+  "activities_sorting_cards_to_match": "726df11b7253521d20204557a0ff372c2210a533a35a5d5cbd123b439ae5522e",
+  "activities_sorting_cards_without_match": "43263df8e50f36475ab07bbf41473e4d174f93801c6a4139bc2196ed6e37a132",
+  "activities_sorting_cause": "9f0037391563f4d01308b5ed0775857e9b3a9e6eafbfb26aa3616fd0821fe4a6",
+  "activities_sorting_cause_picked": "3d5d7dcb6a39ada97ffd140810ec25e9c2bc9c94bf21e38dd64a5f9aadd5464d",
+  "activities_sorting_causes_and_effects": "9dde80298b887909f2c271871da99bfe1bef810b5b67d3fe335646a8b097a9aa",
+  "activities_sorting_correct_answer": "7b753fc7919efcb14e64862247e8664ade3288bfc3f377df453914df04308073",
+  "activities_sorting_dont_go_together": "bca64590c18fc8a915e85cfdacb2dcbf9ed1782e0cc12002c896586768d62859",
+  "activities_sorting_dont_go_together_short": "35b1a580fa402980b3819d2d973ade7b52fa663e671715d1c18445d222c22cae",
+  "activities_sorting_drag_onto_timeline": "7835b020a50e61ff20776e6c6f9b5f79ddf7b279a4d725a5ee70dc62ebd0ce6e",
+  "activities_sorting_drag_steps": "24b2e58216b4073da19c8e91b0328aeef0f12febbef08f1f0ebac78a99d3ac15",
+  "activities_sorting_events_to_place": "a0f2f5e2c67ff8da8a1f2c104c6eeabf37674e259d4493361eb5b02f924dff46",
+  "activities_sorting_every_spot_named": "7c01ade0cc982cca43040b96dc5fbc4ded6708af769a6f4f56ac34f3950a7693",
+  "activities_sorting_gap_between": "e9e9c913bf08d8d30e31645ebfc7e08786ce53f3b951e078c2dd7026a672746f",
+  "activities_sorting_goes_with": "3f8c221192d031dc67fb92441b1a0b7bfe8ce70c97d2ef99c0e3ec5db9794766",
+  "activities_sorting_led_to": "ffb0523fb63dc03ec6b750b52ab7641832f59d43ed3bbc095980fc5b1d142568",
+  "activities_sorting_linked": "f6a13120ebbbb55f8a83ef74cbfbaa3f2eb293c931c76675dcb3813b7f5d542a",
+  "activities_sorting_links_count": "ab27d2e8612e4f2b601e10e443ae5525fb32f4d6e44a581f3f4d5e5e2f6d3acc",
+  "activities_sorting_look_alikes": "9145d2b521b341a9e214a58e0ca2b5c42619bc1573ff21896e92e93b0bd846bb",
+  "activities_sorting_matched": "016954e78ba9364c1efef7f9384abbb7546851208622e5668357b69094625c2c",
+  "activities_sorting_missed_first_try": "7e9402134b0f469636afba1a49afb6f85caccbb0b979288ca677cc69b0093fd4",
+  "activities_sorting_missed_link": "62e05b7b22b9b72e2d83a7159b043cb8bd7dd5e72c9dd2da767485decd2e1478",
+  "activities_sorting_name_on_spot": "b841090480557230ff9224af4518aceb3242d5da2dcc47d206b8b2e58e5303bd",
+  "activities_sorting_name_taken_off": "aaaa8c001f6966772c53a81e2b8f0e8d922d49c631f2ff59915536afc26cfe29",
+  "activities_sorting_names": "e661e9c5548f70cfcdc91d1beba1211234550bce2a1e1eb2cbd9ff834fcc800a",
+  "activities_sorting_no_match_note": "8855a75ad1ca77fac8ccc9e623563f43954f06c5499161957b9b47de06dcfa3d",
+  "activities_sorting_not_a_link": "7ed7b5cf8b8d9a69c51bcc2b8931e7940891cd6a52a0fde27c246b13d739ab3a",
+  "activities_sorting_not_quite": "0429dd4a0fdfca43069b010b63cfc697d48a56ea7d27424ad1b1a7b2687eeb90",
+  "activities_sorting_not_straight": "75fd2820d3d616832c8c21489f2bf7e9c072accba2eabfd10de3db89438a0966",
+  "activities_sorting_nothing_here": "698d46961346de7ecd7c1d063c21ab67cd22ffa09a27a6b8d94b6504f54c6eec",
+  "activities_sorting_now_pick": "94e2863384096f65340844f0cee4a0fcc51d58d36273753a7a94d7457c16eddc",
+  "activities_sorting_pairs_matched": "0a8a40b4147cbb57397e4023f45862977e192bc5ee02872a0f215fae407ae537",
+  "activities_sorting_pick_a_name": "07a4dae1649db3134de4f534a45cf6a72bb346b77f65c1882d2234bfc855bae9",
+  "activities_sorting_pick_cause": "9f37b7651859212c583b07ee1e89e2b5d38ead54188921def03263d5f35a00bc",
+  "activities_sorting_place_on_timeline": "de860efddcd5353198524e5378c6f1aeb602b02d1fe3fdeb86df3be20334394e",
+  "activities_sorting_placed": "4c916c33a505a59802b06c287e07c813d510aec334030f37e6ee59636ae19f0d",
+  "activities_sorting_put_in": "9c6d449703dcea350c44c26adce449d7af7de78a18aa7908121c8d6d757c3dcd",
+  "activities_sorting_put_it_here": "caf10fbf70e78c7bcef308ce88573653bfabb0c25690a1cbca4efb4040ec9d5a",
+  "activities_sorting_put_on_spot": "8596cc8e97bb59e02f0dd756c0517df8f4af1997dbf371a5b6bac99e40565a93",
+  "activities_sorting_remove_link": "211ed849d0a6752dea85dcb4808a12d8b311712ec433ab2632852a582377fed1",
+  "activities_sorting_removed": "b99e186159f45052d06904b172585d5c081180662601343fdbccb19aab387b7a",
+  "activities_sorting_right_count": "4a21c63a8230d9b71fa5e9127ebf43d84bbc6b446d35b1542e879ebe1efdcc2e",
+  "activities_sorting_right_group": "2f69eab2f75a20601e6ca6b3c99722ca31a16c04635fea5eb57a76b927e9ede6",
+  "activities_sorting_right_order": "94898a3a0085a5a518bd3aecb0c7bea98e87e06e2bccc1a612fb64551be92ff5",
+  "activities_sorting_show_real_dates": "46ee17809f2181e9cecb680c8dec73640e89f8a2df6177dd970b686b1fba39b7",
+  "activities_sorting_sorted_count": "2b3131b7e72b53c099a4e79dc586656233cc516f29050dd20be06ae5cca94d99",
+  "activities_sorting_spot_empty": "f7c85be90c2be7c22219f9e3b6d8f712a309b74fce90fef0bae0553a9f148424",
+  "activities_sorting_spot_named": "d77d4e8ce8fcd53a03ac35dc062a05d92e389be5bfdf5bd8c3383be9469ad46d",
+  "activities_sorting_spots_to_label": "cf1f2a11f6886e8361629486bf1d151eff826c70f2adb83e0f75e786a8f489dd",
+  "activities_sorting_steps_in_your_order": "4c3f833a955b2873fcbefdbd6ab3009bb566826c385d3cef6a95f8ddde84c41d",
+  "activities_sorting_tap_a_name": "1685d8f0693c98fabbf3c6bbf7f86b631627f651dcced3014b71df07d5e30438",
+  "activities_sorting_time_between": "5f8f45f987b03d5677842c2c7d471588cb02460e5e4680afcb67c514cea68509",
+  "activities_sorting_timeline_from": "507274eb3d7ed293ecb091a0bb5047c9c733bddf8f25b2687d30e955b2c9ae9c",
+  "activities_sorting_to_sort": "e9206b45e19d2f50c8afd7af6fb6df157432dc19418785ef53fa6ece92e6d1a5",
+  "activities_sorting_what_each_number_shows": "2faa8a2af7f6d7b7b18e05c565babecc3056b879b9a7e7a4555fb79c5dd2a549",
+  "activities_sorting_wrong_group": "2b658208484cc0c88abdf51fdc68df99b4a6d183c0bff6ecd52ee25cb3211ad5",
+  "activities_sorting_year_and_guess": "7da712421c928879bdf73562ea3ae75be79abfcf15f7993fe8b269db26d74ace",
+  "activities_sorting_year_bce": "21cdde6105ce636394bd03ffbd1dbed41204fede24602bcbb6e31c4c32d735df",
+  "activities_sorting_year_ce": "887c890f3166da1c91399ed33dc00a6a21816500db34cf6c10e572d71b524a0e",
+  "activities_sorting_years": "1147a11c30782ddfa1fd971f0cca12ed24e93e3adaf4afb2be2f7379135a3eab",
+  "activities_sorting_you_had_it_at": "3b0170407c0e76d7fb8b04fa19869b3360164972e60157a0229cc098a0e63132",
+  "activities_sorting_your_guess": "21322dd9412e7697f06b4739e88a799e4c8c2d412fe9177bfcc030a0680fc6e2",
+  "activities_sorting_your_links": "5b40f8b679fa2de2557b8dfbeaffa202a097927a6c8051e4c5b405029753b420"
+}
+-->
+<resources>
+    <string name="activities_sorting_badge_sort_groups">Dividi in gruppi</string>
+    <!-- Above the items still to sort into groups. -->
+    <string name="activities_sorting_to_sort">Da classificare</string>
+    <string name="activities_sorting_all_sorted">Hai classificato tutto. Controlla quando vuoi.</string>
+    <!-- How many items are in a group so far, like "1 of 3 sorted". -->
+    <plurals name="activities_sorting_sorted_count">
+        <item quantity="one">%1$d elemento classificato su %2$d</item>
+        <item quantity="many">%1$d elementi classificati su %2$d</item>
+        <item quantity="other">%1$d elementi classificati su %2$d</item>
+    </plurals>
+    <!-- Places the picked item in a group, like "Put Melting ice in Same substance". Also a TalkBack action on each item. -->
+    <string name="activities_sorting_put_in">Metti %1$s in %2$s</string>
+    <!-- In an empty group while an item is picked. -->
+    <string name="activities_sorting_put_it_here">Metti qui</string>
+    <!-- In an empty group. -->
+    <string name="activities_sorting_nothing_here">Qui non c’è ancora nulla</string>
+    <!-- Read by TalkBack when an item is placed, like "Melting ice is in Same substance. 2 of 3 sorted." -->
+    <plurals name="activities_sorting_placed">
+        <item quantity="one">Hai messo %1$s in %2$s. %3$d elemento classificato su %4$d.</item>
+        <item quantity="many">Hai messo %1$s in %2$s. %3$d elementi classificati su %4$d.</item>
+        <item quantity="other">Hai messo %1$s in %2$s. %3$d elementi classificati su %4$d.</item>
+    </plurals>
+    <!-- An item once checked, for TalkBack, like "Melting ice, right group". -->
+    <string name="activities_sorting_right_group">%1$s, gruppo giusto</string>
+    <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
+    <string name="activities_sorting_wrong_group">%1$s, gruppo sbagliato</string>
+    <!-- How many items were sorted right, like "2 of 3 in the right group". -->
+    <string name="activities_sorting_right_count">%1$d su %2$d nel gruppo giusto</string>
+    <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
+    <string name="activities_sorting_belongs_in">Il gruppo giusto per %1$s è %2$s.</string>
+    <string name="activities_sorting_badge_put_in_order">Metti in ordine</string>
+    <!-- The name of the list of a process's steps the learner orders, for TalkBack. -->
+    <string name="activities_sorting_steps_in_your_order">Passaggi nell’ordine che hai scelto</string>
+    <string name="activities_sorting_drag_steps">Tieni premuto e trascina i passaggi per ordinarli.</string>
+    <!-- Above a process's steps in their true order, once checked. -->
+    <string name="activities_sorting_right_order">L’ordine giusto</string>
+    <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
+    <string name="activities_sorting_you_had_it_at">Lo avevi messo in posizione %1$d</string>
+    <string name="activities_sorting_badge_match_pairs">Abbina le coppie</string>
+    <!-- Pairs matched so far, like "Pairs matched: 1 of 3". -->
+    <string name="activities_sorting_pairs_matched">Coppie abbinate: %1$d su %2$d</string>
+    <!-- Cards that look like they match one on the other side but don't. -->
+    <plurals name="activities_sorting_cards_without_match">
+        <item quantity="one">%d carta non ha abbinamenti</item>
+        <item quantity="many">%d carte non hanno abbinamenti</item>
+        <item quantity="other">%d carte non hanno abbinamenti</item>
+    </plurals>
+    <!-- The name of the two columns of cards, for TalkBack. -->
+    <string name="activities_sorting_cards_to_match">Carte da abbinare</string>
+    <!-- A matched card, for TalkBack, like "pregnant, matched". -->
+    <string name="activities_sorting_card_matched">%1$s, abbinata</string>
+    <!-- A card with no match, for TalkBack, like "embarrassed, no match". -->
+    <string name="activities_sorting_card_no_match">%1$s, senza abbinamento</string>
+    <!-- Read by TalkBack after a match, like "Matched éxito with success. Pairs matched: 2 of 3." -->
+    <string name="activities_sorting_matched">Hai abbinato %1$s a %2$s. Coppie abbinate: %3$d su %4$d.</string>
+    <!-- Starts the reason a picked card has no match, like "“embarrassed” has no match." -->
+    <string name="activities_sorting_no_match_note">«%1$s» non ha abbinamenti.</string>
+    <!-- Read by TalkBack after a wrong pair, like "éxito and pregnant don't go together." -->
+    <string name="activities_sorting_dont_go_together">%1$s e %2$s non si abbinano.</string>
+    <string name="activities_sorting_dont_go_together_short">Queste due carte non vanno insieme.</string>
+    <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
+    <string name="activities_sorting_not_quite">Non è la coppia giusta:</string>
+    <!-- Above the pairs the learner got wrong on the first try. -->
+    <string name="activities_sorting_missed_first_try">Coppie sbagliate al primo tentativo</string>
+    <!-- A pair missed on the first try, like "embarazada goes with pregnant, not embarrassed." -->
+    <string name="activities_sorting_goes_with">%1$s si abbina a %2$s, non a %3$s.</string>
+    <!-- Above the cards that look like a match but have none. -->
+    <string name="activities_sorting_look_alikes">Carte simili senza abbinamento</string>
+    <string name="activities_sorting_badge_link_causes">Collega cause ed effetti</string>
+    <string name="activities_sorting_pick_cause">Scegli una causa, poi il suo effetto.</string>
+    <!-- After a cause is picked, like "Now pick what Years of drought led to." -->
+    <string name="activities_sorting_now_pick">Ora scegli l’effetto di %1$s.</string>
+    <!-- Links made so far out of all, like "1 of 2 links". -->
+    <plurals name="activities_sorting_links_count">
+        <item quantity="one">%1$d nesso su %2$d</item>
+        <item quantity="many">%1$d nessi su %2$d</item>
+        <item quantity="other">%1$d nessi su %2$d</item>
+    </plurals>
+    <!-- On the picked card: what it caused comes next. -->
+    <string name="activities_sorting_cause">Causa</string>
+    <!-- A link that isn't in the story, like "Dust storms didn't lead straight to Prairie plowed for wheat here. Try another link." -->
+    <string name="activities_sorting_not_straight">In questa storia non c’è un nesso diretto da %1$s a %2$s. Prova un altro nesso.</string>
+    <!-- After a link is taken away, like "Removed: Years of drought led to Dust storms." -->
+    <string name="activities_sorting_removed">Nesso rimosso: da %1$s a %2$s.</string>
+    <!-- After a link is made, like "Linked: Years of drought led to Dust storms." -->
+    <string name="activities_sorting_linked">Nesso creato: da %1$s a %2$s.</string>
+    <!-- After a cause is picked, like "Years of drought picked. Now pick what it led to." -->
+    <string name="activities_sorting_cause_picked">Hai scelto %1$s. Ora scegli l’effetto.</string>
+    <!-- The name of the list of causes and effects, for TalkBack. -->
+    <string name="activities_sorting_causes_and_effects">Cause ed effetti</string>
+    <!-- The name of the list of links made, for TalkBack. -->
+    <string name="activities_sorting_your_links">I tuoi nessi</string>
+    <!-- Read by TalkBack in place of the arrow between a cause and its effect. -->
+    <string name="activities_sorting_led_to">all’origine di</string>
+    <!-- Under a link the learner made that the story doesn't have. -->
+    <string name="activities_sorting_not_a_link">Nesso assente in questa storia</string>
+    <!-- Under a link the story has that the learner didn't make. -->
+    <string name="activities_sorting_missed_link">Nesso mancante</string>
+    <!-- A button that takes a link away, like "Remove the link from Years of drought to Dust storms". -->
+    <string name="activities_sorting_remove_link">Rimuovi il nesso da %1$s a %2$s</string>
+    <string name="activities_sorting_badge_place_in_time">Colloca nel tempo</string>
+    <!-- A year before the common era, like "51 BCE". Keep the no-break space (U+00A0) between the year and its era, so they stay on one line. -->
+    <string name="activities_sorting_year_bce">%1$s a.C.</string>
+    <!-- A year of the common era, on a timeline that also has BCE years, like "1969 CE". Keep the no-break space (U+00A0) between the year and its era, so they stay on one line. -->
+    <string name="activities_sorting_year_ce">%1$s d.C.</string>
+    <!-- What TalkBack reads for an event once the real dates show: its real year, then the learner's guess, like "51 BCE. Your guess: 2000 CE". -->
+    <string name="activities_sorting_year_and_guess">%1$s. La tua stima: %2$s</string>
+    <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
+    <string name="activities_sorting_your_guess">La tua stima: %1$s</string>
+    <plurals name="activities_sorting_events_to_place">
+        <item quantity="one">%d evento da posizionare</item>
+        <item quantity="many">%d eventi da posizionare</item>
+        <item quantity="other">%d eventi da posizionare</item>
+    </plurals>
+    <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
+    <string name="activities_sorting_place_on_timeline">Posiziona %1$s sulla linea del tempo</string>
+    <string name="activities_sorting_drag_onto_timeline">Tocca per posizionare, oppure tieni premuto e trascina sulla linea del tempo.</string>
+    <string name="activities_sorting_show_real_dates">Mostra le date esatte</string>
+    <!-- The name of the list of gaps between dates, for TalkBack. -->
+    <string name="activities_sorting_time_between">Intervallo tra le date</string>
+    <!-- An exact gap in years, like "66 years". -->
+    <plurals name="activities_sorting_years">
+        <item quantity="one">%1$s anno</item>
+        <item quantity="many">%1$s anni</item>
+        <item quantity="other">%1$s anni</item>
+    </plurals>
+    <!-- A rounded gap in years, like "about 2,000 years". -->
+    <plurals name="activities_sorting_about_years">
+        <item quantity="one">circa %1$s anno</item>
+        <item quantity="many">circa %1$s anni</item>
+        <item quantity="other">circa %1$s anni</item>
+    </plurals>
+    <!-- After a gap in years: the two events and their years, like "from Cleopatra rules Egypt (51 BCE) to Moon landing (1969 CE)". -->
+    <string name="activities_sorting_gap_between">da %1$s (%2$s) a %3$s (%4$s)</string>
+    <!-- What the timeline's drawing covers, for TalkBack, like "A timeline from 3000 BCE to 2000 CE." -->
+    <string name="activities_sorting_timeline_from">Una linea del tempo dal %1$s al %2$s.</string>
+    <string name="activities_sorting_badge_label_it">Assegna un’etichetta</string>
+    <!-- Read by TalkBack when a name goes on a numbered spot of the picture, like "Aorta on spot 5." -->
+    <string name="activities_sorting_name_on_spot">%1$s sul punto %2$s.</string>
+    <!-- Read by TalkBack when a name is taken off its spot, like "Aorta taken off." -->
+    <string name="activities_sorting_name_taken_off">Hai rimosso %1$s.</string>
+    <!-- Above the names while a spot waits for one, like "Tap a name for spot 2, or hold and drag it onto any spot." -->
+    <string name="activities_sorting_tap_a_name">Tocca un nome per il punto %1$d, oppure tienilo premuto e trascinalo su un punto qualsiasi.</string>
+    <string name="activities_sorting_every_spot_named">Ogni punto ha un nome. Per cambiarlo, tocca il punto.</string>
+    <!-- The name of the list of names to place, for TalkBack. -->
+    <string name="activities_sorting_names">Nomi</string>
+    <!-- Puts a name on a numbered spot, like "Put Aorta on spot 5". Also a TalkBack action on each name. -->
+    <string name="activities_sorting_put_on_spot">Metti %1$s sul punto %2$d</string>
+    <!-- The name of the list of numbered spots, for TalkBack. -->
+    <string name="activities_sorting_spots_to_label">Punti da etichettare</string>
+    <!-- The name of the list that says what each number on an explored picture shows, for TalkBack. -->
+    <string name="activities_sorting_what_each_number_shows">Cosa indica ogni numero</string>
+    <!-- A numbered spot with no name yet, for TalkBack, like "Spot 3: empty". -->
+    <string name="activities_sorting_spot_empty">Punto %1$d: vuoto</string>
+    <!-- A numbered spot and its name, for TalkBack, like "Spot 3: Right ventricle". -->
+    <string name="activities_sorting_spot_named">Punto %1$d: %2$s</string>
+    <!-- On the spot waiting for a name. -->
+    <string name="activities_sorting_pick_a_name">Scegli un nome</string>
+    <!-- For TalkBack, after a spot's wrong name once checked, like "Correct answer: Right atrium". -->
+    <string name="activities_sorting_correct_answer">Risposta corretta: %1$s</string>
+</resources>

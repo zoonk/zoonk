@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "visual_chart_point": "087cf070ae4d60db77d3d7dfdb7dd439c9c7f7dbcbcad1c57a78839aed467c9d",
+  "visual_chart_series_value": "90487aba6036208bd6fd35bd847ccad58fce958356c06078d1f578c219994b01",
+  "visual_chart_summary": "21144633c235dccb2a196bd640c4b571c46b099f7244312f6b3db6964f108e7f",
+  "visual_source": "5a5d21c910b3d7ab1c7e36bb7a5cc522cb8fad3f6610a913db5e90bdc710f6ee"
+}
+-->
+<resources>
+    <string name="visual_source">Fonte: %1$s</string>
+    <!-- A chart read aloud: what it measures (%1$s) by what (%2$s), then each category with its values (%3$s). -->
+    <string name="visual_chart_summary">%1$s per %2$s. %3$s</string>
+    <!-- One category of a chart read aloud: the category (%1$s) and its value or values (%2$s). -->
+    <string name="visual_chart_point">%1$s: %2$s</string>
+    <!-- One series' value in a category of a chart read aloud: the series' name (%1$s) and its value (%2$s). -->
+    <string name="visual_chart_series_value">%1$s %2$s</string>
+</resources>
