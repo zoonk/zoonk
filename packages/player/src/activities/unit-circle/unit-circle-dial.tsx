@@ -221,12 +221,13 @@ export function UnitCircleDial({
         />
 
         <TrigLegs
-          canvas={{ height: size, width }}
+          canvas={{ width }}
           center={center}
           formatValue={formatValue}
           names={names}
           point={point}
           show={show}
+          target={target ? onCircle(center, radius, target.degrees) : null}
           values={values}
         />
 

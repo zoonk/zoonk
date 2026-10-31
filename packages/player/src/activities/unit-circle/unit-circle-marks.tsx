@@ -11,7 +11,7 @@ const LABEL_GAP = 8;
 const SEGMENT_WIDTH = 4;
 const SIN_LABEL_GAP = 26;
 const LABEL_CHAR_WIDTH = 8.5;
-const CORNER_INSET = 10;
+const SIN_LABEL_PAST_POINT = 28;
 
 const TRIG_TONES: Record<TrigName, { stroke: string; text: string }> = {
   cos: { stroke: "stroke-viz-secondary", text: "fill-viz-secondary" },
@@ -110,14 +110,16 @@ function sinLabelPlacement({
   isLeft,
   label,
   point,
+  target,
 }: {
-  canvas: { height: number; width: number };
+  canvas: { width: number };
   foot: Vector;
   isAbove: boolean;
   isLeft: boolean;
   label: string;
   point: Vector;
-}): { anchor: "end" | "start"; point: Vector } {
+  target: Vector | null;
+}): { anchor: "end" | "middle" | "start"; point: Vector } {
   const labelWidth = label.length * LABEL_CHAR_WIDTH;
   const beside = foot.x + (isLeft ? -1 : 1) * SIN_LABEL_GAP;
   const fits = isLeft ? beside - labelWidth >= 0 : beside + labelWidth <= canvas.width;
@@ -126,11 +128,18 @@ function sinLabelPlacement({
     return { anchor: isLeft ? "end" : "start", point: { x: beside, y: (foot.y + point.y) / 2 } };
   }
 
+  const isTargetPast =
+    target !== null &&
+    Math.abs(target.x - point.x) < labelWidth &&
+    (isAbove ? target.y < point.y : target.y > point.y);
+
+  const outermost = isTargetPast ? target.y : point.y;
+
   return {
-    anchor: isLeft ? "start" : "end",
+    anchor: "middle",
     point: {
-      x: isLeft ? 0 : canvas.width,
-      y: isAbove ? canvas.height - CORNER_INSET : CORNER_INSET,
+      x: Math.min(Math.max(foot.x, labelWidth / 2), canvas.width - labelWidth / 2),
+      y: outermost + (isAbove ? -1 : 1) * SIN_LABEL_PAST_POINT,
     },
   };
 }
@@ -142,21 +151,32 @@ export function TrigLegs({
   names,
   point,
   show,
+  target,
   values,
 }: {
-  canvas: { height: number; width: number };
+  canvas: { width: number };
   center: Vector;
   formatValue: (value: number | null) => string;
   names: Record<TrigName, string>;
   point: Vector;
   show: readonly TrigName[];
+  target: Vector | null;
   values: Partial<Record<TrigName, number | null>>;
 }) {
   const foot = { x: point.x, y: center.y };
   const isLeft = point.x < center.x;
   const isAbove = point.y <= center.y;
   const sinLabel = `${names.sin} = ${formatValue(values.sin ?? null)}`;
-  const sinPlacement = sinLabelPlacement({ canvas, foot, isAbove, isLeft, label: sinLabel, point });
+
+  const sinPlacement = sinLabelPlacement({
+    canvas,
+    foot,
+    isAbove,
+    isLeft,
+    label: sinLabel,
+    point,
+    target,
+  });
 
   return (
     <g aria-hidden="true">

@@ -15,6 +15,7 @@ import {
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 
 const polls = engineModeFixtures.randomSimulation.sampling;
 
@@ -83,6 +84,31 @@ describe("geometry and data activities", () => {
     await expect
       .element(page.getByRole("figure"))
       .toMatchTextContent("The question asks about 30°, where sin = 0.5.");
+  });
+
+  it("unit circle: on a phone the sine's value sits by its leg", async () => {
+    await atViewport({ height: 812, width: 375 }, async () => {
+      openActivity({ template: "unitCircle" });
+      await pressOnSlider("Point on the circle", "ArrowRight", 6);
+      await expect.element(valueInput()).toHaveValue("0.5");
+
+      const dial = document.querySelector("figure svg");
+      const leg = dial?.querySelector("path.stroke-viz-highlight")?.getBoundingClientRect();
+
+      const box = [...(dial?.querySelectorAll("text") ?? [])]
+        .find((text) => text.textContent === "sin = 0.5")
+        ?.getBoundingClientRect();
+
+      const gap =
+        box && leg
+          ? Math.hypot(
+              Math.max(box.left - leg.right, 0, leg.left - box.right),
+              Math.max(box.top - leg.bottom, 0, leg.top - box.bottom),
+            )
+          : Number.POSITIVE_INFINITY;
+
+      expect(gap).toBeLessThan(32);
+    });
   });
 
   it("unit circle: reading the wrong angle is wrong", async () => {
