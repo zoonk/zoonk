@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.checkResult
+import com.zoonk.android.feature.player.summaryStep
 import kotlinx.coroutines.CompletableDeferred
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -55,6 +56,23 @@ class TimelineFlowTest : SortingFlow() {
         shows("about 2,000 years")
         shows("about 2,500 years")
         assertTrue(sentAnswer(), sentAnswer().contains(""""ids":["cleo","moon"]"""))
+    }
+
+    @Test
+    fun timelineEventsComeBackWithNoMadeUpGuesses() {
+        harness.play(listOf(ActivityFixtures.step("timeline"), summaryStep("end"))) {
+            grade = { _, _ -> checkResult(true, expected = ActivityFixtures.expected("timeline")) }
+        }
+
+        rule.onNodeWithContentDescription("Place Moon landing on the timeline").performScrollTo().performClick()
+        slider("Moon landing").assertIsFocused().performKeyInput { pressKey(Key.MoveEnd) }
+        rule.onNodeWithContentDescription("Place Cleopatra rules Egypt on the timeline").performScrollTo().performClick()
+        harness.tap("Check")
+        harness.tap("Continue")
+        rule.onNodeWithContentDescription("Previous screen").performClick()
+
+        sliderSays("Moon landing", "1969\u00A0CE")
+        rule.onNodeWithText("Your guess", substring = true).assertDoesNotExist()
     }
 
     @Test

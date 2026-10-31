@@ -116,7 +116,10 @@ private data class TrackEvent(
     val year: Long,
     val isRevealed: Boolean,
     val isRight: Boolean?,
-)
+) {
+    /** An event the learner never placed (or placed on its year) has no guess to compare (main's `hasShownGuess`). */
+    val hasShownGuess get() = isRevealed && guess != year
+}
 
 private class TrackAxis(
     val start: Long,
@@ -531,10 +534,10 @@ private fun EventCard(
     var liftedFrom by remember { mutableStateOf<Long?>(null) }
     var focused by remember { mutableStateOf(false) }
     val value =
-        if (event.isRevealed) {
+        if (event.hasShownGuess) {
             stringResource(R.string.activities_sorting_year_and_guess, formatYear(event.year), formatYear(event.guess))
         } else {
-            formatYear(event.guess)
+            formatYear(if (event.isRevealed) event.year else event.guess)
         }
     val border =
         when {
@@ -618,7 +621,7 @@ private fun EventCard(
                         .copy(fontWeight = FontWeight.SemiBold),
             )
             Text(event.label, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
-            if (event.isRevealed) {
+            if (event.hasShownGuess) {
                 Text(
                     stringResource(R.string.activities_sorting_your_guess, formatYear(event.guess)),
                     color = colors.onSurfaceVariant,
