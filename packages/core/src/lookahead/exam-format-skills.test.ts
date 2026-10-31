@@ -165,6 +165,61 @@ describe(pickExamFormatSkills, () => {
     ).toStrictEqual([skills[3]?.id]);
   });
 
+  it("writes a shared pick count in the options of the subject it's for", async () => {
+    const { blueprint, goal, skills } = await jeeGoal();
+    const twoOf = { ...JEE_FORMATS[1], select: 2 };
+
+    await Promise.all([
+      prisma.examBlueprint.update({
+        data: {
+          structure: {
+            formats: [
+              { ...twoOf, options: 6, sections: ["Verbal"] },
+              { ...twoOf, options: 4, sections: ["Quantitative"] },
+            ],
+            mock: null,
+            rules: [],
+            subjects: ["Verbal", "Quantitative"].map((name) => ({
+              citation,
+              name,
+              questions: 6,
+              topics: [],
+              weight: null,
+            })),
+          },
+        },
+        where: { id: blueprint.id },
+      }),
+      prisma.plan.update({
+        data: {
+          graph: {
+            phases: [{ milestone: null, name: "Basics" }],
+            skills: skills
+              .slice(0, 2)
+              .map((skill, index) => ({
+                area: index === 0 ? "Verbal" : "Quantitative",
+                lessons: 1,
+                name: skill.name,
+                phase: 0,
+                skillId: skill.id,
+                weight: 1,
+              })),
+          },
+        },
+        where: { goalId: goal.id },
+      }),
+    ]);
+
+    const picks = await pickExamFormatSkills({ goalId: goal.id });
+
+    expect(
+      picks.map((pick) => ({ options: pick.answerFormat.options, skillId: pick.skill.id })),
+    ).toStrictEqual([
+      { options: 6, skillId: skills[0]?.id },
+      { options: 4, skillId: skills[1]?.id },
+    ]);
+  });
+
   it("picks first-phase skills by weight, skipping written ones", async () => {
     const { blueprint, goal, skills } = await jeeGoal();
     const [first, second, third, fourth] = skills;

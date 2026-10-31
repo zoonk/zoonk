@@ -107,11 +107,7 @@ export async function pickExamFormatSkills({
   const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
 
   const formats = blueprint
-    ? getMockFormatMix(structure).flatMap((format) =>
-        format.writer.kind === "item"
-          ? [{ ...format, answerFormat: format.writer.answerFormat }]
-          : [],
-      )
+    ? getMockFormatMix(structure).filter((format) => format.writer.kind === "item")
     : [];
 
   if (!blueprint || formats.length === 0) {
@@ -161,20 +157,22 @@ export async function pickExamFormatSkills({
     skills
       .flatMap((skill) => {
         const own = getAreaFormat({ area: skill.area, format, structure });
+        const answerFormat = own?.writer.kind === "item" ? own.writer.answerFormat : null;
 
-        return own !== null &&
-          needsAnswerFormat({ answerFormat: format.answerFormat, blueprintId: blueprint.id, skill })
-          ? [{ own, skill }]
+        return own &&
+          answerFormat &&
+          needsAnswerFormat({ answerFormat, blueprintId: blueprint.id, skill })
+          ? [{ answerFormat, own, skill }]
           : [];
       })
       .toSorted(
         (a, b) =>
-          Number(isKnownInFormat({ answerFormat: format.answerFormat, skill: b.skill })) -
-          Number(isKnownInFormat({ answerFormat: format.answerFormat, skill: a.skill })),
+          Number(isKnownInFormat({ answerFormat: b.answerFormat, skill: b.skill })) -
+          Number(isKnownInFormat({ answerFormat: a.answerFormat, skill: a.skill })),
       )
       .slice(0, EXAM_FORMAT_SKILLS)
-      .map(({ own, skill: { area: _area, items: _items, ...skill } }) => ({
-        answerFormat: format.answerFormat,
+      .map(({ answerFormat, own, skill: { area: _area, items: _items, ...skill } }) => ({
+        answerFormat,
         skill,
         style: own.style,
       })),
