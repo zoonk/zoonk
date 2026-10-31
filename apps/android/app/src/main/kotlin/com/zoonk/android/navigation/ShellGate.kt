@@ -100,27 +100,6 @@ fun ShellGate(
 }
 
 @Composable
-internal fun RouteFrame(
-    route: AppRoute,
-    navigator: AppNavigator,
-    content: @Composable (PaddingValues) -> Unit,
-) {
-    when (route.presentation) {
-        is Presentation.Tab -> {
-            TabRootScaffold(content = content)
-        }
-
-        Presentation.Task -> {
-            TaskScaffold(onClose = navigator::closeTask, content = content)
-        }
-
-        else -> {
-            PageScaffold(onBack = { navigator.back() }, content = content)
-        }
-    }
-}
-
-@Composable
 private fun SignInGate(
     ended: Boolean,
     navigator: AppNavigator,
