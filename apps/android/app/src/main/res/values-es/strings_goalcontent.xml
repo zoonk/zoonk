@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "goalcontent_adjust_plan": "120eaf7e71467ef0b6757777b07ed4f769b311a01589eea2b44bc6908a00d7f7",
-  "goalcontent_also": "3aa17540ac6cf70c8ac95550ce48774ac3a640f33603acf46c8db343c8c6cc53",
-  "goalcontent_also_in_plan": "5fd9e83bb092789b1c23a45e124f7c1ed6d45f72903c2990dd8aee7f89147251",
+  "goalcontent_adjust_plan": "2b7c06c287b10eb825cb1e2d6456a08d13b9ca526700e28a22d88ce4fcc2ba5e",
+  "goalcontent_also": "81ce378f324351b84b49292fd0520eda4e9b31a1caa59e5d3b12071d6a6d61a3",
+  "goalcontent_also_in_plan": "cd78f0a78ab48deaf0852faa8b4c35dd9607aaec3901e43f146c9e5b406d12eb",
   "goalcontent_appears_a_lot": "511ea3869397beb7cc2f171e3fd8dfddb56d70c43306373d8d9e41c6ce819a46",
-  "goalcontent_beyond_guide": "80747614a937f3f6f8e34322a33285578b12c67015f33c2b85aebc57aff9940c",
-  "goalcontent_beyond_notice": "24926a8c38b18fa7008f7ede7abd26255afaa57013e147619b39c62f307db1a0",
+  "goalcontent_beyond_guide": "79a05b4fb547e41dfc5f4957339d8c61bfb08c454efcdb682dbdb17ebedfa022",
+  "goalcontent_beyond_notice": "d34e26a4dac5ff38f1f36f163c5abf59fbd0c290900770b164f6ce32db17ccb5",
   "goalcontent_bring_back": "4c8b90a166b057d6ec3d1cb065071fbff45fa0f774f288d3b7659e3c2350beef",
   "goalcontent_chapter_count": "d1466a6a51cd77c3bcf635b4949b351da1239d10f929423c16bb7fa171fcd8db",
   "goalcontent_chapter_number": "1f9594305f2836e8593dd52b4832370083a6d2a671e0bc3a4017dab2a7e74fab",
@@ -17,77 +17,77 @@
   "goalcontent_chapters_known_after_done": "72a422cd088f46672896c8feab9d8c5340ad808e0a48eeb89afb77bf212132d2",
   "goalcontent_continue": "732f7f60f48267e992d65eb8911d22bcc3fca69928320fc72d8e4c6431d9adf3",
   "goalcontent_count_of": "4cd8f277292ba7fcbab41236d40b6afbcc2f0811b303c702530a13092975ea7e",
-  "goalcontent_course_weights_even": "3fc9fa06043db9c24d778dc4e6b40f2acd87c7d8ca8c5bde07afde487cabf4f9",
-  "goalcontent_course_weights_heavier": "d2c9c4daa79b437b757bb4d460775ad6f2c104e01d7a53ce0268b0334ff65719",
+  "goalcontent_course_weights_even": "b85f353f71704987c4a42081954390021047c0643ac43ee4f91010ecaeb838dd",
+  "goalcontent_course_weights_heavier": "1a5e0732f08dff7272079297358bd3f09362cf88966c43035cc1e0aa1fd2744b",
   "goalcontent_coverage": "a7748d2b162adc4ab7cd8f8851ca723c8d4c6e95390d2cfa686f4a30eee7a2ae",
   "goalcontent_details": "62ed36f25c7ccd499d9fef315added3c84f57e5a1d75baf569bdadc66991dd4b",
   "goalcontent_done_and_known": "d1006774cf9a83c369cfe4340a6243021ef84874a35bdc558503e59b6d3745e2",
   "goalcontent_for_reference": "0e5ebcc719be9c419959af272889c942b7a84a1e84ddc3ca45a97b97887ef910",
-  "goalcontent_frequency_material": "32b90f4b1fab8863009eb7e06be6cea90bcc6114069febe3664df5b041e78de7",
-  "goalcontent_frequency_most": "b00bdaab0dde0b5e50db1ec9b3055b87e2b957414d6fd1c5687e6a939ea008bf",
-  "goalcontent_frequency_past_exams": "2bd7267d2530630ac44b6794953a9de88b2e57899776d700719ca913dad3a486",
-  "goalcontent_frequency_tagged": "6d2b8ca30cf331967ee0c0144c7cf60774b75d68a6ea8ff65cce23076c40af70",
-  "goalcontent_frequency_tagged_waits": "dee73a3a5daef43fdd2f4d192b347b116b47eaab1cc32f5925974d8ba21a1f9f",
-  "goalcontent_frequency_waits": "e758ea9773a3440f96ae27edbce43ee290663adfe3e7feff15c859fba284cebc",
+  "goalcontent_frequency_material": "fcd5051eaceb037b838f452bedd625a52c13b79b011155cf9a5f6fe857eabe14",
+  "goalcontent_frequency_most": "14c3f9eb9d89cb6d2752101b16fc5ac8dcd177009a3706028947a374725d6457",
+  "goalcontent_frequency_past_exams": "917ed3795d23f68d82b6fc70bcf2b7491125533ee45aeb08d07a1b9fafd9533f",
+  "goalcontent_frequency_tagged": "fa26779b962503e2229ffc72765d8bcecb64c23ec23676d00e4859e21e151915",
+  "goalcontent_frequency_tagged_waits": "7cbe8ffa2b35999303b9dd0f971247a14cbb77fc3aaf4062656206c14b24d616",
+  "goalcontent_frequency_waits": "21c492e94b00d7e4662a4bc006ce91a3a1cd7205b6a03fbc3f7b4f55e494819f",
   "goalcontent_from_material": "4148fcd277c44d43cc62fc267c557fea7aa8b63cada4535ae71ae908480c0c2f",
   "goalcontent_known": "f0811e0c80d546860f7cbc2405eeff5272cd0bceffc43ff55d9130c0350a5ca7",
   "goalcontent_known_before": "bbdc35d20885ab46434f4f8dd02d22bf2763cdf95d6699853b7f3597eda0c7d5",
   "goalcontent_lesson_count": "e968d1fd07bd68d8e0392e6d2f54295c9e26b2f585669ca8ac5830ec785c578f",
   "goalcontent_lessons_done": "b3d1e10ee5719b27e86b863dd91f07c56e48c370909cc2b00316e99622807a5b",
-  "goalcontent_lessons_known_skipped": "ed9bfebc111fd4fc50d95edd705d23a7cb956646c9baa7e0b18570863676f345",
+  "goalcontent_lessons_known_skipped": "0dc1c80c220aaf2e0af1b5d2ef379cbc48fa5e4f8cbc978fb697a027b458b07e",
   "goalcontent_lessons_skipped": "f4732432ee027d563540862d1e614a5ddbe0ab18e2c0b1ca5cd512071ce4aaba",
   "goalcontent_mastery": "03ed1d872ec773928bc8ceea95cf77b6fe13d04d416b9a93055bcf33a0e95e1c",
-  "goalcontent_mastery_pending": "89b06a62925fa24bbc463233cda9631bd384b4a2177b69c7f0c0b5626b2c22bb",
+  "goalcontent_mastery_pending": "9ec347bc0c0ed1f1f46ced2d530cf1ea117c5f5aef8951b12c50e137603f9127",
   "goalcontent_mastery_right": "69e96239611cf6db2ab28227a93382e62ca2397572acf7801a299eb1ef758125",
   "goalcontent_material_topic_count": "4f174574003033bb542b6c86a5fbdb29ffee70134ae3774e391190446a374b94",
-  "goalcontent_matrix_title": "49ed60017a58c44c972cc009e6eae61baedd6a4a52a578c67ba31f3b0d5f75c9",
+  "goalcontent_matrix_title": "3ad7ded8686d0ebda438229b819ce5cefcc37dc83d180d4533c22ad39fb6fb14",
   "goalcontent_module": "86bb6be28d35da88d4460246da63db34334a8dfb090de58193ce06f6abefcaaa",
   "goalcontent_module_count": "7a2133ffe5b7c2e2ebe63a3f5a6d4428aa49722c2511fda5bf651d36593c86f9",
   "goalcontent_modules": "32d106d2def2828c689d63a0f431c40cb26c60966354e07b6d67948d748baec1",
   "goalcontent_more_chapters": "52471e25776680bbcbfa7e144dc9fee93d39e15161ce13a3161ecfd84dac6ba7",
-  "goalcontent_new": "6310642d9784f4de27976fb7a2397e10b7e92546ad62ae038695113f0b7e3693",
+  "goalcontent_new": "872a593e5b33db95d8c9e3edb3b9d04a9af10ae44edf644107062472bf58d1cf",
   "goalcontent_next_date": "2c0ad1c81966adfcc4dbe8f1ad06f2204a873df7d08a97a4a3ff0f13dec83edd",
   "goalcontent_not_in_plan": "682f3e7da2a962d75a2ab207dcf75a904d2c52779463e7684d0aa325e87dc5b9",
   "goalcontent_percent_done": "b68fdc6da17534e40884d2c21239c5bff0353654b69c524124e4fc24507939c4",
   "goalcontent_practice": "296a7133e076e87eb7446718394d921a3c27147be544ae23429b0497d65e3d8b",
   "goalcontent_practice_chapter": "8dd8310524433a95ee587642f3c67b0fa81a2d712aab68a2e65bea1cd5457d41",
-  "goalcontent_practice_daily_cap": "2eefda542c9ce72c54cf68516deb0f82b97ee58122bdc4254b6aaddcc73fa78d",
-  "goalcontent_practice_failed": "097a8c9ea892f79f55ace797f8a244230d5df2de49cd71366b4ef7cf90d743f6",
+  "goalcontent_practice_daily_cap": "677fe17f4d22bec72dcbb3a55b28465a64f905726c2a14c0936014f75305479a",
+  "goalcontent_practice_failed": "ea25b32bc11269673c28b993eab89c415635dfc6b912656631c0bf854217ef78",
   "goalcontent_practice_nothing": "c8c9bd0f9080987951069ba48ebf0e2c4e69b739178585cc19098c1bf5697c49",
   "goalcontent_preparation": "c10d0bd9837cdc9f8efa7a21390f87c9db30a61dfd665ffd075310ac051d9c29",
   "goalcontent_progress": "42f3dc89ad615bc3ca4a0eafd7a18b56c4080017b04f51ef78bb1f36c900168b",
   "goalcontent_question_count": "28490415f917210813c767539a8c266a213bc97ce9531a3c4e023cfdd58ef08e",
   "goalcontent_questions": "86540e1adc4818d36606c5e90a3db365338eb639659d04facdac2df5f4570b51",
-  "goalcontent_questions_source_edition": "5ee84f55b3cecd46ccca2f5bbfa97fdf82b5ad44f50460522e53226daf9d69f1",
-  "goalcontent_questions_source_latest": "2e514ddcf55cd117a16e722185a374b9680fe7ecebae84d7e2b487a906a59fa9",
-  "goalcontent_save_failed": "255d9085fbe63311761c4befaeae92c3ab4e8e6c451bd793ffa4197df1ff3945",
-  "goalcontent_see_all": "ed298165addab92ef9c0122434919386c3a7608e17fa6d13d6805dbd893ae498",
+  "goalcontent_questions_source_edition": "f3d7e360f494f90ca6d4042ed072ff23c87c53b5e4602a38547b9a3071fd6330",
+  "goalcontent_questions_source_latest": "2b53b41fcf450bb98b931db8409dacb92831faab384c632c4ed623551122a530",
+  "goalcontent_save_failed": "e53050f18dcb98e96d0c8d26e2c7f389382647d53971f857b7284d4d9eade100",
+  "goalcontent_see_all": "cc79c433736c9b3bc20261fa87b01828303e01ceed41011c0a435fc5c4ded417",
   "goalcontent_share_of_exam": "f6d9ca1718932f252bbbc1d2f1425db6f2f931b1bef814245e0766bdfd725499",
   "goalcontent_skill_count": "1508802b26642e8ee18977e7eabe582917a3587e246a909c2f401687f3aa2ffc",
   "goalcontent_skill_learning": "4f4f66cab68acc2ebf33c6513ed3c6c4ea1e03565a8a5a3bf9c43fc6d4d42f81",
   "goalcontent_skill_mastered": "e8ec56fd344cb92ad8f1ca33c47d07da76cce435edff31cd8c6c223665d29d2d",
   "goalcontent_skill_solid": "d86b8b37e2fe14a4f46228d5b1672769c9c8a2323fe20a828bd5b702e7f0d41c",
   "goalcontent_skills": "024b2a9b898fd4e6cc17c3f3f1d667c59fd80891033beeba00fe4e0dfaaaba44",
-  "goalcontent_skipped_known": "c103099e4c3a23e40e01a095c64a8d8e30b6b6a451b8b9a1b4f876285e039b9f",
+  "goalcontent_skipped_known": "7b517d00bed8171eee6eda785d041a93277c0988d12a46e733e08060dadc2121",
   "goalcontent_start": "cc0854bb8b324a41aac7839102d140a50a3298942faad4506e8b76f1bebde64b",
   "goalcontent_studied": "260a27a1ffd6d7a3467ad774d19d11ffe648c2336e6e5b90598ad63ce84398ec",
-  "goalcontent_subject": "18addfae1a4a9d91cf794b5c9628ce3141cf9f40865192a9110307cb1deb8d9b",
+  "goalcontent_subject": "d90c5008a8438eb8d2269a43dc8d3024a29fc58593cf7e0e7674ea9cb6c877f0",
   "goalcontent_subject_chapter": "2a152d68609ee443b0732b6bd06aeefad0b05609d2523750b18603f3785c79d0",
-  "goalcontent_subject_count": "8e2c6dc7db9f19ea5faff5bbc036add9abe180ec6dfcdc6c39e1f170e8c50072",
-  "goalcontent_subject_missing": "c00f8cdcdfc6916e57e040876df8529c706b6cf83c9f66f54d33b00970fc3ce2",
-  "goalcontent_subject_skipped": "643d3b4e3ff58cf9af5bb43bb0d52d28ae074ba9f84d0a9c99fd94ce2f3917c2",
+  "goalcontent_subject_count": "69c3efc6458a5e3eaf13fdfec1b205ab2665a3476d2dcd8b0b5df609923f21d5",
+  "goalcontent_subject_missing": "bd4ef7668abf2e43d419716d584ab34f4f4488072b1300d89cdc8c3d5e53e51d",
+  "goalcontent_subject_skipped": "59fb69074e12839f355c73ff8fe03099e66b4a63b6d57e12d7f68285751987de",
   "goalcontent_subject_time": "63e7304087c8ae7788593cbe75f907a8a330dcb0f99af4e0b94bf3678b246d0a",
-  "goalcontent_subjects": "ab8d3f1f05b4b836ab2fbee466ff36e53e5d07c120bed7ec4acc4ec4b5c882ec",
+  "goalcontent_subjects": "46863f044cc7cdee487ab68c0582f28c6bd73069c7e521fad7645c2bcfe5027d",
   "goalcontent_to_review": "316ef17bff975e00b718a6fb54dc7ff73c95fcaa429352c16755631ea243cc35",
   "goalcontent_topic_count": "fc54e1681b57ee282a1953c37538e628ded7d8b090a526fee484c30a11014c77",
-  "goalcontent_topic_in_progress": "55cb556bc5e7762569bec1eec255b184b35aedb7b56324b75ba5184f70dc7c56",
+  "goalcontent_topic_in_progress": "69af8d83741fcae042d4a6dac4bb6c72d0382c672f4b03f9f22bb07e46a50949",
   "goalcontent_topic_known": "26893b8e70743e2740089303a144ac7a5285d1c4961f087c111a83bf2847b6d0",
-  "goalcontent_topic_known_practice": "21317ef64b9eba39737943af2efe9d47ffad394fc1dc847808f7f20773c3bb6c",
-  "goalcontent_topic_known_reviews": "c30022c167bae8c7ace7c18d09278c884f60af84382445bc669858051c812324",
-  "goalcontent_topic_missing": "71c0188351466eddd89b6120315c20e7c12b7c3914262d6c61545f0206cfb641",
+  "goalcontent_topic_known_practice": "abc52fa2af5912a1659c3acc3764920f33f13b8db8b8322afc9b1d0b9c0c3153",
+  "goalcontent_topic_known_reviews": "a5e664d9cc84298061be364beffe7b6f5b3e04d47d3ff77e5be22c2cb006b809",
+  "goalcontent_topic_missing": "d0b7e0068e790c5a81e38a3e79c916e54617b71bd4e416cf499fe518f9a2f136",
   "goalcontent_topic_past_basics": "0ed0e8e11837d6efd77a2364e3b4a4fc78e37c00265a5a5380c96f195c2f040a",
-  "goalcontent_topic_skipped": "5f2bd877eb7c8fbcaa66647c1782b626f82da5995d8d5a86231857e7173e870a",
-  "goalcontent_topic_skipped_base": "1a5eee9bcd36a0c2907e0dd14b7dc46284a9974ae7e809176a9e7d10ef9df7f9",
+  "goalcontent_topic_skipped": "fd8156e50cebbe0ebf6779fb57e6d188245f2549a3199391f0651c8d81db4018",
+  "goalcontent_topic_skipped_base": "b1c820d01d8c3050a77a8ad2c87fda72bb19f43e9da941145097810ce4418d80",
   "goalcontent_topic_time": "c968d7e48c19ea585cde9b82bcedcce689c729f80252d0443a2dc9df7eb28cdf",
   "goalcontent_topic_to_study": "2902fbbbbff49b1fd1481863a8d73e61158a64e9462abf756f05b16f37adb9da",
   "goalcontent_topics": "d8cebe56769fa266e8c53d246c81058c5ad3b2b165de1a7b433e6aeb1657b558",
@@ -101,13 +101,13 @@
 -->
 <resources>
     <!-- The Plan's section listing an exam's subjects. -->
-    <string name="goalcontent_subjects">Asignaturas</string>
+    <string name="goalcontent_subjects">Materias</string>
     <!-- The Plan's section listing the plan's modules. -->
     <string name="goalcontent_modules">Módulos</string>
     <plurals name="goalcontent_subject_count">
-        <item quantity="one">%d asignatura</item>
-        <item quantity="many">%d asignaturas</item>
-        <item quantity="other">%d asignaturas</item>
+        <item quantity="one">%d materia</item>
+        <item quantity="many">%d materias</item>
+        <item quantity="other">%d materias</item>
     </plurals>
     <plurals name="goalcontent_module_count">
         <item quantity="one">%d módulo</item>
@@ -163,29 +163,29 @@
     <!-- Legend of a progress bar's parts. -->
     <string name="goalcontent_studied">Estudiado</string>
     <string name="goalcontent_known">Ya lo sabías</string>
-    <string name="goalcontent_new">Nuevo</string>
+    <string name="goalcontent_new">Ahora</string>
     <!-- An exam subject's estimated readiness. -->
     <string name="goalcontent_preparation">Preparación</string>
     <string name="goalcontent_coverage">Cobertura</string>
     <string name="goalcontent_mastery">Dominio</string>
     <!-- A subject's first answers to unseen questions that were right: "6 of 8 right". -->
     <string name="goalcontent_mastery_right">%1$s de %2$s correctas</string>
-    <string name="goalcontent_mastery_pending">Se muestra tras unas cuantas preguntas de práctica</string>
+    <string name="goalcontent_mastery_pending">Se muestra después de algunas preguntas de práctica</string>
     <string name="goalcontent_not_in_plan">No está en tu plan</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
-    <string name="goalcontent_also_in_plan">También está en tu plan</string>
+    <string name="goalcontent_also_in_plan">También en tu plan</string>
     <!-- A group of subjects the plan adds outside an exam's public notice. -->
-    <string name="goalcontent_beyond_notice">Más allá de la convocatoria</string>
+    <string name="goalcontent_beyond_notice">Fuera de la convocatoria</string>
     <!-- A group of subjects the plan adds outside a language certificate's official guide. -->
-    <string name="goalcontent_beyond_guide">Más allá de la guía oficial</string>
+    <string name="goalcontent_beyond_guide">Fuera de la guía oficial</string>
     <!-- %1$s is a link to the site that counted the questions. -->
-    <string name="goalcontent_questions_source_edition">Preguntas por asignatura en %1$s, según el recuento de %2$s.</string>
-    <string name="goalcontent_questions_source_latest">Preguntas por asignatura en el último examen, según el recuento de %1$s.</string>
+    <string name="goalcontent_questions_source_edition">Preguntas por materia en el %1$s, según el conteo de %2$s.</string>
+    <string name="goalcontent_questions_source_latest">Preguntas por materia en el examen más reciente, según el conteo de %1$s.</string>
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
-    <string name="goalcontent_course_weights_heavier">%1$s en %2$s tiene %3$s más de peso, así que tu plan le dedica más tiempo. Ponderaciones de %4$s.</string>
-    <string name="goalcontent_course_weights_even">%1$s en %2$s da el mismo peso a todas las partes del examen. Ponderaciones de %3$s.</string>
+    <string name="goalcontent_course_weights_heavier">%1$s en %2$s da más peso a %3$s, así que tu plan les dedica más tiempo. Fuente: %4$s.</string>
+    <string name="goalcontent_course_weights_even">%1$s en %2$s da el mismo peso a todas las partes del examen. Fuente: %3$s.</string>
     <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
-    <string name="goalcontent_subject">Asignatura</string>
+    <string name="goalcontent_subject">Materia</string>
     <!-- Eyebrow of a subject's page for a module of the learner's plan. -->
     <string name="goalcontent_module">Módulo</string>
     <string name="goalcontent_from_material">De tu material</string>
@@ -197,9 +197,9 @@
         <item quantity="other">%d temas saltados porque ya los conoces</item>
     </plurals>
     <plurals name="goalcontent_lessons_known_skipped">
-        <item quantity="one">%d lección saltada porque ya la conoces</item>
-        <item quantity="many">%d lecciones saltadas porque ya las conoces</item>
-        <item quantity="other">%d lecciones saltadas porque ya las conoces</item>
+        <item quantity="one">%d lección saltada porque ya conoces su contenido</item>
+        <item quantity="many">%d lecciones saltadas porque ya conoces su contenido</item>
+        <item quantity="other">%d lecciones saltadas porque ya conoces su contenido</item>
     </plurals>
     <!-- Opens the next chapter or lesson once some are done. -->
     <string name="goalcontent_continue">Continuar</string>
@@ -210,7 +210,7 @@
     <string name="goalcontent_topics_in_guide">Temas de la guía oficial</string>
     <string name="goalcontent_details">Detalles</string>
     <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
-    <string name="goalcontent_also">También</string>
+    <string name="goalcontent_also">Más opciones</string>
     <string name="goalcontent_questions">Preguntas</string>
     <string name="goalcontent_topics">Temas</string>
     <string name="goalcontent_chapters">Capítulos</string>
@@ -223,13 +223,13 @@
         <item quantity="many">%d lecciones saltadas</item>
         <item quantity="other">%d lecciones saltadas</item>
     </plurals>
-    <string name="goalcontent_subject_skipped">Has quitado esta asignatura de tu plan.</string>
+    <string name="goalcontent_subject_skipped">Quitaste esta materia de tu plan.</string>
     <string name="goalcontent_subject_time">No cabe en el tiempo que tienes.</string>
-    <string name="goalcontent_subject_missing">Tu plan aún no incluye esta asignatura.</string>
-    <string name="goalcontent_adjust_plan">Ajustar plan</string>
+    <string name="goalcontent_subject_missing">Tu plan aún no cubre esta materia.</string>
+    <string name="goalcontent_adjust_plan">Ajustar el plan</string>
     <!-- Puts a subject the learner took out back in their plan. -->
     <string name="goalcontent_bring_back">Volver a incluirla</string>
-    <string name="goalcontent_save_failed">No se ha guardado. Inténtalo de nuevo.</string>
+    <string name="goalcontent_save_failed">No se pudo guardar. Inténtalo de nuevo.</string>
     <plurals name="goalcontent_chapters_done">
         <item quantity="one">%d capítulo completado</item>
         <item quantity="many">%d capítulos completados</item>
@@ -253,43 +253,43 @@
         <item quantity="many">%d capítulos más</item>
         <item quantity="other">%d capítulos más</item>
     </plurals>
-    <string name="goalcontent_skipped_known">Saltado porque ya lo conoces</string>
+    <string name="goalcontent_skipped_known">Se saltó porque ya lo sabes</string>
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
     <string name="goalcontent_lessons_done">%1$s · %2$s completadas</string>
     <!-- A topic's state for screen readers. -->
     <string name="goalcontent_topic_known">Ya lo sabes</string>
-    <string name="goalcontent_topic_in_progress">En curso</string>
+    <string name="goalcontent_topic_in_progress">En progreso</string>
     <string name="goalcontent_topic_to_study">Por estudiar</string>
-    <string name="goalcontent_topic_known_reviews">Ya lo sabes · lo volverás a ver en tus repasos</string>
-    <string name="goalcontent_topic_known_practice">Ya lo sabes · lo volverás a ver al practicar</string>
-    <string name="goalcontent_topic_skipped">Has quitado esta asignatura de tu plan</string>
+    <string name="goalcontent_topic_known_reviews">Ya lo sabes · vuelve a aparecer en tus repasos</string>
+    <string name="goalcontent_topic_known_practice">Ya lo sabes · vuelve a aparecer en la práctica</string>
+    <string name="goalcontent_topic_skipped">Quitaste esta materia de tu plan</string>
     <string name="goalcontent_topic_past_basics">Empiezas después de lo básico</string>
-    <string name="goalcontent_topic_skipped_base">Has elegido saltarte este requisito previo</string>
+    <string name="goalcontent_topic_skipped_base">Elegiste saltar este requisito previo</string>
     <string name="goalcontent_topic_time">No cabe en el tiempo que tienes</string>
-    <string name="goalcontent_topic_missing">Aún no hay lecciones sobre esto</string>
+    <string name="goalcontent_topic_missing">Aún no hay lecciones sobre este tema</string>
     <!-- Marks a topic past exams asked a lot. -->
     <string name="goalcontent_appears_a_lot">Aparece mucho</string>
     <!-- %1$s is the "Appears a lot" mark. -->
-    <string name="goalcontent_frequency_material">Los temas marcados con %1$s son los que, según tu material, aparecen mucho. Les dedicarás más tiempo.</string>
-    <string name="goalcontent_frequency_past_exams">Los temas marcados con %1$s son los que más han aparecido en exámenes anteriores.</string>
+    <string name="goalcontent_frequency_material">Los temas marcados con %1$s son los que aparecen con frecuencia según tu material. Se les dedica más tiempo.</string>
+    <string name="goalcontent_frequency_past_exams">Los temas marcados con %1$s son los más frecuentes en exámenes anteriores.</string>
     <!-- %1$s is the "Appears a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
-    <string name="goalcontent_frequency_tagged_waits">Los temas marcados con %1$s son los que más han aparecido en exámenes anteriores (%2$s, según %3$s). Los que menos han aparecido tendrán que esperar.</string>
-    <string name="goalcontent_frequency_tagged">Los temas marcados con %1$s son los que más han aparecido en exámenes anteriores (%2$s, según %3$s). Les dedicarás más tiempo.</string>
+    <string name="goalcontent_frequency_tagged_waits">Los temas marcados con %1$s son los más frecuentes en exámenes anteriores (%2$s, según %3$s). Los menos frecuentes quedan para después.</string>
+    <string name="goalcontent_frequency_tagged">Los temas marcados con %1$s son los más frecuentes en exámenes anteriores (%2$s, según %3$s). Se les dedica más tiempo.</string>
     <!-- %1$s is what the source counted, %2$s a link to the source's site. -->
-    <string name="goalcontent_frequency_waits">Los temas que menos han aparecido en exámenes anteriores tendrán que esperar (%1$s, según %2$s).</string>
-    <string name="goalcontent_frequency_most">Dedicarás más tiempo a los temas que más han aparecido en exámenes anteriores (%1$s, según %2$s).</string>
+    <string name="goalcontent_frequency_waits">Los temas menos frecuentes en exámenes anteriores quedan para después (%1$s, según %2$s).</string>
+    <string name="goalcontent_frequency_most">Se dedica más tiempo a los temas más frecuentes en exámenes anteriores (%1$s, según %2$s).</string>
     <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
-    <string name="goalcontent_matrix_title">Qué preguntan los exámenes</string>
-    <string name="goalcontent_see_all">Ver todos: %1$s</string>
+    <string name="goalcontent_matrix_title">Lo que evalúan las preguntas</string>
+    <string name="goalcontent_see_all">Ver los %1$s</string>
     <!-- Eyebrow of a chapter's page: "Biology · Chapter 4". -->
     <string name="goalcontent_subject_chapter">%1$s · Capítulo %2$s</string>
     <string name="goalcontent_chapter_number">Capítulo %1$s</string>
     <string name="goalcontent_progress">Progreso</string>
     <string name="goalcontent_practice">Práctica</string>
     <string name="goalcontent_practice_chapter">Practicar este capítulo</string>
-    <string name="goalcontent_practice_daily_cap">Eso es todo por hoy para la práctica extra. La sesión de mañana retomará este capítulo.</string>
+    <string name="goalcontent_practice_daily_cap">Completaste la práctica extra de hoy. En la sesión de mañana retomarás este capítulo.</string>
     <string name="goalcontent_practice_nothing">Aún no hay nada que practicar en este capítulo.</string>
-    <string name="goalcontent_practice_failed">No ha funcionado. Vuelve a intentarlo en un momento.</string>
+    <string name="goalcontent_practice_failed">No funcionó. Vuelve a intentarlo en un momento.</string>
     <!-- Heading over material to look things up in, such as a mind map and a summary, rather than lessons to do. -->
     <string name="goalcontent_for_reference">Para consultar</string>
     <string name="goalcontent_chapter_summary">Resumen del capítulo</string>

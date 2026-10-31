@@ -2,56 +2,56 @@
 <!-- eloqnt-fingerprints-v1
 {
   "ceremony_belt": "318fd3d2a9fbacd62a1cf8f1cc835f485c58fcf91a6450d630075e056421c6d7",
-  "ceremony_belt_detail": "eee306c251f13e21c4a316fcd2c635e1c53982474acf6da7f46ceb0926218d6f",
-  "ceremony_belt_reached": "7b25190b81048b70236dc4aa8488df01b58a564146197303302e9d97fc9a3c75",
+  "ceremony_belt_detail": "69171dbe24d9e4fd1deab8772d5e0ad59892bf75a1624821b25c4669399421ec",
+  "ceremony_belt_reached": "cde99e88218124cc84c73d70389408dac97ce54aa32fa1b42f41a7a3651a240b",
   "ceremony_continue": "412e40f981e6a16035f28f161ce75b59b8d09a3bf6c61fde739ef3302cb50f10",
-  "ceremony_glasses_aviator": "7916108d144af960386b7987ec8b569bb22e2a3ab34530a35fb9c4395a585467",
-  "ceremony_glasses_aviator_detail": "f2e4a7a363d5434a186d43887b8e3d163851f4c202f472c7f9311f343048e6b3",
-  "ceremony_glasses_cat_eye": "4c842c3031a03b7a0b51551406eff4ac41eafa636f81392c68f1a9b26794f137",
-  "ceremony_glasses_cat_eye_detail": "a2baecef94d42a9aef878ab8f475653fdcd380245d746e5729d13c4604366a7b",
+  "ceremony_glasses_aviator": "23c26cf8aa7ab7ba9e2b0b9730e5bea7708766bfe26ea933663dd8b2c258d7a4",
+  "ceremony_glasses_aviator_detail": "c55cdfb265edb941a027ffe71deb7a87cfc6025d413197c899fab15b770112d6",
+  "ceremony_glasses_cat_eye": "797c891541b105e503946f591cb6c1ac83812611e4dc65ac67908a1b569e3b50",
+  "ceremony_glasses_cat_eye_detail": "e518078ce899504547b55d26bfba76c5a6e7c800019a8e57cefc7a8cbbf06ccb",
   "ceremony_glasses_monocle": "231a085cfa03c17162ca66da4f093848a466b28589afbb364871eb57870b9e4c",
   "ceremony_glasses_monocle_detail": "6c4ba268a0c3ad5461063dea2948a283c951e8169cecaf8adf05fefb9d4230a6",
-  "ceremony_glasses_new": "96f4a11af236581b1da03bf3a7f90a4fda1463ef32eed9fe27e2fb6204ae2bb9",
+  "ceremony_glasses_new": "e4f7e8e4144f645b464f399cebcce3478f5243f70c3ba5f70bd16303a06bfca9",
   "ceremony_glasses_new_detail": "34ee3a375891a4a8a4db55c84995c33474088dfc0b0b0c6baabff7f50e785e2d",
-  "ceremony_glasses_retro": "7e6cf999da704d89eb2554184231e649649bd61e59b46dde70b1618b0c061df1",
+  "ceremony_glasses_retro": "8954477724f346219addee6fc08ebb15f9aa8d4eb1ab60832f715d17dac05fa6",
   "ceremony_glasses_retro_detail": "5b5418829b1955c85a091853e24b8eb664c33e875309a712aad4ceefa2ba2f67",
-  "ceremony_glasses_star": "f8aed02b33bf493dd43fd5926a96492aed374eb513b8e6ba8f8540021483d1df",
+  "ceremony_glasses_star": "0532fa1cf59f1158b56e4557495efc7a7c264bf4e9d0dd2c39802ca9a46ddddb",
   "ceremony_glasses_star_detail": "759f1095c4c78f7f6f5ac86beae0314fbcd5b6c33ae0a7e878d5b25a70edba75",
-  "ceremony_grew_up": "b3973122b1261b3829796334d622404304834357bc82c457b6fdf85cfe508ae6",
-  "ceremony_new_belt": "4c3dfea8509bdb61094127ee4b1a2a8a7e0ff1af8e5dcccb667d4518cea0995b",
+  "ceremony_grew_up": "657c8aa83857e34a9fff645383ad4f3d26275f1b4577aa8d6c9b99373ebef5e0",
+  "ceremony_new_belt": "ddf4f51ac70e2cf97c58f587d02b3d8643dedbf88c0872e99687687dda9f927a",
   "ceremony_not_now": "41c1c303ad2f2ea604e3a98455ef85f1eb2cea9644ad052764a05939c9c84451",
-  "ceremony_stage_adult": "ce3b89cd5edd1ca98bf8b875a36843d865ac70d80e83cf6c6b9659d01e476fde",
-  "ceremony_stage_young": "961366730f5a7033e7f1930c5dc4af1ef60b7ff5450280e907839d48bc82b92c",
-  "ceremony_wear": "71d4b3269d7b88d13f6d88118fd0bb4793d15dbe2487373f744df8e2d39669c0"
+  "ceremony_stage_adult": "984c37058790145236d4fc97b695b85aafbadda5429596c31c4031aa37badb37",
+  "ceremony_stage_young": "4eec9ba17011d848089a92291c26870f80ea74aebae14fe67e993742e00a91a3",
+  "ceremony_wear": "32584307dbc96bebe6062ef1f18c9d9e798a5f44791ed3d1213ca37c6b66c4c5"
 }
 -->
 <resources>
     <!-- %1$s is the belt's name, such as Yellow belt. -->
     <string name="ceremony_belt">¡%1$s!</string>
-    <string name="ceremony_new_belt">¡Un cinturón nuevo!</string>
+    <string name="ceremony_new_belt">¡Un nuevo cinturón!</string>
     <!-- %1$s is a formatted amount of Brain Power, such as 1,000. -->
-    <string name="ceremony_belt_reached">Has alcanzado %1$s de Poder Mental aprendiendo.</string>
-    <string name="ceremony_belt_detail">Lo has conseguido con tu Poder Mental.</string>
+    <string name="ceremony_belt_reached">Alcanzaste %1$s de Poder Mental aprendiendo.</string>
+    <string name="ceremony_belt_detail">Lo ganaste con tu Poder Mental.</string>
     <!-- %1$s is the buddy's name. -->
-    <string name="ceremony_grew_up">¡%1$s ha crecido!</string>
+    <string name="ceremony_grew_up">¡%1$s creció!</string>
     <!-- %1$s is the buddy's name. -->
-    <string name="ceremony_stage_young">%1$s ya es joven y sigue creciendo con tu Poder Mental.</string>
+    <string name="ceremony_stage_young">%1$s ya está en la etapa Joven y sigue creciendo con tu Poder Mental.</string>
     <!-- %1$s is the buddy's name. -->
-    <string name="ceremony_stage_adult">%1$s ya es adulto y ha crecido gracias a tu Poder Mental.</string>
-    <string name="ceremony_glasses_star">¡Gafas de estrella!</string>
+    <string name="ceremony_stage_adult">%1$s ya está en la etapa Adulta y terminó de crecer gracias a tu Poder Mental.</string>
+    <string name="ceremony_glasses_star">¡Lentes de estrella!</string>
     <string name="ceremony_glasses_star_detail">Por ganar tu primer desafío de la fase.</string>
-    <string name="ceremony_glasses_aviator">¡Gafas de aviador!</string>
-    <string name="ceremony_glasses_aviator_detail">Por completar tu primer Desafío semanal.</string>
-    <string name="ceremony_glasses_cat_eye">¡Gafas de ojo de gato!</string>
-    <string name="ceremony_glasses_cat_eye_detail">Por completar todas las misiones en 7 días diferentes.</string>
-    <string name="ceremony_glasses_retro">¡Gafas retro!</string>
+    <string name="ceremony_glasses_aviator">¡Lentes de aviador!</string>
+    <string name="ceremony_glasses_aviator_detail">Por completar tu primer desafío semanal.</string>
+    <string name="ceremony_glasses_cat_eye">¡Lentes de ojo de gato!</string>
+    <string name="ceremony_glasses_cat_eye_detail">Por completar todas las misiones en 7 días distintos.</string>
+    <string name="ceremony_glasses_retro">¡Lentes retro!</string>
     <string name="ceremony_glasses_retro_detail">Por completar 50 repasos.</string>
     <string name="ceremony_glasses_monocle">¡Un monóculo!</string>
     <string name="ceremony_glasses_monocle_detail">Por ganar el desafío final.</string>
-    <string name="ceremony_glasses_new">¡Gafas nuevas!</string>
+    <string name="ceremony_glasses_new">¡Lentes nuevos!</string>
     <string name="ceremony_glasses_new_detail">Vienen con tu compañero.</string>
     <string name="ceremony_continue">Continuar</string>
     <!-- Button after earning glasses: puts them on the learner's buddy. -->
-    <string name="ceremony_wear">Ponérselas</string>
+    <string name="ceremony_wear">Ponérselos</string>
     <string name="ceremony_not_now">Ahora no</string>
 </resources>
