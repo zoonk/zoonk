@@ -1035,7 +1035,11 @@ describe(courseOutlineWorkflow, () => {
 
       const runs = inputs.map((input) => courseOutlineWorkflow(input));
 
-      await expect(Promise.race(runs)).resolves.toStrictEqual({ status: "busy" });
+      await expect(Promise.race(runs)).resolves.toStrictEqual({
+        nextRunId: "started-run",
+        status: "busy",
+      });
+
       loserDone.resolve(null);
       await Promise.all(runs);
 
@@ -2352,7 +2356,11 @@ describe(courseOutlineWorkflow, () => {
       scope,
     };
 
-    await expect(courseOutlineWorkflow(input)).resolves.toStrictEqual({ status: "joined" });
+    await expect(courseOutlineWorkflow(input)).resolves.toStrictEqual({
+      nextRunId: "started-run",
+      status: "joined",
+    });
+
     expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [{ ...input, attempt: 1 }]);
   });
 
@@ -2372,7 +2380,11 @@ describe(courseOutlineWorkflow, () => {
       scope,
     };
 
-    await expect(courseOutlineWorkflow(input)).resolves.toStrictEqual({ status: "joined" });
+    await expect(courseOutlineWorkflow(input)).resolves.toStrictEqual({
+      nextRunId: "started-run",
+      status: "joined",
+    });
+
     expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [{ ...input, attempt: 2 }]);
   });
 
