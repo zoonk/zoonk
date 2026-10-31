@@ -83,10 +83,10 @@
   "plan_change_bases_skip": "d72e51411c8c2c3fc0276c2198975d0690f8c8f1b72017b38c2acabd0ad87ba7",
   "plan_change_calendar_says": "fbaeb3fafa4926f3c414700fde5cb3d88c03a3a8e624d7244df654961f35ff04",
   "plan_change_calendar_sets_date": "7f2432a4c36f06ba8b35328d8733aea6ce631a271002876e3b55e511027d16b3",
-  "plan_change_changed": "c8263e2b857a4fd56af2a824af7abc5aad2602909ad89debd878229904d5d09c",
+  "plan_change_changed": "7e383554b54869b4af40fcc62acba13c2607076ca0760d86dfabdd08b2979020",
   "plan_change_daily_time": "08d3da56ac0751025026e1931390c6fc7773642c8765c512abefcf427dfa2b92",
-  "plan_change_daily_time_changed": "6ca3b90507743bbc1896ef1b6f4b6d9c3b361c16590208c45c86631cc4eb2790",
-  "plan_change_date_moved": "a7b5a1606875982806838741fb08b0c9940fe35dd4f9260d26778c8887a651be",
+  "plan_change_daily_time_changed": "906f510192e7e1b48fe4898351013d08eb6b0667d115919d4a59c32897b7fdbf",
+  "plan_change_date_moved": "e1b733f9680f94f64c811f20579eb8c778ff5e4c125565d6b67efc722ae8dd3b",
   "plan_change_days_time": "cd59dc800f64fe8ffd4ce6b7c1651b6c05b680e9cc8f54e712e4de8583d8c957",
   "plan_change_easier": "b3700fa1c66c25d10bf0c850299ef8d742af532e70ce5895366f915978c2b794",
   "plan_change_ends_around_instead": "19338e4f02df5bb8d2a2954e42db39eabdb8321a65e064aa908de3766eeb96a7",
@@ -146,7 +146,7 @@
   "plan_change_phase_dates_late_many": "0db34192c8388e55786c52bd4e51a986104c6d1c20bd730f492cd2bc1b630823",
   "plan_change_phase_dates_late_one": "dc15f8232a0848e055b9871cc83dbedd56e4a9c904d906142a0be076b92e5201",
   "plan_change_phase_dates_lessons": "2587838391f125337bf49daba7cc498debbc31ce18594541fcd17d9312cf38e7",
-  "plan_change_phase_dates_moved": "796fa7c7354a856781e86e2958a79ff97e066bec13ce0726464ccc4a9617ec7c",
+  "plan_change_phase_dates_moved": "2d3007175b16e70770e18f1d89896e51edb64b11336621f0ddf40e2f604bf1af",
   "plan_change_phase_dates_outcomes": "391f33d0c247bb04c5b1b562df06c8e1ea42cc07d1b4164e5a401ff89360de31",
   "plan_change_phase_dates_rest_many": "632e4eefdd948f10cdf23eaac8481390f041ccd058be5671ab2328f3506469c2",
   "plan_change_phase_dates_rest_one": "052b1bec995104c8fd4f22c4fb663668c63dce2c5c206316926026c7427fabf1",
@@ -196,7 +196,7 @@
   "plan_change_unwritten_skill": "192c1438aa96df07917b414eefc6d478612a5d4ecc15a93a052b6c7025ca7f5a",
   "plan_change_usual_difficulty": "295c7e8337079b13a8a4bb1850dba485beba841b089738496eed1db97ad35cf6",
   "plan_change_weekly_challenge": "21fc91657c62b9bf49531aef9928092e37919acc482ea743f8daa99d962ef745",
-  "plan_change_weekly_challenge_moved": "cbd1d2ef96f3227eb035e0bebc6ebe2124b6333f0b4f8857a3730a6af2907a1a",
+  "plan_change_weekly_challenge_moved": "4c57875366444c75ae3331c6b09a97e2b8d07acfe6130c8e55d0867a22daaa7f",
   "plan_change_weekly_challenges_move": "a1162476fa187c7b2662cf1cde93376c37bdf1b322861597567e0aec02ac3ff8",
   "plan_change_weekly_challenges_on": "809833764e28a52452695d15f379233806060aa2b594467b66456e24ec766b1d",
   "plan_change_weekly_mocks_move": "6aed5680d70ccc72177db33598803b687f53251c7215694fe75b4c655d1ff1ae",
@@ -922,7 +922,7 @@
     <string name="plan_change_today_changed">계획에 반영되고, 오늘의 학습도 그에 맞춰 진행돼요.</string>
     <string name="plan_change_today_unchanged">다음 학습일부터 계획에 반영돼요. 오늘의 학습은 그대로예요.</string>
     <string name="plan_change_from_now_on">앞으로 이 내용에 맞춰 계획이 진행돼요.</string>
-    <string name="plan_change_changed">계획이 바뀌어요.</string>
+    <string name="plan_change_changed">계획이 바뀌었어요.</string>
     <string name="plan_change_own_level_first">새로운 수준에 맞춰 %1$s부터 학습해요.</string>
     <string name="plan_change_rebalance">가장 연습이 필요한 %1$s 영역에 시간을 더 써요.</string>
     <string name="plan_change_follows_notice">계획은 시험 공고를 기준으로 해요.</string>
@@ -956,11 +956,11 @@
     <string name="plan_change_suggest_harder">더 어려운 내용.</string>
     <string name="plan_change_suggest_easier">더 쉬운 내용.</string>
     <string name="plan_change_suggest_usual_difficulty">보통 난이도의 레슨.</string>
-    <string name="plan_change_daily_time_changed">하루 학습 시간이 %1$s으로 바뀌어요.</string>
+    <string name="plan_change_daily_time_changed">하루에 %1$s씩 공부하도록 바꿨어요.</string>
     <string name="plan_change_rest_day">%1$s: 쉬는 날이에요.</string>
     <string name="plan_change_days_time">%1$s: 하루 %2$s씩 학습해요.</string>
     <string name="plan_change_light_week">%1$s부터 일주일 동안은 학습 시간을 절반으로 줄여요.</string>
-    <string name="plan_change_weekly_challenge_moved">주간 챌린지 날짜가 %1$s로 바뀌어요.</string>
+    <string name="plan_change_weekly_challenge_moved">주간 챌린지 날짜가 %1$s로 바뀌었어요.</string>
     <!-- %1$s is one or more activities joined as a list, such as "Listening" or "New words and Writing". -->
     <string name="plan_change_activities_left_out">%1$s을(를) 레슨에서 제외해요.</string>
     <!-- %1$s is one or more activities joined as a list, such as "Listening" or "New words and Writing". -->
@@ -977,8 +977,8 @@
     <plurals name="plan_change_skills_come_in">
         <item quantity="other">%1$s을(를) 계획에 포함해요.</item>
     </plurals>
-    <string name="plan_change_date_moved">날짜가 %1$s로 바뀌어요.</string>
-    <string name="plan_change_phase_dates_moved">단계별 날짜가 바뀌어 목표 날짜 전에 더 많은 레슨을 공부할 수 있어요.</string>
+    <string name="plan_change_date_moved">날짜가 %1$s로 바뀌었어요.</string>
+    <string name="plan_change_phase_dates_moved">단계별 날짜가 바뀌어서 목표 날짜 전에 더 많은 레슨을 마칠 수 있어요.</string>
     <string name="plan_change_fit_lessons">학습 시간에 맞는 분량의 레슨이 계획에 포함돼요.</string>
     <string name="plan_change_exam_choice">%1$s 학습을 %2$s에 맞춰 계획해요.</string>
     <string name="plan_change_no_deadline">기한 없이 편한 페이스로 모든 내용을 배워요.</string>

@@ -10802,9 +10802,9 @@ msgid "{document, select, notice {Your plan follows the exam notice.} other {You
 msgstr "{document, select, notice {Il tuo piano segue il bando dell’esame.} other {Il tuo piano segue la guida ufficiale dell’esame.}}"
 
 #: src/plan/use-change-sentence.ts
-msgctxt "B5ATMk"
-msgid "Daily time becomes {time}."
-msgstr "Il tempo giornaliero passa a {time}."
+msgctxt "n-S3-o"
+msgid "Daily time changed to {time}."
+msgstr "Il tempo giornaliero è ora di {time}."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "bkqP1O"
@@ -10812,9 +10812,9 @@ msgid "A light week from {date}, at half the time."
 msgstr "Una settimana più leggera dal {date}, con il tempo dimezzato."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "ouCzFr"
-msgid "The weekly challenge moves to {date}."
-msgstr "La sfida settimanale si sposta al {date}."
+msgctxt "QB_qg5"
+msgid "The weekly challenge moved to {date}."
+msgstr "La sfida settimanale è stata spostata al {date}."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "VzP2ac"
@@ -10841,17 +10841,17 @@ msgctxt "ZIyDwb"
 msgid "{count, plural, one {{skills} comes into your plan.} other {{skills} come into your plan.}}"
 msgstr "{count, plural, one {{skills} entra nel tuo piano.} other {{skills} entrano nel tuo piano.}}"
 
-#. The goal's date moves, earlier or later. {date} is a day, like "May 5".
+#. The goal's date moved, earlier or later. {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
 #: src/plan/use-choice-sentence.ts
-msgctxt "k1CuqL"
-msgid "The date moves to {date}."
-msgstr "La data passa al {date}."
+msgctxt "FunQxr"
+msgid "Date moved to {date}."
+msgstr "Data spostata al {date}."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "1feYRq"
-msgid "Your phase dates move, so more lessons fit before your goal's date."
-msgstr "Le date delle fasi si spostano per far rientrare più lezioni prima della data del tuo obiettivo."
+msgctxt "TXiOHF"
+msgid "Your phase dates moved, so more lessons fit before your goal's date."
+msgstr "Le date delle fasi sono state spostate, così c’è spazio per più lezioni prima della data del tuo obiettivo."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "2rqIF8"
@@ -10864,9 +10864,10 @@ msgid "Your plan studies {subject} for {group}."
 msgstr "Il tuo piano prevede lo studio di {subject} per {group}."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "e5pmPD"
-msgid "Your plan changes."
-msgstr "Il tuo piano cambia."
+#: src/plan/use-coverage-sentence.ts
+msgctxt "5m7gA2"
+msgid "Your plan changed."
+msgstr "Il tuo piano è cambiato."
 
 #. "With the exam around {date}" means "and the exam is around {date}". {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
@@ -10979,11 +10980,6 @@ msgstr "Fuori dal tuo piano: {topics}."
 msgctxt "iNSgWW"
 msgid "Your placement answers changed what fits by your date."
 msgstr "Le tue risposte al test di livello hanno cambiato ciò che puoi completare entro la data scelta."
-
-#: src/plan/use-coverage-sentence.ts
-msgctxt "5m7gA2"
-msgid "Your plan changed."
-msgstr "Il tuo piano è cambiato."
 
 #: src/plan/use-effect-counts.ts
 msgctxt "_K4MVL"

@@ -10802,9 +10802,9 @@ msgid "{document, select, notice {Your plan follows the exam notice.} other {You
 msgstr "{document, select, notice {시험 공고에 맞춘 계획이에요.} other {시험 공식 안내서에 맞춘 계획이에요.}}"
 
 #: src/plan/use-change-sentence.ts
-msgctxt "B5ATMk"
-msgid "Daily time becomes {time}."
-msgstr "하루 학습 시간이 {time}으로 바뀌어요."
+msgctxt "n-S3-o"
+msgid "Daily time changed to {time}."
+msgstr "하루에 {time}씩 공부하도록 바꿨어요."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "bkqP1O"
@@ -10812,9 +10812,9 @@ msgid "A light week from {date}, at half the time."
 msgstr "{date}부터 일주일 동안은 학습 시간을 절반으로 줄여요."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "ouCzFr"
-msgid "The weekly challenge moves to {date}."
-msgstr "주간 챌린지 날짜가 {date}로 바뀌어요."
+msgctxt "QB_qg5"
+msgid "The weekly challenge moved to {date}."
+msgstr "주간 챌린지 날짜가 {date}로 바뀌었어요."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "VzP2ac"
@@ -10841,17 +10841,17 @@ msgctxt "ZIyDwb"
 msgid "{count, plural, one {{skills} comes into your plan.} other {{skills} come into your plan.}}"
 msgstr "{count, plural, other {{skills}이(가) 계획에 추가돼요.}}"
 
-#. The goal's date moves, earlier or later. {date} is a day, like "May 5".
+#. The goal's date moved, earlier or later. {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
 #: src/plan/use-choice-sentence.ts
-msgctxt "k1CuqL"
-msgid "The date moves to {date}."
-msgstr "날짜가 {date}로 바뀌어요."
+msgctxt "FunQxr"
+msgid "Date moved to {date}."
+msgstr "날짜가 {date}로 바뀌었어요."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "1feYRq"
-msgid "Your phase dates move, so more lessons fit before your goal's date."
-msgstr "단계별 날짜가 바뀌어 목표 날짜 전에 더 많은 레슨을 공부할 수 있어요."
+msgctxt "TXiOHF"
+msgid "Your phase dates moved, so more lessons fit before your goal's date."
+msgstr "단계별 날짜가 바뀌어서 목표 날짜 전에 더 많은 레슨을 마칠 수 있어요."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "2rqIF8"
@@ -10864,9 +10864,10 @@ msgid "Your plan studies {subject} for {group}."
 msgstr "{subject} 학습을 {group}에 맞춰 계획해요."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "e5pmPD"
-msgid "Your plan changes."
-msgstr "계획이 바뀌어요."
+#: src/plan/use-coverage-sentence.ts
+msgctxt "5m7gA2"
+msgid "Your plan changed."
+msgstr "계획이 바뀌었어요."
 
 #. "With the exam around {date}" means "and the exam is around {date}". {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
@@ -10979,11 +10980,6 @@ msgstr "계획에서 제외된 주제: {topics}."
 msgctxt "iNSgWW"
 msgid "Your placement answers changed what fits by your date."
 msgstr "실력 진단 답변에 따라 목표일까지 배울 수 있는 내용이 바뀌었어요."
-
-#: src/plan/use-coverage-sentence.ts
-msgctxt "5m7gA2"
-msgid "Your plan changed."
-msgstr "계획이 바뀌었어요."
 
 #: src/plan/use-effect-counts.ts
 msgctxt "_K4MVL"
