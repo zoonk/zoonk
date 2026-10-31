@@ -3308,12 +3308,12 @@ msgstr "Se eliminó tu cuenta."
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "VqYaaL"
 msgid "Check the year and try again."
-msgstr "Comprueba el año y vuelve a intentarlo."
+msgstr "Revisa el año y vuelve a intentarlo."
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "TCf3Ld"
 msgid "We couldn't save it. Check your connection and try again."
-msgstr "No hemos podido guardarlo. Comprueba tu conexión y vuelve a intentarlo."
+msgstr "No pudimos guardarlo. Revisa tu conexión y vuelve a intentarlo."
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "wqPXuM"
@@ -3323,7 +3323,7 @@ msgstr "¿En qué año naciste?"
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "u7SgKI"
 msgid "We ask everyone once."
-msgstr "Se lo preguntamos a todo el mundo una sola vez."
+msgstr "Se lo preguntamos a todos una sola vez."
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "Wr357G"
@@ -3343,12 +3343,12 @@ msgstr "Aún no"
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "7dMiHf"
 msgid "You need to be {minimumAge, number} or older to use Zoonk, so we'll log you out. We'll be here when you are."
-msgstr "Para usar Zoonk necesitas tener {minimumAge, number} años o más, así que cerraremos tu sesión. Estaremos aquí cuando los cumplas."
+msgstr "Necesitas tener {minimumAge, number} años o más para usar Zoonk, así que cerraremos tu sesión. Aquí estaremos cuando los cumplas."
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "GuXkQM"
 msgid "You need to be {minimumAge, number} or older to use Zoonk. We'll be here when you are."
-msgstr "Para usar Zoonk necesitas tener {minimumAge, number} años o más. Estaremos aquí cuando los cumplas."
+msgstr "Necesitas tener {minimumAge, number} años o más para usar Zoonk. Aquí estaremos cuando los cumplas."
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "kAEQyV"
@@ -3401,7 +3401,7 @@ msgstr "Prueba de enfoque"
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 msgctxt "eBoUdl"
 msgid "Start lesson"
-msgstr "Empezar lección"
+msgstr "Empezar la lección"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx
@@ -3577,7 +3577,7 @@ msgstr "Datos de uso"
 #: src/app/[lang]/usage-data-notice.tsx
 msgctxt "9LGL8u"
 msgid "Can we use cookies to see how you use Zoonk, so we can improve it? <link>Privacy</link>"
-msgstr "¿Podemos usar cookies para saber cómo usas Zoonk y así mejorarlo? <link>Privacidad</link>"
+msgstr "¿Podemos usar cookies para ver cómo usas Zoonk y así mejorarlo? <link>Privacidad</link>"
 
 #: src/app/[lang]/usage-data-notice.tsx
 msgctxt "pvtgR2"
