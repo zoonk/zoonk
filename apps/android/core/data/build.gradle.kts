@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.coil.network.okhttp)
     implementation(libs.okhttp.sse)
     implementation(libs.tink.android)
+    releaseImplementation(libs.sentry.okhttp)
 
     // Account and Plus.
     implementation(libs.billing.ktx)

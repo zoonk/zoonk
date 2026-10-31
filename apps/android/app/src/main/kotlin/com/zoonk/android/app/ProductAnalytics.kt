@@ -82,8 +82,8 @@ private class PostHogAnalytics(
             capturePushNotificationOpened = false
             preloadFeatureFlags = false
             sendFeatureFlagEvent = false
-            // Opting out stops capture, but the queue still uploads what it holds and reset still asks for
-            // feature flags. A request that may not leave is answered here, which drops what it carried.
+            // Opted out, PostHog still uploads its queue and asks for flags, so this answers what may not leave:
+            // https://github.com/PostHog/posthog-android/issues/919
             httpClient =
                 OkHttpClient
                     .Builder()

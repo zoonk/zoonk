@@ -1,5 +1,3 @@
-import io.sentry.android.gradle.extensions.InstrumentationFeature
-
 plugins {
     id("zoonk.android.application")
     alias(libs.plugins.aboutlibraries.android)
@@ -65,11 +63,9 @@ sentry {
     autoUploadProguardMapping = providers.gradleProperty("sentryUploadMapping").map { it.toBoolean() }.orElse(false)
     telemetry = false
     autoInstallation.enabled = false
-    tracingInstrumentation {
-        // File paths can name a learner's files, and logcat lines from libraries can carry signed URLs.
-        features = setOf(InstrumentationFeature.OKHTTP)
-        logcat.enabled = false
-    }
+    // Its instrumentation varies with Gradle's caches, so :core:data's release setup traces OkHttp in code:
+    // https://github.com/getsentry/sentry-android-gradle-plugin/issues/1492
+    tracingInstrumentation.enabled = false
 }
 
 aboutLibraries {
@@ -122,7 +118,6 @@ dependencies {
 
     // Crash and error reports.
     implementation(libs.sentry.android)
-    implementation(libs.sentry.okhttp)
 
     // Product analytics.
     implementation(libs.posthog.android)

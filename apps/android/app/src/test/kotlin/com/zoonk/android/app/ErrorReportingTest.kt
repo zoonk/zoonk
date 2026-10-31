@@ -2,13 +2,9 @@ package com.zoonk.android.app
 
 import io.sentry.Breadcrumb
 import io.sentry.Hint
-import io.sentry.SentryEvent
 import io.sentry.SentryOptions
 import io.sentry.SpanId
 import io.sentry.SpanStatus
-import io.sentry.exception.ExceptionMechanismException
-import io.sentry.exception.SentryHttpClientException
-import io.sentry.protocol.Mechanism
 import io.sentry.protocol.SentryId
 import io.sentry.protocol.SentrySpan
 import io.sentry.protocol.SentryTransaction
@@ -16,8 +12,6 @@ import io.sentry.protocol.TransactionInfo
 import io.sentry.util.PropagationTargetsUtils
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -62,25 +56,11 @@ class ErrorReportingTest {
         assertFalse(PropagationTargetsUtils.contain(targets, "https://files.example.com/a.png?from=https://api.zoonk.com/v1"))
     }
 
-    @Test
-    fun failedRequestsAreDroppedAndCrashesKept() {
-        val failedRequest =
-            SentryEvent(
-                ExceptionMechanismException(Mechanism(), SentryHttpClientException("HTTP Client Error with status code: 500"), null),
-            )
-        assertNull(sent(failedRequest))
-
-        val crash = SentryEvent(IllegalStateException())
-        assertSame(crash, sent(crash))
-    }
-
     private fun sent(breadcrumb: Breadcrumb) =
         options.beforeBreadcrumb.let { if (it == null) breadcrumb else it.execute(breadcrumb, Hint()) }
 
     private fun sent(transaction: SentryTransaction) =
         options.beforeSendTransaction.let { if (it == null) transaction else it.execute(transaction, Hint()) }
-
-    private fun sent(event: SentryEvent) = options.beforeSend.let { if (it == null) event else it.execute(event, Hint()) }
 
     private fun span(vararg data: Pair<String, Any>) =
         SentrySpan(

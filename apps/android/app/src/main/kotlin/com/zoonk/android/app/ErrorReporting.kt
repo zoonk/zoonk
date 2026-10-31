@@ -5,7 +5,6 @@ import io.sentry.Breadcrumb
 import io.sentry.SentryOptions
 import io.sentry.SpanDataConvention
 import io.sentry.android.core.SentryAndroid
-import io.sentry.exception.SentryHttpClientException
 import io.sentry.protocol.SentrySpan
 import java.util.regex.Pattern
 
@@ -23,8 +22,6 @@ internal fun SentryOptions.configureReporting(apiBaseUrl: String) {
     // The SDK sends trace headers to a URL that contains a target or matches it whole as a regex,
     // so this one is a regex for the API's URLs only.
     setTracePropagationTargets(listOf("^${Pattern.quote(apiBaseUrl)}/.*"))
-    // The API reports its own failures. OkHttp's Sentry interceptor, which the plugin adds, has no switch for these events.
-    beforeSend = SentryOptions.BeforeSendCallback { event, _ -> event.takeUnless { it.throwable is SentryHttpClientException } }
     // Query strings carry upload credentials, signatures and what learners search for.
     beforeBreadcrumb = SentryOptions.BeforeBreadcrumbCallback { breadcrumb, _ -> breadcrumb.apply { dropQuery() } }
     beforeSendTransaction =
