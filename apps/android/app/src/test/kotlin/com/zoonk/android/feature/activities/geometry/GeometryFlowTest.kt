@@ -328,6 +328,17 @@ class GeometryFlowTest {
     }
 
     @Test
+    fun lineCrossingDropsItsDragHintOnceTheAnswerIsChecked() {
+        play("lineCrossing.breakEven", isCorrect = true)
+
+        shows("Drag a line by its handle.")
+        rule.onNode(hasSetTextAction()).performTextInput("250")
+        harness.tap("Check")
+
+        rule.onNodeWithText("Drag a line by its handle.").assertDoesNotExist()
+    }
+
+    @Test
     fun lineCrossingMovesByDragTalkBackAndTap() {
         play("lineCrossing", isCorrect = true)
 

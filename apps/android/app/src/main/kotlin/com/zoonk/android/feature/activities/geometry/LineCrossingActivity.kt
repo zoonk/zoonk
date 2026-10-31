@@ -173,7 +173,7 @@ private fun LineCrossingActivity(props: ActivityProps) {
                 ChangeRow(fields.yLabel, yChange, isVertical = true)
                 ChangeRow(fields.xLabel, xChange, isVertical = false)
             }
-        } else {
+        } else if (!props.isChecked) {
             ActivityCanvasLabel(stringResource(R.string.activities_geometry_line_hint))
         }
 
