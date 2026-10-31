@@ -2,6 +2,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
+import { createSetUpGoalPlan } from "../../plans/_test-utils/set-up-plan";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { findPlanTimeToCover } from "../../plans/get-time-advice";
 import { endNoticeWait, startNoticeWait } from "../../plans/notice-wait";
@@ -54,7 +55,7 @@ describe("the onboarding view's plan readiness", () => {
 
   it("says the plan waits while its exam's notice is read, as the time answers do", async () => {
     const { goal, library } = await setup();
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
     await startNoticeWait({ goalId: goal.id });
 
     await expect(readReadiness(goal.id)).resolves.toStrictEqual({
