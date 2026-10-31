@@ -39,7 +39,7 @@ msgstr "Wyloguj się"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "U3l-Q9"
 msgid "Home page"
-msgstr "Przejdź do strony głównej"
+msgstr "Strona główna"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
@@ -133,7 +133,7 @@ msgstr "W katalogu"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "zMX-mq"
 msgid "Ask {buddy}: “{question}”"
-msgstr "Zapytaj: {buddy} („{question}”)"
+msgstr "Zapytaj (odpowie {buddy}): „{question}”"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "t-HGE_"
@@ -190,7 +190,7 @@ msgstr "Popracuj nad błędami"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "z6HKe1"
 msgid "Ask {buddy}…"
-msgstr "Zapytaj: {buddy}…"
+msgstr "Zapytaj, a {buddy} odpowie…"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
@@ -517,7 +517,7 @@ msgstr "Twój plan od tego rozdziału"
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "NCLSU6"
 msgid "Start today, at your level"
-msgstr "Zacznij dziś, na swoim poziomie"
+msgstr "Zacznij dziś na swoim poziomie"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
 msgctxt "H_k_3P"
@@ -628,7 +628,7 @@ msgstr "Nie mieści się"
 #: src/app/[lang]/(home)/_components/goal-measure.tsx
 msgctxt "ArogzQ"
 msgid "{count, plural, =0 {# of {total, number} lessons} one {# of {total, number} lessons} other {# of {total, number} lessons}}"
-msgstr "{count, plural, =0 {# z {total, number} lekcji} one {# lekcja z {total, number}} few {# lekcje z {total, number}} other {# lekcji z {total, number}}}"
+msgstr "{count, plural, =0 {# z {total, number} lekcji} other {# z {total, number} lekcji}}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-chapter-row.tsx
 msgctxt "OGR3YM"
@@ -872,7 +872,7 @@ msgstr "Dział"
 #: src/app/[lang]/(app)/(learn)/content/units/[chapterId]/page.tsx
 msgctxt "9dC4eV"
 msgid "A unit of your language plan, with its lessons and how far you are."
-msgstr "Dział twojego planu nauki języka, jego lekcje i twoje postępy."
+msgstr "Dział twojego planu nauki języka: lekcje i twoje postępy."
 
 #: src/app/[lang]/(app)/(learn)/exam/page.tsx
 msgctxt "9HjIgh"
@@ -918,6 +918,7 @@ msgid "Answer them and we'll plan every day until you reach your goal."
 msgstr "Odpowiedz na nie, a zaplanujemy naukę na każdy dzień, aż osiągniesz cel."
 
 #: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
+#: src/app/[lang]/birth-year-gate.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Kontynuuj"
@@ -945,12 +946,12 @@ msgstr "Witaj ponownie"
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "N2AOpV"
 msgid "Your quick explanation"
-msgstr "Twoje krótkie wyjaśnienie"
+msgstr "Twoje szybkie wyjaśnienie"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "Iqgfb9"
 msgid "Quick explanation"
-msgstr "Krótkie wyjaśnienie"
+msgstr "Szybkie wyjaśnienie"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "kgu6gE"
@@ -1025,7 +1026,7 @@ msgstr "Potrzebujemy jeszcze kilku odpowiedzi, by dokończyć twój plan. Cel: {
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "dMgVfu"
 msgid "Setting up"
-msgstr "Tworzenie planu"
+msgstr "W trakcie konfiguracji"
 
 #: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 msgctxt "irPOsS"
@@ -1151,9 +1152,9 @@ msgid "Delete your account?"
 msgstr "Usunąć konto?"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "hL_UdI"
-msgid "Your goals, plans, progress, memory, feedback and uploads are deleted for good. This can't be undone."
-msgstr "Twoje cele, plany, postępy, zapamiętane informacje, opinie i przesłane pliki zostaną trwale usunięte. Nie da się tego cofnąć."
+msgctxt "yF2UF2"
+msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
+msgstr ""
 
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -1210,15 +1211,17 @@ msgstr "Tak zwracają się do ciebie Zoonk i twój kumpel"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Imię"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "vLl7z0"
-msgid "3-30 characters. Letters, numbers, and underscores only."
-msgstr "3–30 znaków. Tylko litery, cyfry i podkreślenia."
+msgctxt "wubfpa"
+msgid "3-30 characters. Letters a–z, numbers, and underscores only."
+msgstr ""
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
@@ -1262,6 +1265,12 @@ msgid "Choose your buddy, sounds, a daily time limit and the app's language."
 msgstr "Wybierz kumpla, dźwięki, dzienny limit czasu i język aplikacji."
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "cXBJ7U"
+msgid "Privacy"
+msgstr "Prywatność"
+
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "BbrYZc"
 msgid "Your buddy, lessons and language, the way you like them."
 msgstr "Twój kumpel, lekcje i język po twojemu."
@@ -1276,20 +1285,234 @@ msgctxt "KTQxC5"
 msgid "What Zoonk remembers to give you examples and plans that fit your life."
 msgstr "To, co Zoonk pamięta, by dopasować przykłady i plany do twojego życia."
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "UWVETE"
-msgid "Cancel subscription"
-msgstr "Anuluj subskrypcję"
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "Jgc-3V"
+msgid "Choose how to cancel"
+msgstr ""
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "kjXmSN"
-msgid "Unable to manage your subscription. Contact us at hello@zoonk.com"
-msgstr "Nie możemy zarządzać twoją subskrypcją. Napisz do nas na hello@zoonk.com"
+#. Label for why the subscription ends now, in a legal cancellation form
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "AkCxS_"
+msgid "Reason"
+msgstr ""
 
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "C_0PBN"
+msgid "Briefly, why you can't keep Plus until the end of the period."
+msgstr ""
+
+#. Confirms withdrawing from the contract with a full refund. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Widerruf bestätigen”, in French “Confirmer la rétractation”, in Spanish “Confirmar desistimiento”, in Portuguese “Confirmar retratação”, in Italian “Conferma recesso”, in Polish “Potwierdź odstąpienie od umowy”.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "JdkOCO"
+msgid "Confirm withdrawal"
+msgstr ""
+
+#. Confirms canceling the subscription, at the end of the period or now for an important reason. In German it must read exactly “Jetzt kündigen” (BGB § 312k).
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "AmzBg2"
+msgid "Cancel now"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "KEqLnF"
+msgid "We'll email you the confirmation."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "sy-pv5"
+msgid "Email"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "p1P-hQ"
+msgid "Request"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "z_wUXE"
+msgid "Received"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "L3xzht"
+msgid "We've refunded the full {amount} to the payment method you used. Your bank usually shows it within 5 to 10 business days."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "4sPQbT"
+msgid "We've refunded {amount} for the days left to the payment method you used. Your bank usually shows it within 5 to 10 business days."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "RBJRQ0"
+msgid "We've refunded {amount} for the months that haven't started to the payment method you used. Your bank usually shows it within 5 to 10 business days."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "zG9LME"
+msgid "Plus has ended."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "-g6ZnF"
+msgid "You keep Plus until {date}, then it ends."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "a6637b"
+msgid "We've emailed the confirmation to {email}."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "qO091u"
 msgid "Your subscription will end on <mono>{date}</mono>."
 msgstr "Twoja subskrypcja zakończy się <mono>{date}</mono>."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "SBWnEw"
+msgid "We couldn't cancel your subscription. Try again or email hello@zoonk.com."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+msgctxt "0sJrli"
+msgid "That option isn't available anymore. Check your choice above and try again."
+msgstr ""
+
+#. The 14-day withdrawal from the contract with its full refund. Use the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "dTs6Jp"
+msgid "We received your withdrawal."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "aeHrbi"
+msgid "We received your cancellation."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "S8L_pb"
+msgid "If {email} has Plus from our website, the confirmation will arrive there within a few minutes. No email? Check it's the address you subscribed with, or write to hello@zoonk.com."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "RKaCAK"
+msgid "Subscribed in the App Store or Google Play? This doesn't cancel it. Cancel it there."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "_kuMS2"
+msgid "You keep Plus until the period you paid for ends. After a yearly renewal, it ends with the current month, and we refund the rest."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "aMFeUo"
+msgid "Cancel at the end of the period"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "eCYQKH"
+msgid "Within 14 days of subscribing. Plus ends right away, and we refund everything."
+msgstr ""
+
+#. The 14-day withdrawal from the contract with its full refund. In brackets, the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "67jMfM"
+msgid "Full refund (withdrawal)"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "M1J5Bi"
+msgid "Plus ends right away, and we refund the days left."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "5Avfh5"
+msgid "End now for an important reason"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "D8gqFG"
+msgid "The one you use for Zoonk"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "c2I4F9"
+msgid "We couldn't send your request. Try again or email hello@zoonk.com."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "JmEP0L"
+msgid "Check your name and email, then try again."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "cEOHN2"
+msgid "Cancel Plus"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "qsB1Um"
+msgid "For Plus bought on our website. No login needed."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "ObvuQ4"
+msgid "Your last payment didn't go through. Canceling stops us from trying again."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "tXpyKb"
+msgid "Stop the unpaid renewal"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "FLm13g"
+msgid "For the {count, plural, one {# month} other {# months}} that haven't started, we refund {amount}."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "St4jDv"
+msgid "You won't be charged again."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "HJBzay"
+msgid "Keep Plus until {date}"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "rM1iWC"
+msgid "Plus ends right away, and we refund {amount}. You can do this until {date}."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "Je1aal"
+msgid "Plus ends right away, and we refund {amount} for the days left."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "8PqZ9h"
+msgid "Plus ends right away."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "t5tErU"
+msgid "There's no subscription to cancel on {email}."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "ta4t1h"
+msgid "Plus, yearly"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+msgctxt "7VS06t"
+msgid "Plus, monthly"
+msgstr ""
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "AucmVG"
@@ -1302,9 +1525,14 @@ msgid "Current billing period ends on <mono>{date}</mono>."
 msgstr "Bieżący okres rozliczeniowy kończy się <mono>{date}</mono>."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "UWVETE"
+msgid "Cancel subscription"
+msgstr "Anuluj subskrypcję"
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "CrGYez"
 msgid "Subscription ending"
-msgstr "Subskrypcja dobiega końca"
+msgstr "Subskrypcja wygasa"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "3a5wL8"
@@ -1326,7 +1554,7 @@ msgstr "Free"
 #: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
 msgctxt "kkHvAa"
 msgid "<mono>{used, number}/{limit, number}</mono> buddy messages used today"
-msgstr "Wykorzystane dziś wiadomości do kumpla: <mono>{used, number}/{limit, number}</mono>"
+msgstr "Wykorzystano dziś <mono>{used, number}/{limit, number}</mono> wiadomości do kumpla"
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "3iCRcP"
@@ -1356,7 +1584,17 @@ msgstr "Tą subskrypcją zarządza Zoonk. Jeśli potrzebujesz pomocy w jej zmian
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "5CI3KH"
 msgid "Contact support"
-msgstr "Skontaktuj się z pomocą techniczną"
+msgstr "Skontaktuj się z pomocą"
+
+#: src/app/[lang]/(app)/(settings)/subscription/refund-offer.tsx
+msgctxt "6vciLq"
+msgid "Until {date}, you can still end Plus now and get a full refund."
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/refund-offer.tsx
+msgctxt "nXq8w6"
+msgid "Get a full refund"
+msgstr ""
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 msgctxt "bF03Os"
@@ -1412,7 +1650,7 @@ msgstr "Zacznij naukę, aby śledzić swoje postępy"
 #: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
 msgctxt "4IVFWL"
 msgid "Go to Today"
-msgstr "Przejdź do „Dzisiaj”"
+msgstr "Przejdź do zakładki Dziś"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/lib/public/public-labels.ts
@@ -1463,6 +1701,7 @@ msgctxt "QbGIBZ"
 msgid "Your stats"
 msgstr "Twoje statystyki"
 
+#. Legend of a heatmap, from the lightest to the darkest squares.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 msgctxt "Xsvev8"
 msgid "Activity from less to more"
@@ -1481,7 +1720,7 @@ msgstr "Więcej"
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 msgctxt "-eNLo_"
 msgid "{date} · {count, plural, =0 {No study} one {# activity} other {# activities}}"
-msgstr "{date} · {count, plural, =0 {Brak nauki} one {# aktywność} other {# aktywności}}"
+msgstr "{date} · {count, plural, =0 {Bez nauki} one {# aktywność} other {# aktywności}}"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
@@ -1635,13 +1874,14 @@ msgstr "Osiągnięto maksymalny poziom"
 #: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
 msgctxt "Cm04Yp"
 msgid "Next level"
-msgstr "Następny poziom"
+msgstr "Kolejny poziom"
 
 #: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
 msgctxt "cmc2-s"
 msgid "{color, select, yellow {To Yellow belt} orange {To Orange belt} green {To Green belt} blue {To Blue belt} purple {To Purple belt} brown {To Brown belt} red {To Red belt} gray {To Gray belt} black {To Black belt} other {To the next belt}}"
 msgstr "{color, select, yellow {Do żółtego pasa} orange {Do pomarańczowego pasa} green {Do zielonego pasa} blue {Do niebieskiego pasa} purple {Do fioletowego pasa} brown {Do brązowego pasa} red {Do czerwonego pasa} gray {Do szarego pasa} black {Do czarnego pasa} other {Do następnego pasa}}"
 
+#. Label above the points still needed to reach that level.
 #: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
 msgctxt "57EFxN"
 msgid "To level {level}"
@@ -1700,7 +1940,7 @@ msgstr "Wieczór"
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
 msgctxt "VcCKQU"
 msgid "{count, plural, =0 {No answers} one {# answer} other {# answers}}"
-msgstr "{count, plural, =0 {Na razie # odpowiedzi} one {# odpowiedź} other {# odpowiedzi}}"
+msgstr "{count, plural, =0 {Brak odpowiedzi} one {# odpowiedź} other {# odpowiedzi}}"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
 msgctxt "2oIGIh"
@@ -1720,7 +1960,7 @@ msgstr "Każdy dzień"
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "wmdZZD"
 msgid "Any time"
-msgstr "Każda pora"
+msgstr "O każdej porze"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "QF6BDw"
@@ -2113,11 +2353,13 @@ msgctxt "CsR4zq"
 msgid "SAT in {month}"
 msgstr "Egzamin ósmoklasisty: {month}"
 
+#. An example goal's name. Use your language's name for Mexico City.
 #: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "7iOCQZ"
-msgid "Spanish for Madrid"
-msgstr "Hiszpański na przeprowadzkę do Madrytu"
+msgctxt "3parBE"
+msgid "Spanish for Mexico City"
+msgstr ""
 
+#. Use your language's name for London.
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "PnbhyK"
 msgid "English for London"
@@ -2148,12 +2390,12 @@ msgstr "Analityk danych"
 #: src/app/[lang]/(home)/_components/final-call.tsx
 msgctxt "PYDioW"
 msgid "The big day"
-msgstr "Ważny dzień"
+msgstr "Wielki dzień"
 
 #: src/app/[lang]/(home)/_components/final-call.tsx
 msgctxt "g39LXe"
 msgid "What's your big day?"
-msgstr "Jaki ważny dzień cię czeka?"
+msgstr "Jaki wielki dzień cię czeka?"
 
 #: src/app/[lang]/(home)/_components/goal-measure.tsx
 msgctxt "s4s2qc"
@@ -2305,7 +2547,7 @@ msgstr "{time} dziennie"
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "goalSwitcher.8PP61v"
 msgid "{days, plural, =0 {The day is here} one {# day left} other {# days left}}"
-msgstr "{days, plural, =0 {To już dziś} one {Został # dzień} few {Zostały # dni} many {Zostało # dni} other {Zostało # dnia}}"
+msgstr "{days, plural, =0 {To już dziś} one {Został # dzień} few {Zostały # dni} other {Zostało # dni}}"
 
 #: src/app/[lang]/(home)/_components/hero-window.tsx
 msgctxt "Ecf4N6"
@@ -2336,7 +2578,7 @@ msgstr "Przykładowe plany. Twój uwzględnia cel, czas na naukę i to, co już 
 #: src/app/[lang]/opengraph-image.tsx
 msgctxt "hV7Lpg"
 msgid "Know what to study every day until the big day."
-msgstr "Wiesz, czego się uczyć każdego dnia, aż nadejdzie ten ważny dzień."
+msgstr "Wiesz, czego się uczyć każdego dnia aż do wielkiego dnia."
 
 #: src/app/[lang]/(home)/_components/home-hero.tsx
 #: src/app/[lang]/opengraph-image.tsx
@@ -2349,6 +2591,7 @@ msgctxt "UDq71K"
 msgid "get ready for the ENEM in {month}"
 msgstr "przygotować się do matury, termin: {month}"
 
+#. The page below shows a plan for the SAT, so keep the SAT.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "voOKaq"
 msgid "get ready for the SAT in {month}"
@@ -2359,10 +2602,11 @@ msgctxt "XmrixE"
 msgid "get promoted to data analyst by {month}"
 msgstr "awansować na stanowisko analityka danych, termin: {month}"
 
+#. An example goal a learner might type; {month} is a month name. Use your language's name for Mexico City.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "Kiy_DO"
-msgid "speak Spanish for my move to Madrid in {month}"
-msgstr "mówić po hiszpańsku przed przeprowadzką do Madrytu, termin: {month}"
+msgctxt "vF1uwi"
+msgid "speak Spanish for my move to Mexico City in {month}"
+msgstr ""
 
 #. An example goal a learner might type; {month} is a month name. Use your language's name for London.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
@@ -2556,7 +2800,7 @@ msgstr "Drapieżniki jedzą mniej niż ich ofiary"
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
-msgstr "Poprawna odpowiedź"
+msgstr "Poprawna"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "BxleoZ"
@@ -2842,22 +3086,23 @@ msgctxt "TCZIsQ"
 msgid "Real problem · Sales by region"
 msgstr "Praktyczne zadanie · Sprzedaż według regionów"
 
+#. The buddy answers a learner of Spanish. Keep only “departamento” and “apartamento” in Spanish, the words being taught; translate the rest, Mexico and Mexico City included.
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "3Yv6Eb"
-msgid "Both work. In Spain people usually say “piso” for a flat in a building. “Apartamento” often means a small one, like a holiday rental, so “piso” sounds more natural when you're renting in Madrid."
-msgstr "Oba słowa pasują. W Hiszpanii na mieszkanie w bloku zwykle mówi się „piso”. „Apartamento” często oznacza małe mieszkanie, na przykład wynajmowane na wakacje, więc „piso” brzmi naturalniej, gdy wynajmujesz mieszkanie w Madrycie."
+msgctxt "720M2K"
+msgid "Both work. In Mexico people usually say “departamento” for a flat in a building, so it sounds more natural when you're renting in Mexico City."
+msgstr ""
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "iyPucV"
-msgid "Why “piso” and not “apartamento”?"
-msgstr "Dlaczego „piso”, a nie „apartamento”?"
+msgctxt "L7mfuM"
+msgid "Why “departamento” and not “apartamento”?"
+msgstr ""
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "00sc5X"
 msgid "Lesson · Calling about an apartment"
 msgstr "Lekcja · Rozmowa w sprawie mieszkania"
 
-#. The buddy answers a learner of English. Keep only “flat” and “apartment” in English, the words being taught; translate the rest, London and the US included.
+#. The buddy answers a learner of English. Keep only “flat” and “apartment” in English, the words being taught; translate the rest, London and the US included. “there” is London.
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "4teyr4"
 msgid "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there."
@@ -2897,7 +3142,7 @@ msgstr "Nie wiesz, co dalej? Zapytaj Zu."
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "HRHTTM"
 msgid "Your AI study buddy explains any question as simply as you need, right where you got stuck."
-msgstr "Twój kumpel do nauki z AI odpowie na każde pytanie tak prosto, jak potrzebujesz, dokładnie tam, gdzie pojawia się problem."
+msgstr "Twój kumpel do nauki z AI odpowiada na każde pytanie tak prosto, jak potrzebujesz, dokładnie tam, gdzie coś sprawia ci trudność."
 
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "HGiiLi"
@@ -2914,6 +3159,7 @@ msgctxt "uzFoxW"
 msgid "I know a few things"
 msgstr "Trochę już wiem"
 
+#. An answer to how much the learner already knows about the topic.
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "wouTdw"
 msgid "The basics"
@@ -3007,7 +3253,7 @@ msgstr "Twój plan się zmienił"
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "bW7B87"
 msgid "New"
-msgstr "Teraz"
+msgstr "Nowe"
 
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "K0Lp_g"
@@ -3099,7 +3345,7 @@ msgstr "Wczoraj"
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "yesterdaySwitch.cMaydB"
 msgid "Studied"
-msgstr "Nauka"
+msgstr "Udało się pouczyć"
 
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "yesterdaySwitch.1Gku3Z"
@@ -3159,7 +3405,7 @@ msgstr "Powiedz Zoonkowi, do czego się przygotowujesz, np. do egzaminu lub prze
 #: src/app/[lang]/(home)/page.tsx
 msgctxt "201rSY"
 msgid "Zoonk: A study plan for every day until the big day"
-msgstr "Zoonk: Plan nauki na każdy dzień aż do ważnego dnia"
+msgstr "Zoonk: Plan nauki na każdy dzień aż do wielkiego dnia"
 
 #: src/app/[lang]/(home)/page.tsx
 #: src/components/auth-gate.tsx
@@ -3174,6 +3420,56 @@ msgstr "Zacznij za darmo"
 msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "Usunięto twoje konto."
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "VqYaaL"
+msgid "Check the year and try again."
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "TCf3Ld"
+msgid "We couldn't save it. Check your connection and try again."
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "wqPXuM"
+msgid "What year were you born?"
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "u7SgKI"
+msgid "We ask everyone once."
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "Wr357G"
+msgid "Birth year"
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "dUCA4K"
+msgid "Not now"
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "WCgBMi"
+msgid "Not just yet"
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "7dMiHf"
+msgid "You need to be {minimumAge, number} or older to use Zoonk, so we'll log you out. We'll be here when you are."
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "GuXkQM"
+msgid "You need to be {minimumAge, number} or older to use Zoonk. We'll be here when you are."
+msgstr ""
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "kAEQyV"
+msgid "OK"
+msgstr ""
 
 #: src/app/[lang]/challenge/[planItemId]/page.tsx
 #: src/app/[lang]/checkpoint/[blockId]/page.tsx
@@ -3196,7 +3492,7 @@ msgstr "Przejdź na stronę główną"
 #: src/app/[lang]/essay/[blockId]/page.tsx
 msgctxt "Jo0iJd"
 msgid "Writing practice"
-msgstr "Ćwiczenia z pisania"
+msgstr "Ćwiczenie pisania"
 
 #: src/app/[lang]/explain/[goalId]/explain-client.tsx
 msgctxt "UOYMne"
@@ -3217,6 +3513,11 @@ msgstr "Chcę dogłębnie zrozumieć temat: {topic}"
 msgctxt "-3M8u-"
 msgid "Focus test"
 msgstr "Test priorytetów"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+msgctxt "eBoUdl"
+msgid "Start lesson"
+msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx
@@ -3274,7 +3575,7 @@ msgstr "Zoonk przygotuje ją, gdy zaczniesz. Zajmuje to minutę lub dwie."
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "RFCwI6"
 msgid "Starting…"
-msgstr "Zaczynamy…"
+msgstr "Rozpoczynamy…"
 
 #: src/app/[lang]/mistakes/practice/page.tsx
 msgctxt "HGnX5e"
@@ -3384,6 +3685,26 @@ msgctxt "KGN7UU"
 msgid "This chapter"
 msgstr "Ten rozdział"
 
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "zNLs8L"
+msgid "Usage data"
+msgstr ""
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "9LGL8u"
+msgid "Can we use cookies to see how you use Zoonk, so we can improve it? <link>Privacy</link>"
+msgstr ""
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "pvtgR2"
+msgid "Decline"
+msgstr ""
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "sjzLbX"
+msgid "Accept"
+msgstr ""
+
 #: src/app/auth/apple/route.ts
 msgctxt "5JUHBB"
 msgid "Go back to Zoonk"
@@ -3449,7 +3770,7 @@ msgstr "{count, plural, one {# szybka lekcja} few {# szybkie lekcje} many {# szy
 #: src/components/catalog/area-study.ts
 msgctxt "T9NkkS"
 msgid "{fitting, plural, =0 {# of {total, number} lessons fit} one {# of {total, number} lessons fit} other {# of {total, number} lessons fit}}"
-msgstr "{fitting, plural, =0 {Mieści się # z {total, number} lekcji} one {Mieści się # lekcja z {total, number}} few {Mieszczą się # lekcje z {total, number}} other {Mieści się # lekcji z {total, number}}}"
+msgstr "{fitting, plural, =0 {# z {total, number} lekcji mieści się} few {# z {total, number} lekcji mieszczą się} other {Mieści się # z {total, number} lekcji}}"
 
 #: src/components/catalog/area-study.ts
 msgctxt "XP3dEr"
@@ -3489,12 +3810,12 @@ msgstr "Po tym rozdziale"
 #: src/components/catalog/course-exam-eyebrow.tsx
 msgctxt "U-M99k"
 msgid "Exam around {dates} · {days, plural, =0 {today} one {about # day left} other {about # days left}}"
-msgstr "Egzamin około {dates} · {days, plural, =0 {dzisiaj} one {został mniej więcej # dzień} few {zostały mniej więcej # dni} many {zostało mniej więcej # dni} other {zostało mniej więcej # dnia}}"
+msgstr "Egzamin około {dates} · {days, plural, =0 {dziś} one {pozostało około # dnia} other {pozostało około # dni}}"
 
 #: src/components/catalog/course-exam-eyebrow.tsx
 msgctxt "_of7g2"
 msgid "Exam on {dates} · {days, plural, =0 {today} one {# day left} other {# days left}}"
-msgstr "Egzamin {dates} · {days, plural, =0 {dzisiaj} one {został # dzień} few {zostały # dni} many {zostało # dni} other {zostało # dnia}}"
+msgstr "Egzamin {dates} · {days, plural, =0 {dziś} one {pozostał # dzień} few {pozostały # dni} other {pozostało # dni}}"
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "aaZjUM"
@@ -3509,7 +3830,7 @@ msgstr "na ukończenie całego kursu od podstaw przy nauce po {minutes, plural, 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "JR79VT"
 msgid "Starting today, you'd finish around <strong>{month}</strong>."
-msgstr "Jeśli zaczniesz dziś, orientacyjny termin ukończenia to <strong>{month}</strong>."
+msgstr "Jeśli zaczniesz dziś, przewidywany termin ukończenia to <strong>{month}</strong>."
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "lM5n28"
@@ -3519,7 +3840,7 @@ msgstr "+ {count, plural, one {# dodatkowa lekcja} few {# dodatkowe lekcje} othe
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "vEgeBR"
 msgid "by {date}, at {time} a day, Monday to Friday, what comes up most first: {count, plural, =0 {lessons} one {# lesson} other {# lessons}} already in the course, and more written as you reach them."
-msgstr "do {date}, po {time} dziennie, od poniedziałku do piątku, najpierw to, co pojawia się najczęściej: {count, plural, =0 {lekcje już dostępne w kursie} one {# lekcja już dostępna w kursie} few {# lekcje już dostępne w kursie} other {# lekcji już dostępnych w kursie}}, a kolejne przygotujemy, gdy do nich dojdziesz."
+msgstr "do {date}, przy {time} nauki dziennie od poniedziałku do piątku, zaczynając od najczęstszych zagadnień: {count, plural, =0 {lekcje} one {# lekcja} few {# lekcje} other {# lekcji}} już w kursie, a kolejne przygotowujemy w miarę twoich postępów."
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "lhlS-t"
@@ -3675,7 +3996,7 @@ msgstr "Prześlij"
 #: src/components/public/course-start-failure.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
-msgstr "Załóż bezpłatne konto"
+msgstr "Utwórz bezpłatne konto"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "m5_Dxl"
@@ -3695,12 +4016,12 @@ msgstr "Plan dopasowany do twojego celu i terminu"
 #: src/components/pricing/free-plan.tsx
 msgctxt "Bj_ci-"
 msgid "For an exam: the diagnostic, your plan and {days, plural, =7 {its first week} one {its first day} other {its first # days}}"
-msgstr "Do egzaminu: test diagnostyczny, twój plan i nauka przez {days, plural, =7 {pierwszy tydzień (# dni)} one {# dzień} other {pierwsze # dni}}"
+msgstr "Przygotowanie do egzaminu: test diagnostyczny, twój plan i {days, plural, =7 {pierwszy tydzień nauki} one {pierwszy dzień nauki} other {pierwsze # dni nauki}}"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "5ZDN6U"
 msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
-msgstr "Kumpel AI do nauki: {count, plural, one {# wiadomość} other {# wiadomości}} dziennie"
+msgstr "Kumpel do nauki z AI: {count, plural, one {# wiadomość} other {# wiadomości}} dziennie"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "JfcsFI"
@@ -3725,7 +4046,7 @@ msgstr "Egzaminy próbne z limitem czasu jak na prawdziwym egzaminie"
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "qYv-RO"
 msgid "An AI study buddy whenever you're stuck"
-msgstr "Kumpel AI do nauki zawsze, gdy utkniesz"
+msgstr "Kumpel do nauki z AI zawsze, gdy potrzebujesz pomocy"
 
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "GEER8U"
@@ -3792,15 +4113,16 @@ msgctxt "EMZyX7"
 msgid "save {amount}"
 msgstr "oszczędź {amount}"
 
+#. Reassurance next to the subscribe button: the learner can cancel whenever they want.
 #: src/components/pricing/plus-plan.tsx
 msgctxt "dyhF_4"
 msgid "Cancel anytime."
-msgstr "Zrezygnuj w dowolnej chwili."
+msgstr "Możesz zrezygnować w dowolnej chwili."
 
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "jPlE1k"
 msgid "Get ready for your exam, new job or move with Zoonk Plus: unlimited lessons and goals, full exam prep with mock exams and your AI study buddy. Start free."
-msgstr "Przygotuj się do egzaminu, nowej pracy lub przeprowadzki z Zoonkiem Plus: lekcje i cele bez limitu, pełne przygotowanie do egzaminu z egzaminami próbnymi i twój kumpel do nauki oparty na AI. Zacznij za darmo."
+msgstr "Przygotuj się do egzaminu, nowej pracy lub przeprowadzki z Zoonkiem Plus: lekcje i cele bez limitu, pełne przygotowanie do egzaminu z egzaminami próbnymi i twój kumpel do nauki z AI. Zacznij bezpłatnie."
 
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "DfjjXa"
@@ -3816,12 +4138,12 @@ msgstr "Zacznij za darmo. <rest>Przejdź na Plus, gdy chcesz mieć wszystko.</re
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "xrpz7X"
 msgid "Free covers one goal at a time. Plus covers every goal, all the way to the big day."
-msgstr "Free obejmuje jeden cel naraz. Plus obejmuje wszystkie cele aż do wielkiego dnia."
+msgstr "Pakiet Free obejmuje jeden cel naraz. Plus obejmuje każdy cel aż do wielkiego dnia."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "1vrigA"
 msgid "Start free with {count, plural, one {# lesson} other {# lessons}}, no account needed. With a free account, you get:"
-msgstr "Zacznij od {count, plural, other {# lekcji}} za darmo, bez zakładania konta. Z bezpłatnym kontem otrzymujesz:"
+msgstr "Zacznij od {count, plural, one {# bezpłatnej lekcji} other {# bezpłatnych lekcji}} bez zakładania konta. Z bezpłatnym kontem zyskujesz:"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "PKf2T8"
@@ -3842,12 +4164,12 @@ msgstr "{month, plural, one {# lekcja} few {# lekcje} other {# lekcji}} miesięc
 #: src/components/pricing/plus-questions.tsx
 msgctxt "PVvHeY"
 msgid "{days, plural, =7 {The first week} one {The first day} other {The first # days}} of exam prep"
-msgstr "{days, plural, =7 {Pierwszy tydzień (# dni)} one {#. dzień} other {Pierwsze # dni}} przygotowań do egzaminu"
+msgstr "{days, plural, =7 {Pierwszy tydzień} one {Pierwszy dzień} other {Pierwsze # dni}} przygotowań do egzaminu"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "FZOFIX"
 msgid "{tutor, plural, one {# message to your buddy} other {# messages to your buddy}} and {uploads, plural, one {# upload} other {# uploads}} a day"
-msgstr "{tutor, plural, one {# wiadomość do kumpla} other {# wiadomości do kumpla}} i {uploads, plural, one {# przesłanie pliku} few {# przesłania pliku} other {# przesłań pliku}} dziennie"
+msgstr "Dziennie {tutor, plural, one {# wiadomość do kumpla} other {# wiadomości do kumpla}} i możliwość przesłania {uploads, plural, one {# pliku} other {# plików}}"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "QKrdr3"
@@ -3900,14 +4222,20 @@ msgid "Can I get a refund?"
 msgstr "Czy mogę otrzymać zwrot pieniędzy?"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "LHV1sa"
-msgid "Just <link>contact us</link> and tell us what happened. We'll do our best to get you a refund."
-msgstr "Po prostu <link>napisz do nas</link> i opowiedz, co się stało. Postaramy się zwrócić ci pieniądze."
+msgctxt "ilifrv"
+msgid "If you subscribed on our website, <link>cancel</link> within 14 days for a full refund. After a yearly renewal, canceling refunds the months that haven't started. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
+msgstr ""
+
+#: src/components/pricing/plus-questions.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "xkr-zo"
+msgid "Terms"
+msgstr "Regulamin"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "4YTeTA"
 msgid "{days, plural, =7 {Diagnostic and week 1} one {Diagnostic and day 1} other {Diagnostic and the first # days}}"
-msgstr "{days, plural, =7 {Test wstępny i pierwszy tydzień (# dni)} one {Test wstępny i #. dzień} other {Test wstępny i pierwsze # dni}}"
+msgstr "{days, plural, =7 {Test diagnostyczny i 1. tydzień} one {Test diagnostyczny i 1. dzień} other {Test diagnostyczny i pierwsze # dni}}"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "NsXWWN"
@@ -3932,7 +4260,7 @@ msgstr "Plan przygotowań do egzaminu"
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "2ZZIpk"
 msgid "{days, plural, =7 {Free: the diagnostic and week 1 · Plus: every week after it to exam day, with mock exams} one {Free: the diagnostic and day 1 · Plus: every day after it to exam day, with mock exams} other {Free: the diagnostic and the first # days · Plus: every day after them to exam day, with mock exams}}"
-msgstr "{days, plural, =7 {Free: test wstępny i pierwszy tydzień (# dni) · Plus: wszystkie kolejne tygodnie do dnia egzaminu, z egzaminami próbnymi} one {Free: test wstępny i #. dzień · Plus: wszystkie kolejne dni do dnia egzaminu, z egzaminami próbnymi} other {Free: test wstępny i pierwsze # dni · Plus: wszystkie kolejne dni do dnia egzaminu, z egzaminami próbnymi}}"
+msgstr "{days, plural, =7 {Free: test diagnostyczny i 1. tydzień · Plus: każdy kolejny tydzień aż do egzaminu, z egzaminami próbnymi} one {Free: test diagnostyczny i 1. dzień · Plus: każdy kolejny dzień aż do egzaminu, z egzaminami próbnymi} other {Free: test diagnostyczny i pierwsze # dni · Plus: każdy kolejny dzień aż do egzaminu, z egzaminami próbnymi}}"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "Q-aTo1"
@@ -3947,7 +4275,7 @@ msgstr "Każdy inny cel"
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "KshPEJ"
 msgid "{count, plural, one {About one short lesson each weekday.} other {About # short lessons each weekday.}}"
-msgstr "{count, plural, one {Mniej więcej # krótka lekcja w każdy dzień roboczy.} few {Mniej więcej # krótkie lekcje w każdy dzień roboczy.} many {Mniej więcej # krótkich lekcji w każdy dzień roboczy.} other {Mniej więcej # krótkiej lekcji w każdy dzień roboczy.}}"
+msgstr "{count, plural, one {Około jednej krótkiej lekcji w każdy dzień roboczy.} other {Około # krótkich lekcji w każdy dzień roboczy.}}"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "en1DQp"
@@ -3997,7 +4325,7 @@ msgstr "Nie udało się rozpocząć tego kursu."
 #: src/components/public/day-list.tsx
 msgctxt "m9CrfE"
 msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
-msgstr "{done, plural, =0 {# z {total, number} ukończonych} other {Ukończono # z {total, number}}}"
+msgstr "{done, plural, =0 {# z {total, number} ukończono} other {Ukończono # z {total, number}}}"
 
 #: src/components/public/footer-explore-links.tsx
 msgctxt "3snD6d"
@@ -4049,15 +4377,17 @@ msgctxt "Vge-RX"
 msgid "Footer"
 msgstr "Stopka"
 
+#. Footer link to cancel a subscription, which German law requires (BGB § 312k). In German it must read exactly “Verträge hier kündigen”.
 #: src/components/public/public-footer.tsx
-msgctxt "cXBJ7U"
-msgid "Privacy"
-msgstr "Prywatność"
+msgctxt "gdJ1Ic"
+msgid "Cancel your subscription here"
+msgstr ""
 
+#. Footer link to withdraw within 14 days, which EU law requires. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Vertrag widerrufen”, in French “Renoncer au contrat ici”, in Spanish “Desistir del contrato aquí”, in Portuguese “Retrate-se do contrato aqui”, in Italian “Recedere dal contratto qui”, in Polish “Odstąp od umowy tutaj”.
 #: src/components/public/public-footer.tsx
-msgctxt "xkr-zo"
-msgid "Terms"
-msgstr "Regulamin"
+msgctxt "OxFgc6"
+msgid "Withdraw from contract here"
+msgstr ""
 
 #: src/components/public/public-footer.tsx
 msgctxt "k7JNE3"
