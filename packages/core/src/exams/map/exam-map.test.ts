@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getSubjectPoints } from "../../library/exams/subject-points";
-import { listSubjectShares } from "../../library/exams/subject-shares";
+import { listPlanShares, listSubjectShares } from "../../library/exams/subject-shares";
 import { buildExamMap } from "./exam-map";
 
 const citation = { passage: "…", sourceId: "notice" };
@@ -190,14 +190,55 @@ describe("the final score's formula", () => {
 
     expect(listSubjectShares({ ...structure, subjects }).at(-1)).toBe(0.5);
   });
+});
 
-  it("gives a qualifying test's subjects no share", () => {
-    const structure = scored({
-      scoring: { parts: [part("Paper I", 100), { ...part("Paper II", 80), qualifying: true }] },
-      subjects: [...grouped("Paper I", ["General Studies"]), ...grouped("Paper II", ["Aptitude"])],
-    });
+type Minimum = NonNullable<ExamStructure["mock"]>["scoring"]["parts"];
+
+function prelims(minimum: NonNullable<Minimum>[number]["minimum"]): ExamStructure {
+  return scored({
+    scoring: {
+      parts: [
+        { ...part("Paper I", 100), maxPoints: 200 },
+        { ...part("Paper II", 80), maxPoints: 200, minimum, qualifying: true },
+      ],
+    },
+    subjects: [...grouped("Paper I", ["General Studies"]), ...grouped("Paper II", ["CSAT"])],
+  });
+}
+
+describe("a qualifying test", () => {
+  it("counts for none of the result, so the map shows it outside the score", () => {
+    const structure = prelims({ unit: "percent", value: 33 });
+    const map = buildExamMap({ frequency: [], skills: [], structure });
 
     expect(listSubjectShares(structure)).toStrictEqual([1, 0]);
+
+    expect(map.subjects.map((item) => [item.name, item.share])).toStrictEqual([
+      ["General Studies", 1],
+      ["CSAT", 0],
+    ]);
+  });
+
+  it.each([
+    { minimum: { unit: "percent" as const, value: 33 }, name: "a percent" },
+    { minimum: { unit: "points" as const, value: 66 }, name: "points" },
+  ])(
+    "weighs in the plan what passing takes, its $name minimum of the half its points would have",
+    ({ minimum }) => {
+      const [general, aptitude] = listPlanShares(prelims(minimum));
+
+      expect(aptitude).toBeCloseTo(0.33 * 0.5);
+      expect(general).toBeCloseTo(1 - 0.33 * 0.5);
+    },
+  );
+
+  it("weighs in the plan what its points would have when the notice states no minimum", () => {
+    expect(listPlanShares(prelims(null))).toStrictEqual([0.5, 0.5]);
+  });
+
+  it("keeps the plan's counted shares as the result's when no test is qualifying", () => {
+    const structure = withFormula([term(["P1", "P2", "P3"], 0.5), term(["P4"], 0.5)]);
+    expect(listPlanShares(structure)).toStrictEqual(listSubjectShares(structure));
   });
 });
 

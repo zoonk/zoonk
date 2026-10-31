@@ -1,9 +1,12 @@
 import { getSubjectShareFallback } from "../../exams/_utils/subject-share-fallback";
 import { listCountedSubjects } from "../../exams/choices/exam-choices";
-import { type ExamStructure } from "./blueprint-contract";
+import { type ExamStructure, type ScoredPart } from "./blueprint-contract";
+import { getPartMaxPoints } from "./part-points";
 import { getSubjectPoints } from "./subject-points";
 
 type Subject = ExamStructure["subjects"][number];
+
+const PERCENT = 100;
 
 type ShareGroup = { parts: readonly string[]; share: number };
 
@@ -13,10 +16,40 @@ function isInGroup({ group, subject }: { group: ShareGroup; subject: Subject }):
   );
 }
 
-function isQualifying({ structure, subject }: { structure: ExamStructure; subject: Subject }) {
-  return (structure.mock?.scoring.parts ?? []).some(
-    (part) => part.qualifying && (part.name === subject.name || part.name === subject.group),
+function findQualifyingPart({
+  structure,
+  subject,
+}: {
+  structure: ExamStructure;
+  subject: Subject;
+}): ScoredPart | null {
+  const parts = structure.mock?.scoring.parts ?? [];
+
+  return (
+    parts.find(
+      (part) => part.qualifying && (part.name === subject.name || part.name === subject.group),
+    ) ?? null
   );
+}
+
+function isQualifying({ structure, subject }: { structure: ExamStructure; subject: Subject }) {
+  return findQualifyingPart({ structure, subject }) !== null;
+}
+
+/** The share of its points a test's minimum asks; all of them when the notice gives none. */
+function getPassShare({ part, structure }: { part: ScoredPart; structure: ExamStructure }) {
+  const { minimum } = part;
+
+  if (!minimum) {
+    return 1;
+  }
+
+  if (minimum.unit === "percent") {
+    return Math.min(1, minimum.value / PERCENT);
+  }
+
+  const max = getPartMaxPoints({ marking: structure.mock?.scoring.marking ?? [], part });
+  return max ? Math.min(1, minimum.value / max) : 1;
 }
 
 /** A subject's own stated weight counts only where no term of the final score covers it. */
@@ -92,5 +125,43 @@ export function listSubjectShares(structure: ExamStructure): (number | null)[] {
       stated: group !== null,
       subject,
     });
+  });
+}
+
+/**
+ * Each subject's planning priority: its share of the final score, except that a qualifying test,
+ * which can still eliminate the learner, weighs its minimum's share of the points share it would
+ * have if it counted, and the shares that count scale to the rest.
+ */
+export function listPlanShares(structure: ExamStructure): (number | null)[] {
+  const shares = listSubjectShares(structure);
+  const counted = new Set(listCountedSubjects(structure.subjects));
+  const points = structure.subjects.map((subject) => getSubjectPoints({ structure, subject }));
+  const parts = structure.subjects.map((subject) => findQualifyingPart({ structure, subject }));
+
+  const total = structure.subjects.reduce(
+    (sum, subject, index) => sum + (counted.has(subject) ? (points[index] ?? 0) : 0),
+    0,
+  );
+
+  const passing = parts.map((part, index) => {
+    const own = points[index] ?? null;
+
+    return part && own !== null && total > 0
+      ? (getPassShare({ part, structure }) * own) / total
+      : null;
+  });
+
+  const reserved = structure.subjects.reduce(
+    (sum, subject, index) => sum + (counted.has(subject) ? (passing[index] ?? 0) : 0),
+    0,
+  );
+
+  return shares.map((share, index) => {
+    if (parts[index]) {
+      return passing[index] ?? null;
+    }
+
+    return share === null ? null : share * (1 - reserved);
   });
 }

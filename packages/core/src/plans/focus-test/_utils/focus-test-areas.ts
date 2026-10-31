@@ -1,6 +1,6 @@
 import { isWrittenSubject } from "../../../exams/mocks/written-subject";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
-import { listSubjectShares } from "../../../library/exams/subject-shares";
+import { listPlanShares } from "../../../library/exams/subject-shares";
 import {
   followsNotice,
   matchAreasToSubjects,
@@ -43,7 +43,7 @@ function getExamAreas({
     return null;
   }
 
-  const shares = listSubjectShares(structure);
+  const shares = listPlanShares(structure);
   const known = shares.filter((share) => share !== null);
 
   const fallback =

@@ -162,3 +162,68 @@ describe(getAreaShares, () => {
     ).toBeNull();
   });
 });
+
+describe("a qualifying test in the plan", () => {
+  const prelims: ExamStructure = {
+    formats: [],
+    mock: {
+      adaptive: false,
+      citations: [],
+      order: null,
+      scoring: {
+        description: "",
+        marking: [
+          {
+            citation,
+            format: null,
+            part: "General Studies",
+            points: 2,
+            questions: 100,
+            wrongPoints: null,
+          },
+          { citation, format: null, part: "CSAT", points: 2.5, questions: 80, wrongPoints: null },
+        ],
+        method: "wrongCancelsRight",
+        parts: [
+          {
+            citation,
+            maxPoints: 200,
+            minimum: null,
+            name: "General Studies",
+            qualifying: false,
+            questions: 100,
+          },
+          {
+            citation,
+            maxPoints: 200,
+            minimum: { unit: "percent", value: 33 },
+            name: "CSAT",
+            qualifying: true,
+            questions: 80,
+          },
+        ],
+      },
+      sections: [],
+      timeLimitMinutes: null,
+      totalQuestions: null,
+    },
+    rules: [],
+    subjects: [subject("General Studies", 100), subject("CSAT", 80)],
+  };
+
+  const graph = graphOf(["General Studies", "CSAT"]);
+
+  it("gives the area what passing takes, 33% of the half its points would have", () => {
+    const shares = getAreaShares({ graph, structure: prelims });
+
+    expect(shares?.get("CSAT")).toBeCloseTo(0.165);
+    expect(shares?.get("General Studies")).toBeCloseTo(0.835);
+  });
+
+  it("counts it in the share of the exam the plan covers", () => {
+    const shares = getExamSubjectShares({ graph, structure: prelims });
+
+    expect(shares?.map((item) => item.areas)).toStrictEqual([["General Studies"], ["CSAT"]]);
+    expect(shares?.[1]?.share).toBeCloseTo(0.165);
+  });
+});

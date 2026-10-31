@@ -1,6 +1,6 @@
 import { getSubjectShareFallback } from "../../exams/_utils/subject-share-fallback";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { listSubjectShares } from "../../library/exams/subject-shares";
+import { listPlanShares } from "../../library/exams/subject-shares";
 import { followsNotice, matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import { getSkillArea } from "../planner/graph-areas";
 import { type PlanGraph } from "../planner/plan-state";
@@ -60,7 +60,7 @@ function matchSubjectShares({
     return null;
   }
 
-  const shares = listSubjectShares(structure);
+  const shares = listPlanShares(structure);
   const fallback = getSubjectShareFallback(shares);
 
   return structure.subjects
