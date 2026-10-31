@@ -2,6 +2,7 @@ import { type ItemFormat } from "@zoonk/db";
 import { apportion } from "@zoonk/utils/apportion";
 import { type ExamStructure, type MarkingRow } from "../../library/exams/blueprint-contract";
 import { getPartMaxPoints, getPointsPerQuestion } from "../../library/exams/part-points";
+import { getMarkingPenalty } from "../../library/exams/marking-penalty";
 import { getWrongPenalty } from "../scoring/mock-scoring";
 import { getChoiceFormatKey } from "./mock-format-mix";
 import { findAreaSubject } from "./mock-options";
@@ -45,7 +46,7 @@ function rankRow({
   subject,
 }: {
   format: MarkingRow["format"];
-  selection: string | null;
+  selection: string;
   row: MarkingRow;
   subject: Subject | undefined;
 }): number | null {
@@ -55,18 +56,16 @@ function rankRow({
     return null;
   }
 
-  if (
-    row.format === "multipleChoice" &&
-    row.select !== undefined &&
-    row.select !== null &&
-    selection !== null &&
-    selection !== getChoiceFormatKey(row.select ?? null)
-  ) {
+  const choiceKey =
+    row.format === "multipleChoice" && row.select !== undefined && row.select !== null
+      ? getChoiceFormatKey(row.select)
+      : null;
+
+  if (choiceKey !== null && selection !== choiceKey) {
     return null;
   }
 
-  const selectionRank =
-    row.format === "multipleChoice" && row.select !== null && row.select !== undefined ? 1 : 0;
+  const selectionRank = choiceKey === null ? 0 : 1;
 
   return partRank * PART_SPECIFICITY + (row.format === null ? 0 : 2) + selectionRank;
 }
@@ -78,7 +77,7 @@ function findRows({
   subject,
 }: {
   format: MarkingRow["format"];
-  selection: string | null;
+  selection: string;
   rows: readonly MarkingRow[];
   subject: Subject | undefined;
 }): MarkingRow[] {
@@ -160,7 +159,7 @@ function markItems({
         {
           part: item.part,
           points: row?.points ?? 1,
-          wrongPenalty: row?.wrongPenalty ?? wrongPenalty,
+          wrongPenalty: (row ? getMarkingPenalty(row) : null) ?? wrongPenalty,
         },
       ]),
     ),

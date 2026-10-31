@@ -85256,12 +85256,11 @@
                             }
                           ]
                         },
-                        "wrongPenalty": {
+                        "wrongPoints": {
                           "nullable": true,
-                          "description": "The share of `points` a wrong answer takes away; null when the notice doesn't say, so the exam's `wrongPenalty` applies",
+                          "description": "Points lost per wrong answer; null when unstated, so the exam-wide penalty share applies",
                           "type": "number",
-                          "minimum": 0,
-                          "maximum": 1
+                          "minimum": 0
                         }
                       },
                       "required": [
@@ -85270,7 +85269,7 @@
                         "part",
                         "points",
                         "questions",
-                        "wrongPenalty"
+                        "wrongPoints"
                       ],
                       "additionalProperties": false
                     }

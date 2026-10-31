@@ -54,7 +54,7 @@ function scored({
 }
 
 function row(name: string | null, points: number, questions: number | null = null) {
-  return { citation, format: null, part: name, points, questions, wrongPenalty: null };
+  return { citation, format: null, part: name, points, questions, wrongPoints: null };
 }
 
 function grouped(group: string, names: string[]) {

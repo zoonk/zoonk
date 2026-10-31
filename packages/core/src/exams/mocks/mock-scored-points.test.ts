@@ -33,15 +33,8 @@ function structure({ p2Points }: { p2Points: number }) {
       scoring: {
         description: "",
         marking: [
-          { citation, format: null, part: "P1", points: 1, questions: 8, wrongPenalty: null },
-          {
-            citation,
-            format: null,
-            part: "P2",
-            points: p2Points,
-            questions: 8,
-            wrongPenalty: null,
-          },
+          { citation, format: null, part: "P1", points: 1, questions: 8, wrongPoints: null },
+          { citation, format: null, part: "P2", points: p2Points, questions: 8, wrongPoints: null },
         ],
         method: "wrongCancelsRight",
         parts: [

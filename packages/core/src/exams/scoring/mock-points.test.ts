@@ -42,7 +42,7 @@ function examStructure({
 function row(
   name: string | null,
   points: number,
-  extra: { format?: MarkingRow["format"]; questions?: number; wrongPenalty?: number } = {},
+  extra: { format?: MarkingRow["format"]; questions?: number; wrongPoints?: number } = {},
 ) {
   return {
     citation,
@@ -50,7 +50,7 @@ function row(
     part: name,
     points,
     questions: extra.questions ?? null,
-    wrongPenalty: extra.wrongPenalty ?? null,
+    wrongPoints: extra.wrongPoints ?? null,
   };
 }
 
@@ -289,8 +289,8 @@ describe("an exam scored by question type", () => {
   const structure = examStructure({
     scoring: {
       marking: [
-        row(null, 3, { format: "multipleChoice", wrongPenalty: 1 / 3 }),
-        row(null, 4, { format: "numeric", wrongPenalty: 0 }),
+        row(null, 3, { format: "multipleChoice", wrongPoints: 1 }),
+        row(null, 4, { format: "numeric", wrongPoints: 0 }),
       ],
     },
     subjects: [subject("Physics", "Paper 1", null)],
@@ -327,9 +327,9 @@ describe("a section mixing 1-point and 2-point questions", () => {
   const structure = examStructure({
     scoring: {
       marking: [
-        row("Section A", 1, { format: "multipleChoice", questions: 10, wrongPenalty: 1 / 3 }),
-        row("Section A", 2, { format: "multipleChoice", questions: 20, wrongPenalty: 1 / 3 }),
-        row("Section B", 2, { questions: 10, wrongPenalty: 0 }),
+        row("Section A", 1, { format: "multipleChoice", questions: 10, wrongPoints: 1 / 3 }),
+        row("Section A", 2, { format: "multipleChoice", questions: 20, wrongPoints: 2 / 3 }),
+        row("Section B", 2, { questions: 10, wrongPoints: 0 }),
       ],
       parts: [part("Section A"), part("Section B")],
     },
@@ -370,8 +370,8 @@ describe("an exam with a qualifying paper", () => {
   const structure = examStructure({
     scoring: {
       marking: [
-        row("General Studies Paper I", 2, { questions: 100, wrongPenalty: 1 / 3 }),
-        row("CSAT Paper II", 2.5, { questions: 80, wrongPenalty: 1 / 3 }),
+        row("General Studies Paper I", 2, { questions: 100, wrongPoints: 2 / 3 }),
+        row("CSAT Paper II", 2.5, { questions: 80, wrongPoints: 2.5 / 3 }),
       ],
       parts: [
         part("General Studies Paper I", { maxPoints: 200 }),
@@ -593,11 +593,11 @@ describe("selection marking", () => {
       scoring: {
         marking: [
           {
-            ...row(null, 3, { format: "multipleChoice", questions: 2, wrongPenalty: 1 / 3 }),
+            ...row(null, 3, { format: "multipleChoice", questions: 2, wrongPoints: 1 }),
             select: 1,
           },
           {
-            ...row(null, 4, { format: "multipleChoice", questions: 2, wrongPenalty: 0.5 }),
+            ...row(null, 4, { format: "multipleChoice", questions: 2, wrongPoints: 2 }),
             select: "all",
           },
         ],
@@ -676,5 +676,43 @@ describe("conflicting whole-paper evidence", () => {
 
     expect(result).toMatchObject({ max: null, met: null });
     expect(result.unjudged).toContainEqual({ minimum: { unit: "points", value: 50 }, name: null });
+  });
+});
+
+describe("whole papers with known counts", () => {
+  it("includes a whole paper without a known maximum when summing half-mock projections", () => {
+    const marking: MockMarking = {
+      items: {},
+      maxPoints: null,
+      parts: [
+        {
+          maxPoints: null,
+          minimum: null,
+          name: "A",
+          objective: true,
+          qualifying: false,
+          questions: 2,
+        },
+        {
+          maxPoints: 4,
+          minimum: null,
+          name: "B",
+          objective: true,
+          qualifying: false,
+          questions: 2,
+        },
+      ],
+      totalMinimum: { unit: "points", value: 4 },
+    };
+
+    const answers: PointsAnswer[] = ["A", "A", "B"].map((name) => ({
+      credit: 1,
+      marking: { part: name, points: 2, wrongPenalty: 0 },
+      outcome: "right",
+    }));
+
+    const result = scoreMockPoints({ answers, marking, scope: "half" });
+    expect(result.projected).toBe(8);
+    expect(result.parts[0]).not.toHaveProperty("whole");
   });
 });

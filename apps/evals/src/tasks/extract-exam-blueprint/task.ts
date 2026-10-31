@@ -4,6 +4,7 @@ import { type NumericEntry, type OptionSelect } from "@zoonk/ai/tasks/items/sche
 import { type PartialCreditRule } from "@zoonk/ai/tasks/research/partial-credit";
 import { isUsableBlueprint } from "@zoonk/core/library/exams/blueprint-content";
 import { getFormatShares } from "@zoonk/core/library/exams/format-shares";
+import { getMarkingPenalty } from "@zoonk/core/library/exams/marking-penalty";
 import { normalizeString } from "@zoonk/utils/string";
 import {
   type ExtractionEvalInput,
@@ -31,7 +32,7 @@ type ExpectedFact =
       share?: number;
     }
   | { kind: "scoring"; method: NonNullable<ExtractionEvalOutput["mock"]>["scoring"]["method"] }
-  | { kind: "markingRow"; part: string[]; points: number; wrongPenalty?: number }
+  | { kind: "markingRow"; part: string[]; points: number; wrongPoints?: number }
   | {
       kind: "scoredPart";
       maxPoints?: number;
@@ -67,7 +68,7 @@ type Reading = {
             part: string | null;
             points: number;
             questions: number | null;
-            wrongPenalty: number | null;
+            wrongPoints: number | null;
           }[];
           parts?: {
             maxPoints: number | null;
@@ -309,8 +310,11 @@ function hasMarkingRow({
     (row) =>
       namesPart({ name: row.part, names: fact.part }) &&
       row.points === fact.points &&
-      (fact.wrongPenalty === undefined ||
-        Math.abs((row.wrongPenalty ?? penalty ?? 0) - fact.wrongPenalty) < PENALTY_TOLERANCE),
+      (fact.wrongPoints === undefined ||
+        Math.abs(
+          (getMarkingPenalty(row) ?? penalty ?? 0) -
+            (getMarkingPenalty({ points: fact.points, wrongPoints: fact.wrongPoints }) ?? 0),
+        ) < PENALTY_TOLERANCE),
   );
 }
 
@@ -439,18 +443,6 @@ function fromExtraction(output: ExtractionEvalOutput): Reading {
   return {
     ...output,
     formats: output.formats.map((format, index) => ({ ...format, share: shares[index] })),
-    mock: output.mock
-      ? {
-          ...output.mock,
-          scoring: {
-            ...output.mock.scoring,
-            marking: output.mock.scoring.marking.map((row) => ({
-              ...row,
-              wrongPenalty: row.wrongPenalty === null ? null : row.wrongPenalty / row.points,
-            })),
-          },
-        }
-      : null,
     questionCount: output.edition.questionCount,
     testedLanguage: output.testedLanguage?.language ?? null,
   };

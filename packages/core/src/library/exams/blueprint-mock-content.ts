@@ -2,6 +2,7 @@ import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-
 import { type ExamStructure, type SectionNavigation } from "./blueprint-contract";
 import { type KeptFacts, keptOr } from "./blueprint-kept";
 import { toPointsScoring } from "./blueprint-points-content";
+import { normalizePenalty } from "./marking-penalty";
 
 type Extraction = BlueprintExtraction;
 type MockConditions = NonNullable<ExamStructure["mock"]>;
@@ -141,7 +142,7 @@ function toScoring({
         : keptOr({ gap: "", id: "mock.scoring.description", kept, value: description }),
     method,
     ...(relative && kept.has("mock.scoring.relative") ? { relative: true } : {}),
-    ...(penalty === null ? {} : { wrongPenalty: penalty }),
+    ...(penalty === null ? {} : { wrongPenalty: normalizePenalty(penalty) }),
     ...toScale({ kept, scale }),
     ...toPointsScoring({ kept, partNames, scoring: mock.scoring }),
   };

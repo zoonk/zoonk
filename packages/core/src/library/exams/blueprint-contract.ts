@@ -129,14 +129,13 @@ const markingRowSchema = z.object({
     description:
       "The number of options to select, or all for multiple selection; null when unstated",
   }),
-  wrongPenalty: z
+  wrongPoints: z
     .number()
     .min(0)
-    .max(1)
     .nullable()
     .meta({
       description:
-        "The share of `points` a wrong answer takes away; null when the notice doesn't say, so the exam's `wrongPenalty` applies",
+        "Points lost per wrong answer; null when unstated, so the exam-wide penalty share applies",
     }),
 });
 

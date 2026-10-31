@@ -23,12 +23,12 @@ function describeRowScope(row: MarkingRow): string {
   return row.format ? `${part} (${FORMAT_WORDS[row.format]}${describeSelection(row)})` : part;
 }
 
-function describePenalty(row: MarkingRow & { wrongPenalty: number }): string {
-  if (row.wrongPenalty === 0) {
+function describePenalty(row: MarkingRow & { wrongPoints: number }): string {
+  if (row.wrongPoints === 0) {
     return "a wrong answer costs no points";
   }
 
-  return `each wrong answer takes away exactly ${describePoints(row.wrongPenalty)}`;
+  return `each wrong answer takes away exactly ${describePoints(row.wrongPoints)}`;
 }
 
 type PointsSource = { documents: ExtractionDocument[]; found: Passage[]; scoring: Scoring };
@@ -45,9 +45,9 @@ function markingFacts({ documents, found, scoring }: PointsSource): FactEntry[] 
           id: `${id}.questions`,
           statement: `In ${scope}, ${row.questions} questions are worth ${describePoints(row.points)} each`,
         },
-        row.wrongPenalty !== null && {
-          id: `${id}.wrongPenalty`,
-          statement: `In ${scope}, ${describePenalty({ ...row, wrongPenalty: row.wrongPenalty })}`,
+        row.wrongPoints !== null && {
+          id: `${id}.wrongPoints`,
+          statement: `In ${scope}, ${describePenalty({ ...row, wrongPoints: row.wrongPoints })}`,
         },
       ],
       documents,

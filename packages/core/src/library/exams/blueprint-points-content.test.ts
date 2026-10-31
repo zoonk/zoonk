@@ -3,6 +3,7 @@ import { scoreMockPoints } from "../../exams/scoring/mock-points";
 import { blueprintExtraction } from "./_test-utils/blueprint-extraction";
 import { toBlueprintContent } from "./blueprint-content";
 import { listBlueprintFacts } from "./blueprint-facts";
+import { getMarkingPenalty } from "./marking-penalty";
 
 const P1 = "Conhecimentos básicos (P1)";
 const P2 = "Conhecimentos específicos (P2)";
@@ -94,7 +95,7 @@ const ROW_P1: Row = {
   points: 1,
   questions: 40,
   select: null,
-  wrongPenalty: 1,
+  wrongPoints: 1,
 };
 
 const ROW_P2: Row = {
@@ -104,7 +105,7 @@ const ROW_P2: Row = {
   points: 1.5,
   questions: 60,
   select: null,
-  wrongPenalty: 1.5,
+  wrongPoints: 1.5,
 };
 
 const ROWS = [ROW_P1, ROW_P2];
@@ -145,8 +146,8 @@ describe("the points a notice gives", () => {
     const scoring = readScoring({ scoring: { marking: ROWS, parts: PARTS, totalMinimum: TOTAL } });
 
     expect(scoring?.marking).toMatchObject([
-      { format: "trueFalse", part: P1, points: 1, questions: 40, wrongPenalty: 1 },
-      { format: null, part: P2, points: 1.5, questions: 60, wrongPenalty: 1 },
+      { format: "trueFalse", part: P1, points: 1, questions: 40, wrongPoints: 1 },
+      { format: null, part: P2, points: 1.5, questions: 60, wrongPoints: 1.5 },
     ]);
 
     expect(scoring?.parts).toMatchObject([
@@ -160,13 +161,13 @@ describe("the points a notice gives", () => {
 
   it("keeps a row without the count or penalty its passages don't support", () => {
     const scoring = readScoring({
-      keep: (id) => !id.endsWith(".questions") && !id.endsWith(".wrongPenalty"),
+      keep: (id) => !id.endsWith(".questions") && !id.endsWith(".wrongPoints"),
       scoring: { marking: ROWS },
     });
 
     expect(scoring?.marking).toMatchObject([
-      { points: 1, questions: null, wrongPenalty: null },
-      { points: 1.5, questions: null, wrongPenalty: null },
+      { points: 1, questions: null, wrongPoints: null },
+      { points: 1.5, questions: null, wrongPoints: null },
     ]);
   });
 
@@ -277,23 +278,22 @@ describe("the points a notice gives", () => {
 
 describe("exact point deductions", () => {
   it("checks the exact deduction and derives a repeating ratio in code", () => {
-    const marking = { ...ROW_P1, points: 3, wrongPenalty: 1 };
+    const marking = { ...ROW_P1, points: 3, wrongPoints: 1 };
     const extraction = extractionWith({ marking: [marking] });
     const facts = listBlueprintFacts({ documents: DOCUMENTS, extraction });
 
     expect(
-      facts.find((fact) => fact.id === "mock.scoring.marking.0.wrongPenalty")?.statement,
+      facts.find((fact) => fact.id === "mock.scoring.marking.0.wrongPoints")?.statement,
     ).toContain("exactly 1 point");
 
-    expect(readScoring({ scoring: { marking: [marking] } })?.marking?.[0]?.wrongPenalty).toBe(
-      1 / 3,
-    );
+    expect(readScoring({ scoring: { marking: [marking] } })?.marking?.[0]?.wrongPoints).toBe(1);
   });
 
   it("scores five right and five wrong at +3/−1 as exactly ten points", () => {
-    const penalty = readScoring({
-      scoring: { marking: [{ ...ROW_P1, points: 3, wrongPenalty: 1 }] },
-    })?.marking?.[0]?.wrongPenalty;
+    const row = readScoring({ scoring: { marking: [{ ...ROW_P1, points: 3, wrongPoints: 1 }] } })
+      ?.marking?.[0];
+
+    const penalty = row ? getMarkingPenalty(row) : null;
 
     expect(penalty).toBeDefined();
     const item = { part: null, points: 3, wrongPenalty: penalty ?? 0 };
@@ -314,11 +314,66 @@ describe("exact point deductions", () => {
   });
 
   it("does not round an approximate deduction into an exact cited claim", () => {
-    const extraction = extractionWith({ marking: [{ ...ROW_P1, points: 3, wrongPenalty: 0.999 }] });
+    const extraction = extractionWith({ marking: [{ ...ROW_P1, points: 3, wrongPoints: 0.999 }] });
     const facts = listBlueprintFacts({ documents: DOCUMENTS, extraction });
 
     expect(
-      facts.find((fact) => fact.id === "mock.scoring.marking.0.wrongPenalty")?.statement,
+      facts.find((fact) => fact.id === "mock.scoring.marking.0.wrongPoints")?.statement,
     ).toContain("exactly 0.999 points");
+  });
+});
+
+describe("fractional deductions at the minimum", () => {
+  it.each([
+    { lost: 0.333, minimum: 40, points: 1, right: 45, wrong: 15 },
+    { lost: 0.666667, minimum: 40, points: 2, right: 25, wrong: 15 },
+    { lost: 0.6667, minimum: 40, points: 2, right: 25, wrong: 15 },
+    { lost: 0.67, minimum: 40, points: 2, right: 25, wrong: 15 },
+    { lost: 0.666667, minimum: 80, points: 2, right: 45, wrong: 15 },
+  ])(
+    "keeps the exact boundary with $points points and a $lost deduction",
+    ({ points, right, wrong, lost, minimum }) => {
+      const row = readScoring({ scoring: { marking: [{ ...ROW_P1, points, wrongPoints: lost }] } })
+        ?.marking?.[0];
+
+      const penalty = row ? (getMarkingPenalty(row) ?? 0) : 0;
+
+      const marking = { part: null, points, wrongPenalty: penalty };
+
+      const answers = Array.from({ length: right + wrong }, (_, index) => ({
+        credit: index < right ? 1 : 0,
+        marking,
+        outcome: index < right ? ("right" as const) : ("wrong" as const),
+      }));
+
+      const result = scoreMockPoints({
+        answers,
+        marking: {
+          items: {},
+          maxPoints: (right + wrong) * points,
+          parts: [],
+          totalMinimum: { unit: "points", value: minimum },
+        },
+        scope: "full",
+      });
+
+      expect(result).toMatchObject({ earned: minimum, met: true, short: null });
+    },
+  );
+
+  it("normalizes the exam-wide share too", () => {
+    expect(readScoring({ scoring: { wrongPenalty: 0.333 } })?.wrongPenalty).toBe(1 / 3);
+  });
+
+  it("treats a minimum within a displayed rounding step as met", () => {
+    const marking = { part: null, points: 1, wrongPenalty: 0 };
+
+    const result = scoreMockPoints({
+      answers: [{ credit: 0.999, marking, outcome: "partial" }],
+      marking: { items: {}, maxPoints: 1, parts: [], totalMinimum: { unit: "points", value: 1 } },
+      scope: "full",
+    });
+
+    expect(result).toMatchObject({ met: true, short: null });
   });
 });

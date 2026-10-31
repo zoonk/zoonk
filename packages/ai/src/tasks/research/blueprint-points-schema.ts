@@ -11,7 +11,7 @@ const markingRowSchema = z.object({
   points: z.number(),
   questions: z.number().int().nullable(),
   select: questionFormatSchema.shape.select,
-  wrongPenalty: z.number().nullable(),
+  wrongPoints: z.number().nullable(),
 });
 
 const scoredPartSchema = z.object({

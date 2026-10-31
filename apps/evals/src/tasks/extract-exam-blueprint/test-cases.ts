@@ -24,7 +24,7 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { kind: "scoring", method: "wrongCancelsRight" },
         { groups: ["P1", "P2", "P3", "P4"], kind: "groupedSubjects" },
         { kind: "subject", name: "Prova discursiva" },
-        { kind: "markingRow", part: ["P3"], points: 2, wrongPenalty: 1 },
+        { kind: "markingRow", part: ["P3"], points: 2, wrongPoints: 2 },
         { kind: "scoredPart", minimum: { unit: "points", value: 8 }, part: ["P1"], questions: 40 },
         { kind: "scoredPart", minimum: { unit: "points", value: 12 }, part: ["P2"], questions: 40 },
         { kind: "scoredPart", minimum: { unit: "points", value: 54 }, part: ["P3"], questions: 90 },
@@ -43,8 +43,8 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
     expected: {
       facts: [
         { kind: "scoring", method: "wrongCancelsRight" },
-        { kind: "markingRow", part: ["Paper I"], points: 2, wrongPenalty: 1 / 3 },
-        { kind: "markingRow", part: ["Paper II", "CSAT"], points: 2.5, wrongPenalty: 1 / 3 },
+        { kind: "markingRow", part: ["Paper I"], points: 2, wrongPoints: 2 / 3 },
+        { kind: "markingRow", part: ["Paper II", "CSAT"], points: 2.5, wrongPoints: 2.5 / 3 },
         { kind: "scoredPart", maxPoints: 200, part: ["Paper I"] },
         {
           kind: "scoredPart",

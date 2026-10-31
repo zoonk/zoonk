@@ -2,6 +2,7 @@ import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-
 import { normalizeString } from "@zoonk/utils/string";
 import { type MarkingRow, type PointsMinimum, type ScoredPart } from "./blueprint-contract";
 import { type KeptFacts, keptOr } from "./blueprint-kept";
+import { getMarkingPenalty } from "./marking-penalty";
 import { getPartMaxPoints } from "./part-points";
 
 type Scoring = NonNullable<BlueprintExtraction["mock"]>["scoring"];
@@ -31,7 +32,9 @@ function toMarking({
     }
 
     const questions = keptOr({ gap: null, id: `${id}.questions`, kept, value: row.questions });
-    const penalty = keptOr({ gap: null, id: `${id}.wrongPenalty`, kept, value: row.wrongPenalty });
+    const penalty = keptOr({ gap: null, id: `${id}.wrongPoints`, kept, value: row.wrongPoints });
+
+    const share = getMarkingPenalty({ points: row.points, wrongPoints: penalty });
 
     return [
       {
@@ -41,8 +44,7 @@ function toMarking({
         points: row.points,
         questions: questions !== null && questions >= 1 ? questions : null,
         select: row.select,
-        wrongPenalty:
-          penalty !== null && penalty >= 0 && penalty <= row.points ? penalty / row.points : null,
+        wrongPoints: share === null ? null : share * row.points,
       },
     ];
   });

@@ -16,6 +16,7 @@ const PERCENT = 100;
 /** Sums of fractional penalties (a third of 2 points) carry float noise that no score means. */
 const PRECISION = 1e6;
 const TOLERANCE = 1 / PRECISION;
+const MINIMUM_ROUNDING_STEP = { percent: 0.1, points: 0.01 };
 
 function withoutNoise(value: number): number {
   return Math.round(value * PRECISION) / PRECISION;
@@ -93,7 +94,7 @@ function judge({
     return { met: null, short: null };
   }
 
-  const met = score + TOLERANCE >= minimum.value;
+  const met = score + MINIMUM_ROUNDING_STEP[minimum.unit] / 2 >= minimum.value;
   return { met, short: met ? null : withoutNoise(minimum.value - score) };
 }
 
@@ -155,6 +156,7 @@ function scorePart({
 }) {
   const { asked, earned } = sumPoints(answers);
   const max = part.maxPoints;
+  const whole = isWholeTest({ answerCount: answers.length, asked, max, questions: part.questions });
 
   return {
     ...toTally({
@@ -164,10 +166,11 @@ function scorePart({
       minimum: part.minimum,
       projected: project({ asked, earned, max }),
       scope,
-      whole: isWholeTest({ answerCount: answers.length, asked, max, questions: part.questions }),
+      whole,
     }),
     name: part.name,
     qualifying: part.qualifying,
+    whole,
   };
 }
 
@@ -176,9 +179,7 @@ function isCounted(part: MarkedPart): boolean {
 }
 
 function sumProjections(parts: readonly ReturnType<typeof scorePart>[]): number | null {
-  const projections = parts.map((part) =>
-    isWholeTest({ asked: part.asked, max: part.max }) ? part.earned : part.projected,
-  );
+  const projections = parts.map((part) => (part.whole ? part.earned : part.projected));
 
   return projections.every((value) => value !== null)
     ? withoutNoise(projections.reduce((sum, value) => sum + value, 0))
@@ -221,17 +222,7 @@ function scoreTotal({
 
   const whole =
     counted.length > 0
-      ? complete &&
-        countedParts.every((scored) => {
-          const part = counted.find((item) => item.name === scored.name);
-
-          return isWholeTest({
-            answerCount: answers.filter((answer) => answer.marking.part === scored.name).length,
-            asked: scored.asked,
-            max: scored.max,
-            questions: part?.questions,
-          });
-        })
+      ? complete && countedParts.every((part) => part.whole)
       : isWholeTest({ asked, max });
 
   return {
@@ -282,24 +273,22 @@ export function scoreMockPoints({
     return own.length > 0 ? [scorePart({ answers: own, part, scope })] : [];
   });
 
-  const asked = new Set(parts.map((part) => part.name));
   const { judged, ...total } = scoreTotal({ answers, marking, parts, scope });
 
   const unjudged = [
-    ...marking.parts.flatMap((part) =>
-      part.minimum &&
-      (!asked.has(part.name) ||
-        (scope === "full" &&
-          parts.find((scored) => scored.name === part.name)?.projected === null &&
-          parts.find((scored) => scored.name === part.name)?.met === null))
+    ...marking.parts.flatMap((part) => {
+      const scored = parts.find((item) => item.name === part.name);
+
+      return part.minimum &&
+        (!scored || (scope === "full" && scored.projected === null && scored.met === null))
         ? [{ minimum: part.minimum, name: part.name }]
-        : [],
-    ),
+        : [];
+    }),
     ...(marking.totalMinimum &&
     (!judged || (scope === "full" && total.met === null && total.projected === null))
       ? [{ minimum: marking.totalMinimum, name: null }]
       : []),
   ];
 
-  return { ...total, parts, unjudged };
+  return { ...total, parts: parts.map(({ whole: _whole, ...part }) => part), unjudged };
 }

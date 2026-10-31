@@ -299,6 +299,7 @@
     "./library/exams/blueprint-reading": "./src/library/exams/blueprint-reading.ts",
     "./library/exams/check-freshness": "./src/library/exams/check-freshness.ts",
     "./library/exams/find-same-exam": "./src/library/exams/find-same-exam.ts",
+    "./library/exams/marking-penalty": "./src/library/exams/marking-penalty.ts",
     "./library/exams/format-shares": "./src/library/exams/format-shares.ts",
     "./library/exams/freshness-access": "./src/library/exams/freshness-access.ts",
     "./library/exams/freshness-checks": "./src/library/exams/freshness-checks.ts",

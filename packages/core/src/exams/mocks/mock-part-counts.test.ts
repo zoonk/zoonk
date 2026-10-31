@@ -102,9 +102,9 @@ describe("a notice that counts its tests' questions, not its subjects'", () => {
     const byRows = structureWith({
       scoring: {
         marking: [
-          { citation, format: null, part: "P1", points: 1, questions: 40, wrongPenalty: null },
-          { citation, format: null, part: "P2", points: 1, questions: 40, wrongPenalty: null },
-          { citation, format: null, part: "P3", points: 2, questions: 90, wrongPenalty: null },
+          { citation, format: null, part: "P1", points: 1, questions: 40, wrongPoints: null },
+          { citation, format: null, part: "P2", points: 1, questions: 40, wrongPoints: null },
+          { citation, format: null, part: "P3", points: 2, questions: 90, wrongPoints: null },
         ],
       },
     });
