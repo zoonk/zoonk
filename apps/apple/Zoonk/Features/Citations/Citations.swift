@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Main's `useCitationLabel`: the page or slide of the learner's material, or its title when it
-/// has no pages.
+/// Main's `useCitationLabel`.
 enum CitationLabel {
   static func material(title: String, page: Int?, unit: String) -> String {
     guard let page else {
@@ -18,8 +17,7 @@ enum CitationLabel {
   }
 }
 
-/// Main's `SourcesChip`: when a public document was last checked, opening its title, publisher
-/// and link.
+/// Main's `SourcesChip`.
 struct SourcesChip: View {
   let title: String
   let publisher: String?
@@ -48,6 +46,7 @@ struct SourcesChip: View {
     .controlSize(.small)
     .popover(isPresented: $showsSource) {
       SourceDetails(title: title, publisher: publisher, url: url, checkedAt: checkedAt)
+        // By default a popover becomes a full-screen cover in landscape, with no way to close it.
         .presentationCompactAdaptation(.popover)
     }
   }

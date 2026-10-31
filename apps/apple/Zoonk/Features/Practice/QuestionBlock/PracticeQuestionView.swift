@@ -365,7 +365,7 @@ struct WorkedStepsView: View {
   }
 }
 
-/// Main's `ItemCitationNote`: where an answer comes from, with the Sources chip once it was checked.
+/// Main's `ItemCitationNote`.
 struct CitationNote: View {
   let citation: PracticeCitation
 
