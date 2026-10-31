@@ -24,6 +24,42 @@ final class StudyAPITests: XCTestCase {
     XCTAssertEqual(shown["lessonId"] as? String, "bf2cf2eb-ea8d-8423-8d56-c97287bf412e")
   }
 
+  func testAPlanThatChangedWhileTheDayOpenedIsAskedOnceMore() async throws {
+    let transport = StudyRecordingTransport(responses: [
+      (.conflict, #"{"error":{"code":"STUDY_DAY_RETRYABLE","message":"Try again."}}"#),
+      (.ok, #"{"kind":"lesson","lessonId":"l1","sessionId":"s1"}"#),
+    ])
+    let api = StudyAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+
+    let opening = try await api.openBlock(
+      token: "token", target: .next(.init(expectedBlockId: "b1", kind: .next, sessionId: "s1")),
+      timeZone: "America/Sao_Paulo")
+
+    XCTAssertEqual(opening, .lesson(.init(kind: .lesson, lessonId: "l1", sessionId: "s1")))
+    XCTAssertEqual(transport.sent.value.count, 2, "once more, in a request of its own")
+    let target = try XCTUnwrap(transport.sent.value.first?.json["target"] as? NSDictionary)
+    XCTAssertEqual(target["kind"] as? String, "next")
+    XCTAssertEqual(target["expectedBlockId"] as? String, "b1")
+  }
+
+  func testASecondLostRaceFailsTheOpening() async throws {
+    let retryable = #"{"error":{"code":"STUDY_DAY_RETRYABLE","message":"Try again."}}"#
+    let transport = StudyRecordingTransport(responses: [
+      (.conflict, retryable), (.conflict, retryable),
+    ])
+    let api = StudyAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+
+    do {
+      _ = try await api.openBlock(
+        token: "token", target: .block(.init(blockId: "b1", kind: .block)), timeZone: "UTC")
+      XCTFail("a second lost race is a failure")
+    } catch {
+      XCTAssertEqual(error as? APIError, .unavailable)
+    }
+
+    XCTAssertEqual(transport.sent.value.count, 2)
+  }
+
   private static let baseURL = URL(string: "https://api.zoonk.test")!
 
   private static let block = #"""
@@ -42,6 +78,7 @@ private struct StudyRecordingTransport: ClientTransport {
   }
 
   let sent = StudyRecorded()
+  var responses: [(HTTPResponse.Status, String)] = []
 
   func send(
     _ request: HTTPRequest,
@@ -54,10 +91,17 @@ private struct StudyRecordingTransport: ClientTransport {
       data = try await Data(collecting: body, upTo: 100_000)
     }
 
-    sent.append(
+    let index = sent.append(
       Sent(body: data, contentLength: request.headerFields[.contentLength].flatMap { Int($0) }))
 
-    return (HTTPResponse(status: .internalServerError), nil)
+    guard index < responses.count else {
+      return (HTTPResponse(status: .internalServerError), nil)
+    }
+
+    let (status, json) = responses[index]
+    return (
+      HTTPResponse(status: status, headerFields: [.contentType: "application/json"]), HTTPBody(json)
+    )
   }
 }
 
@@ -69,7 +113,11 @@ private final class StudyRecorded: @unchecked Sendable {
     lock.withLock { items }
   }
 
-  func append(_ item: StudyRecordingTransport.Sent) {
-    lock.withLock { items.append(item) }
+  @discardableResult
+  func append(_ item: StudyRecordingTransport.Sent) -> Int {
+    lock.withLock {
+      items.append(item)
+      return items.count - 1
+    }
   }
 }

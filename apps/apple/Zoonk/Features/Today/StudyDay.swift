@@ -236,16 +236,6 @@ struct StudyBlock: Decodable, Equatable, Sendable {
     case lessons
   }
 
-  /// Where a tap opens the block, by core's rule. `unknown`: a lesson block whose lesson the read
-  /// didn't check, so its readiness is asked first.
-  enum Screen: String, Decodable, Sendable {
-    case challenge
-    case essay
-    case lesson
-    case session
-    case unknown
-  }
-
   struct Capsule: Decodable, Equatable, Sendable {
     let questions: Int
     let title: String?
@@ -288,7 +278,6 @@ struct StudyBlock: Decodable, Equatable, Sendable {
   let questions: Int
   let refresh: Bool
   let reinforcement: Bool
-  let screen: Screen
   var status: Status
   let subject: String?
   let title: String?
@@ -320,11 +309,6 @@ struct StudyBlock: Decodable, Equatable, Sendable {
     case .produce: return .essay
     case .review: return .review
     }
-  }
-
-  /// Mirrors main's `isQuestionBlock`.
-  var isQuestionBlock: Bool {
-    kind != .learn && screen == .session
   }
 }
 

@@ -113,8 +113,8 @@ final class AppNavigationTests: XCTestCase {
     let first = AppRouter()
     let second = AppRouter()
 
-    first.openStudy(.questionBlock(sessionID: "s1", blockID: "b1"))
-    second.openStudy(.questionBlock(sessionID: "s1", blockID: "b2"))
+    first.openStudy(.questionBlock(blockID: "b1"))
+    second.openStudy(.questionBlock(blockID: "b2"))
     second.playback.leave()
 
     XCTAssertEqual(first.playback.playingBlockID, "b1", "Another window's block leaves this one's")

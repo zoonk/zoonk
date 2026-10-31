@@ -450,7 +450,7 @@ struct TodayMissionsSection: View {
   @Environment(\.isPaneSplit) private var isBesideTheDay
 
   let view: TodayView
-  let open: (StudyBlock, Bool) -> Void
+  let open: (StudyBlock) -> Void
 
   private var missions: [StudyMission] { view.session.missions }
 
@@ -494,7 +494,7 @@ struct TodayMissionsSection: View {
     switch opens.kind {
     case "block":
       if let block = view.session.blocks.first(where: { mission.opens($0) }) {
-        open(block, false)
+        open(block)
       }
     case "mistakesPractice":
       router.open(.mistakePractice())

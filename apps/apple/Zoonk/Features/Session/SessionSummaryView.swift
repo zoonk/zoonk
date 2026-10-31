@@ -216,7 +216,7 @@ struct SessionSummaryView: View {
     failed = false
 
     action = Task {
-      let result = await today.open(next, sessionID: sessionID)
+      let result = await today.open(next, as: .next, sessionID: sessionID)
       isAddingTime = false
 
       switch result {

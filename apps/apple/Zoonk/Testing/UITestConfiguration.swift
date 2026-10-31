@@ -412,8 +412,8 @@
       throw APIError.network
     }
 
-    func startBlock(token: String, sessionID: String, blockID: String, timeZone: String)
-      async throws -> BlockStart
+    func openBlock(token: String, target: StudyBlockOpeningTarget, timeZone: String) async throws
+      -> StudyBlockOpening
     {
       throw APIError.network
     }
@@ -442,17 +442,7 @@
       throw APIError.network
     }
 
-    func languageCheckpointCall(token: String, blockID: String) async throws
-      -> LanguageCheckpointCall
-    {
-      throw APIError.network
-    }
-
     func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome {
-      throw APIError.network
-    }
-
-    func prepareSession(token: String, sessionID: String) async throws {
       throw APIError.network
     }
 

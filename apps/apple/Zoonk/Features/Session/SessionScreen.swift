@@ -417,7 +417,8 @@ private struct NextStopView: View {
     failed = false
 
     action = Task {
-      let result = await today.open(block, sessionID: sessionID)
+      let result = await today.open(
+        block, as: block.id == next?.id ? .next : .block, sessionID: sessionID)
       isOpening = false
 
       switch result {

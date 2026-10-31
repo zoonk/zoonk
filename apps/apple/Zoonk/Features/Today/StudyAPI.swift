@@ -1,17 +1,12 @@
 import Foundation
 
-struct OpenedStudyDay: Decodable, Equatable, Sendable {
-  let session: StudyDay
-  let sessionId: String
-  let target: StudyBlock?
-}
+typealias StudyBlockOpening = Components.Schemas.StudyBlockOpening
+typealias StudyBlockOpeningTarget = Components.Schemas.StudyBlockOpeningTarget
 
-enum BlockStart: Equatable, Sendable {
-  case started
-  /// Finished meanwhile on another device: read the day again.
-  case finished
-  case dailyLimitReached
-  case earlierFirst
+struct OpenedStudyDay: Decodable, Equatable, Sendable {
+  /// Nil when the day opened without a target, or its target can't start.
+  let opening: StudyBlockOpening?
+  let sessionId: String
 }
 
 /// Every write here starts only from a tap.
@@ -20,8 +15,9 @@ protocol StudyAPIClient: Sendable {
   func openDay(
     token: String, goalID: String, shownDate: String, timeZone: String, target: DayTarget?
   ) async throws -> OpenedStudyDay
-  func startBlock(token: String, sessionID: String, blockID: String, timeZone: String)
-    async throws -> BlockStart
+  /// The server decides where the block opens, and starts it when its screen doesn't.
+  func openBlock(token: String, target: StudyBlockOpeningTarget, timeZone: String) async throws
+    -> StudyBlockOpening
   func addExtraBlock(token: String, sessionID: String) async throws -> StudyBlock
   func catchUp(token: String, sessionID: String, timeZone: String) async throws
   func stop(token: String, sessionID: String, timeZone: String) async throws
@@ -29,14 +25,11 @@ protocol StudyAPIClient: Sendable {
   func getSummary(token: String, sessionID: String) async throws -> SessionSummary
   func lessonReadiness(token: String, lessonID: String) async throws
     -> Components.Schemas.LessonReadiness
-  func languageCheckpointCall(token: String, blockID: String) async throws
-    -> LanguageCheckpointCall
   /// Only on the learner's tap, since it runs AI.
   func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome
   /// How the lesson stands once no run writes it; `run` is the one the learner's tap started.
   func followWriting(token: String, lessonID: String, run: String?) async throws
     -> Components.Schemas.LessonReadiness
-  func prepareSession(token: String, sessionID: String) async throws
   /// Only on the learner's tap, since it outlines the day's lessons with AI.
   func prepareLessons(token: String, goalID: String) async throws
   /// Only on the learner's tap: research reads their uploads instead of searching again.
@@ -85,11 +78,6 @@ private struct TimeZoneBody: Encodable {
   let timeZone: String
 }
 
-private struct BlockStartBody: Encodable {
-  let afterWriting: Bool
-  let timeZone: String
-}
-
 private struct StatusBody: Encodable {
   let status: String
 }
@@ -135,46 +123,47 @@ struct StudyAPI: StudyAPIClient {
     // Sent as its own JSON: the generated body drops the shown block's `null`s, which core needs.
     let json = try JSONEncoder().encode(body)
 
-    return try await clients.perform(token: token, body: json) { client in
-      switch try await client.openStudyDay(
-        path: .init(goalId: goalID), body: .json(try StudyJSON.recode(body)))
-      {
-      case .ok(let response):
-        return try StudyJSON.recode(try response.body.json)
-      case .created(let response):
-        return try StudyJSON.recode(try response.body.json)
-      case .unauthorized:
-        throw APIError.unauthorized
-      case .notFound:
-        throw APIError.notFound
-      default:
-        throw APIError.unavailable
+    return try await sendingAgainIfRetryable {
+      try await clients.perform(token: token, body: json) { client -> OpenedStudyDay? in
+        switch try await client.openStudyDay(
+          path: .init(goalId: goalID), body: .json(try StudyJSON.recode(body)))
+        {
+        case .ok(let response):
+          return try StudyJSON.recode(try response.body.json, as: OpenedStudyDay.self)
+        case .created(let response):
+          return try StudyJSON.recode(try response.body.json, as: OpenedStudyDay.self)
+        case .conflict(let response):
+          return try retryable(StudyJSON.recode(try response.body.json))
+        case .unauthorized:
+          throw APIError.unauthorized
+        case .notFound:
+          throw APIError.notFound
+        default:
+          throw APIError.unavailable
+        }
       }
     }
   }
 
-  func startBlock(token: String, sessionID: String, blockID: String, timeZone: String)
-    async throws -> BlockStart
+  func openBlock(token: String, target: StudyBlockOpeningTarget, timeZone: String) async throws
+    -> StudyBlockOpening
   {
-    let body = BlockStartBody(afterWriting: false, timeZone: timeZone)
-
-    return try await clients.perform(token: token) { client in
-      switch try await client.createStudyBlockStart(
-        path: .init(sessionId: sessionID, blockId: blockID), body: .json(try StudyJSON.recode(body))
-      ) {
-      case .ok:
-        return .started
-      case .forbidden:
-        return .dailyLimitReached
-      case .conflict(let response):
-        let problem: APIProblem = try StudyJSON.recode(try response.body.json)
-        return problem.error.code == "EARLIER_FIRST" ? .earlierFirst : .finished
-      case .unauthorized:
-        throw APIError.unauthorized
-      case .notFound:
-        throw APIError.notFound
-      default:
-        throw APIError.unavailable
+    try await sendingAgainIfRetryable {
+      try await clients.perform(token: token) { client -> StudyBlockOpening? in
+        switch try await client.openStudyBlock(
+          body: .json(.init(target: target, timeZone: timeZone)))
+        {
+        case .ok(let response):
+          return try response.body.json
+        case .conflict(let response):
+          return try retryable(StudyJSON.recode(try response.body.json))
+        case .unauthorized:
+          throw APIError.unauthorized
+        case .notFound:
+          throw APIError.notFound
+        default:
+          throw APIError.unavailable
+        }
       }
     }
   }
@@ -264,12 +253,6 @@ struct StudyAPI: StudyAPIClient {
     try await LessonPlayerAPI(clients: clients).getReadiness(id: lessonID, token: token)
   }
 
-  func languageCheckpointCall(token: String, blockID: String) async throws
-    -> LanguageCheckpointCall
-  {
-    try await LiveCallAPI(clients: clients).checkpointCall(blockId: blockID, token: token)
-  }
-
   func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws {
     let body = StatusBody(status: accepted ? "accepted" : "dismissed")
 
@@ -329,21 +312,6 @@ struct StudyAPI: StudyAPIClient {
         return try StudyJSON.recode(try response.body.json)
       case .conflict:
         return nil
-      case .unauthorized:
-        throw APIError.unauthorized
-      case .notFound:
-        throw APIError.notFound
-      default:
-        throw APIError.unavailable
-      }
-    }
-  }
-
-  func prepareSession(token: String, sessionID: String) async throws {
-    try await clients.perform(token: token) { client in
-      switch try await client.createStudySessionPreparation(path: .init(sessionId: sessionID)) {
-      case .accepted:
-        return
       case .unauthorized:
         throw APIError.unauthorized
       case .notFound:
@@ -415,4 +383,28 @@ struct StudyAPI: StudyAPIClient {
       }
     }
   }
+}
+
+/// Nil for `STUDY_DAY_RETRYABLE`, which the API answers when the plan changed while the day opened.
+private func retryable<Value>(_ problem: APIProblem) throws -> Value? {
+  guard problem.error.code == "STUDY_DAY_RETRYABLE" else {
+    throw APIError.unavailable
+  }
+
+  return nil
+}
+
+/// The API asks for one more try after `STUDY_DAY_RETRYABLE`, in a request of its own.
+private func sendingAgainIfRetryable<Value>(_ send: () async throws -> Value?) async throws
+  -> Value
+{
+  if let value = try await send() {
+    return value
+  }
+
+  guard let value = try await send() else {
+    throw APIError.unavailable
+  }
+
+  return value
 }

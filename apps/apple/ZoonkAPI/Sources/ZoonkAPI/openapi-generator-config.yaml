@@ -78,7 +78,6 @@ filter:
     - createStudyBlockStart
     - createStudyCatchUpBlocks
     - createStudyExtraBlock
-    - createStudySessionPreparation
     - createStudySessionStop
     - createSubjectQuestion
     - createUpload
@@ -192,6 +191,7 @@ filter:
     - listSourceChangeNotices
     - moveChallenge
     - moveWeeklyChallenge
+    - openStudyBlock
     - openStudyDay
     - practiceMistakePattern
     - previewGoalResume

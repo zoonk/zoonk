@@ -237,7 +237,6 @@ final class OnboardingStore {
       [api] identity in
       try await api.completePlacement(
         goalID: goalID, fromScratch: fromScratch, token: identity.bearerToken)
-      try? await api.prepareLessons(goalID: goalID, token: identity.bearerToken)
     }
   }
 

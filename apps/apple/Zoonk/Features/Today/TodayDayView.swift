@@ -190,7 +190,7 @@ struct TodayDayView: View {
   @ViewBuilder
   private var aside: some View {
     if !view.session.missions.isEmpty {
-      TodayMissionsSection(view: view, open: open)
+      TodayMissionsSection(view: view, open: openMission)
     }
 
     TodayWeekSection(view: view)
@@ -239,7 +239,13 @@ struct TodayDayView: View {
     let tap: Tap = next ? .main : .block(block.position)
 
     run(tap) {
-      await store.open(block, next: next, in: view)
+      await store.open(block, as: next ? .next : .block, in: view)
+    }
+  }
+
+  private func openMission(_ block: StudyBlock) {
+    run(.block(block.position)) {
+      await store.open(block, as: .mission, in: view)
     }
   }
 
@@ -335,17 +341,27 @@ struct TodayDayView: View {
 }
 
 extension AppRouter {
-  /// A block Today doesn't list as one to do now shows Today as it stands; one that couldn't open
-  /// leaves the learner where they tapped.
+  /// A mission's block Today doesn't list, or one no longer free to start, shows Today as it stands.
+  /// Nothing opens when it couldn't, or once the learner moved on.
   static func openingTodayBlocks(today: TodayStore) -> BlockOpener {
     { blockID, router in
+      let tab = router.selectedTab
+      let shown = (router.tasks, router.path(for: tab).wrappedValue)
+
       Task {
-        switch await today.open(blockID: blockID) {
-        case .done(let destination)?:
-          router.openStudy(destination)
-        case nil:
+        let result = await today.open(blockID: blockID)
+
+        guard router.selectedTab == tab, shown == (router.tasks, router.path(for: tab).wrappedValue)
+        else {
+          return
+        }
+
+        switch result {
+        case .done(.changed):
           router.showRoot(of: .today)
-        case .failed?, .obsolete?:
+        case .done(let destination):
+          router.openStudy(destination)
+        case .failed, .obsolete:
           break
         }
       }
@@ -353,10 +369,17 @@ extension AppRouter {
   }
 
   /// Anything but a question block opens its own screen over the session, so closing it goes on with
-  /// the day.
+  /// the day. `changed` opens nothing: the screen the learner tapped on reads again.
   func openStudy(_ destination: StudyDestination) {
-    if case .questionBlock(_, let blockID) = destination {
+    switch destination {
+    case .questionBlock(let blockID):
       playback.play(blockID: blockID)
+    case .today:
+      return showRoot(of: .today)
+    case .changed:
+      return
+    default:
+      break
     }
 
     guard let step = destination.step else {
@@ -389,7 +412,7 @@ extension StudyDestination {
       .lesson(lessonId: lessonID, sessionId: sessionID)
     case .mock(let blockID, let sessionID):
       .mock(blockId: blockID, sessionId: sessionID)
-    case .questionBlock, .session, .lessonWait:
+    case .questionBlock, .session, .lessonWait, .today, .changed:
       nil
     }
   }
