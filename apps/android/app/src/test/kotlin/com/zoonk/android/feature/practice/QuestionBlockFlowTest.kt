@@ -133,7 +133,7 @@ class QuestionBlockFlowTest {
 
     @Test
     fun continueAtABlocksEndOpensTheSessionsNextBlock() {
-        studyApi.openings = listOf(opening("session", "blockId" to NEXT_BLOCK))
+        studyApi.openings = listOf(opening("session", "blockId" to NEXT_BLOCK, "sessionId" to PRACTICE_SESSION))
         playToTheEnd()
 
         rule.onNodeWithText("Continue").performClick()

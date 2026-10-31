@@ -33,7 +33,7 @@ internal class FakeStudyApi : StudyApi {
     var dayOpening: JsonObject? = null
 
     /** The answer to each block opening, in order; the last one answers the rest. */
-    var openings = listOf(opening("session", "blockId" to null))
+    var openings = listOf(opening("session", "blockId" to null, "sessionId" to SESSION.toString()))
 
     /** Thrown by the next requests, one each, before they answer. */
     val failures = ArrayDeque<ApiException>()

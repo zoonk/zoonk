@@ -69,10 +69,8 @@ class TodayViewModel(
         read: TodayRead.Day,
         step: DayStep,
     ) {
-        val blockId = step.id
-        val sessionId = read.day.sessionId
-        if (blockId == null || sessionId == null) return open(read, step, next = false)
-        run(read, TodayTap.Step(step.position)) { opener.openMission(blockId, sessionId) }
+        val blockId = step.id ?: return open(read, step, next = false)
+        run(read, TodayTap.Step(step.position)) { opener.openMission(blockId) }
     }
 
     fun keepLearning(read: TodayRead.Day) =

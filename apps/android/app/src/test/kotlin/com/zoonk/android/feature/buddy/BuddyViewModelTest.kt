@@ -12,27 +12,22 @@ import com.zoonk.android.feature.plan.learnerSummary
 import com.zoonk.android.feature.session.FakeStudyApi
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.StudyOpener
-import com.zoonk.android.feature.session.decodeFixture
-import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.feature.session.opening
-import com.zoonk.android.feature.today.FakeTodayApi
-import com.zoonk.android.feature.today.TodayStore
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.BuddyStatus
 import com.zoonk.api.models.LearningProfile
 import com.zoonk.api.models.StudyBlockOpeningTarget
-import com.zoonk.api.models.Today
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -52,47 +47,26 @@ class BuddyViewModelTest {
     fun reset() = Dispatchers.resetMain()
 
     @Test
-    fun aMissionsBlockFromADayOpenedElsewhereOpensInTheSessionTodayReadsAgain() =
+    fun aMissionsBlockOpensInTheSessionItsOpeningNames() =
         runTest(dispatcher) {
-            val unopened = decodeFixture<Today>("today", "session" to fixture("unstarted-study-day"))
-            val opened =
-                decodeFixture<Today>(
-                    "today",
-                    "session" to
-                        fixture(
-                            "study-session",
-                            "id" to SESSION.toString(),
-                            "blocks" to JsonArray(listOf(fixture("study-block", "id" to BLOCK.toString()))),
-                        ),
-                )
-            val today = FakeTodayApi(listOf(unopened, opened))
-            val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
             val study = FakeStudyApi()
-            study.openings = listOf(opening("session", "blockId" to BLOCK.toString()))
-            val vm =
-                BuddyViewModel(
-                    BuddyStore(NoBuddyApi, cache, { "UTC" }, cache.resource(Audience.SignedIn) { learnerSummary() }, backgroundScope),
-                    LearningProfileStore(NoProfileApi, cache),
-                    TodayStore(today, cache, backgroundScope, { "UTC" }),
-                    StudyOpener(study, { _, _ -> error("Not used") }, cache, { "UTC" }),
-                )
+            study.openings = listOf(opening("session", "blockId" to BLOCK.toString(), "sessionId" to SESSION.toString()))
+            val vm = buddy(study, NoBuddyApi)
 
             vm.openMission(MissionOpens.Block(blockId = BLOCK, position = null), GOAL)
             advanceUntilIdle()
 
-            assertEquals(2, today.reads)
             assertEquals(listOf(BLOCK), study.targets.map { (it as StudyBlockOpeningTarget.MissionWrapper).value.blockId })
             assertEquals(AppRoute.QuestionBlock(SESSION.toString(), BLOCK.toString()), vm.routes.first())
         }
 
     @Test
-    fun aMissionsBlockTodayDoesntHoldOpensNothingAndReadsTheCardsAgain() =
+    fun aMissionNoLongerFreeToStartReadsTheCardsAgain() =
         runTest(dispatcher) {
-            val today = FakeTodayApi(listOf(decodeFixture<Today>("today", "session" to fixture("unstarted-study-day"))))
-            val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
             val study = FakeStudyApi()
+            study.openings = listOf(opening("changed"))
             var statusReads = 0
-            val buddy =
+            val status =
                 object : BuddyApi {
                     override suspend fun status(
                         session: AuthenticatedSession,
@@ -102,20 +76,26 @@ class BuddyViewModelTest {
                         throw ApiException(ApiError.Unavailable)
                     }
                 }
-            val vm =
-                BuddyViewModel(
-                    BuddyStore(buddy, cache, { "UTC" }, cache.resource(Audience.SignedIn) { learnerSummary() }, backgroundScope),
-                    LearningProfileStore(NoProfileApi, cache),
-                    TodayStore(today, cache, backgroundScope, { "UTC" }),
-                    StudyOpener(study, { _, _ -> error("Not used") }, cache, { "UTC" }),
-                )
+            val vm = buddy(study, status)
 
             vm.openMission(MissionOpens.Block(blockId = BLOCK, position = null), GOAL)
             advanceUntilIdle()
 
-            assertEquals(0, study.targets.size)
+            assertEquals(1, study.targets.size)
             assertEquals(1, statusReads)
         }
+
+    private fun TestScope.buddy(
+        study: FakeStudyApi,
+        status: BuddyApi,
+    ): BuddyViewModel {
+        val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
+        return BuddyViewModel(
+            BuddyStore(status, cache, { "UTC" }, cache.resource(Audience.SignedIn) { learnerSummary() }, backgroundScope),
+            LearningProfileStore(NoProfileApi, cache),
+            StudyOpener(study, { _, _ -> error("Not used") }, cache, { "UTC" }),
+        )
+    }
 
     private object NoBuddyApi : BuddyApi {
         override suspend fun status(

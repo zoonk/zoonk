@@ -150,7 +150,7 @@ internal fun BuddyPage(
     navigator: AppNavigator,
     access: TutorAccess = rememberTutorAccess(app),
 ) {
-    val vm = viewModel { BuddyViewModel(app.buddy, app.learningProfile, app.today, app.studyOpener) }
+    val vm = viewModel { BuddyViewModel(app.buddy, app.learningProfile, app.studyOpener) }
     val look = status.look()
     val name = buddyName(look.kind, status.buddy.name)
     val face = rememberBuddyActorState()

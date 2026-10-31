@@ -68,7 +68,7 @@ class StudyOpenerTest {
     fun aTapOnASavedReviewOpensItsQuestionsInTheDaysSession() =
         runTest {
             val api = FakeStudyApi()
-            api.openings = listOf(opening("session", "blockId" to blockId(0).toString()))
+            api.openings = listOf(opening("session", "blockId" to blockId(0).toString(), "sessionId" to SESSION.toString()))
             val review = step(0, kind = StudyBlock.Kind.REVIEW, screen = StudyBlock.Screen.SESSION, lessonId = null)
 
             val result = opener(api).open(day(listOf(review)), review, next = false, goalId = GOAL)
@@ -83,14 +83,23 @@ class StudyOpenerTest {
         val session = SESSION.toString()
         val planItem = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d77"
 
-        fun routeOf(opening: JsonObject) = ApiJson.decodeFromJsonElement(StudyBlockOpening.serializer(), opening).route(SESSION)
+        fun routeOf(opening: JsonObject) = ApiJson.decodeFromJsonElement(StudyBlockOpening.serializer(), opening).route()
 
-        assertEquals(AppRoute.Session(blockId = block, sessionId = session), routeOf(opening("preparingLesson", "blockId" to block)))
-        assertEquals(AppRoute.Essay(block), routeOf(opening("essay", "blockId" to block)))
+        assertEquals(
+            AppRoute.Session(blockId = block, sessionId = session),
+            routeOf(
+                opening(
+                    "preparingLesson",
+                    "blockId" to block,
+                    "sessionId" to session,
+                ),
+            ),
+        )
+        assertEquals(AppRoute.Essay(block), routeOf(opening("essay", "blockId" to block, "sessionId" to session)))
         assertEquals(AppRoute.Checkpoint(block, session), routeOf(opening("checkpoint", "blockId" to block, "sessionId" to session)))
         assertEquals(AppRoute.Mock(block, session), routeOf(opening("mock", "blockId" to block, "sessionId" to session)))
         assertEquals(AppRoute.Challenge(planItem, session), routeOf(opening("challenge", "planItemId" to planItem, "sessionId" to session)))
-        assertEquals(AppRoute.Session(sessionId = session), routeOf(opening("session", "blockId" to null)))
+        assertEquals(AppRoute.Session(sessionId = session), routeOf(opening("session", "blockId" to null, "sessionId" to session)))
         assertEquals(AppRoute.Session(blockId = block, sessionId = session), routeOf(unwritten()))
         assertEquals(AppRoute.Today, routeOf(opening("today")))
         assertEquals(null, routeOf(opening("changed")))
@@ -168,12 +177,12 @@ class StudyOpenerTest {
     fun aDayNotOpenedYetIsSavedWithTheShownWorkAndItsNullsThenFollowsItsOpening() =
         runTest {
             val api = FakeStudyApi()
-            api.dayOpening = opening("session", "blockId" to blockId(0).toString())
+            val opened = decodeFixture<OpenedStudyDay>("opened-study-day").sessionId
+            api.dayOpening = opening("session", "blockId" to blockId(0).toString(), "sessionId" to opened.toString())
             val review = step(0, kind = StudyBlock.Kind.REVIEW, screen = StudyBlock.Screen.SESSION, saved = false, lessonId = null)
 
             val result = opener(api).open(day(listOf(review), saved = false), review, next = true, goalId = GOAL)
 
-            val opened = decodeFixture<OpenedStudyDay>("opened-study-day").sessionId
             assertEquals(MutationResult.Done(AppRoute.QuestionBlock(opened.toString(), blockId(0).toString())), result)
             assertEquals(emptyList<StudyBlockOpeningTarget>(), api.targets)
             val target =
@@ -208,7 +217,7 @@ class StudyOpenerTest {
             val api = FakeStudyApi()
             val retryable = ApiException(ApiError.Unavailable, "STUDY_DAY_RETRYABLE", status = 409)
             val essay = step(0, kind = StudyBlock.Kind.PRODUCE, screen = StudyBlock.Screen.ESSAY, lessonId = null)
-            api.openings = listOf(opening("essay", "blockId" to blockId(0).toString()))
+            api.openings = listOf(opening("essay", "blockId" to blockId(0).toString(), "sessionId" to SESSION.toString()))
 
             api.failures += retryable
             assertEquals(
@@ -225,27 +234,27 @@ class StudyOpenerTest {
     fun aMissionOpensItsBlockOnlyWhileFreeAndOneGoneMeanwhileOpensNothing() =
         runTest {
             val api = FakeStudyApi()
-            api.openings = listOf(opening("session", "blockId" to blockId(0).toString()))
+            api.openings = listOf(opening("session", "blockId" to blockId(0).toString(), "sessionId" to SESSION.toString()))
 
             assertEquals(
                 MutationResult.Done(AppRoute.QuestionBlock(SESSION.toString(), blockId(0).toString())),
-                opener(api).openMission(blockId(0), SESSION),
+                opener(api).openMission(blockId(0)),
             )
             assertEquals(target("mission", "blockId" to blockId(0).toString()), sent(api.targets.single()))
 
             api.openings = listOf(opening("changed"))
-            assertEquals(MutationResult.Done(null), opener(api).openMission(blockId(0), SESSION))
+            assertEquals(MutationResult.Done(null), opener(api).openMission(blockId(0)))
 
             api.failures += ApiException(ApiError.NotFound, status = 404)
-            assertEquals(MutationResult.Done(null), opener(api).openMission(blockId(0), SESSION))
+            assertEquals(MutationResult.Done(null), opener(api).openMission(blockId(0)))
         }
 
     @Test
     fun extraTimeKeepsADayNotOpenedYetThenOpensTheBlockItAdded() =
         runTest {
             val api = FakeStudyApi()
-            api.openings = listOf(opening("session", "blockId" to FakeStudyApi.EXTRA_BLOCK.toString()))
             val opened = decodeFixture<OpenedStudyDay>("opened-study-day").sessionId
+            api.openings = listOf(opening("session", "blockId" to FakeStudyApi.EXTRA_BLOCK.toString(), "sessionId" to opened.toString()))
 
             val result = opener(api).addExtraTime(day(saved = false), GOAL)
 
@@ -259,7 +268,7 @@ class StudyOpenerTest {
     fun continuingAtABlocksEndOpensTheSessionsNextStepWhateverItIs() =
         runTest {
             val api = FakeStudyApi()
-            api.openings = listOf(opening("session", "blockId" to blockId(1).toString()))
+            api.openings = listOf(opening("session", "blockId" to blockId(1).toString(), "sessionId" to SESSION.toString()))
 
             val result = opener(api).continueSession(SESSION)
 
@@ -273,7 +282,7 @@ class StudyOpenerTest {
         runTest {
             val api = FakeStudyApi()
 
-            api.openings = listOf(opening("session", "blockId" to null))
+            api.openings = listOf(opening("session", "blockId" to null, "sessionId" to SESSION.toString()))
             assertEquals(MutationResult.Done(AppRoute.Session(sessionId = SESSION.toString())), opener(api).continueSession(SESSION))
 
             api.openings = listOf(opening("today"))

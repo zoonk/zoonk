@@ -108,18 +108,15 @@ class StudyOpener(
             val sessionId = day.sessionId
             val blockId = step.id
             if (sessionId != null && blockId != null) {
-                follow(session, openBlock(session, if (next) nextTarget(sessionId, blockId) else blockTarget(blockId)), sessionId)
+                follow(session, openBlock(session, if (next) nextTarget(sessionId, blockId) else blockTarget(blockId)))
             } else {
                 val opened = retryingOnce { api.openDay(session, day.goalId ?: goalId, openDayBody(day.localDate, step, next, timeZone())) }
-                opened.opening?.let { follow(session, it, opened.sessionId) }
+                opened.opening?.let { follow(session, it) }
             }
         }
 
     /** A mission card's block, which opens only while it's still free to start; one gone meanwhile opens nothing either. */
-    suspend fun openMission(
-        blockId: UUID,
-        sessionId: UUID,
-    ): MutationResult<AppRoute?> =
+    suspend fun openMission(blockId: UUID): MutationResult<AppRoute?> =
         cache.mutate(invalidating = OPENING) { session ->
             val target = StudyBlockOpeningTarget.MissionWrapper(StudyBlockOpeningMission(blockId, StudyBlockOpeningMission.Kind.MISSION))
             val opening =
@@ -128,13 +125,13 @@ class StudyOpener(
                 } catch (e: ApiException) {
                     if (e.error == ApiError.NotFound) return@mutate null else throw e
                 }
-            follow(session, opening, sessionId)
+            follow(session, opening)
         }
 
     override suspend fun continueSession(sessionId: UUID): MutationResult<AppRoute> =
         cache.mutate(invalidating = OPENING) { session ->
             val target = StudyBlockOpeningTarget.NextWrapper(StudyBlockOpeningNext(StudyBlockOpeningNext.Kind.NEXT, sessionId))
-            follow(session, openBlock(session, target), sessionId) ?: AppRoute.Today
+            follow(session, openBlock(session, target)) ?: AppRoute.Today
         }
 
     /** Stop for today: the session's summary says what's done so far and offers to keep going. */
@@ -152,7 +149,7 @@ class StudyOpener(
         cache.mutate(invalidating = OPENING) { session ->
             val sessionId = day.sessionId ?: keep(session, day, goalId)
             val added = api.addExtraBlock(session, sessionId)
-            follow(session, openBlock(session, blockTarget(added.id)), sessionId)
+            follow(session, openBlock(session, blockTarget(added.id)))
         }
 
     /** Saves an unopened day first, keeping it even with nothing in it. */
@@ -179,8 +176,7 @@ class StudyOpener(
     private suspend fun follow(
         session: AuthenticatedSession,
         opening: StudyBlockOpening,
-        sessionId: UUID,
-    ): AppRoute? = if (opening is StudyBlockOpening.UnwrittenlessonWrapper) unwritten(session, opening.value) else opening.route(sessionId)
+    ): AppRoute? = if (opening is StudyBlockOpening.UnwrittenlessonWrapper) unwritten(session, opening.value) else opening.route()
 
     /**
      * Main's `useOpenUnwrittenLesson`: the tap asks once for the lesson, and the session waits on the
@@ -204,7 +200,7 @@ class StudyOpener(
         return if (generation.status ==
             LessonGeneration.Status.READY
         ) {
-            openBlock(session, blockTarget(blockId)).route(opening.sessionId)
+            openBlock(session, blockTarget(blockId)).route()
         } else {
             waiting
         }
@@ -235,8 +231,7 @@ private fun nextTarget(
 private fun blockTarget(blockId: UUID) =
     StudyBlockOpeningTarget.BlockWrapper(StudyBlockOpeningBlock(blockId, StudyBlockOpeningBlock.Kind.BLOCK))
 
-/** The screen an opening shows, in the session the caller opened it in when the opening doesn't say. */
-internal fun StudyBlockOpening.route(sessionId: UUID): AppRoute? =
+internal fun StudyBlockOpening.route(): AppRoute? =
     when (this) {
         is StudyBlockOpening.LessonWrapper -> {
             AppRoute.Lesson(value.lessonId.toString(), value.sessionId.toString())
@@ -247,7 +242,7 @@ internal fun StudyBlockOpening.route(sessionId: UUID): AppRoute? =
         }
 
         is StudyBlockOpening.PreparinglessonWrapper -> {
-            AppRoute.Session(blockId = value.blockId.toString(), sessionId = sessionId.toString())
+            AppRoute.Session(blockId = value.blockId.toString(), sessionId = value.sessionId.toString())
         }
 
         is StudyBlockOpening.EssayWrapper -> {
@@ -267,8 +262,8 @@ internal fun StudyBlockOpening.route(sessionId: UUID): AppRoute? =
         }
 
         is StudyBlockOpening.SessionWrapper -> {
-            value.blockId?.let { AppRoute.QuestionBlock(sessionId.toString(), it.toString()) }
-                ?: AppRoute.Session(sessionId = sessionId.toString())
+            value.blockId?.let { AppRoute.QuestionBlock(value.sessionId.toString(), it.toString()) }
+                ?: AppRoute.Session(sessionId = value.sessionId.toString())
         }
 
         is StudyBlockOpening.TodayWrapper -> {

@@ -626,7 +626,7 @@ class TodayFlowTest {
                 if (blockId.toString() == lessonBlock) {
                     opening("lesson", "lessonId" to lesson, "sessionId" to this@TodayFlowTest.session)
                 } else {
-                    opening("session", "blockId" to blockId.toString())
+                    opening("session", "blockId" to blockId.toString(), "sessionId" to this@TodayFlowTest.session)
                 }
             return ApiJson.decodeFromJsonElement(StudyBlockOpening.serializer(), answer)
         }
