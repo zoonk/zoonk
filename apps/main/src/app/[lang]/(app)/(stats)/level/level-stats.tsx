@@ -1,3 +1,4 @@
+import { getFormatter } from "@/i18n/formatter";
 import { getBeltLabel } from "@/lib/belt-colors";
 import { type BeltLevelDetails } from "@zoonk/core/progress/get-belt-level";
 import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
@@ -6,7 +7,7 @@ import { LEVELS_PER_COLOR } from "@zoonk/utils/belt-level";
 import { BRAIN_POWER_PER_LESSON } from "@zoonk/utils/brain-power";
 import { formatWholeNumber } from "@zoonk/utils/number";
 import { BrainIcon, ChevronsUpIcon } from "lucide-react";
-import { getExtracted, getFormatter } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { STAT_PAGE_TILES_CLASS, StatsLine } from "../_components/stats-tiles";
 
 const PERCENT = 100;

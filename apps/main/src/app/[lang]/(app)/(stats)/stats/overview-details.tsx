@@ -1,3 +1,4 @@
+import { getFormatter } from "@/i18n/formatter";
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { type getScoreHistory } from "@zoonk/core/progress/get-score-history";
@@ -19,7 +20,7 @@ import {
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { formatMetricPercent } from "@zoonk/utils/number";
 import { ChevronRightIcon } from "lucide-react";
-import { getExtracted, getFormatter } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { PatternsNote, getBestDayName, getBestTimeName } from "../patterns/pattern-summary";
 import { ScoreChart } from "../score/score-chart";
 import { OVERVIEW_CHART_MEDIA } from "./overview-chart-media";

@@ -1,7 +1,8 @@
 "use client";
 
 import { formatDuration } from "@zoonk/utils/duration";
-import { useFormatter, useLocale } from "next-intl";
+import { useLocale } from "next-intl";
+import { useFormatter } from "./formatter";
 
 const SECONDS_PER_MINUTE = 60;
 

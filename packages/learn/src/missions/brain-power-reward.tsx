@@ -10,7 +10,8 @@ import {
 } from "@zoonk/ui/components/popover";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BrainIcon, CheckIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useFormatter } from "../_utils/formatter";
 import { renderSentenceNumber } from "./mission-copy";
 
 export function BrainPowerReward({

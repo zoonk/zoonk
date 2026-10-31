@@ -11,7 +11,8 @@ import {
 } from "@zoonk/core/exams/kept-month";
 import { type GoalDraft } from "@zoonk/core/goals/contract";
 import { type OnboardingExamDate } from "@zoonk/core/view-models/onboarding/contract";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useFormatter } from "../../_utils/formatter";
 import { daysUntilIsoDate, toLocalIsoDate, useFormatIsoDate } from "../../_utils/iso-date";
 import { toLabelCase } from "../../_utils/label-case";
 import { useNoticeDayText } from "../../plan/notice-day";

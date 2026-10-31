@@ -1,8 +1,9 @@
 "use client";
 
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useEffect } from "react";
 import { Steps, type StepsItem } from "../_components/steps";
+import { useFormatter } from "../_utils/formatter";
 import { useLearnAnalytics } from "../learn-context";
 import { TaskMainLink } from "../shell/task-frame";
 import {

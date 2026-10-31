@@ -13,8 +13,9 @@ import {
   TimerIcon,
   TriangleAlertIcon,
 } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { ANSWER_TONE } from "../_components/answer-tone";
+import { useFormatter } from "../_utils/formatter";
 import { LearnLink } from "../learn-link";
 import { ItemLine, ItemStem, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";

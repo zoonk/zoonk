@@ -12,7 +12,7 @@ import {
 } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import {
   LIST_ROW_INTERACTIVE_CLASS,
   ListRowContent,
@@ -21,6 +21,7 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "../../_components/list-group";
+import { useFormatter } from "../../_utils/formatter";
 import { useFormatDuration } from "../../_utils/time-format";
 import { LearnLink } from "../../learn-link";
 import { useCriterionGloss, useTaskRoleLabel } from "./exam-speaking-labels";

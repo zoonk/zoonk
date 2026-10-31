@@ -8,7 +8,7 @@ import { CountUp } from "@zoonk/ui/components/count-up";
 import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BrainIcon, StarIcon, TargetIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { StatTile, StatTiles } from "../../_components/stat-tile";
 import {
   StepCard,
@@ -17,6 +17,7 @@ import {
   StepHeader,
   StepTitle,
 } from "../../_components/step-card";
+import { useFormatter } from "../../_utils/formatter";
 import { ChallengeCallPlusNotice } from "../../challenge/challenge-plus-lock";
 import { StepWithDayMoment } from "../../session/day-moment";
 import { useConversationTitle } from "./conversation-labels";

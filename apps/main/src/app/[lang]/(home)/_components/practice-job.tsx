@@ -1,10 +1,11 @@
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
 import { Pair } from "@/components/public/pair";
 import { ProductWindow } from "@/components/public/product-window";
+import { getFormatter } from "@/i18n/formatter";
 import { KindIcon } from "@zoonk/learn/kind-tile";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheckIcon } from "lucide-react";
-import { getExtracted, getFormatter } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { FRAME_EYEBROW_CLASS } from "./day-one-styles";
 import { SQL_NAMES, getExampleSet } from "./landing-examples";
 import { CARD_CLASS } from "./practice-card-styles";

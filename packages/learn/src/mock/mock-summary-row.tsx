@@ -1,7 +1,7 @@
 "use client";
 
 import { type ExamMockSummary } from "@zoonk/core/exams/view/contract";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import {
   ListRow,
   ListRowContent,
@@ -12,6 +12,7 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 import { StatusMark } from "../_components/status-mark";
+import { useFormatter } from "../_utils/formatter";
 import { useMockShapeLabel } from "./mock-labels";
 
 function useMeasureText() {

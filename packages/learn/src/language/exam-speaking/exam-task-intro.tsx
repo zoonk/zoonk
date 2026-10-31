@@ -3,11 +3,12 @@
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
 import { type ExamTaskView } from "@zoonk/core/language/exam-speaking/contract";
 import { InfoIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef } from "react";
 import { Callout } from "../../_components/callout";
 import { PageEyebrow } from "../../_components/page";
 import { TaskAsideContent } from "../../_components/task-layout";
+import { useFormatter } from "../../_utils/formatter";
 import { TaskFrame } from "../../shell/task-frame";
 import { CharacterRow, MicNote } from "../conversation/conversation-parts";
 import { useCriterionGloss, useTaskRoleNoun } from "./exam-speaking-labels";

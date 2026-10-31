@@ -6,7 +6,8 @@ import {
   type SpeakingEstimate,
   type SpeakingTaskView,
 } from "@zoonk/core/language/exam-speaking/contract";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useFormatter } from "../../_utils/formatter";
 
 const POINT_DIGITS = 2;
 

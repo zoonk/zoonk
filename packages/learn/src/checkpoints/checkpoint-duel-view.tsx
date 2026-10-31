@@ -2,11 +2,12 @@
 
 import { type CheckpointQuestion } from "@zoonk/core/checkpoints/contract";
 import { BrainIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { StepRow, StepRows } from "../_components/step-card";
 import { TaskHeaderSegments, TaskHeaderTitle, type TaskSegment } from "../_components/task-header";
 import { TaskActions } from "../_components/task-layout";
 import { TaskMeta } from "../_components/task-meta";
+import { useFormatter } from "../_utils/formatter";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemStem, ItemSupport, QUESTION_TEXT_CLASS } from "../questions/item-text";
 import { NumericAnswerField } from "../questions/numeric-answer-field";
@@ -181,9 +182,8 @@ function reward(chunks: React.ReactNode) {
 
 function PrizeRow() {
   const t = useExtracted();
-  const format = useFormatter();
   const { checkpoint } = useCheckpointScreen();
-  const points = format.number(checkpoint.reward.brainPower);
+  const points = useFormatter().number(checkpoint.reward.brainPower);
   const phase = phaseNumber(checkpoint);
   const isWeekly = checkpoint.kind === "weekly";
 

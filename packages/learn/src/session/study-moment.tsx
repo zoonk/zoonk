@@ -3,13 +3,14 @@
 import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { EnterButton } from "../_components/enter-button";
 import { KindMark } from "../_components/kind-tile";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { PageSectionLabel } from "../_components/page";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
+import { useFormatter } from "../_utils/formatter";
 import { useFormatDuration } from "../_utils/time-format";
 import { SCREEN_STEADY_MS } from "../_utils/use-steady";
 import { type LearnBuddy } from "../buddies/use-buddy-name";

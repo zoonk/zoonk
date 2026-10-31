@@ -1,7 +1,8 @@
 import { EYEBROW_CLASS } from "@/components/public/landing-styles";
+import { getFormatter } from "@/i18n/formatter";
 import { getIsoDayFormatter } from "@/lib/public/public-labels";
 import { type CoursePlanExample } from "@zoonk/core/catalog/course-plan-example-contract";
-import { getExtracted, getFormatter } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 
 export async function CourseExamEyebrow({
   exam,

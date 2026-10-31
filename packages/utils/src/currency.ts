@@ -1,3 +1,5 @@
+import { getFormattingLocale } from "./locale";
+
 const COUNTRY_CURRENCY: Readonly<Record<string, string>> = {
   AD: "eur",
   AT: "eur",
@@ -91,7 +93,7 @@ export function formatPrice(amount: number, currency: string, locale = "en-US"):
   const value = toMajorUnits(amount, currency);
   const fractionDigits = Number.isInteger(value) ? 0 : 2;
 
-  return new Intl.NumberFormat(locale, {
+  return new Intl.NumberFormat(getFormattingLocale(locale), {
     currency: currency.toUpperCase(),
     maximumFractionDigits: fractionDigits,
     minimumFractionDigits: fractionDigits,

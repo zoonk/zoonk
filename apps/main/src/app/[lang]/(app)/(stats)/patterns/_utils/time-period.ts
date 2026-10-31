@@ -1,3 +1,5 @@
+import { getFormattingLocale } from "@zoonk/utils/locale";
+
 const TIME_PERIOD_HOURS = [
   { end: 6, start: 0 },
   { end: 12, start: 6 },
@@ -41,7 +43,12 @@ export function getScoreTimePeriodRange({
   period: number;
 }): string {
   const range = TIME_PERIOD_HOURS.at(period) ?? TIME_PERIOD_HOURS[0];
-  const formatter = new Intl.DateTimeFormat(locale, { hour: "numeric", timeZone: "UTC" });
+
+  const formatter = new Intl.DateTimeFormat(getFormattingLocale(locale), {
+    hour: "numeric",
+    timeZone: "UTC",
+  });
+
   const start = getClockHour({ formatter, hour: range.start });
   const end = getClockHour({ formatter, hour: range.end });
 

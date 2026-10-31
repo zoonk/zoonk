@@ -12,11 +12,12 @@ import {
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon, CrosshairIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { createContext, use, useId, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
 import { KindDot } from "../_components/kind-tile";
 import { ChangeSaveError } from "../_components/save-error";
+import { useFormatter } from "../_utils/formatter";
 import { LearnLink } from "../learn-link";
 import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
 import { PlanBases } from "./plan-bases";

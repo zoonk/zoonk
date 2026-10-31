@@ -1,5 +1,6 @@
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useFormatter } from "../_utils/formatter";
 import { toTopicWords } from "../syllabus/topic-number";
 
 const MAX_NAMED_TOPICS = 3;

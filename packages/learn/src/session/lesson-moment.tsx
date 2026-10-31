@@ -1,12 +1,13 @@
 "use client";
 
 import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart } from "../_components/test-out-start-link";
+import { useFormatter } from "../_utils/formatter";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { DayMoment } from "./day-moment";
 import { FailedMoment } from "./failed-moment";

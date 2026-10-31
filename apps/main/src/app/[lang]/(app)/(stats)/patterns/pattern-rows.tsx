@@ -1,3 +1,4 @@
+import { getFormatter } from "@/i18n/formatter";
 import {
   type TimeScorePattern,
   type WeekdayScorePattern,
@@ -6,7 +7,7 @@ import { MIN_PATTERN_ANSWERS, type ScorePerformance } from "@zoonk/core/progress
 import { LIST_GROUP_CLASS } from "@zoonk/learn/list";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
 import { cn } from "@zoonk/ui/lib/utils";
-import { getExtracted, getFormatter, getLocale } from "next-intl/server";
+import { getExtracted, getLocale } from "next-intl/server";
 import { getScoreTimePeriodRange } from "./_utils/time-period";
 import { getScoreWeekdayLabel } from "./_utils/weekday";
 import { getTimePeriodNames } from "./pattern-names";

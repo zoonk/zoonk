@@ -1,4 +1,5 @@
 import { isJsonObject } from "./json";
+import { getFormattingLocale } from "./locale";
 
 /**
  * Five or more ungrouped digits outside a decimal, code, date or word. A leading 0 is a postal code
@@ -72,7 +73,7 @@ function collectTexts(value: unknown, latex = false): TextParts[] {
 }
 
 function usesDecimalComma(language: string): boolean {
-  const parts = new Intl.NumberFormat(language).formatToParts(DECIMAL_SAMPLE);
+  const parts = new Intl.NumberFormat(getFormattingLocale(language)).formatToParts(DECIMAL_SAMPLE);
   return parts.some((part) => part.type === "decimal" && part.value === ",");
 }
 
@@ -110,7 +111,7 @@ export function findNumberFormatFlaws({
   language: string;
   value: unknown;
 }): string[] {
-  const number = new Intl.NumberFormat(language);
+  const number = new Intl.NumberFormat(getFormattingLocale(language));
   const decimalComma = usesDecimalComma(language);
 
   return collectTexts(value).flatMap(({ math, prose }) => [

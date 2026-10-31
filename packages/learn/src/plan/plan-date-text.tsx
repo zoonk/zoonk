@@ -2,8 +2,9 @@
 
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type DateTimeFormatOptions, useExtracted, useFormatter } from "next-intl";
+import { type DateTimeFormatOptions, useExtracted } from "next-intl";
 import { use } from "react";
+import { useFormatter } from "../_utils/formatter";
 import { isoDateToUtc, toLocalIsoDate } from "../_utils/iso-date";
 import { PlanScreenContext } from "./plan-context";
 import { type PlanDateStyle, getPlanDateStyle } from "./plan-date-style";

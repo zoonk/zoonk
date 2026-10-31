@@ -7,10 +7,11 @@ import {
 import { PlanRoad } from "@/components/public/plan-road";
 import { ProductWindow } from "@/components/public/product-window";
 import { Variant, VariantSwitch, VariantSwitchOption } from "@/components/public/variant-switch";
+import { getFormatter } from "@/i18n/formatter";
 import { getMinutesFormatter } from "@/lib/public/public-labels";
 import { GoalMark } from "@zoonk/learn/goal-mark";
 import { cn } from "@zoonk/ui/lib/utils";
-import { getExtracted, getFormatter } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { getExamplePlans } from "./example-plans";
 import { getCurrentPhase, getRoadBands } from "./example-road";
 import { getHeroDays } from "./hero-days";

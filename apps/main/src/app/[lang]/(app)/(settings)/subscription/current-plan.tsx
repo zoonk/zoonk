@@ -1,4 +1,5 @@
 import { PlusBenefits } from "@/components/pricing/plus-benefits";
+import { getFormatter } from "@/i18n/formatter";
 import { Link } from "@/i18n/navigation";
 import { type Subscription } from "@zoonk/db";
 import { CHIP_CLASS } from "@zoonk/learn/chip";
@@ -13,7 +14,7 @@ import {
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { isWebManagedSubscriptionProvider } from "@zoonk/utils/subscription";
-import { getExtracted, getFormatter } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { ManagedSubscription } from "./managed-subscription";
 
 function renderDate(chunks: React.ReactNode) {

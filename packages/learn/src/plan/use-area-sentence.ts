@@ -1,7 +1,8 @@
 "use client";
 
 import { type PlanOperation } from "@zoonk/core/plans/contract";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useFormatter } from "../_utils/formatter";
 
 type AreaOperation = Extract<PlanOperation, { areas: string[] }>;
 

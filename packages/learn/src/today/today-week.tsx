@@ -2,7 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { GraduationCapIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { BigQuantity } from "../_components/big-quantity";
 import { GoalRing, type GoalRingTrack } from "../_components/goal-ring";
 import { KindIcon } from "../_components/kind-tile";
@@ -13,6 +13,7 @@ import {
   PageSectionTitle,
 } from "../_components/page";
 import { DoneMark } from "../_components/status-mark";
+import { useFormatter } from "../_utils/formatter";
 import { useFormatDuration } from "../_utils/time-format";
 import { type StudySession } from "../session/session-types";
 import { useTodayScreen } from "./today-context";

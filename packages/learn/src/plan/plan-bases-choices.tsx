@@ -3,12 +3,13 @@
 import { type PlanBaseView } from "@zoonk/core/plans/view-contract";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { SlidersHorizontalIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { ChoiceRows } from "../_components/choice-rows";
 import { Disclosure } from "../_components/disclosure";
 import { ListGroup, ListRowIcon } from "../_components/list-group";
 import { SettingRow } from "../_components/setting-rows";
+import { useFormatter } from "../_utils/formatter";
 import { useFormatDuration } from "../_utils/time-format";
 
 export type BaseChoice = PlanBaseView["choice"];

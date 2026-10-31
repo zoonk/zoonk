@@ -1,5 +1,6 @@
+import { getFormatter } from "@/i18n/formatter";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { getExtracted, getFormatter } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { type ExamplePhase } from "./example-road";
 import {
   type ExampleCalendar,

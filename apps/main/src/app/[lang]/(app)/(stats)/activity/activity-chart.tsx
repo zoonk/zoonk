@@ -23,6 +23,7 @@ import {
   getContributionCalendarWeekKey,
   groupContributionCalendarDaysByWeek,
 } from "@zoonk/utils/contribution-calendar";
+import { getFormattingLocale } from "@zoonk/utils/locale";
 import { getExtracted, getLocale } from "next-intl/server";
 import { getProgressDayFormatter } from "../_components/progress-insight-date-label";
 import { getActivityCalendarIntensity } from "./_utils/activity-calendar-intensity";
@@ -125,7 +126,12 @@ async function ActivityLegend() {
 export async function ActivityChart({ days }: { days: LearningActivityDay[] }) {
   const t = await getExtracted();
   const locale = await getLocale();
-  const monthFormatter = new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" });
+
+  const monthFormatter = new Intl.DateTimeFormat(getFormattingLocale(locale), {
+    month: "short",
+    timeZone: "UTC",
+  });
+
   const formatDay = getProgressDayFormatter({ locale, newest: days.at(-1)?.date });
   const maximumActivitiesCompleted = Math.max(0, ...days.map((day) => day.activitiesCompleted));
 

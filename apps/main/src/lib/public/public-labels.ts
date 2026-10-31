@@ -1,6 +1,7 @@
+import { getFormatter } from "@/i18n/formatter";
 import { type CourseLevel } from "@zoonk/db";
 import { formatDuration } from "@zoonk/utils/duration";
-import { getExtracted, getFormatter, getLocale } from "next-intl/server";
+import { getExtracted, getLocale } from "next-intl/server";
 import { getTotalDuration } from "./total-duration";
 
 const MINUTES_PER_HOUR = 60;

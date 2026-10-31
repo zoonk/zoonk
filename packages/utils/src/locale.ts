@@ -23,6 +23,13 @@ export function getContentLocale(language: string): SupportedLocale | null {
   return locale && isValidLocale(locale) ? locale : null;
 }
 
+/** Plain `es` writes numbers and dates Spain's way (1.234,56), but the app's Spanish and its courses are Mexico's. */
+const FORMATTING_LOCALES: ReadonlyMap<string, string> = new Map([["es", "es-MX"]]);
+
+export function getFormattingLocale(language: string): string {
+  return FORMATTING_LOCALES.get(language) ?? language;
+}
+
 export function getSupportedLocaleFromLanguage(language: string): SupportedLocale {
   return getContentLocale(language) ?? DEFAULT_LOCALE;
 }

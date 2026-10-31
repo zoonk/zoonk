@@ -5,7 +5,7 @@ import {
   type NoticedPattern,
 } from "@zoonk/core/view-models/language/contract";
 import { KeyboardIcon, MicIcon, SparklesIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import {
   ListRowContent,
   ListRowDescription,
@@ -24,6 +24,7 @@ import {
   SuggestionLinkAction,
   SuggestionSummary,
 } from "../../_components/suggestion";
+import { useFormatter } from "../../_utils/formatter";
 
 type Pronunciation = NonNullable<LanguageTodayView["pronunciation"]>;
 

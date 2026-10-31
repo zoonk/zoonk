@@ -1,4 +1,5 @@
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { getFormattingLocale } from "@zoonk/utils/locale";
 
 const DAYS_IN_A_WEEK = 7;
 
@@ -35,12 +36,17 @@ export function describeReviewDate({
   if (days < DAYS_IN_A_WEEK) {
     return {
       kind: "weekday",
-      label: new Intl.DateTimeFormat(locale, { weekday: "long" }).format(review),
+      label: new Intl.DateTimeFormat(getFormattingLocale(locale), { weekday: "long" }).format(
+        review,
+      ),
     };
   }
 
   return {
     kind: "date",
-    label: new Intl.DateTimeFormat(locale, { day: "numeric", month: "short" }).format(review),
+    label: new Intl.DateTimeFormat(getFormattingLocale(locale), {
+      day: "numeric",
+      month: "short",
+    }).format(review),
   };
 }

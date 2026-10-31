@@ -1,5 +1,6 @@
 import { aggregateByPeriod } from "./aggregation";
 import { type HistoryPeriod } from "./date-ranges";
+import { getFormattingLocale } from "./locale";
 
 export function isValidChartPayload<T>(
   payload: unknown,
@@ -19,14 +20,17 @@ export function formatLabel(date: Date, period: HistoryPeriod, locale: string): 
   }
 
   if (period === "month") {
-    return new Intl.DateTimeFormat(locale, {
+    return new Intl.DateTimeFormat(getFormattingLocale(locale), {
       day: "numeric",
       month: "short",
       timeZone: "UTC",
     }).format(date);
   }
 
-  return new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(date);
+  return new Intl.DateTimeFormat(getFormattingLocale(locale), {
+    month: "short",
+    timeZone: "UTC",
+  }).format(date);
 }
 
 function getAggregatedPoints(

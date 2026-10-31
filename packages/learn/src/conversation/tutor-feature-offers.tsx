@@ -10,9 +10,10 @@ import {
   PlusIcon,
   SparklesIcon,
 } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
 import { PlusNotice } from "../_components/plus-lock";
+import { useFormatter } from "../_utils/formatter";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { SubjectIcon } from "../syllabus/subject-icon";

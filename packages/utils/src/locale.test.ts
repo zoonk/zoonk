@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { getContentLocale, getSupportedLocaleFromLanguage, isValidLocale } from "./locale";
+import {
+  getContentLocale,
+  getFormattingLocale,
+  getSupportedLocaleFromLanguage,
+  isValidLocale,
+} from "./locale";
 
 describe(getContentLocale, () => {
   it.each([
@@ -42,5 +47,16 @@ describe(getSupportedLocaleFromLanguage, () => {
 
   it("falls back to English for unsupported languages", () => {
     expect(getSupportedLocaleFromLanguage("it")).toBe("en");
+  });
+});
+
+describe(getFormattingLocale, () => {
+  it("formats Spanish like Mexico, the variety the app and its courses use", () => {
+    expect(getFormattingLocale("es")).toBe("es-MX");
+  });
+
+  it("keeps every other language and an explicit region as they are", () => {
+    expect(getFormattingLocale("pt")).toBe("pt");
+    expect(getFormattingLocale("es-AR")).toBe("es-AR");
   });
 });

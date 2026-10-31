@@ -12,6 +12,10 @@ describe(formatLocalizedNumber, () => {
     expect(formatLocalizedNumber({ locale: "pt", value: 3869.684462 })).toBe("3.869,68");
   });
 
+  it("writes Spanish the Mexican way, not Spain's", () => {
+    expect(formatLocalizedNumber({ locale: "es", value: 3869.684462 })).toBe("3,869.68");
+  });
+
   it("signs changes, drops grouping for inputs and shortens axis labels", () => {
     expect(formatLocalizedNumber({ locale: "en", signed: true, value: 8 })).toBe("+8");
     expect(formatLocalizedNumber({ locale: "en", signed: true, value: 0 })).toBe("0");
@@ -126,6 +130,7 @@ describe(parseLocalizedNumber, () => {
     expect(parseLocalizedNumber({ locale: "pt", text: "12.000" })).toBe(12_000);
     expect(parseLocalizedNumber({ locale: "en", text: "3,869.68" })).toBe(3869.68);
     expect(parseLocalizedNumber({ locale: "pt", text: "3.869,68" })).toBe(3869.68);
+    expect(parseLocalizedNumber({ locale: "es", text: "1,000" })).toBe(1000);
   });
 
   it("takes the last mark as the decimal point when both appear, in any language", () => {

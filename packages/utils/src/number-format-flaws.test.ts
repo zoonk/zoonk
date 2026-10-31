@@ -14,6 +14,11 @@ describe(findNumberFormatFlaws, () => {
       "Writes 40000000 without grouping its digits; write 40,000,000.",
       "Writes 12500 without grouping its digits; write 12,500.",
     ]);
+
+    expect(findNumberFormatFlaws({ language: "es", value })).toStrictEqual([
+      "Writes 40000000 without grouping its digits; write 40,000,000.",
+      "Writes 12500 without grouping its digits; write 12,500.",
+    ]);
   });
 
   it("passes grouped numbers, years, decimals, codes, dates and money", () => {

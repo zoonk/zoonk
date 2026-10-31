@@ -3,11 +3,12 @@
 import { type ExamView } from "@zoonk/core/exams/view/contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownRightIcon, ArrowUpRightIcon, TimerIcon, TrophyIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { Meter, MeterFill } from "../_components/meter";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PlusMark } from "../_components/plus-lock";
 import { StatTile, StatTiles } from "../_components/stat-tile";
+import { useFormatter } from "../_utils/formatter";
 import { useMockShapeLabel } from "../mock/mock-labels";
 import { findBestArea } from "./best-area";
 import { useExamScreen } from "./exam-context";

@@ -2,7 +2,8 @@
 
 import { type MockLeftOut, type MockScoreNotes } from "@zoonk/core/exams/mocks/view-contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useFormatter } from "../_utils/formatter";
 
 function useLeftOutLine() {
   const t = useExtracted();

@@ -1,7 +1,7 @@
 "use client";
 
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { useFormatter } from "next-intl";
+import { useFormatter } from "./formatter";
 
 const REFERENCE_SUNDAY = Date.parse("2023-01-01T00:00:00Z");
 

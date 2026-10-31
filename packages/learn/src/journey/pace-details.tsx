@@ -2,11 +2,12 @@
 
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { GoalRing, type GoalRingTrack } from "../_components/goal-ring";
 import { ListGroup, ListRowContent, ListRowLink, ListRowTitle } from "../_components/list-group";
 import { SectionLabel } from "../_components/section-label";
 import { DoneMark } from "../_components/status-mark";
+import { useFormatter } from "../_utils/formatter";
 import { isoDateToUtc } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "../plan/plan-context";

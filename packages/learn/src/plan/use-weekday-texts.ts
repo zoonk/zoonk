@@ -2,7 +2,8 @@
 
 import { type PlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useFormatter } from "../_utils/formatter";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatDuration } from "../_utils/time-format";

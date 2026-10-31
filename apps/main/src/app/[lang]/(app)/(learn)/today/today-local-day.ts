@@ -1,5 +1,5 @@
 import "server-only";
-import { getFormatter } from "next-intl/server";
+import { getFormatter } from "@/i18n/formatter";
 
 /** Null when no goal says where the learner is, rather than a day that may be off by one. */
 export async function getLocalDay({

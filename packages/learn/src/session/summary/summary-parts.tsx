@@ -11,7 +11,7 @@ import {
   TrendingDownIcon,
   TrendingUpIcon,
 } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { PageSectionTitle } from "../../_components/page";
 import { StatTile, StatTiles } from "../../_components/stat-tile";
 import {
@@ -23,6 +23,7 @@ import {
   StepRows,
   StepTitle,
 } from "../../_components/step-card";
+import { useFormatter } from "../../_utils/formatter";
 import { useFormatGoalProgress, useFormatShare } from "../../_utils/percent";
 import { useFormatDuration } from "../../_utils/time-format";
 import { useBeltName } from "../../_utils/use-belt-name";

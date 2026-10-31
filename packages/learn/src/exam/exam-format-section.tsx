@@ -1,7 +1,7 @@
 "use client";
 
 import { type ExamFormatDay } from "@zoonk/core/exams/view/contract";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
 import {
   PageSection,
@@ -9,6 +9,7 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
+import { useFormatter } from "../_utils/formatter";
 import { useFormatDuration } from "../_utils/time-format";
 import { useExamScreen } from "./exam-context";
 import { useExamDayDate } from "./exam-labels";

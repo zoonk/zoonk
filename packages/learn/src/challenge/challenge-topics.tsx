@@ -1,7 +1,7 @@
 "use client";
 
 import { type ChallengeTopic } from "@zoonk/core/checkpoints/challenge-contract";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import {
   ListGroup,
   ListRow,
@@ -12,6 +12,7 @@ import {
 } from "../_components/list-group";
 import { PageSectionTitle } from "../_components/page";
 import { TaskAsideContent } from "../_components/task-layout";
+import { useFormatter } from "../_utils/formatter";
 import { useChallengeScreen } from "./challenge-context";
 
 type TopicRow = { subject: string | null; topics: string[] };

@@ -1,3 +1,5 @@
+import { getFormattingLocale } from "./locale";
+
 export const DEFAULT_PROGRESS_LOOKBACK_DAYS = 90;
 
 const APP_LAUNCH_YEAR = 2025;
@@ -140,7 +142,7 @@ export function formatPeriodLabel(
   }
 
   if (period === "month") {
-    return new Intl.DateTimeFormat(locale, {
+    return new Intl.DateTimeFormat(getFormattingLocale(locale), {
       month: "long",
       timeZone: "UTC",
       year: "numeric",

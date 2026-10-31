@@ -1,4 +1,5 @@
 import { type GeneratedMathProblem } from "@zoonk/ai/tasks/items/schemas";
+import { getFormattingLocale } from "@zoonk/utils/locale";
 import { evaluateFormula } from "../../activities/expression/evaluate-expression";
 
 const PLACEHOLDER = /\{(?<name>[A-Z_a-z]\w*)\}/gu;
@@ -20,7 +21,7 @@ export function getPlaceholders(text: string): string[] {
 }
 
 function formatValue({ language, value }: { language: string; value: number }): string {
-  return new Intl.NumberFormat(language, {
+  return new Intl.NumberFormat(getFormattingLocale(language), {
     maximumFractionDigits: MAX_DISPLAY_DECIMALS,
     useGrouping: "min2",
   }).format(value);

@@ -1,6 +1,7 @@
 "use client";
 
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useFormatter } from "../_utils/formatter";
 
 export function useCriterionName() {
   const t = useExtracted();

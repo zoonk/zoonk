@@ -1,6 +1,7 @@
 import { GoalForm } from "@/components/public/goal-form";
 import { Variant } from "@/components/public/variant-switch";
-import { getExtracted, getFormatter } from "next-intl/server";
+import { getFormatter } from "@/i18n/formatter";
+import { getExtracted } from "next-intl/server";
 import { getExamplePlans } from "./example-plans";
 import { EXAMPLE_GOALS, type ExampleGoal, GOAL_SWITCH, getExampleSet } from "./landing-examples";
 

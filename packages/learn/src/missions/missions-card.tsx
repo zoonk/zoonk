@@ -3,11 +3,12 @@
 import { countDoneMissions, isFullMeal } from "@zoonk/core/sessions/missions";
 import { cn } from "@zoonk/ui/lib/utils";
 import { TargetIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { ListGroup } from "../_components/list-group";
 import { SURFACE_CLASS, Surface } from "../_components/surface";
 import { FactSegments } from "../_components/task-meta";
+import { useFormatter } from "../_utils/formatter";
 import { useFormatDuration } from "../_utils/time-format";
 import { type BuddyToday } from "../buddies/buddy-status-view";
 import { type LearnBuddy } from "../buddies/use-buddy-name";

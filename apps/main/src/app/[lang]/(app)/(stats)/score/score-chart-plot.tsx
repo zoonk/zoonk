@@ -1,7 +1,8 @@
 "use client";
 
+import { useFormatter } from "@zoonk/learn/formatter";
 import { formatMetricPercent } from "@zoonk/utils/number";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import {
   ProgressChartGrid,
   ProgressChartLine,

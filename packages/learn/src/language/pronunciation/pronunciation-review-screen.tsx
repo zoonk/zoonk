@@ -14,12 +14,13 @@ import {
 } from "@zoonk/ui/components/dropdown-menu";
 import { cn } from "@zoonk/ui/lib/utils";
 import { EllipsisIcon, RotateCcwIcon, SkipForwardIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { FeedbackVerdict } from "../../_components/feedback-panel";
 import { MomentReadouts } from "../../_components/moment-readouts";
 import { AnswersSaveError } from "../../_components/save-error";
 import { TASK_HEADER_ICON_CLASS, TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
+import { useFormatter } from "../../_utils/formatter";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { DayMoment } from "../../session/day-moment";
 import { MomentAfterCeremony, type MomentCeremony } from "../../session/moment-ceremony";

@@ -1,3 +1,4 @@
+import { getFormatter } from "@/i18n/formatter";
 import { type EnergyDay } from "@zoonk/core/progress/energy";
 import {
   ContributionCalendar,
@@ -23,8 +24,9 @@ import {
   getContributionCalendarWeekKey,
   groupContributionCalendarDaysByWeek,
 } from "@zoonk/utils/contribution-calendar";
+import { getFormattingLocale } from "@zoonk/utils/locale";
 import { formatMetricPercent } from "@zoonk/utils/number";
-import { getExtracted, getFormatter, getLocale } from "next-intl/server";
+import { getExtracted, getLocale } from "next-intl/server";
 import { getProgressDayFormatter } from "../_components/progress-insight-date-label";
 import { getEnergyCalendarIntensity } from "./_utils/energy-calendar-intensity";
 
@@ -122,7 +124,11 @@ export async function EnergyChart({ days }: { days: EnergyDay[] }) {
     hasActivity: (day) => day.energy !== null,
   });
 
-  const monthFormatter = new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" });
+  const monthFormatter = new Intl.DateTimeFormat(getFormattingLocale(locale), {
+    month: "short",
+    timeZone: "UTC",
+  });
+
   const formatDay = getProgressDayFormatter({ locale, newest: days.at(-1)?.date });
 
   function getAccessibleLabel(day: EnergyDay) {

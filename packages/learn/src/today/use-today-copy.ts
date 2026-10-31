@@ -2,7 +2,8 @@
 
 import { type DayState } from "@zoonk/core/sessions/day-state";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useFormatter } from "../_utils/formatter";
 import { useFormatDuration } from "../_utils/time-format";
 import { useTodayScreen } from "./today-context";
 

@@ -2,7 +2,8 @@
 
 import { type BeltColor, getBeltStartBrainPower } from "@zoonk/utils/belt-level";
 import { type BuddyGlasses, type BuddyStage } from "@zoonk/utils/buddy";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useFormatter } from "../_utils/formatter";
 import { toBeltColor, useBeltName } from "../_utils/use-belt-name";
 import { BUDDY_GLASSES } from "../buddies/buddy-labels";
 import { type LearnBuddy, useBuddyName } from "../buddies/use-buddy-name";

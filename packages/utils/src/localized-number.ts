@@ -1,3 +1,5 @@
+import { getFormattingLocale } from "./locale";
+
 const DEFAULT_FRACTION_DIGITS = 2;
 const MINUS_SIGN = "\u2212";
 const TEN = 10;
@@ -19,7 +21,7 @@ export function getNumberFormatter(
     return cached;
   }
 
-  const formatter = new Intl.NumberFormat(locale, options);
+  const formatter = new Intl.NumberFormat(getFormattingLocale(locale), options);
   formatters.set(key, formatter);
   return formatter;
 }

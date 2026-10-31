@@ -2,8 +2,9 @@
 
 import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { FlagIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { PageSectionFooter } from "../_components/page";
+import { useFormatter } from "../_utils/formatter";
 import { getSourceHost } from "../_utils/source-host";
 import { usePassMarksNote } from "../_utils/use-pass-marks-note";
 import { FrequencyChip, setsApart } from "./frequency-chip";

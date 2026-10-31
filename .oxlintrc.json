@@ -32,6 +32,23 @@
     "eslint/max-params": "off",
     "eslint/max-statements": ["error", { "ignoreTopLevelFunctions": true, "max": 30 }],
     "eslint/no-inline-comments": "off",
+    "eslint/no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "next-intl",
+            "importNames": ["useFormatter"],
+            "message": "Use useFormatter from @zoonk/learn/formatter, which formats Spanish the Mexican way."
+          },
+          {
+            "name": "next-intl/server",
+            "importNames": ["getFormatter"],
+            "message": "Use getFormatter from @/i18n/formatter, which formats Spanish the Mexican way."
+          }
+        ]
+      }
+    ],
     "eslint/no-magic-numbers": [
       "error",
       {

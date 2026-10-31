@@ -2,7 +2,7 @@
 
 import { type TargetCutoff } from "@zoonk/core/exams/cutoffs/contract";
 import { TargetIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import {
   ListRow,
   ListRowContent,
@@ -11,6 +11,7 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "../_components/list-group";
+import { useFormatter } from "../_utils/formatter";
 import { getSourceHost } from "../_utils/source-host";
 
 /**
