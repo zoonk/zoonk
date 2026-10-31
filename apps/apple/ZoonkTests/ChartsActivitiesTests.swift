@@ -206,6 +206,23 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertEqual(view.baseline?.kind, .whatIf)
   }
 
+  func testFormulaModelDropsTheChangeLabelForTheAnswersOnceChecked() throws {
+    let fields: FormulaModelFields = try decode(
+      """
+      {"events":[{"label":"Rent goes up $500","name":"rentUp"}],
+       "outputs":[{"formula":"price * 1000 - 2000 - rentUp * 500","id":"profit","label":"Profit","unit":"$"}],
+       "variables":[{"initial":3,"label":"Price","max":6,"min":2,"name":"price","step":0.5}]}
+      """)
+    let view = FormulaModelView(
+      fields: fields, axis: fields.variables[0], charted: fields.outputs[0],
+      sliders: ["price": 4], events: ["rentUp": 1])
+
+    XCTAssertEqual(
+      view.changeLabel(showsAnswer: false),
+      ActivityNumberFormat.format(-500, unit: "$", signed: true))
+    XCTAssertNil(view.changeLabel(showsAnswer: true))
+  }
+
   func testFormulaModelStartsAtTheCheckInputsTheLastOfANameWinning() throws {
     let fields: FormulaModelFields = try decode(
       """

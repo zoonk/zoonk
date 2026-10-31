@@ -158,13 +158,10 @@ struct FormulaModelCanvas: View {
           .foregroundStyle(.mint)
           .symbolSize(90)
           .annotation(position: .top, spacing: 4) {
-            if view.delta != 0 {
-              Text(
-                verbatim: ActivityNumberFormat.format(
-                  view.delta, unit: view.charted.unit, signed: true)
-              )
-              .font(.caption.weight(.semibold).monospacedDigit())
-              .foregroundStyle(.mint)
+            if let label = view.changeLabel(showsAnswer: expected != nil) {
+              Text(verbatim: label)
+                .font(.caption.weight(.semibold).monospacedDigit())
+                .foregroundStyle(.mint)
             }
           }
       }

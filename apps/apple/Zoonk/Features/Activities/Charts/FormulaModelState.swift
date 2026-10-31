@@ -182,6 +182,16 @@ struct FormulaModelView {
     return now - before
   }
 
+  /// Once checked, the right answer's label takes the change label's place; the readouts still say
+  /// it.
+  func changeLabel(showsAnswer: Bool) -> String? {
+    guard !showsAnswer, delta != 0 else {
+      return nil
+    }
+
+    return ActivityNumberFormat.format(delta, unit: charted.unit, signed: true)
+  }
+
   var compared: (x: Double, y: Double)? {
     guard let compareAt = fields.compareAt else {
       return nil
