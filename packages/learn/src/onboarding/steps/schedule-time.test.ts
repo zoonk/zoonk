@@ -242,8 +242,14 @@ describe(asksAboutTime, () => {
 describe(getTooClose, () => {
   const SHORT = { kind: "share", share: 0.15 } as const;
 
-  it("says why only when not even a whole day covers everything", () => {
+  it("says why only when no suggestion covers everything", () => {
+    const longerThanSuggested = { coreMinutes: 255, recommendedMinutes: 805, suggested: null };
+
     expect(getTooClose({ found: foundTime(), line: SHORT, studiesEveryDay: true })).toBeNull();
+
+    expect(
+      getTooClose({ found: foundTime(longerThanSuggested), line: SHORT, studiesEveryDay: true }),
+    ).toBe("date");
 
     expect(
       getTooClose({ found: foundTime(PAST_DATE), line: SHORT, studiesEveryDay: true }),

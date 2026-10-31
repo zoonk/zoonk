@@ -56,7 +56,7 @@ const suggestedTimeSchema = z
   .default(null)
   .meta({
     description:
-      "The daily time to start the learner on: recommendedMinutes, else coreMinutes when not even a whole day covers everything. Null when neither is, without a date, while not ready, and when the date has passed. With studyDays, like them, the day the goals typed together share",
+      "The daily time to start the learner on, never more than 4 hours a day: recommendedMinutes when it's at most that, else coreMinutes when that is. Null when neither is, without a date, while not ready, and when the date has passed. With studyDays, like them, the day the goals typed together share",
   });
 
 const targetDateNamedMonthSchema = z
@@ -112,7 +112,7 @@ export const planTimeToCoverSchema = z
       .nullable()
       .meta({
         description:
-          "When even every topic's core lessons don't fit by the date: the fewest daily minutes that bring every topic in. Null when they all fit. With studyDays, the least day the goals typed together share that gives this goal those minutes, at least 5 minutes for each goal",
+          "When even every topic's core lessons don't fit by the date: the fewest daily minutes that bring every topic in. Null when they all fit. With studyDays, the least day the goals typed together share that gives this goal those minutes, at least 5 minutes for each goal. Never offer it as a time to study: offer suggested",
       }),
     fittingDate: isoDateSchema
       .nullable()
@@ -134,7 +134,7 @@ export const planTimeToCoverSchema = z
       .nullable()
       .meta({
         description:
-          "Daily minutes that study the whole goal in depth by its date: the fewest up to 4 hours a day; above that, a time that does, which a weekly mock can make a little more than the fewest. Null without a date, while the plan is being built, or when not even a whole day does. With studyDays, the least day the goals typed together share that gives this goal those minutes, at least 5 minutes for each goal: the time to save as the schedule answer",
+          "Daily minutes that study the whole goal in depth by its date: the fewest up to 4 hours a day; above that, a time that does, which a weekly mock can make a little more than the fewest. Null without a date, while the plan is being built, or when not even a whole day does. With studyDays, the least day the goals typed together share that gives this goal those minutes, at least 5 minutes for each goal. Never offer it as a time to study: offer suggested",
       }),
     suggested: suggestedTimeSchema,
     targetDate: isoDateSchema

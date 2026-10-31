@@ -1,6 +1,15 @@
 import { type PlanSuggestedTime, type PlanTimeToCover } from "../time-advice-contract";
 
-/** Both times are null when more than a whole day would be needed, so neither is ever suggested then. */
+/**
+ * Few people keep up more focused study than this a day, so a goal that needs more starts on less
+ * and says what it covers first. The learner can still pick any time.
+ */
+const LONGEST_SUGGESTED_MINUTES = 240;
+
+function isSustainable(minutes: number | null): minutes is number {
+  return minutes !== null && minutes <= LONGEST_SUGGESTED_MINUTES;
+}
+
 export function getSuggestedTime({
   coreMinutes,
   recommendedMinutes,
@@ -8,9 +17,9 @@ export function getSuggestedTime({
   PlanSuggestedTime,
   "split"
 > | null {
-  if (recommendedMinutes !== null) {
+  if (isSustainable(recommendedMinutes)) {
     return { kind: "everything", minutes: recommendedMinutes };
   }
 
-  return coreMinutes === null ? null : { kind: "everyTopic", minutes: coreMinutes };
+  return isSustainable(coreMinutes) ? { kind: "everyTopic", minutes: coreMinutes } : null;
 }

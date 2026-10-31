@@ -124,9 +124,9 @@ export function toPickedMinutes({
 export type TooClose = "date" | "days";
 
 /**
- * Why no suggestion covers everything, which happens only when not even a whole day does; null when
- * one does, the time shown does, or the date passed. The date is to blame only once every day is a
- * study day: until then, more days bring the time down.
+ * Why no suggestion covers everything, which happens when it would take longer than core ever
+ * suggests; null when one does, the time shown does, or the date passed. The date is to blame only
+ * once every day is a study day: until then, more days bring the time down.
  */
 export function getTooClose({
   found,
