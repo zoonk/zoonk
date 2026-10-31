@@ -12059,35 +12059,6 @@
         }
       }
     },
-    "Pick the one you'll take. Until you do, your plan leaves %@ out." : {
-      "comment" : "Explains an exam choice still to make",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wähle die Prüfung, die du ablegen wirst. Bis dahin lässt dein Plan %@ aus."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elige el examen que vas a hacer. Hasta entonces, tu plan omite %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choisis l’examen que tu passeras. En attendant, ton plan laisse %@ de côté."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escolha a prova que você vai fazer. Até lá, %@ fica de fora do seu plano."
-          }
-        }
-      }
-    },
     "Plan" : {
       "comment" : "Title of the Plan tab",
       "localizations" : {
@@ -14788,31 +14759,196 @@
         }
       }
     },
-    "Until you pick, your plan leaves %@ out." : {
-      "comment" : "Says the plan leaves an exam's choice out until the learner picks",
+    "Until you pick, your plan and mocks leave out %@: %lld of the exam's %lld points." : {
+      "comment" : "The first argument is a part of the exam, such as a specialty's own test or a foreign language, that the plan skips until the learner picks an option; the numbers are points of the exam's score",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bis du eine Wahl triffst, wird %@ in deinem Plan ausgelassen."
+            "value" : "Bis du dich entschieden hast, lassen dein Plan und deine Probeprüfungen %1$@ aus: %2$lld von %3$lld Punkten der Prüfung."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Until you pick, your plan and mocks leave out %1$@: %2$lld of the exam's %3$lld points."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hasta que elijas, tu plan omite %@."
+            "value" : "Hasta que elijas una opción, tu plan y tus simulacros omiten %1$@: %2$lld de los %3$lld puntos del examen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En attendant ton choix, ton plan laisse %@ de côté."
+            "value" : "Tant que tu n’as pas fait ton choix, ton plan et tes examens blancs laissent %1$@ de côté : %2$lld sur les %3$lld points de l’examen."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Até você escolher, %@ fica de fora do seu plano."
+            "value" : "Até você escolher, %1$@ fica de fora do seu plano e dos simulados: %2$lld dos %3$lld pontos da prova."
+          }
+        }
+      }
+    },
+    "Until you pick, your plan and mocks leave out %@: %lld of the exam's %lld questions." : {
+      "comment" : "The first argument is a part of the exam, such as a specialty's own test or a foreign language, that the plan skips until the learner picks an option",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bis du dich entschieden hast, lassen dein Plan und deine Probeprüfungen %1$@ aus: %2$lld von %3$lld Fragen der Prüfung."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Until you pick, your plan and mocks leave out %1$@: %2$lld of the exam's %3$lld questions."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta que elijas una opción, tu plan y tus simulacros omiten %1$@: %2$lld de las %3$lld preguntas del examen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tant que tu n’as pas fait ton choix, ton plan et tes examens blancs laissent %1$@ de côté : %2$lld sur les %3$lld questions de l’examen."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Até você escolher, %1$@ fica de fora do seu plano e dos simulados: %2$lld das %3$lld questões da prova."
+          }
+        }
+      }
+    },
+    "Until you pick, your plan and mocks leave out %@: %lld questions." : {
+      "comment" : "The first argument is a part of the exam, such as a specialty's own test or a foreign language, that the plan skips until the learner picks an option",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Bis du dich entschieden hast, lassen dein Plan und deine Probeprüfungen %1$@ aus: %2$lld Frage."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Bis du dich entschieden hast, lassen dein Plan und deine Probeprüfungen %1$@ aus: %2$lld Fragen."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Until you pick, your plan and mocks leave out %1$@: %2$lld question."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Until you pick, your plan and mocks leave out %1$@: %2$lld questions."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Hasta que elijas una opción, tu plan y tus simulacros omiten %1$@: %2$lld pregunta."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Hasta que elijas una opción, tu plan y tus simulacros omiten %1$@: %2$lld preguntas."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tant que tu n’as pas fait ton choix, ton plan et tes examens blancs laissent %1$@ de côté : %2$lld question."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tant que tu n’as pas fait ton choix, ton plan et tes examens blancs laissent %1$@ de côté : %2$lld questions."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Até você escolher, %1$@ fica de fora do seu plano e dos simulados: %2$lld questão."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Até você escolher, %1$@ fica de fora do seu plano e dos simulados: %2$lld questões."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Until you pick, your plan and mocks leave out %@." : {
+      "comment" : "The argument is a part of the exam, such as a specialty's own test or a foreign language, that the plan skips until the learner picks an option",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bis du dich entschieden hast, lassen dein Plan und deine Probeprüfungen %@ aus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta que elijas una opción, tu plan y tus simulacros omiten %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tant que tu n’as pas fait ton choix, ton plan et tes examens blancs laissent %@ de côté."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Até você escolher, %@ fica de fora do seu plano e dos simulados."
           }
         }
       }

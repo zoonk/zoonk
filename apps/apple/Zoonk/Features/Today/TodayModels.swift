@@ -74,6 +74,7 @@ struct TodayView: Decodable, Equatable, Sendable {
     }
 
     let group: String
+    let leftOut: ExamChoiceLeftOut
     let options: [Option]
   }
 

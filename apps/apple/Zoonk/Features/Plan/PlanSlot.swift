@@ -100,9 +100,7 @@ struct PlanSuggestionSection: View {
           comment:
             "Asks which option of an exam's choice, like its foreign language, the learner takes"),
         systemImage: "list.bullet",
-        description: Text(
-          "Pick the one you'll take. Until you do, your plan leaves \(choice.group) out.",
-          tableName: "Plan", comment: "Explains an exam choice still to make")
+        description: Text(choice.leftOut.line)
       ) {
         Menu {
           ForEach(choice.options, id: \.self) { option in

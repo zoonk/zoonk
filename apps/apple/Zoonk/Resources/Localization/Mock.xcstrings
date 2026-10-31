@@ -59,6 +59,35 @@
         }
       }
     },
+    "%@ is left out until you pick which one you take, in your plan." : {
+      "comment" : "The argument is a part of the exam, such as a specialty's own test, that the learner hasn't picked an option for yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ wird ausgelassen, bis du in deinem Plan auswählst, welchen Test du ablegst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se omite %@ hasta que elijas una opción en tu plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On laisse %@ de côté tant que tu n’as pas choisi ton option dans ton plan."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ fica de fora até você escolher uma opção no seu plano."
+          }
+        }
+      }
+    },
     "%@ is only in full mocks." : {
       "comment" : "A written part only full mocks ask",
       "localizations" : {
@@ -2300,6 +2329,35 @@
         }
       }
     },
+    "An exam day without %@" : {
+      "comment" : "A mock of a whole exam day without the tests the learner hasn't picked an option for yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Prüfungstag ohne %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un día de examen sin %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une journée d’examen sans %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um dia de prova sem %@"
+          }
+        }
+      }
+    },
     "Answer each question to move on." : {
       "comment" : "Answers required",
       "localizations" : {
@@ -3211,6 +3269,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Todas as tarefas foram concluídas. Entregue esta seção para continuar."
+          }
+        }
+      }
+    },
+    "Exam day %lld without %@" : {
+      "comment" : "A mock of one whole exam day, of an exam of several days, without the tests the learner hasn't picked an option for yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfungstag %1$lld ohne %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Exam day %1$lld without %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Día %1$lld del examen sin %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour %1$lld de l’examen sans %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dia %1$lld de prova sem %2$@"
           }
         }
       }

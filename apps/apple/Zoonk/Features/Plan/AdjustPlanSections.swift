@@ -106,9 +106,7 @@ private struct PlanExamChoiceSection: View {
           "Asks which option of an exam's choice, like its foreign language, the learner takes")
     } footer: {
       if choice.subject == nil {
-        Text(
-          "Until you pick, your plan leaves \(choice.group) out.", tableName: "Plan",
-          comment: "Says the plan leaves an exam's choice out until the learner picks")
+        Text(choice.leftOut.line)
       }
     }
   }

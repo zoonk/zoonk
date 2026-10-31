@@ -1077,7 +1077,7 @@ private struct MockNotesSection: View {
   let view: MockView
 
   var body: some View {
-    let lines = leftOutLines
+    let lines = view.leftOut.map(MockLabels.leftOut)
 
     if !lines.isEmpty || short != nil || view.sizeSource.pastEdition != nil
       || view.sizeSource.questions != .notice || view.sizeSource.time != .notice
@@ -1102,47 +1102,5 @@ private struct MockNotesSection: View {
       localized:
         "This mock asks \(view.questions) of \(examQuestions) questions: there weren't enough new ones yet.",
       table: "Mock", comment: "A mock that asked fewer questions than the exam")
-  }
-
-  private var leftOutLines: [String] {
-    view.leftOut.map { leftOut in
-      switch (leftOut.part, leftOut.name) {
-      case (.choice, let name):
-        String(
-          localized: "\(name ?? "") isn't in mocks yet.", table: "Mock", comment: "A left-out part")
-      case (.listening, let name?), (.speaking, let name?):
-        String(localized: "\(name) isn't in mocks yet.", table: "Mock", comment: "A left-out part")
-      case (.listening, nil):
-        String(localized: "Listening isn't in mocks yet.", table: "Mock", comment: "Left out")
-      case (.speaking, nil):
-        String(
-          localized: "The speaking part isn't in mocks yet.", table: "Mock", comment: "Left out")
-      case (.practical, let name?):
-        String(
-          localized: "\(name) can't be part of a mock: it's a practical test.", table: "Mock",
-          comment: "A practical part left out")
-      case (.practical, nil):
-        String(
-          localized: "The exam's practical test can't be part of a mock.", table: "Mock",
-          comment: "A practical test left out")
-      case (.numeric, _):
-        String(
-          localized: "Questions answered with a number are asked as multiple choice.",
-          table: "Mock", comment: "Numeric questions asked as choices")
-      case (.shortAnswer, _):
-        String(
-          localized: "Questions answered in a few words are asked as multiple choice.",
-          table: "Mock", comment: "Short answers asked as choices")
-      case (.written, let name):
-        String(
-          localized:
-            "There's no essay for \(name ?? "") yet, so you practice it in your essay sessions.",
-          table: "Mock", comment: "A written part without an essay yet")
-      case (.writtenInFull, let name):
-        String(
-          localized: "\(name ?? "") is only in full mocks.", table: "Mock",
-          comment: "A written part only full mocks ask")
-      }
-    }
   }
 }

@@ -136,11 +136,8 @@ struct TodayExamChoiceSection: View {
             )
             .font(.headline)
 
-            Text(
-              "Pick the one you'll take. Until you do, your plan leaves \(choice.group) out.",
-              tableName: "Plan", comment: "Explains an exam choice still to make"
-            )
-            .foregroundStyle(.secondary)
+            Text(choice.leftOut.line)
+              .foregroundStyle(.secondary)
           }
         } icon: {
           Image(systemName: "signpost.right")

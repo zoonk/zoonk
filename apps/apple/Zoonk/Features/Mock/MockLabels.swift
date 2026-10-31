@@ -23,6 +23,34 @@ enum MockLabels {
     }
   }
 
+  static func optionName(_ option: MockOption, severalDays: Bool) -> String {
+    if option.kind == .area {
+      return option.areas.first ?? option.area
+        ?? String(localized: "One subject", table: "Mock", comment: "A one-subject mock")
+    }
+
+    let unpicked = option.leftOut.compactMap { $0.part == .choice ? $0.name : nil }
+
+    if option.kind == .full, !unpicked.isEmpty {
+      let names = unpicked.formatted(.list(type: .and))
+
+      return severalDays
+        ? String(
+          localized: "Exam day \(option.day ?? 1) without \(names)", table: "Mock",
+          comment:
+            "A mock of one whole exam day, of an exam of several days, without the tests the learner hasn't picked an option for yet"
+        )
+        : String(
+          localized: "An exam day without \(names)", table: "Mock",
+          comment:
+            "A mock of a whole exam day without the tests the learner hasn't picked an option for yet"
+        )
+    }
+
+    return daySize(
+      fullLength: option.kind == .full, day: severalDays ? (option.day ?? 1) : nil)
+  }
+
   static func shape(purpose: MockPurpose, shape: MockShape?) -> String? {
     if purpose == .placement {
       return String(
@@ -37,6 +65,50 @@ enum MockLabels {
     case .area: return shape.area
     case .full: return daySize(fullLength: true, day: nil)
     case .half: return daySize(fullLength: false, day: nil)
+    }
+  }
+
+  static func leftOut(_ leftOut: MockLeftOut) -> String {
+    switch (leftOut.part, leftOut.name) {
+    case (.choice, let name):
+      String(
+        localized: "\(name ?? "") is left out until you pick which one you take, in your plan.",
+        table: "Mock",
+        comment:
+          "The argument is a part of the exam, such as a specialty's own test, that the learner hasn't picked an option for yet"
+      )
+    case (.listening, let name?), (.speaking, let name?):
+      String(localized: "\(name) isn't in mocks yet.", table: "Mock", comment: "A left-out part")
+    case (.listening, nil):
+      String(localized: "Listening isn't in mocks yet.", table: "Mock", comment: "Left out")
+    case (.speaking, nil):
+      String(
+        localized: "The speaking part isn't in mocks yet.", table: "Mock", comment: "Left out")
+    case (.practical, let name?):
+      String(
+        localized: "\(name) can't be part of a mock: it's a practical test.", table: "Mock",
+        comment: "A practical part left out")
+    case (.practical, nil):
+      String(
+        localized: "The exam's practical test can't be part of a mock.", table: "Mock",
+        comment: "A practical test left out")
+    case (.numeric, _):
+      String(
+        localized: "Questions answered with a number are asked as multiple choice.",
+        table: "Mock", comment: "Numeric questions asked as choices")
+    case (.shortAnswer, _):
+      String(
+        localized: "Questions answered in a few words are asked as multiple choice.",
+        table: "Mock", comment: "Short answers asked as choices")
+    case (.written, let name):
+      String(
+        localized:
+          "There's no essay for \(name ?? "") yet, so you practice it in your essay sessions.",
+        table: "Mock", comment: "A written part without an essay yet")
+    case (.writtenInFull, let name):
+      String(
+        localized: "\(name ?? "") is only in full mocks.", table: "Mock",
+        comment: "A written part only full mocks ask")
     }
   }
 

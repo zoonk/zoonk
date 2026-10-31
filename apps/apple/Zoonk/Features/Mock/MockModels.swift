@@ -483,6 +483,7 @@ struct MockOption: Hashable, Decodable, Sendable, Identifiable {
   var day: Int?
   var estimatedMinutes: Int
   var kind: MockShape.Kind
+  var leftOut: [MockLeftOut]
   var minutes: Int
   var objectiveOnly: Bool
   var questions: Int

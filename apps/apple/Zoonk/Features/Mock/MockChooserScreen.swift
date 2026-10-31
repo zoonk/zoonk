@@ -236,9 +236,15 @@ private struct MockChooser: View {
           Text("The exam", tableName: "Mock", comment: "Mocks of the whole exam or half of it")
         } footer: {
           if let pickedOption {
-            MockSizeNote(
-              document: view.examDocument, minutes: pickedOption.minutes,
-              questions: pickedOption.questions, source: view.sizeSource)
+            VStack(alignment: .leading, spacing: 4) {
+              MockSizeNote(
+                document: view.examDocument, minutes: pickedOption.minutes,
+                questions: pickedOption.questions, source: view.sizeSource)
+              ForEach(
+                pickedOption.leftOut.filter { $0.part != .writtenInFull }.map(MockLabels.leftOut),
+                id: \.self
+              ) { Text($0) }
+            }
           }
         }
 
@@ -391,7 +397,8 @@ private struct MockChooser: View {
 
   private func optionRow(_ option: MockOption) -> some View {
     choiceRow(
-      id: option.id, isPicked: option.id == pickedOption?.id, title: name(option),
+      id: option.id, isPicked: option.id == pickedOption?.id,
+      title: MockLabels.optionName(option, severalDays: severalDays),
       detail: optionDetail(option),
       trailing: String(
         localized:
@@ -437,16 +444,6 @@ private struct MockChooser: View {
     .foregroundStyle(.primary)
     .disabled(busy)
     .accessibilityAddTraits(isPicked ? .isSelected : [])
-  }
-
-  private func name(_ option: MockOption) -> String {
-    if option.kind == .area {
-      return option.areas.first ?? option.area
-        ?? String(localized: "One subject", table: "Mock", comment: "A one-subject mock")
-    }
-
-    return MockLabels.daySize(
-      fullLength: option.kind == .full, day: severalDays ? (option.day ?? 1) : nil)
   }
 
   private func optionDetail(_ option: MockOption) -> String {

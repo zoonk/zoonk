@@ -186,6 +186,8 @@ struct ChoiceRows<Value: Hashable>: View {
 
   let choices: [Choice]
   var picked: Value?
+  var header: Text?
+  var footer: Text?
   let onPick: (Value) -> Void
 
   var body: some View {
@@ -216,6 +218,10 @@ struct ChoiceRows<Value: Hashable>: View {
         }
         .accessibilityAddTraits(picked == choice.value ? .isSelected : [])
       }
+    } header: {
+      header
+    } footer: {
+      footer
     }
   }
 }
@@ -814,7 +820,14 @@ private struct ExamChoiceQuestion: View {
             label: Text(option.shortName ?? option.name),
             detail: option.shortName.flatMap { $0 == option.name ? nil : Text(option.name) })
         },
-        picked: picks[choice.group]
+        picked: picks[choice.group],
+        header: Text(choice.group),
+        footer: Text(
+          ExamChoiceLeftOut(
+            examPoints: choice.leftOut.examPoints, examQuestions: choice.leftOut.examQuestions,
+            name: choice.leftOut.name, points: choice.leftOut.points,
+            questions: choice.leftOut.questions
+          ).line)
       ) { name in
         picks[choice.group] = name
 
