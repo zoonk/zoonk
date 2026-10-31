@@ -182,6 +182,7 @@ describe("lesson screens", () => {
 
   it("shows a written answer nothing checked next to the sample answer, without calling it wrong", async () => {
     const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
+    const explainAnswer = vi.fn<NonNullable<LessonPlayerAdapters["explainAnswer"]>>();
 
     const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() =>
       Promise.resolve({
@@ -202,7 +203,7 @@ describe("lesson screens", () => {
       }),
     );
 
-    renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep }), lesson });
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep, explainAnswer }), lesson });
 
     await page
       .getByRole("textbox", { name: "In your own words: why is the electron drawn as a cloud?" })
@@ -210,6 +211,10 @@ describe("lesson screens", () => {
 
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(verdict("Not checked this time")).toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "Explain my answer" }))
+      .not.toBeInTheDocument();
 
     await expect
       .element(page.getByRole("status").getByText("Because it maps chances."))
