@@ -1,4 +1,4 @@
-import { replaceEmDashes } from "@zoonk/utils/string";
+import { countWords, replaceEmDashes } from "@zoonk/utils/string";
 import { findPlaceholderText, findUnrenderedMarkdown } from "@zoonk/utils/text-flaws";
 import { normalizeTypedAnswer } from "../grading/typed-answer-match";
 import {
@@ -149,8 +149,8 @@ export function repairListeningSet(set: ListeningSet, request: ListeningSetReque
   };
 }
 
-function countWords(turns: readonly ListeningTurn[]): number {
-  return turns.flatMap((turn) => turn.text.split(" ").filter(Boolean)).length;
+function countScriptWords(turns: readonly ListeningTurn[]): number {
+  return turns.reduce((total, turn) => total + countWords(turn.text), 0);
 }
 
 function getQuestionText(question: ListeningQuestion): string {
@@ -182,7 +182,7 @@ function findQuestionProblems(script: string, question: ListeningQuestion): stri
 
 function findScriptProblems(set: ListeningSet): string[] {
   const names = new Set(set.speakers.map((speaker) => speaker.name));
-  const words = countWords(set.turns);
+  const words = countScriptWords(set.turns);
 
   const strangers = new Set(
     set.turns.map((turn) => turn.speaker).filter((speaker) => !names.has(speaker)),

@@ -6,6 +6,7 @@ import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { cn } from "@zoonk/ui/lib/utils";
+import { countWords } from "@zoonk/utils/string";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
@@ -34,12 +35,6 @@ import { useFinishEssay } from "./use-finish-essay";
 export type { EssayActions } from "./essay-context";
 
 type Status = "dailyLimitReached" | "error" | "idle" | "limitReached" | "pending";
-
-const WORD_PATTERN = /\S+/gu;
-
-function countWords(text: string): number {
-  return text.match(WORD_PATTERN)?.length ?? 0;
-}
 
 /** Grading takes about 9 to 17 s, and up to 24 s on the fallback model. */
 const GRADING_BOUNDS = { slowMs: 20_000, timeoutMs: 90_000 } as const;

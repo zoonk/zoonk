@@ -1,4 +1,5 @@
 import { type MasteryState, type MistakeCause } from "@zoonk/db";
+import { countWords } from "@zoonk/utils/string";
 
 export type MistakeSignals = {
   dontKnow?: boolean;
@@ -23,7 +24,7 @@ const STRONG_ACCURACY = 0.8;
 const WEAK_ACCURACY = 0.5;
 
 function estimateReadingMs(text: string): number {
-  const words = text.trim().split(/\s+/u).filter(Boolean).length;
+  const words = countWords(text);
   return Math.max(MIN_READING_MS, Math.round((words / READING_WORDS_PER_MINUTE) * MS_PER_MINUTE));
 }
 

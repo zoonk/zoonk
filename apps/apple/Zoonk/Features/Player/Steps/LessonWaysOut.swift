@@ -210,7 +210,7 @@ extension LessonStep {
       return nil
     }
 
-    let words = text.split(whereSeparator: \.isWhitespace).count
+    let words = WordCount.count(text)
     let readingSeconds = Double(words) / 150 * 60
     return .seconds(max(45, readingSeconds * 3))
   }

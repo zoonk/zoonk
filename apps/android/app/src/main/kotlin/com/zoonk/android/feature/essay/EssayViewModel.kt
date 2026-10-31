@@ -8,6 +8,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.player.SessionMove
 import com.zoonk.android.feature.player.SessionMover
 import com.zoonk.android.feature.player.SessionSteps
+import com.zoonk.android.feature.player.language.countWords
 import com.zoonk.api.models.Essay
 import com.zoonk.api.models.EssayDraftsInner
 import com.zoonk.api.models.EssayGrade
@@ -59,7 +60,7 @@ data class EssayUi(
 ) {
     val graded: String get() = drafts?.firstOrNull()?.text.orEmpty()
     val grade: EssayGrade? get() = drafts?.firstOrNull()?.grade
-    val words: Int get() = WORD.findAll(text).count()
+    val words: Int get() = countWords(text)
     val unsent: Boolean get() = text.isNotBlank() && text != graded
 
     /** It shows what it is and takes no draft; a block finished in this visit goes on to the session instead. */
@@ -256,5 +257,3 @@ class EssayViewModel(
         val GRADING_TIMEOUT = 90.seconds
     }
 }
-
-private val WORD = Regex("\\S+")

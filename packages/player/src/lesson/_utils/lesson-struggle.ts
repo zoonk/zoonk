@@ -1,3 +1,4 @@
+import { countWords } from "@zoonk/utils/string";
 import { type LessonPlayerState, getCurrentStep } from "../lesson-player-state";
 import { type PlayableLibraryStep } from "../lesson-player-types";
 
@@ -78,7 +79,7 @@ export function getStrugglePauseMs(step: PlayableLibraryStep): number | null {
     return null;
   }
 
-  const words = getReadingText(step).split(/\s+/u).filter(Boolean).length;
+  const words = countWords(getReadingText(step));
   const readingMs = (words / READING_WORDS_PER_MINUTE) * MS_PER_MINUTE;
 
   return Math.max(MIN_STRUGGLE_PAUSE_MS, Math.round(readingMs * PAUSE_READING_FACTOR));

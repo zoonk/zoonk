@@ -83,6 +83,13 @@ describe(isEssayTooShort, () => {
   it("doesn't count punctuation as words", () => {
     expect(isEssayTooShort({ essay: `${words(59)} — ...`, rubric: ENEM })).toBe(true);
   });
+
+  it("counts the words of an essay written without spaces", () => {
+    const essay =
+      "私は、高校生がアルバイトをすることに賛成です。社会に出る前に働く経験をすると、お金の大切さや時間の使い方を学べるからです。";
+
+    expect(isEssayTooShort({ essay, rubric: OAB })).toBe(false);
+  });
 });
 
 describe(buildEssayGrade, () => {

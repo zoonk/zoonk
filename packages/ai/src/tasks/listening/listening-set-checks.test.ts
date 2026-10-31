@@ -185,4 +185,17 @@ describe(findListeningSetProblems, () => {
       ]),
     );
   });
+
+  it("counts the words of a script written without spaces", () => {
+    const set = setOf({
+      turns: scriptOf([
+        "すみません、来週の木曜日に会議室を予約したいのですが、空いていますか。",
+        "はい、木曜日の午後なら空いています。何名様でご利用になりますか。",
+        "十二人です。プロジェクターも使いたいのですが、借りられますか。",
+        "はい、プロジェクターは無料でお貸しできます。お名前をお願いします。",
+      ]),
+    });
+
+    expect(findListeningSetProblems(set, REQUEST).join("\n")).not.toContain("The script has");
+  });
 });

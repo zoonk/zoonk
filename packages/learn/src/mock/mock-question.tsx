@@ -5,6 +5,7 @@ import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { InputGroup, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { formatLocalizedNumber } from "@zoonk/utils/localized-number";
+import { countWords } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { useAppLocale } from "../_utils/locale";
@@ -82,15 +83,13 @@ function MockWordAnswer({ question }: { question: MockQuestion }) {
   );
 }
 
-const WORD_PATTERN = /\S+/gu;
-
 function EssayAnswer({ question }: { question: MockQuestion }) {
   const textId = useId();
   const { runner } = useMockScreen();
   const writingName = useWritingName();
   const answer = runner.drafts[question.itemId]?.answer ?? null;
   const text = answer && "text" in answer ? answer.text : "";
-  const words = text.match(WORD_PATTERN)?.length ?? 0;
+  const words = countWords(text);
 
   return (
     <section className="flex flex-col gap-2">

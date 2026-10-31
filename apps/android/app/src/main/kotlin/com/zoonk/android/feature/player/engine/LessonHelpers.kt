@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.player.engine
 
+import com.zoonk.android.feature.player.language.countWords
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import kotlin.math.max
@@ -88,7 +89,7 @@ fun LessonStep.strugglePauseMs(): Long? {
                 return null
             }
         }
-    val words = text.split(Regex("\\s+")).count { it.isNotEmpty() }
+    val words = countWords(text)
     val readingMs = words / READING_WORDS_PER_MINUTE * MS_PER_MINUTE
 
     return max(MIN_STRUGGLE_PAUSE_MS, (readingMs * PAUSE_READING_FACTOR).roundToLong())

@@ -1,3 +1,4 @@
+import { countWords } from "@zoonk/utils/string";
 import {
   type EnemInterventionElements,
   type EssayGrade,
@@ -165,10 +166,6 @@ function getTotalMaxScore(rubric: EssayRubric): number {
   }
 
   return rubric.kind === "oab" ? OAB_TOTAL_MAX : rubric.maxScore;
-}
-
-function countWords(text: string): number {
-  return text.split(/\s+/u).filter((token) => /[\p{L}\p{N}]/u.test(token)).length;
 }
 
 export function isEssayTooShort({ essay, rubric }: { essay: string; rubric: EssayRubric }) {

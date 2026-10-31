@@ -77,7 +77,7 @@ private struct EssayContent: View {
   }
 
   private var canSend: Bool {
-    EssayWords.count(writer.text) > 0 && writer.status != .grading && essay.gradesLeft > 0
+    WordCount.count(writer.text) > 0 && writer.status != .grading && essay.gradesLeft > 0
       && !finishing
   }
 
@@ -274,7 +274,7 @@ private struct EssayContent: View {
       }
     }
 
-    let words = EssayWords.count(writer.text)
+    let words = WordCount.count(writer.text)
 
     Section {
       TextEditor(text: $writer.text)

@@ -325,7 +325,7 @@ private struct MockEssayBox: View {
         .font(.subheadline.weight(.medium))
         .accessibilityHidden(true)
 
-      let words = EssayWords.count(text.wrappedValue)
+      let words = WordCount.count(text.wrappedValue)
 
       TextEditor(text: text)
         .frame(minHeight: 280)

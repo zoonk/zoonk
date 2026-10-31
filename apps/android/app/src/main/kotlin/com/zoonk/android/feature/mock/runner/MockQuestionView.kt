@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.feature.audio.SpeechPlayer
+import com.zoonk.android.feature.player.language.countWords
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.ItemLine
 import com.zoonk.android.feature.questions.ItemSetText
@@ -242,7 +243,7 @@ private fun EssayAnswer(
     draft: MockDraft?,
 ) {
     val text = (draft?.answer as? Answer.Text)?.text.orEmpty()
-    val words = WORDS.findAll(text).count()
+    val words = countWords(text)
 
     OutlinedTextField(
         value = text,
@@ -429,7 +430,6 @@ internal fun ItemCountdown(
     }
 }
 
-private val WORDS = Regex("\\S+")
 private const val NUMBER_DIGITS = 4
 private const val MAX_ESSAY_CHARACTERS = 12_000
 private const val ESSAY_LINES = 10
