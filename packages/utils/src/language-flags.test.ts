@@ -2,10 +2,10 @@ import { describe, expect, it } from "vitest";
 import { getLanguageFlagCode, getLanguageFlagLabel } from "./language-flags";
 
 describe(getLanguageFlagCode, () => {
-  it("shows the variety courses teach: US English, Brazilian Portuguese, Spain Spanish", () => {
+  it("shows the variety courses teach: US English, Brazilian Portuguese, Mexican Spanish", () => {
     expect(getLanguageFlagCode("en")).toBe("us");
     expect(getLanguageFlagCode("pt")).toBe("br");
-    expect(getLanguageFlagCode("es")).toBe("es");
+    expect(getLanguageFlagCode("es")).toBe("mx");
   });
 
   it("reads the language of a tag with a region, in any case", () => {
@@ -40,7 +40,7 @@ describe(getLanguageFlagCode, () => {
 describe(getLanguageFlagLabel, () => {
   it("names the variety the flag marks, in the viewer's language", () => {
     expect(getLanguageFlagLabel({ language: "en", userLanguage: "en" })).toBe("American English");
-    expect(getLanguageFlagLabel({ language: "es", userLanguage: "en" })).toBe("European Spanish");
+    expect(getLanguageFlagLabel({ language: "es", userLanguage: "en" })).toBe("Mexican Spanish");
 
     expect(getLanguageFlagLabel({ language: "pt", userLanguage: "es" })).toBe(
       "Portugués de Brasil",

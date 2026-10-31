@@ -21,7 +21,7 @@ const LANGUAGE_FLAGS = {
   de: "de",
   el: "gr",
   en: "us",
-  es: "es",
+  es: "mx",
   et: "ee",
   eu: "es-pv",
   fa: "ir",

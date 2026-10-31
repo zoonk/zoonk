@@ -19,7 +19,6 @@ import eeFlag from "flag-icons/flags/4x3/ee.svg";
 import esCtFlag from "flag-icons/flags/4x3/es-ct.svg";
 import esGaFlag from "flag-icons/flags/4x3/es-ga.svg";
 import esPvFlag from "flag-icons/flags/4x3/es-pv.svg";
-import esFlag from "flag-icons/flags/4x3/es.svg";
 import etFlag from "flag-icons/flags/4x3/et.svg";
 import fiFlag from "flag-icons/flags/4x3/fi.svg";
 import frFlag from "flag-icons/flags/4x3/fr.svg";
@@ -48,6 +47,7 @@ import mgFlag from "flag-icons/flags/4x3/mg.svg";
 import mkFlag from "flag-icons/flags/4x3/mk.svg";
 import mmFlag from "flag-icons/flags/4x3/mm.svg";
 import mnFlag from "flag-icons/flags/4x3/mn.svg";
+import mxFlag from "flag-icons/flags/4x3/mx.svg";
 import myFlag from "flag-icons/flags/4x3/my.svg";
 import nlFlag from "flag-icons/flags/4x3/nl.svg";
 import noFlag from "flag-icons/flags/4x3/no.svg";
@@ -90,7 +90,6 @@ export const FLAG_IMAGES: Record<LanguageFlagCode, FlagImage> = {
   de: deFlag,
   dk: dkFlag,
   ee: eeFlag,
-  es: esFlag,
   "es-ct": esCtFlag,
   "es-ga": esGaFlag,
   "es-pv": esPvFlag,
@@ -122,6 +121,7 @@ export const FLAG_IMAGES: Record<LanguageFlagCode, FlagImage> = {
   mk: mkFlag,
   mm: mmFlag,
   mn: mnFlag,
+  mx: mxFlag,
   my: myFlag,
   nl: nlFlag,
   no: noFlag,
