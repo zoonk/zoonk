@@ -300,6 +300,23 @@ class GeometryFlowTest {
     }
 
     @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun moleculeBuilderExploredDrawsItsBuildWithoutGrading() {
+        harness.play(listOf(ActivityFixtures.exploreStep("moleculeBuilder"), summaryStep("end")))
+
+        val drawing = rule.onNode(hasContentDescription("double bond", substring = true)).captureToImage().toPixelMap()
+        val full = LightPalette.success
+        val graded =
+            (0 until drawing.width).sumOf { x ->
+                (0 until drawing.height).count { y ->
+                    val pixel = drawing[x, y]
+                    abs(pixel.red - full.red) + abs(pixel.green - full.green) + abs(pixel.blue - full.blue) < NEAR_INK
+                }
+            }
+        assertEquals(0, graded)
+    }
+
+    @Test
     fun moleculeBuilderUndoesAndRemovesAtoms() {
         play("moleculeBuilder", isCorrect = true)
 

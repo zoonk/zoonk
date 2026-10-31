@@ -305,7 +305,7 @@ private fun ExploredMolecule(props: ActivityProps) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
         )
-        structure?.let { MoleculeStructure(it, atomName) }
+        structure?.let { MoleculeStructure(it, atomName, showsBondStatus = false) }
     }
 }
 
@@ -397,6 +397,7 @@ private fun MoleculeDrawing(
     selectedId: String?,
     scale: Float,
     modifier: Modifier,
+    showsBondStatus: Boolean = true,
 ) {
     val measurer = rememberTextMeasurer()
     val density = LocalDensity.current
@@ -423,7 +424,7 @@ private fun MoleculeDrawing(
                 drawCircle(accent, radius + RING_GAP * scale, center, style = Stroke(3 * scale))
             }
             drawCircle(colors.fill, radius, center)
-            when (Molecule.fill(build, atom)) {
+            when (if (showsBondStatus) Molecule.fill(build, atom) else AtomFill.Open) {
                 AtomFill.Open -> drawCircle(ink.copy(alpha = OPEN_RING_ALPHA), radius, center, style = Stroke(1.5f * scale))
                 AtomFill.Full -> drawCircle(full, radius, center, style = Stroke(3 * scale))
                 AtomFill.Over -> drawCircle(over, radius, center, style = Stroke(3 * scale))
@@ -610,7 +611,7 @@ private fun MoleculeExample(
             stringResource(R.string.activities_geometry_molecule_example),
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
         )
-        MoleculeStructure(structure, atomName)
+        MoleculeStructure(structure, atomName, showsBondStatus = true)
     }
 }
 
@@ -618,6 +619,7 @@ private fun MoleculeExample(
 private fun MoleculeStructure(
     structure: MoleculeBuild,
     atomName: (BuildAtom) -> String,
+    showsBondStatus: Boolean,
 ) {
     val density = LocalDensity.current
     val resources = LocalResources.current
@@ -642,6 +644,7 @@ private fun MoleculeStructure(
                 Modifier.size(width, width * (spanY / spanX).toFloat()).semantics {
                     contentDescription = describeBuild(structure, atomName, resources)
                 },
+            showsBondStatus = showsBondStatus,
         )
     }
     Text(
