@@ -1,3 +1,4 @@
+import { toNameWords } from "@zoonk/utils/name-words";
 import { z } from "zod";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getSubjectQuestions } from "../../library/exams/subject-questions";
@@ -61,6 +62,35 @@ export function listExamChoiceViews({
       subject: group.options.find((option) => option.name === choice?.subject)?.name ?? null,
     };
   });
+}
+
+/** Shorter words are acronyms like "TI", which a notice can spell out in its other options' names. */
+const MIN_NAMING_WORD = 4;
+
+function toOptionWords(option: Pick<Subject, "name" | "shortName">): Set<string> {
+  return new Set(
+    [option.name, option.shortName ?? ""]
+      .flatMap((name) => toNameWords(name))
+      .filter((word) => word.length >= MIN_NAMING_WORD),
+  );
+}
+
+export function findNamedOption({
+  options,
+  words,
+}: {
+  options: readonly Pick<Subject, "name" | "shortName">[];
+  words: readonly string[];
+}): string | null {
+  const said = new Set(words.flatMap((text) => toNameWords(text)));
+  const optionWords = options.map((option) => toOptionWords(option));
+  const isOwn = (word: string) => optionWords.filter((other) => other.has(word)).length === 1;
+
+  const named = options.filter((_, index) =>
+    [...(optionWords[index] ?? [])].some((word) => said.has(word) && isOwn(word)),
+  );
+
+  return named.length === 1 ? (named[0]?.name ?? null) : null;
 }
 
 export function listUnchosenSubjects({

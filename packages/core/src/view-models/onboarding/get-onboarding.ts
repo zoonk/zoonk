@@ -5,7 +5,11 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { searchCourses } from "../../courses/search-courses";
 import { getNoSitting } from "../../exams/_utils/notice-day";
 import { getExamCalendarDay, getPlanExamDays } from "../../exams/_utils/plan-exam-days";
-import { listExamChoiceViews, toChosenStructure } from "../../exams/choices/exam-choices";
+import {
+  findNamedOption,
+  listExamChoiceViews,
+  toChosenStructure,
+} from "../../exams/choices/exam-choices";
 import { loadExamChoices } from "../../exams/choices/load-exam-choices";
 import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { loadCourseExam } from "../../goals/_utils/course-exam";
@@ -39,23 +43,41 @@ export type OnboardingResult =
   | { onboarding: OnboardingView; status: "ready" }
   | { status: "notFound" | "unauthorized" };
 
+/** The question is still asked: an option the learner's goal names only starts picked. */
+function preselectNamedOptions({
+  choices,
+  words,
+}: {
+  choices: OnboardingView["examChoices"];
+  words: string[];
+}): OnboardingView["examChoices"] {
+  return choices.map((choice) =>
+    choice.subject
+      ? choice
+      : { ...choice, subject: findNamedOption({ options: choice.options, words }) },
+  );
+}
+
 async function findExamNotice({
   details,
   examBlueprintId,
   goalDate,
   goalId,
+  prompt,
   today,
 }: {
   details: Record<string, unknown>;
   examBlueprintId: string | null;
   goalDate: string | null;
   goalId: string;
+  prompt: string;
   today: string;
 }): Promise<{
   choices: OnboardingView["examChoices"];
   examDate: string | null;
   examDays: OnboardingView["examDays"];
   fromMaterial: boolean;
+  hasUnpickedChoice: boolean;
   noSitting: NoSitting | null;
   subjects: OnboardingView["examSubjects"];
 }> {
@@ -65,6 +87,7 @@ async function findExamNotice({
       examDate: null,
       examDays: null,
       fromMaterial: false,
+      hasUnpickedChoice: false,
       noSitting: null,
       subjects: [],
     };
@@ -86,14 +109,18 @@ async function findExamNotice({
     ? structure.subjects.filter((subject) => !isWrittenSubject({ structure, subject }))
     : [];
 
+  const views = stored ? listExamChoiceViews({ choices, structure: stored }) : [];
+  const position = typeof details.targetPosition === "string" ? details.targetPosition : "";
+
   return {
-    choices: stored ? listExamChoiceViews({ choices, structure: stored }) : [],
+    choices: preselectNamedOptions({ choices: views, words: [prompt, position] }),
     examDate: blueprint?.examDate ? toIsoDate(blueprint.examDate) : null,
     examDays:
       blueprint && !blueprint.ownerId
         ? getNextSittingDays({ edition: blueprint.edition, today })
         : null,
     fromMaterial: Boolean(blueprint?.ownerId),
+    hasUnpickedChoice: views.some((choice) => choice.subject === null),
     noSitting: getNoSitting({ blueprint, details, goalDate, today }),
     subjects: subjects.map((subject) => ({
       name: subject.name,
@@ -214,7 +241,14 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     findLearningProfileView(userId),
     findActiveGoalId(userId),
     findOnboardingGoalIds(goal),
-    findExamNotice({ details, examBlueprintId: goal.examBlueprintId, goalDate, goalId, today }),
+    findExamNotice({
+      details,
+      examBlueprintId: goal.examBlueprintId,
+      goalDate,
+      goalId,
+      prompt: goal.prompt,
+      today,
+    }),
     findCourseExamDays({ goal, today }),
   ]);
 
@@ -233,7 +267,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     goal: {
       dateProblem: dateProblem?.kind ?? null,
       details,
-      hasUnpickedChoice: notice.choices.some((choice) => choice.subject === null),
+      hasUnpickedChoice: notice.hasUnpickedChoice,
       kind: goal.kind,
       targetDate: view.targetDate,
     },

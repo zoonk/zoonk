@@ -97,3 +97,59 @@ export function twoChoiceBlueprintFixture() {
     },
   });
 }
+
+export const SPECIALTY = "Especialidade";
+export const AUDIT = "Auditoria";
+export const DATA_SCIENCE = "Tecnologia da Informação – Ciência de Dados";
+export const INFRASTRUCTURE = "Tecnologia da Informação – Infraestrutura de TI";
+export const SOFTWARE = "Tecnologia da Informação – Desenvolvimento de Sistemas";
+
+const SHARED_QUESTIONS = 40;
+const SPECIALTY_QUESTIONS = 90;
+
+function specialty(name: string, shortName: string, disciplines: string[]) {
+  const topicGroups = disciplines.map((discipline) => ({
+    name: discipline,
+    topics: [`1 ${discipline}`],
+  }));
+
+  return {
+    choiceGroup: SPECIALTY,
+    citation,
+    group: "Conhecimentos específicos (P3)",
+    name,
+    questions: SPECIALTY_QUESTIONS,
+    shortName,
+    topicGroups,
+    topics: topicGroups.flatMap((group) => group.topics),
+    weight: null,
+  };
+}
+
+export function specialtyBlueprintFixture() {
+  return examBlueprintFixture({
+    language: "pt",
+    name: "CGU",
+    role: "Auditor Federal de Finanças e Controle",
+    structure: {
+      formats: [{ citation, description: "Certo ou errado", kind: "trueFalse", options: null }],
+      mock: null,
+      rules: [],
+      subjects: [
+        subject("Ética Pública e Responsabilidade Profissional", SHARED_QUESTIONS, {
+          group: "Conhecimentos básicos (P1)",
+        }),
+        subject("Fundamentos de Auditoria Governamental", SHARED_QUESTIONS, {
+          group: "Conhecimentos complementares (P2)",
+        }),
+        specialty(AUDIT, "Auditoria", ["Auditoria Governamental", "Finanças Públicas"]),
+        specialty(DATA_SCIENCE, "Ciência de Dados", ["Estatística", "Aprendizado de Máquina"]),
+        specialty(INFRASTRUCTURE, "Infraestrutura de TI", ["Redes", "Computação em Nuvem"]),
+        specialty(SOFTWARE, "Desenvolvimento de Sistemas", [
+          "Engenharia de Software",
+          "Arquitetura de Sistemas",
+        ]),
+      ],
+    },
+  });
+}

@@ -11,8 +11,11 @@ import {
   LANGUAGES,
   MATH,
   PHILOSOPHY,
+  SOFTWARE,
   SPANISH,
+  SPECIALTY,
   choiceBlueprintFixture,
+  specialtyBlueprintFixture,
   twoChoiceBlueprintFixture,
 } from "../../exams/choices/_test-utils/choice-blueprint";
 import { unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
@@ -133,6 +136,27 @@ describe("onboarding an exam with a choice", () => {
     await expect(loadOnboarding(goal.id)).resolves.toMatchObject({
       steps: expect.arrayContaining(["examChoice"]),
     });
+  });
+
+  it("starts at the specialty the learner's goal names, and still asks", async () => {
+    const user = await userFixture();
+    const blueprint = await specialtyBlueprintFixture();
+
+    const { goal, plan } = await unplannedGoalFixture({
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      language: "pt",
+      prompt: "passar no concurso da CGU para auditor de TI, desenvolvimento",
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    const onboarding = await loadOnboarding(goal.id);
+
+    expect(onboarding.steps).toContain("examChoice");
+    expect(onboarding.examChoices).toMatchObject([{ group: SPECIALTY, subject: SOFTWARE }]);
+    await expect(loadChoices(plan.id)).resolves.toStrictEqual([]);
   });
 
   it("asks every choice of any exam and keeps each pick on its own", async () => {
