@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mock_answer_sheet": "c0ec7679363fd84b65f6d6187e2e757cfbaf39fcafc6d547d9c5364945185a29",
+  "mock_answered_count": "0147dff36c72bf2b63f483e2872a6e1ce3678cfbe224d439ba24414a25585b7e",
+  "mock_answers_saved": "31a9872f79722647c004fbe724d2d9bbf99d97becb893f4db52c086743db10f3",
+  "mock_break": "4a54df15a5d8b0cb757ae8c87ff8b73ede1781da59809e1a9888aa68ccec22a1",
+  "mock_break_detail": "2f59152a8edff312bed54bf9b19dc7cbfd6fed1fc0a53cd6a3f44d5362b33713",
+  "mock_break_time_left": "b130f4f76d1787e1c0806bb41ccd5b4caa8f56786adf15d477d21b4aa2b03376",
+  "mock_cell_answered": "23ae19049484d4a490bb35bdb4a4ef2493e46d8cdb82c4797a64681f633e634a",
+  "mock_cell_flagged": "3f7cbd6fcc21710430a13e86b30dcfb2c15714295fc8d1af2fb0167881a012c9",
+  "mock_continue": "f43f02679569823585b117b2026fa8c338a2f363d53ecceab174c1b01b0b79b8",
+  "mock_continue_section": "92d4bff9c631dc4d0d43288bce514ed7726014cedb42ce5e7a973e2ebf87b7a2",
+  "mock_essay_blank": "0f4c6b7edf719b845b0c39be8ddf03293dc3f5304436ac13d23c5e0c4e5e2da5",
+  "mock_essays_blank": "2d8657594f92edc80cd24eddea4af4efccf77af18c69c2982d404e602b3042f8",
+  "mock_every_answered": "446f8b091b3e4dca2d3762c7062cbb8b8f0d2fc49100d5cba177f236dccfa631",
+  "mock_expired_detail": "38f1b519d858aab97c7f3c7b899e176d80d47027b3c22c041eaedbdae0587f9d",
+  "mock_expired_title": "80bcba749c71165a024b4e9592b373bea46679bcd80fc2effc4bb96791c0a5a4",
+  "mock_flag": "3311cf72f33b5caf54163581e5070a0b7632583caf6fc6ce21d63b30b57a1904",
+  "mock_flagged_count": "760b6f7c6259b67f77802932a81d2da71e76e0e39db3f416ac37d42708f6e2b0",
+  "mock_full_day": "93ba4a122f499a01e7f4e7233224b241b2f791cf10a520e2da26bab256bd8644",
+  "mock_full_day_number": "67b406f8c70e7b07f6d336a8a38b9e7445b0b631862b043d785b41fe83faa7ff",
+  "mock_go_to_today": "9366f112ec4eb825ea6555627d07923bc5b836e7c6719ba4ae0f162244e54cb9",
+  "mock_grading": "e612b57b0886231f877ce37e75a287bdc6aa2ec809b5c37bb65cf653f736c6dc",
+  "mock_half_day": "76321d257e26b1a8e4c24e41c10c17050381b26ba038a89eb6d464e42d1c143f",
+  "mock_half_day_number": "8e0613985797fd0ec67dd19b29f8ecf4638b1f8d36afb138f9b71130042bafe6",
+  "mock_hand_in": "d9195a4830df55fb9cd575b3f3e70c8f1b7d07c8d28e52e7b574c90fa1fd9795",
+  "mock_hand_in_final": "326b628a0f292a07014be78e6597f635046cb4a48122cabc54d74b54c6b1e8b3",
+  "mock_hand_in_mock": "f87dc3e60f845973cc22494a2ff041c723ede16756653752d412bed760c02788",
+  "mock_hand_in_mock_title": "512d2f8b0150874bacc290a5f563082b2fcdf3bab2eb53eacbf27bf7874d7596",
+  "mock_hand_in_section": "6aa629c528182be460e9e8ef28816ffa53ae23dc33d58bee9f8f1ce20607076f",
+  "mock_hand_in_section_title": "a8f33ed3ba8be9dbc0fb1327333c5e887c0593f6bceb05ca4409c23eec8a33e8",
+  "mock_handed_in": "c6bafb213755c8574701a41cd26a3b1c08daff56abba5d816bcba2e29f942202",
+  "mock_handed_in_title": "7aa1972342548405550eb2070c3cd581b4f604c4efd137eaca048aa5311aadbf",
+  "mock_handing_in": "85800c0e492cd2e4a996d44c0451c08b548084b48512712a75cc38bb2e49676a",
+  "mock_keep_answering": "1dc87279a98104b22ed0b28867894a591556f0efe084cb0885d18d23c7126faa",
+  "mock_keep_going": "c01693937811e0e538cf6529f49f8afed7427f772316405b887f5ab21323366b",
+  "mock_label": "5feb0953f1b85d05ba84c155579f270ddd2f2648ba3aff2640a8174028ac406d",
+  "mock_label_shape": "d28d06109dd466576d05228b472a4b7d06a7319f206a294a0e4b59dd6fc8d878",
+  "mock_last_not_saved": "0d99c98406da9d2e2aa1aa7a020435a7d18b35a66f6abbc49b2d2677ecfebed1",
+  "mock_left_blank": "ef9ce209842503123875a9715dda8271ec38ba2473eda0a8d32f8a14f3d76b2b",
+  "mock_left_blank_and_flagged": "f8600bff6469b59d06cd78fa22b8a4a43dfb400ea21096e065ff6e884e1ded61",
+  "mock_left_blank_only": "08127ffb57058880ec7ce4fc9e1e0ab43f9ea0a79c3431e76c9e1b1265a65f40",
+  "mock_left_flagged": "d7436fba742079f4e6d34a66821c5fa222e6a220285d9d32af0bcd8e29ca766a",
+  "mock_left_flagged_only": "4efcc92ad8858a604d396b69121801c395bfc908bc1a12f1a29740bc92834358",
+  "mock_legend": "a1701401b26c9ea11deefdbdbf6ac54396cb4f005b7cce3484ad0be113752e1f",
+  "mock_moves_forward": "0fd5fbd394370caf979d32c88e2e014e8319e96e0b07fc78871182ed03346c4d",
+  "mock_moves_forward_must": "8a2761fea44bcd787deff78e7461cfb9a8b109f9e66aa079defbaa804c605622",
+  "mock_moves_must": "5d50fdaef2eb822824c9c8f7a82876d06e04252082640f28957afe296422a023",
+  "mock_moves_review_any": "0a7d14dd9f794322fbccc7c53433771277a22e336b91ecc308526378bb78d4bf",
+  "mock_moves_review_changes": "8898fc3f209942d16bb732cd8ce90c3a636f9987b39409413e8c35144a352641",
+  "mock_moves_review_none": "493b79ffa59f68543161993a6725d3d683773eb087c95724f3c2958782a341d5",
+  "mock_net_score": "4e4ae87705791be9779af5db3e6e6b5633bafb74559c102c6a9846ba0dd4e61b",
+  "mock_next": "30bfed0fd45a7dda4859985d6196ec013685316695a46ef9ed39c2ca9f429a23",
+  "mock_next_named": "7cadca0650766e03bc0a6e545bccccf2eecfe26068b446e314cb52434a8a00fb",
+  "mock_next_section": "9accd0524c41c7ed9dabd437a95d03c394676217cab43dc1ae687d696acd7532",
+  "mock_not_found_description": "2b10e0f120e19278211cd0155154bc9b9f43414f18f67907b3e374e1e30a9953",
+  "mock_not_found_title": "b9da13835f242641b3b1a6b4a3c86f44d0a9337d83b4ed0a707377210fc26982",
+  "mock_not_saved_retrying": "5b80d094db7f34ae28dbffe1c0f7f765bc35fcaa61b5beae4aa30bef6aff8269",
+  "mock_place": "6f4f79b8300799bfe604a1ac1c9ac4be246b1a501af1209a3eb14e629789f985",
+  "mock_progress_label": "42a5783daff8b0691a7af628f7da8ef664483c608077253e7a35d10bbf763748",
+  "mock_question_number": "82da547f59fc81766d6b4ed814141783e85e6209da6c850d0a76e4aaa4d628ce",
+  "mock_question_place": "f3fb6bd6f364030bad9bfa3d7ca5e9ce86d6723f91be97c74e67c6f1a72c60bd",
+  "mock_question_place_area": "fc8fb9ceeb8f9a3453e59f461ab0c3cdb70ea2e660cf4effb466513caf02ab90",
+  "mock_questions": "2efb07f8ca59a04c084a583e6b8b734e1b274bdc0147e2f14dd3a3df8c5ef0df",
+  "mock_retry": "86f883e3a176590efaf899e638aa0ebefa73b7b9711f25995a20f6262706c2fa",
+  "mock_reused": "b52746e9a1cf91c8883c8b2c3543f2b7d540e1ce3ee5e0d9d4a98294b8fb1cf5",
+  "mock_right_answers": "c21a593e23ad6b0e3b0a39d754233b80213ee4d9e9deb5a0b198b537e53eda9a",
+  "mock_row_detail": "ea625492a8ba49abb385afb706b632562a6e6b0a72f097bf12c3e3e305b38263",
+  "mock_section_answered": "0457032a09df13fb268f51df5dfc615588dbf0f59af069ab94a318747c5c8422",
+  "mock_section_number": "bd03f7c4178b727c613b8cc40a7c66bf74d91018dedc9875f568436f6eac46f1",
+  "mock_sections": "07b60af3daf2eb8ba6e95fc55bb19403667704536a3d40e5a0055d11afbb725a",
+  "mock_see_how": "b80998226f57582addfe833a9ac14334c44a15c6f70ede3d589b3beb806e4709",
+  "mock_shape_of_questions": "f48fe39260d9a7ae684f85b90e93d6acd491837d2d59fa659fc818a42aef7082",
+  "mock_sheet": "a30f04ed4533d68f1de25385a3ee71a9c7d862168b918c73a4ce40cef1aa457f",
+  "mock_short": "b0ded60aa326503cd3e48f72b3ac7ca7f8db84bcebdf5217d5f567d619f7f1d5",
+  "mock_speaking": "38e52dfa62c0f36fd950679fcc8119e8f823b5877088483d00ad950be55806e5",
+  "mock_speaking_all_done": "6a6b14c348b5eea9dd7460863b9246e5eb7b82bb9e04cd17753c12f272cbc3b4",
+  "mock_speaking_done": "3330f8b9de791e5b3eaf285b6d14a7e297a6b1a7cc3204b518de7fa36aa56bd7",
+  "mock_speaking_hand_in_done": "e6c8c1b34fd878b58cfdb6947aa8cfc0194936ee6443917d4db2f205c8679042",
+  "mock_speaking_hand_in_left": "d48efb9566039a71be3eeedf1e7f8521c3238e661f92d358f469c308a27a654a",
+  "mock_speaking_intro": "0b875f8d9cc85971974783d9bfc729010268bf2022c68382109d46204d8acf36",
+  "mock_speaking_left": "b25c565d4f727378a424641a447d3d776c901df6a6351af63909dcbc4823a9f1",
+  "mock_speaking_start": "461133bf6799e1f4c6ae1744749cf2813a541edb2084685f31ea4d89112bc9f9",
+  "mock_speaking_start_task": "bd49a60e2540c0627481de667ee285d983e4fb3173b7cd443ad7bc5505b94174",
+  "mock_speaking_start_task_number": "4bba4f76b70f15041badc3a5873f135cb0dcced70b19b3bd0ada77339088b3ff",
+  "mock_speaking_task": "71408bebc14368363ead932a6282bc9a62968d8edf9c8c163f5c9fc5609f9a0d",
+  "mock_speaking_writing": "802f5bfb1e8d7dc31b529015955cd17603ec84d1ef4ecb12f15c87e5a595fa66",
+  "mock_start_next": "a2a4e7e949c7d58a5b704f595ab519c085b8d453b7927f4d11c0814831e36594",
+  "mock_starting_point": "305406dd18e72d68b07e6369f91a486f481eab9b4a8efa7dda321d3cb34a5b5a",
+  "mock_step_failed": "2662505ea4fe63031f234d1323bbccfe6a216b56083813a696ca6b8c5494decf",
+  "mock_step_failed_saved": "9f9155d9a285a276b839f23d3edcffcdca38d25c8fb239242b59fe7f7585e5fa",
+  "mock_step_slow": "0a48b08c6647383f33cc84b46e5ce4bc26cffa7267983236e03885dab2a45b06",
+  "mock_take": "3adc3d91958911877620f74e655a070ab10ab9daf85dc1b8368b4c97c5e71a6a",
+  "mock_take_new": "cb11b1ae12aebdfc04264464d6cf5f74a8e9872fc443fdb053302270b85ba5ca",
+  "mock_time_left_caption": "1f4ea93bc8c8d1634e04a8c184c884c2b09e99cc42a2765382d6b7592a1ed6be",
+  "mock_time_left_label": "d6f4caa11e4282d386c936b138374c6bd45ef06ea6da94311894a2f3ae0693b1",
+  "mock_time_left_question": "b6c75d50104161286a09753db49c2afcfceca808cae1c680da7feec87792cd1a",
+  "mock_time_up": "a325cb213a6cad076ff135592e12611e5dc4c433213d04d5a9fe02720dac2171",
+  "mock_title": "f7baa19ebfb880dc0db9ad9e6b6ffe82da5eecc99b6df74bdca4beb9b189d242",
+  "mock_words": "09bea6696784497561148eb3b0daa415cfadf75894d07ef11e3c5cd4857b7e35",
+  "mock_written_part": "6394e671851eb17368937215e9a5700250292edfa3dbd6f32df4769d8c3706a6",
+  "mock_written_part_area": "b43f3a2581a6f24450f38dc40c9c8920a7c5a5d0031d2105e31516cbc48973d3",
+  "mock_your_essay": "724e58e8832e908e0d0c917af8d1825bb46d456b8931e292c59ab41a37af3eb1"
+}
+-->
+<resources>
+    <string name="mock_title">Deneme sınavı %1$d</string>
+    <string name="mock_full_day">Tam günlük sınav</string>
+    <string name="mock_half_day">Yarım günlük sınav</string>
+    <string name="mock_full_day_number">Tam günlük sınav, %1$d. gün</string>
+    <string name="mock_half_day_number">Yarım günlük sınav, %1$d. gün</string>
+    <!-- A placement mock, the one that finds where the learner starts. -->
+    <string name="mock_starting_point">Başlangıç noktası</string>
+    <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
+    <string name="mock_net_score">Net %1$s / %2$d</string>
+    <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60 right". -->
+    <plurals name="mock_right_answers">
+        <item quantity="one">%1$s / %2$d doğru</item>
+        <item quantity="other">%1$s / %2$d doğru</item>
+    </plurals>
+    <!-- %1$s is what the mock covered, such as "Mathematics"; it asked %2$d of the exam's %3$d questions. -->
+    <plurals name="mock_shape_of_questions">
+        <item quantity="one">%1$s, %2$d / %3$d soru</item>
+        <item quantity="other">%1$s, %2$d / %3$d soru</item>
+    </plurals>
+    <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
+    <string name="mock_row_detail">%1$s · %2$s</string>
+    <string name="mock_take">Deneme sınavına gir</string>
+    <string name="mock_continue">Deneme sınavına devam et</string>
+    <string name="mock_label">Deneme sınavı</string>
+    <!-- %1$s is what the mock covers, such as "Mathematics" or "A full exam day". -->
+    <string name="mock_label_shape">Deneme sınavı · %1$s</string>
+    <string name="mock_not_found_title">Bu sayfayı bulamadık</string>
+    <string name="mock_not_found_description">Bağlantı eski veya yanlış yazılmış olabilir.</string>
+    <string name="mock_go_to_today">Bugün sayfasına git</string>
+    <!-- What screen readers call the section's countdown. -->
+    <string name="mock_time_left_label">Kalan süre</string>
+    <!-- Under the section's countdown, such as "1:24:09". -->
+    <string name="mock_time_left_caption">kalan süre</string>
+    <string name="mock_time_left_question">Bu soru için kalan süre</string>
+    <string name="mock_progress_label">Bu oturumda cevaplanan sorular</string>
+    <!-- Where the learner is among a section's questions: "12 of 45". -->
+    <string name="mock_place">%1$d / %2$d</string>
+    <string name="mock_written_part">Yazılı bölüm</string>
+    <!-- %1$s is the essay's area, such as Portuguese. -->
+    <string name="mock_written_part_area">Yazılı bölüm · %1$s</string>
+    <string name="mock_question_place">Soru %1$d / %2$d</string>
+    <!-- %3$s is the question's area, such as Mathematics. -->
+    <string name="mock_question_place_area">Soru %1$d / %2$d · %3$s</string>
+    <string name="mock_flag">İşaretle</string>
+    <string name="mock_next">Devam et</string>
+    <string name="mock_hand_in_mock">Deneme sınavını teslim et</string>
+    <string name="mock_hand_in_section">Bu oturumu teslim et</string>
+    <string name="mock_handing_in">Teslim ediyoruz…</string>
+    <string name="mock_moves_review_any">Gözden geçirme: istediğin soruya geri dönebilirsin.</string>
+    <string name="mock_moves_review_none">Gözden geçirme: Artık cevaplarını değiştiremezsin.</string>
+    <plurals name="mock_moves_review_changes">
+        <item quantity="one">Gözden geçirme: %d cevap daha değiştirebilirsin.</item>
+        <item quantity="other">Gözden geçirme: %d cevap daha değiştirebilirsin.</item>
+    </plurals>
+    <string name="mock_moves_forward_must">İlerlemek için her soruyu cevapla. Cevapladığın soruya geri dönemezsin.</string>
+    <string name="mock_moves_forward">Bir soruyu geçtikten sonra ona geri dönemezsin.</string>
+    <string name="mock_moves_must">İlerlemek için her soruyu cevapla.</string>
+    <string name="mock_hand_in_mock_title">Deneme sınavını teslim etmek istiyor musun?</string>
+    <string name="mock_hand_in_section_title">Bu oturumu teslim etmek istiyor musun?</string>
+    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
+    <plurals name="mock_left_blank">
+        <item quantity="one">%d soru boş</item>
+        <item quantity="other">%d soru boş</item>
+    </plurals>
+    <plurals name="mock_left_flagged">
+        <item quantity="one">%d soru işaretli</item>
+        <item quantity="other">%d soru işaretli</item>
+    </plurals>
+    <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
+    <string name="mock_left_blank_and_flagged">%1$s ve %2$s.</string>
+    <plurals name="mock_left_blank_only">
+        <item quantity="one">%d soru boş.</item>
+        <item quantity="other">%d soru boş.</item>
+    </plurals>
+    <plurals name="mock_left_flagged_only">
+        <item quantity="one">%d soru işaretli.</item>
+        <item quantity="other">%d soru işaretli.</item>
+    </plurals>
+    <string name="mock_every_answered">Tüm sorular cevaplandı.</string>
+    <string name="mock_essay_blank">Kompozisyon boş.</string>
+    <plurals name="mock_essays_blank">
+        <item quantity="one">%d kompozisyon boş.</item>
+        <item quantity="other">%d kompozisyon boş.</item>
+    </plurals>
+    <string name="mock_hand_in_final">Bundan sonra cevaplarını değiştiremezsin.</string>
+    <string name="mock_keep_answering">Cevaplamaya devam et</string>
+    <string name="mock_hand_in">Teslim et</string>
+    <string name="mock_sheet">Cevap kâğıdı</string>
+    <string name="mock_answer_sheet">Cevap kağıdı</string>
+    <!-- Read with mock_flagged_count: "12 answered · 2 flagged". -->
+    <plurals name="mock_answered_count">
+        <item quantity="one">%d soru cevaplandı</item>
+        <item quantity="other">%d soru cevaplandı</item>
+    </plurals>
+    <plurals name="mock_flagged_count">
+        <item quantity="one">%d soru işaretli</item>
+        <item quantity="other">%d soru işaretli</item>
+    </plurals>
+    <string name="mock_questions">Sorular</string>
+    <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
+    <string name="mock_question_number">%1$d. soru</string>
+    <string name="mock_cell_answered">cevaplandı</string>
+    <string name="mock_cell_flagged">işaretli</string>
+    <string name="mock_legend">işaretli · sınav günündeki gibi, bitene kadar geri bildirim yok</string>
+    <plurals name="mock_reused">
+        <item quantity="one">%d soru tekrar soruluyor.</item>
+        <item quantity="other">%d soru tekrar soruluyor; önce yanlış cevapladıkların geliyor.</item>
+    </plurals>
+    <!-- %1$d is how many questions this mock asks, %2$d how many the real exam asks. -->
+    <plurals name="mock_short">
+        <item quantity="one">Bu deneme sınavı %1$d sorudan oluşuyor; gerçek sınavda ise %2$d soru var. Henüz yeterince yeni soru yok.</item>
+        <item quantity="other">Bu deneme sınavı %1$d sorudan oluşuyor; gerçek sınavda ise %2$d soru var. Henüz yeterince yeni soru yok.</item>
+    </plurals>
+    <string name="mock_sections">Oturumlar</string>
+    <string name="mock_section_number">%1$d. oturum</string>
+    <!-- A section's status in the list of the mock's sections. -->
+    <string name="mock_handed_in">Teslim edildi</string>
+    <!-- A section's answered questions of all of them: "12/45". -->
+    <string name="mock_section_answered">%1$d/%2$d</string>
+    <string name="mock_not_saved_retrying">Henüz kaydedilmedi · tekrar deniyoruz</string>
+    <string name="mock_retry">Tekrar dene</string>
+    <string name="mock_last_not_saved">Son cevabın kaydedilemedi.</string>
+    <string name="mock_step_failed_saved">İşlem tamamlanamadı. Cevapların kayıtlı. Birazdan tekrar dene.</string>
+    <string name="mock_step_failed">İşlem tamamlanamadı. Birazdan tekrar dene.</string>
+    <string name="mock_step_slow">Teslim işlemini henüz tamamlayamadık. Normalden uzun sürüyor.</string>
+    <string name="mock_handed_in_title">Deneme sınavı teslim edildi</string>
+    <string name="mock_see_how">Sonucunu gör</string>
+    <string name="mock_grading">Değerlendiriyoruz…</string>
+    <string name="mock_continue_section">Devam et</string>
+    <string name="mock_time_up">Süre doldu</string>
+    <string name="mock_answers_saved">Şu ana kadar verdiğin cevaplar kaydedildi.</string>
+    <string name="mock_break">Mola</string>
+    <string name="mock_break_time_left">Kalan mola süresi</string>
+    <string name="mock_break_detail">Mola bittiğinde sonraki oturum kendiliğinden başlar.</string>
+    <!-- %1$s is the next section's name, such as Mathematics. -->
+    <string name="mock_next_named">Sıradaki: %1$s</string>
+    <string name="mock_next_section">Sonraki oturum</string>
+    <string name="mock_start_next">Sonraki oturumu başlat</string>
+    <string name="mock_expired_title">Sen yokken süre doldu</string>
+    <string name="mock_expired_detail">Soruların çoğu yanıtsız kaldığı için bu sınav puanlanmaz ve hazırlık düzeyini etkilemez.</string>
+    <string name="mock_take_new">Yeni bir deneme sınavına gir</string>
+    <string name="mock_your_essay">Kompozisyonun</string>
+    <plurals name="mock_words">
+        <item quantity="one">%d kelime</item>
+        <item quantity="other">%d kelime</item>
+    </plurals>
+    <string name="mock_speaking">Konuşma</string>
+    <string name="mock_speaking_intro">Her bölümde, sınavda olduğu gibi bir değerlendiriciyle canlı sohbet edersin; burada değerlendirici rolünü yapay zekâ üstlenir. Kartlarını başladığında hazırlıyoruz. Bu yaklaşık yarım dakika sürer.</string>
+    <string name="mock_speaking_start">Konuşma oturumuna başla</string>
+    <string name="mock_speaking_writing">Kartlarını hazırlıyoruz…</string>
+    <plurals name="mock_speaking_left">
+        <item quantity="one">Bölümleri sırayla tamamla. Her birinde bir sohbet yapıp buraya dönersin. %d bölüm kaldı.</item>
+        <item quantity="other">Bölümleri sırayla tamamla. Her birinde bir sohbet yapıp buraya dönersin. %d bölüm kaldı.</item>
+    </plurals>
+    <string name="mock_speaking_all_done">Tüm bölümler tamamlandı. Devam etmek için bu oturumu teslim et.</string>
+    <!-- %2$s is how long the task lasts, such as "4–5 min". -->
+    <string name="mock_speaking_task">%1$d. bölüm · %2$s</string>
+    <!-- Status beside a speaking task the learner has finished. -->
+    <string name="mock_speaking_done">Tamamlandı</string>
+    <string name="mock_speaking_start_task">Başla</string>
+    <string name="mock_speaking_start_task_number">%1$d. bölüme başla</string>
+    <plurals name="mock_speaking_hand_in_left">
+        <item quantity="one">%d bölüm tamamlanmadığı için bu oturumun tahmini puanı hesaplanmayacak. Teslim ettikten sonra bu deneme sınavında o bölümü yapamazsın.</item>
+        <item quantity="other">%d bölüm tamamlanmadığı için bu oturumun tahmini puanı hesaplanmayacak. Teslim ettikten sonra bu deneme sınavında o bölümleri yapamazsın.</item>
+    </plurals>
+    <string name="mock_speaking_hand_in_done">Tüm bölümler tamamlandı. Teslim ettikten sonra bu deneme sınavında bunları tekrar yapamazsın.</string>
+    <string name="mock_keep_going">Devam et</string>
+</resources>

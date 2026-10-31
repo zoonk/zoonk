@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "pronunciation_accent": "23ded3dacde6be2cd71f531bda3bc69185251ef8b3990298cdae67b2dd7d3af2",
+  "pronunciation_comes_back": "2c84686d62e26601440f1c1c1eef6fe4cba39494dc669c078a97e50fb9cc5917",
+  "pronunciation_continue": "8dd5f087670b30801618d8224a5f64ea11ad4675843051882d66cdf5c94be897",
+  "pronunciation_done": "553bf1e6c41559c70790808ca98742dbb745e6a0e2abb44908b9def3a7228204",
+  "pronunciation_failed": "628819987733f1b00adefa951f4c64f9c8849140fa324e41ca926db05fc26fae",
+  "pronunciation_grading": "e704f2ee6e11f45c863ac7fbd3c91bda0ad318c7ed50bc22d80fd2d015123d38",
+  "pronunciation_heard": "d5a96ceef2a9a907d288e2c14b53d6c7b31d9c1dac9157a9d5ed88832d657455",
+  "pronunciation_learned": "db42fc1ba44ce52feca90e6de2d804061f47c94938736f2c620bf8c5353a374f",
+  "pronunciation_listen": "76ac75c032492fa7783783865e222450324c2d02fb6203521896c51b8b1980b8",
+  "pronunciation_listen_slowly": "254bfbb9b2e6c5fbee2a5baf92e798ca2feddf6619186b38187dd1c5cbef6f73",
+  "pronunciation_microphone_off": "150f4365cae63d4fdd09ff15cef841a0d3d953f6ef7f2dbe6ddc8f5b66b48b46",
+  "pronunciation_no_speech": "92aa123979b0cc89bc0afbb21d6544508800b611bcec342e0704602feb7cf301",
+  "pronunciation_no_words": "34696164ae65a1bda2253610b79f1d048e865ca40886c5f382efb6b18540c9b9",
+  "pronunciation_nothing_said": "3b1992749193fa57ec2c4084365f6fbd2cfbbe2b6b4764ddc5d014996f8bb3fa",
+  "pronunciation_options": "fc887e60c14f455ade6ddfeb18926e4d4510ccd7c9260246cbc688783d124cd1",
+  "pronunciation_position": "a797a7fe49d4e1f2944372ca5730db18c501de7340cad4e16dd1a468483acf24",
+  "pronunciation_practice_done": "68c68051b9b8d933376139eef6c014c084fe4eda9dd51ef856536cce46c052e7",
+  "pronunciation_press_record": "22bbbd7ea44929d2ad3d3a058d96151f25decc0ee1f138bb5ca0ceda0fe485d2",
+  "pronunciation_recording": "fbd913ecaa0df34510edbe8a4fc1f88bf09cd3817c925c417195519bdb3deaad",
+  "pronunciation_save_failed": "cf9e1535d8663a0a2cb5253dab33775adb607bf2e5e467a7b3d47a7521cd6eb3",
+  "pronunciation_save_retry": "506ab7d32e9c7d6daa4f72632bdf2742aa9323412fbb774c363f78f85753a7e3",
+  "pronunciation_say_it_like": "e4e216510b14d167a43645487258efef67559d8714c492f59be3797a03dab069",
+  "pronunciation_see_how": "6a359b25397da9eeead1983bee8e2288f56c8a4266f4fd4937dc934be5637d29",
+  "pronunciation_skip": "b81ae7e8b22c0765108485bed4933fb5e90c11de71cb593c6570d585ac4ccbd8",
+  "pronunciation_sounded_right": "6e7afce50ec69f9f5ab5242d49d4cd2bb13b51fc90d7bce53a99c800a295eaab",
+  "pronunciation_title": "8835bc6d15fded452ad0c3a3dd39826a50ec211648b4ce8ab7d62baa7e40489f",
+  "pronunciation_try_again": "2781e726df3a586e0bfa823edd22d10781f33de433437013ad147463d696173a"
+}
+-->
+<resources>
+    <string name="pronunciation_title">Tekrar söyle</string>
+    <!-- %1$s is the word in view, %2$s how many words the round has. -->
+    <string name="pronunciation_position">%1$s. kelime (toplam %2$s)</string>
+    <string name="pronunciation_listen">Dinle</string>
+    <string name="pronunciation_listen_slowly">Yavaş dinle</string>
+    <!-- %1$s is the word spelled the way it sounds in the learner's language, shown in a fixed-width font. -->
+    <string name="pronunciation_say_it_like">Şöyle söyle: %1$s</string>
+    <string name="pronunciation_options">Ekran seçeneklerini aç</string>
+    <string name="pronunciation_skip">Bu kelimeyi atla</string>
+    <string name="pronunciation_press_record">Kaydet düğmesine bas ve kelimeyi sesli söyle</string>
+    <string name="pronunciation_recording">Kaydediyoruz… Bitirince Durdur’a bas.</string>
+    <string name="pronunciation_grading">Nasıl söylediğini dinliyoruz…</string>
+    <string name="pronunciation_no_speech">Kelimeyi duyamadık. Biraz daha yaklaşarak tekrar dene.</string>
+    <string name="pronunciation_failed">İşlem tamamlanamadı. Tekrar dene.</string>
+    <string name="pronunciation_microphone_off">Kelimeyi söylemek için Ayarlar’dan Zoonk’a mikrofon izni ver. Şimdilik atlayabilirsin.</string>
+    <string name="pronunciation_sounded_right">Doğru söyledin</string>
+    <!-- %1$s is what the grader heard when the word didn't sound right. -->
+    <string name="pronunciation_heard">“%1$s” duyduk</string>
+    <!-- %1$s is the day the word comes back to say again, such as "May 4". -->
+    <string name="pronunciation_comes_back">%1$s tarihinde tekrar gelecek.</string>
+    <string name="pronunciation_learned">Bu kelimeyi artık doğru söylüyorsun. Bir daha karşına çıkmayacak.</string>
+    <!-- Says the same word again. -->
+    <string name="pronunciation_try_again">Tekrar dene</string>
+    <!-- Goes on to the next word. -->
+    <string name="pronunciation_continue">Devam et</string>
+    <!-- Ends the round after its last word. -->
+    <string name="pronunciation_see_how">Sonucu gör</string>
+    <string name="pronunciation_save_failed">Gönderilemedi. Cevapların saklanıyor.</string>
+    <!-- Retries saving the round. -->
+    <string name="pronunciation_save_retry">Tekrar dene</string>
+    <string name="pronunciation_no_words">Bugün tekrar söylemen gereken kelime yok.</string>
+    <string name="pronunciation_practice_done">Alıştırma tamamlandı</string>
+    <string name="pronunciation_nothing_said">Bu kez hiçbir şey söylemedin</string>
+    <string name="pronunciation_accent">Aksanın sana asla engel olmaz. Hâlâ farklı telaffuz ettiğin kelimeler yarın tekrar karşına çıkar.</string>
+    <!-- Closes the finished round. -->
+    <string name="pronunciation_done">Kapat</string>
+</resources>

@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "player_action_check": "baa4248a33e2d464f660d742ec31f0d284c0f42afa5199998da9164b2e7483c1",
+  "player_action_checking": "e3e3f56e4d0fd2979127cb7bb471e925108c4f9bc05cb05df6e58712b859b480",
+  "player_action_confirm": "2f8022b74816958c0fadd4716252c83c3bc3d42ded05b4409c2caac7c72ed333",
+  "player_action_continue": "0ebe4de04fe13db94a959fbcc219c2cb7d4196439f264397f1229bec211662d6",
+  "player_action_next": "28a4f66d58d3a20568fb9a746a32e209302ce6d354d2799c234d9fdad08e912c",
+  "player_action_next_step": "3264b7a104f7dac4647360df0b5af8cccce93d4d321a9aa677b11e02333d1390",
+  "player_action_see_answer": "3e132e1d8f4fe07831df8edf0021e876c63bae6102644959f9645c44be58decd",
+  "player_action_see_how_it_went": "684dcfa8ad20755f316f586a0df9cb89e8da1aa5d1f4c79fb15aa916443d043d",
+  "player_action_start": "8495c3d527f196ac1a748b6845650bd9af39a334edbd360c7f56fef2fd54fa3d",
+  "player_activity_correct_answer": "0428d2904cb34f36d4d72bca7d26b7fc7f80995b4bf763f3f031231e1f702da8",
+  "player_activity_example_data": "4a1551cb79238578b39dd6b09986edb6065e876677d5539c5e7f1fdd44de5334",
+  "player_activity_source": "b5c57a4759eeac95789e36df1137bde0b75b317d641ce22687bc49e818abe7e1",
+  "player_activity_your_answer": "2696ccf189b48bbe04ac5be78ef10d27a6eacfdddefedd87a9abb7a338bbba3f",
+  "player_ai_note": "cd01ff87751678570bc62ad6bc4a493b08863c63bd74a399a9b53129f150ccc7",
+  "player_already_knew": "13b16b7ca1c0e932323b68af29575037d01907cbfdcbdd4568bc02bce9aef8a1",
+  "player_answer_feedback": "ba76899e60461334de1626f9d8467f163d7948f725f08a44a11317e4d59a7b5e",
+  "player_answer_options": "c4a43467dd7bf64a092970d9e9b1c13588b39bb5434d2a7d6e1750c1e6cc7530",
+  "player_back": "2cd980caf4c032575f9bdaeae3c55e77e04951cee34db17aa52873ccd2ac1915",
+  "player_back_to_chapter": "c9fade0c18023a45274b8a3393927db3cce5cd16773ce3a2ca45aa4fa88b4006",
+  "player_back_to_unit": "637faaea21a78bc36c210895c2b75cb9ac23815faa9d45e2ebf33ea8466d27f9",
+  "player_build_my_plan": "e2f5c84df1374865b2f8687e948a634ba49b44f8c10118f37101b233fae7a595",
+  "player_can_talk_now": "779ef9042bc4d3a7d2d6e6ca1f2dd4bf96e9b93d3e5be489dcdd2f28107f2812",
+  "player_cant_talk_now": "606d2d643b5d85519c818e9b10301b83b040dbcbccc7182a7f818d91fa3d0b90",
+  "player_cant_write_now": "fc1c97a7b4b4b9b1d7f41818d0f72438ef311607df6ebba297a9f68847a6577e",
+  "player_challenge_bit_higher": "d3f9c99633816e44704f70c48dde737c42cc3cb2436c37b1efb8d4b0fde61f11",
+  "player_challenge_bit_lower": "d84397464677975ec724e015601286cd1bd54195f24d83ca86a1755ae3085870",
+  "player_challenge_case": "291676cacd69f68f643d3b4446135370dd1d4398889280bec8090fd0452b52f4",
+  "player_challenge_complete": "313e01869eb50008d96c53d2f02db62aaf86337d487c9d910b937875dae0ce77",
+  "player_challenge_good": "3c7fc251ed94950647b253a4224baa80598e2a4c1302990d81770cf62003b36b",
+  "player_challenge_help": "1fcdd4215936e04a0670cce3ab0a6d237803ac86ee63f82431ce0d65be4d80e5",
+  "player_challenge_help_ai": "efd2db179a4ec4da960e12f2a1eab090ea9c4214fe1b909eccb8e85f310dd17b",
+  "player_challenge_improve": "85c87ec6f46fca9e586a0f1b57db4f18f3204c1bdbc841d88ee09711c0c07417",
+  "player_challenge_meters": "24e1037f6e33fbf0eef16396d678f270977de38212465abd5134d605715810ff",
+  "player_challenge_mission": "10df5d0fb59c949f68a4adb682ea6421c487d43a5076684b1cd7316d84f233e3",
+  "player_challenge_much_higher": "2355b18821c9965f83a4d97d1fa79560d78b2b7cead0796266b82bf7acb67d5e",
+  "player_challenge_much_lower": "bb2f500d019e7da6ab6d1397d398ef7f790e924e999da38eae12339470cf3849",
+  "player_challenge_no_change": "6b7de7856fe635227e4a437f39b93bd68375dff39412591f2325a76ceadf9309",
+  "player_challenge_practice": "0e52f079a3fb59504d48ce62d78e716262ee4b131fa5da4857ef0eb3077feefb",
+  "player_challenge_scenario_complete": "fedb7d2d81894dfa0911aebf9468edad03498f28995de904e33f9def7f9ebcdb",
+  "player_challenge_skills": "3c61688c7cf6261637306727cabb5f04e07acad1970b24bda6ba141d97d27324",
+  "player_challenge_team": "902258f8e89e4e760f1d02533ac7018e73140938af4504d30fb97b5feb07fc89",
+  "player_challenge_what_happened": "1186241f292a549f7d64d152e697871a301ce6c97a918dd1a527180c6918e21e",
+  "player_challenge_what_if": "a90ca944394d277a044f3ce9fc0265295c4666aa596d00c6499c9b8cfe83bc9b",
+  "player_challenge_you": "64d4afbe99cad4fe41836f925f3aa9990b9d496f342dc567288db382c3164dc5",
+  "player_check_failed": "624207ebf676c1120eaf4885f570184cbc6d24b06bb31439cb5ab3daaeee208b",
+  "player_comes_back_at_end": "30b8f9fea16f213a400d7be354c77a36d084fa228a571076c13cb3fa7de3bbb3",
+  "player_comes_back_date": "e9dbdfcb344c8318018809f78173fff4115184a5c806cca390f7faa2bcea071e",
+  "player_comes_back_today": "46879c7e42df1d3f71cb504676b43543aa5527b50d1253cabe9936e1c70942c0",
+  "player_comes_back_tomorrow": "c7499b9982e4029d42a1ce269aa9396ea69be0a24407f416e19a992b4847c72e",
+  "player_comes_back_weekday": "1f0d72c0e7d5693420956b9adc01ed9ee78e8ed38dc00acdc55a0cde118c65e6",
+  "player_correct_answer_label": "0f4790909209d425cf6bba5d1565e087a00e87866a9cefd14fa013520c926d2e",
+  "player_correction_right": "811f2dd0b23fb5b12041105e2116af07a491043ed27247bb54f37b476123df7e",
+  "player_correction_yours": "94039e56148651e4f5ee60acda7c8fb7a87bc3c86d5ae71ba5c13856a8c62d58",
+  "player_course_size": "ff7f60513b7e30ce4b27cec2854cc01e8f674e0e2de82734305b157b92f04b8f",
+  "player_create_account_to_save": "9672a6c1ec7c8c4197024ec76fc26b0e7c4728762449eaab7f11bd76b835d532",
+  "player_create_free_account": "4acf9e2ea91a7146418108af1e158ea0928f0fea2e1067201804a41d12fc2540",
+  "player_done": "77c71e67d8ce266b33a1d0fd7bdd80437205c9804bb282d237171b8fbb1125e2",
+  "player_dont_know_yet": "c3ffdc0441acc26e7372c9d8c1d8f14a7e579250b9c6a601ad434ccebd385573",
+  "player_drawing_picture": "3e0f196a982c1d6ee2b2c1f71a773cc7c95fe481aaf930a0fd476c5253fd1abb",
+  "player_enter_hint": "9342536f0d87d8fa17faf16d03183fb6031d2ac2b625889d9ae5bdeb86387655",
+  "player_explain_first": "fccc2a995158ab210dd96edb358f0f6d36a670fcac484c169dff921b6c46fcb5",
+  "player_finish": "d5824258e72a7d853c32aa92a5fc617f6112d6df67613af917e22787cc0fa2d3",
+  "player_free_limit_day_description": "1d96fa48af378ab37ddb17daf09e4f2dd081f9c44216ddc8138ccef345cffcac",
+  "player_free_limit_day_title": "7ad8502fb59c63f752f65578bd85200c4247b43decb722f289101b0a26f5ddc0",
+  "player_free_limit_month_description": "3d1652c3bf61c4d8dd670e660094440d480f99a9c8592c8670d61e595f3f0bd2",
+  "player_free_limit_month_title": "55af5d69da8b8988cfca712e0c427098966979deb38d5504d15b90672f70129f",
+  "player_guess_first": "3373d79273854683438333463cbaf4a891a7bd44b1c8f7aaf9a7e34de199b9b9",
+  "player_guess_hint": "8f95d299fe8670fc483ab350eb98ad6fa243aec887682643682d89babb392251",
+  "player_guest_limit_description": "0cd4ae12163dc7e2a782a9e20b66cb4acf1347eb9120e5056f4a84aa83b09baf",
+  "player_guest_limit_title": "69e1f4ba1f17e62f589814106f9c61ad59f5423a268f2683bffdc5824d079b86",
+  "player_guest_save_note": "0492c1126c85faf2a6634e30de7a2e223d61a19a5b57c824ba3de7c2e6feb972",
+  "player_how_to_say": "33f4bfe8545f50fdf06a9351451a83ce8f43b9cf67d06f177b30ca7fd61910ce",
+  "player_hyperdrive_streak": "2900c3e097de5ebb4055d84c0eed4f7c67015a2f4b68ed54d5514e45af8c04fa",
+  "player_in_your_own_words": "cf363329efd586e3992676e7e7c69f6a636e7af349209169863cebd20035ba97",
+  "player_keep_writing": "44fedfb2b108a1db6cbfdec2a18cb9506f2682e94f6ad57d20262d3c985dea53",
+  "player_key_point_missing": "bfebfa8df1b5e07a931131249126d8874d4723a3e93ff1d9e1b4f87c673218a5",
+  "player_key_point_stated": "881e069e553d6035b4e86fc5caf3d788f81407aecc9422f7db9eba5277b57d81",
+  "player_key_points": "91be72a62502d6c5a5054f9c705a60e0b1e8df432f8b75ab5491225feb2ec56a",
+  "player_know_this": "7539dcb818f200e32b5df2af11ddad1c78f398744cd702d2123f92f1fc8a2518",
+  "player_leave_description": "8396e62d659b6f24d20ab07ed1c5a11bead4328dd7a987aac0cf0f59f20e33ff",
+  "player_leave_title": "3cea3abed641caa899906b5a3b219ef70fac47afc61ffcf5e074df9443594cc8",
+  "player_lesson_complete": "cbb709d22a4255706059af72c5ad8fa03d07603f0e93a9f6cdc17581702894cd",
+  "player_lesson_of": "77f8e143211024c89ebbeff43401e51f5d0088247e3d0a68dcbc807a572a054b",
+  "player_lesson_summary": "94a67410f02d2148f31447b079626ecdad07446dc6181646503aa6369c3dd1c2",
+  "player_listen": "2c3a1e1d4744442bb0e25bb21d912496b7f443f7d9dd8d415bfb9b4554e32753",
+  "player_microphone_blocked": "fa2f1c1b5e431071256daec5aec33442b410264e86d7cd1737c0eda0dc5c1101",
+  "player_next_lesson": "583121a7d9e9b9f39395ad7a06c87700ce3481b968ed7a23fd5b050ab4fb6554",
+  "player_next_step_failed": "4ddec6a37ae918efcb2f45be3d5e408cebeec412b0bf2b9e8b24a133f752a720",
+  "player_not_found_description": "dc363c035996e44b3c9a5ec2dfa972d09e44a67cf07be71434e6c1a9bad4d99a",
+  "player_not_found_title": "e948b6069446886b5c2ebe069a5f0852e9cfb45d6352113d71a49a4b358db008",
+  "player_not_in_app_description": "f80e3e2550b248b67d55849787e23a78c759949ee6c141ac952c1395e3ede22c",
+  "player_not_in_app_title": "b0b55f8ba9360f1a1ba3f63bb8bf4d0110c1e29b715edcddd95ebede0fe5d194",
+  "player_not_written_description": "ac8cca6f1c6251a301cd712589e91f72bce3aa9194ea17f620d6928619974d84",
+  "player_not_written_title": "3ea8a41df0b801db7cc58cf7714b81c49a0982cde436519531b3011953e08c11",
+  "player_nothing_left_description": "ca75ac90053d81554758ab7601f0bbc61e0be428b88dbaa57fbb5076e6cb9ba7",
+  "player_nothing_left_title": "cd5a43c688ba84f5574408f45474afa79f2f9d190e2f3ae762c81f71420e31c0",
+  "player_notice_answer_not_saved": "0ffd1d6cd13fbe924920c7562e9119fe551379a7d7b1f224a088167bfa7bbd21",
+  "player_notice_picture_ready": "e2744f86b16f67cdda997321755b3f1a6293ba025bce9780c28cc1667a490a9c",
+  "player_notice_self_correct": "d08469d66c3b513c6fe960c753432dfbf754ead98de2f49403a0f36e11181ba3",
+  "player_notice_writing_skipped": "6f7ec4192f18a01eadc480ae8fd5555a7a4f603e34c2d13911207932d5b47b1e",
+  "player_open_failed": "67b8e1a6af4847e3c5cbcd7340b22f59e869ef969953f6a40aee80603bea93aa",
+  "player_opening_lesson": "04ddffca306d4c6571540ace77d879be63759dd8c85179534b86b96662ab557f",
+  "player_part_of": "c9d745c1a3c7affefaecc365a89d28eacab7de5bfbd34e4709b693536252a865",
+  "player_phase_plan": "67b12d10a891196200cdfd39b2a59c166bce88543a818a077927fce4625acfd5",
+  "player_phase_plan_line_1": "34644611866735be908ddd4e690e9085b0bb2a4556cd7c6ec1d7f21654e0d829",
+  "player_phase_plan_line_2": "9a0bca44fd04311af798c6f6fbf990e7c01356183b745be27b7024e1b9c210df",
+  "player_phase_write": "a57cc8b348851e80b96c0d143abb937dbc1202929e0e48eb7fb58ab327338f1c",
+  "player_phase_write_line": "a11f3a07c9739faaf5eec49f9148968d2b5d3d590b467c4f4272532bf853f856",
+  "player_plus_limit_description": "37694c4ae0da2fa410602eeba2b9e457828c2eaec03f53a3f50d8e456f46f88b",
+  "player_plus_limit_title": "5b07aa84e384cf09a3b0a6d37a6eaef1f473fb79e74fee90ac38c298f7d19c9e",
+  "player_previous_screen": "7fab01423ad39162dfff7c16d3607c8853ccabe169b795b2215de6ef48d69592",
+  "player_progress": "c1debdd21a184dcdcce8b1a0b0dc5a02a637176d5312cf32702f0da7b527cdb9",
+  "player_quick_check": "d4320a1eaa8c172271b9de14d0ebadcca7c07b3b537b536585155092bacc8f55",
+  "player_ready_instead": "c99d27d74337f4cd6b548e6367939a03715e96202a2f4fd47bd2ebaa451e7822",
+  "player_ready_while_waiting": "4a7c890d53c169a8c5240999c59fee4e58c1a04df833448eed5f834fbb6a66ae",
+  "player_review_ideas": "4c5b1dbf33866dae3202445182fa371cb2770ccd2b646d1cb00efbc075259cdd",
+  "player_review_on": "e912cc5c74cc718ce4c01ee485ca311ce005cbf198983ccb18874c7cbac960e9",
+  "player_save_failed": "b19bb443c7dba08cd658c06faa0e5eb3c9c6178bce3d6238ba66ccb1ff86c289",
+  "player_saved_to_mistakes": "75b2650f784a5618fedec34029e44cb5cb46e6bdcdfe97bc65f792d5380aaded",
+  "player_saved_to_mistakes_back_at_end": "86590eb884d7a60511d1b4ad6585d91b4757345c4ff83edf85da16a18522e5bf",
+  "player_saved_to_mistakes_back_date": "4b7e1207b5fa44da9d1a3f3d7ba31b22374be1e0e36cf6c46c8ee40ddb22246d",
+  "player_saved_to_mistakes_back_today": "625624e5b7e9a07c161cf6a789dc956d21e7b0c37ef7ea9711d32080200bebc2",
+  "player_saved_to_mistakes_back_tomorrow": "af55ceedc4b5e424bbdfe5114d4bd6bbe7af5637f5a84b4ca0b95d2447484f5b",
+  "player_saved_to_mistakes_back_weekday": "0202541838e7417a003b4bb196ac84dfc25d5fd8d5e8ceb8569830ffeaf168b3",
+  "player_saving_progress": "88aa09188d40416edd4df3de80fd49db4cb8c2a8bb13ba2499afa5fbb231b67a",
+  "player_say_it_instead": "b981fadc5ae697923de315eafab2b24791b0331d9bcacb9f66a6d1f2bb4f55a4",
+  "player_screen_options": "fa549e3ce14d23736e7d5d8fed84e3ddcde2bfab8c8746f39dabc95eca54ae3a",
+  "player_see_plus": "58f2f3dd963de98b3cb1173577fb2bcddbf6b2ca68ec4fe0d00c748cda6eed1d",
+  "player_see_todays_summary": "985c70511b29a0410045c09a6a4afbcf04de61dca3d349862ff5875df57ae133",
+  "player_set_aside_description": "bfec2c7ca91d42e0415ace15f7802fbe97ce55f502c1b49ee0ce6487357bae9c",
+  "player_set_aside_title": "da1a3741e39d26aca549a34ffc0ada175f2741c3bbb5ccab5609754e7f6219d6",
+  "player_slow_down_description": "bbb5e590d07ce960ae71ece915b08ccb98d9cd4aedd4d3f83176a5086e3cc03f",
+  "player_slow_down_title": "7d719bf43eeb3a9622e10fce8b0c86978c424ce9d23a55878817202518785c46",
+  "player_slowly": "8af0be02aeaaecb7cd7930912cf2536b73219c75a08af7b28a96a89c48fe2552",
+  "player_sounds_like": "daaf104646dad681afd33e6a81084c5c5b13714d735727c6371bb99cc49365ab",
+  "player_spelled": "36ac9717dd4e16d8eb8447fed3a4b86d5f895970ee2b5963b7eb3b222ce3b6c2",
+  "player_start_failed_description": "7093de4cd328fd9fdc386067e4c2dadf52bc8a2bd2fdbc6c71f9ad82aa15be9a",
+  "player_start_failed_title": "ee9100adec2e2d0dd407ab0b6b5d0ffc7af06e4b5401d082970c88951beef496",
+  "player_start_this_lesson": "390cf859f433d3fd22db0d701f1c33cff598d1cacdfb27909156c23460d1da52",
+  "player_starting": "4c3dbf6213501755b799942d7bf01316c5a115ffd96a70d17162ae6cb8651007",
+  "player_still_checking": "cd641ccee08d2fbbba068b5a2c4aaf0696dca14795b31e66e4ba286e1e5d17b2",
+  "player_stop_failed": "bacf92739ba6d6ce5820f7a347860fc437c77c6c30ae5128c0d9fa66f03e1c14",
+  "player_stop_for_today": "497ad2132602f69e16d525b4ea84bd24d2fa495fcd70fa25a960bbc5c306073e",
+  "player_summary": "76a023fcd9a571d3cc608a04bbd9aa6f9dd224f566fd949dfc65770d3da51b42",
+  "player_summary_ideas": "700167b879504ae64f8a16e5bf850e683e52569debcc1788134b30b29f4afa5b",
+  "player_try_again": "0bd2ae7a08f67176343ff4e2853fe6a81616d3f4229b321f43771a7023092587",
+  "player_unchecked_compare": "eada2bbc01f1f21ed10bad23ca59b57c258a756f45b192b99033f77c4559e222",
+  "player_verdict_almost": "ef061ca34d4ec5dfad5cac44977b98d0964e9316fbf7480f241487bea7945c74",
+  "player_verdict_correct": "c4e0dc42a963ef592d664142292bdfe30649db6e10e8382c4dacd1141a2ff7c2",
+  "player_verdict_guess": "3b16fa59edb7d4c711eab95d283281b7a2a7362c479026dd88bf734730ada36f",
+  "player_verdict_guess_right": "efacc98c9445ea1bbfb6613e6b232bff8861bf69aa21988c339a64fc3eae6773",
+  "player_verdict_sample_answer": "93645a1d0ee17ca85619a8ed3f8f210b5e1075a790aae5fb3e5e34cad761ddb1",
+  "player_verdict_typo": "5403677f0a8b35155f1dbe8cfb7449680517dd793ee9b17661f6fb16e113e32a",
+  "player_verdict_unchecked": "b69301349f50f325d112048950a9967325654c76abc4e12c552acb742f2d9d5c",
+  "player_what_we_heard": "20bc275c010e34d2b6c06fef2a9b689c57e241cbb19c4e8601d0b9cf3ea4d3f5",
+  "player_word_heard_as": "f10f017ef71c3c15ad4395d24fccead4ca8faf490d9680c69f974f18e60b0684",
+  "player_word_not_heard": "feb266e8391f08db6393c15605802dd43ea6f47b05119899e5ec36b2fef0e7c6",
+  "player_worked_example": "53bf1186ba96bdf0e2daf830787b99d40d2c1b5d2005270f87d4db0663432bfe",
+  "player_worked_example_result": "3473cddf25f2ec80e8e83676abe67d00d4f82e09082596a655c5d77cb84ec63b",
+  "player_worked_example_steps": "5cce18499ba28100a3d73f7bb942cdd3565fd4e7c3f27cd6cefa6f7bcaa24a75",
+  "player_write_again": "a7971372e1fb64ebdf825ffd0a971ad16d10b6543eb4eda2aa25098f3bc23391",
+  "player_write_your_answer": "2bccbed46fb67a1c21ac7f7bec82bf53d3acdfefbc9d8bab6aebe58f0f16c701",
+  "player_writing_lesson": "8975f01bba2c0faad3702827b546e4e78f406275856f78ebb131ea4578d4c8a7",
+  "player_writing_note": "70cabbaa0433fe75cf17db99689d4c85106e5fe167a87dd0cc52df42dc5dee60",
+  "player_your_answer": "bbe8405a2b2d75235749e343b89c05b81a5186b28caff3190bad9bf9ee3db627"
+}
+-->
+<resources>
+    <string name="player_screen_options">Ekran seçeneklerini aç</string>
+    <string name="player_ai_note">Yapay zekâyla hazırlandı. Hatalar içerebilir.</string>
+    <string name="player_know_this">Bunu zaten biliyorum</string>
+    <string name="player_lesson_summary">Ders özeti</string>
+    <string name="player_progress">Ders ilerlemesi</string>
+    <string name="player_leave_title">Şimdilik çıkmak ister misin?</string>
+    <string name="player_leave_description">Cevabın henüz kontrol edilmediği için kaydedilmeyecek.</string>
+    <string name="player_keep_writing">Yazmaya devam et</string>
+    <string name="player_action_check">Kontrol et</string>
+    <string name="player_action_checking">Cevabını kontrol ediyoruz</string>
+    <string name="player_action_confirm">Onayla</string>
+    <string name="player_action_continue">Devam et</string>
+    <string name="player_action_next">Devam et</string>
+    <string name="player_action_next_step">Sonraki adımı göster</string>
+    <string name="player_action_see_answer">Cevabı gör</string>
+    <string name="player_action_see_how_it_went">Sonucunu gör</string>
+    <string name="player_action_start">Başla</string>
+    <string name="player_previous_screen">Önceki ekrana dön</string>
+    <string name="player_quick_check">Hızlı kontrol · %1$s/%2$s</string>
+    <!-- Shown on a wrong answer the learner can still fix right away. "Not quite" means "that isn't right", not "better luck next time". -->
+    <string name="player_notice_self_correct">Doğru değil. Tekrar bakıp kendin düzelt, sonra kontrol et.</string>
+    <string name="player_notice_answer_not_saved">Bu soruya verdiğin cevap kaydedilmedi. Dersi bitirmek için tekrar cevapla.</string>
+    <string name="player_notice_picture_ready">Bu soru için görsel bekleniyordu. Dersi bitirmek için soruyu cevapla.</string>
+    <string name="player_notice_writing_skipped">Bugün başka içerik hazırlamıyoruz.</string>
+    <string name="player_write_again">Tekrar yaz</string>
+    <string name="player_verdict_almost">Çok yaklaştın</string>
+    <string name="player_verdict_correct">Doğru!</string>
+    <string name="player_verdict_guess">İşte cevap</string>
+    <string name="player_verdict_guess_right">Güzel tahmin!</string>
+    <string name="player_verdict_sample_answer">İşte iyi bir cevap</string>
+    <string name="player_verdict_typo">Doğru, yazımına dikkat et</string>
+    <string name="player_verdict_unchecked">Bu kez kontrol edilmedi</string>
+    <string name="player_answer_feedback">Cevap değerlendirmesi</string>
+    <string name="player_spelled">Yazılışı:</string>
+    <string name="player_correct_answer_label">Cevap:</string>
+    <string name="player_unchecked_compare">Her soruyu günde birkaç kez kontrol ediyoruz. Cevabını bununla karşılaştır:</string>
+    <plurals name="player_key_points">
+        <item quantity="one">%1$s / %2$s temel nokta</item>
+        <item quantity="other">%1$s / %2$s temel nokta</item>
+    </plurals>
+    <string name="player_key_point_stated">Belirtilen: %1$s</string>
+    <string name="player_key_point_missing">Eksik: %1$s</string>
+    <string name="player_correction_yours">Cevabın</string>
+    <string name="player_correction_right">Doğru cevap</string>
+    <string name="player_hyperdrive_streak">Üst üste %1$s doğru</string>
+    <string name="player_comes_back_at_end">Bu soru dersin sonunda yeniden karşına çıkacak</string>
+    <string name="player_saved_to_mistakes">Yanlış defterine kaydedildi</string>
+    <string name="player_saved_to_mistakes_back_at_end">Yanlış defterine kaydedildi · bu dersin sonunda karşına çıkacak</string>
+    <string name="player_saved_to_mistakes_back_today">Yanlış defterine kaydedildi · bugün ilerleyen saatlerdeki tekrarda karşına çıkacak</string>
+    <string name="player_saved_to_mistakes_back_tomorrow">Yanlış defterine kaydedildi · yarınki tekrarda karşına çıkacak</string>
+    <string name="player_saved_to_mistakes_back_weekday">Yanlış defterine kaydedildi · %1$s günü tekrarda karşına çıkacak</string>
+    <string name="player_saved_to_mistakes_back_date">Yanlış defterine kaydedildi · %1$s tarihindeki tekrarda karşına çıkacak</string>
+    <string name="player_comes_back_today">Bu bilgi bugün ilerleyen saatlerdeki tekrarda karşına çıkacak</string>
+    <string name="player_comes_back_tomorrow">Bu bilgi yarınki tekrarda karşına çıkacak</string>
+    <string name="player_comes_back_weekday">Bu bilgi %1$s günü tekrarda karşına çıkacak</string>
+    <string name="player_comes_back_date">Bu bilgi %1$s tarihindeki tekrarda karşına çıkacak</string>
+    <string name="player_guess_first">Önce tahmin et</string>
+    <string name="player_guess_hint">Şimdi yanlış yapman daha sonra hatırlamanı kolaylaştırır.</string>
+    <string name="player_answer_options">Cevap seçenekleri</string>
+    <string name="player_worked_example">Çözümlü örnek</string>
+    <string name="player_worked_example_steps">Adımlar</string>
+    <string name="player_worked_example_result">Sonuç</string>
+    <string name="player_summary">Özet</string>
+    <plurals name="player_summary_ideas">
+        <item quantity="one">Bu dersten aklında kalacak %1$s bilgi</item>
+        <item quantity="other">Bu dersten aklında kalacak %1$s bilgi</item>
+    </plurals>
+    <string name="player_in_your_own_words">Kendi cümlelerinle</string>
+    <string name="player_cant_write_now">Şu an yazamıyorum</string>
+    <string name="player_dont_know_yet">Henüz bilmiyorum</string>
+    <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
+    <string name="player_explain_first">Önce açıklamayı göster</string>
+    <string name="player_check_failed">Bu kez cevabını kontrol edemedik. Tekrar dene.</string>
+    <string name="player_still_checking">Hâlâ kontrol ediyoruz. Normalden uzun sürüyor.</string>
+    <string name="player_enter_hint">Kontrol etmek için Enter’a, yeni satır için Shift+Enter’a bas.</string>
+    <string name="player_your_answer">Cevabın</string>
+    <string name="player_write_your_answer">Cevabını yaz</string>
+    <string name="player_not_written_title">Bu ders henüz hazırlanmadı</string>
+    <string name="player_not_written_description">Başladığında Zoonk dersi hazırlar. Bir iki dakika sürer.</string>
+    <string name="player_start_this_lesson">Bu derse başla</string>
+    <string name="player_starting">Başlatıyoruz…</string>
+    <string name="player_writing_lesson">Dersini hazırlıyoruz</string>
+    <string name="player_phase_plan">Dersi planlıyoruz</string>
+    <string name="player_phase_plan_line_1">Neleri işleyeceğimizi seçiyoruz…</string>
+    <string name="player_phase_plan_line_2">Konuyu anlatmanın en iyi yolunu seçiyoruz…</string>
+    <string name="player_phase_write">Dersi hazırlıyoruz</string>
+    <string name="player_phase_write_line">%1$d. ekranı hazırlıyoruz…</string>
+    <string name="player_writing_note">Genellikle bir iki dakika sürer. Ders hazır olur olmaz burada açılır.</string>
+    <string name="player_ready_while_waiting">Beklerken başlayabilirsin</string>
+    <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->
+    <string name="player_ready_instead">Bunun yerine yapabilirsin</string>
+    <plurals name="player_review_ideas">
+        <item quantity="one">%1$s bilgiyi tekrar et</item>
+        <item quantity="other">%1$s bilgiyi tekrar et</item>
+    </plurals>
+    <string name="player_set_aside_title">Bu ders kullanılamıyor</string>
+    <string name="player_set_aside_description">Kalite kontrollerimizden geçemediği için planın bu ders olmadan devam ediyor.</string>
+    <string name="player_opening_lesson">Dersini açıyoruz</string>
+    <string name="player_open_failed">Dersi açamadık. Tekrar dene veya devam etmek için giriş yap.</string>
+    <string name="player_try_again">Tekrar dene</string>
+    <string name="player_back">Geri dön</string>
+    <string name="player_not_found_title">Ders kullanılamıyor</string>
+    <string name="player_not_found_description">Bu ders artık kullanılamıyor.</string>
+    <string name="player_cant_talk_now">Şu an konuşamıyorum</string>
+    <string name="player_can_talk_now">Şu an konuşabilirim</string>
+    <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
+    <string name="player_say_it_instead">Sesli söyle</string>
+    <string name="player_microphone_blocked">Mikrofona erişim engellendi. Bunun yerine cevabını yaz.</string>
+    <string name="player_what_we_heard">Duyduklarımız</string>
+    <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
+    <string name="player_word_not_heard">%1$s (duyulmadı)</string>
+    <!-- Read by screen readers: %1$s is the word asked for, %2$s what the learner said instead. -->
+    <string name="player_word_heard_as">%1$s (%2$s olarak duyuldu)</string>
+    <string name="player_how_to_say">%1$s nasıl söylenir</string>
+    <!-- %1$s spells how the word sounds, such as “AHM-breh”. -->
+    <string name="player_sounds_like">okunuşu %1$s</string>
+    <string name="player_listen">Dinle</string>
+    <string name="player_slowly">Yavaş dinle</string>
+    <string name="player_activity_example_data">Örnek sayılar, gerçek veri değil</string>
+    <!-- %1$s names where an activity's data comes from, such as "World Bank (2023)". -->
+    <string name="player_activity_source">Kaynak: %1$s</string>
+    <string name="player_activity_your_answer">Cevabın:</string>
+    <string name="player_activity_correct_answer">Doğru cevap:</string>
+    <!-- A work challenge's label: %1$s is where it happens, such as "Customer support". -->
+    <string name="player_challenge_case">Meydan okuma · %1$s</string>
+    <!-- A what-if scenario's label: %1$s is where it happens. -->
+    <string name="player_challenge_what_if">Ya şöyle olsaydı · %1$s</string>
+    <string name="player_challenge_mission">Görevin</string>
+    <string name="player_challenge_team">Ekibin</string>
+    <string name="player_challenge_help_ai">Ekibinden veya yapay zekâdan yardım isteyebilirsin. Kararların sonucu değiştirir.</string>
+    <string name="player_challenge_help">Ekibinden yardım isteyebilirsin. Kararların sonucu değiştirir.</string>
+    <string name="player_challenge_meters">Durumun gidişatı</string>
+    <!-- How a meter moved after the learner's decision. -->
+    <string name="player_challenge_no_change">değişiklik yok</string>
+    <string name="player_challenge_much_higher">çok daha yüksek</string>
+    <string name="player_challenge_bit_higher">biraz daha yüksek</string>
+    <string name="player_challenge_much_lower">çok daha düşük</string>
+    <string name="player_challenge_bit_lower">biraz daha düşük</string>
+    <!-- Read by screen readers before the learner's own reply in a challenge's conversation. -->
+    <string name="player_challenge_you">Sen: %1$s</string>
+    <string name="player_challenge_what_happened">Ne oldu</string>
+    <string name="player_challenge_complete">Meydan okuma tamamlandı</string>
+    <string name="player_challenge_scenario_complete">Senaryo tamamlandı</string>
+    <string name="player_challenge_good">İyi yaptıkların</string>
+    <string name="player_challenge_improve">Geliştirilecekler</string>
+    <string name="player_challenge_skills">Çalışılan beceriler</string>
+    <!-- %1$s is the skill to practice, %2$s how long it takes, such as "5 min". -->
+    <string name="player_challenge_practice">“%1$s” alıştırması yap · %2$s</string>
+    <string name="player_done">Tamam</string>
+    <string name="player_drawing_picture">Resmi çiziyoruz…</string>
+    <string name="player_not_in_app_title">Bu ders henüz uygulamada yok</string>
+    <string name="player_not_in_app_description">Bu derste uygulamanın henüz gösteremediği ekranlar var. Dersi zoonk.com üzerinden yapabilirsin.</string>
+    <string name="player_start_failed_title">Bu dersi açamadık</string>
+    <string name="player_start_failed_description">Birazdan tekrar dene. İlerlemen kaybolmadı.</string>
+    <string name="player_slow_down_title">Kısa bir mola ver</string>
+    <plurals name="player_slow_down_description">
+        <item quantity="one">Kısa sürede çok sayıda derse başladın. Bu ders %1$s saniye sonra açılacak.</item>
+        <item quantity="other">Kısa sürede çok sayıda derse başladın. Bu ders %1$s saniye sonra açılacak.</item>
+    </plurals>
+    <string name="player_free_limit_day_title">Bugünlük yeni dersler bu kadar</string>
+    <string name="player_free_limit_day_description">Öğrendiklerini tekrar edebilir, yanlışların üzerinde çalışabilirsin. Yeni dersler yarın yeniden açılacak; hemen devam etmek için Plus’a geç.</string>
+    <string name="player_free_limit_month_title">Bu ay için yeni dersler bu kadar</string>
+    <string name="player_free_limit_month_description">Öğrendiklerini tekrar edebilir, yanlışların üzerinde çalışabilirsin. Yeni dersler gelecek ay yeniden açılacak; hemen devam etmek için Plus’a geç.</string>
+    <string name="player_see_plus">Plus’ı incele</string>
+    <string name="player_guest_limit_title">Devam etmek için ilerlemeni kaydet</string>
+    <string name="player_guest_limit_description">Hesap açmadan deneyebileceğin dersleri tamamladın. Ücretsiz bir hesap açıp kaldığın yerden devam et; tüm ilerlemen korunacak.</string>
+    <string name="player_create_free_account">Ücretsiz hesap oluştur</string>
+    <string name="player_plus_limit_title">Bugün çok şey öğrendin</string>
+    <string name="player_plus_limit_description">Bugünkü ders sınırına ulaştın. Yeni dersler yarın yeniden açılacak.</string>
+    <string name="player_lesson_complete">Ders tamamlandı</string>
+    <string name="player_already_knew">Bunu zaten biliyordun</string>
+    <string name="player_saving_progress">İlerlemeni kaydediyoruz…</string>
+    <string name="player_save_failed">Gönderilemedi. Cevapların saklanıyor.</string>
+    <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
+    <string name="player_review_on">%1$s tarihinde tekrar</string>
+    <string name="player_next_lesson">Sonraki derse geç</string>
+    <string name="player_stop_for_today">Bugünlük bitir</string>
+    <string name="player_see_todays_summary">Bugünün özetini gör</string>
+    <string name="player_next_step_failed">Sonraki adımı açamadık. Tekrar dene.</string>
+    <string name="player_stop_failed">Çalışmayı durduramadık. Tekrar dene.</string>
+    <string name="player_back_to_chapter">Üniteye dön</string>
+    <string name="player_back_to_unit">Üniteye dön</string>
+    <string name="player_part_of">Bu dersin yer aldığı içerikler</string>
+    <plurals name="player_course_size">
+        <item quantity="one">%1$s ünite · senin temponla yaklaşık %2$s</item>
+        <item quantity="other">%1$s ünite · senin temponla yaklaşık %2$s</item>
+    </plurals>
+    <plurals name="player_lesson_of">
+        <item quantity="one">%1$s / %2$s ders</item>
+        <item quantity="other">%1$s / %2$s ders</item>
+    </plurals>
+    <string name="player_guest_save_note">İlerlemeni kaydet; öğrendiklerini pekiştirmen için daha sonra kısa bir tekrar karşına çıkacak.</string>
+    <string name="player_build_my_plan">Planımı oluştur</string>
+    <string name="player_create_account_to_save">Kaydetmek için hesap oluştur</string>
+    <string name="player_nothing_left_title">Cevaplanacak soru kalmadı</string>
+    <string name="player_nothing_left_description">Sonucunu görmek için bitir.</string>
+    <string name="player_finish">Bitir</string>
+    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
+</resources>

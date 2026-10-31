@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "planlink_about": "f458b409c2b1dd860b14abb5cdf6782c8cd4a2908baef86b435d9f3c63ab4aa3",
+  "planlink_eyebrow": "0c0008110b32313383bbf2b499a681aa35c19bb491c3bcac609dc71946af0edc",
+  "planlink_facts": "47f4d79c25695b05cc1a071ddfba0fa238010164fdcb2f0867711a38293d6d30",
+  "planlink_failed": "f0ef9866c92f9a33207e7e4da94d939712fcf5adc5a23ca1270033ed3c306116",
+  "planlink_make_it_yours": "3a465c21c66b3aea164d5fa943eef1926100bdd90c825a065efeaee651628fcb",
+  "planlink_minutes_label": "4990b6737308d645568c475419c289306e7bd626cb1ae3470ee3bd86148ba279",
+  "planlink_not_found": "e624e8708afbdb2b35d38dab3a889b9eb34f8efacacdb9e8609de6376957e3f7",
+  "planlink_not_found_description": "b49569e554cd92cfa1b62cb6ca9c92ad46a1776e2f4eddcc2da8303639b75502",
+  "planlink_phases": "bdbafcbec535856dd8ecbad08777ae62037381da7b4b3e8fbca12f044fcdd943",
+  "planlink_refused": "00a8f93b3dd7673c98b1c974613467b8dc18a0fb85b18c5c74b8355a7ad0d451",
+  "planlink_skills": "dcef578d2cc44010535c7d2db16541089d38b4090b754a17878d862ae1c8e858",
+  "planlink_start": "80a5d35b130154f3ba0479085e5a803efdeefa6d45afba874c7ee469133c7072",
+  "planlink_study_plan": "04f72ae9fb14d41547c3a39fde935ea06245a7ad668b41a049927cd03ccf177a"
+}
+-->
+<resources>
+    <!-- Above a shared plan's subject. -->
+    <string name="planlink_eyebrow">Seninle paylaşılan bir çalışma planı</string>
+    <!-- A shared plan without a subject, and the title over its phases. -->
+    <string name="planlink_study_plan">Çalışma planı</string>
+    <string name="planlink_minutes_label">Günde ne kadar zaman?</string>
+    <!-- Starts the learner's own plan from a shared one. -->
+    <string name="planlink_start">Bu planla başla</string>
+    <string name="planlink_make_it_yours">Aynı konuda kendi temponda ilerleyebileceğin, sana özel bir planın olur. Birkaç soruyu cevapla, ardından zaten bildiklerini atla.</string>
+    <string name="planlink_refused">Şu anda başka bir hedefe başlayamazsın. Önce bir hedefini bitir ya da duraklat.</string>
+    <string name="planlink_failed">Bir sorun oluştu. Birazdan tekrar dene.</string>
+    <!-- A shared plan's size: %1$s is its study time, such as "40 hr"; %2$s its phases, such as "5 phases"; %3$s its skills, such as "24 skills". -->
+    <string name="planlink_facts">~%1$s çalışma · %2$s · %3$s</string>
+    <plurals name="planlink_phases">
+        <item quantity="one">%d aşama</item>
+        <item quantity="other">%d aşama</item>
+    </plurals>
+    <plurals name="planlink_skills">
+        <item quantity="one">%d beceri</item>
+        <item quantity="other">%d beceri</item>
+    </plurals>
+    <!-- A phase's approximate study time. %1$s is a duration, such as "2 hr". -->
+    <string name="planlink_about">~%1$s</string>
+    <string name="planlink_not_found">Bu plan kullanılamıyor</string>
+    <string name="planlink_not_found_description">Bağlantı eskimiş ya da sahibi planı paylaşmayı bırakmış olabilir.</string>
+</resources>

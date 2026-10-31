@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "listening_elapsed": "a29b17c5e5533b3c1c423f91820464d1d68b448b047e9756635cd8688360a701",
+  "listening_failed": "c4e4bf7e8a5d3c3acc0d12d06c3fafa4209da3917fbfcbc3323e431627175b16",
+  "listening_note_free": "3074a53f230da32c114dc21da7c58dfcf5192d6ff1a5c4286a521c7f35430a1b",
+  "listening_note_once": "f7785b11a5c1f0989b176c5a704780b1150a62fd9109291e9e038693651bfb24",
+  "listening_note_one_more": "06ad758b60f298a128299f55830c6fae049b0dbe512015ee7f054140fba8cb5d",
+  "listening_note_restarted": "614ecf634cfc2388467d25220ed9e2c38324a90e6fac620f764824e22e5678d5",
+  "listening_note_twice": "1a600a44e5c66c359fed4c320a9b55358928f275c932ce868fdd60a7dd799f33",
+  "listening_note_used": "f9680207b1e95f7bb276517155836e2c68238bd23abea049f27276b998ff8003",
+  "listening_play": "b6a2735995dff914d7506af2a20b4f9a730be05af0292b7baa510d1a237834f3",
+  "listening_play_again": "445e11113f5187d9c0c67cff549015a0485d3fa7ab08124754c932ffc71f70da",
+  "listening_playing": "ab4d9656e1a2ec8c794c6cd4f1663057a7f21cf0c42eedd189ec832203621ce1",
+  "listening_playing_note": "3b45d905380d56a30bad154ae6a2372157385b88937a4bc14c846011ad1d32eb",
+  "listening_questions": "fc7234817a28d14e899fca1ac813a4c0daac6a78ff152d1ae024727462f8c52f",
+  "listening_recording": "86db3cdfd170deb8fbb58f4622dc8aa35f172bc8936b7ce0735df8b9014cf985",
+  "listening_stop": "62aa1a3c6db121b35bf44e72d6c55d1444735643f35d5b0abc9cf59f9c97dc79",
+  "listening_transcript": "c9e9e7a1be37a7b8b80a221c9f95565616e53d1a653cf9581036adfbb8a5adc1"
+}
+-->
+<resources>
+    <string name="listening_recording">Kayıt</string>
+    <string name="listening_play">Kaydı oynat</string>
+    <string name="listening_play_again">Tekrar oynat</string>
+    <string name="listening_playing">Oynatılıyor</string>
+    <string name="listening_stop">Durdur</string>
+    <!-- How far the recording played: "0:42 of 2:10". -->
+    <string name="listening_elapsed">%1$s / %2$s</string>
+    <string name="listening_note_free">İstediğin kadar tekrar dinle.</string>
+    <string name="listening_note_restarted">Kayıt bitmeden durdu. Baştan bir kez daha dinleyebilirsin.</string>
+    <string name="listening_note_used">Tüm dinleme haklarını kullandın. Duyduklarına göre cevapla.</string>
+    <string name="listening_note_one_more">Bir kez daha dinleyebilirsin.</string>
+    <string name="listening_note_once">Sınavdaki gibi bir kez dinleyebilirsin. Önce soruları oku.</string>
+    <string name="listening_note_twice">Sınavdaki gibi iki kez dinleyebilirsin. Önce soruları oku.</string>
+    <string name="listening_failed">Kayıt yüklenemedi. Bağlantını kontrol edip tekrar dene.</string>
+    <string name="listening_playing_note">Oynatılıyor. Sınavdaki gibi duraklatılamaz.</string>
+    <plurals name="listening_questions">
+        <item quantity="one">Bu kayıtla ilgili soru (%d)</item>
+        <item quantity="other">Bu kayıtla ilgili sorular (%d)</item>
+    </plurals>
+    <string name="listening_transcript">Kayıt metni</string>
+</resources>

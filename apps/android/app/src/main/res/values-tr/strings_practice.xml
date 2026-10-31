@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "practice_already_answered": "995f89aa3ddaccda1eb9797d2f0f9cee195fecef7af420fac4e147ddd935b670",
+  "practice_check": "f5168c4abd957648c955b2850b934c833acda822588b690bdcfd64ad88f0e195",
+  "practice_close": "b7d5bd492b6e57bb1c0c6cb87c6d37231122565ae5747186cee1c57c6fc00e32",
+  "practice_continue": "16595a3b2d0db683155ec19e7baf4811523690d384931c3f157fbff22bb61fa5",
+  "practice_count": "003e20d11c9df262e89981126ccdbec2aaec86be312a6b59a29f1a900a3e5db6",
+  "practice_done_review": "d521a34f64ccc2a7b0f161fe41f9e330eff7cd8537fd05b9b68b6cc589769be7",
+  "practice_done_title": "d33a7ff9a9f7e3c53a73ef1649def4ceea7f9f64b7372059b16e5ef1bc25bb30",
+  "practice_finish": "72f3e8042d57c3666834679b5b7ff620b869c8094569882d9c9fce6028a25102",
+  "practice_finish_now": "37f0543f72b19494b0354e1f0ffe269efb431049e801f51166827d90754606c4",
+  "practice_finish_ready_detail": "6b52f3f89ce6a8e08449143523d496d83cc653ecc727286fe19add988f039886",
+  "practice_finish_ready_title": "26fd11375173637c0a4b8aa22008bbd8f12170f78568f382f3ef51244a77ca36",
+  "practice_net": "50596108b62f0c77a52f711d979ab6e623c81e7629158a4096576379348cf5a2",
+  "practice_net_hint": "a65bb8d2567e4af2622be4ac9ee013135dee4a53a131a8bbfd7776fc38e19c05",
+  "practice_net_right": "7e2d3adf9f56b7868716d384d60eccea48c067249e5de90cfe903d7185b0ed12",
+  "practice_net_tally": "cc48555a4ea30254a0690e79bf3336b16a6503f5d378b95619ecdf8581bc196c",
+  "practice_net_wrong": "d6eefebd01c5d198165333dd5111d1f0e56d7875308b5beba29469dafcbd8f55",
+  "practice_next": "cd566b780f159b16b26490f0f05e82cd87481d9713e78da15762ddad613868fc",
+  "practice_not_found_description": "a525a8d8a72c02e220c978f4dcee6641ea51317e439bca053b1835edc7a4f4e4",
+  "practice_not_found_title": "79153ba984109e43e2d7d1ad4cf121055f049a10ccb88e17c8bb18d61cf23a32",
+  "practice_pause_failed": "f2d1ad5df7a74846f38e3127dd8eb64cf084e3330730e1ec9db95e3484dbecc2",
+  "practice_pause_stop": "a02d45310d06146e090ce49f396aede5ab55e4110626c1375b2672e1813789ba",
+  "practice_pause_text": "6424a7143a4d45ff5e3f1c6f3e7ada15f30eaaad7ca3ea7e5f4cad1ca7b44e6f",
+  "practice_progress": "6dbecbbb71faf7a4cb1df8ece3e80fd032c625232c03917c0b716a1ae2e36182",
+  "practice_save_error": "449a54577347c8d41236fa4f3fda5f76c2af89d965bca9e220b2870f0e839966",
+  "practice_time_machine_answered": "38107a7628466b2a3065e9572d11415f3857f54610e0863d8e5376c4adfba097",
+  "practice_time_machine_right_again": "69517a78c8dc718f616e0ac2160b5bd31d2ebf511397b45260495b0cd875beac",
+  "practice_time_machine_right_before": "cb4f82e43d6852e567867c1d148d2cda310a370177b312ffd780ea694de9fd61",
+  "practice_time_machine_seen": "13026cb83f30e2a549846e9952a7e835e4f23c71f7514dae52003a673291b9ff",
+  "practice_time_machine_tripped": "48ec2bfd56e6b9f4ff1482b5c8440342299d1c4a2869683235f4c2a3aaf43b9c",
+  "practice_try_again": "b3327b003f2c888de328e1ba022ace000315489b5d2e41e945165fb5e721e66d",
+  "practice_undo": "61000e1f079404e48e424d9d8129d3cdfc19122f8c0528780089550ced6f1b59",
+  "practice_undo_failed": "ca741bf46a829bd1c8698d42fda3340490f48deccfb4676e6e2e10f5aa1104c9"
+}
+-->
+<resources>
+    <string name="practice_progress">Soru %1$d / %2$d</string>
+    <string name="practice_check">Kontrol et</string>
+    <string name="practice_continue">Devam et</string>
+    <string name="practice_finish">Bitir</string>
+    <!-- Goes to the next question of a test graded only at its end. -->
+    <string name="practice_next">İlerle</string>
+    <!-- Sends a test's answers when its last questions couldn't be written. -->
+    <string name="practice_finish_now">Bu cevaplarla bitir</string>
+    <string name="practice_undo">Geri al</string>
+    <string name="practice_undo_failed">Kaydedilemedi. Tekrar dene.</string>
+    <!-- Where the learner is in a test, such as "3 of 10". -->
+    <string name="practice_count">%1$d / %2$d</string>
+    <string name="practice_try_again">Tekrar dene</string>
+    <string name="practice_finish_ready_title">Cevaplanacak soru kalmadı</string>
+    <string name="practice_finish_ready_detail">Sonucunu görmek için bitir.</string>
+    <string name="practice_already_answered">Bu soruyu daha önce cevapladın.</string>
+    <string name="practice_save_error">Gönderilemedi. Cevapların saklanıyor.</string>
+    <plurals name="practice_net_right">
+        <item quantity="one">%d doğru</item>
+        <item quantity="other">%d doğru</item>
+    </plurals>
+    <plurals name="practice_net_wrong">
+        <item quantity="one">%d yanlış</item>
+        <item quantity="other">%d yanlış</item>
+    </plurals>
+    <!-- Right answers minus wrong ones, which can be negative. -->
+    <string name="practice_net">%1$d net</string>
+    <!-- The block's score so far: right (%1$s), wrong (%2$s) and net (%3$s). -->
+    <string name="practice_net_tally">%1$s · %2$s · %3$s</string>
+    <string name="practice_net_hint">Bir yanlış cevap bir doğru cevabı götürür. Emin değil misin? Boş bırak.</string>
+    <!-- %1$s is a day and month, like October 8. -->
+    <string name="practice_time_machine_seen">Bunu %1$s tarihinde gördün.</string>
+    <string name="practice_time_machine_right_again">Yine doğru, tıpkı %1$s tarihinde olduğu gibi.</string>
+    <string name="practice_time_machine_right_before">%1$s tarihinde doğru cevapladın. Şimdi tekrar etmek aklında kalmasına yardımcı olur.</string>
+    <!-- %1$s is a day and month; %2$s is the answer the learner gave then. -->
+    <string name="practice_time_machine_answered">%1$s tarihinde “%2$s” cevabını verdin.</string>
+    <string name="practice_time_machine_tripped">%1$s tarihinde bu soruda zorlandın.</string>
+    <string name="practice_pause_text">Üst üste birkaç yanlış oldu. Kısa bir mola genelde iyi gelir ve bugün yaptığın her şey hesaba katılır.</string>
+    <string name="practice_pause_stop">Bugünlük bitir</string>
+    <string name="practice_pause_failed">Çalışmayı durduramadık. Tekrar dene.</string>
+    <string name="practice_done_title">Alıştırma tamamlandı</string>
+    <string name="practice_done_review">Tekrar tamamlandı</string>
+    <string name="practice_not_found_title">Bu sorular artık burada değil</string>
+    <string name="practice_not_found_description">Süreleri dolmuş ya da yerleri değişmiş olabilir. Sıradaki adımı Bugün ekranında bulabilirsin.</string>
+    <string name="practice_close">Kapat</string>
+</resources>

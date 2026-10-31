@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "research_change_label": "5dd4a56d25e8fd0b0c076b756dd2da6653dbfb8182acf002acd69d072a387258",
+  "research_class_action": "97e8f66a13303536fa5aa4e5fcd7a77725122cbae5cf289d8c810c53bff872d8",
+  "research_class_body": "81fa041e6f32f9ca40806be1b40f24b1a6dab7851e66135f4b4ad5b5f1a83189",
+  "research_class_title": "e0f67f11520cdd9edd2c08ffcdc4815ee485f1dc49abd8635506d2430a05a62a",
+  "research_guide_action": "ad7facdfcecdc320639e2e4a529133dad03a092043839382374c4e5011c21203",
+  "research_guide_body": "e207d0bf479859716d538ea655abcaa6d2ccbc6acfa50b58a811fe5662c2333e",
+  "research_guide_title": "8dfd3f9140a461c45661029b6aa556fbf81991744ca8ea3290c61bd07ca8ad9f",
+  "research_not_now": "19bd811781547532e3a3b79187177f0303b4bc0640b173a2348479b26de0d369",
+  "research_notice_action": "b2dab6d044b765b3cf90743492761a4c406d5f54d37b4a2288e73e45c6304d8f",
+  "research_notice_body": "254f1faf1f2be48ff196c3fcfe22cf5fa1c0cd33412d21f9400323fc361c8e00",
+  "research_notice_title": "7dcb6b862ccd6aa41c84ce5c53955d78757cad827f3e93236bdf91b3767b91af",
+  "research_source_action": "faf282a1c5cd7871a26fa66af0192cefb7ff764ee114707e09b17c5fb8066404",
+  "research_source_body": "0ec850d7dd8f744fbc26d15fb9e5639835a0ac66690bc03bca4ee1df9266dc2e",
+  "research_source_title": "c90c409535638ed555f632b03e912952794e4baf454d4b4bf5bfcb7de494ef9b",
+  "research_unverified_guide_body": "7adee235e1d383e2fd7c8b510e1fc6a9a1e9f2bb499b4e2c5fad1f8094010012",
+  "research_unverified_notice_body": "c912b34ce1e080d584e3e27e3c873d240a9d5bffd02cbfe5834d532a42913e20",
+  "research_unverified_title": "ffaeb2eeab20a26ef919f532a8507e9b3adda56b3d3f05e06bbc85266f9cf3f9",
+  "research_upload_label": "b35df3052490ce78d1ace6f63c8b735afee5a65726e597f8cf27ee74cee6065e",
+  "research_upload_open": "a0d785463f8e0ac2ab58ca337e30cfaac11c26f30cec7be2112f8305af2b9527",
+  "research_upload_sending": "fea67909b908deae7422e8c12cbed1ad64bf7edf04f54b5e3bf8a5ab9d6d79df",
+  "research_upload_thanks": "db0e8774fc3a06ce48a2590a76635eccf546bdf2d59772a464ebb6b96d6e21cb"
+}
+-->
+<resources>
+    <!-- Names Today's notice when research needs the learner to upload a document. -->
+    <string name="research_upload_label">Planın için bir belge gerekiyor</string>
+    <!-- Opens the upload ask from Today's notice line. -->
+    <string name="research_upload_open">Yükle</string>
+    <string name="research_upload_thanks">Teşekkürler. Şimdi belgeyi okuyoruz, planın birkaç dakika içinde güncellenecek.</string>
+    <string name="research_upload_sending">Okunması için gönderiyoruz…</string>
+    <string name="research_not_now">Sonraya bırak</string>
+    <string name="research_class_title">Ders materyalini ekle</string>
+    <string name="research_class_body">Öğretmeninin sınavı hiçbir yerde yayımlanmamış. Planını derste işlenen konulara göre hazırlayabilmemiz için slaytları, notları veya konu listesini yükle.</string>
+    <string name="research_class_action">Materyalini yükle</string>
+    <string name="research_source_title">Resmî kaynağı bulamadık</string>
+    <string name="research_source_body">Derslerini çalıştığın kaynağa göre hazırlayabilmemiz için resmî metni veya kılavuzu yükle.</string>
+    <string name="research_source_action">Belge yükle</string>
+    <!-- An exam's notice: the official document that announces it and lists what it covers. -->
+    <string name="research_notice_title">Resmî ilanı bulamadık</string>
+    <string name="research_notice_body">Planının gerçek sınava uygun olması için ilanı yükle.</string>
+    <string name="research_notice_action">İlanı yükle</string>
+    <string name="research_guide_title">Resmî kılavuzu bulamadık</string>
+    <string name="research_guide_body">Planının gerçek sınava uygun olması için resmî kılavuzu yükle.</string>
+    <string name="research_guide_action">Resmî kılavuzu yükle</string>
+    <string name="research_unverified_title">Sınavın ayrıntılarını doğrulayamadık</string>
+    <string name="research_unverified_notice_body">Bulduğumuz bilgiler sınavın ayrıntılarıyla uyuşmadı. Planının gerçek sınava uygun olması için resmî ilanı yükle.</string>
+    <string name="research_unverified_guide_body">Bulduğumuz bilgiler sınavın ayrıntılarıyla uyuşmadı. Planının gerçek sınava uygun olması için resmî kılavuzu yükle.</string>
+    <!-- Names Today's notice that says what changed in a source the goal follows, like a new exam notice. -->
+    <string name="research_change_label">Neler değişti</string>
+</resources>

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "challenge_back_to_today": "efd2cbf5539845de2f056d35638890cdca94e783563673e08cbd8f40f20cc44d",
+  "challenge_call_detail": "27088cb346522508c4c9c4d6dc61890ae77f146d35bbbefca15cac3f60c90e5b",
+  "challenge_call_goals": "13bd26f572ac00b79c6ece0ef9dfaec46ef49af8c438d8415531cfc58881ffcd",
+  "challenge_call_goals_title": "b464531720b5e631adf2fc69cdfd4ccf14f82e306b4c792ca5c003f97ade5aff",
+  "challenge_call_level": "2029435e015798cac8a7c3cad1d495ab1f18d77ab4d8edde09d81e38e536bf4d",
+  "challenge_call_passed": "65c5d195ca6fbb406088ada08271373854cc451b40b18451976b93918eeb7ced",
+  "challenge_call_plus": "d98eb12e8389530538a62ce5327918b7026498332bd410d88a88808b23b8535a",
+  "challenge_call_result": "c50248137a3ed31c071b3613489290ff261430d324f9a03dc0535851aff75114",
+  "challenge_call_title": "277319f2c790b39ca6b0f9635ce4990ca8f80b98c0fa21c5601cc409d7436144",
+  "challenge_call_to_win": "77433963e7f5bdadd5dec9d489b1817f97931786235de06f67c932048ebb3a72",
+  "challenge_change_failed": "535ea1ca16bff53a6bd890921e93df8919b58c1df2d0c5bef346755f689072e5",
+  "challenge_continue": "6339892df6812ab0b742027ac2ae28f7418ed2f8d72f56bcc0ac71c283454134",
+  "challenge_day_time": "c3200b69d868837a61e9e0898721947661a366e5b61581d2624eee4bd6d17867",
+  "challenge_mock_plus": "168e4eebd1711c4e6bb4fd942296cd1d30c1cc6132a324260ae5207fe20e742c",
+  "challenge_mock_start": "fb96498f1b8967f86e558bc1857cdcca78ecc154eeaca365fb67c8b577ef3862",
+  "challenge_move": "3b83e7b5a265ba0d0cb08d209729199637ee24eaaeb1b4a6428e31c32b74574b",
+  "challenge_move_before_monday": "95709bbcf6c985590e94500ea9277ccd58b28a0144f4be6fb236b8395caec64c",
+  "challenge_move_collision": "2c0b75c668bc4d832609b7100d3366bd72d3f2faa869ab5dc85ca7c528b61b39",
+  "challenge_move_no_room": "b7ef7eaf3dd5e3865ef0f6bcbfff15dee91462369fe4ba9a4e08a825e4dc63d5",
+  "challenge_move_unfunded": "d6253217b8d4691d3e911783f835a6f8a9de50fa2763628c0c3594b57c6a0a58",
+  "challenge_moved_detail": "31b7a33e6877851a10d98c46c172c01f9dbefda8ef6e271aad80b710fd22ca90",
+  "challenge_moved_title": "6f4c8440a7239f75d25fb8aa899b47eb6646c9c201aef396078fc5d49ca44cb5",
+  "challenge_next_session": "cce4bf92d1a55ca88a148ca145d3e32980711d021062ede4f998c4c83dd85079",
+  "challenge_not_ready": "ffba56842f35859ce62836c60562ca32e1b356e140a53c275ed59426afdd7c9e",
+  "challenge_objective_only": "1227ed29211c47c759bcf88eb76a3594356074f3c23400786c705971fab8d277",
+  "challenge_opens_after_lessons": "bb2d53f364689e3a1285ee5236a695bc427dc7915f5fb08601e50524750b3862",
+  "challenge_opens_in": "9090cd0eddad5044bcc9ee109c96ce6137e56a3a868083218ed03d926382bcc9",
+  "challenge_opens_tomorrow": "fe76081785d9df330b331bd5f484c314f844e2b083caad7f9c39e71d31d1c490",
+  "challenge_penalty_cancels": "a2a1aeff3dbda74c9d183fc65c693ea937af017c3af680fd8c8430fe5043096a",
+  "challenge_penalty_costs": "fa7f5e6040239ab5a4352196423800654f39e437b2f98ac8083299c8b1848092",
+  "challenge_prize": "d89ef011e01d214068bffb6697c672f0727943fd7832b366080ae16fc1e1ba08",
+  "challenge_questions": "6272d4dbd9c9ad6c1077b0a1e9e8573ee6388ccaa643b090f186d3fb2fdd52e5",
+  "challenge_rematch": "0c676c95852625001fb35196c322ecefaed24fdfeab701f72fb29838796bc877",
+  "challenge_result_at_end": "9886f8a18f1c9c25acdd40c7080d4a51e6119c1c91b58ab2cbe9586dfc360aea",
+  "challenge_result_right": "ae4cbf42cfb6261c2cd0dc118195e28f92cb16018c09f4e5601aad7e299ed583",
+  "challenge_section_questions": "0d434b9d57392c7fc77837155577407e94309094ad6f44215e4ebabec7f07722",
+  "challenge_section_size": "6aaaba40b380f6e4eea08896b8689bc8a36054cb06b134a455c616c3c8a7374b",
+  "challenge_see_plus": "2b22743461f63aad31bb587b7e2c188d0ef0f9534bb43c859951e7b42950deea",
+  "challenge_see_result": "0820419f204e9b32f69618a16d4398d8f915daf5411bf46ffe4347b8027eca77",
+  "challenge_start": "1567afe92f50d8f985ec940f73f23c8fe40e9eedc38da5c7b0531d36574d2745",
+  "challenge_start_failed": "477b68b1e70838b180a64877d624c6f32305d8802060ce5e5ca3023de798512d",
+  "challenge_start_slow": "d1ac047fb3e2484528e2758f2b846aa1e3782e6367f53f321aef1206dad8f194",
+  "challenge_starting": "3b220b3c32acab41154a9b29d30e67e916a5e3ca7955caec5f414691ad63cc39",
+  "challenge_today": "2e0dd987aa5899d17d30cd9d1da455447efa702bedee16b6bdf154506760f2f6",
+  "challenge_tomorrow": "c1a747fc22c58848f384fd1ba33094b4109cd97608647e004f3b073c5a841307",
+  "challenge_topic_count": "573c9528b21e5cad71ae8cb2c01300a71611ac64189751d9acc71a78c5db9cc9",
+  "challenge_topics_asked": "51181d4e8141d06d4804671621e584a4dce2828f41adff1a03ca3012aa12bb50",
+  "challenge_topics_weekly": "5a578eb30c4f6e2a5425b265efb674ae4e4a3ce9e453a081af83079e3f3f9057",
+  "challenge_topics_will_ask": "faac86a6578ab5b1fa60b2b4abe456ec0a2d6420d3f73690c3008d7330eed784",
+  "challenge_trickster_mixed": "114e4d21b75de87344fcaa269781d62c4c169ed230644e2d2429a21b9cb50c41",
+  "challenge_trickster_recording_count": "f5fe0b5b8748e559846b3eefc47274a450f7dbd3d576ebdade589fe9e362e16e",
+  "challenge_trickster_recordings": "9040d110da87f16255f5a1ec4d6055215a6bfe3b5c13ae005e0b297f8c34362f",
+  "challenge_trickster_rule": "878e7147a78dc3676d0ef9456c8f4eef8def14085369b6a78d18677259d6f8d5",
+  "challenge_undo": "3feb3fe24bcfa8c1815613a8402fb37b917da3813cbf9ff1a2769b3333ab140c",
+  "challenge_used_up_move": "f3efd9c93d8bbc2e27426ad7b1db4c05be86a3d83511c5890b7452c04838bfef",
+  "challenge_used_up_next_session": "5b1878b0bd5f84385b5ebdf585772f5772a4c58e947fc0b49f4239f2c681ebe8",
+  "challenge_used_up_on": "b3f7d8503f21b5e581d6b393c4e71df1fd5f0cb3ea4b71cc384cf6f26de48415",
+  "challenge_used_up_tomorrow": "3f648d07793ffa5bdaa004c691b8c55f92412d5ef6607df1ef4919ef6030b6a8",
+  "challenge_used_up_weekly": "53332a40271ee4908600c47a59f6001b36995e2d631a4739745d6137163d67db",
+  "challenge_weekly_detail": "bdc53e276752ba619d1322ac989099eb0684aa72b30af39e1548429da03619c7",
+  "challenge_weekly_rule": "0d19541ecf5a1e32a0a5b2c76bd518a66a020f423313ef1d6e949c66df2c4ff3",
+  "challenge_writing": "a2b6e2da3700bb12944f7d5d12a9b3f0f64a7eb11102fafd46a83805be2486ef",
+  "challenge_writing_detail": "277d08cf9fe23ae2abc6e543d3d1b61173141f051c4aef56434fad7fe9a33464",
+  "challenge_writing_line": "5ee10558e7ba5ba080ab111ce49b10fb30819a7b88d231d25bffca2ae858224e",
+  "challenge_writing_questions": "63635f3be88cb105871fd60d1df5b094e1226017bf9917362757edb0e5b88cde",
+  "challenge_writing_title": "3adda4ea6d96b15a5fe6ec41a1c6408937c6f1f234fbc2a17a0251cbc9767fcb",
+  "challenge_written_asked": "1842592317a176692386ebac1296fee9210394cf44c20bb6e35775a0ac64a565",
+  "challenge_written_practiced": "a55af61ed74daf806f8fe524170321ad6f9d322ec67aea307d16478db307b3d1"
+}
+-->
+<resources>
+    <string name="challenge_writing">Meydan okumanı hazırlıyoruz</string>
+    <string name="challenge_writing_questions">Çalıştıklarınla ilgili sorular hazırlıyoruz</string>
+    <string name="challenge_writing_line">Sorularla ölçeceğimiz becerileri seçiyoruz…</string>
+    <string name="challenge_writing_title">Meydan okumanı hazırlıyoruz</string>
+    <string name="challenge_writing_detail">Sorularını hazırlıyoruz. Hazır olunca meydan okuma burada başlayacak.</string>
+    <!-- %1$s is the challenge's name, like "Phase 2 challenge". -->
+    <string name="challenge_rematch">Yeni deneme · %1$s</string>
+    <string name="challenge_trickster_recordings">Bu aşamadaki ses kayıtlarıyla ilgili ipucusuz sorular. Kayıtlar sınavdaki gibi dinletilir.</string>
+    <plurals name="challenge_trickster_recording_count">
+        <item quantity="one">Bu aşamadaki %d ses kaydıyla ilgili sorular. Her kayıt sınavdaki gibi, ipucu olmadan dinletilir.</item>
+        <item quantity="other">Bu aşamadaki %d ses kaydıyla ilgili sorular. Her kayıt sınavdaki gibi, ipucu olmadan dinletilir.</item>
+    </plurals>
+    <string name="challenge_trickster_mixed">Bu aşamadan ipucusuz karma sorular.</string>
+    <string name="challenge_trickster_rule">Her cevabından sonra doğru mu yanlış mı olduğunu göreceksin. En sonda nedenini ve kurduğu tuzakları öğreneceksin. O kazanırsa ertesi gün rövanş yapabilirsin.</string>
+    <string name="challenge_weekly_detail">Bu hafta çalıştığın konulardan ipucusuz sorular.</string>
+    <string name="challenge_weekly_rule">Her cevabından sonra doğru mu yanlış mı olduğunu göreceksin. Nedenini en sonda öğreneceksin.</string>
+    <plurals name="challenge_questions">
+        <item quantity="one">%d soru</item>
+        <item quantity="other">%d soru</item>
+    </plurals>
+    <!-- %1$s is the Brain Power the challenge gives, like 30. -->
+    <string name="challenge_prize">+%1$s Beyin Gücü</string>
+    <!-- The learner's right answers (%1$d) out of all of them (%2$d). -->
+    <plurals name="challenge_result_right">
+        <item quantity="one">%1$d/%2$d doğru</item>
+        <item quantity="other">%1$d/%2$d doğru</item>
+    </plurals>
+    <string name="challenge_topics_weekly">Bu haftanın konuları</string>
+    <string name="challenge_topics_asked">Sordukları</string>
+    <string name="challenge_topics_will_ask">Soracakları</string>
+    <plurals name="challenge_topic_count">
+        <item quantity="one">%d konu</item>
+        <item quantity="other">%d konu</item>
+    </plurals>
+    <string name="challenge_today">Bugün</string>
+    <string name="challenge_tomorrow">Yarın</string>
+    <!-- %1$s is the day; %2$s is the time it starts, like 9:00 AM. -->
+    <string name="challenge_day_time">%1$s · %2$s</string>
+    <string name="challenge_mock_start">Deneme sınavına başla</string>
+    <string name="challenge_objective_only">Yalnızca test bölümü</string>
+    <string name="challenge_section_questions">Sorular</string>
+    <!-- A section's questions (%1$d) and its time (%2$s), like "45 questions · 1 h 30 min". -->
+    <plurals name="challenge_section_size">
+        <item quantity="one">%1$d soru · %2$s</item>
+        <item quantity="other">%1$d soru · %2$s</item>
+    </plurals>
+    <string name="challenge_written_asked">Deneme sınavında yazılır, teslim ettikten sonra sınavın ölçütlerine göre değerlendirilir.</string>
+    <string name="challenge_written_practiced">Yazılı bölüm: Kompozisyon çalışmalarında pratik yaparsın ve yazdıkların sınavın ölçütlerine göre değerlendirilir.</string>
+    <string name="challenge_penalty_cancels">Bir yanlış cevap bir doğru cevabı götürür, bu yüzden emin değilsen ifadeyi boş bırak.</string>
+    <!-- %1$s is the share of a right answer a wrong one costs, like 25%; %2$s is the confidence below which leaving it blank pays off, like 20%. -->
+    <string name="challenge_penalty_costs">Yanlış bir cevap, doğru bir cevabın puanından %1$s götürür; bu yüzden en az %2$s emin değilsen soruyu boş bırak.</string>
+    <string name="challenge_result_at_end">Sınav gününde olduğu gibi, sonucunu yalnızca en sonda görürsün.</string>
+    <string name="challenge_mock_plus">Deneme sınavları Plus’a dahil: istediğin zaman ve her hafta planında.</string>
+    <string name="challenge_call_title">Ünite sohbeti</string>
+    <string name="challenge_call_detail">Kendini ifade edeceğin canlı bir sohbet. Konuş ya da yaz.</string>
+    <!-- %1$s is the call's length; %2$s its level, like B1. -->
+    <string name="challenge_call_level">%1$s · Seviye %2$s</string>
+    <plurals name="challenge_call_goals">
+        <item quantity="one">%d hedef</item>
+        <item quantity="other">%d hedef</item>
+    </plurals>
+    <!-- %1$s is how many goals win the call. -->
+    <string name="challenge_call_to_win">Kazanmak için %1$s</string>
+    <string name="challenge_call_goals_title">Anlatman gerekenler</string>
+    <string name="challenge_call_passed">Meydan okumayı başarıyla tamamladın</string>
+    <!-- The goals the learner got across (%1$d) out of all of them (%2$d). -->
+    <plurals name="challenge_call_result">
+        <item quantity="one">%1$d/%2$d hedef</item>
+        <item quantity="other">%1$d/%2$d hedef</item>
+    </plurals>
+    <string name="challenge_call_plus">Meydan okuma sohbetleri Plus’a dahil. Planın bu sohbetler olmadan da devam ediyor.</string>
+    <string name="challenge_start">Başla</string>
+    <string name="challenge_starting">Başlatıyoruz…</string>
+    <string name="challenge_start_failed">İşlem tamamlanamadı. Birazdan tekrar dene.</string>
+    <string name="challenge_start_slow">Hâlâ başlatmaya çalışıyoruz. Bu, normalden uzun sürüyor.</string>
+    <string name="challenge_continue">Devam et</string>
+    <string name="challenge_see_result">Sonucunu gör</string>
+    <string name="challenge_see_plus">Plus’ı incele</string>
+    <string name="challenge_opens_tomorrow">Yarın açılacak</string>
+    <plurals name="challenge_opens_in">
+        <item quantity="one">%d gün sonra açılacak</item>
+        <item quantity="other">%d gün sonra açılacak</item>
+    </plurals>
+    <string name="challenge_opens_after_lessons">Bu aşamanın dersleri bitince açılır</string>
+    <string name="challenge_not_ready">Bu meydan okuma henüz hazır değil.</string>
+    <string name="challenge_next_session">Bir sonraki çalışmanda</string>
+    <!-- The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week. -->
+    <string name="challenge_used_up_weekly">Günlük süre sınırına ulaştın. Bu haftaki meydan okumayı kaçıracaksın.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_move">Günlük süre sınırına ulaştın. Meydan okumayı kaçırmamak için pazartesiye taşı.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_next_session">Günlük süre sınırına ulaştın. Meydan okuma bir sonraki çalışmanda olacak.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_tomorrow">Günlük süre sınırına ulaştın. Meydan okuma yarın burada olacak.</string>
+    <!-- The daily time limit is a setting that stops study for the day. %1$s is a weekday, like Monday. -->
+    <string name="challenge_used_up_on">Günlük süre sınırına ulaştın. Meydan okuma %1$s günü burada olacak.</string>
+    <string name="challenge_back_to_today">Bugün’e dön</string>
+    <string name="challenge_move">Pazartesiye taşı</string>
+    <!-- %1$s is a weekday and day, like Monday, Nov 3. -->
+    <string name="challenge_moved_title">%1$s tarihine taşındı</string>
+    <string name="challenge_moved_detail">Meydan okumaya yer açmak için planındaki sonraki dersler kaydırıldı.</string>
+    <string name="challenge_undo">Geri al</string>
+    <string name="challenge_move_before_monday">Haftalık meydan okuma veya deneme sınavı yalnızca gelecek pazartesiye ya da daha sonraki bir güne alınabilir. Günü değişmiyor.</string>
+    <string name="challenge_move_collision">O gün zaten bir haftalık meydan okuma veya deneme sınavı var. Bu yüzden günü değişmiyor.</string>
+    <string name="challenge_move_no_room">Planında bu meydan okuma için pazartesi günü yer açılamıyor. Günü değişmiyor.</string>
+    <!-- %1$s is the mock's length, like 5 hr, describing the mock as in "a 5-hour mock exam"; %2$s is the day it would move to, like Nov 3 ("on Nov 3"). -->
+    <string name="challenge_move_unfunded">Planında %1$s süren bu deneme sınavı için %2$s tarihinde yer yok. Tarihi değişmiyor.</string>
+    <string name="challenge_change_failed">Kaydedilemedi. Tekrar dene.</string>
+</resources>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_badge_before_after": "629c42d265d97c8b409b1432b2264c920bc2d5572a338dd9ab1b189ec93470ea",
+  "activities_badge_estimate_first": "d367a6ca10c38e0dd738458e771c06b2cabbc5e4ad9e9349e4e81c3b793fe75d",
+  "activities_badge_find_error": "54a2fd12c08e4340657679e171fb74fd6a88a4e92b9f21c1f65ca16ddafe3a57",
+  "activities_badge_follow_questions": "1638310c3cb22beb3ed06602e81f13de235f14bb180170fb6cda1c95162a8952",
+  "activities_badge_read_chart": "963ec87b3b9330ee1e832bc48d4b4b80a121480c3e2dffac03661f4963f186a3",
+  "activities_badge_reply": "22b41ad534300f513e365e73eb5e8518ae605e30183544906d6d1dcfaeca4420",
+  "activities_badge_spot_pattern": "b6dd8caccecc92b6502f1cfa131a7248c7a3eb51465ceaf298db12ebb324d5aa",
+  "activities_badge_step_by_step": "32c09e8b22fb35beee8b0d0a7a9ed23ccc9e23c34d9097bdcd9d4ca8073f45c7",
+  "activities_before_after_less": "1302aa7c5b9e49522e70f1a3ebfcb9c91be7e3ee3e528d60a65644998d679e6c",
+  "activities_before_after_more": "11e791a61595141ad21c5d317ac3ed11e73c8f1ca6923aaeea03a7e1cc28a926",
+  "activities_before_after_no_change": "1bd7f90240370bd36dfb38363d900b5274f93ec3dfa4f1e716ed971718253f33",
+  "activities_before_after_show": "d70ed2dceaf81d709803d1dcfaa9d389da81fe6dcdb55ad6a255b981d0ca7166",
+  "activities_chart_description": "a2d8af9dfb451eb2bb89820448c5c02d959589b9a731b60aed70fd3d366919ef",
+  "activities_chart_rate": "6ab13d8abcfc7b18735524094cb408e57ff212b0727d6c76d9e0a6c167a56dca",
+  "activities_chart_span": "56f2a02e4a2b3a21a8264bc5b4ab673d7b82ebbbe7876e9dcb78c54584622da3",
+  "activities_chart_spans": "6d17a79577ac2cf5c96f73aaec0e8f842750dfbdc211c7b4354382b524c61f86",
+  "activities_chart_tap_span": "f19b60373bb3ae36ecc3db8bcdcf5e2fc6dd0e59b526d8f2d139b42fa468dda3",
+  "activities_dialogue_conversation": "ce4adb5972e9b332a62ac208d962aaa6c62e6b8d0d3de56694b83321dad67092",
+  "activities_dialogue_hear_best": "7afe1a7b20173021647c62bb65e44775b2f50543224aa0d8188205a8e6c8e932",
+  "activities_dialogue_hear_line": "c36d9f381a81bfb50a065c84c4f8ffc8beb0931cda6de4a4a7080a4c49cc94a6",
+  "activities_dialogue_they_say": "c250e628ec50f8f6b3aa99ca9e56e2a391df547d3313d07c050bd860e402b247",
+  "activities_dialogue_you_said": "fa4eaced909f8cc48d44d2e70c290fb98bf65cedca5d18c9bcd1458f814bfb34",
+  "activities_find_error_ai_answer": "c475cf603e33501b38ccea3d9c1481bd8b59f3c443fe333ebe54923bef30135c",
+  "activities_find_error_ai_asked": "4da0961e3fc595f4beaf151a3a427430dba00d8102f5d3980f0903a2105b2eb6",
+  "activities_find_error_ai_note": "d4b72f1b72040b1cb2341e32350e8ca9168b91d42d990afda6f8e249280d08f5",
+  "activities_find_error_problem": "a8df3f95e126769aaf32360d4818822c105685f2afd072c55793dd3d154b35d7",
+  "activities_find_error_step": "f63cba4ace3f3ebca158121f20cafb17bafbb5add1e2642684e3f2a9ade4cdee",
+  "activities_find_error_the_wrong_step": "63837113a8d41296808609f7d969b310f45fade9d86fa3616648784202b5493d",
+  "activities_find_error_worked": "cfef9ae8d11994f73540ed447eb2aa4e5d0e47fae1d65a101051b0006226b43f",
+  "activities_find_error_wrong_step": "49e71a822f5afbccb4a1d821cfb8cafd848a180af35b731de439b569b230832e",
+  "activities_find_error_your_pick": "5c45cbcde5898777eee14d4dead2512ba50f5f5399749bcf0f6c6c0c987c7f81",
+  "activities_guess_close": "d8831cf9d3aa780f3a52881d78a4eb1daaa837d544bffbc8f136884accccaf42",
+  "activities_guess_drag": "e25686b0108652c802aa0216931256086a5f218e7e3a462d239917879460b4a9",
+  "activities_guess_none": "5a6561c2d6e60c4c50cfc9c5622096ae0c6c942a7025a6f155ce4a4c18ffd337",
+  "activities_guess_off_by": "a7b8e055351c8d5a9c75e06e87b6b83130a64070d189a82c8cf297cbbbbcb433",
+  "activities_guess_real_value": "faa3a1603136e5765c66be8fbf3f42d7f5cb2fd48f4aa215e87d3dca532d78ab",
+  "activities_guess_scale": "0613158ffd0fbc6bc593022a81096660429364eb1154eb49dc85ae5b7031fed8",
+  "activities_guess_scale_revealed": "6f2d6cf84cfe3e987056bb040f1e10a73b7c867092bd8814f3e66febfba96e37",
+  "activities_guess_slider": "0637674e6945c53cc7b54501f0d35d0eb05bed44f1745d0e6dbff427085b112a",
+  "activities_guess_too_big": "4a319043b4238d675969259ace9ee2e6f1317a9298673c16331779f2c62afa18",
+  "activities_guess_too_small": "a25fcc85f1fced3f35830c77c611588c2d3c2eafd7f04dd83e3ae474a2daa043",
+  "activities_guess_yours": "79763d1df6b49a1ba7cf6b0fc61eabd291fc66823dd21527ff3b3dc55eeb8114",
+  "activities_pattern_blank": "8e0158bfe34ca28b13e9d32a6cfe0aa72183ff1752cdc8a4221c5a90e2d09d1e",
+  "activities_pattern_correct": "07d58fd3667e0b32a86e19b431d611c7a81f4236eadc941dd74b33477d3bc3c3",
+  "activities_pattern_endings": "6e62903d279de5272bd15b8fa8628f429b9ba130acfb48d78fbed8941e936c02",
+  "activities_pattern_which_ending": "7f6054dffaeb921ba97989cff9994b531b6a299200201c71850791e8a9976571",
+  "activities_solver_first_pick": "b5c4481c0d87ef77ecf675f51bb9fa00ccb5b684000032180f98249fa0652395",
+  "activities_solver_not_quite": "51677ba2feb113b557a03df28351f2150890e45a284d609b7376f322e6ba416e",
+  "activities_solver_right": "ec47080183e185fb671ff0be81fb396220b298be8667982a39e68e6863ec4c43",
+  "activities_solver_steps": "ae3f4b0659f66492329fbd8a3a76d131a6a5822fb547ea0c7dfa55ce9c64e240",
+  "activities_sortable_dropped": "a4c9b82faa99a1389965aa966dc866adc64f7d34e2e71ac62dfac7af2c5205e1",
+  "activities_sortable_move_down": "4e968af1e3cbf8017bbeefd34933b03240e293cd431f10dce8cedc3265caf15a",
+  "activities_sortable_move_up": "c81521667f74eda60a2e3c27ab9aff1cc485ce01527590f22fe9131d77cc22e1",
+  "activities_sortable_over": "a3b42587667f17c7b307a64bfc9958412cca31f2339ca29494c39ae9597d6bd8",
+  "activities_sortable_picked_up": "d214cae23ce4baef2a295c4cd13e8d4acf35a59ec074e5b8718901cc2bfd0324",
+  "activities_sortable_stopped": "e8e87143c64b20de3e09b58327746b51f660b5cee4cdfb7703b59e8afbe516f5",
+  "activities_tree_case": "80846ed11b6768d4feaf9fdf85a5170ce73ff0a834e2cdbfef894296e5efa56a",
+  "activities_tree_it_leads_to": "8de288de8262cdf919993acf9de073d552957ce842a2210d602b648706c9feed",
+  "activities_tree_leads_to": "047dafc1158f0f99d4be399d59acff363dd933cefc1fb7436ff940a9e544cbf8",
+  "activities_tree_still_possible": "563ddca1701b1d4092d43c8c11a32a3469d57fc5f1ed9e27f407d65d9ac998d9",
+  "activities_tree_undo": "346a8dacd56e95c9af4d2b164cb34fc04b58e3b8b2cdc4f5fd5205e3e74de9ed",
+  "activities_tree_walk": "b5a4d3ecd2e21b6221c58f4f63e7d2cdd845fc38d47ad8b25f6a7d465c492525",
+  "activities_tree_you_chose": "3bc91fb633718fe3368b47e7be64c3a5513d18154f11d95d4fa290396f6c1ee7",
+  "activities_tree_your_answers": "b5d361c97bb40b60e6ae1c45a557f0f44a23900ae67a35090515416e038ac23b"
+}
+-->
+<resources>
+    <string name="activities_badge_estimate_first">Önce tahmin et</string>
+    <string name="activities_badge_read_chart">Grafiği oku</string>
+    <string name="activities_badge_before_after">Öncesi ve sonrası</string>
+    <!-- A key here is an identification key: questions that branch until they name something, like a key to trees. -->
+    <string name="activities_badge_follow_questions">Soruları takip et</string>
+    <string name="activities_badge_find_error">Hatayı bul</string>
+    <string name="activities_badge_step_by_step">Adım adım</string>
+    <string name="activities_badge_spot_pattern">Örüntüyü bul</string>
+    <string name="activities_badge_reply">Cevap ver</string>
+    <!-- The guess scale's ends, written with their unit, like "1 day" and "3,650 days". -->
+    <string name="activities_guess_scale">%1$s ile %2$s arasında bir ölçek.</string>
+    <!-- The guess scale once checked; the last value is the real one. -->
+    <string name="activities_guess_scale_revealed">%1$s ile %2$s arasında bir ölçek. Gerçek değer: %3$s.</string>
+    <string name="activities_guess_real_value">Gerçek değer: %1$s</string>
+    <string name="activities_guess_drag">Tahmin etmek için sürükle</string>
+    <string name="activities_guess_yours">Tahminin: %1$s</string>
+    <!-- The guess slider's name, for TalkBack. -->
+    <string name="activities_guess_slider">Tahminin</string>
+    <string name="activities_guess_none">Henüz tahmin yok</string>
+    <string name="activities_guess_close">Tahminin gerçek değere yakın.</string>
+    <!-- How far a guess was, written with its unit, like "3 days". -->
+    <string name="activities_guess_off_by">Tahmininle gerçek değer arasında %1$s fark var.</string>
+    <!-- How many times bigger the guess was than the real value, like "3.5". -->
+    <string name="activities_guess_too_big">Tahminin gerçek değerden yaklaşık %1$s kat yüksek.</string>
+    <!-- How many times smaller the guess was than the real value, like "3.5". -->
+    <string name="activities_guess_too_small">Tahminin gerçek değerden yaklaşık %1$s kat düşük.</string>
+    <!-- Button that shows the "after" state of a before-and-after comparison; %1$s names it, like "With the assembly line". -->
+    <string name="activities_before_after_show">Sonrasını göster: %1$s</string>
+    <string name="activities_before_after_no_change">Değişiklik yok</string>
+    <!-- How a fact shrank, like "3 times less". -->
+    <string name="activities_before_after_less">%1$s kat daha az</string>
+    <!-- How a fact grew, like "8 times more". -->
+    <string name="activities_before_after_more">%1$s kat daha fazla</string>
+    <!-- What a line chart shows, for TalkBack: its value name, its axis name, then its first and last values with where they sit, like "A line chart of CO₂ by Year, from 316 ppm at 1960 to 421 ppm at 2023." -->
+    <string name="activities_chart_description">%1$s değerinin %2$s eksenindeki değişimini gösteren çizgi grafiği. İlk değer %3$s, eksendeki yeri %4$s; son değer %5$s, eksendeki yeri %6$s.</string>
+    <!-- A measured span and its change, like "1960 to 1990: +38 ppm." -->
+    <string name="activities_chart_span">%1$s: %2$s.</string>
+    <string name="activities_chart_tap_span">Ölçmek için bir aralığa dokun</string>
+    <!-- The name of the group of spans the learner can measure, for TalkBack. -->
+    <string name="activities_chart_spans">Ölçülecek aralıklar</string>
+    <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
+    <string name="activities_chart_rate">%1$s / %2$s</string>
+    <!-- The panel with the case the learner follows through the questions. -->
+    <string name="activities_tree_case">İncelenen örnek</string>
+    <!-- The outcomes the learner's answers can still reach from here. -->
+    <string name="activities_tree_still_possible">Hâlâ mümkün olanlar</string>
+    <string name="activities_tree_your_answers">Cevapların</string>
+    <string name="activities_tree_leads_to">Cevaplarına göre sonuç</string>
+    <string name="activities_tree_undo">Geri al</string>
+    <string name="activities_tree_walk">Bu durum için izlenen yol</string>
+    <!-- The branch the learner took where the key went another way, like "You chose Single". -->
+    <string name="activities_tree_you_chose">Seçimin: %1$s</string>
+    <!-- The outcome the right walk reaches, like "It leads to Pine." -->
+    <string name="activities_tree_it_leads_to">Bu yolun sonucu: %1$s.</string>
+    <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->
+    <string name="activities_find_error_ai_asked">Biri bir yapay zekâ asistanına sordu</string>
+    <string name="activities_find_error_problem">Soru</string>
+    <string name="activities_find_error_ai_note">Yapay zekânın cevabı. Bir adım yanlış: yapay zekânın hatasını bul.</string>
+    <!-- The name of the list of the AI's steps, for TalkBack. -->
+    <string name="activities_find_error_ai_answer">Yapay zekâ asistanının cevabı</string>
+    <!-- The name of the list of a worked answer's steps, for TalkBack. -->
+    <string name="activities_find_error_worked">Adım adım çözüm</string>
+    <!-- Read before a step of the answer, for TalkBack, like "Step 2". -->
+    <string name="activities_find_error_step">%1$d. adım</string>
+    <!-- For TalkBack, on the step that has the error once checked. -->
+    <string name="activities_find_error_the_wrong_step">Hatalı adım</string>
+    <!-- For TalkBack, on the learner's pick once checked, when it wasn't the wrong step. -->
+    <string name="activities_find_error_your_pick">Seçimin</string>
+    <string name="activities_find_error_wrong_step">%1$d. adım yanlış.</string>
+    <!-- The name of the list of a problem's steps, for TalkBack. -->
+    <string name="activities_solver_steps">Adımlar</string>
+    <!-- Lead-in to why a pick is wrong, like "Not quite: that adds the tax first." It means "that isn't right", not "better luck next time". -->
+    <string name="activities_solver_not_quite">Tam doğru değil:</string>
+    <!-- Before why the right pick is right. -->
+    <string name="activities_solver_right">Doğru:</string>
+    <!-- The learner's first, wrong pick at a step, like "Your first pick: Add 8% first". -->
+    <string name="activities_solver_first_pick">İlk seçimin: %1$s</string>
+    <!-- Asks which ending a row's person takes, like "Which ending does nosotros take?" -->
+    <string name="activities_pattern_which_ending">%1$s hangi eki alır?</string>
+    <!-- The name of the group of endings to pick, for TalkBack, like "Endings for nosotros". -->
+    <string name="activities_pattern_endings">%1$s için ekler</string>
+    <!-- An open cell, for TalkBack: the row's person and the word so far, like "nosotros: habl…, choose the ending". -->
+    <string name="activities_pattern_blank">%1$s: %2$s, eki seç</string>
+    <!-- Read after a wrong form, for TalkBack, like "Correct answer: hablamos". -->
+    <string name="activities_pattern_correct">Doğru cevap: %1$s</string>
+    <!-- The name of the list of lines spoken so far, for TalkBack. -->
+    <string name="activities_dialogue_conversation">Şu ana kadarki konuşma</string>
+    <!-- Read before the other person's line, for TalkBack. -->
+    <string name="activities_dialogue_they_say">Karşındaki kişi şöyle diyor:</string>
+    <!-- Read before the learner's own earlier line, for TalkBack. -->
+    <string name="activities_dialogue_you_said">Şöyle dedin:</string>
+    <string name="activities_dialogue_hear_line">Bu repliği dinle</string>
+    <string name="activities_dialogue_hear_best">En uygun cevabı dinle</string>
+    <!-- Read by TalkBack when a row is lifted with the keyboard, like "Picked up Water is split at position 2." -->
+    <string name="activities_sortable_picked_up">%1$s, %2$d. sıradan alındı.</string>
+    <!-- Read by TalkBack as a lifted row moves, like "Water is split is over position 3." -->
+    <string name="activities_sortable_over">%1$s, %2$d. sıranın üzerinde.</string>
+    <!-- Read by TalkBack when a row is put down, like "Water is split dropped at position 3." -->
+    <string name="activities_sortable_dropped">%1$s, %2$d. sıraya bırakıldı.</string>
+    <!-- Read by TalkBack when moving a row is cancelled. -->
+    <string name="activities_sortable_stopped">%1$s için taşıma iptal edildi. Önceki yerinde kaldı.</string>
+    <!-- TalkBack actions that move a row of a list one place. -->
+    <string name="activities_sortable_move_up">Yukarı taşı</string>
+    <string name="activities_sortable_move_down">Aşağı taşı</string>
+</resources>

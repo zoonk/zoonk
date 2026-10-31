@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "limit_calls_free_day": "4f20e1ad0fbc617f81420d1e9616936bd3926d6f8b262689caa8fc5a4f9db5e9",
+  "limit_calls_free_month": "7af0584d924013a9f87f50e732c939527a1a69e7792c6ed48ac0aa4c64da2afd",
+  "limit_calls_guest": "1dbadaef5eafd48dea672ab8eb3bbeee67d55fee73269e77e180b00a49aa27ea",
+  "limit_calls_plus_day": "8bb393f402c6bb681800b1c468b830dfa2f1fe95122adecd2bb494007fd2a27e",
+  "limit_calls_plus_month": "7aa12e4b78c0af92fdb83e85b3684fefa5321608d20ab6a6c6d0f627b5e50c20",
+  "limit_create_account": "c554dd10688178a5f5e0e1214c0c3905c614a477e3ee465ae3dbda5849cb409f",
+  "limit_help_free_day": "9d024cb3d0f1bba877bfd7449a32c1d77286ce80908afdfc7e50726754236734",
+  "limit_help_free_month": "98bdbe5525cb646e56f25bf1337ea4cbc814f13a3fd39d1facc8260f86b6fb43",
+  "limit_help_guest_day": "3cf8e156eaf842d5c99dc2a22514ea644483ae2af0979cf0b6fc315fb5174b2e",
+  "limit_help_guest_total": "2ce27e04bde216d7b12ce2f29da0856a7c32357f422e149375152dcfa3ebecd5",
+  "limit_help_plus": "0fc727bc94582ca07c223f55ef1678a85c629e977823a202488ab55bb2aa75c8",
+  "limit_lessons_free_day": "739623d55321de21f29fed0047bf10f106675354204dc27a532bac873aa281c1",
+  "limit_lessons_free_month": "45075b26b9801e410a95a91aec51cb1f53d9bafef2ee8aaa64ea2d6a234049a3",
+  "limit_lessons_guest": "de8bbe2394f4ea215354c63b71706f0944c0b8fe145bc24a11ffc96a6b2a46b8",
+  "limit_lessons_plus": "3b795a9fde2655c05e634bf42143c69a01e3f573a31f84cb1df8b3bf6ffb5ad3",
+  "limit_mind_maps_free_day": "72183679e688afaba0f9a93d6380ea2373d4e73cdd94e2e6cb46c4fed535447f",
+  "limit_mind_maps_free_month": "deccbbf6141db7a867dd35a5395112a52faa9c3447b99e7706d1475ac00f4301",
+  "limit_mind_maps_guest": "a06640eba7ebf3f764230941a07948d13f573157e41d2921e74f780f37321301",
+  "limit_mind_maps_plus": "5eb5b14bfe4cf603fde4053ad7c5be28b6a295ad59fb61ecbe9ff5b69a3a3b56",
+  "limit_outlines_free_day": "88912b3aee8c1fd4ccdca83507c44ec7b7ba747027991407f10a1ee8c0a28359",
+  "limit_outlines_free_month": "73ddd773f6bf3606ba90a4bd503bc2ea0929de87d51297e2d6532c5227e01ca3",
+  "limit_outlines_guest": "9e42e782f1d28f2cc8a89dc5abf13557313be85fd5918d9206d051f44fa1a4ca",
+  "limit_outlines_plus": "77b7687a94aff9208f57b03736fe94b71e988e030526d6da02e1852c751cdf98",
+  "limit_see_plus": "fcb5f935b7a83f22c9cb9b3747ab1d4f7c22a0c4b5d8e7863a57c9fd745d09e3",
+  "limit_sign_up_required": "76f9e9d6f59791cf582c37c8410141a689861c4e7d386093d89112d635ff1875",
+  "limit_slow_down": "dc96b0ce3af7f0f3eb350a1540c4d2211650f68ff7aa78cb9626cf238ccff367"
+}
+-->
+<resources>
+    <string name="limit_create_account">Ücretsiz hesap oluştur</string>
+    <string name="limit_see_plus">Plus’ı incele</string>
+    <string name="limit_slow_down">Kısa bir ara ver, sonra tekrar dene.</string>
+    <string name="limit_sign_up_required">Devam etmek için ücretsiz bir hesap oluştur.</string>
+    <string name="limit_help_guest_total">Hesap açmadan alabileceğin ücretsiz yardım hakkını kullandın. Devam etmek için ücretsiz bir hesap oluştur.</string>
+    <string name="limit_help_guest_day">Bugünkü ücretsiz yardım hakkını kullandın. Devam etmek için ücretsiz bir hesap oluştur.</string>
+    <string name="limit_help_plus">Bugünkü yardım hakkını kullandın. Yarın yenilenecek.</string>
+    <string name="limit_help_free_month">Bu ayki yardım hakkını kullandın. Gelecek ay yenilenecek. Hemen devam etmek istersen Plus’a geç.</string>
+    <string name="limit_help_free_day">Bugünkü yardım hakkını kullandın. Yarın yenilenecek. Hemen devam etmek istersen Plus’a geç.</string>
+    <string name="limit_lessons_guest">Hesap açmadan ders deneme hakkını kullandın. Devam etmek için ücretsiz bir hesap oluştur.</string>
+    <string name="limit_lessons_plus">Bugünkü yeni ders hakkını kullandın. Yarın yeni dersler açılacak.</string>
+    <string name="limit_lessons_free_month">Bu ayki yeni ders hakkını kullandın. Gelecek ay yeni dersler açılacak. Hemen devam etmek istersen Plus’a geç.</string>
+    <string name="limit_lessons_free_day">Bugünkü yeni ders hakkını kullandın. Yarın yeni dersler açılacak. Hemen devam etmek istersen Plus’a geç.</string>
+    <string name="limit_mind_maps_guest">Hesap açmadan deneyebileceğin zihin haritasını oluşturdun. Daha fazlası için ücretsiz bir hesap oluştur.</string>
+    <string name="limit_mind_maps_plus">Bugünkü zihin haritası oluşturma hakkını kullandın. Yarın daha fazlasını oluşturabilirsin.</string>
+    <string name="limit_mind_maps_free_month">Bu ayki zihin haritası oluşturma hakkını kullandın. Gelecek ay daha fazlasını oluşturabilirsin. Hemen devam etmek istersen Plus’a geç.</string>
+    <string name="limit_mind_maps_free_day">Bugünkü zihin haritası oluşturma hakkını kullandın. Yarın daha fazlasını oluşturabilirsin. Hemen devam etmek istersen Plus’a geç.</string>
+    <string name="limit_outlines_guest">Hesap açmadan bir konuya önceden göz atma hakkını kullandın. Daha fazla konu görmek için ücretsiz bir hesap oluştur.</string>
+    <string name="limit_outlines_plus">Bugünlük konulara önceden göz atma hakkını kullandın. Yarın daha fazla konu görebilirsin.</string>
+    <string name="limit_outlines_free_month">Bu ayki konulara önceden göz atma hakkını kullandın. Gelecek ay daha fazla konu görebilirsin. Hemen devam etmek istersen Plus’a geç.</string>
+    <string name="limit_outlines_free_day">Bugünlük konulara önceden göz atma hakkını kullandın. Yarın daha fazla konu görebilirsin. Hemen devam etmek istersen Plus’a geç.</string>
+    <string name="limit_calls_guest">Ücretsiz bir hesapla sohbet ederek konuşma pratiği yapabilirsin. Sesli pratik yapmak için bir hesap oluştur.</string>
+    <string name="limit_calls_plus_month">Sohbet hakların gelecek ay yenilenecek.</string>
+    <string name="limit_calls_plus_day">Sohbet hakların yarın yenilenecek.</string>
+    <string name="limit_calls_free_month">Sohbet hakların gelecek ay yenilenecek. Daha fazla sohbet hakkı için Plus’a geç.</string>
+    <string name="limit_calls_free_day">Sohbet hakların yarın yenilenecek. Daha fazla sohbet hakkı için Plus’a geç.</string>
+</resources>

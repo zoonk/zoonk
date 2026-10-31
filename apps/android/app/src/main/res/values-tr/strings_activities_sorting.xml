@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_sorting_about_years": "4d2e152c746892ddd375335c5c3a49de8586713132ac2ea9c75ec86bf98a7ea9",
+  "activities_sorting_all_sorted": "f88d4211cb978bfc0bc8019d35b03fcdfc0c3a4ef36b86f10d27b266dae94341",
+  "activities_sorting_badge_label_it": "8ba6075e5f2929a4015059d2b90a3a677b06c0b3b81fb0a79d1bf287ef25f1ec",
+  "activities_sorting_badge_link_causes": "bb558f81bfa643d2326f9be421113e1727233af2920844ea2a98baa4b2d169ff",
+  "activities_sorting_badge_match_pairs": "e9a9d0f3f62163e2f8e06c2f72c548ab0f8b7d5ba46a35dcd5c231431778432c",
+  "activities_sorting_badge_place_in_time": "79081bac43e5350d79de6fea8b51266489eb9d2aba82d5b15ca25b48abe289b7",
+  "activities_sorting_badge_put_in_order": "bd5943f791430b0639427f50f9ddc9f0a2e14e4f293e85b151884d5cb9d6be1d",
+  "activities_sorting_badge_sort_groups": "ac253a0c5e67c8c2ff091b3bb83473f6fd4d31c8ca97f81c77f9a0fdcd45be55",
+  "activities_sorting_belongs_in": "5c3788fc3c00521b492e6352111d783f109973592de37bf6c0158838348dcf80",
+  "activities_sorting_card_matched": "5518dbd72a895d1c174fc5cb14f43251040fa33f8507098e79d07577d9ca1e46",
+  "activities_sorting_card_no_match": "02d165a835357730d4a0c3ab88e023017e6ded493c68751a117a335c3ba388a6",
+  "activities_sorting_cards_to_match": "2c011b92a6425b8063cdc6d358df81aeda87a36c33ed56954b7cf273011b1284",
+  "activities_sorting_cards_without_match": "26d4b4775b5bc4db8b45fecffc1b2b90d6f3709a7ec54100a4b9d1c4d752ddb2",
+  "activities_sorting_cause": "e0ea16558be44896c34dc7a9c15fe4d6c973c0767ce8addfbb6ef50875b1d6ee",
+  "activities_sorting_cause_picked": "3e18ab18265bed4db7d44725272e396106cf5d7543c00fd13333cc6822fe329d",
+  "activities_sorting_causes_and_effects": "1c98d95684ec5dd5b646410fbd4bad17dc047667950db4cd604d3c141b04b465",
+  "activities_sorting_correct_answer": "ffcca376ebe986a534a28c68abc777a95d7bb17d0c5bd794c284a82c3b5a750d",
+  "activities_sorting_dont_go_together": "538a06e313ddb54b409cd47751c687f2a9887711700eef9436e7607659bff6c2",
+  "activities_sorting_dont_go_together_short": "7959f1cc491a99bcd915086d477d6c4b88f6add7a6624f886e8fb24b503b8638",
+  "activities_sorting_drag_onto_timeline": "e2e72f38045925e44754acb7dcd91c8845430d6a08fd6634915509a3f3110eda",
+  "activities_sorting_drag_steps": "39c7f97cf18f7e9bf434c891f64ac0279663384f73e9ee42582abc46ad7b6721",
+  "activities_sorting_events_to_place": "9bdf4123823656e20b24c9486e4e9fe0529f8402950672fd0e116897b7cd32a5",
+  "activities_sorting_every_spot_named": "22683f75117be1b5b5d5899d0ce4459c4b2175d266cdf4e4fac6466235c81c4b",
+  "activities_sorting_gap_between": "24752f2160cbc46466634de06c757f1d8dafff7f4d362fa73bd2d02efe957501",
+  "activities_sorting_goes_with": "4e9474df023579d14530bc1a38d2cded04afe62b7633c4a0b515513845e79610",
+  "activities_sorting_led_to": "aa196169303041db547ec25114e31a1b878e0945e996686eb2d21816d92efc2e",
+  "activities_sorting_linked": "99d19c77c5322db8b220e7a1656c0b3057b4b95bea6c87eefe6000f2f985d7eb",
+  "activities_sorting_links_count": "4072fb0849d794739add44e253a0a120bb457c3fbdd1fad6b8f02939e30d190e",
+  "activities_sorting_look_alikes": "07421e8ab2a948d97035da6dd2d0536efc27512adb17e8a11aada4226d602735",
+  "activities_sorting_matched": "505ad1aab1b0101cf40b3ee261e0550ae5815ae612f873a547ac8b31c93956ff",
+  "activities_sorting_missed_first_try": "3a033fa2d91b705f4a2370f896fb4c29d2a086f6ce9c7a58fbbd310f3f562abe",
+  "activities_sorting_missed_link": "b3ecf523ebab21b6811e30e3b6ae6c02179bde4bfd0ac3b26fb90016196c88ad",
+  "activities_sorting_name_on_spot": "45709328d8ada092ca65c65e5ff68d0e9005088fe8a114471f56d64fbb3d00f1",
+  "activities_sorting_name_taken_off": "a170fd1ceb9074e95aad2e4ec4c510deddd5864b0220cacde5ccb87a9d12bd5b",
+  "activities_sorting_names": "ffa97042e684ec692fa095bb1aabb8431264f3a87417c0ec81b4a6dc6a5496a7",
+  "activities_sorting_no_match_note": "6fa944dcac3a4d12b25472f242bf356dea032e32879949352d491680795e0b07",
+  "activities_sorting_not_a_link": "3f79f58bdad2f5ec5b80b445316d8139fa90861db6915747596db52d9810bfa5",
+  "activities_sorting_not_quite": "1ddaa1d455e83abf4dbdf0446ca6a3a6acfd1f9c8d78264b21e9d3e9fd4c45f8",
+  "activities_sorting_not_straight": "db832e539cba0c47e5f86ccfaf147f03e57cb1f303094c5c64d6d457b44b16bf",
+  "activities_sorting_nothing_here": "bcff10138db62f9d47011c494f2bb90137c81539387ed6e6316afaedd01d9250",
+  "activities_sorting_now_pick": "d0f4982536dbc61289a6f7b0b9ab146146f9376cbeef01525087bae51b8bbcd8",
+  "activities_sorting_pairs_matched": "f799537bfc596f8bcdcacfe4b806019cae0de05b65793409eb38605c9575253b",
+  "activities_sorting_pick_a_name": "9c7a572aca6a5fb59d96f557f2909d36548a50c585ee336827ba709f4cf28a71",
+  "activities_sorting_pick_cause": "f0deda7ab0daf66f1671b9b431fe10b92eafae9d08d9f7b56f910048b1219aff",
+  "activities_sorting_place_on_timeline": "c09e91a7e7ea4746c448f9ad3a4e84f94c5546f1e9412c6282248cfdf9dcb349",
+  "activities_sorting_placed": "0dd021b0043e66ce8520df46754846be2f35d1358aa35166fc75f2c3caa4d633",
+  "activities_sorting_put_in": "5dc9a33ff5e4ebcc528b0c4fa5a6038b482f2803f44269ed2e751fa607c12e75",
+  "activities_sorting_put_it_here": "fb9107363f55d99fabd5fbe6136450250ab5069d37a6f2165b19ed6cc213c85b",
+  "activities_sorting_put_on_spot": "b8b05d7eb5377bdc8d263ebea6a517eee8e553a89e505ca4f2c02725e12d0699",
+  "activities_sorting_remove_link": "ee2fc7dc9520a620dd0ea4f3c84fab36c111f5ef10ae740716e320b3d5d427f1",
+  "activities_sorting_removed": "9a3f335556b5fbb97ac9ca2be5a469cdc6af098d498f8519dc0929d5699bab7e",
+  "activities_sorting_right_count": "caabc6ead7ed7aaa8f2cec509a652b7f6abafd5329a84adeb0b349e3cfd811b5",
+  "activities_sorting_right_group": "4d278612ec191e2632dbe9ed6ec40260c3851fc040a3da2cd8b697c7b9a68310",
+  "activities_sorting_right_order": "aeeb67e0056c484ca7321bf722a06fcbdbbbedf068d6db655751a698fb474ade",
+  "activities_sorting_show_real_dates": "776f0e573446237f69731efd0f73b47db79512abfcc5dbab1b5f4454703a8bee",
+  "activities_sorting_sorted_count": "805b44969c2395f59ed62d6f4e18b0d8f878fdb8cd037533cd82780bfe4f3e79",
+  "activities_sorting_spot_empty": "d321e1ee714649a7b4ae36c1ea16af9080b78865a38094788b432e158d3e5663",
+  "activities_sorting_spot_named": "aa5da8ff37a19671bc5e986c1f507c6f29a50ec53e87a0c604311f31f5a6a033",
+  "activities_sorting_spots_to_label": "cc979ef70fcb662f528c1294664d86f7137e03c36a99c735f52c460a2f753e08",
+  "activities_sorting_steps_in_your_order": "9d9062bd5e61c2723bb532c3a39923e5298e35ae1011538101f651d9bfa75d06",
+  "activities_sorting_tap_a_name": "c87b76616ab1d35ee104cd3b145b9c1ee704d95b970650c5077f168a2af866f7",
+  "activities_sorting_time_between": "750845865b8cbe5853f77b800cfbcd8441b69ee0e1d123e9465ef597d205f087",
+  "activities_sorting_timeline_from": "bd3dc693e56398c7fe4ab30a3190ec9bc925ed3725aa93ed89655ef2bd86251f",
+  "activities_sorting_to_sort": "14b30b2a3c63bc00d4feb65ab9fee400cbb059079209f5cadf73afad9472d9f2",
+  "activities_sorting_what_each_number_shows": "4c0d7cf0225a5f68f82cca5685f622a8afc86081955cc4671fbbbf5f1db9b627",
+  "activities_sorting_wrong_group": "1d885a0c6e5ae32d9235a8148252a6787e6fc788848d2b17e7b5d08b56670bf7",
+  "activities_sorting_year_and_guess": "2a06a3e55729bef52bb286ab693227457f52e945aedda1e194757af8004eb73d",
+  "activities_sorting_year_bce": "3d80a5ff89aaddba11b4ffe46b95ad64f8f132f4918cee0f3680b3f18231d6b3",
+  "activities_sorting_year_ce": "ec8f38909990532464497585a7f8c1ad211037d4f21d80833b6eb531200905de",
+  "activities_sorting_years": "5d0b795ed88d700ab9b39437b91ded3b44f86268da0356e280184606a7a56260",
+  "activities_sorting_you_had_it_at": "b0db265fb5672f5d0dcd87c3aadf13c73c2c67c4d9dba90228b00230fb09961d",
+  "activities_sorting_your_guess": "2a495b4710d0b8a0f21a8945f1f6a0e4637c37ad38b482236c2c942006153997",
+  "activities_sorting_your_links": "c69a0e8bb930b27f7060476bc57402e2c558bc56dce09fc73f91e94edaf9e001"
+}
+-->
+<resources>
+    <string name="activities_sorting_badge_sort_groups">Gruplara ayır</string>
+    <!-- Above the items still to sort into groups. -->
+    <string name="activities_sorting_to_sort">Gruplanacaklar</string>
+    <string name="activities_sorting_all_sorted">Hepsi gruplandı. Hazır olduğunda kontrol et.</string>
+    <!-- How many items are in a group so far, like "1 of 3 sorted". -->
+    <plurals name="activities_sorting_sorted_count">
+        <item quantity="one">%1$d öğe gruplandı (toplam %2$d)</item>
+        <item quantity="other">%1$d öğe gruplandı (toplam %2$d)</item>
+    </plurals>
+    <!-- Places the picked item in a group, like "Put Melting ice in Same substance". Also a TalkBack action on each item. -->
+    <string name="activities_sorting_put_in">%1$s öğesini %2$s grubuna koy</string>
+    <!-- In an empty group while an item is picked. -->
+    <string name="activities_sorting_put_it_here">Buraya koy</string>
+    <!-- In an empty group. -->
+    <string name="activities_sorting_nothing_here">Henüz bir şey yok</string>
+    <!-- Read by TalkBack when an item is placed, like "Melting ice is in Same substance. 2 of 3 sorted." -->
+    <plurals name="activities_sorting_placed">
+        <item quantity="one">%1$s, %2$s grubunda. %3$d öğe gruplandı (toplam %4$d).</item>
+        <item quantity="other">%1$s, %2$s grubunda. %3$d öğe gruplandı (toplam %4$d).</item>
+    </plurals>
+    <!-- An item once checked, for TalkBack, like "Melting ice, right group". -->
+    <string name="activities_sorting_right_group">%1$s, doğru grupta</string>
+    <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
+    <string name="activities_sorting_wrong_group">%1$s, yanlış grupta</string>
+    <!-- How many items were sorted right, like "2 of 3 in the right group". -->
+    <string name="activities_sorting_right_count">%1$d öğe doğru grupta (toplam %2$d)</string>
+    <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
+    <string name="activities_sorting_belongs_in">%1$s, %2$s grubunda olmalı.</string>
+    <string name="activities_sorting_badge_put_in_order">Sıraya koy</string>
+    <!-- The name of the list of a process's steps the learner orders, for TalkBack. -->
+    <string name="activities_sorting_steps_in_your_order">Senin sıralamana göre adımlar</string>
+    <string name="activities_sorting_drag_steps">Adımları basılı tutup sürükleyerek sırala.</string>
+    <!-- Above a process's steps in their true order, once checked. -->
+    <string name="activities_sorting_right_order">Doğru sıralama</string>
+    <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
+    <string name="activities_sorting_you_had_it_at">Senin sıralamanda: %1$d</string>
+    <string name="activities_sorting_badge_match_pairs">Eşleştir</string>
+    <!-- Pairs matched so far, like "Pairs matched: 1 of 3". -->
+    <string name="activities_sorting_pairs_matched">Eşleşen çift: %1$d (toplam %2$d)</string>
+    <!-- Cards that look like they match one on the other side but don't. -->
+    <plurals name="activities_sorting_cards_without_match">
+        <item quantity="one">%d kartın eşi yok</item>
+        <item quantity="other">%d kartın eşi yok</item>
+    </plurals>
+    <!-- The name of the two columns of cards, for TalkBack. -->
+    <string name="activities_sorting_cards_to_match">Eşleştirilecek kartlar</string>
+    <!-- A matched card, for TalkBack, like "pregnant, matched". -->
+    <string name="activities_sorting_card_matched">%1$s, eşleşti</string>
+    <!-- A card with no match, for TalkBack, like "embarrassed, no match". -->
+    <string name="activities_sorting_card_no_match">%1$s, eşi yok</string>
+    <!-- Read by TalkBack after a match, like "Matched éxito with success. Pairs matched: 2 of 3." -->
+    <string name="activities_sorting_matched">%1$s ile %2$s eşleşti. Eşleşen çift: %3$d (toplam %4$d).</string>
+    <!-- Starts the reason a picked card has no match, like "“embarrassed” has no match." -->
+    <string name="activities_sorting_no_match_note">“%1$s” kartının eşi yok.</string>
+    <!-- Read by TalkBack after a wrong pair, like "éxito and pregnant don't go together." -->
+    <string name="activities_sorting_dont_go_together">%1$s ile %2$s eşleşmiyor.</string>
+    <string name="activities_sorting_dont_go_together_short">Bu ikisi eşleşmiyor.</string>
+    <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
+    <string name="activities_sorting_not_quite">Eşleşmedi:</string>
+    <!-- Above the pairs the learner got wrong on the first try. -->
+    <string name="activities_sorting_missed_first_try">İlk denemede yanlış eşleştirdiklerin</string>
+    <!-- A pair missed on the first try, like "embarazada goes with pregnant, not embarrassed." -->
+    <string name="activities_sorting_goes_with">%1$s ile %2$s eşleşir, %3$s ile eşleşmez.</string>
+    <!-- Above the cards that look like a match but have none. -->
+    <string name="activities_sorting_look_alikes">Benzer görünen ama eşi olmayanlar</string>
+    <string name="activities_sorting_badge_link_causes">Neden-sonuç ilişkisi kur</string>
+    <string name="activities_sorting_pick_cause">Önce bir neden, sonra yol açtığı sonucu seç.</string>
+    <!-- After a cause is picked, like "Now pick what Years of drought led to." -->
+    <string name="activities_sorting_now_pick">Şimdi %1$s sonucunda ne olduğunu seç.</string>
+    <!-- Links made so far out of all, like "1 of 2 links". -->
+    <plurals name="activities_sorting_links_count">
+        <item quantity="one">%1$d ilişki kuruldu (toplam %2$d)</item>
+        <item quantity="other">%1$d ilişki kuruldu (toplam %2$d)</item>
+    </plurals>
+    <!-- On the picked card: what it caused comes next. -->
+    <string name="activities_sorting_cause">Neden</string>
+    <!-- A link that isn't in the story, like "Dust storms didn't lead straight to Prairie plowed for wheat here. Try another link." -->
+    <string name="activities_sorting_not_straight">Bu hikâyede %1$s, doğrudan %2$s sonucuna yol açmadı. Başka bir ilişki dene.</string>
+    <!-- After a link is taken away, like "Removed: Years of drought led to Dust storms." -->
+    <string name="activities_sorting_removed">İlişki kaldırıldı: %1$s, %2$s sonucuna yol açtı.</string>
+    <!-- After a link is made, like "Linked: Years of drought led to Dust storms." -->
+    <string name="activities_sorting_linked">İlişki kuruldu: %1$s, %2$s sonucuna yol açtı.</string>
+    <!-- After a cause is picked, like "Years of drought picked. Now pick what it led to." -->
+    <string name="activities_sorting_cause_picked">%1$s seçildi. Şimdi neye yol açtığını seç.</string>
+    <!-- The name of the list of causes and effects, for TalkBack. -->
+    <string name="activities_sorting_causes_and_effects">Nedenler ve sonuçlar</string>
+    <!-- The name of the list of links made, for TalkBack. -->
+    <string name="activities_sorting_your_links">Kurduğun ilişkiler</string>
+    <!-- Read by TalkBack in place of the arrow between a cause and its effect. -->
+    <string name="activities_sorting_led_to">sonucunda</string>
+    <!-- Under a link the learner made that the story doesn't have. -->
+    <string name="activities_sorting_not_a_link">Bu hikâyede böyle bir ilişki yok</string>
+    <!-- Under a link the story has that the learner didn't make. -->
+    <string name="activities_sorting_missed_link">Eksik ilişki</string>
+    <!-- A button that takes a link away, like "Remove the link from Years of drought to Dust storms". -->
+    <string name="activities_sorting_remove_link">%1$s ile %2$s arasındaki ilişkiyi kaldır</string>
+    <string name="activities_sorting_badge_place_in_time">Zaman çizelgesine yerleştir</string>
+    <!-- A year before the common era, like "51 BCE". Keep the no-break space (U+00A0) between the year and its era, so they stay on one line. -->
+    <string name="activities_sorting_year_bce">MÖ %1$s</string>
+    <!-- A year of the common era, on a timeline that also has BCE years, like "1969 CE". Keep the no-break space (U+00A0) between the year and its era, so they stay on one line. -->
+    <string name="activities_sorting_year_ce">MS %1$s</string>
+    <!-- What TalkBack reads for an event once the real dates show: its real year, then the learner's guess, like "51 BCE. Your guess: 2000 CE". -->
+    <string name="activities_sorting_year_and_guess">%1$s. Tahminin: %2$s</string>
+    <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
+    <string name="activities_sorting_your_guess">Tahminin: %1$s</string>
+    <plurals name="activities_sorting_events_to_place">
+        <item quantity="one">Yerleştirilecek %d olay</item>
+        <item quantity="other">Yerleştirilecek %d olay</item>
+    </plurals>
+    <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
+    <string name="activities_sorting_place_on_timeline">%1$s olayını zaman çizelgesine yerleştir</string>
+    <string name="activities_sorting_drag_onto_timeline">Yerleştirmek için dokun veya basılı tutup zaman çizelgesine sürükle.</string>
+    <string name="activities_sorting_show_real_dates">Gerçek tarihleri göster</string>
+    <!-- The name of the list of gaps between dates, for TalkBack. -->
+    <string name="activities_sorting_time_between">Tarihler arasındaki süre</string>
+    <!-- An exact gap in years, like "66 years". -->
+    <plurals name="activities_sorting_years">
+        <item quantity="one">%1$s yıl</item>
+        <item quantity="other">%1$s yıl</item>
+    </plurals>
+    <!-- A rounded gap in years, like "about 2,000 years". -->
+    <plurals name="activities_sorting_about_years">
+        <item quantity="one">yaklaşık %1$s yıl</item>
+        <item quantity="other">yaklaşık %1$s yıl</item>
+    </plurals>
+    <!-- After a gap in years: the two events and their years, like "from Cleopatra rules Egypt (51 BCE) to Moon landing (1969 CE)". -->
+    <string name="activities_sorting_gap_between">%1$s (%2$s) ile %3$s (%4$s) arası</string>
+    <!-- What the timeline's drawing covers, for TalkBack, like "A timeline from 3000 BCE to 2000 CE." -->
+    <string name="activities_sorting_timeline_from">%1$s ile %2$s arasını gösteren zaman çizelgesi.</string>
+    <string name="activities_sorting_badge_label_it">Etiketle</string>
+    <!-- Read by TalkBack when a name goes on a numbered spot of the picture, like "Aorta on spot 5." -->
+    <string name="activities_sorting_name_on_spot">%1$s, %2$s numaralı noktada.</string>
+    <!-- Read by TalkBack when a name is taken off its spot, like "Aorta taken off." -->
+    <string name="activities_sorting_name_taken_off">%1$s kaldırıldı.</string>
+    <!-- Above the names while a spot waits for one, like "Tap a name for spot 2, or hold and drag it onto any spot." -->
+    <string name="activities_sorting_tap_a_name">%1$d numaralı nokta için bir ada dokun veya bir adı basılı tutup istediğin noktaya sürükle.</string>
+    <string name="activities_sorting_every_spot_named">Tüm noktalar adlandırıldı. Bir adı değiştirmek için o noktaya dokun.</string>
+    <!-- The name of the list of names to place, for TalkBack. -->
+    <string name="activities_sorting_names">Adlar</string>
+    <!-- Puts a name on a numbered spot, like "Put Aorta on spot 5". Also a TalkBack action on each name. -->
+    <string name="activities_sorting_put_on_spot">%1$s adını %2$d numaralı noktaya yerleştir</string>
+    <!-- The name of the list of numbered spots, for TalkBack. -->
+    <string name="activities_sorting_spots_to_label">Adlandırılacak noktalar</string>
+    <!-- The name of the list that says what each number on an explored picture shows, for TalkBack. -->
+    <string name="activities_sorting_what_each_number_shows">Numaraların gösterdikleri</string>
+    <!-- A numbered spot with no name yet, for TalkBack, like "Spot 3: empty". -->
+    <string name="activities_sorting_spot_empty">%1$d numaralı nokta: boş</string>
+    <!-- A numbered spot and its name, for TalkBack, like "Spot 3: Right ventricle". -->
+    <string name="activities_sorting_spot_named">%1$d numaralı nokta: %2$s</string>
+    <!-- On the spot waiting for a name. -->
+    <string name="activities_sorting_pick_a_name">Bir ad seç</string>
+    <!-- For TalkBack, after a spot's wrong name once checked, like "Correct answer: Right atrium". -->
+    <string name="activities_sorting_correct_answer">Doğru cevap: %1$s</string>
+</resources>

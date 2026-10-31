@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "search_appearance": "b3408a39ef3d46f80d65888f70639ce7480d099443095011b83700ae60c03a3d",
+  "search_ask_buddy": "6953d69ebdda11015e8a08a30149805bfcc8bc61aceac72d00e9d3a4f8009a6b",
+  "search_ask_detail": "e2efd6de24b53a4cb1c53ff1c7ce8d0ceac7732739618154a2a285af42822e86",
+  "search_ask_question": "8c1a4f829f36d9dc2dbc26c76d667cbd00a93a844b6b70b0dcb551a70dd100f6",
+  "search_blog": "77d2230368e0f43c4ec6b273137cbf8cddfa302774ee7a144963ef1590e8f130",
+  "search_buddy_keyword": "39ba293ad249c349d9b61029a3cfb08b64c7445fac3ec2e540bb973e1bf31a2a",
+  "search_clear": "4f960cb4da8a9fe29b6709b07413ef4d1715905e44629ba9c1a2bc4465da2c9d",
+  "search_close": "209a920191d8f716a31935370eae2d2d8fc018524e8b066b95f5bd0144aad44b",
+  "search_continue": "68d21a3d6aa7b89ba66b89a538ebab0ac5f16e34b6a44656fbaaa423012389b3",
+  "search_continue_failed": "0d1a8ec6952e1e0eb7f0334fcd8bdca443d058c5cbbfb11847530c747891bcfe",
+  "search_group_account": "7e6127bbf9631672cd7132bc5b65bbbfe06393592b5ee2841cfd13fbef44595b",
+  "search_group_actions": "64d258f7c071cb6b00e483c31e1edeb800704c6d9c93ea05fe78de774dc29374",
+  "search_group_ask": "658b617767e60db4dc019a565c63760efa586a872c4ea1b8f35efa30f8222826",
+  "search_group_catalog": "3a12c10f2d98610b8559c15d6b451349f5fbcda7c05318f8d9628526a3742fdb",
+  "search_group_explanations": "90ff536d047c9b7cad4e7468bdd7a7abb326684eaa8771d020cb5ad4cb99eb98",
+  "search_group_go_to": "904b348b5629a059c1b4f504c929c084c284b0d1ffe229203618b0e1fa7cf9dd",
+  "search_group_goals": "1523888886bceb336ff6a47eb5ac870c276558bceb2262b6131fb0cc5b31f9cf",
+  "search_group_help": "61bfa25584f5dfbfc5ba0f71dd4fb32ebc56d355b3c905f0088828a1bb29d3e8",
+  "search_group_mocks": "e42950ccc48b3f137489a0c2f96dae35ca3c7dbf300ff787f6a109bc0b312a96",
+  "search_group_new_goal": "a55787b69b7d284ab548d5d3b34a65f8bb9ebaef283de6d7241d3c59b87c100f",
+  "search_group_plan": "4ce20824c54c3e161d4a7a47c52fda2280a9bda3422e4132a2d982fd13890e03",
+  "search_help": "ec8be23769c7935922ddfd8677832f5b072135cee14f95d7606b57a6cb783f1f",
+  "search_home": "4f25169147a25a77d19b3560de6779af5906a3998fc182d710060e913f8751b6",
+  "search_language": "fd93dc7cdc6c062d6cbfdfe570a5beceed1a28f511b0966796178e6dc383020a",
+  "search_log_in": "c2bfe6a860aa9aebadb80f34176385d14d4b3d069aa60f41eab3bb67fe22ae51",
+  "search_log_out": "fec3ff5a23cc12c2645aabdd063f196d4f4ea6904b2fa4c2c731b32a00f17894",
+  "search_logbook": "56fd2ca3b9af8f3306723101a31a78e9d9842f46caa91ea0b1f3294cbe6df30f",
+  "search_memory": "0abbb4ff06bb92345c2e03538cc5da249f941b93d4f5248be32fca3157ab1715",
+  "search_mistakes_notebook": "b2e0a243e5968126c3edbf799f9de0be40f1b11770faf04183f14ecba3fbe19d",
+  "search_mock_exam": "18501470e626ed1a78aa2ba2cde47ff9e1e8a8c5b8829bd2e23480a8f4d6d76e",
+  "search_open": "6adbbe07215f15635fe3b5ded045f05cda9fa7777783be39fbcbecefd76cf8b0",
+  "search_placeholder": "24ce7097d7eb984d2f6fd0d9b53297b1f007f36e600b760ee56e6fea91683257",
+  "search_practice_mistakes": "41db7ed00a1a363d361e67ce7badea0c08102800b57e5ca46a602f9c40f9dd82",
+  "search_preferences": "aae11f42980f3265f966e9e72c171d2c3a4344fc6bdea6b8333fbd4115f22e3b",
+  "search_pricing": "648ec4fb19d56438e995c500b8468fcaf789e8920fb1ecc883e861fb0904754d",
+  "search_profile": "7a5c2bcef7543e1a005a12d34d9ad20a1e40f3f7c3a7ee69c41c1c83c2be1bd5",
+  "search_send_feedback_keywords": "47d11d61f9c6d80e16ae332c094ea3980ca82d4e763bcb355c1943efde3db757",
+  "search_settings": "d34da2127d3df9da77eb138c2fe227f0475b87d183696180d02244f61568053a",
+  "search_start_goal": "14a6920037593d12e2e17154ee3a0e13745ca1110e557b4870987d08da865ca7",
+  "search_start_goal_named": "9aa8504fbc26e292508129f98018165a722da327df45ce434febd73df9c6de6c",
+  "search_start_new_goal": "168f3e9eea1f1b829359fa3a6fd196096c43f53f4786988777a3eb09b751d00f",
+  "search_start_new_goal_named": "86a12478d307bc686362ed749171d173b2cc1105fc39a143e02c895eaf9524fa",
+  "search_subscription": "572f2842c69440f3957abfd921a648f34e492d6c4a7d251591fb6a218d8e3936",
+  "search_switch_goal": "8ee7b3f41f07b2cc72abaa5db7c24db7fd8e03ed74503300c9db203fcdfb58e2",
+  "search_take_mock": "c423fa864222cbcac0badbe62db07fd74b8edd97e357b41284fc283eaf6f6803",
+  "search_take_mock_detail": "0a6213dd089f71fa3b56a4b8cf4f5b0d1302757cdab706c1eb76d1df00f793ff"
+}
+-->
+<resources>
+    <string name="search_placeholder">Ara veya sor…</string>
+    <string name="search_open">Ara veya sor</string>
+    <string name="search_close">Aramayı kapat</string>
+    <string name="search_clear">Aramayı temizle</string>
+    <string name="search_continue_failed">Sıradaki adımını açamadık. Tekrar dene.</string>
+    <string name="search_group_actions">İşlemler</string>
+    <string name="search_group_go_to">Gezinme</string>
+    <string name="search_group_goals">Hedeflerin</string>
+    <string name="search_group_explanations">Kısa açıklamalar</string>
+    <string name="search_group_plan">Planın</string>
+    <string name="search_group_mocks">Deneme sınavları</string>
+    <string name="search_group_catalog">Katalogda</string>
+    <string name="search_group_account">Hesabım</string>
+    <string name="search_group_help">Yardım</string>
+    <string name="search_group_ask">Sor</string>
+    <string name="search_group_new_goal">Yeni bir hedefe başla</string>
+    <string name="search_continue">Bugünkü çalışmana devam et</string>
+    <string name="search_take_mock">Deneme sınavına gir</string>
+    <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->
+    <string name="search_take_mock_detail">Tam gün, yarım gün veya tek branş</string>
+    <string name="search_practice_mistakes">Yanlışların üzerinde çalış</string>
+    <string name="search_ask_buddy">Sorunu %1$s ile paylaş…</string>
+    <string name="search_start_new_goal">Yeni bir hedefe başla</string>
+    <string name="search_buddy_keyword">Arkadaş</string>
+    <string name="search_mistakes_notebook">Yanlış defteri</string>
+    <string name="search_logbook">Çalışma günlüğü</string>
+    <string name="search_switch_goal">%1$s hedefine geç</string>
+    <string name="search_mock_exam">Deneme sınavı %1$s</string>
+    <string name="search_home">Ana sayfaya git</string>
+    <string name="search_start_goal">Bir hedefe başla</string>
+    <string name="search_pricing">Fiyatlar</string>
+    <string name="search_log_in">Giriş yap</string>
+    <string name="search_log_out">Çıkış yap</string>
+    <string name="search_blog">Blog</string>
+    <!-- Words people type to find Send feedback in the search, never shown. Keep “bug” and add the words people use in this language. -->
+    <string name="search_send_feedback_keywords">bug, hata, sorun, hata bildir, fikir, öneri, özellik isteği, iletişim</string>
+    <string name="search_help">Yardım</string>
+    <string name="search_settings">Ayarlar</string>
+    <string name="search_profile">Profil</string>
+    <string name="search_memory">Bellek</string>
+    <string name="search_subscription">Abonelik</string>
+    <string name="search_preferences">Tercihler</string>
+    <string name="search_appearance">Görünüm</string>
+    <string name="search_language">Dil</string>
+    <string name="search_ask_question">%1$s ile sohbette sor: “%2$s”</string>
+    <string name="search_ask_detail">Sohbeti açar</string>
+    <string name="search_start_new_goal_named">Yeni bir hedefe başla: “%1$s”</string>
+    <string name="search_start_goal_named">Bir hedefe başla: “%1$s”</string>
+</resources>
