@@ -88,7 +88,7 @@ class NextStopTest {
         val cache = AppCache(signIn, scope)
         val viewModel =
             SessionViewModel(
-                StudyOpener(api, api::writeLesson, cache, { "UTC" }, scope),
+                StudyOpener(api, api::writeLesson, cache, { "UTC" }),
                 StudySessionStore(api, cache) { "UTC" },
                 { _, milliseconds -> waits += milliseconds },
                 cache,
@@ -141,7 +141,7 @@ class NextStopTest {
         show()
         writeTheLesson()
 
-        assertEquals(emptyList<UUID>(), api.started)
+        assertEquals(0, api.targets.size)
         assertEquals(0, api.opened.size)
         rule.onNodeWithText("Your lesson is ready.").assertExists()
         rule.onNodeWithText("Start").assertIsFocused()

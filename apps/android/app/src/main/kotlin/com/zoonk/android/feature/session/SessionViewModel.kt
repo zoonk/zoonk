@@ -195,11 +195,12 @@ class SessionViewModel(
         viewModelScope.launch { cache.mutate { writingApi.recordWait(it, now() - wait.since) } }
     }
 
+    /** A saved day's shown step may be one the learner asked for, so only a day not saved yet starts it as the next one. */
     fun start(
         day: DayView,
         step: DayStep,
         goalId: UUID,
-    ) = run(SessionAction.Start) { opener.open(day, step, next = true, goalId = goalId) }
+    ) = run(SessionAction.Start) { opener.open(day, step, next = day.sessionId == null, goalId = goalId) }
 
     fun stop(sessionId: UUID) = run(SessionAction.Stop) { opener.stop(sessionId) }
 
@@ -210,7 +211,7 @@ class SessionViewModel(
         goalId: UUID,
     ) = run(SessionAction.ExtraTime) { opener.addExtraTime(day, goalId) }
 
-    /** A null route means the step can't open now (the day changed, its limit, earlier work first), which Today explains. */
+    /** A null route means the day changed meanwhile, which Today shows. */
     private fun run(
         action: SessionAction,
         write: suspend () -> MutationResult<AppRoute?>,

@@ -121,6 +121,7 @@ internal fun TodayDay(
             val idle = { !switching }
             TodayActionHandlers(
                 open = { step -> if (idle()) viewModel.open(read, step, next = false) },
+                openMission = { step -> if (idle()) viewModel.openMission(read, step) },
                 next = { model.day.nextStep?.let { if (idle()) viewModel.open(read, it, next = true) } },
                 keepLearning = { if (idle()) viewModel.keepLearning(read) },
                 prepare = { if (idle()) viewModel.prepareLessons(read) },
@@ -194,7 +195,6 @@ internal fun TodayDay(
     }
 }
 
-/** A mission's block opens as its row does; its page opens where it lives. */
 private fun openMission(
     opens: MissionOpens,
     model: TodayDayModel,
@@ -208,7 +208,7 @@ private fun openMission(
         is MissionOpens.Block -> {
             val step = model.day.steps.firstOrNull { if (opens.blockId != null) it.id == opens.blockId else it.position == opens.position }
             // Done or gone meanwhile: Today reads the day again so the learner sees why.
-            if (step != null) actions.open(step) else scope.launch { today.refresh() }
+            if (step != null) actions.openMission(step) else scope.launch { today.refresh() }
         }
 
         else -> {
@@ -219,6 +219,7 @@ private fun openMission(
 
 internal class TodayActionHandlers(
     val open: (com.zoonk.android.feature.session.DayStep) -> Unit,
+    val openMission: (com.zoonk.android.feature.session.DayStep) -> Unit,
     val next: () -> Unit,
     val keepLearning: () -> Unit,
     val prepare: () -> Unit,

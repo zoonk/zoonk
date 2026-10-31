@@ -6,7 +6,9 @@ import com.zoonk.android.data.perform
 import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
-import com.zoonk.api.models.StudyBlockStart
+import com.zoonk.api.models.StudyBlockOpening
+import com.zoonk.api.models.StudyBlockOpeningInput
+import com.zoonk.api.models.StudyBlockOpeningTarget
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.StudySessionSummary
 import com.zoonk.api.models.StudySessionTimeZone
@@ -20,6 +22,12 @@ class LiveStudyApi(
         goalId: UUID,
         body: OpenStudyDayRequest,
     ): OpenedStudyDay = perform { api.clients(session).studySessions.openStudyDay(goalId, body) }
+
+    override suspend fun openBlock(
+        session: AuthenticatedSession,
+        target: StudyBlockOpeningTarget,
+        timeZone: String,
+    ): StudyBlockOpening = perform { api.clients(session).studySessions.openStudyBlock(StudyBlockOpeningInput(target, timeZone)) }
 
     override suspend fun session(
         session: AuthenticatedSession,
@@ -46,27 +54,11 @@ class LiveStudyApi(
         perform { api.clients(session).studySessions.createStudyCatchUpBlocks(sessionId, StudySessionTimeZone(timeZone)) }
     }
 
-    override suspend fun startBlock(
-        session: AuthenticatedSession,
-        sessionId: UUID,
-        blockId: UUID,
-        timeZone: String,
-    ) {
-        perform { api.clients(session).studySessions.createStudyBlockStart(sessionId, blockId, StudyBlockStart(timeZone = timeZone)) }
-    }
-
     override suspend fun stop(
         session: AuthenticatedSession,
         sessionId: UUID,
         timeZone: String,
     ) {
         perform { api.clients(session).studySessions.createStudySessionStop(sessionId, StudySessionTimeZone(timeZone)) }
-    }
-
-    override suspend fun prepare(
-        session: AuthenticatedSession,
-        sessionId: UUID,
-    ) {
-        perform { api.clients(session).contentGeneration.createStudySessionPreparation(sessionId) }
     }
 }

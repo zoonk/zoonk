@@ -9,6 +9,7 @@ import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.feature.today.FakeTodayApi
 import com.zoonk.android.feature.today.TodayStore
+import com.zoonk.api.models.StudyBlockOpeningTarget
 import com.zoonk.api.models.Today
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -50,14 +51,17 @@ class SearchViewModelTest {
                 )
             val today = TodayStore(FakeTodayApi(listOf(decodeFixture<Today>("today", "session" to day))), cache, backgroundScope, { "UTC" })
             val study = FakeStudyApi()
-            val vm = SearchViewModel(today, StudyOpener(study, { _, _ -> error("Not used") }, cache, { "UTC" }, backgroundScope))
+            val vm = SearchViewModel(today, StudyOpener(study, { _, _ -> error("Not used") }, cache, { "UTC" }))
             today.today.load()
 
             vm.continueToday(open = {}, failed = {})
             vm.continueToday(open = {}, failed = {})
             advanceUntilIdle()
 
-            assertEquals(listOf(UUID.fromString(BLOCK)), study.started)
+            assertEquals(
+                listOf(UUID.fromString(BLOCK)),
+                study.targets.map { (it as StudyBlockOpeningTarget.NextWrapper).value.expectedBlockId },
+            )
         }
 
     private companion object {

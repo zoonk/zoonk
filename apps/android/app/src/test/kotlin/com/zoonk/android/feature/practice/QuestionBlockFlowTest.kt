@@ -21,14 +21,13 @@ import com.zoonk.android.feature.practice.block.Runner
 import com.zoonk.android.feature.session.FakeStudyApi
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.decodeFixture
-import com.zoonk.android.feature.session.fixture
+import com.zoonk.android.feature.session.opening
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -75,7 +74,7 @@ class QuestionBlockFlowTest {
     private fun playToTheEnd() {
         val cache = cache()
         val opener =
-            StudyOpener(studyApi, studyApi::writeLesson, cache, timeZone = { "UTC" }, scope = CoroutineScope(Dispatchers.Main.immediate))
+            StudyOpener(studyApi, studyApi::writeLesson, cache, timeZone = { "UTC" })
         val detail = blockDetail(listOf(blockQuestion(FIRST, "question" to "Which is a planet?", "options" to strings("Mars", "Moon"))))
         val viewModel = practiceViewModel(cache, detail, steps = opener, completion = decodeFixture("study-block-completion"))
 
@@ -134,28 +133,20 @@ class QuestionBlockFlowTest {
 
     @Test
     fun continueAtABlocksEndOpensTheSessionsNextBlock() {
-        studyApi.session = decodeFixture("study-session", "id" to PRACTICE_SESSION, "goalId" to GOAL, "current" to true)
-        studyApi.openedSession =
-            fixture(
-                "study-session",
-                "id" to PRACTICE_SESSION,
-                "nextBlockId" to NEXT_BLOCK,
-                "blocks" to JsonArray(listOf(fixture("study-block", "id" to NEXT_BLOCK, "kind" to "practice"))),
-            )
+        studyApi.openings = listOf(opening("session", "blockId" to NEXT_BLOCK))
         playToTheEnd()
 
         rule.onNodeWithText("Continue").performClick()
         rule.waitUntil { left.isNotEmpty() }
 
         assertEquals(listOf<AppRoute>(AppRoute.QuestionBlock(PRACTICE_SESSION, NEXT_BLOCK)), left)
-        assertEquals(listOf(UUID.fromString(NEXT_BLOCK)), studyApi.started)
+        assertEquals(1, studyApi.targets.size)
         assertEquals(emptyList<UUID>(), studyApi.stopped)
     }
 
     private companion object {
         const val FIRST = "3b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
         const val SECOND = "4b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
-        const val GOAL = "5b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
         const val NEXT_BLOCK = "6b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
     }
 }

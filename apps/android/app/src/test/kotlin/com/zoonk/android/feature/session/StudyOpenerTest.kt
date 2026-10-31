@@ -10,93 +10,125 @@ import com.zoonk.android.feature.player.LessonWriting
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
+import com.zoonk.api.ApiJson
 import com.zoonk.api.ApiRequestJson
 import com.zoonk.api.models.LessonGeneration
 import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
+import com.zoonk.api.models.StudyBlockOpening
+import com.zoonk.api.models.StudyBlockOpeningTarget
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.util.UUID
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class StudyOpenerTest {
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
 
     private fun TestScope.opener(api: FakeStudyApi): StudyOpener {
         val scope = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
-        return StudyOpener(api, api::writeLesson, AppCache(FakeSession(ana), scope), timeZone = { "America/Sao_Paulo" }, scope = scope)
+        return StudyOpener(api, api::writeLesson, AppCache(FakeSession(ana), scope), timeZone = { "America/Sao_Paulo" })
     }
 
+    private fun sent(target: StudyBlockOpeningTarget): JsonObject =
+        ApiRequestJson.encodeToJsonElement(StudyBlockOpeningTarget.serializer(), target).jsonObject
+
+    private fun target(
+        kind: String,
+        vararg fields: Pair<String, Any?>,
+    ): JsonObject = opening(kind, *fields)
+
     @Test
-    fun aSavedLessonStartsItsBlockAndOpensThePlayerWithTheSession() =
+    fun continueOnASavedDayNamesTheShownStepAndOpensTheLessonTheServerStarted() =
         runTest {
             val api = FakeStudyApi()
+            api.openings = listOf(opening("lesson", "lessonId" to LESSON, "sessionId" to SESSION.toString()))
             val lesson = step(0)
 
             val result = opener(api).open(day(listOf(lesson)), lesson, next = true, goalId = GOAL)
 
-            assertEquals(MutationResult.Done(AppRoute.Lesson(lesson.lessonId.toString(), SESSION.toString())), result)
-            assertEquals(listOf(blockId(0)), api.started)
+            assertEquals(MutationResult.Done(AppRoute.Lesson(LESSON, SESSION.toString())), result)
+            assertEquals(
+                listOf(target("next", "expectedBlockId" to blockId(0).toString(), "sessionId" to SESSION.toString())),
+                api.targets.map(::sent),
+            )
             assertEquals(emptyList<OpenStudyDayRequest>(), api.opened)
             assertEquals(emptyList<String>(), api.written)
         }
 
     @Test
-    fun aSavedReviewStartsItsBlockAndOpensTheQuestionRunner() =
+    fun aTapOnASavedReviewOpensItsQuestionsInTheDaysSession() =
         runTest {
             val api = FakeStudyApi()
+            api.openings = listOf(opening("session", "blockId" to blockId(0).toString()))
             val review = step(0, kind = StudyBlock.Kind.REVIEW, screen = StudyBlock.Screen.SESSION, lessonId = null)
 
             val result = opener(api).open(day(listOf(review)), review, next = false, goalId = GOAL)
 
             assertEquals(MutationResult.Done(AppRoute.QuestionBlock(SESSION.toString(), blockId(0).toString())), result)
-            assertEquals(listOf(blockId(0)), api.started)
+            assertEquals(listOf(target("block", "blockId" to blockId(0).toString())), api.targets.map(::sent))
         }
 
     @Test
-    fun anUnwrittenLessonsTapAsksToWriteItOnceAndOpensItsPageToFollowTheWriting() =
+    fun eachOpeningShowsItsScreen() {
+        val block = blockId(0).toString()
+        val session = SESSION.toString()
+        val planItem = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d77"
+
+        fun routeOf(opening: JsonObject) = ApiJson.decodeFromJsonElement(StudyBlockOpening.serializer(), opening).route(SESSION)
+
+        assertEquals(AppRoute.Session(blockId = block, sessionId = session), routeOf(opening("preparingLesson", "blockId" to block)))
+        assertEquals(AppRoute.Essay(block), routeOf(opening("essay", "blockId" to block)))
+        assertEquals(AppRoute.Checkpoint(block, session), routeOf(opening("checkpoint", "blockId" to block, "sessionId" to session)))
+        assertEquals(AppRoute.Mock(block, session), routeOf(opening("mock", "blockId" to block, "sessionId" to session)))
+        assertEquals(AppRoute.Challenge(planItem, session), routeOf(opening("challenge", "planItemId" to planItem, "sessionId" to session)))
+        assertEquals(AppRoute.Session(sessionId = session), routeOf(opening("session", "blockId" to null)))
+        assertEquals(AppRoute.Session(blockId = block, sessionId = session), routeOf(unwritten()))
+        assertEquals(AppRoute.Today, routeOf(opening("today")))
+        assertEquals(null, routeOf(opening("changed")))
+    }
+
+    @Test
+    fun anUnwrittenLessonsTapAsksToWriteItOnceAndTheSessionWaitsOnItsBlock() =
         runTest {
             val api = FakeStudyApi()
+            api.openings = listOf(unwritten())
             val lesson = step(0, screen = StudyBlock.Screen.SESSION)
 
             val result = opener(api).open(day(listOf(lesson)), lesson, next = false, goalId = GOAL)
 
-            assertEquals(MutationResult.Done(AppRoute.Lesson(lesson.lessonId.toString(), SESSION.toString())), result)
-            assertEquals(listOf(lesson.lessonId.toString()), api.written)
-            advanceUntilIdle()
-            assertEquals(emptyList<UUID>(), api.started)
-            assertEquals(emptyList<UUID>(), api.prepared)
+            assertEquals(MutationResult.Done(AppRoute.Session(blockId = blockId(0).toString(), sessionId = SESSION.toString())), result)
+            assertEquals(listOf(LESSON), api.written)
+            assertEquals(1, api.targets.size)
         }
 
     @Test
-    fun aLessonWrittenBeforeTheTapStartsItsBlockAndOpens() =
+    fun aLessonWrittenBeforeTheTapOpensItsBlockAgainWhichStartsIt() =
         runTest {
             val api = FakeStudyApi()
             api.generation = LessonGeneration(generationId = null, status = LessonGeneration.Status.READY)
+            api.openings = listOf(unwritten(), opening("lesson", "lessonId" to LESSON, "sessionId" to SESSION.toString()))
             val lesson = step(0, screen = StudyBlock.Screen.SESSION)
 
-            val result = opener(api).open(day(listOf(lesson)), lesson, next = false, goalId = GOAL)
+            val result = opener(api).open(day(listOf(lesson)), lesson, next = true, goalId = GOAL)
 
-            assertEquals(MutationResult.Done(AppRoute.Lesson(lesson.lessonId.toString(), SESSION.toString())), result)
-            assertEquals(listOf(blockId(0)), api.started)
+            assertEquals(MutationResult.Done(AppRoute.Lesson(LESSON, SESSION.toString())), result)
+            assertEquals(target("block", "blockId" to blockId(0).toString()), sent(api.targets.last()))
         }
 
     @Test
     fun aRefusedWriteOpensTheSessionsStepWithWhyUntilAWriteGoesThrough() =
         runTest {
             val api = FakeStudyApi()
+            api.openings = listOf(unwritten())
             val lesson = step(0, screen = StudyBlock.Screen.SESSION)
             val opener = opener(api)
             val step = MutationResult.Done(AppRoute.Session(blockId = blockId(0).toString(), sessionId = SESSION.toString()))
@@ -116,13 +148,13 @@ class StudyOpenerTest {
             api.writeError = null
             opener.open(day(listOf(lesson)), lesson, next = false, goalId = GOAL)
             assertEquals(null, opener.notWritten(blockId(0)))
-            assertEquals(emptyList<UUID>(), api.started)
         }
 
     @Test
     fun aWriteThatFailsOrFindsNoLessonFailsTheTap() =
         runTest {
             val api = FakeStudyApi()
+            api.openings = listOf(unwritten())
             val lesson = step(0, screen = StudyBlock.Screen.SESSION)
 
             api.writeError = ApiException(ApiError.NotFound, status = 404)
@@ -133,16 +165,17 @@ class StudyOpenerTest {
         }
 
     @Test
-    fun aDayNotOpenedYetIsSavedWithTheShownWorkAndItsNullsThenOpensWhereTheSavedBlockPlays() =
+    fun aDayNotOpenedYetIsSavedWithTheShownWorkAndItsNullsThenFollowsItsOpening() =
         runTest {
             val api = FakeStudyApi()
-            api.target = fixture("study-block", "id" to blockId(0).toString(), "kind" to "review", "screen" to "session", "position" to 0)
+            api.dayOpening = opening("session", "blockId" to blockId(0).toString())
             val review = step(0, kind = StudyBlock.Kind.REVIEW, screen = StudyBlock.Screen.SESSION, saved = false, lessonId = null)
 
             val result = opener(api).open(day(listOf(review), saved = false), review, next = true, goalId = GOAL)
 
             val opened = decodeFixture<OpenedStudyDay>("opened-study-day").sessionId
             assertEquals(MutationResult.Done(AppRoute.QuestionBlock(opened.toString(), blockId(0).toString())), result)
+            assertEquals(emptyList<StudyBlockOpeningTarget>(), api.targets)
             val target =
                 ApiRequestJson
                     .encodeToJsonElement(OpenStudyDayRequest.serializer(), api.opened.single())
@@ -157,10 +190,9 @@ class StudyOpenerTest {
         }
 
     @Test
-    fun aDayThatChangedMeanwhileOpensNothing() =
+    fun aDayWhoseTargetCantStartOpensNothing() =
         runTest {
             val api = FakeStudyApi()
-            api.target = fixture("study-block")
             api.targetStatus = "changed"
             val lesson = step(0, saved = false)
 
@@ -171,106 +203,81 @@ class StudyOpenerTest {
         }
 
     @Test
-    fun aBlockFinishedElsewhereOpensTheSessionAndTheDailyLimitOpensNothing() =
+    fun anOpenThatLostARaceWithAPlanChangeIsSentOnceMoreOnItsOwn() =
         runTest {
             val api = FakeStudyApi()
+            val retryable = ApiException(ApiError.Unavailable, "STUDY_DAY_RETRYABLE", status = 409)
             val essay = step(0, kind = StudyBlock.Kind.PRODUCE, screen = StudyBlock.Screen.ESSAY, lessonId = null)
+            api.openings = listOf(opening("essay", "blockId" to blockId(0).toString()))
 
-            api.startError = "BLOCK_FINISHED"
+            api.failures += retryable
             assertEquals(
-                MutationResult.Done(AppRoute.Session(sessionId = SESSION.toString())),
+                MutationResult.Done(AppRoute.Essay(blockId(0).toString())),
                 opener(api).open(day(listOf(essay)), essay, next = false, goalId = GOAL),
             )
+            assertEquals(2, api.targets.size)
 
-            api.startError = "DAILY_LIMIT_REACHED"
-            assertEquals(MutationResult.Done(null), opener(api).open(day(listOf(essay)), essay, next = false, goalId = GOAL))
+            api.failures += listOf(retryable, retryable)
+            assertTrue(opener(api).open(day(listOf(essay)), essay, next = false, goalId = GOAL) is MutationResult.Failed)
         }
 
     @Test
-    fun aChallengeNotBegunOpensItsIntroWhichStartsIt() =
+    fun aMissionOpensItsBlockOnlyWhileFreeAndOneGoneMeanwhileOpensNothing() =
         runTest {
             val api = FakeStudyApi()
-            val planItem = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d77")
-            val challenge =
-                step(0, kind = StudyBlock.Kind.CHECKPOINT, screen = StudyBlock.Screen.CHALLENGE, lessonId = null, planItemId = planItem)
+            api.openings = listOf(opening("session", "blockId" to blockId(0).toString()))
 
-            val result = opener(api).open(day(listOf(challenge)), challenge, next = false, goalId = GOAL)
+            assertEquals(
+                MutationResult.Done(AppRoute.QuestionBlock(SESSION.toString(), blockId(0).toString())),
+                opener(api).openMission(blockId(0), SESSION),
+            )
+            assertEquals(target("mission", "blockId" to blockId(0).toString()), sent(api.targets.single()))
 
-            assertEquals(MutationResult.Done(AppRoute.Challenge(planItem.toString(), SESSION.toString())), result)
-            assertEquals(emptyList<UUID>(), api.started)
+            api.openings = listOf(opening("changed"))
+            assertEquals(MutationResult.Done(null), opener(api).openMission(blockId(0), SESSION))
+
+            api.failures += ApiException(ApiError.NotFound, status = 404)
+            assertEquals(MutationResult.Done(null), opener(api).openMission(blockId(0), SESSION))
         }
 
     @Test
-    fun onlyAnOpenWithoutAStartPreparesTheSessionSinceAStartPreparesItOnTheServer() =
-        runTest {
-            val lesson = step(0)
-            val review = step(1, kind = StudyBlock.Kind.REVIEW, screen = StudyBlock.Screen.SESSION, lessonId = null)
-            val challenge =
-                step(
-                    2,
-                    kind = StudyBlock.Kind.CHECKPOINT,
-                    screen = StudyBlock.Screen.CHALLENGE,
-                    lessonId = null,
-                    planItemId = UUID.randomUUID(),
-                )
-            val unpicked = step(3, screen = StudyBlock.Screen.SESSION, lessonId = null)
-            val day = day(listOf(lesson, review, challenge, unpicked))
-
-            suspend fun preparedFor(step: DayStep): List<UUID> {
-                val api = FakeStudyApi()
-                opener(api).open(day, step, next = false, goalId = GOAL)
-                advanceUntilIdle()
-                return api.prepared
-            }
-
-            assertEquals(emptyList<UUID>(), preparedFor(lesson))
-            assertEquals(emptyList<UUID>(), preparedFor(review))
-            assertEquals(listOf(SESSION), preparedFor(challenge))
-            assertEquals(listOf(SESSION), preparedFor(unpicked))
-        }
-
-    @Test
-    fun continuingOpensTheDayFirstSoItStartsTheNextBlockTheQueueGainedSince() =
+    fun extraTimeKeepsADayNotOpenedYetThenOpensTheBlockItAdded() =
         runTest {
             val api = FakeStudyApi()
-            api.session = decodeFixture("study-session", *studySession(next = null))
-            api.openedSession = fixture("study-session", *studySession(next = blockId(1)))
+            api.openings = listOf(opening("session", "blockId" to FakeStudyApi.EXTRA_BLOCK.toString()))
+            val opened = decodeFixture<OpenedStudyDay>("opened-study-day").sessionId
+
+            val result = opener(api).addExtraTime(day(saved = false), GOAL)
+
+            assertEquals(MutationResult.Done(AppRoute.QuestionBlock(opened.toString(), FakeStudyApi.EXTRA_BLOCK.toString())), result)
+            assertEquals(true, api.opened.single().keepEmpty)
+            assertEquals(listOf(opened), api.added)
+            assertEquals(target("block", "blockId" to FakeStudyApi.EXTRA_BLOCK.toString()), sent(api.targets.single()))
+        }
+
+    @Test
+    fun continuingAtABlocksEndOpensTheSessionsNextStepWhateverItIs() =
+        runTest {
+            val api = FakeStudyApi()
+            api.openings = listOf(opening("session", "blockId" to blockId(1).toString()))
 
             val result = opener(api).continueSession(SESSION)
 
             assertEquals(MutationResult.Done(AppRoute.QuestionBlock(SESSION.toString(), blockId(1).toString())), result)
-            assertEquals(1, api.opened.size)
-            assertEquals(listOf(blockId(1)), api.started)
+            assertEquals(target("next", "sessionId" to SESSION.toString()), sent(api.targets.single()))
+            assertEquals(0, api.sessionReads)
         }
 
     @Test
-    fun continuingWithNothingLeftOpensTheSessionsSummary() =
+    fun continuingWithNothingLeftOpensTheSummaryAndAfterTheDayEndedGoesBackToToday() =
         runTest {
             val api = FakeStudyApi()
-            api.session = decodeFixture("study-session", *studySession(next = null))
-            api.openedSession = fixture("study-session", *studySession(next = null))
 
+            api.openings = listOf(opening("session", "blockId" to null))
             assertEquals(MutationResult.Done(AppRoute.Session(sessionId = SESSION.toString())), opener(api).continueSession(SESSION))
-            assertEquals(emptyList<UUID>(), api.started)
-        }
 
-    @Test
-    fun continuingAfterTheDayEndedOrWhenTheNextStepCantStartGoesBackToToday() =
-        runTest {
-            val api = FakeStudyApi()
-
-            api.session = decodeFixture("study-session", *studySession(next = blockId(1), current = false))
+            api.openings = listOf(opening("today"))
             assertEquals(MutationResult.Done(AppRoute.Today), opener(api).continueSession(SESSION))
-            assertEquals(emptyList<OpenStudyDayRequest>(), api.opened)
-
-            api.session = decodeFixture("study-session", *studySession(next = blockId(1)))
-            api.openedSession = fixture("study-session", *studySession(next = blockId(1)), "id" to UUID.randomUUID().toString())
-            assertEquals(MutationResult.Done(AppRoute.Today), opener(api).continueSession(SESSION))
-
-            api.openedSession = fixture("study-session", *studySession(next = blockId(1)))
-            api.startError = "DAILY_LIMIT_REACHED"
-            assertEquals(MutationResult.Done(AppRoute.Today), opener(api).continueSession(SESSION))
-            assertEquals(emptyList<UUID>(), api.started)
         }
 
     @Test
@@ -282,21 +289,10 @@ class StudyOpenerTest {
             assertEquals(listOf(SESSION), api.stopped)
         }
 
-    private fun studySession(
-        next: UUID?,
-        current: Boolean = true,
-    ): Array<Pair<String, Any?>> =
-        arrayOf(
-            "id" to SESSION.toString(),
-            "goalId" to GOAL.toString(),
-            "current" to current,
-            "nextBlockId" to next?.toString(),
-            "blocks" to
-                JsonArray(
-                    listOf(
-                        fixture("study-block", "id" to blockId(0).toString(), "position" to 0, "status" to "completed"),
-                        fixture("study-block", "id" to blockId(1).toString(), "position" to 1),
-                    ),
-                ),
-        )
+    private fun unwritten() =
+        opening("unwrittenLesson", "blockId" to blockId(0).toString(), "lessonId" to LESSON, "sessionId" to SESSION.toString())
+
+    private companion object {
+        val LESSON = step(0).lessonId.toString()
+    }
 }

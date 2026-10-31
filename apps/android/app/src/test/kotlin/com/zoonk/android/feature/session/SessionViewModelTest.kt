@@ -5,6 +5,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.Milestone
+import com.zoonk.api.models.StudyBlockOpeningTarget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -40,7 +41,7 @@ class SessionViewModelTest {
         val scope = CoroutineScope(SupervisorJob() + dispatcher)
         val cache = AppCache(FakeSession(ana), scope)
         return SessionViewModel(
-            StudyOpener(api, api::writeLesson, cache, { "UTC" }, scope),
+            StudyOpener(api, api::writeLesson, cache, { "UTC" }),
             StudySessionStore(api, cache) { "UTC" },
             { _, _ -> },
             cache,
@@ -106,6 +107,19 @@ class SessionViewModelTest {
             assertEquals(1, api.sessionReads)
             assertEquals(1, api.summaryReads)
             assertEquals(emptyList<AppRoute>(), routes)
+        }
+
+    @Test
+    fun startOnASavedDayOpensTheShownStepItselfSinceTheLearnerMayHaveAskedForIt() =
+        runTest(dispatcher) {
+            val api = FakeStudyApi()
+            val viewModel = viewModel(api)
+            val asked = step(1)
+
+            viewModel.start(day(listOf(step(0), asked)), asked, GOAL)
+            advanceUntilIdle()
+
+            assertEquals(listOf(blockId(1)), api.targets.map { (it as StudyBlockOpeningTarget.BlockWrapper).value.blockId })
         }
 
     private companion object {

@@ -11,6 +11,8 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.test.hasScrollToNodeAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -18,6 +20,7 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
@@ -35,6 +38,7 @@ import com.zoonk.android.feature.session.StudyApi
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
+import com.zoonk.android.feature.session.opening
 import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -47,6 +51,8 @@ import com.zoonk.api.models.LanguageTodayPronunciation
 import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
+import com.zoonk.api.models.StudyBlockOpening
+import com.zoonk.api.models.StudyBlockOpeningTarget
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.StudySessionSummary
 import com.zoonk.api.models.SuggestedGoal
@@ -86,7 +92,7 @@ class TodayFlowTest {
     val rule: ComposeContentTestRule = createComposeRule()
 
     private lateinit var navigator: AppNavigator
-    private val started = mutableListOf<UUID>()
+    private val opened = mutableListOf<String>()
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private val session = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d02"
     private val lesson = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d31"
@@ -146,14 +152,7 @@ class TodayFlowTest {
         val store = TodayStore(todayApi, cache, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate), timeZone = { "UTC" })
         val viewModel =
             TodayViewModel(
-                StudyOpener(
-                    StartingApi(),
-                    { _, _ -> error("Not used") },
-                    cache,
-                    timeZone = { "UTC" },
-                    scope =
-                        CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
-                ),
+                StudyOpener(OpeningApi(), { _, _ -> error("Not used") }, cache, timeZone = { "UTC" }),
                 store,
                 PlanStore(plans, cache),
             )
@@ -246,25 +245,44 @@ class TodayFlowTest {
     }
 
     @Test
-    fun startOpensTheWrittenLessonInThePlayerAfterStartingItsBlock() {
+    fun startOpensTheLessonTheServerStartedForTheShownStep() {
         show()
 
         rule.onNodeWithText("Start session").performClick()
         rule.waitForIdle()
 
         assertEquals(AppRoute.Lesson(lesson, session), navigator.currentRoute)
-        assertEquals(listOf(UUID.fromString(lessonBlock)), started)
+        assertEquals(listOf("next $lessonBlock"), opened)
     }
 
     @Test
-    fun aReviewRowStartsItsBlockAndOpensTheQuestionRunner() {
+    fun aReviewRowOpensItsBlockInTheQuestionRunner() {
         show()
 
         rule.onNodeWithText("What you already know").performClick()
         rule.waitForIdle()
 
         assertEquals(AppRoute.QuestionBlock(session, reviewBlock), navigator.currentRoute)
-        assertEquals(listOf(UUID.fromString(reviewBlock)), started)
+        assertEquals(listOf("block $reviewBlock"), opened)
+    }
+
+    @Test
+    fun aMissionCardOpensItsBlockAsAMission() {
+        val missions =
+            ApiJson.parseToJsonElement(
+                """
+                [{"done":0,"kind":"review","status":"todo","total":1,"opens":{"kind":"block","blockId":"$reviewBlock"}},
+                 {"done":0,"kind":"askBuddy","status":"todo","total":1,"opens":{"kind":"buddy"}}]
+                """.trimIndent(),
+            )
+        show("missions" to missions)
+
+        rule.onNode(hasScrollToNodeAction()).performScrollToNode(hasText("Review"))
+        rule.onNodeWithText("Review").performClick()
+        rule.waitForIdle()
+
+        assertEquals(AppRoute.QuestionBlock(session, reviewBlock), navigator.currentRoute)
+        assertEquals(listOf("mission $reviewBlock"), opened)
     }
 
     @Test
@@ -585,12 +603,33 @@ class TodayFlowTest {
         put("value", done.toDouble() / total)
     }
 
-    private inner class StartingApi : StudyApi {
+    private inner class OpeningApi : StudyApi {
         override suspend fun openDay(
             session: AuthenticatedSession,
             goalId: UUID,
             body: OpenStudyDayRequest,
         ): OpenedStudyDay = error("The day is saved")
+
+        override suspend fun openBlock(
+            session: AuthenticatedSession,
+            target: StudyBlockOpeningTarget,
+            timeZone: String,
+        ): StudyBlockOpening {
+            val (kind, blockId) =
+                when (target) {
+                    is StudyBlockOpeningTarget.NextWrapper -> "next" to target.value.expectedBlockId
+                    is StudyBlockOpeningTarget.BlockWrapper -> "block" to target.value.blockId
+                    is StudyBlockOpeningTarget.MissionWrapper -> "mission" to target.value.blockId
+                }
+            opened += "$kind $blockId"
+            val answer =
+                if (blockId.toString() == lessonBlock) {
+                    opening("lesson", "lessonId" to lesson, "sessionId" to this@TodayFlowTest.session)
+                } else {
+                    opening("session", "blockId" to blockId.toString())
+                }
+            return ApiJson.decodeFromJsonElement(StudyBlockOpening.serializer(), answer)
+        }
 
         override suspend fun stop(
             session: AuthenticatedSession,
@@ -615,25 +654,11 @@ class TodayFlowTest {
             timeZone: String,
         ) = Unit
 
-        override suspend fun startBlock(
-            session: AuthenticatedSession,
-            sessionId: UUID,
-            blockId: UUID,
-            timeZone: String,
-        ) {
-            started += blockId
-        }
-
         override suspend fun session(
             session: AuthenticatedSession,
             sessionId: UUID,
             timeZone: String,
         ): StudySession = error("Not used")
-
-        override suspend fun prepare(
-            session: AuthenticatedSession,
-            sessionId: UUID,
-        ) = Unit
     }
 
     private val todayApi = ShownTodayApi()

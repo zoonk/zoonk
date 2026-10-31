@@ -64,6 +64,17 @@ class TodayViewModel(
         opener.open(read.day, step, next, read.today.goal.id)
     }
 
+    /** A mission card's block; on a day not saved yet it opens as its row does. */
+    fun openMission(
+        read: TodayRead.Day,
+        step: DayStep,
+    ) {
+        val blockId = step.id
+        val sessionId = read.day.sessionId
+        if (blockId == null || sessionId == null) return open(read, step, next = false)
+        run(read, TodayTap.Step(step.position)) { opener.openMission(blockId, sessionId) }
+    }
+
     fun keepLearning(read: TodayRead.Day) =
         run(read, TodayTap.KeepLearning) {
             opener.addExtraTime(read.day, read.today.goal.id)
