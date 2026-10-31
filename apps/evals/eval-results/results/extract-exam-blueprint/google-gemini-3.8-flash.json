@@ -1460,17 +1460,17 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 9/9 (read 9). passages found 69/69. problems left 0",
+          "conclusion": "Facts kept 9/9 (read 8). passages found 71/71. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 9/9 (read 9). passages found 69/69. problems left 0",
+          "conclusion": "Facts kept 9/9 (read 8). passages found 71/71. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 9/9 (read 9). passages found 69/69. problems left 0",
+          "conclusion": "Facts kept 9/9 (read 8). passages found 71/71. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }

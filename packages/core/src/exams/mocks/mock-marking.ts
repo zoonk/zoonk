@@ -3,6 +3,7 @@ import { apportion } from "@zoonk/utils/apportion";
 import { type ExamStructure, type MarkingRow } from "../../library/exams/blueprint-contract";
 import { getPartMaxPoints, getPointsPerQuestion } from "../../library/exams/part-points";
 import { getWrongPenalty } from "../scoring/mock-scoring";
+import { getChoiceFormatKey } from "./mock-format-mix";
 import { findAreaSubject } from "./mock-options";
 import { type MockCandidate, type MockPlan, getPlannedItemIds } from "./mock-plan";
 import { type ItemMarking, type MockMarking } from "./mock-points-contract";
@@ -10,8 +11,10 @@ import { isWrittenSubject } from "./written-subject";
 
 type Subject = ExamStructure["subjects"][number];
 type Scoring = NonNullable<ExamStructure["mock"]>["scoring"];
-type PlannedItem = Pick<MockCandidate, "area" | "itemFormat" | "itemId">;
+type PlannedItem = Pick<MockCandidate, "area" | "itemFormat" | "itemId" | "format">;
 type MarkedParts = MockMarking["parts"];
+
+const PART_SPECIFICITY = 4;
 
 const POINTS_METHODS = new Set<Scoring["method"]>(["raw", "wrongCancelsRight"]);
 
@@ -37,10 +40,12 @@ function rankPart({ row, subject }: { row: MarkingRow; subject: Subject | undefi
 /** The most specific row wins: the subject's own name, then its group, then the whole exam. */
 function rankRow({
   format,
+  selection,
   row,
   subject,
 }: {
   format: MarkingRow["format"];
+  selection: string | null;
   row: MarkingRow;
   subject: Subject | undefined;
 }): number | null {
@@ -50,20 +55,35 @@ function rankRow({
     return null;
   }
 
-  return partRank * 2 + (row.format === null ? 0 : 1);
+  if (
+    row.format === "multipleChoice" &&
+    row.select !== undefined &&
+    row.select !== null &&
+    selection !== null &&
+    selection !== getChoiceFormatKey(row.select ?? null)
+  ) {
+    return null;
+  }
+
+  const selectionRank =
+    row.format === "multipleChoice" && row.select !== null && row.select !== undefined ? 1 : 0;
+
+  return partRank * PART_SPECIFICITY + (row.format === null ? 0 : 2) + selectionRank;
 }
 
 function findRows({
   format,
+  selection,
   rows,
   subject,
 }: {
   format: MarkingRow["format"];
+  selection: string | null;
   rows: readonly MarkingRow[];
   subject: Subject | undefined;
 }): MarkingRow[] {
   const ranked = rows.flatMap((row) => {
-    const rank = rankRow({ format, row, subject });
+    const rank = rankRow({ format, row, selection, subject });
     return rank === null ? [] : [{ rank, row }];
   });
 
@@ -118,7 +138,14 @@ function markItems({
 
   const matched = items.map((item) => {
     const subject = item.area ? subjects.get(item.area) : undefined;
-    const found = findRows({ format: ROW_FORMATS[item.itemFormat] ?? null, rows, subject });
+
+    const found = findRows({
+      format: ROW_FORMATS[item.itemFormat] ?? null,
+      rows,
+      selection: item.format ?? getChoiceFormatKey(null),
+      subject,
+    });
+
     return { found, item, part: findPart({ parts, subject }) };
   });
 
@@ -224,12 +251,41 @@ function toMockMarking({
     name: part.name,
     objective: !isWrittenPart({ name: part.name, structure }),
     qualifying: part.qualifying,
+    questions: part.questions,
   }));
 
+  const missing =
+    parts.length > 0
+      ? structure.subjects
+          .flatMap((subject) => {
+            const name = findPart({ parts, subject });
+
+            return name &&
+              !isWrittenSubject({ structure, subject }) &&
+              !parts.some((part) => part.name === name)
+              ? [
+                  {
+                    maxPoints: null,
+                    minimum: null,
+                    name,
+                    objective: true,
+                    qualifying: false,
+                    questions: null,
+                  },
+                ]
+              : [];
+          })
+          .filter(
+            (part, index, all) => all.findIndex((other) => other.name === part.name) === index,
+          )
+      : [];
+
+  const allParts = [...parts, ...missing];
+
   return {
-    items: markItems({ items, parts, structure }),
-    maxPoints: getTotalMaxPoints({ parts, scoring, structure }),
-    parts,
+    items: markItems({ items, parts: allParts, structure }),
+    maxPoints: getTotalMaxPoints({ parts: allParts, scoring, structure }),
+    parts: allParts,
     totalMinimum: scoring.totalMinimum
       ? { unit: scoring.totalMinimum.unit, value: scoring.totalMinimum.value }
       : null,

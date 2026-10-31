@@ -47,7 +47,7 @@ export function getItemMarking({
   );
 }
 
-function getAnswerPoints({ credit, marking, outcome }: PointsAnswer): number {
+export function getAnswerPoints({ credit, marking, outcome }: PointsAnswer): number {
   if (outcome === "blank") {
     return 0;
   }
@@ -97,8 +97,20 @@ function judge({
   return { met, short: met ? null : withoutNoise(minimum.value - score) };
 }
 
-function isWholeTest({ asked, max }: { asked: number; max: number | null }): boolean {
-  return max === null || Math.abs(asked - max) < TOLERANCE;
+function isWholeTest({
+  asked,
+  max,
+  questions,
+  answerCount,
+}: {
+  asked: number;
+  max: number | null;
+  questions?: number | null;
+  answerCount?: number;
+}): boolean {
+  return max === null
+    ? typeof questions === "number" && questions === answerCount
+    : Math.abs(asked - max) < TOLERANCE;
 }
 
 function project({ asked, earned, max }: { asked: number; earned: number; max: number | null }) {
@@ -152,7 +164,7 @@ function scorePart({
       minimum: part.minimum,
       projected: project({ asked, earned, max }),
       scope,
-      whole: isWholeTest({ asked, max }),
+      whole: isWholeTest({ answerCount: answers.length, asked, max, questions: part.questions }),
     }),
     name: part.name,
     qualifying: part.qualifying,
@@ -188,15 +200,20 @@ function scoreTotal({
   const countedNames = new Set(counted.map((part) => part.name));
   const qualifying = new Set(marking.parts.flatMap((part) => (part.qualifying ? [part.name] : [])));
 
-  const inTotal = answers.filter(({ marking: { part } }) =>
-    counted.length > 0
-      ? part !== null && countedNames.has(part)
-      : part === null || !qualifying.has(part),
-  );
+  const inTotal = answers.filter(({ marking: { part } }) => part === null || !qualifying.has(part));
 
   const { asked, earned } = sumPoints(inTotal);
   const countedParts = parts.filter((part) => countedNames.has(part.name));
-  const judged = counted.length > 0 ? countedParts.length === counted.length : asked > 0;
+
+  const complete = inTotal.every(
+    (answer) => answer.marking.part !== null && countedNames.has(answer.marking.part),
+  );
+
+  const judged =
+    counted.length > 0
+      ? complete && countedParts.length === counted.length
+      : asked > 0 && marking.maxPoints !== null;
+
   const max = marking.maxPoints;
 
   const projected =
@@ -204,7 +221,17 @@ function scoreTotal({
 
   const whole =
     counted.length > 0
-      ? countedParts.every((part) => isWholeTest({ asked: part.asked, max: part.max }))
+      ? complete &&
+        countedParts.every((scored) => {
+          const part = counted.find((item) => item.name === scored.name);
+
+          return isWholeTest({
+            answerCount: answers.filter((answer) => answer.marking.part === scored.name).length,
+            asked: scored.asked,
+            max: scored.max,
+            questions: part?.questions,
+          });
+        })
       : isWholeTest({ asked, max });
 
   return {
@@ -260,9 +287,18 @@ export function scoreMockPoints({
 
   const unjudged = [
     ...marking.parts.flatMap((part) =>
-      part.minimum && !asked.has(part.name) ? [{ minimum: part.minimum, name: part.name }] : [],
+      part.minimum &&
+      (!asked.has(part.name) ||
+        (scope === "full" &&
+          parts.find((scored) => scored.name === part.name)?.projected === null &&
+          parts.find((scored) => scored.name === part.name)?.met === null))
+        ? [{ minimum: part.minimum, name: part.name }]
+        : [],
     ),
-    ...(marking.totalMinimum && !judged ? [{ minimum: marking.totalMinimum, name: null }] : []),
+    ...(marking.totalMinimum &&
+    (!judged || (scope === "full" && total.met === null && total.projected === null))
+      ? [{ minimum: marking.totalMinimum, name: null }]
+      : []),
   ];
 
   return { ...total, parts, unjudged };

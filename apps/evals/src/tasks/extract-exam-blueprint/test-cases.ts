@@ -43,8 +43,8 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
     expected: {
       facts: [
         { kind: "scoring", method: "wrongCancelsRight" },
-        { kind: "markingRow", part: ["Paper I"], points: 2, wrongPenalty: 0.33 },
-        { kind: "markingRow", part: ["Paper II", "CSAT"], points: 2.5, wrongPenalty: 0.33 },
+        { kind: "markingRow", part: ["Paper I"], points: 2, wrongPenalty: 1 / 3 },
+        { kind: "markingRow", part: ["Paper II", "CSAT"], points: 2.5, wrongPenalty: 1 / 3 },
         { kind: "scoredPart", maxPoints: 200, part: ["Paper I"] },
         {
           kind: "scoredPart",

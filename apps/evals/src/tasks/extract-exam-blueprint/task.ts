@@ -439,6 +439,18 @@ function fromExtraction(output: ExtractionEvalOutput): Reading {
   return {
     ...output,
     formats: output.formats.map((format, index) => ({ ...format, share: shares[index] })),
+    mock: output.mock
+      ? {
+          ...output.mock,
+          scoring: {
+            ...output.mock.scoring,
+            marking: output.mock.scoring.marking.map((row) => ({
+              ...row,
+              wrongPenalty: row.wrongPenalty === null ? null : row.wrongPenalty / row.points,
+            })),
+          },
+        }
+      : null,
     questionCount: output.edition.questionCount,
     testedLanguage: output.testedLanguage?.language ?? null,
   };

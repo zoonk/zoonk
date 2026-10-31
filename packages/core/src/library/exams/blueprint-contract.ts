@@ -125,6 +125,10 @@ const markingRowSchema = z.object({
     .min(1)
     .nullable()
     .meta({ description: "How many questions it covers; null when the notice doesn't say" }),
+  select: blueprintFormatSchema.shape.select.meta({
+    description:
+      "The number of options to select, or all for multiple selection; null when unstated",
+  }),
   wrongPenalty: z
     .number()
     .min(0)

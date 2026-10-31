@@ -29,8 +29,8 @@ function toNumericKey(entry: NumericEntry): string {
   return `numeric:${entry.kind}:${entry.places ?? ""}`;
 }
 
-function toPicksKey(select: ExamAnswerFormat["select"]): string {
-  return `picks:${select}`;
+export function getChoiceFormatKey(select: ExamAnswerFormat["select"]): string {
+  return select === null || select === 1 ? CHOICE_KEY : `picks:${select}`;
 }
 
 type ExamFormat = ExamStructure["formats"][number];
@@ -47,7 +47,12 @@ function toStatedFormat({
 
   if (format.kind === "multipleChoice" && format.select && format.select !== 1) {
     const answerFormat = { entry: null, format: "multipleChoice", select: format.select } as const;
-    return { key: toPicksKey(format.select), stated, writer: { answerFormat, kind: "item" } };
+
+    return {
+      key: getChoiceFormatKey(format.select),
+      stated,
+      writer: { answerFormat, kind: "item" },
+    };
   }
 
   if (format.kind === "numeric") {
@@ -133,7 +138,7 @@ export function getItemFormatKey({
   const select = optionSelectSchema.safeParse(content.select).data ?? 1;
 
   if (item.format === "multipleChoice" && select !== 1) {
-    const own = toPicksKey(select);
+    const own = getChoiceFormatKey(select);
     return keys.includes(own) ? own : firstOf("picks:");
   }
 

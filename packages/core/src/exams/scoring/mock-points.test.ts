@@ -487,9 +487,9 @@ describe("a minimum this mock can't put in its unit", () => {
     expect(paper2).toMatchObject({ met: null, projected: null });
   });
 
-  it("judges a percent minimum on the share of points, never on the points", () => {
+  it("leaves a percent minimum unjudged without a known paper size", () => {
     const [, paper2] = scoreMockPoints({ answers, marking, scope: "full" }).parts;
-    expect(paper2).toMatchObject({ earned: 5, met: true });
+    expect(paper2).toMatchObject({ earned: 5, met: null });
   });
 });
 
@@ -529,4 +529,152 @@ describe("mocks that judge nothing", () => {
       ).toBeNull();
     },
   );
+});
+
+describe("incomplete notice evidence", () => {
+  it("keeps unknown objective answers in the score without judging the total", () => {
+    const structure = examStructure({
+      scoring: {
+        parts: [part("P1", { maxPoints: 40 })],
+        totalMinimum: { citation, unit: "points", value: 50 },
+      },
+      subjects: [subject("A", "P1", 40), subject("B", "P2", 40)],
+    });
+
+    const marking = mark({
+      planned: [
+        { area: "A", count: 40 },
+        { area: "B", count: 40 },
+      ],
+      structure,
+    });
+
+    const result = scoreMockPoints({
+      answers: Object.values(marking.items).map((item) => ({
+        credit: 1,
+        marking: item,
+        outcome: "right",
+      })),
+      marking,
+      scope: "full",
+    });
+
+    expect(result.earned).toBe(80);
+    expect(result.met).toBeNull();
+    expect(result.unjudged).toContainEqual({ minimum: { unit: "points", value: 50 }, name: null });
+  });
+
+  it("does not judge an unknown-length paper", () => {
+    const structure = examStructure({
+      scoring: { parts: [part("P1", { minimum: { unit: "points", value: 30 } })] },
+      subjects: [subject("A", "P1", null)],
+    });
+
+    const marking = mark({ planned: [{ area: "A", count: 10 }], structure });
+
+    const result = scoreMockPoints({
+      answers: Object.values(marking.items).map((item) => ({
+        credit: 1,
+        marking: item,
+        outcome: "right",
+      })),
+      marking,
+      scope: "full",
+    });
+
+    expect(result.parts[0]?.met).toBeNull();
+    expect(result.unjudged).toContainEqual({ minimum: { unit: "points", value: 30 }, name: "P1" });
+  });
+});
+
+describe("selection marking", () => {
+  it("matches single and multiple selection marking regardless of item order", () => {
+    const structure = examStructure({
+      scoring: {
+        marking: [
+          {
+            ...row(null, 3, { format: "multipleChoice", questions: 2, wrongPenalty: 1 / 3 }),
+            select: 1,
+          },
+          {
+            ...row(null, 4, { format: "multipleChoice", questions: 2, wrongPenalty: 0.5 }),
+            select: "all",
+          },
+        ],
+      },
+      subjects: [subject("Physics", null, 4)],
+    });
+
+    const items = [
+      {
+        area: "Physics",
+        format: "picks:all",
+        itemFormat: "multipleChoice" as const,
+        itemId: "multi",
+      },
+      {
+        area: "Physics",
+        format: "choice",
+        itemFormat: "multipleChoice" as const,
+        itemId: "single",
+      },
+    ];
+
+    expect(markItems({ items, structure })?.items).toStrictEqual({
+      multi: { part: "Physics", points: 4, wrongPenalty: 0.5 },
+      single: { part: "Physics", points: 3, wrongPenalty: 1 / 3 },
+    });
+  });
+});
+
+describe("conflicting whole-paper evidence", () => {
+  it("does not let a question count override a known point maximum", () => {
+    const structure = examStructure({
+      scoring: {
+        parts: [
+          part("P1", { maxPoints: 20, minimum: { unit: "points", value: 15 }, questions: 10 }),
+        ],
+      },
+      subjects: [subject("A", "P1", 10)],
+    });
+
+    const marking = mark({ planned: [{ area: "A", count: 10 }], structure });
+
+    const result = scoreMockPoints({
+      answers: Object.values(marking.items).map((item) => ({
+        credit: 1,
+        marking: item,
+        outcome: "right",
+      })),
+      marking,
+      scope: "full",
+    });
+
+    expect(result.parts[0]).toMatchObject({ met: null, projected: 20 });
+  });
+
+  it("leaves the total unjudged when an unlisted paper has no bank questions", () => {
+    const structure = examStructure({
+      scoring: {
+        parts: [part("P1", { maxPoints: 40 })],
+        totalMinimum: { citation, unit: "points", value: 50 },
+      },
+      subjects: [subject("A", "P1", 40), subject("B", "P2", null)],
+    });
+
+    const marking = mark({ planned: [{ area: "A", count: 40 }], structure });
+
+    const result = scoreMockPoints({
+      answers: Object.values(marking.items).map((item) => ({
+        credit: 1,
+        marking: item,
+        outcome: "right",
+      })),
+      marking,
+      scope: "full",
+    });
+
+    expect(result).toMatchObject({ max: null, met: null });
+    expect(result.unjudged).toContainEqual({ minimum: { unit: "points", value: 50 }, name: null });
+  });
 });

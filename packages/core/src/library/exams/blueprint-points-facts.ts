@@ -6,15 +6,21 @@ type Scoring = NonNullable<BlueprintExtraction["mock"]>["scoring"];
 type MarkingRow = Scoring["marking"][number];
 type Minimum = { unit: "percent" | "points"; value: number };
 
-const POINT_DECIMALS = 100;
-
 function describePoints(points: number): string {
   return `${points} ${points === 1 ? "point" : "points"}`;
 }
 
+function describeSelection(row: MarkingRow): string {
+  if (row.format !== "multipleChoice" || row.select === null) {
+    return "";
+  }
+
+  return row.select === 1 ? ", single choice" : `, select ${row.select}`;
+}
+
 function describeRowScope(row: MarkingRow): string {
   const part = row.part ? `"${row.part}"` : "the whole exam";
-  return row.format ? `${part} (${FORMAT_WORDS[row.format]})` : part;
+  return row.format ? `${part} (${FORMAT_WORDS[row.format]}${describeSelection(row)})` : part;
 }
 
 function describePenalty(row: MarkingRow & { wrongPenalty: number }): string {
@@ -22,8 +28,7 @@ function describePenalty(row: MarkingRow & { wrongPenalty: number }): string {
     return "a wrong answer costs no points";
   }
 
-  const lost = Math.round(row.points * row.wrongPenalty * POINT_DECIMALS) / POINT_DECIMALS;
-  return `each wrong answer takes away ${row.wrongPenalty} of a right answer's ${describePoints(row.points)}, about ${describePoints(lost)}`;
+  return `each wrong answer takes away exactly ${describePoints(row.wrongPenalty)}`;
 }
 
 type PointsSource = { documents: ExtractionDocument[]; found: Passage[]; scoring: Scoring };

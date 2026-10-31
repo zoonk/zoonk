@@ -20,6 +20,7 @@ export const mockMarkingSchema = z.object({
       name: z.string(),
       objective: z.boolean(),
       qualifying: z.boolean(),
+      questions: z.number().int().positive().nullable().optional(),
     }),
   ),
   totalMinimum: pointsMinimumSchema.nullable(),

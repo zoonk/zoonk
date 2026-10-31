@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { scoreMockPoints } from "../../exams/scoring/mock-points";
 import { blueprintExtraction } from "./_test-utils/blueprint-extraction";
 import { toBlueprintContent } from "./blueprint-content";
 import { listBlueprintFacts } from "./blueprint-facts";
@@ -92,6 +93,7 @@ const ROW_P1: Row = {
   passages: cite(LINES.p1, LINES.penalty),
   points: 1,
   questions: 40,
+  select: null,
   wrongPenalty: 1,
 };
 
@@ -101,7 +103,8 @@ const ROW_P2: Row = {
   passages: cite(LINES.p2, LINES.penalty),
   points: 1.5,
   questions: 60,
-  wrongPenalty: 1,
+  select: null,
+  wrongPenalty: 1.5,
 };
 
 const ROWS = [ROW_P1, ROW_P2];
@@ -269,5 +272,53 @@ describe("the points a notice gives", () => {
     });
 
     expect(scoring?.parts).toMatchObject([{ name: P3, qualifying: true }]);
+  });
+});
+
+describe("exact point deductions", () => {
+  it("checks the exact deduction and derives a repeating ratio in code", () => {
+    const marking = { ...ROW_P1, points: 3, wrongPenalty: 1 };
+    const extraction = extractionWith({ marking: [marking] });
+    const facts = listBlueprintFacts({ documents: DOCUMENTS, extraction });
+
+    expect(
+      facts.find((fact) => fact.id === "mock.scoring.marking.0.wrongPenalty")?.statement,
+    ).toContain("exactly 1 point");
+
+    expect(readScoring({ scoring: { marking: [marking] } })?.marking?.[0]?.wrongPenalty).toBe(
+      1 / 3,
+    );
+  });
+
+  it("scores five right and five wrong at +3/−1 as exactly ten points", () => {
+    const penalty = readScoring({
+      scoring: { marking: [{ ...ROW_P1, points: 3, wrongPenalty: 1 }] },
+    })?.marking?.[0]?.wrongPenalty;
+
+    expect(penalty).toBeDefined();
+    const item = { part: null, points: 3, wrongPenalty: penalty ?? 0 };
+
+    const answers = Array.from({ length: 10 }, (_, index) => ({
+      credit: index < 5 ? 1 : 0,
+      marking: item,
+      outcome: index < 5 ? ("right" as const) : ("wrong" as const),
+    }));
+
+    expect(
+      scoreMockPoints({
+        answers,
+        marking: { items: {}, maxPoints: null, parts: [], totalMinimum: null },
+        scope: "none",
+      }).earned,
+    ).toBe(10);
+  });
+
+  it("does not round an approximate deduction into an exact cited claim", () => {
+    const extraction = extractionWith({ marking: [{ ...ROW_P1, points: 3, wrongPenalty: 0.999 }] });
+    const facts = listBlueprintFacts({ documents: DOCUMENTS, extraction });
+
+    expect(
+      facts.find((fact) => fact.id === "mock.scoring.marking.0.wrongPenalty")?.statement,
+    ).toContain("exactly 0.999 points");
   });
 });

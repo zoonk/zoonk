@@ -40,7 +40,9 @@ function toMarking({
         part,
         points: row.points,
         questions: questions !== null && questions >= 1 ? questions : null,
-        wrongPenalty: penalty !== null && penalty >= 0 && penalty <= 1 ? penalty : null,
+        select: row.select,
+        wrongPenalty:
+          penalty !== null && penalty >= 0 && penalty <= row.points ? penalty / row.points : null,
       },
     ];
   });

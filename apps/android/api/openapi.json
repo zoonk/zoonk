@@ -85239,6 +85239,23 @@
                           "minimum": 1,
                           "maximum": 9007199254740991
                         },
+                        "select": {
+                          "description": "The number of options to select, or all for multiple selection; null when unstated",
+                          "nullable": true,
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 8
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "all"
+                              ]
+                            }
+                          ]
+                        },
                         "wrongPenalty": {
                           "nullable": true,
                           "description": "The share of `points` a wrong answer takes away; null when the notice doesn't say, so the exam's `wrongPenalty` applies",
