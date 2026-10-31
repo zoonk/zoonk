@@ -65,7 +65,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.BuildConfig
+import com.zoonk.android.data.BuildConfig
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppNavigator

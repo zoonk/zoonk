@@ -388,8 +388,9 @@ private fun elapsed(
     clockOffsetMillis: Long?,
 ): Long? {
     val startedAt = phase.startedAt ?: return null
+    val endedAt = phase.endedAt
     return when {
-        phase.status == PhaseStatus.Completed && phase.endedAt != null -> phase.endedAt - startedAt
+        phase.status == PhaseStatus.Completed && endedAt != null -> endedAt - startedAt
         phase.status == PhaseStatus.Active && following && clockOffsetMillis != null -> now - clockOffsetMillis - startedAt
         else -> null
     }?.coerceAtLeast(0)

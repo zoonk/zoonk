@@ -359,6 +359,7 @@ private fun Answer(
     val busy = state.answeringId != null || state.asking
     val failure = state.answerFailures[turn.id]
     val linksChecked = turn.id !in state.streamed
+    val answer = turn.answer
 
     when {
         turn.status == TutorTurn.Status.Pending && !streaming -> {
@@ -385,8 +386,8 @@ private fun Answer(
             }
         }
 
-        turn.answer != null -> {
-            AnswerText(turn.answer, linksChecked, routes.open)
+        answer != null -> {
+            AnswerText(answer, linksChecked, routes.open)
             if (turn.status == TutorTurn.Status.Running && !streaming) CheckAgain(enabled = !busy && others == 0) { vm.checkAgain(turn.id) }
         }
 

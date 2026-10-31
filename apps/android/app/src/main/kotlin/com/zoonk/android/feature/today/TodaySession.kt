@@ -431,7 +431,7 @@ private fun StepRow(
             )
 
             if (!finished) StepLines(model, step)
-            if (isNext && step.canTestOut && step.chapterId != null) TestOutLink(model, step.chapterId, onNavigate)
+            if (isNext && step.canTestOut) step.chapterId?.let { TestOutLink(model, it, onNavigate) }
         }
 
         if (!finished) {
@@ -561,12 +561,13 @@ private fun rowLabel(
         model.day.catchUp
             ?.positions
             ?.contains(step.position) == true
+    val subject = step.subject
     val label =
         when {
             step.practisesTopics -> shortTopicList(step.topics, named = 1)
-            !catchingUp && step.checkpoint != null -> listOfNotNull(step.subject, blockDetail(step)).factsLine()
-            !catchingUp -> step.subject
-            step.subject != null -> stringResource(R.string.today_step_catching_up_subject, step.subject)
+            !catchingUp && step.checkpoint != null -> listOfNotNull(subject, blockDetail(step)).factsLine()
+            !catchingUp -> subject
+            subject != null -> stringResource(R.string.today_step_catching_up_subject, subject)
             else -> stringResource(R.string.today_step_catching_up)
         }
 

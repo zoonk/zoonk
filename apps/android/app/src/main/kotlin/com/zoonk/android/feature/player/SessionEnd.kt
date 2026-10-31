@@ -25,15 +25,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-/** A session block's Continue and Stop for today (main's `useStudyNavigation`). */
-interface SessionSteps {
-    /** The session's next step, its summary once nothing is left, or Today when the day is over. */
-    suspend fun continueSession(sessionId: UUID): MutationResult<AppRoute>
-
-    /** The stopped session's summary. */
-    suspend fun stop(sessionId: UUID): MutationResult<AppRoute>
-}
-
 enum class SessionStep { Continue, Stop }
 
 /** A block's end while [pending] saves, after [failed], or [leaving] for the route it opened. */

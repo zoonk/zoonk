@@ -42,33 +42,6 @@ import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 import java.util.UUID
 
-/**
- * Main's `useFullCourse`: studying everything, an exam's past its date and another goal's without
- * one. [endDate] only for an exam, whose plan already knows it. A dated goal's plan practices until
- * its date, so its end without one is previewed when asked.
- */
-@Immutable
-internal data class FullCourse(
-    val isExam: Boolean,
-    val on: Boolean,
-    val endDate: LocalDate?,
-    val targetDate: LocalDate,
-    val targetDateNamedMonth: Boolean,
-) {
-    fun operations(on: Boolean): List<PlanOp> = if (isExam) listOf(PlanOp.FullCourse(on)) else listOf(PlanOp.TargetDate(null))
-}
-
-/** Null when there's nothing to choose. */
-internal fun fullCourse(page: PlanPageState): FullCourse? {
-    val plan = page.plan
-    val schedule = plan.schedule
-    val target = schedule.targetDate ?: return null
-    val fits = plan.feasibility?.fits ?: false
-    if (page.goal.kind == LearnerSummaryGoal.Kind.EXPLAIN || (page.isExam && fits && !schedule.fullCourse)) return null
-    val end = if (page.isExam) plan.estimate.fullCourseEndDate else null
-    return FullCourse(page.isExam, schedule.fullCourse, end?.toJavaLocalDate(), target.toJavaLocalDate(), schedule.targetDateNamedMonth)
-}
-
 /** Names the exam's year beside the finish's, so November 2027 never reads as the exam's month. */
 @Composable
 internal fun finishText(

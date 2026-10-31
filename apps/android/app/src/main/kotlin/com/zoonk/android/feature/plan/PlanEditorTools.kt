@@ -48,15 +48,6 @@ import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.api.models.PlanTool
 import java.util.UUID
 
-/** What the learner answers for one or more of the plan's tools; [system] is the device a setup is for. */
-data class ToolAnswer(
-    val tools: List<String>,
-    val choice: PlanTool.Choice,
-    val system: PlanTool.System? = null,
-) {
-    val operation: PlanOp get() = PlanOp.Tools(tools.map { ToolPick(it, choice.value, system?.value) })
-}
-
 /** Main's `PlanTools`: tools only later phases use are listed under "More later" instead of asked now. */
 @Composable
 internal fun PlanTools(

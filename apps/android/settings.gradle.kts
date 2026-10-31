@@ -18,4 +18,4 @@ dependencyResolutionManagement {
 rootProject.name = "ZoonkAndroid"
 
 include(":app", ":api", ":lint-checks")
-include(":core:navigation", ":core:resources")
+include(":core:data", ":core:navigation", ":core:resources")

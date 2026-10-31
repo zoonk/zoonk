@@ -27,14 +27,6 @@ import java.util.UUID
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 
-/** The box's text, and the draft being graded with its attempt, so sending it again after the process ends is graded once. */
-@Serializable
-data class UnsentEssay(
-    val text: String,
-    val attemptId: String? = null,
-    val sent: String? = null,
-)
-
 private val Essay.closed get() = status == Essay.Status.COMPLETED || status == Essay.Status.SKIPPED
 
 enum class EssayMode { Grade, Write }

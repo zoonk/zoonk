@@ -38,16 +38,6 @@ import com.zoonk.api.models.ItemAnswerInput
 import kotlinx.serialization.Serializable
 import java.util.UUID
 
-/** One answer of a run graded only at its end, in the API's shape. */
-@Serializable
-data class GradedAnswer(
-    val itemId: String,
-    val answer: Answer,
-    val durationMs: Long,
-)
-
-fun GradedAnswer.input() = ItemAnswerInput(answer.recode(), durationMs, UUID.fromString(itemId))
-
 enum class UndoState { Idle, Pending, Done, Failed }
 
 @Composable
@@ -71,13 +61,6 @@ internal fun UndoAction(
         ) { Text(stringResource(R.string.practice_undo)) }
     }
 }
-
-/** A run's answers so far and the id they're sent with, kept until graded so a send that never answered counts once. */
-@Serializable
-data class AnswersDraft(
-    val requestId: String,
-    val answers: List<GradedAnswer> = emptyList(),
-)
 
 /**
  * The answers that match the questions in order, short of the last one, so reopening a run while

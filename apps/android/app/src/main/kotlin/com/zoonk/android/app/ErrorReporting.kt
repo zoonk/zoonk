@@ -14,7 +14,7 @@ internal fun startErrorReporting(context: Context) {
     if (BuildConfig.SENTRY_DSN.isEmpty()) return
     SentryAndroid.init(context) { options ->
         options.dsn = BuildConfig.SENTRY_DSN
-        options.configureReporting(apiBaseUrl = BuildConfig.API_BASE_URL)
+        options.configureReporting(apiBaseUrl = com.zoonk.android.data.BuildConfig.API_BASE_URL)
     }
 }
 

@@ -9,8 +9,9 @@ import kotlinx.coroutines.cancel
 
 class ZoonkApplication :
     Application(),
-    SingletonImageLoader.Factory {
-    lateinit var container: AppContainer
+    SingletonImageLoader.Factory,
+    ContainerApplication {
+    override lateinit var container: AppContainer
         private set
 
     override fun onCreate() {

@@ -15,17 +15,6 @@ import com.zoonk.api.models.Milestone
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-class MilestoneViews(
-    private val api: ApiClients,
-    private val cache: AppCache,
-) {
-    /** So a ceremony shows once, wherever its milestone is read next. */
-    suspend fun markShown(milestoneId: UUID): Boolean =
-        cache.mutate(invalidating = setOf(DataDomain.UserProgress)) { session ->
-            perform { api.clients(session).milestones.createMilestoneView(milestoneId) }
-        } is MutationResult.Done
-}
-
 /** A finished block's or lesson's ceremony, shown before its moment, as main's `SessionCeremony` is. */
 @Composable
 fun SessionCeremony(

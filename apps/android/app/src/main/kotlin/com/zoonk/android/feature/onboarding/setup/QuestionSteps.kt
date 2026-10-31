@@ -245,15 +245,6 @@ internal fun ColumnScope.PurposeStep(
     }
 }
 
-/** The quick test is the answer of a learner who isn't sure, and leaves their level to placement. */
-internal sealed interface LevelChoice {
-    data class Own(
-        val level: OnboardingAnswerInputOneOf7.Level,
-    ) : LevelChoice
-
-    data object QuickTest : LevelChoice
-}
-
 @Composable
 internal fun ColumnScope.LevelStep(
     subject: String,

@@ -1,5 +1,4 @@
 import io.sentry.android.gradle.extensions.InstrumentationFeature
-import java.util.Properties
 
 plugins {
     id("zoonk.android.application")
@@ -8,29 +7,14 @@ plugins {
     alias(libs.plugins.sentry.android)
 }
 
-// Written by `pnpm dev`; without it, `pnpm dev:direct`'s port.
-val localApiBaseUrl =
-    providers
-        .fileContents(layout.projectDirectory.file("../local-development.properties"))
-        .asText
-        .map { Properties().apply { load(it.reader()) }.getProperty("apiBaseUrl") }
-        .orElse("http://localhost:4000")
-
 android {
     // The resources module took `com.zoonk.android`, so its `R` keeps that name.
     namespace = "com.zoonk.android.app"
 
     defaultConfig {
         applicationId = "com.zoonk"
-        versionCode = 1
-        versionName = "0.1.0"
-        // Google's Web client, the audience Zoonk's API accepts; without it there's no Google button.
-        buildConfigField(
-            "String",
-            "GOOGLE_SERVER_CLIENT_ID",
-            "\"${providers.environmentVariable("GOOGLE_SERVER_CLIENT_ID").getOrElse("")}\"",
-        )
-        buildConfigField("String", "APPLE_CLIENT_ID", "\"${providers.environmentVariable("APPLE_CLIENT_ID").getOrElse("")}\"")
+        versionCode = providers.gradleProperty("zoonk.versionCode").get().toInt()
+        versionName = providers.gradleProperty("zoonk.versionName").get()
     }
 
     buildTypes {
@@ -38,19 +22,10 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
             isPseudoLocalesEnabled = true
-            buildConfigField("String", "API_BASE_URL", "\"${localApiBaseUrl.get()}\"")
-            // The API refuses tokens for `com.zoonk.debug`, so a debug build sends none rather than spend Google decodes.
-            buildConfigField("String", "PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER", "\"\"")
             buildConfigField("String", "SENTRY_DSN", "\"\"")
         }
 
         release {
-            buildConfigField("String", "API_BASE_URL", "\"https://api.zoonk.com\"")
-            buildConfigField(
-                "String",
-                "PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER",
-                "\"${providers.environmentVariable("PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER").getOrElse("")}\"",
-            )
             buildConfigField("String", "SENTRY_DSN", "\"${providers.gradleProperty("sentryDsn").getOrElse("")}\"")
             isMinifyEnabled = true
             isShrinkResources = true
@@ -105,6 +80,7 @@ dependencies {
     // First, so our strings that replace a library's (close_sheet) win the resource merge.
     implementation(project(":core:resources"))
     implementation(project(":core:navigation"))
+    implementation(project(":core:data"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -166,6 +142,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.leakcanary.android)
 
+    testImplementation(testFixtures(project(":core:data")))
     testImplementation(testFixtures(project(":core:navigation")))
     testImplementation(composeBom)
     testImplementation(libs.androidx.compose.ui.test.junit4)
