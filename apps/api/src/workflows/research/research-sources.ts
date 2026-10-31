@@ -138,7 +138,13 @@ export async function findAndStoreSources({
       ? copies
       : [...stored, ...copies];
 
-  const sourceIds = readable.map((source) => source.sourceId);
+  // The reading takes the first document as the notice whose hash the blueprint keeps.
+  const sourceIds = readable
+    .toSorted(
+      (first, second) =>
+        Number(second.documentType === "notice") - Number(first.documentType === "notice"),
+    )
+    .map((source) => source.sourceId);
 
   return { board: found.board, sourceIds: [...new Set(sourceIds)] };
 }

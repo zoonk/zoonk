@@ -650,13 +650,7 @@ describe(researchWorkflow, () => {
       readFixture("tcdf-2026-notice.txt"),
     ]);
 
-    const fromCopy = allBlocked
-      ? extraction
-      : (JSON.parse(
-          JSON.stringify(extraction).replaceAll('"document":1', '"document":2'),
-        ) as BlueprintExtraction);
-
-    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...READING_RESULT, data: fromCopy });
+    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...READING_RESULT, data: extraction });
 
     const suffix = randomUUID();
 
@@ -730,7 +724,7 @@ describe(researchWorkflow, () => {
     const [reading] = vi.mocked(extractExamBlueprint).mock.calls.map(([input]) => input);
     const urls = reading?.documents.map((document) => document.url) ?? [];
 
-    expect(urls).toStrictEqual(allBlocked ? [readableCopy.url] : [newsPage.url, readableCopy.url]);
+    expect(urls).toStrictEqual(allBlocked ? [readableCopy.url] : [readableCopy.url, newsPage.url]);
 
     const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
       include: { source: true },
@@ -742,6 +736,7 @@ describe(researchWorkflow, () => {
       },
     });
 
+    expect(blueprint.source?.url).toBe(readableCopy.url);
     expect(examStructureSchema.parse(blueprint.structure).subjects.length).toBeGreaterThan(0);
   });
 
