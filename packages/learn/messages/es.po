@@ -794,7 +794,7 @@ msgstr "Cinturón blanco"
 #: src/_utils/use-choice-left-out.ts
 msgctxt "8GYum4"
 msgid "Until you pick, your plan and mocks leave out {name}: {count, number} of the exam's {total, number} points."
-msgstr "Hasta que elijas una opción, tu plan y tus simulacros omiten {name}: {count, number} de los {total, number} puntos del examen."
+msgstr "Hasta que elijas, tu plan y tus simulacros omiten {name}: {count, number} de los {total, number} puntos del examen."
 
 #. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
 #: src/_utils/use-choice-left-out.ts
@@ -2460,7 +2460,7 @@ msgstr "Avanzado"
 #: src/essay/essay-closed.tsx
 msgctxt "af7HsK"
 msgid "You skipped this essay."
-msgstr "Te has saltado esta redacción."
+msgstr "Te saltaste esta redacción."
 
 #: src/essay/essay-feedback.tsx
 msgctxt "H9233U"
@@ -2696,7 +2696,7 @@ msgstr "No se pudo completar. Tu texto sigue aquí. Inténtalo de nuevo en un mo
 #: src/essay/essay-screen.tsx
 msgctxt "yDPN7m"
 msgid "You've reached your daily time limit. Your text stays here."
-msgstr "Has alcanzado tu límite de tiempo diario. Tu texto seguirá aquí."
+msgstr "Alcanzaste tu límite de tiempo diario. Tu texto se queda aquí."
 
 #: src/essay/essay-screen.tsx
 msgctxt "Vl53xq"
@@ -7453,7 +7453,7 @@ msgstr "Tiempo restante para esta pregunta"
 #: src/mock/mock-notes.tsx
 msgctxt "ojUkTG"
 msgid "{name} is left out until you pick which one you take, in your plan."
-msgstr "{name} se omite hasta que elijas en tu plan la opción de la que vas a examinarte."
+msgstr "{name} se omite hasta que elijas en tu plan cuál vas a presentar."
 
 #: src/mock/mock-notes.tsx
 msgctxt "rpHBhB"
@@ -7543,7 +7543,7 @@ msgstr "Este simulacro muestra cuántas preguntas respondiste bien."
 #: src/mock/mock-option-labels.ts
 msgctxt "LB2EVt"
 msgid "Exam day {day} without {names}"
-msgstr "Día de examen {day} sin {names}"
+msgstr "Día {day} del examen sin {names}"
 
 #: src/mock/mock-option-labels.ts
 msgctxt "24Y1kW"
@@ -7859,17 +7859,17 @@ msgstr "Tu plan"
 #: src/mock/mock-result-points.tsx
 msgctxt "cT7Wf1"
 msgid "{unit, select, percent {At {score}, below the {minimum} it needs} other {{short, plural, one {# point} other {# points}} short of the {minimum} it needs}}"
-msgstr "{unit, select, percent {Con {score}, por debajo del mínimo de {minimum}} other {A {short, plural, one {# punto} other {# puntos}} del mínimo de {minimum}}}"
+msgstr "{unit, select, percent {Con {score}, por debajo del {minimum} que necesita} other {{short, plural, one {A # punto} other {A # puntos}} del mínimo de {minimum}}}"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "I-wYX9"
 msgid "{unit, select, percent {Reached the {minimum} it needs} other {Reached the {value, plural, one {# point} other {# points}} it needs}}"
-msgstr "{unit, select, percent {Ha alcanzado el mínimo de {minimum}} other {Ha alcanzado {value, plural, one {el # punto que necesita} other {los # puntos que necesita}}}}"
+msgstr "{unit, select, percent {Alcanzó el mínimo de {minimum}} other {Alcanzó el mínimo de {value, plural, one {# punto} other {# puntos}}}}"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "G7GP7-"
 msgid "Needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}}"
-msgstr "Necesita {unit, select, percent {{minimum} de sus puntos} other {{value, plural, one {# punto} other {# puntos}}}}"
+msgstr "Necesita {unit, select, percent {el {minimum} de sus puntos} other {{value, plural, one {# punto} other {# puntos}}}}"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "8Qf9bm"
@@ -7884,37 +7884,37 @@ msgstr "Pruebas objetivas en conjunto"
 #: src/mock/mock-result-points.tsx
 msgctxt "5JW5j4"
 msgid "You'd be eliminated: the objective tests together {unit, select, percent {reach {score}, below the {minimum} they need} other {are {short, plural, one {# point} other {# points}} short of {minimum}}}."
-msgstr "Quedarías fuera: las pruebas objetivas en conjunto {unit, select, percent {alcanzan {score}, por debajo del mínimo de {minimum}} other {se quedan a {short, plural, one {# punto} other {# puntos}} del mínimo de {minimum}}}."
+msgstr "Quedarías fuera: las pruebas objetivas en conjunto {unit, select, percent {alcanzan el {score}, por debajo del {minimum} que necesitan} other {quedan {short, plural, one {# punto} other {# puntos}} por debajo de {minimum}}}."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "f6NtkC"
 msgid "You'd be eliminated: {name} {unit, select, percent {is at {score}, below the {minimum} it needs} other {is {short, plural, one {# point} other {# points}} short of {minimum}}}."
-msgstr "Quedarías fuera: {name} {unit, select, percent {alcanza {score}, por debajo del mínimo de {minimum}} other {se queda a {short, plural, one {# punto} other {# puntos}} del mínimo de {minimum}}}."
+msgstr "Quedarías fuera: {name} {unit, select, percent {alcanza el {score}, por debajo del {minimum} que necesita} other {queda {short, plural, one {# punto} other {# puntos}} por debajo de {minimum}}}."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "IiVFOl"
 msgid "Meets the objective minimums checked here."
-msgstr "Cumple los mínimos que se comprueban aquí para las pruebas objetivas."
+msgstr "Cumple los mínimos de las pruebas objetivas evaluadas aquí."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "iUqCgB"
 msgid "About {projected} of {max} points on the whole exam, projected from this mock. Only a full mock says whether you'd reach the minimums."
-msgstr "Aproximadamente {projected} de {max} puntos en el examen completo, según la estimación basada en este simulacro. Solo un simulacro completo permite saber si alcanzarías los mínimos."
+msgstr "Aproximadamente {projected} de {max} puntos en todo el examen, según la proyección de este simulacro. Solo un simulacro completo permite saber si alcanzarías los mínimos."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "0FUIoF"
 msgid "Each test's points are projected onto its whole length. Only a full mock says whether you'd reach the minimums."
-msgstr "La puntuación de cada prueba se estima como si la hubieras hecho completa. Solo un simulacro completo permite saber si alcanzarías los mínimos."
+msgstr "Se estima qué puntaje obtendrías en cada prueba completa. Solo un simulacro completo permite saber si alcanzarías los mínimos."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JcMiUs"
 msgid "The objective tests together need {unit, select, percent {{minimum} of their points} other {{value, plural, one {# point} other {# points}}}}, and this mock doesn't have them all."
-msgstr "Las pruebas objetivas en conjunto requieren {unit, select, percent {{minimum} de sus puntos} other {{value, plural, one {# punto} other {# puntos}}}}, y este simulacro no las incluye todas."
+msgstr "Las pruebas objetivas en conjunto necesitan {unit, select, percent {el {minimum} de sus puntos} other {{value, plural, one {# punto} other {# puntos}}}}, y este simulacro no las incluye todas."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "VIKtKQ"
 msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}} and isn't in this mock."
-msgstr "{name} requiere {unit, select, percent {{minimum} de sus puntos} other {{value, plural, one {# punto} other {# puntos}}}} y no forma parte de este simulacro."
+msgstr "{name} necesita {unit, select, percent {el {minimum} de sus puntos} other {{value, plural, one {# punto} other {# puntos}}}} y no se incluye en este simulacro."
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
@@ -9613,7 +9613,7 @@ msgstr "Fecha límite"
 #: src/onboarding/understood/understood-date-row.ts
 msgctxt "oxqgs5"
 msgid "You pick this test's day when you book it. Booked already? Set it here."
-msgstr "Eliges la fecha de esta prueba al reservarla. ¿Ya la has reservado? Indícala aquí."
+msgstr "Eliges la fecha de esta prueba cuando la reservas. ¿Ya la reservaste? Ingresa la fecha aquí."
 
 #: src/onboarding/understood/understood-date-row.ts
 msgctxt "dnMNKB"
