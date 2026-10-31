@@ -9,7 +9,7 @@ import { type PlacementSkill } from "../placement/placement-graph";
 import {
   type ItemSkillRows,
   type SkillEntry,
-  expandItem,
+  expandItems,
   firstPerSkill,
   getPhaseAreaId,
   toGraphEntries,
@@ -154,7 +154,7 @@ async function loadPlanEntryRows(input: PlanRead) {
 
   const itemSkills = await loadItemSkills(plan.items, getLibrarySource(input));
 
-  const itemEntries = plan.items.flatMap((item) => expandItem({ item, skills: itemSkills }));
+  const itemEntries = expandItems({ items: plan.items, skills: itemSkills });
   const planned = itemEntries.length > 0 ? itemEntries : toGraphEntries(plan.graph);
 
   const leftOut = withLeftOut
@@ -221,15 +221,15 @@ async function loadPlan(input: PlanRead): Promise<GoalPlan> {
   const graph = parsePlanGraph(plan.graph);
   const sections = new Map(graph.skills.map((skill) => [skill.skillId, skill.area]));
 
-  const foundations = getFoundationSkillIds({
-    graph,
-    prerequisites: new Map(
-      [...Map.groupBy(edges, (edge) => edge.skillId)].map(([skillId, list]) => [
-        skillId,
-        list.map((edge) => edge.prerequisiteId),
-      ]),
-    ),
-  });
+  const prerequisites = new Map(
+    [...Map.groupBy(edges, (edge) => edge.skillId)].map(([skillId, list]) => [
+      skillId,
+      list.map((edge) => edge.prerequisiteId),
+    ]),
+  );
+
+  const foundations = getFoundationSkillIds({ graph, prerequisites });
+  const itemEntries = Map.groupBy(allEntries, (entry) => entry.planItemId);
 
   const bandOf = new Map(bands.map((skill) => [skill.id, skill.level]));
 
@@ -244,9 +244,7 @@ async function loadPlan(input: PlanRead): Promise<GoalPlan> {
     items: plan.items.map((item) => ({
       chapterId: item.chapterId,
       id: item.id,
-      skillIds: unique(
-        allEntries.filter((entry) => entry.planItemId === item.id).map((entry) => entry.skillId),
-      ),
+      skillIds: unique((itemEntries.get(item.id) ?? []).map((entry) => entry.skillId)),
       status: item.status,
     })),
     skills: entries.map((entry, order) => ({
@@ -258,9 +256,7 @@ async function loadPlan(input: PlanRead): Promise<GoalPlan> {
       memberSkillIds: toMemberSkillIds(entry.skillId, membersOf),
       order,
       phase: entry.phase,
-      prerequisiteIds: edges
-        .filter((edge) => edge.skillId === entry.skillId)
-        .map((edge) => edge.prerequisiteId),
+      prerequisiteIds: prerequisites.get(entry.skillId) ?? [],
       sectionTitle: sections.get(entry.skillId) ?? itemSections.get(entry.planItemId) ?? null,
     })),
   };

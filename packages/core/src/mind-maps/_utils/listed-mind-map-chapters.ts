@@ -101,7 +101,7 @@ export function mindMapChapterRows(goals: Sql): Sql {
             AND h.lesson_id IS NOT NULL
         )
       ),
-      -- What each item teaches, in teaching order, where expandItem files it (null: a phase).
+      -- What each item teaches, in teaching order, where expandItems files it (null: a phase).
       entries AS (
         SELECT
           f.goal_id, f.id AS item_id, f.position, 0::bigint AS ord, s.id AS skill_id,

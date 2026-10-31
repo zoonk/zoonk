@@ -31,40 +31,49 @@ export function getPhaseAreaId(phase: number): string {
   return `phase:${phase}`;
 }
 
-export function expandItem({
-  item,
+export function expandItems({
+  items,
   skills,
 }: {
-  item: ProjectedPlanItem;
+  items: readonly ProjectedPlanItem[];
   skills: ItemSkillRows;
 }): SkillEntry[] {
-  const fallbackArea = item.chapterId ?? getPhaseAreaId(item.phase);
-  const base = { phase: item.phase, planItemId: item.id };
+  const lessonRows = Map.groupBy(skills.lessonSkills, (row) => row.lessonId);
+  const chapterRows = Map.groupBy(skills.chapterLessons, (row) => row.chapterId);
 
-  if (item.skillId) {
-    return [{ ...base, areaId: fallbackArea, skillId: item.skillId }];
-  }
+  return items.flatMap((item) => {
+    const fallbackArea = item.chapterId ?? getPhaseAreaId(item.phase);
+    const base = { phase: item.phase, planItemId: item.id };
 
-  if (item.lessonId) {
-    return skills.lessonSkills
-      .filter((row) => row.lessonId === item.lessonId)
-      .map((row) => ({
+    if (item.skillId) {
+      return [{ ...base, areaId: fallbackArea, skillId: item.skillId }];
+    }
+
+    if (item.lessonId) {
+      return (lessonRows.get(item.lessonId) ?? []).map((row) => ({
         ...base,
         areaId: item.chapterId ?? row.lesson.homeChapterId ?? fallbackArea,
         skillId: row.skillId,
       }));
-  }
+    }
 
-  return skills.chapterLessons
-    .filter((row) => row.chapterId === item.chapterId)
-    .flatMap((row) => row.lesson.skills)
-    .map((row) => ({ ...base, areaId: fallbackArea, skillId: row.skillId }));
+    return (item.chapterId === null ? [] : (chapterRows.get(item.chapterId) ?? []))
+      .flatMap((row) => row.lesson.skills)
+      .map((row) => ({ ...base, areaId: fallbackArea, skillId: row.skillId }));
+  });
 }
 
 export function firstPerSkill(entries: readonly SkillEntry[]): SkillEntry[] {
-  return entries.filter(
-    (entry, index) => entries.findIndex((other) => other.skillId === entry.skillId) === index,
-  );
+  const seen = new Set<string>();
+
+  return entries.filter((entry) => {
+    if (seen.has(entry.skillId)) {
+      return false;
+    }
+
+    seen.add(entry.skillId);
+    return true;
+  });
 }
 
 /** Empty plans still need graph skills for mocks and review when no teaching fits. */
@@ -89,17 +98,16 @@ export function projectPlanSkills({
   rows: ItemSkillRows;
   survivorOf: (skillId: string) => string;
 }): { itemSkillIds: Map<string, string[]>; skillIds: string[] } {
-  const expanded = items.flatMap((item) => expandItem({ item, skills: rows }));
+  const expanded = expandItems({ items, skills: rows });
   const planned = expanded.length > 0 ? expanded : toGraphEntries(graph);
   const entries = planned.map((entry) => ({ ...entry, skillId: survivorOf(entry.skillId) }));
+  const itemEntries = Map.groupBy(entries, (entry) => entry.planItemId);
 
   return {
     itemSkillIds: new Map(
       items.map((item) => [
         item.id,
-        unique(
-          entries.filter((entry) => entry.planItemId === item.id).map((entry) => entry.skillId),
-        ),
+        unique((itemEntries.get(item.id) ?? []).map((entry) => entry.skillId)),
       ]),
     ),
     skillIds: firstPerSkill(entries).map((entry) => entry.skillId),
