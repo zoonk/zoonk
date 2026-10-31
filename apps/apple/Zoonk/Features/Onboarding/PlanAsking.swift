@@ -12,8 +12,9 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer, C: Clock<Du
   enum Status: Equatable, Sendable {
     case idle
     case asking
-    /// An ask that went unanswered too long (it keeps asking) or three failures in a row: `restart`
-    /// asks again. A plan that stays unready while its research runs keeps being asked.
+    /// An ask that went unanswered too long (it keeps asking, and its answer clears this) or three
+    /// failures in a row: `restart` asks again. A plan that stays unready while its research runs
+    /// keeps being asked.
     case failed
   }
 
@@ -102,6 +103,8 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer, C: Clock<Du
           status = .idle
           return
         }
+
+        status = .asking
       } catch {
         guard !(error is CancellationError), !Task.isCancelled else {
           return

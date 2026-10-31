@@ -278,6 +278,32 @@ final class PlanAskingTests: XCTestCase {
     server.releaseNext()
   }
 
+  func testAnAnswerAfterATimeoutClearsTheFailureWhileItKeepsAsking() async {
+    final class Asks {
+      var count = 0
+      var statusOnRetry: PlanAsking<String, Answer, ContinuousClock>.Status?
+    }
+
+    let asking = makeAsking(timeout: .milliseconds(200))
+    let asks = Asks()
+
+    // The first answer comes between the first timeout and the second.
+    await asking.ask("a", when: true) {
+      asks.count += 1
+
+      guard asks.count > 1 else {
+        try await Task.sleep(for: .milliseconds(300))
+        return Answer(id: 1, ready: false)
+      }
+
+      asks.statusOnRetry = asking.status
+      return Answer(id: 2, ready: true)
+    }
+
+    XCTAssertEqual(asks.statusOnRetry, .asking)
+    XCTAssertEqual(asking.status, .idle)
+  }
+
   func testAWeekWaitingForTheLaneFailsInTimeWithoutBeingSent() async {
     let asking = makeAsking(timeout: .milliseconds(20))
     let server = HeldRequests()
