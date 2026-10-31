@@ -37,7 +37,7 @@ export async function submitEssay({
     return found;
   }
 
-  const { block, blueprint, content, goal, item, sessionDate, sessionId, userId } = found.owned;
+  const { block, blueprint, content, goal, item, sessionId, userId } = found.owned;
 
   const attemptId = input.attemptId
     ? getAnswerAttemptId({ key: input.attemptId, questionId: blockId, userId })
@@ -51,10 +51,10 @@ export async function submitEssay({
 
   const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
   const localDate = getDateInTimeZone({ date: new Date(), timeZone });
-  const isTodays = sessionDate.getTime() === localDate.getTime();
 
+  // A written essay is graded even after its day ended, so the send takes on a block from any day.
   const started =
-    block.status === "pending" && isTodays
+    block.status === "pending"
       ? await startStudyBlock({ blockId, input: { timeZone: input.timeZone }, sessionId })
       : null;
 

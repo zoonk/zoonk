@@ -16,6 +16,8 @@ import { endEssayGradeClaim } from "./_utils/essay-grade-claims";
 import { getEssay } from "./get-essay";
 import { submitEssay } from "./submit-essay";
 
+const AFTER_MIDNIGHT = new Date("2026-10-01T00:05:00Z");
+
 const GRADE = {
   criteria: [1, 2, 3, 4, 5].map((index) => ({
     comment: `Comment ${index}`,
@@ -568,36 +570,31 @@ describe("essay drafts and access", () => {
     await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
-  it("starts today's writing block when a draft is sent, but never another day's", async () => {
-    const { goal } = await essaySetup();
+  it("grades a draft sent after midnight from a writing page opened the day before, on its own block", async () => {
+    const { goal, user } = await essaySetup();
     const today = await getTodayStudySession({ goalId: goal.id });
     const blocks = today.status === "ready" ? today.session.blocks : [];
     const sessionId = today.status === "ready" ? today.session.id : "";
     const blockId = blocks.find((block) => block.kind === "produce")?.id ?? "";
-    const input = { durationMs: 1000, text: "Draft" };
 
-    const { localDate } = await prisma.studySession.findUniqueOrThrow({ where: { id: sessionId } });
-    const yesterday = new Date(localDate.getTime() - DAY_MS);
+    await getEssay({ blockId });
+    vi.setSystemTime(AFTER_MIDNIGHT);
 
-    await prisma.studySession.update({ data: { localDate: yesterday }, where: { id: sessionId } });
+    await expect(
+      submitEssay({ blockId, input: { durationMs: 1000, text: "My essay about it." } }),
+    ).resolves.toMatchObject({ grade: { total: { score: 720 } }, status: "graded" });
 
-    await expect(submitEssay({ blockId, input })).resolves.toStrictEqual({
-      status: "blockNotActive",
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } }),
+    ).resolves.toMatchObject({ sessionId, status: "active" });
+
+    await expect(
+      prisma.attempt.findFirstOrThrow({ where: { userId: user.id } }),
+    ).resolves.toMatchObject({ studySessionId: sessionId });
+
+    await expect(finishStudyBlock({ blockId, input: {}, sessionId })).resolves.toMatchObject({
+      status: "ready",
     });
-
-    expect(gradeEssay).not.toHaveBeenCalled();
-
-    await expect(
-      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } }),
-    ).resolves.toMatchObject({ startedAt: null, status: "pending" });
-
-    await prisma.studySession.update({ data: { localDate }, where: { id: sessionId } });
-
-    await expect(submitEssay({ blockId, input })).resolves.toMatchObject({ status: "graded" });
-
-    await expect(
-      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } }),
-    ).resolves.toMatchObject({ status: "active" });
   });
 
   it("keeps a writing block to its learner, and only a writing block", async () => {

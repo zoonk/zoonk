@@ -122,7 +122,7 @@ test.describe("Essays API", () => {
     await anonymous.dispose();
   });
 
-  test("shows the writing block to its learner only and grades nothing for another day's block", async () => {
+  test("shows the writing block to its learner only and grades a draft for yesterday's block", async () => {
     const [learner, other] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "essay" }),
       createBearerLearner({ baseURL, prefix: "essay-other" }),
@@ -155,10 +155,10 @@ test.describe("Essays API", () => {
       status: "pending",
     });
 
-    const notStarted = await learner.api.post(`${path}/submissions`, { data: DRAFT });
+    const sent = await learner.api.post(`${path}/submissions`, { data: DRAFT });
 
-    expect(notStarted.status()).toBe(409);
-    await expect(notStarted.json()).resolves.toMatchObject({ error: { code: "BLOCK_NOT_ACTIVE" } });
+    expect(sent.status()).toBe(200);
+    await expect(sent.json()).resolves.toMatchObject({ zeroReason: "tooShort" });
 
     const refusals = await Promise.all([
       other.api.get(path),
@@ -175,7 +175,7 @@ test.describe("Essays API", () => {
     ]);
 
     const attempts = await prisma.attempt.count({ where: { userId: learner.userId } });
-    expect(attempts).toBe(0);
+    expect(attempts).toBe(1);
 
     await Promise.all([learner.api.dispose(), other.api.dispose()]);
   });
