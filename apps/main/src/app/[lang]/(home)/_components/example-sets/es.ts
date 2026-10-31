@@ -14,8 +14,6 @@ const inferences = {
 
 export const es: ExampleSet = {
   exam: {
-    // The UANL's sitting; each university sets its own.
-    date: "2026-05-30",
     goal: (month) => `prepararme para el EXANI-II en ${month}`,
     mock: {
       score: "1080–1140",
@@ -55,7 +53,10 @@ export const es: ExampleSet = {
         "En la tiendita, 3 refrescos y 2 bolsas de papas cuestan $64. Si cada refresco cuesta $12, ¿cuánto cuesta una bolsa de papas?",
       subject: math,
     },
+    // The UANL's sittings; each university sets its own.
+    sittings: ["2026-11-07"],
     subjects: [math, reading, writing, chemistry],
+    timeZone: "America/Monterrey",
     today: [
       inferences,
       { id: "proportions", minutes: 5, subject: math, title: "Razones y proporciones" },

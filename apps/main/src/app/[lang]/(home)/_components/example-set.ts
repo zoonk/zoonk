@@ -21,8 +21,8 @@ type ExamOption = { result?: "right" | "wrong"; text: string };
 export type ExamExample = {
   /** Its researched exam days come first while the Library course is published. */
   course?: { brandSlug: string; courseSlug: string };
-  /** An official sitting; later years keep its weekday. */
-  date: string;
+  /** Published sittings in order; after the last one, later years keep its weekday until the list is updated. */
+  sittings: readonly [string, ...string[]];
   /** Like `planName`, gets the exam month's name; a language that inflects it ("w maju") writes the month itself. */
   goal: (month: string) => string;
   mock: {
@@ -44,6 +44,8 @@ export type ExamExample = {
     subject: ExamSubject;
   };
   subjects: readonly ExamSubject[];
+  /** An IANA zone; the example counts days from today there. */
+  timeZone: string;
   /** Today's lessons, which also come back tomorrow after a day without studying. */
   today: readonly [ExamLesson, ExamLesson, ExamLesson];
   tomorrow: { lessons: readonly [ExamLesson, ExamLesson, ...ExamLesson[]]; review: ExamLesson };

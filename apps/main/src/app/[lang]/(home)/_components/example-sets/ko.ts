@@ -10,7 +10,6 @@ const poetry = { id: "poetry", minutes: 5, subject: korean, title: "현대시: �
 
 export const ko: ExampleSet = {
   exam: {
-    date: "2026-11-19",
     goal: (month) => `${month} 수능 준비하기`,
     mock: {
       score: "2–3등급",
@@ -50,7 +49,9 @@ export const ko: ExampleSet = {
       question: "함수 f(x) = x³ − 3x² + 2의 극솟값은?",
       subject: math,
     },
+    sittings: ["2026-11-19", "2027-11-18"],
     subjects: [korean, math, english, history, inquiry],
+    timeZone: "Asia/Seoul",
     today: [
       poetry,
       { id: "sequences", minutes: 6, subject: math, title: "수열의 합" },

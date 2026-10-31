@@ -9,8 +9,6 @@ const poetry = { id: "poetry", minutes: 5, subject: german, title: "Lyrik des Ex
 
 export const de: ExampleSet = {
   exam: {
-    // North Rhine-Westphalia's first written exam; each state sets its own dates.
-    date: "2027-04-13",
     goal: (month) => `mich aufs Abitur im ${month} vorbereiten`,
     mock: {
       score: "10–12 Punkte",
@@ -50,7 +48,10 @@ export const de: ExampleSet = {
         "Gegeben ist die Funktion f mit f(x) = x³ − 3x. An welcher Stelle hat der Graph von f einen Tiefpunkt?",
       subject: math,
     },
+    // North Rhine-Westphalia's first written exam; each state sets its own dates.
+    sittings: ["2027-04-13"],
     subjects: [german, math, english, history],
+    timeZone: "Europe/Berlin",
     today: [
       poetry,
       { id: "extrema", minutes: 6, subject: math, title: "Ableitung und Extrempunkte" },

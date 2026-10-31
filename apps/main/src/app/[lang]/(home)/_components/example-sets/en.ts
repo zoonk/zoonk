@@ -7,7 +7,6 @@ const wordsInContext = { id: "words", minutes: 5, subject: reading, title: "Word
 
 export const en: ExampleSet = {
   exam: {
-    date: "2027-03-06",
     goal: (month) => `get ready for the SAT in ${month}`,
     mock: {
       score: "1180–1260",
@@ -47,7 +46,23 @@ export const en: ExampleSet = {
         "A phone plan costs $12 a month plus $0.05 per text. Ana paid $15.40 in March. How many texts did she send?",
       subject: math,
     },
+    sittings: [
+      "2026-11-07",
+      "2026-12-05",
+      "2027-03-06",
+      "2027-05-01",
+      "2027-06-05",
+      "2027-08-28",
+      "2027-09-18",
+      "2027-10-09",
+      "2027-11-06",
+      "2027-12-04",
+      "2028-03-04",
+      "2028-05-06",
+      "2028-06-03",
+    ],
     subjects: [reading, math],
+    timeZone: "America/New_York",
     today: [
       wordsInContext,
       { id: "equations", minutes: 6, subject: math, title: "Linear equations in context" },

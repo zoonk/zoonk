@@ -14,13 +14,22 @@ function getSittingIn({ day, year }: { day: string; year: number }): string {
   return addIsoDays({ day: sameDate, days: shift > HALF_WEEK ? shift - DAYS_PER_WEEK : shift });
 }
 
-export function getNextSitting({ day, today }: { day: string; today: string }): string {
-  if (day > today) {
-    return day;
+export function getNextSitting({
+  sittings,
+  today,
+}: {
+  sittings: readonly [string, ...string[]];
+  today: string;
+}): string {
+  const listed = sittings.find((day) => day > today);
+
+  if (listed) {
+    return listed;
   }
 
+  const last = sittings.at(-1) ?? sittings[0];
   const year = Number(today.slice(0, YEAR_LENGTH));
-  const thisYear = getSittingIn({ day, year });
+  const thisYear = getSittingIn({ day: last, year });
 
-  return thisYear > today ? thisYear : getSittingIn({ day, year: year + 1 });
+  return thisYear > today ? thisYear : getSittingIn({ day: last, year: year + 1 });
 }

@@ -9,8 +9,6 @@ const crisis = { id: "crisis", minutes: 4, subject: history, title: "La crisi de
 
 export const it: ExampleSet = {
   exam: {
-    // The prima prova, which opens the exam.
-    date: "2027-06-16",
     goal: (month) => `prepararmi alla maturità di ${month}`,
     mock: {
       score: "14–16/20",
@@ -49,7 +47,10 @@ export const it: ExampleSet = {
       question: "Qual è la derivata di f(x) = x · eˣ?",
       subject: math,
     },
+    // The prima prova, which opens the exam.
+    sittings: ["2027-06-16"],
     subjects: [italian, math, physics, history],
+    timeZone: "Europe/Rome",
     today: [
       crisis,
       { id: "limits", minutes: 6, subject: math, title: "Limiti e asintoti" },

@@ -52,30 +52,30 @@ function exampleDay(isoDate: string): Date {
 /** Example dates are written as if this were today and move with the real calendar, so no day shown is already gone. */
 const AUTHORED_TODAY = "2026-10-13";
 
-type ExamCourse = NonNullable<ExamExample["course"]>;
-
 type ExampleDays = { examDay: string | null; today: string };
 
 /** Cached so the page stays prerendered; the default cache lifetime works it out again soon after the day changes. */
-async function getCachedExampleDays(course: ExamCourse | null): Promise<ExampleDays> {
+async function getCachedExampleDays({
+  course,
+  timeZone,
+}: Pick<ExamExample, "course" | "timeZone">): Promise<ExampleDays> {
   "use cache";
 
   const found = course ? await getCourseExamDaysByRoute(course) : null;
-  const timeZone = found?.timeZone ?? "UTC";
 
-  const today = getIsoDay({ now: new Date(), timeZone });
+  const today = getIsoDay({ now: new Date(), timeZone: found?.timeZone ?? timeZone });
   return { examDay: found?.days.find((day) => day > today) ?? null, today };
 }
 
-async function getExampleDays(course: ExamCourse | null): Promise<ExampleDays> {
+async function getExampleDays({ course, timeZone }: ExamExample): Promise<ExampleDays> {
   try {
-    return await getCachedExampleDays(course);
+    return await getCachedExampleDays({ course, timeZone });
   } catch (error) {
     // Next's own signals (a prerender's interrupted request) must keep propagating.
     unstable_rethrow(error);
     logError("Landing example days failed", { error });
 
-    return getCachedExampleDays(null);
+    return getCachedExampleDays({ timeZone });
   }
 }
 
@@ -88,11 +88,11 @@ export type ExampleCalendar = {
 
 export const getExampleCalendar = cache(async (): Promise<ExampleCalendar> => {
   const { exam } = await getExampleSet();
-  const { examDay, today } = await getExampleDays(exam.course ?? null);
+  const { examDay, today } = await getExampleDays(exam);
   const offset = daysBetweenIsoDays({ from: AUTHORED_TODAY, to: today });
 
   return {
-    examDay: exampleDay(examDay ?? getNextSitting({ day: exam.date, today })),
+    examDay: exampleDay(examDay ?? getNextSitting({ sittings: exam.sittings, today })),
     shift: (isoDate) => exampleDay(addIsoDays({ day: isoDate, days: offset })),
     today: exampleDay(today),
     tomorrow: exampleDay(addIsoDays({ day: today, days: 1 })),

@@ -10,7 +10,6 @@ const classical = { id: "classical", minutes: 5, subject: japanese, title: "古�
 
 export const ja: ExampleSet = {
   exam: {
-    date: "2027-01-16",
     goal: (month) => `${month}の共通テストに備える`,
     mock: {
       score: "62–70点",
@@ -49,7 +48,9 @@ export const ja: ExampleSet = {
       question: "2次関数 y = x² − 4x + 1 の最小値を求めよ。",
       subject: math,
     },
+    sittings: ["2027-01-16"],
     subjects: [english, math, japanese, chemistry, informatics],
+    timeZone: "Asia/Tokyo",
     today: [
       classical,
       { id: "quadratic", minutes: 6, subject: math, title: "2次関数の最大・最小" },

@@ -14,8 +14,6 @@ const conscience = {
 
 export const fr: ExampleSet = {
   exam: {
-    // The philosophy paper, which opens the written exams.
-    date: "2027-06-14",
     goal: (month) => `me préparer au bac en ${month}`,
     mock: {
       score: "13–15/20",
@@ -54,7 +52,10 @@ export const fr: ExampleSet = {
       question: "Soit f la fonction définie sur ℝ par f(x) = 3x² − 4x + 1. Que vaut f′(2) ?",
       subject: maths,
     },
+    // The philosophy paper, which opens the written exams.
+    sittings: ["2027-06-14"],
     subjects: [philosophy, maths, physics, oral],
+    timeZone: "Europe/Paris",
     today: [
       conscience,
       { id: "variations", minutes: 6, subject: maths, title: "Dérivée et sens de variation" },

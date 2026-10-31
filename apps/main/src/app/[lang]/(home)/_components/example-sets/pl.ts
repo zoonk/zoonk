@@ -9,8 +9,6 @@ const dziady = { id: "dziady", minutes: 5, subject: polish, title: "Romantyzm: �
 
 export const pl: ExampleSet = {
   exam: {
-    // The written Polish paper, which opens the matura.
-    date: "2027-05-04",
     goal: () => "przygotować się do matury w maju",
     mock: {
       score: "62–70%",
@@ -49,7 +47,10 @@ export const pl: ExampleSet = {
       question: "Jaka jest najmniejsza wartość funkcji f(x) = x² − 6x + 5?",
       subject: math,
     },
+    // The written Polish paper, which opens the matura.
+    sittings: ["2027-05-04"],
     subjects: [polish, math, english, biology],
+    timeZone: "Europe/Warsaw",
     today: [
       dziady,
       { id: "quadratic", minutes: 6, subject: math, title: "Funkcja kwadratowa" },

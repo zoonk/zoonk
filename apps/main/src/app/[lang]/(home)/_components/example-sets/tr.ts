@@ -9,8 +9,6 @@ const mainIdea = { id: "main-idea", minutes: 5, subject: turkish, title: "Paragr
 
 export const tr: ExampleSet = {
   exam: {
-    // The TYT, its first session.
-    date: "2027-06-19",
     goal: () => "Haziran’daki YKS’ye hazırlanmak",
     mock: {
       score: "395–420",
@@ -51,7 +49,10 @@ export const tr: ExampleSet = {
         "Bir sınıftaki öğrencilerin %40’ı kızdır. Sınıfa 6 kız öğrenci daha katılınca kızların oranı %50 oluyor. Başlangıçta sınıfta kaç öğrenci vardır?",
       subject: basicMath,
     },
+    // The TYT, its first session.
+    sittings: ["2026-06-20"],
     subjects: [turkish, basicMath, math, physics],
+    timeZone: "Europe/Istanbul",
     today: [
       mainIdea,
       { id: "problems", minutes: 6, subject: basicMath, title: "Yüzde ve kâr-zarar problemleri" },

@@ -17,7 +17,6 @@ const republic = {
 export const pt: ExampleSet = {
   exam: {
     course: { brandSlug: AI_ORG_SLUG, courseSlug: "enem-pt" },
-    date: "2026-11-08",
     goal: (month) => `me preparar para o Enem em ${month}`,
     mock: {
       score: "610–690",
@@ -63,7 +62,9 @@ export const pt: ExampleSet = {
         "Em uma cadeia alimentar, a energia disponível diminui a cada nível trófico. Qual é o principal motivo?",
       subject: natural,
     },
+    sittings: ["2026-11-08", "2026-11-15"],
     subjects: [languages, human, natural, math, essay],
+    timeZone: "America/Sao_Paulo",
     today: [
       republic,
       { id: "discounts", minutes: 5, subject: math, title: "Cupons e descontos juntos" },
