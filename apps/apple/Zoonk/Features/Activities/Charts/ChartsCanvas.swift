@@ -178,6 +178,15 @@ extension View {
 }
 
 extension View {
+  /// A plot places its labels by value in a frame that doesn't grow, so they stop growing at the
+  /// largest standard size, where they still fit beside each other. The words and readouts around
+  /// the plot keep growing.
+  func chartsPlotText() -> some View {
+    dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+  }
+}
+
+extension View {
   /// Outlines a chart label in the background color, as main does, so a line crossing it never
   /// cuts through its letters.
   func chartsLabelHalo() -> some View {

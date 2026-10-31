@@ -230,6 +230,7 @@ private struct ChanceSimulationView: View {
     }
     .frame(minHeight: 160)
     .chartsMarksHidden()
+    .chartsPlotText()
   }
 
   private func runningShareChart(hits: [Bool]) -> some View {
@@ -276,6 +277,7 @@ private struct ChanceSimulationView: View {
     }
     .frame(minHeight: 160)
     .chartsMarksHidden()
+    .chartsPlotText()
   }
 }
 
@@ -455,6 +457,7 @@ private struct SamplingSimulationView: View {
       .frame(minHeight: 180)
       .padding(.top, 16)
       .chartsMarksHidden()
+      .chartsPlotText()
 
       if comparison != nil {
         HStack(spacing: 16) {

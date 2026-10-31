@@ -236,6 +236,7 @@ struct FormulaModelCanvas: View {
     }
     .frame(minHeight: 200)
     .chartsMarksHidden()
+    .chartsPlotText()
   }
 
   /// Its label is written as the feedback writes it, with the digits the learner's answer needs.

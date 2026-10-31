@@ -185,6 +185,7 @@ struct NumberLineCanvas: View {
       }
       .coordinateSpace(.named(ChartsPlot.space))
     }
+    .chartsPlotText()
     .frame(minHeight: 156)
     .padding(.top, 8)
     .accessibilityElement(children: .contain)

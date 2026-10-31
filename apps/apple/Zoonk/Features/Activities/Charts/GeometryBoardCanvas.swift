@@ -97,6 +97,7 @@ struct GeometryBoardCanvas: View {
       }
       .coordinateSpace(.named(ChartsPlot.space))
     }
+    .chartsPlotText()
     .aspectRatio(
       CGFloat((bounds.maxX - bounds.minX) / max(bounds.maxY - bounds.minY, 1e-9)), contentMode: .fit
     )

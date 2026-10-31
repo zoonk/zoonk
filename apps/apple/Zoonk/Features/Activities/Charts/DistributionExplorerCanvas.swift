@@ -271,6 +271,7 @@ struct DistributionExplorerCanvas: View {
         }
         .coordinateSpace(.named(ChartsPlot.space))
       }
+      .chartsPlotText()
       .frame(minHeight: 200)
       .padding(.top, 20)
       .accessibilityElement(children: .contain)

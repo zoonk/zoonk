@@ -228,6 +228,7 @@ struct UnitCircleCanvas: View {
       }
       .coordinateSpace(.named(ChartsPlot.space))
     }
+    .chartsPlotText()
     .aspectRatio(1, contentMode: .fit)
     .frame(maxWidth: 360)
     .frame(maxWidth: .infinity)
@@ -376,6 +377,7 @@ struct UnitCircleCanvas: View {
     }
     .frame(minHeight: 140)
     .chartsMarksHidden()
+    .chartsPlotText()
   }
 
   private var summary: String {

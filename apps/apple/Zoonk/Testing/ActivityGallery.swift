@@ -31,7 +31,9 @@
             answer: Self.environment["ZOONK_ACTIVITY_GALLERY_ANSWER"].flatMap {
               try? JSONDecoder().decode(LessonAnswer.self, from: Data($0.utf8))
             },
-            isExploring: Self.environment["ZOONK_ACTIVITY_GALLERY_EXPLORE"] != nil)
+            isExploring: Self.environment["ZOONK_ACTIVITY_GALLERY_EXPLORE"] != nil
+          )
+          .roundedButtonsAtAccessibilitySizes()
         }
       } else {
         content

@@ -90,6 +90,7 @@ From the first accessibility size (`dynamicTypeSize.isAccessibilitySize`) text g
 - Text buttons side by side go in a `ButtonRow`: stacked, each is a regular-size rounded rectangle as wide as the row, like an alert's buttons.
 - Buttons are rounded rectangles, not capsules: a wrapped capsule's round ends take the width its words need. A button's shape doesn't reach into a presentation, so the app's root, the router's presented screens and any other presented screen with text buttons each set it (`roundedButtonsAtAccessibilitySizes()`), and bordered, main-action and glass buttons follow it. A bordered button in a toolbar keeps `.buttonBorderShape(.automatic)` (`TutorAskToolbarItem`): toolbars keep their own text size, so it never wraps.
 - A bar over the content is a `screenBar(edge:)` (`DesignSystem/ScreenBar.swift`), never a bare `safeAreaBar`: like the system's bars, its controls' text stops growing at the second accessibility size, so the content keeps the screen. A field in the bar takes `.keepsFullTextSize()`: learners read what they type. Controls that can't show their titles there show them in the Large Content Viewer (`accessibilityShowsLargeContentViewer()`), as a tab bar does.
+- A plot's labels, placed by value in a frame that doesn't grow, stop growing at the largest standard size with `chartsPlotText()`, where they still fit beside each other. The words and readouts around the plot keep growing.
 
 ## Components
 

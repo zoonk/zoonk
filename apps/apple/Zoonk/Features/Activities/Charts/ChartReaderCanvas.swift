@@ -57,6 +57,7 @@ struct ChartReaderCanvas: View {
   let context: ActivityCanvasContext
   let fields: ChartReaderFields
 
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @State private var selected: [String] = []
 
   private var isChecked: Bool {
@@ -97,7 +98,18 @@ struct ChartReaderCanvas: View {
           Button {
             toggle(span.id)
           } label: {
-            Text(verbatim: span.label)
+            VStack(spacing: 2) {
+              Text(verbatim: span.label)
+
+              // The plot's labels stop growing, so the measurement also shows here at full size.
+              if dynamicTypeSize.isAccessibilitySize, shownSpans.contains(span),
+                let text = measureText(span)
+              {
+                Text(verbatim: text)
+                  .fontWeight(.semibold)
+                  .foregroundStyle(.purple)
+              }
+            }
           }
           .buttonStyle(ChartsChoiceStyle(state: state(of: span)))
           .disabled(isChecked)
@@ -170,6 +182,7 @@ struct ChartReaderCanvas: View {
         }
       }
     }
+    .chartsPlotText()
     .frame(minHeight: 184)
   }
 

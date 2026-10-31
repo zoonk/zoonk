@@ -160,6 +160,7 @@ struct LineCrossingCanvas: View {
       }
       .coordinateSpace(.named(ChartsPlot.space))
     }
+    .chartsPlotText()
     .frame(minHeight: 240)
     .accessibilityElement(children: .contain)
     .accessibilityLabel(Text(verbatim: summary(changes: changes)))

@@ -108,6 +108,7 @@ struct AreaModelCanvas: View {
     ChartsCanvas {
       if fields.isArea {
         AreaGrid(sides: $sides, isEnabled: !isChecked)
+          .chartsPlotText()
           .frame(height: gridHeight)
           .frame(maxWidth: .infinity)
           .onGeometryChange(for: CGFloat.self) {
@@ -117,6 +118,7 @@ struct AreaModelCanvas: View {
           }
       } else {
         AreaBar(sides: $sides, isEnabled: !isChecked)
+          .chartsPlotText()
       }
 
       ChartsReadout(text: sum)

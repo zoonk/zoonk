@@ -467,6 +467,7 @@ private struct MoleculeDrawing: View {
         }
       }
     }
+    .chartsPlotText()
     .aspectRatio(MoleculeModel.size.width / MoleculeModel.size.height, contentMode: .fit)
     .frame(maxWidth: 480)
     .frame(maxWidth: .infinity)
