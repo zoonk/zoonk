@@ -1,3 +1,7 @@
+/**
+ * No backup on another provider yet: Gemini Live would need its own server-made session and a
+ * second realtime client in each app.
+ */
 export const LIVE_CONVERSATION_MODEL = "openai/gpt-live-1";
 
 /**
