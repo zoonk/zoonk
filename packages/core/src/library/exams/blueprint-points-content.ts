@@ -17,8 +17,22 @@ const MAX_PERCENT = 100;
 /** Shares a reading rounds, such as 0.67 and 0.34, can add up to a little over the whole. */
 const MAX_SHARES_TOTAL = 1.01;
 
+const LABEL_PATTERN = /\((?<label>[^()]+)\)\s*$/u;
+
+function toLabel(name: string): string | null {
+  const label = LABEL_PATTERN.exec(name)?.groups?.label;
+  return label ? normalizeString(label) : null;
+}
+
+/**
+ * A notice's table can name a test by another column, such as "Prova objetiva (P1)" for
+ * "Conhecimentos básicos (P1)": the label they share ties them.
+ */
 function findPartName({ name, partNames }: { name: string; partNames: readonly string[] }) {
-  return partNames.find((known) => normalizeString(known) === normalizeString(name)) ?? null;
+  const same = partNames.find((known) => normalizeString(known) === normalizeString(name));
+  const label = toLabel(name);
+  const labeled = label ? partNames.filter((known) => toLabel(known) === label) : [];
+  return same ?? (labeled.length === 1 ? (labeled[0] ?? null) : null);
 }
 
 function toMarking({

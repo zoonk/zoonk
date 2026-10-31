@@ -183,6 +183,22 @@ describe("the points a notice gives", () => {
     ]);
   });
 
+  it("keeps a row, test or share named by the label of the table's other column", () => {
+    const other = "Prova objetiva (P1)";
+
+    const scoring = readScoring({
+      scoring: {
+        finalShares: [{ ...SHARE_OBJECTIVE, parts: [other, P2] }, SHARE_WRITTEN],
+        marking: [{ ...ROW_P1, part: other }],
+        parts: [{ ...PART_P1, name: other, passages: cite(LINES.table, LINES.minimums) }],
+      },
+    });
+
+    expect(scoring?.marking?.map((row) => row.part)).toStrictEqual([P1]);
+    expect(scoring?.parts?.map((part) => part.name)).toStrictEqual([P1]);
+    expect(scoring?.finalShares?.map((share) => share.parts)).toStrictEqual([[P1, P2], [P3]]);
+  });
+
   it("drops a row or test whose name is no kept group or subject", () => {
     const scoring = readScoring({
       scoring: {
