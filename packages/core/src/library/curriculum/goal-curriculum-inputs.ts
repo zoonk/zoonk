@@ -47,6 +47,7 @@ const OMITTED_CONTEXT_FIELDS = new Set([
   "courseStart",
   "level",
   "onboardingId",
+  "onboardingPlace",
   "purpose",
 ]);
 

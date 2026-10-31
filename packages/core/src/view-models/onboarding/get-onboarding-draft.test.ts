@@ -28,6 +28,7 @@ describe(getOnboardingDraft, () => {
 
     await expect(getOnboardingDraft({ draftId: draft.id })).resolves.toStrictEqual({
       draft: {
+        activeGoalLimit: 1,
         generationId: "understanding-run",
         goalId: null,
         id: draft.id,

@@ -97,10 +97,12 @@ function ReadDraft({
   understanding: GoalUnderstandingView;
 }) {
   switch (understanding.status) {
-    case "goals":
+    case "goals": {
+      const card = toUnderstandingDraft({ activeGoalLimit: draft.activeGoalLimit, understanding });
+
       return (
         <UnderstoodScreen
-          draft={toUnderstandingDraft(understanding)}
+          draft={card}
           error={creation.error}
           goal={draft.prompt}
           goalLimit={goalLimit}
@@ -110,7 +112,7 @@ function ReadDraft({
             creation.run(() =>
               actions.createGoals(
                 toGoalCreateInput({
-                  draft: toUnderstandingDraft(understanding),
+                  draft: card,
                   materialIntent: attached.length > 0 ? intent : null,
                   sourceIds: attached.map((source) => source.id),
                   timeZone: getLocalTimeZone(),
@@ -123,6 +125,7 @@ function ReadDraft({
           signUpHref={routes.signUp}
         />
       );
+    }
     case "explain":
       return (
         <ExplainGoal

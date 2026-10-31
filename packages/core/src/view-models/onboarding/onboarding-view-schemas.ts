@@ -94,6 +94,13 @@ export const goalUnderstandingViewSchema = z
 
 export const onboardingDraftViewSchema = z
   .object({
+    activeGoalLimit: z
+      .int()
+      .nullable()
+      .meta({
+        description:
+          "How many goals the learner's plan follows at once (1 on Free and for guests), null on Plus. The card's goals past it are Plus's: show them locked with the subscribe call to action and leave them out of POST /goals. They stay on the draft, so they unlock here once the learner has Plus",
+      }),
     generationId: z
       .string()
       .nullable()

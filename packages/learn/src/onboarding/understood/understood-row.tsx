@@ -163,6 +163,43 @@ function ChoiceDates({
   );
 }
 
+const FACT_ROW_CLASS =
+  "group/fact flex items-start gap-3 py-3 sm:grid sm:grid-cols-[9rem_minmax(0,1fr)_auto]";
+
+const LABEL_CLASS = "text-muted-foreground text-[0.8125rem] sm:pt-px";
+
+function RowFact({ row }: { row: Row }) {
+  return (
+    <>
+      <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <span className="text-[0.9375rem] font-medium">{row.value}</span>
+        {row.badge && <span className="text-muted-foreground text-xs">{row.badge}</span>}
+      </span>
+
+      {(row.note || row.source) && (
+        <span className="text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
+          {row.note}
+          {row.note && row.source && <span aria-hidden="true">{" · "}</span>}
+          {row.source && <SourceLink source={row.source} />}
+        </span>
+      )}
+    </>
+  );
+}
+
+export function UnderstoodFactItem({ row }: { row: Row }) {
+  return (
+    <li className={FACT_ROW_CLASS}>
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:contents">
+        <span className={LABEL_CLASS}>{row.label}</span>
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <RowFact row={row} />
+        </div>
+      </div>
+    </li>
+  );
+}
+
 export function UnderstoodRowItem({
   editValue,
   editing,
@@ -182,9 +219,9 @@ export function UnderstoodRowItem({
   const label = editing ? (row.editLabel ?? row.label) : row.label;
 
   return (
-    <li className="group/fact flex items-start gap-3 py-3 sm:grid sm:grid-cols-[9rem_minmax(0,1fr)_auto]">
+    <li className={FACT_ROW_CLASS}>
       <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:contents">
-        <span className="text-muted-foreground text-[0.8125rem] sm:pt-px">{label}</span>
+        <span className={LABEL_CLASS}>{label}</span>
 
         <div className="flex min-w-0 flex-col gap-0.5">
           {editing && row.editable ? (
@@ -204,18 +241,7 @@ export function UnderstoodRowItem({
               type={row.editable.kind}
             />
           ) : (
-            <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-              <span className="text-[0.9375rem] font-medium">{row.value}</span>
-              {row.badge && <span className="text-muted-foreground text-xs">{row.badge}</span>}
-            </span>
-          )}
-
-          {(row.note || row.source) && !editing && (
-            <span className="text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
-              {row.note}
-              {row.note && row.source && <span aria-hidden="true">{" · "}</span>}
-              {row.source && <SourceLink source={row.source} />}
-            </span>
+            <RowFact row={row} />
           )}
 
           {row.suggestedDate && !editing && (

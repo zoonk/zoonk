@@ -37,6 +37,7 @@ export function summaryOf(userId: string, activeGoalId: string | null = null): L
     tier: "free",
     timeZone: null,
     today: null,
+    waitingGoals: [],
   };
 }
 

@@ -1,3 +1,4 @@
+import { goalCreateInputSchema } from "@zoonk/core/goals/contract";
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import { BuddyGlasses, BuddyKind, CourseLevel, GoalKind, GoalStatus } from "@zoonk/db";
 import { BELT_COLORS_ORDER } from "@zoonk/utils/belt-level";
@@ -132,6 +133,28 @@ const learnerSummarySchema = z
       })
       .nullable()
       .meta({ description: "Today's saved session, or null before it's saved" }),
+    waitingGoals: z
+      .array(
+        z
+          .object({
+            id: z.string(),
+            input: goalCreateInputSchema.meta({
+              description:
+                "POST /goals as it is to start it. It shares the day with the goals typed with it, and its setup asks the day's time again",
+            }),
+            locked: z
+              .boolean()
+              .meta({
+                description:
+                  "The plan follows no more goals at once: show it with the Plus lock, opening Plus",
+              }),
+          })
+          .meta({ id: "LearnerSummaryWaitingGoal" }),
+      )
+      .meta({
+        description:
+          "Goals typed together with the learner's goals that their plan didn't start (Free and guests follow one at a time), kept so they start without typing them again. Listed under the learner's goals until started, or until every goal started with them is archived",
+      }),
   })
   .meta({ id: "LearnerSummary" }) satisfies z.ZodType<LearnerSummary>;
 

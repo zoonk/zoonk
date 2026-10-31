@@ -23,8 +23,13 @@ import { daysUntilIsoDate, hasIsoDatePassed } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
 import { GoalMark } from "./goal-mark";
-
-type GoalKind = "exam" | "explain" | "language" | "learn";
+import {
+  GOAL_ROW_CLASS,
+  type GoalKind,
+  MENU_ROW_CLASS,
+  type WaitingGoal,
+  WaitingOption,
+} from "./goal-menu-row";
 
 type SwitcherGoal = {
   dailyMinutes: number;
@@ -103,17 +108,11 @@ function GoalLine({ goal }: { goal: SwitcherGoal }) {
   );
 }
 
-const MENU_ROW_CLASS = "rounded-lg pl-2 text-[0.84375rem] pointer-fine:min-h-9";
-
 const MENU_LABEL_CLASS = "text-faint px-2 pt-1.5 pb-1 text-[0.71875rem] font-[550]";
 
 function GoalOption({ goal }: { goal: SwitcherGoal }) {
   return (
-    <DropdownMenuRadioItem
-      className={cn(MENU_ROW_CLASS, "gap-2.5 py-1.5")}
-      closeOnClick
-      value={goal.id}
-    >
+    <DropdownMenuRadioItem className={GOAL_ROW_CLASS} closeOnClick value={goal.id}>
       <GoalMark goal={goal} />
       <span className="flex min-w-0 flex-col">
         <span>{goal.title}</span>
@@ -191,7 +190,9 @@ export function GoalSwitcher({
   goals,
   newGoalHref,
   onSelect,
+  onStartWaiting,
   placement = "bar",
+  waitingGoals,
 }: {
   activeGoalId: string | null;
   explanationHref: string;
@@ -199,7 +200,9 @@ export function GoalSwitcher({
   goals: SwitcherGoal[];
   newGoalHref: string;
   onSelect: (goalId: string) => Promise<void>;
+  onStartWaiting: (waitingGoalId: string) => Promise<void>;
   placement?: SwitcherPlacement;
+  waitingGoals: WaitingGoal[];
 }) {
   const t = useExtracted("goalSwitcher");
   const [isPending, startTransition] = useGoalSwitchTransition();
@@ -261,6 +264,19 @@ export function GoalSwitcher({
                 <GoalOption goal={goal} key={goal.id} />
               ))}
             </DropdownMenuRadioGroup>
+
+            {waitingGoals.map((goal) => (
+              <WaitingOption
+                goal={goal}
+                isStarting={isPending}
+                key={goal.id}
+                onStart={(waitingGoalId) =>
+                  startTransition(async () => {
+                    await onStartWaiting(waitingGoalId);
+                  })
+                }
+              />
+            ))}
           </DropdownMenuGroup>
         )}
 

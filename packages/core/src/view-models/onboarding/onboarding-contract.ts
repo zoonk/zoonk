@@ -101,6 +101,8 @@ type OnboardingDraftStatus = (typeof ONBOARDING_DRAFT_STATUSES)[number];
 
 /** understanding retains learner edits; goalId identifies the main confirmed goal and generationId follows live progress. */
 export type OnboardingDraftView = {
+  /** Goals past this many on the card are Plus's: shown locked and left out of the goals created. Null on Plus. */
+  activeGoalLimit: number | null;
   /** The run reading the words; null when none is needed (a cached understanding) or none started. */
   generationId: string | null;
   goalId: string | null;

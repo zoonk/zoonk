@@ -104,7 +104,7 @@ async function applyEdit({
   const current = await prisma.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } });
 
   if (saved) {
-    return { draft: toDraftView({ draft: current, goalId: null }), status: "revised" };
+    return { draft: await toDraftView({ draft: current, goalId: null }), status: "revised" };
   }
 
   return attempt < MAX_ATTEMPTS

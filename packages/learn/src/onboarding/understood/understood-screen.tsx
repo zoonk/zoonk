@@ -6,6 +6,7 @@ import {
 } from "@zoonk/core/view-models/onboarding/contract";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
+import { PlusNotice } from "../../_components/plus-lock";
 import { GoalLimitWall, isPlusGoalLimit } from "../entry/goal-limit-notice";
 import { GoalFooter } from "../entry/goal-outcomes";
 import { type GoalError } from "../goal-errors";
@@ -20,7 +21,7 @@ import {
   OnboardingTitle,
 } from "../onboarding-frame";
 import { type UnderstandingDraft } from "./understanding-draft";
-import { UnderstoodRowItem } from "./understood-row";
+import { UnderstoodFactItem, UnderstoodRowItem } from "./understood-row";
 import { UnderstoodWords } from "./understood-words";
 import {
   type EditableField,
@@ -115,6 +116,19 @@ function GoalCard({
   );
 }
 
+function LockedGoalCard({ goal }: { goal: UnderstoodGoalView }) {
+  const rowsFor = useUnderstoodRows();
+  const rows = rowsFor({ cutoff: goal.cutoff, draft: goal.draft, examDates: goal.examDates });
+
+  return (
+    <ul className="flex flex-col [&>li+li]:border-t">
+      {rows.map((row) => (
+        <UnderstoodFactItem key={row.id} row={row} />
+      ))}
+    </ul>
+  );
+}
+
 export function UnderstoodScreen({
   draft,
   error,
@@ -189,6 +203,22 @@ export function UnderstoodScreen({
           onSave={({ field, value }) => onRevise(toDraftEdit({ field, goal: index, value }))}
         />
       ))}
+
+      {draft.lockedGoals.length > 0 && (
+        <div className="flex flex-col gap-3">
+          {draft.lockedGoals.map((understood, index) => (
+            // oxlint-disable-next-line react/no-array-index-key -- Locked goals can't be edited; their place is their identity.
+            <LockedGoalCard goal={understood} key={index} />
+          ))}
+
+          <PlusNotice cta={!plusLimit}>
+            {t(
+              "{count, plural, one {Following more than one goal at a time comes with Plus. Until then, this goal waits in your goals.} other {Following more than one goal at a time comes with Plus. Until then, these goals wait in your goals.}}",
+              { count: draft.lockedGoals.length },
+            )}
+          </PlusNotice>
+        </div>
+      )}
 
       {plusLimit ? (
         <OnboardingFooter className="gap-3">

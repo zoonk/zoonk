@@ -9748,6 +9748,11 @@ msgid "You can change all of this later."
 msgstr "Você pode mudar tudo isso depois."
 
 #: src/onboarding/understood/understood-screen.tsx
+msgctxt "aHZ7X8"
+msgid "{count, plural, one {Following more than one goal at a time comes with Plus. Until then, this goal waits in your goals.} other {Following more than one goal at a time comes with Plus. Until then, these goals wait in your goals.}}"
+msgstr "{count, plural, one {Com o Plus, você pode seguir mais de uma meta ao mesmo tempo. Até lá, essa meta fica na sua lista de metas.} other {Com o Plus, você pode seguir mais de uma meta ao mesmo tempo. Até lá, essas metas ficam na sua lista de metas.}}"
+
+#: src/onboarding/understood/understood-screen.tsx
 msgctxt "pWjhwg"
 msgid "Looks right"
 msgstr "Está certo"
@@ -12324,6 +12329,16 @@ msgstr "Revisões"
 msgctxt "fqtVVy"
 msgid "Quick review"
 msgstr "Revisão rápida"
+
+#: src/shell/goal-menu-row.tsx
+msgctxt "goalSwitcher.MIqzZd"
+msgid "Starts with Plus"
+msgstr "Disponível com o Plus"
+
+#: src/shell/goal-menu-row.tsx
+msgctxt "goalSwitcher.zbkRbA"
+msgid "Ready to start"
+msgstr "Pronta para começar"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.aefUZL"

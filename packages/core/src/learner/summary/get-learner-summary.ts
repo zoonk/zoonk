@@ -22,6 +22,7 @@ import { hasSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speak
 import { countReadyMistakes } from "../../mistakes/mistake-availability";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getSession } from "../../users/get-session";
+import { findWaitingGoals } from "../../view-models/onboarding/_utils/waiting-goals";
 import { isGoalSetupLeft } from "../../view-models/onboarding/onboarding-steps";
 import { getAnswerTimeZone } from "../_utils/owned-goal";
 import { readLearningProfile } from "../facts/learning-profile";
@@ -209,8 +210,9 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   const listed = toSummaryGoals({ activeGoalId, goals, phaseFacts });
   const current = listed.find((goal) => goal.isActive) ?? null;
   const phaseChallengesRequired = activeGoal?.kind !== "language" || subscription !== null;
+  const tier = getTier({ isAnonymous, subscription });
 
-  const [goalDay, ready] = await Promise.all([
+  const [goalDay, ready, waitingGoals] = await Promise.all([
     loadActiveGoalDay({
       goal: activeGoal,
       localDate,
@@ -228,6 +230,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
           userId,
         })
       : 0,
+    findWaitingGoals({ goals, tier, today: toIsoDate(localDate), userId }),
   ]);
 
   return {
@@ -261,8 +264,9 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
     }),
     places: getPlaces({ activeGoal, facts, goal: current, readyMistakes: ready }),
     readAt: now.getTime(),
-    tier: getTier({ isAnonymous, subscription }),
+    tier,
     timeZone: getSavedTimeZone(activeGoal),
     today: goalDay.today,
+    waitingGoals,
   };
 }

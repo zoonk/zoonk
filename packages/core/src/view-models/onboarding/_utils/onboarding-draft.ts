@@ -2,6 +2,8 @@ import "server-only";
 import { type GoalUnderstanding } from "@zoonk/ai/tasks/goals/understand-goal";
 import { type OnboardingDraft, type TransactionClient, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
+import { readEntitlementViewer } from "../../../entitlements/_utils/entitlement-viewer";
+import { getActiveGoalLimit } from "../../../entitlements/limits";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { type GoalUnderstandingView, type OnboardingDraftView } from "../onboarding-contract";
 import { goalUnderstandingViewSchema } from "../onboarding-view-schemas";
@@ -46,17 +48,21 @@ export function parseStoredUnderstanding(value: unknown): GoalUnderstandingView 
   return goalUnderstandingViewSchema.safeParse(value).data ?? null;
 }
 
-export function toDraftView({
+/** The lock follows the learner's plan as it is now, so subscribing unlocks the rest of the card. */
+export async function toDraftView({
   draft,
   goalId,
 }: {
   draft: OnboardingDraft;
   goalId: string | null;
-}): OnboardingDraftView {
+}): Promise<OnboardingDraftView> {
   const understanding =
     draft.status === "understood" ? parseStoredUnderstanding(draft.understanding) : null;
 
+  const viewer = await readEntitlementViewer();
+
   return {
+    activeGoalLimit: getActiveGoalLimit(viewer?.tier ?? "guest"),
     generationId: draft.runId,
     goalId,
     id: draft.id,

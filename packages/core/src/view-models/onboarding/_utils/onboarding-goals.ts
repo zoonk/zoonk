@@ -2,7 +2,7 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 
-function readDetail(details: unknown, key: string): string | null {
+export function readDetail(details: unknown, key: string): string | null {
   const value = isJsonObject(details) ? details[key] : null;
   return typeof value === "string" ? value : null;
 }

@@ -55,10 +55,10 @@ export async function startGoalUnderstanding(
   );
 
   if (!cached) {
-    return { draft: toDraftView({ draft, goalId: null }), status: "understanding" };
+    return { draft: await toDraftView({ draft, goalId: null }), status: "understanding" };
   }
 
   const understood = await completeDraft({ draft, exams: [], understanding: cached });
 
-  return { draft: toDraftView({ draft: understood, goalId: null }), status: "understood" };
+  return { draft: await toDraftView({ draft: understood, goalId: null }), status: "understood" };
 }

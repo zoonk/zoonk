@@ -40809,6 +40809,13 @@
               "next"
             ],
             "additionalProperties": false
+          },
+          "waitingGoals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LearnerSummaryWaitingGoal"
+            },
+            "description": "Goals typed together with the learner's goals that their plan didn't start (Free and guests follow one at a time), kept so they start without typing them again. Listed under the learner's goals until started, or until every goal started with them is archived"
           }
         },
         "required": [
@@ -40826,7 +40833,8 @@
           "readAt",
           "tier",
           "timeZone",
-          "today"
+          "today",
+          "waitingGoals"
         ],
         "additionalProperties": false
       },
@@ -40921,6 +40929,32 @@
           "targetDate",
           "targetLanguage",
           "title"
+        ],
+        "additionalProperties": false
+      },
+      "LearnerSummaryWaitingGoal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "input": {
+            "description": "POST /goals as it is to start it. It shares the day with the goals typed with it, and its setup asks the day's time again",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GoalCreateInputOutput"
+              }
+            ]
+          },
+          "locked": {
+            "type": "boolean",
+            "description": "The plan follows no more goals at once: show it with the Plus lock, opening Plus"
+          }
+        },
+        "required": [
+          "id",
+          "input",
+          "locked"
         ],
         "additionalProperties": false
       },
@@ -84598,6 +84632,13 @@
       "OnboardingDraft": {
         "type": "object",
         "properties": {
+          "activeGoalLimit": {
+            "nullable": true,
+            "description": "How many goals the learner's plan follows at once (1 on Free and for guests), null on Plus. The card's goals past it are Plus's: show them locked with the subscribe call to action and leave them out of POST /goals. They stay on the draft, so they unlock here once the learner has Plus",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
           "generationId": {
             "nullable": true,
             "description": "The run reading the words, followed live at `GET /v1/generations/{generationId}/events` (`readGoal`, `findExamDates` when the words name an exam, then `understandingReady`); null when none is needed or none started yet",
@@ -84639,6 +84680,7 @@
           }
         },
         "required": [
+          "activeGoalLimit",
           "generationId",
           "goalId",
           "id",
@@ -91685,6 +91727,60 @@
           "language",
           "prompt",
           "title"
+        ],
+        "additionalProperties": false
+      },
+      "GoalCreateInputOutput": {
+        "type": "object",
+        "properties": {
+          "dailyMinutes": {
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 1440,
+            "description": "The day's time, shared by the new goals"
+          },
+          "goals": {
+            "minItems": 1,
+            "maxItems": 3,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GoalDraftOutput"
+            }
+          },
+          "sourceIds": {
+            "description": "Material the learner uploaded with the goal (`POST /v1/uploads`), linked to the main goal so its research and curriculum read it",
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          "studyDays": {
+            "minItems": 1,
+            "maxItems": 7,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 6
+            },
+            "description": "Weekdays the learner studies, Sunday (0) to Saturday (6); every day when left out"
+          },
+          "studyTime": {
+            "type": "string",
+            "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$",
+            "description": "Preferred local study time, such as \"20:00\""
+          },
+          "timeZone": {
+            "type": "string",
+            "description": "The learner's IANA timezone"
+          }
+        },
+        "required": [
+          "dailyMinutes",
+          "goals"
         ],
         "additionalProperties": false
       }

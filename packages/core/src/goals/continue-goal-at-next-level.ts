@@ -23,7 +23,7 @@ const OWN_LEVEL_BEFORE: Record<CourseLevel, string> = {
   overview: "none",
 };
 
-const ONBOARDING_FIELDS = new Set(["answered", "onboardingId"]);
+const ONBOARDING_FIELDS = new Set(["answered", "onboardingId", "onboardingPlace"]);
 
 function buildNextDetails({ goal, level }: { goal: Goal; level: CourseLevel }) {
   const details = isJsonObject(goal.details) ? goal.details : {};

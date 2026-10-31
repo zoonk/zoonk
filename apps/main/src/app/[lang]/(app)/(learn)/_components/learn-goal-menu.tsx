@@ -3,10 +3,17 @@
 import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { VisitorLook } from "@/components/learner/visitor-look";
 import { PublicHomeLink } from "@/components/public/public-top-bar";
-import { type LearnerSummaryGoal } from "@zoonk/core/learner/summary/contract";
+import { useRouter } from "@/i18n/navigation";
+import { noteAppWrite } from "@/lib/http/app-write-ledger";
+import {
+  type LearnerSummaryGoal,
+  type LearnerSummaryWaitingGoal,
+} from "@zoonk/core/learner/summary/contract";
 import { GoalSwitcher } from "@zoonk/learn/goal-switcher";
 import { cn } from "@zoonk/ui/lib/utils";
+import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { Suspense } from "react";
+import { createOnboardingGoalsAction } from "../../(onboarding)/start/onboarding-actions";
 import { switchGoal } from "./switch-goal";
 
 type Placement = "bar" | "sidebar";
@@ -17,6 +24,24 @@ function toSwitcherGoals(goals: readonly LearnerSummaryGoal[]) {
       ? []
       : [{ dailyMinutes, id, kind, status, targetDate, targetLanguage, title }],
   );
+}
+
+function toSwitcherWaitingGoals(goals: readonly LearnerSummaryWaitingGoal[]) {
+  return goals.flatMap(({ id, input, locked }) => {
+    const [goal] = input.goals;
+
+    return goal
+      ? [
+          {
+            id,
+            kind: goal.kind,
+            locked,
+            targetLanguage: goal.targetLanguage ?? null,
+            title: goal.title,
+          },
+        ]
+      : [];
+  });
 }
 
 function PendingGoalMenu({ placement = "bar" }: { placement?: Placement }) {
@@ -35,6 +60,7 @@ function PendingGoalMenu({ placement = "bar" }: { placement?: Placement }) {
 
 function GoalMenu({ placement }: { placement?: Placement }) {
   const learner = useFrameLearner();
+  const router = useRouter();
 
   if (learner.status === "visitor") {
     return <PublicHomeLink />;
@@ -44,6 +70,24 @@ function GoalMenu({ placement }: { placement?: Placement }) {
     return <PendingGoalMenu placement={placement} />;
   }
 
+  const { waitingGoals } = learner.summary;
+
+  const startWaiting = async (waitingGoalId: string) => {
+    const waiting = waitingGoals.find((goal) => goal.id === waitingGoalId);
+
+    if (!waiting) {
+      return;
+    }
+
+    const outcome = await noteAppWrite(
+      createOnboardingGoalsAction({ ...waiting.input, timeZone: getLocalTimeZone() }),
+    );
+
+    if (outcome.status === "created") {
+      router.push(`/start/${outcome.goalId}`);
+    }
+  };
+
   return (
     <GoalSwitcher
       activeGoalId={learner.summary.activeGoalId}
@@ -52,7 +96,9 @@ function GoalMenu({ placement }: { placement?: Placement }) {
       goals={toSwitcherGoals(learner.summary.goals)}
       newGoalHref="/start"
       onSelect={switchGoal}
+      onStartWaiting={startWaiting}
       placement={placement}
+      waitingGoals={toSwitcherWaitingGoals(waitingGoals)}
     />
   );
 }

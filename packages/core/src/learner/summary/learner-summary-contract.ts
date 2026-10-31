@@ -6,6 +6,7 @@ import {
   type GoalStatus,
 } from "@zoonk/db/enums";
 import { type BeltColor } from "@zoonk/utils/belt-level";
+import { type GoalCreateInput } from "../../goals/goal-contract";
 
 /** Timestamps are epoch milliseconds; signedInAt distinguishes separate sessions for the same learner. */
 export type LearnerIdentity = {
@@ -35,6 +36,14 @@ export type LearnerSummaryGoal = {
   targetDate: string | null;
   targetLanguage: string | null;
   title: string;
+};
+
+/** A goal typed with others that the learner's plan didn't start, kept so it starts without typing it again. */
+export type LearnerSummaryWaitingGoal = {
+  id: string;
+  /** The POST /goals body that starts it. */
+  input: GoalCreateInput;
+  locked: boolean;
 };
 
 type LearnerSummaryBuddy = {
@@ -96,4 +105,5 @@ export type LearnerSummary = {
   timeZone: string | null;
   /** Null before session creation, without a goal, or while paused. */
   today: LearnerSummaryToday | null;
+  waitingGoals: LearnerSummaryWaitingGoal[];
 };

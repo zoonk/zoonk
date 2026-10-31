@@ -6,21 +6,28 @@ import {
 
 export type UnderstandingDraft = {
   goals: UnderstoodGoalView[];
+  lockedGoals: UnderstoodGoalView[];
   minutesSaid: boolean;
   schedule: UnderstoodSchedule;
 };
 
 export function toUnderstandingDraft({
-  goals,
-  schedule,
+  activeGoalLimit,
+  understanding: { goals, schedule },
 }: {
-  goals: UnderstoodGoalView[];
-  schedule: UnderstoodSchedule;
+  activeGoalLimit: number | null;
+  understanding: { goals: UnderstoodGoalView[]; schedule: UnderstoodSchedule };
 }): UnderstandingDraft {
   const answered = goals[0]?.draft.details?.answered;
   const minutesSaid = Array.isArray(answered) && answered.includes("schedule");
+  const allowed = activeGoalLimit ?? goals.length;
 
-  return { goals, minutesSaid, schedule };
+  return {
+    goals: goals.slice(0, allowed),
+    lockedGoals: goals.slice(allowed),
+    minutesSaid,
+    schedule,
+  };
 }
 
 type Draft = UnderstoodGoalView["draft"];

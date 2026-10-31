@@ -9748,6 +9748,11 @@ msgid "You can change all of this later."
 msgstr "나중에 모두 바꿀 수 있어요."
 
 #: src/onboarding/understood/understood-screen.tsx
+msgctxt "aHZ7X8"
+msgid "{count, plural, one {Following more than one goal at a time comes with Plus. Until then, this goal waits in your goals.} other {Following more than one goal at a time comes with Plus. Until then, these goals wait in your goals.}}"
+msgstr "{count, plural, other {여러 목표를 동시에 진행하려면 Plus가 필요해요. 그전까지는 목표 목록에서 대기해요.}}"
+
+#: src/onboarding/understood/understood-screen.tsx
 msgctxt "pWjhwg"
 msgid "Looks right"
 msgstr "맞아요"
@@ -12324,6 +12329,16 @@ msgstr "복습"
 msgctxt "fqtVVy"
 msgid "Quick review"
 msgstr "간단 복습"
+
+#: src/shell/goal-menu-row.tsx
+msgctxt "goalSwitcher.MIqzZd"
+msgid "Starts with Plus"
+msgstr "Plus로 시작 가능"
+
+#: src/shell/goal-menu-row.tsx
+msgctxt "goalSwitcher.zbkRbA"
+msgid "Ready to start"
+msgstr "시작 준비 완료"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.aefUZL"

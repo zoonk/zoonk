@@ -14,7 +14,7 @@ describe("onboarding supporting read budgets", () => {
     const draft = await onboardingDraftFixture({ userId: user.id });
     mockSession(user.id);
     const counts = await countDatabaseStatements(() => getOnboardingDraft({ draftId: draft.id }));
-    assertReadBudget(counts, 2);
+    assertReadBudget(counts, 3);
     expect(counts.result.status).toBe("ready");
   });
 
