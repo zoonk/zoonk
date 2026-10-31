@@ -88,6 +88,7 @@ dependencies {
     implementation(project(":feature:conversation"))
     implementation(project(":feature:onboarding"))
     implementation(project(":feature:plan"))
+    implementation(project(":feature:player"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.lifecycle.runtime.compose)

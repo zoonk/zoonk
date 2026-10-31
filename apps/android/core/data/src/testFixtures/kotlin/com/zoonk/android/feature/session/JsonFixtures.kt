@@ -9,7 +9,7 @@ import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
 
 /** A response the contract allows, from `src/test/resources/fixtures/<name>.json`, with [overrides] on top. */
-internal fun fixture(
+fun fixture(
     name: String,
     vararg overrides: Pair<String, Any?>,
 ): JsonObject {
@@ -17,12 +17,12 @@ internal fun fixture(
     return JsonObject(ApiJson.parseToJsonElement(text).jsonObject + overrides.associate { (key, value) -> key to value.toJson() })
 }
 
-internal inline fun <reified T> decodeFixture(
+inline fun <reified T> decodeFixture(
     name: String,
     vararg overrides: Pair<String, Any?>,
 ): T = ApiJson.decodeFromJsonElement(fixture(name, *overrides))
 
-internal fun Any?.toJson(): JsonElement =
+fun Any?.toJson(): JsonElement =
     when (this) {
         null -> JsonNull
         is JsonElement -> this
