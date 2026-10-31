@@ -9,7 +9,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { sumOf } from "@zoonk/utils/number";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { countOptions, getExamFormats } from "../../library/exams/exam-choice-format";
-import { listAskedIn } from "../../library/exams/format-sections";
+import { isAskedIn, listAskedIn } from "../../library/exams/format-sections";
 import { isFormatShare } from "../../library/exams/format-shares";
 import { describeFormat } from "../../library/exams/format-style";
 import { ANY_NUMBER } from "../../library/items/_utils/numeric-entry";
@@ -238,13 +238,26 @@ export function getFormatQuotas({
 }
 
 export function getMockWritingFormat({
+  allNames,
   format,
   names,
   structure,
 }: {
+  allNames: readonly string[];
   format: MockFormat;
   names: readonly string[];
   structure: Pick<ExamStructure, "formats" | "pastOptions"> | null;
 }): MockFormat | null {
+  const members = structure
+    ? getExamFormats(structure).filter((member) => toWriter(member)?.key === format.key)
+    : [];
+
+  const resolved = members.some((member) => isAskedIn({ format: member, names: allNames }));
+  const asked = members.some((member) => isAskedIn({ format: member, names }));
+
+  if (resolved && !asked) {
+    return null;
+  }
+
   return getMockFormatMix(structure, names).find((scoped) => scoped.key === format.key) ?? null;
 }

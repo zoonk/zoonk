@@ -41,6 +41,9 @@ describe(getMockWritingFormat, () => {
       skills.filter(
         (skill) =>
           getMockWritingFormat({
+            allNames: skills.flatMap((candidate) =>
+              listSubjectNames({ area: candidate.area, structure }),
+            ),
             format,
             names: listSubjectNames({ area: skill.area, structure }),
             structure,

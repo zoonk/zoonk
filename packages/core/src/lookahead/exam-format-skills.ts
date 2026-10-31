@@ -158,10 +158,15 @@ export async function pickExamFormatSkills({
 
   const exam = toItemExam(blueprint);
 
+  const allNames = skills.flatMap((skill) =>
+    skill.area ? listSubjectNames({ area: skill.area, structure }) : [],
+  );
+
   const picks = formats.flatMap((format) =>
     skills
       .flatMap((skill) => {
         const own = getMockWritingFormat({
+          allNames,
           format,
           names: skill.area ? listSubjectNames({ area: skill.area, structure }) : [],
           structure,

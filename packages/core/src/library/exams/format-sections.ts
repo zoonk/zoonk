@@ -2,7 +2,7 @@ import { namesMatch } from "../../exams/_utils/name-match";
 
 type SectionedFormat = { sections?: readonly string[] };
 
-function isAskedIn({
+export function isAskedIn({
   format,
   names,
 }: {

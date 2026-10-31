@@ -141,12 +141,17 @@ export function getMockQuestionsShortfall({
   skills: readonly MockWritingSkill[];
   structure: ExamStructure | null;
 }): MockFormatShortfall[] {
+  const allNames = skills.flatMap((skill) =>
+    skill.area ? listSubjectNames({ area: skill.area, structure }) : [],
+  );
+
   const shortFormats = new Set(listShortFormats({ candidates, mix, option, plan }));
   const fresh = candidates.filter((candidate) => !candidate.answered);
 
   return countFormats({ candidates, mix, option, plan }).flatMap(({ format, needed, wanted }) => {
     const eligible = skills.flatMap((skill) => {
       const own = getMockWritingFormat({
+        allNames,
         format,
         names: skill.area ? listSubjectNames({ area: skill.area, structure }) : [],
         structure,
