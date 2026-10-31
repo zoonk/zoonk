@@ -442,6 +442,39 @@ describe(finishMock, () => {
     },
   );
 
+  it("finishes more simultaneous hand-ins of one sitting than the database pool holds", async () => {
+    const { blockId, user } = await scheduledMockSetup();
+    await startMock({ blockId, input: {} });
+    await answerRight({ blockId, count: 9 });
+
+    const outcomes = await Promise.allSettled(
+      Array.from({ length: 12 }, () => finishMock({ blockId, input: {} })),
+    );
+
+    expect(outcomes).toStrictEqual(
+      Array.from({ length: 12 }, () => ({ status: "fulfilled", value: { status: "finished" } })),
+    );
+
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(9);
+  });
+
+  it("grades a hand-in whose grading request died once its claim runs out", async () => {
+    const { blockId } = await scheduledMockSetup();
+    await startMock({ blockId, input: {} });
+    await answerRight({ blockId, count: 9 });
+
+    await prisma.mockExam.update({
+      data: { handInClaimedAt: new Date(SESSION_NOW.getTime() - 6 * MINUTE_MS), sectionIndex: 1 },
+      where: { blockId },
+    });
+
+    await expect(finishMock({ blockId, input: {} })).resolves.toStrictEqual({ status: "finished" });
+
+    const finished = await getMock(blockId);
+
+    expect(finished.status === "ready" && finished.mock.result).toMatchObject({ correct: 9 });
+  });
+
   it("grades a finish that stopped halfway on the next try, recording each answer once", async () => {
     const { blockId, user } = await scheduledMockSetup();
     await startMock({ blockId, input: {} });

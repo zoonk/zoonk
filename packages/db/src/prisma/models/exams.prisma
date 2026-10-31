@@ -6,6 +6,7 @@ enum MockExamStatus {
 /// `conditions` fixes each section's questions and minutes when the mock starts. `result` keeps
 /// numbers and title snapshots, so it survives content changes. `listeningPlays` counts plays by
 /// item set id (`{ "<setId>": 1 }`), so another tab or device can't play past the exam's limit.
+/// `handInClaimedAt` marks the request grading a hand-in: duplicates wait for its result.
 model MockExam {
   id               String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId           String                 @map("user_id") @db.Uuid
@@ -22,6 +23,7 @@ model MockExam {
   sectionStartedAt DateTime               @map("section_started_at")
   startedAt        DateTime               @default(now()) @map("started_at")
   finishedAt       DateTime?              @map("finished_at")
+  handInClaimedAt  DateTime?              @map("hand_in_claimed_at")
   result           Json?
   listeningPlays   Json                   @default("{}") @map("listening_plays")
   createdAt        DateTime               @default(now()) @map("created_at")

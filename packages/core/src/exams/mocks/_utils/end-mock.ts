@@ -1,21 +1,73 @@
 import "server-only";
-import { type TransactionClient, prisma, sql } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { type MockConditions } from "../mock-contract";
 import { completeMock } from "./complete-mock";
 import { type MockSitting, type OwnedMock, findMockSitting } from "./owned-mock";
 
-const FINISH_LOCK_NAMESPACE = 51_881;
+/**
+ * Far longer than a hand-in takes, so an older claim belongs to a request that died. If one still
+ * runs, attempts are unique per mock and item: the second grader fails instead of grading twice.
+ */
+const HAND_IN_LEASE_MS = 300_000;
 
-const FINISH_TIMEOUT_MS = 300_000;
+const CLAIM_POLL_MS = 250;
 
-async function lockMockFinish(tx: TransactionClient, mockId: string): Promise<void> {
-  await tx.$queryRaw(
-    sql`SELECT pg_advisory_xact_lock(${FINISH_LOCK_NAMESPACE}::int, hashtext(${mockId}))::text`,
-  );
+type ClaimedMock = MockSitting & { handInClaimedAt: Date };
+
+async function claimHandIn({
+  conditions,
+  current,
+  mock,
+}: {
+  conditions: MockConditions;
+  current: MockSitting;
+  mock: MockSitting;
+}): Promise<ClaimedMock | null> {
+  const handedIn = conditions.sections.length;
+  const now = new Date();
+
+  if (current.sectionIndex >= handedIn) {
+    const { count } = await prisma.mockExam.updateMany({
+      data: { handInClaimedAt: now },
+      where: {
+        OR: [
+          { handInClaimedAt: null },
+          { handInClaimedAt: { lt: new Date(now.getTime() - HAND_IN_LEASE_MS) } },
+        ],
+        id: mock.id,
+        status: "active",
+      },
+    });
+
+    return count > 0 ? { ...current, handInClaimedAt: now } : null;
+  }
+
+  const count = await writeLearnerChange({ userId: mock.userId }, async (tx) => {
+    const updated = await tx.mockExam.updateMany({
+      data: { conditions, handInClaimedAt: now, sectionIndex: handedIn },
+      where: { id: mock.id, sectionIndex: mock.sectionIndex, status: "active" },
+    });
+
+    return updated.count > 0 ? updated.count : unchanged(updated.count);
+  });
+
+  return count > 0
+    ? { ...current, conditions, handInClaimedAt: now, sectionIndex: handedIn }
+    : null;
 }
 
-/** A failed finish may commit some answers; retrying records only the remaining ones. */
+async function waitForClaim() {
+  await new Promise((resolve) => {
+    setTimeout(resolve, CLAIM_POLL_MS);
+  });
+}
+
+/**
+ * One request grades a hand-in; duplicates wait for its result without holding a database
+ * connection. A failed finish may commit some answers; retrying records only the remaining ones.
+ */
 export async function endMock({
   conditions,
   mock,
@@ -27,49 +79,38 @@ export async function endMock({
   owned: OwnedMock;
   timeZone: string;
 }): Promise<"expired" | "finished" | "notRunning"> {
-  return prisma.$transaction(
-    async (tx) => {
-      await lockMockFinish(tx, mock.id);
+  const current = await findMockSitting(prisma, mock.id);
 
-      const current = await findMockSitting(tx, mock.id);
+  if (current?.status !== "active") {
+    return current?.status === "finished" || current?.status === "expired"
+      ? current.status
+      : "notRunning";
+  }
 
-      if (current?.status !== "active") {
-        return current?.status === "finished" || current?.status === "expired"
-          ? current.status
-          : "notRunning";
-      }
+  if (
+    current.sectionIndex < conditions.sections.length &&
+    current.sectionIndex !== mock.sectionIndex
+  ) {
+    return "notRunning";
+  }
 
-      const handedIn = conditions.sections.length;
-      const isStuck = current.sectionIndex >= handedIn;
+  const claimed = await claimHandIn({ conditions, current, mock });
 
-      if (!isStuck) {
-        // Outside the lock's transaction: grading updates this row too, and must not wait on it.
-        const count = await writeLearnerChange({ userId: mock.userId }, async (writing) => {
-          const updated = await writing.mockExam.updateMany({
-            data: { conditions, sectionIndex: handedIn },
-            where: { id: mock.id, sectionIndex: mock.sectionIndex, status: "active" },
-          });
+  if (!claimed) {
+    await waitForClaim();
+    return endMock({ conditions, mock, owned, timeZone });
+  }
 
-          return updated.count > 0 ? updated.count : unchanged(updated.count);
-        });
+  const { error } = await safeAsync(() => completeMock({ mock: claimed, owned, timeZone }));
 
-        if (count === 0) {
-          return "notRunning";
-        }
-      }
+  if (error) {
+    await prisma.mockExam.updateMany({
+      data: { handInClaimedAt: null },
+      where: { handInClaimedAt: claimed.handInClaimedAt, id: mock.id },
+    });
 
-      await completeMock({
-        mock: {
-          ...current,
-          conditions: isStuck ? current.conditions : conditions,
-          sectionIndex: handedIn,
-        },
-        owned,
-        timeZone,
-      });
+    throw error;
+  }
 
-      return "finished";
-    },
-    { timeout: FINISH_TIMEOUT_MS },
-  );
+  return "finished";
 }
