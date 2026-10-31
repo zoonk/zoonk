@@ -12781,7 +12781,7 @@
       }
     },
     "See the full course" : {
-      "comment" : "Opens the Library course the plan takes some chapters of",
+      "comment" : "Opens the Library course the plan is built from",
       "localizations" : {
         "de" : {
           "stringUnit" : {

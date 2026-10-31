@@ -100,14 +100,14 @@ struct PlanToolbar: ViewModifier {
         }
       }
 
-      if let course = context.plan.partialCourse {
+      if let course = context.plan.libraryCourse {
         Button {
           router.open(.course(courseId: course.courseId, title: course.title))
         } label: {
           Label {
             Text(
               "See the full course", tableName: "Plan",
-              comment: "Opens the Library course the plan takes some chapters of")
+              comment: "Opens the Library course the plan is built from")
           } icon: {
             Image(systemName: "books.vertical")
           }

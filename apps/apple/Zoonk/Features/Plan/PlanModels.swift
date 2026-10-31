@@ -21,7 +21,7 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   }
 
   struct Course: Decodable, Equatable, Sendable {
-    let brandSlug: String
+    let brandSlug: String?
     let chapterCount: Int
     let courseId: String
     let courseSlug: String
@@ -212,10 +212,8 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let bases: Bases?
   let course: Course?
 
-  var partialCourse: Course? {
-    guard let course, !course.brandSlug.isEmpty, course.planChapterCount > 0,
-      course.planChapterCount < course.chapterCount
-    else {
+  var libraryCourse: Course? {
+    guard let course, course.brandSlug != nil, course.planChapterCount > 0 else {
       return nil
     }
 

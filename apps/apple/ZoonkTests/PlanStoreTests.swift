@@ -126,6 +126,23 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertEqual(result.outcome, .undone)
   }
 
+  func testPlanLinksTheLibraryCourseItTakesEveryChapterOfButNotAPrivateOne() throws {
+    let course = { (brandSlug: String) in
+      """
+      {
+        "brandSlug": \(brandSlug), "chapterCount": 17, "courseId": "course",
+        "courseSlug": "italiano-pt", "planChapterCount": 17, "title": "Italiano"
+      }
+      """
+    }
+
+    let library = try GoalPlan.stub(planId: "plan", course: course("\"ai\""))
+    let own = try GoalPlan.stub(planId: "plan", course: course("null"))
+
+    XCTAssertEqual(library.libraryCourse?.courseId, "course")
+    XCTAssertNil(own.libraryCourse)
+  }
+
   func testUndoneChangeSaysSoAndRevalidatesThePlan() async {
     let api = PlanAPIStub()
     let store = makeStore(api: api)
@@ -333,11 +350,11 @@ extension AppliedPlanChange {
 }
 
 extension GoalPlan {
-  fileprivate static func stub(planId: String) throws -> GoalPlan {
+  fileprivate static func stub(planId: String, course: String = "null") throws -> GoalPlan {
     let json = """
       {
         "access": { "freeWeekOver": false, "mocksRequirePlus": false },
-        "areas": [], "bases": null, "course": null, "end": null,
+        "areas": [], "bases": null, "course": \(course), "end": null,
         "estimate": { "endDate": null, "fullCourseEndDate": null },
         "examChoices": [], "examDocument": "notice", "feasibility": null, "fitOffer": null, "goalId": "goal",
         "phases": [], "planId": "\(planId)", "ready": true,

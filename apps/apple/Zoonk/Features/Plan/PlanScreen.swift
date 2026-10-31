@@ -156,7 +156,7 @@ private struct PlanContent: View {
     if let structure {
       PlanSyllabusSection(goalKind: goal.kind, syllabus: structure)
     } else {
-      PlanPathSection(context: context)
+      PlanPathSection(context: context, course: context.plan.libraryCourse)
     }
   }
 }

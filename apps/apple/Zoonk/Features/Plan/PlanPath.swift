@@ -4,6 +4,7 @@ struct PlanPathSection: View {
   @Environment(PlanStore.self) private var store
 
   let context: PlanContext
+  var course: GoalPlan.Course?
 
   var body: some View {
     let phases = context.plan.roadPhases
@@ -17,6 +18,18 @@ struct PlanPathSection: View {
       }
 
       PlanPathRows(context: context)
+
+      if let course {
+        NavigationLink(value: AppRoute.course(courseId: course.courseId, title: course.title)) {
+          Label {
+            Text(
+              "See the full course", tableName: "Plan",
+              comment: "Opens the Library course the plan is built from")
+          } icon: {
+            Image(systemName: "books.vertical")
+          }
+        }
+      }
     } header: {
       HStack(alignment: .firstTextBaseline) {
         Text("Your path", tableName: "Plan", comment: "Section of the plan's phases and chapters")
