@@ -11,7 +11,7 @@ const LABEL_GAP = 8;
 const SEGMENT_WIDTH = 4;
 const SIN_LABEL_GAP = 26;
 const LABEL_CHAR_WIDTH = 8.5;
-const SIN_LABEL_PAST_POINT = 28;
+const SIN_LABEL_PAST_POINT = 25;
 
 const TRIG_TONES: Record<TrigName, { stroke: string; text: string }> = {
   cos: { stroke: "stroke-viz-secondary", text: "fill-viz-secondary" },
@@ -31,13 +31,17 @@ export function arcPath(center: Vector, radius: number, degrees: number): string
   return `M${center.x + radius} ${center.y} A${radius} ${radius} 0 ${large} 0 ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
 }
 
+type LabelBaseline = "middle" | "text-after-edge" | "text-before-edge";
+
 export function DialLabel({
   anchor,
+  baseline = "middle",
   children,
   className,
   point,
 }: {
   anchor: "end" | "middle" | "start";
+  baseline?: LabelBaseline;
   children: React.ReactNode;
   className?: string;
   point: Vector;
@@ -46,7 +50,7 @@ export function DialLabel({
     <text
       aria-hidden="true"
       className={cn("text-sm font-semibold tabular-nums", DRAWING_LABEL_HALO, className)}
-      dominantBaseline="middle"
+      dominantBaseline={baseline}
       textAnchor={anchor}
       x={point.x}
       y={point.y}
@@ -119,13 +123,17 @@ function sinLabelPlacement({
   label: string;
   point: Vector;
   target: Vector | null;
-}): { anchor: "end" | "middle" | "start"; point: Vector } {
+}): { anchor: "end" | "middle" | "start"; baseline: LabelBaseline; point: Vector } {
   const labelWidth = label.length * LABEL_CHAR_WIDTH;
   const beside = foot.x + (isLeft ? -1 : 1) * SIN_LABEL_GAP;
   const fits = isLeft ? beside - labelWidth >= 0 : beside + labelWidth <= canvas.width;
 
   if (fits) {
-    return { anchor: isLeft ? "end" : "start", point: { x: beside, y: (foot.y + point.y) / 2 } };
+    return {
+      anchor: isLeft ? "end" : "start",
+      baseline: "middle",
+      point: { x: beside, y: (foot.y + point.y) / 2 },
+    };
   }
 
   const isTargetPast =
@@ -137,6 +145,7 @@ function sinLabelPlacement({
 
   return {
     anchor: "middle",
+    baseline: isAbove ? "text-after-edge" : "text-before-edge",
     point: {
       x: Math.min(Math.max(foot.x, labelWidth / 2), canvas.width - labelWidth / 2),
       y: outermost + (isAbove ? -1 : 1) * SIN_LABEL_PAST_POINT,
@@ -211,6 +220,7 @@ export function TrigLegs({
           />
           <DialLabel
             anchor={sinPlacement.anchor}
+            baseline={sinPlacement.baseline}
             className={TRIG_TONES.sin.text}
             point={sinPlacement.point}
           >

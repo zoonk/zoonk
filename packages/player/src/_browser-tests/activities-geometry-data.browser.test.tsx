@@ -3,7 +3,7 @@ import {
   activityContentFixtures,
   engineModeFixtures,
 } from "@zoonk/testing/fixtures/activity-contents";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, onTestFinished } from "vitest";
 import { page } from "vitest/browser";
 import {
   checkActivity,
@@ -18,6 +18,7 @@ import {
 import { atViewport } from "../_test-utils/browser-viewport";
 
 const polls = engineModeFixtures.randomSimulation.sampling;
+const FOCUS_RING = 17;
 
 describe("geometry and data activities", () => {
   it("geometry board: the angles are worked out from the parts", async () => {
@@ -108,6 +109,37 @@ describe("geometry and data activities", () => {
           : Number.POSITIVE_INFINITY;
 
       expect(gap).toBeLessThan(32);
+    });
+  });
+
+  it("unit circle: in large text the sine's value stays clear of the point", async () => {
+    document.documentElement.style.fontSize = "200%";
+
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport({ height: 812, width: 375 }, async () => {
+      openActivity({ template: "unitCircle" });
+      await pressOnSlider("Point on the circle", "ArrowRight", 6);
+      await expect.element(valueInput()).toHaveValue("0.5");
+
+      const point = page.getByRole("slider", { name: "Point on the circle" }).element();
+      const ring = point.getBoundingClientRect();
+      const center = { x: ring.left + ring.width / 2, y: ring.top + ring.height / 2 };
+
+      const box = [...(document.querySelector("figure svg")?.querySelectorAll("text") ?? [])]
+        .find((text) => text.textContent === "sin = 0.5")
+        ?.getBoundingClientRect();
+
+      const gap = box
+        ? Math.hypot(
+            Math.max(box.left - center.x, 0, center.x - box.right),
+            Math.max(box.top - center.y, 0, center.y - box.bottom),
+          )
+        : 0;
+
+      expect(gap).toBeGreaterThan(FOCUS_RING);
     });
   });
 
