@@ -51,7 +51,7 @@
   "goalcontent_percent_done": "c0c3df557cf0d6a59dee7ea4af650f725b9df4a872a15b5ca95ab667f295b871",
   "goalcontent_practice": "78a8a56d9f591a19c1d46ce03353fb0b9db299185b28b7392697c4a57f072f72",
   "goalcontent_practice_chapter": "f89519e0918ebf4f2bb5abfb217a7d177bd083ba7012eb8d93278e7b51e1d030",
-  "goalcontent_practice_daily_cap": "b5b29b43cef09b99d705d3965c0c76db95dd00f4af7e8c901b06ad6d228faff5",
+  "goalcontent_practice_daily_limit": "ee228b515b754a4ad8bf06cd1d9955a0b0a0ca5d5664a74d755cf243e7547e1e",
   "goalcontent_practice_failed": "c2b7dd93ba37a471553d231d4dc1909c550189f9d4f0d2542e694de3b08cb794",
   "goalcontent_practice_nothing": "d5cd6110edaa91eeab72c37ba4716055855823b82f6165de4bcad88ff178737c",
   "goalcontent_preparation": "ada559c06b8a342cdb6bf4a6decd443acfd94eb8d97664ec377c57b26b8780aa",
@@ -270,7 +270,8 @@
     <string name="goalcontent_progress">İlerleme</string>
     <string name="goalcontent_practice">Alıştırma</string>
     <string name="goalcontent_practice_chapter">Bu ünitede alıştırma yap</string>
-    <string name="goalcontent_practice_daily_cap">Bugünlük ek alıştırmalar bu kadar. Yarınki çalışmanda bu üniteye devam edeceksin.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="goalcontent_practice_daily_limit">Günlük süre sınırına ulaştın. Yarınki çalışmanda bu üniteye devam edeceksin.</string>
     <string name="goalcontent_practice_nothing">Bu ünitede henüz alıştırma yapabileceğin bir şey yok.</string>
     <string name="goalcontent_practice_failed">Bir sorun oluştu. Birazdan tekrar dene.</string>
     <!-- Heading over material to look things up in, such as a mind map and a summary, rather than lessons to do. -->

@@ -51,7 +51,7 @@
   "goalcontent_percent_done": "438e94e4475dc13d921eb911eaf0400c0f7710926070843399c6c532640a1d88",
   "goalcontent_practice": "cdd331e2252879b7b4e4b96bd289565e448433c74afb17abfc4ec97b4e5f364f",
   "goalcontent_practice_chapter": "c6d8e264bb265a90217040f615a86113b8ac8ff7f2d9efdbd97fda71b9caf791",
-  "goalcontent_practice_daily_cap": "cdb0550e20eb32a1d2eb6ae755c8f80b05a13ff5f73221c2b754a473b1d14576",
+  "goalcontent_practice_daily_limit": "33f1de0103641c36798370499da1439483417725b0b782cfc5e2895d4c6ec660",
   "goalcontent_practice_failed": "934e900513c34349efed492b739b98ea1e2bcdc2c75258bec3578661bb459260",
   "goalcontent_practice_nothing": "525c72f7e3263eefda8ff31c0770790c8b8b03d459cbc964c47b7f78fe4312e0",
   "goalcontent_preparation": "7d6b4ed3c831b880cdc9287a40835bd965c9993b661e657639acbc1231ec3fd8",
@@ -253,7 +253,8 @@
     <string name="goalcontent_progress">진도</string>
     <string name="goalcontent_practice">연습하기</string>
     <string name="goalcontent_practice_chapter">이 챕터 연습하기</string>
-    <string name="goalcontent_practice_daily_cap">오늘 추가 연습은 여기까지예요. 내일 학습에서 이 챕터를 이어서 공부해요.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="goalcontent_practice_daily_limit">하루 학습 시간 제한에 도달했어요. 이 챕터는 내일 학습에서 이어갈 거예요.</string>
     <string name="goalcontent_practice_nothing">이 챕터에는 아직 연습할 내용이 없어요.</string>
     <string name="goalcontent_practice_failed">처리하지 못했어요. 잠시 후에 다시 시도해 보세요.</string>
     <!-- Heading over material to look things up in, such as a mind map and a summary, rather than lessons to do. -->
