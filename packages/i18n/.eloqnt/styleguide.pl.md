@@ -69,7 +69,9 @@
 - “Mock exam”, including speaking mocks: “egzamin próbny”
 - “Logbook”: “Dziennik nauki”
 - “Fading” (needs review): “Do powtórki”
-- “Overview” (course level): “Przegląd”
+- “Overview” (course level and a plan's first phase): “Przegląd”
+- “Beginner” / “Intermediate” / “Advanced” (course levels and plan phases): “Początkujący” / “Średnio zaawansowany” / “Zaawansowany”
+- “Quick lesson”: “Szybka lekcja”
 - “Focus test”: “Test priorytetów”
 - “Weekly summary”: “Podsumowanie tygodnia”
 - “Full review”: “Pełna powtórka”; spaced review: “powtórka”

@@ -74,7 +74,9 @@
 - “Mock exam”, including speaking mocks: “모의고사”
 - “Logbook”: “학습 일지”
 - “Fading” (needs review): “잊혀 가는 중”
-- “Overview” (course level): “개요”
+- “Overview” (course level and a plan's first phase): “개요”
+- “Beginner” / “Intermediate” / “Advanced” (course levels and plan phases): “초급” / “중급” / “고급”
+- “Quick lesson”: “짧은 레슨”
 - “Focus test”: “집중 진단”
 - “Weekly summary”: “주간 요약”
 - “Full review”: “총복습”; spaced review: “복습”

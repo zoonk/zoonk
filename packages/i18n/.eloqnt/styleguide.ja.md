@@ -70,7 +70,9 @@
 - “Mock exam”, including speaking mocks: “模試”
 - “Logbook”: “学習記録”
 - “Fading” (needs review): “忘れかけ”
-- “Overview” (course level): “概要”
+- “Overview” (course level and a plan's first phase): “概要”
+- “Beginner” / “Intermediate” / “Advanced” (course levels and plan phases): “初級” / “中級” / “上級”
+- “Quick lesson”: “クイックレッスン”
 - “Focus test”: “重点診断”
 - “Weekly summary”: “週間まとめ”
 - “Full review”: “総復習”; spaced review: “復習”

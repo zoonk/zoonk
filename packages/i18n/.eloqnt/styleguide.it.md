@@ -60,7 +60,9 @@
 - “Mock exam”, including speaking mocks: “Simulazione”; standalone title: “Simulazione d’esame”
 - “Logbook”: “Diario di bordo”
 - “Fading” (needs review): “Da ripassare”
-- “Overview” (course level): “Panoramica”
+- “Overview” (course level and a plan's first phase): “Panoramica”
+- “Beginner” / “Intermediate” / “Advanced” (course levels and plan phases): “Principiante” / “Intermedio” / “Avanzato”
+- “Quick lesson”: “Lezione veloce”
 - “Focus test”: “Test delle priorità”
 - “Weekly summary”: “Riepilogo settimanale”
 - “Full review”: “Ripasso generale”

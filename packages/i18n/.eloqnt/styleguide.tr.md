@@ -72,7 +72,9 @@
 - “Mock exam”, including speaking mocks: “deneme sınavı”, never just “deneme”, which is a try
 - “Logbook”: “Çalışma günlüğü”
 - “Fading” (needs review): “Tekrar edilecek”
-- “Overview” (course level): “Genel bakış”
+- “Overview” (course level and a plan's first phase): “Genel bakış”
+- “Beginner” / “Intermediate” / “Advanced” (course levels and plan phases): “Başlangıç” / “Orta seviye” / “İleri seviye”
+- “Quick lesson”: “Hızlı ders”
 - “Focus test”: “Odak testi”
 - “Weekly summary”: “Haftalık özet”
 - “Full review”: “Genel tekrar”; spaced review: “tekrar”
