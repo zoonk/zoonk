@@ -798,61 +798,239 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ und %2$lld weitere"
+            "value" : "%1$@ und %#@more@"
+          },
+          "substitutions" : {
+            "more" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg weitere"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ and %2$lld more"
+            "value" : "%1$@ and %#@more@"
+          },
+          "substitutions" : {
+            "more" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg more"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg more"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ y %2$lld más"
+            "value" : "%1$@ y %#@more@"
+          },
+          "substitutions" : {
+            "more" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg más"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ et %2$lld de plus"
+            "value" : "%1$@ et %#@more@"
+          },
+          "substitutions" : {
+            "more" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg autre"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg autres"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ e %2$lld in più"
+            "value" : "%1$@ e %#@more@"
+          },
+          "substitutions" : {
+            "more" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg altra"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg altre"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@、ほか%2$lldレッスン"
+            "value" : "%1$@、%#@more@"
+          },
+          "substitutions" : {
+            "more" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "ほか%argレッスン"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 외 %2$lld개"
+            "value" : "%1$@ 외 %#@more@"
+          },
+          "substitutions" : {
+            "more" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg개"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ i jeszcze %2$lld"
+            "value" : "%1$@ i %#@more@"
+          },
+          "substitutions" : {
+            "more" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "jeszcze %arg"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ e mais %2$lld"
+            "value" : "%1$@ e %#@more@"
+          },
+          "substitutions" : {
+            "more" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "mais %arg"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ve %2$lld tane daha"
+            "value" : "%1$@ ve %#@more@"
+          },
+          "substitutions" : {
+            "more" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg tane daha"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
