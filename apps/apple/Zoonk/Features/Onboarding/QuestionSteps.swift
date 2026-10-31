@@ -777,6 +777,23 @@ private struct FollowUpsQuestion: View {
   }
 }
 
+func examChoiceQuestionDescription(_ choices: [Components.Schemas.ExamChoice]) -> String {
+  if choices.count == 1, let choice = choices.first {
+    return String(
+      localized:
+        "The exam offers \(choice.options.count) options for \(choice.group). Your plan and mocks follow the one you pick, and you can change it in your plan.",
+      table: "Onboarding",
+      comment:
+        "Under the exam choice question. The second argument is the notice's name for the choice, such as a specialty or the foreign language, in the notice's own language"
+    )
+  }
+
+  return String(
+    localized:
+      "The exam has \(choices.count) choices to make. Your plan and mocks follow your picks, and you can change them in your plan.",
+    table: "Onboarding", comment: "Under the exam choice question, for several choices")
+}
+
 private struct ExamChoiceQuestion: View {
   let subject: String
   let choices: [Components.Schemas.ExamChoice]
@@ -808,10 +825,7 @@ private struct ExamChoiceQuestion: View {
           "Which ones will you take?", tableName: "Onboarding",
           comment:
             "Asks which of an exam's optional subjects the learner takes, for several choices"),
-      description: Text(
-        "The plan and the mocks follow your pick. You can change it in your plan.",
-        tableName: "Onboarding",
-        comment: "Under the exam choice question"))
+      description: Text(examChoiceQuestionDescription(choices)))
 
     ForEach(choices, id: \.group) { choice in
       ChoiceRows(

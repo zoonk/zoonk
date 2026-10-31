@@ -3022,6 +3022,275 @@
         }
       }
     },
+    "Following the %@ syllabus" : {
+      "comment" : "The option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach dem Lehrplan für %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Following the %@ syllabus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Según el temario de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selon le programme de %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguindo o conteúdo programático de %@"
+          }
+        }
+      }
+    },
+    "The exam has %lld choices to make. Your plan and mocks follow your picks, and you can change them in your plan." : {
+      "comment" : "Under the exam choice question, for several choices",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Für die Prüfung musst du %lld Entscheidung treffen. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du in deinem Plan ändern kannst."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Für die Prüfung musst du %lld Entscheidungen treffen. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du in deinem Plan ändern kannst."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "The exam has %lld choice to make. Your plan and mocks follow your picks, and you can change them in your plan."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "The exam has %lld choices to make. Your plan and mocks follow your picks, and you can change them in your plan."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Para el examen debes tomar %lld decisión. Tu plan y tus simulacros se basan en tus elecciones, y puedes cambiarlas en tu plan."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Para el examen debes tomar %lld decisiones. Tu plan y tus simulacros se basan en tus elecciones, y puedes cambiarlas en tu plan."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Pour cet examen, tu as %lld choix à faire. Ton plan et tes examens blancs s’adaptent à tes choix, que tu peux modifier dans ton plan."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "A prova tem %lld escolha para você fazer. Seu plano e seus simulados seguem suas escolhas, que você pode mudar no plano."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "A prova tem %lld escolhas para você fazer. Seu plano e seus simulados seguem suas escolhas, que você pode mudar no plano."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "The exam offers %lld options for %@. Your plan and mocks follow the one you pick, and you can change it in your plan." : {
+      "comment" : "Under the exam choice question. The second argument is the notice's name for the choice, such as a specialty or the foreign language, in the notice's own language",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Prüfung bietet %#@count@ für %2$@. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du in deinem Plan ändern kannst."
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Option"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Optionen"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The exam offers %#@count@ for %2$@. Your plan and mocks follow the one you pick, and you can change it in your plan."
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg option"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg options"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El examen ofrece %#@count@ para %2$@. Tu plan y tus simulacros se basan en la opción que elijas, y puedes cambiarla en tu plan."
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg opción"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg opciones"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’examen propose %#@count@ pour %2$@. Ton plan et tes examens blancs s’adaptent à ton choix, que tu peux modifier dans ton plan."
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg option"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg options"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A prova oferece %#@count@ para %2$@. Seu plano e seus simulados seguem sua escolha, que você pode mudar no plano."
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg opção"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg opções"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "~ Estimated: the notice doesn't say how much these areas weigh." : {
       "comment" : "Under weights estimated because the exam notice doesn't give them",
       "localizations" : {
@@ -18827,65 +19096,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kesin tarih sınavın resmî takviminde açıklanır. Tarihi şimdiden biliyor musun? Buradan belirle."
-          }
-        }
-      }
-    },
-    "The plan and the mocks follow your pick. You can change it in your plan." : {
-      "comment" : "Under the exam choice question",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der Plan und die Probeprüfungen richten sich nach deiner Auswahl. Du kannst sie in deinem Plan ändern."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El plan y los simulacros se basan en tu elección. Puedes cambiarla en tu plan."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le plan et les examens blancs suivent ton choix. Tu peux le modifier dans ton plan."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il piano e le simulazioni si basano sulla tua scelta. Puoi cambiarla nel piano."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選んだ試験に合わせて学習計画と模試を作ります。選択は学習計画で変更できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계획과 모의고사는 선택한 시험을 기준으로 해요. 계획에서 선택을 바꿀 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plan i egzaminy próbne uwzględniają twój wybór. Możesz go zmienić w swoim planie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O plano e os simulados seguem sua escolha. Você pode mudar isso no seu plano."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planın ve deneme sınavların seçimine göre şekillenir. Seçimini planından değiştirebilirsin."
           }
         }
       }

@@ -677,6 +677,11 @@ struct PlanSettingsSection: View {
         label: Text(
           "Study days", tableName: "Plan", comment: "Setting: the days of the week to study"),
         value: Text(studyDaysText(schedule.weekdayMinutes)), section: .days)
+
+      // The exam's choices open first in Adjust plan.
+      ForEach(context.plan.examChoices) { choice in
+        setting(label: Text(choice.group), value: choiceValue(choice), section: .top)
+      }
     } header: {
       Text("Your plan", tableName: "Plan", comment: "Section of the plan's settings")
     }
@@ -690,6 +695,15 @@ struct PlanSettingsSection: View {
     }
 
     return planFinishText(context) ?? Text(verbatim: "")
+  }
+
+  private func choiceValue(_ choice: GoalPlan.ExamChoice) -> Text {
+    guard let picked = choice.pickedName else {
+      return Text("Choose", tableName: "Plan", comment: "An exam choice not made yet")
+        .foregroundStyle(.warning)
+    }
+
+    return Text(picked)
   }
 
   private func setting(label: Text, value: Text, section: AdjustPlanSheet.Section) -> some View {

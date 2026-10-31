@@ -12703,6 +12703,41 @@
         }
       }
     },
+    "Change" : {
+      "comment" : "Opens the plan's settings to change the option of an exam's choice it follows",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ändern"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Change"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alterar"
+          }
+        }
+      }
+    },
     "Change how you'll use %@" : {
       "comment" : "Hint on a tool row",
       "localizations" : {

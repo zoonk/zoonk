@@ -221,6 +221,31 @@ private struct RevealNoticeDay: View {
   }
 }
 
+/// Main's `PlanChoiceLines`: which option of each exam choice the plan follows. An unpicked choice
+/// is the plan suggestion's to ask.
+private struct RevealExamChoices: View {
+  let plan: GoalPlan
+  let change: () -> Void
+
+  var body: some View {
+    ForEach(plan.examChoices) { choice in
+      if let line = choice.followingLine {
+        Section {
+          Text(line)
+            .foregroundStyle(.secondary)
+
+          Button(action: change) {
+            Text(
+              "Change", tableName: "Plan",
+              comment:
+                "Opens the plan's settings to change the option of an exam's choice it follows")
+          }
+        }
+      }
+    }
+  }
+}
+
 private struct NoticeReadingView: View {
   let plan: GoalPlan
 
@@ -368,6 +393,8 @@ private struct PlanReveal: View {
 
     RevealNoticeDay(
       isSaving: $isChangingDate, failed: $dateChangeFailed, goalID: goal.id, plan: plan)
+
+    RevealExamChoices(plan: plan) { adjusting = .top }
 
     Section {
       VStack(spacing: 12) {
