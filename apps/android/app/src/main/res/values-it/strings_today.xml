@@ -186,6 +186,7 @@
   "today_week_full_review_detail": "6f1102d8015479447761e4d64e0e66b1137d907edb00d07683588aac0c035df9",
   "today_week_full_review_name": "3a8a0fc884474b4d62eeb1e6cfb9acfe5dc6da285c8e2998ecd278561c5f688b",
   "today_week_gain": "07964f329f4b9bc6fd158f5a605176c8b33dad1e402a86fcd381532ae75c410d",
+  "today_week_goal_reached": "a4c649cfa3fb19e91dfb5dee1d2ef9721cd01a01e0fb5ffad0d28a1bea79ab6c",
   "today_week_loss": "1ed585d1ea4b8918d0e5cb3a5422a19bd5c3b798e1207791e96811bc6cd4a496",
   "today_week_mock_name": "b179bfe431e8208f1697051f8becd2480e97256648ee9e67af585a48c0771d96",
   "today_week_not_studied": "59d5a59463a8a59a103f4d6db9b04425860b93cd22addd8d503ef721a42e32f9",
@@ -369,6 +370,7 @@
     <string name="today_week_day">%1$s: %2$s</string>
     <!-- "Saturday: weekly challenge, not studied". -->
     <string name="today_week_challenge_day">%1$s: %2$s, %3$s</string>
+    <string name="today_week_goal_reached">tempo giornaliero raggiunto</string>
     <string name="today_week_studied">hai studiato</string>
     <string name="today_week_exam_day">giorno dell’esame</string>
     <string name="today_week_deadline">data del tuo obiettivo</string>
@@ -511,5 +513,4 @@
     <string name="today_coming_stalled">Ci stiamo mettendo più del solito</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get today's lessons" link. -->
     <string name="today_coming_not_written">Non le abbiamo ancora preparate.</string>
-    <string name="today_exam_choice_detail">Finché non scegli, il tuo piano lascia fuori {arg1}.</string>
 </resources>

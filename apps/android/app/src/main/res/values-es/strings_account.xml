@@ -51,7 +51,7 @@
   "account_username_available": "07a542184504047216c861cf36bac708fab42eafc6b2d44a714d716729f12ee1",
   "account_username_checking": "2b01c556ab97b1f76494afeb4c6302fb42df9ef351d007d359ae7a8e9b314670",
   "account_username_line": "24dfc39542992c216e474c700c9c6afe1a2faee0b1531cfd60779f03f5b48dd9",
-  "account_username_rules": "336666ad7a898844d9052eb3397c3a080a13e269398d278896c19350ac7314d8",
+  "account_username_rules": "e87988c7156bf7e4e92672877e7fb7c015b353b8c02eb94a36cc6ad0b2002d37",
   "account_username_taken": "c9396008475a27be2e961af8ac200061c5fc33e769e37e4e44707d508ca7a42f",
   "account_welcome_description": "8d1678f3b46ca5c827f7ae53ea7bcf630cc10c7cfc082fd667e7c8ccf738e80f",
   "account_welcome_note": "013027e5b7c96fd12c6a4b1f50e723678ee8014d721aa29e5798814a902a719e",
@@ -109,7 +109,7 @@
     <string name="account_username_available">%1$s está disponible</string>
     <!-- %1$s is a username. -->
     <string name="account_username_taken">%1$s ya está en uso</string>
-    <string name="account_username_rules">De 3 a 30 caracteres. Solo letras, números y guiones bajos.</string>
+    <string name="account_username_rules">De 3 a 30 caracteres. Solo letras a–z, números y guiones bajos.</string>
     <string name="account_save_failed">No pudimos guardar tu perfil. Inténtalo de nuevo.</string>
     <string name="account_menu_settings">Configuración</string>
     <string name="account_menu_subscription">Suscripción</string>

@@ -10,6 +10,7 @@
   "settings_delete_account_description": "b2e1e212044d07e4dd32ad266f10c39562b96b5775e8d645720cdbd575032f47",
   "settings_delete_code_description": "608c9cd687c72c77d1892c01cd9ab3bd6853de45b0f6bcb667465c41931ccbd8",
   "settings_delete_code_title": "33895d5ef27a4485199ad19a3de450aa9f4f3dbf2c9018ffeb128de7cc679a61",
+  "settings_delete_confirm_description": "62917a64d8d8247ece2dd3b48896800b9190b426fff932723dde19e174fbba11",
   "settings_delete_confirm_title": "a7962120ab810d83538517b7ba875a4642f928769d4edbe229cda6f98101a386",
   "settings_delete_ellipsis": "7c652bf1fbaeb8d35f43bfe2f774bda0c2a6b886e9932147dca4e5382ac90165",
   "settings_delete_failed": "24d5b46bc75211266aae92eb47b2d6322a88f7fdcb6d9a4b6abc6b7bc04f6234",
@@ -41,6 +42,9 @@
   "settings_preferences_no_limit": "391cfb8c6319aaecdc8d356724b59de240150fe127f26296203dd01a5396d99c",
   "settings_preferences_on_this_device": "4e26099aabeb4b32a675c984fd8ffe473f6950ec0f40143aaef6ccf71279128b",
   "settings_preferences_save_failed": "54cae5401fc71611d084862ec475f1d3e7aa5634d82d6d0c196666708d0d8888",
+  "settings_preferences_share_usage_data": "0fea72de32218115cae5812d96c8c23266a670b60766b1c9e52f13a822ad452c",
+  "settings_preferences_share_usage_data_description": "c4ba3f54f9133aeea6f3c37c44e00f3dae8499051b0f097cb4fce9f2edc48261",
+  "settings_preferences_share_usage_data_locked": "7ef757a668a1744e36ed44840ff25fb070d0a36a67ba95a22798f406e7621301",
   "settings_preferences_sounds": "91d08567d642ca7da376933a0920e3599fca6155075387e633d62f42633c6674",
   "settings_preferences_sounds_description": "8c640ebf9a1e3a1f57c5713b9e03723c0cced7c484b0af63433eda09a5096687",
   "settings_preferences_summary": "1283790d8b808ddfb1e3264667a4494bd9e44354435ac2ec7367b0051e98cd31",
@@ -73,6 +77,7 @@
     <string name="settings_delete_account_description">Elimina per sempre il tuo account e tutti i suoi dati. L’abbonamento a Plus acquistato sul web viene disdetto; gli acquisti su Google Play e App Store si gestiscono dove li hai effettuati.</string>
     <string name="settings_delete_ellipsis">Elimina…</string>
     <string name="settings_delete_confirm_title">Vuoi eliminare il tuo account?</string>
+    <string name="settings_delete_confirm_description">I tuoi obiettivi, piani e progressi, la memoria e i file caricati vengono eliminati per sempre. Non puoi annullare questa operazione.</string>
     <string name="settings_cancel">Annulla</string>
     <string name="settings_delete_code_title">Conferma la tua identità</string>
     <!-- %1$s is the account's email address. -->
@@ -107,4 +112,8 @@
     <string name="settings_profile_description">Il tuo nome, il nome utente e il tuo account.</string>
     <string name="settings_preferences_description">Il tuo compagno, le lezioni e la lingua, come vuoi tu.</string>
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
+    <string name="settings_preferences_share_usage_data">Condividi i dati di utilizzo</string>
+    <string name="settings_preferences_share_usage_data_description">Ci mostra come usi Zoonk, così possiamo migliorarlo</string>
+    <!-- Why the usage data switch is off and can't be turned on: the law doesn't let minors agree to it. -->
+    <string name="settings_preferences_share_usage_data_locked">Disattivato per chi ha meno di 18 anni nel tuo paese</string>
 </resources>

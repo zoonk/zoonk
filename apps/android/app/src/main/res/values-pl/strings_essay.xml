@@ -13,6 +13,7 @@
   "essay_criterion_legal_basis": "4dadfa7a2e3eecae16ae01c9d9e95bf8eec0539f74951e867dcaf39db3a1825b",
   "essay_criterion_requests": "e485de4e6d10ea5bf83f65ac8e4243d54d333483119b8a74747c7d9dfb25b0c0",
   "essay_criterion_topic": "285dacbf99eab4d055e8a2081a8a4c29aed08de44930592ecd9f06008ee2e562",
+  "essay_daily_limit_reached": "2ae6af293240f0f53397dd4e7ec938cf5652505f2ad21e6d4e2783b302a841b9",
   "essay_element_action": "4b0f6fdcb6d65a10c923535d4807b98057093674cc3d9c7541e049ca4b1577f5",
   "essay_element_agent": "ddd30894dc2f43d8bd2191388e08f47507b03fd2c8c1cd5d67da5dc0da3cc11c",
   "essay_element_detail": "03898a0dc1c93ec761ed4ce5387a4d25dc2eee2a683ffb76fc2444b6939e036c",
@@ -47,6 +48,7 @@
   "essay_send": "48fb0c6adb0548d937482e2391a7abcc15876de99524efa1036e9fdf466cc6c9",
   "essay_send_failed": "afb0b1b0d6d9531ae8ab6c2b633edd7cc5366001524ac12d165ef6b69756b8c5",
   "essay_skip_rewrite": "13a0ace997245638cd4cb5d0288fc9ec5a20bf23e8bb31925616b36551e6ce9b",
+  "essay_skipped": "6e0164918377158ade07868e780cc11b48e0976394c40cca60880688f2dc022a",
   "essay_supporting_texts": "7eb6fe55055065e97a910708affe384a6c09feeaa8acea1404b1eb5ad35a852a",
   "essay_the_case": "26449493c22a26e932122c23c8ad7c5ba607b2e8b574f81516ce05f133ba0c0a",
   "essay_title": "cb84d4b8882cab8956eb5e6f9ae03546d1e22acfbab03430de07ebf78d330930",
@@ -104,8 +106,12 @@
         <item quantity="many">%d słów</item>
         <item quantity="other">%d słowa</item>
     </plurals>
+    <!-- On an essay the learner skipped, opened again from a link. -->
+    <string name="essay_skipped">Pominięto to wypracowanie.</string>
     <string name="essay_back_to_today">Wróć do „Dziś”</string>
     <string name="essay_send_failed">Nie udało się wysłać. Twój tekst nadal tu jest. Spróbuj ponownie za chwilę.</string>
+    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
+    <string name="essay_daily_limit_reached">Twój czas nauki na dziś się skończył. Twój tekst zostaje tutaj.</string>
     <string name="essay_limit_reached">Wykorzystano już limit ocen wypracowań na dziś. Twój tekst zostaje tutaj; wyślij go jutro.</string>
     <string name="essay_grading">Sprawdzamy twoje wypracowanie według każdego kryterium. Może to potrwać do 30 sekund.</string>
     <string name="essay_grading_slow">Nadal oceniamy. Trwa to dłużej niż zwykle.</string>
@@ -140,6 +146,4 @@
     <string name="essay_element_present">Uwzględniono</string>
     <!-- Whether an element of the proposal is in the essay. -->
     <string name="essay_element_missing">Brak</string>
-    <!-- On an essay the learner skipped, opened again from a link. -->
-    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
 </resources>

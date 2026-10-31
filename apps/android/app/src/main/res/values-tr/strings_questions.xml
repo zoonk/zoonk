@@ -36,6 +36,7 @@
   "questions_matched_with": "8250423926cbc872aeea77e2f38b93c7db59886fe04686360d266ac6622a53de",
   "questions_mistake_fixed": "56d8658e12db4f902bf4effac8604f086d49eeab70d8c3c99970fe46bda77914",
   "questions_mistakes_fixed": "a215ad447ac56c5a3b44536b82c747c9c747a58907a14c86057d3776d57fb70f",
+  "questions_not_quite": "73554ed2b99b75ac002c57ec525c0ce71ae0361f3975c0f8126257d46d05a004",
   "questions_open_source": "0ffb53293ef423e25d758e49c65b26d2ad12bb2a69641fbb309bb15ca2ff70b5",
   "questions_order_hint": "a95f4f7da50f224884130b25ea88648f33be907cb40815512bd93c75bdbd3c5f",
   "questions_pick_all": "b00b8afaacce418cbbe2ccbb3253b9918c984e4471f38b5106327ba082b803a5",
@@ -102,6 +103,8 @@
     <string name="questions_invalid_integer">12 gibi bir tam sayı yaz.</string>
     <string name="questions_feedback_label">Cevap değerlendirmesi</string>
     <string name="questions_correct">Doğru!</string>
+    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
+    <string name="questions_not_quite">Doğru değil</string>
     <string name="questions_left_blank">Boş bırakıldı</string>
     <string name="questions_dont_know_yet">Henüz bilmiyorum</string>
     <plurals name="questions_streak">
@@ -158,5 +161,4 @@
     <string name="questions_drill_show_answers">Okudum. Cevapları göster</string>
     <string name="questions_drill_not_sure">Emin değilim</string>
     <string name="questions_drill_open_lesson">Dersi gözden geçir</string>
-    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
 </resources>

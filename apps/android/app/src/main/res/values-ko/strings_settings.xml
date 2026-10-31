@@ -10,6 +10,7 @@
   "settings_delete_account_description": "f09b2de6512b7abcad3e3170b47c3d80473902e150a91b01e0543495d197e2bf",
   "settings_delete_code_description": "4ae5278829d7d32ff4052c528f121395e71085d1117de0d311383fa71aef04f7",
   "settings_delete_code_title": "0987d0b987df998a16c135d3b9cd2e9611a55238a4c9353a3bc99822a7d38b53",
+  "settings_delete_confirm_description": "e676be3570e8d635d2e1e75ba3a49b1d28d0fbe5bdc433aeac8e2446049acf0c",
   "settings_delete_confirm_title": "c9791b054038920d9a5e550ef72213f55a9aa29cc71b5985becd31650891980a",
   "settings_delete_ellipsis": "fb5f0561a6ccf69c4c7343f0dc9aa956eaf93da4d1e1d3242c727e0e5b2b2169",
   "settings_delete_failed": "b7f37532c6d47f49d0154e9a2249ff85dee64d06c2e95973c0b9b181085944b3",
@@ -41,6 +42,9 @@
   "settings_preferences_no_limit": "ed7a7f69c81b2514b37e8a3d418cc34dc3eb4708cb9f2364c07dd85471ab3561",
   "settings_preferences_on_this_device": "79c8e5fea6c4519f49c694132ae69a21f949a2ac9503753c4d1c126e10320f21",
   "settings_preferences_save_failed": "ba7636ee4896cc2dc3de2f91456d72d2a2dac9aff05bade72ebe17f18b82fc77",
+  "settings_preferences_share_usage_data": "2cb412d570fea104a4adc657a5961046daf9ed79601e251373422214e651980c",
+  "settings_preferences_share_usage_data_description": "a2d8395dc1ccf944c3d48974e0d01fcfe209e87a73a24f025942167c369a825c",
+  "settings_preferences_share_usage_data_locked": "7915020e2171913a73ce0eb82983921135246943b3d9827da98bab50e88fda73",
   "settings_preferences_sounds": "44fbc42b458b7b831e0375356efbda421231a2068aeaba0ca6692316d583439d",
   "settings_preferences_sounds_description": "fd0698c088fe01f8bb6bbc2fec4d0e0c63525712955ccc1437b6916344e85473",
   "settings_preferences_summary": "5d6e68552124d521d787a6182bdb87e80ee767757cf12626256bde5fe7fd986e",
@@ -73,6 +77,7 @@
     <string name="settings_delete_account_description">계정과 그 안의 모든 데이터가 영구적으로 삭제돼요. 웹에서 구독한 Plus는 해지되고, Google Play와 App Store에서 구매한 구독은 구매한 곳에서 관리해야 해요.</string>
     <string name="settings_delete_ellipsis">삭제…</string>
     <string name="settings_delete_confirm_title">계정을 삭제할까요?</string>
+    <string name="settings_delete_confirm_description">목표, 계획, 진도, 메모리와 업로드한 파일이 영구적으로 삭제돼요. 되돌릴 수 없어요.</string>
     <string name="settings_cancel">취소</string>
     <string name="settings_delete_code_title">본인 확인</string>
     <!-- %1$s is the account's email address. -->
@@ -107,4 +112,8 @@
     <string name="settings_profile_description">이름, 사용자 이름, 계정 정보예요.</string>
     <string name="settings_preferences_description">짝꿍, 레슨, 언어를 원하는 대로 설정하세요.</string>
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
+    <string name="settings_preferences_share_usage_data">앱 사용 데이터 제공</string>
+    <string name="settings_preferences_share_usage_data_description">Zoonk를 어떻게 사용하는지 알려 주고 서비스 개선에 도움이 돼요</string>
+    <!-- Why the usage data switch is off and can't be turned on: the law doesn't let minors agree to it. -->
+    <string name="settings_preferences_share_usage_data_locked">거주 국가에서는 만 18세 미만 학습자가 켤 수 없어요</string>
 </resources>

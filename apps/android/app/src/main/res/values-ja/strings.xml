@@ -15,6 +15,9 @@
   "belt_red": "f34a345b7f878b2ffd78702050e306a9b6d6967e17ca4a82ed191edb40882790",
   "belt_white": "b873613f71de7403824ec0f7524df4be6d1fc9936f841b9f6877c8a4ab5aa14e",
   "belt_yellow": "f26d34c4ddc94e08f7e4bc191caf8208a11a4841627dde8bb28685269909359f",
+  "close_sheet": "5cbd5438b8fa3785e38e2445047c42f1f610de988452c55bee11a8bb8f7933e9",
+  "daily_time_covers_everything": "5c437933a191e3191742ce6b47a45ccf9111f3c6866a3af749c06f39adcf29b8",
+  "daily_time_suggested": "606d1974c26b2a6ecb004efdfeb61ab21e2d9ec9a90076e9010e68226d871047",
   "diff_line_spoken": "1c8d908c8cf2552355e1372675ab709208b248c486a30b2fb3dba671244fa8f8",
   "disclosure_collapsed": "69eb18d3fbabcae2dd4089681ce0dcc4ce73368a37fe39c54a4b04b62854765c",
   "disclosure_expanded": "084df3e97163a1eaae7f83fdecbd1bfd67674e710856dbe017de9ea80755f8f4",
@@ -62,7 +65,7 @@
   "web_page_unavailable": "8cec6e0bbdd4d2ecda7e5b4cf76c1fb1d6de484f451d5432042b124187594052"
 }
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="navigation_today">今日</string>
     <string name="navigation_plan">学習計画</string>
     <string name="navigation_buddy">相棒</string>
@@ -129,4 +132,10 @@
     <string name="list_row_states">%1$s、%2$s</string>
     <!-- A toast, at most two short lines: a link did nothing because no app on the phone can open web pages. Same meaning as Android's own "No app can perform this action". -->
     <string name="web_page_unavailable">このページを開けるアプリがありません。</string>
+    <!-- Replaces Compose's own string of this name, whose Portuguese and German read as closing a spreadsheet. TalkBack's label for the dimmed area behind a bottom sheet, which closes the sheet. "Sheet" means a panel that slides up from the bottom of the screen, not a spreadsheet or a sheet of paper. -->
+    <string name="close_sheet" tools:override="true" tools:ignore="UnusedResources">パネルを閉じる</string>
+    <!-- In the time a day picker's menu. %1$s is a daily study time, such as "4 h". The same word as "We suggest 4 h a day" and "Use the suggested 4 h a day" beside it: suggested, not recommended. -->
+    <string name="daily_time_suggested">%1$s（提案）</string>
+    <!-- In the time a day picker's menu: the time that covers the whole goal or exam. %1$s is a daily study time, such as "13 h 30 min". -->
+    <string name="daily_time_covers_everything">%1$s（全範囲を学べる）</string>
 </resources>

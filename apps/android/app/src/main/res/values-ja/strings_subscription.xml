@@ -15,7 +15,7 @@
   "subscription_answer_free_lead": "1f24df8f326b2e378bafbb7ad34f2a56d0ca986f4176a9481fc4bfd2cdeecdfd",
   "subscription_answer_free_lessons": "5816bc40445896e8690d110e650a4c39fea03f4650c8dad5101e6ec3c14c3936",
   "subscription_answer_free_uploads": "8ac12b9893c6772af5d91e4e7030a8c0d9051d6ef08e77de84f297e895b92284",
-  "subscription_answer_refund": "dfbdf0232292bdcb5650fa20e36dc9c7035d0045a02846eb3edeb17974d7cd49",
+  "subscription_answer_refund": "2d5e47915beb4aea4c6f8976be0267f7f1556552e8ad9b751684720f22b58c2d",
   "subscription_answer_unlimited": "f4c1700b14f952baf43193fd3c4a2af56d4d971534a3913e8e5f224840df4f50",
   "subscription_available_with_plus": "96ae80d70bf80243ad593a149566f0c6a3133333e51ecdb8d6aedf8dfa238a3d",
   "subscription_benefit_buddy": "e0508362a1b5b3e7bc13d6e098853079e1748b4773ed4dc9841959073113deca",
@@ -27,7 +27,17 @@
   "subscription_billing_period": "bc3a89a3fe251c0b1626350a3459e4be3bab34375abb16e15e5bb4917d886ee2",
   "subscription_cancel": "8063a1134fe55365c84903e68eedc15d6923f1329e7157db34a7b8055328865f",
   "subscription_cancel_anytime": "c7c206e8bd8b3f503334b3a4695145818cebb085d6c8e117a453294c15d4a0c0",
+  "subscription_cancel_at_period_end": "7f182133d6d874417d0034f6a8d1b4c55f07044e84b9664f85271e6d962b1805",
+  "subscription_cancel_at_period_end_refund": "3c4bdb53d592a07636da3969fe3348520383aba74bea03f60fa25a452482acd5",
+  "subscription_cancel_confirm": "c17f913ed98d2e8e4bf18ff283b67cb283b61e35b6789b27645ef0ba10435346",
+  "subscription_cancel_email": "a0abb7f7bf35f0cb246744c2aba7c8378febe32785f2dd3ba134e11abc96f039",
   "subscription_cancel_failed": "dbf8c1521bc0ef618eb73c6b5d9e23792af82a27e755e06a0f9f30262b72fd59",
+  "subscription_cancel_title": "caed509f6cc8d72feb8e996950180fbc7f7e5b50d9e0020a95d9855c428c9082",
+  "subscription_cancel_unavailable": "0938c976397181d0a5a94cca0e19397042e95f115515e734048fce48c12a5e6b",
+  "subscription_cancel_withdraw": "4c9ca6490a78b8a7f7c4f0849ccc16992b8ab1359439eedf5fe06f0d05010d4e",
+  "subscription_cancel_withdrawal": "625dd63e7b5ece199c5737f808c5f2da58e612d4eb2fb7e1ec11ea58ca7f9dbe",
+  "subscription_canceled": "7051b42956540abba181e79dbe0166c6060c72cb9bc4705a3afcdbf35566367c",
+  "subscription_canceled_refund": "15502eb1bb006e8cd019ad2e0f91e26e21c5781e2cd08ef0f6e92248fb82f1dc",
   "subscription_contact_support": "5c517849a791f02fb65165a7f3473bdb1706e79e4671f42564d820ba0178bef8",
   "subscription_ending": "9f3652dd50437e339618bd0c2e730671d280469be33778ff27d4b3f17070ad92",
   "subscription_ends_on": "1978a3105f31425f282ea6224c985d2257ac275813c0f360a3ced91800f871a8",
@@ -44,7 +54,9 @@
   "subscription_free_week_over_description": "b2633a5b1c3c780b8aa578a7ef0941d08579a5416e6c6e9aeeaf6220c4a5deae",
   "subscription_free_week_over_title": "e8fbbe44e77f0e19652c5657db2fc3879ec925967f224ffad144d84dea05e4b2",
   "subscription_get_plus": "5c2e4498cd2167eecf200e918fa151dcf998ad15d34421c4e40d217663b52f00",
+  "subscription_get_refund": "4e2cf490495ee23a22b8cf7385a24e42ec3ed68b1a07d2af7108afd15dc1e5ec",
   "subscription_hide_answer": "6dc13c62d64c74f2654a96a7c0b8dbef17a9ebaf031b422a3d06ec62df0a92b6",
+  "subscription_keep_plus": "b4d93b75a06450667ae7242f237994e9a9766022d98f481fd4a643e0f070134e",
   "subscription_manage_google": "203f57bf90846fb2ab671556f0c1952e90d3d302de603b542968c5271f99df70",
   "subscription_managed_apple": "6efeba678f162b70ba0bc7f63746550cc6610b03d0bb22e7d17c4ce5612f7d01",
   "subscription_managed_google": "3017ac5a389f8a9f3525d5cc0b47fdc73bf9274286d0dacce89ffb5ac6b3bf01",
@@ -53,6 +65,7 @@
   "subscription_monthly": "d48069c2e42d55ef2e725cdf46c582eb9dc883843c85b7e0c764fbba335be199",
   "subscription_no_card_needed": "312a0e8ccfa86155456c4e90f91eae5c489a070ea49fe122adfd5bcdaaa63d23",
   "subscription_offer_title": "a5456df799bda8fe7566951fd58068abf6518b519b9f84f57b32a9dd04690fe7",
+  "subscription_ok": "9a0fb85127aadb6b651a9e062382db1d1b60ef23c56b9558fd341c203ef38ae3",
   "subscription_per_month": "64bb9e5c042312332893c6fd31a0a0a4a1e6d84a1f9811ec003d7cee9c2e077c",
   "subscription_per_year": "a767923e4d9cce7ebdb166e5ea109cb626ee80a50f81fab1ee0f23df05ec9e6e",
   "subscription_period_ends_on": "0e378cae77abe368c92bdd42f279ce9debc01450a1533de06641ddc84ead821f",
@@ -69,6 +82,7 @@
   "subscription_questions_email": "ddb6e6fd737f6c26c687a3c12d25fd7262790a18142d594cbcfa7cbf94de187a",
   "subscription_questions_title": "e7837e5303d443b8d4534c1b558ebd03d61f3019716ad887654eeacc87b287ac",
   "subscription_questions_unsure": "54a2ed5f5d9b57d5ebe4ca51faecc3665bdc94241559fe9320de8a80c5f6d538",
+  "subscription_refund_still_open": "e74781796681efa4eacc25d4b00166399dcd7599fc5d1598763d2a9d4effb589",
   "subscription_renews_on": "b2dab5f3605ab9f524e70a52726ed99b0221234d2902ec4a26fb5e52ead1d102",
   "subscription_save": "1d211229417ed82fbfa0a64a756bd23da964f84548a8254dc0eb5c238993f96c",
   "subscription_see_plus": "717e9b010019ea016341f8d31f3b5aa85f460c7304c90e74bc293b4c90c32ace",
@@ -100,10 +114,35 @@
     <string name="subscription_managed_zoonk">このサブスクリプションはZoonkが管理しています。変更や解約でお困りの場合は、サポートにお問い合わせください。</string>
     <string name="subscription_manage_google">Google Playで管理する</string>
     <string name="subscription_contact_support">サポートに問い合わせる</string>
-    <!-- Opens the page that cancels a Plus bought on the web. -->
+    <!-- Opens the choices for canceling a Plus bought on the web. -->
     <string name="subscription_cancel">サブスクリプションを解約する</string>
-    <!-- Opening the page that cancels a Plus bought on the web failed. -->
+    <!-- Loading or sending the cancellation of a Plus bought on the web failed. -->
     <string name="subscription_cancel_failed">サブスクリプションの管理画面を開けませんでした。hello@zoonk.comまでお問い合わせください</string>
+    <!-- The title of the dialog that cancels a Plus bought on the web. -->
+    <string name="subscription_cancel_title">Plusを解約しますか？</string>
+    <!-- Within 14 days of subscribing. %1$s is the last day of the refund, like "Nov 14, 2026"; %2$s the amount, like "R$ 29,90". -->
+    <string name="subscription_cancel_withdrawal">%1$sまでは、%2$sの全額返金を受けられます。Plusはすぐに終了します。</string>
+    <!-- Confirms withdrawing from the contract with a full refund. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Widerruf bestätigen”, in French “Confirmer la rétractation”, in Spanish “Confirmar desistimiento”, in Portuguese “Confirmar retratação”, in Italian “Conferma recesso”, in Polish “Potwierdź odstąpienie od umowy”. -->
+    <string name="subscription_cancel_withdraw">契約の撤回を確定する</string>
+    <!-- Stopping the renewal. %1$s is the day Plus ends, like "Nov 14, 2026". -->
+    <string name="subscription_cancel_at_period_end">Plusは%1$sまで使え、その後終了します。今後の請求はありません。</string>
+    <!-- Stopping the renewal after a yearly renewal. %1$s is the day Plus ends, like "Nov 14, 2026"; %2$s the amount refunded for the months that haven't started, like "R$ 99,90". -->
+    <string name="subscription_cancel_at_period_end_refund">Plusは%1$sまで使えます。まだ始まっていない月の分として%2$sを返金します。</string>
+    <!-- Stops the renewal, so Plus ends at the end of what's paid. German law (BGB § 312k) requires this button to read exactly "Jetzt kündigen" in German. -->
+    <string name="subscription_cancel_confirm">今すぐ解約する</string>
+    <!-- Closes the cancel dialog without canceling. -->
+    <string name="subscription_keep_plus">Plusを続ける</string>
+    <!-- The last line of the cancel dialog. -->
+    <string name="subscription_cancel_email">確認メールをお送りします。</string>
+    <string name="subscription_canceled">Plusを解約しました。確認メールをお送りしました。</string>
+    <!-- %1$s is the amount refunded, like "R$ 29,90". -->
+    <string name="subscription_canceled_refund">元のお支払い方法に%1$sを返金しました。Plusを解約しました。確認メールをお送りしました。</string>
+    <string name="subscription_refund_still_open">%1$sまでは、Plusを今すぐ解約して全額返金を受けられます。</string>
+    <string name="subscription_get_refund">全額返金を受ける</string>
+    <!-- The cancel option the learner chose closed meanwhile, such as the 14-day refund. -->
+    <string name="subscription_cancel_unavailable">その方法は利用できなくなりました。</string>
+    <!-- Closes a message after canceling. -->
+    <string name="subscription_ok">OK</string>
     <string name="subscription_offer_title">Zoonk Plusに登録する</string>
     <string name="subscription_your_plan">利用中のプラン</string>
     <string name="subscription_free">無料プラン</string>
@@ -200,5 +239,5 @@
     <string name="subscription_question_cancel">解約するとどうなりますか？</string>
     <string name="subscription_answer_cancel">お支払い済みの期間が終わるまでPlusを利用できます。その後は無料プランに戻りますが、目標や学習の進捗はそのまま残ります。</string>
     <string name="subscription_question_refund">返金は受けられますか？</string>
-    <string name="subscription_answer_refund">状況を添えてお問い合わせください。返金できるよう、できる限り対応します。</string>
+    <string name="subscription_answer_refund">Google Playで購入したPlusの返金はGoogle Playが対応します。Google Playで返金を申請してください。Zoonkのウェブサイトで登録した場合は、登録から14日以内に解約すると全額返金を受けられます。お問い合わせください。</string>
 </resources>

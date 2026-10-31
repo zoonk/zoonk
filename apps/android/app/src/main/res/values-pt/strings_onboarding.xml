@@ -56,8 +56,8 @@
   "onboarding_exam_expected": "6571d5d9d801876b2630b0c742e6ef59292058f5fad23e06a6877c277a5587b1",
   "onboarding_exam_on": "3a2dd36768785d356c0184cda2ec35c3bfcb59b36bb6e203b60bcbb7fe77edbe",
   "onboarding_exam_on_two": "86d55e276cf25a91b21f8920e742fbcc23d4f24a0a403956561aac8e564da7c1",
-  "onboarding_exam_ready": "a652e4f57be5633bd5be28b8bf93328c0a24fd9168ca09e36f46e913b3746ec2",
-  "onboarding_exam_ready_first_day": "b61795879d953fb3f1f9ecdcaf979d06f6e1522ebfc44db364f11ca4a6d05d42",
+  "onboarding_exam_ready": "74ffceab77823b851c78e3445be96a3961abf6bb2ece2e25caf98dc67c4d65ef",
+  "onboarding_exam_ready_first_day": "6715e6143a415eb72da443c17ce40ca6bbbef502e0d2eb8cd6009ac9da1aa6ac",
   "onboarding_explain_description": "f327a5c71ce22022aed1ed768954cfed7267dea0d583ddb6cadc89387c0585d1",
   "onboarding_explain_it": "0a8b228075da6a9887893379a47f7d735c58a3cecbed3703b484be0f5c3f0d77",
   "onboarding_finish_later": "b585bc6afde844e6ce28427b93e6b1051e2d89f379fa2984e291b66a7e951d24",
@@ -956,8 +956,8 @@
     <string name="onboarding_exam_on">Sua prova é em %1$s</string>
     <!-- %1$s is an exam's first day, %2$s its second. -->
     <string name="onboarding_exam_on_two">Sua prova é em %1$s (e %2$s)</string>
-    <string name="onboarding_exam_ready">Seu plano ajuda você a se preparar até lá.</string>
-    <string name="onboarding_exam_ready_first_day">Seu plano ajuda você a se preparar até o primeiro dia.</string>
+    <string name="onboarding_exam_ready">Seu plano ajusta o ritmo das aulas para você terminar até essa data.</string>
+    <string name="onboarding_exam_ready_first_day">Seu plano ajusta o ritmo das aulas para você terminar até o primeiro dia.</string>
     <string name="onboarding_exam_expected">Esta é a data prevista até que o edital confirme.</string>
     <string name="onboarding_another_date">Outra data</string>
     <string name="onboarding_date_title">Você tem uma data em mente?</string>

@@ -186,6 +186,7 @@
   "today_week_full_review_detail": "255cda7f6e5295ffdb81969ac477464f009fa9b8eaebd484a16eb2004c6d8597",
   "today_week_full_review_name": "6ad1f99ea9d3ff628554a06e9acad7043cef0886ed82c7abb76d023ab601f5c9",
   "today_week_gain": "12f55205ffc8ffa240f77a9e5f505b9cdf4a079315b1baa25b37dd0e382922f0",
+  "today_week_goal_reached": "8aab68319ff527397ead1b064740788685e1d729939005b8d7a8f09c2ebd5492",
   "today_week_loss": "9942d6f6d50b2368c5e35337a77333066c8fccc5cde183b334a1a190a40071e1",
   "today_week_mock_name": "59517e0e3f0904021cbee29ebd15cf8ea040758cb17cc3085c908f350e51be87",
   "today_week_not_studied": "e652d91023219e992a8bb4ced420a19fe56984ba4a46bbe33033db1f305e9fb6",
@@ -358,6 +359,7 @@
     <string name="today_week_day">%1$s: %2$s</string>
     <!-- "Saturday: weekly challenge, not studied". -->
     <string name="today_week_challenge_day">%1$s: %2$s, %3$s</string>
+    <string name="today_week_goal_reached">günlük çalışma süresi tamamlandı</string>
     <string name="today_week_studied">çalışıldı</string>
     <string name="today_week_exam_day">sınav günü</string>
     <string name="today_week_deadline">hedef tarihin</string>
@@ -494,5 +496,4 @@
     <string name="today_coming_stalled">Normalden uzun sürüyor</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get today's lessons" link. -->
     <string name="today_coming_not_written">Henüz hazırlanmadı.</string>
-    <string name="today_exam_choice_detail">Seçim yapana kadar {arg1} planının dışında kalır.</string>
 </resources>

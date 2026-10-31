@@ -56,6 +56,8 @@
   "onboarding_exam_expected": "25c1c2dbbcbc1202a06a170002ace7b67e629508a6efe74716a53a0faa708170",
   "onboarding_exam_on": "ed4c3a2627354e8a59b28fc88480c55af05118392d699b145b191dc74d9204aa",
   "onboarding_exam_on_two": "55481b206fd0a62fa15d8ac29b00bbea8349585fe41de491ab3268bbeb352183",
+  "onboarding_exam_ready": "aa7a711aa0d8933131e411f5b711d025495e13dc2f27046279b81b4e3675524a",
+  "onboarding_exam_ready_first_day": "85611e845c19e2da32b30bfe25aad13eca97df56c480aaed32a539142cb925f7",
   "onboarding_explain_description": "99aeea3bdf0b7e8ab0e1d3594e246a634aa5fd71712aac87de58683503c2085d",
   "onboarding_explain_it": "e6c946b04d3c2cbbde01cc8a9903a95962cab1f8be503ace3c0ff2de74c4b7bd",
   "onboarding_finish_later": "e51d9378571195d97e6ffe7398b50de93f0419a6407608cf6313b8903534c059",
@@ -328,6 +330,7 @@
   "onboarding_role_work_title": "b6f01db8422df92d4c19589f261f1d5aa013bdb83a84cafdb6c2ad95c8a9b5c2",
   "onboarding_row_course": "f51b480ce69641fb94ba44c8cdf4282541d512e80ac5eeb1a9af3ca26cfdef19",
   "onboarding_row_cutoff_score": "ada2be6e33eef6653c94c27d9d6fb32222785a94bb90a280cb7f2b1803dd38b3",
+  "onboarding_row_date_booked": "cc4224715973376e1ec56fc722ed595d829d79ed310f36eecbe9d80ffef1e414",
   "onboarding_row_date_not_out_guide": "a4cad4a25a8c8353e5496ae515fe4e0f576a70114664f1b444630c8e3a20fb94",
   "onboarding_row_date_not_out_notice": "b223e0ac5d436cd4a9b48cf50809770f2dabeb8e6532dbe6b38c000f51b517e4",
   "onboarding_row_date_to_be_confirmed": "80abf6b797dc049386891a892991d4f11835a29c0d136b25ba563e5b035f011d",
@@ -529,6 +532,7 @@
     <string name="onboarding_row_date_to_be_confirmed">%1$s, 추후 확정</string>
     <string name="onboarding_row_date_not_out_notice">공식 시험일은 시험 공고에 나와요. 이미 날짜를 알고 있나요? 여기에 입력하세요.</string>
     <string name="onboarding_row_date_not_out_guide">시험일은 공식 시험 일정표에 나와요. 이미 날짜를 알고 있나요? 여기에 입력하세요.</string>
+    <string name="onboarding_row_date_booked">예약할 때 시험 날짜를 정해요. 이미 예약했나요? 여기서 날짜를 설정해 주세요.</string>
     <string name="onboarding_row_dates_estimated">예년 일정을 바탕으로 예상했어요. 공식 일정이 나오면 알려 드릴게요.</string>
     <string name="onboarding_row_pick_date">날짜 선택하기</string>
     <string name="onboarding_row_several_sittings">이 시험은 매년 여러 번 열려요. 날짜를 고르기 전까지는 첫 번째 시험일을 기준으로 계획을 세워요.</string>
@@ -910,6 +914,8 @@
     <string name="onboarding_exam_on">시험은 %1$s에 있어요</string>
     <!-- %1$s is an exam's first day, %2$s its second. -->
     <string name="onboarding_exam_on_two">시험은 %1$s과 %2$s에 있어요</string>
+    <string name="onboarding_exam_ready">그날까지 레슨을 마칠 수 있도록 진도를 조절해요.</string>
+    <string name="onboarding_exam_ready_first_day">시험 첫날까지 레슨을 마칠 수 있도록 진도를 조절해요.</string>
     <string name="onboarding_exam_expected">공고로 확정되기 전까지는 예상 날짜예요.</string>
     <string name="onboarding_another_date">다른 날짜</string>
     <string name="onboarding_date_title">목표로 정한 날짜가 있나요?</string>
@@ -966,40 +972,4 @@
     <string name="onboarding_reveal_reading_line_guide">공식 안내서에 나온 파트와 주제를 찾고 있어요…</string>
     <string name="onboarding_reveal_reading_line_dates">시험 날짜와 방식을 확인하고 있어요…</string>
     <string name="onboarding_reveal_reading_line_fit">계획에 반영하고 있어요…</string>
-    <string name="onboarding_position_placeholder">예: 행정직, 세무직</string>
-    <string name="onboarding_finish_around">{arg1}쯤 마쳐요.</string>
-    <string name="onboarding_finish_unknown">이 일정으로는 언제 마칠지 예상할 수 없어요. 학습 시간이나 학습하는 날을 늘려 보세요.</string>
-    <string name="onboarding_finish_failed">언제 마칠지 계산하지 못했어요.</string>
-    <string name="onboarding_finish_working">언제 마칠지 계산하고 있어요…</string>
-    <string name="onboarding_try_again">다시 시도</string>
-    <string name="onboarding_schedule_suggested">{arg1} (추천)</string>
-    <string name="onboarding_schedule_too_close">목표 날짜까지 남은 시간이 짧아 모든 내용을 깊이 있게 배우기 어려워요.</string>
-    <string name="onboarding_schedule_days_too_close">선택한 학습일만으로는 목표 날짜까지 모든 내용을 깊이 있게 배우기 어려워요. 학습일을 늘리면 도움이 돼요.</string>
-    <string name="onboarding_schedule_split_one">이 목표에는 하루 {arg1}, 다른 목표에는 {arg2}씩 배정해요.</string>
-    <string name="onboarding_schedule_split_many">이 목표에는 하루 {arg1}, 나머지 목표에는 모두 합쳐 {arg2}씩 배정해요.</string>
-    <string name="onboarding_schedule_takes_exam_all">{arg1}까지 시험의 모든 주제를 공부하는 데 필요한 시간이에요.</string>
-    <string name="onboarding_schedule_takes_exam_all_month">{arg1}까지 시험의 모든 주제를 공부하는 데 필요한 시간이에요.</string>
-    <string name="onboarding_schedule_takes_goal_all">{arg1}까지 목표로 정한 내용을 모두 공부하는 데 필요한 시간이에요.</string>
-    <string name="onboarding_schedule_takes_goal_all_month">{arg1}까지 목표로 정한 내용을 모두 공부하는 데 필요한 시간이에요.</string>
-    <string name="onboarding_schedule_covers_exam_all">{arg1}까지 시험의 모든 주제를 공부해요.</string>
-    <string name="onboarding_schedule_covers_exam_all_month">{arg1}까지 시험의 모든 주제를 공부해요.</string>
-    <string name="onboarding_schedule_covers_goal_all">{arg1}까지 목표로 정한 내용을 모두 공부해요.</string>
-    <string name="onboarding_schedule_covers_goal_all_month">{arg1}까지 목표로 정한 내용을 모두 공부해요.</string>
-    <string name="onboarding_schedule_reaches_exam">{arg1}까지 시험의 모든 주제를 다뤄요. 일부는 간단히 살펴봐요.</string>
-    <string name="onboarding_schedule_reaches_exam_month">{arg1}까지 시험의 모든 주제를 다뤄요. 일부는 간단히 살펴봐요.</string>
-    <string name="onboarding_schedule_reaches_goal">{arg1}까지 목표로 정한 내용을 모두 다뤄요. 일부는 간단히 살펴봐요.</string>
-    <string name="onboarding_schedule_reaches_goal_month">{arg1}까지 목표로 정한 내용을 모두 다뤄요. 일부는 간단히 살펴봐요.</string>
-    <string name="onboarding_schedule_share_exam">시험 주제 중 자주 나오는 것부터 약 {arg1}를 {arg2}까지 깊이 공부해요.</string>
-    <string name="onboarding_schedule_share_exam_month">시험 주제 중 자주 나오는 것부터 약 {arg1}를 {arg2}까지 깊이 공부해요.</string>
-    <string name="onboarding_schedule_share_goal">목표로 정한 내용 중 중요한 것부터 약 {arg1}를 {arg2}까지 깊이 공부해요.</string>
-    <string name="onboarding_schedule_share_goal_month">목표로 정한 내용 중 중요한 것부터 약 {arg1}를 {arg2}까지 깊이 공부해요.</string>
-    <string name="onboarding_schedule_past_date">정해 둔 날짜인 {arg1}이 지났어요. 다음 화면에서 새 날짜를 고를 수 있어요.</string>
-    <string name="onboarding_schedule_past_date_month">정해 둔 날짜인 {arg1}이 지났어요. 다음 화면에서 새 날짜를 고를 수 있어요.</string>
-    <string name="onboarding_schedule_no_days">학습할 요일을 하나 이상 선택하세요.</string>
-    <string name="onboarding_schedule_working">목표 달성에 필요한 시간을 계산하고 있어요…</string>
-    <string name="onboarding_schedule_find_failed">목표 달성에 필요한 시간을 계산하지 못했어요.</string>
-    <string name="onboarding_schedule_asking">하루 {arg1}씩 공부하면 어디까지 배울 수 있는지 알아보고 있어요…</string>
-    <string name="onboarding_schedule_ask_failed">하루 {arg1}씩 공부할 때 배울 수 있는 범위를 계산하지 못했어요.</string>
-    <string name="onboarding_schedule_offer_everything">하루 {arg1}으로 전체 내용 공부하기</string>
-    <string name="onboarding_schedule_offer_every_topic">하루 {arg1}으로 모든 주제 다루기</string>
 </resources>

@@ -35,7 +35,6 @@
   "today_earlier_work": "56b8d14c26203ae230f69ed1001161ac429a2ac2db5fcf384ba8b6796af71a5b",
   "today_earlier_work_detail": "fb4e43bb949e7390edbaadf9b024b019d2171c99983c1ede58a90d8cb6e5f658",
   "today_exam_choice_choose": "d9cb2efab69311bd9af3ec9931c30f4ab39f7cdf2072f2bf98a97e6e9ea81086",
-  "today_exam_choice_detail": "716a5953f439dfd016310d7c3bc6045077caa13cebfacccaf32235277db64228",
   "today_exam_choice_question": "93e1b32f5a9903411411a50e91d300ed864a9196af5de8b7deb94cf517576cd7",
   "today_exam_speaking": "1222d5244052de4d91d18b4a8378b8b2617138a9c47dd764d23443b07449e8c6",
   "today_exam_speaking_detail": "d73c77b04f190aebda598654cb5778198b26b663ca9bbddf1092679f13a16d99",
@@ -187,7 +186,7 @@
   "today_week_full_review_detail": "6a93c29ce875c3b8256e634504040bddce7e60b8191ec0af1eadf0103810a5ed",
   "today_week_full_review_name": "0984d587dcace3d000e0a64e3ad4410b9771785ae6a0c00470aa3b9830618d56",
   "today_week_gain": "0e7d8c055e7f8f43d7da8012e28f4b803c2cf34c345e604a3b6a591d042add00",
-  "today_week_goal_reached": "4972638e398b581f01d18c98a7c1632ec5cd2e745c6af5e4b389f3d596179fb6",
+  "today_week_goal_reached": "2c734b36b70fd86f69bb8d4cec2bd6860f5b84f339e3d980c284c071124d4522",
   "today_week_loss": "91273a67bc1828dd159a6efaeb11ccccf425066202936f25c10e6bb40a1919e7",
   "today_week_mock_name": "104c995b6eb4ba60a725cfe3abcdbc52170f5920128367fb2a208e4a1668df46",
   "today_week_not_studied": "d8b6dc21bd5376a3b1788e9c4f484d1bd3750b8f31500bbce369c13a456cdac9",
@@ -345,11 +344,11 @@
     </plurals>
     <!-- Read by TalkBack; both are durations, such as "1 hr 20 min of 3 hr 45 min". -->
     <string name="today_week_time">今週は%1$s学習しました（目標は%2$s）</string>
-    <!-- Read by TalkBack for each day of the week: "Monday: goal reached". -->
+    <!-- Read by TalkBack for each day of the week: "Monday: daily time met". -->
     <string name="today_week_day">%1$s：%2$s</string>
     <!-- "Saturday: weekly challenge, not studied". -->
     <string name="today_week_challenge_day">%1$s：%2$s、%3$s</string>
-    <string name="today_week_goal_reached">目標達成</string>
+    <string name="today_week_goal_reached">1日の学習時間を達成</string>
     <string name="today_week_studied">学習済み</string>
     <string name="today_week_exam_day">試験日</string>
     <string name="today_week_deadline">目標日</string>
@@ -430,8 +429,6 @@
     <string name="today_notice_exam_choice">試験の選択</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="today_exam_choice_question">%1$s：どれを受験しますか？</string>
-    <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
-    <string name="today_exam_choice_detail">選ぶまでは、%1$sは学習計画に含まれません。</string>
     <string name="today_exam_choice_choose">選ぶ</string>
     <string name="today_notice_plan_change">変更の提案</string>
     <string name="today_plan_suggestion">学習計画の提案</string>

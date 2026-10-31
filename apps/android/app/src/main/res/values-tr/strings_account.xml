@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "account_agreement": "61659e9d2c422de0c030ee2ce07f6f7154913a6cebfc968f9c4bf7af7f2f9658",
+  "account_below_minimum_age_description": "fe06528ee8dc14591182fd824c63aeac06248ccf3a5e607c5a8add2c741abf7d",
+  "account_below_minimum_age_log_out_description": "241b903bb244a27ba0f3d0a45e0fb953e825f5f80d49e7275cf444dc661aec3f",
+  "account_below_minimum_age_ok": "9fd5cf78072a627d4cc79269c6dfc22c908181f5d8aa419b2c25ca807ebc1c8a",
+  "account_below_minimum_age_title": "467245b061638e40854e33e3e18c8e202b0052fee6d88eeeee6659f8c0c1f6dc",
+  "account_birth_year_description": "688a276b4a999cddc813d1def54fb2cd2250fcf4d71adef65206fecf0501c53f",
+  "account_birth_year_invalid": "f206bbedeae7d8e1548930d6fd3348e35cadea44f3ba67b19294a3e9af1d6bcc",
+  "account_birth_year_label": "dff9e5c79070d462d27700cb91533285a2285eeadd48da89e1aef666bef0e892",
+  "account_birth_year_not_now": "b20ddc4aacb9502ed28a3f152d21078a2ec7211d4d9d03d9035d89de5b0d8d03",
   "account_birth_year_save_failed": "20ce64cc2efc13e6352d6d4329bb7e7f0b5582f498cc3b44c2f991cb83c0d35c",
+  "account_birth_year_title": "8d436ee896285abb31fce25136dcd577c427c154ff9aa0bb3cac8eae43bdf59d",
   "account_change": "29dd8da7a4002acc4fe052562d52aacdcf32f8a90fcb1afa9e3bfa885990d982",
   "account_change_email": "faf054401856f18184782a14cd71f4544dfa3c511a691573fd78038c08328086",
   "account_change_username": "2b7c3193793da2d886c15b82d987ac33ff2f4250a219b70886461ed1dec24827",
@@ -51,6 +61,7 @@
   "account_username_available": "66fdb8556eb7a0b55597c626cf4ba25effeff3ca916879a6196ab3bb66472194",
   "account_username_checking": "5a8fd0d9e4421dc83d5c7f81e4b765c06886b4848d2b3937827693debefb0eb7",
   "account_username_line": "e4dbb46744123e31df05b0ca6d609b9902a4231276392718e7903118ab8318f9",
+  "account_username_rules": "ac20034fdf3c0ee63800c1a46e737f829eec67adc6509310e254d157f30d06c6",
   "account_username_taken": "9f6364387f52f361dc8ea70286611ec00425b2d19eb5a039025da05d3f9895b4",
   "account_welcome_description": "313d5f83ce56ea798caa3a756f3ca9160f3f1b2a704eded5d121cdff9862d374",
   "account_welcome_note": "3c841f12937fd075a1fa99c59a10b2fc48d580e4430362a7857ba7617d80245a",
@@ -71,6 +82,8 @@
     <string name="account_email">E-posta</string>
     <string name="account_email_placeholder">me@gmail.com</string>
     <string name="account_continue">Devam et</string>
+    <!-- %1$s is "Terms of Service" and %2$s is "Privacy Policy", each a link. -->
+    <string name="account_agreement">Devam ederek Zoonk’un %1$s ve %2$s metinlerini kabul edersin.</string>
     <string name="account_check_email_title">E-postanı kontrol et</string>
     <!-- %1$s is an email address. -->
     <string name="account_check_email_description">%1$s adresine gönderdiğimiz kodu gir.</string>
@@ -106,6 +119,7 @@
     <string name="account_username_available">%1$s kullanılabilir</string>
     <!-- %1$s is a username. -->
     <string name="account_username_taken">%1$s zaten kullanılıyor</string>
+    <string name="account_username_rules">3–30 karakter. Yalnızca a–z harfleri, rakamlar ve alt çizgi.</string>
     <string name="account_save_failed">Profilini kaydedemedik. Tekrar dene.</string>
     <string name="account_menu_settings">Ayarlar</string>
     <string name="account_menu_subscription">Abonelik</string>
@@ -116,12 +130,20 @@
     <string name="account_sign_out_failed">Zoonk oturumunu kapatamadı. Bağlantını kontrol edip tekrar dene.</string>
     <string name="account_unavailable_title">Hesabını kontrol edemedik</string>
     <string name="account_unavailable_description">Oturumun hâlâ açık. Bağlantında bir sorun olabilir, birazdan tekrar dene.</string>
-    <string name="account_birth_year_save_failed">Kaydedilemedi. Tekrar dene.</string>
-    <!-- %1$s is "Terms of Service" and %2$s is "Privacy Policy", each a link. -->
     <!-- Asked once, before a new or existing account goes on learning. -->
+    <string name="account_birth_year_title">Hangi yıl doğdun?</string>
+    <string name="account_birth_year_description">Bunu herkese bir kez soruyoruz.</string>
     <!-- Closes the birth year question without answering; nothing starts. -->
+    <string name="account_birth_year_not_now">Şimdi değil</string>
     <!-- The label of the field where the learner types the four-digit year they were born, like 1998. -->
+    <string name="account_birth_year_label">Doğum yılı</string>
+    <string name="account_birth_year_invalid">Yılı kontrol edip tekrar dene.</string>
+    <string name="account_birth_year_save_failed">Kaydedilemedi. Tekrar dene.</string>
     <!-- Title of a kind message to someone too young to use Zoonk where they live. -->
+    <string name="account_below_minimum_age_title">Henüz zamanı değil</string>
     <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Kind and encouraging, never scolding. -->
+    <string name="account_below_minimum_age_description">Zoonk’u kullanmak için en az %1$d yaşında olman gerekiyor. O yaşa geldiğinde burada olacağız.</string>
     <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Shown to someone signed in: "log you out" means Zoonk ends their session in the app when they tap OK, the same action as the menu's "Log out". Kind and encouraging, never scolding. -->
+    <string name="account_below_minimum_age_log_out_description">Zoonk’u kullanmak için en az %1$d yaşında olman gerekiyor, bu yüzden oturumunu kapatacağız. O yaşa geldiğinde burada olacağız.</string>
+    <string name="account_below_minimum_age_ok">Tamam</string>
 </resources>

@@ -56,8 +56,8 @@
   "onboarding_exam_expected": "b0f1d3c740a5319403002d9b30c1240c63cc46ba46abed073cee55b4e44a7cdd",
   "onboarding_exam_on": "a14431a2b4d00351ebacfb8b57c61e164311c4979ca46267000a8af56f808108",
   "onboarding_exam_on_two": "3250173527411eeb50168edcf9971560a040ad47ac894d072838c4164d15112c",
-  "onboarding_exam_ready": "169909e7bd1939b7d4a808f60f1d5c615f7f9cc7195eafa9fafaf493a63c18ff",
-  "onboarding_exam_ready_first_day": "9379db36b09a86f06b51e51213dbe113df98fd47fd1b44233777f12e4a88ad78",
+  "onboarding_exam_ready": "aaf348c741a1ecf69e96d5d9a328f84046ca1041afb1eeb84c58ebcf976d3f7d",
+  "onboarding_exam_ready_first_day": "37873f102e85e0ef7ba3a80725c58f1a5d19a5bc83fd32efcfc0cbeb35b7ae51",
   "onboarding_explain_description": "4f84b5f74890b2554e4055981543c3fff83527e9215a2ec2a69149022074346f",
   "onboarding_explain_it": "0a380006f96473d5e817cb187fd5102c0698896f935a38f287612a113fe419bb",
   "onboarding_finish_later": "5252cd1b1e50dd66862986664fcf2881e1bb0e599ffb3450837d74f28d4d5587",
@@ -956,8 +956,8 @@
     <string name="onboarding_exam_on">Ton examen est prévu le %1$s</string>
     <!-- %1$s is an exam's first day, %2$s its second. -->
     <string name="onboarding_exam_on_two">Ton examen est prévu le %1$s (et le %2$s)</string>
-    <string name="onboarding_exam_ready">Ton plan te prépare d’ici là.</string>
-    <string name="onboarding_exam_ready_first_day">Ton plan te prépare pour le premier jour.</string>
+    <string name="onboarding_exam_ready">Ton plan répartit tes leçons pour que tu les termines d’ici là.</string>
+    <string name="onboarding_exam_ready_first_day">Ton plan répartit tes leçons pour que tu les termines d’ici le premier jour.</string>
     <string name="onboarding_exam_expected">C’est la date prévue, en attendant sa confirmation dans l’avis.</string>
     <string name="onboarding_another_date">Une autre date</string>
     <string name="onboarding_date_title">Vises-tu une date précise ?</string>

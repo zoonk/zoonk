@@ -37,7 +37,7 @@
   "generation_placement_questions_line": "475dcc01a9984f89a99a21d7213b8cb1311cf5700dabaad3740f7f108e0ab6c3",
   "generation_question_line": "613a841f4ba02ba8b72e502a3011987ee1e0233aa89be8fcb1c46662080a804d",
   "generation_question_review": "bc49438044c69efd5a8d4d58247d33443725ef01d45b3d85b3e09a2fc4d0fcdf",
-  "generation_reconnect": "417646d540e6d80936550bc25b70ca3df0759b5919caac3f487c601e9f41fddf",
+  "generation_reconnect": "ff318ee6c5c51ceeeadd93c52b920eabeac3db708d5e49092b6660b4f33359fd",
   "generation_skills": "04e87013d877ce2557ab99475053541d5c039c93bd9a29242fe1798612efe3f6",
   "generation_skills_line_1": "092d3b76b7b930e25ac829cf0924299a1f613fd81256a551afd5c43406d5e536",
   "generation_skills_line_2": "5f61aac8ea786fe69d5a53b38884f4e8c89a7dd9cf5d6070090c82ac20393cc1",
@@ -58,6 +58,7 @@
     <string name="generation_connection_lost">연결이 끊겼어요</string>
     <string name="generation_connection_lost_description">진행 상황을 더 이상 확인할 수 없어요. 작업은 계속 진행 중일 수 있어요.</string>
     <!-- Follows a run again after its updates stopped. -->
+    <string name="generation_reconnect">다시 연결하기</string>
     <!-- Title when something being written failed. -->
     <string name="generation_failed">완료하지 못했어요</string>
     <string name="generation_failed_description">저희 쪽에 문제가 생겼어요.</string>

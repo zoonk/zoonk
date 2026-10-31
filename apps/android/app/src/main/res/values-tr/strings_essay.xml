@@ -13,6 +13,7 @@
   "essay_criterion_legal_basis": "18699697b94b1367bedf46fff2efb85c0f0b25875f6a4e69500d61cf7076bb95",
   "essay_criterion_requests": "87fef4f4a271e1a57939479ed374a8fb117fe3e1deeea8ab0755dff0f35fe0fc",
   "essay_criterion_topic": "bfe7c8a8024c170885642c0809411a161d4187b4fc4dc5c18554f657458c23da",
+  "essay_daily_limit_reached": "c201332f1e616e24923044485f5f8bd51b66f39823d19dfd75cbe0df1f6c70ed",
   "essay_element_action": "e11a07e21b4c02653323dd6b9e38f8824d050037e1cb1e49423b1e7d97c72892",
   "essay_element_agent": "9c5f76d5d95128227430405eec094189871d1117ea8da0ec7dd0d2e804810822",
   "essay_element_detail": "8bc090561f2a9f6ce59658285a707ed3029eeede263c1a9bf52f4b6a1218dbec",
@@ -47,6 +48,7 @@
   "essay_send": "62886978de76a32b3bcdf1a938e72a33a12fa45b44178262e5d299b95b851795",
   "essay_send_failed": "620484cfceb1898f324c6765faf8d4332fd15f2d7221626e77235863d80b6fb6",
   "essay_skip_rewrite": "38d209182fd6e03a808f25f52f6b3f30e25074782c984ca79c9030a7506f2028",
+  "essay_skipped": "be168f28ba3b7e44b507e076434363eac5d25b84752da0979fab572294cce9af",
   "essay_supporting_texts": "284247f75176a73283ece11d20d21dc967460d7094a301abf75a6aac733da29e",
   "essay_the_case": "f49fccea8d964c1d742be1ddc878a0adf8120fb67b6b0841f1c49f312934d622",
   "essay_title": "a9328f75b055cff2585692b490da4c10949681f8df012d8683828113346659f1",
@@ -102,8 +104,12 @@
         <item quantity="one">%d kelime</item>
         <item quantity="other">%d kelime</item>
     </plurals>
+    <!-- On an essay the learner skipped, opened again from a link. -->
+    <string name="essay_skipped">Bu kompozisyonu atladın.</string>
     <string name="essay_back_to_today">Bugün’e dön</string>
     <string name="essay_send_failed">İşlem tamamlanamadı. Metnin hâlâ burada. Birazdan tekrar dene.</string>
+    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
+    <string name="essay_daily_limit_reached">Günlük süre sınırına ulaştın. Yazdıkların burada kalacak.</string>
     <string name="essay_limit_reached">Bugünkü kompozisyon değerlendirme haklarını kullandın. Metnin burada kalacak; yarın gönder.</string>
     <string name="essay_grading">Kompozisyonunu her ölçüte göre inceliyoruz. Bu işlem 30 saniyeye kadar sürebilir.</string>
     <string name="essay_grading_slow">Değerlendirmeye devam ediyoruz. Normalden uzun sürüyor.</string>
@@ -138,6 +144,4 @@
     <string name="essay_element_present">Var</string>
     <!-- Whether an element of the proposal is in the essay. -->
     <string name="essay_element_missing">Eksik</string>
-    <!-- On an essay the learner skipped, opened again from a link. -->
-    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
 </resources>

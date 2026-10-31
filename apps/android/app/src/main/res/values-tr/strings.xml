@@ -15,6 +15,9 @@
   "belt_red": "c35949a8133967e3fa6453781f5339467bb536f427c46932d7835b1dfd9cd056",
   "belt_white": "fd60aea6c879d9e8eb66818e572445d3ae408a9de23ed80582a74da10d628622",
   "belt_yellow": "19b99c373edcfb6c87eee9f1c0d35adec4a08fd7b498dbcb557ba5ec1f5c2c31",
+  "close_sheet": "898abd7647e888b9017a67db1cd4d6c2f92bcd7f5938e7d2b935bd2c2c2b9b89",
+  "daily_time_covers_everything": "272000e05be671063fc3ddfd4e271d01d59be2f2149330b6648308452b59937a",
+  "daily_time_suggested": "9284cf40fb4d3545096ff9385c792fd7cdc524a61b219e064e102e035e420a71",
   "diff_line_spoken": "08ff92cf1c881e1ca729470a0829333fa8064c3e3340cb8cc68a11e08859ee2e",
   "disclosure_collapsed": "fcd7630ba4dc71efaab53d712b71e7b3497072e6c3f7bdfb54323dc86bab99ef",
   "disclosure_expanded": "ef1bf7e2d28892c32b244eafef0271c4189d5800fcc4a5b4b08879bfb573c0e7",
@@ -130,6 +133,9 @@
     <!-- A toast, at most two short lines: a link did nothing because no app on the phone can open web pages. Same meaning as Android's own "No app can perform this action". -->
     <string name="web_page_unavailable">Bu sayfayı açabilecek bir uygulama yok.</string>
     <!-- Replaces Compose's own string of this name, whose Portuguese and German read as closing a spreadsheet. TalkBack's label for the dimmed area behind a bottom sheet, which closes the sheet. "Sheet" means a panel that slides up from the bottom of the screen, not a spreadsheet or a sheet of paper. -->
+    <string name="close_sheet" tools:override="true" tools:ignore="UnusedResources">Paneli kapat</string>
     <!-- In the time a day picker's menu. %1$s is a daily study time, such as "4 h". The same word as "We suggest 4 h a day" and "Use the suggested 4 h a day" beside it: suggested, not recommended. -->
+    <string name="daily_time_suggested">%1$s (önerilen)</string>
     <!-- In the time a day picker's menu: the time that covers the whole goal or exam. %1$s is a daily study time, such as "13 h 30 min". -->
+    <string name="daily_time_covers_everything">%1$s (tamamını kapsar)</string>
 </resources>

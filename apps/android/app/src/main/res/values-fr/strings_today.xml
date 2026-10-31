@@ -186,7 +186,7 @@
   "today_week_full_review_detail": "e12ef4bb8e383a2d4198fbf6abd652172cdfc9d3b7a010c28d2698f0262fc918",
   "today_week_full_review_name": "d7b02eb65c324fc08c8bbf02ef22a36b45f77c006b3bf0b40c4236054fe5d17f",
   "today_week_gain": "851d6e029095e080637d6046bb35cc2c718af3797d7c5a2c42eee19f8e45477c",
-  "today_week_goal_reached": "939a3dd94b0cc686b6d891c7f7b372270a2859b562dee29d44a6e1265da50961",
+  "today_week_goal_reached": "4e02f1892a0e09dd820688e02ca143a5d316bdaae63ec622a2753152e0053f17",
   "today_week_loss": "477d0b00acf5dbae44b8029fe37ccf427d276d690790b8881fa3d1715d170584",
   "today_week_mock_name": "f76f55398fdea6c71a0e9a3e10281016fd4225fe61bb0c244d2214edc1dfe53d",
   "today_week_not_studied": "89fdc432cc0bf7243f518183a483450630e1120009dd0964e50622ea39234784",
@@ -366,11 +366,11 @@
     </plurals>
     <!-- Read by TalkBack; both are durations, such as "1 hr 20 min of 3 hr 45 min". -->
     <string name="today_week_time">%1$s sur %2$s d’étude cette semaine</string>
-    <!-- Read by TalkBack for each day of the week: "Monday: goal reached". -->
+    <!-- Read by TalkBack for each day of the week: "Monday: daily time met". -->
     <string name="today_week_day">%1$s : %2$s</string>
     <!-- "Saturday: weekly challenge, not studied". -->
     <string name="today_week_challenge_day">%1$s : %2$s, %3$s</string>
-    <string name="today_week_goal_reached">objectif atteint</string>
+    <string name="today_week_goal_reached">durée quotidienne atteinte</string>
     <string name="today_week_studied">étudié</string>
     <string name="today_week_exam_day">jour de l’examen</string>
     <string name="today_week_deadline">date de ton objectif</string>

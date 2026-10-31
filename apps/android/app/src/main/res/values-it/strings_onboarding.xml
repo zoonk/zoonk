@@ -56,6 +56,8 @@
   "onboarding_exam_expected": "4372654a9c62cdd63a9d1ff23d0fb0959dee02a45088939092521050dfd23786",
   "onboarding_exam_on": "48bfba21dc79b1621925bfc353eefb0bd553b6120d9f34e2135defdf488e5b9e",
   "onboarding_exam_on_two": "cc75ff390b3a33b213e537639689c245fd5e451a2884c6247ecc9e418e20ca01",
+  "onboarding_exam_ready": "5192e8107525628fd29250c14eccbd1114c46478366231286e7702f447158ae2",
+  "onboarding_exam_ready_first_day": "f6c46518667c5965023137880358947c0f886927296befd49a4d44a3745a1773",
   "onboarding_explain_description": "a102e4554710692b836c23f9e2a2f565f662c8f64fd700135893bd9eaf9ebe65",
   "onboarding_explain_it": "8c85c5c9846190272c9390189f145c423a556a4aab439ac62961bee894570a07",
   "onboarding_finish_later": "49032c272a76f69bc3bd3b0dfa0bbb62b44ed081310602d7eec2844a96674035",
@@ -78,6 +80,7 @@
   "onboarding_how_it_works_say": "82d79f0d6d0ae79416160dbf06aaa1b77354f1d5067018c47bc32ba0802480c4",
   "onboarding_instrument_description": "b3e0a2517657c3722e3e60fa7be48ccc90707292adcbe64ab7800644fa2aa0ad",
   "onboarding_instrument_title": "2d95cced67c62acbdce3293e004d3308f23ec126b88fc2b20b44469bb4746677",
+  "onboarding_intent_exam": "89995950af1d88bca43ab57935589a5c0ab994ab28780e944d073a6e8a9eca91",
   "onboarding_intent_exam_description": "b7fc58c6a380e0f8177e5ce94b9194d8ce0b15774ef12803a27efedfdc5bc128",
   "onboarding_intent_label": "f0904d1e36e1ef6b6a4a9514ebc40ef98533e3ec18e867c092e1518ad201b5ba",
   "onboarding_intent_questions": "7ca2008182158547a43a50ece072db6e41d8c9350d4e3e8282ddc38c20d450b9",
@@ -327,6 +330,7 @@
   "onboarding_role_work_title": "6496f962e9dfe30fc8cb7e8c0336a6c71e49cf29bb0bdbfbcd1811a29ee02d88",
   "onboarding_row_course": "33aac90fd699cf255ff91d4a92606554fe630576ca975ab75e66fbd0b5d86ea1",
   "onboarding_row_cutoff_score": "c640161c5676afee0c4fa7925c3e520d21cb85d700e6811bb71af214fd87d143",
+  "onboarding_row_date_booked": "5eafb4fb112c50c1717e37531fd9028cedb133f783a8494c93f520f6d0e67526",
   "onboarding_row_date_not_out_guide": "76bb955e1303c491dad3d71c0fcc7eb4e39a99f8c06858d2b84f9acb76ce0b0a",
   "onboarding_row_date_not_out_notice": "7aba8cd86eacfdc6f0322b8aca4f0f7be5abd2ba926fb12a8c50b96a683bf9bc",
   "onboarding_row_date_to_be_confirmed": "166f9579a403c936fb688a417ce6113ada5b50b154a1b28f1739cf66fe6407c3",
@@ -532,6 +536,7 @@
     <string name="onboarding_row_date_to_be_confirmed">%1$s, da confermare</string>
     <string name="onboarding_row_date_not_out_notice">La data ufficiale sarà pubblicata nel bando d’esame. La conosci già? Impostala qui.</string>
     <string name="onboarding_row_date_not_out_guide">La data sarà pubblicata sul calendario ufficiale dell’esame. La conosci già? Impostala qui.</string>
+    <string name="onboarding_row_date_booked">Scegli la data di questo test quando lo prenoti. Hai già prenotato? Impostala qui.</string>
     <string name="onboarding_row_dates_estimated">Stima basata sulle date abituali. Ti avviseremo quando usciranno quelle ufficiali.</string>
     <string name="onboarding_row_pick_date">Scegli la tua data</string>
     <string name="onboarding_row_several_sittings">Questo esame si svolge più volte all’anno. Finché non scegli una data, il tuo piano si basa sulla prima.</string>
@@ -584,6 +589,8 @@
     <string name="onboarding_attach_sign_in">Crea un account per aggiungere il tuo materiale.</string>
     <string name="onboarding_attach_failed">Non siamo riusciti ad aggiungerlo. Riprova tra un momento.</string>
     <string name="onboarding_intent_title">Cosa vuoi fare?</string>
+    <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
+    <string name="onboarding_intent_exam">Prepararmi per un esame</string>
     <string name="onboarding_intent_exam_description">Indica una data e pianificheremo lo studio fino ad allora</string>
     <string name="onboarding_intent_understand">Capire questo materiale</string>
     <string name="onboarding_intent_understand_description">Lezioni brevi, nell’ordine giusto</string>
@@ -949,6 +956,8 @@
     <string name="onboarding_exam_on">Data del tuo esame: %1$s</string>
     <!-- %1$s is an exam's first day, %2$s its second. -->
     <string name="onboarding_exam_on_two">Date del tuo esame: %1$s (e %2$s)</string>
+    <string name="onboarding_exam_ready">Il piano distribuisce le lezioni per completarle entro quella data.</string>
+    <string name="onboarding_exam_ready_first_day">Il piano distribuisce le lezioni per completarle entro il primo giorno.</string>
     <string name="onboarding_exam_expected">Questa è la data prevista, in attesa della conferma nel bando.</string>
     <string name="onboarding_another_date">Un’altra data</string>
     <string name="onboarding_date_title">Hai una data in mente?</string>
@@ -1007,41 +1016,4 @@
     <string name="onboarding_reveal_reading_line_guide">Stiamo cercando le parti e gli argomenti elencati nella guida ufficiale…</string>
     <string name="onboarding_reveal_reading_line_dates">Stiamo controllando le date e le modalità dell’esame…</string>
     <string name="onboarding_reveal_reading_line_fit">Stiamo inserendo tutto nel tuo piano…</string>
-    <string name="onboarding_position_placeholder">Es. agente, funzionario</string>
-    <string name="onboarding_finish_around">Finisci verso {arg1}.</string>
-    <string name="onboarding_finish_unknown">Non riusciamo a stimare quando finirai con questo ritmo. Prova ad aumentare il tempo o i giorni di studio.</string>
-    <string name="onboarding_finish_failed">Non riusciamo a calcolare quando finirai.</string>
-    <string name="onboarding_finish_working">Stiamo calcolando quando finiresti…</string>
-    <string name="onboarding_try_again">Riprova</string>
-    <string name="onboarding_schedule_suggested">{arg1} (durata consigliata)</string>
-    <string name="onboarding_schedule_too_close">La data che hai scelto è troppo vicina per approfondire tutto.</string>
-    <string name="onboarding_schedule_days_too_close">I giorni che hai scelto non bastano per approfondire tutto entro la data che hai indicato. Aggiungere giorni di studio aiuterebbe.</string>
-    <string name="onboarding_schedule_split_one">A questo obiettivo dedichi {arg1} al giorno e all’altro {arg2}.</string>
-    <string name="onboarding_schedule_split_many">A questo obiettivo dedichi {arg1} al giorno e agli altri {arg2} in tutto.</string>
-    <string name="onboarding_schedule_takes_exam_all">Il tempo necessario per studiare tutti gli argomenti dell’esame entro il giorno {arg1}.</string>
-    <string name="onboarding_schedule_takes_exam_all_month">Il tempo necessario per studiare tutti gli argomenti dell’esame entro {arg1}.</string>
-    <string name="onboarding_schedule_takes_goal_all">Il tempo necessario per studiare tutto ciò che serve per il tuo obiettivo entro il giorno {arg1}.</string>
-    <string name="onboarding_schedule_takes_goal_all_month">Il tempo necessario per studiare tutto ciò che serve per il tuo obiettivo entro {arg1}.</string>
-    <string name="onboarding_schedule_covers_exam_all">Copre tutti gli argomenti dell’esame entro il giorno {arg1}.</string>
-    <string name="onboarding_schedule_covers_exam_all_month">Copre tutti gli argomenti dell’esame entro {arg1}.</string>
-    <string name="onboarding_schedule_covers_goal_all">Copre tutto ciò che serve per il tuo obiettivo entro il giorno {arg1}.</string>
-    <string name="onboarding_schedule_covers_goal_all_month">Copre tutto ciò che serve per il tuo obiettivo entro {arg1}.</string>
-    <string name="onboarding_schedule_reaches_exam">Affronta tutti gli argomenti dell’esame entro il giorno {arg1}, alcuni in modo meno approfondito.</string>
-    <string name="onboarding_schedule_reaches_exam_month">Affronta tutti gli argomenti dell’esame entro {arg1}, alcuni in modo meno approfondito.</string>
-    <string name="onboarding_schedule_reaches_goal">Affronta tutti gli aspetti del tuo obiettivo entro il giorno {arg1}, alcuni in modo meno approfondito.</string>
-    <string name="onboarding_schedule_reaches_goal_month">Affronta tutti gli aspetti del tuo obiettivo entro {arg1}, alcuni in modo meno approfondito.</string>
-    <string name="onboarding_schedule_share_exam">Approfondisce parte degli argomenti dell’esame (circa {arg1}) entro il giorno {arg2}, partendo dai più frequenti.</string>
-    <string name="onboarding_schedule_share_exam_month">Approfondisce parte degli argomenti dell’esame (circa {arg1}) entro {arg2}, partendo dai più frequenti.</string>
-    <string name="onboarding_schedule_share_goal">Approfondisce parte dei contenuti del tuo obiettivo (circa {arg1}) entro il giorno {arg2}, partendo dai più importanti.</string>
-    <string name="onboarding_schedule_share_goal_month">Approfondisce parte dei contenuti del tuo obiettivo (circa {arg1}) entro {arg2}, partendo dai più importanti.</string>
-    <string name="onboarding_schedule_past_date">La data che hai scelto, {arg1}, è passata. Puoi sceglierne un’altra nella prossima schermata.</string>
-    <string name="onboarding_schedule_past_date_month">La data che hai scelto, {arg1}, è passata. Puoi sceglierne un’altra nella prossima schermata.</string>
-    <string name="onboarding_schedule_no_days">Scegli almeno un giorno di studio.</string>
-    <string name="onboarding_schedule_working">Stiamo calcolando quanto tempo serve per il tuo obiettivo…</string>
-    <string name="onboarding_schedule_find_failed">Non riusciamo a calcolare quanto tempo serve per il tuo obiettivo.</string>
-    <string name="onboarding_schedule_asking">Stiamo calcolando quanto puoi studiare con {arg1} al giorno…</string>
-    <string name="onboarding_schedule_ask_failed">Non siamo riusciti a calcolare quanto puoi studiare con {arg1} al giorno.</string>
-    <string name="onboarding_schedule_offer_everything">Studia tutto con {arg1} al giorno</string>
-    <string name="onboarding_schedule_offer_every_topic">Affronta tutti gli argomenti con {arg1} al giorno</string>
-    <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
 </resources>

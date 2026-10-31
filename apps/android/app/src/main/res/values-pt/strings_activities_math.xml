@@ -67,6 +67,7 @@
   "activities_math_sampling_done": "c3d218265e5b680bd1a5e770ae5c4565a3b8f8e139fb8125543d59dbf7097502",
   "activities_math_sampling_margin": "5f5011f3e4933ae5c3f8ca9e197e859b02b5d1c8cd6469e6b32d47355e6b8030",
   "activities_math_sampling_margin_points": "3fdaf8bb39e065a95a894a2c7d42b0a1a029d95caf6d14359cd78f5c2745d5bc",
+  "activities_math_sampling_margin_points_decimal": "ee81bb5b5a3b6645a9eacdfb3dce08a858c208a6c12d6a69e8ded32b3a2c958f",
   "activities_math_sampling_math": "7c9a5db5daa8e83fbb307c6419bab3749499d7b1c199822a4802e9790da997b9",
   "activities_math_sampling_range": "ed34d538e855f0973a3d3589e77a3c7e76e8370c07f1f54e78ca653fa5b7fcc6",
   "activities_math_sampling_running": "2738c405a1df143a4a208737c99c2b28c3221942dffbe59759717984a0396420",
@@ -237,4 +238,6 @@
         <item quantity="many">±%1$s pontos</item>
         <item quantity="other">±%1$s pontos</item>
     </plurals>
+    <!-- A margin of error in percentage points with decimals, like "±9.8 points", in the form a language gives decimal numbers (Polish "±9,8 punktu"). -->
+    <string name="activities_math_sampling_margin_points_decimal">±%1$s pontos</string>
 </resources>

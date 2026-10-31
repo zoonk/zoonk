@@ -13,6 +13,7 @@
   "essay_criterion_legal_basis": "6736bbf33c22bf0d5765550a2bf1b45beee9211325ac0f8fea4566521e93e6b5",
   "essay_criterion_requests": "65a95a4b92bc79932abed68e5938cef60d62a876a78d30594d818dccb9223b8b",
   "essay_criterion_topic": "111e62bc2f4ccee1350a7973c3759abbf1134ba00a542ca3215e0a896be18af3",
+  "essay_daily_limit_reached": "74aa4bd72efc4f1ad9afb9c4c5ee303c53401b15bc01632babf2d76f70dcb106",
   "essay_element_action": "33766196d912aad37f60d309ed9984a337aeafec948f7563e22f380f0d768830",
   "essay_element_agent": "9a18e228f3f787d40d437527f239e636c403507dd8819f04727701058965bea8",
   "essay_element_detail": "01b432b746d4a81e48fae6eb66cbed722dfa3df6fd7972923b5338ac46e7f850",
@@ -47,6 +48,7 @@
   "essay_send": "92f5b2831d8a26ac5b14a59afad77d9fd5a1098b2dd5073f7a3ff8ef90a00291",
   "essay_send_failed": "0a398e9aaef27bcfcffcbc8deb71532e325af4b7c7b281ef081894c4fe75e584",
   "essay_skip_rewrite": "8a3340451ce89f60d20c15c913864222bf72afac8b9b95037fdf0d733fe0fa67",
+  "essay_skipped": "7e18004453348ee31350773d8774eac143565a80a44b4a614ef1f0a43aa26216",
   "essay_supporting_texts": "e5948a078a130f89745541ab5414510956c3f29ceeb11c5fba3ea98ae0539ac6",
   "essay_the_case": "4672cb4881d950aa3d7bd3cda871fa846f00f688166efa740d9cd81f84d72e24",
   "essay_title": "efb83fbbe10414a437b2d1cd582f93a365dc13e70f2914ae8486ff7a575932c4",
@@ -101,8 +103,12 @@
     <plurals name="essay_words">
         <item quantity="other">%d단어</item>
     </plurals>
+    <!-- On an essay the learner skipped, opened again from a link. -->
+    <string name="essay_skipped">이 에세이는 건너뛰었어요.</string>
     <string name="essay_back_to_today">오늘로 돌아가기</string>
     <string name="essay_send_failed">처리하지 못했어요. 쓴 글은 그대로 남아 있어요. 잠시 후 다시 시도해 보세요.</string>
+    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
+    <string name="essay_daily_limit_reached">하루 학습 시간 제한에 도달했어요. 쓴 글은 여기에 그대로 남아 있어요.</string>
     <string name="essay_limit_reached">오늘 에세이 채점 횟수를 다 썼어요. 쓴 글은 그대로 남아 있으니 내일 보내세요.</string>
     <string name="essay_grading">평가 기준별로 에세이를 살펴보고 있어요. 최대 30초가 걸릴 수 있어요.</string>
     <string name="essay_grading_slow">아직 채점하고 있어요. 평소보다 시간이 더 걸리고 있어요.</string>
@@ -137,6 +143,4 @@
     <string name="essay_element_present">있음</string>
     <!-- Whether an element of the proposal is in the essay. -->
     <string name="essay_element_missing">없음</string>
-    <!-- On an essay the learner skipped, opened again from a link. -->
-    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
 </resources>

@@ -51,7 +51,7 @@
   "account_username_available": "93541d3d9df9024774176af1f24d38ca4c61250f08e9a56712aad906cdda0da0",
   "account_username_checking": "6ef04b24ad286575ba5a7455ffd9325e147066677725952ad507686e29983291",
   "account_username_line": "694a279b677a3bd8973cf10d42130a3cd7f2f4e4e3ae4ad1383563ec89439aa0",
-  "account_username_rules": "c5097cc0822a78f6f1255dfa35259227c2d948cb3bc858114565db1c56a55c24",
+  "account_username_rules": "5dc9eb9c30f956153eb586306a6e89463293efb93190ad0a61743b80b687a158",
   "account_username_taken": "b4a1332fa7d461da1f718a7947bf4d53827b064afa960e1c7061e54b5ebf1162",
   "account_welcome_description": "1ece81e8f27cd0f6b5ad55b58474c9ad8b21a91830184b409411d8c986f65ff5",
   "account_welcome_note": "fbb9d62c9e544b2c2f83cde3a24ae070ba03904fb998ba00ad8b77a75c635839",
@@ -109,7 +109,7 @@
     <string name="account_username_available">%1$s está disponível</string>
     <!-- %1$s is a username. -->
     <string name="account_username_taken">%1$s já está em uso</string>
-    <string name="account_username_rules">De 3 a 30 caracteres. Use apenas letras, números e sublinhados.</string>
+    <string name="account_username_rules">De 3 a 30 caracteres. Apenas letras de a a z, números e sublinhados.</string>
     <string name="account_save_failed">Não conseguimos salvar seu perfil. Tente de novo.</string>
     <string name="account_menu_settings">Configurações</string>
     <string name="account_menu_subscription">Assinatura</string>

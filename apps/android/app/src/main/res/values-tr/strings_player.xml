@@ -152,6 +152,7 @@
   "player_verdict_correct": "c4e0dc42a963ef592d664142292bdfe30649db6e10e8382c4dacd1141a2ff7c2",
   "player_verdict_guess": "3b16fa59edb7d4c711eab95d283281b7a2a7362c479026dd88bf734730ada36f",
   "player_verdict_guess_right": "efacc98c9445ea1bbfb6613e6b232bff8861bf69aa21988c339a64fc3eae6773",
+  "player_verdict_incorrect": "3786aad6daf0fb3687c0aad39b6469d3852f61b1665df4410339eee75363da53",
   "player_verdict_sample_answer": "93645a1d0ee17ca85619a8ed3f8f210b5e1075a790aae5fb3e5e34cad761ddb1",
   "player_verdict_typo": "5403677f0a8b35155f1dbe8cfb7449680517dd793ee9b17661f6fb16e113e32a",
   "player_verdict_unchecked": "b69301349f50f325d112048950a9967325654c76abc4e12c552acb742f2d9d5c",
@@ -198,6 +199,8 @@
     <string name="player_verdict_correct">Doğru!</string>
     <string name="player_verdict_guess">İşte cevap</string>
     <string name="player_verdict_guess_right">Güzel tahmin!</string>
+    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
+    <string name="player_verdict_incorrect">Doğru değil</string>
     <string name="player_verdict_sample_answer">İşte iyi bir cevap</string>
     <string name="player_verdict_typo">Doğru, yazımına dikkat et</string>
     <string name="player_verdict_unchecked">Bu kez kontrol edilmedi</string>
@@ -366,5 +369,4 @@
     <string name="player_nothing_left_title">Cevaplanacak soru kalmadı</string>
     <string name="player_nothing_left_description">Sonucunu görmek için bitir.</string>
     <string name="player_finish">Bitir</string>
-    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
 </resources>

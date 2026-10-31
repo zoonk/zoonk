@@ -4,8 +4,11 @@
   "mock_chooser_about": "9a98078c281609853537d20e245478a62bdd042ba308a8c08f75f0b36f0ae98e",
   "mock_chooser_about_recommended": "92e7b84ed17be42ae837a5dc6a1cc21fe180ed8852eae59afc2d540ebbbef719",
   "mock_chooser_failed": "b780d74b0af959a6bd01356150e3ebbaea3a11d764898deaa3aadeefeb055ef3",
+  "mock_chooser_full_day_number_without": "49622aead131901fcaf4c28ea6a4e61ba2ce02ff14f2381f6f24ba09fbddcdfe",
+  "mock_chooser_full_day_without": "eca724014e8a2324a8542903ebe70cedba23b7bd64c65ca010eadd96b839e4c7",
   "mock_chooser_getting_ready": "e5c6a121e5b45426b49ab56d04f0c0314de073fedfea36cd261886347684f004",
   "mock_chooser_last_mock": "b7d8423c88cd598464a9d867b311e1cc1c58db8a34c4bbc5314a3d41e4891acd",
+  "mock_chooser_left_out_choice": "1a1994be5085cdfe106c114f836e97289a2ddb4b6051a259fa63fa1409c8432e",
   "mock_chooser_left_out_listening": "3b4a3fb784c7e4a0727e3099e65ae684a1f947540c69785f4ca86166398d24f2",
   "mock_chooser_left_out_named": "0f0711f4c419681c5fb331bac5813fc374ae2cc7b2b2f4835e122185b385b5c2",
   "mock_chooser_left_out_numeric": "d4eb00b5dee23eec8f854e9d07b43b7942d0ca2280dadbe0295dd2ba3970a408",
@@ -86,6 +89,11 @@
     <string name="mock_chooser_see_plus">Poznaj Plus</string>
     <string name="mock_chooser_plus">W pakiecie Plus masz egzaminy próbne: kiedy chcesz i co tydzień w swoim planie.</string>
     <string name="mock_chooser_one_subject">Jeden przedmiot</string>
+    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$s lists them, such as "Specialty knowledge (P3)". -->
+    <string name="mock_chooser_full_day_without">Dzień egzaminu bez części: %1$s</string>
+    <!-- PluralsCandidate: %1$d names which exam day it is, not a count. -->
+    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$d is the exam day's number; %2$s lists the tests, such as "Foreign language". -->
+    <string name="mock_chooser_full_day_number_without" tools:ignore="PluralsCandidate">%1$d. dzień egzaminu bez części: %2$s</string>
     <!-- After a mock's parts or subjects: the mock covers only the exam's objective part, questions with set answers, and leaves the exam day's written part out. -->
     <string name="mock_chooser_objective_only">tylko część testowa</string>
     <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
@@ -210,8 +218,6 @@
     <string name="mock_chooser_left_out_short_answer">W pytaniach wymagających krótkiej odpowiedzi wybierasz odpowiedź z podanych opcji.</string>
     <!-- %1$s is the exam's name for a written part, such as "Essay". -->
     <string name="mock_chooser_left_out_written">%1$s: tej części nie ma jeszcze w egzaminach próbnych, więc ćwiczysz ją podczas nauki pisania wypracowań.</string>
-    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$s lists them, such as "Specialty knowledge (P3)". -->
-    <!-- PluralsCandidate: %1$d names which exam day it is, not a count. -->
-    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$d is the exam day's number; %2$s lists the tests, such as "Foreign language". -->
     <!-- %1$s is a part of the exam, such as a specialty's own test, that the learner hasn't picked an option for yet. -->
+    <string name="mock_chooser_left_out_choice">%1$s: tę część uwzględnimy dopiero wtedy, gdy wybierzesz odpowiednią opcję w planie.</string>
 </resources>

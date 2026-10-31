@@ -4,8 +4,11 @@
   "mock_chooser_about": "a5901da3b7afe2a3fabe63973eaeaf80a35b7df3709d60a33638955125cfde38",
   "mock_chooser_about_recommended": "a160416bcca456adf1ac6d42e304b33f1747fafccd89a0bc40e62d4f8ee660a6",
   "mock_chooser_failed": "0905cd2e4801cc445ef91a956c38d3f7e7001c16d4eb0334f3e7e903e1612793",
+  "mock_chooser_full_day_number_without": "53b609655213d5f32e41a96f4affb91fcf14e4b0d1ffd757da84aef08bc18a7c",
+  "mock_chooser_full_day_without": "ac879e638f16784b07221ef6798824c19a09be4f8a77ffb77950b2cbc8f647ff",
   "mock_chooser_getting_ready": "013962e6237d2b1fa6bedffee4f7cc4c608fd87e4a3556043d6d2fcf4431be7b",
   "mock_chooser_last_mock": "5f93d093cd1b8418c611f269cdba232daa381a29bbb1bbd39121bf6f66d9e9b8",
+  "mock_chooser_left_out_choice": "90d76fd979e13a17e7a11278dc196945a17c938d1388d7621297916792025ce8",
   "mock_chooser_left_out_listening": "69a7262e32e843e8de6f8ee4f3d0846c335e15128fc88d3d68343c2e411707f2",
   "mock_chooser_left_out_named": "701bbac3a8e2a7a7096f8d483ce10ab14ffb123eef0598e351e2eb2c77415dce",
   "mock_chooser_left_out_numeric": "93be420493b9f7190418c0e7e5c21d4095fa162f80431477bbc3698d94e1157a",
@@ -71,7 +74,7 @@
   "mock_chooser_written_part": "869262215594025f9f07b173cc871cd77c2ede4430797d3dab3ea3d862779377"
 }
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="mock_chooser_title">模試を受ける</string>
     <string name="mock_chooser_rule">本番の試験と同じように、結果がわかるのは最後です。</string>
     <string name="mock_chooser_pick_free">今回は試験をどこまで受けるか選んでください。</string>
@@ -83,6 +86,11 @@
     <string name="mock_chooser_see_plus">Plusの詳細を見る</string>
     <string name="mock_chooser_plus">Plusならいつでも模試を受けられ、学習計画にも毎週組み込まれます。</string>
     <string name="mock_chooser_one_subject">1科目</string>
+    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$s lists them, such as "Specialty knowledge (P3)". -->
+    <string name="mock_chooser_full_day_without">試験1日分（%1$sを除く）</string>
+    <!-- PluralsCandidate: %1$d names which exam day it is, not a count. -->
+    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$d is the exam day's number; %2$s lists the tests, such as "Foreign language". -->
+    <string name="mock_chooser_full_day_number_without" tools:ignore="PluralsCandidate">試験%1$d日目（%2$sを除く）</string>
     <!-- After a mock's parts or subjects: the mock covers only the exam's objective part, questions with set answers, and leaves the exam day's written part out. -->
     <string name="mock_chooser_objective_only">正解が決まっている問題のみ</string>
     <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
@@ -180,4 +188,6 @@
     <string name="mock_chooser_left_out_short_answer">短い言葉で答える問題は、選択式で出題されます。</string>
     <!-- %1$s is the exam's name for a written part, such as "Essay". -->
     <string name="mock_chooser_left_out_written">%1$sの課題はまだないため、小論文の学習で練習します。</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test, that the learner hasn't picked an option for yet. -->
+    <string name="mock_chooser_left_out_choice">%1$sは、学習計画でどれを受験するか選ぶまで含まれません。</string>
 </resources>

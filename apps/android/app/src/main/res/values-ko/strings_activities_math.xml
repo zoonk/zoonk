@@ -28,7 +28,7 @@
   "activities_math_balance_steps": "502d0ab186970530eab904182dccf4b9e9d8ae516267defff892e439ca272a83",
   "activities_math_balance_take_left": "63e5e20cdc8d85db2985dc7b89ea780f247bd50eee768fd64386075337e8f9b7",
   "activities_math_balance_take_right": "f464c37a13c90d19baa7e8c0b2110eeb95db5a90a8743f6771c392b76a2e4ae6",
-  "activities_math_balance_undo": "3731cfd322e1e7fbef6f3d9451168b0c8a622ca86c4e9591da575174c5e5b59d",
+  "activities_math_balance_undo": "1e3ebc412cf71e9d2e1823a18b3e05c3ed874d102fcb4f402ea04d3f0a71ba02",
   "activities_math_chance_description": "3e7f3989d93640976f377c3083be7e25829bf5984ac9c7b2ee0b454d57e6bbb4",
   "activities_math_chance_no": "65d56753be917cc81e4edc5a7ff5e4df96ec5b45accecaed5b4b206b203fc58d",
   "activities_math_chance_pick_first": "a27f1be05772ab5c8a7e05ab67e540803a0605cd8f44331b74dcf83c2e80fbc6",
@@ -181,6 +181,7 @@
     <!-- A button that divides both pans into as many equal groups as there are bags, like "Split both sides into 2 equal groups". -->
     <string name="activities_math_balance_split">양쪽을 각각 %1$s묶음으로 똑같이 나누기</string>
     <!-- A button that takes back the last move on the balance. -->
+    <string name="activities_math_balance_undo">되돌리기</string>
     <!-- The name of the list of a balance problem's worked steps, for TalkBack. -->
     <string name="activities_math_balance_steps">풀이 과정</string>
     <!-- Before a worked step the learner has reached, for TalkBack. -->

@@ -7,11 +7,13 @@
   "mock_result_already_changed": "f335dad6884ceeb51f38a75b13e8a5350c3dd5c8999a410bb3daa8be19c05ea2",
   "mock_result_already_in": "57321389f8fd7a185789501d75a25bf5d82a77a692366dd29c53f333a079559a",
   "mock_result_apply": "b1fbc4c8a0e2c2012361eb733a14d9fe81fda67ad71c7a5ac39616ef772d3927",
+  "mock_result_below_percent": "67d6df0b39ef7f96f70a124eb2d2da95e397b1a4a8aff63f55467d90c6b5724e",
   "mock_result_blank": "c697e23d0c1843460cc34b9277ecb2165f4232a822fdd9a378f00b3a13b56233",
   "mock_result_blank_exam_day": "31e2b5e441f94ae26fa00f67e2dcea27deec862faca445f62638eef47186f16e",
   "mock_result_blank_gain": "61438dd64eb9739cb0c15fb5317d2379a395a322eba26a7cd136a4640c03a471",
   "mock_result_blank_this_score": "c8644a6029745ce35cf59065e8e2a13a3bed61613d8dc73af13ef327dd05df9d",
   "mock_result_by_area": "b86d1eb03e31f501bf5dab2b168f72dfe8598e964552482e147004127081d163",
+  "mock_result_by_test": "0ad4a9d94547a5ab0e6b2d2b4e003f84ea13022e76eb29a3c7cfb7312272c6d7",
   "mock_result_by_topic": "a0263608958011cc23b5e2e693dd194cf1e64b1b63d293a8c9a68d6a0bed4975",
   "mock_result_calibration": "e4c3645a7d8e05b6b6f820edccaa027821831140fc454c8a77caf771c22a6cc7",
   "mock_result_calibration_detail": "173fc96939d02d51bcfa639885a4905d4e90da3f9395a40b5533a0ed24d72595",
@@ -23,6 +25,10 @@
   "mock_result_done": "7cb10337a7c75caef2722738e7ef39b144380e88b86d35cd2bb5246cd7f4f006",
   "mock_result_down": "0b2ae66072c2aaa486837115bf2c0e981cc83d0d45be5118b169e7ecf91ab0df",
   "mock_result_easy_wrong": "e11488d447974cb547835529b52d851a18cde5e60993582e0ffe6821d0b2ec64",
+  "mock_result_eliminated_percent": "bccabfcc5b42544950ba14c40eca396465edf21d8b1330c12a85ac8c9b1d89ad",
+  "mock_result_eliminated_points": "ea11d0a0685d2ba33a9d6cb409e23ff946b2b3f7409e3ff1679db252601b1ffa",
+  "mock_result_eliminated_together_percent": "8b3d8dbcfaa32ece45962477d6fd629c7bb9ae0af1804d04beefe6979ce5bf48",
+  "mock_result_eliminated_together_points": "2a1b1187f2ce7c0c51b42c40cd8de761b98ff9542aedecd922a8ffe04fe52aea",
   "mock_result_estimate_detail": "f35532b5bf56795b2b5fa1bf294561bbf7e526007654478c4e0bee2725159c92",
   "mock_result_estimated_score": "9ed24c03ed62f635266a41a060aeee06545c047f858a468b6d043d83d19646df",
   "mock_result_focus_done": "c587ea89e132bdfad719a26817af560d884b504a1bbb54e6ac27aba99e933a94",
@@ -40,9 +46,12 @@
   "mock_result_left_blank": "561d26a1259414528e352598af4a1fc14986fdcb3599c069a1ca34f4b34d65a8",
   "mock_result_left_out_written_in_full": "35102c8cbd7f88855f11597f011497ba1ebe9c503e065b8ed2f43e1232893b2a",
   "mock_result_lessons_less": "372d04248ebeed85b7d7b62d632dc38dd45f1b87afc56d2d72cf29a4c12d83ce",
+  "mock_result_meets_minimums": "c87f715a95155479a2814e8d362598e7145d41a4596f6670bef22cf439a3f6e3",
   "mock_result_mistakes_to_review": "436b5a89024b903e5216f9ad6af332ef721f974fd32d073a22b3ef97bc163f34",
   "mock_result_more_time": "fea3a5f28e126cfd3a1e6ca41146ef88d86aa26afbbab64303fd0ca9e3d042a9",
   "mock_result_more_topics": "78b7284f7074003e2c17c9fe0042fbd5ca4c3efb58e2a5b42366b5203150d129",
+  "mock_result_needs_percent": "a9f278a56cbf1af0f8af4f48d7eea4c45a915b6bfe9366df6b67e07161aa2bf4",
+  "mock_result_needs_points": "966f47c074fc6e5298e8dbb5497b380aa98214a1e1df4732f3363652d7cbd549",
   "mock_result_net_score": "9b548774ef214fa1cc88bbdb6edcc499414b95f25b29e737a052c281748369c2",
   "mock_result_new": "dfa988c510c7f4b5f1edec0d3b36a03d14f3a30180878603ff4bac405bdba99d",
   "mock_result_no_estimate": "84c8ceac9f75cbcb1efcb63d83d68cc613bcc605d89b2c2b8f8bd74b3130ea73",
@@ -63,11 +72,18 @@
   "mock_result_pass_score": "fea42e1b3bd2eaff6de72a7ea73104e24fced79ea743367922d4a42ce870bbe2",
   "mock_result_plan_not_saved": "77d9bcc2fd235d3afec142cda20e16801eeb0073565c47648def2431de452eeb",
   "mock_result_plan_stays": "ed1b74fedd032c1c18f6df755a4b0256fc2c74f23fb389bb32c623140f15098d",
+  "mock_result_points": "786f3dad25c11968cb9e45faca470da840dd667acb8e7bbc6f2c5d39d0a3afd3",
+  "mock_result_points_of": "d93c8ab2245a0177b0a52e312bbb95606a5bf318daec7c069b61a95f4cb26d06",
   "mock_result_preparation_counts": "e4d2673eb4569f4e991eb0d564d9773afe2c5b1f242b61d08381cb2477905f41",
   "mock_result_preparation_fell": "7fcb2994e1101b56214df0ec4db851e659ffceff778862afb5a1b4712fe8a324",
+  "mock_result_projected_tests": "406c88a90be183c05f04c99c71d5e4b0b8e83dd877b3ffa3007644f4ab8e5b54",
+  "mock_result_projected_total": "d830a3c2919555a97b9091eae410f5646a5a7e0ee9dd354a85a620a914f41bad",
+  "mock_result_qualifying": "0d817969eccaf47cad175b80cd09fca2ec3e648b080d570aa1d1d7ae44a226e0",
   "mock_result_question": "8c02c5d1d1759bc65218f0d27b6b2983ed74f9cbab461089c83c30fc648ad263",
   "mock_result_question_area": "e8ba6a2af303853323f2a9b57480de640ca564c078bcd8159f87281953e5bce7",
   "mock_result_range": "45d35bdf1114052dddaaa5ab5044a5e1484514e3f89225a41273cfe52d73dfa9",
+  "mock_result_reached_percent": "2713b1189fde98c4a2d6ca1a0a3df389728e9ab671fb2306c5955753f6922d4a",
+  "mock_result_reached_points": "41e4336ff1079e710ebfe29120699d141a345f4e32b1f55b1ef06bef02358d15",
   "mock_result_relative": "c54c5b12ef0a437f38dfeac53c8c9509e17f74bdcde13470e3be5a7360d53485",
   "mock_result_review": "d5e25a7c09333715ae8a9d2460016c6cecc1c00ae43fd36ccdfc4eceaf93f092",
   "mock_result_review_mistake": "996c79ed6db7d62d93b1b4320de2c71c0538ac67704be734546ea7fcbba07b96",
@@ -83,11 +99,13 @@
   "mock_result_see_plan": "534a49f893b5073df37f44f4a0278eb3bcb77b4c1733b4fa5d8e7bfeb1507228",
   "mock_result_see_question": "7403c42aa47e8a2eca850142b224ff665845b8e315e2c65fbe42a0b4f1af93dc",
   "mock_result_see_questions": "c5511a73303802559c2789c19db2e00e7c92f746877e61909aefcb0ec9d82cba",
+  "mock_result_short_points": "b46b15d7a777333d9414d082b38f286f01939f6859c3e833a42b2f60da2d4c20",
   "mock_result_shows_right": "6c876584c000f6476d03a21c3e09dd9962ff1eebe66b49280d0ee0a09fd6bb91",
   "mock_result_skip_done": "c2105244c29a69c28749986bbecf698fd73565e9db30fe3390be34ccd8d38600",
   "mock_result_skip_title": "02674f0a74a4b37508ad3ed48cc207a06e296403b255bd1268581fab62ec2322",
   "mock_result_subjects": "8cf2f0d642c6d660b88c792e9d6e41524924e940637ca37b9cfc59191061af04",
   "mock_result_task_not_graded": "3679ca7e171f844882dce9f6b97be62f23d39ff28c91a03602faba8a24fb06a0",
+  "mock_result_tests_together": "f32fd98bc80fc39b597588c8cb7391331a11337c73579dc8d1ca6ad427048d74",
   "mock_result_timing": "7c35af6fdbed0d4cbf3c3f5706d3e3c788147aeb2c56edc7f117b58ccf66c3be",
   "mock_result_timing_area": "b4b15b88c5dda69b2a6cf8b41b3fd8bf499b844c421178a40d14ef83ddea2b37",
   "mock_result_to_pass_guide": "b08a0a790c6ff9fce4ae52e6b10e55ff56a2cc2d3c90a65793d6b77b1bd351e9",
@@ -95,6 +113,10 @@
   "mock_result_too_short": "0c23e19a08033987d1f82866ed75902acfb7cc5adf686a18ce26a08b15fb7d00",
   "mock_result_typed_estimate": "1420ea12945eb30f95fd7e24815cdd892164d818173dc8b0dbbd93f9a37d51f8",
   "mock_result_typed_no_estimate": "35ff2f98f5b817560a69ac782f4360b4d52e469ac60e289f1813265964c11c0e",
+  "mock_result_unjudged_percent": "eca590b2efa69f0c98df25e5ba7b6b9f4092e8e71d514c735b8762a791098a87",
+  "mock_result_unjudged_points": "14ae72c0bd61b41cd1bdc64880500f849e31274ceebc31b3785999af3edc624c",
+  "mock_result_unjudged_together_percent": "cb927515d1524e01babebfa21b73bfcd4f54bcc5f333f60c77904e44c1d70e4d",
+  "mock_result_unjudged_together_points": "47949ab763f62327e9121370bbf502e97ebc5d90d1c7bebc812bb4141f09d12f",
   "mock_result_up": "85b2d9f40fa091b25115b3b70de8d4f213295782c33cc21300eaede456888bfc",
   "mock_result_written_part": "be4ecf48a201d95e3b3feb460cb485613822c02c979289902dc4abd066409c49",
   "mock_result_wrong": "fbbe5b7086da1f767ddf6c21b48a073fbfc94ee15fb95602884bd9d0d5f4bdf0",
@@ -140,6 +162,62 @@
     <string name="mock_result_relative">本番の結果は、同じ回の受験者全体の成績によって決まります。</string>
     <string name="mock_result_shows_right">この模試では正解数を表示します。</string>
     <string name="mock_result_left_out_written_in_full">%1$sはフル模試にのみ含まれます。</string>
+    <!-- The label under a mock's score when it's counted in the exam's own points. -->
+    <string name="mock_result_points">点</string>
+    <!-- Points earned of the points possible, such as "182 of 260"; either can be a decimal. -->
+    <string name="mock_result_points_of">%1$s / %2$s</string>
+    <!-- A section of a mock's result: one row for each test of the exam, with its points and the least it must reach. -->
+    <string name="mock_result_by_test">試験別</string>
+    <!-- A row for the exam's objective tests counted together, against the least they must reach together. -->
+    <string name="mock_result_tests_together">選択式試験の合計</string>
+    <!-- A qualifying test: it only has to reach its minimum, and its points aren't added to the exam's total. -->
+    <string name="mock_result_qualifying">合計には加算されません</string>
+    <!-- Under a test that missed its minimum. %1$s is its score as a percent of its points, such as "38%"; %2$s is the percent it needs, such as "40%". -->
+    <string name="mock_result_below_percent">%1$sで、基準の%2$sに届いていません</string>
+    <!-- Under a test that missed its minimum. %1$s is how many points it's short, possibly a decimal; %2$s is the points it needs. -->
+    <plurals name="mock_result_short_points">
+        <item quantity="other">%1$s点不足しています（基準：%2$s点）</item>
+    </plurals>
+    <!-- Under a test that reached its minimum. %1$s is the percent of its points it needs, such as "40%". -->
+    <string name="mock_result_reached_percent">基準の%1$sに達しています</string>
+    <!-- Under a test that reached its minimum. %1$s is the points it needs, possibly a decimal. -->
+    <plurals name="mock_result_reached_points">
+        <item quantity="other">基準の%1$s点に達しています</item>
+    </plurals>
+    <!-- Under a test whose minimum this mock can't judge. %1$s is the percent of its points it needs, such as "40%". -->
+    <string name="mock_result_needs_percent">満点の%1$sが必要です</string>
+    <!-- Under a test whose minimum this mock can't judge. %1$s is the points it needs, possibly a decimal. -->
+    <plurals name="mock_result_needs_points">
+        <item quantity="other">%1$s点が必要です</item>
+    </plurals>
+    <!-- A full mock's verdict when the objective tests together missed their minimum. %1$s is their score as a percent of their points; %2$s is the percent they need. -->
+    <string name="mock_result_eliminated_together_percent">本番なら不合格です。選択式試験の合計は%1$sで、基準の%2$sに届いていません。</string>
+    <!-- A full mock's verdict when the objective tests together missed their minimum. %1$s is how many points they're short, possibly a decimal; %2$s is the points they need. -->
+    <plurals name="mock_result_eliminated_together_points">
+        <item quantity="other">本番なら不合格です。選択式試験の合計は%1$s点不足しています（基準：%2$s点）。</item>
+    </plurals>
+    <!-- A full mock's verdict when one test missed its minimum. %1$s is the test, such as "P1"; %2$s is its score as a percent of its points; %3$s is the percent it needs. -->
+    <string name="mock_result_eliminated_percent">本番なら不合格です。%1$sは%2$sで、基準の%3$sに届いていません。</string>
+    <!-- A full mock's verdict when one test missed its minimum. %1$s is the test, such as "P1"; %2$s is how many points it's short, possibly a decimal; %3$s is the points it needs. -->
+    <plurals name="mock_result_eliminated_points">
+        <item quantity="other">本番なら不合格です。%1$sは%2$s点不足しています（基準：%3$s点）。</item>
+    </plurals>
+    <string name="mock_result_meets_minimums">ここで確認した選択式試験の最低基準を満たしています。</string>
+    <!-- A part of the exam's mock, projected onto the whole exam. %1$s is the projected points; %2$s the exam's most points. -->
+    <string name="mock_result_projected_total">この模試からの推定では、試験全体で約%1$s点（%2$s点満点）です。最低基準を満たすかどうかは、すべての試験を含む模試でのみ判断できます。</string>
+    <string name="mock_result_projected_tests">各試験の得点をもとに、全問解いた場合の得点を推定しています。最低基準に達するかどうかは、試験全体を通した模試でのみ確認できます。</string>
+    <!-- A minimum this mock couldn't check. %1$s is the percent of their points the objective tests need together, such as "50%". -->
+    <string name="mock_result_unjudged_together_percent">選択式試験は合計で満点の%1$sが必要ですが、この模試にはすべての試験が含まれていません。</string>
+    <!-- A minimum this mock couldn't check. %1$s is the points the objective tests need together, possibly a decimal. -->
+    <plurals name="mock_result_unjudged_together_points">
+        <item quantity="other">選択式試験は合計で%1$s点が必要ですが、この模試にはすべての試験が含まれていません。</item>
+    </plurals>
+    <!-- A minimum this mock couldn't check. %1$s is the test, such as "Essay"; %2$s is the percent of its points it needs, such as "50%". -->
+    <string name="mock_result_unjudged_percent">%1$sは満点の%2$sが必要ですが、この模試には含まれていません。</string>
+    <!-- A minimum this mock couldn't check. %1$s is the test, such as "Essay"; %2$s is the points it needs, possibly a decimal. -->
+    <plurals name="mock_result_unjudged_points">
+        <item quantity="other">%1$sは%2$s点が必要ですが、この模試には含まれていません。</item>
+    </plurals>
     <string name="mock_result_by_topic">トピック別</string>
     <string name="mock_result_by_area">分野別</string>
     <plurals name="mock_result_more_topics">

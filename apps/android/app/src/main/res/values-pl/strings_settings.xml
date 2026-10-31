@@ -10,6 +10,7 @@
   "settings_delete_account_description": "b39ee67fdcfecbc01c23cf189af5c910dcdfc321165c6b4e14bf4241a30e1e58",
   "settings_delete_code_description": "dc469b47d61fdeb8f58e11dd91bbbf831384271887cffa540828e26d2f3c2f76",
   "settings_delete_code_title": "c1cbdf2b7db003617fc387b98eac5ece09b3af2271ced759770123bed765b0db",
+  "settings_delete_confirm_description": "9c5579483541b2095a2f0d7e472389ec5aaf86cbce3ea0a52ce1b4d88f7ea1f8",
   "settings_delete_confirm_title": "9101a4be064896ee9d18fc802359e5fc75c9eb5e81b68e22bebb968ca06e977d",
   "settings_delete_ellipsis": "d37bb173236a127ef692399056b40779eec61f4a142f86d80cf541ba710d377d",
   "settings_delete_failed": "f2e03e8fdc5577e6ec4b91b93ca88dbd845874e266dfffc53e540c32b6d4b4e2",
@@ -41,6 +42,9 @@
   "settings_preferences_no_limit": "f7537cc9b65866f4dd5fa560f26b5dcc78d75770324657019087115f7291020b",
   "settings_preferences_on_this_device": "7ba7920b539040ef656f503b8a8d8c7550ca3df7c2cc05504ba27a4bb035192b",
   "settings_preferences_save_failed": "2eb38cf5d6a4d5cd309a9a2b012c781367ba6df0c99426217f7002e4570317ef",
+  "settings_preferences_share_usage_data": "e9efb9a8dfe52b4f2fd6ab86c381c6b2c29a9b036a6e15e9682dcbbd83c09dab",
+  "settings_preferences_share_usage_data_description": "25a0dc6db4e721a36b62a3a7050964dc435f4872b72d39f75de0623b517066f2",
+  "settings_preferences_share_usage_data_locked": "b9ee8a3310c5fbdb5dfcd1bd1e1994060a464e76fba032430ffd77377ff4e181",
   "settings_preferences_sounds": "153b3d587642ab8953023d417bba56aa3ef3d0ddeb3c0d31e4c4c7fed670918c",
   "settings_preferences_sounds_description": "9dcc0bff12439e277bdac18bab4b03c68ca899ae33ea1be944767c7d5c361f16",
   "settings_preferences_summary": "bd824fccac233ad2871b712254f83a1741913da594e23a97f69a7cb99da9985e",
@@ -73,6 +77,7 @@
     <string name="settings_delete_account_description">Trwale usuwa twoje konto i wszystkie jego dane. Plus kupiony na stronie zostanie anulowany; zakupami w Google Play i App Store zarządzasz w tych sklepach.</string>
     <string name="settings_delete_ellipsis">Usuń…</string>
     <string name="settings_delete_confirm_title">Usunąć konto?</string>
+    <string name="settings_delete_confirm_description">Twoje cele, plany, postępy, zapamiętane informacje i przesłane pliki zostaną usunięte na zawsze. Nie można tego cofnąć.</string>
     <string name="settings_cancel">Anuluj</string>
     <string name="settings_delete_code_title">Potwierdź, że to ty</string>
     <!-- %1$s is the account's email address. -->
@@ -107,4 +112,8 @@
     <string name="settings_profile_description">Twoje imię, nazwa użytkownika i konto.</string>
     <string name="settings_preferences_description">Twój kumpel, lekcje i język po twojemu.</string>
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
+    <string name="settings_preferences_share_usage_data">Udostępniasz dane o korzystaniu z aplikacji</string>
+    <string name="settings_preferences_share_usage_data_description">Pokazuje nam, jak korzystasz z Zoonka, żebyśmy mogli go ulepszać</string>
+    <!-- Why the usage data switch is off and can't be turned on: the law doesn't let minors agree to it. -->
+    <string name="settings_preferences_share_usage_data_locked">Wyłączone dla osób poniżej 18 lat w twoim kraju</string>
 </resources>

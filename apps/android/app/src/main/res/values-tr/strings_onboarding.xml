@@ -56,6 +56,8 @@
   "onboarding_exam_expected": "3cbb2e4ac6c21f6b4fba065b2fb796a7cfbcc6cc7e6ac2b53aa3f522d02264ff",
   "onboarding_exam_on": "b87f81025771ff6dcb8301f174c30de590ba8917da49d5fc0700f26fc0c0e248",
   "onboarding_exam_on_two": "822bc88857218e501d0fbca1c89d04c2dcba97839c4a816470d3a4878429f5ba",
+  "onboarding_exam_ready": "4f4f7cb721b3f986974b1dadf7da9e7fdadf189e36856d88263c0eb2bde993de",
+  "onboarding_exam_ready_first_day": "8c6748a84a64b5c41a908f5a0fe56b2afac7e7b7805f4e492f7bd79730aa348e",
   "onboarding_explain_description": "9e3e705d5d0ef7ea7c679acc77f9d2091a5fa85580625936c189e64dcc8467aa",
   "onboarding_explain_it": "0920e3334fea11e7907fca14de34ad573cfc5ebc26addab4f5b7e929e2b33763",
   "onboarding_finish_later": "587877ada00bd7a77375760b90296110252f5d8f90d52968052fd02899ddbe3a",
@@ -113,6 +115,7 @@
   "onboarding_language_test_writing": "7e6b19e3a6f87d8486b6027e88ad23662e72e186d7ee98c91a9229b04e3e2619",
   "onboarding_level_advanced": "bb1d27bb26897ac52cca079eabb635ee181b6c62abc1986ba812e845ea7e6f0f",
   "onboarding_level_advanced_description": "9681bdabc2bc67c2395fcb62407c4eccc8997348c99c58fd5e3115a72085a182",
+  "onboarding_level_basic": "c7bd14c408278debc93ad832bc07c046139f12985a318da6be7e46fa6aefa036",
   "onboarding_level_basic_description": "c9c577367f5dfa0a35f9b045affd93c90194abdda18ada3f0f1d1d70bc5ac806",
   "onboarding_level_description": "551438445cad704a9c9c6b2483b9796074172d19bcbb941576706ac76804e1ad",
   "onboarding_level_intermediate": "5429f01f3f5ae7f5d471408062bd6258f020f8fe7ab336019ebcce1ebc1455dc",
@@ -327,6 +330,7 @@
   "onboarding_role_work_title": "67f0b8f26df76c26edf78531940fa91259b6e8a848419e5a556c012578085e92",
   "onboarding_row_course": "78d7359ff111ffaf05389fd3093fbd4d256f6a77ea464ce9dfe86b9dec14d96f",
   "onboarding_row_cutoff_score": "0058d0d7ffd1eb5d5b2a59b0a0d5b105e714d4f47b9b0825aa7fca16ef779462",
+  "onboarding_row_date_booked": "4451d988643d65605821d963ddc3639ac6506b839d453dcb2e3150a9805e0a60",
   "onboarding_row_date_not_out_guide": "e8615997138644345f68b5db60fae470e03f0c4d03a09643cbec8821dd8dbd15",
   "onboarding_row_date_not_out_notice": "7132da7f0ba3e9bdee39135b51a54acc44538c442eb3a4fbf5913426d9e119ef",
   "onboarding_row_date_to_be_confirmed": "3b289be8763213ceab9df640c82fc72403a3a9db228b6d9084071ad88fca4bcc",
@@ -530,6 +534,7 @@
     <string name="onboarding_row_date_to_be_confirmed">%1$s, henüz kesinleşmedi</string>
     <string name="onboarding_row_date_not_out_notice">Sınavın resmî tarihi ilanda açıklanır. Zaten biliyor musun? Buradan belirle.</string>
     <string name="onboarding_row_date_not_out_guide">Sınav tarihi resmî takvimde açıklanır. Zaten biliyor musun? Buradan belirle.</string>
+    <string name="onboarding_row_date_booked">Bu sınavın tarihini kayıt yaptırırken seçersin. Zaten kayıt yaptırdın mı? Tarihi buradan ayarla.</string>
     <string name="onboarding_row_dates_estimated">Sınavın genelde yapıldığı tarihlere göre tahmin edildi. Resmî tarihler açıklanınca haber vereceğiz.</string>
     <string name="onboarding_row_pick_date">Tarihini seç</string>
     <string name="onboarding_row_several_sittings">Bu sınav yılda birkaç kez yapılıyor. Bir tarih seçene kadar planın ilk sınav tarihini esas alır.</string>
@@ -887,6 +892,7 @@
     <string name="onboarding_course_start_free">Ücretsiz başla, hesap gerekmez.</string>
     <string name="onboarding_level_none">Hiç bilmiyorum, yeni başlıyorum</string>
     <string name="onboarding_level_none_description">Sıfırdan, günlük hayattan örneklerle</string>
+    <string name="onboarding_level_basic">Temel bilgiler</string>
     <string name="onboarding_level_basic_description">Birkaç şey biliyorum</string>
     <string name="onboarding_level_intermediate">Daha önce çalıştım</string>
     <string name="onboarding_level_intermediate_description">Zaten bildiklerini atlayacağız</string>
@@ -929,6 +935,8 @@
     <string name="onboarding_exam_on">Sınavın %1$s tarihinde</string>
     <!-- %1$s is an exam's first day, %2$s its second. -->
     <string name="onboarding_exam_on_two">Sınavın %1$s ve %2$s tarihlerinde</string>
+    <string name="onboarding_exam_ready">Planın, derslerini o tarihe kadar bitirmen için temponu ayarlar.</string>
+    <string name="onboarding_exam_ready_first_day">Planın, derslerini sınavın ilk gününe kadar bitirmen için temponu ayarlar.</string>
     <string name="onboarding_exam_expected">Bu tarih, ilanla kesinleşene kadar tahminidir.</string>
     <string name="onboarding_another_date">Başka bir tarih seç</string>
     <string name="onboarding_date_title">Hedeflediğin bir tarih var mı?</string>
@@ -986,40 +994,4 @@
     <string name="onboarding_reveal_reading_line_guide">Resmî kılavuzdaki bölümleri ve konuları buluyoruz…</string>
     <string name="onboarding_reveal_reading_line_dates">Sınavın tarihlerini ve formatını kontrol ediyoruz…</string>
     <string name="onboarding_reveal_reading_line_fit">Bunları planına yerleştiriyoruz…</string>
-    <string name="onboarding_position_placeholder">Örn. memur, uzman yardımcısı</string>
-    <string name="onboarding_finish_around">{arg1} gibi bitirirsin.</string>
-    <string name="onboarding_finish_unknown">Bu program için bitiş tarihi tahmin edemiyoruz. Çalışma süreni veya çalışma günü sayını artırmayı dene.</string>
-    <string name="onboarding_finish_failed">Ne zaman bitireceğini hesaplayamadık.</string>
-    <string name="onboarding_finish_working">Ne zaman bitireceğini hesaplıyoruz…</string>
-    <string name="onboarding_try_again">Tekrar dene</string>
-    <string name="onboarding_schedule_suggested">{arg1} (önerilen)</string>
-    <string name="onboarding_schedule_too_close">Her konuyu derinlemesine öğrenmek için hedef tarihin çok yakın.</string>
-    <string name="onboarding_schedule_days_too_close">Seçtiğin günlerle hedef tarihine kadar her konuyu derinlemesine öğrenmek mümkün değil. Çalışmaya daha fazla gün ayırmak yardımcı olur.</string>
-    <string name="onboarding_schedule_split_one">Bu hedefe günde {arg1}, diğer hedefine de {arg2} ayırırsın.</string>
-    <string name="onboarding_schedule_split_many">Bu hedefe günde {arg1}, diğer hedeflerine toplam {arg2} ayırırsın.</string>
-    <string name="onboarding_schedule_takes_exam_all">Tüm sınav konularını {arg1} tarihine kadar bitirmek için gereken süre.</string>
-    <string name="onboarding_schedule_takes_exam_all_month">Tüm sınav konularını {arg1} ayına kadar bitirmek için gereken süre.</string>
-    <string name="onboarding_schedule_takes_goal_all">Hedefindeki tüm içeriği {arg1} tarihine kadar tamamlamak için gereken süre.</string>
-    <string name="onboarding_schedule_takes_goal_all_month">Hedefindeki tüm içeriği {arg1} ayına kadar tamamlamak için gereken süre.</string>
-    <string name="onboarding_schedule_covers_exam_all">Tüm sınav konuları {arg1} tarihine kadar işlenir.</string>
-    <string name="onboarding_schedule_covers_exam_all_month">Tüm sınav konuları {arg1} ayına kadar işlenir.</string>
-    <string name="onboarding_schedule_covers_goal_all">Hedefindeki tüm içerik {arg1} tarihine kadar tamamlanır.</string>
-    <string name="onboarding_schedule_covers_goal_all_month">Hedefindeki tüm içerik {arg1} ayına kadar tamamlanır.</string>
-    <string name="onboarding_schedule_reaches_exam">Tüm sınav konuları {arg1} tarihine kadar ele alınır; bazıları daha az ayrıntıyla işlenir.</string>
-    <string name="onboarding_schedule_reaches_exam_month">Tüm sınav konuları {arg1} ayına kadar ele alınır; bazıları daha az ayrıntıyla işlenir.</string>
-    <string name="onboarding_schedule_reaches_goal">Hedefindeki tüm içerik {arg1} tarihine kadar ele alınır; bazı kısımlar daha az ayrıntıyla işlenir.</string>
-    <string name="onboarding_schedule_reaches_goal_month">Hedefindeki tüm içerik {arg1} ayına kadar ele alınır; bazı kısımlar daha az ayrıntıyla işlenir.</string>
-    <string name="onboarding_schedule_share_exam">Sınav konularının yaklaşık {arg1} kadarı {arg2} tarihine kadar ayrıntılı işlenir; en sık çıkanlara öncelik verilir.</string>
-    <string name="onboarding_schedule_share_exam_month">Sınav konularının yaklaşık {arg1} kadarı {arg2} ayına kadar ayrıntılı işlenir; en sık çıkanlara öncelik verilir.</string>
-    <string name="onboarding_schedule_share_goal">Hedefindeki içeriğin yaklaşık {arg1} kadarı {arg2} tarihine kadar ayrıntılı işlenir; en önemli kısımlara öncelik verilir.</string>
-    <string name="onboarding_schedule_share_goal_month">Hedefindeki içeriğin yaklaşık {arg1} kadarı {arg2} ayına kadar ayrıntılı işlenir; en önemli kısımlara öncelik verilir.</string>
-    <string name="onboarding_schedule_past_date">Seçtiğin {arg1} tarihi geçti. Sonraki ekranda yeni bir tarih seçebilirsin.</string>
-    <string name="onboarding_schedule_past_date_month">Seçtiğin {arg1} tarihi geçti. Sonraki ekranda yeni bir tarih seçebilirsin.</string>
-    <string name="onboarding_schedule_no_days">En az bir çalışma günü seç.</string>
-    <string name="onboarding_schedule_working">Hedefin için gereken süreyi hesaplıyoruz…</string>
-    <string name="onboarding_schedule_find_failed">Hedefin için gereken süreyi hesaplayamadık.</string>
-    <string name="onboarding_schedule_asking">Günde {arg1} ile ne kadar ilerleyebileceğini hesaplıyoruz…</string>
-    <string name="onboarding_schedule_ask_failed">Günde {arg1} ile ne kadar ilerleyebileceğini hesaplayamadık.</string>
-    <string name="onboarding_schedule_offer_everything">Günde {arg1} çalışarak hepsini bitir</string>
-    <string name="onboarding_schedule_offer_every_topic">Günde {arg1} çalışarak her konuyu ele al</string>
 </resources>

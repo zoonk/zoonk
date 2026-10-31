@@ -67,6 +67,7 @@
   "activities_math_sampling_done": "e7fa010b393a72cebf9cbe0437001772412aa9a37e0af7bd647a0ed34c0ad904",
   "activities_math_sampling_margin": "4ab5c9fc169530019b091a864fc01e51542078c2006ee083a77c13413be85113",
   "activities_math_sampling_margin_points": "fe7b104731355328a454369b3bed3c4e0cf53ae0968114c83a70db902c9322e4",
+  "activities_math_sampling_margin_points_decimal": "1380e65efb0d52f0cc57f2c9e909b9f114eeaafdfc95517407b183c581b9a6eb",
   "activities_math_sampling_math": "fccd70c7ae50be404e623f19e33db78fca3d0defda31faf5680870c1e08899e3",
   "activities_math_sampling_range": "4adb0a0f0f093b42b3c98c8c30f1b83a4e1927974379159aeafb1bc6f7361dfa",
   "activities_math_sampling_running": "a0b9271176d4fce4b07a7f26632b1a9b6c7c682668f4efba07a3e44d6814b133",
@@ -237,4 +238,6 @@
         <item quantity="many">±%1$s puntos</item>
         <item quantity="other">±%1$s puntos</item>
     </plurals>
+    <!-- A margin of error in percentage points with decimals, like "±9.8 points", in the form a language gives decimal numbers (Polish "±9,8 punktu"). -->
+    <string name="activities_math_sampling_margin_points_decimal">±%1$s puntos</string>
 </resources>

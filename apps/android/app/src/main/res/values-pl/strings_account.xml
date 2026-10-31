@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "account_agreement": "5aef7e7df589da681d3476aa000351bb6475c2c8bb4feb15859e669c7de705e5",
+  "account_below_minimum_age_description": "b937a97ce8cf1de2a9b32c1bee8d8976d2ca8a35375b6e0777a198aedd4509ff",
+  "account_below_minimum_age_log_out_description": "57c82d52f3cd5cf147fa1359c640ed9c333d3455d3c731e4d44fece8b812024d",
+  "account_below_minimum_age_ok": "7913979e563b11680da00255b7c721b49702e362132184e6188889d1ac4338d0",
+  "account_below_minimum_age_title": "04e239354c4b0290ceedd682376fdb5f4f85c4dbba4121d1bf2ec5af6990478a",
+  "account_birth_year_description": "d7bb5f2cdacb2b2b655133f2bb24154b08c95194758cdbc6492e899b26096e84",
+  "account_birth_year_invalid": "befd3c9eb03cc89f36f725424db039885769cd296354a35b7c07d0bec6d7aa9c",
+  "account_birth_year_label": "1f55146cde62d212e9d7e4250964eeae0011836eede7b988dcc9693b829c6dde",
+  "account_birth_year_not_now": "f23390e0fb49587f8703c3abfbf7815a532e56c848b1d143e02b59e7c00eb0e0",
   "account_birth_year_save_failed": "efab1e4bf77162e3587d5d90e121683232eab91c32e895fc36fc34bca98dd804",
+  "account_birth_year_title": "33f8b43ecff5716b7e178aa2afa8ad057c27f7ae31207d5bab231cd89dd64b7e",
   "account_change": "a0a42a3aa795682f6ddee76f159781cfcba14c48514c65e7d202e591fcb30d6c",
   "account_change_email": "4e062b348372afaf65ed0320b99eec8f17fc21a5541fa2af0bce14e803e58f26",
   "account_change_username": "244f1d22966de7ed229dcb16fbfba3735d7c14eebfbb804ede8c1ff8a41ae445",
@@ -51,6 +61,7 @@
   "account_username_available": "2b02e8e0dbb22766ce17c8c70cee84c539732221d701d365cf6b2d2e08c85519",
   "account_username_checking": "5782f5c9f4b15085e55849fd2ca977abcef1792bb951e1dc149e81476f045a25",
   "account_username_line": "76f4ce7322e383222f8d378c623f05295a0946cb8abe1b644d6ce2664b92e1ee",
+  "account_username_rules": "8ef9083ad8275c1253a1666ae8eb0ab6728288b635dc4cfc980248f442349d65",
   "account_username_taken": "61ebc5e8d49d410b475bf335bad35a3988ccb4991212eaf7b6f9de340dc24e68",
   "account_welcome_description": "92e472bb19e2c9389fc35c829872f40d2c85c2afd8043927020360f3774c599c",
   "account_welcome_note": "daa66838dc733403b932db57f3dfa84a79c83c7482a8f03f4c73bc1c8e2eb86e",
@@ -71,6 +82,8 @@
     <string name="account_email">E-mail</string>
     <string name="account_email_placeholder">me@gmail.com</string>
     <string name="account_continue">Kontynuuj</string>
+    <!-- %1$s is "Terms of Service" and %2$s is "Privacy Policy", each a link. -->
+    <string name="account_agreement">Kontynuując, akceptujesz zasady Zoonka: %1$s i %2$s.</string>
     <string name="account_check_email_title">Sprawdź pocztę</string>
     <!-- %1$s is an email address. -->
     <string name="account_check_email_description">Wpisz kod wysłany na adres %1$s.</string>
@@ -106,6 +119,7 @@
     <string name="account_username_available">Nazwa %1$s jest dostępna</string>
     <!-- %1$s is a username. -->
     <string name="account_username_taken">Nazwa %1$s jest już zajęta</string>
+    <string name="account_username_rules">3–30 znaków. Tylko litery a–z, cyfry i podkreślenia.</string>
     <string name="account_save_failed">Nie udało się zapisać profilu. Spróbuj ponownie.</string>
     <string name="account_menu_settings">Ustawienia</string>
     <string name="account_menu_subscription">Subskrypcja</string>
@@ -116,12 +130,20 @@
     <string name="account_sign_out_failed">Zoonk nie może cię wylogować. Sprawdź połączenie i spróbuj ponownie.</string>
     <string name="account_unavailable_title">Nie udało nam się sprawdzić twojego konta</string>
     <string name="account_unavailable_description">Nie wylogowano cię. To może być problem z połączeniem, więc spróbuj ponownie za chwilę.</string>
-    <string name="account_birth_year_save_failed">Nie udało się zapisać. Spróbuj ponownie.</string>
-    <!-- %1$s is "Terms of Service" and %2$s is "Privacy Policy", each a link. -->
     <!-- Asked once, before a new or existing account goes on learning. -->
+    <string name="account_birth_year_title">Jaki jest twój rok urodzenia?</string>
+    <string name="account_birth_year_description">Każdego pytamy tylko raz.</string>
     <!-- Closes the birth year question without answering; nothing starts. -->
+    <string name="account_birth_year_not_now">Nie teraz</string>
     <!-- The label of the field where the learner types the four-digit year they were born, like 1998. -->
+    <string name="account_birth_year_label">Rok urodzenia</string>
+    <string name="account_birth_year_invalid">Sprawdź rok i spróbuj ponownie.</string>
+    <string name="account_birth_year_save_failed">Nie udało się zapisać. Spróbuj ponownie.</string>
     <!-- Title of a kind message to someone too young to use Zoonk where they live. -->
+    <string name="account_below_minimum_age_title">Jeszcze nie teraz</string>
     <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Kind and encouraging, never scolding. -->
+    <string name="account_below_minimum_age_description">Aby korzystać z Zoonka, musisz mieć co najmniej %1$d lat. Będziemy tu na ciebie czekać.</string>
     <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Shown to someone signed in: "log you out" means Zoonk ends their session in the app when they tap OK, the same action as the menu's "Log out". Kind and encouraging, never scolding. -->
+    <string name="account_below_minimum_age_log_out_description">Aby korzystać z Zoonka, musisz mieć co najmniej %1$d lat, więc cię wylogujemy. Będziemy tu na ciebie czekać.</string>
+    <string name="account_below_minimum_age_ok">OK</string>
 </resources>

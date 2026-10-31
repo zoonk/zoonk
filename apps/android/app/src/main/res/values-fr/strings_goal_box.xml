@@ -21,14 +21,14 @@
 -->
 <resources>
     <string name="goal_box_label">Je veux</string>
-    <!-- Example in the empty goal box. Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the EXANI-II in Spanish, the bac in French, the Abitur in German. %1$s is a language name. -->
+    <!-- Example in the empty goal box. Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the EXANI-II in Spanish, the bac in French, the Abitur in German, the maturità in Italian, the 共通テスト in Japanese, the 수능 in Korean, the YKS in Turkish, the matura in Polish. For an exam without a pass mark (共通テスト, 수능, YKS), say doing well on it. %1$s is a language name. -->
     <string name="goal_box_placeholder">réussir le bac, parler %1$s…</string>
     <string name="goal_box_submit">Préparer mon plan</string>
     <string name="goal_box_write_first">Écris d’abord ton objectif dans la zone de texte, avec tes propres mots.</string>
     <string name="goal_box_examples">Exemples</string>
     <!-- What TalkBack says a tap on an example does: it sends that example as the learner's goal. -->
     <string name="goal_box_example_pick">commencer cet objectif</string>
-    <!-- Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the EXANI-II in Spanish, the bac in French, the Abitur in German. -->
+    <!-- Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the EXANI-II in Spanish, the bac in French, the Abitur in German, the maturità in Italian, the 共通テスト in Japanese, the 수능 in Korean, the YKS in Turkish, the matura in Polish. For an exam without a pass mark (共通テスト, 수능, YKS), say doing well on it. -->
     <string name="goal_box_example_exam">Réussir le bac</string>
     <!-- %1$s is a language name. -->
     <string name="goal_box_example_language">Parler %1$s pour un entretien d’embauche</string>

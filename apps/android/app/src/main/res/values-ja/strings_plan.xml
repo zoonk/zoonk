@@ -83,7 +83,10 @@
   "plan_change_bases_skip": "7f46664584f95ed8c29e98c9961af80dde0fc69ac809f458e6382d6a474af346",
   "plan_change_calendar_says": "8e32b1a8c2259ecd6ef76abdd4b53e8ffc5c7128371229256f7eb1f646a8141d",
   "plan_change_calendar_sets_date": "8906bbb9998440ea49998e3f3ac1eedc7887a94a01cd41c760ba0d9b4bf76084",
+  "plan_change_changed": "2bfcea58d47d5046e7a207f5062d90fc64fce76d48161ca382a790a2abead769",
   "plan_change_daily_time": "844fe4582012db17910dd4b140c6a283fa2f2986bec545698c6164529f4f2d23",
+  "plan_change_daily_time_changed": "48f2210c5f8000bfd7298b342b2ac8820180e1d859874cbdb106ca905f499539",
+  "plan_change_date_moved": "c15990e589a79a950d91d3c7e548d2cbcfa32390416c36680e61c226d3af67a8",
   "plan_change_days_time": "6e6fe8857b8f446776503d2d62cef30115cd0ff50d173e51d0339e0dab7a0640",
   "plan_change_easier": "c58ae2f294e285efdfc37c035c6cac2b77233730ee8ee7cc22dde856301a9737",
   "plan_change_ends_around_instead": "f73e8e9c786b6797d01a8c8518a0120cb2e078097d8ad64a00247c60bf3d89e2",
@@ -143,6 +146,7 @@
   "plan_change_phase_dates_late_many": "3dcb195a3f4513ae79ce4bfc7c52e1f34f9cf4ce7761d03e0b3f5e963cd5fcaf",
   "plan_change_phase_dates_late_one": "430852bf80cbf3a905ea42a62e9f43166af1fc6046df2fd7cdd11f7f9ff3908c",
   "plan_change_phase_dates_lessons": "e5ccd01c7c370d6fba6cfe63a6526f3150e690b773ec141d87aabb18306fc46e",
+  "plan_change_phase_dates_moved": "9ee61954c22abe7bb4397ba33bfbc772b35ae3cb0c6dbe137af41614899ec4af",
   "plan_change_phase_dates_outcomes": "63fa30885f057cf85f5ecf8b7a0741a4d62a03492a92e42bd2fd3248eab736ef",
   "plan_change_phase_dates_rest_many": "6b67e79b5189d5269b7626abf25fcf7ea06eff9e5bbb4e2dafc40374287def38",
   "plan_change_phase_dates_rest_one": "13bd97a47d5abf3fc0453789b303033d6c14ab8d9036dab7732ec91f61df4822",
@@ -192,6 +196,7 @@
   "plan_change_unwritten_skill": "34474b059c58c201699060e91416f8f665b36c3da60bdf04f32e4199a0e773e9",
   "plan_change_usual_difficulty": "7a787c989c1d0397346ad5a03b57f59a2cbfa46eb6fd546a119f382d170cc793",
   "plan_change_weekly_challenge": "79a31d51e06bd26e63882bd00e5ffe0060ec120ab15fafbb8186905ca27ba519",
+  "plan_change_weekly_challenge_moved": "a8e1f5eabd9a7d8882838c6232934fb383da2b57ef203a6a9660b119d716cffe",
   "plan_change_weekly_challenges_move": "bfc5462dc6f6e92124f0e3c09dcd0f009c3dca183dbacafb21a5caeb8fa5c953",
   "plan_change_weekly_challenges_on": "8d7f536e676b2b441d103c0670d86e840eff89618a69564b7c9d76f594efcc9a",
   "plan_change_weekly_mocks_move": "e98b8927dd36407d5be055048ad2de4854ffab8522dbede234da9219c0a43c4b",
@@ -240,6 +245,10 @@
   "plan_even_across_skills": "87cac3148dd48f1d476f0be3a2ff2e39c8d1dca63c4e5f9f969719c067714e69",
   "plan_every_day": "b902c43428c856c4ffd4dbde80b5be1a9bf462864418a649c6862b89588464ff",
   "plan_everything": "4d872a38a947c57fefa3169c8f96a8afb399c8001d2c6abf5a7813c9365cfc97",
+  "plan_exam_choice_left_out": "268836361f9317fcda7f8c0bebab3cb14f6ced96712d0c32f29d1d961b9dc33e",
+  "plan_exam_choice_left_out_points": "a12b4863f478bad046d32384210ab41c06f5976a4ec97715886b833f23f3b5f8",
+  "plan_exam_choice_left_out_questions": "87b7a1c19990dcaf14b4674359423f171b122203386d8b00e79c98ee53c81d6b",
+  "plan_exam_choice_left_out_questions_of": "b4e943efc997329db9e0995cb486621116ee6c0b3c2dda17d7ae09501de53afa",
   "plan_exam_choice_question": "ef05ea395fee60485d89b4624125ed8721cdcfc66a93ed4eac54c55d51d90f0d",
   "plan_exam_date": "a0a39f1220465490a59bb9abcf23f3f4d0497a51b4250ed1919d38d807d29a6f",
   "plan_exam_date_label": "7400ea190140d2f000dfa90e05e38a0d465076e9f5995125d82e29af8f471179",
@@ -275,6 +284,7 @@
   "plan_focus_only": "a3e24dedb6733b940d541b36a852121ffbf73c39d34eee7d212fa2baa4b15c87",
   "plan_fridays": "294546d6d834ed2f45b9e3ad4e0adc201b1fd34147ab5469d7adc3231a999c01",
   "plan_full_course": "8c9b172a4bdff7bb62395347fa9d5d5be3131c67add484ff5c8f71556725992c",
+  "plan_full_course_off": "6690b491e5a95476d886157dfbb985006704e850569b252be068ac4ae6b0cf9f",
   "plan_full_course_on_exam": "c91d0e85ab51644162033aee399c777d44cb07ab25622947f1b1d9d617830d53",
   "plan_full_course_on_exam_unknown_end": "59ea3d8a798448bdcfa46c153d045d51982ec1252b5376e91a6ce9ed6e7bb600",
   "plan_full_course_rule_exam": "29ec7ba8e272e22142349e66087988cff41da77759ae72938659d6d4e16d05cc",
@@ -479,14 +489,48 @@
   "plan_thursdays": "40fa8d2e25c9b31fa6fb22721a4a676d6815eae0395597d3bdcfe89891d70928",
   "plan_time_a_day": "aaf73bc31d70259b6b4888afd3562f916b6ca93e22a05ed65a59de16395853d6",
   "plan_time_a_day_label": "c50ac8340016ef90f84f85fef953eeee47c478d6915b56b577b5a52f2eece836",
+  "plan_time_ask_failed": "55106f0471f0b9221eff2f43f1758bc2b462d59ffd8b7dec221d1766e5102d61",
+  "plan_time_asking": "92cb260050f7eea20dc4e6666cd25765ba78546f0a6e2db8c6ae108bfa65a5ea",
   "plan_time_covers_everything_by": "794c88837180a61dd92c24fe0c219108d3ca7581f6b433ad0699eecd87ad7b5c",
   "plan_time_covers_everything_by_month": "d0a14710121c2d89968c5a855e7dc1137df4a62c6d2f88d639aaed856244869d",
   "plan_time_covers_everything_in_depth": "4d8eeb283c5e80f164e9c825150a352cd427d2ef99fde89af3b2a81169935624",
+  "plan_time_covers_exam_all": "c8aefd6268f06118db2ece2374da1c7880b6e0ccc61d226792988bbcf61a5eb7",
+  "plan_time_covers_exam_all_month": "1b4739af27443c6893b5e3865b3412734d753597ccbf7f95bdad92a806906e35",
+  "plan_time_covers_goal_all": "76656914ca6c135eb58e5cfee12f172b21e10bcc444acd883babe0838fe96e54",
+  "plan_time_covers_goal_all_month": "fa4507bf9121b22297f3d79bae5687f0a3f47cacc13e353378d77bfccd796c3a",
   "plan_time_find_failed": "695e21c3219eee2a09049a58f71c84448c5bd12e26bf67b24a10d915793e3d46",
   "plan_time_finish_failed": "dcc0d508a2c72f3ad5abeedf92e7fc4c922c6c7c1164027ad2b3a838e054e119",
   "plan_time_finish_unknown": "f0c2cc088fe5cdaa3d060f3afa0bf253bdf262e759cc0ef788fbd2f929dee38b",
+  "plan_time_focus_exam_every_topic": "ae834f4e203f75050220decf94af16cb726387c94f3eff8b0f25653b60bc2203",
+  "plan_time_focus_exam_most_asked": "083d9670bf68f09ecba86951a435d2e1d23cd95895a3f58fb761869a99fdd2be",
+  "plan_time_focus_goal_every_part": "a431030d836c05d623131d9fc09da906aad2c72f5050b808b2c1a20c8572d4b1",
+  "plan_time_focus_goal_most_important": "d20600b6071fc5f2a3859cb8d088ee14926555504bcc638b73ba8ea5c5eca0d5",
+  "plan_time_more_days": "5e4ab6054ebfbb9383dc24ae4141fbaf1d661306ab3befcab707d363ab66b3e3",
   "plan_time_no_days": "946ba6b0e8ccdedf78962d240645d344c43c01ad663894646d76b2ca05755bd0",
+  "plan_time_none": "faac9fab42ee6f6a0df5d370e408feb2756a3711e8471a634b9cff3b34f37b50",
+  "plan_time_none_month": "334a131f53e6b1b7943c2e35de2942c59850ebfe6848df3eb9b26d77f7c6eb2c",
   "plan_time_on_weekends": "59dec620e3b2e76eaefdcc4c7e8b2360b16598c7e48bb685e06800b202ebb120",
+  "plan_time_past_date": "c030d75871a13896851a18c55284e47fec4e84320164f8de1b4e42123abcaa4b",
+  "plan_time_past_date_month": "de0e9f6e0be250f2735d790a78fcaa8ea178afa3e2c19ddb56b29098dc7e3057",
+  "plan_time_share_exam": "6e3384a3cfd3131d4687512c8e1fb194a700748053355672ee4b5c429d355ec0",
+  "plan_time_share_exam_month": "a59665e60a54c3a4e54dcf588b860de14e8794af4a4c7233e93b0299bb098fc8",
+  "plan_time_share_goal": "ecb4ca74a195cc8508da560d57e95c4762ba1ecbcdaa44292ef012b416352ee9",
+  "plan_time_share_goal_month": "515246d7e3bc283db44fa09b386ae56109763c9329f188f2afaea82147193992",
+  "plan_time_split_many": "15c2550469d83dbbd53b3ce5d13680e66e32cdbbb9bec823fafb210c3a394a1d",
+  "plan_time_split_one": "7a023d2706ec9eeae1db8debe7226fe39029d1aa74cb2f6b198fcf607ed2acdd",
+  "plan_time_suggest": "fd0c971771240beb06afbd8fc576936cc9383f2a9b6b5d6224e223095dc7aefe",
+  "plan_time_suggest_title": "5f17e33ff3ef51fd15d3c92c67eeab44167b792bcf89f6735c911cb2a924a15d",
+  "plan_time_takes_everything": "24a40f8358da2d4bae57bd6fff8ae3bcadd9049de2b6d2ca643dd8426ea84df7",
+  "plan_time_takes_everything_month": "d443bf15a52910112219afab7db44719f09842077b563d0b235bb25ff5a8ea68",
+  "plan_time_takes_exam_all": "051a037623511dcb048e59092b5b9746384851184d8bf222e27064a28efe3371",
+  "plan_time_takes_exam_all_month": "c9a35d448e9be7936ba90cc1f5fbe9644e2310f2b5b80a364c92a5b09d53de0b",
+  "plan_time_takes_goal_all": "be70cac5e6a24af9c0f474424de6ed9dfe4edf9b58abafa48ca75f8ba9d364cd",
+  "plan_time_takes_goal_all_month": "6fd153b74acaa7f6e5e7cee93d1c86286b8a8f16da9a093bddff6f6090ef5e7a",
+  "plan_time_takes_most": "d739c53ff67196fbefa41b1d0437b25473c5273a2909c72faa813ab39ccc4182",
+  "plan_time_takes_most_month": "2816b020d21412aae87a903000932028aa64d722c8d07a1f7ad92bffbc394f07",
+  "plan_time_too_long": "86d8d471da919cfa33941ba41c875ab4f600fb5822e04c6fa644ffc6c6ff024e",
+  "plan_time_use_suggested": "d73eb308951b08c8e428178d33c504bce01674f97fae17562a43d542d13d61af",
+  "plan_time_use_to_cover_everything": "41903064e85079ee2bdf9b9bf6d63f34ca3f8f30c81ab10776c777575377aed8",
   "plan_time_weekends": "0e2637cc88b36c959ab85fbece6ef50bcc2828f1a477b5c53a3f7c9419dbdde7",
   "plan_time_working": "36621f59e3f9d0885933ef38ff7ce0f509090cd4d86d99c4dd1146b24fb53482",
   "plan_title": "52a4e993f029b6b6a61e4a9e603e64ba509313815dd64f821a2edcdad5b64ce4",
@@ -878,6 +922,7 @@
     <string name="plan_change_today_changed">学習計画に反映され、今日の学習もそれに沿って進みます。</string>
     <string name="plan_change_today_unchanged">次の学習日から学習計画に反映されます。今日の学習はそのままです。</string>
     <string name="plan_change_from_now_on">これからの学習計画は、この内容に沿って進みます。</string>
+    <string name="plan_change_changed">学習計画が変わります。</string>
     <string name="plan_change_own_level_first">新しいレベルでは、%1$sを先に学びます。</string>
     <string name="plan_change_rebalance">特に学習が必要な%1$sに、より多くの時間をかけます。</string>
     <string name="plan_change_follows_notice">学習計画は試験要項に沿っています。</string>
@@ -911,9 +956,11 @@
     <string name="plan_change_suggest_harder">学習内容を難しくします。</string>
     <string name="plan_change_suggest_easier">学習内容をやさしくします。</string>
     <string name="plan_change_suggest_usual_difficulty">レッスンを通常の難易度にします。</string>
+    <string name="plan_change_daily_time_changed">1日の学習時間が%1$sになります。</string>
     <string name="plan_change_rest_day">%1$sは休みの日です。</string>
     <string name="plan_change_days_time">%1$sは1日%2$s学習します。</string>
     <string name="plan_change_light_week">%1$sから1週間は、学習時間を半分にして軽めに進めます。</string>
+    <string name="plan_change_weekly_challenge_moved">週間チャレンジの日程が%1$sに変わります。</string>
     <!-- %1$s is one or more activities joined as a list, such as "Listening" or "New words and Writing". -->
     <string name="plan_change_activities_left_out">レッスンに%1$sが入りきりません。</string>
     <!-- %1$s is one or more activities joined as a list, such as "Listening" or "New words and Writing". -->
@@ -930,6 +977,8 @@
     <plurals name="plan_change_skills_come_in">
         <item quantity="other">学習計画に%1$sが加わります。</item>
     </plurals>
+    <string name="plan_change_date_moved">日付が%1$sに変わります。</string>
+    <string name="plan_change_phase_dates_moved">各フェーズの日程が変わり、目標の日までにより多くのレッスンを計画に入れられます。</string>
     <string name="plan_change_fit_lessons">学習時間に収まる分のレッスンが学習計画に入ります。</string>
     <string name="plan_change_exam_choice">%1$sを%2$s向けに学ぶ計画です。</string>
     <string name="plan_change_no_deadline">期限を設けず、自分のペースですべて学びます。</string>
@@ -1115,6 +1164,16 @@
     <string name="plan_time_on_weekends">週末の学習時間</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="plan_exam_choice_question">%1$s：どの科目を受験しますか？</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s and %3$s are points of the exam's score. -->
+    <string name="plan_exam_choice_left_out_points">選ぶまでは、学習計画と模試に%1$sは含まれません（配点は%2$s点、試験全体は%3$s点満点）。</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions; %3$s is the exam's. -->
+    <string name="plan_exam_choice_left_out_questions_of">選ぶまでは、学習計画と模試に%1$sは含まれません（%2$s問分、試験全体は%3$s問）。</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions. -->
+    <plurals name="plan_exam_choice_left_out_questions">
+        <item quantity="other">選ぶまでは、学習計画と模試に%1$sの%2$s問は含まれません。</item>
+    </plurals>
+    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. -->
+    <string name="plan_exam_choice_left_out">選ぶまでは、学習計画と模試に%1$sは含まれません。</string>
     <string name="plan_prerequisites">前提知識</string>
     <string name="plan_choose_prerequisites">前提知識を選ぶ</string>
     <string name="plan_prerequisites_exam">よく出題されるトピックの土台となる知識です。</string>
@@ -1224,11 +1283,77 @@
     <string name="plan_tell_buddy">ほかに変えたいことは？%1$sに伝える</string>
     <string name="plan_tell_buddy_description">「週末は少なめにしたい」など、自分の言葉で伝えてください。反映する前に変更内容を確認できます。</string>
     <string name="plan_tell_buddy_description_modules">「モジュールをスキップしたい」「週末は少なめにしたい」など、自分の言葉で伝えてください。反映する前に変更内容を確認できます。</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_none">毎日丸1日学習しても、%1$sまでに全範囲をしっかり学ぶことはできません。</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_none_month">毎日丸1日学習しても、%1$sまでに全範囲をしっかり学ぶことはできません。</string>
+    <!-- %1$s is a day, such as "May 5"; %2$s is a daily study time, such as "13 h 30 min". -->
+    <string name="plan_time_takes_everything">%1$sまでに全範囲をしっかり学ぶには、1日約%2$sが必要です。多くの人には続けるのが難しい学習量です。</string>
+    <!-- %1$s is a month and year, such as "May 2027"; %2$s is a daily study time, such as "13 h 30 min". -->
+    <string name="plan_time_takes_everything_month">%1$sまでに全範囲をしっかり学ぶには、1日約%2$sが必要です。多くの人には続けるのが難しい学習量です。</string>
+    <!-- Part of the goal never fits, whatever the time, so this is the most any daily time covers. %1$s is a day, such as "May 5"; %2$s a percentage, such as "99%"; %3$s a daily study time, such as "8 h". -->
+    <string name="plan_time_takes_most">%1$sまでにしっかり学べるのは、1日の学習時間をどれだけ増やしても全体の約%2$sまでです。その範囲を学ぶには1日約%3$sが必要で、多くの人には続けるのが難しい学習量です。</string>
+    <!-- Part of the goal never fits, whatever the time, so this is the most any daily time covers. %1$s is a month and year, such as "May 2027"; %2$s a percentage, such as "99%"; %3$s a daily study time, such as "8 h". -->
+    <string name="plan_time_takes_most_month">%1$sまでにしっかり学べるのは、1日の学習時間をどれだけ増やしても全体の約%2$sまでです。その範囲を学ぶには1日約%3$sが必要で、多くの人には続けるのが難しい学習量です。</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
+    <string name="plan_time_share_exam">よく出る内容から始め、試験範囲の約%1$sを%2$sまでにしっかり学びます。</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_share_exam_month">よく出る内容から始め、試験範囲の約%1$sを%2$sまでにしっかり学びます。</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
+    <string name="plan_time_share_goal">大切な内容から始め、目標に必要な範囲の約%1$sを%2$sまでにしっかり学びます。</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_share_goal_month">大切な内容から始め、目標に必要な範囲の約%1$sを%2$sまでにしっかり学びます。</string>
+    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
+    <string name="plan_time_focus_exam_every_topic">この学習計画では、試験の全トピックを学び、よく出るものはより深く学びます。深く学ぶ範囲は試験範囲全体の約%1$sです。</string>
+    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
+    <string name="plan_time_focus_exam_most_asked">この学習計画では、試験によく出る内容から始め、試験範囲全体の約%1$sを深く学びます。あまり出ないトピックは計画に入りきらない場合があります。</string>
+    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
+    <string name="plan_time_focus_goal_every_part">この学習計画では、目標に必要な内容をすべて学び、特に大切な部分はより深く学びます。深く学ぶ範囲は全体の約%1$sです。</string>
+    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
+    <string name="plan_time_focus_goal_most_important">この学習計画では、特に大切な内容から始め、目標に必要な内容全体の約%1$sを深く学びます。残りは計画に入りきらない場合があります。</string>
+    <string name="plan_time_more_days">学習できる日を増やすと、余裕が生まれます。</string>
+    <!-- A sentence before what that time covers. %1$s is a daily study time, such as "4 h". -->
+    <string name="plan_time_suggest">1日%1$sがおすすめです。</string>
+    <!-- The title of a suggestion to change the daily study time. %1$s is a daily study time, such as "4 h". -->
+    <string name="plan_time_suggest_title">おすすめは1日%1$s</string>
+    <string name="plan_time_too_long">多くの人には続けるのが難しい学習時間です。</string>
+    <!-- After the line about the time a day, when two goals were typed together. %1$s is this goal's time, %2$s the other goal's, such as "20 min". -->
+    <string name="plan_time_split_one">1日あたり、この目標に%1$s、もう1つの目標に%2$sを充てます。</string>
+    <!-- After the line about the time a day, when three or more goals were typed together. %1$s is this goal's time, %2$s the others' time together. -->
+    <string name="plan_time_split_many">1日あたり、この目標に%1$s、ほかの目標に合計%2$sを充てます。</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_takes_exam_all">%1$sまでに試験の全トピックを学ぶために必要な時間です。</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_takes_exam_all_month">%1$sまでに試験の全トピックを学ぶために必要な時間です。</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_takes_goal_all">%1$sまでに目標に必要な内容をすべて学ぶための時間です。</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_takes_goal_all_month">%1$sまでに目標に必要な内容をすべて学ぶための時間です。</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_covers_exam_all">%1$sまでに試験の全トピックを学びます。</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_covers_exam_all_month">%1$sまでに試験の全トピックを学びます。</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_covers_goal_all">%1$sまでに目標に必要な内容をすべて学びます。</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_covers_goal_all_month">%1$sまでに目標に必要な内容をすべて学びます。</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_past_date">設定した%1$sは過ぎています。次の画面で新しい日付を選べます。</string>
+    <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
+    <string name="plan_time_past_date_month">設定した%1$sは過ぎています。次の画面で新しい日付を選べます。</string>
     <string name="plan_time_finish_unknown">このスケジュールでは完了日を予測できません。学習時間か学習する日を増やしてみてください。</string>
     <string name="plan_time_finish_failed">いつ終わるか計算できませんでした。</string>
     <string name="plan_time_no_days">学習する日を1日以上選んでください。</string>
     <string name="plan_time_working">目標に必要な学習時間を計算しています…</string>
     <string name="plan_time_find_failed">目標に必要な学習時間を計算できませんでした。</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="plan_time_asking">1日%1$sで学べる範囲を計算しています…</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="plan_time_ask_failed">1日%1$sで学べる範囲を計算できませんでした。</string>
+    <!-- A button under the time a day. %1$s is a daily study time, such as "45 min". Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything". -->
+    <string name="plan_time_use_to_cover_everything">全範囲をカバーするために1日%1$sにする</string>
+    <!-- A button under the time a day that goes back to the suggested time. %1$s is a daily study time, such as "4 h". -->
+    <string name="plan_time_use_suggested">おすすめの1日%1$sにする</string>
     <string name="plan_working_out_coverage">設定した学習時間で学べる範囲を計算しています…</string>
     <!-- %1$s is a month and year, like "March 2027". -->
     <string name="plan_finish_around">%1$sごろに完了します。</string>
@@ -1253,6 +1378,7 @@
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">期日を%1$sに変える</string>
     <string name="plan_full_course_switch">試験後も続けてすべて学ぶ</string>
+    <string name="plan_full_course_off">オフにすると、学習計画は試験日までになります。</string>
     <string name="plan_full_course_on_exam">%1$s 試験までは、よく出る内容を優先します。</string>
     <string name="plan_full_course_on_exam_unknown_end">試験までは、よく出る内容を優先して学びます。入りきらない内容は試験後に学びます。</string>
     <string name="plan_finish">1日%1$sなら、%2$sに完了します。</string>
@@ -1316,53 +1442,4 @@
     <string name="plan_finished_title">学習計画を完了しました</string>
     <string name="plan_study_next">次に学ぶ内容はこちらです。</string>
     <string name="plan_continue_at">%1$sで学習を続ける</string>
-    <string name="plan_exam_choice_until_you_pick">選ぶまでは、{arg1}は学習計画に含まれません。</string>
-    <string name="plan_covers_whole_goal">目標の全範囲を学べます。</string>
-    <string name="plan_covered_exam_most_asked">1日{arg1}の学習で、試験のすべてのトピックを学び、よく出るトピックはより深く学びます。</string>
-    <string name="plan_covered_exam_less_depth">1日{arg1}の学習で、試験のすべてのトピックを学びますが、一部は深く掘り下げません。</string>
-    <string name="plan_covered_goal_core">1日{arg1}の学習で、目標に必要な内容をすべて学び、特に大切な内容はより深く学びます。</string>
-    <string name="plan_covered_exam_after">1日{arg1}では、試験までにすべてのトピックを学びきれません。出題の少ないトピックは試験後に学びます。</string>
-    <string name="plan_covered_exam_left_out">1日{arg1}では、すべてのトピックを学びきれません。出題の少ないトピックは計画に入りきりません。</string>
-    <string name="plan_covered_goal_left_out">1日{arg1}では、目標に必要な内容をすべて学びきれません。学ぶ順番が後の内容は計画に入りきりません。</string>
-    <string name="plan_find_covers">1日{arg1}で、{arg2}までにすべてじっくり学べます。</string>
-    <string name="plan_find_covers_month">1日{arg1}で、{arg2}までにすべてじっくり学べます。</string>
-    <string name="plan_find_none">1日の学習時間をどれだけ増やしても、{arg1}までにすべてじっくり学ぶことはできません。</string>
-    <string name="plan_find_none_month">1日の学習時間をどれだけ増やしても、{arg1}までにすべてじっくり学ぶことはできません。</string>
-    <string name="plan_find_every_topic">1日{arg1}で全トピックを学べますが、一部は深く掘り下げません。</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s and %3$s are points of the exam's score. -->
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions; %3$s is the exam's. -->
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions. -->
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. -->
-    <!-- %1$s is a day, such as "May 5". -->
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <!-- %1$s is a day, such as "May 5"; %2$s is a daily study time, such as "13 h 30 min". -->
-    <!-- %1$s is a month and year, such as "May 2027"; %2$s is a daily study time, such as "13 h 30 min". -->
-    <!-- Part of the goal never fits, whatever the time, so this is the most any daily time covers. %1$s is a day, such as "May 5"; %2$s a percentage, such as "99%"; %3$s a daily study time, such as "8 h". -->
-    <!-- Part of the goal never fits, whatever the time, so this is the most any daily time covers. %1$s is a month and year, such as "May 2027"; %2$s a percentage, such as "99%"; %3$s a daily study time, such as "8 h". -->
-    <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
-    <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
-    <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
-    <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
-    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
-    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
-    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
-    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
-    <!-- A sentence before what that time covers. %1$s is a daily study time, such as "4 h". -->
-    <!-- The title of a suggestion to change the daily study time. %1$s is a daily study time, such as "4 h". -->
-    <!-- After the line about the time a day, when two goals were typed together. %1$s is this goal's time, %2$s the other goal's, such as "20 min". -->
-    <!-- After the line about the time a day, when three or more goals were typed together. %1$s is this goal's time, %2$s the others' time together. -->
-    <!-- %1$s is a day, such as "May 5". -->
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <!-- %1$s is a day, such as "May 5". -->
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <!-- %1$s is a day, such as "May 5". -->
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <!-- %1$s is a day, such as "May 5". -->
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <!-- %1$s is a day, such as "May 5". -->
-    <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
-    <!-- %1$s is a duration, such as "30 min". -->
-    <!-- %1$s is a duration, such as "30 min". -->
-    <!-- A button under the time a day. %1$s is a daily study time, such as "45 min". Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything". -->
-    <!-- A button under the time a day that goes back to the suggested time. %1$s is a daily study time, such as "4 h". -->
 </resources>

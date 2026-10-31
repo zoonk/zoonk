@@ -51,7 +51,7 @@
   "account_username_available": "28dc88738b72409979adbbaa57bef7c832b8ebc861710e1d03d591d2811debf7",
   "account_username_checking": "bfc172866735014513d8665182de533258661705874661956747f7fa1ed959f9",
   "account_username_line": "74544e383fdf647f18edf60cda27fc1c20b5ab711dd36d7132896ca3534919ec",
-  "account_username_rules": "c9fc817bd7610d33b0ffa85276f25f8295951b13a467df301f20c63e91a5bb92",
+  "account_username_rules": "b44e851c0f342349a06212a725a737bc2bb65f1577c5211104f9b28015cffbd6",
   "account_username_taken": "70c59a8dde53bbf197070d4a4117aa5b5697f6f758dbf2b82ed96decb5e822b0",
   "account_welcome_description": "7479f9c2a2f88016dbae0e7395771f5830d808e15a00036771d5f2a7cf3c51b0",
   "account_welcome_note": "b3b4d942ccbcc9ae3ebbc6445313389729455702fc5b1c8a0f82b5987cf4cbfb",
@@ -109,7 +109,7 @@
     <string name="account_username_available">%1$s ist verfügbar</string>
     <!-- %1$s is a username. -->
     <string name="account_username_taken">%1$s ist bereits vergeben</string>
-    <string name="account_username_rules">3–30 Zeichen. Nur Buchstaben, Zahlen und Unterstriche.</string>
+    <string name="account_username_rules">3–30 Zeichen. Nur Buchstaben a–z, Ziffern und Unterstriche.</string>
     <string name="account_save_failed">Wir konnten dein Profil nicht speichern. Versuch es noch einmal.</string>
     <string name="account_menu_settings">Einstellungen</string>
     <string name="account_menu_subscription">Abo</string>

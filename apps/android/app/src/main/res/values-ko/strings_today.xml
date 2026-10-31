@@ -186,6 +186,7 @@
   "today_week_full_review_detail": "960d3ca057eb93289aca4704c56182621f9b919196453ddd29f5d111a95e70c4",
   "today_week_full_review_name": "b13e0709693f1bd0bca1779ec737680d499cd06584955f4885d3a262c38b01c6",
   "today_week_gain": "a377d84179e2a63245e86baf5ebe204b5cf4e92f7e83620805a537673546a5bf",
+  "today_week_goal_reached": "e0c1885d6eb7a6a292c87d36be7251110430f66555e6fb1ec2214a6fb1c77f32",
   "today_week_loss": "40f4bcf8bd146e1991038356917c0d5e944663396c5fe8027d4831ebdb898189",
   "today_week_mock_name": "300bb92cdcfe87864272431ec14275b1bbc8cdb17c71f77b1d01742166616e99",
   "today_week_not_studied": "a46fd3ea682d3e78976294e3c87106ad6d5d8bbfcaecb724ca6e5c3478f9c4b7",
@@ -347,6 +348,7 @@
     <string name="today_week_day">%1$s: %2$s</string>
     <!-- "Saturday: weekly challenge, not studied". -->
     <string name="today_week_challenge_day">%1$s: %2$s, %3$s</string>
+    <string name="today_week_goal_reached">하루 학습 시간 달성</string>
     <string name="today_week_studied">학습함</string>
     <string name="today_week_exam_day">시험일</string>
     <string name="today_week_deadline">목표 날짜</string>
@@ -477,5 +479,4 @@
     <string name="today_coming_stalled">평소보다 오래 걸리고 있어요</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get today's lessons" link. -->
     <string name="today_coming_not_written">아직 만들지 않았어요.</string>
-    <string name="today_exam_choice_detail">과목을 고르기 전까지 계획에서 {arg1}을(를) 제외해요.</string>
 </resources>

@@ -10,7 +10,7 @@
   "settings_delete_account_description": "8bd99ae584e714b36d52668af719b4b31e13948a5e397669205bcce71504bd27",
   "settings_delete_code_description": "18e9545acb9d45814a6974c473c05d14a58ebecc6b9608822d8b66abc96b9570",
   "settings_delete_code_title": "7a4c9094fc9e8f580d0de507323dcdfc690c4eba2c440eeb5c44d87adfb8d5a7",
-  "settings_delete_confirm_description": "acbee3ba2a78725af8098f46461d465f0b0201ce847e970fe1b3ede8c91bf193",
+  "settings_delete_confirm_description": "852cb674ba62928dc1f31a5d6046848343eaf1909d92ccc9523ced97f4204249",
   "settings_delete_confirm_title": "585e0723e835ff5cf8139041680d59f6a4f562ddc090276be4587e10945752e2",
   "settings_delete_ellipsis": "bdb15b941cf9334386ac1bdd04d5b5118ccc5cb72b83e250a13014c1fbaa943b",
   "settings_delete_failed": "5c53b9f62e3bf261ba4ceac1a463cc2e47bbaabd609e4ab87466a0ce5802e94d",
@@ -42,6 +42,9 @@
   "settings_preferences_no_limit": "cafef55eafe24ea7d072e52305e79b48c7ad975e56dd92a4421725e57278d37d",
   "settings_preferences_on_this_device": "c0a2d98cf9ddd99cc8c136a3a1c40ca2b570c29317bfe355a48c3a4f64f2006d",
   "settings_preferences_save_failed": "ccd1308e7ba482b252d245b98f159063851645f50643921432e9c9884aafb90c",
+  "settings_preferences_share_usage_data": "17e99e362edaadae762d517b6c2e46f8eca99ced22c312ac50756fe08819a4f7",
+  "settings_preferences_share_usage_data_description": "f72f54da4d515ca69c81c523a3ff2acd9ac262f36465c1bdeef0bb197114854e",
+  "settings_preferences_share_usage_data_locked": "abeba7f6adda862d52b627a5ae45231c0257448ffe931ed46c36be975a9d6b5c",
   "settings_preferences_sounds": "692afa6fa1188e5418851868b0afc8f545493d0f3754d5fbae92cb958b2f031b",
   "settings_preferences_sounds_description": "4d521392c771733e62dccdd4970acd85523f3ead84f84d559d02b09a1eedbe7d",
   "settings_preferences_summary": "45820d8a8eea034f640b53a64914a6f2038566ea7b6ca9bd4ff24c038e5db199",
@@ -74,7 +77,7 @@
     <string name="settings_delete_account_description">アカウントとすべてのデータを完全に削除します。ウェブで購入したPlusは解約されます。Google PlayやApp Storeで購入した分は、購入先で管理してください。</string>
     <string name="settings_delete_ellipsis">削除…</string>
     <string name="settings_delete_confirm_title">アカウントを削除しますか？</string>
-    <string name="settings_delete_confirm_description">目標、学習計画、進捗、メモリ、フィードバック、アップロードしたファイルはすべて完全に削除されます。この操作は取り消せません。</string>
+    <string name="settings_delete_confirm_description">目標、学習計画、進捗、メモリ、アップロードしたファイルが完全に削除されます。元には戻せません。</string>
     <string name="settings_cancel">キャンセル</string>
     <string name="settings_delete_code_title">本人確認</string>
     <!-- %1$s is the account's email address. -->
@@ -108,4 +111,9 @@
     <string name="settings_licenses_read">ライセンスを読む</string>
     <string name="settings_profile_description">名前、ユーザー名、アカウントの設定です。</string>
     <string name="settings_preferences_description">相棒やレッスン、言語を好みに合わせて設定できます。</string>
+    <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
+    <string name="settings_preferences_share_usage_data">利用状況データを送信する</string>
+    <string name="settings_preferences_share_usage_data_description">Zoonkの利用状況を把握し、改善に役立てます</string>
+    <!-- Why the usage data switch is off and can't be turned on: the law doesn't let minors agree to it. -->
+    <string name="settings_preferences_share_usage_data_locked">お住まいの国では18歳未満の方はオンにできません</string>
 </resources>

@@ -4,8 +4,11 @@
   "mock_chooser_about": "032547a28251bf27e682eba458248ac52fa5f957a134a62d4748e4a3fe8bfbf9",
   "mock_chooser_about_recommended": "6f86f29f68731d187890e3e1682adc8c7720b76cca845ba4992e8e617ae85e61",
   "mock_chooser_failed": "9731b60b42cdcd5963e060c25e2c7c07f65d969df6e65936459c1741ce06d88a",
+  "mock_chooser_full_day_number_without": "0d7e879b5d474ad99d12e8b1e810f9864b454df4ccd5aed3c66a364ab2b6e34f",
+  "mock_chooser_full_day_without": "4774208025080fe2522e4bca6e998f85225a46d5cfbd60459295344383b1c29f",
   "mock_chooser_getting_ready": "65e00c83ffbc721698a75d38138fb816d2bedf2093b91c5b7bf0f03679ce23f3",
   "mock_chooser_last_mock": "3995d50ff26ddbc4242ac008a2d2a27f2a32a759140ec590fe0a38790217bac7",
+  "mock_chooser_left_out_choice": "603ce058a2270989cda6fe617ab5fdeb9bbf19034e200ec373e720426e2d229e",
   "mock_chooser_left_out_listening": "76a0446a7bfaa06188694b41c07683c29f760283625b56ee4661ebc601542864",
   "mock_chooser_left_out_named": "ea6d33f25c385fc022bb7798f218ee64a17b607dd3863a04917a46da8c30e049",
   "mock_chooser_left_out_numeric": "a3337763a7c8617327fd67061608d932765ada11f111c47096a4a1b115850629",
@@ -83,6 +86,11 @@
     <string name="mock_chooser_see_plus">Plus 알아보기</string>
     <string name="mock_chooser_plus">Plus를 구독하면 언제든 모의고사를 볼 수 있고, 계획에도 매주 포함돼요.</string>
     <string name="mock_chooser_one_subject">한 과목</string>
+    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$s lists them, such as "Specialty knowledge (P3)". -->
+    <string name="mock_chooser_full_day_without">하루치 시험 (%1$s 제외)</string>
+    <!-- PluralsCandidate: %1$d names which exam day it is, not a count. -->
+    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$d is the exam day's number; %2$s lists the tests, such as "Foreign language". -->
+    <string name="mock_chooser_full_day_number_without" tools:ignore="PluralsCandidate">시험 %1$d일 차 (%2$s 제외)</string>
     <!-- After a mock's parts or subjects: the mock covers only the exam's objective part, questions with set answers, and leaves the exam day's written part out. -->
     <string name="mock_chooser_objective_only">정답이 정해진 문제만</string>
     <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
@@ -180,8 +188,6 @@
     <string name="mock_chooser_left_out_short_answer">짧게 답을 쓰는 문제는 객관식으로 나와요.</string>
     <!-- %1$s is the exam's name for a written part, such as "Essay". -->
     <string name="mock_chooser_left_out_written">아직 %1$s 파트의 에세이 문제가 없어 에세이 학습에서 연습해요.</string>
-    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$s lists them, such as "Specialty knowledge (P3)". -->
-    <!-- PluralsCandidate: %1$d names which exam day it is, not a count. -->
-    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$d is the exam day's number; %2$s lists the tests, such as "Foreign language". -->
     <!-- %1$s is a part of the exam, such as a specialty's own test, that the learner hasn't picked an option for yet. -->
+    <string name="mock_chooser_left_out_choice">%1$s은(는) 계획에서 어떤 시험을 볼지 고를 때까지 제외돼요.</string>
 </resources>
