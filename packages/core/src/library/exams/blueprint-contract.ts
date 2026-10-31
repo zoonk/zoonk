@@ -211,6 +211,8 @@ export const examEditionSchema = z.object({
   noticeUrl: z.string().nullable(),
   questionCount: z.number().int().nullable(),
   sourceHash: z.string().nullable(),
+  /** Every document the reading read, the notice first, so a new reading reads them all again. */
+  sourceIds: z.array(z.string()).optional(),
   timeZone: z.string().nullable(),
   year: z.number().int().nullable(),
 });

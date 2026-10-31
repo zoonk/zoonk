@@ -139,6 +139,7 @@ function mergeEdition({
       next: next.questionCount,
     }),
     sourceHash: next.sourceHash ?? current.sourceHash,
+    sourceIds: next.sourceIds ?? current.sourceIds,
     timeZone: changedFields.has("edition.dates")
       ? (next.timeZone ?? current.timeZone)
       : (current.timeZone ?? next.timeZone),

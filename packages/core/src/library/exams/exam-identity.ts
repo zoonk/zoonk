@@ -1,6 +1,7 @@
 import "server-only";
 import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { normalizeIdentityText, scopeIdentityKey } from "@zoonk/utils/identity-key";
+import { examEditionSchema } from "./blueprint-contract";
 
 export type ExamIdentity = {
   board: string | null;
@@ -65,13 +66,23 @@ export async function getSharedExamIdentity(examBlueprintId: string): Promise<Ex
   };
 }
 
+/** `sourceIds` are the notice, then the corrections and annexes its last reading read with it. */
 export async function getSharedExamNotice(
   examBlueprintId: string,
-): Promise<{ identity: ExamIdentity; sourceId: string } | null> {
+): Promise<{ identity: ExamIdentity; sourceIds: string[] } | null> {
   const [identity, blueprint] = await Promise.all([
     getSharedExamIdentity(examBlueprintId),
-    prisma.examBlueprint.findUnique({ select: { sourceId: true }, where: { id: examBlueprintId } }),
+    prisma.examBlueprint.findUnique({
+      select: { edition: true, sourceId: true },
+      where: { id: examBlueprintId },
+    }),
   ]);
 
-  return identity && blueprint?.sourceId ? { identity, sourceId: blueprint.sourceId } : null;
+  if (!identity || !blueprint?.sourceId) {
+    return null;
+  }
+
+  const read = examEditionSchema.safeParse(blueprint.edition).data?.sourceIds ?? [];
+
+  return { identity, sourceIds: [...new Set([blueprint.sourceId, ...read])] };
 }

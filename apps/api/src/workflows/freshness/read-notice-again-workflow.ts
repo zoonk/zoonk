@@ -25,7 +25,7 @@ export async function readNoticeAgainWorkflow({
     force: true,
     identity: notice.identity,
     isNew: false,
-    sourceIds: [notice.sourceId],
+    sourceIds: notice.sourceIds,
   });
 
   await addMissingExamSkillsStep(examBlueprintId);

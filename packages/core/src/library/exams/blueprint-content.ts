@@ -234,6 +234,7 @@ export function toBlueprintContent({
         value: edition.questionCount,
       }),
       sourceHash,
+      sourceIds: documents.map((document) => document.sourceId),
       timeZone: toTimeZone(edition.timeZone),
       year: keptOr({ gap: null, id: "edition.year", kept, value: edition.year }),
     },

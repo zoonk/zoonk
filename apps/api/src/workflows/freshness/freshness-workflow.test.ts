@@ -71,6 +71,8 @@ const NEXT_NOTICE_PLAN: ExamResearchPlan = {
   searchTerms: ["TCDF"],
 };
 
+const ANNEX_TEXT = "ANEXO II – QUADRO DE PROVAS\nP1 Conhecimentos básicos: 50 itens.";
+
 async function readFixture(name: string) {
   return readFile(new URL(`../research/_test-fixtures/${name}`, import.meta.url), "utf8");
 }
@@ -114,6 +116,17 @@ async function examWithLearner({ erratum }: { erratum?: string } = {}) {
 
   const current = withExamDate({ extraction, line: OLD_DATE_LINE });
   const text = [notice, OLD_DATE_LINE, erratum].filter(Boolean).join("\n");
+  serveNotice(ANNEX_TEXT);
+
+  const annex = await storeWebSource({
+    kind: "official",
+    language: "pt",
+    publisher: "Cebraspe",
+    title: "Anexo – Quadro de provas",
+    topic: "exam",
+    url: `https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/${randomUUID()}-anexo.txt`,
+  });
+
   serveNotice(text);
 
   const source = await storeWebSource({
@@ -125,7 +138,11 @@ async function examWithLearner({ erratum }: { erratum?: string } = {}) {
     url: `https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/${randomUUID()}.txt`,
   });
 
-  const documents = [{ sourceId: source.id, text }];
+  const documents = [
+    { sourceId: source.id, text },
+    { sourceId: annex.id, text: ANNEX_TEXT },
+  ];
+
   const facts = listBlueprintFacts({ documents, extraction: current });
 
   const read = toBlueprintContent({
@@ -156,7 +173,7 @@ async function examWithLearner({ erratum }: { erratum?: string } = {}) {
   const user = await userFixture();
   await goalFixture({ examBlueprintId: saved.blueprint.id, kind: "exam", userId: user.id });
 
-  return { blueprint: saved.blueprint, extraction, notice, source };
+  return { annex, blueprint: saved.blueprint, extraction, notice, source };
 }
 
 async function lawWithLearner(text: string) {
@@ -218,7 +235,7 @@ describe(freshnessWorkflow, () => {
   });
 
   it("updates only what a corrected notice changed and records the learner notice", async () => {
-    const { blueprint, extraction, notice } = await examWithLearner();
+    const { annex, blueprint, extraction, notice, source } = await examWithLearner();
     serveNotice(`${notice}\n${NEW_DATE_LINE}`);
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
@@ -264,7 +281,10 @@ describe(freshnessWorkflow, () => {
     expect(stored.examDate).toStrictEqual(new Date("2026-11-29T00:00:00.000Z"));
     expect(stored.structure).toStrictEqual(blueprint.structure);
 
-    expect(vi.mocked(extractExamBlueprint).mock.calls[0]?.[0].serviceTier).toBe("flex");
+    expect(vi.mocked(extractExamBlueprint).mock.calls[0]?.[0]).toMatchObject({
+      documents: [{ url: source.url }, { url: annex.url }],
+      serviceTier: "flex",
+    });
 
     expect(notices).toMatchObject([
       {
@@ -481,7 +501,9 @@ describe(freshnessWorkflow, () => {
   });
 
   it("reads an exam's stored notice again on an admin's request, though nothing changed", async () => {
-    const { blueprint, extraction } = await examWithLearner({ erratum: NEW_DATE_LINE });
+    const { annex, blueprint, extraction, source } = await examWithLearner({
+      erratum: NEW_DATE_LINE,
+    });
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
       data: withExamDate({ extraction, line: NEW_DATE_LINE }),
@@ -530,6 +552,10 @@ describe(freshnessWorkflow, () => {
     expect(extractExamBlueprint).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ corrections: [leftOut] }),
     );
+
+    expect(
+      vi.mocked(extractExamBlueprint).mock.calls[0]?.[0].documents.map((document) => document.url),
+    ).toStrictEqual([source.url, annex.url]);
 
     await expect(
       prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } }),

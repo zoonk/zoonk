@@ -93,7 +93,7 @@ describe(checkFreshness, () => {
   });
 
   it("asks for a blueprint update when the notice changed", async () => {
-    const { blueprint, source } = await examWithLearner({ examDate: daysFromNow(90) });
+    const { blueprint } = await examWithLearner({ examDate: daysFromNow(90) });
     servePage("A prova terá 60 questões.");
 
     const check = await checkFreshness({
@@ -102,7 +102,7 @@ describe(checkFreshness, () => {
     });
 
     expect(check).toMatchObject({
-      blueprintUpdate: { examBlueprintId: blueprint.id, sourceId: source.id },
+      blueprintUpdate: { examBlueprintId: blueprint.id },
       nextCheckAt: daysFromNow(7).toISOString(),
       status: "scheduled",
     });

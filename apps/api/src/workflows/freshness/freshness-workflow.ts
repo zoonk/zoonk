@@ -9,6 +9,7 @@ import { readExamBlueprint } from "../research/read-exam-blueprint";
 import { findAndStoreSources } from "../research/research-sources";
 import { checkFreshnessStep } from "./steps/check-freshness-step";
 import { loadBlueprintIdentityStep } from "./steps/load-blueprint-identity-step";
+import { loadBlueprintNoticeStep } from "./steps/load-blueprint-notice-step";
 import { planNextNoticeStep } from "./steps/plan-next-notice-step";
 import { recordSourceNoticeStep } from "./steps/record-source-notice-step";
 
@@ -61,15 +62,15 @@ async function applyChanges({
   }
 
   if (check.blueprintUpdate) {
-    const identity = await loadBlueprintIdentityStep(check.blueprintUpdate.examBlueprintId);
+    const notice = await loadBlueprintNoticeStep(check.blueprintUpdate.examBlueprintId);
 
-    if (identity) {
+    if (notice) {
       await readExamBlueprint({
         analytics,
         background: true,
-        identity,
+        identity: notice.identity,
         isNew: false,
-        sourceIds: [check.blueprintUpdate.sourceId],
+        sourceIds: notice.sourceIds,
       });
     }
   }

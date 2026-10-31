@@ -2,7 +2,7 @@ import { type ExamIdentity, getSharedExamNotice } from "@zoonk/core/library/exam
 
 export async function loadBlueprintNoticeStep(
   examBlueprintId: string,
-): Promise<{ identity: ExamIdentity; sourceId: string } | null> {
+): Promise<{ identity: ExamIdentity; sourceIds: string[] } | null> {
   "use step";
 
   return getSharedExamNotice(examBlueprintId);

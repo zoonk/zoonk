@@ -31,7 +31,7 @@ export type SourceChange = {
 export type FreshnessCheck =
   | { reason: FreshnessStopReason; status: "stopped" }
   | {
-      blueprintUpdate: { examBlueprintId: string; sourceId: string } | null;
+      blueprintUpdate: { examBlueprintId: string } | null;
       nextCheckAt: string;
       nextNotice: { examBlueprintId: string } | null;
       sourceChange: SourceChange | null;
@@ -181,9 +181,7 @@ async function checkExam({
   const isBehind = sourceHash !== content.edition.sourceHash;
 
   return {
-    blueprintUpdate: isBehind
-      ? { examBlueprintId: blueprint.id, sourceId: blueprint.source.id }
-      : null,
+    blueprintUpdate: isBehind ? { examBlueprintId: blueprint.id } : null,
     nextCheckAt: nextCheckAt.toISOString(),
     nextNotice: null,
     sourceChange: null,
