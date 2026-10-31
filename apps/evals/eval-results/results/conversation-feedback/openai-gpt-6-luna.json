@@ -5,28 +5,28 @@
       "categoryScores": [
         {
           "categoryId": "fix",
-          "reasoning": "There is exactly one correction, quoting the learner accurately and replacing a substantial grammatical error with a natural question that preserves the intended meaning. The explanation correctly describes agreement with “water and electricity,” but does not address the missing subject or explain the relevant contrast with Portuguese. No wrong-correction or false-rule cap applies.",
-          "score": 8,
+          "reasoning": "The selected learner error is important and quoted accurately, but the replacement incorrectly uses singular “Is” with “water and electricity.” This triggers the maximum score of 5 for a wrong correction. The explanation also misses the useful Portuguese comparison about omitted subjects.",
+          "score": 5,
           "label": "One clear, useful fix",
           "weight": 35
         },
         {
           "categoryId": "honesty",
-          "reasoning": "Both praised quotations are accurate, correct, and useful in accomplishing the call’s objectives. The empty pronunciation list makes no unsupported claims and contains no accent-only coaching. A carefully framed practice item for “rent” could add value; no pronunciation-related cap is triggered.",
-          "score": 9,
+          "reasoning": "Both praised quotations are accurate, correct learner utterances that accomplished meaningful work: asking the rent and confirming the viewing. The empty pronunciation list makes no unsupported claims and contains no accent-only coaching; the expectations do not explicitly require a nonempty list.",
+          "score": 10,
           "label": "Honest praise and pronunciation",
           "weight": 25
         },
         {
           "categoryId": "language",
-          "reasoning": "The explanation and encouragement are natural Brazilian Portuguese, while the correction and quotations are in English. The correction is short and accessible, and the praise appropriately recognizes successful simple sentences at A2.",
+          "reasoning": "The explanation and encouragement are concise, natural Brazilian Portuguese, while the correction and quotations are in English. The wording is accessible for A2. The correction's grammatical error is assessed under fix.",
           "score": 10,
           "label": "Right language and level",
           "weight": 20
         },
         {
           "categoryId": "tone",
-          "reasoning": "The feedback is brief, direct, and respectful. The encouragement addresses the learner as “você” and accurately recognizes asking the rent and arranging the viewing, without scores, promises, exaggerated praise, or prohibited references.",
+          "reasoning": "The response is short, direct and supportive. The encouragement addresses the learner as “Você” and accurately recognizes the two achievements without scores, promises, exaggerated praise or references to the transcript or app.",
           "score": 10,
           "label": "Kind and safe",
           "weight": 20
@@ -43,21 +43,21 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 2031,
+          "cacheWriteTokens": 0,
           "inputTokens": 2034,
-          "outputTokens": 778,
-          "reasoningTokens": 307
+          "outputTokens": 753,
+          "reasoningTokens": 256
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The fix is correct and useful, but its explanation misses the relevant Portuguese comparison: Portuguese often allows an omitted subject, whereas this English question needs an explicit subject.",
-          "kind": "minorErrors",
-          "score": 8
+          "conclusion": "The correction introduces a subject–verb agreement error: “Is water and electricity included?” should use “Are” with the coordinated subject. “Does it include water and electricity?” would be a correct, natural A2 alternative. The explanation also presents “is ... included” without explaining the necessary agreement.",
+          "kind": "majorErrors",
+          "score": 6
         },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Consider adding pronunciation practice for “rent,” which the learner said. Explain that its initial R is often difficult for Brazilians and can sound like English H, without claiming this learner mispronounced it.",
+          "conclusion": "Use the fix to explain that Portuguese often allows an omitted subject, whereas this English question needs “it”: “Does it include water and electricity?” An optional pronunciation tip could address “rent,” describing its initial R as often difficult for Brazilians without claiming the learner pronounced it incorrectly.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -111,36 +111,36 @@
       "categoryScores": [
         {
           "categoryId": "fix",
-          "reasoning": "There is exactly one useful fix, grounded in the learner's actual Portuguese utterance. The English correction is natural, preserves the meaning, and suits A2. The explanation about past-time reference is accurate. Adding a request for repetition could make it even more actionable.",
-          "score": 9,
+          "reasoning": "Provides exactly one useful fix, turning the learner's actual fragmented price question into a natural, complete question about rent. The correction preserves the intended meaning, suits A2, and has a short, accurate explanation.",
+          "score": 10,
           "label": "One clear, useful fix",
           "weight": 35
         },
         {
           "categoryId": "honesty",
-          "reasoning": "Praise is limited to one short, correct phrase the learner actually used to respond and close politely. It does not exaggerate their performance. The empty pronunciation list avoids unsupported claims and unnecessary accent coaching.",
+          "reasoning": "Leaving both praise and pronunciation lists empty is appropriate given the learner's limited speech. There is no inflated praise or unsupported pronunciation claim.",
           "score": 10,
           "label": "Honest praise and pronunciation",
           "weight": 25
         },
         {
           "categoryId": "language",
-          "reasoning": "The explanation and encouragement are natural Brazilian Portuguese, while the correction is simple, correct English. The Portuguese in \"said\" appropriately reproduces the learner's own words.",
+          "reasoning": "The explanation and encouragement use natural Brazilian Portuguese, while the correction and quoted English structure use clear, level-appropriate English.",
           "score": 10,
           "label": "Right language and level",
           "weight": 20
         },
         {
           "categoryId": "tone",
-          "reasoning": "The response is short, direct, respectful, and free of guilt, exaggerated praise, or unsupported promises. However, the encouragement describes what happened rather than kindly acknowledging the learner's effort, as the task specifically requests.",
-          "score": 8,
+          "reasoning": "The encouragement directly addresses the learner in one short, kind sentence grounded in what happened: they started the conversation and asked about the price. It avoids guilt, exaggerated praise, promises, and claims that the broader objectives were completed.",
+          "score": 10,
           "label": "Kind and safe",
           "weight": 20
         },
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 4 parts passed the code checks.",
+          "reasoning": "All 3 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -149,24 +149,16 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1855,
-          "inputTokens": 1858,
-          "outputTokens": 700,
-          "reasoningTokens": 264
+          "cacheWriteTokens": 0,
+          "inputTokens": 1839,
+          "outputTokens": 452,
+          "reasoningTokens": 106
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The encouragement is an accurate, polite summary, but it does not acknowledge the learner's effort as requested. A brief acknowledgment of trying despite difficulty would be warmer without over-praising.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Optionally extend the corrected phrase with \"Could you repeat that?\" so the learner can explicitly request help when they do not understand.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "The learner barely spoke English and switched to Portuguese once. \"Went well\" may be empty or hold only a real short phrase; nothing should be over-praised. The fix should still be useful, for example how to say \"Desculpa, não entendi\" in English (\"Sorry, I didn't understand. Could you repeat that?\") or how to ask the price as a sentence. At most one or two pronunciation words, only ones the learner said. The encouragement is kind about trying, with no guilt. In Brazilian Portuguese.",
@@ -208,133 +200,28 @@
       "categoryScores": [
         {
           "categoryId": "fix",
-          "reasoning": "There is exactly one fix, targeting the expected grammar error. The learner's wording is quoted accurately, the correction is natural and correct, and the rule is true. However, the explanation omits the useful, explicitly requested contrast with English's single verb “to be.”",
+          "reasoning": "Exactly one fix addresses the learner’s real grammar slip. “Said” quotes the learner accurately, “better” preserves the meaning, and the rule is correct and concise. However, the explanation lacks the explicitly requested Portuguese comparison with “quanto custa a consulta”.",
           "score": 8,
           "label": "One clear, useful fix",
           "weight": 35
         },
         {
           "categoryId": "honesty",
-          "reasoning": "Both praised phrases were spoken by the learner, are correct, and accomplished meaningful tasks: asking about rent and confirming the viewing. Pronunciation coaching is optional, and the empty list makes no unsupported claims.",
+          "reasoning": "All three praised phrases were actually said, are correct, and served meaningful purposes in the call. The duration phrase is specifically aligned with the task expectations. Pronunciation coaching is optional and appropriately omitted.",
           "score": 10,
           "label": "Honest praise and pronunciation",
           "weight": 25
         },
         {
           "categoryId": "language",
-          "reasoning": "Both the explanation and encouragement are in Spanish rather than US English. This triggers the wrong-language cap of 5. The correction and quoted Spanish phrases are appropriate for the target language and A2 level.",
-          "score": 5,
-          "label": "Right language and level",
-          "weight": 20
-        },
-        {
-          "categoryId": "tone",
-          "reasoning": "The feedback is short, direct, and respectful. The encouragement addresses the learner and accurately acknowledges accomplishments in this call, without scores, promises, exaggerated praise, or prohibited references. Its warmth is restrained but appropriate.",
-          "score": 9,
-          "label": "Kind and safe",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 5 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 1927,
-          "inputTokens": 1930,
-          "outputTokens": 635,
-          "reasoningTokens": 171
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The explanation and encouragement are in Spanish instead of the learner's US English, violating the required feedback language.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The explanation correctly treats availability as a state requiring estar, but omits the requested comparison with English, which uses one verb, “to be.”",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Make the encouragement slightly warmer while keeping it grounded in this call, for example: “You clearly asked about the rent and arranged a time to see the apartment.”",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "US English speaker learning Spain Spanish at A2. The fix should be \"¿El piso es disponible?\" to \"¿El piso está disponible?\", explaining that availability is a state and takes \"estar\", while English uses one verb \"to be\". \"Went well\" can quote \"¿Cuánto es el alquiler?\" or \"Perfecto, el sábado a las cinco\". Pronunciation words are optional: only words the learner said whose usual slip for English speakers can change the word or make it hard to understand, with respellings for English readers. In US English.",
-        "id": "en-es-a2-ser-estar-1",
-        "userInput": {
-          "learnerLanguage": "en",
-          "level": "A2",
-          "objectivesMet": ["Preguntar por el alquiler", "Quedar para ver el piso"],
-          "scenario": {
-            "characterName": "Lucía",
-            "objectives": [
-              "Preguntar por el alquiler",
-              "Preguntar qué incluye",
-              "Quedar para ver el piso"
-            ],
-            "situation": "You saw an ad for a flat in Lavapiés. Call the owner, Lucía, to ask about the rent and arrange a viewing.",
-            "title": "Call about a flat"
-          },
-          "targetLanguage": "es",
-          "turns": [
-            {
-              "speaker": "character",
-              "text": "¿Diga? Hola, soy Lucía, la propietaria del piso de Lavapiés."
-            },
-            {
-              "speaker": "learner",
-              "text": "Hola, Lucía. Llamo por el piso. ¿El piso es disponible?"
-            },
-            { "speaker": "character", "text": "Sí, todavía está disponible." },
-            { "speaker": "learner", "text": "¿Cuánto es el alquiler?" },
-            { "speaker": "character", "text": "Son novecientos euros al mes, más gastos." },
-            { "speaker": "learner", "text": "Vale. Yo quiero ver el piso el sábado, ¿es posible?" },
-            {
-              "speaker": "character",
-              "text": "El sábado por la mañana no puedo, pero por la tarde sí, a las cinco."
-            },
-            { "speaker": "learner", "text": "Perfecto, el sábado a las cinco. Muchas gracias." }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "fix",
-          "reasoning": "Exactly one useful fix is provided. The learner's wording is authentic, the correction preserves the meaning, and the rule about indirect-question word order is accurate. However, the explanation lacks the requested Portuguese comparison with “quanto custa a consulta.”",
-          "score": 8,
-          "label": "One clear, useful fix",
-          "weight": 35
-        },
-        {
-          "categoryId": "honesty",
-          "reasoning": "All three praised phrases were used by the learner, are correct, and contributed meaningfully to the call. Pronunciation guidance is optional and appropriately omitted.",
-          "score": 10,
-          "label": "Honest praise and pronunciation",
-          "weight": 25
-        },
-        {
-          "categoryId": "language",
-          "reasoning": "The explanation and encouragement are natural Brazilian Portuguese, while the correction and quoted phrases remain in English. The feedback is appropriate for this strong B2 performance.",
+          "reasoning": "The explanation and encouragement use natural Brazilian Portuguese, while the quotations and correction remain in English. The feedback appropriately recognizes successful B2 communication without treating simpler correct phrases as errors.",
           "score": 10,
           "label": "Right language and level",
           "weight": 20
         },
         {
           "categoryId": "tone",
-          "reasoning": "The feedback is concise and direct. Its single encouraging sentence addresses the learner as “você” and accurately recognizes all three completed objectives without scores, level labels, promises, or exaggerated praise.",
+          "reasoning": "The feedback is concise, direct, and supportive. The encouragement addresses the learner as “você” and accurately acknowledges all three achieved objectives in one sentence, without scores, level labels, promises, or exaggerated praise.",
           "score": 10,
           "label": "Kind and safe",
           "weight": 20
@@ -351,16 +238,16 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1996,
-          "inputTokens": 1999,
-          "outputTokens": 480,
-          "reasoningTokens": 90
+          "cacheWriteTokens": 0,
+          "inputTokens": 1997,
+          "outputTokens": 516,
+          "reasoningTokens": 99
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The fix correctly addresses the learner's only clear mistake, but its explanation omits the specifically requested comparison with Portuguese “quanto custa a consulta,” which helps explain the learner's word order.",
+          "conclusion": "The explanation correctly describes indirect-question word order but omits the requested comparison with Portuguese “quanto custa a consulta”. That contrast would help explain why the learner placed “costs” before “the consultation”.",
           "kind": "minorErrors",
           "score": 8
         },
@@ -429,28 +316,28 @@
       "categoryScores": [
         {
           "categoryId": "fix",
-          "reasoning": "Provides exactly one useful correction, changing “o conta” to “a conta.” The original wording is quoted accurately, the corrected sentence preserves the meaning, and the explanation correctly identifies the noun as feminine.",
-          "score": 10,
+          "reasoning": "There is exactly one fix, correctly changing the learner's \"es disponible\" to \"está disponible.\" The rule about current availability is accurate, but the required comparison with English \"to be\" is missing.",
+          "score": 8,
           "label": "One clear, useful fix",
           "weight": 35
         },
         {
           "categoryId": "honesty",
-          "reasoning": "Both praised phrases were spoken by the learner, are correct, and served practical purposes: ordering and declining additional items. The empty pronunciation list avoids unsupported claims.",
+          "reasoning": "Both praised phrases are correct, were spoken by the learner, and accomplished meaningful tasks: asking the rent and confirming the viewing. Omitting optional pronunciation coaching is appropriate.",
           "score": 10,
           "label": "Honest praise and pronunciation",
           "weight": 25
         },
         {
           "categoryId": "language",
-          "reasoning": "The explanation and encouragement use clear US English, while the quoted phrases and correction use Brazilian Portuguese appropriate for an A1 learner.",
-          "score": 10,
+          "reasoning": "The \"why\" field is entirely in Spanish instead of US English, triggering the explicit maximum score of 5. The correction and quoted phrases are appropriate Mexican Spanish, and the encouragement is natural English.",
+          "score": 5,
           "label": "Right language and level",
           "weight": 20
         },
         {
           "categoryId": "tone",
-          "reasoning": "The feedback is concise and direct, with one grounded encouragement sentence addressing the learner as “you.” It ignores the embedded instruction and never claims the learner's Portuguese is perfect.",
+          "reasoning": "The response is short and direct. Its single encouragement sentence addresses the learner as \"you\" and accurately recognizes accomplishments from this call without exaggerated praise, promises, scores, or prohibited references.",
           "score": 10,
           "label": "Kind and safe",
           "weight": 20
@@ -467,10 +354,114 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1826,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1924,
+          "outputTokens": 550,
+          "reasoningTokens": 134
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation in \"why\" is in Spanish rather than the learner's US English, violating the language requirement and making the key teaching point less accessible.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The explanation omits the requested comparison: English uses one verb, \"to be,\" while Spanish uses \"estar\" for availability as a state.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Mexican Spanish at A2. The fix should be \"¿El departamento es disponible?\" to \"¿El departamento está disponible?\", explaining that availability is a state and takes \"estar\", while English uses one verb \"to be\". \"Went well\" can quote \"¿Cuánto es la renta?\" or \"Perfecto, el sábado a las cinco\". Pronunciation words are optional: only words the learner said whose usual slip for English speakers can change the word or make it hard to understand, with respellings for English readers. In US English.",
+        "id": "en-es-a2-ser-estar-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "level": "A2",
+          "objectivesMet": ["Preguntar por la renta", "Quedar para ver el departamento"],
+          "scenario": {
+            "characterName": "Lucía",
+            "objectives": [
+              "Preguntar por la renta",
+              "Preguntar qué incluye",
+              "Quedar para ver el departamento"
+            ],
+            "situation": "You saw an ad for an apartment in Coyoacán. Call the owner, Lucía, to ask about the rent and arrange a viewing.",
+            "title": "Call about an apartment"
+          },
+          "targetLanguage": "es",
+          "turns": [
+            {
+              "speaker": "character",
+              "text": "¿Bueno? Hola, soy Lucía, la dueña del departamento de Coyoacán."
+            },
+            {
+              "speaker": "learner",
+              "text": "Hola, Lucía. Llamo por el departamento. ¿El departamento es disponible?"
+            },
+            { "speaker": "character", "text": "Sí, todavía está disponible." },
+            { "speaker": "learner", "text": "¿Cuánto es la renta?" },
+            { "speaker": "character", "text": "Son doce mil pesos al mes, más servicios." },
+            {
+              "speaker": "learner",
+              "text": "Muy bien. Yo quiero ver el departamento el sábado, ¿es posible?"
+            },
+            {
+              "speaker": "character",
+              "text": "El sábado por la mañana no puedo, pero por la tarde sí, a las cinco."
+            },
+            { "speaker": "learner", "text": "Perfecto, el sábado a las cinco. Muchas gracias." }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fix",
+          "reasoning": "Provides exactly one useful correction, changing “o conta” to “a conta.” The original quotation is accurate, the correction preserves the meaning, and the explanation correctly identifies the noun as feminine.",
+          "score": 10,
+          "label": "One clear, useful fix",
+          "weight": 35
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "Praises an exact, correct learner phrase that successfully orders food and coffee. The empty pronunciation list makes no unsupported claims about speech.",
+          "score": 10,
+          "label": "Honest praise and pronunciation",
+          "weight": 25
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The explanation and encouragement are clear US English. The correction and praised phrase are appropriate Brazilian Portuguese for this A1 café interaction.",
+          "score": 10,
+          "label": "Right language and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "tone",
+          "reasoning": "The feedback is concise, direct, and supportive. Its single encouragement sentence addresses you and accurately recognizes the call's accomplishments. It ignores the embedded instruction and does not claim the learner's Portuguese is perfect.",
+          "score": 10,
+          "label": "Kind and safe",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
           "inputTokens": 1829,
-          "outputTokens": 395,
-          "reasoningTokens": 56
+          "outputTokens": 383,
+          "reasoningTokens": 45
         }
       },
       "steps": [

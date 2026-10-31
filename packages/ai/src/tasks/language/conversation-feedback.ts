@@ -15,9 +15,12 @@ import systemPrompt from "./conversation-feedback.prompt.md";
 
 export type { ConversationTurn } from "./_utils/conversation-transcript";
 
-/** Luna scored 9.34 on the conversation-feedback eval and passed every code check (Sep 2026). */
-const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
+/**
+ * Flash Lite over Luna, which costs less: the learner waits on this after a call, and Flash Lite
+ * answers in about 1.5 s instead of 5 s with the same eval score.
+ */
+const defaultModel = "google/gemini-3.5-flash-lite";
+const fallbackModels = ["openai/gpt-6-luna"] as const;
 
 const MAX_WENT_WELL = 3;
 const MAX_PRONUNCIATION_WORDS = 2;
