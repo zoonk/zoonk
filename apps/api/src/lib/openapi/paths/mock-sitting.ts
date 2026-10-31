@@ -4,6 +4,7 @@ import {
 } from "@zoonk/core/exams/mocks/answer-contract";
 import { mockTimeZoneInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { speakingSectionViewSchema } from "@zoonk/core/language/exam-speaking/contract";
+import { contentWritingResponse } from "../schemas/content-writing";
 import { mockStepResponseSchema } from "../schemas/mock-exam";
 import { mockPlayResponseSchema } from "../schemas/mock-parts";
 import { mockPathParamsSchema, mockSectionPathParamsSchema } from "../schemas/paths";
@@ -125,7 +126,7 @@ export const mockSittingPaths = {
   "/mocks/{blockId}/speaking": {
     post: {
       description:
-        "Starts the running mock's speaking section (`current.kind` `speaking`) once the learner reaches it: the exam's speaking paper, every task's card written now (about 20-40 seconds), each task a live call to open in turn (`tasks[].conversationId`: GET /language-conversations/{conversationId}, then POST its connections). The paper is kept on the mock: starting again returns the same one, also as `speaking` on GET /mocks/{blockId}. Hand the section in as any other once its calls are done.",
+        "Starts the running mock's speaking section (`current.kind` `speaking`) once the learner reaches it: the exam's speaking paper, each task a live call to open in turn (`tasks[].conversationId`: GET /language-conversations/{conversationId}, then POST its connections). The server writes the paper while the learner sits the sections before it; one not written yet answers 202 with the run writing it: follow it, then send this again. The paper is kept on the mock, also as `speaking` on GET /mocks/{blockId} once the learner reaches the section. Hand the section in as any other once its calls are done.",
       operationId: "startMockSpeaking",
       requestParams: { path: mockPathParamsSchema },
       responses: {
@@ -133,6 +134,7 @@ export const mockSittingPaths = {
           content: { "application/json": { schema: speakingSectionViewSchema } },
           description: "The mock's speaking paper",
         },
+        "202": contentWritingResponse("A run is writing the paper"),
         ...commonErrors,
         "402": { ...paymentRequiredResponse, description: "Mock exams come with Plus" },
         "409": {
@@ -141,7 +143,7 @@ export const mockSittingPaths = {
         },
         "503": {
           ...conflictResponse,
-          description: "Calls are paused (CALLS_PAUSED); no task cards are generated.",
+          description: "Calls are paused (CALLS_PAUSED); no task cards are written.",
         },
       },
       security: AUTHENTICATED_SECURITY,

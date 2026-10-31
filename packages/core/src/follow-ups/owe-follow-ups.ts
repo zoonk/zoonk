@@ -28,6 +28,8 @@ function getFollowUpKey(followUp: FollowUp): string {
     }
     case "voiceWord":
       return followUp.input.wordId;
+    case "writeSpeakingPaper":
+      return followUp.input.mockId;
     default:
       return followUp satisfies never;
   }

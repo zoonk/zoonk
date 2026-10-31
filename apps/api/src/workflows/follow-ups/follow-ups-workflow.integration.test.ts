@@ -1,6 +1,9 @@
+import { generateExamSpeakingCard } from "@zoonk/ai/tasks/language/exam-speaking-card";
 import { gateMemoryFact } from "@zoonk/ai/tasks/memory/gate";
 import { classifyMistakeCause } from "@zoonk/ai/tasks/mistakes/cause";
+import { mockConditionsSchema } from "@zoonk/core/exams/mocks/contract";
 import { prisma } from "@zoonk/db";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -10,6 +13,10 @@ import { followUpsWorkflow } from "./follow-ups-workflow";
 
 vi.mock("@zoonk/ai/tasks/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/memory/gate", () => ({ gateMemoryFact: vi.fn() }));
+
+vi.mock("@zoonk/ai/tasks/language/exam-speaking-card", () => ({
+  generateExamSpeakingCard: vi.fn(),
+}));
 
 const WAIT = { interval: 200, timeout: 30_000 };
 
@@ -95,6 +102,88 @@ describe(followUpsWorkflow, () => {
         prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
       ).resolves.toMatchObject({ sensitive: true });
     }, WAIT);
+  });
+
+  it("writes the speaking paper a mock's start owed while the earlier papers are sat", async () => {
+    const user = await userFixture();
+
+    const goal = await goalFixture({
+      details: { examName: "DELE" },
+      kind: "exam",
+      language: "pt",
+      targetLanguage: "es",
+      title: "DELE B2",
+      userId: user.id,
+    });
+
+    vi.mocked(generateExamSpeakingCard).mockResolvedValue({
+      data: {
+        character: { name: "Lucía", place: "Sala de examen", role: "examinadora" },
+        characterBrief: "Give the instruction, listen, then ask a question.",
+        hints: [],
+        instructions: ["Hable sobre el tema."],
+        openingLine: "Buenos días.",
+        photos: [],
+        prompts: [],
+        summary: "Fale sobre o tema.",
+        table: null,
+        text: null,
+      },
+      provenance: {} as never,
+      systemPrompt: "",
+      usage: {} as never,
+      userPrompt: "",
+    });
+
+    const reading = { essays: [], itemIds: [], minutes: 30, name: "Lectura", questions: 0 };
+    const speaking = { ...reading, kind: "speaking", minutes: 20, name: "Expresión oral" };
+
+    const mock = await prisma.mockExam.create({
+      data: {
+        conditions: {
+          day: null,
+          examQuestions: null,
+          fullLength: true,
+          partialCredit: "allOrNothing",
+          purpose: "practice",
+          reused: 0,
+          scoring: "raw",
+          sections: [
+            { ...reading, routing: null },
+            { ...speaking, routing: null },
+          ],
+          shape: null,
+          startTime: null,
+          timeZone: null,
+          timedOutSections: [],
+          wrongPenalty: 0,
+        },
+        goalId: goal.id,
+        sectionStartedAt: new Date(),
+        startedAt: new Date(),
+        userId: user.id,
+      },
+    });
+
+    await prisma.followUp.create({
+      data: {
+        input: { mockId: mock.id },
+        key: mock.id,
+        kind: "writeSpeakingPaper",
+        userId: user.id,
+      },
+    });
+
+    await runFollowUps(user.id);
+
+    await vi.waitFor(async () => {
+      const sitting = await prisma.mockExam.findUniqueOrThrow({ where: { id: mock.id } });
+      const [, paper] = mockConditionsSchema.parse(sitting.conditions).sections;
+
+      expect(paper?.speakingSectionId).toStrictEqual(expect.any(String));
+    }, WAIT);
+
+    await expect(countOwed(user.id)).resolves.toBe(0);
   });
 
   it("retries a failed model call in its step until the work is done", async () => {

@@ -24,7 +24,8 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { getChallenge } from "../../checkpoints/get-challenge";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { startStudyBlock } from "../../sessions/start-study-block";
-import { prepareCheckpointCall } from "./prepare-language-calls";
+import { writeTestCall } from "./_test-utils/write-test-call";
+import { listLanguageCallWritings } from "./prepare-language-calls";
 import {
   openLanguageCheckpointCall,
   startLanguageConversation,
@@ -274,36 +275,45 @@ describe("language checkpoint calls", () => {
     ).resolves.toStrictEqual(shifted);
   });
 
-  it("opens the shared block before writing the call once earlier lessons are skipped", async () => {
-    const { block, earlier } = await waitingCheckpointFixture({ reason: "lessons" });
+  it("leaves the block as it was while its call is written, then starts it once written", async () => {
+    const { block, earlier, user } = await waitingCheckpointFixture({ reason: "lessons" });
 
-    await prisma.studySessionBlock.update({
+    const skipped = await prisma.studySessionBlock.update({
       data: { status: "skipped" },
       where: { id: earlier.id },
     });
 
-    const scenario = vi.mocked(generateConversationScenario).getMockImplementation();
+    const pending = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } });
+    const started = await startLanguageConversation({ blockId: block.id, kind: "checkpoint" });
 
-    vi.mocked(generateConversationScenario).mockImplementationOnce(async (...args) => {
-      const started = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } });
-
-      const session = await prisma.studySession.findUniqueOrThrow({
-        where: { id: block.sessionId },
-      });
-
-      expect(started).toMatchObject({ startedAt: expect.any(Date), status: "active" });
-      expect(session).toMatchObject({ startedAt: expect.any(Date), status: "active" });
-
-      if (!scenario) {
-        throw new Error("Expected the external scenario boundary");
-      }
-
-      return scenario(...args);
+    expect(started).toMatchObject({
+      status: "preparing",
+      writing: { kind: "unitScenario", level: "B1", userId: user.id },
     });
+
+    expect(generateConversationScenario).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+    ).resolves.toStrictEqual(pending);
+
+    await expect(
+      prisma.studySession.findUniqueOrThrow({ where: { id: skipped.sessionId } }),
+    ).resolves.toMatchObject({ startedAt: null });
+
+    if (started.status !== "preparing") {
+      throw new Error("Expected the call to need writing");
+    }
+
+    await writeTestCall(started.writing);
 
     await expect(
       startLanguageConversation({ blockId: block.id, kind: "checkpoint" }),
     ).resolves.toMatchObject({ status: "ready" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+    ).resolves.toMatchObject({ startedAt: expect.any(Date), status: "active" });
 
     expect(generateConversationScenario).toHaveBeenCalledOnce();
   });
@@ -408,12 +418,24 @@ describe("language checkpoint calls", () => {
     ).resolves.toBe(1);
   });
 
-  it("leaves a checkpoint preparing when its call isn't written, and starting it writes the call", async () => {
-    const { block, renting } = await reachedCheckpointFixture({ speaking: 2 });
+  it("leaves a checkpoint preparing when its call isn't written, and its start asks for the writing", async () => {
+    const { block, renting, user } = await reachedCheckpointFixture({ speaking: 2 });
 
     await expect(openLanguageCheckpointCall(block.id)).resolves.toStrictEqual({
       status: "preparing",
       unitTitle: renting.title,
+    });
+
+    const asked = await startLanguageConversation({ blockId: block.id, kind: "checkpoint" });
+
+    expect(asked).toStrictEqual({
+      status: "preparing",
+      writing: {
+        kind: "unitScenario",
+        level: "B1",
+        unit: expect.objectContaining({ id: renting.id, title: renting.title }),
+        userId: user.id,
+      },
     });
 
     expect(generateConversationScenario).not.toHaveBeenCalled();
@@ -422,13 +444,19 @@ describe("language checkpoint calls", () => {
       prisma.languageConversation.count({ where: { studyBlockId: block.id } }),
     ).resolves.toBe(0);
 
+    if (asked.status !== "preparing") {
+      throw new Error("Expected the call to need writing");
+    }
+
+    await writeTestCall(asked.writing);
+    await writeTestCall(asked.writing);
+    expect(generateConversationScenario).toHaveBeenCalledOnce();
+
     const started = await startLanguageConversation({ blockId: block.id, kind: "checkpoint" });
 
     if (started.status !== "ready") {
       throw new Error(`Expected the call to start, got ${started.status}`);
     }
-
-    expect(generateConversationScenario).toHaveBeenCalledOnce();
 
     await expect(openLanguageCheckpointCall(block.id)).resolves.toStrictEqual({
       conversationId: started.conversationId,
@@ -436,20 +464,32 @@ describe("language checkpoint calls", () => {
     });
   });
 
-  it("writes the next checkpoint's call ahead at the learner's level, once", async () => {
+  it("asks to write the next checkpoint's call ahead at the learner's level, once", async () => {
     const { block, goal, renting, user } = await reachedCheckpointFixture({ speaking: 2 });
+    const learner = { goalId: goal.id, userId: user.id };
+    const writings = await listLanguageCallWritings(learner);
 
-    await prepareCheckpointCall({ goalId: goal.id, userId: user.id });
-    await prepareCheckpointCall({ goalId: goal.id, userId: user.id });
+    expect(writings).toContainEqual(
+      expect.objectContaining({
+        kind: "unitScenario",
+        level: "B1",
+        unit: expect.objectContaining({ id: renting.id }),
+      }),
+    );
 
-    expect(generateConversationScenario).toHaveBeenCalledExactlyOnceWith(
+    await Promise.all(writings.map((writing) => writeTestCall(writing)));
+
+    expect(generateConversationScenario).toHaveBeenCalledWith(
       expect.objectContaining({ level: "B1", unitTitle: renting.title }),
     );
+
+    await expect(listLanguageCallWritings(learner)).resolves.toStrictEqual([]);
+    vi.mocked(generateConversationScenario).mockClear();
 
     const opened = await openLanguageCheckpointCall(block.id);
 
     expect(opened.status).toBe("notStarted");
-    expect(generateConversationScenario).toHaveBeenCalledOnce();
+    expect(generateConversationScenario).not.toHaveBeenCalled();
 
     await startLanguageConversation({ blockId: block.id, kind: "checkpoint" });
 
@@ -458,7 +498,7 @@ describe("language checkpoint calls", () => {
     ).resolves.toMatchObject({ level: "B1", titleSnapshot: B1_SCENARIO.title });
   });
 
-  it("writes nothing ahead when the unit's call is written or the goal has no checkpoint call", async () => {
+  it("asks for nothing ahead when the unit's call is written or the goal has no checkpoint call", async () => {
     const [written, other] = await Promise.all([
       reachedCheckpointFixture({ speaking: 1 }),
       userFixture(),
@@ -466,12 +506,13 @@ describe("language checkpoint calls", () => {
 
     const otherGoal = await goalFixture({ userId: other.id });
 
-    await Promise.all([
-      prepareCheckpointCall({ goalId: written.goal.id, userId: written.user.id }),
-      prepareCheckpointCall({ goalId: otherGoal.id, userId: other.id }),
-    ]);
+    await expect(
+      listLanguageCallWritings({ goalId: written.goal.id, userId: written.user.id }),
+    ).resolves.toStrictEqual([]);
 
-    expect(generateConversationScenario).not.toHaveBeenCalled();
+    await expect(
+      listLanguageCallWritings({ goalId: otherGoal.id, userId: other.id }),
+    ).resolves.toStrictEqual([]);
   });
 
   it("keeps another learner's checkpoint closed", async () => {

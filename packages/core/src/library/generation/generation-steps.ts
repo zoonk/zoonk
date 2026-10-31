@@ -109,3 +109,15 @@ const GOAL_UNDERSTANDING_STEPS = [
 export type GoalUnderstandingStepName = (typeof GOAL_UNDERSTANDING_STEPS)[number];
 
 export const GOAL_UNDERSTANDING_READY_STEP: GoalUnderstandingStepName = "understandingReady";
+
+const CALL_WRITING_STEPS = ["joinRunningCall", "writeCall", "callReady"] as const;
+
+export type CallWritingStepName = (typeof CALL_WRITING_STEPS)[number];
+
+export const CALL_READY_STEP: CallWritingStepName = "callReady";
+
+const SETUP_LESSON_STEPS = ["joinSetupLessons", "writeSetupLessons", "setupLessonsReady"] as const;
+
+export type SetupLessonStepName = (typeof SETUP_LESSON_STEPS)[number];
+
+export const SETUP_LESSONS_READY_STEP: SetupLessonStepName = "setupLessonsReady";

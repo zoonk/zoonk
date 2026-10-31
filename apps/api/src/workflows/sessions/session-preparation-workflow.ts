@@ -22,7 +22,7 @@ import {
 } from "../goals/steps/field-items-steps";
 import { endLessonsAskStep, readGoalLookaheadStep } from "../goals/steps/goal-lookahead-steps";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
-import { prepareLanguageCallsStep } from "./steps/language-call-steps";
+import { writeLanguageCalls } from "./steps/language-call-steps";
 import {
   listLearnerVersionTargetsStep,
   prepareFieldChallengeStep,
@@ -241,7 +241,7 @@ async function prepareLessons({
 
   await Promise.all([
     preparation.personalized ? personalizeLessons({ analytics, input, preparation }) : null,
-    prepareLanguageCallsStep({ goalId: input.goalId, userId: input.userId }).catch(() => null),
+    writeLanguageCalls({ goalId: input.goalId, userId: input.userId }).catch(() => null),
     writeClaimQuestions({ analytics, input }).catch(() => null),
     writePlacementWeekQuestions({ analytics, input }).catch(() => null),
   ]);

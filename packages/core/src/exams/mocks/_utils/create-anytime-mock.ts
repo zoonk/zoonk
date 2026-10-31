@@ -22,6 +22,7 @@ import {
 } from "./anytime-mock-setup";
 import { loadMockCandidates } from "./mock-candidates";
 import { getExamStartTime } from "./mock-conditions";
+import { oweSpeakingPaper } from "./mock-speaking";
 
 export type CreateAnytimeMockResult =
   | { id: string; status: "running" | "started" }
@@ -204,9 +205,11 @@ export async function createAnytimeMock({
 
     const now = new Date();
 
+    const conditions = toConditions({ candidates, goal, pick, plan, setup });
+
     const created = await tx.mockExam.create({
       data: {
-        conditions: toConditions({ candidates, goal, pick, plan, setup }),
+        conditions,
         examBlueprintId: setup.blueprint?.id ?? null,
         goalId: goal.id,
         sectionStartedAt: now,
@@ -215,6 +218,7 @@ export async function createAnytimeMock({
       },
     });
 
+    await oweSpeakingPaper({ conditions, mockId: created.id, tx, userId });
     return { id: created.id, status: "started" };
   });
 }

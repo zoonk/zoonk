@@ -1,10 +1,8 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
 import { getToolKey } from "../library/chapters/chapter-tools";
-import {
-  type SetupLesson,
-  findOrCreateSetupLesson,
-} from "../library/tools/find-or-create-setup-lesson";
+import { type SetupLesson, findSetupLesson } from "../library/tools/find-or-create-setup-lesson";
+import { type SetupLessonWriting } from "../library/tools/setup-lesson-contract";
 import { applyChangeNow } from "./_utils/apply-plan-change";
 import { findOwnedPlan, loadPlanChangeView } from "./_utils/owned-plan";
 import { findCurrentPhase } from "./_utils/phase-states";
@@ -19,6 +17,7 @@ import { type PlanGraph } from "./planner/plan-state";
 
 export type PlanToolChoiceResult =
   | { change: PlanChangeView | null; status: "applied" }
+  | { status: "preparing"; writing: SetupLessonWriting }
   | { error: PlanOperationError | "unknownTool"; status: "invalid" }
   | { status: "notFound" | "unauthorized" };
 
@@ -43,7 +42,42 @@ async function findChosenTools({
   return tools.length === keys.length ? tools : null;
 }
 
-async function prepareSetups({
+function toSetupTool({ goal, tool }: { goal: Goal; tool: PlanTool }) {
+  return { name: tool.name, ownerId: tool.isPrivate ? goal.userId : null };
+}
+
+async function findSetups({
+  goal,
+  system,
+  tools,
+}: {
+  goal: Goal;
+  system: string;
+  tools: readonly PlanTool[];
+}): Promise<{ chosen: ChosenTool[]; writing: SetupLessonWriting | null }> {
+  const chosen = await Promise.all(
+    tools.map(async (tool) => ({
+      setup: await findSetupLesson({
+        ...toSetupTool({ goal, tool }),
+        language: goal.language,
+        system,
+        tool: tool.name,
+      }),
+      tool,
+    })),
+  );
+
+  const missing = chosen.flatMap(({ setup, tool }) => (setup ? [] : [toSetupTool({ goal, tool })]));
+
+  const writing =
+    missing.length > 0
+      ? { goalId: goal.id, language: goal.language, system, tools: missing, userId: goal.userId }
+      : null;
+
+  return { chosen, writing };
+}
+
+async function chooseTools({
   goal,
   input,
   tools,
@@ -51,28 +85,12 @@ async function prepareSetups({
   goal: Goal;
   input: PlanToolChoiceInput;
   tools: readonly PlanTool[];
-}): Promise<ChosenTool[]> {
+}): Promise<{ chosen: ChosenTool[]; writing: SetupLessonWriting | null }> {
   const { system } = input;
 
-  return Promise.all(
-    tools.map(async (tool) => ({
-      setup:
-        input.choice === "setup" && system
-          ? await findOrCreateSetupLesson({
-              analytics: {
-                contentScope: tool.isPrivate ? "personal" : "shared",
-                distinctId: goal.userId,
-                goalId: goal.id,
-              },
-              language: goal.language,
-              ownerId: tool.isPrivate ? goal.userId : null,
-              system,
-              tool: tool.name,
-            })
-          : null,
-      tool,
-    })),
-  );
+  return input.choice === "setup" && system
+    ? findSetups({ goal, system, tools })
+    : { chosen: tools.map((tool) => ({ setup: null, tool })), writing: null };
 }
 
 async function toOperations({
@@ -137,7 +155,11 @@ export async function choosePlanTools({
       return { error: "unknownTool" as const, status: "invalid" as const };
     }
 
-    const chosen = await prepareSetups({ goal: context.goal, input, tools });
+    const { chosen, writing } = await chooseTools({ goal: context.goal, input, tools });
+
+    if (writing) {
+      return { status: "preparing" as const, writing };
+    }
 
     const result = await applyChangeNow({
       context,

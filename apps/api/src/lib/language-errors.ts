@@ -10,7 +10,7 @@ type RefusedConversation =
   | Exclude<ConnectLanguageConversationResult, { status: "ready" }>
   | Exclude<Awaited<ReturnType<typeof redeemLiveCallSdp>>, { status: "ready" }>
   | Exclude<Awaited<ReturnType<typeof endLanguageConversationConnection>>, { status: "closed" }>
-  | Exclude<StartLanguageConversationResult, { status: "ready" }>;
+  | Exclude<StartLanguageConversationResult, { status: "preparing" | "ready" }>;
 
 const CALL_LIMIT_MESSAGES = {
   day: "No more call time on your plan today",

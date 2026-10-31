@@ -4,6 +4,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { type AllowanceLimit } from "../../../entitlements/contract";
 import { saveDayBeforeActivity } from "../../../sessions/ensure-study-session";
 import { readLiveCallAdmission } from "../../conversations/_utils/live-call-policy";
+import { type PreparingCall } from "../../conversations/call-writing-contract";
 import { type SpeakingFormat, type SpeakingTaskFormat } from "../speaking-format";
 import { getSpeakingTask } from "../speaking-formats";
 import {
@@ -12,11 +13,11 @@ import {
   findShortCallTime,
   hasSpeakingAccess,
 } from "./exam-speaking-setup";
-import { writeExamTask } from "./write-exam-task";
 
 const SECONDS_PER_MINUTE = 60;
 
 export type StartExamTaskResult =
+  | PreparingCall
   | { conversationId: string; status: "ready" }
   | { limit: AllowanceLimit; status: "limitReached" }
   | { status: "callsPaused" | "notFound" | "notLanguage" | "plusRequired" };
@@ -40,7 +41,7 @@ function isCardFor({
   );
 }
 
-async function findWaitingExamTask({
+export async function findWaitingExamTask({
   format,
   goal,
   task,
@@ -76,8 +77,6 @@ export async function startExamTask({
     return { status: "notLanguage" };
   }
 
-  await saveDayBeforeActivity({ goalId, language: setup.goal.targetLanguage, userId });
-
   const taskFormat = getSpeakingTask({ format: setup.format, task });
 
   if (!taskFormat) {
@@ -100,10 +99,13 @@ export async function startExamTask({
 
   const waiting = await findWaitingExamTask({ ...setup, task: taskFormat });
 
-  if (waiting) {
-    return { conversationId: waiting.id, status: "ready" };
+  if (!waiting) {
+    return {
+      status: "preparing",
+      writing: { goalId, kind: "examTask", task: taskFormat.key, userId },
+    };
   }
 
-  const written = await writeExamTask({ ...setup, task: taskFormat });
-  return { conversationId: written.conversationId, status: "ready" };
+  await saveDayBeforeActivity({ goalId, language: setup.goal.targetLanguage, userId });
+  return { conversationId: waiting.id, status: "ready" };
 }

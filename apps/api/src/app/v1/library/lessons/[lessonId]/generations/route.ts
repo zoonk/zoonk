@@ -1,3 +1,4 @@
+import { acceptedGeneration } from "@/lib/accepted-generation";
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import {
@@ -9,18 +10,6 @@ import { startLessonWriting } from "@/lib/lesson-writing";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
 import { NextResponse } from "next/server";
-
-const ACCEPTED = 202;
-
-function acceptedGeneration(generationId: string) {
-  return NextResponse.json(
-    { generationId, status: "generating" },
-    {
-      headers: { Location: `/v1/generations/${encodeURIComponent(generationId)}` },
-      status: ACCEPTED,
-    },
-  );
-}
 
 async function createLessonGeneration(
   _request: Request,

@@ -11,6 +11,7 @@ import {
   liveCallSdpResponseSchema,
 } from "@zoonk/core/language/conversations/contract";
 import { studySessionErrorCodes } from "../../study-session-errors";
+import { contentWritingResponse } from "../schemas/content-writing";
 import {
   languageConversationConnectionPathParamsSchema,
   languageConversationCreatedSchema,
@@ -56,7 +57,7 @@ export const languageConversationPaths = {
     post: {
       ...common,
       description:
-        "Starts a live conversation: practice for a unit (1 to 5 minutes), a language goal's Plus-only phase/final checkpoint call (its length set by the learner's level; 402 PLUS_REQUIRED for Free or lapsed learners), a speaking mock of the exam the goal prepares for (IELTS or TOEFL iBT), or one task of a DELE, DELF or DALF, Goethe-Zertifikat or Cambridge English speaking paper (kind examSpeaking, Plus only: 402 PLUS_REQUIRED otherwise), with a new card each time and the call as long as the task's official time; a task whose shortest official time doesn't fit the call time left today or this month is refused with 429 CONVERSATION_LIMIT_REACHED (`details` names the period) before any card is written. A checkpoint call starts or resumes its study block first; unfinished earlier lessons or phase challenges refuse it before any scenario is written or existing call returned. The character speaks at the learner's speaking level, an exam's examiner or partner at the exam's. Nothing is charged until the call connects.",
+        "Starts a live conversation: practice for a unit (1 to 5 minutes), a language goal's Plus-only phase/final checkpoint call (its length set by the learner's level; 402 PLUS_REQUIRED for Free or lapsed learners), a speaking mock of the exam the goal prepares for (IELTS or TOEFL iBT), or one task of a DELE, DELF or DALF, Goethe-Zertifikat or Cambridge English speaking paper (kind examSpeaking, Plus only: 402 PLUS_REQUIRED otherwise), with a new card each time and the call as long as the task's official time; a task whose shortest official time doesn't fit the call time left today or this month is refused with 429 CONVERSATION_LIMIT_REACHED (`details` names the period) before any card is written. A call whose scenario, mock or task card isn't written yet answers 202 with the run writing it, having started nothing (a checkpoint's block stays as it was): follow it, then send the same request again. The server writes calls the learner may start soon ahead, and the next mock or task card when a call ends, so this is rare. A checkpoint call then starts or resumes its study block; unfinished earlier lessons or phase challenges refuse it. The character speaks at the learner's speaking level, an exam's examiner or partner at the exam's. Nothing is charged until the call connects.",
       operationId: "startLanguageConversation",
       requestBody: {
         content: { "application/json": { schema: languageConversationStartInputSchema } },
@@ -64,6 +65,7 @@ export const languageConversationPaths = {
       },
       responses: {
         "201": jsonResponse(languageConversationCreatedSchema, "The new conversation"),
+        "202": contentWritingResponse("A run is writing the call; nothing started yet"),
         "402": {
           ...paymentRequiredResponse,
           description:

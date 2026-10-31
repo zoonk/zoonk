@@ -19,12 +19,14 @@ import {
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { reviewRunsInline } from "../../_test-utils/review-runs";
+import { mockConditionsSchema } from "../../exams/mocks/mock-contract";
+import { startWrittenCall, writeTestCall } from "../conversations/_test-utils/write-test-call";
 import { completeLanguageConversation } from "../conversations/complete-language-conversation";
 import { getLanguageConversation } from "../conversations/get-language-conversation";
+import { findNextCallWriting } from "../conversations/prepare-language-calls";
 import { startLanguageConversation } from "../conversations/start-language-conversation";
 import { loadSpeakingPaper } from "./_utils/exam-speaking-setup";
 import { getSpeakingSection } from "./get-speaking-section";
-import { startSpeakingSection } from "./start-speaking-section";
 
 const PROVENANCE = {
   generatedAt: new Date().toISOString(),
@@ -117,13 +119,62 @@ async function deleLearner({ plus = true, title = "DELE B2" } = {}) {
 }
 
 async function startTask({ goalId, task }: { goalId: string; task: string }) {
-  const started = await startLanguageConversation({ goalId, kind: "examSpeaking", task });
+  const started = await startWrittenCall({ goalId, kind: "examSpeaking", task });
 
   if (started.status !== "ready") {
     throw new Error(`Couldn't start: ${started.status}`);
   }
 
   return started.conversationId;
+}
+
+async function sitSpeakingPaper(goal: { id: string; userId: string }) {
+  const mock = await prisma.mockExam.create({
+    data: {
+      conditions: {
+        day: null,
+        examQuestions: null,
+        fullLength: true,
+        partialCredit: "allOrNothing",
+        purpose: "practice",
+        reused: 0,
+        scoring: "raw",
+        sections: [
+          {
+            essays: [],
+            itemIds: [],
+            kind: "speaking",
+            minutes: 20,
+            name: "Expresión e interacción orales",
+            questions: 0,
+            routing: null,
+          },
+        ],
+        shape: null,
+        startTime: null,
+        timeZone: null,
+        timedOutSections: [],
+        wrongPenalty: 0,
+      },
+      goalId: goal.id,
+      sectionStartedAt: new Date(),
+      startedAt: new Date(),
+      userId: goal.userId,
+    },
+  });
+
+  const writing = { kind: "speakingPaper", mockId: mock.id, userId: goal.userId } as const;
+  await writeTestCall(writing);
+
+  const sitting = await prisma.mockExam.findUniqueOrThrow({ where: { id: mock.id } });
+  const sectionId = mockConditionsSchema.parse(sitting.conditions).sections[0]?.speakingSectionId;
+  const read = await getSpeakingSection(sectionId ?? "");
+
+  if (read.status !== "ready") {
+    throw new Error(`Couldn't read the paper: ${read.status}`);
+  }
+
+  return { section: read.section, writing };
 }
 
 async function connect(conversationId: string) {
@@ -170,6 +221,23 @@ describe("exam speaking tasks", () => {
   });
 
   afterEach(cleanupTestCalls);
+
+  it("asks for a task's card that isn't written, writing nothing and starting nothing", async () => {
+    const { goal, user } = await deleLearner();
+
+    await expect(
+      startLanguageConversation({ goalId: goal.id, kind: "examSpeaking", task: "t1" }),
+    ).resolves.toStrictEqual({
+      status: "preparing",
+      writing: { goalId: goal.id, kind: "examTask", task: "t1", userId: user.id },
+    });
+
+    expect(generateExamSpeakingCard).not.toHaveBeenCalled();
+
+    await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(
+      0,
+    );
+  });
 
   it("marks a new exam task once and leaves its waiting retry unchanged", async () => {
     const { goal } = await deleLearner();
@@ -291,6 +359,32 @@ describe("exam speaking tasks", () => {
     await expect(startTask({ goalId: goal.id, task: "t3" })).resolves.toStrictEqual(
       expect.any(String),
     );
+  });
+
+  it("asks for a task's next card once a try the learner spoke in ends, so only a first try waits", async () => {
+    const { goal, user } = await deleLearner();
+    const first = await startTask({ goalId: goal.id, task: "t1" });
+
+    await connect(first);
+
+    await completeLanguageConversation({
+      conversationId: first,
+      input: testCallCompletionInput(first, COMPLETION),
+      runs: reviewRunsInline,
+    });
+
+    const next = await findNextCallWriting({ conversationId: first, userId: user.id });
+
+    expect(next).toStrictEqual({ goalId: goal.id, kind: "examTask", task: "t1", userId: user.id });
+
+    await writeTestCall(next ?? { goalId: goal.id, kind: "examTask", task: "t1", userId: user.id });
+    const written = vi.mocked(generateExamSpeakingCard).mock.calls.length;
+    const input = { goalId: goal.id, kind: "examSpeaking", task: "t1" } as const;
+    const again = await startLanguageConversation(input);
+
+    expect(again).toMatchObject({ status: "ready" });
+    expect(again.status === "ready" && again.conversationId).not.toBe(first);
+    expect(generateExamSpeakingCard).toHaveBeenCalledTimes(written);
   });
 
   it("refuses a task the paper doesn't have and a goal for another exam", async () => {
@@ -518,13 +612,7 @@ describe("exam speaking tasks", () => {
 
   it("starts a whole paper as one section and adds up its official points once every task is graded", async () => {
     const { goal } = await deleLearner();
-    const started = await startSpeakingSection({ goalId: goal.id });
-
-    if (started.status !== "ready") {
-      throw new Error(`Couldn't start: ${started.status}`);
-    }
-
-    const { section } = started;
+    const { section } = await sitSpeakingPaper(goal);
 
     expect(section).toMatchObject({
       estimate: { complete: false, high: null, low: null, total: 25 },
@@ -568,11 +656,7 @@ describe("exam speaking tasks", () => {
 
   it("says when a typed task leaves the paper without points: typing shows nothing of the voice", async () => {
     const { goal } = await deleLearner();
-    const started = await startSpeakingSection({ goalId: goal.id });
-
-    if (started.status !== "ready") {
-      throw new Error(`Couldn't start: ${started.status}`);
-    }
+    const { section } = await sitSpeakingPaper(goal);
 
     vi.mocked(scoreSpeaking).mockImplementation(async ({ criteria }) => ({
       data: {
@@ -595,7 +679,7 @@ describe("exam speaking tasks", () => {
       userPrompt: "",
     }));
 
-    for (const task of started.section.tasks) {
+    for (const task of section.tasks) {
       // oxlint-disable-next-line eslint/no-await-in-loop -- One learner can hold only one active voice session.
       await connect(task.conversationId);
 
@@ -607,7 +691,7 @@ describe("exam speaking tasks", () => {
       });
     }
 
-    await expect(getSpeakingSection(started.section.id)).resolves.toMatchObject({
+    await expect(getSpeakingSection(section.id)).resolves.toMatchObject({
       section: { estimate: { complete: false, high: null, low: null, typed: true } },
       status: "ready",
     });
@@ -615,9 +699,7 @@ describe("exam speaking tasks", () => {
 
   it("writes a task that continues an earlier one from that task's card", async () => {
     const { goal } = await deleLearner({ title: "DELE B1" });
-    const started = await startSpeakingSection({ goalId: goal.id });
-
-    expect(started.status).toBe("ready");
+    await sitSpeakingPaper(goal);
 
     expect(generateExamSpeakingCard).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -638,12 +720,28 @@ describe("exam speaking tasks", () => {
 
   it("keeps another learner's section from them", async () => {
     const { goal } = await deleLearner();
-    const started = await startSpeakingSection({ goalId: goal.id });
+    const { section } = await sitSpeakingPaper(goal);
     const other = await userFixture();
     mockSession(other.id);
 
+    await expect(getSpeakingSection(section.id)).resolves.toStrictEqual({ status: "notFound" });
+  });
+
+  it("binds a whole paper to its sitting once: writing it again adds nothing", async () => {
+    const { goal, user } = await deleLearner();
+    const { section, writing } = await sitSpeakingPaper(goal);
+    const written = vi.mocked(generateExamSpeakingCard).mock.calls.length;
+
+    await writeTestCall(writing);
+
+    expect(generateExamSpeakingCard).toHaveBeenCalledTimes(written);
+
     await expect(
-      getSpeakingSection(started.status === "ready" ? started.section.id : ""),
-    ).resolves.toStrictEqual({ status: "notFound" });
+      prisma.languageConversation.count({ where: { sectionId: section.id, userId: user.id } }),
+    ).resolves.toBe(section.tasks.length);
+
+    await expect(
+      prisma.languageConversation.count({ where: { kind: "examSpeaking", userId: user.id } }),
+    ).resolves.toBe(section.tasks.length);
   });
 });

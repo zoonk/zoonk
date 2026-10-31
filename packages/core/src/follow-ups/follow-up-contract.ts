@@ -50,6 +50,7 @@ export const followUpSchema = z.discriminatedUnion("kind", [
     input: z.object({ orgSlug: z.string(), targetLanguage: z.string(), wordId: z.uuid() }),
     kind: z.literal("voiceWord"),
   }),
+  z.object({ input: z.object({ mockId: z.uuid() }), kind: z.literal("writeSpeakingPaper") }),
 ]);
 
 export type FollowUp = z.infer<typeof followUpSchema>;

@@ -9,7 +9,7 @@ import { prisma } from "@zoonk/db";
 import { writtenChallengeCaseFixture } from "@zoonk/testing/fixtures/challenge-written-case";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
+import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import {
   courseChapterFixture,
   libraryChapterFixture,
@@ -32,6 +32,7 @@ import { createHook, sleep } from "workflow";
 import { start } from "workflow/api";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { taskResult } from "../_test-utils/recorded-outputs";
+import { callContentWorkflow } from "../calls/call-content-workflow";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { sessionPreparationWorkflow } from "./session-preparation-workflow";
@@ -563,7 +564,7 @@ describe(sessionPreparationWorkflow, () => {
     },
   );
 
-  it("writes a Plus learner's next checkpoint call ahead, so opening it never waits", async () => {
+  it("starts the writing of a Plus learner's next checkpoint call ahead, so opening it never waits", async () => {
     const { checkpoints, goal, items, renting, user } = await languageGoalFixture();
 
     await Promise.all([
@@ -581,15 +582,18 @@ describe(sessionPreparationWorkflow, () => {
       }),
     ]);
 
-    vi.mocked(generateConversationScenario).mockResolvedValue(
-      taskResult({ ...RENTING_SCENARIO, title: "Negociar o aluguel" }),
-    );
-
     await sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id });
 
-    expect(generateConversationScenario).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ unitTitle: renting.title }),
-    );
+    expect(start).toHaveBeenCalledWith(callContentWorkflow, [
+      {
+        kind: "unitScenario",
+        level: "B1",
+        unit: expect.objectContaining({ id: renting.id, title: renting.title }),
+        userId: user.id,
+      },
+    ]);
+
+    expect(generateConversationScenario).not.toHaveBeenCalled();
   });
 
   it("writes a few questions for a topic the learner was taken to know that practice can't ask", async () => {

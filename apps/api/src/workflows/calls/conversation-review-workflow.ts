@@ -5,12 +5,12 @@ import {
 } from "@zoonk/core/language/conversations/review";
 import { getWorkflowMetadata } from "workflow";
 import { start } from "workflow/api";
-import { speakingMockWorkflow } from "./speaking-mock-workflow";
+import { callContentWorkflow } from "./call-content-workflow";
 import {
   checkObjectivesStep,
   claimReviewStep,
   endReviewedCallStep,
-  findNextSpeakingMockStep,
+  findNextCallWritingStep,
   scoreCallStep,
   settleReviewStep,
   writeReviewStep,
@@ -31,12 +31,15 @@ async function reviewCall(
   return objectivesMet && score ? writeReviewStep({ ...input, objectivesMet, score }) : null;
 }
 
-/** Decided from the settled call, so a replay after the settle still writes the next mock. */
-async function writeNextSpeakingMock({ conversationId, userId }: ConversationReviewInput) {
-  const goalId = await findNextSpeakingMockStep({ conversationId, userId });
+/**
+ * Decided from the settled call, so a replay after the settle still writes the next mock or task
+ * card, and only a task's first try waits.
+ */
+async function writeNextCall({ conversationId, userId }: ConversationReviewInput) {
+  const writing = await findNextCallWritingStep({ conversationId, userId });
 
-  if (goalId) {
-    await start(speakingMockWorkflow, [{ goalId, userId }]);
+  if (writing) {
+    await start(callContentWorkflow, [writing]);
   }
 }
 
@@ -60,7 +63,7 @@ export async function conversationReviewWorkflow(
   const review = await reviewCall({ ...input, runId }).catch(() => null);
   const outcome = await settleReviewStep({ ...input, review, runId });
 
-  await writeNextSpeakingMock(input).catch(() => null);
+  await writeNextCall(input).catch(() => null);
 
   return outcome;
 }

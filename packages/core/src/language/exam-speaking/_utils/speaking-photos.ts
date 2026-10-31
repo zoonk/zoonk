@@ -7,7 +7,7 @@ import { type SpeakingCard } from "../speaking-contract";
 
 const PHOTO_FILE_NAME = "library/speaking/photo.webp";
 
-async function drawPhoto({
+export async function drawSpeakingPhoto({
   alt,
   analytics,
   scene,
@@ -30,14 +30,4 @@ async function drawPhoto({
   }
 
   return { alt, url: upload.data };
-}
-
-export function drawSpeakingPhotos({
-  analytics,
-  photos,
-}: {
-  analytics: AiGenerationContext;
-  photos: readonly { alt: string; scene: string }[];
-}): Promise<SpeakingCard["photos"]> {
-  return Promise.all(photos.map((photo) => drawPhoto({ ...photo, analytics })));
 }

@@ -8,6 +8,7 @@ import { focusTestInputSchema } from "@zoonk/core/plans/focus-test/contract";
 import { planLinkStartInputSchema } from "@zoonk/core/plans/link-contract";
 import { ownLevelChangeInputSchema } from "@zoonk/core/plans/own-level-contract";
 import { z } from "zod";
+import { contentWritingResponse } from "../schemas/content-writing";
 import {
   focusTestGenerationSchema,
   focusTestResponseSchema,
@@ -204,7 +205,7 @@ export const planPaths = {
   "/goals/{goalId}/plan/tool-choices": {
     post: {
       description:
-        "The learner's answer on the plan's \"You'll use\" card for one or more of its tools: they have it, they'll set it up on their device, or they'll go without (examples only, no practice on their own computer). Setting a tool up adds a short setup lesson for that tool and device right before the first chapter that uses it; any other answer takes back a setup lesson an earlier answer added. It re-plans from today and can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason unknownTool when a tool isn't in the plan.",
+        "The learner's answer on the plan's \"You'll use\" card for one or more of its tools: they have it, they'll set it up on their device, or they'll go without (examples only, no practice on their own computer). Setting a tool up adds a short setup lesson for that tool and device right before the first chapter that uses it; a setup lesson nobody has needed yet answers 202 with the run writing it, nothing applied: follow it, then send the same choice again. Any other answer takes back a setup lesson an earlier answer added. It re-plans from today and can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason unknownTool when a tool isn't in the plan.",
       operationId: "createPlanToolChoice",
       requestBody: {
         content: { "application/json": { schema: planToolChoiceInputSchema } },
@@ -217,6 +218,7 @@ export const planPaths = {
           content: { "application/json": { schema: planChangeResultSchema } },
           description: "The applied change",
         },
+        "202": contentWritingResponse("A run is writing the setup lessons; nothing is applied yet"),
         "422": planChangeInvalidResponse,
       },
       security: AUTHENTICATED_SECURITY,

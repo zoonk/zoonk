@@ -6174,7 +6174,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Starts a live conversation: practice for a unit (1 to 5 minutes), a language goal's Plus-only phase/final checkpoint call (its length set by the learner's level; 402 PLUS_REQUIRED for Free or lapsed learners), a speaking mock of the exam the goal prepares for (IELTS or TOEFL iBT), or one task of a DELE, DELF or DALF, Goethe-Zertifikat or Cambridge English speaking paper (kind examSpeaking, Plus only: 402 PLUS_REQUIRED otherwise), with a new card each time and the call as long as the task's official time; a task whose shortest official time doesn't fit the call time left today or this month is refused with 429 CONVERSATION_LIMIT_REACHED (`details` names the period) before any card is written. A checkpoint call starts or resumes its study block first; unfinished earlier lessons or phase challenges refuse it before any scenario is written or existing call returned. The character speaks at the learner's speaking level, an exam's examiner or partner at the exam's. Nothing is charged until the call connects.",
+        "description": "Starts a live conversation: practice for a unit (1 to 5 minutes), a language goal's Plus-only phase/final checkpoint call (its length set by the learner's level; 402 PLUS_REQUIRED for Free or lapsed learners), a speaking mock of the exam the goal prepares for (IELTS or TOEFL iBT), or one task of a DELE, DELF or DALF, Goethe-Zertifikat or Cambridge English speaking paper (kind examSpeaking, Plus only: 402 PLUS_REQUIRED otherwise), with a new card each time and the call as long as the task's official time; a task whose shortest official time doesn't fit the call time left today or this month is refused with 429 CONVERSATION_LIMIT_REACHED (`details` names the period) before any card is written. A call whose scenario, mock or task card isn't written yet answers 202 with the run writing it, having started nothing (a checkpoint's block stays as it was): follow it, then send the same request again. The server writes calls the learner may start soon ahead, and the next mock or task card when a call ends, so this is rare. A checkpoint call then starts or resumes its study block; unfinished earlier lessons or phase challenges refuse it. The character speaks at the learner's speaking level, an exam's examiner or partner at the exam's. Nothing is charged until the call connects.",
         "operationId": "startLanguageConversation",
         "summary": "Start a live conversation",
         "requestBody": {
@@ -6194,6 +6194,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LanguageConversationCreated"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "A run is writing the call; nothing started yet",
+            "headers": {
+              "Location": {
+                "required": true,
+                "description": "The run's status URL: GET /generations/{generationId}",
+                "schema": {
+                  "type": "string",
+                  "description": "The run's status URL: GET /generations/{generationId}"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentWriting"
                 }
               }
             }
@@ -15750,7 +15770,7 @@
     },
     "/goals/{goalId}/plan/tool-choices": {
       "post": {
-        "description": "The learner's answer on the plan's \"You'll use\" card for one or more of its tools: they have it, they'll set it up on their device, or they'll go without (examples only, no practice on their own computer). Setting a tool up adds a short setup lesson for that tool and device right before the first chapter that uses it; any other answer takes back a setup lesson an earlier answer added. It re-plans from today and can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason unknownTool when a tool isn't in the plan.",
+        "description": "The learner's answer on the plan's \"You'll use\" card for one or more of its tools: they have it, they'll set it up on their device, or they'll go without (examples only, no practice on their own computer). Setting a tool up adds a short setup lesson for that tool and device right before the first chapter that uses it; a setup lesson nobody has needed yet answers 202 with the run writing it, nothing applied: follow it, then send the same choice again. Any other answer takes back a setup lesson an earlier answer added. It re-plans from today and can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason unknownTool when a tool isn't in the plan.",
         "operationId": "createPlanToolChoice",
         "security": [
           {
@@ -15795,6 +15815,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PlanChangeResult"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "A run is writing the setup lessons; nothing is applied yet",
+            "headers": {
+              "Location": {
+                "required": true,
+                "description": "The run's status URL: GET /generations/{generationId}",
+                "schema": {
+                  "type": "string",
+                  "description": "The run's status URL: GET /generations/{generationId}"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentWriting"
                 }
               }
             }
@@ -19988,7 +20028,7 @@
     },
     "/mocks/{blockId}/speaking": {
       "post": {
-        "description": "Starts the running mock's speaking section (`current.kind` `speaking`) once the learner reaches it: the exam's speaking paper, every task's card written now (about 20-40 seconds), each task a live call to open in turn (`tasks[].conversationId`: GET /language-conversations/{conversationId}, then POST its connections). The paper is kept on the mock: starting again returns the same one, also as `speaking` on GET /mocks/{blockId}. Hand the section in as any other once its calls are done.",
+        "description": "Starts the running mock's speaking section (`current.kind` `speaking`) once the learner reaches it: the exam's speaking paper, each task a live call to open in turn (`tasks[].conversationId`: GET /language-conversations/{conversationId}, then POST its connections). The server writes the paper while the learner sits the sections before it; one not written yet answers 202 with the run writing it: follow it, then send this again. The paper is kept on the mock, also as `speaking` on GET /mocks/{blockId} once the learner reaches the section. Hand the section in as any other once its calls are done.",
         "operationId": "startMockSpeaking",
         "security": [
           {
@@ -20023,6 +20063,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SpeakingSection"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "A run is writing the paper",
+            "headers": {
+              "Location": {
+                "required": true,
+                "description": "The run's status URL: GET /generations/{generationId}",
+                "schema": {
+                  "type": "string",
+                  "description": "The run's status URL: GET /generations/{generationId}"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentWriting"
                 }
               }
             }
@@ -20088,7 +20148,7 @@
             }
           },
           "503": {
-            "description": "Calls are paused (CALLS_PAUSED); no task cards are generated.",
+            "description": "Calls are paused (CALLS_PAUSED); no task cards are written.",
             "content": {
               "application/json": {
                 "schema": {
@@ -38589,6 +38649,26 @@
         },
         "required": [
           "conversationId"
+        ],
+        "additionalProperties": false
+      },
+      "ContentWriting": {
+        "type": "object",
+        "properties": {
+          "generationId": {
+            "type": "string",
+            "description": "The run writing what the request needs: stream GET /generations/{generationId}/events, then send the same request again. A failed run is retried by sending the request again"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "generating"
+            ]
+          }
+        },
+        "required": [
+          "generationId",
+          "status"
         ],
         "additionalProperties": false
       },

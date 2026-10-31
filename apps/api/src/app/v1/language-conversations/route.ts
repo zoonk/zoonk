@@ -1,4 +1,6 @@
+import { acceptedGeneration } from "@/lib/accepted-generation";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { startCallWriting } from "@/lib/call-writing";
 import { conversationRefusalError } from "@/lib/language-errors";
 import { readBody } from "@/lib/request-input";
 import { languageConversationStartInputSchema } from "@zoonk/core/language/conversations/contract";
@@ -11,6 +13,10 @@ async function createLanguageConversation(request: NextRequest) {
   const parsed = await readBody(request, languageConversationStartInputSchema);
 
   const result = await startLanguageConversation(parsed);
+
+  if (result.status === "preparing") {
+    return acceptedGeneration(await startCallWriting(result.writing));
+  }
 
   if (result.status !== "ready") {
     return conversationRefusalError(result, "Unit or checkpoint not found");

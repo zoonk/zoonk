@@ -7,6 +7,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { buildSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { writeSetupLesson } from "../library/tools/find-or-create-setup-lesson";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { choosePlanTools } from "./choose-plan-tools";
 import { createGoalPlan } from "./create-goal-plan";
@@ -40,6 +41,19 @@ function mockOutline(title: string) {
     usage: {} as never,
     userPrompt: "",
   });
+}
+
+/** As the API's setup lesson run does: one tool at a time, then the same choice again. */
+async function chooseWritten(request: Parameters<typeof choosePlanTools>[0]) {
+  const chosen = await choosePlanTools(request);
+
+  if (chosen.status !== "preparing") {
+    return chosen;
+  }
+
+  const { writing } = chosen;
+  await Promise.all(writing.tools.map((tool) => writeSetupLesson({ tool, writing })));
+  return choosePlanTools(request);
 }
 
 /** Tool names are unique per test, so one test's shared setup lessons never meet another's. */
@@ -165,7 +179,23 @@ describe(choosePlanTools, () => {
     mockOutline(title);
 
     const input = { choice: "setup" as const, system: "windows" as const, tools: [tools.python] };
-    const first = await choosePlanTools({ goalId: goal.id, input });
+    const before = await loadPlanItems(plan.id);
+
+    await expect(choosePlanTools({ goalId: goal.id, input })).resolves.toStrictEqual({
+      status: "preparing",
+      writing: {
+        goalId: goal.id,
+        language: "en",
+        system: "windows",
+        tools: [{ name: tools.python, ownerId: null }],
+        userId: goal.userId,
+      },
+    });
+
+    expect(generateSetupLessonOutline).not.toHaveBeenCalled();
+    await expect(loadPlanItems(plan.id)).resolves.toStrictEqual(before);
+
+    const first = await chooseWritten({ goalId: goal.id, input });
 
     expect(first).toMatchObject({
       change: { canUndo: true, operations: [{ kind: "setTools" }, { kind: "addSkills" }] },
@@ -240,7 +270,7 @@ describe(choosePlanTools, () => {
     const { goal, plan, tools } = await setup();
     mockOutline(`Set up ${tools.spreadsheet} on a Mac`);
 
-    await choosePlanTools({
+    await chooseWritten({
       goalId: goal.id,
       input: { choice: "setup", system: "macos", tools: [tools.spreadsheet] },
     });
@@ -300,7 +330,14 @@ describe(choosePlanTools, () => {
       where: { id: library.chapters[1]?.id },
     });
 
-    await choosePlanTools({
+    await expect(
+      choosePlanTools({
+        goalId: goal.id,
+        input: { choice: "setup", system: "windows", tools: [tool] },
+      }),
+    ).resolves.toMatchObject({ writing: { tools: [{ name: tool, ownerId: user.id }] } });
+
+    await chooseWritten({
       goalId: goal.id,
       input: { choice: "setup", system: "windows", tools: [tool] },
     });

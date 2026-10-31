@@ -9,12 +9,24 @@ import {
 import { type CurriculumAnalytics } from "../curriculum/curriculum-scope";
 import { createLibraryLesson } from "../lessons/create-library-lesson";
 import { createSkill } from "../skills/create-skill";
+import { type SetupLessonWriting } from "./setup-lesson-contract";
 
 const SETUP_LEVEL = "beginner";
 
 export type SetupLesson = { lessonId: string; skillId: string; title: string };
 
-async function findSetupLesson({
+type SetupLessonRequest = {
+  language: string;
+  ownerId: string | null;
+  system: string;
+  tool: string;
+};
+
+function getSetupIdentityKey({ ownerId, system, tool }: SetupLessonRequest): string {
+  return scopeIdentityKey({ key: buildSetupSkillIdentityKey({ system, tool }), ownerId });
+}
+
+async function findSetupLessonByKey({
   identityKey,
   language,
 }: {
@@ -37,26 +49,20 @@ async function findSetupLesson({
   return skill && lesson ? { lessonId: lesson.id, skillId: skill.id, title: lesson.title } : null;
 }
 
-/** Internal workflow bridge: derive the owner from the authenticated public boundary. */
-export async function findOrCreateSetupLesson({
-  analytics,
-  language,
-  ownerId,
-  system,
-  tool,
-}: {
-  analytics?: CurriculumAnalytics;
-  language: string;
-  ownerId: string | null;
-  system: string;
-  tool: string;
-}): Promise<SetupLesson> {
-  const identityKey = scopeIdentityKey({
-    key: buildSetupSkillIdentityKey({ system, tool }),
-    ownerId,
+export function findSetupLesson(request: SetupLessonRequest): Promise<SetupLesson | null> {
+  return findSetupLessonByKey({
+    identityKey: getSetupIdentityKey(request),
+    language: request.language,
   });
+}
 
-  const existing = await findSetupLesson({ identityKey, language });
+async function findOrCreateSetupLesson({
+  analytics,
+  ...request
+}: SetupLessonRequest & { analytics?: CurriculumAnalytics }): Promise<SetupLesson> {
+  const { language, ownerId, system, tool } = request;
+  const identityKey = getSetupIdentityKey(request);
+  const existing = await findSetupLessonByKey({ identityKey, language });
 
   if (existing) {
     return existing;
@@ -109,4 +115,23 @@ export async function findOrCreateSetupLesson({
   });
 
   return { lessonId: lesson.id, skillId: skill.id, title: lesson.title };
+}
+
+/** Internal, for the setup lesson workflow: one tool of a choice the learner's capability asked for. */
+export async function writeSetupLesson({
+  tool,
+  writing,
+}: {
+  tool: SetupLessonWriting["tools"][number];
+  writing: SetupLessonWriting;
+}): Promise<void> {
+  const { goalId, language, system, userId } = writing;
+
+  await findOrCreateSetupLesson({
+    analytics: { contentScope: tool.ownerId ? "personal" : "shared", distinctId: userId, goalId },
+    language,
+    ownerId: tool.ownerId,
+    system,
+    tool: tool.name,
+  });
 }

@@ -1,68 +1,34 @@
 import { randomUUID } from "node:crypto";
+import { generateExamSpeakingCard } from "@zoonk/ai/tasks/language/exam-speaking-card";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
-import {
-  LEARNER_LOCK,
-  holdLearnerLock,
-  waitForBlockedStatement,
-} from "../../_test-utils/learner-lock";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { listOwed } from "../../_test-utils/follow-ups";
 import { mockSession } from "../../_test-utils/mock-session";
-import { getSpeakingSection } from "../../language/exam-speaking/get-speaking-section";
-import { type SpeakingSectionView } from "../../language/exam-speaking/speaking-contract";
-import { startSpeakingSection } from "../../language/exam-speaking/start-speaking-section";
+import { writeTestCall } from "../../language/conversations/_test-utils/write-test-call";
 import { getMock } from "./get-mock";
 import { getMockOptions } from "./get-mock-options";
+import { mockConditionsSchema } from "./mock-contract";
 import { startAnytimeMock } from "./start-anytime-mock";
 import { startMockSpeaking } from "./start-mock-speaking";
 import { submitMockSection } from "./submit-mock-section";
 
-vi.mock("../../language/exam-speaking/start-speaking-section", () => ({
-  startSpeakingSection: vi.fn(),
-}));
-
-vi.mock("../../language/exam-speaking/get-speaking-section", () => ({
-  getSpeakingSection: vi.fn(),
-}));
+const PROVENANCE = {
+  generatedAt: new Date().toISOString(),
+  latencyMs: 1,
+  model: "openai/gpt-6-luna",
+  promptVersion: "v-test",
+  provider: "openai",
+  requestedModel: "openai/gpt-6-luna",
+  runId: "run-test",
+  usage: {},
+};
 
 const SPEAKING = "Expresión e interacción orales";
 const READING_QUESTIONS = 6;
-
-function taskFixture(key: string, name: string) {
-  return {
-    conversationId: randomUUID(),
-    key,
-    minutes: { max: 6, min: 4 },
-    mode: "monologue" as const,
-    name,
-    options: 2,
-    prepMinutes: 10,
-    prepShared: null,
-    role: "examiner" as const,
-    status: "ready" as const,
-    stimulus: "topic" as const,
-  };
-}
-
-function paperFixture(): SpeakingSectionView {
-  return {
-    estimate: { complete: false, high: null, low: null, total: 25, typed: false },
-    exam: "dele",
-    id: randomUUID(),
-    language: "es",
-    level: "B2",
-    paper: SPEAKING,
-    pass: { kind: "group", min: 30, of: 50 },
-    prepMinutes: 20,
-    prepTasks: ["t1", "t2"],
-    source: "https://examenes.cervantes.es",
-    tasks: [taskFixture("t1", "Tarea 1"), taskFixture("t2", "Tarea 2")],
-    title: "DELE B2",
-  };
-}
 
 async function speakingSetup() {
   const [user, blueprint, reading] = await Promise.all([
@@ -142,147 +108,131 @@ async function speakingSetup() {
   return { goal };
 }
 
+async function startFullMock(goalId: string) {
+  const started = await startAnytimeMock({
+    goalId,
+    input: { shape: { area: null, day: null, kind: "full" } },
+  });
+
+  if (started.status !== "started") {
+    throw new Error(`Expected a started mock, got ${started.status}`);
+  }
+
+  return started.id;
+}
+
+async function readSpeakingSectionId(mockId: string) {
+  const mock = await prisma.mockExam.findUniqueOrThrow({ where: { id: mockId } });
+  return mockConditionsSchema.parse(mock.conditions).sections[1]?.speakingSectionId ?? null;
+}
+
 describe(startMockSpeaking, () => {
-  it("preserves a paused paper refusal on the active speaking section without attaching a paper", async () => {
+  beforeEach(() => {
+    vi.mocked(generateExamSpeakingCard).mockResolvedValue({
+      data: {
+        character: { name: "Lucía", place: "Sala de examen", role: "examinadora" },
+        characterBrief: "Give the instruction, listen, then ask a question.",
+        hints: ["Desde mi punto de vista…"],
+        instructions: ["Hable sobre el tema durante dos minutos."],
+        openingLine: "Buenos días.",
+        photos: [],
+        prompts: ["El transporte en tu ciudad"],
+        summary: "Fale sobre o tema.",
+        table: null,
+        text: null,
+      },
+      provenance: PROVENANCE,
+      systemPrompt: "",
+      usage: undefined as never,
+      userPrompt: "",
+    });
+  });
+
+  it("owes the speaking paper in the transaction that starts a sitting with a speaking part", async () => {
     const { goal } = await speakingSetup();
-    vi.mocked(startSpeakingSection).mockResolvedValue({ status: "callsPaused" });
+    const mockId = await startFullMock(goal.id);
 
-    const started = await startAnytimeMock({
-      goalId: goal.id,
-      input: { shape: { area: null, day: null, kind: "full" } },
+    await expect(listOwed(goal.userId)).resolves.toContainEqual({
+      input: { mockId },
+      key: mockId,
+      kind: "writeSpeakingPaper",
+    });
+  });
+
+  it("asks for a paper that isn't written yet, attaching nothing", async () => {
+    const { goal } = await speakingSetup();
+    const mockId = await startFullMock(goal.id);
+
+    await submitMockSection({ blockId: mockId, input: { timeZone: "UTC" }, section: 0 });
+    const before = await prisma.mockExam.findUniqueOrThrow({ where: { id: mockId } });
+
+    await expect(startMockSpeaking({ blockId: mockId })).resolves.toStrictEqual({
+      status: "preparing",
+      writing: { kind: "speakingPaper", mockId, userId: goal.userId },
     });
 
-    if (started.status !== "started") {
-      throw new Error(`Expected a started mock, got ${started.status}`);
-    }
-
-    await submitMockSection({ blockId: started.id, input: { timeZone: "UTC" }, section: 0 });
-    const reached = await getMock(started.id);
-    expect(reached.status === "ready" && reached.mock.current).toMatchObject({ kind: "speaking" });
-    const before = await prisma.mockExam.findUniqueOrThrow({ where: { id: started.id } });
-
-    await expect(startMockSpeaking({ blockId: started.id })).resolves.toStrictEqual({
-      status: "callsPaused",
-    });
-
-    const after = await prisma.mockExam.findUniqueOrThrow({ where: { id: started.id } });
+    const after = await prisma.mockExam.findUniqueOrThrow({ where: { id: mockId } });
     expect(after.conditions).toStrictEqual(before.conditions);
-    expect(after.conditions).not.toHaveProperty("sections.1.speakingSectionId");
-    expect(startSpeakingSection).toHaveBeenCalledExactlyOnceWith({ goalId: goal.id });
-    expect(getSpeakingSection).not.toHaveBeenCalled();
+    expect(generateExamSpeakingCard).not.toHaveBeenCalled();
   });
 
-  it("marks before competing paper attachments and keeps only one marker", async () => {
+  it("binds the paper once when two runs write it at the same time", async () => {
     const { goal } = await speakingSetup();
-    const paper = paperFixture();
-    const papersReady = Promise.withResolvers<null>();
-    let startedPapers = 0;
+    const mockId = await startFullMock(goal.id);
+    const writing = { kind: "speakingPaper", mockId, userId: goal.userId } as const;
 
-    vi.mocked(startSpeakingSection).mockImplementation(async () => {
-      startedPapers += 1;
+    await Promise.all([writeTestCall(writing), writeTestCall(writing)]);
 
-      if (startedPapers === 2) {
-        papersReady.resolve(null);
-      }
+    const sectionId = await readSpeakingSectionId(mockId);
 
-      return { section: paper, status: "ready" };
+    expect(sectionId).toStrictEqual(expect.any(String));
+
+    const calls = await prisma.languageConversation.findMany({
+      select: { sectionId: true },
+      where: { kind: "examSpeaking", userId: goal.userId },
     });
 
-    vi.mocked(getSpeakingSection).mockResolvedValue({ section: paper, status: "ready" });
-
-    const started = await startAnytimeMock({
-      goalId: goal.id,
-      input: { shape: { area: null, day: null, kind: "full" } },
-    });
-
-    if (started.status !== "started") {
-      throw new Error("Expected a started mock");
-    }
-
-    await submitMockSection({ blockId: started.id, input: { timeZone: "UTC" }, section: 0 });
-    const held = holdLearnerLock({ userId: goal.userId });
-    const pid = await held.pid;
-
-    const requests = [
-      startMockSpeaking({ blockId: started.id }),
-      startMockSpeaking({ blockId: started.id }),
-    ];
-
-    const drained = Promise.allSettled(requests);
-
-    for (const request of requests) {
-      void request.then(
-        () => papersReady.resolve(null),
-        (error: unknown) => papersReady.reject(error),
-      );
-    }
-
-    try {
-      await papersReady.promise;
-      await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
-    } finally {
-      held.release();
-      await Promise.all([held.done, drained]);
-    }
-
-    await expect(Promise.all(requests)).resolves.toStrictEqual([
-      { section: paper, status: "ready" },
-      { section: paper, status: "ready" },
-    ]);
+    expect(new Set(calls.map((call) => call.sectionId))).toStrictEqual(new Set([sectionId]));
   });
 
-  it("sits the speaking paper in a full mock only: written once the learner reaches it, the same one after", async () => {
+  it("sits the paper written ahead in a full mock only, shown once the learner reaches it", async () => {
     const { goal } = await speakingSetup();
-    const paper = paperFixture();
-
-    vi.mocked(startSpeakingSection).mockResolvedValue({ section: paper, status: "ready" });
-    vi.mocked(getSpeakingSection).mockResolvedValue({ section: paper, status: "ready" });
-
     const options = await getMockOptions({ goalId: goal.id });
     const listed = options.status === "ready" ? options.view.options : [];
     const full = listed.find((option) => option.kind === "full");
     const half = listed.find((option) => option.kind === "half");
 
     expect(full?.leftOut.map((part) => part.part)).not.toContain("speaking");
-
     expect(half?.leftOut).toContainEqual({ name: SPEAKING, part: "speaking" });
 
-    const started = await startAnytimeMock({
-      goalId: goal.id,
-      input: { shape: { area: null, day: null, kind: "full" } },
-    });
+    const mockId = await startFullMock(goal.id);
+    await writeTestCall({ kind: "speakingPaper", mockId, userId: goal.userId });
 
-    if (started.status !== "started") {
-      throw new Error(`Expected a started mock, got ${started.status}`);
-    }
+    const early = await getMock(mockId);
+    expect(early.status === "ready" && early.mock.speaking).toBeNull();
 
-    await expect(startMockSpeaking({ blockId: started.id })).resolves.toStrictEqual({
+    await expect(startMockSpeaking({ blockId: mockId })).resolves.toStrictEqual({
       status: "notSpeaking",
     });
 
-    await submitMockSection({ blockId: started.id, input: { timeZone: "UTC" }, section: 0 });
+    await submitMockSection({ blockId: mockId, input: { timeZone: "UTC" }, section: 0 });
 
-    const reached = await getMock(started.id);
+    const reached = await getMock(mockId);
 
     expect(reached.status === "ready" && reached.mock.current).toMatchObject({
       kind: "speaking",
       questions: [],
     });
 
-    await expect(startMockSpeaking({ blockId: started.id })).resolves.toStrictEqual({
-      section: paper,
-      status: "ready",
-    });
+    const sectionId = await readSpeakingSectionId(mockId);
+    const started = await startMockSpeaking({ blockId: mockId });
 
-    await expect(startMockSpeaking({ blockId: started.id })).resolves.toMatchObject({
-      section: { id: paper.id },
-    });
+    expect(started).toMatchObject({ section: { id: sectionId }, status: "ready" });
+    await expect(startMockSpeaking({ blockId: mockId })).resolves.toStrictEqual(started);
 
-    expect(startSpeakingSection).toHaveBeenCalledOnce();
+    const sat = await getMock(mockId);
 
-    const sat = await getMock(started.id);
-
-    expect(sat.status === "ready" && sat.mock.speaking).toStrictEqual(paper);
+    expect(sat.status === "ready" && sat.mock.speaking).toMatchObject({ id: sectionId });
 
     expect(sat.status === "ready" && sat.mock.leftOut.map((part) => part.part)).not.toContain(
       "speaking",

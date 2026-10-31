@@ -1,9 +1,6 @@
 import { claimConversationReview } from "@zoonk/core/language/conversations/claim-review";
 import { endLiveCall } from "@zoonk/core/language/conversations/end-live-call";
-import {
-  findNextSpeakingMockGoalId,
-  prepareSpeakingMock,
-} from "@zoonk/core/language/conversations/prepare";
+import { findNextCallWriting } from "@zoonk/core/language/conversations/prepare";
 import {
   type ConversationReview,
   type ConversationReviewInput,
@@ -61,12 +58,7 @@ export async function settleReviewStep(
   return settleConversationReview(input);
 }
 
-export async function findNextSpeakingMockStep(input: { conversationId: string; userId: string }) {
+export async function findNextCallWritingStep(input: { conversationId: string; userId: string }) {
   "use step";
-  return findNextSpeakingMockGoalId(input);
-}
-
-export async function prepareSpeakingMockStep(input: { goalId: string; userId: string }) {
-  "use step";
-  await prepareSpeakingMock(input);
+  return findNextCallWriting(input);
 }

@@ -31,6 +31,7 @@ import {
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { reviewRunsInline } from "../../_test-utils/review-runs";
 import { loadSessionBosses } from "../../checkpoints/_utils/load-boss";
+import { writeTestCall } from "./_test-utils/write-test-call";
 import { checkLanguageConversationObjectives } from "./check-language-conversation-objectives";
 import { completeLanguageConversation } from "./complete-language-conversation";
 import { getLanguageConversation } from "./get-language-conversation";
@@ -148,6 +149,48 @@ describe("language conversations", () => {
     });
 
     expect(result.status === "ready" && "instructions" in result.conversation).toBe(false);
+  });
+
+  it("asks for a unit's call that isn't written at the learner's level, then starts once it's written", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    await prisma.conversationScenario.deleteMany({ where: { chapterId: renting.id } });
+
+    vi.mocked(generateConversationScenario).mockResolvedValue({
+      data: RENTING_SCENARIO,
+      provenance: PROVENANCE,
+      systemPrompt: "",
+      usage: undefined as never,
+      userPrompt: "",
+    });
+
+    const input = { chapterId: renting.id, kind: "practice", minutes: 2 } as const;
+    const asked = await startLanguageConversation(input);
+
+    expect(asked).toStrictEqual({
+      status: "preparing",
+      writing: {
+        kind: "unitScenario",
+        level: "A2",
+        unit: expect.objectContaining({ id: renting.id, title: renting.title }),
+        userId: user.id,
+      },
+    });
+
+    expect(generateConversationScenario).not.toHaveBeenCalled();
+
+    await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(
+      0,
+    );
+
+    if (asked.status !== "preparing") {
+      throw new Error("Expected the call to need writing");
+    }
+
+    await writeTestCall(asked.writing);
+
+    await expect(startLanguageConversation(input)).resolves.toMatchObject({ status: "ready" });
+    expect(generateConversationScenario).toHaveBeenCalledOnce();
   });
 
   it("keeps another learner's call hidden", async () => {

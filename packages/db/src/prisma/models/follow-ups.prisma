@@ -9,6 +9,7 @@ enum FollowUpKind {
   checkDailyInsight    @map("check_daily_insight")
   checkFactSensitivity @map("check_fact_sensitivity")
   voiceWord            @map("voice_word")
+  writeSpeakingPaper   @map("write_speaking_paper")
 }
 
 /// Work owed after a learner's write; ended by the run that started it unless asked again since,

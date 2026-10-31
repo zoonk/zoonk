@@ -1,26 +1,26 @@
 import "server-only";
-import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
-import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
+import { prisma } from "@zoonk/db";
 import { type AllowanceLimit } from "../../entitlements/contract";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { readDailyTimeLimitReached } from "../../sessions/_utils/daily-time-limit";
 import { getStoredBlockWait } from "../../sessions/block-wait";
 import { saveDayBeforeActivity } from "../../sessions/ensure-study-session";
-import { type StartStudyBlockResult, startStudyBlock } from "../../sessions/start-study-block";
 import { getSession } from "../../users/get-session";
 import { findLearnerLanguageGoal } from "../_utils/language-goal";
 import { startExamTask } from "../exam-speaking/_utils/start-exam-task";
-import { findLanguageCheckpointBlock, toCheckpointScenarioUnit } from "./_utils/checkpoint-block";
+import {
+  type CheckpointRefusal,
+  findBlockConversation,
+  findCheckpointBlock,
+  startCheckpointCall,
+} from "./_utils/checkpoint-call";
 import { getSpeakingLevel } from "./_utils/conversation-goal";
-import { findUnitScenario, getUnitScenario } from "./_utils/conversation-scenario";
+import { findUnitScenario, toScenarioUnit } from "./_utils/conversation-scenario";
 import { createConversation } from "./_utils/create-conversation";
 import { readLiveCallAdmission } from "./_utils/live-call-policy";
-import {
-  findSpeakingMockSetup,
-  findWaitingSpeakingMock,
-  writeSpeakingMock,
-} from "./_utils/speaking-mock";
+import { findSpeakingMockSetup, findWaitingSpeakingMock } from "./_utils/speaking-mock";
+import { type PreparingCall } from "./call-writing-contract";
 import {
   type LanguageCheckpointCall,
   type LanguageConversationIntro,
@@ -32,12 +32,8 @@ type StartedCall =
   | { conversationId: string; sessionId?: string; status: "ready" }
   | { status: "notFound" | "notLanguage" | "unauthorized" };
 
-type CheckpointRefusal = Exclude<
-  StartStudyBlockResult,
-  { status: "notFound" | "ready" | "unauthorized" }
->;
-
 export type StartLanguageConversationResult =
+  | PreparingCall
   | StartedCall
   | CheckpointRefusal
   | { limit: AllowanceLimit; status: "limitReached" }
@@ -53,7 +49,7 @@ async function startPractice({
 }: {
   input: Extract<LanguageConversationStartInput, { kind: "practice" }>;
   userId: string;
-}): Promise<StartedCall | { status: "callsPaused" }> {
+}): Promise<PreparingCall | StartedCall | { status: "callsPaused" }> {
   const chapter = await prisma.chapter.findFirst({
     where: { ...libraryRowsVisibleTo(userId), id: input.chapterId },
   });
@@ -72,11 +68,16 @@ async function startPractice({
     return { status: "callsPaused" };
   }
 
-  await saveDayBeforeActivity({ goalId: input.goalId, language: targetLanguage, userId });
-
   const goal = await findLearnerLanguageGoal({ goalId: input.goalId, targetLanguage, userId });
   const level = await getSpeakingLevel({ goal, targetLanguage, userId });
-  const scenario = await getUnitScenario({ level, unit: { ...chapter, targetLanguage }, userId });
+  const scenario = await findUnitScenario({ chapterId: chapter.id, level });
+
+  if (!scenario) {
+    const unit = toScenarioUnit({ ...chapter, targetLanguage });
+    return { status: "preparing", writing: { kind: "unitScenario", level, unit, userId } };
+  }
+
+  await saveDayBeforeActivity({ goalId: input.goalId, language: targetLanguage, userId });
 
   const conversation = await createConversation({
     chapterId: chapter.id,
@@ -92,26 +93,6 @@ async function startPractice({
   });
 
   return { conversationId: conversation.id, status: "ready" };
-}
-
-async function loadAccessibleCheckpoint({ blockId, userId }: { blockId: string; userId: string }) {
-  const checkpoint = await findLanguageCheckpointBlock({ blockId, userId });
-
-  if (checkpoint.status !== "ready") {
-    return checkpoint;
-  }
-
-  const { targetLanguage } = checkpoint.goal;
-
-  if (!targetLanguage) {
-    return { status: "notLanguage" as const };
-  }
-
-  if (!(await arePhaseChallengesRequired({ goalKind: checkpoint.goal.kind, userId }))) {
-    return { status: "plusRequired" as const };
-  }
-
-  return { ...checkpoint, status: "ready" as const, targetLanguage };
 }
 
 async function introWithDailyLimit({
@@ -130,98 +111,6 @@ async function introWithDailyLimit({
   const { currentDate } = await getRequestProgressDateContext();
   const dailyLimitReached = await readDailyTimeLimitReached({ date: currentDate, userId });
   return { dailyLimitReached, intro, status: "notStarted" };
-}
-
-async function findCheckpointBlock({ blockId, userId }: { blockId: string; userId: string }) {
-  const checkpoint = await loadAccessibleCheckpoint({ blockId, userId });
-
-  if (checkpoint.status !== "ready") {
-    return checkpoint;
-  }
-
-  const session = await prisma.studySession.findFirst({
-    include: { blocks: true },
-    where: { blocks: { some: { id: blockId } }, userId },
-  });
-
-  const block = session?.blocks.find((candidate) => candidate.id === blockId);
-
-  return session && block
-    ? { block, checkpoint, session, status: "ready" as const }
-    : { status: "notFound" as const };
-}
-
-function findBlockConversation(blockId: string) {
-  return prisma.languageConversation.findUnique({
-    select: { id: true, userId: true },
-    where: { studyBlockId: blockId },
-  });
-}
-
-async function startCheckpoint({
-  blockId,
-  userId,
-}: {
-  blockId: string;
-  userId: string;
-}): Promise<StartLanguageConversationResult> {
-  const found = await findCheckpointBlock({ blockId, userId });
-
-  if (found.status !== "ready") {
-    return found;
-  }
-
-  const { goal, targetLanguage, unit } = found.checkpoint;
-  const sessionId = found.session.id;
-  const started = await startStudyBlock({ blockId, input: {}, sessionId });
-
-  if (started.status !== "ready") {
-    return started;
-  }
-
-  const existing = await findBlockConversation(blockId);
-
-  if (existing) {
-    return existing.userId === userId
-      ? { conversationId: existing.id, sessionId, status: "ready" }
-      : { status: "notFound" };
-  }
-
-  const level = await getSpeakingLevel({ goal, targetLanguage, userId });
-
-  const scenario = await getUnitScenario({
-    level,
-    unit: toCheckpointScenarioUnit({ goal, targetLanguage, unit }),
-    userId,
-  });
-
-  try {
-    const conversation = await createConversation({
-      chapterId: unit.chapterId,
-      goal,
-      kind: "checkpoint",
-      language: goal.language,
-      level,
-      markChanged: true,
-      minutes: getCheckpointMinutes(level),
-      scenario,
-      studyBlockId: blockId,
-      targetLanguage,
-      userId,
-    });
-
-    return { conversationId: conversation.id, sessionId, status: "ready" };
-  } catch (error) {
-    if (!isPrismaUniqueConstraintError(error)) {
-      throw error;
-    }
-
-    const winner = await prisma.languageConversation.findUniqueOrThrow({
-      where: { studyBlockId: blockId },
-    });
-
-    return { conversationId: winner.id, sessionId, status: "ready" };
-  }
 }
 
 async function readCheckpointCall({
@@ -284,21 +173,25 @@ async function startSpeakingMock({
 }: {
   goalId: string;
   userId: string;
-}): Promise<StartedCall | { status: "callsPaused" }> {
+}): Promise<PreparingCall | StartedCall | { status: "callsPaused" }> {
   const setup = await findSpeakingMockSetup({ goalId, userId });
 
   if (!setup) {
     return { status: "notLanguage" };
   }
 
-  await saveDayBeforeActivity({ goalId, language: setup.goal.targetLanguage, userId });
-
   if ((await readLiveCallAdmission({ transaction: prisma, userId })) === null) {
     return { status: "callsPaused" };
   }
 
-  const conversation = (await findWaitingSpeakingMock(setup)) ?? (await writeSpeakingMock(setup));
-  return { conversationId: conversation.id, status: "ready" };
+  const waiting = await findWaitingSpeakingMock(setup);
+
+  if (!waiting) {
+    return { status: "preparing", writing: { goalId, kind: "speakingMock", userId } };
+  }
+
+  await saveDayBeforeActivity({ goalId, language: setup.goal.targetLanguage, userId });
+  return { conversationId: waiting.id, status: "ready" };
 }
 
 export async function startLanguageConversation(
@@ -313,7 +206,7 @@ export async function startLanguageConversation(
   const userId = session.user.id;
 
   if (input.kind === "checkpoint") {
-    return startCheckpoint({ blockId: input.blockId, userId });
+    return startCheckpointCall({ blockId: input.blockId, userId });
   }
 
   if (input.kind === "speakingMock") {
@@ -327,7 +220,7 @@ export async function startLanguageConversation(
   return startPractice({ input, userId });
 }
 
-/** Read-only: use the Start POST to create the conversation or write its scenario. */
+/** Read-only: the Start POST creates the conversation, or asks for its scenario to be written. */
 export async function openLanguageCheckpointCall(
   blockId: string,
 ): Promise<OpenLanguageCheckpointCallResult> {

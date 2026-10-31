@@ -277,7 +277,7 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
       loadFinished({ areas, conditions, owned }),
       canMoveMock(owned),
       loadAskedTypedParts(getAskedItemIds(conditions).map((entry) => entry.itemId)),
-      loadMockSpeaking(conditions),
+      loadMockSpeaking(mock),
       loadMockMissionMoment({ mock, timeZone: getAnswerTimeZone({ goal: owned.goal }) }),
       mock?.status === "finished" ? loadCeremony(owned.userId) : null,
     ]);

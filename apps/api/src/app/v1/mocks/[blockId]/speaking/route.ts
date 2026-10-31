@@ -1,4 +1,6 @@
+import { acceptedGeneration } from "@/lib/accepted-generation";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { startCallWriting } from "@/lib/call-writing";
 import { examError } from "@/lib/exam-errors";
 import { conversationRefusalError } from "@/lib/language-errors";
 import { mockPathParamsSchema } from "@/lib/openapi/schemas/paths";
@@ -13,6 +15,10 @@ async function postMockSpeaking(
   const path = await readPathParams(context, mockPathParamsSchema);
 
   const result = await startMockSpeaking({ blockId: path.blockId });
+
+  if (result.status === "preparing") {
+    return acceptedGeneration(await startCallWriting(result.writing));
+  }
 
   if (result.status === "callsPaused") {
     return conversationRefusalError({ status: result.status });

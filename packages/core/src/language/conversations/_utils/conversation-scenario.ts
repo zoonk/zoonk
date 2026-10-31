@@ -1,9 +1,10 @@
 import "server-only";
 import { generateConversationScenario } from "@zoonk/ai/tasks/language/conversation-scenario";
 import { generateSpeakingMockScenario } from "@zoonk/ai/tasks/language/speaking-mock-scenario";
-import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import { toProvenanceData } from "../../../library/_utils/library-rows";
+import { type ScenarioUnit } from "../call-writing-contract";
 import {
   type ConversationScenario,
   type SpeakingMockExam,
@@ -11,14 +12,10 @@ import {
 } from "../conversation-contract";
 import { SPEAKING_MOCK_MINUTES } from "../speaking-mock-format";
 
-type ScenarioUnit = {
-  description: string;
-  id: string;
-  language: string;
-  objectives: string[];
-  targetLanguage: string;
-  title: string;
-};
+export function toScenarioUnit(unit: ScenarioUnit): ScenarioUnit {
+  const { description, id, language, objectives, targetLanguage, title } = unit;
+  return { description, id, language, objectives, targetLanguage, title };
+}
 
 function findSavedScenario({ chapterId, level }: { chapterId: string; level: CefrLevel }) {
   return prisma.conversationScenario.findUnique({ where: { chapterLevel: { chapterId, level } } });
@@ -33,7 +30,8 @@ export async function findUnitScenario(where: {
   return parsed.success ? parsed.data : null;
 }
 
-export async function getUnitScenario({
+/** Workflow only: a request reads the saved scenario and asks for this when it's missing. */
+export async function writeUnitScenario({
   level,
   unit,
   userId,
@@ -41,11 +39,9 @@ export async function getUnitScenario({
   level: CefrLevel;
   unit: ScenarioUnit;
   userId: string;
-}): Promise<ConversationScenario> {
-  const saved = await findUnitScenario({ chapterId: unit.id, level });
-
-  if (saved) {
-    return saved;
+}): Promise<void> {
+  if (await findUnitScenario({ chapterId: unit.id, level })) {
+    return;
   }
 
   const { data, provenance } = await generateConversationScenario({
@@ -58,20 +54,10 @@ export async function getUnitScenario({
     unitTitle: unit.title,
   });
 
-  try {
-    await prisma.conversationScenario.create({
-      data: { content: data, ...toProvenanceData(provenance), chapterId: unit.id, level },
-    });
-
-    return conversationScenarioSchema.parse(data);
-  } catch (error) {
-    if (!isPrismaUniqueConstraintError(error)) {
-      throw error;
-    }
-
-    const winner = await findSavedScenario({ chapterId: unit.id, level });
-    return conversationScenarioSchema.parse(winner?.content);
-  }
+  await prisma.conversationScenario.createMany({
+    data: [{ content: data, ...toProvenanceData(provenance), chapterId: unit.id, level }],
+    skipDuplicates: true,
+  });
 }
 
 export async function getSpeakingMockScenario({

@@ -14,9 +14,10 @@ import {
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { reviewRunsInline } from "../../_test-utils/review-runs";
+import { startWrittenCall, writeTestCall } from "./_test-utils/write-test-call";
 import { completeLanguageConversation } from "./complete-language-conversation";
 import { getLanguageConversation } from "./get-language-conversation";
-import { findNextSpeakingMockGoalId, prepareSpeakingMock } from "./prepare-language-calls";
+import { findNextCallWriting, prepareSpeakingMock } from "./prepare-language-calls";
 import { startLanguageConversation } from "./start-language-conversation";
 
 const PROVENANCE = {
@@ -105,7 +106,7 @@ function sleep(ms: number) {
 }
 
 async function startMock(goalId: string) {
-  const started = await startLanguageConversation({ goalId, kind: "speakingMock" });
+  const started = await startWrittenCall({ goalId, kind: "speakingMock" });
 
   if (started.status !== "ready") {
     throw new Error(`Couldn't start: ${started.status}`);
@@ -137,9 +138,26 @@ describe("speaking mocks", () => {
 
   afterEach(cleanupTestCalls);
 
+  it("asks for a mock that isn't written, writing nothing and starting nothing", async () => {
+    const { goal, user } = await examGoalFixture("Vou fazer o IELTS");
+
+    await expect(
+      startLanguageConversation({ goalId: goal.id, kind: "speakingMock" }),
+    ).resolves.toStrictEqual({
+      status: "preparing",
+      writing: { goalId: goal.id, kind: "speakingMock", userId: user.id },
+    });
+
+    expect(generateSpeakingMockScenario).not.toHaveBeenCalled();
+
+    await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(
+      0,
+    );
+  });
+
   it("marks a new speaking mock once and leaves its waiting retry unchanged", async () => {
     const { goal } = await examGoalFixture("Vou fazer o IELTS");
-    const started = await startLanguageConversation({ goalId: goal.id, kind: "speakingMock" });
+    const started = await startWrittenCall({ goalId: goal.id, kind: "speakingMock" });
 
     expect(started.status).toBe("ready");
 
@@ -187,7 +205,7 @@ describe("speaking mocks", () => {
 
     const startFor = async (title: string) => {
       await prisma.goal.update({ data: { kind: "exam", title }, where: { id: goal.id } });
-      const started = await startLanguageConversation({ goalId: goal.id, kind: "speakingMock" });
+      const started = await startWrittenCall({ goalId: goal.id, kind: "speakingMock" });
 
       if (started.status !== "ready") {
         return started.status;
@@ -308,7 +326,7 @@ describe("speaking mocks", () => {
 
   it("writes no next mock for one that never connected, so ending unstarted mocks can't write mocks", async () => {
     const { goal, user } = await examGoalFixture("Preciso do TOEFL para o mestrado");
-    const started = await startLanguageConversation({ goalId: goal.id, kind: "speakingMock" });
+    const started = await startWrittenCall({ goalId: goal.id, kind: "speakingMock" });
     const conversationId = started.status === "ready" ? started.conversationId : "";
 
     await reserveTestCall(conversationId);
@@ -321,9 +339,7 @@ describe("speaking mocks", () => {
 
     expect(scoreSpeaking).not.toHaveBeenCalled();
 
-    await expect(
-      findNextSpeakingMockGoalId({ conversationId, userId: user.id }),
-    ).resolves.toBeNull();
+    await expect(findNextCallWriting({ conversationId, userId: user.id })).resolves.toBeNull();
   });
 
   it("writes the next mock ahead once a mock ends, so another try starts at once", async () => {
@@ -338,19 +354,19 @@ describe("speaking mocks", () => {
       runs: reviewRunsInline,
     });
 
-    const nextGoalId = await findNextSpeakingMockGoalId({ conversationId: first, userId: user.id });
+    const next = await findNextCallWriting({ conversationId: first, userId: user.id });
 
-    expect(nextGoalId).toBe(goal.id);
-    await prepareSpeakingMock({ goalId: goal.id, userId: user.id });
+    expect(next).toStrictEqual({ goalId: goal.id, kind: "speakingMock", userId: user.id });
+    await writeTestCall(next ?? { goalId: goal.id, kind: "speakingMock", userId: user.id });
     expect(generateSpeakingMockScenario).toHaveBeenCalledTimes(2);
 
-    const next = await startMock(goal.id);
+    const second = await startMock(goal.id);
 
-    expect(next).not.toBe(first);
+    expect(second).not.toBe(first);
     expect(generateSpeakingMockScenario).toHaveBeenCalledTimes(2);
 
     await expect(
-      prisma.languageConversation.findUniqueOrThrow({ where: { id: next } }),
+      prisma.languageConversation.findUniqueOrThrow({ where: { id: second } }),
     ).resolves.toMatchObject({ scenario: { exam: "toefl" }, status: "ready" });
   });
 

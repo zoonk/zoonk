@@ -17,7 +17,7 @@ import {
 
 export type BackgroundTask = Exclude<
   OwedFollowUp,
-  { kind: "prepareGoalLessons" | "prepareSession" | "writeLesson" }
+  { kind: "prepareGoalLessons" | "prepareSession" | "writeLesson" | "writeSpeakingPaper" }
 >;
 
 export type BackgroundTaskResult = { status: "alreadyRunning" | "done" };

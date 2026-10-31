@@ -1,8 +1,10 @@
+import { acceptedGeneration } from "@/lib/accepted-generation";
 import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { planChangeInvalid } from "@/lib/plan-errors";
 import { readBody, readPathParams } from "@/lib/request-input";
+import { startSetupLessonWriting } from "@/lib/setup-lesson-writing";
 import { choosePlanTools } from "@zoonk/core/plans/choose-tools";
 import { planToolChoiceInputSchema } from "@zoonk/core/plans/contract";
 import { type NextRequest, NextResponse } from "next/server";
@@ -20,6 +22,10 @@ async function createToolChoice(
 
   if (result.status === "invalid") {
     return planChangeInvalid(result);
+  }
+
+  if (result.status === "preparing") {
+    return acceptedGeneration(await startSetupLessonWriting(result.writing));
   }
 
   if (result.status !== "applied") {

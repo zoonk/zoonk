@@ -21,25 +21,27 @@ type NewConversation = {
   userId: string;
 };
 
+export function toConversationData(input: Omit<NewConversation, "markChanged">) {
+  return {
+    chapterId: input.chapterId,
+    goalId: input.goal?.id ?? null,
+    kind: input.kind,
+    language: input.language,
+    level: input.level,
+    liveModel: LIVE_CONVERSATION_MODEL,
+    minutes: input.minutes,
+    scenario: input.scenario,
+    sectionId: input.sectionId ?? null,
+    studyBlockId: input.studyBlockId ?? null,
+    targetLanguage: input.targetLanguage,
+    titleSnapshot: input.scenario.title,
+    userId: input.userId,
+  };
+}
+
 export function createConversation(input: NewConversation) {
   const create = (client: Pick<typeof prisma, "languageConversation">) =>
-    client.languageConversation.create({
-      data: {
-        chapterId: input.chapterId,
-        goalId: input.goal?.id ?? null,
-        kind: input.kind,
-        language: input.language,
-        level: input.level,
-        liveModel: LIVE_CONVERSATION_MODEL,
-        minutes: input.minutes,
-        scenario: input.scenario,
-        sectionId: input.sectionId ?? null,
-        studyBlockId: input.studyBlockId ?? null,
-        targetLanguage: input.targetLanguage,
-        titleSnapshot: input.scenario.title,
-        userId: input.userId,
-      },
-    });
+    client.languageConversation.create({ data: toConversationData(input) });
 
   return writeLearnerChange({ userId: input.userId }, create);
 }
