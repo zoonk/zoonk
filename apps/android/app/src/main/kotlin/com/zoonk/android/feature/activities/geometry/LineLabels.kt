@@ -3,6 +3,7 @@ package com.zoonk.android.feature.activities.geometry
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
@@ -32,8 +33,9 @@ internal class LabelMarks(
  * Main's `line-crossing-labels.ts`. Where each line's name sits, in order: by its end of the line on the
  * open side, or at the nearest spot that clears the lines, the marks (drag handles, crossings, arrows) and
  * the names placed before it. When no spot close by clears every line, it keeps off its own line and the
- * marks, and when large text leaves no room for that, off its own line, so its halo never cuts the line
- * it names. [unit] is pixels per dp.
+ * marks, then just off its own line, searching the whole chart when nothing near is free. Its halo never
+ * cuts the line it names: with no free spot anywhere it stays by its end, on the line's open side. [unit]
+ * is pixels per dp.
  */
 internal fun placeLineLabels(
     area: Rect,
@@ -65,24 +67,32 @@ private fun placeLineLabel(
             marks.circles.none { touches(it, clearance) } &&
             placed.none { touches(it, clearance) }
 
+    val isClear = { box: Rect -> box.fits(emptyList()) && box.clearsMarks() }
+    val offItsLine = { box: Rect -> box.fits(emptyList()) }
     val passes =
         listOf<(Rect, Offset) -> Boolean>(
             { box, shift -> shift.getDistance() <= CLEAR_OF_ALL_STEPS && box.fits(marks.lines) && box.clearsMarks() },
-            { box, _ -> box.fits(emptyList()) && box.clearsMarks() },
-            { box, _ -> box.fits(emptyList()) },
+            { box, _ -> isClear(box) },
+            { box, _ -> offItsLine(box) },
         )
-    val shift = passes.firstNotNullOfOrNull { pass -> NEAREST_SHIFTS.firstOrNull { pass(start.translate(it * step), it) } }
+    val nearby = passes.firstNotNullOfOrNull { pass -> NEAREST_SHIFTS.firstOrNull { pass(start.translate(it * step), it) } }
+    if (nearby != null) return start.translate(nearby * step)
 
-    return shift?.let { start.translate(it * step) } ?: start.clampedInto(area)
+    val spots = spotsAcross(area, start)
+    return spots.firstOrNull(isClear) ?: spots.firstOrNull(offItsLine) ?: start
 }
 
-private fun Rect.clampedInto(area: Rect): Rect =
-    translate(
-        Offset(
-            left.coerceIn(area.left, max(area.left, area.right - width)) - left,
-            top.coerceIn(area.top, max(area.top, area.bottom - height)) - top,
-        ),
-    )
+private fun spotsAcross(
+    area: Rect,
+    start: Rect,
+): List<Rect> {
+    val columns = floor((area.width - start.width) / start.height).toInt() + 1
+    val rows = floor((area.height - start.height) / start.height).toInt() + 1
+    if (columns < 1 || rows < 1) return emptyList()
+    return (0 until columns * rows)
+        .map { Rect(Offset(area.left + it % columns * start.height, area.top + it / columns * start.height), start.size) }
+        .sortedBy { (it.topLeft - start.topLeft).getDistance() }
+}
 
 private fun besideEnd(
     label: LineLabel,

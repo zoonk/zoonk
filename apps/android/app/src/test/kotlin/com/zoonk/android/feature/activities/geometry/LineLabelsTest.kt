@@ -75,4 +75,21 @@ class LineLabelsTest {
         assertTrue("box $box", box.top >= area.top)
         assertTrue("gap ${gap(box, segment)}", gap(box, segment) >= 3f)
     }
+
+    @Test
+    fun findsRoomForALongNameAwayFromItsLineRatherThanAcrossIt() {
+        val segment = LabelSegment(Offset(22f, 218f), Offset(293f, 26f))
+        val box = place(LineLabel(isUpper = true, segment, Size(240f, 24f))).single()
+
+        assertTrue("gap ${gap(box, segment)}", gap(box, segment) >= 3f)
+        assertTrue("box $box", box.top >= area.top && box.bottom <= area.bottom)
+    }
+
+    @Test
+    fun keepsANameTooWideForTheChartOffItsLineByItsEnd() {
+        val segment = LabelSegment(Offset(22f, 218f), Offset(293f, 26f))
+        val box = place(LineLabel(isUpper = true, segment, Size(320f, 24f))).single()
+
+        assertTrue("gap ${gap(box, segment)}", gap(box, segment) >= 3f)
+    }
 }
