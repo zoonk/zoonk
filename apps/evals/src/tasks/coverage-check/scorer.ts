@@ -1,5 +1,7 @@
+import { getTestCaseLanguage } from "@/lib/case-languages";
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer } from "@/lib/types";
+import { findVerbFormProblems } from "@/lib/verb-form";
 import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString } from "@zoonk/utils/string";
 
@@ -12,7 +14,7 @@ export type CoverageCheckExpected = {
   placements?: { key: string; topics: string[] }[];
 };
 
-type Flagged = { examWeight: number | null; syllabusLine: string };
+type Flagged = { examWeight: number | null; name: string; syllabusLine: string };
 type WeightChange = { examWeight: number; key: string };
 type Placement = { key: string; topics: string[] };
 type Output = { flagged: Flagged[]; placements: Placement[]; weightChanges: WeightChange[] };
@@ -39,7 +41,8 @@ function toFlagged(skill: unknown): Flagged[] {
   }
 
   const examWeight = typeof skill.examWeight === "number" ? skill.examWeight : null;
-  return [{ examWeight, syllabusLine: skill.syllabusLine }];
+  const name = typeof skill.name === "string" ? skill.name : "";
+  return [{ examWeight, name, syllabusLine: skill.syllabusLine }];
 }
 
 function toWeightChange(change: unknown): WeightChange[] {
@@ -278,7 +281,17 @@ export const scoreCoverageCheck: TaskScorer<CoverageCheckExpected> = ({ output, 
     ? scorePlacements({ expected: expected.placements, placements: parsed.placements })
     : null;
 
-  const parts = [gaps.f1, weights?.f1, gapWeights?.share, placed?.f1].filter(
+  const forms = findVerbFormProblems({
+    language: getTestCaseLanguage(testCase),
+    texts: parsed.flagged.map((skill) => skill.name),
+  });
+
+  const formShare =
+    parsed.flagged.length === 0
+      ? 1
+      : (parsed.flagged.length - forms.length) / parsed.flagged.length;
+
+  const parts = [gaps.f1, weights?.f1, gapWeights?.share, placed?.f1, formShare].filter(
     (part) => part !== undefined,
   );
 
@@ -290,6 +303,7 @@ export const scoreCoverageCheck: TaskScorer<CoverageCheckExpected> = ({ output, 
     ...(weights?.details ?? []),
     ...(gapWeights?.details ?? []),
     ...(placed?.details ?? []),
+    ...forms,
   ];
 
   return createFixedScore({

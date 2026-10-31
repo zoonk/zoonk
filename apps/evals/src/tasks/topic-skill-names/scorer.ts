@@ -1,5 +1,7 @@
+import { getTestCaseLanguage } from "@/lib/case-languages";
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer } from "@/lib/types";
+import { findVerbFormProblems } from "@/lib/verb-form";
 import { type TopicSkillName } from "@zoonk/ai/tasks/plans/topic-skill-names";
 import { normalizeString } from "@zoonk/utils/string";
 
@@ -60,7 +62,14 @@ export const scoreTopicSkillNames: TaskScorer<TopicSkillNamesExpected> = ({ outp
   );
 
   const leaks = problems.flatMap((problem) => problem.leaks);
-  const misses = problems.flatMap((problem) => problem.misses);
+
+  const misses = [
+    ...problems.flatMap((problem) => problem.misses),
+    ...findVerbFormProblems({
+      language: getTestCaseLanguage(testCase),
+      texts: skills.flatMap((skill) => (skill ? [skill.name] : [])),
+    }),
+  ];
 
   if (leaks.length > 0) {
     return createFixedScore({ conclusion: [...leaks, ...misses].join(" "), score: 6 });
