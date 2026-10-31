@@ -20,16 +20,7 @@ const RECENT_DRAFTS = 5;
 
 type ResumeGoal = Pick<
   Goal,
-  | "createdAt"
-  | "details"
-  | "examBlueprintId"
-  | "id"
-  | "kind"
-  | "language"
-  | "prompt"
-  | "status"
-  | "targetDate"
-  | "title"
+  "createdAt" | "details" | "examBlueprintId" | "id" | "kind" | "status" | "targetDate" | "title"
 >;
 
 type ResumeDraft = {
@@ -147,8 +138,6 @@ export async function getOnboardingResume(): Promise<OnboardingResumeResult> {
         examBlueprintId: true,
         id: true,
         kind: true,
-        language: true,
-        prompt: true,
         status: true,
         targetDate: true,
         title: true,

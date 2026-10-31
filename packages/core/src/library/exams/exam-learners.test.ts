@@ -127,20 +127,19 @@ describe(linkGoalToExamBlueprint, () => {
     ).toStrictEqual({ "DELE B2": [other.id, "es"], "PTE Academic 65": [pte.id, "en"] });
   });
 
-  it("takes the specialty the learner's own words name, and leaves the choice when they refuse one", async () => {
+  it("takes the specialty the learner's stated position names, and never one only their goal's words name", async () => {
     const user = await userFixture();
 
     const [blueprint, named, refused] = await Promise.all([
       specialtyBlueprintFixture(),
       goalFixture({
+        details: { targetPosition: "Auditor Federal – Desenvolvimento de Sistemas" },
         kind: "exam",
-        language: "pt",
-        prompt: "Passar na CGU, desenvolvimento de sistemas",
+        prompt: "Passar na CGU como auditor",
         userId: user.id,
       }),
       goalFixture({
         kind: "exam",
-        language: "pt",
         prompt: "Passar na CGU, mas não quero Desenvolvimento de Sistemas",
         userId: user.id,
       }),
@@ -171,10 +170,9 @@ describe(linkGoalToExamBlueprint, () => {
     const auditing = [{ group: SPECIALTY, subject: "Auditoria" }];
 
     const goal = await goalFixture({
+      details: { targetPosition: "Desenvolvimento de Sistemas" },
       examBlueprintId: blueprint.id,
       kind: "exam",
-      language: "pt",
-      prompt: "Passar na CGU, desenvolvimento de sistemas",
       userId: user.id,
     });
 

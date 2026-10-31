@@ -50,7 +50,7 @@ async function findExamNotice({
   today,
 }: {
   details: Record<string, unknown>;
-  goal: Pick<Goal, "details" | "examBlueprintId" | "id" | "language" | "prompt" | "title">;
+  goal: Pick<Goal, "details" | "examBlueprintId" | "id">;
   goalDate: string | null;
   today: string;
 }): Promise<{

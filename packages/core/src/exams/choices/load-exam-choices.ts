@@ -45,7 +45,7 @@ export async function loadExamChoiceViews({
 
 /** Onboarding asks a choice only when the learner's own words name none of its options. */
 export async function hasUnpickedChoice(
-  goal: Pick<Goal, "details" | "examBlueprintId" | "id" | "language" | "prompt" | "title">,
+  goal: Pick<Goal, "details" | "examBlueprintId" | "id">,
 ): Promise<boolean> {
   const [structure, saved] = await Promise.all([
     loadStructure(goal.examBlueprintId),

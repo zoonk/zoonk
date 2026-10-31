@@ -156,10 +156,10 @@ describe("onboarding an exam with a choice", () => {
     });
   });
 
-  it("takes the specialty the learner's goal names without asking, and saves it with their next answer", async () => {
-    const { goal, plan } = await specialtyGoal(
-      "passar no concurso da CGU para auditor de TI, desenvolvimento",
-    );
+  it("takes the specialty the learner's stated position names without asking, and saves it with their next answer", async () => {
+    const { goal, plan } = await specialtyGoal("passar no concurso da CGU para auditor de TI", {
+      targetPosition: "Auditor de TI, desenvolvimento de sistemas",
+    });
 
     const onboarding = await loadOnboarding(goal.id);
 
@@ -178,10 +178,13 @@ describe("onboarding an exam with a choice", () => {
     ]);
   });
 
+  // The goal reading records no position for these, so only the goal's own words name an option.
   it.each([
-    ["names none", "passar no concurso da CGU para auditor"],
-    ["refuses one", "passar no concurso da CGU, não quero Auditoria"],
-  ])("asks which specialty when the goal %s", async (_, prompt) => {
+    "Passar na CGU, preciso estudar os dados do edital",
+    "Passar na CGU e aprender ciência de dados",
+    "CGU, possivelmente Auditoria",
+    "passar no concurso da CGU, não quero Auditoria",
+  ])("asks which specialty for %j", async (prompt) => {
     const { goal } = await specialtyGoal(prompt);
     const onboarding = await loadOnboarding(goal.id);
 
