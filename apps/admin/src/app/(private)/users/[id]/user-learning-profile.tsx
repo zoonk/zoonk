@@ -14,7 +14,6 @@ export async function UserLearningProfile({ userId }: { userId: string }) {
           <DetailField label="Buddy">
             {[profile.buddyName, profile.buddyKind].filter(Boolean).join(" · ") || "—"}
           </DetailField>
-          <DetailField label="Birth year">{profile.birthYear ?? "—"}</DetailField>
           <DetailField label="Active goal">{profile.activeGoal?.title ?? "—"}</DetailField>
           <DetailField label="Memory">{profile.memoryEnabled ? "On" : "Off"}</DetailField>
           <DetailField label="Sounds">{profile.soundsEnabled ? "On" : "Off"}</DetailField>
