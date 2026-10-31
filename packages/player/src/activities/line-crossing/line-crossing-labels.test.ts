@@ -152,4 +152,21 @@ describe(placeLineLabels, () => {
     expect(box && gapToBox(box, arrow)).toBeGreaterThanOrEqual(3);
     expect(box && gapToSegment(box, segment)).toBeGreaterThanOrEqual(3);
   });
+
+  it("leaves an optional name out when no spot clears the marks, and keeps the others", () => {
+    const segment = { from: { x: 22, y: 222 }, to: { x: 293, y: 26 } };
+    const everywhere = { cx: 166, cy: 124, radius: 400 };
+
+    const [name, optional] = placeLineLabels({
+      area,
+      labels: [
+        { isUpper: true, segment, size },
+        { isOptional: true, isUpper: false, segment, size },
+      ],
+      marks: { ...noMarks, circles: [everywhere] },
+    });
+
+    expect(name).not.toBeNull();
+    expect(optional).toBeNull();
+  });
 });

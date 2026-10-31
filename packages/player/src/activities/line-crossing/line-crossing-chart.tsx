@@ -10,7 +10,8 @@ import {
   CROSSING_RADIUS,
   ChangeArrows,
   ClipArea,
-  Crossing,
+  CrossingDot,
+  CrossingGuide,
   LineLabel,
   LineMark,
   changeArrowBoxes,
@@ -35,7 +36,14 @@ const PADDING = { bottom: 30, left: 22, right: 18, top: 26 };
 const LINE_CLASSES = ["stroke-viz-highlight", "stroke-viz-secondary"] as const;
 const LINE_TEXT_CLASSES = ["text-viz-highlight", "text-viz-secondary"] as const;
 
-type ChartLabel = { className: string; id: string; isUpper: boolean; label: string; line: Line };
+type ChartLabel = {
+  className: string;
+  id: string;
+  isOptional?: boolean;
+  isUpper: boolean;
+  label: string;
+  line: Line;
+};
 
 type LineAndSlide = { line: ChartLine; slide: LineSlide };
 
@@ -111,6 +119,7 @@ function LineLabels({
       .map((line) => ({
         className: "text-muted-foreground",
         id: `${line.id}-before`,
+        isOptional: true,
         isUpper: false,
         label: t("Before"),
         line,
@@ -122,7 +131,14 @@ function LineLabels({
     const { from, to } = visibleSegment(label.line, domain);
 
     return size
-      ? [{ isUpper: label.isUpper, segment: { from: pixel(from), to: pixel(to) }, size }]
+      ? [
+          {
+            isOptional: label.isOptional,
+            isUpper: label.isUpper,
+            segment: { from: pixel(from), to: pixel(to) },
+            size,
+          },
+        ]
       : [];
   });
 
@@ -227,12 +243,12 @@ export function LineCrossingChart({
 
       {moved.length > 0 && (
         <>
-          <Crossing isBefore point={before} />
+          <CrossingGuide isBefore point={before} />
           <ChangeArrows after={after} before={before} />
         </>
       )}
 
-      <Crossing isBefore={false} point={after} />
+      <CrossingGuide isBefore={false} point={after} />
 
       {slides.map(({ line, slide }, index) => (
         <LineHandle
@@ -246,6 +262,10 @@ export function LineCrossingChart({
           {...handleText(line)}
         />
       ))}
+
+      {/* The crossings are the answer, so they show over a handle resting on them. */}
+      {moved.length > 0 && <CrossingDot isBefore point={before} />}
+      <CrossingDot isBefore={false} point={after} />
     </ActivityPlot>
   );
 }

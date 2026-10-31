@@ -81,31 +81,36 @@ export function LineLabel({
   );
 }
 
-export function Crossing({ isBefore, point }: { isBefore: boolean; point: Point }) {
+export function CrossingGuide({ isBefore, point }: { isBefore: boolean; point: Point }) {
   const { x, y } = usePlotScales();
   const [px, py] = [x.toPixel(point.x), y.toPixel(point.y)];
 
   return (
-    <g aria-hidden="true">
-      <path
-        className={cn(
-          "fill-none",
-          isBefore ? "stroke-muted-foreground/50" : "stroke-foreground/60",
-        )}
-        d={`M${x.range[0]} ${py} H${px} V${y.range[0]}`}
-        strokeDasharray="3 3"
-        strokeWidth={1.5}
-      />
-      <circle
-        className={
-          isBefore ? "fill-background stroke-muted-foreground" : "fill-foreground stroke-background"
-        }
-        cx={px}
-        cy={py}
-        r={DOT_RADIUS}
-        strokeWidth={2}
-      />
-    </g>
+    <path
+      aria-hidden="true"
+      className={cn("fill-none", isBefore ? "stroke-muted-foreground/50" : "stroke-foreground/60")}
+      d={`M${x.range[0]} ${py} H${px} V${y.range[0]}`}
+      strokeDasharray="3 3"
+      strokeWidth={1.5}
+    />
+  );
+}
+
+export function CrossingDot({ isBefore, point }: { isBefore: boolean; point: Point }) {
+  const { x, y } = usePlotScales();
+
+  return (
+    <circle
+      aria-hidden="true"
+      className={cn(
+        "pointer-events-none",
+        isBefore ? "fill-background stroke-muted-foreground" : "fill-foreground stroke-background",
+      )}
+      cx={x.toPixel(point.x)}
+      cy={y.toPixel(point.y)}
+      r={DOT_RADIUS}
+      strokeWidth={2}
+    />
   );
 }
 

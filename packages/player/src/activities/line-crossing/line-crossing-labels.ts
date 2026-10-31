@@ -5,7 +5,7 @@ export type LabelBox = { bottom: number; left: number; right: number; top: numbe
 type LabelCircle = { cx: number; cy: number; radius: number };
 export type LabelSize = { height: number; width: number };
 type LabelSegment = { from: Point; to: Point };
-type LineLabel = { isUpper: boolean; segment: LabelSegment; size: LabelSize };
+type LineLabel = { isOptional?: boolean; isUpper: boolean; segment: LabelSegment; size: LabelSize };
 
 const LABEL_GAP = 8;
 const CLEARANCE = 3;
@@ -116,7 +116,7 @@ function placeLineLabel({
   label: LineLabel;
   marks: LabelMarks;
   placed: readonly LabelBox[];
-}): LabelBox {
+}): LabelBox | null {
   const start = besideEnd(label, area);
   const step = label.size.height / STEPS_PER_LABEL_HEIGHT;
 
@@ -138,7 +138,7 @@ function placeLineLabel({
       fits(box, marks.lines) &&
       clearsMarks(box),
     isClear,
-    offItsLine,
+    ...(label.isOptional ? [] : [offItsLine]),
   ].reduce<Point | null>(
     (found, pass) =>
       found ??
@@ -152,7 +152,13 @@ function placeLineLabel({
   }
 
   const spots = spotsAcross(area, start);
-  return spots.find((box) => isClear(box)) ?? spots.find((box) => offItsLine(box)) ?? start;
+  const clear = spots.find((box) => isClear(box));
+
+  if (clear || label.isOptional) {
+    return clear ?? null;
+  }
+
+  return spots.find((box) => offItsLine(box)) ?? start;
 }
 
 /**
@@ -161,7 +167,8 @@ function placeLineLabel({
  * before it. When no spot close by clears every line, it keeps off its own line and the marks,
  * then just off its own line, searching the whole chart when nothing near is free. Every spot it
  * searches keeps clear of the arrows, heads included. Its halo never cuts the line it names: with no
- * free spot anywhere it stays by its end, on the line's open side.
+ * free spot anywhere it stays by its end, on the line's open side. An optional name with no spot
+ * clear of the marks and the names before it is left out, as null.
  */
 export function placeLineLabels({
   area,
@@ -173,13 +180,14 @@ export function placeLineLabels({
   labels: readonly LineLabel[];
   marks: LabelMarks;
   placed?: readonly LabelBox[];
-}): LabelBox[] {
+}): (LabelBox | null)[] {
   const [label, ...rest] = labels;
 
   if (!label) {
-    return [...placed];
+    return [];
   }
 
   const box = placeLineLabel({ area, label, marks, placed });
-  return placeLineLabels({ area, labels: rest, marks, placed: [...placed, box] });
+  const next = box ? [...placed, box] : placed;
+  return [box, ...placeLineLabels({ area, labels: rest, marks, placed: next })];
 }

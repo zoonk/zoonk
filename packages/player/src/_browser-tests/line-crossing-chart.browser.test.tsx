@@ -3,11 +3,12 @@ import {
   engineModeFixtures,
 } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it, onTestFinished } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
 import {
   checkActivity,
   expectVerdict,
   openActivity,
+  press,
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
@@ -105,6 +106,39 @@ function gapToHandle(label: SVGTextElement, name: string): number {
   return gapTo(label.getBoundingClientRect(), center) - box.width / 2;
 }
 
+function handlesUnderBefore(names: readonly string[]): string[] {
+  const before = [...document.querySelectorAll<SVGTextElement>("figure svg text")].find(
+    (text) => text.textContent === "Before" && text.getAttribute("visibility") !== "hidden",
+  );
+
+  return before ? names.filter((name) => gapToHandle(before, `Move the line ${name}`) <= HALO) : [];
+}
+
+async function beforeOverAHandle(names: readonly string[]): Promise<string[]> {
+  const overlaps: string[] = [];
+
+  for (const name of names) {
+    const slider = page.getByRole("slider", { name: `Move the line ${name}` }).element();
+    // oxlint-disable-next-line no-await-in-loop -- Each line walks its range in turn.
+    await pressOnSlider(`Move the line ${name}`, "Home", 1);
+    let previous: string | null = null;
+
+    while (slider.getAttribute("aria-valuenow") !== previous) {
+      const value = slider.getAttribute("aria-valuenow");
+
+      overlaps.push(
+        ...handlesUnderBefore(names).map((handle) => `${handle} with ${name} at ${value}`),
+      );
+
+      previous = value;
+      // oxlint-disable-next-line no-await-in-loop -- Each move lands before the labels are read.
+      await press("ArrowRight");
+    }
+  }
+
+  return overlaps;
+}
+
 type Bounds = { bottom: number; left: number; right: number; top: number };
 
 function plotBounds(): Bounds {
@@ -180,6 +214,16 @@ async function handlesOutsideAtEachEnd(
   }
 
   return outside;
+}
+
+function crossingDot(): SVGCircleElement {
+  const dot = document.querySelector<SVGCircleElement>("figure svg circle.fill-foreground");
+
+  if (!dot) {
+    throw new Error("No crossing drawn");
+  }
+
+  return dot;
 }
 
 function handleGapsFromTheCrossing(names: readonly string[]): number[] {
@@ -337,6 +381,33 @@ describe("line crossing chart", () => {
     });
   });
 
+  it("draws the new crossing over a handle resting on it, and a drag there still moves the handle", async () => {
+    await atViewport(PHONE, async () => {
+      openActivity({ template: "lineCrossing" });
+      await pressOnSlider("Move the line Demand", "End", 1);
+      const supply = page.getByRole("slider", { name: "Move the line Supply" });
+      const handle = supply.element().getBoundingClientRect();
+      const dot = crossingDot().getBoundingClientRect();
+      const body = document.body.getBoundingClientRect();
+
+      expect(supply.element().compareDocumentPosition(crossingDot())).toBe(
+        Node.DOCUMENT_POSITION_FOLLOWING,
+      );
+
+      await userEvent.dragAndDrop(supply, page.elementLocator(document.body), {
+        force: true,
+        sourcePosition: {
+          x: dot.left + dot.width / 2 - handle.left,
+          y: dot.top + dot.height / 2 - handle.top,
+        },
+        steps: 6,
+        targetPosition: { x: dot.left - 60 - body.left, y: dot.top + dot.height / 2 - body.top },
+      });
+
+      await expect.element(supply).not.toHaveAttribute("aria-valuenow", "0");
+    });
+  });
+
   it("keeps a handle's value in its range when the chart narrows at the end of its slide", async () => {
     await atViewport(WIDE, async () => {
       openActivity({ template: "lineCrossing" });
@@ -389,6 +460,19 @@ describe("line crossing chart", () => {
       await expect(
         handlesOutsideAtEachEnd(["Supply", "Demand"], chartBounds),
       ).resolves.toStrictEqual([]);
+    });
+  });
+
+  it("leaves Before out where it can't sit clear of the handles, on a narrow phone in large text", async () => {
+    document.documentElement.style.fontSize = "200%";
+
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport(NARROW, async () => {
+      openActivity({ template: "lineCrossing" });
+      await expect(beforeOverAHandle(["Supply", "Demand"])).resolves.toStrictEqual([]);
     });
   });
 
