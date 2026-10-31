@@ -46,6 +46,8 @@ import java.util.Locale
  * Lesson text with paragraphs, short lists and tables of data, as the step contract allows, and
  * the `mark` sentence highlighted where the text shows it (main's `RichTextBlocks`). Paragraphs
  * take `style` (the surrounding `LocalTextStyle` by default); tables use the smaller body size.
+ * `literalNumbers` keeps numbers as written, for text whose digits are characters (main's
+ * `LessonRichText`).
  */
 @Composable
 fun RichText(
@@ -53,12 +55,14 @@ fun RichText(
     modifier: Modifier = Modifier,
     mark: String? = null,
     style: TextStyle = LocalTextStyle.current,
+    literalNumbers: Boolean = false,
 ) {
     val locale = currentLocale()
     val blocks =
-        remember(text, mark, locale) {
+        remember(text, mark, locale, literalNumbers) {
             val parsed = parseRichBlocks(text)
-            (if (mark.isNullOrEmpty()) parsed else markRichBlocks(parsed, mark)).map { typesetBlock(it, locale) }
+            val marked = if (mark.isNullOrEmpty()) parsed else markRichBlocks(parsed, mark)
+            if (literalNumbers) marked else marked.map { typesetBlock(it, locale) }
         }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(BLOCK_GAP)) {

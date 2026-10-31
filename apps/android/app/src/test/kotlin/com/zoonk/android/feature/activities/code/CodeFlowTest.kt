@@ -228,6 +228,15 @@ class CodeFlowTest {
     }
 
     @Test
+    fun numbersInARegexTaskAreTextToMatchSoTheyArentGrouped() {
+        play(zipHintTester, ActivityFixtures.expected("patternTester"), isCorrect = true, { ScriptedSandbox.regexTested(it) })
+
+        shows("Match US ZIP codes, like 94103 or 94103-1234.")
+        tap("Show a hint")
+        shows("941031 has six digits.")
+    }
+
+    @Test
     fun aFormulaIsCheckedCellByCell() {
         play(formulaTester, expected = null, isCorrect = false, { ScriptedSandbox.regexTested(it) })
 
@@ -491,6 +500,13 @@ class CodeFlowTest {
                     ).jsonObject,
                 id = "formula",
             )
+
+        val zipHintTester =
+            ActivityFixtures.contentJson("patternTester").let { content ->
+                val hints = ApiJson.parseToJsonElement("""[{"hint":"941031 has six digits.","mistake":"Matches extra digits"}]""")
+                val fields = content.getValue("fields").jsonObject
+                ActivityFixtures.step(JsonObject(content + ("fields" to JsonObject(fields + ("hints" to hints)))), id = "zip")
+            }
 
         val twoPauseTracer =
             ActivityFixtures.contentJson("codeTracer").let { content ->

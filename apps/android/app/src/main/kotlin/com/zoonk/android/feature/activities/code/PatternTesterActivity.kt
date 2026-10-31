@@ -131,7 +131,11 @@ private fun PatternTesterActivity(props: ActivityProps) {
     }
 
     ActivityCanvas(gap = 16.dp) {
-        RichText(regex?.task ?: formula?.task.orEmpty(), style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
+        RichText(
+            regex?.task ?: formula?.task.orEmpty(),
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+            literalNumbers = regex != null,
+        )
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             PatternField(value, ::change, isRegex = regex != null, props.isLocked, props.isChecked, focus)
             if (!props.isChecked) {
@@ -148,7 +152,9 @@ private fun PatternTesterActivity(props: ActivityProps) {
         }
         if (regex != null) RegexExamples(regex, value.text)
         if (formula != null) FormulaExamples(formula, value.text)
-        if (!props.isExploring) PatternHints(regex?.hints ?: formula?.hints.orEmpty(), props.isChecked, props.isLocked)
+        if (!props.isExploring) {
+            PatternHints(regex?.hints ?: formula?.hints.orEmpty(), props.isChecked, props.isLocked, literalNumbers = regex != null)
+        }
         if (props.isChecked) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 ActivityCanvasLabel(
@@ -452,6 +458,7 @@ private fun PatternHints(
     hints: List<PatternHint>,
     isChecked: Boolean,
     isLocked: Boolean,
+    literalNumbers: Boolean,
 ) {
     var shown by rememberSaveable { mutableIntStateOf(0) }
     if (hints.isEmpty()) return
@@ -475,8 +482,9 @@ private fun PatternHints(
                             RichText(
                                 stringResource(R.string.activities_code_hint_mistake, hint.mistake),
                                 style = style.copy(fontWeight = FontWeight.SemiBold),
+                                literalNumbers = literalNumbers,
                             )
-                            RichText(hint.hint, style = style)
+                            RichText(hint.hint, style = style, literalNumbers = literalNumbers)
                         }
                     }
                 }
