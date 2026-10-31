@@ -11,10 +11,10 @@ import systemPrompt from "./word-ipa.prompt.md";
 /**
  * A wrong IPA makes the voice and its check agree on a wrong word. Claude Sonnet 5.5 wrote all 115
  * look-alike readings right on the word-ipa eval; Haiku, Luna and Flash Lite got some wrong (11 Oct
- * 2026).
+ * 2026). GPT-6.1 Sol matched GPT-6 Sol with 52 of 55 sampled words right (31 Oct 2026).
  */
 const defaultModel = "anthropic/claude-sonnet-5.5";
-const fallbackModels = ["openai/gpt-6-sol", "google/gemini-3.8-flash"] as const;
+const fallbackModels = ["openai/gpt-6.1-sol", "google/gemini-3.8-flash"] as const;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the word's own sounds come before the English reading. */
 const schema = z.object({ ipa: z.string(), englishIpa: z.string().nullable() });

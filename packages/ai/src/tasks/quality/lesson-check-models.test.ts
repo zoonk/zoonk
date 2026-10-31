@@ -12,7 +12,7 @@ describe(getLessonCheckModels, () => {
 
     expect(
       getLessonCheckModels({ reuse: "bounded", writerModel: "anthropic/claude-opus-5.5" }),
-    ).toStrictEqual({ fallbackModels: ["openai/gpt-6-sol"], model: "google/gemini-3.8-flash" });
+    ).toStrictEqual({ fallbackModels: ["openai/gpt-6.1-sol"], model: "google/gemini-3.8-flash" });
   });
 
   it("checks a lesson that may serve one learner with the cheaper reviewer from another family", () => {
@@ -29,6 +29,9 @@ describe(getLessonCheckModels, () => {
     // Gemini reviewer.
     expect(
       getLessonCheckModels({ reuse: "personal", writerModel: "google/gemini-3.8-flash" }),
-    ).toStrictEqual({ fallbackModels: ["openai/gpt-6-sol"], model: "anthropic/claude-sonnet-5.5" });
+    ).toStrictEqual({
+      fallbackModels: ["openai/gpt-6.1-sol"],
+      model: "anthropic/claude-sonnet-5.5",
+    });
   });
 });

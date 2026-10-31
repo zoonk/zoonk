@@ -11,10 +11,11 @@ import systemPrompt from "./past-questions.prompt.md";
 
 /**
  * The answer must copy long papers exactly: on the past-questions eval every quoted part matched
- * its paper and every key was right (27 Sep 2026).
+ * its paper and every key was right (27 Sep 2026). GPT-6.1 Sol did the same, scoring 9.71 to
+ * Flash's 9.81 on the same cases (31 Oct 2026).
  */
 const defaultModel = "google/gemini-3.8-flash";
-const fallbackModels = ["openai/gpt-6-sol"] as const;
+const fallbackModels = ["openai/gpt-6.1-sol"] as const;
 
 const DEFAULT_COUNT = 10;
 const MAX_COUNT = 20;
