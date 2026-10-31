@@ -329,8 +329,7 @@ private func goalLine(_ goal: LearnerGoal) -> String {
     return String(
       localized: "Finished", table: "Navigation", comment: "A goal the learner finished")
   case .active, .archived:
-    let time = Duration.seconds(goal.dailyMinutes * 60)
-      .formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))
+    let time = studyDuration(minutes: goal.dailyMinutes)
     let perDay = String(
       localized: "\(time) a day", table: "Navigation",
       comment: "How long the learner studies a goal each day, such as 45 min a day")

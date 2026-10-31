@@ -255,17 +255,7 @@ extension TodayView.PlanStatus {
 }
 
 func studyDuration(minutes: Int) -> String {
-  let style = Measurement<UnitDuration>.FormatStyle(width: .abbreviated)
-  let hours = minutes / 60
-  let rest = minutes % 60
-  let minutePart = Measurement(value: Double(rest), unit: UnitDuration.minutes).formatted(style)
-
-  guard hours > 0 else {
-    return minutePart
-  }
-
-  let hourPart = Measurement(value: Double(hours), unit: UnitDuration.hours).formatted(style)
-  return rest == 0 ? hourPart : "\(hourPart) \(minutePart)"
+  progressLearningTime(minutes * 60)
 }
 
 /// Midnight in UTC, to format with a UTC calendar so it never shifts a day.

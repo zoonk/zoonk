@@ -115,7 +115,7 @@ struct PlanLinkScreen: View {
       Section {
         Picker(selection: $dailyMinutes) {
           ForEach(ScheduleTime.dailyTimes(link.dailyTimes), id: \.self) { minutes in
-            Text(duration(minutes)).tag(minutes)
+            Text(studyDuration(minutes: minutes)).tag(minutes)
           }
         } label: {
           Text(
@@ -170,7 +170,7 @@ struct PlanLinkScreen: View {
         Text("A study plan", tableName: "PlanLink", comment: "Header over a shared plan's phases")
       } footer: {
         Text(
-          "~\(duration(max(1, minutes(outline.hours)))) of study · \(outline.phases.count) phases · \(outline.skillCount) skills",
+          "~\(studyDuration(minutes: max(1, minutes(outline.hours)))) of study · \(outline.phases.count) phases · \(outline.skillCount) skills",
           tableName: "PlanLink", comment: "A shared plan's size: its study time, phases and skills")
       }
     }
@@ -213,17 +213,12 @@ struct PlanLinkScreen: View {
   /// A phase too small to measure shows no size, so nothing ever reads "~0 min".
   private func phaseSize(_ hours: Double) -> String? {
     let minutes = minutes(hours)
-    return minutes > 0 ? "~" + duration(minutes) : nil
+    return minutes > 0 ? "~" + studyDuration(minutes: minutes) : nil
   }
 
   /// Under an hour counts in minutes; from an hour on, in whole hours, since it's an estimate.
   private func minutes(_ hours: Double) -> Int {
     let minutes = Int((hours * 60).rounded())
     return minutes < 60 ? minutes : Int(hours.rounded()) * 60
-  }
-
-  private func duration(_ minutes: Int) -> String {
-    Duration.seconds(minutes * 60).formatted(
-      .units(allowed: [.hours, .minutes], width: .abbreviated))
   }
 }

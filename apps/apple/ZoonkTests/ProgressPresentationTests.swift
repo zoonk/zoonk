@@ -24,6 +24,13 @@ final class ProgressPresentationTests: XCTestCase {
     }
   }
 
+  func testLearningTimeWritesJapaneseUnitsTogether() {
+    let locale = Locale(identifier: "ja_JP")
+
+    XCTAssertEqual(progressLearningTime(5_400, locale: locale), "1時間30分")
+    XCTAssertEqual(progressLearningTime(45, locale: locale), "45秒")
+  }
+
   func testDaypartHoursFollowTheLocalesClock() {
     XCTAssertEqual(
       ProgressDaypart.allCases.map { $0.localizedTimeRange(locale: Locale(identifier: "en_US")) },

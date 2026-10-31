@@ -26,7 +26,9 @@ func progressLearningTime(_ totalSeconds: Int, locale: Locale = .autoupdatingCur
 
   let hours = unit(totalMinutes / 60, .hours)
   let minutes = totalMinutes % 60
-  return minutes == 0 ? hours : "\(hours) \(unit(minutes, .minutes))"
+  // Foundation spaces Japanese units ("1時間 30分"), but Japanese writes them together ("1時間30分").
+  let separator = locale.language.languageCode == .japanese ? "" : " "
+  return minutes == 0 ? hours : "\(hours)\(separator)\(unit(minutes, .minutes))"
 }
 
 /// Mirrors main's `formatMetricPercent`; `value` is on the API's 0–100 scale.

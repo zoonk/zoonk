@@ -55,7 +55,7 @@ struct PreferencesView: View {
 
             ForEach(preferences.dailyLimitChoices, id: \.self) { minutes in
               Text(
-                "\(Duration.seconds(minutes * 60).formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))) a day",
+                "\(studyDuration(minutes: minutes)) a day",
                 tableName: "Settings",
                 comment: "Daily time limit option, as in “30 min a day”"
               )

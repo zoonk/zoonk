@@ -43,8 +43,7 @@ extension PlanPhase {
 }
 
 func planDurationText(minutes: Double) -> String {
-  Duration.seconds(minutes * 60).formatted(
-    .units(allowed: [.hours, .minutes], width: .abbreviated, maximumUnitCount: 2))
+  progressLearningTime(Int((minutes * 60).rounded()))
 }
 
 struct PlanRoadmapSection: View {

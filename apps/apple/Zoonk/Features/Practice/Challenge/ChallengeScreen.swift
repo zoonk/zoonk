@@ -481,9 +481,7 @@ struct ChallengeScreen: View {
     }
 
     if let minutes = challenge.estimatedMinutes ?? challenge.minutes {
-      facts.append(
-        Duration.seconds(minutes * 60).formatted(
-          .units(allowed: [.hours, .minutes], width: .abbreviated)))
+      facts.append(studyDuration(minutes: minutes))
     }
 
     if let date = challenge.date, challenge.status == .upcoming, when(challenge) == nil {

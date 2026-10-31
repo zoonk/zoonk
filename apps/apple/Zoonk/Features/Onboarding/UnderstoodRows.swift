@@ -144,7 +144,7 @@ enum UnderstoodRows {
       minutesSaid
       ? String(
         localized: LocalizedStringResource(
-          "\(Duration.seconds(schedule.dailyMinutes * 60), format: .units(allowed: [.hours, .minutes], width: .wide)) a day",
+          "\(studyDuration(minutes: schedule.dailyMinutes)) a day",
           table: "Onboarding", comment: "How long the learner studies each day"))
       : nil
     let parts = [when, minutes].compactMap(\.self)
