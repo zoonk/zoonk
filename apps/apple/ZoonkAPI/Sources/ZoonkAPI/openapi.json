@@ -76816,7 +76816,7 @@
           },
           "share": {
             "nullable": true,
-            "description": "Its share of the exam: the notice's weight, or its share of the questions",
+            "description": "Its share of the exam; for a qualifying test, what passing it takes",
             "type": "number",
             "minimum": 0,
             "maximum": 1

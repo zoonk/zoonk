@@ -10,7 +10,7 @@ import {
   getPastQuestionsSource,
   getSubjectQuestions,
 } from "../../../library/exams/subject-questions";
-import { listSubjectShares } from "../../../library/exams/subject-shares";
+import { listPlanShares } from "../../../library/exams/subject-shares";
 import { getTopicFrequencySource, listTopicLevels } from "../../../library/exams/topic-frequency";
 import { getTopicHeadings } from "../../../library/exams/topic-groups";
 import { readCourseWeights } from "../../../plans/planner/course-weights";
@@ -72,7 +72,7 @@ export async function loadNotice(
   const { edition, structure: read, topicFrequency } = readBlueprintContent(blueprint);
   const structure = toChosenStructure({ choices, structure: read });
   const levels = listTopicLevels({ structure, topicFrequency });
-  const shares = listSubjectShares(structure);
+  const shares = listPlanShares(structure);
 
   const subjects: NoticeSubject[] = structure.subjects.map((subject, index) => ({
     frequencySource: getTopicFrequencySource({ structure, subject }),

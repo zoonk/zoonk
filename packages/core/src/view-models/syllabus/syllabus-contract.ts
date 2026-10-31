@@ -183,9 +183,7 @@ const syllabusSubjectSchema = z
       .meta({ description: "Questions on it in the exam, when the notice says" }),
     share: shareSchema
       .nullable()
-      .meta({
-        description: "Its share of the exam: the notice's weight, or its share of the questions",
-      }),
+      .meta({ description: "Its share of the exam; for a qualifying test, what passing it takes" }),
     shortName: z
       .string()
       .meta({

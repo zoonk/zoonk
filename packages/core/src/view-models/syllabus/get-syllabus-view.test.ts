@@ -19,10 +19,33 @@ import { getSyllabusView } from "./get-syllabus-view";
 
 const citation = { passage: "Conteúdo programático", sourceId: "notice" };
 
-function noticeStructure() {
+const QUALIFYING_P2 = {
+  adaptive: false,
+  citations: [],
+  order: null,
+  scoring: {
+    description: "",
+    method: "raw" as const,
+    parts: [
+      {
+        citation,
+        maxPoints: null,
+        minimum: { unit: "percent" as const, value: 30 },
+        name: "Conhecimentos específicos (P2)",
+        qualifying: true,
+        questions: null,
+      },
+    ],
+  },
+  sections: [],
+  timeLimitMinutes: null,
+  totalQuestions: null,
+};
+
+function noticeStructure(mock: typeof QUALIFYING_P2 | null = null) {
   return {
     formats: [],
-    mock: null,
+    mock,
     rules: [],
     subjects: [
       {
@@ -45,7 +68,13 @@ function noticeStructure() {
   };
 }
 
-async function signedInExamLearner({ topics }: { topics: boolean }) {
+async function signedInExamLearner({
+  mock = null,
+  topics,
+}: {
+  mock?: typeof QUALIFYING_P2 | null;
+  topics: boolean;
+}) {
   const user = await userFixture();
 
   const [blueprint, portugueseCourse, lawCourse, orthography, cohesion, principles, lesson] =
@@ -61,7 +90,7 @@ async function signedInExamLearner({ topics }: { topics: boolean }) {
           timeZone: null,
           year: 2026,
         },
-        structure: noticeStructure(),
+        structure: noticeStructure(mock),
       }),
       courseFixture({ imageUrl: "https://example.com/pt.webp", title: "Língua Portuguesa" }),
       courseFixture({ imageUrl: "https://example.com/dc.webp", title: "Direito Constitucional" }),
@@ -250,6 +279,18 @@ describe(getSyllabusView, () => {
     expect(syllabus?.subjects[1]?.chapters).toMatchObject([
       { chapterId: lawChapter.id, nextDate: "2026-10-06", state: "current" },
     ]);
+  });
+
+  it("weighs a test that only has to be passed by what passing it takes, never as nothing to study", async () => {
+    await signedInExamLearner({ mock: QUALIFYING_P2, topics: false });
+    const result = await getSyllabusView();
+    const subjects = result.status === "ready" ? result.syllabus.subjects : [];
+    const [portuguese, law] = subjects;
+
+    expect(law?.share).toBeCloseTo(0.3 * (10 / 40));
+    expect(portuguese?.share).toBeCloseTo(1 - 0.3 * (10 / 40));
+
+    expect(subjects.map((subject) => subject.displayWeight?.percent)).toStrictEqual([93, 7]);
   });
 
   it("shows a class test's material by its headings, as the learner's material, not a notice", async () => {
