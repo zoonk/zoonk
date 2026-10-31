@@ -2241,7 +2241,7 @@ msgstr "Crear un nuevo objetivo"
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "Zt_vKl"
 msgid "The free plan follows one goal at a time: pause your current goal from its menu, or follow more than one with Plus."
-msgstr "El plan Gratis permite seguir un objetivo a la vez: pausa tu objetivo actual desde su menú o sigue más de uno con Plus."
+msgstr "El plan gratis te permite seguir un objetivo a la vez: pausa tu objetivo actual desde su menú o sigue más de uno con Plus."
 
 #. Describes how often essay practice comes in the learner's plan.
 #: src/conversation/tutor-feature-offers.tsx
@@ -2541,7 +2541,7 @@ msgstr ", ausente"
 #: src/essay/essay-screen.tsx
 msgctxt "l44-_n"
 msgid "Skip the rewrite"
-msgstr "Omitir la reescritura"
+msgstr "Saltar la reescritura"
 
 #: src/essay/essay-feedback.tsx
 msgctxt "wCgTu5"
@@ -2648,7 +2648,7 @@ msgstr "Respuesta libre · criterios de calificación de AP"
 #: src/session/use-block-copy.ts
 msgctxt "Jo0iJd"
 msgid "Writing practice"
-msgstr "Práctica de escritura"
+msgstr "Práctica de redacción"
 
 #: src/essay/essay-prompt.tsx
 msgctxt "OJsoa4"
@@ -3857,7 +3857,7 @@ msgstr "Preparando la lección"
 #: src/journey/goal-actions.tsx
 msgctxt "vr-vFm"
 msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "Con el plan Gratis puedes seguir un objetivo a la vez. Pausa tu otro objetivo para reanudar este u obtén Plus para seguir más objetivos."
+msgstr "El plan gratis te permite seguir un objetivo a la vez. Pausa tu otro objetivo para reanudar este u obtén Plus para seguir más de uno."
 
 #: src/journey/goal-actions.tsx
 msgctxt "iTK9B7"
@@ -5594,7 +5594,7 @@ msgstr "Aproximadamente {time} para leer, escuchar y decir una frase en voz alta
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "Lqi6Xz"
 msgid "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it."
-msgstr "¿No conoces su alfabeto? Omite la prueba. Tu primera sesión empieza con una breve lección para aprender a leerlo."
+msgstr "¿Aún no conoces su alfabeto? Sáltate la prueba. Tu primera sesión empieza con una breve lección para aprender a leerlo."
 
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "11ZJH9"
@@ -8402,7 +8402,7 @@ msgstr "Más objetivos a la vez con Plus"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "KJXbLd"
 msgid "The free plan follows one goal at a time. To start another, pause your current goal from the menu on your Plan. Quick questions work anytime."
-msgstr "El plan gratuito te permite seguir un objetivo a la vez. Para crear otro, pausa tu objetivo actual desde el menú de tu Plan. Puedes hacer preguntas rápidas en cualquier momento."
+msgstr "El plan gratis te permite seguir un objetivo a la vez. Para crear otro, pausa tu objetivo actual desde el menú de tu Plan. Puedes hacer preguntas rápidas en cualquier momento."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"
@@ -8989,7 +8989,7 @@ msgstr "Sé algunas cosas"
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "h9kQ0S"
 msgid "We'll skip what you already know"
-msgstr "Omitiremos lo que ya sabes"
+msgstr "Saltaremos lo que ya sabes"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "47D0tB"
@@ -9004,7 +9004,7 @@ msgstr "Se adapta a tus respuestas, aproximadamente {time}"
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "PAwSdR"
 msgid "Not sure, give me a quick test"
-msgstr "No sé, hacer una prueba rápida"
+msgstr "No sé, quiero una prueba rápida"
 
 #: src/onboarding/steps/notice-reading.tsx
 msgctxt "xzvcZt"
@@ -9191,7 +9191,7 @@ msgstr "Se basan en las habilidades que necesitas para alcanzar tu objetivo. Sue
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "WYzHAI"
 msgid "Skip for now"
-msgstr "Omitir por ahora"
+msgstr "Saltar por ahora"
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "8S9f9-"
@@ -10769,7 +10769,7 @@ msgstr "{count, plural, one {# requisito previo, {time} para lo esencial.} other
 #: src/plan/use-change-sentence.ts
 msgctxt "hFKPQ9"
 msgid "Harder from now on: tougher practice, and the basics you already do well are skipped."
-msgstr "A partir de ahora, la práctica es más exigente y se omite lo básico que ya dominas."
+msgstr "A partir de ahora, la práctica es más exigente y se saltan los conceptos básicos que ya dominas."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "VgcdiE"
@@ -11168,12 +11168,12 @@ msgstr "Fase {number, number}"
 #: src/plan/use-phase-name.ts
 msgctxt "planPhases.6RRX7X"
 msgid "Foundations"
-msgstr "Fundamentos"
+msgstr "Bases"
 
 #: src/plan/use-phase-name.ts
 msgctxt "planPhases.PFt14a"
 msgid "Fill the gaps"
-msgstr "Completar lo que falta"
+msgstr "Cubrir lo que falta"
 
 #: src/plan/use-phase-name.ts
 msgctxt "planPhases.KV-O0y"
@@ -11480,7 +11480,7 @@ msgstr "A partir de ahora, práctica de escritura cada dos semanas."
 #: src/plan/written-cadence.tsx
 msgctxt "NCZM_0"
 msgid "Writing practice only in the final weeks from now on."
-msgstr "A partir de ahora, práctica de escritura solo en las últimas semanas."
+msgstr "A partir de ahora, solo hay práctica de redacción en las últimas semanas."
 
 #: src/plan/written-cadence.tsx
 msgctxt "nik_-i"
@@ -12868,7 +12868,7 @@ msgstr "Empieza por estas. Al iniciar tu sesión, el plan se ajusta al tiempo qu
 #: src/today/today-exam-access.tsx
 msgctxt "6cgB9d"
 msgid "Exam prep on the free plan"
-msgstr "Preparación para exámenes en el plan Gratis"
+msgstr "Preparación para exámenes en el plan gratis"
 
 #: src/today/today-exam-choice.tsx
 msgctxt "SVKPfj"
