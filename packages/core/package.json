@@ -9,7 +9,6 @@
     }
   },
   "exports": {
-    "./library/exams/format-sections": "./src/library/exams/format-sections.ts",
     "./ai": "./src/ai.ts",
     "./ai-calls/log": "./src/ai-calls/ai-call-log.ts",
     "./analytics/ai-generations": "./src/analytics/ai-generations.ts",

@@ -2,14 +2,6 @@ import { namesMatch } from "../../exams/_utils/name-match";
 
 type SectionedFormat = { sections?: readonly string[] };
 
-export function findUnknownScopeFormats<Format extends SectionedFormat>(
-  formats: readonly Format[],
-): Format[] {
-  return formats.some((format) => format.sections?.length)
-    ? formats.filter((format) => !format.sections?.length)
-    : [];
-}
-
 function isAskedIn({
   format,
   names,
