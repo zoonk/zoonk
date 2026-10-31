@@ -1,9 +1,16 @@
 import { stripe } from "@better-auth/stripe";
 import { PAID_PLANS } from "@zoonk/utils/subscription";
+import { z } from "zod";
+import { getCheckoutSessionParams } from "./checkout-session-params";
 import { stripeClient } from "./client";
 import { reportSubscriptionChange } from "./subscription-events";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? "";
+
+const upgradeBodySchema = z.object({
+  annual: z.boolean().optional(),
+  locale: z.string().optional(),
+});
 
 type ReportedSubscription = { plan: string; referenceId: string };
 
@@ -23,7 +30,10 @@ export function stripePlugin() {
     stripeWebhookSecret: webhookSecret,
     subscription: {
       enabled: true,
-      getCheckoutSessionParams: () => ({ params: { allow_promotion_codes: true } }),
+      getCheckoutSessionParams: async (_data, _request, ctx) => {
+        const { annual, locale } = upgradeBodySchema.parse(ctx.body);
+        return { params: await getCheckoutSessionParams({ annual: annual === true, locale }) };
+      },
       // Canceling keeps Plus until the period ends, so the decision counts when it becomes
       // pending; a subscription ended right away (or by failed payments) was never pending.
       onSubscriptionCancel: ({ subscription }) => reportChange("canceled", subscription),

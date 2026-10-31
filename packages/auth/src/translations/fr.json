@@ -1,4 +1,7 @@
 {
+  "checkoutMonthlyRenewal": "Plus commence dès votre paiement et se renouvelle automatiquement chaque mois jusqu'à ce que vous le résiliiez. Vous pouvez résilier à tout moment dans Zoonk, dans Paramètres › Abonnement, et garder Plus jusqu'à la fin de la période payée. Vous avez changé d'avis ? Écrivez à hello@zoonk.com dans les 14 jours pour être remboursé intégralement.",
+  "checkoutTermsConsent": "J'ai lu et j'accepte les [Conditions d'utilisation]({termsUrl}), y compris le renouvellement automatique et le remboursement sous 14 jours.",
+  "checkoutYearlyRenewal": "Plus commence dès votre paiement et se renouvelle automatiquement chaque année jusqu'à ce que vous le résiliiez. Vous pouvez résilier à tout moment dans Zoonk, dans Paramètres › Abonnement, et garder Plus jusqu'à la fin de la période payée. Vous avez changé d'avis ? Écrivez à hello@zoonk.com dans les 14 jours pour être remboursé intégralement.",
   "otpDisclaimer": "Si vous n'avez pas demandé ce code, vous pouvez ignorer ce message.",
   "otpExpiry": "Ce code expire dans 5 minutes.",
   "otpIntro": "Voici votre code pour vous connecter à Zoonk :",
