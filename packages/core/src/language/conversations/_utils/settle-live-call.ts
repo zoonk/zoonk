@@ -43,10 +43,11 @@ export async function settleLiveCall({
         data: { spentMicros: { increment: delta } },
         where: { day: connection.freeSpendDay },
       }),
-    transaction.usageRecord.updateMany({
-      data: { costMicros, seconds: learnerSeconds },
-      where: { kind: "conversation", targetId: connection.id, userId: connection.userId },
-    }),
+    connection.userId &&
+      transaction.usageRecord.updateMany({
+        data: { costMicros, seconds: learnerSeconds },
+        where: { kind: "conversation", targetId: connection.id, userId: connection.userId },
+      }),
   ]);
 
   return true;

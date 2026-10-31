@@ -10,6 +10,7 @@ import {
   listDueFreshnessTargetsStep,
   listLessonsForLaterReviewStep,
   purgeEvaluationRunsStep,
+  purgeExpiredAuthRecordsStep,
   purgeExpiredVerificationsStep,
   purgeMemoryFactsStep,
   recalibrateItemDifficultiesStep,
@@ -18,6 +19,8 @@ import {
 const MAX_GUEST_BATCHES = 20;
 
 export type DailySweepsResult = {
+  accessRecordsPurged: number;
+  sessionsPurged: number;
   evaluationRunsPurged: number;
   flaggedContentStarted: boolean;
   freshnessChecks: number;
@@ -77,7 +80,7 @@ async function startLaterReviews(): Promise<number> {
 export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
   "use workflow";
 
-  const [checks, guests, facts, runs, items, reviews, flagged, retired, verifications] =
+  const [checks, guests, facts, runs, items, reviews, flagged, retired, verifications, access] =
     await Promise.allSettled([
       checkFreshness(),
       deleteGuests(),
@@ -88,9 +91,11 @@ export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
       rewriteFlaggedContent(),
       deleteRetiredStepsStep(),
       purgeExpiredVerificationsStep(),
+      purgeExpiredAuthRecordsStep(),
     ]);
 
   return {
+    accessRecordsPurged: access.status === "fulfilled" ? access.value.recordsPurged : 0,
     evaluationRunsPurged: countOf(runs),
     flaggedContentStarted: flagged.status === "fulfilled" && flagged.value,
     freshnessChecks: countOf(checks),
@@ -99,6 +104,7 @@ export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
     laterReviews: countOf(reviews),
     memoryFactsPurged: countOf(facts),
     retiredStepsDeleted: countOf(retired),
+    sessionsPurged: access.status === "fulfilled" ? access.value.sessionsPurged : 0,
     verificationsPurged: countOf(verifications),
   };
 }

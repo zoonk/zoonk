@@ -35,10 +35,10 @@ async function endWithoutProvider({
 }: {
   connectionId: string;
   reason: LiveCallEndReason;
-  userId: string;
+  userId: string | null;
 }): Promise<EndStep> {
   return prisma.$transaction(async (transaction) => {
-    await lockUsageForViewer({ transaction, userId });
+    await lockUsageForViewer({ transaction, userId: userId ?? connectionId });
 
     const connection = await transaction.liveCallConnection.findUniqueOrThrow({
       where: { id: connectionId },
@@ -89,7 +89,7 @@ async function settleHungUp({
   reason: LiveCallEndReason;
 }): Promise<void> {
   const settled = await prisma.$transaction(async (transaction) => {
-    await lockUsageForViewer({ transaction, userId: connection.userId });
+    await lockUsageForViewer({ transaction, userId: connection.userId ?? connection.id });
 
     const current = await transaction.liveCallConnection.findUniqueOrThrow({
       where: { id: connection.id },
@@ -118,7 +118,9 @@ async function settleHungUp({
 
   if (settled !== null) {
     await recordLiveConversationUsage({
-      analytics: { contentScope: "personal", distinctId: connection.userId },
+      analytics: connection.userId
+        ? { contentScope: "personal", distinctId: connection.userId }
+        : undefined,
       runId: connection.id,
       seconds: settled,
     });
@@ -142,7 +144,10 @@ export async function endLiveCall({
   const step = await endWithoutProvider({ connectionId, reason, userId: original.userId });
 
   if (step.status !== "hangUp") {
-    revalidateCacheTags([getAllowanceCacheTag(original.userId)]);
+    if (original.userId) {
+      revalidateCacheTags([getAllowanceCacheTag(original.userId)]);
+    }
+
     return step;
   }
 
@@ -154,7 +159,10 @@ export async function endLiveCall({
   }
 
   await settleHungUp({ alreadyEnded: hungUp.data === "alreadyEnded", connection, reason });
-  revalidateCacheTags([getAllowanceCacheTag(connection.userId)]);
+
+  if (connection.userId) {
+    revalidateCacheTags([getAllowanceCacheTag(connection.userId)]);
+  }
 
   return { status: "ended" };
 }

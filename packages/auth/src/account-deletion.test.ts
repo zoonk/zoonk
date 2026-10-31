@@ -39,6 +39,28 @@ describe(deleteUserDependenciesBeforeAuthDelete, () => {
     mocks.revokeStoredAppleAuthorization.mockResolvedValue(true);
   });
 
+  it("clears live-call ownership while preserving its cost record", async () => {
+    const user = await createTestUser();
+
+    const call = await prisma.liveCallConnection.create({
+      data: {
+        conversationId: randomUUID(),
+        costMicros: 123,
+        deadlineAt: new Date(),
+        heldSeconds: 60,
+        state: "ended",
+        userId: user.id,
+      },
+    });
+
+    await deleteUserDependenciesBeforeAuthDelete(user);
+    await prisma.user.delete({ where: { id: user.id } });
+
+    await expect(
+      prisma.liveCallConnection.findUnique({ where: { id: call.id } }),
+    ).resolves.toStrictEqual({ ...call, userId: null });
+  });
+
   it("removes local subscription records", async () => {
     const user = await createTestUser();
 

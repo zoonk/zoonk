@@ -40,9 +40,16 @@ export type RedeemLiveCallSdpResult =
 
 type Refusal = Exclude<RedeemLiveCallSdpResult, { status: "ready" }>;
 
+type OwnedLiveCallConnection = LiveCallConnection & { userId: string };
+
 type Prepared =
   | Refusal
-  | { connection: LiveCallConnection; instructions: string; status: "prepared"; voice: string };
+  | {
+      connection: OwnedLiveCallConnection;
+      instructions: string;
+      status: "prepared";
+      voice: string;
+    };
 
 function unusableReservation({
   connection,
@@ -124,7 +131,7 @@ async function prepareCreation({
     });
 
     return {
-      connection: starting,
+      connection: { ...starting, userId },
       instructions,
       status: "prepared" as const,
       voice: getLiveConversationVoice(conversation.targetLanguage),
@@ -136,7 +143,7 @@ async function settleFailedCreation({
   connection,
   refused,
 }: {
-  connection: LiveCallConnection;
+  connection: OwnedLiveCallConnection;
   refused: boolean;
 }): Promise<void> {
   await prisma.$transaction(async (transaction) => {
@@ -172,7 +179,7 @@ async function recordCreatedSession({
   connection,
   providerSessionId,
 }: {
-  connection: LiveCallConnection;
+  connection: OwnedLiveCallConnection;
   providerSessionId: string;
 }): Promise<Created> {
   return writeLearnerChange<Created>({ userId: connection.userId }, async (transaction) => {

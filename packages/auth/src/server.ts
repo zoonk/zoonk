@@ -2,6 +2,7 @@ import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { prisma } from "@zoonk/db";
 import { isLocalhostSupported } from "@zoonk/utils/environment";
 import { getAllowedHosts, getBaseUrl, getDevelopmentTrustedOrigins } from "@zoonk/utils/origin";
+import { getIP } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import {
   admin as adminPlugin,
@@ -49,6 +50,29 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
   },
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   databaseHooks: {
+    session: {
+      create: {
+        after: async (session, context) => {
+          await prisma.accessRecord.create({
+            data: {
+              createdAt: session.createdAt,
+              id: session.id,
+              ipAddress: context?.headers
+                ? (getIP(context.headers, {
+                    advanced: {
+                      ipAddress: {
+                        ...context.context.options.advanced?.ipAddress,
+                        ipv6Subnet: 128,
+                      },
+                    },
+                  }) ?? session.ipAddress)
+                : session.ipAddress,
+              userId: session.userId,
+            },
+          });
+        },
+      },
+    },
     user: {
       create: {
         after: async (user, context) => {

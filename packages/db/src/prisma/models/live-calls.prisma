@@ -43,7 +43,8 @@ model FreeCallSpendDay {
 /// the learner's usage record, which cascades with their account; the provider's bill doesn't.
 model LiveCallConnection {
   id                String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId            String             @map("user_id") @db.Uuid
+  userId            String?            @map("user_id") @db.Uuid
+  user              User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
   conversationId    String             @map("conversation_id") @db.Uuid
   state             LiveCallState      @default(reserved)
   heldSeconds       Int                @map("held_seconds")

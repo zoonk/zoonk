@@ -700,6 +700,7 @@ describe("live calls", () => {
     await expect(connection(setup.connectionId)).resolves.toMatchObject({
       costMicros: getLiveCallCostMicros(TWO_MINUTES),
       state: "ended",
+      userId: null,
     });
 
     await expect(freeDaySpent(started)).resolves.toBe(getLiveCallCostMicros(TWO_MINUTES));

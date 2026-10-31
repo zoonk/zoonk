@@ -84,7 +84,32 @@ describe(dailySweepsWorkflow, () => {
       ),
     ]);
 
+    const [expiredSession, oldAccessRecord] = await Promise.all([
+      prisma.session.create({
+        data: { expiresAt: new Date(now - DAY_MS), token: randomUUID(), userId: learner.id },
+      }),
+      prisma.accessRecord.create({
+        data: {
+          createdAt: new Date(now - 200 * DAY_MS),
+          id: randomUUID(),
+          ipAddress: "203.0.113.1",
+          userId: learner.id,
+        },
+      }),
+    ]);
+
     const result = await dailySweepsWorkflow();
+
+    expect(result.sessionsPurged).toBeGreaterThanOrEqual(1);
+    expect(result.accessRecordsPurged).toBeGreaterThanOrEqual(1);
+
+    await expect(
+      prisma.session.findUnique({ where: { id: expiredSession.id } }),
+    ).resolves.toBeNull();
+
+    await expect(
+      prisma.accessRecord.findUnique({ where: { id: oldAccessRecord.id } }),
+    ).resolves.toBeNull();
 
     expect(result.guestsDeleted).toBeGreaterThanOrEqual(1);
     expect(result.memoryFactsPurged).toBeGreaterThanOrEqual(1);

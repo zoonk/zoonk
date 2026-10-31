@@ -18,6 +18,7 @@ model User {
   isAnonymous           Boolean                   @default(false) @map("is_anonymous")
   username              String?
   displayUsername       String?                   @map("display_username")
+  liveCallConnections   LiveCallConnection[]
   sessions              Session[]
   accounts              Account[]
   members               Member[]
@@ -243,4 +244,15 @@ model AccountDeletion {
 
   @@index([analyticsRemovedAt, deletedAt])
   @@map("account_deletions")
+}
+
+// Marco Civil art. 15 requires six months of access records, including after account deletion.
+model AccessRecord {
+  id        String   @id @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  ipAddress String?  @map("ip_address")
+  createdAt DateTime @map("created_at")
+
+  @@index([createdAt])
+  @@map("access_records")
 }

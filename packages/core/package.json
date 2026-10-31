@@ -33,6 +33,7 @@
     "./auth/ott/login-route": "./src/auth/ott-login-route.ts",
     "./auth/ott/redirect": "./src/auth/ott-redirect.ts",
     "./auth/ott/state": "./src/auth/ott-state.ts",
+    "./auth/purge-expired-auth-records": "./src/auth/purge-expired-auth-records.ts",
     "./auth/purge-verifications": "./src/auth/purge-expired-verifications.ts",
     "./auth/subscription": "./src/auth/subscription.ts",
     "./cache/course-content-tags": "./src/cache/course-content-tags.ts",

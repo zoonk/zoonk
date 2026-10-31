@@ -1,3 +1,4 @@
+import { purgeExpiredAuthRecords } from "@zoonk/core/auth/purge-expired-auth-records";
 import { purgeExpiredVerifications } from "@zoonk/core/auth/purge-verifications";
 import { purgeEvaluationRuns } from "@zoonk/core/evaluation-runs/purge";
 import { deleteInactiveGuests } from "@zoonk/core/guests/delete-inactive";
@@ -67,4 +68,10 @@ export async function purgeExpiredVerificationsStep(): Promise<number> {
 
   const { purged } = await purgeExpiredVerifications();
   return purged;
+}
+
+export async function purgeExpiredAuthRecordsStep() {
+  "use step";
+
+  return purgeExpiredAuthRecords();
 }
