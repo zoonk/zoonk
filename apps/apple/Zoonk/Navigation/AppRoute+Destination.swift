@@ -109,8 +109,8 @@ extension AppRoute {
       SessionScreen()
     case .logbook:
       LogbookScreen()
-    case .lesson(let lessonId, let sessionId):
-      LessonPlayerScreen(lessonId: lessonId, sessionId: sessionId)
+    case .lesson(let lessonId, let sessionId, let fromCatalog):
+      LessonPlayerScreen(lessonId: lessonId, sessionId: sessionId, fromCatalog: fromCatalog)
     case .questionBlock(let sessionId, let blockId):
       QuestionBlockScreen(sessionId: sessionId, blockId: blockId)
     case .mistakePractice(let skillId):

@@ -7,7 +7,6 @@ struct LearningPreferences: Equatable, Sendable {
   var dailyLimitMinutes: Int?
   /// Core's daily times for the limit's picker.
   let dailyTimes: [Int]
-  var shareUsageData: Bool
   var soundsEnabled: Bool
 
   /// A saved limit the list lacks, such as one set on the web, shows as itself.
@@ -19,6 +18,7 @@ struct LearningPreferences: Equatable, Sendable {
 enum PreferencesUpdate: Equatable, Sendable {
   case buddy(BuddyChoice)
   case dailyLimitMinutes(Int?)
+  /// The summary shows it, so it changes nothing here.
   case shareUsageData(Bool)
   case soundsEnabled(Bool)
 
@@ -31,8 +31,8 @@ enum PreferencesUpdate: Equatable, Sendable {
       next.buddyPicked = true
     case .dailyLimitMinutes(let minutes):
       next.dailyLimitMinutes = minutes
-    case .shareUsageData(let shares):
-      next.shareUsageData = shares
+    case .shareUsageData:
+      break
     case .soundsEnabled(let enabled):
       next.soundsEnabled = enabled
     }
@@ -53,7 +53,7 @@ enum PreferencesUpdate: Equatable, Sendable {
     case .dailyLimitMinutes:
       next.dailyLimitMinutes = source.dailyLimitMinutes
     case .shareUsageData:
-      next.shareUsageData = source.shareUsageData
+      break
     case .soundsEnabled:
       next.soundsEnabled = source.soundsEnabled
     }
@@ -150,8 +150,6 @@ extension LearningPreferences {
       availableGlasses: profile.availableGlasses.compactMap { BuddyGlasses(rawValue: $0.rawValue) },
       dailyLimitMinutes: profile.dailyLimitMinutes,
       dailyTimes: profile.dailyTimes,
-      // Usage is recorded until the learner turns it off.
-      shareUsageData: profile.shareUsageData ?? true,
       soundsEnabled: profile.soundsEnabled)
   }
 }

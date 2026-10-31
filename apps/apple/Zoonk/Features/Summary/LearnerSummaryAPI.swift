@@ -2,6 +2,7 @@ import Foundation
 
 struct LearnerSummary: Equatable, Sendable {
   let activeGoalID: String?
+  var analytics: LearnerAnalytics
   let buddy: BuddyLook
   let buddyName: String?
   let goals: [LearnerGoal]
@@ -61,6 +62,16 @@ struct LearnerWaitingGoal: Equatable, Identifiable, Sendable {
   let locked: Bool
 
   var title: String { input.goals.first?.title ?? "" }
+}
+
+struct LearnerAnalytics: Equatable, Sendable {
+  let disabled: Bool
+  let goalKind: LearnerGoal.Kind?
+  let plan: String
+  let planPhase: Int?
+  /// Only true lets the app send usage data.
+  var usageDataSharing: Bool?
+  let username: String?
 }
 
 struct LearnerLevel: Equatable, Sendable {
@@ -129,6 +140,13 @@ struct LearnerSummaryAPI: LearnerSummaryAPIClient {
 func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> LearnerSummary {
   LearnerSummary(
     activeGoalID: summary.activeGoalId,
+    analytics: LearnerAnalytics(
+      disabled: summary.analytics.disabled,
+      goalKind: summary.analytics.goal.flatMap { LearnerGoal.Kind(rawValue: $0.kind.rawValue) },
+      plan: summary.analytics.plan,
+      planPhase: summary.analytics.goal?.phase,
+      usageDataSharing: summary.analytics.usageDataSharing,
+      username: summary.analytics.username),
     buddy: BuddyLook(
       kind: BuddyKind(rawValue: summary.buddy.kind.rawValue) ?? .zu,
       glasses: BuddyGlasses(rawValue: summary.buddy.glasses.rawValue) ?? .round,

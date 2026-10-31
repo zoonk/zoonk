@@ -305,6 +305,9 @@
       summary
         ?? LearnerSummary(
           activeGoalID: nil,
+          analytics: LearnerAnalytics(
+            disabled: false, goalKind: nil, plan: "free", planPhase: nil, usageDataSharing: nil,
+            username: nil),
           buddy: BuddyLook(),
           buddyName: nil,
           goals: [],

@@ -99,6 +99,9 @@ struct LogbookScreen: View {
         switch recap.state {
         case .loaded(let value):
           LogbookSteps(recap: value, learnerName: learnerName)
+            .onAppear {
+              UsageAnalytics.track(.logbookViewed)
+            }
         case .failed(let error) where error != .unauthorized:
           ContentUnavailableView {
             Label {

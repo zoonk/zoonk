@@ -20,6 +20,9 @@ struct ChapterView: View {
               comment: "Accessibility status while a chapter loads."))
       case .loaded(let detail):
         ChapterLandingList(chapter: chapter, course: course.value, detail: detail)
+          .onAppear {
+            UsageAnalytics.track(.publicPageViewed(contentID: chapter.id, page: .chapter))
+          }
       case .empty:
         ChapterLandingList(
           chapter: chapter, course: course.value, detail: ChapterDetail(chapter: nil, lessons: []))

@@ -108,6 +108,9 @@ extension LearnerSummary {
   ) -> LearnerSummary {
     LearnerSummary(
       activeGoalID: goals.first?.id,
+      analytics: LearnerAnalytics(
+        disabled: false, goalKind: nil, plan: "free", planPhase: nil, usageDataSharing: nil,
+        username: nil),
       buddy: BuddyLook(),
       buddyName: nil,
       goals: goals,

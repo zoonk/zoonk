@@ -72,6 +72,7 @@ struct ZoonkApp: App {
           .modifier(UITestFixtureFailureCover(failure: uiTestFixtureFailure))
         #endif
         .loads(learnerSummary.summary, refreshable: false)
+        .usageAnalytics()
         .task(id: learnerSummary.summary.value?.nextChangeAt) {
           await learnerSummary.refreshAtNextChange()
         }

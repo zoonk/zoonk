@@ -83,6 +83,9 @@ struct SubscriptionView: View {
     .inAppPurchaseOptions { _ in
       [.appAccountToken(appAccountToken)]
     }
+    .onInAppPurchaseStart { product in
+      UsageAnalytics.track(.subscriptionCheckoutStarted(.init(productID: product.id)))
+    }
     .onInAppPurchaseCompletion { _, result in
       _ = await subscriptions.handlePurchase(
         StoreKitSubscriptionClient.purchaseOutcome(from: result),

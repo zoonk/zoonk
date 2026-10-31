@@ -30,6 +30,7 @@ These instructions apply to the native iPhone and iPad app in this directory and
 - Extract stable, independently owned domains or sufficiently large features into local Swift packages when real module boundaries emerge.
 - Use Swift concurrency and value types by default. Keep observable state at the narrowest owning feature boundary and avoid introducing view models that only relay data without adding domain behavior.
 - Scope every asynchronous result and credential mutation to the full session identity that started it. Before publishing or deleting state, confirm that identity is still current and test meaningful request-order races.
+- Usage analytics mirror main's browser events: fire one with `UsageAnalytics.track(_:)`, adding its case to `AnalyticsEvent` (`App/AnalyticsEvent.swift`) with main's name and properties, where main fires it; never send an outcome a write makes, which core already sends. `UsageAnalytics` decides whether anything reaches PostHog.
 - Treat initial loading and refresh as different experiences. Deduplicate only in-flight work, preserve valid content during revalidation, and make authentication loss lead to a recoverable screen rather than stranded loading UI. `Resource` (below) does all of this; don't reimplement it in a store.
 
 ## Data loading and caching

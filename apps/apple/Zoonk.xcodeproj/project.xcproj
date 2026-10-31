@@ -27,6 +27,12 @@
       },
     }, {
       "kind": "remote",
+      "repository": "https://github.com/PostHog/posthog-ios",
+      "version": {
+        "up-to-next-major-version": "3.93.1",
+      },
+    }, {
+      "kind": "remote",
       "repository": "https://github.com/getsentry/sentry-cocoa",
       "version": {
         "up-to-next-major-version": "9.32.0",
@@ -136,6 +142,10 @@
         }, {
           "package": "ZoonkAPI",
           "product-name": "ZoonkAPI",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "posthog-ios",
+          "product-name": "PostHog",
           "build-phase": { "build-phase": "frameworks" },
         }, {
           "package": "sentry-cocoa",

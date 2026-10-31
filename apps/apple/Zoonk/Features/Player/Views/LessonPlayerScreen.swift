@@ -41,14 +41,15 @@ struct LessonPlayerScreen: View {
 
   let lessonId: String
   var sessionId: String?
+  var fromCatalog = false
 
   var body: some View {
     if let player {
       LessonPlayerContent(
         store: LessonPlayerStore(
-          lessonId: lessonId, studySessionId: sessionId, api: player.api, cache: player.cache,
-          preferences: player.preferences, lessonResource: player.lesson(id: lessonId),
-          blockFinished: player.blockFinished)
+          lessonId: lessonId, studySessionId: sessionId, fromCatalog: fromCatalog,
+          api: player.api, cache: player.cache, preferences: player.preferences,
+          lessonResource: player.lesson(id: lessonId), blockFinished: player.blockFinished)
       )
       .id(lessonId)
     }
@@ -57,6 +58,7 @@ struct LessonPlayerScreen: View {
 
 private struct LessonPlayerContent: View {
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.scenePhase) private var scenePhase
   @Environment(\.activityRenderers) private var activityRenderers
   @Environment(\.lessonTutor) private var tutor
   @Environment(\.lessonAudio) private var audio
@@ -141,6 +143,14 @@ private struct LessonPlayerContent: View {
     }
     .environment(\.lessonAudio, sounds)
     .onChange(of: store.state?.currentStep?.id) { sounds.stop() }
+    .onChange(of: scenePhase) { _, phase in
+      if phase == .background {
+        store.reportAbandonment()
+      }
+    }
+    .onDisappear {
+      store.reportAbandonment()
+    }
   }
 
   private var sounds: LessonAudio {

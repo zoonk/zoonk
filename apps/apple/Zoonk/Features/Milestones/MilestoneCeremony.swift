@@ -37,6 +37,10 @@ struct MilestoneCeremony: View {
     }
     .landsActsOnInput()
     .task(id: milestone.id) {
+      if let ceremony = AnalyticsEvent.Ceremony(milestoneKind: milestone.kind) {
+        UsageAnalytics.track(.ceremonyShown(ceremony))
+      }
+
       await sessions.markShown(milestone)
     }
   }

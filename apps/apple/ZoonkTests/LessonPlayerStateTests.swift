@@ -255,6 +255,33 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertFalse(state.canGoBack)
   }
 
+  func testLeavingAStartedLessonCountsTheWrongAnswersSinceTheLastRightOne() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    XCTAssertNil(AnalyticsEvent.abandonment(of: state), "no run started")
+
+    state.startRun(runId: "run", answers: [])
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "wrong")
+
+    XCTAssertEqual(
+      AnalyticsEvent.abandonment(of: state),
+      .activityAbandoned(lessonID: "lesson", screen: 5, stepKind: "check", wrongInARow: 1))
+
+    state.continueLesson()
+    state.continueLesson()
+    XCTAssertEqual(state.currentStep?.id, "second", "the missed check comes back")
+    try answerCheck(&state, optionId: "wrong")
+
+    XCTAssertEqual(
+      AnalyticsEvent.abandonment(of: state),
+      .activityAbandoned(lessonID: "lesson", screen: 7, stepKind: "check", wrongInARow: 1),
+      "a screen counts once, by its latest verdict")
+  }
+
   private func answerCheck(
     _ state: inout LessonPlayerState, optionId: String, attemptId: String? = nil
   ) throws {

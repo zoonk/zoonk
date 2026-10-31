@@ -16,7 +16,8 @@ enum AppRoute: Hashable, Identifiable {
 
   case session
   case logbook
-  case lesson(lessonId: String, sessionId: String? = nil)
+  /// `fromCatalog`: started from its Library page, which showed its first question.
+  case lesson(lessonId: String, sessionId: String? = nil, fromCatalog: Bool = false)
   case questionBlock(sessionId: String, blockId: String)
   case mistakePractice(skillId: String? = nil)
   case pattern(patternId: String)

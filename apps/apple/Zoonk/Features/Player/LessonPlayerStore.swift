@@ -33,6 +33,8 @@ final class LessonPlayerStore {
 
   let lessonId: String
   let studySessionId: String?
+  /// Its Library page showed the first question, so answering it counts as main's catalog answer.
+  private let fromCatalog: Bool
   private(set) var screen = Screen.loading
   private(set) var lesson: PlayableLesson?
   private(set) var state: LessonPlayerState?
@@ -82,10 +84,12 @@ final class LessonPlayerStore {
   private var exampleLinesWriting: Task<Void, Never>?
   /// The device-graded answers being sent now, by screen, so finishing waits for them.
   private var saving: [String: Task<Void, Never>] = [:]
+  private var reportedAbandonment = false
   @ObservationIgnored let promptAudio = LessonPromptAudio()
 
   init(
-    lessonId: String, studySessionId: String?, api: LessonPlayerAPI, cache: AppCache,
+    lessonId: String, studySessionId: String?, fromCatalog: Bool = false, api: LessonPlayerAPI,
+    cache: AppCache,
     preferences: Resource<LearningPreferences>,
     lessonResource: Resource<LessonLoad>,
     choices: LessonTodayChoices = .standard,
@@ -93,6 +97,7 @@ final class LessonPlayerStore {
   ) {
     self.lessonId = lessonId
     self.studySessionId = studySessionId
+    self.fromCatalog = fromCatalog
     self.api = api
     self.cache = cache
     self.preferences = preferences
@@ -410,6 +415,17 @@ final class LessonPlayerStore {
     finishIfCompleted()
   }
 
+  /// Once, the first time the learner leaves a started lesson unfinished: closing it or leaving the
+  /// app.
+  func reportAbandonment() {
+    guard !reportedAbandonment, let state, let event = AnalyticsEvent.abandonment(of: state) else {
+      return
+    }
+
+    reportedAbandonment = true
+    UsageAnalytics.track(event)
+  }
+
   func restoreWriting() {
     choices.setChosenToday(.cantWrite, false)
     state?.restoreWriting()
@@ -428,7 +444,15 @@ final class LessonPlayerStore {
     let attemptId = UUID().uuidString.lowercased()
     let durationMs = Int(Date.now.timeIntervalSince(state.stepStartedAt) * 1000)
 
+    if step.kind == .hook || (fromCatalog && state.position == 0) {
+      UsageAnalytics.track(.hookAnswered(lessonID: state.lessonId))
+    }
+
     if let grade = LessonGrading.grade(answer, step: step, gradeActivity: gradeActivity) {
+      if case .activity(let content) = step.content {
+        UsageAnalytics.track(.activityUsed(lessonID: state.lessonId, template: content.template))
+      }
+
       let unsaved =
         answer.isRecorded
         ? LessonPlayerState.UnsavedAnswer(

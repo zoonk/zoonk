@@ -243,6 +243,9 @@ struct LessonUnavailableView: View {
     case .plusRequired, .limitReached(tier: .free, _):
       SeePlusButton()
         .buttonStyle(.mainAction)
+        .onAppear {
+          UsageAnalytics.track(.subscriptionGateShown)
+        }
       backButton
     case .limitReached(tier: .guest, _):
       SignUpButton()

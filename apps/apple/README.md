@@ -99,6 +99,10 @@ Release builds send crashes, hangs and errors to the `zoonk-ios` project in Sent
 
 Archiving uploads the app's debug symbols, so crash reports show our code instead of memory addresses. Before your first archive, run `brew install getsentry/tools/sentry-cli`, then `sentry-cli login`. Archiving stops with an error until both are done.
 
+## Usage analytics
+
+Release builds send usage analytics to the "Zoonk" project in PostHog, the one the web uses, only while the learner's summary says they share usage data (`analytics.usageDataSharing`). Debug builds and tests name no project, so they never start PostHog. To check what the app sends, add `ZoonkPostHogProjectToken` and `ZoonkPostHogHost` (a local listener's address) to `Zoonk/Info-Debug.plist` for one build, and don't commit them.
+
 ## Continuous Integration
 
 GitHub Actions checks Swift formatting, builds the iPhone and iPad app and checks that every string it compiled is in its String Catalog. UI tests remain local because clean hosted macOS runners currently spend several minutes preparing the simulator before executing the tests.

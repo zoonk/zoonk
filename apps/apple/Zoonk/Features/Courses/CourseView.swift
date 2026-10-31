@@ -18,6 +18,9 @@ struct CourseView: View {
               comment: "Accessibility status while a course loads."))
       case .loaded(let detail):
         CourseLandingList(detail: detail)
+          .onAppear {
+            UsageAnalytics.track(.publicPageViewed(contentID: course.id, page: .course))
+          }
       case .empty:
         CourseDetailEmptyView()
       case .failed(let failure):

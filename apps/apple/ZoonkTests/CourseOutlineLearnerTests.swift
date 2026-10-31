@@ -65,6 +65,9 @@ final class CourseOutlineLearnerTests: XCTestCase {
   {
     LearnerSummary(
       activeGoalID: "goal",
+      analytics: LearnerAnalytics(
+        disabled: false, goalKind: nil, plan: "free", planPhase: nil, usageDataSharing: nil,
+        username: nil),
       buddy: BuddyLook(),
       buddyName: nil,
       goals: [

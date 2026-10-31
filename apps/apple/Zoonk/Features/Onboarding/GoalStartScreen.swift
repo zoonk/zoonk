@@ -256,6 +256,7 @@ private struct GoalStartFlow: View {
   }
 
   private func send(_ goal: String) {
+    UsageAnalytics.track(.goalTyped(hasAttachment: !material.isEmpty))
     sending?.cancel()
     words = goal
     error = nil

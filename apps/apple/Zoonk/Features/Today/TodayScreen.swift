@@ -13,7 +13,11 @@ struct TodayScreen: View {
   @ViewBuilder
   private var content: some View {
     if session.authenticatedSession == nil {
+      // Signed out, Today is the app's front door, as main's home page is the web's.
       TodayStartGoal()
+        .onAppear {
+          UsageAnalytics.track(.homeViewed)
+        }
     } else {
       signedIn
         .loads(store.today)

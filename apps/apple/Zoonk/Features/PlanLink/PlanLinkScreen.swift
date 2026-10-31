@@ -23,6 +23,12 @@ struct PlanLinkScreen: View {
           switch resource.state {
           case .loaded(let link):
             plan(link)
+              .onAppear {
+                // The owner goes to their own Plan, as main redirects them before counting.
+                if link.owner?.goalId == nil {
+                  UsageAnalytics.track(.planLinkOpened(planID: planId))
+                }
+              }
           case .failed(.notFound):
             ContentUnavailableView {
               Label {

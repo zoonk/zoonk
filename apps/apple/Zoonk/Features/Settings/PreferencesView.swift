@@ -75,7 +75,7 @@ struct PreferencesView: View {
         }
 
         Section {
-          Toggle(isOn: usageDataBinding(preferences)) {
+          Toggle(isOn: usageDataBinding) {
             Text(
               "Share usage data", tableName: "Settings",
               comment: "Switch that lets Zoonk record how the learner uses it, for analytics")
@@ -146,10 +146,12 @@ struct PreferencesView: View {
       })
   }
 
-  private func usageDataBinding(_ preferences: LearningPreferences) -> Binding<Bool> {
+  private var usageDataBinding: Binding<Bool> {
     Binding(
-      get: { preferences.shareUsageData },
+      get: { learner.summary.value?.analytics.usageDataSharing == true },
       set: { shares in
+        learner.showUsageDataSharing(shares)
+
         Task {
           await settings.updatePreferences(.shareUsageData(shares))
         }

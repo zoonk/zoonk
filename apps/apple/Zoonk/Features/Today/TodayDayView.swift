@@ -62,6 +62,7 @@ struct TodayDayView: View {
     .onChange(of: view.notice) {
       if shownNotice == nil {
         shownNotice = view.notice
+        countNotice()
       }
     }
     .modifier(LanguageTodayLoading(goal: view.goal))
@@ -341,6 +342,22 @@ struct TodayDayView: View {
     examChoiceDraft = []
     answeredUpload = nil
     store.dropAnsweredPlanChange()
+    UsageAnalytics.track(.todayViewed)
+    countNotice()
+  }
+
+  /// Once a visit, as main's notices count when they mount: folding redraws the panes, not the visit.
+  private func countNotice() {
+    switch shownNotice {
+    case .insight:
+      if let insight = view.insight {
+        UsageAnalytics.track(.insightShown(.init(insight)))
+      }
+    case .examAccess:
+      UsageAnalytics.track(.subscriptionGateShown)
+    default:
+      break
+    }
   }
 }
 

@@ -43,6 +43,15 @@ final class LearnerSummaryStore {
     await summary.refresh()
   }
 
+  /// The learner's switch shows at once, so analytics stop before the save is read back.
+  func showUsageDataSharing(_ shares: Bool) {
+    summary.update { summary in
+      var summary = summary
+      summary.analytics.usageDataSharing = shares
+      return summary
+    }
+  }
+
   /// True once the goal is the one the tabs show, with the summary read again for it.
   @discardableResult
   func switchGoal(to goalID: String) async -> Bool {

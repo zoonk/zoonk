@@ -32,16 +32,6 @@ final class SettingsAPITests: XCTestCase {
       [["dailyLimitMinutes": 30], ["soundsEnabled": false], ["shareUsageData": false]])
   }
 
-  func testUsageDataIsSharedUntilTheLearnerChooses() async throws {
-    let api = SettingsAPI(
-      clients: APIClientFactory(
-        baseURL: URL(string: "https://api.zoonk.test")!, transport: ProfileUpdateTransport()))
-
-    let preferences = try await api.updatePreferences(token: "token", .soundsEnabled(true))
-
-    XCTAssertTrue(preferences.shareUsageData)
-  }
-
   func testTheLimitOffersCoresTimesWithASavedOneTheyLack() async throws {
     let transport = ProfileUpdateTransport(limit: 370)
     let api = SettingsAPI(

@@ -17,6 +17,9 @@ struct CatalogLessonView: View {
           .frame(maxWidth: .infinity, maxHeight: .infinity)
       case .loaded(let value):
         CatalogLessonList(lesson: lesson, value: value)
+          .onAppear {
+            UsageAnalytics.track(.publicPageViewed(contentID: lesson.id, page: .lesson))
+          }
       case .empty:
         CatalogFailureRecoveryView(context: .lesson, failure: .notFound) {
           await resource.refresh()
@@ -109,7 +112,7 @@ private struct CatalogLessonList: View {
 
       Section {
         Button {
-          router.open(.lesson(lessonId: value.id))
+          router.open(.lesson(lessonId: value.id, fromCatalog: true))
         } label: {
           Group {
             if value.firstScreen == nil {
