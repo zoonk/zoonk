@@ -116,7 +116,7 @@ struct LineCrossingCanvas: View {
             .foregroundStyle(index == 0 ? Color.mint : Color.purple)
             .lineStyle(StrokeStyle(lineWidth: 2.5))
 
-          PointMark(x: .value("x", segment.to.x), y: .value("y", segment.to.y))
+          PointMark(x: .value(verbatim: "x", segment.to.x), y: .value(verbatim: "y", segment.to.y))
             .opacity(0)
             .annotation(position: .topLeading, spacing: 2) {
               Text(verbatim: field.label)
@@ -125,16 +125,22 @@ struct LineCrossingCanvas: View {
             }
         }
 
-        PointMark(x: .value("x", after.x), y: .value("y", after.y))
+        PointMark(x: .value(verbatim: "x", after.x), y: .value(verbatim: "y", after.y))
           .foregroundStyle(.primary)
           .symbolSize(70)
 
-        RuleMark(x: .value("x", after.x), yStart: .value("y", 0), yEnd: .value("y", after.y))
-          .foregroundStyle(.secondary)
-          .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 3]))
-        RuleMark(xStart: .value("x", 0), xEnd: .value("x", after.x), y: .value("y", after.y))
-          .foregroundStyle(.secondary)
-          .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 3]))
+        RuleMark(
+          x: .value(verbatim: "x", after.x), yStart: .value(verbatim: "y", 0),
+          yEnd: .value(verbatim: "y", after.y)
+        )
+        .foregroundStyle(.secondary)
+        .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 3]))
+        RuleMark(
+          xStart: .value(verbatim: "x", 0), xEnd: .value(verbatim: "x", after.x),
+          y: .value(verbatim: "y", after.y)
+        )
+        .foregroundStyle(.secondary)
+        .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 3]))
       }
     }
     .chartXScale(domain: 0...domain.x)
@@ -166,7 +172,9 @@ struct LineCrossingCanvas: View {
     let segment = LineCrossingModel.segment(line, domain: domain)
 
     return ForEach([segment.from, segment.to], id: \.x) { point in
-      LineMark(x: .value("x", point.x), y: .value("y", point.y), series: .value("line", series))
+      LineMark(
+        x: .value(verbatim: "x", point.x), y: .value(verbatim: "y", point.y),
+        series: .value(verbatim: "line", series))
     }
   }
 

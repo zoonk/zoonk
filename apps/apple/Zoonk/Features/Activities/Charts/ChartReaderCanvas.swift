@@ -115,8 +115,10 @@ struct ChartReaderCanvas: View {
   private var chart: some View {
     Chart {
       ForEach(shownSpans) { span in
-        RectangleMark(xStart: .value("From", span.from), xEnd: .value("To", span.to))
-          .foregroundStyle(Color.purple.opacity(0.12))
+        RectangleMark(
+          xStart: .value(verbatim: "From", span.from), xEnd: .value(verbatim: "To", span.to)
+        )
+        .foregroundStyle(Color.purple.opacity(0.12))
       }
 
       ForEach(fields.points, id: \.x) { point in
@@ -127,15 +129,15 @@ struct ChartReaderCanvas: View {
 
       ForEach(shownSpans) { span in
         ForEach([span.from, span.to], id: \.self) { x in
-          PointMark(x: .value("x", x), y: .value("y", fields.y(at: x) ?? 0))
+          PointMark(x: .value(verbatim: "x", x), y: .value(verbatim: "y", fields.y(at: x) ?? 0))
             .foregroundStyle(.purple)
             .symbolSize(60)
         }
 
         if let text = measureText(span) {
           PointMark(
-            x: .value("x", (span.from + span.to) / 2),
-            y: .value("y", max(fields.y(at: span.from) ?? 0, fields.y(at: span.to) ?? 0))
+            x: .value(verbatim: "x", (span.from + span.to) / 2),
+            y: .value(verbatim: "y", max(fields.y(at: span.from) ?? 0, fields.y(at: span.to) ?? 0))
           )
           .opacity(0)
           .annotation(position: .top, spacing: 4) {

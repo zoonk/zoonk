@@ -136,7 +136,8 @@ struct FormulaModelCanvas: View {
         if let baseline = view.baseline {
           ForEach(view.curve(baseline.values), id: \.x) { point in
             LineMark(
-              x: .value("x", point.x), y: .value("y", point.y), series: .value("curve", "before")
+              x: .value(verbatim: "x", point.x), y: .value(verbatim: "y", point.y),
+              series: .value(verbatim: "curve", "before")
             )
             .foregroundStyle(.secondary)
             .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
@@ -144,26 +145,30 @@ struct FormulaModelCanvas: View {
         }
 
         ForEach(current, id: \.x) { point in
-          LineMark(x: .value("x", point.x), y: .value("y", point.y), series: .value("curve", "now"))
-            .foregroundStyle(.mint)
-            .lineStyle(StrokeStyle(lineWidth: 2.5))
+          LineMark(
+            x: .value(verbatim: "x", point.x), y: .value(verbatim: "y", point.y),
+            series: .value(verbatim: "curve", "now")
+          )
+          .foregroundStyle(.mint)
+          .lineStyle(StrokeStyle(lineWidth: 2.5))
         }
 
         if let compared = view.compared {
-          PointMark(x: .value("x", compared.x), y: .value("y", compared.y))
+          PointMark(x: .value(verbatim: "x", compared.x), y: .value(verbatim: "y", compared.y))
             .foregroundStyle(.orange)
             .symbolSize(60)
         }
 
         if now != nil {
-          RuleMark(x: .value("x", view.x))
+          RuleMark(x: .value(verbatim: "x", view.x))
             .foregroundStyle(.secondary.opacity(0.5))
         }
       }
 
       if let change {
         RuleMark(
-          x: .value("x", view.x), yStart: .value("y", change.before), yEnd: .value("y", change.now)
+          x: .value(verbatim: "x", view.x), yStart: .value(verbatim: "y", change.before),
+          yEnd: .value(verbatim: "y", change.now)
         )
         .foregroundStyle(.orange)
         .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [3, 3]))
@@ -183,7 +188,7 @@ struct FormulaModelCanvas: View {
 
       ChartsHiddenMarks {
         if let before = view.chartedBefore {
-          PointMark(x: .value("x", view.x), y: .value("y", before))
+          PointMark(x: .value(verbatim: "x", view.x), y: .value(verbatim: "y", before))
             .symbol {
               Circle()
                 .strokeBorder(.secondary, lineWidth: 2)
@@ -193,14 +198,14 @@ struct FormulaModelCanvas: View {
         }
 
         if let now {
-          PointMark(x: .value("x", view.x), y: .value("y", now))
+          PointMark(x: .value(verbatim: "x", view.x), y: .value(verbatim: "y", now))
             .foregroundStyle(.mint)
             .symbolSize(90)
         }
       }
 
       if let expected {
-        PointMark(x: .value("x", expected.x), y: .value("y", expected.y))
+        PointMark(x: .value(verbatim: "x", expected.x), y: .value(verbatim: "y", expected.y))
           .symbol(Circle().strokeBorder(lineWidth: 2.5))
           .symbolSize(260)
           .foregroundStyle(.success)

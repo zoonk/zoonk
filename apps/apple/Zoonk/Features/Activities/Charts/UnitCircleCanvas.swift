@@ -334,20 +334,22 @@ struct UnitCircleCanvas: View {
       ForEach(fields.show.filter { $0 != .tan }, id: \.self) { trig in
         ForEach(Array(stride(from: 0.0, through: 360, by: 5)), id: \.self) { x in
           LineMark(
-            x: .value("angle", x), y: .value("value", fields.value(trig, degrees: x) ?? 0),
-            series: .value("wave", trig.rawValue)
+            x: .value(verbatim: "angle", x),
+            y: .value(verbatim: "value", fields.value(trig, degrees: x) ?? 0),
+            series: .value(verbatim: "wave", trig.rawValue)
           )
           .foregroundStyle(Self.color(trig))
         }
 
         PointMark(
-          x: .value("angle", degrees), y: .value("value", fields.value(trig, degrees: degrees) ?? 0)
+          x: .value(verbatim: "angle", degrees),
+          y: .value(verbatim: "value", fields.value(trig, degrees: degrees) ?? 0)
         )
         .foregroundStyle(Self.color(trig))
         .symbolSize(60)
       }
 
-      RuleMark(x: .value("angle", degrees))
+      RuleMark(x: .value(verbatim: "angle", degrees))
         .foregroundStyle(.secondary.opacity(0.5))
         .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [2, 4]))
     }

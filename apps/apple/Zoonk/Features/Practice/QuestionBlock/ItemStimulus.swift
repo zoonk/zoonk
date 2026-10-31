@@ -172,14 +172,14 @@ struct PracticeVisualView: View {
                 BarMark(
                   x: .value(chart.categoryLabel, category), y: .value(chart.valueLabel, value)
                 )
-                .foregroundStyle(by: .value("Series", series.name))
-                .position(by: .value("Series", series.name))
+                .foregroundStyle(by: .value(verbatim: "Series", series.name))
+                .position(by: .value(verbatim: "Series", series.name))
               } else {
                 LineMark(
                   x: .value(chart.categoryLabel, category), y: .value(chart.valueLabel, value)
                 )
-                .foregroundStyle(by: .value("Series", series.name))
-                .symbol(by: .value("Series", series.name))
+                .foregroundStyle(by: .value(verbatim: "Series", series.name))
+                .symbol(by: .value(verbatim: "Series", series.name))
               }
             }
           }

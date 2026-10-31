@@ -205,7 +205,7 @@ private struct ChanceSimulationView: View {
     let ticks = Array(Set([first, last] + (hitTicks.count == 1 ? hitTicks : []))).sorted()
 
     return Chart(bars, id: \.outcome) { bar in
-      BarMark(x: .value("outcome", bar.outcome), y: .value("count", bar.count))
+      BarMark(x: .value(verbatim: "outcome", bar.outcome), y: .value(verbatim: "count", bar.count))
         .foregroundStyle(
           ChanceModel.isHit(fields.model, bar.outcome) ? Color.orange : Color.secondary.opacity(0.4)
         )
@@ -235,7 +235,7 @@ private struct ChanceSimulationView: View {
   private func runningShareChart(hits: [Bool]) -> some View {
     Chart {
       if let guess {
-        RuleMark(y: .value("guess", guess))
+        RuleMark(y: .value(verbatim: "guess", guess))
           .foregroundStyle(isGuessRight ? Color.success : .destructive)
           .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 4]))
           .annotation(position: .top, alignment: .trailing) {
@@ -249,7 +249,7 @@ private struct ChanceSimulationView: View {
       }
 
       ForEach(ChanceModel.runningShare(hits, points: 200), id: \.x) { point in
-        LineMark(x: .value("run", point.x), y: .value("share", point.y))
+        LineMark(x: .value(verbatim: "run", point.x), y: .value(verbatim: "share", point.y))
           .foregroundStyle(.mint)
       }
     }
@@ -404,8 +404,8 @@ private struct SamplingSimulationView: View {
         if let comparison {
           ForEach(comparison, id: \.from) { bin in
             RectangleMark(
-              xStart: .value("from", bin.from), xEnd: .value("to", bin.to),
-              yStart: .value("count", 0), yEnd: .value("count", bin.count)
+              xStart: .value(verbatim: "from", bin.from), xEnd: .value(verbatim: "to", bin.to),
+              yStart: .value(verbatim: "count", 0), yEnd: .value(verbatim: "count", bin.count)
             )
             .foregroundStyle(Color.secondary.opacity(0.25))
           }
@@ -413,20 +413,21 @@ private struct SamplingSimulationView: View {
 
         ForEach(bins, id: \.from) { bin in
           RectangleMark(
-            xStart: .value("from", bin.from), xEnd: .value("to", bin.to),
-            yStart: .value("count", 0), yEnd: .value("count", bin.count)
+            xStart: .value(verbatim: "from", bin.from), xEnd: .value(verbatim: "to", bin.to),
+            yStart: .value(verbatim: "count", 0), yEnd: .value(verbatim: "count", bin.count)
           )
           .foregroundStyle(Color.mint.opacity(0.8))
         }
 
         if isDone {
           RectangleMark(
-            xStart: .value("from", range.lowerBound), xEnd: .value("to", range.upperBound)
+            xStart: .value(verbatim: "from", range.lowerBound),
+            xEnd: .value(verbatim: "to", range.upperBound)
           )
           .foregroundStyle(Color.mint.opacity(0.1))
         }
 
-        RuleMark(x: .value("truth", truth))
+        RuleMark(x: .value(verbatim: "truth", truth))
           .foregroundStyle(.orange)
           .lineStyle(StrokeStyle(lineWidth: 2))
           .annotation(position: .top) {

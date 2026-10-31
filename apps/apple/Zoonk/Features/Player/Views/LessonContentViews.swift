@@ -296,14 +296,14 @@ private struct LessonChartView: View {
           BarMark(
             x: .value(chart.categoryLabel, point.category), y: .value(chart.valueLabel, point.value)
           )
-          .foregroundStyle(by: .value("Series", point.series))
-          .position(by: .value("Series", point.series))
+          .foregroundStyle(by: .value(verbatim: "Series", point.series))
+          .position(by: .value(verbatim: "Series", point.series))
         } else {
           LineMark(
             x: .value(chart.categoryLabel, point.category), y: .value(chart.valueLabel, point.value)
           )
-          .foregroundStyle(by: .value("Series", point.series))
-          .symbol(by: .value("Series", point.series))
+          .foregroundStyle(by: .value(verbatim: "Series", point.series))
+          .symbol(by: .value(verbatim: "Series", point.series))
         }
       }
       .chartYScale(domain: .automatic(includesZero: chart.axisStart == nil || chart.axisStart == 0))

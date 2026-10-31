@@ -204,29 +204,29 @@ struct DistributionExplorerCanvas: View {
       Chart {
         ChartsHiddenMarks {
           ForEach(curve.filter { $0.x >= handles.from && $0.x <= handles.to }, id: \.x) { point in
-            AreaMark(x: .value("x", point.x), y: .value("density", point.y))
+            AreaMark(x: .value(verbatim: "x", point.x), y: .value(verbatim: "density", point.y))
               .foregroundStyle(Color.mint.opacity(0.25))
           }
 
           ForEach(curve, id: \.x) { point in
-            LineMark(x: .value("x", point.x), y: .value("density", point.y))
+            LineMark(x: .value(verbatim: "x", point.x), y: .value(verbatim: "density", point.y))
               .foregroundStyle(.primary)
           }
 
           if case .normal(let mean, _) = fields.distribution {
-            RuleMark(x: .value("mean", mean))
+            RuleMark(x: .value(verbatim: "mean", mean))
               .foregroundStyle(.secondary)
               .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
           }
 
           if isChecked {
             ForEach([fields.target.from, fields.target.to], id: \.self) { edge in
-              RuleMark(x: .value("target", edge))
+              RuleMark(x: .value(verbatim: "target", edge))
                 .foregroundStyle(.orange)
                 .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 3]))
             }
 
-            RuleMark(x: .value("target", (fields.target.from + fields.target.to) / 2))
+            RuleMark(x: .value(verbatim: "target", (fields.target.from + fields.target.to) / 2))
               .opacity(0)
               .annotation(position: .top, alignment: .center) {
                 Text(
@@ -238,8 +238,8 @@ struct DistributionExplorerCanvas: View {
               }
           }
 
-          RuleMark(x: .value("lower", handles.from)).foregroundStyle(.mint)
-          RuleMark(x: .value("upper", handles.to)).foregroundStyle(.mint)
+          RuleMark(x: .value(verbatim: "lower", handles.from)).foregroundStyle(.mint)
+          RuleMark(x: .value(verbatim: "upper", handles.to)).foregroundStyle(.mint)
         }
       }
       .chartXScale(domain: domain)
