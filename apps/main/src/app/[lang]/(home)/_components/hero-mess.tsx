@@ -27,10 +27,12 @@ function SearchArtifact({ example }: { example: HeroExample }) {
         "without-zoonk:-rotate-[1.8deg]",
       )}
     >
-      <p className="flex items-center gap-2.5 px-3.5 py-3 text-[0.9375rem]">
-        <SearchIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
-        <span className="truncate">{example.search}</span>
-        <span className="bg-foreground -ml-2 h-4.5 w-px shrink-0" />
+      <p className="flex items-start gap-2.5 px-3.5 py-3 text-[0.9375rem] leading-5.5">
+        <SearchIcon aria-hidden="true" className="text-muted-foreground mt-0.75 size-4 shrink-0" />
+        <span className="min-w-0 text-pretty">
+          {example.search}
+          <span className="bg-foreground ml-0.5 inline-block h-4.5 w-px align-[-0.25rem]" />
+        </span>
       </p>
 
       <ul className="border-t py-1">
@@ -55,17 +57,17 @@ function TabsArtifact({ example }: { example: HeroExample }) {
     <div
       className={cn(
         ARTIFACT_CLASS,
-        "bg-muted top-[156px] left-0 flex w-[96%] items-end gap-0.5 p-1.5 sm:top-[178px] sm:w-110",
-        "without-zoonk:rotate-[1.4deg] without-zoonk:delay-50 translate-x-6 translate-y-[70px]",
+        "bg-muted top-[156px] left-0 flex w-full items-end gap-0.5 p-1.5 sm:top-[178px] sm:w-110",
+        "without-zoonk:rotate-[1.4deg] without-zoonk:delay-50 translate-x-3 translate-y-[70px] sm:translate-x-6",
       )}
     >
       {[first, second].map((tab, index) => (
         <p
           className={cn(
-            "flex h-9 min-w-0 items-center gap-1.75 rounded-lg px-2.5 text-[0.78125rem]",
+            "flex h-9 min-w-0 items-center gap-1.5 rounded-lg px-2 text-xs",
             index === 0
               ? "bg-popover text-foreground shadow-[0_1px_2px_oklch(0_0_0/8%)]"
-              : "text-muted-foreground uppercase",
+              : "text-muted-foreground",
           )}
           key={tab}
         >

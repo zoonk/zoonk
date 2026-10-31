@@ -2187,7 +2187,7 @@ msgid "Tell us your goal and answer a few quick questions. Then just follow each
 msgstr "目標を教えて、簡単な質問にいくつか答えてください。あとは毎日の学習計画に沿って進めるだけです。"
 
 #: src/app/[lang]/(home)/_components/forget-section.tsx
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "8AqUKr"
 msgid "Asking for directions"
 msgstr "道を尋ねる"
@@ -2253,7 +2253,7 @@ msgctxt "5czPwn"
 msgid "An illustration of the forgetting curve. Review dates change with your answers."
 msgstr "忘却曲線を表した図です。復習日は答えに応じて変わります。"
 
-#. A messy spreadsheet's file name. Translate “schedule” with one short word and keep the underscores, “FINAL_v3” and “.xlsx”. {exam} is the exam's name in lowercase. In Brazilian Portuguese: “cronograma_{exam}_FINAL_v3.xlsx”.
+#. A messy spreadsheet's file name. Translate “schedule” with one short word of at most 9 letters and keep the underscores, “FINAL_v3” and “.xlsx”. {exam} is the exam's name in lowercase. In Brazilian Portuguese: “cronograma_{exam}_FINAL_v3.xlsx”.
 #: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "A2PGPU"
 msgid "schedule_{exam}_FINAL_v3.xlsx"
@@ -2276,29 +2276,17 @@ msgctxt "--iDsA"
 msgid "where to start studying for the {exam}"
 msgstr "{exam}の勉強 何から始める"
 
-#. A search engine's suggestion: casual, lowercase. {exam} is lowercase.
+#. A search engine's suggestion: casual, lowercase, as short as the English. {exam} is lowercase.
 #: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "JqUc1j"
 msgid "studying for the {exam} from scratch"
 msgstr "{exam} ゼロからの勉強法"
 
-#. A search engine's suggestion: casual, lowercase. {exam} is lowercase.
+#. A search engine's suggestion: casual, lowercase, as short as the English. {exam} is lowercase.
 #: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "a26eAp"
 msgid "what comes up most on the {exam}"
 msgstr "{exam} よく出る問題"
-
-#. A browser tab's title for a video lesson. {topic} is a school topic.
-#: src/app/[lang]/(home)/_components/hero-examples.ts
-msgctxt "p6_5IZ"
-msgid "{topic}: lesson 1"
-msgstr "{topic}：レッスン1"
-
-#. A browser tab's title for a cram video, shown in capitals. {topic} is a school topic. In Brazilian Portuguese: “Resumão {topic}”.
-#: src/app/[lang]/(home)/_components/hero-examples.ts
-msgctxt "bqJd3p"
-msgid "{topic} crash course"
-msgstr "{topic}の総まとめ"
 
 #: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "9YszG4"
@@ -2322,11 +2310,11 @@ msgctxt "o4Yiw3"
 msgid "Mean and median"
 msgstr "平均値と中央値"
 
-#. A spreadsheet's file name. Translate the words and keep the underscores and “.xlsx”.
+#. A spreadsheet's file name, as short as the English: translate the words and keep the underscores and “.xlsx”. In Brazilian Portuguese: “plano_dados_2027.xlsx”.
 #: src/app/[lang]/(home)/_components/hero-examples.ts
-msgctxt "XhAkIy"
-msgid "data_career_plan_2027.xlsx"
-msgstr "データ分析_キャリア_プラン_2027.xlsx"
+msgctxt "TP_Hp1"
+msgid "data_plan_2027.xlsx"
+msgstr "データ_計画_2027.xlsx"
 
 #: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "IQ4iqI"
@@ -2365,185 +2353,401 @@ msgctxt "dcA_Pq"
 msgid "Data visualization"
 msgstr "データの可視化"
 
-#. A search engine's suggestion: casual, lowercase.
+#. A search engine's suggestion: casual, lowercase, as short as the English.
 #: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "tFhP5f"
 msgid "data analyst without a degree"
 msgstr "大卒じゃなくてもデータアナリスト"
 
-#. A search engine's suggestion: casual, lowercase. Keep “sql” and “python”.
+#. A search engine's suggestion: casual, lowercase, as short as the English. Keep “sql” and “python”.
 #: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "fbK3Am"
 msgid "sql or python first"
 msgstr "sqlとpython どっちが先"
 
-#. A browser tab's title for a video course.
+#. A browser tab's title for a video course, as short as the English: a phone shows it beside another tab.
 #: src/app/[lang]/(home)/_components/hero-examples.ts
-msgctxt "YBtIhI"
-msgid "SQL from scratch"
-msgstr "ゼロから学ぶSQL"
+msgctxt "CJtdvr"
+msgid "SQL basics"
+msgstr "SQL入門"
 
-#. A browser tab's title for a video course.
+#. A browser tab's title for a video course, as short as the English: a phone shows it beside another tab.
 #: src/app/[lang]/(home)/_components/hero-examples.ts
-msgctxt "_OhIrM"
-msgid "Power BI in 2 hours"
-msgstr "2時間で学ぶPower BI"
+msgctxt "y0pYPN"
+msgid "Power BI tutorial"
+msgstr "Power BI入門"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "uv4tw_"
 msgid "Basic SQL"
 msgstr "SQLの基礎"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "jg1oe7"
 msgid "Pivot tables"
 msgstr "ピボットテーブル"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "wgNfiX"
 msgid "Window functions"
 msgstr "ウィンドウ関数"
 
 #. An Excel function: use its name in your language's Excel.
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "UC--Se"
 msgid "XLOOKUP"
 msgstr "XLOOKUP"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "l5zKvT"
 msgid "Cleaning data"
 msgstr "データクレンジング"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "z5eDEP"
 msgid "Hypothesis tests"
 msgstr "仮説検定"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "EDaTf-"
 msgid "Linear regression"
 msgstr "線形回帰"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "dEvP4t"
 msgid "Sampling"
 msgstr "サンプリング"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "nwqt7T"
 msgid "Dashboards"
 msgstr "ダッシュボード"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "ggbhiR"
 msgid "Business metrics"
 msgstr "ビジネス指標"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "j7WWaK"
 msgid "Telling stories with data"
 msgstr "データでストーリーを伝える"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "-QNBMa"
 msgid "Data modeling"
 msgstr "データモデリング"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "uNOJ2Q"
 msgid "Portfolio"
 msgstr "ポートフォリオ"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "6pFhsv"
 msgid "Technical interviews"
 msgstr "技術面接"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "x7zrQq"
 msgid "Standard deviation"
 msgstr "標準偏差"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "Dc4Vu-"
 msgid "Correlation"
 msgstr "相関"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "eIw6xr"
 msgid "Outliers"
 msgstr "外れ値"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "ZmRyDX"
 msgid "Subqueries"
 msgstr "サブクエリ"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "tEPO8C"
 msgid "A/B tests"
 msgstr "A/Bテスト"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "1hS7Sm"
 msgid "Cohort analysis"
 msgstr "コホート分析"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "vPII9V"
 msgid "Conversion funnels"
 msgstr "コンバージョンファネル"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "588kpe"
 msgid "Data types"
 msgstr "データ型"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "P4R1Bq"
 msgid "Aggregations"
 msgstr "集計"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "IcBJoJ"
 msgid "Excel charts"
 msgstr "Excelのグラフ"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "ARJh9q"
 msgid "Python basics"
 msgstr "Pythonの基礎"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "wgVL5w"
 msgid "Dates and times"
 msgstr "日付と時刻"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "3zH6CJ"
 msgid "Missing values"
 msgstr "欠損値"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "zC81BZ"
 msgid "Exploratory analysis"
 msgstr "探索的データ分析"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "tMbwGE"
 msgid "Presenting results"
 msgstr "分析結果の発表"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "0quLKn"
 msgid "Data ethics"
 msgstr "データ倫理"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "bbGAq-"
 msgid "Spreadsheet formulas"
 msgstr "表計算の数式"
+
+#. SQL's common table expressions; keep “CTE” as is.
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "d7M-cZ"
+msgid "CTEs"
+msgstr "CTE"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "TXLox5"
+msgid "KPIs"
+msgstr "KPI"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "awaJec"
+msgid "Normal distribution"
+msgstr "正規分布"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "PJ5JJ-"
+msgid "Data warehouses"
+msgstr "データウェアハウス"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "q0cGvG"
+msgid "Time series"
+msgstr "時系列"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "XhQrGb"
+msgid "APIs"
+msgstr "API"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "nIuCY9"
+msgid "Web scraping"
+msgstr "ウェブスクレイピング"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "8T-5rH"
+msgid "Database normalization"
+msgstr "データベースの正規化"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "MAHiMB"
+msgid "Primary and foreign keys"
+msgstr "主キーと外部キー"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "2wfjbs"
+msgid "String functions"
+msgstr "文字列関数"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "wzwD5F"
+msgid "Regular expressions"
+msgstr "正規表現"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "Y9p5ZI"
+msgid "Confidence intervals"
+msgstr "信頼区間"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "PnrXip"
+msgid "P-values"
+msgstr "p値"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "EO14ud"
+msgid "Descriptive statistics"
+msgstr "記述統計"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "txB4LZ"
+msgid "Percentiles"
+msgstr "パーセンタイル"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "16HHKv"
+msgid "Moving averages"
+msgstr "移動平均"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "uSZR3x"
+msgid "Seasonality"
+msgstr "季節性"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "BjiJ1E"
+msgid "Forecasting"
+msgstr "予測"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "HhK3hL"
+msgid "Churn analysis"
+msgstr "顧客離脱の分析"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "Fu-yVS"
+msgid "Customer segmentation"
+msgstr "顧客の分類"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "nL6Jl0"
+msgid "Retention"
+msgstr "顧客維持"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "lqhBud"
+msgid "Revenue metrics"
+msgstr "収益指標"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "-746RL"
+msgid "Marketing attribution"
+msgstr "マーケティングの貢献度分析"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "eX_09T"
+msgid "Web analytics"
+msgstr "ウェブ解析"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "zOv79c"
+msgid "SQL views"
+msgstr "SQLビュー"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "Hhr-s6"
+msgid "Query performance"
+msgstr "クエリのパフォーマンス"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "-bHJSS"
+msgid "Data pipelines"
+msgstr "データパイプライン"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "EG4n7E"
+msgid "Data governance"
+msgstr "データガバナンス"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "KEIWiY"
+msgid "Data quality checks"
+msgstr "データ品質の確認"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "0uFAXy"
+msgid "Duplicate records"
+msgstr "重複レコード"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "zFWRst"
+msgid "Merging tables"
+msgstr "テーブルの結合"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "HY506Z"
+msgid "Reshaping data"
+msgstr "データの変形"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "7AD0XE"
+msgid "Conditional formatting"
+msgstr "条件付き書式"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "odlX0e"
+msgid "Excel macros"
+msgstr "Excelマクロ"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "NRvowL"
+msgid "Writing reports"
+msgstr "レポート作成"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "IYAKcM"
+msgid "Your résumé"
+msgstr "履歴書"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "BqUqk7"
+msgid "LinkedIn profile"
+msgstr "LinkedInのプロフィール"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "POZqkv"
+msgid "Case studies"
+msgstr "事例研究"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "LGPe8a"
+msgid "Probability basics"
+msgstr "確率の基礎"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "DPaXZT"
+msgid "Bar and line charts"
+msgstr "棒グラフと折れ線グラフ"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "geWuHd"
+msgid "Heatmaps"
+msgstr "ヒートマップ"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "B1BnkW"
+msgid "Data dictionaries"
+msgstr "データ辞書"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "ZHCpf7"
+msgid "Sales dashboards"
+msgstr "売上ダッシュボード"
 
 #. A spreadsheet's row label, short for “Week”.
 #: src/app/[lang]/(home)/_components/hero-mess.tsx
@@ -2612,206 +2816,29 @@ msgctxt "vuwclE"
 msgid "Pronunciation"
 msgstr "発音"
 
-#. A search engine's suggestion: casual, lowercase.
+#. A search engine's suggestion: casual, lowercase, as short as the English.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "UFr3n3"
-msgid "english from zero in 5 months, is it possible"
-msgstr "英語はゼロから5か月で身につくのか"
+msgctxt "UQZ59R"
+msgid "english in 5 months, is it possible"
+msgstr "5か月で英語って身につく"
 
-#. A search engine's suggestion: casual, lowercase.
+#. A search engine's suggestion: casual, lowercase, as short as the English.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
 msgctxt "RKdJNp"
 msgid "english for moving abroad"
 msgstr "海外移住のための英語"
 
-#. A browser tab's title for an English video.
+#. A browser tab's title for an English video, as short as the English: a phone shows it beside another tab.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
 msgctxt "ixOmJ_"
 msgid "50 phrasal verbs"
 msgstr "phrasal verbs 50選"
 
-#. A browser tab's title for an English video.
+#. A browser tab's title for an English video, as short as the English: a phone shows it beside another tab.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
 msgctxt "wJv88b"
 msgid "British accent"
-msgstr "イギリス英語の発音"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "cCtXxl"
-msgid "Small talk"
-msgstr "ちょっとした雑談"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "oqFdQv"
-msgid "Opening a bank account"
-msgstr "銀行口座を開く"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "8bsSu8"
-msgid "Job interviews"
-msgstr "就職の面接"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "Jp5b0b"
-msgid "Phone calls"
-msgstr "電話で話す"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "Qjokqs"
-msgid "In, on and at"
-msgstr "in・on・atの使い分け"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "YczFm6"
-msgid "Used to"
-msgstr "used toの使い方"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "nzmFRM"
-msgid "Conditionals"
-msgstr "条件文"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "mQdkOM"
-msgid "Seeing a doctor"
-msgstr "診察を受ける"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "jMB7fa"
-msgid "Irregular verbs"
-msgstr "不規則動詞"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "syvaMe"
-msgid "Will and going to"
-msgstr "willとgoing toの使い分け"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "DW4q3M"
-msgid "Modal verbs"
-msgstr "助動詞"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "-9OpIk"
-msgid "Reported speech"
-msgstr "間接話法"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "oGUw1v"
-msgid "British slang"
-msgstr "イギリス英語のスラング"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "fJHZbj"
-msgid "Writing emails"
-msgstr "メールを書く"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "MafdkP"
-msgid "Passive voice"
-msgstr "受動態"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "0YG5_J"
-msgid "Numbers and prices"
-msgstr "数字と値段"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "zzHAso"
-msgid "Complaining politely"
-msgstr "丁寧に苦情を伝える"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "GjhjEM"
-msgid "Making friends"
-msgstr "友達を作る"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "xJnXn-"
-msgid "A CV in English"
-msgstr "英文履歴書"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "_FwuCM"
-msgid "False friends"
-msgstr "似ていて意味が違う単語"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "1PSu6I"
-msgid "Idioms"
-msgstr "慣用表現"
-
-#. The London Underground.
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "mYTaWG"
-msgid "Taking the Tube"
-msgstr "ロンドンの地下鉄に乗る"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "Umc5eX"
-msgid "Talking about the weather"
-msgstr "天気の話をする"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "z0C-fI"
-msgid "Past continuous"
-msgstr "Past continuous"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "zhQDK_"
-msgid "Ordering food"
-msgstr "料理を注文する"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "HN_h17"
-msgid "Present simple"
-msgstr "Present simple"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "9NKtlI"
-msgid "Prepositions of time"
-msgstr "Prepositions of time"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "QIQMhT"
-msgid "At the airport"
-msgstr "空港でのやり取り"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "P0cSVK"
-msgid "Booking a hotel"
-msgstr "ホテルの予約"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "0CR3bM"
-msgid "Shopping for clothes"
-msgstr "服の買い物"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "1042Oh"
-msgid "Paying bills"
-msgstr "料金の支払い"
-
-#. Signing up with a family doctor in the UK.
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "GOdURb"
-msgid "Registering with a GP"
-msgstr "かかりつけ医への登録"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "5dMt7r"
-msgid "Weekend plans"
-msgstr "週末の予定"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "4no0Ie"
-msgid "Formal and informal English"
-msgstr "フォーマルな英語とカジュアルな英語"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "bi371t"
-msgid "Linking words"
-msgstr "つなぎ言葉"
+msgstr "英国アクセント"
 
 #. A topic for learning Spanish before moving to Mexico City.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
@@ -2860,104 +2887,567 @@ msgctxt "zzQULs"
 msgid "how to learn spanish fast to move abroad"
 msgstr "海外移住のためにスペイン語を早く身につける方法"
 
-#. A search engine's suggestion: casual, lowercase.
+#. A search engine's suggestion: casual, lowercase, as short as the English.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "qVW5zK"
-msgid "spanish from zero in 5 months, is it possible"
-msgstr "スペイン語はゼロから5か月で身につくのか"
+msgctxt "zrQn71"
+msgid "spanish in 5 months, is it possible"
+msgstr "スペイン語 5か月で習得できる"
 
-#. A search engine's suggestion: casual, lowercase.
+#. A search engine's suggestion: casual, lowercase, as short as the English.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
 msgctxt "sbyJjP"
 msgid "spanish for moving abroad"
 msgstr "海外移住のためのスペイン語"
 
-#. A browser tab's title for a Spanish video.
+#. A browser tab's title for a Spanish video, as short as the English: a phone shows it beside another tab.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
 msgctxt "zfHKg5"
 msgid "Verb conjugation"
 msgstr "動詞の活用"
 
-#. A browser tab's title for a Spanish video.
+#. A browser tab's title for a Spanish video, as short as the English: a phone shows it beside another tab.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "iMmFvT"
 msgid "Mexican slang"
 msgstr "メキシコのスラング"
 
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "cCtXxl"
+msgid "Small talk"
+msgstr "ちょっとした雑談"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "oqFdQv"
+msgid "Opening a bank account"
+msgstr "銀行口座を開く"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "8bsSu8"
+msgid "Job interviews"
+msgstr "就職の面接"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Jp5b0b"
+msgid "Phone calls"
+msgstr "電話で話す"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Qjokqs"
+msgid "In, on and at"
+msgstr "in・on・atの使い分け"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "YczFm6"
+msgid "Used to"
+msgstr "used toの使い方"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "nzmFRM"
+msgid "Conditionals"
+msgstr "条件文"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "mQdkOM"
+msgid "Seeing a doctor"
+msgstr "診察を受ける"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "jMB7fa"
+msgid "Irregular verbs"
+msgstr "不規則動詞"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "syvaMe"
+msgid "Will and going to"
+msgstr "willとgoing toの使い分け"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "DW4q3M"
+msgid "Modal verbs"
+msgstr "助動詞"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "-9OpIk"
+msgid "Reported speech"
+msgstr "間接話法"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "oGUw1v"
+msgid "British slang"
+msgstr "イギリス英語のスラング"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "fJHZbj"
+msgid "Writing emails"
+msgstr "メールを書く"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "MafdkP"
+msgid "Passive voice"
+msgstr "受動態"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "0YG5_J"
+msgid "Numbers and prices"
+msgstr "数字と値段"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "zzHAso"
+msgid "Complaining politely"
+msgstr "丁寧に苦情を伝える"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "GjhjEM"
+msgid "Making friends"
+msgstr "友達を作る"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "xJnXn-"
+msgid "A CV in English"
+msgstr "英文履歴書"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "_FwuCM"
+msgid "False friends"
+msgstr "似ていて意味が違う単語"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "1PSu6I"
+msgid "Idioms"
+msgstr "慣用表現"
+
+#. The London Underground.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "mYTaWG"
+msgid "Taking the Tube"
+msgstr "ロンドンの地下鉄に乗る"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Umc5eX"
+msgid "Talking about the weather"
+msgstr "天気の話をする"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "z0C-fI"
+msgid "Past continuous"
+msgstr "Past continuous"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "zhQDK_"
+msgid "Ordering food"
+msgstr "料理を注文する"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "HN_h17"
+msgid "Present simple"
+msgstr "Present simple"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "9NKtlI"
+msgid "Prepositions of time"
+msgstr "Prepositions of time"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "QIQMhT"
+msgid "At the airport"
+msgstr "空港でのやり取り"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "P0cSVK"
+msgid "Booking a hotel"
+msgstr "ホテルの予約"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "0CR3bM"
+msgid "Shopping for clothes"
+msgstr "服の買い物"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "1042Oh"
+msgid "Paying bills"
+msgstr "料金の支払い"
+
+#. Signing up with a family doctor in the UK.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "GOdURb"
+msgid "Registering with a GP"
+msgstr "かかりつけ医への登録"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "5dMt7r"
+msgid "Weekend plans"
+msgstr "週末の予定"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "4no0Ie"
+msgid "Formal and informal English"
+msgstr "フォーマルな英語とカジュアルな英語"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "bi371t"
+msgid "Linking words"
+msgstr "つなぎ言葉"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "0Xnpg4"
+msgid "Introducing yourself"
+msgstr "自己紹介"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Atfvsw"
+msgid "Countable and uncountable"
+msgstr "Countable and uncountable"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "HgoU30"
+msgid "Present continuous"
+msgstr "Present continuous"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "2BJjMD"
+msgid "Asking for help"
+msgstr "助けを求める"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "UIu-aU"
+msgid "At the supermarket"
+msgstr "スーパーで"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "IASTHU"
+msgid "Comparatives"
+msgstr "Comparatives"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "q--Z-m"
+msgid "Question tags"
+msgstr "Question tags"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "m9ZQKQ"
+msgid "Making an appointment"
+msgstr "予約する"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "5SYUls"
+msgid "Relative clauses"
+msgstr "Relative clauses"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "7XwuCX"
+msgid "Going out at night"
+msgstr "夜に出かける"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "MeYB2K"
+msgid "Some and any"
+msgstr "someとany"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "5VRNTq"
+msgid "At the pub"
+msgstr "パブで"
+
+#. A pronunciation topic for learners of English.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "9NvQ7H"
+msgid "Pronouncing “-ed”"
+msgstr "「-ed」の発音"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "oYAkzR"
+msgid "Talking to coworkers"
+msgstr "同僚と話す"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "JYLSKE"
+msgid "Intonation"
+msgstr "イントネーション"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "wJv3Ip"
+msgid "Getting a SIM card"
+msgstr "SIMカードを買う"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "C-0je_"
+msgid "Collocations"
+msgstr "コロケーション"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "N2RmdO"
+msgid "Taking the bus"
+msgstr "バスに乗る"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Abdyee"
+msgid "Past perfect"
+msgstr "Past perfect"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "E9A2x9"
+msgid "Polite requests"
+msgstr "丁寧にお願いする"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "bsQKgn"
+msgid "Word stress"
+msgstr "単語のアクセント"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "4CKWuC"
+msgid "Saying sorry"
+msgstr "謝る"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "7YlKf7"
+msgid "Since and for"
+msgstr "sinceとfor"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "msi3VP"
+msgid "Giving opinions"
+msgstr "意見を伝える"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "EiRdS_"
+msgid "Make and do"
+msgstr "makeとdo"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "2G3OKf"
+msgid "Agreeing and disagreeing"
+msgstr "賛成・反対を伝える"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "LrKF52"
+msgid "Say and tell"
+msgstr "sayとtell"
+
+#. A UK local tax on homes.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "syConX"
+msgid "Council tax"
+msgstr "カウンシルタックス"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "NYRqPJ"
+msgid "Gerunds and infinitives"
+msgstr "gerundsとinfinitives"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "CzedbT"
+msgid "Describing people"
+msgstr "人の特徴を説明する"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "vSnyT6"
+msgid "Too and enough"
+msgstr "tooとenough"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "pnbTui"
+msgid "Talking about family"
+msgstr "家族について話す"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "-WrNBl"
+msgid "Listening practice"
+msgstr "リスニング練習"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Ijevsy"
+msgid "British and American English"
+msgstr "イギリス英語とアメリカ英語"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "q48Kon"
+msgid "Watching series in English"
+msgstr "英語でドラマを見る"
+
 #. A Spanish grammar topic.
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "o5dcRe"
 msgid "The subjunctive"
 msgstr "接続法"
 
 #. A Spanish grammar topic: keep “por” and “para” in Spanish.
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "T-SlZH"
 msgid "Por and para"
 msgstr "porとparaの使い分け"
 
 #. A Spanish grammar topic: keep “gustar” in Spanish.
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "-T6zu8"
 msgid "Verbs like gustar"
 msgstr "gustarのような動詞"
 
 #. A Spanish grammar topic: keep “tú” and “usted” in Spanish.
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "JafIDQ"
 msgid "Tú and usted"
 msgstr "túとustedの使い分け"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "HgeEzh"
 msgid "A CV in Spanish"
 msgstr "スペイン語の履歴書"
 
 #. Mexico City's subway.
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "_lyMF3"
 msgid "Taking the metro"
 msgstr "地下鉄に乗る"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "8HP4KD"
 msgid "Reflexive verbs"
 msgstr "再帰動詞"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "sdWSVm"
 msgid "At the market"
 msgstr "市場での会話"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "sc__2J"
 msgid "The imperfect"
 msgstr "線過去"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "RA4Y2E"
 msgid "Telling a story"
 msgstr "物語を語る"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "We9l88"
 msgid "Present tense"
 msgstr "現在形"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "MJlEHy"
 msgid "Ordering tacos"
 msgstr "タコスの注文"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "OyVECT"
 msgid "Getting around the city"
 msgstr "街での移動"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "EKcm9W"
 msgid "Formal and informal Spanish"
 msgstr "フォーマルなスペイン語とカジュアルなスペイン語"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "SpESOo"
+msgid "Direct object pronouns"
+msgstr "直接目的語代名詞"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "XWWEUL"
+msgid "Gender of nouns"
+msgstr "名詞の性"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "AtBECX"
+msgid "At the pharmacy"
+msgstr "薬局で"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "1Nx_ds"
+msgid "The future tense"
+msgstr "未来形"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "DSjBNA"
+msgid "Street food"
+msgstr "屋台料理"
+
+#. A Spanish grammar topic: keep “ir a” in Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "1xhvPH"
+msgid "Ir a + infinitive"
+msgstr "ir a + 不定詞"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "MO5fzt"
+msgid "Paying rent"
+msgstr "家賃を払う"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "nGYOGh"
+msgid "Diminutives"
+msgstr "縮小辞"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "f5gkO4"
+msgid "Taking a taxi"
+msgstr "タクシーに乗る"
+
+#. A Spanish grammar topic: the imperative.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "TY8Ho1"
+msgid "Commands"
+msgstr "命令形"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "-S4Hj0"
+msgid "Making plans with friends"
+msgstr "友達と予定を立てる"
+
+#. Spanish accent marks, such as “á”.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "f9cc8a"
+msgid "Written accents"
+msgstr "アクセント記号"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Mjyrpe"
+msgid "Ordering coffee"
+msgstr "コーヒーを注文する"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "vuBTA2"
+msgid "The conditional"
+msgstr "過去未来形"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "llvcqZ"
+msgid "Asking for the check"
+msgstr "お会計をお願いする"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "OT0oz5"
+msgid "Spanish vowels"
+msgstr "スペイン語の母音"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "T1qnCF"
+msgid "Talking to neighbors"
+msgstr "近所の人と話す"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "ko14Qa"
+msgid "Emergencies"
+msgstr "緊急時の対応"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "KVimoQ"
+msgid "Haggling"
+msgstr "値段交渉"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "yI2CII"
+msgid "Telling time"
+msgstr "時刻の伝え方"
 
 #: src/app/[lang]/(home)/_components/hero-stage.tsx
 msgctxt "493J7R"
@@ -3114,23 +3604,23 @@ msgctxt "WtT1Bl"
 msgid "Tell us your goal and the date. Zoonk splits it all into a daily plan sized to your time."
 msgstr "目標と達成したい日を教えてください。Zoonkが学習に使える時間に合わせて、毎日の学習計画を立てます。"
 
-#. An example goal a learner might type; {month} is a month name. In Brazilian Portuguese: “virar analista de dados até {month}”.
+#. An example goal a learner might type, short enough to fit on one line beside a button; {month} is a month name. In Brazilian Portuguese: “virar analista de dados até {month}”.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "xlsEx0"
 msgid "become a data analyst by {month}"
 msgstr "{month}までにデータアナリストになる"
 
-#. An example goal a learner might type; {month} is a month name. Use your language's name for Mexico City.
+#. An example goal a learner might type, short enough to fit on one line beside a button. Use your language's name for Mexico City.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "vF1uwi"
-msgid "speak Spanish for my move to Mexico City in {month}"
-msgstr "{month}にメキシコシティへ引っ越すので、スペイン語を話せるようになりたいです"
+msgctxt "034zMY"
+msgid "speak Spanish to live in Mexico City"
+msgstr "メキシコシティで暮らすためにスペイン語を話せるようになる"
 
-#. An example goal a learner might type; {month} is a month name. Use your language's name for London. In Brazilian Portuguese: “falar inglês para me mudar para Londres em {month}”.
+#. An example goal a learner might type, short enough to fit on one line beside a button. Use your language's name for London. In Brazilian Portuguese: “falar inglês para morar em Londres”.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "FWZush"
-msgid "speak English for my move to London in {month}"
-msgstr "{month}にロンドンへ引っ越すので、英語を話せるようになる"
+msgctxt "a-JAH3"
+msgid "speak English to live in London"
+msgstr "ロンドンで暮らすために英語を話す"
 
 #: src/app/[lang]/(home)/_components/missed-day-section.tsx
 msgctxt "planPhases.6RRX7X"

@@ -2187,7 +2187,7 @@ msgid "Tell us your goal and answer a few quick questions. Then just follow each
 msgstr "Powiedz nam, jaki masz cel, i odpowiedz na kilka krótkich pytań. Potem po prostu realizuj plan na każdy dzień."
 
 #: src/app/[lang]/(home)/_components/forget-section.tsx
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "8AqUKr"
 msgid "Asking for directions"
 msgstr "Pytanie o drogę"
@@ -2253,7 +2253,7 @@ msgctxt "5czPwn"
 msgid "An illustration of the forgetting curve. Review dates change with your answers."
 msgstr "Ilustracja krzywej zapominania. Terminy powtórek zmieniają się w zależności od twoich odpowiedzi."
 
-#. A messy spreadsheet's file name. Translate “schedule” with one short word and keep the underscores, “FINAL_v3” and “.xlsx”. {exam} is the exam's name in lowercase. In Brazilian Portuguese: “cronograma_{exam}_FINAL_v3.xlsx”.
+#. A messy spreadsheet's file name. Translate “schedule” with one short word of at most 9 letters and keep the underscores, “FINAL_v3” and “.xlsx”. {exam} is the exam's name in lowercase. In Brazilian Portuguese: “cronograma_{exam}_FINAL_v3.xlsx”.
 #: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "A2PGPU"
 msgid "schedule_{exam}_FINAL_v3.xlsx"
@@ -2276,29 +2276,17 @@ msgctxt "--iDsA"
 msgid "where to start studying for the {exam}"
 msgstr "{exam} od czego zacząć naukę"
 
-#. A search engine's suggestion: casual, lowercase. {exam} is lowercase.
+#. A search engine's suggestion: casual, lowercase, as short as the English. {exam} is lowercase.
 #: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "JqUc1j"
 msgid "studying for the {exam} from scratch"
 msgstr "{exam} nauka od zera"
 
-#. A search engine's suggestion: casual, lowercase. {exam} is lowercase.
+#. A search engine's suggestion: casual, lowercase, as short as the English. {exam} is lowercase.
 #: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "a26eAp"
 msgid "what comes up most on the {exam}"
 msgstr "{exam} co pojawia się najczęściej"
-
-#. A browser tab's title for a video lesson. {topic} is a school topic.
-#: src/app/[lang]/(home)/_components/hero-examples.ts
-msgctxt "p6_5IZ"
-msgid "{topic}: lesson 1"
-msgstr "{topic}: lekcja 1"
-
-#. A browser tab's title for a cram video, shown in capitals. {topic} is a school topic. In Brazilian Portuguese: “Resumão {topic}”.
-#: src/app/[lang]/(home)/_components/hero-examples.ts
-msgctxt "bqJd3p"
-msgid "{topic} crash course"
-msgstr "{topic} W PIGUŁCE"
 
 #: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "9YszG4"
@@ -2322,11 +2310,11 @@ msgctxt "o4Yiw3"
 msgid "Mean and median"
 msgstr "Średnia i mediana"
 
-#. A spreadsheet's file name. Translate the words and keep the underscores and “.xlsx”.
+#. A spreadsheet's file name, as short as the English: translate the words and keep the underscores and “.xlsx”. In Brazilian Portuguese: “plano_dados_2027.xlsx”.
 #: src/app/[lang]/(home)/_components/hero-examples.ts
-msgctxt "XhAkIy"
-msgid "data_career_plan_2027.xlsx"
-msgstr "plan_kariery_w_analizie_danych_2027.xlsx"
+msgctxt "TP_Hp1"
+msgid "data_plan_2027.xlsx"
+msgstr "plan_danych_2027.xlsx"
 
 #: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "IQ4iqI"
@@ -2365,185 +2353,401 @@ msgctxt "dcA_Pq"
 msgid "Data visualization"
 msgstr "Wizualizacja danych"
 
-#. A search engine's suggestion: casual, lowercase.
+#. A search engine's suggestion: casual, lowercase, as short as the English.
 #: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "tFhP5f"
 msgid "data analyst without a degree"
 msgstr "analityk danych bez studiów"
 
-#. A search engine's suggestion: casual, lowercase. Keep “sql” and “python”.
+#. A search engine's suggestion: casual, lowercase, as short as the English. Keep “sql” and “python”.
 #: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "fbK3Am"
 msgid "sql or python first"
 msgstr "najpierw sql czy python"
 
-#. A browser tab's title for a video course.
+#. A browser tab's title for a video course, as short as the English: a phone shows it beside another tab.
 #: src/app/[lang]/(home)/_components/hero-examples.ts
-msgctxt "YBtIhI"
-msgid "SQL from scratch"
-msgstr "SQL od podstaw"
+msgctxt "CJtdvr"
+msgid "SQL basics"
+msgstr "Podstawy SQL"
 
-#. A browser tab's title for a video course.
+#. A browser tab's title for a video course, as short as the English: a phone shows it beside another tab.
 #: src/app/[lang]/(home)/_components/hero-examples.ts
-msgctxt "_OhIrM"
-msgid "Power BI in 2 hours"
-msgstr "Power BI w 2 godziny"
+msgctxt "y0pYPN"
+msgid "Power BI tutorial"
+msgstr "Kurs Power BI"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "uv4tw_"
 msgid "Basic SQL"
 msgstr "Podstawy SQL"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "jg1oe7"
 msgid "Pivot tables"
 msgstr "Tabele przestawne"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "wgNfiX"
 msgid "Window functions"
 msgstr "Funkcje okienkowe"
 
 #. An Excel function: use its name in your language's Excel.
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "UC--Se"
 msgid "XLOOKUP"
 msgstr "X.WYSZUKAJ"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "l5zKvT"
 msgid "Cleaning data"
 msgstr "Czyszczenie danych"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "z5eDEP"
 msgid "Hypothesis tests"
 msgstr "Testowanie hipotez"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "EDaTf-"
 msgid "Linear regression"
 msgstr "Regresja liniowa"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "dEvP4t"
 msgid "Sampling"
 msgstr "Dobór próby"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "nwqt7T"
 msgid "Dashboards"
 msgstr "Panele analityczne"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "ggbhiR"
 msgid "Business metrics"
 msgstr "Wskaźniki biznesowe"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "j7WWaK"
 msgid "Telling stories with data"
 msgstr "Opowiadanie historii za pomocą danych"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "-QNBMa"
 msgid "Data modeling"
 msgstr "Modelowanie danych"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "uNOJ2Q"
 msgid "Portfolio"
 msgstr "Portfolio"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "6pFhsv"
 msgid "Technical interviews"
 msgstr "Techniczne rozmowy kwalifikacyjne"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "x7zrQq"
 msgid "Standard deviation"
 msgstr "Odchylenie standardowe"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "Dc4Vu-"
 msgid "Correlation"
 msgstr "Korelacja"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "eIw6xr"
 msgid "Outliers"
 msgstr "Wartości odstające"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "ZmRyDX"
 msgid "Subqueries"
 msgstr "Podzapytania"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "tEPO8C"
 msgid "A/B tests"
 msgstr "Testy A/B"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "1hS7Sm"
 msgid "Cohort analysis"
 msgstr "Analiza kohortowa"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "vPII9V"
 msgid "Conversion funnels"
 msgstr "Lejki konwersji"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "588kpe"
 msgid "Data types"
 msgstr "Typy danych"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "P4R1Bq"
 msgid "Aggregations"
 msgstr "Agregowanie danych"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "IcBJoJ"
 msgid "Excel charts"
 msgstr "Wykresy w programie Excel"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "ARJh9q"
 msgid "Python basics"
 msgstr "Podstawy języka Python"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "wgVL5w"
 msgid "Dates and times"
 msgstr "Daty i godziny"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "3zH6CJ"
 msgid "Missing values"
 msgstr "Brakujące wartości"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "zC81BZ"
 msgid "Exploratory analysis"
 msgstr "Analiza eksploracyjna"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "tMbwGE"
 msgid "Presenting results"
 msgstr "Prezentowanie wyników"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "0quLKn"
 msgid "Data ethics"
 msgstr "Etyka pracy z danymi"
 
-#: src/app/[lang]/(home)/_components/hero-examples.ts
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
 msgctxt "bbGAq-"
 msgid "Spreadsheet formulas"
 msgstr "Formuły w arkuszach kalkulacyjnych"
+
+#. SQL's common table expressions; keep “CTE” as is.
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "d7M-cZ"
+msgid "CTEs"
+msgstr "CTE"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "TXLox5"
+msgid "KPIs"
+msgstr "KPI"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "awaJec"
+msgid "Normal distribution"
+msgstr "Rozkład normalny"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "PJ5JJ-"
+msgid "Data warehouses"
+msgstr "Hurtownie danych"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "q0cGvG"
+msgid "Time series"
+msgstr "Szeregi czasowe"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "XhQrGb"
+msgid "APIs"
+msgstr "API"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "nIuCY9"
+msgid "Web scraping"
+msgstr "Zbieranie danych ze stron"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "8T-5rH"
+msgid "Database normalization"
+msgstr "Normalizacja baz danych"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "MAHiMB"
+msgid "Primary and foreign keys"
+msgstr "Klucze główne i obce"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "2wfjbs"
+msgid "String functions"
+msgstr "Funkcje tekstowe"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "wzwD5F"
+msgid "Regular expressions"
+msgstr "Wyrażenia regularne"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "Y9p5ZI"
+msgid "Confidence intervals"
+msgstr "Przedziały ufności"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "PnrXip"
+msgid "P-values"
+msgstr "Wartości p"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "EO14ud"
+msgid "Descriptive statistics"
+msgstr "Statystyka opisowa"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "txB4LZ"
+msgid "Percentiles"
+msgstr "Percentyle"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "16HHKv"
+msgid "Moving averages"
+msgstr "Średnie kroczące"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "uSZR3x"
+msgid "Seasonality"
+msgstr "Sezonowość"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "BjiJ1E"
+msgid "Forecasting"
+msgstr "Prognozowanie"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "HhK3hL"
+msgid "Churn analysis"
+msgstr "Analiza odejść klientów"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "Fu-yVS"
+msgid "Customer segmentation"
+msgstr "Segmentacja klientów"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "nL6Jl0"
+msgid "Retention"
+msgstr "Utrzymanie klientów"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "lqhBud"
+msgid "Revenue metrics"
+msgstr "Wskaźniki przychodów"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "-746RL"
+msgid "Marketing attribution"
+msgstr "Atrybucja marketingowa"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "eX_09T"
+msgid "Web analytics"
+msgstr "Analityka internetowa"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "zOv79c"
+msgid "SQL views"
+msgstr "Widoki SQL"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "Hhr-s6"
+msgid "Query performance"
+msgstr "Wydajność zapytań"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "-bHJSS"
+msgid "Data pipelines"
+msgstr "Potoki danych"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "EG4n7E"
+msgid "Data governance"
+msgstr "Nadzór nad danymi"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "KEIWiY"
+msgid "Data quality checks"
+msgstr "Kontrola jakości danych"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "0uFAXy"
+msgid "Duplicate records"
+msgstr "Zduplikowane rekordy"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "zFWRst"
+msgid "Merging tables"
+msgstr "Scalanie tabel"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "HY506Z"
+msgid "Reshaping data"
+msgstr "Zmiana struktury danych"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "7AD0XE"
+msgid "Conditional formatting"
+msgstr "Formatowanie warunkowe"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "odlX0e"
+msgid "Excel macros"
+msgstr "Makra programu Excel"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "NRvowL"
+msgid "Writing reports"
+msgstr "Pisanie raportów"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "IYAKcM"
+msgid "Your résumé"
+msgstr "Twoje CV"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "BqUqk7"
+msgid "LinkedIn profile"
+msgstr "Profil na LinkedIn"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "POZqkv"
+msgid "Case studies"
+msgstr "Studia przypadków"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "LGPe8a"
+msgid "Probability basics"
+msgstr "Podstawy rachunku prawdopodobieństwa"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "DPaXZT"
+msgid "Bar and line charts"
+msgstr "Wykresy słupkowe i liniowe"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "geWuHd"
+msgid "Heatmaps"
+msgstr "Mapy cieplne"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "B1BnkW"
+msgid "Data dictionaries"
+msgstr "Słowniki danych"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "ZHCpf7"
+msgid "Sales dashboards"
+msgstr "Pulpity sprzedażowe"
 
 #. A spreadsheet's row label, short for “Week”.
 #: src/app/[lang]/(home)/_components/hero-mess.tsx
@@ -2612,206 +2816,29 @@ msgctxt "vuwclE"
 msgid "Pronunciation"
 msgstr "Wymowa"
 
-#. A search engine's suggestion: casual, lowercase.
+#. A search engine's suggestion: casual, lowercase, as short as the English.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "UFr3n3"
-msgid "english from zero in 5 months, is it possible"
-msgstr "angielski od zera w 5 miesięcy, czy to możliwe"
+msgctxt "UQZ59R"
+msgid "english in 5 months, is it possible"
+msgstr "angielski w 5 miesięcy, czy to możliwe"
 
-#. A search engine's suggestion: casual, lowercase.
+#. A search engine's suggestion: casual, lowercase, as short as the English.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
 msgctxt "RKdJNp"
 msgid "english for moving abroad"
-msgstr "angielski przed przeprowadzką za granicę"
+msgstr "angielski na emigrację"
 
-#. A browser tab's title for an English video.
+#. A browser tab's title for an English video, as short as the English: a phone shows it beside another tab.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
 msgctxt "ixOmJ_"
 msgid "50 phrasal verbs"
 msgstr "50 phrasal verbs"
 
-#. A browser tab's title for an English video.
+#. A browser tab's title for an English video, as short as the English: a phone shows it beside another tab.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
 msgctxt "wJv88b"
 msgid "British accent"
 msgstr "Brytyjski akcent"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "cCtXxl"
-msgid "Small talk"
-msgstr "Luźne rozmowy"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "oqFdQv"
-msgid "Opening a bank account"
-msgstr "Zakładanie konta bankowego"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "8bsSu8"
-msgid "Job interviews"
-msgstr "Rozmowy kwalifikacyjne"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "Jp5b0b"
-msgid "Phone calls"
-msgstr "Rozmowy telefoniczne"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "Qjokqs"
-msgid "In, on and at"
-msgstr "Przyimki „in”, „on” i „at”"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "YczFm6"
-msgid "Used to"
-msgstr "Konstrukcja „used to”"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "nzmFRM"
-msgid "Conditionals"
-msgstr "Okresy warunkowe"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "mQdkOM"
-msgid "Seeing a doctor"
-msgstr "Wizyta u lekarza"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "jMB7fa"
-msgid "Irregular verbs"
-msgstr "Czasowniki nieregularne"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "syvaMe"
-msgid "Will and going to"
-msgstr "Konstrukcje „will” i „going to”"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "DW4q3M"
-msgid "Modal verbs"
-msgstr "Czasowniki modalne"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "-9OpIk"
-msgid "Reported speech"
-msgstr "Mowa zależna"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "oGUw1v"
-msgid "British slang"
-msgstr "Brytyjski slang"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "fJHZbj"
-msgid "Writing emails"
-msgstr "Pisanie e-maili"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "MafdkP"
-msgid "Passive voice"
-msgstr "Strona bierna"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "0YG5_J"
-msgid "Numbers and prices"
-msgstr "Liczby i ceny"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "zzHAso"
-msgid "Complaining politely"
-msgstr "Uprzejme wyrażanie niezadowolenia"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "GjhjEM"
-msgid "Making friends"
-msgstr "Zawieranie znajomości"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "xJnXn-"
-msgid "A CV in English"
-msgstr "CV po angielsku"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "_FwuCM"
-msgid "False friends"
-msgstr "Fałszywi przyjaciele"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "1PSu6I"
-msgid "Idioms"
-msgstr "Idiomy"
-
-#. The London Underground.
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "mYTaWG"
-msgid "Taking the Tube"
-msgstr "Jazda londyńskim metrem"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "Umc5eX"
-msgid "Talking about the weather"
-msgstr "Rozmowy o pogodzie"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "z0C-fI"
-msgid "Past continuous"
-msgstr "Past continuous"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "zhQDK_"
-msgid "Ordering food"
-msgstr "Zamawianie jedzenia"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "HN_h17"
-msgid "Present simple"
-msgstr "Present simple"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "9NKtlI"
-msgid "Prepositions of time"
-msgstr "Przyimki czasu"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "QIQMhT"
-msgid "At the airport"
-msgstr "Na lotnisku"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "P0cSVK"
-msgid "Booking a hotel"
-msgstr "Rezerwacja hotelu"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "0CR3bM"
-msgid "Shopping for clothes"
-msgstr "Kupowanie ubrań"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "1042Oh"
-msgid "Paying bills"
-msgstr "Płacenie rachunków"
-
-#. Signing up with a family doctor in the UK.
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "GOdURb"
-msgid "Registering with a GP"
-msgstr "Rejestracja u lekarza rodzinnego"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "5dMt7r"
-msgid "Weekend plans"
-msgstr "Plany na weekend"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "4no0Ie"
-msgid "Formal and informal English"
-msgstr "Angielski formalny i nieformalny"
-
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "bi371t"
-msgid "Linking words"
-msgstr "Wyrażenia łączące"
 
 #. A topic for learning Spanish before moving to Mexico City.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
@@ -2860,104 +2887,567 @@ msgctxt "zzQULs"
 msgid "how to learn spanish fast to move abroad"
 msgstr "jak szybko nauczyć się hiszpańskiego przed przeprowadzką za granicę"
 
-#. A search engine's suggestion: casual, lowercase.
+#. A search engine's suggestion: casual, lowercase, as short as the English.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
-msgctxt "qVW5zK"
-msgid "spanish from zero in 5 months, is it possible"
-msgstr "hiszpański od zera w 5 miesięcy, czy to możliwe"
+msgctxt "zrQn71"
+msgid "spanish in 5 months, is it possible"
+msgstr "hiszpański w 5 miesięcy, czy to możliwe"
 
-#. A search engine's suggestion: casual, lowercase.
+#. A search engine's suggestion: casual, lowercase, as short as the English.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
 msgctxt "sbyJjP"
 msgid "spanish for moving abroad"
 msgstr "hiszpański przed przeprowadzką za granicę"
 
-#. A browser tab's title for a Spanish video.
+#. A browser tab's title for a Spanish video, as short as the English: a phone shows it beside another tab.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
 msgctxt "zfHKg5"
 msgid "Verb conjugation"
 msgstr "Odmiana czasowników"
 
-#. A browser tab's title for a Spanish video.
+#. A browser tab's title for a Spanish video, as short as the English: a phone shows it beside another tab.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "iMmFvT"
 msgid "Mexican slang"
 msgstr "Meksykański slang"
 
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "cCtXxl"
+msgid "Small talk"
+msgstr "Luźne rozmowy"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "oqFdQv"
+msgid "Opening a bank account"
+msgstr "Zakładanie konta bankowego"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "8bsSu8"
+msgid "Job interviews"
+msgstr "Rozmowy kwalifikacyjne"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Jp5b0b"
+msgid "Phone calls"
+msgstr "Rozmowy telefoniczne"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Qjokqs"
+msgid "In, on and at"
+msgstr "Przyimki „in”, „on” i „at”"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "YczFm6"
+msgid "Used to"
+msgstr "Konstrukcja „used to”"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "nzmFRM"
+msgid "Conditionals"
+msgstr "Okresy warunkowe"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "mQdkOM"
+msgid "Seeing a doctor"
+msgstr "Wizyta u lekarza"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "jMB7fa"
+msgid "Irregular verbs"
+msgstr "Czasowniki nieregularne"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "syvaMe"
+msgid "Will and going to"
+msgstr "Konstrukcje „will” i „going to”"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "DW4q3M"
+msgid "Modal verbs"
+msgstr "Czasowniki modalne"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "-9OpIk"
+msgid "Reported speech"
+msgstr "Mowa zależna"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "oGUw1v"
+msgid "British slang"
+msgstr "Brytyjski slang"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "fJHZbj"
+msgid "Writing emails"
+msgstr "Pisanie e-maili"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "MafdkP"
+msgid "Passive voice"
+msgstr "Strona bierna"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "0YG5_J"
+msgid "Numbers and prices"
+msgstr "Liczby i ceny"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "zzHAso"
+msgid "Complaining politely"
+msgstr "Uprzejme wyrażanie niezadowolenia"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "GjhjEM"
+msgid "Making friends"
+msgstr "Zawieranie znajomości"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "xJnXn-"
+msgid "A CV in English"
+msgstr "CV po angielsku"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "_FwuCM"
+msgid "False friends"
+msgstr "Fałszywi przyjaciele"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "1PSu6I"
+msgid "Idioms"
+msgstr "Idiomy"
+
+#. The London Underground.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "mYTaWG"
+msgid "Taking the Tube"
+msgstr "Jazda londyńskim metrem"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Umc5eX"
+msgid "Talking about the weather"
+msgstr "Rozmowy o pogodzie"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "z0C-fI"
+msgid "Past continuous"
+msgstr "Past continuous"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "zhQDK_"
+msgid "Ordering food"
+msgstr "Zamawianie jedzenia"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "HN_h17"
+msgid "Present simple"
+msgstr "Present simple"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "9NKtlI"
+msgid "Prepositions of time"
+msgstr "Przyimki czasu"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "QIQMhT"
+msgid "At the airport"
+msgstr "Na lotnisku"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "P0cSVK"
+msgid "Booking a hotel"
+msgstr "Rezerwacja hotelu"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "0CR3bM"
+msgid "Shopping for clothes"
+msgstr "Kupowanie ubrań"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "1042Oh"
+msgid "Paying bills"
+msgstr "Płacenie rachunków"
+
+#. Signing up with a family doctor in the UK.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "GOdURb"
+msgid "Registering with a GP"
+msgstr "Rejestracja u lekarza rodzinnego"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "5dMt7r"
+msgid "Weekend plans"
+msgstr "Plany na weekend"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "4no0Ie"
+msgid "Formal and informal English"
+msgstr "Angielski formalny i nieformalny"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "bi371t"
+msgid "Linking words"
+msgstr "Wyrażenia łączące"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "0Xnpg4"
+msgid "Introducing yourself"
+msgstr "Przedstawianie się"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Atfvsw"
+msgid "Countable and uncountable"
+msgstr "Rzeczowniki policzalne i niepoliczalne"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "HgoU30"
+msgid "Present continuous"
+msgstr "Present continuous"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "2BJjMD"
+msgid "Asking for help"
+msgstr "Prośba o pomoc"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "UIu-aU"
+msgid "At the supermarket"
+msgstr "W supermarkecie"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "IASTHU"
+msgid "Comparatives"
+msgstr "Comparatives"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "q--Z-m"
+msgid "Question tags"
+msgstr "Question tags"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "m9ZQKQ"
+msgid "Making an appointment"
+msgstr "Umawianie wizyty"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "5SYUls"
+msgid "Relative clauses"
+msgstr "Relative clauses"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "7XwuCX"
+msgid "Going out at night"
+msgstr "Wieczorne wyjścia"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "MeYB2K"
+msgid "Some and any"
+msgstr "Some i any"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "5VRNTq"
+msgid "At the pub"
+msgstr "W pubie"
+
+#. A pronunciation topic for learners of English.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "9NvQ7H"
+msgid "Pronouncing “-ed”"
+msgstr "Wymowa „-ed”"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "oYAkzR"
+msgid "Talking to coworkers"
+msgstr "Rozmowy ze współpracownikami"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "JYLSKE"
+msgid "Intonation"
+msgstr "Intonacja"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "wJv3Ip"
+msgid "Getting a SIM card"
+msgstr "Zakup karty SIM"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "C-0je_"
+msgid "Collocations"
+msgstr "Kolokacje"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "N2RmdO"
+msgid "Taking the bus"
+msgstr "Podróż autobusem"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Abdyee"
+msgid "Past perfect"
+msgstr "Past perfect"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "E9A2x9"
+msgid "Polite requests"
+msgstr "Uprzejme prośby"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "bsQKgn"
+msgid "Word stress"
+msgstr "Akcent wyrazowy"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "4CKWuC"
+msgid "Saying sorry"
+msgstr "Przepraszanie"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "7YlKf7"
+msgid "Since and for"
+msgstr "Since i for"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "msi3VP"
+msgid "Giving opinions"
+msgstr "Wyrażanie opinii"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "EiRdS_"
+msgid "Make and do"
+msgstr "Make i do"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "2G3OKf"
+msgid "Agreeing and disagreeing"
+msgstr "Wyrażanie zgody i sprzeciwu"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "LrKF52"
+msgid "Say and tell"
+msgstr "Say i tell"
+
+#. A UK local tax on homes.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "syConX"
+msgid "Council tax"
+msgstr "Podatek lokalny"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "NYRqPJ"
+msgid "Gerunds and infinitives"
+msgstr "Gerunds and infinitives"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "CzedbT"
+msgid "Describing people"
+msgstr "Opisywanie ludzi"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "vSnyT6"
+msgid "Too and enough"
+msgstr "Too i enough"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "pnbTui"
+msgid "Talking about family"
+msgstr "Rozmowy o rodzinie"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "-WrNBl"
+msgid "Listening practice"
+msgstr "Ćwiczenia ze słuchania"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Ijevsy"
+msgid "British and American English"
+msgstr "Angielski brytyjski i amerykański"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "q48Kon"
+msgid "Watching series in English"
+msgstr "Oglądanie seriali po angielsku"
+
 #. A Spanish grammar topic.
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "o5dcRe"
 msgid "The subjunctive"
 msgstr "Tryb łączący"
 
 #. A Spanish grammar topic: keep “por” and “para” in Spanish.
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "T-SlZH"
 msgid "Por and para"
 msgstr "Przyimki „por” i „para”"
 
 #. A Spanish grammar topic: keep “gustar” in Spanish.
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "-T6zu8"
 msgid "Verbs like gustar"
 msgstr "Czasowniki typu „gustar”"
 
 #. A Spanish grammar topic: keep “tú” and “usted” in Spanish.
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "JafIDQ"
 msgid "Tú and usted"
 msgstr "Formy „tú” i „usted”"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "HgeEzh"
 msgid "A CV in Spanish"
 msgstr "CV po hiszpańsku"
 
 #. Mexico City's subway.
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "_lyMF3"
 msgid "Taking the metro"
 msgstr "Jazda metrem"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "8HP4KD"
 msgid "Reflexive verbs"
 msgstr "Czasowniki zwrotne"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "sdWSVm"
 msgid "At the market"
 msgstr "Na targu"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "sc__2J"
 msgid "The imperfect"
 msgstr "Czas przeszły niedokonany"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "RA4Y2E"
 msgid "Telling a story"
 msgstr "Opowiadanie historii"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "We9l88"
 msgid "Present tense"
 msgstr "Czas teraźniejszy"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "MJlEHy"
 msgid "Ordering tacos"
 msgstr "Zamawianie tacos"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "OyVECT"
 msgid "Getting around the city"
 msgstr "Poruszanie się po mieście"
 
-#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
 msgctxt "EKcm9W"
 msgid "Formal and informal Spanish"
 msgstr "Hiszpański formalny i nieformalny"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "SpESOo"
+msgid "Direct object pronouns"
+msgstr "Zaimki dopełnienia bliższego"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "XWWEUL"
+msgid "Gender of nouns"
+msgstr "Rodzaj rzeczowników"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "AtBECX"
+msgid "At the pharmacy"
+msgstr "W aptece"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "1Nx_ds"
+msgid "The future tense"
+msgstr "Czas przyszły"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "DSjBNA"
+msgid "Street food"
+msgstr "Jedzenie uliczne"
+
+#. A Spanish grammar topic: keep “ir a” in Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "1xhvPH"
+msgid "Ir a + infinitive"
+msgstr "Ir a + bezokolicznik"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "MO5fzt"
+msgid "Paying rent"
+msgstr "Płacenie czynszu"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "nGYOGh"
+msgid "Diminutives"
+msgstr "Zdrobnienia"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "f5gkO4"
+msgid "Taking a taxi"
+msgstr "Podróż taksówką"
+
+#. A Spanish grammar topic: the imperative.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "TY8Ho1"
+msgid "Commands"
+msgstr "Tryb rozkazujący"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "-S4Hj0"
+msgid "Making plans with friends"
+msgstr "Umawianie się ze znajomymi"
+
+#. Spanish accent marks, such as “á”.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "f9cc8a"
+msgid "Written accents"
+msgstr "Akcenty graficzne"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Mjyrpe"
+msgid "Ordering coffee"
+msgstr "Zamawianie kawy"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "vuBTA2"
+msgid "The conditional"
+msgstr "Tryb warunkowy"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "llvcqZ"
+msgid "Asking for the check"
+msgstr "Prośba o rachunek"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "OT0oz5"
+msgid "Spanish vowels"
+msgstr "Hiszpańskie samogłoski"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "T1qnCF"
+msgid "Talking to neighbors"
+msgstr "Rozmowy z sąsiadami"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "ko14Qa"
+msgid "Emergencies"
+msgstr "Nagłe wypadki"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "KVimoQ"
+msgid "Haggling"
+msgstr "Targowanie się"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "yI2CII"
+msgid "Telling time"
+msgstr "Podawanie godziny"
 
 #: src/app/[lang]/(home)/_components/hero-stage.tsx
 msgctxt "493J7R"
@@ -3114,23 +3604,23 @@ msgctxt "WtT1Bl"
 msgid "Tell us your goal and the date. Zoonk splits it all into a daily plan sized to your time."
 msgstr "Podaj swój cel i termin. Zoonk rozpisuje naukę na każdy dzień, dopasowując plan do czasu, jaki masz."
 
-#. An example goal a learner might type; {month} is a month name. In Brazilian Portuguese: “virar analista de dados até {month}”.
+#. An example goal a learner might type, short enough to fit on one line beside a button; {month} is a month name. In Brazilian Portuguese: “virar analista de dados até {month}”.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "xlsEx0"
 msgid "become a data analyst by {month}"
 msgstr "zostać analitykiem danych, termin: {month}"
 
-#. An example goal a learner might type; {month} is a month name. Use your language's name for Mexico City.
+#. An example goal a learner might type, short enough to fit on one line beside a button. Use your language's name for Mexico City.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "vF1uwi"
-msgid "speak Spanish for my move to Mexico City in {month}"
-msgstr "mówić po hiszpańsku przed przeprowadzką do Meksyku ({month})"
+msgctxt "034zMY"
+msgid "speak Spanish to live in Mexico City"
+msgstr "mówić po hiszpańsku, żeby zamieszkać w mieście Meksyk"
 
-#. An example goal a learner might type; {month} is a month name. Use your language's name for London. In Brazilian Portuguese: “falar inglês para me mudar para Londres em {month}”.
+#. An example goal a learner might type, short enough to fit on one line beside a button. Use your language's name for London. In Brazilian Portuguese: “falar inglês para morar em Londres”.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "FWZush"
-msgid "speak English for my move to London in {month}"
-msgstr "mówić po angielsku przed przeprowadzką do Londynu, termin: {month}"
+msgctxt "a-JAH3"
+msgid "speak English to live in London"
+msgstr "mówić po angielsku w Londynie"
 
 #: src/app/[lang]/(home)/_components/missed-day-section.tsx
 msgctxt "planPhases.6RRX7X"

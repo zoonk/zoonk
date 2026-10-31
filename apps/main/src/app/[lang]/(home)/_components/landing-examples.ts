@@ -93,7 +93,7 @@ export const getExampleCalendar = cache(async (): Promise<ExampleCalendar> => {
   };
 });
 
-const EXAMPLE_GOAL_DATES = { job: "2027-06-10", move: "2027-03-01" } as const;
+const JOB_GOAL_DATE = "2027-06-10";
 
 export function addDays(date: Date, days: number): Date {
   return new Date(date.getTime() + days * MS_PER_DAY);
@@ -104,7 +104,7 @@ export function getGoalDate({
   goal,
 }: {
   calendar: ExampleCalendar;
-  goal: ExampleGoal;
+  goal: "exam" | "job";
 }): Date {
-  return goal === "exam" ? calendar.examDay : calendar.shift(EXAMPLE_GOAL_DATES[goal]);
+  return goal === "exam" ? calendar.examDay : calendar.shift(JOB_GOAL_DATE);
 }

@@ -36,11 +36,14 @@ function getPicks(example: HeroExample): string[] {
   return example.topics.filter((topic) => isPicked({ example, topic }));
 }
 
+/** The wall carries the most topics on the page, so each one is a single span with a single text. */
 function Wall({ example }: { example: HeroExample }) {
+  const last = example.topics.length - 1;
+
   return (
     <p
       className={cn(
-        "text-foreground/27 contrast-more:text-foreground/62 h-full overflow-hidden mask-b-from-55% mask-b-to-97% text-[0.84375rem] leading-[1.75] tracking-[-0.005em] text-pretty sm:text-lg sm:leading-[2.3]",
+        "text-foreground/27 contrast-more:text-foreground/62 h-full overflow-hidden mask-b-from-55% mask-b-to-97% text-[0.84375rem] leading-[1.75] tracking-[-0.005em] text-pretty *:not-first:whitespace-nowrap sm:text-lg sm:leading-[2.3]",
         "opacity-0 transition-[opacity,color] duration-200 ease-out sm:opacity-100",
         "without-zoonk:text-foreground/76 without-zoonk:opacity-100",
       )}
@@ -49,21 +52,23 @@ function Wall({ example }: { example: HeroExample }) {
         {example.label}
       </span>
 
-      {example.topics.map((topic, index) => (
-        <Fragment key={topic}>
-          {index > 0 && " "}
-          <span className="whitespace-nowrap">
-            {isPicked({ example, topic }) ? (
+      {example.topics.flatMap((topic, index) => {
+        const dot = index < last ? DOT : "";
+
+        return [
+          " ",
+          isPicked({ example, topic }) ? (
+            <span key={topic}>
               <b className="text-foreground without-zoonk:text-inherit font-semibold transition-colors">
                 {topic}
               </b>
-            ) : (
-              topic
-            )}
-            {index < example.topics.length - 1 && DOT}
-          </span>
-        </Fragment>
-      ))}
+              {dot}
+            </span>
+          ) : (
+            <span key={topic}>{`${topic}${dot}`}</span>
+          ),
+        ];
+      })}
     </p>
   );
 }

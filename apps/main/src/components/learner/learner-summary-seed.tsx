@@ -39,3 +39,17 @@ export function LearnerSummarySeed() {
     </>
   );
 }
+
+const VISITOR_SEED: Promise<LearnerSummarySeedValue> = Promise.resolve({ status: "visitor" });
+
+/** Only for the home page: `proxy.ts` sends anyone holding a session cookie to Today before it renders. */
+export function VisitorSummarySeed() {
+  return (
+    <>
+      <meta content="" name={LEARNER_SEED_META} />
+      <Suspense fallback={null}>
+        <ProvideLearnerSeed seed={VISITOR_SEED} />
+      </Suspense>
+    </>
+  );
+}

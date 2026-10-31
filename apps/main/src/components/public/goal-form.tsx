@@ -28,9 +28,11 @@ type ExampleChoices = { examples: Readonly<Record<string, string>>; name: string
 
 /**
  * Without scripts it's a plain GET form that only fills onboarding's box: reading a goal always
- * starts from a tap. Screen readers hear the example from a copy of their own, so a page with hidden
- * variants reads only the one shown. Picking one of `exampleChoices`' radios writes its example into
- * the box when the box is empty or still holds an earlier pick, never over the visitor's words.
+ * starts from a tap. The button sits beside the words only when the longest example fits there on
+ * one line, and what the visitor types never moves it. Screen readers hear the example from a copy
+ * of their own, so a page with hidden variants reads only the one shown. Picking one of
+ * `exampleChoices`' radios writes its example into the box when the box is empty or still holds an
+ * earlier pick, never over the visitor's words.
  */
 export function GoalForm({
   action,
@@ -94,7 +96,7 @@ export function GoalForm({
       <GoalField
         action={action}
         aria-busy={sending}
-        className="flex-col items-stretch sm:flex-row sm:items-end"
+        className="flex-wrap justify-end"
         id={id}
         method="get"
         onSubmit={(event) => {
@@ -109,7 +111,7 @@ export function GoalForm({
           }
         }}
       >
-        <div className="flex min-w-0 flex-1 items-start gap-2 pr-2.5 sm:pr-0">
+        <div className="flex min-w-0 flex-auto items-start gap-2 pr-2.5">
           <GoalFieldLabel htmlFor={fieldId}>{t("I want to")}</GoalFieldLabel>
 
           <div className="group/goal grid min-w-0 flex-1">
@@ -133,7 +135,7 @@ export function GoalForm({
             <GoalFieldText
               aria-describedby={[hinted && lineId, exampleId].filter(Boolean).join(" ")}
               aria-invalid={hinted || undefined}
-              className="col-start-1 row-start-1"
+              className="col-start-1 row-start-1 contain-inline-size"
               id={fieldId}
               name={GOAL_PARAM}
               onFocus={() => router.prefetch("/start")}

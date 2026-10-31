@@ -41,6 +41,8 @@ export type ExamExample = {
   name: string;
   /** Published sittings in order; after the last one, later years keep its weekday until the list is updated. */
   sittings: readonly [string, ...string[]];
+  /** Two video tabs a student left open, short enough to sit side by side on a phone. */
+  tabs: readonly [string, string];
   /** An IANA zone; the example counts days from today there. */
   timeZone: string;
   topics: readonly string[];

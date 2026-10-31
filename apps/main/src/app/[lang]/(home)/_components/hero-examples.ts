@@ -1,6 +1,7 @@
 import { getExtracted, getFormatter } from "next-intl/server";
 import { cache } from "react";
 import { type HeroExample, toSteps } from "./hero-example";
+import { getJobTopics } from "./hero-job-topics";
 import { getLondonExample, getMexicoCityExample } from "./hero-move-examples";
 import {
   type ExampleGoal,
@@ -15,7 +16,6 @@ async function getExamExample(): Promise<HeroExample> {
   const { exam } = await getExampleSet();
   const calendar = await getExampleCalendar();
   const searched = exam.name.toLocaleLowerCase();
-  const [, firstTab = "", secondTab = ""] = exam.topics;
 
   const date = format.dateTime(getGoalDate({ calendar, goal: "exam" }), {
     day: "numeric",
@@ -26,7 +26,7 @@ async function getExamExample(): Promise<HeroExample> {
   return {
     file: t({
       description:
-        "A messy spreadsheet's file name. Translate “schedule” with one short word and keep the underscores, “FINAL_v3” and “.xlsx”. {exam} is the exam's name in lowercase. In Brazilian Portuguese: “cronograma_{exam}_FINAL_v3.xlsx”.",
+        "A messy spreadsheet's file name. Translate “schedule” with one short word of at most 9 letters and keep the underscores, “FINAL_v3” and “.xlsx”. {exam} is the exam's name in lowercase. In Brazilian Portuguese: “cronograma_{exam}_FINAL_v3.xlsx”.",
       message: "schedule_{exam}_FINAL_v3.xlsx",
       values: { exam: searched },
     }),
@@ -46,29 +46,19 @@ async function getExamExample(): Promise<HeroExample> {
     steps: toSteps(exam.day),
     suggestions: [
       t({
-        description: "A search engine's suggestion: casual, lowercase. {exam} is lowercase.",
+        description:
+          "A search engine's suggestion: casual, lowercase, as short as the English. {exam} is lowercase.",
         message: "studying for the {exam} from scratch",
         values: { exam: searched },
       }),
       t({
-        description: "A search engine's suggestion: casual, lowercase. {exam} is lowercase.",
+        description:
+          "A search engine's suggestion: casual, lowercase, as short as the English. {exam} is lowercase.",
         message: "what comes up most on the {exam}",
         values: { exam: searched },
       }),
     ],
-    tabs: [
-      t({
-        description: "A browser tab's title for a video lesson. {topic} is a school topic.",
-        message: "{topic}: lesson 1",
-        values: { topic: firstTab },
-      }),
-      t({
-        description:
-          "A browser tab's title for a cram video, shown in capitals. {topic} is a school topic. In Brazilian Portuguese: “Resumão {topic}”.",
-        message: "{topic} crash course",
-        values: { topic: secondTab },
-      }),
-    ],
+    tabs: exam.tabs,
     topics: exam.topics,
   };
 }
@@ -95,8 +85,8 @@ async function getJobExample(): Promise<HeroExample> {
   return {
     file: t({
       description:
-        "A spreadsheet's file name. Translate the words and keep the underscores and “.xlsx”.",
-      message: "data_career_plan_2027.xlsx",
+        "A spreadsheet's file name, as short as the English: translate the words and keep the underscores and “.xlsx”. In Brazilian Portuguese: “plano_dados_2027.xlsx”.",
+      message: "data_plan_2027.xlsx",
     }),
     label: t("Everything that shows up in data analyst job posts"),
     moreTabs: 23,
@@ -135,66 +125,28 @@ async function getJobExample(): Promise<HeroExample> {
     ]),
     suggestions: [
       t({
-        description: "A search engine's suggestion: casual, lowercase.",
+        description: "A search engine's suggestion: casual, lowercase, as short as the English.",
         message: "data analyst without a degree",
       }),
       t({
-        description: "A search engine's suggestion: casual, lowercase. Keep “sql” and “python”.",
+        description:
+          "A search engine's suggestion: casual, lowercase, as short as the English. Keep “sql” and “python”.",
         message: "sql or python first",
       }),
     ],
     tabs: [
-      t({ description: "A browser tab's title for a video course.", message: "SQL from scratch" }),
       t({
-        description: "A browser tab's title for a video course.",
-        message: "Power BI in 2 hours",
+        description:
+          "A browser tab's title for a video course, as short as the English: a phone shows it beside another tab.",
+        message: "SQL basics",
+      }),
+      t({
+        description:
+          "A browser tab's title for a video course, as short as the English: a phone shows it beside another tab.",
+        message: "Power BI tutorial",
       }),
     ],
-    topics: [
-      day.joins,
-      t("Basic SQL"),
-      day.median,
-      t("Pivot tables"),
-      "Python",
-      day.chart,
-      day.groupBy,
-      "Power BI",
-      "pandas",
-      t("Window functions"),
-      t({
-        description: "An Excel function: use its name in your language's Excel.",
-        message: "XLOOKUP",
-      }),
-      t("Cleaning data"),
-      t("Hypothesis tests"),
-      t("Linear regression"),
-      t("Sampling"),
-      t("Dashboards"),
-      t("Business metrics"),
-      t("Telling stories with data"),
-      t("Data modeling"),
-      "ETL",
-      "Git",
-      t("Portfolio"),
-      t("Technical interviews"),
-      t("Standard deviation"),
-      t("Correlation"),
-      t("Outliers"),
-      t("Subqueries"),
-      t("A/B tests"),
-      t("Cohort analysis"),
-      t("Conversion funnels"),
-      t("Data types"),
-      t("Aggregations"),
-      t("Excel charts"),
-      t("Python basics"),
-      t("Dates and times"),
-      t("Missing values"),
-      t("Exploratory analysis"),
-      t("Presenting results"),
-      t("Data ethics"),
-      t("Spreadsheet formulas"),
-    ],
+    topics: await getJobTopics(day),
   };
 }
 

@@ -1,5 +1,6 @@
 import { getExtracted } from "next-intl/server";
 import { type HeroExample, toSteps } from "./hero-example";
+import { getLondonTopics, getMexicoCityTopics } from "./hero-move-topics";
 
 export async function getLondonExample(): Promise<HeroExample> {
   const t = await getExtracted();
@@ -57,66 +58,27 @@ export async function getLondonExample(): Promise<HeroExample> {
     ]),
     suggestions: [
       t({
-        description: "A search engine's suggestion: casual, lowercase.",
-        message: "english from zero in 5 months, is it possible",
+        description: "A search engine's suggestion: casual, lowercase, as short as the English.",
+        message: "english in 5 months, is it possible",
       }),
       t({
-        description: "A search engine's suggestion: casual, lowercase.",
+        description: "A search engine's suggestion: casual, lowercase, as short as the English.",
         message: "english for moving abroad",
       }),
     ],
     tabs: [
       t({
-        description: "A browser tab's title for an English video.",
+        description:
+          "A browser tab's title for an English video, as short as the English: a phone shows it beside another tab.",
         message: "50 phrasal verbs",
       }),
-      t({ description: "A browser tab's title for an English video.", message: "British accent" }),
-    ],
-    topics: [
-      day.flat,
-      t("Small talk"),
-      day.presentPerfect,
-      day.phrasalVerbs,
-      t("Opening a bank account"),
-      day.th,
-      t("Job interviews"),
-      t("Phone calls"),
-      t("In, on and at"),
-      t("Used to"),
-      t("Conditionals"),
-      t("Asking for directions"),
-      t("Seeing a doctor"),
-      t("Irregular verbs"),
-      t("Will and going to"),
-      t("Modal verbs"),
-      t("Reported speech"),
-      t("British slang"),
-      t("Writing emails"),
-      t("Passive voice"),
-      t("Numbers and prices"),
-      t("Complaining politely"),
-      t("Making friends"),
-      t("A CV in English"),
-      t("False friends"),
-      t("Idioms"),
-      t({ description: "The London Underground.", message: "Taking the Tube" }),
-      t("Talking about the weather"),
-      t("Past continuous"),
-      t("Ordering food"),
-      t("Present simple"),
-      t("Prepositions of time"),
-      t("At the airport"),
-      t("Booking a hotel"),
-      t("Shopping for clothes"),
-      t("Paying bills"),
       t({
-        description: "Signing up with a family doctor in the UK.",
-        message: "Registering with a GP",
+        description:
+          "A browser tab's title for an English video, as short as the English: a phone shows it beside another tab.",
+        message: "British accent",
       }),
-      t("Weekend plans"),
-      t("Formal and informal English"),
-      t("Linking words"),
     ],
+    topics: await getLondonTopics(day),
   };
 }
 
@@ -182,68 +144,26 @@ export async function getMexicoCityExample(): Promise<HeroExample> {
     ]),
     suggestions: [
       t({
-        description: "A search engine's suggestion: casual, lowercase.",
-        message: "spanish from zero in 5 months, is it possible",
+        description: "A search engine's suggestion: casual, lowercase, as short as the English.",
+        message: "spanish in 5 months, is it possible",
       }),
       t({
-        description: "A search engine's suggestion: casual, lowercase.",
+        description: "A search engine's suggestion: casual, lowercase, as short as the English.",
         message: "spanish for moving abroad",
       }),
     ],
     tabs: [
-      t({ description: "A browser tab's title for a Spanish video.", message: "Verb conjugation" }),
-      t({ description: "A browser tab's title for a Spanish video.", message: "Mexican slang" }),
+      t({
+        description:
+          "A browser tab's title for a Spanish video, as short as the English: a phone shows it beside another tab.",
+        message: "Verb conjugation",
+      }),
+      t({
+        description:
+          "A browser tab's title for a Spanish video, as short as the English: a phone shows it beside another tab.",
+        message: "Mexican slang",
+      }),
     ],
-    topics: [
-      day.apartment,
-      t("Small talk"),
-      day.serEstar,
-      day.preterite,
-      t("Opening a bank account"),
-      day.rr,
-      t("Job interviews"),
-      t("Phone calls"),
-      t({ description: "A Spanish grammar topic.", message: "The subjunctive" }),
-      t({
-        description: "A Spanish grammar topic: keep “por” and “para” in Spanish.",
-        message: "Por and para",
-      }),
-      t({
-        description: "A Spanish grammar topic: keep “gustar” in Spanish.",
-        message: "Verbs like gustar",
-      }),
-      t("Asking for directions"),
-      t("Seeing a doctor"),
-      t("Irregular verbs"),
-      t({
-        description: "A Spanish grammar topic: keep “tú” and “usted” in Spanish.",
-        message: "Tú and usted",
-      }),
-      t("Mexican slang"),
-      t("Writing emails"),
-      t("Numbers and prices"),
-      t("Complaining politely"),
-      t("Making friends"),
-      t("A CV in Spanish"),
-      t("False friends"),
-      t("Idioms"),
-      t({ description: "Mexico City's subway.", message: "Taking the metro" }),
-      t("Talking about the weather"),
-      t("Ordering food"),
-      t("Reflexive verbs"),
-      t("At the market"),
-      t("The imperfect"),
-      t("Telling a story"),
-      t("Present tense"),
-      t("Ordering tacos"),
-      t("At the airport"),
-      t("Booking a hotel"),
-      t("Shopping for clothes"),
-      t("Paying bills"),
-      t("Getting around the city"),
-      t("Weekend plans"),
-      t("Formal and informal Spanish"),
-      t("Linking words"),
-    ],
+    topics: await getMexicoCityTopics(day),
   };
 }

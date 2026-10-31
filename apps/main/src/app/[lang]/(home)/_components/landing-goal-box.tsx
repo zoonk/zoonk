@@ -17,14 +17,14 @@ async function getGoalExamples(): Promise<Record<ExampleGoal, string>> {
   const set = await getExampleSet();
   const calendar = await getExampleCalendar();
 
-  const month = (goal: ExampleGoal) =>
+  const month = (goal: "exam" | "job") =>
     format.dateTime(getGoalDate({ calendar, goal }), { month: "long", timeZone: "UTC" });
 
   return {
     exam: set.exam.goal(month("exam")),
     job: t({
       description:
-        "An example goal a learner might type; {month} is a month name. In Brazilian Portuguese: “virar analista de dados até {month}”.",
+        "An example goal a learner might type, short enough to fit on one line beside a button; {month} is a month name. In Brazilian Portuguese: “virar analista de dados até {month}”.",
       message: "become a data analyst by {month}",
       values: { month: month("job") },
     }),
@@ -32,15 +32,13 @@ async function getGoalExamples(): Promise<Record<ExampleGoal, string>> {
       set.move === "mexico-city"
         ? t({
             description:
-              "An example goal a learner might type; {month} is a month name. Use your language's name for Mexico City.",
-            message: "speak Spanish for my move to Mexico City in {month}",
-            values: { month: month("move") },
+              "An example goal a learner might type, short enough to fit on one line beside a button. Use your language's name for Mexico City.",
+            message: "speak Spanish to live in Mexico City",
           })
         : t({
             description:
-              "An example goal a learner might type; {month} is a month name. Use your language's name for London. In Brazilian Portuguese: “falar inglês para me mudar para Londres em {month}”.",
-            message: "speak English for my move to London in {month}",
-            values: { month: month("move") },
+              "An example goal a learner might type, short enough to fit on one line beside a button. Use your language's name for London. In Brazilian Portuguese: “falar inglês para morar em Londres”.",
+            message: "speak English to live in London",
           }),
   };
 }
