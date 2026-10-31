@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="mock_chooser_title">Take a mock exam</string>
     <string name="mock_chooser_rule">Your result only shows at the end, like on exam day.</string>
     <string name="mock_chooser_pick_free">Pick how much of the exam to take now.</string>
@@ -14,8 +14,9 @@
     <string name="mock_chooser_one_subject">One subject</string>
     <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$s lists them, such as "Specialty knowledge (P3)". -->
     <string name="mock_chooser_full_day_without">An exam day without %1$s</string>
+    <!-- PluralsCandidate: %1$d names which exam day it is, not a count. -->
     <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$d is the exam day's number; %2$s lists the tests, such as "Foreign language". -->
-    <string name="mock_chooser_full_day_number_without">Exam day %1$d without %2$s</string>
+    <string name="mock_chooser_full_day_number_without" tools:ignore="PluralsCandidate">Exam day %1$d without %2$s</string>
     <!-- After a mock's parts or subjects: the mock covers only the exam's objective part, questions with set answers, and leaves the exam day's written part out. -->
     <string name="mock_chooser_objective_only">objective part only</string>
     <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
