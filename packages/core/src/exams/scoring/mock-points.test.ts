@@ -716,3 +716,29 @@ describe("whole papers with known counts", () => {
     expect(result.parts[0]).not.toHaveProperty("whole");
   });
 });
+
+describe("real percentage misses", () => {
+  it("fails 299.75 points out of 500 against a 60 percent minimum", () => {
+    const marking = { part: null, points: 1, wrongPenalty: 0.25 };
+
+    const answers: PointsAnswer[] = [
+      ...Array.from({ length: 320 }, () => ({ credit: 1, marking, outcome: "right" as const })),
+      ...Array.from({ length: 81 }, () => ({ credit: 0, marking, outcome: "wrong" as const })),
+      ...Array.from({ length: 99 }, () => ({ credit: 0, marking, outcome: "blank" as const })),
+    ];
+
+    const result = scoreMockPoints({
+      answers,
+      marking: {
+        items: {},
+        maxPoints: 500,
+        parts: [],
+        totalMinimum: { unit: "percent", value: 60 },
+      },
+      scope: "full",
+    });
+
+    expect(result).toMatchObject({ earned: 299.75, met: false });
+    expect(result.short).toBeGreaterThanOrEqual(0.1);
+  });
+});

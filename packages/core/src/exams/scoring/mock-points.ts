@@ -94,8 +94,14 @@ function judge({
     return { met: null, short: null };
   }
 
-  const met = score + MINIMUM_ROUNDING_STEP[minimum.unit] / 2 >= minimum.value;
-  return { met, short: met ? null : withoutNoise(minimum.value - score) };
+  const met = score + TOLERANCE >= minimum.value;
+
+  return {
+    met,
+    short: met
+      ? null
+      : Math.max(MINIMUM_ROUNDING_STEP[minimum.unit], withoutNoise(minimum.value - score)),
+  };
 }
 
 function isWholeTest({

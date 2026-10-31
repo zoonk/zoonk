@@ -365,7 +365,7 @@ describe("fractional deductions at the minimum", () => {
     expect(readScoring({ scoring: { wrongPenalty: 0.333 } })?.wrongPenalty).toBe(1 / 3);
   });
 
-  it("treats a minimum within a displayed rounding step as met", () => {
+  it("retains a real small miss with a displayable shortfall", () => {
     const marking = { part: null, points: 1, wrongPenalty: 0 };
 
     const result = scoreMockPoints({
@@ -374,7 +374,7 @@ describe("fractional deductions at the minimum", () => {
       scope: "full",
     });
 
-    expect(result).toMatchObject({ met: true, short: null });
+    expect(result).toMatchObject({ met: false, short: 0.01 });
   });
 });
 
