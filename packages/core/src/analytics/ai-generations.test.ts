@@ -1,5 +1,6 @@
 import { toAiGenerationEvent } from "@zoonk/ai/ai-generation-event";
 import { type AiGeneration } from "@zoonk/ai/ai-generation-sink";
+import { prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { POSTHOG_SYSTEM_DISTINCT_ID } from "@zoonk/utils/posthog";
@@ -37,7 +38,7 @@ async function sendThroughRegisteredSink(sent: AiGeneration = generation) {
   await globalThis.zoonkAiGenerationSinks?.get("posthog")?.(sent);
 }
 
-async function learnerGeneration(profile: { birthYear?: number; shareUsageData?: boolean }) {
+async function learnerGeneration(profile: { shareUsageData?: boolean }) {
   const user = await userFixture();
   await learningProfileFixture({ ...profile, userId: user.id });
 
@@ -78,16 +79,16 @@ describe(registerAiGenerationAnalytics, () => {
     expect(posthogClient.shutdown).toHaveBeenCalledOnce();
   });
 
-  it("names an adult learner as the person behind the generation", async () => {
-    const sent = await learnerGeneration({ birthYear: 1990 });
+  it("names the learner as the person behind the generation", async () => {
+    const sent = await learnerGeneration({});
 
     await sendThroughRegisteredSink(sent);
 
     expect(posthogClient.capture).toHaveBeenCalledExactlyOnceWith(toAiGenerationEvent(sent));
   });
 
-  it("counts a minor's generation as system work, without their account or goal", async () => {
-    const sent = await learnerGeneration({ birthYear: new Date().getUTCFullYear() - 15 });
+  it("counts a generation for a learner who turned usage data off as system work", async () => {
+    const sent = await learnerGeneration({ shareUsageData: false });
 
     await sendThroughRegisteredSink(sent);
 
@@ -99,16 +100,13 @@ describe(registerAiGenerationAnalytics, () => {
     expect(sentEvent()?.properties).not.toHaveProperty("goal_id");
   });
 
-  it("counts a generation for a learner who turned usage data off as system work", async () => {
-    const sent = await learnerGeneration({ birthYear: 1990, shareUsageData: false });
+  it("counts a generation that finishes after its learner's account is gone as system work", async () => {
+    const sent = await learnerGeneration({});
+    await prisma.user.delete({ where: { id: sent.context.distinctId } });
 
     await sendThroughRegisteredSink(sent);
 
-    expect(sentEvent()).toMatchObject({
-      distinctId: POSTHOG_SYSTEM_DISTINCT_ID,
-      properties: { $ai_trace_id: "trace-1", $process_person_profile: false },
-    });
-
+    expect(sentEvent()).toMatchObject({ distinctId: POSTHOG_SYSTEM_DISTINCT_ID });
     expect(sentEvent()?.properties).not.toHaveProperty("goal_id");
   });
 

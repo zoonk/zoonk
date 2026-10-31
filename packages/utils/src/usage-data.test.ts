@@ -1,21 +1,8 @@
 import { describe, expect, it } from "vitest";
-import {
-  USAGE_DATA_MINOR_COOKIE,
-  getUsageDataChoice,
-  parseUsageDataCookie,
-  resolveUsageDataSharing,
-} from "./usage-data";
+import { getUsageDataChoice, parseUsageDataCookie, resolveUsageDataSharing } from "./usage-data";
 
-function sharing({
-  choice = null,
-  country,
-  minor = false,
-}: {
-  choice?: boolean | null;
-  country: string | null;
-  minor?: boolean;
-}) {
-  return resolveUsageDataSharing({ choice, country, minor });
+function sharing({ choice = null, country }: { choice?: boolean | null; country: string | null }) {
+  return resolveUsageDataSharing({ choice, country });
 }
 
 describe(resolveUsageDataSharing, () => {
@@ -47,24 +34,12 @@ describe(resolveUsageDataSharing, () => {
     expect(sharing({ choice: false, country: "US" })).toBe(false);
     expect(sharing({ choice: true, country: "DE" })).toBe(true);
   });
-
-  it("keeps a minor out where the law needs a yes, even after they said yes", () => {
-    expect(sharing({ choice: true, country: "DE", minor: true })).toBe(false);
-    expect(sharing({ country: "RE", minor: true })).toBe(false);
-    expect(sharing({ country: null, minor: true })).toBe(false);
-  });
-
-  it("follows a minor's choice elsewhere", () => {
-    expect(sharing({ country: "BR", minor: true })).toBe(true);
-    expect(sharing({ choice: false, country: "BR", minor: true })).toBe(false);
-  });
 });
 
 describe(parseUsageDataCookie, () => {
   it("reads only the two choices it writes", () => {
     expect(parseUsageDataCookie("on")).toBe(true);
     expect(parseUsageDataCookie("off")).toBe(false);
-    expect(parseUsageDataCookie(USAGE_DATA_MINOR_COOKIE)).toBeNull();
     expect(parseUsageDataCookie("yes")).toBeNull();
     expect(parseUsageDataCookie(null)).toBeNull();
   });

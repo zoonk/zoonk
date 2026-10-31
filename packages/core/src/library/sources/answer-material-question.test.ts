@@ -83,7 +83,7 @@ describe(answerMaterialQuestion, () => {
   });
 
   it('sends "Tutor Asked" about the material after the response, from the client that asked', async () => {
-    const { slides } = await learnerWithSlides();
+    const { slides, user } = await learnerWithSlides();
     mockAnswer({ answer: "Sobram 2 ATP por glicose.", found: true, refs: ["S1:2"] });
 
     vi.mocked(headers).mockResolvedValue(
@@ -102,6 +102,7 @@ describe(answerMaterialQuestion, () => {
 
     expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
+        distinctId: user.id,
         name: "Tutor Asked",
         properties: { scope: "material" },
         shared: expect.objectContaining({ platform: "ios" }),

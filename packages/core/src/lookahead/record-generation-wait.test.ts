@@ -20,6 +20,7 @@ describe(recordGenerationWait, () => {
 
     expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
+        distinctId: user.id,
         name: "Generation Waited",
         properties: { content_kind: "lesson", milliseconds: 1850 },
         shared: expect.objectContaining({ locale: "pt", platform: "android" }),

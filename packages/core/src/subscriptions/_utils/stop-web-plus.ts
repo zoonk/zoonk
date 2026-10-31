@@ -2,14 +2,10 @@ import "server-only";
 import { stripeClient } from "@zoonk/auth/stripe-client";
 import { reportSubscriptionChange } from "@zoonk/auth/subscription-events";
 import { prisma } from "@zoonk/db";
-import { type PriceInfo } from "@zoonk/utils/currency";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { PLUS_PLAN } from "@zoonk/utils/subscription";
 import type Stripe from "stripe";
-
-/** More than a decade of monthly payments; an account below the minimum age can't have more. */
-const MAX_REFUNDED_INVOICES = 200;
 
 /** A renewal Stripe couldn't charge has no Plus left, but Stripe keeps trying to collect it. */
 export const UNPAID_STATUSES = ["past_due", "unpaid"];
@@ -31,16 +27,23 @@ export function getLatestInvoice(subscription: Stripe.Subscription): Stripe.Invo
  * Refunds what's still owed of `owed`, so a payment refunded by hand or a request retried after a
  * failure never refunds twice; concurrent requests share Stripe's idempotency key.
  */
-async function refundInvoice({ invoice, owed }: { invoice: Stripe.Invoice; owed: number }) {
-  const payment = invoice.payments?.data.find((entry) => entry.status === "paid")?.payment;
+export async function refundLatestPayment({
+  owed,
+  subscription,
+}: {
+  owed: number;
+  subscription: Stripe.Subscription;
+}): Promise<void> {
+  const invoice = getLatestInvoice(subscription);
+  const payment = invoice?.payments?.data.find((entry) => entry.status === "paid")?.payment;
 
   const paymentIntentId =
     typeof payment?.payment_intent === "string"
       ? payment.payment_intent
       : payment?.payment_intent?.id;
 
-  if (!paymentIntentId) {
-    throw new Error(`Invoice ${invoice.id} has no paid payment to refund`);
+  if (!invoice || !paymentIntentId) {
+    throw new Error(`Subscription ${subscription.id} has no paid invoice to refund`);
   }
 
   const paymentIntent = await stripeClient.paymentIntents.retrieve(paymentIntentId, {
@@ -61,48 +64,8 @@ async function refundInvoice({ invoice, owed }: { invoice: Stripe.Invoice; owed:
   );
 
   if (refund.status === "failed" || refund.status === "canceled") {
-    throw new Error(`Refund ${refund.id} for invoice ${invoice.id} ${refund.status}`);
+    throw new Error(`Refund ${refund.id} for subscription ${subscription.id} ${refund.status}`);
   }
-}
-
-export async function refundLatestPayment({
-  owed,
-  subscription,
-}: {
-  owed: number;
-  subscription: Stripe.Subscription;
-}): Promise<void> {
-  const invoice = getLatestInvoice(subscription);
-
-  if (!invoice) {
-    throw new Error(`Subscription ${subscription.id} has no paid invoice to refund`);
-  }
-
-  await refundInvoice({ invoice, owed });
-}
-
-/** Returns what the customers paid in all. */
-export async function refundEveryPayment(customerIds: string[]): Promise<PriceInfo | null> {
-  const listed = await Promise.all(
-    customerIds.map((customer) =>
-      stripeClient.invoices
-        .list({ customer, expand: ["data.payments"], status: "paid" })
-        .autoPagingToArray({ limit: MAX_REFUNDED_INVOICES }),
-    ),
-  );
-
-  const paid = listed.flat().filter((invoice) => invoice.amount_paid > 0);
-
-  await Promise.all(paid.map((invoice) => refundInvoice({ invoice, owed: invoice.amount_paid })));
-
-  const [first] = paid;
-
-  return first
-    ? {
-        amount: paid.reduce((sum, invoice) => sum + invoice.amount_paid, 0),
-        currency: first.currency,
-      }
-    : null;
 }
 
 /** A failure here leaves the invoice open but no longer collected, so it doesn't undo the cancel. */

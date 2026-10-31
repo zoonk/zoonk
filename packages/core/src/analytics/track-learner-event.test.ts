@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { trackServerEvent } from "./server";
 import { trackLearnerEvents } from "./track-learner-event";
@@ -45,8 +45,7 @@ describe(trackLearnerEvents, () => {
 
     expect(trackServerEvent).toHaveBeenCalledWith({
       ...EVENT,
-      distinctId: expect.any(String),
-      identified: false,
+      distinctId: user.id,
       shared: { goal_kind: "exam", is_guest: false, locale: "pt", plan_phase: 1, platform: "ios" },
     });
   });
@@ -132,82 +131,12 @@ describe(trackLearnerEvents, () => {
     expect(trackServerEvent).not.toHaveBeenCalled();
   });
 
-  it("identifies an adult where they are, and never a minor", async () => {
+  it("sends nothing when the browser sending the request said no, before its account knows", async () => {
     const { user } = await setup();
-    const year = new Date().getUTCFullYear();
 
-    vi.mocked(headers).mockResolvedValue(new Headers({ "x-vercel-ip-country": "BR" }));
-
-    await prisma.userLearningProfile.update({
-      data: { birthYear: year - 19 },
-      where: { userId: user.id },
-    });
-
-    await trackLearnerEvents({ events: [EVENT], userId: user.id });
-
-    await prisma.userLearningProfile.update({
-      data: { birthYear: year - 17 },
-      where: { userId: user.id },
-    });
-
-    await trackLearnerEvents({ events: [EVENT], userId: user.id });
-
-    expect(vi.mocked(trackServerEvent).mock.calls.map(([event]) => event.identified)).toStrictEqual(
-      [true, false],
+    vi.mocked(cookies).mockResolvedValueOnce(
+      new Map([["ZOONK_USAGE_DATA", { name: "ZOONK_USAGE_DATA", value: "off" }]]) as never,
     );
-  });
-
-  it("sends an adult's events under their account, and a minor's under a random ID each time", async () => {
-    const { user } = await setup();
-    const year = new Date().getUTCFullYear();
-    vi.mocked(headers).mockResolvedValue(new Headers({ "x-vercel-ip-country": "BR" }));
-
-    await prisma.userLearningProfile.update({
-      data: { birthYear: year - 30 },
-      where: { userId: user.id },
-    });
-
-    await trackLearnerEvents({ events: [EVENT], userId: user.id });
-
-    await prisma.userLearningProfile.update({
-      data: { birthYear: year - 15 },
-      where: { userId: user.id },
-    });
-
-    await trackLearnerEvents({ events: [EVENT, EVENT], userId: user.id });
-    await trackLearnerEvents({ events: [EVENT], userId: user.id });
-
-    const [adult, ...minor] = vi
-      .mocked(trackServerEvent)
-      .mock.calls.map(([event]) => event.distinctId);
-
-    expect(adult).toBe(user.id);
-    expect(minor).not.toContain(user.id);
-    expect(minor[0]).toBe(minor[1]);
-    expect(minor[2]).not.toBe(minor[0]);
-  });
-
-  it("takes Korea's adult age in a workflow step, and sends nothing about a minor there", async () => {
-    const { user } = await setup();
-
-    await prisma.userLearningProfile.update({
-      data: { birthYear: new Date().getUTCFullYear() - 19 },
-      where: { userId: user.id },
-    });
-
-    await trackLearnerEvents({ events: [EVENT], platform: null, userId: user.id });
-
-    expect(trackServerEvent).not.toHaveBeenCalled();
-  });
-
-  it("sends nothing about a minor where the law needs a yes they can't give", async () => {
-    const { user } = await setup();
-    vi.mocked(headers).mockResolvedValue(new Headers({ "x-vercel-ip-country": "DE" }));
-
-    await prisma.userLearningProfile.update({
-      data: { birthYear: new Date().getUTCFullYear() - 15, shareUsageData: true },
-      where: { userId: user.id },
-    });
 
     await trackLearnerEvents({ events: [EVENT], userId: user.id });
 

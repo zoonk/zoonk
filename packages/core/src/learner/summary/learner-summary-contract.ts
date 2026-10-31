@@ -64,8 +64,6 @@ export type LearnerSummaryPlaces = {
 };
 
 type LearnerSummaryAnalytics = {
-  /** Known to be an adult where they are: only adults are identified and recorded. */
-  adult: boolean;
   disabled: boolean;
   goal: { kind: GoalKind; phase: number | null } | null;
   /** The subscription's plan name, or "free". */
@@ -84,8 +82,6 @@ export type LearnerSummary = {
   day: LearnerSummaryDay | null;
   goals: LearnerSummaryGoal[];
   identity: LearnerIdentity;
-  /** True until the learner gives their birth year; ask before they keep learning. */
-  needsBirthYear: boolean;
   /** The belt and level, or null before any learning. */
   level: { color: BeltColor; level: number } | null;
   /** Today's missions done and offered; null on a day without missions or before it's saved. */

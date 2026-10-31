@@ -105,8 +105,7 @@ describe("session outcomes sent from the server", () => {
 
     expect(sentEvents("Session Started")).toStrictEqual([
       {
-        distinctId: expect.any(String),
-        identified: false,
+        distinctId: user.id,
         name: "Session Started",
         properties: { blocks: 3, planned_minutes: session.minutes.planned, session_id: session.id },
         shared,
@@ -131,8 +130,7 @@ describe("session outcomes sent from the server", () => {
 
     expect(sentEvents("Session Completed")).toStrictEqual([
       {
-        distinctId: expect.any(String),
-        identified: false,
+        distinctId: user.id,
         name: "Session Completed",
         properties: {
           blocks_completed: 3,
@@ -173,7 +171,7 @@ describe("session outcomes sent from the server", () => {
   });
 
   it("stopping for today completes the block in progress, and the session waits", async () => {
-    const { session } = await setup();
+    const { session, user } = await setup();
     const [review] = session.blocks;
     const flush = runDeferredWork();
 
@@ -184,7 +182,7 @@ describe("session outcomes sent from the server", () => {
     await flush();
 
     expect(sentEvents("Block Completed")).toMatchObject([
-      { properties: { block_kind: "review", seconds: 120 } },
+      { distinctId: user.id, properties: { block_kind: "review", seconds: 120 } },
     ]);
 
     expect(sentEvents("Session Completed")).toStrictEqual([]);

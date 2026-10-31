@@ -713,6 +713,7 @@ describe(getGoalPlan, () => {
 
     expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
+        distinctId: goal.userId,
         name: "Plan Created",
         properties: expect.objectContaining({ from_plan_link: false, goal_id: goal.id, phases: 2 }),
       }),

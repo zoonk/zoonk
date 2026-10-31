@@ -70,18 +70,9 @@ export const learningProfileUpdateSchema = z
 
 export type LearningProfileUpdateInput = z.infer<typeof learningProfileUpdateSchema>;
 
-export const birthYearInputSchema = z
-  .object({ birthYear: z.int().meta({ description: "The year the learner was born" }) })
-  .strict()
-  .meta({ id: "BirthYearInput" });
-
-export type BirthYearInput = z.infer<typeof birthYearInputSchema>;
-
 export type LearningProfileView = {
   activeGoalId: string | null;
   availableGlasses: BuddyGlasses[];
-  /** Null until the learner answers; ask before they keep learning. */
-  birthYear: number | null;
   /** The learner's own daily study limit in minutes, or null for none. */
   dailyLimitMinutes: number | null;
   /** The limits offered, in minutes: the same times a plan's day offers. */
@@ -90,5 +81,4 @@ export type LearningProfileView = {
   /** Null until the learner chooses. */
   shareUsageData: boolean | null;
   soundsEnabled: boolean;
-  usageDataLockedOff: boolean;
 };

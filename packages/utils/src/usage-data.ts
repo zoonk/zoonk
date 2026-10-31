@@ -87,31 +87,14 @@ export function getUsageDataChoice({
   return account === false || browser === false ? false : (browser ?? account);
 }
 
-/** A learner known to be a minor can't give the yes the law needs, so it stays off whatever they chose. */
-export function isUsageDataLockedOff({
-  country,
-  minor,
-}: {
-  country: string | null;
-  minor: boolean;
-}): boolean {
-  return minor && requiresUsageDataConsent(country);
-}
-
 /** null: nobody has chosen yet where the law needs a yes, so the visitor must be asked. */
 export function resolveUsageDataSharing({
   choice,
   country,
-  minor,
 }: {
   choice: boolean | null;
   country: string | null;
-  minor: boolean;
 }): boolean | null {
-  if (isUsageDataLockedOff({ country, minor })) {
-    return false;
-  }
-
   return choice ?? (requiresUsageDataConsent(country) ? null : true);
 }
 
@@ -122,12 +105,6 @@ export function parseUsageDataCookie(value: string | null | undefined): boolean 
 
   return value === "off" ? false : null;
 }
-
-/**
- * Hides the notice for a known minor where they can't say yes. It isn't a choice, so they're asked
- * once they're an adult.
- */
-export const USAGE_DATA_MINOR_COOKIE = "minor";
 
 export function formatUsageDataCookie(share: boolean): string {
   return share ? "on" : "off";

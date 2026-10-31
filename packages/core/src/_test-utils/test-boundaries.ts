@@ -17,7 +17,7 @@ export const nextCache = {
 // with `runDeferredWork` from `deferred-work.ts`.
 export const nextServer = { after: vi.fn() };
 
-export const nextHeaders = { headers: vi.fn() };
+export const nextHeaders = { cookies: vi.fn(), headers: vi.fn() };
 
 export const session = { getSession: vi.fn() };
 
@@ -124,6 +124,7 @@ export async function resetBoundaries(): Promise<void> {
   [
     ...Object.values(nextCache),
     ...Object.values(nextServer),
+    nextHeaders.cookies,
     nextHeaders.headers,
     session.getSession,
     dateContext.getRequestProgressDateContext,
@@ -143,6 +144,7 @@ export async function resetBoundaries(): Promise<void> {
     sessionId: `session-${crypto.randomUUID()}`,
   }));
 
+  nextHeaders.cookies.mockImplementation(async () => new Map());
   nextHeaders.headers.mockImplementation(async () => new Headers());
 
   dateContext.getRequestProgressDateContext.mockImplementation(

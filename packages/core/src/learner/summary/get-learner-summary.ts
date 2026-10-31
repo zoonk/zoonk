@@ -1,6 +1,5 @@
 import "server-only";
 import { type Goal, type Subscription, prisma } from "@zoonk/db";
-import { isAdult } from "@zoonk/utils/age";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
@@ -23,7 +22,6 @@ import { hasSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speak
 import { countReadyMistakes } from "../../mistakes/mistake-availability";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getSession } from "../../users/get-session";
-import { findRequestCountry } from "../../users/request-country";
 import { isGoalSetupLeft } from "../../view-models/onboarding/onboarding-steps";
 import { getAnswerTimeZone } from "../_utils/owned-goal";
 import { readLearningProfile } from "../facts/learning-profile";
@@ -192,7 +190,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
 
   const now = await getRequestInstant();
 
-  const [profile, goals, subscription, sessions, phaseFacts, facts, country] = await Promise.all([
+  const [profile, goals, subscription, sessions, phaseFacts, facts] = await Promise.all([
     readLearningProfile(userId),
     prisma.goal.findMany({ orderBy: { createdAt: "asc" }, where: { userId } }),
     isAnonymous ? null : getActiveSubscription(),
@@ -202,7 +200,6 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
     }),
     loadPlanPhaseFacts({ userId }),
     loadLearnerFacts(userId),
-    findRequestCountry(),
   ]);
 
   const activeGoal = findActiveGoal({ activeGoalId: profile?.activeGoalId, goals });
@@ -238,7 +235,6 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
     account: { email: session.user.email, image: user.image, name: user.name },
     activeGoalId,
     analytics: {
-      adult: isAdult({ birthYear: profile?.birthYear ?? null, country, now }),
       disabled: user.analyticsDisabled,
       goal: getAnalyticsGoal({ goal: current, phaseChallengesRequired, phaseFacts }),
       plan: subscription?.plan ?? "free",
@@ -255,7 +251,6 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
       userId,
     },
     missions: goalDay.missions,
-    needsBirthYear: !profile?.birthYear,
     nextChangeAt: getNextChangeAt({
       carriedUntil: goalDay.carriedUntil,
       localDate,

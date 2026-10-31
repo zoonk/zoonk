@@ -3,7 +3,6 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./age": "./src/age.ts",
     "./aggregation": "./src/aggregation.ts",
     "./apportion": "./src/apportion.ts",
     "./belt-level": "./src/belt-level.ts",

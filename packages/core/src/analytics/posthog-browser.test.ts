@@ -1,25 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const client = vi.hoisted(() => {
-  const config = { persistence: "" };
-
-  return {
-    config,
-    get_property: vi.fn<(name: string) => unknown>(),
-    has_opted_out_capturing: vi.fn(() => false),
-    init: vi.fn((_token: string, options: { persistence: string }) => {
-      config.persistence = options.persistence;
-    }),
-    opt_in_capturing: vi.fn(),
-    opt_out_capturing: vi.fn(),
-    reset: vi.fn(),
-    set_config: vi.fn((options: { persistence: string }) => {
-      config.persistence = options.persistence;
-    }),
-    startSessionRecording: vi.fn(),
-    stopSessionRecording: vi.fn(),
-  };
-});
+const client = vi.hoisted(() => ({
+  has_opted_out_capturing: vi.fn(() => false),
+  init: vi.fn(),
+  opt_in_capturing: vi.fn(),
+  opt_out_capturing: vi.fn(),
+  startSessionRecording: vi.fn(),
+  stopSessionRecording: vi.fn(),
+}));
 
 vi.mock("posthog-js", () => ({ default: client }));
 
@@ -44,7 +32,6 @@ describe("PostHog in the browser", () => {
     vi.stubEnv("NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN", "project-token");
     vi.stubGlobal("document", { readyState: "complete" });
     vi.stubGlobal("requestIdleCallback", (callback: () => void) => setTimeout(callback, 0));
-    client.get_property.mockReturnValue("anonymous");
   });
 
   afterEach(() => {
@@ -70,30 +57,28 @@ describe("PostHog in the browser", () => {
     expect(client.init).not.toHaveBeenCalled();
   });
 
-  it("starts with recording off, and records only an adult", async () => {
+  it("loads once and records the session of anyone who shares", async () => {
     const posthog = await loadModule();
 
-    await posthog.startPostHog({ age: null });
+    await posthog.startPostHog();
 
     expect(client.init).toHaveBeenCalledExactlyOnceWith("project-token", {
       api_host: "https://posthog.test",
       defaults: "2026-05-30",
       disable_session_recording: true,
-      persistence: "localStorage+cookie",
     });
 
-    expect(client.startSessionRecording).not.toHaveBeenCalled();
+    expect(client.startSessionRecording).toHaveBeenCalledOnce();
 
-    await posthog.startPostHog({ age: "adult" });
+    await posthog.startPostHog();
 
     expect(client.init).toHaveBeenCalledOnce();
-    expect(client.startSessionRecording).toHaveBeenCalledOnce();
     await expect(posthog.loadPostHog()).resolves.toBe(client);
   });
 
   it("opts out once turned off, and back in without an event when turned on again", async () => {
     const posthog = await loadModule();
-    await posthog.startPostHog({ age: "adult" });
+    await posthog.startPostHog();
 
     await posthog.stopPostHog();
 
@@ -102,50 +87,9 @@ describe("PostHog in the browser", () => {
     await expect(posthog.loadPostHog()).resolves.toBeNull();
 
     client.has_opted_out_capturing.mockReturnValueOnce(true);
-    await posthog.startPostHog({ age: null });
+    await posthog.startPostHog();
 
     expect(client.opt_in_capturing).toHaveBeenCalledExactlyOnceWith({ captureEventName: false });
-  });
-
-  it("drops the identity this browser holds for anyone not known to be an adult", async () => {
-    client.get_property.mockReturnValue("identified");
-    const posthog = await loadModule();
-
-    await posthog.startPostHog({ age: "adult" });
-    expect(client.reset).not.toHaveBeenCalled();
-
-    await posthog.startPostHog({ age: null });
-    expect(client.reset).toHaveBeenCalledOnce();
-  });
-
-  it("keeps a minor's random ID in this tab alone", async () => {
-    const posthog = await loadModule();
-
-    await posthog.startPostHog({ age: "minor" });
-
-    expect(client.init).toHaveBeenCalledWith(
-      "project-token",
-      expect.objectContaining({ persistence: "sessionStorage" }),
-    );
-
-    expect(client.reset).not.toHaveBeenCalled();
-    expect(client.startSessionRecording).not.toHaveBeenCalled();
-  });
-
-  it("drops the IDs a learner had before or after being known as a minor", async () => {
-    const posthog = await loadModule();
-    await posthog.startPostHog({ age: null });
-
-    await posthog.startPostHog({ age: "minor" });
-
-    expect(client.set_config).toHaveBeenLastCalledWith({ persistence: "sessionStorage" });
-    expect(client.reset).toHaveBeenCalledExactlyOnceWith({ resetDeviceID: true });
-
-    await posthog.startPostHog({ age: "adult" });
-
-    expect(client.set_config).toHaveBeenLastCalledWith({ persistence: "localStorage+cookie" });
-    expect(client.reset).toHaveBeenLastCalledWith({ resetDeviceID: true });
-    expect(client.reset).toHaveBeenCalledTimes(2);
   });
 
   it("never loads when the visitor says no before the page has loaded", async () => {
@@ -157,7 +101,7 @@ describe("PostHog in the browser", () => {
     });
 
     const posthog = await loadModule();
-    const start = posthog.startPostHog({ age: "adult" });
+    const start = posthog.startPostHog();
     const stop = posthog.stopPostHog();
 
     listeners.forEach((listener) => listener());
@@ -170,7 +114,7 @@ describe("PostHog in the browser", () => {
     vi.stubEnv("NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN", "");
     const posthog = await loadModule();
 
-    await posthog.startPostHog({ age: "minor" });
+    await posthog.startPostHog();
     expect(posthog.isSharingUsageData()).toBe(true);
 
     await posthog.stopPostHog();

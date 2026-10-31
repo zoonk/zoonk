@@ -1,11 +1,14 @@
 import "server-only";
-import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import {
+  USAGE_DATA_COOKIE,
+  getUsageDataChoice,
+  parseUsageDataCookie,
+} from "@zoonk/utils/usage-data";
+import { cookies } from "next/headers";
 import { findActiveGoalId, loadCurrentPhases } from "../goals/_utils/goal-view";
-import { findRequestCountry } from "../users/request-country";
 import { type AnalyticsEvent } from "./events";
-import { getLearnerAnalyticsPolicy } from "./learner-analytics-policy";
 import { getRequestPlatform } from "./request-platform";
 import { trackServerEvent } from "./server";
 import {
@@ -43,10 +46,7 @@ async function loadEventGoal({ goalId, userId }: { goalId: string; userId: strin
 async function loadLearner({ goalId, userId }: Pick<LearnerEventsInput, "goalId" | "userId">) {
   const [user, eventGoalId] = await Promise.all([
     prisma.user.findUnique({
-      select: {
-        isAnonymous: true,
-        learningProfile: { select: { birthYear: true, shareUsageData: true } },
-      },
+      select: { isAnonymous: true, learningProfile: { select: { shareUsageData: true } } },
       where: { id: userId },
     }),
     goalId ?? findActiveGoalId(userId),
@@ -59,7 +59,6 @@ async function loadLearner({ goalId, userId }: Pick<LearnerEventsInput, "goalId"
   const goal = eventGoalId ? await loadEventGoal({ goalId: eventGoalId, userId }) : null;
 
   return {
-    birthYear: user.learningProfile?.birthYear ?? null,
     goal,
     isAnonymous: user.isAnonymous,
     shareUsageData: user.learningProfile?.shareUsageData ?? null,
@@ -85,10 +84,15 @@ function toSharedProperties({
   });
 }
 
+/** A web request carries the browser's choice, which may not have reached the account yet. */
+async function readBrowserUsageData(): Promise<boolean | null> {
+  const { data: cookieStore } = await safeAsync(() => cookies());
+  return parseUsageDataCookie(cookieStore?.get(USAGE_DATA_COOKIE)?.value);
+}
+
 /**
- * Follows the learner's analytics policy: only an adult's events carry their account ID, and anyone
- * else's a new random one, so nothing ties them back to the account. Lookup and analytics failures
- * never fail the caller.
+ * Sends nothing once the learner turns usage data off, on their account or in the browser sending
+ * the request. Lookup and analytics failures never fail the caller.
  */
 export async function trackLearnerEvents({
   events,
@@ -104,24 +108,20 @@ export async function trackLearnerEvents({
   await safeAsync(async () => {
     const fromRequest = platform === undefined;
 
-    const [learner, eventPlatform, country] = await Promise.all([
+    const [learner, eventPlatform, browser] = await Promise.all([
       loadLearner({ goalId, userId }),
       fromRequest ? getRequestPlatform() : platform,
-      fromRequest ? findRequestCountry() : null,
+      fromRequest ? readBrowserUsageData() : null,
     ]);
 
-    const policy = learner && getLearnerAnalyticsPolicy({ ...learner, country });
-
-    if (!learner || policy === "off") {
+    if (!learner || getUsageDataChoice({ account: learner.shareUsageData, browser }) === false) {
       return;
     }
 
     const shared = toSharedProperties({ learner, locale, platform: eventPlatform });
-    const identified = policy === "identified";
-    const distinctId = identified ? userId : randomUUID();
 
     await Promise.all(
-      events.map((event) => trackServerEvent({ ...event, distinctId, identified, shared })),
+      events.map((event) => trackServerEvent({ ...event, distinctId: userId, shared })),
     );
   });
 }

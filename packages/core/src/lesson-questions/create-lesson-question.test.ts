@@ -136,6 +136,7 @@ describe(createLessonQuestion, () => {
 
     expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
+        distinctId: user.id,
         name: "Tutor Asked",
         properties: { lesson_id: lesson.id, scope: "lesson" },
       }),

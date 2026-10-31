@@ -33,8 +33,6 @@ model UserLearningProfile {
   /// The device's own mute still wins.
   soundsEnabled     Boolean      @default(true) @map("sounds_enabled")
   dailyLimitMinutes Int?         @map("daily_limit_minutes") @db.SmallInt
-  /// Never a date: a boolean for adults would go stale on a birthday. Null until the learner answers.
-  birthYear         Int?         @map("birth_year") @db.SmallInt
   /// Null until the learner chooses; where the law needs a yes, analytics wait for one.
   shareUsageData    Boolean?     @map("share_usage_data")
   createdAt         DateTime     @default(now()) @map("created_at")

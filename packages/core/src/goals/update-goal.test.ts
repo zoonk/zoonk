@@ -266,7 +266,7 @@ describe(updateGoal, () => {
   });
 
   it('sends "Goal Reached" once when the learner completes a goal', async () => {
-    const { goal } = await signedInGoal();
+    const { goal, user } = await signedInGoal();
 
     await prisma.goal.update({
       data: { createdAt: new Date("2020-09-18T12:00:00Z") },
@@ -281,7 +281,11 @@ describe(updateGoal, () => {
     await flush();
 
     expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ name: "Goal Reached", properties: { days: 10, goal_id: goal.id } }),
+      expect.objectContaining({
+        distinctId: user.id,
+        name: "Goal Reached",
+        properties: { days: 10, goal_id: goal.id },
+      }),
     );
   });
 

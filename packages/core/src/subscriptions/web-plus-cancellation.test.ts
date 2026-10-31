@@ -16,7 +16,6 @@ import type Stripe from "stripe";
 
 const stripe = vi.hoisted(() => ({
   cancel: vi.fn(),
-  listInvoices: vi.fn(),
   paymentIntent: vi.fn(),
   refund: vi.fn(),
   retrieve: vi.fn(),
@@ -27,7 +26,7 @@ const stripe = vi.hoisted(() => ({
 // Stripe and the mailer are external services; the learner's subscription row is real.
 vi.mock("@zoonk/auth/stripe-client", () => ({
   stripeClient: {
-    invoices: { list: stripe.listInvoices, voidInvoice: stripe.voidInvoice },
+    invoices: { voidInvoice: stripe.voidInvoice },
     paymentIntents: { retrieve: stripe.paymentIntent },
     refunds: { create: stripe.refund },
     subscriptions: { cancel: stripe.cancel, retrieve: stripe.retrieve, update: stripe.update },
@@ -107,15 +106,6 @@ function stripeSubscription({
     start_date: now - subscribedDaysAgo * DAY,
     status,
   } as unknown as Stripe.Subscription;
-}
-
-function paidInvoices() {
-  return ["in_first", "in_second"].map((id) => ({
-    amount_paid: 999,
-    currency: "eur",
-    id,
-    payments: { data: [{ payment: { payment_intent: `pi_${id}` }, status: "paid" }] },
-  }));
 }
 
 async function subscribedLearner({
@@ -731,7 +721,7 @@ describe("web Plus cancellation", () => {
       });
 
       const user = await subscribedLearner({ subscription });
-      await endWebPlusForDeletedAccount({ learner: user, refund: "terms" });
+      await endWebPlusForDeletedAccount({ learner: user });
 
       expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({ amount: 999 }),
@@ -765,7 +755,7 @@ describe("web Plus cancellation", () => {
       });
 
       const user = await subscribedLearner({ subscription });
-      await endWebPlusForDeletedAccount({ learner: user, refund: "terms" });
+      await endWebPlusForDeletedAccount({ learner: user });
 
       expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({ amount: 8000 }),
@@ -786,7 +776,7 @@ describe("web Plus cancellation", () => {
       });
 
       const user = await subscribedLearner({ subscription });
-      await endWebPlusForDeletedAccount({ learner: user, refund: "terms" });
+      await endWebPlusForDeletedAccount({ learner: user });
 
       expect(stripe.refund).not.toHaveBeenCalled();
       expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscription.id, { prorate: false });
@@ -806,76 +796,12 @@ describe("web Plus cancellation", () => {
       });
 
       const user = await subscribedLearner({ subscription });
-      await endWebPlusForDeletedAccount({ learner: user, refund: "terms" });
+      await endWebPlusForDeletedAccount({ learner: user });
 
       expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({ amount: 8000 }),
         expect.anything(),
       );
-    });
-
-    it("refunds every payment in full for an account below the minimum age", async () => {
-      const subscription = stripeSubscription({
-        amountPaid: 999,
-        interval: "month",
-        periodStartDaysAgo: 20,
-        subscribedDaysAgo: 50,
-      });
-
-      const user = await subscribedLearner({ subscription });
-
-      await prisma.user.update({
-        data: { stripeCustomerId: "cus_learner" },
-        where: { id: user.id },
-      });
-
-      stripe.listInvoices.mockReturnValue({ autoPagingToArray: async () => paidInvoices() });
-      await endWebPlusForDeletedAccount({ learner: user, refund: "everything" });
-
-      expect(stripe.listInvoices).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({ customer: "cus_learner", status: "paid" }),
-      );
-
-      expect(stripe.refund).toHaveBeenCalledTimes(2);
-
-      expect(stripe.refund).toHaveBeenCalledWith(
-        { amount: 999, payment_intent: "pi_in_first", reason: "requested_by_customer" },
-        expect.anything(),
-      );
-
-      expect(stripe.refund).toHaveBeenCalledWith(
-        { amount: 999, payment_intent: "pi_in_second", reason: "requested_by_customer" },
-        expect.anything(),
-      );
-
-      expect(sendPlusCancellationEmail).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({
-          choice: "withdrawal",
-          refund: { amount: 1998, currency: "eur" },
-        }),
-      );
-    });
-
-    it("refunds what an account below the minimum age paid even after its Plus ended", async () => {
-      const user = await userFixture();
-
-      await prisma.subscription.create({
-        data: {
-          plan: "plus",
-          provider: "stripe",
-          referenceId: user.id,
-          status: "canceled",
-          stripeCustomerId: "cus_learner",
-          stripeSubscriptionId: `sub_${randomUUID()}`,
-        },
-      });
-
-      stripe.listInvoices.mockReturnValue({ autoPagingToArray: async () => paidInvoices() });
-      await endWebPlusForDeletedAccount({ learner: user, refund: "everything" });
-
-      expect(stripe.refund).toHaveBeenCalledTimes(2);
-      expect(stripe.cancel).not.toHaveBeenCalled();
-      expect(sendPlusCancellationEmail).not.toHaveBeenCalled();
     });
   });
 });

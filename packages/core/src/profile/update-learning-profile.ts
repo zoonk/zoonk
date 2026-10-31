@@ -1,12 +1,9 @@
 import "server-only";
 import { type BuddyGlasses, prisma } from "@zoonk/db";
-import { isKnownMinor } from "@zoonk/utils/age";
-import { isUsageDataLockedOff } from "@zoonk/utils/usage-data";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getLearningProfileCacheTag } from "../cache/tags";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSession } from "../users/get-session";
-import { findRequestCountry } from "../users/request-country";
 import { findLearningProfileView, listAvailableGlasses } from "./_utils/learning-profile-view";
 import { DEFAULT_BUDDY } from "./default-buddy";
 import {
@@ -34,17 +31,11 @@ function getBuddyData(buddy: LearningProfileUpdateInput["buddy"]) {
   };
 }
 
-function getProfileData({
-  input,
-  shareUsageData,
-}: {
-  input: LearningProfileUpdateInput;
-  shareUsageData: boolean | null | undefined;
-}) {
+function getProfileData(input: LearningProfileUpdateInput) {
   return {
     ...(input.activeGoalId !== undefined && { activeGoalId: input.activeGoalId }),
     ...(input.soundsEnabled !== undefined && { soundsEnabled: input.soundsEnabled }),
-    ...(shareUsageData !== undefined && { shareUsageData }),
+    ...(input.shareUsageData !== undefined && { shareUsageData: input.shareUsageData }),
     ...(input.dailyLimitMinutes !== undefined && { dailyLimitMinutes: input.dailyLimitMinutes }),
     ...getBuddyData(input.buddy),
   };
@@ -122,30 +113,6 @@ async function findInvalidField({
   return goalAllowed ? null : "goalNotFound";
 }
 
-/**
- * A minor's yes where the law needs one isn't theirs to give, so it's kept as no choice and they're
- * asked again once they're an adult.
- */
-async function findShareUsageData({
-  share,
-  userId,
-}: {
-  share: boolean | undefined;
-  userId: string;
-}): Promise<boolean | null | undefined> {
-  if (share !== true) {
-    return share;
-  }
-
-  const [profile, country] = await Promise.all([
-    prisma.userLearningProfile.findUnique({ select: { birthYear: true }, where: { userId } }),
-    findRequestCountry(),
-  ]);
-
-  const minor = isKnownMinor({ birthYear: profile?.birthYear ?? null, country, now: new Date() });
-  return isUsageDataLockedOff({ country, minor }) ? null : share;
-}
-
 export async function updateLearningProfile(
   input: LearningProfileUpdateInput,
 ): Promise<LearningProfileUpdateResult> {
@@ -157,16 +124,13 @@ export async function updateLearningProfile(
 
   const userId = session.user.id;
 
-  const [invalidField, shareUsageData] = await Promise.all([
-    findInvalidField({ input, userId }),
-    findShareUsageData({ share: input.shareUsageData, userId }),
-  ]);
+  const invalidField = await findInvalidField({ input, userId });
 
   if (invalidField) {
     return { status: invalidField };
   }
 
-  const data = getProfileData({ input, shareUsageData });
+  const data = getProfileData(input);
 
   const changed = await writeProfile({ data, userId });
 

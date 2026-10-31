@@ -7,9 +7,10 @@ import {
   reauthorizeAppleForAccountDeletion,
 } from "@zoonk/auth/native-apple";
 import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { headers } from "next/headers";
 import { endWebPlusForDeletedAccount } from "../subscriptions/web-plus-account-deletion";
-import { logAccountDeletion } from "./_utils/log-account-deletion";
 import { getSession } from "./get-session";
 
 type AccountDeletionAuthorization = {
@@ -117,8 +118,17 @@ async function throwAfterTemporarySessionCleanup({
   throw error;
 }
 
+/** Retain the deleted account's analytics id for manual removal; logging failure must not fail account deletion. */
+async function logAccountDeletion(userId: string) {
+  const { error } = await safeAsync(() => prisma.accountDeletion.create({ data: { userId } }));
+
+  if (error) {
+    logError("Couldn't log the account deletion; remove its analytics by hand:", userId, error);
+  }
+}
+
 function endWebPlus(learner: { email: string; id: string; name: string }) {
-  return endWebPlusForDeletedAccount({ learner, refund: "terms" });
+  return endWebPlusForDeletedAccount({ learner });
 }
 
 /** Permanently deletes the session's user through Better Auth's fresh-session checks and cleanup hooks. */

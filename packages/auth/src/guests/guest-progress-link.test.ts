@@ -64,7 +64,6 @@ async function seed({ table, userId, value }: { table: Table; userId: string; va
       return prisma.userLearningProfile.create({
         data: {
           activeGoalId: goal.id,
-          birthYear: 2000 + value,
           buddyGlasses: value > 5 ? "round" : "star",
           buddyKind: "zu",
           buddyName: `Buddy ${value}`,
@@ -451,7 +450,7 @@ describe("guest progress linking", () => {
     },
   );
 
-  it("takes the guest's birth year and usage data choice when the account has none", async () => {
+  it("takes the guest's usage data choice when the account has none", async () => {
     const [account, guest] = await Promise.all([
       createExistingAccount({ createdAt: DAY }),
       signInAsGuest(),
@@ -465,7 +464,7 @@ describe("guest progress linking", () => {
     ]);
 
     await prisma.userLearningProfile.update({
-      data: { birthYear: null, shareUsageData: null },
+      data: { shareUsageData: null },
       where: { userId: account.userId },
     });
 
@@ -475,7 +474,7 @@ describe("guest progress linking", () => {
 
     await expect(
       prisma.userLearningProfile.findUnique({ where: { userId: account.userId } }),
-    ).resolves.toMatchObject({ birthYear: 2003, shareUsageData: false });
+    ).resolves.toMatchObject({ shareUsageData: false });
   });
 
   it.each(TABLES)("preserves the guest's entire unique %s snapshot", async (table) => {

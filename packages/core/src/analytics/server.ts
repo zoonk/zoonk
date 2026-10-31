@@ -42,27 +42,13 @@ async function capture({
   });
 }
 
-/** Without `identified`, PostHog keeps no person profile for the learner. */
 export async function trackServerEvent({
   distinctId,
-  identified,
   name,
   properties,
   shared,
-}: AnalyticsEvent & {
-  distinctId: string;
-  identified: boolean;
-  shared: SharedEventProperties;
-}): Promise<void> {
-  await capture({
-    distinctId,
-    event: name,
-    properties: {
-      ...properties,
-      ...shared,
-      ...(!identified && { $process_person_profile: false }),
-    },
-  });
+}: AnalyticsEvent & { distinctId: string; shared: SharedEventProperties }): Promise<void> {
+  await capture({ distinctId, event: name, properties: { ...properties, ...shared } });
 }
 
 export async function trackSystemEvent({ name, properties }: AnalyticsEvent): Promise<void> {
