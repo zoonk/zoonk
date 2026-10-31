@@ -72,4 +72,5 @@ internal fun Project.configureAndroid(android: CommonExtension) {
 }
 
 private const val COMPILE_SDK = 37
+internal const val TARGET_SDK = 37
 private const val MIN_SDK = 26

@@ -20,7 +20,7 @@ if (!name || !/^[a-z\d_]+$/u.test(name)) {
   throw new Error("Pass a Material Symbol's name, like `sunny` (fonts.google.com/icons).");
 }
 
-const drawables = new URL("../../app/src/main/res/drawable/", import.meta.url);
+const drawables = new URL("../../core/resources/src/main/res/drawable/", import.meta.url);
 const source = `https://raw.githubusercontent.com/google/material-design-icons/master/symbols/android/${name}/materialsymbolsoutlined/${name}`;
 
 async function addVariant({ file, url }: { file: string; url: string }) {

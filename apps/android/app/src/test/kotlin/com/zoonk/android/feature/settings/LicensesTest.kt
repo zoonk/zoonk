@@ -47,7 +47,7 @@ class LicensesTest {
             ApplicationProvider
                 .getApplicationContext<Context>()
                 .resources
-                .openRawResource(R.raw.aboutlibraries)
+                .openRawResource(com.zoonk.android.app.R.raw.aboutlibraries)
                 .bufferedReader()
                 .use { it.readText() }
         val missing =

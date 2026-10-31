@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.ApplicationExtension
+import com.zoonk.buildlogic.TARGET_SDK
 import com.zoonk.buildlogic.configureAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -16,5 +17,3 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
         }
     }
 }
-
-private const val TARGET_SDK = 37

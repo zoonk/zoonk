@@ -5,23 +5,24 @@ import { dirname, join } from "node:path";
 import { onTestFinished, test } from "vitest";
 import { untrackedCatalogs } from "./catalogs.mts";
 
-test("translatable resources cannot bypass Eloqnt via another XML file, locale, or source set", async () => {
+test("translatable resources cannot bypass Eloqnt via another XML file, locale, source set, or module", async () => {
   const root = await mkdtemp(join(tmpdir(), "zoonk-android-catalogs-"));
   onTestFinished(() => rm(root, { force: true, recursive: true }));
   const source = '<resources><string name="title">Home</string></resources>';
 
   const tracked = [
-    "app/src/main/res/values/strings.xml",
-    "app/src/main/res/values-de/strings.xml",
-    "app/src/main/res/values/strings_today.xml",
-    "app/src/main/res/values-de/strings_today.xml",
+    "core/resources/src/main/res/values/strings.xml",
+    "core/resources/src/main/res/values-de/strings.xml",
+    "core/resources/src/main/res/values/strings_today.xml",
+    "core/resources/src/main/res/values-de/strings_today.xml",
   ];
 
   const untracked = [
-    "app/src/main/res/values/feature.xml",
-    "app/src/main/res/values-de/strings_removed.xml",
-    "app/src/main/res/values-ar/strings.xml",
+    "core/resources/src/main/res/values/feature.xml",
+    "core/resources/src/main/res/values-de/strings_removed.xml",
+    "core/resources/src/main/res/values-ar/strings.xml",
     "app/src/debug/res/values/strings.xml",
+    "app/src/main/res/values/strings.xml",
   ];
 
   async function writeCatalog(path: string) {
@@ -33,7 +34,7 @@ test("translatable resources cannot bypass Eloqnt via another XML file, locale, 
   await Promise.all([...tracked, ...untracked].map((path) => writeCatalog(path)));
 
   await writeFile(
-    join(root, "app/src/main/res/values/colors.xml"),
+    join(root, "core/resources/src/main/res/values/colors.xml"),
     '<resources><color name="background">#FFFFFF</color><string name="brand" translatable="false">Zoonk</string></resources>',
   );
 

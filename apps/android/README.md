@@ -35,7 +35,7 @@ pnpm android:tablet -- Pixel_Tablet
 
 Use Android Studio for Compose previews. APKs and test reports are under `app/build/`.
 
-The Makefile shortcuts require GNU Make and a POSIX shell. On native Windows, use `.\gradlew.bat` from this directory with the tasks listed in the [Makefile](Makefile), for example `.\gradlew.bat assembleRelease`.
+The Makefile shortcuts require GNU Make and a POSIX shell. On native Windows, use `.\gradlew.bat` from this directory with the tasks listed in the [Makefile](Makefile), for example `.\gradlew.bat :app:assembleRelease`.
 
 ## Local API
 
@@ -53,7 +53,7 @@ adb shell am broadcast -a com.zoonk.debug.SIGN_IN -n com.zoonk.debug/com.zoonk.a
 
 ## Structure
 
-The [app source](app/src/main/kotlin/com/zoonk/android) is organized into `app/` composition (application, container), `data/` (cache, session, drafts, API runtime), `navigation/`, `feature/<feature>/`, and shared `ui/` packages. [`api/`](api) generates the Kotlin client from `api/openapi.json` on build. `lint-checks/` is build-time tooling, not part of the APK.
+The [app source](app/src/main/kotlin/com/zoonk/android) is organized into `app/` composition (application, container), `data/` (cache, session, drafts, API runtime), `navigation/`, `feature/<feature>/`, and shared `ui/` packages. [`core/resources/`](core/resources) holds every string, translation, drawable, font and asset. [`api/`](api) generates the Kotlin client from `api/openapi.json` on build. `lint-checks/` is build-time tooling, not part of the APK.
 
 Read [AGENTS.md](AGENTS.md) for architecture, platform, and contribution constraints.
 
@@ -63,7 +63,7 @@ The theme (`ui/theme`), shared pieces (`ui/components`), formatters (`ui/format`
 
 ## Localization
 
-Author English copy in your feature's `app/src/main/res/values/strings_<feature>.xml`, with names prefixed by the feature (`today_blocks_left`); shared words live in [strings.xml](app/src/main/res/values/strings.xml). Each file is its own Eloqnt catalog. Then use `stringResource` or `pluralStringResource`. Android resources are explicit, not automatically extracted from Kotlin.
+Author English copy in your feature's `core/resources/src/main/res/values/strings_<feature>.xml`, with names prefixed by the feature (`today_blocks_left`); shared words live in [strings.xml](core/resources/src/main/res/values/strings.xml). Each file is its own Eloqnt catalog. Then use `stringResource` or `pluralStringResource`. Android resources are explicit, not automatically extracted from Kotlin.
 
 ```sh
 pnpm --filter android i18n       # Translate missing/changed copy and prune removed entries

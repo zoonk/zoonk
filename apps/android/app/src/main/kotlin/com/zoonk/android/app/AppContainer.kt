@@ -3,7 +3,6 @@ package com.zoonk.android.app
 import android.content.Context
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.zoonk.android.BuildConfig
 import com.zoonk.android.app.shell.GoalSwitch
 import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AppCache

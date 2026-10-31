@@ -22,7 +22,7 @@ apps/apple/Zoonk.xcodeproj/project.xcworkspace/contents.xcworkspacedata linguist
 
 # Android catalogs translated by Eloqnt; values/strings.xml is the authored English source.
 # Match language codes without hiding configuration overrides such as values-night or values-land.
-apps/android/app/src/main/res/values-[a-z][a-z]/strings.xml linguist-generated=true
+apps/android/core/resources/src/main/res/values-[a-z][a-z]/strings.xml linguist-generated=true
 
 # Gradle wrapper code. Keep wrapper properties and JVM criteria visible as build configuration.
 apps/android/gradlew linguist-generated=true

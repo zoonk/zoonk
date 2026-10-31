@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 
 export const SANDBOX_PAGE_FILE = fileURLToPath(
-  new URL("../../app/src/main/assets/sandbox/index.html", import.meta.url),
+  new URL("../../core/resources/src/main/assets/sandbox/index.html", import.meta.url),
 );
 
 const repoRoot = fileURLToPath(new URL("../../../../", import.meta.url));

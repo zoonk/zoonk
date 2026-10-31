@@ -15,7 +15,8 @@ val localApiBaseUrl =
         .orElse("http://localhost:4000")
 
 android {
-    namespace = "com.zoonk.android"
+    // The resources module took `com.zoonk.android`, so its `R` keeps that name.
+    namespace = "com.zoonk.android.app"
 
     defaultConfig {
         applicationId = "com.zoonk"
@@ -67,7 +68,9 @@ android {
         // aren't outranked by a library's regional copy, such as Compose's pt-rBR "Fechar planilha".
         localeFilters +=
             listOf("en") +
-            file("src/main/res").list().orEmpty().mapNotNull { Regex("values-([a-z]{2,3})").matchEntire(it)?.groupValues?.get(1) }
+            file("../core/resources/src/main/res").list().orEmpty().mapNotNull {
+                Regex("values-([a-z]{2,3})").matchEntire(it)?.groupValues?.get(1)
+            }
     }
 }
 
@@ -79,6 +82,8 @@ aboutLibraries {
 }
 
 dependencies {
+    // First, so our strings that replace a library's (close_sheet) win the resource merge.
+    implementation(project(":core:resources"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.lifecycle.runtime.compose)

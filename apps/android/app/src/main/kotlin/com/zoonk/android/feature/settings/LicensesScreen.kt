@@ -119,7 +119,7 @@ private fun LicenseSheet(
 private fun readLibraries(context: Context): List<Library> {
     val json =
         context.resources
-            .openRawResource(R.raw.aboutlibraries)
+            .openRawResource(com.zoonk.android.app.R.raw.aboutlibraries)
             .bufferedReader()
             .use { it.readText() }
     return Libs

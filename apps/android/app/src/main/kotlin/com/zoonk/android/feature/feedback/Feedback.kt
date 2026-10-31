@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zoonk.android.BuildConfig
+import com.zoonk.android.app.BuildConfig
 import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.SessionSource

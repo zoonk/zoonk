@@ -25,7 +25,7 @@ const tailwindTheme = createRequire(`${repoRoot}packages/ui/package.json`).resol
   "tailwindcss/theme.css",
 );
 
-const resources = `${androidRoot}app/src/main/res`;
+const resources = `${androidRoot}core/resources/src/main/res`;
 const kotlinFile = `${androidRoot}app/src/main/kotlin/com/zoonk/android/ui/theme/ZoonkPalette.kt`;
 
 const header =

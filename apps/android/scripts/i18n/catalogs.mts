@@ -7,16 +7,18 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 
 export const ANDROID_ROOT = fileURLToPath(new URL("../../", import.meta.url));
 
+const CATALOG_RES = "core/resources/src/main/res";
+
 export function catalogNames(root: string) {
-  return globSync("app/src/main/res/values/strings*.xml", { cwd: root })
+  return globSync(`${CATALOG_RES}/values/strings*.xml`, { cwd: root })
     .map((file) => basename(file, ".xml"))
     .toSorted();
 }
 
 export function catalogPath(catalog: string) {
   return {
-    source: `app/src/main/res/values/${catalog}`,
-    targets: `app/src/main/res/values-{code}/${catalog}`,
+    source: `${CATALOG_RES}/values/${catalog}`,
+    targets: `${CATALOG_RES}/values-{code}/${catalog}`,
   };
 }
 
@@ -32,7 +34,12 @@ export function readSourceCatalogs(root: string) {
 }
 
 export async function untrackedCatalogs(root: string) {
-  const files = await Array.fromAsync(glob("app/src/**/res/values*/*.xml", { cwd: root }));
+  const files = await Array.fromAsync(
+    glob(["*/src/**/res/values*/*.xml", "*/*/src/**/res/values*/*.xml"], {
+      cwd: root,
+      exclude: (path) => path === "node_modules",
+    }),
+  );
 
   const tracked = new Set(
     catalogNames(root).flatMap((catalog) =>

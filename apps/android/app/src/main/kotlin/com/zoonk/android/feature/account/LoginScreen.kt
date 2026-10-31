@@ -63,9 +63,9 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.zoonk.android.BuildConfig
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.BuildConfig
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppNavigator

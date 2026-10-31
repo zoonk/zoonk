@@ -14,6 +14,10 @@ gradlePlugin {
             id = "zoonk.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
+        register("androidLibrary") {
+            id = "zoonk.android.library"
+            implementationClass = "AndroidLibraryConventionPlugin"
+        }
         register("jvmLibrary") {
             id = "zoonk.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"

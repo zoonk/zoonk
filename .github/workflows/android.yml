@@ -140,7 +140,7 @@ jobs:
         include:
           - job: checks
             target: lint
-            tasks: lintRelease
+            tasks: ":app:lintRelease"
           - job: release
             target: build
             arguments: -x lintVitalRelease
