@@ -3,7 +3,6 @@ import io.sentry.android.gradle.extensions.InstrumentationFeature
 plugins {
     id("zoonk.android.application")
     alias(libs.plugins.aboutlibraries.android)
-    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.sentry.android)
 }
 
@@ -106,49 +105,20 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
     implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.commonmark)
-    implementation(libs.commonmark.ext.gfm.strikethrough)
-    implementation(libs.commonmark.ext.gfm.tables)
 
     // Navigation, routes and the adaptive shell.
-    implementation(libs.androidx.browser)
     implementation(libs.androidx.compose.material3.adaptive)
-    implementation(libs.androidx.compose.material3.adaptive.layout)
-    implementation(libs.androidx.compose.material3.adaptive.navigation)
     implementation(libs.androidx.compose.material3.adaptive.navigation3)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.serialization.core)
 
     implementation(project(":api"))
     implementation(libs.coil.compose)
-    implementation(libs.coil.network.okhttp)
-    implementation(libs.androidx.credentials)
-    implementation(libs.androidx.credentials.play.services.auth)
-    implementation(libs.androidx.datastore)
-    implementation(libs.androidx.datastore.tink)
-    implementation(libs.okhttp.sse)
-    implementation(libs.tink.android)
 
-    // Account and Plus.
-    implementation(libs.androidx.lifecycle.process)
-    implementation(libs.billing.ktx)
-    implementation(libs.googleid)
-    implementation(libs.kotlinx.coroutines.play.services)
-    implementation(libs.play.integrity)
+    // The licenses screen.
     implementation(libs.aboutlibraries.core)
-
-    // Speech clips and recorded answers.
-    implementation(libs.androidx.media3.exoplayer)
-
-    // Live calls.
-    implementation(libs.webrtc)
-
-    // Code sandbox.
-    implementation(libs.androidx.webkit)
 
     // Crash and error reports.
     implementation(libs.sentry.android)
