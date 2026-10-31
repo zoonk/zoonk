@@ -10,9 +10,9 @@ import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type CourseLevel } from "./_utils/course-levels";
 import template from "./teaching-chapters.prompt.md";
 
-/** Sonnet 5.5 found the chapter of every skill the PR preview wrote again, at 7.8s (30 Oct 2026). */
-const defaultModel = "anthropic/claude-sonnet-5.5";
-const fallbackModels = ["google/gemini-3.8-flash", "openai/gpt-6.1-sol"] as const;
+/** Terra placed every skill in its chapter, as Sonnet did, at a fifth of the cost (30 Oct 2026). */
+const defaultModel = "openai/gpt-6.1-terra";
+const fallbackModels = ["anthropic/claude-sonnet-5.5", "google/gemini-3.8-flash"] as const;
 
 const answerSchema = z.object({ after: z.number(), chapter: z.number().nullable() });
 

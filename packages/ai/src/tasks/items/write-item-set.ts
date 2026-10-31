@@ -15,7 +15,7 @@ import { GENERATED_ITEM_SCHEMAS, type GeneratedItem } from "./item-schemas";
 import { formatPastQuestions } from "./past-question-lines";
 import taskPrompt from "./write-item-set.prompt.md";
 
-const defaultModel = "openai/gpt-6-sol";
+const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 
 const DEFAULT_OPTION_COUNT = 4;

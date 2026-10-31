@@ -20,7 +20,7 @@ const defaultModel = "openai/gpt-6-luna";
 
 /** Low reasoning keeps the scores up: 8.94 on the 4 tool screens (6 Oct 2026). */
 const defaultReasoning: Reasoning = "low";
-const fallbackModels = ["google/gemini-3.8-flash", "openai/gpt-6-sol"] as const;
+const fallbackModels = ["google/gemini-3.8-flash", "openai/gpt-6.1-terra"] as const;
 
 /** For learners who install nothing: device steps become examples they read on the screen. */
 export const NO_INSTALL_TOOL_KEY = "no-install";

@@ -26,10 +26,10 @@ import quickLessonPrompt from "./quick-lesson.prompt.md";
 import { splitLessonSpec } from "./split-lesson-spec";
 
 /**
- * Sol leads the lesson-spec eval at close to the lowest cost; Haiku and Luna scored lower (7 Oct
- * 2026).
+ * Terra matched Sol on the lesson-spec eval at under half the cost (30 Oct 2026); Haiku and Luna
+ * scored lower (7 Oct 2026).
  */
-const defaultModel = "openai/gpt-6-sol";
+const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
 
 const skillSchema = z.object({

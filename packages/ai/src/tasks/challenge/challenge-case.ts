@@ -10,10 +10,10 @@ import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import systemPrompt from "./challenge-case.prompt.md";
 
 /**
- * Sol scored highest on the challenge-case eval (27 Sep 2026). A challenge is written once per
- * chapter and shared, so quality outweighs cost.
+ * Terra scored a little above Sol on the challenge-case eval at under half the cost (30 Oct 2026).
+ * A challenge is written once per chapter and shared, so quality outweighs cost.
  */
-const defaultModel = "openai/gpt-6-sol";
+const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
 
 /** A work case feels like a real job; a "What if" is a light scenario for overview courses. */

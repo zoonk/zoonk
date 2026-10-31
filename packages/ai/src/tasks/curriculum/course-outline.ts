@@ -22,10 +22,10 @@ import { readStreamedChapter } from "./_utils/streamed-chapter";
 import template from "./course-outline.prompt.md";
 
 /**
- * Sol tied Opus on the course-outline eval at a third of the cost (26 Sep 2026); Luna's cheaper
- * overviews left out foundations (7 Oct 2026).
+ * Terra scored a little above Sol on the course-outline eval at under half the cost (30 Oct 2026);
+ * Luna's cheaper overviews left out foundations (7 Oct 2026).
  */
-const defaultModel = "openai/gpt-6-sol";
+const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
 
 const schema = z.object({ chapters: z.array(chapterSchema) });

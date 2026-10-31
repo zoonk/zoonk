@@ -108,7 +108,7 @@ describe(fixLessonDraft, () => {
     });
   });
 
-  it("fixes with Luna, falling back to Sol and then Opus", async () => {
+  it("fixes with Luna, falling back to Terra and then Opus", async () => {
     vi.mocked(generateText).mockResolvedValueOnce(
       createGenerateTextResult({ screens: [], summary: null }, "openai/gpt-6-luna"),
     );
@@ -117,7 +117,9 @@ describe(fixLessonDraft, () => {
 
     expect(vi.mocked(generateText).mock.calls[0]?.[0]).toMatchObject({
       model: "openai/gpt-6-luna",
-      providerOptions: { gateway: { models: ["openai/gpt-6-sol", "anthropic/claude-opus-5.5"] } },
+      providerOptions: {
+        gateway: { models: ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] },
+      },
     });
   });
 

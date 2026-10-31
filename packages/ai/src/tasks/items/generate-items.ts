@@ -20,10 +20,10 @@ import {
 import { formatPastQuestions } from "./past-question-lines";
 
 /**
- * Sol scored close to Opus on the generate-items eval at a quarter of the cost; Flash wrote wrong
+ * Terra matched Sol on the generate-items eval at 40% of the cost (30 Oct 2026); Flash wrote wrong
  * keys and a medical error, so it isn't a fallback (Sep 2026).
  */
-const defaultModel = "openai/gpt-6-sol";
+const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 
 const DEFAULT_COUNT = 4;

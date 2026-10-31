@@ -14,11 +14,11 @@ import {
 import systemPrompt from "./quick-explanation.prompt.md";
 
 /**
- * The first screen should show in about 20 seconds: Luna scored 8.73 at 8.6s p50, Sol 9.12 at 21s
- * (Sep 2026).
+ * The first screen should show in about 20 seconds: Luna scored 8.68 at 9s p50, and Terra 8.89 at
+ * 14s for eight times the cost, so Terra is the fallback (30 Oct 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["openai/gpt-6-sol", "google/gemini-3.8-flash"] as const;
+const fallbackModels = ["openai/gpt-6.1-terra", "google/gemini-3.8-flash"] as const;
 
 const RECAP_ITEMS = 3;
 const MIN_CHECK_OPTIONS = 3;

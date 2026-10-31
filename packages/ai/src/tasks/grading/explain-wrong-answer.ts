@@ -10,10 +10,10 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./explain-wrong-answer.prompt.md";
 
 /**
- * Made once per mistake and shared, so quality wins: Sol scored 9.69 at 2.8s p50, and slower models
- * were within noise (13 Oct 2026).
+ * Made once per mistake and shared, so quality wins: Terra scored 9.69 at 2.1s p50 against Sol's
+ * 9.78, within noise, at half the cost (30 Oct 2026).
  */
-const defaultModel = "openai/gpt-6-sol";
+const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.8-flash"] as const;
 
 const schema = z.object({ explanation: z.string() });

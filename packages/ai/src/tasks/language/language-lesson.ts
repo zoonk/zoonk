@@ -14,10 +14,10 @@ import respellingForPortuguese from "./language-lesson-respelling-pt.prompt.md";
 import basePrompt from "./language-lesson.prompt.md";
 
 /**
- * Written once per pair and shared, so quality wins: GPT-6.1 Sol scored 8.83 against GPT-6 Sol's
- * 7.30, which stated a false grammar rule in every lesson (7 Oct 2026).
+ * Written once per pair and shared, so quality wins: Terra scored 8.91 against GPT-6.1 Sol's 8.75
+ * at under half the cost (30 Oct 2026).
  */
-const defaultModel = "openai/gpt-6.1-sol";
+const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;
 
 const MIN_WORDS = 3;

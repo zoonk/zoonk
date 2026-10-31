@@ -18,7 +18,7 @@ import {
 import taskPrompt from "./write-listening-set.prompt.md";
 
 /** The item writer's model, whose eval chose it for right keys and exam realism. */
-const defaultModel = "openai/gpt-6-sol";
+const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 
 const MIN_COUNT = 1;

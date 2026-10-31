@@ -12,7 +12,7 @@ import systemPrompt from "./alphabet-lesson.prompt.md";
  * eval, ahead of Sol at a fraction of the cost (27 Sep 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["openai/gpt-6-sol"] as const;
+const fallbackModels = ["openai/gpt-6.1-terra"] as const;
 
 const MIN_INTRO = 1;
 const MAX_INTRO = 2;

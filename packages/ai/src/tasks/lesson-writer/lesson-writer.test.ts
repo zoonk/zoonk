@@ -72,16 +72,16 @@ function option(text: string, isCorrect: boolean) {
 
 describe(getLessonRewriteModel, () => {
   it("picks the writer chain's first model from a family whose drafts weren't held back", () => {
-    expect(getLessonRewriteModel(["openai/gpt-6-sol", "openai/gpt-6-sol"])).toBe(
+    expect(getLessonRewriteModel(["openai/gpt-6.1-terra", "openai/gpt-6.1-terra"])).toBe(
       "anthropic/claude-opus-5.5",
     );
 
     expect(getLessonRewriteModel(["google/gemini-3.8-flash", "google/gemini-3.8-flash"])).toBe(
-      "openai/gpt-6-sol",
+      "openai/gpt-6.1-terra",
     );
 
     // A fallback wrote one of them: both families are left out.
-    expect(getLessonRewriteModel(["openai/gpt-6-sol", "anthropic/claude-opus-5.5"])).toBe(
+    expect(getLessonRewriteModel(["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"])).toBe(
       "google/gemini-3.8-flash",
     );
   });
@@ -166,10 +166,13 @@ describe(writeLessonDraft, () => {
     const gemini = vi.mocked(generateText).mock.lastCall?.[0].providerOptions?.gateway;
 
     await writeLessonDraft(params);
-    const sol = vi.mocked(generateText).mock.lastCall?.[0].providerOptions?.gateway;
+    const terra = vi.mocked(generateText).mock.lastCall?.[0].providerOptions?.gateway;
 
-    expect(gemini).toMatchObject({ models: ["openai/gpt-6-sol", "anthropic/claude-opus-5.5"] });
-    expect(sol).toMatchObject({ models: ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] });
+    expect(gemini).toMatchObject({ models: ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] });
+
+    expect(terra).toMatchObject({
+      models: ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"],
+    });
   });
 
   it("reads a key the model left out as null when null is all it could hold", async () => {

@@ -17,10 +17,12 @@ import typedCheck from "./placement-items-typed-check.prompt.md";
 import taskPrompt from "./placement-items.prompt.md";
 
 /**
- * Sol wrote every key right on the placement-items eval; Luna and Haiku scored lower, and GPT-6.1
- * Sol was within noise at twice the wait (13 Oct 2026).
+ * Placement questions are kept per skill and reused, so right keys outweigh a longer first wait: at
+ * high reasoning Terra wrote every key right at about half Sol's cost, and at its default reasoning
+ * it slipped on two of six sets (30 Oct 2026).
  */
-const defaultModel = "openai/gpt-6-sol";
+const defaultModel = "openai/gpt-6.1-terra";
+const defaultReasoning: Reasoning = "high";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 
 const DEFAULT_OPTION_COUNT = 4;
@@ -146,7 +148,7 @@ export async function generatePlacementItems(params: PlacementItemsParams) {
   const {
     analytics,
     model = defaultModel,
-    reasoning,
+    reasoning = defaultReasoning,
     serviceTier,
     skills,
     useFallback = true,

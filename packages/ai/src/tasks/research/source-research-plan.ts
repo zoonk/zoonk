@@ -9,7 +9,7 @@ import systemPrompt from "./source-research-plan.prompt.md";
 
 /** Flash was cheapest and fastest on the research-plan eval. */
 const defaultModel = "google/gemini-3.8-flash";
-const fallbackModels = ["openai/gpt-6-sol", "anthropic/claude-opus-5.5"] as const;
+const fallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;
 
 const schema = z.object({
   country: z.string(),

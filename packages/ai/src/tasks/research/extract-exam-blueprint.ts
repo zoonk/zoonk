@@ -20,10 +20,10 @@ import { type ResearchDocument, toDocumentParts } from "./research-documents";
 /**
  * Flash read 32 of 32 facts on the extract-exam-blueprint eval; Gemini 4 Argon scored a little
  * higher at nearly twice the price (13 Oct 2026). Both stop on recitation now and then, which falls
- * back to Sol.
+ * back to Terra.
  */
 const defaultModel = "google/gemini-3.8-flash";
-const fallbackModels = ["openai/gpt-6-sol", "anthropic/claude-opus-5.5"] as const;
+const fallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;
 
 const cited = { document: z.number().int(), passage: z.string() };
 

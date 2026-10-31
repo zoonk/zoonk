@@ -10,7 +10,7 @@ import systemPrompt from "./research-plan.prompt.md";
 
 /** All three candidates named every exam right on the research-plan eval; Flash was cheapest. */
 const defaultModel = "google/gemini-3.8-flash";
-const fallbackModels = ["openai/gpt-6-sol", "anthropic/claude-opus-5.5"] as const;
+const fallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;
 
 const MAX_DOMAINS = 5;
 const MAX_QUERIES = 4;

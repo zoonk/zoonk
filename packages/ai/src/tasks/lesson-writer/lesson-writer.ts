@@ -21,15 +21,15 @@ const systemPrompt = rulesTemplate.replace("{{TYPED_QUESTION}}", () =>
 );
 
 /**
- * Sol taught fewer wrong ideas than Gemini and Opus on the lesson-writer eval (26 Sep 2026), and
- * split into parts, Luna taught something wrong in 6 of 10 lessons against Sol's 1 (9 Oct 2026).
- * Fallbacks come from other families, so an outage at one provider doesn't stop lessons.
+ * Terra taught fewer wrong ideas than Sol on the lesson-writer eval at under half the cost (30 Oct
+ * 2026); Gemini, Opus and Luna taught more. Fallbacks come from other families, so an outage at one
+ * provider doesn't stop lessons.
  */
-const defaultModel = "openai/gpt-6-sol";
+const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
 
 /**
- * Gemini 3.8 Flash rejects the writer's schema as too large (9 Oct 2026), so it falls back to Sol.
+ * Gemini 3.8 Flash rejects the writer's schema as too large (9 Oct 2026), so it falls back to Terra.
  */
 const geminiFallbackModels = [defaultModel, "anthropic/claude-opus-5.5"] as const;
 
@@ -49,7 +49,7 @@ export type WriteLessonDraftParams = LessonWritingContext & {
 
 /**
  * The first model of the writer's chain from a family that wrote none of the held-back drafts; a
- * shared lesson Sol drafted goes to Opus rather than Gemini, which taught wrong ideas in the writer
+ * shared lesson Terra drafted goes to Opus rather than Gemini, which taught wrong ideas in the writer
  * eval. The reviewer follows the writer, so it stays from another family.
  */
 export function getLessonRewriteModel(heldBackModels: readonly string[]): string {

@@ -21,10 +21,10 @@ import { type ExamOutline, formatExamOutline } from "./exam-outline";
 import { buildSkillGraphSystemPrompt } from "./skill-graph-system-prompt";
 
 /**
- * Sol scored within Opus's margin on the skill-graph eval at under a third of the cost (26 Sep
- * 2026); Flash missed whole areas on huge goals, so it's only the last fallback.
+ * Terra scored a little above Sol on the skill-graph eval at half the cost (30 Oct 2026); Flash
+ * missed whole areas on huge goals, so it's only the last fallback.
  */
-const defaultModel = "openai/gpt-6-sol";
+const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
 
 const courseSchema = z.object({

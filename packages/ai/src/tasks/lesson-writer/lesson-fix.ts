@@ -21,11 +21,12 @@ import {
 } from "./written-lesson-schema";
 
 /**
- * A fix rewrites a few flagged screens, so the cheapest model that fixes them all leads: Luna fixed
- * every case (9 Oct 2026). Gemini rejects the screens' schema as too large, so it's no fallback.
+ * A fix rewrites a few flagged screens, so the cheapest model that fixes them leads: Luna fixed 4
+ * of 5 cases and Terra all 5 (30 Oct 2026). Gemini rejects the screens' schema as too large, so
+ * it's no fallback.
  */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["openai/gpt-6-sol", "anthropic/claude-opus-5.5"] as const;
+const fallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the screen number comes before its content. */
 const schema = z.object({
