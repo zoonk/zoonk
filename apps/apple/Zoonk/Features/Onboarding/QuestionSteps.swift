@@ -347,7 +347,7 @@ private struct RoleQuestion: View {
 
 struct LabeledField: View {
   let label: Text
-  let prompt: Text
+  let prompt: Text?
   @Binding var text: String
 
   var body: some View {
@@ -356,7 +356,8 @@ struct LabeledField: View {
         .font(.subheadline)
         .foregroundStyle(.secondary)
         .accessibilityHidden(true)
-      MultilineTextField(text: $text, prompt: prompt, label: label)
+      // Without a prompt, the field would repeat its label, already shown above, as its placeholder.
+      MultilineTextField(text: $text, prompt: prompt ?? Text(verbatim: ""), label: label)
     }
   }
 }
@@ -461,15 +462,14 @@ private struct TextQuestion: View {
     }
   }
 
-  private var prompt: Text {
+  /// No example fits every exam's positions, so the position box has none.
+  private var prompt: Text? {
     switch kind {
     case .admission:
       Text(
         "E.g., medicine, 750 points", tableName: "Onboarding", comment: "Example admission targets")
     case .position:
-      Text(
-        "E.g., agente, analista", tableName: "Onboarding",
-        comment: "Example civil service positions")
+      nil
     case .reason:
       Text(
         "E.g., a job interview, travel", tableName: "Onboarding",

@@ -4057,35 +4057,6 @@
         }
       }
     },
-    "E.g., agente, analista" : {
-      "comment" : "Example civil service positions",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Z. B. Sachbearbeiter, Analyst"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Por ejemplo, agente, analista"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ex. : agent administratif, analyste"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ex.: agente, analista"
-          }
-        }
-      }
-    },
     "E.g., band 7, 100 points" : {
       "comment" : "Example score targets",
       "localizations" : {
