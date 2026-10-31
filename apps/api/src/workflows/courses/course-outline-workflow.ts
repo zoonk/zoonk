@@ -3,27 +3,27 @@ import {
   type CurriculumScope,
   joinLevelBands,
 } from "@zoonk/core/library/curriculum/scope";
-import { safeAsync } from "@zoonk/utils/error";
+import { COURSE_OUTLINE_READY_STEP } from "@zoonk/core/library/generation/steps";
+import { type StepStreamMessage, WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata, sleep } from "workflow";
-import { start } from "workflow/api";
+import { type Run, start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { deliverCourseContent } from "../_shared/course-content-notification";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
-import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { claimRunToken, joinRun } from "../_shared/run-token";
 import { claimCourseWhenFree } from "./claim-course-when-free";
 import { courseIconWorkflow } from "./course-details-workflow";
+import { replanWaitingGoals } from "./replan-waiting-goals";
 import { startCourseDetailsRun } from "./start-course-details-run";
 import { type BandPlan, toChapterMoves } from "./steps/band-outline";
 import {
+  type CourseOutlineStreamStep,
+  courseOutlineProgressStep,
   coverBandSkillsStep,
   finishCourseOutlineStep,
-  listWaitingGoalsStep,
-  logReplanFailureStep,
   needsLegacyCourseDetailsStep,
   placeChaptersAfterStep,
   planOutlineBandStep,
-  replanWaitingGoalStep,
   saveOutlineChapterStep,
   writeOutlineBandStep,
 } from "./steps/course-outline-steps";
@@ -41,7 +41,7 @@ export type CourseOutlineInput = {
 };
 
 export type CourseOutlineResult =
-  | { status: "busy" | "joined" }
+  | { nextRunId?: string; status: "busy" | "joined" }
   | { bandsWritten: number; chapterIds: string[]; status: "written" };
 
 /** Each turn waits for a whole run, so a request still missing bands after this many is stuck, not busy. */
@@ -62,69 +62,6 @@ function toPosition({
 }): number {
   const position = plan.nextPosition + index;
   return early && position >= early.position ? position + 1 : position;
-}
-
-/**
- * A goal that still fails to re-plan leaves the band written, not failed: its plan stays usable on
- * stand-ins until its next refresh.
- */
-async function replanWaitingGoals({
-  context,
-  goalIds,
-  skillIds,
-}: {
-  context: RunContext;
-  goalIds: string[];
-  skillIds: string[];
-}): Promise<void> {
-  const listed = await listWaitingGoalsStep({ goalIds, skillIds });
-  const initiating = context.analytics?.goalId;
-
-  const waiting =
-    initiating && listed.includes(initiating)
-      ? [initiating, ...listed.filter((id) => id !== initiating)]
-      : listed;
-
-  const conflicts: string[] = [];
-  const failures: { goalId: string; reason: unknown }[] = [];
-
-  for (const goalId of waiting) {
-    // oxlint-disable-next-line no-await-in-loop -- Bound the transactions started for a popular course's waiting plans.
-    const { data, error } = await safeAsync(() => replanWaitingGoalStep(goalId));
-
-    if (error) {
-      failures.push({ goalId, reason: error });
-    } else if (data.conflict) {
-      conflicts.push(goalId);
-    }
-  }
-
-  for (const goalId of conflicts) {
-    // oxlint-disable-next-line no-await-in-loop -- Healthy goals have already been planned before durable conflict retries wait.
-    const { error } = await safeAsync(() => retryPlanConflicts(replanWaitingGoalStep, goalId));
-
-    if (error) {
-      failures.push({ goalId, reason: error });
-    }
-  }
-
-  const [first] = failures;
-
-  if (first) {
-    await Promise.all([
-      logReplanFailureStep({
-        courseId: context.courseId,
-        error: first.reason instanceof Error ? first.reason.message : String(first.reason),
-        goalIds: failures.map(({ goalId }) => goalId),
-        skillIds,
-      }),
-      trackGenerationFailedStep({
-        analytics: context.analytics,
-        contentKind: "course",
-        task: "waiting-goals-replan",
-      }),
-    ]);
-  }
 }
 
 async function writeBand({ context, plan: needed }: { context: RunContext; plan: BandPlan }) {
@@ -262,8 +199,8 @@ async function takeNextTurn({
     );
   }
 
-  await start(courseOutlineWorkflow, [{ ...input, attempt: attempt + 1 }]);
-  return { status };
+  const next = await start(courseOutlineWorkflow, [{ ...input, attempt: attempt + 1 }]);
+  return { nextRunId: next.runId, status };
 }
 
 async function planBands({
@@ -282,30 +219,28 @@ async function planBands({
   return plans.filter((plan) => plan !== null);
 }
 
-export async function courseOutlineWorkflow(
-  input: CourseOutlineInput,
-): Promise<CourseOutlineResult> {
-  "use workflow";
-
-  const { workflowRunId } = getWorkflowMetadata();
-  const { conflict } = await claimRunToken(`course-outline:${input.courseId}`);
-  const attempt = input.attempt ?? 0;
-
-  const context: RunContext = { ...input, workflowRunId };
-
+async function outlineCourse({
+  conflict,
+  context,
+  input,
+}: {
+  conflict: Run<unknown> | null;
+  context: RunContext;
+  input: CourseOutlineInput;
+}): Promise<CourseOutlineResult> {
   if (conflict) {
     await joinRun(conflict);
 
     const missing = await planBands({ context, needs: input.bands });
 
     return missing.length > 0
-      ? takeNextTurn({ attempt, input, status: "joined" })
+      ? takeNextTurn({ attempt: input.attempt ?? 0, input, status: "joined" })
       : { status: "joined" };
   }
 
   const [, outlined] = await Promise.allSettled([
     startIconEarly(context),
-    writeOutline({ context, input, workflowRunId }),
+    writeOutline({ context, input, workflowRunId: context.workflowRunId }),
   ]);
 
   if (outlined.status === "rejected") {
@@ -313,6 +248,43 @@ export async function courseOutlineWorkflow(
   }
 
   return outlined.value;
+}
+
+/** A run that hands its bands to the next turn sends its readers on to that run. */
+function getLastEvent(result: CourseOutlineResult): StepStreamMessage<CourseOutlineStreamStep> {
+  if ("nextRunId" in result && result.nextRunId) {
+    return { entityId: result.nextRunId, status: "started", step: "joinCourseOutline" };
+  }
+
+  return { status: "completed", step: COURSE_OUTLINE_READY_STEP };
+}
+
+export async function courseOutlineWorkflow(
+  input: CourseOutlineInput,
+): Promise<CourseOutlineResult> {
+  "use workflow";
+
+  const { workflowRunId } = getWorkflowMetadata();
+  const { conflict } = await claimRunToken(`course-outline:${input.courseId}`);
+
+  await courseOutlineProgressStep(
+    conflict
+      ? { entityId: conflict.runId, status: "started", step: "joinCourseOutline" }
+      : { status: "started", step: "writeCourseOutline" },
+  );
+
+  try {
+    const result = await outlineCourse({ conflict, context: { ...input, workflowRunId }, input });
+    await courseOutlineProgressStep(getLastEvent(result), { last: true });
+    return result;
+  } catch (error) {
+    await courseOutlineProgressStep(
+      { reason: "aiGenerationFailed", status: "error", step: WORKFLOW_ERROR_STEP },
+      { last: true },
+    );
+
+    throw error;
+  }
 }
 
 async function startIconEarly(context: RunContext): Promise<void> {

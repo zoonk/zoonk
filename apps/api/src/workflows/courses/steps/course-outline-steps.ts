@@ -35,11 +35,14 @@ import {
   loadBandChapters,
   tagTeachingChapters,
 } from "@zoonk/core/library/curriculum/teaching-chapters";
+import { type CourseOutlineStepName } from "@zoonk/core/library/generation/steps";
+import { type WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { logError } from "@zoonk/utils/logger";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { catchPlanConflict } from "../../_shared/plan-conflict-outcome";
 import { type PlanStepOutcome } from "../../_shared/plan-conflict-retry";
 import { isRunActive } from "../../_shared/run-activity";
+import { progressStep } from "../../_shared/stream-status";
 import {
   type BandAnchors,
   type BandInput,
@@ -49,6 +52,10 @@ import {
   toOutlineParams,
 } from "./band-outline";
 import { type BandOutline, writeWaitedBand } from "./waited-band-outline";
+
+export type CourseOutlineStreamStep = CourseOutlineStepName | typeof WORKFLOW_ERROR_STEP;
+
+export const courseOutlineProgressStep = progressStep<CourseOutlineStreamStep>;
 
 type OutlineContext = {
   analytics?: ContentAnalytics;

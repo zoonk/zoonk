@@ -26,6 +26,16 @@ export type GoalContentStepName = (typeof GOAL_CONTENT_STEPS)[number];
 
 export const GOAL_READY_STEP: GoalContentStepName = "goalReady";
 
+const COURSE_OUTLINE_STEPS = [
+  "joinCourseOutline",
+  "writeCourseOutline",
+  "courseOutlineReady",
+] as const;
+
+export type CourseOutlineStepName = (typeof COURSE_OUTLINE_STEPS)[number];
+
+export const COURSE_OUTLINE_READY_STEP: CourseOutlineStepName = "courseOutlineReady";
+
 const LEVEL_TEST_BANK_STEPS = [
   "joinLevelTestBank",
   "writeLevelTestBank",
