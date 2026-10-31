@@ -27,6 +27,18 @@ internal class LineSlide(
     val at: (Double) -> Vec,
 )
 
+/** Main's `ChartDomain`: the chart's span, from its bottom left [min] to its top right [max]. */
+internal data class ChartDomain(
+    val min: Vec,
+    val max: Vec,
+)
+
+/** Main's `chartSlides`: the chart's [domain] and each line's slide, in the lines' order. */
+internal class ChartSlides(
+    val domain: ChartDomain,
+    val slides: List<LineSlide>,
+)
+
 /** Main's `line-crossing-model.ts` with core's `shiftLine` and `crossing`. Offsets are right or up when positive. */
 internal object LineCrossingModel {
     fun axis(direction: Direction): PlaceOrientation =
@@ -68,29 +80,57 @@ internal object LineCrossingModel {
 
     fun range(amount: Double) = SnapRange(min = -amount * 2, max = amount * 2, step = amount / STEPS_PER_SHIFT)
 
-    /** The chart's top right corner: room for every crossing the handles can reach, and a little more. */
-    fun domain(
+    /**
+     * Main's `chartDomain`: from the origin to past every crossing the learner can reach, reaching below zero
+     * only as far as it takes for the resting and the right crossings to sit inside the handles' margin, with
+     * room to spare. [real] is each line's real move.
+     */
+    private fun domain(
         amount: Double,
         axis: PlaceOrientation,
-        first: Line,
-        second: Line,
-    ): Vec {
+        lines: List<Line>,
+        real: List<Double>,
+    ): ChartDomain {
+        val (first, second) = lines
         val reach = range(amount).max
-        val points =
+        val reachable =
             listOf(-reach, 0.0, reach).flatMap { offset ->
                 listOf(crossing(moved(first, offset, axis), second), crossing(first, moved(second, offset, axis)))
             }
-        val x = maxOf(points.maxOf { it.x }, MIN_SPAN)
-        val y = maxOf(points.maxOf { it.y }, first.intercept, second.intercept, MIN_SPAN)
-        return Vec(x * HEADROOM, y * HEADROOM)
+        val kept = listOf(crossing(first, second), crossing(moved(first, real[0], axis), moved(second, real[1], axis)))
+        val upper = Vec(reachable.maxOf { it.x } * HEADROOM, maxOf(reachable.maxOf { it.y }, first.intercept, second.intercept) * HEADROOM)
+        return ChartDomain(Vec(lowerBound(kept.minOf { it.x }, upper.x), lowerBound(kept.minOf { it.y }, upper.y)), upper)
     }
+
+    private fun lowerBound(
+        lowest: Double,
+        upper: Double,
+    ) = min(0.0, (lowest - KEPT_MARGIN * upper) / (1 - KEPT_MARGIN))
+
+    fun slides(
+        amount: Double,
+        axis: PlaceOrientation,
+        lines: List<Line>,
+        real: List<Double>,
+    ): ChartSlides {
+        val domain = domain(amount, axis, lines, real)
+        val crossing = crossing(lines[0], lines[1])
+        return ChartSlides(domain, lines.map { slide(amount, axis, it, domain, crossing) })
+    }
+
+    /** Main's `restoredOffset`: a saved answer keeps only its direction, so its line goes as far as the real move, or the furthest allowed stop that way. */
+    fun restoredOffset(
+        amount: Double,
+        direction: Direction,
+        range: SnapRange,
+    ) = clamp(offset(direction, amount), range.min, range.max)
 
     /** The part of a line inside the chart, from its left end. */
     fun segment(
         line: Line,
-        domain: Vec,
+        domain: ChartDomain,
     ): Pair<Vec, Vec> {
-        val (start, end) = spanInside(line, Vec(0.0, 0.0), domain) ?: (0.0 to 0.0)
+        val (start, end) = spanInside(line, domain.min, domain.max) ?: (0.0 to 0.0)
         return Vec(start, line.yAt(start)) to Vec(end, line.yAt(end))
     }
 
@@ -100,25 +140,26 @@ internal object LineCrossingModel {
      * resting spot inside that inset. It rests 82% along the line, or at the nearest point to that clear of
      * the resting [crossing], kept inside the inset.
      */
-    fun slide(
+    private fun slide(
         amount: Double,
         axis: PlaceOrientation,
         line: Line,
-        domain: Vec,
+        domain: ChartDomain,
         crossing: Vec,
     ): LineSlide {
-        val low = Vec(domain.x * HANDLE_MARGIN, domain.y * HANDLE_MARGIN)
-        val high = Vec(domain.x - low.x, domain.y - low.y)
+        val size = Vec(domain.max.x - domain.min.x, domain.max.y - domain.min.y)
+        val low = Vec(domain.min.x + size.x * HANDLE_MARGIN, domain.min.y + size.y * HANDLE_MARGIN)
+        val high = Vec(domain.max.x - size.x * HANDLE_MARGIN, domain.max.y - size.y * HANDLE_MARGIN)
         val full = range(amount)
         val count = ((full.max - full.min) / full.step).roundToInt() + 1
         val offsets =
             (0 until count)
                 .map { snapToStep(full.min + it * full.step, full) }
                 .filter { spanInside(moved(line, it, axis), low, high) != null }
-        val visible = spanInside(line, Vec(0.0, 0.0), domain) ?: (0.0 to 0.0)
+        val visible = spanInside(line, domain.min, domain.max) ?: (0.0 to 0.0)
         val (from, to) = spanInside(line, low, high) ?: visible
         val along = { share: Double -> clamp(visible.first + (visible.second - visible.first) * share, from, to) }
-        val isClear = { x: Double -> hypot((x - crossing.x) / domain.x, (line.yAt(x) - crossing.y) / domain.y) >= CROSSING_GAP }
+        val isClear = { x: Double -> hypot((x - crossing.x) / size.x, (line.yAt(x) - crossing.y) / size.y) >= CROSSING_GAP }
         val homeX = along(HANDLE_SHARES.firstOrNull { isClear(along(it)) } ?: HANDLE_SHARE)
         return LineSlide(offsets, SnapRange(offsets.min(), offsets.max(), full.step)) { offset ->
             val shifted = moved(line, offset, axis)
@@ -161,9 +202,9 @@ internal object LineCrossingModel {
     // (192dp), so a slide never depends on the screen's size.
     private const val HANDLE_MARGIN = 0.08
     private const val CROSSING_GAP = 0.135
+    private const val KEPT_MARGIN = HANDLE_MARGIN * 2
     private val HANDLE_SHARES =
         (0..HANDLE_SHARE_STEPS).map { it.toDouble() / HANDLE_SHARE_STEPS }.sortedBy { abs(it - HANDLE_SHARE) }
-    private const val MIN_SPAN = 1.0
     private const val STEPS_PER_SHIFT = 4
     private const val RELATIVE_SLACK = 1e-9
     private const val FLOAT_SLACK = 1e-9

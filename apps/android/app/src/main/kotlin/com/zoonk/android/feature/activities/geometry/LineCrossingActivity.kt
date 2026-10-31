@@ -95,14 +95,21 @@ private fun LineCrossingActivity(props: ActivityProps) {
     val fields = content.fields
     val (first, second) = fields.lines.takeIf { it.size == 2 } ?: return
     val axis = LineCrossingModel.axis(fields.shift.direction)
+    val realOffset = LineCrossingModel.offset(fields.shift.direction, fields.shift.amount)
+    val realOffsetOf = { line: FieldLine -> if (line.id == fields.shift.line) realOffset else 0.0 }
+    val chart = LineCrossingModel.slides(fields.shift.amount, axis, fields.lines.map { it.line() }, fields.lines.map(realOffsetOf))
     val given = props.answer.curveShift
     var movedId by rememberSaveable { mutableStateOf(given?.curve) }
     var movedBy by rememberSaveable {
-        mutableDoubleStateOf(given?.let { LineCrossingModel.offset(Direction.valueOf(it.direction.name), fields.shift.amount) } ?: 0.0)
+        mutableDoubleStateOf(
+            given?.let { answer ->
+                chart.slides.getOrNull(fields.lines.indexOfFirst { it.id == answer.curve })?.let {
+                    LineCrossingModel.restoredOffset(fields.shift.amount, Direction.valueOf(answer.direction.name), it.range)
+                }
+            } ?: 0.0,
+        )
     }
     val offsetOf = { line: FieldLine -> if (line.id == movedId) movedBy else 0.0 }
-    val realOffset = LineCrossingModel.offset(fields.shift.direction, fields.shift.amount)
-    val realOffsetOf = { line: FieldLine -> if (line.id == fields.shift.line) realOffset else 0.0 }
     val crossingWith = { offset: (FieldLine) -> Double ->
         LineCrossingModel.crossing(
             LineCrossingModel.moved(first.line(), offset(first), axis),
@@ -160,6 +167,7 @@ private fun LineCrossingActivity(props: ActivityProps) {
         LineCrossingChart(
             fields = fields,
             axis = axis,
+            chart = chart,
             offsetOf = offsetOf,
             answerLine = shifted?.takeIf { showsAnswer }?.let { LineCrossingModel.moved(it.line(), realOffset, axis) },
             enabled = !props.isLocked,
@@ -209,6 +217,7 @@ private class ChartColors(
 private fun LineCrossingChart(
     fields: LineCrossingFields,
     axis: PlaceOrientation,
+    chart: ChartSlides,
     offsetOf: (FieldLine) -> Double,
     answerLine: Line?,
     enabled: Boolean,
@@ -230,9 +239,8 @@ private fun LineCrossingChart(
         )
     val beforeLabel = stringResource(R.string.activities_geometry_line_before)
     val whatHappened = stringResource(R.string.activities_geometry_line_what_happened)
-    val amount = fields.shift.amount
     val lines = fields.lines.map { it.line() }
-    val domain = LineCrossingModel.domain(amount, axis, lines[0], lines[1])
+    val domain = chart.domain
     val shown = fields.lines.map { LineCrossingModel.moved(it.line(), offsetOf(it), axis) }
     val movedLines = fields.lines.filter { offsetOf(it) != 0.0 }.map { it.line() }
     val before = LineCrossingModel.crossing(lines[0], lines[1])
@@ -250,16 +258,13 @@ private fun LineCrossingChart(
         val right = constraints.maxWidth - with(density) { PADDING_RIGHT.toPx() }
         val top = with(density) { band.toPx() }
         val bottom = constraints.maxHeight - top
-        val x = LinearScale(0.0..domain.x, left to right)
-        val y = LinearScale(0.0..domain.y, bottom to top)
+        val x = LinearScale(domain.min.x..domain.max.x, left to right)
+        val y = LinearScale(domain.min.y..domain.max.y, bottom to top)
         val pixel = { point: Vec -> Offset(x.toPixel(point.x), y.toPixel(point.y)) }
         val segment = { line: Line -> LineCrossingModel.segment(line, domain).let { (from, to) -> LabelSegment(pixel(from), pixel(to)) } }
         val knob = with(density) { (KNOB_RADIUS + KNOB_STROKE / 2).toPx() }
         val handles =
-            fields.lines.map { line ->
-                val slide = LineCrossingModel.slide(amount, axis, line.line(), domain, before)
-                PlacedHandle(line, slide, pixel(slide.at(offsetOf(line))))
-            }
+            fields.lines.zip(chart.slides) { line, slide -> PlacedHandle(line, slide, pixel(slide.at(offsetOf(line)))) }
         val names =
             fields.lines.mapIndexed { index, line -> LineName(line.label, colors.tones[index], shown[index], isUpper = true) } +
                 listOfNotNull(answerLine?.let { LineName(whatHappened, colors.rightText, it, isUpper = false) }) +

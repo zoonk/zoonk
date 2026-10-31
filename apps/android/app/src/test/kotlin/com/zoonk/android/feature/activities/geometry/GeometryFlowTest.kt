@@ -2,6 +2,7 @@ package com.zoonk.android.feature.activities.geometry
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -30,6 +31,8 @@ import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.swipe
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.activities.sorting.choiceCheck
@@ -39,6 +42,10 @@ import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonStepAnswer
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.put
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -354,6 +361,61 @@ class GeometryFlowTest {
     }
 
     @Test
+    fun lineCrossingBringsAMoveBackNoFurtherThanItsLineCanGo() {
+        val content = ActivityFixtures.contentJson("lineCrossing.breakEven")
+        val flatCost =
+            JsonObject(
+                content.getValue("fields").jsonObject +
+                    (
+                        "lines" to
+                            buildJsonArray {
+                                add(lineJson("cost", "Cost", intercept = 500, slope = 0))
+                                add(lineJson("revenue", "Revenue", intercept = 0, slope = 15))
+                            }
+                    ),
+            )
+        val moveACurve = ActivityFixtures.contentJson("lineCrossing").getValue("check")
+        val step = ActivityFixtures.step(JsonObject(content + ("fields" to flatCost) + ("check" to moveACurve)), id = "flatCost")
+        harness.play(listOf(step, summaryStep("end"))) { grade = { _, _ -> checkResult(false) } }
+
+        handle(COST).press(Key.DirectionDown)
+        harness.tap("Check")
+        harness.tap("Continue")
+        rule.onNodeWithContentDescription("Previous screen").performClick()
+
+        val range = handle(COST).fetchSemanticsNode().config[SemanticsProperties.ProgressBarRangeInfo]
+        assertEquals(-250f to -250f, range.current to range.range.start)
+    }
+
+    @Test
+    @Config(qualifiers = "w320dp-h640dp", fontScale = 2f)
+    fun lineCrossingKeepsEveryHandleInsideTheChartOnASmallPhoneInLargeText() {
+        play("lineCrossing", isCorrect = true)
+        val reach = with(rule.density) { KNOB_REACH.toPx() }
+        val padding = with(rule.density) { CANVAS_PADDING.toPx() }
+
+        val outside =
+            listOf(SUPPLY, DEMAND).flatMap { name ->
+                listOf(Key.MoveHome, Key.MoveEnd).flatMap { key ->
+                    handle(name).press(key)
+                    val chart =
+                        rule
+                            .onNode(
+                                hasContentDescription("A chart of two lines", substring = true),
+                            ).unclippedBounds()
+                            .deflate(padding)
+                    listOf(SUPPLY, DEMAND)
+                        .filterNot { other ->
+                            val knob = Rect(rule.onNodeWithContentDescription(other).unclippedBounds().center, reach)
+                            knob.left >= chart.left && knob.right <= chart.right && knob.top >= chart.top && knob.bottom <= chart.bottom
+                        }.map { "$it with $name at $key" }
+                }
+            }
+
+        assertEquals(emptyList<String>(), outside)
+    }
+
+    @Test
     fun moleculeBuilderKeepsItsUndoWhenAndroidRecreatesTheScreen() {
         val restoration = StateRestorationTester(rule)
         play("moleculeBuilder", isCorrect = true, restoration = restoration)
@@ -366,11 +428,27 @@ class GeometryFlowTest {
         rule.onNodeWithContentDescription("Oxygen 1: 1 of 2 bonds").assertExists()
     }
 
+    private fun SemanticsNodeInteraction.unclippedBounds() = fetchSemanticsNode().let { Rect(it.positionInRoot, it.size.toSize()) }
+
+    private fun lineJson(
+        id: String,
+        label: String,
+        intercept: Int,
+        slope: Int,
+    ) = buildJsonObject {
+        put("id", id)
+        put("intercept", intercept)
+        put("label", label)
+        put("slope", slope)
+    }
+
     private companion object {
         const val POINT = "Point on the circle"
         const val CORNER_C = "Corner C"
         const val SUPPLY = "Move the line Supply"
         const val DEMAND = "Move the line Demand"
         const val COST = "Move the line Cost"
+        val KNOB_REACH = 15.25.dp
+        val CANVAS_PADDING = 16.dp
     }
 }
