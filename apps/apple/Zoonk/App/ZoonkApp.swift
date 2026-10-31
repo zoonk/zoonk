@@ -29,6 +29,8 @@ struct ZoonkApp: App {
   #endif
 
   init() {
+    ErrorReporting.start()
+
     #if DEBUG
       let configuration = UITestConfiguration.current
       let dependencies = configuration?.dependencies ?? .live()

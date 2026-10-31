@@ -27,6 +27,12 @@
       },
     }, {
       "kind": "remote",
+      "repository": "https://github.com/getsentry/sentry-cocoa",
+      "version": {
+        "up-to-next-major-version": "9.32.0",
+      },
+    }, {
+      "kind": "remote",
       "repository": "https://github.com/stasel/WebRTC",
       "version": {
         "up-to-next-major-version": "156.0.0",
@@ -106,16 +112,34 @@
         "compile-sources",
         "frameworks",
         "resources",
+        {
+          "kind": "script",
+          "name": "Upload Debug Symbols to Sentry",
+          "input-paths": [
+            "$(DWARF_DSYM_FOLDER_PATH)/$(DWARF_DSYM_FILE_NAME)/Contents/Resources/DWARF/$(EXECUTABLE_NAME)",
+          ],
+          "run-on-every-build": true,
+          "scope": "install",
+          "shell": "/bin/sh",
+          "script": "scripts/upload-debug-symbols.sh",
+        },
       ],
       "package-product-members": [
         {
+          "package": "GoogleSignIn-iOS",
+          "product-name": "GoogleSignIn",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "WebRTC",
+          "product-name": "WebRTC",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
           "package": "ZoonkAPI",
           "product-name": "ZoonkAPI",
           "build-phase": { "build-phase": "frameworks" },
-        },
-        {
-          "package": "GoogleSignIn-iOS",
-          "product-name": "GoogleSignIn",
+        }, {
+          "package": "sentry-cocoa",
+          "product-name": "Sentry",
           "build-phase": { "build-phase": "frameworks" },
         }, {
           "package": "swift-http-types",
@@ -129,10 +153,6 @@
           "package": "swift-openapi-urlsession",
           "product-name": "OpenAPIURLSession",
           "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "WebRTC",
-          "product-name": "WebRTC",
-          "build-phase": { "build-phase": "frameworks" },
         },
       ],
       "build-settings": {
@@ -143,6 +163,7 @@
         "CURRENT_PROJECT_VERSION": "1",
         "DEVELOPMENT_TEAM": "CGXYKAQUT9",
         "ENABLE_PREVIEWS": "YES",
+        "ENABLE_USER_SCRIPT_SANDBOXING": "NO",
         "GENERATE_INFOPLIST_FILE": "NO",
         "INFOPLIST_KEY_CFBundleDisplayName": "Zoonk",
         "INFOPLIST_KEY_LSApplicationCategoryType": "public.app-category.education",

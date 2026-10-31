@@ -92,6 +92,12 @@ Build the app after adding or changing copy so Xcode extracts the source strings
 
 Keep catalogs together in `Zoonk/Resources/Localization`, named by feature or app surface, and use the generic `pt` locale. Xcode resolves each catalog from its table basename, while Eloqnt automatically discovers every catalog in this directory. Fix translations through the [translation rules](../../AGENTS.md#translations), and don't add manual extraction state for ordinary source-driven strings.
 
+## Crash reports
+
+Release builds send crashes, hangs and errors to the `zoonk-ios` project in Sentry. Debug builds and tests don't report.
+
+Archiving uploads the app's debug symbols, so crash reports show our code instead of memory addresses. Before your first archive, run `brew install getsentry/tools/sentry-cli`, then `sentry-cli login`. Archiving stops with an error until both are done.
+
 ## Continuous Integration
 
 GitHub Actions checks Swift formatting and builds the iPhone and iPad app. UI tests remain local because clean hosted macOS runners currently spend several minutes preparing the simulator before executing the tests.
