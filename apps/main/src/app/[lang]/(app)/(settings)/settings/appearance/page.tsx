@@ -3,12 +3,10 @@ import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { Page, PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { isKnownMinor } from "@zoonk/utils/age";
 import { getRequestCountry } from "@zoonk/utils/locale-request";
 import {
   USAGE_DATA_COOKIE,
   getUsageDataChoice,
-  isUsageDataLockedOff,
   parseUsageDataCookie,
   resolveUsageDataSharing,
 } from "@zoonk/utils/usage-data";
@@ -32,44 +30,23 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-async function isMinor({ birthYear, country }: { birthYear: number | null; country: string }) {
-  "use cache: private";
-  return isKnownMinor({ birthYear, country, now: new Date() });
-}
-
 /** Off until the visitor says yes where the law needs one, as `AppAnalytics` decides. */
-async function readUsageData({
-  account,
-  birthYear,
-}: {
-  account: boolean | null;
-  birthYear: number | null;
-}) {
+async function readShareUsageData(account: boolean | null): Promise<boolean> {
   const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
   const browser = parseUsageDataCookie(cookieStore.get(USAGE_DATA_COOKIE)?.value);
-  const country = getRequestCountry(requestHeaders);
-  const minor = await isMinor({ birthYear, country });
 
   const share = resolveUsageDataSharing({
     choice: getUsageDataChoice({ account, browser }),
-    country,
-    minor,
+    country: getRequestCountry(requestHeaders),
   });
 
-  return {
-    shareUsageData: share ?? false,
-    usageDataLockedOff: isUsageDataLockedOff({ country, minor }),
-  };
+  return share ?? false;
 }
 
 /** Visitors get only the language and usage data, which their browser keeps. */
 async function AppearanceContent() {
   const [profile, buddy] = await Promise.all([getLearningProfile(), getLearnerBuddy()]);
-
-  const usageData = await readUsageData({
-    account: profile?.shareUsageData ?? null,
-    birthYear: profile?.birthYear ?? null,
-  });
+  const shareUsageData = await readShareUsageData(profile?.shareUsageData ?? null);
 
   return (
     <AppearanceSettings
@@ -83,7 +60,7 @@ async function AppearanceContent() {
           energy: buddy.energy,
           studiedToday: buddy.studiedToday,
         },
-        ...usageData,
+        shareUsageData,
         soundsEnabled: profile?.soundsEnabled ?? true,
       }}
     />

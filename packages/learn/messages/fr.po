@@ -911,11 +911,6 @@ msgid "Privacy"
 msgstr "Confidentialité"
 
 #: src/appearance/appearance-screen.tsx
-msgctxt "72SFRq"
-msgid "Off for learners under 18 in your country"
-msgstr "Désactivé pour les moins de 18 ans dans ton pays"
-
-#: src/appearance/appearance-screen.tsx
 msgctxt "8uEFmZ"
 msgid "Shows us how you use Zoonk, so we can improve it"
 msgstr "Nous aide à améliorer Zoonk en montrant comment tu l’utilises"

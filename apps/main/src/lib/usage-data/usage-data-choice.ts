@@ -4,7 +4,6 @@ import {
   COUNTRY_COOKIE,
   USAGE_DATA_COOKIE,
   USAGE_DATA_COOKIE_MAX_AGE,
-  USAGE_DATA_MINOR_COOKIE,
   formatUsageDataCookie,
   parseUsageDataCookie,
 } from "@zoonk/utils/usage-data";
@@ -61,27 +60,12 @@ export function readRequestCountry(): void {
     });
 }
 
-async function writeUsageDataCookie({
-  maxAge = USAGE_DATA_COOKIE_MAX_AGE,
-  value,
-}: {
-  maxAge?: number;
-  value: string;
-}): Promise<void> {
-  await setCookie(USAGE_DATA_COOKIE, value, { maxAge });
+export async function rememberUsageDataChoice(share: boolean): Promise<void> {
+  await setCookie(USAGE_DATA_COOKIE, formatUsageDataCookie(share), {
+    maxAge: USAGE_DATA_COOKIE_MAX_AGE,
+  });
+
   notifyUsageDataChoice();
-}
-
-export function rememberUsageDataChoice(share: boolean): Promise<void> {
-  return writeUsageDataCookie({ value: formatUsageDataCookie(share) });
-}
-
-export function rememberMinorBrowser(): Promise<void> {
-  return writeUsageDataCookie({ value: USAGE_DATA_MINOR_COOKIE });
-}
-
-export function forgetMinorBrowser(): Promise<void> {
-  return writeUsageDataCookie({ maxAge: 0, value: "" });
 }
 
 async function saveAccountChoice(share: boolean): Promise<boolean> {
@@ -98,18 +82,12 @@ let carried = false;
 
 /**
  * A choice made as a visitor goes with the account once there is one, so the server's events
- * follow it. A yes waits for `withYes`, once the learner is known not to be a minor who can't give
- * one, so it never turns analytics on when they're an adult. Resolves to whether the account has
- * it; nothing to carry counts as done.
+ * follow it. Resolves to whether the account has it; nothing to carry counts as done.
  */
-export async function carryUsageDataChoiceToAccount({
-  withYes,
-}: {
-  withYes: boolean;
-}): Promise<boolean> {
+export async function carryUsageDataChoiceToAccount(): Promise<boolean> {
   const share = parseUsageDataCookie(readUsageDataCookie());
 
-  if (carried || share === null || (share && !withYes)) {
+  if (carried || share === null) {
     return true;
   }
 

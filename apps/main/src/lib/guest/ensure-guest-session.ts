@@ -1,66 +1,13 @@
-import { type BirthYearOutcome, askBirthYear, saveBirthYear } from "@/lib/age/birth-year-request";
-import { checkBirthYearAction } from "@/lib/age/check-birth-year-action";
 import { ensureLearnerSummary } from "@/lib/learner/learner-store";
 import { carryUsageDataChoiceToAccount } from "@/lib/usage-data/usage-data-choice";
-import { type authClient as AuthClient } from "@zoonk/auth/client";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 
 /** Better Auth's captcha plugin answers this code when Vercel BotID flags the browser. */
 const BOT_CHECK_REFUSED = "VERIFICATION_FAILED";
 
-/**
- * `blocked`: the bot check refused this browser, so trying again won't help. `cancelled`: the
- * visitor didn't give their birth year, so nothing started and nothing went wrong.
- */
-type GuestSession = "blocked" | "cancelled" | "failed" | "ready";
-
-/**
- * The year is checked before the guest exists, so nobody below the minimum age gets an account, and
- * a visitor's usage data choice is on the account before any learning. A try after a failed save
- * already has its guest, so it only saves again.
- */
-async function startGuestWithBirthYear({
-  authClient,
-  birthYear,
-}: {
-  authClient: typeof AuthClient;
-  birthYear: number;
-}): Promise<BirthYearOutcome> {
-  const check = await checkBirthYearAction(birthYear).catch(() => null);
-
-  if (!check) {
-    return { status: "failed" };
-  }
-
-  if (check.status !== "allowed") {
-    return check.status === "belowMinimumAge" ? check : { status: "invalid" };
-  }
-
-  const { data } = await authClient.getSession();
-
-  if (!data) {
-    const { error } = await authClient.signIn.anonymous();
-
-    if (error) {
-      logError("[ensureGuestSession] Could not start a guest session:", error);
-      return { status: error.code === BOT_CHECK_REFUSED ? "blocked" : "failed" };
-    }
-  }
-
-  const saved = await saveBirthYear(birthYear);
-
-  if (saved.status === "belowMinimumAge" || saved.status === "accountClosed") {
-    return saved;
-  }
-
-  if (saved.status !== "saved") {
-    return { ...saved, guestStarted: true };
-  }
-
-  const carried = await carryUsageDataChoiceToAccount({ withYes: false });
-  return carried ? saved : { guestStarted: true, status: "failed" };
-}
+/** `blocked`: the bot check refused this browser, so trying again won't help. */
+type GuestSession = "blocked" | "failed" | "ready";
 
 /**
  * Only a check that answered "no session" makes a guest: after a failed check, signing in anonymously
@@ -86,13 +33,16 @@ async function startGuestSession(): Promise<GuestSession> {
     return "ready";
   }
 
-  const asked = await askBirthYear({
-    signedIn: false,
-    submit: (birthYear) => startGuestWithBirthYear({ authClient, birthYear }),
-  });
+  const { error } = await authClient.signIn.anonymous();
 
-  if (asked !== "saved") {
-    return asked;
+  if (error) {
+    logError("[ensureGuestSession] Could not start a guest session:", error);
+    return error.code === BOT_CHECK_REFUSED ? "blocked" : "failed";
+  }
+
+  // A visitor's choice goes with the guest before its first learning, so the server's events follow it.
+  if (!(await carryUsageDataChoiceToAccount())) {
+    return "failed";
   }
 
   ensureLearnerSummary();

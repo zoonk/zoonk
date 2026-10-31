@@ -9,7 +9,6 @@ import { getString, isJsonObject } from "@zoonk/utils/json";
 
 export type LessonWritingAnswer =
   | { generationId: string; status: "writing" }
-  | { status: "cancelled" }
   | { limit: LessonLimit; status: "refused" }
   | { status: "failed" }
   | { status: "plusRequired" }
@@ -54,10 +53,8 @@ function readAnswer({
 }
 
 export async function askToWriteLesson(lessonId: string): Promise<LessonWritingAnswer> {
-  const guest = await ensureGuestSession();
-
-  if (guest !== "ready") {
-    return { status: guest === "cancelled" ? "cancelled" : "failed" };
+  if ((await ensureGuestSession()) !== "ready") {
+    return { status: "failed" };
   }
 
   const response = await postFromBrowser({

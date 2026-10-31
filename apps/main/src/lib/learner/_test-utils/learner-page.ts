@@ -12,14 +12,7 @@ export function summaryOf(userId: string, activeGoalId: string | null = null): L
   return {
     account: { email: `${userId}@zoonk.test`, image: null, name: userId },
     activeGoalId,
-    analytics: {
-      adult: true,
-      disabled: false,
-      goal: null,
-      plan: "free",
-      shareUsageData: null,
-      username: null,
-    },
+    analytics: { disabled: false, goal: null, plan: "free", shareUsageData: null, username: null },
     buddy: {
       beltColor: "white",
       energy: null,
@@ -38,7 +31,6 @@ export function summaryOf(userId: string, activeGoalId: string | null = null): L
     },
     level: null,
     missions: null,
-    needsBirthYear: false,
     nextChangeAt: now + DAY_MS,
     places: { exam: false, mindMaps: false, readyMistakes: 0, speaking: false },
     readAt: now,

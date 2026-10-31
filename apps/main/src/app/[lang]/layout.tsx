@@ -15,7 +15,6 @@ import { AccountDeletedToast } from "./account-deleted-toast";
 import { AppAnalytics } from "./app-analytics";
 import { AppCommandPalette } from "./app-command-palette";
 import { AuthChangeReload } from "./auth-change-reload";
-import { BirthYearGate } from "./birth-year-gate";
 import { KeepTypingScript } from "./keep-typing-script";
 import { LearnerSummarySync } from "./learner-summary-sync";
 import { PaletteRequestReset } from "./palette-request-reset";
@@ -69,7 +68,6 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
               <AppCommandPaletteSlot />
               <AccountDeletedToast />
             </MainFeedbackProvider>
-            <BirthYearGate />
           </ClientMessagesProvider>
         </NuqsAdapter>
         <AuthChangeReload />

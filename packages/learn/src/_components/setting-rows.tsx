@@ -44,13 +44,11 @@ export function SettingRow({
 export function SwitchSettingRow({
   checked,
   description,
-  disabled = false,
   label,
   onCheckedChange,
 }: {
   checked: boolean;
   description: React.ReactNode;
-  disabled?: boolean;
   label: string;
   onCheckedChange: (checked: boolean) => void;
 }) {
@@ -67,7 +65,6 @@ export function SwitchSettingRow({
         aria-describedby={descriptionId}
         aria-labelledby={labelId}
         checked={checked}
-        disabled={disabled}
         onCheckedChange={onCheckedChange}
       />
     </SettingRow>

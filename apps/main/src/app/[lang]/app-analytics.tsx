@@ -4,18 +4,15 @@ import { type LearnerSummaryState } from "@/lib/learner/learner-snapshot";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import {
   carryUsageDataChoiceToAccount,
-  forgetMinorBrowser,
   readBrowserUsageData,
   readRequestCountry,
   readUsageDataCookie,
-  rememberMinorBrowser,
   rememberUsageDataChoice,
   subscribeToUsageData,
 } from "@/lib/usage-data/usage-data-choice";
 import { USAGE_NOTICE_ATTRIBUTE } from "@/lib/usage-data/usage-notice-script";
 import { Analytics, type BeforeSendEvent } from "@vercel/analytics/next";
 import {
-  type AnalyticsAge,
   isSharingUsageData,
   startPostHog,
   stopPostHog,
@@ -23,34 +20,17 @@ import {
 import { RegisterSharedEventProperties } from "@zoonk/core/analytics/register-shared-properties";
 import { buildSharedEventProperties } from "@zoonk/core/analytics/shared-properties";
 import {
-  USAGE_DATA_MINOR_COOKIE,
   getUsageDataChoice,
-  isUsageDataLockedOff,
   parseUsageDataCookie,
   resolveUsageDataSharing,
 } from "@zoonk/utils/usage-data";
 import { useEffect, useMemo, useSyncExternalStore } from "react";
 import { PostHogIdentify } from "./posthog-identify";
 
-function getAnalyticsAge({
-  adult,
-  needsBirthYear,
-}: {
-  adult: boolean;
-  needsBirthYear: boolean;
-}): AnalyticsAge {
-  if (adult) {
-    return "adult";
-  }
-
-  return needsBirthYear ? null : "minor";
-}
-
 /** Null until the summary is read: analytics stay off rather than count someone as somebody else. */
 function getAnalyticsViewer({ learner, locale }: { learner: LearnerSummaryState; locale: string }) {
   if (learner.status === "visitor") {
     return {
-      age: null,
       disabled: false,
       plan: "free",
       properties: buildSharedEventProperties({ isGuest: true, locale, platform: "web" }),
@@ -64,10 +44,9 @@ function getAnalyticsViewer({ learner, locale }: { learner: LearnerSummaryState;
     return null;
   }
 
-  const { analytics, identity, needsBirthYear } = learner.summary;
+  const { analytics, identity } = learner.summary;
 
   return {
-    age: getAnalyticsAge({ adult: analytics.adult, needsBirthYear }),
     disabled: analytics.disabled,
     plan: analytics.plan,
     properties: buildSharedEventProperties({
@@ -84,15 +63,9 @@ function getAnalyticsViewer({ learner, locale }: { learner: LearnerSummaryState;
 
 /**
  * true shares, false doesn't, null asks (the notice), undefined waits for the country, which the
- * browser reads only while nobody has chosen, or a minor said yes. PostHog never starts on a guess.
+ * browser reads only while nobody has chosen. PostHog never starts on a guess.
  */
-function useUsageDataSharing({
-  account,
-  minor,
-}: {
-  account: boolean | null;
-  minor: boolean;
-}): { lockedOff: boolean; share: boolean | null } | undefined {
+function useUsageDataSharing(account: boolean | null): boolean | null | undefined {
   // Null during the server's render and hydration, which know neither cookie.
   const browser = useSyncExternalStore(subscribeToUsageData, readBrowserUsageData, () => null);
 
@@ -100,75 +73,46 @@ function useUsageDataSharing({
     ? getUsageDataChoice({ account, browser: parseUsageDataCookie(browser.choice) })
     : null;
 
-  const countryNeeded =
-    browser !== null && !browser.country && (choice === null || (minor && choice));
+  const countryNeeded = browser !== null && choice === null && !browser.country;
 
   useEffect(() => {
-    if (!countryNeeded) {
-      return;
+    if (countryNeeded) {
+      readRequestCountry();
     }
-
-    readRequestCountry();
-
-    // A minor's yes may not count where they are, so what it started stops until the country says.
-    if (minor && choice) {
-      void stopPostHog();
-    }
-  }, [choice, countryNeeded, minor]);
+  }, [countryNeeded]);
 
   if (!browser || countryNeeded) {
     return undefined;
   }
 
-  return {
-    lockedOff: isUsageDataLockedOff({ country: browser.country, minor }),
-    share: resolveUsageDataSharing({ choice, country: browser.country, minor }),
-  };
+  return resolveUsageDataSharing({ choice, country: browser.country });
 }
 
-/**
- * A minor's browser where they can't say yes keeps a mark instead of their choice, so the notice
- * stays hidden from the first paint and nothing they chose goes with their account. Once the mark
- * no longer applies (they're an adult, or someone else uses the browser), it goes, so the notice
- * asks from the first paint again.
- */
 function UsageDataSharing({
   account,
-  age,
-  lockedOff,
   share,
   signedIn,
 }: {
   account: boolean | null;
-  age: AnalyticsAge;
-  lockedOff: boolean;
   share: boolean | null;
   signedIn: boolean;
 }) {
   useEffect(() => {
     document.documentElement.toggleAttribute(USAGE_NOTICE_ATTRIBUTE, share === null);
 
-    const cookie = readUsageDataCookie();
-    const browser = parseUsageDataCookie(cookie);
+    const browser = parseUsageDataCookie(readUsageDataCookie());
 
-    if (lockedOff) {
-      if (cookie !== USAGE_DATA_MINOR_COOKIE && browser !== false) {
-        void rememberMinorBrowser();
-      }
-    } else {
-      if (account !== null && browser === null) {
-        void rememberUsageDataChoice(account);
-      } else if (cookie === USAGE_DATA_MINOR_COOKIE) {
-        void forgetMinorBrowser();
-      }
-
-      if (signedIn && account === null) {
-        void carryUsageDataChoiceToAccount({ withYes: true });
-      }
+    if (account !== null && browser === null) {
+      void rememberUsageDataChoice(account);
     }
 
-    void (share ? startPostHog({ age }) : stopPostHog());
-  }, [account, age, lockedOff, share, signedIn]);
+    // A "no" in this browser wins over the account's, so its other devices and the server stop too.
+    if (signedIn && (account === null || (browser === false && account))) {
+      void carryUsageDataChoiceToAccount();
+    }
+
+    void (share ? startPostHog() : stopPostHog());
+  }, [account, share, signedIn]);
 
   return null;
 }
@@ -182,31 +126,22 @@ function keepWhileSharing(event: BeforeSendEvent): BeforeSendEvent | null {
 export function AppAnalytics({ locale }: { locale: string }) {
   const learner = useLearnerSummary();
   const viewer = useMemo(() => getAnalyticsViewer({ learner, locale }), [learner, locale]);
+  const share = useUsageDataSharing(viewer?.shareUsageData ?? null);
 
-  const sharing = useUsageDataSharing({
-    account: viewer?.shareUsageData ?? null,
-    minor: viewer?.age === "minor",
-  });
-
-  if (!viewer || !sharing) {
+  if (!viewer || share === undefined) {
     return null;
   }
-
-  const { lockedOff, share } = sharing;
 
   return (
     <>
       <UsageDataSharing
         account={viewer.shareUsageData}
-        age={viewer.age}
-        lockedOff={lockedOff}
         share={share}
         signedIn={viewer.userId !== null}
       />
       <RegisterSharedEventProperties properties={viewer.properties} />
       {share && (
         <PostHogIdentify
-          adult={viewer.age === "adult"}
           analyticsDisabled={viewer.disabled}
           plan={viewer.plan}
           userId={viewer.userId}

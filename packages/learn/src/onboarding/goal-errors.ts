@@ -95,10 +95,7 @@ export function useStartError() {
   const goalLimitMessage = useGoalLimitMessage();
 
   return (
-    outcome: Exclude<
-      StartUnderstandingOutcome,
-      { status: "cancelled" | "started" | "startFailed" }
-    >,
+    outcome: Exclude<StartUnderstandingOutcome, { status: "started" | "startFailed" }>,
   ): GoalError => {
     if (outcome.status === "limitReached") {
       return limitError(outcome);

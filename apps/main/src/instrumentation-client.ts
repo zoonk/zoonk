@@ -24,11 +24,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-/**
- * PostHog starts from `AppAnalytics` once the visitor's choice and country allow it, and records
- * sessions only for learners known to be adults, so minors and anyone who hasn't told us their age
- * are never recorded.
- */
+/** PostHog starts from `AppAnalytics` once the visitor's choice and country allow it. */
 waitForSharedProperties();
 
 /** Before any page's first write. */
