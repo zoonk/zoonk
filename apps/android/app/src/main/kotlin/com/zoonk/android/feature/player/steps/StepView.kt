@@ -27,6 +27,12 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLi
 interface StepActions {
     fun select(answer: LessonAnswer?)
 
+    /** A number key's pick: through the view's own pick when it took the keys, so a key does what a tap does. */
+    fun pickByKey(answer: LessonAnswer?) = select(answer)
+
+    /** A view whose pick does more than select (a translation says its word) takes the number keys while it shows. */
+    fun takeKeyPicks(pick: ((LessonAnswer?) -> Unit)?) = Unit
+
     /** The action bar's main action, for a field's Enter key. */
     fun runPrimary()
 
@@ -102,7 +108,7 @@ value class KeyPick(
     val answer: LessonAnswer?,
 )
 
-/** The pick a number key makes on a screen of options, a second press clearing it; null where keys pick nothing. */
+/** The pick a number key makes on a screen of options, a second press clearing it except a translation's; null where keys pick nothing. */
 fun keyPick(
     step: LessonStep,
     index: Int,
@@ -161,5 +167,6 @@ fun keyPick(
             }
         } ?: return null
 
-    return KeyPick(answer.takeUnless { it == state.answers[step.id] })
+    val keepsPick = answer is LessonAnswer.Translation
+    return KeyPick(answer.takeUnless { !keepsPick && it == state.answers[step.id] })
 }

@@ -17,8 +17,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -120,7 +123,7 @@ fun LanguageStepView(
 
         StepKind.Translation -> {
             exercise.word?.let { word ->
-                TranslationView(word, exercise.translationOptions, answer, result, locked, languages, speech, select)
+                TranslationView(word, exercise.translationOptions, answer, result, locked, languages, speech, select, actions)
             }
         }
 
@@ -357,8 +360,19 @@ private fun TranslationView(
     languages: LessonLanguages,
     speech: SpeechPlayer?,
     select: (LessonAnswer?) -> Unit,
+    actions: StepActions,
 ) {
     val sounds = speech?.let { rememberSpokenAudio(it, languages.target) }
+    val pick = { id: String? ->
+        options.find { it.id == id }?.audioUrl?.let { sounds?.speak(listOf(SpokenText(null, recording = it))) }
+        select(id?.let(LessonAnswer::Translation))
+    }
+    val latestPick by rememberUpdatedState(pick)
+
+    DisposableEffect(actions) {
+        actions.takeKeyPicks { answer -> latestPick((answer as? LessonAnswer.Translation)?.optionId) }
+        onDispose { actions.takeKeyPicks(null) }
+    }
 
     QuestionScene {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -381,10 +395,8 @@ private fun TranslationView(
                     Romanization(options.find { it.id == option.id }?.romanization)
                 }
             },
-            onSelect = { id ->
-                options.find { it.id == id }?.audioUrl?.let { sounds?.speak(listOf(SpokenText(null, recording = it))) }
-                select(id?.let(LessonAnswer::Translation))
-            },
+            // A pick tapped again stays picked and says its word again.
+            onSelect = { tapped -> pick(tapped ?: (answer as? LessonAnswer.Translation)?.optionId) },
         )
     }
 }

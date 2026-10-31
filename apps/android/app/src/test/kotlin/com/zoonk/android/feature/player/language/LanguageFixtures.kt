@@ -101,12 +101,15 @@ internal fun vocabulary(id: String) =
 internal fun translation(
     id: String,
     hints: String? = null,
+    gatoAudio: String? = null,
 ) = step(
     id,
     StepKind.Translation,
     "translation",
     word = WORD,
-    translations = """[{"audioUrl":null,"id":"w-2","romanization":null,"word":"perro"},{"audioUrl":null,"id":"w-1",
+    translations = """[{"audioUrl":null,"id":"w-2","romanization":null,"word":"perro"},{"audioUrl":${gatoAudio?.let {
+        "\"$it\""
+    }},"id":"w-1",
         "romanization":"ga-to","word":"gato"}]""",
     hints = hints,
 )

@@ -35,6 +35,7 @@ import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.audio.GradeOutcome
+import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.audio.previewSpeech
 import com.zoonk.android.feature.player.FakeLessonPlayerApi
@@ -51,7 +52,6 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
-import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.playable
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.summaryStep
@@ -67,6 +67,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -83,6 +84,7 @@ class LanguageStepsFlowTest {
 
     private val session = FakeSession(AuthenticatedSession(ANA, "token-a", "local-a"))
     private lateinit var api: FakeLessonPlayerApi
+    private lateinit var speech: SpeechPlayer
 
     private val exits =
         object : LessonPlayerExits {
@@ -119,7 +121,10 @@ class LanguageStepsFlowTest {
 
         rule.setContent {
             ZoonkTheme {
-                CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState(), LocalLessonSpeech provides previewSpeech()) {
+                CompositionLocalProvider(
+                    LocalSnackbarHostState provides SnackbarHostState(),
+                    LocalLessonSpeech provides previewSpeech().also { speech = it },
+                ) {
                     val state by viewModel.state.collectAsState()
                     val ending by viewModel.ending.collectAsState()
                     LaunchedEffect(Unit) { viewModel.open(lesson) }
@@ -221,6 +226,37 @@ class LanguageStepsFlowTest {
         play(listOf(translation("pick"), summaryStep("end")), learner = "es-MX")
 
         rule.onNodeWithText("Which one means this?").assertIsDisplayed()
+    }
+
+    @Test
+    fun aTranslationPickTappedAgainStaysPicked() {
+        play(listOf(translation("pick"), summaryStep("end")))
+
+        tap("gato")
+        tap("gato")
+        tap("Check")
+
+        assertEquals(Json.parseToJsonElement("""{"kind":"translation","selectedOptionId":"w-1"}"""), sent("pick"))
+    }
+
+    @Test
+    fun aTranslationPickedByItsNumberKeySaysItsWordAsATapDoes() {
+        play(listOf(translation("pick", gatoAudio = "https://blob.zoonk.test/gato.mp3"), summaryStep("end")))
+
+        rule.onRoot().performKeyInput { pressKey(Key.Two) }
+
+        assertNotNull(speech.playback.value)
+    }
+
+    @Test
+    fun aTranslationPickedTwiceByItsNumberKeyStaysPicked() {
+        play(listOf(translation("pick"), summaryStep("end")))
+
+        rule.onRoot().performKeyInput { pressKey(Key.Two) }
+        rule.onRoot().performKeyInput { pressKey(Key.Two) }
+        tap("Check")
+
+        assertEquals(Json.parseToJsonElement("""{"kind":"translation","selectedOptionId":"w-1"}"""), sent("pick"))
     }
 
     @Test

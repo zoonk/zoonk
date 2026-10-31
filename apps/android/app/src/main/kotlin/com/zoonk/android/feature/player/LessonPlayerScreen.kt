@@ -168,7 +168,18 @@ fun LessonPlayer(
     val actions =
         remember(viewModel) {
             object : StepActions {
+                private var keyPicks: ((LessonAnswer?) -> Unit)? = null
+
                 override fun select(answer: LessonAnswer?) = viewModel.select(answer)
+
+                override fun pickByKey(answer: LessonAnswer?) {
+                    val own = keyPicks
+                    if (own == null) select(answer) else own(answer)
+                }
+
+                override fun takeKeyPicks(pick: ((LessonAnswer?) -> Unit)?) {
+                    keyPicks = pick
+                }
 
                 override fun runPrimary() {
                     viewModel.state.value
@@ -351,7 +362,7 @@ private fun handleKey(
         digit >= 0 && state.phase == LessonPhase.Playing -> {
             val step = screen.step ?: return false
             val pick = keyPick(step, digit, state) ?: return false
-            viewModel.select(pick.answer)
+            actions.pickByKey(pick.answer)
             true
         }
 
