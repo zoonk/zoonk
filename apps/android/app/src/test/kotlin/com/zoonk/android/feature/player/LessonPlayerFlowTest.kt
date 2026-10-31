@@ -267,7 +267,7 @@ class LessonPlayerFlowTest {
 
         assertEquals(GradeOutcome.Graded(Unit), outcome)
         assertEquals(listOf("say"), api.spokenTakes)
-        rule.onNodeWithText("Say the h softly.").assertIsDisplayed()
+        rule.onNodeWithText("Say the h softly.").performScrollTo().assertIsDisplayed()
         assertEquals(
             "Tengo ambre",
             viewModel.state.value
@@ -305,7 +305,7 @@ class LessonPlayerFlowTest {
         tap("Check")
 
         rule.onNodeWithText("R$50.5").assertIsDisplayed()
-        rule.onNodeWithText("R$52").assertIsDisplayed()
+        rule.onNodeWithText("R$52").performScrollTo().assertIsDisplayed()
         val sent =
             api.checks
                 .single()
