@@ -33,6 +33,20 @@ final class UnderstoodRowsTests: XCTestCase {
     XCTAssertEqual(date.field, .targetDate)
   }
 
+  func testATestLearnersBookPromisesNoNoticeDate() throws {
+    let goal = try understoodGoal(
+      draft: [
+        "kind": "exam", "language": "en", "prompt": "prepare for the GRE",
+        "title": "Prepare for the GRE", "details": ["examDay": "booked"],
+      ])
+
+    let date = try XCTUnwrap(
+      UnderstoodRows.rows(for: goal, today: today).first { $0.id == "targetDate" })
+
+    XCTAssertEqual(
+      date.note, "You pick this test's day when you book it. Booked already? Set it here.")
+  }
+
   func testAnOfficialDateCountsTheDaysLeftAndLinksItsSource() throws {
     let goal = try understoodGoal(
       draft: [

@@ -78,6 +78,8 @@ struct UnderstoodFacts: Decodable {
     let targetCourse: String?
     let targetPosition: String?
     let targetScore: String?
+    /// "booked" when each candidate books their own day, so no notice gives it.
+    let examDay: String?
     let examMonth: Int?
     let examYear: Int?
   }
@@ -363,16 +365,7 @@ enum UnderstoodRows {
       return UnderstoodRow(
         id: "targetDate", label: examDateLabel,
         value: toBeConfirmed(month: month, year: year),
-        note: isGuide
-          ? String(
-            localized: LocalizedStringResource(
-              "The official date comes out on the exam's official calendar. Know it already? Set it here.",
-              table: "Onboarding", comment: "Under an exam date that isn't out yet"))
-          : String(
-            localized: LocalizedStringResource(
-              "The official date comes out in the exam's notice. Know it already? Set it here.",
-              table: "Onboarding", comment: "Under an exam date that isn't out yet, from its notice"
-            )),
+        note: unknownDateNote(booked: facts.details?.examDay == "booked", isGuide: isGuide),
         field: .targetDate, editValue: "")
     }
 
@@ -468,6 +461,26 @@ enum UnderstoodRows {
           table: "Onboarding", comment: "Under the sittings of an exam held several times a year")),
       source: first.source.flatMap(source),
       field: .targetDate, editValue: first.date, choiceDates: open.map(\.date))
+  }
+
+  private static func unknownDateNote(booked: Bool, isGuide: Bool) -> String {
+    if booked {
+      return String(
+        localized: LocalizedStringResource(
+          "You pick this test's day when you book it. Booked already? Set it here.",
+          table: "Onboarding",
+          comment: "Under the date of a test each candidate books a day for, such as the GRE"))
+    }
+
+    return isGuide
+      ? String(
+        localized: LocalizedStringResource(
+          "The official date comes out on the exam's official calendar. Know it already? Set it here.",
+          table: "Onboarding", comment: "Under an exam date that isn't out yet"))
+      : String(
+        localized: LocalizedStringResource(
+          "The official date comes out in the exam's notice. Know it already? Set it here.",
+          table: "Onboarding", comment: "Under an exam date that isn't out yet, from its notice"))
   }
 
   private static func noticeDayText(_ isoDate: String, isGuide: Bool) -> String {

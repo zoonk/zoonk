@@ -11796,6 +11796,35 @@
         }
       }
     },
+    "You pick this test's day when you book it. Booked already? Set it here." : {
+      "comment" : "Under the date of a test each candidate books a day for, such as the GRE",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den Termin für diesen Test wählst du bei der Buchung. Schon gebucht? Trag ihn hier ein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliges la fecha de esta prueba al reservarla. ¿Ya la has reservado? Indica la fecha aquí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu choisis la date de cette épreuve quand tu réserves ta place. Tu as déjà réservé ? Indique-la ici."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você escolhe o dia desta prova ao agendar. Já agendou? Informe a data aqui."
+          }
+        }
+      }
+    },
     "you said" : {
       "comment" : "Marks a level row as the learner's own words",
       "localizations" : {
