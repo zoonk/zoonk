@@ -85156,6 +85156,26 @@
             ],
             "additionalProperties": false
           },
+          "planReadiness": {
+            "type": "object",
+            "properties": {
+              "readingNotice": {
+                "default": false,
+                "description": "True while the plan waits for the exam's official documents to be read, which can change the time it needs: ready stays false until the reading lands or the plan's wait for it ends",
+                "type": "boolean"
+              },
+              "ready": {
+                "type": "boolean",
+                "description": "False while the plan is being built, or while it waits for placement or its exam's notice reading, which change what it needs: ask again in a few seconds"
+              }
+            },
+            "required": [
+              "readingNotice",
+              "ready"
+            ],
+            "additionalProperties": false,
+            "description": "Whether the plan can answer the time question yet, as the time answers (`POST /goals/{goalId}/plan/time-to-cover` and `time-advice`) say it: the `schedule` screen opens on the plan's wait while `ready` is false (the notice reading's while `readingNotice` is true) and on the question once it's true, so it never switches screens before the plan's first answer. Those answers say when it changes"
+          },
           "quickTestMinutes": {
             "type": "integer",
             "minimum": 0,
@@ -85240,6 +85260,7 @@
           "goal",
           "goalIds",
           "libraryCourse",
+          "planReadiness",
           "quickTestMinutes",
           "recommendedMinutes",
           "steps",

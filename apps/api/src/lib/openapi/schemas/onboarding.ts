@@ -1,5 +1,5 @@
 import { examChoiceViewSchema } from "@zoonk/core/exams/choices/contract";
-import { daySplitSchema } from "@zoonk/core/plans/time-advice-contract";
+import { daySplitSchema, planReadinessSchema } from "@zoonk/core/plans/time-advice-contract";
 import {
   ONBOARDING_QUESTIONS,
   type OnboardingView,
@@ -104,6 +104,10 @@ export const onboardingResponseSchema = z
         description:
           "A published Library course that teaches the goal, searched again once every question is answered",
       }),
+    planReadiness: planReadinessSchema.meta({
+      description:
+        "Whether the plan can answer the time question yet, as the time answers (`POST /goals/{goalId}/plan/time-to-cover` and `time-advice`) say it: the `schedule` screen opens on the plan's wait while `ready` is false (the notice reading's while `readingNotice` is true) and on the question once it's true, so it never switches screens before the plan's first answer. Those answers say when it changes",
+    }),
     quickTestMinutes: z
       .int()
       .positive()

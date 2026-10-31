@@ -1,19 +1,18 @@
 import "server-only";
 import { loadGoalDateKind } from "../exams/_utils/goal-date-estimate";
 import { getBudgetForGoal, getDaySplit, getGoalShare } from "../goals/daily-budget";
+import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { findOnboardingGoalIds } from "../view-models/onboarding/_utils/onboarding-goals";
-import { isPlanReady } from "./_utils/apply-plan-change";
-import { findOwnedPlan } from "./_utils/owned-plan";
 import { applyChangeOperations } from "./_utils/part-areas";
 import { type PlanContext } from "./_utils/plan-context";
 import { toShownShare } from "./_utils/plan-feasibility-view";
 import { buildPlanNumbersView } from "./_utils/plan-numbers-view";
-import { isPlanSetupTaskOwed } from "./_utils/plan-setup-tasks";
+import { readPlanReadiness } from "./_utils/plan-readiness";
+import { loadPlanAtToken } from "./_utils/plan-token";
 import { computePlan } from "./_utils/replan";
 import { getChangePlanning } from "./_utils/steered-areas";
 import { getSuggestedTime } from "./_utils/suggested-time";
 import { MIN_DAILY_MINUTES } from "./daily-minutes";
-import { getNoticeWaitState } from "./notice-wait";
 import { type LearnerPlanOperation } from "./plan-contract";
 import { getFullCourseEnd } from "./planner/after-exam";
 import { FITTING_DATE_TRIES } from "./planner/fitting-date";
@@ -127,25 +126,22 @@ async function loadAskedPlan(
 ): Promise<
   { context: PlanContext; status: "ready" } | { status: "notFound" | "unauthorized" } | Waiting
 > {
-  const owned = await findOwnedPlan({ goalId });
+  const owned = await findOwnedGoal(goalId);
 
   if (owned.status !== "ready") {
     return owned;
   }
 
-  const { context } = owned;
+  const readiness = await readPlanReadiness(goalId);
 
-  const owesPlacement = await isPlanSetupTaskOwed({ goalId, task: "placement" });
-
-  const readingNotice =
-    getNoticeWaitState({ noticeWaitUntil: context.plan.noticeWaitUntil, now: new Date() }) ===
-    "reading";
-
-  if (context.phases.length === 0 || !isPlanReady(context) || owesPlacement || readingNotice) {
-    return { readingNotice, ready: false };
+  if (readiness && !readiness.ready) {
+    return { readingNotice: readiness.readingNotice, ready: false };
   }
 
-  return { context, status: "ready" };
+  // After the readiness, never beside it: the plan read is then built and placed as far as it said.
+  const context = readiness && (await loadPlanAtToken(goalId));
+
+  return context ? { context, status: "ready" } : { status: "notFound" };
 }
 
 async function planAtDate(context: PlanContext, targetDate: Date | null) {

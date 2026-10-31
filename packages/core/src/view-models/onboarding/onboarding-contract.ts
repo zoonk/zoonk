@@ -11,6 +11,7 @@ import { MAX_GOAL_PROMPT_LENGTH } from "../../goals/goal-input-limits";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../../plans/daily-minutes";
 import { type NoSitting } from "../../plans/plan-view-contract";
 import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
+import { type PlanReadiness } from "../../plans/time-advice-contract";
 import { learningProfileUpdateSchema } from "../../profile/learning-profile-contract";
 import { MAX_ONBOARDING_ANSWER_LENGTH } from "./onboarding-limits";
 
@@ -227,6 +228,8 @@ export type OnboardingView = {
   goalIds: string[];
   /** Searched again after all questions; null before then or when no public course fits. */
   libraryCourse: OnboardingLibraryCourse | null;
+  /** As the time answers say it, so the time question opens on its wait while the plan can't answer. */
+  planReadiness: PlanReadiness;
   /** How long the level question's quick test takes: a language goal's is its level test. */
   quickTestMinutes: number;
   /** Initial choice only; preserve course-page selections and never imply the recommendation guarantees plan coverage. */

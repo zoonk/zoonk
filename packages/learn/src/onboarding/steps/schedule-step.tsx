@@ -2,10 +2,10 @@
 
 import { getExamDocument } from "@zoonk/core/exams/document";
 import { type GoalView } from "@zoonk/core/goals/contract";
+import { type PlanReadiness } from "@zoonk/core/plans/time-advice-contract";
 import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/contract";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
 import { DailyTimePicker } from "../../_components/daily-time-picker";
 import { type GoalDate, TimeAnswer } from "../../_components/time-answer";
 import { getFullTimeNote, getMarkedTimes, getOffer } from "../../_utils/time-answer";
@@ -18,15 +18,7 @@ import { type GoalsTogether, keepsFullCourse, toPickedMinutes, waitsToSave } fro
 import { StepForm } from "./step-form";
 import { EVERY_DAY, WeekdayToggles, WeekendMinutes } from "./study-week";
 import { type Schedule, type ScheduleActions, useSchedule } from "./use-schedule";
-import {
-  WAITING_RUN,
-  getWaitRun,
-  hasWaitFailed,
-  isPlanBuilding,
-  isPlanMade,
-  isRunStopped,
-  waitsForPlan,
-} from "./wait-run";
+import { WAITING_RUN, getPlanWait, getWaitRun, isPlanMade, isRunStopped } from "./wait-run";
 
 const FULL_COURSE_ID = "onboarding-full-course";
 
@@ -61,22 +53,6 @@ function getScheduleAnswer({
     timeZone: getLocalTimeZone(),
     weekendMinutes: weekend ?? undefined,
   };
-}
-
-function PlanWait({
-  gate,
-  goal,
-  run,
-}: {
-  gate: Schedule["gate"];
-  goal: GoalView;
-  run: GenerationRun | null;
-}) {
-  if (gate.last?.readingNotice && !hasWaitFailed({ poll: gate.status, run })) {
-    return <NoticeReading document={getExamDocument(goal)} lastNotice={false} />;
-  }
-
-  return <PlanBuilding run={getWaitRun({ poll: gate, run: run ?? WAITING_RUN })} />;
 }
 
 function ScheduleTime({ exam, schedule }: { exam: boolean; schedule: Schedule }) {
@@ -189,6 +165,7 @@ export function ScheduleStep({
   goal,
   onAnswer,
   pending,
+  planReadiness,
   recommendedMinutes,
   run,
   together,
@@ -198,13 +175,12 @@ export function ScheduleStep({
   goal: GoalView;
   onAnswer: (input: OnboardingAnswerInput) => void;
   pending: boolean;
+  planReadiness: PlanReadiness;
   recommendedMinutes: number;
   run: GenerationRun | null;
   together: GoalsTogether;
 }) {
   const t = useExtracted();
-  // oxlint-disable-next-line react/hook-use-state -- Read once as the step opens, never updated.
-  const [openedBuilding] = useState(() => isPlanBuilding(run));
 
   const schedule = useSchedule({
     actions: { findTimeToCover, getTimeAdvice },
@@ -217,8 +193,14 @@ export function ScheduleStep({
     together,
   });
 
-  if (waitsForPlan({ gate: schedule.gate, openedBuilding, run })) {
-    return <PlanWait gate={schedule.gate} goal={goal} run={run} />;
+  const wait = getPlanWait({ gate: schedule.gate, opened: planReadiness, run });
+
+  if (wait === "notice") {
+    return <NoticeReading document={getExamDocument(goal)} lastNotice={false} />;
+  }
+
+  if (wait === "building") {
+    return <PlanBuilding run={getWaitRun({ poll: schedule.gate, run: run ?? WAITING_RUN })} />;
   }
 
   return (

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { type PollStatus } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
-import { WAITING_RUN, hasWaitFailed, isPlanBuilding, waitsForPlan } from "./wait-run";
+import { WAITING_RUN, getPlanWait, hasWaitFailed } from "./wait-run";
 
 describe(hasWaitFailed, () => {
   it.each<PollStatus>(["idle", "polling"])("keeps a healthy notice wait open while %s", (poll) => {
@@ -29,72 +29,47 @@ describe(hasWaitFailed, () => {
   });
 });
 
-const building: GenerationRun = {
-  failure: null,
-  status: "following",
-  steps: { buildSkillGraph: "started", understandGoal: "completed" },
-};
-
-const made: GenerationRun = {
-  failure: null,
-  status: "following",
-  steps: { createPlan: "completed", outlineCourses: "started" },
-};
-
-describe(isPlanBuilding, () => {
-  it("is true while the run reports steps without having made the plan", () => {
-    const failed: GenerationRun = { ...building, failure: "generation", status: "failed" };
-
-    expect(isPlanBuilding(building)).toBe(true);
-    expect(isPlanBuilding(failed)).toBe(true);
-  });
-
-  it("is false once the run made the plan or is done", () => {
-    expect(isPlanBuilding(made)).toBe(false);
-    expect(isPlanBuilding({ ...building, status: "ready" })).toBe(false);
-  });
-
-  it("is false while the run hasn't said where it is", () => {
-    expect(isPlanBuilding(WAITING_RUN)).toBe(false);
-    expect(isPlanBuilding({ ...WAITING_RUN, status: "following" })).toBe(false);
-    expect(isPlanBuilding(null)).toBe(false);
-  });
-});
-
-describe(waitsForPlan, () => {
+describe(getPlanWait, () => {
+  const following: GenerationRun = { failure: null, status: "following", steps: {} };
+  const done: GenerationRun = { ...following, status: "ready" };
   const asking = { last: null, status: "polling" as const };
-  const notReady = { last: { readingNotice: false, ready: false }, status: "polling" as const };
+  const building = { readingNotice: false, ready: false };
+  const reading = { readingNotice: true, ready: false };
+  const ready = { readingNotice: false, ready: true };
 
-  it("shows the wait before the plan's first answer when the step opened on a plan being built", () => {
-    expect(waitsForPlan({ gate: asking, openedBuilding: true, run: building })).toBe(true);
+  it("opens on the plan's wait before its first answer when the view says it can't answer yet", () => {
+    expect(getPlanWait({ gate: asking, opened: building, run: following })).toBe("building");
+    expect(getPlanWait({ gate: asking, opened: reading, run: following })).toBe("notice");
   });
 
-  it("keeps the question before the first answer when the step opened without that", () => {
-    expect(waitsForPlan({ gate: asking, openedBuilding: false, run: made })).toBe(false);
-    expect(waitsForPlan({ gate: asking, openedBuilding: false, run: building })).toBe(false);
+  it("opens on the question before the plan's first answer when the view says it can answer", () => {
+    expect(getPlanWait({ gate: asking, opened: ready, run: following })).toBeNull();
   });
 
-  it("shows the question when it doesn't ask the plan", () => {
-    const idle = { last: null, status: "idle" as const };
-    expect(waitsForPlan({ gate: idle, openedBuilding: true, run: building })).toBe(false);
+  it("goes by the plan's answers once they come", () => {
+    const answeredReady = { last: ready, status: "idle" as const };
+    const answeredBuilding = { last: building, status: "polling" as const };
+
+    expect(getPlanWait({ gate: answeredReady, opened: building, run: following })).toBeNull();
+    expect(getPlanWait({ gate: answeredBuilding, opened: ready, run: following })).toBe("building");
   });
 
-  it("waits while the plan says it isn't ready and its run goes on", () => {
-    expect(waitsForPlan({ gate: notReady, openedBuilding: false, run: made })).toBe(true);
+  it("keeps the view's wait until the plan's first answer, even once its run is done", () => {
+    expect(getPlanWait({ gate: asking, opened: building, run: done })).toBe("building");
   });
 
-  it("asks once the plan is ready, or once its run is done", () => {
-    const ready = { last: { readingNotice: false, ready: true }, status: "idle" as const };
-    const done: GenerationRun = { ...made, status: "ready" };
-
-    expect(waitsForPlan({ gate: ready, openedBuilding: true, run: building })).toBe(false);
-    expect(waitsForPlan({ gate: notReady, openedBuilding: true, run: done })).toBe(false);
+  it("asks once the plan's run is done, even while the plan says it isn't ready", () => {
+    const gate = { last: building, status: "polling" as const };
+    expect(getPlanWait({ gate, opened: building, run: done })).toBeNull();
   });
 
   it("waits while the exam's notice is read, even once the run is done", () => {
-    const reading = { last: { readingNotice: true, ready: false }, status: "polling" as const };
-    const done: GenerationRun = { ...made, status: "ready" };
+    const gate = { last: reading, status: "polling" as const };
+    expect(getPlanWait({ gate, opened: ready, run: done })).toBe("notice");
+  });
 
-    expect(waitsForPlan({ gate: reading, openedBuilding: false, run: done })).toBe(true);
+  it("offers to try again when asking about the notice's reading stopped", () => {
+    const gate = { last: reading, status: "failed" as const };
+    expect(getPlanWait({ gate, opened: reading, run: following })).toBe("building");
   });
 });

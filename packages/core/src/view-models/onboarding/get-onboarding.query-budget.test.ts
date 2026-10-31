@@ -11,7 +11,7 @@ describe("render read budgets", () => {
     const goal = await goalFixture({ userId: user.id });
     mockSession(user.id);
     const counts = await countDatabaseStatements(() => getOnboarding({ goalId: goal.id }));
-    assertReadBudget(counts, 10);
+    assertReadBudget(counts, 11);
     expect(counts.result.status).toBe("ready");
   });
 });

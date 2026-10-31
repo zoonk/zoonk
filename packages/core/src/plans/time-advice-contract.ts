@@ -25,6 +25,13 @@ const readySchema = z
       "False while the plan is being built, or while it waits for placement or its exam's notice reading, which change what it needs: ask again in a few seconds",
   });
 
+export const planReadinessSchema = z.object({
+  readingNotice: readingNoticeSchema,
+  ready: readySchema,
+});
+
+export type PlanReadiness = z.infer<typeof planReadinessSchema>;
+
 export const daySplitSchema = z
   .object({
     mine: z.int().meta({ description: "This goal's minutes of the day" }),

@@ -181,6 +181,7 @@ export function OnboardingStepScreen({
           findTimeToCover={(week) => actions.findTimeToCover({ goalId: view.goal.id, ...week })}
           getTimeAdvice={(week) => actions.getTimeAdvice({ goalId: view.goal.id, ...week })}
           goal={view.goal}
+          planReadiness={view.planReadiness}
           recommendedMinutes={view.recommendedMinutes}
           run={run}
           together={{

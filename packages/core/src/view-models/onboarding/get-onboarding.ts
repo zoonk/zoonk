@@ -16,6 +16,7 @@ import { getDaySplit } from "../../goals/daily-budget";
 import { getQuickTestMinutes } from "../../language/level-test/level-test-contract";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
+import { readPlanReadiness } from "../../plans/_utils/plan-readiness";
 import { DAILY_TIME_CHOICES } from "../../plans/daily-minutes";
 import { type NoSitting } from "../../plans/plan-view-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
@@ -234,20 +235,23 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
   );
 
-  const [profile, activeGoalId, goalIds, notice, courseExamDays] = await Promise.all([
-    findLearningProfileView(userId),
-    findActiveGoalId(userId),
-    findOnboardingGoalIds(goal),
-    findExamNotice({
-      details,
-      examBlueprintId: goal.examBlueprintId,
-      goalDate,
-      goalId,
-      prompt: goal.prompt,
-      today,
-    }),
-    findCourseExamDays({ goal, today }),
-  ]);
+  const [profile, activeGoalId, goalIds, notice, courseExamDays, planReadiness] = await Promise.all(
+    [
+      findLearningProfileView(userId),
+      findActiveGoalId(userId),
+      findOnboardingGoalIds(goal),
+      findExamNotice({
+        details,
+        examBlueprintId: goal.examBlueprintId,
+        goalDate,
+        goalId,
+        prompt: goal.prompt,
+        today,
+      }),
+      findCourseExamDays({ goal, today }),
+      readPlanReadiness(goal.id),
+    ],
+  );
 
   const [earlierGoals, [view]] = await Promise.all([
     prisma.goal.count({ where: { id: { notIn: goalIds }, userId } }),
@@ -314,6 +318,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       goal: view,
       goalIds,
       libraryCourse,
+      planReadiness: planReadiness ?? { readingNotice: false, ready: false },
       quickTestMinutes: getQuickTestMinutes(goal.kind),
       recommendedMinutes,
       steps,

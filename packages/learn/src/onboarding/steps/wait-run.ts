@@ -1,3 +1,4 @@
+import { type PlanReadiness } from "@zoonk/core/plans/time-advice-contract";
 import { type PollStatus } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
 
@@ -27,37 +28,6 @@ export function isPlanMade(run: GenerationRun | null): boolean {
   return run?.steps.createPlan === "completed";
 }
 
-export function isPlanBuilding(run: GenerationRun | null): boolean {
-  return (
-    run !== null && run.status !== "ready" && Object.keys(run.steps).length > 0 && !isPlanMade(run)
-  );
-}
-
-type PlanGate = { last: { readingNotice: boolean; ready: boolean } | null; status: PollStatus };
-
-/**
- * Until the plan's first answer, the run as the step opened decides, so a reload's replayed steps
- * never switch the screen. A run that's done leaves the time question to say the plan is still
- * working the time out.
- */
-export function waitsForPlan({
-  gate,
-  openedBuilding,
-  run,
-}: {
-  gate: PlanGate;
-  openedBuilding: boolean;
-  run: GenerationRun | null;
-}) {
-  const { last } = gate;
-
-  if (last === null) {
-    return gate.status === "polling" && openedBuilding;
-  }
-
-  return !last.ready && (last.readingNotice || run?.status !== "ready");
-}
-
 export function hasWaitFailed({
   poll,
   run,
@@ -66,4 +36,29 @@ export function hasWaitFailed({
   run: GenerationRun | null;
 }): boolean {
   return poll === "failed" || poll === "timedOut" || isRunStopped(run);
+}
+
+type PlanGate = { last: PlanReadiness | null; status: PollStatus };
+
+/**
+ * Until the plan's first answer, the onboarding view's word as the step opened decides. After it, a
+ * run that's done leaves the time question to say the plan is still working the time out.
+ */
+export function getPlanWait({
+  gate,
+  opened,
+  run,
+}: {
+  gate: PlanGate;
+  opened: PlanReadiness;
+  run: GenerationRun | null;
+}): "building" | "notice" | null {
+  const { last } = gate;
+  const { readingNotice, ready } = last ?? opened;
+
+  if (ready || (last && !readingNotice && run?.status === "ready")) {
+    return null;
+  }
+
+  return readingNotice && !hasWaitFailed({ poll: gate.status, run }) ? "notice" : "building";
 }
