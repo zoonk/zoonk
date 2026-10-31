@@ -42,19 +42,24 @@ export function usePlacePointer({
   orientation = "horizontal",
   range,
   scale,
+  valueAt,
 }: {
   disabled?: boolean;
   onChange: (value: number) => void;
   orientation?: Orientation;
   range: SnapRange;
   scale: LinearScale;
+  valueAt?: (point: { x: number; y: number }) => number;
 }) {
   function place(event: React.PointerEvent<SVGElement>) {
     const point = svgPoint(event);
 
     if (point) {
-      const position = orientation === "horizontal" ? point.x : point.y;
-      onChange(snapToStep(scale.toValue(position), range));
+      const value = valueAt
+        ? valueAt(point)
+        : scale.toValue(orientation === "horizontal" ? point.x : point.y);
+
+      onChange(snapToStep(value, range));
     }
   }
 
@@ -87,6 +92,7 @@ export function ActivityPlaceHandle({
   range,
   scale,
   value,
+  valueAt,
   valueText,
 }: {
   children: React.ReactNode;
@@ -100,9 +106,10 @@ export function ActivityPlaceHandle({
   range: SnapRange;
   scale: LinearScale;
   value: number;
+  valueAt?: (point: { x: number; y: number }) => number;
   valueText: string;
 }) {
-  const pointer = usePlacePointer({ disabled, onChange, orientation, range, scale });
+  const pointer = usePlacePointer({ disabled, onChange, orientation, range, scale, valueAt });
 
   function handleKeyDown(event: React.KeyboardEvent<SVGGElement>) {
     const key = growsDownward(orientation, scale) ? flipVerticalKey(event.key) : event.key;

@@ -1,4 +1,5 @@
 import { crossing, shiftLine } from "@zoonk/core/library/activities/line-crossing";
+import { type SnapRange, clamp, snapToStep } from "../_utils/snap-value";
 
 export type Line = { intercept: number; slope: number };
 
@@ -8,13 +9,27 @@ export type ShiftAxis = "horizontal" | "vertical";
 
 export type LineOffsets = Readonly<Record<string, number>>;
 
+export type LineSlide = { at: (offset: number) => Point; offsets: number[]; range: SnapRange };
+
 type Direction = "down" | "left" | "right" | "up";
 
 const HEADROOM = 1.25;
-const SNAP_SLACK = 1e-9;
 const MIN_SPAN = 1;
 const STEPS_PER_SHIFT = 4;
 const RELATIVE_SLACK = 1e-9;
+const HANDLE_SHARE = 0.82;
+const HANDLE_SHARE_STEPS = 100;
+const ORIGIN: Point = { x: 0, y: 0 };
+
+// Shares of the chart that fit a whole handle, and its gap from a crossing dot, on the smallest
+// plot (192px), so a slide never depends on the window's size.
+const HANDLE_MARGIN = 0.08;
+const CROSSING_GAP = 0.135;
+
+const HANDLE_SHARES = Array.from(
+  { length: HANDLE_SHARE_STEPS + 1 },
+  (_, step) => step / HANDLE_SHARE_STEPS,
+).toSorted((first, second) => Math.abs(first - HANDLE_SHARE) - Math.abs(second - HANDLE_SHARE));
 
 export function shiftAxis(direction: Direction): ShiftAxis {
   return direction === "left" || direction === "right" ? "horizontal" : "vertical";
@@ -55,7 +70,7 @@ export function lineShiftAnswer(offsets: LineOffsets, axis: ShiftAxis) {
   return { curve, direction: directionOf(offset, axis), kind: "curveShift" } as const;
 }
 
-function shiftRange(amount: number) {
+function shiftRange(amount: number): SnapRange {
   return { max: amount * 2, min: -amount * 2, step: amount / STEPS_PER_SHIFT };
 }
 
@@ -88,27 +103,24 @@ export function chartDomain({
   return { x: x * HEADROOM, y: y * HEADROOM };
 }
 
-export function visibleSegment(line: Line, domain: Point): { from: Point; to: Point } {
+function spanInside(line: Line, low: Point, high: Point): { from: number; to: number } | null {
   if (line.slope === 0) {
-    return { from: { x: 0, y: line.intercept }, to: { x: domain.x, y: line.intercept } };
+    return line.intercept >= low.y && line.intercept <= high.y ? { from: low.x, to: high.x } : null;
   }
 
-  const [atBottom, atTop] = [
-    (0 - line.intercept) / line.slope,
-    (domain.y - line.intercept) / line.slope,
+  const [atLow, atHigh] = [
+    (low.y - line.intercept) / line.slope,
+    (high.y - line.intercept) / line.slope,
   ];
 
-  const from = Math.max(0, Math.min(atBottom, atTop));
-  const to = Math.min(domain.x, Math.max(atBottom, atTop));
-  const [start, end] = from <= to ? [from, to] : [0, 0];
-
-  return { from: { x: start, y: yAt(line, start) }, to: { x: end, y: yAt(line, end) } };
+  const from = Math.max(low.x, Math.min(atLow, atHigh));
+  const to = Math.min(high.x, Math.max(atLow, atHigh));
+  return from <= to ? { from, to } : null;
 }
 
-export function pointAlong(line: Line, domain: Point, share: number): Point {
-  const { from, to } = visibleSegment(line, domain);
-  const x = from.x + (to.x - from.x) * share;
-  return { x, y: yAt(line, x) };
+export function visibleSegment(line: Line, domain: Point): { from: Point; to: Point } {
+  const { from, to } = spanInside(line, ORIGIN, domain) ?? { from: 0, to: 0 };
+  return { from: { x: from, y: yAt(line, from) }, to: { x: to, y: yAt(line, to) } };
 }
 
 export function changeDirection(before: number, after: number): "down" | "same" | "up" {
@@ -122,30 +134,56 @@ export function changeDirection(before: number, after: number): "down" | "same" 
 }
 
 /**
- * How far a line's handle slides from rest: twice the real shift each way, cut where the handle
- * would pass `lowest` or `highest`, but never short of this line's real move.
+ * How a line's handle slides: twice the real shift each way, as far as the line still passes
+ * through the chart inset by a handle's margin. At each shift the handle rides its moved line,
+ * at the point nearest its resting spot inside that inset. It rests 82% along the line, or at
+ * the nearest point to that clear of the resting crossing, kept inside the inset.
  */
-export function slideRange({
+export function lineSlide({
   amount,
-  highest,
-  home,
-  lowest,
-  real,
+  axis,
+  crossing: restingCrossing,
+  domain,
+  line,
 }: {
   amount: number;
-  highest: number;
-  home: number;
-  lowest: number;
-  real: number;
-}): { max: number; min: number; step: number } {
+  axis: ShiftAxis;
+  crossing: Point;
+  domain: Point;
+  line: Line;
+}): LineSlide {
+  const low = { x: domain.x * HANDLE_MARGIN, y: domain.y * HANDLE_MARGIN };
+  const high = { x: domain.x - low.x, y: domain.y - low.y };
   const full = shiftRange(amount);
+  const count = Math.round((full.max - full.min) / full.step) + 1;
 
-  const steps = (room: number) =>
-    Math.floor(Math.max(room, 0) / full.step + SNAP_SLACK) * full.step;
+  const offsets = Array.from({ length: count }, (_, index) =>
+    snapToStep(full.min + index * full.step, full),
+  ).filter((offset) => spanInside(movedLine(line, offset, axis), low, high));
+
+  const visible = spanInside(line, ORIGIN, domain) ?? { from: 0, to: 0 };
+  const resting = spanInside(line, low, high) ?? visible;
+
+  const along = (share: number) =>
+    clamp(visible.from + (visible.to - visible.from) * share, resting.from, resting.to);
+
+  const isClear = (x: number) =>
+    Math.hypot((x - restingCrossing.x) / domain.x, (yAt(line, x) - restingCrossing.y) / domain.y) >=
+    CROSSING_GAP;
+
+  const homeX = along(HANDLE_SHARES.find((share) => isClear(along(share))) ?? HANDLE_SHARE);
+
+  function at(offset: number): Point {
+    const moved = movedLine(line, offset, axis);
+    const preferred = axis === "horizontal" ? homeX + offset : homeX;
+    const span = spanInside(moved, low, high);
+    const x = span ? clamp(preferred, span.from, span.to) : preferred;
+    return { x, y: yAt(moved, x) };
+  }
 
   return {
-    max: Math.max(Math.min(full.max, steps(highest - home)), real),
-    min: Math.min(Math.max(full.min, -steps(home - lowest)), real),
-    step: full.step,
+    at,
+    offsets,
+    range: { max: Math.max(...offsets), min: Math.min(...offsets), step: full.step },
   };
 }

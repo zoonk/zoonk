@@ -1,12 +1,19 @@
+import { lineCrossingTemplate } from "@zoonk/core/library/activities/line-crossing";
+import {
+  activityContentFixtures,
+  engineModeFixtures,
+} from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import {
+  type Point,
   changeDirection,
   chartDomain,
   crossingPoint,
   lineShiftAnswer,
+  lineSlide,
   moveLine,
   movedLine,
-  slideRange,
+  shiftAxis,
   visibleSegment,
 } from "./line-crossing-model";
 
@@ -14,6 +21,49 @@ const supply = { intercept: 1, slope: 0.5 };
 const demand = { intercept: 10, slope: -1 };
 const cost = { intercept: 2000, slope: 5 };
 const revenue = { intercept: 0, slope: 15 };
+
+const SMALLEST_PLOT = 192;
+const HANDLE_REACH = 14 + 2.5 / 2;
+const CROSSING_REACH = 7;
+const { breakEven } = engineModeFixtures.lineCrossing;
+const supplyDemand = activityContentFixtures.lineCrossing.fields;
+
+const CHARTS = [
+  { fields: supplyDemand, name: "supply and demand" },
+  { fields: breakEven.fields, name: "break-even" },
+  {
+    fields: {
+      ...breakEven.fields,
+      lines: [
+        { id: "cost", intercept: 500, label: "Cost", slope: 0 },
+        { id: "revenue", intercept: 0, label: "Revenue", slope: 15 },
+      ],
+    },
+    name: "flat cost",
+  },
+  {
+    fields: { ...supplyDemand, shift: { amount: 2, direction: "down", line: "supply" } },
+    name: "supply moved down",
+  },
+  {
+    fields: { ...supplyDemand, shift: { amount: 2, direction: "down", line: "demand" } },
+    name: "demand moved down",
+  },
+].map(({ fields, name }) => ({ fields: lineCrossingTemplate.fields.parse(fields), name }));
+
+function onTheSmallestPlot(point: Point, domain: Point): Point {
+  return { x: (point.x / domain.x) * SMALLEST_PLOT, y: (point.y / domain.y) * SMALLEST_PLOT };
+}
+
+function isOnTheSmallestPlot(point: Point, domain: Point): boolean {
+  const { x, y } = onTheSmallestPlot(point, domain);
+  return [x, y].every((side) => side >= HANDLE_REACH && side <= SMALLEST_PLOT - HANDLE_REACH);
+}
+
+function gapOnTheSmallestPlot(point: Point, other: Point, domain: Point): number {
+  const [first, second] = [onTheSmallestPlot(point, domain), onTheSmallestPlot(other, domain)];
+  return Math.hypot(first.x - second.x, first.y - second.y);
+}
 
 describe(movedLine, () => {
   it("moves a line right by giving every y more x", () => {
@@ -84,28 +134,40 @@ describe(chartDomain, () => {
   });
 });
 
-describe(slideRange, () => {
-  it("slides twice the shift each way when the chart has room", () => {
-    expect(slideRange({ amount: 2, highest: 10.83, home: 5, lowest: 0, real: 0 })).toStrictEqual({
-      max: 4,
-      min: -4,
-      step: 0.5,
+describe(lineSlide, () => {
+  it("keeps every handle on the chart, off the crossing at rest, and the right move in reach", () => {
+    const problems = CHARTS.flatMap(({ fields, name }) => {
+      const { amount, direction } = fields.shift;
+      const axis = shiftAxis(direction);
+      const [first, second] = fields.lines;
+
+      if (!first || !second) {
+        return [`${name} has no two lines`];
+      }
+
+      const domain = chartDomain({ amount, axis, lines: [first, second] });
+      const crossing = crossingPoint(first, second);
+      const real = direction === "right" || direction === "up" ? amount : -amount;
+
+      return fields.lines.flatMap((line) => {
+        const { at, offsets } = lineSlide({ amount, axis, crossing, domain, line });
+        const where = (offset: number) => `${name}: ${line.label} at ${offset}`;
+
+        return [
+          ...offsets
+            .filter((offset) => !isOnTheSmallestPlot(at(offset), domain))
+            .map((offset) => `${where(offset)} leaves the chart at ${JSON.stringify(at(offset))}`),
+          ...(gapOnTheSmallestPlot(at(0), crossing, domain) < HANDLE_REACH + CROSSING_REACH
+            ? [`${where(0)} covers the crossing`]
+            : []),
+          ...(line.id === fields.shift.line && !offsets.includes(real)
+            ? [`${where(real)} is out of reach`]
+            : []),
+        ];
+      });
     });
-  });
 
-  it("stops where the handle would leave the chart", () => {
-    const flatCost = { intercept: 500, slope: 0 };
-    const extent = chartDomain({ amount: 500, axis: "vertical", lines: [flatCost, revenue] }).y;
-    const range = slideRange({ amount: 500, highest: extent, home: 500, lowest: 0, real: 500 });
-
-    expect(range.min).toBe(-500);
-    expect(500 + range.max).toBeLessThanOrEqual(extent);
-  });
-
-  it("never stops short of the line's real move", () => {
-    expect(slideRange({ amount: 500, highest: 1000, home: 900, lowest: 0, real: 500 }).max).toBe(
-      500,
-    );
+    expect(problems).toStrictEqual([]);
   });
 });
 

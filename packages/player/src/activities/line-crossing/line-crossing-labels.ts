@@ -101,9 +101,9 @@ function besideEnd({ isUpper, segment, size }: LineLabel, area: LabelBox): Label
 }
 
 type LabelMarks = {
+  arrows: readonly LabelBox[];
   circles: readonly LabelCircle[];
   lines: readonly LabelSegment[];
-  segments: readonly LabelSegment[];
 };
 
 function placeLineLabel({
@@ -121,13 +121,13 @@ function placeLineLabel({
   const step = label.size.height / STEPS_PER_LABEL_HEIGHT;
 
   const clearsMarks = (box: LabelBox) =>
-    marks.segments.every((segment) => !touchesSegment(box, segment)) &&
     marks.circles.every((circle) => !touchesCircle(box, circle)) &&
     placed.every((other) => !touchesBox(box, other));
 
   const fits = (box: LabelBox, lines: readonly LabelSegment[]) =>
     isInside(box, area) &&
-    [label.segment, ...lines].every((segment) => !touchesSegment(box, segment));
+    [label.segment, ...lines].every((segment) => !touchesSegment(box, segment)) &&
+    marks.arrows.every((arrow) => !touchesBox(box, arrow));
 
   const isClear = (box: LabelBox) => fits(box, []) && clearsMarks(box);
   const offItsLine = (box: LabelBox) => fits(box, []);
@@ -157,11 +157,11 @@ function placeLineLabel({
 
 /**
  * Where each line's name sits, in order: by its end of the line on the open side, or at the
- * nearest spot that clears the lines, the marks (drag handles, crossings, arrows) and the names
- * placed before it. When no spot close by clears every line, it keeps off its own line and the
- * marks, then just off its own line, searching the whole chart when nothing near is free. Its
- * halo never cuts the line it names: with no free spot anywhere it stays by its end, on the line's
- * open side.
+ * nearest spot that clears the lines, the marks (drag handles, crossings) and the names placed
+ * before it. When no spot close by clears every line, it keeps off its own line and the marks,
+ * then just off its own line, searching the whole chart when nothing near is free. Every spot it
+ * searches keeps clear of the arrows, heads included. Its halo never cuts the line it names: with no
+ * free spot anywhere it stays by its end, on the line's open side.
  */
 export function placeLineLabels({
   area,

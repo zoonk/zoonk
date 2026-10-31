@@ -3,13 +3,7 @@
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { ActivityPlot, usePlotScales } from "../_components/activity-plot";
-import {
-  HANDLE_RADIUS,
-  HANDLE_STROKE,
-  LineHandle,
-  handlePlace,
-  handleSlide,
-} from "./line-crossing-handle";
+import { HANDLE_RADIUS, HANDLE_STROKE, LineHandle } from "./line-crossing-handle";
 import { type LabelSize, placeLineLabels } from "./line-crossing-labels";
 import {
   Axes,
@@ -19,15 +13,17 @@ import {
   Crossing,
   LineLabel,
   LineMark,
-  changeArrows,
+  changeArrowBoxes,
 } from "./line-crossing-marks";
 import {
   type Line,
   type LineOffsets,
+  type LineSlide,
   type Point,
   type ShiftAxis,
   chartDomain,
   crossingPoint,
+  lineSlide,
   movedLine,
   visibleSegment,
 } from "./line-crossing-model";
@@ -41,46 +37,24 @@ const LINE_TEXT_CLASSES = ["text-viz-highlight", "text-viz-secondary"] as const;
 
 type ChartLabel = { className: string; id: string; isUpper: boolean; label: string; line: Line };
 
-function useLineSlides({
-  amount,
-  axis,
-  domain,
-  lines,
-  real,
-}: {
-  amount: number;
-  axis: ShiftAxis;
-  domain: Point;
-  lines: readonly [ChartLine, ChartLine];
-  real: LineOffsets;
-}) {
-  const scales = usePlotScales();
-  const crossing = crossingPoint(lines[0], lines[1]);
-
-  return lines.map((line) => ({
-    line,
-    ...handleSlide({ amount, axis, crossing, domain, line, real: real[line.id] ?? 0, scales }),
-  }));
-}
+type LineAndSlide = { line: ChartLine; slide: LineSlide };
 
 function LineLabels({
-  amount,
   answerLine,
   axis,
   crossings,
   domain,
   lines,
   offsets,
-  real,
+  slides,
 }: {
-  amount: number;
   answerLine: Line | null;
   axis: ShiftAxis;
   crossings: { after: Point; before: Point | null };
   domain: Point;
   lines: readonly [ChartLine, ChartLine];
   offsets: LineOffsets;
-  real: LineOffsets;
+  slides: readonly LineAndSlide[];
 }) {
   const t = useExtracted();
   const scales = usePlotScales();
@@ -95,13 +69,10 @@ function LineLabels({
     top: scales.y.range[1],
   };
 
-  const handles = useLineSlides({ amount, axis, domain, lines, real }).map(
-    ({ home, line, range }) => {
-      const { cx, cy } = handlePlace({ axis, home, offset: offsetOf(line), range, scales });
-
-      return { cx, cy, radius: HANDLE_RADIUS + HANDLE_STROKE / 2 };
-    },
-  );
+  const handles = slides.map(({ line, slide }) => {
+    const { x, y } = pixel(slide.at(offsetOf(line)));
+    return { cx: x, cy: y, radius: HANDLE_RADIUS + HANDLE_STROKE / 2 };
+  });
 
   const dots = [crossings.after, crossings.before].flatMap((point) =>
     point
@@ -110,10 +81,10 @@ function LineLabels({
   );
 
   const marks = {
-    circles: [...handles, ...dots],
-    segments: crossings.before
-      ? changeArrows({ after: crossings.after, before: crossings.before, ...scales })
+    arrows: crossings.before
+      ? changeArrowBoxes({ after: crossings.after, before: crossings.before, ...scales })
       : [],
+    circles: [...handles, ...dots],
   };
 
   const labels: ChartLabel[] = [
@@ -175,44 +146,6 @@ function LineLabels({
   ));
 }
 
-function LineHandles({
-  amount,
-  axis,
-  disabled,
-  domain,
-  handleText,
-  lines,
-  offsets,
-  onMove,
-  real,
-}: {
-  amount: number;
-  axis: ShiftAxis;
-  disabled: boolean;
-  domain: Point;
-  handleText: (line: ChartLine) => { label: string; valueText: string };
-  lines: readonly [ChartLine, ChartLine];
-  offsets: LineOffsets;
-  onMove: (id: string, offset: number) => void;
-  real: LineOffsets;
-}) {
-  return useLineSlides({ amount, axis, domain, lines, real }).map(
-    ({ home, line, range }, index) => (
-      <LineHandle
-        axis={axis}
-        className={LINE_TEXT_CLASSES[index] ?? ""}
-        disabled={disabled}
-        home={home}
-        key={line.id}
-        offset={offsets[line.id] ?? 0}
-        onChange={(offset) => onMove(line.id, offset)}
-        range={range}
-        {...handleText(line)}
-      />
-    ),
-  );
-}
-
 export function LineCrossingChart({
   amount,
   answerLine,
@@ -222,7 +155,6 @@ export function LineCrossingChart({
   lines,
   offsets,
   onMove,
-  real,
   xLabel,
   yLabel,
 }: {
@@ -234,7 +166,6 @@ export function LineCrossingChart({
   lines: readonly [ChartLine, ChartLine];
   offsets: LineOffsets;
   onMove: (id: string, offset: number) => void;
-  real: LineOffsets;
   xLabel: string;
   yLabel: string;
 }) {
@@ -246,6 +177,11 @@ export function LineCrossingChart({
   const before = crossingPoint(lines[0], lines[1]);
   const [first, second] = shown;
   const after = first && second ? crossingPoint(first, second) : before;
+
+  const slides = lines.map((line) => ({
+    line,
+    slide: lineSlide({ amount, axis, crossing: before, domain, line }),
+  }));
 
   return (
     <ActivityPlot
@@ -283,14 +219,13 @@ export function LineCrossingChart({
       </g>
 
       <LineLabels
-        amount={amount}
         answerLine={answerLine}
         axis={axis}
         crossings={{ after, before: moved.length > 0 ? before : null }}
         domain={domain}
         lines={lines}
         offsets={offsets}
-        real={real}
+        slides={slides}
       />
 
       {moved.length > 0 && (
@@ -302,17 +237,18 @@ export function LineCrossingChart({
 
       <Crossing isBefore={false} point={after} />
 
-      <LineHandles
-        amount={amount}
-        axis={axis}
-        disabled={isChecked}
-        domain={domain}
-        handleText={handleText}
-        lines={lines}
-        offsets={offsets}
-        onMove={onMove}
-        real={real}
-      />
+      {slides.map(({ line, slide }, index) => (
+        <LineHandle
+          axis={axis}
+          className={LINE_TEXT_CLASSES[index] ?? ""}
+          disabled={isChecked}
+          key={line.id}
+          offset={offsets[line.id] ?? 0}
+          onChange={(offset) => onMove(line.id, offset)}
+          slide={slide}
+          {...handleText(line)}
+        />
+      ))}
     </ActivityPlot>
   );
 }

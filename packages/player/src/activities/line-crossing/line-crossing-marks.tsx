@@ -10,6 +10,8 @@ import { type Line, type Point, visibleSegment } from "./line-crossing-model";
 
 const DOT_RADIUS = 6;
 const ARROW_OFFSET = 10;
+const ARROW_STROKE = 2;
+const ARROW_HEAD = 7;
 const Y_LABEL_RISE = 12;
 const X_LABEL_DROP = 20;
 
@@ -109,17 +111,9 @@ export function Crossing({ isBefore, point }: { isBefore: boolean; point: Point 
 
 export const CROSSING_RADIUS = DOT_RADIUS + 1;
 
-export function changeArrows({
-  after,
-  before,
-  x,
-  y,
-}: {
-  after: Point;
-  before: Point;
-  x: LinearScale;
-  y: LinearScale;
-}): { from: Point; to: Point }[] {
+type ArrowEnds = { after: Point; before: Point; x: LinearScale; y: LinearScale };
+
+function changeArrows({ after, before, x, y }: ArrowEnds): { from: Point; to: Point }[] {
   const [left, bottom] = [x.range[0], y.range[0]];
 
   const arrows = [
@@ -136,6 +130,17 @@ export function changeArrows({
   return arrows.filter(({ from, to }) => Math.hypot(to.x - from.x, to.y - from.y) > DOT_RADIUS);
 }
 
+export function changeArrowBoxes(ends: ArrowEnds): LabelBox[] {
+  const reach = (ARROW_HEAD * ARROW_STROKE) / 2;
+
+  return changeArrows(ends).map(({ from, to }) => ({
+    bottom: Math.max(from.y, to.y) + reach,
+    left: Math.min(from.x, to.x) - reach,
+    right: Math.max(from.x, to.x) + reach,
+    top: Math.min(from.y, to.y) - reach,
+  }));
+}
+
 export function ChangeArrows({ after, before }: { after: Point; before: Point }) {
   const { x, y } = usePlotScales();
   const markerId = useId();
@@ -145,8 +150,8 @@ export function ChangeArrows({ after, before }: { after: Point; before: Point })
       <defs>
         <marker
           id={markerId}
-          markerHeight={7}
-          markerWidth={7}
+          markerHeight={ARROW_HEAD}
+          markerWidth={ARROW_HEAD}
           orient="auto-start-reverse"
           refX={7}
           refY={5}
@@ -166,7 +171,7 @@ export function ChangeArrows({ after, before }: { after: Point; before: Point })
           d={`M${from.x} ${from.y} L${to.x} ${to.y}`}
           key={from.x === to.x ? "y" : "x"}
           markerEnd={`url(#${markerId})`}
-          strokeWidth={2}
+          strokeWidth={ARROW_STROKE}
         />
       ))}
     </g>

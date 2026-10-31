@@ -17,6 +17,8 @@ import { previewEntries } from "../preview/preview-catalog";
 import { buildLesson } from "../preview/preview-lesson";
 
 const PHONE = { height: 812, width: 375 };
+const WIDE = { height: 812, width: 480 };
+const NARROW = { height: 812, width: 320 };
 const HALO = 2;
 const { breakEven } = engineModeFixtures.lineCrossing;
 const supplyDemand = activityContentFixtures.lineCrossing;
@@ -100,8 +102,33 @@ function gapToHandle(label: SVGTextElement, name: string): number {
   return gapTo(label.getBoundingClientRect(), center) - box.width / 2;
 }
 
+type Bounds = { bottom: number; left: number; right: number; top: number };
+
+function plotBounds(): Bounds {
+  const svg = document.querySelector("figure svg");
+  const plot = svg?.querySelector("clipPath rect");
+
+  if (!svg || !plot) {
+    throw new Error("No plot drawn");
+  }
+
+  const chart = svg.getBoundingClientRect();
+
+  const [left, top] = [
+    chart.left + Number(plot.getAttribute("x")),
+    chart.top + Number(plot.getAttribute("y")),
+  ];
+
+  return {
+    bottom: top + Number(plot.getAttribute("height")),
+    left,
+    right: left + Number(plot.getAttribute("width")),
+    top,
+  };
+}
+
 function handlesOutsideTheChart(names: readonly string[]): string[] {
-  const chart = document.querySelector("figure svg")?.getBoundingClientRect();
+  const plot = plotBounds();
 
   return names.filter((name) => {
     const ring = page
@@ -111,12 +138,11 @@ function handlesOutsideTheChart(names: readonly string[]): string[] {
       ?.getBoundingClientRect();
 
     return (
-      !chart ||
       !ring ||
-      ring.left < chart.left ||
-      ring.right > chart.right ||
-      ring.top < chart.top ||
-      ring.bottom > chart.bottom
+      ring.left < plot.left ||
+      ring.right > plot.right ||
+      ring.top < plot.top ||
+      ring.bottom > plot.bottom
     );
   });
 }
@@ -159,6 +185,53 @@ function handleGapsFromTheCrossing(names: readonly string[]): number[] {
 
     return between - ring.width / 2 - dot.width / 2;
   });
+}
+
+function arrowHeads(): Bounds[] {
+  const svg = document.querySelector<SVGSVGElement>("figure svg");
+  const marker = svg?.querySelector("marker");
+
+  if (!svg || !marker) {
+    throw new Error("No change arrows drawn");
+  }
+
+  const view = marker.viewBox.baseVal;
+  const [refX, refY] = [marker.refX.baseVal.value, marker.refY.baseVal.value];
+  const matrix = svg.getScreenCTM() ?? undefined;
+
+  return [...svg.querySelectorAll<SVGPathElement>("path[marker-end]")].map((arrow) => {
+    const strokeWidth = Number(arrow.getAttribute("stroke-width"));
+    const unit = (marker.markerWidth.baseVal.value * strokeWidth) / view.width;
+    const start = arrow.getPointAtLength(0);
+    const end = arrow.getPointAtLength(arrow.getTotalLength());
+    const length = Math.hypot(end.x - start.x, end.y - start.y);
+    const along = { x: (end.x - start.x) / length, y: (end.y - start.y) / length };
+
+    const corners = [-refX, view.width - refX].flatMap((forward) =>
+      [-refY, view.height - refY].map((side) =>
+        new DOMPoint(
+          end.x + (forward * along.x - side * along.y) * unit,
+          end.y + (forward * along.y + side * along.x) * unit,
+        ).matrixTransform(matrix),
+      ),
+    );
+
+    const [xs, ys] = [corners.map((corner) => corner.x), corners.map((corner) => corner.y)];
+
+    return {
+      bottom: Math.max(...ys),
+      left: Math.min(...xs),
+      right: Math.max(...xs),
+      top: Math.min(...ys),
+    };
+  });
+}
+
+function gapBetween(box: Bounds, other: Bounds): number {
+  return Math.hypot(
+    Math.max(other.left - box.right, 0, box.left - other.right),
+    Math.max(other.top - box.bottom, 0, box.top - other.bottom),
+  );
 }
 
 async function expectNamesOffTheirLines() {
@@ -243,6 +316,37 @@ describe("line crossing chart", () => {
       expect(Math.min(...handleGapsFromTheCrossing(["Supply", "Demand"]))).toBeGreaterThan(0);
 
       await expect(handlesOutsideAtEachEnd(["Supply", "Demand"])).resolves.toStrictEqual([]);
+    });
+  });
+
+  it("keeps a handle's value in its range when the chart narrows at the end of its slide", async () => {
+    await atViewport(WIDE, async () => {
+      openActivity({ template: "lineCrossing" });
+      await pressOnSlider("Move the line Supply", "End", 1);
+      const wide = plotBounds().right;
+
+      await page.viewport(NARROW.width, NARROW.height);
+      await expect.poll(() => plotBounds().right).toBeLessThan(wide);
+
+      const supply = page.getByRole("slider", { name: "Move the line Supply" }).element();
+
+      expect(Number(supply.getAttribute("aria-valuenow"))).toBeLessThanOrEqual(
+        Number(supply.getAttribute("aria-valuemax")),
+      );
+
+      expect(handlesOutsideTheChart(["Supply", "Demand"])).toStrictEqual([]);
+    });
+  });
+
+  it("keeps the Before name clear of the change arrows, heads included", async () => {
+    await atViewport(PHONE, async () => {
+      openActivity({ template: "lineCrossing" });
+      await pressOnSlider("Move the line Demand", "End", 1);
+      const before = lineName("Before").getBoundingClientRect();
+
+      expect(Math.min(...arrowHeads().map((head) => gapBetween(before, head)))).toBeGreaterThan(
+        HALO,
+      );
     });
   });
 });

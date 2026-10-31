@@ -4,7 +4,7 @@ import { type Point } from "./line-crossing-model";
 
 const area = { bottom: 222, left: 22, right: 311, top: 26 };
 const size = { height: 12, width: 50 };
-const noMarks = { circles: [], lines: [], segments: [] };
+const noMarks = { arrows: [], circles: [], lines: [] };
 
 function gapToSegment(box: LabelBox, { from, to }: { from: Point; to: Point }): number {
   const samples = Array.from({ length: 201 }, (_, index) => ({
@@ -19,6 +19,13 @@ function gapToSegment(box: LabelBox, { from, to }: { from: Point; to: Point }): 
         Math.max(box.top - point.y, 0, point.y - box.bottom),
       ),
     ),
+  );
+}
+
+function gapToBox(box: LabelBox, other: LabelBox): number {
+  return Math.hypot(
+    Math.max(other.left - box.right, 0, box.left - other.right),
+    Math.max(other.top - box.bottom, 0, box.top - other.bottom),
   );
 }
 
@@ -128,6 +135,21 @@ describe(placeLineLabels, () => {
       marks: noMarks,
     });
 
+    expect(box && gapToSegment(box, segment)).toBeGreaterThanOrEqual(3);
+  });
+
+  it("keeps a name clear of an arrow, head included, even when no spot nearby is free", () => {
+    const segment = { from: { x: 22, y: 222 }, to: { x: 293, y: 26 } };
+    const everywhere = { cx: 166, cy: 124, radius: 400 };
+    const arrow = { bottom: 87, left: 230, right: 244, top: 26 };
+
+    const [box] = placeLineLabels({
+      area,
+      labels: [{ isUpper: true, segment, size }],
+      marks: { ...noMarks, arrows: [arrow], circles: [everywhere] },
+    });
+
+    expect(box && gapToBox(box, arrow)).toBeGreaterThanOrEqual(3);
     expect(box && gapToSegment(box, segment)).toBeGreaterThanOrEqual(3);
   });
 });
