@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { ZoonkLogo } from "@zoonk/ui/components/zoonk-logo";
 import { getExtracted } from "next-intl/server";
+import { CommercialDisclosureLink } from "./commercial-disclosure-link";
 import { FooterExploreLinks } from "./footer-explore-links";
 import { FooterLanguages } from "./footer-languages";
 import { PUBLIC_CONTAINER_CLASS } from "./landing-styles";
@@ -39,6 +40,7 @@ export async function PublicFooter({ pathname }: { pathname?: string }) {
             <Link className={FOOTER_LINK_CLASS} href="/terms">
               {t("Terms")}
             </Link>
+            <CommercialDisclosureLink className={FOOTER_LINK_CLASS} />
           </nav>
 
           <FooterLanguages pathname={pathname} />

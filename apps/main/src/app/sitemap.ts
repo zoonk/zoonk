@@ -4,7 +4,7 @@ import { SUPPORTED_LOCALES, type SupportedLocale } from "@zoonk/utils/locale";
 import { SITE_URL } from "@zoonk/utils/url";
 import { type MetadataRoute } from "next";
 
-const STATIC_PATHS = ["/start", "/privacy", "/terms"];
+const STATIC_PATHS = ["/start", "/privacy", "/terms", "/commercial-disclosure"];
 
 const LOCALIZED_PATHS = [
   "/",
