@@ -4,9 +4,11 @@ import {
   DISCLOSURE_LINK_CLASS,
   PublicDisclosure,
 } from "@/components/public/public-disclosure";
+import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { cn } from "@zoonk/ui/lib/utils";
+import { getSentenceSpace } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { getExampleSet } from "./landing-examples";
 
@@ -24,6 +26,7 @@ function emailLink(address: string) {
 
 export async function HomeFaq() {
   const t = await getExtracted();
+  const space = getSentenceSpace(await getAppLocale());
   const { exam } = await getExampleSet();
   const limits = getFreePlanLimits();
 
@@ -46,7 +49,8 @@ export async function HomeFaq() {
         <>
           {t(
             "Plus is a subscription. It unlocks every goal and every lesson, the full plan up to exam day, mock exams timed like the real exam, Zu whenever you need it and higher limits on practice conversations. You see your whole plan before you pay, and you can cancel anytime.",
-          )}{" "}
+          )}
+          {space}
           <Link className={DISCLOSURE_LINK_CLASS} href="/pricing">
             {t("See prices")}
           </Link>
