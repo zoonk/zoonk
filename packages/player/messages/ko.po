@@ -44,7 +44,7 @@ msgstr "청음 훈련"
 #: src/activities/_components/activity-badge.tsx
 msgctxt "h3UUQw"
 msgid "Estimate first"
-msgstr "먼저 어림해 보기"
+msgstr "먼저 어림하기"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "7JlauX"
@@ -180,7 +180,7 @@ msgstr "단계별로 풀기"
 #: src/activities/_components/activity-badge.tsx
 msgctxt "S-w423"
 msgid "Step through"
-msgstr "한 단계씩 따라가기"
+msgstr "단계별로 실행하기"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "4M_1qG"
@@ -337,7 +337,7 @@ msgstr "{item} 항목을 {position}번 위치에서 집어 들었어요."
 #: src/activities/_components/activity-sortable-list.tsx
 msgctxt "NNTjVW"
 msgid "To move an item, press Space or Enter, use the arrow keys to move it, then press Space or Enter again to drop it. Press Escape to cancel."
-msgstr "항목을 옮기려면 Space 키나 Enter 키를 누르고 방향키로 옮긴 다음, Space 키나 Enter 키를 다시 눌러 놓으세요. 취소하려면 Escape 키를 누르세요."
+msgstr "항목을 옮기려면 Space 또는 Enter를 누르고, 방향키로 위치를 정한 뒤 Space 또는 Enter를 다시 눌러 놓으세요. 취소하려면 Escape를 누르세요."
 
 #: src/activities/_components/activity-sound-button.tsx
 msgctxt "ZmADei"
@@ -347,7 +347,7 @@ msgstr "소리를 불러오지 못했어요. 그래도 모든 음표를 볼 수 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "eYmsAC"
 msgid "{runtime} didn't load. Check your connection and try again."
-msgstr "{runtime}을(를) 불러오지 못했어요. 연결 상태를 확인하고 다시 시도해 보세요."
+msgstr "{runtime}을(를) 불러오지 못했어요. 인터넷 연결을 확인하고 다시 시도해 보세요."
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
@@ -813,7 +813,7 @@ msgstr "{cause}에서 {effect}(으)로 이어지는 연결 고리 삭제하기"
 #: src/activities/chart-reader/chart-reader-activity.tsx
 msgctxt "ZNsEWh"
 msgid "{value} per {unit}"
-msgstr "{value}/{unit}"
+msgstr "{value} ({unit}당)"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
 msgctxt "CzXebu"
@@ -838,7 +838,7 @@ msgstr "{span}: {change}."
 #: src/activities/code-runner/code-runner-activity.tsx
 msgctxt "ydcluT"
 msgid "{count, plural, one {Line {lines} is yours} other {Lines {lines} are yours}}"
-msgstr "{count, plural, other {{lines}번 줄은 직접 수정할 수 있어요}}"
+msgstr "{count, plural, other {직접 작성할 줄: {lines}}}"
 
 #: src/activities/code-runner/code-runner-activity.tsx
 #: src/activities/code-tracer/tracer-parts.tsx
@@ -1808,7 +1808,7 @@ msgstr "경계선을 간략하게 표시했어요."
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "kLw_vQ"
 msgid "Simplified street plan, after John Snow's 1854 map."
-msgstr "John Snow의 1854년 지도를 바탕으로 간략하게 그린 거리 지도예요."
+msgstr "존 스노의 1854년 지도를 바탕으로 간략하게 그린 거리 지도예요."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "HfJhT9"
@@ -1858,7 +1858,7 @@ msgstr "두 카드는 짝이 아니에요."
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Dzn88L"
 msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {count, plural, =0 {} one {# card has no match.} other {# cards have no match.}} {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
-msgstr "카드가 두 열로 나뉘어 있어요. 왼쪽과 오른쪽에서 카드를 한 장씩 골라 짝을 맞추세요. {count, plural, =0 {} other {짝이 없는 카드가 #장 있어요.}} {matched, plural, other {#쌍을 맞췄어요(총 {total}쌍).}}"
+msgstr "카드가 두 열로 나뉘어 있어요. 왼쪽과 오른쪽에서 카드를 하나씩 골라 짝을 맞추세요. {count, plural, =0 {} other {짝이 없는 카드가 #개 있어요.}} {matched, plural, other {맞춘 짝은 #쌍이고, 전체는 {total}쌍이에요.}}"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "kzygtu"
@@ -1908,7 +1908,7 @@ msgstr "{atom}을(를) 선택했어요."
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "phXGea"
 msgid "Nothing selected."
-msgstr "선택한 원자가 없어요."
+msgstr "선택한 항목이 없어요."
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "DLio1y"
@@ -2104,7 +2104,7 @@ msgstr "멜로디"
 #: src/activities/notation-player/notation-player-activity.tsx
 msgctxt "rVVJz4"
 msgid "The music couldn't load. Check your connection and try again."
-msgstr "음악을 불러오지 못했어요. 연결 상태를 확인하고 다시 시도해 보세요."
+msgstr "음악을 불러오지 못했어요. 인터넷 연결을 확인하고 다시 시도해 보세요."
 
 #: src/activities/notation-player/notation-player-activity.tsx
 #: src/lesson/steps/spoken-answer-step.tsx
@@ -2135,7 +2135,7 @@ msgstr "{bar}번째 마디: {notes}."
 #: src/activities/number-line/number-line-activity.tsx
 msgctxt "-s66db"
 msgid "{label} in {unit}"
-msgstr "{label} (단위: {unit})"
+msgstr "{label} ({unit})"
 
 #: src/activities/number-line/number-line-activity.tsx
 msgctxt "BDKQJ4"
@@ -2255,6 +2255,7 @@ msgctxt "8WlDyp"
 msgid "Repeat a number of times"
 msgstr "정해진 횟수만큼 반복"
 
+#. A noun on a palette of pattern parts: a group of characters.
 #: src/activities/pattern-tester/pattern-tester-activity.tsx
 msgctxt "HpoDwk"
 msgid "Group"
@@ -2494,7 +2495,7 @@ msgstr "표본을 뽑고 있어요({count}/{runs})…"
 #: src/activities/random-simulation/use-sampling-format.ts
 msgctxt "vUQRu0"
 msgid "±{value} {count, plural, =0 {points} one {point} other {points}}"
-msgstr "±{value}{count, plural, =0 {포인트} other {퍼센트포인트}}"
+msgstr "±{value}{count, plural, =0 {포인트} other {포인트}}"
 
 #: src/activities/random-simulation/use-sampling-format.ts
 msgctxt "_dayPZ"
@@ -2519,7 +2520,7 @@ msgstr "먼저 듣기"
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "V8V6gJ"
 msgid "Start tapping"
-msgstr "누르기 시작"
+msgstr "두드리기 시작"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "zuJJlV"
@@ -2539,7 +2540,7 @@ msgstr "소리가 날 때마다 누르세요 · {click}/{total}"
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "U3WmLU"
 msgid "We couldn't match enough taps to the clicks. Try again, tapping with each one."
-msgstr "소리에 맞춰 누른 기록이 충분하지 않았어요. 소리가 날 때마다 누르며 다시 시도해 보세요."
+msgstr "클릭 소리에 맞춘 탭을 충분히 감지하지 못했어요. 소리가 날 때마다 탭하며 다시 시도해 보세요."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "JUoCnO"
@@ -2717,7 +2718,7 @@ msgstr "쿼리는 실행됐지만 결과 테이블이 없어요. SELECT로 행�
 #: src/activities/sql-playground/sql-result.tsx
 msgctxt "XjrTx5"
 msgid "{count, plural, =0 {Your result has no rows} one {Your result: # row} other {Your result: # rows}}"
-msgstr "{count, plural, =0 {내 결과에 행이 없어요} other {내 결과에 #개의 행이 있어요}}"
+msgstr "{count, plural, =0 {결과에 행 없음} other {결과: #행}}"
 
 #: src/activities/sql-playground/sql-result.tsx
 msgctxt "BgDPcv"
@@ -2999,7 +3000,7 @@ msgstr "짝을 모두 맞췄어요. 계속하려면 확인을 누르세요."
 #: src/components/play-audio-button.tsx
 msgctxt "WGft2H"
 msgid "Pause pronunciation"
-msgstr "발음 일시 정지"
+msgstr "발음 재생 일시 정지"
 
 #: src/components/play-audio-button.tsx
 msgctxt "lYWSeP"
@@ -3135,7 +3136,7 @@ msgstr "계정 없이 체험할 수 있는 레슨을 모두 마쳤어요. 무료
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "gojCcS"
 msgid "Save your progress to keep going"
-msgstr "학습 기록을 저장하고 계속 학습하세요"
+msgstr "계속 학습하려면 진도를 저장하세요"
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-thread.tsx
@@ -3157,7 +3158,7 @@ msgstr "오늘 정말 많이 배웠어요"
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "jdlHSh"
 msgid "Try again in a moment. Nothing you did was lost."
-msgstr "잠시 후 다시 시도해 보세요. 지금까지의 학습 기록은 그대로 남아 있어요."
+msgstr "잠시 후에 다시 시도해 보세요. 지금까지 진행한 내용은 모두 남아 있어요."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "ObBVZr"
@@ -3439,6 +3440,7 @@ msgctxt "ZpQ6us"
 msgid "Result"
 msgstr "결과"
 
+#. Heading of the panel that recaps the lesson, not a button.
 #: src/lesson/lesson-aside.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "C9sbYe"
@@ -3498,7 +3500,7 @@ msgstr "레슨 닫기"
 #: src/lesson/lesson-player-header.tsx
 msgctxt "dYp90P"
 msgid "Lesson progress"
-msgstr "레슨 진행 상황"
+msgstr "레슨 진도"
 
 #: src/lesson/lesson-player-shell.tsx
 msgctxt "ZHEKO0"
@@ -3523,7 +3525,7 @@ msgstr "이미 알고 있어요"
 #: src/lesson/lesson-stage.tsx
 msgctxt "qzpeai"
 msgid "Write again"
-msgstr "다시 쓰기"
+msgstr "다시 만들기"
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "LnHBcu"
@@ -3583,7 +3585,7 @@ msgstr "챌린지 완료"
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "ttLWcq"
 msgid "Skills practiced"
-msgstr "연습한 능력"
+msgstr "연습한 스킬"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "gvZdep"
@@ -3628,12 +3630,12 @@ msgstr "변화 없음"
 #: src/lesson/steps/challenge/challenge-meters.tsx
 msgctxt "PCaH9F"
 msgid "much lower"
-msgstr "크게 낮아짐"
+msgstr "훨씬 낮아짐"
 
 #: src/lesson/steps/challenge/challenge-meters.tsx
 msgctxt "PSDUKP"
 msgid "much higher"
-msgstr "크게 높아짐"
+msgstr "훨씬 높아짐"
 
 #: src/lesson/steps/challenge/challenge-meters.tsx
 msgctxt "xklNWu"
@@ -3788,7 +3790,7 @@ msgstr "고른 답: <strong>{answer}</strong> · 문제: “<question></question
 #: src/questions/ask-tutor.tsx
 msgctxt "H7C1B-"
 msgid "Ask {name} about this chapter"
-msgstr "{name}에게 이 단원에 대해 질문하기"
+msgstr "{name}에게 이 챕터에 대해 질문하기"
 
 #: src/questions/ask-tutor.tsx
 msgctxt "BL_-O3"
@@ -3818,7 +3820,7 @@ msgstr "마지막 질문을 보내지 못했어요. 다시 시도해 보세요."
 #: src/questions/lesson-question-composer.tsx
 msgctxt "v9luVQ"
 msgid "Ask about this chapter…"
-msgstr "이 단원에 대해 질문해 보세요…"
+msgstr "이 챕터에 대해 질문해 보세요…"
 
 #: src/questions/lesson-question-composer.tsx
 msgctxt "CVtLex"
@@ -3918,7 +3920,7 @@ msgstr "이 화면에 대해 질문해 보세요"
 #: src/questions/lesson-question-panel.tsx
 msgctxt "o8a1UO"
 msgid "Ask questions about this chapter"
-msgstr "이 단원에 대해 질문해 보세요"
+msgstr "이 챕터에 대해 질문해 보세요"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "haOEeK"
@@ -3963,7 +3965,7 @@ msgstr "질문을 불러오고 있어요…"
 #: src/questions/lesson-question-thread.tsx
 msgctxt "x8F_ZU"
 msgid "Questions about this chapter"
-msgstr "이 단원에 대한 질문"
+msgstr "이 챕터에 대한 질문"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "-OSLps"
@@ -4014,7 +4016,7 @@ msgstr "내 답에 대해"
 #: src/questions/lesson-question-turn.tsx
 msgctxt "xY7fiy"
 msgid "About this chapter"
-msgstr "이 장에 대해"
+msgstr "이 챕터에 대해"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "A6lEGi"
@@ -4071,6 +4073,7 @@ msgctxt "C1eFF3"
 msgid "No answer available."
 msgstr "답변이 없어요."
 
+#. The study buddy is writing its answer; it speaks as "I".
 #: src/questions/lesson-question-turn.tsx
 msgctxt "P1QHV0"
 msgid "Thinking…"
@@ -4096,6 +4099,7 @@ msgctxt "nCFX1M"
 msgid "Load earlier questions"
 msgstr "이전 질문 불러오기"
 
+#. Label of the field where the learner types a question.
 #: src/questions/lesson-question-turn.tsx
 msgctxt "LIVM_k"
 msgid "Your question"
@@ -4209,7 +4213,7 @@ msgstr "이 답을 차근차근 설명해 주세요"
 #: src/questions/use-tutor-suggestions.ts
 msgctxt "hE0dmj"
 msgid "What will I be able to do after this chapter?"
-msgstr "이 장을 마치면 무엇을 할 수 있나요?"
+msgstr "이 챕터를 마치면 무엇을 할 수 있나요?"
 
 #: src/questions/use-tutor-suggestions.ts
 msgctxt "nd7C7Y"
