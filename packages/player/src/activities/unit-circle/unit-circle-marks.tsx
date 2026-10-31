@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { useLayoutEffect, useRef, useState } from "react";
 import { DRAWING_LABEL_HALO } from "../_utils/drawing-label";
 import { type TrigName } from "./use-unit-circle-format";
 
@@ -10,7 +11,6 @@ const HALF_TURN = 180;
 const LABEL_GAP = 8;
 const SEGMENT_WIDTH = 4;
 const SIN_LABEL_GAP = 26;
-const LABEL_CHAR_WIDTH = 8.5;
 const SIN_LABEL_PAST_POINT = 25;
 
 const TRIG_TONES: Record<TrigName, { stroke: string; text: string }> = {
@@ -39,18 +39,21 @@ export function DialLabel({
   children,
   className,
   point,
+  ref,
 }: {
   anchor: "end" | "middle" | "start";
   baseline?: LabelBaseline;
   children: React.ReactNode;
   className?: string;
   point: Vector;
+  ref?: React.Ref<SVGTextElement>;
 }) {
   return (
     <text
       aria-hidden="true"
       className={cn("text-sm font-semibold tabular-nums", DRAWING_LABEL_HALO, className)}
       dominantBaseline={baseline}
+      ref={ref}
       textAnchor={anchor}
       x={point.x}
       y={point.y}
@@ -112,7 +115,7 @@ function sinLabelPlacement({
   foot,
   isAbove,
   isLeft,
-  label,
+  labelWidth,
   point,
   target,
 }: {
@@ -120,11 +123,10 @@ function sinLabelPlacement({
   foot: Vector;
   isAbove: boolean;
   isLeft: boolean;
-  label: string;
+  labelWidth: number;
   point: Vector;
   target: Vector | null;
 }): { anchor: "end" | "middle" | "start"; baseline: LabelBaseline; point: Vector } {
-  const labelWidth = label.length * LABEL_CHAR_WIDTH;
   const beside = foot.x + (isLeft ? -1 : 1) * SIN_LABEL_GAP;
   const fits = isLeft ? beside - labelWidth >= 0 : beside + labelWidth <= canvas.width;
 
@@ -176,13 +178,19 @@ export function TrigLegs({
   const isLeft = point.x < center.x;
   const isAbove = point.y <= center.y;
   const sinLabel = `${names.sin} = ${formatValue(values.sin ?? null)}`;
+  const sinRef = useRef<SVGTextElement>(null);
+  const [drawnSin, setDrawnSin] = useState({ label: "", width: 0 });
+
+  useLayoutEffect(() => {
+    setDrawnSin({ label: sinLabel, width: sinRef.current?.getBBox().width ?? 0 });
+  }, [sinLabel]);
 
   const sinPlacement = sinLabelPlacement({
     canvas,
     foot,
     isAbove,
     isLeft,
-    label: sinLabel,
+    labelWidth: drawnSin.label === sinLabel ? drawnSin.width : 0,
     point,
     target,
   });
@@ -223,6 +231,7 @@ export function TrigLegs({
             baseline={sinPlacement.baseline}
             className={TRIG_TONES.sin.text}
             point={sinPlacement.point}
+            ref={sinRef}
           >
             {sinLabel}
           </DialLabel>

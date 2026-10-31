@@ -143,6 +143,35 @@ describe("geometry and data activities", () => {
     });
   });
 
+  it("unit circle: in large text a long negative sine value stays inside the dial", async () => {
+    document.documentElement.style.fontSize = "200%";
+
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport({ height: 812, width: 375 }, async () => {
+      openActivity({ template: "unitCircle" });
+      await pressOnSlider("Point on the circle", "End", 1);
+      await press("ArrowLeft", 3);
+
+      const dial = document.querySelector("figure svg");
+
+      const sine = () =>
+        [...(dial?.querySelectorAll("text") ?? [])].find((text) =>
+          /^sin = [-−]/u.test(text.textContent ?? ""),
+        );
+
+      await expect.poll(sine).toBeDefined();
+
+      const box = sine()?.getBoundingClientRect();
+      const edges = dial?.getBoundingClientRect();
+
+      expect(box?.left).toBeGreaterThanOrEqual(edges?.left ?? Number.POSITIVE_INFINITY);
+      expect(box?.right).toBeLessThanOrEqual(edges?.right ?? Number.NEGATIVE_INFINITY);
+    });
+  });
+
   it("unit circle: reading the wrong angle is wrong", async () => {
     openActivity({ template: "unitCircle" });
     await pressOnSlider("Point on the circle", "ArrowRight", 3);
