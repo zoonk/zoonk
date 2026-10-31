@@ -56,6 +56,17 @@ describe(getReadingReasoning, () => {
 });
 
 describe(mergeQuestionFormats, () => {
+  it("keeps different formats quoted in the same sentence", () => {
+    const passage = "Questions are multiple choice or numeric entry.";
+    const choice = { ...format("multipleChoice", 5), passage };
+    const numeric = { ...format("numeric"), passage };
+
+    expect(mergeQuestionFormats({ found: [choice], read: [choice, numeric] })).toStrictEqual([
+      choice,
+      numeric,
+    ]);
+  });
+
   it("adds every format the reading missed, two of the same kind included", () => {
     const table = { ...format("shortAnswer"), description: "Completar a tabela das organelas" };
     const essay = { ...format("essay"), description: "Dissertativa sobre osmose" };
