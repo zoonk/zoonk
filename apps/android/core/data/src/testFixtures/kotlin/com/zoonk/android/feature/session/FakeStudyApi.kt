@@ -15,12 +15,12 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import java.util.UUID
 
-internal fun opening(
+fun opening(
     kind: String,
     vararg fields: Pair<String, Any?>,
 ): JsonObject = JsonObject(mapOf("kind" to JsonPrimitive(kind)) + fields.associate { (key, value) -> key to value.toJson() })
 
-internal class FakeStudyApi : StudyApi {
+class FakeStudyApi : StudyApi {
     val opened = mutableListOf<OpenStudyDayRequest>()
     val targets = mutableListOf<StudyBlockOpeningTarget>()
     val added = mutableListOf<UUID>()

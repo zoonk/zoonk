@@ -12,13 +12,13 @@ import com.zoonk.api.models.StudySessionWeekTime
 import kotlinx.datetime.LocalDate
 import java.util.UUID
 
-internal val GOAL: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d01")
-internal val SESSION: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d02")
-internal val DAY: LocalDate = LocalDate(2026, 10, 28)
+val GOAL: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d01")
+val SESSION: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d02")
+val DAY: LocalDate = LocalDate(2026, 10, 28)
 
-internal fun blockId(position: Int): UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2e%02d".format(position))
+fun blockId(position: Int): UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2e%02d".format(position))
 
-internal fun step(
+fun step(
     position: Int,
     status: StudyBlock.Status = StudyBlock.Status.PENDING,
     kind: StudyBlock.Kind = StudyBlock.Kind.LEARN,
@@ -60,7 +60,7 @@ internal fun step(
         waitReason = null,
     )
 
-internal fun day(
+fun day(
     steps: List<DayStep> = listOf(step(0), step(1)),
     nextPosition: Long? = steps.firstOrNull { !it.isFinished }?.position,
     dailyGoal: Double = 20.0,

@@ -8,7 +8,7 @@ import com.zoonk.api.models.Today
 import java.util.UUID
 import kotlin.time.Instant
 
-internal class FakeTodayApi(
+class FakeTodayApi(
     private val answers: List<Today>,
 ) : TodayApi {
     var reads = 0

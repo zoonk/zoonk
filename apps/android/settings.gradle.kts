@@ -27,4 +27,5 @@ include(
     ":feature:onboarding",
     ":feature:plan",
     ":feature:player",
+    ":feature:today",
 )

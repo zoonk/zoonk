@@ -8,7 +8,7 @@ import kotlinx.coroutines.CompletableDeferred
 import java.util.UUID
 import kotlin.time.Instant
 
-internal fun earlierQuestion(
+fun earlierQuestion(
     n: Int,
     answer: String? = "Answer $n",
     courseTitle: String? = "Atoms",
@@ -23,7 +23,7 @@ internal fun earlierQuestion(
 )
 
 /** Two pages, newest first: questions 1 and 2, then 3 and 4. */
-internal class FakeEarlierQuestionsApi : EarlierQuestionsApi {
+class FakeEarlierQuestionsApi : EarlierQuestionsApi {
     var first = EarlierQuestions(nextCursor = UUID(0, 2), questions = listOf(earlierQuestion(1), earlierQuestion(2)))
     var older = EarlierQuestions(nextCursor = null, questions = listOf(earlierQuestion(3), earlierQuestion(4)))
     val reads = mutableListOf<Pair<String, UUID?>>()

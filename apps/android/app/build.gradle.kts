@@ -90,6 +90,7 @@ dependencies {
     implementation(project(":feature:onboarding"))
     implementation(project(":feature:plan"))
     implementation(project(":feature:player"))
+    implementation(project(":feature:today"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.lifecycle.runtime.compose)

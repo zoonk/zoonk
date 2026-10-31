@@ -69,7 +69,7 @@ internal fun TodayPractice(
 }
 
 @Composable
-internal fun TodayPracticeRows(
+fun TodayPracticeRows(
     mistakes: MistakeListAvailability?,
     mocks: MockOptions?,
     speaking: LanguageTodaySpeaking?,

@@ -84,7 +84,7 @@ internal class TodayDayModel(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun TodayDay(
+fun TodayDay(
     read: TodayRead.Day,
     today: Resource<TodayRead>,
     switching: Boolean,

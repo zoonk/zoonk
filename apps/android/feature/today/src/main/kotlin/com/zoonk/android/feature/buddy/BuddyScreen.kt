@@ -142,7 +142,7 @@ private val LearnerSummary.tutoredGoalId: String?
             ?.toString()
 
 @Composable
-internal fun BuddyPage(
+fun BuddyPage(
     status: BuddyStatus,
     goalId: String,
     ask: String?,
