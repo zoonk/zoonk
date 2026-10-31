@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.captureToImage
@@ -17,6 +18,7 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -37,6 +39,7 @@ import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageToday
@@ -70,6 +73,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
+import java.util.Locale
 import java.util.UUID
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -281,6 +285,63 @@ class TodayFlowTest {
         show("blocks" to JsonArray(listOf(challenge)))
 
         rule.onNodeWithText("Spanish\u00A0· Ordering food\u00A0· 8 questions, no hints").assertExists()
+    }
+
+    private fun limit(reached: Boolean) =
+        buildJsonObject {
+            put("limitMinutes", 180)
+            put("reached", reached)
+            put("remainingMinutes", if (reached) 0 else 180)
+            put("usedMinutes", if (reached) 180 else 0)
+        }
+
+    private fun dayMinutes(done: Int) =
+        buildJsonObject {
+            put("dailyGoal", 240)
+            put("done", done)
+            put("planned", 180)
+        }
+
+    private val threeHours = formatMinutes(180, Locale.ENGLISH)
+
+    /** A test layout gives inline links no size to tap, so a link is found and followed through the line's text. */
+    private fun link(label: String): LinkAnnotation.Clickable {
+        val text =
+            rule
+                .onNodeWithText(label, substring = true)
+                .fetchSemanticsNode()
+                .config[SemanticsProperties.Text]
+                .first()
+        return text.getLinkAnnotations(0, text.length).first { text.substring(it.start, it.end) == label }.item as LinkAnnotation.Clickable
+    }
+
+    @Test
+    fun aDailyLimitShorterThanTheDaySaysTodayStopsThereAndLinksToIt() {
+        show("minutes" to dayMinutes(done = 0), "dailyLimit" to limit(reached = false))
+
+        rule.onNodeWithText("Today stops at your daily time limit of $threeHours.", substring = true).assertExists()
+        val change = link("Change limit")
+        rule.runOnIdle { change.linkInteractionListener?.onClick(change) }
+        rule.waitForIdle()
+
+        assertEquals(AppRoute.Preferences, navigator.currentRoute)
+    }
+
+    @Test
+    fun aDayTheLimitEndedShortSaysTheLimitWasReachedInsteadOfThatTheDayIsDone() {
+        show("state" to "done", "nextPosition" to null, "minutes" to dayMinutes(done = 180), "dailyLimit" to limit(reached = true))
+
+        rule.onNodeWithText("You've reached your daily time limit of $threeHours.", substring = true).assertExists()
+        rule.onNodeWithText("Today's session is complete.", substring = true).assertDoesNotExist()
+        link("Change limit")
+    }
+
+    @Test
+    fun aDayAtItsLimitSaysTheDailyTimeLimitWasReached() {
+        show("state" to "limit", "nextPosition" to null, "minutes" to dayMinutes(done = 180), "dailyLimit" to limit(reached = true))
+
+        rule.onNodeWithText("You've reached your daily time limit of $threeHours.", substring = true).assertExists()
+        link("Change limit")
     }
 
     @Test

@@ -83,11 +83,11 @@ class CheckpointCallTest {
     }
 
     @Test
-    fun todaysStudyTimeUsedUpLeadsBackToToday() {
+    fun aReachedDailyTimeLimitLeadsBackToToday() {
         harness.api.checkpoint = checkpointIntro(dailyLimitReached = true)
         show()
 
-        compose.onNodeWithText("You've reached today's study time. You can make this call in your next session.").assertExists()
+        compose.onNodeWithText("You've reached your daily time limit. You can make this call in your next session.").assertExists()
         compose.onNodeWithText("Start the call").assertDoesNotExist()
         compose.onNodeWithText("Back to Today").performClick()
         assertEquals(1, today)

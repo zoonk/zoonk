@@ -55,11 +55,11 @@
   "challenge_trickster_recordings": "311880f05c5cb04eda5c63731118fd73059ea933cc8ca37cd8c6d736a46a543b",
   "challenge_trickster_rule": "cb27a0bd0c0d69bb5ea905ffd8597c480ccfe3c6278b54d0a46807c217c09083",
   "challenge_undo": "87d93eff54465f5dda3ec2338421f27583948ab28f291861528ddc11ed9026ae",
-  "challenge_used_up_move": "017f8f978126a48bafb10f958bbb8dc1d849652bf1d920a6e95342755701b173",
-  "challenge_used_up_next_session": "6fd0d23642e491cf1c202c4a5f67703581b19c81271fda9fa7ab21ca7471bc57",
-  "challenge_used_up_on": "eaaedb46a3e71cc73b0cdb8f4d18b0fb7cade8875c4a83d6241394426f234812",
-  "challenge_used_up_tomorrow": "14411f00dec1bc023e9a3b806d89dbd4f4e43ec9d12e240f3691f6b0b5fee44b",
-  "challenge_used_up_weekly": "4c118345ec8f87f2ad1eec2cac26074fe8803a93d18d983a4bda0d3b45896291",
+  "challenge_used_up_move": "dcc874d2bef1b1ae979651e00c2ddf3e769e42c5089c7dd594340c72b51f28f7",
+  "challenge_used_up_next_session": "7d2c631fd5aabd31055eeee7e68aa6c39d3df59e60ae5b6886a8e6734638fb93",
+  "challenge_used_up_on": "40d210b8d083d59077f354f6b9b52b5a265bb3d0cce3dcf09675ef2a25ff6cdb",
+  "challenge_used_up_tomorrow": "96cd6ca28a409f955a8d9f96f8b9d57961967e97d4469a9bc99c4b147a63b851",
+  "challenge_used_up_weekly": "313be5c0ad8bc2474fbdb643d3b3e542d821ea9bdfa4a8ceee00fd90b1166e6d",
   "challenge_weekly_detail": "e51bcb663229e38b3a9d64738c037b63de5a2eb95a3111c7fd37f61e30d30c89",
   "challenge_weekly_rule": "814c4de11f133eeab6126a5e4d32699ed5b262538a8ab7b7d2632062be873bb0",
   "challenge_writing": "a8c7d5787c299e63979e0880e3070af6afbcf505aaf11d08b6570153c0d9e46d",
@@ -166,13 +166,16 @@
     <string name="challenge_opens_after_lessons">S’ouvre après les leçons de cette phase</string>
     <string name="challenge_not_ready">Ce défi n’est pas encore prêt.</string>
     <string name="challenge_next_session">À ta prochaine séance</string>
-    <!-- The weekly challenge can't move to another day, so the learner misses it this week. -->
-    <string name="challenge_used_up_weekly">Tu as utilisé tout ton temps d’étude pour aujourd’hui. Tu manqueras le défi de cette semaine.</string>
-    <string name="challenge_used_up_move">Tu as utilisé tout ton temps d’étude pour aujourd’hui. Reporte le défi à lundi pour le garder.</string>
-    <string name="challenge_used_up_next_session">Tu as utilisé tout ton temps d’étude pour aujourd’hui. Tu retrouveras le défi lors de ta prochaine séance.</string>
-    <string name="challenge_used_up_tomorrow">Tu as utilisé tout ton temps d’étude pour aujourd’hui. Le défi sera là demain.</string>
-    <!-- %1$s is a weekday, like Monday. -->
-    <string name="challenge_used_up_on">Tu as utilisé tout ton temps d’étude pour aujourd’hui. Le défi sera là %1$s.</string>
+    <!-- The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week. -->
+    <string name="challenge_used_up_weekly">Tu as atteint ta limite de temps pour aujourd’hui. Tu vas manquer le défi de cette semaine.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_move">Tu as atteint ta limite de temps quotidienne. Reporte le défi à lundi pour le conserver.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_next_session">Tu as atteint ta limite de temps quotidienne. Tu retrouveras le défi à ta prochaine séance.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_tomorrow">Tu as atteint ta limite de temps quotidienne. Le défi sera là demain.</string>
+    <!-- The daily time limit is a setting that stops study for the day. %1$s is a weekday, like Monday. -->
+    <string name="challenge_used_up_on">Tu as atteint ta limite quotidienne de temps d’étude. Le défi sera disponible %1$s.</string>
     <string name="challenge_back_to_today">Retour à Aujourd’hui</string>
     <string name="challenge_move">Déplacer à lundi</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->

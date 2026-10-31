@@ -45,6 +45,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
@@ -768,20 +769,15 @@ private fun TodayDayStatus(
 
     when (model.state) {
         StudySession.State.DONE -> {
+            if (day.limitCutDayShort) {
+                LimitStatus(model, actions, reached = true, modifier)
+                return
+            }
             val studied = day.studiedToday()
-            val summary = stringResource(R.string.today_see_summary)
             val link =
                 if (model.keepLearning) {
-                    buildAnnotatedString {
-                        withLink(
-                            LinkAnnotation.Clickable(
-                                tag = "summary",
-                                styles =
-                                    TextLinkStyles(
-                                        SpanStyle(fontWeight = FontWeight.Medium, textDecoration = TextDecoration.Underline),
-                                    ),
-                            ) { actions.navigate(AppRoute.Session(goalId = (day.goalId ?: model.today.goal.id).toString())) },
-                        ) { append(summary) }
+                    statusLink(stringResource(R.string.today_see_summary)) {
+                        actions.navigate(AppRoute.Session(goalId = (day.goalId ?: model.today.goal.id).toString()))
                     }
                 } else {
                     null
@@ -820,7 +816,7 @@ private fun TodayDayStatus(
         }
 
         StudySession.State.LIMIT -> {
-            TodayStatusLine(R.drawable.ic_hourglass_empty, stringResource(R.string.today_limit), seeYou(model), modifier)
+            LimitStatus(model, actions, reached = true, modifier)
         }
 
         StudySession.State.REST -> {
@@ -849,9 +845,42 @@ private fun TodayDayStatus(
             }
         }
 
-        StudySession.State.UNDERWAY -> {}
+        StudySession.State.UNDERWAY -> {
+            if (day.limitCapsDay) LimitStatus(model, actions, reached = false, modifier)
+        }
     }
 }
+
+/** The day's line while the daily time limit cuts it short, or once it has ended it, with the way to change the limit. */
+@Composable
+private fun LimitStatus(
+    model: TodayDayModel,
+    actions: TodayActionHandlers,
+    reached: Boolean,
+    modifier: Modifier,
+) {
+    val time = formatMinutes((model.day.dailyLimit?.limitMinutes ?: 0).toInt(), currentLocale())
+    TodayStatusLine(
+        icon = R.drawable.ic_hourglass_empty,
+        sentence = stringResource(if (reached) R.string.today_limit_reached else R.string.today_limit_stops, time),
+        clause = if (reached) seeYou(model) else null,
+        modifier = modifier,
+        link = statusLink(stringResource(R.string.today_change_limit)) { actions.navigate(AppRoute.Preferences) },
+    )
+}
+
+private fun statusLink(
+    label: String,
+    onClick: () -> Unit,
+): AnnotatedString =
+    buildAnnotatedString {
+        withLink(
+            LinkAnnotation.Clickable(
+                tag = label,
+                styles = TextLinkStyles(SpanStyle(fontWeight = FontWeight.Medium, textDecoration = TextDecoration.Underline)),
+            ) { onClick() },
+        ) { append(label) }
+    }
 
 /** "See you tomorrow!" only when tomorrow is a study day; else the plan's next day by name, or the next session. */
 @Composable

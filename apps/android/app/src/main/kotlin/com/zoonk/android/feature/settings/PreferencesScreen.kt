@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
@@ -39,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -254,12 +257,13 @@ private fun BuddySection(
 }
 
 @Composable
-private fun LessonsSection(
+internal fun LessonsSection(
     profile: LearningProfile,
     preferences: PreferencesViewModel,
 ) {
     var isChoosingLimit by rememberSaveable { mutableStateOf(false) }
     val locale = currentLocale()
+    val limits = listOf(null) + (profile.dailyTimes + listOfNotNull(profile.dailyLimitMinutes)).distinct().sorted()
 
     @Composable
     fun limitLabel(minutes: Long?) =
@@ -292,7 +296,8 @@ private fun LessonsSection(
                     onDismissRequest = { isChoosingLimit = false },
                     modifier = Modifier.align(Alignment.TopEnd),
                 ) {
-                    (listOf<Long?>(null) + DAILY_LIMIT_CHOICES).forEach { minutes ->
+                    val current = remember { BringIntoViewRequester() }
+                    limits.forEach { minutes ->
                         val isCurrent = minutes == profile.dailyLimitMinutes
                         DropdownMenuItem(
                             text = { Text(limitLabel(minutes)) },
@@ -309,13 +314,17 @@ private fun LessonsSection(
                                 } else {
                                     null
                                 },
-                            modifier = Modifier.semantics { selected = isCurrent },
+                            modifier =
+                                Modifier
+                                    .semantics { selected = isCurrent }
+                                    .then(if (isCurrent) Modifier.bringIntoViewRequester(current) else Modifier),
                             onClick = {
                                 isChoosingLimit = false
                                 if (minutes != profile.dailyLimitMinutes) preferences.setDailyLimit(minutes)
                             },
                         )
                     }
+                    LaunchedEffect(Unit) { current.bringIntoView() }
                 }
             }
         }
@@ -354,6 +363,3 @@ private fun Section(
         content()
     }
 }
-
-/** Core's `DAILY_LIMIT_CHOICES`. */
-private val DAILY_LIMIT_CHOICES = listOf<Long?>(15, 30, 45, 60, 90, 120, 180)

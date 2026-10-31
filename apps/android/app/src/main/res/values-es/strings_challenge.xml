@@ -55,11 +55,11 @@
   "challenge_trickster_recordings": "ebd2c5024c57b2dfe26403e0b4e95f9574eda91493f56b7806001371a72053c6",
   "challenge_trickster_rule": "4c810ea14fd37a74d5a6fcbc07ed351a628b1b5e64a8537f9a92f734218244d2",
   "challenge_undo": "b6431e30a3dbe22216573eab92ea72f9438dbad96266e5a42b6dd2def1b32119",
-  "challenge_used_up_move": "d54366eb93cc04c37c1468f609a71bd4550e47b9f5edd1f74c09ffd8b73076de",
-  "challenge_used_up_next_session": "b42ab2fbd25aeb2ae84f5b3aef589910fc24f6b920ccb46b7125d26e5059000b",
-  "challenge_used_up_on": "936b075e90234fd3665583382b3e0250b68b674713e61fd98993e602e5f74e4e",
-  "challenge_used_up_tomorrow": "4d76177a2421633e8df3ecdceaf6fd69d0d4bc31b4e2d89042d4bf55ffc71001",
-  "challenge_used_up_weekly": "397e8109ce44f1e824b932af13a5e2bdde62bd74d35976eda396f73f0fbcd3ac",
+  "challenge_used_up_move": "5be38a86653722883a0733a514127421b39290725e7ca6fb209b5dc01f9d37e6",
+  "challenge_used_up_next_session": "e1d2ededbd161db6c4fcafda064e0e95135e506a5aedd14aa6c74051c9e2c4fc",
+  "challenge_used_up_on": "e4c98cf79c312978198e97dcf384101bbcb80a854fba2fe2993af999a6e82770",
+  "challenge_used_up_tomorrow": "7df3cdfcad5b844bc53b95bf6da1ceb600828332cda0aeb2a455fa08e9a91bae",
+  "challenge_used_up_weekly": "768cfd60c9349e1a19f20af434cf9d5877db2710dc18a518a6305688fad19bb3",
   "challenge_weekly_detail": "e020e5da75aff8bbd94f26056989f0621e094110985f1d9ec0b44da1d75598ac",
   "challenge_weekly_rule": "6a50e69ccdd0e0034428356755ddcc2cf44af235362e645df26377e38623c360",
   "challenge_writing": "bf74f5044f26274995d6e265636f4897426ad44bf558074a43fd875794a9bf21",
@@ -166,13 +166,16 @@
     <string name="challenge_opens_after_lessons">Se abre después de las lecciones de esta fase</string>
     <string name="challenge_not_ready">Este desafío aún no está listo.</string>
     <string name="challenge_next_session">En tu próxima sesión</string>
-    <!-- The weekly challenge can't move to another day, so the learner misses it this week. -->
-    <string name="challenge_used_up_weekly">Has completado tu tiempo de estudio de hoy. Te perderás el desafío de esta semana.</string>
-    <string name="challenge_used_up_move">Has completado tu tiempo de estudio de hoy. Pasa el desafío al lunes para conservarlo.</string>
-    <string name="challenge_used_up_next_session">Has completado tu tiempo de estudio de hoy. El desafío estará en tu próxima sesión.</string>
-    <string name="challenge_used_up_tomorrow">Has completado tu tiempo de estudio de hoy. El desafío estará aquí mañana.</string>
-    <!-- %1$s is a weekday, like Monday. -->
-    <string name="challenge_used_up_on">Has completado tu tiempo de estudio de hoy. El desafío estará aquí el %1$s.</string>
+    <!-- The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week. -->
+    <string name="challenge_used_up_weekly">Has alcanzado tu límite de tiempo diario. Te perderás el desafío de esta semana.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_move">Has alcanzado tu límite de tiempo diario. Pasa el desafío al lunes para conservarlo.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_next_session">Has alcanzado tu límite de tiempo diario. El desafío estará en tu próxima sesión.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_tomorrow">Has alcanzado tu límite de tiempo diario. El desafío estará aquí mañana.</string>
+    <!-- The daily time limit is a setting that stops study for the day. %1$s is a weekday, like Monday. -->
+    <string name="challenge_used_up_on">Has alcanzado tu límite de tiempo diario. El desafío estará disponible el %1$s.</string>
     <string name="challenge_back_to_today">Volver a Hoy</string>
     <string name="challenge_move">Pasar al lunes</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->

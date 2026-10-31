@@ -55,11 +55,11 @@
   "challenge_trickster_recordings": "3868421f63eba9a03272338c68039311bf35c8883b29537bca5791fc466990b2",
   "challenge_trickster_rule": "689a8f76daf881bbcfbd1aad8eb7eb02afbfd847a3cfbf4be0b6a4d17097f82e",
   "challenge_undo": "dbcbcd05608fefedb08b824fcb5d687d64998afdb6f5a446bae8d967a4bad20f",
-  "challenge_used_up_move": "448926a824f465630142f00723cf2e4ae6f4a181575f11d0531dee1a5c34f3c8",
-  "challenge_used_up_next_session": "9c001c3f4c0b02fb83734986913b758d3e49f7fb0644de6f5f760fbd50465931",
-  "challenge_used_up_on": "690aaa9e97c7e115e332affb943711296c164ed14b610f85fb2cfabeda4cdae2",
-  "challenge_used_up_tomorrow": "fe0a3f6977ff5234398894ce843a6be88e689babdb601dca9a447e1ac7b1abb4",
-  "challenge_used_up_weekly": "c71a999ad867306cc4d60c3f0af58598a2faf26b6624fe06c6b3670044716b63",
+  "challenge_used_up_move": "dae2bdeec56ff3aa9cb06ec4e5f0330621bac0271245130eb69b6753d8130e73",
+  "challenge_used_up_next_session": "c956d7b24cfef84520d1231561e365a88c9d250c8bce9bdd9b1f05185c0cec83",
+  "challenge_used_up_on": "e78b9907f19072b1dd0964c740bff769f11e2fd32433dcc96956e06e94c66098",
+  "challenge_used_up_tomorrow": "9dd2fba915187e38f59172fc1aa7a3cb86c454abf011044e415ffcd7d57eb3ef",
+  "challenge_used_up_weekly": "a2a61da20e44e875f4ee26a715da113851f6d8db2073eafd86c0d375813546f1",
   "challenge_weekly_detail": "e7d36e516e927cca97f2a6247f8a6e07801a1e3ca70fc1e11b47b01ed0d2cdf5",
   "challenge_weekly_rule": "85d84b0e6211e2766351d292fb99597a7ab13d998eac810d848345ad5c4cf633",
   "challenge_writing": "97a653fe44beda98455a50a439d67ae6faa7391e2f1d634bf18eb4b8470a8e12",
@@ -158,13 +158,16 @@
     <string name="challenge_opens_after_lessons">Wird nach den Lektionen dieser Phase freigeschaltet</string>
     <string name="challenge_not_ready">Diese Herausforderung ist noch nicht bereit.</string>
     <string name="challenge_next_session">In deiner nächsten Lerneinheit</string>
-    <!-- The weekly challenge can't move to another day, so the learner misses it this week. -->
-    <string name="challenge_used_up_weekly">Deine Lernzeit für heute ist aufgebraucht. Du verpasst die Herausforderung dieser Woche.</string>
-    <string name="challenge_used_up_move">Deine Lernzeit für heute ist aufgebraucht. Verschieb die Herausforderung auf Montag, um sie zu behalten.</string>
-    <string name="challenge_used_up_next_session">Deine Lernzeit für heute ist aufgebraucht. Die Herausforderung wartet in deiner nächsten Lerneinheit auf dich.</string>
-    <string name="challenge_used_up_tomorrow">Deine Lernzeit für heute ist aufgebraucht. Die Herausforderung wartet morgen hier auf dich.</string>
-    <!-- %1$s is a weekday, like Monday. -->
-    <string name="challenge_used_up_on">Deine Lernzeit für heute ist aufgebraucht. Die Herausforderung wartet am %1$s hier auf dich.</string>
+    <!-- The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week. -->
+    <string name="challenge_used_up_weekly">Du hast dein tägliches Zeitlimit erreicht. Du verpasst die Herausforderung dieser Woche.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_move">Du hast dein tägliches Zeitlimit erreicht. Verschieb die Herausforderung auf Montag, um sie zu behalten.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_next_session">Du hast dein tägliches Zeitlimit erreicht. Die Herausforderung wartet in deiner nächsten Lerneinheit auf dich.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_tomorrow">Du hast dein tägliches Zeitlimit erreicht. Die Herausforderung wartet morgen hier auf dich.</string>
+    <!-- The daily time limit is a setting that stops study for the day. %1$s is a weekday, like Monday. -->
+    <string name="challenge_used_up_on">Du hast dein tägliches Zeitlimit erreicht. Die Herausforderung wartet am %1$s auf dich.</string>
     <string name="challenge_back_to_today">Zurück zu Heute</string>
     <string name="challenge_move">Auf Montag verschieben</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->

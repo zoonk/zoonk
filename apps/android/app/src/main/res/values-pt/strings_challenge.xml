@@ -55,11 +55,11 @@
   "challenge_trickster_recordings": "6acc514cef0198517eb52ddf4c5fc83ea28011b853754aea24e4c32d7938c06a",
   "challenge_trickster_rule": "d5453189112a83ec8f5a8fc2ef0e7a8e2ca6229cb7e7047342eef17b40ca9c86",
   "challenge_undo": "5523940309280a16ddc2823e9270dfa8ec4c35e70611ba7d93b3bbd8e8d459cf",
-  "challenge_used_up_move": "7e352bed52f7eb78c4f78feab4b46350272b1a173aee5946ded5331720872adf",
-  "challenge_used_up_next_session": "de8492e1165482f49377708b126357e9d6fb1ab25a5cbab78eea2b96abcfaa0a",
-  "challenge_used_up_on": "918bfdb0ca4bec742ef894b8a519f229669a2f68d254dbaeb60be95b1e229d6d",
-  "challenge_used_up_tomorrow": "6ed5ed1bade7d282153a085947a3f45633d736566fe6b49c1a5db321f3aaa431",
-  "challenge_used_up_weekly": "8a9032d407081915d71c405211f1686d275ff859f550380ae1f17a74a64c9b0c",
+  "challenge_used_up_move": "63e2d685c70a4abefe8dd4a78d845f3067be0446217dba0acbf2db86d7324f54",
+  "challenge_used_up_next_session": "60279a209aaf9e90589923a0fc60743356620d5009ffb9df530c23cafab82195",
+  "challenge_used_up_on": "f1338f740eba6dc28785818b6841ee833d2165a4af3e1f370b7681c740f61d58",
+  "challenge_used_up_tomorrow": "f33ce52132eff8e21ca40705511a3e496804ec7993c0315a4385a0e4d7d6eedb",
+  "challenge_used_up_weekly": "e1a974908ba6596afd6ef648bbc231481d2556bb4965e7b2468614bfefc48665",
   "challenge_weekly_detail": "ef835e83acf919106ad68ddf569bd93c688246c82ff17585074a79c81e339a12",
   "challenge_weekly_rule": "a4743826caa6b63476d0f477675a34ffc3fbe36104574e21cde3ce88e02845c0",
   "challenge_writing": "5364003acd39a2df5eeb4bbd03f6a3d75d57aee322ef4912ddba458912798cc0",
@@ -166,13 +166,16 @@
     <string name="challenge_opens_after_lessons">Abre depois das aulas desta fase</string>
     <string name="challenge_not_ready">Este desafio ainda não está pronto.</string>
     <string name="challenge_next_session">Na sua próxima sessão</string>
-    <!-- The weekly challenge can't move to another day, so the learner misses it this week. -->
-    <string name="challenge_used_up_weekly">Você usou todo o seu tempo de estudo de hoje. Você vai ficar de fora do desafio desta semana.</string>
-    <string name="challenge_used_up_move">Você usou todo o seu tempo de estudo de hoje. Para manter o desafio, mude a data para segunda-feira.</string>
-    <string name="challenge_used_up_next_session">Você usou todo o seu tempo de estudo de hoje. O desafio vai estar na sua próxima sessão.</string>
-    <string name="challenge_used_up_tomorrow">Você usou todo o seu tempo de estudo de hoje. O desafio vai estar aqui amanhã.</string>
-    <!-- %1$s is a weekday, like Monday. -->
-    <string name="challenge_used_up_on">Você usou todo o seu tempo de estudo de hoje. O desafio vai estar aqui %1$s.</string>
+    <!-- The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week. -->
+    <string name="challenge_used_up_weekly">Você atingiu seu limite diário de estudo. Você vai perder o desafio desta semana.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_move">Você atingiu seu limite diário de tempo. Para manter o desafio, passe ele para segunda-feira.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_next_session">Você atingiu seu limite diário de tempo. O desafio ficará para a sua próxima sessão.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_tomorrow">Você atingiu seu limite diário de tempo. O desafio estará aqui amanhã.</string>
+    <!-- The daily time limit is a setting that stops study for the day. %1$s is a weekday, like Monday. -->
+    <string name="challenge_used_up_on">Você atingiu seu limite diário de tempo. O desafio vai estar aqui %1$s.</string>
     <string name="challenge_back_to_today">Voltar para Hoje</string>
     <string name="challenge_move">Mudar para segunda-feira</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->

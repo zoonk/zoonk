@@ -92,13 +92,16 @@
     <string name="challenge_opens_after_lessons">Opens after this phase\'s lessons</string>
     <string name="challenge_not_ready">This challenge isn\'t ready yet.</string>
     <string name="challenge_next_session">In your next session</string>
-    <!-- The weekly challenge can't move to another day, so the learner misses it this week. -->
-    <string name="challenge_used_up_weekly">You\'ve reached today\'s study time. You\'ll miss this week\'s challenge.</string>
-    <string name="challenge_used_up_move">You\'ve reached today\'s study time. Move the challenge to Monday to keep it.</string>
-    <string name="challenge_used_up_next_session">You\'ve reached today\'s study time. The challenge will be in your next session.</string>
-    <string name="challenge_used_up_tomorrow">You\'ve reached today\'s study time. The challenge will be here tomorrow.</string>
-    <!-- %1$s is a weekday, like Monday. -->
-    <string name="challenge_used_up_on">You\'ve reached today\'s study time. The challenge will be here on %1$s.</string>
+    <!-- The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week. -->
+    <string name="challenge_used_up_weekly">You\'ve reached your daily time limit. You\'ll miss this week\'s challenge.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_move">You\'ve reached your daily time limit. Move the challenge to Monday to keep it.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_next_session">You\'ve reached your daily time limit. The challenge will be in your next session.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_tomorrow">You\'ve reached your daily time limit. The challenge will be here tomorrow.</string>
+    <!-- The daily time limit is a setting that stops study for the day. %1$s is a weekday, like Monday. -->
+    <string name="challenge_used_up_on">You\'ve reached your daily time limit. The challenge will be here on %1$s.</string>
     <string name="challenge_back_to_today">Back to Today</string>
 
     <string name="challenge_move">Move to Monday</string>

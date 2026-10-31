@@ -9,6 +9,14 @@ import com.zoonk.api.models.StudySession
 val DayView.limitReached: Boolean
     get() = dailyLimit?.reached == true
 
+/** The learner's daily time limit is shorter than the day's plan, so the day stops at it. */
+val DayView.limitCapsDay: Boolean
+    get() = dailyLimit?.limitMinutes?.let { it < minutes.dailyGoal } == true
+
+/** The limit ended the day before it held the plan's time. */
+val DayView.limitCutDayShort: Boolean
+    get() = limitReached && minutes.planned < minutes.dailyGoal
+
 val DayView.started: Boolean
     get() = steps.any { it.status != StudyBlock.Status.PENDING }
 

@@ -13,6 +13,7 @@
   "today_catch_up_next_days": "a1bab30bee3a082744554c27c5313049dd738c7bef835e364c09685054009edd",
   "today_catch_up_today": "7af28213a6c33693b22dd4b7a649be327c684ae619c206e7900ba638e855b27e",
   "today_catch_up_tomorrow": "dfc2dd4245cd0d226e3ea02b5bb786513ade4409f89d889424c4e31fd0e5be6b",
+  "today_change_limit": "d51ad17e4fc31536d71dc86993374a0ecb6ab6675df7cdef785067d05fca4fc5",
   "today_choose_focus": "52c1b5c5ce85426cc237a2123a37aed3f9001710bd28b9828e3d1138b49d63ac",
   "today_coming_not_written": "66c6351619833281f16d994066903c2aa72dfa8b0b28acde167b4c0101740a08",
   "today_coming_stalled": "e0bb2a98ded92ba6a52c29109c979e9e27fc0c352982d7d0e296ace4c13e145e",
@@ -60,7 +61,8 @@
   "today_keep_learning_failed": "9b9bc27c9d8e19d0f137428e28c94ce6422a6f7abe23d820279da1254cbd5f46",
   "today_keep_my_time": "e667c32351f32012b0b2d845d150b796311cb60df1d3bb9d03d55147ed212590",
   "today_lessons_not_written": "25514812613cece6555872c969a8192d9619467834dacdc2bab39b18e6ddf216",
-  "today_limit": "0fc8735b09d478eb4fa5640baafa798207aa5627e5fac84a9b2be2f9536a30bb",
+  "today_limit_reached": "233752d00bffe23110eb2305008f59099921eb22dc66952b582bb2f49bf11cfd",
+  "today_limit_stops": "2ccc8782d7a9be8fba44f3cf4f4d537f4b2b963859b361c8c8dd58cdc91c8b75",
   "today_mistakes_notebook": "536f561cc0979f2b969c6ff8b749d4d8d047f6c6bec7976d43d5c946be14994f",
   "today_mistakes_ready": "4c0de7ee5f72a8d51f12e0f9d8ef952fbd5fc02c8ca78413f89ec2453e72f0d7",
   "today_mistakes_redo": "a74d16ab7b5d408cfe3843146979e0f0a45f466b88d533396b8250ba1970c030",
@@ -292,7 +294,12 @@
         <item quantity="other">Dein Zieldatum ist vorbei und %d Lektionen sind noch offen.</item>
     </plurals>
     <string name="today_past_date_detail">Passe deinen Plan an, um weiterzulernen.</string>
-    <string name="today_limit">Das war deine Lernzeit für heute.</string>
+    <!-- The daily time limit is a setting that stops study for the day; it's shorter than the plan's time for today. %1$s is a duration, such as "3 hr". -->
+    <string name="today_limit_stops">Heute endet das Lernen, sobald dein tägliches Zeitlimit von %1$s erreicht ist.</string>
+    <!-- The daily time limit is a setting that stops study for the day. %1$s is a duration, such as "3 hr". -->
+    <string name="today_limit_reached">Du hast dein tägliches Zeitlimit von %1$s erreicht.</string>
+    <!-- A link to the setting for the daily time limit. -->
+    <string name="today_change_limit">Zeitlimit ändern</string>
     <string name="today_see_you_next_session">Bis zu deiner nächsten Lerneinheit!</string>
     <string name="today_see_you_tomorrow">Bis morgen!</string>
     <!-- %1$s is a weekday, such as "Monday". -->

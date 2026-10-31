@@ -13,6 +13,7 @@
   "today_catch_up_next_days": "6d3ac9c46fcbb3a45b3a92491fe8db71dceef1f02fe3e6e9586ecc70c8c4e525",
   "today_catch_up_today": "d2e94709d3df88023b1bf405efee900434d5e930da5f25d1dedd2ac97c267b5b",
   "today_catch_up_tomorrow": "455e41c4dfda0dac392eea1274670e9c97e77145a03a6805c6606c75647c9901",
+  "today_change_limit": "32093ce30855e101bd3b3ea614e33c27a48b121e773aff9257fdecd5c16fd9de",
   "today_choose_focus": "4ed68b961faf157e464059a5f4c80366976a417a8da75ff4820e7554150e8c00",
   "today_coming_not_written": "822cffd71ffe86ce250f135eb7f27dc952459bf327267b06a4f0e3104730a8c3",
   "today_coming_stalled": "e037f3384a4252158d78f19e2f51abdfa300ab8a39e1a5c18a838c3f2cb4c60c",
@@ -60,7 +61,8 @@
   "today_keep_learning_failed": "311b1fe614b0253008a7cc21282a1ae93708b3bd8d972fd8e80776cafa9cad11",
   "today_keep_my_time": "203dde1082a6447f01999b0d02376a83ddcaf4d6658cfe25f31056e3eeebb24c",
   "today_lessons_not_written": "2e862a0879caa013d4865be6658ff504ffd7d4562a5fb5bcf13d0b1d62ddb645",
-  "today_limit": "7bb1a87b7fab786377b70cdfd213cc482f1a2c767c7c9c4d44d250cbd97934e1",
+  "today_limit_reached": "0c0eb3df95b82e257deefb354bdd60ceaee82e4736f108256bf6cb606ba1bced",
+  "today_limit_stops": "2b5c9bd622544e4a8c396279e254b223ccac99b1e6dcbe29a7c796c91f8c23d8",
   "today_mistakes_notebook": "1020376f5e6e336a0a03fa62e739827339e9fca90c3a9d70e0b2dd718ea827da",
   "today_mistakes_ready": "8482ce05549ac67ef3fff1489e9deb69e321c565d44f487c96a460505cd4ebaa",
   "today_mistakes_redo": "4ef3d0edb01663a6950348b7c4776b16705b5ecb20bdfda8bf2081c7f58b9a26",
@@ -302,7 +304,12 @@
         <item quantity="other">Llegó la fecha prevista y quedaban %d lecciones.</item>
     </plurals>
     <string name="today_past_date_detail">Ajusta tu plan para seguir adelante.</string>
-    <string name="today_limit">Ese es el tiempo de estudio de hoy.</string>
+    <!-- The daily time limit is a setting that stops study for the day; it's shorter than the plan's time for today. %1$s is a duration, such as "3 hr". -->
+    <string name="today_limit_stops">El estudio de hoy termina al alcanzar tu límite de tiempo diario de %1$s.</string>
+    <!-- The daily time limit is a setting that stops study for the day. %1$s is a duration, such as "3 hr". -->
+    <string name="today_limit_reached">Has alcanzado tu límite de tiempo diario de %1$s.</string>
+    <!-- A link to the setting for the daily time limit. -->
+    <string name="today_change_limit">Cambiar límite</string>
     <string name="today_see_you_next_session">¡Hasta tu próxima sesión!</string>
     <string name="today_see_you_tomorrow">¡Hasta mañana!</string>
     <!-- %1$s is a weekday, such as "Monday". -->
