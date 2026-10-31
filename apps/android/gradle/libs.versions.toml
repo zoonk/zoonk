@@ -56,6 +56,11 @@ webrtc = "150.7871.04"
 androidxWebkit = "1.18.0"
 
 [libraries]
+# Build logic.
+android-gradle-api = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
+compose-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+
 lint-api = { module = "com.android.tools.lint:lint-api", version.ref = "lint" }
 lint-tests = { module = "com.android.tools.lint:lint-tests", version.ref = "lint" }
 junit = { module = "junit:junit", version.ref = "junit" }

@@ -6,7 +6,7 @@ The [repository guidance](../../AGENTS.md) applies. This file adds Android-speci
 
 - This Kotlin/Jetpack Compose app targets phones, tablets, foldables, ChromeOS, and resizable Android windows. Main defines product intent, copy, behavior, API contracts and screen structure; Apple shows how a native client reads the public API; the design system defines meaning. Build it with Android's default components, styles, and behavior. Additional platforms such as Wear OS or TV require their own product scope.
 - The minimum is API 26. Don't add fallbacks below it. Above it, version checks exist only where the platform API is newer: the per-app language row (33), call audio routing (31) and the contrast level (34).
-- Keep a single activity. Modules: `:app` (every feature), `:api` (the generated client), `:lint-checks` (build time, not in the APK). Split `:app` only when CI measurements show its compile time needs it.
+- Keep a single activity. Modules: `:app` (every feature), `:api` (the generated client), `:lint-checks` (build time, not in the APK). Every module applies a convention plugin from `build-logic` (`zoonk.android.application`, `zoonk.jvm.library`), which sets the SDKs, Kotlin, Compose, lint and unit-test options once; a module's own build file keeps only what is specific to it.
 - Packages in `:app`: `app/` (application, container, shell), `data/`, `navigation/`, `ui/theme`, `ui/components`, `ui/format`, `feature/<feature>/`. Product code is organized by feature; a shared piece has one owning package and others call it.
 - `AppContainer`, created in `ZoonkApplication`, wires everything with constructor injection: the HTTP client, `ApiClients`, `PrivateImages`, `DraftStore`, `SessionStore`, `AppCache` and every store. Don't add a DI framework. Debug-only behavior lives in the `debug` source set (with a no-op twin in `release` when main code calls it), never parsed in product code.
 - Coroutines: the container's scope (`SupervisorJob() + Dispatchers.Main.immediate`) for caches and timers, `viewModelScope` for writes, `rememberCoroutineScope()` for UI-only work. Never `GlobalScope`. Retrofit calls are main-safe; use `Dispatchers.Default` only for measured heavy work.
@@ -69,7 +69,7 @@ Every read the app shows goes through one pattern in `data/`, so screens are ins
 ## Performance
 
 - Screens feel instant: show cached data at once and revalidate in the background; show a loading state only when nothing is cached. Load each fact once and never refetch on recomposition, resume or tab switch.
-- Keep composition cheap: lazy lists with `key` and `contentType`, composables below the screen taking values rather than stores, per-frame values read in lambdas (`Modifier.offset { }`, `drawBehind`). The generated models are declared stable in `app/compose-stability.conf`; add a package there only when all its types are immutable.
+- Keep composition cheap: lazy lists with `key` and `contentType`, composables below the screen taking values rather than stores, per-frame values read in lambdas (`Modifier.offset { }`, `drawBehind`). The generated models are declared stable in `compose-stability.conf`; add a package there only when all its types are immutable.
 - LeakCanary runs in debug builds; a retained object it reports is a bug to fix.
 - When a change touches data loading, stores, navigation or long-lived state, measure requests per screen and tab switch, memory, leaks, idle CPU and jank with the [verify skill's Android reference](../../.agents/skills/verify/references/android.md), and report the numbers before and after.
 

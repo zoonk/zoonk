@@ -10,12 +10,14 @@ plugins {
 
 spotless {
     kotlin {
-        target("app/src/**/*.kt", "api/src/**/*.kt", "lint-checks/src/**/*.kt")
+        target("**/src/**/*.kt")
+        targetExclude("**/build/**", "**/node_modules/**")
         ktlint()
     }
 
     kotlinGradle {
-        target("*.gradle.kts", "app/*.gradle.kts", "api/*.gradle.kts", "lint-checks/*.gradle.kts")
+        target("**/*.gradle.kts")
+        targetExclude("**/build/**", "**/node_modules/**")
         ktlint()
     }
 
