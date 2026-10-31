@@ -50,7 +50,8 @@
   "onboarding_error_could_not_read": "0f6938b9b7719b0555ef257b270fe6c1183d83ba46ccba858039ef4ea16ecf6d",
   "onboarding_error_could_not_save": "cf00a5cf766d3c2b4ab6da8a420812dcd9afebd113d5098bf4f88a8a9f6d26e8",
   "onboarding_error_one_moment": "f3e3ce6aac804da89c8da6581f43dd05449cd59e5d97b4e3fc2ac2272bdc14ee",
-  "onboarding_exam_choice_description": "11af9f87a145d56191ca0c969e8ec6f00c05c80a348b38dfa95bbe6941d87a04",
+  "onboarding_exam_choice_choices": "8e9812fc356683c01ac235ba43e5bbf1b852ab7cf62b50dc855346b6ad61fbb1",
+  "onboarding_exam_choice_options": "d1fc46633833e061cfc3d634139088d662f2ab94673350bcee1eed68db85f062",
   "onboarding_exam_choice_title_one": "103a908c9a1e11dedc09c4d4ee036d56565f53f4924f80ff98cc08b877634442",
   "onboarding_exam_choice_title_other": "dacb3427cb7553128709c8558abc2a996740285e31df9d76d31f021508b04ade",
   "onboarding_exam_expected": "4372654a9c62cdd63a9d1ff23d0fb0959dee02a45088939092521050dfd23786",
@@ -972,7 +973,18 @@
     <string name="onboarding_date_is_today">La data che hai scelto è oggi, quindi non restano giorni da pianificare.</string>
     <string name="onboarding_exam_choice_title_one">Quale sosterrai?</string>
     <string name="onboarding_exam_choice_title_other">Quali sosterrai?</string>
-    <string name="onboarding_exam_choice_description">Il piano e le simulazioni seguono la tua scelta. Puoi cambiarla nel piano.</string>
+    <!-- Under the exam choice question. %1$d counts the options; %2$s is the notice's name for the choice, such as a specialty or the foreign language, in the notice's own language. -->
+    <plurals name="onboarding_exam_choice_options">
+        <item quantity="one">L’esame prevede %1$d opzione per %2$s. Il tuo piano e le simulazioni seguono la tua scelta, che puoi cambiare nel piano.</item>
+        <item quantity="many">L’esame prevede %1$d opzioni per %2$s. Il tuo piano e le simulazioni seguono la tua scelta, che puoi cambiare nel piano.</item>
+        <item quantity="other">L’esame prevede %1$d opzioni per %2$s. Il tuo piano e le simulazioni seguono la tua scelta, che puoi cambiare nel piano.</item>
+    </plurals>
+    <!-- Under the exam choice question, for several choices. -->
+    <plurals name="onboarding_exam_choice_choices">
+        <item quantity="one">Per l’esame devi fare %1$d scelta. Il tuo piano e le simulazioni seguono le tue scelte, che puoi cambiare nel piano.</item>
+        <item quantity="many">Per l’esame devi fare %1$d scelte. Il tuo piano e le simulazioni seguono le tue scelte, che puoi cambiare nel piano.</item>
+        <item quantity="other">Per l’esame devi fare %1$d scelte. Il tuo piano e le simulazioni seguono le tue scelte, che puoi cambiare nel piano.</item>
+    </plurals>
     <string name="onboarding_decide_later">Decidi più tardi</string>
     <string name="onboarding_buddy_title">Scegli il tuo compagno</string>
     <string name="onboarding_buddy_description">Il tuo compagno cresce mentre impari.</string>

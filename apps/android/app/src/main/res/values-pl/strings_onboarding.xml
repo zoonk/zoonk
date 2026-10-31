@@ -50,7 +50,8 @@
   "onboarding_error_could_not_read": "99520dbdc5bb587777fe113ea2a99b753c5c4139d4029c09b37243b5cb45b7fd",
   "onboarding_error_could_not_save": "b97382b2c0b87b9609159980941f803a6606dd929a3226159ef501e1c2894631",
   "onboarding_error_one_moment": "8b554b756aab06e1e836cb0507156c83ae213717f80dab8547b60490c7881f22",
-  "onboarding_exam_choice_description": "3ca728839992cd74517a9ebc6f1729dce048029c225d3db30342fe541b9a62af",
+  "onboarding_exam_choice_choices": "44d2ffc5bfe18f1467afcf80e462a777a404184737850e1cab0b25cdb677bba7",
+  "onboarding_exam_choice_options": "dc870865b869eabb075c93336cd8f3db8567b5a9730945a5d1eed15b9d89965d",
   "onboarding_exam_choice_title_one": "7b8d37d2194e21d09ee0974e890ef6bc00a353554c24f3d31fb784c4f0a0832e",
   "onboarding_exam_choice_title_other": "76f4dce45d63aa3b61974f3d55850860989c8bc6d97aa60d8a01d9b4dd6ba780",
   "onboarding_exam_expected": "5d1ae8544f408d84c52ff14b5e1d4666e4a02180ac35794cbf0fc43f70636f4c",
@@ -993,7 +994,20 @@
     <string name="onboarding_date_is_today">Twój termin wypada dziś, więc nie ma już na kiedy zaplanować nauki.</string>
     <string name="onboarding_exam_choice_title_one">Który egzamin będziesz zdawać?</string>
     <string name="onboarding_exam_choice_title_other">Które egzaminy będziesz zdawać?</string>
-    <string name="onboarding_exam_choice_description">Plan i egzaminy próbne dopasowujemy do twojego wyboru. Możesz go zmienić w planie.</string>
+    <!-- Under the exam choice question. %1$d counts the options; %2$s is the notice's name for the choice, such as a specialty or the foreign language, in the notice's own language. -->
+    <plurals name="onboarding_exam_choice_options">
+        <item quantity="one">Na egzaminie masz do wyboru %1$d opcję w kategorii: %2$s. Twój plan i egzaminy próbne uwzględniają twój wybór. Możesz go zmienić w planie.</item>
+        <item quantity="few">Na egzaminie masz do wyboru %1$d opcje w kategorii: %2$s. Twój plan i egzaminy próbne uwzględniają twój wybór. Możesz go zmienić w planie.</item>
+        <item quantity="many">Na egzaminie masz do wyboru %1$d opcji w kategorii: %2$s. Twój plan i egzaminy próbne uwzględniają twój wybór. Możesz go zmienić w planie.</item>
+        <item quantity="other">Na egzaminie masz do wyboru %1$d opcji w kategorii: %2$s. Twój plan i egzaminy próbne uwzględniają twój wybór. Możesz go zmienić w planie.</item>
+    </plurals>
+    <!-- Under the exam choice question, for several choices. -->
+    <plurals name="onboarding_exam_choice_choices">
+        <item quantity="one">Na tym egzaminie masz do podjęcia %1$d decyzję. Twój plan i egzaminy próbne uwzględniają twoje wybory. Możesz je zmienić w planie.</item>
+        <item quantity="few">Na tym egzaminie masz do podjęcia %1$d decyzje. Twój plan i egzaminy próbne uwzględniają twoje wybory. Możesz je zmienić w planie.</item>
+        <item quantity="many">Na tym egzaminie masz do podjęcia %1$d decyzji. Twój plan i egzaminy próbne uwzględniają twoje wybory. Możesz je zmienić w planie.</item>
+        <item quantity="other">Na tym egzaminie masz do podjęcia %1$d decyzji. Twój plan i egzaminy próbne uwzględniają twoje wybory. Możesz je zmienić w planie.</item>
+    </plurals>
     <string name="onboarding_decide_later">Zdecyduję później</string>
     <string name="onboarding_buddy_title">Wybierz swojego kumpla</string>
     <string name="onboarding_buddy_description">Twój kumpel rośnie, gdy się uczysz.</string>

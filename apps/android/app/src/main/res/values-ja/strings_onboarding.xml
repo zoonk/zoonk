@@ -50,7 +50,8 @@
   "onboarding_error_could_not_read": "50e5e98c09073f2e2253b6371388c5265ab44118e6d1f655ebd183c431630d55",
   "onboarding_error_could_not_save": "0c69f48ed9441c40e4db3b86c4ca7bcadf957571cd52fc115460ad92e508bed9",
   "onboarding_error_one_moment": "64653fb4b3b925347bb592b292df0252b770f3b1642871db100986888678b58e",
-  "onboarding_exam_choice_description": "cbf9c28e585121d8c356d85da2b436477c64c69ed8910c4119af15d74db13166",
+  "onboarding_exam_choice_choices": "79be59a4def61dca2781d26dd818ecea8554e26c0b31b2ba2a0cb9c0cd796a2f",
+  "onboarding_exam_choice_options": "305682d6c4eafa6e778e54bee9a67347d749798eb93d2115b2e126547c171cfb",
   "onboarding_exam_choice_title_one": "ea1cfd70783c2ad47235d792845fc82dddedb30758213d197488156c6b038202",
   "onboarding_exam_choice_title_other": "fe159555a3888c7ac60a1db9da79d17401f175a5caa5ea919fa2cb0e9bd92802",
   "onboarding_exam_expected": "e80119f20ae2aef610e4aec369943d745454038b2e89bfb37fbc4f12f711f890",
@@ -930,7 +931,14 @@
     <string name="onboarding_date_is_today">設定した日付が今日なので、それまでに学習できる日が残っていません。</string>
     <string name="onboarding_exam_choice_title_one">どの試験を受けますか？</string>
     <string name="onboarding_exam_choice_title_other">どの試験を受けますか？</string>
-    <string name="onboarding_exam_choice_description">選んだ試験に合わせて学習計画と模試を作成します。試験は学習計画で変更できます。</string>
+    <!-- Under the exam choice question. %1$d counts the options; %2$s is the notice's name for the choice, such as a specialty or the foreign language, in the notice's own language. -->
+    <plurals name="onboarding_exam_choice_options">
+        <item quantity="other">この試験では、%1$d種類の選択肢から%2$sを選べます。選んだ内容は学習計画と模試に反映され、学習計画で変更できます。</item>
+    </plurals>
+    <!-- Under the exam choice question, for several choices. -->
+    <plurals name="onboarding_exam_choice_choices">
+        <item quantity="other">この試験には、選択が必要な項目が%1$d個あります。選んだ内容は学習計画と模試に反映され、学習計画で変更できます。</item>
+    </plurals>
     <string name="onboarding_decide_later">後で決める</string>
     <string name="onboarding_buddy_title">相棒を選ぶ</string>
     <string name="onboarding_buddy_description">学ぶにつれて、相棒も成長します。</string>

@@ -205,6 +205,8 @@
   "plan_change_writing_weekly": "b2a59039a39707c4d163dbed14f810927ad52d8cd4a6ed4f5d4cc23574e48407",
   "plan_check_failed": "d65a65a8d02bc6b4db6d15601c3fdb2391f4e53aec5d0553cf64cc66f4fedd03",
   "plan_checking_changes": "8a80627345137e11ec47e6d51147325a1e2ac76832d8219433e186fc03432b00",
+  "plan_choice_change": "634caa992c8bf87f6b017a857fa3542c1793c3b63ff68f9c25d2755a619c2745",
+  "plan_choice_following": "9c05bde963ca7bed186285e35eff2267d7c71c0c991fd0d4438671671d1e32ad",
   "plan_choose": "df18bfcfcd2f9613d55ac8afc340c24db8f0bb06695d7ae6d4b5422c6b86f915",
   "plan_choose_by_subject": "1e1e7676fced84504e710f6ac498f34bab4676916a6c5397cd466eacbdfeb9b9",
   "plan_choose_focus": "9fbddaf16b7f76da57a775370134d46a6fc4807d7476c2029c4c4855ea66d734",
@@ -775,6 +777,10 @@
     <string name="plan_study_days">Çalıştığın günler</string>
     <string name="plan_mock_exams">Deneme sınavları</string>
     <string name="plan_choose">Seç</string>
+    <!-- %1$s is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it. -->
+    <string name="plan_choice_following">%1$s müfredatı takip ediliyor</string>
+    <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
+    <string name="plan_choice_change">Değiştir</string>
     <string name="plan_practice">Pratik yap</string>
     <string name="plan_everything">Hepsi</string>
     <string name="plan_to_be_confirmed">Henüz kesinleşmedi</string>

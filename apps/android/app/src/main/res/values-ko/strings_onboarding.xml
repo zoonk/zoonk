@@ -50,7 +50,8 @@
   "onboarding_error_could_not_read": "172ea2d4044cc517ccd7a61fc9e00831f52b790118a9cdd58cd65805e404f868",
   "onboarding_error_could_not_save": "fce8fda0cb8709956f7df5067d23bc4120f8f2a01f7f7562a81d407448472187",
   "onboarding_error_one_moment": "1a90d65fc5a09bdf0b9ccfa040709ffab4efe540fa14cb6859665defd7ec36c0",
-  "onboarding_exam_choice_description": "cfc2146f3ac78f2ef909c82703e07b288b31fb538e60757beecbb27b4b5c7a2e",
+  "onboarding_exam_choice_choices": "44a48cec6dd7f6af4a36113d959f5f0db60f0c813e8044a13a0eded18e2c8e17",
+  "onboarding_exam_choice_options": "d5375101c2add936d8e45e266dfaa73b189284bd97074f67191c80781e870dc6",
   "onboarding_exam_choice_title_one": "d0efda3edd1e56e987dc5211e86e534fd7448dc38edee8ae1eed465c851d48d5",
   "onboarding_exam_choice_title_other": "936bccc3021b4007134104c09ffa01a055c10900ac811cd107f91d7c014d175a",
   "onboarding_exam_expected": "25c1c2dbbcbc1202a06a170002ace7b67e629508a6efe74716a53a0faa708170",
@@ -930,7 +931,14 @@
     <string name="onboarding_date_is_today">정한 날짜가 오늘이라 계획에 넣을 수 있는 날이 없어요.</string>
     <string name="onboarding_exam_choice_title_one">어떤 시험을 볼 건가요?</string>
     <string name="onboarding_exam_choice_title_other">어떤 시험을 볼 건가요?</string>
-    <string name="onboarding_exam_choice_description">선택한 시험에 맞춰 계획과 모의고사를 만들어요. 계획에서 선택을 바꿀 수 있어요.</string>
+    <!-- Under the exam choice question. %1$d counts the options; %2$s is the notice's name for the choice, such as a specialty or the foreign language, in the notice's own language. -->
+    <plurals name="onboarding_exam_choice_options">
+        <item quantity="other">이 시험에는 %1$d개의 %2$s 선택지가 있어요. 선택한 항목에 맞춰 계획과 모의고사가 구성돼요. 선택은 계획에서 바꿀 수 있어요.</item>
+    </plurals>
+    <!-- Under the exam choice question, for several choices. -->
+    <plurals name="onboarding_exam_choice_choices">
+        <item quantity="other">이 시험에는 선택해야 할 항목이 %1$d개 있어요. 선택한 항목에 맞춰 계획과 모의고사가 구성돼요. 선택은 계획에서 바꿀 수 있어요.</item>
+    </plurals>
     <string name="onboarding_decide_later">나중에 결정하기</string>
     <string name="onboarding_buddy_title">짝꿍 고르기</string>
     <string name="onboarding_buddy_description">배울수록 짝꿍도 자라요.</string>

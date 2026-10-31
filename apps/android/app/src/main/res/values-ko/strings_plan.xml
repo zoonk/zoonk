@@ -205,6 +205,8 @@
   "plan_change_writing_weekly": "c6dff348283b7ebfed77472f1c54381620d00fdfbd6a7914b84fb9fc16a770cc",
   "plan_check_failed": "53c6132b38858b042beef4c4534b57756c3d9061b3bead9237c904111255ee10",
   "plan_checking_changes": "40d8014cc20eaba54b3e284287df11e5c35d53014ea42fe7eaf6332161a48027",
+  "plan_choice_change": "69c52a07519d731a98076e0d3c1411ba0f4b27e6da3288c99f5317a818dc3763",
+  "plan_choice_following": "d15aaecc6bb0d2159de332450eb43b0873a3a2f39061dfaefd52b05cd8226b75",
   "plan_choose": "98f12ce043134f99ab12e19fcbd1c2de6e7b7614a9c8fe2c666a3adb61e678e8",
   "plan_choose_by_subject": "baf2e15cdb8c810f458506dd72878e0cc7f24e7ae13373cba436ed5284e2a517",
   "plan_choose_focus": "40e058499372e4bfe2884d4a4b114747950b8caee79fefe22b83b5e9e0f4ae42",
@@ -761,6 +763,10 @@
     <string name="plan_study_days">학습 일수</string>
     <string name="plan_mock_exams">모의고사</string>
     <string name="plan_choose">선택</string>
+    <!-- %1$s is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it. -->
+    <string name="plan_choice_following">%1$s 출제 범위 적용 중</string>
+    <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
+    <string name="plan_choice_change">변경하기</string>
     <string name="plan_practice">연습하기</string>
     <string name="plan_everything">모두</string>
     <string name="plan_to_be_confirmed">추후 확정</string>

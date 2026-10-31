@@ -952,6 +952,7 @@ msgid "Save"
 msgstr "Zapisz"
 
 #: src/appearance/buddy-settings.tsx
+#: src/plan/plan-choice-lines.tsx
 #: src/plan/plan-tools.tsx
 msgctxt "BY343C"
 msgid "Change"
@@ -2403,6 +2404,7 @@ msgid "Choose where to focus"
 msgstr "Wybierz, na czym się skupić"
 
 #: src/conversation/tutor-tool-offer.tsx
+#: src/plan/plan-choice-lines.tsx
 #: src/plan/plan-exam-choices.tsx
 #: src/plan/plan-properties.tsx
 #: src/plan/plan-tools.tsx
@@ -8941,10 +8943,16 @@ msgctxt "R8HSEX"
 msgid "Pick a date after today."
 msgstr "Wybierz datę późniejszą niż dzisiejsza."
 
+#. {group} is the notice's name for one of the exam's choices, such as a specialty or the foreign language, which comes from the notice in its own language
 #: src/onboarding/steps/exam-choice-step.tsx
-msgctxt "oolIep"
-msgid "The plan and the mocks follow your pick. You can change it in your plan."
-msgstr "Plan i egzaminy próbne dopasowujemy do twojego wyboru. Możesz go zmienić w planie."
+msgctxt "AdAHjB"
+msgid "The exam offers {count, plural, one {# option} other {# options}} for {group}. Your plan and mocks follow the one you pick, and you can change it in your plan."
+msgstr "Na egzaminie masz do wyboru {count, plural, one {# opcję} few {# opcje} other {# opcji}} w kategorii: {group}. Twój plan i egzaminy próbne uwzględniają wybraną opcję. Możesz ją zmienić w planie."
+
+#: src/onboarding/steps/exam-choice-step.tsx
+msgctxt "_7GRXH"
+msgid "The exam has {count, plural, one {# choice} other {# choices}} to make. Your plan and mocks follow your picks, and you can change them in your plan."
+msgstr "Na egzaminie masz do podjęcia {count, plural, one {# decyzję} few {# decyzje} other {# decyzji}}. Twój plan i egzaminy próbne uwzględniają twoje wybory. Możesz je zmienić w planie."
 
 #: src/onboarding/steps/exam-choice-step.tsx
 msgctxt "K8LmJV"
@@ -10112,6 +10120,12 @@ msgstr "Podstawy"
 msgctxt "dkcNQw"
 msgid "Choose prerequisites"
 msgstr "Wybierz podstawy"
+
+#. {option} is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it
+#: src/plan/plan-choice-lines.tsx
+msgctxt "Su6-x7"
+msgid "Following the {option} syllabus"
+msgstr "Plan obejmuje materiał dla opcji: {option}"
 
 #: src/plan/plan-choices.tsx
 msgctxt "pNi2vP"

@@ -952,6 +952,7 @@ msgid "Save"
 msgstr "保存する"
 
 #: src/appearance/buddy-settings.tsx
+#: src/plan/plan-choice-lines.tsx
 #: src/plan/plan-tools.tsx
 msgctxt "BY343C"
 msgid "Change"
@@ -2403,6 +2404,7 @@ msgid "Choose where to focus"
 msgstr "重点的に学ぶ科目を選ぶ"
 
 #: src/conversation/tutor-tool-offer.tsx
+#: src/plan/plan-choice-lines.tsx
 #: src/plan/plan-exam-choices.tsx
 #: src/plan/plan-properties.tsx
 #: src/plan/plan-tools.tsx
@@ -8941,10 +8943,16 @@ msgctxt "R8HSEX"
 msgid "Pick a date after today."
 msgstr "明日以降の日付を選んでください。"
 
+#. {group} is the notice's name for one of the exam's choices, such as a specialty or the foreign language, which comes from the notice in its own language
 #: src/onboarding/steps/exam-choice-step.tsx
-msgctxt "oolIep"
-msgid "The plan and the mocks follow your pick. You can change it in your plan."
-msgstr "選んだ試験に合わせて学習計画と模試を作成します。試験は学習計画で変更できます。"
+msgctxt "AdAHjB"
+msgid "The exam offers {count, plural, one {# option} other {# options}} for {group}. Your plan and mocks follow the one you pick, and you can change it in your plan."
+msgstr "この試験では、{count, plural, other {#個の選択肢}}から「{group}」を選びます。選んだ内容が学習計画と模試に反映され、選択内容は学習計画で変更できます。"
+
+#: src/onboarding/steps/exam-choice-step.tsx
+msgctxt "_7GRXH"
+msgid "The exam has {count, plural, one {# choice} other {# choices}} to make. Your plan and mocks follow your picks, and you can change them in your plan."
+msgstr "この試験では、{count, plural, other {#項目}}について選択が必要です。選んだ内容が学習計画と模試に反映され、選択内容は学習計画で変更できます。"
 
 #: src/onboarding/steps/exam-choice-step.tsx
 msgctxt "K8LmJV"
@@ -10112,6 +10120,12 @@ msgstr "前提知識"
 msgctxt "dkcNQw"
 msgid "Choose prerequisites"
 msgstr "前提知識を選ぶ"
+
+#. {option} is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it
+#: src/plan/plan-choice-lines.tsx
+msgctxt "Su6-x7"
+msgid "Following the {option} syllabus"
+msgstr "「{option}」の出題範囲に沿っています"
 
 #: src/plan/plan-choices.tsx
 msgctxt "pNi2vP"

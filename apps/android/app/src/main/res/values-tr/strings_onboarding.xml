@@ -50,7 +50,8 @@
   "onboarding_error_could_not_read": "0df012cdc1046ab7f4b194a96de7fa07d7df6db2b417ebe0b529cd4685f82f7b",
   "onboarding_error_could_not_save": "e0aa3ddcb0df279dd1f8a41104b50bbcd5a5492cb47f996234378b075582ec01",
   "onboarding_error_one_moment": "0a33d5eff996f065a55b48ae48f960b20a56e7a90deb9851e28ab7392b8d8d9f",
-  "onboarding_exam_choice_description": "73db488d18927b45dacaf6a8ea47c58dd856b6a71752838f391cccfc90bcbd5c",
+  "onboarding_exam_choice_choices": "f83f949d2cbe1090e954236c7156a08747a3a71fd6eaddd9bc31f4003e008085",
+  "onboarding_exam_choice_options": "b9b0e9207db4e6da16ac615ecf5aba23c2a068d72deb49fcfcd4f2f012c0a70d",
   "onboarding_exam_choice_title_one": "26950cd3c3461fc6ad4c7c3e5d37cf027e15302b09f74cacd3cfa3695f4233be",
   "onboarding_exam_choice_title_other": "07fb2722ce558c5467e58e30ce5ed86ac2614cecebc8165a0af58247ace6f098",
   "onboarding_exam_expected": "3cbb2e4ac6c21f6b4fba065b2fb796a7cfbcc6cc7e6ac2b53aa3f522d02264ff",
@@ -951,7 +952,16 @@
     <string name="onboarding_date_is_today">Hedef tarihin bugün, bu yüzden planlanacak gün kalmadı.</string>
     <string name="onboarding_exam_choice_title_one">Hangisine gireceksin?</string>
     <string name="onboarding_exam_choice_title_other">Hangilerine gireceksin?</string>
-    <string name="onboarding_exam_choice_description">Planın ve deneme sınavların seçimine göre hazırlanır. Seçimini planında değiştirebilirsin.</string>
+    <!-- Under the exam choice question. %1$d counts the options; %2$s is the notice's name for the choice, such as a specialty or the foreign language, in the notice's own language. -->
+    <plurals name="onboarding_exam_choice_options">
+        <item quantity="one">Sınavda %1$d %2$s seçeneği var. Planın ve deneme sınavların seçimine göre hazırlanır. Seçimini planından değiştirebilirsin.</item>
+        <item quantity="other">Sınavda %1$d %2$s seçeneği var. Planın ve deneme sınavların seçimine göre hazırlanır. Seçimini planından değiştirebilirsin.</item>
+    </plurals>
+    <!-- Under the exam choice question, for several choices. -->
+    <plurals name="onboarding_exam_choice_choices">
+        <item quantity="one">Sınav için %1$d seçim yapman gerekiyor. Planın ve deneme sınavların seçimlerine göre hazırlanır. Seçimlerini planından değiştirebilirsin.</item>
+        <item quantity="other">Sınav için %1$d seçim yapman gerekiyor. Planın ve deneme sınavların seçimlerine göre hazırlanır. Seçimlerini planından değiştirebilirsin.</item>
+    </plurals>
     <string name="onboarding_decide_later">Sonra karar ver</string>
     <string name="onboarding_buddy_title">Arkadaşını seç</string>
     <string name="onboarding_buddy_description">Öğrendikçe arkadaşın da büyür.</string>

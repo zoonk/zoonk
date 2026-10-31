@@ -205,6 +205,8 @@
   "plan_change_writing_weekly": "719fe0144b631a85f808c54fa12a73eb8bac81caa31f4c17993a38197fb0496b",
   "plan_check_failed": "a0558518a319e612e03e544c1306c9296347bea6e210fd20594e84ab94e561fc",
   "plan_checking_changes": "421a6f826f00dd71808850dbd1376cb218f010520a5fb598fa4bd1a57e1bd66e",
+  "plan_choice_change": "7667eb803ff5ba985f14d5799fbc53f039a0b411869e38bd6ae54a2c0ef7957e",
+  "plan_choice_following": "75c35cc286a230b1b9248e9e8e13e43e0a3a0650d3224ceb627c2033b8ec58d0",
   "plan_choose": "873fdf4a67f8337a57fa48a185e5ca4df31af0d477bc903f421cd6898e134ca8",
   "plan_choose_by_subject": "283ba7f4991f7844ca2bdf6d70976b40d23882136e06f7ffc54606d7f42a74fb",
   "plan_choose_focus": "c71d007426c085ab9c78a9a009ed966fa8f03e84dadb8f1442d59ecbcd6c340a",
@@ -789,6 +791,10 @@
     <string name="plan_study_days">Giorni di studio</string>
     <string name="plan_mock_exams">Simulazioni d’esame</string>
     <string name="plan_choose">Scegli</string>
+    <!-- %1$s is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it. -->
+    <string name="plan_choice_following">Segue il programma di %1$s</string>
+    <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
+    <string name="plan_choice_change">Cambia</string>
     <string name="plan_practice">Esercitati</string>
     <string name="plan_everything">Tutto</string>
     <string name="plan_to_be_confirmed">Da confermare</string>

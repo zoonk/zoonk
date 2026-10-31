@@ -205,6 +205,8 @@
   "plan_change_writing_weekly": "57ef7234c24db7facfccb2beb6207a09ef99517aba0e14ae90129b050c3cbbb2",
   "plan_check_failed": "6887bd97151682cea6e353e39af5a0dbbff4636040339d400e386ce8a9dc9ca7",
   "plan_checking_changes": "921586e6316add192f0bd30b8d9b562399db50678aab8f805bb98a74d3ce497b",
+  "plan_choice_change": "c6333de4cf1f76c2720cf4de8a1c76b0a88a7c7585c5e4ed3bf0f632826ab81e",
+  "plan_choice_following": "184eea71e7cd0b8273de9acd1e6f232899c763c78e49568ea4b816b31ad4a2a3",
   "plan_choose": "14ded916e745a67d61f1a77e3058d65e4d854092429d048a4cfe14012488c94d",
   "plan_choose_by_subject": "084aeb6ac1b4adf1210cf630c78134a45a3977d562b738abbd347f5e2dbd420b",
   "plan_choose_focus": "0cb3a8617d4dcf67f939fb9b0600d887a7dfcb368672f73cdfac92b0a7c356a4",
@@ -761,6 +763,10 @@
     <string name="plan_study_days">学習日数</string>
     <string name="plan_mock_exams">模試</string>
     <string name="plan_choose">選ぶ</string>
+    <!-- %1$s is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it. -->
+    <string name="plan_choice_following">%1$sの出題範囲に沿っています</string>
+    <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
+    <string name="plan_choice_change">変更する</string>
     <string name="plan_practice">演習</string>
     <string name="plan_everything">すべて</string>
     <string name="plan_to_be_confirmed">未確定</string>
