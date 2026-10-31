@@ -287,6 +287,21 @@ describe(alphabetReviewWorkflow, () => {
     await expectSetAside(lessonId);
   });
 
+  it("takes a wrong lesson out of play when its fix can't be voiced", async () => {
+    const lessonId = await publishCyrillic();
+
+    vi.mocked(checkLessonQuality).mockResolvedValue(review([SILENT_H]));
+    fixX({ audioText: "хо", pronunciation: "Como o r de “rato”, mais áspero; ouça хо (kho)." });
+
+    vi.mocked(generateLanguageAudio).mockResolvedValue({
+      data: null,
+      error: new Error("TTS failed"),
+    });
+
+    await expect(alphabetReviewWorkflow({ lessonId, version: 1 })).rejects.toThrow();
+    await expectSetAside(lessonId);
+  });
+
   it("takes a wrong lesson out of play when its fix fails the lesson's checks", async () => {
     const lessonId = await publishCyrillic();
 

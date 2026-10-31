@@ -48,18 +48,23 @@ export async function alphabetReviewWorkflow({
     return "replaced";
   }
 
-  const audioUrls = await voiceAlphabetClips({
-    clips: fix.clips,
-    targetLanguage: fix.targetLanguage,
-  });
+  try {
+    const audioUrls = await voiceAlphabetClips({
+      clips: fix.clips,
+      targetLanguage: fix.targetLanguage,
+    });
 
-  const published = await publishAlphabetFixStep({
-    audioUrls,
-    lesson: fix.lesson,
-    lessonId,
-    provenance: fix.provenance,
-    replaces: version,
-  });
+    const published = await publishAlphabetFixStep({
+      audioUrls,
+      lesson: fix.lesson,
+      lessonId,
+      provenance: fix.provenance,
+      replaces: version,
+    });
 
-  return published === null ? "replaced" : "republished";
+    return published === null ? "replaced" : "republished";
+  } catch (error) {
+    await setAsidePublishedLessonStep({ lessonId, version });
+    throw error;
+  }
 }
