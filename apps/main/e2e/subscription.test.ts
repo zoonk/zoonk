@@ -4,6 +4,7 @@ import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { expect, test } from "./fixtures";
+import { expectHydrated } from "./hydration";
 
 type StripeSubscriptionActionPath = "/api/auth/subscription/upgrade";
 
@@ -16,7 +17,7 @@ function getStripeSubscriptionFields() {
   };
 }
 
-async function openWithSubscription(browser: Browser) {
+async function createWebSubscriber() {
   const user = await createE2EUser(getBaseURL());
 
   await prisma.subscription.create({
@@ -32,6 +33,11 @@ async function openWithSubscription(browser: Browser) {
     },
   });
 
+  return user;
+}
+
+async function openWithSubscription(browser: Browser) {
+  const user = await createWebSubscriber();
   const browserContext = await browser.newContext({ storageState: user.storageState });
   const page = await browserContext.newPage();
 
@@ -102,6 +108,33 @@ test.describe("Subscription Page - With Plus Subscription", () => {
       .toMatchObject({ cancelAtPeriodEnd: true, status: "active" });
 
     await browserContext.close();
+  });
+});
+
+test.describe("Subscription Page - Cancel Without Logging In", () => {
+  test("cancels a website subscription from its email, for a visitor who isn't logged in", async ({
+    browser,
+  }) => {
+    const user = await createWebSubscriber();
+    const visitor = await browser.newContext();
+    const page = await visitor.newPage();
+
+    await page.goto("/subscription/cancel");
+
+    const cancel = page.getByRole("button", { exact: true, name: "Cancel now" });
+    await expectHydrated(cancel);
+
+    await page.getByLabel("Name").fill("Visitor Without A Login");
+    await page.getByLabel("Email", { exact: true }).fill(user.email);
+    await cancel.click();
+
+    await expect(page.getByRole("status")).toContainText("We received your cancellation.");
+
+    await expect
+      .poll(async () => prisma.subscription.findFirst({ where: { referenceId: user.id } }))
+      .toMatchObject({ cancelAtPeriodEnd: true, status: "active" });
+
+    await visitor.close();
   });
 });
 

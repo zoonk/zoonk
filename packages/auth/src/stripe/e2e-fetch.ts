@@ -42,11 +42,30 @@ export async function stripeE2EFetch(
         {
           current_period_end: seconds(subscription.periodEnd),
           current_period_start: seconds(subscription.periodStart),
+          id: `si_${id}`,
           price: { recurring: { interval: "month" } },
         },
       ],
     },
-    latest_invoice: { amount_paid: 1000, currency: "usd", id: `in_${id}`, status: "paid" },
+    latest_invoice: {
+      amount_paid: 1000,
+      currency: "usd",
+      id: `in_${id}`,
+      lines: {
+        data: [
+          {
+            parent: {
+              subscription_item_details: { proration: false, subscription_item: `si_${id}` },
+            },
+            period: {
+              end: seconds(subscription.periodEnd),
+              start: seconds(subscription.periodStart),
+            },
+          },
+        ],
+      },
+      status: "paid",
+    },
     start_date: seconds(subscription.periodStart),
     status: subscription.status,
   });
