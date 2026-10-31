@@ -31,12 +31,17 @@ const structure = {
 
 describe(recordTopicFrequency, () => {
   it("looks up how often a shared exam's topics are asked once, and the plan then reads it", async () => {
-    const blueprint = await examBlueprintFixture({ name: "ENEM", role: null, structure });
+    const blueprint = await examBlueprintFixture({
+      board: "Inep",
+      name: "ENEM",
+      role: null,
+      structure,
+    });
 
     await expect(
       findTopicFrequencyLookup({ examBlueprintId: blueprint.id }),
     ).resolves.toStrictEqual({
-      board: blueprint.board,
+      board: "Inep",
       exam: "ENEM",
       subjects: [{ name: "Ciências da Natureza e suas Tecnologias", topics: NATUREZA }],
     });
@@ -92,6 +97,7 @@ describe(recordTopicFrequency, () => {
     ];
 
     const blueprint = await examBlueprintFixture({
+      board: "Inep",
       name: "ENEM",
       role: null,
       structure: {
@@ -128,7 +134,13 @@ describe(recordTopicFrequency, () => {
 
   it("never looks up a private blueprint read from a learner's material", async () => {
     const owner = await userFixture();
-    const blueprint = await examBlueprintFixture({ ownerId: owner.id, structure });
+    const blueprint = await examBlueprintFixture({ board: "Inep", ownerId: owner.id, structure });
+
+    await expect(findTopicFrequencyLookup({ examBlueprintId: blueprint.id })).resolves.toBeNull();
+  });
+
+  it("looks up nothing while the exam's board is unknown, since another board's papers don't count", async () => {
+    const blueprint = await examBlueprintFixture({ board: null, name: "ENEM", structure });
 
     await expect(findTopicFrequencyLookup({ examBlueprintId: blueprint.id })).resolves.toBeNull();
   });

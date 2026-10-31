@@ -37,6 +37,7 @@ const structure = {
 describe(recordSubjectQuestions, () => {
   it("looks up a shared exam's subject counts once, and the subjects then carry them", async () => {
     const blueprint = await examBlueprintFixture({
+      board: "FGV",
       name: "OAB Exame de Ordem Unificado",
       role: "1ª fase",
       structure,
@@ -45,7 +46,7 @@ describe(recordSubjectQuestions, () => {
     await expect(
       findSubjectQuestionsLookup({ examBlueprintId: blueprint.id }),
     ).resolves.toStrictEqual({
-      board: blueprint.board,
+      board: "FGV",
       exam: "OAB Exame de Ordem Unificado, 1ª fase",
       subjects: ["Direito Civil", "Direito Penal", "Ética Profissional"],
       total: 80,
@@ -74,7 +75,7 @@ describe(recordSubjectQuestions, () => {
   });
 
   it("keeps the counts a source gives when it doesn't count every subject", async () => {
-    const blueprint = await examBlueprintFixture({ structure });
+    const blueprint = await examBlueprintFixture({ board: "FGV", structure });
 
     await recordSubjectQuestions({
       edition: null,
@@ -101,10 +102,17 @@ describe(recordSubjectQuestions, () => {
     const owner = await userFixture();
 
     const blueprint = await examBlueprintFixture({
+      board: "FGV",
       ownerId: owner.id,
       structure,
       visibility: "private",
     });
+
+    await expect(findSubjectQuestionsLookup({ examBlueprintId: blueprint.id })).resolves.toBeNull();
+  });
+
+  it("looks up nothing while the exam's board is unknown, since another board's papers don't count", async () => {
+    const blueprint = await examBlueprintFixture({ board: null, structure });
 
     await expect(findSubjectQuestionsLookup({ examBlueprintId: blueprint.id })).resolves.toBeNull();
   });

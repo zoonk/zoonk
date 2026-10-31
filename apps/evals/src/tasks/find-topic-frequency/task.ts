@@ -7,7 +7,13 @@ import {
 } from "@zoonk/ai/tasks/research/find-topic-frequency";
 import { TEST_CASES } from "./test-cases";
 
-export type FindTopicFrequencyExpected = { found: string[]; notLow: string[]; notHigh: string[] };
+export type FindTopicFrequencyExpected = {
+  found: string[];
+  notLow: string[];
+  notHigh: string[];
+  /** Rating any subject beyond `found` is wrong, such as one only another board's papers rate. */
+  onlyFound?: boolean;
+};
 
 function parseOutput(output: string): TopicFrequencyFinding | null {
   try {
@@ -41,6 +47,17 @@ const scoreTopicFrequency: TaskScorer<FindTopicFrequencyExpected> = ({ output, t
 
   if (!found || !expected) {
     return createFixedScore({ conclusion: "No output", score: 6 });
+  }
+
+  const extra = expected.onlyFound
+    ? found.subjects.filter((subject) => !expected.found.includes(subject.name))
+    : [];
+
+  if (extra.length > 0) {
+    return createFixedScore({
+      conclusion: `Rated ${extra.map((subject) => `${subject.name} (${subject.basis})`).join("; ")}`,
+      score: 6,
+    });
   }
 
   const contradictions = findContradictions({ expected, found });

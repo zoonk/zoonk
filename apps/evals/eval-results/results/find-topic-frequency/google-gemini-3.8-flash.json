@@ -3,14 +3,30 @@
   "results": [
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "found": ["Ciências da Natureza e suas Tecnologias"],
-          "notHigh": ["A Mecânica e o funcionamento do Universo"],
+          "found": [
+            "Ciências da Natureza e suas Tecnologias"
+          ],
+          "notHigh": [
+            "A Mecânica e o funcionamento do Universo"
+          ],
           "notLow": [
             "Ecologia e ciências ambientais",
             "Hereditariedade e diversidade da vida",
@@ -67,15 +83,29 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
           "found": [],
           "notHigh": [],
-          "notLow": ["1 Compreensão e interpretação de textos de gêneros variados"]
+          "notLow": [
+            "1 Compreensão e interpretação de textos de gêneros variados"
+          ]
         },
         "id": "pt-camara-portugues-1",
         "userInput": {
@@ -103,12 +133,28 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "found": [], "notHigh": [], "notLow": [] },
+        "expected": {
+          "found": [],
+          "notHigh": [],
+          "notLow": []
+        },
         "id": "pt-enem-humanas-1",
         "userInput": {
           "board": "Inep",
@@ -131,14 +177,30 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "found": ["Ciências da Natureza e suas Tecnologias"],
-          "notHigh": ["A Mecânica e o funcionamento do Universo"],
+          "found": [
+            "Ciências da Natureza e suas Tecnologias"
+          ],
+          "notHigh": [
+            "A Mecânica e o funcionamento do Universo"
+          ],
           "notLow": [
             "Ecologia e ciências ambientais",
             "Hereditariedade e diversidade da vida",
@@ -180,6 +242,56 @@
             }
           ],
           "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "found": [],
+          "notHigh": [],
+          "notLow": [],
+          "onlyFound": true
+        },
+        "id": "pt-cgu-2026-new-board-and-syllabus-1",
+        "userInput": {
+          "board": "Cebraspe",
+          "exam": "CGU, Auditor Federal de Finanças e Controle",
+          "subjects": [
+            {
+              "name": "Administração Pública e Fundamentos de Políticas Públicas",
+              "topics": [
+                "1 Organização administrativa",
+                "1.1 Administração direta e indireta; descentralização e desconcentração; agentes públicos; funções da administração pública: formulação, execução, regulação e controle de políticas e ações públicas; arranjos de cooperação com entes federativos e entidades não estatais",
+                "2 Modelos de administração",
+                "2.1 Burocracia e profissionalização; gestão orientada a resultados; participação e governança; limites e contribuições de diferentes modelos na realidade brasileira",
+                "3 Políticas públicas",
+                "3.1 Problema público, agenda e formulação; instrumentos de ação estatal; implementação, monitoramento e avaliação; intersetorialidade e atores governamentais e sociais",
+                "4 Planejamento e recursos",
+                "4.1 Funções do planejamento e do orçamento; relação entre PPA, LDO e LOA; receita e despesa em nível conceitual; restrições fiscais, escolhas alocativas e sustentabilidade das ações",
+                "5 Serviços e transformação digital",
+                "5.1 Orientação ao usuário; simplificação e acessibilidade; coordenação de serviços; oportunidades e riscos da automação e da inteligência artificial na administração"
+              ]
+            }
+          ],
+          "today": "2026-10-30"
         }
       }
     }

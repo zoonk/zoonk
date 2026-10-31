@@ -1,4 +1,5 @@
 import "server-only";
+import { isSameBoard } from "@zoonk/ai/tasks/research/same-board";
 import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
@@ -125,6 +126,31 @@ export async function previewExamBlueprintChanges({
   return mergeBlueprintContent({ current: stored, next: content }).changes;
 }
 
+/** What past papers showed (counts, topics, options) belongs to the board that wrote them. */
+function forgetOtherBoardsPapers({
+  board,
+  current,
+}: {
+  board: string | null;
+  current: ExamBlueprint;
+}): BlueprintContent {
+  const stored = readBlueprintContent(current);
+
+  if (board === null || isSameBoard(current.board, board)) {
+    return stored;
+  }
+
+  return {
+    ...stored,
+    structure: {
+      ...stored.structure,
+      pastOptions: null,
+      pastQuestions: null,
+      pastTopicFrequency: null,
+    },
+  };
+}
+
 async function updateBlueprint({
   current,
   input,
@@ -132,7 +158,7 @@ async function updateBlueprint({
   current: ExamBlueprint;
   input: SaveExamBlueprintInput;
 }): Promise<SavedExamBlueprint> {
-  const stored = readBlueprintContent(current);
+  const stored = forgetOtherBoardsPapers({ board: input.identity.board, current });
   const { changes, content } = mergeBlueprintContent({ current: stored, next: input.content });
 
   const notice = changes.length > 0 ? input.notice : null;

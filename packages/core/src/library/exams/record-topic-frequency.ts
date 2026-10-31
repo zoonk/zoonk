@@ -11,7 +11,7 @@ import {
 import { listUnratedSubjects, needsTopicFrequency } from "./topic-frequency";
 
 export type TopicFrequencyLookup = {
-  board: string | null;
+  board: string;
   exam: string;
   subjects: { name: string; topics: string[] }[];
 };
@@ -20,7 +20,10 @@ function describeExam(blueprint: Pick<ExamBlueprint, "name" | "role">): string {
   return blueprint.role ? `${blueprint.name}, ${blueprint.role}` : blueprint.name;
 }
 
-/** Internal workflow bridge: the blueprint must come from the research run that linked it. */
+/**
+ * Internal workflow bridge: the blueprint must come from the research run that linked it. Null
+ * while the exam's board is unknown, since only past papers its current board wrote count.
+ */
 export async function findTopicFrequencyLookup({
   examBlueprintId,
 }: {
@@ -31,7 +34,7 @@ export async function findTopicFrequencyLookup({
   const topicFrequency = topicFrequencySchema.safeParse(blueprint?.topicFrequency).data ?? [];
 
   if (
-    !blueprint ||
+    !blueprint?.board ||
     blueprint.ownerId ||
     !structure ||
     !needsTopicFrequency({ now: new Date(), structure, topicFrequency })

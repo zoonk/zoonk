@@ -145,6 +145,7 @@
     "./tasks/research/find-target-cutoff": "./src/tasks/research/find-target-cutoff.ts",
     "./tasks/research/find-topic-frequency": "./src/tasks/research/find-topic-frequency.ts",
     "./tasks/research/plan": "./src/tasks/research/research-plan.ts",
+    "./tasks/research/same-board": "./src/tasks/research/same-board.ts",
     "./tasks/research/search-tools": "./src/tasks/research/research-search-tools.ts",
     "./tasks/research/source-change-notice": "./src/tasks/research/source-change-notice.ts",
     "./tasks/research/source-plan": "./src/tasks/research/source-research-plan.ts",

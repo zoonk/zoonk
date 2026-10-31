@@ -21,6 +21,7 @@ const subjects = [
 
 const natureza = {
   basis: " questões de 2009 a 2024 ",
+  board: "INEP",
   sourceTitle: "Os assuntos que mais caem no Enem",
   sourceUrl: PAGE,
   subject: 1,
@@ -33,7 +34,12 @@ const natureza = {
 describe(toTopicFrequencyFinding, () => {
   it("keeps a subject's topics one source rates, in the notice's words, with the source", () => {
     expect(
-      toTopicFrequencyFinding({ isSearched: searched, raw: { subjects: [natureza] }, subjects }),
+      toTopicFrequencyFinding({
+        board: "Inep",
+        isSearched: searched,
+        raw: { subjects: [natureza] },
+        subjects,
+      }),
     ).toStrictEqual({
       subjects: [
         {
@@ -67,7 +73,9 @@ describe(toTopicFrequencyFinding, () => {
       ],
     };
 
-    expect(toTopicFrequencyFinding({ isSearched: searched, raw, subjects })).toStrictEqual({
+    expect(
+      toTopicFrequencyFinding({ board: "Inep", isSearched: searched, raw, subjects }),
+    ).toStrictEqual({
       subjects: [
         {
           basis: "questões de 2009 a 2024",
@@ -77,5 +85,26 @@ describe(toTopicFrequencyFinding, () => {
         },
       ],
     });
+  });
+
+  it("leaves out a source that counted another board's editions, or doesn't say whose", () => {
+    const humanas = {
+      ...natureza,
+      board: null,
+      subject: 2,
+      topics: [{ appearances: 9, level: "high", topic: "S2.1" }],
+    };
+
+    const raw = { subjects: [natureza, humanas] };
+
+    expect(
+      toTopicFrequencyFinding({ board: "Cebraspe", isSearched: searched, raw, subjects }),
+    ).toStrictEqual({ subjects: [] });
+
+    expect(
+      toTopicFrequencyFinding({ board: "Inep", isSearched: searched, raw, subjects }).subjects.map(
+        (subject) => subject.name,
+      ),
+    ).toStrictEqual(["Ciências da Natureza e suas Tecnologias"]);
   });
 });

@@ -31,6 +31,7 @@ const schema = z.object({
   subjects: z.array(
     z.object({
       basis: z.string(),
+      board: z.string().nullable(),
       sourceTitle: z.string().nullable(),
       sourceUrl: z.string().nullable(),
       subject: z.number().int(),
@@ -40,7 +41,7 @@ const schema = z.object({
 });
 
 type FindTopicFrequencyInput = {
-  board: string | null;
+  board: string;
   exam: string;
   /** Topics in the notice's words. */
   subjects: TopicFrequencySubject[];
@@ -70,7 +71,7 @@ function buildUserPrompt(input: FindTopicFrequencyInput): string {
     TODAY: ${input.today}
 
 ${formatUntrustedInput({
-  BOARD: input.board ?? "",
+  BOARD: input.board,
   EXAM: input.exam,
   SUBJECTS: formatSubjects(input.subjects),
 })}
@@ -103,7 +104,12 @@ export async function findTopicFrequency({
     userPrompt,
   });
 
-  const data = toTopicFrequencyFinding({ isSearched, raw: output, subjects: input.subjects });
+  const data = toTopicFrequencyFinding({
+    board: input.board,
+    isSearched,
+    raw: output,
+    subjects: input.subjects,
+  });
 
   return { data, provenance, systemPrompt, usage, userPrompt };
 }

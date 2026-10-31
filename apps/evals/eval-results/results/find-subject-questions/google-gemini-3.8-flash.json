@@ -3,12 +3,27 @@
   "results": [
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "counts": {}, "status": "any" },
+        "expected": {
+          "counts": {},
+          "status": "any"
+        },
         "id": "pt-camara-registro-redacao-1",
         "userInput": {
           "board": "Cebraspe",
@@ -31,12 +46,29 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "counts": { "20": 8 }, "status": "found" },
+        "expected": {
+          "counts": {
+            "20": 8
+          },
+          "status": "found"
+        },
         "id": "pt-oab-1a-fase-1",
         "userInput": {
           "board": "FGV",
@@ -70,8 +102,16 @@
     },
     {
       "steps": [
-        { "conclusion": "Missed the published distribution", "kind": "majorErrors", "score": 8 },
-        { "conclusion": "Missed the published distribution", "kind": "minorErrors", "score": 8 },
+        {
+          "conclusion": "Missed the published distribution",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Missed the published distribution",
+          "kind": "minorErrors",
+          "score": 8
+        },
         {
           "conclusion": "Missed the published distribution",
           "kind": "potentialImprovements",
@@ -79,7 +119,10 @@
         }
       ],
       "testCase": {
-        "expected": { "counts": {}, "status": "found" },
+        "expected": {
+          "counts": {},
+          "status": "found"
+        },
         "id": "pt-oab-1a-fase-without-ethics-1",
         "userInput": {
           "board": "FGV",
@@ -107,6 +150,54 @@
           ],
           "today": "2026-10-06",
           "total": 80
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {},
+          "status": "unknown"
+        },
+        "id": "pt-cgu-2026-new-board-and-syllabus-1",
+        "userInput": {
+          "board": "Cebraspe",
+          "exam": "CGU, Auditor Federal de Finanças e Controle",
+          "subjects": [
+            "Estado, Democracia, Direitos e Ciência Política",
+            "Sociedade Brasileira, Desigualdades, Diversidade e Desenvolvimento",
+            "Ética Pública e Responsabilidade Profissional",
+            "Administração Pública e Fundamentos de Políticas Públicas",
+            "Fundamentos de Governança, Riscos e Integridade Pública e Privada",
+            "Fundamentos de Transparência, Ouvidoria e Participação Social",
+            "Fundamentos de Direito Público Aplicado, Controle e Responsabilização",
+            "Fundamentos de Evidências, Dados e Inteligência Artificial",
+            "Fundamentos de Auditoria Governamental e Atuação Integrada da CGU",
+            "Auditoria Governamental: Avaliação, Consultoria e Apuração",
+            "Finanças Públicas, Orçamento e Contabilidade Pública",
+            "Políticas Públicas e Métodos de Investigação e Avaliação",
+            "Auditoria de Contratações, Transferências e Execução de Recursos",
+            "Integridade, Transparência e Responsabilização Aplicadas ao Controle Público"
+          ],
+          "today": "2026-10-30",
+          "total": 170
         }
       }
     }

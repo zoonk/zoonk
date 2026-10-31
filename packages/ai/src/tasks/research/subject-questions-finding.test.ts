@@ -5,6 +5,7 @@ const PAGE = "https://blog.example.com/oab-distribuicao-de-questoes";
 const searched = (url: string) => url.startsWith("https://blog.example.com/");
 
 const raw = {
+  board: "FGV Conhecimento",
   counts: [
     { questions: 8, subject: 1 },
     { questions: 6, subject: 2 },
@@ -19,7 +20,13 @@ const raw = {
 describe(toSubjectQuestionsFinding, () => {
   it("keeps one count per subject, in the subjects' order, with its source", () => {
     expect(
-      toSubjectQuestionsFinding({ isSearched: searched, raw, subjectCount: 3, total: 20 }),
+      toSubjectQuestionsFinding({
+        board: "FGV",
+        isSearched: searched,
+        raw,
+        subjectCount: 3,
+        total: 20,
+      }),
     ).toStrictEqual({
       edition: "45º Exame",
       questions: [8, 6, 6],
@@ -31,11 +38,18 @@ describe(toSubjectQuestionsFinding, () => {
   it("keeps the counts it has when a subject has none or two, never more than the exam's total", () => {
     // The OAB's source counts ethics too, which this reading's 4th subject list lacks.
     expect(
-      toSubjectQuestionsFinding({ isSearched: searched, raw, subjectCount: 4, total: 22 }),
+      toSubjectQuestionsFinding({
+        board: "FGV",
+        isSearched: searched,
+        raw,
+        subjectCount: 4,
+        total: 22,
+      }),
     ).toMatchObject({ questions: [8, 6, 6, null], status: "found" });
 
     expect(
       toSubjectQuestionsFinding({
+        board: "FGV",
         isSearched: searched,
         raw: { ...raw, counts: [...raw.counts, { questions: 2, subject: 1 }] },
         subjectCount: 3,
@@ -44,7 +58,13 @@ describe(toSubjectQuestionsFinding, () => {
     ).toMatchObject({ questions: [null, 6, 6], status: "found" });
 
     expect(
-      toSubjectQuestionsFinding({ isSearched: searched, raw, subjectCount: 4, total: 18 }),
+      toSubjectQuestionsFinding({
+        board: "FGV",
+        isSearched: searched,
+        raw,
+        subjectCount: 4,
+        total: 18,
+      }),
     ).toMatchObject({ status: "unknown" });
   });
 
@@ -52,11 +72,18 @@ describe(toSubjectQuestionsFinding, () => {
     const unknown = { edition: null, questions: [], source: null, status: "unknown" };
 
     expect(
-      toSubjectQuestionsFinding({ isSearched: searched, raw, subjectCount: 3, total: 80 }),
+      toSubjectQuestionsFinding({
+        board: "FGV",
+        isSearched: searched,
+        raw,
+        subjectCount: 3,
+        total: 80,
+      }),
     ).toStrictEqual(unknown);
 
     expect(
       toSubjectQuestionsFinding({
+        board: "FGV",
         isSearched: searched,
         raw: { ...raw, sourceUrl: "https://invented.example.org/page" },
         subjectCount: 3,
@@ -66,11 +93,34 @@ describe(toSubjectQuestionsFinding, () => {
 
     expect(
       toSubjectQuestionsFinding({
+        board: "FGV",
         isSearched: searched,
         raw: { ...raw, counts: [{ questions: 0, subject: 1 }] },
         subjectCount: 3,
         total: null,
       }),
     ).toStrictEqual(unknown);
+  });
+
+  it("counts nothing from an edition another board ran, or one whose board it doesn't say", () => {
+    expect(
+      toSubjectQuestionsFinding({
+        board: "Cebraspe",
+        isSearched: searched,
+        raw,
+        subjectCount: 3,
+        total: 20,
+      }),
+    ).toMatchObject({ status: "unknown" });
+
+    expect(
+      toSubjectQuestionsFinding({
+        board: "FGV",
+        isSearched: searched,
+        raw: { ...raw, board: null },
+        subjectCount: 3,
+        total: 20,
+      }),
+    ).toMatchObject({ status: "unknown" });
   });
 });

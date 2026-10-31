@@ -43,6 +43,19 @@ const HUMANAS_TOPICS = [
   "Representação espacial",
 ];
 
+const CGU_ADMINISTRACAO_TOPICS = [
+  "1 Organização administrativa",
+  "1.1 Administração direta e indireta; descentralização e desconcentração; agentes públicos; funções da administração pública: formulação, execução, regulação e controle de políticas e ações públicas; arranjos de cooperação com entes federativos e entidades não estatais",
+  "2 Modelos de administração",
+  "2.1 Burocracia e profissionalização; gestão orientada a resultados; participação e governança; limites e contribuições de diferentes modelos na realidade brasileira",
+  "3 Políticas públicas",
+  "3.1 Problema público, agenda e formulação; instrumentos de ação estatal; implementação, monitoramento e avaliação; intersetorialidade e atores governamentais e sociais",
+  "4 Planejamento e recursos",
+  "4.1 Funções do planejamento e do orçamento; relação entre PPA, LDO e LOA; receita e despesa em nível conceitual; restrições fiscais, escolhas alocativas e sustentabilidade das ações",
+  "5 Serviços e transformação digital",
+  "5.1 Orientação ao usuário; simplificação e acessibilidade; coordenação de serviços; oportunidades e riscos da automação e da inteligência artificial na administração",
+];
+
 export const TEST_CASES: FindTopicFrequencyCase[] = [
   {
     expected: {
@@ -99,6 +112,21 @@ export const TEST_CASES: FindTopicFrequencyCase[] = [
         },
       ],
       today: TODAY,
+    },
+  },
+  {
+    expected: { found: [], notHigh: [], notLow: [], onlyFound: true },
+    id: "pt-cgu-2026-new-board-and-syllabus",
+    userInput: {
+      board: "Cebraspe",
+      exam: "CGU, Auditor Federal de Finanças e Controle",
+      subjects: [
+        {
+          name: "Administração Pública e Fundamentos de Políticas Públicas",
+          topics: CGU_ADMINISTRACAO_TOPICS,
+        },
+      ],
+      today: "2026-10-30",
     },
   },
 ];

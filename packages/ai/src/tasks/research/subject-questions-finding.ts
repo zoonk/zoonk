@@ -1,8 +1,12 @@
+import { isSameBoard } from "./same-board";
+
 const MAX_TITLE_LENGTH = 200;
 const MAX_EDITION_LENGTH = 80;
 
 /** Counts by the subject's number in `SUBJECTS`. */
 export type RawSubjectQuestionsFinding = {
+  /** Who ran the edition the counts are from. */
+  board: string | null;
   counts: { questions: number; subject: number }[];
   edition: string | null;
   sourceTitle: string | null;
@@ -62,18 +66,20 @@ function fitsTotal({ questions, total }: { questions: (number | null)[]; total: 
  * A subject without a single count has none and the others keep theirs; anything else is unknown.
  */
 export function toSubjectQuestionsFinding({
+  board,
   isSearched,
   raw,
   subjectCount,
   total,
 }: {
+  board: string;
   /** An address on a site the search didn't return was invented. */
   isSearched: (url: string) => boolean;
   raw: RawSubjectQuestionsFinding;
   subjectCount: number;
   total: number | null;
 }): SubjectQuestionsFinding {
-  if (raw.status !== "found") {
+  if (raw.status !== "found" || !isSameBoard(raw.board, board)) {
     return UNKNOWN;
   }
 

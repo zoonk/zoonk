@@ -7,7 +7,7 @@ import { type ExamStructure, examEditionSchema, examStructureSchema } from "./bl
 import { needsPastQuestions } from "./subject-questions";
 
 export type SubjectQuestionsLookup = {
-  board: string | null;
+  board: string;
   exam: string;
   subjects: string[];
   total: number | null;
@@ -17,7 +17,10 @@ function describeExam(blueprint: Pick<ExamBlueprint, "name" | "role">): string {
   return blueprint.role ? `${blueprint.name}, ${blueprint.role}` : blueprint.name;
 }
 
-/** Internal workflow bridge: the blueprint must come from the research run that linked it. */
+/**
+ * Internal workflow bridge: the blueprint must come from the research run that linked it. Null
+ * while the exam's board is unknown, since only past papers its current board wrote count.
+ */
 export async function findSubjectQuestionsLookup({
   examBlueprintId,
 }: {
@@ -27,7 +30,7 @@ export async function findSubjectQuestionsLookup({
   const structure = examStructureSchema.safeParse(blueprint?.structure).data;
 
   if (
-    !blueprint ||
+    !blueprint?.board ||
     blueprint.ownerId ||
     !structure ||
     !needsPastQuestions({ now: new Date(), structure })

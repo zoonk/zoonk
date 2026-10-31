@@ -276,6 +276,68 @@ describe(saveExamBlueprint, () => {
     ).resolves.toBe(0);
   });
 
+  it("forgets what past papers showed when the exam changes boards, and keeps it under the same board", async () => {
+    const source = await sourceFixture({ language: "pt" });
+    const examIdentity = identity({ board: "FGV" });
+    const first = content({ questions: 80, sourceHash: source.contentHash, sourceId: source.id });
+    const pastSource = { title: "Distribuição", url: "https://example.com/fgv" };
+
+    const past = {
+      pastOptions: {
+        checkedAt: "2026-01-10T00:00:00.000Z",
+        edition: "2022",
+        options: 5,
+        source: pastSource,
+      },
+      pastQuestions: {
+        checkedAt: "2026-01-10T00:00:00.000Z",
+        edition: "2022",
+        source: pastSource,
+        subjects: [{ name: "Direito Constitucional", questions: 20 }],
+      },
+      pastTopicFrequency: {
+        checkedAt: "2026-01-10T00:00:00.000Z",
+        subjects: [
+          {
+            basis: "questões da FGV",
+            name: "Direito Constitucional",
+            source: pastSource,
+            topics: [{ appearances: 12, level: "high" as const, topic: "Direitos fundamentais" }],
+          },
+        ],
+      },
+    };
+
+    await saveExamBlueprint({
+      content: { ...first, structure: { ...first.structure, ...past } },
+      identity: examIdentity,
+      provenance: PROVENANCE,
+      sourceId: source.id,
+    });
+
+    const sameBoard = await saveExamBlueprint({
+      content: first,
+      identity: { ...examIdentity, board: "FGV Conhecimento" },
+      provenance: PROVENANCE,
+      sourceId: source.id,
+    });
+
+    expect(sameBoard.blueprint).toMatchObject({ board: "FGV Conhecimento", structure: past });
+
+    const newBoard = await saveExamBlueprint({
+      content: first,
+      identity: { ...examIdentity, board: "Cebraspe" },
+      provenance: PROVENANCE,
+      sourceId: source.id,
+    });
+
+    expect(newBoard.blueprint.board).toBe("Cebraspe");
+
+    expect(newBoard.blueprint.structure).not.toHaveProperty("pastOptions");
+    expect(newBoard.blueprint.structure).not.toHaveProperty("pastQuestions");
+    expect(newBoard.blueprint.structure).not.toHaveProperty("pastTopicFrequency");
+  });
+
   it("tells learners nothing when the same document is read again", async () => {
     const source = await sourceFixture({ language: "pt" });
     const examIdentity = identity();

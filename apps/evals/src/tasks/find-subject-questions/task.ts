@@ -10,7 +10,8 @@ import { TEST_CASES } from "./test-cases";
 export type FindSubjectQuestionsExpected = {
   /** Uses 1-based subject numbers; empty accepts unknown or a self-consistent answer. */
   counts: Record<number, number>;
-  status: "any" | "found";
+  /** `unknown` when no edition the current board ran had these subjects. */
+  status: "any" | "found" | "unknown";
 };
 
 function parseOutput(output: string): SubjectQuestionsFinding | null {
@@ -46,6 +47,13 @@ const scoreSubjectQuestions: TaskScorer<FindSubjectQuestionsExpected> = ({ outpu
     return expected.status === "found"
       ? createFixedScore({ conclusion: "Missed the published distribution", score: 8 })
       : createFixedScore({ conclusion: "None", score: 10 });
+  }
+
+  if (expected.status === "unknown") {
+    return createFixedScore({
+      conclusion: `Counted ${found.edition ?? "an edition"} from ${found.source.url}`,
+      score: 6,
+    });
   }
 
   const wrong = findWrongCounts({ expected, questions: found.questions });

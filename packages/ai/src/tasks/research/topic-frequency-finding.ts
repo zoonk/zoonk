@@ -1,3 +1,5 @@
+import { isSameBoard } from "./same-board";
+
 const MAX_TITLE_LENGTH = 200;
 const MAX_BASIS_LENGTH = 120;
 
@@ -11,6 +13,8 @@ export type TopicFrequencySubject = { name: string; topics: string[] };
 export type RawTopicFrequencyFinding = {
   subjects: {
     basis: string;
+    /** Who ran the editions the source counted. */
+    board: string | null;
     sourceTitle: string | null;
     sourceUrl: string | null;
     subject: number;
@@ -77,13 +81,16 @@ function toTopics({
 }
 
 /**
- * Only one source's rating of a subject's own topics, from a page a search returned; never guessed.
+ * Only one source's rating of a subject's own topics, counted from editions `board` ran, from a
+ * page a search returned; never guessed.
  */
 export function toTopicFrequencyFinding({
+  board,
   isSearched,
   raw,
   subjects,
 }: {
+  board: string;
   /** An address on a site the search didn't return was invented. */
   isSearched: (url: string) => boolean;
   raw: RawTopicFrequencyFinding;
@@ -93,7 +100,13 @@ export function toTopicFrequencyFinding({
     const subject = subjects[entry.subject - 1];
     const url = entry.sourceUrl?.trim();
 
-    if (!subject || !url || !URL.canParse(url) || !isSearched(url)) {
+    if (
+      !subject ||
+      !url ||
+      !URL.canParse(url) ||
+      !isSearched(url) ||
+      !isSameBoard(entry.board, board)
+    ) {
       return [];
     }
 

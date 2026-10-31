@@ -100,7 +100,7 @@ describe(recordChoiceOptions, () => {
   });
 
   it("keeps the subjects' counts recorded at the same time", async () => {
-    const blueprint = await examBlueprintFixture({ structure: structure(null) });
+    const blueprint = await examBlueprintFixture({ board: "Inep", structure: structure(null) });
     const lookup = await findSubjectQuestionsLookup({ examBlueprintId: blueprint.id });
 
     await Promise.all([

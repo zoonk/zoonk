@@ -20,6 +20,7 @@ const defaultReasoning: Reasoning = "low";
 const MAX_STEPS = 5;
 
 const schema = z.object({
+  board: z.string().nullable(),
   counts: z.array(z.object({ questions: z.number().int(), subject: z.number().int() })),
   edition: z.string().nullable(),
   sourceTitle: z.string().nullable(),
@@ -28,7 +29,7 @@ const schema = z.object({
 });
 
 type FindSubjectQuestionsInput = {
-  board: string | null;
+  board: string;
   exam: string;
   subjects: string[];
   today: string;
@@ -48,7 +49,7 @@ function buildUserPrompt(input: FindSubjectQuestionsInput): string {
     TODAY: ${input.today}
 
 ${formatUntrustedInput({
-  BOARD: input.board ?? "",
+  BOARD: input.board,
   EXAM: input.exam,
   SUBJECTS: input.subjects.map((subject, index) => `${index + 1}. ${subject}`).join("\n"),
   TOTAL: input.total === null ? "" : String(input.total),
@@ -80,6 +81,7 @@ export async function findSubjectQuestions({
   });
 
   const data = toSubjectQuestionsFinding({
+    board: input.board,
     isSearched,
     raw: output,
     subjectCount: input.subjects.length,
