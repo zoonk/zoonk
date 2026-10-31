@@ -84,14 +84,9 @@ private struct ProcessOrderCanvas: View {
         selectedId = isSelected ? nil : step.id
       }
     } label: {
-      HStack(alignment: .firstTextBaseline, spacing: 12) {
-        ProcessStepMarks(position: index + 1, icon: step.icon, mark: .plain)
+      ProcessStepRow(position: index + 1, icon: step.icon, mark: .plain, isDraggable: true) {
         LessonRichText(step.text)
           .fontWeight(.medium)
-          .frame(maxWidth: .infinity, alignment: .leading)
-        Image(systemName: "line.3.horizontal")
-          .foregroundStyle(.secondary)
-          .accessibilityHidden(true)
       }
     }
     .buttonStyle(ActivityTileStyle(mark: isSelected ? .selected : .plain))
@@ -172,9 +167,7 @@ private struct ProcessOrderCanvas: View {
         let mark: ActivityTileMark =
           result.map { $0.learnerPosition == $0.position ? .right : .wrong } ?? .plain
 
-        HStack(alignment: .firstTextBaseline, spacing: 12) {
-          ProcessStepMarks(position: index + 1, icon: step.icon, mark: mark)
-
+        ProcessStepRow(position: index + 1, icon: step.icon, mark: mark) {
           VStack(alignment: .leading, spacing: 4) {
             LessonRichText(step.text)
               .fontWeight(.medium)
@@ -191,7 +184,6 @@ private struct ProcessOrderCanvas: View {
               .foregroundStyle(.destructive)
             }
           }
-          .frame(maxWidth: .infinity, alignment: .leading)
         }
         .font(.subheadline)
         .padding(12)
@@ -207,6 +199,51 @@ private struct ProcessOrderCanvas: View {
     case .right: Color.success.opacity(0.1)
     case .wrong: Color.destructive.opacity(0.1)
     default: Color(.secondarySystemBackground)
+    }
+  }
+}
+
+private struct ProcessStepRow<Content: View>: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+  let position: Int
+  let icon: String?
+  let mark: ActivityTileMark
+  var isDraggable = false
+  @ViewBuilder let content: Content
+
+  var body: some View {
+    if dynamicTypeSize.isAccessibilitySize {
+      VStack(alignment: .leading, spacing: 8) {
+        HStack(spacing: 12) {
+          marks
+          Spacer(minLength: 0)
+          handle
+        }
+        text
+      }
+    } else {
+      HStack(alignment: .firstTextBaseline, spacing: 12) {
+        marks
+        text
+        handle
+      }
+    }
+  }
+
+  private var marks: some View {
+    ProcessStepMarks(position: position, icon: icon, mark: mark)
+  }
+
+  private var text: some View {
+    content.frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  @ViewBuilder private var handle: some View {
+    if isDraggable {
+      Image(systemName: "line.3.horizontal")
+        .foregroundStyle(.secondary)
+        .accessibilityHidden(true)
     }
   }
 }
