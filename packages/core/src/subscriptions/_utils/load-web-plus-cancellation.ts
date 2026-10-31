@@ -54,8 +54,12 @@ function describeCancellation({
   const item = subscription.items.data[0];
   const invoice = getLatestInvoice(subscription);
 
-  // An early `cancel_at` shortens the item's current period; the invoice line keeps the period paid for.
-  const paidPeriod = invoice?.lines.data[0]?.period;
+  // An early `cancel_at` shortens the item's current period; the item's own line keeps the period
+  // paid for, after any proration lines.
+  const paidPeriod = invoice?.lines.data.find((line) => {
+    const details = line.parent?.subscription_item_details;
+    return details?.subscription_item === item?.id && details?.proration === false;
+  })?.period;
 
   if (!item || !invoice || !paidPeriod) {
     return { email: learner.email, status: "none" };

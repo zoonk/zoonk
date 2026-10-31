@@ -70,6 +70,7 @@ function stripeSubscription({
           // Stripe ends the current period at an earlier `cancel_at`.
           current_period_end: cancelAt ?? periodEnd,
           current_period_start: periodStart,
+          id: "si_plus",
           price: { recurring: { interval } },
         },
       ],
@@ -78,7 +79,23 @@ function stripeSubscription({
       amount_paid: amountPaid,
       currency: "eur",
       id: `in_${randomUUID()}`,
-      lines: { data: [{ period: { end: periodEnd, start: periodStart } }] },
+      lines: {
+        data: [
+          // An upgrade's proration comes first, over a shorter period.
+          {
+            parent: {
+              subscription_item_details: { proration: true, subscription_item: "si_plus" },
+            },
+            period: { end: periodStart + DAY, start: periodStart },
+          },
+          {
+            parent: {
+              subscription_item_details: { proration: false, subscription_item: "si_plus" },
+            },
+            period: { end: periodEnd, start: periodStart },
+          },
+        ],
+      },
       payments: { data: [{ payment: { payment_intent: "pi_paid" }, status: "paid" }] },
       status: status === "active" ? "paid" : "open",
     },
