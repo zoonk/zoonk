@@ -59,6 +59,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.GoalLimitReason
+import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.MAX_GOAL_LENGTH
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.FACT_SEPARATOR
@@ -81,6 +82,7 @@ import java.time.ZoneOffset
 internal fun ColumnScope.UnderstoodScreen(
     goal: String,
     understanding: GoalUnderstandingOneOf,
+    activeGoalLimit: Long?,
     material: List<String>,
     isCreating: Boolean,
     error: GoalError?,
@@ -103,6 +105,8 @@ internal fun ColumnScope.UnderstoodScreen(
             rows.scheduleRow(understanding.schedule, minutesSaid(understanding.goals.firstOrNull())),
         )
     val plusLimit = listOfNotNull((error as? GoalError.Limit)?.reason, goalLimit).firstOrNull { it.isPlusLimit }
+    val startable = understanding.startableGoals(activeGoalLimit)
+    val locked = understanding.goals.drop(startable.size)
 
     if (rewriting) {
         RewriteWords(words = goal, disabled = isCreating, onCancel = { rewriting = false }, onRewrite = onRewrite)
@@ -113,7 +117,7 @@ internal fun ColumnScope.UnderstoodScreen(
     OnboardingHeading(
         stringResource(R.string.onboarding_understood_title),
         stringResource(
-            if (understanding.goals.size >
+            if (startable.size >
                 1
             ) {
                 R.string.onboarding_understood_description_shared
@@ -123,7 +127,7 @@ internal fun ColumnScope.UnderstoodScreen(
         ),
     )
 
-    understanding.goals.forEachIndexed { index, understood ->
+    startable.forEachIndexed { index, understood ->
         Column {
             (rows.rows(understood) + if (index == 0) firstGoalRows else emptyList()).forEachIndexed { place, row ->
                 if (place > 0) HorizontalDivider()
@@ -141,6 +145,8 @@ internal fun ColumnScope.UnderstoodScreen(
         }
     }
 
+    if (locked.isNotEmpty()) LockedGoals(locked, rows, onSeePlus.takeIf { plusLimit == null })
+
     if (plusLimit != null) {
         GoalLimitWall(plusLimit, onSeePlus, onOpenPlan)
     } else {
@@ -153,6 +159,38 @@ internal fun ColumnScope.UnderstoodScreen(
             }
         }
     }
+}
+
+/** Read as the card read them, with no fixes: they start later from the goal switcher, as they are. */
+@Composable
+private fun LockedGoals(
+    goals: List<UnderstoodGoal>,
+    rows: UnderstoodRows,
+    onSeePlus: (() -> Unit)?,
+) {
+    goals.forEach { goal ->
+        Column {
+            rows.rows(goal).forEachIndexed { place, row ->
+                if (place > 0) HorizontalDivider()
+                FactRow(
+                    row = row.copy(editable = null, suggestedDate = null, choiceDates = emptyList()),
+                    editValue = "",
+                    editing = false,
+                    saving = false,
+                    failed = false,
+                    onEdit = {},
+                    onSave = {},
+                )
+            }
+        }
+    }
+    PlusNotice(
+        onSeePlus = onSeePlus,
+        description =
+            stringResource(
+                if (goals.size == 1) R.string.onboarding_understood_locked_goal else R.string.onboarding_understood_locked_goals,
+            ),
+    )
 }
 
 @Composable

@@ -53,14 +53,15 @@ internal const val GOAL_ID = "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d"
 internal fun understoodDraft(
     prompt: String = "pass the bar exam",
     understanding: String = goalsUnderstanding(),
+    activeGoalLimit: Int? = null,
 ): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understood","understanding":$understanding}""",
+        """{"activeGoalLimit":$activeGoalLimit,"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understood","understanding":$understanding}""",
     )
 
 internal fun failedDraft(prompt: String = "pass the bar exam"): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"failed","understanding":null}""",
+        """{"activeGoalLimit":null,"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"failed","understanding":null}""",
     )
 
 internal fun readingDraft(
@@ -68,7 +69,7 @@ internal fun readingDraft(
     generationId: String = "run-1",
 ): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"generationId":"$generationId","goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understanding","understanding":null}""",
+        """{"activeGoalLimit":null,"generationId":"$generationId","goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understanding","understanding":null}""",
     )
 
 internal fun goalsUnderstanding(

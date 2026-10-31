@@ -9,7 +9,10 @@
   "goal_switcher_new_goal": "ba9cda1997221ce841a26408813c5efcb3dc7c5ff7234de75a73f525a09063b7",
   "goal_switcher_paused": "49bd9e230004f44b0e7cb95a17a8b6c1d025ff0fc92da8f60196ac37405da6ec",
   "goal_switcher_quick_explanations": "35574eae1b0ddefb4762b8b394f486034f0c1b3cce42699ec3104d318d0acaaa",
+  "goal_switcher_ready_to_start": "8eaee8c823bbb432cb87e307d718a494f80f46f88a943cfde0007d2af4b300df",
+  "goal_switcher_start_failed": "6e30e896f55be88f093e76ef886a170f4f2c932b8450e31e0598db3534523cda",
   "goal_switcher_start_goal": "e2305a56764f3d83ac5578ff8f60fa91aaa99e99fe6eeb9955a836818fd8232b",
+  "goal_switcher_starts_with_plus": "2658eedb86ac8f6189f6df914515eaaa025008d7d94dc7755cc37a69a9c502d8",
   "goal_switcher_your_goals": "e9dc8c9076df01325fa2a6f7afe5e8cdf6076ac133ede6ac575224aa374d5588"
 }
 -->
@@ -26,4 +29,9 @@
     <string name="goal_switcher_finished">Completado</string>
     <string name="goal_switcher_paused">En pausa</string>
     <string name="goal_switcher_failed">No pudimos cambiar de objetivo. Inténtalo de nuevo.</string>
+    <!-- Under a goal the learner typed with their goals that their plan didn't start: the free plan follows one goal at a time. Plus is the name of Zoonk's paid plan. -->
+    <string name="goal_switcher_starts_with_plus">Puedes crearlo con Plus</string>
+    <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
+    <string name="goal_switcher_ready_to_start">Ya puedes crearlo</string>
+    <string name="goal_switcher_start_failed">No pudimos crear este objetivo. Inténtalo de nuevo.</string>
 </resources>

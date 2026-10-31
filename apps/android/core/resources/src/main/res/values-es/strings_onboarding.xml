@@ -402,6 +402,8 @@
   "onboarding_understanding_title": "ad356f7a992c127dcc3c2c166749f34f2b0175482dc8132e15afee24c62e97e5",
   "onboarding_understood_description": "2032b76914a8eba329ae73ab40f8c15a9a73c9ababe693e4596ae06f64b9d396",
   "onboarding_understood_description_shared": "ef5d5e993c3bf2bbd264b1c4c1b0aed830074d6cc6a679aa460e614d5c394965",
+  "onboarding_understood_locked_goal": "c955a84fc84fde42dc1be53300707e2ef04827336d6713e1985ada89a90a661d",
+  "onboarding_understood_locked_goals": "15315588695f98a7c5a7d822e6decd7359803f9e624139c39484d9c5936bebe4",
   "onboarding_understood_title": "0733997fa284a5930af7277926b4a8493b00745508611e499d3899d1a22b0705",
   "onboarding_upload_file": "2f78e32c7d3b491cd5046b37d22b9f1c7fc3baee73f924812994d7a455c2bde1",
   "onboarding_use_this_date": "ea34a1348e0ffc4e1aa140aa2d73b0c82aaabb06b22a900ca6c98843161e8728",
@@ -479,6 +481,10 @@
     <string name="onboarding_understood_description">Puedes cambiar todo esto después.</string>
     <!-- When the learner's words became more than one goal. -->
     <string name="onboarding_understood_description_shared">Tu tiempo diario se reparte entre estos objetivos. Puedes cambiar todo esto después.</string>
+    <!-- Under the goals the learner typed past the one the free plan follows; "this goal" is the one shown just above. Plus is the name of Zoonk's paid plan. -->
+    <string name="onboarding_understood_locked_goal">Con Plus puedes seguir más de un objetivo a la vez. Mientras tanto, este objetivo queda guardado en tu lista de objetivos.</string>
+    <!-- The same, for two or more goals shown just above. -->
+    <string name="onboarding_understood_locked_goals">Con Plus puedes seguir más de un objetivo a la vez. Mientras tanto, estos objetivos quedan guardados en tu lista de objetivos.</string>
     <string name="onboarding_looks_right">Confirmar</string>
     <string name="onboarding_saving_goal">Guardando tu objetivo…</string>
     <string name="onboarding_fix_something">Corregir algo</string>

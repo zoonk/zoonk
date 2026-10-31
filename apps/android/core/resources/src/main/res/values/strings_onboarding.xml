@@ -65,6 +65,10 @@
     <string name="onboarding_understood_description">You can change all of this later.</string>
     <!-- When the learner's words became more than one goal. -->
     <string name="onboarding_understood_description_shared">These goals share your daily time. You can change all of this later.</string>
+    <!-- Under the goals the learner typed past the one the free plan follows; "this goal" is the one shown just above. Plus is the name of Zoonk's paid plan. -->
+    <string name="onboarding_understood_locked_goal">Following more than one goal at a time comes with Plus. Until then, this goal waits in your goals.</string>
+    <!-- The same, for two or more goals shown just above. -->
+    <string name="onboarding_understood_locked_goals">Following more than one goal at a time comes with Plus. Until then, these goals wait in your goals.</string>
     <string name="onboarding_looks_right">Looks right</string>
     <string name="onboarding_saving_goal">Saving your goal…</string>
     <string name="onboarding_fix_something">Fix something</string>

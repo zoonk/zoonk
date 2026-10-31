@@ -1,10 +1,12 @@
 package com.zoonk.android.feature.onboarding.start
 
 import com.zoonk.api.models.GoalCreateInput
+import com.zoonk.api.models.GoalCreateInputOutput
 import com.zoonk.api.models.GoalDraft
 import com.zoonk.api.models.GoalDraftOutput
 import com.zoonk.api.models.GoalUnderstandingOneOf
 import com.zoonk.api.models.OnboardingDraft
+import com.zoonk.api.models.UnderstoodGoal
 import kotlinx.serialization.json.JsonPrimitive
 import java.util.TimeZone
 import java.util.UUID
@@ -12,16 +14,21 @@ import java.util.UUID
 private const val EXPLANATION_MINUTES = 5L
 private const val MUSICIANSHIP_MINUTES = 15L
 
+/** The card's goals past the [activeGoalLimit] the learner's plan follows at once are Plus's: shown locked, never sent. */
+internal fun GoalUnderstandingOneOf.startableGoals(activeGoalLimit: Long?): List<UnderstoodGoal> =
+    goals.take(activeGoalLimit?.toInt() ?: goals.size)
+
 /** The first goal carries what the learner wants from their material. */
 internal fun understoodGoalsInput(
     understanding: GoalUnderstandingOneOf,
+    activeGoalLimit: Long?,
     materialIntent: MaterialIntent?,
     sourceIds: List<String>,
 ): GoalCreateInput =
     GoalCreateInput(
         dailyMinutes = understanding.schedule.dailyMinutes,
         goals =
-            understanding.goals.mapIndexed { index, goal ->
+            understanding.startableGoals(activeGoalLimit).mapIndexed { index, goal ->
                 goal.draft.toGoalDraft().let { if (index == 0) it.withMaterialIntent(materialIntent) else it }
             },
         sourceIds = sourceIds.map(UUID::fromString).ifEmpty { null },
@@ -74,6 +81,17 @@ internal fun musicianshipInput(
         ),
     timeZone = TimeZone.getDefault().id,
 )
+
+/** A goal its card left waiting starts as the card read it. */
+internal fun GoalCreateInputOutput.toGoalCreateInput() =
+    GoalCreateInput(
+        dailyMinutes = dailyMinutes,
+        goals = goals.map { it.toGoalDraft() },
+        sourceIds = sourceIds,
+        studyDays = studyDays,
+        studyTime = studyTime,
+        timeZone = TimeZone.getDefault().id,
+    )
 
 private fun GoalDraftOutput.toGoalDraft() =
     GoalDraft(

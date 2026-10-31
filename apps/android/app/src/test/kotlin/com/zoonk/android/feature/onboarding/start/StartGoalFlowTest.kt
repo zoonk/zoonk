@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
@@ -13,6 +14,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -101,6 +103,31 @@ class StartGoalFlowTest {
                 .goals
                 .single()
                 .title,
+        )
+        assertEquals(AppRoute.GoalSetup(GOAL_ID), navigator.currentRoute)
+    }
+
+    @Test
+    fun goalsPastWhatTheFreePlanFollowsShowLockedAndAreNotCreated() {
+        api.understood = { understoodDraft(prompt = it, understanding = TWO_GOALS, activeGoalLimit = 1) }
+        show()
+        sendGoal("learn English and statistics")
+
+        rule.onNodeWithText("You can change all of this later.").assertIsDisplayed()
+        rule.onNodeWithText("Learn statistics").performScrollTo().assertIsDisplayed()
+        rule
+            .onNodeWithText("Following more than one goal at a time comes with Plus. Until then, this goal waits in your goals.")
+            .performScrollTo()
+            .assertIsDisplayed()
+        rule.onAllNodesWithContentDescription("Edit Goal").assertCountEquals(1)
+        rule.onNodeWithText("Looks right").performScrollTo().performClick()
+
+        assertEquals(
+            listOf("Learn English"),
+            api.created
+                .single()
+                .goals
+                .map { it.title },
         )
         assertEquals(AppRoute.GoalSetup(GOAL_ID), navigator.currentRoute)
     }
@@ -283,3 +310,10 @@ class StartGoalFlowTest {
         assertEquals(emptyList<String>(), api.drafts)
     }
 }
+
+private val TWO_GOALS =
+    """
+    {"status":"goals","schedule":{"dailyMinutes":30,"studyDays":null,"studyTime":null,"studyTimeNote":null},
+     "goals":[{"cutoff":null,"examDates":[],"draft":{"kind":"learn","language":"en","prompt":"learn English and statistics","title":"Learn English","details":{}}},
+      {"cutoff":null,"examDates":[],"draft":{"kind":"learn","language":"en","prompt":"learn English and statistics","title":"Learn statistics","details":{}}}]}
+    """.trimIndent()

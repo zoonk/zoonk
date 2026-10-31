@@ -9,7 +9,10 @@
   "goal_switcher_new_goal": "fbdf292145fb8dc6d39ac8b953d81049580ae9c183981281cae161da2dd0d6d0",
   "goal_switcher_paused": "f8c7eda102710b4d91cc8f614fdb353bc9438a50f746d2c12cbebf3686a0134e",
   "goal_switcher_quick_explanations": "b8752c7ae4d3085793773cbe2fbf89344fd93998fd789dcaa1f52b10c251b9ae",
+  "goal_switcher_ready_to_start": "8db9438c16f8f2aa21862edbc6130030413508547674c030e2c09bb7c24a07e1",
+  "goal_switcher_start_failed": "ee729b8b952c8e1cfcae76a8dd178e0cbe83c77f8aefbc11e71c1112fb3d88ed",
   "goal_switcher_start_goal": "c457ad26a6239d908b7d3ba114f0270209278daace9aef6175c02fdf427bb66c",
+  "goal_switcher_starts_with_plus": "9ae4e5873432b8ba0ed577217de01dd5dc5c6d1a3b01bf8de79ca7e329b0a4e6",
   "goal_switcher_your_goals": "9090922cd9f88968b1922e33499c038cbdbc5303038e34a745b2fe56e97facc1"
 }
 -->
@@ -26,4 +29,9 @@
     <string name="goal_switcher_finished">Tamamlandı</string>
     <string name="goal_switcher_paused">Duraklatıldı</string>
     <string name="goal_switcher_failed">Hedefini değiştiremedik. Tekrar dene.</string>
+    <!-- Under a goal the learner typed with their goals that their plan didn't start: the free plan follows one goal at a time. Plus is the name of Zoonk's paid plan. -->
+    <string name="goal_switcher_starts_with_plus">Plus ile başlatılabilir</string>
+    <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
+    <string name="goal_switcher_ready_to_start">Başlamaya hazır</string>
+    <string name="goal_switcher_start_failed">Bu hedefi başlatamadık. Tekrar dene.</string>
 </resources>

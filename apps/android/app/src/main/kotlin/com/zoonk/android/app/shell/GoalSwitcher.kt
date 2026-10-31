@@ -22,6 +22,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -41,6 +42,8 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.onboarding.WriteOutcome
+import com.zoonk.android.feature.onboarding.start.toGoalCreateInput
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LetterMark
@@ -49,6 +52,7 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LearnerSummaryGoal
+import com.zoonk.api.models.LearnerSummaryWaitingGoal
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -58,9 +62,10 @@ import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 /**
- * The tab roots' top app bar title: the goal switcher (main's goal menu), listing the followed goals
- * and open quick explanations, New goal and Explore courses. Empty until the learner summary
- * exists to fill it, as main keeps neutral placeholders while the summary is unread.
+ * The tab roots' top app bar title: the goal switcher (main's goal menu), listing the followed goals,
+ * the goals typed with them that their plan didn't start, open quick explanations, New goal and
+ * Explore courses. Empty until the learner summary exists to fill it, as main keeps neutral
+ * placeholders while the summary is unread.
  */
 @Composable
 fun GoalSwitcher(
@@ -77,8 +82,8 @@ fun GoalSwitcher(
     val selected = followed.firstOrNull { it.id == selectedId } ?: followed.firstOrNull()
     val viewModel = viewModel { GoalSwitcherViewModel(app) }
     val snackbars = LocalSnackbarHostState.current
-    val failedText = stringResource(R.string.goal_switcher_failed)
-    LaunchedEffect(viewModel) { viewModel.failures.collect { snackbars.showSnackbar(failedText) } }
+    val resources = LocalResources.current
+    LaunchedEffect(viewModel, resources) { viewModel.failures.collect { snackbars.showSnackbar(resources.getString(it)) } }
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     if (selected == null && explanations.isEmpty()) {
@@ -101,7 +106,15 @@ fun GoalSwitcher(
         }
 
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }, modifier = Modifier.widthIn(max = MENU_WIDTH)) {
-            MenuItems(selected, followed, explanations, onDismiss = { expanded = false }, navigator = navigator, viewModel = viewModel)
+            MenuItems(
+                selected,
+                followed,
+                learner.waitingGoals,
+                explanations,
+                onDismiss = { expanded = false },
+                navigator = navigator,
+                viewModel = viewModel,
+            )
         }
     }
 }
@@ -109,7 +122,7 @@ fun GoalSwitcher(
 @Composable
 private fun SwitcherTitle(selected: LearnerSummaryGoal?) {
     if (selected != null) {
-        GoalMark(selected)
+        GoalMark(selected.title)
     } else {
         Icon(painterResource(R.drawable.ic_add), contentDescription = null, modifier = Modifier.size(18.dp))
     }
@@ -133,6 +146,7 @@ private fun SwitcherTitle(selected: LearnerSummaryGoal?) {
 private fun MenuItems(
     selected: LearnerSummaryGoal?,
     followed: List<LearnerSummaryGoal>,
+    waiting: List<LearnerSummaryWaitingGoal>,
     explanations: List<LearnerSummaryGoal>,
     onDismiss: () -> Unit,
     navigator: AppNavigator,
@@ -149,13 +163,43 @@ private fun MenuItems(
                         GoalLine(goal)
                     }
                 },
-                leadingIcon = { GoalMark(goal) },
+                leadingIcon = { GoalMark(goal.title) },
                 trailingIcon = if (isSelected) ({ Icon(painterResource(R.drawable.ic_check), contentDescription = null) }) else null,
                 onClick = {
                     onDismiss()
                     if (!isSelected) viewModel.select(goal.id)
                 },
                 modifier = Modifier.semantics { this.selected = isSelected },
+            )
+        }
+        waiting.forEach { goal ->
+            val title =
+                goal.input.goals
+                    .first()
+                    .title
+            DropdownMenuItem(
+                text = {
+                    Column {
+                        Text(title)
+                        Text(
+                            text =
+                                stringResource(
+                                    if (goal.locked) R.string.goal_switcher_starts_with_plus else R.string.goal_switcher_ready_to_start,
+                                ),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.labelMedium,
+                        )
+                    }
+                },
+                leadingIcon = { GoalMark(title) },
+                onClick = {
+                    onDismiss()
+                    if (goal.locked) {
+                        navigator.open(AppRoute.Subscription)
+                    } else {
+                        viewModel.start(goal) { navigator.open(AppRoute.GoalSetup(it)) }
+                    }
+                },
             )
         }
     }
@@ -197,15 +241,40 @@ private fun MenuItems(
 class GoalSwitcherViewModel(
     private val app: AppContainer,
 ) : ViewModel() {
-    private val failed = Channel<Unit>(Channel.CONFLATED)
+    private val failed = Channel<Int>(Channel.CONFLATED)
     val failures = failed.receiveAsFlow()
+
+    private var starting = false
 
     fun select(goalId: UUID) {
         val session = app.sessions.current
         viewModelScope.launch {
             val saved = app.goalSwitch.select(goalId, listOf(app.learnerSummary.summary, app.today.today), shows = app.today::shows)
             // A switch its session didn't outlive (sign-out, another account) isn't the next learner's to retry.
-            if (saved == false && app.sessions.current == session) failed.send(Unit)
+            if (saved == false && app.sessions.current == session) failed.send(R.string.goal_switcher_failed)
+        }
+    }
+
+    /** Starts a goal its card left waiting, then asks its setup; one that didn't start stays listed. */
+    fun start(
+        waiting: LearnerSummaryWaitingGoal,
+        onStarted: (String) -> Unit,
+    ) {
+        if (starting) return
+        starting = true
+        viewModelScope.launch {
+            when (val outcome = app.onboarding.createGoals(waiting.input.toGoalCreateInput())) {
+                is WriteOutcome.Done -> {
+                    onStarted(outcome.value)
+                }
+
+                WriteOutcome.Obsolete -> {}
+
+                else -> {
+                    failed.send(R.string.goal_switcher_start_failed)
+                }
+            }
+            starting = false
         }
     }
 }
@@ -257,7 +326,7 @@ private fun GoalLine(goal: LearnerSummaryGoal) {
 
 /** The goal's first letter on a quiet tile (main's `GoalMark`). */
 @Composable
-internal fun GoalMark(goal: LearnerSummaryGoal) {
+internal fun GoalMark(title: String) {
     Surface(
         shape = MaterialTheme.shapes.extraSmall,
         color = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -265,7 +334,7 @@ internal fun GoalMark(goal: LearnerSummaryGoal) {
     ) {
         LetterMark(
             letter =
-                goal.title
+                title
                     .firstOrNull()
                     ?.uppercase()
                     .orEmpty(),

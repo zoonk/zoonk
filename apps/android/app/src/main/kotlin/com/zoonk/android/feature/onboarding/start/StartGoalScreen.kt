@@ -397,6 +397,7 @@ private fun ColumnScope.DraftContent(
             UnderstoodScreen(
                 goal = draft.prompt,
                 understanding = understanding.value,
+                activeGoalLimit = draft.activeGoalLimit,
                 material = vm.flow.attached.map { it.title },
                 isCreating = vm.isCreating,
                 error = vm.creationError,
@@ -406,6 +407,7 @@ private fun ColumnScope.DraftContent(
                     vm.confirm(
                         understoodGoalsInput(
                             understanding.value,
+                            draft.activeGoalLimit,
                             flow.intent.takeIf { flow.attached.isNotEmpty() },
                             flow.attached.map { it.id },
                         ),

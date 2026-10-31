@@ -9,7 +9,10 @@
   "goal_switcher_new_goal": "a5209bf492acdaf56c077a03bec5522ccaa32846ad87d15e0c22354c43b413bb",
   "goal_switcher_paused": "d652798bbcb1b22361ad8a10187f49a4172ba096129303b441bbde06483b6488",
   "goal_switcher_quick_explanations": "d8615c6ab8afd1d26588b16125c4fde0e14514097b848701a48f7cbefa69cc6b",
+  "goal_switcher_ready_to_start": "d9a390cb49631755bb2b1aace580fa5745bd611642e2cbe791452fcea78d4b39",
+  "goal_switcher_start_failed": "8248d661c94d4bda28efd8c58e902e865b34635249ced2803f8fac7f5734eb26",
   "goal_switcher_start_goal": "2a5f781661e4778f80d1dd606a394fb3c603ca1d973d8c36a4356508a922e68a",
+  "goal_switcher_starts_with_plus": "74b577e70d30934bb804db5f55d6f81b2f86fa1329988b345415825a6f6bb667",
   "goal_switcher_your_goals": "0d4c9016961deb7230e39a413edb2a277b4249992d38986804681fdb1d277b5a"
 }
 -->
@@ -26,4 +29,9 @@
     <string name="goal_switcher_finished">완료</string>
     <string name="goal_switcher_paused">일시 중지됨</string>
     <string name="goal_switcher_failed">목표를 바꾸지 못했어요. 다시 시도해 보세요.</string>
+    <!-- Under a goal the learner typed with their goals that their plan didn't start: the free plan follows one goal at a time. Plus is the name of Zoonk's paid plan. -->
+    <string name="goal_switcher_starts_with_plus">Plus로 시작 가능</string>
+    <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
+    <string name="goal_switcher_ready_to_start">바로 시작 가능</string>
+    <string name="goal_switcher_start_failed">이 목표를 시작하지 못했어요. 다시 시도해 보세요.</string>
 </resources>

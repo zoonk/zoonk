@@ -87,7 +87,7 @@ class LetterMarkTest {
                 TopAppBar(
                     title = {
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                            GoalMark(goal)
+                            GoalMark(goal.title)
                             Text(goal.title)
                         }
                     },
