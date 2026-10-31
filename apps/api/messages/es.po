@@ -84,7 +84,7 @@ msgstr "Algo salió mal. Inténtalo de nuevo en un momento."
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "__wP3o"
 msgid "This code expired. Get a new one."
-msgstr "Este código caducó. Pide uno nuevo."
+msgstr "Este código expiró. Pide uno nuevo."
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "hUjCDW"
@@ -295,7 +295,7 @@ msgstr "Te dejé abajo el cambio propuesto para tu plan. Nada cambia hasta que l
 #: src/lib/tutor-confirmation.ts
 msgctxt "cVQNWB"
 msgid "Below you can start it as a new goal."
-msgstr "Abajo puedes empezar un nuevo objetivo a partir de esto."
+msgstr "Más abajo puedes crear un nuevo objetivo con esto."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "40I13C"
