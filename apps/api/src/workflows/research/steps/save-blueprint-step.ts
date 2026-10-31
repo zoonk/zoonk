@@ -67,12 +67,14 @@ function withCheck({
 
 export async function saveBlueprintStep({
   analytics,
+  board,
   check,
   identity,
   reading: unchecked,
   sourceId,
 }: {
   analytics: ResearchAnalytics;
+  board: string | null;
   check: ReadingCheckInput | null;
   identity: ExamIdentity;
   reading: BlueprintReading;
@@ -89,6 +91,7 @@ export async function saveBlueprintStep({
   const notice = await writeNotice({ analytics, identity, reading });
 
   const saved = await saveExamBlueprint({
+    board,
     content: reading.content,
     identity,
     notice,

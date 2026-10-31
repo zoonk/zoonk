@@ -154,6 +154,7 @@ describe(saveExamBlueprint, () => {
     const examIdentity = identity();
 
     const saved = await saveExamBlueprint({
+      board: "Cebraspe",
       content: content({ questions: 120, sourceHash: source.contentHash, sourceId: source.id }),
       identity: examIdentity,
       provenance: PROVENANCE,
@@ -315,7 +316,7 @@ describe(saveExamBlueprint, () => {
 
   it("forgets what past papers showed when the exam changes boards, and keeps it under the same board", async () => {
     const source = await sourceFixture({ language: "pt" });
-    const examIdentity = identity({ board: "FGV" });
+    const examIdentity = identity();
     const first = content({ questions: 80, sourceHash: source.contentHash, sourceId: source.id });
     const pastSource = { title: "Distribuição", url: "https://example.com/fgv" };
 
@@ -346,6 +347,7 @@ describe(saveExamBlueprint, () => {
     };
 
     await saveExamBlueprint({
+      board: "FGV",
       content: { ...first, structure: { ...first.structure, ...past } },
       identity: examIdentity,
       provenance: PROVENANCE,
@@ -353,8 +355,9 @@ describe(saveExamBlueprint, () => {
     });
 
     const sameBoard = await saveExamBlueprint({
+      board: "FGV Conhecimento",
       content: first,
-      identity: { ...examIdentity, board: "FGV Conhecimento" },
+      identity: examIdentity,
       provenance: PROVENANCE,
       sourceId: source.id,
     });
@@ -362,8 +365,9 @@ describe(saveExamBlueprint, () => {
     expect(sameBoard.blueprint).toMatchObject({ board: "FGV Conhecimento", structure: past });
 
     const newBoard = await saveExamBlueprint({
+      board: "Cebraspe",
       content: first,
-      identity: { ...examIdentity, board: "Cebraspe" },
+      identity: examIdentity,
       provenance: PROVENANCE,
       sourceId: source.id,
     });
@@ -375,7 +379,7 @@ describe(saveExamBlueprint, () => {
     expect(newBoard.blueprint.structure).not.toHaveProperty("pastTopicFrequency");
   });
 
-  it("lets a later edition's notice replace the last one's subjects, and keeps what a re-read missed", async () => {
+  it("lets a later edition's notice replace the last one's subjects and board, and keeps what a re-read missed", async () => {
     const [last, reread, next] = await Promise.all([
       sourceFixture({ language: "pt" }),
       sourceFixture({ language: "pt" }),
@@ -386,6 +390,7 @@ describe(saveExamBlueprint, () => {
 
     const read = (source: typeof last, edition: Omit<Parameters<typeof withSyllabus>[0], "base">) =>
       saveExamBlueprint({
+        board: source === last ? "FGV" : null,
         content: withSyllabus({
           base: content({ questions: 80, sourceHash: source.contentHash, sourceId: source.id }),
           ...edition,
@@ -406,6 +411,7 @@ describe(saveExamBlueprint, () => {
     });
 
     expect(subjectNames(missed.blueprint)).toStrictEqual(lastSyllabus);
+    expect(missed.blueprint.board).toBe("FGV");
 
     const nextEdition = await read(next, {
       examDate: "2026-12-13",
@@ -414,6 +420,7 @@ describe(saveExamBlueprint, () => {
     });
 
     expect(subjectNames(nextEdition.blueprint)).toStrictEqual(["Auditoria", "Finanças Públicas"]);
+    expect(nextEdition.blueprint.board).toBeNull();
   });
 
   it("tells learners nothing when the same document is read again", async () => {

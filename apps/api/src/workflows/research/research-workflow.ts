@@ -156,8 +156,9 @@ async function researchExam(context: ResearchContext<ExamResearchPlan>): Promise
   const reading = {
     analytics: uploads.length > 0 ? { ...analytics, contentScope: "personal" as const } : analytics,
     background: false,
+    board,
     exceptGoalId: goal.id,
-    identity: { ...identity, board: board ?? identity.board },
+    identity,
     isNew: !blueprintId,
     sourceIds,
   };

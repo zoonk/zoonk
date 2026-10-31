@@ -44,7 +44,8 @@ async function searchNextNotice({
   await readExamBlueprint({
     analytics,
     background: true,
-    identity: { ...identity, board: board ?? identity.board },
+    board,
+    identity,
     isNew: false,
     sourceIds,
   });

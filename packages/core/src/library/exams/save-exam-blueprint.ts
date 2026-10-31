@@ -27,6 +27,8 @@ import { type ExamIdentity, buildExamIdentityKey, findExamBlueprintByKey } from 
 export type BlueprintNotice = { message: string; provenance: LibraryProvenance };
 
 export type SaveExamBlueprintInput = {
+  /** The board this reading's search named for its edition, when one did. */
+  board?: string | null;
   content: BlueprintContent;
   identity: ExamIdentity;
   sourceId: string;
@@ -147,12 +149,12 @@ export async function previewExamBlueprintChanges({
 function forgetOtherBoardsPapers({
   board,
   current,
+  stored,
 }: {
   board: string | null;
   current: ExamBlueprint;
+  stored: BlueprintContent;
 }): BlueprintContent {
-  const stored = readBlueprintContent(current);
-
   if (board === null || isSameBoard(current.board, board)) {
     return stored;
   }
@@ -175,12 +177,16 @@ async function updateBlueprint({
   current: ExamBlueprint;
   input: SaveExamBlueprintInput;
 }): Promise<SavedExamBlueprint> {
-  const stored = forgetOtherBoardsPapers({ board: input.identity.board, current });
+  const read = readBlueprintContent(current);
+  const nextEdition = isNextEdition({ current: read, next: input.content });
+  // An edition nobody named a board for keeps "unknown", never the last edition's board.
+  const board = input.board ?? (nextEdition ? null : current.board);
+  const stored = forgetOtherBoardsPapers({ board, current, stored: read });
 
   const { changes, content } = mergeBlueprintContent({
     current: stored,
     next: input.content,
-    nextEdition: isNextEdition({ current: stored, next: input.content }),
+    nextEdition,
   });
 
   const notice = changes.length > 0 ? input.notice : null;
@@ -197,7 +203,7 @@ async function updateBlueprint({
     const updated = await tx.examBlueprint.update({
       data: {
         ...toContentColumns(content),
-        board: input.identity.board,
+        board,
         sourceId: input.sourceId,
         ...(changes.length > 0 ? toProvenanceData(input.provenance) : {}),
       },
@@ -286,7 +292,7 @@ export async function saveExamBlueprint(
     create: () =>
       prisma.examBlueprint.create({
         data: {
-          board: identity.board,
+          board: input.board ?? null,
           country: identity.country,
           identityKey,
           language: identity.language,

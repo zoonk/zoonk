@@ -38,6 +38,7 @@ async function proposeNoticeDates({
  */
 export async function readExamBlueprint({
   analytics,
+  board = null,
   exceptGoalId = null,
   force = false,
   identity,
@@ -46,6 +47,8 @@ export async function readExamBlueprint({
   sourceIds,
 }: {
   analytics: ResearchAnalytics;
+  /** The board the search for these documents named, when one did. */
+  board?: string | null;
   exceptGoalId?: string | null;
   force?: boolean;
   identity: ExamIdentity;
@@ -82,6 +85,7 @@ export async function readExamBlueprint({
 
   const saved = await saveBlueprintStep({
     analytics,
+    board,
     check: shared && reading.problems ? { problems: reading.problems } : null,
     identity,
     reading,
