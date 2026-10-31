@@ -189,6 +189,10 @@
     <string name="plan_study_days">Study days</string>
     <string name="plan_mock_exams">Mock exams</string>
     <string name="plan_choose">Choose</string>
+    <!-- %1$s is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it. -->
+    <string name="plan_choice_following">Following the %1$s syllabus</string>
+    <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
+    <string name="plan_choice_change">Change</string>
     <string name="plan_practice">Practice</string>
     <string name="plan_everything">Everything</string>
     <string name="plan_to_be_confirmed">To be confirmed</string>

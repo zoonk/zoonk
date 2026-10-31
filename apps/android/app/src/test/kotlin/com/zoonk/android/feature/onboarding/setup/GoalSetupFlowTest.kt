@@ -144,7 +144,7 @@ class GoalSetupFlowTest {
     }
 
     @Test
-    fun anExamChoiceSaysWhatStaysOutUntilItsPicked() {
+    fun anExamChoiceSaysWhatTheNoticeOffersAndWhatStaysOutUntilItsPicked() {
         val specialty =
             """
             [{"group":"Specialty","leftOut":{"examPoints":360,"examQuestions":null,"name":"Specialty knowledge (P3)","points":180,"questions":null},
@@ -154,6 +154,10 @@ class GoalSetupFlowTest {
         show()
 
         rule.onNodeWithText("Which one will you take?").assertIsDisplayed()
+        rule
+            .onNodeWithText(
+                "The exam offers 2 options for Specialty. Your plan and mocks follow the one you pick, and you can change it in your plan.",
+            ).assertIsDisplayed()
         rule
             .onNodeWithText("Until you pick, your plan and mocks leave out Specialty knowledge (P3): 180 of the exam's 360 points.")
             .performScrollTo()

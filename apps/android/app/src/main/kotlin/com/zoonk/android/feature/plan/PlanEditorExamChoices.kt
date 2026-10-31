@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
@@ -73,6 +74,37 @@ private fun ExamChoiceOptions(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+        }
+    }
+}
+
+/** Main's `PlanChoiceLines`: which option of each exam choice the plan follows, or what it leaves out until one is picked. */
+@Composable
+internal fun PlanChoiceLines(
+    choices: List<ExamChoice>,
+    onChange: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (choices.isEmpty()) return
+    Column(modifier) {
+        choices.forEach { choice ->
+            key(choice.group) {
+                val picked = choice.options.firstOrNull { it.name == choice.subject }
+                Text(
+                    text =
+                        picked?.let {
+                            stringResource(
+                                R.string.plan_choice_following,
+                                it.shortName ?: it.name,
+                            )
+                        } ?: examChoiceLeftOut(choice),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                TextButton(onClick = onChange) {
+                    Text(stringResource(if (picked != null) R.string.plan_choice_change else R.string.plan_choose))
+                }
+            }
         }
     }
 }

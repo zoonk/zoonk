@@ -205,6 +205,8 @@
   "plan_change_writing_weekly": "f7e3ac7c40109b84fcbe3e3491a24b8968364833bb3b5c0631490a3785f74c6c",
   "plan_check_failed": "60fc1aad46d843950bd7bbf8a0699574335d49cb79f763e5d60b87d93e5d2954",
   "plan_checking_changes": "eba9ffa512e768a88b0076dbb09a0c7b4782cad14acbb9623e37754d74e3f7b7",
+  "plan_choice_change": "50571d2cd66eb8743f8f3e8ea4131429190f08d3ed8935513900431451a735e1",
+  "plan_choice_following": "e9aa891157cf6aa6a5920c9bfc3b0d2093935fe4f4ddf9b8bf71881286cd6a55",
   "plan_choose": "046463549f44bff5b492b95c07894d76a68b090b5a9cccb1a633f0fe5a200415",
   "plan_choose_by_subject": "e1f2211b3c0a9d66491032a2c09c87f4de3b544759e280e9721c3d5e1b0e29be",
   "plan_choose_focus": "c759a0e596f867da9e95f62a5aab26630a9612d8ca20a77eb4cca24b799f6ae8",
@@ -789,6 +791,10 @@
     <string name="plan_study_days">Jours d’étude</string>
     <string name="plan_mock_exams">Examens blancs</string>
     <string name="plan_choose">Choisir</string>
+    <!-- %1$s is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it. -->
+    <string name="plan_choice_following">Suit le programme de %1$s</string>
+    <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
+    <string name="plan_choice_change">Modifier</string>
     <string name="plan_practice">S’entraîner</string>
     <string name="plan_everything">Tout</string>
     <string name="plan_to_be_confirmed">À confirmer</string>

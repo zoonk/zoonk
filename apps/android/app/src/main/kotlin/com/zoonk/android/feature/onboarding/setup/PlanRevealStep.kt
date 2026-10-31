@@ -51,6 +51,8 @@ import com.zoonk.android.data.READING_RUN
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
+import com.zoonk.android.feature.plan.ADJUST_CHOICES
+import com.zoonk.android.feature.plan.PlanChoiceLines
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.studyDaysWords
 import com.zoonk.android.navigation.AppNavigator
@@ -167,6 +169,10 @@ internal fun ColumnScope.PlanRevealStep(
                     navigator.closeSection()
                     navigator.open(AppRoute.Plan())
                 },
+                onChangeChoice = {
+                    navigator.closeSection()
+                    navigator.open(AppRoute.Plan(focus = ADJUST_CHOICES))
+                },
                 onCreateAccount = { navigator.open(AppRoute.Login) },
                 onSeePlus = { navigator.open(AppRoute.Subscription) },
             )
@@ -261,6 +267,7 @@ private fun RevealBody(
     starting: Boolean,
     onStart: () -> Unit,
     onAdjust: () -> Unit,
+    onChangeChoice: () -> Unit,
     onCreateAccount: () -> Unit,
     onSeePlus: () -> Unit,
 ) {
@@ -271,6 +278,7 @@ private fun RevealBody(
         SuccessEyebrow(stringResource(R.string.onboarding_reveal_created))
         Text(goal.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
         FactsLine(plan.revealFacts(today), plan.schedule)
+        PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
         PaceLine(plan, goal.kind)
         NoticeDayLine(plan)
     }

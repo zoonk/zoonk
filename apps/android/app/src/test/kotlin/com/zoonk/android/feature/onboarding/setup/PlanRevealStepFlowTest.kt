@@ -36,8 +36,10 @@ import com.zoonk.android.feature.onboarding.feasibilityOf
 import com.zoonk.android.feature.onboarding.numbersOf
 import com.zoonk.android.feature.onboarding.phaseOf
 import com.zoonk.android.feature.onboarding.planOf
+import com.zoonk.android.feature.onboarding.specialtyChoice
 import com.zoonk.android.feature.onboarding.subjectOf
 import com.zoonk.android.feature.onboarding.syllabusOf
+import com.zoonk.android.feature.plan.ADJUST_CHOICES
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppNavigator
@@ -114,6 +116,33 @@ class PlanRevealStepFlowTest {
         rule.mainClock.advanceTimeByFrame()
 
         assertEquals(AppRoute.Today, navigator.currentRoute)
+    }
+
+    @Test
+    fun theSpecialtyThePlanFollowsShowsWithAWayToChangeItInThePlan() {
+        planApi.shownPlan = planOf(examChoices = specialtyChoice("Tecnologia da Informação – Desenvolvimento de Sistemas"))
+        show()
+
+        rule.onNodeWithText("Following the Desenvolvimento de Sistemas syllabus").assertIsDisplayed()
+
+        navigator.select(AppTab.Plan)
+        navigator.open(SETUP)
+        rule.onNodeWithText("Change").performClick()
+        rule.mainClock.advanceTimeByFrame()
+
+        assertEquals(AppRoute.Plan(focus = ADJUST_CHOICES), navigator.currentRoute)
+    }
+
+    @Test
+    fun aSpecialtyLeftForLaterSaysWhatThePlanLeavesOut() {
+        planApi.shownPlan = planOf(examChoices = specialtyChoice())
+        show()
+
+        rule
+            .onNodeWithText("Until you pick, your plan and mocks leave out Conhecimentos específicos (P3): 180 of the exam's 360 points.")
+            .assertIsDisplayed()
+        rule.onNodeWithText("Choose").assertIsDisplayed()
+        rule.onNodeWithText("syllabus", substring = true).assertDoesNotExist()
     }
 
     @Test

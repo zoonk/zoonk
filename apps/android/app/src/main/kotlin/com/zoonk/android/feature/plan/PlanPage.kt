@@ -185,8 +185,16 @@ internal fun PlanPage(
         } else {
             null
         }
-    var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME) }
-    var editingAt by rememberSaveable { mutableStateOf(if (focus == ADJUST_TIME) PlanSection.Time else null) }
+    var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME || focus == ADJUST_CHOICES) }
+    var editingAt by rememberSaveable {
+        mutableStateOf(
+            when (focus) {
+                ADJUST_TIME -> PlanSection.Time
+                ADJUST_CHOICES -> PlanSection.Choices
+                else -> null
+            },
+        )
+    }
     var choosingFocus by rememberSaveable { mutableStateOf(focus == CHOOSE_FOCUS) }
     var studyingEverything by rememberSaveable { mutableStateOf(focus == STUDY_EVERYTHING && fullCourse(page) != null) }
     val links = PlanLinks(navigator, page, farTopics::open)
@@ -297,6 +305,9 @@ internal fun PlanPage(
 /** Main's `?focus=` arrivals, as Today's and the tutor's links open the Plan. */
 private const val ADJUST = "adjust"
 private const val ADJUST_TIME = "time"
+
+/** The plan reveal's Change beside the exam option the plan follows: Android's reveal can't open the editor itself. */
+internal const val ADJUST_CHOICES = "choices"
 private const val CHOOSE_FOCUS = "choose"
 private const val STUDY_EVERYTHING = "everything"
 
@@ -376,7 +387,15 @@ internal fun PlanContent(
                 }
                 if (structure != null) {
                     item(key = "structure", contentType = "structure") {
-                        PlanSyllabusSection(structure, onOpenSubject = links::subject, modifier = Modifier.bleed(PAGE_MARGIN))
+                        PlanSyllabusSection(structure, onOpenSubject = links::subject, modifier = Modifier.bleed(PAGE_MARGIN)) {
+                            // Unpicked choices are the suggestion's; beside the aside, its properties name the pick.
+                            if (!asideBeside) {
+                                PlanChoiceLines(
+                                    choices = page.plan.examChoices.filter { it.subject != null },
+                                    onChange = { onAdjust?.invoke(PlanSection.Choices) },
+                                )
+                            }
+                        }
                     }
                 } else {
                     item(key = "path", contentType = "path") {

@@ -545,7 +545,16 @@
     <string name="onboarding_date_is_today">Your date is today, so there are no days left to plan.</string>
     <string name="onboarding_exam_choice_title_one">Which one will you take?</string>
     <string name="onboarding_exam_choice_title_other">Which ones will you take?</string>
-    <string name="onboarding_exam_choice_description">The plan and the mocks follow your pick. You can change it in your plan.</string>
+    <!-- Under the exam choice question. %1$d counts the options; %2$s is the notice's name for the choice, such as a specialty or the foreign language, in the notice's own language. -->
+    <plurals name="onboarding_exam_choice_options">
+        <item quantity="one">The exam offers %1$d option for %2$s. Your plan and mocks follow the one you pick, and you can change it in your plan.</item>
+        <item quantity="other">The exam offers %1$d options for %2$s. Your plan and mocks follow the one you pick, and you can change it in your plan.</item>
+    </plurals>
+    <!-- Under the exam choice question, for several choices. -->
+    <plurals name="onboarding_exam_choice_choices">
+        <item quantity="one">The exam has %1$d choice to make. Your plan and mocks follow your picks, and you can change them in your plan.</item>
+        <item quantity="other">The exam has %1$d choices to make. Your plan and mocks follow your picks, and you can change them in your plan.</item>
+    </plurals>
     <string name="onboarding_decide_later">Decide later</string>
     <string name="onboarding_buddy_title">Choose your buddy</string>
     <string name="onboarding_buddy_description">Your buddy grows as you learn.</string>

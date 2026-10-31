@@ -50,7 +50,8 @@
   "onboarding_error_could_not_read": "acb4e16b9cf312893a30ea308eb3010521b2547a2cccfcdb5977116ed6698e53",
   "onboarding_error_could_not_save": "80958c0d3a4a89b000569ed878fd62af0704a768ec87e5d3d14afa47c8a12bef",
   "onboarding_error_one_moment": "77cf53ed50531a70354a6f161d3fbc6f3db86666804e925121d0e3871f8e79a1",
-  "onboarding_exam_choice_description": "9a0fddd2d8c971c82fbe1a7bf302988bac4e78c938b6a8719e9605ffde6bcbfc",
+  "onboarding_exam_choice_choices": "8779102466100c42721a658df455b09ed2df976c30b0da655a36033e963cf1b5",
+  "onboarding_exam_choice_options": "951556dc35bb5cbe160ec71f8714a12452e437aacf5f5cd06e45f0bb15a6dd93",
   "onboarding_exam_choice_title_one": "1e0dceef0124873f88af0d89935d1a052172d7af6ddf69a1bd82014238cb9504",
   "onboarding_exam_choice_title_other": "9e779b2aeb626b92c8cedbb60557221dda2a3a4c17ea32ed163494176c7ab19e",
   "onboarding_exam_expected": "862c36777fc7c540cdc73001718c29fa5b5432a5ff91091aaad6a056dfb06da1",
@@ -972,7 +973,18 @@
     <string name="onboarding_date_is_today">La fecha que elegiste es hoy, así que no quedan días para planificar.</string>
     <string name="onboarding_exam_choice_title_one">¿Cuál vas a presentar?</string>
     <string name="onboarding_exam_choice_title_other">¿Cuáles vas a presentar?</string>
-    <string name="onboarding_exam_choice_description">El plan y los simulacros se adaptan a tu elección. Puedes cambiarla en tu plan.</string>
+    <!-- Under the exam choice question. %1$d counts the options; %2$s is the notice's name for the choice, such as a specialty or the foreign language, in the notice's own language. -->
+    <plurals name="onboarding_exam_choice_options">
+        <item quantity="one">El examen ofrece %1$d opción para %2$s. Tu plan y tus simulacros se basan en la que elijas, y puedes cambiarla en tu plan.</item>
+        <item quantity="many">El examen ofrece %1$d opciones para %2$s. Tu plan y tus simulacros se basan en la que elijas, y puedes cambiarla en tu plan.</item>
+        <item quantity="other">El examen ofrece %1$d opciones para %2$s. Tu plan y tus simulacros se basan en la que elijas, y puedes cambiarla en tu plan.</item>
+    </plurals>
+    <!-- Under the exam choice question, for several choices. -->
+    <plurals name="onboarding_exam_choice_choices">
+        <item quantity="one">Debes tomar %1$d decisión para el examen. Tu plan y tus simulacros se basan en lo que elijas, y puedes cambiar tu elección en tu plan.</item>
+        <item quantity="many">Debes tomar %1$d decisiones para el examen. Tu plan y tus simulacros se basan en lo que elijas, y puedes cambiar tus elecciones en tu plan.</item>
+        <item quantity="other">Debes tomar %1$d decisiones para el examen. Tu plan y tus simulacros se basan en lo que elijas, y puedes cambiar tus elecciones en tu plan.</item>
+    </plurals>
     <string name="onboarding_decide_later">Decidir más tarde</string>
     <string name="onboarding_buddy_title">Elegir tu compañero</string>
     <string name="onboarding_buddy_description">Tu compañero crece mientras aprendes.</string>

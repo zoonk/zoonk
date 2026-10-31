@@ -23,7 +23,9 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.feature.goalcontent.examSyllabus
 import com.zoonk.android.feature.goalcontent.modulesSyllabus
+import com.zoonk.android.feature.onboarding.specialtyChoice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -79,6 +81,17 @@ class PlanContentTest {
                 )
             }
         }
+    }
+
+    @Test
+    fun theSubjectsSayWhichSpecialtyThePlanFollowsAndChangeOpensItsChoice() {
+        val picked = specialtyChoice("Tecnologia da Informação – Desenvolvimento de Sistemas")
+        show(kind = "exam", structure = examSyllabus(), plan = plan(""""examChoices":$picked"""))
+
+        compose.onNodeWithText("Following the Desenvolvimento de Sistemas syllabus").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Change").performScrollTo().performClick()
+
+        assertEquals(listOf<PlanSection?>(PlanSection.Choices), adjusted)
     }
 
     @Test

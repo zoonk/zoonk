@@ -2,6 +2,7 @@ package com.zoonk.android.feature.goalcontent
 
 import android.icu.text.ListFormatter
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,6 +45,7 @@ fun PlanSyllabusSection(
     syllabus: Syllabus,
     onOpenSubject: (String) -> Unit,
     modifier: Modifier = Modifier,
+    note: @Composable () -> Unit = {},
 ) {
     val groups = groupSubjects(syllabus.subjects, modules = syllabus.kind == Syllabus.Kind.MODULES)
     val exam = syllabus.goal.kind == GoalContentGoal.Kind.EXAM
@@ -64,6 +66,7 @@ fun PlanSyllabusSection(
                     Modifier.padding(horizontal = PAGE_PADDING),
                     detail = stringResource(R.string.goalcontent_preparation),
                 )
+                Box(Modifier.padding(horizontal = PAGE_PADDING)) { note() }
             } else {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = PAGE_PADDING),

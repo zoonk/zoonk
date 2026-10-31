@@ -118,12 +118,13 @@ internal fun planOf(
     weekStart: LocalDate = LocalDate.now(),
     weekdayMinutes: List<Int> = listOf(0, dailyMinutes, dailyMinutes, dailyMinutes, dailyMinutes, dailyMinutes, 0),
     weekendMinutes: Int? = null,
+    examChoices: String = "[]",
 ): Plan =
     ApiJson.decodeFromString(
         """
         {"access":{"freeUntil":null,"freeWeekOver":$freeWeekOver,"mocksRequirePlus":false},"areas":[],"changes":[],
          "estimate":{"remainingHours":40,"totalHours":40${endDate?.let { ""","endDate":"$it"""" } ?: ""}},
-         "examChoices":[],"examDocument":"notice","fundedMocks":[],"goalId":"$GOAL_ID","phases":[${phases.joinToString(",")}],
+         "examChoices":$examChoices,"examDocument":"notice","fundedMocks":[],"goalId":"$GOAL_ID","phases":[${phases.joinToString(",")}],
          "planId":"$PLAN_ID","ready":$ready${notice?.let {
             ""","notice":"$it""""
         } ?: ""}${feasibility?.let { ""","feasibility":$it""" } ?: ""}
@@ -251,3 +252,11 @@ internal fun preparingTestOf(
             "\"$it\""
         } ?: "null"},"status":"preparing"}""",
     )
+
+/** CGU 2026's specialty choice, with [subject] the option the plan follows or null until the learner picks. */
+internal fun specialtyChoice(subject: String? = null) =
+    """
+    [{"group":"Especialidade","leftOut":{"examPoints":360,"examQuestions":null,"name":"Conhecimentos específicos (P3)","points":180,"questions":null},
+      "options":[{"name":"Auditoria","shortName":null},{"name":"Tecnologia da Informação – Desenvolvimento de Sistemas","shortName":"Desenvolvimento de Sistemas"}],
+      "subject":${subject?.let { "\"$it\"" } ?: "null"}}]
+    """.trimIndent()

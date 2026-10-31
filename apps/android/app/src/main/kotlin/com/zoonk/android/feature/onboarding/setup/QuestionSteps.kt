@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -793,7 +794,10 @@ internal fun ColumnScope.ExamChoiceStep(
                     R.string.onboarding_exam_choice_title_other
                 },
             ),
-        description = stringResource(R.string.onboarding_exam_choice_description),
+        description =
+            choices.singleOrNull()?.let { choice ->
+                pluralStringResource(R.plurals.onboarding_exam_choice_options, choice.options.size, choice.options.size, choice.group)
+            } ?: pluralStringResource(R.plurals.onboarding_exam_choice_choices, choices.size, choices.size),
         subject = subject,
         canContinue = choices.all { it.group in picks },
         skipLabel = stringResource(R.string.onboarding_decide_later),
