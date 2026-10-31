@@ -1,0 +1,216 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fix",
+          "reasoning": "The quoted mistake is authentic, and the replacement is correct, natural and suitable for A2. The explanation gives a true rule. However, the repeated subject omission is the more useful language-transfer issue, and the replacement introduces an additional word-order correction that the explanation does not cover. No explicit score cap applies.",
+          "score": 8,
+          "label": "One clear, useful fix",
+          "weight": 35
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "Both praised phrases were spoken by the learner, are correct and accomplished meaningful goals in the call. The empty pronunciation list makes no unsupported claims and violates no explicit requirement to include an item, though an appropriately framed tip for “rent” would add useful support.",
+          "score": 9,
+          "label": "Honest praise and pronunciation",
+          "weight": 25
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The explanation and encouragement are natural Brazilian Portuguese. The quoted phrases and correction are in English, and the teaching language is accessible at A2.",
+          "score": 10,
+          "label": "Right language and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "tone",
+          "reasoning": "The response is short, direct and supportive. Its single encouragement sentence addresses the learner as “você” and accurately recognizes asking about rent and arranging the visit, without scores, promises or exaggerated praise.",
+          "score": 10,
+          "label": "Kind and safe",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2023,
+          "outputTokens": 669,
+          "reasoningTokens": 182
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The Saturday correction is valid, but the repeated missing subject would be a more useful focus for this learner. The correction also changes question word order while explaining only the preposition, making the single teaching point less focused.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Prefer “Is available?” → “Is it available?” with a brief explanation that Portuguese can omit the subject but this English question needs “it.” An optional pronunciation tip could address “rent,” explaining that its initial r is often difficult for Brazilians without claiming the learner mispronounced it.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A2 Brazilian learner who reached two objectives with typical mistakes: dropping the subject (\"Is available?\", \"Is include the water\"), \"in Saturday\" for \"on Saturday\" and \"in the internet\". The fix should be one of these, most usefully the missing subject or \"Does it include...\", with a \"why\" that mentions Portuguese dropping the subject when relevant. \"Went well\" can quote \"How much is the rent?\" or \"Saturday at two is perfect\". Pronunciation words must be ones the learner said whose usual slip for Brazilians can change the word or make it hard to understand, like \"rent\" (a first \"r\" that can sound like \"h\"), presented as often hard for Brazilians; not accent-only sounds like the \"th\" in \"Thank you\". In Brazilian Portuguese.",
+        "id": "pt-en-a2-renting-mistakes-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "objectivesMet": ["Ask about the rent", "Book a viewing"],
+          "scenario": {
+            "characterName": "Sarah",
+            "objectives": ["Ask about the rent", "Ask what's included", "Book a viewing"],
+            "situation": "Você viu um anúncio de apartamento na Queen Street e liga para a proprietária, Sarah, para perguntar o aluguel e marcar uma visita.",
+            "title": "Ligar para marcar uma visita"
+          },
+          "targetLanguage": "en",
+          "turns": [
+            {
+              "speaker": "character",
+              "text": "Hi, this is Sarah from Queen Street Apartments. How can I help?"
+            },
+            {
+              "speaker": "learner",
+              "text": "Hello, I see the apartment in the internet. Is available?"
+            },
+            {
+              "speaker": "character",
+              "text": "Yes, it's still available. It's a one-bedroom on the second floor."
+            },
+            { "speaker": "learner", "text": "How much is the rent?" },
+            { "speaker": "character", "text": "It's twelve hundred dollars a month." },
+            { "speaker": "learner", "text": "Is include the water and the light?" },
+            { "speaker": "character", "text": "Water is included, but electricity isn't." },
+            { "speaker": "learner", "text": "Ok. I can visit the apartment in Saturday?" },
+            {
+              "speaker": "character",
+              "text": "Saturday morning is taken, but I can do Saturday at 2 p.m."
+            },
+            {
+              "speaker": "learner",
+              "text": "Yes, Saturday at two is perfect. Thank you very much."
+            },
+            { "speaker": "character", "text": "Great, see you then!" }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fix",
+          "reasoning": "There is exactly one fix, and it correctly addresses the learner’s most useful grammar correction using their exact words. The explanation identifies estar for availability, but omits the expected English comparison and could describe the state more precisely without relying on temporariness.",
+          "score": 8,
+          "label": "One clear, useful fix",
+          "weight": 35
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "All three praised phrases were said by the learner, are correct at A2, and served meaningful purposes in the call. Pronunciation guidance is optional, and the empty list makes no unsupported claims.",
+          "score": 10,
+          "label": "Honest praise and pronunciation",
+          "weight": 25
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The explanation and encouragement are natural US English. The correction and quoted phrases are appropriate Mexican Spanish, and the feedback is accessible at A2.",
+          "score": 10,
+          "label": "Right language and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "tone",
+          "reasoning": "The feedback is direct and concise. The encouragement addresses the learner as “you” and accurately recognizes what they accomplished in this call without exaggerated praise, promises, scores, or prohibited references.",
+          "score": 10,
+          "label": "Kind and safe",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1936,
+          "outputTokens": 588,
+          "reasoningTokens": 161
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The explanation omits the expected comparison with English, which uses one verb, “to be,” where Spanish distinguishes ser and estar.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the explanation more precise by focusing on availability as a state rather than emphasizing temporariness: “Availability is a state, so use estar. English uses ‘to be’ for both ser and estar.”",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Mexican Spanish at A2. The fix should be \"¿El departamento es disponible?\" to \"¿El departamento está disponible?\", explaining that availability is a state and takes \"estar\", while English uses one verb \"to be\". \"Went well\" can quote \"¿Cuánto es la renta?\" or \"Perfecto, el sábado a las cinco\". Pronunciation words are optional: only words the learner said whose usual slip for English speakers can change the word or make it hard to understand, with respellings for English readers. In US English.",
+        "id": "en-es-a2-ser-estar-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "level": "A2",
+          "objectivesMet": ["Preguntar por la renta", "Quedar para ver el departamento"],
+          "scenario": {
+            "characterName": "Lucía",
+            "objectives": [
+              "Preguntar por la renta",
+              "Preguntar qué incluye",
+              "Quedar para ver el departamento"
+            ],
+            "situation": "You saw an ad for an apartment in Coyoacán. Call the owner, Lucía, to ask about the rent and arrange a viewing.",
+            "title": "Call about an apartment"
+          },
+          "targetLanguage": "es",
+          "turns": [
+            {
+              "speaker": "character",
+              "text": "¿Bueno? Hola, soy Lucía, la dueña del departamento de Coyoacán."
+            },
+            {
+              "speaker": "learner",
+              "text": "Hola, Lucía. Llamo por el departamento. ¿El departamento es disponible?"
+            },
+            { "speaker": "character", "text": "Sí, todavía está disponible." },
+            { "speaker": "learner", "text": "¿Cuánto es la renta?" },
+            { "speaker": "character", "text": "Son doce mil pesos al mes, más servicios." },
+            {
+              "speaker": "learner",
+              "text": "Muy bien. Yo quiero ver el departamento el sábado, ¿es posible?"
+            },
+            {
+              "speaker": "character",
+              "text": "El sábado por la mañana no puedo, pero por la tarde sí, a las cinco."
+            },
+            { "speaker": "learner", "text": "Perfecto, el sábado a las cinco. Muchas gracias." }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "conversation-feedback"
+}

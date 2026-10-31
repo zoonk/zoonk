@@ -14,10 +14,10 @@ import mockPrompt from "./speaking-mock-scenario.prompt.md";
 
 /**
  * Usually written ahead, so the next try starts at once. Luna scored 9.3 on the IELTS and 8.7 on
- * the TOEFL mock (27 Sep 2026).
+ * the TOEFL mock (27 Sep 2026); Flash Lite 3.5 scored 7.9 (31 Oct 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.1-flash-lite"] as const;
+const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
 
 /**
  * TOEFL iBT Speaking takes about 8 minutes: 7 sentences to repeat, then 4 interview questions of 45

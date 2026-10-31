@@ -7,7 +7,7 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import systemPrompt from "./image-prompt-safety-rewrite.prompt.md";
 
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["deepseek/deepseek-v4-flash", "google/gemini-3.1-flash-lite"] as const;
+const fallbackModels = ["deepseek/deepseek-v4-flash", "google/gemini-3.5-flash-lite"] as const;
 const MAX_ERROR_CONTEXT_LENGTH = 1200;
 
 const schema = z.object({ input: z.string().min(1) }).strict();

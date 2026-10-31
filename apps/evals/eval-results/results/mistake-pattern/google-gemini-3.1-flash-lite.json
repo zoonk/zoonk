@@ -274,6 +274,106 @@
           "targetLanguage": "en"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "rule",
+          "reasoning": "The result correctly identifies ser/estar confusion and selects mistakes 1, 2, 3, and 5, excluding the unrelated plural error. However, its permanent-versus-temporary rule is misleading, reinforced by calling the father’s profession permanent. This triggers the false-rule cap of 4. The explanation also omits the English single-verb connection.",
+          "score": 4,
+          "label": "Right pattern, true rule",
+          "weight": 40
+        },
+        {
+          "categoryId": "drill",
+          "reasoning": "There are five new sentences, mixed answers, and explanatory feedback. However, “La puerta ___ abierta ahora mismo” permits both está for a state and es for a passive action, triggering the two-right-options cap of 5. The contrast entries also do not show the difference side by side.",
+          "score": 5,
+          "label": "Contrast and drill",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "All instructional text is Portuguese, including the title, rule, labels, and feedback, despite the learner’s language being US English. This triggers the wrong-language cap of 5 and affects nearly the entire explanation. The Spanish practice material is appropriate to the target language, and the tone is plain and nonjudgmental.",
+          "score": 3,
+          "label": "Language and tone",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1926,
+          "outputTokens": 741,
+          "reasoningTokens": 187
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The title, rule, contrast labels, and all feedback are in Portuguese rather than US English. The rule also teaches a misleading permanent-versus-temporary distinction: jobs need not be permanent, and estar can describe lasting states. It does not explain that English uses one verb, “to be,” for both Spanish verbs. Drill question 3 has two grammatical answers: “está abierta” describes the door’s state, while “es abierta” can describe the action in the passive voice.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The contrast entries present separate examples rather than showing the alternatives side by side. The rule’s description of the learner’s errors mentions only using ser instead of estar, overlooking mistake 5’s reverse substitution.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use paired examples that clearly distinguish what someone or something is from its state or location. Replace the ambiguous door question with a sentence whose wording excludes the competing verb, and make feedback explain meaning rather than presumed permanence.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A US English speaker learning Mexican Spanish mixes up \"ser\" and \"estar\" (mistakes 1, 2, 3 and 5): English has one verb \"to be\". Mistake 4 (a missing plural) is unrelated. The rule should say \"estar\" is for states and location, \"ser\" for what something is (like a job), with a drill that mixes \"es\" and \"está\" forms. In US English.",
+        "expected": { "kind": "pattern", "mistakeNumbers": [1, 2, 3, 5] },
+        "id": "en-es-ser-estar-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "mistakes": [
+            {
+              "answer": "es",
+              "correctAnswer": "está",
+              "format": "fillBlank",
+              "question": "La tienda ___ cerrada hoy."
+            },
+            {
+              "answer": "Soy cansado.",
+              "correctAnswer": "Estoy cansado.",
+              "format": "typed",
+              "question": "Translate: 'I'm tired.'"
+            },
+            {
+              "answer": "es",
+              "correctAnswer": "está",
+              "format": "multipleChoice",
+              "question": "¿Dónde ___ el museo?"
+            },
+            {
+              "answer": "Tengo dos hermano.",
+              "correctAnswer": "Tengo dos hermanos.",
+              "format": "typed",
+              "question": "Translate: 'I have two brothers.'"
+            },
+            {
+              "answer": "Mi hermana está médica",
+              "correctAnswer": "Mi hermana es médica.",
+              "format": "spoken",
+              "question": "Say: 'Mi hermana es médica.'"
+            }
+          ],
+          "targetLanguage": "es"
+        }
+      }
     }
   ],
   "taskId": "mistake-pattern"

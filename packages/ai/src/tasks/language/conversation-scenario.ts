@@ -10,9 +10,12 @@ import { getLanguagePromptContext } from "../_utils/prompt-language";
 import { scenarioSchema } from "./_utils/scenario-schema";
 import systemPrompt from "./conversation-scenario.prompt.md";
 
-/** Cached per chapter and level and shared, so it runs rarely: Luna scored 9.22 (Sep 2026). */
+/**
+ * Cached per chapter and level and shared, so it runs rarely: Luna scored 9.22 (Sep 2026),
+ * Flash Lite 3.5 8.75 (31 Oct 2026).
+ */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.1-flash-lite"] as const;
+const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
 
 export type GenerateConversationScenarioSchema = z.infer<typeof scenarioSchema>;
 

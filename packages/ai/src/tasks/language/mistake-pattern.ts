@@ -10,11 +10,12 @@ import { normalizeMistakePattern } from "./mistake-pattern-rules";
 import systemPrompt from "./mistake-pattern.prompt.md";
 
 /**
- * Luna scored 9.29 on the mistake-pattern eval with the right kind every time; Flash Lite stated a
- * false rule about Portuguese (Sep 2026).
+ * Luna scored 9.29 on the mistake-pattern eval with the right kind every time (Sep 2026);
+ * Flash Lite 3.5 scored 8.2, missed the "since" and "for" pattern and stated a false rule for "ser"
+ * and "estar" (31 Oct 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.1-flash-lite"] as const;
+const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
 
 const MAX_CONTRAST_ROWS = 3;
 const DRILL_QUESTIONS = 5;

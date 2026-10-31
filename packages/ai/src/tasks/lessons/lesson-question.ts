@@ -17,9 +17,10 @@ import systemPrompt from "./lesson-question.prompt.md";
 export const LESSON_QUESTION_MODEL = "openai/gpt-6-luna";
 /**
  * Haiku first: in the memory eval it was the fallback that never forced an unrelated memory fact
- * into an answer. Flash Lite stays last as the cheapest option.
+ * into an answer. Flash Lite 3.5 scored 8.75 on the memory cases but did force one in
+ * (31 Oct 2026).
  */
-const fallbackModels = ["anthropic/claude-haiku-5.5", "google/gemini-3.1-flash-lite"] as const;
+const fallbackModels = ["anthropic/claude-haiku-5.5", "google/gemini-3.5-flash-lite"] as const;
 const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty lesson question answer";
 const LESSON_QUESTION_TASK = "lesson-question";
 

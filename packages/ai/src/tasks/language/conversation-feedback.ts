@@ -16,11 +16,11 @@ import systemPrompt from "./conversation-feedback.prompt.md";
 export type { ConversationTurn } from "./_utils/conversation-transcript";
 
 /**
- * Luna scored 9.34 on the conversation-feedback eval and passed every code check; Flash Lite was
- * faster but wrote a wrong correction (Sep 2026).
+ * Luna scored 9.34 on the conversation-feedback eval and passed every code check (Sep 2026);
+ * Flash Lite 3.5 scored 9.37 on two of its cases (31 Oct 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.1-flash-lite"] as const;
+const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
 
 const MAX_WENT_WELL = 3;
 const MAX_PRONUNCIATION_WORDS = 2;

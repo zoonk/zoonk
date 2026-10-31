@@ -327,6 +327,110 @@
           ]
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fix",
+          "reasoning": "There is exactly one fix, quoting the learner accurately and providing the required correction to “¿El departamento está disponible?” The rule is true, but the requested English–Spanish comparison is missing.",
+          "score": 8,
+          "label": "One clear, useful fix",
+          "weight": 35
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "All three praised excerpts are correct phrases the learner actually said and contributed to asking about rent or arranging the viewing. Pronunciation coaching is optional, so the empty list is appropriate.",
+          "score": 10,
+          "label": "Honest praise and pronunciation",
+          "weight": 25
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "Both why and encouragement are in the wrong language, triggering the explicit maximum score of 5. The correction and quoted Spanish phrases otherwise fit the target language and A2 level.",
+          "score": 5,
+          "label": "Right language and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "tone",
+          "reasoning": "The feedback is short and direct. The encouragement addresses the learner personally and accurately recognizes asking the price and confirming the viewing, without exaggerated praise, promises, scores, or prohibited references.",
+          "score": 10,
+          "label": "Kind and safe",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1931,
+          "outputTokens": 569,
+          "reasoningTokens": 155
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation and encouragement are in Spanish rather than the learner’s US English. This violates the language requirement and makes the feedback less accessible to this A2 learner.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The explanation correctly associates availability with estar, but omits the requested comparison with English, which uses one verb, “to be,” where Spanish distinguishes ser and estar.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Mexican Spanish at A2. The fix should be \"¿El departamento es disponible?\" to \"¿El departamento está disponible?\", explaining that availability is a state and takes \"estar\", while English uses one verb \"to be\". \"Went well\" can quote \"¿Cuánto es la renta?\" or \"Perfecto, el sábado a las cinco\". Pronunciation words are optional: only words the learner said whose usual slip for English speakers can change the word or make it hard to understand, with respellings for English readers. In US English.",
+        "id": "en-es-a2-ser-estar-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "level": "A2",
+          "objectivesMet": ["Preguntar por la renta", "Quedar para ver el departamento"],
+          "scenario": {
+            "characterName": "Lucía",
+            "objectives": [
+              "Preguntar por la renta",
+              "Preguntar qué incluye",
+              "Quedar para ver el departamento"
+            ],
+            "situation": "You saw an ad for an apartment in Coyoacán. Call the owner, Lucía, to ask about the rent and arrange a viewing.",
+            "title": "Call about an apartment"
+          },
+          "targetLanguage": "es",
+          "turns": [
+            {
+              "speaker": "character",
+              "text": "¿Bueno? Hola, soy Lucía, la dueña del departamento de Coyoacán."
+            },
+            {
+              "speaker": "learner",
+              "text": "Hola, Lucía. Llamo por el departamento. ¿El departamento es disponible?"
+            },
+            { "speaker": "character", "text": "Sí, todavía está disponible." },
+            { "speaker": "learner", "text": "¿Cuánto es la renta?" },
+            { "speaker": "character", "text": "Son doce mil pesos al mes, más servicios." },
+            {
+              "speaker": "learner",
+              "text": "Muy bien. Yo quiero ver el departamento el sábado, ¿es posible?"
+            },
+            {
+              "speaker": "character",
+              "text": "El sábado por la mañana no puedo, pero por la tarde sí, a las cinco."
+            },
+            { "speaker": "learner", "text": "Perfecto, el sábado a las cinco. Muchas gracias." }
+          ]
+        }
+      }
     }
   ],
   "taskId": "conversation-feedback"
