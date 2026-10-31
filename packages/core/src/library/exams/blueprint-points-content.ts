@@ -32,7 +32,8 @@ function findPartName({ name, partNames }: { name: string; partNames: readonly s
   const same = partNames.find((known) => normalizeString(known) === normalizeString(name));
   const label = toLabel(name);
   const labeled = label ? partNames.filter((known) => toLabel(known) === label) : [];
-  return same ?? (labeled.length === 1 ? (labeled[0] ?? null) : null);
+  const distinct = new Set(labeled.map((known) => normalizeString(known)));
+  return same ?? (distinct.size === 1 ? (labeled[0] ?? null) : null);
 }
 
 function toMarking({

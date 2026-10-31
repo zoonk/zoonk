@@ -49,7 +49,7 @@ function subject(name: string, group: string, passage: string) {
 
 type Scoring = NonNullable<ReturnType<typeof blueprintExtraction>["mock"]>["scoring"];
 
-function extractionWith(scoring: Partial<Scoring>) {
+function extractionWith(scoring: Partial<Scoring>, written = "Prova discursiva") {
   const base = blueprintExtraction();
 
   return {
@@ -62,7 +62,7 @@ function extractionWith(scoring: Partial<Scoring>) {
     subjects: [
       subject("Língua Portuguesa", P1, LINES.p1Subject),
       subject("Auditoria", P2, LINES.p2Subject),
-      subject("Prova discursiva", P3, LINES.p3Subject),
+      subject(written, P3, LINES.p3Subject),
     ],
   };
 }
@@ -70,11 +70,13 @@ function extractionWith(scoring: Partial<Scoring>) {
 function readScoring({
   keep = () => true,
   scoring,
+  written,
 }: {
   keep?: (id: string) => boolean;
   scoring: Partial<Scoring>;
+  written?: string;
 }) {
-  const extraction = extractionWith(scoring);
+  const extraction = extractionWith(scoring, written);
   const facts = listBlueprintFacts({ documents: DOCUMENTS, extraction });
 
   return toBlueprintContent({
@@ -197,6 +199,26 @@ describe("the points a notice gives", () => {
     expect(scoring?.marking?.map((row) => row.part)).toStrictEqual([P1]);
     expect(scoring?.parts?.map((part) => part.name)).toStrictEqual([P1]);
     expect(scoring?.finalShares?.map((share) => share.parts)).toStrictEqual([[P1, P2], [P3]]);
+  });
+
+  it.each([
+    { kept: [P3], name: "the same label as its group", written: P3 },
+    { kept: [], name: "a label another of its names shares", written: "Redação (P3)" },
+  ])("resolves a part by $name only when that label names one test", ({ kept, written }) => {
+    const other = "Prova escrita (P3)";
+
+    const scoring = readScoring({
+      scoring: {
+        finalShares: [{ ...SHARE_WRITTEN, parts: [other] }],
+        marking: [{ ...ROW_P2, part: other, passages: cite(LINES.p3) }],
+        parts: [{ ...PART_P3, name: other }],
+      },
+      written,
+    });
+
+    expect(scoring?.marking?.map((row) => row.part) ?? []).toStrictEqual(kept);
+    expect(scoring?.parts?.map((part) => part.name) ?? []).toStrictEqual(kept);
+    expect(scoring?.finalShares?.flatMap((share) => share.parts) ?? []).toStrictEqual(kept);
   });
 
   it("drops a row or test whose name is no kept group or subject", () => {
