@@ -52,12 +52,22 @@ const learnerSummarySchema = z
     activeGoalId: z.uuid().nullable().meta({ description: "The goal the tabs show" }),
     analytics: z
       .object({
-        disabled: z.boolean().meta({ description: "The learner turned analytics off" }),
+        adult: z
+          .boolean()
+          .meta({
+            description:
+              "Known to be an adult where the learner is: only adults are identified and recorded",
+          }),
+        disabled: z.boolean().meta({ description: "Zoonk keeps the account out of its analytics" }),
         goal: z
           .object({ kind: z.enum(GoalKind), phase: z.int().nullable() })
           .nullable()
           .meta({ description: "The active goal's kind and the plan phase it's in" }),
         plan: z.string().meta({ description: 'The subscription\'s plan, or "free"' }),
+        shareUsageData: z
+          .boolean()
+          .nullable()
+          .meta({ description: "The learner's usage data choice, or null before one" }),
         username: z.string().nullable(),
       })
       .meta({ description: "What analytics attach to the learner's events" }),
@@ -98,6 +108,12 @@ const learnerSummarySchema = z
       .object({ done: z.int(), total: z.int() })
       .nullable()
       .meta({ description: "Today's missions, or null on a day without any" }),
+    needsBirthYear: z
+      .boolean()
+      .meta({
+        description:
+          "True until the learner saves their birth year (`PUT /v1/me/birth-year`); ask before they keep learning",
+      }),
     nextChangeAt: millisecondsSchema.meta({
       description:
         "When the summary changes without a write: the next local or UTC midnight (when the allowance starts over), the end of a day carried over from the night before, the subscription's next change or the session's end",

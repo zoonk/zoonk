@@ -8,6 +8,13 @@ export const learningProfileSchema = z
     availableGlasses: z
       .array(z.enum(BuddyGlasses))
       .meta({ description: "Glasses the buddy can wear: round plus the earned ones" }),
+    birthYear: z
+      .int()
+      .nullable()
+      .meta({
+        description:
+          "The year the learner was born, or null until they answer. Ask before they keep learning",
+      }),
     buddy: learningBuddySchema,
     dailyLimitMinutes: z
       .int()
@@ -18,6 +25,13 @@ export const learningProfileSchema = z
       .meta({
         description:
           "The daily limits to offer, in minutes: the same times a plan's day offers. Show a saved limit that isn't one of them too",
+      }),
+    shareUsageData: z
+      .boolean()
+      .nullable()
+      .meta({
+        description:
+          "Whether Zoonk may record how the learner uses it, or null before they choose. Their events are recorded unless it's false",
       }),
     soundsEnabled: z
       .boolean()
