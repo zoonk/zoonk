@@ -27,6 +27,7 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.onboarding.DAILY_TIMES
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -532,6 +533,54 @@ class PlanScreenshots {
                     Column(Modifier.padding(top = 24.dp)) {
                         PlanEditorBody(page, PlanEdits(latest = latest), onClose = if (panel) ({}) else null)
                     }
+                }
+            }
+        }
+        compose.waitForIdle()
+        write(name, compose.onRoot().captureToImage().asAndroidBitmap())
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun editorTimeOnTheSuggestion() = captureEditorTime("plan-editor-time-suggested", minutes = 240, share = 0.32)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-night-xxhdpi")
+    fun editorTimeOnTheSuggestionDark() = captureEditorTime("plan-editor-time-suggested-dark", minutes = 240, share = 0.32, dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun editorTimeOnTheFullTime() = captureEditorTime("plan-editor-time-full", minutes = 805, share = 1.0)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun editorTimeShort() = captureEditorTime("plan-editor-time-short", minutes = 90, share = 0.14)
+
+    /** An exam whose whole syllabus takes 13 h 25 min a day, at [minutes] a day, with the time question's answer in. */
+    private fun captureEditorTime(
+        name: String,
+        minutes: Int,
+        share: Double,
+        dark: Boolean = false,
+    ) {
+        val summary = learnerSummary(kind = "exam", title = "ENEM")
+        val fits = share >= 1
+        val plan =
+            plan(
+                """
+                "feasibility":{"coreFits":false,"coveredShare":$share,"deadline":"2027-11-07","deepensMostAsked":false,"fits":$fits,
+                 "measure":"exam","timeCovers":$fits},
+                "schedule":{"dailyMinutes":$minutes,"dailyTimes":$DAILY_TIMES,"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDate":"2027-11-07",
+                 "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":$minutes,
+                 "weekend":null,"weekendDays":[]},"weekdayMinutes":[0,$minutes,$minutes,$minutes,$minutes,$minutes,0]}
+                """.trimIndent(),
+            )
+        val page = PlanPageState(summary.goals.first(), plan, summary)
+        val found = TimeToCoverState.Answered(timeToCoverRevision(plan), timeToCover(recommended = 805, focus = 240))
+        compose.setContent {
+            ZoonkTheme(darkTheme = dark) {
+                Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
+                    Column(Modifier.padding(top = 24.dp)) { PlanEditorBody(page, PlanEdits(timeToCover = found)) }
                 }
             }
         }

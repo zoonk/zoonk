@@ -52,19 +52,28 @@ internal sealed interface CoverageChange {
     }
 }
 
-/** A goal moves its date when asked to, or when no time covers everything; an exam's date never moves. */
+/**
+ * A goal moves its date when asked to, or when no suggested time covers everything; an exam's date
+ * never moves. A focus suggestion is offered only to a learner who studies less than it each day:
+ * one who already studies longer is never asked to cut down.
+ */
 internal fun coverageChange(
     isExam: Boolean,
     intent: CoverageIntent,
     time: PlanTimeToCover,
+    dailyMinutes: Int,
 ): CoverageChange? {
     val answer = time.answer()
     val fitting = time.fittingDate?.toJavaLocalDate()
     if (!isExam && fitting != null && (intent == CoverageIntent.Date || answer !is TimeToCoverAnswer.Covers)) {
         return CoverageChange.Date(fitting)
     }
-    if (intent == CoverageIntent.Date || answer !is TimeToCoverAnswer.Covers) return null
-    return CoverageChange.Time(answer.minutes)
+    if (intent == CoverageIntent.Date) return null
+    return when (answer) {
+        is TimeToCoverAnswer.Covers -> CoverageChange.Time(answer.minutes)
+        is TimeToCoverAnswer.Focus -> CoverageChange.Time(answer.minutes).takeIf { answer.minutes > dailyMinutes }
+        TimeToCoverAnswer.None -> null
+    }
 }
 
 private class CoverageOffer(
@@ -84,6 +93,17 @@ private fun courseOffer(page: PlanPageState): CoverageOffer? {
     )
 }
 
+/** What covering everything takes beside a focus suggestion, or null when there's nothing longer to say. */
+@Composable
+private fun everythingTakes(
+    time: PlanTimeToCover,
+    today: LocalDate,
+): String? {
+    val longer = longerTime(time) ?: return null
+    val target = time.targetDate ?: return null
+    return everythingTakesText(GoalDate(target, time.targetDateNamedMonth), longer.full, today)
+}
+
 @Composable
 private fun answerOffer(
     page: PlanPageState,
@@ -92,16 +112,20 @@ private fun answerOffer(
     time: PlanTimeToCover,
 ): CoverageOffer? {
     val locale = currentLocale()
-    return when (val change = coverageChange(page.isExam, intent, time)) {
-        null -> {
-            null
-        }
-
+    val takes = everythingTakes(time, page.today)
+    val change =
+        coverageChange(
+            page.isExam,
+            intent,
+            time,
+            page.plan.schedule.dailyMinutes
+                .toInt(),
+        ) ?: return null
+    val answer = time.answer()
+    return when (change) {
         is CoverageChange.Date -> {
-            val target = time.targetDate?.takeIf { time.answer() is TimeToCoverAnswer.None }
-            val none = target?.let { noTimeCoversText(it.toJavaLocalDate(), time.targetDateNamedMonth, page.today) }
             CoverageOffer(
-                description = listOfNotNull(covered, none.takeIf { intent == CoverageIntent.Time }),
+                description = listOfNotNull(covered, takes.takeIf { intent == CoverageIntent.Time }),
                 operations = change.operations,
                 title =
                     stringResource(
@@ -112,11 +136,19 @@ private fun answerOffer(
         }
 
         is CoverageChange.Time -> {
-            CoverageOffer(
-                description = listOf(covered),
-                operations = change.operations,
-                title = stringResource(R.string.plan_time_covers_everything_in_depth, formatMinutes(change.minutes, locale)),
-            )
+            if (answer is TimeToCoverAnswer.Focus) {
+                CoverageOffer(
+                    description = listOfNotNull(takes, focusText(answer.coveredShare, answer.everyTopic, page.isExam)),
+                    operations = change.operations,
+                    title = stringResource(R.string.plan_time_suggest_title, formatMinutes(change.minutes, locale)),
+                )
+            } else {
+                CoverageOffer(
+                    description = listOf(covered),
+                    operations = change.operations,
+                    title = stringResource(R.string.plan_time_covers_everything_in_depth, formatMinutes(change.minutes, locale)),
+                )
+            }
         }
     }
 }
@@ -132,7 +164,7 @@ internal fun CoverageSuggestion(slot: Slot) {
     val edits = slot.edits
     val state = slot.state
     val coverage = planCoverage(plan)
-    val covered = coverage?.let { coveredText(plan, it) }.orEmpty()
+    val covered = coverage?.let { coveredText(plan, it, page.today) }.orEmpty()
     val search = edits.timeToCover.forPlan(plan)
     val found = (search as? TimeToCoverState.Answered)?.time
     val course = fullCourse(page)
@@ -145,12 +177,9 @@ internal fun CoverageSuggestion(slot: Slot) {
     val dateless = isGoal && found != null && found.fittingDate == null
     val noDate = dateless && state.intent == CoverageIntent.Date
     val moveDate = isGoal && courseOffer == null && !dateless && offer?.operations?.firstOrNull() !is PlanOp.TargetDate
-    val studiesEverything = !isGoal && courseOffer == null && found?.answer() is TimeToCoverAnswer.None && course != null
+    val studiesEverything = !isGoal && courseOffer == null && found != null && found.answer() !is TimeToCoverAnswer.Covers && course != null
     val failed = stringResource(if (state.intent == CoverageIntent.Date) R.string.plan_couldnt_check_changes else R.string.plan_find_failed)
-    val none =
-        found?.targetDate?.takeIf { offer == null && !noDate }?.let {
-            noTimeCoversText(it.toJavaLocalDate(), found.targetDateNamedMonth, page.today)
-        }
+    val none = found?.takeIf { offer == null && !noDate }?.let { everythingTakes(it, page.today) }
     val status =
         when {
             retry -> if (search is TimeToCoverState.Building) stringResource(R.string.plan_find_building) else failed
@@ -170,7 +199,7 @@ internal fun CoverageSuggestion(slot: Slot) {
         edits.findTimeToCover(plan) { outcome ->
             if (state.asking == next) focus()
             val time = (outcome as? TimeToCoverOutcome.Answered)?.time ?: return@findTimeToCover
-            val change = coverageChange(page.isExam, next, time) ?: return@findTimeToCover
+            val change = coverageChange(page.isExam, next, time, plan.schedule.dailyMinutes.toInt()) ?: return@findTimeToCover
             if (coverage != null && state.asking == next) slot.host.requestPreview(change.operations)
         }
     }

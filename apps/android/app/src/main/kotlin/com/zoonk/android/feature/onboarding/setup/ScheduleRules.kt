@@ -1,13 +1,14 @@
 package com.zoonk.android.feature.onboarding.setup
 
 import androidx.compose.runtime.saveable.Saver
+import com.zoonk.android.feature.plan.DaySplit
+import com.zoonk.android.feature.plan.TimeLine
+import com.zoonk.android.feature.plan.isBusy
+import com.zoonk.android.feature.plan.suggestedMinutes
 import com.zoonk.api.models.OnboardingTimeChoicesInner
-import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
-import com.zoonk.api.models.PlanTimeToCoverSuggested
-import kotlinx.datetime.LocalDate
 
 /** Sunday is 0, as the plan numbers weekdays. */
 internal val EVERY_DAY = (0..6).toList()
@@ -23,12 +24,6 @@ internal data class StudyWeek(
     val studyDays: List<Int>,
     val weekendMinutes: Int? = null,
     val fullCourse: Boolean = false,
-)
-
-internal data class DaySplit(
-    val mine: Int,
-    val others: Int,
-    val rest: Int,
 )
 
 internal val DaySplitSaver =
@@ -81,39 +76,6 @@ internal fun findWeek(
     weekend: Int?,
 ) = StudyWeek(days, weekend)
 
-/** What the time shown means, or why that isn't known yet. */
-internal sealed interface TimeLine {
-    data object Asking : TimeLine
-
-    data object AskFailed : TimeLine
-
-    data object EveryTopic : TimeLine
-
-    data class Everything(
-        val suggested: Boolean,
-    ) : TimeLine
-
-    data object FindFailed : TimeLine
-
-    data class Finish(
-        val endDate: LocalDate,
-    ) : TimeLine
-
-    data object NoDays : TimeLine
-
-    data object NoFinish : TimeLine
-
-    data object PastDate : TimeLine
-
-    data class Share(
-        val share: Double,
-    ) : TimeLine
-
-    data object Working : TimeLine
-}
-
-internal fun suggestedMinutes(found: PlanTimeToCover?): Int? = found?.suggested?.minutes?.toInt()
-
 /**
  * Null while the first time is still being worked out: no other time is shown in its place. The time
  * follows the suggestion as the days change only when the screen started on one; [settled] says none
@@ -147,74 +109,20 @@ internal fun pickedMinutes(
     minutes: Int,
 ): Int? = minutes.takeUnless { suggestedMinutes(first) != null && suggestedMinutes(found) == minutes }
 
-internal enum class TooClose { Date, Days }
+/** The plan's answer for the days shown and what it says about the time shown. */
+internal data class TimeAnswerState(
+    val found: PlanTimeToCover?,
+    val line: TimeLine,
+    val updating: Boolean = false,
+)
 
-/**
- * Why no time covers everything: only when not even a whole day does while more time would still
- * cover more, as main says it. Null when a time covers everything, even past the suggestion, when
- * part never fits whatever the time, when the time shown covers it, or when the date passed. The
- * date is to blame only once every day is a study day: until then, more days bring the time down.
- */
-internal fun tooClose(
-    found: PlanTimeToCover?,
-    line: TimeLine,
-    studiesEveryDay: Boolean,
-): TooClose? =
-    when {
-        found == null || found.pastDate || line is TimeLine.Everything -> null
-        found.recommendedMinutes != null || found.most != null -> null
-        studiesEveryDay -> TooClose.Date
-        else -> TooClose.Days
-    }
-
-/** Only while the time shown falls short of everything, and only a suggestion its label is true of. */
-internal fun offer(
-    found: PlanTimeToCover?,
-    line: TimeLine,
-    minutes: Int?,
-): PlanTimeToCoverSuggested? =
-    found?.suggested?.takeIf {
-        it.minutes.toInt() != minutes &&
-            line !is TimeLine.Everything &&
-            (it.kind == PlanTimeToCoverSuggested.Kind.EVERYTHING || it.everyTopic)
-    }
-
-/** [found] is the plan's answer for the days shown, [advice] its answer for the time shown on them; either is null while it's asked for. */
-internal fun timeLine(
-    advice: PlanTimeAdvice?,
-    askFailed: Boolean,
-    dated: Boolean,
-    findFailed: Boolean,
-    found: PlanTimeToCover?,
-    hasDays: Boolean,
-    minutes: Int?,
-): TimeLine {
-    val asking = if (askFailed) TimeLine.AskFailed else TimeLine.Asking
-    return when {
-        !hasDays -> TimeLine.NoDays
-        minutes == null -> TimeLine.Working
-        !dated && advice == null -> asking
-        !dated -> advice?.endDate?.let(TimeLine::Finish) ?: TimeLine.NoFinish
-        found == null -> if (findFailed) TimeLine.FindFailed else TimeLine.Working
-        found.pastDate -> TimeLine.PastDate
-        else -> datedLine(advice, asking, found.suggested, minutes)
-    }
-}
-
-private fun datedLine(
-    advice: PlanTimeAdvice?,
-    asking: TimeLine,
-    suggested: PlanTimeToCoverSuggested?,
-    minutes: Int,
-): TimeLine {
-    if (suggested?.minutes?.toInt() == minutes) {
-        return when (suggested.kind) {
-            PlanTimeToCoverSuggested.Kind.EVERYTHING -> TimeLine.Everything(suggested = true)
-            PlanTimeToCoverSuggested.Kind.FOCUS -> if (suggested.everyTopic) TimeLine.EveryTopic else TimeLine.Share(suggested.coveredShare)
-        }
-    }
-    val share = (advice ?: return asking).coveredShare ?: 0.0
-    return if (share >= 1) TimeLine.Everything(suggested = false) else TimeLine.Share(share)
+/** While the time shown is worked out again, the last answer stays in place, marked as updating. */
+internal fun shownAnswer(
+    last: TimeAnswerState,
+    now: TimeAnswerState,
+): TimeAnswerState {
+    val updating = now.line.isBusy && !last.line.isBusy
+    return (if (updating) last else now).copy(updating = updating)
 }
 
 /** The time picked needs the plan's own answer, except the one it suggested. */

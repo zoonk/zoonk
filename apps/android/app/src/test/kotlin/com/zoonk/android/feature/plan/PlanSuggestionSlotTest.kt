@@ -253,6 +253,26 @@ class PlanSuggestionSlotTest {
     }
 
     @Test
+    fun aBigGoalsCoverageSuggestsAFocusedTimeAndSaysWhatEverythingTakes() {
+        showSlot(coveragePlan(), found = timeToCover(recommended = 805, focus = 240))
+
+        compose.onNodeWithText("Find the time that covers everything").performClick()
+
+        compose.onNodeWithText("We suggest 4\u00A0hr a day").assertIsDisplayed()
+        compose
+            .onNodeWithText(
+                "Covering everything in depth by January 31, 2027 takes about 13\u00A0hr 25\u00A0min a day, more than most people can keep up.",
+            ).assertExists()
+        compose
+            .onNodeWithText(
+                "Your plan then covers every part of your goal, what matters most in more depth. That's about 60% of it studied in depth.",
+            ).assertExists()
+        compose.onNodeWithText("Apply").performClick()
+
+        assertEquals(listOf(listOf<PlanOp>(PlanOp.DailyMinutes(240))), applied)
+    }
+
+    @Test
     fun aGoalsCoverageMovesItsDateFromOtherOptions() {
         showSlot(coveragePlan(), found = timeToCover(recommended = 45, fittingDate = "2027-04-18"))
 

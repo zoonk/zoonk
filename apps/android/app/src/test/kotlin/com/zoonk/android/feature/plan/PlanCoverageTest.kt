@@ -13,6 +13,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.feature.onboarding.DAILY_TIMES
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanChangeResult
@@ -73,63 +74,113 @@ class PlanCoverageTest {
     ) = TimeToCoverState.Answered(timeToCoverRevision(plan), time)
 
     @Test
-    fun theTimeThatCoversEverythingIsFoundOnlyFromTheLearnersTap() {
+    fun theEditorAsksForTheTimeQuestionsAnswerAsItOpens() {
         show()
 
-        compose
-            .onNodeWithText("20 min a day studies every part of your goal, the ones that matter most in more depth.")
-            .assertIsDisplayed()
-        assertEquals(0, finds)
-        compose.onNodeWithText("Find the time that covers everything").performClick()
-
         assertEquals(1, finds)
+        compose
+            .onNodeWithText("Covers about 60% of your goal in depth by January 31, 2027, starting with what matters most.")
+            .performScrollTo()
+            .assertIsDisplayed()
+        compose.onNodeWithText("Working out the time your goal needs…").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Find the time that covers everything").assertDoesNotExist()
     }
 
     @Test
-    fun theTimeFoundIsUsedInOneTapAndTheKeyboardWaitsOnThePicker() {
+    fun aFocusSuggestionSaysWhatEverythingTakesAndOffersTheSuggestedTime() {
+        show(found = answered(time = timeToCover(recommended = 805, focus = 240)))
+
+        compose
+            .onNodeWithText(
+                "Covering everything in depth by January 31, 2027 takes about 13\u00A0hr 25\u00A0min a day, " +
+                    "more than most people can keep up. More study days would help.",
+            ).performScrollTo()
+            .assertIsDisplayed()
+        compose.onNodeWithText("Use the suggested 4\u00A0hr a day").performScrollTo().performClick()
+
+        assertEquals(listOf(PlanPart.Schedule to listOf<PlanOp>(PlanOp.DailyMinutes(240))), changes)
+        compose.onNodeWithContentDescription("Time a day, 20\u00A0min").assertIsFocused()
+    }
+
+    @Test
+    fun aLearnerOnTheTimeThatCoversEverythingHearsItIsMoreThanMostKeepUpAndCanGoBack() {
+        val full =
+            plan(
+                """
+                "feasibility":{"coreFits":true,"coveredShare":1,"deadline":"2027-01-31","deepensMostAsked":false,"fits":true,
+                 "measure":"goal","timeCovers":true},
+                "schedule":{"dailyMinutes":805,"dailyTimes":$DAILY_TIMES,"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDate":"2027-01-31",
+                 "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":805,"weekend":null,
+                 "weekendDays":[]},"weekdayMinutes":[0,805,805,805,805,805,0]}
+                """.trimIndent(),
+            )
+        show(plan = full, found = answered(plan = full, time = timeToCover(recommended = 805, focus = 240)))
+
+        compose
+            .onNodeWithText("Covers your whole goal by January 31, 2027. That's more than most people can keep up.")
+            .performScrollTo()
+            .assertIsDisplayed()
+        compose.onNodeWithText("Use the suggested 4\u00A0hr a day").performScrollTo().performClick()
+
+        assertEquals(listOf(PlanPart.Schedule to listOf<PlanOp>(PlanOp.DailyMinutes(240))), changes)
+    }
+
+    @Test
+    fun thePickerMarksTheSuggestedTimeAndTheOneThatCoversEverything() {
+        show(found = answered(time = timeToCover(recommended = 805, focus = 240)))
+
+        compose.onNodeWithContentDescription("Time a day, 20\u00A0min").performClick()
+
+        compose.onNodeWithText("4\u00A0hr (suggested)").assertIsDisplayed()
+        compose.onNodeWithText("13\u00A0hr 25\u00A0min (covers everything)").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun theSuggestionThatCoversEverythingIsUsedInOneTapAndTheKeyboardWaitsOnThePicker() {
         show(found = answered(time = timeToCover(recommended = 45)))
 
-        compose.onNodeWithText("Use 45\u00A0min a day").performClick()
+        compose.onNodeWithText("Use 45\u00A0min a day to cover everything").performClick()
 
         assertEquals(listOf(PlanPart.Schedule to listOf<PlanOp>(PlanOp.DailyMinutes(45))), changes)
         compose.onNodeWithContentDescription("Time a day, 20\u00A0min").assertIsFocused()
     }
 
     @Test
-    fun thePickerMarksTheTimeFound() {
-        show(found = answered(time = timeToCover(recommended = 45)))
-
-        compose.onNodeWithContentDescription("Time a day, 20\u00A0min").performClick()
-
-        compose.onNodeWithText("45\u00A0min (suggested)").assertIsDisplayed()
-    }
-
-    @Test
-    fun aTimeFoundThatIsAlreadyThePlansIsntOffered() {
+    fun aSuggestionThatIsAlreadyThePlansTimeIsntOffered() {
         show(found = answered(time = timeToCover(recommended = 20)))
 
-        compose.onNodeWithText("Use 20\u00A0min a day").assertDoesNotExist()
+        compose.onNodeWithText("What it takes to cover your whole goal by January 31, 2027.").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Use 20\u00A0min a day to cover everything").assertDoesNotExist()
     }
 
     @Test
-    fun anAnswerFoundForAnotherPlanIsntShown() {
+    fun anAnswerFoundForAnotherPlanIsAskedAgain() {
         show(found = answered(plan = coveragePlan(coreFits = false), time = timeToCover(recommended = 45)))
 
-        compose.onNodeWithText("Use 45\u00A0min a day").assertDoesNotExist()
-        compose.onNodeWithText("Find the time that covers everything").assertIsDisplayed()
+        compose.onNodeWithText("Use 45\u00A0min a day to cover everything").assertDoesNotExist()
+        assertEquals(1, finds)
+    }
+
+    @Test
+    fun anAnswerThatFailedOffersTryAgain() {
+        show(found = TimeToCoverState.Failed(timeToCoverRevision(coveragePlan())))
+
+        compose.onNodeWithText("We couldn't work out the time your goal needs.").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Try again").performScrollTo().performClick()
+
+        assertEquals(1, finds)
     }
 
     @Test
     fun whileTheScheduleSavesItsCoverageIsBeingWorkedOut() {
-        show(pending = setOf(PlanPart.Schedule))
+        show(pending = setOf(PlanPart.Schedule), found = answered())
 
-        compose.onNodeWithText("Working out what your time covers…").assertIsDisplayed()
-        compose.onNodeWithText("Find the time that covers everything").assertDoesNotExist()
+        compose.onNodeWithText("Working out what your time covers…").performScrollTo().assertIsDisplayed()
     }
 
     @Test
     fun movingTheDateFindsItFirst() {
-        show()
+        show(found = TimeToCoverState.Failed(timeToCoverRevision(coveragePlan())))
 
         compose.onNodeWithText("Move your date to cover everything").performClick()
 
@@ -141,7 +192,7 @@ class PlanCoverageTest {
     fun aDateFoundMovesInOneTap() {
         show(found = answered(time = timeToCover(recommended = null, fittingDate = "2027-03-15")))
 
-        compose.onNodeWithText("At 20 min a day, your plan covers everything by March 15, 2027.").assertIsDisplayed()
+        compose.onNodeWithText("At 20\u00A0min a day, your plan covers everything by March 15, 2027.").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("Move your date to March 15, 2027").performClick()
 
         assertEquals(listOf(PlanPart.Schedule to listOf<PlanOp>(PlanOp.TargetDate(LocalDate.parse("2027-03-15")))), changes)
@@ -149,9 +200,10 @@ class PlanCoverageTest {
 
     @Test
     fun anExamStudiesEverythingFromItsSwitch() {
-        show(plan = coveragePlan(kind = "exam"), kind = "exam")
+        show(plan = coveragePlan(kind = "exam"), kind = "exam", found = answered(plan = coveragePlan(kind = "exam")))
 
         compose.onNodeWithText("Move your date to cover everything").assertDoesNotExist()
+        compose.onNodeWithText("When off, your plan ends at the exam.").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("Study everything, even after the exam").performScrollTo().performClick()
 
         assertEquals(listOf(PlanPart.FullCourse to listOf<PlanOp>(PlanOp.FullCourse(true))), changes)
@@ -159,7 +211,8 @@ class PlanCoverageTest {
 
     @Test
     fun aDatedGoalOpensStudyEverythingAndTheFocusChoice() {
-        show(plan = coveragePlan(areas = "[${area("Algebra")},${area("Geometry")}]"))
+        val areas = "[${area("Algebra")},${area("Geometry")}]"
+        show(plan = coveragePlan(areas = areas), found = answered(plan = coveragePlan(areas = areas)))
 
         compose.onNodeWithText("Study everything").performScrollTo().performClick()
         compose.onNodeWithText("Choose where to focus").performScrollTo().performClick()
@@ -169,34 +222,9 @@ class PlanCoverageTest {
 
     @Test
     fun aTimeThatCoversEverythingSaysSo() {
-        show(
-            plan =
-                plan(
-                    """
-                    "feasibility":{"coreFits":true,"coveredShare":1,"deadline":"2027-01-31","deepensMostAsked":false,"fits":true,
-                     "measure":"goal","timeCovers":true}
-                    """.trimIndent(),
-                ),
-        )
-        compose.onNodeWithText("Covers your whole goal.").assertIsDisplayed()
-    }
-
-    @Test
-    fun aTimeFoundOnTheLearnersTapTakesFocusToUseIt() {
-        show(finding = answered(time = timeToCover(recommended = 45)))
-
-        compose.onNodeWithText("Find the time that covers everything").performClick()
-
-        compose.onNodeWithText("Use 45\u00A0min a day").assertIsFocused()
-    }
-
-    @Test
-    fun aDateFoundOnTheLearnersTapTakesFocusToMoveDate() {
-        show(finding = answered(time = timeToCover(recommended = null, fittingDate = "2027-03-15")))
-
-        compose.onNodeWithText("Find the time that covers everything").performClick()
-
-        compose.onNodeWithText("Move your date to March 15, 2027").assertIsFocused()
+        val covered = coveragePlan(fits = true)
+        show(plan = covered, found = answered(plan = covered))
+        compose.onNodeWithText("Covers your whole goal by January 31, 2027.").performScrollTo().assertIsDisplayed()
     }
 
     @Test

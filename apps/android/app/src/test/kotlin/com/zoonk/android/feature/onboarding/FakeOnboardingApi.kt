@@ -493,14 +493,14 @@ internal class FakeOnboardingApi : OnboardingApi {
     }
 }
 
-/** The time the API starts a dated goal on for these answers: all of it, else a focus that reaches every topic. */
+/** Core's rule: the time that covers everything when it's at most 4 hours a day, else the [focus] time it offers. */
 internal fun suggestionFor(
     recommended: Long?,
     focus: Long?,
 ): PlanTimeToCoverSuggested? =
     when {
-        recommended != null && recommended <= A_DAY -> suggestion(PlanTimeToCoverSuggested.Kind.EVERYTHING, recommended)
-        focus != null && focus <= A_DAY -> suggestion(PlanTimeToCoverSuggested.Kind.FOCUS, focus)
+        recommended != null && recommended <= MOST_SUGGESTED -> suggestion(PlanTimeToCoverSuggested.Kind.EVERYTHING, recommended)
+        focus != null -> suggestion(PlanTimeToCoverSuggested.Kind.FOCUS, focus)
         else -> null
     }
 
@@ -551,4 +551,4 @@ internal fun adviceOf(
 /** Core's `DAILY_TIME_CHOICES`: 5 and 10 minutes, quarter hours to 4 hours, then half hours to a whole day. */
 internal val DAILY_TIMES = listOf(5, 10) + (15..240 step 15) + (270..1440 step 30)
 
-private const val A_DAY = 1440L
+private const val MOST_SUGGESTED = 240L

@@ -2,6 +2,7 @@ package com.zoonk.android.feature.plan
 
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanTimeToCover
+import com.zoonk.api.models.PlanTimeToCoverSuggested
 
 /**
  * Main's `getTimeToCoverRevision`: what the time found depends on. The plan's id is in it, since
@@ -61,9 +62,15 @@ sealed interface TimeToCoverOutcome {
     data object Stale : TimeToCoverOutcome
 }
 
-/** Main's `TimeToCoverAnswer`: a time that covers everything, or none. */
+/** Main's `TimeToCoverAnswer`: core's suggestion, a time that covers everything or one that focuses, or none. */
 sealed interface TimeToCoverAnswer {
     data class Covers(
+        val minutes: Int,
+    ) : TimeToCoverAnswer
+
+    data class Focus(
+        val coveredShare: Double,
+        val everyTopic: Boolean,
         val minutes: Int,
     ) : TimeToCoverAnswer
 
@@ -71,12 +78,9 @@ sealed interface TimeToCoverAnswer {
 }
 
 internal fun PlanTimeToCover.answer(): TimeToCoverAnswer =
-    recommendedMinutes?.let { TimeToCoverAnswer.Covers(it.toInt()) } ?: TimeToCoverAnswer.None
-
-/** The time the answer offers among the time a day's chips. */
-internal val TimeToCoverAnswer.offeredMinutes: Int?
-    get() =
-        when (this) {
-            is TimeToCoverAnswer.Covers -> minutes
-            TimeToCoverAnswer.None -> null
+    suggested?.let {
+        when (it.kind) {
+            PlanTimeToCoverSuggested.Kind.EVERYTHING -> TimeToCoverAnswer.Covers(it.minutes.toInt())
+            PlanTimeToCoverSuggested.Kind.FOCUS -> TimeToCoverAnswer.Focus(it.coveredShare, it.everyTopic, it.minutes.toInt())
         }
+    } ?: TimeToCoverAnswer.None

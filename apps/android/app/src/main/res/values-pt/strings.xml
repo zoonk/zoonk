@@ -16,6 +16,8 @@
   "belt_white": "4348afae540fb5a9714476d821e196046435c2ae4fb1b02b9987ea8b4b919124",
   "belt_yellow": "f8faf5651d3d1463f6fa8734c37fe116923213ca2419eeae60a0e3b0b9d06083",
   "close_sheet": "3b77d63d96f980deb287f573d84eec0c9b956cf60e2b472f26c6bfbec686d98e",
+  "daily_time_covers_everything": "b3123d6f1d2c10769b147786cd5525f495cf2b25b4b4b4e9fa6a1a1d85cb410a",
+  "daily_time_suggested": "40f535ae2a2069ed4dbed45225eab4b142377fbe44efb0d7a06905da3586b735",
   "diff_line_spoken": "de8080575de02358b87a2f6cdef85969858733ce88fa41ebb70b8e8fe117bc11",
   "disclosure_collapsed": "f49121409f18b6d4eb2d5c5f87fcd6e7883b31987745452e63a3550f2847fa0b",
   "disclosure_expanded": "02e11e04e3cfd7f7f8dd0b5458f7d4b0917eee97af279d7c7efb1650da415a09",
@@ -132,4 +134,8 @@
     <string name="web_page_unavailable">Nenhum app consegue abrir esta página.</string>
     <!-- Replaces Compose's own string of this name, whose Portuguese and German read as closing a spreadsheet. TalkBack's label for the dimmed area behind a bottom sheet, which closes the sheet. "Sheet" means a panel that slides up from the bottom of the screen, not a spreadsheet or a sheet of paper. -->
     <string name="close_sheet" tools:override="true" tools:ignore="UnusedResources">Fechar painel</string>
+    <!-- In the time a day picker's menu. %1$s is a daily study time, such as "4 h". The same word as "We suggest 4 h a day" and "Use the suggested 4 h a day" beside it: suggested, not recommended. -->
+    <string name="daily_time_suggested">%1$s (sugerido)</string>
+    <!-- In the time a day picker's menu: the time that covers the whole goal or exam. %1$s is a daily study time, such as "13 h 30 min". -->
+    <string name="daily_time_covers_everything">%1$s (cobre tudo)</string>
 </resources>

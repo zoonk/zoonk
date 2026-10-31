@@ -15,6 +15,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,8 +75,15 @@ private fun DailyMinutes(
     val pending = edits.isPending(PlanPart.Schedule)
     val weekdayDays = shape.weekdayDays.map(Long::toInt)
     val shown = askedMinutes(edits.asked(PlanPart.Schedule), weekdayDays) ?: shape.weekdays.toInt()
-    val answer = (edits.timeToCover.forPlan(page.plan) as? TimeToCoverState.Answered)?.time?.answer()
+    val search = edits.timeToCover.forPlan(page.plan)
+    val marked = markedTimes((search as? TimeToCoverState.Answered)?.time)
     val focus = remember { CoverageFocus() }
+    val dated = page.plan.schedule.targetDate != null
+
+    // Asked when the editor opens, never on loading the page: it plans the goal at many times.
+    LaunchedEffect(dated, search == TimeToCoverState.Idle) {
+        if (dated && search == TimeToCoverState.Idle) edits.findTimeToCover(page.plan) {}
+    }
 
     fun setMinutes(minutes: Int) {
         if (pending || minutes == shown) return
@@ -94,9 +102,10 @@ private fun DailyMinutes(
             onChange = ::setMinutes,
             modifier = Modifier.focusRequester(focus.pickedTime),
             enabled = !pending,
-            suggested = answer?.offeredMinutes,
+            suggested = marked.suggested,
+            full = marked.full,
         )
-        DailyCoverage(page, edits, focus, onUseTime = ::setMinutes)
+        DailyCoverage(page, edits, focus, minutes = shape.weekdays.toInt(), onUseTime = ::setMinutes)
         FullCourseSwitch(page, edits, focus.studyEverything)
     }
 }

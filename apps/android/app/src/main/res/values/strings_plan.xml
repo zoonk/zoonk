@@ -788,35 +788,92 @@
     <string name="plan_tell_buddy_description">In your own words, like “less on weekends”. You\'ll see the change before it applies.</string>
     <string name="plan_tell_buddy_description_modules">In your own words, like “skip a module” or “less on weekends”. You\'ll see the change before it applies.</string>
 
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_none">Not even a whole day covers everything in depth by %1$s.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_none_month">Not even a whole day covers everything in depth by %1$s.</string>
+    <!-- %1$s is a day, such as "May 5"; %2$s is a daily study time, such as "13 h 30 min". -->
+    <string name="plan_time_takes_everything">Covering everything in depth by %1$s takes about %2$s a day, more than most people can keep up.</string>
+    <!-- %1$s is a month and year, such as "May 2027"; %2$s is a daily study time, such as "13 h 30 min". -->
+    <string name="plan_time_takes_everything_month">Covering everything in depth by %1$s takes about %2$s a day, more than most people can keep up.</string>
+    <!-- Part of the goal never fits, whatever the time, so this is the most any daily time covers. %1$s is a day, such as "May 5"; %2$s a percentage, such as "99%"; %3$s a daily study time, such as "8 h". -->
+    <string name="plan_time_takes_most">Covering as much as any daily time can by %1$s, about %2$s in depth, takes about %3$s a day, more than most people can keep up.</string>
+    <!-- Part of the goal never fits, whatever the time, so this is the most any daily time covers. %1$s is a month and year, such as "May 2027"; %2$s a percentage, such as "99%"; %3$s a daily study time, such as "8 h". -->
+    <string name="plan_time_takes_most_month">Covering as much as any daily time can by %1$s, about %2$s in depth, takes about %3$s a day, more than most people can keep up.</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
+    <string name="plan_time_share_exam">Covers about %1$s of your exam topics in depth by %2$s, starting with what comes up most.</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_share_exam_month">Covers about %1$s of your exam topics in depth by %2$s, starting with what comes up most.</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
+    <string name="plan_time_share_goal">Covers about %1$s of your goal in depth by %2$s, starting with what matters most.</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_share_goal_month">Covers about %1$s of your goal in depth by %2$s, starting with what matters most.</string>
+    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
+    <string name="plan_time_focus_exam_every_topic">Your plan then covers every exam topic, the ones asked most in more depth. That\'s about %1$s of the exam studied in depth.</string>
+    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
+    <string name="plan_time_focus_exam_most_asked">Your plan then starts with what the exam asks most, about %1$s of it studied in depth. Topics it asks least may not fit.</string>
+    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
+    <string name="plan_time_focus_goal_every_part">Your plan then covers every part of your goal, what matters most in more depth. That\'s about %1$s of it studied in depth.</string>
+    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
+    <string name="plan_time_focus_goal_most_important">Your plan then starts with what matters most, about %1$s of your goal studied in depth. The rest may not fit.</string>
+    <string name="plan_time_more_days">More study days would help.</string>
+    <!-- A sentence before what that time covers. %1$s is a daily study time, such as "4 h". -->
+    <string name="plan_time_suggest">We suggest %1$s a day.</string>
+    <!-- The title of a suggestion to change the daily study time. %1$s is a daily study time, such as "4 h". -->
+    <string name="plan_time_suggest_title">We suggest %1$s a day</string>
+    <string name="plan_time_too_long">That\'s more than most people can keep up.</string>
+    <!-- After the line about the time a day, when two goals were typed together. %1$s is this goal's time, %2$s the other goal's, such as "20 min". -->
+    <string name="plan_time_split_one">This goal gets %1$s a day and your other goal %2$s.</string>
+    <!-- After the line about the time a day, when three or more goals were typed together. %1$s is this goal's time, %2$s the others' time together. -->
+    <string name="plan_time_split_many">This goal gets %1$s a day and your other goals %2$s together.</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_takes_exam_all">What it takes to cover all your exam topics by %1$s.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_takes_exam_all_month">What it takes to cover all your exam topics by %1$s.</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_takes_goal_all">What it takes to cover your whole goal by %1$s.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_takes_goal_all_month">What it takes to cover your whole goal by %1$s.</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_covers_exam_all">Covers all your exam topics by %1$s.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_covers_exam_all_month">Covers all your exam topics by %1$s.</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_covers_goal_all">Covers your whole goal by %1$s.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_covers_goal_all_month">Covers your whole goal by %1$s.</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_past_date">Your date, %1$s, has passed. You can choose a new one on the next screen.</string>
+    <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
+    <string name="plan_time_past_date_month">Your date, %1$s, has passed. You can choose a new one on the next screen.</string>
+    <string name="plan_time_finish_unknown">We can\'t estimate a finish date for this schedule. Try more time or more study days.</string>
+    <string name="plan_time_finish_failed">We couldn\'t work out when you\'d finish.</string>
+    <string name="plan_time_no_days">Choose at least one study day.</string>
+    <string name="plan_time_working">Working out the time your goal needs…</string>
+    <string name="plan_time_find_failed">We couldn\'t work out the time your goal needs.</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="plan_time_asking">Working out what %1$s a day covers…</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="plan_time_ask_failed">We couldn\'t work out what %1$s a day covers.</string>
+    <!-- A button under the time a day. %1$s is a daily study time, such as "45 min". Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything". -->
+    <string name="plan_time_use_to_cover_everything">Use %1$s a day to cover everything</string>
+    <!-- A button under the time a day that goes back to the suggested time. %1$s is a daily study time, such as "4 h". -->
+    <string name="plan_time_use_suggested">Use the suggested %1$s a day</string>
     <string name="plan_working_out_coverage">Working out what your time covers…</string>
     <!-- %1$s is a month and year, like "March 2027". -->
     <string name="plan_finish_around">You finish around %1$s.</string>
     <string name="plan_finish_working">Working out when you\'d finish…</string>
-    <string name="plan_covers_whole_goal">Covers your whole goal.</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_covers_everything_by">Your time covers everything by %1$s</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_everything_by_month">Your time covers everything by %1$s</string>
     <string name="plan_covered_not_enough">%1$s a day isn\'t enough time to cover your goal.</string>
-    <string name="plan_covered_exam_most_asked">%1$s a day studies every topic of the exam, the ones that come up most in more depth.</string>
-    <string name="plan_covered_exam_less_depth">%1$s a day studies every topic of the exam, some of them in less depth.</string>
-    <string name="plan_covered_goal_core">%1$s a day studies every part of your goal, the ones that matter most in more depth.</string>
-    <string name="plan_covered_exam_after">%1$s a day doesn\'t reach every topic by the exam: the ones that come up least come after it.</string>
-    <string name="plan_covered_exam_left_out">%1$s a day doesn\'t reach every topic: the ones that come up least are left out.</string>
-    <string name="plan_covered_goal_left_out">%1$s a day doesn\'t reach every part of your goal: what comes last in your path is left out.</string>
+    <!-- A button that works out the daily time that covers the whole goal. Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything". -->
     <string name="plan_find">Find the time that covers everything</string>
     <string name="plan_finding">Finding the time…</string>
     <string name="plan_try_again">Try again</string>
     <string name="plan_find_building">Your plan is still being built. Try again in a moment.</string>
     <string name="plan_find_failed">We couldn\'t work out the time needed.</string>
-    <!-- %1$s is a daily time, such as "30 min"; %2$s is a day, such as "May 5". -->
-    <string name="plan_find_covers">%1$s a day covers everything in depth by %2$s.</string>
-    <!-- %1$s is a daily time, such as "30 min"; %2$s is a month and year, such as "May 2027". -->
-    <string name="plan_find_covers_month">%1$s a day covers everything in depth by %2$s.</string>
-    <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_find_none">No amount of time a day covers everything in depth by %1$s.</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_find_none_month">No amount of time a day covers everything in depth by %1$s.</string>
     <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->
     <string name="plan_find_fitting_date">At %1$s a day, your plan covers everything by %2$s.</string>
     <string name="plan_find_no_date">We couldn\'t find a date that covers everything.</string>
@@ -826,7 +883,7 @@
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">Move your date to %1$s</string>
     <string name="plan_full_course_switch">Study everything, even after the exam</string>
-    <string name="plan_full_course_off">What doesn\'t fit by the exam is left out of your plan.</string>
+    <string name="plan_full_course_off">When off, your plan ends at the exam.</string>
     <string name="plan_full_course_on_exam">%1$s Until the exam, what comes up most comes first.</string>
     <string name="plan_full_course_on_exam_unknown_end">Until the exam, what comes up most comes first. What doesn\'t fit comes after it.</string>
     <string name="plan_finish">At %1$s a day, you finish in %2$s.</string>

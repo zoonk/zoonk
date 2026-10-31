@@ -74,7 +74,10 @@ fun TimeMenu(
     }
 }
 
-/** Main's daily time picker: the big time a day, picked from core's [times]; its menu marks the time the plan [suggested]. */
+/**
+ * Main's daily time picker: the big time a day, picked from core's [times]; its menu marks the time
+ * the plan [suggested] and the [full] time that covers everything.
+ */
 @Composable
 fun DailyTimePicker(
     times: List<Long>,
@@ -84,6 +87,7 @@ fun DailyTimePicker(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     suggested: Int? = null,
+    full: Int? = null,
     stale: Boolean = false,
 ) {
     if (minutes == null) {
@@ -120,14 +124,15 @@ fun DailyTimePicker(
         TimeMenu(
             expanded = open,
             onDismissRequest = { open = false },
-            times = pickerTimes(times, minutes, suggested),
+            times = pickerTimes(times, minutes, suggested, full),
             shown = minutes,
             onPick = onChange,
             label = { time ->
-                if (time == suggested) {
-                    stringResource(R.string.onboarding_schedule_suggested, formatMinutes(time, locale))
-                } else {
-                    formatMinutes(time, locale)
+                val shownTime = formatMinutes(time, locale)
+                when (time) {
+                    suggested -> stringResource(R.string.daily_time_suggested, shownTime)
+                    full -> stringResource(R.string.daily_time_covers_everything, shownTime)
+                    else -> shownTime
                 }
             },
         )

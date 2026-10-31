@@ -39,22 +39,35 @@ class PlanSlotItemsTest {
     }
 
     @Test
-    fun aGoalMovesItsDateWhenAskedOrWhenNoTimeCoversEverything() {
+    fun aGoalMovesItsDateWhenAskedOrWhenNoSuggestedTimeCoversEverything() {
         val fitting = timeToCover(recommended = 45, fittingDate = "2027-04-18")
         val date = CoverageChange.Date(LocalDate.parse("2027-04-18"))
 
-        assertEquals(CoverageChange.Time(45), coverageChange(isExam = false, CoverageIntent.Time, fitting))
-        assertEquals(date, coverageChange(isExam = false, CoverageIntent.Date, fitting))
-        assertEquals(date, coverageChange(isExam = false, CoverageIntent.Time, timeToCover(recommended = null, fittingDate = "2027-04-18")))
-        assertNull(coverageChange(isExam = false, CoverageIntent.Date, timeToCover(recommended = 45)))
+        assertEquals(CoverageChange.Time(45), coverageChange(isExam = false, CoverageIntent.Time, fitting, dailyMinutes = 20))
+        assertEquals(date, coverageChange(isExam = false, CoverageIntent.Date, fitting, dailyMinutes = 20))
+        assertEquals(
+            date,
+            coverageChange(
+                isExam = false,
+                CoverageIntent.Time,
+                timeToCover(recommended = 805, focus = 240, fittingDate = "2027-04-18"),
+                20,
+            ),
+        )
+        assertNull(coverageChange(isExam = false, CoverageIntent.Date, timeToCover(recommended = 45), dailyMinutes = 20))
     }
 
     @Test
-    fun anExamsDateNeverMoves() {
-        val fitting = timeToCover(recommended = null, focus = 240, fittingDate = "2027-04-18")
+    fun anExamsDateNeverMovesAndAFocusIsOfferedOnlyToALearnerWhoStudiesLess() {
+        val focus = timeToCover(recommended = null, focus = 240, fittingDate = "2027-04-18")
 
-        assertNull(coverageChange(isExam = true, CoverageIntent.Time, fitting))
-        assertEquals(CoverageChange.Time(45), coverageChange(isExam = true, CoverageIntent.Time, timeToCover(recommended = 45)))
+        assertEquals(CoverageChange.Time(240), coverageChange(isExam = true, CoverageIntent.Time, focus, dailyMinutes = 120))
+        assertNull(coverageChange(isExam = true, CoverageIntent.Time, focus, dailyMinutes = 300))
+        assertNull(coverageChange(isExam = true, CoverageIntent.Time, timeToCover(recommended = null), dailyMinutes = 20))
+        assertEquals(
+            CoverageChange.Time(45),
+            coverageChange(isExam = true, CoverageIntent.Time, timeToCover(recommended = 45), dailyMinutes = 20),
+        )
     }
 
     private companion object {

@@ -2,11 +2,11 @@ package com.zoonk.android.feature.onboarding.setup
 
 import com.zoonk.android.feature.onboarding.suggestion
 import com.zoonk.android.feature.onboarding.suggestionFor
+import com.zoonk.android.feature.plan.DaySplit
+import com.zoonk.android.feature.plan.TimeLine
 import com.zoonk.api.models.OnboardingTimeChoicesInner
 import com.zoonk.api.models.OnboardingTimeChoicesInnerSplit
-import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeToCover
-import com.zoonk.api.models.PlanTimeToCoverMost
 import com.zoonk.api.models.PlanTimeToCoverSuggested
 import com.zoonk.api.models.PlanTimeToCoverSuggestedSplit
 import kotlinx.datetime.LocalDate
@@ -33,33 +33,7 @@ class ScheduleRulesTest {
 
     private val pastDate = found(recommended = null).copy(pastDate = true)
 
-    private fun advice(
-        share: Double? = 0.48,
-        endDate: LocalDate? = null,
-    ) = PlanTimeAdvice(
-        coveredShare = share,
-        endDate = endDate,
-        fullCourseEndDate = null,
-        measure = PlanTimeAdvice.Measure.GOAL,
-        numbers = null,
-        ready = true,
-        targetDate = LocalDate(2028, 10, 29),
-        targetDateNamedMonth = false,
-    )
-
-    private val tooClose = found(recommended = null, focus = 300)
-
-    private val noSuggestion = found(recommended = 2_000, focus = 2_000)
-
-    private fun line(
-        advice: PlanTimeAdvice? = null,
-        askFailed: Boolean = false,
-        dated: Boolean = true,
-        findFailed: Boolean = false,
-        found: PlanTimeToCover? = found(),
-        hasDays: Boolean = true,
-        minutes: Int? = 35,
-    ) = timeLine(advice, askFailed, dated, findFailed, found, hasDays, minutes)
+    private val noSuggestion = found(recommended = null)
 
     @Test
     fun aNewGoalsEveryDayWeekOpensOnWeekdaysButAChosenWeekStays() {
@@ -81,16 +55,6 @@ class ScheduleRulesTest {
         val answer = found(recommended = 35).copy(suggested = suggested)
 
         assertEquals(50, shownMinutes(60, answer, answer, picked = null, settled = false))
-        assertEquals(TimeLine.EveryTopic, line(found = answer, minutes = 50))
-    }
-
-    @Test
-    fun aFocusThatLeavesTopicsOutSaysOnlyWhatItCoversAndIsNotOfferedAsReachingEveryTopic() {
-        val leavesTopicsOut =
-            found(recommended = 2_000).copy(suggested = suggestion(PlanTimeToCoverSuggested.Kind.FOCUS, 240, everyTopic = false))
-
-        assertEquals(TimeLine.Share(0.6), line(found = leavesTopicsOut, minutes = 240))
-        assertNull(offer(leavesTopicsOut, TimeLine.Share(0.1), 30))
     }
 
     @Test
@@ -120,30 +84,6 @@ class ScheduleRulesTest {
     }
 
     @Test
-    fun theLineSaysWhatTheTimeShownMeansOrWhyThatIsNotKnownYet() {
-        assertEquals(TimeLine.NoDays, line(hasDays = false))
-        assertEquals(TimeLine.Everything(suggested = true), line())
-        assertEquals(TimeLine.EveryTopic, line(found = found(recommended = 2_000, focus = 45), minutes = 45))
-        assertEquals(TimeLine.Asking, line(minutes = 15))
-        assertEquals(TimeLine.Share(0.48), line(advice = advice(), minutes = 15))
-        assertEquals(TimeLine.Everything(suggested = false), line(advice = advice(share = 1.0), minutes = 60))
-        assertEquals(TimeLine.Working, line(found = null, minutes = null))
-        assertEquals(TimeLine.FindFailed, line(findFailed = true, found = null, minutes = 15))
-        assertEquals(TimeLine.AskFailed, line(askFailed = true, minutes = 15))
-        assertEquals(TimeLine.PastDate, line(found = pastDate))
-    }
-
-    @Test
-    fun anUndatedGoalsLineSaysWhenItWouldFinish() {
-        assertEquals(TimeLine.Asking, line(dated = false, found = null, minutes = 15))
-        assertEquals(
-            TimeLine.Finish(LocalDate(2027, 3, 15)),
-            line(advice = advice(share = null, endDate = LocalDate(2027, 3, 15)), dated = false, found = null, minutes = 15),
-        )
-        assertEquals(TimeLine.NoFinish, line(advice = advice(share = null), dated = false, found = null, minutes = 15))
-    }
-
-    @Test
     fun onlyATimeTheSuggestionDoesntExplainIsAskedAbout() {
         assertFalse(asksAboutTime(dated = true, found = found(), fullCourse = false, minutes = 35))
         assertTrue(asksAboutTime(dated = true, found = found(), fullCourse = false, minutes = 30))
@@ -152,34 +92,6 @@ class ScheduleRulesTest {
         assertFalse(asksAboutTime(dated = true, found = null, fullCourse = false, minutes = 35))
         assertFalse(asksAboutTime(dated = true, found = found(), fullCourse = false, minutes = null))
         assertFalse(asksAboutTime(dated = true, found = pastDate, fullCourse = false, minutes = 30))
-    }
-
-    @Test
-    fun aTooCloseDateIsSaidOnlyWhenNoDayCoversEverything() {
-        val short = TimeLine.Share(0.15)
-        assertNull(tooClose(found(), short, studiesEveryDay = true))
-        assertNull(tooClose(pastDate, short, studiesEveryDay = true))
-        assertEquals(TooClose.Date, tooClose(tooClose, short, studiesEveryDay = true))
-        assertEquals(TooClose.Days, tooClose(tooClose, short, studiesEveryDay = false))
-        assertNull(tooClose(tooClose, TimeLine.Everything(suggested = false), studiesEveryDay = true))
-    }
-
-    @Test
-    fun noDateOrDaysAreBlamedWhileATimeCoversEverythingOrPartNeverFitsWhateverTheTime() {
-        val short = TimeLine.Share(0.3)
-        val coveredAt300 = found(recommended = 300).copy(suggested = suggestion(PlanTimeToCoverSuggested.Kind.FOCUS, 240))
-        val partNeverFits = tooClose.copy(most = PlanTimeToCoverMost(coveredShare = 0.99, minutes = 280))
-
-        assertNull(tooClose(coveredAt300, short, studiesEveryDay = false))
-        assertNull(tooClose(partNeverFits, short, studiesEveryDay = false))
-    }
-
-    @Test
-    fun theSuggestionIsOfferedBackOnlyWhileAnotherTimeFallsShort() {
-        val short = TimeLine.Share(0.48)
-        assertNull(offer(found(), short, 35))
-        assertEquals(suggestion(PlanTimeToCoverSuggested.Kind.EVERYTHING, 35), offer(found(), short, 15))
-        assertNull(offer(found(recommended = 2_000, focus = 240), TimeLine.Everything(suggested = false), 900))
     }
 
     @Test
@@ -213,6 +125,17 @@ class ScheduleRulesTest {
         assertFalse(waitsForSuggestion(failed = false, first = found(), found = found(), picked = null))
         assertFalse(waitsForSuggestion(failed = false, first = found(), found = null, picked = 30))
         assertFalse(waitsForSuggestion(failed = false, first = noSuggestion, found = null, picked = null))
+    }
+
+    @Test
+    fun theLastAnswerStaysInPlaceMarkedAsUpdatingWhileTheNewOneIsWorkedOut() {
+        val last = TimeAnswerState(found(), TimeLine.Share(0.4))
+        val asking = TimeAnswerState(null, TimeLine.Asking)
+        val answered = TimeAnswerState(found(recommended = 50), TimeLine.Everything(suggested = true))
+
+        assertEquals(last.copy(updating = true), shownAnswer(last, asking))
+        assertEquals(answered, shownAnswer(last, answered))
+        assertEquals(asking, shownAnswer(asking, asking))
     }
 
     @Test

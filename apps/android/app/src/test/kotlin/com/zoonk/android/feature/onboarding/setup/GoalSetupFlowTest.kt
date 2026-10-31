@@ -250,9 +250,11 @@ class GoalSetupFlowTest {
     @Test
     fun theScheduleSendsItsTimeAndWeekdays() {
         api.setup = { setupView(listOf("schedule", "plan")) }
+        api.advice = { adviceOf(null, LocalDate(2027, 3, 15), targetDate = null) }
         show()
 
         rule.onNodeWithText("How much time can you study each day?").assertIsDisplayed()
+        rule.onNodeWithText("You finish around March 2027.").performScrollTo().assertIsDisplayed()
         rule.onNodeWithText("Continue").performScrollTo().performClick()
         rule.waitForIdle()
 
@@ -289,10 +291,11 @@ class GoalSetupFlowTest {
         pickTime(from = "45\u00A0min", to = "30\u00A0min")
         rule
             .onNodeWithText(
-                "Covers about 60% of your exam topics in depth by November 8, 2030, what comes up most first.",
-            ).assertIsDisplayed()
+                "Covers about 60% of your exam topics in depth by November 8, 2030, starting with what comes up most.",
+            ).performScrollTo()
+            .assertIsDisplayed()
 
-        rule.onNodeWithText("Cover everything with 45\u00A0min a day").performClick()
+        rule.onNodeWithText("Use 45\u00A0min a day to cover everything").performScrollTo().performClick()
         rule.onNodeWithText("Continue").performScrollTo().performClick()
         rule.waitForIdle()
         assertEquals(45L, (api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf8Value).value.dailyMinutes)
@@ -334,18 +337,96 @@ class GoalSetupFlowTest {
     }
 
     @Test
-    fun aDayThatCantHoldEverythingOpensOnTheTimeThatReachesEveryTopicAndSaysWhy() {
+    fun aDayNoTimeCoversStartsOnTheSuggestionAndSaysNotEvenAWholeDayCoversIt() {
         api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
-        api.cover = { coverOf(recommended = null, focus = 300) }
+        api.cover = { coverOf(recommended = null, focus = 240) }
         show()
 
-        rule.onNodeWithContentDescription("Time a day, 5\u00A0hr").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Time a day, 4\u00A0hr").performScrollTo().assertIsDisplayed()
+        rule
+            .onNodeWithText("Not even a whole day covers everything in depth by November 8, 2030. More study days would help.")
+            .performScrollTo()
+            .assertIsDisplayed()
         rule
             .onNodeWithText(
-                "The days you picked can't cover everything in depth by your date. More study days would help.",
-                substring = true,
+                "We suggest 4\u00A0hr a day. Your plan then covers every exam topic, the ones asked most in more depth. " +
+                    "That's about 60% of the exam studied in depth.",
             ).performScrollTo()
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun aBigExamSaysWhatEverythingTakesBesideTheSuggestionAndTheLearnerPicksEither() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { coverOf(recommended = 805, focus = 240) }
+        api.advice = { input -> adviceOf(if (input.dailyMinutes == 805L) 1.0 else 0.6) }
+        show()
+
+        rule.onNodeWithContentDescription("Time a day, 4\u00A0hr").performScrollTo().assertIsDisplayed()
+        rule
+            .onNodeWithText(
+                "Covering everything in depth by November 8, 2030 takes about 13\u00A0hr 25\u00A0min a day, " +
+                    "more than most people can keep up. More study days would help.",
+            ).performScrollTo()
+            .assertIsDisplayed()
+
+        rule.onNodeWithText("Use 13\u00A0hr 25\u00A0min a day").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(1_000)
+
+        rule
+            .onNodeWithText("Covers all your exam topics by November 8, 2030. That's more than most people can keep up.")
+            .performScrollTo()
+            .assertIsDisplayed()
+        rule.onNodeWithText("Use the suggested 4\u00A0hr a day").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.onNodeWithContentDescription("Time a day, 4\u00A0hr").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun theTimePickerMarksTheSuggestionAndTheTimeThatCoversEverything() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { coverOf(recommended = 805, focus = 240) }
+        show()
+
+        rule.onNodeWithContentDescription("Time a day, 4\u00A0hr").performScrollTo().performClick()
+
+        rule.onNodeWithText("4\u00A0hr (suggested)").assertIsDisplayed()
+        rule.onNodeWithText("13\u00A0hr 25\u00A0min (covers everything)").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun theStudyDaysComeAboveTheTime() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { coverOf(recommended = 45) }
+        show()
+
+        val days =
+            rule
+                .onNodeWithText("Study days")
+                .fetchSemanticsNode()
+                .boundsInRoot.top
+        val time =
+            rule
+                .onNodeWithContentDescription("Time a day, 45\u00A0min")
+                .fetchSemanticsNode()
+                .boundsInRoot.top
+        assertTrue(days < time)
+    }
+
+    @Test
+    fun aDayTappedKeepsTheLastAnswerInPlaceWhileTheNewOneIsWorkedOut() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { input -> coverOf(recommended = if (input.studyDays.orEmpty().size == 5) 45 else 50) }
+        api.coverGate = CompletableDeferred()
+        show()
+
+        rule.onNodeWithText("What it takes to cover all your exam topics by November 8, 2030.").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithContentDescription("Friday").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(1_000)
+
+        rule.onNodeWithText("What it takes to cover all your exam topics by November 8, 2030.").assertExists()
+        rule.onNodeWithText("Working out the time your goal needs…").assertDoesNotExist()
+        rule.onNodeWithText("Continue").performScrollTo().assertIsNotEnabled()
     }
 
     @Test
@@ -417,7 +498,7 @@ class GoalSetupFlowTest {
             { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08", goalIds = listOf(GOAL_ID, EXAM_GOAL_ID)) }
         api.cover = { input ->
             when (input.studyDays.orEmpty().size) {
-                5 -> coverOf(recommended = 2_000, focus = 2_000)
+                5 -> coverOf(recommended = null)
                 6 -> coverOf(recommended = 50, split = PlanTimeToCoverSuggestedSplit(mine = 35, others = 1, rest = 15))
                 else -> coverOf(recommended = 40, split = PlanTimeToCoverSuggestedSplit(mine = 28, others = 1, rest = 12))
             }
@@ -427,7 +508,7 @@ class GoalSetupFlowTest {
 
         rule.onNodeWithContentDescription("Saturday").performScrollTo().performClick()
         rule.mainClock.advanceTimeBy(1_000)
-        rule.onNodeWithText("Cover everything with 50\u00A0min a day").performScrollTo().performClick()
+        rule.onNodeWithText("Use 50\u00A0min a day to cover everything").performScrollTo().performClick()
         rule.onNodeWithContentDescription("Sunday").performScrollTo().performClick()
         rule.mainClock.advanceTimeBy(1_000)
 
@@ -467,6 +548,7 @@ class GoalSetupFlowTest {
     @Test
     fun aDayTooShortForTheGoalsTypedTogetherSaysTheLeastItTakes() {
         api.setup = { setupView(listOf("schedule", "plan"), goalIds = listOf(GOAL_ID, EXAM_GOAL_ID)) }
+        api.advice = { adviceOf(null, LocalDate(2027, 3, 15), targetDate = null) }
         api.refusal =
             ApiException(
                 ApiError.Unavailable,
@@ -480,6 +562,7 @@ class GoalSetupFlowTest {
             )
         show()
 
+        rule.onNodeWithText("You finish around March 2027.").performScrollTo().assertIsDisplayed()
         rule.onNodeWithText("Continue").performScrollTo().performClick()
         rule.waitForIdle()
 

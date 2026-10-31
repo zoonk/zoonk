@@ -207,12 +207,13 @@ internal fun coveragePlan(
     fullCourse: Boolean = false,
     areas: String = "[]",
     extra: String = "",
+    fits: Boolean = false,
 ): Plan =
     plan(
         """
         ${if (extra.isEmpty()) "" else "$extra,"}
         "areas":$areas,
-        "feasibility":{"coreFits":$coreFits,"coveredShare":0.6,"deadline":"2027-01-31","deepensMostAsked":false,"fits":false,
+        "feasibility":{"coreFits":$coreFits,"coveredShare":${if (fits) 1 else 0.6},"deadline":"2027-01-31","deepensMostAsked":false,"fits":$fits,
          "measure":"$kind","timeCovers":$timeCovers},
         "schedule":{"dailyMinutes":20,"dailyTimes":$DAILY_TIMES,"fullCourse":$fullCourse,"lightWeeks":[],"studyDays":5,"targetDate":"2027-01-31",
          "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,20,20,20,20,20,0]}

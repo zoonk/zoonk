@@ -1,16 +1,12 @@
 package com.zoonk.android.feature.onboarding.setup
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.FilterChip
@@ -19,35 +15,35 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.onboarding.AdviceQuery
 import com.zoonk.android.feature.onboarding.CoverQuery
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.plan.DaySplit
+import com.zoonk.android.feature.plan.GoalDate
+import com.zoonk.android.feature.plan.TimeAnswer
+import com.zoonk.android.feature.plan.TimeLine
+import com.zoonk.android.feature.plan.fullTimeNote
+import com.zoonk.android.feature.plan.lineAdvice
+import com.zoonk.android.feature.plan.markedTimes
+import com.zoonk.android.feature.plan.timeLine
+import com.zoonk.android.feature.plan.timeOffer
 import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.TimeSelect
@@ -55,8 +51,6 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.format.formatPercent
-import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.OnboardingAnswerInput
@@ -64,7 +58,6 @@ import com.zoonk.api.models.OnboardingAnswerInputOneOf8
 import com.zoonk.api.models.OnboardingTimeChoicesInner
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeToCover
-import com.zoonk.api.models.PlanTimeToCoverSuggested
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
 import java.time.DayOfWeek
@@ -126,7 +119,17 @@ internal fun ColumnScope.ScheduleStep(
             ready = { it.ready },
         )
     val advice = timeAdvice.answer?.takeIf { it.ready }
-    val line = timeLine(advice, timeAdvice.status == PollStatus.Failed, dated, findFailed, found, hasDays, minutes)
+    val askFailed = timeAdvice.status == PollStatus.Failed
+    val lineAt = { lineAdvice: PlanTimeAdvice?, lineFound: PlanTimeToCover? ->
+        timeLine(lineAdvice?.lineAdvice(), askFailed, dated, findFailed, lineFound, hasDays, minutes)
+    }
+    val line = lineAt(advice, found)
+    val lastAdvice = advice ?: timeAdvice.last?.takeIf { it.ready }
+    val shown =
+        shownAnswer(
+            last = TimeAnswerState(shownFound, lineAt(lastAdvice, shownFound)),
+            now = TimeAnswerState(found, line),
+        )
 
     val gate =
         if (dated) {
@@ -150,7 +153,7 @@ internal fun ColumnScope.ScheduleStep(
         shownFound
             ?.targetDate
             ?.takeIf { dated }
-            ?.let { ShownDate(it, shownFound.targetDateNamedMonth) }
+            ?.let { GoalDate(it, shownFound.targetDateNamedMonth) }
     val answers = listOf(covering.answer, covering.last, covering.first)
     val choose = { next: Int, followed: PlanTimeToCover? ->
         pickedSplit = daySplit(next, timeChoices, answers) ?: pickedSplit.takeIf { next == picked }
@@ -158,6 +161,7 @@ internal fun ColumnScope.ScheduleStep(
     }
     val pick = { next: Int -> choose(next, shownFound) }
     val stale = hasDays && waitsForSuggestion(findFailed, first, found, picked)
+    val marked = markedTimes(found)
 
     StepForm(
         title = stringResource(R.string.onboarding_schedule_title),
@@ -181,41 +185,7 @@ internal fun ColumnScope.ScheduleStep(
     ) {
         if (!factsBeside) PlanFactChips(goal)
 
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            DailyTimePicker(
-                times = timeChoices.map { it.minutes },
-                minutes = minutes,
-                label = stringResource(R.string.onboarding_schedule_time_label),
-                onChange = pick,
-                suggested = suggestedMinutes(found),
-                stale = stale,
-            )
-            ScheduleLine(
-                date = date,
-                exam = exam,
-                line = line,
-                minutes = minutes,
-                offer = offer(found, line, minutes),
-                tooClose = tooClose(found, line, studiesEveryDay = days.size == EVERY_DAY.size),
-                split =
-                    (
-                        daySplit(
-                            minutes,
-                            timeChoices,
-                            answers,
-                        ) ?: pickedSplit.takeIf { picked != null && picked == minutes }
-                    ).takeIf { hasDays },
-                onRetry = if (findFailed) covering.restart else timeAdvice.restart,
-                onUseOffer = { choose(it, found) },
-            )
-        }
-
-        val short = line is TimeLine.Share || line is TimeLine.EveryTopic
-        if (exam && date != null && (short || keepsFullCourse(fullCourse, line))) {
-            val end = minutes?.let { time -> advice?.fullCourseEndDate?.let { ExamFinish(time, it, date) } }
-            FullCourseToggle(fullCourse, end, onCheckedChange = { fullCourse = it })
-        }
-
+        // The days decide the time, and what the time covers arrives last, so nothing above it moves.
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             WeekdayToggles(days, onChange = { days = it })
             if (days.any(::isWeekend)) {
@@ -231,6 +201,46 @@ internal fun ColumnScope.ScheduleStep(
                 )
             }
         }
+
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            val label = stringResource(R.string.onboarding_schedule_time_label)
+            // The picker carries the name for screen readers; this is its visible title.
+            Text(label, Modifier.clearAndSetSemantics {}, fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodyMedium)
+            DailyTimePicker(
+                times = timeChoices.map { it.minutes },
+                minutes = minutes,
+                label = label,
+                onChange = pick,
+                suggested = marked.suggested,
+                full = marked.full,
+                stale = stale,
+            )
+            TimeAnswer(
+                date = date,
+                exam = exam,
+                line = shown.line,
+                minutes = minutes,
+                note = fullTimeNote(shown.found, shown.line, studiesEveryDay = days.size == EVERY_DAY.size),
+                offer = timeOffer(shown.found, shown.line, minutes),
+                onRetry = if (findFailed) covering.restart else timeAdvice.restart,
+                onUseOffer = { choose(it, found) },
+                split =
+                    (
+                        daySplit(
+                            minutes,
+                            timeChoices,
+                            answers,
+                        ) ?: pickedSplit.takeIf { picked != null && picked == minutes }
+                    ).takeIf { hasDays },
+                updating = shown.updating,
+            )
+        }
+
+        val short = shown.line is TimeLine.Share || shown.line is TimeLine.Focus
+        if (exam && date != null && (short || keepsFullCourse(fullCourse, shown.line))) {
+            val end = minutes?.let { time -> advice?.fullCourseEndDate?.let { ExamFinish(time, it, date) } }
+            FullCourseToggle(fullCourse, end, onCheckedChange = { fullCourse = it })
+        }
     }
 }
 
@@ -242,196 +252,11 @@ private data class PlanGate(
     fun waits(run: GenerationRun) = !ready && (readingNotice || run.status != GenerationRun.Status.Ready)
 }
 
-/** A goal's date as the plan answered it. */
-private data class ShownDate(
-    val date: LocalDate,
-    val namedMonth: Boolean,
-)
-
 private data class ExamFinish(
     val minutes: Int,
     val end: LocalDate,
-    val exam: ShownDate,
+    val exam: GoalDate,
 )
-
-/** One polite live region for the time shown: what it means, why, and the way back to the suggestion. */
-@Composable
-private fun ScheduleLine(
-    date: ShownDate?,
-    exam: Boolean,
-    line: TimeLine,
-    minutes: Int?,
-    offer: PlanTimeToCoverSuggested?,
-    tooClose: TooClose?,
-    split: DaySplit?,
-    onRetry: () -> Unit,
-    onUseOffer: (Int) -> Unit,
-) {
-    val failed = line is TimeLine.AskFailed || line is TimeLine.FindFailed
-    val words = lineWords(date, exam, line, minutes)
-    val close = tooClose?.let { tooCloseWords(it) }
-    val shared = split?.let { splitWords(it) }
-    val locale = currentLocale()
-
-    Column(Modifier.heightIn(min = 48.dp).semantics { liveRegion = LiveRegionMode.Polite }) {
-        Text(
-            buildAnnotatedString {
-                close?.let { append("$it ") }
-                append(words)
-                shared?.let { append(" $it") }
-            },
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        when {
-            failed -> {
-                TextButton(onClick = onRetry) { Text(stringResource(R.string.onboarding_try_again)) }
-            }
-
-            offer != null -> {
-                val words =
-                    when (offer.kind) {
-                        PlanTimeToCoverSuggested.Kind.EVERYTHING -> R.string.onboarding_schedule_offer_everything
-                        PlanTimeToCoverSuggested.Kind.FOCUS -> R.string.onboarding_schedule_offer_every_topic
-                    }
-                val minutes = offer.minutes.toInt()
-                TextButton(onClick = { onUseOffer(minutes) }) {
-                    Text(stringResource(words, formatMinutes(minutes, locale)))
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun tooCloseWords(tooClose: TooClose): String =
-    stringResource(
-        when (tooClose) {
-            TooClose.Date -> R.string.onboarding_schedule_too_close
-            TooClose.Days -> R.string.onboarding_schedule_days_too_close
-        },
-    )
-
-@Composable
-private fun splitWords(split: DaySplit): String {
-    val locale = currentLocale()
-    val words = if (split.others == 1) R.string.onboarding_schedule_split_one else R.string.onboarding_schedule_split_many
-    return stringResource(words, formatMinutes(split.mine, locale), formatMinutes(split.rest, locale))
-}
-
-@Composable
-private fun lineWords(
-    date: ShownDate?,
-    exam: Boolean,
-    line: TimeLine,
-    minutes: Int?,
-): AnnotatedString {
-    val locale = currentLocale()
-    val shown = date?.let { goalDate(it.date, it.namedMonth, DateStyle.Long) }.orEmpty()
-    val month = date?.namedMonth == true
-    val time = formatMinutes(minutes ?: 0, locale)
-    val text =
-        when (line) {
-            is TimeLine.Everything -> {
-                stringResource(
-                    when {
-                        line.suggested && exam && month -> R.string.onboarding_schedule_takes_exam_all_month
-                        line.suggested && exam -> R.string.onboarding_schedule_takes_exam_all
-                        line.suggested && month -> R.string.onboarding_schedule_takes_goal_all_month
-                        line.suggested -> R.string.onboarding_schedule_takes_goal_all
-                        exam && month -> R.string.onboarding_schedule_covers_exam_all_month
-                        exam -> R.string.onboarding_schedule_covers_exam_all
-                        month -> R.string.onboarding_schedule_covers_goal_all_month
-                        else -> R.string.onboarding_schedule_covers_goal_all
-                    },
-                    shown,
-                )
-            }
-
-            TimeLine.EveryTopic -> {
-                val reaches =
-                    when {
-                        exam && month -> R.string.onboarding_schedule_reaches_exam_month
-                        exam -> R.string.onboarding_schedule_reaches_exam
-                        month -> R.string.onboarding_schedule_reaches_goal_month
-                        else -> R.string.onboarding_schedule_reaches_goal
-                    }
-                stringResource(reaches, shown)
-            }
-
-            is TimeLine.Share -> {
-                stringResource(
-                    when {
-                        exam && month -> R.string.onboarding_schedule_share_exam_month
-                        exam -> R.string.onboarding_schedule_share_exam
-                        month -> R.string.onboarding_schedule_share_goal_month
-                        else -> R.string.onboarding_schedule_share_goal
-                    },
-                    formatPercent(line.share, locale),
-                    shown,
-                )
-            }
-
-            TimeLine.PastDate -> {
-                stringResource(if (month) R.string.onboarding_schedule_past_date_month else R.string.onboarding_schedule_past_date, shown)
-            }
-
-            is TimeLine.Finish -> {
-                val month = formatDate(line.endDate.toJavaLocalDate(), locale, DateStyle.Month)
-                return stringResource(R.string.onboarding_finish_around, month)
-                    .emphasizing(month, SpanStyle(fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface))
-            }
-
-            TimeLine.NoFinish -> {
-                stringResource(R.string.onboarding_finish_unknown)
-            }
-
-            TimeLine.NoDays -> {
-                stringResource(R.string.onboarding_schedule_no_days)
-            }
-
-            TimeLine.Working -> {
-                stringResource(R.string.onboarding_schedule_working)
-            }
-
-            TimeLine.FindFailed -> {
-                stringResource(R.string.onboarding_schedule_find_failed)
-            }
-
-            TimeLine.Asking -> {
-                if (date == null) {
-                    stringResource(R.string.onboarding_finish_working)
-                } else {
-                    stringResource(R.string.onboarding_schedule_asking, time)
-                }
-            }
-
-            TimeLine.AskFailed -> {
-                if (date == null) {
-                    stringResource(R.string.onboarding_finish_failed)
-                } else {
-                    stringResource(R.string.onboarding_schedule_ask_failed, time)
-                }
-            }
-        }
-    return AnnotatedString(text)
-}
-
-private fun String.emphasizing(
-    part: String,
-    style: SpanStyle,
-): AnnotatedString {
-    val start = indexOf(part)
-    return buildAnnotatedString {
-        if (start < 0) {
-            append(this@emphasizing)
-        } else {
-            append(substring(0, start))
-            withStyle(style) { append(part) }
-            append(substring(start + part.length))
-        }
-    }
-}
 
 @Composable
 private fun FullCourseToggle(

@@ -16,6 +16,8 @@
   "belt_white": "91a2b81c2515e0f80c1d8ef7e305294310287d72cee8857eadee669e4a9dbd83",
   "belt_yellow": "5dd844f038b50cbe7d661a387a46339c9dc91c5f5f6bb4f4ed6181a1bd0c0c41",
   "close_sheet": "7b9a5337e54bb9b4b0e63492b60f103b0c339905df94f00ca87d000347bac7a3",
+  "daily_time_covers_everything": "611e3a7dcf52d6f96eb5bf4664f6fd40fb85a2f44e5c987bcb8a9b081ea6b7ea",
+  "daily_time_suggested": "ff2ca06b76fd7ef4cf2ad8cedbc35ea52d0d32c7d3ef969d2a5ae76237f25e41",
   "diff_line_spoken": "72d5183bb3969077300a2d941de21642eb51091a638ba25df24f1fd4a177396f",
   "disclosure_collapsed": "1a8df7e5aa135ba53c3beb5f89db00a03d2fbfdc9400badafae88fb8c3d49ee4",
   "disclosure_expanded": "79e96b5cb7794153b46e85e9a0d0691905103a013a70a0d6d1a3843a73006837",
@@ -132,4 +134,8 @@
     <string name="web_page_unavailable">Keine App kann diese Seite öffnen.</string>
     <!-- Replaces Compose's own string of this name, whose Portuguese and German read as closing a spreadsheet. TalkBack's label for the dimmed area behind a bottom sheet, which closes the sheet. "Sheet" means a panel that slides up from the bottom of the screen, not a spreadsheet or a sheet of paper. -->
     <string name="close_sheet" tools:override="true" tools:ignore="UnusedResources">Dialog schließen</string>
+    <!-- In the time a day picker's menu. %1$s is a daily study time, such as "4 h". The same word as "We suggest 4 h a day" and "Use the suggested 4 h a day" beside it: suggested, not recommended. -->
+    <string name="daily_time_suggested">%1$s (vorgeschlagen)</string>
+    <!-- In the time a day picker's menu: the time that covers the whole goal or exam. %1$s is a daily study time, such as "13 h 30 min". -->
+    <string name="daily_time_covers_everything">%1$s (deckt alles ab)</string>
 </resources>

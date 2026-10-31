@@ -565,12 +565,6 @@
         <item quantity="other">%d days</item>
     </plurals>
     <string name="onboarding_schedule_title">How much time can you study each day?</string>
-    <!-- %1$s is a month and year, like "March 2027". -->
-    <string name="onboarding_finish_around">You finish around %1$s.</string>
-    <string name="onboarding_finish_unknown">We can\'t estimate a finish date for this schedule. Try more time or more study days.</string>
-    <string name="onboarding_finish_failed">We couldn\'t work out when you\'d finish.</string>
-    <string name="onboarding_finish_working">Working out when you\'d finish…</string>
-    <string name="onboarding_try_again">Try again</string>
     <string name="onboarding_full_course">Study everything, even after the exam</string>
     <string name="onboarding_full_course_rule">Until the exam, what comes up most comes first. What doesn\'t fit comes after it.</string>
     <string name="onboarding_full_course_until_exam">Until the exam, what comes up most comes first.</string>
@@ -581,61 +575,6 @@
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="onboarding_weekend_time">Different time on weekends</string>
     <string name="onboarding_schedule_time_label">Time a day</string>
-    <!-- %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_schedule_suggested">%1$s (suggested)</string>
-    <string name="onboarding_schedule_too_close">Your date is too close to cover everything in depth.</string>
-    <string name="onboarding_schedule_days_too_close">The days you picked can\'t cover everything in depth by your date. More study days would help.</string>
-    <!-- After the line about the time a day, when two goals were typed together. %1$s is this goal's time, %2$s the other goal's, such as "20 min". -->
-    <string name="onboarding_schedule_split_one">This goal gets %1$s a day and your other goal %2$s.</string>
-    <!-- After the line about the time a day, when three or more goals were typed together. %1$s is this goal's time, %2$s the others' time together. -->
-    <string name="onboarding_schedule_split_many">This goal gets %1$s a day and your other goals %2$s together.</string>
-    <!-- %1$s is a day, such as "May 5". -->
-    <string name="onboarding_schedule_takes_exam_all">What it takes to cover all your exam topics by %1$s.</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="onboarding_schedule_takes_exam_all_month">What it takes to cover all your exam topics by %1$s.</string>
-    <!-- %1$s is a day, such as "May 5". -->
-    <string name="onboarding_schedule_takes_goal_all">What it takes to cover your whole goal by %1$s.</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="onboarding_schedule_takes_goal_all_month">What it takes to cover your whole goal by %1$s.</string>
-    <!-- %1$s is a day, such as "May 5". -->
-    <string name="onboarding_schedule_covers_exam_all">Covers all your exam topics by %1$s.</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="onboarding_schedule_covers_exam_all_month">Covers all your exam topics by %1$s.</string>
-    <!-- %1$s is a day, such as "May 5". -->
-    <string name="onboarding_schedule_covers_goal_all">Covers your whole goal by %1$s.</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="onboarding_schedule_covers_goal_all_month">Covers your whole goal by %1$s.</string>
-    <!-- %1$s is a day, such as "May 5". -->
-    <string name="onboarding_schedule_reaches_exam">Reaches every exam topic by %1$s, some in less depth.</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="onboarding_schedule_reaches_exam_month">Reaches every exam topic by %1$s, some in less depth.</string>
-    <!-- %1$s is a day, such as "May 5". -->
-    <string name="onboarding_schedule_reaches_goal">Reaches every part of your goal by %1$s, some in less depth.</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="onboarding_schedule_reaches_goal_month">Reaches every part of your goal by %1$s, some in less depth.</string>
-    <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
-    <string name="onboarding_schedule_share_exam">Covers about %1$s of your exam topics in depth by %2$s, what comes up most first.</string>
-    <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
-    <string name="onboarding_schedule_share_exam_month">Covers about %1$s of your exam topics in depth by %2$s, what comes up most first.</string>
-    <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
-    <string name="onboarding_schedule_share_goal">Covers about %1$s of your goal in depth by %2$s, what matters most first.</string>
-    <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
-    <string name="onboarding_schedule_share_goal_month">Covers about %1$s of your goal in depth by %2$s, what matters most first.</string>
-    <!-- %1$s is a day, such as "May 5". -->
-    <string name="onboarding_schedule_past_date">Your date, %1$s, has passed. You can choose a new one on the next screen.</string>
-    <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
-    <string name="onboarding_schedule_past_date_month">Your date, %1$s, has passed. You can choose a new one on the next screen.</string>
-    <string name="onboarding_schedule_no_days">Choose at least one study day.</string>
-    <string name="onboarding_schedule_working">Working out the time your goal needs…</string>
-    <string name="onboarding_schedule_find_failed">We couldn\'t work out the time your goal needs.</string>
-    <!-- %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_schedule_asking">Working out what %1$s a day covers…</string>
-    <!-- %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_schedule_ask_failed">We couldn\'t work out what %1$s a day covers.</string>
-    <!-- A link under the time a day. %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_schedule_offer_everything">Cover everything with %1$s a day</string>
-    <!-- A link under the time a day. %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_schedule_offer_every_topic">Reach every topic with %1$s a day</string>
     <string name="onboarding_study_days">Study days</string>
     <string name="onboarding_weekend_time_label">Time on weekends</string>
     <string name="onboarding_answers_saved">Your answers are saved.</string>
