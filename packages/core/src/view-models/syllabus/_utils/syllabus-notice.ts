@@ -3,7 +3,6 @@ import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { namesMatch } from "../../../exams/_utils/name-match";
 import { type ExamChoice, toChosenStructure } from "../../../exams/choices/exam-choices";
 import { loadExamChoices } from "../../../exams/choices/load-exam-choices";
-import { getSubjectShare } from "../../../exams/map/exam-map";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { getPassMarks } from "../../../library/exams/pass-marks";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
@@ -11,6 +10,7 @@ import {
   getPastQuestionsSource,
   getSubjectQuestions,
 } from "../../../library/exams/subject-questions";
+import { listSubjectShares } from "../../../library/exams/subject-shares";
 import { getTopicFrequencySource, listTopicLevels } from "../../../library/exams/topic-frequency";
 import { getTopicHeadings } from "../../../library/exams/topic-groups";
 import { readCourseWeights } from "../../../plans/planner/course-weights";
@@ -72,15 +72,16 @@ export async function loadNotice(
   const { edition, structure: read, topicFrequency } = readBlueprintContent(blueprint);
   const structure = toChosenStructure({ choices, structure: read });
   const levels = listTopicLevels({ structure, topicFrequency });
+  const shares = listSubjectShares(structure);
 
-  const subjects: NoticeSubject[] = structure.subjects.map((subject) => ({
+  const subjects: NoticeSubject[] = structure.subjects.map((subject, index) => ({
     frequencySource: getTopicFrequencySource({ structure, subject }),
     group: subject.group ?? null,
     matrix: subject.matrix ?? [],
     name: subject.name,
     partOf: subject.partOf ?? null,
     questions: getSubjectQuestions({ structure, subject }),
-    share: getSubjectShare({ structure, subject }),
+    share: shares[index] ?? null,
     shortName: subject.shortName ?? null,
     topicFrequency: new Map(
       levels

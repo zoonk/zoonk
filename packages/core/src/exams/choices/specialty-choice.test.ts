@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
-import { getSubjectShare } from "../map/exam-map";
+import { listSubjectShares } from "../../library/exams/subject-shares";
 import { planOptionMock } from "../mocks/mock-option-plan";
 import { listMockOptions } from "../mocks/mock-options";
 import { toMockStructure } from "../mocks/mock-structure";
@@ -98,10 +98,24 @@ describe("a CGU 2026 specialty, as its notice was read", () => {
     });
   });
 
-  it("weighs the picked specialty by P3's 180 of the exam's 360 points", () => {
+  it("weighs the picked specialty by the final score's formula: half for the 260 objective points, 180 of them P3's", () => {
     const chosen = toChosenStructure({ choices: PICKED, structure: CGU });
-    const specialty = chosen.subjects.find((subject) => subject.name === SOFTWARE?.name);
+    const shares = listSubjectShares(chosen);
 
-    expect(specialty && getSubjectShare({ structure: chosen, subject: specialty })).toBe(0.5);
+    const shareOf = (name?: string) =>
+      shares[chosen.subjects.findIndex((item) => item.name === name)];
+
+    expect(shareOf(SOFTWARE?.name)).toBeCloseTo((0.5 * 180) / 260);
+    expect(shareOf("Prova discursiva")).toBe(0.5);
+    expect(shares.reduce<number>((sum, share) => sum + (share ?? 0), 0)).toBeCloseTo(1);
+  });
+
+  it("weighs the picked specialty by P3's 180 of the exam's 360 points without a formula", () => {
+    const scoring = CGU.mock && { ...CGU.mock.scoring, finalShares: undefined };
+    const structure = { ...CGU, mock: CGU.mock && scoring && { ...CGU.mock, scoring } };
+    const chosen = toChosenStructure({ choices: PICKED, structure });
+    const index = chosen.subjects.findIndex((subject) => subject.name === SOFTWARE?.name);
+
+    expect(listSubjectShares(chosen)[index]).toBe(0.5);
   });
 });

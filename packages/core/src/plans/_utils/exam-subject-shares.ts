@@ -1,6 +1,6 @@
 import { getSubjectShareFallback } from "../../exams/_utils/subject-share-fallback";
-import { getSubjectShare } from "../../exams/map/exam-map";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { listSubjectShares } from "../../library/exams/subject-shares";
 import { followsNotice, matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import { getSkillArea } from "../planner/graph-areas";
 import { type PlanGraph } from "../planner/plan-state";
@@ -18,7 +18,7 @@ export function getExamSubjectShares({
   structure: ExamStructure;
 }): ExamSubjectShare[] | null {
   return (
-    listSubjectShares({ graph, structure })?.map(({ areas, share }) => ({ areas, share })) ?? null
+    matchSubjectShares({ graph, structure })?.map(({ areas, share }) => ({ areas, share })) ?? null
   );
 }
 
@@ -29,7 +29,7 @@ export function getAreaShares({
   graph: PlanGraph;
   structure: ExamStructure;
 }): Map<string, number> | null {
-  const subjects = listSubjectShares({ graph, structure });
+  const subjects = matchSubjectShares({ graph, structure });
   const stated = subjects?.filter((subject) => subject.stated).length ?? 0;
 
   if (!subjects || subjects.length === 0 || stated < subjects.length * MIN_STATED_SHARE) {
@@ -43,7 +43,7 @@ export function getAreaShares({
   );
 }
 
-function listSubjectShares({
+function matchSubjectShares({
   graph,
   structure,
 }: {
@@ -60,7 +60,7 @@ function listSubjectShares({
     return null;
   }
 
-  const shares = structure.subjects.map((subject) => getSubjectShare({ structure, subject }));
+  const shares = listSubjectShares(structure);
   const fallback = getSubjectShareFallback(shares);
 
   return structure.subjects

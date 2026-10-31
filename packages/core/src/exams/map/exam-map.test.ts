@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getSubjectPoints } from "../../library/exams/subject-points";
-import { buildExamMap, getSubjectShare } from "./exam-map";
+import { listSubjectShares } from "../../library/exams/subject-shares";
+import { buildExamMap } from "./exam-map";
 
 const citation = { passage: "…", sourceId: "notice" };
 const LANGUAGES = "Linguagens, Códigos e suas Tecnologias";
@@ -24,10 +25,9 @@ const enem: ExamStructure = {
   ],
 };
 
-describe(getSubjectShare, () => {
+describe(listSubjectShares, () => {
   it("shares the exam's questions counting each question once, a choice's options included", () => {
-    const shares = enem.subjects.map((item) => getSubjectShare({ structure: enem, subject: item }));
-    expect(shares).toStrictEqual([0.5, 5 / 90, 5 / 90, 0.5]);
+    expect(listSubjectShares(enem)).toStrictEqual([0.5, 5 / 90, 5 / 90, 0.5]);
   });
 });
 
@@ -73,10 +73,6 @@ function part(name: string, questions: number) {
   return { citation, maxPoints: null, minimum: null, name, qualifying: false, questions };
 }
 
-function shareOf(structure: ExamStructure) {
-  return structure.subjects.map((item) => getSubjectShare({ structure, subject: item }));
-}
-
 describe("a subject's share of the exam's points", () => {
   it("weighs a test whose questions count double double, splitting each test's points among its subjects", () => {
     const structure = scored({
@@ -88,7 +84,7 @@ describe("a subject's share of the exam's points", () => {
       ],
     });
 
-    const shares = shareOf(structure);
+    const shares = listSubjectShares(structure);
 
     expect(shares.slice(0, 4)).toStrictEqual(Array.from({ length: 4 }, () => 10 / 260));
     expect(shares.slice(4, 9)).toStrictEqual(Array.from({ length: 5 }, () => 8 / 260));
@@ -110,16 +106,98 @@ describe("a subject's share of the exam's points", () => {
       ],
     });
 
-    expect(shareOf(structure)).toStrictEqual([0.4, 0.2, 0.1, 0.1, 0.1, 0.1]);
+    expect(listSubjectShares(structure)).toStrictEqual([0.4, 0.2, 0.1, 0.1, 0.1, 0.1]);
   });
 
-  it("keeps the weight the notice states", () => {
+  it("keeps the weight the notice states and shares the rest by points", () => {
     const structure = scored({
       scoring: { marking: [row("Português", 4), row(null, 2)] },
-      subjects: [subject("Português", 10, { weight: 0.25 }), subject("Matemática", 10)],
+      subjects: [
+        subject("Português", 10, { weight: 0.25 }),
+        subject("Matemática", 10),
+        subject("Física", 5),
+      ],
     });
 
-    expect(shareOf(structure)[0]).toBe(0.25);
+    expect(listSubjectShares(structure)).toStrictEqual([0.25, (0.75 * 20) / 30, (0.75 * 10) / 30]);
+  });
+});
+
+function term(parts: string[], share: number) {
+  return { citation, parts, share };
+}
+
+function withFormula(finalShares?: ReturnType<typeof term>[]): ExamStructure {
+  return scored({
+    scoring: {
+      finalShares,
+      marking: [row("P3", 2)],
+      parts: [
+        part("P1", 40),
+        part("P2", 40),
+        part("P3", 90),
+        { ...part("P4", 1), maxPoints: 100, questions: null },
+      ],
+    },
+    subjects: [
+      ...grouped("P1", ["Português", "Ética"]),
+      ...grouped("P2", ["Auditoria"]),
+      ...grouped("P3", ["TI"]),
+      ...grouped("P4", ["Prova discursiva"]),
+    ],
+  });
+}
+
+describe("the final score's formula", () => {
+  it("adds points across tests without a formula", () => {
+    expect(listSubjectShares(withFormula())).toStrictEqual([
+      20 / 360,
+      20 / 360,
+      40 / 360,
+      180 / 360,
+      100 / 360,
+    ]);
+  });
+
+  it("splits each term's share among its tests' subjects by their points", () => {
+    const structure = withFormula([term(["P1", "P2", "P3"], 0.5), term(["P4"], 0.5)]);
+
+    expect(listSubjectShares(structure)).toStrictEqual([
+      (0.5 * 20) / 260,
+      (0.5 * 20) / 260,
+      (0.5 * 40) / 260,
+      (0.5 * 180) / 260,
+      0.5,
+    ]);
+  });
+
+  it("shares what no term covers by points", () => {
+    expect(listSubjectShares(withFormula([term(["P4"], 0.4)]))).toStrictEqual([
+      (0.6 * 20) / 260,
+      (0.6 * 20) / 260,
+      (0.6 * 40) / 260,
+      (0.6 * 180) / 260,
+      0.4,
+    ]);
+  });
+
+  it("lets a term of the final score decide over a subject's own weight", () => {
+    const structure = withFormula([term(["P1", "P2", "P3"], 0.5), term(["P4"], 0.5)]);
+
+    const subjects = structure.subjects.map((item) =>
+      item.name === "Prova discursiva" ? { ...item, weight: 0.3 } : item,
+    );
+
+    expect(listSubjectShares({ ...structure, subjects }).at(-1)).toBe(0.5);
+  });
+
+  it("gives a qualifying test's subjects no share", () => {
+    const structure = scored({
+      scoring: { parts: [part("Paper I", 100), { ...part("Paper II", 80), qualifying: true }] },
+      subjects: [...grouped("Paper I", ["General Studies"]), ...grouped("Paper II", ["Aptitude"])],
+    });
+
+    expect(listSubjectShares(structure)).toStrictEqual([1, 0]);
   });
 });
 
@@ -130,7 +208,7 @@ describe("written test weights", () => {
       subjects: [subject("Objective", 100), ...grouped("P4", ["Prova discursiva"])],
     });
 
-    expect(shareOf(structure)).toStrictEqual([0.5, 0.5]);
+    expect(listSubjectShares(structure)).toStrictEqual([0.5, 0.5]);
   });
 
   it("shares a written paper's maximum among its written subjects", () => {
@@ -139,7 +217,7 @@ describe("written test weights", () => {
       subjects: [subject("Objective", 100), ...grouped("P4", ["Essay", "Redação"])],
     });
 
-    expect(shareOf(structure)).toStrictEqual([0.5, 0.25, 0.25]);
+    expect(listSubjectShares(structure)).toStrictEqual([0.5, 0.25, 0.25]);
   });
 });
 

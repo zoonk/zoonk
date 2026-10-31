@@ -1,11 +1,11 @@
 import { type MasteryState } from "@zoonk/db";
 import { type ExamStructure, type TopicFrequency } from "../../library/exams/blueprint-contract";
-import { getSubjectPoints } from "../../library/exams/subject-points";
 import {
   getPastQuestionsSource,
   getSubjectQuestions,
   orderByQuestions,
 } from "../../library/exams/subject-questions";
+import { listSubjectShares } from "../../library/exams/subject-shares";
 import { namesMatch } from "../_utils/name-match";
 import { getSubjectShareFallback } from "../_utils/subject-share-fallback";
 import { listCountedSubjects } from "../choices/exam-choices";
@@ -43,29 +43,8 @@ function rank(topic: Pick<ExamMapTopic, "frequency">): number {
   return topic.frequency ? FREQUENCY_RANK[topic.frequency] : NO_FREQUENCY_RANK;
 }
 
-export function getSubjectShare({
-  structure,
-  subject,
-}: {
-  structure: ExamStructure;
-  subject: ExamStructure["subjects"][number];
-}): number | null {
-  if (subject.weight !== null) {
-    return subject.weight;
-  }
-
-  const points = getSubjectPoints({ structure, subject });
-
-  const total = listCountedSubjects(structure.subjects).reduce(
-    (sum, item) => sum + (getSubjectPoints({ structure, subject: item }) ?? 0),
-    0,
-  );
-
-  return points !== null && total > 0 ? points / total : null;
-}
-
 function getMapShares(structure: ExamStructure): (number | null)[] {
-  const shares = structure.subjects.map((subject) => getSubjectShare({ structure, subject }));
+  const shares = listSubjectShares(structure);
 
   const hasUnknownWritten = structure.subjects.some(
     (subject, index) => shares[index] === null && isWrittenSubject({ structure, subject }),

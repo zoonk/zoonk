@@ -182,7 +182,29 @@
         },
         "unit": "points",
         "value": 78
-      }
+      },
+      "finalShares": [
+        {
+          "citation": {
+            "passage": "11.1 A nota final no concurso (NFC) será calculada por meio da seguinte fórmula: NFC = NFPO/26 + NFPD/10,",
+            "sourceId": "document-1"
+          },
+          "parts": [
+            "Conhecimentos básicos (P1)",
+            "Conhecimentos complementares (P2)",
+            "Conhecimentos específicos (P3)"
+          ],
+          "share": 0.5
+        },
+        {
+          "citation": {
+            "passage": "11.1 A nota final no concurso (NFC) será calculada por meio da seguinte fórmula: NFC = NFPO/26 + NFPD/10,",
+            "sourceId": "document-1"
+          },
+          "parts": ["Prova discursiva (P4)"],
+          "share": 0.5
+        }
+      ]
     },
     "sections": [
       {

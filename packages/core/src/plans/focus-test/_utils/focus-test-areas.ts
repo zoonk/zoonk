@@ -1,6 +1,6 @@
-import { getSubjectShare } from "../../../exams/map/exam-map";
 import { isWrittenSubject } from "../../../exams/mocks/written-subject";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
+import { listSubjectShares } from "../../../library/exams/subject-shares";
 import {
   followsNotice,
   matchAreasToSubjects,
@@ -43,7 +43,7 @@ function getExamAreas({
     return null;
   }
 
-  const shares = structure.subjects.map((subject) => getSubjectShare({ structure, subject }));
+  const shares = listSubjectShares(structure);
   const known = shares.filter((share) => share !== null);
 
   const fallback =
