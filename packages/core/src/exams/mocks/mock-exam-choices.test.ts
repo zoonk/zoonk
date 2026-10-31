@@ -49,6 +49,7 @@ function bank(area: string, { count, skills }: { count: number; skills: number }
     answered: false,
     area,
     difficulty: null,
+    itemFormat: "multipleChoice",
     itemId: `${area}#${index}`,
     skillId: `${area}-skill-${index % skills}`,
   }));

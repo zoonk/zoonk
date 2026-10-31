@@ -1,3 +1,4 @@
+import { type ItemFormat } from "@zoonk/db";
 import { type ExamStructure, type SectionNavigation } from "../../library/exams/blueprint-contract";
 import { fitToClock } from "./mock-clock-fit";
 import {
@@ -30,6 +31,7 @@ export type MockCandidate = {
   area: string | null;
   difficulty: number | null;
   format?: string | null;
+  itemFormat: ItemFormat;
   itemId: string;
   set?: { id: string; position: number; size: number };
   skillId: string;

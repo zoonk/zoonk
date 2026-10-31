@@ -79,6 +79,7 @@ export async function loadListeningCandidates({
           area: sectionName,
           difficulty: member.difficulty,
           format: getItemFormatKey({ item: member, mix }),
+          itemFormat: member.format,
           itemId: member.id,
           set: { id: pick.setId ?? "", position, size: members.length },
           skillId: member.skillId,

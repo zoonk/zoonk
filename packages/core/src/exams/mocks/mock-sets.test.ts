@@ -3,7 +3,14 @@ import { type MockCandidate } from "./mock-plan";
 import { takeQuestions } from "./mock-sets";
 
 function single(itemId: string): MockCandidate {
-  return { answered: false, area: null, difficulty: null, itemId, skillId: "skill" };
+  return {
+    answered: false,
+    area: null,
+    difficulty: null,
+    itemFormat: "multipleChoice",
+    itemId,
+    skillId: "skill",
+  };
 }
 
 function of(format: string, itemId: string): MockCandidate {

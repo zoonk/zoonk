@@ -474,6 +474,40 @@ describe("progress across mocks", () => {
     expect(exam?.progress).toMatchObject({ improved: ["Mathematics"], needsWork: ["Languages"] });
   });
 
+  it("weighs a mock scored in points by its share of the points, not of right answers", async () => {
+    const { goal, user } = await progressSetup({ plus: true });
+
+    const points = {
+      asked: 40,
+      earned: 30,
+      max: 40,
+      met: null,
+      minimum: null,
+      parts: [],
+      projected: null,
+      short: null,
+      unjudged: [],
+    };
+
+    await prisma.mockExam.create({
+      data: {
+        conditions: sat({ purpose: "practice", shape: { area: null, day: null, kind: "full" } }),
+        createdAt: daysAgo(1),
+        finishedAt: daysAgo(1),
+        goalId: goal.id,
+        result: { ...subjectResult({ Mathematics: 10 }, 20), points },
+        sectionStartedAt: daysAgo(1),
+        status: "finished",
+        userId: user.id,
+      },
+    });
+
+    const result = await getExamView({ goalId: goal.id });
+    const progress = result.status === "ready" ? result.exam.progress : null;
+
+    expect(progress?.mocks.at(-1)).toMatchObject({ number: 5, percent: 75 });
+  });
+
   it("draws no trend from too little evidence: few questions of a subject, or a mostly repeated mock", async () => {
     const { goal, user } = await progressSetup({ plus: true });
     const ethics = { area: "Ética", day: null, kind: "area" } as const;

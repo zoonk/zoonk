@@ -7,6 +7,7 @@ import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint
 import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring/mock-scoring";
 import { type MockConditions } from "../mock-contract";
 import { getMockFormatMix } from "../mock-format-mix";
+import { markPlannedItems } from "../mock-marking";
 import { planOptionMock } from "../mock-option-plan";
 import { type MockCandidate, type MockPlan, countPlannedQuestions } from "../mock-plan";
 import { isMockShort, listShortFormats } from "../mock-shortfall";
@@ -104,11 +105,13 @@ export async function planFromBank({
 }
 
 function toConditions({
+  candidates,
   goal,
   pick,
   plan,
   setup,
 }: {
+  candidates: readonly MockCandidate[];
   goal: Goal;
   pick: AnytimeMockPick;
   plan: MockPlan;
@@ -122,6 +125,11 @@ function toConditions({
     day: plan.day,
     examQuestions: purpose === "practice" && asked < option.questions ? option.questions : null,
     fullLength: purpose === "practice" && option.kind === "full",
+    ...markPlannedItems({
+      candidates: [...candidates, ...[...setup.listening.values()].flat()],
+      plan,
+      structure: setup.structure,
+    }),
     partialCredit: getPartialCredit(setup.structure),
     purpose,
     reused: plan.reused,
@@ -194,7 +202,7 @@ export async function createAnytimeMock({
 
     const created = await tx.mockExam.create({
       data: {
-        conditions: toConditions({ goal, pick, plan, setup }),
+        conditions: toConditions({ candidates, goal, pick, plan, setup }),
         examBlueprintId: setup.blueprint?.id ?? null,
         goalId: goal.id,
         sectionStartedAt: now,

@@ -3,6 +3,7 @@ import "server-only";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring/mock-scoring";
 import { type MockConditions } from "../mock-contract";
+import { markPlannedItems } from "../mock-marking";
 import { type OwnedMock } from "./owned-mock";
 import { planWeeklyMock } from "./plan-weekly-mock";
 
@@ -51,6 +52,7 @@ export async function buildMockConditions(
     day: plan.day,
     examQuestions: null,
     fullLength: plan.fullLength,
+    ...markPlannedItems({ candidates: plan.candidates, plan, structure }),
     partialCredit: getPartialCredit(structure),
     purpose: "planned",
     reused: plan.reused,

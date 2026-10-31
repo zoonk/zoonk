@@ -30,6 +30,10 @@ function toPercent({ part, whole }: { part: number; whole: number }): number {
 }
 
 function getMockPercent(result: MockResult): number {
+  if (result.points) {
+    return toPercent({ part: result.points.earned, whole: result.points.asked });
+  }
+
   const part = result.scoring === "net" && result.net ? result.net.net : result.correct;
   return toPercent({ part, whole: result.total });
 }

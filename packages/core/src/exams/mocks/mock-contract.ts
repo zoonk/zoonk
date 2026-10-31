@@ -12,6 +12,7 @@ import { type Reached } from "../../sessions/reached";
 import { type EssayView } from "../essays/essay-contract";
 import { type ExamDocument } from "../exam-document";
 import { type ExamMockSummary } from "../view/exam-view-contract";
+import { mockMarkingSchema, mockPointsSchema } from "./mock-points-contract";
 import {
   type MockAdaptView,
   type MockCurrentSection,
@@ -81,6 +82,7 @@ export const mockConditionsSchema = z.object({
   day: z.int().nullable(),
   examQuestions: z.int().min(0).nullable(),
   fullLength: z.boolean(),
+  marking: mockMarkingSchema.optional(),
   partialCredit: z.enum(PARTIAL_CREDIT_RULES),
   purpose: z.enum(MOCK_PURPOSES),
   reused: z.int().min(0),
@@ -163,6 +165,13 @@ export const mockResultSchema = z
       })
       .nullable(),
     plannedMinutes: z.number(),
+    points: mockPointsSchema
+      .nullable()
+      .optional()
+      .meta({
+        description:
+          "Lead the result with `earned` of `asked`; null for an exam not scored in points, such as one scored by item response theory or on a scale",
+      }),
     preparation: z.object({ after: z.number(), before: z.number() }).nullable(),
     previous: z.number().nullable(),
     scoring: z.enum(MOCK_SCORINGS),

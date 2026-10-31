@@ -23,6 +23,7 @@ import {
   calibrateRange,
   estimateIrtRange,
   getEstimateCalibration,
+  weighByPoints,
 } from "./score-estimate";
 
 const CALIBRATION_REPORTS = 200;
@@ -106,7 +107,7 @@ async function loadExamScale(
 function loadRecentMocks(goalId: string) {
   return prisma.mockExam.findMany({
     orderBy: { finishedAt: "desc" },
-    select: { conditions: true, result: true },
+    select: { conditions: true, finishedAt: true, result: true },
     take: RECENT_MOCKS,
     where: { goalId, status: "finished" },
   });
@@ -118,6 +119,16 @@ function getIrtAbilities(mocks: readonly RecentMock[]) {
   return mocks.flatMap((mock) => {
     const irt = mockResultSchema.safeParse(mock.result).data?.irt;
     return irt ? [{ se: irt.se, theta: irt.theta }] : [];
+  });
+}
+
+function toScoredMocks(mocks: readonly RecentMock[]) {
+  return mocks.flatMap(({ finishedAt, result }) => {
+    const parsed = mockResultSchema.safeParse(result).data;
+
+    return finishedAt && parsed
+      ? [{ endedAt: finishedAt, points: parsed.points ?? null, total: parsed.total }]
+      : [];
   });
 }
 
@@ -174,7 +185,7 @@ export async function loadGoalScoreEstimate({
       : null;
   }
 
-  const percent = estimateScoreRange(ledgerMocks);
+  const percent = estimateScoreRange(weighByPoints(toScoredMocks(mocks)) ?? ledgerMocks);
 
   if (!percent) {
     return null;

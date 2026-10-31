@@ -93,7 +93,7 @@ export async function planWeeklyMock({
   structure: ExamStructure | null;
   today: Date;
   userId: string;
-}): Promise<MockPlan> {
+}): Promise<MockPlan & { candidates: MockCandidate[] }> {
   const [candidates, mockNumber, finalStretchStart, written, listening] = await Promise.all([
     loadMockCandidates({ goal, itemIds, plan: savedPlan, skillIds, structure, userId }),
     countFinishedMocksBefore({ goalId: goal.id }),
@@ -105,6 +105,7 @@ export async function planWeeklyMock({
   ]);
 
   const bySubject = toSubjectCandidates({ candidates, structure });
+  const asked = [...bySubject, ...[...listening.values()].flat()];
 
   const fullLength =
     identity?.fullLength ??
@@ -126,7 +127,10 @@ export async function planWeeklyMock({
     });
 
   if (identity) {
-    return plan(Math.max(0, getMockDays(structure).indexOf(identity.day)) - mockNumber);
+    return {
+      ...plan(Math.max(0, getMockDays(structure).indexOf(identity.day)) - mockNumber),
+      candidates: asked,
+    };
   }
 
   const days = new Set((structure?.mock?.sections ?? []).map((section) => section.day)).size;
@@ -136,12 +140,10 @@ export async function planWeeklyMock({
     countPlannedQuestions(candidate) > countPlannedQuestions(best) ? candidate : best,
   );
 
-  if (itemIds) {
-    return fullest;
-  }
+  const chosen = itemIds
+    ? fullest
+    : (plans.find((candidate) => countPlannedQuestions(candidate) >= MIN_CHECKPOINT_QUESTIONS) ??
+      fullest);
 
-  return (
-    plans.find((candidate) => countPlannedQuestions(candidate) >= MIN_CHECKPOINT_QUESTIONS) ??
-    fullest
-  );
+  return { ...chosen, candidates: asked };
 }

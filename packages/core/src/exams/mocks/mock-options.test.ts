@@ -89,6 +89,7 @@ function candidates(area: string, count: number): MockCandidate[] {
     answered: false,
     area,
     difficulty: null,
+    itemFormat: "multipleChoice",
     itemId: `${area}-${index}`,
     skillId: `${area}-skill-${index % 3}`,
   }));
@@ -482,6 +483,7 @@ describe(planOptionMock, () => {
         answered: false,
         area: name,
         difficulty: null,
+        itemFormat: "multipleChoice" as const,
         itemId: `${name}#${index}`,
         skillId: `${name}-skill-${index % 3}`,
       })),

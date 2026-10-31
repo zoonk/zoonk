@@ -83177,6 +83177,15 @@
           "plannedMinutes": {
             "type": "number"
           },
+          "points": {
+            "description": "Lead the result with `earned` of `asked`; null for an exam not scored in points, such as one scored by item response theory or on a scale",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MockPoints"
+              }
+            ]
+          },
           "preparation": {
             "nullable": true,
             "type": "object",
@@ -83269,6 +83278,171 @@
           "topics",
           "total",
           "unansweredAtTimeout"
+        ],
+        "additionalProperties": false
+      },
+      "MockPoints": {
+        "type": "object",
+        "properties": {
+          "asked": {
+            "type": "number",
+            "description": "What this mock's questions of it were worth, in points"
+          },
+          "earned": {
+            "type": "number",
+            "description": "Points earned: a right answer earns its points (a partly right one its share of them), a wrong one loses its penalty and a blank earns 0, so it can be negative"
+          },
+          "max": {
+            "nullable": true,
+            "description": "The most points the whole test gives; null when the notice doesn't say",
+            "type": "number"
+          },
+          "met": {
+            "nullable": true,
+            "description": "Whether `earned` reached `minimum`: judged only in a full mock that asked the whole test, null otherwise",
+            "type": "boolean"
+          },
+          "minimum": {
+            "nullable": true,
+            "description": "The least every candidate must reach, in points or in percent of the test's points, when this mock checks it (`met`) or projects it (`projected`); null otherwise",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PointsMinimum"
+              }
+            ]
+          },
+          "projected": {
+            "nullable": true,
+            "description": "For a mock that asked part of the test: `earned` ÷ `asked` × `max`, an estimate for the whole test that never decides `met`; null when it asked the whole test or `max` is unknown",
+            "type": "number"
+          },
+          "short": {
+            "nullable": true,
+            "description": "How far below `minimum` it ended, in the minimum's unit, when `met` is false",
+            "type": "number"
+          },
+          "parts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "asked": {
+                  "type": "number",
+                  "description": "What this mock's questions of it were worth, in points"
+                },
+                "earned": {
+                  "type": "number",
+                  "description": "Points earned: a right answer earns its points (a partly right one its share of them), a wrong one loses its penalty and a blank earns 0, so it can be negative"
+                },
+                "max": {
+                  "nullable": true,
+                  "description": "The most points the whole test gives; null when the notice doesn't say",
+                  "type": "number"
+                },
+                "met": {
+                  "nullable": true,
+                  "description": "Whether `earned` reached `minimum`: judged only in a full mock that asked the whole test, null otherwise",
+                  "type": "boolean"
+                },
+                "minimum": {
+                  "nullable": true,
+                  "description": "The least every candidate must reach, in points or in percent of the test's points, when this mock checks it (`met`) or projects it (`projected`); null otherwise",
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/PointsMinimum"
+                    }
+                  ]
+                },
+                "projected": {
+                  "nullable": true,
+                  "description": "For a mock that asked part of the test: `earned` ÷ `asked` × `max`, an estimate for the whole test that never decides `met`; null when it asked the whole test or `max` is unknown",
+                  "type": "number"
+                },
+                "short": {
+                  "nullable": true,
+                  "description": "How far below `minimum` it ended, in the minimum's unit, when `met` is false",
+                  "type": "number"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The test or block, as the notice names it"
+                },
+                "qualifying": {
+                  "type": "boolean",
+                  "description": "It only has to reach its minimum and doesn't count toward the total, such as a qualifying paper"
+                }
+              },
+              "required": [
+                "asked",
+                "earned",
+                "max",
+                "met",
+                "minimum",
+                "projected",
+                "short",
+                "name",
+                "qualifying"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Each test this mock asked, in the notice's order"
+          },
+          "unjudged": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "minimum": {
+                  "$ref": "#/components/schemas/PointsMinimum"
+                },
+                "name": {
+                  "nullable": true,
+                  "description": "The test, or null for the tests that count, together",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "minimum",
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Minimums this mock couldn't check, to list as still ahead: a written test, a test on another exam day, a test none of its questions belong to, or the tests together when it didn't ask them all"
+          }
+        },
+        "required": [
+          "asked",
+          "earned",
+          "max",
+          "met",
+          "minimum",
+          "projected",
+          "short",
+          "parts",
+          "unjudged"
+        ],
+        "additionalProperties": false,
+        "description": "For an exam the notice scores in points: the points of the tests that count toward the result, added together, with their minimums, then each test's"
+      },
+      "PointsMinimum": {
+        "type": "object",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "enum": [
+              "points",
+              "percent"
+            ],
+            "description": "`points`, or `percent` of the test's points"
+          },
+          "value": {
+            "type": "number",
+            "description": "The least points, or percent, to reach"
+          }
+        },
+        "required": [
+          "unit",
+          "value"
         ],
         "additionalProperties": false
       },
@@ -85010,6 +85184,80 @@
                   "description": {
                     "type": "string"
                   },
+                  "marking": {
+                    "description": "How a right and a wrong answer score where it differs by test or format, in the notice's order; a question no row covers earns 1 point",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "citation": {
+                          "type": "object",
+                          "properties": {
+                            "passage": {
+                              "type": "string"
+                            },
+                            "sourceId": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "passage",
+                            "sourceId"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "format": {
+                          "nullable": true,
+                          "description": "The question format it scores; null for every format",
+                          "type": "string",
+                          "enum": [
+                            "multipleChoice",
+                            "trueFalse",
+                            "essay",
+                            "shortAnswer",
+                            "numeric",
+                            "oral",
+                            "practical",
+                            "other"
+                          ]
+                        },
+                        "part": {
+                          "nullable": true,
+                          "description": "The test or block it scores, as a subject's `group` or `name` writes it; null for the whole exam",
+                          "type": "string"
+                        },
+                        "points": {
+                          "type": "number",
+                          "minimum": 0,
+                          "exclusiveMinimum": true,
+                          "description": "What a right answer earns"
+                        },
+                        "questions": {
+                          "nullable": true,
+                          "description": "How many questions it covers; null when the notice doesn't say",
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "wrongPenalty": {
+                          "nullable": true,
+                          "description": "The share of `points` a wrong answer takes away; null when the notice doesn't say, so the exam's `wrongPenalty` applies",
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "citation",
+                        "format",
+                        "part",
+                        "points",
+                        "questions",
+                        "wrongPenalty"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
                   "method": {
                     "type": "string",
                     "enum": [
@@ -85019,6 +85267,86 @@
                       "scaled",
                       "other"
                     ]
+                  },
+                  "parts": {
+                    "description": "Each test or block the notice gives questions, points or a minimum for",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "citation": {
+                          "type": "object",
+                          "properties": {
+                            "passage": {
+                              "type": "string"
+                            },
+                            "sourceId": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "passage",
+                            "sourceId"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "maxPoints": {
+                          "nullable": true,
+                          "description": "The most points it gives; null when the notice doesn't say",
+                          "type": "number",
+                          "minimum": 0,
+                          "exclusiveMinimum": true
+                        },
+                        "minimum": {
+                          "nullable": true,
+                          "description": "The least every candidate must reach in it; null when none applies to all",
+                          "type": "object",
+                          "properties": {
+                            "unit": {
+                              "type": "string",
+                              "enum": [
+                                "points",
+                                "percent"
+                              ]
+                            },
+                            "value": {
+                              "type": "number",
+                              "minimum": 0,
+                              "exclusiveMinimum": true
+                            }
+                          },
+                          "required": [
+                            "unit",
+                            "value"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "The test or block, as a subject's `group` or `name` writes it"
+                        },
+                        "qualifying": {
+                          "type": "boolean",
+                          "description": "It only has to reach its minimum and doesn't count toward the result"
+                        },
+                        "questions": {
+                          "nullable": true,
+                          "description": "How many questions it has; null when the notice doesn't say",
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "citation",
+                        "maxPoints",
+                        "minimum",
+                        "name",
+                        "qualifying",
+                        "questions"
+                      ],
+                      "additionalProperties": false
+                    }
                   },
                   "relative": {
                     "type": "boolean"
@@ -85072,6 +85400,47 @@
                       "name",
                       "passScore",
                       "step"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "totalMinimum": {
+                    "description": "The least every candidate must reach in the objective tests that count, added together; null when none",
+                    "nullable": true,
+                    "type": "object",
+                    "properties": {
+                      "unit": {
+                        "type": "string",
+                        "enum": [
+                          "points",
+                          "percent"
+                        ]
+                      },
+                      "value": {
+                        "type": "number",
+                        "minimum": 0,
+                        "exclusiveMinimum": true
+                      },
+                      "citation": {
+                        "type": "object",
+                        "properties": {
+                          "passage": {
+                            "type": "string"
+                          },
+                          "sourceId": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "passage",
+                          "sourceId"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "unit",
+                      "value",
+                      "citation"
                     ],
                     "additionalProperties": false
                   },

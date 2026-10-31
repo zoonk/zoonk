@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { type NetAnswer, getNetCalibration, getNetScore, sumCalibration } from "./net-score";
 
-function answers(entries: [NetAnswer["outcome"], boolean, number][]): NetAnswer[] {
+function answers(
+  entries: [NetAnswer["outcome"], boolean, number][],
+  wrongPenalty = 1,
+): NetAnswer[] {
   return entries.flatMap(([outcome, flagged, times]) =>
-    Array.from({ length: times }, () => ({ flagged, outcome })),
+    Array.from({ length: times }, () => ({ flagged, outcome, wrongPenalty })),
   );
 }
 
@@ -24,11 +27,14 @@ describe(getNetScore, () => {
   it("takes the notice's share of a right answer for each wrong one, as JEE's -1 against +4", () => {
     expect(
       getNetScore({
-        answers: answers([
-          ["right", false, 12],
-          ["wrong", false, 5],
-          ["blank", false, 3],
-        ]),
+        answers: answers(
+          [
+            ["right", false, 12],
+            ["wrong", false, 5],
+            ["blank", false, 3],
+          ],
+          0.25,
+        ),
         penalty: 0.25,
       }),
     ).toStrictEqual({
@@ -46,10 +52,10 @@ describe(getNetScore, () => {
     expect(
       getNetScore({
         answers: [
-          { flagged: false, outcome: "right" },
-          { credit: 0.5, flagged: false, outcome: "partial" },
-          { flagged: false, outcome: "wrong" },
-          { flagged: false, outcome: "blank" },
+          { flagged: false, outcome: "right", wrongPenalty: 0.5 },
+          { credit: 0.5, flagged: false, outcome: "partial", wrongPenalty: 0.5 },
+          { flagged: false, outcome: "wrong", wrongPenalty: 0.5 },
+          { flagged: false, outcome: "blank", wrongPenalty: 0.5 },
         ],
         penalty: 0.5,
       }),
@@ -57,17 +63,17 @@ describe(getNetScore, () => {
   });
 });
 
-const UNSURE_TWO_OF_SIX = answers([
+const UNSURE_TWO_OF_SIX: [NetAnswer["outcome"], boolean, number][] = [
   ["right", false, 9],
   ["wrong", false, 1],
   ["right", true, 2],
   ["wrong", true, 4],
   ["blank", true, 2],
-]);
+];
 
 describe(getNetCalibration, () => {
   it("advises leaving unsure statements blank when they lose points", () => {
-    const calibration = getNetCalibration({ answers: UNSURE_TWO_OF_SIX, penalty: 1 });
+    const calibration = getNetCalibration({ answers: answers(UNSURE_TWO_OF_SIX), penalty: 1 });
 
     expect(calibration).toStrictEqual({
       advice: "blankUnsure",
@@ -78,7 +84,10 @@ describe(getNetCalibration, () => {
   });
 
   it("sets the break-even from the penalty: a fifth of answers right pays where a wrong costs a quarter", () => {
-    const calibration = getNetCalibration({ answers: UNSURE_TWO_OF_SIX, penalty: 0.25 });
+    const calibration = getNetCalibration({
+      answers: answers(UNSURE_TWO_OF_SIX, 0.25),
+      penalty: 0.25,
+    });
 
     expect(calibration).toMatchObject({ advice: "keepAnswering", blankingGain: -1 });
   });
@@ -100,6 +109,19 @@ describe(getNetCalibration, () => {
     expect(
       getNetCalibration({ answers: answers([["wrong", true, 2]]), penalty: 1 }).advice,
     ).toBeNull();
+  });
+});
+
+describe("per-question penalties", () => {
+  it("costs each wrong answer its own question's penalty, as numeric answers that cost nothing beside choices that cost a quarter", () => {
+    const mixed: NetAnswer[] = [
+      { flagged: true, outcome: "right", wrongPenalty: 0.25 },
+      { flagged: true, outcome: "wrong", wrongPenalty: 0.25 },
+      { flagged: true, outcome: "wrong", wrongPenalty: 0 },
+    ];
+
+    expect(getNetScore({ answers: mixed, penalty: 0.25 }).net).toBe(0.75);
+    expect(getNetCalibration({ answers: mixed, penalty: 0.25 }).blankingGain).toBe(-0.75);
   });
 });
 

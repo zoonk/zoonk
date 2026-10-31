@@ -192,6 +192,7 @@ const BANK: MockCandidate[] = SKILLS.flatMap((skill) =>
     answered: false,
     area: skill.area,
     difficulty: null,
+    itemFormat: "multipleChoice",
     itemId: `${skill.skillId}/${copy}`,
     skillId: skill.skillId,
   })),
@@ -269,6 +270,7 @@ describe(planPlacementMock, () => {
       answered: false,
       area: skill.area,
       difficulty: null,
+      itemFormat: "multipleChoice",
       itemId: `${skill.skillId}/0`,
       skillId: skill.skillId,
     }));

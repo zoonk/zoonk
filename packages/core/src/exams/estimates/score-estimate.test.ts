@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { calibrateRange, estimateIrtRange, getEstimateCalibration } from "./score-estimate";
+import { estimateScoreRange } from "../../preparation/estimated-score";
+import {
+  calibrateRange,
+  estimateIrtRange,
+  getEstimateCalibration,
+  weighByPoints,
+} from "./score-estimate";
 
 const MIN_CALIBRATION_REPORTS = 5;
 
@@ -52,5 +58,36 @@ describe(estimateIrtRange, () => {
 
     expect(one && three && three.high - three.low < one.high - one.low).toBe(true);
     expect((three?.low ?? 0) % 10).toBe(0);
+  });
+});
+
+describe(weighByPoints, () => {
+  const endedAt = new Date("2026-10-01T12:00:00Z");
+
+  it("estimates from the share of points, so wrong answers on a test worth double weigh double", () => {
+    const weighed = weighByPoints([
+      { endedAt, points: { asked: 260, earned: 182 }, total: 170 },
+      { endedAt, points: { asked: 260, earned: 130 }, total: 170 },
+    ]);
+
+    expect(weighed?.map((mock) => mock.correct / mock.total)).toStrictEqual([0.7, 0.5]);
+
+    const range = estimateScoreRange(weighed ?? []);
+    expect(range && (range.low + range.high) / 2).toBeCloseTo(60, 0);
+  });
+
+  it("keeps a negative net score at nothing rather than below it", () => {
+    expect(
+      weighByPoints([{ endedAt, points: { asked: 80, earned: -12 }, total: 80 }]),
+    ).toStrictEqual([{ correct: 0, endedAt, total: 80 }]);
+  });
+
+  it("leaves mocks without points to the right answers", () => {
+    expect(
+      weighByPoints([
+        { endedAt, points: { asked: 80, earned: 40 }, total: 80 },
+        { endedAt, points: null, total: 80 },
+      ]),
+    ).toBeNull();
   });
 });

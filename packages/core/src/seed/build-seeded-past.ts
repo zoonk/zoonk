@@ -16,6 +16,7 @@ import { type GradedMockAnswer, analyzeMock } from "../exams/mocks/mock-analysis
 import { type MockAnswer } from "../exams/mocks/mock-answer-contract";
 import { type MockConditions } from "../exams/mocks/mock-contract";
 import { getPlannedItemIds } from "../exams/mocks/mock-plan";
+import { getItemMarking } from "../exams/scoring/mock-points";
 import { getPickOutcome } from "../exams/scoring/partial-credit";
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { gradeSessionAnswer, parseSessionItem } from "../sessions/_utils/session-items";
@@ -234,6 +235,7 @@ async function answerMock({
       durationMs,
       flagged: false,
       irtItem: item.irt,
+      marking: getItemMarking({ conditions, itemId: item.id }),
       outcome: getPickOutcome({ answered: grade.answered, credit: grade.credit }),
       section,
       skill: { id: item.skillId, name: skillNames.get(item.skillId) ?? "" },

@@ -1,6 +1,8 @@
 import { type IrtItem, estimateAbility, getIrtCoherence, toScaleRange } from "../scoring/irt";
+import { getPointsScope, scoreMockPoints } from "../scoring/mock-points";
 import { type NetOutcome, getNetCalibration, getNetScore } from "../scoring/net-score";
 import { type MockConditions, type MockResult, type MockScoring } from "./mock-contract";
+import { type ItemMarking } from "./mock-points-contract";
 
 const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
@@ -13,6 +15,7 @@ export type GradedMockAnswer = {
   durationMs: number;
   flagged: boolean;
   irtItem: IrtItem;
+  marking: ItemMarking;
   outcome: NetOutcome;
   section: number;
   skill: { id: string; name: string };
@@ -149,21 +152,34 @@ export function analyzeMock({
   preparation: MockResult["preparation"];
   previous: number | null;
 }): MockResult {
-  const { scoring } = conditions;
+  const { marking, scoring } = conditions;
   const groups = groupByArea({ answers, conditions });
   const correct = countPoints(answers);
+
+  const netAnswers = answers.map((answer) => ({
+    ...answer,
+    wrongPenalty: answer.marking.wrongPenalty,
+  }));
 
   return {
     areas: groups.map((group) => toAreaResult({ conditions, group, scoring })),
     blank: answers.filter((answer) => answer.outcome === "blank").length,
     calibration:
-      scoring === "net" ? getNetCalibration({ answers, penalty: conditions.wrongPenalty }) : null,
+      scoring === "net"
+        ? getNetCalibration({ answers: netAnswers, penalty: conditions.wrongPenalty })
+        : null,
     coherence: scoring === "irt" ? getIrtCoherence(toResponses(answers)) : null,
     correct,
     irt: scoring === "irt" ? getOverallIrt(groups) : null,
     minutesUsed,
-    net: scoring === "net" ? getNetScore({ answers, penalty: conditions.wrongPenalty }) : null,
+    net:
+      scoring === "net"
+        ? getNetScore({ answers: netAnswers, penalty: conditions.wrongPenalty })
+        : null,
     plannedMinutes: conditions.sections.reduce((sum, section) => sum + section.minutes, 0),
+    points: marking
+      ? scoreMockPoints({ answers, marking, scope: getPointsScope(conditions) })
+      : null,
     preparation,
     previous,
     scoring,

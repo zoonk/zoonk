@@ -1,6 +1,11 @@
 export type NetOutcome = "blank" | "partial" | "right" | "wrong";
 
-export type NetAnswer = { credit?: number; flagged: boolean; outcome: NetOutcome };
+export type NetAnswer = {
+  credit?: number;
+  flagged: boolean;
+  outcome: NetOutcome;
+  wrongPenalty: number;
+};
 
 type NetScore = {
   blank: number;
@@ -20,6 +25,10 @@ function count(answers: readonly NetAnswer[], outcome: NetOutcome): number {
   return answers.filter((answer) => answer.outcome === outcome).length;
 }
 
+function sumPenalties(answers: readonly NetAnswer[]): number {
+  return answers.reduce((sum, answer) => sum + answer.wrongPenalty, 0);
+}
+
 export function getBreakEven(penalty: number): number {
   return penalty / (1 + penalty);
 }
@@ -32,10 +41,10 @@ export function getNetScore({
   penalty: number;
 }): NetScore {
   const right = count(answers, "right");
-  const wrong = count(answers, "wrong");
+  const wrong = answers.filter((answer) => answer.outcome === "wrong");
   const partial = answers.filter((answer) => answer.outcome === "partial");
   const shares = partial.reduce((sum, answer) => sum + (answer.credit ?? 0), 0);
-  const net = Math.round((right + shares - penalty * wrong) * NET_DECIMALS) / NET_DECIMALS;
+  const net = Math.round((right + shares - sumPenalties(wrong)) * NET_DECIMALS) / NET_DECIMALS;
 
   return {
     blank: count(answers, "blank"),
@@ -44,7 +53,7 @@ export function getNetScore({
     partial: partial.length,
     penalty,
     right,
-    wrong,
+    wrong: wrong.length,
   };
 }
 
@@ -83,10 +92,15 @@ export function getNetCalibration({
   answers: readonly NetAnswer[];
   penalty: number;
 }): NetCalibration {
+  const flagged = answers.filter((answer) => answer.flagged);
   const sure = toGroup(answers.filter((answer) => !answer.flagged));
-  const unsure = toGroup(answers.filter((answer) => answer.flagged));
-  const unsureWrong = unsure.answered - unsure.right;
-  const blankingGain = Math.round((penalty * unsureWrong - unsure.right) * NET_DECIMALS);
+  const unsure = toGroup(flagged);
+
+  const missed = flagged.filter(
+    (answer) => answer.outcome !== "blank" && answer.outcome !== "right",
+  );
+
+  const blankingGain = Math.round((sumPenalties(missed) - unsure.right) * NET_DECIMALS);
 
   return {
     advice: getAdvice({ penalty, unsure }),

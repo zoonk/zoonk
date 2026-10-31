@@ -1,3 +1,4 @@
+import { type MockResult } from "../../preparation/preparation-math";
 import {
   type AbilityEstimate,
   SCORE_STEP,
@@ -7,6 +8,24 @@ import {
 } from "../scoring/irt";
 
 const MIN_CALIBRATION_REPORTS = 5;
+
+type ScoredMock = {
+  endedAt: Date;
+  points: { asked: number; earned: number } | null;
+  total: number;
+};
+
+/** Mocks scored in points count by their share of the points, so a test worth double weighs double. */
+export function weighByPoints(mocks: readonly ScoredMock[]): MockResult[] | null {
+  if (mocks.length === 0 || mocks.some((mock) => !mock.points || mock.points.asked <= 0)) {
+    return null;
+  }
+
+  return mocks.map(({ endedAt, points, total }) => {
+    const share = points ? points.earned / points.asked : 0;
+    return { correct: Math.min(1, Math.max(0, share)) * total, endedAt, total };
+  });
+}
 
 export type ReportedResult = { estimateHigh: number; estimateLow: number; official: number };
 

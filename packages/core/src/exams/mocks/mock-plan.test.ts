@@ -48,6 +48,7 @@ function candidates(area: string, count: number, skills = 3): MockCandidate[] {
     answered: false,
     area,
     difficulty: (index % 3) - 1,
+    itemFormat: "multipleChoice",
     itemId: `${area}-${index}`,
     skillId: `${area}-skill-${index % skills}`,
   }));
@@ -88,6 +89,7 @@ describe(planMock, () => {
       answered: false,
       area: null,
       difficulty: 0,
+      itemFormat: "multipleChoice" as const,
       itemId: `unsorted-${index}`,
       skillId: `unsorted-skill-${index % 3}`,
     }));
@@ -193,6 +195,7 @@ describe(planMock, () => {
       answered: true,
       area: "Math",
       difficulty: 0,
+      itemFormat: "multipleChoice" as const,
       itemId: `answered-${index}`,
       skillId: `Math-skill-${index % 3}`,
     }));

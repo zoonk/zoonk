@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { gradeTypedItemAnswer } from "../../../learner/_utils/typed-grading";
 import { recordLearnerAnswer } from "../../../learner/record-learner-answer";
 import { scheduleMistakeCause } from "../../../mistakes/resolve-mistake-cause";
+import { getItemMarking } from "../../scoring/mock-points";
 import { getPickOutcome } from "../../scoring/partial-credit";
 import { type GradedMockAnswer } from "../mock-analysis";
 import { type MockAnswer } from "../mock-answer-contract";
@@ -215,6 +216,7 @@ function toGraded({
     durationMs: question.durationMs,
     flagged: question.flagged,
     irtItem: item.irt,
+    marking: getItemMarking({ conditions: mock.conditions, itemId: item.id }),
     outcome,
     section,
     skill: { id: item.skillId, name: skillNames.get(item.skillId) ?? "" },

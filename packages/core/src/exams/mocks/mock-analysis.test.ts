@@ -39,6 +39,7 @@ function answer(overrides: Partial<GradedMockAnswer>): GradedMockAnswer {
     durationMs: 120_000,
     flagged: false,
     irtItem: EASY,
+    marking: { part: null, points: 1, wrongPenalty: 1 },
     outcome: "right",
     section: 0,
     skill: { id: "fractions", name: "Fractions" },

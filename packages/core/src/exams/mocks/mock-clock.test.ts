@@ -31,6 +31,7 @@ function thinBank(count: number): MockCandidate[] {
     answered: false,
     area: "Natural Sciences",
     difficulty: 0,
+    itemFormat: "multipleChoice",
     itemId: `science-${index}`,
     skillId: `science-skill-${index % 3}`,
   }));
@@ -93,6 +94,7 @@ function bank(area: string, count: number): MockCandidate[] {
     answered: false,
     area,
     difficulty: 0,
+    itemFormat: "multipleChoice",
     itemId: `${area}-${index}`,
     skillId: `${area}-skill-${index % 3}`,
   }));
