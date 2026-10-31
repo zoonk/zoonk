@@ -2,6 +2,7 @@
 
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { useExtracted } from "next-intl";
+import { useState } from "react";
 import { FollowedRun } from "../../generation/generation-follower";
 import { type GenerationRun } from "../../generation/generation-run";
 import { GenerationWait } from "../../generation/generation-wait";
@@ -16,14 +17,22 @@ import { GoalErrorAlert, TypedGoal } from "./goal-outcomes";
 
 const WAITING_RUN: GenerationRun = { failure: null, status: "waiting", steps: {} };
 
-function UnderstandingWaitScreen({ goal, run }: { goal: string; run: GenerationRun }) {
+function UnderstandingWaitScreen({
+  goal,
+  run,
+  since,
+}: {
+  goal: string;
+  run: GenerationRun;
+  since?: number;
+}) {
   const t = useExtracted();
 
   return (
     <OnboardingColumn>
       <TypedGoal goal={goal} />
 
-      <GenerationWait kind="understanding" run={run}>
+      <GenerationWait kind="understanding" run={run} since={since}>
         <OnboardingHeading>
           <OnboardingTitle>{t("Understanding your goal")}</OnboardingTitle>
           <OnboardingDescription>{t("Next, you check what we understood.")}</OnboardingDescription>
@@ -57,8 +66,8 @@ function UnderstandingLimit({
   );
 }
 
-export function SendingGoal({ goal }: { goal: string }) {
-  return <UnderstandingWaitScreen goal={goal} run={WAITING_RUN} />;
+export function SendingGoal({ goal, since }: { goal: string; since: number }) {
+  return <UnderstandingWaitScreen goal={goal} run={WAITING_RUN} since={since} />;
 }
 
 /**
@@ -73,6 +82,7 @@ export function UnderstandingWait({
   onRestart,
   onRetry,
   readFailed,
+  sentAt,
   signUpHref,
 }: {
   draft: OnboardingDraftView;
@@ -82,14 +92,28 @@ export function UnderstandingWait({
   onRestart: () => Promise<string | null>;
   onRetry: () => void;
   readFailed: boolean;
+  sentAt?: number;
   signUpHref: string;
 }) {
+  const [startedAgainAt, setStartedAgainAt] = useState<number | null>(null);
+  const since = startedAgainAt ?? sentAt;
+
+  const retry = () => {
+    setStartedAgainAt(Date.now());
+    onRetry();
+  };
+
+  const restart = () => {
+    setStartedAgainAt(Date.now());
+    return onRestart();
+  };
+
   if (limitError) {
     return <UnderstandingLimit error={limitError} goal={draft.prompt} signUpHref={signUpHref} />;
   }
 
   if (isRetrying) {
-    return <UnderstandingWaitScreen goal={draft.prompt} run={WAITING_RUN} />;
+    return <UnderstandingWaitScreen goal={draft.prompt} run={WAITING_RUN} since={since} />;
   }
 
   if (readFailed) {
@@ -108,9 +132,9 @@ export function UnderstandingWait({
         key={draft.generationId}
         kind="understanding"
         onReady={onReady}
-        restart={onRestart}
+        restart={restart}
       >
-        {(run) => <UnderstandingWaitScreen goal={draft.prompt} run={run} />}
+        {(run) => <UnderstandingWaitScreen goal={draft.prompt} run={run} since={since} />}
       </FollowedRun>
     );
   }
@@ -120,7 +144,7 @@ export function UnderstandingWait({
       goal={draft.prompt}
       run={{
         failure: draft.status === "failed" ? "generation" : "notStarted",
-        retry: onRetry,
+        retry,
         status: "failed",
         steps: {},
       }}

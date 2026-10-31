@@ -45,10 +45,12 @@ function WaitProgress({
   label,
   progress,
   run,
+  since,
 }: {
   label: string;
   progress: PhaseProgress<string>;
   run: GenerationRun;
+  since?: number;
 }) {
   const locale = useAppLocale();
 
@@ -56,6 +58,7 @@ function WaitProgress({
     active: isFollowing(run),
     estimatedMs: progress.activeMs,
     progress: progress.progress,
+    since,
     target: progress.target,
   });
 
@@ -218,11 +221,14 @@ export function GenerationWait({
   className,
   kind,
   run,
+  since,
 }: {
   children?: React.ReactNode;
   className?: string;
   kind: GenerationKind;
   run: GenerationRun;
+  /** When the wait began on this device, for a screen that takes over a wait another one showed. */
+  since?: number;
 }) {
   const copy = useGenerationCopy(kind);
   const definition = getGenerationKind(kind);
@@ -247,7 +253,7 @@ export function GenerationWait({
         {failure ? (
           <GenerationFailureNotice failure={failure} retry={run.retry} />
         ) : (
-          <WaitProgress label={copy.name} progress={progress} run={run} />
+          <WaitProgress label={copy.name} progress={progress} run={run} since={since} />
         )}
       </GenerationTimelineHeader>
 

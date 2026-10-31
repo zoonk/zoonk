@@ -59,12 +59,16 @@ export function takeSentGoal(draftId: string): number | null {
 }
 
 /** A goal sent from another page, still on its way: `/start` shows it waiting until it takes the outcome. */
-export type HandedOffGoal = { goal: string; outcome: Promise<StartUnderstandingOutcome> };
+export type HandedOffGoal = {
+  goal: string;
+  outcome: Promise<StartUnderstandingOutcome>;
+  sentAt: number;
+};
 
 let handedOff: HandedOffGoal | null = null;
 
-export function handOffGoal(goal: HandedOffGoal): void {
-  handedOff = goal;
+export function handOffGoal(goal: Omit<HandedOffGoal, "sentAt">): void {
+  handedOff = { ...goal, sentAt: Date.now() };
 }
 
 export function getHandedOffGoal(): HandedOffGoal | null {

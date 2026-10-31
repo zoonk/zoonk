@@ -20,7 +20,11 @@ export function StartSkeleton() {
     const handedOff = getHandedOffGoal();
 
     return handedOff ? (
-      <StartSentGoal goal={handedOff.goal} hasAccount={hasAccount(learner)} />
+      <StartSentGoal
+        goal={handedOff.goal}
+        hasAccount={hasAccount(learner)}
+        sentAt={handedOff.sentAt}
+      />
     ) : (
       <StartEntrySkeleton />
     );
@@ -29,7 +33,7 @@ export function StartSkeleton() {
   const sent = getSentGoal(draftId);
 
   return sent?.pending ? (
-    <StartSentGoal goal={sent.prompt} hasAccount={hasAccount(learner)} />
+    <StartSentGoal goal={sent.prompt} hasAccount={hasAccount(learner)} sentAt={sent.sentAt} />
   ) : (
     <StartWaitSkeleton />
   );

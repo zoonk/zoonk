@@ -28,7 +28,7 @@ export function useSubmitUnderstanding({
   onDraft: (draft: OnboardingDraftView) => void;
   onError: (input: { error: GoalError; words: string }) => void;
   onExplanation: (input: { draft: OnboardingDraftView; question: string }) => void;
-  onSending: (goal: string) => void;
+  onSending: (sent: { goal: string; sentAt: number }) => void;
   understanding: UnderstandingActions;
 }) {
   const locale = useAppLocale();
@@ -74,22 +74,25 @@ export function useSubmitUnderstanding({
 
   async function sendOnce({ goal, signal }: { goal: string; signal: AbortSignal }) {
     analytics.track({ name: "Goal Typed", properties: { has_attachment: hasAttachment } });
+    const sentAt = Date.now();
     const outcome = sendGoal({ goal, language: locale, signal, understanding });
-    await follow({ goal, outcome, signal });
+    await follow({ goal, outcome, sentAt, signal });
   }
 
   /** Shows the goal on its way, then what was understood or what went wrong, unless `signal` aborted. */
   async function follow({
     goal,
     outcome,
+    sentAt,
     signal,
   }: {
     goal: string;
     outcome: Promise<StartUnderstandingOutcome>;
+    sentAt: number;
     signal: AbortSignal;
   }) {
     setIsSubmitting(true);
-    onSending(goal);
+    onSending({ goal, sentAt });
 
     const result = await outcome;
 

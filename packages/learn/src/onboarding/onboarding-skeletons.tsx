@@ -84,11 +84,19 @@ export function StartEntrySkeleton() {
   );
 }
 
-export function StartSentGoal({ goal, hasAccount }: { goal: string; hasAccount: boolean }) {
+export function StartSentGoal({
+  goal,
+  hasAccount,
+  sentAt,
+}: {
+  goal: string;
+  hasAccount: boolean;
+  sentAt: number;
+}) {
   return (
     <OnboardingRailProvider rail={<OnboardingHowItWorks hasAccount={hasAccount} />}>
       <OnboardingFrame>
-        <SendingGoal goal={goal} />
+        <SendingGoal goal={goal} since={sentAt} />
       </OnboardingFrame>
     </OnboardingRailProvider>
   );

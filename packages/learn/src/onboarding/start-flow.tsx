@@ -13,7 +13,7 @@ import { GuestGoalGate } from "./entry/guest-goal-gate";
 import { useSubmitGoal } from "./entry/material-goal";
 import { type MaterialIntent } from "./entry/material-intent";
 import { MaterialQuestions } from "./entry/material-questions";
-import { forgetHandedOffGoal, getHandedOffGoal } from "./entry/understanding-start";
+import { forgetHandedOffGoal, getHandedOffGoal, getSentGoal } from "./entry/understanding-start";
 import { SendingGoal } from "./entry/understanding-wait";
 import { useDraftActions } from "./entry/use-draft-actions";
 import { useFollowSavedDraft } from "./entry/use-follow-saved-draft";
@@ -35,8 +35,8 @@ import { OnboardingRailProvider } from "./onboarding-rail";
 type StartState =
   | { error: GoalError | null; kind: "entry"; words: string }
   | { kind: "questions" }
-  | { goal: string; kind: "sending" }
-  | { draft: OnboardingDraftView; kind: "draft" };
+  | { goal: string; kind: "sending"; sentAt: number }
+  | { draft: OnboardingDraftView; kind: "draft"; sentAt?: number };
 
 function getInitialState({
   defaultGoal,
@@ -48,14 +48,30 @@ function getInitialState({
   takesHandedOffGoal: boolean;
 }): StartState {
   if (initialDraft) {
-    return { draft: initialDraft, kind: "draft" };
+    return { draft: initialDraft, kind: "draft", sentAt: getSentGoal(initialDraft.id)?.sentAt };
   }
 
   const handedOff = takesHandedOffGoal ? getHandedOffGoal() : null;
 
   return handedOff
-    ? { goal: handedOff.goal, kind: "sending" }
+    ? { goal: handedOff.goal, kind: "sending", sentAt: handedOff.sentAt }
     : { error: null, kind: "entry", words: defaultGoal };
+}
+
+/** The draft's read goes on from the wait its send began, so its bar never starts over. */
+function toDraftState({
+  current,
+  draft,
+}: {
+  current: StartState;
+  draft: OnboardingDraftView;
+}): StartState {
+  const sentAt =
+    current.kind === "sending" || (current.kind === "draft" && current.draft.id === draft.id)
+      ? current.sentAt
+      : undefined;
+
+  return { draft, kind: "draft", sentAt };
 }
 
 function getScreenKey(state: StartState): string {
@@ -113,7 +129,7 @@ function useFollowHandedOffGoal({
       return;
     }
 
-    await follow({ goal: handedOff.goal, outcome: handedOff.outcome, signal });
+    await follow({ ...handedOff, signal });
 
     if (!signal.aborted) {
       forgetHandedOffGoal(handedOff);
@@ -125,6 +141,28 @@ function useFollowHandedOffGoal({
     void followHandedOff(controller.signal);
     return () => controller.abort();
   }, []);
+}
+
+function useFocusTitleOnNewScreen(screen: string) {
+  const lastFocusedScreen = useRef(screen);
+
+  useLayoutEffect(() => {
+    if (lastFocusedScreen.current === screen) {
+      return;
+    }
+
+    lastFocusedScreen.current = screen;
+
+    if (!isFocusLost(document.activeElement)) {
+      return;
+    }
+
+    const title = [
+      ...document.querySelectorAll<HTMLElement>('[data-slot="onboarding-title"]'),
+    ].find((heading) => heading.checkVisibility());
+
+    title?.focus({ preventScroll: true });
+  }, [screen]);
 }
 
 type GoalStartFlowProps = {
@@ -164,29 +202,10 @@ function GoalStartFlow({
     getInitialState({ defaultGoal, initialDraft, takesHandedOffGoal }),
   );
 
-  const screen = getScreenKey(state);
-  const lastFocusedScreen = useRef(screen);
-
-  useLayoutEffect(() => {
-    if (lastFocusedScreen.current === screen) {
-      return;
-    }
-
-    lastFocusedScreen.current = screen;
-
-    if (!isFocusLost(document.activeElement)) {
-      return;
-    }
-
-    const title = [
-      ...document.querySelectorAll<HTMLElement>('[data-slot="onboarding-title"]'),
-    ].find((heading) => heading.checkVisibility());
-
-    title?.focus({ preventScroll: true });
-  }, [screen]);
+  useFocusTitleOnNewScreen(getScreenKey(state));
 
   const savedDraft = useFollowSavedDraft({
-    follow: (draft) => setState({ draft, kind: "draft" }),
+    follow: (draft) => setState((current) => toDraftState({ current, draft })),
     initialDraft,
     shown: state.kind === "draft" ? state.draft : null,
   });
@@ -194,7 +213,7 @@ function GoalStartFlow({
   const showDraft = (draft: OnboardingDraftView) => {
     navigation.showDraft(draft.id);
     savedDraft.markOwn();
-    setState({ draft, kind: "draft" });
+    setState((current) => toDraftState({ current, draft }));
   };
 
   const draftActions = useDraftActions({
@@ -229,9 +248,9 @@ function GoalStartFlow({
     onDraft: showDraft,
     onError: showEntry,
     onExplanation: startExplanation,
-    onSending: (goal) => {
+    onSending: ({ goal, sentAt }) => {
       draftActions.cancel();
-      setState({ goal, kind: "sending" });
+      setState({ goal, kind: "sending", sentAt });
     },
     understanding: actions.understanding,
   });
@@ -290,7 +309,7 @@ function GoalStartFlow({
           <MaterialQuestions ask={actions.askMaterial} buddy={buddy} sources={attached} />
         )}
 
-        {state.kind === "sending" && <SendingGoal goal={state.goal} />}
+        {state.kind === "sending" && <SendingGoal goal={state.goal} since={state.sentAt} />}
 
         {state.kind === "draft" && (
           <DraftScreen
@@ -309,6 +328,7 @@ function GoalStartFlow({
             onBack={() => backToEntry(state.draft.prompt)}
             onRewrite={(goal) => void submission.send(goal)}
             routes={routes}
+            sentAt={state.sentAt}
           />
         )}
       </OnboardingFrame>

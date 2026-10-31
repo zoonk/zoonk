@@ -156,6 +156,7 @@ function ReadDraft({
 export function DraftScreen({
   draft,
   draftActions,
+  sentAt,
   ...props
 }: {
   actions: OnboardingActions;
@@ -168,6 +169,7 @@ export function DraftScreen({
   onBack: () => void;
   onRewrite: (words: string) => void;
   routes: OnboardingRoutes;
+  sentAt?: number;
 }) {
   const understanding = draft.status === "understood" ? draft.understanding : null;
 
@@ -181,6 +183,7 @@ export function DraftScreen({
         onRestart={draftActions.restart}
         onRetry={draftActions.retry}
         readFailed={draftActions.readFailed}
+        sentAt={sentAt}
         signUpHref={props.routes.signUp}
       />
     );
