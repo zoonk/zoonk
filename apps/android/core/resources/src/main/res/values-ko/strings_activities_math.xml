@@ -61,6 +61,7 @@
   "activities_math_formula_with_what_ifs": "c80977e3347aaed98b72d301180af154a8a0ee7ca2eb6536fb3e586c341c58be",
   "activities_math_number_line_answer": "04264c7459874a2614caf117ce3982779b0f115cf5707349c4d7ab059c4e822c",
   "activities_math_number_line_description": "8df206b72ea82123a4e410899b9c3213a2c23caa214dea22eb87a05fb30a72f9",
+  "activities_math_number_line_explore_description": "75b3f68617caa08d1067405dec87a937773e814ed0b6a7a65af24908372087d4",
   "activities_math_number_line_jumps": "8e0c06077799cc7b6f9e213e8a8c5bf0065d75ed7c4144e07be4c408a7b03996",
   "activities_math_number_line_label": "2fa85dcac6d079da843d7847614e24b0219d45017fdb891df869512f685ea639",
   "activities_math_run_again": "ddee1a576d72ce6465222da31fef5e298ca1cdc7f1f8acab4cd2e53d88c0384b",
@@ -100,6 +101,8 @@
     <string name="activities_math_number_line_answer">수직선 위의 내 답</string>
     <!-- What the number line shows, for TalkBack: its name, its ends, where it starts and where the learner's dot is, like "A number line for Temperature from -5 to 7. It starts at -3 °C, and your dot is at 5 °C." -->
     <string name="activities_math_number_line_description">%1$s 수직선으로, 범위는 %2$s부터 %3$s까지예요. 시작점은 %4$s이고, 답을 나타내는 점은 %5$s에 있어요.</string>
+    <!-- What an explained number line shows, for TalkBack: its name, its ends and where it starts, like "A number line for Temperature from -5 to 7. It starts at -3 °C." -->
+    <string name="activities_math_number_line_explore_description">%1$s의 수직선은 %2$s부터 %3$s까지예요. %4$s에서 시작해요.</string>
     <!-- Once checked, the jumps the line takes and where they land, like "The jumps go +3, +5 and land at 5 °C." -->
     <string name="activities_math_number_line_jumps">차례로 %1$s만큼 이동해 %2$s에 도착해요.</string>
     <!-- One result of a model at another value of its slider, like "Value after 20 years at 5%: $2,653". -->

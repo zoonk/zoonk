@@ -61,6 +61,7 @@
   "activities_math_formula_with_what_ifs": "360c736252d1d6eec8ea0347a308d24c2f4e5dab5c48f963e549e580f54a1670",
   "activities_math_number_line_answer": "6101c1f3a826bbd0a6fb5b59295a903470abddd997435bd38afc5da5149a3ab3",
   "activities_math_number_line_description": "608f2bbccaaea54d855325acefae20644a4c78391549416e563e8b9e4b73ae07",
+  "activities_math_number_line_explore_description": "c2c3ae7e64f8dd9d509915640c2e75688bd12634b4b31acaa73249d68ebdca65",
   "activities_math_number_line_jumps": "aecc204a5c637bd65915d9a153e836fa0fca5938ca34d115ab420d8df7a22a70",
   "activities_math_number_line_label": "7db11f7415ebc7fabfebe0ff3c8f77bfb13f7573bafaa69ae1a8705e7d35ba27",
   "activities_math_run_again": "75bf27929f11ef6d818e8b57059c49d4bb9e3aaa854b7ec587eb317b979117a1",
@@ -100,6 +101,8 @@
     <string name="activities_math_number_line_answer">Sayı doğrusundaki cevabın</string>
     <!-- What the number line shows, for TalkBack: its name, its ends, where it starts and where the learner's dot is, like "A number line for Temperature from -5 to 7. It starts at -3 °C, and your dot is at 5 °C." -->
     <string name="activities_math_number_line_description">%1$s için %2$s ile %3$s arasında bir sayı doğrusu. Başlangıç noktası %4$s, senin noktan ise %5$s.</string>
+    <!-- What an explained number line shows, for TalkBack: its name, its ends and where it starts, like "A number line for Temperature from -5 to 7. It starts at -3 °C." -->
+    <string name="activities_math_number_line_explore_description">%1$s için %2$s ile %3$s arasında bir sayı doğrusu. Başlangıç noktası %4$s.</string>
     <!-- Once checked, the jumps the line takes and where they land, like "The jumps go +3, +5 and land at 5 °C." -->
     <string name="activities_math_number_line_jumps">Sıçrama adımları %1$s, ulaşılan nokta %2$s.</string>
     <!-- One result of a model at another value of its slider, like "Value after 20 years at 5%: $2,653". -->

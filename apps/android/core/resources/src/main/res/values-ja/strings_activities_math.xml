@@ -61,6 +61,7 @@
   "activities_math_formula_with_what_ifs": "ca5857fb84ad3d0e60d5840201f65e62d25286309bde1f28acf210bdb4adcb58",
   "activities_math_number_line_answer": "8a6c0402d041461c3692320aa1ecf9af6eb822d3916fb5268e4834840bc77703",
   "activities_math_number_line_description": "9a9e9fdde8ccc461e1ff6472e856bc74926d2acb4c485548f1ae664108365878",
+  "activities_math_number_line_explore_description": "b656f9e64d20524076cf612a74925a4d45094bace8efa5c921b56fb855a00d0c",
   "activities_math_number_line_jumps": "443536d2efe3c5f787fa393c5fa9d90f4fca8578dbbd8656bea622491c19e3ca",
   "activities_math_number_line_label": "daf2dde7b0aabf7f979fe94c8ae582192b9a58abb88ee130809bf77a5694844a",
   "activities_math_run_again": "d88cc8bd25ada14bdd56c6f07928fda5b095040e4f66181210399d8d3164d23f",
@@ -100,6 +101,8 @@
     <string name="activities_math_number_line_answer">数直線上の答えの位置</string>
     <!-- What the number line shows, for TalkBack: its name, its ends, where it starts and where the learner's dot is, like "A number line for Temperature from -5 to 7. It starts at -3 °C, and your dot is at 5 °C." -->
     <string name="activities_math_number_line_description">%1$sの数直線です。範囲は%2$sから%3$sです。開始位置は%4$sで、答えの点は%5$sにあります。</string>
+    <!-- What an explained number line shows, for TalkBack: its name, its ends and where it starts, like "A number line for Temperature from -5 to 7. It starts at -3 °C." -->
+    <string name="activities_math_number_line_explore_description">%1$sの数直線で、%2$sから%3$sまでを示しています。%4$sから始まります。</string>
     <!-- Once checked, the jumps the line takes and where they land, like "The jumps go +3, +5 and land at 5 °C." -->
     <string name="activities_math_number_line_jumps">ジャンプの移動量は%1$sで、着地点は%2$sです。</string>
     <!-- One result of a model at another value of its slider, like "Value after 20 years at 5%: $2,653". -->

@@ -61,6 +61,7 @@
   "activities_math_formula_with_what_ifs": "b55b3fcf46ac291b17def32dec95393cf3bcc12917b30b3e7b041a164975d1f8",
   "activities_math_number_line_answer": "edb0f828bd94e73f175f9d0f39dd55cee468ed251d3ba6f48e686d7666ace948",
   "activities_math_number_line_description": "90dc2eaa9e8eb2c9f129b926ca70ef4b0e62df75e92d3ac5b1e09c6224af8bad",
+  "activities_math_number_line_explore_description": "78b3ebea087b97764d3bec9d4ea3eaa5966a19080a4885e160d3d5a2b1fc1890",
   "activities_math_number_line_jumps": "e3f41c4eb11a9a62429938a1ffdefed62bb2c1d2bbfffa13f1e6af5508fb6a30",
   "activities_math_number_line_label": "781269d72298bf00ae86c934431437be953b6ccd3c3d18a4b65cc7e182b766fb",
   "activities_math_run_again": "7aefdb5f036d6ae3c5287f666c1a412227fd1a9739d9b263d52534e726d0c1d9",
@@ -100,6 +101,8 @@
     <string name="activities_math_number_line_answer">Tu respuesta en la recta numérica</string>
     <!-- What the number line shows, for TalkBack: its name, its ends, where it starts and where the learner's dot is, like "A number line for Temperature from -5 to 7. It starts at -3 °C, and your dot is at 5 °C." -->
     <string name="activities_math_number_line_description">Una recta numérica de %1$s, de %2$s a %3$s. Empieza en %4$s y tu punto está en %5$s.</string>
+    <!-- What an explained number line shows, for TalkBack: its name, its ends and where it starts, like "A number line for Temperature from -5 to 7. It starts at -3 °C." -->
+    <string name="activities_math_number_line_explore_description">Una recta numérica para %1$s, de %2$s a %3$s. Empieza en %4$s.</string>
     <!-- Once checked, the jumps the line takes and where they land, like "The jumps go +3, +5 and land at 5 °C." -->
     <string name="activities_math_number_line_jumps">Los saltos son de %1$s y terminan en %2$s.</string>
     <!-- One result of a model at another value of its slider, like "Value after 20 years at 5%: $2,653". -->

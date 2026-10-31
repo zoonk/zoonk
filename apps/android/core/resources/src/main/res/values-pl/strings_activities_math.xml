@@ -61,6 +61,7 @@
   "activities_math_formula_with_what_ifs": "9685bfde0416be6bb3a782525e019a14323de868099f886ab64dc866c05b26df",
   "activities_math_number_line_answer": "0898c60adc1305c8483a00c56f51c0487dd05b3d45cfd453b7cb82ee3e0121f9",
   "activities_math_number_line_description": "1709fe0805f6de4cb421d324e9179b44515a667be87396ca700e118caf88efa6",
+  "activities_math_number_line_explore_description": "e6104e1bfee9c9f576c3219fb934ed8ac406fe66db30e2814055a5d58bc41be6",
   "activities_math_number_line_jumps": "0f033e5e1b0da3e19ba3a17f57fe458d5ba9a7084527f4f776c2d51d45e323ad",
   "activities_math_number_line_label": "7ad21ebe1dd0cf66eaf896ea34820b2ae6b427bc204dc02dca3361c8bac648c1",
   "activities_math_run_again": "657db57bf04c7bef2ae285cb25614cd31bfcc13fe0581752df496f200e0d5aee",
@@ -100,6 +101,8 @@
     <string name="activities_math_number_line_answer">Twoja odpowiedź na osi liczbowej</string>
     <!-- What the number line shows, for TalkBack: its name, its ends, where it starts and where the learner's dot is, like "A number line for Temperature from -5 to 7. It starts at -3 °C, and your dot is at 5 °C." -->
     <string name="activities_math_number_line_description">Oś liczbowa: %1$s, od %2$s do %3$s. Punkt początkowy: %4$s, a na %5$s jest twój punkt.</string>
+    <!-- What an explained number line shows, for TalkBack: its name, its ends and where it starts, like "A number line for Temperature from -5 to 7. It starts at -3 °C." -->
+    <string name="activities_math_number_line_explore_description">Oś liczbowa: %1$s, od %2$s do %3$s. Wartość początkowa: %4$s.</string>
     <!-- Once checked, the jumps the line takes and where they land, like "The jumps go +3, +5 and land at 5 °C." -->
     <string name="activities_math_number_line_jumps">Skoki o %1$s kończą się na %2$s.</string>
     <!-- One result of a model at another value of its slider, like "Value after 20 years at 5%: $2,653". -->

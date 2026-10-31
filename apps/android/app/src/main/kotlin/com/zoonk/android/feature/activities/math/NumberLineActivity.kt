@@ -67,20 +67,22 @@ private class Jump(
     val to get() = from + by
 }
 
-/** The dot's place is the numeric answer; once checked, the line draws the moves the answer takes. */
+/** The dot's place is the numeric answer; once checked, the line draws the moves the answer takes, and an explanation shows that walk solved. */
 @Composable
 private fun NumberLineActivity(props: ActivityProps) {
     val fields = (props.content as NumberLineContent).value.fields
     val locale = currentLocale()
     val format = { value: Double -> formatAmount(value, locale) }
     val withUnit = { value: Double -> formatAmount(value, locale, fields.unit) }
-    val position = props.answer.numericValue?.let { clamp(it, fields.min, fields.max) } ?: fields.start
     val stops = jumpStops(fields.start, fields.moves.map { it.by })
     val landing = stops.last()
+    val position =
+        if (props.isExploring) landing else props.answer.numericValue?.let { clamp(it, fields.min, fields.max) } ?: fields.start
+    val showsMoves = props.isChecked || props.isExploring
     val highlight = MaterialTheme.zoonk.vizHighlight
     val secondary = MaterialTheme.zoonk.vizSecondary
     val jumps =
-        if (props.isChecked) {
+        if (showsMoves) {
             fields.moves.mapIndexed { index, move ->
                 val label = move.label ?: formatAmount(move.by, locale, signed = true)
                 Jump(stops[index], move.by, label, if (index % 2 == 0) secondary else highlight)
@@ -93,15 +95,25 @@ private fun NumberLineActivity(props: ActivityProps) {
         }
     val description =
         listOfNotNull(
-            stringResource(
-                R.string.activities_math_number_line_description,
-                fields.label,
-                format(fields.min),
-                format(fields.max),
-                withUnit(fields.start),
-                withUnit(position),
-            ),
-            if (props.isChecked) {
+            if (props.isExploring) {
+                stringResource(
+                    R.string.activities_math_number_line_explore_description,
+                    fields.label,
+                    format(fields.min),
+                    format(fields.max),
+                    withUnit(fields.start),
+                )
+            } else {
+                stringResource(
+                    R.string.activities_math_number_line_description,
+                    fields.label,
+                    format(fields.min),
+                    format(fields.max),
+                    withUnit(fields.start),
+                    withUnit(position),
+                )
+            },
+            if (showsMoves) {
                 stringResource(
                     R.string.activities_math_number_line_jumps,
                     fields.moves.joinToString(", ") { formatAmount(it.by, locale, signed = true) },
@@ -124,6 +136,7 @@ private fun NumberLineActivity(props: ActivityProps) {
             jumps = jumps,
             landing = landing.takeIf { props.isChecked },
             locked = props.isLocked,
+            isExploring = props.isExploring,
             valueText = withUnit(position),
             format = format,
             onPlace = { props.onAnswerChange(numericAnswer(it)) },
@@ -142,6 +155,7 @@ private fun NumberLinePlot(
     jumps: List<Jump>,
     landing: Double?,
     locked: Boolean,
+    isExploring: Boolean,
     valueText: String,
     format: (Double) -> String,
     onPlace: (Double) -> Unit,
@@ -186,28 +200,27 @@ private fun NumberLinePlot(
             val start = Offset(x.toPixel(fields.start), baseline)
             drawCircle(colors.ring, (START_RADIUS + START_RING).toPx(), start)
             drawCircle(colors.start, (START_RADIUS - START_RING).toPx(), start)
+            if (isExploring) drawDot(Offset(x.toPixel(position), baseline), highlight, colors.ring)
         }
-        ActivityPlaceTrack(
-            area = Rect(x.range.first, baseline - trackHalf, x.range.second, baseline + trackHalf),
-            scale = x,
-            range = range,
-            onChange = onPlace,
-            disabled = locked,
-        )
-        ActivityPlaceHandle(
-            center = Offset(x.toPixel(position), baseline),
-            scale = x,
-            range = range,
-            value = position,
-            label = stringResource(R.string.activities_math_number_line_answer),
-            valueText = valueText,
-            onChange = onPlace,
-            disabled = locked,
-        ) {
-            Canvas(Modifier.size(HALO * 2)) {
-                drawCircle(highlight.copy(alpha = SOFT).compositeOver(colors.ring))
-                drawCircle(colors.ring, (DOT + DOT_RING).toPx())
-                drawCircle(highlight, (DOT - DOT_RING).toPx())
+        if (!isExploring) {
+            ActivityPlaceTrack(
+                area = Rect(x.range.first, baseline - trackHalf, x.range.second, baseline + trackHalf),
+                scale = x,
+                range = range,
+                onChange = onPlace,
+                disabled = locked,
+            )
+            ActivityPlaceHandle(
+                center = Offset(x.toPixel(position), baseline),
+                scale = x,
+                range = range,
+                value = position,
+                label = stringResource(R.string.activities_math_number_line_answer),
+                valueText = valueText,
+                onChange = onPlace,
+                disabled = locked,
+            ) {
+                Canvas(Modifier.size(HALO * 2)) { drawDot(center, highlight, colors.ring) }
             }
         }
         if (landing != null) {
@@ -216,6 +229,16 @@ private fun NumberLinePlot(
             }
         }
     }
+}
+
+private fun DrawScope.drawDot(
+    center: Offset,
+    highlight: Color,
+    ring: Color,
+) {
+    drawCircle(highlight.copy(alpha = SOFT).compositeOver(ring), HALO.toPx(), center)
+    drawCircle(ring, (DOT + DOT_RING).toPx(), center)
+    drawCircle(highlight, (DOT - DOT_RING).toPx(), center)
 }
 
 private class LineColors(

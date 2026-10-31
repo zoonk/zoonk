@@ -61,6 +61,7 @@
   "activities_math_formula_with_what_ifs": "c0bc8536f95d5d1323721540dc218bc45f9be75a70458a1b745cc3cfa7ec6f99",
   "activities_math_number_line_answer": "ee59f371c6e16652f6792ebf0febe33d7ebaff2fb0cbc4986f55b23c847185fb",
   "activities_math_number_line_description": "4c7c7cc52870bf434ffa0f543c2cefe07216cc671a978742f7299dc0338ffe78",
+  "activities_math_number_line_explore_description": "62c5e4f40dbc449f26357d51cf414a4ff391f4e000f8e75de7120d55ddb264a0",
   "activities_math_number_line_jumps": "45eef8efdfda94a2d1f7853cd735dbcc5c0393b64b67a3ace3c1117f40059892",
   "activities_math_number_line_label": "30850d22384984c3a415761f68812717fa0a5431fc6855f52f949dddbd46e4a5",
   "activities_math_run_again": "950b6a92b4c1bfa4f04995011d5c639cd6b0cef32368b399f21fc8b0a2da70aa",
@@ -100,6 +101,8 @@
     <string name="activities_math_number_line_answer">Deine Antwort auf dem Zahlenstrahl</string>
     <!-- What the number line shows, for TalkBack: its name, its ends, where it starts and where the learner's dot is, like "A number line for Temperature from -5 to 7. It starts at -3 °C, and your dot is at 5 °C." -->
     <string name="activities_math_number_line_description">Ein Zahlenstrahl für %1$s von %2$s bis %3$s. Er beginnt bei %4$s, und dein Punkt liegt bei %5$s.</string>
+    <!-- What an explained number line shows, for TalkBack: its name, its ends and where it starts, like "A number line for Temperature from -5 to 7. It starts at -3 °C." -->
+    <string name="activities_math_number_line_explore_description">Eine Zahlengerade für %1$s von %2$s bis %3$s. Sie beginnt bei %4$s.</string>
     <!-- Once checked, the jumps the line takes and where they land, like "The jumps go +3, +5 and land at 5 °C." -->
     <string name="activities_math_number_line_jumps">Die Sprünge verlaufen %1$s und landen bei %2$s.</string>
     <!-- One result of a model at another value of its slider, like "Value after 20 years at 5%: $2,653". -->
