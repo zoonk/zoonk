@@ -44,7 +44,7 @@ internal class FeedbackReveal {
         val keepsQuestion = question.top - margin
         val showsVerdict = verdict.bottom - height + margin
 
-        return if (whole > keepsQuestion && keepsQuestion > 0 && showsVerdict <= keepsQuestion) keepsQuestion else whole
+        return if (whole > keepsQuestion && keepsQuestion >= 0 && showsVerdict <= keepsQuestion) keepsQuestion else whole
     }
 }
 
