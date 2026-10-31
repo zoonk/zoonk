@@ -30,6 +30,8 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { kind: "scoredPart", minimum: { unit: "points", value: 54 }, part: ["P3"], questions: 90 },
         { kind: "scoredPart", minimum: { unit: "points", value: 50 }, part: ["P4", "discursiva"] },
         { kind: "totalMinimum", minimum: { unit: "points", value: 78 } },
+        { kind: "finalShare", parts: ["P1", "P2", "P3"], share: 0.5 },
+        { kind: "finalShare", parts: ["discursiva"], share: 0.5 },
       ],
     },
     id: "cgu-2026-affc-ti-points",

@@ -1000,70 +1000,6 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 9/9 (read 9). passages found 71/71. problems left 0",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 9/9 (read 9). passages found 71/71. problems left 0",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 9/9 (read 9). passages found 71/71. problems left 0",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "scoring", "method": "wrongCancelsRight" },
-            { "groups": ["P1", "P2", "P3", "P4"], "kind": "groupedSubjects" },
-            { "kind": "subject", "name": "Prova discursiva" },
-            { "kind": "markingRow", "part": ["P3"], "points": 2, "wrongPoints": 2 },
-            {
-              "kind": "scoredPart",
-              "minimum": { "unit": "points", "value": 8 },
-              "part": ["P1"],
-              "questions": 40
-            },
-            {
-              "kind": "scoredPart",
-              "minimum": { "unit": "points", "value": 12 },
-              "part": ["P2"],
-              "questions": 40
-            },
-            {
-              "kind": "scoredPart",
-              "minimum": { "unit": "points", "value": 54 },
-              "part": ["P3"],
-              "questions": 90
-            },
-            {
-              "kind": "scoredPart",
-              "minimum": { "unit": "points", "value": 50 },
-              "part": ["P4", "discursiva"]
-            },
-            { "kind": "totalMinimum", "minimum": { "unit": "points", "value": 78 } }
-          ]
-        },
-        "id": "cgu-2026-affc-ti-points-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Edital nº 1 – CGU 2026 – Auditor Federal de Finanças e Controle (atualizado)",
-              "url": "https://cdn.cebraspe.org.br/concursos/CGU_26_AFFC/arquivos/FDEEFB41D8ACD48AB369A9915EA1A48C67389EC91427E98F6F264E19B1F63FB9.pdf"
-            }
-          ],
-          "exam": "CGU 2026, Auditor Federal de Finanças e Controle, TI – Desenvolvimento de Sistemas"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
           "conclusion": "Facts kept 7/7 (read 7). passages found 83/83. problems left 1",
           "kind": "majorErrors",
           "score": 10
@@ -1121,6 +1057,72 @@
             }
           ],
           "exam": "Concurso CGU 2026, Auditor Federal de Finanças e Controle"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 11/11 (read 11). passages found 88/88. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 11/11 (read 11). passages found 88/88. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 11/11 (read 11). passages found 88/88. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "scoring", "method": "wrongCancelsRight" },
+            { "groups": ["P1", "P2", "P3", "P4"], "kind": "groupedSubjects" },
+            { "kind": "subject", "name": "Prova discursiva" },
+            { "kind": "markingRow", "part": ["P3"], "points": 2, "wrongPoints": 2 },
+            {
+              "kind": "scoredPart",
+              "minimum": { "unit": "points", "value": 8 },
+              "part": ["P1"],
+              "questions": 40
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": { "unit": "points", "value": 12 },
+              "part": ["P2"],
+              "questions": 40
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": { "unit": "points", "value": 54 },
+              "part": ["P3"],
+              "questions": 90
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": { "unit": "points", "value": 50 },
+              "part": ["P4", "discursiva"]
+            },
+            { "kind": "totalMinimum", "minimum": { "unit": "points", "value": 78 } },
+            { "kind": "finalShare", "parts": ["P1", "P2", "P3"], "share": 0.5 },
+            { "kind": "finalShare", "parts": ["discursiva"], "share": 0.5 }
+          ]
+        },
+        "id": "cgu-2026-affc-ti-points-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital nº 1 – CGU 2026 – Auditor Federal de Finanças e Controle (atualizado)",
+              "url": "https://cdn.cebraspe.org.br/concursos/CGU_26_AFFC/arquivos/FDEEFB41D8ACD48AB369A9915EA1A48C67389EC91427E98F6F264E19B1F63FB9.pdf"
+            }
+          ],
+          "exam": "CGU 2026, Auditor Federal de Finanças e Controle, TI – Desenvolvimento de Sistemas"
         }
       }
     }

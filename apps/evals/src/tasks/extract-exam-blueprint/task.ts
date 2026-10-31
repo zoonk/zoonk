@@ -42,6 +42,7 @@ type ExpectedFact =
       questions?: number;
     }
   | { kind: "totalMinimum"; minimum: PointsMinimum | null }
+  | { kind: "finalShare"; parts: string[]; share: number }
   | { kind: "wrongPenalty"; value: number }
   | { kind: "scale"; max: number; min: number }
   | { kind: "breakAfter"; minutes: number }
@@ -64,6 +65,7 @@ type Reading = {
   mock:
     | (Pick<NonNullable<ExtractionEvalOutput["mock"]>, "timeLimitMinutes" | "totalQuestions"> & {
         scoring: Pick<NonNullable<ExtractionEvalOutput["mock"]>["scoring"], "method"> & {
+          finalShares?: { parts: string[]; share: number }[];
           marking?: {
             part: string | null;
             points: number;
@@ -233,6 +235,7 @@ function hasFormat({
 
 const MOCK_FACT_KINDS = [
   "breakAfter",
+  "finalShare",
   "listeningParts",
   "markingRow",
   "scale",
@@ -249,6 +252,22 @@ type MockFact = Extract<ExpectedFact, { kind: (typeof MOCK_FACT_KINDS)[number] }
 
 function isMockFact(fact: ExpectedFact): fact is MockFact {
   return MOCK_FACT_KINDS.some((kind) => kind === fact.kind);
+}
+
+const SCORING_FACT_KINDS = [
+  "finalShare",
+  "markingRow",
+  "scale",
+  "scoredPart",
+  "scoring",
+  "totalMinimum",
+  "wrongPenalty",
+] as const;
+
+type ScoringFact = Extract<MockFact, { kind: (typeof SCORING_FACT_KINDS)[number] }>;
+
+function isScoringFact(fact: MockFact): fact is ScoringFact {
+  return SCORING_FACT_KINDS.some((kind) => kind === fact.kind);
 }
 
 const PENALTY_TOLERANCE = 0.01;
@@ -324,14 +343,33 @@ function hasMarkingRow({
   );
 }
 
+function hasFinalShare({
+  fact,
+  scoring,
+}: {
+  fact: Extract<ExpectedFact, { kind: "finalShare" }>;
+  scoring: Scoring | null;
+}): boolean {
+  return (scoring?.finalShares ?? []).some(
+    (share) =>
+      share.parts.length === fact.parts.length &&
+      fact.parts.every((name) =>
+        share.parts.some((part) => namesPart({ name: part, names: [name] })),
+      ) &&
+      Math.abs(share.share - fact.share) < PENALTY_TOLERANCE,
+  );
+}
+
 function isPointsFactFound({
   fact,
   scoring,
 }: {
-  fact: Extract<MockFact, { kind: "markingRow" | "scoredPart" | "totalMinimum" }>;
+  fact: Extract<MockFact, { kind: "finalShare" | "markingRow" | "scoredPart" | "totalMinimum" }>;
   scoring: Scoring | null;
 }): boolean {
   switch (fact.kind) {
+    case "finalShare":
+      return hasFinalShare({ fact, scoring });
     case "markingRow":
       return hasMarkingRow({ fact, scoring });
     case "scoredPart":
@@ -347,10 +385,7 @@ function isScoringFactFound({
   fact,
   scoring,
 }: {
-  fact: Extract<
-    MockFact,
-    { kind: "markingRow" | "scale" | "scoredPart" | "scoring" | "totalMinimum" | "wrongPenalty" }
-  >;
+  fact: ScoringFact;
   scoring: NonNullable<Reading["mock"]>["scoring"] | null;
 }): boolean {
   switch (fact.kind) {
@@ -360,6 +395,7 @@ function isScoringFactFound({
       return scoring?.wrongPenalty === fact.value;
     case "scale":
       return scoring?.scale?.min === fact.min && scoring.scale.max === fact.max;
+    case "finalShare":
     case "markingRow":
     case "scoredPart":
     case "totalMinimum":
@@ -370,6 +406,10 @@ function isScoringFactFound({
 }
 
 function isMockFactFound({ fact, reading }: { fact: MockFact; reading: Reading }): boolean {
+  if (isScoringFact(fact)) {
+    return isScoringFactFound({ fact, scoring: reading.mock?.scoring ?? null });
+  }
+
   const sections = reading.mock?.sections ?? [];
 
   switch (fact.kind) {
@@ -377,13 +417,6 @@ function isMockFactFound({ fact, reading }: { fact: MockFact; reading: Reading }
       return hasSection({ fact, reading });
     case "listeningParts":
       return hasListeningParts({ fact, reading });
-    case "markingRow":
-    case "scale":
-    case "scoredPart":
-    case "scoring":
-    case "totalMinimum":
-    case "wrongPenalty":
-      return isScoringFactFound({ fact, scoring: reading.mock?.scoring ?? null });
     case "breakAfter":
       return sections.some((section) => section.breakAfterMinutes === fact.minutes);
     case "tools":
