@@ -1,4 +1,7 @@
-import { engineModeFixtures } from "@zoonk/testing/fixtures/activity-contents";
+import {
+  activityContentFixtures,
+  engineModeFixtures,
+} from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it, onTestFinished } from "vitest";
 import { page } from "vitest/browser";
 import {
@@ -16,6 +19,26 @@ import { buildLesson } from "../preview/preview-lesson";
 const PHONE = { height: 812, width: 375 };
 const HALO = 2;
 const { breakEven } = engineModeFixtures.lineCrossing;
+const supplyDemand = activityContentFixtures.lineCrossing;
+
+const flatCost = {
+  ...breakEven,
+  fields: {
+    ...breakEven.fields,
+    lines: [
+      { id: "cost", intercept: 500, label: "Cost", slope: 0 },
+      { id: "revenue", intercept: 0, label: "Revenue", slope: 15 },
+    ],
+  },
+};
+
+const supplyDemandUpAndDown = {
+  ...supplyDemand,
+  fields: {
+    ...supplyDemand.fields,
+    shift: { amount: 2, direction: "down" as const, line: "supply" },
+  },
+};
 
 function lineName(name: string): SVGTextElement {
   const label = [...document.querySelectorAll<SVGTextElement>("figure svg text")].find(
@@ -115,6 +138,29 @@ async function handlesOutsideAtEachEnd(names: readonly string[]): Promise<string
   return outside;
 }
 
+function handleGapsFromTheCrossing(names: readonly string[]): number[] {
+  const dot = document.querySelector("figure svg circle.fill-foreground")?.getBoundingClientRect();
+
+  return names.map((name) => {
+    const ring = page
+      .getByRole("slider", { name: `Move the line ${name}` })
+      .element()
+      .querySelector("circle.fill-background")
+      ?.getBoundingClientRect();
+
+    if (!dot || !ring) {
+      return Number.NEGATIVE_INFINITY;
+    }
+
+    const between = Math.hypot(
+      ring.left + ring.width / 2 - (dot.left + dot.width / 2),
+      ring.top + ring.height / 2 - (dot.top + dot.height / 2),
+    );
+
+    return between - ring.width / 2 - dot.width / 2;
+  });
+}
+
 async function expectNamesOffTheirLines() {
   await expect.element(page.getByRole("slider", { name: "Move the line Revenue" })).toBeVisible();
   const revenue = lineName("Revenue");
@@ -176,6 +222,27 @@ describe("line crossing chart", () => {
     await atViewport(PHONE, async () => {
       openActivity({ content: breakEven, template: "lineCrossing" });
       await expect(handlesOutsideAtEachEnd(["Cost", "Revenue"])).resolves.toStrictEqual([]);
+    });
+  });
+
+  it("keeps a flat line's handle on the chart when its slide would leave it", async () => {
+    await atViewport(PHONE, async () => {
+      openActivity({ content: flatCost, template: "lineCrossing" });
+      await expect(handlesOutsideAtEachEnd(["Cost", "Revenue"])).resolves.toStrictEqual([]);
+    });
+  });
+
+  it("rests each handle clear of the crossing, and on the chart at both ends", async () => {
+    await atViewport(PHONE, async () => {
+      openActivity({ content: supplyDemandUpAndDown, template: "lineCrossing" });
+
+      await expect
+        .element(page.getByRole("slider", { name: "Move the line Demand" }))
+        .toBeVisible();
+
+      expect(Math.min(...handleGapsFromTheCrossing(["Supply", "Demand"]))).toBeGreaterThan(0);
+
+      await expect(handlesOutsideAtEachEnd(["Supply", "Demand"])).resolves.toStrictEqual([]);
     });
   });
 });

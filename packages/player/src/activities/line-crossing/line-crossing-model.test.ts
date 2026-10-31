@@ -2,12 +2,12 @@ import { describe, expect, it } from "vitest";
 import {
   changeDirection,
   chartDomain,
-  chartLayout,
   crossingPoint,
   lineShiftAnswer,
   moveLine,
   movedLine,
   shiftRange,
+  slideRange,
   visibleSegment,
 } from "./line-crossing-model";
 
@@ -94,25 +94,28 @@ describe(chartDomain, () => {
   });
 });
 
-describe(chartLayout, () => {
-  it("leaves room on the chart for each handle's whole slide", () => {
-    const { domain, homes } = chartLayout({
-      amount: 2,
-      axis: "horizontal",
-      lines: [supply, demand],
+describe(slideRange, () => {
+  it("slides twice the shift each way when the chart has room", () => {
+    expect(slideRange({ amount: 2, highest: 10.83, home: 5, lowest: 0, real: 0 })).toStrictEqual({
+      max: 4,
+      min: -4,
+      step: 0.5,
     });
-
-    const { max, min } = shiftRange(2);
-
-    expect(Math.min(...homes.map((home) => home.x + min))).toBeGreaterThanOrEqual(0);
-    expect(Math.max(...homes.map((home) => home.x + max))).toBeLessThanOrEqual(domain.x);
   });
 
-  it("keeps a falling line's handle above zero when it slides down", () => {
-    const { homes } = chartLayout({ amount: 2, axis: "vertical", lines: [supply, demand] });
-    const { min } = shiftRange(2);
+  it("stops where the handle would leave the chart", () => {
+    const flatCost = { intercept: 500, slope: 0 };
+    const extent = chartDomain({ amount: 500, axis: "vertical", lines: [flatCost, revenue] }).y;
+    const range = slideRange({ amount: 500, highest: extent, home: 500, lowest: 0, real: 500 });
 
-    expect(homes[1].y + min).toBeGreaterThanOrEqual(0);
+    expect(range.min).toBe(-500);
+    expect(500 + range.max).toBeLessThanOrEqual(extent);
+  });
+
+  it("never stops short of the line's real move", () => {
+    expect(slideRange({ amount: 500, highest: 1000, home: 900, lowest: 0, real: 500 }).max).toBe(
+      500,
+    );
   });
 });
 

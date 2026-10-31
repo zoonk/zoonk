@@ -108,6 +108,7 @@ export function LineCrossingActivity({
         lines={[first, second]}
         offsets={offsets}
         onMove={handleMove}
+        real={real}
         xLabel={fields.xLabel}
         yLabel={fields.yLabel}
       />
