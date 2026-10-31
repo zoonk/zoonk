@@ -30,7 +30,7 @@
   "generation_notice_line_2": "7b1362d1f17846bbbe3c2df426547de60144a5e38b929abbb1fdc804d5fea324",
   "generation_phase_active": "00d415371ed085694d928e79e6f34c77417fcd9be3f9b9e347137cf8c706c04d",
   "generation_phase_completed": "e1e23422eadb2faadaf975a205c44432d4eb7fcd04401777291d44310cb334e4",
-  "generation_phase_failed": "5651c9c5b618e1fc9dce34fc0f48eb7327a9ae41159611032861e257f4fa1fa2",
+  "generation_phase_failed": "01041f9254a06bde937c57a344e01e9f8e9691fd26a949f1fbc51ad460b5a46f",
   "generation_phase_pending": "b46bd5cb882c63270610836c9604a2c9b36bf699b8fc303da00685294a3ec1b4",
   "generation_placement": "8bd12c3698d03a3e0d69a65f1d9970f17c64d5dc7295f74d58f39666abe7c08b",
   "generation_placement_questions": "aee4c2a38b097cb5e4199db94e87dfea00d11b3aaa63c9bbb385a2b6417cfcf1",
@@ -71,7 +71,7 @@
     <string name="generation_phase_pending">まだ始まっていません</string>
     <string name="generation_phase_active">進行中</string>
     <string name="generation_phase_completed">完了</string>
-    <string name="generation_phase_failed">ここで停止しました</string>
+    <string name="generation_phase_failed">ここで止まりました</string>
     <!-- A detail line while questions are written, with the question's number. -->
     <string name="generation_question_line">第%1$d問を作成しています…</string>
     <string name="generation_question_review">答え合わせをしています…</string>

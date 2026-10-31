@@ -37,7 +37,7 @@
   "tutor_error_session": "66b213841fec6765bfc1d8d8541a56acbb9933023fd89aa3c2236c2653e7051d",
   "tutor_error_slow_down": "ef9fd12050c97e60344364a73a22392e6ad8d01bd8c7f8eac2abfec62e76ab92",
   "tutor_error_subscription": "2c34bd0600beb05dd6ebcec6fc7627222a7fd559e3bb7b807e944c4a2a71ac98",
-  "tutor_get_answer": "edb6f310887cc8cd1e058983a4cc55684ab0e3edce82c8fb645ace9c1a59a29a",
+  "tutor_get_answer": "f8f53be312863b2df8c92ee2171f8d24b9529216490ae3863d138b517e36c9d7",
   "tutor_guest_title": "ac6c59f83be624779d88098597b03ce2f4f7d2ddb032af76aa154ef7ef436e78",
   "tutor_link_cancel": "5ea6512cf6ad9f5b7752cf4f045b112b6a42a90b0a8b0bd5d3c353f19bccbc99",
   "tutor_link_description": "3cc47837da25c72003f8fbd0e04ea29cbd279ed4b9c0e24aa875c1496ddd2b79",
@@ -78,7 +78,7 @@
   "tutor_offer_plus": "545f83ac3aedf980ec2b8cc7b9bb34dc0dafd7d44b3d400738176b4d770180fd",
   "tutor_offer_plus_description": "fbb0d3b44a88b92725125cf8834d3afa4752047523e7f165860316575327e18a",
   "tutor_offer_plus_subscribed": "7e5ce2753919d0abfccc141d7688dce4c8ad097c8fe2572d99e582ae0627e138",
-  "tutor_offer_practice": "020bec564dee05d33d9556994cec8a6caa0ed75d3ae852ad9fef79b2a53c7ae9",
+  "tutor_offer_practice": "3f37bb2113608f25754e7680fdd493a81a7059c0654a2a1b3ef1a3cbd1d38b1c",
   "tutor_offer_pronunciation": "3ec5e6b5c93e390b125aa6e2e56bfaaf1889353a5adaddfc6c766b77f8b1bb7f",
   "tutor_offer_see_plus": "a99de65bd1f7b5a1e9d0f61c1ef2a9a2eacecdd6ad9cbb4414d0e2b7c4154c0e",
   "tutor_offer_start": "afb5b98d7e1da5c8798f1d3d2e6d624d113b554dae4bbf3007fae4eb2ee647ab",
@@ -158,7 +158,7 @@
     <string name="tutor_guest_title">無料アカウントを作成して質問する</string>
     <!-- Loading the written chat with the learner's buddy. Not a speaking call. -->
     <string name="tutor_loading">チャットを読み込んでいます…</string>
-    <string name="tutor_get_answer">回答を見る</string>
+    <string name="tutor_get_answer">答えを聞く</string>
     <string name="tutor_not_answered">この質問には回答できませんでした。</string>
     <string name="tutor_answer_failed">回答を最後まで作成できませんでした。</string>
     <string name="tutor_check_again">もう一度確認する</string>
@@ -202,7 +202,7 @@
     <string name="tutor_offer_open">開く</string>
     <string name="tutor_offer_choose">選ぶ</string>
     <string name="tutor_offer_start">始める</string>
-    <string name="tutor_offer_practice">演習</string>
+    <string name="tutor_offer_practice">練習</string>
     <string name="tutor_offer_call_paused">現在、会話機能はどなたも利用できません。しばらくしてからもう一度お試しください。</string>
     <string name="tutor_offer_start_goal">新しい目標を始める</string>
     <!-- The goal the learner may start, in quotes. -->

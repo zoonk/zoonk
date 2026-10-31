@@ -72,7 +72,7 @@ msgstr "料金"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "xIoGG9"
 msgid "Go to"
-msgstr "移動"
+msgstr "移動先"
 
 #. Words people type to find Send feedback in the search, never shown. Keep “bug” and add the words people use in this language.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
@@ -1720,7 +1720,7 @@ msgstr "どの曜日でも"
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "wmdZZD"
 msgid "Any time"
-msgstr "どの時間帯でも"
+msgstr "いつでも"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "QF6BDw"
@@ -1762,7 +1762,7 @@ msgstr "正答率が最も高い曜日"
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "dFW9lU"
 msgid "Best time"
-msgstr "正答率が最も高い時間帯"
+msgstr "得意な時間帯"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "WDXXIC"
@@ -1812,7 +1812,7 @@ msgstr "すべての回答のうち"
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 msgctxt "gAnLDP"
 msgid "Right"
-msgstr "正解数"
+msgstr "正解"
 
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 msgctxt "3YnSzO"
@@ -3099,7 +3099,7 @@ msgstr "昨日"
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "yesterdaySwitch.cMaydB"
 msgid "Studied"
-msgstr "学習した"
+msgstr "学習済み"
 
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "yesterdaySwitch.1Gku3Z"
@@ -3196,7 +3196,7 @@ msgstr "ホームに戻る"
 #: src/app/[lang]/essay/[blockId]/page.tsx
 msgctxt "Jo0iJd"
 msgid "Writing practice"
-msgstr "ライティングの練習"
+msgstr "小論文の練習"
 
 #: src/app/[lang]/explain/[goalId]/explain-client.tsx
 msgctxt "UOYMne"
@@ -3917,7 +3917,7 @@ msgstr "苦手の克服"
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "KV-O0y"
 msgid "Practice"
-msgstr "練習"
+msgstr "演習"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "Csk9Zg"

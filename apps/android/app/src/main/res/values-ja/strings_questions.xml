@@ -25,7 +25,7 @@
   "questions_entry_fraction": "be5aeb9f01e9add0839fac5c411bbe1a2b7fa9db3e61b8b9e25feb23f1d4ba41",
   "questions_entry_integer": "5b7c62dd116028e4939a85cf0ae5f5c3040fca4497543ca0dc8769b9b14af760",
   "questions_false": "903219b7bea6e96bf5ececf77ed939c48008ddb50f845e4182e5c9ef7e1a46b9",
-  "questions_feedback_label": "50584a55a1c83c440116ec012bc9b093148bc63575d8e0b4efe72b705a3b5586",
+  "questions_feedback_label": "d950a821df341a5733a090e90f4062822b74f601cb2e463e0d03edb0e73df253",
   "questions_invalid_fraction": "7d25b0de0708846058ba4afd77ce1fdc6d16957eb1e52b426a1d9f9d5143c7d3",
   "questions_invalid_integer": "9c47ca06387b27c5d53fa99ccb8e8b122a232ea599de95574ce41e6c23a951ca",
   "questions_invalid_number": "439085f99d66f858b66204021a51d9d98b574ee57b38b612b71d0c266740c9e5",
@@ -99,7 +99,7 @@
     <!-- %1$s is a decimal number written the language's way, like 2.5. -->
     <string name="questions_invalid_fraction">2/3のような分数か、%1$sのような数値を入力してください。</string>
     <string name="questions_invalid_integer">12のような整数を入力してください。</string>
-    <string name="questions_feedback_label">答え合わせの結果</string>
+    <string name="questions_feedback_label">回答へのフィードバック</string>
     <string name="questions_correct">正解です！</string>
     <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
     <string name="questions_not_quite">正解ではありません</string>

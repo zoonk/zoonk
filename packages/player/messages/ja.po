@@ -79,7 +79,7 @@ msgstr "実際にやってみる"
 #: src/activities/_components/activity-badge.tsx
 msgctxt "UJRCcU"
 msgid "Label it"
-msgstr "名前を付ける"
+msgstr "ラベルを付ける"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "eGo7pb"
@@ -180,7 +180,7 @@ msgstr "順を追って進む"
 #: src/activities/_components/activity-badge.tsx
 msgctxt "S-w423"
 msgid "Step through"
-msgstr "一段階ずつ進める"
+msgstr "手順をたどる"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "4M_1qG"
@@ -884,7 +884,7 @@ msgstr "コードを実行すると、出力が表示されます"
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "5ZJLyt"
 msgid "Nothing printed"
-msgstr "何も出力されませんでした"
+msgstr "何も出力されていません"
 
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "fio5op"
@@ -969,12 +969,12 @@ msgstr "未設定"
 #: src/activities/code-tracer/tracer-parts.tsx
 msgctxt "nKNuOk"
 msgid "Step back"
-msgstr "前のステップに戻る"
+msgstr "1ステップ戻る"
 
 #: src/activities/code-tracer/tracer-parts.tsx
 msgctxt "VbyaoP"
 msgid "Step forward"
-msgstr "次のステップに進む"
+msgstr "1ステップ進む"
 
 #: src/activities/code-tracer/tracer-parts.tsx
 msgctxt "LQcg2H"
@@ -3014,12 +3014,12 @@ msgstr "一時停止"
 #: src/components/play-audio-button.tsx
 msgctxt "J3ca41"
 msgid "Play"
-msgstr "再生"
+msgstr "再生する"
 
 #: src/components/player-choice-scene.tsx
 msgctxt "akd-cv"
 msgid "Answer options"
-msgstr "答えの選択肢"
+msgstr "回答の選択肢"
 
 #: src/components/translation-step.tsx
 msgctxt "anLbqe"
@@ -3255,7 +3255,7 @@ msgstr "{name}に聞く"
 #: src/lesson/controls/ask-buddy-offer.tsx
 msgctxt "c-JYNI"
 msgid "No thanks"
-msgstr "今は大丈夫"
+msgstr "今はやめておく"
 
 #. Button the learner taps to see the lesson's explanation before answering this question.
 #: src/lesson/controls/explain-first-button.tsx
@@ -3498,7 +3498,7 @@ msgstr "レッスンを閉じる"
 #: src/lesson/lesson-player-header.tsx
 msgctxt "dYp90P"
 msgid "Lesson progress"
-msgstr "レッスンの進み具合"
+msgstr "レッスンの進行状況"
 
 #: src/lesson/lesson-player-shell.tsx
 msgctxt "ZHEKO0"
@@ -3523,7 +3523,7 @@ msgstr "これはもう知っている"
 #: src/lesson/lesson-stage.tsx
 msgctxt "qzpeai"
 msgid "Write again"
-msgstr "もう一度書く"
+msgstr "もう一度作成する"
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "LnHBcu"
@@ -3628,12 +3628,12 @@ msgstr "変化なし"
 #: src/lesson/steps/challenge/challenge-meters.tsx
 msgctxt "PCaH9F"
 msgid "much lower"
-msgstr "大きく低下"
+msgstr "大幅に低下"
 
 #: src/lesson/steps/challenge/challenge-meters.tsx
 msgctxt "PSDUKP"
 msgid "much higher"
-msgstr "大きく上昇"
+msgstr "大幅に上昇"
 
 #: src/lesson/steps/challenge/challenge-meters.tsx
 msgctxt "xklNWu"
@@ -3767,7 +3767,7 @@ msgstr "発音のコツ："
 #: src/lesson/steps/worked-example-step.tsx
 msgctxt "RW_YMt"
 msgid "Worked example"
-msgstr "例題と解説"
+msgstr "解説付きの例"
 
 #: src/lesson/tutor/tutor-quote.tsx
 #: src/questions/item-tutor.tsx
@@ -4054,7 +4054,7 @@ msgstr "回答を最後まで作成できませんでした。"
 #: src/questions/lesson-question-turn.tsx
 msgctxt "plrEVt"
 msgid "Get answer"
-msgstr "回答を見る"
+msgstr "答えを見る"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "TtobyB"

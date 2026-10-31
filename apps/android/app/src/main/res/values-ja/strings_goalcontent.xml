@@ -45,11 +45,11 @@
   "goalcontent_module_count": "7506eee2df9cc8bf155fc341267dea929e4e8a8178ffab73e866119a166a2221",
   "goalcontent_modules": "27676010b67443d416c99b13db8a6c1f7b743410c6e095c30227331f20de77b3",
   "goalcontent_more_chapters": "f27ee266241ecf73e2f9d07068532b0bba7fc2f3351b18ac22033a8185497375",
-  "goalcontent_new": "d2564d163734e535bac8a99cc44b0b5f2f8ae68fc1465fc2319a99978647c5d0",
+  "goalcontent_new": "a1077b29b1a3654de119a652c00766cd9214768d99cbed015af0c2ea3da2f898",
   "goalcontent_next_date": "8ec082deaa789e4f31b1a33662fe260237bf915e729b0141e50e49b37ef4125d",
   "goalcontent_not_in_plan": "0be63d04aee19a3bd8baa587c773742711ec19fd71196a096d29ece7a88f9bd4",
   "goalcontent_percent_done": "1e03727052d726fa2324a3e9cd906365016a0bb1f59564c4d350e1e8353579e5",
-  "goalcontent_practice": "9f623b586788014f46cc07fa870ede082545f678444c7665c5b674dd0a221afb",
+  "goalcontent_practice": "c002214272f9c22cf3101621a159fb4317b96631491fed627c4256cc7d27b9c2",
   "goalcontent_practice_chapter": "5216b7c2acf39bb89e6d4427d3ed9052de213825df9afafc23647cce0783c694",
   "goalcontent_practice_daily_cap": "2766d4dca0daadba1983ecef43a4b1cae75a1000ed8a18fbfdbfecb8149ace02",
   "goalcontent_practice_failed": "40dbe1b12f4656211d12dde576755ad0da328622bb520a123ffea6d3750eff85",
@@ -143,7 +143,7 @@
     <!-- Legend of a progress bar's parts. -->
     <string name="goalcontent_studied">学習済み</string>
     <string name="goalcontent_known">知っていた</string>
-    <string name="goalcontent_new">変更後</string>
+    <string name="goalcontent_new">新規</string>
     <!-- An exam subject's estimated readiness. -->
     <string name="goalcontent_preparation">準備状況</string>
     <string name="goalcontent_coverage">学習状況</string>
@@ -251,7 +251,7 @@
     <string name="goalcontent_subject_chapter">%1$s · 第%2$s章</string>
     <string name="goalcontent_chapter_number">第%1$s章</string>
     <string name="goalcontent_progress">進み具合</string>
-    <string name="goalcontent_practice">演習</string>
+    <string name="goalcontent_practice">練習</string>
     <string name="goalcontent_practice_chapter">この章を練習する</string>
     <string name="goalcontent_practice_daily_cap">今日の追加練習はここまでです。この章の練習は明日の学習で続けます。</string>
     <string name="goalcontent_practice_nothing">この章にはまだ練習する内容がありません。</string>

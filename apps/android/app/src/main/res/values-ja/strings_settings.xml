@@ -27,7 +27,7 @@
   "settings_licenses_website": "dd60760a564df5a2d31db75c27655e4310057561b43b90d11ff88da573fd80fe",
   "settings_manage_apple": "0fe56eebfbbcee3ece3331de2b9e5f1a8e9ecc04ecb0f29c51935ffc757290b6",
   "settings_memory": "df3e4c3aa15c5503206a19fffb9488cdec20753ae9c719365cf9414bd6df2d6a",
-  "settings_preferences": "bae27367027ceb1f44d9d357e55a1630a8ce95f42df3960f5d0eb84b922b9f2a",
+  "settings_preferences": "68cbe0056556621e185ec10196f6d024e2d4fed07a1cdca61747d52c750a54c5",
   "settings_preferences_app_language": "8db893624e11f4bfeb05b7b786e1b523585357050ca0b352a1e6bdfca9a655c1",
   "settings_preferences_buddy": "73c76d51e9f7524079b0645156cdf074696a9cbd6760a9fb1dae647919e71815",
   "settings_preferences_buddy_line": "3f2f018254f692a759aac6149a5620059a52ee7789ad0201f5b8c831144099bf",
@@ -54,7 +54,7 @@
 }
 -->
 <resources>
-    <string name="settings_preferences">好み</string>
+    <string name="settings_preferences">環境設定</string>
     <string name="settings_memory">メモリ</string>
     <!-- %1$s is the buddy's name and %2$s the app's language, like "Zu · English". -->
     <string name="settings_preferences_summary">%1$s · %2$s</string>

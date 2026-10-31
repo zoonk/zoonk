@@ -7,7 +7,7 @@
   "essay_criterion_closing": "2613b3052e14f15169834411bb19d0e70a4785cb2b2260c50d0ceaa4854d003b",
   "essay_criterion_cohesion": "750da3d18da700dd2fbaf1cbf697d3d11dc32d09684a8739de7b790f7321b088",
   "essay_criterion_facts": "30f63d8b959c656c80f9a21bd066b85b792ce17b91d2bd67cea77e0d189f3611",
-  "essay_criterion_formal_writing": "af6ac115eadeda4bd35e09494040738c6ddadb7fa25655f3c4e8fe5beca1e391",
+  "essay_criterion_formal_writing": "fc972d34b94d3421b52c17fa110c9e6a99f330157530d8e633fa51e3de065c7d",
   "essay_criterion_intervention": "a98590fd284c23b55fa1337a43f95161bdbcd83018f9b5ffd6b1f37f4779ada4",
   "essay_criterion_legal_basis": "5bb2d27befb2a4a3b3a43efdf8ca4988fd107cc0e5946cda68106b832a13fa80",
   "essay_criterion_requests": "8d1ccacdb5e4da3f2b0e41d3bd2573431d9a319cf2d13ea49327bfdc41cea1c5",
@@ -68,7 +68,7 @@
     <string name="essay_scale">推定スコア（0〜%1$s）</string>
     <!-- A criterion's score, such as "160 of 200". -->
     <string name="essay_score_of">%1$s / %2$s</string>
-    <string name="essay_criterion_formal_writing">改まった文体</string>
+    <string name="essay_criterion_formal_writing">フォーマルな文体</string>
     <!-- Enem essay competence 2: addressing the set theme and drawing on outside knowledge. -->
     <string name="essay_criterion_topic">テーマと知識の活用</string>
     <string name="essay_criterion_argument">論の展開</string>

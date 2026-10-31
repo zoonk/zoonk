@@ -9,7 +9,7 @@
   "stats_answers": "a4df4937fe6ac437a814bd58e2d0f75c6d33b703e3e6667b860321e3d5dbb017",
   "stats_any_day": "a525962c2ae59b6e8638f16dac8de85963d61bcbd70662984c50e7b3a14fd410",
   "stats_any_day_studied": "a0b3d920776b261fb64b3c5ac06d5fde68f95f19aacfa5cc2e7ab40b28a7f2ed",
-  "stats_any_time": "e35520da3da6058b00c5567d95de25beb7dd8c0a2931553cdce3d8ebda65cf27",
+  "stats_any_time": "9d4d8a9141273beba70fc2886bcaeddbd87151a75eb72e4f07235792eb50ae5d",
   "stats_average": "c7788b2acc898b514ddc1ad8f3f09a0995e27603d2c044a95c5b81e223fbeff4",
   "stats_back_from_today": "b91a24493708a7c76ff93507906b1a7517a42cf0006020d658aae784bbd5099c",
   "stats_belt_at": "1fe51ff6cb62af6458feba472fbb13139542247c79f360882db4707a64104aa3",
@@ -17,7 +17,7 @@
   "stats_belt_earned": "ff9fa09132443349ef65e3fe7608f0e542fd16f0b5c1de2708de6a8b9acf8559",
   "stats_belt_progression": "cd5e0159cf8f135c8e8c7ac4042a705706cb2077432dd6863f352ceaf6b0f355",
   "stats_best_day": "c9343adb1e39e7fbb331bd258e356567bb1f7bec9226d342fefb84d74843f590",
-  "stats_best_time": "74b9e5dc084b6b3a754b089c2a47cb927f58605f7b22435b571e2b0e1f71f62e",
+  "stats_best_time": "7de3d7ebe0b08a0d6f3197f3a61f4aab7a25aedd1e47d96d4af583e798e74233",
   "stats_brain_power": "becec7b5e0f23dd30a0143e7937b7942cee9829cf2e2eb85c0c70ac07f5d3b2d",
   "stats_brain_power_amount": "c5542f0cf102aa2aa3ba3b26ec12f840e03f5fc3df2e900a13a33c1afa2d6dee",
   "stats_calendar_activity_summary": "f4ff0ff6807c9d2a8f4d7ea0cf4b671ebc92effc3eef5a7b68de3ab7bbf21579",
@@ -58,7 +58,7 @@
   "stats_night": "3149ad09bbd0ebf51e2110adb4dbf2bbc44216d333547e28197d18a6d86966c8",
   "stats_no_answers": "7a18a3fa1d2d51b4be46a497701e36de399b260a3ddfc8d7c0454adc3c1f757d",
   "stats_not_enough": "15712627b55ef2b8b348469aa665e47c12ebb5824af900d0493192582fbd3620",
-  "stats_not_yet": "a55fcda7fc728a471c435d43fa4c2f148fcebc7d88495b882058c14e04792ad9",
+  "stats_not_yet": "562ba61b1a5dd9e118725b6e9e35a983f134a1266be0d8bf409bf0d19bb05cab",
   "stats_of_all_answers": "66dff2d30637f4a3ba5b24da44c9e4fa0f37f23eea79e86a8f74b8499b38bb26",
   "stats_open": "70bc0c0ebed0d1db12dc017e9c77580e517628ef0bc52093d5cda5be8b390bb2",
   "stats_overview": "6a925434d0b1d487401a59d62acffa8cbba73d4e2a414d681be122bfa9fae96b",
@@ -108,7 +108,7 @@
     <string name="stats_patterns">傾向</string>
     <string name="stats_empty_title">学習を始めると進み具合を確認できます</string>
     <string name="stats_go_to_today">「今日」へ移動する</string>
-    <string name="stats_not_yet">まだです</string>
+    <string name="stats_not_yet">まだ</string>
     <string name="stats_part_failed">この部分を読み込めませんでした。</string>
     <string name="stats_energy_average">平均 %1$s</string>
     <string name="stats_study_days">学習日数</string>
@@ -123,7 +123,7 @@
     <string name="stats_patterns_90">傾向 · 90日間</string>
     <string name="stats_see_all">すべて見る</string>
     <string name="stats_best_day">正答率が最も高い曜日</string>
-    <string name="stats_best_time">正答率が最も高い時間帯</string>
+    <string name="stats_best_time">調子のよい時間帯</string>
     <!-- Noun row label for how much the scores varied over the week; its value is the range from the lowest to the highest weekday score, such as "62%–80%". -->
     <string name="stats_week_spread">曜日ごとのスコアの幅</string>
     <string name="stats_range">%1$s〜%2$s</string>
@@ -209,7 +209,7 @@
     <string name="stats_throughout_week">曜日別</string>
     <string name="stats_throughout_day">時間帯別</string>
     <string name="stats_any_day">どの曜日でも</string>
-    <string name="stats_any_time">どの時間帯でも</string>
+    <string name="stats_any_time">いつでも</string>
     <!-- Answers given from midnight to 6 AM. -->
     <string name="stats_night">深夜・早朝</string>
     <string name="stats_morning">朝</string>

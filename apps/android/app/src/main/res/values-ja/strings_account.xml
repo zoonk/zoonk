@@ -28,7 +28,7 @@
   "account_menu_log_out": "4f6fad1bb48b5a7bb37ccf30169f541e46b4cbc9222f1a4308a7591e488bdd94",
   "account_menu_pricing": "21a9ae691b3fac3d97f3cabdc2948d6a3b2e653e09978701e3e7105c2cb6c143",
   "account_menu_settings": "21d08ec5f6e0424f0d3581f0fcb71ceb060e6cf07515ed39f7853fa259db3a97",
-  "account_menu_subscription": "9727c68bd23376d515e3b87c0396942875a1856e49267c93ab684cd152412c29",
+  "account_menu_subscription": "6d617322af0513eea71ac1b24b6de8204801d2e3243ab0cd2cbda44c99d434d0",
   "account_name": "a971d665052f1cea5a5fa46427cc8b6566eb89ff45ae67cdf7140b08e23e3639",
   "account_name_description": "d36ba81861aef243f3782d3d4d39714e5d849bd7dbb40aa9d6afb971d777bae6",
   "account_new_code_failed": "b0f17daf116254d6c8483e0f461e4fece62dd6ca671833f13e433168b30cef00",
@@ -112,7 +112,7 @@
     <string name="account_username_rules">3～30文字。英数字とアンダースコアのみ使えます。</string>
     <string name="account_save_failed">プロフィールを保存できませんでした。もう一度お試しください。</string>
     <string name="account_menu_settings">設定</string>
-    <string name="account_menu_subscription">利用プラン</string>
+    <string name="account_menu_subscription">サブスクリプション</string>
     <string name="account_menu_pricing">料金</string>
     <string name="account_menu_help">ヘルプ</string>
     <string name="account_menu_log_out">ログアウト</string>

@@ -3,8 +3,8 @@
 {
   "activities_sorting_about_years": "5d2e096e3fa56204824186583187ad55836cd95efd14b6eab625c9fac75a67a0",
   "activities_sorting_all_sorted": "68b4b682d53c70ac2b131be64c56ab3a5e955249917f6a047bd1f08e602dc53a",
-  "activities_sorting_badge_label_it": "64bdc392a7d1cc540391319cee8920dfa8c09d78b7306d4584de42808e69736e",
-  "activities_sorting_badge_link_causes": "4e64243bb7ba0f5bf4943f665213c3c813b9aa2eb065e14f3715b72175fe55be",
+  "activities_sorting_badge_label_it": "7284e418707ee1131c5e3948ce55b64ab90aec5c0d1634518821a98cf406bf5a",
+  "activities_sorting_badge_link_causes": "4ac1cc75603f71e90d4f4396d65f0c3789f4c95f8e0e1707d64349267a85ecab",
   "activities_sorting_badge_match_pairs": "7ece404ad928beba3ccf02e5c96d220e7ebaa91a0f9ed3e245c5a571a85ff9e2",
   "activities_sorting_badge_place_in_time": "76da7c02e82aa5e8c784078f18c48517c55285ae434ae8ea444be97c6e64ad67",
   "activities_sorting_badge_put_in_order": "d778df71a8bd601baf8c2d175e71e5417cf6d537ac87706923326974c0ada97c",
@@ -139,7 +139,7 @@
     <string name="activities_sorting_goes_with">%1$sのペアは%2$sで、%3$sではありません。</string>
     <!-- Above the cards that look like a match but have none. -->
     <string name="activities_sorting_look_alikes">似ていてもペアにならないカード</string>
-    <string name="activities_sorting_badge_link_causes">原因をつなぐ</string>
+    <string name="activities_sorting_badge_link_causes">原因を結びつける</string>
     <string name="activities_sorting_pick_cause">原因を選び、次にその結果を選んでください。</string>
     <!-- After a cause is picked, like "Now pick what Years of drought led to." -->
     <string name="activities_sorting_now_pick">次に、%1$sが何につながったか選んでください。</string>
@@ -199,7 +199,7 @@
     <string name="activities_sorting_gap_between">%1$s（%2$s）から%3$s（%4$s）まで</string>
     <!-- What the timeline's drawing covers, for TalkBack, like "A timeline from 3000 BCE to 2000 CE." -->
     <string name="activities_sorting_timeline_from">%1$sから%2$sまでの年表です。</string>
-    <string name="activities_sorting_badge_label_it">名前を付ける</string>
+    <string name="activities_sorting_badge_label_it">ラベルを付ける</string>
     <!-- Read by TalkBack when a name goes on a numbered spot of the picture, like "Aorta on spot 5." -->
     <string name="activities_sorting_name_on_spot">%1$sを%2$s番に置きました。</string>
     <!-- Read by TalkBack when a name is taken off its spot, like "Aorta taken off." -->

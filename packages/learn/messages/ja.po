@@ -9,7 +9,7 @@ msgstr ""
 #: src/_components/answer-option.tsx
 msgctxt "akd-cv"
 msgid "Answer options"
-msgstr "答えの選択肢"
+msgstr "回答の選択肢"
 
 #. Tags the learner's pick when it counts as neither right nor wrong.
 #: src/_components/answer-option.tsx
@@ -345,7 +345,7 @@ msgstr "明日また会話の練習ができます。Plusに登録すると、�
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"
 msgid "Coming up"
-msgstr "これから"
+msgstr "今後の学習"
 
 #: src/_components/lesson-list.tsx
 #: src/appearance/appearance-screen.tsx
@@ -975,7 +975,7 @@ msgstr "丸形"
 #: src/buddies/buddy-labels.tsx
 msgctxt "EG5RcY"
 msgid "Star glasses"
-msgstr "星形メガネ"
+msgstr "星形のメガネ"
 
 #: src/buddies/buddy-labels.tsx
 msgctxt "zDRNy5"
@@ -985,7 +985,7 @@ msgstr "アビエーター型メガネ"
 #: src/buddies/buddy-labels.tsx
 msgctxt "4k0N-w"
 msgid "Cat-eye glasses"
-msgstr "キャットアイ型メガネ"
+msgstr "キャットアイのメガネ"
 
 #: src/buddies/buddy-labels.tsx
 msgctxt "kkaEy0"
@@ -1120,7 +1120,7 @@ msgstr "初めてフェーズチャレンジに勝ったごほうびです。"
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "XV5HMz"
 msgid "Star glasses!"
-msgstr "星形メガネ！"
+msgstr "星形のメガネ！"
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "wy1Nxr"
@@ -1130,7 +1130,7 @@ msgstr "初めて週間チャレンジを終えたごほうびです。"
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "jcEok6"
 msgid "Aviator glasses!"
-msgstr "アビエーターメガネ！"
+msgstr "アビエーター型のメガネ！"
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "C-l1GK"
@@ -1150,7 +1150,7 @@ msgstr "復習を50回終えたごほうびです。"
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "Pocdew"
 msgid "Retro glasses!"
-msgstr "レトロメガネ！"
+msgstr "レトロなメガネ！"
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "BaBoNG"
@@ -1670,7 +1670,7 @@ msgstr "スキル"
 #: src/plan/use-short-plan.ts
 msgctxt "KV-O0y"
 msgid "Practice"
-msgstr "演習"
+msgstr "練習"
 
 #: src/chapter/chapter-screen.tsx
 #: src/journey/journey-hero.tsx
@@ -1864,7 +1864,7 @@ msgstr "次のフェーズ"
 #: src/checkpoints/checkpoint-result-details.tsx
 msgctxt "U_fdgH"
 msgid "What's next"
-msgstr "次のステップ"
+msgstr "次にすること"
 
 #: src/checkpoints/checkpoint-result-details.tsx
 msgctxt "WhT_G3"
@@ -2107,7 +2107,7 @@ msgstr "管理する"
 #: src/conversation/tutor-offer-card.tsx
 msgctxt "offers.KV-O0y"
 msgid "Practice"
-msgstr "演習"
+msgstr "練習する"
 
 #: src/conversation/tutor-plan-change.tsx
 msgctxt "LTNKL8"
@@ -2323,7 +2323,7 @@ msgstr "各評価基準のコメントを見る"
 #: src/essay/essay-labels.tsx
 msgctxt "CNjg8R"
 msgid "Formal writing"
-msgstr "改まった文体"
+msgstr "文体・表現の適切さ"
 
 #. Enem essay competence 2: addressing the set topic and drawing on outside knowledge.
 #: src/essay/essay-labels.tsx
@@ -2410,7 +2410,7 @@ msgstr "自由記述・AP採点基準"
 #: src/session/use-block-copy.ts
 msgctxt "Jo0iJd"
 msgid "Writing practice"
-msgstr "ライティングの練習"
+msgstr "文章を書く練習"
 
 #: src/essay/essay-prompt.tsx
 msgctxt "OJsoa4"
@@ -3257,7 +3257,7 @@ msgstr "完了"
 #: src/generation/generation-wait.tsx
 msgctxt "tc4dTE"
 msgid "stopped here"
-msgstr "ここで停止しました"
+msgstr "ここで止まりました"
 
 #: src/generation/generation-wait.tsx
 msgctxt "wSt267"
@@ -4442,7 +4442,7 @@ msgstr "再接続しています…"
 #: src/language/conversation/call-control.tsx
 msgctxt "bGfToC"
 msgid "Calling…"
-msgstr "呼び出しています…"
+msgstr "接続しています…"
 
 #: src/language/conversation/call-control.tsx
 msgctxt "kVieCI"
@@ -4829,7 +4829,7 @@ msgstr "使った表現"
 #: src/language/conversation/conversation-result.tsx
 msgctxt "A4Mc64"
 msgid "To improve"
-msgstr "改善できる点"
+msgstr "改善点"
 
 #. The call's goals, things to say, that the learner hasn't said yet.
 #: src/language/conversation/conversation-result.tsx
@@ -5877,7 +5877,7 @@ msgstr "プロフィール"
 #: src/memory/memory-labels.tsx
 msgctxt "lEdpUM"
 msgid "Routine"
-msgstr "習慣"
+msgstr "生活リズム"
 
 #: src/memory/memory-labels.tsx
 msgctxt "PCSt5T"
@@ -6296,7 +6296,7 @@ msgstr "{area}を練習する"
 #: src/missions/mission-copy.tsx
 msgctxt "missions.KV-O0y"
 msgid "Practice"
-msgstr "演習"
+msgstr "練習"
 
 #: src/missions/mission-copy.tsx
 msgctxt "missions.R-J5ox"
@@ -6788,7 +6788,7 @@ msgstr "まだわからない"
 #: src/session/question-block/question-feedback.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
-msgstr "答え合わせの結果"
+msgstr "回答へのフィードバック"
 
 #. "Your notebook" is the learner's Mistakes notebook.
 #: src/mistakes/practice-step.tsx
@@ -6839,7 +6839,7 @@ msgstr "{answered, plural, =0 {回答した問題は#問です} other {#問に�
 #: src/mock/mock-runner-view.tsx
 msgctxt "kyHVVK"
 msgid "Written part"
-msgstr "記述式パート"
+msgstr "記述問題"
 
 #: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-review.tsx
@@ -7148,7 +7148,7 @@ msgstr "提出後は回答を変更できません。"
 #: src/mock/mock-hand-in.tsx
 msgctxt "p7qnGJ"
 msgid "Keep answering"
-msgstr "回答を続ける"
+msgstr "解答を続ける"
 
 #: src/mock/mock-labels.tsx
 msgctxt "6i2nIX"
@@ -7396,12 +7396,12 @@ msgstr "不正解"
 #: src/mock/mock-result-answers.tsx
 msgctxt "EVKFmp"
 msgid "Partly right"
-msgstr "部分正解"
+msgstr "一部正解"
 
 #: src/mock/mock-result-answers.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
-msgstr "未回答"
+msgstr "未解答"
 
 #: src/mock/mock-result-answers.tsx
 msgctxt "AD7fbK"
@@ -8086,7 +8086,7 @@ msgstr "解説を開いています…"
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "n-6wcY"
 msgid "Explain it"
-msgstr "解説を読む"
+msgstr "説明する"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dXKhtW"
@@ -8155,7 +8155,7 @@ msgstr "目標を保存しています…"
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "2zqqBZ"
 msgid "Start musicianship"
-msgstr "音楽の基礎を学ぶ"
+msgstr "音楽の基礎を学び始める"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "h6_d7P"
@@ -8565,7 +8565,7 @@ msgstr "要項で確定するまでは、見込みの日程です。"
 #: src/onboarding/steps/date-step.tsx
 msgctxt "V5oclX"
 msgid "Another date"
-msgstr "別の日付を選ぶ"
+msgstr "別の日付"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "39WY1F"
@@ -9181,7 +9181,7 @@ msgstr "例：教師、学生"
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "8UHLr_"
 msgid "Your role"
-msgstr "職種"
+msgstr "職業・立場"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "8wmIea"
@@ -9505,7 +9505,7 @@ msgstr "教育機関：{institution}"
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "ujaB7H"
 msgid "Where"
-msgstr "教育機関"
+msgstr "志望先"
 
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "O6G1Qp"
@@ -11079,7 +11079,7 @@ msgstr "練習を増やします。"
 #: src/plan/use-proposed-sentence.ts
 msgctxt "i8iXqU"
 msgid "More explanation."
-msgstr "説明を増やします。"
+msgstr "解説を多めにします。"
 
 #: src/plan/use-proposed-sentence.ts
 msgctxt "IXaFjE"
@@ -11211,7 +11211,7 @@ msgstr "macOS"
 #: src/plan/use-system-name.ts
 msgctxt "38lkyw"
 msgid "Phone only"
-msgstr "スマホのみ"
+msgstr "スマートフォンのみ"
 
 #: src/plan/use-system-name.ts
 msgctxt "XnimdQ"
@@ -11375,7 +11375,7 @@ msgstr "この回答で終了する"
 #: src/session/summary/summary-actions.tsx
 msgctxt "2O2sfp"
 msgid "Finish"
-msgstr "完了する"
+msgstr "終了する"
 
 #: src/questions/item-set-stimulus.tsx
 msgctxt "_pDdit"
@@ -12001,7 +12001,7 @@ msgstr "新しいレッスン"
 #: src/session/use-block-copy.ts
 msgctxt "JfeRyY"
 msgid "Bonus practice"
-msgstr "追加練習"
+msgstr "追加の練習"
 
 #: src/session/use-block-copy.ts
 msgctxt "MbAJ4_"
@@ -12746,7 +12746,7 @@ msgstr "無料プランの試験対策"
 #: src/today/today-exam-choice.tsx
 msgctxt "SVKPfj"
 msgid "Exam choice"
-msgstr "受験科目の選択"
+msgstr "試験の選択"
 
 #: src/today/today-exam-moment.tsx
 msgctxt "9HjIgh"
@@ -12817,7 +12817,7 @@ msgstr "追加する"
 #: src/today/today-insight.tsx
 msgctxt "c-JYNI"
 msgid "No thanks"
-msgstr "今は大丈夫"
+msgstr "見送る"
 
 #: src/today/today-insight.tsx
 msgctxt "xNg7nj"

@@ -13,10 +13,10 @@
   "search_continue_failed": "4536cdf05522cc536d26e78e15d1e741eeb519dda0cebe799298faf8daf5f3b2",
   "search_group_account": "7856156d901309ccec0c854cf3711ca5decf934336df39857e80a6b29be2b551",
   "search_group_actions": "06254e5b0b8281d96e4bbc88c2a7c1b949d0b0dce6efcb9d70a62782e0180f7f",
-  "search_group_ask": "677b01115781f24f325a316fed21358b9c3576169840841c3391cc8bf4548347",
+  "search_group_ask": "3b41af5b72c4bb90f803b74f1f810d3d627e44895aa0c9fc721e0d6398baecb9",
   "search_group_catalog": "91d482bc1c7d276dd18c396c079995aab473ef3f2524b7e05ed609a27dcfcbeb",
   "search_group_explanations": "0464658fc2830f338b906e51336ac9674732e17e2985eb06d2eca8f78e2641b4",
-  "search_group_go_to": "7a7d4e5282770c4edbe843044033644442005ec88fdf7e6dca945d2b6ac7223b",
+  "search_group_go_to": "d851324784fc36a9a8e908434533f7e2cea263b3aa02dccbf9371df73ed38d0b",
   "search_group_goals": "8bafaa328de3dbc2121608c39940870301bf08a5aa4e697179d6b298726a8bd8",
   "search_group_help": "d455491aadcd236490f9f24d1c452445c3aaeed6129367d509f19e8929ef4bd0",
   "search_group_mocks": "0dadcf4ee5d43f0dcc9f07e873198b4e18023a6bf1e4f458a87335d33153a130",
@@ -34,7 +34,7 @@
   "search_open": "8cc8f938889d1a65bf9256710bb96388413b1aac03471fe8e115b05903f3b903",
   "search_placeholder": "417de576b5606407e96493b7f6f33621d2eeb3aa159602350ac5c88f3941d4f4",
   "search_practice_mistakes": "fcf8631bc9e21dfb727607c501dc1329a6c816364c3a7a086fba45c544ffd472",
-  "search_preferences": "921229710227ef776de853c45ed4b7ee1d2bc388240739cc4fbd9fcb3b8fbd01",
+  "search_preferences": "9d3ba292ea0a48cd90d198bcad835e5f2e6c555acdebfd88d547500f521b2c79",
   "search_pricing": "965282ecb31a489e9d370369df4536ac6335c527839263cf7e91a909494b1a70",
   "search_profile": "9411a37d74973716667aeadb5d8bd3d6ca919efe5102ab05d7d2fa63e3d06fdd",
   "search_send_feedback_keywords": "e7578c1022e8a360e048f501dfb9d2af21ef87f01d38f322006ae43f1cf5b9f3",
@@ -43,7 +43,7 @@
   "search_start_goal_named": "b3bed4de5d4eb0ddcc54549a4032b278e0ffba2d208fbfd4547c4f0c03dbc7d9",
   "search_start_new_goal": "cbbd4220cf10734b2dabfecd615cf7b3b966186780fed06838e2f895c1a60119",
   "search_start_new_goal_named": "7f68102e92460f6f571daec631a1ac82f1ea3ade0f49428b39cf52cf360d5a33",
-  "search_subscription": "78e1a6b858d819188e01dc5f6991e232cdd2e0f8de8358bd791696e9a2a84e42",
+  "search_subscription": "fce8d821e83268b11453dcdb1b4cfa290a5320fcbd283bf7b6f7c5ea135ad253",
   "search_switch_goal": "7ab8fa6ac4fd9e8d61cadbd1e1832b063cdfa762dda53752a1565091a9809a91",
   "search_take_mock": "42d0710d1426514e4b566a4a5acd3f389c8b126d177529d393b2aea43358cd67",
   "search_take_mock_detail": "31cab762eb519db745f9e897a013680833377153a7551a538a57bc28bf8d60da"
@@ -56,7 +56,7 @@
     <string name="search_clear">検索内容を消す</string>
     <string name="search_continue_failed">次のステップを開けませんでした。もう一度お試しください。</string>
     <string name="search_group_actions">操作</string>
-    <string name="search_group_go_to">移動</string>
+    <string name="search_group_go_to">移動先</string>
     <string name="search_group_goals">目標</string>
     <string name="search_group_explanations">簡単な解説</string>
     <string name="search_group_plan">学習計画</string>
@@ -64,7 +64,7 @@
     <string name="search_group_catalog">カタログ内</string>
     <string name="search_group_account">アカウント</string>
     <string name="search_group_help">ヘルプ</string>
-    <string name="search_group_ask">質問する</string>
+    <string name="search_group_ask">質問</string>
     <string name="search_group_new_goal">新しい目標</string>
     <string name="search_continue">今日の学習を続ける</string>
     <string name="search_take_mock">模試を受ける</string>
@@ -90,8 +90,8 @@
     <string name="search_settings">設定</string>
     <string name="search_profile">プロフィール</string>
     <string name="search_memory">メモリ</string>
-    <string name="search_subscription">利用プラン</string>
-    <string name="search_preferences">好み</string>
+    <string name="search_subscription">サブスクリプション</string>
+    <string name="search_preferences">設定</string>
     <string name="search_appearance">外観</string>
     <string name="search_language">言語</string>
     <string name="search_ask_question">%1$sに「%2$s」と聞く</string>

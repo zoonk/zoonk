@@ -3,7 +3,7 @@
 {
   "activities_code_badge_query_data": "5c35b8a456a850537f69e4b01a474b12bdecb784b88650738c4b4a396444f0c8",
   "activities_code_badge_run": "f328741319afca9aaf14c7f3e1f2839efea27ad3282f49d3ca6eacd144b200b3",
-  "activities_code_badge_step_through": "267f6d82ca78dfef2bbf536729d1d988e3df170a409fabadfc52abf627922f20",
+  "activities_code_badge_step_through": "52047959c7e55ba4bb2fc5e556f11e9e70dd80b0152c9424ea7422b7c2243bdf",
   "activities_code_badge_test_pattern": "10a124b61bcbce3886a7b982de45bb61f622b200e16fdfa5b742ba1e5225d651",
   "activities_code_before_first_line": "7063e1f2a1555035676bb4e66700f292305515f665b69eaab72691d94d8327ec",
   "activities_code_changed_code": "800fc093ef511284112a3987edf51c162d12d0284aa68c88475fb138a460e8d0",
@@ -22,7 +22,7 @@
   "activities_code_no_table": "140bce3e23985f582b952b0b2cc4eca9e1cff3853d239b739b43449f76c4046b",
   "activities_code_not_quite": "736491b531dbf8107d3db1291bc08baf6c86b5acd2cc0396e1a00761801ba3f2",
   "activities_code_not_set": "fcdf49c43b63e1f42578ad3fabb715b5f761e48e652c74cae983a5d9efee721c",
-  "activities_code_nothing_printed": "af5f3678cdb56921467f9819e81d3c1b7b72e3e1f0cc743f01db02c1add5d33c",
+  "activities_code_nothing_printed": "cf095e1de5065c75f33ff0146a3ba3e4874f84c198b5260ca49cbbffb73b7a00",
   "activities_code_output": "514324af83c80938c6dda62a20b684bdfea8438bab6eeab12dd8daa5aaef7a7b",
   "activities_code_pass_count": "2dc8ad703e83fb3a6d2e62d2786abee42441a876d6a6e6354f440c7584e9c3de",
   "activities_code_pattern_cant_run": "5954c263cecfa73d2d61c08780050843475a634cb2bbefdc3c5a62a1e41fb515",
@@ -71,8 +71,8 @@
   "activities_code_snippet_zero_or_more": "2bc794ab864a45e18fd36c2492e12c8790fa53de4a1ffff7678f93ff29cd5bc4",
   "activities_code_sql_words": "8f5ac831b4b25f0b011978a0448610e2ffbc52386f7b8932bd7b332b25536a10",
   "activities_code_start_over": "99e8005b716f5e5abdb9b07f550beac1cb38b16b46bbf5e9c0c2855b1882eefa",
-  "activities_code_step_back": "f4f6a4597a4e0ba8b9a2fc318cd8066ad24349a92e1c98baa47c3e8dff04c222",
-  "activities_code_step_forward": "be35a7de1cccb6ac494ea94afc108b5c5658f33d70dbb00a9fb3fe8835cf8442",
+  "activities_code_step_back": "498a1c7b0cb3ae77e8e7af8789638c1882871e015647d21d33b993f16aa189bf",
+  "activities_code_step_forward": "b3987a3250395df2b95fecbca2d4abbe545dd1c26358e1f92c1539ff32119c9a",
   "activities_code_step_next_line": "92322a0abbff40c2f290f0a305cc4328801a81454a097658ef685eaf54ecc021",
   "activities_code_step_of": "634a39f1f1b047896f6046670a86036e0dae3711598ec850c9eac51d655989c1",
   "activities_code_step_to_see": "262deb79f1431b47ab6607135aff9ad77151888f9c96702cb808d9162e0b9026",
@@ -120,7 +120,7 @@
     <!-- The output the program should print. -->
     <string name="activities_code_expected">期待される出力</string>
     <string name="activities_code_run_to_see">コードを実行すると、出力が表示されます</string>
-    <string name="activities_code_nothing_printed">何も出力されませんでした</string>
+    <string name="activities_code_nothing_printed">出力なし</string>
     <string name="activities_code_changed_code">コードを変更しました。もう一度実行して、新しい出力を確認してください。</string>
     <!-- A program's error and the line it happened on, like "Line 2: NameError: name 'x' is not defined". -->
     <string name="activities_code_error_line">%1$d行目：%2$s</string>
@@ -236,9 +236,9 @@
     <string name="activities_code_expected_result">期待される結果</string>
     <string name="activities_code_expected_result_in_order">期待される結果（この順序で）</string>
     <string name="activities_code_query_that_works">正しい結果が得られるクエリ</string>
-    <string name="activities_code_badge_step_through">一段階ずつ進める</string>
-    <string name="activities_code_step_back">前のステップに戻る</string>
-    <string name="activities_code_step_forward">次のステップに進む</string>
+    <string name="activities_code_badge_step_through">ステップ実行</string>
+    <string name="activities_code_step_back">1ステップ戻る</string>
+    <string name="activities_code_step_forward">1ステップ進む</string>
     <!-- Where a code trace stands before any line ran. -->
     <string name="activities_code_before_first_line">最初の行の実行前</string>
     <!-- Where a code trace stands, like "Step 2 of 4". -->

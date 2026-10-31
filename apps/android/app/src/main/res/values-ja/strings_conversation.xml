@@ -56,8 +56,8 @@
   "conversation_get_ready_description": "4732a3a776dc47f7e2bbbf0076e5e357c3be6fd2dd31fd6228f1668a52555885",
   "conversation_getting_ready": "9f828ff43234b28b695b012435b4379bb454a8700953bcf3fe84e573eb220482",
   "conversation_go_to_task": "4c882a3ed753e64dbd739a7e0432b7e57676fd8cdea89620cd4c412bc0d59782",
-  "conversation_goal_done": "06a026ce8623d666b6cac0e73b56b2fd84a6e31a51220e587322e29785df58ea",
-  "conversation_goal_not_yet": "6ccdf29da5ab5c39fbe123d5b50ec95cf1f6de3c04548ff1e398df7d25744be2",
+  "conversation_goal_done": "49a9b4b965299d4bcde590cbd21c9780709355e40fcb9651b3dd3d89d09f4ef2",
+  "conversation_goal_not_yet": "67728058d3e62da67cbad828769e9a6476771276433d6396857a0355803a26ce",
   "conversation_goals": "608c8785d7e65b841abac0aa36c1c100a13fe26a7ec5d1828fa216058ce42ef9",
   "conversation_goals_met": "4ff5a35978d21be8cef8e4bf652a0156dd483ecd68403a529e1f85429eaf0db2",
   "conversation_goals_tile": "c9d9c9fb32357eeaec1e58d47e646454503d6d5cdafc4d25784719a1cda3af04",
@@ -138,7 +138,7 @@
   "conversation_taken_over": "0233f0cf67d5f777b1e65464a8f06b5f624a5b9d267ef16bc006aba4005ed86a",
   "conversation_talking": "f91b77bd188807bec915a34ea2b767ce47b02c0c097b480cc0d85da7d268f834",
   "conversation_tip": "21f4592127e2325f8248f7edc812f3bf97657913435981a30cd9bff30e965a77",
-  "conversation_to_improve": "60c1a3dca67c8928f552c49ed9a3fcb828bdf9f129a6e07fb433bee6666c4596",
+  "conversation_to_improve": "f69786c962575df361c97d42108e0fe611b023acae0e469861828cedcaa2bab4",
   "conversation_toefl_mock": "286044fea36a4187ed8f1690d62c8bd9c66e030142ad1177d25818b3d321e7f8",
   "conversation_try_again": "e82e03479c07173332e7def5b59740e6902f69220f37ac78a337b7e749bff18e",
   "conversation_try_again_later": "200f787c48a673340abd4bad6ad167d13333c27f52409256583cdc4d37558719",
@@ -205,8 +205,8 @@
     <string name="conversation_goals">会話の目標</string>
     <!-- How many of the call's goals the learner has met, such as "1 of 3". -->
     <string name="conversation_goals_met">%1$s / %2$s</string>
-    <string name="conversation_goal_done">完了</string>
-    <string name="conversation_goal_not_yet">まだです</string>
+    <string name="conversation_goal_done">達成</string>
+    <string name="conversation_goal_not_yet">まだ</string>
     <string name="conversation_reconnecting">再接続しています…</string>
     <string name="conversation_calling">呼び出しています…</string>
     <string name="conversation_microphone_off">マイクがオフ</string>
@@ -255,7 +255,7 @@
     <string name="conversation_stars_rule">会話を終えると星を1つ、伝えたいことをすべて伝えると1つ、ヘルプを使わなければ1つ獲得できます。</string>
     <string name="conversation_went_well">うまくできたこと</string>
     <string name="conversation_said_well">うまく言えたフレーズ</string>
-    <string name="conversation_to_improve">改善できる点</string>
+    <string name="conversation_to_improve">改善点</string>
     <string name="conversation_still_to_get_across">まだ伝えていないこと</string>
     <string name="conversation_words_to_practice">声に出して練習する単語</string>
     <!-- Labels of a correction: what the learner said, then a better way to say it. -->

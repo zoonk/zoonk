@@ -29,7 +29,7 @@
   "subscription_cancel_anytime": "c7c206e8bd8b3f503334b3a4695145818cebb085d6c8e117a453294c15d4a0c0",
   "subscription_cancel_failed": "dbf8c1521bc0ef618eb73c6b5d9e23792af82a27e755e06a0f9f30262b72fd59",
   "subscription_contact_support": "5c517849a791f02fb65165a7f3473bdb1706e79e4671f42564d820ba0178bef8",
-  "subscription_ending": "6c0af16cfa98ae33a8762b6e27151e9dc7c30381212f9084513528ba7398ef60",
+  "subscription_ending": "9f3652dd50437e339618bd0c2e730671d280469be33778ff27d4b3f17070ad92",
   "subscription_ends_on": "1978a3105f31425f282ea6224c985d2257ac275813c0f360a3ced91800f871a8",
   "subscription_free": "8f059e3c68f5e778ad0b39582eeeb22851991fdba71e018d5a61d621efd80517",
   "subscription_free_buddy": "0f15fe6016861dbc1b1e1e953e7e45094b1a44fc10f1596c732ce0b0c5ce8337",
@@ -78,7 +78,7 @@
   "subscription_unavailable": "8c999a3ba8217eb9c0c8777fe459b081cdb0d52e081c079c770257ac0158bb45",
   "subscription_yearly": "d3890f92a1536f9e7de590075a988ef1c9130acc594f1d7bd85cf1e58d9a33f2",
   "subscription_yearly_per_month": "ea75f3890722c31b3c6e922d55e17f8e59db256ca2142b68cfbae75b4874e5a3",
-  "subscription_your_plan": "fb4a7e418324432d8076232ae2d8dacfffb90498c4b8a7eefa8c824d530ef1dc"
+  "subscription_your_plan": "1fb4070b1f49eeac5d71c8d091a7017f2f74d13cc04ac1eac5aa463087ee7e3a"
 }
 -->
 <resources>
@@ -88,7 +88,7 @@
     <string name="subscription_free_week_over_title">試験対策の無料期間（1週間）が終了しました</string>
     <string name="subscription_free_week_over_description">復習や間違い直しは引き続き無料です。Plusでは、新しいレッスンや学習計画の続き、模試に取り組めます。</string>
     <string name="subscription_active">有効</string>
-    <string name="subscription_ending">終了予定</string>
+    <string name="subscription_ending">サブスクリプション終了予定</string>
     <!-- %1$s is a date. -->
     <string name="subscription_ends_on">サブスクリプションは%1$sに終了します。</string>
     <!-- %1$s is a date. -->
@@ -105,7 +105,7 @@
     <!-- Opening the page that cancels a Plus bought on the web failed. -->
     <string name="subscription_cancel_failed">サブスクリプションの管理画面を開けませんでした。hello@zoonk.comまでお問い合わせください</string>
     <string name="subscription_offer_title">Zoonk Plusに登録する</string>
-    <string name="subscription_your_plan">学習計画</string>
+    <string name="subscription_your_plan">利用中のプラン</string>
     <string name="subscription_free">無料プラン</string>
     <!-- %1$d is how many buddy messages were used today and %2$d the day's limit, which picks the plural. -->
     <plurals name="subscription_messages_used">

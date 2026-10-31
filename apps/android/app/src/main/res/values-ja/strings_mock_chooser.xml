@@ -63,7 +63,7 @@
   "mock_chooser_subjects": "7691a3365ee84812a8e29eb88405674e97fa4d008a727bde894ea80614845477",
   "mock_chooser_time_limit": "31825a354906b3b6c674bcbc2165975d0ca98c704667382175ba45007b12abb1",
   "mock_chooser_title": "3827d1234522d6bcede8e4f14069f3482d474d9b975bd7157ce667d4797451df",
-  "mock_chooser_usually_takes": "6573430c2e4d172e06b609bf951e8d16dceb98916fb433f61bfddc17a78a0abe",
+  "mock_chooser_usually_takes": "b7e6b0c17dc4a0ee0a160f50f7495c8b5c2a08c4548a8d36f9108728d73248d1",
   "mock_chooser_writing": "e4e00b0c59856aa9e4441a48750a109ed3cab0d5f4cd8a967a40ecae4c762980",
   "mock_chooser_writing_questions": "02bf3f141f4decaa5fe4292200ad459f1a907719c3055cb31bdaacade5bd5877",
   "mock_chooser_writing_questions_line": "a03961f21328e788b92ea571021cf248d7cb29df57e0e366d695243f738ec77b",
@@ -116,7 +116,7 @@
     <string name="mock_chooser_picked">選択した模試</string>
     <string name="mock_chooser_questions">問題</string>
     <string name="mock_chooser_time_limit">制限時間</string>
-    <string name="mock_chooser_usually_takes">所要時間の目安</string>
+    <string name="mock_chooser_usually_takes">通常の所要時間</string>
     <!-- %1$s is a duration, such as "1 hr 20 min". -->
     <string name="mock_chooser_about">約%1$s</string>
     <!-- %1$s is a duration, such as "30 min". -->

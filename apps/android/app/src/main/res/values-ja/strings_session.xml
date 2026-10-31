@@ -24,7 +24,7 @@
   "session_block_weakest": "7104403a7c7182b7fafc25aacb60a838086a168c49458e6472d8a994ed7f3101",
   "session_block_weekly_challenge": "ec1586be9f1bd39b81aed0eeab687c10613e18aebc2dec18fec79576c631dd92",
   "session_block_what_you_know": "18d36f3a50e7473f4c70af5421894bcbfb67dca65c339b5c45b9356c462d1822",
-  "session_block_writing_practice": "802a2a53d5dafb6dc05906e8690812bd6046abd3cbc93e3a1ecf845de0fb487d",
+  "session_block_writing_practice": "b94c5974b1edaae1a9c9994e1c7e2cdfdc24a2482bedeb8e5d77e10cd4f6b42d",
   "session_energy_at": "763c4781f260ee04c082ed5e40ecee18f7794a92ac94cd27340fa10a3c9d08e9",
   "session_energy_detail": "7917ea2b07fc817239b6abf3b907e96f8e66b39442372ab26445befdfc9a57f9",
   "session_energy_glowing": "ffd5d54b63fec2b40d8eb023171762eaa49defe49ac58408b5add071552da8f7",
@@ -50,7 +50,7 @@
   "session_summary_done_under_minute": "c508c80c9b436dcad696b1184ca07d3b83acb4f0d9585d03fb2fc42c277e2652",
   "session_summary_earned_today": "84b5fb7a8a88040f7ebacdeb9f8559f2724116894a5dd82246e961f0743095d4",
   "session_summary_eyebrow": "4012c17799d6107b2bba005326dc0bc65ae7f5beb20f9573a58575564f445cf8",
-  "session_summary_finish": "d4f0822b1add225ae69459f71d8fc8a889f4858e769c1f04b87745e9ac294887",
+  "session_summary_finish": "2d9f68e5e0c28f97c8481ea5e3faf7d2cafe105d8f8e8f47b1ee67ed95be6c55",
   "session_summary_keep_going": "c51dba4b0dbc5713c54a409f58f01ac2b7bb6e355635849f98016404e5643d18",
   "session_summary_levels_gained": "55709958635c2d6f404e59dc4b233f04186e0135fe8af179018dee060c3bb466",
   "session_summary_mission_done": "40a22f86842e62706201f2deeb89f5bec248e790e84ef45b3c38011f443aacf2",
@@ -60,7 +60,7 @@
   "session_summary_preparation": "b7f2111544a0b11e46ef3447fa7fc74cec186c237fffe7853568f3a72f534320",
   "session_summary_progress": "e4b7c4b5e456f4bc92e4424d2010cfeadd7e3ac12d62bf9286b1cd5f3f409128",
   "session_summary_rewards": "29f2277236f0a3a43d588ea1a2524ede57563ff2cc262d4c1e2b308b6c8467a1",
-  "session_summary_right": "00b6e9ccfba2748af29d8cb1f141db0ce6175f388de6385e622c114bb083d146",
+  "session_summary_right": "8f2de19edf1e6668d8bee42a8b565da13e65cda4c83109ee274288e9393e9f1b",
   "session_summary_right_spoken": "e16679adda198085ebff10cd1f791142656b1b7f257e70966226755888bff76f",
   "session_summary_save_note": "caadab9d0a83e01e68db40f718661e6a93c0860709ef9c0144ee05738b0b322b",
   "session_summary_see_mistakes": "a4eecf6ec64f15a7bd170f0319abe2e2e4eb615e627bde6401bcf7f6904dee94",
@@ -83,7 +83,7 @@
     <string name="session_block_reviews">復習</string>
     <string name="session_block_quick_review">さっと復習</string>
     <string name="session_block_new_lesson">新しいレッスン</string>
-    <string name="session_block_writing_practice">ライティングの練習</string>
+    <string name="session_block_writing_practice">ライティング練習</string>
     <string name="session_block_full_review">総復習</string>
     <string name="session_block_practice_mistakes">間違えたところの練習</string>
     <string name="session_block_bonus_practice">追加練習</string>
@@ -139,7 +139,7 @@
     <string name="session_summary_done_in">%1$sで完了</string>
     <!-- After Stop for today; %1$s is the time studied, such as "13 min". -->
     <string name="session_summary_so_far">ここまで%1$s</string>
-    <string name="session_summary_right">正解数</string>
+    <string name="session_summary_right">正解</string>
     <!-- What TalkBack says for "3/5" right answers. -->
     <string name="session_summary_right_spoken">%1$d問正解、全%2$d問</string>
     <!-- Right minus wrong on questions that take points off for a wrong answer. -->
@@ -171,7 +171,7 @@
     <string name="session_summary_streak">%1$s問連続正解</string>
     <string name="session_summary_see_mistakes">間違いを見る</string>
     <string name="session_summary_keep_going">続ける</string>
-    <string name="session_summary_finish">完了する</string>
+    <string name="session_summary_finish">終える</string>
     <string name="session_summary_save_note">次回も見られるように、学習計画を保存しましょう。</string>
     <string name="session_summary_create_account">アカウントを作成する</string>
     <!-- Above the title of the session's next step. -->

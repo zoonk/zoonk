@@ -33,7 +33,7 @@
   "buddy_page_missions": "a4b193c38ec468967d9da2b31a893f432a761808edcfb273ec3b38de8757d403",
   "buddy_page_missions_done": "5edd0f8def77e55ee6e48824d9c809e07e36fb88c34efd063d4d1f5bef939941",
   "buddy_page_more": "ddb7a357aa832bee724d295bdb8c2cef3ff99cedff101c033ff356d3aafa0edb",
-  "buddy_page_not_yet": "ccd21731ecb5776793c710ccc663f1609381984d6f7758bfa5abc4daa4c58fe8",
+  "buddy_page_not_yet": "47c38bcdf5544429ff160b5485031265a8cf95a716d89d677afdb2bdc8fa4b59",
   "buddy_page_open_failed": "7d83d275d01e6bd14cc35c528b35cd56495f0b4934120509ff52947a421135ea",
   "buddy_page_placeholder": "166765b82bfa7310da2017e8464861291f7f5b035c69aa00a0dea83aefc96fa4",
   "buddy_page_remembers": "9ed368023fa7d2ae9afc289cb90b462afeca767ce23e95d616618ad10fa8ca03",
@@ -82,7 +82,7 @@
     <string name="buddy_page_energy_napping">%1$sはお昼寝中です。何か学ぶと目を覚まします。</string>
     <string name="buddy_page_energy_studied">今日は学習したので、エネルギーは減りません。</string>
     <string name="buddy_page_energy_study">今日の学習でエネルギーを保てます。</string>
-    <string name="buddy_page_not_yet">まだです</string>
+    <string name="buddy_page_not_yet">まだ</string>
     <string name="buddy_page_missions">ミッション</string>
     <!-- Read aloud for the missions shown as "1/3". -->
     <string name="buddy_page_missions_done">ミッション完了数：%1$d件（全%2$d件）</string>

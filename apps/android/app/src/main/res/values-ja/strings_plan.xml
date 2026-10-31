@@ -177,7 +177,7 @@
   "plan_change_such_as": "db8fc71792649d215e8e40c8ec6bee2f7163a1cc64c1f8c18b11b0d92fac117e",
   "plan_change_suggest_easier": "0ae7b74d1a9e0abd303dea547238453c9f22c651312e8c57afcc9f1130e0119b",
   "plan_change_suggest_harder": "d19c796b4c4580d22c2d3f4fb67dced4c8d219676a3a28d47fde253c868daef9",
-  "plan_change_suggest_more_explanation": "daaf3c45b165fdaa6b8ee0f10ff942101cb87fe9c7868c048740eb6a952169ff",
+  "plan_change_suggest_more_explanation": "40a2f9b756237c6e39142c45408cda8d6eeda7f14ab136797560e830fc53b553",
   "plan_change_suggest_more_practice": "a96d1c704e1b5920e1281ded80894a4c3ab63ffcfb786d3a7c6494c2fead3e4f",
   "plan_change_suggest_usual_difficulty": "072a0e2ea3000ff45047484d9b534b875f613a94a8745a13a90c4af425f5d39c",
   "plan_change_tested_out": "25b469f9116f19fa945f2e79b025127ee0ae1ad04c70d7093446344fbca3cb4b",
@@ -213,7 +213,7 @@
   "plan_continue": "bd2e404806522127514d128b420df8296629368b35aed9b24fd7c694ccc70b15",
   "plan_continue_at": "2ba93801c5c50b33fa076a9d91a2b40bea9b4246c5c713c490345bd370bd7a61",
   "plan_continues_on": "807b0ed31bf3295ed2c70457dc4dd5f0c859c9689fbfc4b25ee9b678de52c755",
-  "plan_continues_today": "1da106c1750f7af95a9d053c1d7939263ad315c2c8190427a23d6c3093f0f3b5",
+  "plan_continues_today": "f7ecd2c41b5589824b20342b25a176eea06853c333bc384dc5201f1fe05128c5",
   "plan_couldnt_check_changes": "02911353e0032ee61fa6f97ad3dcffefca062efa169d72333b14ed98fe256950",
   "plan_coverage": "ef6358ca75573796bae5ea36f574fb24a4a6251e753ab45a4909d0f528442e5c",
   "plan_coverage_caption": "95402fdf06a28e35ea94a3ac4d864f61fae8ca7218d1cc77136a35fc4eac4bec",
@@ -346,7 +346,7 @@
   "plan_more": "8bea52958575ccf82d66408e54f8779c9d66144aa2cfc87168483708307f47a3",
   "plan_more_chapters": "adb297b2e6a118648cb64ce19c8b509f0158d418a2027a24386bc3e66c81ceef",
   "plan_more_explanation": "656295cd31b91b36e525b5d39c95c43276fa3188a1f7d7f559e48427c2f5db59",
-  "plan_more_lessons": "75959a4dc649ad9d971a9568f2963678ab1612364c9110d808c9fb6e095b8edd",
+  "plan_more_lessons": "93b6d7beaec1e05f57cd4b40b99b45b3e83faafa8f5b39f1ea966d701904ae2f",
   "plan_more_lessons_challenge_on": "8382b4fa5cb6e2bcd083e3f738e202cdedcf98fb5c1a25c81bc84b4cbb842330",
   "plan_more_lessons_fit": "54aba5101f6cfe475edb181bec74004110dcc1aed2b21d5fec8f5f67f7aeb509",
   "plan_more_lessons_on_the_way": "39d724212e931c8758f3911b612d60de27905775c44a844e3cfdea760f413520",
@@ -407,10 +407,10 @@
   "plan_phase_gaps": "ce9325929c40e8b3a78f90b84a856119f7da4e0536e959b25fb180546b0962b8",
   "plan_phase_lessons_being_written": "e1bc70783330470212c004cba9a24ff1d021acfae11c928696326c204090fbff",
   "plan_phase_number": "0900769955b5198a53bbac946d69049c2cbccb6721d767d41438121a38f8f554",
-  "plan_phase_practice": "9bfe32aaac5c83dc23018336f0a19d82f1e56442d6797731117a2ecfb0fcaf40",
+  "plan_phase_practice": "852fdcb5386cf541065747ca001fbde23e0da49f454e96c5ff5e004c9a7e9c9e",
   "plan_phases_done": "8eda0763bfc6d6a45b9f793ba643e4113509e5cff4c007ab400f4fbf19ae3a4b",
   "plan_pick_date": "ae80050327dc4a1f5fe65a1a5881ba5361ea8c1ad6560d88b1ee33538d21fda3",
-  "plan_practice": "10ac56204ed09363b985e26d1b4736537a4918b80f43ff633f1f43c8bd72750c",
+  "plan_practice": "34690231753ff0202bddf5da311255c1ef79c611ead96606d85578060b87ad92",
   "plan_preparation": "58b5867a560395164470e542cd43503a8616a7ee5f3e20274719feaef0a40359",
   "plan_prerequisites": "725402d0590dcfb0f16f87af604c4b8426849c36c4bb6fb19947d6d2cad13280",
   "plan_prerequisites_exam": "16e9ae36e1b503a470764bdb6bf889b228438504602467b819c6c54ecafe7d3e",
@@ -487,7 +487,7 @@
   "plan_suggestion_position": "48e0cf5647770de6d69ac964104093d0d7ecd89ffa2a790fe6a024acc6c53a90",
   "plan_suggestion_previous": "62cec93ba77f7e0f9fbc5299000b62f7b1b69bec7ba48209a1365830ce0c7b62",
   "plan_sundays": "769466baec8f2aecd8ada2a16b48cc8455b26d9f749a6b367164e29cad75f68b",
-  "plan_system_phone": "8aa608ea1b404d45d9dbceaf9c4e0b39f7738e13a0f510653485ce0b00393590",
+  "plan_system_phone": "602eeda2741b6cdcb14374bb17df0498af8fbcc8fec1b7b6288c0f19283b01f7",
   "plan_take_short_test": "d4b0df30856d5c1fff591c6bbfb835f7728c630890900b9befbd1452bc3cdf7e",
   "plan_talk_to": "af3ac44b04d228e388421f56ee17ceac5ff257a0572d5a985eccf143a3456a42",
   "plan_tell_buddy": "99d4a4f9f69ef355400e055a337625ca9c8bd2e8dc74dffeee187de61bc5b04e",
@@ -537,7 +537,7 @@
   "plan_until": "cdc046143433221dfa0922933d0752364ea60adcd92c71324cf67ae2b2175d9b",
   "plan_until_estimate": "0c347982c3745983786bbbca43c5e945fc3045dcaae90a02b03f120256fc15d8",
   "plan_until_estimate_spoken": "98623573bf2636ef3a3f6c1daa4452eb2993bdf8022ffdcd4e96c9975873ac67",
-  "plan_up_next": "5360ff855d8c3c8b785a977663a8e6a7653ccec4b3439e056e482267ceba071c",
+  "plan_up_next": "8ee5de734bc5f2f2925ff62625c71f61704bd846a1574edd7b6d251fec7f1211",
   "plan_up_next_suffix": "f53b4e8acc74b9378c2a44cf5a90eca53ba095165b17a602bad60246ce3daa63",
   "plan_updated": "3c914164963cd1b73e9c26ba78a00251a5f837b47f88c514da8984c98a826c03",
   "plan_updated_sentence": "141d99f0aa6efe0f0951d63641f3458fcdb92b5ed3a9b6dabf432402a2f563bf",
@@ -630,7 +630,7 @@
     <string name="plan_phase_number">フェーズ%1$d</string>
     <string name="plan_phase_foundations">基礎</string>
     <string name="plan_phase_gaps">知識の穴を埋める</string>
-    <string name="plan_phase_practice">演習</string>
+    <string name="plan_phase_practice">練習</string>
     <string name="plan_phase_final_stretch">仕上げ</string>
     <string name="plan_phase_after_exam">試験後</string>
     <string name="plan_short_map_and_gaps">試験の全体像と苦手分野</string>
@@ -656,19 +656,19 @@
     <string name="plan_challenge_left_out">チャレンジが計画に入りきりませんでした</string>
     <!-- On a phase of the learner's plan: the plan has no room for its challenge before their goal's date. -->
     <string name="plan_challenge_no_time">目標日までにこのフェーズのチャレンジを行う時間がありません</string>
-    <string name="plan_continues_today">今日再開します</string>
+    <string name="plan_continues_today">今日も続きます</string>
     <!-- %1$s is the day the plan resumes, such as "Nov 3". -->
     <string name="plan_continues_on">%1$sから再開</string>
     <string name="plan_more_lessons_challenge_on">続きのレッスンを準備しています · チャレンジは%1$s</string>
     <string name="plan_more_lessons_on_the_way">追加のレッスンを作成しています</string>
     <string name="plan_lessons_done_challenge_on">レッスン完了 · チャレンジは%1$s</string>
-    <string name="plan_up_next">次の学習</string>
+    <string name="plan_up_next">次の予定</string>
     <string name="plan_skipped">スキップ</string>
     <string name="plan_done">完了</string>
     <plurals name="plan_skills_you_know">
         <item quantity="other">もともと知っていた%d個のスキル</item>
     </plurals>
-    <string name="plan_more_lessons">追加のレッスン</string>
+    <string name="plan_more_lessons">ほかのレッスン</string>
     <string name="plan_lessons_on_the_way">レッスンを準備しています</string>
     <string name="plan_skipped_known">もともと知っていたためスキップしました</string>
     <string name="plan_going_deeper">前に学んだトピックをさらに深く学びます</string>
@@ -732,7 +732,7 @@
     <string name="plan_study_days">学習日数</string>
     <string name="plan_mock_exams">模試</string>
     <string name="plan_choose">選ぶ</string>
-    <string name="plan_practice">演習</string>
+    <string name="plan_practice">練習</string>
     <string name="plan_everything">すべて</string>
     <string name="plan_to_be_confirmed">未確定</string>
     <string name="plan_no_date">日付なし</string>
@@ -923,7 +923,7 @@
     <string name="plan_change_back_in_plan">学習計画に%1$sを戻します。</string>
     <string name="plan_change_add_to_plan">学習計画に%1$sを追加します。</string>
     <string name="plan_change_suggest_more_practice">練習を増やします。</string>
-    <string name="plan_change_suggest_more_explanation">説明を増やします。</string>
+    <string name="plan_change_suggest_more_explanation">解説を増やしたいです。</string>
     <string name="plan_change_suggest_harder">学習内容を難しくします。</string>
     <string name="plan_change_suggest_easier">学習内容をやさしくします。</string>
     <string name="plan_change_suggest_usual_difficulty">レッスンを通常の難易度にします。</string>
@@ -978,7 +978,7 @@
     <string name="plan_change_tool_setup">%1$sを%2$sで使う準備は、使い始める前のレッスンで行います。</string>
     <string name="plan_change_tool_have">%1$sはすでにあるので、設定は不要です。</string>
     <string name="plan_change_tool_none">%1$sはインストールせず、例を使って学びます。</string>
-    <string name="plan_system_phone">スマホのみ</string>
+    <string name="plan_system_phone">スマートフォンのみ</string>
     <string name="plan_change_missed_days">前日までに終わっていないレッスンを先に学ぶため、残りの学習計画を後ろにずらしました。</string>
     <plurals name="plan_change_tested_out">
         <item quantity="other">テストで%dレッスンの内容をすでに知っていることがわかったため、学習計画から外れます。</item>

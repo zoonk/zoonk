@@ -4,7 +4,7 @@
   "exam_about": "e5432992ba56b7539fb64ce8ca8d1ba2efe0b443b38fa2c1f9d3e5e3033a9d63",
   "exam_add_result": "fcdecff54c941961bc3c029307ff718009395a76f200f82af7d734ea79ca0857",
   "exam_add_result_detail": "ae1a5c69466e255040f27606287e97068f74a0cd2ec2c750f4367a0fbe6fc9a7",
-  "exam_best_area": "33db95881bfb6151607f11a8a88337bb4dde803341898baac6dd73aa03553b9c",
+  "exam_best_area": "66899e24b879a996beed129addbbc2ddab01bc53cef10073673d302d864f56f4",
   "exam_by_subject": "76c09be827a8b2a9a67ada0c0df108c95240bd7aaebc8672bb479fb76ed09151",
   "exam_calibration": "ae7ce5ec47cc5cbd9be14643a171ce6529601b50fef343b872089aa413063de3",
   "exam_calibration_blank_unsure": "0dec630a15486ceb0686209aeadf655c27d739e8ae694620f633b683a5618676",
@@ -66,7 +66,7 @@
   "exam_out_of": "c2539c17a7e3658e9c867c2c92a0f100e1005c7d6dd3b90bf8b613d538fd2106",
   "exam_pass_marks_language": "65abc4262539684578869753fa9a4e0ac9cbad2845a0b031ea9d8248faf763f4",
   "exam_passed_no": "56674f316a3506879c808195055ca3a39c80744c9b0b7108f6959b0d4628d5b8",
-  "exam_passed_unknown": "fe9eac87f8035a0b4464e76c92f00316d81769e8ff855323f43a22b19dc17302",
+  "exam_passed_unknown": "aee19768e58d3996e6e197007540d5da88dbcd63fc82bf24174ed8fbcf295cd8",
   "exam_passed_yes": "a0bff7e6b9ee62af70cbc32434f8228481e279fc7ee0070087e0db51e454070c",
   "exam_prepared": "099342ab33b0086acdaca0c7fc416257463e749ccff64e26037bebd78de764b5",
   "exam_progress_better": "940d51281eb0eb6522e39a001911a3809e2af1b3db7ce31790225057e023c181",
@@ -202,7 +202,7 @@
     <string name="exam_did_you_pass">合格しましたか？</string>
     <string name="exam_passed_yes">はい</string>
     <string name="exam_passed_no">いいえ</string>
-    <string name="exam_passed_unknown">まだです</string>
+    <string name="exam_passed_unknown">まだ</string>
     <string name="exam_save_result">結果を保存する</string>
     <string name="exam_mocks_title">模試</string>
     <plurals name="exam_mocks_taken">
@@ -227,7 +227,7 @@
     <string name="exam_right_answers_in">%1$sの正解数</string>
     <!-- %1$s is a change in percentage points, such as +12. -->
     <string name="exam_since_first">初回から%1$s</string>
-    <string name="exam_best_area">最も得意な分野</string>
+    <string name="exam_best_area">得意な分野</string>
     <!-- %1$s and %2$s are the first and latest scores, such as 45%. -->
     <string name="exam_progress_chart_label">模試のスコアの推移：%1$sから%2$s</string>
     <string name="exam_by_subject">科目別</string>

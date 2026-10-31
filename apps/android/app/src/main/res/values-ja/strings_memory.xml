@@ -4,9 +4,9 @@
   "memory_category_background": "e6bc5a6f08d54e1421d5cf7f15a6eaf490d2ba11e8ec0e3fbfdb11aa246a4441",
   "memory_category_context": "bc300b816c8df9f81bc045a9a9eb21caf846264c59b64c24de5b9ad2afc8e3d8",
   "memory_category_goals": "db315fd80a12f3876234c774324f25765be6808b119261e796d161340eeb451e",
-  "memory_category_learning": "a2a84eb5686a43c97dbe4185b75ee545259f6e4fa90fba846c4e3bfd1f228ede",
+  "memory_category_learning": "4ba8f91639c08238c7f2ca0989d88a0091073e3d548162cc0332d3ee50535b33",
   "memory_category_preferences": "58aff615ad5d113744fc5f50f71bd5a5d3fd2b897a7d750ab2340c4f6923c4e0",
-  "memory_category_routine": "4c40c50c27b5848ed8f86d01d936479b7105c7532f6e6ec9272b363016e69f29",
+  "memory_category_routine": "93bcd24b0d32677c605d52eff35f0b4b358ae07ef02949f7f78794f6707af59d",
   "memory_change_undone": "269260ff6ff5422aafcb745db85d41600f36950b9275aa66d1d585e6579c3666",
   "memory_delete": "d25a94c1334b5bc6935bad34e4a6588cc4d90bdc6eb2f057bd7ff819d1bf7139",
   "memory_description": "3b0fb0201d7373c6c053416f7326c98a3172378ca983a91af421f5dd2c6fde2e",
@@ -24,7 +24,7 @@
   "memory_sensitive_note": "f788b11c7cbcec3d872349c523d2c06d228fb6d0bc76ae227311603fdb8a1137",
   "memory_source_chat": "0ea68b3e634f578522feef39e7aa457dd5b46a5870c96cb756c72268ebfeaf6e",
   "memory_source_noticed": "ece509397b15d56b5d3aabbbd1a20a98e9af48bb9b3fd660b4f27bc5f6f7dbe9",
-  "memory_source_onboarding": "71c1f46a4eb70cf8684e564d8ac546ddbb4276dd3cbddb70c1aeb46259989c63",
+  "memory_source_onboarding": "70c8efac7665933d1fbcb8af604fa19254c8fcba0c40cd48c8564330b11691d5",
   "memory_source_session": "4011d66a1d6013872ea332861dbcc7f3fa5b5199b7a9da58b8aa7395820580ed",
   "memory_source_you": "f14d7be85b4d50991a43a5909639c7662a4357b65b3cb58b8335f47e159cc2f6",
   "memory_undo": "5256769217e7610dd5e7056121ad021f69347c976d5c3ba138bf6570aeb99df8",
@@ -47,14 +47,14 @@
     <string name="memory_category_goals">目標</string>
     <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
     <string name="memory_category_background">基本情報</string>
-    <string name="memory_category_routine">習慣</string>
+    <string name="memory_category_routine">日課</string>
     <string name="memory_category_preferences">好み</string>
-    <string name="memory_category_learning">学習中</string>
+    <string name="memory_category_learning">学習</string>
     <string name="memory_category_context">状況</string>
     <string name="memory_source_noticed">利用状況からわかったこと</string>
     <string name="memory_source_you">教えてもらったこと</string>
     <string name="memory_source_chat">チャットから</string>
-    <string name="memory_source_onboarding">初期設定から</string>
+    <string name="memory_source_onboarding">初期設定で登録</string>
     <string name="memory_source_session">学習から</string>
     <!-- %1$s is where the fact came from ("From a chat") and %2$s the day it was noted. -->
     <string name="memory_fact_source">%1$s · %2$s</string>

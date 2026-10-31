@@ -51,10 +51,10 @@
   "today_get_lessons": "f86092e3033b873ace6b31a234db91b74dd1f8f12dd3b5b20faf8f4c3f18dd83",
   "today_insight_add_it": "e3e84900bd9af746c7fa6dcaa1f509f5f2b586c90330c8753e9b254ea7d7aeaf",
   "today_insight_got_it": "908312d2e49028a303666e10fce86344ae4cf02e7ef7828a6a01054828b859e6",
-  "today_insight_keep_it": "e92f664999a9c70bdaa2dfcd7cdb7cc18a536979025106139cd646ad2df57c39",
+  "today_insight_keep_it": "ca47e2723eb741023afb449ea3da78e28ee6c8dda33f84d6e59600eecbeb8d18",
   "today_insight_label": "1308838b71558b39bd9c87ffe237b82d97f29c89e2f53f9a0fb166cb90527d04",
   "today_insight_move_time": "51576e04d63997c7ec5cad7c68069ea0bfbec3dd97c0f2a2c187553549b0b238",
-  "today_insight_no_thanks": "240d0fadfc855f2875b8880ad7806f5ce82de3529398f9de8285abb1f3833833",
+  "today_insight_no_thanks": "83f6d850dfac3c68d1e572fe59b57a308c31821a65c4ea6085541a4e631a8d42",
   "today_insight_time_moved": "23cae514026ae97b0ec57d30e43c207f7731f8d33465e20b00196c6424e2a7dc",
   "today_insight_time_stays": "e4e1a3852d12f6c64d8d8c8712f5dca8cedd89e07bf08e0a164d19d54b676a37",
   "today_keep_learning": "3f8b719dd9300caba8002284d90645797f27079dcb19c1db2f04c1949350c3af",
@@ -82,7 +82,7 @@
   "today_nothing_to_review": "be644b8035fc034da5af897b9f9f04feec582bb2e52166eea30dc43cace35bf3",
   "today_notice_exam": "4276446a612d60ded2fb121da245d629a39be05fa203f3b9f3ef3de03ffbec70",
   "today_notice_exam_access": "5ce5113ebfa6034ec4a2cf3ee8c24f2efe6554dcb818cea1070e47eb50cad12c",
-  "today_notice_exam_choice": "951d74a3ba5ab5fb858272347200acc001287c7b0b27ad115e167e40c12a2a95",
+  "today_notice_exam_choice": "287f434fd4ee0a75aa9254af652a43388e958879a04a80a206fe94592aeb7aed",
   "today_notice_falling_behind": "1c238b77ddc619753e5ed9438a7a097b01609b8881f08889c3b59ef9c8788f10",
   "today_notice_plan_change": "55fc6cfe51ce7d24e8f163c545d7b660cbb98f15880a9479f592f6dee39c60af",
   "today_notice_suggested_goal": "cc64284cf211572c9d3b3c904bb586f005c3642ddbecb34ea8c825913c8821d6",
@@ -138,7 +138,7 @@
   "today_see_you_tomorrow": "35004ac9371acbbced50064a3f9896c76df3a820d7ca87169cca22a9b9fad70e",
   "today_see_your_plan": "3446780f55c43c9d5f708ed8eee6a8790594f2e8919072bc8abdac153794db78",
   "today_session_ended_description": "ea0fc3e39ba91dac64a81ecee327fe033edbed960d8dfa05b2963cb4379eec2b",
-  "today_setting_up": "8807d32efdf3064df7cad1e16a32d2348b1e7dec65f5b4d677e5245974c968d9",
+  "today_setting_up": "25d7da831242f7d24011cda9ff2b82f3fa14c84ef31d7f0c8ac0663821c14a46",
   "today_setting_up_detail": "8cc36d3d9728537302367156f72c1dd15b64b64b151d7c346c3eb550370dca95",
   "today_setting_up_goal": "2eff45dc7c88995ace2ed2ed455a4ef1e6db298a8c8352054f719189c978604b",
   "today_start_new_goal": "b26f64ff48475547ae6d93df71e71b4b32706ab8d3686a12fa3eb80a65f24a2c",
@@ -190,7 +190,7 @@
   "today_week_goal_reached": "4972638e398b581f01d18c98a7c1632ec5cd2e745c6af5e4b389f3d596179fb6",
   "today_week_loss": "91273a67bc1828dd159a6efaeb11ccccf425066202936f25c10e6bb40a1919e7",
   "today_week_mock_name": "104c995b6eb4ba60a725cfe3abcdbc52170f5920128367fb2a208e4a1668df46",
-  "today_week_not_studied": "6baa702af4c8c660ff816f6bd449c8f352118d4806970053720c4c2f52e29058",
+  "today_week_not_studied": "d8b6dc21bd5376a3b1788e9c4f484d1bd3750b8f31500bbce369c13a456cdac9",
   "today_week_planned": "24a0de726dafd4041365c7abe4c925a8c2e71debf4c41bccc355e5afd12f1394",
   "today_week_rest_day": "c6a8236fa7fbc2f9cbc7ea4b2b3fbd780a45bcc360593d051d2b1ad798c99731",
   "today_week_studied": "8ead90c8c430212f18230f528d0bebda25aa5f1038f71fa02ef4f68b8be6bfed",
@@ -328,7 +328,7 @@
     <string name="today_new_goal">新しい目標</string>
     <string name="today_resume_effect">今日から学習計画を再開し、休んでいた日に予定されていたレッスンから進めます。</string>
     <string name="today_resume_goal_limit">無料プランで進められる目標は一度に1つです。この目標を再開するには、ほかの目標を一時停止するか、複数の目標を進められるPlusに登録してください。</string>
-    <string name="today_setting_up">設定中</string>
+    <string name="today_setting_up">準備しています</string>
     <string name="today_setting_up_goal">「%1$s」の学習計画を作成するには、あといくつか回答が必要です。</string>
     <string name="today_setting_up_detail">回答をもとに学習計画を作成します。</string>
     <string name="today_continue_setting_up">設定を続ける</string>
@@ -358,7 +358,7 @@
     <string name="today_week_rest_day">休みの日</string>
     <string name="today_week_today">今日</string>
     <string name="today_week_planned">学習予定</string>
-    <string name="today_week_not_studied">未学習</string>
+    <string name="today_week_not_studied">学習なし</string>
     <string name="today_week_full_review_name">総復習</string>
     <string name="today_week_mock_name">模試</string>
     <string name="today_week_challenge_name">週間チャレンジ</string>
@@ -415,8 +415,8 @@
     <string name="today_notice_suggested_goal">おすすめの目標</string>
     <string name="today_insight_label">最近の回答から</string>
     <string name="today_insight_add_it">追加する</string>
-    <string name="today_insight_no_thanks">今は大丈夫</string>
-    <string name="today_insight_keep_it">このままにする</string>
+    <string name="today_insight_no_thanks">いいえ</string>
+    <string name="today_insight_keep_it">そのままにする</string>
     <!-- %1$s is a time of day, such as "19:00". Moves the time of day the learner studies, not how long they study. -->
     <string name="today_insight_move_time">学習する時刻を%1$sに変更する</string>
     <string name="today_insight_got_it">了解</string>
@@ -427,7 +427,7 @@
     <string name="today_plan_stays">学習計画はそのままです。</string>
     <string name="today_noted">わかりました。</string>
     <string name="today_undo">元に戻す</string>
-    <string name="today_notice_exam_choice">受験科目の選択</string>
+    <string name="today_notice_exam_choice">試験の選択</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="today_exam_choice_question">%1$s：どれを受験しますか？</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->

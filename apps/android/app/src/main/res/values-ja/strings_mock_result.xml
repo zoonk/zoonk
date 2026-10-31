@@ -44,7 +44,7 @@
   "mock_result_more_time": "fea3a5f28e126cfd3a1e6ca41146ef88d86aa26afbbab64303fd0ca9e3d042a9",
   "mock_result_more_topics": "78b7284f7074003e2c17c9fe0042fbd5ca4c3efb58e2a5b42366b5203150d129",
   "mock_result_net_score": "9b548774ef214fa1cc88bbdb6edcc499414b95f25b29e737a052c281748369c2",
-  "mock_result_new": "fc9be93e8cdaefc3a0d45d044f3d556234d859cb5bc4aaee818617da4e75bcfa",
+  "mock_result_new": "dfa988c510c7f4b5f1edec0d3b36a03d14f3a30180878603ff4bac405bdba99d",
   "mock_result_no_estimate": "84c8ceac9f75cbcb1efcb63d83d68cc613bcc605d89b2c2b8f8bd74b3130ea73",
   "mock_result_not_done": "8e52f2e8c7199936929c5ee3d3c4ba124874486b84d2ce601087b815990b6eb0",
   "mock_result_not_every_task": "a52e77205c8c7c4d14d6ab3219d753615353c64038ee4f801ce6486efb903d9c",
@@ -54,7 +54,7 @@
   "mock_result_now": "0aa33957f18ff30dc728d63f232d6807007c160b9411fc75c4ecf62e61475e9a",
   "mock_result_of": "1714df5a7391f0f49f62aa1e0cf4a7885c10c8b90b6ee2f41a6059f53a2aab9d",
   "mock_result_off_plan": "c12717e5b485bf58431c08673aec8dbf35014ca25e7c0f2214b2799bbf49315e",
-  "mock_result_partly_right": "d6223bf2ee155033579422bcc34cd79a033a78322b6a989497cc4e4268daa884",
+  "mock_result_partly_right": "576cefef3212802751199c1f4104b42f0418195e83c8709fb2d3b5c96c8f3dee",
   "mock_result_partly_right_note": "13700a2efe871800b42ddec997b46c389f1db57d208188aebfd0517a01aeb3b4",
   "mock_result_pass_floor": "6e1f2dcdb2f17459a3d44671b0efddae7ea73c1b0d59fec2e9f118dbad7ec316",
   "mock_result_pass_group": "26842e54008ff0439860abc3d27d9be9b2090ede50ca0f4f700de2f17fc3616b",
@@ -72,7 +72,7 @@
   "mock_result_review": "d5e25a7c09333715ae8a9d2460016c6cecc1c00ae43fd36ccdfc4eceaf93f092",
   "mock_result_review_mistake": "996c79ed6db7d62d93b1b4320de2c71c0538ac67704be734546ea7fcbba07b96",
   "mock_result_review_mistakes": "8243c42ab7a18fdb8070a76165ce4571e1c8d9ac5df7b3ea80d2c34d66ad1bcf",
-  "mock_result_right": "4d31671271957a691ce246dda97788f1cd972d2fac3fc9a9d4856aea3e3064fb",
+  "mock_result_right": "51cd0ee3c5c75858c97e226a5ac2dd6edd1fe50fcaf4a18049f68a1e531a78df",
   "mock_result_right_answers": "2052708d45fe5b6f61990dc90e706ea0890679d38fda86325dd3558d8db65780",
   "mock_result_right_of": "656091b72b37cf4fef90effbdb87774ff9ca8a64bde2e26d006c0c802fbcd4c7",
   "mock_result_scale": "a5e5e404c18b1e57ac8b6cbca82ca5f30ae16a965be9c5def7e39af12aa05b1f",
@@ -88,7 +88,7 @@
   "mock_result_skip_title": "02674f0a74a4b37508ad3ed48cc207a06e296403b255bd1268581fab62ec2322",
   "mock_result_subjects": "8cf2f0d642c6d660b88c792e9d6e41524924e940637ca37b9cfc59191061af04",
   "mock_result_task_not_graded": "3679ca7e171f844882dce9f6b97be62f23d39ff28c91a03602faba8a24fb06a0",
-  "mock_result_timing": "c9356a21570194e74bece663d35cc7b6ea17084eca0a0149acae922e792f3436",
+  "mock_result_timing": "7c35af6fdbed0d4cbf3c3f5706d3e3c788147aeb2c56edc7f117b58ccf66c3be",
   "mock_result_timing_area": "b4b15b88c5dda69b2a6cf8b41b3fd8bf499b844c421178a40d14ef83ddea2b37",
   "mock_result_to_pass_guide": "b08a0a790c6ff9fce4ae52e6b10e55ff56a2cc2d3c90a65793d6b77b1bd351e9",
   "mock_result_to_pass_notice": "aafdafc8b1efded6e0f7e4b372de38c44ce1ae3b55ddf9be79c4cca750f2183f",
@@ -118,9 +118,9 @@
     <string name="mock_result_up">前回から+%1$s</string>
     <!-- %1$s is the drop with its minus sign, such as "−12". -->
     <string name="mock_result_down">%1$s（前回比）</string>
-    <string name="mock_result_right">正解数</string>
+    <string name="mock_result_right">正解</string>
     <string name="mock_result_wrong">不正解</string>
-    <string name="mock_result_partly_right">部分正解</string>
+    <string name="mock_result_partly_right">一部正解</string>
     <string name="mock_result_blank">未回答</string>
     <string name="mock_result_blank_exam_day">本番の試験と同じく、未回答は不正解として扱われます。</string>
     <string name="mock_result_blank_this_score">このスコアの計算では、未回答は不正解として扱われます。</string>
@@ -146,7 +146,7 @@
         <item quantity="other">ほか%d個のトピック</item>
     </plurals>
     <string name="mock_result_insights">模試でわかったこと</string>
-    <string name="mock_result_timing">時間配分</string>
+    <string name="mock_result_timing">解答時間</string>
     <!-- %1$d is the seconds the learner took per question in one subject; %2$s is that subject's name, such as "Mathematics"; %3$s is the seconds to aim for. -->
     <plurals name="mock_result_timing_area">
         <item quantity="other">1問に%1$d 秒かかりました（%2$s）。%3$s以内を目指しましょう。</item>
@@ -223,7 +223,7 @@
     </plurals>
     <!-- %1$s is a subject, %2$s how it went, such as "4 of 10 right". -->
     <string name="mock_result_more_time">%1$sの学習時間を増やす（%2$s）</string>
-    <string name="mock_result_new">変更後</string>
+    <string name="mock_result_new">新規</string>
     <string name="mock_result_off_plan">学習計画から除外</string>
     <string name="mock_result_apply">適用する</string>
     <string name="mock_result_keep_plan">学習計画を変えない</string>

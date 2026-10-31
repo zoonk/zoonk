@@ -29,12 +29,12 @@
   "gate_start_goal_title": "ff4319c0e54acb293e6c590c35fae766c6f8f94e048cedf2735765c50e0c311f",
   "gate_start_something_new": "7ce7fa6cf29bec2ad23a185c4ba4a8754c4f30e1a9e397528174d072116d8cb1",
   "lesson_summaries_title": "bfdfca72a0f4a8feba5e6430bd0268471350bfbaf80725d99aac6b735ff82436",
-  "lessons_coming_up": "9cea157aa4ba4e43e871867d82b306fc0ee07838d75755497d39c716ce89ebaf",
+  "lessons_coming_up": "0dcf3928f1a962aac225e0c8977f917155119d09c88e11467b1d802562991d6a",
   "lessons_done": "c204e1138515aa81bf4b2e2f8ae448e04463ed9bbb5e167599c75f52276ab1eb",
   "lessons_done_count": "a11a427930fb006080c8f691c235fd2a10fe9eb024c3ab2230a04964a8aba309",
   "lessons_position": "7198dce563898a33097498e5eb6786e616bc3059eeb060b85556926f50c3cc7b",
   "lessons_title": "d8a0b278abfea0934d7d994bed446a05daa688e24eac9b72e41e00bc17a48d1c",
-  "lessons_up_next": "f314bdee9ce63a2cba1b81c75c37a5f369716ec9c95bbe619f249f363a318eb6",
+  "lessons_up_next": "72e056ead6c233422447859dbdd8a75b06be1ad5b6d0f05ea550dcbfc681bf29",
   "list_row_states": "f35da9366135509be78b27bf2e73a8f834eb698f160ede3613e53757269eb646",
   "load_failed_description": "0fc10bc3f8addb2f8b1ad069d111629b9a7aee01e41a53be4c5510986e691456",
   "load_failed_title": "846f0066069068eb421e2860946d2a2f25f5ca857f7d54e5d7ebc577b61f5bb0",
@@ -115,8 +115,8 @@
     <string name="lessons_position">%1$s.</string>
     <!-- TalkBack names each lesson's mark. Done: finished. Up next: the one lesson to do now. Coming up: the lessons after it, for later. The three must read as clearly different states. -->
     <string name="lessons_done">完了</string>
-    <string name="lessons_up_next">次の学習</string>
-    <string name="lessons_coming_up">これから</string>
+    <string name="lessons_up_next">次のレッスン</string>
+    <string name="lessons_coming_up">このあとのレッスン</string>
     <!-- Heads the key ideas of each lesson in a chapter's or unit's summary. -->
     <string name="lesson_summaries_title">まとめ</string>
     <string name="test_out_title">すでに知っている内容ですか？</string>

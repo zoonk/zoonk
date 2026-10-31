@@ -16,8 +16,8 @@
   "player_activity_your_answer": "18fe7582508bc0af69f9b42742db633b98eaf0b5fbd8af202330ae4937f98fd0",
   "player_ai_note": "1e2bf34b97cb44bb5b4ed2b23c0084792e970814030f0c615f67ecd0019ee9f7",
   "player_already_knew": "9e0ebc0f29ee9d507ac776c046adbdd8cccd21e9d32a8f742c428a7763b271bd",
-  "player_answer_feedback": "6ea84f2907234d33723f457b88cad70f51bf72a1026ffc9512a66b1b8af59f21",
-  "player_answer_options": "7b7f2e4818a9c8f92f19524e2ec2e8a0ea5763e111e853a8bd5694e3e3522816",
+  "player_answer_feedback": "925c255004620fd92be8487a1e5add20891ba0c1d2a1f3947db4eb77a1a4e474",
+  "player_answer_options": "60c900f851047ce70d7af0b0e4fa1de4d1a9c02efeef9084dea1e4a14ba5fd69",
   "player_back": "0b35ae88d3b6a0a2ce1d32955404917d15c29a252a2fdb181135bfa2f9ca0ae9",
   "player_back_to_chapter": "e42f1bc9d787999f980711b92845b5df766c8a04b0ebd269d2429d44ed5303e7",
   "player_back_to_unit": "bf95351079063f4273fee41fec9c3fd0409699c5fe977b6ce001fa4d2f4ef08f",
@@ -32,11 +32,11 @@
   "player_challenge_good": "f64d6904ded4736b644004e534d5cbb7d6c55f6cc412b286b3b061c9f1f3a242",
   "player_challenge_help": "cac73f663cd4773ab066ccc345dd7665f3ba128129e88ca1434f71ec4fe2a846",
   "player_challenge_help_ai": "ea0a247d0ba05862932a0605aef1cfe36c1a6abfc495b0e5fc04e3326d0222f6",
-  "player_challenge_improve": "8e53dd7e53d20e1db25b535dcdcbdd64b97baa0d0aad43c6f0a332accdecc32a",
+  "player_challenge_improve": "2cc7e3dce88f72b4f662296438e682ab3f5b1af00386cbabdaaad569c6bfc067",
   "player_challenge_meters": "86f851d8d9d3a9d19d2a2044116cf163913c96becb2127679596852d25eb528d",
   "player_challenge_mission": "63bf785e49eeac63e9ee7c874c5776b9728561c467275238bed987fa5e6f83b3",
-  "player_challenge_much_higher": "c70214bff56d9d179084f4adc5335c7018fe707a0f70a206572ffaf3200e4007",
-  "player_challenge_much_lower": "674ba9b83ea5842f4257972260aec3895e3bb2c8575f39959900441c611941e2",
+  "player_challenge_much_higher": "82360c0659c3d89996d2426ed2f810bacd7682e636e60aabba93047a5cda3bf6",
+  "player_challenge_much_lower": "cd5d79f917df6bdb055c11b88d8166abfddcd6dc4c1831a5f63d6f8bbb1b85b0",
   "player_challenge_no_change": "e61c09647c22d195038da994c86a6b93d0681fd7f17134617061889b39c3a6c2",
   "player_challenge_practice": "1f7f56cb9b0da2154b852f133928cd57ff2a42bb40cdd84028126b89e029ac18",
   "player_challenge_scenario_complete": "be3b339d720266fa20fdb093075c8018616b79a62b8454c78bca188a7a1f2753",
@@ -62,7 +62,7 @@
   "player_drawing_picture": "683f4921bd17f0dfc72b519de50b30ca69caba42ae6ed9b9df366ccf4e63929a",
   "player_enter_hint": "b24b318a5bc6902ff891b1324d9da77b3c070b291ff1f42f76ffff5d6d046a2b",
   "player_explain_first": "cc912bbf4a3d3f444fdf2477a743bdf45bc277d981dc0c9fd4f69f09f90c0d9f",
-  "player_finish": "57e6be5243694b27216df3bb82782f93046856dd73f07d705063440709bfe4dc",
+  "player_finish": "6125fb5faa5b30cf9bbab8563006825d7a16f261c6dc22abdf7b9105c9e2eadd",
   "player_free_limit_day_description": "76c8af95295ad087ad400f69242fd90fd345e0043c2ab77b9b662ad2e8285aff",
   "player_free_limit_day_title": "631638b4252caaa2628dad5093d61fad40098ff435bc13b9274a65fc320065ec",
   "player_free_limit_month_description": "2183035bc22981b8b3276d819b51caac1ca3b29392a66fed54325a33348fbe65",
@@ -159,7 +159,7 @@
   "player_what_we_heard": "bfe4694bad39f3f3938bbed4b082514deb76869c4671f762472113a0aa9c3f4d",
   "player_word_heard_as": "74ae69f4a33a8b42a4ba82734275c3d296437e7c18f57231d9aed8ff0c28694d",
   "player_word_not_heard": "0f127d156a099b13965ebaf2eb55795de62b4dc1e5992638543e23ea1ba44d73",
-  "player_worked_example": "6b526e29de9adea89b99a2b3b9c3b837b5f0b03860cbfbdd6651ee514cd70a23",
+  "player_worked_example": "7897eb665990df87124caba92e31630030574a3499f14b334fc9b47209d006c9",
   "player_worked_example_result": "43af72607b04329561399251dcd527b45a7658a7b767999be7daf96e04e45432",
   "player_worked_example_steps": "d9c7c02325c39d0acfb5f9da66d0c8db82e4bda0cf8ce72699b301ceb20a4a33",
   "player_write_again": "6dea98772c823b9e15ba65575d8b3e04d074f79dc910a286815b6f939a319ca7",
@@ -204,7 +204,7 @@
     <string name="player_verdict_sample_answer">回答例はこちらです</string>
     <string name="player_verdict_typo">正解です。つづりに気をつけましょう</string>
     <string name="player_verdict_unchecked">今回は答え合わせをしていません</string>
-    <string name="player_answer_feedback">答え合わせの結果</string>
+    <string name="player_answer_feedback">回答へのフィードバック</string>
     <string name="player_spelled">つづり：</string>
     <string name="player_correct_answer_label">答え：</string>
     <string name="player_unchecked_compare">各問題で答え合わせができるのは1日に数回です。次の解答例と自分の答えを比べてみてください：</string>
@@ -229,8 +229,8 @@
     <string name="player_comes_back_date">この内容は%1$sの復習にもう一度出てきます</string>
     <string name="player_guess_first">まず予想する</string>
     <string name="player_guess_hint">ここで間違えると、あとで覚えやすくなります。</string>
-    <string name="player_answer_options">答えの選択肢</string>
-    <string name="player_worked_example">例題と解説</string>
+    <string name="player_answer_options">選択肢</string>
+    <string name="player_worked_example">解き方の例</string>
     <string name="player_worked_example_steps">ステップ</string>
     <string name="player_worked_example_result">結果</string>
     <string name="player_summary">まとめ</string>
@@ -303,9 +303,9 @@
     <string name="player_challenge_meters">現在の状況</string>
     <!-- How a meter moved after the learner's decision. -->
     <string name="player_challenge_no_change">変化なし</string>
-    <string name="player_challenge_much_higher">大きく上昇</string>
+    <string name="player_challenge_much_higher">大幅に高い</string>
     <string name="player_challenge_bit_higher">少し上昇</string>
-    <string name="player_challenge_much_lower">大きく低下</string>
+    <string name="player_challenge_much_lower">大幅に低い</string>
     <string name="player_challenge_bit_lower">少し低下</string>
     <!-- Read by screen readers before the learner's own reply in a challenge's conversation. -->
     <string name="player_challenge_you">自分の返答：%1$s</string>
@@ -313,7 +313,7 @@
     <string name="player_challenge_complete">チャレンジ完了</string>
     <string name="player_challenge_scenario_complete">シナリオ完了</string>
     <string name="player_challenge_good">よかった点</string>
-    <string name="player_challenge_improve">改善できる点</string>
+    <string name="player_challenge_improve">改善点</string>
     <string name="player_challenge_skills">練習したスキル</string>
     <!-- %1$s is the skill to practice, %2$s how long it takes, such as "5 min". -->
     <string name="player_challenge_practice">「%1$s」を練習する · %2$s</string>
@@ -362,5 +362,5 @@
     <string name="player_create_account_to_save">アカウントを作成して保存する</string>
     <string name="player_nothing_left_title">すべての問題に回答しました</string>
     <string name="player_nothing_left_description">終了すると結果を確認できます。</string>
-    <string name="player_finish">完了する</string>
+    <string name="player_finish">終了する</string>
 </resources>
