@@ -17,6 +17,7 @@
   "account_change_username": "61a210346bcb9883d36b03daed603fe5a4505ad1e34f77337f8a7bdff9613070",
   "account_check_email_description": "51df482fa061ab79bfed460d8fb8da5b971f37cafde94311361db6b5e94e6441",
   "account_check_email_title": "98c9803fd6684941c0aca04292c542b59e25b5d110cf29116634c302d7b9da1a",
+  "account_closed_below_minimum_age_description": "8af0eb365071001809da51a9b8fd0475367cc5051382ce1dbbfd7330c7a9ba4e",
   "account_code_label": "2c558bfc9dad8d2b09323cf3e7ab885c6033b3860daeb251a3b4b9e82a9b0fc6",
   "account_continue": "05583d22d2ded5596a4f3b8e6e3dad24c4e83f7b45bebccab38b7d28d8dc3f8a",
   "account_continue_with_apple": "8fd2e778e55b3fb129c287f1c90d104af07cab98fda70ea8a868f3b49f26dde0",
@@ -145,5 +146,7 @@
     <string name="account_below_minimum_age_description">Zoonkは%1$d歳から利用できます。その年齢になったら、いつでも戻ってきてください。</string>
     <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Shown to someone signed in: "log you out" means Zoonk ends their session in the app when they tap OK, the same action as the menu's "Log out". Kind and encouraging, never scolding. -->
     <string name="account_below_minimum_age_log_out_description">Zoonkは%1$d歳から利用できるため、ログアウトします。その年齢になったら、いつでも戻ってきてください。</string>
+    <!-- %1$d is the minimum age to use Zoonk where the learner lives, like 13. Shown to someone signed in whose birth year is certainly below it: Zoonk has already deleted the account. Kind and encouraging, never scolding. -->
+    <string name="account_closed_below_minimum_age_description">Zoonkを利用するには%1$d歳以上である必要があるため、アカウントを閉鎖し、データを削除しました。利用できる年齢になったら、またお会いできるのを楽しみにしています。</string>
     <string name="account_below_minimum_age_ok">OK</string>
 </resources>

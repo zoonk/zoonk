@@ -2565,10 +2565,40 @@
             "value" : "Tu as changé d’avis ? Choisis « Garder Plus » pour que ta formule se renouvelle comme avant."
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai cambiato idea? Mantieni Plus e l’abbonamento si rinnoverà come prima."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "気が変わりましたか？Plusを継続すると、これまでどおり自動更新されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마음이 바뀌었나요? Plus를 계속 이용하면 이전처럼 자동 갱신돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chcesz jednak zostać? Zachowaj Plus, a pakiet będzie się odnawiać jak wcześniej."
+          }
+        },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mudou de ideia? Mantenha o Plus e ele volta a ser renovado como antes."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fikrini mi değiştirdin? Plus’ı koru, eskisi gibi yenilensin."
           }
         }
       }
@@ -9629,10 +9659,40 @@
             "value" : "Nous n’avons pas pu réactiver le renouvellement de Plus. Réessaie ou écris à hello@zoonk.com."
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a riattivare il rinnovo di Plus. Riprova o scrivi a hello@zoonk.com."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plusを継続できませんでした。もう一度試すか、hello@zoonk.comまでメールでお問い合わせください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus 자동 갱신을 다시 켜지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się zachować Plus. Spróbuj ponownie lub napisz na hello@zoonk.com."
+          }
+        },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "A gente não conseguiu manter o Plus. Tente de novo ou envie um e-mail para contato@zoonk.com."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus’ı koruyamadık. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
           }
         }
       }
@@ -10738,10 +10798,40 @@
             "value" : "Ta formule Plus prend fin immédiatement et nous te remboursons %@ sur le moyen de paiement utilisé."
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo abbonamento Plus termina subito e ti rimborsiamo %@ sul metodo di pagamento che hai usato."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plusはすぐに終了し、お支払い時と同じ方法で%@を返金します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus가 바로 종료되고, 결제할 때 사용한 수단으로 %@ 환불돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój pakiet Plus zakończy się od razu, a my zwrócimy %@ tą samą metodą płatności."
+          }
+        },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "O seu Plus acaba na hora, e a gente reembolsa %@ no mesmo meio de pagamento que você usou."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus aboneliğin hemen sona erer ve %@ tutarını kullandığın ödeme yöntemine iade ederiz."
           }
         }
       }
@@ -10767,10 +10857,40 @@
             "value" : "Ta formule Plus prend fin immédiatement, sans remboursement. Nous ne te facturerons plus rien."
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo abbonamento Plus termina subito, senza rimborso. Non riceverai altri addebiti."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plusはすぐに終了し、返金はありません。今後の請求はありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus가 환불 없이 바로 종료돼요. 앞으로 요금이 청구되지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój pakiet Plus zakończy się od razu, bez zwrotu pieniędzy. Nie pobierzemy już żadnych opłat."
+          }
+        },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "O seu Plus acaba na hora, sem reembolso. Não haverá novas cobranças."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus aboneliğin hemen sona erer ve para iadesi yapılmaz. Senden tekrar ücret alınmaz."
           }
         }
       }

@@ -216,6 +216,7 @@ msgstr "Bugün"
 #: src/app/[lang]/(app)/(learn)/plan/page.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 #: src/components/learn/journey-page-bar.tsx
 msgctxt "fz0z4c"
 msgid "Plan"
@@ -918,6 +919,7 @@ msgid "Answer them and we'll plan every day until you reach your goal."
 msgstr "Soruları cevapla, hedefine ulaşana kadar günlük planını hazırlayacağız."
 
 #: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "acrOoz"
 msgid "Continue"
@@ -1131,9 +1133,9 @@ msgstr "Hesabı sil"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "PswkCL"
-msgid "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store."
-msgstr "Hesabını ve içindeki her şeyi kalıcı olarak siler. Web üzerinden alınan Plus aboneliği iptal edilir; App Store’dan yapılan satın alımlar App Store üzerinden yönetilir."
+msgctxt "YRbz6b"
+msgid "Deletes your account and everything in it for good. Plus from the App Store or Google Play has to be canceled there."
+msgstr "Hesabını ve içindeki her şeyi kalıcı olarak siler. Plus’ı App Store veya Google Play’den aldıysan oradan iptal etmelisin."
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -1155,6 +1157,16 @@ msgstr "Hesabın silinsin mi?"
 msgctxt "yF2UF2"
 msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
 msgstr "Hedeflerin, planların, ilerlemen, bellekteki bilgilerin ve yüklediğin dosyalar kalıcı olarak silinir. Bu işlem geri alınamaz."
+
+#: src/app/[lang]/(app)/(settings)/profile/deletion-plus-notice.tsx
+msgctxt "UVa47p"
+msgid "Your Plus ends right away, and we refund {amount} to the payment method you used."
+msgstr "Plus aboneliğin hemen sona erer ve {amount} tutarını kullandığın ödeme yöntemine iade ederiz."
+
+#: src/app/[lang]/(app)/(settings)/profile/deletion-plus-notice.tsx
+msgctxt "mvvPso"
+msgid "Your Plus ends right away, without a refund. You won't be charged again."
+msgstr "Plus aboneliğin hemen sona erer ve ücret iadesi yapılmaz. Senden tekrar ücret alınmaz."
 
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -1313,10 +1325,27 @@ msgctxt "AmzBg2"
 msgid "Cancel now"
 msgstr "Şimdi iptal et"
 
+#. Sends the cancellation from its summary page, as French law asks (Code de la consommation D215-3). In French it must read exactly “Notifier la résiliation”.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "Ta3yI5"
+msgid "Notify cancellation"
+msgstr "İptali bildir"
+
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 msgctxt "KEqLnF"
 msgid "We'll email you the confirmation."
 msgstr "Onayı sana e-postayla göndereceğiz."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "YKq7GK"
+msgid "Check your request"
+msgstr "Talebini kontrol et"
+
+#. Goes back from the cancellation's summary to change it. In French it reads “Modifier”.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "wEQDC6"
+msgid "Edit"
+msgstr "Düzenle"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
@@ -1365,12 +1394,6 @@ msgid "We've emailed the confirmation to {email}."
 msgstr "Onay e-postasını {email} adresine gönderdik."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "qO091u"
-msgid "Your subscription will end on <mono>{date}</mono>."
-msgstr "Aboneliğin <mono>{date}</mono> tarihinde sona erecek."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
 msgctxt "SBWnEw"
 msgid "We couldn't cancel your subscription. Try again or email hello@zoonk.com."
 msgstr "Aboneliğini iptal edemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
@@ -1379,6 +1402,22 @@ msgstr "Aboneliğini iptal edemedik. Tekrar dene veya hello@zoonk.com adresine e
 msgctxt "0sJrli"
 msgid "That option isn't available anymore. Check your choice above and try again."
 msgstr "Bu seçenek artık kullanılamıyor. Yukarıdaki seçimini kontrol edip tekrar dene."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "qO091u"
+msgid "Your subscription will end on <mono>{date}</mono>."
+msgstr "Aboneliğin <mono>{date}</mono> tarihinde sona erecek."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "c2I4F9"
+msgid "We couldn't send your request. Try again or email hello@zoonk.com."
+msgstr "Talebini gönderemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "JmEP0L"
+msgid "Check your name and email, then try again."
+msgstr "Adını ve e-posta adresini kontrol edip tekrar dene."
 
 #. The 14-day withdrawal from the contract with its full refund. Use the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
@@ -1407,6 +1446,7 @@ msgid "You keep Plus until the period you paid for ends. After a yearly renewal,
 msgstr "Ücretini ödediğin dönem bitene kadar Plus’ı kullanmaya devam edersin. Yıllık yenilemeden sonra iptal edersen aboneliğin içinde bulunduğun ayın sonunda biter, kalan tutarı iade ederiz."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "aMFeUo"
 msgid "Cancel at the end of the period"
 msgstr "Dönem sonunda iptal"
@@ -1439,16 +1479,6 @@ msgctxt "D8gqFG"
 msgid "The one you use for Zoonk"
 msgstr "Zoonk için kullandığın e-posta adresi"
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "c2I4F9"
-msgid "We couldn't send your request. Try again or email hello@zoonk.com."
-msgstr "Talebini gönderemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "JmEP0L"
-msgid "Check your name and email, then try again."
-msgstr "Adını ve e-posta adresini kontrol edip tekrar dene."
-
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "cEOHN2"
 msgid "Cancel Plus"
@@ -1470,19 +1500,14 @@ msgid "Stop the unpaid renewal"
 msgstr "Ödemesi alınamayan yenilemeyi durdur"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "FLm13g"
-msgid "For the {count, plural, one {# month} other {# months}} that haven't started, we refund {amount}."
-msgstr "Henüz başlamamış {count, plural, other {# ay}} için {amount} iade ederiz."
+msgctxt "3h2o8M"
+msgid "You keep Plus until {date}. For the {count, plural, one {# month} other {# months}} that haven't started, we refund {amount}."
+msgstr "Plus aboneliğin {date} tarihine kadar devam eder. Henüz başlamamış {count, plural, other {# ay}} için {amount} tutarını iade ederiz."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "St4jDv"
-msgid "You won't be charged again."
-msgstr "Senden bir daha ücret alınmaz."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "HJBzay"
-msgid "Keep Plus until {date}"
-msgstr "Plus’ı {date} tarihine kadar kullan"
+msgctxt "lxAhrA"
+msgid "You keep Plus until {date}, and you won't be charged again."
+msgstr "Plus aboneliğin {date} tarihine kadar devam eder ve senden tekrar ücret alınmaz."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "rM1iWC"
@@ -1555,6 +1580,21 @@ msgstr "Ücretsiz"
 msgctxt "kkHvAa"
 msgid "<mono>{used, number}/{limit, number}</mono> buddy messages used today"
 msgstr "Bugün <mono>{used, number} / {limit, number}</mono> ders arkadaşı mesajı kullanıldı"
+
+#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
+msgctxt "lRRr8l"
+msgid "Changed your mind? Keep Plus, and it renews as before."
+msgstr "Fikrini mi değiştirdin? Plus’ı koru, aboneliğin eskisi gibi yenilensin."
+
+#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
+msgctxt "KLKQ8N"
+msgid "Keep Plus"
+msgstr "Plus’ı koru"
+
+#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
+msgctxt "S4ds_U"
+msgid "We couldn't keep Plus. Try again or email hello@zoonk.com."
+msgstr "Plus’ı koruyamadık. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "3iCRcP"
@@ -3456,9 +3496,9 @@ msgid "Not now"
 msgstr "Sonraya bırak"
 
 #: src/app/[lang]/birth-year-gate.tsx
-msgctxt "WCgBMi"
-msgid "Not just yet"
-msgstr "Henüz değil"
+msgctxt "H6bpYq"
+msgid "You need to be {minimumAge, number} or older to use Zoonk, so we've closed your account and deleted its data. We'll be here when you are."
+msgstr "Zoonk’u kullanmak için en az {minimumAge, number} yaşında olman gerekiyor. Bu yüzden hesabını kapattık ve verilerini sildik. O yaşa geldiğinde burada olacağız."
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "7dMiHf"
@@ -3469,6 +3509,11 @@ msgstr "Zoonk’u kullanmak için en az {minimumAge, number} yaşında olman ger
 msgctxt "GuXkQM"
 msgid "You need to be {minimumAge, number} or older to use Zoonk. We'll be here when you are."
 msgstr "Zoonk’u kullanmak için en az {minimumAge, number} yaşında olman gerekiyor. O yaşa geldiğinde burada olacağız."
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "WCgBMi"
+msgid "Not just yet"
+msgstr "Henüz değil"
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "kAEQyV"

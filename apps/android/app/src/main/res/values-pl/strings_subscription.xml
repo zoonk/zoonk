@@ -39,6 +39,8 @@
   "subscription_canceled": "d5ef32880e19c2a44dddbc01ee68329e078d195bdf3ca7a04800e70ec74bee35",
   "subscription_canceled_refund": "016977b746ee9e87dddd23f672d838a882a42156af3e7f09ebeabf14055ff1df",
   "subscription_contact_support": "f84acf6584971a108ef888f3ab5dd445ec6f3bcd4c6a7faf9bb5286e4c57492f",
+  "subscription_deletion_no_refund": "d94315e9f15328f189ac100d7636be8e8866cb3f0711523d2756b060ce07fdf9",
+  "subscription_deletion_refund": "5a3cb8af42d06ec0e44d11063e11717ec5b7777dc22724c8532a1f4de112c9be",
   "subscription_ending": "3cd3c2105f1b21d246afceed581f0255582e35764f5c023b3d780931cb1eb7a8",
   "subscription_ends_on": "9934d7f0b6cab08f97ffd09d0f2bc58ff912768b846e3359d3f6bf197cc5e4fc",
   "subscription_free": "ef9f35d283bc847c3cc86acaec29477ff8f2296a435f5b596bac9e5314591d50",
@@ -56,7 +58,9 @@
   "subscription_get_plus": "38f4673f391315456fc3c77bf59f9ef2f0630d2ce7b7cb1d4d9ff2e26c87a98f",
   "subscription_get_refund": "86dd1ba5102181e1c45507217c35447f4eded247aebb560e16977fa953a59c2a",
   "subscription_hide_answer": "95a8ab1fa24b913b4092fda98b380b10b6b3acb363c4c86f41d19f2448e23bd1",
+  "subscription_keep_failed": "78c21fd1682602599180fc9ca6b619619fa4485ec22a8276a2ff297c56f2d2a8",
   "subscription_keep_plus": "bb6e14b834b4a321bd4a7b2e97e9a97a6895e9e7d22098fb5db4460c8df689c7",
+  "subscription_keep_plus_description": "d9f61295c5fc1bbcbc1dd1b5b5a09a965cd1e8e7e0635c3bbe754abc6c912f6f",
   "subscription_manage_google": "c41317ca14bc99784838ddd6c22123e6ab5ada33064b8ec67aa097cb79d4fb85",
   "subscription_managed_apple": "1875241d971137e32c3c45f0875c426c89b7adc75decbbf0eb2e2eac752d8b8b",
   "subscription_managed_google": "9912004aa40bd6e9f2c5fb4293775865fe177851e886ca0370e5c6137a550d74",
@@ -130,7 +134,7 @@
     <string name="subscription_cancel_at_period_end_refund">Zachowujesz pakiet Plus do %1$s. Zwrócimy ci %2$s za miesiące, które jeszcze się nie zaczęły.</string>
     <!-- Stops the renewal, so Plus ends at the end of what's paid. German law (BGB § 312k) requires this button to read exactly "Jetzt kündigen" in German. -->
     <string name="subscription_cancel_confirm">Anuluj teraz</string>
-    <!-- Closes the cancel dialog without canceling. -->
+    <!-- Closes the cancel dialog without canceling, and turns a stopped renewal back on so Plus renews as before. -->
     <string name="subscription_keep_plus">Zachowaj Plus</string>
     <!-- The last line of the cancel dialog. -->
     <string name="subscription_cancel_email">Potwierdzenie wyślemy ci e-mailem.</string>
@@ -139,6 +143,13 @@
     <string name="subscription_canceled_refund">Zwróciliśmy %1$s tą samą metodą płatności. Subskrypcja Plus została anulowana. Potwierdzenie wysłaliśmy ci e-mailem.</string>
     <string name="subscription_refund_still_open">Do %1$s możesz jeszcze zakończyć pakiet Plus już teraz i otrzymać pełny zwrot.</string>
     <string name="subscription_get_refund">Uzyskaj pełny zwrot</string>
+    <!-- Above the Keep Plus button, once the renewal of Plus bought on the web is stopped. -->
+    <string name="subscription_keep_plus_description">Zmieniasz zdanie? Zachowaj Plus, a pakiet będzie się odnawiać jak wcześniej.</string>
+    <string name="subscription_keep_failed">Nie udało się zachować Plus. Spróbuj ponownie lub napisz na hello@zoonk.com.</string>
+    <!-- Before deleting the account, what happens to Plus bought on the web. %1$s is the amount refunded, like "R$ 29,90". -->
+    <string name="subscription_deletion_refund">Twój pakiet Plus wygaśnie od razu, a my zwrócimy %1$s tą samą metodą płatności.</string>
+    <!-- Before deleting the account, what happens to Plus bought on the web when nothing is refunded. -->
+    <string name="subscription_deletion_no_refund">Twój pakiet Plus wygaśnie od razu, bez zwrotu pieniędzy. Nie pobierzemy już żadnych opłat.</string>
     <!-- The cancel option the learner chose closed meanwhile, such as the 14-day refund. -->
     <string name="subscription_cancel_unavailable">Ta opcja nie jest już dostępna.</string>
     <!-- Closes a message after canceling. -->

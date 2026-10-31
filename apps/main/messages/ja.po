@@ -216,6 +216,7 @@ msgstr "今日"
 #: src/app/[lang]/(app)/(learn)/plan/page.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 #: src/components/learn/journey-page-bar.tsx
 msgctxt "fz0z4c"
 msgid "Plan"
@@ -918,6 +919,7 @@ msgid "Answer them and we'll plan every day until you reach your goal."
 msgstr "質問への回答をもとに、目標達成までの毎日の学習計画を立てます。"
 
 #: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "acrOoz"
 msgid "Continue"
@@ -1131,9 +1133,9 @@ msgstr "アカウントの削除"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "PswkCL"
-msgid "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store."
-msgstr "アカウントとすべてのデータを完全に削除します。ウェブで購入したPlusは解約されます。App Storeでの購入分はApp Storeで管理してください。"
+msgctxt "YRbz6b"
+msgid "Deletes your account and everything in it for good. Plus from the App Store or Google Play has to be canceled there."
+msgstr "アカウントとすべてのデータを完全に削除します。App StoreやGoogle Playで登録したPlusは、登録したストアで解約する必要があります。"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -1155,6 +1157,16 @@ msgstr "アカウントを削除しますか？"
 msgctxt "yF2UF2"
 msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
 msgstr "目標、学習計画、進捗、メモリ、アップロードしたファイルが完全に削除されます。元には戻せません。"
+
+#: src/app/[lang]/(app)/(settings)/profile/deletion-plus-notice.tsx
+msgctxt "UVa47p"
+msgid "Your Plus ends right away, and we refund {amount} to the payment method you used."
+msgstr "Plusはすぐに終了し、お支払い時と同じ方法で{amount}を返金します。"
+
+#: src/app/[lang]/(app)/(settings)/profile/deletion-plus-notice.tsx
+msgctxt "mvvPso"
+msgid "Your Plus ends right away, without a refund. You won't be charged again."
+msgstr "Plusはすぐに終了し、返金はありません。今後、料金は請求されません。"
 
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -1313,10 +1325,27 @@ msgctxt "AmzBg2"
 msgid "Cancel now"
 msgstr "今すぐ解約する"
 
+#. Sends the cancellation from its summary page, as French law asks (Code de la consommation D215-3). In French it must read exactly “Notifier la résiliation”.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "Ta3yI5"
+msgid "Notify cancellation"
+msgstr "解約を通知する"
+
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 msgctxt "KEqLnF"
 msgid "We'll email you the confirmation."
 msgstr "確認メールをお送りします。"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "YKq7GK"
+msgid "Check your request"
+msgstr "申請内容の確認"
+
+#. Goes back from the cancellation's summary to change it. In French it reads “Modifier”.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
+msgctxt "wEQDC6"
+msgid "Edit"
+msgstr "変更する"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
@@ -1365,12 +1394,6 @@ msgid "We've emailed the confirmation to {email}."
 msgstr "確認メールを{email}にお送りしました。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "qO091u"
-msgid "Your subscription will end on <mono>{date}</mono>."
-msgstr "サブスクリプションは<mono>{date}</mono>に終了します。"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
 msgctxt "SBWnEw"
 msgid "We couldn't cancel your subscription. Try again or email hello@zoonk.com."
 msgstr "サブスクリプションを解約できませんでした。もう一度試すか、hello@zoonk.comまでメールでご連絡ください。"
@@ -1379,6 +1402,22 @@ msgstr "サブスクリプションを解約できませんでした。もう一
 msgctxt "0sJrli"
 msgid "That option isn't available anymore. Check your choice above and try again."
 msgstr "その方法は利用できなくなりました。上の選択内容を確認して、もう一度お試しください。"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "qO091u"
+msgid "Your subscription will end on <mono>{date}</mono>."
+msgstr "サブスクリプションは<mono>{date}</mono>に終了します。"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "c2I4F9"
+msgid "We couldn't send your request. Try again or email hello@zoonk.com."
+msgstr "申請を送信できませんでした。もう一度試すか、hello@zoonk.comまでメールでご連絡ください。"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+msgctxt "JmEP0L"
+msgid "Check your name and email, then try again."
+msgstr "名前とメールアドレスを確認して、もう一度試してください。"
 
 #. The 14-day withdrawal from the contract with its full refund. Use the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
@@ -1407,6 +1446,7 @@ msgid "You keep Plus until the period you paid for ends. After a yearly renewal,
 msgstr "お支払い済みの期間が終わるまでPlusを利用できます。年間プランの更新後は、今月末で利用が終了し、残りの期間分を返金します。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "aMFeUo"
 msgid "Cancel at the end of the period"
 msgstr "利用期間の終了時に解約する"
@@ -1439,16 +1479,6 @@ msgctxt "D8gqFG"
 msgid "The one you use for Zoonk"
 msgstr "Zoonkで使っているメールアドレス"
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "c2I4F9"
-msgid "We couldn't send your request. Try again or email hello@zoonk.com."
-msgstr "申請を送信できませんでした。もう一度試すか、hello@zoonk.comまでメールでご連絡ください。"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "JmEP0L"
-msgid "Check your name and email, then try again."
-msgstr "名前とメールアドレスを確認して、もう一度試してください。"
-
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "cEOHN2"
 msgid "Cancel Plus"
@@ -1470,19 +1500,14 @@ msgid "Stop the unpaid renewal"
 msgstr "支払いが済んでいない更新を取り消す"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "FLm13g"
-msgid "For the {count, plural, one {# month} other {# months}} that haven't started, we refund {amount}."
-msgstr "まだ始まっていない{count, plural, other {#か月}}分の料金として、{amount}を返金します。"
+msgctxt "3h2o8M"
+msgid "You keep Plus until {date}. For the {count, plural, one {# month} other {# months}} that haven't started, we refund {amount}."
+msgstr "Plusは{date}まで利用できます。まだ始まっていない{count, plural, other {#か月}}分の料金として、{amount}を返金します。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "St4jDv"
-msgid "You won't be charged again."
-msgstr "今後、料金は請求されません。"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "HJBzay"
-msgid "Keep Plus until {date}"
-msgstr "Plusを{date}まで利用する"
+msgctxt "lxAhrA"
+msgid "You keep Plus until {date}, and you won't be charged again."
+msgstr "Plusは{date}まで利用でき、今後の請求はありません。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "rM1iWC"
@@ -1555,6 +1580,21 @@ msgstr "無料プラン"
 msgctxt "kkHvAa"
 msgid "<mono>{used, number}/{limit, number}</mono> buddy messages used today"
 msgstr "今日の相棒とのメッセージ利用数：<mono>{used, number}/{limit, number}</mono>件"
+
+#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
+msgctxt "lRRr8l"
+msgid "Changed your mind? Keep Plus, and it renews as before."
+msgstr "気が変わりましたか？Plusを継続すると、これまでどおり自動更新されます。"
+
+#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
+msgctxt "KLKQ8N"
+msgid "Keep Plus"
+msgstr "Plusを継続する"
+
+#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
+msgctxt "S4ds_U"
+msgid "We couldn't keep Plus. Try again or email hello@zoonk.com."
+msgstr "Plusを継続できませんでした。もう一度試すか、hello@zoonk.comまでメールでご連絡ください。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "3iCRcP"
@@ -3456,9 +3496,9 @@ msgid "Not now"
 msgstr "今はしない"
 
 #: src/app/[lang]/birth-year-gate.tsx
-msgctxt "WCgBMi"
-msgid "Not just yet"
-msgstr "まだ利用できません"
+msgctxt "H6bpYq"
+msgid "You need to be {minimumAge, number} or older to use Zoonk, so we've closed your account and deleted its data. We'll be here when you are."
+msgstr "Zoonkを利用するには{minimumAge, number}歳以上である必要があるため、アカウントを閉鎖し、データを削除しました。利用できる年齢になったら、いつでも戻ってきてください。"
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "7dMiHf"
@@ -3469,6 +3509,11 @@ msgstr "Zoonkを利用できるのは{minimumAge, number}歳からなので、�
 msgctxt "GuXkQM"
 msgid "You need to be {minimumAge, number} or older to use Zoonk. We'll be here when you are."
 msgstr "Zoonkを利用できるのは{minimumAge, number}歳からです。その年齢になったら、いつでも戻ってきてください。"
+
+#: src/app/[lang]/birth-year-gate.tsx
+msgctxt "WCgBMi"
+msgid "Not just yet"
+msgstr "まだ利用できません"
 
 #: src/app/[lang]/birth-year-gate.tsx
 msgctxt "kAEQyV"
