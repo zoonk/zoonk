@@ -103,7 +103,7 @@
       ],
       "passThroughEnv": ["PLAYWRIGHT_*"]
     },
-    "i18n:lint": {},
+    "i18n:lint": { "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/i18n/src/**"] },
     "i18n": { "cache": false },
     "start": { "cache": false, "dependsOn": ["build", "^start"], "persistent": true },
     "test": {
