@@ -50,7 +50,7 @@
     <string name="account_username_available">%1$s is available</string>
     <!-- %1$s is a username. -->
     <string name="account_username_taken">%1$s is already taken</string>
-    <string name="account_username_rules">3–30 characters. Letters, numbers, and underscores only.</string>
+    <string name="account_username_rules">3–30 characters. Letters a–z, numbers, and underscores only.</string>
     <string name="account_save_failed">We couldn\'t save your profile. Try again.</string>
     <string name="account_menu_settings">Settings</string>
     <string name="account_menu_subscription">Subscription</string>

@@ -64,7 +64,7 @@ function UsernameDescription({
       )}
       id={id}
     >
-      {t("3-30 characters. Letters, numbers, and underscores only.")}
+      {t("3-30 characters. Letters a–z, numbers, and underscores only.")}
     </p>
   );
 }

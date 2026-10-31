@@ -80,7 +80,7 @@ async function ProfileSkeleton() {
               <Skeleton className="h-11 w-full rounded-lg" />
             </SettingRow>
             <SettingRow
-              description={t("3-30 characters. Letters, numbers, and underscores only.")}
+              description={t("3-30 characters. Letters a–z, numbers, and underscores only.")}
               label={t("Username")}
               wide
             >

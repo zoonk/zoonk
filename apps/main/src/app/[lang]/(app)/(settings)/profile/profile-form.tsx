@@ -50,7 +50,7 @@ function UsernameHint({ status, username }: { status: UsernameStatusType; userna
 
   return (
     <span className={cn(status === "invalid" && "text-destructive-text")}>
-      {t("3-30 characters. Letters, numbers, and underscores only.")}
+      {t("3-30 characters. Letters a–z, numbers, and underscores only.")}
     </span>
   );
 }
