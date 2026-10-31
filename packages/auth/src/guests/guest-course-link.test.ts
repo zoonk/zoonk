@@ -1,16 +1,14 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { describe, expect, it, vi } from "vitest";
-import { createExistingAccount, signInAsGuest, signInWithPassword } from "./_test-utils/guest-auth";
-
-/** BotID only classifies requests on Vercel, so tests stand in for its verdict. */
-vi.mock("botid/server", () => ({ checkBotId: vi.fn().mockResolvedValue({ isBot: false }) }));
+import { describe, expect, it } from "vitest";
+import { createLearner } from "./_test-utils/learner-data";
+import { linkGuestAccount } from "./link-guest-account";
 
 describe("guest private course linking", () => {
   it("allocates free destination slugs and keeps course IDs and plan references when both owners use the same slug", async () => {
-    const [account, guest] = await Promise.all([
-      createExistingAccount({ createdAt: new Date("2026-09-01T00:00:00Z") }),
-      signInAsGuest(),
+    const [accountId, guestId] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
     ]);
 
     const courseData = {
@@ -22,13 +20,13 @@ describe("guest private course linking", () => {
     };
 
     const [accountCourse, guestCourse, freeCourse] = await Promise.all([
-      prisma.course.create({ data: { ...courseData, userId: account.userId } }),
-      prisma.course.create({ data: { ...courseData, userId: guest.guestId } }),
+      prisma.course.create({ data: { ...courseData, userId: accountId } }),
+      prisma.course.create({ data: { ...courseData, userId: guestId } }),
       prisma.course.create({
-        data: { ...courseData, slug: "acme-approval-workflow-3", userId: guest.guestId },
+        data: { ...courseData, slug: "acme-approval-workflow-3", userId: guestId },
       }),
       prisma.course.create({
-        data: { ...courseData, slug: "acme-approval-workflow-2", userId: account.userId },
+        data: { ...courseData, slug: "acme-approval-workflow-2", userId: accountId },
       }),
     ]);
 
@@ -41,7 +39,7 @@ describe("guest private course linking", () => {
         level: "beginner",
         model: "test",
         normalizedTitle: "approval",
-        ownerId: guest.guestId,
+        ownerId: guestId,
         promptVersion: "test",
         runId: "test",
         slug: "approval",
@@ -58,7 +56,7 @@ describe("guest private course linking", () => {
         primaryCourseId: guestCourse.id,
         prompt: "Learn our approval process",
         title: "Internal approvals",
-        userId: guest.guestId,
+        userId: guestId,
       },
     });
 
@@ -79,28 +77,28 @@ describe("guest private course linking", () => {
       include: { items: true },
     });
 
-    await signInWithPassword({ email: account.email, headers: guest.headers });
+    await linkGuestAccount({ account: { id: accountId }, guestUserId: guestId });
 
     await expect(
       prisma.course.findUniqueOrThrow({ where: { id: guestCourse.id } }),
-    ).resolves.toMatchObject({ slug: "acme-approval-workflow-4", userId: account.userId });
+    ).resolves.toMatchObject({ slug: "acme-approval-workflow-4", userId: accountId });
 
     await expect(
       prisma.course.findUniqueOrThrow({ where: { id: accountCourse.id } }),
-    ).resolves.toMatchObject({ slug: courseData.slug, userId: account.userId });
+    ).resolves.toMatchObject({ slug: courseData.slug, userId: accountId });
 
     await expect(
       prisma.course.findUniqueOrThrow({ where: { id: freeCourse.id } }),
-    ).resolves.toMatchObject({ slug: "acme-approval-workflow-3", userId: account.userId });
+    ).resolves.toMatchObject({ slug: "acme-approval-workflow-3", userId: accountId });
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       primaryCourseId: guestCourse.id,
-      userId: account.userId,
+      userId: accountId,
     });
 
     await expect(
       prisma.chapter.findUniqueOrThrow({ where: { id: chapter.id } }),
-    ).resolves.toMatchObject({ homeCourseId: guestCourse.id, ownerId: account.userId });
+    ).resolves.toMatchObject({ homeCourseId: guestCourse.id, ownerId: accountId });
 
     await expect(
       prisma.plan.findUniqueOrThrow({ include: { items: true }, where: { id: plan.id } }),
@@ -109,15 +107,15 @@ describe("guest private course linking", () => {
       items: [expect.objectContaining({ chapterId: chapter.id, id: plan.items[0]?.id })],
     });
 
-    await expect(prisma.course.count({ where: { userId: account.userId } })).resolves.toBe(4);
-    await expect(prisma.user.findUnique({ where: { id: guest.guestId } })).resolves.toBeNull();
+    await expect(prisma.course.count({ where: { userId: accountId } })).resolves.toBe(4);
+    await expect(prisma.user.findUnique({ where: { id: guestId } })).resolves.toBeNull();
   });
 
   it("serializes concurrent guest transfers into the same course home", async () => {
-    const [account, firstGuest, secondGuest] = await Promise.all([
-      createExistingAccount({ createdAt: new Date("2026-09-01T00:00:00Z") }),
-      signInAsGuest(),
-      signInAsGuest(),
+    const [accountId, firstGuestId, secondGuestId] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
+      createLearner({ isAnonymous: true }),
     ]);
 
     const data = {
@@ -129,19 +127,19 @@ describe("guest private course linking", () => {
     };
 
     await Promise.all([
-      prisma.course.create({ data: { ...data, userId: account.userId } }),
-      prisma.course.create({ data: { ...data, userId: firstGuest.guestId } }),
-      prisma.course.create({ data: { ...data, userId: secondGuest.guestId } }),
+      prisma.course.create({ data: { ...data, userId: accountId } }),
+      prisma.course.create({ data: { ...data, userId: firstGuestId } }),
+      prisma.course.create({ data: { ...data, userId: secondGuestId } }),
     ]);
 
     await Promise.all([
-      signInWithPassword({ email: account.email, headers: firstGuest.headers }),
-      signInWithPassword({ email: account.email, headers: secondGuest.headers }),
+      linkGuestAccount({ account: { id: accountId }, guestUserId: firstGuestId }),
+      linkGuestAccount({ account: { id: accountId }, guestUserId: secondGuestId }),
     ]);
 
     const courses = await prisma.course.findMany({
       orderBy: { slug: "asc" },
-      where: { userId: account.userId },
+      where: { userId: accountId },
     });
 
     expect(courses.map((course) => course.slug)).toStrictEqual([
@@ -151,7 +149,7 @@ describe("guest private course linking", () => {
     ]);
 
     await expect(
-      prisma.user.count({ where: { id: { in: [firstGuest.guestId, secondGuest.guestId] } } }),
+      prisma.user.count({ where: { id: { in: [firstGuestId, secondGuestId] } } }),
     ).resolves.toBe(0);
   });
 });

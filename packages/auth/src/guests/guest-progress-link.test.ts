@@ -1,15 +1,13 @@
 import { type TransactionClient, prisma, sql } from "@zoonk/db";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { waitForBlocked } from "./_test-utils/blocked-sessions";
-import { createExistingAccount, signInAsGuest, signInWithPassword } from "./_test-utils/guest-auth";
+import { createLearner } from "./_test-utils/learner-data";
 import {
   mergeDailyProgress,
   mergeLearningProfile,
   mergeUserProgress,
 } from "./_utils/merge-progress";
-
-/** BotID only classifies requests on Vercel, so tests stand in for its verdict. */
-vi.mock("botid/server", () => ({ checkBotId: vi.fn().mockResolvedValue({ isBot: false }) }));
+import { linkGuestAccount } from "./link-guest-account";
 
 const DAY = new Date("2026-09-01T00:00:00Z");
 const LATER = new Date("2026-09-02T00:00:00Z");
@@ -188,18 +186,18 @@ async function assertCombined({ table, userId }: { table: Table; userId: string 
 
 describe("guest progress linking", () => {
   it.each(TABLES)("merges concurrent first %s rows atomically", async (table) => {
-    const [account, first, second] = await Promise.all([
-      createExistingAccount({ createdAt: DAY }),
-      signInAsGuest(),
-      signInAsGuest(),
+    const [accountId, firstId, secondId] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
+      createLearner({ isAnonymous: true }),
     ]);
 
-    await removeAccountRows({ table, userId: account.userId });
-    const guestIds = [first.guestId, second.guestId];
+    await removeAccountRows({ table, userId: accountId });
+    const guestIds = [firstId, secondId];
 
     await Promise.all([
-      seed({ table, userId: first.guestId, value: 3 }),
-      seed({ table, userId: second.guestId, value: 7 }),
+      seed({ table, userId: firstId, value: 3 }),
+      seed({ table, userId: secondId, value: 7 }),
     ]);
 
     const lock = await holdRows({ table, userIds: guestIds });
@@ -207,7 +205,7 @@ describe("guest progress linking", () => {
     const transfers = Promise.allSettled(
       guestIds.map((guestUserId) =>
         prisma.$transaction((transaction) =>
-          merge({ guestUserId, table, transaction, userId: account.userId }),
+          merge({ guestUserId, table, transaction, userId: accountId }),
         ),
       ),
     );
@@ -224,7 +222,7 @@ describe("guest progress linking", () => {
       { status: "fulfilled" },
     ]);
 
-    await assertCombined({ table, userId: account.userId });
+    await assertCombined({ table, userId: accountId });
 
     await expect(
       Promise.all(guestIds.map((userId) => read({ table, userId }))),
@@ -234,33 +232,33 @@ describe("guest progress linking", () => {
   it.each(TABLES)(
     "merges a %s account row inserted while the guest transfer is waiting",
     async (table) => {
-      const [account, guest] = await Promise.all([
-        createExistingAccount({ createdAt: DAY }),
-        signInAsGuest(),
+      const [accountId, guestId] = await Promise.all([
+        createLearner({ isAnonymous: false }),
+        createLearner({ isAnonymous: true }),
       ]);
 
-      await removeAccountRows({ table, userId: account.userId });
-      const guestRow = await seed({ table, userId: guest.guestId, value: 3 });
-      const lock = await holdRows({ table, userIds: [guest.guestId] });
+      await removeAccountRows({ table, userId: accountId });
+      const guestRow = await seed({ table, userId: guestId, value: 3 });
+      const lock = await holdRows({ table, userIds: [guestId] });
 
       const transfer = Promise.allSettled([
         prisma.$transaction((transaction) =>
-          merge({ guestUserId: guest.guestId, table, transaction, userId: account.userId }),
+          merge({ guestUserId: guestId, table, transaction, userId: accountId }),
         ),
       ]);
 
       try {
         await waitForBlocked({ blocker: lock.blocker, count: 1 });
-        await seed({ table, userId: account.userId, value: 7 });
+        await seed({ table, userId: accountId, value: 7 });
       } finally {
         lock.release.resolve(null);
         await lock.held;
       }
 
       await expect(transfer).resolves.toMatchObject([{ status: "fulfilled" }]);
-      await assertCombined({ table, userId: account.userId });
-      await expect(read({ table, userId: guest.guestId })).resolves.toStrictEqual([]);
-      const rows = await read({ table, userId: account.userId });
+      await assertCombined({ table, userId: accountId });
+      await expect(read({ table, userId: guestId })).resolves.toStrictEqual([]);
+      const rows = await read({ table, userId: accountId });
       expect(rows[0]?.id).not.toBe(guestRow.id);
     },
   );
@@ -268,14 +266,14 @@ describe("guest progress linking", () => {
   it.each(["daily_progress", "user_progress"] as const)(
     "keeps %s maxima written after the merge reads",
     async (table) => {
-      const [account, guest] = await Promise.all([
-        createExistingAccount({ createdAt: DAY }),
-        signInAsGuest(),
+      const [accountId, guestId] = await Promise.all([
+        createLearner({ isAnonymous: false }),
+        createLearner({ isAnonymous: true }),
       ]);
 
       await Promise.all([
-        seed({ table, userId: account.userId, value: 3 }),
-        seed({ table, userId: guest.guestId, value: 7 }),
+        seed({ table, userId: accountId, value: 3 }),
+        seed({ table, userId: guestId, value: 7 }),
       ]);
 
       const ready = Promise.withResolvers<number>();
@@ -283,7 +281,7 @@ describe("guest progress linking", () => {
 
       const held = prisma.$transaction(async (transaction) => {
         await transaction.$queryRaw(
-          sql`SELECT id FROM ${sql([table])} WHERE user_id = ${account.userId}::uuid FOR UPDATE`,
+          sql`SELECT id FROM ${sql([table])} WHERE user_id = ${accountId}::uuid FOR UPDATE`,
         );
 
         const [backend] = await transaction.$queryRaw<
@@ -296,12 +294,12 @@ describe("guest progress linking", () => {
         if (table === "daily_progress") {
           await transaction.dailyProgress.updateMany({
             data: { energyAtEnd: 99 },
-            where: { userId: account.userId },
+            where: { userId: accountId },
           });
         } else {
           await transaction.userProgress.update({
             data: { currentEnergy: 99, lastActiveAt: new Date("2026-09-03T00:00:00Z") },
-            where: { userId: account.userId },
+            where: { userId: accountId },
           });
         }
       });
@@ -309,7 +307,7 @@ describe("guest progress linking", () => {
       const blocker = await ready.promise;
 
       const transfer = prisma.$transaction((transaction) =>
-        merge({ guestUserId: guest.guestId, table, transaction, userId: account.userId }),
+        merge({ guestUserId: guestId, table, transaction, userId: accountId }),
       );
 
       try {
@@ -323,8 +321,8 @@ describe("guest progress linking", () => {
 
       const energy =
         table === "daily_progress"
-          ? await prisma.dailyProgress.findFirstOrThrow({ where: { userId: account.userId } })
-          : await prisma.userProgress.findUniqueOrThrow({ where: { userId: account.userId } });
+          ? await prisma.dailyProgress.findFirstOrThrow({ where: { userId: accountId } })
+          : await prisma.userProgress.findUniqueOrThrow({ where: { userId: accountId } });
 
       const expected =
         table === "daily_progress"
@@ -340,27 +338,27 @@ describe("guest progress linking", () => {
   );
 
   it("keeps a Buddy picked on the account while the guest profile is waiting", async () => {
-    const [account, guest] = await Promise.all([
-      createExistingAccount({ createdAt: DAY }),
-      signInAsGuest(),
+    const [accountId, guestId] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
     ]);
 
     const table = "user_learning_profiles";
 
     await Promise.all([
-      seed({ table, userId: account.userId, value: 7 }),
-      seed({ table, userId: guest.guestId, value: 3 }),
+      seed({ table, userId: accountId, value: 7 }),
+      seed({ table, userId: guestId, value: 3 }),
     ]);
 
     await prisma.userLearningProfile.update({
       data: { buddyKind: null },
-      where: { userId: account.userId },
+      where: { userId: accountId },
     });
 
-    const lock = await holdRows({ table, userIds: [guest.guestId] });
+    const lock = await holdRows({ table, userIds: [guestId] });
 
     const transfer = prisma.$transaction((transaction) =>
-      mergeLearningProfile({ guestUserId: guest.guestId, transaction, userId: account.userId }),
+      mergeLearningProfile({ guestUserId: guestId, transaction, userId: accountId }),
     );
 
     try {
@@ -373,7 +371,7 @@ describe("guest progress linking", () => {
           buddyName: "Picked now",
           dailyLimitMinutes: 99,
         },
-        where: { userId: account.userId },
+        where: { userId: accountId },
       });
     } finally {
       lock.release.resolve(null);
@@ -383,7 +381,7 @@ describe("guest progress linking", () => {
     await transfer;
 
     await expect(
-      prisma.userLearningProfile.findUnique({ where: { userId: account.userId } }),
+      prisma.userLearningProfile.findUnique({ where: { userId: accountId } }),
     ).resolves.toMatchObject({
       buddyGlasses: "retro",
       buddyKind: "otto",
@@ -400,38 +398,38 @@ describe("guest progress linking", () => {
   ])(
     "keeps account settings and buddy (picked: $picked, guest goal: $active)",
     async ({ active, picked }) => {
-      const [account, guest] = await Promise.all([
-        createExistingAccount({ createdAt: DAY }),
-        signInAsGuest(),
+      const [accountId, guestId] = await Promise.all([
+        createLearner({ isAnonymous: false }),
+        createLearner({ isAnonymous: true }),
       ]);
 
       const table = "user_learning_profiles";
 
       const [accountRow, guestRow] = await Promise.all([
-        seed({ table, userId: account.userId, value: 7 }),
-        seed({ table, userId: guest.guestId, value: 3 }),
+        seed({ table, userId: accountId, value: 7 }),
+        seed({ table, userId: guestId, value: 3 }),
       ]);
 
       if (!active) {
         await prisma.userLearningProfile.update({
           data: { activeGoalId: null },
-          where: { userId: guest.guestId },
+          where: { userId: guestId },
         });
       }
 
       if (!picked) {
         await prisma.userLearningProfile.update({
           data: { buddyKind: null },
-          where: { userId: account.userId },
+          where: { userId: accountId },
         });
       }
 
       await prisma.$transaction((transaction) =>
-        mergeLearningProfile({ guestUserId: guest.guestId, transaction, userId: account.userId }),
+        mergeLearningProfile({ guestUserId: guestId, transaction, userId: accountId }),
       );
 
       const profile = await prisma.userLearningProfile.findUniqueOrThrow({
-        where: { userId: account.userId },
+        where: { userId: accountId },
       });
 
       const guestGoalId = "activeGoalId" in guestRow ? guestRow.activeGoalId : null;
@@ -451,76 +449,73 @@ describe("guest progress linking", () => {
   );
 
   it("takes the guest's usage data choice when the account has none", async () => {
-    const [account, guest] = await Promise.all([
-      createExistingAccount({ createdAt: DAY }),
-      signInAsGuest(),
+    const [accountId, guestId] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
     ]);
 
     const table = "user_learning_profiles";
 
     await Promise.all([
-      seed({ table, userId: account.userId, value: 7 }),
-      seed({ table, userId: guest.guestId, value: 3 }),
+      seed({ table, userId: accountId, value: 7 }),
+      seed({ table, userId: guestId, value: 3 }),
     ]);
 
     await prisma.userLearningProfile.update({
       data: { shareUsageData: null },
-      where: { userId: account.userId },
+      where: { userId: accountId },
     });
 
     await prisma.$transaction((transaction) =>
-      mergeLearningProfile({ guestUserId: guest.guestId, transaction, userId: account.userId }),
+      mergeLearningProfile({ guestUserId: guestId, transaction, userId: accountId }),
     );
 
     await expect(
-      prisma.userLearningProfile.findUnique({ where: { userId: account.userId } }),
+      prisma.userLearningProfile.findUnique({ where: { userId: accountId } }),
     ).resolves.toMatchObject({ shareUsageData: false });
   });
 
   it.each(TABLES)("preserves the guest's entire unique %s snapshot", async (table) => {
-    const [account, guest] = await Promise.all([
-      createExistingAccount({ createdAt: DAY }),
-      signInAsGuest(),
+    const [accountId, guestId] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
     ]);
 
-    await removeAccountRows({ table, userId: account.userId });
-    const row = await seed({ table, userId: guest.guestId, value: 3 });
+    await removeAccountRows({ table, userId: accountId });
+    const row = await seed({ table, userId: guestId, value: 3 });
 
     await prisma.$transaction((transaction) =>
-      merge({ guestUserId: guest.guestId, table, transaction, userId: account.userId }),
+      merge({ guestUserId: guestId, table, transaction, userId: accountId }),
     );
 
-    await expect(read({ table, userId: account.userId })).resolves.toStrictEqual([
-      { ...row, userId: account.userId },
+    await expect(read({ table, userId: accountId })).resolves.toStrictEqual([
+      { ...row, userId: accountId },
     ]);
 
-    await expect(read({ table, userId: guest.guestId })).resolves.toStrictEqual([]);
+    await expect(read({ table, userId: guestId })).resolves.toStrictEqual([]);
   });
 
   it("links two full guest sessions with additive progress and account settings", async () => {
-    const [account, first, second] = await Promise.all([
-      createExistingAccount({ createdAt: DAY }),
-      signInAsGuest(),
-      signInAsGuest(),
+    const [accountId, firstId, secondId] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
+      createLearner({ isAnonymous: true }),
     ]);
 
-    await seed({ table: "user_progress", userId: account.userId, value: 0 });
+    await seed({ table: "user_progress", userId: accountId, value: 0 });
 
     await Promise.all(
       TABLES.flatMap((table) => [
-        seed({ table, userId: first.guestId, value: 3 }),
-        seed({ table, userId: second.guestId, value: 7 }),
+        seed({ table, userId: firstId, value: 3 }),
+        seed({ table, userId: secondId, value: 7 }),
       ]),
     );
 
-    const lock = await holdRows({
-      table: "daily_progress",
-      userIds: [first.guestId, second.guestId],
-    });
+    const lock = await holdRows({ table: "daily_progress", userIds: [firstId, secondId] });
 
     const links = Promise.allSettled(
-      [first, second].map((guest) =>
-        signInWithPassword({ email: account.email, headers: guest.headers }),
+      [firstId, secondId].map((guestUserId) =>
+        linkGuestAccount({ account: { id: accountId }, guestUserId }),
       ),
     );
 
@@ -532,10 +527,10 @@ describe("guest progress linking", () => {
     }
 
     await expect(links).resolves.toMatchObject([{ status: "fulfilled" }, { status: "fulfilled" }]);
-    await Promise.all(TABLES.map((table) => assertCombined({ table, userId: account.userId })));
+    await Promise.all(TABLES.map((table) => assertCombined({ table, userId: accountId })));
 
-    await expect(
-      prisma.user.count({ where: { id: { in: [first.guestId, second.guestId] } } }),
-    ).resolves.toBe(0);
+    await expect(prisma.user.count({ where: { id: { in: [firstId, secondId] } } })).resolves.toBe(
+      0,
+    );
   });
 });

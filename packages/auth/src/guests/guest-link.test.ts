@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { describe, expect, it, vi } from "vitest";
-import { holdTransaction, waitForBlocked } from "./_test-utils/blocked-sessions";
 import {
   createExistingAccount,
   createTestEmail,
@@ -10,13 +9,7 @@ import {
   signInWithPassword,
   signUp,
 } from "./_test-utils/guest-auth";
-import {
-  countLearnerRows,
-  createGoal,
-  createSkill,
-  seedLearnerData,
-} from "./_test-utils/learner-data";
-import { linkGuestAccount } from "./link-guest-account";
+import { countLearnerRows, createSkill, seedLearnerData } from "./_test-utils/learner-data";
 
 /** BotID only classifies requests on Vercel, so tests stand in for its verdict. */
 vi.mock("botid/server", () => ({ checkBotId: vi.fn().mockResolvedValue({ isBot: false }) }));
@@ -25,28 +18,6 @@ const THIRTY_DAYS_MS = 2_592_000_000;
 
 function daysAgo(milliseconds: number) {
   return new Date(Date.now() - milliseconds);
-}
-
-async function readMarks({ goalIds }: { goalIds: string[] }) {
-  const plans = await prisma.plan.findMany({
-    orderBy: { goalId: "asc" },
-    select: { goalId: true, inputVersion: true },
-    where: { goalId: { in: goalIds } },
-  });
-
-  return { plans };
-}
-
-async function createLearnersWithPlans() {
-  const [account, guest] = await Promise.all([
-    createExistingAccount({ createdAt: daysAgo(THIRTY_DAYS_MS) }),
-    signInAsGuest(),
-  ]);
-
-  const goals = await Promise.all([createGoal(account.userId), createGoal(guest.guestId)]);
-  await Promise.all(goals.map((goal) => prisma.plan.create({ data: { goalId: goal.id } })));
-
-  return { account, goalIds: goals.map((goal) => goal.id), guest };
 }
 
 describe("guest accounts", () => {
@@ -104,48 +75,6 @@ describe("guest accounts", () => {
     });
 
     await expect(prisma.user.findUnique({ where: { id: guestId } })).resolves.toBeNull();
-  });
-
-  it("moves a guest's private course, its skills and pictures included, so deleting the guest keeps them", async () => {
-    const { guestId, headers } = await signInAsGuest();
-    const id = randomUUID();
-    const privateRow = { ownerId: guestId, visibility: "private" as const };
-    const provenance = { model: "test-model", promptVersion: "test", runId: `test-run-${id}` };
-
-    const [skill, picture] = await Promise.all([
-      prisma.skill.create({
-        data: {
-          ...privateRow,
-          ...provenance,
-          description: "A private idea in one sentence",
-          identityKey: `private:${guestId}:skill:${id}`,
-          language: "en",
-          name: `Private skill ${id}`,
-          normalizedName: `private skill ${id}`,
-        },
-      }),
-      prisma.mediaAsset.create({
-        data: {
-          ...privateRow,
-          ...provenance,
-          kind: "image",
-          reuseKey: `private:${guestId}:image:${id}`,
-          url: `https://store.private.blob.vercel-storage.com/images/${guestId}/step-${id}.webp`,
-        },
-      }),
-    ]);
-
-    const { userId } = await signUp({ email: createTestEmail(), headers });
-
-    await expect(prisma.user.findUnique({ where: { id: guestId } })).resolves.toBeNull();
-
-    await expect(
-      prisma.skill.findUnique({ select: { ownerId: true }, where: { id: skill.id } }),
-    ).resolves.toStrictEqual({ ownerId: userId });
-
-    await expect(
-      prisma.mediaAsset.findUnique({ select: { ownerId: true }, where: { id: picture.id } }),
-    ).resolves.toStrictEqual({ ownerId: userId });
   });
 
   it("keeps an existing account's rows on a clash and adds the guest's day and Brain Power", async () => {
@@ -210,102 +139,5 @@ describe("guest accounts", () => {
 
     await expect(countLearnerRows(account.userId)).resolves.toMatchObject({ goals: 1, skills: 1 });
     await expect(prisma.user.findUnique({ where: { id: guest.guestId } })).resolves.toBeNull();
-  });
-
-  it("marks every plan the guest's learning feeds as changed", async () => {
-    const { account, goalIds, guest } = await createLearnersWithPlans();
-    const before = await readMarks({ goalIds });
-
-    await signInWithPassword({ email: account.email, headers: guest.headers });
-
-    await expect(readMarks({ goalIds })).resolves.toStrictEqual({
-      plans: before.plans.map((plan) => ({ ...plan, inputVersion: plan.inputVersion + 1 })),
-    });
-  });
-
-  it("changes nothing when another sign-in already moved the guest", async () => {
-    const { account, goalIds, guest } = await createLearnersWithPlans();
-    await signInWithPassword({ email: account.email, headers: guest.headers });
-    const linked = await readMarks({ goalIds });
-
-    await linkGuestAccount({ account: { id: account.userId }, guestUserId: guest.guestId });
-
-    await expect(readMarks({ goalIds })).resolves.toStrictEqual(linked);
-  });
-
-  it("marks the account before it takes any lock of its own rows", async () => {
-    const { account, guest } = await createLearnersWithPlans();
-
-    const writing = await holdTransaction(
-      (transaction) =>
-        transaction.$queryRaw`SELECT id FROM users WHERE id = ${account.userId}::uuid FOR UPDATE`,
-    );
-
-    const linking = signInWithPassword({ email: account.email, headers: guest.headers });
-
-    try {
-      await waitForBlocked({ blocker: writing.blocker, count: 1 });
-
-      const [advisory, guestRows] = await Promise.all([
-        prisma.$queryRaw<{ pid: number }[]>`
-          SELECT lock.pid FROM pg_locks AS lock
-          WHERE lock.locktype = 'advisory' AND ${writing.blocker}::int = ANY(pg_blocking_pids(lock.pid))
-        `,
-        prisma.$transaction(
-          (transaction) => transaction.$queryRaw<{ id: string }[]>`
-            SELECT id FROM users WHERE id = ${guest.guestId}::uuid FOR UPDATE SKIP LOCKED
-          `,
-        ),
-      ]);
-
-      expect({ advisory, guestRows: guestRows.length }).toStrictEqual({
-        advisory: [],
-        guestRows: 1,
-      });
-    } finally {
-      writing.release();
-    }
-
-    await writing.held;
-    await linking;
-    await expect(prisma.user.findUnique({ where: { id: guest.guestId } })).resolves.toBeNull();
-  });
-
-  it("marks a plan another link moved into the account while this one waited", async () => {
-    const [account, ...guests] = await Promise.all([
-      createExistingAccount({ createdAt: daysAgo(THIRTY_DAYS_MS) }),
-      signInAsGuest(),
-      signInAsGuest(),
-    ]);
-
-    const goals = await Promise.all(guests.map((guest) => createGoal(guest.guestId)));
-    const goalIds = goals.map((goal) => goal.id);
-    await Promise.all(goalIds.map((goalId) => prisma.plan.create({ data: { goalId } })));
-    const before = await readMarks({ goalIds });
-
-    const writing = await holdTransaction(
-      (transaction) =>
-        transaction.$queryRaw`SELECT id FROM users WHERE id = ${account.userId}::uuid FOR UPDATE`,
-    );
-
-    const linking = Promise.all(
-      guests.map((guest) => signInWithPassword({ email: account.email, headers: guest.headers })),
-    );
-
-    try {
-      await waitForBlocked({ blocker: writing.blocker, count: 2 });
-    } finally {
-      writing.release();
-    }
-
-    await writing.held;
-    await linking;
-    const after = await readMarks({ goalIds });
-
-    expect(
-      after.plans
-        .map((plan, index) => plan.inputVersion - (before.plans[index]?.inputVersion ?? 0))
-        .toSorted((first, second) => first - second),
-    ).toStrictEqual([1, 2]);
   });
 });

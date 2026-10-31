@@ -1,18 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { holdTransaction, waitForBlocked } from "./_test-utils/blocked-sessions";
-import {
-  createExistingAccount,
-  createTestEmail,
-  signInAsGuest,
-  signInWithPassword,
-  signUp,
-} from "./_test-utils/guest-auth";
-import { createGoal, createLesson } from "./_test-utils/learner-data";
-
-/** BotID only classifies requests on Vercel, so tests stand in for its verdict. */
-vi.mock("botid/server", () => ({ checkBotId: vi.fn().mockResolvedValue({ isBot: false }) }));
+import { createGoal, createLearner, createLesson } from "./_test-utils/learner-data";
+import { linkGuestAccount } from "./link-guest-account";
 
 const OLDER = new Date("2026-09-01T00:00:00Z");
 const NEWER = new Date("2026-09-02T00:00:00Z");
@@ -84,7 +75,12 @@ function readStatuses(questionIds: string[]) {
 
 describe("guest tutor link", () => {
   it("moves a guest's tutor threads to the new account with every question as it was", async () => {
-    const [{ guestId, headers }, lesson] = await Promise.all([signInAsGuest(), createLesson()]);
+    const [accountId, guestId, lesson] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
+      createLesson(),
+    ]);
+
     const goal = await createGoal(guestId);
 
     const [lessonThread, planThread] = await Promise.all([
@@ -102,13 +98,13 @@ describe("guest tutor link", () => {
       askTutor({ createdAt: OLDER, question: "Is my plan too long?", threadId: planThread.id }),
     ]);
 
-    const { userId } = await signUp({ email: createTestEmail(), headers });
+    await linkGuestAccount({ account: { id: accountId }, guestUserId: guestId });
 
     await expect(prisma.user.findUnique({ where: { id: guestId } })).resolves.toBeNull();
 
     const threads = await prisma.lessonQuestionThread.findMany({
       orderBy: { id: "asc" },
-      where: { userId },
+      where: { userId: accountId },
     });
 
     expect(threads.map((thread) => thread.id)).toStrictEqual(
@@ -127,9 +123,9 @@ describe("guest tutor link", () => {
   });
 
   it("joins a guest's thread to the account's about the same lesson, keeping both histories", async () => {
-    const [account, guest, lesson] = await Promise.all([
-      createExistingAccount({ createdAt: OLDER }),
-      signInAsGuest(),
+    const [accountId, guestId, lesson] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
       createLesson(),
     ]);
 
@@ -140,7 +136,7 @@ describe("guest tutor link", () => {
           kind: "lesson",
           libraryLessonId: lesson.id,
           updatedAt: NEWER,
-          userId: account.userId,
+          userId: accountId,
         },
       }),
       prisma.lessonQuestionThread.create({
@@ -149,7 +145,7 @@ describe("guest tutor link", () => {
           kind: "lesson",
           libraryLessonId: lesson.id,
           updatedAt: NEWEST,
-          userId: guest.guestId,
+          userId: guestId,
         },
       }),
     ]);
@@ -172,9 +168,9 @@ describe("guest tutor link", () => {
       }),
     ]);
 
-    await signInWithPassword({ email: account.email, headers: guest.headers });
+    await linkGuestAccount({ account: { id: accountId }, guestUserId: guestId });
 
-    await expect(prisma.user.findUnique({ where: { id: guest.guestId } })).resolves.toBeNull();
+    await expect(prisma.user.findUnique({ where: { id: guestId } })).resolves.toBeNull();
 
     const threads = await prisma.lessonQuestionThread.findMany({
       include: { questions: { orderBy: { createdAt: "asc" } } },
@@ -188,7 +184,7 @@ describe("guest tutor link", () => {
       createdAt: OLDER,
       id: accountThread.id,
       updatedAt: NEWEST,
-      userId: account.userId,
+      userId: accountId,
     });
 
     expect(thread?.questions.map((question) => question.id)).toStrictEqual([
@@ -212,14 +208,14 @@ describe("guest tutor link", () => {
   });
 
   it("joins a thread the account starts about the same lesson while the guest's moves", async () => {
-    const [account, guest, lesson] = await Promise.all([
-      createExistingAccount({ createdAt: OLDER }),
-      signInAsGuest(),
+    const [accountId, guestId, lesson] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
       createLesson(),
     ]);
 
     const guestThread = await prisma.lessonQuestionThread.create({
-      data: { kind: "lesson", libraryLessonId: lesson.id, userId: guest.guestId },
+      data: { kind: "lesson", libraryLessonId: lesson.id, userId: guestId },
     });
 
     const guestQuestion = await askTutor({
@@ -230,7 +226,7 @@ describe("guest tutor link", () => {
 
     const asking = await holdTransaction(async (transaction) => {
       const thread = await transaction.lessonQuestionThread.create({
-        data: { kind: "lesson", libraryLessonId: lesson.id, userId: account.userId },
+        data: { kind: "lesson", libraryLessonId: lesson.id, userId: accountId },
       });
 
       await transaction.lessonQuestion.create({
@@ -247,7 +243,7 @@ describe("guest tutor link", () => {
       return thread;
     });
 
-    const linking = signInWithPassword({ email: account.email, headers: guest.headers });
+    const linking = linkGuestAccount({ account: { id: accountId }, guestUserId: guestId });
 
     try {
       await waitForBlocked({ blocker: asking.blocker, count: 1 });
@@ -274,12 +270,12 @@ describe("guest tutor link", () => {
   });
 
   it("keeps one unanswered turn open per screen in a joined thread so none waits on another", async () => {
-    const [account, guest] = await Promise.all([
-      createExistingAccount({ createdAt: OLDER }),
-      signInAsGuest(),
+    const [accountId, guestId] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
     ]);
 
-    const learners = { accountUserId: account.userId, guestUserId: guest.guestId };
+    const learners = { accountUserId: accountId, guestUserId: guestId };
 
     const [answeringLesson, waitingLesson] = await Promise.all([
       createSameLessonThreads(learners),
@@ -334,7 +330,7 @@ describe("guest tutor link", () => {
       }),
     ]);
 
-    await signInWithPassword({ email: account.email, headers: guest.headers });
+    await linkGuestAccount({ account: { id: accountId }, guestUserId: guestId });
 
     await expect(readStatuses(answering.map((question) => question.id))).resolves.toStrictEqual([
       { status: "completed" },

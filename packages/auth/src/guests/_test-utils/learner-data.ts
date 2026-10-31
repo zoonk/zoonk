@@ -6,6 +6,20 @@ const STUDY_HOUR = 10;
 const STUDY_WEEKDAY = 0;
 const DAILY_MINUTES = 20;
 
+export async function createLearner({ isAnonymous }: { isAnonymous: boolean }) {
+  const { id } = await prisma.user.create({
+    data: {
+      email: `guest-link-${randomUUID()}@example.test`,
+      isAnonymous,
+      name: "Guest link learner",
+      progress: { create: {} },
+    },
+    select: { id: true },
+  });
+
+  return id;
+}
+
 /** This package can't depend on the shared fixtures. */
 export async function createSkill() {
   const id = randomUUID();

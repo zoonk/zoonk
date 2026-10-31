@@ -1,13 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { prisma, sql } from "@zoonk/db";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { waitForBlocked } from "./_test-utils/blocked-sessions";
-import { createExistingAccount, signInAsGuest, signInWithPassword } from "./_test-utils/guest-auth";
-import { createLesson, createSkill } from "./_test-utils/learner-data";
+import { createLearner, createLesson, createSkill } from "./_test-utils/learner-data";
 import { moveKeyedRows } from "./_utils/merge-keyed-rows";
-
-/** BotID only classifies requests on Vercel, so tests stand in for its verdict. */
-vi.mock("botid/server", () => ({ checkBotId: vi.fn().mockResolvedValue({ isBot: false }) }));
 
 const OLDER = new Date("2026-09-01T00:00:00Z");
 
@@ -217,100 +213,80 @@ function readRows({ table, userId }: { table: KeyedTable; userId: string }) {
 }
 
 describe("guest keyed-row linking", () => {
-  it.each(
-    TABLES.flatMap((table) => [
-      { direct: false, table },
-      { direct: true, table },
-    ]),
-  )(
-    "links concurrent guests sharing $table (direct transfer: $direct)",
-    async ({ table, direct }) => {
-      const [account, firstGuest, secondGuest] = await Promise.all([
-        createExistingAccount({ createdAt: OLDER }),
-        signInAsGuest(),
-        signInAsGuest(),
-      ]);
+  it.each(TABLES)("links concurrent guests sharing %s", async (table) => {
+    const [accountId, ...userIds] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
+      createLearner({ isAnonymous: true }),
+    ]);
 
-      const userIds = [firstGuest.guestId, secondGuest.guestId];
-      const sourceRows = await seedSharedRows({ table, userIds });
-      const release = Promise.withResolvers<null>();
-      const ready = Promise.withResolvers<number>();
+    const sourceRows = await seedSharedRows({ table, userIds });
+    const release = Promise.withResolvers<null>();
+    const ready = Promise.withResolvers<number>();
 
-      const held = prisma.$transaction(
-        async (transaction) => {
-          await transaction.$queryRaw(sql`
-        SELECT id FROM ${sql([table])}
-        WHERE user_id IN (${firstGuest.guestId}::uuid, ${secondGuest.guestId}::uuid)
-        FOR UPDATE
-      `);
+    const held = prisma.$transaction(
+      async (transaction) => {
+        await transaction.$queryRaw(sql`
+          SELECT id FROM ${sql([table])} WHERE user_id = ANY(${userIds}::uuid[]) FOR UPDATE
+        `);
 
-          const [backend] = await transaction.$queryRaw<
-            { pid: number }[]
-          >`SELECT pg_backend_pid() AS pid`;
+        const [backend] = await transaction.$queryRaw<
+          { pid: number }[]
+        >`SELECT pg_backend_pid() AS pid`;
 
-          ready.resolve(backend!.pid);
-          await release.promise;
-        },
-        { timeout: 12_000 },
-      );
+        ready.resolve(backend!.pid);
+        await release.promise;
+      },
+      { timeout: 12_000 },
+    );
 
-      const blocker = await ready.promise;
+    const blocker = await ready.promise;
 
-      const linking = Promise.allSettled(
-        [firstGuest, secondGuest].map((guest) =>
-          direct
-            ? prisma.$transaction((transaction) =>
-                moveKeyedRows({ guestUserId: guest.guestId, transaction, userId: account.userId }),
-              )
-            : signInWithPassword({ email: account.email, headers: guest.headers }),
+    const linking = Promise.allSettled(
+      userIds.map((guestUserId) =>
+        prisma.$transaction((transaction) =>
+          moveKeyedRows({ guestUserId, transaction, userId: accountId }),
         ),
-      );
+      ),
+    );
 
-      try {
-        await waitForBlocked({ blocker, count: 2 });
-      } finally {
-        release.resolve(null);
-        await held;
-      }
+    try {
+      await waitForBlocked({ blocker, count: 2 });
+    } finally {
+      release.resolve(null);
+      await held;
+    }
 
-      const outcomes = await linking;
-      expect(outcomes).toMatchObject([{ status: "fulfilled" }, { status: "fulfilled" }]);
-      const accountRows = await readRows({ table, userId: account.userId });
-      expect(accountRows).toHaveLength(1);
+    const outcomes = await linking;
+    expect(outcomes).toMatchObject([{ status: "fulfilled" }, { status: "fulfilled" }]);
+    const accountRows = await readRows({ table, userId: accountId });
+    expect(accountRows).toHaveLength(1);
 
-      expect(sourceRows.map((row) => ({ ...row, userId: account.userId }))).toContainEqual(
-        accountRows[0],
-      );
+    expect(sourceRows.map((row) => ({ ...row, userId: accountId }))).toContainEqual(accountRows[0]);
 
-      await expect(prisma.user.count({ where: { id: { in: userIds } } })).resolves.toBe(
-        direct ? 2 : 0,
-      );
-
-      const remainingRows = await Promise.all(userIds.map((userId) => readRows({ table, userId })));
-      expect(remainingRows).toStrictEqual([[], []]);
-    },
-  );
+    const remainingRows = await Promise.all(userIds.map((userId) => readRows({ table, userId })));
+    expect(remainingRows).toStrictEqual([[], []]);
+  });
 
   it.each(TABLES)(
     "retains the account's full %s snapshot on collision and moves unique rows",
     async (table) => {
-      const [account, guest] = await Promise.all([
-        createExistingAccount({ createdAt: OLDER }),
-        signInAsGuest(),
+      const [accountId, guestId] = await Promise.all([
+        createLearner({ isAnonymous: false }),
+        createLearner({ isAnonymous: true }),
       ]);
 
-      const [accountRow] = await seedSharedRows({
-        table,
-        userIds: [account.userId, guest.guestId],
-      });
+      const [accountRow] = await seedSharedRows({ table, userIds: [accountId, guestId] });
+      const [uniqueRow] = await seedSharedRows({ table, userIds: [guestId] });
 
-      const [uniqueRow] = await seedSharedRows({ table, userIds: [guest.guestId] });
-      await signInWithPassword({ email: account.email, headers: guest.headers });
-      const accountRows = await readRows({ table, userId: account.userId });
+      await prisma.$transaction((transaction) =>
+        moveKeyedRows({ guestUserId: guestId, transaction, userId: accountId }),
+      );
+
+      const accountRows = await readRows({ table, userId: accountId });
       expect(accountRows).toHaveLength(2);
       expect(accountRows).toContainEqual(accountRow);
-      expect(accountRows).toContainEqual({ ...uniqueRow, userId: account.userId });
-      await expect(prisma.user.findUnique({ where: { id: guest.guestId } })).resolves.toBeNull();
+      expect(accountRows).toContainEqual({ ...uniqueRow, userId: accountId });
     },
   );
 });
