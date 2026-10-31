@@ -34,7 +34,7 @@ async function plannedGoalWithLargeMemory() {
   const user = await userFixture();
 
   const [goal, skill] = await Promise.all([
-    goalFixture({ userId: user.id }),
+    goalFixture({ details: { answered: [] }, userId: user.id }),
     skillFixture(),
     learningProfileFixture({ memoryEnabled: true, userId: user.id }),
     memoryFactFixture({ category: "routine", statement: TRIP, userId: user.id }),
