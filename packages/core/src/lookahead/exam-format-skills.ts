@@ -174,6 +174,7 @@ export async function pickExamFormatSkills({
         const own = getMockWritingFormat({
           format,
           names: area ? listSubjectNames({ area, structure }) : [],
+          structure,
         });
 
         return own ? [{ answerFormat: format.answerFormat, skill, style: own.style }] : [];

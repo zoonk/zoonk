@@ -242,16 +242,18 @@ export function getFormatQuotas({
 export function getMockWritingFormat({
   format,
   names,
+  structure,
 }: {
   format: MockFormat;
   names: readonly string[];
+  structure?: Pick<ExamStructure, "formats" | "pastOptions"> | null;
 }): MockFormat | null {
   if (!format.formats) {
     return format;
   }
 
   return (
-    getMockFormatMix({ formats: format.formats, pastOptions: null }, names).find(
+    getMockFormatMix(structure ?? { formats: format.formats, pastOptions: null }, names).find(
       (scoped) => scoped.key === format.key,
     ) ?? null
   );

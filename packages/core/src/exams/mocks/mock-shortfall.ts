@@ -146,8 +146,14 @@ export function getMockQuestionsShortfall({
   const fresh = candidates.filter((candidate) => !candidate.answered);
 
   return countFormats({ candidates, mix, option, plan }).flatMap(({ format, needed, wanted }) => {
-    const eligible = listAskedSkills({ format, skills, structure }).filter((skill) =>
-      canWrite({ candidates, format, skill }),
+    const eligible = listAskedSkills({ format, skills, structure }).filter(
+      (skill) =>
+        canWrite({ candidates, format, skill }) &&
+        getMockWritingFormat({
+          format,
+          names: skill.area ? listSubjectNames({ area: skill.area, structure }) : [],
+          structure,
+        }) !== null,
     );
 
     const size = Math.max(needed, wanted);
@@ -181,6 +187,7 @@ export function getMockQuestionsShortfall({
       const own = getMockWritingFormat({
         format,
         names: skill.area ? listSubjectNames({ area: skill.area, structure }) : [],
+        structure,
       });
 
       return own ? [{ format: own, questionsPerSkill: target - holds(skill), skill }] : [];
