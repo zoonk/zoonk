@@ -2,6 +2,7 @@ package com.zoonk.android.feature.onboarding.setup
 
 import android.app.LocaleConfig
 import android.app.LocaleManager
+import android.icu.util.ULocale
 import android.os.Build
 import android.os.LocaleList
 import androidx.compose.foundation.layout.Arrangement
@@ -499,51 +500,11 @@ private fun languageName(
     locale: Locale,
 ): String = Locale.forLanguageTag(tag).getDisplayLanguage(locale).ifEmpty { tag }
 
-/** The languages core writes an alphabet lesson for (`NON_LATIN_SCRIPT_LANGUAGES` in packages/utils/src/languages.ts). */
-private fun usesNonLatinScript(tag: String): Boolean = Locale.forLanguageTag(tag).language in NON_LATIN_SCRIPT_LANGUAGES
-
-private val NON_LATIN_SCRIPT_LANGUAGES =
-    setOf(
-        "am",
-        "ar",
-        "be",
-        "bg",
-        "bn",
-        "bo",
-        "dv",
-        "el",
-        "fa",
-        "gu",
-        "he",
-        "hi",
-        "hy",
-        "ja",
-        "ka",
-        "km",
-        "kn",
-        "ko",
-        "lo",
-        "mk",
-        "ml",
-        "mn",
-        "mr",
-        "my",
-        "ne",
-        "pa",
-        "ps",
-        "ru",
-        "sd",
-        "si",
-        "sr",
-        "ta",
-        "te",
-        "th",
-        "ti",
-        "uk",
-        "ur",
-        "yi",
-        "zh",
-    )
+internal fun usesNonLatinScript(tag: String): Boolean =
+    ULocale.addLikelySubtags(ULocale.forLanguageTag(tag)).script.let {
+        it.isNotEmpty() &&
+            it != "Latn"
+    }
 
 private const val LISTENING_RATE = 0.9f
 
