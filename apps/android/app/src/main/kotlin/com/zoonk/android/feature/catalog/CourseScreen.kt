@@ -188,18 +188,6 @@ internal data class CatalogPageLayout(
     val headline: Modifier,
 )
 
-/** A course, chapter or lesson that no longer exists is a not-found page inside the frame, as on main. */
-@Composable
-internal fun CatalogNotFound(navigator: AppNavigator) {
-    StatusMessage(
-        icon = R.drawable.ic_search_off,
-        title = stringResource(R.string.catalog_not_found_title),
-        description = stringResource(R.string.catalog_not_found_description),
-    ) {
-        Button(onClick = { navigator.open(AppRoute.Catalog()) }) { Text(stringResource(R.string.catalog_title)) }
-    }
-}
-
 private fun LazyListScope.courseContent(
     app: AppContainer,
     navigator: AppNavigator,

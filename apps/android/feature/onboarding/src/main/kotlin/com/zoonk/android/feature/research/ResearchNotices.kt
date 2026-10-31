@@ -35,7 +35,7 @@ import java.util.UUID
  * rebuilds the plan minutes later; "Not now" removes the ask for good.
  */
 @Composable
-internal fun UploadRequestNotice(
+fun UploadRequestNotice(
     goalId: UUID,
     request: TodayUploadRequest?,
     store: OnboardingStore,
@@ -101,7 +101,7 @@ internal fun UploadRequestNotice(
 
 /** A change to a source the goal follows, such as a new notice. */
 @Composable
-internal fun SourceChangeNotice(
+fun SourceChangeNotice(
     message: String,
     layout: SuggestionLayout,
     modifier: Modifier = Modifier,

@@ -14,12 +14,12 @@ import kotlinx.serialization.json.jsonObject
 import java.util.UUID
 import kotlin.time.Clock
 
-internal val GOAL: UUID = UUID.fromString("6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a01")
-internal const val BLOCK = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a03"
-internal const val PLAN_ITEM = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a04"
+val GOAL: UUID = UUID.fromString("6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a01")
+const val BLOCK = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a03"
+const val PLAN_ITEM = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a04"
 
 /** An exam a few weeks away with nothing taken yet; [extra]'s top-level fields replace or add to it. */
-internal fun exam(extra: String = ""): ExamView {
+fun exam(extra: String = ""): ExamView {
     val base =
         ApiJson
             .parseToJsonElement(
@@ -38,7 +38,7 @@ internal fun exam(extra: String = ""): ExamView {
     return ApiJson.decodeFromJsonElement<ExamView>(JsonObject(base + fields))
 }
 
-internal fun mockOptions(extra: String = ""): MockOptions {
+fun mockOptions(extra: String = ""): MockOptions {
     val base =
         ApiJson
             .parseToJsonElement(
@@ -53,7 +53,7 @@ internal fun mockOptions(extra: String = ""): MockOptions {
     return ApiJson.decodeFromJsonElement<MockOptions>(JsonObject(base + fields))
 }
 
-internal class FakeExamApi(
+class FakeExamApi(
     var exam: ExamView? = exam(),
 ) : ExamApi {
     var reads = 0
@@ -81,7 +81,7 @@ internal class FakeExamApi(
     }
 }
 
-internal class FakeMockApi(
+class FakeMockApi(
     var options: MockOptions? = mockOptions(),
 ) : MockApi {
     override suspend fun options(

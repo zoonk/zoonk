@@ -135,13 +135,6 @@ internal fun CoroutineScope.switchThenOpenToday(
     }
 }
 
-internal fun LearnerSummary.goalOnCourse(courseId: String): LearnerSummaryGoal? =
-    goals.firstOrNull { goal ->
-        goal.courseId?.toString() == courseId &&
-            goal.status == LearnerSummaryGoal.Status.ACTIVE &&
-            goal.kind != LearnerSummaryGoal.Kind.EXPLAIN
-    }
-
 /** Main's `getTotalDuration`: minutes under an hour, rounded hours ("~3 hr") after. */
 internal fun formatTotalDuration(
     totalMinutes: Double,

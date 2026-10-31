@@ -87,11 +87,11 @@ import java.util.Locale
 import androidx.compose.ui.text.intl.LocaleList as TextLocales
 
 /** The app's speech player for listening questions; none in previews and tests, where the message shows as text. */
-internal val LocalSetupSpeech = staticCompositionLocalOf<SpeechPlayer?> { null }
+val LocalSetupSpeech = staticCompositionLocalOf<SpeechPlayer?> { null }
 
 /** [language] is the learner's own. There's no way back during its questions; stopping shows the levels so far. */
 @Composable
-internal fun ColumnScope.LanguageLevelTestStep(
+fun ColumnScope.LanguageLevelTestStep(
     goalId: String,
     language: String,
     targetLanguage: String,

@@ -83,7 +83,7 @@ internal fun musicianshipInput(
 )
 
 /** A goal its card left waiting starts as the card read it. */
-internal fun GoalCreateInputOutput.toGoalCreateInput() =
+fun GoalCreateInputOutput.toGoalCreateInput() =
     GoalCreateInput(
         dailyMinutes = dailyMinutes,
         goals = goals.map { it.toGoalDraft() },

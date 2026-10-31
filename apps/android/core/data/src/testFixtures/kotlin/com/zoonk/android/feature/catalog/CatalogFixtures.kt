@@ -13,19 +13,19 @@ import com.zoonk.api.models.CourseResource
 import com.zoonk.api.models.CourseResult
 import kotlinx.coroutines.CompletableDeferred
 
-internal const val COURSE = "11111111-1111-4111-8111-111111111111"
-internal const val CHAPTER_ONE = "22222222-2222-4222-8222-222222222221"
-internal const val CHAPTER_TWO = "22222222-2222-4222-8222-222222222222"
-internal const val LESSON_ONE = "33333333-3333-4333-8333-333333333331"
-internal const val LESSON_TWO = "33333333-3333-4333-8333-333333333332"
-internal const val LESSON_THREE = "33333333-3333-4333-8333-333333333333"
+const val COURSE = "11111111-1111-4111-8111-111111111111"
+const val CHAPTER_ONE = "22222222-2222-4222-8222-222222222221"
+const val CHAPTER_TWO = "22222222-2222-4222-8222-222222222222"
+const val LESSON_ONE = "33333333-3333-4333-8333-333333333331"
+const val LESSON_TWO = "33333333-3333-4333-8333-333333333332"
+const val LESSON_THREE = "33333333-3333-4333-8333-333333333333"
 private const val ORG = "44444444-4444-4444-8444-444444444444"
 
 private const val QUESTION =
     """{"context":null,"guess":true,"kind":"choice","question":"Does the electron circle the nucleus?",
         "options":[{"id":"planet","text":"Yes, like a tiny planet"},{"id":"cloud","text":"No, it's more like a cloud"}]}"""
 
-internal fun courseResult(
+fun courseResult(
     id: String,
     title: String,
     subject: String? = "science",
@@ -36,12 +36,12 @@ internal fun courseResult(
             "title":"$title"}""",
     )
 
-internal fun counts(): CourseCategoryCounts =
+fun counts(): CourseCategoryCounts =
     ApiJson.decodeFromString(
         """{"categories":[{"category":"science","courseCount":2},{"category":"math","courseCount":1},{"category":"law","courseCount":0}],"total":3}""",
     )
 
-internal fun course(
+fun course(
     tryLesson: Boolean = true,
     quickTestMinutes: Int = 2,
 ): CourseResource =
@@ -59,13 +59,13 @@ internal fun course(
             "organization":{"id":"$ORG","name":"Zoonk","slug":"zoonk"}}""",
     )
 
-internal fun chapters(): List<CourseChapter> =
+fun chapters(): List<CourseChapter> =
     listOf(
         chapter(CHAPTER_ONE, "Inside the atom", "overview", 0, listOf(LESSON_ONE to "Inside an atom", LESSON_TWO to "The cloud")),
         chapter(CHAPTER_TWO, "Bonds", "beginner", 1, listOf(LESSON_THREE to "Sharing electrons")),
     )
 
-internal fun chapter(
+fun chapter(
     id: String,
     title: String,
     level: String,
@@ -80,14 +80,14 @@ internal fun chapter(
         ) { (lessonId, lessonTitle) -> """{"estimatedMinutes":7,"id":"$lessonId","slug":"l","title":"$lessonTitle"}""" }}]}""",
     )
 
-internal fun chapterResource(id: String): ChapterResource =
+fun chapterResource(id: String): ChapterResource =
     ApiJson.decodeFromString(
         """{"courseId":"$COURSE","description":"d","generationStatus":"completed","id":"$id","language":"en","level":"beginner",
             "objectives":[],"position":1,"slug":"c","title":"Bonds",
             "tryLesson":{"chapterTitle":"Bonds","lessonId":"$LESSON_THREE","minutes":7,"number":1,"screen":$QUESTION}}""",
     )
 
-internal fun catalogLesson(
+fun catalogLesson(
     id: String,
     firstScreen: String = QUESTION,
 ): CatalogLesson =
@@ -97,7 +97,7 @@ internal fun catalogLesson(
     )
 
 /** Counts each read, serves pages of [pageSize] from [all], and fails a read while [failing]. */
-internal class FakeCatalogApi(
+class FakeCatalogApi(
     private val all: List<CourseResult> = (1..5).map { courseResult("55555555-5555-4555-8555-55555555555$it", "Course $it") },
     private val pageSize: Int = 2,
 ) : CatalogApi {
