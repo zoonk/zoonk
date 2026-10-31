@@ -3,9 +3,21 @@
   "results": [
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -78,78 +90,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": {
-          "gaps": [
-            "Week 7: Sampling distributions and the central limit theorem",
-            "Week 10: Chi-square tests for categorical data"
-          ]
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
         },
-        "id": "en-intro-stats-syllabus-1",
-        "userInput": {
-          "goal": "Learn introductory statistics at a university level",
-          "goalKind": "learn",
-          "language": "en",
-          "references": [
-            {
-              "text": "Week 1: Types of data and sampling methods\nWeek 2: Graphs for categorical and numerical data\nWeek 3: Measures of center and spread\nWeek 4: The normal distribution and z-scores\nWeek 5: Correlation and simple linear regression\nWeek 6: Probability rules\nWeek 7: Sampling distributions and the central limit theorem\nWeek 8: Confidence intervals for a mean and a proportion\nWeek 9: Hypothesis tests and p-values\nWeek 10: Chi-square tests for categorical data\nGrading: homework 30%, midterm 30%, final exam 40%\nOffice hours: Tuesdays from 2 to 4 pm",
-              "title": "STAT 101: Introduction to Statistics"
-            }
-          ],
-          "skills": [
-            {
-              "description": "Classify data and choose a sampling method.",
-              "key": "data-types",
-              "name": "Classify data and choose a sampling method"
-            },
-            {
-              "description": "Choose and read charts for a data set.",
-              "key": "charts",
-              "name": "Choose and read charts for a data set"
-            },
-            {
-              "description": "Summarize data with center and spread.",
-              "key": "center-spread",
-              "name": "Summarize data with center and spread"
-            },
-            {
-              "description": "Use the normal distribution and z-scores.",
-              "key": "normal",
-              "name": "Use the normal distribution and z-scores"
-            },
-            {
-              "description": "Fit and read a simple linear regression.",
-              "key": "regression",
-              "name": "Fit and read a simple linear regression"
-            },
-            {
-              "description": "Apply basic probability rules.",
-              "key": "probability",
-              "name": "Apply basic probability rules"
-            },
-            {
-              "description": "Build a confidence interval.",
-              "key": "confidence-intervals",
-              "name": "Build a confidence interval"
-            },
-            {
-              "description": "Run a hypothesis test and read a p-value.",
-              "key": "hypothesis-tests",
-              "name": "Run a hypothesis test and read a p-value"
-            }
-          ]
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
         }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
@@ -222,12 +177,26 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "gaps": [] },
+        "expected": {
+          "gaps": []
+        },
         "id": "es-python-no-gaps-1",
         "userInput": {
           "goal": "Aprender a programar en Python",
@@ -286,15 +255,40 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "examWeights": [{ "key": "linear-equations", "max": 5, "min": 4 }],
-          "gapWeights": [{ "max": 4, "min": 2 }],
-          "gaps": ["Expression of ideas"]
+          "examWeights": [
+            {
+              "key": "linear-equations",
+              "max": 5,
+              "min": 4
+            }
+          ],
+          "gapWeights": [
+            {
+              "max": 4,
+              "min": 2
+            }
+          ],
+          "gaps": [
+            "Expression of ideas"
+          ]
         },
         "id": "en-sat-blueprint-weights-1",
         "userInput": {
@@ -356,23 +350,49 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "gaps": ["5 Sistemas eleitorais"],
+          "gaps": [
+            "5 Sistemas eleitorais"
+          ],
           "placements": [
-            { "key": "crase", "topics": ["5.7 Emprego do sinal indicativo de crase"] },
-            { "key": "concordancia", "topics": ["5.5 Concordância verbal e nominal"] }
+            {
+              "key": "crase",
+              "topics": [
+                "5.7 Emprego do sinal indicativo de crase"
+              ]
+            },
+            {
+              "key": "concordancia",
+              "topics": [
+                "5.5 Concordância verbal e nominal"
+              ]
+            }
           ]
         },
         "id": "pt-camara-notice-topics-1",
         "userInput": {
           "examOutline": {
             "name": "Concurso da Câmara dos Deputados, Analista Legislativo",
-            "notes": ["Scoring: cada item errado anula um item certo"],
+            "notes": [
+              "Scoring: cada item errado anula um item certo"
+            ],
             "subjects": [
               {
                 "group": "Conhecimentos básicos (P1)",
@@ -412,7 +432,9 @@
               "name": "Interpretar textos de gêneros variados",
               "examWeight": 4,
               "area": "Língua Portuguesa",
-              "topics": ["1 Compreensão e interpretação de textos de gêneros variados"]
+              "topics": [
+                "1 Compreensão e interpretação de textos de gêneros variados"
+              ]
             },
             {
               "description": "Aplicar as regras de ortografia.",
@@ -420,7 +442,9 @@
               "name": "Aplicar as regras de ortografia",
               "examWeight": 3,
               "area": "Língua Portuguesa",
-              "topics": ["3 Domínio da ortografia"]
+              "topics": [
+                "3 Domínio da ortografia"
+              ]
             },
             {
               "description": "Empregar o acento grave indicativo de crase.",
@@ -444,7 +468,9 @@
               "name": "Comparar regimes políticos",
               "examWeight": 3,
               "area": "Ciência Política",
-              "topics": ["1 Regimes políticos"]
+              "topics": [
+                "1 Regimes políticos"
+              ]
             },
             {
               "description": "Distinguir sistemas e formas de governo.",
@@ -452,7 +478,313 @@
               "name": "Distinguir sistemas e formas de governo",
               "examWeight": 3,
               "area": "Ciência Política",
-              "topics": ["2 Sistemas e formas de governo"]
+              "topics": [
+                "2 Sistemas e formas de governo"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [
+            "Week 7: Sampling distributions and the central limit theorem",
+            "Week 10: Chi-square tests for categorical data"
+          ]
+        },
+        "id": "en-intro-stats-syllabus-1",
+        "userInput": {
+          "goal": "Learn introductory statistics at a university level",
+          "goalKind": "learn",
+          "language": "en",
+          "references": [
+            {
+              "text": "Week 1: Types of data and sampling methods\nWeek 2: Graphs for categorical and numerical data\nWeek 3: Measures of center and spread\nWeek 4: The normal distribution and z-scores\nWeek 5: Correlation and simple linear regression\nWeek 6: Probability rules\nWeek 7: Sampling distributions and the central limit theorem\nWeek 8: Confidence intervals for a mean and a proportion\nWeek 9: Hypothesis tests and p-values\nWeek 10: Chi-square tests for categorical data\nGrading: homework 30%, midterm 30%, final exam 40%\nOffice hours: Tuesdays from 2 to 4 pm",
+              "title": "STAT 101: Introduction to Statistics"
+            }
+          ],
+          "skills": [
+            {
+              "description": "Classify data and choose a sampling method.",
+              "key": "data-types",
+              "name": "Classify data and choose a sampling method"
+            },
+            {
+              "description": "Choose and read charts for a data set.",
+              "key": "charts",
+              "name": "Choose and read charts for a data set"
+            },
+            {
+              "description": "Summarize data with center and spread.",
+              "key": "center-spread",
+              "name": "Summarize data with center and spread"
+            },
+            {
+              "description": "Use the normal distribution and z-scores.",
+              "key": "normal",
+              "name": "Use the normal distribution and z-scores"
+            },
+            {
+              "description": "Fit and read a simple linear regression.",
+              "key": "regression",
+              "name": "Fit and read a simple linear regression"
+            },
+            {
+              "description": "Apply basic probability rules.",
+              "key": "probability",
+              "name": "Apply basic probability rules"
+            },
+            {
+              "description": "Build a confidence interval.",
+              "key": "confidence-intervals",
+              "name": "Build a confidence interval"
+            },
+            {
+              "description": "Run a hypothesis test and read a p-value.",
+              "key": "hypothesis-tests",
+              "name": "Run a hypothesis test and read a p-value"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [
+            "第6回：標本分布と中心極限定理",
+            "第9回：カイ二乗検定"
+          ]
+        },
+        "id": "ja-intro-stats-syllabus-1",
+        "userInput": {
+          "goal": "大学の統計学入門の単位を取る",
+          "goalKind": "learn",
+          "language": "ja",
+          "references": [
+            {
+              "text": "第1回：データの種類と標本調査\n第2回：度数分布表とヒストグラム\n第3回：平均・分散・標準偏差\n第4回：正規分布と標準化\n第5回：相関と単回帰\n第6回：標本分布と中心極限定理\n第7回：母平均の区間推定\n第8回：仮説検定とp値\n第9回：カイ二乗検定\n成績評価：レポート40%、期末試験60%",
+              "title": "統計学入門（シラバス）"
+            }
+          ],
+          "skills": [
+            {
+              "description": "データの種類を見分け、標本調査の方法を選べる.",
+              "key": "data-types",
+              "name": "データの種類を見分け、標本調査の方法を選べる"
+            },
+            {
+              "description": "度数分布表とヒストグラムを作れる.",
+              "key": "histogram",
+              "name": "度数分布表とヒストグラムを作れる"
+            },
+            {
+              "description": "平均と標準偏差でデータを要約できる.",
+              "key": "spread",
+              "name": "平均と標準偏差でデータを要約できる"
+            },
+            {
+              "description": "正規分布で確率を求められる.",
+              "key": "normal",
+              "name": "正規分布で確率を求められる"
+            },
+            {
+              "description": "相関係数と回帰直線を読み取れる.",
+              "key": "regression",
+              "name": "相関係数と回帰直線を読み取れる"
+            },
+            {
+              "description": "母平均の信頼区間を求められる.",
+              "key": "intervals",
+              "name": "母平均の信頼区間を求められる"
+            },
+            {
+              "description": "仮説検定を行いp値を読み取れる.",
+              "key": "tests",
+              "name": "仮説検定を行いp値を読み取れる"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [
+            "7주차: 딕셔너리와 집합",
+            "10주차: 예외 처리"
+          ]
+        },
+        "id": "ko-python-syllabus-1",
+        "userInput": {
+          "goal": "교양 파이썬 수업에서 좋은 학점 받기",
+          "goalKind": "learn",
+          "language": "ko",
+          "references": [
+            {
+              "text": "1주차: 파이썬 설치와 첫 프로그램\n2주차: 변수와 자료형\n3주차: 조건문\n4주차: 반복문\n5주차: 함수\n6주차: 리스트와 튜플\n7주차: 딕셔너리와 집합\n8주차: 중간고사\n9주차: 파일 읽고 쓰기\n10주차: 예외 처리\n평가: 과제 30%, 중간고사 30%, 기말고사 40%",
+              "title": "컴퓨팅 사고와 파이썬"
+            }
+          ],
+          "skills": [
+            {
+              "description": "파이썬을 설치하고 첫 프로그램을 실행할 수 있어요.",
+              "key": "setup",
+              "name": "파이썬을 설치하고 첫 프로그램을 실행할 수 있어요"
+            },
+            {
+              "description": "변수와 자료형을 다룰 수 있어요.",
+              "key": "variables",
+              "name": "변수와 자료형을 다룰 수 있어요"
+            },
+            {
+              "description": "조건문으로 분기를 만들 수 있어요.",
+              "key": "conditions",
+              "name": "조건문으로 분기를 만들 수 있어요"
+            },
+            {
+              "description": "반복문으로 같은 작업을 되풀이할 수 있어요.",
+              "key": "loops",
+              "name": "반복문으로 같은 작업을 되풀이할 수 있어요"
+            },
+            {
+              "description": "함수를 만들고 호출할 수 있어요.",
+              "key": "functions",
+              "name": "함수를 만들고 호출할 수 있어요"
+            },
+            {
+              "description": "리스트와 튜플을 다룰 수 있어요.",
+              "key": "lists",
+              "name": "리스트와 튜플을 다룰 수 있어요"
+            },
+            {
+              "description": "파일을 읽고 쓸 수 있어요.",
+              "key": "files",
+              "name": "파일을 읽고 쓸 수 있어요"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [
+            "5. Hafta: Kâr ve zarar hesapları",
+            "8. Hafta: Bileşik faiz"
+          ]
+        },
+        "id": "tr-business-math-syllabus-1",
+        "userInput": {
+          "goal": "Ticari matematik dersini geçmek",
+          "goalKind": "learn",
+          "language": "tr",
+          "references": [
+            {
+              "text": "1. Hafta: Oran ve orantı\n2. Hafta: Yüzde hesapları\n3. Hafta: KDV dahil ve hariç fiyatlar\n4. Hafta: İskonto\n5. Hafta: Kâr ve zarar hesapları\n6. Hafta: Basit faiz\n7. Hafta: Ara sınav\n8. Hafta: Bileşik faiz\n9. Hafta: Taksitli ödemeler\nDeğerlendirme: ara sınav %40, final %60",
+              "title": "Ticari Matematik"
+            }
+          ],
+          "skills": [
+            {
+              "description": "Oran ve orantı problemlerini çözmek.",
+              "key": "ratios",
+              "name": "Oran ve orantı problemlerini çözmek"
+            },
+            {
+              "description": "Yüzde hesaplamak.",
+              "key": "percent",
+              "name": "Yüzde hesaplamak"
+            },
+            {
+              "description": "KDV dahil ve hariç fiyatı bulmak.",
+              "key": "vat",
+              "name": "KDV dahil ve hariç fiyatı bulmak"
+            },
+            {
+              "description": "İskontolu fiyatı hesaplamak.",
+              "key": "discount",
+              "name": "İskontolu fiyatı hesaplamak"
+            },
+            {
+              "description": "Basit faizi hesaplamak.",
+              "key": "simple-interest",
+              "name": "Basit faizi hesaplamak"
+            },
+            {
+              "description": "Taksitli ödemenin toplam maliyetini bulmak.",
+              "key": "installments",
+              "name": "Taksitli ödemenin toplam maliyetini bulmak"
             }
           ]
         }

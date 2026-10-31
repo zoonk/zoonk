@@ -135,4 +135,43 @@ export const TEST_CASES: TopicSkillNamesTestCase[] = [
       },
     ],
   }),
+  namesCase({
+    id: "class-test-teacher",
+    language: "ja",
+    topics: [
+      {
+        description: "田中先生が金曜日の小テストに出すと言っていた、細胞小器官の表。",
+        general: ["細胞小器官"],
+        name: "田中先生の金曜の小テスト用に細胞小器官の表を埋める",
+        personal: ["田中", "金曜"],
+        subject: "生物",
+      },
+    ],
+  }),
+  namesCase({
+    id: "interview-company",
+    language: "ko",
+    topics: [
+      {
+        description: "토스 면접에서 내가 짠 SQL 쿼리를 영어로 설명하기.",
+        general: ["SQL"],
+        name: "토스 면접에서 SQL 쿼리를 영어로 설명하기",
+        personal: ["토스"],
+        subject: "면접 영어",
+      },
+    ],
+  }),
+  namesCase({
+    id: "prep-course-essay",
+    language: "tr",
+    topics: [
+      {
+        description: "Dershanede Ayşe Hoca'nın geçen hafta verdiği konu: şehirde ulaşım.",
+        general: ["ulaşım"],
+        name: "Ayşe Hoca'nın verdiği şehirde ulaşım konulu deneme",
+        personal: ["Ayşe", "dershane", "geçen hafta"],
+        subject: "Türkçe",
+      },
+    ],
+  }),
 ];

@@ -721,4 +721,40 @@ Obs.: a prova tem 5 questões abertas e 5 de marcar. Não cai divisão celular (
       withoutTools: true,
     },
   },
+  {
+    expectations: `
+      - MUST be in natural Japanese: descriptions use です・ます without stiff keigo and never address the learner as あなた
+      - Beginner band of Excel for office work in Japan: entering and formatting data, formulas and cell references, SUM, AVERAGE, IF and XLOOKUP or VLOOKUP, sorting and filtering, tables, charts, pivot tables, printing and sharing a workbook, with Japanese office examples (売上表, 経費精算, 勤怠表, amounts in 円)
+      - Objectives, can-do lines and skills end in the plain potential form (計算できる, 作れる, ～できる), never as an order (～しよう, ～してください) or a bare noun
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { tool: "excel" },
+    id: "ja-excel-beginner",
+    userInput: { courseTitle: "Excel", language: "ja", level: "beginner" },
+  },
+  {
+    expectations: `
+      - MUST be in natural Korean in 해요체, never 합니다체 or 반말
+      - Beginner band of statistics: types of data, tables and charts, center and spread, probability, the normal distribution, sampling and bias, correlation, and a first look at estimation and hypothesis tests, with Korean examples (amounts in 원, 통계청 data, 수능 scores)
+      - Objectives, can-do lines and skills end in ~ㄹ 수 있어요 (계산할 수 있어요, 읽을 수 있어요), never as an order (~하세요, ~해 보세요) or a bare noun
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { tool: "엑셀|excel|스프레드시트|sheets|계산기" },
+    id: "ko-statistics-beginner",
+    userInput: { courseTitle: "통계학", language: "ko", level: "beginner" },
+  },
+  {
+    expectations: `
+      - MUST be in natural Turkish, addressing the learner as "sen"
+      - Beginner band of personal finance in Turkey: a monthly budget, saving, an emergency fund, inflation and real returns, credit cards, installments (taksit) and loan interest, deposit accounts, BES, funds and the basics of investing, taxes on a salary, with amounts in TL
+      - Objectives, can-do lines and skills end in the -mak/-mek infinitive with the verb last ("bütçe hazırlamak"), never as an order ("hazırlayın", "hazırla") or a bare noun
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { tool: "excel|tablo|sheets|hesap" },
+    id: "tr-personal-finance-beginner",
+    userInput: { courseTitle: "Kişisel finans", language: "tr", level: "beginner" },
+  },
 ];

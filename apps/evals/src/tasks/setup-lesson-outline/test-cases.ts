@@ -32,4 +32,23 @@ export const TEST_CASES: TestCase<SetupLessonOutlineExpected, SetupLessonOutline
       tool: "Calculadora gráfica (Desmos ou GeoGebra)",
     },
   },
+  {
+    expected: { device: "windows", tool: "python" },
+    id: "ja-python-windows",
+    userInput: { language: "ja", system: "windows", tool: "Python" },
+  },
+  {
+    expected: { device: "mac|맥", tool: "엑셀|excel|스프레드시트|sheets" },
+    id: "ko-spreadsheet-macos",
+    userInput: {
+      language: "ko",
+      system: "macos",
+      tool: "스프레드시트 (구글 스프레드시트 또는 엑셀)",
+    },
+  },
+  {
+    expected: { device: "linux|ubuntu", tool: "terminal|uçbirim" },
+    id: "tr-terminal-linux",
+    userInput: { language: "tr", system: "linux", tool: "Terminal" },
+  },
 ];

@@ -671,4 +671,76 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
     },
   },
   ...VISUAL_TEST_CASES,
+  {
+    expectations: `
+      - MUST be in natural Japanese: です・ます, never あなた
+      - Beginner lesson on percentages of change for shopping and prices in Japan: 割引, 税込 and 税抜 prices, and a price going up by a percentage, with amounts in 円
+      - A worked example comes before a similar task with less help, and checks make the learner compute or choose the result
+      - Skill names and can-do lines end in the plain potential form (計算できる, 作れる, ～できる), never as an order (～しよう, ～してください) or a bare noun
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "ja-percent-change-beginner",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: outlined({ after: ["割合をグラフで比べる"], before: ["割合と百分率"] }),
+      chapterTitle: "割合",
+      courseTitle: "毎日の数学",
+      language: "ja",
+      lessonCanDo: "割引後の値段を計算できる",
+      lessonDescription: "2割引や10%増しの値段を、電卓なしで出せるようになります。",
+      lessonTitle: "割引と値上げを計算する",
+      level: "beginner",
+      skills: ["割引後の値段を計算できる", "値上げ後の値段を計算できる"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in natural Korean in 해요체
+      - Beginner lesson on writing a simple SQL query with WHERE for someone who builds reports at work, with Korean business examples (amounts in 원, Korean names and cities)
+      - Writing a query is a procedure, so it needs a worked example on a small table and then a similar task with less help
+      - Skill names and can-do lines end in ~ㄹ 수 있어요 (계산할 수 있어요, 읽을 수 있어요), never as an order (~하세요, ~해 보세요) or a bare noun
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "ko-sql-where-beginner",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: outlined({
+        after: ["여러 조건으로 행 고르기"],
+        before: ["테이블과 행 이해하기"],
+      }),
+      chapterTitle: "데이터 고르기",
+      courseTitle: "SQL 기초",
+      language: "ko",
+      lessonCanDo: "조건에 맞는 행만 골라낼 수 있어요",
+      lessonDescription: "WHERE로 필요한 주문만 골라 보고서를 빠르게 만들어요.",
+      lessonTitle: "WHERE로 행 고르기",
+      level: "beginner",
+      skills: ["WHERE로 조건에 맞는 행을 고를 수 있어요"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in natural Turkish, addressing the learner as "sen"
+      - Beginner lesson on comparing a deposit account's return with inflation in Turkey: nominal and real return, monthly interest, the stopaj tax on interest, with amounts in TL
+      - A worked example comes before a similar task with less help, and the application answers a real choice the learner faces with their savings
+      - Skill names and can-do lines end in the -mak/-mek infinitive with the verb last ("bütçe hazırlamak"), never as an order ("hazırlayın", "hazırla") or a bare noun
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "tr-real-return-beginner",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: outlined({ after: ["Fonları karşılaştırmak"], before: ["Enflasyon nedir?"] }),
+      chapterTitle: "Birikimini korumak",
+      courseTitle: "Kişisel finans",
+      language: "tr",
+      lessonCanDo: "Mevduat getirisini enflasyonla karşılaştırmak",
+      lessonDescription: "Vadeli hesabın faizi enflasyonu geçiyor mu, birkaç adımda hesapla.",
+      lessonTitle: "Faiz enflasyonu geçiyor mu?",
+      level: "beginner",
+      skills: ["Reel getiriyi hesaplamak"],
+    },
+  },
 ];

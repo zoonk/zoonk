@@ -217,7 +217,9 @@
                 "group": "Dia 1",
                 "name": "Redação",
                 "questions": null,
-                "topics": ["Texto dissertativo-argumentativo sobre um problema social"],
+                "topics": [
+                  "Texto dissertativo-argumentativo sobre um problema social"
+                ],
                 "weight": null
               },
               {
@@ -898,14 +900,23 @@
                 "group": "Bloco II (36 itens)",
                 "name": "Estatística",
                 "questions": null,
-                "topics": ["Estatística descritiva", "Probabilidade", "Inferência"],
+                "topics": [
+                  "Estatística descritiva",
+                  "Probabilidade",
+                  "Inferência"
+                ],
                 "weight": null
               },
               {
                 "group": "Bloco II (36 itens)",
                 "name": "Raciocínio Lógico",
                 "questions": null,
-                "topics": ["Proposições e equivalências", "Argumentos", "Conjuntos", "Contagem"],
+                "topics": [
+                  "Proposições e equivalências",
+                  "Argumentos",
+                  "Conjuntos",
+                  "Contagem"
+                ],
                 "weight": null
               },
               {
@@ -926,7 +937,11 @@
                 "group": "Bloco III (24 itens)",
                 "name": "Contabilidade Geral",
                 "questions": null,
-                "topics": ["Patrimônio", "Registros contábeis", "Demonstrações contábeis"],
+                "topics": [
+                  "Patrimônio",
+                  "Registros contábeis",
+                  "Demonstrações contábeis"
+                ],
                 "weight": null
               }
             ],
@@ -941,7 +956,11 @@
                 "subject": "Língua Portuguesa",
                 "topic": "Reescrita de frases e parágrafos do texto"
               },
-              { "level": "medium", "subject": "Informática", "topic": "Segurança da informação" },
+              {
+                "level": "medium",
+                "subject": "Informática",
+                "topic": "Segurança da informação"
+              },
               {
                 "level": "low",
                 "subject": "Contabilidade Geral",
@@ -1429,6 +1448,282 @@
           "goal": "Passar no concurso da CGU",
           "goalKind": "exam",
           "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Every named pillar is represented: cleaning, pivot tables, charts, SQL reporting queries, Python analysis, business statistics, dashboards, and communicating findings to decision-makers. Ledger reconciliation, budget variances, receivables aging, and expense analysis ground the map in accounting work. Exam weights are correctly null for this non-exam goal. No missing-pillar cap applies.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The overall progression is sensible, course titles are canonical subjects, and phase titles describe stages rather than repeating taught topics. However, build-charts lacks an Excel aggregation or Python data-processing prerequisite, while reconcile-results lacks an aggregation prerequisite despite requiring totals and counts to be checked. These are multiple missing direct dependencies, triggering the cap of 7. Phase 1 also promises result checking before the explicit reconciliation skill appears.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 8–15-lesson skills are consistently sized and generally represent coherent capabilities. The weakness is the uniform time allocation: 399 lessons receive 39.9 hours, leaving just 19.95 hours for all exercises and reviews. For a SQL/Python beginner, this particularly underbudgets learning, debugging, and independently repeating the new-tool workflows. The clearly mis-sized practical learning allocation warrants the cap of 8; there is insufficient evidence to assert that the total is wrong by more than half.",
+          "score": 8,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills are relevant operational capabilities rather than introductions, motivation, history, or generic career advice. Security, documentation, reconciliation, and effect tracking support workplace analysis. Similar operations in Excel, SQL, and Python teach distinct tool capabilities required by the guidance rather than merely duplicating lessons. No filler cap applies.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The content fits an experienced accountant learning workplace analysis, starts SQL and Python at beginner level, and avoids basic arithmetic or elementary accounting instruction. Descriptions use natural polite Japanese, never address the learner as あなた, and all names and milestones end in plain potential forms. Nevertheless, the skill names systematically fail the explicit verb-first naming requirement, beginning with objects or tool names instead. This repeated naming mismatch limits the score to 7.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The graph emphasizes framing questions, understanding data grain, validating totals, making fair comparisons, interpreting uncertainty, distinguishing association from causation, and communicating limitations. It also explicitly teaches giving AI a purpose and constraints and validating generated SQL/Python before application, with data-security prerequisites. No AI-related cap applies. More concrete testing techniques would strengthen an already useful AI skill.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 7902,
+          "outputTokens": 1872,
+          "reasoningTokens": 895
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The study-time estimate is too compressed for the breadth of new skills. The 399 three-minute lessons consume 19.95 of the 39.9 hours, leaving only three minutes per lesson for all practice and review, including first-time SQL, Python, regression, and workflow automation. The prerequisite graph also omits important tool dependencies: chart construction depends only on chart selection, and result reconciliation depends only on data quality rather than an aggregation skill.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Phase 1 promises that results can be checked, but the explicit result-reconciliation skill is deferred to phase 2. Skill names consistently end in appropriate plain potential forms and read naturally, but they do not literally satisfy the separate verb-first naming requirement: names such as データの粒度と項目を確認できる begin with their objects rather than verbs.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Allocate practice time by difficulty instead of assigning every lesson the same six-minute total. Make the existing skills culminate in a connected monthly-close exercise: clean journal data, reconcile totals to the ledger, analyze budget-versus-actual differences, update a dashboard, and report findings to a manager. The AI skill could specify small test datasets and deliberate error cases for checking generated SQL and Python.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in natural Japanese: descriptions use です・ます and never address the learner as あなた\n      - Data analysis for an accountant who knows Excel: cleaning data, pivot tables and charts, SQL for reports, Python or another tool for analysis, statistics for business questions, dashboards, and presenting findings to a manager, built on what accounting work already uses (仕訳, 月次決算, 予算と実績)\n      - Skill names and milestones end in the plain potential form (計算できる, 作れる, ～できる), never as an order (～しよう, ～してください) or a bare noun\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "ja-data-analysis-accountant-1",
+        "userInput": {
+          "context": "経理を5年やっています。Excelは使えますが、SQLやPythonは触ったことがありません。",
+          "goal": "仕事でデータ分析ができるようになりたい",
+          "goalKind": "learn",
+          "language": "ja",
+          "ownLevel": "basic",
+          "purpose": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Arrival, interviews, customer service, banking, phone plans, medical visits, and social interaction are represented. However, residence-card handling is never explicit, and generic housing inquiries and rental terms do not establish share-house-specific capabilities. These are two missing named pillars, triggering the maximum score of 7.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The broad progression from basic interaction to independent living and workplace coordination is sensible, and the course title is canonical. Nevertheless, kana do not come first, and writing a foreign learner's name in Japanese appears before katakana with only self-introduction as its prerequisite. These multiple foundational sequencing/dependency errors trigger the cap of 7. Some phase titles also repeat instructional situations or areas rather than purely identifying stages.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 194.9-hour total is a plausible substantial preparation plan, the phase totals reconcile, and most skills have consistent lesson counts. There is no basis for declaring the estimate wrong by more than half. However, 'departure-arrangements' combines employment termination, moving, contract cancellation, and settlement across separate domains; this clearly oversized bundle triggers the cap of 8.",
+          "score": 8,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills address practical communication needed during a working holiday. There are no motivational, historical, overview, recap, or study-tip skills. Related skills generally add distinct contexts or capabilities rather than clearly repeating most of the same lessons.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The course is correctly titled '일본어', descriptions use Korean 해요체, and all skill names and milestones use can-do endings. Most learning is situated in useful daily-life and work tasks. However, the explicit kana-first starting requirement is violated, and beginner/intermediate labels with later mixing do not establish the requested A1-led CEFR progression. This pattern of level-fit mismatches triggers the cap of 7.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The map emphasizes live interaction, clarification, checking conditions, explaining problems, and coordinating solutions rather than rote procedures. Foundational kana literacy is appropriate and not unnecessary memorization. Because this is a language goal, the work-goal requirement for an explicit AI-tool skill does not apply. Optional translation-output verification could add value in administrative and written communication.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 10722,
+          "outputTokens": 1415,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The zero-beginner sequence violates the explicit kana-first requirement: greetings and self-introduction precede hiragana, and writing personal details precedes katakana without any script prerequisite. The map also omits explicit residence-card and share-house skills; immigration questions, address registration, and generic rental inquiries do not fully cover those named pillars. Levels are labeled only beginner/intermediate rather than showing the required A1-led CEFR progression.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some phase titles repeat taught situations or areas, particularly first meetings and workplace relationships, rather than clearly naming progression stages. The final departure skill bundles leaving employment and moving house. Wording such as '공과금 서비스' is less natural than referring directly to electricity, gas, and water services, and '일본어로' in selected skill names unnecessarily reduces their reusability.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the café or convenience-store shift context explicit in the existing customer-service skills. Show how learners acquire the contextual kanji needed for job advertisements, payslips, and official notices. Explain the practice/review allowance behind the hour estimates, and optionally include checking translation-tool output for consequential messages or forms.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in natural Korean in 해요체\n      - Language goal: skills are real situations with can-dos for a working holiday in Japan, such as arriving and the residence card, finding a share house, a part-time job interview, working a shift at a café or a convenience store, the bank and the phone plan, the doctor, and making friends\n      - Ordered by level from A1 (beginner), since the learner starts from zero: kana come first; grammar lives inside situations\n      - The course is Japanese itself, titled in Korean (for example \"일본어\")\n      - Skill names and milestones end in ~ㄹ 수 있어요 (계산할 수 있어요, 읽을 수 있어요), never as an order (~하세요, ~해 보세요) or a bare noun\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "ko-language-japanese-working-holiday-1",
+        "userInput": {
+          "context": "내년 봄에 도쿄로 워킹홀리데이를 가요. 일본어는 히라가나도 아직 몰라요.",
+          "goal": "워킹홀리데이를 위해 일본어 배우기",
+          "goalKind": "language",
+          "language": "ko",
+          "ownLevel": "none",
+          "targetLanguage": "ja"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Kotlin, Android Studio, Compose layouts and state, navigation, API calls, local storage, testing, and Google Play publishing all appear explicitly. However, the required AI coding-assistant pillar is absent. One missing named pillar caps coverage at 8.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Most dependencies support a sensible progression from Kotlin and tooling to UI, persistence, networking, testing, and release. However, privacy-compliance depends on play-release instead of preparing the learner for publication, a clear central prerequisite error that caps this category at 8. Most phase titles also describe situations or topics rather than progression stages, independently supporting the same cap. The milestones otherwise describe achievable capabilities.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Skills have broadly consistent scope and estimates, usually 18–30 short lessons, and none substitutes for an entire course. The 161.2-hour total is plausible for a substantial Android path building on Java knowledge and leaves meaningful time beyond the three-minute lessons for practice. Minor scope clarification would help distinguish introductory coroutine management from advanced cancellation and error handling.",
+          "score": 9,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills contribute to Android implementation, architecture, quality, platform integration, or publication. There are no motivation, history, study-tip, or standalone overview skills. The two application-building skills provide relevant integration practice rather than obvious recap filler, and the advanced topics fit the requested deep learning purpose.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The technical path fits a Java-knowing computer engineering student new to mobile development. Kotlin is introduced through language-specific features rather than a separate general programming foundations course. Names and milestones consistently end with Turkish infinitives, and the language is generally natural. However, the required informal learner address is absent throughout the descriptions; this clear mismatch caps the category at 8.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Debugging, testing, security decisions, lifecycle handling, measurement before optimization, and responsibility boundaries emphasize understanding and verification rather than rote syntax. Nevertheless, the case explicitly requires effective use of AI coding assistants, including reading and checking generated code, and no skill addresses that capability.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 12449,
+          "outputTokens": 1335,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required AI coding-assistant capability is entirely missing: no skill teaches specifying a coding task, reading generated code, checking API validity, or verifying behavior with tests. The publishing dependency is also reversed: privacy and store compliance requires play-release, although the relevant declarations and compliance checks must be completed before publishing.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Descriptions consistently use impersonal wording such as 'kullanmayı kapsar' rather than addressing the learner as 'sen'. Several phase titles describe situations or subject matter—particularly 'Bağımsız uygulamalar', 'Gerçek dünya koşulları', and 'Yayın ve sürdürülebilirlik'—rather than clearly naming stages of progression.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the study-time allocation more transparent by distinguishing short lessons from implementation practice and review. Also clarify the boundary between the introductory coroutine skill and the later cancellation/error-handling skill, since both descriptions include cancellation and scope management.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in natural Turkish, addressing the learner as \"sen\"\n      - Mobile app development for a second-year computer engineering student who knows Java: Kotlin, Android Studio, Jetpack Compose layouts and state, navigation, calling an API, local storage, testing, publishing to Google Play, and using AI coding assistants well (reading and checking generated code)\n      - Doesn't reteach programming basics the learner knows from Java\n      - Skill names and milestones end in the -mak/-mek infinitive with the verb last (\"bütçe hazırlamak\"), never as an order (\"hazırlayın\", \"hazırla\") or a bare noun\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "tr-android-development-student-1",
+        "userInput": {
+          "context": "Bilgisayar mühendisliği 2. sınıftayım. Java biliyorum ama hiç mobil uygulama yapmadım.",
+          "goal": "Android uygulama geliştirmeyi öğrenmek",
+          "goalKind": "learn",
+          "language": "tr",
+          "ownLevel": "basic",
+          "purpose": "deep"
         }
       }
     }

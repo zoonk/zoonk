@@ -1,5 +1,6 @@
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer } from "@/lib/types";
+import { countWords } from "@zoonk/utils/string";
 
 export type SetupLessonOutlineExpected = { device: string; tool: string };
 
@@ -18,10 +19,6 @@ const MIN_MINUTES = 3;
 const MAX_MINUTES = 5;
 const MIN_SCORE = 1;
 const MAX_SCORE = 10;
-
-function countWords(text: string): number {
-  return text.trim().split(/\s+/u).filter(Boolean).length;
-}
 
 function parseOutline(output: string): SetupOutline | null {
   try {

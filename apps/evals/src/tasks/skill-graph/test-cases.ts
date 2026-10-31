@@ -8,7 +8,7 @@ import { PIRACEMA_BLUEPRINT } from "./piracema-blueprint";
 
 const SHARED_EXPECTATIONS = `
   - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)
-  - Skill names are actions starting with a verb, named generically so other courses could reuse them
+  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them
   - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number
   - Exam weights are 1 to 5 for exam goals and null otherwise
   - Don't evaluate JSON formatting
@@ -722,6 +722,64 @@ A prof disse: vai ter questão de completar a tabela das organelas e uma dissert
       language: "pt",
       ownLevel: "basic",
       purpose: "work",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in natural Japanese: descriptions use です・ます and never address the learner as あなた
+      - Data analysis for an accountant who knows Excel: cleaning data, pivot tables and charts, SQL for reports, Python or another tool for analysis, statistics for business questions, dashboards, and presenting findings to a manager, built on what accounting work already uses (仕訳, 月次決算, 予算と実績)
+      - Skill names and milestones end in the plain potential form (計算できる, 作れる, ～できる), never as an order (～しよう, ～してください) or a bare noun
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "ja-data-analysis-accountant",
+    userInput: {
+      context: "経理を5年やっています。Excelは使えますが、SQLやPythonは触ったことがありません。",
+      goal: "仕事でデータ分析ができるようになりたい",
+      goalKind: "learn",
+      language: "ja",
+      ownLevel: "basic",
+      purpose: "work",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in natural Korean in 해요체
+      - Language goal: skills are real situations with can-dos for a working holiday in Japan, such as arriving and the residence card, finding a share house, a part-time job interview, working a shift at a café or a convenience store, the bank and the phone plan, the doctor, and making friends
+      - Ordered by level from A1 (beginner), since the learner starts from zero: kana come first; grammar lives inside situations
+      - The course is Japanese itself, titled in Korean (for example "일본어")
+      - Skill names and milestones end in ~ㄹ 수 있어요 (계산할 수 있어요, 읽을 수 있어요), never as an order (~하세요, ~해 보세요) or a bare noun
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "ko-language-japanese-working-holiday",
+    userInput: {
+      context: "내년 봄에 도쿄로 워킹홀리데이를 가요. 일본어는 히라가나도 아직 몰라요.",
+      goal: "워킹홀리데이를 위해 일본어 배우기",
+      goalKind: "language",
+      language: "ko",
+      ownLevel: "none",
+      targetLanguage: "ja",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in natural Turkish, addressing the learner as "sen"
+      - Mobile app development for a second-year computer engineering student who knows Java: Kotlin, Android Studio, Jetpack Compose layouts and state, navigation, calling an API, local storage, testing, publishing to Google Play, and using AI coding assistants well (reading and checking generated code)
+      - Doesn't reteach programming basics the learner knows from Java
+      - Skill names and milestones end in the -mak/-mek infinitive with the verb last ("bütçe hazırlamak"), never as an order ("hazırlayın", "hazırla") or a bare noun
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "tr-android-development-student",
+    userInput: {
+      context:
+        "Bilgisayar mühendisliği 2. sınıftayım. Java biliyorum ama hiç mobil uygulama yapmadım.",
+      goal: "Android uygulama geliştirmeyi öğrenmek",
+      goalKind: "learn",
+      language: "tr",
+      ownLevel: "basic",
+      purpose: "deep",
     },
   },
 ];
