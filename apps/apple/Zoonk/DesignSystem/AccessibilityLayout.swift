@@ -96,11 +96,30 @@ struct SectionHeaderRow<Trailing: View>: View {
 }
 
 extension View {
+  /// Stacked, a list row's label flows its icon into the title's first line, which pushes aside the
+  /// first line of every text and control in a title of several. Such a label keeps its icon in a
+  /// column instead.
+  func labelIconInColumnWhenStacked() -> some View {
+    modifier(LabelIconColumn())
+  }
+
   /// A wrapped capsule's round ends take the width its words need, so from the first accessibility
   /// size buttons are rounded rectangles. A button's shape doesn't reach into a presentation:
   /// apply it at the root of each presented screen too.
   func roundedButtonsAtAccessibilitySizes() -> some View {
     modifier(AccessibilityButtonShape())
+  }
+}
+
+private struct LabelIconColumn: ViewModifier {
+  @Environment(\.stacksContent) private var isStacked
+
+  func body(content: Content) -> some View {
+    if isStacked {
+      content.labelStyle(.titleAndIcon)
+    } else {
+      content
+    }
   }
 }
 

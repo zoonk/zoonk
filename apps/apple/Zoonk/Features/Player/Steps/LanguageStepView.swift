@@ -346,7 +346,7 @@ private struct FillBlankView: View {
   }
 
   var body: some View {
-    FlowLayout(spacing: 8) {
+    FlowLayout(spacing: 8, alignment: .firstTextBaseline) {
       ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
         if !segment.isEmpty {
           Text(segment.trimmingCharacters(in: .whitespaces))

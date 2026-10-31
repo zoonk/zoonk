@@ -75,6 +75,7 @@ struct PlusNotice<Action: View>: View {
       Image(systemName: "sparkles")
         .foregroundStyle(.secondary)
     }
+    .labelIconInColumnWhenStacked()
   }
 }
 
