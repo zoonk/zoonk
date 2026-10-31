@@ -82,6 +82,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
   let fullMeal: FullMeal
   let goalId: String?
   let lessonsComing: Bool
+  let lessonsToPrepare: Bool
   /// The learner's calendar day, `YYYY-MM-DD`.
   let localDate: String
   let minutes: Minutes
@@ -95,6 +96,16 @@ struct StudyDay: Decodable, Equatable, Sendable {
 
   var nextBlock: StudyBlock? {
     blocks.first { $0.position == nextPosition }
+  }
+
+  /// Mirrors main's `ComingLessonsRow`: the time a day holds for lessons not written yet, which
+  /// the learner asks for while nobody is outlining them.
+  var comingLessons: ComingLessons? {
+    if lessonsToPrepare {
+      return .toPrepare
+    }
+
+    return lessonsComing ? .beingWritten : nil
   }
 
   /// The day as a block's completion says it now stands, before the session is read again: the
@@ -162,6 +173,11 @@ struct StudyDay: Decodable, Equatable, Sendable {
         weight: weight, fill: kind == .lesson ? .track : .color(kind.color.opacity(0.35)))
     }
   }
+}
+
+enum ComingLessons {
+  case beingWritten
+  case toPrepare
 }
 
 /// Core decides where the day stands.

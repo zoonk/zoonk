@@ -18,6 +18,16 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(session.queue(next: nil).after.map(\.position), [1, 2, 3])
   }
 
+  func testADayWithLessonsAsksForTheNextOnesWhileNobodyWritesThem() throws {
+    let lesson = try block(position: 0, kind: "learn", screen: "lesson")
+
+    XCTAssertEqual(
+      try day(blocks: [lesson], nextPosition: 0, lessonsToPrepare: true).comingLessons, .toPrepare)
+    XCTAssertEqual(
+      try day(blocks: [lesson], nextPosition: 0, lessonsComing: true).comingLessons, .beingWritten)
+    XCTAssertNil(try day(blocks: [lesson], nextPosition: 0).comingLessons)
+  }
+
   func testStartOnADayNotOpenedYetOpensItWithTheShownStep() async throws {
     let view = try today(
       session: day(blocks: [block(position: 0, kind: "review")], nextPosition: 0))
@@ -633,8 +643,9 @@ private func block(
 }
 
 private func dayJSON(
-  blocks: [StudyBlock], nextPosition: Int?, id: String?, dailyGoal: Int, emptyDay: String?,
-  limitReached: Bool, localDate: String, goalID: String, state: String
+  blocks: [StudyBlock], nextPosition: Int?, id: String?, dailyGoal: Int, planned: Int,
+  emptyDay: String?, limitMinutes: Int?, limitReached: Bool, lessonsComing: Bool,
+  lessonsToPrepare: Bool, localDate: String, goalID: String, state: String
 ) -> String {
   let blockList = blocks.map {
     blockJSON(
@@ -645,12 +656,14 @@ private func dayJSON(
 
   return """
     {"blocks":[\(blockList.joined(separator: ","))],"brainPower":0,"catchUp":null,"current":true,
-    "dailyLimit":{"limitMinutes":60,"reached":\(limitReached),"remainingMinutes":0,"usedMinutes":0},
+    "dailyLimit":{"limitMinutes":\(limitMinutes.map(String.init) ?? "null"),"reached":\(limitReached),"remainingMinutes":0,
+    "usedMinutes":0},
     "dayEndsAt":1793242800000,"emptyDay":\(json(emptyDay)),
     "examAccess":{"includesMockExams":true,"trialEnded":false},"examTomorrow":false,
     "extraTime":{"available":false,"lessons":[],"minutes":10,"reason":null},"freshStart":null,
-    "fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"\(goalID)","lessonsComing":false,
-    "localDate":"\(localDate)","minutes":{"dailyGoal":\(dailyGoal),"done":0,"planned":15},
+    "fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"\(goalID)",
+    "lessonsComing":\(lessonsComing),"lessonsToPrepare":\(lessonsToPrepare),
+    "localDate":"\(localDate)","minutes":{"dailyGoal":\(dailyGoal),"done":0,"planned":\(planned)},
     "missions":[],"nextPosition":\(nextPosition.map(String.init) ?? "null"),
     "pauseSuggested":false,"plusLessons":[],"sessionBar":{"completed":0,"total":1},"state":"\(state)",
     "week":{"days":[],"nextStudyDate":null,
@@ -661,13 +674,16 @@ private func dayJSON(
 
 private func day(
   blocks: [StudyBlock], nextPosition: Int?, id: String? = nil, dailyGoal: Int = 15,
-  emptyDay: String? = nil, limitReached: Bool = false, localDate: String = "2026-10-28",
+  planned: Int = 15, emptyDay: String? = nil, limitMinutes: Int? = 60, limitReached: Bool = false,
+  lessonsComing: Bool = false, lessonsToPrepare: Bool = false, localDate: String = "2026-10-28",
   goalID: String = "g1", state: String = "underway"
 ) throws -> StudyDay {
   try decode(
     dayJSON(
-      blocks: blocks, nextPosition: nextPosition, id: id, dailyGoal: dailyGoal, emptyDay: emptyDay,
-      limitReached: limitReached, localDate: localDate, goalID: goalID, state: state))
+      blocks: blocks, nextPosition: nextPosition, id: id, dailyGoal: dailyGoal, planned: planned,
+      emptyDay: emptyDay, limitMinutes: limitMinutes, limitReached: limitReached,
+      lessonsComing: lessonsComing, lessonsToPrepare: lessonsToPrepare, localDate: localDate,
+      goalID: goalID, state: state))
 }
 
 private func planChange(

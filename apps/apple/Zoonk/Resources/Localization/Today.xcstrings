@@ -756,101 +756,6 @@
         }
       }
     },
-    "%lld activities so far · more as you go" : {
-      "comment" : "A day whose lessons are still being outlined",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Bisher %lld Aktivität · weitere folgen"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Bisher %lld Aktivitäten · weitere folgen"
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld activity so far · more as you go"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld activities so far · more as you go"
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld actividad por ahora · habrá más a medida que avances"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld actividades por ahora · habrá más a medida que avances"
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld activité pour l’instant · d’autres à venir"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld activités pour l’instant · d’autres à venir"
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld atividade até agora · mais ao longo do estudo"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld atividades até agora · mais ao longo do estudo"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "%lld Brain Power earned for today's missions" : {
       "comment" : "The missions' bonus, earned",
       "localizations" : {
@@ -5536,6 +5441,35 @@
         }
       }
     },
+    "Not written yet. **Get today's lessons**" : {
+      "comment" : "Asks for the day's next lessons, which nobody is writing",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nicht erstellt. **Lektionen für heute holen**"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no están preparadas. **Obtener las lecciones de hoy**"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas encore préparées. **Obtenir les leçons du jour**"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda não foram criadas. **Pedir as aulas de hoje**"
+          }
+        }
+      }
+    },
     "Noted. You keep your time, with less depth where it counts least." : {
       "comment" : "The learner kept their daily time after falling behind",
       "localizations" : {
@@ -7471,6 +7405,35 @@
         }
       }
     },
+    "Taking longer than usual" : {
+      "comment" : "The day's next lessons are taking long to outline",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir brauchen länger als üblich"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Está tardando más de lo habitual"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ça prend plus de temps que d’habitude"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demorando mais que o normal"
+          }
+        }
+      }
+    },
     "Thanks. We're reading it now, and your plan will update in a few minutes." : {
       "comment" : "After the learner uploaded the document research asked for",
       "localizations" : {
@@ -9263,6 +9226,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A data da sua meta passou e ainda restam aulas."
+          }
+        }
+      }
+    },
+    "Your next lessons" : {
+      "comment" : "Holds the place of the day's lessons that aren't written yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine nächsten Lektionen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus próximas lecciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes prochaines leçons"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suas próximas aulas"
           }
         }
       }

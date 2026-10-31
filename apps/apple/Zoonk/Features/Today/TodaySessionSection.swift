@@ -143,7 +143,10 @@ struct TodaySessionSection: View {
     let (before, upcoming) = session.queue(next: next)
     let foldsDone = next != nil && done.count > doneRows
     let markedUpTo = upcoming.lastIndex { countsTowardMission($0) }.map { $0 + 1 } ?? 0
-    let shownUpcoming = disclosures.showsMore ? upcoming.count : max(upcomingRows, markedUpTo)
+    let coming = next == nil ? nil : session.comingLessons
+    let upcomingCount = upcoming.count + (coming == nil ? 0 : 1)
+    let foldedFrom = max(upcomingRows, markedUpTo)
+    let shownUpcoming = disclosures.showsMore ? upcomingCount : foldedFrom
 
     if foldsDone {
       FoldRow(isOpen: $disclosures.showsDone, isDone: true, count: done.count, minutes: nil)
@@ -188,22 +191,18 @@ struct TodaySessionSection: View {
       }
     }
 
-    if upcoming.count > shownUpcoming || (disclosures.showsMore && upcoming.count > upcomingRows) {
-      FoldRow(
-        isOpen: $disclosures.showsMore, isDone: false,
-        count: upcoming.count - max(upcomingRows, markedUpTo),
-        minutes: upcoming.dropFirst(max(upcomingRows, markedUpTo)).reduce(0) {
-          $0 + $1.estimatedMinutes
-        })
+    if let coming, upcoming.count < shownUpcoming {
+      ComingLessonsRow(
+        coming: coming, writingStalled: writingStalled, isBusy: busy == .prepare,
+        failed: failed == .prepare, prepare: prepare
+      )
+      .disabled(busy != nil)
     }
 
-    if session.lessonsComing {
-      Text(
-        "\(session.blocks.count) activities so far · more as you go", tableName: "Today",
-        comment: "A day whose lessons are still being outlined"
-      )
-      .font(.footnote.monospacedDigit())
-      .foregroundStyle(.secondary)
+    if upcomingCount > shownUpcoming || (disclosures.showsMore && upcomingCount > upcomingRows) {
+      FoldRow(
+        isOpen: $disclosures.showsMore, isDone: false, count: upcomingCount - foldedFrom,
+        minutes: upcoming.dropFirst(foldedFrom).reduce(0) { $0 + $1.estimatedMinutes })
     }
   }
 
@@ -484,6 +483,75 @@ struct BlockRow: View {
       Text("Skipped", tableName: "Today", comment: "A skipped block")
     case .active, .pending:
       isNext ? Text("Next", tableName: "Today", comment: "The day's next block") : Text("")
+    }
+  }
+}
+
+/// Holds the place of the day's lessons that aren't written yet: Today reads again until they land
+/// while they're outlined, and asks the learner for them while nobody is.
+private struct ComingLessonsRow: View {
+  let coming: ComingLessons
+  let writingStalled: Bool
+  let isBusy: Bool
+  let failed: Bool
+  let prepare: () -> Void
+
+  var body: some View {
+    switch coming {
+    case .toPrepare:
+      Button(action: prepare) {
+        row
+      }
+      .tint(.primary)
+    case .beingWritten:
+      row
+        .accessibilityElement(children: .combine)
+    }
+  }
+
+  private var row: some View {
+    HStack(alignment: .firstTextBaseline, spacing: 12) {
+      KindMark(kind: .lesson)
+        .frame(minWidth: 20)
+
+      VStack(alignment: .leading, spacing: 2) {
+        Text(
+          "Your next lessons", tableName: "Today",
+          comment: "Holds the place of the day's lessons that aren't written yet")
+
+        Group {
+          switch coming {
+          case .toPrepare:
+            Text(
+              "Not written yet. **Get today's lessons**", tableName: "Today",
+              comment: "Asks for the day's next lessons, which nobody is writing")
+          case .beingWritten where writingStalled:
+            Text(
+              "Taking longer than usual", tableName: "Today",
+              comment: "The day's next lessons are taking long to outline")
+          case .beingWritten:
+            Text(
+              "Being written for you…", tableName: "Today",
+              comment: "A lesson being written right now")
+          }
+        }
+        .font(.footnote)
+        .foregroundStyle(.secondary)
+
+        if failed {
+          Text(
+            "That didn't save. Try again.", tableName: "Today",
+            comment: "A change couldn't be saved"
+          )
+          .font(.footnote)
+          .foregroundStyle(.destructive)
+        }
+      }
+
+      if isBusy {
+        Spacer(minLength: 8)
+        ProgressView()
+      }
     }
   }
 }
