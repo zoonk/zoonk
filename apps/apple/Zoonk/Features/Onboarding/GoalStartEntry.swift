@@ -216,9 +216,33 @@ struct GoalEntrySections<Attachment: View>: View {
       LocalizedStringResource(
         "pass the EXANI-II, speak \(language)…", table: "Onboarding",
         comment: "Example goal in the empty goal box; the language is one the learner could speak")
+    case .kyotsu:
+      LocalizedStringResource(
+        "do well on the Common Test, speak \(language)…", table: "Onboarding",
+        comment:
+          "Example goal in the empty goal box: Japan's Common Test for University Admissions, 共通テスト; the language is one the learner could speak"
+      )
+    case .matura:
+      LocalizedStringResource(
+        "pass the matura, speak \(language)…", table: "Onboarding",
+        comment: "Example goal in the empty goal box; the language is one the learner could speak")
+    case .maturita:
+      LocalizedStringResource(
+        "pass the maturità, speak \(language)…", table: "Onboarding",
+        comment: "Example goal in the empty goal box; the language is one the learner could speak")
     case .sat:
       LocalizedStringResource(
         "pass the SAT, speak \(language)…", table: "Onboarding",
+        comment: "Example goal in the empty goal box; the language is one the learner could speak")
+    case .suneung:
+      LocalizedStringResource(
+        "do well on the CSAT, speak \(language)…", table: "Onboarding",
+        comment:
+          "Example goal in the empty goal box: South Korea's college entrance exam, 수능; the language is one the learner could speak"
+      )
+    case .yks:
+      LocalizedStringResource(
+        "do well on the YKS, speak \(language)…", table: "Onboarding",
         comment: "Example goal in the empty goal box; the language is one the learner could speak")
     }
   }
@@ -235,8 +259,24 @@ struct GoalEntrySections<Attachment: View>: View {
       case .exani:
         LocalizedStringResource(
           "Pass the EXANI-II", table: "Onboarding", comment: "An example goal")
+      case .kyotsu:
+        LocalizedStringResource(
+          "Do well on the Common Test", table: "Onboarding",
+          comment: "An example goal: Japan's Common Test for University Admissions, 共通テスト")
+      case .matura:
+        LocalizedStringResource("Pass the matura", table: "Onboarding", comment: "An example goal")
+      case .maturita:
+        LocalizedStringResource(
+          "Pass the maturità", table: "Onboarding", comment: "An example goal")
       case .sat:
         LocalizedStringResource("Pass the SAT", table: "Onboarding", comment: "An example goal")
+      case .suneung:
+        LocalizedStringResource(
+          "Do well on the CSAT", table: "Onboarding",
+          comment: "An example goal: South Korea's college entrance exam, 수능")
+      case .yks:
+        LocalizedStringResource(
+          "Do well on the YKS", table: "Onboarding", comment: "An example goal")
       }
 
     return [
@@ -280,7 +320,7 @@ struct GoalEntrySections<Attachment: View>: View {
 /// Mirrors main's `useLocalGoalExample`.
 private enum LocalExample {
   enum Exam {
-    case abitur, bac, enem, exani, sat
+    case abitur, bac, enem, exani, kyotsu, matura, maturita, sat, suneung, yks
   }
 
   static var exam: Exam {
@@ -288,7 +328,12 @@ private enum LocalExample {
     case "de": .abitur
     case "es": .exani
     case "fr": .bac
+    case "it": .maturita
+    case "ja": .kyotsu
+    case "ko": .suneung
+    case "pl": .matura
     case "pt": .enem
+    case "tr": .yks
     default: .sat
     }
   }

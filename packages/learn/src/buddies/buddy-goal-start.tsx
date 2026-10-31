@@ -12,21 +12,17 @@ import {
   GoalFieldText,
   useGoalFieldAction,
 } from "../onboarding/entry/goal-field";
-import { useLocalGoalExample } from "../onboarding/entry/use-local-goal-example";
+import { useLocalExamGoal, useLocalGoalExample } from "../onboarding/entry/use-local-goal-example";
 import { BUDDY_COLUMN_CLASS, BuddyHeader } from "./buddy-header";
 import { type BuddyStatusView, toLearnBuddy } from "./buddy-status-view";
 
 function useGoalExamples(): string[] {
   const t = useExtracted();
-  const { exam, language } = useLocalGoalExample();
+  const { language } = useLocalGoalExample();
+  const exam = useLocalExamGoal();
 
   return [
-    t({
-      description: "Each branch names its own exam: keep that exam in it, never another country's.",
-      message:
-        "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} other {Pass the SAT}}",
-      values: { exam },
-    }),
+    exam,
     t("Speak {language} for a job interview", { language }),
     t("Understand quantum physics"),
   ];

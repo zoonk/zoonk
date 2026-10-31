@@ -12,26 +12,18 @@ import {
 } from "../../_components/list-group";
 import { PageSectionTitle } from "../../_components/page";
 import { useQuickExplanationLabel } from "../../explain/quick-explanation-label";
-import { useLocalGoalExample } from "./use-local-goal-example";
+import { useLocalExamGoal, useLocalGoalExample } from "./use-local-goal-example";
 
 type GoalExample = { kind: string; label: string };
 
 function useGoalExamples(): GoalExample[] {
   const t = useExtracted();
   const quickExplanation = useQuickExplanationLabel();
-  const { exam, language } = useLocalGoalExample();
+  const { language } = useLocalGoalExample();
+  const exam = useLocalExamGoal();
 
   return [
-    {
-      kind: t("Exam"),
-      label: t({
-        description:
-          "Each branch names its own exam: keep that exam in it, never another country's.",
-        message:
-          "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} other {Pass the SAT}}",
-        values: { exam },
-      }),
-    },
+    { kind: t("Exam"), label: exam },
     { kind: t("Language"), label: t("Speak {language} for a job interview", { language }) },
     { kind: t("Learn a topic"), label: t("Understand quantum physics") },
     { kind: t("Music"), label: t("Learn music from scratch") },

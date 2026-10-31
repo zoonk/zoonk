@@ -119,6 +119,26 @@ struct BuddyGoalStart: View {
         String(
           localized: "Pass the EXANI-II", table: "Buddy",
           comment: "An example goal: Mexico's university admission exam")
+      case "it":
+        String(
+          localized: "Pass the maturità", table: "Buddy",
+          comment: "An example goal: Italy's school-leaving exam")
+      case "ja":
+        String(
+          localized: "Do well on the Common Test", table: "Buddy",
+          comment: "An example goal: Japan's Common Test for University Admissions")
+      case "ko":
+        String(
+          localized: "Do well on the CSAT", table: "Buddy",
+          comment: "An example goal: South Korea's college entrance exam (수능)")
+      case "pl":
+        String(
+          localized: "Pass the matura", table: "Buddy",
+          comment: "An example goal: Poland's school-leaving exam")
+      case "tr":
+        String(
+          localized: "Do well on the YKS", table: "Buddy",
+          comment: "An example goal: Turkey's university entrance exam")
       default:
         String(
           localized: "Pass the SAT", table: "Buddy",
