@@ -51,7 +51,7 @@ export const TEST_CASES: TestCase<CheckCitedFactsExpected, CheckCitedFactsParams
       supportedIds: [
         "mock.scoring.parts.0.maxPoints",
         "mock.scoring.marking.0",
-        "mock.scoring.marking.0.wrongPenalty",
+        "mock.scoring.marking.0.wrongPoints",
       ],
     },
     id: "points-worked-out",
@@ -74,16 +74,14 @@ export const TEST_CASES: TestCase<CheckCitedFactsExpected, CheckCitedFactsParams
           statement: "In the whole exam, a right answer earns 3 points",
         },
         {
-          id: "mock.scoring.marking.0.wrongPenalty",
+          id: "mock.scoring.marking.0.wrongPoints",
           passage: POINTS_LINES.marks,
-          statement:
-            "In the whole exam, each wrong answer takes away 0.333 of a right answer's 3 points, about 1 point",
+          statement: "In the whole exam, each wrong answer takes away exactly 1 point",
         },
         {
-          id: "mock.scoring.marking.1.wrongPenalty",
+          id: "mock.scoring.marking.1.wrongPoints",
           passage: POINTS_LINES.marks,
-          statement:
-            "In the whole exam, each wrong answer takes away 0.5 of a right answer's 3 points, about 1.5 points",
+          statement: "In the whole exam, each wrong answer takes away exactly 1.5 points",
         },
       ],
     },
