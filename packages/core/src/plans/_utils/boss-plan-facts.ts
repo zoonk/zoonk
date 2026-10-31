@@ -32,13 +32,19 @@ export async function loadBossPlanFacts({
     lessonIds: [...new Set(lessonIds)].toSorted(),
   });
 
+  const graphSkillIds = new Set(graph.skills.map((skill) => skill.skillId));
+
   const taught = [
-    ...graph.skills.map((skill) => skill.skillId),
+    ...graphSkillIds,
     ...rows.lessonSkills.map((row) => row.skillId),
     ...rows.chapterLessons.flatMap((row) => row.lesson.skills.map((skill) => skill.skillId)),
   ];
 
-  const survivors = await loadSkillSurvivorMap([...new Set(taught)]);
+  // The graph's skills are survivors already: callers resolve it with `resolveMergedSkills`.
+  const survivors = await loadSkillSurvivorMap(
+    [...new Set(taught)].filter((skillId) => !graphSkillIds.has(skillId)),
+  );
+
   const skillIds = [...new Set(taught.map((skillId) => survivors.get(skillId) ?? skillId))];
 
   const bank =

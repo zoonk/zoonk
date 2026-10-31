@@ -57,55 +57,46 @@ export async function wasLastDayStudied(
   );
 }
 
-async function loadTodaySettle(context: Pick<PlanContext, "plan" | "timeZone" | "today">) {
-  const settled = await prisma.planChange.findFirst({
-    orderBy: { createdAt: "desc" },
-    select: { createdAt: true, payload: true },
+async function loadTodayCarried(context: Pick<PlanContext, "plan" | "timeZone" | "today">) {
+  const changes = await prisma.planChange.findMany({
+    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+    select: { createdAt: true, kind: true, payload: true, status: true },
     where: {
       createdAt: {
         gte: getStartOfLocalDay({ localDate: context.today, timeZone: context.timeZone }),
       },
-      kind: { in: ["missedDays", "resumed"] },
+      kind: { in: ["missedDays", "relearn", "resumed"] },
       planId: context.plan.id,
     },
   });
 
-  return (
-    settled && {
-      createdAt: settled.createdAt,
-      itemIds: parsePlanChangePayload(settled.payload).carriedItemIds,
-    }
-  );
+  const settled = changes.findLast((change) => change.kind !== "relearn");
+
+  return {
+    relearnedIds: changes.flatMap((change) =>
+      change.kind === "relearn" && change.status === "applied"
+        ? parsePlanChangePayload(change.payload).carriedItemIds
+        : [],
+    ),
+    settle: settled
+      ? {
+          createdAt: settled.createdAt,
+          itemIds: parsePlanChangePayload(settled.payload).carriedItemIds,
+        }
+      : null,
+  };
 }
 
 export async function loadPlanCarrySnapshot(context: PlanContext) {
-  const [previous, settle] = await Promise.all([
+  const [previous, carried] = await Promise.all([
     loadCarryOver({ goalId: context.goal.id, today: context.today }),
-    loadTodaySettle(context),
+    loadTodayCarried(context),
   ]);
 
-  return { previous, settle };
+  return { previous, ...carried };
 }
 
 export type PlanCarrySnapshot = Awaited<ReturnType<typeof loadPlanCarrySnapshot>>;
-
-async function loadTodayRelearnedItemIds(
-  context: Pick<PlanContext, "plan" | "timeZone" | "today">,
-): Promise<string[]> {
-  const changes = await prisma.planChange.findMany({
-    select: { payload: true },
-    where: {
-      createdAt: {
-        gte: getStartOfLocalDay({ localDate: context.today, timeZone: context.timeZone }),
-      },
-      kind: "relearn",
-      planId: context.plan.id,
-      status: "applied",
-    },
-  });
-
-  return changes.flatMap((change) => parsePlanChangePayload(change.payload).carriedItemIds);
-}
 
 async function loadTodayEdit(context: Pick<PlanContext, "plan" | "timeZone" | "today">) {
   const change = await prisma.planChange.findFirst({
@@ -138,9 +129,8 @@ export async function loadPlanCarryOver({
   mode: PlanningMode;
   snapshot?: PlanCarrySnapshot;
 }): Promise<CarryOver | null> {
-  const [settle, relearnedIds, edit] = await Promise.all([
-    snapshot ? snapshot.settle : loadTodaySettle(context),
-    loadTodayRelearnedItemIds(context),
+  const [{ relearnedIds, settle }, edit] = await Promise.all([
+    snapshot ?? loadTodayCarried(context),
     mode === "automatic" ? loadTodayEdit(context) : null,
   ]);
 
