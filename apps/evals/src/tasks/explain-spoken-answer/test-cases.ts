@@ -33,7 +33,7 @@ export const TEST_CASES: TestCase<unknown, ExplainSpokenAnswerInput>[] = [
     },
   },
   {
-    expectations: `A Spanish speaker's "ship" came out as "sheep": Spanish has one "i" sound, so the short English "i" in "ship" is hard. The tip should explain the short, relaxed vowel. In Spain Spanish.`,
+    expectations: `A Spanish speaker's "ship" came out as "sheep": Spanish has one "i" sound, so the short English "i" in "ship" is hard. The tip should explain the short, relaxed vowel. In Mexican Spanish.`,
     id: "es-en-ship-sheep",
     userInput: {
       expectedSentence: "The ship is very big",

@@ -150,7 +150,7 @@ export const TEST_CASES: TestCase<CourseOutlineExpected, CourseOutlineParams>[] 
   },
   {
     expectations: `
-      - MUST be in Spain Spanish (not Latin American Spanish), for example "ordenador" and "fichero" or "archivo" in their European use
+      - MUST be in Latin American Spanish as written in Mexico (not Spain Spanish), for example "computadora" and "archivo", never "ordenador" or "fichero"
       - Beginner band of Python programming: running Python and the tools to write it, variables and types, strings, conditionals, loops, functions, lists, dictionaries and other collections, reading and writing files, errors and exceptions, modules and packages, virtual environments, basic testing, and a small real program
       - Programming is a field AI is changing: lessons must include working with AI assistants (describing a task, reading and reviewing generated code, finding the bug in AI code) and favor concepts and debugging over memorizing syntax
 

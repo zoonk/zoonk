@@ -567,7 +567,7 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
   },
   {
     expectations: `
-      - MUST be in Spain Spanish (not Latin American Spanish): names and descriptions in European Spanish vocabulary and forms
+      - MUST be in Latin American Spanish as written in Mexico (not Spain Spanish): names and descriptions in Mexican vocabulary and forms
       - Language goal: skills are real situations with can-dos for working at a hotel in London, such as checking guests in and out, handling complaints, taking phone reservations, giving directions and recommendations, small talk with guests, writing short emails to guests, and understanding colleagues and instructions at work
       - Ordered by CEFR level from A1/A2 (beginner) to B1/B2 (intermediate); the learner has a basic level, so the path should not dwell on the alphabet
       - Grammar lives inside situations, not as standalone grammar skills

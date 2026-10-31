@@ -32,17 +32,17 @@ export const TEST_CASES: TestCase<unknown, LevelTestBankInput>[] = [
     userInput: { learnerLanguage: "en", targetLanguage: "pt" },
   },
   {
-    expectations: `A bank of Spain Spanish passages and sentences (Spain vocabulary and forms like "vosotros", "piso", "móvil") for US English speakers: questions, options and translations in US English. Levels A1 to C1 clearly increase in difficulty.`,
+    expectations: `A bank of Mexican Spanish passages and sentences (Mexican vocabulary and forms like "ustedes", "departamento", "celular", never "vosotros") for US English speakers: questions, options and translations in US English. Levels A1 to C1 clearly increase in difficulty.`,
     id: "en-es",
     userInput: { learnerLanguage: "en", targetLanguage: "es" },
   },
   {
-    expectations: `A bank of Spain Spanish passages and sentences (Spain vocabulary and forms like "vosotros", "piso", "móvil") for Brazilian learners: questions, options and translations in Brazilian Portuguese. Portuguese and Spanish are close, so no option can be picked by guessing a cognate. Levels A1 to C1 clearly increase in difficulty.`,
+    expectations: `A bank of Mexican Spanish passages and sentences (Mexican vocabulary and forms like "ustedes", "departamento", "celular", never "vosotros") for Brazilian learners: questions, options and translations in Brazilian Portuguese. Portuguese and Spanish are close, so no option can be picked by guessing a cognate. Levels A1 to C1 clearly increase in difficulty.`,
     id: "pt-es",
     userInput: { learnerLanguage: "pt", targetLanguage: "es" },
   },
   {
-    expectations: `A bank of US English passages and sentences for Spain Spanish speakers: questions, options and translations in Spain Spanish. Levels A1 to C1 clearly increase in difficulty.`,
+    expectations: `A bank of US English passages and sentences for Mexican Spanish speakers: questions, options and translations in Mexican Spanish. Levels A1 to C1 clearly increase in difficulty.`,
     id: "es-en",
     userInput: { learnerLanguage: "es", targetLanguage: "en" },
   },

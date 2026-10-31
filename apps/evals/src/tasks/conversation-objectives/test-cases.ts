@@ -49,7 +49,7 @@ const WORK: Call = {
 
 const NEIGHBOR: Call = {
   characterNotes:
-    "Javier, upstairs neighbor in Madrid, rehearses with his band on weeknights. Defensive at first, then reasonable: he can stop by 10pm on weeknights and put a rug down; Fridays stay his band's night.",
+    "Javier, upstairs neighbor in Guadalajara, rehearses with his band on weeknights. Defensive at first, then reasonable: he can stop by 10pm on weeknights and put a rug down; Fridays stay his band's night.",
   objectives: [
     {
       description: "Explain the noise problem politely but clearly.",

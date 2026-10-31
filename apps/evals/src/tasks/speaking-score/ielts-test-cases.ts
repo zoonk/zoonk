@@ -76,7 +76,7 @@ export const IELTS_TEST_CASES: TestCase<SpeakingScoreExpected, SpeakingScoreInpu
     }),
   },
   {
-    expectations: `A B1 candidate (bands about 5 to 5.5): keeps going with simple linking, but with frequent errors ("I like very much the nature", "my parents was working", "we eat a lot of fish", "for know other cultures", "too much tourists", "should to control"). Evidence and tips in Spain Spanish, explaining errors that come from Spanish when relevant.`,
+    expectations: `A B1 candidate (bands about 5 to 5.5): keeps going with simple linking, but with frequent errors ("I like very much the nature", "my parents was working", "we eat a lot of fish", "for know other cultures", "too much tourists", "should to control"). Evidence and tips in Mexican Spanish, explaining errors that come from Spanish when relevant.`,
     expected: { bandHigh: 5.5, bandLow: 5 },
     id: "es-en-b1-candidate",
     userInput: mockInput({

@@ -2,7 +2,7 @@ import { defineScoreCategories } from "@/lib/score-categories";
 
 export const LANGUAGE_LESSON_SCORE_CATEGORIES = defineScoreCategories([
   {
-    expectations: `Every target-language word and sentence is grammatical, natural and in the requested variant (US English, Brazilian Portuguese or Spain Spanish, including vocabulary like "piso" and "fianza" in Spain). Every translation has exactly the meaning of the original. Tips, notes and explanations say only true things about both languages. Score at most 5 for a wrong translation, an ungrammatical sentence or a false rule; at most 7 for the wrong variant.`,
+    expectations: `Every target-language word and sentence is grammatical, natural and in the requested variant (US English, Brazilian Portuguese or Mexican Spanish, including vocabulary like "departamento" and "renta" in Mexico). Every translation has exactly the meaning of the original. Tips, notes and explanations say only true things about both languages. Score at most 5 for a wrong translation, an ungrammatical sentence or a false rule; at most 7 for the wrong variant.`,
     id: "accuracy",
     label: "Accuracy",
     weight: 30,

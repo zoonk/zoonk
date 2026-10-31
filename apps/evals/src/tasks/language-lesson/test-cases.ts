@@ -110,22 +110,22 @@ export const TEST_CASES: TestCase<unknown, LanguageLessonInput>[] = [
     },
   },
   {
-    expectations: `US English speaker learning Spain Spanish, A2, renting a flat in Madrid. Spain vocabulary: "el piso", "el alquiler", "la fianza", "los gastos"; "vosotros" is fine but a lesson aimed at a landlord would use "usted". Latin American forms like "el departamento" or "el depósito" as the main word are wrong for this variant. Tips should target sounds English speakers get wrong (the tapped "r", pure vowels, "ll").`,
+    expectations: `US English speaker learning Mexican Spanish, A2, renting an apartment in Mexico City. Mexican vocabulary: "el departamento", "la renta", "el depósito", "los servicios"; "ustedes" for a group, never "vosotros", and a lesson aimed at a landlord would use "usted". Spain forms like "el piso", "el alquiler", "la fianza" or "los gastos" as the main word are wrong for this variant. Tips should target sounds English speakers get wrong (the tapped "r", pure vowels, "ll").`,
     id: "en-es-a2-renting",
     userInput: {
       knownWords: ["la casa", "¿Cuánto cuesta?"],
       learnerLanguage: "en",
-      lessonCanDo: "Ask about the rent, the deposit and the bills for a flat",
+      lessonCanDo: "Ask about the rent, the deposit and the bills for an apartment",
       lessonDescription: "Ask what the rent is and what the deposit and bills are",
       lessonTitle: "Asking about the rent",
       level: "A2",
       targetLanguage: "es",
-      unitCanDos: ["Call about a flat", "Ask what's included", "Arrange a viewing"],
-      unitTitle: "Renting a flat in Madrid",
+      unitCanDos: ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
+      unitTitle: "Renting an apartment in Mexico City",
     },
   },
   {
-    expectations: `Spain Spanish speaker learning US English, A2, talking about their job. Words like "I work as", "a nurse", "a shift", "full-time". Tips for Spanish speakers (the English "v" and "b", the "sh" sound, adding "e" before "s" + consonant as in "estudent"), notes for false friends ("actually" is not "actualmente"). All learner-language text in Spain Spanish.`,
+    expectations: `Mexican Spanish speaker learning US English, A2, talking about their job. Words like "I work as", "a nurse", "a shift", "full-time". Tips for Spanish speakers (the English "v" and "b", the "sh" sound, adding "e" before "s" + consonant as in "estudent"), notes for false friends ("actually" is not "actualmente"). All learner-language text in Mexican Spanish.`,
     id: "es-en-a2-work",
     userInput: {
       knownWords: ["I am", "my name is"],

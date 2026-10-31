@@ -24,15 +24,16 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
-    expectations: `US English speaker learning Spain Spanish at A2, renting a flat in Madrid. A call to a landlord ("casero" or "propietaria") about a "piso", with euros, Spain vocabulary ("fianza", "gastos", "piso", not "departamento") and "usted" or natural Spain register. Opening line and hints short (A2). Title, situation and descriptions in US English.`,
+    expectations: `US English speaker learning Mexican Spanish at A2, renting an apartment in Mexico City. A call to a landlord ("dueño" or "dueña") about a "departamento", with pesos, Mexican vocabulary ("renta", "depósito", "servicios", "departamento", not "piso") and "usted". Opening line and hints short (A2). Title, situation and descriptions in US English.`,
     id: "en-es-a2-renting",
     userInput: {
-      canDo: ["Call about a flat", "Ask what's included", "Arrange a viewing"],
+      canDo: ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
       learnerLanguage: "en",
       level: "A2",
       targetLanguage: "es",
-      unitDescription: "Find a flat, ask about the rent and the deposit, and arrange a viewing",
-      unitTitle: "Renting a flat in Madrid",
+      unitDescription:
+        "Find an apartment, ask about the rent and the deposit, and arrange a viewing",
+      unitTitle: "Renting an apartment in Mexico City",
     },
   },
   {

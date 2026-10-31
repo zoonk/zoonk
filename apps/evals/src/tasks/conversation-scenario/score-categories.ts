@@ -26,7 +26,7 @@ export const CONVERSATION_SCENARIO_SCORE_CATEGORIES = defineScoreCategories([
     weight: 15,
   },
   {
-    expectations: `Title, situation, role and objective descriptions are in the learner's language, natural and concise; place, opening line, objective labels and hints are in the target language and its variant (US English, Brazilian Portuguese, Spain Spanish); the brief is in English. No emojis and no em dashes. Score at most 5 for a field in the wrong language.`,
+    expectations: `Title, situation, role and objective descriptions are in the learner's language, natural and concise; place, opening line, objective labels and hints are in the target language and its variant (US English, Brazilian Portuguese, Mexican Spanish); the brief is in English. No emojis and no em dashes. Score at most 5 for a field in the wrong language.`,
     id: "languages",
     label: "Right language per field",
     weight: 15,

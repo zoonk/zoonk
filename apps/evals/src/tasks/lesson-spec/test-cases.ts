@@ -195,7 +195,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   },
   {
     expectations: `
-      - MUST be in Spain Spanish (not Latin American Spanish)
+      - MUST be in Latin American Spanish as written in Mexico (not Spain Spanish: no "vosotros", "ordenador" or euros)
       - Beginner lesson on pivot tables in a spreadsheet for someone who builds sales reports at work
       - Building a pivot table is a procedure, so it needs a worked example on a small sales table (rows, columns, values, summary function) and then a similar task with less help
       - Checks should make the learner choose rows, columns and the summary (sum vs count vs average) for a question

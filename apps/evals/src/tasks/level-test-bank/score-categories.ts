@@ -14,7 +14,7 @@ export const LEVEL_TEST_BANK_SCORE_CATEGORIES = defineScoreCategories([
     weight: 35,
   },
   {
-    expectations: `Passages and speaking sentences are natural and correct in the target variant (US English, Brazilian Portuguese, Spain Spanish). Reading passages read like real written texts and listening passages like natural speech (voicemail, announcement, audio message). Questions, options and translations are in the learner's language and its variant. Situations vary across the bank; no brands, real people or stereotypes. Score at most 5 for a field in the wrong language.`,
+    expectations: `Passages and speaking sentences are natural and correct in the target variant (US English, Brazilian Portuguese, Mexican Spanish). Reading passages read like real written texts and listening passages like natural speech (voicemail, announcement, audio message). Questions, options and translations are in the learner's language and its variant. Situations vary across the bank; no brands, real people or stereotypes. Score at most 5 for a field in the wrong language.`,
     id: "language",
     label: "Languages and variety",
     weight: 25,

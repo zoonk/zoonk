@@ -26,7 +26,7 @@ export const COURSE_OUTLINE_SCORE_CATEGORIES = defineScoreCategories([
     weight: 15,
   },
   {
-    expectations: `Audit fit to the level band and language. Overview: 3 to 6 chapters of big ideas in plain words, covering beginner and advanced ideas at a high level, with no formulas, equations, code or notation anywhere in titles, descriptions, can-do lines or skills. Beginner: from zero, everyday words. Intermediate and advanced: build on earlier bands without repeating them. Text must be in the requested language variant (US English, Brazilian Portuguese, Spain Spanish). Score at most 6 when an overview has fewer than 3 or more than 6 chapters or relies on formulas or code; at most 8 for one level mismatch; at most 7 for several or for the wrong language variant in several places.`,
+    expectations: `Audit fit to the level band and language. Overview: 3 to 6 chapters of big ideas in plain words, covering beginner and advanced ideas at a high level, with no formulas, equations, code or notation anywhere in titles, descriptions, can-do lines or skills. Beginner: from zero, everyday words. Intermediate and advanced: build on earlier bands without repeating them. Text must be in the requested language variant (US English, Brazilian Portuguese, Mexican Spanish). Score at most 6 when an overview has fewer than 3 or more than 6 chapters or relies on formulas or code; at most 8 for one level mismatch; at most 7 for several or for the wrong language variant in several places.`,
     id: "levelFit",
     label: "Level & language fit",
     weight: 15,
