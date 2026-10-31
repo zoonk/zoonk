@@ -411,7 +411,7 @@ private fun PracticeChapterRow(
 @Composable
 private fun practiceMessage(outcome: PracticeOutcome?): String? =
     when (outcome) {
-        PracticeOutcome.DailyCap -> stringResource(R.string.goalcontent_practice_daily_cap)
+        PracticeOutcome.DailyLimit -> stringResource(R.string.goalcontent_practice_daily_limit)
         PracticeOutcome.NothingToPractice -> stringResource(R.string.goalcontent_practice_nothing)
         PracticeOutcome.Failed -> stringResource(R.string.goalcontent_practice_failed)
         is PracticeOutcome.Opened, null -> null

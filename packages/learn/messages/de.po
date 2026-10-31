@@ -1864,10 +1864,11 @@ msgctxt "EwFu5D"
 msgid "Practice this chapter"
 msgstr "Dieses Kapitel üben"
 
+#. The daily time limit is a setting that stops study for the day.
 #: src/chapter/chapter-mistakes.tsx
-msgctxt "ICjbKS"
-msgid "That's all the bonus practice for today. Tomorrow's session picks this chapter up."
-msgstr "Das war die Zusatzübung für heute. In der morgigen Lerneinheit geht es mit diesem Kapitel weiter."
+msgctxt "bpvVQy"
+msgid "You've reached your daily time limit. Tomorrow's session picks this chapter up."
+msgstr "Du hast dein tägliches Zeitlimit erreicht. Morgen geht es in deiner Lerneinheit mit diesem Kapitel weiter."
 
 #: src/chapter/chapter-mistakes.tsx
 msgctxt "AH7TuQ"

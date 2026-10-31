@@ -311,10 +311,13 @@ private struct ChapterContent: View {
       switch result {
       case .done(.opened(let route)):
         router.open(route)
-      case .done(.dailyCap):
+      case .done(.dailyLimit):
         practiceNote = Text(
-          "That's all the bonus practice for today. Tomorrow's session picks this chapter up.",
-          tableName: "Plan", comment: "Says today's bonus practice is used up")
+          "You've reached your daily time limit. Tomorrow's session picks this chapter up.",
+          tableName: "Plan",
+          comment:
+            "Says the learner's daily time limit, a setting that stops study for the day, is reached"
+        )
       case .done(.nothingToPractice):
         practiceNote = Text(
           "Nothing to practice in this chapter yet.", tableName: "Plan",

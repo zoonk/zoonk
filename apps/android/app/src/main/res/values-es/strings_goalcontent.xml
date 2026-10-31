@@ -51,7 +51,7 @@
   "goalcontent_percent_done": "b68fdc6da17534e40884d2c21239c5bff0353654b69c524124e4fc24507939c4",
   "goalcontent_practice": "296a7133e076e87eb7446718394d921a3c27147be544ae23429b0497d65e3d8b",
   "goalcontent_practice_chapter": "8dd8310524433a95ee587642f3c67b0fa81a2d712aab68a2e65bea1cd5457d41",
-  "goalcontent_practice_daily_cap": "677fe17f4d22bec72dcbb3a55b28465a64f905726c2a14c0936014f75305479a",
+  "goalcontent_practice_daily_limit": "50fba51feb62b0df3335b439f76c5e820f165f062eb463cc5371573937dc63a4",
   "goalcontent_practice_failed": "ea25b32bc11269673c28b993eab89c415635dfc6b912656631c0bf854217ef78",
   "goalcontent_practice_nothing": "c8c9bd0f9080987951069ba48ebf0e2c4e69b739178585cc19098c1bf5697c49",
   "goalcontent_preparation": "c10d0bd9837cdc9f8efa7a21390f87c9db30a61dfd665ffd075310ac051d9c29",
@@ -287,7 +287,8 @@
     <string name="goalcontent_progress">Progreso</string>
     <string name="goalcontent_practice">Práctica</string>
     <string name="goalcontent_practice_chapter">Practicar este capítulo</string>
-    <string name="goalcontent_practice_daily_cap">Completaste la práctica extra de hoy. En la sesión de mañana retomarás este capítulo.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="goalcontent_practice_daily_limit">Alcanzaste tu límite de tiempo diario. En la sesión de mañana continuarás con este capítulo.</string>
     <string name="goalcontent_practice_nothing">Aún no hay nada que practicar en este capítulo.</string>
     <string name="goalcontent_practice_failed">No funcionó. Vuelve a intentarlo en un momento.</string>
     <!-- Heading over material to look things up in, such as a mind map and a summary, rather than lessons to do. -->

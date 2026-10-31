@@ -26731,65 +26731,6 @@
         }
       }
     },
-    "That's all the bonus practice for today. Tomorrow's session picks this chapter up." : {
-      "comment" : "Says today's bonus practice is used up",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das war die Bonusübung für heute. In der morgigen Lerneinheit geht es mit diesem Kapitel weiter."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No queda más práctica extra por hoy. En la sesión de mañana seguirás con este capítulo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "C’est tout pour l’entraînement bonus d’aujourd’hui. La séance de demain reprend ce chapitre."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per oggi gli esercizi extra sono finiti. Riprenderai questo capitolo nella sessione di domani."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の追加練習はここまでです。明日の学習でこの章の続きを進めます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘의 추가 연습은 여기까지예요. 내일 학습에서 이 챕터를 이어서 공부해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To już wszystkie dodatkowe ćwiczenia na dziś. Jutro wrócisz do tego rozdziału."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A prática extra de hoje acabou. A sessão de amanhã continua este capítulo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünkü ek alıştırmalar bu kadar. Yarınki çalışmada bu üniteye devam edeceksin."
-          }
-        }
-      }
-    },
     "The call didn't start. Try again in a moment." : {
       "comment" : "Says the practice call didn't start",
       "localizations" : {
@@ -30883,6 +30824,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kullanacakların"
+          }
+        }
+      }
+    },
+    "You've reached your daily time limit. Tomorrow's session picks this chapter up." : {
+      "comment" : "Says the learner's daily time limit, a setting that stops study for the day, is reached",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast dein tägliches Zeitlimit erreicht. In deiner morgigen Lerneinheit geht es mit diesem Kapitel weiter."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alcanzaste tu límite de tiempo diario. En la sesión de mañana continuarás con este capítulo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as atteint ta limite de temps quotidienne. Tu reprendras ce chapitre à la séance de demain."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você atingiu seu limite diário de tempo. Na sessão de amanhã, você continua este capítulo."
           }
         }
       }

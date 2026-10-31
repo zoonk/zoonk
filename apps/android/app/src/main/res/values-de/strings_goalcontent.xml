@@ -51,7 +51,7 @@
   "goalcontent_percent_done": "bdb115ed6bcac880436a8d1d20732c9fa9c36e192312eefb3472f1752e8d71da",
   "goalcontent_practice": "9aa47799fc3026ce701ddf0e39813c1a453beaa17fcdaf990d150bfecc2253b5",
   "goalcontent_practice_chapter": "e962310778a592b233e550e3fdefaf99266fac08b973322967a1cb42e9acd86c",
-  "goalcontent_practice_daily_cap": "6faf638395bf8383f54cae9b880c70ade31962eea1c50a0765bc28798937482f",
+  "goalcontent_practice_daily_limit": "1fb3285be14d99ca84ff9b290fbba8802127fb539566e7d764156bc1daac859a",
   "goalcontent_practice_failed": "970ea91079595a34b72563d5da73e7be0d0a307fecaa9268acc231c1a6968a83",
   "goalcontent_practice_nothing": "57eb48c642f0628312f32c52bddff6cbf63146c3e33c7e11550dc05d34504a26",
   "goalcontent_preparation": "e9c32bf3b22879bb3bac1a392f18fb401b95ac1c047dda376443a1ca71035be8",
@@ -270,7 +270,8 @@
     <string name="goalcontent_progress">Fortschritt</string>
     <string name="goalcontent_practice">Üben</string>
     <string name="goalcontent_practice_chapter">Dieses Kapitel üben</string>
-    <string name="goalcontent_practice_daily_cap">Das war die zusätzliche Übung für heute. In deiner morgigen Lerneinheit geht es mit diesem Kapitel weiter.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="goalcontent_practice_daily_limit">Du hast dein tägliches Zeitlimit erreicht. Morgen geht es in deiner Lerneinheit mit diesem Kapitel weiter.</string>
     <string name="goalcontent_practice_nothing">In diesem Kapitel gibt es noch nichts zu üben.</string>
     <string name="goalcontent_practice_failed">Das hat nicht geklappt. Versuch es gleich noch einmal.</string>
     <!-- Heading over material to look things up in, such as a mind map and a summary, rather than lessons to do. -->

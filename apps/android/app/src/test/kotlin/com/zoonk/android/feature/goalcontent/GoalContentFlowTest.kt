@@ -289,13 +289,13 @@ class GoalContentFlowTest {
     }
 
     @Test
-    fun practiceUsedUpForTheDaySaysWhenItComesBack() {
+    fun practiceAtTheDailyLimitSaysWhenItComesBack() {
         api.practice = { throw ApiException(ApiError.Unavailable, code = "EXTRA_TIME_UNAVAILABLE", status = 409) }
         showChapter()
 
         rule.onNodeWithText("Practice this chapter").performClick()
 
-        rule.onNodeWithText("That's all the bonus practice for today. Tomorrow's session picks this chapter up.").assertIsDisplayed()
+        rule.onNodeWithText("You've reached your daily time limit. Tomorrow's session picks this chapter up.").assertIsDisplayed()
         assertEquals(AppRoute.Today, navigator.currentRoute)
     }
 

@@ -4,11 +4,11 @@ import { useExtracted } from "next-intl";
 import { type AreaPracticeOutcome } from "../_utils/use-practice-run";
 
 export function PracticeOutcomeMessage({
-  dailyCap,
+  dailyLimit,
   nothingToPractice,
   outcome,
 }: {
-  dailyCap: string;
+  dailyLimit: string;
   nothingToPractice: string;
   outcome: AreaPracticeOutcome | null;
 }) {
@@ -19,7 +19,7 @@ export function PracticeOutcomeMessage({
   }
 
   const messages: Record<Exclude<AreaPracticeOutcome, "started">, string> = {
-    dailyCap,
+    dailyLimit,
     failed: t("That didn't work. Try again in a moment."),
     nothingToPractice,
   };
