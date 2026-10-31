@@ -95,8 +95,22 @@ private fun FormulaModelBoard(
     val fields = content.fields
     val numeric = (content.check as? NumericCheckValue)?.value
     val locale = currentLocale()
-    var sliders by rememberSaveable { mutableStateOf(startingValues(fields.variables)) }
-    var events by rememberSaveable { mutableStateOf(eventsOff(fields)) }
+    // A numeric answer keeps only the number, so a model opened with one starts at the check's inputs, which puts the
+    // expected point on the drawn curve (main's `startingModel`).
+    val answered =
+        numeric
+            ?.inputs
+            ?.takeIf { props.answer.numericValue != null }
+            .orEmpty()
+            .associate { it.name to it.`value` }
+    var sliders by rememberSaveable {
+        mutableStateOf(
+            startingValues(fields.variables).mapValues { (name, start) ->
+                answered[name] ?: start
+            },
+        )
+    }
+    var events by rememberSaveable { mutableStateOf(eventsOff(fields).mapValues { (name, off) -> answered[name] ?: off }) }
     val view = remember(sliders, events) { modelView(fields, axis, charted, sliders, events) }
     val formatOutput = { output: ModelOutput, value: Double? -> value?.let { formatAmount(it, locale, output.unit) }.orEmpty() }
     val formatX = { value: Double -> formatAmount(value, locale, axis.unit) }

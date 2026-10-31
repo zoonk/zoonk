@@ -16,6 +16,7 @@ import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -207,6 +208,21 @@ class MathFlowTest {
         typedValue("1000")
         described("$1,500 before")
         described("What-ifs switched on: Rent goes up $500.")
+    }
+
+    @Test
+    fun formulaModelComesBackAtTheCheckedInputsSoTheRightAnswerSitsOnTheCurve() {
+        val fixture = "formulaModel.scenario"
+        play(listOf(ActivityFixtures.step(fixture), summaryStep("end")), isCorrect = true, ActivityFixtures.expected(fixture))
+
+        rule.onNodeWithText("Rent goes up $500").performScrollTo().performClick()
+        press(Key.DirectionRight, 2, handle = slider("Price per cup"))
+        harness.tap("Check")
+        harness.tap("Continue")
+        rule.onNodeWithContentDescription("Previous screen").performClick()
+
+        rule.onNodeWithText("Rent goes up $500").assertIsSelected()
+        described("$1,500 before")
     }
 
     @Test
