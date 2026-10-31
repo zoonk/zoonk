@@ -12,4 +12,12 @@ describe(getCheckoutSessionParams, () => {
       },
     });
   });
+
+  it("writes it in a translated language the site doesn't offer yet", async () => {
+    const params = await getCheckoutSessionParams({ annual: false, locale: "ja" });
+
+    expect(params.custom_text).toMatchObject({
+      submit: { message: expect.stringContaining("毎月") },
+    });
+  });
 });

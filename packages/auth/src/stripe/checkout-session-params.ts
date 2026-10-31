@@ -1,10 +1,18 @@
 import { TERMS_URL } from "@zoonk/utils/url";
-import { getRequestTranslation, getTranslation } from "../translations/get-translations";
+import {
+  getRequestTranslation,
+  getTranslation,
+  isTranslatedLocale,
+} from "../translations/get-translations";
 import type Stripe from "stripe";
 
+/** Stripe's `auto` and any language we don't translate fall back to the request's language. */
 function getCheckoutTranslation(stripeLocale?: string) {
   const language = stripeLocale?.split("-")[0];
-  return language ? getTranslation(language) : getRequestTranslation();
+
+  return language && isTranslatedLocale(language)
+    ? getTranslation(language)
+    : getRequestTranslation();
 }
 
 /**

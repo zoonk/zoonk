@@ -1,4 +1,4 @@
-import { LOCALE_COOKIE, isValidLocale } from "@zoonk/utils/locale";
+import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import { getLocaleFromRequest } from "@zoonk/utils/locale-request";
 import { cookies, headers } from "next/headers";
 
@@ -15,9 +15,14 @@ const translations = {
   tr: () => import("./tr.json").then((module) => module.default),
 };
 
+type TranslatedLocale = keyof typeof translations;
+
+export function isTranslatedLocale(locale: string): locale is TranslatedLocale {
+  return Object.hasOwn(translations, locale);
+}
+
 export function getTranslation(locale: string) {
-  const safeLocale: keyof typeof translations = isValidLocale(locale) ? locale : "en";
-  return translations[safeLocale]();
+  return translations[isTranslatedLocale(locale) ? locale : "en"]();
 }
 
 export async function getRequestTranslation() {
