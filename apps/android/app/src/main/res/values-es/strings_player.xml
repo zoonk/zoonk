@@ -46,6 +46,8 @@
   "player_challenge_what_if": "05a2209e8989884dc34314d265c79de3a2a15586f1eddb4d47632ee765a4521d",
   "player_challenge_you": "922338af2d832190c3d71ce68852f8c064b497ef1aa03203d91c17effd33c7c2",
   "player_check_failed": "0a4e41baef2645a05abc70ca30e1d55c684e9e050343aa756702bf2fc18f81e1",
+  "player_citation_from_material": "dd93d4005a210ecacfd2fb52329f2d6b7d85861a2a3789121ac7d4f9593ac5ad",
+  "player_citation_not_in_material": "3ef4823a70593e25697dfdb659d00943545f1afba87958ed0eacdc10b05780b9",
   "player_comes_back_at_end": "59182d83cdb24541f7e2e2d89e7209f08db57192b43ecfc688bfad122a3f87a6",
   "player_comes_back_date": "993c96f32435be5375b8713e6157ab74f3f8b443df8d7264ad0c576f43aa1201",
   "player_comes_back_today": "c24e7e62de7721ad4806f67d9cffcf47226b7294c11c6cf705bc10ddb69c632f",
@@ -376,3 +378,7 @@
     <string name="player_nothing_left_description">Termina para ver cómo te fue.</string>
     <string name="player_finish">Finalizar</string>
 </resources>
+    <!-- For TalkBack, under a lesson screen: where it comes from in the learner\'s own material. %1$s is a document\'s title, maybe with its page or slide, like "Biology.pdf, page 12". -->
+    <string name="player_citation_from_material">De tu material: %1$s</string>
+    <!-- Under a screen of a lesson built from the learner\'s own material, when no page of that material supports what the screen says. -->
+    <string name="player_citation_not_in_material">No aparece en tu material</string>

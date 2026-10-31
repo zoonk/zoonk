@@ -20,8 +20,6 @@
   "onboarding_buddy_description": "d3ac9c346f65e6e2942e33495b26d0679b530579906f9980f14fdb448d597532",
   "onboarding_buddy_title": "2d5e1bf6ed8dd22c05938f0beb99a58f7443a131471591781f716a89abae4785",
   "onboarding_cancel": "549581de061f9a4fc500bbd51f25348aad3ba8d3e68146aa2fcd8c968bda8634",
-  "onboarding_citation_page": "5c14a764f56d5edd9f4c5d3ae13ac3304df356d5948d6aa546d2dc4b5175b131",
-  "onboarding_citation_slide": "4b9552f222bf034d9a8254f86928d5f823ee43049911ee473aa4d62506c17f21",
   "onboarding_continue": "c2eb49cc176f22d161eafb034252df622cd409ad39257f066d8a76b0f64274d6",
   "onboarding_course_build": "a771d8bcf0479148630cd30f5c0c515b11b14bd4cc60785399fe7c4170563e84",
   "onboarding_course_chapter_description": "4393acf3b3527d157877c5361d938efa90be263465a3bc0ee47cc5a37b583982",
@@ -603,9 +601,6 @@
     <string name="onboarding_your_question">La tua domanda</string>
     <string name="onboarding_question_placeholder">Ad esempio, perché la glicolisi ha una resa netta di soli 2 ATP?</string>
     <string name="onboarding_ask">Chiedi</string>
-    <!-- %1$s is a document\'s title, %2$s a page number. -->
-    <string name="onboarding_citation_page">%1$s, pagina %2$s</string>
-    <string name="onboarding_citation_slide">%1$s, diapositiva %2$s</string>
     <string name="onboarding_question_failed">Non siamo riusciti a rispondere. Riprova tra poco.</string>
     <string name="onboarding_question_sign_in">Crea un account per fare domande sul tuo materiale.</string>
     <string name="onboarding_question_slow_down">Stai facendo molte domande in poco tempo. Riprova tra qualche minuto.</string>

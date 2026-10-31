@@ -207,3 +207,7 @@
     <string name="player_nothing_left_description">Finish to see how it went.</string>
     <string name="player_finish">Finish</string>
 </resources>
+    <!-- For TalkBack, under a lesson screen: where it comes from in the learner\'s own material. %1$s is a document\'s title, maybe with its page or slide, like "Biology.pdf, page 12". -->
+    <string name="player_citation_from_material">From your material: %1$s</string>
+    <!-- Under a screen of a lesson built from the learner\'s own material, when no page of that material supports what the screen says. -->
+    <string name="player_citation_not_in_material">Not in your material</string>

@@ -37,7 +37,6 @@
   "questions_mistake_fixed": "4fda4d5c20d207d669925c98c8984f1b1a8e42e0ca34c5d906e37dd079dc092b",
   "questions_mistakes_fixed": "9868fe5d1e79a375cee5feb18dc78d2531e5c17eac01c00fde2f57c895d6d68c",
   "questions_not_quite": "a55aa362702b9c83e19ff57cac6473f80dfc9f1dcb49626a2581a6360d39672c",
-  "questions_open_source": "3c798bbb17a37a4a06ddee20179902bf738fbc4f02124047c9ba8beb8d4abc14",
   "questions_order_hint": "173f4ffea88e1f227ad7d78b436346219b6fa4b611a72fff57471c8df2e9363e",
   "questions_pick_all": "ab750dd69cb2ba2c955f1986b5c65c616f79da2866516b670480089be587de3d",
   "questions_pick_count": "26be8bdbea664237fcf050d1f4ebfcbb58666147bc5e2e97d0e5a2787e883c08",
@@ -57,9 +56,6 @@
   "questions_set_place_chart": "963f07b450462b77edadb12dc5c69ad1dfe9fbf9d6ddc3d348bd273dcdad8909",
   "questions_set_place_text": "c7242f49ce78bf86bdccc8b20586eaf41e859a3db0b09bf049b41ab3e0acab57",
   "questions_show_less": "80651909c1988326593888cb7101ee37d425d8e375f35891b34692969acebd9c",
-  "questions_source_checked": "2634581b745dc4be0f9fdf68bce54026f25dd7987dd066d7296c1303928bd5b2",
-  "questions_source_checked_by": "0d6d126e93488b7d47e88be34843d54250c87c9478c019257943382cb165c608",
-  "questions_sources_chip": "702543cbb651c62256c98dd8bf98c33d85b25beba901770a97d8aaf550da2c7a",
   "questions_streak": "c56d4e2ab2a719fb6d263b6035e7f7ade7169bdb997861afb5f5d17c857bb370",
   "questions_true": "db8508c88aa4f5e73b555c9c40c6bad213c66c51da629a5917d9f084456405ce",
   "questions_wrong": "f09759ebc92a36661df4db7faa1054dc095b04e921f36378b6096cecd709770e",
@@ -139,11 +135,6 @@
     <string name="questions_placement_note">Dopracowujemy twój plan. Pomyłki w tym zadaniu nigdy nie trafiają do zeszytu błędów.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Pytanie z wcześniejszego egzaminu · %1$s</string>
-    <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
-    <string name="questions_sources_chip">Źródła · Sprawdzono: %1$s</string>
-    <string name="questions_source_checked_by">%1$s · Sprawdzono: %2$s</string>
-    <string name="questions_source_checked">Sprawdzono: %1$s</string>
-    <string name="questions_open_source">Otwórz źródło</string>
     <string name="questions_drill_reteach_ideas">Najpierw wyjaśnienie, potem kilka pytań na ten temat.</string>
     <string name="questions_drill_reteach">Kilka pytań na temat, który sprawił ci trudność.</string>
     <string name="questions_drill_read_carefully">Przeczytaj każde słowo, zanim odpowiesz.</string>

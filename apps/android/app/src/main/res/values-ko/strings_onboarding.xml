@@ -20,8 +20,6 @@
   "onboarding_buddy_description": "3d462e210c95da8532598bf1f522f5142cf034177aa64972b75b090699eba9af",
   "onboarding_buddy_title": "98ea45f84338bf4b61932937c88df63e9e3361f2993d505678ecb80f0666cd51",
   "onboarding_cancel": "0ac34f0f2dc62fd8b1b3a47061f6c11e2b7bf0e70849df2f4d5e6420f02477a3",
-  "onboarding_citation_page": "e6a05a9edfd2e285abeb232e1b3c9c77f4e680bde0d484838e12c1cf368df9a1",
-  "onboarding_citation_slide": "26732ebd77fbb54ca5abc0c7cd78d342773f7c9624640be0e2966962c63a3c6a",
   "onboarding_continue": "64393e0ccd7cc3b6790c81b16e4b579c3d79095cf83307672fb4368f9e42ccb8",
   "onboarding_course_build": "14763a5e1414c4f6f99e866e919fb8a2701b1aaa7a8a899fa4f4b7984a87edb4",
   "onboarding_course_chapter_description": "095b057c67d4e785891fa4086789b046be13ce6cd715a7ad614080380385d12b",
@@ -599,9 +597,6 @@
     <string name="onboarding_your_question">내 질문</string>
     <string name="onboarding_question_placeholder">예: 해당 과정에서 ATP가 2개만 순생성되는 이유는 무엇인가요?</string>
     <string name="onboarding_ask">질문하기</string>
-    <!-- %1$s is a document\'s title, %2$s a page number. -->
-    <string name="onboarding_citation_page">%1$s, %2$s페이지</string>
-    <string name="onboarding_citation_slide">%1$s, %2$s번 슬라이드</string>
     <string name="onboarding_question_failed">답변하지 못했어요. 잠시 후 다시 시도해 보세요.</string>
     <string name="onboarding_question_sign_in">자료에 대해 질문하려면 계정을 만드세요.</string>
     <string name="onboarding_question_slow_down">짧은 시간에 여러 번 질문하셨어요. 몇 분 후에 다시 시도해 보세요.</string>

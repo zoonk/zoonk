@@ -15,6 +15,12 @@
   "belt_red": "f34a345b7f878b2ffd78702050e306a9b6d6967e17ca4a82ed191edb40882790",
   "belt_white": "b873613f71de7403824ec0f7524df4be6d1fc9936f841b9f6877c8a4ab5aa14e",
   "belt_yellow": "f26d34c4ddc94e08f7e4bc191caf8208a11a4841627dde8bb28685269909359f",
+  "citation_checked": "5f6101356785fc91fe7b4a91762baee7a8f984bca9e3e8c706965826dbab32dd",
+  "citation_checked_by": "2c05736fe56ee50024299da41961d259681cadc7afd8b79a94241a36a5df3742",
+  "citation_open_source": "98bae505d4df6babff283120edf2a34431328d33a74db17030a936d9a3e85b2e",
+  "citation_page": "b580583860c76ca0010cee39bc9ff1f111104da25e0a41ccbd1c8a98bb32677a",
+  "citation_slide": "185039c505d18dca27dd45bc3347eb6ad891604da7fe2a9cf5758a6eaaa17657",
+  "citation_sources_chip": "9c19c1c57cacb5752ad9f6d219116658c83ddc9cade62ec963834f170b8b5b78",
   "close_sheet": "5cbd5438b8fa3785e38e2445047c42f1f610de988452c55bee11a8bb8f7933e9",
   "daily_time_covers_everything": "5c437933a191e3191742ce6b47a45ccf9111f3c6866a3af749c06f39adcf29b8",
   "daily_time_suggested": "606d1974c26b2a6ecb004efdfeb61ab21e2d9ec9a90076e9010e68226d871047",
@@ -138,4 +144,12 @@
     <string name="daily_time_suggested">%1$s（提案）</string>
     <!-- In the time a day picker's menu: the time that covers the whole goal or exam. %1$s is a daily study time, such as "13 h 30 min". -->
     <string name="daily_time_covers_everything">%1$s（全範囲を学べる）</string>
+    <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
+    <string name="citation_sources_chip">出典 · 最終確認：%1$s</string>
+    <string name="citation_checked_by">%1$s · 最終確認：%2$s</string>
+    <string name="citation_checked">最終確認：%1$s</string>
+    <string name="citation_open_source">出典を開く</string>
+    <!-- %1$s is a document\'s title, %2$s a page number. -->
+    <string name="citation_page">%1$s、%2$sページ</string>
+    <string name="citation_slide">%1$s、スライド%2$s</string>
 </resources>

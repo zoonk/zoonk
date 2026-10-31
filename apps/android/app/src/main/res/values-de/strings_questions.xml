@@ -37,7 +37,6 @@
   "questions_mistake_fixed": "41d3e614911d5e9d21c23e6e18b271a2e00c7fd108aadb92cd2246d91f0361be",
   "questions_mistakes_fixed": "b94fa654949463d15703b017a7392de4f2d8b6c1669f270162c46f62bc640ecd",
   "questions_not_quite": "c7540536989388360d68e20666aca5c6f93f1d228cc9f0edfb80e4cccc559fa5",
-  "questions_open_source": "571366e965ff9338a6e06d37b354b5b0c84c9c3fae8827eda89fa5f24efe1306",
   "questions_order_hint": "1025487c28a4b341279ab7907ecdbc6856fa074202372fd54392b36eaa0fa50f",
   "questions_pick_all": "4ee5fbce9033f5f84f21c287b53b0af3bf4df9397843430108be7988cd9fd8b0",
   "questions_pick_count": "3cf7409a0888124d693edbb19f055a81941a1f2ab52f056b900a377c3a87eb69",
@@ -57,9 +56,6 @@
   "questions_set_place_chart": "4975c43ae9ad369e83aef9605253dc90516edf98e39954bc4781514c8a01db52",
   "questions_set_place_text": "e90a6a9013c7f7eacbb352432a1d7e85c3503573ca404add0147fc8b314fa0fe",
   "questions_show_less": "aea18fc70677bd45f1fcdad1688dc6a628d1326217cdf014c3d00f6564d6525f",
-  "questions_source_checked": "e3d957cd1f61d2ea392b86abfef2e76a79fa24af44ff6da9e9b05dabdb1387dd",
-  "questions_source_checked_by": "8fa547933cbfdc18351283ed3c07206ba0bf65d52ec273b63d7835af4fb70089",
-  "questions_sources_chip": "132c69ee88be1157323023c3fa532f7e1b29c9a0836401181b10d1a9b9bb83b9",
   "questions_streak": "706081ac6cd98a179645586510c42c1c60001db04007c05c35371813c302bdfd",
   "questions_true": "617e712d49ffc3f15d2a19f08f1706738ffc0f1d6eac8244f1e0d6e1aee07573",
   "questions_wrong": "d8f8005b57242854323ac33cc9beb14361e4293abe61ea3873abdf5d44655948",
@@ -131,11 +127,6 @@
     <string name="questions_placement_note">Wir stimmen deinen Plan genauer ab. Eine falsche Antwort wird hier nicht als Fehler gespeichert.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Frage aus einer früheren Prüfung · %1$s</string>
-    <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
-    <string name="questions_sources_chip">Quellen · Geprüft: %1$s</string>
-    <string name="questions_source_checked_by">%1$s · Geprüft: %2$s</string>
-    <string name="questions_source_checked">Geprüft %1$s</string>
-    <string name="questions_open_source">Quelle öffnen</string>
     <string name="questions_drill_reteach_ideas">Erst die Erklärung, dann ein paar Fragen dazu.</string>
     <string name="questions_drill_reteach">Ein paar Fragen zu einem Thema, bei dem du einen Fehler gemacht hast.</string>
     <string name="questions_drill_read_carefully">Lies jedes Wort, bevor du antwortest.</string>

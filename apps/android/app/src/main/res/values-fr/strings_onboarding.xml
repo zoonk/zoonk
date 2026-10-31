@@ -20,8 +20,6 @@
   "onboarding_buddy_description": "dce91ef861f8b60f665b53365ac5b42542bbcdc2292ea1c04baa876339987ce4",
   "onboarding_buddy_title": "e570af64462708b517a16faf595db82e0400402f481da6f0f154dab13e624a64",
   "onboarding_cancel": "b647c7cb1e486ecf5d493e8edc143ba461acb1ddb3f339fcdd81a84d6b18eb91",
-  "onboarding_citation_page": "224520b0dd0f3a500db40e3352d351ca075aa1568350689911196202e04411cf",
-  "onboarding_citation_slide": "273e773477dcfc907789c9265ede7da2ac2167a70172857130661f85eee817b2",
   "onboarding_continue": "c4ae02c13ebf34514d9aa110867ebe4ed15001a61332870dded5bcd29092a8bd",
   "onboarding_course_build": "7abdfdeaef69b361c154a695ab68e04e8cb7208765d104c3d82c40bf0a8e544d",
   "onboarding_course_chapter_description": "8eb30460e3bc4f31cb60272149282c2afa4f2383f3e79ff3d2c3c0bcac1f4be9",
@@ -603,9 +601,6 @@
     <string name="onboarding_your_question">Ta question</string>
     <string name="onboarding_question_placeholder">Ex. : pourquoi la glycolyse ne produit-elle que 2 ATP nets ?</string>
     <string name="onboarding_ask">Poser la question</string>
-    <!-- %1$s is a document\'s title, %2$s a page number. -->
-    <string name="onboarding_citation_page">%1$s, page %2$s</string>
-    <string name="onboarding_citation_slide">%1$s, diapositive %2$s</string>
     <string name="onboarding_question_failed">Nous n’avons pas pu répondre à cette question. Réessaie dans un instant.</string>
     <string name="onboarding_question_sign_in">Crée un compte pour poser des questions sur tes documents.</string>
     <string name="onboarding_question_slow_down">Tu poses des questions rapidement. Réessaie dans quelques minutes.</string>

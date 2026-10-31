@@ -15,6 +15,12 @@
   "belt_red": "c35949a8133967e3fa6453781f5339467bb536f427c46932d7835b1dfd9cd056",
   "belt_white": "fd60aea6c879d9e8eb66818e572445d3ae408a9de23ed80582a74da10d628622",
   "belt_yellow": "19b99c373edcfb6c87eee9f1c0d35adec4a08fd7b498dbcb557ba5ec1f5c2c31",
+  "citation_checked": "6173442d990a5b33628294517a71e35e42ccc24e7f69f4fd359c798b1f24bc83",
+  "citation_checked_by": "87144f545b4ddb7557e89704961a69690775701461bb4907185401a3086e2b0f",
+  "citation_open_source": "c1a764054822396d190011aed3289f6a43e77e06fdd53f1ca1a6840fed15f7f9",
+  "citation_page": "9fd1402604e83152c0bd06f6c2d2231e99dcc4cdb34957e32682468532d4e92d",
+  "citation_slide": "ccf23d4b9d32c136d0fcd467ce3e63a99f0aa0143cc28c39afb2a0ccaa093989",
+  "citation_sources_chip": "95feeeffd8034e8ca76568e44260658eaefc4ba4ab3567990e48cfef0a1f1782",
   "close_sheet": "898abd7647e888b9017a67db1cd4d6c2f92bcd7f5938e7d2b935bd2c2c2b9b89",
   "daily_time_covers_everything": "272000e05be671063fc3ddfd4e271d01d59be2f2149330b6648308452b59937a",
   "daily_time_suggested": "9284cf40fb4d3545096ff9385c792fd7cdc524a61b219e064e102e035e420a71",
@@ -138,4 +144,12 @@
     <string name="daily_time_suggested">%1$s (önerilen)</string>
     <!-- In the time a day picker's menu: the time that covers the whole goal or exam. %1$s is a daily study time, such as "13 h 30 min". -->
     <string name="daily_time_covers_everything">%1$s (tamamını kapsar)</string>
+    <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
+    <string name="citation_sources_chip">Kaynaklar · Son kontrol: %1$s</string>
+    <string name="citation_checked_by">%1$s · Son kontrol: %2$s</string>
+    <string name="citation_checked">Son kontrol: %1$s</string>
+    <string name="citation_open_source">Kaynağı aç</string>
+    <!-- %1$s is a document\'s title, %2$s a page number. -->
+    <string name="citation_page">%1$s, %2$s. sayfa</string>
+    <string name="citation_slide">%1$s, slayt %2$s</string>
 </resources>

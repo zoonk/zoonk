@@ -37,7 +37,6 @@
   "questions_mistake_fixed": "cd5460a3f4fe549052ed9d0a9c456ae159294f5156ef4457e6f1bf702e4eeb58",
   "questions_mistakes_fixed": "dd935979acfeac761f921a8a20c7b70c1809d9eb0de4415e40c7d70576d69c5b",
   "questions_not_quite": "38468003acf180f62333d09da61f8fe53000399a705d79a560106afd78291ee7",
-  "questions_open_source": "3d2df58ee3b09bf7609108beec3042627839112130827c06c44e734c127bd311",
   "questions_order_hint": "ec866cd8cb1fe8b35283c309e1ef990efa638d8ef47bf514647683ca9e7866b4",
   "questions_pick_all": "b243c73a143410df84faea675eb40ac9a33296249cb0e4cdeea94f23804f0420",
   "questions_pick_count": "294a260c9774c85614feb4fcd1d7a9ca927ac87f39e2bdef824276feaa407400",
@@ -57,9 +56,6 @@
   "questions_set_place_chart": "1e38c682e85f54927176ba84676bff904c7684162e372da1f3e623d497adf36f",
   "questions_set_place_text": "e3814e7027d3ae62909c658672c94a2395e2a9824e99ea3885362ab322a5c389",
   "questions_show_less": "98c190d851de95a6fa7305704c62c4557ab3e5c187ba54a0c9c14de54f652362",
-  "questions_source_checked": "9f6175c968f1f3064319c2e944edf8c8374fb754472cb4ed9157efbafcff7a00",
-  "questions_source_checked_by": "6b68a924ae6d4738185acea2f1c1b273c60180b60b12bb0a2089edddd67421a6",
-  "questions_sources_chip": "bb2fdf0c474758fa9d95d56ca058e04eed46d7b68d1f15efeca084b31c04c7da",
   "questions_streak": "76b03d35ca10fba96805abdab9011dfa2afd26c6c75d2000165ae4339fbff2c3",
   "questions_true": "f6cf4c903c2c674f1d918e543835b6a2a8908b3d249df3a439c37cf984dbe483",
   "questions_wrong": "b2a4ba73d5b7f6523853a768dc74a29973d7dedfc4de64bb0412ae05dd6e5a69",
@@ -127,11 +123,6 @@
     <string name="questions_placement_note">学習計画を調整しています。ここで間違えても、間違いノートには保存されません。</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">過去問 · %1$s</string>
-    <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
-    <string name="questions_sources_chip">出典 · %1$sに確認済み</string>
-    <string name="questions_source_checked_by">%1$s · %2$sに確認済み</string>
-    <string name="questions_source_checked">%1$sに確認済み</string>
-    <string name="questions_open_source">出典を開く</string>
     <string name="questions_drill_reteach_ideas">まず考え方を学んでから、問題をいくつか解きます。</string>
     <string name="questions_drill_reteach">つまずいた内容について、問題をいくつか解きます。</string>
     <string name="questions_drill_read_carefully">一語一語よく読んでから答えましょう。</string>

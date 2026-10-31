@@ -37,7 +37,6 @@
   "questions_mistake_fixed": "5ce4d03976d7237dc364a17cb9f165c2721b431a01daba2d01242a40b237b287",
   "questions_mistakes_fixed": "89ea0a599ed8208f9a698f7cf549138e05ffc1ee183ffc90e7c6ab119353686d",
   "questions_not_quite": "3cb5439bcc39ddee31e890dbca3efabde317fe32740f74210344fa874b41a737",
-  "questions_open_source": "07084d9317de23094ace1e67cb6164e053c5a5e37b38e88b15625f550dc56eae",
   "questions_order_hint": "39e7f6198d63a153d4888d3dc6134f42d54afc38e98f6fd0ca02d002276736b0",
   "questions_pick_all": "4b50b2e5b5fa1f13cc6bb3743261ad9bc8ee90d4a6037058c46cb654df54f9c4",
   "questions_pick_count": "d50b2066b0faa848622b7d420f15dc691e5fe8848be959a2275df479a419404a",
@@ -57,9 +56,6 @@
   "questions_set_place_chart": "5a1d7eda7f16a846a2214e4e6f999cb1d42164c2739464ce2ad9d163d84d1435",
   "questions_set_place_text": "7e010c53ff4f8fa54ba71392d4a7b7c3403983c84b3becc4bd0585a23cffb741",
   "questions_show_less": "1c76be7ebeff589e2888eecc03bcd7225ea12de4686b465ae9d147390ea2c635",
-  "questions_source_checked": "f2f35bfae8c2047632c98b67033a444ec12b3f640409a6d1d30d8c951131ef2d",
-  "questions_source_checked_by": "b74fb3f3697978cda372175dd77f61f5facd8ca18da26d980c25404825aa8282",
-  "questions_sources_chip": "7abcfaa83d9d510fc2131083df0d9c51d27b3c1e6bd78808ee127c80ee5377b7",
   "questions_streak": "9a77e823b0c1c23c5ab297db4a1d72dba340cdcca2c38bc9dfe2bce0c835e47e",
   "questions_true": "e23b3f5010d3690a9d9827bd8e0ade7ecfe84386f03a5d91050c808ffb0c8b14",
   "questions_wrong": "89e9d2803359e0913b4f05ce355dba363ec8ec03d21a45aac42ca1fcca52c256",
@@ -135,11 +131,6 @@
     <string name="questions_placement_note">Afinando tu plan. Aquí, las respuestas incorrectas nunca se guardan como errores.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Pregunta de un examen anterior · %1$s</string>
-    <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
-    <string name="questions_sources_chip">Fuentes · Revisadas en %1$s</string>
-    <string name="questions_source_checked_by">%1$s · Revisada en %2$s</string>
-    <string name="questions_source_checked">Revisada en %1$s</string>
-    <string name="questions_open_source">Abrir la fuente</string>
     <string name="questions_drill_reteach_ideas">Primero la idea y luego unas preguntas sobre ella.</string>
     <string name="questions_drill_reteach">Unas preguntas sobre una idea que no te quedó clara.</string>
     <string name="questions_drill_read_carefully">Lee cada palabra antes de responder.</string>

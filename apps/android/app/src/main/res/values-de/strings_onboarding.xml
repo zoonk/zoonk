@@ -20,8 +20,6 @@
   "onboarding_buddy_description": "7c39f1bccf5f9e002153ceb3bb118aaab5d1a8d10611aeae16c890143e01b08d",
   "onboarding_buddy_title": "7b1f65043e21c45fda8f51007bee00d1121212c641123cef2c5ca7237005ff67",
   "onboarding_cancel": "1b2978937718830f42dbfb19cadcaa3e85898f4149e64279f9e732fa07de0f14",
-  "onboarding_citation_page": "4b72278480b0dda9958c86d8fb644edd02a8e9e84b96dfcb83f5b5ad2aa4fc18",
-  "onboarding_citation_slide": "61739bd4cf222eb7610fb0fe4534567ea77054ee3f62820ba51e63a94eeb6924",
   "onboarding_continue": "deeaf079beb4d803bd47aa48cb8d28ff425ef667b0bab1f1c254058036aad89c",
   "onboarding_course_build": "7d3f86de7eb76b08dbc6272474e19b2bb9a71bf89ad0e956eadef1cd13b1b5ad",
   "onboarding_course_chapter_description": "ad6b5b65a12515e08053ce8e1aedc46938bae934a8b1905cfa6d8788084812b4",
@@ -601,9 +599,6 @@
     <string name="onboarding_your_question">Deine Frage</string>
     <string name="onboarding_question_placeholder">Z. B. warum liefert die Glykolyse netto nur 2 ATP?</string>
     <string name="onboarding_ask">Frage stellen</string>
-    <!-- %1$s is a document\'s title, %2$s a page number. -->
-    <string name="onboarding_citation_page">%1$s, Seite %2$s</string>
-    <string name="onboarding_citation_slide">%1$s, Folie %2$s</string>
     <string name="onboarding_question_failed">Wir konnten das nicht beantworten. Versuch es gleich noch einmal.</string>
     <string name="onboarding_question_sign_in">Erstell ein Konto, um Fragen zu deinen Lerninhalten zu stellen.</string>
     <string name="onboarding_question_slow_down">Du stellst gerade viele Fragen. Versuch es in ein paar Minuten noch einmal.</string>

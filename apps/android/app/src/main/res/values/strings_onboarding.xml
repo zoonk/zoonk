@@ -191,9 +191,6 @@
     <string name="onboarding_your_question">Your question</string>
     <string name="onboarding_question_placeholder">E.g., why does glycolysis net only 2 ATP?</string>
     <string name="onboarding_ask">Ask</string>
-    <!-- %1$s is a document\'s title, %2$s a page number. -->
-    <string name="onboarding_citation_page">%1$s, page %2$s</string>
-    <string name="onboarding_citation_slide">%1$s, slide %2$s</string>
     <string name="onboarding_question_failed">We couldn\'t answer that. Try again in a moment.</string>
     <string name="onboarding_question_sign_in">Create an account to ask about your material.</string>
     <string name="onboarding_question_slow_down">You\'re asking quickly. Try again in a few minutes.</string>

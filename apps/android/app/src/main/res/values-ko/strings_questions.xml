@@ -37,7 +37,6 @@
   "questions_mistake_fixed": "9ebfa1cdcda5602c4d111df264321e267dcadb3f92febe3cf8e4a4d7d8515b7b",
   "questions_mistakes_fixed": "acb3820d35f1709094fe89227d421638143166c71949d72a02490b46c601fd1d",
   "questions_not_quite": "1cc0cfef3c1a9b06305c65c56f639bf5443c70d5831391ccd82389bb0ff5cd05",
-  "questions_open_source": "5619a1eeffdf3b1dee17efc4bf6a4d240662a6001f4e676569a26d6bbe6c69b0",
   "questions_order_hint": "b8d6adebb6f2125be5d4a9eb2c6dec08a4bb457085311a8b86bb06f988816dfe",
   "questions_pick_all": "5e40865407ecf31cbfc49eac61c494a52e310ca3cd145cc89ca351ab251a8c02",
   "questions_pick_count": "6ba0440bad0423cec81c835bb2102ac42518c9c4abc56ab2cd968ada49be1f2a",
@@ -57,9 +56,6 @@
   "questions_set_place_chart": "36189efd92703b9e7bdefe053e64030cbda6a44d8d1297fafec7ec77549c220f",
   "questions_set_place_text": "70311571dded17fb309fa32a6979d54df66f69423411b5b1cb6a06964bb00209",
   "questions_show_less": "8fd0c7dab6e58cc423527e99c518ca1e94f96d16d1dcb644ce6341496f32bef9",
-  "questions_source_checked": "c4cf0e9f71314494f1e3fe28ce0cc74e4cdce9d9ba6fc7be841ddb9ed47fa737",
-  "questions_source_checked_by": "bbd50bc777f51a8415b435fde4766643578395d5302bf6cfd84bce14c95c8537",
-  "questions_sources_chip": "3592a5ba77f5b58d97df58043355c5cff07284fc1f8e6cf5b3916673725c083b",
   "questions_streak": "93f1b272ce33e5faf4d2db08b4a7637a1be032a8daefcbb52618d6da25286d55",
   "questions_true": "3150be553b23ce1b6330ca3b4a691f4ddce254f1280c4447f4211f6f96cc5235",
   "questions_wrong": "8467412468171dba8f50e3134a7974263d847d323bf5f71a63ba16dff6133601",
@@ -127,11 +123,6 @@
     <string name="questions_placement_note">계획을 다듬고 있어요. 여기서 틀려도 오답 노트에 저장되지 않아요.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">기출문제 · %1$s</string>
-    <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
-    <string name="questions_sources_chip">출처 · %1$s 확인</string>
-    <string name="questions_source_checked_by">%1$s · %2$s 확인</string>
-    <string name="questions_source_checked">%1$s 확인</string>
-    <string name="questions_open_source">출처 열기</string>
     <string name="questions_drill_reteach_ideas">먼저 개념을 살펴보고 관련 문제를 몇 개 풀어요.</string>
     <string name="questions_drill_reteach">놓쳤던 개념에 관한 문제를 몇 개 풀어요.</string>
     <string name="questions_drill_read_carefully">답하기 전에 단어 하나하나 꼼꼼히 읽어 보세요.</string>

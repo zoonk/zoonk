@@ -20,8 +20,6 @@
   "onboarding_buddy_description": "af68f3efb439b65a20107e3c93a3542ee0402991cbac5384795ba736d1473aab",
   "onboarding_buddy_title": "ed19ec370e00c852c8343e201aa722fb58ed2efcaaada4b49d04ea4e8788ae8b",
   "onboarding_cancel": "63f4d6bf872960b3a566c8478a757ccbb3ec2645049f2e25239bcc9082393d82",
-  "onboarding_citation_page": "835f9d5e830e9d03f589fb011cf51291d11cd025b0a3f0cb848ee2861abb2021",
-  "onboarding_citation_slide": "7bff7e67f87dc13d11863aa18f64352807ecc2125177d5d084a6e36665a216b0",
   "onboarding_continue": "66346dc40f787c5f51921d49e6b4b3cce5822b0a858636576dc45a2babb020b2",
   "onboarding_course_build": "ec0015afe806c25ad3b4b803fafd724265432c26b1c5c82d8a69d2d3598b1d2a",
   "onboarding_course_chapter_description": "480f05e6e80f3dd773df8426e8207d8df2d4b9746639722572fab59e712cea17",
@@ -605,9 +603,6 @@
     <string name="onboarding_your_question">Twoje pytanie</string>
     <string name="onboarding_question_placeholder">Np. dlaczego glikoliza daje tylko 2 ATP netto?</string>
     <string name="onboarding_ask">Zapytaj</string>
-    <!-- %1$s is a document\'s title, %2$s a page number. -->
-    <string name="onboarding_citation_page">%1$s, str. %2$s</string>
-    <string name="onboarding_citation_slide">%1$s, slajd %2$s</string>
     <string name="onboarding_question_failed">Nie udało nam się odpowiedzieć. Spróbuj ponownie za chwilę.</string>
     <string name="onboarding_question_sign_in">Utwórz konto, aby zadawać pytania o swoje materiały.</string>
     <string name="onboarding_question_slow_down">Zadajesz pytania jedno po drugim. Spróbuj ponownie za kilka minut.</string>

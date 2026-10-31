@@ -15,6 +15,12 @@
   "belt_red": "42a38720c1f366c71d0dd75c16f774bf3627060ed897b3e5a0801e85c9e4acb7",
   "belt_white": "754ea2057e14d670683686ee3a8dd6c40701fd3d0da2dee3f53ae3f369f612ff",
   "belt_yellow": "5356dd706b4c61a1cfac245556834c16e6c846a0aca2dc0a0f11e6356ede37b3",
+  "citation_checked": "95ec6ac785600862f46f217330eefd5bdf2d701573a814450ab2342de8614b7f",
+  "citation_checked_by": "ad122a7ba3b32e5fd123f7a5abe5e9cf5771dc545b950d8ca3c48b20e7ff38b7",
+  "citation_open_source": "4a7ef8679150ddeddb08a8707c73c9bb8580f99d72fbbd7e7c57eff4de6b0e87",
+  "citation_page": "8a4dc3f50a137c181750410ef325dfbfb9cdbe913734a2ddf46accdaed9bd1d9",
+  "citation_slide": "eca2e03afd70bf71aa2acc7dfa80cf94314454912b8c29c2ae38af5b41ae6264",
+  "citation_sources_chip": "58cf332afa1bf36da9be353444a474d5e7d6e36bedbafb4a5fdcbb26d0cd8af2",
   "close_sheet": "73b185e1d473bb7850afe7b2b5753bd7e696adfaf4a6dfb95b3c612a960a939a",
   "daily_time_covers_everything": "f36b08050a27aec9f55b151d679ed285ef1ba272237a4171d60dc6f6cd64ada5",
   "daily_time_suggested": "c268f7482881e3992918e69147da1843969fbed6cd6fd3ae296116865f91dd78",
@@ -138,4 +144,12 @@
     <string name="daily_time_suggested">%1$s (suggerito)</string>
     <!-- In the time a day picker's menu: the time that covers the whole goal or exam. %1$s is a daily study time, such as "13 h 30 min". -->
     <string name="daily_time_covers_everything">%1$s (copre tutto)</string>
+    <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
+    <string name="citation_sources_chip">Fonti · Ultima verifica: %1$s</string>
+    <string name="citation_checked_by">%1$s · Ultima verifica: %2$s</string>
+    <string name="citation_checked">Ultima verifica: %1$s</string>
+    <string name="citation_open_source">Apri la fonte</string>
+    <!-- %1$s is a document\'s title, %2$s a page number. -->
+    <string name="citation_page">%1$s, pagina %2$s</string>
+    <string name="citation_slide">%1$s, diapositiva %2$s</string>
 </resources>

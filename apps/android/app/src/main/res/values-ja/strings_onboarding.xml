@@ -20,8 +20,6 @@
   "onboarding_buddy_description": "4deab14de496423fd347c846018a3cf518bd91e3285a397e5069800dd954c9b1",
   "onboarding_buddy_title": "6a67fc4117c2e75adaf3fa3b52991a7ccc36fe5bb3a3353bde878eab6d324471",
   "onboarding_cancel": "f38bf700f1e5d2d5d337be42237ce4c6df18c7e024fd50763ef149479b3b2206",
-  "onboarding_citation_page": "6a815bdbf68fafef7b53e01e4886206c75df3b32da21b59044342c174c797575",
-  "onboarding_citation_slide": "07740a8c34128da4f4638a8a1e53326bd8630fc6589c3778f91532fb68da01f2",
   "onboarding_continue": "9df52770977ac6b6565f3132a901b54600ad82674dae33f75cb2e55a7769d171",
   "onboarding_course_build": "f7b03256c7c4602e8fe74fe6d4e3f9534066f319ae779d05862411b1250ccef2",
   "onboarding_course_chapter_description": "cd4460cd5446d9414d3ce127184497896505234dda02f5085736fbf1f1073ee6",
@@ -599,9 +597,6 @@
     <string name="onboarding_your_question">質問</string>
     <string name="onboarding_question_placeholder">例：解糖系でATPが正味2分子しか得られないのはなぜですか？</string>
     <string name="onboarding_ask">質問する</string>
-    <!-- %1$s is a document\'s title, %2$s a page number. -->
-    <string name="onboarding_citation_page">%1$s、%2$sページ</string>
-    <string name="onboarding_citation_slide">%1$s、スライド%2$s</string>
     <string name="onboarding_question_failed">回答できませんでした。少し待ってからもう一度お試しください。</string>
     <string name="onboarding_question_sign_in">資料について質問するには、アカウントを作成してください。</string>
     <string name="onboarding_question_slow_down">短時間に質問が続いています。数分後にもう一度お試しください。</string>

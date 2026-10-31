@@ -46,6 +46,8 @@
   "player_challenge_what_if": "048e1d23ccf365baef6e892ca6755f55a4a7e8f53f82333ca1489c00863184c3",
   "player_challenge_you": "82692250b5531f7672298424faea3f693fcbc1936acb011d7d20d88c219ebbab",
   "player_check_failed": "d3c80a4f3a483d344ae107ef583663501d64894de7332993a0b416bc8a3825b7",
+  "player_citation_from_material": "38fd0eaa320f1fd1915f890d3b01a7cc89428f6e771966a9e366359dd6e70944",
+  "player_citation_not_in_material": "9dead427f8a8aee46f317c94b4118a33ab6d8a7f0b2fbeadb70d225519fe609b",
   "player_comes_back_at_end": "9d993efbf3e7b9cc3c40b76d979ec124e9604ae15762d5a55bf0c98ede4b0903",
   "player_comes_back_date": "e22e8a05bc4760909e683f2870d30c0d639535975877f60260c37e1b6930c8a2",
   "player_comes_back_today": "43a3a9dfa07f9ae2fab0d748af3d7f4aaa61eeab1faf4f62f906e8690d93766a",
@@ -364,3 +366,7 @@
     <string name="player_nothing_left_description">終了すると結果を確認できます。</string>
     <string name="player_finish">終了する</string>
 </resources>
+    <!-- For TalkBack, under a lesson screen: where it comes from in the learner\'s own material. %1$s is a document\'s title, maybe with its page or slide, like "Biology.pdf, page 12". -->
+    <string name="player_citation_from_material">参照した資料：%1$s</string>
+    <!-- Under a screen of a lesson built from the learner\'s own material, when no page of that material supports what the screen says. -->
+    <string name="player_citation_not_in_material">資料には載っていません</string>

@@ -20,8 +20,6 @@
   "onboarding_buddy_description": "833dd0523852cb5bb904aaace3fcc393b456f1a2ad9af4bbc75e3d55dd36fbc4",
   "onboarding_buddy_title": "65453d64d1a120472341a32661b678192f610374a527b15f0766eb8c366d68c9",
   "onboarding_cancel": "59b6f363e35ea4cbaadbd74f800fcc2469e87be4c9d65a1080e663d6c2a0056b",
-  "onboarding_citation_page": "573fb07b163421e1cb1416821e1ad61e14a8ea1da02bab5f8da4f88c01ee72ce",
-  "onboarding_citation_slide": "07609df742970c336dee9fda259b7a375497784372b861df8a1bf868e16ffd0b",
   "onboarding_continue": "3f443789982207421ca6ea62fa0c25cfe9bd7577725c53bb803ef0d94c73e80c",
   "onboarding_course_build": "1bea2cd8d3b2bf1270b54905c39a48eb74aac2c0fe19c6b6bd3a93d4474a5e2a",
   "onboarding_course_chapter_description": "d83c9eaab4c2c5278e3b48cf30c972173d6fc04fd5f36b83fe81f82dbf00a215",
@@ -603,9 +601,6 @@
     <string name="onboarding_your_question">Tu pregunta</string>
     <string name="onboarding_question_placeholder">P. ej., ¿por qué la glucólisis solo produce 2 ATP netos?</string>
     <string name="onboarding_ask">Preguntar</string>
-    <!-- %1$s is a document\'s title, %2$s a page number. -->
-    <string name="onboarding_citation_page">%1$s, página %2$s</string>
-    <string name="onboarding_citation_slide">%1$s, diapositiva %2$s</string>
     <string name="onboarding_question_failed">No pudimos responder esa pregunta. Inténtalo de nuevo en un momento.</string>
     <string name="onboarding_question_sign_in">Crea una cuenta para hacer preguntas sobre tu material.</string>
     <string name="onboarding_question_slow_down">Estás haciendo muchas preguntas seguidas. Inténtalo de nuevo en unos minutos.</string>

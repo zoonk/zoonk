@@ -46,6 +46,8 @@
   "player_challenge_what_if": "9e6aa5329d00beddd3b0afba42ca636f92ec29d6b20964f19429ad00a88351a4",
   "player_challenge_you": "ab84c86622703e251a7ad2cc9f5c9a6672f7dcf7da7bac0fcc3504bf1477467c",
   "player_check_failed": "4f26afa45db5a9764a780daea6a88b0989169ac11b810e6d44a9e3ff4eedbfda",
+  "player_citation_from_material": "108a1fde8b24f6841ff933d5575762d34b943986477f83a460d839506023df3b",
+  "player_citation_not_in_material": "fab9784325bca754b4f352062babb82149b465b4b5f69053dd15770933062cf8",
   "player_comes_back_at_end": "fe1143921ac73e6fb2773d05cd9efefac819858de98b28756cc8cfa707cebd3e",
   "player_comes_back_date": "8861d731e80505f77588fd141089a943c6176e6215c7644e6874d42ed27432cb",
   "player_comes_back_today": "2b75b08164c515aad75e110348616a3a65cbe3ec5b3259ec1d50238ec5a8b4bf",
@@ -364,3 +366,7 @@
     <string name="player_nothing_left_description">마치고 결과를 확인해 보세요.</string>
     <string name="player_finish">끝내기</string>
 </resources>
+    <!-- For TalkBack, under a lesson screen: where it comes from in the learner\'s own material. %1$s is a document\'s title, maybe with its page or slide, like "Biology.pdf, page 12". -->
+    <string name="player_citation_from_material">내 자료에서 가져왔어요: %1$s</string>
+    <!-- Under a screen of a lesson built from the learner\'s own material, when no page of that material supports what the screen says. -->
+    <string name="player_citation_not_in_material">내 자료에 없는 내용</string>

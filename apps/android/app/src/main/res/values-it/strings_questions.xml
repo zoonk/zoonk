@@ -37,7 +37,6 @@
   "questions_mistake_fixed": "35a246bf7ca3d42cb99fb2995863e109d74eebdb27f0d69c0ff27d8e71f4c817",
   "questions_mistakes_fixed": "5ab4316176c0a6ae3f409c6cc0de54cddeca916b1ddd9eafd93646f1e9dbe735",
   "questions_not_quite": "589d955109e2f825e6cf5b66c420fb9231d0f26aa3b860437e88867950b50cb1",
-  "questions_open_source": "7ad354395d45a7742a7fed59463afc7acf3a0fe3e3b52b62ffb1340fb118127a",
   "questions_order_hint": "6ea1fe0dc0f984fa167849c676c20b9d4c5a1c592f1ea29706eae08b5d00ad30",
   "questions_pick_all": "6d28ba82c14953788277725937de6f9c59442c21a9abe9f3cb60750c1cc28570",
   "questions_pick_count": "6afcda4bc467e55e5c793545f9e5c444af132bfb47ef5803389d34e6f27719f9",
@@ -57,9 +56,6 @@
   "questions_set_place_chart": "30173d28799df833baeebbc1ef34e4573212a4edc909e81a2f6fb8b93a766917",
   "questions_set_place_text": "b4d54223eaee04e3bda131ffdf04b595918e5ae114d9682431dacb4194d36add",
   "questions_show_less": "5fb3369de6bfd711c57a9d070a5df430092d7952842b55610ed5aeed15e2f5e5",
-  "questions_source_checked": "f9d50123dbde0660719e0ad523448113470b57569697d8dd28dc1f7b45d91848",
-  "questions_source_checked_by": "fe6a4879e325006460609388e9bf14c72ee017993f8763f160b768bfd31ee168",
-  "questions_sources_chip": "c41dfa414b56ec2ac7a415fa4cf5b454419639170849fe8e712451296b2c3bce",
   "questions_streak": "7dc73ddbd05212e3bde182c7f52c6a0a539ef746e8474ccfdae1585389864409",
   "questions_true": "645a80438e43882c25835dc1a7eb186cf15ee0884f93560777678361c163e793",
   "questions_wrong": "99fa75a1d9f6b1da8479d4a4ae73d98b34fe4c68815a13bbd9620f545ed82bc7",
@@ -135,11 +131,6 @@
     <string name="questions_placement_note">Stiamo mettendo a punto il tuo piano. Qui le risposte sbagliate non vengono mai salvate come errori.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Domanda di un esame precedente · %1$s</string>
-    <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
-    <string name="questions_sources_chip">Fonti · Ultima verifica: %1$s</string>
-    <string name="questions_source_checked_by">%1$s · Ultima verifica: %2$s</string>
-    <string name="questions_source_checked">Ultima verifica: %1$s</string>
-    <string name="questions_open_source">Apri la fonte</string>
     <string name="questions_drill_reteach_ideas">Prima il concetto, poi qualche domanda.</string>
     <string name="questions_drill_reteach">Qualche domanda su un concetto che ti è sfuggito.</string>
     <string name="questions_drill_read_carefully">Leggi ogni parola prima di rispondere.</string>

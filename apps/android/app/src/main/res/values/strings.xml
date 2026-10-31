@@ -73,4 +73,12 @@
     <string name="daily_time_suggested">%1$s (suggested)</string>
     <!-- In the time a day picker's menu: the time that covers the whole goal or exam. %1$s is a daily study time, such as "13 h 30 min". -->
     <string name="daily_time_covers_everything">%1$s (covers everything)</string>
+    <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
+    <string name="citation_sources_chip">Sources · Checked %1$s</string>
+    <string name="citation_checked_by">%1$s · Checked %2$s</string>
+    <string name="citation_checked">Checked %1$s</string>
+    <string name="citation_open_source">Open the source</string>
+    <!-- %1$s is a document\'s title, %2$s a page number. -->
+    <string name="citation_page">%1$s, page %2$s</string>
+    <string name="citation_slide">%1$s, slide %2$s</string>
 </resources>

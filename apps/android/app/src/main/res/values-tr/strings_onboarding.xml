@@ -20,8 +20,6 @@
   "onboarding_buddy_description": "5e279b1d9e23cf1a6965dc1015b7d33f161b4e50e94c5c182cc25eb79d1e6b6d",
   "onboarding_buddy_title": "e860635b79cae6427181a12e5a993a1aebedb5ebe9e738fbfa45edf97f061206",
   "onboarding_cancel": "83483a9fe6c33e49f8c11b7b913c058f9d16f462b0715640386dd82491c019a8",
-  "onboarding_citation_page": "451433d65cdb49d5850ebf072f5cf74a0cc74693494eca561f356cbc179fd743",
-  "onboarding_citation_slide": "0358e6b3e64da643c696b6938bcf3138f05e1d0cb544fa963df7706a09a44588",
   "onboarding_continue": "b87f76bd23a8ea11eef65c0a385053f19df4563c0c5b79dd4761f396b14f50bc",
   "onboarding_course_build": "b26947f2bc8e77454819d3b794ecc126e3d05c67aafc04f4df4010af4584a24f",
   "onboarding_course_chapter_description": "e63454f67a41ee007e8b18a88cdb43f2492b76da29cf1c9fd7a20394b658fbbc",
@@ -601,9 +599,6 @@
     <string name="onboarding_your_question">Sorun</string>
     <string name="onboarding_question_placeholder">Örneğin, glikolizde neden net olarak sadece 2 ATP elde edilir?</string>
     <string name="onboarding_ask">Sor</string>
-    <!-- %1$s is a document\'s title, %2$s a page number. -->
-    <string name="onboarding_citation_page">%1$s, sayfa %2$s</string>
-    <string name="onboarding_citation_slide">%1$s, slayt %2$s</string>
     <string name="onboarding_question_failed">Bu soruyu cevaplayamadık. Birazdan tekrar dene.</string>
     <string name="onboarding_question_sign_in">Materyalin hakkında soru sormak için hesap oluştur.</string>
     <string name="onboarding_question_slow_down">Peş peşe soru soruyorsun. Birkaç dakika sonra tekrar dene.</string>

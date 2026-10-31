@@ -54,6 +54,9 @@ import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.feature.onboarding.PickedFile
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
+import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.materialCitationLabel
+import com.zoonk.api.models.MaterialCitation
 
 /** What the uploads route reads. */
 private val ACCEPTED_TYPES =
@@ -413,27 +416,8 @@ internal fun MaterialAnswer(outcome: WriteOutcome<com.zoonk.api.models.MaterialQ
             if (answer.citations.isNotEmpty()) {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     answer.citations.forEach { citation ->
-                        val page = citation.page
-                        val label =
-                            when {
-                                page == null -> {
-                                    citation.title
-                                }
-
-                                citation.unit == com.zoonk.api.models.MaterialCitation.Unit.SLIDE -> {
-                                    stringResource(
-                                        R.string.onboarding_citation_slide,
-                                        citation.title,
-                                        page.toString(),
-                                    )
-                                }
-
-                                else -> {
-                                    stringResource(R.string.onboarding_citation_page, citation.title, page.toString())
-                                }
-                            }
-                        com.zoonk.android.ui.components
-                            .LabelChip(text = label, icon = R.drawable.ic_description)
+                        val label = materialCitationLabel(citation.title, citation.page, citation.unit == MaterialCitation.Unit.SLIDE)
+                        LabelChip(text = label, icon = R.drawable.ic_description)
                     }
                 }
             }

@@ -37,7 +37,6 @@
   "questions_mistake_fixed": "56d8658e12db4f902bf4effac8604f086d49eeab70d8c3c99970fe46bda77914",
   "questions_mistakes_fixed": "a215ad447ac56c5a3b44536b82c747c9c747a58907a14c86057d3776d57fb70f",
   "questions_not_quite": "73554ed2b99b75ac002c57ec525c0ce71ae0361f3975c0f8126257d46d05a004",
-  "questions_open_source": "0ffb53293ef423e25d758e49c65b26d2ad12bb2a69641fbb309bb15ca2ff70b5",
   "questions_order_hint": "a95f4f7da50f224884130b25ea88648f33be907cb40815512bd93c75bdbd3c5f",
   "questions_pick_all": "b00b8afaacce418cbbe2ccbb3253b9918c984e4471f38b5106327ba082b803a5",
   "questions_pick_count": "19c7e25d95bc10f24bda080bac04176be841890abbbe27f253c72db96f743c88",
@@ -57,9 +56,6 @@
   "questions_set_place_chart": "e4d04c0f8083e9ceacc071d2ee85eaf00888410c688b366bfe590db999691415",
   "questions_set_place_text": "435bdfb9da7a7a3154d787423e00588c7eba1529ed6a86ba067ed96c2d2525f1",
   "questions_show_less": "9eb9c828cce4b683b85ef27369121caab6a014fdddca73cbb226a4226d25a1dd",
-  "questions_source_checked": "6ea4df40eaeeddb6a1b54a4f0fa3c7f9be242c724eaa69327d06098aebeae16b",
-  "questions_source_checked_by": "4afca9360a8105f945cd9319aff757a3b162098072545be94715e4375473d42c",
-  "questions_sources_chip": "836c3de64bc26fd331a83c33ed9c75d9bd2794b4009300002490f2c5e6d81bfa",
   "questions_streak": "68e98de84609efb586ecd3f196493f0ab4aae5ab0d86ccd23f96d8d79e36d2bc",
   "questions_true": "5dc23f411a4689da2c5cf3678a1c56ccc988fbc5831d80a51fc402dbded4b14d",
   "questions_wrong": "5b032c9bc2b6537e8ac54ad45da37c34073f4c6d1440bbcf54481a5c835036db",
@@ -131,11 +127,6 @@
     <string name="questions_placement_note">Planını sana göre ayarlıyoruz. Buradaki yanlışlar yanlış defterine kaydedilmez.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Çıkmış sınav sorusu · %1$s</string>
-    <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
-    <string name="questions_sources_chip">Kaynaklar · Son kontrol: %1$s</string>
-    <string name="questions_source_checked_by">%1$s · Son kontrol: %2$s</string>
-    <string name="questions_source_checked">Son kontrol: %1$s</string>
-    <string name="questions_open_source">Kaynağı aç</string>
     <string name="questions_drill_reteach_ideas">Önce konu anlatımı, sonra konuyla ilgili birkaç soru.</string>
     <string name="questions_drill_reteach">Takıldığın bir konuyla ilgili birkaç soru.</string>
     <string name="questions_drill_read_carefully">Cevaplamadan önce her kelimeyi oku.</string>

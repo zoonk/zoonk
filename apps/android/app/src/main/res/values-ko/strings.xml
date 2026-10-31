@@ -15,6 +15,12 @@
   "belt_red": "dfe390117ae16bb1dbf2097131eef76758f8798eb07348c41cb02f903caba925",
   "belt_white": "8a582741fc9f1c3326140f658510ad572de670eae780b5194ab6be653febf36c",
   "belt_yellow": "978d0a5e39edf7fd2916d58413df9229e31c1d0966c1f214713b40dcb7fc7e77",
+  "citation_checked": "aea53fee7551afbdfcfa98bbc05bd9cbaf76031886854e60241108d98865fc9b",
+  "citation_checked_by": "dfee2adcaed08f0c3159d136686d68f9a5c0e4bdef693858a2591e360f08a63b",
+  "citation_open_source": "135c15dbc0c224e6d50622dfdcb0a35c1c374e371134693a6f23e47856a1ab4e",
+  "citation_page": "3811697d5461db1f7a263f78850578fa770048803041074bd808f4d416e3a729",
+  "citation_slide": "b652e51a549d27dc0b686763494d6fc9b01c118f1d7c480b9c0b35b0a9688c4d",
+  "citation_sources_chip": "57c3ba52944ec2e3575b02273212bbfae2ee65e3c33a3f739423b3dcd6be1ccf",
   "close_sheet": "2226e0bb1dd73bd5f3492587f5d4f2cadd3546ebe1a6eae6515e2ffff8ea0418",
   "daily_time_covers_everything": "962930ca47f22b017499e0f4f005204fd4e6e03d7e93edeed734f9273eff72eb",
   "daily_time_suggested": "a8ce19659a1859cd55aa58f665179d900d4ded45a33b6a2b58eb70db50118ef9",
@@ -138,4 +144,12 @@
     <string name="daily_time_suggested">%1$s (제안)</string>
     <!-- In the time a day picker's menu: the time that covers the whole goal or exam. %1$s is a daily study time, such as "13 h 30 min". -->
     <string name="daily_time_covers_everything">%1$s (모든 내용 학습 가능)</string>
+    <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
+    <string name="citation_sources_chip">출처 · %1$s 확인</string>
+    <string name="citation_checked_by">%1$s · %2$s 확인</string>
+    <string name="citation_checked">%1$s 확인</string>
+    <string name="citation_open_source">출처 열기</string>
+    <!-- %1$s is a document\'s title, %2$s a page number. -->
+    <string name="citation_page">%1$s, %2$s페이지</string>
+    <string name="citation_slide">%1$s, %2$s번 슬라이드</string>
 </resources>

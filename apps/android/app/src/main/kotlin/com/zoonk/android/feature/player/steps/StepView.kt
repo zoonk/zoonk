@@ -86,6 +86,8 @@ fun StepView(
 
 fun isPlayable(step: LessonStep): Boolean =
     when (val content = step.content) {
+
+    step.citation?.let { LessonCitation(it) }
         is StepContent.Activity -> content.isPlayable
         else -> true
     }

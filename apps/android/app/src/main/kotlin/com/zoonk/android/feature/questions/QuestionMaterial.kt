@@ -12,24 +12,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -42,27 +32,19 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.app.openWebPage
+import com.zoonk.android.ui.components.IconNote
 import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
-import com.zoonk.android.ui.format.DateStyle
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDate
-import kotlinx.coroutines.launch
+import com.zoonk.android.ui.components.SourcesChip
 import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
 
 /** What a question stands on before it's asked: its situation, picture and chart. Pictures load through [com.zoonk.android.ui.components.LocalPrivatePictures]. */
 @Composable
@@ -177,7 +159,7 @@ fun SetPlace(
 /** Over a placement question, so a miss feels safe. */
 @Composable
 fun PlacementNote(modifier: Modifier = Modifier) {
-    QuestionNote(R.drawable.ic_explore, stringResource(R.string.questions_placement_note), modifier)
+    IconNote(R.drawable.ic_explore, stringResource(R.string.questions_placement_note), modifier)
 }
 
 /** Past exam questions are only copied where their organizer allows it with the source cited. */
@@ -186,26 +168,7 @@ fun QuotedSource(
     citation: Citation,
     modifier: Modifier = Modifier,
 ) {
-    QuestionNote(R.drawable.ic_history_edu, stringResource(R.string.questions_quoted_source, citation.text), modifier)
-}
-
-@Composable
-private fun QuestionNote(
-    icon: Int,
-    text: String,
-    modifier: Modifier,
-) {
-    val style = MaterialTheme.typography.labelMedium
-
-    Row(modifier, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        Icon(
-            painter = painterResource(icon),
-            contentDescription = null,
-            modifier = Modifier.size(style.lineHeightDp()),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(text = text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = style)
-    }
+    IconNote(R.drawable.ic_history_edu, stringResource(R.string.questions_quoted_source, citation.text), modifier)
 }
 
 /** Where an answer comes from, with when it was checked once someone did (main's `ItemCitationNote`). */
@@ -226,73 +189,11 @@ fun ItemCitationNote(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelMedium,
         )
-        citation.checkedAt?.let(::checkedDay)?.let { SourcesChip(citation, it) }
+        citation.checkedAt?.let(::checkedAt)?.let { SourcesChip(citation.title ?: citation.text, citation.publisher, citation.url, it) }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SourcesChip(
-    citation: Citation,
-    checked: LocalDate,
-) {
-    val locale = currentLocale()
-    val context = LocalContext.current
-    val tooltip = rememberTooltipState(isPersistent = true)
-    val scope = rememberCoroutineScope()
-    val day = formatDate(checked, locale, DateStyle.Short)
-    val url = citation.url
-
-    TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
-        tooltip = {
-            RichTooltip(
-                title = { Text(citation.title ?: citation.text) },
-                action =
-                    url?.let {
-                        {
-                            TextButton(onClick = { openWebPage(context, it) }) {
-                                Text(stringResource(R.string.questions_open_source))
-                                Icon(
-                                    painterResource(R.drawable.ic_open_in_new),
-                                    contentDescription = null,
-                                    modifier = Modifier.padding(start = 6.dp).size(16.dp),
-                                )
-                            }
-                        }
-                    },
-            ) {
-                Text(
-                    citation.publisher?.let { stringResource(R.string.questions_source_checked_by, it, day) }
-                        ?: stringResource(R.string.questions_source_checked, day),
-                )
-            }
-        },
-        state = tooltip,
-    ) {
-        AssistChip(
-            onClick = { scope.launch { tooltip.show() } },
-            label = { Text(stringResource(R.string.questions_sources_chip, formatDate(checked, locale, DateStyle.MonthShort))) },
-            colors =
-                AssistChipDefaults.assistChipColors(
-                    labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    leadingIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                ),
-            leadingIcon = {
-                Icon(
-                    painterResource(R.drawable.ic_menu_book),
-                    contentDescription = null,
-                    modifier = Modifier.size(AssistChipDefaults.IconSize),
-                )
-            },
-        )
-    }
-}
-
-private fun checkedDay(checkedAt: String): LocalDate? =
-    runCatching {
-        Instant.parse(checkedAt).atZone(ZoneOffset.UTC).toLocalDate()
-    }.getOrNull()
+private fun checkedAt(text: String): Instant? = runCatching { Instant.parse(text) }.getOrNull()
 
 /** About where a phone starts folding a set's text, and where an aside gives it half the window. */
 internal fun isLongText(text: String?): Boolean = (text?.length ?: 0) >= LONG_TEXT_CHARACTERS
