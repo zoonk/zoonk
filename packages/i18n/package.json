@@ -2,7 +2,6 @@
   "name": "@zoonk/i18n",
   "private": true,
   "bin": {
-    "check-precompiled-formats": "./src/precompiled-formats/cli.ts",
     "reuse-translations": "./src/reuse-translations/cli.ts"
   },
   "type": "module",

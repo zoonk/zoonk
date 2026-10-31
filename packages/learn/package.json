@@ -168,7 +168,7 @@
     "build": "pnpm extract:messages",
     "build:e2e": "pnpm extract:messages",
     "extract:messages": "tsx extract-messages.ts",
-    "i18n:lint": "eloqnt lint --strict && check-precompiled-formats",
+    "i18n:lint": "eloqnt lint --strict && node ../i18n/src/precompiled-formats/cli.ts",
     "i18n": "reuse-translations && eloqnt translate",
     "test": "vitest run",
     "test:watch": "vitest",

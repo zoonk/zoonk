@@ -55,6 +55,7 @@
       "ignore": ["src/prisma/seed/**"],
       "prisma": false
     },
+    "packages/i18n": { "entry": ["src/precompiled-formats/cli.ts!"] },
     "packages/learn": {
       "entry": [".eloqnt/config.ts"],
       "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"]
