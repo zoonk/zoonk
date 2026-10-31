@@ -18,6 +18,7 @@ type ExpectedFact =
   | { kind: "subject"; name: string; questions?: number }
   | { kind: "topic"; subject: string; topic: string }
   | { kind: "group"; subject: string; group: string }
+  | { kind: "groupedSubjects"; groups: string[] }
   | { kind: "choice"; options: string[]; partOf?: string }
   | { kind: "section"; minutes?: number; questions?: number }
   | { kind: "listeningParts"; parts: number; plays?: number; questions: number }
@@ -30,12 +31,24 @@ type ExpectedFact =
       share?: number;
     }
   | { kind: "scoring"; method: NonNullable<ExtractionEvalOutput["mock"]>["scoring"]["method"] }
+  | { kind: "markingRow"; part: string[]; points: number; wrongPenalty?: number }
+  | {
+      kind: "scoredPart";
+      maxPoints?: number;
+      minimum?: PointsMinimum;
+      part: string[];
+      qualifying?: boolean;
+      questions?: number;
+    }
+  | { kind: "totalMinimum"; minimum: PointsMinimum | null }
   | { kind: "wrongPenalty"; value: number }
   | { kind: "scale"; max: number; min: number }
   | { kind: "breakAfter"; minutes: number }
   | { kind: "tools"; mentions: string }
   | { kind: "testedLanguage"; language: string | null }
   | { kind: "timeLimit"; minutes: number };
+
+type PointsMinimum = { unit: "percent" | "points"; value: number };
 
 export type ExtractionExpected = { facts: ExpectedFact[]; usable?: boolean };
 
@@ -50,7 +63,21 @@ type Reading = {
   mock:
     | (Pick<NonNullable<ExtractionEvalOutput["mock"]>, "timeLimitMinutes" | "totalQuestions"> & {
         scoring: Pick<NonNullable<ExtractionEvalOutput["mock"]>["scoring"], "method"> & {
+          marking?: {
+            part: string | null;
+            points: number;
+            questions: number | null;
+            wrongPenalty: number | null;
+          }[];
+          parts?: {
+            maxPoints: number | null;
+            minimum: PointsMinimum | null;
+            name: string;
+            qualifying: boolean;
+            questions: number | null;
+          }[];
           scale?: { max: number; min: number } | null;
+          totalMinimum?: PointsMinimum | null;
           wrongPenalty?: number | null;
         };
         sections: (Pick<
@@ -138,6 +165,21 @@ function findSubject({ name, reading }: { name: string; reading: Reading }) {
   );
 }
 
+function hasGroupedSubjects({
+  fact,
+  reading,
+}: {
+  fact: Extract<ExpectedFact, { kind: "groupedSubjects" }>;
+  reading: Reading;
+}): boolean {
+  const groups = reading.subjects.map((subject) => subject.group ?? null);
+
+  return (
+    groups.every((group) => group !== null) &&
+    fact.groups.every((name) => groups.some((group) => namesPart({ name: group, names: [name] })))
+  );
+}
+
 function hasChoice({
   fact,
   reading,
@@ -185,11 +227,14 @@ function hasFormat({
 const MOCK_FACT_KINDS = [
   "breakAfter",
   "listeningParts",
+  "markingRow",
   "scale",
+  "scoredPart",
   "scoring",
   "section",
   "timeLimit",
   "tools",
+  "totalMinimum",
   "wrongPenalty",
 ] as const;
 
@@ -199,11 +244,103 @@ function isMockFact(fact: ExpectedFact): fact is MockFact {
   return MOCK_FACT_KINDS.some((kind) => kind === fact.kind);
 }
 
+const PENALTY_TOLERANCE = 0.01;
+
+type Scoring = NonNullable<Reading["mock"]>["scoring"];
+
+function toWords(name: string): string[] {
+  return normalizeString(name)
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter(Boolean);
+}
+
+/** Whole words, so "Paper I" never matches "Paper II". */
+function namesPart({ name, names }: { name: string | null; names: readonly string[] }): boolean {
+  const words = toWords(name ?? "");
+
+  return names.some((alternative) => {
+    const wanted = toWords(alternative);
+
+    return words.some((_, start) => wanted.every((word, offset) => words[start + offset] === word));
+  });
+}
+
+function isSameMinimum(read: PointsMinimum | null | undefined, wanted: PointsMinimum | null) {
+  return wanted === null
+    ? !read
+    : read?.unit === wanted.unit && Math.abs(read.value - wanted.value) < PENALTY_TOLERANCE;
+}
+
+function countRowQuestions({ part, scoring }: { part: string; scoring: Scoring | null }) {
+  return (scoring?.marking ?? [])
+    .filter((row) => row.part === part)
+    .reduce((sum, row) => sum + (row.questions ?? 0), 0);
+}
+
+function hasScoredPart({
+  fact,
+  scoring,
+}: {
+  fact: Extract<ExpectedFact, { kind: "scoredPart" }>;
+  scoring: Scoring | null;
+}): boolean {
+  return (scoring?.parts ?? []).some(
+    (part) =>
+      namesPart({ name: part.name, names: fact.part }) &&
+      (fact.maxPoints === undefined || part.maxPoints === fact.maxPoints) &&
+      (fact.minimum === undefined || isSameMinimum(part.minimum, fact.minimum)) &&
+      (fact.qualifying === undefined || part.qualifying === fact.qualifying) &&
+      (fact.questions === undefined ||
+        part.questions === fact.questions ||
+        countRowQuestions({ part: part.name, scoring }) === fact.questions),
+  );
+}
+
+function hasMarkingRow({
+  fact,
+  scoring,
+}: {
+  fact: Extract<ExpectedFact, { kind: "markingRow" }>;
+  scoring: Scoring | null;
+}): boolean {
+  const penalty = scoring?.wrongPenalty ?? null;
+
+  return (scoring?.marking ?? []).some(
+    (row) =>
+      namesPart({ name: row.part, names: fact.part }) &&
+      row.points === fact.points &&
+      (fact.wrongPenalty === undefined ||
+        Math.abs((row.wrongPenalty ?? penalty ?? 0) - fact.wrongPenalty) < PENALTY_TOLERANCE),
+  );
+}
+
+function isPointsFactFound({
+  fact,
+  scoring,
+}: {
+  fact: Extract<MockFact, { kind: "markingRow" | "scoredPart" | "totalMinimum" }>;
+  scoring: Scoring | null;
+}): boolean {
+  switch (fact.kind) {
+    case "markingRow":
+      return hasMarkingRow({ fact, scoring });
+    case "scoredPart":
+      return hasScoredPart({ fact, scoring });
+    case "totalMinimum":
+      return isSameMinimum(scoring?.totalMinimum, fact.minimum);
+    default:
+      return false;
+  }
+}
+
 function isScoringFactFound({
   fact,
   scoring,
 }: {
-  fact: Extract<MockFact, { kind: "scale" | "scoring" | "wrongPenalty" }>;
+  fact: Extract<
+    MockFact,
+    { kind: "markingRow" | "scale" | "scoredPart" | "scoring" | "totalMinimum" | "wrongPenalty" }
+  >;
   scoring: NonNullable<Reading["mock"]>["scoring"] | null;
 }): boolean {
   switch (fact.kind) {
@@ -213,6 +350,10 @@ function isScoringFactFound({
       return scoring?.wrongPenalty === fact.value;
     case "scale":
       return scoring?.scale?.min === fact.min && scoring.scale.max === fact.max;
+    case "markingRow":
+    case "scoredPart":
+    case "totalMinimum":
+      return isPointsFactFound({ fact, scoring });
     default:
       return false;
   }
@@ -226,8 +367,11 @@ function isMockFactFound({ fact, reading }: { fact: MockFact; reading: Reading }
       return hasSection({ fact, reading });
     case "listeningParts":
       return hasListeningParts({ fact, reading });
+    case "markingRow":
     case "scale":
+    case "scoredPart":
     case "scoring":
+    case "totalMinimum":
     case "wrongPenalty":
       return isScoringFactFound({ fact, scoring: reading.mock?.scoring ?? null });
     case "breakAfter":
@@ -276,6 +420,8 @@ function isFactFound({ fact, reading }: { fact: ExpectedFact; reading: Reading }
       );
     case "choice":
       return hasChoice({ fact, reading });
+    case "groupedSubjects":
+      return hasGroupedSubjects({ fact, reading });
     case "format":
       return hasFormat({ fact, reading });
     case "testedLanguage":

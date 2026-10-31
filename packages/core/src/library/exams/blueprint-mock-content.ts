@@ -1,6 +1,7 @@
 import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { type ExamStructure, type SectionNavigation } from "./blueprint-contract";
 import { type KeptFacts, keptOr } from "./blueprint-kept";
+import { toPointsScoring } from "./blueprint-points-content";
 
 type Extraction = BlueprintExtraction;
 type MockConditions = NonNullable<ExamStructure["mock"]>;
@@ -113,7 +114,15 @@ function toSections({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extract
   }));
 }
 
-function toScoring({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extraction["mock"]> }) {
+function toScoring({
+  kept,
+  mock,
+  partNames,
+}: {
+  kept: KeptFacts;
+  mock: NonNullable<Extraction["mock"]>;
+  partNames: readonly string[];
+}) {
   const { description, method, relative, scale, wrongPenalty } = mock.scoring;
 
   if (!kept.has("mock.scoring")) {
@@ -134,6 +143,7 @@ function toScoring({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extracti
     ...(relative && kept.has("mock.scoring.relative") ? { relative: true } : {}),
     ...(penalty === null ? {} : { wrongPenalty: penalty }),
     ...toScale({ kept, scale }),
+    ...toPointsScoring({ kept, partNames, scoring: mock.scoring }),
   };
 }
 
@@ -172,7 +182,15 @@ function toScale({
   };
 }
 
-export function toMock({ extraction, kept }: { extraction: Extraction; kept: KeptFacts }) {
+export function toMock({
+  extraction,
+  kept,
+  partNames,
+}: {
+  extraction: Extraction;
+  kept: KeptFacts;
+  partNames: readonly string[];
+}) {
   const { mock } = extraction;
   const citations = [...kept.entries()].find(([id]) => id.startsWith("mock."))?.[1];
 
@@ -184,7 +202,7 @@ export function toMock({ extraction, kept }: { extraction: Extraction; kept: Kep
     adaptive: mock.adaptive && kept.has("mock.adaptive"),
     citations,
     order: keptOr({ gap: null, id: "mock.order", kept, value: mock.order }),
-    scoring: toScoring({ kept, mock }),
+    scoring: toScoring({ kept, mock, partNames }),
     sections: toSections({ kept, mock }),
     timeLimitMinutes: keptOr({
       gap: null,

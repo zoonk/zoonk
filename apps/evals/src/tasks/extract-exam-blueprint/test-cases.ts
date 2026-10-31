@@ -7,7 +7,61 @@ const OAB_48_NOTICE = {
   url: "https://s.oab.org.br/arquivos/2026/09/fb43fb37-838e-4d33-a863-99fa1f98b921.pdf",
 };
 
+const CGU_2026_NOTICE = {
+  title: "Edital nº 1 – CGU 2026 – Auditor Federal de Finanças e Controle (atualizado)",
+  url: "https://cdn.cebraspe.org.br/concursos/CGU_26_AFFC/arquivos/FDEEFB41D8ACD48AB369A9915EA1A48C67389EC91427E98F6F264E19B1F63FB9.pdf",
+};
+
+const UPSC_CSE_2026_NOTICE = {
+  title: "Civil Services Examination 2026 notice",
+  url: "https://www.upsc.gov.in/sites/default/files/Notif-CSP-2026-Engl-060226Rev.pdf",
+};
+
 export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
+  {
+    expected: {
+      facts: [
+        { kind: "scoring", method: "wrongCancelsRight" },
+        { groups: ["P1", "P2", "P3", "P4"], kind: "groupedSubjects" },
+        { kind: "subject", name: "Prova discursiva" },
+        { kind: "markingRow", part: ["P3"], points: 2, wrongPenalty: 1 },
+        { kind: "scoredPart", minimum: { unit: "points", value: 8 }, part: ["P1"], questions: 40 },
+        { kind: "scoredPart", minimum: { unit: "points", value: 12 }, part: ["P2"], questions: 40 },
+        { kind: "scoredPart", minimum: { unit: "points", value: 54 }, part: ["P3"], questions: 90 },
+        { kind: "scoredPart", minimum: { unit: "points", value: 50 }, part: ["P4", "discursiva"] },
+        { kind: "totalMinimum", minimum: { unit: "points", value: 78 } },
+      ],
+    },
+    id: "cgu-2026-affc-ti-points",
+    language: "pt",
+    userInput: {
+      documents: [CGU_2026_NOTICE],
+      exam: "CGU 2026, Auditor Federal de Finanças e Controle, TI – Desenvolvimento de Sistemas",
+    },
+  },
+  {
+    expected: {
+      facts: [
+        { kind: "scoring", method: "wrongCancelsRight" },
+        { kind: "markingRow", part: ["Paper I"], points: 2, wrongPenalty: 0.33 },
+        { kind: "markingRow", part: ["Paper II", "CSAT"], points: 2.5, wrongPenalty: 0.33 },
+        { kind: "scoredPart", maxPoints: 200, part: ["Paper I"] },
+        {
+          kind: "scoredPart",
+          minimum: { unit: "percent", value: 33 },
+          part: ["Paper II", "CSAT"],
+          qualifying: true,
+        },
+        { kind: "totalMinimum", minimum: null },
+      ],
+    },
+    id: "upsc-cse-2026-prelims-points",
+    language: "en",
+    userInput: {
+      documents: [UPSC_CSE_2026_NOTICE],
+      exam: "UPSC Civil Services (Preliminary) Examination 2026",
+    },
+  },
   {
     expected: {
       facts: [

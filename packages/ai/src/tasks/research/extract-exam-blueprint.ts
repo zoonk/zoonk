@@ -7,6 +7,8 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { startTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
+import { pointsScoringShape } from "./blueprint-points-schema";
+import { cited, citedMany } from "./cited-passages";
 import readingAgainPrompt from "./extract-exam-blueprint-reading-again.prompt.md";
 import systemPrompt from "./extract-exam-blueprint.prompt.md";
 import {
@@ -16,6 +18,7 @@ import {
 } from "./extract-question-formats";
 import { getReadingReasoning } from "./reading-reasoning";
 import { type ResearchDocument, toDocumentParts } from "./research-documents";
+import { withWrittenTestSubjects } from "./written-test-subjects";
 
 /**
  * Flash read 32 of 32 facts on the extract-exam-blueprint eval; Gemini 4 Argon scored a little
@@ -24,11 +27,6 @@ import { type ResearchDocument, toDocumentParts } from "./research-documents";
  */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;
-
-const cited = { document: z.number().int(), passage: z.string() };
-
-/** Facts a notice states in several places cite each passage. */
-const citedMany = { passages: z.array(z.object(cited)) };
 
 /**
  * The reading streams, so a long one never waits on response headers (three SAT readings hit the
@@ -101,6 +99,7 @@ const extractionSchema = z.object({
       order: z.string().nullable(),
       scoring: z.object({
         description: z.string(),
+        ...pointsScoringShape,
         method: z.enum(["raw", "wrongCancelsRight", "itemResponseTheory", "scaled", "other"]),
         /** The result depends on the other candidates (a percentile, a standardized score). */
         relative: z.boolean(),
@@ -223,7 +222,10 @@ export async function extractExamBlueprint(
 
   return {
     ...reading,
-    data: { ...reading.data, formats: mergeQuestionFormats({ found, read: reading.data.formats }) },
+    data: withWrittenTestSubjects({
+      ...reading.data,
+      formats: mergeQuestionFormats({ found, read: reading.data.formats }),
+    }),
     formatsProvenance: formats.data?.provenance ?? null,
   };
 }

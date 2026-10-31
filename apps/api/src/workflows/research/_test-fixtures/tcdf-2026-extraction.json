@@ -93,9 +93,12 @@
     "order": null,
     "scoring": {
       "description": "Cada acerto confere 1,00 ponto, cada erro desconta 1,00 ponto e itens sem marcação ou marcação dupla recebem 0,00 ponto.",
+      "marking": [],
       "method": "wrongCancelsRight",
+      "parts": [],
       "relative": false,
       "scale": null,
+      "totalMinimum": null,
       "wrongPenalty": null
     },
     "sections": [

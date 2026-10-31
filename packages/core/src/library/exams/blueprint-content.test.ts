@@ -422,10 +422,9 @@ describe(toBlueprintContent, () => {
     const mock = base.mock && {
       ...base.mock,
       scoring: {
+        ...base.mock.scoring,
         description: "+4 por acerto e -1 por erro",
         method: "wrongCancelsRight" as const,
-        relative: false,
-        scale: null,
         wrongPenalty: 0.25,
       },
     };

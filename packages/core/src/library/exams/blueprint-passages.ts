@@ -60,6 +60,20 @@ export function listCountPassages(format: FormatPassages): Passage[] {
   return format.countPassage ? [{ document: format.document, passage: format.countPassage }] : [];
 }
 
+function listScoringPassages(
+  scoring: NonNullable<BlueprintExtraction["mock"]>["scoring"] | undefined,
+): Passage[] {
+  if (!scoring) {
+    return [];
+  }
+
+  return [
+    ...scoring.marking.flatMap((row) => row.passages),
+    ...scoring.parts.flatMap((part) => part.passages),
+    ...(scoring.totalMinimum?.passages ?? []),
+  ];
+}
+
 export function listExtractionPassages(extraction: BlueprintExtraction): Passage[] {
   const { document, passage } = extraction.reusePolicy;
 
@@ -71,6 +85,7 @@ export function listExtractionPassages(extraction: BlueprintExtraction): Passage
       ...listCountPassages(format),
     ]),
     ...(extraction.mock?.passages ?? []),
+    ...listScoringPassages(extraction.mock?.scoring),
     ...(extraction.mock?.sections ?? []).flatMap((section) => [
       ...section.passages,
       ...section.tasks.flatMap((task) => task.passages),

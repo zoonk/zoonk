@@ -2,6 +2,7 @@ import {
   type FormatCount,
   type QuestionFormat,
 } from "@zoonk/ai/tasks/research/extract-question-formats";
+import { type ExamStructure } from "./blueprint-contract";
 
 const PERCENT = 100;
 
@@ -40,4 +41,18 @@ export function getFormatShares(formats: readonly CountedFormat[]): (number | nu
   return formats.map(({ count, kind }) =>
     count && isObjectiveFormat(kind) ? count.value / whole : null,
   );
+}
+
+export function isFormatShare(share: number | null | undefined): share is number {
+  return typeof share === "number" && share > 0 && share <= 1;
+}
+
+export function toAnswerFormat(format: {
+  entry: ExamStructure["formats"][number]["entry"];
+  select: ExamStructure["formats"][number]["select"];
+}) {
+  return {
+    ...(format.entry ? { entry: format.entry } : {}),
+    ...(format.select && format.select !== 1 ? { select: format.select } : {}),
+  };
 }

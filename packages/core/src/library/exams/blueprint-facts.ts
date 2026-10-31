@@ -3,7 +3,8 @@ import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-
 import { type FormatCount } from "@zoonk/ai/tasks/research/extract-question-formats";
 import { type PartialCreditRule } from "@zoonk/ai/tasks/research/partial-credit";
 import { splitEvenly } from "@zoonk/utils/split-evenly";
-import { type FactEntry, type FactSource, toFacts } from "./blueprint-fact-claims";
+import { normalizeString } from "@zoonk/utils/string";
+import { FORMAT_WORDS, type FactEntry, type FactSource, toFacts } from "./blueprint-fact-claims";
 import { testedLanguageFacts } from "./blueprint-language";
 import { mockFacts } from "./blueprint-mock-facts";
 import {
@@ -17,19 +18,6 @@ import {
 import { findNamesInDocument } from "./passage-check";
 
 type Extraction = BlueprintExtraction;
-
-const FORMAT_WORDS: Record<Extraction["formats"][number]["kind"], string> = {
-  essay: "a written answer in the candidate's own words, such as an essay or a discursive question",
-  multipleChoice:
-    "multiple-choice questions, answered by picking among given options or by picking words or items in a text",
-  numeric: "questions answered with a number",
-  oral: "an oral exam",
-  other: "other questions",
-  practical: "a practical test",
-  shortAnswer:
-    "questions answered by writing or typing a short answer, such as a word, a value, a sentence, or a table or blank to fill in",
-  trueFalse: "items judged true or false (right or wrong)",
-};
 
 function nameFormat(format: Pick<Extraction["formats"][number], "kind" | "passage">): string {
   return `${FORMAT_WORDS[format.kind]} ("${format.passage}")`;
@@ -49,12 +37,34 @@ function describeParts(parts: (string | false | null)[]): string {
   return parts.filter(Boolean).join("; ");
 }
 
+type Subject = Extraction["subjects"][number];
+
+function namesEither(first: string, second: string): boolean {
+  const [one, other] = [normalizeString(first), normalizeString(second)];
+  return one.length > 0 && other.length > 0 && (one.includes(other) || other.includes(one));
+}
+
+/** A written or oral test is one of the subjects, but the check reads "subject" as a discipline. */
+function isTestSubject({ extraction, subject }: { extraction: Extraction; subject: Subject }) {
+  return (extraction.mock?.sections ?? []).some(
+    (section) =>
+      section.kind !== "objective" &&
+      [subject.name, subject.group ?? ""].some((label) => namesEither(label, section.name)),
+  );
+}
+
+function describeGroup({ group, name, subject }: { group: string; name: string; subject: string }) {
+  return namesEither(group, subject) ? `${name} is "${group}"` : `${name} is part of "${group}"`;
+}
+
 function subjectFacts({ documents, extraction, found }: FactSource): FactEntry[] {
   return extraction.subjects.flatMap((subject, index) => {
     const id = `subjects.${index}`;
-    const name = `Subject "${subject.name}"`;
+    const kind = isTestSubject({ extraction, subject }) ? "Exam test" : "Subject";
+    const name = `${kind} "${subject.name}"`;
+    const passages = toPartPassages({ found, name: subject.name, own: subject.passages });
 
-    return toFacts({
+    const claims = toFacts({
       claims: [
         { id, statement: name },
         subject.questions !== null && {
@@ -64,10 +74,6 @@ function subjectFacts({ documents, extraction, found }: FactSource): FactEntry[]
         subject.weight !== null && {
           id: `${id}.weight`,
           statement: `${name} is worth ${Math.round(subject.weight * PERCENT)}% of the final score`,
-        },
-        Boolean(subject.group) && {
-          id: `${id}.group`,
-          statement: `${name} is part of "${subject.group}"`,
         },
         Boolean(subject.choiceGroup) && {
           id: `${id}.choiceGroup`,
@@ -79,8 +85,23 @@ function subjectFacts({ documents, extraction, found }: FactSource): FactEntry[]
         },
       ],
       documents,
-      passages: toPartPassages({ found, name: subject.name, own: subject.passages }),
+      passages,
     });
+
+    const group = subject.group
+      ? toFacts({
+          claims: [
+            {
+              id: `${id}.group`,
+              statement: describeGroup({ group: subject.group, name, subject: subject.name }),
+            },
+          ],
+          documents,
+          passages: toPartPassages({ found, name: subject.group, own: passages }),
+        })
+      : [];
+
+    return [...claims, ...group];
   });
 }
 

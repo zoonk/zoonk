@@ -6,6 +6,7 @@ import {
   toPartPassages,
   uniquePassages,
 } from "./blueprint-passages";
+import { pointsFacts } from "./blueprint-points-facts";
 
 type Mock = NonNullable<BlueprintExtraction["mock"]>;
 type Task = Mock["sections"][number]["tasks"][number];
@@ -153,7 +154,7 @@ export function mockFacts({ documents, extraction, found }: FactSource): FactEnt
     return [];
   }
 
-  const conditions = toFacts({
+  const scoring = toFacts({
     claims: [
       { id: "mock.scoring", statement: `Scoring: ${describeScoring(mock.scoring)}` },
       mock.scoring.method !== "other" && {
@@ -173,6 +174,16 @@ export function mockFacts({ documents, extraction, found }: FactSource): FactEnt
         id: "mock.scoring.scale",
         statement: describeScale(mock.scoring.scale),
       },
+    ],
+    documents,
+    passages: uniquePassages([
+      ...mock.passages,
+      ...mock.scoring.marking.flatMap((row) => row.passages),
+    ]),
+  });
+
+  const conditions = toFacts({
+    claims: [
       mock.totalQuestions !== null && {
         id: "mock.totalQuestions",
         statement: `The exam has ${mock.totalQuestions} questions in total`,
@@ -191,5 +202,10 @@ export function mockFacts({ documents, extraction, found }: FactSource): FactEnt
     passages: mock.passages,
   });
 
-  return [...conditions, ...sectionFacts({ documents, found, mock })];
+  return [
+    ...scoring,
+    ...conditions,
+    ...pointsFacts({ documents, found, scoring: mock.scoring }),
+    ...sectionFacts({ documents, found, mock }),
+  ];
 }

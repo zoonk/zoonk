@@ -2,20 +2,14 @@ import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { listChoiceGroups } from "../../exams/choices/exam-choices";
 import { type ReusePolicy } from "../sources/source-contract";
-import {
-  type BlueprintContent,
-  type Citation,
-  type ExamStructure,
-  isFormatShare,
-  toAnswerFormat,
-} from "./blueprint-contract";
+import { type BlueprintContent, type Citation, type ExamStructure } from "./blueprint-contract";
 import { type FactEntry } from "./blueprint-fact-claims";
 import { type KeptFacts, keptOr, toKeptFacts } from "./blueprint-kept";
 import { toTestedLanguage } from "./blueprint-language";
 import { toMock } from "./blueprint-mock-content";
 import { type ExtractionDocument } from "./blueprint-passages";
 import { toSubjectTopics } from "./blueprint-subject-topics";
-import { getFormatShares, isObjectiveFormat } from "./format-shares";
+import { getFormatShares, isFormatShare, isObjectiveFormat, toAnswerFormat } from "./format-shares";
 import { isObjectiveTestUnread } from "./objective-test";
 
 type Extraction = BlueprintExtraction;
@@ -148,6 +142,12 @@ function toStructure({
 }): ExamStructure {
   const groups = findKeptGroups({ extraction, kept });
 
+  const subjects = keepRealChoices(
+    keepItems({ items: extraction.subjects, kept, prefix: "subjects" }).map(({ found, id, item }) =>
+      toSubject({ documents, found, groups, id, item, kept }),
+    ),
+  );
+
   return {
     formats: keepItems({
       items: withFormatShares({ extraction, kept }),
@@ -167,17 +167,17 @@ function toStructure({
         : {}),
       ...(isFormatShare(item.share) ? { share: item.share } : {}),
     })),
-    mock: toMock({ extraction, kept }),
+    mock: toMock({
+      extraction,
+      kept,
+      partNames: [...groups, ...subjects.map((subject) => subject.name)],
+    }),
     rules: keepItems({ items: extraction.rules, kept, prefix: "rules" }).map(({ found, item }) => ({
       citation: found,
       kind: item.kind,
       text: item.text,
     })),
-    subjects: keepRealChoices(
-      keepItems({ items: extraction.subjects, kept, prefix: "subjects" }).map(
-        ({ found, id, item }) => toSubject({ documents, found, groups, id, item, kept }),
-      ),
-    ),
+    subjects,
     testedLanguage: toTestedLanguage({ extraction, kept }),
   };
 }

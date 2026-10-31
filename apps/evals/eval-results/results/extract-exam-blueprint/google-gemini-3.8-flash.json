@@ -22,19 +22,67 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "questionCount", "value": 180 },
-            { "date": "2026-11-08", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-11-15", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-06-05", "dateKind": "registrationEnd", "kind": "date" },
-            { "kind": "subject", "name": "Linguagens", "questions": 45 },
-            { "kind": "subject", "name": "Matemática", "questions": 45 },
-            { "kind": "choice", "options": ["Inglês", "Espanhol"], "partOf": "Linguagens" },
-            { "format": "multipleChoice", "kind": "format" },
-            { "format": "essay", "kind": "format" },
-            { "kind": "scoring", "method": "itemResponseTheory" },
-            { "kind": "timeLimit", "minutes": 330 },
-            { "kind": "timeLimit", "minutes": 300 },
-            { "kind": "testedLanguage", "language": null }
+            {
+              "kind": "questionCount",
+              "value": 180
+            },
+            {
+              "date": "2026-11-08",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-11-15",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-06-05",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            },
+            {
+              "kind": "subject",
+              "name": "Linguagens",
+              "questions": 45
+            },
+            {
+              "kind": "subject",
+              "name": "Matemática",
+              "questions": 45
+            },
+            {
+              "kind": "choice",
+              "options": [
+                "Inglês",
+                "Espanhol"
+              ],
+              "partOf": "Linguagens"
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "itemResponseTheory"
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 330
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 300
+            },
+            {
+              "kind": "testedLanguage",
+              "language": null
+            }
           ]
         },
         "id": "enem-2026-1",
@@ -71,17 +119,53 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "questionCount", "value": 150 },
-            { "kind": "section", "questions": 35 },
-            { "kind": "section", "questions": 45 },
-            { "kind": "section", "questions": 70 },
-            { "format": "trueFalse", "kind": "format" },
-            { "kind": "scoring", "method": "wrongCancelsRight" },
-            { "kind": "wrongPenalty", "value": 1 },
-            { "kind": "timeLimit", "minutes": 240 },
-            { "date": "2026-11-22", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-08-26", "dateKind": "registrationStart", "kind": "date" },
-            { "date": "2026-09-17", "dateKind": "registrationEnd", "kind": "date" }
+            {
+              "kind": "questionCount",
+              "value": 150
+            },
+            {
+              "kind": "section",
+              "questions": 35
+            },
+            {
+              "kind": "section",
+              "questions": 45
+            },
+            {
+              "kind": "section",
+              "questions": 70
+            },
+            {
+              "format": "trueFalse",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "wrongCancelsRight"
+            },
+            {
+              "kind": "wrongPenalty",
+              "value": 1
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 240
+            },
+            {
+              "date": "2026-11-22",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-08-26",
+              "dateKind": "registrationStart",
+              "kind": "date"
+            },
+            {
+              "date": "2026-09-17",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            }
           ]
         },
         "id": "tcdf-2026-1",
@@ -118,15 +202,46 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "date": "2027-01-17", "dateKind": "exam", "kind": "date" },
-            { "format": "trueFalse", "kind": "format" },
-            { "kind": "scoring", "method": "wrongCancelsRight" },
-            { "kind": "section", "minutes": 300, "questions": 180 },
-            { "kind": "subject", "name": "Língua Portuguesa" },
-            { "kind": "subject", "name": "Linguística" },
-            { "kind": "subject", "name": "Ciência Política" },
-            { "group": "P1", "kind": "group", "subject": "Língua Portuguesa" },
-            { "group": "P2", "kind": "group", "subject": "Linguística" },
+            {
+              "date": "2027-01-17",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "format": "trueFalse",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "wrongCancelsRight"
+            },
+            {
+              "kind": "section",
+              "minutes": 300,
+              "questions": 180
+            },
+            {
+              "kind": "subject",
+              "name": "Língua Portuguesa"
+            },
+            {
+              "kind": "subject",
+              "name": "Linguística"
+            },
+            {
+              "kind": "subject",
+              "name": "Ciência Política"
+            },
+            {
+              "group": "P1",
+              "kind": "group",
+              "subject": "Língua Portuguesa"
+            },
+            {
+              "group": "P2",
+              "kind": "group",
+              "subject": "Linguística"
+            },
             {
               "kind": "topic",
               "subject": "Língua Portuguesa",
@@ -183,15 +298,48 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "section", "minutes": 300, "questions": 80 },
-            { "format": "multipleChoice", "kind": "format" },
-            { "kind": "scoring", "method": "raw" },
-            { "kind": "timeLimit", "minutes": 300 },
-            { "date": "2026-06-01", "dateKind": "registrationStart", "kind": "date" },
-            { "date": "2026-06-08", "dateKind": "registrationEnd", "kind": "date" },
-            { "date": "2026-09-06", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-10-18", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-12-03", "dateKind": "results", "kind": "date" }
+            {
+              "kind": "section",
+              "minutes": 300,
+              "questions": 80
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "raw"
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 300
+            },
+            {
+              "date": "2026-06-01",
+              "dateKind": "registrationStart",
+              "kind": "date"
+            },
+            {
+              "date": "2026-06-08",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            },
+            {
+              "date": "2026-09-06",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-10-18",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-12-03",
+              "dateKind": "results",
+              "kind": "date"
+            }
           ]
         },
         "id": "oab-47-1",
@@ -228,16 +376,49 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "subject", "name": "Ética" },
-            { "kind": "subject", "name": "Direitos Humanos" },
-            { "kind": "subject", "name": "Filosofia do Direito" },
-            { "kind": "subject", "name": "Direito Eleitoral" },
-            { "kind": "subject", "name": "Direito Civil" },
-            { "kind": "subject", "name": "Direito Processual Penal" },
-            { "kind": "section", "minutes": 300, "questions": 80 },
-            { "format": "multipleChoice", "kind": "format" },
-            { "date": "2027-01-10", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-02-28", "dateKind": "other", "kind": "date" }
+            {
+              "kind": "subject",
+              "name": "Ética"
+            },
+            {
+              "kind": "subject",
+              "name": "Direitos Humanos"
+            },
+            {
+              "kind": "subject",
+              "name": "Filosofia do Direito"
+            },
+            {
+              "kind": "subject",
+              "name": "Direito Eleitoral"
+            },
+            {
+              "kind": "subject",
+              "name": "Direito Civil"
+            },
+            {
+              "kind": "subject",
+              "name": "Direito Processual Penal"
+            },
+            {
+              "kind": "section",
+              "minutes": 300,
+              "questions": 80
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "date": "2027-01-10",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-02-28",
+              "dateKind": "other",
+              "kind": "date"
+            }
           ]
         },
         "id": "oab-48-1a-fase-1",
@@ -274,10 +455,23 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "subject", "name": "Ética" },
-            { "kind": "subject", "name": "Direitos Humanos" },
-            { "kind": "subject", "name": "Direito Civil" },
-            { "kind": "section", "minutes": 300, "questions": 80 }
+            {
+              "kind": "subject",
+              "name": "Ética"
+            },
+            {
+              "kind": "subject",
+              "name": "Direitos Humanos"
+            },
+            {
+              "kind": "subject",
+              "name": "Direito Civil"
+            },
+            {
+              "kind": "section",
+              "minutes": 300,
+              "questions": 80
+            }
           ]
         },
         "id": "oab-48-1a-fase-told-ethics-1",
@@ -324,14 +518,42 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "questionCount", "value": 98 },
-            { "kind": "section", "minutes": 64, "questions": 54 },
-            { "kind": "section", "minutes": 70, "questions": 44 },
-            { "kind": "timeLimit", "minutes": 134 },
-            { "kind": "breakAfter", "minutes": 10 },
-            { "format": "multipleChoice", "kind": "format" },
-            { "date": "2027-03-06", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-02-19", "dateKind": "registrationEnd", "kind": "date" }
+            {
+              "kind": "questionCount",
+              "value": 98
+            },
+            {
+              "kind": "section",
+              "minutes": 64,
+              "questions": 54
+            },
+            {
+              "kind": "section",
+              "minutes": 70,
+              "questions": 44
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 134
+            },
+            {
+              "kind": "breakAfter",
+              "minutes": 10
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "date": "2027-03-06",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-02-19",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            }
           ]
         },
         "id": "sat-1",
@@ -372,13 +594,37 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "questionCount", "value": 48 },
-            { "kind": "section", "minutes": 100, "questions": 42 },
-            { "kind": "section", "minutes": 90, "questions": 6 },
-            { "kind": "timeLimit", "minutes": 190 },
-            { "kind": "tools", "mentions": "calculator" },
-            { "format": "multipleChoice", "kind": "format" },
-            { "date": "2027-05-10", "dateKind": "exam", "kind": "date" }
+            {
+              "kind": "questionCount",
+              "value": 48
+            },
+            {
+              "kind": "section",
+              "minutes": 100,
+              "questions": 42
+            },
+            {
+              "kind": "section",
+              "minutes": 90,
+              "questions": 6
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 190
+            },
+            {
+              "kind": "tools",
+              "mentions": "calculator"
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "date": "2027-05-10",
+              "dateKind": "exam",
+              "kind": "date"
+            }
           ]
         },
         "id": "ap-calculus-ab-2027-1",
@@ -419,13 +665,38 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "timeLimit", "minutes": 165 },
-            { "kind": "section", "minutes": 30, "questions": 40 },
-            { "kind": "section", "minutes": 60, "questions": 40 },
-            { "kind": "listeningParts", "parts": 4, "plays": 1, "questions": 10 },
-            { "format": "essay", "kind": "format" },
-            { "format": "oral", "kind": "format" },
-            { "kind": "testedLanguage", "language": "en" }
+            {
+              "kind": "timeLimit",
+              "minutes": 165
+            },
+            {
+              "kind": "section",
+              "minutes": 30,
+              "questions": 40
+            },
+            {
+              "kind": "section",
+              "minutes": 60,
+              "questions": 40
+            },
+            {
+              "kind": "listeningParts",
+              "parts": 4,
+              "plays": 1,
+              "questions": 10
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "format": "oral",
+              "kind": "format"
+            },
+            {
+              "kind": "testedLanguage",
+              "language": "en"
+            }
           ]
         },
         "id": "ielts-academic-1",
@@ -466,10 +737,23 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "timeLimit", "minutes": 165 },
-            { "kind": "section", "minutes": 60, "questions": 40 },
-            { "format": "essay", "kind": "format" },
-            { "format": "oral", "kind": "format" }
+            {
+              "kind": "timeLimit",
+              "minutes": 165
+            },
+            {
+              "kind": "section",
+              "minutes": 60,
+              "questions": 40
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "format": "oral",
+              "kind": "format"
+            }
           ]
         },
         "id": "ielts-academic-research-pages-1",
@@ -522,9 +806,20 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "testedLanguage", "language": "en" },
-            { "kind": "scale", "max": 90, "min": 10 },
-            { "format": "multipleChoice", "kind": "format", "select": "all" },
+            {
+              "kind": "testedLanguage",
+              "language": "en"
+            },
+            {
+              "kind": "scale",
+              "max": 90,
+              "min": 10
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format",
+              "select": "all"
+            },
             {
               "format": "multipleChoice",
               "kind": "format",
@@ -537,7 +832,10 @@
         "language": "en",
         "userInput": {
           "documents": [
-            { "title": "PTE Academic", "url": "https://www.pearsonpte.com/pte-academic" },
+            {
+              "title": "PTE Academic",
+              "url": "https://www.pearsonpte.com/pte-academic"
+            },
             {
               "title": "PTE Academic test format: Listening",
               "url": "https://www.pearsonpte.com/pte-academic/test-format/listening"
@@ -568,15 +866,27 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "format": "multipleChoice", "kind": "format", "select": "all" },
+            {
+              "format": "multipleChoice",
+              "kind": "format",
+              "select": "all"
+            },
             {
               "format": "multipleChoice",
               "kind": "format",
               "partialCredit": "perOption",
               "select": "all"
             },
-            { "entry": "decimals", "format": "numeric", "kind": "format" },
-            { "format": "numeric", "kind": "format", "share": 0.25 }
+            {
+              "entry": "decimals",
+              "format": "numeric",
+              "kind": "format"
+            },
+            {
+              "format": "numeric",
+              "kind": "format",
+              "share": 0.25
+            }
           ]
         },
         "id": "jee-advanced-2026-paper-1-1",
@@ -613,11 +923,30 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "questionCount", "value": 120 },
-            { "kind": "section", "minutes": 30, "questions": 50 },
-            { "kind": "section", "minutes": 29, "questions": 47 },
-            { "kind": "section", "minutes": 23, "questions": 12 },
-            { "kind": "section", "minutes": 8, "questions": 11 }
+            {
+              "kind": "questionCount",
+              "value": 120
+            },
+            {
+              "kind": "section",
+              "minutes": 30,
+              "questions": 50
+            },
+            {
+              "kind": "section",
+              "minutes": 29,
+              "questions": 47
+            },
+            {
+              "kind": "section",
+              "minutes": 23,
+              "questions": 12
+            },
+            {
+              "kind": "section",
+              "minutes": 8,
+              "questions": 11
+            }
           ]
         },
         "id": "toefl-ibt-1",
@@ -654,8 +983,17 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "subject", "name": "Língua Inglesa" },
-            { "kind": "choice", "options": ["Espanhola", "Francesa"] }
+            {
+              "kind": "subject",
+              "name": "Língua Inglesa"
+            },
+            {
+              "kind": "choice",
+              "options": [
+                "Espanhola",
+                "Francesa"
+              ]
+            }
           ]
         },
         "id": "cacd-2025-1",
@@ -692,9 +1030,18 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "questionCount", "value": 70 },
-            { "format": "multipleChoice", "kind": "format" },
-            { "format": "essay", "kind": "format" }
+            {
+              "kind": "questionCount",
+              "value": 70
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            }
           ],
           "usable": false
         },
@@ -732,15 +1079,47 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "questionCount", "value": 70 },
-            { "kind": "subject", "name": "Língua Portuguesa", "questions": 16 },
-            { "kind": "subject", "name": "Direito", "questions": 30 },
-            { "kind": "subject", "name": "Informática", "questions": 9 },
-            { "kind": "subject", "name": "Raciocínio Lógico", "questions": 7 },
-            { "format": "multipleChoice", "kind": "format" },
-            { "format": "essay", "kind": "format" },
-            { "kind": "scale", "max": 10, "min": 0 },
-            { "date": "2025-12-07", "kind": "date" }
+            {
+              "kind": "questionCount",
+              "value": 70
+            },
+            {
+              "kind": "subject",
+              "name": "Língua Portuguesa",
+              "questions": 16
+            },
+            {
+              "kind": "subject",
+              "name": "Direito",
+              "questions": 30
+            },
+            {
+              "kind": "subject",
+              "name": "Informática",
+              "questions": 9
+            },
+            {
+              "kind": "subject",
+              "name": "Raciocínio Lógico",
+              "questions": 7
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "scale",
+              "max": 10,
+              "min": 0
+            },
+            {
+              "date": "2025-12-07",
+              "kind": "date"
+            }
           ],
           "usable": true
         },
@@ -782,10 +1161,22 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "choice", "options": ["Historia de España", "Filosofía"] },
             {
               "kind": "choice",
-              "options": ["alemán", "francés", "inglés", "italiano", "portugués"]
+              "options": [
+                "Historia de España",
+                "Filosofía"
+              ]
+            },
+            {
+              "kind": "choice",
+              "options": [
+                "alemán",
+                "francés",
+                "inglés",
+                "italiano",
+                "portugués"
+              ]
             }
           ]
         },
@@ -823,20 +1214,50 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "date": "2027-04-02", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-05-22", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-07-09", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-10-15", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-11-13", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-02-10", "dateKind": "registrationEnd", "kind": "date" },
-            { "kind": "testedLanguage", "language": "es" }
+            {
+              "date": "2027-04-02",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-05-22",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-07-09",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-10-15",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-11-13",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-02-10",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            },
+            {
+              "kind": "testedLanguage",
+              "language": "es"
+            }
           ]
         },
         "id": "dele-b2-sittings-1",
         "language": "es",
         "userInput": {
           "documents": [
-            { "title": "Cuándo es el DELE", "url": "https://examenes.cervantes.es/es/dele/cuando" },
+            {
+              "title": "Cuándo es el DELE",
+              "url": "https://examenes.cervantes.es/es/dele/cuando"
+            },
             {
               "title": "Guía de examen DELE B2",
               "url": "https://examenes.cervantes.es/sites/default/files/guia_examen_dele_b2_0.pdf"
@@ -867,9 +1288,21 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "date": "2027-04-27", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-05-05", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-04-30", "dateKind": "exam", "kind": "date" }
+            {
+              "date": "2027-04-27",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-05-05",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-04-30",
+              "dateKind": "exam",
+              "kind": "date"
+            }
           ]
         },
         "id": "abitur-bayern-2027-1",
@@ -906,16 +1339,31 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "date": "2027-06-14", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-06-15", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-07-06", "dateKind": "results", "kind": "date" }
+            {
+              "date": "2027-06-14",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-06-15",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-07-06",
+              "dateKind": "results",
+              "kind": "date"
+            }
           ]
         },
         "id": "bac-2027-1",
         "language": "fr",
         "userInput": {
           "documents": [
-            { "title": "Dates du bac 2027", "url": "https://www.letudiant.fr/bac/date-du-bac.html" }
+            {
+              "title": "Dates du bac 2027",
+              "url": "https://www.letudiant.fr/bac/date-du-bac.html"
+            }
           ],
           "exam": "Baccalauréat général 2027"
         }
@@ -942,8 +1390,14 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "format": "shortAnswer", "kind": "format" },
-            { "format": "essay", "kind": "format" }
+            {
+              "format": "shortAnswer",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            }
           ]
         },
         "id": "pt-class-notes-biologia-celular-1",
@@ -980,8 +1434,14 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "format": "multipleChoice", "kind": "format" },
-            { "format": "essay", "kind": "format" }
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            }
           ]
         },
         "id": "en-class-notes-ap-biology-unit-2-1",
@@ -994,6 +1454,118 @@
             }
           ],
           "exam": "AP Biology unit 2 test"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 9/9 (read 9). passages found 69/69. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 9/9 (read 9). passages found 69/69. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 9/9 (read 9). passages found 69/69. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "scoring",
+              "method": "wrongCancelsRight"
+            },
+            {
+              "groups": [
+                "P1",
+                "P2",
+                "P3",
+                "P4"
+              ],
+              "kind": "groupedSubjects"
+            },
+            {
+              "kind": "subject",
+              "name": "Prova discursiva"
+            },
+            {
+              "kind": "markingRow",
+              "part": [
+                "P3"
+              ],
+              "points": 2,
+              "wrongPenalty": 1
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": {
+                "unit": "points",
+                "value": 8
+              },
+              "part": [
+                "P1"
+              ],
+              "questions": 40
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": {
+                "unit": "points",
+                "value": 12
+              },
+              "part": [
+                "P2"
+              ],
+              "questions": 40
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": {
+                "unit": "points",
+                "value": 54
+              },
+              "part": [
+                "P3"
+              ],
+              "questions": 90
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": {
+                "unit": "points",
+                "value": 50
+              },
+              "part": [
+                "P4",
+                "discursiva"
+              ]
+            },
+            {
+              "kind": "totalMinimum",
+              "minimum": {
+                "unit": "points",
+                "value": 78
+              }
+            }
+          ]
+        },
+        "id": "cgu-2026-affc-ti-points-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital nº 1 – CGU 2026 – Auditor Federal de Finanças e Controle (atualizado)",
+              "url": "https://cdn.cebraspe.org.br/concursos/CGU_26_AFFC/arquivos/FDEEFB41D8ACD48AB369A9915EA1A48C67389EC91427E98F6F264E19B1F63FB9.pdf"
+            }
+          ],
+          "exam": "CGU 2026, Auditor Federal de Finanças e Controle, TI – Desenvolvimento de Sistemas"
         }
       }
     }

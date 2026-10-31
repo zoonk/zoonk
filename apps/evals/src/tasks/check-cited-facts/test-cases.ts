@@ -39,7 +39,55 @@ const IELTS_UNNAMED_LINES = [
   "Summary … - Time allowed: 60 minutes … Summary … - Number of questions: 40 … The test time is 2 hours and 45 minutes, and the format is the same wherever it is taken. … In IELTS, there are four sections: Listening, Reading, Writing and Speaking. … The IELTS Academic test is made up of four sections: Listening, Reading, Writing, and Speaking.",
 ] as const;
 
+const POINTS_LINES = {
+  items: "8.1 A prova objetiva P2 terá 50 itens, cada um valendo 1,50 ponto.",
+  marks:
+    "Marking Scheme … Each correct answer carries 3 marks; for each incorrect answer, 1 mark will be deducted.",
+} as const;
+
 export const TEST_CASES: TestCase<CheckCitedFactsExpected, CheckCitedFactsParams>[] = [
+  {
+    expected: {
+      supportedIds: [
+        "mock.scoring.parts.0.maxPoints",
+        "mock.scoring.marking.0",
+        "mock.scoring.marking.0.wrongPenalty",
+      ],
+    },
+    id: "points-worked-out",
+    language: "pt",
+    userInput: {
+      facts: [
+        {
+          id: "mock.scoring.parts.0.maxPoints",
+          passage: POINTS_LINES.items,
+          statement: '"P2" gives at most 75 points',
+        },
+        {
+          id: "mock.scoring.parts.1.maxPoints",
+          passage: POINTS_LINES.items,
+          statement: '"P2" gives at most 80 points',
+        },
+        {
+          id: "mock.scoring.marking.0",
+          passage: POINTS_LINES.marks,
+          statement: "In the whole exam, a right answer earns 3 points",
+        },
+        {
+          id: "mock.scoring.marking.0.wrongPenalty",
+          passage: POINTS_LINES.marks,
+          statement:
+            "In the whole exam, each wrong answer takes away 0.333 of a right answer's 3 points, about 1 point",
+        },
+        {
+          id: "mock.scoring.marking.1.wrongPenalty",
+          passage: POINTS_LINES.marks,
+          statement:
+            "In the whole exam, each wrong answer takes away 0.5 of a right answer's 3 points, about 1.5 points",
+        },
+      ],
+    },
+  },
   {
     expected: {
       supportedIds: ["formats.0", "formats.0.description", "formats.1", "formats.1.description"],

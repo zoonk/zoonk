@@ -96,13 +96,95 @@ const mockSectionSchema = z.object({
   tools: z.string().nullable().optional(),
 });
 
+const POINTS_MINIMUM_UNITS = ["points", "percent"] as const;
+
+export const pointsMinimumSchema = z.object({
+  unit: z.enum(POINTS_MINIMUM_UNITS),
+  value: z.number().positive(),
+});
+
+export type PointsMinimum = z.infer<typeof pointsMinimumSchema>;
+
+const markingRowSchema = z.object({
+  citation: citationSchema,
+  format: z
+    .enum(EXAM_FORMAT_KINDS)
+    .nullable()
+    .meta({ description: "The question format it scores; null for every format" }),
+  part: z
+    .string()
+    .nullable()
+    .meta({
+      description:
+        "The test or block it scores, as a subject's `group` or `name` writes it; null for the whole exam",
+    }),
+  points: z.number().positive().meta({ description: "What a right answer earns" }),
+  questions: z
+    .number()
+    .int()
+    .min(1)
+    .nullable()
+    .meta({ description: "How many questions it covers; null when the notice doesn't say" }),
+  wrongPenalty: z
+    .number()
+    .min(0)
+    .max(1)
+    .nullable()
+    .meta({
+      description:
+        "The share of `points` a wrong answer takes away; null when the notice doesn't say, so the exam's `wrongPenalty` applies",
+    }),
+});
+
+const scoredPartSchema = z.object({
+  citation: citationSchema,
+  maxPoints: z
+    .number()
+    .positive()
+    .nullable()
+    .meta({ description: "The most points it gives; null when the notice doesn't say" }),
+  minimum: pointsMinimumSchema
+    .nullable()
+    .meta({
+      description: "The least every candidate must reach in it; null when none applies to all",
+    }),
+  name: z
+    .string()
+    .meta({ description: "The test or block, as a subject's `group` or `name` writes it" }),
+  qualifying: z
+    .boolean()
+    .meta({ description: "It only has to reach its minimum and doesn't count toward the result" }),
+  questions: z
+    .number()
+    .int()
+    .min(1)
+    .nullable()
+    .meta({ description: "How many questions it has; null when the notice doesn't say" }),
+});
+
+export type MarkingRow = z.infer<typeof markingRowSchema>;
+export type ScoredPart = z.infer<typeof scoredPartSchema>;
+
 const mockConditionsSchema = z.object({
   adaptive: z.boolean(),
   citations: z.array(citationSchema),
   order: z.string().nullable(),
   scoring: z.object({
     description: z.string(),
+    marking: z
+      .array(markingRowSchema)
+      .optional()
+      .meta({
+        description:
+          "How a right and a wrong answer score where it differs by test or format, in the notice's order; a question no row covers earns 1 point",
+      }),
     method: z.enum(EXAM_SCORING_METHODS),
+    parts: z
+      .array(scoredPartSchema)
+      .optional()
+      .meta({
+        description: "Each test or block the notice gives questions, points or a minimum for",
+      }),
     relative: z.boolean().optional(),
     scale: z
       .object({
@@ -115,6 +197,14 @@ const mockConditionsSchema = z.object({
       })
       .nullable()
       .optional(),
+    totalMinimum: pointsMinimumSchema
+      .extend({ citation: citationSchema })
+      .nullable()
+      .optional()
+      .meta({
+        description:
+          "The least every candidate must reach in the objective tests that count, added together; null when none",
+      }),
     wrongPenalty: z.number().min(0).max(1).nullable().optional(),
   }),
   sections: z.array(mockSectionSchema),
@@ -244,17 +334,3 @@ export type BlueprintContent = {
   structure: ExamStructure;
   topicFrequency: TopicFrequency;
 };
-
-export function isFormatShare(share: number | null | undefined): share is number {
-  return typeof share === "number" && share > 0 && share <= 1;
-}
-
-export function toAnswerFormat(format: {
-  entry: ExamStructure["formats"][number]["entry"];
-  select: ExamStructure["formats"][number]["select"];
-}) {
-  return {
-    ...(format.entry ? { entry: format.entry } : {}),
-    ...(format.select && format.select !== 1 ? { select: format.select } : {}),
-  };
-}

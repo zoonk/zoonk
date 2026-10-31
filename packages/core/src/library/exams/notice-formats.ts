@@ -3,8 +3,9 @@ import { type QuestionFormat } from "@zoonk/ai/tasks/research/extract-question-f
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { type ExamStructure, examStructureSchema, toAnswerFormat } from "./blueprint-contract";
+import { type ExamStructure, examStructureSchema } from "./blueprint-contract";
 import { type ExtractionDocument } from "./blueprint-passages";
+import { toAnswerFormat } from "./format-shares";
 import { isPassageInDocument } from "./passage-check";
 
 const noticeFormatsSchema = examStructureSchema.shape.formats;

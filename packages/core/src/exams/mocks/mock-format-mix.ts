@@ -5,8 +5,9 @@ import {
 } from "@zoonk/ai/tasks/items/schemas";
 import { apportion } from "@zoonk/utils/apportion";
 import { isJsonObject } from "@zoonk/utils/json";
-import { type ExamStructure, isFormatShare } from "../../library/exams/blueprint-contract";
+import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getExamFormats } from "../../library/exams/exam-choice-format";
+import { isFormatShare } from "../../library/exams/format-shares";
 import { ANY_NUMBER } from "../../library/items/_utils/numeric-entry";
 import { type ExamAnswerFormat } from "../../lookahead/exam-answer-formats";
 
