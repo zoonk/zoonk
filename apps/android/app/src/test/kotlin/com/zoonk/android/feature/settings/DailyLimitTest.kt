@@ -36,7 +36,7 @@ class DailyLimitTest {
         ApiJson.decodeFromString(
             """
             {"activeGoalId":null,"availableGlasses":["round"],"birthYear":1990,"buddy":{"glasses":"round","kind":"zu","name":null,"picked":false},
-             "dailyLimitMinutes":200,"dailyTimes":[5,15,1440],"shareUsageData":null,"soundsEnabled":true}
+             "dailyLimitMinutes":200,"dailyTimes":[5,15,1440],"shareUsageData":null,"soundsEnabled":true,"usageDataLockedOff":false}
             """.trimIndent(),
         )
 

@@ -329,7 +329,7 @@ internal fun LessonsSection(
     }
 }
 
-/** The server records usage unless the learner turned it off. */
+/** The server records usage unless the learner turned it off or it's locked off for a minor. */
 @Composable
 private fun UsageDataSection(
     profile: LearningProfile,
@@ -337,11 +337,20 @@ private fun UsageDataSection(
 ) {
     Section(stringResource(R.string.settings_your_data)) {
         OutlinedCard(Modifier.fillMaxWidth()) {
+            val locked = profile.usageDataLockedOff
             SwitchRow(
                 title = stringResource(R.string.settings_preferences_share_usage_data),
-                description = stringResource(R.string.settings_preferences_share_usage_data_description),
-                checked = profile.shareUsageData ?: true,
+                description =
+                    stringResource(
+                        if (locked) {
+                            R.string.settings_preferences_share_usage_data_locked
+                        } else {
+                            R.string.settings_preferences_share_usage_data_description
+                        },
+                    ),
+                checked = !locked && profile.shareUsageData != false,
                 onCheckedChange = preferences::setShareUsageData,
+                enabled = !locked,
             )
         }
     }
@@ -353,12 +362,19 @@ private fun SwitchRow(
     description: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
+    enabled: Boolean = true,
 ) {
     ListItem(
         headlineContent = { Text(title) },
         supportingContent = { Text(description) },
-        trailingContent = { Switch(checked = checked, onCheckedChange = null) },
-        modifier = Modifier.toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange),
+        trailingContent = { Switch(checked = checked, onCheckedChange = null, enabled = enabled) },
+        modifier =
+            Modifier.toggleable(
+                value = checked,
+                enabled = enabled,
+                role = Role.Switch,
+                onValueChange = onCheckedChange,
+            ),
     )
 }
 

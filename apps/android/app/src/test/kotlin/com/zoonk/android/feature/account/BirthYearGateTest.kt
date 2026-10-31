@@ -54,7 +54,7 @@ private class FakeBirthYearApi : LearningProfileApi {
         ApiJson.decodeFromString(
             """
             {"activeGoalId":null,"availableGlasses":["round"],"birthYear":null,"buddy":{"glasses":"round","kind":"zu","name":null,"picked":false},
-             "dailyLimitMinutes":null,"dailyTimes":[5,10,15],"shareUsageData":null,"soundsEnabled":true}
+             "dailyLimitMinutes":null,"dailyTimes":[5,10,15],"shareUsageData":null,"soundsEnabled":true,"usageDataLockedOff":false}
             """.trimIndent(),
         )
 
