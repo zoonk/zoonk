@@ -6,12 +6,22 @@
 - Localize an exam named only as an example, such as a goal suggestion, for Italy: the Maturità, university admission tests and concorsi pubblici. Keep the exam when the screen shows its own scores, sections or questions, such as the SAT example plan.
 - Lines saying what Zoonk is doing while it works speak as “noi” (“Stiamo preparando la pagina 3…”). The buddy speaks as “io”.
 - Buttons, links, menu actions and mission names use the “tu” imperative: “Riprova”, “Inizia un nuovo obiettivo”, “Completa la tua prima lezione”.
+- Options the learner picks to answer a question or name a goal speak as the learner, in the infinitive or the first person: “Cambiare carriera”, “Parto da zero”, “Superare la Maturità”. Plan phases and feature titles are nouns: “Recupero delle lacune”, “Esercizi sugli errori”.
 - Avoid adjectives and participles that mark the learner's or the buddy's gender, also in lines they say: “Ti diamo il benvenuto”, not “Benvenuto”. Never use “ə”, “*” or “/a”.
 - Treat “Potenza Mentale” as a product name without an article in short labels and headings. Amounts in sentences take “punti”: “500 punti di Potenza Mentale”.
 
 ## Glossary
 
 - “goal” (the learner's goal): “obiettivo”
+- “cancel” a subscription: “disdire” (“Disdici l'abbonamento”), not “annullare”
+- “Terms of service”: “Termini di servizio”, the legal page's title
+- “flag” (a mock question to come back to): “contrassegnare”, never “segnalare”, which reports a problem
+- “trap” (in a Trickster question): “trappola”; the “Trap hunter” badge: “Caccia alle trappole”
+- “Quick explanation”: “Spiegazione rapida”
+- “AI study buddy”: “compagno di studio con l'IA”
+- “speaking practice”: “esercitazione orale”; a practice “call”: “conversazione di allenamento”; “Speaking” as a skill label: “Parlato”, but in sentences “prova orale”, “parte orale” or “come parli”
+- “feedback” the learner sends Zoonk: “feedback”; feedback on an essay or a call: “commenti”
+- “set up” (Zoonk setting up a goal or a plan): “configurare”, since “Preparazione” is the readiness score
 - “plan” (study plan): “piano”, not “piano di studi” (a degree's course list) or “programma”; subscription plan: “formula” (“la formula Free”), never “piano”
 - “Free” (subscription name): “Free”
 - “Get Plus”: “passa a Plus”
@@ -30,7 +40,7 @@
 - “card”: a speaking exam's task card: “scheda”; a card to pick in an activity: “carta”
 - “hand in” (a mock or one of its parts): “consegnare”
 - “pattern” (a mistake that recurs): “errore ricorrente”
-- “link” (between a cause and its effect): “nesso”, not “collegamento”
+- “link” (between a cause and its effect): “nesso”, not “collegamento”; a web “link”: “link”
 - “score”, including an exam's “band”: “punteggio”, not “voto” (an essay's grade)
 - Language skills “Listening” / “Speaking” / “Reading” / “Writing” / “Words”: “Ascolto” / “Parlato” / “Lettura” / “Scrittura” / “Lessico”
 - Speaking criteria “Fluency” / “Accuracy” / “Interaction” / “Range of language”: “Fluidità” / “Correttezza” / “Interazione” / “Ricchezza linguistica”
