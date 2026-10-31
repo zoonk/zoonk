@@ -334,8 +334,10 @@ struct LessonAnswerField: View {
   var body: some View {
     MultilineTextField(
       text: Binding(get: { text }, set: onChange),
-      prompt: Text(
-        "Write your answer", tableName: "Player", comment: "Placeholder of a written answer"),
+      prompt: isNumber
+        ? Text("Your answer", tableName: "Player", comment: "Placeholder of a number answer")
+        : Text(
+          "Write your answer", tableName: "Player", comment: "Placeholder of a written answer"),
       label: label
     )
     .lineLimit(isNumber ? 1...1 : 3...8)
