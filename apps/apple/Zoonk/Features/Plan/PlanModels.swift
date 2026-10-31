@@ -49,8 +49,10 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     let group: String
     let leftOut: ExamChoiceLeftOut
     let options: [Option]
-    /// The option picked; nil until the learner picks, and the plan leaves the group out.
-    let subject: String?
+    /// The options picked, in the notice's order; empty until the learner picks, and the plan
+    /// leaves the group out.
+    let subjects: [String]
+    let take: Int
 
     var id: String { group }
   }

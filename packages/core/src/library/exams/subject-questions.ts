@@ -1,5 +1,6 @@
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { normalizeString } from "@zoonk/utils/string";
+import { listCountedSubjects } from "../../exams/choices/choice-groups";
 import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { type ExamStructure } from "./blueprint-contract";
 
@@ -118,11 +119,8 @@ function splitPartQuestions({
       !isInsideAnother({ structure, subject: item }),
   );
 
-  const places = new Map(siblings.map((item) => [item.choiceGroup ?? item.name, item]));
-
-  const counts = [...places.values()].map((item) =>
-    getNoticeQuestions({ structure, subject: item }),
-  );
+  const places = listCountedSubjects({ choiceGroups: structure.choiceGroups, subjects: siblings });
+  const counts = places.map((item) => getNoticeQuestions({ structure, subject: item }));
 
   const open = counts.filter((count) => count === null).length;
   const left = total - counts.reduce<number>((sum, count) => sum + (count ?? 0), 0);

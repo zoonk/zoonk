@@ -20,7 +20,7 @@ type ExpectedFact =
   | { kind: "topic"; subject: string; topic: string }
   | { kind: "group"; subject: string; group: string }
   | { kind: "groupedSubjects"; groups: string[] }
-  | { kind: "choice"; options: string[]; partOf?: string }
+  | { kind: "choice"; options: string[]; partOf?: string; take?: number }
   | { kind: "section"; minutes?: number; questions?: number }
   | { kind: "listeningParts"; parts: number; plays?: number; questions: number }
   | {
@@ -55,6 +55,7 @@ type PointsMinimum = { unit: "percent" | "points"; value: number };
 export type ExtractionExpected = { facts: ExpectedFact[]; usable?: boolean };
 
 type Reading = {
+  choiceGroups?: { name: string; take: number }[];
   dates: Pick<ExtractionEvalOutput["dates"][number], "date" | "kind">[];
   formats: (Pick<ExtractionEvalOutput["formats"][number], "kind"> & {
     entry?: NumericEntry | null;
@@ -209,7 +210,14 @@ function hasChoice({
     fact.partOf === undefined ||
     normalizeString(option?.partOf ?? "").includes(normalizeString(fact.partOf));
 
-  return Boolean(group) && groups.size === 1 && options.every((option) => isInside(option));
+  const take = reading.choiceGroups?.find((item) => item.name === group)?.take ?? 1;
+
+  return (
+    Boolean(group) &&
+    groups.size === 1 &&
+    options.every((option) => isInside(option)) &&
+    (fact.take === undefined || take === fact.take)
+  );
 }
 
 const SHARE_TOLERANCE = 0.02;
@@ -489,6 +497,7 @@ function fromExtraction(output: ExtractionEvalOutput): Reading {
 
 function fromKept({ kept }: ExtractionEvalOutput): Reading {
   return {
+    choiceGroups: kept.structure.choiceGroups,
     dates: kept.edition.dates,
     formats: kept.structure.formats,
     mock: kept.structure.mock,

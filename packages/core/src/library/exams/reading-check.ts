@@ -1,7 +1,7 @@
 import { type ExamReadingFindings } from "@zoonk/ai/tasks/research/check-exam-reading";
 import { type ReadingCorrection } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { nameOverlap, namesMatch } from "../../exams/_utils/name-match";
-import { listCountedSubjects } from "../../exams/choices/exam-choices";
+import { listCountedSubjects } from "../../exams/choices/choice-groups";
 import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { type BlueprintContent, type ReadingProblem } from "./blueprint-contract";
 import { type ExtractionDocument } from "./blueprint-passages";
@@ -94,7 +94,7 @@ function findTotalProblems(content: BlueprintContent): ReadingProblem[] {
   const { edition, structure } = content;
   const total = structure.mock?.totalQuestions ?? edition.questionCount;
 
-  const objective = listCountedSubjects(structure.subjects).filter(
+  const objective = listCountedSubjects(structure).filter(
     (subject) => !isWrittenSubject({ structure, subject }),
   );
 

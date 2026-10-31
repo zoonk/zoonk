@@ -22,6 +22,7 @@ export function blueprintExtraction(
   overrides: Partial<BlueprintExtraction> = {},
 ): BlueprintExtraction {
   return {
+    choiceGroups: [],
     dates: [
       {
         date: "2026-11-08",

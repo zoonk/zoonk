@@ -50,6 +50,7 @@
   "onboarding_error_one_moment": "ef89a73e24c6a16613e7269438aec996723a344a0f3e244c91180014e71947b1",
   "onboarding_exam_choice_choices": "c1b94b4da9c4873a406bc7caa3466c3bddad54c1628626b6782bf04455683192",
   "onboarding_exam_choice_options": "4355c937134c290710409dac5fda088283970917982ac0764010a643bef7a0eb",
+  "onboarding_exam_choice_options_take": "564f9d853d3b543194d87f483783198c945577e0e7c7000fea1e61a5e618369e",
   "onboarding_exam_choice_title_one": "36bdfac38937ab2f52c4938f771e1e3ff1161ee8e1d8a5478e53ea47cdcc2192",
   "onboarding_exam_choice_title_other": "d5cf3850ee0b65b22d86201029beca04e1563b9ec461fd02f23b815b5be984b7",
   "onboarding_exam_expected": "b0f1d3c740a5319403002d9b30c1240c63cc46ba46abed073cee55b4e44a7cdd",
@@ -973,6 +974,12 @@
         <item quantity="one">L’examen propose %1$d option pour %2$s. Ton plan et tes examens blancs s’adaptent à ton choix, que tu peux modifier dans ton plan.</item>
         <item quantity="many">L’examen propose %1$d options pour %2$s. Ton plan et tes examens blancs s’adaptent à ton choix, que tu peux modifier dans ton plan.</item>
         <item quantity="other">L’examen propose %1$d options pour %2$s. Ton plan et tes examens blancs s’adaptent à ton choix, que tu peux modifier dans ton plan.</item>
+    </plurals>
+    <!-- Under the exam choice question when each candidate takes several of its options. %1$d counts the options; %2$s is the notice's name for the choice, such as the modules a course takes, in the notice's own language; %3$d is how many of the options each candidate takes, at least 2. -->
+    <plurals name="onboarding_exam_choice_options_take">
+        <item quantity="one">L’examen propose %1$d option pour %2$s, et il faut en choisir %3$d. Ton plan et tes examens blancs s’adaptent à tes choix, que tu peux modifier dans ton plan.</item>
+        <item quantity="many">L’examen propose %1$d options pour %2$s, et il faut en choisir %3$d. Ton plan et tes examens blancs s’adaptent à tes choix, que tu peux modifier dans ton plan.</item>
+        <item quantity="other">L’examen propose %1$d options pour %2$s, et il faut en choisir %3$d. Ton plan et tes examens blancs s’adaptent à tes choix, que tu peux modifier dans ton plan.</item>
     </plurals>
     <!-- Under the exam choice question, for several choices. -->
     <plurals name="onboarding_exam_choice_choices">

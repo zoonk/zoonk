@@ -603,6 +603,31 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
   {
     expected: {
       facts: [
+        { kind: "subject", name: "Comprensión lectora", questions: 30 },
+        { kind: "subject", name: "Redacción indirecta", questions: 30 },
+        { kind: "subject", name: "Pensamiento matemático", questions: 30 },
+        {
+          kind: "choice",
+          options: ["Administración", "Biología", "Derecho", "Premedicina", "Química"],
+          take: 2,
+        },
+      ],
+    },
+    id: "exani-ii-modules",
+    language: "es",
+    userInput: {
+      documents: [
+        {
+          title: "Guía para el sustentante EXANI-II",
+          url: "https://ingreso.uady.mx/licenciatura/docs/2_EXANI_II_guia_sustente_2023.pdf",
+        },
+      ],
+      exam: "EXANI-II",
+    },
+  },
+  {
+    expected: {
+      facts: [
         { date: "2027-04-02", dateKind: "exam", kind: "date" },
         { date: "2027-05-22", dateKind: "exam", kind: "date" },
         { date: "2027-07-09", dateKind: "exam", kind: "date" },

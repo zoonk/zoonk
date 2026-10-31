@@ -165,14 +165,14 @@ describe(linkGoalToExamBlueprint, () => {
     const picks = (goalId: string) =>
       parsePlanSettings(plans.find((plan) => plan.goalId === goalId)?.settings).examChoices;
 
-    expect(picks(named.id)).toStrictEqual([{ group: SPECIALTY, subject: SOFTWARE }]);
+    expect(picks(named.id)).toStrictEqual([{ group: SPECIALTY, subjects: [SOFTWARE] }]);
     expect(picks(refused.id)).toStrictEqual([]);
   });
 
   it("never changes a pick the learner already made when research links the notice again", async () => {
     const user = await userFixture();
     const blueprint = await specialtyBlueprintFixture();
-    const auditing = [{ group: SPECIALTY, subject: "Auditoria" }];
+    const auditing = [{ group: SPECIALTY, subjects: ["Auditoria"] }];
 
     const goal = await goalFixture({
       details: { targetPosition: "Desenvolvimento de Sistemas" },

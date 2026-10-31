@@ -55,7 +55,7 @@ class PlanSuggestionSlotTest {
 
     private lateinit var navigator: AppNavigator
     private val statuses = mutableListOf<GoalUpdateInput.Status>()
-    private val chosen = mutableListOf<Pair<String, String>>()
+    private val chosen = mutableListOf<Pair<String, List<String>>>()
     private val undone = mutableListOf<PlanChange>()
     private var changes by mutableStateOf(emptyMap<java.util.UUID, EditorChange>())
     private var search by mutableStateOf<TimeToCoverState>(TimeToCoverState.Idle)
@@ -82,9 +82,10 @@ class PlanSuggestionSlotTest {
                     pending = pending,
                     changes = changes,
                     undo = { undone += it },
-                    chooseExamOption = { group, subject, answered ->
-                        chosen += group to subject
-                        val change = planChange(operations = """[{"kind":"setExamChoice","group":"$group","subject":"$subject"}]""")
+                    chooseExamOption = { group, subjects, answered ->
+                        chosen += group to subjects
+                        val names = subjects.joinToString(",") { "\"$it\"" }
+                        val change = planChange(operations = """[{"kind":"setExamChoice","group":"$group","subjects":[$names]}]""")
                         changes = changes + (change.id to EditorChange(change))
                         answered(PlanChangeResult(change = change, status = PlanChangeResult.Status.APPLIED))
                     },
@@ -154,7 +155,7 @@ class PlanSuggestionSlotTest {
         compose.onNodeWithText("Spanish").performClick()
         compose.onNodeWithText("Undo").performClick()
 
-        assertEquals(listOf("Foreign language" to "Spanish"), chosen)
+        assertEquals(listOf("Foreign language" to listOf("Spanish")), chosen)
         assertEquals(CHANGE_ID, undone.single().id.toString())
     }
 
@@ -449,7 +450,7 @@ class PlanSuggestionSlotTest {
             """"examChoices":[{"group":"Foreign language",""" +
                 """"leftOut":{"examPoints":1000,"examQuestions":180,"name":"Foreign language","points":50,"questions":5},""" +
                 """"options":[{"name":"English","shortName":null},""" +
-                """{"name":"Spanish","shortName":null}],"subject":null}]"""
+                """{"name":"Spanish","shortName":null}],"subjects":[],"take":1}]"""
         const val BEHIND = """"status":{"kind":"behind","days":2,"extraMinutesPerDay":10,"lessons":null}"""
         const val FIT_OFFER =
             """"fitOffer":{"canApply":true,"effect":{"lessonsAdded":6,"lessonsRemoved":0},"fits":false,""" +

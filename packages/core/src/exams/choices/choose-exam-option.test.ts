@@ -62,7 +62,7 @@ async function loadChoices(planId: string) {
   return parsePlanSettings(plan.settings).examChoices;
 }
 
-const spanish = { group: FOREIGN, subject: SPANISH, timeZone: TIME_ZONE };
+const spanish = { group: FOREIGN, subjects: [SPANISH], timeZone: TIME_ZONE };
 
 describe(chooseExamOption, () => {
   beforeEach(() => {
@@ -104,7 +104,7 @@ describe(chooseExamOption, () => {
       });
 
     await expect(pending()).resolves.toBeGreaterThan(0);
-    await chooseExamOption({ goalId: goal.id, input: { ...spanish, subject: ENGLISH } });
+    await chooseExamOption({ goalId: goal.id, input: { ...spanish, subjects: [ENGLISH] } });
     await expect(pending()).resolves.toBe(0);
   });
 
@@ -116,7 +116,7 @@ describe(chooseExamOption, () => {
     expect(result).toMatchObject({ change: { status: "applied" }, status: "applied" });
 
     await expect(loadChoices(plan.id)).resolves.toStrictEqual([
-      { group: FOREIGN, subject: SPANISH },
+      { group: FOREIGN, subjects: [SPANISH] },
     ]);
 
     const changeId = result.status === "applied" ? (result.change?.id ?? "") : "";
@@ -124,17 +124,17 @@ describe(chooseExamOption, () => {
     const change = await prisma.planChange.findUniqueOrThrow({ where: { id: changeId } });
 
     expect(change.payload).toMatchObject({
-      operations: [{ group: FOREIGN, kind: "setExamChoice", subject: SPANISH }],
+      operations: [{ group: FOREIGN, kind: "setExamChoice", subjects: [SPANISH] }],
       source: "learner",
     });
 
     const english = await chooseExamOption({
       goalId: goal.id,
-      input: { ...spanish, subject: ENGLISH },
+      input: { ...spanish, subjects: [ENGLISH] },
     });
 
     await expect(loadChoices(plan.id)).resolves.toStrictEqual([
-      { group: FOREIGN, subject: ENGLISH },
+      { group: FOREIGN, subjects: [ENGLISH] },
     ]);
 
     await decidePlanChange({
@@ -144,7 +144,7 @@ describe(chooseExamOption, () => {
     });
 
     await expect(loadChoices(plan.id)).resolves.toStrictEqual([
-      { group: FOREIGN, subject: SPANISH },
+      { group: FOREIGN, subjects: [SPANISH] },
     ]);
   });
 
@@ -207,7 +207,7 @@ describe(chooseExamOption, () => {
     });
 
     await expect(loadChoices(plan.id)).resolves.toStrictEqual([
-      { group: FOREIGN, subject: SPANISH },
+      { group: FOREIGN, subjects: [SPANISH] },
     ]);
   });
 
@@ -215,11 +215,11 @@ describe(chooseExamOption, () => {
     const { goal, plan } = await setup();
 
     await expect(
-      chooseExamOption({ goalId: goal.id, input: { ...spanish, subject: "Língua Francesa" } }),
+      chooseExamOption({ goalId: goal.id, input: { ...spanish, subjects: ["Língua Francesa"] } }),
     ).resolves.toStrictEqual({ error: "unknownOption", status: "invalid" });
 
     await expect(
-      chooseExamOption({ goalId: goal.id, input: { ...spanish, subject: LANGUAGES } }),
+      chooseExamOption({ goalId: goal.id, input: { ...spanish, subjects: [LANGUAGES] } }),
     ).resolves.toStrictEqual({ error: "unknownOption", status: "invalid" });
 
     await expect(loadChoices(plan.id)).resolves.toStrictEqual([]);
@@ -243,7 +243,7 @@ describe(chooseExamOption, () => {
       examBlueprintId: blueprint.id,
       kind: "exam",
       language: "es",
-      settings: { examChoices: [{ group: HISTORY, subject: SPANISH_HISTORY }] },
+      settings: { examChoices: [{ group: HISTORY, subjects: [SPANISH_HISTORY] }] },
       userId: user.id,
     });
 
@@ -251,17 +251,17 @@ describe(chooseExamOption, () => {
 
     await chooseExamOption({
       goalId: goal.id,
-      input: { group: FOREIGN_LANGUAGE, subject: ENGLISH_II, timeZone: TIME_ZONE },
+      input: { group: FOREIGN_LANGUAGE, subjects: [ENGLISH_II], timeZone: TIME_ZONE },
     });
 
     await chooseExamOption({
       goalId: goal.id,
-      input: { group: HISTORY, subject: PHILOSOPHY, timeZone: TIME_ZONE },
+      input: { group: HISTORY, subjects: [PHILOSOPHY], timeZone: TIME_ZONE },
     });
 
     await expect(loadChoices(plan.id)).resolves.toStrictEqual([
-      { group: HISTORY, subject: PHILOSOPHY },
-      { group: FOREIGN_LANGUAGE, subject: ENGLISH_II },
+      { group: HISTORY, subjects: [PHILOSOPHY] },
+      { group: FOREIGN_LANGUAGE, subjects: [ENGLISH_II] },
     ]);
   });
 });

@@ -9226,7 +9226,7 @@
       }
     },
     "Following the %@ syllabus" : {
-      "comment" : "The option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it",
+      "comment" : "The options of an exam's choice the learner's plan studies, listed, such as a specialty (Desenvolvimento de Sistemas), a foreign language or two modules, named as the exam's notice names them",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -18510,6 +18510,279 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sınav ilanında %@ tarihi yazıyor."
+          }
+        }
+      }
+    },
+    "The exam offers %lld options for %@, and each candidate takes %lld of them. Your plan and mocks follow the ones you pick, and you can change them in your plan." : {
+      "comment" : "Under the exam choice question. The second argument is the notice's name for the choice, such as the modules a course takes, in the notice's own language; the third is how many of the options each candidate takes",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Prüfung bietet %#@count@ für %2$@, und jede teilnehmende Person absolviert %3$lld davon. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du in deinem Plan ändern kannst."
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Option"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Optionen"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The exam offers %#@count@ for %2$@, and each candidate takes %3$lld of them. Your plan and mocks follow the ones you pick, and you can change them in your plan."
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg option"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg options"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El examen ofrece %#@count@ para %2$@, y cada aspirante presenta %3$lld de ellas. Tu plan y tus simulacros se basan en las que elijas, y puedes cambiarlas en tu plan."
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg opción"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg opciones"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’examen propose %#@count@ pour %2$@, et tu dois en choisir %3$lld. Ton plan et tes examens blancs s’adaptent à tes choix, que tu peux modifier dans ton plan."
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg option"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg options"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’esame prevede %#@count@ per %2$@ e ogni partecipante deve sceglierne %3$lld. Il tuo piano e le simulazioni si basano sulle opzioni che scegli, che puoi cambiare nel piano."
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg opzione"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg opzioni"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この試験では、%#@count@から%2$@を%3$lld種類選んで受験します。学習計画と模試には選んだ内容が反映され、選択内容は学習計画で変更できます。"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg種類の選択肢"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 시험에는 %#@count@ %2$@ 선택지가 있고, 응시자는 그중 %3$lld개를 선택해 응시해요. 계획과 모의고사는 선택한 항목에 맞춰 구성되며, 계획에서 선택을 바꿀 수 있어요."
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg개의"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na egzaminie masz do wyboru %#@count@ (%2$@) i zdajesz %3$lld z nich. Twój plan i egzaminy próbne uwzględniają wybrane opcje. Możesz je zmienić w swoim planie."
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "few" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg opcje"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg opcję"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg opcji"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A prova oferece %#@count@ para %2$@, e cada participante faz %3$lld delas. Seu plano e seus simulados seguem as opções que você escolher, e você pode mudar sua escolha no plano."
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg opção"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg opções"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sınavda %#@count@ sunulan %2$@ için her aday bunlardan %3$lld tanesini seçer. Planın ve deneme sınavların seçimlerine göre hazırlanır. Seçimlerini planında değiştirebilirsin."
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg seçenek"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }

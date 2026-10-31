@@ -27,6 +27,7 @@
   "diff_line_spoken": "3e640ae0352897a69aa98984ed40993b97e732f993864a71b89347639f689fae",
   "disclosure_collapsed": "81dd3f8a21164232f30559b2e6628ccdbb377f1e55b1d44e4f456017cee43738",
   "disclosure_expanded": "893266bc8ddfd842dfdc5d789bf2dbe38b8e0ea1b2b0411a28e718331fa0d321",
+  "exam_choice_pick_up_to": "be38a54275c2ec32594979689edd0f26014cda6205a9e8bb73fa21235bc4ac66",
   "gate_log_in": "98f660ca3b309bf732757e35901309eb90404492511da552f789554f7ff88e5e",
   "gate_session_ended_description": "0236c720d201d3bb65f74da335dc5588f5d52c6a2d2071b54821dc1059caa297",
   "gate_session_ended_title": "06a458005af0a017bbd0dd24bbd6a16f3b079b7a4a42c516098158318bd0dd3e",
@@ -113,6 +114,8 @@
     <string name="load_failed_try_again">Riprova</string>
     <string name="suggestion_view">Visualizza</string>
     <string name="suggestion_save_failed">Il salvataggio non è riuscito. Riprova.</string>
+    <!-- Above the options of an exam's choice when each candidate takes several of them, such as two of a course's modules. %1$d is how many, at least 2. -->
+    <string name="exam_choice_pick_up_to">Scegline fino a %1$d.</string>
     <string name="disclosure_expanded">Espanso</string>
     <string name="disclosure_collapsed">Compresso</string>
     <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->

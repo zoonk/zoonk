@@ -252,6 +252,7 @@
   "plan_exam_choice_left_out_questions": "f355797dbbe965ef477afdebd126c1643823754f2daf2b8339e25fd57d8abe7a",
   "plan_exam_choice_left_out_questions_of": "089f8d3b649e75f4761db1a8fe39ea5a801d4fad16ab8774de0697aab54a5b39",
   "plan_exam_choice_question": "b461920958ebb28b7787b06cb6907b44374a7fff19898a42e1667dd813bfa2c0",
+  "plan_exam_choice_question_several": "3b0311e73c1bd076c5a35f173d9bb507bf0adb114d56ccf502efe43f0a586a9d",
   "plan_exam_date": "af134b505098e9b769b7b9cbd7821f28aba1207d248ba0a0465c5114588b575f",
   "plan_exam_date_label": "11e415c382b7f53954aeff15163eac39ffeedc49666ee2519b2b7e195419bc6b",
   "plan_exam_day": "fdd0d94b54b6c5284830c835138d39c4226d372a6d82d7ed69ab9183aab2a9a6",
@@ -1247,6 +1248,8 @@
     <string name="plan_time_on_weekends">Hafta sonu çalışma süresi</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="plan_exam_choice_question">%1$s: hangisinden sınava gireceksin?</string>
+    <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
+    <string name="plan_exam_choice_question_several">%1$s: hangilerinden sınava gireceksin?</string>
     <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s and %3$s are points of the exam's score. -->
     <string name="plan_exam_choice_left_out_points">Seçimini yapana kadar planında ve deneme sınavlarında %1$s dışarıda kalır: %2$s / %3$s puan.</string>
     <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions; %3$s is the exam's. -->

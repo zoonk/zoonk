@@ -29,7 +29,10 @@ export type TodayActions = {
   catchUp: () => Promise<boolean>;
   challengeHref: (planItemId: string) => string;
   changePlan: (operations: PlanOperation[]) => Promise<PlanChangeView | null>;
-  chooseExamOption: (input: { group: string; subject: string }) => Promise<PlanChangeView | null>;
+  chooseExamOption: (input: {
+    group: string;
+    subjects: string[];
+  }) => Promise<PlanChangeView | null>;
   adjustTimeHref: string;
   chooseFocusHref: string;
   studyEverythingHref: string;

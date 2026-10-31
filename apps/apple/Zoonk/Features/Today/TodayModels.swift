@@ -68,14 +68,10 @@ struct TodayView: Decodable, Equatable, Sendable {
 
   /// One of the exam's choices the learner hasn't picked yet; the plan studies none of its options.
   struct ExamChoice: Decodable, Equatable, Sendable {
-    struct Option: Decodable, Equatable, Sendable {
-      let name: String
-      let shortName: String?
-    }
-
     let group: String
     let leftOut: ExamChoiceLeftOut
-    let options: [Option]
+    let options: [GoalPlan.ExamChoice.Option]
+    let take: Int
   }
 
   struct MockFunding: Decodable, Equatable, Sendable {

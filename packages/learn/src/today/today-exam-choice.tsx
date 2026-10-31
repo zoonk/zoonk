@@ -20,6 +20,7 @@ import {
 } from "../_components/suggestion";
 import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
 import { useLearnAnalytics } from "../learn-context";
+import { ExamChoicePicks } from "../plan/exam-choice-picks";
 import { useChangeSentence } from "../plan/use-change-sentence";
 import { useTodayScreen } from "./today-context";
 import { ProposalEffect } from "./today-plan-change";
@@ -59,11 +60,15 @@ function ChoiceQuestion({
   choice: ExamChoice;
   failed: boolean;
   isPending: boolean;
-  onPick: (input: { group: string; subject: string }) => void;
+  onPick: (input: { group: string; subjects: string[] }) => void;
 }) {
   const t = useExtracted();
   const leftOutLine = useChoiceLeftOutLine();
-  const question = t("{group}: which one will you take?", { group: choice.group });
+
+  const question =
+    choice.take > 1
+      ? t("{group}: which ones will you take?", { group: choice.group })
+      : t("{group}: which one will you take?", { group: choice.group });
 
   return (
     <>
@@ -76,19 +81,27 @@ function ChoiceQuestion({
         <SuggestionHeader>{question}</SuggestionHeader>
         <SuggestionDescription>{leftOutLine(choice)}</SuggestionDescription>
 
-        {/* Equal options, so one under the other in their order, never one as the main answer. */}
-        <SuggestionActions className="flex-col items-stretch">
-          {choice.options.map((option) => (
-            <SuggestionAction
-              disabled={isPending}
-              key={option.name}
-              onClick={() => onPick({ group: choice.group, subject: option.name })}
-              variant="outline"
-            >
-              {option.shortName ?? option.name}
-            </SuggestionAction>
-          ))}
-        </SuggestionActions>
+        {choice.take > 1 ? (
+          <ExamChoicePicks
+            choice={choice}
+            disabled={isPending}
+            onSave={(subjects) => onPick({ group: choice.group, subjects })}
+          />
+        ) : (
+          // Equal options, so one under the other in their order, never one as the main answer.
+          <SuggestionActions className="flex-col items-stretch">
+            {choice.options.map((option) => (
+              <SuggestionAction
+                disabled={isPending}
+                key={option.name}
+                onClick={() => onPick({ group: choice.group, subjects: [option.name] })}
+                variant="outline"
+              >
+                {option.shortName ?? option.name}
+              </SuggestionAction>
+            ))}
+          </SuggestionActions>
+        )}
 
         {failed && <SuggestionSaveError />}
       </SuggestionContent>
@@ -140,7 +153,7 @@ export function TodayExamChoice() {
     return null;
   }
 
-  const pick = (input: { group: string; subject: string }) =>
+  const pick = (input: { group: string; subjects: string[] }) =>
     save(
       () => actions.chooseExamOption(input),
       (change) => {

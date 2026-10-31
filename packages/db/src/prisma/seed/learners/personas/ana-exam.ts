@@ -256,7 +256,7 @@ function anaGoal({ edition, now }: { edition: EnemEdition; now: Date }): SeedGoa
       examChoices: [
         {
           group: t("Foreign language", "Língua Estrangeira"),
-          subject: t("English", "Língua Inglesa"),
+          subjects: [t("English", "Língua Inglesa")],
         },
       ],
       focusAreas: ["Ciências da Natureza"],

@@ -778,6 +778,16 @@ private struct FollowUpsQuestion: View {
 }
 
 func examChoiceQuestionDescription(_ choices: [Components.Schemas.ExamChoice]) -> String {
+  if choices.count == 1, let choice = choices.first, choice.take > 1 {
+    return String(
+      localized:
+        "The exam offers \(choice.options.count) options for \(choice.group), and each candidate takes \(choice.take) of them. Your plan and mocks follow the ones you pick, and you can change them in your plan.",
+      table: "Onboarding",
+      comment:
+        "Under the exam choice question. The second argument is the notice's name for the choice, such as the modules a course takes, in the notice's own language; the third is how many of the options each candidate takes"
+    )
+  }
+
   if choices.count == 1, let choice = choices.first {
     return String(
       localized:
@@ -799,7 +809,7 @@ private struct ExamChoiceQuestion: View {
   let choices: [Components.Schemas.ExamChoice]
   let onAnswer: ([String: Any]) -> Void
 
-  @State private var picks: [String: String]
+  @State private var picks: [String: [String]]
 
   init(
     subject: String, choices: [Components.Schemas.ExamChoice],
@@ -810,14 +820,15 @@ private struct ExamChoiceQuestion: View {
     self.onAnswer = onAnswer
     _picks = State(
       initialValue: Dictionary(
-        choices.compactMap { choice in choice.subject.map { (choice.group, $0) } },
-        uniquingKeysWith: { first, _ in first }))
+        choices.map { ($0.group, $0.subjects) }, uniquingKeysWith: { first, _ in first }))
   }
 
   var body: some View {
+    let takes = choices.map(\.take).reduce(0, +)
+
     StepHeader(
       subject: subject,
-      title: choices.count == 1
+      title: takes == 1
         ? Text(
           "Which one will you take?", tableName: "Onboarding",
           comment: "Asks which of an exam's optional subjects the learner takes")
@@ -828,33 +839,56 @@ private struct ExamChoiceQuestion: View {
       description: Text(examChoiceQuestionDescription(choices)))
 
     ForEach(choices, id: \.group) { choice in
-      ChoiceRows(
-        choices: choice.options.map { option in
-          .init(
-            value: option.name,
-            label: Text(option.shortName ?? option.name),
-            detail: option.shortName.flatMap { $0 == option.name ? nil : Text(option.name) })
-        },
-        picked: picks[choice.group],
-        header: Text(choice.group),
-        footer: Text(
-          ExamChoiceLeftOut(
-            examPoints: choice.leftOut.examPoints, examQuestions: choice.leftOut.examQuestions,
-            name: choice.leftOut.name, points: choice.leftOut.points,
-            questions: choice.leftOut.questions
-          ).line)
-      ) { name in
-        picks[choice.group] = name
+      let options = choice.options.map {
+        GoalPlan.ExamChoice.Option(name: $0.name, shortName: $0.shortName)
+      }
+      let leftOut = Text(
+        ExamChoiceLeftOut(
+          examPoints: choice.leftOut.examPoints, examQuestions: choice.leftOut.examQuestions,
+          name: choice.leftOut.name, points: choice.leftOut.points,
+          questions: choice.leftOut.questions
+        ).line)
 
-        // One choice to make moves on once it's picked; several wait for Continue.
-        if choices.count == 1 {
-          submit()
+      if choice.take > 1 {
+        Section {
+          ExamOptionToggles(
+            options: options, take: choice.take,
+            picked: Binding(
+              get: { picks[choice.group] ?? [] },
+              set: { picks[choice.group] = $0 }))
+        } header: {
+          VStack(alignment: .leading, spacing: 2) {
+            Text(choice.group)
+            Text.examPickLimit(choice.take)
+              .fontWeight(.regular)
+          }
+        } footer: {
+          leftOut
+        }
+      } else {
+        ChoiceRows(
+          choices: options.map { option in
+            .init(
+              value: option.name,
+              label: Text(option.shortName ?? option.name),
+              detail: option.shortName.flatMap { $0 == option.name ? nil : Text(option.name) })
+          },
+          picked: picks[choice.group]?.first,
+          header: Text(choice.group),
+          footer: leftOut
+        ) { name in
+          picks[choice.group] = [name]
+
+          // One option to pick moves on once it's picked; more wait for Continue.
+          if takes == 1 {
+            submit()
+          }
         }
       }
     }
 
     StepButtons(
-      canContinue: choices.allSatisfy { picks[$0.group] != nil },
+      canContinue: choices.allSatisfy { !(picks[$0.group] ?? []).isEmpty },
       skipLabel: Text(
         "Decide later", tableName: "Onboarding", comment: "Leaves an exam's choice for later"),
       onContinue: submit
@@ -865,8 +899,9 @@ private struct ExamChoiceQuestion: View {
 
   private func submit() {
     onAnswer([
-      "choices": choices.compactMap { choice in
-        picks[choice.group].map { ["group": choice.group, "subject": $0] }
+      "choices": choices.compactMap { choice -> [String: Any]? in
+        let subjects = choice.options.map(\.name).filter((picks[choice.group] ?? []).contains)
+        return subjects.isEmpty ? nil : ["group": choice.group, "subjects": subjects]
       },
       "question": "examChoice",
       "timeZone": TimeZone.current.identifier,

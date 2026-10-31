@@ -50,6 +50,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.ExamChoicePick
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingAnswerInputOneOf9
 import com.zoonk.api.models.PlanTimeAdvice
@@ -148,7 +149,7 @@ class GoalSetupFlowTest {
         val specialty =
             """
             [{"group":"Specialty","leftOut":{"examPoints":360,"examQuestions":null,"name":"Specialty knowledge (P3)","points":180,"questions":null},
-              "options":[{"name":"Auditing","shortName":null},{"name":"Technology","shortName":null}],"subject":null}]
+              "options":[{"name":"Auditing","shortName":null},{"name":"Technology","shortName":null}],"subjects":[],"take":1}]
             """.trimIndent()
         api.setup = { setupView(listOf("examChoice", "plan"), kind = "exam", examChoices = specialty) }
         show()
@@ -162,6 +163,38 @@ class GoalSetupFlowTest {
             .onNodeWithText("Until you pick, your plan and mocks leave out Specialty knowledge (P3): 180 of the exam's 360 points.")
             .performScrollTo()
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun examModulesTakeUpToTheirCountAndSendOnContinueInTheNoticesOrder() {
+        val modules =
+            """
+            [{"group":"Modules","leftOut":{"examPoints":null,"examQuestions":null,"name":"Modules","points":null,"questions":48},
+              "options":[{"name":"Biology","shortName":null},{"name":"Chemistry","shortName":null},{"name":"Law","shortName":null}],
+              "subjects":[],"take":2}]
+            """.trimIndent()
+        api.setup = { setupView(listOf("examChoice", "plan"), kind = "exam", examChoices = modules) }
+        show()
+
+        rule.onNodeWithText("Which ones will you take?").assertIsDisplayed()
+        rule
+            .onNodeWithText(
+                "The exam offers 3 options for Modules, and each candidate takes 2 of them. " +
+                    "Your plan and mocks follow the ones you pick, and you can change them in your plan.",
+            ).assertIsDisplayed()
+        rule.onNodeWithText("Pick up to 2.").assertIsDisplayed()
+        rule.onNodeWithText("Continue").performScrollTo().assertIsNotEnabled()
+        rule.onNodeWithText("Law").performScrollTo().performClick()
+        rule.onNodeWithText("Biology").performScrollTo().performClick()
+        rule.waitForIdle()
+
+        assertTrue(api.answers.isEmpty())
+        rule.onNodeWithText("Chemistry").assertIsNotEnabled()
+        rule.onNodeWithText("Continue").performScrollTo().performClick()
+        rule.waitForIdle()
+
+        val answer = (api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf6Value).value
+        assertEquals(listOf(ExamChoicePick("Modules", listOf("Biology", "Law"))), answer.choices)
     }
 
     @Test

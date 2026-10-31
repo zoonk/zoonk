@@ -252,6 +252,7 @@
   "plan_exam_choice_left_out_questions": "87b7a1c19990dcaf14b4674359423f171b122203386d8b00e79c98ee53c81d6b",
   "plan_exam_choice_left_out_questions_of": "b4e943efc997329db9e0995cb486621116ee6c0b3c2dda17d7ae09501de53afa",
   "plan_exam_choice_question": "ef05ea395fee60485d89b4624125ed8721cdcfc66a93ed4eac54c55d51d90f0d",
+  "plan_exam_choice_question_several": "f3d2e851620c6fa034804d7d57a21a63a7885c1e90a23cde85403f6e2c066f77",
   "plan_exam_date": "a0a39f1220465490a59bb9abcf23f3f4d0497a51b4250ed1919d38d807d29a6f",
   "plan_exam_date_label": "7400ea190140d2f000dfa90e05e38a0d465076e9f5995125d82e29af8f471179",
   "plan_exam_day": "e87a3293748f5cb374674d1894a10c979288bb78b305a55f7b9a826d0e011fe1",
@@ -1176,6 +1177,8 @@
     <string name="plan_time_on_weekends">週末の学習時間</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="plan_exam_choice_question">%1$s：どの科目を受験しますか？</string>
+    <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
+    <string name="plan_exam_choice_question_several">%1$s：どれを受験しますか？</string>
     <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s and %3$s are points of the exam's score. -->
     <string name="plan_exam_choice_left_out_points">選ぶまでは、学習計画と模試に%1$sは含まれません（配点は%2$s点、試験全体は%3$s点満点）。</string>
     <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions; %3$s is the exam's. -->

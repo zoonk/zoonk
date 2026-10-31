@@ -47,7 +47,7 @@ class PlanEditorTest {
 
     private val changes = mutableListOf<Pair<PlanPart, List<PlanOp>>>()
     private val undone = mutableListOf<PlanChange>()
-    private val examChoices = mutableListOf<Pair<String, String>>()
+    private val examChoices = mutableListOf<Pair<String, List<String>>>()
     private val toolAnswers = mutableListOf<ToolAnswer>()
     private var asked by mutableStateOf(emptyMap<PlanPart, List<PlanOp>>())
     private var shownLatest by mutableStateOf<EditorChange?>(null)
@@ -84,9 +84,9 @@ class PlanEditorTest {
                         }
                     },
                     undo = { undone += it },
-                    chooseExamOption = { group, subject, _ ->
-                        examChoices += group to subject
-                        asked = asked + (PlanPart.ExamChoices to listOf(PlanOp.ExamChoice(group, subject)))
+                    chooseExamOption = { group, subjects, _ ->
+                        examChoices += group to subjects
+                        asked = asked + (PlanPart.ExamChoices to listOf(PlanOp.ExamChoice(group, subjects)))
                     },
                     chooseTools = { answer, answered ->
                         toolAnswers += answer
@@ -279,8 +279,22 @@ class PlanEditorTest {
             .assertIsDisplayed()
         compose.onNodeWithText("Spanish").performScrollTo().performClick()
 
-        assertEquals(listOf("Foreign language" to "Spanish"), examChoices)
+        assertEquals(listOf("Foreign language" to listOf("Spanish")), examChoices)
         compose.onNodeWithText("Spanish").assertIsSelected()
+    }
+
+    @Test
+    fun examModulesSaveTogetherOnceSavedAndNoMoreThanTheExamTakes() {
+        show(EXAM_MODULES)
+
+        compose.onNodeWithText("Pick up to 2.").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Save").performScrollTo().assertIsNotEnabled()
+        compose.onNodeWithText("Law").performScrollTo().performClick()
+
+        compose.onNodeWithText("Chemistry").assertIsNotEnabled()
+        assertEquals(emptyList<Pair<String, List<String>>>(), examChoices)
+        compose.onNodeWithText("Save").performScrollTo().performClick()
+        assertEquals(listOf("Modules" to listOf("Biology", "Law")), examChoices)
     }
 
     @Test
@@ -391,7 +405,13 @@ class PlanEditorTest {
             """"examChoices":[{"group":"Foreign language",""" +
                 """"leftOut":{"examPoints":null,"examQuestions":180,"name":"Foreign language","points":null,"questions":5},""" +
                 """"options":[{"name":"English","shortName":null},""" +
-                """{"name":"Spanish","shortName":null}],"subject":null}]"""
+                """{"name":"Spanish","shortName":null}],"subjects":[],"take":1}]"""
+
+        const val EXAM_MODULES =
+            """"examChoices":[{"group":"Modules",""" +
+                """"leftOut":{"examPoints":null,"examQuestions":null,"name":"Modules","points":null,"questions":48},""" +
+                """"options":[{"name":"Biology","shortName":null},{"name":"Chemistry","shortName":null},""" +
+                """{"name":"Law","shortName":null}],"subjects":["Biology"],"take":2}]"""
 
         val BASES =
             """"bases":{"daysLeft":40,"knownCount":0,"items":[""" +

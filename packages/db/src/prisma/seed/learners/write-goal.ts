@@ -214,7 +214,7 @@ export async function writeGoal(scope: LearnerScope, goal: SeedGoal): Promise<st
     settings: {
       examChoices: (goal.plan.examChoices ?? []).map((choice) => ({
         group: choice.group.in(learner.language),
-        subject: choice.subject.in(learner.language),
+        subjects: choice.subjects.map((subject) => subject.in(learner.language)),
       })),
       focusAreas: goal.plan.focusAreas ?? [],
       pace: LESSON_PACE,

@@ -85,7 +85,8 @@ describe("onboarding an exam with a choice", () => {
           { name: ENGLISH, shortName: "Inglês" },
           { name: SPANISH, shortName: "Espanhol" },
         ],
-        subject: null,
+        subjects: [],
+        take: 1,
       },
     ]);
 
@@ -98,12 +99,12 @@ describe("onboarding an exam with a choice", () => {
     await expect(
       answerOnboardingQuestion({
         goalId: goal.id,
-        input: { choices: [{ group: FOREIGN, subject: SPANISH }], question: "examChoice" },
+        input: { choices: [{ group: FOREIGN, subjects: [SPANISH] }], question: "examChoice" },
       }),
     ).resolves.toStrictEqual({ movedTo: null, status: "saved" });
 
     await expect(loadChoices(plan.id)).resolves.toStrictEqual([
-      { group: FOREIGN, subject: SPANISH },
+      { group: FOREIGN, subjects: [SPANISH] },
     ]);
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
@@ -113,7 +114,7 @@ describe("onboarding an exam with a choice", () => {
     const onboarding = await loadOnboarding(goal.id);
 
     expect(onboarding.steps).not.toContain("examChoice");
-    expect(onboarding.examChoices[0]?.subject).toBe(SPANISH);
+    expect(onboarding.examChoices[0]?.subjects).toStrictEqual([SPANISH]);
 
     expect(onboarding.examSubjects.map((subject) => subject.name)).toStrictEqual([
       LANGUAGES,
@@ -144,7 +145,7 @@ describe("onboarding an exam with a choice", () => {
       answerOnboardingQuestion({
         goalId: goal.id,
         input: {
-          choices: [{ group: FOREIGN, subject: "Língua Francesa" }],
+          choices: [{ group: FOREIGN, subjects: ["Língua Francesa"] }],
           question: "examChoice",
         },
       }),
@@ -166,7 +167,7 @@ describe("onboarding an exam with a choice", () => {
     const onboarding = await loadOnboarding(goal.id);
 
     expect(onboarding.steps).not.toContain("examChoice");
-    expect(onboarding.examChoices).toMatchObject([{ group: SPECIALTY, subject: SOFTWARE }]);
+    expect(onboarding.examChoices).toMatchObject([{ group: SPECIALTY, subjects: [SOFTWARE] }]);
     expect(onboarding.examSubjects.map((subject) => subject.name)).toContain(SOFTWARE);
     await expect(loadChoices(plan.id)).resolves.toStrictEqual([]);
 
@@ -176,7 +177,7 @@ describe("onboarding an exam with a choice", () => {
     });
 
     await expect(loadChoices(plan.id)).resolves.toStrictEqual([
-      { group: SPECIALTY, subject: SOFTWARE },
+      { group: SPECIALTY, subjects: [SOFTWARE] },
     ]);
   });
 
@@ -191,7 +192,7 @@ describe("onboarding an exam with a choice", () => {
     const onboarding = await loadOnboarding(goal.id);
 
     expect(onboarding.steps).toContain("examChoice");
-    expect(onboarding.examChoices).toMatchObject([{ group: SPECIALTY, subject: null }]);
+    expect(onboarding.examChoices).toMatchObject([{ group: SPECIALTY, subjects: [] }]);
   });
 
   it("takes the specialty when the position the learner types is its name", async () => {
@@ -205,7 +206,7 @@ describe("onboarding an exam with a choice", () => {
     });
 
     await expect(loadChoices(plan.id)).resolves.toStrictEqual([
-      { group: SPECIALTY, subject: SOFTWARE },
+      { group: SPECIALTY, subjects: [SOFTWARE] },
     ]);
 
     await expect(loadOnboarding(goal.id)).resolves.not.toMatchObject({
@@ -264,14 +265,14 @@ describe("onboarding an exam with a choice", () => {
 
     await expect(loadOnboarding(goal.id)).resolves.toMatchObject({
       examChoices: [
-        { group: HISTORY, subject: null },
-        { group: FOREIGN_LANGUAGE, subject: null },
+        { group: HISTORY, subjects: [] },
+        { group: FOREIGN_LANGUAGE, subjects: [] },
       ],
     });
 
     const picks = [
-      { group: HISTORY, subject: PHILOSOPHY },
-      { group: FOREIGN_LANGUAGE, subject: FRENCH },
+      { group: HISTORY, subjects: [PHILOSOPHY] },
+      { group: FOREIGN_LANGUAGE, subjects: [FRENCH] },
     ];
 
     await answerOnboardingQuestion({

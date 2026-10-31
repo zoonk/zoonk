@@ -138,7 +138,7 @@ function useOperationSentence() {
       case "setExamChoice":
         return t("Your plan studies {subject} for {group}.", {
           group: operation.group,
-          subject: operation.subject,
+          subject: list(operation.subjects),
         });
       default:
         return t("Your plan changed.");

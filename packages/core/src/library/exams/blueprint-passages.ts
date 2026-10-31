@@ -80,6 +80,7 @@ export function listExtractionPassages(extraction: BlueprintExtraction): Passage
 
   return [
     ...extraction.subjects.flatMap((subject) => subject.passages),
+    ...extraction.choiceGroups.flatMap((group) => group.passages),
     ...extraction.formats.flatMap((format) => [
       format,
       ...listMarkingPassages(format),

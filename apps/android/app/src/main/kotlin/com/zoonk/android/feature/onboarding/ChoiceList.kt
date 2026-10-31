@@ -4,6 +4,8 @@ import android.view.KeyEvent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -13,6 +15,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
@@ -83,4 +86,42 @@ fun <T> ChoiceList(
     }
 }
 
+/** Several answers at once, one row per choice with its checkbox; with [max], the other rows are disabled once that many are picked. */
+@Composable
+fun <T> CheckList(
+    choices: List<Choice<T>>,
+    value: List<T>,
+    label: String,
+    onToggle: (T) -> Unit,
+    modifier: Modifier = Modifier,
+    max: Int? = null,
+    readOnly: Boolean = false,
+) {
+    val full = max != null && value.size >= max
+
+    OutlinedCard(modifier.semantics { contentDescription = label }) {
+        choices.forEachIndexed { index, choice ->
+            if (index > 0) HorizontalDivider()
+            val checked = choice.value in value
+            val open = checked || !full
+            ListItem(
+                headlineContent = { Text(choice.label) },
+                supportingContent = choice.description?.let { { Text(it) } },
+                trailingContent = { Checkbox(checked = checked, onCheckedChange = null) },
+                colors =
+                    ListItemDefaults.colors(
+                        containerColor = if (checked) MaterialTheme.zoonk.selectedTint else MaterialTheme.colorScheme.surface,
+                    ),
+                modifier =
+                    Modifier
+                        .alpha(if (open) 1f else DISABLED_ALPHA)
+                        .toggleable(checked, enabled = open && !readOnly, role = Role.Checkbox) { onToggle(choice.value) },
+            )
+        }
+    }
+}
+
 private const val NUMBER_KEYS = 9
+
+/** Material's disabled emphasis. */
+private const val DISABLED_ALPHA = 0.38f

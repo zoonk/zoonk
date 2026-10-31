@@ -55,7 +55,7 @@ const AREAS = [
   { name: "Humanities", skills: 4 },
 ] as const;
 
-async function setup(examChoices: readonly { group: string; subject: string }[]) {
+async function setup(examChoices: readonly { group: string; subjects: string[] }[]) {
   const [user, blueprint] = await Promise.all([
     userFixture(),
     examBlueprintFixture({ structure: STRUCTURE }),
@@ -118,7 +118,7 @@ async function setup(examChoices: readonly { group: string; subject: string }[])
 
 describe("mocks of an exam with a choice of subject", () => {
   it("ask the foreign language the learner picked, out of the share of the subject it's part of", async () => {
-    const { goal, skills } = await setup([{ group: GROUP, subject: "Spanish" }]);
+    const { goal, skills } = await setup([{ group: GROUP, subjects: ["Spanish"] }]);
 
     const started = await startAnytimeMock({
       goalId: goal.id,
@@ -180,7 +180,7 @@ describe("mocks of an exam with a choice of subject", () => {
     });
 
     await prisma.plan.update({
-      data: { settings: { examChoices: [{ group: GROUP, subject: "Spanish" }] } },
+      data: { settings: { examChoices: [{ group: GROUP, subjects: ["Spanish"] }] } },
       where: { goalId: goal.id },
     });
 

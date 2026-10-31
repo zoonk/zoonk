@@ -36,6 +36,7 @@
   "today_earlier_work_detail": "a748d51b35f12f30f9a2cf74459deaabd93fbc421679c1acc6408f3c7c36ad82",
   "today_exam_choice_choose": "cd4d55901ba5d38ad2547b8701f91a0b26d5d56ba680dcb4aa152b20e02e3a87",
   "today_exam_choice_question": "67c8fd60a6d490d7efb59e658a797f2ba9a288d5a6af157bb6bac9f472c29160",
+  "today_exam_choice_question_several": "bc9bd23349e23b2c68091ef47959175d14a1124f39b0c155ab644694a45219dd",
   "today_exam_speaking": "e6683bb109dbdbf167df9881367616dd6b96d19736f38e67c1a6ddd76e966627",
   "today_exam_speaking_detail": "c7e95dca0b00071c582c4351ad7ad98dae831eebbacf24b3fbe727220658b2f3",
   "today_exam_today": "321417ab155ba08306fa8d497febdbb04abbb2ab7410e1cbeb8862ae319c9024",
@@ -429,6 +430,8 @@
     <string name="today_notice_exam_choice">시험 선택</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="today_exam_choice_question">%1$s: 어떤 과목을 선택할까요?</string>
+    <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
+    <string name="today_exam_choice_question_several">%1$s: 어떤 항목에 응시할 건가요?</string>
     <string name="today_exam_choice_choose">선택</string>
     <string name="today_notice_plan_change">변경 제안</string>
     <string name="today_plan_suggestion">계획 제안</string>

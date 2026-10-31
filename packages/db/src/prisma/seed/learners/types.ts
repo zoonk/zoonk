@@ -75,7 +75,7 @@ export type SeedGoal = {
     graph?: readonly SeedGraphSkill[];
     changes?: SeedPlanChange[];
     focusAreas?: string[];
-    examChoices?: { group: Localized; subject: Localized }[];
+    examChoices?: { group: Localized; subjects: Localized[] }[];
   };
 };
 

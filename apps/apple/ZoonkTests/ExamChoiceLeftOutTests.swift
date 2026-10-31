@@ -32,7 +32,7 @@ final class ExamChoiceLeftOutTests: XCTestCase {
 
   func testThePlansChoicesReadWhatTheyLeaveOut() throws {
     let json = #"""
-      {"group":"Especialidade","subject":null,
+      {"group":"Especialidade","subjects":[],"take":1,
        "options":[{"name":"Auditoria e Fiscalização","shortName":null}],
        "leftOut":{"examPoints":260,"examQuestions":180,"name":"Conhecimentos específicos (P3)",
                   "points":90,"questions":60}}

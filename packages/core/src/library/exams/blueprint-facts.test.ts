@@ -66,6 +66,29 @@ describe(listBlueprintFacts, () => {
     expect(statements).toHaveProperty(["subjects.1.questions"]);
   });
 
+  it("claims how many options candidates take once for the choice, never on an option", () => {
+    const base = blueprintExtraction();
+    const [languages] = base.subjects;
+    const moduleOption = (name: string) => ({ ...languages!, choiceGroup: "Módulos", name });
+
+    const extraction = blueprintExtraction({
+      choiceGroups: [{ name: "Módulos", passages: languages!.passages, take: 2 }],
+      subjects: [moduleOption("Biología"), moduleOption("Premedicina")],
+    });
+
+    const statements = Object.fromEntries(
+      listBlueprintFacts({ documents: DOCUMENTS, extraction }).map((fact) => [
+        fact.id,
+        fact.statement,
+      ]),
+    );
+
+    expect(statements).toMatchObject({
+      "choiceGroups.0": 'Each candidate takes 2 of the options of "Módulos"',
+      "subjects.1.choiceGroup": 'Subject "Premedicina" is one of the options of "Módulos"',
+    });
+  });
+
   it("reads every passage a claim cites, so a count stated elsewhere can support it", () => {
     const facts = listBlueprintFacts({ documents: DOCUMENTS, extraction: blueprintExtraction() });
     const questions = toCitedFacts(facts).find((fact) => fact.id === "subjects.0.questions");

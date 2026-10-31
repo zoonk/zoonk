@@ -48,7 +48,7 @@ describe(listUnpickedChoices, () => {
   });
 
   it("lists nothing once the learner picks", () => {
-    const choices = [{ group: FOREIGN, subject: "Língua Inglesa" }];
+    const choices = [{ group: FOREIGN, subjects: ["Língua Inglesa"] }];
 
     expect(
       listUnpickedChoices({ picks: { examChoices: choices, examSubjects: [] }, structure: ENEM }),

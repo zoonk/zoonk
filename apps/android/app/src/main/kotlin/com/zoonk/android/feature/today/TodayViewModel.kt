@@ -234,7 +234,7 @@ class TodayViewModel(
     fun chooseExamOption(
         read: TodayRead.Day,
         group: String,
-        subject: String,
+        subjects: List<String>,
     ) {
         if (isSavingExamChoice) return
         isSavingExamChoice = true
@@ -243,7 +243,7 @@ class TodayViewModel(
         examChoiceFailedOn = null
 
         viewModelScope.launch {
-            val result = plans.chooseExamOption(on.goalId, group, subject)
+            val result = plans.chooseExamOption(on.goalId, group, subjects)
             isSavingExamChoice = false
             if (visit != started) return@launch
             when (result) {

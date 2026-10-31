@@ -99,7 +99,7 @@ async function loadGraphAreas(planId: string) {
 
 function pick({ goalId, subject }: { goalId: string; subject: string }) {
   const group = subject === SPANISH_HISTORY || subject === PHILOSOPHY ? HISTORY : FOREIGN_LANGUAGE;
-  return chooseExamOption({ goalId, input: { group, subject, timeZone: TIME_ZONE } });
+  return chooseExamOption({ goalId, input: { group, subjects: [subject], timeZone: TIME_ZONE } });
 }
 
 function namedAreas(result: Awaited<ReturnType<typeof chooseExamOption>>) {

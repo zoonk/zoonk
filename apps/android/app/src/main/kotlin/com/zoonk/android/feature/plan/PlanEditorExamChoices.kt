@@ -4,11 +4,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -28,7 +33,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.ExamChoice
 
-/** Main's `PlanExamChoices`: until the learner picks an option of a choice, the plan and mocks leave it out. */
+/** Main's `PlanExamChoices`: until the learner picks the options of a choice, the plan and mocks leave it out. */
 @Composable
 internal fun PlanExamChoices(
     page: PlanPageState,
@@ -48,27 +53,32 @@ private fun ExamChoiceOptions(
     choice: ExamChoice,
     edits: PlanEdits,
 ) {
-    val shown =
-        edits
-            .asked(PlanPart.ExamChoices)
-            .filterIsInstance<PlanOp.ExamChoice>()
-            .firstOrNull { it.group == choice.group }
-            ?.subject ?: choice.subject
+    val pending = edits.isPending(PlanPart.ExamChoices)
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionLabel(choice.group)
-        FlowRow(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            choice.options.forEach { option ->
-                PlanChip(
-                    text = option.shortName ?: option.name,
-                    selected = option.name == shown,
-                    onClick = { if (option.name != shown) edits.chooseExamOption(choice.group, option.name) {} },
-                    role = Role.RadioButton,
-                    enabled = !edits.isPending(PlanPart.ExamChoices),
-                )
+        if (choice.take > 1) {
+            ExamChoicePicks(choice, enabled = !pending, onSave = { edits.chooseExamOption(choice.group, it) {} })
+        } else {
+            val shown =
+                edits
+                    .asked(PlanPart.ExamChoices)
+                    .filterIsInstance<PlanOp.ExamChoice>()
+                    .firstOrNull { it.group == choice.group }
+                    ?.subjects ?: choice.subjects
+            FlowRow(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                choice.options.forEach { option ->
+                    PlanChip(
+                        text = option.shortName ?: option.name,
+                        selected = option.name in shown,
+                        onClick = { if (option.name !in shown) edits.chooseExamOption(choice.group, listOf(option.name)) {} },
+                        role = Role.RadioButton,
+                        enabled = !pending,
+                    )
+                }
             }
         }
-        if (choice.subject == null) {
+        if (choice.subjects.isEmpty()) {
             Text(
                 text = examChoiceLeftOut(choice),
                 style = MaterialTheme.typography.bodyMedium,
@@ -78,7 +88,55 @@ private fun ExamChoiceOptions(
     }
 }
 
-/** Main's `PlanChoiceLines`: which option of each exam choice the plan follows, or what it leaves out until one is picked. */
+/** Main's `ExamChoicePicks`: the options of a choice whose candidates take several, saved together so the plan isn't rebuilt on every tick. */
+@Composable
+internal fun ExamChoicePicks(
+    choice: ExamChoice,
+    enabled: Boolean,
+    onSave: (subjects: List<String>) -> Unit,
+) {
+    var draft by rememberSaveable(choice.subjects) { mutableStateOf(choice.subjects) }
+
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(
+            text = stringResource(R.string.exam_choice_pick_up_to, choice.take),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            choice.options.forEach { option ->
+                val picked = option.name in draft
+                PlanChip(
+                    text = option.shortName ?: option.name,
+                    selected = picked,
+                    onClick = { draft = choice.toggled(draft, option.name) },
+                    role = Role.Checkbox,
+                    enabled = enabled && (picked || !choice.isFull(draft)),
+                )
+            }
+        }
+        Button(onClick = { onSave(draft) }, enabled = enabled && choice.canSave(draft)) { Text(stringResource(R.string.plan_save)) }
+    }
+}
+
+internal fun ExamChoice.isFull(picked: List<String>) = picked.size >= take
+
+/** [picked] with [option] ticked or unticked, in the notice's order. */
+internal fun ExamChoice.toggled(
+    picked: List<String>,
+    option: String,
+): List<String> =
+    when {
+        option in picked -> picked - option
+        isFull(picked) -> picked
+        else -> options.map { it.name }.filter { it in picked || it == option }
+    }
+
+internal fun ExamChoice.canSave(draft: List<String>) = draft.isNotEmpty() && draft.toSet() != subjects.toSet()
+
+internal fun ExamChoice.pickedNames(): List<String> = options.filter { it.name in subjects }.map { it.shortName ?: it.name }
+
+/** Main's `PlanChoiceLines`: which options of each exam choice the plan follows, or what it leaves out until they're picked. */
 @Composable
 internal fun PlanChoiceLines(
     choices: List<ExamChoice>,
@@ -89,20 +147,19 @@ internal fun PlanChoiceLines(
     Column(modifier) {
         choices.forEach { choice ->
             key(choice.group) {
-                val picked = choice.options.firstOrNull { it.name == choice.subject }
+                val picked = choice.pickedNames()
                 Text(
                     text =
-                        picked?.let {
-                            stringResource(
-                                R.string.plan_choice_following,
-                                it.shortName ?: it.name,
-                            )
-                        } ?: examChoiceLeftOut(choice),
+                        if (picked.isEmpty()) {
+                            examChoiceLeftOut(choice)
+                        } else {
+                            stringResource(R.string.plan_choice_following, joinList(picked))
+                        },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 TextButton(onClick = onChange) {
-                    Text(stringResource(if (picked != null) R.string.plan_choice_change else R.string.plan_choose))
+                    Text(stringResource(if (picked.isEmpty()) R.string.plan_choose else R.string.plan_choice_change))
                 }
             }
         }
@@ -140,8 +197,8 @@ internal fun examChoiceLeftOut(choice: ExamChoice): String {
 }
 
 /**
- * Main's `ExamChoiceSuggestion`, for the plan's suggestion slot: each option saves at once. Once
- * the [answer] shows, it says what the change did instead, with Undo.
+ * Main's `ExamChoiceSuggestion`, for the plan's suggestion slot: each option saves at once, or the
+ * options taken together once saved. Once the [answer] shows, it says what the change did instead, with Undo.
  */
 @Composable
 internal fun ExamChoiceSuggestion(
@@ -150,10 +207,20 @@ internal fun ExamChoiceSuggestion(
     failed: Boolean,
     pending: Boolean,
     answer: SlotAnswer?,
-    onChoose: (subject: String) -> Unit,
+    onChoose: (subjects: List<String>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val title = stringResource(R.string.plan_exam_choice_question, choice.group)
+    val title =
+        stringResource(
+            if (choice.take >
+                1
+            ) {
+                R.string.plan_exam_choice_question_several
+            } else {
+                R.string.plan_exam_choice_question
+            },
+            choice.group,
+        )
 
     Suggestion(
         label = title,
@@ -170,9 +237,18 @@ internal fun ExamChoiceSuggestion(
             return@Suggestion
         }
         SuggestionDescription(examChoiceLeftOut(choice))
-        SuggestionActions {
-            choice.options.forEach { option ->
-                SuggestionAction(option.shortName ?: option.name, onClick = { onChoose(option.name) }, enabled = !pending, secondary = true)
+        if (choice.take > 1) {
+            ExamChoicePicks(choice, enabled = !pending, onSave = onChoose)
+        } else {
+            SuggestionActions {
+                choice.options.forEach { option ->
+                    SuggestionAction(
+                        option.shortName ?: option.name,
+                        onClick = { onChoose(listOf(option.name)) },
+                        enabled = !pending,
+                        secondary = true,
+                    )
+                }
             }
         }
         if (failed) SuggestionSaveError()

@@ -77,9 +77,24 @@ final class TodayDecodingTests: XCTestCase {
       text)
   }
 
-  private func anaTodayView() throws -> TodayView {
-    let generated = try decoder().decode(
-      Components.Schemas.Today.self, from: Data(anaToday.utf8))
+  func testAChoiceOfSeveralOptionsSaysHowManyEachCandidateTakes() throws {
+    let modules = #"""
+      "examChoice":{"group":"Módulos disciplinares",
+        "leftOut":{"examPoints":null,"examQuestions":null,"name":"Módulos disciplinares",
+                   "points":null,"questions":48},
+        "options":[{"name":"Biología","shortName":null},{"name":"Química","shortName":null}],
+        "subjects":[],"take":2}
+      """#
+    let choice = try XCTUnwrap(
+      anaTodayView(anaToday.replacingOccurrences(of: #""examChoice":null"#, with: modules))
+        .examChoice)
+
+    XCTAssertEqual(choice.take, 2)
+    XCTAssertEqual(choice.options.map(\.name), ["Biología", "Química"])
+  }
+
+  private func anaTodayView(_ json: String = anaToday) throws -> TodayView {
+    let generated = try decoder().decode(Components.Schemas.Today.self, from: Data(json.utf8))
     return try StudyJSON.recode(generated)
   }
 

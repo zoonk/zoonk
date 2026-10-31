@@ -1,4 +1,4 @@
-import { listCountedSubjects } from "../../exams/choices/exam-choices";
+import { listCountedSubjects } from "../../exams/choices/choice-groups";
 import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { type ExamStructure } from "./blueprint-contract";
 import {
@@ -52,7 +52,7 @@ export function getSubjectPoints({
   );
 
   if (part && isWrittenSubject({ structure, subject })) {
-    const subjects = listCountedSubjects(structure.subjects).filter(
+    const subjects = listCountedSubjects(structure).filter(
       (item) => item.name === part.name || item.group === part.name,
     );
 

@@ -22,6 +22,7 @@ import {
 } from "../_components/suggestion";
 import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
 import { useLearnAnalytics } from "../learn-context";
+import { ExamChoicePicks } from "./exam-choice-picks";
 import { usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
 import { PLAN_OPTION_CLASS } from "./plan-option-styles";
@@ -42,7 +43,7 @@ function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => vo
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
 
-  const choose = (input: { group: string; subject: string }, answer?: () => void) => {
+  const choose = (input: { group: string; subjects: string[] }, answer?: () => void) => {
     setFailed(false);
     keepFocus();
 
@@ -69,34 +70,60 @@ function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => vo
   return { choose, failed, isPending };
 }
 
+function OneOptionChoice({
+  choice,
+  choose,
+  isPending,
+}: {
+  choice: ExamChoiceView;
+  choose: ReturnType<typeof useExamChoice>["choose"];
+  isPending: boolean;
+}) {
+  const [saved = ""] = choice.subjects;
+  const tapped = useTappedChoice(saved);
+
+  return (
+    <RadioGroup
+      className="flex flex-wrap gap-2"
+      disabled={isPending}
+      onValueChange={(value) => {
+        if (typeof value === "string" && value !== saved) {
+          choose({ group: choice.group, subjects: [value] }, tapped.pick(value));
+        }
+      }}
+      value={tapped.shown}
+    >
+      {choice.options.map((option) => (
+        <RadioGroupOption className={PLAN_OPTION_CLASS} key={option.name}>
+          <RadioGroupItem value={option.name} />
+          {option.shortName ?? option.name}
+        </RadioGroupOption>
+      ))}
+    </RadioGroup>
+  );
+}
+
 function ExamChoice({ choice }: { choice: ExamChoiceView }) {
   const leftOutLine = useChoiceLeftOutLine();
   const { choose, failed, isPending } = useExamChoice();
-  const tapped = useTappedChoice(choice.subject ?? "");
 
   return (
     <fieldset className="flex flex-col gap-2">
       <legend className="mb-2 text-sm font-medium">{choice.group}</legend>
 
-      <RadioGroup
-        className="flex flex-wrap gap-2"
-        disabled={isPending}
-        onValueChange={(value) => {
-          if (typeof value === "string" && value !== choice.subject) {
-            choose({ group: choice.group, subject: value }, tapped.pick(value));
-          }
-        }}
-        value={tapped.shown}
-      >
-        {choice.options.map((option) => (
-          <RadioGroupOption className={PLAN_OPTION_CLASS} key={option.name}>
-            <RadioGroupItem value={option.name} />
-            {option.shortName ?? option.name}
-          </RadioGroupOption>
-        ))}
-      </RadioGroup>
+      {choice.take > 1 ? (
+        <ExamChoicePicks
+          choice={choice}
+          disabled={isPending}
+          onSave={(subjects) => choose({ group: choice.group, subjects })}
+        />
+      ) : (
+        <OneOptionChoice choice={choice} choose={choose} isPending={isPending} />
+      )}
 
-      {!choice.subject && <p className="text-muted-foreground text-sm">{leftOutLine(choice)}</p>}
+      {choice.subjects.length === 0 && (
+        <p className="text-muted-foreground text-sm">{leftOutLine(choice)}</p>
+      )}
 
       {failed && <ChangeSaveError />}
     </fieldset>
@@ -116,7 +143,11 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
   const { setResult } = usePlanSuggestionSlot();
   const answer = useSlotAnswer(item);
   const { choice } = item;
-  const title = t("{group}: which one will you take?", { group: choice.group });
+
+  const title =
+    choice.take > 1
+      ? t("{group}: which ones will you take?", { group: choice.group })
+      : t("{group}: which one will you take?", { group: choice.group });
 
   const { choose, failed, isPending } = useExamChoice({
     onChange: (change) => setResult({ change, item, text: sentence(change) }),
@@ -151,18 +182,26 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
         ) : (
           <>
             <SuggestionDescription>{leftOutLine(choice)}</SuggestionDescription>
-            <SuggestionActions>
-              {choice.options.map((option) => (
-                <SuggestionAction
-                  disabled={isPending}
-                  key={option.name}
-                  onClick={() => choose({ group: choice.group, subject: option.name })}
-                  variant="outline"
-                >
-                  {option.shortName ?? option.name}
-                </SuggestionAction>
-              ))}
-            </SuggestionActions>
+            {choice.take > 1 ? (
+              <ExamChoicePicks
+                choice={choice}
+                disabled={isPending}
+                onSave={(subjects) => choose({ group: choice.group, subjects })}
+              />
+            ) : (
+              <SuggestionActions>
+                {choice.options.map((option) => (
+                  <SuggestionAction
+                    disabled={isPending}
+                    key={option.name}
+                    onClick={() => choose({ group: choice.group, subjects: [option.name] })}
+                    variant="outline"
+                  >
+                    {option.shortName ?? option.name}
+                  </SuggestionAction>
+                ))}
+              </SuggestionActions>
+            )}
             {failed && <SuggestionSaveError />}
           </>
         )}

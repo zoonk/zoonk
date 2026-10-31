@@ -713,7 +713,10 @@ class PlanScreenshots {
         val EDITOR_CHOICES =
             """
             "examChoices":[{"group":"Língua estrangeira","leftOut":{"examPoints":null,"examQuestions":180,"name":"Língua estrangeira","points":null,"questions":5},"options":[{"name":"Inglês","shortName":null},
-             {"name":"Espanhol","shortName":null}],"subject":null}],
+             {"name":"Espanhol","shortName":null}],"subjects":[],"take":1},
+             {"group":"Módulos","leftOut":{"examPoints":null,"examQuestions":null,"name":"Módulos","points":null,"questions":48},
+              "options":[{"name":"Biología","shortName":null},{"name":"Química","shortName":null},{"name":"Derecho","shortName":null},
+               {"name":"Premedicina","shortName":null}],"subjects":["Biología"],"take":2}],
             "bases":{"daysLeft":12,"knownCount":1,"items":[
              {"area":"Matemática","choice":"essential","choices":["deep","essential","quick","skip"],
               "minutes":{"deep":120,"essential":40,"quick":10},"name":"Frações","neededFor":["Probabilidade"],

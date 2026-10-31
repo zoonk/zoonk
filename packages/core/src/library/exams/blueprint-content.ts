@@ -1,8 +1,9 @@
 import { listExamParts } from "@zoonk/ai/tasks/research/exam-parts";
 import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
-import { listChoiceGroups } from "../../exams/choices/exam-choices";
+import { listChoiceGroups } from "../../exams/choices/choice-groups";
 import { type ReusePolicy } from "../sources/source-contract";
+import { toChoiceGroups } from "./blueprint-choices";
 import { type BlueprintContent, type Citation, type ExamStructure } from "./blueprint-contract";
 import { type FactEntry } from "./blueprint-fact-claims";
 import { type KeptFacts, keptOr, toKeptFacts } from "./blueprint-kept";
@@ -49,7 +50,9 @@ function toShortName({ name, shortName }: { name: string; shortName?: string | n
   return short && short.length < name.trim().length ? short : null;
 }
 
+/** A choice's kept count vouches for its options: an option left out of it would be studied by every learner. */
 function toSubject({
+  choices,
   documents,
   found,
   groups,
@@ -57,6 +60,7 @@ function toSubject({
   item,
   kept,
 }: {
+  choices: ReadonlySet<string>;
   documents: ExtractionDocument[];
   found: Citation;
   groups: ReadonlySet<string>;
@@ -64,7 +68,11 @@ function toSubject({
   item: Extraction["subjects"][number];
   kept: KeptFacts;
 }): ExamStructure["subjects"][number] {
-  const choiceGroup = keptOr({ gap: null, id: `${id}.choiceGroup`, kept, value: item.choiceGroup });
+  const choiceGroup =
+    item.choiceGroup && choices.has(item.choiceGroup)
+      ? item.choiceGroup
+      : keptOr({ gap: null, id: `${id}.choiceGroup`, kept, value: item.choiceGroup });
+
   const partOf = keptOr({ gap: null, id: `${id}.partOf`, kept, value: item.partOf });
 
   return {
@@ -88,15 +96,25 @@ function findKeptGroups({ extraction, kept }: { extraction: Extraction; kept: Ke
   );
 }
 
-function keepRealChoices(subjects: ExamStructure["subjects"]): ExamStructure["subjects"] {
-  const choices = new Set(listChoiceGroups(subjects).map((choice) => choice.name));
+function keepRealChoices({
+  choiceGroups,
+  subjects,
+}: Pick<ExamStructure, "choiceGroups" | "subjects">): Pick<
+  ExamStructure,
+  "choiceGroups" | "subjects"
+> {
+  const choices = listChoiceGroups({ choiceGroups, subjects });
   const names = new Set(subjects.map((subject) => subject.name));
+  const isReal = (name: string) => choices.some((choice) => choice.name === name);
 
-  return subjects.map(({ choiceGroup, partOf, ...subject }) => ({
-    ...subject,
-    ...(choiceGroup && choices.has(choiceGroup) && { choiceGroup }),
-    ...(partOf && partOf !== subject.name && names.has(partOf) && { partOf }),
-  }));
+  return {
+    choiceGroups: choiceGroups?.filter((group) => isReal(group.name)),
+    subjects: subjects.map(({ choiceGroup, partOf, ...subject }) => ({
+      ...subject,
+      ...(choiceGroup && isReal(choiceGroup) && { choiceGroup }),
+      ...(partOf && partOf !== subject.name && names.has(partOf) && { partOf }),
+    })),
+  };
 }
 
 function withFormatShares({ extraction, kept }: { extraction: Extraction; kept: KeptFacts }) {
@@ -149,11 +167,15 @@ function toStructure({
 }): ExamStructure {
   const groups = findKeptGroups({ extraction, kept });
 
-  const subjects = keepRealChoices(
-    keepItems({ items: extraction.subjects, kept, prefix: "subjects" }).map(({ found, id, item }) =>
-      toSubject({ documents, found, groups, id, item, kept }),
+  const counted = toChoiceGroups({ extraction, kept });
+  const choices = new Set(counted.map((choice) => choice.name));
+
+  const { choiceGroups, subjects } = keepRealChoices({
+    choiceGroups: counted,
+    subjects: keepItems({ items: extraction.subjects, kept, prefix: "subjects" }).map(
+      ({ found, id, item }) => toSubject({ choices, documents, found, groups, id, item, kept }),
     ),
-  );
+  });
 
   const mock = toMock({
     extraction,
@@ -165,6 +187,7 @@ function toStructure({
   const parts = listExamParts({ mock, subjects });
 
   return {
+    ...(choiceGroups && choiceGroups.length > 0 && { choiceGroups }),
     formats: keepItems({
       items: withFormatShares({ extraction, kept }),
       kept,

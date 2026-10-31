@@ -33,7 +33,8 @@ protocol PlanAPIClient: Sendable {
   /// Nil when the plan can't take the change.
   func preview(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangePreview?
   func undo(token: String, goalId: String, changeId: String) async throws -> Bool
-  func chooseExamOption(token: String, goalId: String, group: String, subject: String)
+  /// Replaces the choice's whole pick.
+  func chooseExamOption(token: String, goalId: String, group: String, subjects: [String])
     async throws -> PlanChangeOutcome
   /// A setup lesson not written yet is chosen again once its run writes it.
   func chooseTools(
@@ -77,7 +78,7 @@ private struct PlanDecision: Encodable {
 
 private struct ExamChoiceRequest: Encodable {
   let group: String
-  let subject: String
+  let subjects: [String]
   let timeZone: String
 }
 
@@ -255,11 +256,11 @@ struct PlanAPI: PlanAPIClient {
     }
   }
 
-  func chooseExamOption(token: String, goalId: String, group: String, subject: String)
+  func chooseExamOption(token: String, goalId: String, group: String, subjects: [String])
     async throws -> PlanChangeOutcome
   {
     let body: Components.Schemas.ExamChoiceInput = try PracticeJSON.recode(
-      ExamChoiceRequest(group: group, subject: subject, timeZone: timeZone))
+      ExamChoiceRequest(group: group, subjects: subjects, timeZone: timeZone))
 
     return try await clients.perform(token: token) { client in
       switch try await client.createPlanExamChoice(path: .init(goalId: goalId), body: .json(body)) {

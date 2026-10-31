@@ -10,24 +10,18 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
@@ -60,11 +54,13 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.feature.onboarding.CheckList
 import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.plan.examChoiceLeftOut
+import com.zoonk.android.feature.plan.toggled
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyPicker
 import com.zoonk.android.ui.components.GenerationFailureNotice
@@ -73,7 +69,6 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.joinSentences
-import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.BuddyInput
 import com.zoonk.api.models.ExamChoice
 import com.zoonk.api.models.ExamChoicePick
@@ -346,25 +341,23 @@ internal fun ColumnScope.SubjectsLevelStep(
             )
         },
     ) {
-        OutlinedCard(Modifier.semantics { contentDescription = label }) {
-            subjects.forEachIndexed { index, item ->
-                if (index > 0) HorizontalDivider()
-                val checked = item.name in known
-                ListItem(
-                    headlineContent = { Text(item.shortName ?: item.name) },
-                    supportingContent = item.shortName?.takeIf { it != item.name }?.let { { Text(item.name) } },
-                    trailingContent = { Checkbox(checked = checked, onCheckedChange = null) },
-                    colors =
-                        ListItemDefaults.colors(
-                            containerColor = if (checked) MaterialTheme.zoonk.selectedTint else MaterialTheme.colorScheme.surface,
-                        ),
-                    modifier =
-                        Modifier.toggleable(checked, enabled = !pending, role = Role.Checkbox) {
-                            known = if (it) known + item.name else known - item.name
+        CheckList(
+            choices =
+                subjects.map { item ->
+                    Choice(
+                        item.name,
+                        item.shortName ?: item.name,
+                        item.name.takeIf {
+                            item.shortName != null &&
+                                item.shortName != it
                         },
-                )
-            }
-        }
+                    )
+                },
+            value = known,
+            label = label,
+            onToggle = { name -> known = if (name in known) known - name else known + name },
+            readOnly = pending,
+        )
     }
 }
 
@@ -762,8 +755,9 @@ internal fun ColumnScope.ExamChoiceStep(
     pending: Boolean,
     onAnswer: (OnboardingAnswerInput) -> Unit,
 ) {
-    var picks by rememberSaveable { mutableStateOf(choices.mapNotNull { choice -> choice.subject?.let { choice.group to it } }.toMap()) }
-    val answer = { picked: Map<String, String> ->
+    var picks by rememberSaveable { mutableStateOf(choices.filter { it.subjects.isNotEmpty() }.associate { it.group to it.subjects }) }
+    val takes = choices.sumOf { it.take }
+    val answer = { picked: Map<String, List<String>> ->
         onAnswer(
             OnboardingAnswerInput.OnboardingAnswerInputOneOf6Value(
                 OnboardingAnswerInputOneOf6(
@@ -774,24 +768,32 @@ internal fun ColumnScope.ExamChoiceStep(
             ),
         )
     }
+    val only = choices.singleOrNull()
 
     StepForm(
-        title =
-            stringResource(
-                if (choices.size ==
-                    1
-                ) {
-                    R.string.onboarding_exam_choice_title_one
-                } else {
-                    R.string.onboarding_exam_choice_title_other
-                },
-            ),
+        title = stringResource(if (takes == 1L) R.string.onboarding_exam_choice_title_one else R.string.onboarding_exam_choice_title_other),
         description =
-            choices.singleOrNull()?.let { choice ->
-                pluralStringResource(R.plurals.onboarding_exam_choice_options, choice.options.size, choice.options.size, choice.group)
-            } ?: pluralStringResource(R.plurals.onboarding_exam_choice_choices, choices.size, choices.size),
+            when {
+                only == null -> {
+                    pluralStringResource(R.plurals.onboarding_exam_choice_choices, choices.size, choices.size)
+                }
+
+                only.take > 1 -> {
+                    pluralStringResource(
+                        R.plurals.onboarding_exam_choice_options_take,
+                        only.options.size,
+                        only.options.size,
+                        only.group,
+                        only.take,
+                    )
+                }
+
+                else -> {
+                    pluralStringResource(R.plurals.onboarding_exam_choice_options, only.options.size, only.options.size, only.group)
+                }
+            },
         subject = subject,
-        canContinue = choices.all { it.group in picks },
+        canContinue = choices.all { !picks[it.group].isNullOrEmpty() },
         skipLabel = stringResource(R.string.onboarding_decide_later),
         pending = pending,
         onContinue = { answer(picks) },
@@ -804,6 +806,18 @@ internal fun ColumnScope.ExamChoiceStep(
         },
     ) {
         choices.forEach { choice ->
+            val picked = picks[choice.group].orEmpty()
+            val options =
+                choice.options.map { option ->
+                    Choice(
+                        option.name,
+                        option.shortName ?: option.name,
+                        option.name.takeIf {
+                            option.shortName != null &&
+                                option.shortName != it
+                        },
+                    )
+                }
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     choice.group,
@@ -811,25 +825,30 @@ internal fun ColumnScope.ExamChoiceStep(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.titleSmall,
                 )
-                ChoiceList(
-                    choices =
-                        choice.options.map { option ->
-                            Choice(
-                                option.name,
-                                option.shortName ?: option.name,
-                                option.name.takeIf {
-                                    option.shortName !=
-                                        null &&
-                                        option.shortName != it
-                                },
-                            )
-                        },
-                    value = picks[choice.group],
-                    label = choice.group,
-                    onChange = { picks = picks + (choice.group to it) },
-                    onPick = if (choices.size == 1) ({ answer(picks + (choice.group to it)) }) else null,
-                    readOnly = pending,
-                )
+                if (choice.take > 1) {
+                    Text(
+                        stringResource(R.string.exam_choice_pick_up_to, choice.take),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    CheckList(
+                        choices = options,
+                        value = picked,
+                        label = choice.group,
+                        onToggle = { picks = picks + (choice.group to choice.toggled(picked, it)) },
+                        max = choice.take.toInt(),
+                        readOnly = pending,
+                    )
+                } else {
+                    ChoiceList(
+                        choices = options,
+                        value = picked.firstOrNull(),
+                        label = choice.group,
+                        onChange = { picks = picks + (choice.group to listOf(it)) },
+                        onPick = if (takes == 1L) ({ answer(picks + (choice.group to listOf(it))) }) else null,
+                        readOnly = pending,
+                    )
+                }
                 Text(
                     examChoiceLeftOut(choice),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

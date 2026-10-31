@@ -37,7 +37,7 @@ export type PlanActions = {
   /** The change it made: null when the pick changed nothing or the plan isn't built yet. */
   chooseExamOption: (input: {
     group: string;
-    subject: string;
+    subjects: string[];
   }) => Promise<{ change: PlanChangeView | null } | null>;
   /** The run writing the setup lessons it needs, when they aren't written yet. */
   chooseTools: (input: {

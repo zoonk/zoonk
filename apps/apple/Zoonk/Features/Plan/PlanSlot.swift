@@ -29,7 +29,7 @@ enum PlanSlotItem: Hashable {
       items.append(.paused)
     }
 
-    items += plan.examChoices.filter { $0.subject == nil }.map { .choice($0) }
+    items += plan.examChoices.filter(\.subjects.isEmpty).map { .choice($0) }
 
     if status == .pastDate, let fix {
       items.append(.pastDate(fix.text))
@@ -93,6 +93,39 @@ struct PlanSuggestionSection: View {
     switch item {
     case .paused:
       PlanPausedSlot(context: context)
+    case .choice(let choice) where choice.take > 1:
+      card(
+        title: Text(
+          "\(choice.group): which ones will you take?", tableName: "Plan",
+          comment:
+            "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several"
+        ),
+        systemImage: "list.bullet",
+        description: Text(choice.leftOut.line),
+        options: {
+          Text.examPickLimit(choice.take)
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+
+          ExamOptionToggles(
+            options: choice.options, take: choice.take,
+            picked: Binding(
+              get: { draft(choice) },
+              set: { names in
+                store.setSuggestionState(store.suggestionKey(goalId: context.goal.id)) {
+                  $0.choiceDrafts[choice.group] = names
+                }
+              }))
+        },
+        actions: {
+          Button {
+            Task { await choose(draft(choice), in: choice) }
+          } label: {
+            Text(
+              "Save", tableName: "Plan", comment: "Saves the options picked for an exam's choice")
+          }
+          .disabled(draft(choice).isEmpty)
+        })
     case .choice(let choice):
       card(
         title: Text(
@@ -105,7 +138,7 @@ struct PlanSuggestionSection: View {
         Menu {
           ForEach(choice.options, id: \.self) { option in
             Button(option.name) {
-              Task { await choose(option.name, in: choice) }
+              Task { await choose([option.name], in: choice) }
             }
           }
         } label: {
@@ -212,6 +245,7 @@ struct PlanSuggestionSection: View {
 
   private func card(
     title: Text, systemImage: String, description: Text?, effect: PlanEffect? = nil,
+    @ViewBuilder options: () -> some View = { EmptyView() },
     @ViewBuilder actions: () -> some View
   ) -> some View {
     VStack(alignment: .leading, spacing: 8) {
@@ -229,6 +263,8 @@ struct PlanSuggestionSection: View {
       }
 
       PlanEffectDiff(effect: effect, today: context.plan.today)
+
+      options()
 
       HStack {
         actions()
@@ -277,19 +313,17 @@ struct PlanSuggestionSection: View {
     }
   }
 
-  private func choose(_ subject: String, in choice: GoalPlan.ExamChoice) async {
+  private func draft(_ choice: GoalPlan.ExamChoice) -> [String] {
+    store.suggestionState(goalId: context.goal.id).choiceDrafts[choice.group] ?? []
+  }
+
+  private func choose(_ subjects: [String], in choice: GoalPlan.ExamChoice) async {
     let key = store.suggestionKey(goalId: context.goal.id)
     store.setSuggestionState(key) { $0.isWorking = true }
     defer { store.setSuggestionState(key) { $0.isWorking = false } }
 
-    let goalId = context.goal.id
-    let group = choice.group
-    await planEditor.apply(
-      sentence: String(
-        localized: "Your plan studies \(subject) for \(group).", table: "Plan",
-        comment: "Says which option the plan studies for an exam's choice")
-    ) { api, token in
-      try await api.chooseExamOption(token: token, goalId: goalId, group: group, subject: subject)
+    if await planEditor.chooseExamOptions(subjects, in: choice.group) {
+      store.setSuggestionState(key) { $0.choiceDrafts[choice.group] = nil }
     }
   }
 

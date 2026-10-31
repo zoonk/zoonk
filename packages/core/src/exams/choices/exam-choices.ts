@@ -2,6 +2,7 @@ import { z } from "zod";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getSubjectQuestions } from "../../library/exams/subject-questions";
 import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
+import { listChoiceGroups } from "./choice-groups";
 import { examChoicePickSchema } from "./exam-choice-contract";
 import { scopeExamStructure } from "./exam-scope";
 
@@ -23,32 +24,29 @@ export function readExamPicks(settings: unknown): ExamPicks {
   return storedPicksSchema.safeParse(settings).data ?? NO_EXAM_PICKS;
 }
 
-export type ChoiceGroup<T extends Pick<Subject, "choiceGroup" | "name">> = {
-  name: string;
-  options: T[];
-};
-
-export function listChoiceGroups<T extends Pick<Subject, "choiceGroup" | "name">>(
-  subjects: readonly T[],
-): ChoiceGroup<T>[] {
-  const names = [
-    ...new Set(subjects.flatMap((item) => (item.choiceGroup ? [item.choiceGroup] : []))),
-  ];
-
-  return names
-    .map((name) => ({ name, options: subjects.filter((item) => item.choiceGroup === name) }))
-    .filter((group) => group.options.length > 1);
+export function isSamePick(first: ExamChoice, second: ExamChoice): boolean {
+  return (
+    first.group === second.group &&
+    first.subjects.length === second.subjects.length &&
+    first.subjects.every((subject) => second.subjects.includes(subject))
+  );
 }
 
-export function findChoiceOption({
+/** The options a pick names, in the notice's order; null unless it names one to `take` of its choice's options. */
+export function findChosenOptions({
   choice,
   structure,
 }: {
   choice: ExamChoice;
   structure: ExamStructure;
-}): Subject | null {
-  const group = listChoiceGroups(structure.subjects).find((item) => item.name === choice.group);
-  return group?.options.find((option) => option.name === choice.subject) ?? null;
+}): Subject[] | null {
+  const group = listChoiceGroups(structure).find((item) => item.name === choice.group);
+  const names = new Set(choice.subjects);
+  const options = group?.options.filter((option) => names.has(option.name)) ?? [];
+
+  return group && options.length > 0 && options.length === names.size && names.size <= group.take
+    ? options
+    : null;
 }
 
 function listUnchosenOptions({
@@ -59,14 +57,13 @@ function listUnchosenOptions({
   structure: ExamStructure;
 }): Set<string> {
   const chosen = new Set(
-    choices.flatMap((choice) => {
-      const option = findChoiceOption({ choice, structure });
-      return option ? [option.name] : [];
-    }),
+    choices.flatMap((choice) =>
+      (findChosenOptions({ choice, structure }) ?? []).map((option) => option.name),
+    ),
   );
 
   return new Set(
-    listChoiceGroups(structure.subjects).flatMap((group) =>
+    listChoiceGroups(structure).flatMap((group) =>
       group.options.flatMap((option) => (chosen.has(option.name) ? [] : [option.name])),
     ),
   );
@@ -159,7 +156,7 @@ export function toChosenStructure({
 }): ExamStructure {
   const structure = scopeExamStructure({ examSubjects: picks.examSubjects, structure: whole });
 
-  if (listChoiceGroups(structure.subjects).length === 0) {
+  if (listChoiceGroups(structure).length === 0) {
     return structure;
   }
 
@@ -177,20 +174,4 @@ export function toChosenStructure({
         : subject;
     }),
   };
-}
-
-export function listCountedSubjects<T extends Pick<Subject, "choiceGroup" | "name" | "partOf">>(
-  subjects: readonly T[],
-): T[] {
-  const choices = listChoiceGroups(subjects);
-  const names = new Set(subjects.map((item) => item.name));
-
-  return subjects.filter((item) => {
-    if (item.partOf && names.has(item.partOf)) {
-      return false;
-    }
-
-    const group = choices.find((choice) => choice.name === item.choiceGroup);
-    return !group || group.options[0] === item;
-  });
 }

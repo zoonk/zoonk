@@ -77,6 +77,8 @@ const navigationSchema = z.object({
 });
 
 const extractionSchema = z.object({
+  /** Empty when candidates take one option of every choice. */
+  choiceGroups: z.array(z.object({ ...citedMany, name: z.string(), take: z.number().int() })),
   dates: z.array(
     z.object({
       ...cited,
@@ -143,7 +145,7 @@ const extractionSchema = z.object({
   subjects: z.array(
     z.object({
       ...citedMany,
-      /** For one of several subjects candidates pick from (ENEM's foreign language); else null. */
+      /** For one of several subjects candidates take some of (ENEM's foreign language); else null. */
       choiceGroup: z.string().nullable(),
       group: z.string().nullable(),
       /** When the topics are a skills matrix's paired contents (ENEM's); empty otherwise. */

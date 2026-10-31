@@ -185,7 +185,7 @@ function setExamChoice({
   operation: Extract<PlanOperation, { kind: "setExamChoice" }>;
   state: PlanState;
 }): PlanState {
-  const choice = { group: operation.group, subject: operation.subject };
+  const choice = { group: operation.group, subjects: operation.subjects };
   const current = state.settings.examChoices;
   const isPicked = current.some((item) => item.group === operation.group);
 

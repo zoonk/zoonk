@@ -150,6 +150,36 @@ class TodayScreenshots {
     }
 
     private companion object {
+        fun examChoice(
+            group: String,
+            options: List<String>,
+            take: Int,
+        ) = buildJsonObject {
+            put("group", group)
+            putJsonObject("leftOut") {
+                put("examPoints", null as Int?)
+                put("examQuestions", null as Int?)
+                put("name", group)
+                put("points", null as Int?)
+                put("questions", 24 * take)
+            }
+            put(
+                "options",
+                buildJsonArray {
+                    options.forEach { name ->
+                        add(
+                            buildJsonObject {
+                                put("name", name)
+                                put("shortName", null as String?)
+                            },
+                        )
+                    }
+                },
+            )
+            put("subjects", buildJsonArray {})
+            put("take", take)
+        }
+
         val MOCKS: MockOptions by lazy {
             decodeFixture<MockOptions>(
                 "mock-options",
@@ -207,26 +237,16 @@ class TodayScreenshots {
                     day(
                         blocks = lessons(3),
                         next = 0,
+                        today = mapOf("examChoice" to examChoice("Língua estrangeira", listOf("Inglês", "Espanhol"), take = 1)),
+                    ),
+                "notice-exam-modules" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
                         today =
                             mapOf(
                                 "examChoice" to
-                                    buildJsonObject {
-                                        put("group", "Língua estrangeira")
-                                        put(
-                                            "options",
-                                            buildJsonArray {
-                                                listOf("Inglês", "Espanhol").forEach { name ->
-                                                    add(
-                                                        buildJsonObject {
-                                                            put("name", name)
-                                                            put("shortName", null as String?)
-                                                        },
-                                                    )
-                                                }
-                                            },
-                                        )
-                                        put("subject", null as String?)
-                                    },
+                                    examChoice("Módulos disciplinares", listOf("Biología", "Química", "Derecho", "Premedicina"), take = 2),
                             ),
                     ),
                 "notice-plan-change" to

@@ -16,6 +16,7 @@ import com.zoonk.android.feature.exam.examMomentTitle
 import com.zoonk.android.feature.exam.icon
 import com.zoonk.android.feature.language.LanguagePracticeNotice
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.plan.ExamChoicePicks
 import com.zoonk.android.feature.plan.PlanEffectDiff
 import com.zoonk.android.feature.plan.PlanEnd
 import com.zoonk.android.feature.plan.PlanStore
@@ -199,7 +200,18 @@ private fun ExamChoiceNotice(
     }
 
     val choice = state.read.today.examChoice ?: return
-    val question = stringResource(R.string.today_exam_choice_question, choice.group)
+    val question =
+        stringResource(
+            if (choice.take >
+                1
+            ) {
+                R.string.today_exam_choice_question_several
+            } else {
+                R.string.today_exam_choice_question
+            },
+            choice.group,
+        )
+    val choose = { subjects: List<String> -> viewModel.chooseExamOption(state.read, choice.group, subjects) }
 
     Suggestion(
         label = label,
@@ -211,14 +223,18 @@ private fun ExamChoiceNotice(
     ) {
         SuggestionHeader(question)
         SuggestionDescription(examChoiceLeftOut(choice))
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            choice.options.forEach { option ->
-                SuggestionAction(
-                    text = option.shortName ?: option.name,
-                    onClick = { viewModel.chooseExamOption(state.read, choice.group, option.name) },
-                    enabled = !saving,
-                    secondary = true,
-                )
+        if (choice.take > 1) {
+            ExamChoicePicks(choice, enabled = !saving, onSave = choose)
+        } else {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                choice.options.forEach { option ->
+                    SuggestionAction(
+                        text = option.shortName ?: option.name,
+                        onClick = { choose(listOf(option.name)) },
+                        enabled = !saving,
+                        secondary = true,
+                    )
+                }
             }
         }
         if (viewModel.examChoiceFailedOn == state.read.noticeVisit()) SuggestionSaveError()

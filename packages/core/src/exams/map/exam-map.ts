@@ -8,7 +8,7 @@ import {
 import { listSubjectShares } from "../../library/exams/subject-shares";
 import { namesMatch } from "../_utils/name-match";
 import { getSubjectShareFallback } from "../_utils/subject-share-fallback";
-import { listCountedSubjects } from "../choices/exam-choices";
+import { listCountedSubjects } from "../choices/choice-groups";
 import { isWrittenSubject } from "../mocks/written-subject";
 
 type FrequencyLevel = TopicFrequency[number]["level"];
@@ -54,7 +54,7 @@ function getMapShares(structure: ExamStructure): (number | null)[] {
     return shares;
   }
 
-  const counted = listCountedSubjects(structure.subjects).map(
+  const counted = listCountedSubjects(structure).map(
     (subject) => shares[structure.subjects.indexOf(subject)] ?? null,
   );
 

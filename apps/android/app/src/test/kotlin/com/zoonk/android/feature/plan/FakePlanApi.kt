@@ -48,7 +48,7 @@ internal class FakePlanApi : PlanApi {
     var previewGate: CompletableDeferred<Unit>? = null
     var preview = PlanChangePreview(effect = null, feasibility = null, ready = true, unchanged = true)
 
-    val examChoices = mutableListOf<Pair<String, String>>()
+    val examChoices = mutableListOf<Pair<String, List<String>>>()
     val toolAnswers = mutableListOf<ToolAnswer>()
     var toolFailure: ApiException? = null
     var advice = PlanBasesAdvice(daysLeft = 40, ready = true, recommended = PlanBasesAdvice.Recommended.ESSENTIAL)
@@ -173,9 +173,9 @@ internal class FakePlanApi : PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
         group: String,
-        subject: String,
+        subjects: List<String>,
     ): PlanChangeResult {
-        examChoices += group to subject
+        examChoices += group to subjects
         return PlanChangeResult(change = planChange(), status = PlanChangeResult.Status.APPLIED)
     }
 

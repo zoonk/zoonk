@@ -5,17 +5,18 @@ import { planOptionMock } from "../mocks/mock-option-plan";
 import { listMockOptions } from "../mocks/mock-options";
 import { toMockStructure } from "../mocks/mock-structure";
 import reading from "./_test-utils/cgu-2026-structure.json";
-import { type ExamChoice, listChoiceGroups, toChosenStructure } from "./exam-choices";
+import { listChoiceGroups } from "./choice-groups";
+import { type ExamChoice, toChosenStructure } from "./exam-choices";
 
 const CGU = examStructureSchema.parse(reading);
-const [SPECIALTY] = listChoiceGroups(CGU.subjects);
+const [SPECIALTY] = listChoiceGroups(CGU);
 
 const SOFTWARE = SPECIALTY?.options.find(
   (option) => option.shortName === "Desenvolvimento de Sistemas",
 );
 
 const PICKED: ExamChoice[] =
-  SPECIALTY && SOFTWARE ? [{ group: SPECIALTY.name, subject: SOFTWARE.name }] : [];
+  SPECIALTY && SOFTWARE ? [{ group: SPECIALTY.name, subjects: [SOFTWARE.name] }] : [];
 
 const UNCOUNTED_SECTION: ExamStructure["mock"] = CGU.mock && {
   ...CGU.mock,

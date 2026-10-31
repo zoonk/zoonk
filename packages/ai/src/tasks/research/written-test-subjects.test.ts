@@ -46,6 +46,7 @@ function reading({
   subjects: Subject[];
 }): BlueprintExtraction {
   return {
+    choiceGroups: [],
     dates: [],
     edition: { passages: [], questionCount: null, timeZone: null, year: null },
     formats: [],

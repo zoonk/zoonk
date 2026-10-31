@@ -58,7 +58,7 @@ export async function hasUnpickedChoice(
 
   const named = findNamedChoices({ goal, picks: saved, structure });
   const picks = { ...saved, examChoices: [...saved.examChoices, ...named] };
-  return listExamChoiceViews({ picks, structure }).some((choice) => choice.subject === null);
+  return listExamChoiceViews({ picks, structure }).some((choice) => choice.subjects.length === 0);
 }
 
 export async function loadPartAreas({

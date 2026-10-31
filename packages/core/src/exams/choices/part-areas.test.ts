@@ -49,7 +49,7 @@ async function setup({
 
   await chooseExamOption({
     goalId: goal.id,
-    input: { group: FOREIGN, subject: ENGLISH, timeZone: TIME_ZONE },
+    input: { group: FOREIGN, subjects: [ENGLISH], timeZone: TIME_ZONE },
   });
 
   return goal;

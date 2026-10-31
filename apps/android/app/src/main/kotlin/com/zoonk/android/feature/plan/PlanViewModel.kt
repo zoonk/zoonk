@@ -144,9 +144,9 @@ class PlanViewModel(
 
     fun chooseExamOption(
         group: String,
-        subject: String,
+        subjects: List<String>,
         answered: (PlanChangeResult?) -> Unit = {},
-    ) = save(PlanPart.ExamChoices, listOf(PlanOp.ExamChoice(group, subject)), answered) { store.chooseExamOption(goalId, group, subject) }
+    ) = save(PlanPart.ExamChoices, listOf(PlanOp.ExamChoice(group, subjects)), answered) { store.chooseExamOption(goalId, group, subjects) }
 
     /** Main's `useToolChoice`: a setup lesson nobody has needed yet is written first, then the same choice is sent again. */
     val setupLessons = writingWaits.create(GenerationKind.SetupLesson, viewModelScope)

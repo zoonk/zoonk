@@ -233,7 +233,14 @@ class OnboardingScreenshots {
         val SPECIALTY =
             """
             [{"group":"Specialty","leftOut":{"examPoints":360,"examQuestions":null,"name":"Specialty knowledge (P3)","points":180,"questions":null},
-              "options":[{"name":"Auditing and control","shortName":null},{"name":"Information technology","shortName":null}],"subject":null}]
+              "options":[{"name":"Auditing and control","shortName":null},{"name":"Information technology","shortName":null}],"subjects":[],"take":1}]
+            """.trimIndent()
+
+        val MODULES =
+            """
+            [{"group":"Knowledge modules","leftOut":{"examPoints":null,"examQuestions":null,"name":"Knowledge modules","points":null,"questions":48},
+              "options":[{"name":"Biology","shortName":null},{"name":"Chemistry","shortName":null},{"name":"Law","shortName":null},
+               {"name":"Social sciences and humanities","shortName":null}],"subjects":["Biology","Chemistry"],"take":2}]
             """.trimIndent()
 
         val SCREENS: List<Pair<String, @Composable () -> Unit>> =
@@ -427,6 +434,13 @@ class OnboardingScreenshots {
                                     examChoices = SPECIALTY,
                                 )
                             }
+                        },
+                    )
+                },
+                "setup-exam-modules" to {
+                    Setup(
+                        FakeOnboardingApi().apply {
+                            setup = { setupView(listOf("examChoice", "schedule", "plan"), kind = "exam", examChoices = MODULES) }
                         },
                     )
                 },

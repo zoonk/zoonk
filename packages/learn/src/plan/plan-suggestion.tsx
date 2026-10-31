@@ -69,7 +69,7 @@ function usePlanSuggestions(host: PlanSuggestionHost): SlotItem[] {
   const items: (SlotItem | false)[] = [
     host.goalStatus?.status === "paused" && { key: "paused", kind: "paused" },
     ...plan.examChoices
-      .filter((choice) => !choice.subject)
+      .filter((choice) => choice.subjects.length === 0)
       .map((choice): SlotItem => ({ choice, key: `choice:${choice.group}`, kind: "choice" })),
     plan.status?.kind === "pastDate" && {
       key: "pastDate",

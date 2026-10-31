@@ -1,10 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
 import {
-  findChoiceOption,
+  BIOLOGY,
+  CHEMISTRY,
+  EXANI_STRUCTURE,
+  LAW,
+  MODULES,
+  PREMED,
+} from "./_test-utils/choice-blueprint";
+import { listChoiceGroups, listCountedSubjects } from "./choice-groups";
+import {
+  findChosenOptions,
   findPartAreas,
-  listChoiceGroups,
-  listCountedSubjects,
   listUnchosenSubjects,
   readExamPicks,
   toChosenStructure,
@@ -30,7 +37,7 @@ const enem: ExamStructure = {
   ],
 };
 
-const SPANISH = { group: FOREIGN, subject: "Língua Espanhola" };
+const SPANISH = { group: FOREIGN, subjects: ["Língua Espanhola"] };
 const spanish = [SPANISH];
 
 function names(structure: ExamStructure) {
@@ -40,7 +47,7 @@ function names(structure: ExamStructure) {
 describe(listChoiceGroups, () => {
   it("lists each choice with its options in the notice's order", () => {
     expect(
-      listChoiceGroups(enem.subjects).map((group) => [
+      listChoiceGroups(enem).map((group) => [
         group.name,
         group.options.map((option) => option.name),
       ]),
@@ -49,7 +56,7 @@ describe(listChoiceGroups, () => {
 
   it("has no choice when only one subject names it: one option is no choice", () => {
     const single = enem.subjects.filter((item) => item.name !== "Língua Espanhola");
-    expect(listChoiceGroups(single)).toStrictEqual([]);
+    expect(listChoiceGroups({ subjects: single })).toStrictEqual([]);
   });
 });
 
@@ -70,7 +77,7 @@ describe(listUnchosenSubjects, () => {
   });
 
   it("reads a pick the notice no longer lists as no pick", () => {
-    const stale = [{ group: FOREIGN, subject: "Língua Francesa" }];
+    const stale = [{ group: FOREIGN, subjects: ["Língua Francesa"] }];
 
     expect(
       listUnchosenSubjects({ picks: { examChoices: stale, examSubjects: [] }, structure: enem })
@@ -137,7 +144,7 @@ describe(toChosenStructure, () => {
 
 describe(listCountedSubjects, () => {
   it("counts a choice once and an option inside another subject not at all", () => {
-    expect(listCountedSubjects(enem.subjects).map((item) => item.name)).toStrictEqual([
+    expect(listCountedSubjects(enem).map((item) => item.name)).toStrictEqual([
       LANGUAGES,
       "Matemática e suas Tecnologias",
     ]);
@@ -150,20 +157,78 @@ describe(listCountedSubjects, () => {
       subject("Chemistry I", 20, { choiceGroup: "Science elective" }),
     ];
 
-    expect(listCountedSubjects(electives).map((item) => item.name)).toStrictEqual([
+    expect(listCountedSubjects({ subjects: electives }).map((item) => item.name)).toStrictEqual([
       "Korean",
       "Physics I",
     ]);
   });
 });
 
-describe(findChoiceOption, () => {
-  it("finds an option of the named choice only", () => {
-    expect(findChoiceOption({ choice: SPANISH, structure: enem })?.name).toBe("Língua Espanhola");
+const EXANI = examStructureSchema.parse(EXANI_STRUCTURE);
+
+function modules(subjects: string[]) {
+  return (
+    findChosenOptions({ choice: { group: MODULES, subjects }, structure: EXANI })?.map(
+      (item) => item.name,
+    ) ?? null
+  );
+}
+
+describe(findChosenOptions, () => {
+  it("finds the options of the named choice only", () => {
+    expect(
+      findChosenOptions({ choice: SPANISH, structure: enem })?.map((item) => item.name),
+    ).toStrictEqual(["Língua Espanhola"]);
 
     expect(
-      findChoiceOption({ choice: { group: FOREIGN, subject: LANGUAGES }, structure: enem }),
+      findChosenOptions({ choice: { group: FOREIGN, subjects: [LANGUAGES] }, structure: enem }),
     ).toBeNull();
+  });
+
+  it("takes up to as many options as candidates take, in the notice's order", () => {
+    expect(modules([CHEMISTRY, BIOLOGY])).toStrictEqual([BIOLOGY, CHEMISTRY]);
+    expect(modules([PREMED])).toStrictEqual([PREMED]);
+    expect(modules([BIOLOGY, CHEMISTRY, LAW])).toBeNull();
+    expect(modules([BIOLOGY, "Medicina"])).toBeNull();
+  });
+});
+
+describe("an exam whose candidates take two of its modules", () => {
+  it("lists the modules as one choice that takes two", () => {
+    expect(listChoiceGroups(EXANI).map((group) => [group.name, group.take])).toStrictEqual([
+      [MODULES, 2],
+    ]);
+  });
+
+  it("counts two modules toward the exam, and has no choice when two modules are all it lists", () => {
+    expect(listCountedSubjects(EXANI).map((item) => item.name)).toStrictEqual([
+      BIOLOGY,
+      LAW,
+      "Comprensión lectora",
+      "Redacción indirecta",
+      "Pensamiento matemático",
+    ]);
+
+    const two = EXANI.subjects.filter(
+      (item) => item.choiceGroup !== MODULES || [BIOLOGY, CHEMISTRY].includes(item.name),
+    );
+
+    expect(listChoiceGroups({ ...EXANI, subjects: two })).toStrictEqual([]);
+  });
+
+  it("is the exam with the picked modules only", () => {
+    const picks = {
+      examChoices: [{ group: MODULES, subjects: [BIOLOGY, CHEMISTRY] }],
+      examSubjects: [],
+    };
+
+    expect(names(toChosenStructure({ picks, structure: EXANI }))).toStrictEqual([
+      [BIOLOGY, 24],
+      [CHEMISTRY, 24],
+      ["Comprensión lectora", 30],
+      ["Redacción indirecta", 30],
+      ["Pensamiento matemático", 30],
+    ]);
   });
 });
 

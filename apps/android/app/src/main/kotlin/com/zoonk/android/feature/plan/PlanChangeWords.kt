@@ -416,7 +416,7 @@ private fun operationSentence(
         }
 
         is PlanOp.ExamChoice -> {
-            stringResource(R.string.plan_change_exam_choice, op.subject, op.group)
+            stringResource(R.string.plan_change_exam_choice, joinList(op.subjects), op.group)
         }
 
         is PlanOp.TargetDate -> {

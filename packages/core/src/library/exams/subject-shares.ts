@@ -1,5 +1,5 @@
 import { getSubjectShareFallback } from "../../exams/_utils/subject-share-fallback";
-import { listCountedSubjects } from "../../exams/choices/exam-choices";
+import { listCountedSubjects } from "../../exams/choices/choice-groups";
 import { type ExamStructure, type ScoredPart } from "./blueprint-contract";
 import { coversSubject } from "./final-share-cover";
 import { getPartMaxPoints } from "./part-points";
@@ -132,7 +132,7 @@ export function listSubjectShares(structure: ExamStructure): (number | null)[] {
   const groupOf = (subject: Subject) =>
     groups.find((group) => coversSubject({ parts: group.parts, subject })) ?? null;
 
-  const counted = listCountedSubjects(structure.subjects).filter(
+  const counted = listCountedSubjects(structure).filter(
     (subject) => !isQualifying({ structure, subject }),
   );
 
@@ -164,7 +164,7 @@ export function listSubjectShares(structure: ExamStructure): (number | null)[] {
  */
 export function listPlanShares(structure: ExamStructure): (number | null)[] {
   const shares = listSubjectShares(structure);
-  const counted = new Set(listCountedSubjects(structure.subjects));
+  const counted = new Set(listCountedSubjects(structure));
   const points = structure.subjects.map((subject) => getSubjectPoints({ structure, subject }));
   const parts = structure.subjects.map((subject) => findQualifyingPart({ structure, subject }));
 

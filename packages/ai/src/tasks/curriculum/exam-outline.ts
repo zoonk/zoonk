@@ -4,6 +4,8 @@ import { normalizeString } from "@zoonk/utils/string";
 type ExamSubject = {
   /** For one of several subjects candidates pick from: no other skill builds on an option's. */
   choiceGroup?: string | null;
+  /** How many of the choice's options each candidate takes; one when absent. */
+  choiceTake?: number;
   name: string;
   /**
    * What learners call a long-named subject ("Professional Ethics"): an area by it is this subject.
@@ -31,12 +33,15 @@ function toTopicId({ subject, topic }: { subject: number; topic: number }): stri
   return `S${subject + 1}.${topic + 1}`;
 }
 
+function describeChoice({ choiceGroup, choiceTake = 1 }: ExamSubject): string {
+  const taken = choiceTake > 1 ? `${choiceTake} of its options` : "only one option";
+  return `an option of "${choiceGroup}": each candidate takes ${taken}`;
+}
+
 function describeSubject({ index, subject }: { index: number; subject: ExamSubject }): string {
   const details = [
     subject.group,
-    subject.choiceGroup
-      ? `an option of "${subject.choiceGroup}": each candidate takes only one option`
-      : null,
+    subject.choiceGroup ? describeChoice(subject) : null,
     subject.questions === null ? null : `${subject.questions} questions`,
     subject.weight === null ? null : `weight ${Math.round(subject.weight * PERCENT)}%`,
   ].filter(Boolean);

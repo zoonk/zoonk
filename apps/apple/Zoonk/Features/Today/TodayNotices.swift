@@ -107,8 +107,9 @@ struct TodayExamChoiceSection: View {
 
   let goalID: String
   let choice: TodayView.ExamChoice?
-  /// Kept above the panes, so folding keeps the answer.
+  /// Kept above the panes, so folding keeps the answer and the options ticked.
   @Binding var editor: PlanEditor?
+  @Binding var draft: [String]
 
   var body: some View {
     if let editor, case .applied(let change, let sentence) = editor.latest {
@@ -130,22 +131,50 @@ struct TodayExamChoiceSection: View {
       Section {
         Label {
           VStack(alignment: .leading, spacing: 4) {
-            Text(
-              "\(choice.group): which one will you take?", tableName: "Plan",
-              comment: "Asks which option of an exam's choice the learner takes"
-            )
+            Group {
+              if choice.take > 1 {
+                Text(
+                  "\(choice.group): which ones will you take?", tableName: "Plan",
+                  comment:
+                    "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several"
+                )
+              } else {
+                Text(
+                  "\(choice.group): which one will you take?", tableName: "Plan",
+                  comment: "Asks which option of an exam's choice the learner takes")
+              }
+            }
             .font(.headline)
 
             Text(choice.leftOut.line)
               .foregroundStyle(.secondary)
+
+            if choice.take > 1 {
+              Text.examPickLimit(choice.take)
+                .foregroundStyle(.secondary)
+            }
           }
         } icon: {
           Image(systemName: "signpost.right")
         }
 
-        ForEach(choice.options, id: \.name) { option in
-          Button(option.shortName ?? option.name) {
-            pick(option.name, in: choice.group)
+        Group {
+          if choice.take > 1 {
+            ExamOptionToggles(options: choice.options, take: choice.take, picked: $draft)
+
+            Button {
+              pick(draft, in: choice.group)
+            } label: {
+              Text(
+                "Save", tableName: "Plan", comment: "Saves the options picked for an exam's choice")
+            }
+            .disabled(draft.isEmpty)
+          } else {
+            ForEach(choice.options, id: \.name) { option in
+              Button(option.shortName ?? option.name) {
+                pick([option.name], in: choice.group)
+              }
+            }
           }
         }
         .disabled(editor?.isSaving == true)
@@ -166,20 +195,11 @@ struct TodayExamChoiceSection: View {
     }
   }
 
-  private func pick(_ subject: String, in group: String) {
+  private func pick(_ subjects: [String], in group: String) {
     let editor = editor ?? PlanEditor(goalId: goalID, store: plans)
     self.editor = editor
-    let goalID = goalID
 
-    Task {
-      await editor.apply(
-        sentence: String(
-          localized: "Your plan studies \(subject) for \(group).", table: "Plan",
-          comment: "Says which option the plan studies for an exam's choice")
-      ) { api, token in
-        try await api.chooseExamOption(token: token, goalId: goalID, group: group, subject: subject)
-      }
-    }
+    Task { await editor.chooseExamOptions(subjects, in: group) }
   }
 }
 

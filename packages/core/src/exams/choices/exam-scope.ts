@@ -3,6 +3,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getSubjectQuestions } from "../../library/exams/subject-questions";
 import { findSubjectSections } from "../mocks/exam-parts";
+import { listCountedSubjects } from "./choice-groups";
 
 type Subject = ExamStructure["subjects"][number];
 type Mock = NonNullable<ExamStructure["mock"]>;
@@ -97,18 +98,6 @@ function sumStated(values: readonly (number | null)[]): number | null {
     : null;
 }
 
-/** One per exam place: a part counted inside its whole, and one option of a choice. */
-function listPlaces(subjects: readonly Subject[]): Subject[] {
-  const names = new Set(subjects.map((subject) => subject.name));
-
-  return subjects.filter(
-    (subject, index) =>
-      !(subject.partOf && names.has(subject.partOf)) &&
-      (!subject.choiceGroup ||
-        subjects.findIndex((other) => other.choiceGroup === subject.choiceGroup) === index),
-  );
-}
-
 function countQuestions({
   structure,
   subjects,
@@ -117,7 +106,9 @@ function countQuestions({
   subjects: readonly Subject[];
 }): number | null {
   return sumStated(
-    listPlaces(subjects).map((subject) => getSubjectQuestions({ structure, subject })),
+    listCountedSubjects({ choiceGroups: structure.choiceGroups, subjects }).map((subject) =>
+      getSubjectQuestions({ structure, subject }),
+    ),
   );
 }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { Checkbox } from "@zoonk/ui/components/checkbox";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
@@ -151,5 +152,58 @@ export function ChoiceList<Value extends string>({
         </RadioGroupOption>
       ))}
     </RadioGroup>
+  );
+}
+
+export function CheckList<Value extends string>({
+  choices,
+  label,
+  max,
+  onChange,
+  readOnly = false,
+  value,
+}: {
+  choices: Choice<Value>[];
+  label: string;
+  max?: number;
+  onChange: (value: Value[]) => void;
+  readOnly?: boolean;
+  value: readonly Value[];
+}) {
+  const isFull = max !== undefined && value.length >= max;
+
+  return (
+    <fieldset className={LIST_GROUP_CLASS}>
+      <legend className="sr-only">{label}</legend>
+      {choices.map((choice) => {
+        const isPicked = value.includes(choice.value);
+        const isDisabled = readOnly || (!isPicked && isFull);
+
+        return (
+          <label
+            className={cn(CHOICE_ROW_CLASS, isDisabled && "cursor-not-allowed opacity-50")}
+            data-highlighted={isPicked || undefined}
+            key={choice.value}
+          >
+            <ListRowContent>
+              <ListRowTitle>{choice.label}</ListRowTitle>
+              {choice.description && <ListRowDescription>{choice.description}</ListRowDescription>}
+            </ListRowContent>
+            <Checkbox
+              checked={isPicked}
+              className={CHOICE_CONTROL_CLASS}
+              disabled={isDisabled}
+              onCheckedChange={(checked) =>
+                onChange(
+                  checked
+                    ? [...value, choice.value]
+                    : value.filter((item) => item !== choice.value),
+                )
+              }
+            />
+          </label>
+        );
+      })}
+    </fieldset>
   );
 }

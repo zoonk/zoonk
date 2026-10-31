@@ -547,6 +547,11 @@
         <item quantity="one">The exam offers %1$d option for %2$s. Your plan and mocks follow the one you pick, and you can change it in your plan.</item>
         <item quantity="other">The exam offers %1$d options for %2$s. Your plan and mocks follow the one you pick, and you can change it in your plan.</item>
     </plurals>
+    <!-- Under the exam choice question when each candidate takes several of its options. %1$d counts the options; %2$s is the notice's name for the choice, such as the modules a course takes, in the notice's own language; %3$d is how many of the options each candidate takes, at least 2. -->
+    <plurals name="onboarding_exam_choice_options_take">
+        <item quantity="one">The exam offers %1$d option for %2$s, and each candidate takes %3$d of them. Your plan and mocks follow the ones you pick, and you can change them in your plan.</item>
+        <item quantity="other">The exam offers %1$d options for %2$s, and each candidate takes %3$d of them. Your plan and mocks follow the ones you pick, and you can change them in your plan.</item>
+    </plurals>
     <!-- Under the exam choice question, for several choices. -->
     <plurals name="onboarding_exam_choice_choices">
         <item quantity="one">The exam has %1$d choice to make. Your plan and mocks follow your picks, and you can change them in your plan.</item>

@@ -1,5 +1,6 @@
 "use client";
 
+import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { LANGUAGE_ACTIVITY_TYPES } from "@zoonk/core/language/activities";
 import { type MockScheduleView } from "@zoonk/core/plans/view-contract";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -12,6 +13,7 @@ import { useActivityName } from "./plan-activities";
 import { usePlanScreen } from "./plan-context";
 import { PlanDateText } from "./plan-date-text";
 import { type PlanEditorSection } from "./plan-editor-sections";
+import { usePickedNames } from "./use-picked-names";
 import { useStudyDaysText } from "./use-study-days-text";
 
 const TITLE_ID = "plan-properties-title";
@@ -64,6 +66,19 @@ function PropertyRow({
         <PropertyRowParts label={label}>{children}</PropertyRowParts>
       </button>
     </li>
+  );
+}
+
+function ExamChoiceRow({ choice, onOpen }: { choice: ExamChoiceView; onOpen: () => void }) {
+  const t = useExtracted();
+  const picked = usePickedNames(choice);
+
+  return (
+    <PropertyRow label={choice.group} onOpen={onOpen}>
+      <span className={cn(!picked && "text-warning-text font-medium")}>
+        {picked ?? t("Choose")}
+      </span>
+    </PropertyRow>
   );
 }
 
@@ -183,17 +198,9 @@ export function PlanProperties({
 
         {plan.schedule.mocks && <MockExamsRow examHref={examHref} mocks={plan.schedule.mocks} />}
 
-        {plan.examChoices.map((choice) => {
-          const picked = choice.options.find((option) => option.name === choice.subject);
-
-          return (
-            <PropertyRow key={choice.group} label={choice.group} onOpen={() => onOpen("choices")}>
-              <span className={cn(!picked && "text-warning-text font-medium")}>
-                {picked ? (picked.shortName ?? picked.name) : t("Choose")}
-              </span>
-            </PropertyRow>
-          );
-        })}
+        {plan.examChoices.map((choice) => (
+          <ExamChoiceRow choice={choice} key={choice.group} onOpen={() => onOpen("choices")} />
+        ))}
 
         {goal.kind === "language" && practiced.length > 0 && (
           <PropertyRow label={t("Practice")} onOpen={() => onOpen("practice")}>

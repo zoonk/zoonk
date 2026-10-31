@@ -7,7 +7,7 @@ import {
   getPartPointsPerQuestion,
   getPointsPerQuestion,
 } from "../../library/exams/part-points";
-import { listCountedSubjects } from "../choices/exam-choices";
+import { listCountedSubjects } from "../choices/choice-groups";
 import { getWrongPenalty } from "../scoring/mock-scoring";
 import { getChoiceFormatKey, getFormatSelection } from "./mock-format-mix";
 import { findAreaSubject } from "./mock-options";
@@ -281,7 +281,7 @@ function toMockMarking({
                 !isWrittenSubject({ structure, subject: item }),
             );
 
-            const places = listCountedSubjects(subjects);
+            const places = listCountedSubjects({ choiceGroups: structure.choiceGroups, subjects });
 
             const questions = places.every((item) => item.questions !== null)
               ? places.reduce((sum, item) => sum + (item.questions ?? 0), 0)

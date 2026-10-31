@@ -106,7 +106,7 @@ internal data class PlanEdits(
     val findTimeToCover: (Plan, (TimeToCoverOutcome) -> Unit) -> Unit = { _, _ -> },
     val chooseFocus: () -> Unit = {},
     val studyEverything: () -> Unit = {},
-    val chooseExamOption: (group: String, subject: String, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
+    val chooseExamOption: (group: String, subjects: List<String>, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
     val chooseTools: (ToolAnswer, (PlanChangeResult?) -> Unit) -> Unit = { _, _ -> },
     val setupLessons: ContentWritingWait? = null,
     val preview: suspend (List<PlanOp>) -> PlanChangePreview? = { null },

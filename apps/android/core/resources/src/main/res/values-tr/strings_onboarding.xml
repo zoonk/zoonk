@@ -50,6 +50,7 @@
   "onboarding_error_one_moment": "0a33d5eff996f065a55b48ae48f960b20a56e7a90deb9851e28ab7392b8d8d9f",
   "onboarding_exam_choice_choices": "f83f949d2cbe1090e954236c7156a08747a3a71fd6eaddd9bc31f4003e008085",
   "onboarding_exam_choice_options": "b9b0e9207db4e6da16ac615ecf5aba23c2a068d72deb49fcfcd4f2f012c0a70d",
+  "onboarding_exam_choice_options_take": "e37961297d307bf62c3ba91cf9ff448bb78a409a9032a21a6d98c3aabc2ea5db",
   "onboarding_exam_choice_title_one": "26950cd3c3461fc6ad4c7c3e5d37cf027e15302b09f74cacd3cfa3695f4233be",
   "onboarding_exam_choice_title_other": "07fb2722ce558c5467e58e30ce5ed86ac2614cecebc8165a0af58247ace6f098",
   "onboarding_exam_expected": "3cbb2e4ac6c21f6b4fba065b2fb796a7cfbcc6cc7e6ac2b53aa3f522d02264ff",
@@ -951,6 +952,11 @@
     <plurals name="onboarding_exam_choice_options">
         <item quantity="one">Sınavda %1$d %2$s seçeneği var. Planın ve deneme sınavların seçimine göre hazırlanır. Seçimini planından değiştirebilirsin.</item>
         <item quantity="other">Sınavda %1$d %2$s seçeneği var. Planın ve deneme sınavların seçimine göre hazırlanır. Seçimini planından değiştirebilirsin.</item>
+    </plurals>
+    <!-- Under the exam choice question when each candidate takes several of its options. %1$d counts the options; %2$s is the notice's name for the choice, such as the modules a course takes, in the notice's own language; %3$d is how many of the options each candidate takes, at least 2. -->
+    <plurals name="onboarding_exam_choice_options_take">
+        <item quantity="one">Sınavda %1$d farklı %2$s seçeneği var ve her aday bunlardan %3$d tanesini seçiyor. Planın ve deneme sınavların seçimlerine göre hazırlanıyor ve seçimlerini planında değiştirebilirsin.</item>
+        <item quantity="other">Sınavda %1$d farklı %2$s seçeneği var ve her aday bunlardan %3$d tanesini seçiyor. Planın ve deneme sınavların seçimlerine göre hazırlanıyor ve seçimlerini planında değiştirebilirsin.</item>
     </plurals>
     <!-- Under the exam choice question, for several choices. -->
     <plurals name="onboarding_exam_choice_choices">

@@ -237,6 +237,13 @@ const mockConditionsSchema = z.object({
 });
 
 export const examStructureSchema = z.object({
+  choiceGroups: z
+    .array(z.object({ name: z.string(), take: z.number().int().min(2) }))
+    .optional()
+    .meta({
+      description:
+        "The choices whose candidates take several of the options, by a subject's `choiceGroup`; every other choice takes one",
+    }),
   formats: z.array(blueprintFormatSchema),
   mock: mockConditionsSchema.nullable(),
   pastOptions: pastOptionsSchema.nullable().optional(),

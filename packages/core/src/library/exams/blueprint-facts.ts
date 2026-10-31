@@ -4,6 +4,7 @@ import { type FormatCount } from "@zoonk/ai/tasks/research/extract-question-form
 import { type PartialCreditRule } from "@zoonk/ai/tasks/research/partial-credit";
 import { splitEvenly } from "@zoonk/utils/split-evenly";
 import { normalizeString } from "@zoonk/utils/string";
+import { choiceFacts, describeChoice } from "./blueprint-choices";
 import { FORMAT_WORDS, type FactEntry, type FactSource, toFacts } from "./blueprint-fact-claims";
 import { testedLanguageFacts } from "./blueprint-language";
 import { mockFacts } from "./blueprint-mock-facts";
@@ -77,7 +78,7 @@ function subjectFacts({ documents, extraction, found }: FactSource): FactEntry[]
         },
         Boolean(subject.choiceGroup) && {
           id: `${id}.choiceGroup`,
-          statement: `${name} is one of the options of "${subject.choiceGroup}", of which each candidate takes only one`,
+          statement: describeChoice({ extraction, name, subject }),
         },
         Boolean(subject.partOf) && {
           id: `${id}.partOf`,
@@ -287,6 +288,7 @@ export function listBlueprintFacts({
 
   return [
     ...subjectFacts(source),
+    ...choiceFacts(source),
     ...formatFacts(source),
     ...mockFacts(source),
     ...editionFacts(source),

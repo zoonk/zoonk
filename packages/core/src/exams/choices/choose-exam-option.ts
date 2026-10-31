@@ -11,14 +11,14 @@ import { withPlanRetry } from "../../plans/plan-conflict";
 import { type PlanChangeView } from "../../plans/plan-view-contract";
 import { type PlanOperationError } from "../../plans/planner/plan-operations";
 import { type ExamChoiceInput } from "./exam-choice-contract";
-import { type ExamChoice, findChoiceOption } from "./exam-choices";
+import { type ExamChoice, findChosenOptions, isSamePick } from "./exam-choices";
 
 export type ExamChoiceResult =
   | { change: PlanChangeView | null; status: "applied" }
   | { error: PlanOperationError | "unknownOption"; status: "invalid" }
   | { status: "notFound" | "unauthorized" };
 
-const EXAM_CHOICE_NOTE = "The learner picked the option they take of one of the exam's choices.";
+const EXAM_CHOICE_NOTE = "The learner picked the options they take of one of the exam's choices.";
 
 export async function findOfferedChoices({
   choices,
@@ -40,8 +40,8 @@ export async function findOfferedChoices({
   const { structure } = readBlueprintContent(blueprint);
 
   const offered = choices.flatMap((choice) => {
-    const option = findChoiceOption({ choice, structure });
-    return option ? [{ group: choice.group, subject: option.name }] : [];
+    const options = findChosenOptions({ choice, structure });
+    return options ? [{ group: choice.group, subjects: options.map((option) => option.name) }] : [];
   });
 
   return offered.length === choices.length ? offered : null;
@@ -56,10 +56,7 @@ async function applyChoices({
 }): Promise<ExamChoiceResult> {
   const current = context.state.settings.examChoices;
 
-  const changed = choices.filter(
-    (choice) =>
-      !current.some((item) => item.group === choice.group && item.subject === choice.subject),
-  );
+  const changed = choices.filter((choice) => !current.some((item) => isSamePick(item, choice)));
 
   if (changed.length === 0) {
     return { change: null, status: "applied" };
@@ -102,7 +99,7 @@ export async function chooseExamOption({
     }
 
     const offered = await findOfferedChoices({
-      choices: [{ group: input.group, subject: input.subject }],
+      choices: [{ group: input.group, subjects: input.subjects }],
       goal: context.goal,
     });
 

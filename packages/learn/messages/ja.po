@@ -945,6 +945,7 @@ msgstr "キャンセル"
 #: src/appearance/buddy-settings.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/understood/understood-row.tsx
+#: src/plan/exam-choice-picks.tsx
 #: src/plan/plan-date.tsx
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "jvo0vs"
@@ -8996,16 +8997,22 @@ msgctxt "R8HSEX"
 msgid "Pick a date after today."
 msgstr "明日以降の日付を選んでください。"
 
+#: src/onboarding/steps/exam-choice-step.tsx
+msgctxt "_7GRXH"
+msgid "The exam has {count, plural, one {# choice} other {# choices}} to make. Your plan and mocks follow your picks, and you can change them in your plan."
+msgstr "この試験では、{count, plural, other {#項目}}について選択が必要です。選んだ内容が学習計画と模試に反映され、選択内容は学習計画で変更できます。"
+
+#. {group} is the notice's name for one of the exam's choices, such as the modules a course takes, which comes from the notice in its own language. {take} is how many of the options the exam's rules give each candidate
+#: src/onboarding/steps/exam-choice-step.tsx
+msgctxt "G_vCkI"
+msgid "The exam offers {count, plural, one {# option} other {# options}} for {group}, and each candidate takes {take, number} of them. Your plan and mocks follow the ones you pick, and you can change them in your plan."
+msgstr "試験では{count, plural, other {#個の選択肢}}が{group}に用意されており、各受験者はその中から{take, number}個を選んで受験します。学習計画と模試には選んだ内容が反映され、選択内容は学習計画で変更できます。"
+
 #. {group} is the notice's name for one of the exam's choices, such as a specialty or the foreign language, which comes from the notice in its own language
 #: src/onboarding/steps/exam-choice-step.tsx
 msgctxt "AdAHjB"
 msgid "The exam offers {count, plural, one {# option} other {# options}} for {group}. Your plan and mocks follow the one you pick, and you can change it in your plan."
 msgstr "この試験では、{count, plural, other {#個の選択肢}}から「{group}」を選びます。選んだ内容が学習計画と模試に反映され、選択内容は学習計画で変更できます。"
-
-#: src/onboarding/steps/exam-choice-step.tsx
-msgctxt "_7GRXH"
-msgid "The exam has {count, plural, one {# choice} other {# choices}} to make. Your plan and mocks follow your picks, and you can change them in your plan."
-msgstr "この試験では、{count, plural, other {#項目}}について選択が必要です。選んだ内容が学習計画と模試に反映され、選択内容は学習計画で変更できます。"
 
 #: src/onboarding/steps/exam-choice-step.tsx
 msgctxt "K8LmJV"
@@ -9016,6 +9023,12 @@ msgstr "後で決める"
 msgctxt "y_efbE"
 msgid "{count, plural, one {Which one will you take?} other {Which ones will you take?}}"
 msgstr "{count, plural, other {どの試験を受けますか？}}"
+
+#: src/onboarding/steps/exam-choice-step.tsx
+#: src/plan/exam-choice-picks.tsx
+msgctxt "cIh6nO"
+msgid "Pick up to {take, number}."
+msgstr "{take, number}項目まで選んでください。"
 
 #: src/onboarding/steps/full-course-toggle.tsx
 #: src/plan/plan-coverage-suggestion.tsx
@@ -10246,6 +10259,12 @@ msgstr "「週末は少なめにしたい」など、自分の言葉で伝えて
 msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "学習計画の調整"
+
+#: src/plan/plan-exam-choices.tsx
+#: src/today/today-exam-choice.tsx
+msgctxt "FXC8l3"
+msgid "{group}: which ones will you take?"
+msgstr "{group}：どれを受験しますか？"
 
 #: src/plan/plan-exam-choices.tsx
 #: src/today/today-exam-choice.tsx

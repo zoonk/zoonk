@@ -5,21 +5,30 @@ import XCTest
 
 final class ExamChoicePickTests: XCTestCase {
   private let software = "Tecnologia da Informação – Desenvolvimento de Sistemas"
+  private let modules = ["Biología", "Derecho", "Premedicina", "Química"]
 
   func testTheRevealSaysTheSpecialtyThePlanFollowsByItsShortName() throws {
-    let choice = try specialty(subject: software)
+    let choice = try specialty(subjects: [software])
 
-    XCTAssertEqual(choice.pickedName, "Desenvolvimento de Sistemas")
+    XCTAssertEqual(choice.pickedNames, "Desenvolvimento de Sistemas")
     XCTAssertEqual(choice.followingLine, "Following the Desenvolvimento de Sistemas syllabus")
   }
 
   func testAnOptionWithoutAShortNameIsNamedInFull() throws {
-    XCTAssertEqual(try specialty(subject: "Auditoria").pickedName, "Auditoria")
+    XCTAssertEqual(try specialty(subjects: ["Auditoria"]).pickedNames, "Auditoria")
+  }
+
+  func testSeveralPicksAreListedInTheNoticesOrder() throws {
+    let choice = try specialty(subjects: [software, "Auditoria"])
+
+    XCTAssertEqual(choice.pickedNames, "Auditoria and Desenvolvimento de Sistemas")
+    XCTAssertEqual(
+      choice.followingLine, "Following the Auditoria and Desenvolvimento de Sistemas syllabus")
   }
 
   func testAChoiceLeftForLaterOrNoLongerOfferedSaysNothingItFollows() throws {
-    XCTAssertNil(try specialty(subject: nil).followingLine)
-    XCTAssertNil(try specialty(subject: "Controle Interno").pickedName)
+    XCTAssertNil(try specialty(subjects: []).followingLine)
+    XCTAssertNil(try specialty(subjects: ["Controle Interno"]).pickedNames)
   }
 
   func testTheQuestionSaysWhatTheNoticeOffers() throws {
@@ -36,11 +45,57 @@ final class ExamChoicePickTests: XCTestCase {
     )
   }
 
-  private func choiceJSON(group: String, subject: String?) -> String {
-    let picked = subject.map { "\"\($0)\"" } ?? "null"
+  func testTheQuestionSaysHowManyOptionsACandidateTakes() throws {
+    let modules = try questionChoices(groups: ["Módulos disciplinares"], take: 2)
+
+    XCTAssertEqual(
+      examChoiceQuestionDescription(modules),
+      "The exam offers 2 options for Módulos disciplinares, and each candidate takes 2 of them. Your plan and mocks follow the ones you pick, and you can change them in your plan."
+    )
+  }
+
+  func testPicksStayInTheNoticesOrderUpToTheTake() {
+    var picks = ExamOptionPicks(options: modules, take: 2, names: [])
+
+    picks.set("Química", picked: true)
+    picks.set("Biología", picked: true)
+    XCTAssertEqual(picks.names, ["Biología", "Química"])
+
+    picks.set("Derecho", picked: true)
+    XCTAssertEqual(picks.names, ["Biología", "Química"])
+    XCTAssertFalse(picks.canPick("Derecho"))
+    XCTAssertTrue(picks.canPick("Química"))
+
+    picks.set("Química", picked: false)
+    XCTAssertTrue(picks.canPick("Derecho"))
+    picks.set("Derecho", picked: true)
+    XCTAssertEqual(picks.names, ["Biología", "Derecho"])
+  }
+
+  func testATakeOfOneHoldsOneOptionAtATime() {
+    var picks = ExamOptionPicks(options: modules, take: 1, names: ["Premedicina"])
+
+    picks.set("Biología", picked: true)
+    XCTAssertEqual(picks.names, ["Premedicina"])
+  }
+
+  func testSavingNeedsAPickThatIsNotTheSavedOne() {
+    let saved = ["Biología", "Química"]
+
+    XCTAssertFalse(ExamOptionPicks(options: modules, take: 2, names: []).canSave(over: []))
+    XCTAssertTrue(ExamOptionPicks(options: modules, take: 2, names: ["Derecho"]).canSave(over: []))
+    XCTAssertFalse(
+      ExamOptionPicks(options: modules, take: 2, names: ["Química", "Biología"]).canSave(
+        over: saved))
+    XCTAssertTrue(
+      ExamOptionPicks(options: modules, take: 2, names: ["Biología"]).canSave(over: saved))
+  }
+
+  private func choiceJSON(group: String, subjects: [String], take: Int = 1) throws -> String {
+    let picked = String(decoding: try JSONEncoder().encode(subjects), as: UTF8.self)
 
     return """
-      {"group":"\(group)","subject":\(picked),
+      {"group":"\(group)","subjects":\(picked),"take":\(take),
        "options":[{"name":"Auditoria","shortName":null},
                   {"name":"\(software)","shortName":"Desenvolvimento de Sistemas"}],
        "leftOut":{"examPoints":360,"examQuestions":null,"name":"Conhecimentos específicos (P3)",
@@ -48,14 +103,17 @@ final class ExamChoicePickTests: XCTestCase {
       """
   }
 
-  private func specialty(subject: String?) throws -> GoalPlan.ExamChoice {
+  private func specialty(subjects: [String]) throws -> GoalPlan.ExamChoice {
     try JSONDecoder().decode(
       GoalPlan.ExamChoice.self,
-      from: Data(choiceJSON(group: "Especialidade", subject: subject).utf8))
+      from: Data(try choiceJSON(group: "Especialidade", subjects: subjects).utf8))
   }
 
-  private func questionChoices(groups: [String]) throws -> [Components.Schemas.ExamChoice] {
-    let json = "[\(groups.map { choiceJSON(group: $0, subject: nil) }.joined(separator: ","))]"
+  private func questionChoices(groups: [String], take: Int = 1) throws
+    -> [Components.Schemas.ExamChoice]
+  {
+    let json = try
+      "[\(groups.map { try choiceJSON(group: $0, subjects: [], take: take) }.joined(separator: ","))]"
     return try JSONDecoder().decode([Components.Schemas.ExamChoice].self, from: Data(json.utf8))
   }
 }

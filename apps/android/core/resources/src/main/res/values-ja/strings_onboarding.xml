@@ -50,6 +50,7 @@
   "onboarding_error_one_moment": "64653fb4b3b925347bb592b292df0252b770f3b1642871db100986888678b58e",
   "onboarding_exam_choice_choices": "79be59a4def61dca2781d26dd818ecea8554e26c0b31b2ba2a0cb9c0cd796a2f",
   "onboarding_exam_choice_options": "305682d6c4eafa6e778e54bee9a67347d749798eb93d2115b2e126547c171cfb",
+  "onboarding_exam_choice_options_take": "4c17d24d7598e0a9ef709190a66e5f02c7533db2b0eb647db986b2718031f05e",
   "onboarding_exam_choice_title_one": "ea1cfd70783c2ad47235d792845fc82dddedb30758213d197488156c6b038202",
   "onboarding_exam_choice_title_other": "fe159555a3888c7ac60a1db9da79d17401f175a5caa5ea919fa2cb0e9bd92802",
   "onboarding_exam_expected": "e80119f20ae2aef610e4aec369943d745454038b2e89bfb37fbc4f12f711f890",
@@ -929,6 +930,10 @@
     <!-- Under the exam choice question. %1$d counts the options; %2$s is the notice's name for the choice, such as a specialty or the foreign language, in the notice's own language. -->
     <plurals name="onboarding_exam_choice_options">
         <item quantity="other">この試験では、%1$d種類の選択肢から%2$sを選べます。選んだ内容は学習計画と模試に反映され、学習計画で変更できます。</item>
+    </plurals>
+    <!-- Under the exam choice question when each candidate takes several of its options. %1$d counts the options; %2$s is the notice's name for the choice, such as the modules a course takes, in the notice's own language; %3$d is how many of the options each candidate takes, at least 2. -->
+    <plurals name="onboarding_exam_choice_options_take">
+        <item quantity="other">この試験では、%1$d個ある%2$sの選択肢から、受験者はそれぞれ%3$d個を選んで受けます。学習計画と模試には選んだ内容が反映されます。選択は学習計画で変更できます。</item>
     </plurals>
     <!-- Under the exam choice question, for several choices. -->
     <plurals name="onboarding_exam_choice_choices">

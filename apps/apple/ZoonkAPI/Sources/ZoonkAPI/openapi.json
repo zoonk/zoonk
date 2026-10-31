@@ -24372,11 +24372,16 @@
             "maxLength": 300,
             "description": "The notice's name for the choice group, such as Foreign language"
           },
-          "subject": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 300,
-            "description": "The option the learner takes: one of the choice's subjects, by name"
+          "subjects": {
+            "minItems": 1,
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            },
+            "description": "The options the learner takes, by name: from one to the choice's `take` of its subjects"
           },
           "timeZone": {
             "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
@@ -24385,7 +24390,7 @@
         },
         "required": [
           "group",
-          "subject"
+          "subjects"
         ],
         "additionalProperties": false
       },
@@ -28181,16 +28186,21 @@
             "maxLength": 300,
             "description": "The notice's name for the choice group, such as Foreign language"
           },
-          "subject": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 300,
-            "description": "The option the learner takes: one of the choice's subjects, by name"
+          "subjects": {
+            "minItems": 1,
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            },
+            "description": "The options the learner takes, by name: from one to the choice's `take` of its subjects"
           }
         },
         "required": [
           "group",
-          "subject"
+          "subjects"
         ],
         "additionalProperties": false
       },
@@ -36589,11 +36599,16 @@
                       "maxLength": 300,
                       "description": "The notice's name for the choice group, such as Foreign language"
                     },
-                    "subject": {
-                      "type": "string",
-                      "minLength": 1,
-                      "maxLength": 300,
-                      "description": "The option the learner takes: one of the choice's subjects, by name"
+                    "subjects": {
+                      "minItems": 1,
+                      "maxItems": 20,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 300
+                      },
+                      "description": "The options the learner takes, by name: from one to the choice's `take` of its subjects"
                     },
                     "kind": {
                       "type": "string",
@@ -36604,7 +36619,7 @@
                   },
                   "required": [
                     "group",
-                    "subject",
+                    "subjects",
                     "kind"
                   ],
                   "additionalProperties": false
@@ -78425,7 +78440,7 @@
               "questions"
             ],
             "additionalProperties": false,
-            "description": "What the plan and mocks leave out while nothing is picked: `name` is the test the options make up (a specialty's own test), or the choice itself. `points` and `questions` are what an option is worth and how many questions it has; `examPoints` and `examQuestions` the whole exam's with one option. Each is null when the notice doesn't say"
+            "description": "What the plan and mocks leave out while nothing is picked: `name` is the test the options make up (a specialty's own test), or the choice itself. `points` and `questions` are what the options a candidate takes are worth and how many questions they have; `examPoints` and `examQuestions` the whole exam's with them. Each is null when the notice doesn't say"
           },
           "options": {
             "type": "array",
@@ -78447,16 +78462,26 @@
               "additionalProperties": false
             }
           },
-          "subject": {
-            "nullable": true,
-            "type": "string"
+          "subjects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The options the learner picked, in the notice's order; empty while unpicked"
+          },
+          "take": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "How many of the options each candidate takes; a pick has one to this many"
           }
         },
         "required": [
           "group",
           "leftOut",
           "options",
-          "subject"
+          "subjects",
+          "take"
         ],
         "additionalProperties": false
       },
@@ -85739,6 +85764,28 @@
       "ExamStructure": {
         "type": "object",
         "properties": {
+          "choiceGroups": {
+            "description": "The choices whose candidates take several of the options, by a subject's `choiceGroup`; every other choice takes one",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "take": {
+                  "type": "integer",
+                  "minimum": 2,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "name",
+                "take"
+              ],
+              "additionalProperties": false
+            }
+          },
           "formats": {
             "type": "array",
             "items": {

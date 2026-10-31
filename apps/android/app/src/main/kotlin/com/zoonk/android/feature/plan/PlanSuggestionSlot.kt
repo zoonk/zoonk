@@ -121,7 +121,7 @@ internal fun slotItems(
     return buildList {
         if (page.isPaused) add(SlotItem.Paused)
         plan.examChoices
-            .filter { it.subject == null }
+            .filter { it.subjects.isEmpty() }
             .forEach { add(SlotItem.Choice(it)) }
         pastDate?.let { add(SlotItem.PastDate(it.lessons)) }
         if (finished) {
@@ -384,8 +384,8 @@ private fun SlotSuggestion(
                 failed = edits.hasFailed(PlanPart.ExamChoices),
                 pending = edits.isPending(PlanPart.ExamChoices),
                 answer = slot.shownAnswer(item),
-                onChoose = { subject ->
-                    edits.chooseExamOption(item.choice.group, subject) { answer ->
+                onChoose = { subjects ->
+                    edits.chooseExamOption(item.choice.group, subjects) { answer ->
                         answer?.change?.takeIf { answer.status == PlanChangeResult.Status.APPLIED }?.let {
                             slot.state.result = SlotResult(item, it)
                         }

@@ -56,7 +56,7 @@ test.describe("Exam choices API", () => {
     const apiContext = await request.newContext({ baseURL });
 
     const response = await apiContext.post(`/v1/goals/${randomUUID()}/plan/exam-choices`, {
-      data: { group: FOREIGN, subject: SPANISH },
+      data: { group: FOREIGN, subjects: [SPANISH] },
     });
 
     expect(response.status()).toBe(401);
@@ -84,26 +84,30 @@ test.describe("Exam choices API", () => {
           { name: "Língua Inglesa", shortName: "Inglês" },
           { name: SPANISH, shortName: "Espanhol" },
         ],
-        subject: null,
+        subjects: [],
+        take: 1,
       },
     ]);
 
     const picked = await readBody({
       response: await apiContext.post(`/v1/goals/${goal.id}/plan/exam-choices`, {
-        data: { group: FOREIGN, subject: SPANISH, timeZone: TIME_ZONE },
+        data: { group: FOREIGN, subjects: [SPANISH], timeZone: TIME_ZONE },
       }),
       schema: planChangeResultSchema,
     });
 
     expect(picked).toMatchObject({ change: null, status: "applied" });
-    await expect(loadPicks(goal.id)).resolves.toStrictEqual([{ group: FOREIGN, subject: SPANISH }]);
+
+    await expect(loadPicks(goal.id)).resolves.toStrictEqual([
+      { group: FOREIGN, subjects: [SPANISH] },
+    ]);
 
     const after = await readBody({
       response: await apiContext.get(`/v1/goals/${goal.id}/plan`),
       schema: planResponseSchema,
     });
 
-    expect(after.examChoices[0]?.subject).toBe(SPANISH);
+    expect(after.examChoices[0]?.subjects).toStrictEqual([SPANISH]);
     await apiContext.dispose();
   });
 
@@ -116,7 +120,7 @@ test.describe("Exam choices API", () => {
     const goal = await createChoiceGoal(user.id);
 
     const unknown = await apiContext.post(`/v1/goals/${goal.id}/plan/exam-choices`, {
-      data: { group: FOREIGN, subject: "Língua Francesa" },
+      data: { group: FOREIGN, subjects: ["Língua Francesa"] },
     });
 
     expect(unknown.status()).toBe(422);
@@ -126,7 +130,7 @@ test.describe("Exam choices API", () => {
     });
 
     const foreign = await other.apiContext.post(`/v1/goals/${goal.id}/plan/exam-choices`, {
-      data: { group: FOREIGN, subject: SPANISH },
+      data: { group: FOREIGN, subjects: [SPANISH] },
     });
 
     expect(foreign.status()).toBe(404);

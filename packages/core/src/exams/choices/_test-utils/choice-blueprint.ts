@@ -213,3 +213,55 @@ export function commonTestBlueprintFixture() {
     structure: COMMON_TEST_STRUCTURE,
   });
 }
+
+export const MODULES = "Módulos de conocimientos disciplinares";
+export const BIOLOGY = "Biología";
+export const LAW = "Derecho";
+export const ECONOMICS = "Economía";
+export const PREMED = "Premedicina";
+export const CHEMISTRY = "Química";
+export const READING_ES = "Comprensión lectora";
+
+const MODULE_QUESTIONS = 24;
+const PREMED_QUESTIONS = 48;
+const SKILL_QUESTIONS = 30;
+
+const moduleOption = { choiceGroup: MODULES };
+
+export const EXANI_STRUCTURE = {
+  choiceGroups: [{ name: MODULES, take: 2 }],
+  formats: [
+    { citation, description: "Tres opciones", kind: "multipleChoice" as const, options: 3 },
+  ],
+  mock: {
+    adaptive: false,
+    citations: [],
+    order: null,
+    scoring: { description: "", method: "raw" as const },
+    sections: [
+      { day: 1, kind: "objective" as const, minutes: 270, name: "EXANI-II", questions: 138 },
+    ],
+    timeLimitMinutes: 270,
+    totalQuestions: 138,
+  },
+  rules: [],
+  subjects: [
+    subject(BIOLOGY, MODULE_QUESTIONS, moduleOption),
+    subject(LAW, MODULE_QUESTIONS, moduleOption),
+    subject(ECONOMICS, MODULE_QUESTIONS, moduleOption),
+    subject(PREMED, PREMED_QUESTIONS, moduleOption),
+    subject(CHEMISTRY, MODULE_QUESTIONS, moduleOption),
+    subject(READING_ES, SKILL_QUESTIONS),
+    subject("Redacción indirecta", SKILL_QUESTIONS),
+    subject("Pensamiento matemático", SKILL_QUESTIONS),
+  ],
+};
+
+export function moduleBlueprintFixture() {
+  return examBlueprintFixture({
+    country: "MX",
+    language: "es",
+    name: "EXANI-II",
+    structure: EXANI_STRUCTURE,
+  });
+}

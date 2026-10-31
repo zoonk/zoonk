@@ -945,6 +945,7 @@ msgstr "Anuluj"
 #: src/appearance/buddy-settings.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/understood/understood-row.tsx
+#: src/plan/exam-choice-picks.tsx
 #: src/plan/plan-date.tsx
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "jvo0vs"
@@ -8996,16 +8997,22 @@ msgctxt "R8HSEX"
 msgid "Pick a date after today."
 msgstr "Wybierz datę późniejszą niż dzisiejsza."
 
+#: src/onboarding/steps/exam-choice-step.tsx
+msgctxt "_7GRXH"
+msgid "The exam has {count, plural, one {# choice} other {# choices}} to make. Your plan and mocks follow your picks, and you can change them in your plan."
+msgstr "Na egzaminie masz do podjęcia {count, plural, one {# decyzję} few {# decyzje} other {# decyzji}}. Twój plan i egzaminy próbne uwzględniają twoje wybory. Możesz je zmienić w planie."
+
+#. {group} is the notice's name for one of the exam's choices, such as the modules a course takes, which comes from the notice in its own language. {take} is how many of the options the exam's rules give each candidate
+#: src/onboarding/steps/exam-choice-step.tsx
+msgctxt "G_vCkI"
+msgid "The exam offers {count, plural, one {# option} other {# options}} for {group}, and each candidate takes {take, number} of them. Your plan and mocks follow the ones you pick, and you can change them in your plan."
+msgstr "Na egzaminie masz do wyboru {count, plural, one {# opcję} few {# opcje} other {# opcji}} w grupie: {group}. Każda osoba zdająca wybiera z nich {take, number}. Twój plan i egzaminy próbne uwzględniają wybrane opcje, które możesz zmienić w planie."
+
 #. {group} is the notice's name for one of the exam's choices, such as a specialty or the foreign language, which comes from the notice in its own language
 #: src/onboarding/steps/exam-choice-step.tsx
 msgctxt "AdAHjB"
 msgid "The exam offers {count, plural, one {# option} other {# options}} for {group}. Your plan and mocks follow the one you pick, and you can change it in your plan."
 msgstr "Na egzaminie masz do wyboru {count, plural, one {# opcję} few {# opcje} other {# opcji}} w kategorii: {group}. Twój plan i egzaminy próbne uwzględniają wybraną opcję. Możesz ją zmienić w planie."
-
-#: src/onboarding/steps/exam-choice-step.tsx
-msgctxt "_7GRXH"
-msgid "The exam has {count, plural, one {# choice} other {# choices}} to make. Your plan and mocks follow your picks, and you can change them in your plan."
-msgstr "Na egzaminie masz do podjęcia {count, plural, one {# decyzję} few {# decyzje} other {# decyzji}}. Twój plan i egzaminy próbne uwzględniają twoje wybory. Możesz je zmienić w planie."
 
 #: src/onboarding/steps/exam-choice-step.tsx
 msgctxt "K8LmJV"
@@ -9016,6 +9023,12 @@ msgstr "Zdecyduję później"
 msgctxt "y_efbE"
 msgid "{count, plural, one {Which one will you take?} other {Which ones will you take?}}"
 msgstr "{count, plural, one {Który egzamin będziesz zdawać?} other {Które egzaminy będziesz zdawać?}}"
+
+#: src/onboarding/steps/exam-choice-step.tsx
+#: src/plan/exam-choice-picks.tsx
+msgctxt "cIh6nO"
+msgid "Pick up to {take, number}."
+msgstr "Wybierz maksymalnie {take, number}."
 
 #: src/onboarding/steps/full-course-toggle.tsx
 #: src/plan/plan-coverage-suggestion.tsx
@@ -10246,6 +10259,12 @@ msgstr "Napisz własnymi słowami, np. „mniej w weekendy”. Zobaczysz zmianę
 msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "Dostosuj plan"
+
+#: src/plan/plan-exam-choices.tsx
+#: src/today/today-exam-choice.tsx
+msgctxt "FXC8l3"
+msgid "{group}: which ones will you take?"
+msgstr "{group}: które opcje wybierzesz?"
 
 #: src/plan/plan-exam-choices.tsx
 #: src/today/today-exam-choice.tsx

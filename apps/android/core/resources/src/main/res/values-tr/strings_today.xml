@@ -36,6 +36,7 @@
   "today_earlier_work_detail": "5a477151abbb1ce128d312202b51be6c03922ba19dfd75d129a37a91524dadba",
   "today_exam_choice_choose": "f00f538ae0d0895906ce1c25d3e9f7b9ad6c60adb7d27788b440da2a1efbd5ea",
   "today_exam_choice_question": "41060bc694067500d6ae4f7798c5472d7cb41f79e512b4b07d278626508f8936",
+  "today_exam_choice_question_several": "720ea6f284ddfb73e30990679c2adad4fc8e7e5018af0e1ba3f5a4d4f39d3dd9",
   "today_exam_speaking": "2ca91b3e54745f3a937bdf0a39a3f497443480278d87a2937a88deda7e4880a6",
   "today_exam_speaking_detail": "0c618ec9e40a8670065387dc2b4f7a0a94f154811d0873570170bb9a272db2f9",
   "today_exam_today": "1597c519e643e5e5e808609088c739fd234b75cfe7998a3259423b6378d0991c",
@@ -445,6 +446,8 @@
     <string name="today_notice_exam_choice">Sınav seçimi</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="today_exam_choice_question">%1$s: hangisini seçeceksin?</string>
+    <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
+    <string name="today_exam_choice_question_several">%1$s: hangilerinden sınava gireceksin?</string>
     <string name="today_exam_choice_choose">Seç</string>
     <string name="today_notice_plan_change">Önerilen değişiklik</string>
     <string name="today_plan_suggestion">Plan önerisi</string>

@@ -2306,6 +2306,65 @@
         }
       }
     },
+    "%@: which ones will you take?" : {
+      "comment" : "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: Welche wählst du aus?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: ¿cuáles vas a elegir?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ : quelles options vas-tu choisir ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: quali scegli?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@：どれを受験しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: 어떤 항목에 응시할 건가요?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: które opcje wybierasz?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: quais você vai fazer?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: hangilerini seçeceksin?"
+          }
+        }
+      }
+    },
     "%lld / %lld" : {
       "comment" : "Lessons done of a chapter's lessons\nLessons done of a phase's lessons",
       "localizations" : {
@@ -23183,6 +23242,65 @@
         }
       }
     },
+    "Pick up to %lld." : {
+      "comment" : "Over the options of an exam's choice whose candidates take several of them, like two of a course's modules",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähl bis zu %lld aus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige hasta %lld."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisis-en jusqu’à %lld."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scegline fino a %lld."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld個まで選んでください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최대 %lld개를 고르세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybierz maksymalnie %lld."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolha até %lld."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En fazla %lld seçenek seç."
+          }
+        }
+      }
+    },
     "Plan" : {
       "comment" : "Title of the Plan tab",
       "localizations" : {
@@ -24777,7 +24895,7 @@
       }
     },
     "Save" : {
-      "comment" : "Saves the goal's date\nSaves the tool choice",
+      "comment" : "Saves the goal's date\nSaves the options picked for an exam's choice\nSaves the tool choice",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -32595,7 +32713,7 @@
       }
     },
     "Your plan studies %@ for %@." : {
-      "comment" : "Says which option the plan studies for an exam's choice",
+      "comment" : "Says which options the plan studies for an exam's choice: the first argument lists them, the second is the choice, like its foreign language",
       "localizations" : {
         "de" : {
           "stringUnit" : {

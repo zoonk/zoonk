@@ -36,6 +36,7 @@
   "today_earlier_work_detail": "0b91cbe63b45ac7fdf919284dab611aaeb537c22b8bd4ae8c1f60bbe1082edd4",
   "today_exam_choice_choose": "98da2ef8581db6b02454aff3c21c6bbb1429944d70b52d55c155f4dff8c51b0b",
   "today_exam_choice_question": "f4d16e25d328076d6a6d8f25a92ac7da012ac56e3a721b1e53a2b75fbfb795fa",
+  "today_exam_choice_question_several": "8e37a9491038ab244c476866a69442ba7b9bc005564b03c64171668bb65beb10",
   "today_exam_speaking": "a795ad38a57785abfaf3e03fe6d4f4cc01dceed931dd718a6384ec842457e3fe",
   "today_exam_speaking_detail": "7cdb6ac705dc673969df28eb399ff43ac31d3a1c3384b84e44e6bf67968e8c09",
   "today_exam_today": "d9a18a38090e928c92968c26e037f04f11b541dfb161589e717623ebdbc8809d",
@@ -461,6 +462,8 @@
     <string name="today_notice_exam_choice">Elección de examen</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="today_exam_choice_question">%1$s: ¿cuál vas a presentar?</string>
+    <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
+    <string name="today_exam_choice_question_several">%1$s: ¿cuáles vas a presentar?</string>
     <string name="today_exam_choice_choose">Elegir</string>
     <string name="today_notice_plan_change">Cambio sugerido</string>
     <string name="today_plan_suggestion">Sugerencia para el plan</string>

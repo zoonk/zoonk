@@ -223,13 +223,13 @@ internal fun PlanProperties(
                 )
             }
             page.plan.examChoices.forEach { choice ->
-                val picked = choice.options.firstOrNull { it.name == choice.subject }
+                val picked = choice.pickedNames()
                 PropertyRow(
                     label = choice.group,
-                    value = picked?.let { it.shortName ?: it.name } ?: stringResource(R.string.plan_choose),
+                    value = if (picked.isEmpty()) stringResource(R.string.plan_choose) else joinList(picked),
                     onClick = onOpen?.let { { it(PlanSection.Choices) } },
                     onClickLabel = adjust,
-                    warning = picked == null,
+                    warning = picked.isEmpty(),
                 )
             }
             if (page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE) {

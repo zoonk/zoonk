@@ -416,9 +416,9 @@ class PlanViewModelTest {
         runTest {
             var readsWhenAnswered = -1
 
-            viewModel.chooseExamOption("Foreign language", "Spanish") { readsWhenAnswered = api.plans }
+            viewModel.chooseExamOption("Foreign language", listOf("Spanish")) { readsWhenAnswered = api.plans }
 
-            assertEquals(listOf("Foreign language" to "Spanish"), api.examChoices)
+            assertEquals(listOf("Foreign language" to listOf("Spanish")), api.examChoices)
             assertEquals(emptyMap<PlanPart, List<PlanOp>>(), viewModel.asked.value)
             assertEquals(1, readsWhenAnswered)
             assertEquals(

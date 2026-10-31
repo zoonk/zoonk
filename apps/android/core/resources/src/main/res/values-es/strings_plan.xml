@@ -252,6 +252,7 @@
   "plan_exam_choice_left_out_questions": "4b8e05cfe434da615ef130bb920edb86144e59e219ae3382f0484969cf4541ab",
   "plan_exam_choice_left_out_questions_of": "3a6f8469467a5b703cb7fa4fe5896bf3cf8365f3340dae8a2e028cc722e635a3",
   "plan_exam_choice_question": "93528fc11425860b3258bba5210ac893a297e486cbc0b55516ecacff92daf529",
+  "plan_exam_choice_question_several": "33680b1b455a19d37c7ec8e7bfbeff77de9c4b4e0bc305cc239243f7d3a5dc27",
   "plan_exam_date": "a059a0212363e0ca4e2aafd54ec1f5d95893b0b8de07b3902d5b5ac58ce33317",
   "plan_exam_date_label": "6ea13b09d342ff2ad2a1affe83d79516022db6d23a0ac7f32de773fd0c31f975",
   "plan_exam_day": "5f93cb66f01a1e3f3de68af3daf89a66137764ca5d7c4bd8d71c9471a4136d55",
@@ -1318,6 +1319,8 @@
     <string name="plan_time_on_weekends">Tiempo los fines de semana</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="plan_exam_choice_question">%1$s: ¿cuál vas a presentar?</string>
+    <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
+    <string name="plan_exam_choice_question_several">%1$s: ¿cuáles vas a presentar?</string>
     <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s and %3$s are points of the exam's score. -->
     <string name="plan_exam_choice_left_out_points">Hasta que elijas, tu plan y tus simulacros omiten %1$s: %2$s de los %3$s puntos del examen.</string>
     <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions; %3$s is the exam's. -->

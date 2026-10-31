@@ -130,7 +130,7 @@ interface PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
         group: String,
-        subject: String,
+        subjects: List<String>,
     ): PlanChangeResult
 
     /** A setup lesson nobody has needed yet answers with the run writing it; nothing is applied then. */
@@ -250,8 +250,8 @@ class LivePlanApi(
         session: AuthenticatedSession,
         goalId: UUID,
         group: String,
-        subject: String,
-    ) = perform { api.clients(session).plans.createPlanExamChoice(goalId, ExamChoiceInput(group, subject, deviceTimeZone())) }
+        subjects: List<String>,
+    ) = perform { api.clients(session).plans.createPlanExamChoice(goalId, ExamChoiceInput(group, subjects, deviceTimeZone())) }
 
     override suspend fun chooseTools(
         session: AuthenticatedSession,
@@ -367,8 +367,8 @@ class PlanStore(
     suspend fun chooseExamOption(
         goalId: UUID,
         group: String,
-        subject: String,
-    ): MutationResult<PlanChangeResult> = write(goalId) { api.chooseExamOption(it, goalId, group, subject) }
+        subjects: List<String>,
+    ): MutationResult<PlanChangeResult> = write(goalId) { api.chooseExamOption(it, goalId, group, subjects) }
 
     suspend fun chooseTools(
         goalId: UUID,

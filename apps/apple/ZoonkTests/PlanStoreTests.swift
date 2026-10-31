@@ -318,7 +318,7 @@ private actor PlanAPIStub: PlanAPIClient {
   { .saved }
   func preview(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangePreview?
   { nil }
-  func chooseExamOption(token: String, goalId: String, group: String, subject: String)
+  func chooseExamOption(token: String, goalId: String, group: String, subjects: [String])
     async throws -> PlanChangeOutcome
   { .unchanged }
   func chooseTools(

@@ -64,6 +64,22 @@ final class PlanEditor {
     return false
   }
 
+  @discardableResult
+  func chooseExamOptions(_ subjects: [String], in group: String) async -> Bool {
+    let goalId = goalId
+    let names = subjects.formatted(.list(type: .and))
+
+    return await apply(
+      sentence: String(
+        localized: "Your plan studies \(names) for \(group).", table: "Plan",
+        comment:
+          "Says which options the plan studies for an exam's choice: the first argument lists them, the second is the choice, like its foreign language"
+      )
+    ) { api, token in
+      try await api.chooseExamOption(token: token, goalId: goalId, group: group, subjects: subjects)
+    }
+  }
+
   func undo() async {
     guard !isSaving, case .applied(let change, _) = latest, change.canUndo else {
       return

@@ -18,6 +18,7 @@ struct TodayDayView: View {
   @State private var shownNotice: TodayView.Notice?
   @State private var examChecklist: Set<ExamView.ChecklistItem> = []
   @State private var examChoice: PlanEditor?
+  @State private var examChoiceDraft: [String] = []
   @State private var adjusting: AdjustPlanSheet.Section?
   @State private var answeredUpload: TodayView.UploadRequest?
   @State private var uploadDraft = MaterialDraft()
@@ -169,7 +170,9 @@ struct TodayDayView: View {
         FreeWeekOverNotice()
       }
     case .examChoice:
-      TodayExamChoiceSection(goalID: view.goal.id, choice: view.examChoice, editor: $examChoice)
+      TodayExamChoiceSection(
+        goalID: view.goal.id, choice: view.examChoice, editor: $examChoice,
+        draft: $examChoiceDraft)
     case .suggestedGoal:
       if let suggestion = view.suggestedGoal {
         SuggestedGoalSection(suggestion: suggestion)
@@ -335,6 +338,7 @@ struct TodayDayView: View {
   private func startVisit() {
     shownNotice = view.notice
     examChoice = nil
+    examChoiceDraft = []
     answeredUpload = nil
     store.dropAnsweredPlanChange()
   }

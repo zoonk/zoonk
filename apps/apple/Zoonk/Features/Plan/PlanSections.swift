@@ -697,7 +697,7 @@ struct PlanSettingsSection: View {
   }
 
   private func choiceValue(_ choice: GoalPlan.ExamChoice) -> Text {
-    guard let picked = choice.pickedName else {
+    guard let picked = choice.pickedNames else {
       return Text("Choose", tableName: "Plan", comment: "An exam choice not made yet")
         .foregroundStyle(.warning)
     }

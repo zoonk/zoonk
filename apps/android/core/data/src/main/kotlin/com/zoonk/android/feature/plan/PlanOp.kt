@@ -139,7 +139,7 @@ sealed interface PlanOp {
 
     data class ExamChoice(
         val group: String,
-        val subject: String,
+        val subjects: List<String>,
     ) : PlanOp
 
     data object Unknown : PlanOp
@@ -271,7 +271,7 @@ fun PlanOp.Companion.of(json: JsonObject): PlanOp =
         }
 
         "setExamChoice" -> {
-            PlanOp.ExamChoice(json.string("group").orEmpty(), json.string("subject").orEmpty())
+            PlanOp.ExamChoice(json.string("group").orEmpty(), json.strings("subjects"))
         }
 
         else -> {

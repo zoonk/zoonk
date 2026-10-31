@@ -50,6 +50,7 @@
   "onboarding_error_one_moment": "a0bd75621bae3f72d13d3d6257be248c2aafd51b0d88393d2dec7eb6177786cc",
   "onboarding_exam_choice_choices": "fd09bd7cc0d3c44582b1d84004d4ea724ab6edc1f03e8d2adf7486f680b28819",
   "onboarding_exam_choice_options": "973aec11edc96a0e7b98c5e7a08870e784de80b341bcef5616ee7367c2a23bdc",
+  "onboarding_exam_choice_options_take": "09250f7888bf9012edfa9466ebe0bc804aaeed66ad77b360d1595a29fa757415",
   "onboarding_exam_choice_title_one": "69732332a98a94a2494a63e98a78a81d82eb8a2363af16c1dff3cd22cfbf7bdc",
   "onboarding_exam_choice_title_other": "64140cc186bbead128781c4ebc6afeecf554dd055b864617bfe852f6fa42a178",
   "onboarding_exam_expected": "086a306c3064eb2e9b2cf6ac93351a7bec8e45d1b748dcd49c0e1e53f95b0b13",
@@ -951,6 +952,11 @@
     <plurals name="onboarding_exam_choice_options">
         <item quantity="one">Die Prüfung bietet %1$d Option für %2$s. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du im Plan ändern kannst.</item>
         <item quantity="other">Die Prüfung bietet %1$d Optionen für %2$s. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du im Plan ändern kannst.</item>
+    </plurals>
+    <!-- Under the exam choice question when each candidate takes several of its options. %1$d counts the options; %2$s is the notice's name for the choice, such as the modules a course takes, in the notice's own language; %3$d is how many of the options each candidate takes, at least 2. -->
+    <plurals name="onboarding_exam_choice_options_take">
+        <item quantity="one">Die Prüfung bietet %1$d Option für %2$s. Alle Teilnehmenden wählen jeweils %3$d davon aus. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl. Du kannst sie in deinem Plan ändern.</item>
+        <item quantity="other">Die Prüfung bietet %1$d Optionen für %2$s. Alle Teilnehmenden wählen jeweils %3$d davon aus. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl. Du kannst sie in deinem Plan ändern.</item>
     </plurals>
     <!-- Under the exam choice question, for several choices. -->
     <plurals name="onboarding_exam_choice_choices">

@@ -3,15 +3,12 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { toNameWords } from "@zoonk/utils/name-words";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getAnsweredQuestions } from "../../view-models/onboarding/onboarding-steps";
-import {
-  type ExamChoice,
-  type ExamPicks,
-  findChoiceOption,
-  listChoiceGroups,
-} from "./exam-choices";
+import { type ChoiceGroup, listChoiceGroups } from "./choice-groups";
+import { type ExamChoice, type ExamPicks, findChosenOptions } from "./exam-choices";
 import { scopeExamStructure } from "./exam-scope";
 
-type Option = Pick<ExamStructure["subjects"][number], "name" | "shortName">;
+type Subject = ExamStructure["subjects"][number];
+type Option = Pick<Subject, "name" | "shortName">;
 
 function toPhrase(text: string): string {
   return ` ${toNameWords(text).join(" ")} `;
@@ -32,29 +29,29 @@ function namesOption({ option, said }: { option: Option; said: string }): boolea
 }
 
 /**
- * The reading's position may hold more than the option ("Auditor de TI, desenvolvimento de
- * sistemas"); a typed answer must be the option's name, since nothing filtered what it rejects or
- * doubts ("possivelmente Auditoria").
+ * The reading's position may hold more than the options ("Auditor de TI, desenvolvimento de
+ * sistemas"); a typed answer must be an option's name, since nothing filtered what it rejects or
+ * doubts ("possivelmente Auditoria"). Null unless they name exactly as many as candidates take.
  */
-function findNamedOption({
-  options,
+function findNamedOptions({
+  group,
   read,
   typed,
 }: {
-  options: readonly Option[];
+  group: ChoiceGroup<Subject>;
   read: readonly string[];
   typed: readonly string[];
-}): string | null {
+}): string[] | null {
   const readPhrases = read.map((text) => toPhrase(text));
   const typedPhrases = typed.map((text) => toPhrase(text));
 
-  const named = options.filter(
+  const named = group.options.filter(
     (option) =>
       readPhrases.some((said) => saysOption({ option, said })) ||
       typedPhrases.some((said) => namesOption({ option, said })),
   );
 
-  return named.length === 1 ? (named[0]?.name ?? null) : null;
+  return named.length === group.take ? named.map((option) => option.name) : null;
 }
 
 /**
@@ -101,12 +98,12 @@ export function findNamedChoices({
   const { read, typed } = readStatedTexts(details);
   const structure = scopeExamStructure({ examSubjects: picks.examSubjects, structure: whole });
 
-  return listChoiceGroups(structure.subjects).flatMap((group) => {
+  return listChoiceGroups(structure).flatMap((group) => {
     const isPicked = picks.examChoices.some(
-      (choice) => choice.group === group.name && findChoiceOption({ choice, structure }),
+      (choice) => choice.group === group.name && findChosenOptions({ choice, structure }),
     );
 
-    const subject = isPicked ? null : findNamedOption({ options: group.options, read, typed });
-    return subject ? [{ group: group.name, subject }] : [];
+    const subjects = isPicked ? null : findNamedOptions({ group, read, typed });
+    return subjects ? [{ group: group.name, subjects }] : [];
   });
 }

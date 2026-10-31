@@ -6,6 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
+import { usePickedNames } from "./use-picked-names";
 
 function PlanChoiceLine({
   choice,
@@ -19,7 +20,7 @@ function PlanChoiceLine({
   const t = useExtracted();
   const id = useId();
   const leftOutLine = useChoiceLeftOutLine();
-  const picked = choice.options.find((option) => option.name === choice.subject);
+  const picked = usePickedNames(choice);
 
   return (
     <p
@@ -32,7 +33,7 @@ function PlanChoiceLine({
               description:
                 "{option} is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it",
               message: "Following the {option} syllabus",
-              values: { option: picked.shortName ?? picked.name },
+              values: { option: picked },
             })
           : leftOutLine(choice)}
       </span>

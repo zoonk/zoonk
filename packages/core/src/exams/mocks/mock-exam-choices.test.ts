@@ -8,7 +8,7 @@ import { type MockCandidate } from "./mock-plan";
 const citation = { passage: "", sourceId: "notice" };
 const LANGUAGES = "Languages, Codes and their Technologies";
 const GROUP = "Foreign language";
-const SPANISH: ExamChoice = { group: GROUP, subject: "Spanish" };
+const SPANISH: ExamChoice = { group: GROUP, subjects: ["Spanish"] };
 
 function enemDay(optionQuestions: number | null): ExamStructure {
   const option = (name: string) => ({

@@ -27,6 +27,7 @@
   "diff_line_spoken": "08ff92cf1c881e1ca729470a0829333fa8064c3e3340cb8cc68a11e08859ee2e",
   "disclosure_collapsed": "fcd7630ba4dc71efaab53d712b71e7b3497072e6c3f7bdfb54323dc86bab99ef",
   "disclosure_expanded": "ef1bf7e2d28892c32b244eafef0271c4189d5800fcc4a5b4b08879bfb573c0e7",
+  "exam_choice_pick_up_to": "0394ea194e2f963787f04e2e95fcc1da97fc23da6264d2b873576611c44be1b4",
   "gate_log_in": "1c71d46eaf237666a02992594fcf206f0995899f0f72eff412c4c5535e8b2162",
   "gate_session_ended_description": "ac5487ab0a5f8c25304efb1d1c05df078effbebbb65aeb0d5cef0f64e3b67f7b",
   "gate_session_ended_title": "04a43336bfd16031cd8f74d53077d2e4559fce680d6b05789deaa7fdc8c0e99c",
@@ -113,6 +114,8 @@
     <string name="load_failed_try_again">Tekrar dene</string>
     <string name="suggestion_view">Görüntüle</string>
     <string name="suggestion_save_failed">Kaydedilemedi. Tekrar dene.</string>
+    <!-- Above the options of an exam's choice when each candidate takes several of them, such as two of a course's modules. %1$d is how many, at least 2. -->
+    <string name="exam_choice_pick_up_to">En fazla %1$d seçenek seç.</string>
     <string name="disclosure_expanded">Genişletildi</string>
     <string name="disclosure_collapsed">Daraltıldı</string>
     <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->

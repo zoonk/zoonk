@@ -10,7 +10,7 @@ struct AdjustPlanSections: View {
 
   var body: some View {
     ForEach(plan.examChoices) { choice in
-      PlanExamChoiceSection(editor: editor, goal: goal, choice: choice)
+      PlanExamChoiceSection(editor: editor, choice: choice)
         .id(AdjustPlanSheet.Section.choice(choice.group))
     }
 
@@ -74,23 +74,32 @@ struct AdjustPlanSections: View {
 
 private struct PlanExamChoiceSection: View {
   let editor: PlanEditor
-  let goal: LearnerGoal
   let choice: GoalPlan.ExamChoice
 
+  @State private var draft: [String]?
+
   var body: some View {
+    if choice.take > 1 {
+      several
+    } else {
+      one
+    }
+  }
+
+  private var one: some View {
     Section {
       Picker(
         selection: Binding(
-          get: { choice.subject ?? "" },
+          get: { choice.subjects.first ?? "" },
           set: { subject in
-            guard !subject.isEmpty, subject != choice.subject else {
+            guard !subject.isEmpty, subject != choice.subjects.first else {
               return
             }
 
-            Task { await choose(subject) }
+            Task { await editor.chooseExamOptions([subject], in: choice.group) }
           })
       ) {
-        if choice.subject == nil {
+        if choice.subjects.isEmpty {
           Text("Choose", tableName: "Plan", comment: "An exam choice not made yet").tag("")
         }
 
@@ -106,22 +115,51 @@ private struct PlanExamChoiceSection: View {
         comment:
           "Asks which option of an exam's choice, like its foreign language, the learner takes")
     } footer: {
-      if choice.subject == nil {
-        Text(choice.leftOut.line)
-      }
+      leftOut
     }
   }
 
-  private func choose(_ subject: String) async {
-    let goalId = goal.id
-    let group = choice.group
+  private var several: some View {
+    let picked = draft ?? choice.subjects
+    let picks = ExamOptionPicks(
+      options: choice.options.map(\.name), take: choice.take, names: picked)
 
-    await editor.apply(
-      sentence: String(
-        localized: "Your plan studies \(subject) for \(group).", table: "Plan",
-        comment: "Says which option the plan studies for an exam's choice")
-    ) { api, token in
-      try await api.chooseExamOption(token: token, goalId: goalId, group: group, subject: subject)
+    return Section {
+      ExamOptionToggles(
+        options: choice.options, take: choice.take,
+        picked: Binding(get: { picked }, set: { draft = $0 }))
+
+      Button {
+        Task {
+          if await editor.chooseExamOptions(picks.names, in: choice.group) {
+            draft = nil
+          }
+        }
+      } label: {
+        Text("Save", tableName: "Plan", comment: "Saves the options picked for an exam's choice")
+      }
+      .disabled(!picks.canSave(over: choice.subjects))
+    } header: {
+      VStack(alignment: .leading, spacing: 2) {
+        Text(
+          "\(choice.group): which ones will you take?", tableName: "Plan",
+          comment:
+            "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several"
+        )
+        Text.examPickLimit(choice.take)
+          .fontWeight(.regular)
+      }
+    } footer: {
+      leftOut
+    }
+    .tint(.success)
+    .onChange(of: choice.subjects) { draft = nil }
+  }
+
+  @ViewBuilder
+  private var leftOut: some View {
+    if choice.subjects.isEmpty {
+      Text(choice.leftOut.line)
     }
   }
 }

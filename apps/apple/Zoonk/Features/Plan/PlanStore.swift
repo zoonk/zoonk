@@ -34,6 +34,8 @@ final class PlanStore {
   }
 
   struct SuggestionState {
+    /// The options ticked of each choice whose candidates take several, by its group.
+    var choiceDrafts: [String: [String]] = [:]
     var dismissed: Set<PlanSlotItem> = []
     var isWorking = false
   }

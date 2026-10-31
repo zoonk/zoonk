@@ -258,5 +258,5 @@ internal fun specialtyChoice(subject: String? = null) =
     """
     [{"group":"Especialidade","leftOut":{"examPoints":360,"examQuestions":null,"name":"Conhecimentos específicos (P3)","points":180,"questions":null},
       "options":[{"name":"Auditoria","shortName":null},{"name":"Tecnologia da Informação – Desenvolvimento de Sistemas","shortName":"Desenvolvimento de Sistemas"}],
-      "subject":${subject?.let { "\"$it\"" } ?: "null"}}]
+      "subjects":[${subject?.let { "\"$it\"" }.orEmpty()}],"take":1}]
     """.trimIndent()

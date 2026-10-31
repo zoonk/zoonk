@@ -111,7 +111,7 @@ async function findExamNotice({
         ? getNextSittingDays({ edition: blueprint.edition, today })
         : null,
     fromMaterial: Boolean(blueprint?.ownerId),
-    hasUnpickedChoice: views.some((choice) => choice.subject === null),
+    hasUnpickedChoice: views.some((choice) => choice.subjects.length === 0),
     noSitting: getNoSitting({ blueprint, details, goalDate, today }),
     subjects: subjects.map((subject) => ({
       name: subject.name,

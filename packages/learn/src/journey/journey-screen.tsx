@@ -233,7 +233,7 @@ function JourneyBody({
             <SyllabusSection subjectHref={links.subject} syllabus={structure}>
               {/* Unpicked choices are the suggestion's; from 72rem the aside's properties name the pick. */}
               <PlanChoiceLines
-                choices={plan.examChoices.filter((choice) => choice.subject)}
+                choices={plan.examChoices.filter((choice) => choice.subjects.length > 0)}
                 className={IN_COLUMN_CLASS}
                 onChange={() => editor.open("choices")}
               />

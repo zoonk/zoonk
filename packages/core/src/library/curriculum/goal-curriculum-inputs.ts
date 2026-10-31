@@ -4,6 +4,7 @@ import { type SkillGraphParams } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { type Course, type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { listChoiceGroups } from "../../exams/choices/choice-groups";
 import { readCourseStart } from "../../goals/course-start-details";
 import { getKnownSubjects, getOwnLevel } from "../../learner/placement/placement-contract";
 import { isOwnMaterialTest } from "../../learner/placement/placement-material";
@@ -132,9 +133,17 @@ export function toExamOutline(
   const structure = examStructureSchema.safeParse(blueprint.structure).data;
   const frequency = topicFrequencySchema.safeParse(blueprint.topicFrequency).data ?? [];
 
+  const choices = structure ? listChoiceGroups(structure) : [];
+
+  const takenOf = (name?: string | null) => {
+    const choice = choices.find((item) => item.name === name);
+    return choice ? { choiceTake: choice.take } : {};
+  };
+
   const subjects = structure
     ? structure.subjects.map((subject) => ({
         choiceGroup: subject.choiceGroup ?? null,
+        ...takenOf(subject.choiceGroup),
         group: subject.group ?? null,
         name: subject.name,
         questions: getSubjectQuestions({ structure, subject }),

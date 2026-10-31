@@ -36,6 +36,7 @@
   "today_earlier_work_detail": "fb4e43bb949e7390edbaadf9b024b019d2171c99983c1ede58a90d8cb6e5f658",
   "today_exam_choice_choose": "d9cb2efab69311bd9af3ec9931c30f4ab39f7cdf2072f2bf98a97e6e9ea81086",
   "today_exam_choice_question": "93e1b32f5a9903411411a50e91d300ed864a9196af5de8b7deb94cf517576cd7",
+  "today_exam_choice_question_several": "5f75f5d482baff7bc57de00486aea30ec495098cfaa63b9d27980343e459d082",
   "today_exam_speaking": "1222d5244052de4d91d18b4a8378b8b2617138a9c47dd764d23443b07449e8c6",
   "today_exam_speaking_detail": "d73c77b04f190aebda598654cb5778198b26b663ca9bbddf1092679f13a16d99",
   "today_exam_today": "d722fcc9661727a9967feaa8170260c88ebbc6551f962eaa55ced4f9629e5e8a",
@@ -429,6 +430,8 @@
     <string name="today_notice_exam_choice">試験の選択</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="today_exam_choice_question">%1$s：どれを受験しますか？</string>
+    <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
+    <string name="today_exam_choice_question_several">%1$s：どれを受験しますか？</string>
     <string name="today_exam_choice_choose">選ぶ</string>
     <string name="today_notice_plan_change">変更の提案</string>
     <string name="today_plan_suggestion">学習計画の提案</string>

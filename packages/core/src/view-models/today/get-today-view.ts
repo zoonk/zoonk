@@ -208,7 +208,7 @@ async function loadOpenExamChoice(goal: Goal): Promise<ExamChoiceView | null> {
     picks: readExamPicks(saved?.settings),
   });
 
-  return choices.find((choice) => !choice.subject) ?? null;
+  return choices.find((choice) => choice.subjects.length === 0) ?? null;
 }
 
 /** An empty message has nothing to say, as main's notice drew nothing for one. */

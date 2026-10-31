@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
 import reading from "./_test-utils/cgu-2026-structure.json";
+import { BIOLOGY, CHEMISTRY, EXANI_STRUCTURE, MODULES } from "./_test-utils/choice-blueprint";
 import { findNamedChoices } from "./named-exam-choices";
 
 const CGU = examStructureSchema.parse(reading);
@@ -41,26 +42,46 @@ function read(position: string) {
 describe(findNamedChoices, () => {
   it("picks the one option the reading's position names in full", () => {
     expect(named(read("Auditor de TI, desenvolvimento de sistemas"))).toStrictEqual([
-      { group: SPECIALTY, subject: SOFTWARE },
+      { group: SPECIALTY, subjects: [SOFTWARE] },
     ]);
 
     expect(named(read("Auditor Federal – Auditoria"))).toStrictEqual([
-      { group: SPECIALTY, subject: AUDIT },
+      { group: SPECIALTY, subjects: [AUDIT] },
     ]);
   });
 
   it("picks from a typed answer only when it is an option's whole name", () => {
     expect(named({ targetPosition: "Desenvolvimento de Sistemas" })).toStrictEqual([
-      { group: SPECIALTY, subject: SOFTWARE },
+      { group: SPECIALTY, subjects: [SOFTWARE] },
     ]);
 
     expect(named({ targetNote: "desenvolvimento de sistemas." })).toStrictEqual([
-      { group: SPECIALTY, subject: SOFTWARE },
+      { group: SPECIALTY, subjects: [SOFTWARE] },
     ]);
 
     expect(
       named({ followUps: [{ answer: "Inglês", question: "Qual idioma?" }] }, ENEM),
-    ).toStrictEqual([{ group: FOREIGN, subject: "Língua Inglesa" }]);
+    ).toStrictEqual([{ group: FOREIGN, subjects: ["Língua Inglesa"] }]);
+  });
+
+  it("picks the modules only when the learner names as many as candidates take", () => {
+    const exani = examStructureSchema.parse(EXANI_STRUCTURE);
+
+    expect(
+      named(
+        {
+          followUps: [
+            { answer: "Biología", question: "¿Qué módulos?" },
+            { answer: "Química", question: "¿Y el otro?" },
+          ],
+        },
+        exani,
+      ),
+    ).toStrictEqual([{ group: MODULES, subjects: [BIOLOGY, CHEMISTRY] }]);
+
+    expect(
+      named({ followUps: [{ answer: "Biología", question: "¿Qué módulos?" }] }, exani),
+    ).toStrictEqual([]);
   });
 
   it("asks when a typed answer says more than an option, such as a refusal or a doubt", () => {
@@ -96,7 +117,7 @@ describe(findNamedChoices, () => {
     expect(
       findNamedChoices({
         goal: { details },
-        picks: { examChoices: [{ group: SPECIALTY, subject: AUDIT }], examSubjects: [] },
+        picks: { examChoices: [{ group: SPECIALTY, subjects: [AUDIT] }], examSubjects: [] },
         structure: CGU,
       }),
     ).toStrictEqual([]);
@@ -109,11 +130,11 @@ describe(findNamedChoices, () => {
       findNamedChoices({
         goal: { details: { targetPosition: "Desenvolvimento de Sistemas" } },
         picks: {
-          examChoices: [{ group: SPECIALTY, subject: "Controle Interno" }],
+          examChoices: [{ group: SPECIALTY, subjects: ["Controle Interno"] }],
           examSubjects: [],
         },
         structure: CGU,
       }),
-    ).toStrictEqual([{ group: SPECIALTY, subject: SOFTWARE }]);
+    ).toStrictEqual([{ group: SPECIALTY, subjects: [SOFTWARE] }]);
   });
 });

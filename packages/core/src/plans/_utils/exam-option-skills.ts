@@ -1,9 +1,9 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { listChoiceGroups } from "../../exams/choices/choice-groups";
 import {
   type ExamPicks,
   findSubjectAreas,
-  listChoiceGroups,
   listUnchosenSubjects,
 } from "../../exams/choices/exam-choices";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
@@ -27,7 +27,7 @@ function listTakenOptions({
   untaken: ReadonlySet<string>;
 }): Set<string> {
   return new Set(
-    listChoiceGroups(structure.subjects).flatMap((group) =>
+    listChoiceGroups(structure).flatMap((group) =>
       group.options.flatMap((option) => (untaken.has(option.name) ? [] : [option.name])),
     ),
   );

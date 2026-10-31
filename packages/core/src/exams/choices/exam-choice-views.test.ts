@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
 import reading from "./_test-utils/cgu-2026-structure.json";
+import {
+  BIOLOGY,
+  CHEMISTRY,
+  EXANI_STRUCTURE,
+  MODULES,
+  PREMED,
+} from "./_test-utils/choice-blueprint";
 import { listExamChoiceViews } from "./exam-choice-views";
 
 const citation = { passage: "…", sourceId: "notice" };
@@ -26,7 +33,10 @@ const enem: ExamStructure = {
 describe(listExamChoiceViews, () => {
   it("shows each choice's options and the learner's pick, none while unpicked", () => {
     const [view] = listExamChoiceViews({
-      picks: { examChoices: [{ group: FOREIGN, subject: "Língua Espanhola" }], examSubjects: [] },
+      picks: {
+        examChoices: [{ group: FOREIGN, subjects: ["Língua Espanhola"] }],
+        examSubjects: [],
+      },
       structure: enem,
     });
 
@@ -37,12 +47,48 @@ describe(listExamChoiceViews, () => {
         { name: "Língua Inglesa", shortName: "Inglês" },
         { name: "Língua Espanhola", shortName: null },
       ],
-      subject: "Língua Espanhola",
+      subjects: ["Língua Espanhola"],
+      take: 1,
     });
 
     expect(
       listExamChoiceViews({ picks: { examChoices: [], examSubjects: [] }, structure: enem })[0]
-        ?.subject,
+        ?.subjects,
+    ).toStrictEqual([]);
+  });
+
+  it("asks for as many modules as candidates take, and says what two of them are worth", () => {
+    const exani = examStructureSchema.parse(EXANI_STRUCTURE);
+    const unpicked = { examChoices: [], examSubjects: [] };
+
+    const picked = {
+      examChoices: [{ group: MODULES, subjects: [BIOLOGY, CHEMISTRY] }],
+      examSubjects: [],
+    };
+
+    expect(listExamChoiceViews({ picks: unpicked, structure: exani })).toMatchObject([
+      {
+        group: MODULES,
+        leftOut: { examQuestions: 138, name: MODULES, questions: 48 },
+        subjects: [],
+        take: 2,
+      },
+    ]);
+
+    expect(listExamChoiceViews({ picks: picked, structure: exani })[0]?.subjects).toStrictEqual([
+      BIOLOGY,
+      CHEMISTRY,
+    ]);
+
+    const premedOnly = {
+      ...exani,
+      subjects: exani.subjects.map((item) =>
+        item.choiceGroup && item.name !== PREMED ? { ...item, questions: null } : item,
+      ),
+    };
+
+    expect(
+      listExamChoiceViews({ picks: unpicked, structure: premedOnly })[0]?.leftOut.questions,
     ).toBeNull();
   });
 

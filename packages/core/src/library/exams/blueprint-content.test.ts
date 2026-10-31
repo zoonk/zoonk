@@ -713,6 +713,67 @@ describe(toBlueprintContent, () => {
     ).toStrictEqual([null, null, null, null, null]);
   });
 
+  it("keeps how many options candidates take only when its claim was kept and the choice is real, with every option", () => {
+    const base = blueprintExtraction();
+    const [languages, math] = base.subjects;
+    const passages = languages!.passages;
+
+    const option = (name: string) => ({
+      ...math!,
+      choiceGroup: "Módulos",
+      name,
+      passages,
+      questions: 24,
+    });
+
+    const read = ({
+      keep = () => true,
+      modules,
+    }: {
+      keep?: (id: string) => boolean;
+      modules: string[];
+    }) =>
+      readWith({
+        extraction: blueprintExtraction({
+          choiceGroups: [{ name: "Módulos", passages, take: 2 }],
+          subjects: [languages!, ...modules.map((name) => option(name))],
+        }),
+        keep,
+      }).structure;
+
+    const three = ["Biología", "Química", "Derecho"];
+
+    expect(read({ modules: three }).choiceGroups).toStrictEqual([{ name: "Módulos", take: 2 }]);
+
+    expect(
+      read({ keep: (id) => id !== "choiceGroups.0", modules: three }).choiceGroups,
+    ).toBeUndefined();
+
+    const dropped = (keep: (id: string) => boolean) =>
+      read({ keep, modules: three }).subjects.map((subject) => subject.choiceGroup ?? null);
+
+    expect(dropped((id) => id !== "subjects.2.choiceGroup")).toStrictEqual([
+      null,
+      "Módulos",
+      "Módulos",
+      "Módulos",
+    ]);
+
+    expect(
+      dropped((id) => id !== "subjects.2.choiceGroup" && id !== "choiceGroups.0"),
+    ).toStrictEqual([null, "Módulos", null, "Módulos"]);
+
+    const two = read({ modules: ["Biología", "Química"] });
+
+    expect(two.choiceGroups).toBeUndefined();
+
+    expect(two.subjects.map((subject) => subject.choiceGroup ?? null)).toStrictEqual([
+      null,
+      null,
+      null,
+    ]);
+  });
+
   it("keeps a date whose start time the check rejected, without the time", () => {
     const content = readWith({ keep: (id) => id !== "dates.0.startTime" });
 

@@ -20,7 +20,7 @@ class PlanOpTest {
             planChange(
                 """[{"kind":"setDailyMinutes","minutes":40},{"kind":"setTargetDate","targetDate":null},
                    {"kind":"focusAreas","areas":["Math"],"parts":[{"area":"Math","name":"geometry","skillIds":["s1"]}]},
-                   {"kind":"addSkills","skills":[{"name":"SQL","skillId":"k1","lessons":3,"area":null,"beforeSkillId":null}]},{"kind":"setExamChoice","group":"Language","subject":"English"}]""",
+                   {"kind":"addSkills","skills":[{"name":"SQL","skillId":"k1","lessons":3,"area":null,"beforeSkillId":null}]},{"kind":"setExamChoice","group":"Language","subjects":["Biology","Chemistry"]}]""",
             )
 
         assertEquals(
@@ -29,7 +29,7 @@ class PlanOpTest {
                 PlanOp.TargetDate(null),
                 PlanOp.FocusAreas(listOf("Math"), listOf(FocusPart("Math", "geometry", listOf("s1")))),
                 PlanOp.AddSkills(listOf("SQL")),
-                PlanOp.ExamChoice("Language", "English"),
+                PlanOp.ExamChoice("Language", listOf("Biology", "Chemistry")),
             ),
             change.operations.map { it.op },
         )
@@ -80,7 +80,7 @@ class PlanOpTest {
             PlanOp.FollowNotice,
             PlanOp.NoticeDate(LocalDate.of(2027, 1, 31), estimated = true),
             PlanOp.FitPhaseDates,
-            PlanOp.ExamChoice("Language", "English"),
+            PlanOp.ExamChoice("Language", listOf("English")),
             PlanOp.Unknown,
         ).forEach { assertNull(it.toOperation()) }
     }
