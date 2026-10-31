@@ -1068,6 +1068,31 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testAClosedRefundIsReadAgainThoughThePlanStaysTheSame() async {
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(
+        makeAccount(subscription: makeWebSubscription(cancelAt: Date(timeIntervalSince1970: 0)))))
+    api.cancelWebPlusHandler = { _, _ in throw AccountAPIError.cancellationChoiceClosed }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    let cache = AppCache(session: session)
+    var withdrawal: WebPlusCancellation.Withdrawal? = .init(
+      refund: Money(amount: 29.9, currency: "BRL"), until: Date(timeIntervalSince1970: 0))
+    let choices: Resource<WebPlusCancellation> = cache.resource(
+      audience: .signedIn, domains: [.userSubscription]
+    ) { _ in WebPlusCancellation(withdrawal: withdrawal, periodEnd: nil) }
+    await choices.load()
+
+    withdrawal = nil
+    let result = await session.cancelWebPlus(withdraw: true)
+    await choices.load()
+
+    XCTAssertEqual(result, .choiceClosed)
+    XCTAssertNil(choices.value?.withdrawal)
+  }
+
+  @MainActor
   func testAFailedWebPlusCancellationKeepsTheAccount() async {
     let account = makeAccount(subscription: makeWebSubscription())
     let api = SessionStoreAPIStub(currentAccountResult: .success(account))

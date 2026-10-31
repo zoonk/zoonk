@@ -53,6 +53,70 @@ final class SettingsAPITests: XCTestCase {
     XCTAssertEqual(preferences.dailyLimitMinutes, 370)
     XCTAssertEqual(preferences.dailyLimitChoices, [5, 360, 370, 390])
   }
+
+  func testAStoppedRenewalStillReadsItsRefund() async throws {
+    let api = SettingsAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: WebPlusChoicesTransport(
+          status: .ok,
+          json: """
+            {
+              "cancellation": null,
+              "extraordinary": { "refund": { "amount": 19.5, "currency": "BRL" } },
+              "withdrawal": {
+                "refund": { "amount": 29.9, "currency": "BRL" },
+                "until": "2026-11-14T12:00:00.000Z"
+              }
+            }
+            """)))
+
+    let choices = try await api.getWebPlusCancellation(token: "token")
+
+    XCTAssertEqual(
+      choices,
+      WebPlusCancellation(
+        withdrawal: .init(
+          refund: Money(amount: 29.9, currency: "BRL"),
+          until: try Date("2026-11-14T12:00:00Z", strategy: .iso8601)),
+        periodEnd: nil))
+  }
+
+  func testNothingLeftToCancelIsNotFound() async {
+    let api = SettingsAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: WebPlusChoicesTransport(
+          status: .notFound,
+          json: #"{"error":{"code":"NOT_FOUND","message":"Nothing to cancel"}}"#)))
+
+    do {
+      _ = try await api.getWebPlusCancellation(token: "token")
+      XCTFail("Expected nothing to cancel")
+    } catch {
+      XCTAssertEqual(error as? APIError, .notFound)
+    }
+  }
+}
+
+private struct WebPlusChoicesTransport: ClientTransport {
+  let status: HTTPResponse.Status
+  let json: String
+
+  func send(
+    _ request: HTTPRequest,
+    body: HTTPBody?,
+    baseURL: URL,
+    operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    XCTAssertEqual(operationID, "getStripeSubscriptionCancellation")
+    XCTAssertEqual(request.headerFields[.authorization], "Bearer token")
+
+    return (
+      HTTPResponse(status: status, headerFields: [.contentType: "application/json"]),
+      HTTPBody(json)
+    )
+  }
 }
 
 private struct ProfileUpdateTransport: ClientTransport {

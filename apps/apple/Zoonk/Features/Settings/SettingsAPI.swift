@@ -13,6 +13,7 @@ protocol SettingsAPIClient: Sendable {
   func restoreMemoryFact(token: String, factId: String) async throws -> [MemoryFact]
   func getAllowance(token: String) async throws -> PlanAllowance
   func getFreePlan() async throws -> FreePlan
+  func getWebPlusCancellation(token: String) async throws -> WebPlusCancellation
   func exportMemory(token: String) async throws -> Data
   func exportAccountData(token: String) async throws -> Data
 }
@@ -143,6 +144,21 @@ struct SettingsAPI: SettingsAPIClient {
       switch try await client.getFreePlan() {
       case .ok(let response): return try PracticeJSON.recode(try response.body.json)
       default: throw APIError.unavailable
+      }
+    }
+  }
+
+  func getWebPlusCancellation(token: String) async throws -> WebPlusCancellation {
+    try await clients.perform(token: token) { client in
+      switch try await client.getStripeSubscriptionCancellation() {
+      case .ok(let response):
+        return WebPlusCancellation(try response.body.json)
+      case .unauthorized:
+        throw APIError.unauthorized
+      case .notFound:
+        throw APIError.notFound
+      default:
+        throw APIError.unavailable
       }
     }
   }

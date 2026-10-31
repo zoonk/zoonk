@@ -11,6 +11,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,12 +24,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.R
 import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Resource
+import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
+import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.api.models.StripeSubscriptionCancellation
 import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
+import com.zoonk.api.models.StripeSubscriptionCancellationRequest.Choice
 import kotlinx.coroutines.launch
 
 sealed interface WebPlusCancellationStep {
@@ -49,15 +56,14 @@ sealed interface WebPlusCancellationStep {
 /** Canceling a Plus bought on the web, kept across recreation so a refund's receipt isn't lost. */
 class WebPlusCancellationViewModel(
     private val readOptions: suspend () -> MutationResult<StripeSubscriptionCancellation>,
-    private val send: suspend (withdraw: Boolean) -> MutationResult<StripeSubscriptionCancellationReceipt>,
+    private val send: suspend (Choice) -> MutationResult<StripeSubscriptionCancellationReceipt>,
 ) : ViewModel() {
     var step by mutableStateOf<WebPlusCancellationStep>(WebPlusCancellationStep.Closed)
         private set
     var isOpening by mutableStateOf(false)
         private set
 
-    /** The choice on its way: true withdraws. */
-    var sending by mutableStateOf<Boolean?>(null)
+    var sending by mutableStateOf<Choice?>(null)
         private set
     var failed by mutableStateOf(false)
         private set
@@ -83,12 +89,18 @@ class WebPlusCancellationViewModel(
         }
     }
 
-    fun cancel(withdraw: Boolean) {
+    /** Opens choices already read, such as the refund still open after the renewal stopped. */
+    fun open(options: StripeSubscriptionCancellation) {
+        failed = false
+        step = WebPlusCancellationStep.Choosing(options)
+    }
+
+    fun cancel(choice: Choice) {
         if (step !is WebPlusCancellationStep.Choosing || sending != null) return
-        sending = withdraw
+        sending = choice
         failed = false
         viewModelScope.launch {
-            when (val result = send(withdraw)) {
+            when (val result = send(choice)) {
                 is MutationResult.Done -> {
                     step = WebPlusCancellationStep.Canceled(result.value)
                 }
@@ -123,6 +135,31 @@ internal fun WebPlusCancelButton(cancellation: WebPlusCancellationViewModel) {
             enabled = !cancellation.isOpening,
         ) { PendingLabel(cancellation.isOpening, stringResource(R.string.subscription_cancel)) }
         if (cancellation.failed && cancellation.step == WebPlusCancellationStep.Closed) CancelFailed()
+    }
+}
+
+/** Main's `RefundStillOpen`: stopping the renewal keeps the 14-day refund open. */
+@Composable
+internal fun WebPlusRefund(
+    choices: Resource<StripeSubscriptionCancellation>,
+    cancellation: WebPlusCancellationViewModel,
+) {
+    val state by choices.collectShown()
+    val scope = rememberCoroutineScope()
+    val failed = state as? LoadState.Failed
+    if (failed != null && failed.error != ApiError.NotFound) {
+        LoadFailedMessage(onRetry = { scope.launch { choices.refresh() } })
+        return
+    }
+    val options = state.value ?: return
+    val withdrawal = options.withdrawal ?: return
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(
+            stringResource(R.string.subscription_refund_still_open, planDate(withdrawal.until, currentLocale())),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        OutlinedButton(onClick = { cancellation.open(options) }) { Text(stringResource(R.string.subscription_get_refund)) }
     }
 }
 
@@ -181,13 +218,13 @@ private fun CancelChoices(
         confirmButton = {
             Column(horizontalAlignment = Alignment.End) {
                 if (options.withdrawal != null) {
-                    TextButton(onClick = { cancellation.cancel(withdraw = true) }, enabled = sending == null) {
-                        PendingLabel(sending == true, stringResource(R.string.subscription_cancel_withdraw))
+                    TextButton(onClick = { cancellation.cancel(Choice.WITHDRAWAL) }, enabled = sending == null) {
+                        PendingLabel(sending == Choice.WITHDRAWAL, stringResource(R.string.subscription_cancel_withdraw))
                     }
                 }
                 if (options.cancellation != null) {
-                    TextButton(onClick = { cancellation.cancel(withdraw = false) }, enabled = sending == null) {
-                        PendingLabel(sending == false, stringResource(R.string.subscription_cancel_confirm))
+                    TextButton(onClick = { cancellation.cancel(Choice.ORDINARY) }, enabled = sending == null) {
+                        PendingLabel(sending == Choice.ORDINARY, stringResource(R.string.subscription_cancel_confirm))
                     }
                 }
                 TextButton(onClick = cancellation::close, enabled = sending == null) {

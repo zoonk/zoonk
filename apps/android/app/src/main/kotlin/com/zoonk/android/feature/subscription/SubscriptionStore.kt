@@ -20,6 +20,7 @@ import com.zoonk.api.models.StoreSubscriptionResponse
 import com.zoonk.api.models.StripeSubscriptionCancellation
 import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
 import com.zoonk.api.models.StripeSubscriptionCancellationRequest
+import com.zoonk.api.models.StripeSubscriptionCancellationRequest.Choice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,7 +48,7 @@ interface SubscriptionApi {
 
     suspend fun cancelWebPlus(
         session: AuthenticatedSession,
-        withdraw: Boolean,
+        choice: Choice,
     ): StripeSubscriptionCancellationReceipt
 }
 
@@ -74,9 +75,9 @@ class LiveSubscriptionApi(
 
     override suspend fun cancelWebPlus(
         session: AuthenticatedSession,
-        withdraw: Boolean,
+        choice: Choice,
     ): StripeSubscriptionCancellationReceipt =
-        perform { api.clients(session).subscriptions.cancelStripeSubscription(StripeSubscriptionCancellationRequest(withdraw)) }
+        perform { api.clients(session).subscriptions.cancelStripeSubscription(StripeSubscriptionCancellationRequest(choice)) }
 }
 
 sealed interface PurchaseState {
@@ -126,6 +127,15 @@ class SubscriptionStore(
 
     val freePlan: Resource<FreePlan> = cache.resource(Audience.Everyone) { api.freePlan() }
 
+    /**
+     * What a Plus bought on the web whose renewal is stopped can still do, such as the 14-day refund.
+     * It asks Stripe, so only a plan screen showing such a Plus collects it.
+     */
+    val endingWebPlusChoices: Resource<StripeSubscriptionCancellation> =
+        cache.resource(Audience.SignedIn, setOf(DataDomain.UserSubscription)) { session ->
+            session?.let { api.webPlusCancellation(it) }
+        }
+
     val allowance: Resource<AllowanceResponse> =
         cache.resource(Audience.SignedIn, setOf(DataDomain.Allowance, DataDomain.Goals, DataDomain.UserSubscription)) { session ->
             session?.let { api.allowance(it) }
@@ -172,9 +182,9 @@ class SubscriptionStore(
             .also { if (it is MutationResult.Failed && it.error == ApiError.NotFound) readPlanAgain() }
 
     /** A 409 means the chosen option closed meanwhile, so the plan is read again. */
-    suspend fun cancelWebPlus(withdraw: Boolean): MutationResult<StripeSubscriptionCancellationReceipt> =
+    suspend fun cancelWebPlus(choice: Choice): MutationResult<StripeSubscriptionCancellationReceipt> =
         cache
-            .mutate(invalidating = SUBSCRIPTION_DOMAINS) { api.cancelWebPlus(it, withdraw) }
+            .mutate(invalidating = SUBSCRIPTION_DOMAINS) { api.cancelWebPlus(it, choice) }
             .also { if (it is MutationResult.Failed && it.status == HTTP_CONFLICT) readPlanAgain() }
 
     private fun readPlanAgain() = cache.invalidate(SUBSCRIPTION_DOMAINS)

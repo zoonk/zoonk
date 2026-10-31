@@ -55,6 +55,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -70,6 +71,7 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.Money
+import com.zoonk.api.models.StripeSubscriptionCancellation
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.time.ZoneId
@@ -138,7 +140,7 @@ private fun Account(
         is LoadState.Loaded -> {
             val subscription = state.value.account.subscription
             if (subscription != null) {
-                CurrentPlan(subscription, navigator, cancellation)
+                CurrentPlan(subscription, navigator, cancellation, app.subscriptions.endingWebPlusChoices)
             } else {
                 Offer(app, navigator, hasAccount = true, isVisitor = false)
             }
@@ -159,6 +161,7 @@ internal fun CurrentPlan(
     subscription: MeSubscription,
     navigator: AppNavigator,
     cancellation: WebPlusCancellationViewModel,
+    endingChoices: Resource<StripeSubscriptionCancellation>,
 ) {
     val context = LocalContext.current
     val isEnding = subscription.cancelAt != null
@@ -181,7 +184,7 @@ internal fun CurrentPlan(
     PlusBenefits()
 
     if (provider == STRIPE) {
-        if (!isEnding) WebPlusCancelButton(cancellation)
+        if (isEnding) WebPlusRefund(endingChoices, cancellation) else WebPlusCancelButton(cancellation)
         return
     }
 

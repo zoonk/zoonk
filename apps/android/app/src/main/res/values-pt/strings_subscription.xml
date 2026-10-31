@@ -34,7 +34,7 @@
   "subscription_cancel_failed": "47846af04dd2d54558271aa94972712d8c0a37089f920859cff8b66ecaf88dc2",
   "subscription_cancel_title": "eb19cfceefdf04e2fd18b88c781f0c32900db3250425e5d8ea8807d333c6585e",
   "subscription_cancel_unavailable": "f15896361c4a1016e1213f6d9f9af3f07cd17cfc98dfeecc04e97c1fd81e5450",
-  "subscription_cancel_withdraw": "bba75339904c14cdc3b8d735daf8add8ebd7313c68565c6c986c583434f35eb1",
+  "subscription_cancel_withdraw": "3bf5d6f923c16fc6aa427b00f555dfc8a576e57a676741296c139c00f0e8a158",
   "subscription_cancel_withdrawal": "256c43bfbce4c4a94fb8a6e4779839eeb822a1554994ae79a91dfee778f2d887",
   "subscription_canceled": "7b2f7bde7665cf04d24f1122b00d177da41e6f3f0e7919e228a0f3f1e2ae4158",
   "subscription_canceled_refund": "2ad9cc835c11308f70b517c401f23482440d14aeeafe4a847478ccc3e90a4217",
@@ -54,6 +54,7 @@
   "subscription_free_week_over_description": "180a0a2ffab7fc2e7ba047ca53eb16e12487bd7315772213f9e1105a0943334e",
   "subscription_free_week_over_title": "18ed15c59d2d0642dd68212ca0276633eda05d82a4705d677473d04e4f10fee4",
   "subscription_get_plus": "6dfadec23ccc89c9c3191abb8a333545eaea197087bfbc69ec6f153a5aa48cce",
+  "subscription_get_refund": "e02ab0471c72ce13bb93f4f47c1be91fa7faf020083443b7567f6b901954245f",
   "subscription_hide_answer": "296663cec16f65f11e37dd5154eb9aea2c89f4b37e4c40b75a4a2beaa84f767f",
   "subscription_keep_plus": "d5f3b42a6f983188b00d0049561dfae2c3410a81e230589bdb9926db71b17b79",
   "subscription_manage_google": "3350b3c34c2619bf6c0bb6c453f81cfd595325bb120ce397fda93f8edfc15474",
@@ -81,6 +82,7 @@
   "subscription_questions_email": "3291247dd4d0e8eacfaa54c4f48458f0d56932d281094020c10bd74a3cd36310",
   "subscription_questions_title": "c5b5d9e55149773e296c18f25c52bc316c93906f24a20e43c44a61a247a34253",
   "subscription_questions_unsure": "f2bfd023f229176779b84c25283f87be04c75d9875d7af8b4a87ad8ed0a94ef6",
+  "subscription_refund_still_open": "4a9ef67cb64842900cae2e8e3eca97656f3f18cf9bfba57d64a187868786fe9c",
   "subscription_renews_on": "0c88feb024bd57964a6ae8cec7551b66f22b9a4762c7587bda09be1dce267692",
   "subscription_save": "830f6d2099ff6f045f3697854d09171c4189136540aebd1199d718549142932f",
   "subscription_see_plus": "958d1b574b42a2fec152c77e8daade81f8ff754c0441adf78a62b4789aa873cc",
@@ -120,8 +122,8 @@
     <string name="subscription_cancel_title">Cancelar o Plus?</string>
     <!-- Within 14 days of subscribing. %1$s is the last day of the refund, like "Nov 14, 2026"; %2$s the amount, like "R$ 29,90". -->
     <string name="subscription_cancel_withdrawal">Até %1$s, você pode receber um reembolso total de %2$s. O Plus acaba na hora.</string>
-    <!-- Ends Plus now and refunds all of it. German law (BGB § 356a) requires this button to read exactly "Widerruf bestätigen" in German. -->
-    <string name="subscription_cancel_withdraw">Cancelar e receber reembolso</string>
+    <!-- Confirms withdrawing from the contract with a full refund. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Widerruf bestätigen”, in French “Confirmer la rétractation”, in Spanish “Confirmar desistimiento”, in Portuguese “Confirmar retratação”, in Italian “Conferma recesso”, in Polish “Potwierdź odstąpienie od umowy”. -->
+    <string name="subscription_cancel_withdraw">Confirmar retratação</string>
     <!-- Stopping the renewal. %1$s is the day Plus ends, like "Nov 14, 2026". -->
     <string name="subscription_cancel_at_period_end">Você continua com o Plus até %1$s, quando ele acaba. Não haverá novas cobranças.</string>
     <!-- Stopping the renewal after a yearly renewal. %1$s is the day Plus ends, like "Nov 14, 2026"; %2$s the amount refunded for the months that haven't started, like "R$ 99,90". -->
@@ -135,6 +137,8 @@
     <string name="subscription_canceled">O Plus foi cancelado. A gente enviou a confirmação por e-mail.</string>
     <!-- %1$s is the amount refunded, like "R$ 29,90". -->
     <string name="subscription_canceled_refund">A gente reembolsou %1$s pela mesma forma de pagamento que você usou. O Plus foi cancelado. A gente enviou a confirmação por e-mail.</string>
+    <string name="subscription_refund_still_open">Até %1$s, você ainda pode cancelar o Plus na hora e receber um reembolso integral.</string>
+    <string name="subscription_get_refund">Receber reembolso total</string>
     <!-- The cancel option the learner chose closed meanwhile, such as the 14-day refund. -->
     <string name="subscription_cancel_unavailable">Essa opção não está mais disponível.</string>
     <!-- Closes a message after canceling. -->

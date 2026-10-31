@@ -127,6 +127,18 @@ final class AccountAPITests: XCTestCase {
     XCTAssertEqual(synchronization.account.account.subscription?.provider, "apple")
   }
 
+  func testCancelingWebPlusSendsOnlyTheChoice() async throws {
+    let transport = WebPlusCancelTransport()
+    let api = AccountAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!, transport: transport))
+
+    _ = try await api.cancelWebPlus(token: "test-session", withdraw: true)
+    _ = try await api.cancelWebPlus(token: "test-session", withdraw: false)
+
+    XCTAssertEqual(transport.sentBodies.value, [["choice": "withdrawal"], ["choice": "ordinary"]])
+  }
+
   func testInvalidAppleSubscriptionResponseRemainsDistinct() async {
     let api = AccountAPI(
       clients: APIClientFactory(
@@ -226,6 +238,41 @@ private struct CurrentAccountTransport: ClientTransport {
         #"{"account":{"deletion":{"hasAppleAccount":false},"hasActiveSubscription":false,"subscription":null},"user":{"analyticsDisabled":false,"createdAt":"2026-08-15T12:34:56.000Z","displayUsername":null,"email":"learner@zoonk.test","emailVerified":true,"id":"test-user","image":null,"name":"Learner","updatedAt":"2026-08-15T12:34:56.000Z","username":null}}"#
       )
     )
+  }
+}
+
+private struct WebPlusCancelTransport: ClientTransport {
+  let sentBodies = SentJSONBodies()
+
+  func send(
+    _ request: HTTPRequest,
+    body: HTTPBody?,
+    baseURL: URL,
+    operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    XCTAssertEqual(operationID, "cancelStripeSubscription")
+    let data = try await Data(collecting: try XCTUnwrap(body), upTo: 1_024)
+    sentBodies.append(try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: String]))
+
+    return (
+      HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
+      HTTPBody(
+        #"{"endsAt":"2026-10-31T12:00:00.000Z","receivedAt":"2026-10-31T12:00:00.000Z","refund":null}"#
+      )
+    )
+  }
+}
+
+private final class SentJSONBodies: @unchecked Sendable {
+  private let lock = NSLock()
+  private var bodies: [[String: String]] = []
+
+  var value: [[String: String]] {
+    lock.withLock { bodies }
+  }
+
+  func append(_ body: [String: String]) {
+    lock.withLock { bodies.append(body) }
   }
 }
 

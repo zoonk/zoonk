@@ -1169,35 +1169,6 @@
         }
       }
     },
-    "Cancel and get a refund" : {
-      "comment" : "Confirms withdrawing from the contract with a full refund (EU Consumer Rights Directive art. 11a). In German it must read exactly “Widerruf bestätigen” (BGB § 356a).",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Widerruf bestätigen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancelar y recibir un reembolso"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Annuler et se faire rembourser"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancelar e receber reembolso"
-          }
-        }
-      }
-    },
     "Cancel now" : {
       "comment" : "Confirms canceling the subscription; Plus stays until the date in the dialog's message. In German it must read exactly “Jetzt kündigen” (BGB § 312k).",
       "localizations" : {
@@ -1525,6 +1496,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dúvidas frequentes"
+          }
+        }
+      }
+    },
+    "Confirm withdrawal" : {
+      "comment" : "Confirms withdrawing from the contract with a full refund. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Widerruf bestätigen”, in French “Confirmer la rétractation”, in Spanish “Confirmar desistimiento”, in Portuguese “Confirmar retratação”, in Italian “Conferma recesso”, in Polish “Potwierdź odstąpienie od umowy”.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widerruf bestätigen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmar desistimiento"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmer la rétractation"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmar retratação"
           }
         }
       }
@@ -2328,6 +2328,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Grátis"
+          }
+        }
+      }
+    },
+    "Get a full refund" : {
+      "comment" : "Opens the 14-day full refund of Plus bought on the web whose renewal is stopped",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vollen Betrag erstatten lassen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtener un reembolso completo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtenir un remboursement intégral"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Receber reembolso integral"
           }
         }
       }
@@ -4509,6 +4538,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Até %1$@, você pode receber o reembolso integral de %2$@. O Plus termina na hora."
+          }
+        }
+      }
+    },
+    "Until %@, you can still end Plus now and get a full refund." : {
+      "comment" : "Once the renewal of Plus bought on the web is stopped, under the button that still gives the 14-day full refund; the argument is its last day",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bis zum %@ kannst du Plus noch sofort beenden und bekommst den vollen Betrag zurück."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta el %@, aún puedes cancelar Plus de inmediato y recibir un reembolso completo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jusqu’au %@, tu peux encore résilier Plus dès maintenant et obtenir un remboursement intégral."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Até %@, você ainda pode encerrar o Plus agora e receber um reembolso integral."
           }
         }
       }

@@ -14,6 +14,7 @@ final class SettingsStore {
   let memory: Resource<LearnerMemory>
   let allowance: Resource<PlanAllowance>
   let freePlan: Resource<FreePlan>
+  private let endingWebPlusChoices: Resource<WebPlusCancellation>
 
   /// Kept with the learner it's about, so the next learner never sees it.
   private struct Notice {
@@ -70,6 +71,15 @@ final class SettingsStore {
     preferenceSaves = QueuedSaves(preferences, cache: cache)
     memorySaves = QueuedSaves(memory, cache: cache)
     freePlan = cache.resource(audience: .everyone) { _ in try await api.getFreePlan() }
+    endingWebPlusChoices = signedIn([.userSubscription]) {
+      try await api.getWebPlusCancellation(token: $0)
+    }
+  }
+
+  /// What a Plus bought on the web whose renewal is stopped can still do, such as the 14-day
+  /// refund. It asks Stripe, so any other plan has none.
+  func endingWebPlus(for subscription: AccountSubscription) -> Resource<WebPlusCancellation>? {
+    subscription.provider == "stripe" && subscription.cancelAt != nil ? endingWebPlusChoices : nil
   }
 
   func updatePreferences(_ update: PreferencesUpdate) async {

@@ -254,6 +254,46 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertEqual(store.undoStatus, .idle)
   }
 
+  func testOnlyAWebPlusWhoseRenewalStoppedAsksStripeWhatsStillOpen() async {
+    let api = SettingsAPIStub()
+    let store = makeStore(api: api)
+    let ends = Date(timeIntervalSince1970: 2_000_000_000)
+
+    XCTAssertNil(
+      store.endingWebPlus(
+        for: AccountSubscription(plan: "plus", provider: "stripe", status: "active")))
+    XCTAssertNil(
+      store.endingWebPlus(
+        for: AccountSubscription(plan: "plus", provider: "apple", status: "active", cancelAt: ends))
+    )
+
+    let choices = store.endingWebPlus(
+      for: AccountSubscription(plan: "plus", provider: "stripe", status: "active", cancelAt: ends))
+    await choices?.load()
+
+    XCTAssertEqual(choices?.value, .refundStillOpen)
+    let tokens = await api.webPlusCancellationTokens
+    XCTAssertEqual(tokens, ["preview-session"])
+  }
+
+  func testAWebPlusRefundThatDidntLoadFailsUntilTriedAgain() async {
+    let api = SettingsAPIStub()
+    await api.failWebPlusCancellation(with: APIError.unavailable)
+    let store = makeStore(api: api)
+    let choices = store.endingWebPlus(
+      for: AccountSubscription(
+        plan: "plus", provider: "stripe", status: "active",
+        cancelAt: Date(timeIntervalSince1970: 2_000_000_000)))
+
+    await choices?.show()
+    XCTAssertEqual(choices?.state, .failed(.unavailable))
+
+    await api.failWebPlusCancellation(with: nil)
+    await choices?.refresh()
+
+    XCTAssertEqual(choices?.value, .refundStillOpen)
+  }
+
   func testExportFailureDoesNotSayASettingDidNotSave() async {
     let store = makeStore(api: SettingsAPIStub(exportError: APIError.network))
 
@@ -280,6 +320,7 @@ final class SettingsStoreTests: XCTestCase {
 private actor SettingsAPIStub: SettingsAPIClient {
   private(set) var updates: [PreferencesUpdate] = []
   private(set) var restoredFactIds: [String] = []
+  private(set) var webPlusCancellationTokens: [String] = []
   private var beforeDelete: (@MainActor @Sendable () async -> Void)?
   private var holdsDeletes = false
   private var heldDelete: CheckedContinuation<Void, Error>?
@@ -287,6 +328,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
   private var heldUpdateResponse: CheckedContinuation<Void, Error>?
   private var holdsEdits = false
   private var heldEdit: CheckedContinuation<Void, Error>?
+  private var webPlusCancellationError: Error?
 
   private let updateError: Error?
   private let deleteError: Error?
@@ -429,6 +471,20 @@ private actor SettingsAPIStub: SettingsAPIClient {
     throw APIError.unavailable
   }
 
+  func getWebPlusCancellation(token: String) async throws -> WebPlusCancellation {
+    webPlusCancellationTokens.append(token)
+
+    if let webPlusCancellationError {
+      throw webPlusCancellationError
+    }
+
+    return .refundStillOpen
+  }
+
+  func failWebPlusCancellation(with error: Error?) {
+    webPlusCancellationError = error
+  }
+
   nonisolated func exportMemory(token: String) async throws -> Data { Data() }
 
   func exportAccountData(token: String) async throws -> Data {
@@ -449,6 +505,13 @@ extension LearningPreferences {
     dailyTimes: [15, 30, 45],
     shareUsageData: true,
     soundsEnabled: true)
+}
+
+extension WebPlusCancellation {
+  fileprivate static let refundStillOpen = WebPlusCancellation(
+    withdrawal: .init(
+      refund: Money(amount: 29.9, currency: "BRL"), until: Date(timeIntervalSince1970: 1_000)),
+    periodEnd: nil)
 }
 
 extension MemoryFact {

@@ -408,6 +408,7 @@ struct PlusBenefits: View {
 struct PlusStatusView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(SessionStore.self) private var session
+  @Environment(SettingsStore.self) private var settings
   @State private var choices: WebPlusCancellation?
   @State private var outcome: CancellationOutcome?
   @State private var cancellationFailed = false
@@ -461,15 +462,58 @@ struct PlusStatusView: View {
       if subscription.provider == "stripe" {
         if subscription.cancelAt == nil {
           Section {
-            cancelButton
-          } footer: {
-            if cancellationFailed {
+            choicesButton(
               Text(
-                "Unable to manage your subscription. Contact us at hello@zoonk.com",
-                tableName: "Account", comment: "Canceling the web subscription failed"
-              )
-              .foregroundStyle(.destructive)
+                "Cancel subscription", tableName: "Account",
+                comment: "Asks to cancel Plus bought on the web")
+            ) {
+              run(loadChoices)
             }
+          } footer: {
+            cancellationFailedMessage
+          }
+        } else if let endingChoices {
+          switch endingChoices.state {
+          case .loaded(let choices):
+            if let withdrawal = choices.withdrawal {
+              Section {
+                choicesButton(
+                  Text(
+                    "Get a full refund", tableName: "Account",
+                    comment:
+                      "Opens the 14-day full refund of Plus bought on the web whose renewal is stopped"
+                  )
+                ) {
+                  cancellationFailed = false
+                  self.choices = choices
+                }
+              } footer: {
+                VStack(alignment: .leading, spacing: 8) {
+                  Text(
+                    "Until \(day(withdrawal.until)), you can still end Plus now and get a full refund.",
+                    tableName: "Account",
+                    comment:
+                      "Once the renewal of Plus bought on the web is stopped, under the button that still gives the 14-day full refund; the argument is its last day"
+                  )
+
+                  cancellationFailedMessage
+                }
+              }
+            }
+          case .failed(let error) where error != .notFound:
+            Section {
+              Button {
+                Task { await endingChoices.refresh() }
+              } label: {
+                Text(
+                  "Try again", tableName: "Account",
+                  comment: "Loads the 14-day refund of Plus bought on the web again")
+              }
+            } footer: {
+              manageFailedMessage
+            }
+          case .idle, .loading, .empty, .failed:
+            EmptyView()
           }
         }
       } else {
@@ -484,6 +528,7 @@ struct PlusStatusView: View {
         }
       }
     }
+    .modifier(EndingWebPlusLoading(choices: endingChoices))
     .onDisappear {
       working?.cancel()
       working = nil
@@ -520,14 +565,29 @@ struct PlusStatusView: View {
     .toolbarTitleDisplayMode(.inline)
   }
 
-  private var cancelButton: some View {
-    Button {
-      run(loadChoices)
-    } label: {
+  private var endingChoices: Resource<WebPlusCancellation>? {
+    settings.endingWebPlus(for: subscription)
+  }
+
+  @ViewBuilder
+  private var cancellationFailedMessage: some View {
+    if cancellationFailed {
+      manageFailedMessage
+    }
+  }
+
+  private var manageFailedMessage: some View {
+    Text(
+      "Unable to manage your subscription. Contact us at hello@zoonk.com",
+      tableName: "Account", comment: "Canceling the web subscription failed"
+    )
+    .foregroundStyle(.destructive)
+  }
+
+  private func choicesButton(_ title: Text, action: @escaping () -> Void) -> some View {
+    Button(action: action) {
       HStack {
-        Text(
-          "Cancel subscription", tableName: "Account",
-          comment: "Asks to cancel Plus bought on the web")
+        title
 
         Spacer()
 
@@ -548,9 +608,9 @@ struct PlusStatusView: View {
           run { await cancel(withdraw: true) }
         } label: {
           Text(
-            "Cancel and get a refund", tableName: "Account",
+            "Confirm withdrawal", tableName: "Account",
             comment:
-              "Confirms withdrawing from the contract with a full refund (EU Consumer Rights Directive art. 11a). In German it must read exactly “Widerruf bestätigen” (BGB § 356a)."
+              "Confirms withdrawing from the contract with a full refund. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Widerruf bestätigen”, in French “Confirmer la rétractation”, in Spanish “Confirmar desistimiento”, in Portuguese “Confirmar retratação”, in Italian “Conferma recesso”, in Polish “Potwierdź odstąpienie od umowy”."
           )
         }
       }
@@ -705,6 +765,18 @@ struct PlusStatusView: View {
 private enum CancellationOutcome {
   case canceled(refund: Money?, endedPlus: Bool)
   case choiceClosed
+}
+
+private struct EndingWebPlusLoading: ViewModifier {
+  let choices: Resource<WebPlusCancellation>?
+
+  func body(content: Content) -> some View {
+    if let choices {
+      content.loads(choices, refreshable: false)
+    } else {
+      content
+    }
+  }
 }
 
 /// Main's Free card: what the free plan includes, against Plus above it.

@@ -26,8 +26,8 @@
     <string name="subscription_cancel_title">Cancel Plus?</string>
     <!-- Within 14 days of subscribing. %1$s is the last day of the refund, like "Nov 14, 2026"; %2$s the amount, like "R$ 29,90". -->
     <string name="subscription_cancel_withdrawal">Until %1$s, you can get a full refund of %2$s. Plus ends right away.</string>
-    <!-- Ends Plus now and refunds all of it. German law (BGB § 356a) requires this button to read exactly "Widerruf bestätigen" in German. -->
-    <string name="subscription_cancel_withdraw">Cancel and get a refund</string>
+    <!-- Confirms withdrawing from the contract with a full refund. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Widerruf bestätigen”, in French “Confirmer la rétractation”, in Spanish “Confirmar desistimiento”, in Portuguese “Confirmar retratação”, in Italian “Conferma recesso”, in Polish “Potwierdź odstąpienie od umowy”. -->
+    <string name="subscription_cancel_withdraw">Confirm withdrawal</string>
     <!-- Stopping the renewal. %1$s is the day Plus ends, like "Nov 14, 2026". -->
     <string name="subscription_cancel_at_period_end">You keep Plus until %1$s, then it ends. You won\'t be charged again.</string>
     <!-- Stopping the renewal after a yearly renewal. %1$s is the day Plus ends, like "Nov 14, 2026"; %2$s the amount refunded for the months that haven't started, like "R$ 99,90". -->
@@ -41,6 +41,8 @@
     <string name="subscription_canceled">Plus is canceled. We emailed you the confirmation.</string>
     <!-- %1$s is the amount refunded, like "R$ 29,90". -->
     <string name="subscription_canceled_refund">We\'ve refunded %1$s to the payment method you used. Plus is canceled. We emailed you the confirmation.</string>
+    <string name="subscription_refund_still_open">Until %1$s, you can still end Plus now and get a full refund.</string>
+    <string name="subscription_get_refund">Get a full refund</string>
     <!-- The cancel option the learner chose closed meanwhile, such as the 14-day refund. -->
     <string name="subscription_cancel_unavailable">That option isn\'t available anymore.</string>
     <!-- Closes a message after canceling. -->

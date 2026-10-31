@@ -19,8 +19,8 @@ final class SessionStore {
       }
     }
   }
-  /// A purchase, a restore, StoreKit's updates and the account refresh all change it here, with or
-  /// without a window open.
+  /// A purchase, a restore, a web cancellation, StoreKit's updates and the account refresh all
+  /// change it here, with or without a window open.
   @ObservationIgnored var subscriptionChanged: (@MainActor () -> Void)?
 
   private let api: any AccountAPIClient
@@ -376,6 +376,8 @@ final class SessionStore {
       return .failed
     }
 
+    // A closed choice can leave the account as it was while what's left to cancel changed.
+    subscriptionChanged?()
     await reloadAccount(for: authenticatedSession)
     return result
   }

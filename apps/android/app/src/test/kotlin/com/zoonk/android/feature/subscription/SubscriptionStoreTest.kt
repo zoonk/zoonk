@@ -25,6 +25,8 @@ import com.zoonk.api.models.Money
 import com.zoonk.api.models.StoreSubscriptionResponse
 import com.zoonk.api.models.StripeSubscriptionCancellation
 import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
+import com.zoonk.api.models.StripeSubscriptionCancellationRequest.Choice
+import com.zoonk.api.models.StripeSubscriptionCancellationWithdrawal
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -117,17 +119,17 @@ private class FakeSubscriptionApi : SubscriptionApi {
     }
 
     var cancellationRead: suspend () -> StripeSubscriptionCancellation = { throw UnsupportedOperationException() }
-    val canceled = mutableListOf<Pair<String, Boolean>>()
+    val canceled = mutableListOf<Pair<String, Choice>>()
     var cancelFailure: ApiException? = null
 
     override suspend fun webPlusCancellation(session: AuthenticatedSession): StripeSubscriptionCancellation = cancellationRead()
 
     override suspend fun cancelWebPlus(
         session: AuthenticatedSession,
-        withdraw: Boolean,
+        choice: Choice,
     ): StripeSubscriptionCancellationReceipt {
         cancelFailure?.let { throw it }
-        canceled += session.bearerToken to withdraw
+        canceled += session.bearerToken to choice
         return RECEIPT
     }
 }
@@ -286,11 +288,11 @@ class SubscriptionStoreTest {
             advanceUntilIdle()
 
             api.accountRead = { account(it.accountId) }
-            val result = store.cancelWebPlus(withdraw = true)
+            val result = store.cancelWebPlus(Choice.WITHDRAWAL)
             advanceUntilIdle()
 
             assertEquals(MutationResult.Done(RECEIPT), result)
-            assertEquals(listOf("token-a" to true), api.canceled)
+            assertEquals(listOf("token-a" to Choice.WITHDRAWAL), api.canceled)
             assertNull(
                 store.account.state.value.value
                     ?.account
@@ -336,7 +338,7 @@ class SubscriptionStoreTest {
 
             api.cancelFailure = ApiException(ApiError.Unavailable, "CONFLICT", 409)
             api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
-            val result = store.cancelWebPlus(withdraw = true)
+            val result = store.cancelWebPlus(Choice.WITHDRAWAL)
             advanceUntilIdle()
 
             assertEquals(409, (result as MutationResult.Failed).status)
@@ -347,6 +349,31 @@ class SubscriptionStoreTest {
                     ?.account
                     ?.subscription
                     ?.cancelAt,
+            )
+            shown.cancel()
+        }
+
+    @Test
+    fun aRefundThatClosedMeanwhileIsDroppedThoughThePlanStaysTheSame() =
+        runTest {
+            val (_, store) = store(ana)
+            api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
+            api.cancellationRead = { StripeSubscriptionCancellation(cancellation = null, extraordinary = null, withdrawal = WITHDRAWAL) }
+            val shown = launch { store.endingWebPlusChoices.shown.collect {} }
+            advanceUntilIdle()
+            assertNotNull(
+                store.endingWebPlusChoices.state.value.value
+                    ?.withdrawal,
+            )
+
+            api.cancelFailure = ApiException(ApiError.Unavailable, "CONFLICT", 409)
+            api.cancellationRead = { StripeSubscriptionCancellation(cancellation = null, extraordinary = null, withdrawal = null) }
+            store.cancelWebPlus(Choice.WITHDRAWAL)
+            advanceUntilIdle()
+
+            assertNull(
+                store.endingWebPlusChoices.state.value.value
+                    ?.withdrawal,
             )
             shown.cancel()
         }
@@ -366,5 +393,7 @@ class SubscriptionStoreTest {
 
     private companion object {
         val ENDS = Instant.parse("2026-12-01T00:00:00Z")
+        val WITHDRAWAL =
+            StripeSubscriptionCancellationWithdrawal(refund = Money(29.9, "BRL"), until = Instant.parse("2026-11-14T12:00:00Z"))
     }
 }

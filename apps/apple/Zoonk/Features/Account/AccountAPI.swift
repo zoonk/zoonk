@@ -289,14 +289,7 @@ struct AccountAPI {
 
     switch output {
     case .ok(let response):
-      let cancellation = try response.body.json
-      return WebPlusCancellation(
-        withdrawal: cancellation.withdrawal.map {
-          .init(refund: Money($0.refund), until: $0.until)
-        },
-        periodEnd: cancellation.cancellation.map {
-          .init(endsAt: $0.endsAt, refund: $0.refund.map { Money($0.value1) })
-        })
+      return WebPlusCancellation(try response.body.json)
     case .unauthorized:
       throw AccountAPIError.unauthorized
     case .notFound:
@@ -308,7 +301,8 @@ struct AccountAPI {
 
   func cancelWebPlus(token: String, withdraw: Bool) async throws -> Money? {
     let output = try await perform(token: token) { client in
-      try await client.cancelStripeSubscription(.init(body: .json(.init(withdraw: withdraw))))
+      try await client.cancelStripeSubscription(
+        .init(body: .json(.init(choice: withdraw ? .withdrawal : .ordinary))))
     }
 
     switch output {
@@ -574,5 +568,17 @@ extension AccountAPI: AccountAPIClient {}
 extension Money {
   fileprivate init(_ money: Components.Schemas.Money) {
     self.init(amount: money.amount, currency: money.currency)
+  }
+}
+
+extension WebPlusCancellation {
+  init(_ cancellation: Components.Schemas.StripeSubscriptionCancellation) {
+    self.init(
+      withdrawal: cancellation.withdrawal.map {
+        .init(refund: Money($0.refund), until: $0.until)
+      },
+      periodEnd: cancellation.cancellation.map {
+        .init(endsAt: $0.endsAt, refund: $0.refund.map { Money($0.value1) })
+      })
   }
 }
