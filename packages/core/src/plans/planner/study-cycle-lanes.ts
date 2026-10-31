@@ -188,9 +188,10 @@ export function toLanes({
   const phases = units.map((unit) => unit.phase);
   const first = Math.min(...phases);
   const last = Math.max(...phases);
+  const unitsByArea = Map.groupBy(units, (unit) => unit.area);
 
   return areas.map((area, order) => {
-    const own = units.filter((unit) => unit.area === area);
+    const own = unitsByArea.get(area) ?? [];
 
     const phase = Math.max(
       first,

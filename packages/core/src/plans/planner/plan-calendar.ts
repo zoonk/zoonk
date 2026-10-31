@@ -25,8 +25,25 @@ export function daysBetween(from: Date, to: Date): number {
   return Math.round((to.getTime() - from.getTime()) / MS_PER_DAY);
 }
 
+const MAX_CACHED_ISO_DATES = 4096;
+const isoDateByTime = new Map<number, string>();
+
 export function toIsoDate(date: Date): string {
-  return date.toISOString().slice(0, ISO_DATE_LENGTH);
+  const time = date.getTime();
+  const cached = isoDateByTime.get(time);
+
+  if (cached !== undefined) {
+    return cached;
+  }
+
+  const isoDate = date.toISOString().slice(0, ISO_DATE_LENGTH);
+
+  if (isoDateByTime.size >= MAX_CACHED_ISO_DATES) {
+    isoDateByTime.clear();
+  }
+
+  isoDateByTime.set(time, isoDate);
+  return isoDate;
 }
 
 export function fromIsoDate(value: string): Date {

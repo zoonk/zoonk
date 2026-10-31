@@ -1,3 +1,4 @@
+import { once } from "@zoonk/utils/once";
 import { findDayIndex, findDayIndexFrom } from "./day-index";
 import { type StudyPortion, getUnitStudy } from "./interval-study-minutes";
 import { findLargestCount, makeRoomForOutcomes } from "./outcome-room";
@@ -287,37 +288,43 @@ export function scheduleUnits({
   const leftOut = [...room.leftOut, ...closed.leftOut];
   const placed = closed.leftOut.length > 0 ? placeUnits({ cumulative, units: kept }) : roomPlaced;
 
-  const scheduled = placed.flatMap(({ beside, dayIndex, start, unit }) => {
-    const day = days[dayIndex];
+  const scheduled = once(() =>
+    placed.flatMap(({ beside, dayIndex, start, unit }) => {
+      const day = days[dayIndex];
 
-    if (!day || dayIndex < 0) {
-      return [];
-    }
+      if (!day || dayIndex < 0) {
+        return [];
+      }
 
-    const endDay = Math.max(dayIndex, findDayIndex({ cumulative, needed: start + unit.minutes }));
-    const teachingEnd = unit.kind === "boss" ? day.date : (days[endDay]?.date ?? day.date);
+      const endDay = Math.max(dayIndex, findDayIndex({ cumulative, needed: start + unit.minutes }));
+      const teachingEnd = unit.kind === "boss" ? day.date : (days[endDay]?.date ?? day.date);
 
-    const { studyMinutes, studyPortions } = getUnitStudy({
-      cumulative,
-      days,
-      dueDate: day.date,
-      overflowShare: day.shape.share,
-      start,
-      unit,
-    });
+      const { studyMinutes, studyPortions } = getUnitStudy({
+        cumulative,
+        days,
+        dueDate: day.date,
+        overflowShare: day.shape.share,
+        start,
+        unit,
+      });
 
-    return [
-      {
-        ...unit,
-        ...(beside ? { beside } : {}),
-        date: day.date,
-        phase: day.shape.phase ?? unit.phase,
-        studyMinutes,
-        ...(studyPortions.length > 0 ? { studyPortions } : {}),
-        ...(teachingEnd > day.date ? { teachingEnd } : {}),
-      },
-    ];
-  });
+      const phase = day.shape.phase ?? unit.phase;
+
+      const scheduledUnit: ScheduledUnit = beside
+        ? { ...unit, beside, date: day.date, phase, studyMinutes }
+        : { ...unit, date: day.date, phase, studyMinutes };
+
+      if (studyPortions.length > 0) {
+        scheduledUnit.studyPortions = studyPortions;
+      }
+
+      if (teachingEnd > day.date) {
+        scheduledUnit.teachingEnd = teachingEnd;
+      }
+
+      return [scheduledUnit];
+    }),
+  );
 
   const events = days.flatMap((day) =>
     day.shape.events.map((event) => ({
@@ -338,6 +345,10 @@ export function scheduleUnits({
         })),
     ],
     events,
-    units: scheduled,
+    // Built on first read, since a layout tried and then discarded reads only `dropped`; the
+    // units and days it was given must not change before then.
+    get units() {
+      return scheduled();
+    },
   };
 }

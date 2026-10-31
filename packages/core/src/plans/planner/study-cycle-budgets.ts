@@ -116,23 +116,20 @@ export function toDueDates({
   dayIndex: number;
   state: CycleState;
 }): (lane: Lane) => Date | undefined {
-  const heads = new Map(
-    state.lanes.map((lane) => {
+  const [largest, nextLargest] = state.lanes
+    .map((lane) => {
       const head = lane.units[0];
       const ready = head && isUnitReady({ context, left: state.left, unit: head });
-      return [lane, ready ? head.minutes : 0];
-    }),
-  );
+      return { lane, minutes: ready ? head.minutes : 0 };
+    })
+    .toSorted((a, b) => b.minutes - a.minutes);
 
   return (lane) =>
     getDueDate({
       context,
       dayIndex,
       lane,
-      others: Math.max(
-        0,
-        ...[...heads].flatMap(([other, minutes]) => (other === lane ? [] : [minutes])),
-      ),
+      others: Math.max(0, (lane === largest?.lane ? nextLargest?.minutes : largest?.minutes) ?? 0),
       used: state.used,
     });
 }
