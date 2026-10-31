@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
 import reading from "./_test-utils/cgu-2026-structure.json";
-import { listExamChoiceViews, listUnpickedLeftOut } from "./exam-choice-views";
+import { listExamChoiceViews } from "./exam-choice-views";
 
 const citation = { passage: "…", sourceId: "notice" };
 const LANGUAGES = "Linguagens, Códigos e suas Tecnologias";
@@ -53,9 +53,5 @@ describe(listExamChoiceViews, () => {
       points: 180,
       questions: 90,
     });
-
-    expect(listUnpickedLeftOut({ choices: [], structure: cgu })).toStrictEqual([
-      "Conhecimentos específicos (P3)",
-    ]);
   });
 });

@@ -25,9 +25,10 @@ import {
   type MockConditions,
   mockConditionsSchema,
 } from "../mock-contract";
+import { type UnpickedChoice } from "../mock-unpicked";
 import { readMockAnswer } from "./mock-answers";
 import { getAskedItemIds } from "./mock-sections";
-import { readMockStructure, readUnpickedLeftOut } from "./read-mock-structure";
+import { readMockStructure, readUnpickedChoices } from "./read-mock-structure";
 
 type MockSittingStatus = MockExam["status"] | "expired";
 
@@ -45,7 +46,7 @@ export type OwnedMock = {
   payload: BlockPayload;
   sessionDate: Date;
   structure: ExamStructure | null;
-  unpicked: string[];
+  unpicked: UnpickedChoice[];
   userId: string;
 };
 
@@ -112,7 +113,7 @@ async function findScheduledMock({
     payload,
     sessionDate: studySession.localDate,
     structure: blueprint ? readMockStructure({ blueprint, choices }) : null,
-    unpicked: readUnpickedLeftOut({ blueprint, choices }),
+    unpicked: readUnpickedChoices({ blueprint, choices }),
     userId,
   };
 }
@@ -156,7 +157,7 @@ async function findAnytimeMock({
     payload: toBlockPayload({ itemIds }),
     sessionDate: getDateInTimeZone({ date: mock.startedAt, timeZone }),
     structure: examBlueprint ? readMockStructure({ blueprint: examBlueprint, choices }) : null,
-    unpicked: readUnpickedLeftOut({ blueprint: examBlueprint, choices }),
+    unpicked: readUnpickedChoices({ blueprint: examBlueprint, choices }),
     userId,
   };
 }

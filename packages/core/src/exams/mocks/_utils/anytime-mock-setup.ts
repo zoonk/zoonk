@@ -32,7 +32,7 @@ import { countFinishedMocksBefore } from "./mock-number";
 import { loadMockPace } from "./mock-pace";
 import { loadBankTypedParts } from "./mock-typed-parts";
 import { hasStoredTimeRunOutAway } from "./owned-mock";
-import { readMockSizeSource, readMockStructure, readUnpickedLeftOut } from "./read-mock-structure";
+import { readMockSizeSource, readMockStructure, readUnpickedChoices } from "./read-mock-structure";
 
 export type AnytimeMockSetup = {
   blueprint: ExamBlueprint | null;
@@ -125,7 +125,7 @@ export async function loadAnytimeMockSetup(
           speaking: speaking !== null,
           structure,
           typed,
-          unpicked: readUnpickedLeftOut({ blueprint, choices }),
+          unpicked: readUnpickedChoices({ blueprint, choices }),
         })
       : [],
     placement: buildable ? listPlacementMockOptions({ goalAreas, pace, structure }) : [],

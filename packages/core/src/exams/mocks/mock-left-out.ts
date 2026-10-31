@@ -21,20 +21,20 @@ function isUnrunSection(part: MockLeftOut): part is MockLeftOut & { name: string
 
 export function listMockLeftOut({
   asked,
+  choices = [],
   day,
   kind,
   running = new Set(),
   structure,
   typed,
-  unpicked = [],
 }: {
   asked: readonly string[];
+  choices?: readonly string[];
   running?: ReadonlySet<string>;
   typed: readonly MockTypedPart[];
   day: number | null;
   kind: "area" | "full" | "half";
   structure: ExamStructure | null;
-  unpicked?: readonly string[];
 }): MockLeftOut[] {
   const allSections = structure?.mock?.sections ?? [];
   const sections = kind === "area" ? [] : allSections.filter((section) => section.day === day);
@@ -59,8 +59,6 @@ export function listMockLeftOut({
     .filter((part) => !typed.some((format) => format === part))
     .filter((part) => !allSections.some((section) => section.kind === part))
     .map((part): MockLeftOut => ({ name: null, part }));
-
-  const choices = kind === "area" ? [] : unpicked;
 
   return [
     ...choices.map((name): MockLeftOut => ({ name, part: "choice" })),
@@ -126,12 +124,12 @@ export function listSatMockLeftOut({
 
   return listMockLeftOut({
     asked,
+    choices: conditions.unpicked,
     day: conditions.day,
     kind,
     running,
     structure,
     typed,
-    unpicked: conditions.unpicked,
   });
 }
 

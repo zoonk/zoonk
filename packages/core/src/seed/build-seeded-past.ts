@@ -11,7 +11,7 @@ import { gradeMockItem } from "../exams/mocks/_utils/mock-item-grading";
 import { type MockItem, loadMockItems } from "../exams/mocks/_utils/mock-items";
 import { getAskedItemIds } from "../exams/mocks/_utils/mock-sections";
 import { planWeeklyMock } from "../exams/mocks/_utils/plan-weekly-mock";
-import { readMockStructure, readUnpickedLeftOut } from "../exams/mocks/_utils/read-mock-structure";
+import { readMockStructure, readUnpickedChoices } from "../exams/mocks/_utils/read-mock-structure";
 import { type GradedMockAnswer, analyzeMock } from "../exams/mocks/mock-analysis";
 import { type MockAnswer } from "../exams/mocks/mock-answer-contract";
 import { type MockConditions } from "../exams/mocks/mock-contract";
@@ -300,7 +300,7 @@ async function fillMock({
     payload,
     sessionDate: checkpoint.localDate,
     structure,
-    unpicked: readUnpickedLeftOut({ blueprint, choices }),
+    unpicked: readUnpickedChoices({ blueprint, choices }),
     userId: goal.userId,
   });
 

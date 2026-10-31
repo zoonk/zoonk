@@ -99,15 +99,3 @@ export function listExamChoiceViews({
     };
   });
 }
-
-export function listUnpickedLeftOut({
-  choices,
-  structure,
-}: {
-  choices: readonly ExamChoice[];
-  structure: ExamStructure;
-}): string[] {
-  return listExamChoiceViews({ choices, structure }).flatMap((view) =>
-    view.subject ? [] : [view.leftOut.name],
-  );
-}

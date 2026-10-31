@@ -4,6 +4,7 @@ import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint
 import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring/mock-scoring";
 import { type MockConditions } from "../mock-contract";
 import { markPlannedItems } from "../mock-marking";
+import { listLeftOutChoices } from "../mock-unpicked";
 import { type OwnedMock } from "./owned-mock";
 import { planWeeklyMock } from "./plan-weekly-mock";
 
@@ -65,7 +66,11 @@ export async function buildMockConditions(
     startTime: getExamStartTime({ day: plan.day, edition }),
     timeZone: edition?.timeZone ?? null,
     timedOutSections: [],
-    unpicked,
+    unpicked: listLeftOutChoices({
+      day: plan.day,
+      kind: plan.fullLength ? "full" : "half",
+      unpicked,
+    }),
     wrongPenalty: getWrongPenalty(structure),
   };
 }

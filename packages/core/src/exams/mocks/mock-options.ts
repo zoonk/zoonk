@@ -10,6 +10,7 @@ import { type MockOptionView, type MockShape } from "./mock-contract";
 import { type MockTypedPart, listCoveredSections, listMockLeftOut } from "./mock-left-out";
 import { getMockDays, outlineMock } from "./mock-plan";
 import { type SubjectShare } from "./mock-subject-shares";
+import { type UnpickedChoice, listLeftOutChoices } from "./mock-unpicked";
 import { getSubjectPace } from "./subject-sections";
 import { type MockEssayCandidate, getDayWrittenParts } from "./written-parts";
 import { isObjectiveSection, isQuestionSubject } from "./written-subject";
@@ -177,7 +178,7 @@ function toDayOption({
   subjects: readonly Subject[];
   structure: ExamStructure | null;
   typed: readonly MockTypedPart[];
-  unpicked: readonly string[];
+  unpicked: readonly UnpickedChoice[];
 }): MockOption {
   const outline = outlineMock({
     day,
@@ -194,7 +195,8 @@ function toDayOption({
 
   const parts = getDayWrittenParts({ day, structure });
   const asked = outline.written.filter((part) => part.asked).map((part) => part.name);
-  const leftOut = listMockLeftOut({ asked, day, kind, running, structure, typed, unpicked });
+  const choices = listLeftOutChoices({ day, kind, unpicked });
+  const leftOut = listMockLeftOut({ asked, choices, day, kind, running, structure, typed });
 
   return {
     area: null,
@@ -285,7 +287,7 @@ export function listMockOptions({
   speaking?: boolean;
   structure: ExamStructure | null;
   typed?: readonly MockTypedPart[];
-  unpicked?: readonly string[];
+  unpicked?: readonly UnpickedChoice[];
 }): MockOption[] {
   const subjects = structure ? getObjectiveSubjects({ goalAreas, structure }) : [];
   const days = getMockDays(structure);

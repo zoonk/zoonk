@@ -95,28 +95,23 @@ describe(listMockLeftOut, () => {
     ]);
   });
 
-  it("says a day mock leaves out a test the learner hasn't picked an option for", () => {
+  it("says a mock leaves out a test the learner hasn't picked an option for", () => {
     const objective: ExamStructure = {
       ...CERTIFICATE,
       formats: [format("multipleChoice")],
       mock: CERTIFICATE.mock && { ...CERTIFICATE.mock, sections: [CERTIFICATE.mock.sections[0]!] },
     };
 
-    const leftOut = (kind: "area" | "full" | "half") =>
+    expect(
       listMockLeftOut({
         asked: [],
+        choices: ["Conhecimentos específicos (P3)"],
         day: null,
-        kind,
+        kind: "full",
         structure: objective,
         typed: [],
-        unpicked: ["Conhecimentos específicos (P3)"],
-      });
-
-    const choice = { name: "Conhecimentos específicos (P3)", part: "choice" };
-
-    expect(leftOut("full")).toStrictEqual([choice]);
-    expect(leftOut("half")).toStrictEqual([choice]);
-    expect(leftOut("area")).toStrictEqual([]);
+      }),
+    ).toStrictEqual([{ name: "Conhecimentos específicos (P3)", part: "choice" }]);
   });
 
   it("says nothing for an exam a mock copies whole", () => {
