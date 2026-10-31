@@ -15,6 +15,7 @@ function rawGoal(overrides: Partial<RawUnderstoodGoal> = {}): RawUnderstoodGoal 
     examDay: null,
     examMonth: null,
     examName: null,
+    examSubjects: null,
     examTarget: null,
     examYear: null,
     institution: null,
@@ -52,6 +53,32 @@ function raw(overrides: Partial<RawGoalUnderstanding> = {}): RawGoalUnderstandin
 }
 
 describe(normalizeGoalUnderstanding, () => {
+  it("keeps the exam subjects a goal names and drops them from other goals", () => {
+    const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+      raw: raw({
+        goals: [
+          rawGoal({
+            examName: "SAT",
+            examSubjects: [" math ", "reading", "math", ""],
+            kind: "exam",
+          }),
+          rawGoal({ examName: "SAT", examSubjects: [], kind: "exam" }),
+          rawGoal({ examSubjects: ["algebra"] }),
+        ],
+      }),
+      today: TODAY,
+    });
+
+    expect(result).toMatchObject({
+      goals: [
+        { examSubjects: ["math", "reading"] },
+        { examSubjects: undefined },
+        { examSubjects: undefined },
+      ],
+    });
+  });
+
   it("uses the caller's daily time limits", () => {
     expect(
       normalizeGoalUnderstanding({

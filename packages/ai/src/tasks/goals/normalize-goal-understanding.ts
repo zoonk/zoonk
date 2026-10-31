@@ -25,6 +25,7 @@ type RawUnderstoodGoal = {
   examDay: UnderstoodExamDay | null;
   examMonth: number | null;
   examName: string | null;
+  examSubjects: string[] | null;
   examTarget: UnderstoodExamTarget | null;
   examYear: number | null;
   institution: string | null;
@@ -62,6 +63,8 @@ export type UnderstoodGoal = {
   /** 1 to 12, for an exam named without its day ("in March"). */
   examMonth?: number;
   examName?: string;
+  /** The exam's subjects the learner prepares, in their words; undefined for the whole exam. */
+  examSubjects?: string[];
   examTarget?: UnderstoodExamTarget;
   examYear?: number;
   institution?: string;
@@ -104,6 +107,11 @@ function cleanText(value: string | null): string | undefined {
 function cleanCourseName(value: string | null): string | undefined {
   const text = cleanText(value);
   return text && `${text.charAt(0).toLocaleUpperCase()}${text.slice(1)}`;
+}
+
+function cleanTexts(values: string[] | null): string[] | undefined {
+  const texts = [...new Set((values ?? []).flatMap((value) => cleanText(value) ?? []))];
+  return texts.length > 0 ? texts : undefined;
 }
 
 function cleanDailyMinutes({
@@ -177,6 +185,7 @@ function normalizeGoal({
     examDay: goal.kind === "exam" ? (goal.examDay ?? undefined) : undefined,
     examMonth: goal.kind === "exam" ? cleanMonth(goal.examMonth) : undefined,
     examName: goal.kind === "exam" ? cleanText(goal.examName) : undefined,
+    examSubjects: goal.kind === "exam" ? cleanTexts(goal.examSubjects) : undefined,
     examTarget: goal.kind === "exam" ? (goal.examTarget ?? undefined) : undefined,
     examYear: goal.kind === "exam" ? cleanYear(goal.examYear) : undefined,
     institution: cleanText(goal.institution),

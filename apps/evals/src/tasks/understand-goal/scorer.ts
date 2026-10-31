@@ -10,6 +10,7 @@ type ExpectedGoal = {
   examDay?: "booked" | "official" | null;
   examMonth?: number;
   examName?: RegExp;
+  examSubjects?: RegExp[] | null;
   examTarget?: "admission" | "position" | "score" | null;
   examYear?: number;
   hasTargetDate?: boolean;
@@ -57,6 +58,30 @@ function matchesText({ pattern, value }: { pattern: RegExp | undefined; value: u
   return !pattern || (typeof value === "string" && pattern.test(value));
 }
 
+function checkExamSubjects({ expected, value }: { expected: ExpectedGoal; value: unknown }) {
+  const subjects = Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : [];
+
+  if (expected.examSubjects === undefined) {
+    return true;
+  }
+
+  if (expected.examSubjects === null) {
+    return subjects.length === 0;
+  }
+
+  const unmatched = [...subjects];
+
+  return (
+    subjects.length === expected.examSubjects.length &&
+    expected.examSubjects.every((pattern) => {
+      const index = unmatched.findIndex((subject) => pattern.test(subject));
+      return index !== -1 && unmatched.splice(index, 1).length === 1;
+    })
+  );
+}
+
 function getExamChecks({
   expected,
   goal,
@@ -68,6 +93,10 @@ function getExamChecks({
     [
       matchesText({ pattern: expected.examName, value: goal.examName }),
       `exam ${show(goal.examName)}`,
+    ],
+    [
+      checkExamSubjects({ expected, value: goal.examSubjects }),
+      `exam subjects ${show(goal.examSubjects)}`,
     ],
     [
       expected.examYear === undefined || goal.examYear === expected.examYear,

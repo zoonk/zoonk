@@ -77,6 +77,7 @@ export const TEST_CASES: UnderstandGoalCase[] = [
       goals: [
         {
           examName: /enem/iu,
+          examSubjects: null,
           examTarget: "admission",
           hasTargetDate: false,
           institution: /^UFMG$/u,
@@ -400,6 +401,38 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     expected: { goals: [{ kind: "learn" }], route: "goals" },
     goal: "music theory and ear training",
     language: "en",
+  }),
+  testCase("ja-exam-two-subjects-one-goal", {
+    expected: {
+      goals: [
+        {
+          examMonth: 1,
+          examName: /共通テスト/u,
+          examSubjects: [/英語/u, /数学/u],
+          kind: "exam",
+          title: /英語.*数学|数学.*英語/u,
+        },
+      ],
+      route: "goals",
+    },
+    goal: "1月の共通テストで英語と数学を伸ばしたい",
+    language: "ja",
+  }),
+  testCase("es-exam-career-is-not-a-subject", {
+    expected: {
+      goals: [
+        {
+          examName: /exani/iu,
+          examSubjects: null,
+          examTarget: "admission",
+          kind: "exam",
+          targetCourse: /medicina/iu,
+        },
+      ],
+      route: "goals",
+    },
+    goal: "pasar el EXANI-II para entrar a Medicina en la UdeG",
+    language: "es",
   }),
   testCase("pt-learn-music-zero", {
     expected: { goals: [{ kind: "learn", ownLevel: "none" }], route: "goals" },

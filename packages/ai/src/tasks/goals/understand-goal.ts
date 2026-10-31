@@ -26,6 +26,7 @@ const goalSchema = z.object({
   examDay: z.enum(["official", "booked"]).nullable(),
   examMonth: z.number().nullable(),
   examName: z.string().nullable(),
+  examSubjects: z.array(z.string()).nullable(),
   examTarget: z.enum(["admission", "score", "position"]).nullable(),
   examYear: z.number().nullable(),
   institution: z.string().nullable(),
