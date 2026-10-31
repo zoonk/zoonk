@@ -762,4 +762,204 @@ export const TEST_CASES: TestCase<CourseDetailsExpected, CourseDetailsParams>[] 
       language: "en",
     },
   },
+  {
+    expectations: `
+      - MUST be in natural Italian, "tu" wherever the copy speaks to the visitor (never "Lei"), not translated from English
+      - The promise and the outcomes start with the infinitive ("Leggere la busta paga…", "Scegliere…"), never an imperative ("Leggi…", "Risparmia…")
+      - Names the main areas of personal finance in plain words (budget, risparmio, prestiti e rate, tasse, investimenti e pensione) with Italian examples such as the busta paga, the TFR, the 730, a conto corrente, a fondo pensione or acquisti a rate; amounts, if any, in euro written the Italian way (1.000 €). Penalize dollars, credit scores, 401(k) or other US defaults
+      - Regulated field: frames the course as understanding everyday money decisions and knowing when to ask a consulente finanziario, a commercialista or a CAF; never recommends specific investments or products and never promises returns or savings
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { categories: ["economics", "business"] },
+    id: "it-finanza-personale-beginner",
+    userInput: {
+      chapters: [
+        chapter(
+          "beginner",
+          "Leggere la busta paga",
+          "Lordo, netto, trattenute e TFR: dove vanno i soldi prima di arrivare sul conto.",
+        ),
+        chapter(
+          "beginner",
+          "Un budget che regge",
+          "Dividere entrate e spese del mese e trovare dove si può risparmiare.",
+        ),
+        chapter(
+          "beginner",
+          "Il fondo per gli imprevisti",
+          "Quanto mettere da parte per una caldaia da cambiare o una multa, e dove tenerlo.",
+        ),
+        chapter(
+          "beginner",
+          "Prestiti e acquisti a rate",
+          "TAN, TAEG e interessi: cosa guardare prima di firmare un finanziamento.",
+        ),
+        chapter(
+          "beginner",
+          "Tasse e 730",
+          "Detrazioni, scontrini parlanti e rimborsi: come funziona la dichiarazione dei redditi per chi ha una busta paga.",
+        ),
+      ],
+      courseTitle: "Finanza personale",
+      language: "it",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in natural Japanese: sentences in the description use です・ます without stiff keigo (no いただけます or ございます copy) and never address the visitor as あなた
+      - The promise and the outcomes read as abilities the learner will have, in plain form or ～できる (「栄養成分表示から食塩相当量を読み取れる」), never a command (「～しよう」「～してください」); list items don't end with 「。」
+      - Never uses 学ぶ, 学べる, 入門, 基礎から or 徹底ガイド
+      - Uses Japanese everyday food: コンビニ弁当, 定食, 給食, みそ汁, the 栄養成分表示 or the 食事バランスガイド. Penalize American defaults (MyPlate, the Nutrition Facts label, ounces, US portion sizes)
+      - Health: frames the course as understanding everyday eating; nothing implies it qualifies anyone as a 管理栄養士 or 栄養士, diagnoses, treats or plans diets for an illness, or promises weight loss; saying to ask a 医師 or 管理栄養士 about a specific condition is fine
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { categories: ["health", "science"] },
+    id: "ja-eiyogaku-beginner",
+    userInput: {
+      chapters: [
+        chapter(
+          "beginner",
+          "三大栄養素",
+          "炭水化物・たんぱく質・脂質が、体の中でそれぞれどんな働きをしているか。",
+        ),
+        chapter(
+          "beginner",
+          "ビタミンとミネラル",
+          "少しの量で体の調子を整える栄養素と、日本人に不足しがちなもの。",
+        ),
+        chapter(
+          "beginner",
+          "栄養成分表示を読む",
+          "パッケージの表示から、エネルギーや食塩相当量を読み取るコツ。",
+        ),
+        chapter(
+          "beginner",
+          "一日の食事の組み立て",
+          "主食・主菜・副菜をそろえて、無理なくバランスをとる方法。",
+        ),
+        chapter(
+          "beginner",
+          "塩分と日本の食卓",
+          "みそ汁や漬物、外食で塩分が多くなりやすい理由と、減らす工夫。",
+        ),
+      ],
+      courseTitle: "栄養学",
+      language: "ja",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in natural Korean: sentences in the description use 해요체, never 반말 or stiff 하십시오체 copy
+      - The promise and the outcomes read as abilities the learner will have, ending in ～할 수 있어요 or ～할 수 있다 (～하기 also fits a list item), never a command (～하세요, ～해 보세요, ～하자)
+      - Exam preparation: the promise opens with what the candidate will do on the 한국사능력검정시험's own questions (사료나 사진 자료를 보고 시대와 사건 찾기, 사건을 시대 순서로 놓기), framed as preparation. Never promises a 급수, 합격 or a 공무원 시험 benefit
+      - CHAPTERS are only the first band (선사 시대 to 고려): the copy covers the whole exam, from 선사 시대 through 조선, 근대, 일제 강점기 and 현대사
+      - Categories don't matter for exam courses: don't judge them
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "ko-hanguksa-exam",
+    userInput: {
+      chapters: [
+        chapter(
+          "beginner",
+          "선사 시대와 고조선",
+          "유물로 구석기·신석기·청동기 시대를 구분하는 법과 고조선의 건국, 8조법.",
+        ),
+        chapter(
+          "beginner",
+          "삼국의 성장과 경쟁",
+          "고구려·백제·신라가 차례로 전성기를 맞은 과정과 각 나라를 대표하는 왕.",
+        ),
+        chapter(
+          "beginner",
+          "남북국 시대",
+          "통일 신라와 발해의 정치, 그리고 시험에 자주 나오는 문화유산.",
+        ),
+        chapter(
+          "beginner",
+          "고려의 정치와 대외 관계",
+          "후삼국 통일부터 거란·몽골과의 전쟁까지 고려사의 큰 흐름.",
+        ),
+        chapter(
+          "beginner",
+          "자료 보고 시대 찾기",
+          "사료와 사진 자료를 보고 어느 시대 이야기인지 찾아내는 방법.",
+        ),
+      ],
+      courseTitle: "한국사능력검정시험",
+      language: "ko",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in natural Turkish, "sen" wherever the copy speaks to the visitor (never "siz"); the course is German itself, for Turkish speakers
+      - The promise and the outcomes are verb-final phrases, as Turkish learning goals are written ("Kafede Almanca sipariş vermek", "…sipariş verebilmek"), never an imperative ("Sipariş ver", "Konuş")
+      - Focuses on communicating in real situations where German is spoken (travel, Erasmus or a university in Germany, Austria or Switzerland, work, friends and family there), from first conversations to confident use
+      - Never promises fluency, a Goethe-Zertifikat or TestDaF result, a visa or a job, and never mentions how long it takes
+      - Categories don't matter for language courses: don't judge them
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "tr-almanca-language-beginner",
+    userInput: {
+      chapters: [
+        chapter("beginner", "Tanışma", "Adını, nereli olduğunu ve ne iş yaptığını söylemek."),
+        chapter("beginner", "Kafede ve fırında", "Sipariş vermek, fiyat sormak ve hesabı ödemek."),
+        chapter(
+          "beginner",
+          "Saatler ve randevular",
+          "Saati sormak, doktordan randevu almak ve bir buluşma ayarlamak.",
+        ),
+        chapter(
+          "beginner",
+          "Tren istasyonunda",
+          "Bilet almak, doğru peronu bulmak ve gecikme anonslarını anlamak.",
+        ),
+      ],
+      courseTitle: "Almanca",
+      language: "tr",
+      targetLanguage: "de",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in natural Polish, "ty" wherever the copy speaks to the visitor (never "Pan", "Pani" or "Państwo")
+      - The promise and the outcomes start with the infinitive, imperfective for a skill ("Liczyć…", "Rozpoznawać…"), never an imperative ("Policz…", "Sprawdź…")
+      - Uses Polish labor law and work situations: the Kodeks pracy, umowa o pracę versus umowa zlecenie, urlop, L4, the świadectwo pracy, the PIP. Penalize US at-will employment, dollars or Brazilian defaults (CLT, FGTS)
+      - Regulated profession: frames the course as understanding one's rights and duties at work and knowing when to ask a radca prawny, an adwokat or the PIP; nothing says or implies giving legal advice, representing anyone in court or replacing a lawyer or law school
+      - Audience examples like people on their first job, small business owners hiring their first employee, HR and payroll staff (kadry i płace) or law students fit
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { categories: ["law"] },
+    id: "pl-prawo-pracy-beginner",
+    userInput: {
+      chapters: [
+        chapter(
+          "beginner",
+          "Umowa o pracę czy zlecenie?",
+          "Czym się różnią umowa o pracę, umowa zlecenie i umowa o dzieło i co z tego wynika dla pracownika.",
+        ),
+        chapter(
+          "beginner",
+          "Czas pracy i nadgodziny",
+          "Ile wolno pracować w tygodniu i kiedy należy się dodatek za nadgodziny.",
+        ),
+        chapter(
+          "beginner",
+          "Urlop i L4",
+          "Ile dni urlopu przysługuje pracownikowi, jak je liczyć i ile wynosi wynagrodzenie za czas choroby.",
+        ),
+        chapter(
+          "beginner",
+          "Wypowiedzenie i świadectwo pracy",
+          "Okresy wypowiedzenia, rozwiązanie umowy za porozumieniem stron i dokumenty na koniec pracy.",
+        ),
+      ],
+      courseTitle: "Prawo pracy",
+      language: "pl",
+    },
+  },
 ];
