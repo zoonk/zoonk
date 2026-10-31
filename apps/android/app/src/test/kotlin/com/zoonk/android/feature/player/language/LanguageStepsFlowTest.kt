@@ -229,6 +229,13 @@ class LanguageStepsFlowTest {
     }
 
     @Test
+    fun aQuestionsPictureWithNoAddressShowsWhatItShows() {
+        play(listOf(multipleChoice("ask", image = """{"prompt":"A cat asleep on a bed"}"""), summaryStep("end")))
+
+        rule.onNodeWithText("A cat asleep on a bed").assertIsDisplayed()
+    }
+
+    @Test
     fun aTranslationPickTappedAgainStaysPicked() {
         play(listOf(translation("pick"), summaryStep("end")))
 

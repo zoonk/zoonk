@@ -114,16 +114,18 @@ internal fun translation(
     hints = hints,
 )
 
-internal fun multipleChoice(id: String) =
-    step(
-        id,
-        StepKind.MultipleChoice,
-        "multipleChoice",
-        content =
-            """{"options":[{"feedback":"Yes.","id":"bed","isCorrect":true,"text":"On the bed"},{"feedback":"No.","id":"sofa",
-                "isCorrect":false,"text":"On the sofa"}],
-               "question":"Where is the cat?"}""",
-    )
+internal fun multipleChoice(
+    id: String,
+    image: String? = null,
+) = step(
+    id,
+    StepKind.MultipleChoice,
+    "multipleChoice",
+    content =
+        """{"options":[{"feedback":"Yes.","id":"bed","isCorrect":true,"text":"On the bed"},{"feedback":"No.","id":"sofa",
+            "isCorrect":false,"text":"On the sofa"}],
+           "question":"Where is the cat?"${image?.let { ""","image":$it""" }.orEmpty()}}""",
+)
 
 internal fun alphabet(id: String) =
     step(

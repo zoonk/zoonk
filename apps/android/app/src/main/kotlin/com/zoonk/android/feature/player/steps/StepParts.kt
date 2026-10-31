@@ -79,7 +79,7 @@ private fun StepPicturePending(
 }
 
 @Composable
-private fun DescribedPicture(alt: String) {
+internal fun DescribedPicture(alt: String) {
     Surface(color = MaterialTheme.colorScheme.surfaceContainer, shape = MaterialTheme.shapes.medium) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(painterResource(R.drawable.ic_image), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)

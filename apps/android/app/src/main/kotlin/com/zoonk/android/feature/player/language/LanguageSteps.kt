@@ -20,8 +20,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +53,7 @@ import com.zoonk.android.feature.player.model.WordHints
 import com.zoonk.android.feature.player.steps.ChoiceOption
 import com.zoonk.android.feature.player.steps.ChoiceOptions
 import com.zoonk.android.feature.player.steps.ContextText
+import com.zoonk.android.feature.player.steps.DescribedPicture
 import com.zoonk.android.feature.player.steps.QuestionScene
 import com.zoonk.android.feature.player.steps.QuestionText
 import com.zoonk.android.feature.player.steps.ReadScene
@@ -308,6 +311,31 @@ private fun AlphabetView(content: AlphabetContent) {
     }
 }
 
+/** Main's `StepImageView`: the picture drawn whole, or what it shows when it has no address or doesn't load. */
+@Composable
+private fun ChoicePicture(
+    url: String?,
+    prompt: String,
+) {
+    var failed by remember(url) { mutableStateOf(false) }
+
+    if (url == null || failed) {
+        DescribedPicture(prompt)
+    } else {
+        AsyncImage(
+            model = url,
+            contentDescription = prompt,
+            contentScale = ContentScale.Fit,
+            onError = { failed = true },
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 320.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+        )
+    }
+}
+
 /** Four forms to a row once the column is wide enough, as main's grid does from `sm`. */
 private val WIDE_FORMS = 520.dp
 
@@ -321,20 +349,9 @@ private fun MultipleChoiceView(
 ) {
     QuestionScene {
         val image = content.image
-        if (image?.url != null || content.context != null) {
+        if (image != null || content.context != null) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                image?.url?.let { url ->
-                    AsyncImage(
-                        model = url,
-                        contentDescription = image.prompt,
-                        contentScale = ContentScale.Crop,
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .heightIn(max = 320.dp)
-                                .clip(RoundedCornerShape(12.dp)),
-                    )
-                }
+                image?.let { ChoicePicture(it.url, it.prompt) }
                 ContextText(content.context?.let(::stripWrappingQuotes))
             }
         }
