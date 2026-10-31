@@ -31,4 +31,5 @@ format-check:
 strings-check:
 	node scripts/check-strings.mts
 
-check: format-check test strings-check
+check: format-check test
+	$(MAKE) strings-check

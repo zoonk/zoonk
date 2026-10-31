@@ -1,13 +1,13 @@
-import { globSync, readFileSync, statSync } from "node:fs";
+import { existsSync, globSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 
-export type CompiledString = { comment?: string; key: string; table: string; value?: string };
+type CompiledString = { key: string; table: string };
 
-export type Catalog = { strings: Record<string, unknown> };
+type Catalog = { strings: Record<string, unknown> };
 
-type StringsData = { source: string; tables: Record<string, Omit<CompiledString, "table">[]> };
+type StringsData = { file: string; source: string; tables: Record<string, { key: string }[]> };
 
-export const appleDirectory = path.resolve(import.meta.dirname, "..");
+const appleDirectory = path.resolve(import.meta.dirname, "..");
 
 const IGNORED_PATHS = ["DerivedData/**", "node_modules/**", "**/.build/**"];
 
@@ -18,9 +18,8 @@ const TEST_SOURCES = ["ZoonkTests/", "ZoonkUITests/"].map((folder) =>
   path.join(appleDirectory, folder),
 );
 
-/** A printf format specifier, or an escaped percent sign. */
-export const FORMAT_SPECIFIER =
-  /%%|%(?:\d+\$)?[-+ #0']*(?:\d+|\*)?(?:\.(?:\d+|\*))?(?:hh|h|ll|l|q|L|z|t|j)?[@dDiuUxXoOfFeEgGcCsSaAp]/gu;
+// The format specifiers the compiler writes for interpolations, and escaped percent signs.
+const FORMAT_SPECIFIER = /%%|%(?:\d+\$)?(?:@|hh[du]|h[du]|ll[du]|l[duf]|[duf])/gu;
 
 /** Text written without a table, such as `"%@ · %@"`, needs no catalog when it has no words. */
 function needsCatalog({ key, table }: CompiledString): boolean {
@@ -42,33 +41,35 @@ export function catalogFiles(): Map<string, string> {
 
 function readStringsData(file: string): StringsData & { builtAt: number } {
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The Swift compiler writes this file.
-  const data = JSON.parse(readFileSync(file, "utf8")) as StringsData;
-  return { ...data, builtAt: statSync(file).mtimeMs };
+  const data = JSON.parse(readFileSync(file, "utf8")) as Omit<StringsData, "file">;
+  return { ...data, builtAt: statSync(file).mtimeMs, file };
 }
 
 function isAppSource(source: string): boolean {
   return (
+    existsSync(source) &&
     source.startsWith(`${appleDirectory}/`) &&
     !source.startsWith(path.join(appleDirectory, "DerivedData")) &&
     !TEST_SOURCES.some((folder) => source.startsWith(folder))
   );
 }
 
-/** The strings in each source file's newest build, exactly as the app looks them up. */
-function compiledStrings(): CompiledString[] {
+/** Each app source file's newest build, with the strings the app looks up exactly. */
+export function newestStringsData(): StringsData[] {
   const builds = globSync(STRINGSDATA, { cwd: appleDirectory })
     .map((file) => readStringsData(path.join(appleDirectory, file)))
     .filter((data) => isAppSource(data.source));
 
-  const newest = Map.groupBy(builds, (data) => data.source)
+  return Map.groupBy(builds, (data) => data.source)
     .values()
-    .map((versions) =>
-      versions.reduce((last, data) => (data.builtAt > last.builtAt ? data : last)),
-    );
+    .map((versions) => versions.reduce((last, data) => (data.builtAt > last.builtAt ? data : last)))
+    .toArray();
+}
 
-  return [...newest].flatMap((data) =>
+function compiledStrings(): CompiledString[] {
+  return newestStringsData().flatMap((data) =>
     Object.entries(data.tables).flatMap(([table, strings]) =>
-      strings.map((string) => ({ ...string, table })),
+      strings.map(({ key }) => ({ key, table })),
     ),
   );
 }

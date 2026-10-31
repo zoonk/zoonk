@@ -1,61 +1,55 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { copyFileSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import {
-  type CompiledString,
-  FORMAT_SPECIFIER,
   catalogFiles,
   findMissingStrings,
   listStrings,
+  newestStringsData,
   readCatalog,
 } from "./check-strings.mts";
 
 const XCODE_KEY_ORDER = new Intl.Collator("en", { caseFirst: "upper" });
 
-/** Xcode numbers the arguments of a string that has several, so a translation can reorder them. */
-function numberArguments(text: string): string {
-  const specifiers = (text.match(FORMAT_SPECIFIER) ?? []).filter((specifier) => specifier !== "%%");
+/** Xcode's entries for these keys. `xcstringstool sync` rewrites a whole catalog, so it syncs a copy. */
+function syncedEntries(table: string, file: string, keys: Set<string>): [string, unknown][] {
+  const stringsData = newestStringsData().filter((data) => Object.hasOwn(data.tables, table));
+  const directory = mkdtempSync(path.join(tmpdir(), "zoonk-strings-"));
+  const copy = path.join(directory, path.basename(file));
 
-  if (specifiers.length < 2 || specifiers.some((specifier) => specifier.includes("$"))) {
-    return text;
+  try {
+    copyFileSync(file, copy);
+
+    execFileSync(
+      "xcrun",
+      [
+        "xcstringstool",
+        "sync",
+        copy,
+        ...stringsData.flatMap((data) => ["--stringsdata", data.file]),
+        "--skip-marking-strings-stale",
+      ],
+      { stdio: "pipe" },
+    );
+
+    return Object.entries(readCatalog(copy).strings).filter(([key]) => keys.has(key));
+  } finally {
+    rmSync(directory, { force: true, recursive: true });
   }
-
-  let position = 0;
-
-  return text.replaceAll(FORMAT_SPECIFIER, (specifier) =>
-    specifier === "%%" ? specifier : `%${(position += 1)}$${specifier.slice(1)}`,
-  );
-}
-
-function catalogEntry(key: string, uses: CompiledString[]) {
-  const comments = [...new Set(uses.flatMap((use) => use.comment ?? []))].toSorted();
-  const value = uses.find((use) => use.value !== undefined)?.value;
-  const english = numberArguments(value ?? key);
-
-  return [
-    key,
-    {
-      ...(comments.length > 0 && { comment: comments.join("\n") }),
-      ...(value !== undefined && { extractionState: "extracted_with_value" }),
-      ...(english !== key && {
-        localizations: { en: { stringUnit: { state: "new", value: english } } },
-      }),
-    },
-  ] as const;
 }
 
 /** Writes the catalog the way Xcode does, so only the new strings show in its diff. */
-function addToCatalog(file: string, strings: CompiledString[]) {
+function addToCatalog(file: string, added: [string, unknown][]) {
+  const source = readFileSync(file, "utf8");
   const catalog = readCatalog(file);
-
-  const added = Map.groupBy(strings, (string) => string.key)
-    .entries()
-    .map(([key, uses]) => catalogEntry(key, uses));
 
   const entries = [...Object.entries(catalog.strings), ...added].toSorted(([first], [second]) =>
     XCODE_KEY_ORDER.compare(first, second),
   );
 
   const json = JSON.stringify({ ...catalog, strings: Object.fromEntries(entries) }, null, 2);
-  const ending = readFileSync(file, "utf8").endsWith("\n") ? "\n" : "";
+  const ending = source.endsWith("\n") ? "\n" : "";
 
   writeFileSync(
     file,
@@ -65,17 +59,13 @@ function addToCatalog(file: string, strings: CompiledString[]) {
 
 const { missing } = findMissingStrings();
 const catalogs = catalogFiles();
+const added = missing.filter((string) => catalogs.has(string.table));
 const unresolved = missing.filter((string) => !catalogs.has(string.table));
 
-for (const [table, file] of catalogs) {
-  const strings = missing.filter((string) => string.table === table);
-
-  if (strings.length > 0) {
-    addToCatalog(file, strings);
-  }
+for (const [table, strings] of Map.groupBy(added, (string) => string.table)) {
+  const file = catalogs.get(table) ?? "";
+  addToCatalog(file, syncedEntries(table, file, new Set(strings.map((string) => string.key))));
 }
-
-const added = missing.filter((string) => catalogs.has(string.table));
 
 if (added.length > 0) {
   process.stdout.write(`Added to their String Catalogs:\n${listStrings(added)}`);
