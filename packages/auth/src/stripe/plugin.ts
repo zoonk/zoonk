@@ -1,5 +1,9 @@
 import { stripe } from "@better-auth/stripe";
+import { safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { PAID_PLANS } from "@zoonk/utils/subscription";
+import { type BetterAuthPlugin } from "better-auth";
+import { createAuthMiddleware, getSessionFromCtx } from "better-auth/api";
 import { z } from "zod";
 import { getCheckoutSessionParams } from "./checkout-session-params";
 import { stripeClient } from "./client";
@@ -27,9 +31,47 @@ function reportChange(change: "canceled" | "started", subscription: ReportedSubs
   });
 }
 
-function getCustomerId(customer: string | { id: string } | null): string | undefined {
-  return typeof customer === "string" ? customer : customer?.id;
+function getId(object: string | { id: string } | null): string | undefined {
+  return typeof object === "string" ? object : object?.id;
 }
+
+/**
+ * Better Auth saves a subscription as it read it, in its webhooks and on the page a checkout
+ * returns to, and Stripe may have ended it since: events arrive in any order, and store Plus can
+ * end a checkout's subscription before any row names it. Ending is final, so saving an ended one
+ * never undoes a newer state.
+ */
+async function saveIfEnded(subscription: Stripe.Subscription) {
+  if (subscription.status === "canceled") {
+    await saveSubscription(subscription);
+  }
+}
+
+/**
+ * No webhook follows the save on the page a checkout returns to. A failure here only logs, so the
+ * learner who just paid still lands on their page.
+ */
+const saveEndedCheckout = createAuthMiddleware(async (context) => {
+  const checkoutSessionId: unknown = context.query?.checkoutSessionId;
+
+  if (typeof checkoutSessionId !== "string" || !(await getSessionFromCtx(context))) {
+    return;
+  }
+
+  const { error } = await safeAsync(async () => {
+    const checkout = await stripeClient.checkout.sessions.retrieve(checkoutSessionId, {
+      expand: ["subscription"],
+    });
+
+    if (checkout.subscription && typeof checkout.subscription !== "string") {
+      await saveIfEnded(checkout.subscription);
+    }
+  });
+
+  if (error) {
+    logError("Checking a returned checkout's subscription failed", { checkoutSessionId, error });
+  }
+});
 
 /**
  * Runs after Better Auth's own handling of each event. Unlike its callbacks, a failure here fails
@@ -39,13 +81,12 @@ function getCustomerId(customer: string | { id: string } | null): string | undef
  */
 async function onStripeEvent(event: Stripe.Event) {
   if (event.type === "customer.subscription.deleted") {
-    const subscription = event.data.object;
-    const { referenceId } = subscription.metadata;
+    await saveSubscription(event.data.object);
+    return;
+  }
 
-    if (referenceId) {
-      await saveSubscription({ subscription, userId: referenceId });
-    }
-
+  if (event.type === "customer.subscription.updated") {
+    await saveIfEnded(await stripeClient.subscriptions.retrieve(event.data.object.id));
     return;
   }
 
@@ -56,13 +97,20 @@ async function onStripeEvent(event: Stripe.Event) {
   const checkout = event.data.object;
   const userId = checkout.client_reference_id ?? checkout.metadata?.referenceId;
 
-  if (userId) {
-    await endWebPlusBesideStorePlus({ customerId: getCustomerId(checkout.customer), userId });
+  if (!userId) {
+    return;
+  }
+
+  await endWebPlusBesideStorePlus({ customerId: getId(checkout.customer), userId });
+  const subscriptionId = getId(checkout.subscription);
+
+  if (subscriptionId) {
+    await saveIfEnded(await stripeClient.subscriptions.retrieve(subscriptionId));
   }
 }
 
 export function stripePlugin() {
-  return stripe({
+  const plugin = stripe({
     createCustomerOnSignUp: false,
     onEvent: onStripeEvent,
     organization: { enabled: true },
@@ -114,4 +162,16 @@ export function stripePlugin() {
       })),
     },
   });
+
+  return {
+    ...plugin,
+    hooks: {
+      after: [
+        {
+          handler: saveEndedCheckout,
+          matcher: (context) => context.path === "/subscription/success",
+        },
+      ],
+    },
+  } satisfies BetterAuthPlugin;
 }

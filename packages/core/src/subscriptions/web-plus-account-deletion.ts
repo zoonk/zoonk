@@ -46,7 +46,7 @@ export async function endWebPlusForDeletedAccount({
     subscription: stripeSubscription,
   });
 
-  await saveSubscription({ subscription: stopped, userId: learner.id });
+  await saveSubscription(stopped);
 
   await sendPlusCancellationEmail({
     canKeepPlus: false,

@@ -25,6 +25,7 @@ const stripe = vi.hoisted(() => ({
   paymentIntent: vi.fn(),
   refund: vi.fn(),
   retrieve: vi.fn(),
+  retrieveCheckout: vi.fn(),
   retrieveInvoice: vi.fn(),
   searchCustomers: vi.fn(),
   voidInvoice: vi.fn(),
@@ -33,7 +34,7 @@ const stripe = vi.hoisted(() => ({
 // Stripe and the mailer are external services; the learner's subscription rows are real.
 vi.mock("./client", () => ({
   stripeClient: {
-    checkout: { sessions: { create: stripe.checkout } },
+    checkout: { sessions: { create: stripe.checkout, retrieve: stripe.retrieveCheckout } },
     customers: { create: stripe.createCustomer, search: stripe.searchCustomers },
     invoices: {
       createPreview: stripe.createPreview,
@@ -142,6 +143,7 @@ function fakeStripe() {
       subscriptions.set(id, { customer, refunded: 0, status });
       return id;
     },
+    read,
   };
 }
 
@@ -278,6 +280,116 @@ describe("one Plus per learner on the website", () => {
     expect(sentSubjects()).toStrictEqual([pt.plusAlreadyActiveSubject]);
   });
 
+  it("saves a checkout as ended when store Plus ends it before Better Auth saves it", async () => {
+    const stripeFake = fakeStripe();
+    const { userId } = await learner();
+    const row = await addCheckoutRow(userId);
+    await addStorePlus({ userId });
+    const subscriptionId = stripeFake.add("active");
+
+    // Better Auth reads the checkout's subscription while active. Before it saves that, the store
+    // purchase's follow-up ends it, and Stripe's deletion arrives while no row names it yet.
+    stripe.retrieve.mockImplementationOnce(async (id: string) => {
+      const active = stripeFake.read(id);
+      await endWebPlusBesideStorePlus({ userId });
+
+      await deliverStripeEvent({
+        data: { object: stripeFake.read(id) },
+        type: "customer.subscription.deleted",
+      });
+
+      return active;
+    });
+
+    const completed = await deliverCheckoutCompleted({ rowId: row.id, subscriptionId, userId });
+
+    expect(completed.status).toBe(200);
+    expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscriptionId, expect.anything());
+
+    await expect(
+      prisma.subscription.findUniqueOrThrow({ where: { id: row.id } }),
+    ).resolves.toMatchObject({ status: "canceled", stripeSubscriptionId: subscriptionId });
+  });
+
+  it("saves a checkout as ended when store Plus ends it before the page Stripe returns to saves it", async () => {
+    const stripeFake = fakeStripe();
+    const { headers, userId } = await learner();
+    const row = await addCheckoutRow(userId);
+    await addStorePlus({ userId });
+    const subscriptionId = stripeFake.add("active");
+
+    stripe.retrieveCheckout.mockImplementation(
+      async (id: string, params?: { expand?: string[] }) => ({
+        id,
+        metadata: { referenceId: userId, subscriptionId: row.id },
+        payment_status: "paid",
+        subscription: params?.expand?.includes("subscription")
+          ? stripeFake.read(subscriptionId)
+          : subscriptionId,
+      }),
+    );
+
+    // The page reads the subscription while active. Before it saves that, the store purchase's
+    // follow-up ends it and every webhook Stripe sends about it is handled.
+    stripe.retrieve.mockImplementationOnce(async (id: string) => {
+      const active = stripeFake.read(id);
+      await endWebPlusBesideStorePlus({ userId });
+
+      await deliverStripeEvent({
+        data: { object: stripeFake.read(id) },
+        type: "customer.subscription.deleted",
+      });
+
+      await deliverCheckoutCompleted({ rowId: row.id, subscriptionId, userId });
+      return active;
+    });
+
+    const returned = await guestAuth.handler(
+      new Request(
+        "http://localhost:3000/api/auth/subscription/success?callbackURL=%2F&checkoutSessionId=cs_plus",
+        { headers },
+      ),
+    );
+
+    expect(returned.status).toBe(302);
+
+    await expect(
+      prisma.subscription.findUniqueOrThrow({ where: { id: row.id } }),
+    ).resolves.toMatchObject({ status: "canceled" });
+  });
+
+  it("keeps website Plus ended when Stripe's update from before the end arrives after it", async () => {
+    const stripeFake = fakeStripe();
+    const { userId } = await learner();
+    const subscriptionId = stripeFake.add("active");
+    const active = stripeFake.read(subscriptionId);
+
+    const row = await prisma.subscription.create({
+      data: {
+        plan: "plus",
+        referenceId: userId,
+        status: "active",
+        stripeCustomerId: CUSTOMER,
+        stripeSubscriptionId: subscriptionId,
+      },
+    });
+
+    await addStorePlus({ userId });
+    await endWebPlusBesideStorePlus({ userId });
+
+    // A subscription made in Stripe's dashboard names no learner or row.
+    const late = await deliverStripeEvent({
+      data: { object: active },
+      type: "customer.subscription.updated",
+    });
+
+    expect(late.status).toBe(200);
+
+    await expect(
+      prisma.subscription.findUniqueOrThrow({ where: { id: row.id } }),
+    ).resolves.toMatchObject({ status: "canceled" });
+  });
+
   it("ends website Plus under each Stripe customer two checkouts started at once made", async () => {
     const stripeFake = fakeStripe();
     const { userId } = await learner();
@@ -339,10 +451,8 @@ describe("one Plus per learner on the website", () => {
       },
     });
 
-    const ended = await stripe.retrieve(subscriptionId);
-
     const deleted = {
-      data: { object: { ...ended, metadata: { referenceId: userId } } },
+      data: { object: stripeFake.read(subscriptionId) },
       type: "customer.subscription.deleted",
     };
 

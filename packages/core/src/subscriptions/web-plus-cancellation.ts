@@ -306,7 +306,7 @@ export async function keepWebPlus(): Promise<{ status: "kept" | "unavailable" } 
   }
 
   const resumed = await resumeSubscription(stripeSubscription);
-  await saveSubscription({ subscription: resumed, userId: learner.id });
+  await saveSubscription(resumed);
   revalidateCacheTags([getUserSubscriptionCacheTag(learner.id)]);
 
   return { status: "kept" };

@@ -136,13 +136,7 @@ export function resumeSubscription(
  * Stripe's webhook later writes the same fields; writing them now keeps the app and the API from
  * showing the old plan meanwhile.
  */
-export async function saveSubscription({
-  subscription,
-  userId,
-}: {
-  subscription: Stripe.Subscription;
-  userId: string;
-}): Promise<void> {
+export async function saveSubscription(subscription: Stripe.Subscription): Promise<void> {
   const item = subscription.items.data[0];
 
   await prisma.subscription.updateMany({
@@ -157,7 +151,7 @@ export async function saveSubscription({
       }),
       status: subscription.status,
     },
-    where: { provider: "stripe", referenceId: userId, stripeSubscriptionId: subscription.id },
+    where: { provider: "stripe", stripeSubscriptionId: subscription.id },
   });
 }
 
@@ -172,7 +166,7 @@ export async function saveStoppedSubscription({
   stopped: Stripe.Subscription;
   userId: string;
 }): Promise<void> {
-  await saveSubscription({ subscription: stopped, userId });
+  await saveSubscription(stopped);
 
   if (stopped.status === "active") {
     await reportSubscriptionChange({

@@ -101,9 +101,7 @@ async function endWebPlus({
     subscription,
   });
 
-  const { error } = await safeAsync(() =>
-    saveSubscription({ subscription: stopped, userId: learner.id }),
-  );
+  const { error } = await safeAsync(() => saveSubscription(stopped));
 
   if (error) {
     logError("Saving website Plus ended beside store Plus failed", { error, subscriptionId });
