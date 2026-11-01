@@ -144,11 +144,11 @@ fun TaskScaffold(
 
     BackHandler(enabled = exitConfirmation != null) { isConfirmingExit = true }
 
-    val frame: @Composable () -> Unit = {
+    val frame: @Composable (snackbars: Boolean) -> Unit = { snackbars ->
         Scaffold(
             topBar = { TaskTopBar(title, actions, onClose = leave, closeLabel) },
             bottomBar = { if (bottomBar != null) TaskBottomBar(bottomBar) },
-            snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },
+            snackbarHost = { if (snackbars) SnackbarHost(LocalSnackbarHostState.current) },
             content = content,
         )
     }
@@ -160,7 +160,8 @@ fun TaskScaffold(
             panesTouch = true,
             halfWidth = aside?.half == true,
         ) { beside ->
-            CompositionLocalProvider(LocalTaskAsideBeside provides beside) { frame() }
+            // An aside's footer beside the task holds its actions, so the aside shows its snackbars over them.
+            CompositionLocalProvider(LocalTaskAsideBeside provides beside) { frame(!beside || aside?.footer == null) }
         }
     }
 
@@ -209,16 +210,18 @@ private fun TaskAsideRail(aside: TaskAside) {
                         contentAlignment = Alignment.CenterStart,
                     ) { SectionLabel(title) }
                 }
-                Column(
-                    Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 24.dp)
-                        .padding(top = if (aside.title == null) 24.dp else 0.dp, bottom = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    content = aside.content,
-                )
+                Box(Modifier.weight(1f).fillMaxWidth()) {
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = 24.dp)
+                            .padding(top = if (aside.title == null) 24.dp else 0.dp, bottom = 24.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        content = aside.content,
+                    )
+                    if (aside.footer != null) SnackbarHost(LocalSnackbarHostState.current, Modifier.align(Alignment.BottomCenter))
+                }
                 aside.footer?.let { TaskBottomBar(it) }
             }
         }
