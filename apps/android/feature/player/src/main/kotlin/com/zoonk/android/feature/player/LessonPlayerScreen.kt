@@ -25,7 +25,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -123,6 +122,7 @@ import com.zoonk.android.feature.player.steps.rememberScreenWork
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.CelebrationScope
+import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.MeterPart
@@ -913,7 +913,7 @@ private fun ScreenMenu(
     screen: LessonScreen?,
     viewModel: LessonPlayerViewModel,
 ) {
-    var open by remember { mutableStateOf(false) }
+    var open by rememberSaveable { mutableStateOf(false) }
     var summaryOpen by rememberSaveable { mutableStateOf(false) }
     val isDone = state?.phase == LessonPhase.Completed
 

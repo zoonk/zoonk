@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -48,6 +47,7 @@ import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
+import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -196,7 +196,7 @@ private fun TempoMenu(
     tempos: List<Int>,
     onChange: (Int) -> Unit,
 ) {
-    var isOpen by remember { mutableStateOf(false) }
+    var isOpen by rememberSaveable { mutableStateOf(false) }
     val current = stringResource(R.string.activities_music_bpm, tempo)
     val label = stringResource(R.string.activities_music_tempo, current)
 
