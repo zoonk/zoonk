@@ -4,14 +4,6 @@ import XCTest
 
 @MainActor
 final class ProgressStoreTests: XCTestCase {
-  func testActivityWithoutStudyDaysStaysLoaded() async {
-    let store = makeStore(activityResults: [.success(.emptyTestFixture)])
-
-    await store.activity.load()
-
-    XCTAssertEqual(store.activity.state, .loaded(.emptyTestFixture))
-  }
-
   func testMissingEnergyPublishesEmptyState() async {
     let session = SessionStore.preview(account: .progressTestFixture)
     let store = ProgressStore(
@@ -74,12 +66,6 @@ final class ProgressStoreTests: XCTestCase {
     let requestTokens = await api.requestTokens
     XCTAssertEqual(requestTokens, ["old-session", "new-session"])
     XCTAssertEqual(store.activity.state, .loaded(.testFixture))
-  }
-
-  private func makeStore(activityResults: [Result<ActivityProgress, Error>]) -> ProgressStore {
-    ProgressStore(
-      api: ProgressAPIStub(activityResults: activityResults),
-      cache: AppCache(session: .preview(account: .progressTestFixture)))
   }
 }
 

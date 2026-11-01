@@ -210,6 +210,13 @@ final class PracticeModelTests: XCTestCase {
     XCTAssertEqual(choice.value3?.isTrue, false)
   }
 
+  func testSelectAllAndCountsDecode() throws {
+    XCTAssertEqual(try JSONDecoder().decode(PracticeSelect.self, from: Data(#""all""#.utf8)), .all)
+    XCTAssertEqual(try JSONDecoder().decode(PracticeSelect.self, from: Data("2".utf8)), .count(2))
+    XCTAssertTrue(PracticeSelect.all.isComplete([3]))
+    XCTAssertFalse(PracticeSelect.count(2).isComplete([3]))
+  }
+
   func testNumericEntryReadsCommasPointsAndFractions() {
     XCTAssertEqual(NumericEntryParser.parse("2,5", entry: nil), 2.5)
     XCTAssertEqual(NumericEntryParser.parse("1.234,5", entry: nil), 1234.5)
