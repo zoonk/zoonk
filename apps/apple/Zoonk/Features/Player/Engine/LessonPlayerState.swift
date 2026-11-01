@@ -842,7 +842,9 @@ struct LessonPlayerState: Equatable, Sendable {
     }
     position = 0
     phase = queue.isEmpty ? .completed : .playing
-    lessonOrder.forEach { clearAnswer($0) }
+    for id in lessonOrder {
+      clearAnswer(id)
+    }
     results = [:]
     firstVerdicts = [:]
     firstVerdictAttemptIds = [:]
