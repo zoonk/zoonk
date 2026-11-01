@@ -269,18 +269,16 @@ struct ConversationResultView: View {
 
       // Never "0": a call that earned nothing doesn't list it, as on main.
       if result.brainPower > 0 {
-        LabeledContent {
+        IconLabeledContent {
           Text(result.brainPower, format: .number.sign(strategy: .always()))
             .monospacedDigit()
             .foregroundStyle(.brain)
-        } label: {
-          Label {
-            Text("Brain Power", tableName: "Voice", comment: "Points earned label")
-          } icon: {
-            Image(systemName: "brain.head.profile")
-              .foregroundStyle(.brain)
-              .accessibilityHidden(true)
-          }
+        } title: {
+          Text("Brain Power", tableName: "Voice", comment: "Points earned label")
+        } icon: {
+          Image(systemName: "brain.head.profile")
+            .foregroundStyle(.brain)
+            .accessibilityHidden(true)
         }
       }
     } footer: {

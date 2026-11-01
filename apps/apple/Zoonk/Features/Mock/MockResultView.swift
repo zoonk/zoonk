@@ -204,43 +204,35 @@ private struct MockScoreSections: View {
 
     if let counts {
       Section {
-        LabeledContent {
+        IconLabeledContent {
           Text(counts.right, format: .number)
-        } label: {
-          Label {
-            Text("Right", tableName: "Mock", comment: "Right answers")
-          } icon: {
-            Image(systemName: "checkmark").foregroundStyle(.success)
-          }
+        } title: {
+          Text("Right", tableName: "Mock", comment: "Right answers")
+        } icon: {
+          Image(systemName: "checkmark").foregroundStyle(.success)
         }
-        LabeledContent {
+        IconLabeledContent {
           Text(counts.wrong, format: .number)
-        } label: {
-          Label {
-            Text("Wrong", tableName: "Mock", comment: "Wrong answers")
-          } icon: {
-            Image(systemName: "xmark").foregroundStyle(.destructive)
-          }
+        } title: {
+          Text("Wrong", tableName: "Mock", comment: "Wrong answers")
+        } icon: {
+          Image(systemName: "xmark").foregroundStyle(.destructive)
         }
         if counts.partial > 0 {
-          LabeledContent {
+          IconLabeledContent {
             Text(counts.partial, format: .number)
-          } label: {
-            Label {
-              Text("Partly right", tableName: "Mock", comment: "Partly right answers")
-            } icon: {
-              Image(systemName: "circle.dashed")
-            }
+          } title: {
+            Text("Partly right", tableName: "Mock", comment: "Partly right answers")
+          } icon: {
+            Image(systemName: "circle.dashed")
           }
         }
-        LabeledContent {
+        IconLabeledContent {
           Text(counts.blank, format: .number)
-        } label: {
-          Label {
-            Text("Blank", tableName: "Mock", comment: "Blank answers")
-          } icon: {
-            Image(systemName: "minus")
-          }
+        } title: {
+          Text("Blank", tableName: "Mock", comment: "Blank answers")
+        } icon: {
+          Image(systemName: "minus")
         }
       } footer: {
         if result.net == nil, result.blank > 0 {

@@ -1039,19 +1039,17 @@ struct TodayPracticeSection: View {
       }
 
       NavigationLink(value: AppRoute.mistakes) {
-        Label {
-          LabeledContent {
-            if let ready = places?.readyMistakes, ready > 0 {
-              Text(ready, format: .number)
-                .monospacedDigit()
-            }
-          } label: {
-            VStack(alignment: .leading, spacing: 2) {
-              Text("Mistakes notebook", tableName: "Today", comment: "Opens the mistakes notebook")
-              Text("Redo what you got wrong", tableName: "Today", comment: "The notebook's line")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-            }
+        IconLabeledContent {
+          if let ready = places?.readyMistakes, ready > 0 {
+            Text(ready, format: .number)
+              .monospacedDigit()
+          }
+        } title: {
+          VStack(alignment: .leading, spacing: 2) {
+            Text("Mistakes notebook", tableName: "Today", comment: "Opens the mistakes notebook")
+            Text("Redo what you got wrong", tableName: "Today", comment: "The notebook's line")
+              .font(.footnote)
+              .foregroundStyle(.secondary)
           }
         } icon: {
           KindMark(kind: .mistakes)

@@ -471,18 +471,16 @@ private struct PronunciationResultView: View {
           Text("Sounded right", tableName: "Voice", comment: "Readout label for right words")
         }
 
-        LabeledContent {
+        IconLabeledContent {
           Text(result.brainPower, format: .number.sign(strategy: .always(includingZero: false)))
             .monospacedDigit()
             .foregroundStyle(.brain)
-        } label: {
-          Label {
-            Text("Brain Power", tableName: "Voice", comment: "Points earned label")
-          } icon: {
-            Image(systemName: "brain.head.profile")
-              .foregroundStyle(.brain)
-              .accessibilityHidden(true)
-          }
+        } title: {
+          Text("Brain Power", tableName: "Voice", comment: "Points earned label")
+        } icon: {
+          Image(systemName: "brain.head.profile")
+            .foregroundStyle(.brain)
+            .accessibilityHidden(true)
         }
       }
     }

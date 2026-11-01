@@ -537,14 +537,12 @@ struct NextOnPathSection: View {
   }
 
   private func row(title: Text, detail: Text?, kind: LearnKind) -> some View {
-    LabeledContent {
+    IconLabeledContent {
       detail
-    } label: {
-      Label {
-        title.foregroundStyle(.primary)
-      } icon: {
-        KindMark(kind: kind)
-      }
+    } title: {
+      title.foregroundStyle(.primary)
+    } icon: {
+      KindMark(kind: kind)
     }
     .disclosureChevron()
   }
@@ -564,16 +562,12 @@ struct NextOnPathSection: View {
 
   @ViewBuilder
   private var finishRow: some View {
-    let label = Label {
+    let finish = IconLabeledContent {
+      planFinishText(context)
+    } title: {
       Text(context.goal.title).foregroundStyle(.primary)
     } icon: {
       Image(systemName: "flag")
-    }
-
-    let finish = LabeledContent {
-      planFinishText(context)
-    } label: {
-      label
     }
 
     if context.goal.kind == .exam {

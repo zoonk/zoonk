@@ -278,15 +278,13 @@ private struct LogbookSteps: View {
           count: recap.buddyAte.fixes)
 
         if !recap.badges.isEmpty {
-          LabeledContent {
+          IconLabeledContent {
             Text(recap.badges.count, format: .number)
-          } label: {
-            Label {
-              Text("Trap hunter badges", tableName: "Session", comment: "Badges earned this week")
-            } icon: {
-              Image(systemName: "rosette")
-                .foregroundStyle(.secondary)
-            }
+          } title: {
+            Text("Trap hunter badges", tableName: "Session", comment: "Badges earned this week")
+          } icon: {
+            Image(systemName: "rosette")
+              .foregroundStyle(.secondary)
           }
         }
       }
@@ -329,25 +327,21 @@ private struct LogbookSteps: View {
 
     if !recap.isQuiet {
       Section {
-        LabeledContent {
+        IconLabeledContent {
           Text(studyDuration(minutes: recap.week.minutes))
             .monospacedDigit()
-        } label: {
-          Label {
-            Text("Time", tableName: "Session", comment: "The week's study time")
-          } icon: {
-            Image(systemName: "clock")
-          }
+        } title: {
+          Text("Time", tableName: "Session", comment: "The week's study time")
+        } icon: {
+          Image(systemName: "clock")
         }
 
-        LabeledContent {
+        IconLabeledContent {
           Text(recap.week.questions, format: .number)
-        } label: {
-          Label {
-            Text("Questions", tableName: "Session", comment: "The week's questions")
-          } icon: {
-            Image(systemName: "checklist")
-          }
+        } title: {
+          Text("Questions", tableName: "Session", comment: "The week's questions")
+        } icon: {
+          Image(systemName: "checklist")
         }
       }
     }
@@ -379,14 +373,12 @@ private struct LogbookSteps: View {
   @ViewBuilder
   private func learnedRow(_ kind: LearnKind, _ label: Text, count: Int) -> some View {
     if count > 0 {
-      LabeledContent {
+      IconLabeledContent {
         Text(count, format: .number)
-      } label: {
-        Label {
-          label
-        } icon: {
-          KindMark(kind: kind)
-        }
+      } title: {
+        label
+      } icon: {
+        KindMark(kind: kind)
       }
     }
   }

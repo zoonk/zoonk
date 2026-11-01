@@ -422,41 +422,37 @@ private struct EarnedToday: View {
         }
 
         if missionsDone {
-          LabeledContent {
+          IconLabeledContent {
             if let missionsBonus {
               Text(missionsBonus, format: .number.sign(strategy: .always()))
                 .monospacedDigit()
                 .foregroundStyle(.brain)
             }
-          } label: {
-            Label {
-              Text("Today's missions", tableName: "Session", comment: "The missions' header")
-              Text(
-                "All \(summary.missions.count) done", tableName: "Session",
-                comment: "Every one of the day's missions is done")
-            } icon: {
-              Image(systemName: "checklist")
-            }
+          } title: {
+            Text("Today's missions", tableName: "Session", comment: "The missions' header")
+            Text(
+              "All \(summary.missions.count) done", tableName: "Session",
+              comment: "Every one of the day's missions is done")
+          } icon: {
+            Image(systemName: "checklist")
           }
         }
 
         if let stripes, let belt = ProgressBelt(rawValue: stripes.after.color) {
           VStack(alignment: .leading, spacing: 8) {
-            LabeledContent {
+            IconLabeledContent {
               Text(
                 "+\(stripes.stripesGained) levels", tableName: "Session",
                 comment: "How many belt levels the session added"
               )
               .monospacedDigit()
               .foregroundStyle(.success)
-            } label: {
-              Label {
-                Text(
-                  "\(beltName(stripes.after.color) ?? stripes.after.color), level \(stripes.after.level)",
-                  tableName: "Session", comment: "The belt and level reached")
-              } icon: {
-                BeltDot(belt: belt)
-              }
+            } title: {
+              Text(
+                "\(beltName(stripes.after.color) ?? stripes.after.color), level \(stripes.after.level)",
+                tableName: "Session", comment: "The belt and level reached")
+            } icon: {
+              BeltDot(belt: belt)
             }
 
             // The ticks hold still: each level already landed at the end of the block that reached it.

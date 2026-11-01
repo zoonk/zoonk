@@ -69,14 +69,12 @@ struct PlanPathRows: View {
         brief: brief)
     }
 
-    LabeledContent {
+    IconLabeledContent {
       planFinishText(context)
-    } label: {
-      Label {
-        Text(context.goal.title)
-      } icon: {
-        Image(systemName: "flag")
-      }
+    } title: {
+      Text(context.goal.title)
+    } icon: {
+      Image(systemName: "flag")
     }
 
     ForEach(phases.filter { $0.kind == .afterExam }) { phase in

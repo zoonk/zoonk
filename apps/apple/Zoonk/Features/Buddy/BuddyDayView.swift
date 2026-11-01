@@ -103,16 +103,14 @@ struct BuddyDayView: View {
           places.open(.energy)
         } label: {
           VStack(alignment: .leading, spacing: 8) {
-            LabeledContent {
+            IconLabeledContent {
               Text((current / 100).formatted(.percent.precision(.fractionLength(0))))
                 .monospacedDigit()
-            } label: {
-              Label {
-                Text("Energy", tableName: "Buddy", comment: "The buddy's Energy")
-              } icon: {
-                Image(systemName: "bolt.fill")
-                  .foregroundStyle(.energy)
-              }
+            } title: {
+              Text("Energy", tableName: "Buddy", comment: "The buddy's Energy")
+            } icon: {
+              Image(systemName: "bolt.fill")
+                .foregroundStyle(.energy)
             }
 
             ProgressView(value: min(max(current / 100, 0), 1))

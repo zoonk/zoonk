@@ -154,22 +154,20 @@ struct PlanLinkScreen: View {
 
       Section {
         ForEach(Array(outline.phases.enumerated()), id: \.offset) { index, phase in
-          LabeledContent {
+          IconLabeledContent {
             if let size = phaseSize(phase.hours) {
               Text(size)
                 .monospacedDigit()
             }
-          } label: {
-            Label {
-              Text(phase.name)
-              if let milestone = phase.milestone {
-                Text(milestone)
-              }
-            } icon: {
-              Text(index + 1, format: .number)
-                .monospacedDigit()
-                .foregroundStyle(index == 0 ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
+          } title: {
+            Text(phase.name)
+            if let milestone = phase.milestone {
+              Text(milestone)
             }
+          } icon: {
+            Text(index + 1, format: .number)
+              .monospacedDigit()
+              .foregroundStyle(index == 0 ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
           }
         }
       } header: {

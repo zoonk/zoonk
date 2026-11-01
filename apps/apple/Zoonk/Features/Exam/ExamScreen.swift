@@ -531,10 +531,12 @@ private struct ExamMocksSection: View {
     {
       Section {
         ForEach(exam.runningMocks) { mock in
+          let isNext = mock.id == exam.runningMocks.first?.id
+
           Button {
             router.open(.mock(blockId: mock.id))
           } label: {
-            LabeledContent {
+            IconLabeledContent {
               if let deadline = mock.deadline, deadline > .now {
                 Text(timerInterval: Date.now...deadline, countsDown: true)
                   .monospacedDigit()
@@ -545,17 +547,13 @@ private struct ExamMocksSection: View {
               } else {
                 Text("Time's up", tableName: "Exam", comment: "A running mock's time ran out")
               }
-            } label: {
-              let isNext = mock.id == exam.runningMocks.first?.id
-
-              Label {
-                mockTitle(MockLabels.title(number: mock.number), isNext: isNext)
-                Text(
-                  "\(mock.answered) of \(mock.questions) answered", tableName: "Exam",
-                  comment: "A running mock's progress")
-              } icon: {
-                StatusMark(status: isNext ? .next : .todo)
-              }
+            } title: {
+              mockTitle(MockLabels.title(number: mock.number), isNext: isNext)
+              Text(
+                "\(mock.answered) of \(mock.questions) answered", tableName: "Exam",
+                comment: "A running mock's progress")
+            } icon: {
+              StatusMark(status: isNext ? .next : .todo)
             }
             .disclosureChevron()
           }
@@ -565,19 +563,17 @@ private struct ExamMocksSection: View {
           Button {
             router.open(.challenge(planItemId: next.planItemId, sessionId: nil))
           } label: {
-            LabeledContent {
+            IconLabeledContent {
               if let date = next.date.flatMap(studyDate) {
                 Text(date.formatted(.studyDay.weekday(.abbreviated).month(.abbreviated).day()))
               }
-            } label: {
-              Label {
-                mockTitle(
-                  MockLabels.daySize(fullLength: next.fullLength, day: nil),
-                  isNext: exam.runningMocks.isEmpty)
-                Text("\(next.questions) questions", tableName: "Exam", comment: "Next mock size")
-              } icon: {
-                StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
-              }
+            } title: {
+              mockTitle(
+                MockLabels.daySize(fullLength: next.fullLength, day: nil),
+                isNext: exam.runningMocks.isEmpty)
+              Text("\(next.questions) questions", tableName: "Exam", comment: "Next mock size")
+            } icon: {
+              StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
             }
             .disclosureChevron()
           }
@@ -627,27 +623,23 @@ private struct ExamProgressSection: View {
   var body: some View {
     if let progress = exam.progress, let latest = latestMock(progress) {
       Section {
-        LabeledContent {
+        IconLabeledContent {
           Text((Double(latest.percent) / 100).formatted(.percent)).monospacedDigit()
-        } label: {
-          Label {
-            Text("Latest mock", tableName: "Exam", comment: "The latest mock's score")
-            Text(latestDetail(progress, latest: latest))
-          } icon: {
-            Image(systemName: "timer")
-          }
+        } title: {
+          Text("Latest mock", tableName: "Exam", comment: "The latest mock's score")
+          Text(latestDetail(progress, latest: latest))
+        } icon: {
+          Image(systemName: "timer")
         }
 
         if let best = bestArea(progress) {
-          LabeledContent {
+          IconLabeledContent {
             Text((Double(best.percent) / 100).formatted(.percent)).monospacedDigit()
-          } label: {
-            Label {
-              Text("Best area", tableName: "Exam", comment: "The subject that went best")
-              Text(best.name)
-            } icon: {
-              Image(systemName: "trophy").foregroundStyle(.success)
-            }
+          } title: {
+            Text("Best area", tableName: "Exam", comment: "The subject that went best")
+            Text(best.name)
+          } icon: {
+            Image(systemName: "trophy").foregroundStyle(.success)
           }
         }
 

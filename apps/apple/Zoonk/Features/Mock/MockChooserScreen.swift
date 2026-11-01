@@ -541,18 +541,16 @@ struct MockSummaryRow: View {
     Button {
       router.open(.mock(blockId: blockId))
     } label: {
-      LabeledContent {
+      IconLabeledContent {
         Text(score).monospacedDigit()
-      } label: {
-        Label {
-          Text(MockLabels.title(number: mock.number))
-            .foregroundStyle(.primary)
-          Text(
-            [shape, mock.finishedAt.formatted(.dateTime.month(.abbreviated).day())]
-              .compactMap { $0 }.joinedFacts())
-        } icon: {
-          StatusMark(status: .done)
-        }
+      } title: {
+        Text(MockLabels.title(number: mock.number))
+          .foregroundStyle(.primary)
+        Text(
+          [shape, mock.finishedAt.formatted(.dateTime.month(.abbreviated).day())]
+            .compactMap { $0 }.joinedFacts())
+      } icon: {
+        StatusMark(status: .done)
       }
       .disclosureChevron()
     }

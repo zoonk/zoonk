@@ -11,7 +11,7 @@ struct PreferencesView: View {
     Form {
       if let preferences = settings.preferences.value {
         Section {
-          LabeledContent {
+          IconLabeledContent {
             Button {
               isEditingBuddy = true
             } label: {
@@ -24,17 +24,15 @@ struct PreferencesView: View {
               }
             }
             .buttonStyle(.bordered)
-          } label: {
-            Label {
-              Text(preferences.buddy.displayName)
-              Text(
-                "\(BuddyStage(belt: learner.summary.value?.level?.belt ?? .white).name)\u{00A0}· \(preferences.buddy.glasses.worn)",
-                tableName: "Settings",
-                comment: "The buddy's growth stage and glasses, as in “Baby · Round glasses”")
-            } icon: {
-              BuddyFace(kind: preferences.buddy.kind, glasses: preferences.buddy.glasses)
-                .font(.title2)
-            }
+          } title: {
+            Text(preferences.buddy.displayName)
+            Text(
+              "\(BuddyStage(belt: learner.summary.value?.level?.belt ?? .white).name)\u{00A0}· \(preferences.buddy.glasses.worn)",
+              tableName: "Settings",
+              comment: "The buddy's growth stage and glasses, as in “Baby · Round glasses”")
+          } icon: {
+            BuddyFace(kind: preferences.buddy.kind, glasses: preferences.buddy.glasses)
+              .font(.title2)
           }
         } header: {
           Text("Your buddy", tableName: "Settings", comment: "Preferences section about the buddy")

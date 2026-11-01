@@ -122,7 +122,11 @@ private struct StackingLabel: View {
   var body: some View {
     if isStacked {
       ViewThatFits(in: .horizontal) {
-        TitleAndIconLabelStyle().makeBody(configuration: configuration)
+        // The system's gap beside a text title, which a `LabeledContent` title would close.
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+          configuration.icon
+          configuration.title
+        }
 
         VStack(alignment: .leading) {
           configuration.icon
@@ -131,6 +135,28 @@ private struct StackingLabel: View {
       }
     } else {
       Label(configuration)
+    }
+  }
+}
+
+/// A list row's `LabeledContent` whose label has an icon. In a list, a `LabeledContent` lays out a
+/// `Label` in its label itself, and stacked it flows the icon into the title's first line. This
+/// puts a `Label` around the `LabeledContent` instead: side by side the row looks the same, and
+/// stacked the icon follows `StackingLabelStyle` like every other label's.
+struct IconLabeledContent<Content: View, Title: View, Icon: View>: View {
+  @ViewBuilder let content: Content
+  @ViewBuilder let title: Title
+  @ViewBuilder let icon: Icon
+
+  var body: some View {
+    Label {
+      LabeledContent {
+        content
+      } label: {
+        title
+      }
+    } icon: {
+      icon
     }
   }
 }
