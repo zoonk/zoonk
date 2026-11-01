@@ -49,25 +49,21 @@ async function mergeIntoPublicSource({
   ]);
 }
 
+function findPublicCopy(contentHash: string) {
+  return prisma.source.findFirst({
+    select: { id: true },
+    where: { contentHash, visibility: "public" },
+  });
+}
+
 async function publishCopy({
   copy,
   input,
 }: {
   copy: PublisherCopy;
   input: ShareUploadInput;
-}): Promise<SharedUpload> {
-  const identityKey = buildSourceIdentityKey({ contentHash: copy.contentHash, url: null });
-
-  // A freshness check may since have updated the copy first shared with this text.
-  const publicCopy = await prisma.source.findFirst({
-    select: { id: true },
-    where: {
-      OR: [
-        { contentHash: copy.contentHash, visibility: "public" },
-        { identityKey, language: input.language },
-      ],
-    },
-  });
+}): Promise<SharedUpload | null> {
+  const publicCopy = await findPublicCopy(copy.contentHash);
 
   if (publicCopy) {
     await mergeIntoPublicSource({ privateSourceId: input.sourceId, publicSourceId: publicCopy.id });
@@ -80,7 +76,7 @@ async function publishCopy({
         blobUrl: null,
         extractedText: copy.parsed.text,
         fetchedAt: new Date(),
-        identityKey,
+        identityKey: buildSourceIdentityKey({ contentHash: copy.contentHash, url: null }),
         language: input.language,
         mimeType: copy.contentType,
         ownerId: null,
@@ -96,8 +92,10 @@ async function publishCopy({
     }),
   );
 
+  // Either a share of the same text finished first, or a freshness check moved the copy first
+  // shared with this text to a newer edition, which this upload doesn't match: it stays private.
   if (shared.error && isPrismaUniqueConstraintError(shared.error)) {
-    return publishCopy({ copy, input });
+    return (await findPublicCopy(copy.contentHash)) ? publishCopy({ copy, input }) : null;
   }
 
   if (shared.error) {
@@ -129,7 +127,7 @@ export async function shareSourceUpload(input: ShareUploadInput): Promise<Shared
 
   const shared = await publishCopy({ copy, input });
 
-  if (upload.blobUrl) {
+  if (shared && upload.blobUrl) {
     await deleteUploadedBlob(upload.blobUrl);
   }
 

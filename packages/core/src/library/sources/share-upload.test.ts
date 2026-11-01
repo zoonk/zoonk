@@ -200,7 +200,7 @@ describe(shareSourceUpload, () => {
     );
   });
 
-  it("merges into the copy first shared with the same text after the publisher updated it", async () => {
+  it("keeps an upload private when the copy first shared with its text moved to a newer edition", async () => {
     const [first, second] = await Promise.all([userFixture(), userFixture()]);
     const text = noticeText();
     servePublisherCopy(text);
@@ -212,11 +212,15 @@ describe(shareSourceUpload, () => {
 
     servePublisherCopy(text);
     const late = await privateUploadFixture({ text, userId: second.id });
+    vi.mocked(del).mockClear();
 
-    await expect(shareNotice(late.id)).resolves.toStrictEqual({
-      merged: true,
-      sourceId: shared.id,
-    });
+    await expect(shareNotice(late.id)).resolves.toBeNull();
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: late.id } }),
+    ).resolves.toMatchObject({ blobUrl: late.blobUrl, extractedText: text, visibility: "private" });
+
+    expect(del).not.toHaveBeenCalled();
   });
 
   it("ignores sources that aren't private uploads", async () => {
