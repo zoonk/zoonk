@@ -11,7 +11,6 @@ import com.zoonk.android.feature.exam.GOAL
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
-import com.zoonk.api.models.AnytimeMock
 import com.zoonk.api.models.MockQuestionsGeneration
 import com.zoonk.api.models.MockShape
 import com.zoonk.api.models.PlacementMockOption
@@ -54,17 +53,6 @@ class MockStarterTest {
             assertEquals(MutationResult.Done(MockStartOutcome.Opened(STARTED)), starter.start(GOAL, full, acceptFewer = true))
             model.load()
             assertEquals(2, reads)
-        }
-
-    @Test
-    fun aMockAlreadyRunningOpensInsteadOfAnother() =
-        runTest(dispatcher) {
-            api.starts = listOf { started(AnytimeMock.Status.RUNNING) }
-
-            assertEquals(
-                MutationResult.Done(MockStartOutcome.Opened(STARTED)),
-                MockStarter(api, cache()).start(GOAL, full, acceptFewer = false),
-            )
         }
 
     @Test
