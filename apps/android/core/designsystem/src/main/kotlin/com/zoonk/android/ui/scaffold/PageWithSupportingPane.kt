@@ -192,15 +192,17 @@ private fun Rect.throughWindowEnd(): Rect =
     }
 
 /**
- * Where a page [width] wide spreads across an unfolded book's fold: the fold, where it crosses the
- * page and both pages have room for a phone's column at the text's size, measured as a task's lone
- * frame measures it, or null.
+ * Where a page [width] wide spreads into two pages: inside a [SpreadScreen] where that screen's pages
+ * meet, while they show; elsewhere across an unfolded book's fold, where it crosses the page and both
+ * pages have room for a phone's column at the text's size, measured as a task's lone frame measures
+ * it. Null where the page stays one column.
  */
 @Composable
 fun spreadFold(
     width: Dp,
     span: PageSpan?,
 ): PageFold? {
+    LocalSpread.current?.let { spread -> return if (spread.shows) screenSplit(width, span) else null }
     // Read on every frame, not only once a fold shows: a reading that starts late sees no fold at first.
     val pagesFit = pageRoom(width, span = null, panesTouch = true, halfWidth = false, atFoldOnly = false).fits(withText = true)
     return pageFold(width, span)?.takeIf { pagesFit }
@@ -221,6 +223,14 @@ fun pageFold(
 private fun WindowAdaptiveInfo.foldAcross(
     width: Dp,
     span: PageSpan?,
+): PageFold? = foldAt(windowPosture.allVerticalHingeBounds, width, span)
+
+/** The first of [splits] (in the window) that crosses a page [width] wide, from the page's start edge. */
+@Composable
+internal fun foldAt(
+    splits: List<Rect>,
+    width: Dp,
+    span: PageSpan?,
 ): PageFold? {
     val density = LocalDensity.current
     val direction = LocalLayoutDirection.current
@@ -231,7 +241,7 @@ private fun WindowAdaptiveInfo.foldAcross(
             with(density) { width.toPx() },
             direction,
         )
-    val fold = windowPosture.allVerticalHingeBounds.firstOrNull { it.left > page.left && it.right < page.right } ?: return null
+    val fold = splits.firstOrNull { it.left > page.left && it.right < page.right } ?: return null
     val start = if (direction == LayoutDirection.Ltr) fold.left - page.left else page.right - fold.right
 
     return with(density) { PageFold(start.toDp(), (start + fold.width).toDp(), fold) }
@@ -270,6 +280,6 @@ fun Modifier.onPageSpan(onSpan: (PageSpan) -> Unit): Modifier =
     }
 
 /** The narrowest page a book foldable leaves beside the navigation rail: a 673dp Galaxy Z Fold's 256dp, with room to spare. */
-private val MINIMUM_PANE = 240.dp
+internal val MINIMUM_PANE = 240.dp
 
 private const val HALF = 0.5f

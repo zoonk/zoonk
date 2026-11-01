@@ -74,8 +74,9 @@ class TaskAside(
 
 /**
  * One bar either way, so what its [actions] opened stays open as the book folds. Across an unfolded
- * book's fold the title sits beside the way out, centered over the page before the fold, as main's
- * title sits over the task's column; the actions stay at the bar's end, past the fold.
+ * book's fold, or a spread's split on a wide window ([screenSplit]), the title sits beside the way
+ * out, centered over the page before it, as main's title sits over the task's column; the actions
+ * stay at the bar's end, past it.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,7 +90,7 @@ private fun TaskTopBar(
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
     BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-        val fold = pageFold(maxWidth, span)
+        val fold = screenSplit(maxWidth, span)
 
         CenterAlignedTopAppBar(
             title = { if (fold == null) Box(Modifier.titleTarget(focus)) { title() } },

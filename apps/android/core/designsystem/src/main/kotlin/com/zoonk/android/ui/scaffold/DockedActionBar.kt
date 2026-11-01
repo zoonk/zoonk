@@ -19,8 +19,8 @@ import com.zoonk.android.app.LocalSnackbarAnchors
 
 /**
  * Actions pinned to the bottom over a hairline. The window's snackbars show above it. Across an
- * unfolded book foldable's fold, the actions sit on the page after it, off the fold and where the
- * learner's turn is.
+ * unfolded book foldable's fold, or a spread's split on a wide window ([screenSplit]), the actions
+ * sit on the page after it, off the fold and where the learner's turn is.
  */
 @Composable
 fun DockedActionBar(
@@ -35,7 +35,7 @@ fun DockedActionBar(
 
     Surface(modifier.onGloballyPositioned { anchors.set(key, it.boundsInRoot().top) }.onPageSpan { span = it }) {
         BoxWithConstraints {
-            val fold = pageFold(maxWidth, span)
+            val fold = screenSplit(maxWidth, span)
 
             Column {
                 HorizontalDivider()

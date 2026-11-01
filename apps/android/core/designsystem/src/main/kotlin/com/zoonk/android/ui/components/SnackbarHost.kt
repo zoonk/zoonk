@@ -14,11 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.onPageSpan
-import com.zoonk.android.ui.scaffold.pageFold
+import com.zoonk.android.ui.scaffold.screenSplit
 
 /**
- * Material's snackbar host, centered under what it spans. Across an unfolded book foldable's fold
- * its snackbars show on the page after the fold, as sheets and dialogs do, instead of on the fold.
+ * Material's snackbar host, centered under what it spans. Across an unfolded book foldable's fold,
+ * or a spread's split on a wide window ([screenSplit]), its snackbars show on the page after it, as
+ * sheets do, instead of on the fold.
  */
 @Composable
 fun SnackbarHost(
@@ -28,7 +29,7 @@ fun SnackbarHost(
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
     BoxWithConstraints(modifier.fillMaxWidth().onPageSpan { span = it }) {
-        val fold = pageFold(maxWidth, span)
+        val fold = screenSplit(maxWidth, span)
 
         Box(
             if (fold ==
