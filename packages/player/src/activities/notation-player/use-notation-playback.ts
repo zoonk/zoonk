@@ -44,7 +44,10 @@ export function useNotationPlayback({
   useEffect(
     () => () => {
       timing.current?.stop();
+      timing.current = null;
       lit.current.forEach((element) => element.classList.remove(PLAYING_CLASS));
+      lit.current = [];
+      setBar(null);
     },
     [],
   );

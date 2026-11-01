@@ -2,7 +2,7 @@ import {
   activityContentFixtures,
   engineModeFixtures,
 } from "@zoonk/testing/fixtures/activity-contents";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import {
   checkActivity,
@@ -12,12 +12,31 @@ import {
 } from "../_test-utils/activity-player";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
-import { type ActivityContent, activityStep, explanationStep } from "../preview/preview-steps";
+import {
+  type ActivityContent,
+  activityStep,
+  explanationStep,
+  languageStep,
+} from "../preview/preview-steps";
+
+const DEVICE_DELAY_KEY = "zoonk:rhythm-device-delay";
+const LETTER_SOUND = "https://audio.zoonk.test/ja-a.mp3";
 
 const reading = explanationStep({
   text: "A chemical change makes a new substance.",
   title: "Two kinds of change",
 });
+
+function letter({ audioUrl, symbol }: { audioUrl: string | null; symbol: string }) {
+  return languageStep("alphabet", {
+    audioText: symbol,
+    audioUrl,
+    forms: [],
+    pronunciation: `Say ${symbol} as it's written.`,
+    readingAid: symbol,
+    symbol,
+  });
+}
 
 function playLesson(steps: Parameters<typeof buildLesson>[0]) {
   renderLessonPlayer({ lesson: buildLesson(steps) });
@@ -39,6 +58,11 @@ async function goBackAndReturn() {
 }
 
 describe("going back to reread", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    localStorage.removeItem(DEVICE_DELAY_KEY);
+  });
+
   it("keeps an activity as the learner left it until they come back and check it", async () => {
     playLesson([reading, activity()]);
     await page.getByRole("button", { name: /^Next/u }).click();
@@ -90,5 +114,62 @@ describe("going back to reread", () => {
     await expect
       .element(page.getByRole("button", { name: "Previous screen" }))
       .not.toBeInTheDocument();
+  });
+
+  it("starts a rhythm run or a sound check over when the learner leaves it halfway", async () => {
+    localStorage.removeItem(DEVICE_DELAY_KEY);
+    playLesson([reading, activity(activityContentFixtures.rhythmTapper)]);
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: "Start the sound check" }).click();
+
+    await expect
+      .element(page.getByRole("button", { name: "Skip for now" }))
+      .not.toBeInTheDocument();
+
+    await goBackAndReturn();
+
+    await expect.element(page.getByRole("button", { name: "Skip for now" })).toBeVisible();
+    await page.getByRole("button", { name: "Skip for now" }).click();
+    await page.getByRole("button", { name: "Start tapping" }).click();
+
+    await expect
+      .element(page.getByRole("button", { name: "Start tapping" }))
+      .not.toBeInTheDocument();
+
+    await goBackAndReturn();
+
+    await expect.element(page.getByRole("button", { name: "Start tapping" })).toBeVisible();
+  });
+
+  it("plays a screen's sound as on arrival when the learner comes back to it", async () => {
+    const played: string[] = [];
+
+    vi.spyOn(HTMLMediaElement.prototype, "play").mockImplementation(function play(
+      this: HTMLMediaElement,
+    ) {
+      played.push(this.src);
+      return Promise.resolve();
+    });
+
+    renderLessonPlayer({
+      lesson: buildLesson(
+        [
+          reading,
+          letter({ audioUrl: LETTER_SOUND, symbol: "あ" }),
+          letter({ audioUrl: null, symbol: "か" }),
+        ],
+        { language: "pt", targetLanguage: "ja" },
+      ),
+    });
+
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: "Play pronunciation" }).click();
+    await expect.element(page.getByRole("button", { name: "Pause pronunciation" })).toBeVisible();
+    const playedBefore = played.length;
+
+    await goBackAndReturn();
+
+    await expect.poll(() => played.length).toBeGreaterThan(playedBefore);
+    expect(new Set(played)).toStrictEqual(new Set([LETTER_SOUND]));
   });
 });

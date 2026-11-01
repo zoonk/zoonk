@@ -50,10 +50,18 @@ export function useDelayCalibration() {
   const run = useRef<Run | null>(null);
   const taps = useRef<number[]>([]);
 
+  // A sound check its screen leaves (hidden while the learner reads another) can't finish, so it
+  // starts over.
   useEffect(
     () => () => {
-      cancelAnimationFrame(run.current?.frame ?? 0);
+      const left = run.current;
+      cancelAnimationFrame(left?.frame ?? 0);
       run.current = null;
+
+      if (left) {
+        taps.current = [];
+        setPhase({ kind: "idle" });
+      }
     },
     [],
   );

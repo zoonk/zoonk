@@ -5,7 +5,7 @@ import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PauseIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSharedPlayerAudio } from "../player-audio-context";
 import { PLAYER_AUDIO_KEYBOARD_SHORTCUT } from "../player-shortcuts";
 import { useWordAudio } from "../use-word-audio";
@@ -18,6 +18,8 @@ function usePlayAudioButtonState({ audioUrl, preload }: { audioUrl: string; prel
     onEnded: () => setIsPlaying(false),
     preloadUrls: preload && !sharedAudio ? [audioUrl] : undefined,
   });
+
+  useEffect(() => () => setIsPlaying(false), []);
 
   if (sharedAudio) {
     return {

@@ -162,6 +162,7 @@ export function useSpokenAudio(language: string) {
     () => () => {
       runRef.current += 1;
       player?.stop(ownerRef.current);
+      setState(IDLE);
     },
     [player],
   );

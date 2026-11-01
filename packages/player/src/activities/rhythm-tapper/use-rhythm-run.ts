@@ -92,10 +92,20 @@ export function useRhythmRun({
     finishRef.current = onFinish;
   }, [onFinish]);
 
+  // The screen kept hidden while the learner reads another stops its effects: a run it leaves
+  // can't finish, so it starts over, and a finished one stays.
   useEffect(
     () => () => {
-      cancelAnimationFrame(session.current?.frame ?? 0);
+      const left = session.current;
+      cancelAnimationFrame(left?.frame ?? 0);
       session.current = null;
+
+      if (left) {
+        tapsRef.current = [];
+        setTaps([]);
+        setPosition(null);
+        setPhase("idle");
+      }
     },
     [],
   );

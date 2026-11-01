@@ -42,6 +42,16 @@ export function PlayerAudioProvider({
 
   const isPlaying = Boolean(audioUrl && playingAudioUrl === audioUrl);
 
+  // A screen kept hidden stops its sound (useWordAudio releases it); shown again, it starts as on
+  // arrival, prompt included.
+  useEffect(
+    () => () => {
+      hasHandledAudioPromptRef.current = false;
+      setPlayingAudioUrl(null);
+    },
+    [],
+  );
+
   const startAudio = useCallback(
     async ({
       shouldEnableAutoplay,
