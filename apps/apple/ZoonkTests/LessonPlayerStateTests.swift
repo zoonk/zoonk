@@ -340,6 +340,13 @@ final class LessonGradingTests: XCTestCase {
       [true, true, true])
   }
 
+  func testVowelSignsTellArrangedWordsApart() {
+    XCTAssertEqual(
+      LessonGrading.arrangedWordMarks(
+        ["कम", "काम", "มา", "ม้า"], expected: ["काम", "काम।", "ม้า", "ม้า!"], isCorrect: false),
+      [false, true, false, true])
+  }
+
   func testRepeatedMatchLabelsEachTakeOneTile() {
     let board = MatchColumnsBoard(
       pairs: [

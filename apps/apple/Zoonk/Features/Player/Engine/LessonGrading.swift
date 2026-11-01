@@ -266,14 +266,15 @@ enum LessonGrading {
   private static func wordKey(_ word: String) -> String {
     var kept = String.UnicodeScalarView()
     kept.append(
-      contentsOf: word.unicodeScalars.filter { $0.properties.isWhitespace || isLetterOrNumber($0) })
+      contentsOf: word.unicodeScalars.filter { $0.properties.isWhitespace || isWordCharacter($0) })
     return String(kept).lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
   }
 
-  /// JavaScript's `\p{L}` and `\p{N}`.
-  private static func isLetterOrNumber(_ scalar: Unicode.Scalar) -> Bool {
+  /// JavaScript's `\p{L}`, `\p{M}` and `\p{N}`.
+  private static func isWordCharacter(_ scalar: Unicode.Scalar) -> Bool {
     switch scalar.properties.generalCategory {
     case .uppercaseLetter, .lowercaseLetter, .titlecaseLetter, .modifierLetter, .otherLetter,
+      .nonspacingMark, .spacingMark, .enclosingMark,
       .decimalNumber, .letterNumber, .otherNumber:
       true
     default:
