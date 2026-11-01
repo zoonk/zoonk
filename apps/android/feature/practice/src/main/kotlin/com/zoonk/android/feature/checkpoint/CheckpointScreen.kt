@@ -67,8 +67,11 @@ import com.zoonk.android.feature.ceremonies.MomentBuddy
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.player.LessonTitle
+import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.ListeningSet
+import com.zoonk.android.feature.practice.RunFrame
+import com.zoonk.android.feature.practice.RunHeader
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunNotFound
@@ -260,30 +263,44 @@ internal fun DuelPlay(
         state.feedback?.let { trickster.play(if (it.isCorrect) TricksterAct.Sly else TricksterAct.Smug, it.itemId) }
     }
 
-    TaskScaffold(
+    // A duel shows a recording's set with its question and never a passage beside it.
+    RunFrame(
+        title = stringResource(if (read.isBoss) R.string.checkpoint_trickster else R.string.checkpoint_weekly),
+        question = null,
+        place = read.questions.indexOf(question),
+        app = app,
         onClose = viewModel::close,
-        title = { LessonTitle(stringResource(if (read.isBoss) R.string.checkpoint_trickster else R.string.checkpoint_weekly)) },
-        bottomBar = { TaskActionBar { DuelActions(state, score, question, viewModel) } },
-        aside = if (empty) null else TaskAside { DuelAside(read, score, trickster) },
-    ) { padding ->
-        val wide = taskAsideBeside()
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                if (!empty) {
-                    if (read.isBoss && !wide) ShieldBar(read, state, score, question) else DuelSegments(read, state, question)
+        mainAction = null,
+        report = null,
+        progress = { wide ->
+            if (!empty) {
+                RunHeader {
+                    if (read.isBoss &&
+                        !wide
+                    ) {
+                        ShieldBar(read, state, score, question)
+                    } else {
+                        DuelSegments(read, state, question)
+                    }
                 }
-                when {
-                    question != null -> key(question.itemId) { QuestionCard(read, state, score, question, viewModel) }
-                    empty -> QuestionsRemoved(eyebrow(read.checkpoint))
-                    else -> DuelOver(state, score)
-                }
+            }
+        },
+        actions = { DuelActions(state, score, question, viewModel) },
+        aside = if (empty) null else ({ DuelAside(read, score, trickster) }),
+    ) { part, _, _ ->
+        when {
+            question != null -> {
+                key(question.itemId) { QuestionCard(read, state, score, question, viewModel, part) }
+            }
+
+            !part.showsScreen -> {}
+
+            empty -> {
+                QuestionsRemoved(eyebrow(read.checkpoint))
+            }
+
+            else -> {
+                DuelOver(state, score)
             }
         }
     }
@@ -296,12 +313,15 @@ private fun QuestionCard(
     score: DuelScore,
     question: Question,
     viewModel: CheckpointViewModel,
+    part: StepPart,
 ) {
     val feedback = state.feedback?.takeIf { it.itemId == question.itemId }
 
-    question.set?.takeIf { it.listening != null }?.let { ListeningSet(it) }
-    ItemSupport(question)
-    if (question.format != QuestionFormat.TrueFalse) QuestionTitle(question.question, graded = feedback != null)
+    if (part.showsScreen) {
+        question.set?.takeIf { it.listening != null }?.let { ListeningSet(it) }
+        ItemSupport(question)
+        if (question.format != QuestionFormat.TrueFalse) QuestionTitle(question.question, graded = feedback != null)
+    }
     // A wrong pick never reveals the right one until the end.
     QuestionAnswer(
         question = question,
@@ -312,8 +332,9 @@ private fun QuestionCard(
         enabled = feedback == null && !state.pending,
         onAnswer = viewModel::select,
         onSubmit = viewModel::confirm,
+        part = part,
     )
-    feedback?.let { Verdict(it.isCorrect, score.decision, state.reinforcementLessons) }
+    if (part.showsTurn) feedback?.let { Verdict(it.isCorrect, score.decision, state.reinforcementLessons) }
 }
 
 @Composable

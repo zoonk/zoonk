@@ -11,6 +11,10 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
@@ -47,7 +51,10 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class CheckpointScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val rule = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -108,6 +115,30 @@ class CheckpointScreenshots {
         rule.onNodeWithText("Mars", substring = true).performClick()
         rule.onNodeWithText("Confirm").performClick()
     }
+
+    /**
+     * Opens the book flat. Android tells a listener that starts after the fold about it; window-testing
+     * doesn't, so a frame rebuilt as the fold drops the duel's aside hears it again.
+     */
+    private fun unfold() =
+        repeat(2) {
+            rule.waitForIdle()
+            folds.overrideWindowLayoutInfo(
+                TestWindowLayoutInfo(
+                    listOf(
+                        FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
+                    ),
+                ),
+            )
+        }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xxhdpi")
+    fun bookRight() =
+        show("book-right") {
+            unfold()
+            confirm()
+        }
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")

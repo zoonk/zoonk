@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -120,8 +121,8 @@ interface RunControls {
 /**
  * A keyboard's Enter runs [mainAction] and Escape closes, as in the lesson player. On a wide window
  * a question's passage shows beside it, or else [aside]. Across an unfolded book's fold the run is a
- * spread: the passage or [aside] and the question ([StepPart.Screen]) on the page before the fold,
- * the learner's turn ([StepPart.Turn]) on the page after it. A new [place] starts at its top.
+ * spread: the question with its passage ([StepPart.Screen]), then [aside], on the page before the
+ * fold, the learner's turn ([StepPart.Turn]) on the page after it. A new [place] starts at its top.
  */
 @Composable
 internal fun RunFrame(
@@ -132,7 +133,7 @@ internal fun RunFrame(
     onClose: () -> Unit,
     mainAction: (() -> Unit)?,
     report: FeedbackTarget?,
-    progress: @Composable () -> Unit,
+    progress: @Composable (asideShown: Boolean) -> Unit,
     actions: (@Composable (asideShown: Boolean) -> Unit)?,
     closeLabel: String? = null,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
@@ -177,7 +178,7 @@ internal fun RunFrame(
             actions = { report?.let { ReportProblemMenu(app, it) } },
             closeLabel = closeLabel,
             bottomBar = actions?.let { { TaskActionBar { it(asideShown(hasAside, fold)) } } },
-            // A passage takes the rail over the run's own pane, as main's aside; across a fold both lead the page before it.
+            // A passage takes the rail over the run's own pane, as main's aside; across a fold both go on the page before it.
             aside =
                 when {
                     fold != null -> null
@@ -189,7 +190,7 @@ internal fun RunFrame(
             val shown = asideShown(hasAside, fold)
 
             Column(Modifier.padding(padding).fillMaxSize()) {
-                Box(if (fold == null) Modifier else Modifier.width(fold.start)) { progress() }
+                Box(if (fold == null) Modifier else Modifier.width(fold.start)) { progress(shown) }
                 Box(Modifier.weight(1f).fillMaxWidth()) {
                     // The turn's page is the one column's place, so its unsent work stays as the book opens or closes; where an
                     // aside comes or goes the task's frame starts over, and the controls start from the screen's draft.
@@ -202,11 +203,12 @@ internal fun RunFrame(
 
                     if (fold != null) {
                         ScrollingPage(Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true }, screenScroll) {
+                            content(StepPart.Screen, inlineSet, shown)
                             if (shown) {
+                                HorizontalDivider()
                                 asideTitle?.let { SectionLabel(it) }
                                 aside?.invoke(this)
                             }
-                            content(StepPart.Screen, inlineSet, shown)
                         }
                     }
                 }
@@ -263,16 +265,22 @@ internal fun RunMeter(
             )
         }
 
+    RunHeader(
+        Modifier.semantics {
+            contentDescription = label
+            progressBarRangeInfo = ProgressBarRangeInfo(done.toFloat(), 0f..total.toFloat())
+        },
+    ) { MeterParts(parts) }
+}
+
+/** A run's progress over its question, on the question's edges. */
+@Composable
+internal fun RunHeader(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        Box(
-            Modifier
-                .runColumn()
-                .padding(bottom = 8.dp)
-                .semantics {
-                    contentDescription = label
-                    progressBarRangeInfo = ProgressBarRangeInfo(done.toFloat(), 0f..total.toFloat())
-                },
-        ) { MeterParts(parts) }
+        Box(Modifier.runColumn().padding(bottom = 8.dp).then(modifier)) { content() }
     }
 }
 
