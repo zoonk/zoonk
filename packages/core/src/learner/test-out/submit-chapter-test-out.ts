@@ -1,5 +1,4 @@
 import "server-only";
-import { setTimeout as wait } from "node:timers/promises";
 import { type Goal, prisma } from "@zoonk/db";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
@@ -19,6 +18,7 @@ import { type ItemAnswerInput } from "../contract";
 import { recordLearnerAnswer } from "../record-learner-answer";
 import { countSkippableItems, getChapterSkills } from "./_utils/chapter-items";
 import { isTestOutPlusOnly } from "./_utils/test-out-access";
+import { withTestOutClaim } from "./_utils/test-out-claim";
 import { loadTestOutPlan } from "./_utils/test-out-plan";
 import {
   type TestOutReceipt,
@@ -29,9 +29,6 @@ import { type ChapterTestOutInput } from "./test-out-contract";
 import { scoreTestOut } from "./test-out-rules";
 
 const PERCENT = 100;
-/** Longer than any submission takes: an older claim was left by a crash. */
-const CLAIM_TTL_MS = 300_000;
-const CLAIM_POLL_MS = 500;
 
 type ChapterTestOutOutcome = ProgressCelebration & {
   changeId: string | null;
@@ -170,13 +167,24 @@ function toReadyResult({
   };
 }
 
-async function replayReceipt({
-  sent,
+/** Retries return their receipt even if current grading or eligibility checks would refuse them. */
+async function replaySavedReceipt({
+  chapterId,
+  goalId,
+  requestId,
   userId,
 }: {
-  sent: TestOutReceipt;
+  chapterId: string;
+  goalId: string;
+  requestId: string;
   userId: string;
-}): Promise<SubmitChapterTestOutResult> {
+}): Promise<SubmitChapterTestOutResult | null> {
+  const sent = await findTestOutReceipt({ chapterId, goalId, requestId, userId });
+
+  if (!sent) {
+    return null;
+  }
+
   const celebration = await celebrateProgress({ progress: null, userId });
   return toReadyResult({ celebration, said: sent });
 }
@@ -194,11 +202,15 @@ async function submitOwnedTestOut({
 }): Promise<SubmitChapterTestOutResult> {
   const goalId = goal.id;
 
-  // Retries must return their receipt even if current grading or eligibility checks would refuse them.
-  const sent = await findTestOutReceipt({ chapterId, goalId, requestId: input.requestId, userId });
+  const replayed = await replaySavedReceipt({
+    chapterId,
+    goalId,
+    requestId: input.requestId,
+    userId,
+  });
 
-  if (sent) {
-    return replayReceipt({ sent, userId });
+  if (replayed) {
+    return replayed;
   }
 
   const plan = await loadTestOutPlan(goalId);
@@ -290,55 +302,6 @@ async function submitOwnedTestOut({
   return toReadyResult({ celebration, said });
 }
 
-/** The claim's time is its owner's: releasing it never drops a claim taken over after a crash. */
-async function claimSubmission({ key, userId }: { key: string; userId: string }) {
-  const now = new Date();
-
-  await prisma.testOutClaim.deleteMany({
-    where: { createdAt: { lt: new Date(now.getTime() - CLAIM_TTL_MS) }, key },
-  });
-
-  const { count } = await prisma.testOutClaim.createMany({
-    data: [{ createdAt: now, key, userId }],
-    skipDuplicates: true,
-  });
-
-  return count > 0 ? now : null;
-}
-
-/**
- * Domain writers commit their own transactions, so the claim is a row rather than a lock held open:
- * a held transaction kept a connection idle while the work waited for others from the same pool.
- */
-async function submitOnce(
-  submission: Parameters<typeof submitOwnedTestOut>[0] & { key: string },
-): Promise<SubmitChapterTestOutResult> {
-  const { key, ...owned } = submission;
-  const sent = await findTestOutReceipt({
-    chapterId: owned.chapterId,
-    goalId: owned.goal.id,
-    requestId: owned.input.requestId,
-    userId: owned.userId,
-  });
-
-  if (sent) {
-    return replayReceipt({ sent, userId: owned.userId });
-  }
-
-  const claimedAt = await claimSubmission({ key, userId: owned.userId });
-
-  if (!claimedAt) {
-    await wait(CLAIM_POLL_MS);
-    return submitOnce(submission);
-  }
-
-  try {
-    return await submitOwnedTestOut(owned);
-  } finally {
-    await prisma.testOutClaim.deleteMany({ where: { createdAt: claimedAt, key } });
-  }
-}
-
 /** Every question must belong to the chapter. Retrying a requestId returns its receipt without recording or celebrating again. */
 export async function submitChapterTestOut({
   chapterId,
@@ -355,11 +318,12 @@ export async function submitChapterTestOut({
     return owned;
   }
 
-  return submitOnce({
-    chapterId,
-    goal: owned.goal,
-    input,
-    key: `${owned.userId}:${goalId}:${chapterId}:${input.requestId}`,
-    userId: owned.userId,
+  const { userId } = owned;
+
+  return withTestOutClaim({
+    key: `${userId}:${goalId}:${chapterId}:${input.requestId}`,
+    replay: () => replaySavedReceipt({ chapterId, goalId, requestId: input.requestId, userId }),
+    submit: () => submitOwnedTestOut({ chapterId, goal: owned.goal, input, userId }),
+    userId,
   });
 }
