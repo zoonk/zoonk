@@ -3,7 +3,6 @@ package com.zoonk.android.ui.scaffold
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -32,7 +30,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -40,7 +37,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -103,30 +99,23 @@ fun TaskScaffold(
     BackHandler(enabled = exitConfirmation != null) { isConfirmingExit = true }
 
     val frame: @Composable () -> Unit = {
-        var span by remember { mutableStateOf<PageSpan?>(null) }
-
-        BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-            val fold = pageFold(maxWidth, span)
-
-            Scaffold(
-                topBar = {
-                    val close: @Composable () -> Unit = { CloseButton(onClick = leave, label = closeLabel) }
-                    if (fold == null) {
-                        CenterAlignedTopAppBar(title = title, navigationIcon = close, actions = actions)
-                    } else {
-                        // Across an unfolded book foldable each page gets its part of the bar, as main's title
-                        // sits over the task's column: leave and the title over the page before the fold.
-                        Row {
-                            CenterAlignedTopAppBar(title = title, navigationIcon = close, modifier = Modifier.width(fold.start))
-                            TopAppBar(title = {}, actions = actions, modifier = Modifier.weight(1f).padding(start = fold.end - fold.start))
-                        }
-                    }
-                },
-                bottomBar = { if (bottomBar != null) TaskBottomBar(bottomBar) },
-                snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },
-                content = content,
-            )
-        }
+        Scaffold(
+            topBar = {
+                // Across an unfolded book's fold the title stays centered over the page before it, as main's
+                // title sits over the task's column.
+                TopBarAcrossFold(actions) { modifier, barActions ->
+                    CenterAlignedTopAppBar(
+                        title = title,
+                        navigationIcon = { CloseButton(onClick = leave, label = closeLabel) },
+                        actions = barActions,
+                        modifier = modifier,
+                    )
+                }
+            },
+            bottomBar = { if (bottomBar != null) TaskBottomBar(bottomBar) },
+            snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },
+            content = content,
+        )
     }
 
     // The screen's modifier (focus, keys) stays on one node when an aside comes or goes.

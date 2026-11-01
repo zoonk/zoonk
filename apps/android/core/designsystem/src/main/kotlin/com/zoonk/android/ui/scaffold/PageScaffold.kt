@@ -19,7 +19,11 @@ fun PageScaffold(
 ) {
     Scaffold(
         modifier = modifier,
-        topBar = { TopAppBar(title = title, navigationIcon = { BackButton(onClick = onBack) }, actions = actions) },
+        topBar = {
+            TopBarAcrossFold(actions) { modifier, barActions ->
+                TopAppBar(title = title, navigationIcon = { BackButton(onClick = onBack) }, actions = barActions, modifier = modifier)
+            }
+        },
         content = content,
     )
 }

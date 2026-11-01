@@ -34,8 +34,9 @@ import androidx.compose.ui.unit.dp
  * Material's supporting-pane scaffold, by the panes [pageDirective] decides. Where only one pane
  * fits, [mainPane] is told so (`supportingPaneBeside` false) and shows the supporting content its
  * own way, below its content or in a sheet, as main does under `lg`. With [panesTouch], the panes
- * meet without Material's room between them, for an aside that starts with its own hairline, so the
- * page's lists reach that hairline as they reach the window's edge. With [halfWidth], the supporting
+ * meet without Material's room between them: for an aside that starts with its own hairline, so the
+ * page's lists reach that hairline as they reach the window's edge, or for two pages that keep their
+ * own margins on each side of a book's fold. With [halfWidth], the supporting
  * pane takes half the room, for a long passage. With [atFoldOnly], the panes split only at an
  * unfolded book foldable's fold, for a spread that wider windows show as one column.
  */
