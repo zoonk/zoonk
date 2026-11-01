@@ -3,6 +3,7 @@ package com.zoonk.android.feature.activities
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -70,6 +71,25 @@ class ActivityKitFlowTest {
 
         rule.onNodeWithContentDescription("Your answers").assertExists()
         rule.onNodeWithText("Check").assertIsEnabled()
+    }
+
+    /** Android closing the app on a missed check's feedback brings back its retry, which starts over rather than showing the missed path. */
+    @Test
+    fun aMissedChecksRetryStartsOverAfterAndroidClosesTheAppOnItsFeedback() {
+        val restoration = StateRestorationTester(rule)
+        harness.play(listOf(ActivityFixtures.step("decisionTree", id = TREE)), restoration = restoration) {
+            grade = { _, _ -> checkResult(false, expected = ActivityFixtures.expected("decisionTree")) }
+        }
+        tap("Needles")
+        tap("In bundles")
+        harness.tap("Check")
+
+        harness.api.runAnswers = """[{"answeredAt":"2026-10-28T10:01:00Z","isCorrect":false,"stepId":"$TREE"}]"""
+        harness.viewModel = harness.openAgain()
+        restoration.emulateSavedInstanceStateRestore()
+
+        rule.onNodeWithContentDescription("Your answers").assertDoesNotExist()
+        rule.onNodeWithText("Check").assertIsNotEnabled()
     }
 
     private companion object {

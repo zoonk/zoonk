@@ -40,6 +40,7 @@ import com.zoonk.android.feature.player.engine.isServerGradedAnswer
 import com.zoonk.android.feature.player.engine.isWaitingForPicture
 import com.zoonk.android.feature.player.engine.reduce
 import com.zoonk.android.feature.player.engine.revealGuess
+import com.zoonk.android.feature.player.engine.round
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
@@ -206,6 +207,7 @@ class LessonPlayerViewModel(
     private var exampleLinesWrite: Job? = null
     private var writingExampleLines by mutableStateOf(false)
     private var abandonSent = false
+    private var keptRounds: Map<String, Int>? = null
 
     /**
      * Starts the lesson's run when it opens, as main does after its player mounts (never on a
@@ -257,7 +259,17 @@ class LessonPlayerViewModel(
         mutableState.update { state -> state?.let { reduce(it, action, now()) } }
         val after = mutableState.value ?: return
         if (after.completion?.status == CompletionStatus.Saving && before?.completion?.status != CompletionStatus.Saving) saveCompletion()
-        if (after.rounds != before?.rounds) saved[ROUNDS] = HashMap(after.rounds)
+        keepRounds(after)
+    }
+
+    /**
+     * Saves the round each screen's work belongs to, for when Android closes the app in the background. A checked screen
+     * is saved under its next round: the resumed run puts its retry straight on screen, and that retry starts over.
+     */
+    private fun keepRounds(state: LessonPlayerState) {
+        val rounds = state.rounds + state.results.keys.associateWith { state.round(it) + 1 }
+        if (rounds != keptRounds) saved[ROUNDS] = HashMap(rounds)
+        keptRounds = rounds
     }
 
     fun select(answer: LessonAnswer?) {
