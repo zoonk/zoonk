@@ -30,7 +30,7 @@ async function loadSourceFiles(source: Source) {
     return { file: null, images: [] };
   }
 
-  if (source.url && !source.blobUrl && mediaType === PDF_CONTENT_TYPE) {
+  if (source.url && !source.blobUrl && NATIVE_FILE_TYPES.has(mediaType)) {
     return { file: { data: new URL(source.url), mediaType }, images: [] };
   }
 

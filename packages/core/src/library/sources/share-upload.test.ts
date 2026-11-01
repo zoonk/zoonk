@@ -1,12 +1,14 @@
 import { randomUUID } from "node:crypto";
-import { del } from "@vercel/blob";
+import { del, get } from "@vercel/blob";
 import { prisma } from "@zoonk/db";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { Response as PageResponse, fetch } from "undici";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { loadSourceDocuments } from "./load-source-documents";
 import { hashDocument } from "./parse-document";
 import { shareSourceUpload } from "./share-upload";
+import { refreshWebSource } from "./web-sources";
 
 const PRIVATE_STORE = { storeId: "store_test", token: undefined };
 
@@ -19,6 +21,12 @@ function noticeText() {
 function servePublisherCopy(text: string) {
   vi.mocked(fetch).mockImplementation(
     async () => new PageResponse(text, { headers: { "content-type": "text/markdown" } }),
+  );
+}
+
+function servePublisherImage(bytes: Uint8Array) {
+  vi.mocked(fetch).mockImplementation(
+    async () => new PageResponse(bytes, { headers: { "content-type": "image/png" } }),
   );
 }
 
@@ -115,10 +123,10 @@ describe(shareSourceUpload, () => {
     expect(del).not.toHaveBeenCalled();
   });
 
-  it("keeps the file of an image that is the publisher's own, its only readable form", async () => {
+  it("reads a shared image from the publisher's address, so research reads it as updated there", async () => {
     const user = await userFixture();
-    const bytes = new TextEncoder().encode(`PNG ${randomUUID()}`);
-    const contentHash = hashDocument({ bytes, text: null });
+    const learnerBytes = new TextEncoder().encode(`PNG ${randomUUID()}`);
+    const contentHash = hashDocument({ bytes: learnerBytes, text: null });
     const blobUrl = `https://store.private.blob.vercel-storage.com/sources/${user.id}/${randomUUID()}.png`;
 
     const source = await sourceFixture({
@@ -134,17 +142,34 @@ describe(shareSourceUpload, () => {
       visibility: "private",
     });
 
-    vi.mocked(fetch).mockImplementation(
-      async () => new PageResponse(bytes, { headers: { "content-type": "image/png" } }),
-    );
+    vi.mocked(get).mockImplementation(async () => ({
+      blob: {
+        cacheControl: "",
+        contentDisposition: "",
+        contentType: "image/png",
+        downloadUrl: blobUrl,
+        etag: "etag",
+        pathname: blobUrl,
+        size: learnerBytes.byteLength,
+        uploadedAt: new Date(),
+        url: blobUrl,
+      },
+      headers: new Headers(),
+      statusCode: 200,
+      stream: new Response(learnerBytes).body!,
+    }));
 
+    servePublisherImage(learnerBytes);
     await expect(shareNotice(source.id)).resolves.toMatchObject({ merged: false });
 
-    await expect(
-      prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
-    ).resolves.toMatchObject({ blobUrl, mimeType: "image/png", visibility: "public" });
+    servePublisherImage(new TextEncoder().encode(`PNG ${randomUUID()}`));
+    const refresh = await refreshWebSource(source.id);
+    const [document] = await loadSourceDocuments([source.id]);
 
-    expect(del).not.toHaveBeenCalled();
+    expect(document?.contentHash).toBe(refresh?.source.contentHash);
+    expect(document?.file).toStrictEqual({ data: new URL(NOTICE_URL), mediaType: "image/png" });
+
+    expect(del).toHaveBeenCalledWith(blobUrl, PRIVATE_STORE);
   });
 
   it("merges into the copy another learner shared first and removes the duplicate file", async () => {
