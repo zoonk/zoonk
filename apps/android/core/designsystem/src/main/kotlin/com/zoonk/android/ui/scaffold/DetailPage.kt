@@ -29,8 +29,8 @@ import androidx.window.core.layout.WindowSizeClass
 /**
  * Main's `DetailLayout`: one column from the window's start margin, capped at a readable measure
  * (wider windows give it room, never wider margins), and [aside] beside it behind a hairline where
- * there's room. Where there isn't, [content] is told so and shows what the aside holds after its
- * own, as main does under `lg`.
+ * there's room, with [asideBar] pinned under it. Where there isn't, [content] is told so and shows
+ * what the aside and its bar hold its own way, as main does under `lg`.
  */
 @Composable
 fun DetailPage(
@@ -38,6 +38,7 @@ fun DetailPage(
     asideLabel: String,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
+    asideBar: (@Composable () -> Unit)? = null,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
     val padding = detailPagePadding()
@@ -47,15 +48,18 @@ fun DetailPage(
         supportingPane = {
             Row {
                 VerticalDivider()
-                Column(
-                    Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(padding)
-                        .semantics { paneTitle = asideLabel },
-                    verticalArrangement = Arrangement.spacedBy(DETAIL_SECTION_GAP),
-                    content = aside,
-                )
+                Column(Modifier.semantics { paneTitle = asideLabel }) {
+                    Column(
+                        Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState())
+                            .padding(padding),
+                        verticalArrangement = Arrangement.spacedBy(DETAIL_SECTION_GAP),
+                        content = aside,
+                    )
+                    asideBar?.let { bar -> DockedActionBar { Box(Modifier.fillMaxWidth().padding(16.dp)) { bar() } } }
+                }
             }
         },
     ) { asideBeside ->

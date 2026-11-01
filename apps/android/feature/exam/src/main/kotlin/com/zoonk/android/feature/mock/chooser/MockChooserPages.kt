@@ -110,10 +110,18 @@ internal fun PracticeChooser(
     }
 
     val start = { option?.let { viewModel.start(MockChoice.Practice(it.shape), it.key) } }
+    val action: @Composable (Modifier) -> Unit = { modifier ->
+        when {
+            !open -> SeePlusButton(navigator, modifier)
+            shown is ChooserStatus.Short -> StartButton(startWith(shown.outcome), busy, enabled = option != null, modifier) { start() }
+            else -> StartButton(stringResource(R.string.mock_chooser_start), busy, enabled = option != null, modifier) { start() }
+        }
+    }
 
     ChooserPage(
         listState = listState,
         onEnter = { if (open) start() else navigator.open(AppRoute.Subscription) },
+        bar = { StartBar(shown, navigator, action) },
         aside = {
             option?.let {
                 PickedMock(
@@ -138,24 +146,11 @@ internal fun PracticeChooser(
                 eyebrow = view.examName,
                 title = stringResource(R.string.mock_chooser_title),
                 line = stringResource(if (open) R.string.mock_chooser_rule else R.string.mock_chooser_pick_free),
-                status = shown,
-            ) {
-                when {
-                    !open -> {
-                        SeePlusButton(navigator)
-                    }
-
-                    shown is ChooserStatus.Short -> {
-                        StartButton(startWith(shown.outcome), busy, enabled = option != null) { start() }
-                    }
-
-                    else -> {
-                        StartButton(stringResource(R.string.mock_chooser_start), busy, enabled = option != null) { start() }
-                    }
-                }
-            }
+                status = if (asideBeside) ChooserStatus.Choosing else shown,
+                action = action.takeUnless { asideBeside },
+            )
         }
-        refusal(shown, navigator)
+        if (!asideBeside) refusal(shown, navigator)
         // One pick across both lists, as on main: the subjects are a labeled group of the same choice.
         item(key = "choices", contentType = "choices") {
             Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
@@ -207,10 +202,18 @@ internal fun PlacementChooser(
         }
 
     val start = { option?.let { viewModel.start(MockChoice.Placement(it.length), it.key) } }
+    val action: @Composable (Modifier) -> Unit = { modifier ->
+        if (open) {
+            StartButton(stringResource(R.string.mock_chooser_placement_start), busy, enabled = option != null, modifier) { start() }
+        } else {
+            SeePlusButton(navigator, modifier)
+        }
+    }
 
     ChooserPage(
         listState = listState,
         onEnter = { if (open) start() else navigator.open(AppRoute.Subscription) },
+        bar = { StartBar(status, navigator, action) },
         aside = {
             option?.let {
                 PickedMock(
@@ -221,22 +224,17 @@ internal fun PlacementChooser(
                 )
             }
         },
-    ) {
+    ) { asideBeside ->
         item(key = "hero", contentType = "hero") {
             ChooserHero(
                 eyebrow = view.examName,
                 title = stringResource(R.string.mock_chooser_placement_title),
                 line = stringResource(R.string.mock_chooser_placement_detail),
-                status = status,
-            ) {
-                if (open) {
-                    StartButton(stringResource(R.string.mock_chooser_placement_start), busy, enabled = option != null) { start() }
-                } else {
-                    SeePlusButton(navigator)
-                }
-            }
+                status = if (asideBeside) ChooserStatus.Choosing else status,
+                action = action.takeUnless { asideBeside },
+            )
         }
-        refusal(status, navigator)
+        if (!asideBeside) refusal(status, navigator)
         item(key = "lengths", contentType = "choices") { ChoiceRows(choices, picked) { picked = it } }
         item(key = "note", contentType = "note") {
             if (open) {
@@ -279,16 +277,22 @@ internal fun MockWriting(
     }
 }
 
-/** The page's column, with the picked mock beside it where there's room, as main's aside. */
+/**
+ * The page's column, with the picked mock beside it where there's room, as main's aside, and [bar]
+ * pinned under the picked mock there, as on every open book: the start bar sits under what Start
+ * starts.
+ */
 @Composable
 private fun ChooserPage(
     listState: LazyListState,
     onEnter: () -> Unit,
+    bar: @Composable () -> Unit,
     aside: @Composable ColumnScope.() -> Unit,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
     DetailPage(
         aside = aside,
+        asideBar = bar,
         asideLabel = stringResource(R.string.mock_chooser_picked),
         // Enter takes the page's main action, as main's Start does; the arrows move the pick.
         modifier =
@@ -308,13 +312,26 @@ private fun ChooserHero(
     title: String,
     line: String,
     status: ChooserStatus,
-    action: @Composable () -> Unit,
+    action: (@Composable (Modifier) -> Unit)?,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Eyebrow(eyebrow)
         Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall.copy(lineBreak = LineBreak.Heading))
         StatusLine(status, line)
-        Box(Modifier.padding(top = 8.dp).mainActionWidth()) { action() }
+        action?.let { Box(Modifier.padding(top = 8.dp).mainActionWidth()) { it(Modifier.mainActionWidth()) } }
+    }
+}
+
+/** Under the picked mock: what the last Start found, then Start, which fills the page's width as on a phone. */
+@Composable
+private fun StartBar(
+    status: ChooserStatus,
+    navigator: AppNavigator,
+    action: @Composable (Modifier) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        if (status is ChooserStatus.Refused) Refusal(status, navigator) else StatusLine(status, line = null)
+        action(Modifier.fillMaxWidth())
     }
 }
 
@@ -322,7 +339,7 @@ private fun ChooserHero(
 @Composable
 private fun StatusLine(
     status: ChooserStatus,
-    line: String,
+    line: String?,
 ) {
     val failed = status as? ChooserStatus.Failed
     val text =
@@ -340,7 +357,7 @@ private fun StatusLine(
             else -> {
                 line
             }
-        }
+        } ?: return
 
     Text(
         text,
@@ -380,6 +397,7 @@ private fun StartButton(
     label: String,
     busy: Boolean,
     enabled: Boolean,
+    modifier: Modifier,
     onClick: () -> Unit,
 ) {
     // Disabled while it gets the mock ready, keeping its ink as main does.
@@ -388,7 +406,7 @@ private fun StartButton(
             disabledContainerColor = if (busy) MaterialTheme.colorScheme.primary else Color.Unspecified,
             disabledContentColor = if (busy) MaterialTheme.colorScheme.onPrimary else Color.Unspecified,
         )
-    Button(onClick = onClick, modifier = Modifier.mainActionWidth(), enabled = enabled && !busy, colors = colors) {
+    Button(onClick = onClick, modifier = modifier, enabled = enabled && !busy, colors = colors) {
         if (busy) {
             CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
@@ -400,26 +418,35 @@ private fun StartButton(
 }
 
 @Composable
-private fun SeePlusButton(navigator: AppNavigator) {
-    Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = Modifier.mainActionWidth()) {
+private fun SeePlusButton(
+    navigator: AppNavigator,
+    modifier: Modifier,
+) {
+    Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = modifier) {
         Text(stringResource(R.string.mock_chooser_see_plus))
     }
 }
 
-/** Fair use for new questions ran out: main's help limit notice with its way on. */
 private fun LazyListScope.refusal(
     status: ChooserStatus,
     navigator: AppNavigator,
 ) {
     if (status !is ChooserStatus.Refused) return
-    item(key = "refusal", contentType = "refusal") {
-        LimitNotice(
-            limit = status.limit,
-            subject = LimitSubject.Help,
-            onCreateAccount = { navigator.open(AppRoute.Login) },
-            onSeePlus = { navigator.open(AppRoute.Subscription) },
-        )
-    }
+    item(key = "refusal", contentType = "refusal") { Refusal(status, navigator) }
+}
+
+/** Fair use for new questions ran out: main's help limit notice with its way on. */
+@Composable
+private fun Refusal(
+    status: ChooserStatus.Refused,
+    navigator: AppNavigator,
+) {
+    LimitNotice(
+        limit = status.limit,
+        subject = LimitSubject.Help,
+        onCreateAccount = { navigator.open(AppRoute.Login) },
+        onSeePlus = { navigator.open(AppRoute.Subscription) },
+    )
 }
 
 internal data class RowChoice(
