@@ -1,7 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { revalidateTag } from "next/cache";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { getUserSubscriptionCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
 import { getWebPlusSubscription } from "./get-web-plus-subscription";
 import { cancelWebPlus, keepWebPlus } from "./web-plus-cancellation";
@@ -190,6 +192,144 @@ describe("website Plus cancellation", () => {
     await subscribedLearner(stripeSubscription());
     await expect(keepWebPlus()).resolves.toStrictEqual({ status: "unavailable" });
     expect(stripe.update).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    {
+      expected: "ending",
+      liveEnding: true,
+      liveStatus: "active",
+      operation: "cancel",
+      savedEnding: false,
+    },
+    {
+      expected: "none",
+      liveEnding: false,
+      liveStatus: "canceled",
+      operation: "cancel",
+      savedEnding: false,
+    },
+    {
+      expected: "none",
+      liveEnding: false,
+      liveStatus: "canceled",
+      operation: "keep",
+      savedEnding: true,
+    },
+    {
+      expected: "renewing",
+      liveEnding: false,
+      liveStatus: "active",
+      operation: "keep",
+      savedEnding: true,
+    },
+    {
+      expected: "unpaid",
+      liveEnding: false,
+      liveStatus: "past_due",
+      operation: "cancel",
+      savedEnding: false,
+    },
+    {
+      expected: "unpaid",
+      liveEnding: false,
+      liveStatus: "unpaid",
+      operation: "cancel",
+      savedEnding: false,
+    },
+    {
+      expected: "unpaid",
+      liveEnding: true,
+      liveStatus: "past_due",
+      operation: "keep",
+      savedEnding: true,
+    },
+  ] as const)(
+    "reconciles $operation against live $liveStatus / ending=$liveEnding before answering",
+    async ({ operation, savedEnding, liveEnding, liveStatus, expected }) => {
+      const saved = stripeSubscription("month", savedEnding);
+      const user = await subscribedLearner(saved);
+      const periodEnd = new Date(saved.items.data[0]!.current_period_end * 1000);
+
+      const live = {
+        ...saved,
+        cancel_at: liveEnding ? saved.items.data[0]!.current_period_end : null,
+        cancel_at_period_end: liveEnding,
+        status: liveStatus,
+      };
+
+      stripe.retrieve.mockResolvedValue(live);
+      const action = operation === "cancel" ? cancelWebPlus : keepWebPlus;
+
+      await expect(action()).resolves.toStrictEqual({ status: "unavailable" });
+
+      await expect(
+        prisma.subscription.findFirst({ where: { referenceId: user.id } }),
+      ).resolves.toMatchObject({
+        cancelAt: liveEnding ? periodEnd : null,
+        cancelAtPeriodEnd: liveEnding,
+        status: liveStatus,
+      });
+
+      const expectedPeriodEnd = expected === "unpaid" ? null : periodEnd;
+
+      const snapshot =
+        expected === "none"
+          ? { status: "none" }
+          : { periodEnd: expectedPeriodEnd, state: expected, status: "ready" };
+
+      await expect(getWebPlusSubscription()).resolves.toStrictEqual(snapshot);
+
+      expect(revalidateTag).toHaveBeenCalledExactlyOnceWith(getUserSubscriptionCacheTag(user.id), {
+        expire: 0,
+      });
+
+      expect(stripe.cancel).not.toHaveBeenCalled();
+      expect(stripe.update).not.toHaveBeenCalled();
+    },
+  );
+
+  it("refreshes a changed billing period before canceling it", async () => {
+    const saved = stripeSubscription();
+    const user = await subscribedLearner(saved);
+    const item = saved.items.data[0]!;
+    const end = item.current_period_end + 86_400;
+
+    stripe.retrieve.mockResolvedValue({
+      ...saved,
+      items: { data: [{ ...item, current_period_end: end }] },
+    });
+
+    await expect(cancelWebPlus()).resolves.toStrictEqual({ status: "unavailable" });
+
+    await expect(getWebPlusSubscription()).resolves.toStrictEqual({
+      periodEnd: new Date(end * 1000),
+      state: "renewing",
+      status: "ready",
+    });
+
+    expect(stripe.update).not.toHaveBeenCalled();
+
+    expect(revalidateTag).toHaveBeenCalledExactlyOnceWith(getUserSubscriptionCacheTag(user.id), {
+      expire: 0,
+    });
+  });
+
+  it("ends a newly unpaid renewal only after the learner can confirm its corrected state", async () => {
+    const saved = stripeSubscription();
+    await subscribedLearner(saved);
+    stripe.retrieve.mockResolvedValue({ ...saved, status: "past_due" });
+    await expect(cancelWebPlus()).resolves.toStrictEqual({ status: "unavailable" });
+    expect(stripe.cancel).not.toHaveBeenCalled();
+
+    await expect(getWebPlusSubscription()).resolves.toStrictEqual({
+      periodEnd: null,
+      state: "unpaid",
+      status: "ready",
+    });
+
+    await expect(cancelWebPlus()).resolves.toMatchObject({ status: "canceled" });
+    expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(saved.id, { prorate: false });
   });
 
   it("leaves store subscriptions to their store", async () => {

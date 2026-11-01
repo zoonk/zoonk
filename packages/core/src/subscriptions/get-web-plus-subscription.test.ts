@@ -126,6 +126,49 @@ describe(getWebPlusSubscription, () => {
     expect(stripe.retrieve).not.toHaveBeenCalled();
   });
 
+  it("reads a free learner's website state with one query", async () => {
+    const user = await userFixture();
+    vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
+
+    await expect(countDatabaseStatements(getWebPlusSubscription)).resolves.toMatchObject({
+      result: { status: "none" },
+      statements: 1,
+      writes: 0,
+    });
+  });
+
+  it("prefers an older active website plan over a newer unpaid renewal in one query", async () => {
+    const user = await userFixture();
+    vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
+
+    const active = await prisma.subscription.create({
+      data: {
+        periodEnd: new Date(Date.now() + 86_400_000),
+        plan: "plus",
+        provider: "stripe",
+        referenceId: user.id,
+        status: "active",
+        stripeSubscriptionId: `sub_${randomUUID()}`,
+      },
+    });
+
+    await prisma.subscription.create({
+      data: {
+        plan: "plus",
+        provider: "stripe",
+        referenceId: user.id,
+        status: "past_due",
+        stripeSubscriptionId: `sub_${randomUUID()}`,
+      },
+    });
+
+    await expect(countDatabaseStatements(getWebPlusSubscription)).resolves.toMatchObject({
+      result: { periodEnd: active.periodEnd, state: "renewing", status: "ready" },
+      statements: 1,
+      writes: 0,
+    });
+  });
+
   it("does not read a website subscription for a visitor or guest", async () => {
     vi.mocked(getSession).mockResolvedValue(null);
 
