@@ -24,12 +24,12 @@ type WordRow = {
 };
 
 function toWordData({
-  distractors = [],
-  translation = "",
+  distractors,
+  translation,
   word,
 }: {
-  distractors?: string[];
-  translation?: string;
+  distractors: string[];
+  translation: string;
   word: WordRow;
 }) {
   return {
@@ -44,11 +44,9 @@ function toWordData({
 }
 
 async function loadTargetWords({
-  language,
   targetLanguage,
   texts,
 }: {
-  language: string;
   targetLanguage: string;
   texts: string[];
 }) {
@@ -56,12 +54,10 @@ async function loadTargetWords({
     return [];
   }
 
-  const words = await prisma.word.findMany({
-    include: { pronunciations: { where: { userLanguage: language } } },
+  return prisma.word.findMany({
+    select: { audioUrl: true, id: true, romanization: true, word: true },
     where: { targetLanguage, word: { in: [...new Set(texts)], mode: "insensitive" } },
   });
-
-  return words.map((word) => toWordData({ word }));
 }
 
 async function loadExerciseResources({
@@ -104,7 +100,6 @@ async function loadExerciseResources({
   });
 
   const targetWords = await loadTargetWords({
-    language: lesson.language,
     targetLanguage,
     texts: [...lessonWords.flatMap((link) => link.distractors), ...bankWords],
   });
