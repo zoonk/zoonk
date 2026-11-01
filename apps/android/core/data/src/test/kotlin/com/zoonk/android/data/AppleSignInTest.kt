@@ -121,7 +121,7 @@ class AppleSignInTest {
             assertEquals(64, url.queryParameter("nonce")!!.length)
             assertNotEquals(pending.rawNonce, url.queryParameter("nonce"))
             val fragment =
-                "https://zoonk.com/auth/apple#state=${pending.state}&code=a%2Bb%20c&id_token=id&" +
+                "https://www.zoonk.com/auth/apple#state=${pending.state}&code=a%2Bb%20c&id_token=id&" +
                     "user=%7B%22email%22%3A%22a%40example.com%22%2C%22name%22%3A%7B%22firstName%22%3A%22Ana%22%7D%7D"
             assertEquals(SignInResult.SignedIn, sessions.completeAppleSignIn(AppLink.appleCallback(fragment)!!))
             val (request, bearer) = exchanged.single()
@@ -133,8 +133,8 @@ class AppleSignInTest {
             assertEquals("a@example.com", request.user?.email)
             assertEquals(BIA, sessions.current?.accountId)
             assertNull(AppLink.appleCallback("https://evil.com/auth/apple#state=x"))
-            assertNull(AppLink.appleCallback("https://zoonk.com/auth/app#state=x"))
-            assertNull(AppLink.appleCallback("https://zoonk.com/auth/apple?state=x"))
+            assertNull(AppLink.appleCallback("https://www.zoonk.com/auth/app#state=x"))
+            assertNull(AppLink.appleCallback("https://www.zoonk.com/auth/apple?state=x"))
         }
 
     @Test fun aDifferentSignInBeforeTheCallbackSendsNothing() =

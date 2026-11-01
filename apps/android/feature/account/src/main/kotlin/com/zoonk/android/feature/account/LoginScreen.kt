@@ -167,7 +167,7 @@ fun Methods(
             scope.launch {
                 val url = signIn.startApple() ?: return@launch
                 try {
-                    AuthTabIntent.Builder().build().launch(apple, url.toUri(), APPLE_RETURN_HOST, APPLE_RETURN_PATH)
+                    AuthTabIntent.Builder().build().launch(apple, url.toUri(), AppLink.APPLE_RETURN_HOST, AppLink.APPLE_RETURN_PATH)
                 } catch (_: ActivityNotFoundException) {
                     signIn.failApple()
                 }
@@ -434,6 +434,3 @@ private fun failureMessage(failure: AccountFailure): String =
             else -> R.string.account_failure_sign_in
         },
     )
-
-private const val APPLE_RETURN_HOST = "zoonk.com"
-private const val APPLE_RETURN_PATH = "/auth/apple"

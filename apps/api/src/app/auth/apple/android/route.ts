@@ -1,9 +1,9 @@
 /**
  * The App Link Apple sign-in returns to on Android. The Auth Tab hands it to the app before it
  * loads; a browser that doesn't shows main's inert page there. It's the same address in every
- * environment: the app links only zoonk.com, and Apple only returns to a registered reflector.
+ * environment: the app links only www.zoonk.com, and Apple only returns to a registered reflector.
  */
-const APP_LINK_URL = "https://zoonk.com/auth/apple";
+const APP_LINK_URL = "https://www.zoonk.com/auth/apple";
 
 /** Far above any real form Apple posts: a few short fields and an identity token of about a kilobyte. */
 const MAX_BODY_LENGTH = 16_384;

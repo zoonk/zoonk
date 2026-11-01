@@ -47,7 +47,7 @@ describe("Apple's form post to the Android app", () => {
     const { fields, target } = readFragment(response);
 
     expect(response.status).toBe(303);
-    expect(target).toBe("https://zoonk.com/auth/apple");
+    expect(target).toBe("https://www.zoonk.com/auth/apple");
     expect(fields).toStrictEqual(appleForm);
     expect(response.headers.get("cache-control")).toBe("no-store");
     expect(response.headers.get("referrer-policy")).toBe("no-referrer");
@@ -68,7 +68,9 @@ describe("Apple's form post to the Android app", () => {
   it("encodes values so a plus and a space survive any decoder", async () => {
     const response = await postForm({ state: "a+b c" });
 
-    expect(response.headers.get("location")).toBe("https://zoonk.com/auth/apple#state=a%2Bb%20c");
+    expect(response.headers.get("location")).toBe(
+      "https://www.zoonk.com/auth/apple#state=a%2Bb%20c",
+    );
   });
 
   it("refuses a field longer than any Apple sends", async () => {

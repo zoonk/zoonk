@@ -9,6 +9,10 @@ import java.net.URLDecoder
 object AppLink {
     const val SITE_URL = "https://www.zoonk.com"
 
+    /** Must match the API's `APP_LINK_URL`, where its `/auth/apple/android` sends Apple sign-in back. */
+    const val APPLE_RETURN_HOST = "www.zoonk.com"
+    const val APPLE_RETURN_PATH = "/auth/apple"
+
     private val hosts = setOf("zoonk.com", "www.zoonk.com")
 
     /** Main's `localePrefix: "as-needed"`: English pages have no prefix. */
@@ -51,7 +55,7 @@ object AppLink {
     fun appleCallback(url: String): AppleCallback? =
         try {
             val uri = URI(url)
-            if (uri.scheme != "https" || uri.host != "zoonk.com" || uri.path != "/auth/apple" ||
+            if (uri.scheme != "https" || uri.host != APPLE_RETURN_HOST || uri.path != APPLE_RETURN_PATH ||
                 uri.port != -1 || uri.rawUserInfo != null
             ) {
                 null
