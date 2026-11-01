@@ -62,6 +62,9 @@ internal class LessonPlayerHarness(
     lateinit var cache: AppCache
     val chapterKey = ChapterKey(UUID.fromString(GOAL_ID), UUID.fromString(CHAPTER_ID))
     lateinit var openAgain: () -> LessonPlayerViewModel
+
+    /** What Android keeps for the screen when it closes the app in the background; a view model opened again reads it. */
+    var saved = SavedStateHandle()
     lateinit var viewModel: LessonPlayerViewModel
 
     /** The code templates' sandbox; by default one whose page can't open. */
@@ -95,8 +98,7 @@ internal class LessonPlayerHarness(
         chapters = GoalContentStore(chapterApi, cache)
         val drafts = DraftStore(newFolder(), scope, io = Dispatchers.Main.immediate)
         runBlocking { drafts.follow { DraftsChange(ana.accountId) } }
-        // What Android keeps for the screen when it closes the app in the background.
-        val saved = SavedStateHandle()
+        saved = SavedStateHandle()
         val newViewModel = {
             LessonPlayerViewModel(
                 lessonId = LESSON_ID,

@@ -16,6 +16,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
@@ -30,6 +31,7 @@ import com.zoonk.api.models.SpokenAnswerGrade
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -69,6 +71,49 @@ class LessonPlayerFlowTest {
         restoration.emulateSavedInstanceStateRestore()
 
         rule.onNode(hasSetTextAction()).assert(hasText("Because the droplets are small"))
+    }
+
+    /** A start that fails when the app comes back keeps the saved work for the start that follows. */
+    @Test
+    fun aTypedAnswerSurvivesAFailedStartAfterAndroidClosesTheApp() {
+        val restoration = StateRestorationTester(rule)
+        harness.play(listOf(typedAnswerStep("write"), summaryStep("end")), restoration = restoration)
+        rule.onNode(hasSetTextAction()).performTextInput("Because the droplets are small")
+
+        api.startFailures = 1
+        harness.viewModel = openAgain()
+        restoration.emulateSavedInstanceStateRestore()
+        tap("Try again")
+
+        rule.onNode(hasSetTextAction()).assert(hasText("Because the droplets are small"))
+    }
+
+    /** An answer sent to be checked isn't kept: by the time the app comes back, the server may have checked it. */
+    @Test
+    fun anAnswerSentToBeCheckedIsntBroughtBackAfterAndroidClosesTheApp() {
+        val restoration = StateRestorationTester(rule)
+        harness.play(listOf(typedAnswerStep(WRITE), summaryStep("end")), restoration = restoration)
+        rule.onNode(hasSetTextAction()).performTextInput("Because the droplets are small")
+        api.gate = CompletableDeferred()
+        tap("Check")
+
+        // Android saves the screen while the check is on its way; the server checks it before the app comes back.
+        val saved = harness.saved
+        harness.saved = SavedStateHandle(saved.keys().associateWith { saved.get<Any>(it) })
+        api.gate?.complete(Unit)
+        api.runAnswers = """[{"answeredAt":"2026-10-28T10:01:00Z","isCorrect":false,"stepId":"$WRITE"}]"""
+        harness.viewModel = openAgain()
+        restoration.emulateSavedInstanceStateRestore()
+        rule.waitUntil {
+            harness.viewModel.state.value
+                ?.run is LessonRun.Started
+        }
+
+        assertNull(
+            harness.viewModel.state.value
+                ?.answers
+                ?.get(WRITE),
+        )
     }
 
     /** Android closing the app in the background keeps a pick the learner hasn't checked, ready to check. */
@@ -320,3 +365,4 @@ class LessonPlayerFlowTest {
 }
 
 private const val BLANK_ID = "00000000-0000-4000-8000-0000000000ee"
+private const val WRITE = "00000000-0000-4000-8000-000000000301"

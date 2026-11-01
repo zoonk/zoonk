@@ -269,7 +269,11 @@ class LessonPlayerViewModel(
      * under its next round: the resumed run puts its retry straight on screen, and that retry starts over.
      */
     private fun keepWork(state: LessonPlayerState) {
-        val checked = state.results.keys
+        // Until a run starts it holds none of the saved work, so what's saved waits for the run that restores it.
+        if (state.run !is LessonRun.Started) return
+        // An answer sent to be checked may be on the server by the time the app comes back, so it's kept as checked.
+        val sent = state.currentStep?.id?.takeIf { state.phase == LessonPhase.Checking }
+        val checked = state.results.keys + listOfNotNull(sent)
         saved[ROUNDS] = HashMap(state.rounds + checked.associateWith { state.round(it) + 1 })
         saved[REVEALED] = HashMap(state.revealed - checked)
         saved[ANSWERS] = HashMap((state.answers - checked).mapNotNull { (id, answer) -> answerJson(id, answer)?.let { id to it } }.toMap())

@@ -81,6 +81,7 @@ class FakeLessonPlayerApi(
     val completions = mutableListOf<String>()
     var optionalStepIds = "[]"
     var runAnswers = "[]"
+    var startFailures = 0
     var checkFailures = 0
     var grade: (String, LessonStepCheckInput) -> LessonStepCheckResult = { _, _ -> checkResult(isCorrect = true) }
     var gate: CompletableDeferred<Unit>? = null
@@ -103,13 +104,18 @@ class FakeLessonPlayerApi(
         lessonId: String,
         studySessionId: String?,
         runId: String?,
-    ): LibraryLessonRun =
-        ApiJson.decodeFromString(
+    ): LibraryLessonRun {
+        if (startFailures > 0) {
+            startFailures--
+            throw ApiException(ApiError.Network)
+        }
+        return ApiJson.decodeFromString(
             """
             {"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
              "startedAt":"2026-10-28T10:00:00Z","support":null}
             """.trimIndent(),
         )
+    }
 
     override suspend fun check(
         session: AuthenticatedSession,
