@@ -3,6 +3,9 @@ import SwiftUI
 struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
   /// The primary pane's share of the width where there's no hinge.
   let primaryShare: CGFloat
+  /// A question and the learner's turn read as one screen, so text too large for two pages makes
+  /// it one column, even at a hinge (`PaneSpace.panes(primaryShare:stacked:)`).
+  let isSpread: Bool
   let primary: Primary
   let secondary: Secondary
   let single: Single
@@ -11,11 +14,13 @@ struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
 
   init(
     primaryShare: CGFloat = 0.5,
+    isSpread: Bool = false,
     @ViewBuilder primary: () -> Primary,
     @ViewBuilder secondary: () -> Secondary,
     @ViewBuilder single: () -> Single
   ) {
     self.primaryShare = primaryShare
+    self.isSpread = isSpread
     self.primary = primary()
     self.secondary = secondary()
     self.single = single()
@@ -25,7 +30,11 @@ struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
     // A reader, so the panes are chosen in the same layout pass: a wide screen never shows the
     // one-column version first.
     GeometryReader { proxy in
-      let panes = PaneSpace(proxy).panes(primaryShare: primaryShare, stacked: isStacked)
+      let space = PaneSpace(proxy)
+      let panes =
+        isSpread
+        ? space.panes(primaryShare: primaryShare, stacked: isStacked)
+        : space.pages(primaryShare: primaryShare, stacked: isStacked)
 
       Group {
         if let panes {
@@ -47,6 +56,7 @@ struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
           .contentMargins(.top, 0, for: .scrollContent)
         } else {
           single
+            .safeAreaPadding(.trailing, space.lonePageInset)
         }
       }
       .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -59,6 +69,9 @@ struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
 /// pages, and what the learner typed or opened on them, through a fold or a resize.
 struct PaneBeside<Pane: View, Content: View>: View {
   var isAvailable = true
+  /// Only where a hinge makes two pages, for what an open book shows beside a screen that's one
+  /// column on a phone and a tablet.
+  var atHingeOnly = false
   var paneEdge = HorizontalEdge.leading
   /// The leading side's share of the width where there's no hinge, as in `PaneSplit`.
   var primaryShare: CGFloat = 0.5
@@ -71,7 +84,8 @@ struct PaneBeside<Pane: View, Content: View>: View {
     GeometryReader { proxy in
       let panes =
         isAvailable
-        ? PaneSpace(proxy).panes(primaryShare: primaryShare, stacked: isStacked) : nil
+        ? PaneSpace(proxy).pages(
+          primaryShare: primaryShare, stacked: isStacked, atHingeOnly: atHingeOnly) : nil
       let isTrailingPane = panes != nil && paneEdge == .trailing
 
       HStack(spacing: 0) {
@@ -103,8 +117,8 @@ struct PaneBeside<Pane: View, Content: View>: View {
 }
 
 struct PaneSpace: Equatable {
-  /// Every iPhone layout works at this width at standard text sizes, and accessibility sizes get one
-  /// column, so it doesn't grow with the text.
+  /// Every iPhone layout works at this width at standard text sizes. It doesn't grow with the text:
+  /// where it would, a hinge sets the pages anyway, and elsewhere stacked content gets one column.
   static let minimumPane: CGFloat = 360
 
   struct Panes: Equatable {
@@ -143,10 +157,23 @@ struct PaneSpace: Equatable {
     }
   }
 
-  /// One column where content stacks (`stacksContent`): the panes' phone layouts can't fit two of
-  /// them at those text sizes.
+  /// A spread: a question and the learner's turn. One column where content stacks
+  /// (`stacksContent`), whose text is too large for the two halves to read as one screen.
   func panes(primaryShare: CGFloat, stacked: Bool) -> Panes? {
     stacked ? nil : panes(primaryShare: primaryShare)
+  }
+
+  /// A page and what supports it. At a hinge they keep a page each at any text size: the hinge sets
+  /// each page's width, about a phone's, and the text reflows inside it as on a phone. Elsewhere
+  /// content that stacks gets one column, where a pane would be too narrow for it.
+  func pages(primaryShare: CGFloat, stacked: Bool, atHingeOnly: Bool = false) -> Panes? {
+    hinge == nil && (stacked || atHingeOnly) ? nil : panes(primaryShare: primaryShare)
+  }
+
+  /// What a column alone leaves out to keep to the page before the hinge: the hinge and the page
+  /// after it.
+  var lonePageInset: CGFloat {
+    hinge.map { width - $0.lowerBound } ?? 0
   }
 
   /// Decided on the shares, so the hinge never collapses the panes; where there's a hinge, they meet

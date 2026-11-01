@@ -84,7 +84,7 @@ private struct EssayContent: View {
   var body: some View {
     Group {
       if writer.isWriting {
-        PaneSplit {
+        PaneSplit(isSpread: true) {
           Form {
             promptSections
           }

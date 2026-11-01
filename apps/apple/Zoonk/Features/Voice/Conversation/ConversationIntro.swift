@@ -58,7 +58,7 @@ struct ConversationIntro<Footer: View>: View {
   @ViewBuilder let footer: Footer
 
   var body: some View {
-    PaneSplit {
+    PaneSplit(isSpread: true) {
       List {
         situation
       }

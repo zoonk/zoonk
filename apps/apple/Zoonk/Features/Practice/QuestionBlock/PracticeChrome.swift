@@ -125,7 +125,7 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
   @ViewBuilder let actions: () -> Actions
 
   var body: some View {
-    PaneSplit {
+    PaneSplit(isSpread: true) {
       ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: stimulus)
         .pageHeader(header)
     } secondary: {

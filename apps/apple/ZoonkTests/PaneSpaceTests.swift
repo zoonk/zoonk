@@ -50,6 +50,36 @@ final class PaneSpaceTests: XCTestCase {
     XCTAssertEqual(panes, PaneSpace.Panes(primary: 390, gap: 40))
   }
 
+  func testAtAHingeLargeTextKeepsAPageEach() {
+    let space = PaneSpace(width: 868, hinge: 455...495)
+
+    XCTAssertEqual(
+      space.pages(primaryShare: 0.55, stacked: true), PaneSpace.Panes(primary: 455, gap: 40))
+  }
+
+  func testOffAHingeLargeTextIsOneColumn() {
+    XCTAssertNil(PaneSpace(width: 1000).pages(primaryShare: 0.55, stacked: true))
+    XCTAssertNotNil(PaneSpace(width: 1000).pages(primaryShare: 0.55, stacked: false))
+  }
+
+  func testASpreadIsOneColumnAtLargeTextEvenAtAHinge() {
+    XCTAssertNil(PaneSpace(width: 868, hinge: 455...495).panes(primaryShare: 0.5, stacked: true))
+  }
+
+  func testPagesOnlyAtAHingeStayOneColumnOnATablet() {
+    XCTAssertNil(
+      PaneSpace(width: 1000).pages(primaryShare: 0.55, stacked: false, atHingeOnly: true))
+    XCTAssertEqual(
+      PaneSpace(width: 868, hinge: 455...495).pages(
+        primaryShare: 0.55, stacked: false, atHingeOnly: true),
+      PaneSpace.Panes(primary: 455, gap: 40))
+  }
+
+  func testALoneColumnEndsAtTheHinge() {
+    XCTAssertEqual(PaneSpace(width: 868, hinge: 455...495).lonePageInset, 413)
+    XCTAssertEqual(PaneSpace(width: 868).lonePageInset, 0)
+  }
+
   func testAGridHasNoHingeColumnsWithoutAHinge() {
     XCTAssertNil(PaneSpace(width: 828).columnsAroundHinge(minimum: 240, spacing: 24))
   }

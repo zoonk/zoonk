@@ -13,6 +13,13 @@ extension View {
   func keepsBeforeHinge() -> some View {
     modifier(HingeEnd())
   }
+
+  /// For a whole screen with nothing to face, such as a status, a gate or one decision: on iPhone
+  /// Duo it keeps to the page before the hinge, flat or folded, and the page after it stays blank
+  /// under the same background. Elsewhere it's at most `readableWidth` wide, in the middle.
+  func lonePage(readableWidth: CGFloat = .infinity) -> some View {
+    modifier(LonePage(readableWidth: readableWidth))
+  }
 }
 
 private struct FoldDisplacement: ViewModifier {
@@ -39,6 +46,19 @@ private struct HingeEnd: ViewModifier {
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.trailing, space.hinge.map { space.width - $0.lowerBound } ?? 0)
       // Measured outside the padding, so ending the block doesn't move the hinge it reads.
+      .onGeometryChange(for: PaneSpace.self, of: PaneSpace.init) { space = $0 }
+  }
+}
+
+private struct LonePage: ViewModifier {
+  let readableWidth: CGFloat
+
+  @State private var space = PaneSpace(width: 0)
+
+  func body(content: Content) -> some View {
+    content
+      .readableColumn(space.hinge == nil ? readableWidth : .infinity)
+      .safeAreaPadding(.trailing, space.lonePageInset)
       .onGeometryChange(for: PaneSpace.self, of: PaneSpace.init) { space = $0 }
   }
 }

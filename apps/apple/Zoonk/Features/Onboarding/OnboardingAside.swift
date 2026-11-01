@@ -35,25 +35,9 @@ private struct OnboardingColumn: ViewModifier {
       case nil:
         EmptyView()
       }
-    } content: { isBeside in
-      content.modifier(LoneColumn(isBeside: isBeside))
+    } content: { _ in
+      content.lonePage(readableWidth: 640)
     }
-  }
-}
-
-/// Alone, the column keeps to the page before iPhone Duo's hinge, so nothing sits on the fold.
-private struct LoneColumn: ViewModifier {
-  let isBeside: Bool
-
-  @State private var space = PaneSpace(width: 0)
-
-  func body(content: Content) -> some View {
-    let hinge = isBeside ? nil : space.hinge
-
-    content
-      .readableColumn(hinge == nil ? 640 : .infinity)
-      .safeAreaPadding(.trailing, hinge.map { space.width - $0.lowerBound } ?? 0)
-      .onGeometryChange(for: PaneSpace.self, of: PaneSpace.init) { space = $0 }
   }
 }
 
