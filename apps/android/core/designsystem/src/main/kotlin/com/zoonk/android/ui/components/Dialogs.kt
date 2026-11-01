@@ -3,6 +3,8 @@ package com.zoonk.android.ui.components
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
+import androidx.compose.material3.adaptive.separatingHorizontalHingeBounds
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
@@ -19,7 +21,8 @@ import kotlin.math.roundToInt
 
 /**
  * Material's alert dialog. Across an unfolded book foldable's fold its window keeps to the page
- * after the fold, as [ModalBottomSheet] does, instead of sitting centered across it.
+ * after the fold, as [ModalBottomSheet] does, and on a tabletop it sits on the flat half with the
+ * controls, instead of centered across either fold.
  */
 @Composable
 fun AlertDialog(
@@ -29,23 +32,23 @@ fun AlertDialog(
     title: @Composable (() -> Unit)? = null,
     text: @Composable (() -> Unit)? = null,
 ) {
-    val page = pageAfterFold()
+    val place = dialogPlace()
 
     androidx.compose.material3.AlertDialog(
         onDismissRequest = onDismissRequest,
         // Material's dialog has no slot of its own for its window, and its confirm button is always there.
         confirmButton = {
-            page?.let { WindowOnPage(it) }
+            place?.let { WindowAt(it) }
             confirmButton()
         },
-        modifier = if (page == null) Modifier else Modifier.widthIn(max = page.width - PAGE_MARGIN * 2),
+        modifier = place?.width?.let { Modifier.widthIn(max = it - PAGE_MARGIN * 2) } ?: Modifier,
         dismissButton = dismissButton,
         title = title,
         text = text,
     )
 }
 
-/** Material's date picker dialog, on the page after an unfolded book's fold as [AlertDialog] is. */
+/** Material's date picker dialog, off a foldable's fold as [AlertDialog] is. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerDialog(
@@ -54,19 +57,19 @@ fun DatePickerDialog(
     dismissButton: @Composable (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val page = pageAfterFold()
+    val place = dialogPlace()
 
     androidx.compose.material3.DatePickerDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = confirmButton,
         dismissButton = dismissButton,
     ) {
-        page?.let { WindowOnPage(it) }
+        place?.let { WindowAt(it) }
         content()
     }
 }
 
-/** Material's time picker dialog, on the page after an unfolded book's fold as [AlertDialog] is. */
+/** Material's time picker dialog, off a foldable's fold as [AlertDialog] is. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerDialog(
@@ -76,7 +79,7 @@ fun TimePickerDialog(
     dismissButton: @Composable (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val page = pageAfterFold()
+    val place = dialogPlace()
 
     androidx.compose.material3.TimePickerDialog(
         onDismissRequest = onDismissRequest,
@@ -84,40 +87,52 @@ fun TimePickerDialog(
         title = title,
         dismissButton = dismissButton,
     ) {
-        page?.let { WindowOnPage(it) }
+        place?.let { WindowAt(it) }
         content()
     }
 }
 
-/** The page after an unfolded book's fold: its [width], and how far right of the window's middle its own middle sits. */
-private data class PageAfterFold(
-    val width: Dp,
-    val offset: Dp,
+/**
+ * Where a dialog's window sits on a foldable, from the window's middle: on the page after a book's
+ * fold, as wide as that page ([width]), or on a tabletop's flat half. Taller than that half, the
+ * window stays on screen and keeps its height.
+ */
+private data class DialogPlace(
+    val width: Dp?,
+    val x: Dp,
+    val y: Dp,
 )
 
 @Composable
-private fun pageAfterFold(): PageAfterFold? {
+private fun dialogPlace(): DialogPlace? {
+    val density = LocalDensity.current
     val window =
-        with(LocalDensity.current) {
+        with(density) {
             LocalWindowInfo.current.containerSize.width
                 .toDp()
         }
-    val fold = pageFold(window) ?: return null
-    val towardEnd = if (LocalLayoutDirection.current == LayoutDirection.Ltr) 1 else -1
-    return PageAfterFold(width = window - fold.end, offset = fold.end / 2 * towardEnd)
+    pageFold(window)?.let { fold ->
+        val towardEnd = if (LocalLayoutDirection.current == LayoutDirection.Ltr) 1 else -1
+        return DialogPlace(width = window - fold.end, x = fold.end / 2 * towardEnd, y = 0.dp)
+    }
+    val tabletop = currentWindowAdaptiveInfoV2().windowPosture.separatingHorizontalHingeBounds.firstOrNull() ?: return null
+    return DialogPlace(width = null, x = 0.dp, y = with(density) { (tabletop.bottom / 2).toDp() })
 }
 
-/** Material centers a dialog's window in the app's; this moves it onto [page] through the window itself, which only the dialog's own content can reach. */
+/** Material centers a dialog's window in the app's; this moves it to [place] through the window itself, which only the dialog's own content can reach. */
 @Composable
-private fun WindowOnPage(page: PageAfterFold) {
+private fun WindowAt(place: DialogPlace) {
     val window = (LocalView.current.parent as? DialogWindowProvider)?.window ?: return
     val density = LocalDensity.current
 
     SideEffect {
         window.attributes =
             window.attributes.apply {
-                width = with(density) { page.width.toPx() }.roundToInt()
-                x = with(density) { page.offset.toPx() }.roundToInt()
+                with(density) {
+                    place.width?.let { width = it.toPx().roundToInt() }
+                    x = place.x.toPx().roundToInt()
+                    y = place.y.toPx().roundToInt()
+                }
             }
     }
 }
