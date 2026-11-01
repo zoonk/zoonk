@@ -3,6 +3,7 @@ package com.zoonk.android.feature.player
 import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
@@ -26,6 +27,9 @@ import coil3.intercept.Interceptor
 import coil3.request.ImageResult
 import com.zoonk.android.data.PrivateImages
 import com.zoonk.android.feature.player.language.reading
+import com.zoonk.android.feature.player.model.ExplanationStepContent
+import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.ui.components.PrivatePictures
 import kotlinx.coroutines.awaitCancellation
@@ -106,17 +110,37 @@ class LessonSpreadTest {
         assertAfterFold("the picture", described(picture.alt))
     }
 
-    /** Text twice as large leaves a page too narrow for it, so the lesson keeps main's one column. */
+    /** Text twice as large leaves a page too narrow for it, so the lesson keeps one column, on the page before the fold. */
     @Test
     @Config(qualifiers = BOOK, fontScale = 2f)
-    fun largeTextKeepsOneColumnOnAnOpenBook() {
+    fun largeTextKeepsOneColumnBeforeAnOpenBooksFold() {
         harness.play(listOf(checkStep("quiz"), summaryStep("end")))
         unfold()
 
         val question = text("Question quiz?")
         val option = text("Right")
         assertTrue("the options sit under the question: $question, $option", option.top > question.bottom)
-        assertTrue("the options start before the fold: $option", option.left < FOLD)
+        assertBeforeFold("the question", question)
+        assertBeforeFold("an option", option)
+    }
+
+    /** The screen's text moves between the one column and the page before the fold, and the reading place goes with it. */
+    @Test
+    @Config(qualifiers = BOOK)
+    fun theReadingPlaceFollowsTheTextAsTheBookOpensAndCloses() {
+        val paragraphs = (1..40).joinToString("\n\n") { "Paragraph $it." }
+        val long = LessonStep("long", null, StepContent.Explanation(ExplanationStepContent(text = paragraphs, title = "Title long")))
+        harness.play(listOf(long, summaryStep("end")))
+        rule.onNodeWithText("Paragraph 30.", substring = true).performScrollTo()
+
+        unfold()
+        rule.onNodeWithText("Paragraph 30.", substring = true).assertIsDisplayed()
+        rule.onNodeWithText("Title long").assertIsNotDisplayed()
+
+        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(emptyList()))
+        rule.waitForIdle()
+        rule.onNodeWithText("Paragraph 30.", substring = true).assertIsDisplayed()
+        rule.onNodeWithText("Title long").assertIsNotDisplayed()
     }
 
     @Test

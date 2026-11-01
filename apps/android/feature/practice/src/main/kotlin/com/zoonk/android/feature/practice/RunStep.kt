@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -143,8 +144,10 @@ internal fun RunFrame(
     val focus = remember { FocusRequester() }
     val set = question?.set?.takeIf { it.listening == null }
     val hasAside = set == null && aside != null
+    // The one column and the screen's page across a fold share their scroll, so a reading place keeps as the book opens
+    // or closes; the turn's page has its own.
     val scroll = rememberScrollState()
-    val screenScroll = rememberScrollState()
+    val turnScroll = rememberScrollState()
     var span by remember { mutableStateOf<PageSpan?>(null) }
     // A new question starts at its top; the same one recreated (the book folding, a rotation) stays where it was.
     var scrolledTo by rememberSaveable { mutableStateOf<Int?>(null) }
@@ -152,13 +155,16 @@ internal fun RunFrame(
     LaunchedEffect(place) {
         if (scrolledTo != place) {
             scroll.scrollTo(0)
-            screenScroll.scrollTo(0)
+            turnScroll.scrollTo(0)
             scrolledTo = place
         }
     }
 
     BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-        val fold = pageFold(maxWidth, span)?.takeIf { supportingPaneBeside(maxWidth) }
+        val crossing = pageFold(maxWidth, span)
+        val fold = crossing?.takeIf { supportingPaneBeside(maxWidth) }
+        // Where the text is too large for two pages, the one column keeps to the page before the fold.
+        val column = if (fold == null && crossing != null) Modifier.widthIn(max = crossing.start) else Modifier
 
         LaunchedEffect(Unit) { focus.requestFocus() }
 
@@ -189,18 +195,18 @@ internal fun RunFrame(
             val shown = asideShown(hasAside, fold)
 
             Column(Modifier.padding(padding).fillMaxSize()) {
-                Box(if (fold == null) Modifier else Modifier.width(fold.start)) { progress(shown) }
+                Box(if (fold == null) column else Modifier.width(fold.start)) { progress(shown) }
                 Box(Modifier.weight(1f).fillMaxWidth()) {
                     // The turn's page is the one column's place, so its unsent work stays as the book opens or closes.
                     ScrollingPage(
-                        Modifier
+                        column
                             .fillMaxSize()
                             .then(if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true }),
-                        scroll,
+                        if (fold == null) scroll else turnScroll,
                     ) { content(if (fold == null) StepPart.Whole else StepPart.Turn, inlineSet, shown) }
 
                     if (fold != null) {
-                        ScrollingPage(Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true }, screenScroll) {
+                        ScrollingPage(Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true }, scroll) {
                             content(StepPart.Screen, inlineSet, shown)
                             if (shown) {
                                 HorizontalDivider()

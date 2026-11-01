@@ -521,8 +521,10 @@ private fun Content(
 
         else -> {
             val step = screen.step ?: return
+            // The one column and the screen's page across a fold share their scroll, so a reading place keeps as the book
+            // opens or closes; the turn's page has its own.
             val scroll = rememberScrollState()
-            val screenScroll = rememberScrollState()
+            val turnScroll = rememberScrollState()
             val reveal = remember(step.id, state.position) { FeedbackReveal() }
             var span by remember { mutableStateOf<PageSpan?>(null) }
 
@@ -533,7 +535,7 @@ private fun Content(
             LaunchedEffect(screenKey) {
                 if (scrolledTo != screenKey) {
                     scroll.scrollTo(0)
-                    screenScroll.scrollTo(0)
+                    turnScroll.scrollTo(0)
                     scrolledTo = screenKey
                 }
             }
@@ -563,16 +565,19 @@ private fun Content(
                 ) {
                     // Read on every frame, not only once a fold shows: a reading that starts late sees no fold at first.
                     val pagesFit = supportingPaneBeside(maxWidth)
-                    val fold = pageFold(maxWidth, span)?.takeIf { pagesFit }
+                    val crossing = pageFold(maxWidth, span)
+                    val fold = crossing?.takeIf { pagesFit }
+                    // Where the text is too large for two pages, the one column keeps to the page before the fold.
+                    val column = if (fold == null && crossing != null) Modifier.widthIn(max = crossing.start) else Modifier
                     // The turn's page is the whole column without a fold, so the work in it keeps when the book opens or closes.
                     val part = if (fold == null) StepPart.Whole else StepPart.Turn
 
                     StepColumn(
-                        Modifier
+                        column
                             .fillMaxSize()
                             .then(if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true })
                             .onGloballyPositioned { reveal.viewport = it }
-                            .verticalScroll(scroll)
+                            .verticalScroll(if (fold == null) scroll else turnScroll)
                             .padding(vertical = 16.dp),
                     ) {
                         Notice(state, screen, viewModel, part)
@@ -581,7 +586,7 @@ private fun Content(
                         if (offer != null && screen.quickCheck == null) {
                             StrugglePause(step, state.position, touches) { offer(BuddyOfferReason.Pause) }
                         }
-                        Result(state, screen, scroll, reveal, viewModel, exits, offer)
+                        Result(state, screen, if (fold == null) scroll else turnScroll, reveal, viewModel, exits, offer)
                         if (fold == null) LessonRecap(state, screen)
                     }
 
@@ -593,7 +598,7 @@ private fun Content(
                                     .width(fold.start)
                                     .fillMaxHeight()
                                     .semantics { isTraversalGroup = true }
-                                    .verticalScroll(screenScroll)
+                                    .verticalScroll(scroll)
                                     .padding(vertical = 16.dp),
                             ) {
                                 Notice(state, screen, viewModel, StepPart.Screen)

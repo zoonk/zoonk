@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
@@ -263,6 +264,34 @@ class RunSpreadTest {
         rule.waitForIdle()
 
         assertEquals("the passage starts the next question", top.value, text("Recife grew", substring = true).top.value, 0.5f)
+    }
+
+    /** Text twice as large leaves a page too narrow for it, so the run keeps one column, on the page before the fold. */
+    @Test
+    @Config(qualifiers = BOOK, fontScale = 2f)
+    fun largeTextKeepsOneColumnBeforeAnOpenBooksFold() {
+        show()
+        unfold()
+
+        assertBeforeFold("the question", text("Which is a planet?"))
+        assertBeforeFold("an option's row", rule.onNodeWithText("Mars", substring = true).getUnclippedBoundsInRoot())
+    }
+
+    /** The question moves between the one column and the page before the fold, and the reading place goes with it. */
+    @Test
+    @Config(qualifiers = BOOK)
+    fun theReadingPlaceFollowsTheQuestionAsTheBookOpensAndCloses() {
+        val stem = (1..60).joinToString("\n") { "Clause $it about the night sky." } + "\nWhich is a planet?"
+        show(planet("context" to "A note on the sky.", "question" to stem))
+        rule.onNodeWithText("Moon", substring = true, useUnmergedTree = true).performScrollTo()
+        rule.onNodeWithText("A note on the sky.", useUnmergedTree = true).assertIsNotDisplayed()
+
+        unfold()
+        rule.onNodeWithText("A note on the sky.", useUnmergedTree = true).assertIsNotDisplayed()
+
+        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(emptyList()))
+        rule.waitForIdle()
+        rule.onNodeWithText("A note on the sky.", useUnmergedTree = true).assertIsNotDisplayed()
     }
 
     private fun planet(vararg fields: Pair<String, Any?>) =
