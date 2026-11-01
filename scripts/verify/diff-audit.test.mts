@@ -120,7 +120,7 @@ describe("questioning a diff", () => {
       "for (const attempt of answers) {",
     ]);
 
-    assert.deepEqual(names([step]), ["Custom retry 1,2,3,4,5,6,7"]);
+    assert.deepEqual(names([step]), ["Custom retry 1,2,3,4,5,6,7", "Workflow step 2"]);
   });
 
   it("asks whether work after the response should be a follow-up, but not about analytics", () => {
@@ -238,16 +238,32 @@ describe("questioning server cost", () => {
     assert.deepEqual(names([file("apps/admin/src/x.ts", ['distinct: ["itemId"],'])]), []);
   });
 
-  it("asks how many model calls a new workflow step repeats on a retry", () => {
-    const lines = ['  "use step";', "  'use step';", '  "use workflow";'];
+  it("asks how many model calls a workflow step repeats on a retry", () => {
+    const lines = [
+      '  "use step";',
+      "  const draft = await writeLessonContent(input);",
+      "  'use step';",
+    ];
 
     assert.deepEqual(
       names([
         file("apps/api/src/workflows/lessons/steps/write-lesson-step.ts", lines),
+        file("apps/api/src/workflows/_shared/generation-failed-step.ts", lines.slice(1, 2)),
         file("apps/api/src/workflows/lessons/steps/write-lesson-step.test.ts", lines),
+        file("apps/api/src/workflows/lessons/lesson-content-workflow.ts", lines.slice(1, 2)),
         file("packages/core/src/library/lessons/write.ts", lines),
       ]),
-      ["Workflow step 1,2"],
+      ["Workflow step 1,2,3", "Workflow step 1"],
     );
+  });
+
+  it("asks what a prompt open to training reads", () => {
+    const task = file("packages/core/src/library/curriculum/skill-graph.ts", [
+      "    libraryInput: true,",
+      "    libraryInput: false,",
+      "const libraryInput = true;",
+    ]);
+
+    assert.deepEqual(names([task]), ["Prompt open to training 1"]);
   });
 });

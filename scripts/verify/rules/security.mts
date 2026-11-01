@@ -55,6 +55,14 @@ export const SECURITY_RULES: Rule[] = [
     role: "security",
   },
   {
+    files: SERVER_SOURCE,
+    line: /\blibraryInput:\s*true\b/u,
+    name: "Prompt open to training",
+    question:
+      "Trace every input of this prompt: Library content and public documents only? A learner's words, goal title or `details`, upload, memory or anything a client sent keeps the no-training filter.",
+    role: "security",
+  },
+  {
     files: CODE,
     line: /dangerouslySetInnerHTML|\.innerHTML\s*=/u,
     name: "Raw HTML",

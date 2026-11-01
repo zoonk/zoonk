@@ -138,12 +138,13 @@ export const ENGINEERING_RULES: Rule[] = [
     line: new RegExp(String.raw`^(?!\s*${IMPORT_WITHOUT_MODEL_CALLS}).*["']@zoonk/ai/tasks/`, "u"),
     name: "Model task in reach of a request",
     question:
-      "Which request reaches this model call, and which claim admits it before it runs, on every path to it (the learner's allowance, the guests' budget, a per-item cap)? Only an API workflow step or an interactive call may run it (root `AGENTS.md`); otherwise the request answers with a run to wait on, or the write owes a follow-up.",
+      "Which request or step reaches this model call, and which claim admits it before it runs, on every path to it (the learner's allowance, the guests' budget, a per-item cap)? Only an API workflow step, one model call each, or an interactive call may run it (root `AGENTS.md`); otherwise the request answers with a run to wait on, or the write owes a follow-up.",
     role: "engineering",
   },
   {
-    files: /^apps\/api\/src\/workflows\/(?!.*\.test\.)(?!.*_test-utils)/u,
-    line: /^\s*["']use step["']/u,
+    files:
+      /^apps\/api\/src\/workflows\/(?!.*\.test\.)(?!.*_test-utils)(?:.*\/steps\/|.*-step\.ts$)/u,
+    line: /\bawait\b|^\s*["']use step["']/u,
     name: "Workflow step",
     question:
       "How many model calls does it make, counting those inside the core function it runs? A retry repeats every call before the one that failed, so one paid call per step, and a failure no retry fixes is recorded instead of thrown (root `AGENTS.md`).",
