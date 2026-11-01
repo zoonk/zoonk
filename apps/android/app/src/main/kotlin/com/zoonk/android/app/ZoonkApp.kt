@@ -40,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
@@ -76,6 +77,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.defaultPopTransitionSpec
 import androidx.navigation3.ui.defaultTransitionSpec
@@ -257,7 +259,7 @@ fun AppShell(
                     NavDisplay(
                         entries = entries,
                         // A list and its detail split as a page and its aside do, so they meet at an unfolded book's fold.
-                        sceneStrategies = listOf(rememberListDetailSceneStrategy(directive = pageDirective(maxWidth))),
+                        sceneStrategies = listOf(listLed(rememberListDetailSceneStrategy(directive = pageDirective(maxWidth)))),
                         transitionSpec = {
                             if (navigator.isSwitchingTabs) NO_TRANSITION else defaultTransitionSpec<NavKey>()(this)
                         },
@@ -297,6 +299,23 @@ private fun ShellSnackbarHost(
         modifier = modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)).then(lift),
     )
 }
+
+/**
+ * Material's list-detail scene where a list leads it. A detail opened on its own (Subscription from
+ * the account menu) is a page of its own: Material would lay it beside an empty list, or in the page
+ * before an unfolded book's fold with the page after it empty.
+ */
+private fun <T : Any> listLed(listDetail: SceneStrategy<T>): SceneStrategy<T> =
+    SceneStrategy { entries ->
+        val panes = entries.takeLastWhile { PANE_ROLE in it.metadata }
+        if (panes.any { it.metadata[PANE_ROLE]?.javaClass == LIST_ROLE }) with(listDetail) { calculateScene(entries) } else null
+    }
+
+// Material keeps its pane roles' metadata types to itself, so its list's are read off listPane().
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+private val LIST_METADATA = ListDetailSceneStrategy.listPane()
+private val PANE_ROLE = LIST_METADATA.keys.single()
+private val LIST_ROLE = LIST_METADATA.values.single().javaClass
 
 /** A tab switch shows the other tab at once, as everyday screens stay still. */
 private val NO_TRANSITION = ContentTransform(EnterTransition.None, ExitTransition.None)

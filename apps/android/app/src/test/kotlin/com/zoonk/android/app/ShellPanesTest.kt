@@ -1,15 +1,21 @@
 package com.zoonk.android.app
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.width
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -22,6 +28,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.rememberAppNavigator
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -49,7 +56,9 @@ class ShellPanesTest {
                 remember(navigator) {
                     entryProvider<NavKey>(fallback = { key -> NavEntry(key) { Text(key.toString()) } }) {
                         entry<AppRoute.Settings>(metadata = ListDetailSceneStrategy.listPane()) { Text("Settings list") }
-                        entry<AppRoute.Preferences>(metadata = ListDetailSceneStrategy.detailPane()) { Text("Preferences detail") }
+                        entry<AppRoute.Preferences>(metadata = ListDetailSceneStrategy.detailPane()) {
+                            Box(Modifier.fillMaxSize().testTag("detail")) { Text("Preferences detail") }
+                        }
                     }
                 }
             AppShell(navigator, entries, onSendFeedback = {})
@@ -90,5 +99,18 @@ class ShellPanesTest {
         val detail = rule.onNodeWithText("Preferences detail").assertIsDisplayed().getUnclippedBoundsInRoot()
         assertTrue("the list ends at the fold: $list", list.right <= 426.dp)
         assertTrue("the detail starts at the fold: $detail", detail.left >= 426.dp)
+    }
+
+    /** A detail opened on its own, as Subscription from the account menu, is a page of its own beside the rail. */
+    @Test
+    @Config(qualifiers = "w852dp-h883dp")
+    fun aDetailOpenedOnItsOwnFillsThePage() {
+        rule.waitForIdle()
+        val fold = FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)
+        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(listOf(fold)))
+        rule.runOnIdle { navigator.open(AppRoute.Preferences) }
+
+        val detail = rule.onNodeWithTag("detail").assertIsDisplayed().getUnclippedBoundsInRoot()
+        assertEquals(772f, detail.width.value, 0.5f)
     }
 }
