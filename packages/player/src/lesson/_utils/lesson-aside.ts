@@ -26,23 +26,13 @@ export function splitQuestionData(text: string): { data: string | null; question
   };
 }
 
-type HookStep = Extract<PlayableLibraryStep, { kind: "hook" }>;
-
-type HookTextStep = HookStep & { content: Extract<HookStep["content"], { variant: "text" }> };
-
-export type RecapStep =
-  | Extract<PlayableLibraryStep, { kind: "explanation" | "workedExample" }>
-  | HookTextStep;
+export type RecapStep = Extract<PlayableLibraryStep, { kind: "explanation" | "workedExample" }>;
 
 function isRecapStep(step: PlayableLibraryStep | undefined): step is RecapStep {
-  if (!step || isLanguageStep(step)) {
-    return false;
-  }
-
   return (
-    step.kind === "explanation" ||
-    step.kind === "workedExample" ||
-    (step.kind === "hook" && step.content.variant === "text")
+    step !== undefined &&
+    !isLanguageStep(step) &&
+    (step.kind === "explanation" || step.kind === "workedExample")
   );
 }
 
@@ -53,23 +43,8 @@ const RECAP_QUESTION_KINDS = new Set<PlayableLibraryStep["kind"]>([
   "typedAnswer",
 ]);
 
-function getFirstPlace(
-  state: Pick<LessonPlayerState, "queue" | "retried" | "steps">,
-  step: PlayableLibraryStep,
-): number {
-  const first = state.queue.indexOf(step.id);
-  const gaveUpPlace = state.retried.includes(step.id) && state.queue.lastIndexOf(step.id) === first;
-
-  if (!gaveUpPlace) {
-    return first;
-  }
-
-  const later = state.queue.findIndex((id) => (state.steps[id]?.position ?? 0) > step.position);
-  return later === -1 ? first : Math.min(first, later);
-}
-
 export function getLessonRecap(
-  state: Pick<LessonPlayerState, "position" | "queue" | "retried" | "steps">,
+  state: Pick<LessonPlayerState, "phase" | "position" | "queue" | "results" | "steps">,
 ): { position: number; step: RecapStep } | null {
   const current = state.steps[state.queue[state.position] ?? ""];
 
@@ -81,15 +56,20 @@ export function getLessonRecap(
     return null;
   }
 
-  const firstPlace = getFirstPlace(state, current);
+  const read = state.queue
+    .slice(0, state.position)
+    .map((id) => state.steps[id])
+    .filter((step) => isRecapStep(step))
+    .toSorted((a, b) => a.position - b.position);
 
-  const position = state.queue.findLastIndex(
-    (id, index) => index < firstPlace && isRecapStep(state.steps[id]),
-  );
+  const isChecked = state.phase === "feedback" && current.id in state.results;
 
-  const step = state.steps[state.queue[position] ?? ""];
+  // A screen written after the question was written knowing it and may answer it.
+  const step =
+    read.findLast((item) => item.position < current.position) ??
+    (isChecked ? read.find((item) => item.position > current.position) : undefined);
 
-  return isRecapStep(step) ? { position, step } : null;
+  return step ? { position: state.queue.indexOf(step.id), step } : null;
 }
 
 export function getRecapMark({
@@ -121,7 +101,7 @@ function getRowState({ index, position }: { index: number; position: number }): 
 }
 
 function getReadingTitle(step: PlayableLibraryStep | undefined): string | null {
-  if (!isRecapStep(step) || step.kind === "hook") {
+  if (!isRecapStep(step)) {
     return null;
   }
 

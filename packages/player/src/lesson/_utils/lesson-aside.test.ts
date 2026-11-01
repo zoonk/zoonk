@@ -1,17 +1,19 @@
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it } from "vitest";
 import { contentStep, explanationStep, teachingStep } from "../../preview/preview-steps";
+import { stepResult } from "../_test-utils/lesson-steps";
 import { type PlayableLibraryStep } from "../lesson-player-types";
 import { getLessonOutline, getLessonRecap, getRecapMark } from "./lesson-aside";
 
 function stateOf(
   steps: PlayableLibraryStep[],
-  { position = 0, queue = steps.map((step) => step.id) } = {},
+  { checked = false, position = 0, queue = steps.map((step) => step.id) } = {},
 ) {
   return {
+    phase: checked ? ("feedback" as const) : ("playing" as const),
     position,
     queue,
-    retried: [],
+    results: checked ? { [queue[position] ?? ""]: stepResult(false) } : {},
     steps: Object.fromEntries(steps.map((step) => [step.id, step])),
   };
 }
@@ -49,6 +51,51 @@ describe(getLessonOutline, () => {
     ]);
 
     expect(outline.questions).toBe(1);
+  });
+});
+
+function recapOf(
+  written: PlayableLibraryStep[],
+  { checked = false, played }: { checked?: boolean; played: string[] },
+) {
+  const steps = written.map((step, position) => ({ ...step, position }));
+  const state = stateOf(steps, { checked, position: played.length - 1, queue: played });
+  return getLessonRecap(state)?.step.id ?? null;
+}
+
+describe(getLessonRecap, () => {
+  const hook = contentStep("hook", {
+    content: { text: "Microwaves don't heat food from the inside.", variant: "text" },
+    id: "hook",
+  });
+
+  const first = explanationStep({ text: "Water molecules spin." }, { id: "first" });
+  const second = explanationStep({ text: "Spinning makes heat." }, { id: "second" });
+  const quiz = teachingStep("check", { id: "quiz" });
+  const back = ["hook", "quiz", "first", "second", "quiz"];
+
+  it("recaps a question moved ahead of its explanations with the one it was written after, once read", () => {
+    const written = [hook, first, second, quiz];
+
+    expect(recapOf(written, { played: ["hook", "quiz"] })).toBeNull();
+    expect(recapOf(written, { checked: true, played: ["hook", "quiz"] })).toBeNull();
+    expect(recapOf(written, { played: back })).toBe("second");
+  });
+
+  it("recaps a question written before its explanations with the one after it, once checked", () => {
+    const written = [hook, quiz, first, second];
+
+    expect(recapOf(written, { checked: true, played: ["hook", "quiz"] })).toBeNull();
+    expect(recapOf(written, { played: back })).toBeNull();
+    expect(recapOf(written, { checked: true, played: back })).toBe("first");
+
+    const explainedFirst = ["hook", "first", "second", "quiz"];
+    expect(recapOf(written, { played: explainedFirst })).toBeNull();
+    expect(recapOf(written, { checked: true, played: explainedFirst })).toBe("first");
+  });
+
+  it('recaps the screen a question was written after when "Explain first" brought the next one', () => {
+    expect(recapOf([first, quiz, second], { played: ["first", "second", "quiz"] })).toBe("first");
   });
 });
 

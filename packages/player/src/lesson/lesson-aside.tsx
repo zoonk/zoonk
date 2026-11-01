@@ -78,16 +78,8 @@ function WorkedExampleRecap({
   );
 }
 
-function recapTitle(step: RecapStep): string | null {
-  if (step.kind === "hook") {
-    return null;
-  }
-
-  return step.content.title ?? null;
-}
-
 function RecapBody({ mark, step }: { mark: string | null; step: RecapStep }) {
-  const title = recapTitle(step);
+  const { title } = step.content;
 
   return (
     <>
@@ -134,7 +126,7 @@ export function LessonRecapRow() {
     return null;
   }
 
-  const title = recapTitle(recap.step);
+  const { title } = recap.step.content;
 
   return (
     <PlayerContentFrame className="pb-6 lg:hidden" data-slot="lesson-recap-row">
