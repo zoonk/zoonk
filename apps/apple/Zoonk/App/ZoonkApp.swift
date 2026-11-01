@@ -108,6 +108,7 @@ struct ZoonkApp: App {
         .environment(\.activityRenderers, .app)
         .environment(\.openURL, OpenURLAction(handler: LinkOpening.open))
         .roundedButtonsAtAccessibilitySizes()
+        .labelStyle(StackingLabelStyle())
     }
   }
 }

@@ -96,13 +96,6 @@ struct SectionHeaderRow<Trailing: View>: View {
 }
 
 extension View {
-  /// Stacked, a list row's label flows its icon into the title's first line, which pushes aside the
-  /// first line of every text and control in a title of several. Such a label keeps its icon in a
-  /// column instead.
-  func labelIconInColumnWhenStacked() -> some View {
-    modifier(LabelIconColumn())
-  }
-
   /// A wrapped capsule's round ends take the width its words need, so from the first accessibility
   /// size buttons are rounded rectangles. A button's shape doesn't reach into a presentation:
   /// apply it at the root of each presented screen too.
@@ -111,14 +104,34 @@ extension View {
   }
 }
 
-private struct LabelIconColumn: ViewModifier {
+/// The system's label style until content stacks. Stacked, a list row would flow a label's icon
+/// into its title's first line, which pushes aside the first line of every text and control in a
+/// title of several. This one keeps the icon beside a title that fits its line and puts it above
+/// one that wraps, which then takes the row's width, as in a `MarkedRow`. Set at the app's root, it
+/// reaches presented screens too.
+struct StackingLabelStyle: LabelStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    StackingLabel(configuration: configuration)
+  }
+}
+
+private struct StackingLabel: View {
   @Environment(\.stacksContent) private var isStacked
 
-  func body(content: Content) -> some View {
+  let configuration: LabelStyleConfiguration
+
+  var body: some View {
     if isStacked {
-      content.labelStyle(.titleAndIcon)
+      ViewThatFits(in: .horizontal) {
+        TitleAndIconLabelStyle().makeBody(configuration: configuration)
+
+        VStack(alignment: .leading) {
+          configuration.icon
+          configuration.title
+        }
+      }
     } else {
-      content
+      Label(configuration)
     }
   }
 }

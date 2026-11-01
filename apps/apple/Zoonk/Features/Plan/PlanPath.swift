@@ -633,6 +633,5 @@ struct PlanChallengeLabel: View {
     } icon: {
       KindMark(kind: .challenge)
     }
-    .labelIconInColumnWhenStacked()
   }
 }
