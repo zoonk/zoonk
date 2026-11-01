@@ -2,7 +2,10 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { io } from "next/cache";
-import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
+import {
+  type EntitlementViewer,
+  getEntitlementViewer,
+} from "../../entitlements/_utils/entitlement-viewer";
 import { getExamPrepAccess as getPlanExamPrep } from "../../entitlements/limits";
 import { findActiveGoalId } from "../../goals/_utils/goal-view";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
@@ -13,17 +16,19 @@ import { type SessionPlanItem } from "./session-plan-item";
 
 type AccessGoal = Pick<Goal, "createdAt" | "kind" | "timezone">;
 
-/** Tier comes from the session; today is a learner-local label, defaulting to the current day. */
+/** Tier comes from a fresh session check, or the display read GET callers pass; today is a learner-local label, defaulting to the current day. */
 export async function loadExamPrepAccess({
   goal,
+  readViewer = getEntitlementViewer,
   timeZone,
   today,
 }: {
   goal: AccessGoal;
+  readViewer?: () => Promise<EntitlementViewer | null>;
   timeZone?: string | null;
   today?: Date;
 }): Promise<ExamPrepAccess> {
-  const viewer = goal.kind === "exam" ? await getEntitlementViewer() : null;
+  const viewer = goal.kind === "exam" ? await readViewer() : null;
   const zone = getAnswerTimeZone({ goal, timeZone });
 
   await io();

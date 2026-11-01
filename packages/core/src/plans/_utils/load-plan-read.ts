@@ -1,11 +1,11 @@
 import "server-only";
-import { loadCatchUpItems } from "../../sessions/_utils/catch-up";
+import { readCatchUpItems } from "../../learner/facts/catch-up-items";
 import { selectLeftWork } from "./left-work";
 import { type PlanContext } from "./plan-context";
 import { readPlanSummary } from "./plan-summary";
 
 export async function loadPlanReadProjection({ context }: { context: PlanContext; now: Date }) {
-  const catchUp = await loadCatchUpItems(context.goal.id);
+  const catchUp = await readCatchUpItems(context.goal.userId, context.goal.id);
 
   return {
     catchUp: [

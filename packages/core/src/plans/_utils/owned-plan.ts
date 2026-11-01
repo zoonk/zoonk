@@ -7,8 +7,8 @@ import {
   getLearnerModelCacheTag,
   getUserSubscriptionCacheTag,
 } from "../../cache/tags";
-import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
+import { getOwnedGoal } from "../../learner/get-owned-goal";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { getSession } from "../../users/get-session";
 import { type PlanChangeView } from "../plan-view-contract";
@@ -50,7 +50,7 @@ export async function loadOwnedPlanContext(
   { context: PlanContext; now: Date; status: "ready" } | { status: "notFound" | "unauthorized" }
 > {
   const [owned, { currentInstant, timeZone }] = await Promise.all([
-    findOwnedGoal(goalId),
+    getOwnedGoal(goalId),
     getRequestProgressDateContext(),
   ]);
 

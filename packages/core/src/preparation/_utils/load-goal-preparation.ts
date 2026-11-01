@@ -4,9 +4,11 @@ import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
 import { getLearnerModelCacheTag, getUserSubscriptionCacheTag } from "../../cache/tags";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
+import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { loadGoalScoreEstimate } from "../../exams/estimates/load-goal-estimate";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { type OwnedGoal } from "../../learner/_utils/owned-goal";
+import { readCatchUpItems } from "../../learner/facts/catch-up-items";
 import { readPreparationInputs } from "../../learner/facts/preparation-inputs";
 import { type SavedPlan, readSavedPlan } from "../../learner/facts/saved-plan";
 import { getOwnedGoal } from "../../learner/get-owned-goal";
@@ -16,7 +18,6 @@ import { type PlanReadContext } from "../../plans/_utils/plan-read-projection";
 import { getStartOfWeek } from "../../plans/planner/plan-calendar";
 import { parsePlanPhases } from "../../plans/planner/plan-state";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
-import { loadCatchUpItems } from "../../sessions/_utils/catch-up";
 import { loadExamPrepAccess } from "../../sessions/_utils/plus-only-lessons";
 import { getAreaPreparations } from "../area-preparation";
 import { type GoalPreparationResult } from "../get-goal-preparation";
@@ -98,8 +99,8 @@ export async function loadOwnedGoalPreparation({
       readPreparationInputs(userId, goalId),
       readSavedPlan(userId, goalId),
       goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
-      selectedPlan?.catchUp === undefined ? loadCatchUpItems(goalId) : [],
-      loadExamPrepAccess({ goal, timeZone, today }),
+      selectedPlan?.catchUp === undefined ? readCatchUpItems(userId, goalId) : [],
+      loadExamPrepAccess({ goal, readViewer: readEntitlementViewer, timeZone, today }),
       arePhaseChallengesRequired({ goalKind: goal.kind, userId }),
     ]);
 

@@ -1,13 +1,17 @@
 import { prisma } from "@zoonk/db";
-import { planItemFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
+import { planChangeFixture, planItemFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { countDatabaseRows } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
+import { type readCatchUpItems } from "../../learner/facts/catch-up-items";
+import { type readOwnedGoal } from "../../learner/facts/owned-goal";
 import { type readSavedPlan } from "../../learner/facts/saved-plan";
+import { type readActiveSubscription } from "../../learner/facts/subscription";
 import { type readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
 import { type readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { listGoalMindMaps } from "../../mind-maps/list-goal-mind-maps";
@@ -15,6 +19,33 @@ import { signedInCourseGoal } from "../_test-utils/course-goal";
 import { getProgressView } from "../progress/get-progress-view";
 import { getSyllabusView } from "../syllabus/get-syllabus-view";
 import { getPlanTabView } from "./get-plan-view";
+
+vi.mock("../../learner/facts/catch-up-items", async (importOriginal) => {
+  const [actual, { keepRequestReads }] = await Promise.all([
+    importOriginal<{ readCatchUpItems: typeof readCatchUpItems }>(),
+    import("../../_test-utils/keep-request-reads"),
+  ]);
+
+  return { ...actual, readCatchUpItems: keepRequestReads(actual.readCatchUpItems) };
+});
+
+vi.mock("../../learner/facts/subscription", async (importOriginal) => {
+  const [actual, { keepRequestReads }] = await Promise.all([
+    importOriginal<{ readActiveSubscription: typeof readActiveSubscription }>(),
+    import("../../_test-utils/keep-request-reads"),
+  ]);
+
+  return { ...actual, readActiveSubscription: keepRequestReads(actual.readActiveSubscription) };
+});
+
+vi.mock("../../learner/facts/owned-goal", async (importOriginal) => {
+  const [actual, { keepRequestReads }] = await Promise.all([
+    importOriginal<{ readOwnedGoal: typeof readOwnedGoal }>(),
+    import("../../_test-utils/keep-request-reads"),
+  ]);
+
+  return { ...actual, readOwnedGoal: keepRequestReads(actual.readOwnedGoal) };
+});
 
 vi.mock("../../learner/facts/saved-plan", async (importOriginal) => {
   const [actual, { keepRequestReads }] = await Promise.all([
@@ -44,6 +75,61 @@ vi.mock("../../learner/facts/today-learn-blocks", async (importOriginal) => {
 });
 
 describe("the Plan's render reads", () => {
+  it("reads the goal once for the plan", async () => {
+    const { goal } = await signedInCourseGoal();
+
+    const reads = await countDatabaseRows(
+      () => getPlanTabView({ goalId: goal.id }),
+      'WHERE ("public"."goals"."id" = $1 AND "public"."goals"."user_id" = $2)',
+    );
+
+    expect(reads.result.status).toBe("ready");
+    expect(reads.rows).toBe(1);
+  });
+
+  it("reads an exam's subscription and catch-up work once for the plan, its progress and syllabus", async () => {
+    const { goal, plan, user } = await signedInCourseGoal();
+    const blueprint = await examBlueprintFixture();
+
+    await Promise.all([
+      prisma.goal.update({
+        data: { examBlueprintId: blueprint.id, kind: "exam" },
+        where: { id: goal.id },
+      }),
+      prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+      }),
+      planChangeFixture({ kind: "resumed", planId: plan.id, status: "applied" }),
+    ]);
+
+    const subscriptions = await countDatabaseRows(
+      () =>
+        countDatabaseRows(
+          () =>
+            Promise.all([
+              getPlanTabView({ goalId: goal.id }),
+              getProgressView({ goalId: goal.id }),
+              getSyllabusView({ goalId: goal.id }),
+            ]),
+          '"public"."plan_changes"."kind" IN ($1,$2)',
+        ),
+      'FROM "public"."subscriptions"',
+    );
+
+    const catchUp = subscriptions.result;
+
+    expect(catchUp.result.map((result) => result.status)).toStrictEqual([
+      "ready",
+      "ready",
+      "ready",
+    ]);
+
+    expect({ catchUp: catchUp.rows, subscriptions: subscriptions.rows }).toStrictEqual({
+      catchUp: 1,
+      subscriptions: 1,
+    });
+  });
+
   it("reads the saved plan's items once for the plan and its progress", async () => {
     const { items } = await signedInCourseGoal();
 
