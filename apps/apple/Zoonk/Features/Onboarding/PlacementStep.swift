@@ -522,9 +522,9 @@ struct PlacementQuestionScreen<Media: View>: View {
 
       media()
 
-      PracticeQuestionView(question: question, labels: labels, draft: $draft) { answer in
-        onAnswer(answer)
-      }
+      asked.stimulus
+    } response: {
+      asked.response
 
       if failed {
         Text(
@@ -554,6 +554,12 @@ struct PlacementQuestionScreen<Media: View>: View {
         Text("Stop here and see my plan", tableName: "Onboarding", comment: "Ends placement early")
       }
       .disabled(isSaving)
+    }
+  }
+
+  private var asked: PracticeQuestionView {
+    PracticeQuestionView(question: question, labels: labels, draft: $draft) { answer in
+      onAnswer(answer)
     }
   }
 }

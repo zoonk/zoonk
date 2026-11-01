@@ -599,7 +599,7 @@ private struct LevelTestSpeaking: View {
         Text(sentence.translation)
           .foregroundStyle(.secondary)
       }
-
+    } response: {
       VoiceAnswerRecorder(
         grade: { voice, recording in
           await voice.gradeLevelTestSentence(goalId: goalID, recording: recording)
