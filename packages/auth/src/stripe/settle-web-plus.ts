@@ -22,7 +22,7 @@ function isBilled(subscription: Stripe.Subscription): boolean {
   return ACTIVE_SUBSCRIPTION_STATUSES.includes(subscription.status) || isUnpaid(subscription);
 }
 
-export async function findStorePlus(userId: string): Promise<StoreProvider | null> {
+async function findStorePlus(userId: string): Promise<StoreProvider | null> {
   const { orderBy, where } = getActiveSubscriptionQuery({ now: new Date(), userId });
 
   const subscription = await prisma.subscription.findFirst({

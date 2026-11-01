@@ -41,7 +41,6 @@ export const TERMS_URL = new URL("/terms", MAIN_URL).toString();
 
 export const PRIVACY_URL = new URL("/privacy", MAIN_URL).toString();
 
-
 export const APPLE_SUBSCRIPTIONS_URL = "https://apps.apple.com/account/subscriptions";
 
 export const GOOGLE_PLAY_SUBSCRIPTIONS_URL = "https://play.google.com/store/account/subscriptions";

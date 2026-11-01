@@ -1,10 +1,10 @@
 import "server-only";
+import { UNPAID_STATUSES } from "@zoonk/auth/stop-web-plus";
 import { prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getUserSubscriptionCacheTag } from "../../cache/tags";
-import { UNPAID_STATUSES } from "@zoonk/auth/stop-web-plus";
 
-/** A newer store purchase doesn't stop website billing. Prefer a renewing row over an unpaid one. */
+/** Store settlement can lag its purchase. Prefer an active website row over an unpaid one. */
 export async function findWebSubscription(userId: string) {
   const subscriptions = await prisma.subscription.findMany({
     orderBy: { id: "desc" },

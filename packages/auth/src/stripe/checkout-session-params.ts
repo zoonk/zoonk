@@ -27,5 +27,6 @@ export async function getCheckoutSessionParams({
     custom_text: {
       submit: { message: annual ? t.checkoutYearlyRenewal : t.checkoutMonthlyRenewal },
     },
+    subscription_data: { metadata: { locale: language } },
   };
 }

@@ -9,6 +9,7 @@ describe(getCheckoutSessionParams, () => {
       submit: { message: expect.stringContaining("todo ano") },
     });
 
+    expect(params.subscription_data?.metadata).toStrictEqual({ locale: "pt" });
     expect(params.consent_collection).toBeUndefined();
     expect(params.custom_text?.terms_of_service_acceptance).toBeUndefined();
   });

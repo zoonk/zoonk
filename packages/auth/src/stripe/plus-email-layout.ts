@@ -1,9 +1,7 @@
 import { sendEmail } from "@zoonk/mailer";
 import { formatPrice } from "@zoonk/utils/currency";
-import { safeAsync } from "@zoonk/utils/error";
 import { escapeHtml } from "@zoonk/utils/escape-html";
 import { getFormattingLocale } from "@zoonk/utils/locale";
-import { logError } from "@zoonk/utils/logger";
 import { PRIVACY_URL, TERMS_URL } from "@zoonk/utils/url";
 import { type getTranslation } from "../translations/get-translations";
 
@@ -14,7 +12,7 @@ export type BillingInterval = "month" | "year";
 const SELLER =
   "Zoonk Tecnologia e Educação Ltda · CNPJ 42.262.784/0001-76 · Setor SGAN 601, Módulo H, Sala 55, SS1, Parte 14, Edif Ion, Asa Norte, Brasília (DF), 70830-018, Brazil · hello@zoonk.com";
 
-export function fill(template: string, values: Record<string, string>): string {
+function fill(template: string, values: Record<string, string>): string {
   return Object.entries(values).reduce(
     (text, [key, value]) => text.replaceAll(`{${key}}`, value),
     template,
@@ -99,14 +97,5 @@ export async function send({ body, subject, to }: { body: string; subject: strin
 
   if (error) {
     throw error;
-  }
-}
-
-/** Sent from the request that bought or canceled Plus, which a failed email mustn't undo. */
-export async function sendOnce(email: { body: string; subject: string; to: string }) {
-  const { error } = await safeAsync(() => send(email));
-
-  if (error) {
-    logError("Plus email failed", { error, subject: email.subject });
   }
 }
