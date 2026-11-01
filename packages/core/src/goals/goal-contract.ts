@@ -50,6 +50,8 @@ const timeZoneSchema = z
 
 const detailsSchema = z
   .record(z.string(), z.json())
+  // Only research writes the notice's question formats, and shared questions read them.
+  .overwrite(({ noticeFormats: _written, ...details }) => details)
   .refine((details) => JSON.stringify(details).length <= MAX_GOAL_DETAILS_LENGTH, {
     message: `Details are at most ${MAX_GOAL_DETAILS_LENGTH} characters as JSON`,
   })
