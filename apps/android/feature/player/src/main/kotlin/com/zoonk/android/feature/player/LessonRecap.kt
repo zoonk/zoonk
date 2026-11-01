@@ -36,7 +36,7 @@ import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
 
 /**
- * Main's "From the lesson" under a question: the screen it comes after, folded. After a miss the
+ * Main's "From the lesson" under a question: the explanation it sits next to, folded. After a miss the
  * sentence the question rests on is highlighted. Not when "Explain first" can bring the explanation.
  */
 @Composable
@@ -86,11 +86,6 @@ private fun RecapBody(
 
         is StepContent.WorkedExample -> {
             WorkedExampleRecap(content.content, mark)
-        }
-
-        is StepContent.Fact -> {
-            RichText(text = content.content.text, mark = mark, style = style)
-            LessonStepVisual(content.content.visual)
         }
 
         else -> {}

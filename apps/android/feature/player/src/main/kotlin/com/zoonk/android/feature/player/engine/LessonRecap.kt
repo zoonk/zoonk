@@ -7,29 +7,24 @@ import com.zoonk.android.feature.player.model.StepKind
 private val RECAP_QUESTION_KINDS = setOf(StepKind.Activity, StepKind.Check, StepKind.Hook, StepKind.TypedAnswer)
 
 private val LessonStep.isRecapStep: Boolean
-    get() = content is StepContent.Explanation || content is StepContent.WorkedExample || content is StepContent.Fact
+    get() = content is StepContent.Explanation || content is StepContent.WorkedExample
 
-/** A missed check that moved to the end recaps from where it was written, not from the end. */
-private fun LessonPlayerState.firstPlace(step: LessonStep): Int {
-    val first = queue.indexOf(step.id)
-    val gaveUpPlace = step.id in retried && queue.lastIndexOf(step.id) == first
-
-    if (!gaveUpPlace) return first
-
-    val later = queue.indexOfFirst { (steps[it]?.position ?: 0) > step.position }
-    return if (later == -1) first else minOf(first, later)
-}
-
-/** Main's `getLessonRecap`: the explanation, worked example or fact the question in view comes after. */
 fun LessonPlayerState.recap(): LessonStep? {
     val current = currentStep ?: return null
 
     if (current.isReadStep || current.kind !in RECAP_QUESTION_KINDS) return null
 
-    return queue
-        .take(firstPlace(current).coerceAtLeast(0))
-        .lastOrNull { steps[it]?.isRecapStep == true }
-        ?.let(steps::get)
+    val read =
+        queue
+            .take(position)
+            .mapNotNull(steps::get)
+            .filter { it.isRecapStep }
+            .sortedBy { it.position }
+    val isChecked = phase == LessonPhase.Feedback && current.id in results
+
+    // A screen written after the question was written knowing it and may answer it.
+    return read.lastOrNull { it.position < current.position }
+        ?: read.firstOrNull { it.position > current.position }?.takeIf { isChecked }
 }
 
 /** The sentence of [recap] this check or typed answer rests on (its `basis`), when that's the screen it recaps. */

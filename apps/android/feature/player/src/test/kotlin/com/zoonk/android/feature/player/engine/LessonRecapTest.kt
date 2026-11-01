@@ -5,6 +5,9 @@ import com.zoonk.android.feature.player.explanationStep
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepBasis
 import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.android.feature.player.model.TextHook
+import com.zoonk.android.feature.player.stepResult
+import com.zoonk.api.ApiJson
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -25,12 +28,33 @@ class LessonRecapTest {
         )
     }
 
+    private val hook =
+        LessonStep(
+            "hook",
+            null,
+            StepContent.Fact(ApiJson.decodeFromString(TextHook.serializer(), """{"text":"Guess why.","variant":"text"}""")),
+        )
+
+    private val back = listOf("hook", "quiz", "first", "second", "quiz")
+
     private fun stateAt(
         steps: List<LessonStep>,
         queue: List<String> = steps.map { it.id },
         position: Int,
-        retried: List<String> = emptyList(),
-    ) = LessonPlayerState.initial("lesson", steps, now = 0).copy(queue = queue, position = position, retried = retried)
+        checked: Boolean = false,
+    ): LessonPlayerState {
+        val state = LessonPlayerState.initial("lesson", steps, now = 0).copy(queue = queue, position = position)
+        return if (checked) state.copy(phase = LessonPhase.Feedback, results = mapOf(queue[position] to stepResult(false))) else state
+    }
+
+    private fun recapOf(
+        written: List<LessonStep>,
+        played: List<String>,
+        checked: Boolean = false,
+    ): String? {
+        val steps = written.mapIndexed { position, step -> step.copy(position = position) }
+        return stateAt(steps, queue = played, position = played.lastIndex, checked = checked).recap()?.id
+    }
 
     private fun markOf(
         steps: List<LessonStep>,
@@ -66,8 +90,36 @@ class LessonRecapTest {
         val second = explanationStep("second").copy(position = 2)
         val steps = listOf(first, quiz, second)
 
-        val state = stateAt(steps, queue = listOf("first", "second", "quiz"), position = 2, retried = listOf("quiz"))
+        val state = stateAt(steps, queue = listOf("first", "second", "quiz"), position = 2)
 
         assertEquals("first", state.recap()?.id)
+    }
+
+    @Test
+    fun aQuestionMovedAheadOfItsExplanationsRecapsTheOneItWasWrittenAfterOnceRead() {
+        val written = listOf(hook, explanationStep("first"), explanationStep("second"), checkStep("quiz"))
+
+        assertNull(recapOf(written, listOf("hook", "quiz")))
+        assertNull(recapOf(written, listOf("hook", "quiz"), checked = true))
+        assertEquals("second", recapOf(written, back))
+    }
+
+    @Test
+    fun aQuestionWrittenBeforeItsExplanationsRecapsTheOneAfterItOnceChecked() {
+        val written = listOf(hook, checkStep("quiz"), explanationStep("first"), explanationStep("second"))
+        val explainedFirst = listOf("hook", "first", "second", "quiz")
+
+        assertNull(recapOf(written, listOf("hook", "quiz"), checked = true))
+        assertNull(recapOf(written, back))
+        assertEquals("first", recapOf(written, back, checked = true))
+        assertNull(recapOf(written, explainedFirst))
+        assertEquals("first", recapOf(written, explainedFirst, checked = true))
+    }
+
+    @Test
+    fun explainFirstKeepsTheScreenAQuestionWasWrittenAfter() {
+        val written = listOf(explanationStep("first"), checkStep("quiz"), explanationStep("second"))
+
+        assertEquals("first", recapOf(written, listOf("first", "second", "quiz")))
     }
 }
