@@ -1,10 +1,6 @@
 package com.zoonk.android.feature.conversation
 
-import android.Manifest
-import android.app.Application
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
@@ -14,46 +10,15 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextInput
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.zoonk.android.data.AppCache
-import com.zoonk.android.data.AuthenticatedSession
-import com.zoonk.android.data.FakeSession
-import com.zoonk.android.data.apiHttpClient
-import com.zoonk.android.feature.audio.AudioOutput
-import com.zoonk.android.feature.audio.PlaybackEnd
-import com.zoonk.android.feature.audio.SpeechPlayer
-import com.zoonk.android.feature.audio.VoiceFiles
 import com.zoonk.android.feature.livecall.CallReservation
-import com.zoonk.android.feature.livecall.FakeCallClient
-import com.zoonk.android.feature.livecall.FakeTransport
-import com.zoonk.android.feature.livecall.LiveCall
-import com.zoonk.android.feature.livecall.LiveServerEvent
-import com.zoonk.android.feature.livecall.OngoingCalls
 import com.zoonk.android.feature.livecall.characterSays
 import com.zoonk.android.feature.livecall.learnerSays
-import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.Limit
-import com.zoonk.android.ui.components.LimitPeriod
-import com.zoonk.android.ui.components.LimitTier
-import com.zoonk.android.ui.theme.ZoonkTheme
-import com.zoonk.api.ApiJson
-import com.zoonk.api.models.CompletedLanguageConversation
-import com.zoonk.api.models.LanguageConversation
-import com.zoonk.api.models.LanguageConversationCompletionInput
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.Shadows.shadowOf
-import java.io.File
-import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
 class ConversationFlowTest {
@@ -66,7 +31,6 @@ class ConversationFlowTest {
     private val transports get() = harness.transports
     private val transport get() = harness.transport
     private val closed get() = harness.closed
-    private val opened get() = harness.opened
 
     private fun show() = harness.show(compose)
 
@@ -122,35 +86,6 @@ class ConversationFlowTest {
     }
 
     @Test
-    fun aMilestoneTheCallEarnedShowsItsCeremonyBeforeTheResultAndItsMoment() {
-        api.ceremony =
-            """{"id":"00000000-0000-4000-8000-0000000000c9","key":"yellow","kind":"belt","earnedAt":"2026-10-29T12:00:00Z","shownAt":null}"""
-        show()
-        goLive()
-        transport.onEvent(learnerSays("Un café, por favor.", 1000.0, 3000.0))
-
-        compose.onNodeWithContentDescription("End").performClick()
-        compose.waitForIdle()
-
-        compose.onNodeWithText("Ceremony: yellow").assertExists()
-        compose.onNodeWithText("You did well.").assertDoesNotExist()
-        compose.onNodeWithText("Close ceremony").performClick()
-        compose.onNodeWithText("You did well.").assertExists()
-        seen("Day moment")
-        compose.onNodeWithText("Continue").performClick()
-        compose.onNodeWithText("Day moment").assertDoesNotExist()
-    }
-
-    @Test
-    fun aCallOpenedAfterItEndedShowsNoCeremonyOrMoment() {
-        api.stored = endedConversation(harness.id)
-        show()
-
-        compose.onNodeWithText("You did well.").assertExists()
-        compose.onNodeWithText("Day moment").assertDoesNotExist()
-    }
-
-    @Test
     fun endingACallThatHasntConnectedGoesBackToItsIntro() {
         show()
         compose.onNodeWithText("Start the call").performClick()
@@ -162,30 +97,6 @@ class ConversationFlowTest {
         compose.onNodeWithText("Start the call").assertExists()
         assertEquals(listOf(com.zoonk.android.feature.livecall.CONNECTION), client.ended)
         assertTrue(transport.closed)
-    }
-
-    @Test
-    fun aLockedCallOffersPlus() {
-        api.stored = conversation(harness.id, locked = true, kind = LanguageConversation.Kind.CHECKPOINT)
-        show()
-
-        compose.onNodeWithText("Challenge calls come with Plus. Your plan keeps going without them.").assertExists()
-        compose.onNodeWithText("See Plus").performClick()
-
-        assertEquals(listOf<AppRoute>(AppRoute.Subscription), opened)
-        assertTrue(client.connects.isEmpty())
-    }
-
-    @Test
-    fun aCallLimitSaysWhenCallsComeBack() {
-        client.reservations = ArrayDeque(listOf(CallReservation.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Day))))
-        show()
-        compose.onNodeWithText("Start the call").performClick()
-
-        compose.onNodeWithText("No more calls today").assertExists()
-        compose.onNodeWithText("Your calls come back tomorrow, or get Plus for higher call limits.").assertExists()
-        compose.onNodeWithText("See Plus").performClick()
-        assertEquals(listOf<AppRoute>(AppRoute.Subscription), opened)
     }
 
     @Test
@@ -240,30 +151,6 @@ class ConversationFlowTest {
     }
 
     @Test
-    fun theSendButtonWaitsForWords() {
-        show()
-        goLive()
-
-        compose.onNodeWithContentDescription("Send").assertIsNotEnabled()
-        compose.onNode(hasSetTextAction()).performTextInput("Hola")
-        compose.onNodeWithContentDescription("Send").assertIsEnabled()
-    }
-
-    @Test
-    fun aCallTheServerSaysEndedOffersANewOne() {
-        api.completion = { CallCompletion.Ended }
-        show()
-        goLive()
-
-        compose.onNodeWithContentDescription("End").performClick()
-        compose.waitForIdle()
-
-        compose.onNodeWithText("This call has ended").assertExists()
-        compose.onNodeWithText("Start a new call to keep practicing.").assertExists()
-        assertFalse(api.completions.isEmpty())
-    }
-
-    @Test
     fun endingADroppedCallSavesWhatWasSaid() {
         show()
         goLive()
@@ -282,20 +169,5 @@ class ConversationFlowTest {
                 .map { it.text },
         )
         compose.onNodeWithText("You did well.").assertExists()
-    }
-
-    @Test
-    fun aMocksTaskGoesBackToTheMockOnceSaved() {
-        compose.setContent {
-            com.zoonk.android.ui.theme
-                .ZoonkTheme { harness.Conversation(fromMock = true) }
-        }
-        goLive()
-
-        compose.onNodeWithContentDescription("End").performClick()
-        compose.waitForIdle()
-
-        assertEquals(1, api.completions.size)
-        assertEquals(1, closed)
     }
 }

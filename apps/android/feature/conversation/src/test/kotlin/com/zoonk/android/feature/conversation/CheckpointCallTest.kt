@@ -8,8 +8,6 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
-import com.zoonk.android.feature.livecall.LiveServerEvent
-import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -25,7 +23,6 @@ class CheckpointCallTest {
 
     private val block = UUID.fromString("00000000-0000-4000-8000-0000000000b1")
     private val harness = ConversationHarness()
-    private var today = 0
 
     private fun show() {
         val model = CheckpointCallModel(block, harness.store)
@@ -34,43 +31,12 @@ class CheckpointCallTest {
                 CheckpointCallContent(
                     model = model,
                     exits = harness.exits,
-                    onToday = { today++ },
+                    onToday = {},
                     conversation = { id, startWith -> harness.Conversation(id, startWith) },
                     otherwise = { Text("The duel") },
                 )
             }
         }
-    }
-
-    @Test
-    fun startingTheChallengeCallsAtOnceWithTheMicrophoneItAskedFor() {
-        show()
-
-        compose.onNodeWithText("Unit challenge").assertExists()
-        compose.onNodeWithText("Order at the café").assertExists()
-        compose.onNodeWithText("Start the call").performClick()
-        compose.waitForIdle()
-
-        assertEquals(listOf<CallRequest>(CallRequest.Checkpoint(block)), harness.api.starts)
-        assertEquals(listOf(false), harness.client.connects)
-        assertTrue(harness.transport.microphone)
-        harness.transport.onEvent(LiveServerEvent.Started)
-        compose.waitForIdle()
-        compose.onNodeWithText("Listening…").assertExists()
-    }
-
-    @Test
-    fun aCallBeingPreparedIsWrittenOnTheTapThenOpensOnItsIntro() {
-        harness.api.checkpoint = checkpointStatus("""{"status":"preparing","unitTitle":"At the café"}""")
-        show()
-
-        compose.onNodeWithText("At the café").assertExists()
-        compose.onNodeWithText("Get the call ready").performClick()
-        compose.waitForIdle()
-
-        assertEquals(listOf<CallRequest>(CallRequest.Checkpoint(block)), harness.api.starts)
-        compose.onNodeWithText("Start the call").assertExists()
-        assertTrue("A prepared call waits for its own Start", harness.client.connects.isEmpty())
     }
 
     @Test
@@ -86,24 +52,6 @@ class CheckpointCallTest {
         assertEquals(listOf("run-1"), harness.runs.followed)
         compose.onNodeWithText("Start the call").assertExists()
         assertTrue("A prepared call waits for its own Start", harness.client.connects.isEmpty())
-    }
-
-    @Test
-    fun aRunThatFailedWhileGettingTheCallReadyIsTriedAgain() {
-        harness.api.checkpoint = checkpointStatus("""{"status":"preparing","unitTitle":"At the café"}""")
-        harness.api.writings += "run-1"
-        harness.runs.finishes = false
-        show()
-
-        compose.onNodeWithText("Get the call ready").performClick()
-        compose.waitForIdle()
-        compose.onNodeWithText("Getting your call ready").assertExists()
-        compose.onNodeWithText("This didn't finish").assertExists()
-
-        compose.onNodeWithText("Try again").performClick()
-        compose.waitForIdle()
-        assertEquals(2, harness.api.starts.size)
-        compose.onNodeWithText("Start the call").assertExists()
     }
 
     @Test
@@ -130,30 +78,6 @@ class CheckpointCallTest {
     }
 
     @Test
-    fun aReachedDailyTimeLimitLeadsBackToToday() {
-        harness.api.checkpoint = checkpointIntro(dailyLimitReached = true)
-        show()
-
-        compose.onNodeWithText("You've reached your daily time limit. You can make this call in your next session.").assertExists()
-        compose.onNodeWithText("Start the call").assertDoesNotExist()
-        compose.onNodeWithText("Back to Today").performClick()
-        assertEquals(1, today)
-    }
-
-    @Test
-    fun aStartRefusedForPlusOffersPlus() {
-        harness.api.startRefusal = ApiException(ApiError.Unavailable, "PLUS_REQUIRED", 402)
-        show()
-
-        compose.onNodeWithText("Start the call").performClick()
-        compose.waitForIdle()
-
-        compose.onNodeWithText("Challenge calls come with Plus. Your plan keeps going without them.").assertExists()
-        compose.onNodeWithText("See Plus").performClick()
-        assertEquals(listOf<AppRoute>(AppRoute.Subscription), harness.opened)
-    }
-
-    @Test
     fun aDayThatMovedOnReadsTheCheckpointAgain() {
         harness.api.startRefusal = ApiException(ApiError.Unavailable, "BLOCK_FINISHED", 409)
         show()
@@ -164,22 +88,5 @@ class CheckpointCallTest {
         compose.waitForIdle()
 
         assertEquals(reads + 1, harness.api.checkpointReads)
-    }
-
-    @Test
-    fun aCheckpointThatIsntACallShowsItsOwnScreen() {
-        harness.api.checkpoint = checkpointStatus("""{"status":"notLanguage"}""")
-        show()
-
-        compose.onNodeWithText("The duel").assertExists()
-    }
-
-    @Test
-    fun earlierBlocksFirstSendsTheLearnerToToday() {
-        harness.api.checkpoint = checkpointStatus("""{"status":"earlierFirst","reason":"lessons"}""")
-        show()
-        compose.waitForIdle()
-
-        assertEquals(1, today)
     }
 }

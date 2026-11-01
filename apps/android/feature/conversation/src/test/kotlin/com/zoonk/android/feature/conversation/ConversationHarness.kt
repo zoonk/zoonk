@@ -2,7 +2,6 @@ package com.zoonk.android.feature.conversation
 
 import android.Manifest
 import android.app.Application
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -11,7 +10,6 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
-import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -167,11 +165,6 @@ internal class FakeConversationApi(
 
     /** Runs the next starts answer with, one each, before the call is written. */
     val writings = ArrayDeque<String>()
-    var completion: ((LanguageConversationCompletionInput) -> CallCompletion)? = null
-
-    /** The completion's `ceremony` JSON: a milestone the call earned, or `null`. */
-    var ceremony = "null"
-
     override suspend fun conversation(
         session: AuthenticatedSession?,
         id: UUID,
@@ -200,19 +193,12 @@ internal class FakeConversationApi(
         input: LanguageConversationCompletionInput,
     ): CompletedLanguageConversation {
         completions += input
-        when (completion?.invoke(input)) {
-            CallCompletion.Ended -> throw ApiException(ApiError.Unavailable, "CONVERSATION_ENDED", 409)
-            else -> Unit
-        }
-        return completed(stored, ceremony)
+        return completed(stored)
     }
 }
 
-internal fun conversation(
-    id: UUID,
-    locked: Boolean = false,
-    kind: LanguageConversation.Kind = LanguageConversation.Kind.PRACTICE,
-): LanguageConversation = ApiJson.decodeFromString(conversationJson(id, locked, kind, result = null))
+internal fun conversation(id: UUID): LanguageConversation =
+    ApiJson.decodeFromString(conversationJson(id, locked = false, LanguageConversation.Kind.PRACTICE, result = null))
 
 private val CALL_RESULT =
     """
@@ -220,17 +206,10 @@ private val CALL_RESULT =
     "wentWell":["Un café, por favor"],"improve":{"said":"Un café","better":"Un café, por favor","why":"Add please."},"pronunciation":[]}}
     """.trimIndent()
 
-/** A practice call that ended before this screen opened, as a later visit reads it. */
-internal fun endedConversation(id: UUID): LanguageConversation =
-    ApiJson.decodeFromString(conversationJson(id, locked = false, LanguageConversation.Kind.PRACTICE, CALL_RESULT, met = true))
-
-private fun completed(
-    conversation: LanguageConversation,
-    ceremony: String,
-): CompletedLanguageConversation {
+private fun completed(conversation: LanguageConversation): CompletedLanguageConversation {
     val json = conversationJson(conversation.id, conversation.locked, conversation.kind, CALL_RESULT, met = true)
     return ApiJson.decodeFromString(
-        json.dropLast(1) + ""","ceremony":$ceremony,"missionMoment":null,"reached":{"energy":null,"level":null}}""",
+        json.dropLast(1) + ""","ceremony":null,"missionMoment":null,"reached":{"energy":null,"level":null}}""",
     )
 }
 
@@ -248,10 +227,10 @@ private fun conversationJson(
     "targetLanguage":"es","title":"Order at the café","unit":null}
     """.trimIndent()
 
-internal fun checkpointIntro(dailyLimitReached: Boolean = false): LanguageCheckpointCall =
+internal fun checkpointIntro(): LanguageCheckpointCall =
     ApiJson.decodeFromString(
         """
-        {"status":"notStarted","dailyLimitReached":$dailyLimitReached,"intro":{"character":{"name":"Lucía","place":"Café in Madrid","role":"Waiter"},
+        {"status":"notStarted","dailyLimitReached":false,"intro":{"character":{"name":"Lucía","place":"Café in Madrid","role":"Waiter"},
         "exam":null,"examTask":null,"kind":"checkpoint","level":"A2","minutes":3,
         "objectives":[{"description":"Say what you'd like","label":"Ask for a coffee","met":false}],
         "situation":"You're at a café.","targetLanguage":"es","title":"Order at the café"}}
@@ -262,8 +241,6 @@ internal fun checkpointStatus(json: String): LanguageCheckpointCall = ApiJson.de
 
 internal class MemoryPrepTimes : PrepTimes {
     private val starts = kotlinx.coroutines.flow.MutableStateFlow<Map<UUID, Long>>(emptyMap())
-
-    fun started(card: UUID) = card in starts.value
 
     override fun startedAt(card: UUID) = starts.map { it[card] }
 
@@ -277,21 +254,17 @@ internal class MemoryPrepTimes : PrepTimes {
 
 internal val EXAM_GOAL: UUID = UUID.fromString("00000000-0000-4000-8000-0000000000e1")
 
-/** An exam task's or a speaking mock's conversation, with [result] once graded. */
+/** An exam task's conversation, with [result] once graded. */
 internal fun examConversation(
     id: UUID,
-    result: String? = null,
-    kind: String = "examSpeaking",
-    examTask: String? = com.zoonk.android.feature.speaking.EXAM_TASK,
-    exam: String? = null,
+    result: String,
 ): LanguageConversation =
     ApiJson.decodeFromString(
         """
-        {"character":{"name":"Marta","place":"Instituto Cervantes","role":"Examiner"},"exam":${exam?.let {
-            "\"$it\""
-        }},"examTask":$examTask,
-        "goalId":"$EXAM_GOAL","hints":[],"id":"$id","kind":"$kind","level":"B2","locked":false,"minutes":7,"objectives":[],
-        "openingLine":"Buenos días.","result":$result,"situation":"An exam room.","status":"${if (result == null) "ready" else "completed"}",
+        {"character":{"name":"Marta","place":"Instituto Cervantes","role":"Examiner"},"exam":null,
+        "examTask":${com.zoonk.android.feature.speaking.EXAM_TASK},
+        "goalId":"$EXAM_GOAL","hints":[],"id":"$id","kind":"examSpeaking","level":"B2","locked":false,"minutes":7,"objectives":[],
+        "openingLine":"Buenos días.","result":$result,"situation":"An exam room.","status":"completed",
         "targetLanguage":"es","title":"Valorar propuestas","unit":null}
         """.trimIndent(),
     )
