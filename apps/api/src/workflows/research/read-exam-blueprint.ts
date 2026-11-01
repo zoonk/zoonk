@@ -1,7 +1,7 @@
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
 import { listNoticeGoalsStep, proposeNoticeDatesStep } from "../goals/steps/notice-steps";
 import { type ResearchAnalytics } from "./_utils/research-analytics";
-import { extractBlueprintStep } from "./steps/extract-blueprint-step";
+import { extractBlueprint } from "./steps/extract-blueprint-step";
 import { findNoticeReadingStep } from "./steps/is-notice-read-step";
 import { saveBlueprintStep } from "./steps/save-blueprint-step";
 
@@ -73,7 +73,7 @@ export async function readExamBlueprint({
 
   const shared = identity.ownerId === null;
 
-  const reading = await extractBlueprintStep({
+  const reading = await extractBlueprint({
     analytics,
     background,
     corrections: stored?.problems ?? [],

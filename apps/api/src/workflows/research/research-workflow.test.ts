@@ -43,7 +43,7 @@ import { mockHookConflict } from "../../../mocks/workflow";
 import { mockLastRunEvent } from "../../../mocks/workflow-runtime";
 import { goalContentWorkflow } from "../goals/goal-content-workflow";
 import { researchWorkflow } from "./research-workflow";
-import { storeSourceStep } from "./steps/store-sources-step";
+import { storeSource } from "./steps/store-sources-step";
 import { lookUpSubjectQuestionsStep } from "./steps/subject-questions-step";
 import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
 
@@ -786,7 +786,7 @@ describe(researchWorkflow, () => {
 
     vi.mocked(fetch).mockRejectedValue(timedOut);
 
-    await expect(storeSourceStep({ document: notice, language: "pt", topic: "exam" })).rejects.toBe(
+    await expect(storeSource({ document: notice, language: "pt", topic: "exam" })).rejects.toBe(
       timedOut,
     );
   });
@@ -1457,6 +1457,8 @@ describe(researchWorkflow, () => {
         })),
       },
     });
+
+    vi.mocked(extractQuestionFormats).mockResolvedValue({ ...TASK_RESULT, data: [] });
 
     await expect(researchWorkflow({ goalId: goal.id })).resolves.toStrictEqual({
       reason: "unverified",

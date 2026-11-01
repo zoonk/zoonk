@@ -154,6 +154,17 @@ describe(createStepImage, () => {
     storeBlobUploads();
   });
 
+  it("does not retry paid image work when its optional blob upload fails", async () => {
+    const lesson = await scienceLesson();
+    const step = await libraryStepFixture({ content: explanation(), lessonId: lesson.id });
+    mockImageScene(testScene({ focalObject: `a ${randomUUID()} tag` }));
+    mockSearchTerms([]);
+    const draw = mockDrawnImages([await drawTestImage()]);
+    vi.mocked(put).mockRejectedValueOnce(new Error("Blob unavailable"));
+    await expect(createStepImage({ stepId: step.id })).resolves.toStrictEqual({ status: "failed" });
+    expect(draw).toHaveBeenCalledOnce();
+  });
+
   it("draws and stores a new picture in the subject's palette, showing it before its model check", async () => {
     const lesson = await scienceLesson();
     const step = await libraryStepFixture({ content: explanation(), lessonId: lesson.id });

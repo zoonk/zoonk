@@ -1,5 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { CURRENT_STEPS } from "../lessons/lesson-versions";
@@ -125,7 +127,14 @@ export async function createStepImage({
     return { status: "failed" };
   }
 
-  await linkStepImage({ lessonId: lesson.id, mediaAssetId: picture.assetId, stepId });
+  const { error } = await safeAsync(() =>
+    linkStepImage({ lessonId: lesson.id, mediaAssetId: picture.assetId, stepId }),
+  );
+
+  if (error) {
+    logError("The optional lesson picture could not be linked", error);
+    return { status: "failed" };
+  }
 
   return toOutcome(picture);
 }
@@ -198,10 +207,17 @@ export async function createStepOptionPicture({
     return { status: "failed" };
   }
 
-  await prisma.stepOptionPicture.createMany({
-    data: { mediaAssetId: picture.assetId, optionId, stepId },
-    skipDuplicates: true,
-  });
+  const { error } = await safeAsync(() =>
+    prisma.stepOptionPicture.createMany({
+      data: { mediaAssetId: picture.assetId, optionId, stepId },
+      skipDuplicates: true,
+    }),
+  );
+
+  if (error) {
+    logError("The optional lesson option picture could not be linked", error);
+    return { status: "failed" };
+  }
 
   revalidateCacheTags([getLibraryLessonCacheTag(lesson.id)]);
 

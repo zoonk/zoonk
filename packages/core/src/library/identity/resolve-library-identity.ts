@@ -229,11 +229,17 @@ export async function resolveLibraryIdentities({
 export async function resolveLibraryIdentity({
   analytics,
   request,
+  searchTerms,
 }: {
   analytics?: IdentityAnalytics;
   request: LibraryIdentityRequest;
+  searchTerms?: readonly string[];
 }): Promise<LibraryIdentityResolution> {
-  const [resolution] = await resolveLibraryIdentities({ analytics, requests: [request] });
+  const [resolution] = await resolveLibraryIdentities({
+    analytics,
+    requests: [request],
+    ...(searchTerms && { searchTerms: [searchTerms] }),
+  });
 
   if (!resolution) {
     throw new Error("Library identity resolution returned no result.");

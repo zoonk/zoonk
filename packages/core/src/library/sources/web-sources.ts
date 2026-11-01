@@ -1,6 +1,7 @@
 import "server-only";
 import { type Source, prisma } from "@zoonk/db";
 import { buildSourceIdentityKey } from "@zoonk/utils/identity-key";
+import { getSourceIdentitySearch } from "../identity/kinds/source-identity";
 import { resolveLibraryIdentity } from "../identity/resolve-library-identity";
 import { READABLE_SOURCE_FILTER } from "./_utils/readable-sources";
 import { fetchDocument } from "./fetch-document";
@@ -76,15 +77,25 @@ export async function storeWebSource(input: StoreWebSourceInput): Promise<WebSou
   });
 }
 
+export async function getWebSourceSearchSubject(
+  input: Pick<StoreWebSourceInput, "language" | "publisher" | "title" | "url">,
+) {
+  const search = getSourceIdentitySearch({ ...input, contentHash: null, kind: "source" });
+  return (await search.findExact()) ? null : search.aiSubject;
+}
+
 export async function findWebSourceCopy({
   analytics,
+  searchTerms,
   ...input
 }: Pick<StoreWebSourceInput, "language" | "publisher" | "title" | "url"> & {
   analytics?: Parameters<typeof resolveLibraryIdentity>[0]["analytics"];
+  searchTerms?: readonly string[];
 }): Promise<string | null> {
   const resolution = await resolveLibraryIdentity({
     analytics,
     request: { ...input, contentHash: null, kind: "source" },
+    searchTerms,
   });
 
   return resolution.kind === "existing" && resolution.match === "search" ? resolution.id : null;

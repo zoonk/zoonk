@@ -13,13 +13,12 @@ import { listExamParts } from "./exam-parts";
 import readingAgainPrompt from "./extract-exam-blueprint-reading-again.prompt.md";
 import systemPrompt from "./extract-exam-blueprint.prompt.md";
 import {
+  applyQuestionFormats,
   extractQuestionFormats,
-  mergeQuestionFormats,
   questionFormatSchema,
 } from "./extract-question-formats";
 import { getReadingReasoning } from "./reading-reasoning";
 import { type ResearchDocument, toDocumentParts } from "./research-documents";
-import { withWrittenTestSubjects } from "./written-test-subjects";
 
 /**
  * Flash read 32 of 32 facts on the extract-exam-blueprint eval; Gemini 4 Argon scored a little
@@ -189,6 +188,7 @@ export type ExtractExamBlueprintParams = {
   exam: string;
   documents: ResearchDocument[];
   corrections?: ReadingCorrection[];
+  readFormats?: boolean;
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -210,27 +210,27 @@ export async function extractExamBlueprint(
 > {
   const reading = await readWithFallback(params);
 
-  const formats = await safeAsync(() =>
-    extractQuestionFormats({
-      analytics: params.analytics,
-      documents: params.documents,
-      exam: params.exam,
-      model: params.model,
-      parts: listExamParts(reading.data),
-      serviceTier: params.serviceTier,
-      useFallback: params.useFallback,
-    }),
-  );
+  const formats =
+    params.readFormats === false
+      ? null
+      : await safeAsync(() =>
+          extractQuestionFormats({
+            analytics: params.analytics,
+            documents: params.documents,
+            exam: params.exam,
+            model: params.model,
+            parts: listExamParts(reading.data),
+            serviceTier: params.serviceTier,
+            useFallback: params.useFallback,
+          }),
+        );
 
-  const found = formats.data?.data ?? [];
+  const found = formats?.data?.data ?? [];
 
   return {
     ...reading,
-    data: withWrittenTestSubjects({
-      ...reading.data,
-      formats: mergeQuestionFormats({ found, read: reading.data.formats }),
-    }),
-    formatsProvenance: formats.data?.provenance ?? null,
+    data: applyQuestionFormats({ extraction: reading.data, found }),
+    formatsProvenance: formats?.data?.provenance ?? null,
   };
 }
 

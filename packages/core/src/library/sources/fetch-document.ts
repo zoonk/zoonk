@@ -9,8 +9,13 @@ import { MAX_SOURCE_UPLOAD_BYTES } from "./source-contract";
 
 const FETCH_TIMEOUT_MS = 30_000;
 const MAX_REDIRECTS = 5;
+const RETRYABLE_CLIENT_STATUSES = new Set(["408", "425", "429"]);
 const REDIRECT_STATUSES = new Set(["301", "302", "303", "307", "308"]);
 const USER_AGENT = "Mozilla/5.0 (compatible; ZoonkBot/1.0; +https://www.zoonk.com)";
+
+export class PermanentDocumentError extends Error {
+  override name = "PermanentDocumentError";
+}
 
 export type FetchedDocument = { bytes: Uint8Array; contentType: string; url: string };
 
@@ -55,7 +60,7 @@ async function fetchPublicUrl({ redirects, url }: { redirects: number; url: stri
   const sourceUrl = toSourceUrl(url);
 
   if (!sourceUrl) {
-    throw new Error(`Refusing to fetch a non-public address: ${url}`);
+    throw new PermanentDocumentError(`Refusing to fetch a non-public address: ${url}`);
   }
 
   const response = await requestPage(sourceUrl);
@@ -66,7 +71,7 @@ async function fetchPublicUrl({ redirects, url }: { redirects: number; url: stri
     await response.body?.cancel();
 
     if (redirects >= MAX_REDIRECTS) {
-      throw new Error(`Too many redirects fetching ${sourceUrl}`);
+      throw new PermanentDocumentError(`Too many redirects fetching ${sourceUrl}`);
     }
 
     return fetchPublicUrl({
@@ -84,7 +89,14 @@ export async function fetchDocument(url: string): Promise<FetchedDocument> {
 
   if (!fetched.response.ok) {
     await fetched.response.body?.cancel();
-    throw new Error(`Fetching ${fetched.url} failed with status ${fetched.response.status}`);
+    const status = fetched.response.status;
+
+    const Failure =
+      String(status).startsWith("4") && !RETRYABLE_CLIENT_STATUSES.has(String(status))
+        ? PermanentDocumentError
+        : Error;
+
+    throw new Failure(`Fetching ${fetched.url} failed with status ${status}`);
   }
 
   return {

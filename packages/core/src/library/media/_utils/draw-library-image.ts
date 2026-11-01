@@ -2,6 +2,8 @@ import "server-only";
 import { type ImageSceneParams, generateImageScene } from "@zoonk/ai/tasks/images/scene";
 import { type ImageScene, describeImageScene } from "@zoonk/ai/tasks/images/scene-schema";
 import { getImagePalette } from "@zoonk/ai/tasks/images/style";
+import { safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { resolveLibraryIdentity } from "../../identity/resolve-library-identity";
 import { drawImage } from "./draw-checked-image";
 import { canStorePicture } from "./picture-store";
@@ -80,16 +82,23 @@ export async function drawLibraryImage({
     return null;
   }
 
-  const asset = await saveImageAsset({
-    image: drawn.image,
-    language: hasLabels ? language : null,
-    ownerId,
-    palette: palette.key,
-    prompt,
-    provenance: drawn.provenance,
-    reuseKey: resolution.identityKey,
-    scene,
-  });
+  const { data: asset, error } = await safeAsync(() =>
+    saveImageAsset({
+      image: drawn.image,
+      language: hasLabels ? language : null,
+      ownerId,
+      palette: palette.key,
+      prompt,
+      provenance: drawn.provenance,
+      reuseKey: resolution.identityKey,
+      scene,
+    }),
+  );
+
+  if (error) {
+    logError("The optional lesson picture could not be saved", error);
+    return null;
+  }
 
   return { assetId: asset.id, drawn: true };
 }

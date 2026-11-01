@@ -1,16 +1,18 @@
-import "server-only";
 import { normalizeString } from "@zoonk/utils/string";
 import { Output, generateText } from "ai";
+import "server-only";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { numericEntrySchema, optionSelectSchema } from "../items/item-schemas";
+import { type BlueprintExtraction } from "./extract-exam-blueprint";
 import taskPrompt from "./extract-question-formats.prompt.md";
 import { isSameFormat } from "./format-words";
 import { partialCreditSchema } from "./partial-credit";
 import { type ResearchDocument, toDocumentParts } from "./research-documents";
+import { withWrittenTestSubjects } from "./written-test-subjects";
 
 /** Low reasoning: it reads after the blueprint reading, whose parts it ties formats to, so it adds to the wait. */
 const defaultModel = "google/gemini-3.8-flash";
@@ -236,4 +238,17 @@ export function mergeQuestionFormats({
   );
 
   return [...kept, ...added];
+}
+
+export function applyQuestionFormats({
+  extraction,
+  found,
+}: {
+  extraction: BlueprintExtraction;
+  found: Parameters<typeof mergeQuestionFormats>[0]["found"];
+}): BlueprintExtraction {
+  return withWrittenTestSubjects({
+    ...extraction,
+    formats: mergeQuestionFormats({ found, read: extraction.formats }),
+  });
 }

@@ -1,10 +1,15 @@
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { checkCitedFacts } from "@zoonk/ai/tasks/research/check-cited-facts";
 import { checkExamReading } from "@zoonk/ai/tasks/research/check-exam-reading";
+import { listExamParts } from "@zoonk/ai/tasks/research/exam-parts";
 import {
   type BlueprintExtraction,
   extractExamBlueprint,
 } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
+import {
+  applyQuestionFormats,
+  extractQuestionFormats,
+} from "@zoonk/ai/tasks/research/extract-question-formats";
 import { translatePassMarks } from "@zoonk/ai/tasks/research/translate-pass-marks";
 import {
   isUsableBlueprint,
@@ -40,6 +45,11 @@ export type BlueprintReading = {
   usable: boolean;
 };
 
+type BlueprintTextDocument = Pick<
+  Awaited<ReturnType<typeof loadSourceDocuments>>[number],
+  "contentHash" | "id" | "text" | "url"
+>;
+
 function toReadSubjects(extraction: BlueprintExtraction) {
   return extraction.subjects.map((subject) => ({
     name: subject.name,
@@ -49,27 +59,31 @@ function toReadSubjects(extraction: BlueprintExtraction) {
 
 async function checkReading({
   analytics,
-  documents,
+  sourceIds,
   exam,
   extraction,
   serviceTier,
 }: {
   analytics: ResearchAnalytics;
-  documents: Awaited<ReturnType<typeof loadSourceDocuments>>;
+  sourceIds: string[];
   exam: string;
   extraction: BlueprintExtraction;
   serviceTier: ReturnType<typeof chooseServiceTier>;
 }) {
-  const { data, error } = await safeAsync(() =>
-    checkExamReading({
+  "use step";
+
+  const { data, error } = await safeAsync(async () => {
+    const documents = await loadSourceDocuments(sourceIds);
+
+    return checkExamReading({
       analytics,
       documents,
       exam,
       serviceTier,
       subjects: toReadSubjects(extraction),
       total: extraction.mock?.totalQuestions ?? extraction.edition.questionCount,
-    }),
-  );
+    });
+  });
 
   if (error) {
     logError(`The reading of "${exam}" couldn't be checked:`, error);
@@ -89,6 +103,8 @@ async function translateReadPassMarks({
   extraction: BlueprintExtraction;
   serviceTier: ReturnType<typeof chooseServiceTier>;
 }) {
+  "use step";
+
   const texts = listPassMarkTexts(extraction.rules);
 
   if (texts.length === 0) {
@@ -106,24 +122,23 @@ async function translateReadPassMarks({
   return { texts, translations: data?.data.translations ?? {} };
 }
 
-/** The first document is the notice whose hash the blueprint records. */
-export async function extractBlueprintStep({
-  analytics,
-  background,
-  corrections = [],
-  exam,
-  shared,
-  sourceIds,
-}: {
+type ExtractInput = {
   analytics: ResearchAnalytics;
   background: boolean;
   corrections?: ReadingProblem[];
   exam: string;
   shared: boolean;
   sourceIds: string[];
-}): Promise<BlueprintReading> {
-  "use step";
+};
 
+async function extractBlueprintDraftStep({
+  analytics,
+  background,
+  corrections = [],
+  exam,
+  sourceIds,
+}: ExtractInput) {
+  "use step";
   const documents = await loadSourceDocuments(sourceIds);
   const [notice] = documents;
 
@@ -148,29 +163,148 @@ export async function extractBlueprintStep({
     ),
     documents,
     exam,
+    readFormats: false,
     serviceTier,
   });
 
-  const facts = listBlueprintFacts({ documents: extractionDocuments, extraction: extraction.data });
-  const citedFacts = toCitedFacts(facts);
+  return {
+    documents: documents.map(({ contentHash, id, text, url }) => ({ contentHash, id, text, url })),
+    extraction,
+    serviceTier,
+  };
+}
+
+async function readBlueprintFormatsStep({
+  extraction,
+  sourceIds,
+  ...input
+}: Omit<Parameters<typeof extractQuestionFormats>[0], "documents" | "parts"> & {
+  sourceIds: string[];
+  extraction: BlueprintExtraction;
+}) {
+  "use step";
+  const documents = await loadSourceDocuments(sourceIds);
+
+  const { data } = await extractQuestionFormats({
+    ...input,
+    documents,
+    parts: listExamParts(extraction),
+  });
+
+  return applyQuestionFormats({ extraction, found: data });
+}
+
+async function prepareBlueprintChecksStep({
+  documents,
+  extraction,
+}: {
+  documents: BlueprintTextDocument[];
+  extraction: BlueprintExtraction;
+}) {
+  "use step";
+
+  const facts = listBlueprintFacts({
+    documents: documents.map((document) => ({ sourceId: document.id, text: document.text })),
+    extraction,
+  });
+
+  return { batches: toCheckBatches(toCitedFacts(facts)), facts };
+}
+
+async function checkCitedFactsStep(input: Parameters<typeof checkCitedFacts>[0]) {
+  "use step";
+  return checkCitedFacts(input);
+}
+
+/** The first document is the notice whose hash the blueprint records. */
+export async function extractBlueprint({
+  analytics,
+  background,
+  corrections = [],
+  exam,
+  shared,
+  sourceIds,
+}: ExtractInput): Promise<BlueprintReading> {
+  const {
+    documents,
+    extraction: draft,
+    serviceTier,
+  } = await extractBlueprintDraftStep({
+    analytics,
+    background,
+    corrections,
+    exam,
+    shared,
+    sourceIds,
+  });
+
+  const extraction = await readBlueprintFormatsStep({
+    analytics,
+    exam,
+    extraction: draft.data,
+    serviceTier,
+    sourceIds,
+  }).catch(() => draft.data);
+
+  const { batches, facts } = await prepareBlueprintChecksStep({ documents, extraction });
 
   const [checks, findings, passMarks] = await Promise.all([
     Promise.all(
-      toCheckBatches(citedFacts).map((batch) =>
-        checkCitedFacts({ analytics, facts: batch, serviceTier }),
-      ),
+      batches.map((batch) => checkCitedFactsStep({ analytics, facts: batch, serviceTier })),
     ),
-    shared
-      ? checkReading({ analytics, documents, exam, extraction: extraction.data, serviceTier })
-      : null,
-    translateReadPassMarks({ analytics, exam, extraction: extraction.data, serviceTier }),
+    shared ? checkReading({ analytics, exam, extraction, serviceTier, sourceIds }) : null,
+    translateReadPassMarks({ analytics, exam, extraction, serviceTier }),
   ]);
+
+  return assembleBlueprintStep({
+    checks,
+    documents,
+    extraction,
+    facts,
+    findings,
+    passMarks,
+    provenance: draft.provenance,
+    shared,
+  });
+}
+
+async function assembleBlueprintStep({
+  checks,
+  documents,
+  extraction,
+  facts,
+  findings,
+  passMarks,
+  provenance,
+  shared,
+}: {
+  checks: Awaited<ReturnType<typeof checkCitedFacts>>[];
+  documents: BlueprintTextDocument[];
+  extraction: BlueprintExtraction;
+  facts: ReturnType<typeof listBlueprintFacts>;
+  findings: Awaited<ReturnType<typeof checkReading>>;
+  passMarks: Awaited<ReturnType<typeof translateReadPassMarks>>;
+  provenance: Awaited<ReturnType<typeof extractExamBlueprint>>["provenance"];
+  shared: boolean;
+}): Promise<BlueprintReading> {
+  "use step";
+  const { generatedAt, model, promptVersion, runId } = provenance;
+  const [notice] = documents;
+
+  if (!notice) {
+    throw new FatalError("None of the research sources exist anymore.");
+  }
+
+  const extractionDocuments = documents.map((document) => ({
+    sourceId: document.id,
+    text: document.text,
+  }));
 
   const supportedIds = checks.flatMap((check) => check.data.supportedIds);
 
   const checked = toBlueprintContent({
     documents: extractionDocuments,
-    extraction: extraction.data,
+    extraction,
     facts,
     noticeUrl: notice.url,
     sourceHash: notice.contentHash,
@@ -191,20 +325,15 @@ export async function extractBlueprintStep({
     facts: { extracted: facts.length, kept: supportedIds.length },
     problems: findings
       ? findReadingProblems({
-          checked: toReadSubjects(extraction.data),
+          checked: toReadSubjects(extraction),
           content,
           documents: extractionDocuments,
           findings,
-          read: extraction.data,
+          read: extraction,
         })
       : null,
-    provenance: {
-      generatedAt: extraction.provenance.generatedAt,
-      model: extraction.provenance.model,
-      promptVersion: extraction.provenance.promptVersion,
-      runId: extraction.provenance.runId,
-    },
-    reusePolicy: toReusePolicy({ extraction: extraction.data, facts, supportedIds }),
+    provenance: { generatedAt, model, promptVersion, runId },
+    reusePolicy: toReusePolicy({ extraction, facts, supportedIds }),
     usable: isUsableBlueprint({ content, shared }),
   };
 }

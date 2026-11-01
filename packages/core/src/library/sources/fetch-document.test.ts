@@ -1,6 +1,6 @@
 import { Response as PageResponse, fetch } from "undici";
 import { describe, expect, it, vi } from "vitest";
-import { fetchDocument, toSourceUrl } from "./fetch-document";
+import { PermanentDocumentError, fetchDocument, toSourceUrl } from "./fetch-document";
 
 describe(toSourceUrl, () => {
   it("drops the fragment so two links to one notice are one source", () => {
@@ -60,6 +60,14 @@ describe(fetchDocument, () => {
 
     expect(document.url).toBe("https://example.com/novo-edital.pdf");
     expect(fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([404, 410, 403])("marks HTTP %i as a permanent document failure", async (status) => {
+    vi.mocked(fetch).mockResolvedValue(new PageResponse("", { status }));
+
+    await expect(fetchDocument("https://example.com/removed")).rejects.toBeInstanceOf(
+      PermanentDocumentError,
+    );
   });
 
   it("fails on an error status so the step can retry", async () => {
