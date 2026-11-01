@@ -55,18 +55,23 @@ private struct ChapterLandingList: View {
   let detail: ChapterDetail
 
   var body: some View {
+    // As on main's wide page: the lessons under the chapter, what it teaches beside them.
     PaneSplit {
       List {
         header
+        lessons
       }
     } secondary: {
       List {
-        contents
+        strip
+        learnAndStart
       }
     } single: {
       List {
         header
-        contents
+        strip
+        lessons
+        learnAndStart
       }
     }
   }
@@ -131,17 +136,23 @@ private struct ChapterLandingList: View {
   }
 
   @ViewBuilder
-  private var contents: some View {
+  private var strip: some View {
     if let course, let index, outline.count > 1 {
       ChapterStrip(areas: areas, course: course.course, index: index, outline: outline)
     }
+  }
 
+  @ViewBuilder
+  private var lessons: some View {
     if hasLesson {
       ChapterLessonsSection(
         chapter: chapter, lessons: detail.lessons.sorted { $0.position < $1.position },
         number: index.map { $0 + 1 }, total: outline.count)
     }
+  }
 
+  @ViewBuilder
+  private var learnAndStart: some View {
     if let objectives = detail.chapter?.objectives, !objectives.isEmpty {
       Section {
         ForEach(objectives, id: \.self) { CheckLine(text: $0) }
