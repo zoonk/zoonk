@@ -399,7 +399,7 @@ internal fun GlassesCount(status: BuddyStatus) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun GlassesSheet(
+internal fun GlassesSheet(
     status: BuddyStatus,
     look: BuddyLook,
     saveFailed: Boolean,
