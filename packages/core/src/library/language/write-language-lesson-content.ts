@@ -7,13 +7,21 @@ import {
 import { prisma } from "@zoonk/db";
 import { isSameLanguage } from "@zoonk/utils/languages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
+import {
+  listTargetBankWords,
+  normalizeWordKey,
+} from "../../player/contracts/build-word-bank-options";
 import { finishLibraryGeneration } from "../claims/generation-claim";
 import { cleanLanguageLesson } from "./_utils/clean-language-lesson";
 import { fillMissingAudio } from "./_utils/language-audio";
 import { loadLanguageLessonInputs } from "./_utils/language-lesson-inputs";
 import { buildLanguageLessonSteps } from "./_utils/language-lesson-steps";
 import { saveLanguageLesson } from "./_utils/save-language-lesson";
-import { type SharedVocabulary, saveSharedVocabulary } from "./_utils/shared-vocabulary";
+import {
+  type SharedVocabulary,
+  saveSharedVocabulary,
+  saveTargetWords,
+} from "./_utils/shared-vocabulary";
 
 type Analytics = Parameters<typeof generateLanguageLesson>[0]["analytics"];
 
@@ -53,6 +61,7 @@ function withSharedIds({
       words: words.map((item) => item.word),
     },
     sentenceIds: sentences.map((item) => item.id),
+    sentencesById: new Map(sentences.map((item) => [item.id, item.sentence])),
     wordIds: words.map((item) => item.id),
   };
 }
@@ -113,17 +122,32 @@ export async function writeLanguageLessonContent({
 
   const stored = withSharedIds({ content: cleaned, shared });
 
-  await fillMissingAudio({
-    orgSlug: organization.slug,
-    sentenceIds: stored.sentenceIds,
-    targetLanguage: inputs.targetLanguage,
-    wordIds: [...shared.wordIdsByText.values()],
-  });
-
   const steps = buildLanguageLessonSteps({
     ...stored,
     learnerLanguage: inputs.learnerLanguage,
     targetLanguage: inputs.targetLanguage,
+  });
+
+  const lessonWordKeys = new Set(
+    [...shared.wordIdsByText.keys()].map((text) => normalizeWordKey(text)),
+  );
+
+  const bankWordIds = await saveTargetWords({
+    organizationId: organization.id,
+    provenance: draft.provenance,
+    targetLanguage: inputs.targetLanguage,
+    texts: listTargetBankWords({
+      sentences: stored.sentencesById,
+      steps,
+      targetLanguage: inputs.targetLanguage,
+    }).filter((word) => !lessonWordKeys.has(normalizeWordKey(word))),
+  });
+
+  await fillMissingAudio({
+    orgSlug: organization.slug,
+    sentenceIds: stored.sentenceIds,
+    targetLanguage: inputs.targetLanguage,
+    wordIds: [...shared.wordIdsByText.values(), ...bankWordIds.values()],
   });
 
   const saved = await saveLanguageLesson({

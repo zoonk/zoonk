@@ -1,7 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isSameLanguage } from "@zoonk/utils/languages";
-import { deduplicateNormalizedTexts } from "@zoonk/utils/string";
+import { listTargetBankWords } from "../../player/contracts/build-word-bank-options";
 import { type PlayableLibraryStep, type PlayableWordHints } from "../playable-lesson";
 import { type LessonPairResources, type PlayableStepRow, toPlayableSteps } from "./playable-step";
 
@@ -43,22 +43,29 @@ function toWordData({
   };
 }
 
-async function loadDistractorWords({ lesson, texts }: { lesson: ExerciseLesson; texts: string[] }) {
-  const distractorTexts = deduplicateNormalizedTexts(texts);
-
-  if (!lesson.targetLanguage || distractorTexts.length === 0) {
+async function loadTargetWords({
+  language,
+  targetLanguage,
+  texts,
+}: {
+  language: string;
+  targetLanguage: string;
+  texts: string[];
+}) {
+  if (texts.length === 0) {
     return [];
   }
 
   const words = await prisma.word.findMany({
-    include: { pronunciations: { where: { userLanguage: lesson.language } } },
-    where: {
-      targetLanguage: lesson.targetLanguage,
-      word: { in: distractorTexts, mode: "insensitive" },
-    },
+    include: { pronunciations: { where: { userLanguage: language } } },
+    where: { targetLanguage, word: { in: [...new Set(texts)], mode: "insensitive" } },
   });
 
   return words.map((word) => toWordData({ word }));
+}
+
+function usesTargetWords(row: PlayableStepRow): boolean {
+  return Boolean(row.wordId || row.sentenceId) || row.kind === "fillBlank";
 }
 
 async function loadExerciseResources({
@@ -66,9 +73,11 @@ async function loadExerciseResources({
   rows,
 }: {
   lesson: ExerciseLesson;
-  rows: { sentenceId: string | null; wordId: string | null }[];
+  rows: PlayableStepRow[];
 }): Promise<LessonPairResources> {
-  if (!rows.some((row) => row.wordId || row.sentenceId)) {
+  const { targetLanguage } = lesson;
+
+  if (!targetLanguage || !rows.some((row) => usesTargetWords(row))) {
     return NO_RESOURCES;
   }
 
@@ -87,15 +96,27 @@ async function loadExerciseResources({
     }),
   ]);
 
-  const distractorWords = await loadDistractorWords({
-    lesson,
-    texts: [...lessonWords, ...lessonSentences].flatMap((link) => link.distractors),
+  const bankWords = listTargetBankWords({
+    sentences: new Map(
+      lessonSentences.map((link) => [
+        link.sentenceId,
+        { distractors: link.distractors, sentence: link.sentence.sentence },
+      ]),
+    ),
+    steps: rows,
+    targetLanguage,
+  });
+
+  const targetWords = await loadTargetWords({
+    language: lesson.language,
+    targetLanguage,
+    texts: [...lessonWords.flatMap((link) => link.distractors), ...bankWords],
   });
 
   const words = lessonWords.map((link) => toWordData(link));
 
   return {
-    distractorWords,
+    distractorWords: targetWords,
     lessonSentences: lessonSentences.map((link) => ({
       audioUrl: link.sentence.audioUrl,
       distractors: link.distractors,

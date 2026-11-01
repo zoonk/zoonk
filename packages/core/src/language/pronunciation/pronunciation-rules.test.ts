@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  nextPronunciationReview,
-  schedulePronunciationMiss,
-  toReviewWord,
-} from "./pronunciation-rules";
+import { nextPronunciationReview, schedulePronunciationMiss } from "./pronunciation-rules";
 
 const EVENING = new Date("2026-09-28T00:30:00.000Z");
 const TIME_ZONE = "America/Sao_Paulo";
@@ -46,14 +42,5 @@ describe(nextPronunciationReview, () => {
     expect(
       nextPronunciationReview({ isCorrect: false, now: EVENING, stage: 2, timeZone: TIME_ZONE }),
     ).toStrictEqual({ dueAt: new Date("2026-09-28T03:00:00.000Z"), stage: 0 });
-  });
-});
-
-describe(toReviewWord, () => {
-  it("drops the punctuation around a word and keeps what's inside it", () => {
-    expect(toReviewWord("rent?")).toBe("rent");
-    expect(toReviewWord("¿Cuánto")).toBe("Cuánto");
-    expect(toReviewWord("don't,")).toBe("don't");
-    expect(toReviewWord("«l'eau»")).toBe("l'eau");
   });
 });

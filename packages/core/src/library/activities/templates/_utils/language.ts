@@ -1,9 +1,9 @@
-const EDGE_PUNCTUATION = /^[\p{P}\p{S}]+|[\p{P}\p{S}]+$/gu;
+import { trimPunctuation } from "@zoonk/utils/string";
 
 function sentenceWords(sentence: string): string[] {
   return sentence
     .split(/\s+/u)
-    .map((word) => word.replaceAll(EDGE_PUNCTUATION, ""))
+    .map((word) => trimPunctuation(word))
     .filter(Boolean);
 }
 

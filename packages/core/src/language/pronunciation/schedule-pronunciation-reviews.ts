@@ -1,11 +1,12 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
+import { trimPunctuation } from "@zoonk/utils/string";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../cache/tags";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { schedulePronunciationMiss, toReviewWord } from "./pronunciation-rules";
+import { schedulePronunciationMiss } from "./pronunciation-rules";
 
 type ReviewWord = { audioUrl: string | null; id: string; word: string };
 
@@ -70,7 +71,7 @@ export async function schedulePronunciationReviews({
   userLanguage: string;
   words: readonly string[];
 }): Promise<string[]> {
-  const texts = [...new Set(words.map((word) => toReviewWord(word)).filter(Boolean))];
+  const texts = [...new Set(words.map((word) => trimPunctuation(word)).filter(Boolean))];
 
   if (texts.length === 0) {
     return [];

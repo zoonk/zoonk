@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import {
   countWords,
   createEmDashReplacer,
-  deduplicateNormalizedTexts,
   ensureLocaleSuffix,
   getFirstSentence,
   normalizePunctuation,
@@ -13,6 +12,7 @@ import {
   segmentWords,
   stripPunctuation,
   toSlug,
+  trimPunctuation,
 } from "./string";
 
 describe(removeAccents, () => {
@@ -202,19 +202,6 @@ describe(toSlug, () => {
   });
 });
 
-describe(deduplicateNormalizedTexts, () => {
-  it("deduplicates text after punctuation and string normalization", () => {
-    expect(deduplicateNormalizedTexts([" Bonjour ! ", "Bonjour!", "Oi", "oi "])).toStrictEqual([
-      "Bonjour!",
-      "oi",
-    ]);
-  });
-
-  it("keeps the first key order while preserving the latest display text", () => {
-    expect(deduplicateNormalizedTexts(["Olá", "Oi", "Ola"])).toStrictEqual(["Ola", "Oi"]);
-  });
-});
-
 describe(normalizePunctuation, () => {
   it("removes space before exclamation mark", () => {
     expect(normalizePunctuation("Hello !")).toBe("Hello!");
@@ -394,6 +381,17 @@ describe(createEmDashReplacer, () => {
     expect(replacer.push("Sim, dá ")).toBe("Sim, dá");
     expect(replacer.push("— e")).toBe(", e");
     expect(replacer.end()).toBe("");
+  });
+});
+
+describe(trimPunctuation, () => {
+  it("drops the punctuation around a word and keeps what's inside it", () => {
+    expect(trimPunctuation("rent?")).toBe("rent");
+    expect(trimPunctuation("¿Cuánto")).toBe("Cuánto");
+    expect(trimPunctuation("don't,")).toBe("don't");
+    expect(trimPunctuation(" «l'eau» ")).toBe("l'eau");
+    expect(trimPunctuation("「駅」")).toBe("駅");
+    expect(trimPunctuation("नमस्ते।")).toBe("नमस्ते");
   });
 });
 

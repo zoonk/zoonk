@@ -1,6 +1,11 @@
 import { shuffle } from "@zoonk/utils/shuffle";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { buildSentenceWordOptions, buildWordBankOptions } from "./build-word-bank-options";
+import {
+  buildFillBlankOptions,
+  buildSentenceWordOptions,
+  buildWordBankOptions,
+  listTargetBankWords,
+} from "./build-word-bank-options";
 import { type SerializedStep, type SerializedWord } from "./prepare-lesson-data";
 import { type DistractorWord } from "./translation-options";
 
@@ -407,6 +412,133 @@ describe(buildSentenceWordOptions, () => {
         romanization: "privet",
         translation: "hello",
         word: "Привет",
+      },
+    ]);
+  });
+});
+
+describe(listTargetBankWords, () => {
+  it("lists the words reading and fill-in-the-blank tiles show, without the punctuation around them", () => {
+    const words = listTargetBankWords({
+      sentences: new Map([
+        ["read", { distractors: ["Agua", "dónde estás"], sentence: "¿Dónde está el baño?" }],
+        ["heard", { distractors: ["onde"], sentence: "Onde fica o banheiro?" }],
+      ]),
+      steps: [
+        { content: {}, kind: "reading", sentenceId: "read" },
+        {
+          content: {
+            answers: ["l'eau"],
+            distractors: ["le eau", "de l'eau"],
+            feedback: "Eau commence par une voyelle.",
+            template: "Je bois [BLANK].",
+          },
+          kind: "fillBlank",
+          sentenceId: null,
+        },
+        { content: {}, kind: "listening", sentenceId: "heard" },
+      ],
+      targetLanguage: "es",
+    });
+
+    expect(words).toStrictEqual([
+      "Dónde",
+      "está",
+      "el",
+      "baño",
+      "agua",
+      "l'eau",
+      "le eau",
+      "de l'eau",
+    ]);
+  });
+
+  it.each([
+    { distractors: [], language: "es", sentence: "¿Dónde está el baño?" },
+    { distractors: [], language: "en", sentence: "We're sure they were here" },
+    { distractors: [], language: "fr", sentence: "Je bois de l'eau, merci !" },
+    { distractors: [], language: "ja", sentence: "駅はどこですか？" },
+    { distractors: [], language: "ko", sentence: "학교에 가요." },
+    { distractors: [], language: "hi", sentence: "मुझे काम कम है।" },
+    { distractors: [], language: "th", sentence: "ผมชอบกินข้าวมาก" },
+    { distractors: ["Işıklar"], language: "tr", sentence: "Işık yanıyor" },
+  ])(
+    "gives each $language reading tile the audio saved for its own word",
+    ({ distractors, language, sentence }) => {
+      keepOrder();
+      const read = makeSentence({ distractors, sentence });
+      const step = makeStep("reading", read);
+
+      const words = listTargetBankWords({
+        sentences: new Map([[read.id, read]]),
+        steps: [{ ...step, sentenceId: read.id }],
+        targetLanguage: language,
+      });
+
+      const saved = words.map((word, index) =>
+        makeDistractorWord({ audioUrl: `/audio/${index}.mp3`, id: String(index), word }),
+      );
+
+      const options = buildWordBankOptions(step, [], saved, new Map(), {
+        language: "pt",
+        targetLanguage: language,
+      });
+
+      expect(options.map((option) => option.audioUrl)).toStrictEqual(
+        saved.map((word) => word.audioUrl),
+      );
+    },
+  );
+});
+
+describe(buildFillBlankOptions, () => {
+  beforeEach(keepOrder);
+
+  it("gives each tile its word's audio, and the step's own romanization first", () => {
+    const step: SerializedStep = {
+      ...makeStep("reading", makeSentence()),
+      content: {
+        answers: ["食べます"],
+        distractors: ["飲みます"],
+        feedback: "パンは食べるものです。",
+        romanizations: { 飲みます: "nomimasu" },
+        template: "パンを[BLANK]",
+      },
+      kind: "fillBlank",
+      sentence: null,
+    };
+
+    const options = buildFillBlankOptions(
+      step,
+      [],
+      [
+        makeDistractorWord({
+          audioUrl: "/audio/taberu.mp3",
+          romanization: "tabemasu",
+          word: "食べます",
+        }),
+        makeDistractorWord({
+          audioUrl: "/audio/nomu.mp3",
+          id: "2",
+          romanization: "nomu",
+          word: "飲みます",
+        }),
+      ],
+      new Map(),
+    );
+
+    expect(options).toStrictEqual([
+      {
+        audioUrl: "/audio/taberu.mp3",
+        romanization: "tabemasu",
+        translation: null,
+        word: "食べます",
+      },
+      {
+        audioUrl: "/audio/nomu.mp3",
+        romanization: "nomimasu",
+        translation: null,
+        word: "飲みます",
       },
     ]);
   });

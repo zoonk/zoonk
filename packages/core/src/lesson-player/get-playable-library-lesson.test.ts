@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
+import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import {
   languageLessonFixture,
   playableLessonFixture,
@@ -13,6 +14,7 @@ import {
 } from "@zoonk/testing/fixtures/playable-step-contents";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { validateActivity } from "../library/activities/validate-activity";
@@ -146,6 +148,26 @@ describe(getPlayableLibraryLesson, () => {
     ).toStrictEqual(kinds);
 
     expect(validateActivity(playableStepContent.activity)).toMatchObject({ ok: true });
+  });
+
+  it("keeps the fill-in-the-blank tiles of a lesson that doesn't teach a language silent", async () => {
+    const [{ lesson }, organization] = await Promise.all([
+      playableLessonFixture({ steps: ["fillBlank"] }),
+      organizationFixture(),
+    ]);
+
+    await wordFixture({
+      audioUrl: "https://audio.zoonk.test/cloud.mp3",
+      organizationId: organization.id,
+      targetLanguage: lesson.language,
+      word: playableStepContent.fillBlank.answers[0],
+    });
+
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const [step] = result?.status === "ready" ? result.lesson.steps : [];
+    const tiles = step && "exercise" in step ? step.exercise.fillBlankOptions : [];
+
+    expect(tiles.map((tile) => tile.audioUrl)).toStrictEqual([null, null, null]);
   });
 
   it("sends each activity's tolerance floor from its template, so apps grade a guess as core does", async () => {

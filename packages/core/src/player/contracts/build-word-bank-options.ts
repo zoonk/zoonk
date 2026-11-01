@@ -1,6 +1,16 @@
-import { sanitizeDistractors } from "@zoonk/utils/distractors";
+import { type DistractorShape, sanitizeDistractors } from "@zoonk/utils/distractors";
 import { shuffle } from "@zoonk/utils/shuffle";
-import { segmentLearnerWords, segmentWords, stripPunctuation } from "@zoonk/utils/string";
+import {
+  segmentLearnerWords,
+  segmentWords,
+  stripPunctuation,
+  trimPunctuation,
+} from "@zoonk/utils/string";
+import {
+  type StepContentByKind,
+  parseStepContent,
+  safeParseStepContent,
+} from "../../library/steps/contract/step-contract";
 import { getTileRomanization } from "./_utils/tile-romanization";
 import {
   type SerializedStep,
@@ -20,8 +30,9 @@ type WordMetadata = Omit<WordBankOption, "word">;
 
 const WORD_BANK_DISTRACTOR_LIMIT = 4;
 
-function normalizeWordKey(word: string): string {
-  return stripPunctuation(word).toLowerCase().trim();
+/** Texts with the same key share one Word row and its audio. */
+export function normalizeWordKey(word: string): string {
+  return trimPunctuation(word).toLowerCase();
 }
 
 function splitMultiWordEntries(lessonWord: SerializedWord): [string, WordMetadata][] {
@@ -58,25 +69,13 @@ function mergeWordMetadata({
   };
 }
 
-function getUniqueMetadataKeys(entries: readonly (readonly [string, WordMetadata])[]): string[] {
-  return [...new Set(entries.map(([key]) => key))];
-}
-
-function getMergedWordMetadata(
-  entries: readonly (readonly [string, WordMetadata])[],
-  key: string,
-): WordMetadata {
-  return entries
-    .filter(([entryKey]) => entryKey === key)
-    .map(([, metadata]) => metadata)
-    .reduce((current, incoming) => mergeWordMetadata({ current, incoming }));
-}
-
 function buildMergedWordMetadataLookup(
   entries: readonly (readonly [string, WordMetadata])[],
 ): Map<string, WordMetadata> {
-  return new Map(
-    getUniqueMetadataKeys(entries).map((key) => [key, getMergedWordMetadata(entries, key)]),
+  return entries.reduce(
+    (lookup, [key, incoming]) =>
+      lookup.set(key, mergeWordMetadata({ current: lookup.get(key), incoming })),
+    new Map<string, WordMetadata>(),
   );
 }
 
@@ -161,6 +160,81 @@ export function buildSentenceWordOptions(
 
 export type LessonLanguages = { language: string; targetLanguage: string };
 
+type BankSentence = { distractors: string[]; sentence: string };
+
+type BankStep = { content: unknown; kind: string; sentenceId: string | null };
+
+/** Distractors show in lowercase so capitalization cannot reveal extra tiles. */
+function toDistractorTiles({
+  distractors,
+  input,
+  language,
+  shape,
+}: {
+  distractors: string[];
+  input: string;
+  language: string;
+  shape: DistractorShape;
+}): string[] {
+  return sanitizeDistractors({ distractors, input, shape }).map((distractor) =>
+    distractor.toLocaleLowerCase(language),
+  );
+}
+
+function getReadingBankWords({ language, sentence }: { language: string; sentence: BankSentence }) {
+  return {
+    correctWords: segmentWords(sentence.sentence),
+    distractors: toDistractorTiles({
+      distractors: sentence.distractors,
+      input: sentence.sentence,
+      language,
+      shape: "single-word",
+    }),
+  };
+}
+
+function getFillBlankWords(content: StepContentByKind["fillBlank"]): string[] {
+  return [...content.answers, ...content.distractors];
+}
+
+type BankWordsInput = { sentences: ReadonlyMap<string, BankSentence>; targetLanguage: string };
+
+function getTargetBankWords({
+  sentences,
+  step,
+  targetLanguage,
+}: BankWordsInput & { step: BankStep }): string[] {
+  const sentence = step.sentenceId ? sentences.get(step.sentenceId) : undefined;
+
+  if (step.kind === "reading" && sentence) {
+    const { correctWords, distractors } = getReadingBankWords({
+      language: targetLanguage,
+      sentence,
+    });
+
+    return [...correctWords, ...distractors];
+  }
+
+  if (step.kind !== "fillBlank") {
+    return [];
+  }
+
+  const parsed = safeParseStepContent("fillBlank", step.content);
+  return parsed.success ? getFillBlankWords(parsed.data) : [];
+}
+
+/** The target-language words a lesson's reading and fill-in-the-blank tiles show, as their Word rows save them. */
+export function listTargetBankWords({
+  sentences,
+  steps,
+  targetLanguage,
+}: BankWordsInput & { steps: readonly BankStep[] }): string[] {
+  return steps
+    .flatMap((step) => getTargetBankWords({ sentences, step, targetLanguage }))
+    .map((word) => trimPunctuation(word))
+    .filter(Boolean);
+}
+
 type WordBankConfig = {
   correctWords: string[];
   distractors: string[];
@@ -174,12 +248,7 @@ function getWordBankConfig(
 ): WordBankConfig | null {
   if (step.kind === "reading" && step.sentence) {
     return {
-      correctWords: segmentWords(step.sentence.sentence),
-      distractors: sanitizeDistractors({
-        distractors: step.sentence.distractors,
-        input: step.sentence.sentence,
-        shape: "single-word",
-      }),
+      ...getReadingBankWords({ language: languages.targetLanguage, sentence: step.sentence }),
       language: languages.targetLanguage,
       usesTargetLanguageMetadata: true,
     };
@@ -188,9 +257,10 @@ function getWordBankConfig(
   if (step.kind === "listening" && step.sentence) {
     return {
       correctWords: segmentLearnerWords(step.sentence.translation),
-      distractors: sanitizeDistractors({
+      distractors: toDistractorTiles({
         distractors: step.sentence.translationDistractors,
         input: step.sentence.translation,
+        language: languages.language,
         shape: "single-learner-word",
       }),
       language: languages.language,
@@ -216,19 +286,6 @@ function removeCanonicalWordCollisions({
   return distractors.filter((word) => !canonicalWordKeys.has(toKey(word)));
 }
 
-/** Normalize distractor casing so capitalization cannot reveal extra tiles. */
-function getVisibleDistractors({
-  distractors,
-  language,
-}: {
-  distractors: string[];
-  language: string;
-}): string[] {
-  return shuffle(distractors)
-    .slice(0, WORD_BANK_DISTRACTOR_LIMIT)
-    .map((distractor) => distractor.toLocaleLowerCase(language));
-}
-
 export function buildWordBankOptions(
   step: SerializedStep,
   lessonWords: SerializedWord[],
@@ -242,10 +299,10 @@ export function buildWordBankOptions(
     return [];
   }
 
-  const distractors = getVisibleDistractors({
-    distractors: removeCanonicalWordCollisions(config),
-    language: config.language,
-  });
+  const distractors = shuffle(removeCanonicalWordCollisions(config)).slice(
+    0,
+    WORD_BANK_DISTRACTOR_LIMIT,
+  );
 
   const words = shuffle([...config.correctWords, ...distractors]);
 
@@ -254,4 +311,28 @@ export function buildWordBankOptions(
     : emptyWordOption;
 
   return words.map((word) => buildOption(word));
+}
+
+/** Only a language lesson loads target words, so other lessons' tiles stay silent. */
+export function buildFillBlankOptions(
+  step: SerializedStep,
+  lessonWords: SerializedWord[],
+  distractorWords: DistractorWord[],
+  sentenceWordMap: Map<string, WordDataInput>,
+): WordBankOption[] {
+  if (step.kind !== "fillBlank") {
+    return [];
+  }
+
+  const content = parseStepContent("fillBlank", step.content);
+  const buildOption = createWordOptionBuilder({ distractorWords, lessonWords, sentenceWordMap });
+
+  return shuffle(getFillBlankWords(content)).map((word) => {
+    const option = buildOption(word);
+    const romanization = content.romanizations?.[word];
+
+    return romanization
+      ? { ...option, romanization: getTileRomanization({ romanization, word }) }
+      : option;
+  });
 }

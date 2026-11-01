@@ -12,6 +12,8 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { wordFixture, wordPronunciationFixture } from "@zoonk/testing/fixtures/words";
 import { describe, expect, it, vi } from "vitest";
 import { storeBlobUploads } from "../../_test-utils/blob-uploads";
+import { mockSession } from "../../_test-utils/mock-session";
+import { getPlayableLibraryLesson } from "../../lesson-player/get-playable-library-lesson";
 import { claimLibraryGeneration } from "../claims/generation-claim";
 import { STEP_CONTRACT_VERSION, parseStepContent } from "../steps/contract/step-contract";
 import { languageLessonDraft } from "./_test-utils/language-lesson-draft";
@@ -296,6 +298,133 @@ describe(writeLanguageLessonContent, () => {
       ["es", "es RÉNT", true],
       ["pt", "REHNT", true],
     ]);
+  });
+
+  it("voices each word its word banks show once, so every target-language tile plays it", async () => {
+    const organization = await aiOrganizationFixture();
+    const key = crypto.randomUUID();
+    const draft = uniqueDraft(key);
+    const depositText = draft.words[1]!.word;
+
+    const unvoicedVariant = await wordFixture({
+      organizationId: organization.id,
+      targetLanguage: "en",
+      word: `T${depositText.slice(1)}`,
+    });
+
+    const [sentenceWord, lessonWord] = await Promise.all([
+      wordFixture({
+        audioUrl: "https://blob.test/sentence-word.mp3",
+        organizationId: organization.id,
+        targetLanguage: "en",
+        word: key.toUpperCase(),
+      }),
+      wordFixture({
+        audioUrl: "https://blob.test/lesson-word.mp3",
+        organizationId: organization.id,
+        targetLanguage: "en",
+        word: depositText.toUpperCase(),
+      }),
+    ]);
+
+    const { lesson, workflowRunId } = await claimLanguageLesson({ language: "pt" });
+    mockDraft(draft);
+    mockAudio();
+
+    await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+
+    const voiced = vi
+      .mocked(generateLanguageAudio)
+      .mock.calls.map(([call]) => call.text.toLowerCase());
+
+    expect(voiced).not.toContain(key);
+    expect(voiced).not.toContain(depositText.toLowerCase());
+
+    const caseVariants = await prisma.word.findMany({
+      where: {
+        OR: [key, depositText].map((word) => ({ word: { equals: word, mode: "insensitive" } })),
+        targetLanguage: "en",
+      },
+    });
+
+    expect(Object.fromEntries(caseVariants.map((row) => [row.id, row.audioUrl]))).toStrictEqual({
+      [lessonWord.id]: lessonWord.audioUrl,
+      [sentenceWord.id]: sentenceWord.audioUrl,
+      [unvoicedVariant.id]: null,
+    });
+
+    const lessonWords = await linksOf(lesson.id);
+    expect(lessonWords[1]?.wordId).toBe(lessonWord.id);
+
+    mockSession(crypto.randomUUID());
+    const played = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = played?.status === "ready" ? played.lesson.steps : [];
+    const exercises = steps.flatMap((step) => ("exercise" in step ? [step.exercise] : []));
+
+    const tilesOf = (kind: "fillBlank" | "listening" | "reading") =>
+      exercises
+        .filter((exercise) => exercise.kind === kind)
+        .flatMap((exercise) =>
+          kind === "fillBlank" ? exercise.fillBlankOptions : exercise.wordBankOptions,
+        );
+
+    const readingTiles = tilesOf("reading");
+
+    expect(readingTiles.map((tile) => tile.word)).toStrictEqual(
+      expect.arrayContaining(["How", "much", key, "many", "there"]),
+    );
+
+    expect(
+      tilesOf("fillBlank")
+        .map((tile) => tile.word)
+        .toSorted(),
+    ).toStrictEqual(["are", "be", "is"]);
+
+    expect(
+      [...readingTiles, ...tilesOf("fillBlank")].filter((tile) => !tile.audioUrl),
+    ).toStrictEqual([]);
+
+    expect(readingTiles.find((tile) => tile.word === key)?.audioUrl).toBe(sentenceWord.audioUrl);
+    expect(tilesOf("listening").length).toBeGreaterThan(0);
+    expect(tilesOf("listening").filter((tile) => tile.audioUrl)).toStrictEqual([]);
+  });
+
+  it("voices a taught word once when a sentence shows it without its punctuation", async () => {
+    await aiOrganizationFixture();
+    const key = crypto.randomUUID();
+    const draft = uniqueDraft(key);
+    const taught = `${key}?`;
+
+    const { lesson, workflowRunId } = await claimLanguageLesson({ language: "pt" });
+
+    mockDraft({
+      ...draft,
+      words: [...draft.words.slice(0, 2), { ...draft.words[2]!, word: taught }],
+    });
+
+    mockAudio();
+
+    await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+
+    const voiced = vi.mocked(generateLanguageAudio).mock.calls.map(([call]) => call.text);
+    expect(voiced.filter((text) => [key, taught].includes(text))).toStrictEqual([taught]);
+
+    const row = await prisma.word.findFirstOrThrow({
+      where: { targetLanguage: "en", word: taught },
+    });
+
+    mockSession(crypto.randomUUID());
+    const played = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = played?.status === "ready" ? played.lesson.steps : [];
+
+    const keyTiles = steps.flatMap((step) =>
+      "exercise" in step && step.kind === "reading"
+        ? step.exercise.wordBankOptions.filter((tile) => tile.word === key)
+        : [],
+    );
+
+    expect(keyTiles.length).toBeGreaterThan(0);
+    expect(keyTiles.every((tile) => tile.audioUrl === row.audioUrl)).toBe(true);
   });
 
   it("doesn't teach words the unit's earlier lessons taught", async () => {

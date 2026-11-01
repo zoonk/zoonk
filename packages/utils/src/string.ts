@@ -28,18 +28,6 @@ export function toSlug(str: string): string {
     .replaceAll(/^-|-$/gu, "");
 }
 
-export function deduplicateNormalizedTexts(texts: string[]): string[] {
-  return [
-    ...new Map(
-      texts.flatMap((text) => {
-        const normalizedText = normalizePunctuation(text).trim();
-
-        return normalizedText ? [[normalizeString(normalizedText), normalizedText]] : [];
-      }),
-    ).values(),
-  ];
-}
-
 export function ensureLocaleSuffix(value: string, language: string): string {
   if (language === "en") {
     return value;
@@ -102,6 +90,10 @@ export function createEmDashReplacer(): { end: () => string; push: (piece: strin
       return replace(text.slice(0, text.length - held.length));
     },
   };
+}
+
+export function trimPunctuation(text: string): string {
+  return text.replaceAll(/^[^\p{L}\p{M}\p{N}]+|[^\p{L}\p{M}\p{N}]+$/gu, "");
 }
 
 export function stripPunctuation(text: string): string {

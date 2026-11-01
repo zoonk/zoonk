@@ -4,9 +4,9 @@ import {
   type StepContentByKind,
   parseStepContent,
 } from "../../library/steps/contract/step-contract";
-import { getTileRomanization } from "./_utils/tile-romanization";
 import {
   type LessonLanguages,
+  buildFillBlankOptions,
   buildSentenceWordOptions,
   buildWordBankOptions,
 } from "./build-word-bank-options";
@@ -145,25 +145,6 @@ function parseAndShuffleContent(kind: ExerciseKind, content: unknown) {
   return parseStepContent(kind, content);
 }
 
-function buildFillBlankOptions(step: SerializedStep): WordBankOption[] {
-  if (step.kind !== "fillBlank") {
-    return [];
-  }
-
-  const content = parseStepContent("fillBlank", step.content);
-  const words = shuffle([...content.answers, ...content.distractors]);
-
-  return words.map((word) => ({
-    audioUrl: null,
-    romanization: getTileRomanization({
-      romanization: content.romanizations?.[word] ?? null,
-      word,
-    }),
-    translation: null,
-    word,
-  }));
-}
-
 function buildMatchColumnsRightItems(step: SerializedStep): string[] {
   if (step.kind !== "matchColumns") {
     return [];
@@ -239,7 +220,12 @@ export function serializeExerciseSteps({
     return [
       {
         ...step,
-        fillBlankOptions: buildFillBlankOptions(step),
+        fillBlankOptions: buildFillBlankOptions(
+          step,
+          serializedLessonWords,
+          serializedDistractorWords,
+          sentenceWordMap,
+        ),
         matchColumnsRightItems: buildMatchColumnsRightItems(step),
         sentenceWordOptions: step.sentence
           ? buildSentenceWordOptions(

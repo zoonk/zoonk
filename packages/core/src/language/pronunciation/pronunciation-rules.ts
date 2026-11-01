@@ -57,9 +57,3 @@ export function nextPronunciationReview({
 
   return { dueAt: startOfLocalDayAfter({ days: wait, now, timeZone }), stage: nextStage };
 }
-
-const EDGE_PUNCTUATION = /^[\p{P}\p{S}]+|[\p{P}\p{S}]+$/gu;
-
-export function toReviewWord(text: string): string {
-  return text.replaceAll(EDGE_PUNCTUATION, "").trim();
-}
