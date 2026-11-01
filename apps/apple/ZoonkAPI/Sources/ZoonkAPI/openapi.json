@@ -79082,18 +79082,6 @@
                       "type": "number",
                       "minimum": 0
                     },
-                    "kind": {
-                      "type": "string",
-                      "enum": [
-                        "learn",
-                        "foundations",
-                        "gaps",
-                        "practice",
-                        "finalStretch",
-                        "afterExam"
-                      ],
-                      "description": "Exam phases have no name; clients name them by kind"
-                    },
                     "milestone": {
                       "nullable": true,
                       "type": "string"
@@ -79104,7 +79092,6 @@
                   },
                   "required": [
                     "hours",
-                    "kind",
                     "milestone",
                     "name"
                   ],

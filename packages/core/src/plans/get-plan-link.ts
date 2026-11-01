@@ -7,7 +7,7 @@ import { getLinkSubject, keepPublicGraph, loadLinkedPlan } from "./_utils/linked
 import { DAILY_TIME_CHOICES } from "./daily-minutes";
 import { type PlanLinkOutline } from "./plan-link-contract";
 import { getLearningShare } from "./planner/plan-phases";
-import { type PlanGraph, parsePlanGraph, parsePlanPhases } from "./planner/plan-state";
+import { type PlanGraph, parsePlanGraph } from "./planner/plan-state";
 import { DEFAULT_LESSON_MINUTES } from "./planner/plan-units";
 
 export type PlanLinkResult =
@@ -49,7 +49,6 @@ export async function getPlanLink(planId: string): Promise<PlanLinkResult> {
   cacheTag(getGoalsCacheTag(plan.goal.userId));
 
   const graph = await keepPublicGraph(parsePlanGraph(plan.graph));
-  const kinds = parsePlanPhases(plan.phases).map((phase) => phase.kind);
 
   return {
     dailyTimes: DAILY_TIME_CHOICES,
@@ -59,7 +58,6 @@ export async function getPlanLink(planId: string): Promise<PlanLinkResult> {
       language: plan.goal.language,
       phases: graph.phases.map((phase, index) => ({
         hours: toHours({ graph, phase: index }),
-        kind: kinds[index] ?? "learn",
         milestone: phase.milestone,
         name: phase.name,
       })),

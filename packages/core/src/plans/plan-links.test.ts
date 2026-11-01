@@ -75,8 +75,8 @@ describe("plan links", () => {
         hours: 0.4,
         language: "en",
         phases: [
-          { hours: 0.3, kind: "learn", milestone: "Can do Basics", name: "Basics" },
-          { hours: 0.1, kind: "learn", milestone: "Can do Advanced", name: "Advanced" },
+          { hours: 0.3, milestone: "Can do Basics", name: "Basics" },
+          { hours: 0.1, milestone: "Can do Advanced", name: "Advanced" },
         ],
         skillCount: 2,
         subject: { description: "How markets set prices", title: "How the stock market works" },
@@ -184,13 +184,13 @@ describe("plan links", () => {
 
     const link = await getPlanLink(plan.id);
 
-    expect(link).toMatchObject({
-      outline: {
-        goalKind: "exam",
-        phases: [{ kind: "foundations" }, { kind: "gaps" }],
-        subject: null,
-      },
-    });
+    // The link shows the curriculum's phases, never the owner's calendar stretches before the exam.
+    expect(link).toMatchObject({ outline: { goalKind: "exam", subject: null } });
+
+    expect(link.status === "ready" && link.outline.phases).toStrictEqual([
+      { hours: 0.3, milestone: "Can do Basics", name: "Basics" },
+      { hours: 0.1, milestone: "Can do Advanced", name: "Advanced" },
+    ]);
 
     expect(JSON.stringify(link)).not.toContain("Acme");
 

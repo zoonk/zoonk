@@ -239,8 +239,7 @@ private fun PhaseRow(
 ) {
     val locale = currentLocale()
     val number = index + 1
-    val kind = PlanPhase.Kind.entries.firstOrNull { it.value == phase.kind.value }
-    val name = phase.name.ifEmpty { kind?.let { phaseKindName(it, number) }.orEmpty() }
+    val name = phase.name.ifEmpty { phaseKindName(PlanPhase.Kind.LEARN, number) }
     val minutes = approximateMinutes(phase.hours)
 
     // The plan starts at its first phase, marked as the row the learner is on.

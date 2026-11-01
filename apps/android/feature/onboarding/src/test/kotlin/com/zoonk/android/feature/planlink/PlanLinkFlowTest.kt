@@ -65,7 +65,8 @@ class PlanLinkFlowTest {
 
         rule.onNodeWithText("A study plan someone shared with you").assertIsDisplayed()
         rule.onNodeWithText("Bar exam").assertIsDisplayed()
-        rule.onNodeWithText("Foundations").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Building the base").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Phase 2").performScrollTo().assertIsDisplayed()
         rule.onNodeWithContentDescription("Time a day, 30\u00A0min").performClick()
         rule.onNodeWithText("45\u00A0min").performClick()
         rule.onNodeWithText("Start from this plan").performClick()

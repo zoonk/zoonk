@@ -4,7 +4,8 @@ import { shortPhaseSchema } from "./short-exam-plans";
 const isoDateSchema = z.iso.date();
 
 const stateSchema = z.enum(["current", "done", "upcoming"]);
-export const phaseKindSchema = z
+
+const phaseKindSchema = z
   .enum(["learn", "foundations", "gaps", "practice", "finalStretch", "afterExam"])
   .meta({
     description:

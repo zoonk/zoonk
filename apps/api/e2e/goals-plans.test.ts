@@ -657,7 +657,7 @@ test.describe("Goals and plans API", () => {
 
     expect(outline).toMatchObject({
       outline: {
-        phases: [{ kind: "learn", name: "The basics" }],
+        phases: [{ name: "The basics" }],
         skillCount: 1,
         subject: { title: course.title },
       },

@@ -155,8 +155,8 @@ fun planLinkOf(
         {"dailyTimes":${dailyTimes.joinToString(",", "[", "]")},"owner":${owner?.let { "{\"goalId\":\"$it\"}" } ?: "null"},
          "outline":{"goalKind":"exam","hours":40.5,"language":"en","skillCount":24,"targetLanguage":null,
           "subject":{"title":"Bar exam","description":"Pass the state bar on the first try."},
-          "phases":[{"hours":20.0,"kind":"foundations","milestone":"Every subject once","name":""},
-                    {"hours":0.0,"kind":"finalStretch","milestone":null,"name":""}]}}
+          "phases":[{"hours":20.0,"milestone":"Every subject once","name":"Building the base"},
+                    {"hours":0.0,"milestone":null,"name":""}]}}
         """.trimIndent(),
     )
 

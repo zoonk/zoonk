@@ -128,7 +128,7 @@ async function PlanLinkBody({ params }: Props) {
               rows={outline.phases.map((phase, index) => ({
                 description: phase.milestone ?? undefined,
                 id: String(index),
-                title: <PlanPhaseName phase={{ index, kind: phase.kind, name: phase.name }} />,
+                title: <PlanPhaseName phase={{ index, kind: "learn", name: phase.name }} />,
                 trailing: phaseSize(phase.hours) ?? undefined,
               }))}
               startId="0"

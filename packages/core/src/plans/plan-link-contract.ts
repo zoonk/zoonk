@@ -1,7 +1,6 @@
 import { type GoalKind } from "@zoonk/db";
 import { z } from "zod";
 import { dailyMinutesSchema, goalCreateInputSchema } from "../goals/goal-contract";
-import { type PlanPhaseKind } from "./planner/plan-state";
 
 const MAX_TITLE_LENGTH = 120;
 
@@ -35,8 +34,8 @@ export type PlanLinkOutline = {
   goalKind: GoalKind;
   hours: number;
   language: string;
-  /** Exam phases have no name: apps name them by `kind`, as the plan does. */
-  phases: { hours: number; kind: PlanPhaseKind; milestone: string | null; name: string }[];
+  /** The curriculum's phases, never the owner's calendar stretches before an exam. */
+  phases: { hours: number; milestone: string | null; name: string }[];
   skillCount: number;
   targetLanguage: string | null;
 };

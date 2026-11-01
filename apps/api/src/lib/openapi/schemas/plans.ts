@@ -19,7 +19,7 @@ import { planFeasibilitySchema } from "./plan-feasibility";
 import { planItemSchema } from "./plan-items";
 import { planMockScheduleSchema } from "./plan-mock-schedule";
 import { planFitOfferSchema } from "./plan-offers";
-import { phaseKindSchema, planPhaseSchema } from "./plan-phases";
+import { planPhaseSchema } from "./plan-phases";
 import { planWeekShapeSchema } from "./plan-week-shape";
 import { planStatusSchema } from "./preparation";
 import { shortPlanSchema } from "./short-exam-plans";
@@ -277,14 +277,7 @@ export const planLinkResponseSchema = z
       hours: z.number().min(0),
       language: z.string(),
       phases: z.array(
-        z.object({
-          hours: z.number().min(0),
-          kind: phaseKindSchema.meta({
-            description: "Exam phases have no name; clients name them by kind",
-          }),
-          milestone: z.string().nullable(),
-          name: z.string(),
-        }),
+        z.object({ hours: z.number().min(0), milestone: z.string().nullable(), name: z.string() }),
       ),
       skillCount: z.int().min(0),
       subject: z
