@@ -142,6 +142,7 @@ private enum ChooserStatus: Equatable {
 
 private struct MockChooser: View {
   @Environment(ExamStore.self) private var exam
+  @Environment(\.stacksContent) private var isStacked
   @State private var picked: String?
   @State private var length: PlacementMockOption.Length?
   @State private var status: ChooserStatus = .choosing
@@ -214,6 +215,12 @@ private struct MockChooser: View {
           }
         }
         .foregroundStyle(.primary)
+      }
+    }
+
+    if isStacked, shownStatus != nil {
+      Section {
+        startStatus
       }
     }
   }
@@ -297,10 +304,13 @@ private struct MockChooser: View {
   }
 
   /// What the last Start led to sits right above it, not at the top of a list the learner may
-  /// have scrolled away from.
+  /// have scrolled away from. At accessibility sizes it stays in the list, which scrolls where a bar
+  /// can't.
   private var startBar: some View {
     VStack(alignment: .leading, spacing: 10) {
-      startStatus
+      if !isStacked {
+        startStatus
+      }
 
       Group {
         if isOpen {
@@ -352,12 +362,21 @@ private struct MockChooser: View {
       : Text("Start", tableName: "Mock", comment: "Starts the picked mock")
   }
 
+  /// A short bank's note is about the mock it was asked for: another pick starts another mock.
+  private var shownStatus: ChooserStatus? {
+    switch status {
+    case .choosing, .plusRequired: nil
+    case .short(let optionId, _, _, _, _) where optionId != pickedOption?.id: nil
+    default: status
+    }
+  }
+
   @ViewBuilder
   private var startStatus: some View {
-    switch status {
-    case .choosing, .plusRequired:
+    switch shownStatus {
+    case .choosing?, .plusRequired?, nil:
       EmptyView()
-    case .writing:
+    case .writing?:
       Label {
         VStack(alignment: .leading, spacing: 2) {
           Text("Preparing your mock exam", tableName: "Mock", comment: "Questions being written")
@@ -372,9 +391,7 @@ private struct MockChooser: View {
       } icon: {
         ProgressView()
       }
-    // Only for the mock it was about: another pick starts another mock.
-    case .short(let optionId, let examQuestions, let limit, let minutes, let questions)
-    where optionId == pickedOption?.id:
+    case .short(_, let examQuestions, let limit, let minutes, let questions)?:
       VStack(alignment: .leading, spacing: 4) {
         Text(
           "\(questions) of the \(examQuestions) questions are ready now, so this mock takes about \(MockLabels.duration(minutes: minutes)).",
@@ -396,20 +413,18 @@ private struct MockChooser: View {
       }
       .font(.subheadline)
       .foregroundStyle(.secondary)
-    case .short:
-      EmptyView()
-    case .notEnoughQuestions:
+    case .notEnoughQuestions?:
       Text(
         "There aren't enough questions for this mock yet. Try the full exam or another subject.",
         tableName: "Mock", comment: "Too few questions for a mock"
       )
       .font(.subheadline)
       .foregroundStyle(.destructive)
-    case .failed:
+    case .failed?:
       Text("We couldn't start the mock. Try again.", tableName: "Mock", comment: "Start failed")
         .font(.subheadline)
         .foregroundStyle(.destructive)
-    case .refused(let limit):
+    case .refused(let limit)?:
       HelpLimitNotice(limit: limit)
     }
   }
