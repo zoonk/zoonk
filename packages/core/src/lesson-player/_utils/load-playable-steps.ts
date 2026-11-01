@@ -64,10 +64,6 @@ async function loadTargetWords({
   return words.map((word) => toWordData({ word }));
 }
 
-function usesTargetWords(row: PlayableStepRow): boolean {
-  return Boolean(row.wordId || row.sentenceId) || row.kind === "fillBlank";
-}
-
 async function loadExerciseResources({
   lesson,
   rows,
@@ -77,7 +73,7 @@ async function loadExerciseResources({
 }): Promise<LessonPairResources> {
   const { targetLanguage } = lesson;
 
-  if (!targetLanguage || !rows.some((row) => usesTargetWords(row))) {
+  if (!targetLanguage || !rows.some((row) => row.wordId || row.sentenceId)) {
     return NO_RESOURCES;
   }
 
