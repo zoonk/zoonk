@@ -275,7 +275,7 @@ describe("asking the buddy about a session's or practice's question", () => {
         itemIds: [item.id],
       },
       sessionId: session.id,
-      status: "active",
+      status: "pending",
     });
 
     const inBoss = { answered: false, blockId: boss.id, kind: "item" } as const;
@@ -284,6 +284,8 @@ describe("asking the buddy about a session's or practice's question", () => {
     await expect(ask({ context: inBoss, itemId: item.id })).resolves.toStrictEqual({
       status: "notFound",
     });
+
+    await prisma.studySessionBlock.update({ data: { status: "active" }, where: { id: boss.id } });
 
     await expect(ask({ context: inPractice, itemId: item.id })).resolves.toStrictEqual({
       status: "notFound",

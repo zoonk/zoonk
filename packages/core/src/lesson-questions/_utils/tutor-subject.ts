@@ -111,13 +111,13 @@ async function isOnRunningMock({ itemId, userId }: { itemId: string; userId: str
 async function isOnRunningCheckpoint({ itemId, userId }: { itemId: string; userId: string }) {
   const blocks = await prisma.studySessionBlock.findMany({
     select: { payload: true },
-    where: { kind: "checkpoint", session: { userId }, status: "active" },
+    where: { kind: "checkpoint", session: { userId }, status: { in: ["active", "pending"] } },
   });
 
   return blocks.some((block) => getBlockItemIds(readBlockPayload(block)).includes(itemId));
 }
 
-/** Never offer tutor help on questions in a currently running mock or checkpoint. */
+/** Never offer tutor help on questions in a running mock, or a checkpoint not yet finished. */
 async function findItemSubject({ itemId, userId }: { itemId: string; userId: string }) {
   const [item, onRunningMock, onRunningCheckpoint] = await Promise.all([
     prisma.item.findFirst({
