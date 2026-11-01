@@ -15,63 +15,21 @@ struct SearchScreen: View {
   @State private var isFeedbackPresented = false
 
   var body: some View {
-    List {
-      ForEach(groups) { group in
-        Section {
-          ForEach(group.items) { item in
-            Button {
-              perform(item.action)
-            } label: {
-              Label(item.title, systemImage: item.systemImage)
-            }
-            .badge(item.badge)
-            .foregroundStyle(.primary)
-          }
-        } header: {
-          Text(group.title)
-        }
+    PaneSplit(primaryShare: 0.55) {
+      List {
+        groupSections(leadingGroups)
       }
-
-      if let results = catalogResults {
-        Section {
-          ForEach(results.courses) { course in
-            NavigationLink(value: CourseDestination.course(CourseReference(course))) {
-              Label(course.title, systemImage: "book.closed")
-            }
-          }
-
-          ForEach(results.chapters) { chapter in
-            NavigationLink(value: CourseDestination.chapter(ChapterReference(chapter))) {
-              Label {
-                VStack(alignment: .leading, spacing: 4) {
-                  Text(chapter.title)
-                  Text(chapter.courseTitle)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                }
-              } icon: {
-                Image(systemName: "rectangle.stack")
-              }
-            }
-          }
-        } header: {
-          Text("In the catalog", tableName: "Search", comment: "Search results from the catalog")
-        }
+    } secondary: {
+      List {
+        groupSections(trailingGroups)
+        catalogSection
+        groupSections(trailingFallback)
       }
-
-      if let fallback {
-        Section {
-          ForEach(fallback.items) { item in
-            Button {
-              perform(item.action)
-            } label: {
-              Label(item.title, systemImage: item.systemImage)
-            }
-            .foregroundStyle(.primary)
-          }
-        } header: {
-          Text(fallback.title)
-        }
+    } single: {
+      List {
+        groupSections(groups)
+        catalogSection
+        groupSections(fallback.map { [$0] } ?? [])
       }
     }
     .navigationTitle(Text(AppTab.search.title))
@@ -92,6 +50,72 @@ struct SearchScreen: View {
     .sheet(isPresented: $isFeedbackPresented) {
       FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: "command-palette"))
         .accessibilitySizeStyles()
+    }
+  }
+
+  /// Before a query, the places to go face what the learner can do. A query's own matches face the
+  /// catalog and the ways to ask, which lead when nothing of the learner's matches.
+  private var leadingGroups: [SearchGroup] {
+    guard text != nil else {
+      return groups.filter { $0.id != "places" }
+    }
+
+    return groups.isEmpty ? fallback.map { [$0] } ?? [] : groups
+  }
+
+  private var trailingGroups: [SearchGroup] {
+    text == nil ? groups.filter { $0.id == "places" } : []
+  }
+
+  private var trailingFallback: [SearchGroup] {
+    groups.isEmpty ? [] : fallback.map { [$0] } ?? []
+  }
+
+  private func groupSections(_ groups: [SearchGroup]) -> some View {
+    ForEach(groups) { group in
+      Section {
+        ForEach(group.items) { item in
+          Button {
+            perform(item.action)
+          } label: {
+            Label(item.title, systemImage: item.systemImage)
+          }
+          .badge(item.badge)
+          .foregroundStyle(.primary)
+        }
+      } header: {
+        Text(group.title)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var catalogSection: some View {
+    if let results = catalogResults {
+      Section {
+        ForEach(results.courses) { course in
+          NavigationLink(value: CourseDestination.course(CourseReference(course))) {
+            Label(course.title, systemImage: "book.closed")
+          }
+        }
+
+        ForEach(results.chapters) { chapter in
+          NavigationLink(value: CourseDestination.chapter(ChapterReference(chapter))) {
+            Label {
+              VStack(alignment: .leading, spacing: 4) {
+                Text(chapter.title)
+                Text(chapter.courseTitle)
+                  .font(.subheadline)
+                  .foregroundStyle(.secondary)
+              }
+            } icon: {
+              Image(systemName: "rectangle.stack")
+            }
+          }
+        }
+      } header: {
+        Text("In the catalog", tableName: "Search", comment: "Search results from the catalog")
+      }
     }
   }
 
