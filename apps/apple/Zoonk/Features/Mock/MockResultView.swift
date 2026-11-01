@@ -20,13 +20,14 @@ struct MockResultView: View {
     PaneSplit {
       List {
         resultSections
-        reviewSections
       }
     } secondary: {
       List {
         planSections
+        reviewSections
       }
-      // Without a plan change it's empty, and an empty list draws the plain background.
+      // Without a plan change or a question to review it's empty, and an empty list draws the
+      // plain background.
       .scrollContentBackground(.hidden)
       .background(Color(.systemGroupedBackground))
       .safeAreaBar(edge: .bottom) { actionBar }
