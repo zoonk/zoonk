@@ -3,10 +3,13 @@ package com.zoonk.android.feature.subscription
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,7 +22,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -35,9 +37,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
@@ -48,6 +51,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -63,14 +68,13 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.AllowanceItem
+import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.Money
 import com.zoonk.api.models.StripeSubscriptionCancellation
@@ -86,7 +90,7 @@ import kotlin.time.Instant
 
 /**
  * Main's subscription page: a subscriber sees their plan and where to manage it; anyone else sees
- * Plus with Play's prices. Only an account subscribes; a guest or visitor logs in first.
+ * Plus with Play's prices beside Free. Only an account subscribes; a guest or visitor logs in first.
  */
 @Composable
 fun SubscriptionScreen(
@@ -102,26 +106,21 @@ fun SubscriptionScreen(
                 Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
             contentAlignment = Alignment.TopCenter,
         ) {
-            Column(
-                modifier =
-                    Modifier
-                        .widthIn(max = 640.dp)
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-            ) {
-                if (signedIn == null) {
-                    Offer(app, navigator, hasAccount = false, isVisitor = session is SessionState.SignedOut)
-                } else {
-                    Account(app, navigator, signedIn.session.localId)
-                }
+            when {
+                signedIn != null -> Account(app, navigator, signedIn.session.localId)
+                session is SessionState.SignedOut -> Offer(app, navigator, PlanViewer.Visitor)
+                else -> Offer(app, navigator, PlanViewer.Guest)
             }
         }
     }
 }
+
+/** Who reads Plus's offer, as main's viewer states; a subscriber sees their plan instead. */
+internal enum class PlanViewer { Visitor, Guest, Free }
 
 @Composable
 private fun Account(
@@ -146,20 +145,28 @@ private fun Account(
         is LoadState.Loaded -> {
             val subscription = state.value.account.subscription
             if (subscription != null) {
-                CurrentPlan(subscription, navigator, cancellation, app.subscriptions.webPlusChoices)
+                PageColumn { CurrentPlan(subscription, navigator, cancellation, app.subscriptions.webPlusChoices) }
             } else {
-                Offer(app, navigator, hasAccount = true, isVisitor = false)
+                Offer(app, navigator, PlanViewer.Free)
             }
         }
 
         is LoadState.Failed -> {
-            LoadFailedMessage(onRetry = { scope.launch { app.subscriptions.account.refresh() } })
+            PageColumn { LoadFailedMessage(onRetry = { scope.launch { app.subscriptions.account.refresh() } }) }
         }
 
         LoadState.Idle, LoadState.Loading, LoadState.Empty -> {
-            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+            CircularProgressIndicator()
         }
     }
+}
+
+@Composable
+private fun PageColumn(
+    maxWidth: Dp = PAGE_WIDTH,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(Modifier.widthIn(max = maxWidth).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(24.dp), content = content)
 }
 
 @Composable
@@ -242,29 +249,139 @@ private fun dateLine(subscription: MeSubscription): String? {
 private fun Offer(
     app: AppContainer,
     navigator: AppNavigator,
-    hasAccount: Boolean,
-    isVisitor: Boolean,
+    viewer: PlanViewer,
 ) {
     val offers by app.subscriptions.offers.collectShown()
     val freePlan by app.subscriptions.freePlan.collectShown()
     val purchase by app.subscriptions.purchase.collectAsStateWithLifecycle()
-    var period by rememberSaveable { mutableStateOf(BillingPeriod.Monthly) }
     val activity = LocalActivity.current
     val analytics = LocalEventTracker.current
     val scope = rememberCoroutineScope()
+    val onSubscribe: ((PlusOffer) -> Unit)? =
+        activity?.let { host ->
+            { offer ->
+                analytics.track(AnalyticsEvent.SubscriptionCheckoutStarted(offer.period))
+                scope.launch { app.subscriptions.buy(host, offer.period) }
+            }
+        }
+
+    PlanOffer(
+        viewer = viewer,
+        offers = offers,
+        freePlan = freePlan,
+        purchase = purchase,
+        navigator = navigator,
+        onSubscribe = onSubscribe,
+        onRetryFreePlan = { scope.launch { app.subscriptions.freePlan.refresh() } },
+        messagesUsed = if (viewer == PlanViewer.Free) messagesUsedToday(app) else null,
+    )
+}
+
+@Composable
+private fun messagesUsedToday(app: AppContainer): AllowanceItem? {
+    val allowance by app.subscriptions.allowance.collectShown()
+    return allowance.value?.items?.firstOrNull { it.kind == AllowanceItem.Kind.TUTOR_MESSAGE }
+}
+
+/**
+ * Plus beside Free when both fit at [PLAN_MIN_WIDTH], so their prices compare at a glance, with the
+ * questions' heading under Plus and the questions under Free; one above the other otherwise.
+ */
+@Composable
+internal fun PlanOffer(
+    viewer: PlanViewer,
+    offers: LoadState<PlusOffers>,
+    freePlan: LoadState<FreePlan>,
+    purchase: PurchaseState,
+    navigator: AppNavigator,
+    onSubscribe: ((PlusOffer) -> Unit)?,
+    onRetryFreePlan: () -> Unit,
+    messagesUsed: AllowanceItem? = null,
+) {
+    val limits = freePlan.value
+    val hasAccount = viewer == PlanViewer.Free
+
+    BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+        val sideBySide = maxWidth >= PLAN_MIN_WIDTH * LocalDensity.current.fontScale * 2 + PLAN_GAP
+
+        PageColumn(maxWidth = if (sideBySide) TWO_PLANS_WIDTH else PAGE_WIDTH) {
+            Text(
+                stringResource(R.string.subscription_offer_title),
+                Modifier.semantics { heading() },
+                style = MaterialTheme.typography.headlineSmall,
+            )
+
+            PlanColumns(sideBySide, verticalSpacing = 24.dp) {
+                PlusPlanCard(offers, purchase, hasAccount, navigator, onSubscribe)
+                Box {
+                    when {
+                        limits != null -> {
+                            FreePlanCard(
+                                limits,
+                                currency = offers.value?.let { (it.monthly ?: it.yearly)?.currency },
+                                viewer = viewer,
+                                navigator = navigator,
+                                modifier = Modifier.fillMaxHeight(),
+                                messagesUsed = messagesUsed,
+                            )
+                        }
+
+                        freePlan is LoadState.Failed -> {
+                            LoadFailedMessage(onRetry = onRetryFreePlan)
+                        }
+                    }
+                }
+            }
+
+            CommonQuestions(limits, hasAccount, navigator, sideBySide)
+        }
+    }
+}
+
+/** Items in equal columns as tall as the tallest, or one above the other; one layout either way, so their state survives a resize. */
+@Composable
+internal fun PlanColumns(
+    sideBySide: Boolean,
+    verticalSpacing: Dp,
+    content: @Composable () -> Unit,
+) {
+    Layout(content) { items, constraints ->
+        val width = constraints.maxWidth
+        if (sideBySide) {
+            val gap = PLAN_GAP.roundToPx()
+            val column = (width - gap * (items.size - 1)) / items.size
+            val height = items.maxOf { it.maxIntrinsicHeight(column) }
+            val placed = items.map { it.measure(Constraints.fixed(column, height)) }
+            layout(width, height) { placed.forEachIndexed { index, item -> item.placeRelative(index * (column + gap), 0) } }
+        } else {
+            val spacing = verticalSpacing.roundToPx()
+            val placed = items.map { it.measure(constraints.copy(minWidth = width, minHeight = 0)) }
+            layout(width, placed.sumOf { it.height } + spacing * (placed.size - 1)) {
+                var y = 0
+                placed.forEach { item ->
+                    item.placeRelative(0, y)
+                    y += item.height + spacing
+                }
+            }
+        }
+    }
+}
+
+/** Main's PlusPlan: Play's price for each billing period and the way to buy it. */
+@Composable
+private fun PlusPlanCard(
+    offers: LoadState<PlusOffers>,
+    purchase: PurchaseState,
+    hasAccount: Boolean,
+    navigator: AppNavigator,
+    onSubscribe: ((PlusOffer) -> Unit)?,
+) {
+    var period by rememberSaveable { mutableStateOf(BillingPeriod.Monthly) }
     val plans = offers.value
     // Play can sell one base plan and not the other in a region: show the one it sells.
     val offer = plans?.let { it.offerFor(period) ?: it.monthly ?: it.yearly }
     val isWorking = purchase == PurchaseState.Buying || purchase == PurchaseState.Confirming
     val canBuy = offer != null || offers is LoadState.Loading
-
-    Text(
-        stringResource(R.string.subscription_offer_title),
-        Modifier.semantics { heading() },
-        style = MaterialTheme.typography.headlineSmall,
-    )
-
-    if (hasAccount) FreePlanSummary(app)
 
     OutlinedCard(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -311,13 +428,8 @@ private fun Offer(
 
                 else -> {
                     Button(
-                        onClick = {
-                            if (activity != null && offer != null) {
-                                analytics.track(AnalyticsEvent.SubscriptionCheckoutStarted(offer.period))
-                                scope.launch { app.subscriptions.buy(activity, offer.period) }
-                            }
-                        },
-                        enabled = offer != null && !isWorking && activity != null,
+                        onClick = { offer?.let { onSubscribe?.invoke(it) } },
+                        enabled = offer != null && !isWorking && onSubscribe != null,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(stringResource(R.string.subscription_subscribe))
@@ -343,19 +455,6 @@ private fun Offer(
             PlusBenefits()
         }
     }
-
-    if (freePlan is LoadState.Failed) LoadFailedMessage(onRetry = { scope.launch { app.subscriptions.freePlan.refresh() } })
-    val limits = freePlan.value
-    val freeCard = limits?.takeIf { isVisitor }
-    if (freeCard != null) {
-        FreePlanCard(
-            freeCard,
-            currency = plans?.let { (it.monthly ?: it.yearly)?.currency },
-            onStart = { navigator.showRoot(AppTab.Today) },
-        )
-    }
-    // The card already lists what the first answer would.
-    CommonQuestions(limits, hasAccount, navigator, isFreePlanOpen = freeCard == null)
 }
 
 @Composable
@@ -430,38 +529,6 @@ private fun PurchaseMessage(purchase: PurchaseState) {
         color = if (isProblem) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodyMedium,
     )
-}
-
-/** Main's "Your plan" on Free: the buddy messages used today. */
-@Composable
-private fun FreePlanSummary(app: AppContainer) {
-    val allowance by app.subscriptions.allowance.collectShown()
-    val messages = allowance.value?.items?.firstOrNull { it.kind == AllowanceItem.Kind.TUTOR_MESSAGE }
-    val limit = messages?.dailyLimit
-
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(stringResource(R.string.subscription_your_plan))
-        OutlinedCard(Modifier.fillMaxWidth()) {
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.subscription_free)) },
-                supportingContent =
-                    if (messages != null && limit != null) {
-                        {
-                            Text(
-                                pluralStringResource(
-                                    R.plurals.subscription_messages_used,
-                                    limit.toInt(),
-                                    messages.usedToday.toInt(),
-                                    limit.toInt(),
-                                ),
-                            )
-                        }
-                    } else {
-                        null
-                    },
-            )
-        }
-    }
 }
 
 /** Main's PlusBenefits. */
@@ -545,3 +612,12 @@ internal fun money(
 private const val GOOGLE = "google"
 private const val APPLE = "apple"
 internal const val STRIPE = "stripe"
+
+private val PAGE_WIDTH = 640.dp
+
+/** Main's 64rem plans row. */
+private val TWO_PLANS_WIDTH = 1024.dp
+
+/** The narrowest a plan card keeps Plus's billing switch readable, at 100% text. */
+private val PLAN_MIN_WIDTH = 360.dp
+private val PLAN_GAP = 16.dp

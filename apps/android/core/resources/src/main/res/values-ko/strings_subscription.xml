@@ -39,6 +39,7 @@
   "subscription_canceled": "66fc81c18d0d2df89cf164fd43ec819bea177987722ac6ccd1158e90e7c2771f",
   "subscription_canceled_refund": "b60a2545cce44aab17ef02664f0378b9f4a213b2634aecfd06f61ee0ab69a9da",
   "subscription_contact_support": "c7fedc18f6a39016ba6838457f8c8721a6f862a95bfc81f4f204d7867bf30966",
+  "subscription_current_plan": "2444434310a9f64cf9ddf53df34b8d7cc1b3262a450bf21a6662273615042cc1",
   "subscription_deletion_no_refund": "870b2419e4b78e53100b843ef740285fa03d7e223ced6ba111cdfef099e27c25",
   "subscription_deletion_refund": "8b2c845bcfe0f458a07e9b7cf30fab2079df9efbdfa336cdf398388ef9a5a189",
   "subscription_ending": "790f279aa513614119b1f0498664c7ed2eebf69a857e5eb931cee7c6c181f0e7",
@@ -95,8 +96,7 @@
   "subscription_subscribe": "7d981773a0577e824dd75894dff92172935683f365a1f268b4d4eac56739c726",
   "subscription_unavailable": "a2745cab686169e6507892ce258349924920fbf9ba32a7074211b9f972ff9d4c",
   "subscription_yearly": "08b6faca888c087cdd5fc6a438e0b06b28448d9d7b5fc756a62436d65b5e53a9",
-  "subscription_yearly_per_month": "a2f3d4fc6c2b677c6af11e4bac9c5a081d99fab9df6cefd4604b02fc623b004c",
-  "subscription_your_plan": "baf502b198f7b0fab3b9242b7a708f3f6221b08f9999804a93650a27321471c3"
+  "subscription_yearly_per_month": "a2f3d4fc6c2b677c6af11e4bac9c5a081d99fab9df6cefd4604b02fc623b004c"
 }
 -->
 <resources>
@@ -155,7 +155,6 @@
     <!-- Closes a message after canceling. -->
     <string name="subscription_ok">확인</string>
     <string name="subscription_offer_title">Zoonk Plus 구독하기</string>
-    <string name="subscription_your_plan">내 요금제</string>
     <string name="subscription_free">무료</string>
     <!-- %1$d is how many buddy messages were used today and %2$d the day's limit, which picks the plural. -->
     <plurals name="subscription_messages_used">
@@ -188,6 +187,8 @@
     <string name="subscription_benefit_calls">더 넉넉한 말하기 연습 대화 이용 한도</string>
     <string name="subscription_start_free">무료로 시작하기</string>
     <string name="subscription_no_card_needed">카드 등록이 필요 없어요.</string>
+    <!-- In the Free plan card, where the button would be, for a learner already on Free. -->
+    <string name="subscription_current_plan">현재 요금제</string>
     <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("40 lessons a month"). -->
     <string name="subscription_free_summary">%1$s · %2$s</string>
     <!-- %d is the number as a digit, at the start: "1 goal". -->

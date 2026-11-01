@@ -41,7 +41,7 @@ class FreePlanTest {
 
     @Test
     fun theCardSumsUpTheFreePlanWithAWeekOfExamPrep() {
-        rule.setContent { ZoonkTheme { FreePlanCard(limits, currency = "USD", onStart = {}) } }
+        rule.setContent { ZoonkTheme { FreePlanCard(limits, currency = "USD", PlanViewer.Visitor, rememberAppNavigator()) } }
 
         rule.onNode(hasText("$0")).assertIsDisplayed()
         rule.onNode(hasText("1 goal\u00A0· 40 lessons a month")).assertIsDisplayed()
@@ -52,6 +52,7 @@ class FreePlanTest {
     @Test
     fun withoutAnAccountTheFirstAnswerStartsWithTheGuestLessons() {
         questions(hasAccount = false)
+        rule.onNode(hasText("What's in the free plan?") and hasClickAction()).performClick()
 
         rule.onNode(hasText("Start free with 3 lessons, no account needed. With a free account, you get:")).assertIsDisplayed()
         rule.onNode(hasText("10 messages to your buddy and 1 upload a day")).assertIsDisplayed()
@@ -60,6 +61,7 @@ class FreePlanTest {
     @Test
     fun anAccountReadsTheFreePlanAndOpensTheOtherAnswers() {
         questions(hasAccount = true)
+        rule.onNode(hasText("What's in the free plan?") and hasClickAction()).performClick()
 
         rule.onNode(hasText("With the free plan, you get:")).assertIsDisplayed()
         val cancel = rule.onNode(hasText("What happens if I cancel?") and hasClickAction())
@@ -70,22 +72,19 @@ class FreePlanTest {
     }
 
     @Test
-    fun theFirstAnswerStartsClosedBesideTheFreeCard() {
-        questions(hasAccount = false, isFreePlanOpen = false)
+    fun theFirstAnswerStartsClosed() {
+        questions(hasAccount = false)
 
         rule.onNode(hasText("With a free account", substring = true)).assertDoesNotExist()
         rule.onNode(hasText("What's in the free plan?") and hasClickAction()).assert(hasStateDescription("Collapsed"))
     }
 
-    private fun questions(
-        hasAccount: Boolean,
-        isFreePlanOpen: Boolean = true,
-    ) {
+    private fun questions(hasAccount: Boolean) {
         rule.setContent {
             ZoonkTheme {
                 Column(
                     Modifier.verticalScroll(rememberScrollState()),
-                ) { CommonQuestions(limits, hasAccount, rememberAppNavigator(), isFreePlanOpen) }
+                ) { CommonQuestions(limits, hasAccount, rememberAppNavigator(), sideBySide = false) }
             }
         }
     }

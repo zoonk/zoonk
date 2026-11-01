@@ -39,6 +39,7 @@
   "subscription_canceled": "c4f64238a0648265af6e9534f92f6811cecd8c00c805898364eda5726ab06599",
   "subscription_canceled_refund": "8c4e24b9189eec6ccdbf1e15af6b4fb46d6a02b30b3ce8319c8dbb4356a3be26",
   "subscription_contact_support": "3805f4df874308006d14b9ff91e7a649011dc261068a0593879e1a6e645d4586",
+  "subscription_current_plan": "b868dbcab3bba7eedbab73669e78620a575b07ea58383c5efadce565dd9fdd70",
   "subscription_deletion_no_refund": "94c8238dd29bf1eff8de86e5552e4ffdfd592c2704aadd1f17e8a8a80ea63d33",
   "subscription_deletion_refund": "08f77b94462bc7a065ce6cfd4f2bd55b87c3955d8d77dfc75009deeca781d3a3",
   "subscription_ending": "729b2a29563c828ae5c85d5808f25589bec9301d26cd262ac7da327c7c1a5b23",
@@ -95,8 +96,7 @@
   "subscription_subscribe": "4b1cdc763f772d12701a001aa49ed1ee291e7537362e2453113426fb94331a27",
   "subscription_unavailable": "b178f31398ccfa7b1f2ae05b33e2454635434c9583b32a489ba2aae8f0fb8217",
   "subscription_yearly": "7e420b12f56c492f02e92edfc79833f1d1ffdbc574302cb5a337b5d1545e71a1",
-  "subscription_yearly_per_month": "46b896d9645e204a0b5d128dd20bd972bf59ad9a1ec9f47797400243c265bb07",
-  "subscription_your_plan": "e67098ea8de95d30a8818ff6ffdaf7eb29a2a104bae0867e436f7b4656bf8e01"
+  "subscription_yearly_per_month": "46b896d9645e204a0b5d128dd20bd972bf59ad9a1ec9f47797400243c265bb07"
 }
 -->
 <resources>
@@ -155,7 +155,6 @@
     <!-- Closes a message after canceling. -->
     <string name="subscription_ok">Tamam</string>
     <string name="subscription_offer_title">Zoonk Plus’a abone ol</string>
-    <string name="subscription_your_plan">Paketin</string>
     <string name="subscription_free">Ücretsiz</string>
     <!-- %1$d is how many buddy messages were used today and %2$d the day's limit, which picks the plural. -->
     <plurals name="subscription_messages_used">
@@ -189,6 +188,8 @@
     <string name="subscription_benefit_calls">Konuşma pratiği sohbetlerinde daha yüksek limitler</string>
     <string name="subscription_start_free">Ücretsiz başla</string>
     <string name="subscription_no_card_needed">Kart gerekmez.</string>
+    <!-- In the Free plan card, where the button would be, for a learner already on Free. -->
+    <string name="subscription_current_plan">Mevcut paketin</string>
     <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("40 lessons a month"). -->
     <string name="subscription_free_summary">%1$s · %2$s</string>
     <!-- %d is the number as a digit, at the start: "1 goal". -->

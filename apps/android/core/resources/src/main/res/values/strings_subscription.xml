@@ -55,7 +55,6 @@
     <!-- Closes a message after canceling. -->
     <string name="subscription_ok">OK</string>
     <string name="subscription_offer_title">Subscribe to Zoonk Plus</string>
-    <string name="subscription_your_plan">Your plan</string>
     <string name="subscription_free">Free</string>
     <!-- %1$d is how many buddy messages were used today and %2$d the day's limit, which picks the plural. -->
     <plurals name="subscription_messages_used">
@@ -89,6 +88,8 @@
     <string name="subscription_benefit_calls">Higher limits for speaking calls</string>
     <string name="subscription_start_free">Start free</string>
     <string name="subscription_no_card_needed">No card needed.</string>
+    <!-- In the Free plan card, where the button would be, for a learner already on Free. -->
+    <string name="subscription_current_plan">Your current plan</string>
     <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("40 lessons a month"). -->
     <string name="subscription_free_summary">%1$s · %2$s</string>
     <!-- %d is the number as a digit, at the start: "1 goal". -->

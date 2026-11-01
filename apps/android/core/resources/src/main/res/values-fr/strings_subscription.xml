@@ -39,6 +39,7 @@
   "subscription_canceled": "d8b81d6e24ac796cb73668d80f5ab53471fa502616018314c8138f1b5cfebf8b",
   "subscription_canceled_refund": "12e9d79a93ea7da77b925041a2f971790ab975c8133025075d5db7d761be3fd9",
   "subscription_contact_support": "1a8c3b492a0574a1627aef472fb5790c20be64a81121ec6b1dfd62a6464160ad",
+  "subscription_current_plan": "0357425fd30d738315feeb43e09e678478b9b9fbbe5bfe21b80882350e1fa8df",
   "subscription_deletion_no_refund": "71439cfd9e8db3ae57a51b5f9727da2f905d56c1779456b652bf47e29c1099d2",
   "subscription_deletion_refund": "71600f039619b63f12e3863eaf855f1d5e1e329ba3d11f574d32df61e516ec72",
   "subscription_ending": "15fb2387151e922c521d96f22f8c555b3a3eb5d7c8c3b2b42dc267c4bf15d28d",
@@ -95,8 +96,7 @@
   "subscription_subscribe": "ef2e7ab2071a28ef90ad6a2da9fe7f10d39fb90ee347d49b242fbfc8747175e0",
   "subscription_unavailable": "e03f6252a367cd197a35017e070d097ec59ada25fac317cd571e02e3384b7748",
   "subscription_yearly": "a01d217d21ebd632f5aa36631833f38c5bbf5a47d392456886ff6e2a7260f611",
-  "subscription_yearly_per_month": "8e7d72dbc15fad4ab47a14bb866d79c89925881796874e0a7ebd3ad89735f417",
-  "subscription_your_plan": "b8823845f4f1fc0234001c66567623a3441df94ac51053bf0be13be0d4ed1383"
+  "subscription_yearly_per_month": "8e7d72dbc15fad4ab47a14bb866d79c89925881796874e0a7ebd3ad89735f417"
 }
 -->
 <resources>
@@ -155,7 +155,6 @@
     <!-- Closes a message after canceling. -->
     <string name="subscription_ok">OK</string>
     <string name="subscription_offer_title">S’abonner à Zoonk Plus</string>
-    <string name="subscription_your_plan">Ta formule</string>
     <string name="subscription_free">Gratuite</string>
     <!-- %1$d is how many buddy messages were used today and %2$d the day's limit, which picks the plural. -->
     <plurals name="subscription_messages_used">
@@ -190,6 +189,8 @@
     <string name="subscription_benefit_calls">Plus d’appels pour pratiquer l’expression orale</string>
     <string name="subscription_start_free">Commencer gratuitement</string>
     <string name="subscription_no_card_needed">Pas de carte bancaire nécessaire.</string>
+    <!-- In the Free plan card, where the button would be, for a learner already on Free. -->
+    <string name="subscription_current_plan">Ta formule actuelle</string>
     <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("40 lessons a month"). -->
     <string name="subscription_free_summary">%1$s · %2$s</string>
     <!-- %d is the number as a digit, at the start: "1 goal". -->

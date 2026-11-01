@@ -3,6 +3,7 @@ package com.zoonk.android.feature.subscription
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -38,27 +39,32 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.spaceAfterSentence
+import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.FreePlan
 
-/** Main's FreePlan card, which only a visitor sees beside Plus: a guest or an account already has it. */
+/** Main's FreePlan card: how a visitor starts, how a guest keeps going, or a Free account's use of it today. */
 @Composable
 internal fun FreePlanCard(
     limits: FreePlan,
     currency: String?,
-    onStart: () -> Unit,
+    viewer: PlanViewer,
+    navigator: AppNavigator,
+    modifier: Modifier = Modifier,
+    messagesUsed: AllowanceItem? = null,
 ) {
-    OutlinedCard(Modifier.fillMaxWidth()) {
+    OutlinedCard(modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Text(stringResource(R.string.subscription_free), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
             if (currency != null) Text(money(0, currency, currentLocale()), style = MaterialTheme.typography.headlineMedium)
-            OutlinedButton(
-                onClick = onStart,
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text(stringResource(R.string.subscription_start_free)) }
-            Note(stringResource(R.string.subscription_no_card_needed), Modifier.align(Alignment.CenterHorizontally))
+            when (viewer) {
+                PlanViewer.Visitor -> StartFree(stringResource(R.string.subscription_start_free)) { navigator.showRoot(AppTab.Today) }
+                PlanViewer.Guest -> StartFree(stringResource(R.string.limit_create_account)) { navigator.open(AppRoute.Login) }
+                PlanViewer.Free -> CurrentPlanUse(messagesUsed)
+            }
             HorizontalDivider()
             PlanIncludes(
                 summary =
@@ -94,18 +100,42 @@ internal fun FreePlanCard(
     }
 }
 
+@Composable
+private fun ColumnScope.StartFree(
+    label: String,
+    onClick: () -> Unit,
+) {
+    OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) { Text(label) }
+    Note(stringResource(R.string.subscription_no_card_needed), Modifier.align(Alignment.CenterHorizontally))
+}
+
+@Composable
+private fun ColumnScope.CurrentPlanUse(messagesUsed: AllowanceItem?) {
+    Text(
+        stringResource(R.string.subscription_current_plan),
+        Modifier.align(Alignment.CenterHorizontally),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyMedium,
+    )
+    val limit = messagesUsed?.dailyLimit?.toInt() ?: return
+    Note(
+        pluralStringResource(R.plurals.subscription_messages_used, limit, messagesUsed.usedToday.toInt(), limit),
+        Modifier.align(Alignment.CenterHorizontally),
+    )
+}
+
 /** Main's PlusQuestions. [limits] answers the first question; without them it's left out. */
 @Composable
 internal fun CommonQuestions(
     limits: FreePlan?,
     hasAccount: Boolean,
     navigator: AppNavigator,
-    isFreePlanOpen: Boolean,
+    sideBySide: Boolean,
 ) {
     val email = stringResource(R.string.subscription_questions_email)
     val linkStyle = TextLinkStyles(SpanStyle(textDecoration = TextDecoration.Underline))
 
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    PlanColumns(sideBySide, verticalSpacing = 16.dp) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
                 stringResource(R.string.subscription_questions_title),
@@ -126,7 +156,7 @@ internal fun CommonQuestions(
 
         Column {
             if (limits != null) {
-                Question(stringResource(R.string.subscription_question_free), initiallyOpen = isFreePlanOpen) {
+                Question(stringResource(R.string.subscription_question_free)) {
                     FreePlanAnswer(limits, hasAccount)
                 }
             }
@@ -201,10 +231,9 @@ private fun FreePlanAnswer(
 @Composable
 private fun Question(
     question: String,
-    initiallyOpen: Boolean = false,
     answer: @Composable () -> Unit,
 ) {
-    var open by rememberSaveable(question) { mutableStateOf(initiallyOpen) }
+    var open by rememberSaveable(question) { mutableStateOf(false) }
     val state = stringResource(if (open) R.string.disclosure_expanded else R.string.disclosure_collapsed)
 
     HorizontalDivider()
