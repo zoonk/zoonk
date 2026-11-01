@@ -116,7 +116,7 @@ export default async function SettingsPage() {
         </Suspense>
       </Page>
 
-      <div className="hidden md:block">
+      <div className="max-w-form hidden md:block">
         <Suspense fallback={<SettingsHubSkeleton />}>
           <FirstSettingsPage />
         </Suspense>

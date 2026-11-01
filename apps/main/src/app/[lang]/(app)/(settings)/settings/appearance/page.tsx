@@ -96,7 +96,7 @@ export default async function AppearancePage() {
   const t = await getExtracted();
 
   return (
-    <Page>
+    <Page className="max-w-form">
       <SectionPageHeader
         description={t("Your buddy, lessons and language, the way you like them.")}
         title={t({

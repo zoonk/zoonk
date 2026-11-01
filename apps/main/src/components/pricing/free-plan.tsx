@@ -46,7 +46,7 @@ async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState })
 
   if (viewerState.status === "free") {
     return (
-      <p className="text-muted-foreground flex min-h-11 items-center justify-center text-sm">
+      <p className="text-muted-foreground flex min-h-10 items-center justify-center text-sm">
         {t("Your current plan")}
       </p>
     );
@@ -57,9 +57,11 @@ async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState })
 
 export async function FreePlan({
   currency,
+  usedToday,
   viewerState,
 }: {
   currency: string | null;
+  usedToday?: React.ReactNode;
   viewerState?: PlusViewerState;
 }) {
   const t = await getExtracted();
@@ -88,6 +90,8 @@ export async function FreePlan({
             {(reader.status === "visitor" || reader.status === "guest") && (
               <p className={PLAN_ACTION_NOTE_CLASS}>{t("No card needed.")}</p>
             )}
+
+            {reader.status === "free" && usedToday}
           </>
         )}
         viewerState={viewerState}

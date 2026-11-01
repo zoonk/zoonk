@@ -13,7 +13,6 @@ export default async function Layout({ children }: LayoutProps<"/[lang]">) {
   return (
     <>
       <SectionPage
-        contentClassName="max-w-form"
         end={
           <Suspense fallback={null}>
             <SettingsAccountAction />

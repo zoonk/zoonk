@@ -100,7 +100,7 @@ export async function CurrentPlan({ subscription }: { subscription: Subscription
   const isEnding = Boolean(subscription.cancelAt);
 
   return (
-    <Page>
+    <Page className="max-w-form">
       <PageHeader>
         <PageHeaderContent>
           <div className="flex flex-wrap items-center gap-2">

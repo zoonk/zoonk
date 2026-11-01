@@ -44,7 +44,7 @@ export default async function MemoryPage() {
   const t = await getExtracted();
 
   return (
-    <Page>
+    <Page className="max-w-form">
       <SectionPageHeader title={t("Memory")} />
 
       <p className="text-muted-foreground -mt-4 text-sm text-pretty md:mt-0">

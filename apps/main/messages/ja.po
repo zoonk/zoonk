@@ -104,7 +104,6 @@ msgstr "ヘルプ"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 #: src/app/[lang]/(app)/(onboarding)/start/[goalId]/page.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
 #: src/app/[lang]/(home)/_components/start-section.tsx
 msgctxt "ChuNUI"
 msgid "Your plan"
@@ -1566,14 +1565,7 @@ msgctxt "oESc06"
 msgid "What's included"
 msgstr "プランの内容"
 
-#: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
-#: src/components/pricing/free-plan.tsx
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "tf1lIh"
-msgid "Free"
-msgstr "無料プラン"
-
-#: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/free-plan-usage.tsx
 msgctxt "kkHvAa"
 msgid "<mono>{used, number}/{limit, number}</mono> buddy messages used today"
 msgstr "今日の相棒とのメッセージ利用数：<mono>{used, number}/{limit, number}</mono>件"
@@ -4525,6 +4517,12 @@ msgstr "無料アカウントを作成する"
 msgctxt "m5_Dxl"
 msgid "Your current plan"
 msgstr "現在のプラン"
+
+#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "tf1lIh"
+msgid "Free"
+msgstr "無料プラン"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "NynllM"

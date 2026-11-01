@@ -8,7 +8,7 @@ import { getSession } from "@zoonk/core/users/session";
 import { Page, PageHeader, PageHeaderContent, PageTitle } from "@zoonk/learn/page";
 import { getExtracted } from "next-intl/server";
 import { CurrentPlan } from "./current-plan";
-import { FreePlanSummary } from "./free-plan-summary";
+import { FreePlanUsage } from "./free-plan-usage";
 import { StripeCheckoutConfirming } from "./stripe-checkout-confirming";
 import { StripeCheckoutReturn } from "./stripe-checkout-return";
 
@@ -64,11 +64,10 @@ export async function SubscriptionPlans({
         </PageHeaderContent>
       </PageHeader>
 
-      {hasAccount && allowance?.tier === "free" && <FreePlanSummary allowance={allowance} />}
-
       <PlusPricing
         defaultPeriod={readBillingPeriod(query[BILLING_PERIOD_PARAM])}
         monthlyPrice={prices.monthlyPrice}
+        usedToday={allowance?.tier === "free" && <FreePlanUsage allowance={allowance} />}
         viewerState={{ status: getOfferViewer({ hasAccount, hasSession: Boolean(session) }) }}
         yearlyPrice={prices.yearlyPrice}
       />

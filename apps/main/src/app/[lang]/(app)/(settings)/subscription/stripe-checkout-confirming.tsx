@@ -39,7 +39,7 @@ function ConfirmationAttempt({ restart }: { restart: () => void }) {
   const waiting = poll.status === "polling";
 
   return (
-    <Page>
+    <Page className="max-w-form">
       <PageHeader>
         <PageHeaderContent>
           <PageTitle className="md:text-xl md:leading-tight">

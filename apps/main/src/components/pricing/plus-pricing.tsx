@@ -87,6 +87,11 @@ export function PricingPlans({
   );
 }
 
+const PLUS_PRICING_CLASS = "@container flex max-w-5xl flex-col gap-7";
+
+/** Side by side once each card fits its name and the billing switch on one row. */
+const PLAN_CARDS_CLASS = "grid gap-4 @3xl:grid-cols-2";
+
 function PlanCardSkeleton() {
   return (
     <div className={cn(SURFACE_CLASS, PLAN_CARD_CLASS, "gap-4")}>
@@ -106,10 +111,7 @@ function PlanCardSkeleton() {
 export function PricingQuestions() {
   return (
     <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-24 lg:pt-32")}>
-      <PlusQuestions
-        className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12"
-        freePlanShown
-      />
+      <PlusQuestions className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12" />
     </div>
   );
 }
@@ -157,20 +159,21 @@ export function PricingClose({ hasChoice }: { hasChoice: boolean }) {
 export function PlusPricing({
   defaultPeriod,
   monthlyPrice,
+  usedToday,
   viewerState,
   yearlyPrice,
 }: {
   defaultPeriod?: BillingPeriod;
   monthlyPrice: PriceInfo | null;
+  usedToday?: ReactNode;
   viewerState: PlusViewerState;
   yearlyPrice: PriceInfo | null;
 }) {
   const currency = (monthlyPrice ?? yearlyPrice)?.currency ?? null;
-  const freePlanShown = viewerState.status === "visitor";
 
   return (
-    <>
-      <div className="max-w-form flex flex-col gap-4">
+    <div className={PLUS_PRICING_CLASS}>
+      <div className={PLAN_CARDS_CLASS}>
         <PlusPlan
           billingSwitch="subscription-billing"
           defaultPeriod={defaultPeriod}
@@ -179,22 +182,21 @@ export function PlusPricing({
           yearlyPrice={yearlyPrice}
         />
 
-        {freePlanShown && <FreePlan currency={currency} viewerState={viewerState} />}
+        <FreePlan currency={currency} usedToday={usedToday} viewerState={viewerState} />
       </div>
 
-      <PlusQuestions
-        className="max-w-form"
-        freePlanShown={freePlanShown}
-        viewerState={viewerState}
-      />
-    </>
+      <PlusQuestions className="@3xl:grid @3xl:grid-cols-2 @3xl:gap-4" viewerState={viewerState} />
+    </div>
   );
 }
 
 export function PlusPricingSkeleton() {
   return (
-    <div aria-hidden="true" className="max-w-form">
-      <PlanCardSkeleton />
+    <div aria-hidden="true" className={PLUS_PRICING_CLASS}>
+      <div className={PLAN_CARDS_CLASS}>
+        <PlanCardSkeleton />
+        <PlanCardSkeleton />
+      </div>
     </div>
   );
 }

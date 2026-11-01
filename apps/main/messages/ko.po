@@ -104,7 +104,6 @@ msgstr "도움말"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 #: src/app/[lang]/(app)/(onboarding)/start/[goalId]/page.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
 #: src/app/[lang]/(home)/_components/start-section.tsx
 msgctxt "ChuNUI"
 msgid "Your plan"
@@ -1566,14 +1565,7 @@ msgctxt "oESc06"
 msgid "What's included"
 msgstr "포함된 혜택"
 
-#: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
-#: src/components/pricing/free-plan.tsx
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "tf1lIh"
-msgid "Free"
-msgstr "무료"
-
-#: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/free-plan-usage.tsx
 msgctxt "kkHvAa"
 msgid "<mono>{used, number}/{limit, number}</mono> buddy messages used today"
 msgstr "오늘 짝꿍 메시지 <mono>{used, number}/{limit, number}</mono>개 사용"
@@ -4525,6 +4517,12 @@ msgstr "무료 계정 만들기"
 msgctxt "m5_Dxl"
 msgid "Your current plan"
 msgstr "현재 이용 중인 요금제"
+
+#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "tf1lIh"
+msgid "Free"
+msgstr "무료"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "NynllM"

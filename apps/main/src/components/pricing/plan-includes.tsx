@@ -21,7 +21,7 @@ export function PlanIncludes({
             <LineMarker>
               <CheckMark size="sm" />
             </LineMarker>
-            <span className="text-pretty">{item.text}</span>
+            <span className="text-balance">{item.text}</span>
           </li>
         ))}
       </ul>

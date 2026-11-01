@@ -13,14 +13,12 @@ type SectionHubLink = { href: string; title: string };
 
 export function SectionPage({
   children,
-  contentClassName,
   end,
   eyebrow,
   hub,
   nav,
 }: {
   children: React.ReactNode;
-  contentClassName?: string;
   end?: React.ReactNode;
   eyebrow?: React.ReactNode;
   hub: SectionHubLink;
@@ -51,7 +49,7 @@ export function SectionPage({
         {nav}
       </div>
 
-      <div className={cn("flex min-w-0 flex-1 flex-col gap-6", contentClassName)}>{children}</div>
+      <div className="flex min-w-0 flex-1 flex-col gap-6">{children}</div>
     </div>
   );
 }

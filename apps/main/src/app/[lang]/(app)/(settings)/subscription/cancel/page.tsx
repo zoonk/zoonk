@@ -237,7 +237,7 @@ function CancelPlusSkeleton() {
 /** Reachable signed out, from every public page's footer, as EU and German law ask. */
 export default function CancelPlusPage() {
   return (
-    <Page>
+    <Page className="max-w-form">
       <Suspense fallback={<CancelPlusSkeleton />}>
         <CancelPlusContent />
       </Suspense>
