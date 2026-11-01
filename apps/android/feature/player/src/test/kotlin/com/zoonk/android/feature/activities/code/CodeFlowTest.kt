@@ -153,7 +153,6 @@ class CodeFlowTest {
         val result = QueryResult(listOf("name", "pop_millions"), cells)
         return sandboxJson.encodeToJsonElement<QueryRun>(QueryRun.Done(result))
     }
-        "SELECT name, pop_millions FROM countries WHERE continent = 'Asia' AND pop_millions > 200 ORDER BY pop_millions DESC;"
 
     @Test
     fun typingDuringAPendingQueryKeepsItsLateRowsStale() {
