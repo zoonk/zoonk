@@ -159,8 +159,8 @@ describe(sourceVisibilityWorkflow, () => {
     });
 
     servePages({
-      [correctionUrl]: `EDITAL Nº 2 – RETIFICAÇÃO. ${randomUUID()}`,
       [NOTICE_URL]: text,
+      [correctionUrl]: `EDITAL Nº 2 – RETIFICAÇÃO. ${randomUUID()}`,
     });
 
     await expect(
