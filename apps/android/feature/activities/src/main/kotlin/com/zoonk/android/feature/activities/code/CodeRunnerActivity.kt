@@ -21,9 +21,9 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -52,6 +52,8 @@ import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf16Fields
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf16Value as CodeRunnerContent
 
 val codeRunnerRenderer =
@@ -83,6 +85,13 @@ private val CodeLanguage.defaultFileName
             CodeLanguage.Sql -> "query.sql"
         }
 
+/** A run as the sandbox gave it, whose printed text the sandbox caps, so it fits saved state. */
+private val RunSaver =
+    Saver<ProgramRun?, String>(
+        save = { run -> run?.let { sandboxJson.encodeToString(it) } },
+        restore = { sandboxJson.decodeFromString(it) },
+    )
+
 @Composable
 private fun CodeRunnerActivity(props: ActivityProps) {
     val fields = (props.content as CodeRunnerContent).value.fields
@@ -94,7 +103,7 @@ private fun CodeRunnerActivity(props: ActivityProps) {
     val onAnswerChange by rememberUpdatedState(props.onAnswerChange)
     val isLocked by rememberUpdatedState(props.isLocked)
     var edits by rememberSaveable(stateSaver = draftsSaver(String::toInt)) { mutableStateOf(emptyMap<Int, String>()) }
-    var run by remember { mutableStateOf(props.answer.output?.let(ProgramRun::printed)) }
+    var run by rememberSaveable(stateSaver = RunSaver) { mutableStateOf(props.answer.output?.let(ProgramRun::printed)) }
     val program = programWithEdits(if (props.isExploring) fields.solution else fields.starterCode, edits)
     val matches = run?.let { sameOutput(it.output, fields.expectedOutput) } == true
     val mistake = run?.takeUnless { matches || props.isExploring }?.let { mistakeFor(it.output, fields.mistakes)?.feedback }

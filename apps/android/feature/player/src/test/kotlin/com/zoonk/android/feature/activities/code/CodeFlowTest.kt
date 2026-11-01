@@ -101,18 +101,36 @@ class CodeFlowTest {
         rule.onNodeWithText("Check").assertIsEnabled()
     }
 
+    /** Folding or unfolding recreates the screen: a run stopped at the time limit still says so, and code edited since still says it changed. */
+    @Test
+    fun aRunsStopAndLaterEditsStayWhenTheScreenIsRecreated() {
+        val restoration = StateRestorationTester(rule)
+        harness.codeSandbox = { scope -> ScriptedSandbox(scope) { ApiJson.parseToJsonElement(TIMED_OUT) }.sandbox }
+        harness.play(listOf(endlessRunner), restoration = restoration)
+
+        tap("Run")
+        shows(STOPPED)
+        restoration.emulateSavedInstanceStateRestore()
+        rule.onNode(hasText(STOPPED, substring = true)).assertExists()
+
+        line(2).performTextReplacement("while (n < 3) { n += 1; }")
+        shows(CHANGED)
+        restoration.emulateSavedInstanceStateRestore()
+        rule.onNode(hasText(CHANGED, substring = true)).assertExists()
+    }
+
     @Test
     fun anEndlessLoopStopsAtTheTimeLimitAndEnterRunsTheFix() {
         play(endlessRunner, javaScriptExpected, isCorrect = false) { request ->
             if ("while (true)" in request.code) {
-                ApiJson.parseToJsonElement("""{"error":null,"errorOutput":"","output":"","stop":"timeout"}""")
+                ApiJson.parseToJsonElement(TIMED_OUT)
             } else {
                 ScriptedSandbox.printed("counted to 3\n")
             }
         }
 
         tap("Run")
-        shows("Stopped after 3 seconds. Is there a loop that never ends?")
+        shows(STOPPED)
         line(2).performTextReplacement("while (n < 3) { n += 1; }")
         line(2).requestFocus().performKeyInput { pressKey(Key.Enter) }
 
@@ -152,6 +170,22 @@ class CodeFlowTest {
         val cells = rows.map { (name, people) -> listOf(JsonPrimitive(name as String), JsonPrimitive(people as Int)) }
         val result = QueryResult(listOf("name", "pop_millions"), cells)
         return sandboxJson.encodeToJsonElement<QueryRun>(QueryRun.Done(result))
+    }
+
+    @Test
+    fun aQuerysErrorStaysWhenTheScreenIsRecreated() {
+        val restoration = StateRestorationTester(rule)
+        harness.codeSandbox = { scope ->
+            ScriptedSandbox(scope) { sandboxJson.encodeToJsonElement<QueryRun>(QueryRun.Error("no such column: people")) }.sandbox
+        }
+        harness.play(listOf(ActivityFixtures.step("sqlPlayground")), restoration = restoration)
+
+        field("Your query").performTextReplacement("SELECT people FROM countries;")
+        tap("Run")
+        shows("no such column: people")
+        restoration.emulateSavedInstanceStateRestore()
+
+        rule.onNodeWithText("no such column: people").assertExists()
     }
 
     @Test
@@ -209,6 +243,9 @@ class CodeFlowTest {
 
     private companion object {
         const val WAIT_MS = 5_000L
+        const val TIMED_OUT = """{"error":null,"errorOutput":"","output":"","stop":"timeout"}"""
+        const val STOPPED = "Stopped after 3 seconds. Is there a loop that never ends?"
+        const val CHANGED = "You changed the code. Run it again to see the new output."
 
         val javaScriptFields =
             """

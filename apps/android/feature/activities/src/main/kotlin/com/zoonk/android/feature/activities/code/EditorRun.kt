@@ -4,7 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 
 /**
@@ -12,14 +13,16 @@ import androidx.compose.runtime.setValue
  * `rememberCoroutineScope()`, so leaving the screen drops the result.
  */
 @Stable
-class EditorRun {
+class EditorRun(
+    stale: Boolean = false,
+) {
     private var revision = 0
 
     var isRunning by mutableStateOf(false)
         private set
 
     /** The learner edited the code since the shown result. */
-    var isStale by mutableStateOf(false)
+    var isStale by mutableStateOf(stale)
         private set
 
     fun edit() {
@@ -43,4 +46,5 @@ class EditorRun {
 }
 
 @Composable
-fun rememberEditorRun(): EditorRun = remember { EditorRun() }
+fun rememberEditorRun(): EditorRun =
+    rememberSaveable(saver = Saver(save = { it.isStale }, restore = { stale: Boolean -> EditorRun(stale) })) { EditorRun() }

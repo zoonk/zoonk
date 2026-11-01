@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -67,6 +68,8 @@ import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.api.models.ActivityExpectedAnswer
 import com.zoonk.api.models.ActivityExpectedRows
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.doubleOrNull
@@ -89,6 +92,13 @@ private const val OPEN_ROW_LIMIT = 6
 
 private enum class RowState { Plain, Extra, Missing }
 
+/** A query that failed keeps its message; finished rows come back from the answer, since they can be too many to save. */
+private val FailureSaver =
+    Saver<QueryRun?, String>(
+        save = { run -> run?.takeUnless { it is QueryRun.Done }?.let { sandboxJson.encodeToString<QueryRun>(it) } },
+        restore = { sandboxJson.decodeFromString<QueryRun>(it) },
+    )
+
 @Composable
 private fun SqlPlaygroundActivity(props: ActivityProps) {
     val fields = (props.content as SqlPlaygroundContent).value.fields
@@ -102,7 +112,7 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
     var query by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(if (props.isExploring) fields.solution else ""))
     }
-    var run by remember { mutableStateOf<QueryRun?>(props.answer.rows?.let(QueryRun::Done)) }
+    var run by rememberSaveable(stateSaver = FailureSaver) { mutableStateOf<QueryRun?>(props.answer.rows?.let(QueryRun::Done)) }
     val expected = (props.expected.interaction as? ActivityExpectedAnswer.RowsWrapper)?.value
     val result = (run as? QueryRun.Done)?.result
 
