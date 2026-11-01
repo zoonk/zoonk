@@ -3,37 +3,17 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 /**
- * The wording the law fixes for the cancel and withdrawal links and buttons: Directive (EU)
+ * The wording the law fixes for the cancel and withdrawal buttons: Directive (EU)
  * 2023/2673 (art. 11a of the Consumer Rights Directive) in each EU language, and BGB § 312k in
  * German. A re-translation must never change them.
  */
 const LEGAL_LABELS: Record<string, Record<string, string>> = {
-  de: {
-    "Cancel now": "Jetzt kündigen",
-    "Cancel your subscription here": "Verträge hier kündigen",
-    "Confirm withdrawal": "Widerruf bestätigen",
-    "Withdraw from contract here": "Vertrag widerrufen",
-  },
-  es: {
-    "Confirm withdrawal": "Confirmar desistimiento",
-    "Withdraw from contract here": "Desistir del contrato aquí",
-  },
-  fr: {
-    "Confirm withdrawal": "Confirmer la rétractation",
-    "Withdraw from contract here": "Renoncer au contrat ici",
-  },
-  it: {
-    "Confirm withdrawal": "Conferma recesso",
-    "Withdraw from contract here": "Recedere dal contratto qui",
-  },
-  pl: {
-    "Confirm withdrawal": "Potwierdź odstąpienie od umowy",
-    "Withdraw from contract here": "Odstąp od umowy tutaj",
-  },
-  pt: {
-    "Confirm withdrawal": "Confirmar retratação",
-    "Withdraw from contract here": "Retrate-se do contrato aqui",
-  },
+  de: { "Cancel now": "Jetzt kündigen", "Confirm withdrawal": "Widerruf bestätigen" },
+  es: { "Confirm withdrawal": "Confirmar desistimiento" },
+  fr: { "Confirm withdrawal": "Confirmer la rétractation" },
+  it: { "Confirm withdrawal": "Conferma recesso" },
+  pl: { "Confirm withdrawal": "Potwierdź odstąpienie od umowy" },
+  pt: { "Confirm withdrawal": "Confirmar retratação" },
 };
 
 function catalogPath(locale: string): string {

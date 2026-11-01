@@ -1,7 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import { ZoonkLogo } from "@zoonk/ui/components/zoonk-logo";
 import { getExtracted } from "next-intl/server";
-import { CommercialDisclosureLink } from "./commercial-disclosure-link";
 import { FooterExploreLinks } from "./footer-explore-links";
 import { FooterLanguages } from "./footer-languages";
 import { PUBLIC_CONTAINER_CLASS } from "./landing-styles";
@@ -40,21 +39,6 @@ export async function PublicFooter({ pathname }: { pathname?: string }) {
             <Link className={FOOTER_LINK_CLASS} href="/terms">
               {t("Terms")}
             </Link>
-            <Link className={FOOTER_LINK_CLASS} href="/subscription/cancel">
-              {t({
-                description:
-                  "Footer link to cancel a subscription, which German law requires (BGB § 312k). In German it must read exactly “Verträge hier kündigen”.",
-                message: "Cancel your subscription here",
-              })}
-            </Link>
-            <Link className={FOOTER_LINK_CLASS} href="/subscription/cancel?choice=withdrawal">
-              {t({
-                description:
-                  "Footer link to withdraw within 14 days, which EU law requires. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Vertrag widerrufen”, in French “Renoncer au contrat ici”, in Spanish “Desistir del contrato aquí”, in Portuguese “Retrate-se do contrato aqui”, in Italian “Recedere dal contratto qui”, in Polish “Odstąp od umowy tutaj”.",
-                message: "Withdraw from contract here",
-              })}
-            </Link>
-            <CommercialDisclosureLink className={FOOTER_LINK_CLASS} />
           </nav>
 
           <FooterLanguages pathname={pathname} />

@@ -1,4 +1,3 @@
-import { CommercialDisclosureLink } from "@/components/public/commercial-disclosure-link";
 import {
   DISCLOSURE_ANSWER_CLASS,
   DISCLOSURE_LINK_CLASS,
@@ -161,11 +160,10 @@ export async function PlusQuestions({
           </p>
         </PublicDisclosure>
 
-        <p className="text-muted-foreground mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+        <p className="text-muted-foreground mt-6 text-sm">
           <Link className={LEGAL_LINK_CLASS} href="/terms">
             {t("Terms")}
           </Link>
-          <CommercialDisclosureLink className={LEGAL_LINK_CLASS} />
         </p>
       </div>
     </section>
