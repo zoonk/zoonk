@@ -121,6 +121,13 @@ struct LessonStageView: View {
                 scroll.scrollTo(Self.checkNoteId, anchor: .bottom)
               }
             }
+            // "Show the next step" adds a worked example's step under the others, where the page
+            // may have run out of room.
+            .onChange(of: step.kind == .workedExample ? state.revealed[step.id] : nil) {
+              withAnimation {
+                scroll.scrollTo(Self.turnId, anchor: .bottom)
+              }
+            }
             // Raising the keyboard reveals only a field's text; the learner's turn shows whole above
             // the action bar instead. Typing to Ask leaves the lesson where it is.
             .task {

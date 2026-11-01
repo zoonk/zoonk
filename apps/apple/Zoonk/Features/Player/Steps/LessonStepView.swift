@@ -183,8 +183,8 @@ private struct ExplanationStepView: View {
   }
 }
 
-/// A worked example's steps on the screen. Its picture or chart sits under the problem it belongs
-/// to; on a spread it's the trailing page, beside the steps.
+/// The problem with its picture or chart, then its steps. On a spread the steps unfold on the
+/// learner's page, right above the button that shows the next one.
 private struct WorkedExampleStepView: View {
   @Environment(\.isPaneSplit) private var isPaneSplit
 
@@ -195,20 +195,21 @@ private struct WorkedExampleStepView: View {
 
   var body: some View {
     switch part {
-    case .screen: screen
+    case .screen:
+      problem
+
+      if !isPaneSplit {
+        solution
+      }
     case .turn:
       if isPaneSplit {
-        media
+        solution
       }
     }
   }
 
-  private var media: some View {
-    StepMedia(step: step, visual: content.visual)
-  }
-
   @ViewBuilder
-  private var screen: some View {
+  private var problem: some View {
     Text("Worked example", tableName: "Player", comment: "Label above a worked example")
       .font(.caption.monospaced())
       .foregroundStyle(.secondary)
@@ -218,11 +219,11 @@ private struct WorkedExampleStepView: View {
     }
 
     LessonTextBlocks(content.problem)
+    StepMedia(step: step, visual: content.visual)
+  }
 
-    if !isPaneSplit {
-      media
-    }
-
+  @ViewBuilder
+  private var solution: some View {
     VStack(alignment: .leading, spacing: 12) {
       ForEach(Array(content.steps.prefix(shown).enumerated()), id: \.offset) { index, solved in
         HStack(alignment: .firstTextBaseline, spacing: 12) {
