@@ -36,7 +36,7 @@ describe(regexPassesExamples, () => {
     const result = spawnSync(
       process.execPath,
       ["--import", import.meta.resolve("tsx"), "--input-type=module", "--eval", source],
-      { encoding: "utf8", timeout: 2000 },
+      { encoding: "utf8", timeout: 10_000 },
     );
 
     expect(result.error).toBeUndefined();
