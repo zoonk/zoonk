@@ -455,7 +455,13 @@ private struct FillBlankView: View {
 }
 
 private struct ArrangeWordsView: View {
+  private enum WordFocus: Hashable {
+    case placed(Int)
+    case tile(Int)
+  }
+
   @Environment(\.lessonAudio) private var audio
+  @AccessibilityFocusState private var focus: WordFocus?
 
   let exercise: LanguageExercise
   let context: LessonStepContext
@@ -464,10 +470,10 @@ private struct ArrangeWordsView: View {
   private var isListening: Bool { exercise.kind == .listening }
 
   private var arranged: [Int] {
-    guard let words = arrangedWords else {
-      return []
-    }
+    bankIndices(of: arrangedWords ?? [])
+  }
 
+  private func bankIndices(of words: [String]) -> [Int] {
     var used = Set<Int>()
     return words.compactMap { word in
       let index = exercise.wordBankOptions.indices.first {
@@ -538,13 +544,14 @@ private struct ArrangeWordsView: View {
           CheckedWord(word: word, isRight: marks[position])
         } else {
           Button {
-            set(arranged.filter { $0 != index })
+            remove(at: position)
           } label: {
             Text(word)
           }
           .buttonStyle(.bordered)
           .tint(.primary)
           .disabled(context.isLocked)
+          .accessibilityFocused($focus, equals: .placed(index))
         }
       }
     }
@@ -563,8 +570,22 @@ private struct ArrangeWordsView: View {
           set(arranged + [index])
           audio.playWord(option.audioUrl)
         }
+        .accessibilityFocused($focus, equals: .tile(index))
       }
     }
+  }
+
+  /// The removed word's button goes away, so VoiceOver moves to the next placed word, else the
+  /// previous one, else the tile that came back, as on main.
+  private func remove(at position: Int) {
+    let placed = arranged
+    var words = placed.map { exercise.wordBankOptions[$0].word }
+    words.remove(at: position)
+    let rest = bankIndices(of: words)
+    set(rest)
+    focus =
+      rest.indices.contains(position)
+      ? .placed(rest[position]) : rest.last.map(WordFocus.placed) ?? .tile(placed[position])
   }
 
   private func set(_ indices: [Int]) {
