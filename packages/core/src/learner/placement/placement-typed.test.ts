@@ -1,6 +1,5 @@
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
-import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
@@ -179,9 +178,9 @@ describe("typed answers in placement", () => {
     const { goal, typed, user } = await setup();
     await answerQuickRight({ goalId: goal.id });
 
-    await Promise.all(
-      Array.from({ length: 5 }, () => attemptFixture({ itemId: typed.id, userId: user.id })),
-    );
+    await prisma.modelGrade.createMany({
+      data: Array.from({ length: 5 }, () => ({ questionId: typed.id, userId: user.id })),
+    });
 
     const [paraphrase, accepted] = await Promise.all([
       answerPlacementQuestion({

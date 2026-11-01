@@ -40,3 +40,16 @@ model GuestSpendDay {
 
   @@map("guest_spend_days")
 }
+
+/// A typed answer's model grade, claimed before the model runs, so answers sent at once can't each
+/// pass a question's daily cap. `questionId` is the step's or item's plain id.
+model ModelGrade {
+  id         String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questionId String   @map("question_id") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([userId, questionId, createdAt])
+  @@map("model_grades")
+}

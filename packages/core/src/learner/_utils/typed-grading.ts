@@ -1,6 +1,6 @@
 import "server-only";
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/grading/grade-typed-answer";
-import { canGradeWithModel } from "./model-grading";
+import { claimModelGrade } from "./model-grading";
 import { type TypedItem, getTypedQuestionText, matchesAcceptedAnswer } from "./typed-items";
 
 export type TypedVerdict = { feedback: string | null; isCorrect: boolean };
@@ -21,7 +21,7 @@ export async function gradeTypedItemAnswer({
     return { feedback: null, isCorrect: false };
   }
 
-  if (!(await canGradeWithModel({ question: { itemId: item.id }, userId }))) {
+  if (!(await claimModelGrade({ question: { itemId: item.id }, userId }))) {
     return { feedback: null, isCorrect: matchesAcceptedAnswer({ item, text }) };
   }
 

@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
-import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -1080,16 +1080,9 @@ describe(checkLessonStep, () => {
     const { run, steps, user } = await setupRun();
     const stepId = stepOfKind(steps, "typedAnswer").id;
 
-    await Promise.all(
-      Array.from({ length: 5 }, () =>
-        attemptFixture({
-          answeredAt: new Date(run.startedAt.getTime() - 60_000),
-          isCorrect: false,
-          stepId,
-          userId: user.id,
-        }),
-      ),
-    );
+    await prisma.modelGrade.createMany({
+      data: Array.from({ length: 5 }, () => ({ questionId: stepId, userId: user.id })),
+    });
 
     const paraphrase = await check({
       answer: { kind: "typedAnswer", text: "Because it's probably around there" },
@@ -1127,6 +1120,32 @@ describe(checkLessonStep, () => {
     ]);
 
     expect([attempts, mistakes]).toStrictEqual([1, 0]);
+  });
+
+  it("grades written answers sent at once with the model no more than a screen's daily cap", async () => {
+    const { run, steps } = await setupRun();
+    const stepId = stepOfKind(steps, "typedAnswer").id;
+    const sent = 8;
+
+    Array.from({ length: sent }).forEach(() => {
+      vi.mocked(gradeTypedAnswer).mockResolvedValueOnce(
+        typedGrade({ feedback: "Close.", isCorrect: false, score: 0.5 }),
+      );
+    });
+
+    const outcomes = await Promise.all(
+      Array.from({ length: sent }, () =>
+        check({
+          answer: { kind: "typedAnswer", text: "Because it's probably around there" },
+          attemptId: randomUUID(),
+          runId: run.id,
+          stepId,
+        }),
+      ),
+    );
+
+    expect(outcomes.every((outcome) => outcome.status === "checked")).toBe(true);
+    expect(gradeTypedAnswer).toHaveBeenCalledTimes(5);
   });
 
   it("needs a session and a real step", async () => {

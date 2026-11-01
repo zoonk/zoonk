@@ -11,7 +11,7 @@ import {
   recordAnswerOnce,
 } from "../learner/_utils/answer-once";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
-import { canGradeWithModel } from "../learner/_utils/model-grading";
+import { claimModelGrade } from "../learner/_utils/model-grading";
 import { getSession } from "../users/get-session";
 import {
   type ComesBackInput,
@@ -83,7 +83,7 @@ async function gradeRunAnswer({
   const useModel =
     step.kind === "typedAnswer" &&
     isRecorded &&
-    (await canGradeWithModel({ question: { stepId: step.id }, userId }));
+    (await claimModelGrade({ question: { stepId: step.id }, userId }));
 
   return gradeLessonAnswer({ answer, lesson, step, useModel, userId });
 }

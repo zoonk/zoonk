@@ -1,23 +1,35 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { unchanged, writeLearnerChange } from "./write-learner-change";
 
 /** Grading has a per-question cap instead of spending small AI help, since opened lessons already bound it. */
 const MAX_MODEL_GRADED_ANSWERS_PER_DAY = 5;
 
 type AnsweredQuestion = { itemId: string } | { stepId: string };
 
-/** Uses a rolling 24-hour window. */
-export async function canGradeWithModel({
+/**
+ * Claims one of the question's model grades for a rolling day, under the learner's lock and before
+ * the call, so answers sent at once can't each pass the cap. False means grade by code.
+ */
+export async function claimModelGrade({
   question,
   userId,
 }: {
   question: AnsweredQuestion;
   userId: string;
 }): Promise<boolean> {
-  const answers = await prisma.attempt.count({
-    where: { answeredAt: { gte: new Date(Date.now() - MS_PER_DAY) }, userId, ...question },
-  });
+  const questionId = "stepId" in question ? question.stepId : question.itemId;
 
-  return answers < MAX_MODEL_GRADED_ANSWERS_PER_DAY;
+  return writeLearnerChange({ userId }, async (tx) => {
+    const graded = await tx.modelGrade.count({
+      where: { createdAt: { gte: new Date(Date.now() - MS_PER_DAY) }, questionId, userId },
+    });
+
+    if (graded >= MAX_MODEL_GRADED_ANSWERS_PER_DAY) {
+      return unchanged(false);
+    }
+
+    await tx.modelGrade.create({ data: { questionId, userId } });
+    return true;
+  });
 }

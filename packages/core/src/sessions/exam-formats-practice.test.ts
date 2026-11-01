@@ -289,6 +289,33 @@ describe("exam answer formats in practice", () => {
     expect(gradeTypedAnswer).toHaveBeenCalledOnce();
   });
 
+  it("asks the model about a typed word sent many times at once no more than its daily cap", async () => {
+    vi.mocked(gradeTypedAnswer).mockResolvedValue({
+      data: {
+        corrections: [],
+        feedback: "Not the past of go.",
+        isCorrect: false,
+        keyPoints: [],
+        method: "model",
+        score: 0,
+        spelling: null,
+      },
+      provenance: null,
+      systemPrompt: "",
+      usage: null,
+      userPrompt: "",
+    });
+
+    const { itemIds, ref } = await practiceBlock([{ content: TYPED_WORD, format: "typed" }]);
+    const itemId = itemIds[0] ?? "";
+
+    await Promise.all(
+      Array.from({ length: 8 }, () => answer({ answer: { text: "goed" }, itemId, ref })),
+    );
+
+    expect(gradeTypedAnswer).toHaveBeenCalledTimes(5);
+  });
+
   it('takes "I don\'t know yet" on a typed word: its answer, no model, a mistake to come back', async () => {
     const { itemIds, ref, user } = await practiceBlock([
       { content: TYPED_WORD, format: "typed" },
