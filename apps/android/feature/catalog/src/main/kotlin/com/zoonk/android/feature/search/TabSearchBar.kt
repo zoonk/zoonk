@@ -2,7 +2,6 @@ package com.zoonk.android.feature.search
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -33,7 +32,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -74,9 +72,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.scaffold.PageSpan
-import com.zoonk.android.ui.scaffold.onPageSpan
-import com.zoonk.android.ui.scaffold.pageFold
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamMockSummary
 import kotlinx.coroutines.FlowPreview
@@ -257,19 +253,6 @@ private fun Modifier.atBarWidth(state: SearchBarState): Modifier =
         val placeable = measurable.measure(constraints.copy(maxWidth = bar.coerceIn(constraints.minWidth, constraints.maxWidth)))
         layout(placeable.width, placeable.height) { placeable.place(0, 0) }
     }
-
-/**
- * Search reads with what's above it, so across an unfolded book foldable's fold it keeps to the page
- * before it: [content] gets the width to keep to, which ends at the fold.
- */
-@Composable
-private fun BeforeFold(content: @Composable (beforeFold: Modifier) -> Unit) {
-    var span by remember { mutableStateOf<PageSpan?>(null) }
-
-    BoxWithConstraints(Modifier.fillMaxWidth().onPageSpan { span = it }) {
-        content(pageFold(maxWidth, span)?.let { Modifier.widthIn(max = it.start) } ?: Modifier)
-    }
-}
 
 class SearchViewModel(
     private val today: TodayStore,

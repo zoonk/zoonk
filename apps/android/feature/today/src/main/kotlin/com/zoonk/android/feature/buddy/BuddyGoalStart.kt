@@ -39,6 +39,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.rememberGoalExamples
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.api.models.BuddyStatus
 
 /**
@@ -58,26 +59,31 @@ internal fun BuddyGoalStart(
     var goal by rememberSaveable(ask) { mutableStateOf(ask.orEmpty()) }
     val examples = rememberGoalExamples().take(EXAMPLES).map { it.label }
 
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-        Column(
-            Modifier.widthIn(max = BUDDY_COLUMN_WIDTH).fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Column(Modifier.weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                BuddyHeader(look, face = null, name = name, status = status)
-                TutorGreeting(TutorIdentity(name, look), stringResource(R.string.buddy_page_goal_greeting, name))
-                if (earlier.value != null) {
-                    TextButton(onClick = { navigator.open(AppRoute.EarlierQuestions) }) {
-                        Icon(painterResource(R.drawable.ic_history), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
-                        Text(stringResource(R.string.buddy_page_earlier_questions), Modifier.padding(start = ButtonDefaults.IconSpacing))
+    BeforeFold { beforeFold ->
+        Box(beforeFold.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+            Column(
+                Modifier.widthIn(max = BUDDY_COLUMN_WIDTH).fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Column(Modifier.weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                    BuddyHeader(look, face = null, name = name, status = status)
+                    TutorGreeting(TutorIdentity(name, look), stringResource(R.string.buddy_page_goal_greeting, name))
+                    if (earlier.value != null) {
+                        TextButton(onClick = { navigator.open(AppRoute.EarlierQuestions) }) {
+                            Icon(painterResource(R.drawable.ic_history), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
+                            Text(
+                                stringResource(R.string.buddy_page_earlier_questions),
+                                Modifier.padding(start = ButtonDefaults.IconSpacing),
+                            )
+                        }
                     }
                 }
+                val examplesLabel = stringResource(R.string.goal_box_examples)
+                FlowRow(Modifier.semantics { contentDescription = examplesLabel }, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    examples.forEach { example -> SuggestionChip(onClick = { goal = example }, label = { Text(example) }) }
+                }
+                GoalBox(value = goal, onValueChange = { goal = it }, onSubmit = { navigator.open(AppRoute.StartGoal(goal = it)) })
             }
-            val examplesLabel = stringResource(R.string.goal_box_examples)
-            FlowRow(Modifier.semantics { contentDescription = examplesLabel }, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                examples.forEach { example -> SuggestionChip(onClick = { goal = example }, label = { Text(example) }) }
-            }
-            GoalBox(value = goal, onValueChange = { goal = it }, onSubmit = { navigator.open(AppRoute.StartGoal(goal = it)) })
         }
     }
 }

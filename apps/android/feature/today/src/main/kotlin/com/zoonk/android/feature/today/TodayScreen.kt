@@ -59,6 +59,7 @@ import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -478,15 +479,17 @@ internal fun TodayPage(
     padding: PaddingValues,
     content: @Composable () -> Unit,
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()),
-        contentAlignment = Alignment.TopCenter,
-    ) {
-        Column(
-            modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(horizontal = 16.dp, vertical = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+    BeforeFold { beforeFold ->
+        Box(
+            modifier = beforeFold.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()),
+            contentAlignment = Alignment.TopCenter,
         ) {
-            content()
+            Column(
+                modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(horizontal = 16.dp, vertical = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+            ) {
+                content()
+            }
         }
     }
 }

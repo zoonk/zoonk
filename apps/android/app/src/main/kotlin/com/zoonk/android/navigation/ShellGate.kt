@@ -30,6 +30,7 @@ import androidx.navigation3.runtime.NavKey
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.android.ui.scaffold.TaskScaffold
@@ -142,37 +143,39 @@ private fun GateMessage(
     padding: PaddingValues,
     actions: @Composable () -> Unit,
 ) {
-    Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(24.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+    BeforeFold { beforeFold ->
+        Box(
+            modifier =
+                beforeFold
+                    .fillMaxSize()
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(24.dp),
+            contentAlignment = Alignment.Center,
         ) {
-            Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineSmall,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.semantics { heading() },
-            )
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-            )
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                actions()
+                Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.semantics { heading() },
+                )
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                )
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    actions()
+                }
             }
         }
     }

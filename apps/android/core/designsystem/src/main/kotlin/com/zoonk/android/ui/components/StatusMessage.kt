@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.scaffold.BeforeFold
 
 @Composable
 fun StatusMessage(
@@ -33,37 +34,39 @@ fun StatusMessage(
     modifier: Modifier = Modifier,
     actions: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 48.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            painter = painterResource(icon),
-            contentDescription = null,
-            modifier = Modifier.size(32.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Spacer(Modifier.size(16.dp))
-        Text(
-            text = title,
-            modifier = Modifier.widthIn(max = READABLE_WIDTH).semantics { heading() },
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.headlineSmall,
-        )
-        Spacer(Modifier.size(8.dp))
-        Text(
-            text = description,
-            modifier = Modifier.widthIn(max = READABLE_WIDTH),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        Spacer(Modifier.size(24.dp))
+    BeforeFold(modifier) { beforeFold ->
         Column(
+            modifier = beforeFold.fillMaxWidth().padding(horizontal = 24.dp, vertical = 48.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            content = actions,
-        )
+        ) {
+            Icon(
+                painter = painterResource(icon),
+                contentDescription = null,
+                modifier = Modifier.size(32.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.size(16.dp))
+            Text(
+                text = title,
+                modifier = Modifier.widthIn(max = READABLE_WIDTH).semantics { heading() },
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.headlineSmall,
+            )
+            Spacer(Modifier.size(8.dp))
+            Text(
+                text = description,
+                modifier = Modifier.widthIn(max = READABLE_WIDTH),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Spacer(Modifier.size(24.dp))
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                content = actions,
+            )
+        }
     }
 }
 

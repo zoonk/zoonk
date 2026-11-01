@@ -52,6 +52,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -348,17 +349,19 @@ private fun PlanStateColumn(
     padding: PaddingValues,
     content: @Composable () -> Unit,
 ) {
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .widthIn(max = 672.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        content()
+    BeforeFold { beforeFold ->
+        Column(
+            modifier =
+                beforeFold
+                    .fillMaxSize()
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .widthIn(max = 672.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            content()
+        }
     }
 }
 

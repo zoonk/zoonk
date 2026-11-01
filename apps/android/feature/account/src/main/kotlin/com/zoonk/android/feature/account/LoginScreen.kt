@@ -71,6 +71,7 @@ import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
@@ -300,25 +301,27 @@ fun AuthColumn(
     padding: PaddingValues,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .consumeWindowInsets(padding)
-                .imePadding()
-                .verticalScroll(rememberScrollState()),
-        contentAlignment = Alignment.TopCenter,
-    ) {
-        Column(
+    BeforeFold { beforeFold ->
+        Box(
             modifier =
-                Modifier
-                    .widthIn(max = 480.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            content = content,
-        )
+                beforeFold
+                    .fillMaxSize()
+                    .padding(padding)
+                    .consumeWindowInsets(padding)
+                    .imePadding()
+                    .verticalScroll(rememberScrollState()),
+            contentAlignment = Alignment.TopCenter,
+        ) {
+            Column(
+                modifier =
+                    Modifier
+                        .widthIn(max = 480.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                content = content,
+            )
+        }
     }
 }
 
