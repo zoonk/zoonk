@@ -2,6 +2,10 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
@@ -258,6 +262,41 @@ describe("asking the buddy about a session's or practice's question", () => {
       { answered: true, kind: "item" },
       { answered: true, kind: "item" },
     ]);
+  });
+
+  it("keeps a checkpoint's questions out until the learner finishes it, even from practice", async () => {
+    const { item, user } = await practiceQuestion();
+    const session = await studySessionFixture({ userId: user.id });
+
+    const boss = await studySessionBlockFixture({
+      kind: "checkpoint",
+      payload: {
+        checkpoint: { kind: "boss", mock: false, passMark: 70, phase: 0, timeLimitMinutes: null },
+        itemIds: [item.id],
+      },
+      sessionId: session.id,
+      status: "active",
+    });
+
+    const inBoss = { answered: false, blockId: boss.id, kind: "item" } as const;
+    const inPractice = { answered: false, kind: "item" } as const;
+
+    await expect(ask({ context: inBoss, itemId: item.id })).resolves.toStrictEqual({
+      status: "notFound",
+    });
+
+    await expect(ask({ context: inPractice, itemId: item.id })).resolves.toStrictEqual({
+      status: "notFound",
+    });
+
+    await prisma.studySessionBlock.update({
+      data: { completedAt: new Date(), status: "completed" },
+      where: { id: boss.id },
+    });
+
+    await expect(ask({ context: inBoss, itemId: item.id })).resolves.toMatchObject({
+      status: "created",
+    });
   });
 
   it("keeps a question on a mock the learner is sitting, and a block that isn't theirs, out", async () => {

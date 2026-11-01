@@ -4,6 +4,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { hasStoredTimeRunOutAway } from "../../exams/mocks/_utils/owned-mock";
 import { mockConditionsSchema } from "../../exams/mocks/mock-contract";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
+import { getBlockItemIds, readBlockPayload } from "../../sessions/block-payload";
 import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
 import { type SyllabusSubject } from "../../view-models/syllabus/syllabus-contract";
 import { type TutorTarget } from "../contract";
@@ -107,17 +108,31 @@ async function isOnRunningMock({ itemId, userId }: { itemId: string; userId: str
   );
 }
 
-/** Never offer tutor help on questions in a currently running mock. */
+async function isOnRunningCheckpoint({ itemId, userId }: { itemId: string; userId: string }) {
+  const blocks = await prisma.studySessionBlock.findMany({
+    select: { payload: true },
+    where: { kind: "checkpoint", session: { userId }, status: "active" },
+  });
+
+  return blocks.some((block) => getBlockItemIds(readBlockPayload(block)).includes(itemId));
+}
+
+/** Never offer tutor help on questions in a currently running mock or checkpoint. */
 async function findItemSubject({ itemId, userId }: { itemId: string; userId: string }) {
-  const [item, onRunningMock] = await Promise.all([
+  const [item, onRunningMock, onRunningCheckpoint] = await Promise.all([
     prisma.item.findFirst({
       select: { id: true, language: true },
       where: { id: itemId, skill: libraryRowsVisibleTo(userId) },
     }),
     isOnRunningMock({ itemId, userId }),
+    isOnRunningCheckpoint({ itemId, userId }),
   ]);
 
-  return toAccess(item && !onRunningMock ? { item, kind: "item", language: item.language } : null);
+  return toAccess(
+    item && !onRunningMock && !onRunningCheckpoint
+      ? { item, kind: "item", language: item.language }
+      : null,
+  );
 }
 
 /** Only finished mocks may receive tutor help. */

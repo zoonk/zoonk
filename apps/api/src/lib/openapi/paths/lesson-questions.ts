@@ -119,7 +119,7 @@ export const lessonQuestionPaths = {
   "/items/{itemId}/questions": tutorQuestionPaths({
     about: "a question of the learner's study session or mistakes practice",
     context:
-      "`context` is `{ kind: \"item\", answered, blockId? }`: the buddy sees the question as it was asked (with the numbers its session block served, `blockId`, absent in mistakes practice) beside the goal's plan. Before the check (`answered: false`) it never sees the answer and gives hints; after it (`answered: true`) it also sees the learner's latest answer to the question from their own record, the right one and why. Another owner's private item or a question on a mock the learner is still sitting is 404. A block that isn't theirs or doesn't ask it is 422. Without a block, the learner must have their own recorded attempt at the item or a saved mistake on its skill; otherwise the context is 422.",
+      "`context` is `{ kind: \"item\", answered, blockId? }`: the buddy sees the question as it was asked (with the numbers its session block served, `blockId`, absent in mistakes practice) beside the goal's plan. Before the check (`answered: false`) it never sees the answer and gives hints; after it (`answered: true`) it also sees the learner's latest answer to the question from their own record, the right one and why. Another owner's private item or a question on a mock or checkpoint the learner is still taking is 404. A block that isn't theirs or doesn't ask it is 422. Without a block, the learner must have their own recorded attempt at the item or a saved mistake on its skill; otherwise the context is 422.",
     operation: "Item",
     pathSchema: itemPathParamsSchema,
     tag: "Study sessions",
