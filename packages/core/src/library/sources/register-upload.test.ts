@@ -12,6 +12,7 @@ import { createSourceUploadToken } from "./create-upload-token";
 import { hashDocument } from "./parse-document";
 import { registerSourceUpload } from "./register-upload";
 import { shareSourceUpload } from "./share-upload";
+import { refreshWebSource } from "./web-sources";
 
 const PRIVATE_STORE = { storeId: "store_test", token: undefined };
 
@@ -481,6 +482,35 @@ describe(registerSourceUpload, () => {
 
     await expect(
       prisma.usageRecord.count({ where: { kind: "upload", userId: second.id } }),
+    ).resolves.toBe(1);
+  });
+
+  it("stores pasted text again after the shared copy it became was updated", async () => {
+    const user = await userFixture();
+    const text = uniqueText();
+    servePublisherCopy(text);
+    mockSession(user.id);
+
+    const first = await registerSourceUpload({ kind: "text", language: "pt", text });
+
+    if (first.status !== "ready") {
+      throw new Error("The first upload should be stored.");
+    }
+
+    await shareNotice(first.source.id);
+    servePublisherCopy(uniqueText());
+    await expect(refreshWebSource(first.source.id)).resolves.toMatchObject({ status: "changed" });
+
+    const again = await registerSourceUpload({ kind: "text", language: "pt", text });
+
+    expect(again).toMatchObject({
+      checkVisibility: true,
+      source: { ownerId: user.id, visibility: "private" },
+      status: "ready",
+    });
+
+    await expect(
+      prisma.usageRecord.count({ where: { kind: "upload", userId: user.id } }),
     ).resolves.toBe(1);
   });
 

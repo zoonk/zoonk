@@ -96,12 +96,10 @@ async function getOwnGoalId({ goalId, userId }: { goalId?: string | null; userId
 
 function createPrivateSource({
   content,
-  id,
   input,
   userId,
 }: {
   content: UploadContent;
-  id: string;
   input: SourceUploadInput;
   userId: string;
 }) {
@@ -128,7 +126,6 @@ function createPrivateSource({
         contentHash: content.hash,
         extractedText: content.parsed.text,
         fetchedAt: new Date(),
-        id,
         identityKey,
         kind: "upload",
         language: input.language,
@@ -148,7 +145,7 @@ function createPrivateSource({
 
     await oweFollowUps({
       db: tx,
-      followUps: [{ input: { sourceId: id }, kind: "checkUploadVisibility" }],
+      followUps: [{ input: { sourceId: source.id }, kind: "checkUploadVisibility" }],
       userId,
     });
 
@@ -219,7 +216,7 @@ async function storeUpload({
 
   const { created, source } = storedCopy
     ? { created: false, source: storedCopy }
-    : await createPrivateSource({ content, id: uploadId, input, userId });
+    : await createPrivateSource({ content, input, userId });
 
   const fileId = input.kind === "file" ? uploadId : null;
   await linkUpload({ fileId, goalId, sourceId: source.id, userId });
