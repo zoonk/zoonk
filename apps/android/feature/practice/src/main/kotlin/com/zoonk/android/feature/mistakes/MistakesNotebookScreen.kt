@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -41,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -52,6 +56,7 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -351,7 +356,7 @@ private fun NarrowNotebook(
     open: String?,
     listState: LazyListState,
 ) {
-    LazyColumn(Modifier.fillMaxSize(), listState, detailPagePadding(), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+    LazyColumn(Modifier.fillMaxSize(), listState, listPadding(lead), verticalArrangement = Arrangement.spacedBy(ITEM_GAP)) {
         notebookHead(page, actions, lead)
         notebookBody(page, actions) {
             Column(Modifier.bleed(LIST_ITEM_INSET)) {
@@ -372,6 +377,20 @@ private fun NarrowNotebook(
     }
 }
 
+/** Without its hero, a list keeps the hero's empty slot and starts a gap higher, so the gap after that slot doesn't show. */
+@Composable
+private fun listPadding(lead: NotebookLead): PaddingValues {
+    val padding = detailPagePadding()
+    if (lead.hero) return padding
+    val direction = LocalLayoutDirection.current
+    return PaddingValues(
+        start = padding.calculateStartPadding(direction),
+        top = (padding.calculateTopPadding() - ITEM_GAP).coerceAtLeast(0.dp),
+        end = padding.calculateEndPadding(direction),
+        bottom = padding.calculateBottomPadding(),
+    )
+}
+
 @Composable
 private fun WideNotebook(
     page: NotebookPage,
@@ -387,7 +406,7 @@ private fun WideNotebook(
             Modifier.width(SKILLS_WIDTH).fillMaxSize(),
             listState,
             contentPadding = padding,
-            verticalArrangement = Arrangement.spacedBy(24.dp),
+            verticalArrangement = Arrangement.spacedBy(ITEM_GAP),
         ) {
             notebookHead(page, actions, lead)
             notebookBody(page, actions) {
@@ -733,6 +752,7 @@ private fun PageLoading() {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
 }
 
+private val ITEM_GAP = 24.dp
 private val INBOX_WIDTH = 840.dp
 private val SKILLS_WIDTH = 400.dp
 private val ENTRIES_WIDTH = 720.dp

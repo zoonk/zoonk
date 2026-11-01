@@ -2,16 +2,20 @@ package com.zoonk.android.feature.mistakes
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.test.hasScrollToIndexAction
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.layout.FoldingFeature
@@ -32,6 +36,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -143,6 +148,26 @@ class MistakesNotebookFlowTest {
         assertTrue("what's to fix before the fold", bounds("Percentages").right <= 426.dp)
         assertTrue("what's fixed after the fold", bounds("Fractions").left >= 426.dp)
         assertTrue("its title after the fold", bounds("Fixed").left >= 426.dp)
+        assertEquals("its title level with the page before it", bounds("ENEM").top.value, bounds("Fixed").top.value, 0.5f)
+    }
+
+    /** Scrolled until the tabs reach the top, the Fixed list opens on its title as the book opens, not partway down it. */
+    @Test
+    @Config(qualifiers = "w707dp-h823dp")
+    fun theFixedListScrolledToItsTabsOpensOnItsTitle() {
+        fixed = notebook((1..30).map { "Skill $it" to "Question $it?" })
+        fixedGate.complete(Unit)
+        rule.setContent { ZoonkTheme { Notebook(goalId, "ENEM", store(), rememberAppNavigator()) } }
+        rule.onNodeWithText("Fixed").performClick()
+        val list = rule.onNode(hasScrollToIndexAction()).getUnclippedBoundsInRoot()
+        val tabs = rule.onAllNodes(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab)).onFirst().getUnclippedBoundsInRoot()
+        val toTabs = with(rule.density) { (tabs.top - list.top).toPx() }
+        rule.onNode(hasScrollToIndexAction()).performSemanticsAction(SemanticsActions.ScrollBy) { scrollBy -> scrollBy(0f, toTabs) }
+        rule.waitForIdle()
+
+        unfold()
+
+        rule.onNodeWithText("Fixed").assertIsDisplayed()
     }
 
     /** Opening the book recreates the screen, and the list to fix is the one the tabs showed. */
