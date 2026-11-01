@@ -57,7 +57,7 @@ A book-style foldable (Galaxy Z Fold, Pixel Fold) has a phone-shaped outer displ
 - Navigation follows Material's default suite: a bar when folded and in tabletop, a rail when unfolded. A permanent drawer only on large windows: on an unfolded foldable it would take most of the first page.
 - Half opened with a vertical fold (book), the panes stay where they were. Half opened with a horizontal fold (tabletop, the device on its side), content sits on the upright half and controls on the flat one: the bottom bar does this already, and scrolling content may cross the fold. Every feature works in every posture; nothing hides behind one.
 - The outer display is a phone: compact width, the bar, one column. Folding and unfolding recreates the activity, so what the learner made lives in view models, drafts and saveable state, and the scroll position and text input survive.
-- Test on the `Pixel_Fold` AVD in every posture (outer display, inner display flat and half opened as a book, on its side flat and as a tabletop) and on a Galaxy Z Fold's shape, and cover fold logic in Robolectric with `androidx.window:window-testing` ([commands](references/design-system.md#testing-on-a-foldable)).
+- Test on the `Pixel_Fold` AVD in every posture (outer display, inner display flat and half opened as a book, on its side flat and as a tabletop) and on a Galaxy Z Fold's shape, and look at fold layouts in on-demand Robolectric renders with `androidx.window:window-testing` ([commands](references/design-system.md#testing-on-a-foldable)).
 
 ## Official Starting Points
 

@@ -1,6 +1,6 @@
 ---
 name: zoonk-testing
-description: Design, add, or debug Zoonk E2E, lesson player browser, database integration, and pure-function tests.
+description: Design, add, or debug Zoonk E2E, lesson player browser, database integration, pure-function, and Apple and Android app tests.
 license: MIT
 metadata:
   author: zoonk
@@ -13,13 +13,13 @@ Choose the cheapest boundary that exercises the behavior under investigation. Sc
 
 ## Choose coverage
 
-| Behavior                                                                                                          | Boundary                                 | Guidance to load                                                                                                                                                                                                        |
-| ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A high-risk journey or seam only the running app shows ([the E2E bar](#the-e2e-bar)), or the public HTTP contract | Playwright against real product routes   | [E2E](references/e2e.md)                                                                                                                                                                                                |
-| Lesson player behavior: a lesson's screens, answers and feedback                                                  | Vitest browser mode in `packages/player` | Play whole lessons with `renderLessonPlayer` in `packages/player/src/_browser-tests/`, faking only the adapters' server calls. Every app reuses the player, so its behavior is tested there once, not in each app's E2E |
-| Persistence, permissions, transactions, or business orchestration                                                 | Vitest with the real test database       | [Database integration](references/integration.md)                                                                                                                                                                       |
-| Non-trivial pure transformation or domain rule                                                                    | Vitest beside the owning code            | Exercise the exported behavior with meaningful inputs; no additional reference needed                                                                                                                                   |
-| Native behavior                                                                                                   | The app's native test tools              | Read the owning app's AGENTS.md                                                                                                                                                                                         |
+| Behavior                                                                                                          | Boundary                                                           | Guidance to load                                                                                                                                                                                                        |
+| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A high-risk journey or seam only the running app shows ([the E2E bar](#the-e2e-bar)), or the public HTTP contract | Playwright against real product routes                             | [E2E](references/e2e.md)                                                                                                                                                                                                |
+| Lesson player behavior: a lesson's screens, answers and feedback                                                  | Vitest browser mode in `packages/player`                           | Play whole lessons with `renderLessonPlayer` in `packages/player/src/_browser-tests/`, faking only the adapters' server calls. Every app reuses the player, so its behavior is tested there once, not in each app's E2E |
+| Persistence, permissions, transactions, or business orchestration                                                 | Vitest with the real test database                                 | [Database integration](references/integration.md)                                                                                                                                                                       |
+| Non-trivial pure transformation or domain rule                                                                    | Vitest beside the owning code                                      | Exercise the exported behavior with meaningful inputs; no additional reference needed                                                                                                                                   |
+| Apple or Android app behavior that clears [the native bar](#the-native-bar)                                       | The app's unit tests; UI and device tests only for the smoke layer | Read the owning app's AGENTS.md                                                                                                                                                                                         |
 
 ## The E2E bar
 
@@ -34,6 +34,21 @@ Failure paths count as much as happy paths: a lost answer on a bad connection ca
 An `instant()` test guards the chosen prefetched UI under the network lock, not a blanket ban on skeletons. Preserve Today's learner-day and Start-button contract. Hard loads and incomplete or absent prefetches may show skeletons: the static shell must respond immediately while content streams. Check blank screens, slow paints and frozen taps in production page measurements and filmstrips.
 
 Do not write React component unit tests or add tests for `admin`, `evals`, or `blog`. Do not test static configuration against itself, CSS, copy, prompt wording, Zod internals, or framework behavior. Do not export implementation details solely to test them.
+
+## The native bar
+
+A screen test in the Apple or Android app breaks whenever the screen's copy or layout changes, while the bugs it would pin turn up in reviews, parity audits and walks on a device. A native test earns its place only by guarding a risk that matters to a learner and that a check on a device can't see, or can't practically see: if it broke and no test caught it, would a learner be hurt, and would we notice? Weigh impact, likelihood and cheaper coverage as for E2E, with failure paths counting as much as happy ones. In doubt, cut a screen test and keep a data-layer or race test.
+
+Worth a test:
+
+- **The shared data layer:** resources and keyed caches, mutations and queued saves, session identity (signing out on unauthorized, dropping a response whose session ended), generation streams and their resume, request counts, private image loading and API error mapping.
+- **State machines and races the app owns:** transitions driven by a write, a failure, a session change or responses out of order, such as a purchase, the lesson player's state, a live call or a mock run.
+- **Native-only logic:** layout math our code computes (pane splits, fold geometry), formatting it does itself (dates, numbers, durations, plurals across locales), parsing and transforms (rich text, sandbox output, chart and music data), and regexes on the device's engine.
+- **What the learner made:** answers, drafts, progress or recordings kept across recreation, rotation, folding, process death or a failed save.
+- **A thin smoke layer:** a few Apple UI tests (launch to a finished lesson, recovery from auth loss, the accessibility audit) and Android device tests only for what the JVM can't run.
+- **Checks fed by the source of truth:** tests that fail when fixtures exported from main or core drift, contract tests for hand-written wire models, and the Android lint-check detectors.
+
+Not worth one: screen tests of copy, labels, which notice shows, TalkBack or VoiceOver strings, icons, colors, sizes, pane or fold placement, scroll position, what's expanded or where a tap leads; a rule core or the API decides (day state, plan rules, scoring, limits, eligibility) when the app only shows the answer; hand-written JSON fed to the generated API client, which is the contract; framework behavior, static catalogs, config or analytics event names; and a second test of what another already guards (keep the cheaper). A wording, layout or styling fix is checked on the device and in on-demand renders, without a permanent test. Android's renders (`-Pzoonk.shots`) skip in the suite and are a review tool, never goldens.
 
 ## Data and external boundaries
 

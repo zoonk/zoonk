@@ -45,7 +45,7 @@ make test TEST_DESTINATION='platform=iOS Simulator,name=iPhone 16 Pro,OS=latest'
 Run one test or test class by passing an Xcode test identifier:
 
 ```sh
-make ui-test ONLY_TESTING=ZoonkUITests/ZoonkUITests/testPrimaryScreenShowsTitleAndLogIn
+make ui-test ONLY_TESTING=ZoonkUITests/ZoonkUITests/<test name>
 ```
 
 ## API client
