@@ -7,7 +7,10 @@ const IPV4_PATTERN = /^\d{1,3}(?:\.\d{1,3}){3}$/u;
 /** A name may end with the DNS root's dot ("localhost."), which names the same host. */
 const ROOT_DOTS = /\.+$/u;
 
-/** BlockList also matches IPv4-mapped IPv6 addresses against their IPv4 network. */
+/**
+ * BlockList also matches IPv4-mapped IPv6 addresses against their IPv4 network. NAT64, 6to4 and
+ * Teredo addresses carry an IPv4 address a gateway may forward to, so their whole ranges are out.
+ */
 const NON_PUBLIC_NETWORKS: [IPVersion, string][] = [
   ["ipv4", "0.0.0.0/8"],
   ["ipv4", "10.0.0.0/8"],
@@ -16,9 +19,15 @@ const NON_PUBLIC_NETWORKS: [IPVersion, string][] = [
   ["ipv4", "169.254.0.0/16"],
   ["ipv4", "172.16.0.0/12"],
   ["ipv4", "192.168.0.0/16"],
+  ["ipv4", "198.18.0.0/15"],
   ["ipv4", "224.0.0.0/4"],
+  ["ipv4", "240.0.0.0/4"],
   ["ipv6", "::/128"],
   ["ipv6", "::1/128"],
+  ["ipv6", "64:ff9b::/96"],
+  ["ipv6", "64:ff9b:1::/48"],
+  ["ipv6", "2001::/32"],
+  ["ipv6", "2002::/16"],
   ["ipv6", "fc00::/7"],
   ["ipv6", "fe80::/10"],
   ["ipv6", "ff00::/8"],
